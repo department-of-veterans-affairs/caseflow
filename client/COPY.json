@@ -20,6 +20,10 @@
   "CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE": "Issues",
   "CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE": "Veteran Documents",
   "CASE_LIST_TABLE_TASK_ACTION_COLUMN_TITLE": "Action",
+  "CASE_LIST_TABLE_DOCUMENT_ID_COLUMN_TITLE": "Document ID",
+  "CASE_LIST_TABLE_SELECT_COLUMN_TITLE": "Select",
+  "CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE": "Days Waiting",
+  "CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE": "Veteran Documents",
 
   "CASE_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
   "CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL": "Type",
@@ -42,16 +46,6 @@
   "ATTORNEY_QUEUE_TABLE_TASK_NO_DOCUMENTS_READER_LINK": "View in Reader",
   "TASKS_NEED_ASSIGNMENT_ERROR_TITLE": "Some cases need preliminary DAS assignments",
   "TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE": "Cases marked with exclamation points need to be assigned to you through DAS. Please contact your judge or senior counsel to create preliminary DAS assignments.",
-
-  "JUDGE_QUEUE_TABLE_SELECT_COLUMN_TITLE": "Select",
-  "JUDGE_QUEUE_TABLE_VETERAN_NAME_COLUMN_TITLE": "Case Details",
-  "JUDGE_QUEUE_TABLE_DOCUMENT_ID_COLUMN_TITLE": "Document ID",
-  "JUDGE_QUEUE_TABLE_APPEAL_TYPE_COLUMN_TITLE": "Type(s)",
-  "JUDGE_QUEUE_TABLE_DOCKET_NUMBER_COLUMN_TITLE": "Docket Number",
-  "JUDGE_QUEUE_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE": "Issues",
-  "JUDGE_QUEUE_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE": "Veteran Documents",
-  "JUDGE_QUEUE_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE": "Days Waiting",
-
   "JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE": "Cases to Assign",
 
   "NO_CASES_FOR_JUDGE_REVIEW_TITLE": "Cases not found",
@@ -63,8 +57,12 @@
   "CASE_DIFF_VETERAN_AND_APPELLANT": "Veteran is not the appellant.",
   "CASE_SAME_VETERAN_AND_APPELLANT": "The veteran is the appellant.",
 
+  "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_VHA": "OMO - VHA",
+  "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_IME": "OMO - IME",
   "ATTORNEY_CHECKOUT_OMO_LABEL": "Medical Request Ready for Review",
   "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision Ready for Review",
+
+  "REMAND_REASONS_SCREEN_SUBHEAD_LABEL": "Please %s the appropriate remand reason(s) for all the remand dispositions.",
 
   "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL": "Complexity of case",
   "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_SUBHEAD": "How would you rate the complexity of this case?",
@@ -74,7 +72,7 @@
 
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL": "Case Timeliness",
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE": "Date assigned to attorney",
-  "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE": "Decision submitted to attorney",
+  "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE": "Decision submitted to judge",
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED": "Total days worked by attorney",
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM": "does not include days assigned to other teams",
 
@@ -89,7 +87,6 @@
   "JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you need to make any changes, please manage this case in DAS.",
   "JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE": "Thank you for reviewing %s's decision.",
 
-  "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HEADER": "Welcome to Caseflow Hearing Schedule!",
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_HEADER": "Build Schedule",
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_DESCRIPTION": "To build the schedule, please download one of the templates and fill it with the appropriate data. Then, click the \"Upload files\" button to import your completed .xlsx file.",
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_DOWNLOAD_LINK": "Download templates",
@@ -122,6 +119,10 @@
   "HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK": "Apply",
   "HEARING_SCHEDULE_VIEW_START_DATE_LABEL": "From:",
   "HEARING_SCHEDULE_VIEW_END_DATE_LABEL": "To:",
+  "HEARING_SCHEDULE_VIEW_SCHEDULE": "View Schedule",
+
+  "FORM_ERROR_FIELD_REQUIRED": "This field is required",
+  "FORM_ERROR_FIELD_INVALID": "This field is invalid",
 
   "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_ROCO": "We have assigned your video hearings",
   "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_ALERT_TITLE_JUDGE": "We have assigned your judges",
@@ -130,5 +131,5 @@
   "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_MODAL_TITLE": "Please confirm VACOLS upload",
   "HEARING_SCHEDULE_REVIEW_ASSIGNMENTS_MODAL_BODY": "You are about to upload these assignments to VACOLS. Once this is done, you cannot perform this upload for the selected date range again. You will have to make individual edits to the schedule.",
 
-  "HEARING_SCHEDULE_SUCCESS_MESSAGE": "You can view what you uploaded by clicking the 'View current schedule' link below."
+  "HEARING_SCHEDULE_SUCCESS_MESSAGE": "You can view your uploaded schedule by clicking the link below"
 }

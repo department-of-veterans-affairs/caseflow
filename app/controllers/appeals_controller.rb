@@ -1,6 +1,10 @@
 class AppealsController < ApplicationController
+  include Errors
+
   before_action :react_routed
-  before_action :set_application, only: :document_count
+  before_action :set_application, only: [:document_count, :new_documents]
+
+  ROLES = Constants::USER_ROLE_TYPES.keys.freeze
 
   def index
     get_appeals_for_file_number(request.headers["HTTP_VETERAN_ID"]) && return
@@ -19,6 +23,23 @@ class AppealsController < ApplicationController
     render json: { document_count: appeal.number_of_documents }
   rescue Caseflow::Error::ClientRequestError, Caseflow::Error::EfolderAccessForbidden => e
     render e.serialize_response
+  end
+
+  def new_documents
+    render json: { new_documents: appeal.new_documents_for_user(current_user) }
+  rescue Caseflow::Error::ClientRequestError, Caseflow::Error::EfolderAccessForbidden => e
+    render e.serialize_response
+  end
+
+  def tasks
+    no_cache
+
+    role = params[:role].downcase
+    return invalid_role_error unless ROLES.include?(role)
+    tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(params[:appeal_id], role)
+    render json: {
+      tasks: json_tasks(tasks)[:data]
+    }
   end
 
   def show
@@ -93,6 +114,13 @@ class AppealsController < ApplicationController
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
       appeals
+    ).as_json
+  end
+
+  def json_tasks(tasks)
+    ActiveModelSerializers::SerializableResource.new(
+      tasks,
+      each_serializer: ::WorkQueue::LegacyTaskSerializer
     ).as_json
   end
 end

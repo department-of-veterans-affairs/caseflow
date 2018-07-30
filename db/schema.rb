@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180710214914) do
+ActiveRecord::Schema.define(version: 20180724145953) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -446,6 +446,15 @@ ActiveRecord::Schema.define(version: 20180710214914) do
     t.index ["schedule_period_id"], name: "index_non_availabilities_on_schedule_period_id"
   end
 
+  create_table "organizations", force: :cascade do |t|
+    t.string "type"
+    t.string "name"
+    t.string "role"
+    t.string "feature"
+    t.string "url"
+    t.string "participant_id"
+  end
+
   create_table "ramp_closed_appeals", id: :serial, force: :cascade do |t|
     t.string "vacols_id", null: false
     t.integer "ramp_election_id"
@@ -512,6 +521,7 @@ ActiveRecord::Schema.define(version: 20180710214914) do
     t.string "contention_reference_id"
     t.string "description"
     t.string "issue_category"
+    t.date "decision_date"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
   end
 
@@ -560,6 +570,8 @@ ActiveRecord::Schema.define(version: 20180710214914) do
     t.string "appeal_type", null: false
     t.datetime "placed_on_hold_at"
     t.integer "on_hold_duration"
+    t.string "assigned_to_type", null: false
+    t.integer "parent_id"
   end
 
   create_table "team_quotas", id: :serial, force: :cascade do |t|

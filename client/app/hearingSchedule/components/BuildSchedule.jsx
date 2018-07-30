@@ -4,7 +4,8 @@ import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import COPY from '../../../COPY.json';
 import Table from '../../components/Table';
-import { formatDate } from '../../util/DateUtil';
+import { formatDateStr, formatDate } from '../../util/DateUtil';
+import Button from '../../components/Button';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import PropTypes from 'prop-types';
 import DropdownButton from '../../components/DropdownButton';
@@ -15,12 +16,20 @@ import { SPREADSHEET_TYPES } from '../constants';
 
 export default class BuildSchedule extends React.Component {
 
+  openDownloadLink = (periodId) => {
+    window.open(`/hearings/schedule/${periodId}/download.json?download=true`);
+  }
+
   render() {
     const {
       pastUploads,
       displaySuccessMessage,
       schedulePeriod
     } = this.props;
+
+    const linkStyling = css({
+      marginTop: '6px'
+    });
 
     const alertStyling = css({
       marginBottom: '20px'
@@ -66,11 +75,18 @@ export default class BuildSchedule extends React.Component {
     ];
 
     const pastUploadsRows = _.map(pastUploads, (pastUpload) => ({
-      date: `${formatDate(pastUpload.startDate)} - ${formatDate(pastUpload.endDate)}`,
+      date: `${formatDateStr(pastUpload.startDate)} - ${formatDateStr(pastUpload.endDate)}`,
       type: SPREADSHEET_TYPES[pastUpload.type].shortDisplay,
       uploaded: formatDate(pastUpload.createdAt),
       uploadedBy: pastUpload.userFullName,
-      download: <Link name="download">Download {downloadIcon(COLORS.PRIMARY)}</Link>
+      download: <Button name="download"
+        linkStyling
+        onClick={() => {
+          this.openDownloadLink(`${pastUpload.id}`);
+        }
+        }>
+         Download {downloadIcon(COLORS.PRIMARY)}
+      </Button>
     }));
 
     const displayJudgeSuccessMessage = displaySuccessMessage &&
@@ -79,23 +95,33 @@ export default class BuildSchedule extends React.Component {
     const displayRoCoSuccessMessage = displaySuccessMessage &&
       schedulePeriod.type === SPREADSHEET_TYPES.RoSchedulePeriod.value;
 
+    const successMessage = <div>
+      {COPY.HEARING_SCHEDULE_SUCCESS_MESSAGE}
+      <br />
+      <div {...linkStyling}>
+        <Link
+          name="view-schedule"
+          to="/schedule">
+          {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK}</Link>
+      </div>
+    </div>;
+
     return <AppSegment filledBackground>
       {displayJudgeSuccessMessage && <Alert
         type="success"
         title={`You have successfully assigned judges to hearings between
           ${schedulePeriod.startDate} and ${schedulePeriod.endDate}`}
-        message={COPY.HEARING_SCHEDULE_SUCCESS_MESSAGE}
+        message={successMessage}
         styling={alertStyling}
       />}
       {displayRoCoSuccessMessage && <Alert
         type="success"
         title={`You have successfully assigned hearings between
           ${schedulePeriod.startDate} and ${schedulePeriod.endDate}`}
-        message={COPY.HEARING_SCHEDULE_SUCCESS_MESSAGE}
+        message={successMessage}
         styling={alertStyling}
       />}
-      <h1>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_HEADER}</h1>
-      <h2>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_HEADER}</h2>
+      <h1>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_HEADER}</h1>
       <p>{COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_DESCRIPTION}</p>
       <DropdownButton
         lists={downloadOptions}
@@ -124,6 +150,7 @@ export default class BuildSchedule extends React.Component {
 
 BuildSchedule.propTypes = {
   pastUploads: PropTypes.shape({
+    id: PropTypes.number,
     type: PropTypes.string,
     userFullName: PropTypes.string,
     startDate: PropTypes.string,

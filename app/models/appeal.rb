@@ -13,7 +13,8 @@ class Appeal < AmaReview
     )
   end
 
-  delegate :documents, :number_of_documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
+  delegate :documents, :number_of_documents, :manifest_vbms_fetched_at,
+           :new_documents_for_user, :manifest_vva_fetched_at, to: :document_fetcher
 
   def self.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
     if UUID_REGEX.match(id)
@@ -23,9 +24,19 @@ class Appeal < AmaReview
     end
   end
 
+  def type
+    [advanced_on_docket? ? "AOD" : nil].compact.join(" ,")
+  end
+
+  def docket_name
+    docket_type
+  end
+
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
+
+  delegate :name, to: :veteran, prefix: true, allow_nil: true
 
   def create_issues!(request_issues_data:)
     request_issues.destroy_all unless request_issues.empty?

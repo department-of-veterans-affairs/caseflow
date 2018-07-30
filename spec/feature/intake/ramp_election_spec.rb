@@ -167,8 +167,8 @@ RSpec.feature "RAMP Election Intake" do
       "Receipt Date cannot be earlier than RAMP start date, 11/01/2017"
     )
 
-    within_fieldset("Which review lane did the veteran select?") do
-      find("label", text: "Higher Level Review", match: :prefer_exact).click
+    within_fieldset("Which review lane did the Veteran select?") do
+      find("label", text: "Higher-Level Review", match: :prefer_exact).click
     end
     fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
     safe_click "#button-submit-review"
@@ -186,7 +186,7 @@ RSpec.feature "RAMP Election Intake" do
 
     expect(page).to_not have_content("Please select an option.")
 
-    within_fieldset("Which review lane did the veteran select?") do
+    within_fieldset("Which review lane did the Veteran select?") do
       find("label", text: "Supplemental Claim").click
     end
     safe_click "#button-submit-review"
@@ -210,8 +210,8 @@ RSpec.feature "RAMP Election Intake" do
 
     visit "/intake"
 
-    within_fieldset("Which review lane did the veteran select?") do
-      find("label", text: "Higher Level Review with Informal Conference").click
+    within_fieldset("Which review lane did the Veteran select?") do
+      find("label", text: "Higher-Level Review with Informal Conference").click
     end
 
     fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
@@ -233,8 +233,8 @@ RSpec.feature "RAMP Election Intake" do
     # the review request page if you haven't yet reviewed the intake
     visit "/intake/finish"
 
-    within_fieldset("Which review lane did the veteran select?") do
-      find("label", text: "Higher Level Review with Informal Conference").click
+    within_fieldset("Which review lane did the Veteran select?") do
+      find("label", text: "Higher-Level Review with Informal Conference").click
     end
 
     fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
@@ -274,7 +274,7 @@ RSpec.feature "RAMP Election Intake" do
 
     expect(page).to have_content("Intake completed")
     expect(page).to have_content(
-      "Established EP: 682HLRRRAMP - Higher Level Review Rating for Station 397"
+      "Established EP: 682HLRRRAMP - Higher-Level Review Rating for Station 397"
     )
 
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
@@ -286,7 +286,7 @@ RSpec.feature "RAMP Election Intake" do
         station_of_jurisdiction: "397",
         date: election.receipt_date.to_date,
         end_product_modifier: "682",
-        end_product_label: "Higher Level Review Rating",
+        end_product_label: "Higher-Level Review Rating",
         end_product_code: "682HLRRRAMP",
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false
@@ -306,8 +306,8 @@ RSpec.feature "RAMP Election Intake" do
     expect(intake.completed_at).to eq(Time.zone.now)
     expect(intake).to be_success
 
-    election.reload
-    expect(election.end_product_reference_id).to eq("SHANE9642")
+    resultant_end_product_establishment = EndProductEstablishment.find_by(source: election.reload)
+    expect(resultant_end_product_establishment.reference_id).to eq("SHANE9642")
 
     # Validate that the intake is no longer able to be worked on
     visit "/intake/finish"
@@ -324,8 +324,8 @@ RSpec.feature "RAMP Election Intake" do
 
     visit "/intake"
 
-    within_fieldset("Which review lane did the veteran select?") do
-      find("label", text: "Higher Level Review with Informal Conference").click
+    within_fieldset("Which review lane did the Veteran select?") do
+      find("label", text: "Higher-Level Review with Informal Conference").click
     end
 
     fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
@@ -349,8 +349,8 @@ RSpec.feature "RAMP Election Intake" do
 
     visit "/intake"
 
-    within_fieldset("Which review lane did the veteran select?") do
-      find("label", text: "Higher Level Review with Informal Conference").click
+    within_fieldset("Which review lane did the Veteran select?") do
+      find("label", text: "Higher-Level Review with Informal Conference").click
     end
 
     fill_in "What is the Receipt Date of this form?", with: "11/07/2017"

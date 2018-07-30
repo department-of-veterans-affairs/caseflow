@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
@@ -11,55 +11,47 @@ import {
   setSelectedAssignee,
   setSelectedAssigneeSecondary
 } from '../uiReducer/uiActions';
-import {
-  initialAssignTasksToUser
-} from '../QueueActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
 import _ from 'lodash';
-import type {
-  AttorneysOfJudge, IsTaskAssignedToUserSelected, Task, Tasks, UiStateError, State, Attorneys
-} from '../types';
-import Alert from '../../components/Alert';
 import pluralize from 'pluralize';
 import COPY from '../../../COPY.json';
 import { sprintf } from 'sprintf-js';
+import { fullWidth } from '../constants';
+
+import type {
+  AttorneysOfJudge, State
+} from '../types/state';
+import type {
+  Task, Attorneys
+} from '../types/models';
 
 const OTHER = 'OTHER';
 
-type Props = {|
-  // Parameters
+type Params = {|
   previousAssigneeId: string,
   onTaskAssignment: Function,
+  selectedTasks: Array<Task>
+|};
+
+type Props = Params & {|
   // From state
   attorneysOfJudge: AttorneysOfJudge,
   selectedAssignee: string,
   selectedAssigneeSecondary: string,
-  isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
-  tasks: Tasks,
-  error: ?UiStateError,
-  success: string,
   attorneys: Attorneys,
   // Action creators
-  setSelectedAssignee: Function,
-  setSelectedAssigneeSecondary: Function,
-  initialAssignTasksToUser: Function,
-  showErrorMessage: (UiStateError) => void,
-  resetErrorMessages: Function,
-  showSuccessMessage: (string) => void,
-  resetSuccessMessages: Function
+  setSelectedAssignee: typeof setSelectedAssignee,
+  setSelectedAssigneeSecondary: typeof setSelectedAssigneeSecondary,
+  showErrorMessage: typeof showErrorMessage,
+  resetErrorMessages: typeof resetErrorMessages,
+  showSuccessMessage: typeof showSuccessMessage,
+  resetSuccessMessages: typeof resetSuccessMessages
 |};
 
 class AssignWidget extends React.PureComponent<Props> {
-  selectedTasks = (): Array<Task> => {
-    return _.flatMap(
-      this.props.isTaskAssignedToUserSelected[this.props.previousAssigneeId] || {},
-      (selected, id) => (selected ? [this.props.tasks[id]] : []));
-  }
-
   handleButtonClick = () => {
-    const { selectedAssignee, selectedAssigneeSecondary } = this.props;
-    const selectedTasks = this.selectedTasks();
+    const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
 
     this.props.resetSuccessMessages();
     this.props.resetErrorMessages();
@@ -115,8 +107,13 @@ class AssignWidget extends React.PureComponent<Props> {
   }
 
   render = () => {
-    const { attorneysOfJudge, selectedAssignee, selectedAssigneeSecondary, error, success, attorneys } = this.props;
-    const selectedTasks = this.selectedTasks();
+    const {
+      attorneysOfJudge,
+      selectedAssignee,
+      selectedAssigneeSecondary,
+      attorneys,
+      selectedTasks
+    } = this.props;
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
     const options = attorneysOfJudge.map(optionFromAttorney).concat({ label: COPY.ASSIGN_WIDGET_OTHER,
@@ -137,13 +134,13 @@ class AssignWidget extends React.PureComponent<Props> {
     }
 
     return <React.Fragment>
-      {error && <Alert type="error" title={error.title} message={error.detail} />}
-      {success && <Alert type="success" title={success} />}
       <div {...css({
         display: 'flex',
         alignItems: 'center',
         flexWrap: 'wrap',
-        '& > *': { marginRight: '1rem' } })}>
+        '& > *': { marginRight: '1rem',
+          marginTop: '0',
+          marginBottom: '16px' } })}>
         <p>{COPY.ASSIGN_WIDGET_DROPDOWN_PRIMARY_LABEL}</p>
         <SearchableDropdown
           name={COPY.ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY}
@@ -156,6 +153,7 @@ class AssignWidget extends React.PureComponent<Props> {
           styling={css({ width: '30rem' })} />
         {selectedAssignee === OTHER &&
           <React.Fragment>
+            <div {...fullWidth} {...css({ marginBottom: '0' })} />
             <p>{COPY.ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL}</p>
             <SearchableDropdown
               name={COPY.ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY}
@@ -181,30 +179,25 @@ class AssignWidget extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State) => {
-  const { attorneysOfJudge, isTaskAssignedToUserSelected, tasks, attorneys } = state.queue;
-  const { selectedAssignee, selectedAssigneeSecondary, messages: { error, success } } = state.ui;
+  const { attorneysOfJudge, attorneys } = state.queue;
+  const { selectedAssignee, selectedAssigneeSecondary } = state.ui;
 
   return {
     attorneysOfJudge,
     selectedAssignee,
     selectedAssigneeSecondary,
-    isTaskAssignedToUserSelected,
-    tasks,
-    error,
-    success,
     attorneys
   };
 };
 
-export default connect(
+export default (connect(
   mapStateToProps,
   (dispatch) => bindActionCreators({
     setSelectedAssignee,
     setSelectedAssigneeSecondary,
-    initialAssignTasksToUser,
     showErrorMessage,
     resetErrorMessages,
     showSuccessMessage,
     resetSuccessMessages
   }, dispatch)
-)(AssignWidget);
+)(AssignWidget): React.ComponentType<Params>);

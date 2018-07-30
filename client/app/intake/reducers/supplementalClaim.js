@@ -188,7 +188,8 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         [Object.keys(state.nonRatedIssues).length]: {
           $set: {
             category: null,
-            description: null
+            description: null,
+            decisionDate: null
           }
         }
       }
@@ -217,6 +218,16 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       },
       issueCount: {
         $set: nonRatedIssueCounter(state, action)
+      }
+    });
+  case ACTIONS.SET_ISSUE_DECISION_DATE:
+    return update(state, {
+      nonRatedIssues: {
+        [action.payload.issueId]: {
+          decisionDate: {
+            $set: action.payload.decisionDate
+          }
+        }
       }
     });
   default:

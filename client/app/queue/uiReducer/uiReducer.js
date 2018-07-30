@@ -1,7 +1,8 @@
 // @flow
 import { update } from '../../util/ReducerUtil';
 import { ACTIONS } from './uiConstants';
-import type { UiState } from '../types';
+import { ACTIONS as QUEUE_ACTIONS } from '../constants';
+import type { UiState } from '../types/state';
 
 const initialSaveState = {
   savePending: false,
@@ -22,6 +23,8 @@ export const initialState = {
   },
   featureToggles: {},
   userRole: '',
+  userCssId: '',
+  loadedUserId: null,
   selectedAssignee: null,
   selectedAssigneeSecondary: null
 };
@@ -120,9 +123,17 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
         $set: action.payload.featureToggles
       }
     });
+  case QUEUE_ACTIONS.RECEIVE_QUEUE_DETAILS:
+    return update(state, {
+      loadedUserId: { $set: action.payload.userId }
+    });
   case ACTIONS.SET_USER_ROLE:
     return update(state, {
       userRole: { $set: action.payload.userRole }
+    });
+  case ACTIONS.SET_USER_CSS_ID:
+    return update(state, {
+      userCssId: { $set: action.payload.cssId }
     });
   case ACTIONS.SET_SELECTED_ASSIGNEE:
     return update(state, {

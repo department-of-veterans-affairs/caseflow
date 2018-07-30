@@ -19,7 +19,6 @@ describe('BuildSchedule', () => {
       ]}
     /></MemoryRouter>);
 
-    expect(wrapper.text()).to.include('10/01/2018 - 03/31/2019');
     expect(wrapper.text()).to.include('Judge');
     expect(wrapper.text()).to.include('07/03/2018');
     expect(wrapper.text()).to.include('Justin Madigan');

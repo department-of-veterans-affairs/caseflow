@@ -68,11 +68,11 @@ describe EndProductEstablishment do
     let!(:matching_ep) { Generators::EndProduct.build(veteran_file_number: veteran_file_number) }
 
     context "when matching end product has not yet been established" do
-      context "when end_product_reference_id is nil" do
+      context "when end_product.claim_id is nil" do
         it { is_expected.to be_nil }
       end
 
-      context "when end_product_reference_id is set" do
+      context "when end_product_establishment.reference_id is set" do
         let(:reference_id) { "not matching" }
 
         it "raises EstablishedEndProductNotFound error" do
@@ -117,6 +117,22 @@ describe EndProductEstablishment do
         expect(end_product_establishment.reload.last_synced_at).to eq(Time.zone.now)
         expect(end_product_establishment.reload.synced_status).to eq("CAN")
       end
+    end
+  end
+
+  context "#status_canceled?" do
+    subject { end_product_establishment.status_canceled? }
+
+    context "returns true if canceled" do
+      before { end_product_establishment.synced_status = "CAN" }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "returns false if any other status" do
+      before { end_product_establishment.synced_status = "NOTCANCELED" }
+
+      it { is_expected.to eq(false) }
     end
   end
 end

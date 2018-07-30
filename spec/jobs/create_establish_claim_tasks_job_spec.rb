@@ -3,9 +3,6 @@ require "rails_helper"
 describe CreateEstablishClaimTasksJob do
   before do
     Timecop.freeze(Time.zone.local(2015, 2, 1, 12, 8, 0))
-
-    FeatureToggle.enable!(:dispatch_full_grants)
-    FeatureToggle.enable!(:dispatch_partial_grants_remands)
   end
 
   let!(:remand) { Generators::LegacyAppeal.build(vacols_record: :remand_decided) }

@@ -1,15 +1,17 @@
 class LegacyTasksController < ApplicationController
+  include Errors
+
   before_action :verify_queue_access
   before_action :verify_task_assignment_access, only: [:create, :update]
 
-  ROLES = %w[judge attorney].freeze
+  ROLES = Constants::USER_ROLE_TYPES.keys.freeze
 
   def set_application
     RequestStore.store[:application] = "queue"
   end
 
   def index
-    current_role = params[:role] || user.vacols_roles.first
+    current_role = (params[:role] || user.vacols_roles.first).downcase
     return invalid_role_error unless ROLES.include?(current_role)
     respond_to do |format|
       format.html do
@@ -36,7 +38,7 @@ class LegacyTasksController < ApplicationController
       task: json_task(AttorneyLegacyTask.from_vacols(
                         task.last_case_assignment,
                         LegacyAppeal.find_or_create_by_vacols_id(task.vacols_id),
-                        current_user
+                        task.assigned_to
       ))
     }
   end
@@ -49,7 +51,7 @@ class LegacyTasksController < ApplicationController
       task: json_task(AttorneyLegacyTask.from_vacols(
                         task.last_case_assignment,
                         LegacyAppeal.find_or_create_by_vacols_id(task.vacols_id),
-                        current_user
+                        task.assigned_to
       ))
     }
   end

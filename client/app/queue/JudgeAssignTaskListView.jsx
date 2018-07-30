@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
+import { NavLink } from 'react-router-dom';
+
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import {
   resetErrorMessages,
@@ -12,15 +14,13 @@ import {
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import { NavLink } from 'react-router-dom';
-import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import {
-  setAttorneysOfJudge, fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser, fetchAllAttorneys
+  fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser
 } from './QueueActions';
-import { sortTasks } from './utils';
+import { judgeAssignAppealsSelector, getAppealsByUserId } from './selectors';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
 import UnassignedCasesPage from './UnassignedCasesPage';
@@ -36,53 +36,25 @@ class JudgeAssignTaskListView extends React.PureComponent {
     this.props.resetErrorMessages();
   };
 
-  unassignedTasksWithAppeals = () => {
-    const { loadedQueueTasks, appeals, tasks } = this.props;
-    const taskWithId = {};
-
-    for (const id of Object.keys(loadedQueueTasks)) {
-      taskWithId[id] = tasks[id];
-    }
-
-    return sortTasks({
-      tasks: taskWithId,
-      appeals
-    }).
-      filter((task) => task.attributes.task_type === 'Assign').
-      map((task) => ({
-        task,
-        appeal: this.props.appeals[task.appealId]
-      }));
-  }
-
   switchLink = () => <Link to={`/queue/${this.props.userId}/review`}>Switch to Review Cases</Link>
 
   createLoadPromise = () => {
-    this.props.fetchAllAttorneys();
+    for (const attorney of this.props.attorneysOfJudge) {
+      this.props.fetchTasksAndAppealsOfAttorney(attorney.id);
+    }
 
-    const requestOptions = {
-      timeout: true
-    };
-
-    return ApiUtil.get(`/users?role=Attorney&judge_css_id=${this.props.userCssId}`, requestOptions).
-      then(
-        (response) => {
-          const resp = JSON.parse(response.text);
-
-          this.props.setAttorneysOfJudge(resp.attorneys);
-          for (const attorney of resp.attorneys) {
-            this.props.fetchTasksAndAppealsOfAttorney(attorney.id);
-          }
-        });
+    return Promise.resolve();
   }
 
   caseCountOfAttorney = (attorneyId) => {
-    const { tasksAndAppealsOfAttorney } = this.props;
+    const { attorneyAppealsLoadingState, appealsByUserId } = this.props;
 
-    return attorneyId in tasksAndAppealsOfAttorney &&
-        tasksAndAppealsOfAttorney[attorneyId].state === 'LOADED' ?
-      Object.keys(tasksAndAppealsOfAttorney[attorneyId].data.tasks).length.toString() :
-      '?';
+    if (attorneyId in attorneyAppealsLoadingState &&
+      attorneyAppealsLoadingState[attorneyId].state === 'LOADED') {
+      return appealsByUserId[attorneyId] ? appealsByUserId[attorneyId].length : 0;
+    }
+
+    return '?';
   }
 
   render = () => {
@@ -91,7 +63,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
     return <AppSegment filledBackground>
       <div>
         <div {...fullWidth} {...css({ marginBottom: '2em' })}>
-          <h1>Assign {this.unassignedTasksWithAppeals().length} Cases</h1>
+          <h1>Assign {this.props.unassignedAppealsCount} Cases</h1>
           {this.switchLink()}
         </div>
         <div className="usa-width-one-fourth">
@@ -109,7 +81,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
             <ul className="usa-sidenav-list">
               <li>
                 <NavLink to={`/queue/${userId}/assign`} activeClassName="usa-current" exact>
-                  Cases to Assign ({this.unassignedTasksWithAppeals().length})
+                  Cases to Assign ({this.props.unassignedAppealsCount})
                 </NavLink>
               </li>
               {attorneysOfJudge.
@@ -128,7 +100,6 @@ class JudgeAssignTaskListView extends React.PureComponent {
             title="Cases to Assign | Caseflow"
             render={
               () => <UnassignedCasesPage
-                tasksAndAppeals={this.unassignedTasksWithAppeals()}
                 userId={this.props.userId.toString()} />}
           />
           <PageRoute
@@ -143,22 +114,15 @@ class JudgeAssignTaskListView extends React.PureComponent {
 }
 
 JudgeAssignTaskListView.propTypes = {
-  loadedQueueTasks: PropTypes.object.isRequired,
-  appeals: PropTypes.object.isRequired,
   attorneysOfJudge: PropTypes.array.isRequired,
-  tasksAndAppealsOfAttorney: PropTypes.object.isRequired
+  attorneyAppealsLoadingState: PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => {
   const {
     queue: {
       attorneysOfJudge,
-      tasksAndAppealsOfAttorney,
-      tasks,
-      loadedQueue: {
-        tasks: loadedQueueTasks,
-        appeals
-      }
+      attorneyAppealsLoadingState
     },
     ui: {
       featureToggles
@@ -166,11 +130,10 @@ const mapStateToProps = (state) => {
   } = state;
 
   return {
+    unassignedAppealsCount: judgeAssignAppealsSelector(state).length,
+    appealsByUserId: getAppealsByUserId(state),
     attorneysOfJudge,
-    tasksAndAppealsOfAttorney,
-    tasks,
-    loadedQueueTasks,
-    appeals,
+    attorneyAppealsLoadingState,
     featureToggles
   };
 };
@@ -181,10 +144,8 @@ const mapDispatchToProps = (dispatch) => (
     resetErrorMessages,
     resetSuccessMessages,
     resetSaveState,
-    setAttorneysOfJudge,
     fetchTasksAndAppealsOfAttorney,
-    setSelectionOfTaskOfUser,
-    fetchAllAttorneys
+    setSelectionOfTaskOfUser
   }, dispatch)
 );
 

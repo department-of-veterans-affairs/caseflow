@@ -1,50 +1,16 @@
 // @flow
+import type {
+  Task,
+  Tasks,
+  LegacyAppeals,
+  User,
+  Attorneys
+} from './models';
 
-export type DeprecatedTask = {
-  id: string
-};
-
-export type Task = {
-  id: string,
-  appealId: string,
-  attributes: {
-    added_by_css_id: string,
-    added_by_name: string,
-    appeal_id: string,
-    assigned_by_first_name: string,
-    assigned_by_last_name: string,
-    assigned_on: string,
-    docket_date: string,
-    docket_name: string,
-    document_id: string,
-    due_on: string,
-    task_id: string,
-    task_type: string,
-    user_id: string,
-    work_product: string
-  }
-};
-
-export type User = {
-  id: number,
-  station_id: string,
-  css_id: string,
-  full_name: string,
-  email: ?string,
-  roles: Array<String>,
-  selected_regional_office: ?string,
-  display_name: string
-};
-
-export type Tasks = { [string]: Task };
-
-export type LoadedQueueTasks = { [string]: DeprecatedTask };
-export type LoadedQueueAppeals = { [string]: Object };
-
-export type TasksAndAppealsOfAttorney = {
+export type AttorneyAppealsLoadingState = {
   [string]: {
     state: string,
-    data: {tasks: LoadedQueueTasks, appeals: LoadedQueueAppeals},
+    data: {tasks: Tasks, appeals: LegacyAppeals},
     error: {status: number, response: Object}
   }
 };
@@ -75,26 +41,20 @@ export type UiState = {
   },
   featureToggles: Object,
   selectedAssignee: ?string,
-  selectedAssigneeSecondary: ?string
+  selectedAssigneeSecondary: ?string,
+  loadedUserId: ?number,
+  userRole: string,
+  userCssId: string
 };
 
-export type UsersById = { [number]: User };
+export type UsersById = { [number]: ?User };
 
 export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
-
-export type Attorneys = {
-  data?: Array<User>,
-  error?: Object
-};
 
 export type QueueState = {
   judges: UsersById,
   tasks: Tasks,
-  loadedQueue: {
-    appeals: LoadedQueueAppeals,
-    tasks: LoadedQueueTasks,
-    loadedUserId: string
-  },
+  appeals: LegacyAppeals,
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},
   stagedChanges: {
@@ -105,7 +65,7 @@ export type QueueState = {
     }
   },
   attorneysOfJudge: AttorneysOfJudge,
-  tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
+  attorneyAppealsLoadingState: AttorneyAppealsLoadingState,
   isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
   attorneys: Attorneys
 };
