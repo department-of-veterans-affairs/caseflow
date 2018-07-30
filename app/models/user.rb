@@ -188,6 +188,10 @@ class User < ApplicationRecord
     super(options).merge("judge_css_id" => judge_css_id)
   end
 
+  def user_info_for_idt
+    self.class.user_repository.user_info_for_idt(css_id)
+  end
+
   private
 
   def user_info
