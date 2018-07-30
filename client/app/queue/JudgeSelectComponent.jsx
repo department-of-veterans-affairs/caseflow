@@ -97,23 +97,15 @@ class JudgeSelectComponent extends React.PureComponent<Props> {
     const fieldClasses = classNames({
       'usa-input-error': shouldDisplayError
     });
+    const judgeOptions = _.map(judges, (judge, value) => ({
+      label: judge.full_name,
+      value
+    }));
 
-    if (selectingJudge) {
-      const judgeOptions = _.map(judges, (judge, value) => ({
-        label: judge.full_name,
-        value
-      }));
-
-      if (judgeOptions.length === 0) {
-        componentContent = <React.Fragment>
-          <SearchableDropdown
-            name="Loading Judges"
-            placeholder="Loading Judges&hellip;"
-            options={[]}
-            onChange={_.noop}
-            hideLabel />
-        </React.Fragment>;
-      } else {
+    if (judgeOptions.length === 0) {
+      componentContent = <React.Fragment>Loading judges&hellip;</React.Fragment>
+    } else {
+      if (selectingJudge) {
         componentContent = <React.Fragment>
           <SearchableDropdown
             name="Select a judge"
@@ -125,19 +117,19 @@ class JudgeSelectComponent extends React.PureComponent<Props> {
             }}
             hideLabel />
         </React.Fragment>;
+      } else {
+        componentContent = <React.Fragment>
+          {selectedJudge && <span>{selectedJudge.full_name}</span>}
+          <Button
+            id="select-judge"
+            linkStyling
+            willNeverBeLoading
+            styling={selectJudgeButtonStyling(selectedJudge)}
+            onClick={() => this.props.setSelectingJudge(true)}>
+            Select {selectedJudge ? 'another' : 'a'} judge
+          </Button>
+        </React.Fragment>;
       }
-    } else {
-      componentContent = <React.Fragment>
-        {selectedJudge && <span>{selectedJudge.full_name}</span>}
-        <Button
-          id="select-judge"
-          linkStyling
-          willNeverBeLoading
-          styling={selectJudgeButtonStyling(selectedJudge)}
-          onClick={() => this.props.setSelectingJudge(true)}>
-          Select {selectedJudge ? 'another' : 'a'} judge
-        </Button>
-      </React.Fragment>;
     }
 
     return <div className={fieldClasses}>
