@@ -27,8 +27,10 @@ class BuildScheduleContainer extends React.PureComponent {
     });
   };
 
+  shouldNotSendAssignments = () => _.isEmpty(this.props.schedulePeriod) || this.props.schedulePeriod.finalized === true;
+
   sendAssignments = () => {
-    if (_.isEmpty(this.props.schedulePeriod) || this.props.schedulePeriod.finalized === true) {
+    if (this.shouldNotSendAssignments()) {
       return Promise.resolve();
     }
 
@@ -46,7 +48,7 @@ class BuildScheduleContainer extends React.PureComponent {
 
     const vacolsLoadingMessage = 'We are uploading your assignments to VACOLS';
     const pastScheduleLoadingMessage = 'Loading past schedule uploads...';
-    const loadingMessage = this.props.schedulePeriod ? vacolsLoadingMessage : pastScheduleLoadingMessage;
+    const loadingMessage = this.shouldNotSendAssignments() ? pastScheduleLoadingMessage : vacolsLoadingMessage;
 
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
