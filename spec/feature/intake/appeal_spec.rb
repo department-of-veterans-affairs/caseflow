@@ -3,7 +3,8 @@ require "rails_helper"
 RSpec.feature "Appeal Intake" do
   before do
     FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
+    # Test that this works when only enabled on the current user
+    FeatureToggle.enable!(:intakeAma, users: [current_user.css_id])
     FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
