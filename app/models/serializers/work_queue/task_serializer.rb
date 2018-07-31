@@ -20,6 +20,14 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
     object.appeal.type
   end
 
+  attribute :external_appeal_id do
+    object.appeal.uuid
+  end
+
+  attribute :aod do
+    object.appeal.aod || object.appeal.advanced_on_docket
+  end
+
   attribute :docket_number do
     object.appeal.docket_number
   end

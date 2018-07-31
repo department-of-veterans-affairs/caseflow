@@ -25,7 +25,15 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
   end
 
   attribute :case_type do
-    "LegacyAppeal"
+    object.appeal.type
+  end
+
+  attribute :aod do
+    object.appeal.aod
+  end
+
+  attribute :external_appeal_id do
+    object.appeal.vacols_id
   end
 
   attribute :docket_number do
@@ -38,5 +46,14 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
 
   attribute :veteran_file_number do
     object.appeal.veteran_file_number
+  end
+
+  attribute :issues do
+    object.appeal.issues.map do |issue|
+      ActiveModelSerializers::SerializableResource.new(
+        issue,
+        serializer: ::WorkQueue::IssueSerializer
+      ).as_json[:data][:attributes]
+    end
   end
 end

@@ -22,7 +22,7 @@ type Props = Params & {|
 class NewFile extends React.Component<Props> {
   componentDidMount = () => {
     if (!this.props.docs) {
-      this.props.getNewDocuments(this.props.appeal.attributes.vacols_id);
+      this.props.getNewDocuments(this.props.appeal.externalId);
     }
   }
 
@@ -37,7 +37,7 @@ class NewFile extends React.Component<Props> {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const documentObject = state.queue.newDocsForAppeal[ownProps.appeal.attributes.vacols_id];
+  const documentObject = state.queue.newDocsForAppeal[ownProps.appeal.externalId];
 
   return {
     docs: documentObject ? documentObject.docs : null,

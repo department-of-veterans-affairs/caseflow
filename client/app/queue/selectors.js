@@ -23,7 +23,7 @@ const getUserCssId = (state: State) => state.ui.userCssId;
 export const tasksByAssigneeCssIdSelector = createSelector(
   [getTasks, getUserCssId],
   (tasks: Tasks, cssId: string) => _.keyBy(
-    _.filter(tasks, (task: Task) => task.attributes.user_id === cssId),
+    _.filter(tasks, (task: Task) => task.userId === cssId),
     (task: Task) => task.id
   )
 );
@@ -31,15 +31,8 @@ export const tasksByAssigneeCssIdSelector = createSelector(
 export const appealsWithTasksSelector = createSelector(
   [getTasks, getAppeals],
   (tasks: Tasks, appeals: LegacyAppeals) => {
-    const taskMap = _.reduce(tasks, (map, task) => {
-      const taskList = map[task.attributes.appeal_id] ? [...map[task.attributes.appeal_id], task] : [task];
-
-      return { ...map,
-        [task.attributes.appeal_id]: taskList };
-    }, {});
-
     return _.map(appeals, (appeal) => {
-      appeal.tasks = taskMap[appeal.id];
+      appeal.tasks = tasks[appeal.externalId];
 
       return appeal;
     });
@@ -50,21 +43,21 @@ export const appealsByAssigneeCssIdSelector = createSelector(
   [appealsWithTasksSelector, getUserCssId],
   (appeals: LegacyAppeals, cssId: string) =>
     _.filter(appeals, (appeal: LegacyAppeal) =>
-      _.some(appeal.tasks, (task) => task.attributes.user_id === cssId))
+      _.some(appeal.tasks, (task) => task.userId === cssId))
 );
 
 export const judgeReviewAppealsSelector = createSelector(
   [appealsByAssigneeCssIdSelector],
   (appeals: LegacyAppeals) =>
     _.filter(appeals, (appeal: LegacyAppeal) => appeal.tasks &&
-      _.some(appeal.tasks, (task) => task.attributes.task_type === 'Review'))
+      _.some(appeal.tasks, (task) => task.taskType === 'Review'))
 );
 
 export const judgeAssignAppealsSelector = createSelector(
   [appealsByAssigneeCssIdSelector],
   (appeals: LegacyAppeals) =>
     _.filter(appeals, (appeal: LegacyAppeal) => appeal.tasks &&
-      _.some(appeal.tasks, (task) => task.attributes.task_type === 'Assign'))
+      _.some(appeal.tasks, (task) => task.taskType === 'Assign'))
 );
 
 // ***************** Non-memoized selectors *****************

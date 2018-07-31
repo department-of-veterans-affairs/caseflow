@@ -21,40 +21,81 @@ import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
 export const associateTasksWithAppeals =
-  (serverData: { appeals: { data: Array<LegacyAppeal> }, tasks: Array<void> | { data: Array<Task> } }):
+  (serverData: { tasks: { data: Array<Task> } }):
     { appeals: LegacyAppeals, tasks: Tasks } => {
     const {
-      appeals: { data: appeals },
-      tasks: outerTasks
+      tasks: { data : tasks }
     } = serverData;
 
     const result = {
-      appeals: {},
-      tasks: {}
+      appeals: [],
+      tasks: []
     };
 
-    for (const appeal of appeals) {
-      if (appeal) {
-        result.appeals[appeal.attributes.vacols_id] = appeal;
+    const appealHash = tasks.reduce((accumulator, task) => {
+      if (!accumulator[task.attributes.external_appeal_id]) {
+        accumulator[task.attributes.external_appeal_id] = {
+          id: task.attributes.appeal_id,
+          type: task.attributes.appeal_type,
+          externalId: task.attributes.external_appeal_id,
+          docketName: task.attributes.docket_name,
+          caseType: task.attributes.case_type,
+          aod: task.attributes.aod,
+          issues: task.attributes.issues,
+          docketNumber: task.attributes.docket_number,
+          veteranName: task.attributes.veteran_name,
+          veteranFileNumber: task.attributes.veteran_file_number
+        }
       }
-    }
-    if (Array.isArray(outerTasks)) {
-      return result;
-    }
 
-    const tasks = outerTasks.data;
+      return accumulator
+    }, {});
 
-    _.each(tasks, (task) => {
-      task.appealId = task.id;
+    const mappedLegacyTasks = tasks.map((task) => {
+      return {
+        type: task.attributes.type,
+        title: task.attributes.title,
+        appealId: task.attributes.appeal_id,
+        appealType: task.attributes.appeal_type,
+        externalAppealId: task.attributes.external_appeal_id,
+        assignedOn: task.attributes.assigned_on,
+        dueOn: task.attributes.due_on,
+        userId: task.attributes.user_id,
+        assignedToPgId: task.attributes.assigned_to_pg_id,
+        addedByName: task.attributes.added_by_name,
+        addedByCssId: task.attributes.added_by_css_id,
+        taskId: task.attributes.task_id,
+        taskType: task.attributes.task_type,
+        documentId: task.attributes.document_id,
+        assignedByFirstName: task.attributes.assigned_by_first_name,
+        assignedByLastName: task.attributes.assigned_by_last_name,
+        workProduct: task.attributes.work_product
+      };
     });
 
-    for (const task of tasks) {
-      if (task) {
-        result.tasks[task.id] = task;
-      }
-    }
+    const mappedTasks = tasks.map((task) => {
+      return {
+        type: task.attributes.type,
+        title: task.attributes.title,
+        appealId: task.attributes.appeal_id,
+        appealType: task.attributes.appeal_type,
+        externalAppealId: task.attributes.external_appeal_id,
+        status: task.attributes.status,
+        assignedTo: task.attributes.assigned_to,
+        assignedBy: task.attributes.assigned_by,
+        assignedAt: task.attributes.assigned_at,
+        startedAt: task.attributes.started_at,
+        completedAt: task.attributes.completed_at,
+        placeOnHoldAt: task.attributes.placed_on_hold_at,
+        instructions: task.attributes.instructions,
+      };
+    });
 
-    return result;
+    return {
+      tasks: _.groupBy(mappedLegacyTasks, 'externalAppealId'),
+      // tasks: _.groupBy(mappedTasks, 'externalAppealId'),
+      appeals: appealHash
+    };
   };
 
 /*
@@ -74,13 +115,14 @@ export const sortTasks = ({ tasks = {}, appeals = {} }: {tasks: Tasks, appeals: 
 
 export const renderAppealType = (appeal: LegacyAppeal) => {
   const {
-    attributes: { aod, type }
+    aod,
+    caseType
   } = appeal;
-  const cavc = type === 'Court Remand';
+  const cavc = caseType === 'Court Remand';
 
   return <React.Fragment>
     {aod && <span><span {...redText}>AOD</span>, </span>}
-    {cavc ? <span {...redText}>CAVC</span> : <span>{type}</span>}
+    {cavc ? <span {...redText}>CAVC</span> : <span>{caseType}</span>}
   </React.Fragment>;
 };
 

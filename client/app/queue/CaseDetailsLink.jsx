@@ -10,7 +10,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 
 import { setActiveAppeal, setActiveTask } from './CaseDetail/CaseDetailActions';
 
-const getLinkText = (appeal) => <React.Fragment>{appeal.veteran_full_name} ({appeal.vbms_id})</React.Fragment>;
+const getLinkText = (appeal) => <React.Fragment>{appeal.veteranName} ({appeal.veteranFileNumber})</React.Fragment>;
 
 class CaseDetailsLink extends React.PureComponent {
   setActiveAppealAndTask = () => {
@@ -20,13 +20,13 @@ class CaseDetailsLink extends React.PureComponent {
 
   render() {
     const {
-      appeal: { attributes: appeal },
+      appeal,
       disabled
     } = this.props;
 
     return <React.Fragment>
       <Link
-        to={`/queue/appeals/${appeal.vacols_id}`}
+        to={`/queue/appeals/${appeal.externalId}`}
         disabled={disabled}
         onClick={this.props.onClick || this.setActiveAppealAndTask}>
         {this.props.getLinkText(appeal)}
