@@ -28,6 +28,14 @@ RSpec.feature "Appeal Intake" do
     )
   end
 
+  let(:veteran_no_ratings) do
+    Generators::Veteran.build(file_number: "55555555",
+      first_name: "Nora",
+      last_name: "Attings",
+      participant_id: "44444444"
+    )
+  end
+
   let(:receipt_date) { Date.new(2018, 4, 20) }
 
   let(:untimely_days) { 372.days }
@@ -191,5 +199,47 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_content("Something went wrong")
     expect(page).to have_current_path("/intake/review-request")
+  end
+
+  it "Allows a Veteran without ratings to create an intake" do
+    appeal = Appeal.create!(
+      veteran_file_number: veteran_no_ratings.file_number,
+      receipt_date: 2.days.ago,
+      docket_type: "evidence_submission"
+    )
+
+    intake = AppealIntake.create!(
+      veteran_file_number: veteran_no_ratings.file_number,
+      user: current_user,
+      started_at: 5.minutes.ago,
+      detail: appeal
+    )
+
+    Claimant.create!(
+      review_request: appeal,
+      participant_id: veteran_no_ratings.participant_id
+    )
+
+    appeal.start_review!
+
+    visit "/intake"
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_content("This Veteran has no rated, disability issues")
+
+    safe_click "#button-add-issue"
+
+    safe_click ".Select"
+
+    fill_in "Issue category", with: "Active Duty Adjustments"
+    find("#issue-category").send_keys :enter
+    fill_in "Issue description", with: "Description for Active Duty Adjustments"
+
+    expect(page).to have_content("1 issue")
+
+    safe_click "#button-finish-intake"
+
+    expect(page).to have_content("Notice of Disagreement (VA Form 10182) has been processed.")
   end
 end
