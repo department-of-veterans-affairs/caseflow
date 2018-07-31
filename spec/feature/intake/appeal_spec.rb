@@ -30,10 +30,9 @@ RSpec.feature "Appeal Intake" do
 
   let(:veteran_no_ratings) do
     Generators::Veteran.build(file_number: "55555555",
-      first_name: "Nora",
-      last_name: "Attings",
-      participant_id: "44444444"
-    )
+                              first_name: "Nora",
+                              last_name: "Attings",
+                              participant_id: "44444444")
   end
 
   let(:receipt_date) { Date.new(2018, 4, 20) }
@@ -208,7 +207,7 @@ RSpec.feature "Appeal Intake" do
       docket_type: "evidence_submission"
     )
 
-    intake = AppealIntake.create!(
+    AppealIntake.create!(
       veteran_file_number: veteran_no_ratings.file_number,
       user: current_user,
       started_at: 5.minutes.ago,

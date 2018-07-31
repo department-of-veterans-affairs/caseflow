@@ -24,10 +24,9 @@ RSpec.feature "Supplemental Claim Intake" do
 
   let(:veteran_no_ratings) do
     Generators::Veteran.build(file_number: "55555555",
-      first_name: "Nora",
-      last_name: "Attings",
-      participant_id: "44444444"
-    )
+                              first_name: "Nora",
+                              last_name: "Attings",
+                              participant_id: "44444444")
   end
 
   let(:issues) do
@@ -270,7 +269,7 @@ RSpec.feature "Supplemental Claim Intake" do
       receipt_date: 2.days.ago
     )
 
-    intake = SupplementalClaimIntake.create!(
+    SupplementalClaimIntake.create!(
       veteran_file_number: veteran_no_ratings.file_number,
       user: current_user,
       started_at: 5.minutes.ago,

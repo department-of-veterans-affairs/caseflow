@@ -34,7 +34,7 @@ class Rating
     [response[:rating_issues]].flatten.map do |issue_data|
       RatingIssue.from_bgs_hash(issue_data)
     end
-  rescue Savon::Error => error
+  rescue Savon::Error
     []
   end
 
@@ -51,8 +51,7 @@ class Rating
       end
 
       unsorted.sort_by(&:promulgation_date).reverse
-
-    rescue Savon::Error => error
+    rescue Savon::Error
       []
     end
 
