@@ -143,7 +143,7 @@ export default class ReviewAssignments extends React.Component {
       type: HEARING_TYPE_LABELS[hearingDay.hearingType],
       regionalOffice: hearingDay.regionalOffice,
       room: hearingDay.roomInfo,
-      judge: hearingDay.judge
+      judge: hearingDay.judgeName
     }));
 
     return <AppSegment filledBackground>
