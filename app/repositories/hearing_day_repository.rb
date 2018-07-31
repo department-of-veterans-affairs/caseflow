@@ -21,12 +21,14 @@ class HearingDayRepository
       end
     end
 
+    # :nocov:
     def update_schedule(updated_hearings)
       updated_hearings.each do |hearing|
         hearing_to_update = VACOLS::CaseHearing.find(hearing.hearing_pkseq)
         update_vacols_hearing!(hearing_to_update, hearing)
       end
     end
+    # :nocov:
 
     # Query Operations
     def find_hearing_day(hearing_type, hearing_key)
