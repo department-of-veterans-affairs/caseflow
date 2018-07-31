@@ -53,7 +53,7 @@ class AppealDocumentCount extends React.PureComponent {
 
 AppealDocumentCount.propTypes = {
   appeal: PropTypes.object.isRequired,
-  loadingText: PropTypes.boolean
+  loadingText: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => ({
