@@ -22,7 +22,7 @@ import COPY from '../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 import type { LegacyAppeal } from './types/models';
-import type { UiStateError } from './types/state';
+import type { UiStateMessage } from './types/state';
 
 type State = {|
   title: ?string,
@@ -36,7 +36,7 @@ type Params = {|
 type Props = Params & {|
   // store
   highlightFormItems: boolean,
-  error: ?UiStateError,
+  error: ?UiStateMessage,
   appeal: LegacyAppeal,
   // dispatch
   requestSave: typeof requestSave,
@@ -67,7 +67,10 @@ class AddAdminActionView extends React.PureComponent<Props, State> {
         }]
       }
     };
-    const successMsg = 'success message';
+    const successMsg = {
+      title: COPY.ADD_ADMIN_ACTION_CONFIRMATION_TITLE,
+      detail: COPY.ADD_ADMIN_ACTION_CONFIRMATION_DETAIL
+    };
 
     this.props.requestSave('/tasks', payload, successMsg).
       then(() => this.props.deleteAppeal(this.props.appealId));
