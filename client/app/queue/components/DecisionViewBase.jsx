@@ -26,7 +26,8 @@ const getDisplayName = (WrappedComponent) => {
 
 const defaultTopLevelProps = {
   continueBtnText: 'Continue',
-  hideCancelButton: false
+  hideCancelButton: false,
+  modalName: 'cancelCheckout'
 };
 
 export default function decisionViewBase(ComponentToWrap, topLevelProps = defaultTopLevelProps) {
@@ -34,18 +35,15 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
     constructor(props) {
       super(props);
 
-      this.state = {
-        wrapped: {}
-      };
+      this.state = { wrapped: null };
     }
 
     getWrappedComponentRef = (ref) => this.setState({ wrapped: ref })
 
     componentDidMount = () => this.props.highlightInvalidFormItems(false);
 
-    getModal = () => this.props.modal.cancelCheckout;
-    showModal = () => this.props.showModal('cancelCheckout');
-    hideModal = () => this.props.hideModal('cancelCheckout');
+    showModal = () => this.props.showModal(this.props.modalName);
+    hideModal = () => this.props.hideModal(this.props.modalName);
 
     getFooterButtons = () => {
       const buttons = [{
@@ -91,7 +89,7 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
     getNextStepUrl = () => _.invoke(this.state.wrapped, 'getNextStepUrl') || this.props.nextStep;
 
     goToPrevStep = () => {
-      const prevStepHook = _.get(this.state.wrapped, 'goToPrevStep');
+      const { goToPrevStep: prevStepHook = null } = this.state.wrapped;
 
       if (!prevStepHook || prevStepHook()) {
         return this.props.history.push(this.getPrevStepUrl());
@@ -104,8 +102,10 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
       // elements. If present, the wrapped goToNextStep hook dispatches
       // a proceed/invalid action asynchronously, which this responds
       // to in componentDidUpdate.
-      const validation = _.get(this.state.wrapped, 'validateForm');
-      const nextStepHook = _.get(this.state.wrapped, 'goToNextStep');
+      const {
+        validateForm: validation = null,
+        goToNextStep: nextStepHook = null
+      } = this.state.wrapped;
 
       if (!validation || !validation()) {
         return this.props.highlightInvalidFormItems(true);
@@ -135,7 +135,7 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
     }
 
     render = () => <React.Fragment>
-      {this.getModal() && <div className="cf-modal-scroll">
+      {this.props.modal && <div className="cf-modal-scroll">
         <Modal
           title="Are you sure you want to cancel?"
           buttons={[{
@@ -160,11 +160,12 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
 
   WrappedComponent.displayName = `DecisionViewBase(${getDisplayName(WrappedComponent)})`;
 
-  const mapStateToProps = (state) => {
+  const mapStateToProps = (state, ownProps) => {
     const { savePending, saveSuccessful } = state.ui.saveState;
+    const { modalName } = ownProps;
 
     return {
-      modal: state.ui.modal,
+      modal: state.ui.modal[modalName],
       savePending,
       saveSuccessful,
       stagedAppeals: Object.keys(state.queue.stagedChanges.appeals),

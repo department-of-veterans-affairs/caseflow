@@ -53,7 +53,7 @@ class AddAdminActionView extends React.PureComponent<Props, State> {
     };
   }
 
-  validateForm = () => _.every(Object.values(this.state), (val) => Boolean(val));
+  validateForm = () => Object.values(this.state).every(Boolean);
 
   getPrevStepUrl = () => `/queue/appeals/${this.props.appealId}`;
 
