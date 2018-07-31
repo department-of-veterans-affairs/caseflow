@@ -143,11 +143,8 @@ export const buildCaseReviewPayload = (
       }
     }
   };
-  let issueList = issues;
 
   if (userRole === USER_ROLES.ATTORNEY) {
-    issueList = getUndecidedIssues(issues);
-
     _.extend(payload.data.tasks, { document_type: decision.type });
   } else {
     args.factors_not_considered = _.keys(args.factors_not_considered);
@@ -156,7 +153,7 @@ export const buildCaseReviewPayload = (
     _.extend(payload.data.tasks, args);
   }
 
-  payload.data.tasks.issues = issueList.map((issue) => _.extend({},
+  payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => _.extend({},
     _.pick(issue, ['vacols_sequence_id', 'remand_reasons', 'type', 'readjudication']),
     { disposition: _.capitalize(issue.disposition) }
   ));
