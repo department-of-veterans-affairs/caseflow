@@ -64,6 +64,25 @@ export type Task = {
 export type Tasks = { [string]: Task };
 
 export type AmaTask = {
+  id: string,
+  type: string,
+  attributes: {
+    appeal_id: string,
+    assigned_by: User,
+    assigned_to: User,
+    case_type: string,
+    completed_at: ?string,
+    docket_name: ?string,
+    docket_number: string,
+    instructions: ?string,
+    placed_on_hold_at: ?string,
+    started_at: ?string,
+    status: string,
+    title: string,
+    type: string,
+    veteran_file_number: string,
+    veteran_name: ?string
+  }
 };
 
 export type AmaTasks = { [string]: AmaTask };
