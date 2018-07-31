@@ -96,11 +96,12 @@ class AssignWidget extends React.PureComponent<Props> {
       { tasks: selectedTasks,
         assigneeId,
         previousAssigneeId }).
-      then(() => this.props.showSuccessMessage(
-        sprintf(
-          COPY.ASSIGN_WIDGET_SUCCESS,
-          { numCases: selectedTasks.length,
-            casePlural: pluralize('case', selectedTasks.length) }))).
+      then(() => this.props.showSuccessMessage({
+        title: sprintf(COPY.ASSIGN_WIDGET_SUCCESS, {
+          numCases: selectedTasks.length,
+          casePlural: pluralize('case', selectedTasks.length)
+        })
+      })).
       catch(() => this.props.showErrorMessage(
         { title: COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE,
           detail: COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL }));

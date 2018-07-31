@@ -64,8 +64,8 @@ class JudgeReviewTaskListView extends React.PureComponent {
       {messages.error && <Alert type="error" title={messages.error.title}>
         {messages.error.detail}
       </Alert>}
-      {messages.success && <Alert type="success" title={messages.success}>
-        {COPY.JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
+      {messages.success && <Alert type="success" title={messages.success.title}>
+        {messages.success.detail || COPY.JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
       </Alert>}
       {tableContent}
     </AppSegment>;

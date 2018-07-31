@@ -133,7 +133,7 @@ class EvaluateDecisionView extends React.PureComponent {
     });
     const successMsg = sprintf(COPY.JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name);
 
-    this.props.requestSave(`/case_reviews/${task.task_id}/complete`, payload, successMsg).
+    this.props.requestSave(`/case_reviews/${task.task_id}/complete`, payload, { title: successMsg }).
       then(() => this.props.deleteAppeal(appealId));
   }
 
