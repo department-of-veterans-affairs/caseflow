@@ -3,6 +3,7 @@ import { associateTasksWithAppeals } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
+import _ from 'lodash';
 import type { Dispatch, UsersById } from './types/state';
 import type {
   Task,
@@ -315,5 +316,10 @@ export const fetchAllAttorneys = () => (dispatch: Dispatch) => {
 export const fetchAmaTasksOfUser = (userId: number, userRole: string) => (dispatch: Dispatch) => {
   return ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
     then((resp) => resp.body).
-    then((body) => console.log(body));
+    then((body) => dispatch({
+      type: ACTIONS.AMA_TASKS_RECEIVED,
+      payload: {
+        amaTasks: _.pickBy(_.keyBy(body.tasks.data, (task) => task.id), (task) => task)
+      }
+    }));
 }

@@ -63,6 +63,11 @@ export type Task = {
 
 export type Tasks = { [string]: Task };
 
+export type AmaTask = {
+};
+
+export type AmaTasks = { [string]: AmaTask };
+
 export type LegacyAppeal = {
   id: string,
   attributes: {
