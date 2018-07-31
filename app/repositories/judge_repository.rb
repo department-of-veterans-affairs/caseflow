@@ -5,6 +5,7 @@ class JudgeRepository
     end
   end
 
+  # :nocov:
   def self.find_all_judges_with_name_and_id
     # Our user model only contains a full name field, but for certain applications
     # (like the IDT), we need the separate name fields from VACOLS.
