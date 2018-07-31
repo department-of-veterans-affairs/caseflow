@@ -7,9 +7,14 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import { TASK_ACTIONS } from './constants';
 
 import NewFile from './components/NewFile';
+import AppealDocumentCount from './AppealDocumentCount';
+import { css } from 'glamor';
+
+const documentCountSizeStyling = css({
+  fontSize: '.9em'
+});
 
 export default class ReaderLink extends React.PureComponent {
-
   readerLinkAnalytics = () => {
     window.analyticsEvent(this.props.analyticsSource, TASK_ACTIONS.QUEUE_TO_READER);
   }
@@ -24,6 +29,16 @@ export default class ReaderLink extends React.PureComponent {
       <React.Fragment>View Veteran's documents <NewFile appeal={appeal} /></React.Fragment> :
       <React.Fragment>View docs <NewFile appeal={appeal} /></React.Fragment>;
   };
+
+  getAppealDocumentCount = () => {
+    if (this.props.longMessage) {
+      return <span>&nbsp;<AppealDocumentCount appeal={this.props.appeal}/></span>;
+    } else {
+      return <div {...documentCountSizeStyling}>
+        <AppealDocumentCount loadingText={true} appeal={this.props.appeal}/>
+      </div>;
+    }
+  }
 
   render = () => {
     const {
@@ -48,9 +63,12 @@ export default class ReaderLink extends React.PureComponent {
       linkProps.disabled = true;
     }
 
-    return <Link {...linkProps} onClick={this.readerLinkAnalytics}>
-      {this.getLinkText()}
-    </Link>;
+    return <React.Fragment>
+      <Link {...linkProps} onClick={this.readerLinkAnalytics}>
+        {this.getLinkText()}
+      </Link>
+      {this.getAppealDocumentCount()}
+    </React.Fragment>;
   };
 }
 
