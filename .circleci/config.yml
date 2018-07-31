@@ -45,6 +45,10 @@ jobs:
           name: Setup Ruby
           command: rbenv install --skip-existing $(cat ~/project/.ruby-version)
 
+      - run:
+          name: Setup Bundler
+          command: gem install bundler
+
       - save_cache:
           key: rbenv-cache-v1-{{ arch }}-{{ checksum ".ruby-version" }}
           paths:
@@ -54,7 +58,13 @@ jobs:
           keys:
             - gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
 
-      - run: bundle install --path vendor/bundle
+      - run:
+          name: Ruby version
+          command: ruby -v
+
+      - run:
+          name: Bundle install
+          command: bundle install --path vendor/bundle
 
       - save_cache:
           key: gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
