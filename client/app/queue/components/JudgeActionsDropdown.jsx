@@ -43,7 +43,7 @@ type Props = Params & {|
   decision: Object,
   userRole: string,
   // Action creators
-  requestSave: Function,
+  requestSave: typeof requestSave,
   deleteAppeal: typeof deleteAppeal,
   checkoutStagedAppeal: typeof checkoutStagedAppeal,
   stageAppeal: typeof stageAppeal,

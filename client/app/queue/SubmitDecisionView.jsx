@@ -65,7 +65,7 @@ type Props = Params & {|
   // dispatch
   setDecisionOptions: typeof setDecisionOptions,
   resetDecisionOptions: typeof resetDecisionOptions,
-  requestSave: Function,
+  requestSave: typeof requestSave,
   deleteAppeal: typeof deleteAppeal
 |};
 

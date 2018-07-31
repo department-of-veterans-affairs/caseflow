@@ -77,7 +77,7 @@ const saveFailure = (resp: Object) => (dispatch: Dispatch) => {
 
 export const requestSave = (
   url: string, params: Object, successMessage: Object | string, verb: string = 'post'
-) => (dispatch: Dispatch) => {
+): Function => (dispatch: Dispatch) => {
   dispatch(hideErrorMessage());
   dispatch(hideSuccessMessage());
   dispatch({ type: ACTIONS.REQUEST_SAVE });
