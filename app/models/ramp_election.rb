@@ -8,7 +8,8 @@ class RampElection < RampReview
 
   class BGSEndProductSyncError < RuntimeError
     def initialize(error, ramp_election)
-      super(error.message + "\n\n ramp_election_id: #{ramp_election.id}").tap do |result|
+      Raven.extra_context(ramp_election_id: ramp_election.id)
+      super(error.message).tap do |result|
         result.set_backtrace(error.backtrace)
       end
     end
