@@ -16,6 +16,20 @@ module FakeDateHelper
 
     dates.to_a
   end
+
+  def get_dates_between(start_date, end_date, num_of_dates,
+                        exclude_weekends = true)
+    dates = []
+    holidays = Holidays.between(start_date, end_date, :federal_reserve)
+
+    while dates.size < num_of_dates
+      date = Faker::Date.between(start_date, end_date)
+      dates.push(date) unless (exclude_weekends && (date.saturday? || date.sunday?)) ||
+                              holidays.find { |holiday| holiday[:date] == date }.present?
+    end
+
+    dates.to_a
+  end
   # rubocop:enable Metrics/CyclomaticComplexity
 
   def get_unique_dates_for_ro_between(ro_name, schedule_period, num_of_dates)
