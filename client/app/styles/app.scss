@@ -1,3 +1,8 @@
+$asset-path: '../../../public/' !default;
+
+$font-path:  '~uswds/src/fonts';
+$image-path:  '~uswds/src/img';
+
 @import '_variables.scss';
 @import '_main.scss';
 @import '_commons.scss';
