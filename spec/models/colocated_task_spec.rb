@@ -14,7 +14,7 @@ describe ColocatedTask do
   end
 
   context ".create" do
-    context "when all fields are present" do
+    context "when all fields are present and it is a legacy appeal" do
       subject do
         ColocatedTask.create([{
                                assigned_by: attorney,
@@ -26,7 +26,7 @@ describe ColocatedTask do
                                 appeal: appeal }])
       end
 
-      it "creates a co-located task successfully" do
+      it "creates a co-located task successfully and updates VACOLS location" do
         expect(subject.first.valid?).to be true
         expect(subject.first.reload.status).to eq "assigned"
         expect(subject.first.assigned_at).to_not eq nil
@@ -52,6 +52,28 @@ describe ColocatedTask do
         # should start from index 0
         record = ColocatedTask.create(assigned_by: attorney, title: :aoj, appeal: appeal)
         expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST1")
+      end
+    end
+
+    context "when all fields are present and it is an ama appeal" do
+      subject do
+        ColocatedTask.create([{
+                               assigned_by: attorney,
+                               title: :aoj,
+                               parent: create(:ama_attorney_task),
+                               appeal: create(:appeal)
+                             }])
+      end
+
+      it "creates a co-located task successfully and does not update VACOLS location" do
+        expect(subject.first.valid?).to be true
+        expect(subject.first.reload.status).to eq "assigned"
+        expect(subject.first.assigned_at).to_not eq nil
+        expect(subject.first.assigned_by).to eq attorney
+        expect(subject.first.title).to eq "aoj"
+        expect(subject.first.assigned_to).to eq User.find_by(css_id: "BVATEST1")
+
+        expect(AppealRepository).to_not receive(:update_location!)
       end
     end
 
