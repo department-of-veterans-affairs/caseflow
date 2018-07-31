@@ -32,7 +32,7 @@ import type { State } from '../types/state';
 const ASSIGN = 'ASSIGN';
 
 type Params = {|
-  appealId: string,
+  appealId: string
 |};
 
 type Props = Params & {|
