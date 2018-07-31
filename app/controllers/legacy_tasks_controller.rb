@@ -22,8 +22,7 @@ class LegacyTasksController < ApplicationController
                               name: "LegacyTasksController.index") do
           tasks, appeals = LegacyWorkQueue.tasks_with_appeals(user, current_role)
           render json: {
-            tasks: json_tasks(tasks),
-            appeals: json_appeals(appeals)
+            tasks: json_tasks(tasks)
           }
         end
       end
@@ -74,13 +73,6 @@ class LegacyTasksController < ApplicationController
     ActiveModelSerializers::SerializableResource.new(
       task,
       serializer: ::WorkQueue::LegacyTaskSerializer
-    ).as_json
-  end
-
-  def json_appeals(appeals)
-    ActiveModelSerializers::SerializableResource.new(
-      appeals,
-      each_serializer: ::WorkQueue::LegacyAppealSerializer
     ).as_json
   end
 
