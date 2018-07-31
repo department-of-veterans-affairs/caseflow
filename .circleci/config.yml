@@ -39,6 +39,19 @@ jobs:
 
       - restore_cache:
           keys:
+            - rbenv-cache-v1-{{ arch }}-{{ checksum ".ruby-version" }}
+
+      - run:
+          name: Setup Ruby
+          command: rbenv install --skip-existing $(cat ~/project/.ruby-version)
+
+      - save_cache:
+          key: rbenv-cache-v1-{{ arch }}-{{ checksum ".ruby-version" }}
+          paths:
+            - .rbenv
+
+      - restore_cache:
+          keys:
             - gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
 
       - run: bundle install --path vendor/bundle
