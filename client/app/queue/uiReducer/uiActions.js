@@ -1,5 +1,6 @@
 import { ACTIONS } from './uiConstants';
 import ApiUtil from '../../util/ApiUtil';
+import _ from 'lodash';
 
 export const resetErrorMessages = () => ({
   type: ACTIONS.RESET_ERROR_MESSAGES
@@ -46,7 +47,7 @@ export const setSelectingJudge = (selectingJudge) => ({
 });
 
 export const saveSuccess = (message, response) => (dispatch) => {
-  dispatch(showSuccessMessage(message));
+  dispatch(showSuccessMessage(_.isObject(message) ? message : { title: message }));
   dispatch({ type: ACTIONS.SAVE_SUCCESS });
 
   return Promise.resolve(response);

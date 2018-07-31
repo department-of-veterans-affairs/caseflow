@@ -46,7 +46,7 @@ import type {
   LegacyAppeal,
   Judges
 } from './types/models';
-import type { UiStateError } from './types/state';
+import type { UiStateMessage } from './types/state';
 
 type Params = {|
   appealId: string,
@@ -61,7 +61,7 @@ type Props = Params & {|
   task: Task,
   highlightFormItems: Boolean,
   userRole: string,
-  error: ?UiStateError,
+  error: ?UiStateMessage,
   // dispatch
   setDecisionOptions: typeof setDecisionOptions,
   resetDecisionOptions: typeof resetDecisionOptions,

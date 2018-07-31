@@ -119,7 +119,7 @@ class SelectDispositionsView extends React.PureComponent {
 
   render = () => {
     const {
-      saveResult,
+      success,
       appealId,
       appeal: { attributes: { issues } }
     } = this.props;
@@ -131,7 +131,7 @@ class SelectDispositionsView extends React.PureComponent {
       <p className="cf-lead-paragraph" {...marginBottom(2)}>
         Review each issue and assign the appropriate dispositions.
       </p>
-      {saveResult && <Alert type="success" title={saveResult} styling={smallTopMargin} />}
+      {success && <Alert type="success" title={success.title} message={success.detail} styling={smallTopMargin} />}
       <hr />
       <Table
         columns={this.getColumns}
@@ -154,7 +154,7 @@ SelectDispositionsView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
-  saveResult: state.ui.messages.success,
+  success: state.ui.messages.success,
   ..._.pick(state.ui, 'userRole')
 });
 

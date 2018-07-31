@@ -33,32 +33,42 @@ const PowerOfAttorneyDetail = ({ poa }) => <p>{poa.representative_type} - {poa.r
 class CaseDetailsView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.clearActiveAppealAndTask();
-  }
+  };
 
   componentDidMount = () => window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
 
-  render = () => <AppSegment filledBackground>
-    <CaseTitle appeal={this.props.appeal} appealId={this.props.appealId} redirectUrl={window.location.pathname} />
-    {this.props.error && <Alert title={this.props.error.title} type="error">
-      {this.props.error.detail}
-    </Alert>}
-    {this.props.success && <Alert type="success" title={this.props.success} scrollOnAlert={false} />}
-    <CaseSnapshot appeal={this.props.appeal} task={this.props.task} />
-    <hr {...horizontalRuleStyling} />
-    <StickyNavContentArea>
-      <CaseDetailsIssueList
-        title="Issues"
-        isLegacyAppeal={this.props.appeal.attributes.is_legacy_appeal}
-        issues={this.props.appeal.attributes.issues}
-      />
-      <PowerOfAttorneyDetail title="Power of Attorney" poa={this.props.appeal.attributes.power_of_attorney} />
-      { this.props.appeal.attributes.hearings.length &&
-        <CaseHearingsDetail title="Hearings" appeal={this.props.appeal} /> }
-      <VeteranDetail title="About the Veteran" appeal={this.props.appeal} />
-      { !_.isNull(this.props.appeal.attributes.appellant_full_name) &&
-        <AppellantDetail title="About the Appellant" appeal={this.props.appeal} /> }
-    </StickyNavContentArea>
-  </AppSegment>;
+  render = () => {
+    const {
+      appealId,
+      appeal,
+      task,
+      error,
+      success
+    } = this.props;
+
+    return <AppSegment filledBackground>
+      <CaseTitle appeal={appeal} appealId={appealId} redirectUrl={window.location.pathname} />
+      {error && <Alert title={error.title} type="error">
+        {error.detail}
+      </Alert>}
+      {success && <Alert type="success" title={success.title} message={success.detail} scrollOnAlert={false} />}
+      <CaseSnapshot appeal={appeal} task={task} />
+      <hr {...horizontalRuleStyling} />
+      <StickyNavContentArea>
+        <CaseDetailsIssueList
+          title="Issues"
+          isLegacyAppeal={appeal.attributes.is_legacy_appeal}
+          issues={appeal.attributes.issues}
+        />
+        <PowerOfAttorneyDetail title="Power of Attorney" poa={appeal.attributes.power_of_attorney} />
+        {appeal.attributes.hearings.length &&
+        <CaseHearingsDetail title="Hearings" appeal={appeal} />}
+        <VeteranDetail title="About the Veteran" appeal={appeal} />
+        {!_.isNull(appeal.attributes.appellant_full_name) &&
+        <AppellantDetail title="About the Appellant" appeal={appeal} />}
+      </StickyNavContentArea>
+    </AppSegment>;
+  };
 }
 
 CaseDetailsView.propTypes = {
