@@ -78,7 +78,7 @@ export type State = {
   ui: UiState
 };
 
-type Action = { type: string, payload: Object };
+type Action = { type: string, payload?: Object };
 
 /* eslint-disable no-use-before-define */
 

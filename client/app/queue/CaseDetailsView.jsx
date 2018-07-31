@@ -51,7 +51,9 @@ class CaseDetailsView extends React.PureComponent {
       {error && <Alert title={error.title} type="error">
         {error.detail}
       </Alert>}
-      {success && <Alert type="success" title={success.title} message={success.detail} scrollOnAlert={false} />}
+      {success && <Alert type="success" title={success.title} scrollOnAlert={false}>
+        {success.detail}
+      </Alert>}
       <CaseSnapshot appeal={appeal} task={task} />
       <hr {...horizontalRuleStyling} />
       <StickyNavContentArea>
