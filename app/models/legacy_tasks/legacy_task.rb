@@ -16,11 +16,11 @@ class LegacyTask
   delegate :first_name, :last_name, to: :assigned_by, prefix: true
 
   def user_id
-    assigned_to.css_id
+    assigned_to && assigned_to.css_id
   end
 
   def assigned_to_pg_id
-    assigned_to.id
+    assigned_to && assigned_to.id
   end
 
   def task_type
