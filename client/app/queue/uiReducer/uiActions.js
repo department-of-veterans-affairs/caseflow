@@ -1,15 +1,17 @@
 // @flow
 import { ACTIONS } from './uiConstants';
 import ApiUtil from '../../util/ApiUtil';
-import _ from 'lodash';
 
-import type { Dispatch } from '../types/state';
+import type {
+  UiStateMessage,
+  Dispatch
+} from '../types/state';
 
 export const resetErrorMessages = () => ({
   type: ACTIONS.RESET_ERROR_MESSAGES
 });
 
-export const showErrorMessage = (errorMessage: Object) => ({
+export const showErrorMessage = (errorMessage: UiStateMessage) => ({
   type: ACTIONS.SHOW_ERROR_MESSAGE,
   payload: {
     errorMessage
@@ -24,7 +26,7 @@ export const resetSuccessMessages = () => ({
   type: ACTIONS.RESET_SUCCESS_MESSAGES
 });
 
-export const showSuccessMessage = (message: Object | string) => ({
+export const showSuccessMessage = (message: UiStateMessage) => ({
   type: ACTIONS.SHOW_SUCCESS_MESSAGE,
   payload: {
     message
@@ -49,8 +51,8 @@ export const setSelectingJudge = (selectingJudge: boolean) => ({
   }
 });
 
-const saveSuccess = (message: Object | string, response: Object) => (dispatch: Dispatch) => {
-  dispatch(showSuccessMessage(_.isObject(message) ? message : { title: message }));
+const saveSuccess = (message: UiStateMessage, response: Object) => (dispatch: Dispatch) => {
+  dispatch(showSuccessMessage(message));
   dispatch({ type: ACTIONS.SAVE_SUCCESS });
 
   return Promise.resolve(response);
@@ -76,7 +78,7 @@ const saveFailure = (resp: Object) => (dispatch: Dispatch) => {
 };
 
 export const requestSave = (
-  url: string, params: Object, successMessage: Object | string, verb: string = 'post'
+  url: string, params: Object, successMessage: UiStateMessage, verb: string = 'post'
 ): Function => (dispatch: Dispatch) => {
   dispatch(hideErrorMessage());
   dispatch(hideSuccessMessage());
@@ -88,9 +90,9 @@ export const requestSave = (
   );
 };
 
-export const requestUpdate = (url: string, params: Object, successMessage: Object | string) =>
+export const requestUpdate = (url: string, params: Object, successMessage: UiStateMessage) =>
   requestSave(url, params, successMessage, 'put');
-export const requestDelete = (url: string, params: Object, successMessage: Object | string) =>
+export const requestDelete = (url: string, params: Object, successMessage: UiStateMessage) =>
   requestSave(url, params, successMessage, 'delete');
 
 export const resetSaveState = () => ({
@@ -122,14 +124,16 @@ export const setUserCssId = (cssId: string) => ({
   payload: { cssId }
 });
 
-export const setSelectedAssignee = ({ assigneeId }: Object) => ({
+type targetAssignee = { assigneeId: string };
+
+export const setSelectedAssignee = ({ assigneeId }: targetAssignee) => ({
   type: ACTIONS.SET_SELECTED_ASSIGNEE,
   payload: {
     assigneeId
   }
 });
 
-export const setSelectedAssigneeSecondary = ({ assigneeId }: Object) => ({
+export const setSelectedAssigneeSecondary = ({ assigneeId }: targetAssignee) => ({
   type: ACTIONS.SET_SELECTED_ASSIGNEE_SECONDARY,
   payload: {
     assigneeId

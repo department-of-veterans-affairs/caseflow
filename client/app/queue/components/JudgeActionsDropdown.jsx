@@ -92,7 +92,7 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
       const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, { location: 'omo_office' });
       const successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name);
 
-      this.props.requestSave(`/case_reviews/${task.attributes.task_id}/complete`, payload, successMsg).
+      this.props.requestSave(`/case_reviews/${task.attributes.task_id}/complete`, payload, { title: successMsg }).
         then(() => {
           history.push('');
           history.replace('/queue');
