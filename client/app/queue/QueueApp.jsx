@@ -19,6 +19,7 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import AppFrame from '../components/AppFrame';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
+import ColocatedTaskListView from './ColocatedTaskListView';
 import JudgeReviewTaskListView from './JudgeReviewTaskListView';
 import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './EvaluateDecisionView';
@@ -51,12 +52,20 @@ class QueueApp extends React.PureComponent {
     <CaseListView caseflowVeteranId={props.match.params.caseflowVeteranId} />
   </React.Fragment>;
 
+  viewForUserRole = () => {
+    const { userRole } = this.props;
+    if (userRole === USER_ROLES.ATTORNEY) {
+      return <AttorneyTaskListView {...this.props} />;
+    } else if (userRole === USER_ROLES.JUDGE) {
+      return <JudgeReviewTaskListView {...this.props} />;
+    } else if (userRole === USER_ROLES.COLOCATED) {
+      return <ColocatedTaskListView />
+    }
+  }
+
   routedQueueList = () => <QueueLoadingScreen {...this.props}>
     <SearchBar feedbackUrl={this.props.feedbackUrl} />
-    {this.props.userRole === USER_ROLES.ATTORNEY ?
-      <AttorneyTaskListView {...this.props} /> :
-      <JudgeReviewTaskListView {...this.props} />
-    }
+    {this.viewForUserRole()}
   </QueueLoadingScreen>;
 
   routedBeaamList = () => <QueueLoadingScreen {...this.props} urlToLoad="/beaam_appeals">

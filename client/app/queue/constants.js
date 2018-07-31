@@ -140,7 +140,8 @@ export const DOCUMENT_ID_MAX_LENGTH = 30;
 
 export const USER_ROLES = {
   ATTORNEY: USER_ROLE_TYPES.attorney,
-  JUDGE: USER_ROLE_TYPES.judge
+  JUDGE: USER_ROLE_TYPES.judge,
+  COLOCATED: USER_ROLE_TYPES.colocated
 };
 
 export const PAGE_TITLES = {

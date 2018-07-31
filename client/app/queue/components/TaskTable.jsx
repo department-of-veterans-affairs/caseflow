@@ -35,7 +35,7 @@ type Params = {|
   includeDocumentCount?: boolean,
   requireDasRecord?: boolean,
   appeals: LegacyAppeals,
-  userId: ?string,
+  userId?: string,
 |};
 
 type Props = Params & {|
