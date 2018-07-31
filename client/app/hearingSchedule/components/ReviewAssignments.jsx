@@ -10,7 +10,7 @@ import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import Table from '../../components/Table';
 import StatusMessage from '../../components/StatusMessage';
-import { formatDate } from '../../util/DateUtil';
+import { formatDateStr } from '../../util/DateUtil';
 import { SPREADSHEET_TYPES } from '../constants';
 
 const tableStyling = css({
@@ -139,7 +139,7 @@ export default class ReviewAssignments extends React.Component {
     }
 
     const hearingAssignmentRows = _.map(this.props.schedulePeriod.hearingDays, (hearingDay) => ({
-      date: formatDate(hearingDay.hearingDate),
+      date: formatDateStr(hearingDay.hearingDate),
       type: HEARING_TYPE_LABELS[hearingDay.hearingType],
       regionalOffice: hearingDay.regionalOffice,
       room: hearingDay.roomInfo,

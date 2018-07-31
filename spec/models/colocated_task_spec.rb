@@ -141,6 +141,7 @@ describe ColocatedTask do
     end
 
     context "when status is updated to completed" do
+      let!(:staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
       let(:colocated_admin_action) do
         create(:colocated_task, appeal: appeal, appeal_type: appeal_type, assigned_by: attorney)
       end
