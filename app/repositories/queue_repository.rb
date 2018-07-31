@@ -15,6 +15,14 @@ class QueueRepository
       end
     end
 
+    def tasks_for_appeal(appeal_id)
+      MetricsService.record("VACOLS: fetch appeal tasks",
+                            service: :vacols,
+                            name: "tasks_for_appeal") do
+        tasks_for_appeal_query(appeal_id)
+      end
+    end
+
     # rubocop:disable Metrics/MethodLength
     def appeals_from_tasks(tasks)
       vacols_ids = tasks.map(&:vacols_id)
@@ -89,6 +97,11 @@ class QueueRepository
       filter_duplicate_tasks(records)
     end
 
+    def tasks_for_appeal_query(appeal_id)
+      records = VACOLS::CaseAssignment.tasks_for_appeal(appeal_id)
+      filter_duplicate_tasks(records)
+    end
+
     def appeal_info_query(vacols_ids)
       VACOLS::Case.includes(:folder, :correspondent, :representative)
         .find(vacols_ids)
@@ -156,6 +169,8 @@ class QueueRepository
 
     def update_location_to_attorney(vacols_id, attorney)
       vacols_case = VACOLS::Case.find(vacols_id)
+      fail VACOLS::Case::InvalidLocationError, "Invalid location \"#{attorney.vacols_uniq_id}\"" unless
+        attorney.vacols_uniq_id
       vacols_case.update_vacols_location!(attorney.vacols_uniq_id)
       vacols_case.update(bfattid: attorney.vacols_attorney_id)
     end

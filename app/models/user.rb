@@ -4,6 +4,7 @@ class User < ApplicationRecord
   has_many :appeal_views
   has_many :hearing_views
   has_many :annotations
+  has_many :tasks, as: :assigned_to
 
   BOARD_STATION_ID = "101".freeze
 
@@ -185,6 +186,10 @@ class User < ApplicationRecord
 
   def as_json(options)
     super(options).merge("judge_css_id" => judge_css_id)
+  end
+
+  def user_info_for_idt
+    self.class.user_repository.user_info_for_idt(css_id)
   end
 
   private

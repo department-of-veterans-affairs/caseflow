@@ -110,7 +110,7 @@ class LegacyAppeal < ApplicationRecord
 
   LOCATION_CODES = {
     remand_returned_to_bva: "96",
-    bva_dispatch: "30",
+    bva_dispatch: "4E",
     omo_office: "20",
     caseflow: "CASEFLOW"
   }.freeze
@@ -227,6 +227,10 @@ class LegacyAppeal < ApplicationRecord
 
   def representative_type
     power_of_attorney.vacols_representative_type
+  end
+
+  def docket_name
+    "legacy"
   end
 
   # TODO: delegate this to veteran
@@ -385,7 +389,13 @@ class LegacyAppeal < ApplicationRecord
     return "Remand" if remand_on_dispatch?
   end
 
+  def activated?
+    # An appeal is currently at the board, and it has passed some data checks
+    status == "Active"
+  end
+
   def active?
+    # All issues on an appeal have not yet been granted or denied
     status != "Complete"
   end
 

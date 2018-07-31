@@ -1,6 +1,8 @@
-class CoLocatedAdminAction < Task
+class ColocatedTask < Task
   validates :title, inclusion: { in: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s) }
   validate :assigned_by_role_is_valid
+  validates :assigned_by, presence: true
+  validates :parent, presence: true, if: :ama?
 
   class << self
     def create(tasks)
@@ -10,7 +12,7 @@ class CoLocatedAdminAction < Task
           result << super(task.merge(assigned_to: assignee))
           result
         end
-        if records.map(&:valid?).uniq == [true]
+        if records.map(&:valid?).uniq == [true] && records.first.legacy?
           AppealRepository.update_location!(records.first.appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
         end
         records

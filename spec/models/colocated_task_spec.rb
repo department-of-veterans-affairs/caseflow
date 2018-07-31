@@ -1,11 +1,11 @@
-describe CoLocatedAdminAction do
+describe ColocatedTask do
   let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }
-  let!(:vacols_case) { create(:case) }
-  let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+  let!(:staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+  let(:vacols_case) { create(:case) }
+  let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
   before do
     RequestStore.store[:current_user] = attorney
-    allow_any_instance_of(User).to receive(:vacols_roles).and_return(["attorney"])
     FeatureToggle.enable!(:test_facols)
   end
 
@@ -14,19 +14,19 @@ describe CoLocatedAdminAction do
   end
 
   context ".create" do
-    context "when all fields are present" do
+    context "when all fields are present and it is a legacy appeal" do
       subject do
-        CoLocatedAdminAction.create([{
-                                      assigned_by: attorney,
-                                      title: :aoj,
-                                      appeal: appeal
-                                    },
-                                     { assigned_by: attorney,
-                                       title: :poa_clarification,
-                                       appeal: appeal }])
+        ColocatedTask.create([{
+                               assigned_by: attorney,
+                               title: :aoj,
+                               appeal: appeal
+                             },
+                              { assigned_by: attorney,
+                                title: :poa_clarification,
+                                appeal: appeal }])
       end
 
-      it "creates a co-located task successfully" do
+      it "creates a co-located task successfully and updates VACOLS location" do
         expect(subject.first.valid?).to be true
         expect(subject.first.reload.status).to eq "assigned"
         expect(subject.first.assigned_at).to_not eq nil
@@ -43,21 +43,43 @@ describe CoLocatedAdminAction do
 
         expect(vacols_case.reload.bfcurloc).to eq "CASEFLOW"
 
-        record = CoLocatedAdminAction.create(assigned_by: attorney, title: :aoj, appeal: appeal)
+        record = ColocatedTask.create(assigned_by: attorney, title: :aoj, appeal: appeal)
         expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST2")
 
-        record = CoLocatedAdminAction.create(assigned_by: attorney, title: :aoj, appeal: appeal)
+        record = ColocatedTask.create(assigned_by: attorney, title: :aoj, appeal: appeal)
         expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST3")
 
         # should start from index 0
-        record = CoLocatedAdminAction.create(assigned_by: attorney, title: :aoj, appeal: appeal)
+        record = ColocatedTask.create(assigned_by: attorney, title: :aoj, appeal: appeal)
         expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST1")
+      end
+    end
+
+    context "when all fields are present and it is an ama appeal" do
+      subject do
+        ColocatedTask.create([{
+                               assigned_by: attorney,
+                               title: :aoj,
+                               parent: create(:ama_attorney_task),
+                               appeal: create(:appeal)
+                             }])
+      end
+
+      it "creates a co-located task successfully and does not update VACOLS location" do
+        expect(subject.first.valid?).to be true
+        expect(subject.first.reload.status).to eq "assigned"
+        expect(subject.first.assigned_at).to_not eq nil
+        expect(subject.first.assigned_by).to eq attorney
+        expect(subject.first.title).to eq "aoj"
+        expect(subject.first.assigned_to).to eq User.find_by(css_id: "BVATEST1")
+
+        expect(AppealRepository).to_not receive(:update_location!)
       end
     end
 
     context "when appeal is missing" do
       subject do
-        CoLocatedAdminAction.create(
+        ColocatedTask.create(
           assigned_by: attorney,
           title: :aoj
         )
@@ -74,7 +96,7 @@ describe CoLocatedAdminAction do
       end
 
       subject do
-        CoLocatedAdminAction.create(
+        ColocatedTask.create(
           assigned_by: attorney,
           title: :aoj,
           appeal: appeal
@@ -88,7 +110,7 @@ describe CoLocatedAdminAction do
 
     context "when title is not valid" do
       subject do
-        CoLocatedAdminAction.create(
+        ColocatedTask.create(
           assigned_by: attorney,
           title: :test,
           appeal: appeal
@@ -102,7 +124,7 @@ describe CoLocatedAdminAction do
   end
 
   context ".update" do
-    let(:colocated_admin_action) { create(:colocated_admin_action) }
+    let(:colocated_admin_action) { create(:colocated_task) }
 
     context "when status is updated to on-hold" do
       it "should validate on-hold duration" do
@@ -118,7 +140,37 @@ describe CoLocatedAdminAction do
       end
     end
 
-    context "when status is updated to in-progress and on-hold" do
+    context "when status is updated to completed" do
+      let!(:staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+      let(:colocated_admin_action) do
+        create(:colocated_task, appeal: appeal, appeal_type: appeal_type, assigned_by: attorney)
+      end
+
+      context "when more than one task per appeal and not all tasks are completed" do
+        let(:appeal_type) { "LegacyAppeal" }
+
+        let!(:colocated_admin_action2) do
+          create(:colocated_task, appeal: appeal, appeal_type: appeal_type, assigned_by: attorney)
+        end
+
+        it "should not update location in vacols" do
+          colocated_admin_action.update(status: "completed")
+          expect(vacols_case.reload.bfcurloc).to_not eq staff.slogid
+        end
+      end
+
+      context "when legacy appeal" do
+        let(:appeal_type) { "LegacyAppeal" }
+
+        it "should update location in vacols" do
+          expect(vacols_case.bfcurloc).to_not eq staff.slogid
+          colocated_admin_action.update(status: "completed")
+          expect(vacols_case.reload.bfcurloc).to eq staff.slogid
+        end
+      end
+    end
+
+    context "when status is updated" do
       it "should reset timestamps only if status has changed" do
         time1 = Time.utc(2015, 1, 1, 12, 0, 0)
         Timecop.freeze(time1)
@@ -150,6 +202,14 @@ describe CoLocatedAdminAction do
         # go back to in-progres - should reset date
         expect(colocated_admin_action.reload.started_at).to eq time5
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
+
+        time6 = Time.utc(2015, 1, 8, 12, 0, 0)
+        Timecop.freeze(time6)
+        colocated_admin_action.update(status: "completed")
+        # go back to in-progres - should reset date
+        expect(colocated_admin_action.reload.started_at).to eq time5
+        expect(colocated_admin_action.placed_on_hold_at).to eq time3
+        expect(colocated_admin_action.completed_at).to eq time6
       end
     end
   end

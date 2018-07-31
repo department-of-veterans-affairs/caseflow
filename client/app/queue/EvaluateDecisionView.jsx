@@ -25,7 +25,8 @@ import JUDGE_CASE_REVIEW_OPTIONS from '../../constants/JUDGE_CASE_REVIEW_OPTIONS
 import {
   marginBottom, marginTop,
   marginRight, paddingLeft,
-  fullWidth, redText, PAGE_TITLES
+  fullWidth, redText, PAGE_TITLES,
+  ISSUE_DISPOSITIONS
 } from './constants';
 const setWidth = (width) => css({ width });
 const headerStyling = marginBottom(1.5);
@@ -105,6 +106,19 @@ class EvaluateDecisionView extends React.PureComponent {
     return true;
   };
 
+  getPrevStepUrl = () => {
+    const {
+      appealId,
+      appeal: { attributes: appeal }
+    } = this.props;
+    const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
+    const prevUrl = `/queue/appeals/${appealId}`;
+
+    return dispositions.includes(ISSUE_DISPOSITIONS.REMANDED) ?
+      `${prevUrl}/remands` :
+      `${prevUrl}/dispositions`;
+  }
+
   goToNextStep = () => {
     const {
       task: { attributes: task },
@@ -171,7 +185,7 @@ class EvaluateDecisionView extends React.PureComponent {
       {error && <Alert title={error.title} type="error" styling={css(marginTop(0), marginBottom(1))}>
         {error.detail}
       </Alert>}
-      <CaseSnapshot appeal={this.props.appeal} task={this.props.task} />
+      <CaseSnapshot appeal={this.props.appeal} task={this.props.task} hideDropdown />
       <hr {...hrStyling} />
 
       <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
@@ -268,8 +282,8 @@ EvaluateDecisionView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.loadedQueue.appeals[ownProps.appealId],
-  task: state.queue.loadedQueue.tasks[ownProps.appealId],
+  appeal: state.queue.appeals[ownProps.appealId],
+  task: state.queue.tasks[ownProps.appealId],
   highlight: state.ui.highlightFormItems,
   taskOptions: state.queue.stagedChanges.taskDecision.opts,
   decision: state.queue.stagedChanges.taskDecision,

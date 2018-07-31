@@ -8,7 +8,8 @@ class RampElection < RampReview
 
   class BGSEndProductSyncError < RuntimeError
     def initialize(error, ramp_election)
-      super(error.message + "\n\n ramp_election_id: #{ramp_election.id}").tap do |result|
+      Raven.extra_context(ramp_election_id: ramp_election.id)
+      super(error.message).tap do |result|
         result.set_backtrace(error.backtrace)
       end
     end
@@ -35,13 +36,14 @@ class RampElection < RampReview
 
     # Load contentions outside of the Postgres transaction so we don't keep a connection
     # open needlessly for the entirety of what could be a slow VBMS request.
-    end_product_establishment.contentions
-
+    contentions = end_product_establishment.contentions
     transaction do
       issues.destroy_all
 
-      end_product_establishment.contentions.each do |contention|
-        issues.create!(contention: contention)
+      if contentions
+        contentions.each do |contention|
+          issues.create!(contention: contention)
+        end
       end
     end
   end
@@ -62,6 +64,10 @@ class RampElection < RampReview
         end_product_status: nil,
         end_product_status_last_synced_at: nil
       )
+
+      # End product should already be cancelled, so we don't need to pay attention to the establishment that we already
+      # had created. We will create a new one if the ramp election is recreated.
+      end_product_establishment.destroy!
 
       ramp_closed_appeals.destroy_all
     end

@@ -42,11 +42,8 @@ class CaseDetailsView extends React.PureComponent {
     {this.props.error && <Alert title={this.props.error.title} type="error">
       {this.props.error.detail}
     </Alert>}
-    <CaseSnapshot
-      appeal={this.props.appeal}
-      loadedQueueAppealIds={this.props.loadedQueueAppealIds}
-      task={this.props.task}
-    />
+    {this.props.success && <Alert type="success" title={this.props.success} scrollOnAlert={false} />}
+    <CaseSnapshot appeal={this.props.appeal} task={this.props.task} />
     <hr {...horizontalRuleStyling} />
     <StickyNavContentArea>
       <CaseDetailsIssueList
@@ -68,12 +65,18 @@ CaseDetailsView.propTypes = {
   appealId: PropTypes.string.isRequired
 };
 
-const mapStateToProps = (state) => ({
-  appeal: state.caseDetail.activeAppeal,
-  error: state.ui.messages.error,
-  task: state.caseDetail.activeTask,
-  loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)
-});
+const mapStateToProps = (state) => {
+  const { activeAppeal, activeTask } = state.caseDetail;
+  const { appeals, tasks } = state.queue;
+  const { success, error } = state.ui.messages;
+
+  return {
+    appeal: activeAppeal ? appeals[activeAppeal.attributes.vacols_id] : activeAppeal,
+    task: activeTask ? tasks[activeTask.id] : activeTask,
+    success,
+    error
+  };
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   clearActiveAppealAndTask

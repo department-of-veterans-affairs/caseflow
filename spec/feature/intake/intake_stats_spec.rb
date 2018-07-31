@@ -22,10 +22,8 @@ RSpec.feature "Intake Stats Dashboard" do
                            notice_date: 7.days.ago,
                            receipt_date: 45.minutes.ago,
                            option_selected: :supplemental_claim,
-                           established_at: Time.zone.now,
-                           end_product_reference_id: "132",
-                           end_product_status: "VERY_ACTIVE")
-    # Create an election with multiple issues
+                           established_at: Time.zone.now)
+
     ramp_election.issues.create!(description: "an issue")
     ramp_election.issues.create!(description: "another issue")
     ramp_election.issues.create!(description: "yet another issue")
@@ -36,7 +34,6 @@ RSpec.feature "Intake Stats Dashboard" do
            receipt_date: 45.minutes.ago,
            option_selected: :higher_level_review,
            established_at: Time.zone.now,
-           end_product_reference_id: "132",
            end_product_status: "HELLA_ACTIVE").issues.create!(description: "this is the only issue here")
 
     create(:ramp_election,
@@ -92,7 +89,6 @@ RSpec.feature "Intake Stats Dashboard" do
         veteran_file_number: "64205555",
         receipt_date: 45.minutes.ago,
         option_selected: type,
-        end_product_reference_id: ((type == :appeal) ? nil : "123"),
         appeal_docket: type == :appeal && :direct_review,
         established_at: Time.zone.now
       )
@@ -103,7 +99,6 @@ RSpec.feature "Intake Stats Dashboard" do
       veteran_file_number: "64205555",
       receipt_date: 45.minutes.ago,
       option_selected: :appeal,
-      end_product_reference_id: nil,
       appeal_docket: :direct_review,
       established_at: nil
     )
@@ -112,8 +107,8 @@ RSpec.feature "Intake Stats Dashboard" do
     visit "/intake/stats"
     expect(find("#ramp-elections-sent")).to have_content("RAMP Elections Sent for January (so far)")
     expect(find("#ramp-elections-sent")).to have_content("Total 4")
-    expect(find("#ramp-elections-sent")).to have_content("Higher Level Reviews Returned 1")
-    expect(find("#ramp-elections-sent")).to have_content("Higher Level Reviews with Informal Conference Returned 1")
+    expect(find("#ramp-elections-sent")).to have_content("Higher-Level Reviews Returned 1")
+    expect(find("#ramp-elections-sent")).to have_content("Higher-Level Reviews with Informal Conference Returned 1")
     expect(find("#ramp-elections-sent")).to have_content("Supplemental Claims Returned 0")
     expect(find("#ramp-elections-sent")).to have_content("Total Returned 2")
     expect(find("#ramp-elections-sent")).to have_content("Percentage Returned 50 %")
@@ -121,8 +116,8 @@ RSpec.feature "Intake Stats Dashboard" do
 
     expect(find("#ramp-elections-received")).to have_content("RAMP Elections Received for January (so far)")
     expect(find("#ramp-elections-received")).to have_content("Total 4")
-    expect(find("#ramp-elections-received")).to have_content("Higher Level Reviews 2")
-    expect(find("#ramp-elections-received")).to have_content("Higher Level Reviews with Informal Conference 1")
+    expect(find("#ramp-elections-received")).to have_content("Higher-Level Reviews 2")
+    expect(find("#ramp-elections-received")).to have_content("Higher-Level Reviews with Informal Conference 1")
     expect(find("#ramp-elections-received")).to have_content("Supplemental Claims 1")
     expect(find("#ramp-elections-received")).to have_content("Total Issues 4")
     expect(find("#ramp-elections-received")).to have_content("Average Response Time 5.00 days")
@@ -140,8 +135,8 @@ RSpec.feature "Intake Stats Dashboard" do
 
     expect(find("#ramp-refilings-received")).to have_content("RAMP Refilings Received for January (so far)")
     expect(find("#ramp-refilings-received")).to have_content("Total 4")
-    expect(find("#ramp-refilings-received")).to have_content("Higher Level Reviews 1")
-    expect(find("#ramp-refilings-received")).to have_content("Higher Level Reviews with Informal Conference 1")
+    expect(find("#ramp-refilings-received")).to have_content("Higher-Level Reviews 1")
+    expect(find("#ramp-refilings-received")).to have_content("Higher-Level Reviews with Informal Conference 1")
     expect(find("#ramp-refilings-received")).to have_content("Supplemental Claims 1")
     expect(find("#ramp-refilings-received")).to have_content("Appeals 1")
 
@@ -150,8 +145,8 @@ RSpec.feature "Intake Stats Dashboard" do
     click_on "Daily"
     expect(find("#ramp-elections-sent")).to have_content("RAMP Elections Sent for January 7")
     expect(find("#ramp-elections-sent")).to have_content("Total 0")
-    expect(find("#ramp-elections-sent")).to have_content("Higher Level Reviews Returned 0")
-    expect(find("#ramp-elections-sent")).to have_content("Higher Level Reviews with Informal Conference Returned 0")
+    expect(find("#ramp-elections-sent")).to have_content("Higher-Level Reviews Returned 0")
+    expect(find("#ramp-elections-sent")).to have_content("Higher-Level Reviews with Informal Conference Returned 0")
     expect(find("#ramp-elections-sent")).to have_content("Supplemental Claims Returned 0")
     expect(find("#ramp-elections-sent")).to have_content("Total Returned 0")
     expect(find("#ramp-elections-sent")).to have_content("Percentage Returned ?? %")
@@ -159,8 +154,8 @@ RSpec.feature "Intake Stats Dashboard" do
 
     expect(find("#ramp-elections-received")).to have_content("RAMP Elections Received for January 7")
     expect(find("#ramp-elections-received")).to have_content("Total 3")
-    expect(find("#ramp-elections-received")).to have_content("Higher Level Reviews 2")
-    expect(find("#ramp-elections-received")).to have_content("Higher Level Reviews with Informal Conference 0")
+    expect(find("#ramp-elections-received")).to have_content("Higher-Level Reviews 2")
+    expect(find("#ramp-elections-received")).to have_content("Higher-Level Reviews with Informal Conference 0")
     expect(find("#ramp-elections-received")).to have_content("Supplemental Claims 1")
     expect(find("#ramp-elections-received")).to have_content("Average Response Time 6.00 days")
 

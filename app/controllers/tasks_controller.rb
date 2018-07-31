@@ -1,20 +1,27 @@
 class TasksController < ApplicationController
+  include Errors
+
   before_action :verify_queue_access
   before_action :verify_task_assignment_access, only: [:create]
 
   TASK_CLASSES = {
-    CoLocatedAdminAction: CoLocatedAdminAction
+    ColocatedTask: ColocatedTask,
+    AttorneyTask: AttorneyTask
   }.freeze
 
   QUEUES = {
     attorney: AttorneyQueue,
-    colocated: CoLocatedAdminQueue
+    colocated: ColocatedQueue,
+    judge: JudgeQueue
   }.freeze
 
   def set_application
     RequestStore.store[:application] = "queue"
   end
 
+  # e.g, GET /tasks?user_id=xxx&role=colocated
+  #      GET /tasks?user_id=xxx&role=attorney
+  #      GET /tasks?user_id=xxx&role=judge
   def index
     return invalid_role_error unless QUEUES.keys.include?(params[:role].try(:to_sym))
     tasks = queue_class.new(user: user).tasks
@@ -24,10 +31,10 @@ class TasksController < ApplicationController
   def create
     return invalid_type_error unless task_class
 
-    tasks = task_class.create(tasks_params)
+    tasks = task_class.create(create_params)
 
     tasks.each { |task| return invalid_record_error(task) unless task.valid? }
-    render json: { tasks: tasks }, status: :created
+    render json: { tasks: json_tasks(tasks) }, status: :created
   end
 
   def update
@@ -52,17 +59,8 @@ class TasksController < ApplicationController
   end
   helper_method :user
 
-  def invalid_role_error
-    render json: {
-      "errors": [
-        "title": "Role is Invalid",
-        "detail": "User is not allowed to perform this action"
-      ]
-    }, status: 400
-  end
-
   def task_class
-    TASK_CLASSES[tasks_params.first[:type].try(:to_sym)]
+    TASK_CLASSES[create_params.first[:type].try(:to_sym)]
   end
 
   def invalid_type_error
@@ -78,11 +76,12 @@ class TasksController < ApplicationController
     @task ||= Task.find(params[:id])
   end
 
-  def tasks_params
+  def create_params
     [params.require("tasks")].flatten.map do |task|
-      task.permit(:appeal_id, :type, :instructions, :title)
+      task.permit(:type, :instructions, :title, :assigned_to_id, :parent_id)
         .merge(assigned_by: current_user)
-        .merge(appeal_type: "LegacyAppeal")
+        .merge(appeal: Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id]))
+        .merge(assigned_to_type: "User")
     end
   end
 

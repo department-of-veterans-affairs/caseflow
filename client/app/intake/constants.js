@@ -46,6 +46,7 @@ export const ACTIONS = {
   ADD_NON_RATED_ISSUE: 'ADD_NON_RATED_ISSUE',
   SET_ISSUE_CATEGORY: 'SET_ISSUE_CATEGORY',
   SET_ISSUE_DESCRIPTION: 'SET_ISSUE_DESCRIPTION',
+  SET_ISSUE_DECISION_DATE: 'SET_ISSUE_DECISION_DATE',
   SET_HAS_INELIGIBLE_ISSUE: 'SET_HAS_INELIGIBLE_ISSUE',
   CONFIRM_INELIGIBLE_FORM: 'CONFIRM_INELIGIBLE_FORM',
   CONFIRM_OUTSIDE_CASEFLOW_STEPS: 'CONFIRM_OUTSIDE_CASEFLOW_STEPS',
@@ -75,11 +76,11 @@ export const REVIEW_OPTIONS = {
   },
   HIGHER_LEVEL_REVIEW: {
     key: 'higher_level_review',
-    name: 'Higher Level Review'
+    name: 'Higher-Level Review'
   },
   HIGHER_LEVEL_REVIEW_WITH_HEARING: {
     key: 'higher_level_review_with_hearing',
-    name: 'Higher Level Review with Informal Conference'
+    name: 'Higher-Level Review with Informal Conference'
   },
   APPEAL: {
     key: 'appeal',

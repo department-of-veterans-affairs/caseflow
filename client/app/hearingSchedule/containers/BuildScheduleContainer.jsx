@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
-import { onReceivePastUploads, unsetSuccessMessage } from '../actions';
+import { onReceivePastUploads, unsetSuccessMessage, onConfirmAssignmentsUpload } from '../actions';
 import ApiUtil from '../../util/ApiUtil';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../../constants/AppConstants';
@@ -27,16 +27,34 @@ class BuildScheduleContainer extends React.PureComponent {
     });
   };
 
+  shouldNotSendAssignments = () => _.isEmpty(this.props.schedulePeriod) || this.props.schedulePeriod.finalized === true;
+
+  sendAssignments = () => {
+    if (this.shouldNotSendAssignments()) {
+      return Promise.resolve();
+    }
+
+    return ApiUtil.patch(`/hearings/schedule_periods/${this.props.schedulePeriod.id}`).then(() => {
+      this.props.onConfirmAssignmentsUpload();
+    });
+  };
+
   createLoadPromise = () => Promise.all([
-    this.loadPastUploads()
+    this.loadPastUploads(),
+    this.sendAssignments()
   ]);
 
   render = () => {
+
+    const vacolsLoadingMessage = 'We are uploading your assignments to VACOLS';
+    const pastScheduleLoadingMessage = 'Loading past schedule uploads...';
+    const loadingMessage = this.shouldNotSendAssignments() ? pastScheduleLoadingMessage : vacolsLoadingMessage;
+
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
       loadingComponentProps={{
         spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
-        message: 'Loading past schedule uploads...'
+        message: loadingMessage
       }}
       failStatusMessageProps={{
         title: 'Unable to load past schedule uploads.'
@@ -60,7 +78,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceivePastUploads,
-  unsetSuccessMessage
+  unsetSuccessMessage,
+  onConfirmAssignmentsUpload
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(BuildScheduleContainer);

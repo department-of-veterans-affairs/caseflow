@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Higher Level Review Intake" do
+RSpec.feature "Higher-Level Review Intake" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
@@ -180,13 +180,18 @@ RSpec.feature "Higher Level Review Intake" do
 
     fill_in "Issue description", with: "Description for Active Duty Adjustments"
 
+    # To do: Change this to one issue once we implement decision date into issue count
+    expect(page).to have_content("2 issues")
+
+    fill_in "Decision date", with: "04/25/2018"
+
     expect(page).to have_content("2 issues")
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Request for Higher Level Review (VA Form 20-0988) has been processed.")
+    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988) has been processed.")
     expect(page).to have_content(
-      "Established EP: 030HLRR - Higher Level Review Rating for Station 397 - ARC"
+      "Established EP: 030HLRR - Higher-Level Review Rating for Station 397 - ARC"
     )
 
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
@@ -198,7 +203,7 @@ RSpec.feature "Higher Level Review Intake" do
         station_of_jurisdiction: "397",
         date: higher_level_review.receipt_date.to_date,
         end_product_modifier: "032",
-        end_product_label: "Higher Level Review Rating",
+        end_product_label: "Higher-Level Review Rating",
         end_product_code: "030HLRR",
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false
@@ -218,20 +223,22 @@ RSpec.feature "Higher Level Review Intake" do
 
     expect(intake).to be_success
 
-    higher_level_review.reload
-    expect(higher_level_review.end_product_reference_id).to eq("IAMANEPID")
+    resultant_end_product_establishment = EndProductEstablishment.find_by(source: higher_level_review.reload)
+    expect(resultant_end_product_establishment.reference_id).to eq("IAMANEPID")
     expect(higher_level_review.request_issues.count).to eq 2
     expect(higher_level_review.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
       rating_issue_profile_date: receipt_date - untimely_days + 4.days,
-      description: "PTSD denied"
+      description: "PTSD denied",
+      decision_date: nil
     )
 
     expect(higher_level_review.request_issues.last).to have_attributes(
       rating_issue_reference_id: nil,
       rating_issue_profile_date: nil,
       issue_category: "Active Duty Adjustments",
-      description: "Description for Active Duty Adjustments"
+      description: "Description for Active Duty Adjustments",
+      decision_date: 1.month.ago.to_date
     )
 
     visit "/higher_level_reviews/IAMANEPID/edit"
@@ -282,7 +289,7 @@ RSpec.feature "Higher Level Review Intake" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Request for Higher Level Review (VA Form 20-0988) has been processed.")
+    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988) has been processed.")
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: "12341234",

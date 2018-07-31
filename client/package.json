@@ -16,7 +16,7 @@
     "build:test": "NODE_ENV=test yarn run build",
     "build:demo": "NODE_ENV=development yarn run build",
     "build:production": "NODE_ENV=production yarn run build",
-    "dev:clear-build": "rm ../app/assets/webpack/* || true",
+    "dev:clear-build": "rm ../app/assets/javascripts/*webpack* || true",
     "dev": "yarn run dev:clear-build && NODE_ENV=development yarn run build -w",
     "dev:hot": "yarn run dev:clear-build && NODE_ENV=development-hot node webpack-hot-server.js"
   },
@@ -25,7 +25,7 @@
     "client/node_modules"
   ],
   "dependencies": {
-    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#a05abe6",
+    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#95d11a0",
     "babel-core": "^6.18.2",
     "babel-loader": "^7.1.2",
     "babel-polyfill": "^6.23.0",

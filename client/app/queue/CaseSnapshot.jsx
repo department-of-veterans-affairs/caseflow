@@ -5,9 +5,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
+import { appealsByAssigneeCssIdSelector } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
-import JudgeStartCheckoutFlowDropdown from './components/JudgeStartCheckoutFlowDropdown';
+import JudgeActionsDropdown from './components/JudgeActionsDropdown';
 import COPY from '../../COPY.json';
 import { USER_ROLES } from './constants';
 import { COLORS } from '../constants/AppConstants';
@@ -97,16 +98,33 @@ export class CaseSnapshot extends React.PureComponent {
     </React.Fragment>;
   };
 
+  showActionsSection = () => {
+    if (this.props.hideDropdown) {
+      return false;
+    }
+    if (this.props.appealsAssignedToCurrentUser.
+      some((appealIterator) => appealIterator.attributes.vacols_id === this.props.appeal.attributes.vacols_id)) {
+      return true;
+    }
+    if (!this.props.task) {
+      return false;
+    }
+
+    return _.some(
+      this.props.attorneysOfJudge, (attorney) => attorney.id === this.props.task.attributes.assigned_to_pg_id);
+  }
+
   render = () => {
     const {
-      appeal: { attributes: appeal }
+      appeal: { attributes: appeal },
+      userRole
     } = this.props;
     let CheckoutDropdown = <React.Fragment />;
 
-    if (this.props.userRole === USER_ROLES.ATTORNEY) {
+    if (userRole === USER_ROLES.ATTORNEY) {
       CheckoutDropdown = <SelectCheckoutFlowDropdown appealId={appeal.vacols_id} />;
-    } else if (this.props.featureToggles.judge_case_review_checkout) {
-      CheckoutDropdown = <JudgeStartCheckoutFlowDropdown appealId={appeal.vacols_id} />;
+    } else if (userRole === USER_ROLES.JUDGE && this.props.featureToggles.judge_case_review_checkout) {
+      CheckoutDropdown = <JudgeActionsDropdown appealId={appeal.vacols_id} />;
     }
 
     return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
@@ -126,8 +144,7 @@ export class CaseSnapshot extends React.PureComponent {
           {this.taskAssignmentListItems()}
         </CaseDetailsDescriptionList>
       </div>
-      { this.props.featureToggles.phase_two &&
-        this.props.loadedQueueAppealIds.includes(appeal.vacols_id) &&
+      {this.showActionsSection() &&
         <div className="usa-width-one-half">
           <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
           {CheckoutDropdown}
@@ -140,14 +157,16 @@ export class CaseSnapshot extends React.PureComponent {
 CaseSnapshot.propTypes = {
   appeal: PropTypes.object.isRequired,
   featureToggles: PropTypes.object,
-  loadedQueueAppealIds: PropTypes.array,
+  appealsAssignedToCurrentUser: PropTypes.array,
   task: PropTypes.object,
-  userRole: PropTypes.string
+  userRole: PropTypes.string,
+  hideDropdown: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
   ..._.pick(state.ui, 'featureToggles', 'userRole'),
-  loadedQueueAppealIds: Object.keys(state.queue.loadedQueue.appeals)
+  appealsAssignedToCurrentUser: appealsByAssigneeCssIdSelector(state),
+  attorneysOfJudge: state.queue.attorneysOfJudge
 });
 
 export default connect(mapStateToProps)(CaseSnapshot);

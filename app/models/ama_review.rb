@@ -3,7 +3,7 @@ class AmaReview < ApplicationRecord
 
   validate :validate_receipt_date
 
-  AMA_BEGIN_DATE = Date.new(2018, 4, 17).freeze
+  AMA_BEGIN_DATE = Date.new(2018, 4, 1).freeze
 
   self.abstract_class = true
 
@@ -46,9 +46,10 @@ class AmaReview < ApplicationRecord
 
   def create_end_product_and_contentions!
     return nil if contention_descriptions_to_create.empty?
-    establish_end_product!
+    end_product_establishment.perform!
     create_contentions_on_new_end_product!
     associate_rated_issues_on_contentions!
+    update! established_at: Time.zone.now
   end
 
   def veteran
@@ -56,6 +57,10 @@ class AmaReview < ApplicationRecord
   end
 
   private
+
+  def end_product_establishment
+    fail Caseflow::Error::MustImplementInSubclass
+  end
 
   def timely_ratings_cache_key
     "#{veteran_file_number}-#{formatted_receipt_date}"
@@ -95,7 +100,7 @@ class AmaReview < ApplicationRecord
   def create_contentions_in_vbms
     VBMSService.create_contentions!(
       veteran_file_number: veteran_file_number,
-      claim_id: end_product_reference_id,
+      claim_id: end_product_establishment.reference_id,
       contention_descriptions: contention_descriptions_to_create
     )
   end

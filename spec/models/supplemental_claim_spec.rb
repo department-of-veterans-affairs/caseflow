@@ -11,7 +11,6 @@ describe SupplementalClaim do
   let(:veteran_file_number) { "64205555" }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
   let(:receipt_date) { nil }
-  let(:end_product_reference_id) { nil }
   let(:established_at) { nil }
   let(:end_product_status) { nil }
 
@@ -19,9 +18,7 @@ describe SupplementalClaim do
     SupplementalClaim.new(
       veteran_file_number: veteran_file_number,
       receipt_date: receipt_date,
-      end_product_reference_id: end_product_reference_id,
-      established_at: established_at,
-      end_product_status: end_product_status
+      established_at: established_at
     )
   end
 
@@ -73,7 +70,12 @@ describe SupplementalClaim do
     let!(:request_issues_data) do
       [
         { reference_id: "abc", profile_date: "2018-04-04", decision_text: "hello" },
-        { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" }
+        { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" },
+        {
+          decision_text: "non-rated issue decision text",
+          issue_category: "test issue category",
+          decision_date: "2018-12-25"
+        }
       ]
     end
 
@@ -87,17 +89,23 @@ describe SupplementalClaim do
 
     it "creates issues from request_issues_data" do
       subject
-      expect(supplemental_claim.request_issues.count).to eq(2)
+      expect(supplemental_claim.request_issues.count).to eq(3)
       expect(supplemental_claim.request_issues.find_by(rating_issue_reference_id: "abc")).to have_attributes(
         rating_issue_profile_date: Date.new(2018, 4, 4),
         description: "hello"
+      )
+      expect(supplemental_claim.request_issues.find_by(
+               description: "non-rated issue decision text"
+      )).to have_attributes(
+        issue_category: "test issue category",
+        decision_date: Date.new(2018, 12, 25)
       )
     end
   end
 
   context "#create_end_product_and_contentions!" do
     subject { supplemental_claim.create_end_product_and_contentions! }
-    let(:veteran) { Veteran.new(file_number: veteran_file_number) }
+    let(:veteran) { Veteran.create(file_number: veteran_file_number) }
     let(:receipt_date) { 2.days.ago }
     let!(:request_issues_data) do
       [
@@ -123,7 +131,7 @@ describe SupplementalClaim do
       end
     end
 
-    it "creates end product and saves end_product_reference_id" do
+    it "creates end product and saves end_product_establishment" do
       allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 
       subject
@@ -145,7 +153,7 @@ describe SupplementalClaim do
         veteran_hash: veteran.to_vbms_hash
       )
 
-      expect(supplemental_claim.reload.end_product_reference_id).to eq("454545")
+      expect(EndProductEstablishment.find_by(source: supplemental_claim.reload).reference_id).to eq("454545")
     end
 
     context "when VBMS throws an error" do

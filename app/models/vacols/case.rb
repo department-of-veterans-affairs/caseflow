@@ -34,7 +34,8 @@ class VACOLS::Case < VACOLS::Record
     "ADV" => "Advance", # NOD Filed. Case currently at RO
     "REM" => "Remand", # Case has been Remanded to RO or AMC
     "HIS" => "Complete", # BVA action is complete
-    "MOT" => "Motion" # appellant has filed a motion for reconsideration
+    "MOT" => "Motion", # appellant has filed a motion for reconsideration
+    "CAV" => "CAVC" # Case has been remanded from CAVC to BVA
   }.freeze
 
   # corresponds to BRIEFF.bfso
@@ -209,7 +210,12 @@ class VACOLS::Case < VACOLS::Record
 
   # rubocop:disable Metrics/MethodLength
   def update_vacols_location!(location)
-    return unless location
+    unless location
+      Rails.logger.error "THERE IS A BUG IN YOUR CODE! It attempted to assign a case to a falsy location. " \
+                         "Unfortunately, I can't throw an exception here because code may depend on this method " \
+                         "failing silently. Please validate before passing it to this method."
+      return
+    end
 
     conn = self.class.connection
 
