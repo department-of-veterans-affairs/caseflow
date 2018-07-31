@@ -261,13 +261,15 @@ RSpec.describe TasksController, type: :controller do
 
   describe "PATCH /task/:id" do
     let(:user) { create(:user) }
+    let(:attorney) { create(:user) }
     before do
       User.stub = user
       create(:staff, :colocated_role, sdomainid: user.css_id)
+      create(:staff, :attorney_role, sdomainid: attorney.css_id)
     end
 
     context "when updating status to in-progress and on-hold" do
-      let(:admin_action) { create(:colocated_task, assigned_to: user) }
+      let(:admin_action) { create(:colocated_task, assigned_by: attorney, assigned_to: user) }
 
       it "should update successfully" do
         patch :update, params: { task: { status: "in_progress" }, id: admin_action.id }
@@ -285,7 +287,7 @@ RSpec.describe TasksController, type: :controller do
     end
 
     context "when updating status to completed" do
-      let(:admin_action) { create(:colocated_task, assigned_to: user) }
+      let(:admin_action) { create(:colocated_task, assigned_by: attorney, assigned_to: user) }
 
       it "should update successfully" do
         patch :update, params: { task: { status: "completed" }, id: admin_action.id }
@@ -297,7 +299,7 @@ RSpec.describe TasksController, type: :controller do
     end
 
     context "when some other user updates another user's task" do
-      let(:admin_action) { create(:colocated_task, assigned_to: create(:user)) }
+      let(:admin_action) { create(:colocated_task, assigned_by: attorney, assigned_to: create(:user)) }
 
       it "should return not be successful" do
         patch :update, params: { task: { status: "in_progress" }, id: admin_action.id }
