@@ -7,10 +7,12 @@ class HearingDayRepository
       VACOLS::CaseHearing.create_hearing!(hearing_hash) if hearing_hash.present?
     end
 
+    # :nocov:
     def update_vacols_hearing!(hearing, hearing_hash)
       hearing_hash = HearingDayMapper.hearing_day_field_validations(hearing_hash)
       hearing.update_hearing!(hearing_hash) if hearing_hash.present?
     end
+    # :nocov:
 
     # Bulk Operations
     def create_schedule(scheduled_hearings)
