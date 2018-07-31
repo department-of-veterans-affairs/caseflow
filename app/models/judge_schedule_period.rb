@@ -11,8 +11,10 @@ class JudgeSchedulePeriod < SchedulePeriod
     JudgeNonAvailability.import_judge_non_availability(self)
   end
 
+  # :nocov:
   def schedule_confirmed(hearing_schedule)
     HearingDay.update_schedule(hearing_schedule)
     super
   end
+  # :nocov:
 end

@@ -46,7 +46,7 @@ describe HearingDay do
 
     context "generate and persist hearing schedule" do
       before do
-        HearingDay.create_schedule(schedule_period.ro_hearing_day_allocations)
+        HearingDay.create_schedule(schedule_period.algorithm_assignments)
       end
 
       subject { VACOLS::CaseHearing.load_days_for_range(schedule_period.start_date, schedule_period.end_date) }
