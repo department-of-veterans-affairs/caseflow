@@ -132,7 +132,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     def select_schedule_days
       select(:hearing_pkseq,
              :hearing_date,
-             "CASE WHEN FOLDER_NR LIKE 'VIDEO%' THEN 'V' ELSE FOLDER_NR END AS hearing_type",
+             "CASE WHEN folder_nr LIKE 'VIDEO%' THEN 'V' ELSE hearing_type END AS hearing_type",
              :folder_nr,
              :room,
              :board_member,
