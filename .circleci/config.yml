@@ -39,7 +39,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - rbenv-cache-v1-{{ arch }}-{{ checksum ".ruby-version" }}
+            - rbenv-cache-v2-{{ arch }}-{{ checksum ".ruby-version" }}
 
       - run:
           name: Setup Ruby
@@ -50,7 +50,7 @@ jobs:
           command: gem install bundler
 
       - save_cache:
-          key: rbenv-cache-v1-{{ arch }}-{{ checksum ".ruby-version" }}
+          key: rbenv-cache-v2-{{ arch }}-{{ checksum ".ruby-version" }}
           paths:
             - .rbenv
 
