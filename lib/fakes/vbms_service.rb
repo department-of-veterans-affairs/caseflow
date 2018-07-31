@@ -156,12 +156,8 @@ class Fakes::VBMSService
   def self.associate_rated_issues!(claim_id:, rated_issue_contention_map:)
     Rails.logger.info("Submitting rated issues to VBMS...")
     Rails.logger.info("Claim id:\n #{claim_id}")
-
-    # This operation assumes that rated_issue_contention_map is a hash in the form of:
-    # { issue_id: contention_id, issue_id2: contention_id2 }
     Rails.logger.info("Rated issue contention map: #{rated_issue_contention_map.inspect}")
 
-    # If successful, VBMS returns true
     return true
   end
 end

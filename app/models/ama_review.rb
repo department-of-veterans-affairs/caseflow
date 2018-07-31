@@ -48,7 +48,7 @@ class AmaReview < ApplicationRecord
     return nil if contention_descriptions_to_create.empty?
     end_product_establishment.perform!
     create_contentions_on_new_end_product!
-    associate_rated_issues_on_contentions!
+    create_associated_rated_issues_in_vbms!
     update! established_at: Time.zone.now
   end
 
@@ -77,7 +77,11 @@ class AmaReview < ApplicationRecord
 
   def rated_issue_contention_map
     @rated_issue_contention_map ||=
-      request_issues.where.not(contention_reference_id: nil)
+      map_object = {}
+      request_issues.where.not(contention_reference_id: nil).each do |issue|
+        map_object[issue.rating_issue_reference_id] = issue.contention_reference_id
+      end
+      map_object
   end
 
   # VBMS will return ALL contentions on a end product when you create contentions,
@@ -105,7 +109,7 @@ class AmaReview < ApplicationRecord
     )
   end
 
-  def create_associated_rated_issues_in_vbms
+  def create_associated_rated_issues_in_vbms!
     VBMSService.associate_rated_issues!(
       claim_id: end_product_reference_id,
       rated_issue_contention_map: rated_issue_contention_map

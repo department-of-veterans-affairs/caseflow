@@ -7,9 +7,8 @@ class EndProductEstablishment < ApplicationRecord
 
   def perform!
     fail InvalidEndProductError unless end_product_to_establish.valid?
-
     establish_claim_in_vbms(end_product_to_establish).tap do |result|
-      update!(reference_id: result.claim_id, established_at: Time.zone.now)
+      update!(reference_id: result.claim_id, established_at: Time.zone.now, modifier: result.modifier)
     end
   rescue VBMS::HTTPError => error
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
