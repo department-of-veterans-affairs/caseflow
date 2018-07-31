@@ -1,6 +1,6 @@
-include PowerOfAttorneyMapper
-
 RSpec.describe Organizations::TasksController, type: :controller do
+  include PowerOfAttorneyMapper
+
   let(:participant_id) { "123456" }
   let(:vso_participant_id) { "789" }
   let(:url) { "American-Legion" }
