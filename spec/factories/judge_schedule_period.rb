@@ -16,5 +16,9 @@ FactoryBot.define do
       file_name { "blankJudgeSpreadsheet.xlsx" }
       user { create(:user) }
     end
+
+    after(:create) do |schedule_period|
+      create(:staff, :hearing_judge, sdomainid: schedule_period.user.css_id)
+    end
   end
 end
