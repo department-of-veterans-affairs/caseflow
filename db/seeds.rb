@@ -42,6 +42,8 @@ class SeedDB
     User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located no cases")
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
+
+    User.create(css_id: "VSO", station_id: 101, full_name: "VSO user associated with american-legion")
   end
 
   def create_dispatch_tasks(number)
@@ -205,12 +207,18 @@ class SeedDB
       veteran: FactoryBot.create(:veteran),
       request_issues: FactoryBot.build_list(:request_issue, 1, description: "Knee pain")
     )
+
+    LegacyAppeal.create(vacols_id: "2096907", vbms_id: "228081153S")
+    LegacyAppeal.create(vacols_id: "2226048", vbms_id: "213912991S")
+    LegacyAppeal.create(vacols_id: "2249056", vbms_id: "608428712S")
+    LegacyAppeal.create(vacols_id: "2306397", vbms_id: "779309925S")
   end
 
   def create_tasks
     attorney = User.find_by(css_id: "BVASCASPER1")
     judge = User.find_by(css_id: "BVAAABSHIRE")
     colocated = User.find_by(css_id: "BVALSPORER")
+    vso = Organization.find_by(name: "American Legion")
 
     FactoryBot.create(:ama_judge_task, assigned_to: judge, appeal: @ama_appeals[0])
     FactoryBot.create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: @ama_appeals[1])
@@ -249,6 +257,41 @@ class SeedDB
                       assigned_by: judge,
                       parent: parent,
                       appeal: @ama_appeals[5])
+
+    FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @ama_appeals[0])
+
+    # Colocated tasks with legacy appeals
+    FactoryBot.create(:colocated_task,
+                      appeal: LegacyAppeal.find_by(vacols_id: "2096907"),
+                      assigned_by: attorney,
+                      assigned_to: colocated)
+
+    FactoryBot.create(:colocated_task,
+                      :in_progress,
+                      appeal: LegacyAppeal.find_by(vacols_id: "2226048"),
+                      assigned_by: attorney,
+                      assigned_to: colocated)
+
+    FactoryBot.create(:colocated_task,
+                      :in_progress,
+                      appeal: LegacyAppeal.find_by(vacols_id: "2249056"),
+                      assigned_by: attorney,
+                      assigned_to: colocated)
+
+    FactoryBot.create(:colocated_task,
+                      :on_hold,
+                      appeal: LegacyAppeal.find_by(vacols_id: "2306397"),
+                      assigned_by: attorney,
+                      assigned_to: colocated)
+  end
+
+  def create_organizations
+    Vso.create(
+      name: "American Legion",
+      role: "VSO",
+      url: "american-legion",
+      participant_id: "2452415"
+    )
   end
 
   def clean_db
@@ -263,9 +306,8 @@ class SeedDB
     create_tags
     create_ama_appeals
     create_users
+    create_organizations
     create_tasks
-
-    User.create(css_id: "VSO", station_id: 101)
 
     return if Rails.env.development?
 

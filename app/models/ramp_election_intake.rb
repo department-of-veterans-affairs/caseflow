@@ -73,7 +73,7 @@ class RampElectionIntake < Intake
     end
   end
 
-  def ui_hash
+  def ui_hash(ama_enabled)
     super.merge(
       notice_date: ramp_election.notice_date,
       option_selected: ramp_election.option_selected,

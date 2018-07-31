@@ -16,19 +16,20 @@ RSpec.describe TasksController, type: :controller do
     before do
       User.stub = user
       create(:staff, role, sdomainid: user.css_id)
-      create(:colocated_task, assigned_by: user)
-      create(:colocated_task, assigned_by: user)
-      create(:colocated_task, assigned_by: user, status: "completed")
-
-      create(:colocated_task, assigned_to: user)
-      create(:colocated_task, assigned_to: user, status: "in_progress")
-      create(:colocated_task, assigned_to: user, status: "completed")
-      create(:colocated_task)
-
-      create(:ama_judge_task, assigned_to: user)
-      create(:ama_judge_task, :in_progress, assigned_to: user)
-      create(:ama_judge_task, :completed, assigned_to: user)
     end
+
+    let!(:task1) { create(:colocated_task, assigned_by: user) }
+    let!(:task2) { create(:colocated_task, assigned_by: user) }
+    let!(:task3) { create(:colocated_task, assigned_by: user, status: "completed") }
+
+    let!(:task4) { create(:colocated_task, assigned_to: user) }
+    let!(:task5) { create(:colocated_task, assigned_to: user, status: "in_progress") }
+    let!(:task6) { create(:colocated_task, assigned_to: user, status: "completed") }
+    let!(:task7) { create(:colocated_task) }
+
+    let!(:task8) { create(:ama_judge_task, assigned_to: user) }
+    let!(:task9) { create(:ama_judge_task, :in_progress, assigned_to: user) }
+    let!(:task10) { create(:ama_judge_task, :completed, assigned_to: user) }
 
     context "when user is an attorney" do
       let(:role) { :attorney_role }
@@ -41,10 +42,14 @@ RSpec.describe TasksController, type: :controller do
         expect(response_body.first["attributes"]["status"]).to eq "on_hold"
         expect(response_body.first["attributes"]["assigned_by"]["id"]).to eq user.id
         expect(response_body.first["attributes"]["placed_on_hold_at"]).to_not be nil
+        expect(response_body.first["attributes"]["veteran_name"]).to eq task1.appeal.veteran_name
+        expect(response_body.first["attributes"]["veteran_file_number"]).to eq task1.appeal.veteran_file_number
 
         expect(response_body.second["attributes"]["status"]).to eq "on_hold"
         expect(response_body.second["attributes"]["assigned_by"]["id"]).to eq user.id
         expect(response_body.second["attributes"]["placed_on_hold_at"]).to_not be nil
+        expect(response_body.second["attributes"]["veteran_name"]).to eq task2.appeal.veteran_name
+        expect(response_body.second["attributes"]["veteran_file_number"]).to eq task2.appeal.veteran_file_number
       end
     end
 
@@ -104,13 +109,50 @@ RSpec.describe TasksController, type: :controller do
   end
 
   describe "POST /tasks" do
-    let(:attorney) { FactoryBot.create(:user) }
-    let(:user) { FactoryBot.create(:user) }
-    let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+    let(:attorney) { create(:user) }
+    let(:user) { create(:user) }
+    let(:appeal) { create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+
     before do
       User.stub = user
       @staff_user = FactoryBot.create(:staff, role, sdomainid: user.css_id)
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
+    end
+
+    context "Attornet task" do
+      before do
+        FeatureToggle.enable!(:judge_assignment_to_attorney)
+      end
+
+      after do
+        FeatureToggle.disable!(:judge_assignment_to_attorney)
+      end
+
+      context "when current user is a judge" do
+        let(:ama_appeal) { create(:appeal) }
+        let(:ama_judge_task) { create(:ama_judge_task, assigned_to: user) }
+        let(:role) { :judge_role }
+
+        let(:params) do
+          [{
+            "external_id": ama_appeal.uuid,
+            "type": "AttorneyTask",
+            "assigned_to_id": attorney.id,
+            "parent_id": ama_judge_task.id
+          }]
+        end
+
+        it "should be successful" do
+          post :create, params: { tasks: params }
+          expect(response.status).to eq 201
+          response_body = JSON.parse(response.body)["tasks"]["data"]
+          expect(response_body.first["attributes"]["type"]).to eq "AttorneyTask"
+          expect(response_body.first["attributes"]["appeal_id"]).to eq ama_appeal.id
+          expect(response_body.first["attributes"]["appeal_id"]).to eq ama_appeal.id
+          expect(response_body.first["attributes"]["docket_number"]).to eq ama_appeal.docket_number
+          expect(response_body.first["attributes"]["appeal_type"]).to eq "Appeal"
+        end
+      end
     end
 
     context "Co-located admin action" do
@@ -126,7 +168,7 @@ RSpec.describe TasksController, type: :controller do
         let(:role) { :judge_role }
         let(:params) do
           [{
-            "appeal_id": appeal.id,
+            "external_id": appeal.vacols_id,
             "type": "ColocatedTask"
           }]
         end
@@ -143,13 +185,13 @@ RSpec.describe TasksController, type: :controller do
         context "when multiple admin actions" do
           let(:params) do
             [{
-              "appeal_id": appeal.id,
+              "external_id": appeal.vacols_id,
               "type": "ColocatedTask",
               "title": "address_verification",
               "instructions": "do this"
             },
              {
-               "appeal_id": appeal.id,
+               "external_id": appeal.vacols_id,
                "type": "ColocatedTask",
                "title": "substituation_determination",
                "instructions": "another one"
@@ -180,7 +222,7 @@ RSpec.describe TasksController, type: :controller do
         context "when one admin action" do
           let(:params) do
             {
-              "appeal_id": appeal.id,
+              "external_id": appeal.vacols_id,
               "type": "ColocatedTask",
               "title": "address_verification",
               "instructions": "do this"
@@ -202,7 +244,7 @@ RSpec.describe TasksController, type: :controller do
         context "when appeal is not found" do
           let(:params) do
             [{
-              "appeal_id": 4_646_464,
+              "external_id": 4_646_464,
               "type": "ColocatedTask",
               "title": "address_verification"
             }]
@@ -210,9 +252,7 @@ RSpec.describe TasksController, type: :controller do
 
           it "should not be successful" do
             post :create, params: { tasks: params }
-            expect(response.status).to eq 400
-            response_body = JSON.parse(response.body)
-            expect(response_body["errors"].first["detail"]).to eq "Appeal can't be blank"
+            expect(response.status).to eq 404
           end
         end
       end
