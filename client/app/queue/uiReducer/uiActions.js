@@ -49,14 +49,14 @@ export const setSelectingJudge = (selectingJudge: boolean) => ({
   }
 });
 
-export const saveSuccess = (message: Object | string, response: Object) => (dispatch: Dispatch) => {
+const saveSuccess = (message: Object | string, response: Object) => (dispatch: Dispatch) => {
   dispatch(showSuccessMessage(_.isObject(message) ? message : { title: message }));
   dispatch({ type: ACTIONS.SAVE_SUCCESS });
 
   return Promise.resolve(response);
 };
 
-export const saveFailure = (resp: Object) => (dispatch: Dispatch) => {
+const saveFailure = (resp: Object) => (dispatch: Dispatch) => {
   const { response } = resp;
   let responseObject = {
     errors: [{

@@ -50,8 +50,7 @@ import type { UiStateMessage } from './types/state';
 
 type Params = {|
   appealId: string,
-  nextStep: string,
-  requestSave: typeof requestSave
+  nextStep: string
 |};
 
 type Props = Params & {|
@@ -66,7 +65,7 @@ type Props = Params & {|
   // dispatch
   setDecisionOptions: typeof setDecisionOptions,
   resetDecisionOptions: typeof resetDecisionOptions,
-  requestSave: typeof requestSave,
+  requestSave: Function,
   deleteAppeal: typeof deleteAppeal
 |};
 

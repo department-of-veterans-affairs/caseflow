@@ -12,10 +12,7 @@ import DECASS_WORK_PRODUCT_TYPES from '../../../constants/DECASS_WORK_PRODUCT_TY
 import SearchableDropdown from '../../components/SearchableDropdown';
 
 import { buildCaseReviewPayload } from '../utils';
-import {
-  requestSave,
-  saveSuccess
-} from '../uiReducer/uiActions';
+import { requestSave } from '../uiReducer/uiActions';
 import {
   deleteAppeal,
   checkoutStagedAppeal,
@@ -36,7 +33,6 @@ const ASSIGN = 'ASSIGN';
 
 type Params = {|
   appealId: string,
-  requestSave: typeof requestSave
 |};
 
 type Props = Params & {|
@@ -47,8 +43,7 @@ type Props = Params & {|
   decision: Object,
   userRole: string,
   // Action creators
-  requestSave: typeof requestSave,
-  saveSuccess: typeof saveSuccess,
+  requestSave: Function,
   deleteAppeal: typeof deleteAppeal,
   checkoutStagedAppeal: typeof checkoutStagedAppeal,
   stageAppeal: typeof stageAppeal,
@@ -189,7 +184,6 @@ const mapStateToProps = (state: State, ownProps: Params) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
-  saveSuccess,
   deleteAppeal,
   checkoutStagedAppeal,
   stageAppeal,

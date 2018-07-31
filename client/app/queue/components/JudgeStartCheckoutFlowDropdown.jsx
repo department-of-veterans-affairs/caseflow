@@ -11,10 +11,7 @@ import DECASS_WORK_PRODUCT_TYPES from '../../../constants/DECASS_WORK_PRODUCT_TY
 import SearchableDropdown from '../../components/SearchableDropdown';
 
 import { buildCaseReviewPayload } from '../utils';
-import {
-  requestSave,
-  saveSuccess
-} from '../uiReducer/uiActions';
+import { requestSave } from '../uiReducer/uiActions';
 import {
   deleteAppeal,
   checkoutStagedAppeal,
@@ -101,7 +98,6 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
-  saveSuccess,
   deleteAppeal,
   checkoutStagedAppeal,
   stageAppeal,
