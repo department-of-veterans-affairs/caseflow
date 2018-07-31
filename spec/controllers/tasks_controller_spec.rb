@@ -113,7 +113,6 @@ RSpec.describe TasksController, type: :controller do
     let(:user) { create(:user) }
     let(:appeal) { create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
 
-
     before do
       User.stub = user
       @staff_user = FactoryBot.create(:staff, role, sdomainid: user.css_id)
