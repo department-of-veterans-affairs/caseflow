@@ -148,7 +148,6 @@ class VACOLS::CaseHearing < VACOLS::Record
     return :video if folder_nr =~ /VIDEO/
   end
 
-  # :nocov:
   def update_hearing!(hearing_info)
     attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
     MetricsService.record("VACOLS: update_hearing! #{hearing_pkseq}",
@@ -157,7 +156,6 @@ class VACOLS::CaseHearing < VACOLS::Record
       update(attrs.merge(mduser: self.class.current_user_slogid, mdtime: VacolsHelper.local_time_with_utc_timezone))
     end
   end
-  # :nocov:
 
   private
 
