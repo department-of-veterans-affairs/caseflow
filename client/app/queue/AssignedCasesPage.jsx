@@ -15,7 +15,7 @@ import {
 } from './uiReducer/uiActions';
 import Alert from '../components/Alert';
 import type { Task, LegacyAppeals } from './types/models';
-import type { AttorneysOfJudge, AttorneyAppealsLoadingState, UiStateError, State } from './types/state';
+import type { AttorneysOfJudge, AttorneyAppealsLoadingState, UiStateMessage, State } from './types/state';
 
 type Params = {|
   match: Object
@@ -28,8 +28,8 @@ type Props = Params & {|
   featureToggles: Object,
   selectedTasks: Array<Task>,
   attorneyAppealsLoadingState: AttorneyAppealsLoadingState,
-  success: string,
-  error: ?UiStateError,
+  success: ?UiStateMessage,
+  error: ?UiStateMessage,
   // Action creators
   resetSuccessMessages: typeof resetSuccessMessages,
   resetErrorMessages: typeof resetErrorMessages,
@@ -78,7 +78,7 @@ class AssignedCasesPage extends React.Component<Props> {
     return <React.Fragment>
       <h2>{attorneyName}'s Cases</h2>
       {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}
-      {success && <Alert type="success" title={success} scrollOnAlert={false} />}
+      {success && <Alert type="success" title={success.title} message={success.detail} scrollOnAlert={false} />}
       {featureToggles.judge_assignment_to_attorney &&
         <AssignWidget
           previousAssigneeId={attorneyId}
