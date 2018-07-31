@@ -7,10 +7,12 @@ class HearingDayRepository
       VACOLS::CaseHearing.create_hearing!(hearing_hash) if hearing_hash.present?
     end
 
+    # :nocov:
     def update_vacols_hearing!(hearing, hearing_hash)
       hearing_hash = HearingDayMapper.hearing_day_field_validations(hearing_hash)
       hearing.update_hearing!(hearing_hash) if hearing_hash.present?
     end
+    # :nocov:
 
     # Bulk Operations
     def create_schedule(scheduled_hearings)
@@ -19,6 +21,7 @@ class HearingDayRepository
       end
     end
 
+    # :nocov:
     def update_schedule(updated_hearings)
       updated_hearings.each do |hearing|
         hearing_to_update = VACOLS::CaseHearing.find(hearing[:hearing_pkseq])
@@ -26,6 +29,7 @@ class HearingDayRepository
         update_vacols_hearing!(hearing_to_update, hearing)
       end
     end
+    # :nocov:
 
     # Query Operations
     def find_hearing_day(hearing_type, hearing_key)
