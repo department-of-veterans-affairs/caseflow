@@ -3,7 +3,8 @@ require "rails_helper"
 RSpec.feature "Appeal Intake" do
   before do
     FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
+    # Test that this works when only enabled on the current user
+    FeatureToggle.enable!(:intakeAma, users: [current_user.css_id])
     FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
@@ -19,7 +20,7 @@ RSpec.feature "Appeal Intake" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:veteran) do
+  let!(:veteran) do
     Generators::Veteran.build(
       file_number: "22334455",
       first_name: "Ed",
@@ -63,7 +64,7 @@ RSpec.feature "Appeal Intake" do
     )
   end
 
-  it "Creates an appeal", skip: "test fails on circle" do
+  it "Creates an appeal" do
     # Testing no relationships in Appeal and Veteran is claimant, tests two relationships in HRL and one in SC
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(nil)
 
@@ -126,11 +127,13 @@ RSpec.feature "Appeal Intake" do
     expect(appeal).to_not be_nil
     expect(appeal.receipt_date).to eq(receipt_date)
     expect(appeal.docket_type).to eq("evidence_submission")
-    expect(appeal.claimants.first).to have_attributes(
-      participant_id: veteran.participant_id
-    )
 
     expect(page).to have_content("Identify issues on")
+
+    expect(appeal.claimant_participant_id).to eq(
+      intake.veteran.participant_id
+    )
+
     expect(page).to have_content("Decision date: 04/14/2017")
     expect(page).to have_content("Left knee granted")
     expect(page).to_not have_content("Untimely rating issue 1")
@@ -148,6 +151,11 @@ RSpec.feature "Appeal Intake" do
 
     fill_in "Issue description", with: "Description for Active Duty Adjustments"
 
+    # To do: Change this to one issue once we implement decision date into issue count
+    expect(page).to have_content("2 issues")
+
+    fill_in "Decision date", with: "04/19/2018"
+
     expect(page).to have_content("2 issues")
 
     safe_click "#button-finish-intake"
@@ -164,14 +172,16 @@ RSpec.feature "Appeal Intake" do
     expect(appeal.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
       rating_issue_profile_date: receipt_date - untimely_days + 4.days,
-      description: "PTSD denied"
+      description: "PTSD denied",
+      decision_date: nil
     )
 
     expect(appeal.request_issues.last).to have_attributes(
       rating_issue_reference_id: nil,
       rating_issue_profile_date: nil,
       issue_category: "Active Duty Adjustments",
-      description: "Description for Active Duty Adjustments"
+      description: "Description for Active Duty Adjustments",
+      decision_date: 1.month.ago.to_date
     )
   end
 

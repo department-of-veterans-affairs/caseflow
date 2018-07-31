@@ -161,3 +161,16 @@ export const setIssueDescription = (issueId, description) => ({
     }
   }
 });
+
+export const setIssueDecisionDate = (issueId, decisionDate) => ({
+  type: ACTIONS.SET_ISSUE_DECISION_DATE,
+  payload: {
+    issueId,
+    decisionDate
+  },
+  meta: {
+    analytics: {
+      label: decisionDate
+    }
+  }
+});

@@ -6,14 +6,10 @@ FactoryBot.define do
       end
     end
 
+    sequence(:veteran_file_number, 500_000_000)
+
     transient do
       veteran nil
-    end
-
-    veteran_file_number do
-      if veteran
-        veteran.file_number
-      end
     end
 
     uuid do
@@ -34,6 +30,10 @@ FactoryBot.define do
     end
 
     after(:build) do |appeal, evaluator|
+      if evaluator.veteran
+        appeal.veteran_file_number = evaluator.veteran.file_number
+      end
+
       Fakes::VBMSService.document_records ||= {}
       Fakes::VBMSService.document_records[appeal.veteran_file_number] = evaluator.documents
     end

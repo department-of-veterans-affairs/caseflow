@@ -16,15 +16,20 @@ RSpec.describe TasksController, type: :controller do
     before do
       User.stub = user
       create(:staff, role, sdomainid: user.css_id)
-      create(:colocated_task, assigned_by: user)
-      create(:colocated_task, assigned_by: user)
-      create(:colocated_task, assigned_by: user, status: "completed")
-
-      create(:colocated_task, assigned_to: user)
-      create(:colocated_task, assigned_to: user, status: "in_progress")
-      create(:colocated_task, assigned_to: user, status: "completed")
-      create(:colocated_task)
     end
+
+    let!(:task1) { create(:colocated_task, assigned_by: user) }
+    let!(:task2) { create(:colocated_task, assigned_by: user) }
+    let!(:task3) { create(:colocated_task, assigned_by: user, status: "completed") }
+
+    let!(:task4) { create(:colocated_task, assigned_to: user) }
+    let!(:task5) { create(:colocated_task, assigned_to: user, status: "in_progress") }
+    let!(:task6) { create(:colocated_task, assigned_to: user, status: "completed") }
+    let!(:task7) { create(:colocated_task) }
+
+    let!(:task8) { create(:ama_judge_task, assigned_to: user) }
+    let!(:task9) { create(:ama_judge_task, :in_progress, assigned_to: user) }
+    let!(:task10) { create(:ama_judge_task, :completed, assigned_to: user) }
 
     context "when user is an attorney" do
       let(:role) { :attorney_role }
@@ -37,10 +42,14 @@ RSpec.describe TasksController, type: :controller do
         expect(response_body.first["attributes"]["status"]).to eq "on_hold"
         expect(response_body.first["attributes"]["assigned_by"]["id"]).to eq user.id
         expect(response_body.first["attributes"]["placed_on_hold_at"]).to_not be nil
+        expect(response_body.first["attributes"]["veteran_name"]).to eq task1.appeal.veteran_name
+        expect(response_body.first["attributes"]["veteran_file_number"]).to eq task1.appeal.veteran_file_number
 
         expect(response_body.second["attributes"]["status"]).to eq "on_hold"
         expect(response_body.second["attributes"]["assigned_by"]["id"]).to eq user.id
         expect(response_body.second["attributes"]["placed_on_hold_at"]).to_not be nil
+        expect(response_body.second["attributes"]["veteran_name"]).to eq task2.appeal.veteran_name
+        expect(response_body.second["attributes"]["veteran_file_number"]).to eq task2.appeal.veteran_file_number
       end
     end
 
@@ -60,6 +69,23 @@ RSpec.describe TasksController, type: :controller do
 
       it "should process the request succesfully" do
         get :index, params: { user_id: user.id, role: "colocated" }
+        response_body = JSON.parse(response.body)["tasks"]["data"]
+        expect(response_body.size).to eq 2
+        expect(response_body.first["attributes"]["status"]).to eq "assigned"
+        expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq user.id
+        expect(response_body.first["attributes"]["placed_on_hold_at"]).to be nil
+
+        expect(response_body.second["attributes"]["status"]).to eq "in_progress"
+        expect(response_body.second["attributes"]["assigned_to"]["id"]).to eq user.id
+        expect(response_body.second["attributes"]["placed_on_hold_at"]).to be nil
+      end
+    end
+
+    context "when getting tasks for a judge" do
+      let(:role) { :judge_role }
+
+      it "should process the request succesfully" do
+        get :index, params: { user_id: user.id, role: "judge" }
         response_body = JSON.parse(response.body)["tasks"]["data"]
         expect(response_body.size).to eq 2
         expect(response_body.first["attributes"]["status"]).to eq "assigned"

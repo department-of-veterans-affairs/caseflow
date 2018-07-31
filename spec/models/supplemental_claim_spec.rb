@@ -70,7 +70,12 @@ describe SupplementalClaim do
     let!(:request_issues_data) do
       [
         { reference_id: "abc", profile_date: "2018-04-04", decision_text: "hello" },
-        { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" }
+        { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" },
+        {
+          decision_text: "non-rated issue decision text",
+          issue_category: "test issue category",
+          decision_date: "2018-12-25"
+        }
       ]
     end
 
@@ -84,10 +89,16 @@ describe SupplementalClaim do
 
     it "creates issues from request_issues_data" do
       subject
-      expect(supplemental_claim.request_issues.count).to eq(2)
+      expect(supplemental_claim.request_issues.count).to eq(3)
       expect(supplemental_claim.request_issues.find_by(rating_issue_reference_id: "abc")).to have_attributes(
         rating_issue_profile_date: Date.new(2018, 4, 4),
         description: "hello"
+      )
+      expect(supplemental_claim.request_issues.find_by(
+               description: "non-rated issue decision text"
+      )).to have_attributes(
+        issue_category: "test issue category",
+        decision_date: Date.new(2018, 12, 25)
       )
     end
   end
