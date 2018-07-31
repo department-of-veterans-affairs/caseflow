@@ -48,7 +48,6 @@ describe EstablishClaim do
     )
   end
 
-  let(:vacols_record) { :remand_decided }
   let(:dispatched_to_station) { "RO98" }
   let(:aasm_state) { :unassigned }
   let(:completion_status) { nil }
@@ -470,8 +469,6 @@ describe EstablishClaim do
       let(:completion_status) { :routed_to_arc }
 
       context "when appeal is a Remand or Partial Grant" do
-        let(:vacols_record) { :remand_decided }
-
         let(:vacols_case) do
           create(:case_with_decision, :status_remand, folder: folder)
         end
@@ -500,7 +497,6 @@ describe EstablishClaim do
       end
 
       context "when appeal is a Full Grant" do
-        let(:vacols_record) { :full_grant_decided }
         let(:vacols_case) do
           create(:case_with_decision, :status_complete, case_issues:
               [create(:case_issue, :education, :disposition_allowed)], folder: folder)

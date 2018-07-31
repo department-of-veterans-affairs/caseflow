@@ -7,4 +7,8 @@ class Fakes::JudgeRepository
       User.find_or_create_by(css_id: "BVAMELARKIN", station_id: "101", full_name: "Mary Larkin")
     ]
   end
+
+  def self.find_all_judges_with_name_and_id
+    []
+  end
 end

@@ -1,15 +1,31 @@
-class Idt::Api::V1::AppealsController < ActionController::Base
+class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
-  before_action :validate_token
-
-  def validate_token
-    token = request.headers["TOKEN"]
-    return render json: { message: "Missing token" }, status: 400 unless token
-    return render json: { message: "Invalid token" }, status: 403 unless Idt::Token.active?(token)
-  end
+  before_action :verify_access
 
   def index
-    # TODO: return list of appeals assigned to attorney
-    render json: { message: "Successfully authenticated." }
+    appeals = file_number ? appeals_by_file_number : appeals_assigned_to_user
+
+    render json: json_appeals(appeals)
+  end
+
+  def details
+    # TODO: implement
+  end
+
+  def appeals_assigned_to_user
+    # TODO: add AMA appeals
+    LegacyWorkQueue.tasks_with_appeals(user, "attorney")[1].select(&:active?)
+  end
+
+  def appeals_by_file_number
+    # TODO: add AMA appeals
+    LegacyAppeal.fetch_appeals_by_file_number(file_number).select(&:active?)
+  end
+
+  def json_appeals(appeals)
+    ActiveModelSerializers::SerializableResource.new(
+      appeals,
+      each_serializer: ::Idt::V1::AppealSerializer
+    ).as_json
   end
 end

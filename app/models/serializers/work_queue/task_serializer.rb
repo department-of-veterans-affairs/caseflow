@@ -10,9 +10,10 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :completed_at
   attribute :placed_on_hold_at
   attribute :instructions
+  attribute :appeal_type
 
   attribute :docket_name do
-    "legacy"
+    object.appeal.docket_name
   end
 
   attribute :case_type do
@@ -21,5 +22,13 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
 
   attribute :docket_number do
     object.appeal.docket_number
+  end
+
+  attribute :veteran_name do
+    object.appeal.veteran_name
+  end
+
+  attribute :veteran_file_number do
+    object.appeal.veteran_file_number
   end
 end

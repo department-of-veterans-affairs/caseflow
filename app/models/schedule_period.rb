@@ -10,7 +10,7 @@ class SchedulePeriod < ApplicationRecord
   has_many :non_availabilities
 
   cache_attribute :ro_hearing_day_allocations, expires_in: 4.days do
-    genenerate_ro_hearing_schedule
+    generate_ro_hearing_schedule
   end
 
   delegate :full_name, to: :user, prefix: true
@@ -56,7 +56,7 @@ class SchedulePeriod < ApplicationRecord
     end
   end
 
-  def genenerate_ro_hearing_schedule
+  def generate_ro_hearing_schedule
     generate_hearings_days = HearingSchedule::GenerateHearingDaysSchedule.new(self)
     format_ro_data(generate_hearings_days.allocate_hearing_days_to_ros)
   end
