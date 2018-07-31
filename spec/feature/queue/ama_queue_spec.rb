@@ -57,7 +57,7 @@ RSpec.feature "AmaQueue" do
       ]
     end
 
-    scenario "veteran is the appellant", skip: "failing intermittently" do
+    scenario "veteran is the appellant" do
       visit "/queue/beaam"
 
       click_on appeals.first.veteran.first_name
@@ -72,6 +72,7 @@ RSpec.feature "AmaQueue" do
 
       expect(page).to have_content("View Veteran's documents")
       expect(page).to have_selector("text", id: "NEW")
+      expect(page).to have_content("5 docs")
 
       click_on "View Veteran's documents"
 

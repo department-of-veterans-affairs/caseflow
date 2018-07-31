@@ -90,8 +90,8 @@ class AssignedCasesPage extends React.Component<Props> {
         includeType
         includeDocketNumber
         includeIssueCount
-        includeDocumentCount
         includeDaysWaiting
+        includeReaderLink
         appeals={this.props.appealsOfAttorney}
         userId={attorneyId} />
     </React.Fragment>;

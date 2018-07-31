@@ -32,12 +32,12 @@ export default class ReaderLink extends React.PureComponent {
 
   getAppealDocumentCount = () => {
     if (this.props.longMessage) {
-      return <span>&nbsp;<AppealDocumentCount appeal={this.props.appeal}/></span>;
-    } else {
-      return <div {...documentCountSizeStyling}>
-        <AppealDocumentCount loadingText={true} appeal={this.props.appeal}/>
-      </div>;
+      return <span>&nbsp;<AppealDocumentCount appeal={this.props.appeal} /></span>;
     }
+
+    return <div {...documentCountSizeStyling}>
+      <AppealDocumentCount loadingText appeal={this.props.appeal} />
+    </div>;
   }
 
   render = () => {

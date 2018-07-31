@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import ApiUtil from '../util/ApiUtil';
+import _ from 'lodash';
 
 import { setAppealDocCount } from './QueueActions';
 
@@ -40,9 +41,9 @@ class AppealDocumentCount extends React.PureComponent {
     if (_.isNil(this.props.docCountForAppeal)) {
       if (this.props.loadingText) {
         return <span {...documentCountStyling}>Loading number of docs...</span>;
-      } else {
-        return null;
       }
+
+      return null;
     }
 
     return <span {...documentCountStyling}>
