@@ -44,7 +44,7 @@ type Props = Params & {|
   deleteAppeal: typeof deleteAppeal
 |};
 
-class AddAdminActionView extends React.PureComponent<Props, ComponentState> {
+class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
   constructor(props) {
     super(props);
 
@@ -69,10 +69,10 @@ class AddAdminActionView extends React.PureComponent<Props, ComponentState> {
       }
     };
     const successMsg = {
-      title: sprintf(COPY.ADD_ADMIN_ACTION_CONFIRMATION_TITLE, {
+      title: sprintf(COPY.ADD_COLOCATED_TASK_CONFIRMATION_TITLE, {
         teamName: '' // todo
       }),
-      detail: COPY.ADD_ADMIN_ACTION_CONFIRMATION_DETAIL
+      detail: COPY.ADD_COLOCATED_TASK_CONFIRMATION_DETAIL
     };
 
     this.props.requestSave('/tasks', payload, successMsg).
@@ -85,7 +85,7 @@ class AddAdminActionView extends React.PureComponent<Props, ComponentState> {
 
     return <React.Fragment>
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
-        {COPY.ADD_ADMIN_ACTION_SUBHEAD}
+        {COPY.ADD_COLOCATED_TASK_SUBHEAD}
       </h1>
       <hr />
       {error && <Alert title={error.title} type="error">
@@ -94,7 +94,7 @@ class AddAdminActionView extends React.PureComponent<Props, ComponentState> {
       <div {...marginTop(4)}>
         <SearchableDropdown
           errorMessage={highlightFormItems && !title ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-          name={COPY.ADD_ADMIN_ACTION_ACTION_TYPE_LABEL}
+          name={COPY.ADD_COLOCATED_TASK_ACTION_TYPE_LABEL}
           placeholder="Select an action type"
           options={_.map(CO_LOCATED_ADMIN_ACTIONS, (label: string, value: string) => ({
             label,
@@ -106,7 +106,7 @@ class AddAdminActionView extends React.PureComponent<Props, ComponentState> {
       <div {...marginTop(4)}>
         <TextareaField
           errorMessage={highlightFormItems && !instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-          name={COPY.ADD_ADMIN_ACTION_INSTRUCTIONS_LABEL}
+          name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
           onChange={(value) => this.setState({ instructions: value })}
           value={instructions} />
       </div>
@@ -125,7 +125,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   deleteAppeal
 }, dispatch);
 
-const WrappedComponent = decisionViewBase(AddAdminActionView, {
+const WrappedComponent = decisionViewBase(AddColocatedTaskView, {
   hideCancelButton: true,
   continueBtnText: 'Assign Action'
 });

@@ -133,11 +133,11 @@
 
   "HEARING_SCHEDULE_SUCCESS_MESSAGE": "You can view your uploaded schedule by clicking the link below",
 
-  "ADD_ADMIN_ACTION_SUBHEAD": "Submit admin action",
-  "ADD_ADMIN_ACTION_ACTION_TYPE_LABEL": "Select the type of administrative action you'd like to assign:",
-  "ADD_ADMIN_ACTION_INSTRUCTIONS_LABEL": "Provide instructions and context for this action:",
-  "ADD_ADMIN_ACTION_CONFIRMATION_TITLE": "Your IHP has been successfully submitted to %(teamName)s",
-  "ADD_ADMIN_ACTION_CONFIRMATION_DETAIL": "If you need to make any changes, please manage this case in DAS.",
+  "ADD_COLOCATED_TASK_SUBHEAD": "Submit admin action",
+  "ADD_COLOCATED_TASK_ACTION_TYPE_LABEL": "Select the type of administrative action you'd like to assign:",
+  "ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL": "Provide instructions and context for this action:",
+  "ADD_COLOCATED_TASK_CONFIRMATION_TITLE": "Your IHP has been successfully submitted to %(teamName)s",
+  "ADD_COLOCATED_TASK_CONFIRMATION_DETAIL": "If you need to make any changes, please manage this case in DAS.",
 
   "MODAL_CANCEL_ATTORNEY_CHECKOUT": "All changes made to this page will be lost, except for the adding, editing, and deleting of issues."
 }

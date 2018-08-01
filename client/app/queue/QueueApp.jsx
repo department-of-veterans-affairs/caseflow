@@ -22,7 +22,7 @@ import AttorneyTaskListView from './AttorneyTaskListView';
 import JudgeReviewTaskListView from './JudgeReviewTaskListView';
 import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './EvaluateDecisionView';
-import AddAdminActionView from './AddAdminActionView';
+import AddColocatedTaskView from './AddColocatedTaskView';
 
 import CaseListView from './CaseListView';
 import CaseSearchSheet from './CaseSearchSheet';
@@ -96,7 +96,7 @@ class QueueApp extends React.PureComponent {
 
   routedEvaluateDecision = (props) => <EvaluateDecisionView nextStep="/queue" {...props.match.params} />;
 
-  routedAddAdminAction = (props) => <AddAdminActionView nextStep="/queue" {...props.match.params} />;
+  routedAddColocatedTask = (props) => <AddColocatedTaskView nextStep="/queue" {...props.match.params} />;
 
   routedOrganization = (props) => <QueueLoadingScreen {...this.props} urlToLoad={`${props.location.pathname}/tasks`}>
     <SearchBar feedbackUrl={this.props.feedbackUrl} />
@@ -206,7 +206,7 @@ class QueueApp extends React.PureComponent {
             exact
             path="/queue/appeals/:appealId/admin_action"
             title="Add Admin Action | Caseflow"
-            render={this.routedAddAdminAction} />
+            render={this.routedAddColocatedTask} />
           <PageRoute
             exact
             path="/organizations/:organization"
