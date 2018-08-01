@@ -23,6 +23,13 @@ RSpec.feature "Supplemental Claim Intake" do
     Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
   end
 
+  let(:veteran_no_ratings) do
+    Generators::Veteran.build(file_number: "55555555",
+                              first_name: "Nora",
+                              last_name: "Attings",
+                              participant_id: "44444444")
+  end
+
   let(:issues) do
     [
       Generators::Issue.build
@@ -280,5 +287,46 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(page).to have_content("Something went wrong")
     expect(page).to have_current_path("/intake/review-request")
+  end
+
+  it "Allows a Veteran without ratings to create an intake" do
+    supplemental_claim = SupplementalClaim.create!(
+      veteran_file_number: veteran_no_ratings.file_number,
+      receipt_date: 2.days.ago
+    )
+
+    SupplementalClaimIntake.create!(
+      veteran_file_number: veteran_no_ratings.file_number,
+      user: current_user,
+      started_at: 5.minutes.ago,
+      detail: supplemental_claim
+    )
+
+    Claimant.create!(
+      review_request: supplemental_claim,
+      participant_id: veteran_no_ratings.participant_id
+    )
+
+    supplemental_claim.start_review!
+
+    visit "/intake"
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_content("This Veteran has no rated, disability issues")
+
+    safe_click "#button-add-issue"
+
+    safe_click ".Select"
+
+    fill_in "Issue category", with: "Active Duty Adjustments"
+    find("#issue-category").send_keys :enter
+    fill_in "Issue description", with: "Description for Active Duty Adjustments"
+
+    expect(page).to have_content("1 issue")
+
+    safe_click "#button-finish-intake"
+
+    expect(page).to have_content("Request for Supplemental Claim (VA Form 21-526b) has been processed.")
   end
 end
