@@ -11,6 +11,7 @@ RSpec.feature "Higher-Level Review Intake" do
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
   end
 
   after do
@@ -139,7 +140,7 @@ RSpec.feature "Higher-Level Review Intake" do
 
     expect(find("#different-claimant-option_true", visible: false)).to be_checked
     expect(find_field("Bob Vance, Spouse", visible: false)).to be_checked
-
+sleep 10
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
@@ -216,6 +217,15 @@ RSpec.feature "Higher-Level Review Intake" do
       claim_id: "IAMANEPID",
       contention_descriptions: ["Description for Active Duty Adjustments", "PTSD denied"],
       special_issues: []
+    )
+
+    rated_issue = higher_level_review.request_issues.find_by(description: "PTSD denied")
+
+    expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+      claim_id: "IAMANEPID",
+      rated_issue_contention_map: {
+        rated_issue.rating_issue_reference_id => rated_issue.contention_reference_id
+      }
     )
 
     intake.reload

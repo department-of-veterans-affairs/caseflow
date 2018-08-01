@@ -226,6 +226,37 @@ describe HigherLevelReview do
       expect(EndProductEstablishment.find_by(source: higher_level_review.reload).reference_id).to eq("454545")
     end
 
+    it "creates contentions" do
+      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+
+      subject
+
+      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+        veteran_file_number: veteran_file_number,
+        claim_id: "454545",
+        contention_descriptions: %w[goodbye hello],
+        special_issues: []
+      )
+      request_issues = higher_level_review.request_issues
+      expect(request_issues.first.contention_reference_id).to_not be_nil
+      expect(request_issues.second.contention_reference_id).to_not be_nil
+    end
+
+    it "maps rated issues to contentions" do
+      allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+
+      subject
+
+      request_issues = higher_level_review.request_issues
+      expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+        claim_id: "454545",
+        rated_issue_contention_map: {
+          "def" => request_issues.find_by(rating_issue_reference_id: "def").contention_reference_id,
+          "abc" => request_issues.find_by(rating_issue_reference_id: "abc").contention_reference_id
+        }
+      )
+    end
+
     context "when VBMS throws an error" do
       before do
         allow(VBMSService).to receive(:establish_claim!).and_raise(vbms_error)
@@ -243,69 +274,6 @@ describe HigherLevelReview do
           expect(error.error_code).to eq("duplicate_ep")
         end
       end
-    end
-  end
-
-  context "#create_associated_rated_issues_in_vbms!" do
-    subject { higher_level_review.create_associated_rated_issues_in_vbms! }
-
-    before do
-      higher_level_review.save!
-      allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
-    end
-
-    context "when there are no rating issues with contentions" do
-      it "does not call VBMS" do
-        expect(subject).to be nil
-      end
-    end
-
-    context "when there are rating issues with contentions" do
-      RequestIssues.create(
-        review_request: higher_level_review,
-        rating_issue_reference_id: "rating_issue_id1",
-        rating_issue_profile_date: 10.days.ago,
-        contention_reference_id: "contention_id1"
-      )
-
-      RequestIssues.create(
-        review_request: higher_level_review,
-        rating_issue_reference_id: "rating_issue_id2",
-        rating_issue_profile_date: 10.days.ago,
-        contention_reference_id: "contention_id2"
-      )
-
-      subject
-
-      expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
-        claim_id:
-      )
-
-    end
-
-    it "creates end product" do
-      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
-
-      subject
-
-      expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
-        claim_hash: {
-          benefit_type_code: "1",
-          payee_code: "00",
-          predischarge: false,
-          claim_type: "Claim",
-          station_of_jurisdiction: "397",
-          date: receipt_date.to_date,
-          end_product_modifier: "030",
-          end_product_label: "Higher-Level Review Rating",
-          end_product_code: "030HLRR",
-          gulf_war_registry: false,
-          suppress_acknowledgement_letter: false
-        },
-        veteran_hash: veteran.to_vbms_hash
-      )
-
-      expect(EndProductEstablishment.find_by(source: higher_level_review.reload).reference_id).to eq("454545")
     end
   end
 end

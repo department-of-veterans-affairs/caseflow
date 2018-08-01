@@ -23,6 +23,7 @@ class HigherLevelReviewIntake < Intake
   end
 
   def review!(request_params)
+    binding.pry
     detail.start_review!
     detail.create_claimants!(claimant_data: request_params[:claimant] || veteran.participant_id)
     detail.update(request_params.permit(:receipt_date, :informal_conference, :same_office))
@@ -35,7 +36,6 @@ class HigherLevelReviewIntake < Intake
   def complete!(request_params)
     return if complete? || pending?
     start_completion!
-
     detail.create_issues!(request_issues_data: request_params[:request_issues] || [])
 
     create_end_product_and_contentions
