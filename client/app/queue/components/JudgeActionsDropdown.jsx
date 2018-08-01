@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 import COPY from '../../../COPY.json';
@@ -169,10 +168,6 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
     </React.Fragment>;
   }
 }
-
-JudgeActionsDropdown.propTypes = {
-  appealId: PropTypes.string.isRequired
-};
 
 const mapStateToProps = (state: State, ownProps: Params) => ({
   appeal: state.queue.appeals[ownProps.appealId],
