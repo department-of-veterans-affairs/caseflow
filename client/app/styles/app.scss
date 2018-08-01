@@ -1,7 +1,8 @@
-$asset-path: '../../../public/' !default;
+$asset-path: '/' !default;
+@import '~uswds/dist/scss/lib/_bourbon.scss';
 
-$font-path:  '~uswds/src/fonts';
-$image-path:  '~uswds/src/img';
+@import '~uswds/src/stylesheets/core/_variables.scss';
+
 
 @import '_variables.scss';
 @import '_main.scss';
@@ -14,3 +15,4 @@ $image-path:  '~uswds/src/img';
 @import 'reader/_reader_styles_root.scss';
 @import 'hearings/_hearings_styles_root.scss';
 @import '_style_guide.scss';
+@import '~uswds/src/stylesheets/uswds.scss';
