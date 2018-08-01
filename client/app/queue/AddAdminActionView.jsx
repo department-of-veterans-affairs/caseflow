@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import _ from 'lodash';
+import { sprintf } from 'sprintf-js';
 
 import decisionViewBase from './components/DecisionViewBase';
 import TextareaField from '../components/TextareaField';
@@ -63,12 +64,14 @@ class AddAdminActionView extends React.PureComponent<Props, ComponentState> {
         tasks: [{
           ...this.state,
           type: 'ColocatedTask',
-          appeal_id: this.props.appeal.id
+          external_id: this.props.appeal.attributes.vacols_id
         }]
       }
     };
     const successMsg = {
-      title: COPY.ADD_ADMIN_ACTION_CONFIRMATION_TITLE,
+      title: sprintf(COPY.ADD_ADMIN_ACTION_CONFIRMATION_TITLE, {
+        teamName: '' // todo
+      }),
       detail: COPY.ADD_ADMIN_ACTION_CONFIRMATION_DETAIL
     };
 

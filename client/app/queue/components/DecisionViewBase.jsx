@@ -62,7 +62,7 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
         styling: css({ marginLeft: '1rem' })
       }, {
         classNames: ['cf-right-side', 'cf-prev-step', 'usa-button-outline'],
-        callback: this.goToPrevStep,
+        callback: this.props.hideCancelButton ? this.cancelFlow : this.goToPrevStep,
         name: 'back-button',
         displayText: this.props.hideCancelButton ? 'Cancel' : 'Back',
         willNeverBeLoading: true
