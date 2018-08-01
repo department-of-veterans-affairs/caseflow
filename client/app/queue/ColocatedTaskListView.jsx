@@ -6,13 +6,14 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 import StatusMessage from '../components/StatusMessage';
-import TaskTable from './components/TaskTable';
+import AmaTaskTable from './components/AmaTaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Alert from '../components/Alert';
 
 import {
   appealsByAssigneeCssIdSelector,
-  tasksByAssigneeCssIdSelector
+  tasksByAssigneeCssIdSelector,
+  amaTasksByAssigneeId
 } from './selectors';
 import {
   resetErrorMessages,
@@ -23,16 +24,18 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
-import type { LegacyAppeals } from './types/models';
+import type { LegacyAppeals, AmaTask } from './types/models';
 import type { State, UiStateError } from './types/state';
 
 type Params = {|
-  appeals: LegacyAppeals,
+  userId: number,
   error: ?UiStateError,
   success: string
 |};
 
 type Props = Params & {|
+  // From state
+  amaTasks: Array<AmaTask>,
   // Action creators
   clearCaseSelectSearch: typeof clearCaseSelectSearch,
   resetErrorMessages: typeof resetErrorMessages,
@@ -61,16 +64,7 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
       </Alert>}
       {success && <Alert type="success" title={success} scrollOnAlert={false}>
       </Alert>}
-      <TaskTable
-        includeDetailsLink
-        includeType
-        includeDocketNumber
-        includeIssueCount
-        includeDueDate
-        includeReaderLink
-        requireDasRecord
-        appeals={this.props.appeals}
-      />
+      <AmaTaskTable tasks={this.props.amaTasks} />
     </div>;
 
     return <AppSegment filledBackground>
@@ -82,7 +76,7 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
 ColocatedTaskListView.propTypes = {
 };
 
-const mapStateToProps = (state: State) => {
+const mapStateToProps = (state: State, ownProps: Params) => {
   const {
     queue: {
       stagedChanges: {
@@ -99,7 +93,7 @@ const mapStateToProps = (state: State) => {
   } = state;
 
   return {
-    appeals: appealsByAssigneeCssIdSelector(state),
+    amaTasks: amaTasksByAssigneeId(state)[ownProps.userId],
     error,
     success,
     taskDecision,

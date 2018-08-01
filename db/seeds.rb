@@ -167,42 +167,42 @@ class SeedDB
     @ama_appeals << FactoryBot.create(
       :appeal,
       advanced_on_docket: true,
-      veteran_file_number: "209179363",
-      veteran: FactoryBot.create(:veteran),
+      veteran_file_number: "701305078",
+      veteran: Veteran.find_by(file_number: "701305078"),
       request_issues: FactoryBot.build_list(:request_issue, 3, description: "Knee pain")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
-      veteran_file_number: "767574947",
-      veteran: FactoryBot.create(:veteran),
+      veteran_file_number: "701305078",
+      veteran: Veteran.find_by(file_number: "701305078"),
       request_issues: FactoryBot.build_list(:request_issue, 2, description: "PTSD")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       :appellant_not_veteran,
-      veteran_file_number: "216979849",
-      veteran: FactoryBot.create(:veteran),
+      veteran_file_number: "701305078",
+      veteran: Veteran.find_by(file_number: "701305078"),
       request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       :appellant_not_veteran,
-      veteran_file_number: "346979850",
-      veteran: FactoryBot.create(:veteran),
+      veteran_file_number: "701305078",
+      veteran: Veteran.find_by(file_number: "701305078"),
       request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       :appellant_not_veteran,
-      veteran_file_number: "922933849",
-      veteran: FactoryBot.create(:veteran),
+      veteran_file_number: "701305078",
+      veteran: Veteran.find_by(file_number: "701305078"),
       request_issues: FactoryBot.build_list(:request_issue, 3, description: "PTSD")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       :appellant_not_veteran,
-      veteran_file_number: "313379829",
-      veteran: FactoryBot.create(:veteran),
+      veteran_file_number: "701305078",
+      veteran: Veteran.find_by(file_number: "701305078"),
       request_issues: FactoryBot.build_list(:request_issue, 1, description: "Knee pain")
     )
 

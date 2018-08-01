@@ -81,7 +81,11 @@ export type AmaTask = {
     title: string,
     type: string,
     veteran_file_number: string,
-    veteran_name: ?string
+    veteran_name: {
+      first_name: string,
+      middle_initial: string,
+      last_name: string
+    }
   }
 };
 
