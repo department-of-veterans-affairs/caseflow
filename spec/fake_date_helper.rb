@@ -18,14 +18,15 @@ module FakeDateHelper
   end
 
   def get_dates_between(start_date, end_date, num_of_dates,
-                        exclude_weekends = true)
+                        exclude_weekends = true, max_same_date = 4)
     dates = []
     holidays = Holidays.between(start_date, end_date, :federal_reserve)
 
     while dates.size < num_of_dates
       date = Faker::Date.between(start_date, end_date)
       dates.push(date) unless (exclude_weekends && (date.saturday? || date.sunday?)) ||
-                              holidays.find { |holiday| holiday[:date] == date }.present?
+                              holidays.find { |holiday| holiday[:date] == date }.present? ||
+                              dates.count { |v| v == date } > max_same_date
     end
 
     dates.to_a
