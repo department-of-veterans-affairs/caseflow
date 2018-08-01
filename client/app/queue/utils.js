@@ -1,42 +1,61 @@
 // @flow
 import React from 'react';
 import _ from 'lodash';
+import moment from 'moment';
 import StringUtil from '../util/StringUtil';
 import {
   redText,
   USER_ROLES
 } from './constants';
 import type {
+  Task,
   Tasks,
   LegacyAppeal,
   LegacyAppeals,
   Issue,
   Issues
 } from './types/models';
-import type { State } from './types/state';
 import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
-export const associateTasksWithAppeals = (serverData: Object = {}) => {
-  const {
-    appeals: { data: appeals },
-    tasks: { data: tasks }
-  } = serverData;
+export const associateTasksWithAppeals =
+  (serverData: { appeals: { data: Array<LegacyAppeal> }, tasks: Array<void> | { data: Array<Task> } }):
+    { appeals: LegacyAppeals, tasks: Tasks } => {
+    const {
+      appeals: { data: appeals },
+      tasks: outerTasks
+    } = serverData;
 
-  _.each(tasks, (task) => {
-    task.appealId = task.id;
-  });
+    const result = {
+      appeals: {},
+      tasks: {}
+    };
 
-  const tasksById = _.keyBy(tasks, 'id');
-  const appealsById = _.keyBy(appeals, 'attributes.vacols_id');
+    for (const appeal of appeals) {
+      if (appeal) {
+        result.appeals[appeal.attributes.vacols_id] = appeal;
+      }
+    }
+    if (Array.isArray(outerTasks)) {
+      return result;
+    }
 
-  return {
-    appeals: appealsById,
-    tasks: tasksById
+    const tasks = outerTasks.data;
+
+    _.each(tasks, (task) => {
+      task.appealId = task.id;
+    });
+
+    for (const task of tasks) {
+      if (task) {
+        result.tasks[task.id] = task;
+      }
+    }
+
+    return result;
   };
-};
 
 /*
 * Sorting hierarchy:
@@ -124,11 +143,8 @@ export const buildCaseReviewPayload = (
       }
     }
   };
-  let issueList = issues;
 
   if (userRole === USER_ROLES.ATTORNEY) {
-    issueList = getUndecidedIssues(issues);
-
     _.extend(payload.data.tasks, { document_type: decision.type });
   } else {
     args.factors_not_considered = _.keys(args.factors_not_considered);
@@ -137,7 +153,7 @@ export const buildCaseReviewPayload = (
     _.extend(payload.data.tasks, args);
   }
 
-  payload.data.tasks.issues = issueList.map((issue) => _.extend({},
+  payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => _.extend({},
     _.pick(issue, ['vacols_sequence_id', 'remand_reasons', 'type', 'readjudication']),
     { disposition: _.capitalize(issue.disposition) }
   ));
@@ -179,6 +195,5 @@ export const validateWorkProductTypeAndId = (decision: {opts: Object}) => {
   return oldFormat.test(documentId) || newFormat.test(documentId);
 };
 
-export const selectedTasksSelector = (state: State, userId: string) => _.flatMap(
-  state.queue.isTaskAssignedToUserSelected[userId] || {},
-  (selected, id) => (selected ? [state.queue.tasks[id]] : []));
+export const getTaskDaysWaiting = (task: Task) => moment().startOf('day').
+  diff(moment(task.attributes.assigned_on), 'days');

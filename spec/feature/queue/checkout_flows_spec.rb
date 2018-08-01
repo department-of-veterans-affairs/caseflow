@@ -153,7 +153,10 @@ RSpec.feature "Checkout flows" do
         click_on "Continue"
         expect(page).to have_content("Submit Draft Decision for Review")
 
-        fill_in "document_id", with: "12345"
+        document_id = Array.new(35).map { rand(10) }.join
+        fill_in "document_id", with: document_id
+        expect(page.find("#document_id").value.length).to eq 30
+
         fill_in "notes", with: "this is a decision note"
 
         # Expect this to be populated with all judge_staff we've created
@@ -229,8 +232,7 @@ RSpec.feature "Checkout flows" do
         expect(issue_rows.length).to eq(old_issues_count - 1)
 
         visit "/queue"
-
-        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
+        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.id}']/td[4]").text
         expect(issue_count.to_i).to eq(old_issues_count - 1)
       end
     end
@@ -346,7 +348,7 @@ RSpec.feature "Checkout flows" do
 
         visit "/queue"
 
-        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
+        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.id}']/td[4]").text
         expect(issue_count).to eq "2"
       end
     end
@@ -362,7 +364,10 @@ RSpec.feature "Checkout flows" do
           :assigned,
           user: judge_user,
           assigner: attorney_user,
-          case_issues: [FactoryBot.create(:case_issue, :disposition_allowed)],
+          case_issues: [
+            FactoryBot.create(:case_issue, :disposition_allowed),
+            FactoryBot.create(:case_issue, :disposition_granted_by_aoj)
+          ],
           work_product: work_product
         )
       )
@@ -390,6 +395,10 @@ RSpec.feature "Checkout flows" do
           expect(visible_options.length).to eq 1
           expect(visible_options.first.text).to eq COPY::JUDGE_CHECKOUT_DISPATCH_LABEL
         end
+
+        # one issue is decided, excluded from checkout flow
+        expect(appeal.issues.length).to eq 2
+        expect(page.find_all(".issue-disposition-dropdown").length).to eq 1
 
         click_on "Continue"
         expect(page).to have_content("Evaluate Decision")

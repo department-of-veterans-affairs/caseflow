@@ -11,10 +11,7 @@ import DECASS_WORK_PRODUCT_TYPES from '../../../constants/DECASS_WORK_PRODUCT_TY
 import SearchableDropdown from '../../components/SearchableDropdown';
 
 import { buildCaseReviewPayload } from '../utils';
-import {
-  requestSave,
-  saveSuccess
-} from '../uiReducer/uiActions';
+import { requestSave } from '../uiReducer/uiActions';
 import {
   deleteAppeal,
   checkoutStagedAppeal,
@@ -45,7 +42,7 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
       const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, { location: 'omo_office' });
       const successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name);
 
-      this.props.requestSave(`/case_reviews/${task.attributes.task_id}/complete`, payload, successMsg).
+      this.props.requestSave(`/case_reviews/${task.attributes.task_id}/complete`, payload, { title: successMsg }).
         then(() => {
           this.props.deleteAppeal(appealId);
           history.push('');
@@ -92,8 +89,8 @@ JudgeStartCheckoutFlowDropdown.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.loadedQueue.appeals[ownProps.appealId],
-  task: state.queue.loadedQueue.tasks[ownProps.appealId],
+  appeal: state.queue.appeals[ownProps.appealId],
+  task: state.queue.tasks[ownProps.appealId],
   changedAppeals: Object.keys(state.queue.stagedChanges.appeals),
   decision: state.queue.stagedChanges.taskDecision,
   userRole: state.ui.userRole
@@ -101,7 +98,6 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
-  saveSuccess,
   deleteAppeal,
   checkoutStagedAppeal,
   stageAppeal,

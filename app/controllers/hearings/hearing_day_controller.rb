@@ -16,7 +16,9 @@ class Hearings::HearingDayController < HearingScheduleController
       format.json do
         render json: {
           hearings: json_hearings(video_and_co),
-          tbhearings: json_tb_hearings(travel_board)
+          tbhearings: json_tb_hearings(travel_board),
+          startDate: start_date,
+          endDate: end_date
         }
       end
     end
@@ -50,11 +52,11 @@ class Hearings::HearingDayController < HearingScheduleController
   private
 
   def hearing
-    @hearing ||= HearingDay.find_hearing_day(params[:hearing_type], params[:hearing_key])
+    @hearing ||= HearingDay.find_hearing_day(update_params[:hearing_type], update_params[:hearing_key])
   end
 
   def update_params
-    params.permit(:judge_id, :regional_office)
+    params.permit(:judge_id, :regional_office, :hearing_key, :hearing_type)
   end
 
   def create_params

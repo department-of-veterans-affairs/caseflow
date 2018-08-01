@@ -1,0 +1,2 @@
+class JudgeTask < Task
+end

@@ -2,6 +2,7 @@ import React from 'react';
 import COPY from '../../../COPY.json';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
+import _ from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import RadioField from '../../components/RadioField';
@@ -9,7 +10,7 @@ import Button from '../../components/Button';
 import BasicDateRangeSelector from '../../components/BasicDateRangeSelector';
 import FileUpload from '../../components/FileUpload';
 import InlineForm from '../../components/InlineForm';
-import { SPREADSHEET_TYPES } from '../constants';
+import { SPREADSHEET_TYPES, ERROR_MAPPINGS } from '../constants';
 
 const fileUploadStyling = css({
   marginTop: '70px'
@@ -17,59 +18,80 @@ const fileUploadStyling = css({
 
 export default class BuildScheduleUpload extends React.Component {
 
+  getErrorMessage = (errors) => {
+    return <div className="usa-input-error">We have found the following errors with your upload. Please
+      check the file and dates and try again.
+      <ul>
+        {_.map(errors.replace('Validation failed: ', '').split(', '), (error, i) => {
+          return ERROR_MAPPINGS[error] ? <li key={i}>{ERROR_MAPPINGS[error]}</li> : null;
+        })}
+      </ul>
+    </div>;
+  };
+
   getRoCoDisplay = () => {
     return <div>{ SPREADSHEET_TYPES.RoSchedulePeriod.display }
       { this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value &&
-      <InlineForm>
-        <BasicDateRangeSelector
-          messageLabel
-          startDateName="startDate"
-          startDateValue={this.props.roCoStartDate}
-          startDateLabel={false}
-          endDateName="endDate"
-          endDateValue={this.props.roCoEndDate}
-          endDateLabel={false}
-          onStartDateChange={this.props.onRoCoStartDateChange}
-          onEndDateChange={this.props.onRoCoEndDateChange}
-        />
-        <div {...fileUploadStyling} >
-          <FileUpload {...fileUploadStyling}
-            preUploadText="Select a file for upload"
-            postUploadText="Choose a different file"
-            id="ro_co_file_upload"
-            onChange={this.props.onRoCoFileUpload}
-            value={this.props.roCoFileUpload}
+      <div>
+        {this.props.uploadRoCoFormErrors &&
+          <span className="usa-input-error-message">{this.getErrorMessage(this.props.uploadRoCoFormErrors)}</span>}
+        <InlineForm>
+          <BasicDateRangeSelector
+            messageLabel
+            startDateName="startDate"
+            startDateValue={this.props.roCoStartDate}
+            startDateLabel={false}
+            endDateName="endDate"
+            endDateValue={this.props.roCoEndDate}
+            endDateLabel={false}
+            onStartDateChange={this.props.onRoCoStartDateChange}
+            onEndDateChange={this.props.onRoCoEndDateChange}
           />
-        </div>
-      </InlineForm> }
+          <div {...fileUploadStyling} >
+            <FileUpload {...fileUploadStyling}
+              preUploadText="Select a file for upload"
+              postUploadText="Choose a different file"
+              id="ro_co_file_upload"
+              fileType=".xlsx"
+              onChange={this.props.onRoCoFileUpload}
+              value={this.props.roCoFileUpload}
+            />
+          </div>
+        </InlineForm>
+      </div>}
     </div>;
   };
 
   getJudgeDisplay = () => {
     return <div>{ SPREADSHEET_TYPES.JudgeSchedulePeriod.display }
       { this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value &&
-      <InlineForm>
-        <BasicDateRangeSelector
-          messageLabel
-          startDateName="startDate"
-          startDateValue={this.props.judgeStartDate}
-          startDateLabel={false}
-          endDateName="endDate"
-          endDateValue={this.props.judgeEndDate}
-          endDateLabel={false}
-          onStartDateChange={this.props.onJudgeStartDateChange}
-          onEndDateChange={this.props.onJudgeEndDateChange}
-        />
-        <div {...fileUploadStyling} >
-          <FileUpload
-            preUploadText="Select a file for upload"
-            postUploadText="Choose a different file"
-            id="judge_file_upload"
-            onChange={this.props.onJudgeFileUpload}
-            value={this.props.judgeFileUpload}
+      <div>
+        {this.props.uploadJudgeFormErrors &&
+          <span className="usa-input-error-message">{this.getErrorMessage(this.props.uploadJudgeFormErrors)}</span>}
+        <InlineForm>
+          <BasicDateRangeSelector
+            messageLabel
+            startDateName="startDate"
+            startDateValue={this.props.judgeStartDate}
+            startDateLabel={false}
+            endDateName="endDate"
+            endDateValue={this.props.judgeEndDate}
+            endDateLabel={false}
+            onStartDateChange={this.props.onJudgeStartDateChange}
+            onEndDateChange={this.props.onJudgeEndDateChange}
           />
-        </div>
-      </InlineForm>}
+          <div {...fileUploadStyling} >
+            <FileUpload
+              preUploadText="Select a file for upload"
+              postUploadText="Choose a different file"
+              id="judge_file_upload"
+              fileType=".xlsx"
+              onChange={this.props.onJudgeFileUpload}
+              value={this.props.judgeFileUpload}
+            />
+          </div>
+        </InlineForm>
+      </div>}
     </div>;
   };
 
@@ -94,6 +116,7 @@ export default class BuildScheduleUpload extends React.Component {
         options={fileTypes}
         value={this.props.fileType}
         onChange={this.props.onFileTypeChange}
+        errorMessage={this.props.uploadFormErrors}
         required
         vertical
         strongLabel
@@ -132,6 +155,9 @@ BuildScheduleUpload.propTypes = {
   onJudgeEndDateChange: PropTypes.func,
   judgeFileUpload: PropTypes.object,
   onJudgeFileUpload: PropTypes.func,
+  uploadFormErrors: PropTypes.string,
+  uploadRoCoFormErrors: PropTypes.string,
+  uploadJudgeFormErrors: PropTypes.string,
   onUploadContinue: PropTypes.func,
   uploadContinueLoading: PropTypes.bool
 };

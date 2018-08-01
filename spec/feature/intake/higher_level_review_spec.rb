@@ -22,6 +22,13 @@ RSpec.feature "Higher-Level Review Intake" do
     Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
   end
 
+  let(:veteran_no_ratings) do
+    Generators::Veteran.build(file_number: "55555555",
+                              first_name: "Nora",
+                              last_name: "Attings",
+                              participant_id: "44444444")
+  end
+
   let(:inaccessible) { false }
 
   let(:receipt_date) { Date.new(2018, 4, 20) }
@@ -180,6 +187,11 @@ RSpec.feature "Higher-Level Review Intake" do
 
     fill_in "Issue description", with: "Description for Active Duty Adjustments"
 
+    # To do: Change this to one issue once we implement decision date into issue count
+    expect(page).to have_content("2 issues")
+
+    fill_in "Decision date", with: "04/25/2018"
+
     expect(page).to have_content("2 issues")
 
     safe_click "#button-finish-intake"
@@ -218,20 +230,22 @@ RSpec.feature "Higher-Level Review Intake" do
 
     expect(intake).to be_success
 
-    higher_level_review.reload
-    expect(higher_level_review.end_product_reference_id).to eq("IAMANEPID")
+    resultant_end_product_establishment = EndProductEstablishment.find_by(source: higher_level_review.reload)
+    expect(resultant_end_product_establishment.reference_id).to eq("IAMANEPID")
     expect(higher_level_review.request_issues.count).to eq 2
     expect(higher_level_review.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
       rating_issue_profile_date: receipt_date - untimely_days + 4.days,
-      description: "PTSD denied"
+      description: "PTSD denied",
+      decision_date: nil
     )
 
     expect(higher_level_review.request_issues.last).to have_attributes(
       rating_issue_reference_id: nil,
       rating_issue_profile_date: nil,
       issue_category: "Active Duty Adjustments",
-      description: "Description for Active Duty Adjustments"
+      description: "Description for Active Duty Adjustments",
+      decision_date: 1.month.ago.to_date
     )
 
     visit "/higher_level_reviews/IAMANEPID/edit"
@@ -322,5 +336,48 @@ RSpec.feature "Higher-Level Review Intake" do
 
     expect(page).to have_content("Something went wrong")
     expect(page).to have_current_path("/intake/review-request")
+  end
+
+  it "Allows a Veteran without ratings to create an intake" do
+    higher_level_review = HigherLevelReview.create!(
+      veteran_file_number: veteran_no_ratings.file_number,
+      receipt_date: 2.days.ago,
+      informal_conference: false,
+      same_office: false
+    )
+
+    HigherLevelReviewIntake.create!(
+      veteran_file_number: veteran_no_ratings.file_number,
+      user: current_user,
+      started_at: 5.minutes.ago,
+      detail: higher_level_review
+    )
+
+    Claimant.create!(
+      review_request: higher_level_review,
+      participant_id: veteran_no_ratings.participant_id
+    )
+
+    higher_level_review.start_review!
+
+    visit "/intake"
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_content("This Veteran has no rated, disability issues")
+
+    safe_click "#button-add-issue"
+
+    safe_click ".Select"
+
+    fill_in "Issue category", with: "Active Duty Adjustments"
+    find("#issue-category").send_keys :enter
+    fill_in "Issue description", with: "Description for Active Duty Adjustments"
+
+    expect(page).to have_content("1 issue")
+
+    safe_click "#button-finish-intake"
+
+    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988) has been processed.")
   end
 end

@@ -3,11 +3,14 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { BrowserRouter, Switch } from 'react-router-dom';
-import _ from 'lodash';
 import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 
-import { setFeatureToggles, setUserRole } from './uiReducer/uiActions';
+import {
+  setFeatureToggles,
+  setUserRole,
+  setUserCssId
+} from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
 import PageRoute from '../components/PageRoute';
@@ -29,6 +32,7 @@ import AddEditIssueView from './AddEditIssueView';
 import SelectRemandReasonsView from './SelectRemandReasonsView';
 import SearchBar from './SearchBar';
 import BeaamAppealListView from './BeaamAppealListView';
+import OrganizationQueue from './OrganizationQueue';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES, USER_ROLES } from './constants';
@@ -40,6 +44,7 @@ class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
+    this.props.setUserCssId(this.props.userCssId);
   }
 
   routedSearchResults = (props) => <React.Fragment>
@@ -75,16 +80,25 @@ class QueueApp extends React.PureComponent {
     appealId={props.match.params.appealId}
     nextStep="/queue" />;
 
-  routedSelectDispositions = (props) => <SelectDispositionsView appealId={props.match.params.appealId} />;
+  routedSelectDispositions = (props) => <SelectDispositionsView
+    prevStep={`/queue/appeals/${props.match.params.appealId}`}
+    appealId={props.match.params.appealId} />;
 
   routedAddEditIssue = (props) => <AddEditIssueView
     nextStep={`/queue/appeals/${props.match.params.appealId}/dispositions`}
     prevStep={`/queue/appeals/${props.match.params.appealId}/dispositions`}
     {...props.match.params} />;
 
-  routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView {...props.match.params} />;
+  routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView
+    prevStep={`/queue/appeals/${props.match.params.appealId}/dispositions`}
+    {...props.match.params} />;
 
   routedEvaluateDecision = (props) => <EvaluateDecisionView nextStep="/queue" {...props.match.params} />;
+
+  routedOrganization = (props) => <QueueLoadingScreen {...this.props} urlToLoad={`${props.location.pathname}/tasks`}>
+    <SearchBar feedbackUrl={this.props.feedbackUrl} />
+    <OrganizationQueue {...this.props} />
+  </QueueLoadingScreen>
 
   queueName = () => this.props.userRole === USER_ROLES.ATTORNEY ? 'Your Queue' : 'Review Cases';
 
@@ -185,6 +199,11 @@ class QueueApp extends React.PureComponent {
             path="/queue/appeals/:appealId/evaluate"
             title="Evaluate Decision | Caseflow"
             render={this.routedEvaluateDecision} />
+          <PageRoute
+            exact
+            path="/organizations/:organization"
+            title="Organization Queue | Caseflow"
+            render={this.routedOrganization} />
         </div>
       </AppFrame>
       <Footer
@@ -207,15 +226,13 @@ QueueApp.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  ..._.pick(state.caseSelect, 'caseSelectCriteria.searchQuery'),
-  ..._.pick(state.queue.loadedQueue, 'appeals'),
-  reviewActionType: state.queue.stagedChanges.taskDecision.type,
-  searchedAppeals: state.caseList.receivedAppeals
+  reviewActionType: state.queue.stagedChanges.taskDecision.type
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setFeatureToggles,
-  setUserRole
+  setUserRole,
+  setUserCssId
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueApp);

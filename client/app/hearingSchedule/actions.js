@@ -14,6 +14,14 @@ export const onReceiveSchedulePeriod = (schedulePeriod) => ({
   }
 });
 
+export const onSchedulePeriodError = () => ({
+  type: ACTIONS.SCHEDULE_PERIOD_ERROR
+});
+
+export const removeSchedulePeriodError = () => ({
+  type: ACTIONS.REMOVE_SCHEDULE_PERIOD_ERROR
+});
+
 export const onFileTypeChange = (fileType) => ({
   type: ACTIONS.FILE_TYPE_CHANGE,
   payload: {
@@ -61,6 +69,31 @@ export const onJudgeEndDateChange = (endDate) => ({
   payload: {
     endDate
   }
+});
+
+export const updateUploadFormErrors = (errors) => ({
+  type: ACTIONS.UPDATE_UPLOAD_FORM_ERRORS,
+  payload: {
+    errors
+  }
+});
+
+export const updateRoCoUploadFormErrors = (errors) => ({
+  type: ACTIONS.UPDATE_RO_CO_UPLOAD_FORM_ERRORS,
+  payload: {
+    errors
+  }
+});
+
+export const updateJudgeUploadFormErrors = (errors) => ({
+  type: ACTIONS.UPDATE_JUDGE_UPLOAD_FORM_ERRORS,
+  payload: {
+    errors
+  }
+});
+
+export const unsetUploadErrors = () => ({
+  type: ACTIONS.UNSET_UPLOAD_ERRORS
 });
 
 export const onViewStartDateChange = (viewStartDate) => ({

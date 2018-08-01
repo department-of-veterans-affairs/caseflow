@@ -10,14 +10,18 @@ import {
   onReceiveSchedulePeriod,
   onClickConfirmAssignments,
   onClickCloseModal,
-  onConfirmAssignmentsUpload
+  onSchedulePeriodError,
+  removeSchedulePeriodError
 } from '../actions';
 
 export class ReviewAssignmentsContainer extends React.Component {
 
+  componentWillUnmount = () => {
+    this.props.removeSchedulePeriodError();
+  };
+
   onConfirmAssignmentsUpload = () => {
     this.props.onClickCloseModal();
-    this.props.onConfirmAssignmentsUpload();
     this.props.history.push('/schedule/build');
   };
 
@@ -27,6 +31,8 @@ export class ReviewAssignmentsContainer extends React.Component {
       const schedulePeriod = resp.schedulePeriod;
 
       this.props.onReceiveSchedulePeriod(schedulePeriod);
+    }, () => {
+      this.props.onSchedulePeriodError();
     });
   };
 
@@ -46,6 +52,7 @@ export class ReviewAssignmentsContainer extends React.Component {
       }}>
       <ReviewAssignments
         schedulePeriod={this.props.schedulePeriod}
+        schedulePeriodError={this.props.schedulePeriodError}
         onClickConfirmAssignments={this.props.onClickConfirmAssignments}
         onClickCloseModal={this.props.onClickCloseModal}
         displayConfirmationModal={this.props.displayConfirmationModal}
@@ -59,6 +66,7 @@ export class ReviewAssignmentsContainer extends React.Component {
 
 const mapStateToProps = (state) => ({
   schedulePeriod: state.schedulePeriod,
+  schedulePeriodError: state.schedulePeriodError,
   displayConfirmationModal: state.displayConfirmationModal
 });
 
@@ -66,7 +74,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveSchedulePeriod,
   onClickConfirmAssignments,
   onClickCloseModal,
-  onConfirmAssignmentsUpload
+  onSchedulePeriodError,
+  removeSchedulePeriodError
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ReviewAssignmentsContainer));

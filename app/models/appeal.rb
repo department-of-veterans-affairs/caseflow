@@ -24,9 +24,19 @@ class Appeal < AmaReview
     end
   end
 
+  def type
+    [advanced_on_docket? ? "AOD" : nil].compact.join(" ,")
+  end
+
+  def docket_name
+    docket_type
+  end
+
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
+
+  delegate :name, to: :veteran, prefix: true, allow_nil: true
 
   def create_issues!(request_issues_data:)
     request_issues.destroy_all unless request_issues.empty?
