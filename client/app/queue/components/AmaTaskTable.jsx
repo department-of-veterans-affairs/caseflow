@@ -35,11 +35,8 @@ class AmaTaskTable extends React.PureComponent<Props> {
     return {
       header: COPY.CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE,
       valueFunction:
-        (task: AmaTask) => {
-          const { first_name: fn, middle_initial: mi, last_name: ln } = task.attributes.veteran_name;
-          return <a href={`/queue/appeals/${task.attributes.appeal_id}`}>
-            {task.attributes.veteran_name} ({task.attributes.veteran_file_number})</a>;
-        }
+        (task: AmaTask) => <a href={`/queue/appeals/${task.attributes.appeal_id}`}>
+          {task.attributes.veteran_name} ({task.attributes.veteran_file_number})</a>
     };
   }
 
