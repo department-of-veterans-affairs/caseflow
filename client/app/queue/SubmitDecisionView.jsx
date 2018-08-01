@@ -46,7 +46,7 @@ import type {
   LegacyAppeal,
   Judges
 } from './types/models';
-import type { UiStateError } from './types/state';
+import type { UiStateMessage } from './types/state';
 
 type Params = {|
   appealId: string,
@@ -61,7 +61,7 @@ type Props = Params & {|
   task: Task,
   highlightFormItems: Boolean,
   userRole: string,
-  error: ?UiStateError,
+  error: ?UiStateMessage,
   // dispatch
   setDecisionOptions: typeof setDecisionOptions,
   resetDecisionOptions: typeof resetDecisionOptions,
@@ -134,7 +134,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
     const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's
     been sent to ${fields.judge} for review.`;
 
-    this.props.requestSave(`/case_reviews/${taskId}/complete`, payload, successMsg).
+    this.props.requestSave(`/case_reviews/${taskId}/complete`, payload, { title: successMsg }).
       then(() => this.props.deleteAppeal(appealId));
   };
 

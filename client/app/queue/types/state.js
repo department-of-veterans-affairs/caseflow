@@ -22,14 +22,14 @@ export type CaseDetailState = {|
   activeTask: ?Task
 |};
 
-export type UiStateError = {title: string, detail: string}
+export type UiStateMessage = { title: string, detail?: string };
 
 export type UiState = {
   selectingJudge: boolean,
   highlightFormItems: boolean,
   messages: {
-    success: ?string,
-    error: ?UiStateError
+    success: ?UiStateMessage,
+    error: ?UiStateMessage
   },
   saveState: {
     savePending: boolean,
@@ -78,7 +78,7 @@ export type State = {
   ui: UiState
 };
 
-type Action = { type: string, payload: Object };
+type Action = { type: string, payload?: Object };
 
 /* eslint-disable no-use-before-define */
 
