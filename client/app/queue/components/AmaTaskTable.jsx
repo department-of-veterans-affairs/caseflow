@@ -46,10 +46,16 @@ class AmaTaskTable extends React.PureComponent<Props> {
     valueFunction: (task: AmaTask) => CO_LOCATED_ADMIN_ACTIONS[task.attributes.title]
   })
 
+  caseDocketNumberColumn = () => ({
+    header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
+    valueFunction: (task) => task.attributes.docket_number
+  })
+
   getQueueColumns = () : Array<{ header: string, span?: Function, valueFunction: Function, getSortValue?: Function }> =>
     _.compact([
       this.caseDetailsColumn(),
-      this.caseTaskColumn()
+      this.caseTaskColumn(),
+      this.caseDocketNumberColumn()
     ]);
 
   render = () => {
