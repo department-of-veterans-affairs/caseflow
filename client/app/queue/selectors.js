@@ -6,6 +6,7 @@ import type { State } from './types/state';
 import type {
   Task,
   Tasks,
+  AmaTasks,
   LegacyAppeal,
   LegacyAppeals,
   User
@@ -17,6 +18,7 @@ export const selectedTasksSelector = (state: State, userId: string) => _.flatMap
 );
 
 const getTasks = (state: State) => state.queue.tasks;
+const getAmaTasks = (state: State) => state.queue.amaTasks;
 const getAppeals = (state: State) => state.queue.appeals;
 const getUserCssId = (state: State) => state.ui.userCssId;
 
@@ -29,28 +31,25 @@ export const tasksByAssigneeCssIdSelector = createSelector(
 );
 
 export const appealsWithTasksSelector = createSelector(
-  [getTasks, getAppeals],
-  (tasks: Tasks, appeals: LegacyAppeals) => {
-    const taskMap = _.reduce(tasks, (map, task) => {
-      const taskList = map[task.attributes.appeal_id] ? [...map[task.attributes.appeal_id], task] : [task];
+  [getTasks, getAmaTasks, getAppeals],
+  (tasks: Tasks, amaTasks: AmaTasks, appeals: LegacyAppeals) => {
+    const taskMap = _.groupBy(tasks, (task) => task.attributes.appeal_id);
+    const amaTaskMap = _.groupBy(amaTasks, (task) => task.attributes.appeal_id);
 
-      return { ...map,
-        [task.attributes.appeal_id]: taskList };
-    }, {});
-
-    return _.map(appeals, (appeal) => {
-      appeal.tasks = taskMap[appeal.id];
-
-      return appeal;
-    });
+    return _.map(appeals, (appeal) => ({
+      ...appeal,
+      tasks: taskMap[appeal.id],
+      amaTasks: amaTaskMap[appeal.id]
+    }));
   }
 );
 
 export const appealsByAssigneeCssIdSelector = createSelector(
   [appealsWithTasksSelector, getUserCssId],
   (appeals: LegacyAppeals, cssId: string) =>
-    _.filter(appeals, (appeal: LegacyAppeal) =>
-      _.some(appeal.tasks, (task) => task.attributes.user_id === cssId))
+    { debugger; return _.filter(appeals, (appeal: LegacyAppeal) =>
+      _.some(appeal.tasks, (task) => task.attributes.user_id === cssId) ||
+        _.some(appeal.amaTasks, (task) => task.attributes.assigned_to.css_id === cssId)); }
 );
 
 export const judgeReviewAppealsSelector = createSelector(

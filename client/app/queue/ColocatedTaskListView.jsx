@@ -107,13 +107,11 @@ const mapStateToProps = (state: State) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  ...bindActionCreators({
+const mapDispatchToProps = (dispatch) => bindActionCreators({
     clearCaseSelectSearch,
     resetErrorMessages,
     resetSuccessMessages,
     resetSaveState
-  }, dispatch)
-});
+  }, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(ColocatedTaskListView): React.ComponentType<Params>);
