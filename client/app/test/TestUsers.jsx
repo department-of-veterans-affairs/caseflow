@@ -11,6 +11,7 @@ import NavigationBar from '../components/NavigationBar';
 import AppFrame from '../components/AppFrame';
 import { BrowserRouter } from 'react-router-dom';
 import Alert from '../components/Alert';
+import _ from 'lodash';
 
 export default class TestUsers extends React.PureComponent {
   constructor(props) {
@@ -43,10 +44,10 @@ export default class TestUsers extends React.PureComponent {
   userIdOnChange = (value) => this.setState({ userId: value });
   stationIdOnChange = (value) => this.setState({ stationId: value });
   featureToggleOnChange = (value, deletedValue) => {
-    ApiUtil.post(`/test/toggle_feature`, { data: {
-        enable: value,
-        disable: deletedValue
-      }
+    ApiUtil.post('/test/toggle_feature', { data: {
+      enable: value,
+      disable: deletedValue
+    }
     }).then(() => {
       window.location.reload();
     });
@@ -192,7 +193,7 @@ export default class TestUsers extends React.PureComponent {
                   value={featureOptions}
                   selfManageValueState
                   onChange={this.featureToggleOnChange}
-                  creatableOptions={{promptTextCreator: (tagName)=>`Enable feature toggle "${_.trim(tagName)}"`}}
+                  creatableOptions={{ promptTextCreator: (tagName) => `Enable feature toggle "${_.trim(tagName)}"` }}
                 />
               </div> }
             { this.props.isGlobalAdmin &&
