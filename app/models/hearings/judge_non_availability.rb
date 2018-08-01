@@ -5,9 +5,10 @@ class JudgeNonAvailability < NonAvailability
       judge_non_availability = []
       transaction do
         dates.each do |date|
+          css_id = UserRepository.css_id_by_vlj_id(date["vlj_id"])
           judge_non_availability << JudgeNonAvailability.create!(schedule_period: schedule_period,
                                                                  date: date["date"],
-                                                                 object_identifier: date["css_id"])
+                                                                 object_identifier: css_id)
         end
       end
       judge_non_availability

@@ -1,9 +1,4 @@
 FactoryBot.define do
-  before(:create) do
-    S3Service.store_file("validJudgeSpreadsheet.xlsx", "spec/support/validJudgeSpreadsheet.xlsx", :filepath)
-    S3Service.store_file("blankJudgeSpreadsheet.xlsx", "spec/support/blankJudgeSpreadsheet.xlsx", :filepath)
-  end
-
   factory :judge_schedule_period do
     start_date { Date.parse("2018-04-01") }
     end_date { Date.parse("2018-09-30") }
@@ -15,6 +10,12 @@ FactoryBot.define do
       end_date { Date.parse("2018-06-01") }
       file_name { "blankJudgeSpreadsheet.xlsx" }
       user { create(:user) }
+    end
+
+    before(:create) do
+      S3Service.store_file("validJudgeSpreadsheet.xlsx", "spec/support/validJudgeSpreadsheet.xlsx", :filepath)
+      S3Service.store_file("blankJudgeSpreadsheet.xlsx", "spec/support/blankJudgeSpreadsheet.xlsx", :filepath)
+      create(:staff, sattyid: '860', snamef: 'Stuart', snamel: 'Huels')
     end
 
     after(:create) do |schedule_period|

@@ -1,6 +1,6 @@
 class HearingSchedule::ValidateJudgeSpreadsheet
   SPREADSHEET_TITLE = "Judge Non-Availability Dates".freeze
-  SPREADSHEET_EXAMPLE_ROW = [nil, "Jones, Bernard", "BVAJONESB", Date.parse("02/04/2019")].freeze
+  SPREADSHEET_EXAMPLE_ROW = [nil, "Jones, Bernard", "123", Date.parse("02/04/2019")].freeze
   SPREADSHEET_EMPTY_COLUMN = [nil].freeze
 
   class JudgeDatesNotCorrectFormat < StandardError; end
@@ -26,9 +26,8 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     end
   end
 
-  def find_user(css_id, name)
-    User.where(css_id: css_id,
-               full_name: name.split(", ").reverse.join(" ")).count > 0
+  def find_user(vlj_id, name)
+    UserRepository.find_user_by_fn_ln_vlj_id(name.split(", ")[1], name.split(", ")[0], vlj_id).count > 0
   end
 
   def check_range_of_dates(date)
@@ -45,7 +44,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     unless @spreadsheet_data.all? { |row| check_range_of_dates(row["date"]) }
       @errors << JudgeDatesNotInRange
     end
-    unless @spreadsheet_data.all? { |row| find_user(row["css_id"], row["name"]) }
+    unless @spreadsheet_data.all? { |row| find_user(row["vlj_id"], row["name"]) }
       @errors << JudgeNotInDatabase
     end
   end

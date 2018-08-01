@@ -24,10 +24,10 @@ class HearingSchedule::GetSpreadsheetData
   def judge_non_availability_data
     non_availability_dates = []
     names = judge_non_availability_sheet.column(2).drop(JUDGE_NON_AVAILABILITY_HEADER_COLUMNS)
-    css_ids = judge_non_availability_sheet.column(3).drop(JUDGE_NON_AVAILABILITY_HEADER_COLUMNS)
+    vlj_ids = judge_non_availability_sheet.column(3).drop(JUDGE_NON_AVAILABILITY_HEADER_COLUMNS)
     dates = judge_non_availability_sheet.column(4).drop(JUDGE_NON_AVAILABILITY_HEADER_COLUMNS)
-    names.zip(css_ids, dates).each do |row|
-      non_availability_dates.push("name" => row[0], "css_id" => row[1], "date" => row[2])
+    names.zip(vlj_ids, dates).each do |row|
+      non_availability_dates.push("name" => row[0], "vlj_id" => row[1], "date" => row[2])
     end
     non_availability_dates
   end

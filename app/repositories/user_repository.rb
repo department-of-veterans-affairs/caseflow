@@ -32,6 +32,16 @@ class UserRepository
       true
     end
 
+    def css_id_by_vlj_id(vlj_id)
+      VACOLS::Staff.find_by(sattyid: vlj_id).sdomainid
+    end
+
+    def find_user_by_fn_ln_vlj_id(first_name, last_name, vlj_id)
+      VACOLS::Staff.where(sattyid: vlj_id,
+                          snamef: first_name,
+                          snamel: last_name)
+    end
+
     # :nocov:
     def css_id_by_full_name(full_name)
       name = full_name.split(" ")

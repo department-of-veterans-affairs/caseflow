@@ -1,5 +1,5 @@
 describe HearingSchedule::ValidateJudgeSpreadsheet do
-  let(:user) { create(:default_user) }
+  let(:user) { create(:staff, sattyid: '860', snamef: 'Stuart', snamel: 'Huels') }
 
   before do
     user.save!
