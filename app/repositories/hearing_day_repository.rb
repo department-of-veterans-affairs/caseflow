@@ -21,7 +21,8 @@ class HearingDayRepository
 
     def update_schedule(updated_hearings)
       updated_hearings.each do |hearing|
-        hearing_to_update = VACOLS::CaseHearing.find(hearing.hearing_pkseq)
+        hearing_to_update = VACOLS::CaseHearing.find(hearing[:hearing_pkseq])
+        hearing.delete(:hearing_pkseq)
         update_vacols_hearing!(hearing_to_update, hearing)
       end
     end

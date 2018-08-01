@@ -58,8 +58,8 @@ class AttorneyTaskListView extends React.PureComponent {
         {messages.error && <Alert type="error" title={messages.error.title}>
           {messages.error.detail}
         </Alert>}
-        {messages.success && <Alert type="success" title={messages.success}>
-          {COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
+        {messages.success && <Alert type="success" title={messages.success.title}>
+          {messages.success.detail || COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
         </Alert>}
         <TaskTable
           includeDetailsLink
@@ -90,8 +90,7 @@ const mapStateToProps = (state) => {
     queue: {
       stagedChanges: {
         taskDecision
-      },
-      judges
+      }
     },
     ui: {
       messages
@@ -102,8 +101,7 @@ const mapStateToProps = (state) => {
     appeals: appealsByAssigneeCssIdSelector(state),
     tasks: tasksByAssigneeCssIdSelector(state),
     messages,
-    taskDecision,
-    judges
+    taskDecision
   });
 };
 

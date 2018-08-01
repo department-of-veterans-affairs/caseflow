@@ -10,13 +10,21 @@ import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import Table from '../../components/Table';
 import StatusMessage from '../../components/StatusMessage';
-import { formatDate } from '../../util/DateUtil';
+import { formatDateStr } from '../../util/DateUtil';
 import { SPREADSHEET_TYPES } from '../constants';
 
 const tableStyling = css({
   '& > thead > tr > th': { backgroundColor: '#f1f1f1' },
   border: '1px solid #dadbdc'
 });
+
+/* eslint-disable id-length */
+const HEARING_TYPE_LABELS = {
+  V: 'Video',
+  C: 'Central',
+  T: 'Travel'
+};
+/* eslint-enable id-length */
 
 export default class ReviewAssignments extends React.Component {
 
@@ -131,11 +139,11 @@ export default class ReviewAssignments extends React.Component {
     }
 
     const hearingAssignmentRows = _.map(this.props.schedulePeriod.hearingDays, (hearingDay) => ({
-      date: formatDate(hearingDay.hearingDate),
-      type: hearingDay.hearingType,
+      date: formatDateStr(hearingDay.hearingDate),
+      type: HEARING_TYPE_LABELS[hearingDay.hearingType],
       regionalOffice: hearingDay.regionalOffice,
-      room: hearingDay.room,
-      judge: hearingDay.judge
+      room: hearingDay.roomInfo,
+      judge: hearingDay.judgeName
     }));
 
     return <AppSegment filledBackground>
