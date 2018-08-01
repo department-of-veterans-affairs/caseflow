@@ -53,6 +53,38 @@ export const formatRelationships = (relationships) => {
   });
 };
 
+export const validateDate = (date) => {
+  const datePattern = /^(0[1-9]|1[0-2])[/](0[1-9]|[12][0-9]|3[01])[/](19|20)\d\d$/;
+  if (datePattern.test(date)) {
+    return date;
+  }
+
+  return null;
+};
+
+export const validNonRatedIssue = (issue) => {
+  const unvalidatedDate = issue.decisionDate;
+  const decisionDate = validateDate(unvalidatedDate);
+  if (!issue.description) {
+    return false;
+  }
+  // If there isn't any nonRated category, return 0
+  if (!issue.category) {
+    return false;
+  }
+  // If category is unknown issue category, no decision date is necessary.
+  if (issue.category === 'Unknown issue category') {
+    return true;
+  }
+  // If category isn't unknown or there's no valid decisionDate, return 0
+  if (!decisionDate) {
+    return false;
+  }
+
+   // If we've gotten to here, that means we've got all necessary parts for a nonRatedIssue to count
+  return true;
+};
+
 export const formatIssues = (intakeState) => {
   const ratingData = {
     request_issues:
@@ -70,7 +102,7 @@ export const formatIssues = (intakeState) => {
     request_issues:
       _(intakeState.nonRatedIssues).
         filter((issue) => {
-          return issue.category && issue.description;
+          return validNonRatedIssue(issue);
         }).
         map((issue) => {
           return {
@@ -90,22 +122,8 @@ export const formatIssues = (intakeState) => {
 
 export const allIssueCounter = (state, action) => {
   const selectedIssues = formatIssues(state).request_issues;
-  const selectedIssueCount = selectedIssues ? selectedIssues.length : 0;
-  const currentIssue = state.nonRatedIssues[action.payload.issueId];
-  const descriptionCounter = !currentIssue.description && currentIssue.category ? 1 : 0;
-  const categoryCounter = !currentIssue.category && currentIssue.description ? 1 : 0;
 
-  if (selectedIssueCount && !action.payload.category && !action.payload.description) {
-    return selectedIssueCount - 1;
-  }
-
-  if (action.payload.description) {
-    return selectedIssueCount + descriptionCounter;
-  }
-
-  if (action.payload.category) {
-    return selectedIssueCount + categoryCounter;
-  }
+  return selectedIssues ? selectedIssues.length : 0;
 };
 
 export const prepareReviewData = (intakeData, intakeType) => {
