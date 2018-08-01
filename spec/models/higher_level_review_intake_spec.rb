@@ -126,6 +126,7 @@ describe HigherLevelReviewIntake do
     before do
       allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
       allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+      allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
     end
 
     let(:params) do
@@ -150,14 +151,16 @@ describe HigherLevelReviewIntake do
       expect(intake.detail.established_at).to eq(Time.zone.now)
       expect(resultant_end_product_establishment).to_not be_nil
       expect(resultant_end_product_establishment.established_at).to eq(Time.zone.now)
-      expect(intake.detail.request_issues.count).to eq 2
 
-      expect(intake.detail.request_issues.first).to have_attributes(
+      request_issues = intake.detail.request_issues
+      expect(request_issues.count).to eq 2
+
+      expect(request_issues.first).to have_attributes(
         rating_issue_reference_id: "reference-id",
         rating_issue_profile_date: Date.new(2018, 4, 30),
         description: "decision text"
       )
-      expect(intake.detail.request_issues.second).to have_attributes(
+      expect(request_issues.second).to have_attributes(
         description: "non-rated issue text",
         issue_category: "surgery",
         decision_date: 4.days.ago.to_date
@@ -167,6 +170,10 @@ describe HigherLevelReviewIntake do
         claim_id: resultant_end_product_establishment.reference_id,
         contention_descriptions: ["non-rated issue text", "decision text"],
         special_issues: []
+      )
+      expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+        claim_id: resultant_end_product_establishment.reference_id,
+        rated_issue_contention_map: { "reference-id" => request_issues.first.contention_reference_id }
       )
     end
 
