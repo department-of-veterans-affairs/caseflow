@@ -12,7 +12,7 @@ class JudgeCaseReview < ApplicationRecord
   enum location: {
     omo_office: "omo_office",
     bva_dispatch: "bva_dispatch",
-    case_review: "case_review"
+    quality_review: "quality_review"
   }
 
   def sign_decision_or_create_omo!
@@ -39,7 +39,7 @@ class JudgeCaseReview < ApplicationRecord
   def change_location
     # We are using 25 sided die to randomly select a case for quality review
     # https://github.com/department-of-veterans-affairs/caseflow/issues/6407
-    update(location: "case_review") #if rand() < 0.04
+    update(location: :quality_review) if rand < 0.04
   end
 
   class << self
@@ -48,13 +48,12 @@ class JudgeCaseReview < ApplicationRecord
     def complete(params)
       ActiveRecord::Base.multi_transaction do
         record = create(params)
-        binding.pry
         if record.valid?
           MetricsService.record("VACOLS: judge_case_review #{record.task_id}",
                                 service: :vacols,
                                 name: "judge_case_review_" + record.location) do
             record.sign_decision_or_create_omo!
-            record.update_issue_dispositions! if record.bva_dispatch?
+            record.update_issue_dispositions! if record.bva_dispatch? || record.quality_review?
           end
         end
         record
