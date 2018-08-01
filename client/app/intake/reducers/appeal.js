@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, getPageError, formatRatings, formatRelationships, nonRatedIssueCounter } from '../util';
+import { getReceiptDateError, getPageError, formatRatings, formatRelationships, allIssueCounter } from '../util';
 import _ from 'lodash';
 
 const getDocketTypeError = (responseErrorCodes) => (
@@ -213,39 +213,48 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       }
     });
   case ACTIONS.SET_ISSUE_CATEGORY:
-    return update(state, {
+    var updatedState = update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           category: {
             $set: action.payload.category
           }
         }
-      },
+      }
+    })
+    return update(updatedState, {
       issueCount: {
-        $set: nonRatedIssueCounter(state, action)
+        $set: allIssueCounter(updatedState, action)
       }
     });
   case ACTIONS.SET_ISSUE_DESCRIPTION:
-    return update(state, {
+    var updatedState = update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           description: {
             $set: action.payload.description
           }
         }
-      },
+      }
+    });
+    return update(updatedState, {
       issueCount: {
-        $set: nonRatedIssueCounter(state, action)
+        $set: allIssueCounter(updatedState, action)
       }
     });
   case ACTIONS.SET_ISSUE_DECISION_DATE:
-    return update(state, {
+    var updatedState = update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           decisionDate: {
             $set: action.payload.decisionDate
           }
         }
+      }
+    });
+    return update(updatedState, {
+      issueCount: {
+        $set: allIssueCounter(updatedState, action)
       }
     });
   default:

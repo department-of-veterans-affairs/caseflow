@@ -88,7 +88,7 @@ export const formatIssues = (intakeState) => {
   return data;
 };
 
-export const nonRatedIssueCounter = (state, action) => {
+export const allIssueCounter = (state, action) => {
   const selectedIssues = formatIssues(state).request_issues;
   const selectedIssueCount = selectedIssues ? selectedIssues.length : 0;
   const currentIssue = state.nonRatedIssues[action.payload.issueId];
