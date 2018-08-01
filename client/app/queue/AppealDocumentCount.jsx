@@ -4,8 +4,16 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import ApiUtil from '../util/ApiUtil';
+import _ from 'lodash';
 
 import { setAppealDocCount } from './QueueActions';
+
+import { css } from 'glamor';
+import { COLORS } from '../constants/AppConstants';
+
+const documentCountStyling = css({
+  color: COLORS.GREY
+});
 
 class AppealDocumentCount extends React.PureComponent {
   componentDidMount = () => {
@@ -29,11 +37,24 @@ class AppealDocumentCount extends React.PureComponent {
     }
   }
 
-  render = () => this.props.docCountForAppeal;
+  render = () => {
+    if (_.isNil(this.props.docCountForAppeal)) {
+      if (this.props.loadingText) {
+        return <span {...documentCountStyling}>Loading number of docs...</span>;
+      }
+
+      return null;
+    }
+
+    return <span {...documentCountStyling}>
+      {`${this.props.docCountForAppeal} docs`}
+    </span>;
+  }
 }
 
 AppealDocumentCount.propTypes = {
-  appeal: PropTypes.object.isRequired
+  appeal: PropTypes.object.isRequired,
+  loadingText: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => ({

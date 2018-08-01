@@ -58,8 +58,8 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
         includeType
         includeDocketNumber
         includeIssueCount
-        includeDocumentCount
         includeDaysWaiting
+        includeReaderLink
         appeals={this.props.appeals}
         userId={userId} />
     </React.Fragment>;
