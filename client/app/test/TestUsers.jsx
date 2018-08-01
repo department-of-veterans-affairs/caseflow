@@ -42,6 +42,15 @@ export default class TestUsers extends React.PureComponent {
 
   userIdOnChange = (value) => this.setState({ userId: value });
   stationIdOnChange = (value) => this.setState({ stationId: value });
+  featureToggleOnChange = (value, deletedValue) => {
+    ApiUtil.post(`/test/toggle_feature`, { data: {
+        enable: value,
+        disable: deletedValue
+      }
+    }).then(() => {
+      window.location.reload();
+    });
+  }
 
   handleLogInAsUser = () => {
     this.setState({ isLoggingIn: true });
@@ -79,6 +88,13 @@ export default class TestUsers extends React.PureComponent {
       value: user.id,
       label: `${user.css_id} at ${user.station_id} - ${user.full_name}`
     }));
+
+    const featureOptions = this.props.featuresList.map((feature) => ({
+      value: feature,
+      label: feature,
+      tagId: feature
+    }));
+
     const tabs = this.props.appSelectList.map((app) => {
       let tab = {};
 
@@ -165,6 +181,19 @@ export default class TestUsers extends React.PureComponent {
                 <strong>App Selector:</strong>
                 <TabWindow
                   tabs={tabs} />
+                <strong>Global Feature Toggles Enabled:</strong>
+                <SearchableDropdown
+                  name="feature_toggles"
+                  label="Remove or add new feature toggles"
+                  multi
+                  creatable
+                  options={featureOptions}
+                  placeholder=""
+                  value={featureOptions}
+                  selfManageValueState
+                  onChange={this.featureToggleOnChange}
+                  creatableOptions={{promptTextCreator: (tagName)=>`Enable feature toggle "${_.trim(tagName)}"`}}
+                />
               </div> }
             { this.props.isGlobalAdmin &&
             <div>
@@ -197,6 +226,7 @@ TestUsers.propTypes = {
   currentUser: PropTypes.object.isRequired,
   isGlobalAdmin: PropTypes.bool,
   testUsersList: PropTypes.array.isRequired,
+  featuresList: PropTypes.array.isRequired,
   appSelectList: PropTypes.array.isRequired,
   epTypes: PropTypes.array.isRequired
 };
