@@ -7,7 +7,7 @@ class JudgeCaseReview < ApplicationRecord
   validates :task_id, :location, presence: true
   validates :complexity, :quality, presence: true, if: :bva_dispatch?
 
-  after_create :change_location
+  after_create :select_case_for_quality_review
 
   enum location: {
     omo_office: "omo_office",
@@ -36,7 +36,7 @@ class JudgeCaseReview < ApplicationRecord
     judge.vacols_uniq_id
   end
 
-  def change_location
+  def select_case_for_quality_review
     # We are using 25 sided die to randomly select a case for quality review
     # https://github.com/department-of-veterans-affairs/caseflow/issues/6407
     update(location: :quality_review) if rand < 0.04
