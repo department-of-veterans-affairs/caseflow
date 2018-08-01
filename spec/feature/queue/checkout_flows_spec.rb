@@ -364,7 +364,10 @@ RSpec.feature "Checkout flows" do
           :assigned,
           user: judge_user,
           assigner: attorney_user,
-          case_issues: [FactoryBot.create(:case_issue, :disposition_allowed)],
+          case_issues: [
+            FactoryBot.create(:case_issue, :disposition_allowed),
+            FactoryBot.create(:case_issue, :disposition_granted_by_aoj)
+          ],
           work_product: work_product
         )
       )
@@ -392,6 +395,10 @@ RSpec.feature "Checkout flows" do
           expect(visible_options.length).to eq 1
           expect(visible_options.first.text).to eq COPY::JUDGE_CHECKOUT_DISPATCH_LABEL
         end
+
+        # one issue is decided, excluded from checkout flow
+        expect(appeal.issues.length).to eq 2
+        expect(page.find_all(".issue-disposition-dropdown").length).to eq 1
 
         click_on "Continue"
         expect(page).to have_content("Evaluate Decision")

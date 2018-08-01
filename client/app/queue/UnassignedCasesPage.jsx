@@ -15,7 +15,7 @@ import {
 import { judgeAssignAppealsSelector, selectedTasksSelector } from './selectors';
 import type { Task, LegacyAppeals } from './types/models';
 import Alert from '../components/Alert';
-import type { UiStateError } from './types/state';
+import type { UiStateMessage } from './types/state';
 
 type Params = {|
   userId: string,
@@ -25,8 +25,8 @@ type Props = Params & {|
   // Props
   featureToggles: Object,
   selectedTasks: Array<Task>,
-  error: ?UiStateError,
-  success: string,
+  error: ?UiStateMessage,
+  success: ?UiStateMessage,
   appeals: LegacyAppeals,
   // Action creators
   initialAssignTasksToUser: typeof initialAssignTasksToUser,
@@ -46,7 +46,7 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
     return <React.Fragment>
       <h2>{JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE}</h2>
       {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}
-      {success && <Alert type="success" title={success} scrollOnAlert={false} />}
+      {success && <Alert type="success" title={success.title} message={success.detail} scrollOnAlert={false} />}
       {featureToggles.judge_assignment_to_attorney &&
         <AssignWidget
           previousAssigneeId={userId}
@@ -58,8 +58,8 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
         includeType
         includeDocketNumber
         includeIssueCount
-        includeDocumentCount
         includeDaysWaiting
+        includeReaderLink
         appeals={this.props.appeals}
         userId={userId} />
     </React.Fragment>;

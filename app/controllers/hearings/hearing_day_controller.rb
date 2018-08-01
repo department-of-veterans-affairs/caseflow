@@ -16,7 +16,9 @@ class Hearings::HearingDayController < HearingScheduleController
       format.json do
         render json: {
           hearings: json_hearings(video_and_co),
-          tbhearings: json_tb_hearings(travel_board)
+          tbhearings: json_tb_hearings(travel_board),
+          startDate: start_date,
+          endDate: end_date
         }
       end
     end
