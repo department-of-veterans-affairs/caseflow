@@ -76,20 +76,21 @@ class QueueRepository
     end
 
     def sign_decision_or_create_omo!(vacols_id:, created_in_vacols_date:, location:, decass_attrs:)
-      transaction do
-        decass_record = find_decass_record(vacols_id, created_in_vacols_date)
-        case location
-        when :bva_dispatch
-          unless decass_record.draft_decision?
-            msg = "The work product is not decision"
-            fail Caseflow::Error::QueueRepositoryError, msg
-          end
-          update_decass_record(decass_record, decass_attrs)
-        when :omo_office
-          fail Caseflow::Error::QueueRepositoryError, "The work product is not OMO" unless decass_record.omo_request?
+      decass_record = find_decass_record(vacols_id, created_in_vacols_date)
+      case location
+      when :bva_dispatch || :quality_review
+        unless decass_record.draft_decision?
+          msg = "The work product is not decision"
+          fail Caseflow::Error::QueueRepositoryError, msg
         end
-        decass_record.update_vacols_location!(LegacyAppeal::LOCATION_CODES[location])
+        update_decass_record(decass_record, decass_attrs)
+        assign_case_for_quality_review(vacols_id) if location == :quality_review
+      when :omo_office
+        fail Caseflow::Error::QueueRepositoryError, "The work product is not OMO" unless decass_record.omo_request?
+      else
+        fail Caseflow::Error::QueueRepositoryError, "Invalid location"
       end
+      decass_record.update_vacols_location!(LegacyAppeal::LOCATION_CODES[location])
     end
 
     def tasks_query(css_id)
@@ -141,6 +142,17 @@ class QueueRepository
                              deadline_date: VacolsHelper.local_date_with_utc_timezone + 30.days,
                              modifying_user: judge.vacols_uniq_id)
       end
+    end
+
+    def assign_case_for_quality_review(vacols_id)
+      vacols_case = VACOLS::Case.find(vacols_id)
+      VACOLS::DecisionQualityReview.create(
+        qryymm: Time.zone.now.strftime("%y") + Time.zone.now.strftime("%m"),
+        qrsmem: vacols_case.bfmemid,
+        qrfolder: vacols_case.bfkey,
+        qrseldate: VacolsHelper.local_date_with_utc_timezone
+        qrteam: vacols_case.bfboard
+      )
     end
 
     def filter_duplicate_tasks(records)
