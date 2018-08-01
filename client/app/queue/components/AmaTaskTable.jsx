@@ -51,11 +51,20 @@ class AmaTaskTable extends React.PureComponent<Props> {
     valueFunction: (task) => task.attributes.docket_number
   })
 
+  caseDaysWaitingColumn = () => ({
+    header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
+    valueFunction: (task) => {
+      return moment().startOf('day').
+        diff(moment(task.attributes.assigned_at), 'days');
+    }
+  })
+
   getQueueColumns = () : Array<{ header: string, span?: Function, valueFunction: Function, getSortValue?: Function }> =>
     _.compact([
       this.caseDetailsColumn(),
       this.caseTaskColumn(),
-      this.caseDocketNumberColumn()
+      this.caseDocketNumberColumn(),
+      this.caseDaysWaitingColumn()
     ]);
 
   render = () => {
