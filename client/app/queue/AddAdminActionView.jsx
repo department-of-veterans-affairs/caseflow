@@ -25,7 +25,7 @@ import type { LegacyAppeal } from './types/models';
 import type { UiStateMessage } from './types/state';
 import type { ComponentToWrapStructure } from './components/DecisionViewBase';
 
-type State = {|
+type ComponentState = {|
   title: ?string,
   instructions: string
 |};
@@ -44,7 +44,7 @@ type Props = Params & {|
   deleteAppeal: typeof deleteAppeal
 |};
 
-class AddAdminActionView extends React.PureComponent<Props, State> implements ComponentToWrapStructure {
+class AddAdminActionView extends React.PureComponent<Props, ComponentState> implements ComponentToWrapStructure {
   constructor(props) {
     super(props);
 
