@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -40,7 +41,17 @@ import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
 const appStyling = css({ paddingTop: '3rem' });
 
-class QueueApp extends React.PureComponent {
+type Props = {|
+  userDisplayName: string,
+  feedbackUrl: string,
+  userId: number,
+  userRole: string,
+  userCssId: string,
+  dropdownUrls: Array<>,
+  buildDate?: string
+|};
+
+class QueueApp extends React.PureComponent<Props> {
   componentDidMount = () => {
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
