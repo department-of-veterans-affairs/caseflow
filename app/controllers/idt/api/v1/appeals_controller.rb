@@ -9,7 +9,8 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   end
 
   def details
-    # TODO: implement
+    # TODO: add AMA appeals
+    render json: json_appeal_details(LegacyAppeal.find_or_create_by_vacols_id(params[:id]))
   end
 
   def appeals_assigned_to_user
@@ -27,5 +28,10 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
       appeals,
       each_serializer: ::Idt::V1::AppealSerializer
     ).as_json
+  end
+
+  def json_appeal_details(appeal)
+    
+    
   end
 end
