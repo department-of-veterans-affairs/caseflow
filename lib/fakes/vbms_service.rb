@@ -158,6 +158,6 @@ class Fakes::VBMSService
     Rails.logger.info("Claim id:\n #{claim_id}")
     Rails.logger.info("Rated issue contention map: #{rated_issue_contention_map.inspect}")
 
-    return true
+    true
   end
 end

@@ -10,9 +10,4 @@ class RequestIssue < ApplicationRecord
       issue_category: data[:issue_category]
     )
   end
-
-  # def contention=(contention)
-  #   self.contention_reference_id = contention.id
-  #   self.description = contention.text
-  # end
 end

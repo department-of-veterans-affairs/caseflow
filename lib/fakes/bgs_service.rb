@@ -311,7 +311,7 @@ class Fakes::BGSService
   end
 
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
-    ratings = (self.class.rating_records || {})[participant_id]
+    Ratings.where(participant_id: participant_id)
 
     # Simulate the error bgs throws if participant doesn't exist or doesn't have any ratings
     unless ratings

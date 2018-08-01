@@ -245,4 +245,67 @@ describe HigherLevelReview do
       end
     end
   end
+
+  context "#create_associated_rated_issues_in_vbms!" do
+    subject { higher_level_review.create_associated_rated_issues_in_vbms! }
+
+    before do
+      higher_level_review.save!
+      allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+    end
+
+    context "when there are no rating issues with contentions" do
+      it "does not call VBMS" do
+        expect(subject).to be nil
+      end
+    end
+
+    context "when there are rating issues with contentions" do
+      RequestIssues.create(
+        review_request: higher_level_review,
+        rating_issue_reference_id: "rating_issue_id1",
+        rating_issue_profile_date: 10.days.ago,
+        contention_reference_id: "contention_id1"
+      )
+
+      RequestIssues.create(
+        review_request: higher_level_review,
+        rating_issue_reference_id: "rating_issue_id2",
+        rating_issue_profile_date: 10.days.ago,
+        contention_reference_id: "contention_id2"
+      )
+
+      subject
+
+      expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+        claim_id:
+      )
+
+    end
+
+    it "creates end product" do
+      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+
+      subject
+
+      expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+        claim_hash: {
+          benefit_type_code: "1",
+          payee_code: "00",
+          predischarge: false,
+          claim_type: "Claim",
+          station_of_jurisdiction: "397",
+          date: receipt_date.to_date,
+          end_product_modifier: "030",
+          end_product_label: "Higher-Level Review Rating",
+          end_product_code: "030HLRR",
+          gulf_war_registry: false,
+          suppress_acknowledgement_letter: false
+        },
+        veteran_hash: veteran.to_vbms_hash
+      )
+
+      expect(EndProductEstablishment.find_by(source: higher_level_review.reload).reference_id).to eq("454545")
+    end
+  end
 end
