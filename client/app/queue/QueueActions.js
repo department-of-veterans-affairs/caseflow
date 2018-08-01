@@ -23,6 +23,24 @@ export const onReceiveQueue = (
   }
 });
 
+export const onReceiveAppealDetails = (
+  { appeals }: { appeals: LegacyAppeals }
+) => ({
+  type: ACTIONS.RECEIVE_APPEAL_DETAILS,
+  payload: {
+    appeals
+  }
+});
+
+export const onReceiveTasks = (
+  { tasks }: { tasks: Tasks }
+) => ({
+  type: ACTIONS.RECEIVE_TASKS,
+  payload: {
+    tasks
+  }
+});
+
 export const fetchJudges = () => (dispatch: Dispatch) => {
   ApiUtil.get('/users?role=Judge').then((response) => {
     const resp = JSON.parse(response.text);

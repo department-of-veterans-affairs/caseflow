@@ -11,7 +11,7 @@ describe('CaseSelect reducer', () => {
     const vacolsId = 1;
     const assignments = [{
       viewed: false,
-      vacols_id: vacolsId
+      external_id: vacolsId
     }];
 
     const state = reduceActions([

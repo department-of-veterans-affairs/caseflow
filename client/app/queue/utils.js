@@ -20,6 +20,34 @@ import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRI
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
+export const prepareTasksForStore =
+  (tasks: Array<Task>):
+    { tasks: Tasks } => {
+      const mappedLegacyTasks = tasks.map((task) => {
+        return {
+          type: task.attributes.type,
+          title: task.attributes.title,
+          appealId: task.attributes.appeal_id,
+          appealType: task.attributes.appeal_type,
+          externalAppealId: task.attributes.external_appeal_id,
+          assignedOn: task.attributes.assigned_on,
+          dueOn: task.attributes.due_on,
+          userId: task.attributes.user_id,
+          assignedToPgId: task.attributes.assigned_to_pg_id,
+          addedByName: task.attributes.added_by_name,
+          addedByCssId: task.attributes.added_by_css_id,
+          taskId: task.attributes.task_id,
+          taskType: task.attributes.task_type,
+          documentId: task.attributes.document_id,
+          assignedByFirstName: task.attributes.assigned_by_first_name,
+          assignedByLastName: task.attributes.assigned_by_last_name,
+          workProduct: task.attributes.work_product
+        };
+      });
+
+      return _.groupBy(mappedLegacyTasks, 'externalAppealId');
+    }
+
 export const associateTasksWithAppeals =
   (serverData: { tasks: { data: Array<Task> } }):
     { appeals: LegacyAppeals, tasks: Tasks } => {
@@ -52,52 +80,18 @@ export const associateTasksWithAppeals =
       return accumulator
     }, {});
 
-    const mappedLegacyTasks = tasks.map((task) => {
-      return {
-        type: task.attributes.type,
-        title: task.attributes.title,
-        appealId: task.attributes.appeal_id,
-        appealType: task.attributes.appeal_type,
-        externalAppealId: task.attributes.external_appeal_id,
-        assignedOn: task.attributes.assigned_on,
-        dueOn: task.attributes.due_on,
-        userId: task.attributes.user_id,
-        assignedToPgId: task.attributes.assigned_to_pg_id,
-        addedByName: task.attributes.added_by_name,
-        addedByCssId: task.attributes.added_by_css_id,
-        taskId: task.attributes.task_id,
-        taskType: task.attributes.task_type,
-        documentId: task.attributes.document_id,
-        assignedByFirstName: task.attributes.assigned_by_first_name,
-        assignedByLastName: task.attributes.assigned_by_last_name,
-        workProduct: task.attributes.work_product
-      };
-    });
-
-    const mappedTasks = tasks.map((task) => {
-      return {
-        type: task.attributes.type,
-        title: task.attributes.title,
-        appealId: task.attributes.appeal_id,
-        appealType: task.attributes.appeal_type,
-        externalAppealId: task.attributes.external_appeal_id,
-        status: task.attributes.status,
-        assignedTo: task.attributes.assigned_to,
-        assignedBy: task.attributes.assigned_by,
-        assignedAt: task.attributes.assigned_at,
-        startedAt: task.attributes.started_at,
-        completedAt: task.attributes.completed_at,
-        placeOnHoldAt: task.attributes.placed_on_hold_at,
-        instructions: task.attributes.instructions,
-      };
-    });
 
     return {
-      tasks: _.groupBy(mappedLegacyTasks, 'externalAppealId'),
-      // tasks: _.groupBy(mappedTasks, 'externalAppealId'),
+      tasks: prepareTasksForStore(tasks),
       appeals: appealHash
     };
   };
+
+export const prepareAppealDetailsForStore =
+  (appeals: Array<LegacyAppeal>):
+    { appeals: LegacyAppeals } => {
+    return _.keyBy(appeals, 'attributes.external_id'); 
+  }
 
 /*
 * Sorting hierarchy:

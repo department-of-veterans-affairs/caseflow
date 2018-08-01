@@ -36,7 +36,6 @@ class CaseDetailsView extends React.PureComponent {
   }
 
   componentDidMount = () => window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
-
   render = () => <AppSegment filledBackground>
     <CaseTitle appeal={this.props.appeal} appealId={this.props.appealId} redirectUrl={window.location.pathname} />
     {this.props.error && <Alert title={this.props.error.title} type="error">
@@ -65,14 +64,13 @@ CaseDetailsView.propTypes = {
   appealId: PropTypes.string.isRequired
 };
 
-const mapStateToProps = (state) => {
-  const { activeAppeal, activeTask } = state.caseDetail;
-  const { appeals, tasks } = state.queue;
+const mapStateToProps = (state, ownProps) => {
+  const { appealDetails, tasks } = state.queue;
   const { success, error } = state.ui.messages;
 
   return {
-    appeal: activeAppeal ? appeals[activeAppeal.attributes.vacols_id] : activeAppeal,
-    task: activeTask ? tasks[activeTask.id] : activeTask,
+    appeal: appealDetails[ownProps.appealId],
+    task: tasks[ownProps.appealId][0],
     success,
     error
   };

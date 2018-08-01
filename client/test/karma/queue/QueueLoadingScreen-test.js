@@ -6,18 +6,18 @@ const serverData = {
     data: [{
       id: '123',
       attributes: {
-        vacols_id: '1',
+        external_id: '1',
         aod: true
       }
     }, {
       id: '234',
       attributes: {
-        vacols_id: '2',
+        external_id: '2',
         type: 'Court Remand'
       }
     }, {
       id: '345',
-      attributes: { vacols_id: '3' }
+      attributes: { external_id: '3' }
     }]
   },
   tasks: {

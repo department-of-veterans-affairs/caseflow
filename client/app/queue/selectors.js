@@ -76,7 +76,7 @@ export const getAssignedAppeals = (state: State, attorneyId: string) => {
   const cssId = attorney ? attorney.css_id : null;
 
   return _.filter(appeals, (appeal: LegacyAppeal) =>
-    _.some(appeal.tasks, (task) => task.attributes.user_id === cssId));
+    _.some(appeal.tasks, (task) => task.userId === cssId));
 };
 
 export const getAppealsByUserId = (state: State) => {
@@ -85,7 +85,7 @@ export const getAppealsByUserId = (state: State) => {
   const attorneysByCssId = _.keyBy(attorneys, 'css_id');
 
   return _.reduce(appeals, (appealsByUserId: Object, appeal: LegacyAppeal) => {
-    const appealCssId = appeal.tasks ? appeal.tasks[0].attributes.user_id : null;
+    const appealCssId = appeal.tasks ? appeal.tasks[0].userId : null;
     const attorney = attorneysByCssId[appealCssId];
 
     if (!attorney) {
@@ -96,4 +96,8 @@ export const getAppealsByUserId = (state: State) => {
 
     return appealsByUserId;
   }, {});
+};
+
+export const getAppealTasksAssignedToUser = (state: State, appealId: number) => {
+  return getTasks(state)[appealId].filter((task) => task.userId === getUserCssId(state))
 };

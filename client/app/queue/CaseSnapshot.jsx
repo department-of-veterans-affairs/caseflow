@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import { appealsByAssigneeCssIdSelector } from './selectors';
+import { getAppealTasksAssignedToUser } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import JudgeActionsDropdown from './components/JudgeActionsDropdown';
@@ -50,7 +50,7 @@ export class CaseSnapshot extends React.PureComponent {
   daysSinceTaskAssignmentListItem = () => {
     if (this.props.task) {
       const today = moment();
-      const dateAssigned = moment(this.props.task.attributes.assigned_on);
+      const dateAssigned = moment(this.props.task.assignedOn);
       const dayCountSinceAssignment = today.diff(dateAssigned, 'days');
 
       return <React.Fragment>
@@ -70,31 +70,31 @@ export class CaseSnapshot extends React.PureComponent {
       return assignedToListItem;
     }
 
-    const task = this.props.task.attributes;
+    const task = this.props.task;
 
     if (this.props.userRole === USER_ROLES.JUDGE) {
-      if (!task.assigned_by_first_name || !task.assigned_by_last_name || !task.document_id) {
+      if (!task.assignedByFirstName || !task.assignedByLastName || !task.documentId) {
         return assignedToListItem;
       }
 
-      const firstInitial = String.fromCodePoint(task.assigned_by_first_name.codePointAt(0));
-      const nameAbbrev = `${firstInitial}. ${task.assigned_by_last_name}`;
+      const firstInitial = String.fromCodePoint(task.assignedByFirstName.codePointAt(0));
+      const nameAbbrev = `${firstInitial}. ${task.assignedByLastName}`;
 
       return <React.Fragment>
         <dt>{COPY.CASE_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{nameAbbrev}</dd>
-        <dt>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</dt><dd>{task.document_id}</dd>
+        <dt>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</dt><dd>{task.documentId}</dd>
       </React.Fragment>;
     }
 
     return <React.Fragment>
       { task.added_by_name && <React.Fragment>
         <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNOR_LABEL}</dt>
-        <dd>{task.added_by_name}</dd>
+        <dd>{task.addedByName}</dd>
       </React.Fragment> }
       <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
-      <dd><DateString date={task.assigned_on} dateFormat="MM/DD/YY" /></dd>
+      <dd><DateString date={task.assignedOn} dateFormat="MM/DD/YY" /></dd>
       <dt>{COPY.CASE_SNAPSHOT_TASK_DUE_DATE_LABEL}</dt>
-      <dd><DateString date={task.due_on} dateFormat="MM/DD/YY" /></dd>
+      <dd><DateString date={task.dueOn} dateFormat="MM/DD/YY" /></dd>
     </React.Fragment>;
   };
 
@@ -102,8 +102,7 @@ export class CaseSnapshot extends React.PureComponent {
     if (this.props.hideDropdown) {
       return false;
     }
-    if (this.props.appealsAssignedToCurrentUser.
-      some((appealIterator) => appealIterator.attributes.vacols_id === this.props.appeal.attributes.vacols_id)) {
+    if (this.props.appealsAssignedToCurrentUser) {
       return true;
     }
     if (!this.props.task) {
@@ -111,7 +110,7 @@ export class CaseSnapshot extends React.PureComponent {
     }
 
     return _.some(
-      this.props.attorneysOfJudge, (attorney) => attorney.id === this.props.task.attributes.assigned_to_pg_id);
+      this.props.attorneysOfJudge, (attorney) => attorney.id === this.props.task.assignedToPgId);
   }
 
   render = () => {
@@ -122,9 +121,9 @@ export class CaseSnapshot extends React.PureComponent {
     let CheckoutDropdown = <React.Fragment />;
 
     if (userRole === USER_ROLES.ATTORNEY) {
-      CheckoutDropdown = <SelectCheckoutFlowDropdown appealId={appeal.vacols_id} />;
+      CheckoutDropdown = <SelectCheckoutFlowDropdown appealId={appeal.external_id} />;
     } else if (userRole === USER_ROLES.JUDGE && this.props.featureToggles.judge_case_review_checkout) {
-      CheckoutDropdown = <JudgeActionsDropdown appealId={appeal.vacols_id} />;
+      CheckoutDropdown = <JudgeActionsDropdown appealId={appeal.external_id} />;
     }
 
     return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
@@ -163,9 +162,9 @@ CaseSnapshot.propTypes = {
   hideDropdown: PropTypes.bool
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state, props) => ({
   ..._.pick(state.ui, 'featureToggles', 'userRole'),
-  appealsAssignedToCurrentUser: appealsByAssigneeCssIdSelector(state),
+  appealsAssignedToCurrentUser: getAppealTasksAssignedToUser(state, props.appeal.attributes.external_id),
   attorneysOfJudge: state.queue.attorneysOfJudge
 });
 
