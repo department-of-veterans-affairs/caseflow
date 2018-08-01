@@ -56,4 +56,8 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
       ).as_json[:data][:attributes]
     end
   end
+
+  attribute :paper_case do
+    object.appeal.file_type.eql? "Paper"
+  end
 end

@@ -158,7 +158,7 @@ class TaskTable extends React.PureComponent<Props> {
       getSortValue: (appeal) => {
         // We append a * before the docket number if it's a priority case since * comes before
         // numbers in sort order, this forces these cases to the top of the sort.
-        if (appeal.aod || appeal.caseType === 'Court Remand') {
+        if (appeal.isAdvancedOnDocket || appeal.caseType === 'Court Remand') {
           return `*${appeal.docketNumber}`;
         }
 

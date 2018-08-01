@@ -40,11 +40,12 @@ export const associateTasksWithAppeals =
           externalId: task.attributes.external_appeal_id,
           docketName: task.attributes.docket_name,
           caseType: task.attributes.case_type,
-          aod: task.attributes.aod,
+          isAdvancedOnDocket: task.attributes.aod,
           issues: task.attributes.issues,
           docketNumber: task.attributes.docket_number,
           veteranName: task.attributes.veteran_name,
-          veteranFileNumber: task.attributes.veteran_file_number
+          veteranFileNumber: task.attributes.veteran_file_number,
+          isPaperCase: task.attributes.paper_case
         }
       }
 
@@ -115,13 +116,13 @@ export const sortTasks = ({ tasks = {}, appeals = {} }: {tasks: Tasks, appeals: 
 
 export const renderAppealType = (appeal: LegacyAppeal) => {
   const {
-    aod,
+    isAdvancedOnDocket,
     caseType
   } = appeal;
   const cavc = caseType === 'Court Remand';
 
   return <React.Fragment>
-    {aod && <span><span {...redText}>AOD</span>, </span>}
+    {isAdvancedOnDocket && <span><span {...redText}>AOD</span>, </span>}
     {cavc ? <span {...redText}>CAVC</span> : <span>{caseType}</span>}
   </React.Fragment>;
 };

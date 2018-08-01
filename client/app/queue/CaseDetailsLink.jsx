@@ -13,11 +13,6 @@ import { setActiveAppeal, setActiveTask } from './CaseDetail/CaseDetailActions';
 const getLinkText = (appeal) => <React.Fragment>{appeal.veteranName} ({appeal.veteranFileNumber})</React.Fragment>;
 
 class CaseDetailsLink extends React.PureComponent {
-  setActiveAppealAndTask = () => {
-    this.props.setActiveAppeal(this.props.appeal);
-    this.props.setActiveTask(this.props.task);
-  }
-
   render() {
     const {
       appeal,
@@ -28,14 +23,10 @@ class CaseDetailsLink extends React.PureComponent {
       <Link
         to={`/queue/appeals/${appeal.externalId}`}
         disabled={disabled}
-        onClick={this.props.onClick || this.setActiveAppealAndTask}>
+        onClick={this.props.onClick}>
         {this.props.getLinkText(appeal)}
       </Link>
-      {!_.isNull(_.get(appeal, 'appellant_full_name')) && <React.Fragment>
-        <br />
-        <span {...subHeadTextStyle}>{COPY.CASE_DIFF_VETERAN_AND_APPELLANT}</span>
-      </React.Fragment>}
-      {appeal.paper_case && <React.Fragment>
+      {appeal.paperCase && <React.Fragment>
         <br />
         <span {...subHeadTextStyle}>{COPY.IS_PAPER_CASE}</span>
       </React.Fragment>}

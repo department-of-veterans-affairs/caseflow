@@ -39,4 +39,8 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :veteran_file_number do
     object.appeal.veteran_file_number
   end
+
+  attribute :paper_case do
+    object.appeal.file_type.eql? "Paper"
+  end
 end
