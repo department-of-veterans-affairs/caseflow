@@ -30,10 +30,6 @@ FactoryBot.define do
       type "ColocatedTask"
       title { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample }
       instructions "poa is missing"
-
-      after(:create) do |task, _evaluator|
-        create(:staff, :attorney_role, sdomainid: task.assigned_by.css_id)
-      end
     end
 
     factory :ama_colocated_task do
@@ -55,6 +51,12 @@ FactoryBot.define do
       type "AttorneyTask"
       appeal_type "Appeal"
       appeal { create(:appeal) }
+      parent { create(:ama_judge_task) }
+    end
+
+    factory :ama_vso_task do
+      type "VsoTask"
+      appeal_type "Appeal"
     end
   end
 end

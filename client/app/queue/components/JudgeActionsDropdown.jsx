@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 import COPY from '../../../COPY.json';
@@ -12,10 +11,7 @@ import DECASS_WORK_PRODUCT_TYPES from '../../../constants/DECASS_WORK_PRODUCT_TY
 import SearchableDropdown from '../../components/SearchableDropdown';
 
 import { buildCaseReviewPayload } from '../utils';
-import {
-  requestSave,
-  saveSuccess
-} from '../uiReducer/uiActions';
+import { requestSave } from '../uiReducer/uiActions';
 import {
   deleteAppeal,
   checkoutStagedAppeal,
@@ -47,7 +43,6 @@ type Props = Params & {|
   userRole: string,
   // Action creators
   requestSave: typeof requestSave,
-  saveSuccess: typeof saveSuccess,
   deleteAppeal: typeof deleteAppeal,
   checkoutStagedAppeal: typeof checkoutStagedAppeal,
   stageAppeal: typeof stageAppeal,
@@ -96,7 +91,7 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
       const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, { location: 'omo_office' });
       const successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name);
 
-      this.props.requestSave(`/case_reviews/${task.attributes.task_id}/complete`, payload, successMsg).
+      this.props.requestSave(`/case_reviews/${task.attributes.task_id}/complete`, payload, { title: successMsg }).
         then(() => {
           history.push('');
           history.replace('/queue');
@@ -174,10 +169,6 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
   }
 }
 
-JudgeActionsDropdown.propTypes = {
-  appealId: PropTypes.string.isRequired
-};
-
 const mapStateToProps = (state: State, ownProps: Params) => ({
   appeal: state.queue.appeals[ownProps.appealId],
   task: state.queue.tasks[ownProps.appealId],
@@ -188,7 +179,6 @@ const mapStateToProps = (state: State, ownProps: Params) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
-  saveSuccess,
   deleteAppeal,
   checkoutStagedAppeal,
   stageAppeal,
