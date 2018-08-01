@@ -75,13 +75,20 @@ class AmaReview < ApplicationRecord
       request_issues.where(contention_reference_id: nil).pluck(:description)
   end
 
-  def rated_issue_contention_map
-    rated_contentions = request_issues.where.not(contention_reference_id: nil, rating_issue_profile_date: nil)
-    rated_issue_contention_map = {}
-    rated_contentions.each do |issue|
-      rated_issue_contention_map[issue.rating_issue_reference_id] = issue.contention_reference_id
+  def rated_contentions
+    request_issues.where.not(contention_reference_id: nil, rating_issue_profile_date: nil)
+  end
+
+  def create_rated_issue_contention_map
+    issue_contention_map = {}
+    rated_contentions.each do |contention|
+      issue_contention_map[contention.rating_issue_reference_id] = contention.contention_reference_id
     end
-    rated_issue_contention_map
+    issue_contention_map
+  end
+
+  def rated_issue_contention_map
+    @rated_issue_contention_map ||= create_rated_issue_contention_map
   end
 
   # VBMS will return ALL contentions on a end product when you create contentions,
