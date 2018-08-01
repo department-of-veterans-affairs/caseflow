@@ -23,7 +23,6 @@ import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.j
 
 import type { LegacyAppeal } from './types/models';
 import type { UiStateMessage } from './types/state';
-import type { ComponentToWrapStructure } from './components/DecisionViewBase';
 
 type ComponentState = {|
   title: ?string,
@@ -44,7 +43,7 @@ type Props = Params & {|
   deleteAppeal: typeof deleteAppeal
 |};
 
-class AddAdminActionView extends React.PureComponent<Props, ComponentState> implements ComponentToWrapStructure {
+class AddAdminActionView extends React.PureComponent<Props, ComponentState> {
   constructor(props) {
     super(props);
 

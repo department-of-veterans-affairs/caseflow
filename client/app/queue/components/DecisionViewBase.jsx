@@ -1,10 +1,8 @@
-// @flow
-import * as React from 'react';
+import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
-import type { BrowserRouter } from 'react-router-dom';
 import { css } from 'glamor';
 
 import {
@@ -32,52 +30,15 @@ const defaultTopLevelProps = {
   modalName: 'cancelCheckout'
 };
 
-export interface ComponentToWrapStructure {
-  validateForm(): boolean,
-  goToNextStep(): void
-}
-
-export default function decisionViewBase(
-  ComponentToWrap: Class<React.Component<{}> & ComponentToWrapStructure>,
-  topLevelProps: Object = defaultTopLevelProps
-) {
-
-  type WrappedComponentState = {|
-    wrapped: ?Class<React.Component<{}> & ComponentToWrapStructure>
-  |};
-  type WrappedComponentProps = {|
-    // params
-    continueBtnText: string,
-    hideCancelButton: boolean,
-    modalName: string,
-    nextStep: ?string,
-    prevStep: ?string,
-    // store
-    saveSuccessful: boolean,
-    savePending: boolean,
-    continueBtnText: string,
-    hideCancelButton: boolean,
-    stagedAppeals: Array<Number>,
-    appealId: String,
-    modal: Object,
-    // dispatch
-    resetDecisionOptions: typeof resetDecisionOptions,
-    checkoutStagedAppeal: typeof checkoutStagedAppeal,
-    highlightInvalidFormItems: typeof highlightInvalidFormItems,
-    showModal: typeof showModal,
-    hideModal: typeof hideModal,
-    history: BrowserRouter
-  |};
-
-  class WrappedComponent extends React.Component<WrappedComponentProps, WrappedComponentState> {
+export default function decisionViewBase(ComponentToWrap, topLevelProps = defaultTopLevelProps) {
+  class WrappedComponent extends React.Component {
     constructor(props) {
       super(props);
 
       this.state = { wrapped: null };
     }
 
-    getWrappedComponentRef = (ref: Class<React.Component<{}> & ComponentToWrapStructure>) =>
-      this.setState({ wrapped: ref })
+    getWrappedComponentRef = (ref) => this.setState({ wrapped: ref });
 
     componentDidMount = () => this.props.highlightInvalidFormItems(false);
 
@@ -121,7 +82,7 @@ export default function decisionViewBase(
       this.props.resetDecisionOptions();
       _.each(stagedAppeals, this.props.checkoutStagedAppeal);
 
-      history.push(`/queue/appeals/${String(appealId)}`);
+      history.push(`/queue/appeals/${appealId}`);
     }
 
     getPrevStepUrl = () => _.invoke(this.state.wrapped, 'getPrevStepUrl') || this.props.prevStep;
