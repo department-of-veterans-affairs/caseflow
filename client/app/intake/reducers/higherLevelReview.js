@@ -80,6 +80,8 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
 );
 
 export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelReview(), action) => {
+  let updatedState;
+
   switch (action.type) {
   case ACTIONS.START_NEW_INTAKE:
     return mapDataToInitialHigherLevelReview();
@@ -240,7 +242,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       }
     });
   case ACTIONS.SET_ISSUE_CATEGORY:
-    var updatedState = update(state, {
+    updatedState = update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           category: {
@@ -248,14 +250,15 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
           }
         }
       }
-    })
+    });
+
     return update(updatedState, {
       issueCount: {
-        $set: allIssueCounter(updatedState, action)
+        $set: allIssueCounter(updatedState)
       }
     });
   case ACTIONS.SET_ISSUE_DESCRIPTION:
-    var updatedState = update(state, {
+    updatedState = update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           description: {
@@ -264,13 +267,14 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         }
       }
     });
+
     return update(updatedState, {
       issueCount: {
-        $set: allIssueCounter(updatedState, action)
+        $set: allIssueCounter(updatedState)
       }
     });
   case ACTIONS.SET_ISSUE_DECISION_DATE:
-    var updatedState = update(state, {
+    updatedState = update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           decisionDate: {
@@ -279,9 +283,10 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         }
       }
     });
+
     return update(updatedState, {
       issueCount: {
-        $set: allIssueCounter(updatedState, action)
+        $set: allIssueCounter(updatedState)
       }
     });
   default:

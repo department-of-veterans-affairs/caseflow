@@ -55,6 +55,7 @@ export const formatRelationships = (relationships) => {
 
 export const validateDate = (date) => {
   const datePattern = /^(0[1-9]|1[0-2])[/](0[1-9]|[12][0-9]|3[01])[/](19|20)\d\d$/;
+
   if (datePattern.test(date)) {
     return date;
   }
@@ -65,6 +66,7 @@ export const validateDate = (date) => {
 export const validNonRatedIssue = (issue) => {
   const unvalidatedDate = issue.decisionDate;
   const decisionDate = validateDate(unvalidatedDate);
+
   if (!issue.description) {
     return false;
   }
@@ -81,7 +83,7 @@ export const validNonRatedIssue = (issue) => {
     return false;
   }
 
-   // If we've gotten to here, that means we've got all necessary parts for a nonRatedIssue to count
+  // If we've gotten to here, that means we've got all necessary parts for a nonRatedIssue to count
   return true;
 };
 
@@ -120,7 +122,7 @@ export const formatIssues = (intakeState) => {
   return data;
 };
 
-export const allIssueCounter = (state, action) => {
+export const allIssueCounter = (state) => {
   const selectedIssues = formatIssues(state).request_issues;
 
   return selectedIssues ? selectedIssues.length : 0;

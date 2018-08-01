@@ -59,6 +59,8 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
 );
 
 export const supplementalClaimReducer = (state = mapDataToInitialSupplementalClaim(), action) => {
+  let updatedState;
+
   switch (action.type) {
   case ACTIONS.START_NEW_INTAKE:
     return mapDataToInitialSupplementalClaim();
@@ -195,7 +197,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       }
     });
   case ACTIONS.SET_ISSUE_CATEGORY:
-    var updatedState = update(state, {
+    updatedState = update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           category: {
@@ -203,14 +205,15 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
           }
         }
       }
-    })
+    });
+
     return update(updatedState, {
       issueCount: {
-        $set: allIssueCounter(updatedState, action)
+        $set: allIssueCounter(updatedState)
       }
     });
   case ACTIONS.SET_ISSUE_DESCRIPTION:
-    var updatedState = update(state, {
+    updatedState = update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           description: {
@@ -219,13 +222,14 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         }
       }
     });
+
     return update(updatedState, {
       issueCount: {
-        $set: allIssueCounter(updatedState, action)
+        $set: allIssueCounter(updatedState)
       }
     });
   case ACTIONS.SET_ISSUE_DECISION_DATE:
-    var updatedState = update(state, {
+    updatedState = update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           decisionDate: {
@@ -234,9 +238,10 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         }
       }
     });
+
     return update(updatedState, {
       issueCount: {
-        $set: allIssueCounter(updatedState, action)
+        $set: allIssueCounter(updatedState)
       }
     });
   default:

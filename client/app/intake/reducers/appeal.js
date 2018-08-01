@@ -65,6 +65,8 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
 );
 
 export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
+  let updatedState;
+
   switch (action.type) {
   case ACTIONS.START_NEW_INTAKE:
     return mapDataToInitialAppeal();
@@ -213,7 +215,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       }
     });
   case ACTIONS.SET_ISSUE_CATEGORY:
-    var updatedState = update(state, {
+    updatedState = update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           category: {
@@ -221,14 +223,15 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
           }
         }
       }
-    })
+    });
+
     return update(updatedState, {
       issueCount: {
-        $set: allIssueCounter(updatedState, action)
+        $set: allIssueCounter(updatedState)
       }
     });
   case ACTIONS.SET_ISSUE_DESCRIPTION:
-    var updatedState = update(state, {
+    updatedState = update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           description: {
@@ -237,13 +240,14 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         }
       }
     });
+
     return update(updatedState, {
       issueCount: {
-        $set: allIssueCounter(updatedState, action)
+        $set: allIssueCounter(updatedState)
       }
     });
   case ACTIONS.SET_ISSUE_DECISION_DATE:
-    var updatedState = update(state, {
+    updatedState = update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           decisionDate: {
@@ -252,9 +256,10 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         }
       }
     });
+
     return update(updatedState, {
       issueCount: {
-        $set: allIssueCounter(updatedState, action)
+        $set: allIssueCounter(updatedState)
       }
     });
   default:
