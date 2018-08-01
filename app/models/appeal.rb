@@ -37,6 +37,7 @@ class Appeal < AmaReview
   end
 
   def veteran_name
+    # For consistency with LegacyAppeal.veteran_name
     veteran.name.formatted :form
   end
 
