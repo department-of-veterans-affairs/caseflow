@@ -11,6 +11,8 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   attr_reader :available_days, :ros
 
+  MAX_NUMBER_OF_DAYS_PER_DATE = 10
+
   def initialize(schedule_period)
     @amortized = 0
     @co_non_availability_days = []
@@ -22,6 +24,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @available_days = filter_non_availability_days(schedule_period.start_date, schedule_period.end_date)
 
     assign_and_filter_ro_days(schedule_period)
+    @date_allocated = {}
   end
 
   def extract_non_available_days
@@ -76,6 +79,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   def allocate_hearing_days_to_ros
     @amortized = 0
 
+    @ros = @ros.sort_by { |_k, v| v[:num_of_rooms] }.reverse.to_h
     @ros.each_key do |ro_key|
       allocate_all_ro_monthly_hearing_days(ro_key)
     end
@@ -151,11 +155,14 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
       if allocated_days > 0 &&
          grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]]
-
-        rooms_to_allocate = (num_of_rooms <= allocated_days) ? num_of_rooms : allocated_days
+        
+        @date_allocated[monthly_date_keys[date_index]] ||= 0
+        rooms_to_allocate = get_num_of_rooms_to_allocate(monthly_date_keys[date_index],
+                                                         num_of_rooms, allocated_days,
+                                                         grouped_shuffled_monthly_dates[month])
 
         grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] =
-          get_room_numbers(rooms_to_allocate)
+          get_room_numbers(monthly_date_keys[date_index], rooms_to_allocate)
 
         allocated_days -= rooms_to_allocate
       end
@@ -169,8 +176,26 @@ class HearingSchedule::GenerateHearingDaysSchedule
     grouped_shuffled_monthly_dates[month].nil? || monthly_allocations[month] == 0
   end
 
-  def get_room_numbers(num_of_rooms)
-    Array.new(num_of_rooms) { |room_num| { room_num: room_num + 1 } }
+  def get_num_of_rooms_to_allocate(date, num_of_rooms, allocated_days, monthly_grouped_days)
+    num_left_to_max = MAX_NUMBER_OF_DAYS_PER_DATE - @date_allocated[date]
+
+    if num_of_rooms > num_left_to_max &&
+      if monthly_grouped_days.any? { |_k, v| v.length < (MAX_NUMBER_OF_DAYS_PER_DATE - num_of_rooms) }
+        return 0
+      end
+      return num_left_to_max
+    else
+      (num_of_rooms <= allocated_days) ? num_of_rooms : allocated_days
+    end
+  end
+
+  def get_room_numbers(date, num_of_rooms)
+    Array.new(num_of_rooms) do |room_num|
+      @date_allocated[date] ||= 0
+      value = { room_num: 4 + @date_allocated[date] }
+      @date_allocated[date] += 1
+      value
+    end
   end
 
   def distribute(percentage, total)
