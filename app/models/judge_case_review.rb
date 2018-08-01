@@ -39,7 +39,7 @@ class JudgeCaseReview < ApplicationRecord
   def select_case_for_quality_review
     # We are using 25 sided die to randomly select a case for quality review
     # https://github.com/department-of-veterans-affairs/caseflow/issues/6407
-    update(location: :quality_review) if rand < 0.04
+    update(location: :quality_review) if bva_dispatch? && rand < 0.04
   end
 
   class << self

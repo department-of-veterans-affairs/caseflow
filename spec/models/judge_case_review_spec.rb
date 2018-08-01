@@ -182,11 +182,14 @@ describe JudgeCaseReview do
         let(:work_product) { "IME" }
 
         it "should create Judge Case Review" do
+          allow_any_instance_of(JudgeCaseReview).to receive(:rand).and_return(0.02)
           expect(subject.valid?).to eq true
           expect(subject.location).to eq "omo_office"
           expect(subject.judge).to eq judge
           expect(subject.attorney).to eq attorney
           expect(vacols_case.reload.bfcurloc).to eq "20"
+
+          expect(VACOLS::DecisionQualityReview.find_by(qrfolder: vacols_case.bfkey)).to eq nil
         end
       end
     end
