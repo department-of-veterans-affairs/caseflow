@@ -122,7 +122,11 @@ export const formatIssues = (intakeState) => {
   return data;
 };
 
+<<<<<<< HEAD
 export const allIssueCounter = (state) => {
+=======
+export const allIssueCounter = (state, action) => {
+>>>>>>> Update state prior to counting issues
   const selectedIssues = formatIssues(state).request_issues;
 
   return selectedIssues ? selectedIssues.length : 0;
