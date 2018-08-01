@@ -55,7 +55,6 @@ export const formatRelationships = (relationships) => {
 
 export const validateDate = (date) => {
   const datePattern = /^(0[1-9]|1[0-2])[/](0[1-9]|[12][0-9]|3[01])[/](19|20)\d\d$/;
-
   if (datePattern.test(date)) {
     return date;
   }
@@ -122,11 +121,7 @@ export const formatIssues = (intakeState) => {
   return data;
 };
 
-<<<<<<< HEAD
 export const allIssueCounter = (state) => {
-=======
-export const allIssueCounter = (state, action) => {
->>>>>>> Update state prior to counting issues
   const selectedIssues = formatIssues(state).request_issues;
 
   return selectedIssues ? selectedIssues.length : 0;
