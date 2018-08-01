@@ -223,6 +223,15 @@ RSpec.feature "Supplemental Claim Intake" do
       }
     )
 
+    rated_issue = supplemental_claim.request_issues.find_by(description: "PTSD denied")
+
+    expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+      claim_id: "IAMANEPID",
+      rated_issue_contention_map: {
+        rated_issue.rating_issue_reference_id => rated_issue.contention_reference_id
+      }
+    )
+
     intake.reload
     expect(intake.completed_at).to eq(Time.zone.now)
 

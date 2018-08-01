@@ -23,7 +23,6 @@ class HigherLevelReviewIntake < Intake
   end
 
   def review!(request_params)
-    binding.pry
     detail.start_review!
     detail.create_claimants!(claimant_data: request_params[:claimant] || veteran.participant_id)
     detail.update(request_params.permit(:receipt_date, :informal_conference, :same_office))

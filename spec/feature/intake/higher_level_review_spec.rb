@@ -140,7 +140,7 @@ RSpec.feature "Higher-Level Review Intake" do
 
     expect(find("#different-claimant-option_true", visible: false)).to be_checked
     expect(find_field("Bob Vance, Spouse", visible: false)).to be_checked
-sleep 10
+
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
