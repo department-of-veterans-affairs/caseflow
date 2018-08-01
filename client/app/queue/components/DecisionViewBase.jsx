@@ -160,9 +160,9 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
 
   WrappedComponent.displayName = `DecisionViewBase(${getDisplayName(WrappedComponent)})`;
 
-  const mapStateToProps = (state, ownProps) => {
+  const mapStateToProps = (state) => {
     const { savePending, saveSuccessful } = state.ui.saveState;
-    const { modalName } = ownProps;
+    const { modalName } = topLevelProps;
 
     return {
       modal: state.ui.modal[modalName],
