@@ -156,6 +156,36 @@ describe SupplementalClaim do
       expect(EndProductEstablishment.find_by(source: supplemental_claim.reload).reference_id).to eq("454545")
     end
 
+    it "creates contentions" do
+      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+
+      subject
+
+      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+        veteran_file_number: veteran_file_number,
+        claim_id: "454545",
+        contention_descriptions: %w[goodbye hello]
+      )
+      request_issues = supplemental_claim.request_issues
+      expect(request_issues.first.contention_reference_id).to_not be_nil
+      expect(request_issues.second.contention_reference_id).to_not be_nil
+    end
+
+    it "maps rated issues to contentions" do
+      allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+
+      subject
+
+      request_issues = supplemental_claim.request_issues
+      expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+        claim_id: "454545",
+        rated_issue_contention_map: {
+          "def" => request_issues.find_by(rating_issue_reference_id: "def").contention_reference_id,
+          "abc" => request_issues.find_by(rating_issue_reference_id: "abc").contention_reference_id
+        }
+      )
+    end
+
     context "when VBMS throws an error" do
       before do
         allow(VBMSService).to receive(:establish_claim!).and_raise(vbms_error)
