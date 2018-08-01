@@ -22,11 +22,11 @@ import type {
   State
 } from '../types/state';
 
-type Props = {|
+type Params = {|
   appealId: string
 |};
 
-type Params = Props & {|
+type Props = Params & {|
   // state
   featureToggles: Object,
   changedAppeals: Array<number>,
@@ -39,7 +39,7 @@ type Params = Props & {|
   history: Object
 |};
 
-class SelectCheckoutFlowDropdown extends React.PureComponent<Params> {
+class SelectCheckoutFlowDropdown extends React.PureComponent<Props> {
   changeRoute = (props) => {
     const {
       appealId,
