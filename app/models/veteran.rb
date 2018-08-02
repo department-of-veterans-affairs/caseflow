@@ -21,7 +21,7 @@ class Veteran < ApplicationRecord
     "DIS" => "Discharge"
   }.freeze
 
-  COUNTRIES_REQUIRING_ZIP = %w[USA CANADA Germany].freeze
+  COUNTRIES_REQUIRING_ZIP = %w[USA CANADA GERMANY].freeze
 
   validates :ssn, :sex, :first_name, :last_name, :city,
             :address_line1, :country, presence: true, on: :bgs
@@ -34,7 +34,7 @@ class Veteran < ApplicationRecord
   end
 
   def country_requires_zip?
-    COUNTRIES_REQUIRING_ZIP.include?(country)
+    COUNTRIES_REQUIRING_ZIP.include?(country.upcase)
   end
 
   def country_requires_state?
