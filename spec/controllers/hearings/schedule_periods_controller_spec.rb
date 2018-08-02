@@ -105,7 +105,7 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
 
   context "assign judges to full schedule for a schedule period" do
     let!(:hearing_days) do
-      get_dates_between(judge_schedule_period.start_date, judge_schedule_period.end_date, 5).map do |date|
+      get_unique_dates_between(judge_schedule_period.start_date, judge_schedule_period.end_date, 5).map do |date|
         create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13")
       end
     end
