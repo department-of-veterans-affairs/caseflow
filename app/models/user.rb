@@ -228,6 +228,13 @@ class User < ApplicationRecord
       UserRepository.css_ids_by_vlj_ids(vlj_ids)
     end
 
+    # This method is only used in dev/demo mode to test the judge spreadsheet functionality in hearing scheduling
+    def create_judge_in_vacols(first_name, last_name, vlj_id)
+      return unless Rails.env.development? || Rails.env.demo?
+
+      UserRepository.create_judge_in_vacols(first_name, last_name, vlj_id)
+    end
+
     def system_user
       new(
         station_id: "283",

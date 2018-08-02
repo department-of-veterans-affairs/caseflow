@@ -44,6 +44,14 @@ class UserRepository
       results
     end
 
+    # This method is only used in dev/demo mode to test the judge spreadsheet functionality in hearing scheduling
+    def create_judge_in_vacols(first_name, last_name, vlj_id)
+      return unless Rails.env.development? || Rails.env.demo?
+
+      css_id = ["BVA", first_name.first, last_name].join
+      VACOLS::Staff.create(snamef: first_name, snamel: last_name, sdomainid: css_id, sattyid: vlj_id)
+    end
+
     # :nocov:
     def css_id_by_full_name(full_name)
       name = full_name.split(" ")
