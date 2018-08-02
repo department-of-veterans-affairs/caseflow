@@ -224,6 +224,10 @@ class User < ApplicationRecord
     # Empty method used for testing purposes (required)
     def clear_current_user; end
 
+    def css_ids_by_vlj_ids(vlj_ids)
+      UserRepository.css_ids_by_vlj_ids(vlj_ids)
+    end
+
     def system_user
       new(
         station_id: "283",
