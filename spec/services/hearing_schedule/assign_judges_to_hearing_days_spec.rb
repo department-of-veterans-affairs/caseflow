@@ -252,12 +252,18 @@ describe HearingSchedule::AssignJudgesToHearingDays do
   context "Allocating VIDEO and CO hearing days to judges evenly" do
     let(:hearing_days) do
       hearing_days = {}
-      get_dates_between(schedule_period.start_date, schedule_period.end_date, 60).map do |date|
+      date_count = {}
+
+      get_dates_between(schedule_period.start_date, schedule_period.end_date, 300).map do |date|
+        date_count[date] ||= 0
+
+        next if date_count[date] >= 1 && date.wednesday?
         case_hearing = create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13")
         hearing_days[case_hearing.hearing_pkseq] = case_hearing
 
         co_case_hearing = create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: nil)
         hearing_days[co_case_hearing.hearing_pkseq] = co_case_hearing
+        date_count[date] += 1
       end
       hearing_days
     end
@@ -297,18 +303,25 @@ describe HearingSchedule::AssignJudgesToHearingDays do
         create(:travel_board_schedule, tbro: "RO13",
                                        tbstdate: Date.parse("2018-04-16"), tbenddate: Date.parse("2018-04-20"),
                                        tbmem1: judges[3].sattyid,
-                                       tbmem2: judges[4].sattyid,
-                                       tbmem3: judges[5].sattyid)
+                                       tbmem2: judges[4].sattyid)
+        create(:travel_board_schedule, tbro: "RO13",
+                                       tbstdate: Date.parse("2018-04-16"), tbenddate: Date.parse("2018-04-20"),
+                                       tbmem1: judges[5].sattyid,
+                                       tbmem2: judges[6].sattyid)
       end
 
       let(:judges) do
         judges = []
-        8.times do
+        date_count = {}
+        80.times do
           judge = FactoryBot.create(:user)
           get_unique_dates_between(schedule_period.start_date, schedule_period.end_date,
-                                   Random.rand(10..30)).map do |date|
+                                   Random.rand(1..50)).map do |date|
+            date_count[date] ||= 0
+            next unless date_count[date] < 10
             create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
                                             object_identifier: judge.css_id)
+            date_count[date] += 1
           end
           judges << create(:staff, :hearing_judge, sdomainid: judge.css_id)
         end

@@ -48,6 +48,7 @@ class AmaReview < ApplicationRecord
     return nil if contention_descriptions_to_create.empty?
     end_product_establishment.perform!
     create_contentions_on_new_end_product!
+    create_associated_rated_issues_in_vbms!
     update! established_at: Time.zone.now
   end
 
@@ -74,6 +75,22 @@ class AmaReview < ApplicationRecord
       request_issues.where(contention_reference_id: nil).pluck(:description)
   end
 
+  def rated_contentions
+    request_issues.where.not(contention_reference_id: nil, rating_issue_profile_date: nil)
+  end
+
+  def create_rated_issue_contention_map
+    issue_contention_map = {}
+    rated_contentions.each do |contention|
+      issue_contention_map[contention.rating_issue_reference_id] = contention.contention_reference_id
+    end
+    issue_contention_map
+  end
+
+  def rated_issue_contention_map
+    @rated_issue_contention_map ||= create_rated_issue_contention_map
+  end
+
   # VBMS will return ALL contentions on a end product when you create contentions,
   # not just the ones that were just created. This method assumes there are no
   # pre-existing contentions on the end product. Since it was also just created.
@@ -96,6 +113,14 @@ class AmaReview < ApplicationRecord
       veteran_file_number: veteran_file_number,
       claim_id: end_product_establishment.reference_id,
       contention_descriptions: contention_descriptions_to_create
+    )
+  end
+
+  def create_associated_rated_issues_in_vbms!
+    return if rated_issue_contention_map.blank?
+    VBMSService.associate_rated_issues!(
+      claim_id: end_product_establishment.reference_id,
+      rated_issue_contention_map: rated_issue_contention_map
     )
   end
 
