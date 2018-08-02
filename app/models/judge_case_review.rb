@@ -9,7 +9,7 @@ class JudgeCaseReview < ApplicationRecord
 
   after_create :select_case_for_quality_review
 
-  scope :this_month, -> { where(:created_at => Time.now.beginning_of_month..Time.now.end_of_month) }
+  scope :this_month, -> { where(created_at: Time.zone.now.beginning_of_month..Time.zone.now.end_of_month) }
 
   enum location: {
     omo_office: "omo_office",

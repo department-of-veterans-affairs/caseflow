@@ -81,7 +81,7 @@ describe JudgeCaseReview do
         let(:probability) { JudgeCaseReview::QUALITY_REVIEW_SELECTION_PROBABILITY }
 
         it "should create judge case review and change the location to quality review" do
-          allow_any_instance_of(JudgeCaseReview).to receive(:rand).and_return(probability/2)
+          allow_any_instance_of(JudgeCaseReview).to receive(:rand).and_return(probability / 2)
           expect(subject.valid?).to eq true
           expect(subject.location).to eq "quality_review"
           expect(subject.complexity).to eq "hard"
