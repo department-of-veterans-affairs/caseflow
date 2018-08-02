@@ -48,8 +48,18 @@ RSpec.describe Organizations::TasksController, type: :controller do
   describe "GET organization/:organization_id/tasks" do
     let!(:tasks) do
       [
-        create(:task, appeal: create(:appeal), appeal_type: "Appeal", type: :VsoTask, assigned_to: vso),
-        create(:task, appeal: create(:appeal), appeal_type: "Appeal", type: :VsoTask, assigned_to: vso)
+        create(
+          :task,
+          appeal: create(:appeal, veteran: create(:veteran)),
+          appeal_type: "Appeal",
+          type: :VsoTask,
+          assigned_to: vso),
+        create(
+          :task,
+          appeal: create(:appeal, veteran: create(:veteran)),
+          appeal_type: "Appeal",
+          type: :VsoTask,
+          assigned_to: vso)
       ]
     end
 
