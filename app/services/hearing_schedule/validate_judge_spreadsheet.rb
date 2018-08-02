@@ -1,6 +1,6 @@
 class HearingSchedule::ValidateJudgeSpreadsheet
   SPREADSHEET_TITLE = "Judge Non-Availability Dates".freeze
-  SPREADSHEET_EXAMPLE_ROW = [nil, "Jones, Bernard", "123", Date.parse("02/04/2019")].freeze
+  SPREADSHEET_HEADERS = [nil, "Judge Name", "VLJ #", "Date"].freeze
   SPREADSHEET_EMPTY_COLUMN = [nil].freeze
 
   class JudgeDatesNotCorrectFormat < StandardError; end
@@ -20,7 +20,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
 
   def validate_judge_non_availability_template
     unless @spreadsheet_template[:title] == SPREADSHEET_TITLE &&
-           @spreadsheet_template[:example_row] == SPREADSHEET_EXAMPLE_ROW &&
+           @spreadsheet_template[:headers] == SPREADSHEET_HEADERS &&
            @spreadsheet_template[:empty_column] == SPREADSHEET_EMPTY_COLUMN
       @errors << JudgeTemplateNotFollowed
     end
