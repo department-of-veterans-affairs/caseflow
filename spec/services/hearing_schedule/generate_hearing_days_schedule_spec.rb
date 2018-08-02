@@ -40,21 +40,6 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     }
   end
 
-  let(:no_ro_non_available_days) do
-    {
-      "RO17" => get_unique_dates_for_ro_between("RO17", schedule_period, 0),
-      "RO61" => get_unique_dates_for_ro_between("RO61", schedule_period, 0),
-      "RO18" => get_unique_dates_for_ro_between("RO18", schedule_period, 0),
-      "RO22" => get_unique_dates_for_ro_between("RO22", schedule_period, 0),
-      "RO01" => get_unique_dates_for_ro_between("RO01", schedule_period, 0),
-      "RO55" => get_unique_dates_for_ro_between("RO55", schedule_period, 0),
-      "RO02" => get_unique_dates_for_ro_between("RO02", schedule_period, 0),
-      "RO21" => get_unique_dates_for_ro_between("RO21", schedule_period, 0),
-      "RO27" => get_unique_dates_for_ro_between("RO27", schedule_period, 0),
-      "RO28" => get_unique_dates_for_ro_between("RO28", schedule_period, 0)
-    }
-  end
-
   let(:generate_hearing_days_schedule) do
     HearingSchedule::GenerateHearingDaysSchedule.new(schedule_period)
   end
@@ -153,7 +138,6 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     context "Travelboard hearing days" do
       before do
         ro_allocations
-        no_ro_non_available_days
       end
 
       let(:travel_board_schedules) do
@@ -221,12 +205,6 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
   end
 
   context "RO hearing days allocation" do
-    before do
-      ro_allocations
-      co_non_available_days
-      no_ro_non_available_days
-    end
-
     let(:generate_hearing_days_schedule) do
       HearingSchedule::GenerateHearingDaysSchedule.new(schedule_period)
     end
@@ -261,34 +239,31 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
       end
     end
 
-    context "too many allocated days for an RO" do
-      before do
-        ro_allocations
-        ro_non_available_days
-        co_non_available_days
-      end
-
-      let(:ro_allocations) do
+    context "too many allocated days for an RO with multiple rooms" do
+      let!(:ro_allocations) do
         [
-          create(:allocation, regional_office: "RO17", allocated_days: 200, schedule_period: schedule_period)
+          create(:allocation, regional_office: "RO17", allocated_days: 255, schedule_period: schedule_period)
         ]
       end
       it { expect { subject }.to raise_error(HearingSchedule::RoAllocation::NotEnoughAvailableDays) }
     end
 
-    context "too many ro non-avaiable days" do
-      before do
-        ro_allocations
-        ro_non_available_days
-        co_non_available_days
+    context "too many allocated days for an RO with one room" do
+      let!(:ro_allocations) do
+        [
+          create(:allocation, regional_office: "RO16", allocated_days: 128, schedule_period: schedule_period)
+        ]
       end
+      it { expect { subject }.to raise_error(HearingSchedule::RoAllocation::NotEnoughAvailableDays) }
+    end
 
-      let(:ro_non_available_days) do
+    context "too many ro non-availability days" do
+      let!(:ro_non_available_days) do
         {
           "RO17" => get_unique_dates_for_ro_between("RO17", schedule_period, 127)
         }
       end
-      let(:ro_allocations) do
+      let!(:ro_allocations) do
         [
           create(:allocation, regional_office: "RO17", allocated_days: 1, schedule_period: schedule_period)
         ]
@@ -298,25 +273,18 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
     end
 
     context "too many co non-availability days" do
-      before do
-        ro_allocations
-      end
-      let(:co_non_available_days) do
+      let!(:co_non_availability_days) do
         get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, 127).map do |date|
           create(:co_non_availability, date: date, schedule_period_id: schedule_period.id)
         end
       end
 
-      let(:ro_non_available_days) do
-        {
-          "RO17" => get_unique_dates_for_ro_between("RO17", schedule_period, 0)
-        }
-      end
-      let(:ro_allocations) do
+      let!(:ro_allocations) do
         [
           create(:allocation, regional_office: "RO17", allocated_days: 1, schedule_period: schedule_period)
         ]
       end
+
       it { expect { subject }.to raise_error(HearingSchedule::GenerateHearingDaysSchedule::NoDaysAvailableForRO) }
     end
 
