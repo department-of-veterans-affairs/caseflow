@@ -31,6 +31,9 @@ RSpec.describe TasksController, type: :controller do
     let!(:task9) { create(:ama_judge_task, :in_progress, assigned_to: user) }
     let!(:task10) { create(:ama_judge_task, :completed, assigned_to: user) }
 
+    let!(:task_aod) {
+      create(:colocated_task, assigned_to: user, appeal: create(:legacy_appeal, vacols_case: create(:case, :aod))) }
+
     context "when user is an attorney" do
       let(:role) { :attorney_role }
 
