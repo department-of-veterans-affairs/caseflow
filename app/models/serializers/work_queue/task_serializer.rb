@@ -33,6 +33,6 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   end
 
   attribute :external_id do
-    if object.appeal.respond_to? :uuid then object.appeal.uuid else object.appeal.vacols_id end
+    object.appeal.external_id
   end
 end
