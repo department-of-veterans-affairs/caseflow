@@ -229,11 +229,13 @@ class User < ApplicationRecord
     end
 
     # This method is only used in dev/demo mode to test the judge spreadsheet functionality in hearing scheduling
+    # :nocov:
     def create_judge_in_vacols(first_name, last_name, vlj_id)
       return unless Rails.env.development? || Rails.env.demo?
 
       UserRepository.create_judge_in_vacols(first_name, last_name, vlj_id)
     end
+    # :nocov:
 
     def system_user
       new(
