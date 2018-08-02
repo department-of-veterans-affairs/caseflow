@@ -51,6 +51,11 @@ class TasksController < ApplicationController
   # { type: AttorneyTask,
   #   assigned_to_id: 23
   # }
+  # e.g, for ama appeal => PATCH /tasks/:id,
+  # { type: ColocatedtTask,
+  #   status: :on_hold,
+  #   on_hold_duration: "something"
+  # }
   def update
     if task.assigned_to != current_user && task.assigned_by != current_user
       redirect_to "/unauthorized"
