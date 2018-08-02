@@ -182,7 +182,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     grouped_shuffled_monthly_dates[month].nil? || monthly_allocations[month] == 0
   end
 
-  def any_other_days_a_better_fit?(monthly_grouped_days)
+  def any_other_days_a_better_fit?(monthly_grouped_days, num_of_rooms)
     monthly_grouped_days.any? do |_k, v|
       (v.length + num_of_rooms) <= MAX_NUMBER_OF_DAYS_PER_DATE
     end
@@ -192,7 +192,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     num_left_to_max = MAX_NUMBER_OF_DAYS_PER_DATE - @date_allocated[date]
 
     if num_of_rooms > num_left_to_max
-      if any_other_days_a_better_fit?(monthly_grouped_days)
+      if any_other_days_a_better_fit?(monthly_grouped_days, num_of_roomsFexpect(subject.count).to eq(video_hearing_days.count))
         return 0
       end
       return num_left_to_max
