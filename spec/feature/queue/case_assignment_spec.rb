@@ -71,7 +71,10 @@ RSpec.feature "Case Assignment flows" do
 
       expect(page).to have_content("Submit admin action")
 
-      click_dropdown rand(Constants::CO_LOCATED_ADMIN_ACTIONS.length) do
+      opt_idx = rand(Constants::CO_LOCATED_ADMIN_ACTIONS.length)
+      selected_opt = Constants::CO_LOCATED_ADMIN_ACTIONS.values[opt_idx]
+
+      click_dropdown opt_idx do
         visible_options = page.find_all(".Select-option")
         expect(visible_options.length).to eq Constants::CO_LOCATED_ADMIN_ACTIONS.length
       end
@@ -82,7 +85,7 @@ RSpec.feature "Case Assignment flows" do
 
       sleep 1
       expect(page.current_path).to eq "/queue"
-      expect(page).to have_content(sprintf(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, ""))
+      expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, selected_opt))
     end
   end
 end
