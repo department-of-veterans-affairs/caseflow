@@ -36,7 +36,7 @@ class AmaTaskTable extends React.PureComponent<Props> {
     return {
       header: COPY.CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE,
       valueFunction:
-        (task: AmaTask) => <a href={`/queue/appeals/${task.attributes.appeal_id}`}>
+        (task: AmaTask) => <a href={`/queue/appeals/${task.attributes.external_id}`}>
           {task.attributes.veteran_name} ({task.attributes.veteran_file_number})</a>
     };
   }
@@ -62,10 +62,10 @@ class AmaTaskTable extends React.PureComponent<Props> {
   caseReaderLinkColumn = () => ({
     header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
     valueFunction: (task: AmaTask) => {
-      return <ReaderLink appealId={task.attributes.appeal_id.toString()}
+      return <ReaderLink appealId={task.attributes.external_id}
         analyticsSource={CATEGORIES.QUEUE_TABLE}
         redirectUrl={window.location.pathname}
-        appeal={{ attributes: { vacols_id: task.attributes.appeal_id.toString(), paper_case: false } }} />;
+        appeal={{ attributes: { vacols_id: task.attributes.external_id, paper_case: false } }} />;
     }
   })
 

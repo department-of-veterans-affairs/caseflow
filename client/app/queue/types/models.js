@@ -74,6 +74,7 @@ export type AmaTask = {
     completed_at: ?string,
     docket_name: ?string,
     docket_number: string,
+    external_id: string,
     instructions: ?string,
     placed_on_hold_at: ?string,
     started_at: ?string,
