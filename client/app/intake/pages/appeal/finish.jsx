@@ -16,7 +16,7 @@ import {
   setIssueDecisionDate
 } from '../../actions/ama';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
-import { getIntakeStatus } from '../../selectors';
+import { getIntakeStatus, issueCountSelector } from '../../selectors';
 import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
 class Finish extends React.PureComponent {
@@ -82,6 +82,14 @@ const RatedIssues = connect(
   }, dispatch)
 )(RatedIssuesUnconnected);
 
+const mapStateToProps = (state) => {
+  return {
+    issueCount: issueCountSelector(state.appeal)
+  };
+};
+
+const IssueCounterConnected = connect(mapStateToProps)(IssueCounter);
+
 class FinishNextButton extends React.PureComponent {
   handleClick = () => {
     this.props.completeIntake(this.props.intakeId, this.props.appeal).then(
@@ -99,7 +107,7 @@ class FinishNextButton extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
-      disabled={!this.props.appeal.issueCount}
+      disabled={!this.props.issueCount}
     >
       Establish appeal
     </Button>;
@@ -115,12 +123,6 @@ const FinishNextButtonConnected = connect(
     completeIntake
   }, dispatch)
 )(FinishNextButton);
-
-const IssueCounterConnected = connect(
-  ({ appeal }) => ({
-    issueCount: appeal.issueCount
-  })
-)(IssueCounter);
 
 export class FinishButtons extends React.PureComponent {
   render = () =>

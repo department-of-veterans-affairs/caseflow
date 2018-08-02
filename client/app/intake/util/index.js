@@ -122,12 +122,6 @@ export const formatIssues = (intakeState) => {
   return data;
 };
 
-export const allIssueCounter = (state) => {
-  const selectedIssues = formatIssues(state).request_issues;
-
-  return selectedIssues ? selectedIssues.length : 0;
-};
-
 export const prepareReviewData = (intakeData, intakeType) => {
   switch (intakeType) {
   case 'appeal':

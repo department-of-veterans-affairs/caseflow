@@ -16,7 +16,7 @@ import {
   setIssueDecisionDate
 } from '../../actions/ama';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
-import { getIntakeStatus } from '../../selectors';
+import { getIntakeStatus, issueCountSelector } from '../../selectors';
 import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
 class Finish extends React.PureComponent {
@@ -106,11 +106,13 @@ const FinishNextButtonConnected = connect(
   }, dispatch)
 )(FinishNextButton);
 
-const IssueCounterConnected = connect(
-  ({ higherLevelReview }) => ({
-    issueCount: higherLevelReview.issueCount
-  })
-)(IssueCounter);
+const mapStateToProps = (state) => {
+  return {
+    issueCount: issueCountSelector(state.higherLevelReview)
+  };
+};
+
+const IssueCounterConnected = connect(mapStateToProps)(IssueCounter);
 
 const RatedIssues = connect(
   ({ higherLevelReview, intake }) => ({

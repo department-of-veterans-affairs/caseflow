@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, getPageError, formatRatings, formatRelationships, allIssueCounter } from '../util';
+import { getReceiptDateError, getPageError, formatRatings, formatRelationships } from '../util';
 import _ from 'lodash';
 
 const getInformalConferenceError = (responseErrorCodes) => (
@@ -80,8 +80,6 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
 );
 
 export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelReview(), action) => {
-  let updatedState;
-
   switch (action.type) {
   case ACTIONS.START_NEW_INTAKE:
     return mapDataToInitialHigherLevelReview();
@@ -242,7 +240,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       }
     });
   case ACTIONS.SET_ISSUE_CATEGORY:
-    updatedState = update(state, {
+    return update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           category: {
@@ -251,14 +249,8 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         }
       }
     });
-
-    return update(updatedState, {
-      issueCount: {
-        $set: allIssueCounter(updatedState)
-      }
-    });
   case ACTIONS.SET_ISSUE_DESCRIPTION:
-    updatedState = update(state, {
+    return update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           description: {
@@ -267,26 +259,14 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         }
       }
     });
-
-    return update(updatedState, {
-      issueCount: {
-        $set: allIssueCounter(updatedState)
-      }
-    });
   case ACTIONS.SET_ISSUE_DECISION_DATE:
-    updatedState = update(state, {
+    return update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           decisionDate: {
             $set: action.payload.decisionDate
           }
         }
-      }
-    });
-
-    return update(updatedState, {
-      issueCount: {
-        $set: allIssueCounter(updatedState)
       }
     });
   default:

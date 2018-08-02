@@ -143,6 +143,7 @@ RSpec.feature "Appeal Intake" do
     safe_click "#button-add-issue"
 
     safe_click ".Select"
+    expect(page).to have_content("1 issue")
 
     fill_in "Issue category", with: "Active Duty Adjustments"
     find("#issue-category").send_keys :enter

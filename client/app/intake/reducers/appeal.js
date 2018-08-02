@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, getPageError, formatRatings, formatRelationships, allIssueCounter } from '../util';
+import { getReceiptDateError, getPageError, formatRatings, formatRelationships } from '../util';
 import _ from 'lodash';
 
 const getDocketTypeError = (responseErrorCodes) => (
@@ -65,8 +65,6 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
 );
 
 export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
-  let updatedState;
-
   switch (action.type) {
   case ACTIONS.START_NEW_INTAKE:
     return mapDataToInitialAppeal();
@@ -197,9 +195,6 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
             }
           }
         }
-      },
-      issueCount: {
-        $set: action.payload.isSelected ? state.issueCount + 1 : state.issueCount - 1
       }
     });
   case ACTIONS.ADD_NON_RATED_ISSUE:
@@ -215,7 +210,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       }
     });
   case ACTIONS.SET_ISSUE_CATEGORY:
-    updatedState = update(state, {
+    return update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           category: {
@@ -224,14 +219,8 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         }
       }
     });
-
-    return update(updatedState, {
-      issueCount: {
-        $set: allIssueCounter(updatedState)
-      }
-    });
   case ACTIONS.SET_ISSUE_DESCRIPTION:
-    updatedState = update(state, {
+    return update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           description: {
@@ -240,26 +229,14 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         }
       }
     });
-
-    return update(updatedState, {
-      issueCount: {
-        $set: allIssueCounter(updatedState)
-      }
-    });
   case ACTIONS.SET_ISSUE_DECISION_DATE:
-    updatedState = update(state, {
+    return update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           decisionDate: {
             $set: action.payload.decisionDate
           }
         }
-      }
-    });
-
-    return update(updatedState, {
-      issueCount: {
-        $set: allIssueCounter(updatedState)
       }
     });
   default:

@@ -1,7 +1,7 @@
 import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, getPageError, formatRatings, formatRelationships, allIssueCounter } from '../util';
+import { getReceiptDateError, getPageError, formatRatings, formatRelationships } from '../util';
 
 const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.SUPPLEMENTAL_CLAIM.key) {
@@ -59,8 +59,6 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
 );
 
 export const supplementalClaimReducer = (state = mapDataToInitialSupplementalClaim(), action) => {
-  let updatedState;
-
   switch (action.type) {
   case ACTIONS.START_NEW_INTAKE:
     return mapDataToInitialSupplementalClaim();
@@ -197,7 +195,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       }
     });
   case ACTIONS.SET_ISSUE_CATEGORY:
-    updatedState = update(state, {
+    return update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           category: {
@@ -206,14 +204,8 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         }
       }
     });
-
-    return update(updatedState, {
-      issueCount: {
-        $set: allIssueCounter(updatedState)
-      }
-    });
   case ACTIONS.SET_ISSUE_DESCRIPTION:
-    updatedState = update(state, {
+    return update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           description: {
@@ -222,26 +214,14 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         }
       }
     });
-
-    return update(updatedState, {
-      issueCount: {
-        $set: allIssueCounter(updatedState)
-      }
-    });
   case ACTIONS.SET_ISSUE_DECISION_DATE:
-    updatedState = update(state, {
+    return update(state, {
       nonRatedIssues: {
         [action.payload.issueId]: {
           decisionDate: {
             $set: action.payload.decisionDate
           }
         }
-      }
-    });
-
-    return update(updatedState, {
-      issueCount: {
-        $set: allIssueCounter(updatedState)
       }
     });
   default:
