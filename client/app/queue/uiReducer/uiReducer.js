@@ -17,10 +17,7 @@ export const initialState = {
     error: null
   },
   saveState: initialSaveState,
-  modal: {
-    cancelCheckout: false,
-    deleteIssue: false
-  },
+  modal: {},
   featureToggles: {},
   userRole: '',
   userCssId: '',
