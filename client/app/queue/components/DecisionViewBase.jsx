@@ -26,8 +26,7 @@ const getDisplayName = (WrappedComponent) => {
 
 const defaultTopLevelProps = {
   continueBtnText: 'Continue',
-  hideCancelButton: false,
-  modalName: 'cancelCheckout'
+  hideCancelButton: false
 };
 
 export default function decisionViewBase(ComponentToWrap, topLevelProps = defaultTopLevelProps) {
@@ -42,13 +41,10 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
 
     componentDidMount = () => this.props.highlightInvalidFormItems(false);
 
-    showModal = () => this.props.showModal(this.props.modalName);
-    hideModal = () => this.props.hideModal(this.props.modalName);
-
     getFooterButtons = () => {
       const buttons = [{
         classNames: ['cf-btn-link'],
-        callback: this.showModal,
+        callback: () => this.props.showModal('cancelCheckout'),
         name: 'cancel-button',
         displayText: 'Cancel',
         willNeverBeLoading: true
@@ -78,7 +74,7 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
         appealId
       } = this.props;
 
-      this.hideModal();
+      this.props.hideModal('cancelCheckout');
       this.props.resetDecisionOptions();
       _.each(stagedAppeals, this.props.checkoutStagedAppeal);
 
@@ -135,19 +131,19 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
     }
 
     render = () => <React.Fragment>
-      {this.props.modal && <div className="cf-modal-scroll">
+      {this.props.cancelCheckoutModal && <div className="cf-modal-scroll">
         <Modal
           title="Are you sure you want to cancel?"
           buttons={[{
             classNames: ['usa-button', 'cf-btn-link'],
             name: 'Return to editing',
-            onClick: this.hideModal
+            onClick: () => this.props.hideModal('cancelCheckout')
           }, {
             classNames: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
             name: 'Yes, cancel',
             onClick: this.cancelFlow
           }]}
-          closeHandler={this.hideModal}>
+          closeHandler={() => this.props.hideModal('cancelCheckout')}>
           {COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT}
         </Modal>
       </div>}
@@ -162,10 +158,9 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
 
   const mapStateToProps = (state) => {
     const { savePending, saveSuccessful } = state.ui.saveState;
-    const { modalName } = topLevelProps;
 
     return {
-      modal: state.ui.modal[modalName],
+      cancelCheckoutModal: state.ui.modal.cancelCheckout,
       savePending,
       saveSuccessful,
       stagedAppeals: Object.keys(state.queue.stagedChanges.appeals),
