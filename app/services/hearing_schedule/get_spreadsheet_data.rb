@@ -16,7 +16,7 @@ class HearingSchedule::GetSpreadsheetData
   def judge_non_availability_template
     {
       title: judge_non_availability_sheet.column(1)[0],
-      example_row: judge_non_availability_sheet.row(7).uniq,
+      headers: judge_non_availability_sheet.row(2).uniq,
       empty_column: judge_non_availability_sheet.column(5).uniq
     }
   end
@@ -24,10 +24,10 @@ class HearingSchedule::GetSpreadsheetData
   def judge_non_availability_data
     non_availability_dates = []
     names = judge_non_availability_sheet.column(2).drop(JUDGE_NON_AVAILABILITY_HEADER_COLUMNS)
-    css_ids = judge_non_availability_sheet.column(3).drop(JUDGE_NON_AVAILABILITY_HEADER_COLUMNS)
+    vlj_ids = judge_non_availability_sheet.column(3).drop(JUDGE_NON_AVAILABILITY_HEADER_COLUMNS)
     dates = judge_non_availability_sheet.column(4).drop(JUDGE_NON_AVAILABILITY_HEADER_COLUMNS)
-    names.zip(css_ids, dates).each do |row|
-      non_availability_dates.push("name" => row[0], "css_id" => row[1], "date" => row[2])
+    names.zip(vlj_ids, dates).each do |row|
+      non_availability_dates.push("name" => row[0].strip, "vlj_id" => row[1].to_s.strip, "date" => row[2])
     end
     non_availability_dates
   end
@@ -51,9 +51,9 @@ class HearingSchedule::GetSpreadsheetData
     ro_codes.zip(ro_names).each_with_index do |row, index|
       dates = ro_non_availability_sheet.column(index + 3).drop(3).compact
       dates.each do |date|
-        non_availability_dates.push("ro_code" => row[0],
-                                    "ro_city" => row[1].split(", ")[0],
-                                    "ro_state" => row[1].split(", ")[1],
+        non_availability_dates.push("ro_code" => row[0].strip,
+                                    "ro_city" => row[1].split(", ")[0].strip,
+                                    "ro_state" => row[1].split(", ")[1].strip,
                                     "date" => date)
       end
     end
@@ -94,9 +94,9 @@ class HearingSchedule::GetSpreadsheetData
     ro_codes = allocation_sheet.column(3).drop(3)
     allocated_days = allocation_sheet.column(4).drop(3)
     ro_names.zip(ro_codes, allocated_days).each do |row|
-      hearing_allocation_days.push("ro_code" => row[1],
-                                   "ro_city" => row[0].split(", ")[0],
-                                   "ro_state" => row[0].split(", ")[1],
+      hearing_allocation_days.push("ro_code" => row[1].strip,
+                                   "ro_city" => row[0].split(", ")[0].strip,
+                                   "ro_state" => row[0].split(", ")[1].strip,
                                    "allocated_days" => row[2])
     end
     hearing_allocation_days

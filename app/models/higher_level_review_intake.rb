@@ -35,7 +35,6 @@ class HigherLevelReviewIntake < Intake
   def complete!(request_params)
     return if complete? || pending?
     start_completion!
-
     detail.create_issues!(request_issues_data: request_params[:request_issues] || [])
 
     create_end_product_and_contentions
