@@ -30,6 +30,7 @@ const config = {
       ie: 'component-ie'
     }
   },
+  devtool: 'source-map',
   module: {
     loaders: [
       {
@@ -47,7 +48,21 @@ const config = {
       },
       {
         test: /\.scss?$/,
-        use: ['style-loader', 'css-loader', 'sass-loader']
+        use: [{
+          loader: 'style-loader'
+        },
+        {
+          loader: 'css-loader',
+          options: {
+            sourceMap: true
+          }
+        },
+        {
+          loader: 'sass-loader',
+          options: {
+            sourceMap: true
+          }
+        }]
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
