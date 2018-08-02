@@ -32,6 +32,18 @@ class UserRepository
       true
     end
 
+    def css_ids_by_vlj_ids(vlj_ids)
+      users = VACOLS::Staff.where(sattyid: vlj_ids)
+
+      results = {}
+      users.each do |user|
+        results.merge!(user.sattyid => { css_id: user.sdomainid,
+                                         first_name: user.snamef,
+                                         last_name: user.snamel })
+      end
+      results
+    end
+
     # :nocov:
     def css_id_by_full_name(full_name)
       name = full_name.split(" ")

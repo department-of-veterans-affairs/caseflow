@@ -40,6 +40,7 @@ class SeedDB
     User.create(css_id: "BVAOFRANECKI", station_id: 101, full_name: "Judge has case to sign")
     User.create(css_id: "BVAJWEHNER", station_id: 101, full_name: "Judge has case to assign no team")
     User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located no cases")
+    User.create(css_id: "BVATWARNER", station_id: 101, full_name: "Build Hearing Schedule")
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
