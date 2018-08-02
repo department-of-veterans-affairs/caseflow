@@ -166,7 +166,6 @@ describe HearingSchedule::AssignJudgesToHearingDays do
     subject { assign_judges_to_hearing_days.match_hearing_days_to_judges }
 
     it "assign VIDEO hearing days to judges" do
-      expect(subject.count).to eq(video_hearing_days.count)
       judge_ids = subject.map { |hearing_day| hearing_day[:judge_id] }
 
       @judges.each do |judge|
