@@ -26,8 +26,9 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     end
   end
 
-  def find_user(vlj_id, name)
-    UserRepository.find_user_by_fn_ln_vlj_id(name.split(", ")[1], name.split(", ")[0], vlj_id).count > 0
+  def judges_in_vacols?(vlj_ids)
+    judges = UserRepository.css_ids_by_vlj_ids(vlj_ids)
+    judges.count == vlj_ids.uniq.count
   end
 
   def check_range_of_dates(date)
@@ -44,7 +45,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     unless @spreadsheet_data.all? { |row| check_range_of_dates(row["date"]) }
       @errors << JudgeDatesNotInRange
     end
-    unless @spreadsheet_data.all? { |row| find_user(row["vlj_id"], row["name"]) }
+    unless judges_in_vacols?(@spreadsheet_data.pluck("vlj_id"))
       @errors << JudgeNotInDatabase
     end
   end

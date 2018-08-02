@@ -32,14 +32,14 @@ class UserRepository
       true
     end
 
-    def css_id_by_vlj_id(vlj_id)
-      VACOLS::Staff.find_by(sattyid: vlj_id).sdomainid
-    end
+    def css_ids_by_vlj_ids(vlj_ids)
+      users = VACOLS::Staff.where(sattyid: vlj_ids)
 
-    def find_user_by_fn_ln_vlj_id(first_name, last_name, vlj_id)
-      VACOLS::Staff.where(sattyid: vlj_id,
-                          snamef: first_name,
-                          snamel: last_name)
+      results = {}
+      users.each do |user|
+        results.merge!(user.sattyid => user.sdomainid)
+      end
+      results
     end
 
     # :nocov:
