@@ -2,11 +2,6 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Build HearSched"]) }
   let!(:ro_schedule_period) { create(:ro_schedule_period) }
   let!(:judge_schedule_period) { create(:judge_schedule_period) }
-  let(:hearing_days) do
-    get_dates_between(judge_schedule_period.start_date, judge_schedule_period.end_date, 5).map do |date|
-      create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13")
-    end
-  end
 
   context "index" do
     it "returns all schedule periods" do
@@ -109,8 +104,10 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
   end
 
   context "assign judges to full schedule for a schedule period" do
-    before do
-      hearing_days
+    let!(:hearing_days) do
+      get_unique_dates_between(judge_schedule_period.start_date, judge_schedule_period.end_date, 5).map do |date|
+        create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13")
+      end
     end
 
     it "update judge assignments for a given schedulePeriod id" do
