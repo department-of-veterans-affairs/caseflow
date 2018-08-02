@@ -31,4 +31,8 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :veteran_file_number do
     object.appeal.veteran_file_number
   end
+
+  attribute :external_id do
+    if object.appeal.respond_to? :uuid then object.appeal.uuid else object.appeal.vacols_id end
+  end
 end
