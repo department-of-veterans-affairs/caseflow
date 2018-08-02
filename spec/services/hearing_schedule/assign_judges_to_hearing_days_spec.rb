@@ -145,7 +145,6 @@ describe HearingSchedule::AssignJudgesToHearingDays do
   context "handle VIDEO hearings" do
     before do
       @judges = []
-      video_hearing_days
 
       5.times do
         judge = FactoryBot.create(:user)
@@ -157,7 +156,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
       end
     end
 
-    let(:video_hearing_days) do
+    let!(:video_hearing_days) do
       get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, 10).map do |date|
         create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13")
       end
