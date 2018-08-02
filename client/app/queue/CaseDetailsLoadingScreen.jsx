@@ -1,5 +1,4 @@
 // @flow
-import _ from 'lodash';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -10,7 +9,6 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import { prepareAppealDetailsForStore, prepareTasksForStore } from './utils';
 
-import { setActiveAppeal, setActiveTask } from './CaseDetail/CaseDetailActions';
 import { onReceiveAppealDetails, onReceiveTasks, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
 import type { LegacyAppeal, LegacyAppeals, Tasks } from './types/models';
 import type { State, UsersById } from './types/state';
@@ -51,9 +49,9 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
       this.props.onReceiveAppealDetails({ appeals: prepareAppealDetailsForStore([response.body.appeal]) });
     });
     const taskPromise = ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
-      this.props.onReceiveTasks({ tasks: prepareTasksForStore(response.body.tasks) })
-    })
-    let promises = []; 
+      this.props.onReceiveTasks({ tasks: prepareTasksForStore(response.body.tasks) });
+    });
+    const promises = [];
 
     if (!appealDetails || !(appealId in appealDetails)) {
       promises.push(appealPromise);

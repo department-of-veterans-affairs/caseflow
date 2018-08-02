@@ -11,14 +11,19 @@ import type {
   User
 } from './types/models';
 
-export const selectedTasksSelector = (state: State, userId: string) => _.flatMap(
-  state.queue.isTaskAssignedToUserSelected[userId] || {},
-  (selected, id) => selected ? [state.queue.tasks[id]] : []
-);
+export const selectedTasksSelector = (state: State, userId: string) => {
+  const flatTasks = _.flatten(_.values(state.queue.tasks));
+
+  return _.flatMap(
+    state.queue.isTaskAssignedToUserSelected[userId] || {},
+    (selected, id) => selected ? [_.find(flatTasks, { 'taskId': id })] : []
+  );
+}
 
 const getTasks = (state: State) => state.queue.tasks;
 const getAppeals = (state: State) => state.queue.appeals;
 const getUserCssId = (state: State) => state.ui.userCssId;
+const getAppealId = (state: State, props: Object) => props.appealId;
 
 export const tasksByAssigneeCssIdSelector = createSelector(
   [getTasks, getUserCssId],
@@ -32,10 +37,24 @@ export const appealsWithTasksSelector = createSelector(
   [getTasks, getAppeals],
   (tasks: Tasks, appeals: LegacyAppeals) => {
     return _.map(appeals, (appeal) => {
-      appeal.tasks = tasks[appeal.externalId];
+      appeal.tasks = _.filter(tasks, (task) => task.externalAppealId === appeal.externalId);
 
       return appeal;
     });
+  }
+);
+
+export const tasksForAppealSelector = createSelector(
+  [getTasks, getAppealId],
+  (tasks: Tasks, appealId: number) => {
+    return _.filter(tasks, (task) => task.externalAppealId === appealId)
+  }
+);
+
+export const tasksForAppealAssignedToUserSelector = createSelector(
+  [tasksForAppealSelector, getUserCssId],
+  (tasks: Tasks, cssId: string) => {
+    return _.filter(tasks, (task) => task.userId === cssId)
   }
 );
 
@@ -96,8 +115,4 @@ export const getAppealsByUserId = (state: State) => {
 
     return appealsByUserId;
   }, {});
-};
-
-export const getAppealTasksAssignedToUser = (state: State, appealId: number) => {
-  return getTasks(state)[appealId].filter((task) => task.userId === getUserCssId(state))
 };

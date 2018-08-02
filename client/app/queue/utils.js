@@ -23,42 +23,37 @@ import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 export const prepareTasksForStore =
   (tasks: Array<Task>):
     { tasks: Tasks } => {
-      const mappedLegacyTasks = tasks.map((task) => {
-        return {
-          type: task.attributes.type,
-          title: task.attributes.title,
-          appealId: task.attributes.appeal_id,
-          appealType: task.attributes.appeal_type,
-          externalAppealId: task.attributes.external_appeal_id,
-          assignedOn: task.attributes.assigned_on,
-          dueOn: task.attributes.due_on,
-          userId: task.attributes.user_id,
-          assignedToPgId: task.attributes.assigned_to_pg_id,
-          addedByName: task.attributes.added_by_name,
-          addedByCssId: task.attributes.added_by_css_id,
-          taskId: task.attributes.task_id,
-          taskType: task.attributes.task_type,
-          documentId: task.attributes.document_id,
-          assignedByFirstName: task.attributes.assigned_by_first_name,
-          assignedByLastName: task.attributes.assigned_by_last_name,
-          workProduct: task.attributes.work_product
-        };
-      });
+    const mappedLegacyTasks = tasks.map((task) => {
+      return {
+        type: task.attributes.type,
+        title: task.attributes.title,
+        appealId: task.attributes.appeal_id,
+        appealType: task.attributes.appeal_type,
+        externalAppealId: task.attributes.external_appeal_id,
+        assignedOn: task.attributes.assigned_on,
+        dueOn: task.attributes.due_on,
+        userId: task.attributes.user_id,
+        assignedToPgId: task.attributes.assigned_to_pg_id,
+        addedByName: task.attributes.added_by_name,
+        addedByCssId: task.attributes.added_by_css_id,
+        taskId: task.attributes.task_id,
+        taskType: task.attributes.task_type,
+        documentId: task.attributes.document_id,
+        assignedByFirstName: task.attributes.assigned_by_first_name,
+        assignedByLastName: task.attributes.assigned_by_last_name,
+        workProduct: task.attributes.work_product
+      };
+    });
 
-      return _.groupBy(mappedLegacyTasks, 'externalAppealId');
-    }
+    return _.keyBy(mappedLegacyTasks, 'taskId');
+  };
 
 export const associateTasksWithAppeals =
   (serverData: { tasks: { data: Array<Task> } }):
     { appeals: LegacyAppeals, tasks: Tasks } => {
     const {
-      tasks: { data : tasks }
+      tasks: { data: tasks }
     } = serverData;
-
-    const result = {
-      appeals: [],
-      tasks: []
-    };
 
     const appealHash = tasks.reduce((accumulator, task) => {
       if (!accumulator[task.attributes.external_appeal_id]) {
@@ -74,12 +69,11 @@ export const associateTasksWithAppeals =
           veteranName: task.attributes.veteran_name,
           veteranFileNumber: task.attributes.veteran_file_number,
           isPaperCase: task.attributes.paper_case
-        }
+        };
       }
 
-      return accumulator
+      return accumulator;
     }, {});
-
 
     return {
       tasks: prepareTasksForStore(tasks),
@@ -90,8 +84,8 @@ export const associateTasksWithAppeals =
 export const prepareAppealDetailsForStore =
   (appeals: Array<LegacyAppeal>):
     { appeals: LegacyAppeals } => {
-    return _.keyBy(appeals, 'attributes.external_id'); 
-  }
+    return _.keyBy(appeals, 'attributes.external_id');
+  };
 
 /*
 * Sorting hierarchy:

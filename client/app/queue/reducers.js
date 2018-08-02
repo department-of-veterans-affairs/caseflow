@@ -310,28 +310,6 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
       }
     });
   }
-  case ACTIONS.TASK_INITIAL_ASSIGNED: {
-    const appealId = action.payload.task.id;
-
-    return update(state, {
-      tasks: {
-        [appealId]: {
-          $set: action.payload.task
-        }
-      }
-    });
-  }
-  case ACTIONS.TASK_REASSIGNED: {
-    const appealId = action.payload.task.id;
-
-    return update(state, {
-      tasks: {
-        [appealId]: {
-          $set: action.payload.task
-        }
-      }
-    });
-  }
   case ACTIONS.RECEIVE_ALL_ATTORNEYS:
     return update(state, {
       attorneys: {

@@ -95,15 +95,16 @@ class TaskTable extends React.PureComponent<Props> {
           }
 
           return <Checkbox
-            name={task.id}
+            name={task.taskId}
             hideLabel
-            value={this.isTaskSelected(task.id)}
+            value={this.isTaskSelected(task.taskId)}
             onChange={
-              (checked) =>
+              (checked) => {
                 this.props.setSelectionOfTaskOfUser(
                   { userId: this.props.userId,
-                    taskId: task.id,
-                    selected: checked })} />;
+                    taskId: task.taskId,
+                    selected: checked })}
+              } />;
         }
     } : null;
   }
@@ -255,7 +256,7 @@ class TaskTable extends React.PureComponent<Props> {
           return null;
         }
 
-        return <ReaderLink appealId={appeal.vacolsId}
+        return <ReaderLink appealId={appeal.externalId}
           analyticsSource={CATEGORIES.QUEUE_TABLE}
           redirectUrl={window.location.pathname}
           appeal={appeal} />;

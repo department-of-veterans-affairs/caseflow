@@ -6,7 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import { getAppealTasksAssignedToUser } from './selectors';
+import { tasksForAppealAssignedToUserSelector } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import JudgeActionsDropdown from './components/JudgeActionsDropdown';
@@ -184,7 +184,7 @@ const mapStateToProps = (state: State, ownProps: Object) => {
   return {
     featureToggles,
     userRole,
-    appealsAssignedToCurrentUser: getAppealTasksAssignedToUser(state, ownProps.appeal.attributes.external_id),
+    appealsAssignedToCurrentUser: tasksForAppealAssignedToUserSelector(state, ownProps),
     attorneysOfJudge: state.queue.attorneysOfJudge
   };
 };

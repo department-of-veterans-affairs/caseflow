@@ -1,5 +1,5 @@
 // @flow
-import { associateTasksWithAppeals } from './utils';
+import { associateTasksWithAppeals, prepareTasksForStore } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
@@ -253,11 +253,10 @@ export const setSelectionOfTaskOfUser =
     }
   });
 
-const initialTaskAssignment = ({ task, assigneeId }) => ({
+const initialTaskAssignment = ({ tasks }) => ({
   type: ACTIONS.TASK_INITIAL_ASSIGNED,
   payload: {
-    task,
-    assigneeId
+    tasks
   }
 });
 
@@ -269,27 +268,24 @@ export const initialAssignTasksToUser =
           '/legacy_tasks',
           { data: { tasks: { assigned_to_id: assigneeId,
             type: 'JudgeCaseAssignmentToAttorney',
-            appeal_id: oldTask.attributes.appeal_id } } }).
+            appeal_id: oldTask.appealId } } }).
           then((resp) => resp.body).
           then(
             (resp) => {
               const { task: { data: task } } = resp;
 
               task.appealId = task.id;
-              dispatch(initialTaskAssignment({ task,
-                assigneeId }));
+              dispatch(onReceiveTasks({ tasks: prepareTasksForStore([task]) }));
               dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
                 taskId: task.id,
                 selected: false }));
             });
       }));
 
-const taskReassignment = ({ task, assigneeId, previousAssigneeId }) => ({
+const taskReassignment = ({ tasks }) => ({
   type: ACTIONS.TASK_REASSIGNED,
   payload: {
-    task,
-    assigneeId,
-    previousAssigneeId
+    tasks
   }
 });
 
@@ -298,7 +294,7 @@ export const reassignTasksToUser =
     (dispatch: Dispatch) =>
       Promise.all(tasks.map((oldTask) => {
         return ApiUtil.patch(
-          `/legacy_tasks/${oldTask.attributes.task_id}`,
+          `/legacy_tasks/${oldTask.taskId}`,
           { data: { tasks: { assigned_to_id: assigneeId } } }).
           then((resp) => resp.body).
           then(
@@ -306,9 +302,7 @@ export const reassignTasksToUser =
               const { task: { data: task } } = resp;
 
               task.appealId = task.id;
-              dispatch(taskReassignment({ task,
-                assigneeId,
-                previousAssigneeId }));
+              dispatch(onReceiveTasks({ tasks: prepareTasksForStore([task]) }));
               dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
                 taskId: task.id,
                 selected: false }));

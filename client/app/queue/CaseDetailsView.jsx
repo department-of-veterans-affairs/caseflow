@@ -19,6 +19,7 @@ import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
 
 import { clearActiveAppealAndTask } from './CaseDetail/CaseDetailActions';
+import { tasksForAppealSelector } from './selectors';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -82,7 +83,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal: appealDetails[ownProps.appealId],
-    task: tasks[ownProps.appealId][0],
+    task: tasksForAppealSelector(state, ownProps),
     success,
     error
   };

@@ -24,6 +24,7 @@ import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import Alert from '../components/Alert';
 import JudgeSelectComponent from './JudgeSelectComponent';
+import { tasksForAppealAssignedToUserSelector } from './selectors';
 
 import {
   fullWidth,
@@ -215,9 +216,6 @@ const mapStateToProps = (state, ownProps) => {
           [ownProps.appealId]: appeal
         },
         taskDecision: decision
-      },
-      tasks: {
-        [ownProps.appealId]: tasks
       }
     },
     ui: {
@@ -233,7 +231,7 @@ const mapStateToProps = (state, ownProps) => {
     appeal,
     judges,
     // Attorneys should only have one task assigned to them from this appeal.
-    task: tasks[0],
+    task: tasksForAppealAssignedToUserSelector(state, ownProps)[0],
     decision,
     error,
     userRole,
