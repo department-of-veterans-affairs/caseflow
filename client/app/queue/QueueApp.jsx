@@ -204,8 +204,8 @@ class QueueApp extends React.PureComponent {
             render={this.routedEvaluateDecision} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/admin_action"
-            title="Add Admin Action | Caseflow"
+            path="/queue/appeals/:appealId/colocated_task"
+            title="Add Colocated Task | Caseflow"
             render={this.routedAddColocatedTask} />
           <PageRoute
             exact
