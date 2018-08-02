@@ -60,4 +60,8 @@ class Appeal < AmaReview
   end
 
   delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
+
+  def external_id
+    uuid
+  end
 end

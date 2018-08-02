@@ -97,7 +97,8 @@ class VACOLS::CaseHearing < VACOLS::Record
                             name: "create_hearing") do
         create(attrs.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
                            adduser: current_user_slogid,
-                           folder_nr: hearing_info[:regional_office] ? "VIDEO #{hearing_info[:regional_office]}" : nil))
+                           folder_nr: hearing_info[:regional_office] ? "VIDEO #{hearing_info[:regional_office]}" : nil,
+                           hearing_type: "C"))
       end
     end
 
@@ -131,7 +132,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     def select_schedule_days
       select(:hearing_pkseq,
              :hearing_date,
-             :hearing_type,
+             "CASE WHEN folder_nr LIKE 'VIDEO%' THEN 'V' ELSE hearing_type END AS hearing_type",
              :folder_nr,
              :room,
              :board_member,

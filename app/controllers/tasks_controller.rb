@@ -5,7 +5,8 @@ class TasksController < ApplicationController
   before_action :verify_task_assignment_access, only: [:create]
 
   TASK_CLASSES = {
-    ColocatedTask: ColocatedTask
+    ColocatedTask: ColocatedTask,
+    AttorneyTask: AttorneyTask
   }.freeze
 
   QUEUES = {
@@ -30,7 +31,7 @@ class TasksController < ApplicationController
   def create
     return invalid_type_error unless task_class
 
-    tasks = task_class.create(tasks_params)
+    tasks = task_class.create(create_params)
 
     tasks.each { |task| return invalid_record_error(task) unless task.valid? }
     render json: { tasks: json_tasks(tasks) }, status: :created
@@ -59,7 +60,7 @@ class TasksController < ApplicationController
   helper_method :user
 
   def task_class
-    TASK_CLASSES[tasks_params.first[:type].try(:to_sym)]
+    TASK_CLASSES[create_params.first[:type].try(:to_sym)]
   end
 
   def invalid_type_error
@@ -75,11 +76,12 @@ class TasksController < ApplicationController
     @task ||= Task.find(params[:id])
   end
 
-  def tasks_params
+  def create_params
     [params.require("tasks")].flatten.map do |task|
-      task.permit(:appeal_id, :type, :instructions, :title)
+      task.permit(:type, :instructions, :title, :assigned_to_id, :parent_id)
         .merge(assigned_by: current_user)
-        .merge(appeal_type: "LegacyAppeal")
+        .merge(appeal: Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id]))
+        .merge(assigned_to_type: "User")
     end
   end
 

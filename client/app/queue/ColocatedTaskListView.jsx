@@ -25,11 +25,11 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
 import type { LegacyAppeals, AmaTask } from './types/models';
-import type { State, UiStateError } from './types/state';
+import type { State, UiStateMessage } from './types/state';
 
 type Params = {|
   userId: number,
-  error: ?UiStateError,
+  error: ?UiStateMessage,
   success: string
 |};
 
