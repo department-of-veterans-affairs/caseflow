@@ -8,12 +8,13 @@ import type { Dispatch } from './types/state';
 import type {
   Task,
   Tasks,
+  BasicAppeals,
   LegacyAppeals,
   User
 } from './types/models';
 
 export const onReceiveQueue = (
-  { tasks, appeals, userId }: { tasks: Tasks, appeals: LegacyAppeals, userId: number }
+  { tasks, appeals, userId }: { tasks: Tasks, appeals: BasicAppeals, userId: number }
 ) => ({
   type: ACTIONS.RECEIVE_QUEUE_DETAILS,
   payload: {
@@ -253,13 +254,6 @@ export const setSelectionOfTaskOfUser =
     }
   });
 
-const initialTaskAssignment = ({ tasks }) => ({
-  type: ACTIONS.TASK_INITIAL_ASSIGNED,
-  payload: {
-    tasks
-  }
-});
-
 export const initialAssignTasksToUser =
   ({ tasks, assigneeId, previousAssigneeId }: { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) =>
     (dispatch: Dispatch) =>
@@ -274,20 +268,12 @@ export const initialAssignTasksToUser =
             (resp) => {
               const { task: { data: task } } = resp;
 
-              task.appealId = task.id;
               dispatch(onReceiveTasks({ tasks: prepareTasksForStore([task]) }));
               dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
                 taskId: task.id,
                 selected: false }));
             });
       }));
-
-const taskReassignment = ({ tasks }) => ({
-  type: ACTIONS.TASK_REASSIGNED,
-  payload: {
-    tasks
-  }
-});
 
 export const reassignTasksToUser =
   ({ tasks, assigneeId, previousAssigneeId }: { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) =>
@@ -301,7 +287,6 @@ export const reassignTasksToUser =
             (resp) => {
               const { task: { data: task } } = resp;
 
-              task.appealId = task.id;
               dispatch(onReceiveTasks({ tasks: prepareTasksForStore([task]) }));
               dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
                 taskId: task.id,

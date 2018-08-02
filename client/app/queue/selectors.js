@@ -16,9 +16,9 @@ export const selectedTasksSelector = (state: State, userId: string) => {
 
   return _.flatMap(
     state.queue.isTaskAssignedToUserSelected[userId] || {},
-    (selected, id) => selected ? [_.find(flatTasks, { 'taskId': id })] : []
+    (selected, id) => selected ? [_.find(flatTasks, { taskId: id })] : []
   );
-}
+};
 
 const getTasks = (state: State) => state.queue.tasks;
 const getAppeals = (state: State) => state.queue.appeals;
@@ -29,7 +29,7 @@ export const tasksByAssigneeCssIdSelector = createSelector(
   [getTasks, getUserCssId],
   (tasks: Tasks, cssId: string) => _.keyBy(
     _.filter(tasks, (task: Task) => task.userId === cssId),
-    (task: Task) => task.id
+    (task: Task) => task.taskId
   )
 );
 
@@ -47,14 +47,14 @@ export const appealsWithTasksSelector = createSelector(
 export const tasksForAppealSelector = createSelector(
   [getTasks, getAppealId],
   (tasks: Tasks, appealId: number) => {
-    return _.filter(tasks, (task) => task.externalAppealId === appealId)
+    return _.filter(tasks, (task) => task.externalAppealId === appealId);
   }
 );
 
 export const tasksForAppealAssignedToUserSelector = createSelector(
   [tasksForAppealSelector, getUserCssId],
   (tasks: Tasks, cssId: string) => {
-    return _.filter(tasks, (task) => task.userId === cssId)
+    return _.filter(tasks, (task) => task.userId === cssId);
   }
 );
 

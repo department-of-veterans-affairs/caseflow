@@ -5,12 +5,11 @@ import { NewFileIcon } from '../../components/RenderFunctions';
 import { bindActionCreators } from 'redux';
 import { getNewDocuments } from '../QueueActions';
 import type {
-  Appeal,
-  LegacyAppeal
+  BasicAppeal
 } from '../types/models';
 
 type Params = {|
-  appeal: Appeal | LegacyAppeal
+  appeal: BasicAppeal
 |};
 
 type Props = Params & {|

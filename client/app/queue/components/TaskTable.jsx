@@ -103,8 +103,9 @@ class TaskTable extends React.PureComponent<Props> {
                 this.props.setSelectionOfTaskOfUser(
                   { userId: this.props.userId,
                     taskId: task.taskId,
-                    selected: checked })}
-              } />;
+                    selected: checked });
+              }
+            } />;
         }
     } : null;
   }

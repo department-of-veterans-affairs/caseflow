@@ -13,7 +13,7 @@ import JudgeActionsDropdown from './components/JudgeActionsDropdown';
 import COPY from '../../COPY.json';
 import { USER_ROLES } from './constants';
 import { COLORS } from '../constants/AppConstants';
-import { renderAppealType } from './utils';
+import { renderLegacyAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
 import type { LegacyAppeal, Task } from './types/models';
 import type { State, AttorneysOfJudge } from './types/state';
@@ -103,7 +103,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     }
 
     return <React.Fragment>
-      { task.added_by_name && <React.Fragment>
+      { task.addedByName && <React.Fragment>
         <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNOR_LABEL}</dt>
         <dd>{task.addedByName}</dd>
       </React.Fragment> }
@@ -147,7 +147,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
         <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TITLE}</h3>
         <CaseDetailsDescriptionList>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</dt>
-          <dd>{renderAppealType(this.props.appeal)}</dd>
+          <dd>{renderLegacyAppealType(this.props.appeal)}</dd>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
           <dd>{appeal.docket_number}</dd>
           {this.daysSinceTaskAssignmentListItem()}

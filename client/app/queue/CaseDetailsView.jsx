@@ -78,7 +78,7 @@ CaseDetailsView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const { appealDetails, tasks } = state.queue;
+  const { appealDetails } = state.queue;
   const { success, error } = state.ui.messages;
 
   return {

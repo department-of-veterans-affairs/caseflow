@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import _ from 'lodash';
 
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
@@ -18,10 +19,9 @@ type Params = {|
   userId: number,
   userCssId: string,
   userRole: string,
-  appealId?: string,
+  appealId: string,
   children: React.ChildrenArray<React.Node>,
-  userCanAccessQueue: boolean,
-  urlToLoad?: string
+  userCanAccessQueue: boolean
 |};
 
 type Props = Params & {|
@@ -33,7 +33,9 @@ type Props = Params & {|
   judges: UsersById,
   // Action creators
   setAttorneysOfJudge: typeof setAttorneysOfJudge,
-  fetchAllAttorneys: typeof fetchAllAttorneys
+  fetchAllAttorneys: typeof fetchAllAttorneys,
+  onReceiveTasks: typeof onReceiveTasks,
+  onReceiveAppealDetails: typeof onReceiveAppealDetails
 |};
 
 class CaseDetailLoadingScreen extends React.PureComponent<Props> {
@@ -57,7 +59,7 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
       promises.push(appealPromise);
     }
 
-    if (!tasks || !(appealId in tasks)) {
+    if (!tasks || _.filter(tasks, (task) => task.externalAppealId === appealId).length > 0) {
       promises.push(taskPromise);
     }
 

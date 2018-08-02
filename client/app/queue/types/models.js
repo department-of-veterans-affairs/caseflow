@@ -40,25 +40,23 @@ export type Issue = {
 export type Issues = Array<Issue>;
 
 export type Task = {
-  id: string,
+  type: string,
+  title: string,
   appealId: string,
-  attributes: {
-    added_by_css_id: string,
-    added_by_name: string,
-    appeal_id: string,
-    assigned_by_first_name: string,
-    assigned_by_last_name: string,
-    assigned_on: string,
-    docket_date: string,
-    docket_name: string,
-    document_id: string,
-    due_on: string,
-    task_id: string,
-    task_type: string,
-    user_id: string,
-    assigned_to_pg_id: number,
-    work_product: string
-  }
+  appealType: string,
+  externalAppealId: string,
+  assignedOn: string,
+  dueOn: string,
+  userId: string,
+  assignedToPgId: string,
+  addedByName: string,
+  addedByCssId: string,
+  taskId: string,
+  taskType: string,
+  documentId: string,
+  assignedByFirstName: string,
+  assignedByLastName: string,
+  workProduct: string
 };
 
 export type Tasks = { [string]: Task };
@@ -91,6 +89,22 @@ export type LegacyAppeal = {
   },
   tasks: ?Array<Task>
 };
+
+export type BasicAppeal = {
+  id: string,
+  type: string,
+  externalId: string,
+  docketName: string,
+  caseType: string,
+  isAdvancedOnDocket: Boolean,
+  issues: Array<Object>,
+  docketNumber: string,
+  veteranName: string,
+  veteranFileNumber: string,
+  isPaperCase: Boolean
+};
+
+export type BasicAppeals = { [string]: BasicAppeal };
 
 export type Appeal = {
   id: string,

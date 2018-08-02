@@ -12,6 +12,8 @@ import type {
   Tasks,
   LegacyAppeal,
   LegacyAppeals,
+  BasicAppeal,
+  BasicAppeals,
   Issue,
   Issues
 } from './types/models';
@@ -21,8 +23,8 @@ import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
 export const prepareTasksForStore =
-  (tasks: Array<Task>):
-    { tasks: Tasks } => {
+  (tasks: Array<Object>):
+    Tasks => {
     const mappedLegacyTasks = tasks.map((task) => {
       return {
         type: task.attributes.type,
@@ -45,12 +47,12 @@ export const prepareTasksForStore =
       };
     });
 
-    return _.keyBy(mappedLegacyTasks, 'taskId');
+    return _.pickBy(_.keyBy(mappedLegacyTasks, 'taskId'), (task) => task);
   };
 
 export const associateTasksWithAppeals =
-  (serverData: { tasks: { data: Array<Task> } }):
-    { appeals: LegacyAppeals, tasks: Tasks } => {
+  (serverData: { tasks: { data: Array<Object> } }):
+    { appeals: BasicAppeals, tasks: Tasks } => {
     const {
       tasks: { data: tasks }
     } = serverData;
@@ -83,8 +85,8 @@ export const associateTasksWithAppeals =
 
 export const prepareAppealDetailsForStore =
   (appeals: Array<LegacyAppeal>):
-    { appeals: LegacyAppeals } => {
-    return _.keyBy(appeals, 'attributes.external_id');
+    LegacyAppeals => {
+    return _.pickBy(_.keyBy(appeals, 'attributes.external_id'), (appeal) => appeal);
   };
 
 /*
@@ -102,7 +104,7 @@ export const sortTasks = ({ tasks = {}, appeals = {} }: {tasks: Tasks, appeals: 
   flatMap((taskList) => _.sortBy(taskList, (task) => new Date(task.attributes.docket_date))).
   value();
 
-export const renderAppealType = (appeal: LegacyAppeal) => {
+export const renderAppealType = (appeal: BasicAppeal) => {
   const {
     isAdvancedOnDocket,
     caseType
@@ -112,6 +114,21 @@ export const renderAppealType = (appeal: LegacyAppeal) => {
   return <React.Fragment>
     {isAdvancedOnDocket && <span><span {...redText}>AOD</span>, </span>}
     {cavc ? <span {...redText}>CAVC</span> : <span>{caseType}</span>}
+  </React.Fragment>;
+};
+
+export const renderLegacyAppealType = (appeal: LegacyAppeal) => {
+  const {
+    attributes: {
+      aod,
+      type
+    }
+  } = appeal;
+  const cavc = type === 'Court Remand';
+
+  return <React.Fragment>
+    {aod && <span><span {...redText}>AOD</span>, </span>}
+    {cavc ? <span {...redText}>CAVC</span> : <span>{type}</span>}
   </React.Fragment>;
 };
 
@@ -227,4 +244,4 @@ export const validateWorkProductTypeAndId = (decision: {opts: Object}) => {
 };
 
 export const getTaskDaysWaiting = (task: Task) => moment().startOf('day').
-  diff(moment(task.attributes.assigned_on), 'days');
+  diff(moment(task.assignedOn), 'days');
