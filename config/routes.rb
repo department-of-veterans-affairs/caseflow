@@ -209,6 +209,7 @@ Rails.application.routes.draw do
       post "/reseed", to: "users#reseed", as: "reseed"
     end
     post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
+    post "/toggle_feature", to: "users#toggle_feature", as: "toggle_feature"
   end
 
   # :nocov:

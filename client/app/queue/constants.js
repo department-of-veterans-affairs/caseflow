@@ -138,6 +138,7 @@ export const ATTORNEY_COMMENTS_MAX_LENGTH = 350;
 // max length for document id `DECASS.DEDOCID`
 export const DOCUMENT_ID_MAX_LENGTH = 30;
 
+// todo: replace with user_role_types
 export const USER_ROLES = {
   ATTORNEY: USER_ROLE_TYPES.attorney,
   JUDGE: USER_ROLE_TYPES.judge,

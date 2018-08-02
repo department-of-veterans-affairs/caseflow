@@ -240,7 +240,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
           acc
         end
 
-        expect(subject.keys).to eq(allocations.keys)
+        expect(subject.keys.sort).to eq(allocations.keys.sort)
 
         subject.each_key do |ro_key|
           rooms = subject[ro_key][:allocated_dates].reduce({}) do |acc, (k, v)|
