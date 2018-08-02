@@ -17,7 +17,9 @@ class JudgeCaseReview < ApplicationRecord
     quality_review: "quality_review"
   }
 
+  # This numbers need to be adjusted after a full rollout to judges
   MONTHLY_LIMIT_OF_QUAILITY_REVIEWS = 24
+  QUALITY_REVIEW_SELECTION_PROBABILITY = 0.04
 
   def sign_decision_or_create_omo!
     judge.access_to_task?(vacols_id)
@@ -44,7 +46,7 @@ class JudgeCaseReview < ApplicationRecord
     return if self.class.reached_monthly_limit_in_quality_reviews?
     # We are using 25 sided die to randomly select a case for quality review
     # https://github.com/department-of-veterans-affairs/caseflow/issues/6407
-    update(location: :quality_review) if bva_dispatch? && rand < 0.04
+    update(location: :quality_review) if bva_dispatch? && rand < QUALITY_REVIEW_SELECTION_PROBABILITY
   end
 
   class << self
