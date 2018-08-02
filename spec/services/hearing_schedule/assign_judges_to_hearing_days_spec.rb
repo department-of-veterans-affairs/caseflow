@@ -28,31 +28,10 @@ describe HearingSchedule::AssignJudgesToHearingDays do
         end
       end
 
-      it "Caseflow user and staff information are populated" do
+      it "staff information is populated" do
         expect(subject.judges.count).to eq(3)
         subject.judges.each_key do |css_id|
           expect(subject.judges[css_id][:staff_info].sdomainid).to eq(css_id)
-          expect(subject.judges[css_id][:user_info].css_id).to eq(css_id)
-        end
-      end
-    end
-
-    context "when judge exists in VACOLS but not caseflow" do
-      before do
-        3.times do |i|
-          date = get_unique_dates_between(schedule_period.start_date,
-                                          schedule_period.end_date, 1).first
-          create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
-                                          object_identifier: "CSS_ID_#{i}")
-          create(:staff, :hearing_judge, sdomainid: "CSS_ID_#{i}")
-        end
-      end
-
-      it "staff info is populate but user info is nil" do
-        expect(subject.judges.count).to eq(3)
-        subject.judges.each_key do |css_id|
-          expect(subject.judges[css_id][:staff_info].sdomainid).to eq(css_id)
-          expect(subject.judges[css_id][:user_info]).to eq(nil)
         end
       end
     end
