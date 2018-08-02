@@ -3,23 +3,15 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment';
-import pluralize from 'pluralize';
-import { bindActionCreators } from 'redux';
 
 import Table from '../../components/Table';
-import Checkbox from '../../components/Checkbox';
 import ReaderLink from '../ReaderLink';
-import AppealDocumentCount from '../AppealDocumentCount';
 
-import { setSelectionOfTaskOfUser } from '../QueueActions';
-import { renderAppealType } from '../utils';
-import { DateString } from '../../util/DateUtil';
-import { CATEGORIES, redText } from '../constants';
+import { CATEGORIES } from '../constants';
 import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 import type {
-  LegacyAppeals,
   AmaTask
 } from '../types/models';
 
@@ -65,7 +57,8 @@ class AmaTaskTable extends React.PureComponent<Props> {
       return <ReaderLink appealId={task.attributes.external_id}
         analyticsSource={CATEGORIES.QUEUE_TABLE}
         redirectUrl={window.location.pathname}
-        appeal={{ attributes: { vacols_id: task.attributes.external_id, paper_case: false } }} />;
+        appeal={{ attributes: { vacols_id: task.attributes.external_id,
+          paper_case: false } }} />;
     }
   })
 
@@ -80,7 +73,6 @@ class AmaTaskTable extends React.PureComponent<Props> {
 
   render = () => {
     const { tasks } = this.props;
-    console.log(tasks);
 
     return <Table
       columns={this.getQueueColumns}

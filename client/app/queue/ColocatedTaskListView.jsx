@@ -1,30 +1,24 @@
 // @flow
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import _ from 'lodash';
 
-import StatusMessage from '../components/StatusMessage';
 import AmaTaskTable from './components/AmaTaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Alert from '../components/Alert';
 
 import {
-  appealsByAssigneeCssIdSelector,
-  tasksByAssigneeCssIdSelector,
   amaTasksByAssigneeId
 } from './selectors';
 import {
   resetErrorMessages,
   resetSuccessMessages,
-  resetSaveState,
+  resetSaveState
 } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
-import COPY from '../../COPY.json';
-import type { LegacyAppeals, AmaTask } from './types/models';
+import type { AmaTask } from './types/models';
 import type { State, UiStateMessage } from './types/state';
 
 type Params = {|
@@ -62,8 +56,7 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
       {error && <Alert type="error" title={error.title} scrollOnAlert={false}>
         {error.detail}
       </Alert>}
-      {success && <Alert type="success" title={success} scrollOnAlert={false}>
-      </Alert>}
+      {success && <Alert type="success" title={success} scrollOnAlert={false} />}
       <AmaTaskTable tasks={this.props.amaTasks} />
     </div>;
 
@@ -102,10 +95,10 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-    clearCaseSelectSearch,
-    resetErrorMessages,
-    resetSuccessMessages,
-    resetSaveState
-  }, dispatch);
+  clearCaseSelectSearch,
+  resetErrorMessages,
+  resetSuccessMessages,
+  resetSaveState
+}, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(ColocatedTaskListView): React.ComponentType<Params>);

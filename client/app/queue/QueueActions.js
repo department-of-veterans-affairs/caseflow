@@ -329,4 +329,4 @@ export const fetchAmaTasksOfUser = (userId: number, userRole: string) => (dispat
         amaTasks: _.pickBy(_.keyBy(body.tasks.data, (task) => task.id), (task) => task)
       }
     }));
-}
+};

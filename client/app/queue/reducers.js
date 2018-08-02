@@ -364,7 +364,7 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
         ...state.amaTasks,
         ...action.payload.amaTasks
       }
-    }
+    };
   default:
     return state;
   }
