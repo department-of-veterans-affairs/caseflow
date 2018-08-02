@@ -243,8 +243,8 @@ RSpec.feature "Appeal Intake" do
     fill_in "Issue category", with: "Active Duty Adjustments"
     find("#issue-category").send_keys :enter
     fill_in "Issue description", with: "Description for Active Duty Adjustments"
-    fill_in  "Decision date", with: "04/19/2018"
-    
+    fill_in "Decision date", with: "04/19/2018"
+
     expect(page).to have_content("1 issue")
 
     safe_click "#button-finish-intake"
