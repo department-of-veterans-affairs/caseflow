@@ -27,7 +27,7 @@ class HearingSchedule::GetSpreadsheetData
     vlj_ids = judge_non_availability_sheet.column(3).drop(JUDGE_NON_AVAILABILITY_HEADER_COLUMNS)
     dates = judge_non_availability_sheet.column(4).drop(JUDGE_NON_AVAILABILITY_HEADER_COLUMNS)
     names.zip(vlj_ids, dates).each do |row|
-      non_availability_dates.push("name" => row[0], "vlj_id" => row[1], "date" => row[2])
+      non_availability_dates.push("name" => row[0], "vlj_id" => row[1].to_s, "date" => row[2])
     end
     non_availability_dates
   end

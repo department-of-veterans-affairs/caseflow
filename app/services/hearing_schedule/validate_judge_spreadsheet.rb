@@ -26,9 +26,10 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     end
   end
 
-  def judges_in_vacols?(vlj_ids)
-    judges = UserRepository.css_ids_by_vlj_ids(vlj_ids)
-    judges.count == vlj_ids.uniq.count
+  def judge_in_vacols?(vacols_judges, name, vlj_id)
+    vacols_judges[vlj_id] &&
+      vacols_judges[vlj_id][:first_name] == name.split(", ")[1] &&
+      vacols_judges[vlj_id][:last_name] == name.split(", ")[0]
   end
 
   def check_range_of_dates(date)
@@ -36,6 +37,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   end
 
   def validate_judge_non_availability_dates
+    vacols_judges = User.css_ids_by_vlj_ids(@spreadsheet_data.pluck("vlj_id"))
     unless @spreadsheet_data.all? { |row| row["date"].instance_of?(Date) }
       @errors << JudgeDatesNotCorrectFormat
     end
@@ -45,7 +47,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     unless @spreadsheet_data.all? { |row| check_range_of_dates(row["date"]) }
       @errors << JudgeDatesNotInRange
     end
-    unless judges_in_vacols?(@spreadsheet_data.pluck("vlj_id"))
+    unless @spreadsheet_data.all? { |row| judge_in_vacols?(vacols_judges, row["name"], row["vlj_id"]) }
       @errors << JudgeNotInDatabase
     end
   end
