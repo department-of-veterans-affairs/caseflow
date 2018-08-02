@@ -59,12 +59,23 @@ class AmaTaskTable extends React.PureComponent<Props> {
     }
   })
 
+  caseReaderLinkColumn = () => ({
+    header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
+    valueFunction: (task: AmaTask) => {
+      return <ReaderLink appealId={task.attributes.appeal_id.toString()}
+        analyticsSource={CATEGORIES.QUEUE_TABLE}
+        redirectUrl={window.location.pathname}
+        appeal={{ attributes: { vacols_id: task.attributes.appeal_id.toString(), paper_case: false } }} />;
+    }
+  })
+
   getQueueColumns = () : Array<{ header: string, span?: Function, valueFunction: Function, getSortValue?: Function }> =>
     _.compact([
       this.caseDetailsColumn(),
       this.caseTaskColumn(),
       this.caseDocketNumberColumn(),
-      this.caseDaysWaitingColumn()
+      this.caseDaysWaitingColumn(),
+      this.caseReaderLinkColumn()
     ]);
 
   render = () => {
