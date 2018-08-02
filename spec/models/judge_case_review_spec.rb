@@ -1,17 +1,47 @@
 describe JudgeCaseReview do
-  let(:judge) { User.create(css_id: "CFS123", station_id: User::BOARD_STATION_ID) }
-  let(:attorney) { User.create(css_id: "CFS456", station_id: "317") }
-  let!(:decass) { create(:decass, deadtim: "2013-12-06".to_date, defolder: "123456", deprod: work_product) }
-  let!(:vacols_case) { create(:case, bfkey: "123456", bfmemid: "AA", bfboard: "BB") }
-  let!(:vacols_issue1) { create(:case_issue, isskey: "123456") }
-  let!(:vacols_issue2) { create(:case_issue, isskey: "123456") }
-  let!(:judge_staff) { create(:staff, :judge_role, slogid: "CFS456", sdomainid: judge.css_id) }
-
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
+  context ".reached_monthly_limit_in_quality_reviews?" do
+    before do
+      JudgeCaseReview.skip_callback(:create, :after, :select_case_for_quality_review)
+    end
+
+    after do
+      JudgeCaseReview.set_callback(:create, :after, :select_case_for_quality_review)
+    end
+
+    subject { JudgeCaseReview.reached_monthly_limit_in_quality_reviews? }
+    let(:limit) { JudgeCaseReview::MONTHLY_LIMIT_OF_QUAILITY_REVIEWS }
+
+    context "when more than monthly limit" do
+      before do
+        limit.times { create(:judge_case_review, location: :quality_review) }
+      end
+
+      it { is_expected.to be true }
+    end
+
+    context "when less than monthly limit" do
+      before do
+        (limit - 1).times { create(:judge_case_review, location: :quality_review) }
+        create(:judge_case_review, created_at: 2.months.ago, location: :quality_review)
+        create(:judge_case_review, location: :bva_dispatch)
+      end
+
+      it { is_expected.to be false }
+    end
+  end
+
   context ".create" do
+    let(:judge) { User.create(css_id: "CFS123", station_id: User::BOARD_STATION_ID) }
+    let(:attorney) { User.create(css_id: "CFS456", station_id: "317") }
+    let!(:decass) { create(:decass, deadtim: "2013-12-06".to_date, defolder: "123456", deprod: work_product) }
+    let!(:vacols_case) { create(:case, bfkey: "123456", bfmemid: "AA", bfboard: "BB") }
+    let!(:vacols_issue1) { create(:case_issue, isskey: "123456") }
+    let!(:vacols_issue2) { create(:case_issue, isskey: "123456") }
+    let!(:judge_staff) { create(:staff, :judge_role, slogid: "CFS456", sdomainid: judge.css_id) }
     subject { JudgeCaseReview.complete(params) }
 
     context "when all parameters are present to sign a decision and VACOLS update is successful" do

@@ -9,11 +9,15 @@ class JudgeCaseReview < ApplicationRecord
 
   after_create :select_case_for_quality_review
 
+  scope :this_month, -> { where(:created_at => Time.now.beginning_of_month..Time.now.end_of_month) }
+
   enum location: {
     omo_office: "omo_office",
     bva_dispatch: "bva_dispatch",
     quality_review: "quality_review"
   }
+
+  MONTHLY_LIMIT_OF_QUAILITY_REVIEWS = 24
 
   def sign_decision_or_create_omo!
     judge.access_to_task?(vacols_id)
@@ -37,6 +41,7 @@ class JudgeCaseReview < ApplicationRecord
   end
 
   def select_case_for_quality_review
+    return if self.class.reached_monthly_limit_in_quality_reviews?
     # We are using 25 sided die to randomly select a case for quality review
     # https://github.com/department-of-veterans-affairs/caseflow/issues/6407
     update(location: :quality_review) if bva_dispatch? && rand < 0.04
@@ -58,6 +63,10 @@ class JudgeCaseReview < ApplicationRecord
         end
         record
       end
+    end
+
+    def reached_monthly_limit_in_quality_reviews?
+      where(location: :quality_review).this_month.size >= MONTHLY_LIMIT_OF_QUAILITY_REVIEWS
     end
 
     def repository
