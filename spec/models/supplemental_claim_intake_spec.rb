@@ -138,6 +138,7 @@ describe SupplementalClaimIntake do
     it "completes the intake and creates an end product" do
       expect(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
       allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+      allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
 
       subject
 
@@ -146,13 +147,15 @@ describe SupplementalClaimIntake do
       expect(intake.detail.established_at).to eq(Time.zone.now)
       expect(resultant_end_product_establishment).to_not be_nil
       expect(resultant_end_product_establishment.established_at).to eq(Time.zone.now)
-      expect(intake.detail.request_issues.count).to eq 2
-      expect(intake.detail.request_issues.first).to have_attributes(
+
+      request_issues = intake.detail.request_issues
+      expect(request_issues.count).to eq 2
+      expect(request_issues.first).to have_attributes(
         rating_issue_reference_id: "reference-id",
         rating_issue_profile_date: Date.new(2018, 4, 30),
         description: "decision text"
       )
-      expect(intake.detail.request_issues.second).to have_attributes(
+      expect(request_issues.second).to have_attributes(
         issue_category: "test issue category",
         decision_date: Date.new(2018, 12, 25),
         description: "non-rated issue decision text"
@@ -161,6 +164,10 @@ describe SupplementalClaimIntake do
         veteran_file_number: intake.detail.veteran_file_number,
         claim_id: resultant_end_product_establishment.reference_id,
         contention_descriptions: ["non-rated issue decision text", "decision text"]
+      )
+      expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+        claim_id: resultant_end_product_establishment.reference_id,
+        rated_issue_contention_map: { "reference-id" => request_issues.first.contention_reference_id }
       )
     end
 

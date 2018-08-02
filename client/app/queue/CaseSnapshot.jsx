@@ -1,3 +1,4 @@
+// @flow
 import { css } from 'glamor';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -14,6 +15,8 @@ import { USER_ROLES } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import { renderAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
+import type { LegacyAppeal, Task } from './types/models';
+import type { State, AttorneysOfJudge } from './types/state';
 
 const snapshotParentContainerStyling = css({
   backgroundColor: COLORS.GREY_BACKGROUND,
@@ -46,7 +49,20 @@ const snapshotChildResponsiveWrapFixStyling = css({
   }
 });
 
-export class CaseSnapshot extends React.PureComponent {
+type Params = {|
+  appeal: LegacyAppeal,
+  task: Task,
+  hideDropdown?: boolean
+|};
+
+type Props = Params & {|
+  featureToggles: Object,
+  appealsAssignedToCurrentUser: Array<LegacyAppeal>,
+  userRole: string,
+  attorneysOfJudge: AttorneysOfJudge
+|};
+
+export class CaseSnapshot extends React.PureComponent<Props> {
   daysSinceTaskAssignmentListItem = () => {
     if (this.props.task) {
       const today = moment();
@@ -163,10 +179,15 @@ CaseSnapshot.propTypes = {
   hideDropdown: PropTypes.bool
 };
 
-const mapStateToProps = (state) => ({
-  ..._.pick(state.ui, 'featureToggles', 'userRole'),
-  appealsAssignedToCurrentUser: appealsByAssigneeCssIdSelector(state),
-  attorneysOfJudge: state.queue.attorneysOfJudge
-});
+const mapStateToProps = (state: State) => {
+  const { featureToggles, userRole } = state.ui;
+
+  return {
+    featureToggles,
+    userRole,
+    appealsAssignedToCurrentUser: appealsByAssigneeCssIdSelector(state),
+    attorneysOfJudge: state.queue.attorneysOfJudge
+  };
+};
 
 export default connect(mapStateToProps)(CaseSnapshot);
