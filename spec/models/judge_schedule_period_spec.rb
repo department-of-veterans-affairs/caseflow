@@ -1,12 +1,6 @@
 describe JudgeSchedulePeriod do
   let(:judge_schedule_period) { create(:judge_schedule_period) }
 
-  let(:hearing_days) do
-    get_dates_between(judge_schedule_period.start_date, judge_schedule_period.end_date, 3).map do |date|
-      create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13")
-    end
-  end
-
   context "validate_spreadsheet" do
     subject { judge_schedule_period.validate_spreadsheet }
 
@@ -14,8 +8,10 @@ describe JudgeSchedulePeriod do
   end
 
   context "assign judges to hearing days" do
-    before do
-      hearing_days
+    let!(:hearing_days) do
+      get_dates_between(judge_schedule_period.start_date, judge_schedule_period.end_date, 3).map do |date|
+        create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13")
+      end
     end
 
     subject { judge_schedule_period.algorithm_assignments }

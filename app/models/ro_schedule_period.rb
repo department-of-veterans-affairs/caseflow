@@ -3,7 +3,7 @@ class RoSchedulePeriod < SchedulePeriod
   after_create :import_spreadsheet
 
   cache_attribute :algorithm_assignments, expires_in: 4.days do
-    genenerate_ro_hearing_schedule
+    generate_ro_hearing_schedule
   end
 
   def validate_spreadsheet
@@ -42,7 +42,7 @@ class RoSchedulePeriod < SchedulePeriod
     end
   end
 
-  def genenerate_ro_hearing_schedule
+  def generate_ro_hearing_schedule
     generate_hearings_days = HearingSchedule::GenerateHearingDaysSchedule.new(self)
     format_ro_data(generate_hearings_days.allocate_hearing_days_to_ros)
   end
