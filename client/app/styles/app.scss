@@ -6,7 +6,6 @@ $asset-path: '/' !default;
 
 @import '_variables.scss';
 @import '_main.scss';
-@import '_commons.scss';
 @import '_tabs.scss';
 @import '_stats.scss';
 @import '_intake.scss';
@@ -16,3 +15,4 @@ $asset-path: '/' !default;
 @import 'hearings/_hearings_styles_root.scss';
 @import '_style_guide.scss';
 @import '~uswds/src/stylesheets/uswds.scss';
+@import '_commons.scss';
