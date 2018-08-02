@@ -19,6 +19,7 @@ class JudgeSchedulePeriod < SchedulePeriod
     hearing_days = hearing_schedule.map do |hearing_day|
       hearing_day.delete(:judge_name)
       hearing_day.delete(:regional_office)
+      hearing_day.delete(:hearing_type)
       hearing_day
     end
 
