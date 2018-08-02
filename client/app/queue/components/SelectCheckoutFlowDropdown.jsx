@@ -49,7 +49,7 @@ class SelectCheckoutFlowDropdown extends React.PureComponent<Props> {
     const routes = {
       omo_request: 'submit',
       draft_decision: 'dispositions',
-      admin_action: 'admin_action'
+      colocated_task: 'colocated_task'
     };
     const route = routes[decisionType];
 
@@ -77,8 +77,8 @@ class SelectCheckoutFlowDropdown extends React.PureComponent<Props> {
 
     if (featureToggles.attorney_assignment_to_colocated) {
       return [...DRAFT_DECISION_OPTIONS, {
-        label: 'Add Admin Action',
-        value: 'admin_action'
+        label: 'Add Colocated Task',
+        value: 'colocated_task'
       }];
     }
 
