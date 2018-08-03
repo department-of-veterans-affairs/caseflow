@@ -67,6 +67,7 @@ export type AmaTask = {
   id: string,
   type: string,
   attributes: {
+    aod: boolean,
     appeal_id: string,
     assigned_by: User,
     assigned_to: User,
@@ -82,7 +83,7 @@ export type AmaTask = {
     title: string,
     type: string,
     veteran_file_number: string,
-    veteran_name: string
+    veteran_name: ?string
   }
 };
 
@@ -91,7 +92,7 @@ export type AmaTasks = { [string]: AmaTask };
 export type LegacyAppeal = {
   id: string,
   attributes: {
-    is_legacy_appeal: Boolean,
+    is_legacy_appeal: boolean,
     issues: Array<Object>,
     hearings: Array<Object>,
     appellant_full_name: string,
@@ -104,12 +105,12 @@ export type LegacyAppeal = {
     vbms_id: string,
     vacols_id: string,
     type: string,
-    aod: Boolean,
+    aod: boolean,
     docket_number: string,
     status: string,
     decision_date: string,
     certification_date: string,
-    paper_case: Boolean,
+    paper_case: boolean,
     power_of_attorney: string,
     regional_office: Object,
     caseflow_veteran_id: ?string

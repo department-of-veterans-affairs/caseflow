@@ -37,6 +37,6 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   end
 
   attribute :aod do
-    object.appeal.aod
+    object.appeal.advanced_on_docket
   end
 end
