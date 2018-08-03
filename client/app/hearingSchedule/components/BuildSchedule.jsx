@@ -89,6 +89,8 @@ export default class BuildSchedule extends React.Component {
       </Button>
     }));
 
+    const uploadHistory = pastUploadsRows.reverse();
+
     const displayJudgeSuccessMessage = displaySuccessMessage &&
       schedulePeriod.type === SPREADSHEET_TYPES.JudgeSchedulePeriod.value;
 
@@ -141,7 +143,7 @@ export default class BuildSchedule extends React.Component {
         {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK}</Link>
       <Table
         columns={pastUploadsColumns}
-        rowObjects={pastUploadsRows}
+        rowObjects={uploadHistory}
         summary="past-uploads"
       />
     </AppSegment>;
