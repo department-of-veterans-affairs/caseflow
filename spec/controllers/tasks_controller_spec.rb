@@ -22,13 +22,13 @@ RSpec.describe TasksController, type: :controller do
     let!(:task2) { create(:colocated_task, assigned_by: user) }
     let!(:task3) { create(:colocated_task, assigned_by: user, status: "completed") }
 
-    let!(:task4) {
+    let!(:task4) do
       create(:colocated_task, assigned_to: user, appeal: create(:legacy_appeal, vacols_case: create(:case, :aod)))
-    }
+    end
     let!(:task5) { create(:colocated_task, assigned_to: user, status: "in_progress") }
-    let!(:task_ama_colocated_aod) {
+    let!(:task_ama_colocated_aod) do
       create(:ama_colocated_task, assigned_to: user, appeal: create(:appeal, advanced_on_docket: true))
-    }
+    end
     let!(:task6) { create(:colocated_task, assigned_to: user, status: "completed") }
     let!(:task7) { create(:colocated_task) }
 
