@@ -10,7 +10,8 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def details
     # TODO: add AMA appeals
-    render json: json_appeal_details(LegacyAppeal.find_or_create_by_vacols_id(params[:id]))
+    tasks, appeals = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(params[:id], "attorney")
+    render json: json_appeal_details(tasks[0], appeals[0])
   end
 
   def appeals_assigned_to_user
@@ -30,8 +31,17 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     ).as_json
   end
 
-  def json_appeal_details(appeal)
-    
-    
+  def json_appeal_details(task, appeal)
+    { 
+      appeal: json_appeal(appeal),
+      assigned_by: task.added_by ? task.added_by.name : "" 
+    }
+  end
+
+  def json_appeal(appeal) 
+    ActiveModelSerializers::SerializableResource.new(
+      appeal,
+      serializer: ::Idt::V1::AppealDetailsSerializer
+    ).as_json,
   end
 end

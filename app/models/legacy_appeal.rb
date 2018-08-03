@@ -40,7 +40,7 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :case_record
   vacols_attr_accessor :outcoding_date
   vacols_attr_accessor :last_location_change_date
-  vacols_attr_accessor :docket_number, :docket_date
+  vacols_attr_accessor :docket_number, :docket_date, :citation_number
 
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal

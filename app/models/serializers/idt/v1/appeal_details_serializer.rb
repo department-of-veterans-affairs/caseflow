@@ -1,5 +1,4 @@
 class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
-  # TODO: serialize AMA appeals with this serializer
   def id
     object.vacols_id
   end
@@ -32,4 +31,16 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
     object.power_of_attorney.vacols_representative_type
   end
 
+  attribute :issues do
+    object.issues.map do |issue|
+      ActiveModelSerializers::SerializableResource.new(
+        issue,
+        serializer: ::WorkQueue::IssueSerializer
+      ).as_json[:data][:attributes]
+    end
+  end
+
+  attribute :aod
+  attribute :cavc
+  attribute :status
 end

@@ -168,6 +168,7 @@ class AppealRepository
       regional_office_key: case_record.bfregoff,
       certification_date: case_record.bf41stat,
       case_review_date: folder_record.tidktime,
+      citation_number: folder_record.tiread2,
       case_record: case_record,
       disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[case_record.bfdc],
       location_code: case_record.bfcurloc,
