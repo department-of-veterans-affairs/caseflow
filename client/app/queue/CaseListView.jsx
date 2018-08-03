@@ -13,6 +13,7 @@ import CaseListTable from './CaseListTable';
 import { fullWidth } from './constants';
 
 import { clearCaseListSearch, onReceiveAppealsUsingVeteranId } from './CaseList/CaseListActions';
+import { appealsByCaseflowVeteranId } from './selectors';
 
 import COPY from '../../COPY.json';
 
@@ -82,8 +83,8 @@ CaseListView.defaultProps = {
   caseflowVeteranId: ''
 };
 
-const mapStateToProps = (state) => ({
-  appeals: state.caseList.receivedAppeals
+const mapStateToProps = (state, ownProps) => ({
+  appeals: appealsByCaseflowVeteranId(state, ownProps)
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

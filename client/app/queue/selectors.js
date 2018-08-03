@@ -22,9 +22,11 @@ export const selectedTasksSelector = (state: State, userId: string) => {
 
 const getTasks = (state: State) => state.queue.tasks;
 const getAppeals = (state: State) => state.queue.appeals;
+const getAppealDetails = (state: State) => state.queue.appealDetails;
 const getUserCssId = (state: State) => state.ui.userCssId;
 const getAppealId = (state: State, props: Object) => props.appealId;
 const getAttorneys = (state: State) => state.queue.attorneysOfJudge;
+const getCaseflowVeteranId = (state: State, props: Object) => props.caseflowVeteranId;
 
 export const tasksByAssigneeCssIdSelector = createSelector(
   [getTasks, getUserCssId],
@@ -64,6 +66,13 @@ export const tasksForAppealAssignedToAttorneySelector = createSelector(
   (tasks: Tasks, attorneys: Array<User>) => {
     return _.filter(tasks, (task) => _.some(attorneys, (attorney) => task.userId === attorney.css_id));
   }
+);
+
+export const appealsByCaseflowVeteranId = createSelector(
+  [getAppealDetails, getCaseflowVeteranId],
+  (appeals: LegacyAppeals, caseflowVeteranId: string) =>
+    _.filter(appeals, (appeal: LegacyAppeal) => appeal.attributes.caseflow_veteran_id &&
+      appeal.attributes.caseflow_veteran_id.toString() === caseflowVeteranId)
 );
 
 export const appealsByAssigneeCssIdSelector = createSelector(

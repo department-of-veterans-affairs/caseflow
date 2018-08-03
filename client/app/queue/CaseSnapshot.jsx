@@ -55,7 +55,8 @@ type Params = {|
 
 type Props = Params & {|
   featureToggles: Object,
-  userRole: string
+  userRole: string,
+  taskAssignedToAttorney: Task
 |};
 
 export class CaseSnapshot extends React.PureComponent<Props> {

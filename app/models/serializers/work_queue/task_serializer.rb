@@ -20,14 +20,6 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
     object.appeal.type
   end
 
-  attribute :external_appeal_id do
-    object.appeal.uuid
-  end
-
-  attribute :aod do
-    object.appeal.aod || object.appeal.advanced_on_docket
-  end
-
   attribute :docket_number do
     object.appeal.docket_number
   end
@@ -38,9 +30,5 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
 
   attribute :veteran_file_number do
     object.appeal.veteran_file_number
-  end
-
-  attribute :paper_case do
-    object.appeal.file_type.eql? "Paper"
   end
 end

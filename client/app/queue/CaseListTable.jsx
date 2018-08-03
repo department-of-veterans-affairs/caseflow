@@ -6,7 +6,7 @@ import CaseDetailsLink from './CaseDetailsLink';
 import Table from '../components/Table';
 
 import { DateString } from '../util/DateUtil';
-import { renderAppealType } from './utils';
+import { renderLegacyAppealType } from './utils';
 import COPY from '../../COPY.json';
 
 const labelForLocation = (locationCode) => {
@@ -39,7 +39,7 @@ class CaseListTable extends React.PureComponent {
     },
     {
       header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
-      valueFunction: (appeal) => renderAppealType(appeal)
+      valueFunction: (appeal) => renderLegacyAppealType(appeal)
     },
     {
       header: COPY.CASE_LIST_TABLE_DECISION_DATE_COLUMN_TITLE,

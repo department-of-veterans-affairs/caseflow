@@ -91,14 +91,8 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
   reload = () => window.location.reload();
 
   render = () => {
-    // If the current user cannot access queue return early to avoid making the request for queues that would happen
-    // as a result of createLoadPromise().
-    if (!this.props.userCanAccessQueue) {
-      return this.props.children;
-    }
-
     const failStatusMessageChildren = <div>
-      It looks like Caseflow was unable to load your cases.<br />
+      It looks like Caseflow was unable to load this case.<br />
       Please <a onClick={this.reload}>refresh the page</a> and try again.
     </div>;
 
@@ -106,10 +100,10 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
       createLoadPromise={this.createLoadPromise}
       loadingComponentProps={{
         spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
-        message: 'Loading your cases...'
+        message: 'Loading this case...'
       }}
       failStatusMessageProps={{
-        title: 'Unable to load your cases'
+        title: 'Unable to load this case'
       }}
       failStatusMessageChildren={failStatusMessageChildren}>
       {this.props.children}
