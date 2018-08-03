@@ -14,6 +14,17 @@ class AttorneyCaseReview < ApplicationRecord
     draft_decision: Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"]
   }
 
+  def update_in_vacols!
+    MetricsService.record("VACOLS: reassign_case_to_judge #{task_id}",
+                                service: :vacols,
+                                name: document_type) do
+      reassign_case_to_judge_in_vacols!
+      update_issue_dispositions_in_vacols! if draft_decision?
+    end
+  end
+
+  private
+
   def reassign_case_to_judge_in_vacols!
     attorney.access_to_task?(vacols_id)
 
@@ -42,14 +53,13 @@ class AttorneyCaseReview < ApplicationRecord
     def complete(params)
       ActiveRecord::Base.multi_transaction do
         record = create(params)
-        if record.valid?
-          MetricsService.record("VACOLS: reassign_case_to_judge #{record.task_id}",
-                                service: :vacols,
-                                name: record.document_type) do
-            record.reassign_case_to_judge_in_vacols!
-            record.update_issue_dispositions_in_vacols! if record.draft_decision?
-          end
+        return record unless record.valid?
+
+        if record.legacy?
+          record.update_in_vacols!
+          return record
         end
+
         record
       end
     end
