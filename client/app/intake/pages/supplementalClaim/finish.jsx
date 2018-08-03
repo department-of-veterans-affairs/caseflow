@@ -100,7 +100,7 @@ class FinishNextButton extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
-      disabled={!this.props.supplementalClaim.issueCount}
+      disabled={!this.props.issueCount}
     >
       Establish EP
     </Button>;
@@ -110,7 +110,8 @@ const FinishNextButtonConnected = connect(
   ({ supplementalClaim, intake }) => ({
     requestState: supplementalClaim.requestStatus.completeIntake,
     intakeId: intake.id,
-    supplementalClaim
+    supplementalClaim,
+    issueCount: issueCountSelector(supplementalClaim)
   }),
   (dispatch) => bindActionCreators({
     completeIntake

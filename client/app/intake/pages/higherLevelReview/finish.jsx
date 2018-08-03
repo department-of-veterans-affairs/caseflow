@@ -89,7 +89,7 @@ class FinishNextButton extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
-      disabled={!this.props.higherLevelReview.issueCount}
+      disabled={!this.props.issueCount}
     >
       Establish EP
     </Button>;
@@ -99,7 +99,8 @@ const FinishNextButtonConnected = connect(
   ({ higherLevelReview, intake }) => ({
     requestState: higherLevelReview.requestStatus.completeIntake,
     intakeId: intake.id,
-    higherLevelReview
+    higherLevelReview,
+    issueCount: issueCountSelector(higherLevelReview)
   }),
   (dispatch) => bindActionCreators({
     completeIntake

@@ -117,7 +117,8 @@ const FinishNextButtonConnected = connect(
   ({ appeal, intake }) => ({
     requestState: appeal.requestStatus.completeIntake,
     intakeId: intake.id,
-    appeal
+    appeal,
+    issueCount: issueCountSelector(appeal)
   }),
   (dispatch) => bindActionCreators({
     completeIntake
