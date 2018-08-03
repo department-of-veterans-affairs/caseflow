@@ -94,9 +94,8 @@ class VACOLS::CaseHearing < VACOLS::Record
       attrs.except!(nil)
       # Remove time component from hearing_date if client sent one and set timezone to UTC.
       hear_date = attrs[:hearing_date]
-      convertedDate = hear_date.is_a?(Date) ? hear_date : Date.parse(hear_date)
-      utcDate = VacolsHelper.format_date_with_utc_timezone(convertedDate)
-      attrs[:hearing_date] = utcDate
+      converted_date = hear_date.is_a?(Date) ? hear_date : Date.parse(hear_date)
+      attrs[:hearing_date] = VacolsHelper.format_date_with_utc_timezone(converted_date)
       MetricsService.record("VACOLS: create_hearing!",
                             service: :vacols,
                             name: "create_hearing") do
