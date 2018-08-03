@@ -25,7 +25,7 @@ class Appeal < AmaReview
   end
 
   def type
-    [advanced_on_docket? ? "AOD" : nil].compact.join(" ,")
+    "Original"
   end
 
   def aod
