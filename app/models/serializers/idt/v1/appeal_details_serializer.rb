@@ -9,27 +9,14 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
     object.veteran_middle_initial
   end
   attribute :veteran_last_name
-  attribute :veteran_is_appellant do
+  attribute :appellant_not_veteran do
+    !!object.appellant_first_name
   end
-
-  a
-
-  atttribute :appellant do
-    {} if object.fadfas
-
-    {
-      appellant_first_name
-      appellant_middle_name
-      appellant_first_name
-    }
-
+  attribute :appellant_first_name
+  attribute :appellant_middle_name do
+    object.appellant_middle_initial
   end
-
-
-  attribute :veteran_middle_name do
-    object.veteran_middle_initial
-  end
-  attribute :veteran_last_name
+  attribute :appellant_last_name
   attribute :file_number do
     object.sanitized_vbms_id
   end
@@ -37,8 +24,12 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :number_of_issues do
     object.issues.length
   end
-  attribute :
-  attribute :appellant_first_name
-  attribute :appellant_middle_name
-  attribute :appellant_last_name
+
+  attribute :representative_name do
+    object.power_of_attorney.vacols_representative_name
+  end  
+  attribute :representative_type do
+    object.power_of_attorney.vacols_representative_type
+  end
+
 end
