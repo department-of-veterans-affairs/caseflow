@@ -36,13 +36,8 @@ export const getIntakeStatus = createSelector(
   }
 );
 
-const ratings = (state) => state.ratings;
-const nonRatedIssues = (state) => state.nonRatedIssues;
-
-export const issueCountSelector = createSelector(
-  [ratings, nonRatedIssues],
-  (state) => {
+export const issueCountSelector = (state) => {
     const selectedIssues = formatIssues(state).request_issues;
 
     return selectedIssues ? selectedIssues.length : 0;
-  });
+  };
