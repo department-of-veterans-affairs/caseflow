@@ -18,6 +18,7 @@ import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
 export const initialState = {
   judges: {},
   tasks: {},
+  amaTasks: {},
   appeals: {},
   appealDetails: {},
   editingIssue: {},
@@ -324,6 +325,14 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
         }
       }
     });
+  case ACTIONS.AMA_TASKS_RECEIVED:
+    return {
+      ...state,
+      amaTasks: {
+        ...state.amaTasks,
+        ...action.payload.amaTasks
+      }
+    };
   default:
     return state;
   }

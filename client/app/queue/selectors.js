@@ -6,6 +6,8 @@ import type { State } from './types/state';
 import type {
   Task,
   Tasks,
+  AmaTask,
+  AmaTasks,
   LegacyAppeal,
   LegacyAppeals,
   User
@@ -21,6 +23,7 @@ export const selectedTasksSelector = (state: State, userId: string) => {
 };
 
 const getTasks = (state: State) => state.queue.tasks;
+const getAmaTasks = (state: State) => state.queue.amaTasks;
 const getAppeals = (state: State) => state.queue.appeals;
 const getAppealDetails = (state: State) => state.queue.appealDetails;
 const getUserCssId = (state: State) => state.ui.userCssId;
@@ -34,6 +37,11 @@ export const tasksByAssigneeCssIdSelector = createSelector(
     _.filter(tasks, (task: Task) => task.userId === cssId),
     (task: Task) => task.taskId
   )
+);
+
+export const amaTasksByAssigneeId: (State) => { [number]: AmaTask } = createSelector(
+  [getAmaTasks],
+  (tasks: AmaTasks) => _.groupBy(tasks, (task) => task.attributes.assigned_to.id)
 );
 
 export const appealsWithTasksSelector = createSelector(

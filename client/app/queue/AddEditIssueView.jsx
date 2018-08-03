@@ -200,7 +200,7 @@ class AddEditIssueView extends React.Component {
       action,
       highlight,
       error,
-      modal
+      deleteIssueModal
     } = this.props;
 
     const programs = ISSUE_INFO;
@@ -217,7 +217,7 @@ class AddEditIssueView extends React.Component {
     };
 
     return <React.Fragment>
-      {modal && <div className="cf-modal-scroll">
+      {deleteIssueModal && <div className="cf-modal-scroll">
         <Modal
           title="Delete Issue?"
           buttons={[{
@@ -342,7 +342,7 @@ const mapStateToProps = (state, ownProps) => ({
   task: state.queue.tasks[ownProps.appealId],
   issue: state.queue.editingIssue,
   error: state.ui.messages.error,
-  modal: state.ui.modal.deleteIssue
+  deleteIssueModal: state.ui.modal.deleteIssue
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

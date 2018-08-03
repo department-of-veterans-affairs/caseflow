@@ -47,7 +47,8 @@ export const ACTIONS = {
   RECEIVE_ALL_ATTORNEYS: 'RECEIVE_ALL_ATTORNEYS',
   ERROR_LOADING_ATTORNEYS: 'ERROR_LOADING_ATTORNEYS',
   RECEIVE_TASKS: 'RECEIVE_TASKS',
-  RECEIVE_APPEAL_DETAILS: 'RECEIVE_APPEAL_DETAILS'
+  RECEIVE_APPEAL_DETAILS: 'RECEIVE_APPEAL_DETAILS',
+  AMA_TASKS_RECEIVED: 'AMA_TASKS_RECEIVED'
 };
 
 // 'red' isn't contrasty enough w/white; it raises Sniffybara::PageNotAccessibleError when testing
@@ -137,9 +138,11 @@ export const ATTORNEY_COMMENTS_MAX_LENGTH = 350;
 // max length for document id `DECASS.DEDOCID`
 export const DOCUMENT_ID_MAX_LENGTH = 30;
 
+// todo: replace with user_role_types
 export const USER_ROLES = {
   ATTORNEY: USER_ROLE_TYPES.attorney,
-  JUDGE: USER_ROLE_TYPES.judge
+  JUDGE: USER_ROLE_TYPES.judge,
+  COLOCATED: USER_ROLE_TYPES.colocated
 };
 
 export const PAGE_TITLES = {

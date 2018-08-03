@@ -2,6 +2,7 @@
 import type {
   Task,
   Tasks,
+  AmaTasks,
   LegacyAppeals,
   BasicAppeals,
   User,
@@ -36,10 +37,7 @@ export type UiState = {
     savePending: boolean,
     saveSuccessful: ?boolean
   },
-  modal: {
-    cancelCheckout: boolean,
-    deleteIssue: boolean
-  },
+  modal: Object,
   featureToggles: Object,
   selectedAssignee: ?string,
   selectedAssigneeSecondary: ?string,
@@ -57,6 +55,7 @@ export type QueueState = {
   tasks: Tasks,
   appeals: BasicAppeals,
   appealDetails: LegacyAppeals,
+  amaTasks: AmaTasks,
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},
   stagedChanges: {

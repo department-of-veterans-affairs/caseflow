@@ -40,6 +40,7 @@ class SeedDB
     User.create(css_id: "BVAOFRANECKI", station_id: 101, full_name: "Judge has case to sign")
     User.create(css_id: "BVAJWEHNER", station_id: 101, full_name: "Judge has case to assign no team")
     User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located no cases")
+    User.create(css_id: "BVATWARNER", station_id: 101, full_name: "Build Hearing Schedule")
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
@@ -169,42 +170,36 @@ class SeedDB
     @ama_appeals << FactoryBot.create(
       :appeal,
       advanced_on_docket: true,
-      veteran_file_number: "209179363",
-      veteran: FactoryBot.create(:veteran),
+      veteran_file_number: "701305078",
       request_issues: FactoryBot.build_list(:request_issue, 3, description: "Knee pain")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
-      veteran_file_number: "767574947",
-      veteran: FactoryBot.create(:veteran),
+      veteran_file_number: "963360019",
       request_issues: FactoryBot.build_list(:request_issue, 2, description: "PTSD")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       :appellant_not_veteran,
-      veteran_file_number: "216979849",
-      veteran: FactoryBot.create(:veteran),
+      veteran_file_number: "604969679",
       request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       :appellant_not_veteran,
-      veteran_file_number: "346979850",
-      veteran: FactoryBot.create(:veteran),
+      veteran_file_number: "228081153",
       request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       :appellant_not_veteran,
-      veteran_file_number: "922933849",
-      veteran: FactoryBot.create(:veteran),
+      veteran_file_number: "152003980",
       request_issues: FactoryBot.build_list(:request_issue, 3, description: "PTSD")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       :appellant_not_veteran,
-      veteran_file_number: "313379829",
-      veteran: FactoryBot.create(:veteran),
+      veteran_file_number: "375273128",
       request_issues: FactoryBot.build_list(:request_issue, 1, description: "Knee pain")
     )
 

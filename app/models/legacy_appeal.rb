@@ -112,7 +112,8 @@ class LegacyAppeal < ApplicationRecord
     remand_returned_to_bva: "96",
     bva_dispatch: "4E",
     omo_office: "20",
-    caseflow: "CASEFLOW"
+    caseflow: "CASEFLOW",
+    quality_review: "48"
   }.freeze
 
   def document_fetcher
@@ -529,6 +530,10 @@ class LegacyAppeal < ApplicationRecord
 
   def serializer_class
     ::WorkQueue::LegacyAppealSerializer
+  end
+
+  def external_id
+    vacols_id
   end
 
   private
