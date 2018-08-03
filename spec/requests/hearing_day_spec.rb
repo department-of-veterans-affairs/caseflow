@@ -11,8 +11,8 @@ RSpec.describe "Hearing Schedule", type: :request do
                                               hearing_date: "7-Jun-2018 05:00:00.000-4:00", room_info: "1",
                                               regional_office: "RO17" }
       expect(response).to have_http_status(:success)
-      actual_date = Time.parse(JSON.parse(response.body)["hearing"]["hearing_date"]).in_time_zone("UTC")
-      expect(actual_date).to eq(Date.new(2018, 6, 7).in_time_zone("UTC"))
+      actual_date = Date.parse(JSON.parse(response.body)["hearing"]["hearing_date"])
+      expect(actual_date).to eq(Date.new(2018, 6, 7))
       actual_time = Date.parse(JSON.parse(response.body)["hearing"]["hearing_date"]).strftime("%H:%M:%S")
       expect(actual_time).to eq("00:00:00")
       expect(JSON.parse(response.body)["hearing"]["hearing_type"]).to eq("Central")
