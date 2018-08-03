@@ -24,6 +24,12 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     LegacyAppeal.fetch_appeals_by_file_number(file_number).select(&:active?)
   end
 
+  def json_appeal_details(task, appeal)
+    json_details = json_appeal(appeal)
+    json_details[:data][:attributes][:assigned_by] = task.added_by.try(:name)
+    json_details
+  end
+
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
       appeals,
@@ -31,17 +37,10 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     ).as_json
   end
 
-  def json_appeal_details(task, appeal)
-    { 
-      appeal: json_appeal(appeal),
-      assigned_by: task.added_by ? task.added_by.name : "" 
-    }
-  end
-
   def json_appeal(appeal) 
     ActiveModelSerializers::SerializableResource.new(
       appeal,
       serializer: ::Idt::V1::AppealDetailsSerializer
-    ).as_json,
+    ).as_json
   end
 end
