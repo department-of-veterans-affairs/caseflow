@@ -1,4 +1,4 @@
-module LegacyTaskConcern
+module CaseReviewConcern
   extend ActiveSupport::Concern
 
   included do
@@ -9,10 +9,14 @@ module LegacyTaskConcern
   attr_accessor :issues
 
   def appeal
-    @appeal ||= LegacyAppeal.find_or_create_by(vacols_id: vacols_id)
+    @appeal ||= if legacy?
+                  LegacyAppeal.find_or_create_by(vacols_id: vacols_id)
+                else
+                  Task.find(task_id).appeal
+                end
   end
 
-  def update_issue_dispositions!
+  def update_issue_dispositions_in_vacols!
     (issues || []).each do |issue_attrs|
       Issue.update_in_vacols!(
         vacols_id: vacols_id,
@@ -26,6 +30,10 @@ module LegacyTaskConcern
         }
       )
     end
+  end
+
+  def legacy?
+    task_id =~ /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i
   end
 
   def vacols_id

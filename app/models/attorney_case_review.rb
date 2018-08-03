@@ -1,5 +1,5 @@
 class AttorneyCaseReview < ApplicationRecord
-  include LegacyTaskConcern
+  include CaseReviewConcern
 
   belongs_to :reviewing_judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
@@ -47,7 +47,7 @@ class AttorneyCaseReview < ApplicationRecord
                                 service: :vacols,
                                 name: record.document_type) do
             record.reassign_case_to_judge_in_vacols!
-            record.update_issue_dispositions! if record.draft_decision?
+            record.update_issue_dispositions_in_vacols! if record.draft_decision?
           end
         end
         record
