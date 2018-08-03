@@ -38,6 +38,7 @@ import OrganizationQueue from './OrganizationQueue';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES, USER_ROLES } from './constants';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
+import type { State } from './types/state';
 
 const appStyling = css({ paddingTop: '3rem' });
 
@@ -47,8 +48,15 @@ type Props = {|
   userId: number,
   userRole: string,
   userCssId: string,
-  dropdownUrls: Array<>,
-  buildDate?: string
+  dropdownUrls: Array<string>,
+  buildDate?: string,
+  reviewActionType: string,
+  userCanAccessQueue?: boolean,
+  featureToggles: Object,
+  // Action creators
+  setFeatureToggles: typeof setFeatureToggles,
+  setUserRole: typeof setUserRole,
+  setUserCssId: typeof setUserCssId
 |};
 
 class QueueApp extends React.PureComponent<Props> {
@@ -236,7 +244,7 @@ QueueApp.propTypes = {
   buildDate: PropTypes.string
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: State) => ({
   reviewActionType: state.queue.stagedChanges.taskDecision.type
 });
 
