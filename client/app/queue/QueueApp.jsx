@@ -71,7 +71,7 @@ class QueueApp extends React.PureComponent<Props> {
     <CaseListView caseflowVeteranId={props.match.params.caseflowVeteranId} />
   </React.Fragment>;
 
-  routedQueueList = () => <QueueLoadingScreen {...this.props}>
+  routedQueueList = () => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
     <SearchBar feedbackUrl={this.props.feedbackUrl} />
     {this.props.userRole === USER_ROLES.ATTORNEY ?
       <AttorneyTaskListView {...this.props} /> :
@@ -79,19 +79,21 @@ class QueueApp extends React.PureComponent<Props> {
     }
   </QueueLoadingScreen>;
 
-  routedBeaamList = () => <QueueLoadingScreen {...this.props} urlToLoad="/beaam_appeals">
+  routedBeaamList = () => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()} urlToLoad="/beaam_appeals">
     <SearchBar feedbackUrl={this.props.feedbackUrl} />
     <BeaamAppealListView {...this.props} />
   </QueueLoadingScreen>;
 
-  routedJudgeQueueList = (taskType) => ({ match }) => <QueueLoadingScreen {...this.props}>
+  routedJudgeQueueList = (taskType) => ({ match }) => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
     <SearchBar feedbackUrl={this.props.feedbackUrl} />
     {taskType === 'Assign' ?
       <JudgeAssignTaskListView {...this.props} match={match} /> :
       <JudgeReviewTaskListView {...this.props} />}
   </QueueLoadingScreen>;
 
-  routedQueueDetail = (props) => <QueueLoadingScreen {...this.props} appealId={props.match.params.appealId}>
+  routedQueueDetail = (props) => <QueueLoadingScreen
+    {...this.propsForQueueLoadingScreen()}
+    appealId={props.match.params.appealId}>
     <CaseDetailsView appealId={props.match.params.appealId} />
   </QueueLoadingScreen>;
 
@@ -114,12 +116,30 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedEvaluateDecision = (props) => <EvaluateDecisionView nextStep="/queue" {...props.match.params} />;
 
-  routedOrganization = (props) => <QueueLoadingScreen {...this.props} urlToLoad={`${props.location.pathname}/tasks`}>
+  routedOrganization = (props) => <QueueLoadingScreen
+    {...this.propsForQueueLoadingScreen()}
+    urlToLoad={`${props.location.pathname}/tasks`}>
     <SearchBar feedbackUrl={this.props.feedbackUrl} />
     <OrganizationQueue {...this.props} />
   </QueueLoadingScreen>
 
   queueName = () => this.props.userRole === USER_ROLES.ATTORNEY ? 'Your Queue' : 'Review Cases';
+
+  propsForQueueLoadingScreen = () => {
+    const {
+      userId,
+      userCssId,
+      userRole,
+      userCanAccessQueue
+    } = this.props;
+
+    return {
+      userId,
+      userCssId,
+      userRole,
+      userCanAccessQueue
+    };
+  }
 
   render = () => <BrowserRouter>
     <NavigationBar

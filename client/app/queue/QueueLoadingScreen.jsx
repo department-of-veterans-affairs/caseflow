@@ -21,7 +21,7 @@ type Params = {|
   userCssId: string,
   userRole: string,
   appealId?: string,
-  children: React.ChildrenArray<React.Node>,
+  children: React.Node,
   userCanAccessQueue: boolean,
   urlToLoad?: string
 |};
