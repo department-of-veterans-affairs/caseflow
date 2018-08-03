@@ -120,9 +120,7 @@ class HearingSchedule::AssignJudgesToHearingDays
     fail NoJudgesProvided if @judges.keys.empty?
 
     VACOLS::Staff.load_users_by_css_ids(@judges.keys).map do |judge|
-      user = User.find_by(css_id: judge.sdomainid)
       @judges[judge.sdomainid][:staff_info] = judge
-      @judges[judge.sdomainid][:user_info] = user
     end
   end
 
@@ -153,12 +151,8 @@ class HearingSchedule::AssignJudgesToHearingDays
   end
 
   def get_judge_name(css_id)
-    if @judges[css_id][:user_info]
-      @judges[css_id][:user_info].full_name
-    else
-      staff_info = @judges[css_id][:staff_info]
-      "#{staff_info.snamef} #{staff_info.snamemi} #{staff_info.snamel}"
-    end
+    staff_info = @judges[css_id][:staff_info]
+    "#{staff_info.snamef} #{staff_info.snamemi} #{staff_info.snamel}"
   end
 
   def weekend?(day)

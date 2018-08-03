@@ -26,10 +26,27 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     end
   end
 
+  # This method is only used in dev/demo mode to test the judge spreadsheet functionality
+  # :nocov:
+  def find_or_create_judges_in_vacols(vacols_judges, name, vlj_id)
+    return unless Rails.env.development? || Rails.env.demo?
+
+    if vacols_judges[vlj_id] &&
+       vacols_judges[vlj_id][:first_name] == name.split(", ")[1].strip &&
+       vacols_judges[vlj_id][:last_name] == name.split(", ")[0].strip
+      true
+    else
+      User.create_judge_in_vacols(name.split(", ")[1].strip, name.split(", ")[0].strip, vlj_id)
+    end
+  end
+  # :nocov:
+
   def judge_in_vacols?(vacols_judges, name, vlj_id)
+    return find_or_create_judges_in_vacols(vacols_judges, name, vlj_id) if Rails.env.development? || Rails.env.demo?
+
     vacols_judges[vlj_id] &&
-      vacols_judges[vlj_id][:first_name] == name.split(", ")[1] &&
-      vacols_judges[vlj_id][:last_name] == name.split(", ")[0]
+      vacols_judges[vlj_id][:first_name] == name.split(", ")[1].strip &&
+      vacols_judges[vlj_id][:last_name] == name.split(", ")[0].strip
   end
 
   def check_range_of_dates(date)
