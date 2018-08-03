@@ -35,4 +35,8 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :external_id do
     object.appeal.external_id
   end
+
+  attribute :aod do
+    object.appeal.aod
+  end
 end
