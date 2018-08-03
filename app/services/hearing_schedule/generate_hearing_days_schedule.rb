@@ -119,11 +119,24 @@ class HearingSchedule::GenerateHearingDaysSchedule
   end
 
   def allocations_by_month(ro_key)
+    verify_total_available_days(ro_key)
     self.class.validate_and_evenly_distribute_monthly_allocations(
       @ros[ro_key][:allocated_dates],
       monthly_distributed_days(@ros[ro_key][:allocated_days].ceil),
       @ros[ro_key][:num_of_rooms]
     )
+  end
+
+  def get_max_hearing_days_assignments(ro_key)
+    @ros[ro_key][:available_days].count * @ros[ro_key][:num_of_rooms]
+  end
+
+  def verify_total_available_days(ro_key)
+    max_hearing_day_assignments = get_max_hearing_days_assignments(ro_key)
+
+    unless @ros[ro_key][:allocated_days].ceil.to_i <= max_hearing_day_assignments 
+      fail NotEnoughAvailableDays, "#{ro_key} can only hold #{max_hearing_day_assignments} hearing days."
+    end
   end
 
   def add_allocated_days_and_format(ro_key)
@@ -150,7 +163,8 @@ class HearingSchedule::GenerateHearingDaysSchedule
   #
   def allocate_hearing_days_to_individual_ro(ro_key, monthly_allocations, date_index)
     grouped_shuffled_monthly_dates = @ros[ro_key][:allocated_dates]
-
+    
+    binding.pry if monthly_allocations.values.inject(:+) == 0
     # looping through all the monthly allocations
     # and assigning rooms to the datess
     monthly_allocations.each_key do |month|
@@ -167,15 +181,23 @@ class HearingSchedule::GenerateHearingDaysSchedule
         rooms_to_allocate = get_num_of_rooms_to_allocate(monthly_date_keys[date_index],
                                                          num_of_rooms, allocated_days,
                                                          grouped_shuffled_monthly_dates[month])
-
         grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] =
           get_room_numbers(monthly_date_keys[date_index], rooms_to_allocate)
         allocated_days -= rooms_to_allocate
+        remove_available_day_from_ros(monthly_date_keys[date_index])
       end
 
       monthly_allocations[month] = allocated_days
     end
     @ros[ro_key][:allocated_dates] = grouped_shuffled_monthly_dates
+  end
+
+  def remove_available_day_from_ros(date)
+    if @date_allocated[date] >= 10
+      @ros.each do |k, v|
+        @ros[k][:available_days] -= [date] if !v[:assigned]
+      end
+    end
   end
 
   def allocation_not_possible?(grouped_shuffled_monthly_dates, monthly_allocations, month)
