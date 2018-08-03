@@ -13,6 +13,7 @@ type Params = {|
 |};
 
 type Props = Params & {|
+  externalId: string,
   docs: Array<Object>,
   error: string,
   getNewDocuments: Function
@@ -21,7 +22,7 @@ type Props = Params & {|
 class NewFile extends React.Component<Props> {
   componentDidMount = () => {
     if (!this.props.docs) {
-      this.props.getNewDocuments(this.props.appeal.externalId);
+      this.props.getNewDocuments(this.props.externalId);
     }
   }
 
@@ -36,9 +37,11 @@ class NewFile extends React.Component<Props> {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const documentObject = state.queue.newDocsForAppeal[ownProps.appeal.externalId];
+  const externalId = ownProps.appeal.externalId || ownProps.appeal.attributes.external_id;
+  const documentObject = state.queue.newDocsForAppeal[externalId];
 
   return {
+    externalId,
     docs: documentObject ? documentObject.docs : null,
     error: documentObject ? documentObject.error : null
   };

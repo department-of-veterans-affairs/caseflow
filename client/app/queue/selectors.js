@@ -24,6 +24,7 @@ const getTasks = (state: State) => state.queue.tasks;
 const getAppeals = (state: State) => state.queue.appeals;
 const getUserCssId = (state: State) => state.ui.userCssId;
 const getAppealId = (state: State, props: Object) => props.appealId;
+const getAttorneys = (state: State) => state.queue.attorneysOfJudge;
 
 export const tasksByAssigneeCssIdSelector = createSelector(
   [getTasks, getUserCssId],
@@ -44,7 +45,7 @@ export const appealsWithTasksSelector = createSelector(
   }
 );
 
-export const tasksForAppealSelector = createSelector(
+export const getTasksForAppeals = createSelector(
   [getTasks, getAppealId],
   (tasks: Tasks, appealId: number) => {
     return _.filter(tasks, (task) => task.externalAppealId === appealId);
@@ -52,9 +53,16 @@ export const tasksForAppealSelector = createSelector(
 );
 
 export const tasksForAppealAssignedToUserSelector = createSelector(
-  [tasksForAppealSelector, getUserCssId],
+  [getTasksForAppeals, getUserCssId],
   (tasks: Tasks, cssId: string) => {
     return _.filter(tasks, (task) => task.userId === cssId);
+  }
+);
+
+export const tasksForAppealAssignedToAttorneySelector = createSelector(
+  [getTasksForAppeals, getAttorneys],
+  (tasks: Tasks, attorneys: Array<User>) => {
+    return _.filter(tasks, (task) => _.some(attorneys, (attorney) => task.userId === attorney.css_id));
   }
 );
 

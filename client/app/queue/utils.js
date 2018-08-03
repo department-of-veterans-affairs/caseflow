@@ -66,7 +66,7 @@ export const associateTasksWithAppeals =
           docketName: task.attributes.docket_name,
           caseType: task.attributes.case_type,
           isAdvancedOnDocket: task.attributes.aod,
-          issues: task.attributes.issues,
+          issueCount: task.attributes.issue_count,
           docketNumber: task.attributes.docket_number,
           veteranName: task.attributes.veteran_name,
           veteranFileNumber: task.attributes.veteran_file_number,

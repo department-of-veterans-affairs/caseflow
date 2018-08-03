@@ -48,13 +48,8 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
     object.appeal.veteran_file_number
   end
 
-  attribute :issues do
-    object.appeal.issues.map do |issue|
-      ActiveModelSerializers::SerializableResource.new(
-        issue,
-        serializer: ::WorkQueue::IssueSerializer
-      ).as_json[:data][:attributes]
-    end
+  attribute :issue_count do
+    object.appeal.issues.count
   end
 
   attribute :paper_case do

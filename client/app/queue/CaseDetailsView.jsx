@@ -19,7 +19,7 @@ import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
 
 import { clearActiveAppealAndTask } from './CaseDetail/CaseDetailActions';
-import { tasksForAppealSelector } from './selectors';
+import { tasksForAppealAssignedToUserSelector } from './selectors';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -54,7 +54,7 @@ class CaseDetailsView extends React.PureComponent {
       {success && <Alert type="success" title={success.title} scrollOnAlert={false}>
         {success.detail}
       </Alert>}
-      <CaseSnapshot appeal={appeal} task={task} />
+      <CaseSnapshot appealId={appealId} task={task} />
       <hr {...horizontalRuleStyling} />
       <StickyNavContentArea>
         <CaseDetailsIssueList
@@ -83,7 +83,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal: appealDetails[ownProps.appealId],
-    task: tasksForAppealSelector(state, ownProps),
+    task: tasksForAppealAssignedToUserSelector(state, ownProps)[0],
     success,
     error
   };

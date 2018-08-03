@@ -180,9 +180,9 @@ class TaskTable extends React.PureComponent<Props> {
   caseIssueCountColumn = () => {
     return this.props.includeIssueCount ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE,
-      valueFunction: (appeal) => this.appealHasDASRecord(appeal) ? appeal.issues.length : null,
+      valueFunction: (appeal) => this.appealHasDASRecord(appeal) ? appeal.issueCount : null,
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (appeal) => this.appealHasDASRecord(appeal) ? appeal.issues.length : null
+      getSortValue: (appeal) => this.appealHasDASRecord(appeal) ? appeal.issueCount : null
     } : null;
   }
 

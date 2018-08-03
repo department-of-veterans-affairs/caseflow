@@ -1,12 +1,10 @@
 // @flow
 import { css } from 'glamor';
 import moment from 'moment';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 
-import { tasksForAppealAssignedToUserSelector } from './selectors';
+import { tasksForAppealAssignedToAttorneySelector } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import JudgeActionsDropdown from './components/JudgeActionsDropdown';
@@ -16,7 +14,7 @@ import { COLORS } from '../constants/AppConstants';
 import { renderLegacyAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
 import type { LegacyAppeal, Task } from './types/models';
-import type { State, AttorneysOfJudge } from './types/state';
+import type { State } from './types/state';
 
 const snapshotParentContainerStyling = css({
   backgroundColor: COLORS.GREY_BACKGROUND,
@@ -57,9 +55,7 @@ type Params = {|
 
 type Props = Params & {|
   featureToggles: Object,
-  appealsAssignedToCurrentUser: Array<LegacyAppeal>,
-  userRole: string,
-  attorneysOfJudge: AttorneysOfJudge
+  userRole: string
 |};
 
 export class CaseSnapshot extends React.PureComponent<Props> {
@@ -118,15 +114,14 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     if (this.props.hideDropdown) {
       return false;
     }
-    if (this.props.appealsAssignedToCurrentUser) {
+    if (this.props.task) {
       return true;
     }
-    if (!this.props.task) {
-      return false;
+    if (this.props.taskAssignedToAttorney) {
+      return true;
     }
 
-    return _.some(
-      this.props.attorneysOfJudge, (attorney) => attorney.id === this.props.task.assignedToPgId);
+    return false;
   }
 
   render = () => {
@@ -169,23 +164,14 @@ export class CaseSnapshot extends React.PureComponent<Props> {
   };
 }
 
-CaseSnapshot.propTypes = {
-  appeal: PropTypes.object.isRequired,
-  featureToggles: PropTypes.object,
-  appealsAssignedToCurrentUser: PropTypes.array,
-  task: PropTypes.object,
-  userRole: PropTypes.string,
-  hideDropdown: PropTypes.bool
-};
-
 const mapStateToProps = (state: State, ownProps: Object) => {
   const { featureToggles, userRole } = state.ui;
 
   return {
+    appeal: state.queue.appealDetails[ownProps.appealId],
     featureToggles,
     userRole,
-    appealsAssignedToCurrentUser: tasksForAppealAssignedToUserSelector(state, ownProps),
-    attorneysOfJudge: state.queue.attorneysOfJudge
+    taskAssignedToAttorney: tasksForAppealAssignedToAttorneySelector(state, ownProps)[0]
   };
 };
 

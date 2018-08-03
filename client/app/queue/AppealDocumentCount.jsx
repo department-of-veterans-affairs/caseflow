@@ -29,10 +29,10 @@ class AppealDocumentCount extends React.PureComponent {
         timeout: true
       };
 
-      ApiUtil.get(`/appeals/${appeal.externalId}/document_count`, requestOptions).then((response) => {
+      ApiUtil.get(`/appeals/${this.props.externalId}/document_count`, requestOptions).then((response) => {
         const resp = JSON.parse(response.text);
 
-        this.props.setAppealDocCount(appeal.externalId, resp.document_count);
+        this.props.setAppealDocCount(this.props.externalId, resp.document_count);
       });
     }
   }
@@ -57,9 +57,14 @@ AppealDocumentCount.propTypes = {
   loadingText: PropTypes.bool
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  docCountForAppeal: state.queue.docCountForAppeal[ownProps.appeal.externalId] || null
-});
+const mapStateToProps = (state, ownProps) => {
+  const externalId = ownProps.appeal.externalId || ownProps.appeal.attributes.external_id;
+
+  return {
+    externalId,
+    docCountForAppeal: state.queue.docCountForAppeal[externalId] || null
+  };
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setAppealDocCount
