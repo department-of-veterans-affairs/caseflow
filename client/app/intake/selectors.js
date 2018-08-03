@@ -36,12 +36,13 @@ export const getIntakeStatus = createSelector(
   }
 );
 
-const appealState = (state) => state;
+const ratings = (state) => state.ratings;
+const nonRatedIssues = (state) => state.nonRatedIssues;
 
 export const issueCountSelector = createSelector(
-  appealState,
+  [ratings, nonRatedIssues],
   (state) => {
-  const selectedIssues = formatIssues(state).request_issues;
+    const selectedIssues = formatIssues(state).request_issues;
 
-  return selectedIssues ? selectedIssues.length : 0;
-});
+    return selectedIssues ? selectedIssues.length : 0;
+  });
