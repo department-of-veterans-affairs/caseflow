@@ -47,11 +47,11 @@ class TasksController < ApplicationController
     render json: { tasks: json_tasks(tasks) }, status: :created
   end
 
-  # e.g, for ama appeal => PATCH /tasks/:id,
+  # e.g, for ama/legacy appeal => PATCH /tasks/:id,
   # { type: AttorneyTask,
   #   assigned_to_id: 23
   # }
-  # e.g, for ama appeal => PATCH /tasks/:id,
+  # e.g, for ama/legacy appeal => PATCH /tasks/:id,
   # { type: ColocatedtTask,
   #   status: :on_hold,
   #   on_hold_duration: "something"
