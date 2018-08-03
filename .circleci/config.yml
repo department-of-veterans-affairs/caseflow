@@ -39,25 +39,48 @@ jobs:
 
       - restore_cache:
           keys:
-            - gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - dot-rbenv-cache-v3-{{ arch }}-{{ checksum ".ruby-version" }}
 
-      - run: bundle install --path vendor/bundle
+      - run:
+          name: Setup Ruby
+          command: rbenv install --skip-existing $(cat ~/project/.ruby-version)
+
+      - run:
+          name: Setup Bundler
+          command: gem install bundler
 
       - save_cache:
-          key: gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: dot-rbenv-cache-v3-{{ arch }}-{{ checksum ".ruby-version" }}
+          paths:
+            - ~/.rbenv
+
+      - run:
+          name: Ruby version
+          command: ruby -v
+
+      - restore_cache:
+          keys:
+            - vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+
+      - run:
+          name: Bundle install
+          command: bundle install --path vendor/bundle
+
+      - save_cache:
+          key: vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
           paths:
             - vendor/bundle
 
       - restore_cache:
           name: Restore yarn cache
-          key: dot-cache-yarn-v1-{{ checksum "client/yarn.lock" }}
+          key: dot-cache-yarn-v1-{{ arch }}-{{ checksum "client/yarn.lock" }}
 
       - run:
           name: yarn install
           command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
       - save_cache:
-          key: dot-cache-yarn-v1-{{ checksum "client/yarn.lock" }}
+          key: dot-cache-yarn-v1-{{ arch }}-{{ checksum "client/yarn.lock" }}
           paths:
             - ~/.cache/yarn
 

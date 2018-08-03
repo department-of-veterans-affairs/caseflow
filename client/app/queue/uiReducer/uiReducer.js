@@ -17,10 +17,7 @@ export const initialState = {
     error: null
   },
   saveState: initialSaveState,
-  modal: {
-    cancelCheckout: false,
-    deleteIssue: false
-  },
+  modal: {},
   featureToggles: {},
   userRole: '',
   userCssId: '',
@@ -39,11 +36,11 @@ const setMessageState = (state, message, msgType) => update(state, {
 
 const setErrorMessageState = (state, message) => setMessageState(state, message, 'error');
 const hideErrorMessage = (state) => setErrorMessageState(state, null);
-const showErrorMessage = (state, errorMsg = 'Error') => setErrorMessageState(state, errorMsg);
+const showErrorMessage = (state, errorMsg = { title: 'Error' }) => setErrorMessageState(state, errorMsg);
 
 const setSuccessMessageState = (state, message) => setMessageState(state, message, 'success');
 const hideSuccessMessage = (state) => setSuccessMessageState(state, null);
-const showSuccessMessage = (state, message = 'Success') => setSuccessMessageState(state, message);
+const showSuccessMessage = (state, message = { title: 'Success' }) => setSuccessMessageState(state, message);
 
 const setModalState = (state, visibility, modalType) => update(state, {
   modal: {

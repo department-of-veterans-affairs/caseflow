@@ -40,8 +40,11 @@ class SeedDB
     User.create(css_id: "BVAOFRANECKI", station_id: 101, full_name: "Judge has case to sign")
     User.create(css_id: "BVAJWEHNER", station_id: 101, full_name: "Judge has case to assign no team")
     User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located no cases")
+    User.create(css_id: "BVATWARNER", station_id: 101, full_name: "Build Hearing Schedule")
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
+
+    User.create(css_id: "VSO", station_id: 101, full_name: "VSO user associated with american-legion")
   end
 
   def create_dispatch_tasks(number)
@@ -167,42 +170,36 @@ class SeedDB
     @ama_appeals << FactoryBot.create(
       :appeal,
       advanced_on_docket: true,
-      veteran_file_number: "209179363",
-      veteran: FactoryBot.create(:veteran),
+      veteran_file_number: "701305078",
       request_issues: FactoryBot.build_list(:request_issue, 3, description: "Knee pain")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
-      veteran_file_number: "767574947",
-      veteran: FactoryBot.create(:veteran),
+      veteran_file_number: "963360019",
       request_issues: FactoryBot.build_list(:request_issue, 2, description: "PTSD")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       :appellant_not_veteran,
-      veteran_file_number: "216979849",
-      veteran: FactoryBot.create(:veteran),
+      veteran_file_number: "604969679",
       request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       :appellant_not_veteran,
-      veteran_file_number: "346979850",
-      veteran: FactoryBot.create(:veteran),
+      veteran_file_number: "228081153",
       request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       :appellant_not_veteran,
-      veteran_file_number: "922933849",
-      veteran: FactoryBot.create(:veteran),
+      veteran_file_number: "152003980",
       request_issues: FactoryBot.build_list(:request_issue, 3, description: "PTSD")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       :appellant_not_veteran,
-      veteran_file_number: "313379829",
-      veteran: FactoryBot.create(:veteran),
+      veteran_file_number: "375273128",
       request_issues: FactoryBot.build_list(:request_issue, 1, description: "Knee pain")
     )
 
@@ -216,6 +213,7 @@ class SeedDB
     attorney = User.find_by(css_id: "BVASCASPER1")
     judge = User.find_by(css_id: "BVAAABSHIRE")
     colocated = User.find_by(css_id: "BVALSPORER")
+    vso = Organization.find_by(name: "American Legion")
 
     FactoryBot.create(:ama_judge_task, assigned_to: judge, appeal: @ama_appeals[0])
     FactoryBot.create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: @ama_appeals[1])
@@ -255,6 +253,8 @@ class SeedDB
                       parent: parent,
                       appeal: @ama_appeals[5])
 
+    FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @ama_appeals[0])
+
     # Colocated tasks with legacy appeals
     FactoryBot.create(:colocated_task,
                       appeal: LegacyAppeal.find_by(vacols_id: "2096907"),
@@ -280,6 +280,15 @@ class SeedDB
                       assigned_to: colocated)
   end
 
+  def create_organizations
+    Vso.create(
+      name: "American Legion",
+      role: "VSO",
+      url: "american-legion",
+      participant_id: "2452415"
+    )
+  end
+
   def clean_db
     DatabaseCleaner.clean_with(:truncation)
   end
@@ -292,9 +301,8 @@ class SeedDB
     create_tags
     create_ama_appeals
     create_users
+    create_organizations
     create_tasks
-
-    User.create(css_id: "VSO", station_id: 101)
 
     return if Rails.env.development?
 

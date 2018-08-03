@@ -10,7 +10,6 @@ import Table from '../../components/Table';
 import Checkbox from '../../components/Checkbox';
 import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
-import AppealDocumentCount from '../AppealDocumentCount';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { renderAppealType } from '../utils';
@@ -35,7 +34,7 @@ type Params = {|
   includeDocumentCount?: boolean,
   requireDasRecord?: boolean,
   appeals: LegacyAppeals,
-  userId: ?string,
+  userId?: string,
 |};
 
 type Props = Params & {|
@@ -264,13 +263,6 @@ class TaskTable extends React.PureComponent<Props> {
     } : null;
   }
 
-  caseDocumentCount = () => {
-    return this.props.includeDocumentCount ? {
-      header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
-      valueFunction: (appeal) => <AppealDocumentCount appeal={appeal} />
-    } : null;
-  }
-
   getQueueColumns = () : Array<{ header: string, span?: Function, valueFunction: Function, getSortValue?: Function }> =>
     _.compact([
       this.caseSelectColumn(),
@@ -279,7 +271,6 @@ class TaskTable extends React.PureComponent<Props> {
       this.caseTypeColumn(),
       this.caseDocketNumberColumn(),
       this.caseIssueCountColumn(),
-      this.caseDocumentCount(),
       this.caseDueDateColumn(),
       this.caseDaysWaitingColumn(),
       this.caseReaderLinkColumn()

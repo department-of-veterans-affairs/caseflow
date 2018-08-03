@@ -3,7 +3,8 @@ import { associateTasksWithAppeals } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
-import type { Dispatch, UsersById } from './types/state';
+import _ from 'lodash';
+import type { Dispatch } from './types/state';
 import type {
   Task,
   Tasks,
@@ -22,12 +23,19 @@ export const onReceiveQueue = (
   }
 });
 
-export const onReceiveJudges = (judges: UsersById) => ({
-  type: ACTIONS.RECEIVE_JUDGE_DETAILS,
-  payload: {
-    judges
-  }
-});
+export const fetchJudges = () => (dispatch: Dispatch) => {
+  ApiUtil.get('/users?role=Judge').then((response) => {
+    const resp = JSON.parse(response.text);
+    const judges = _.keyBy(resp.judges, 'id');
+
+    dispatch({
+      type: ACTIONS.RECEIVE_JUDGE_DETAILS,
+      payload: {
+        judges
+      }
+    });
+  });
+};
 
 export const getNewDocuments = (appealId: string) => (dispatch: Dispatch) => {
   ApiUtil.get(`/appeals/${appealId}/new_documents`).then((response) => {
@@ -310,4 +318,15 @@ export const fetchAllAttorneys = () => (dispatch: Dispatch) => {
     then(
       (resp) => dispatch(receiveAllAttorneys(resp.attorneys))).
     catch((error) => Promise.reject(dispatch(errorAllAttorneys(error))));
+};
+
+export const fetchAmaTasksOfUser = (userId: number, userRole: string) => (dispatch: Dispatch) => {
+  return ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
+    then((resp) => resp.body).
+    then((body) => dispatch({
+      type: ACTIONS.AMA_TASKS_RECEIVED,
+      payload: {
+        amaTasks: _.pickBy(_.keyBy(body.tasks.data, (task) => task.id), (task) => task)
+      }
+    }));
 };

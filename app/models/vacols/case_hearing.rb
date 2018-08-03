@@ -92,6 +92,10 @@ class VACOLS::CaseHearing < VACOLS::Record
     def create_hearing!(hearing_info)
       attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
       attrs.except!(nil)
+      # Remove time component from hearing_date if client sent one and set timezone to UTC.
+      hear_date = attrs[:hearing_date]
+      converted_date = hear_date.is_a?(Date) ? hear_date : Date.parse(hear_date)
+      attrs[:hearing_date] = VacolsHelper.format_date_with_utc_timezone(converted_date)
       MetricsService.record("VACOLS: create_hearing!",
                             service: :vacols,
                             name: "create_hearing") do
@@ -132,7 +136,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     def select_schedule_days
       select(:hearing_pkseq,
              :hearing_date,
-             "CASE WHEN FOLDER_NR LIKE 'VIDEO%' THEN 'V' ELSE FOLDER_NR END AS hearing_type",
+             "CASE WHEN folder_nr LIKE 'VIDEO%' THEN 'V' ELSE hearing_type END AS hearing_type",
              :folder_nr,
              :room,
              :board_member,

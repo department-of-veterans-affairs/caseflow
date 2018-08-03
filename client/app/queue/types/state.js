@@ -2,6 +2,7 @@
 import type {
   Task,
   Tasks,
+  AmaTasks,
   LegacyAppeals,
   User,
   Attorneys
@@ -22,23 +23,20 @@ export type CaseDetailState = {|
   activeTask: ?Task
 |};
 
-export type UiStateError = {title: string, detail: string}
+export type UiStateMessage = { title: string, detail?: string };
 
 export type UiState = {
   selectingJudge: boolean,
   highlightFormItems: boolean,
   messages: {
-    success: ?string,
-    error: ?UiStateError
+    success: ?UiStateMessage,
+    error: ?UiStateMessage
   },
   saveState: {
     savePending: boolean,
     saveSuccessful: ?boolean
   },
-  modal: {
-    cancelCheckout: boolean,
-    deleteIssue: boolean
-  },
+  modal: Object,
   featureToggles: Object,
   selectedAssignee: ?string,
   selectedAssigneeSecondary: ?string,
@@ -54,6 +52,7 @@ export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 export type QueueState = {
   judges: UsersById,
   tasks: Tasks,
+  amaTasks: AmaTasks,
   appeals: LegacyAppeals,
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},
@@ -78,7 +77,7 @@ export type State = {
   ui: UiState
 };
 
-type Action = { type: string, payload: Object };
+type Action = { type: string, payload?: Object };
 
 /* eslint-disable no-use-before-define */
 

@@ -1,4 +1,6 @@
 RSpec.describe Organizations::TasksController, type: :controller do
+  include PowerOfAttorneyMapper
+
   let(:participant_id) { "123456" }
   let(:vso_participant_id) { "789" }
   let(:url) { "American-Legion" }
@@ -35,25 +37,31 @@ RSpec.describe Organizations::TasksController, type: :controller do
   end
 
   before do
-    BGSService = ExternalApi::BGSService
-
     FeatureToggle.enable!(:rollout_vso)
 
-    allow_any_instance_of(BGS::SecurityWebService).to receive(:find_participant_id)
-      .with(css_id: user.css_id, station_id: user.station_id).and_return(participant_id)
-    allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_id)
-      .with(participant_id).and_return(vso_participant_ids)
-  end
-
-  after do
-    BGSService = Fakes::BGSService
+    allow_any_instance_of(BGSService).to receive(:get_participant_id_for_user)
+      .with(user).and_return(participant_id)
+    allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_id)
+      .with(participant_id).and_return(vso_participant_ids.map { |poa| get_poa_from_bgs_poa(poa) })
   end
 
   describe "GET organization/:organization_id/tasks" do
     let!(:tasks) do
       [
-        create(:task, type: :VsoTask, assigned_to: vso),
-        create(:task, type: :VsoTask, assigned_to: vso)
+        create(
+          :task,
+          appeal: create(:appeal, veteran: create(:veteran)),
+          appeal_type: "Appeal",
+          type: :VsoTask,
+          assigned_to: vso
+        ),
+        create(
+          :task,
+          appeal: create(:appeal, veteran: create(:veteran)),
+          appeal_type: "Appeal",
+          type: :VsoTask,
+          assigned_to: vso
+        )
       ]
     end
 

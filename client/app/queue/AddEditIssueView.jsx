@@ -114,11 +114,11 @@ class AddEditIssueView extends React.Component {
     let requestPromise;
 
     if (this.props.action === 'add') {
-      requestPromise = this.props.requestSave(url, params, 'You created a new issue.');
+      requestPromise = this.props.requestSave(url, params, { title: 'You created a new issue.' });
     } else {
       requestPromise = this.props.requestUpdate(
         `${url}/${issue.vacols_sequence_id}`, params,
-        `You updated issue ${issueIndex + 1}.`
+        { title: `You updated issue ${issueIndex + 1}.` }
       );
     }
 
@@ -159,7 +159,7 @@ class AddEditIssueView extends React.Component {
 
     this.props.requestDelete(
       `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`, {},
-      `You deleted issue ${issueIndex + 1}.`
+      { title: `You deleted issue ${issueIndex + 1}.` }
     ).then((resp) => this.props.deleteEditingAppealIssue(appealId, issueId, JSON.parse(resp.text)));
   };
 
@@ -200,7 +200,7 @@ class AddEditIssueView extends React.Component {
       action,
       highlight,
       error,
-      modal
+      deleteIssueModal
     } = this.props;
 
     const programs = ISSUE_INFO;
@@ -217,7 +217,7 @@ class AddEditIssueView extends React.Component {
     };
 
     return <React.Fragment>
-      {modal && <div className="cf-modal-scroll">
+      {deleteIssueModal && <div className="cf-modal-scroll">
         <Modal
           title="Delete Issue?"
           buttons={[{
@@ -342,7 +342,7 @@ const mapStateToProps = (state, ownProps) => ({
   task: state.queue.tasks[ownProps.appealId],
   issue: state.queue.editingIssue,
   error: state.ui.messages.error,
-  modal: state.ui.modal.deleteIssue
+  deleteIssueModal: state.ui.modal.deleteIssue
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
