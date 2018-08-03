@@ -2,6 +2,7 @@
 import type {
   Task,
   Tasks,
+  AmaTasks,
   LegacyAppeals,
   User,
   Attorneys
@@ -35,10 +36,7 @@ export type UiState = {
     savePending: boolean,
     saveSuccessful: ?boolean
   },
-  modal: {
-    cancelCheckout: boolean,
-    deleteIssue: boolean
-  },
+  modal: Object,
   featureToggles: Object,
   selectedAssignee: ?string,
   selectedAssigneeSecondary: ?string,
@@ -54,6 +52,7 @@ export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 export type QueueState = {
   judges: UsersById,
   tasks: Tasks,
+  amaTasks: AmaTasks,
   appeals: LegacyAppeals,
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},

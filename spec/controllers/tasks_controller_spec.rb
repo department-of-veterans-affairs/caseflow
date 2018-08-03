@@ -193,7 +193,7 @@ RSpec.describe TasksController, type: :controller do
              {
                "external_id": appeal.vacols_id,
                "type": "ColocatedTask",
-               "title": "substituation_determination",
+               "title": "substitution_determination",
                "instructions": "another one"
              }]
           end
@@ -212,7 +212,7 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.second["attributes"]["status"]).to eq "assigned"
             expect(response_body.second["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.second["attributes"]["instructions"]).to eq "another one"
-            expect(response_body.second["attributes"]["title"]).to eq "substituation_determination"
+            expect(response_body.second["attributes"]["title"]).to eq "substitution_determination"
             # assignee should be the same person
             id = response_body.second["attributes"]["assigned_to"]["id"]
             expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq id
@@ -260,18 +260,21 @@ RSpec.describe TasksController, type: :controller do
   end
 
   describe "PATCH /task/:id" do
-    let(:user) { create(:user) }
+    let(:colocated) { create(:user) }
     let(:attorney) { create(:user) }
+    let(:judge) { create(:user) }
+
     before do
-      User.stub = user
-      create(:staff, :colocated_role, sdomainid: user.css_id)
+      create(:staff, :colocated_role, sdomainid: colocated.css_id)
       create(:staff, :attorney_role, sdomainid: attorney.css_id)
+      create(:staff, :judge_role, sdomainid: judge.css_id)
     end
 
     context "when updating status to in-progress and on-hold" do
-      let(:admin_action) { create(:colocated_task, assigned_by: attorney, assigned_to: user) }
+      let(:admin_action) { create(:colocated_task, assigned_by: attorney, assigned_to: colocated) }
 
       it "should update successfully" do
+        User.stub = colocated
         patch :update, params: { task: { status: "in_progress" }, id: admin_action.id }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
@@ -287,9 +290,10 @@ RSpec.describe TasksController, type: :controller do
     end
 
     context "when updating status to completed" do
-      let(:admin_action) { create(:colocated_task, assigned_by: attorney, assigned_to: user) }
+      let(:admin_action) { create(:colocated_task, assigned_by: attorney, assigned_to: colocated) }
 
       it "should update successfully" do
+        User.stub = colocated
         patch :update, params: { task: { status: "completed" }, id: admin_action.id }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
@@ -298,10 +302,25 @@ RSpec.describe TasksController, type: :controller do
       end
     end
 
+    context "when updating assignee" do
+      let(:attorney_task) { create(:ama_attorney_task, assigned_by: judge, assigned_to: attorney) }
+      let(:new_attorney) { create(:user) }
+
+      it "should update successfully" do
+        User.stub = judge
+        create(:staff, :attorney_role, sdomainid: new_attorney.css_id)
+        patch :update, params: { task: { assigned_to_id: new_attorney.id }, id: attorney_task.id }
+        expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)["tasks"]["data"]
+        expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq new_attorney.id
+      end
+    end
+
     context "when some other user updates another user's task" do
       let(:admin_action) { create(:colocated_task, assigned_by: attorney, assigned_to: create(:user)) }
 
       it "should return not be successful" do
+        User.stub = colocated
         patch :update, params: { task: { status: "in_progress" }, id: admin_action.id }
         expect(response.status).to eq 302
       end

@@ -10,7 +10,7 @@ import ApiUtil from '../util/ApiUtil';
 import { associateTasksWithAppeals } from './utils';
 
 import { setActiveAppeal, setActiveTask } from './CaseDetail/CaseDetailActions';
-import { onReceiveQueue, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
+import { onReceiveQueue, setAttorneysOfJudge, fetchAllAttorneys, fetchAmaTasksOfUser } from './QueueActions';
 import type { LegacyAppeal, LegacyAppeals, Tasks } from './types/models';
 import type { State, UsersById } from './types/state';
 import { USER_ROLES } from './constants';
@@ -37,7 +37,8 @@ type Props = Params & {|
   setActiveAppeal: typeof setActiveAppeal,
   setActiveTask: typeof setActiveTask,
   setAttorneysOfJudge: typeof setAttorneysOfJudge,
-  fetchAllAttorneys: typeof fetchAllAttorneys
+  fetchAllAttorneys: typeof fetchAllAttorneys,
+  fetchAmaTasksOfUser: typeof fetchAmaTasksOfUser
 |};
 
 class QueueLoadingScreen extends React.PureComponent<Props> {
@@ -47,18 +48,25 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
     if (this.props.appealId) {
       promises.push(this.loadActiveAppealAndTask(this.props.appealId));
     }
-    promises.push(this.loadQueue());
+    promises.push(this.maybeLoadLegacyQueue());
+    promises.push(this.props.fetchAmaTasksOfUser(this.props.userId, this.props.userRole));
 
     return Promise.all(promises);
   }
 
-  loadQueue = () => {
+  maybeLoadLegacyQueue = () => {
     const {
       userId,
       loadedUserId,
       tasks,
-      appeals
+      appeals,
+      userRole
     } = this.props;
+
+    if (userRole !== USER_ROLES.ATTORNEY && userRole !== USER_ROLES.JUDGE) {
+      return Promise.resolve();
+    }
+
     const userQueueLoaded = !_.isEmpty(tasks) && !_.isEmpty(appeals) && loadedUserId === userId;
     const urlToLoad = this.props.urlToLoad || `/queue/${userId}`;
 
@@ -176,7 +184,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setActiveAppeal,
   setActiveTask,
   setAttorneysOfJudge,
-  fetchAllAttorneys
+  fetchAllAttorneys,
+  fetchAmaTasksOfUser
 }, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen): React.ComponentType<Params>);

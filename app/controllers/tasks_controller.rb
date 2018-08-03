@@ -23,11 +23,33 @@ class TasksController < ApplicationController
   #      GET /tasks?user_id=xxx&role=attorney
   #      GET /tasks?user_id=xxx&role=judge
   def index
-    return invalid_role_error unless QUEUES.keys.include?(params[:role].try(:to_sym))
+    return invalid_role_error unless QUEUES.keys.include?(params[:role].downcase.try(:to_sym))
     tasks = queue_class.new(user: user).tasks
     render json: { tasks: json_tasks(tasks) }
   end
 
+  # To create colocated task
+  # e.g, for legacy appeal => POST /tasks,
+  # { type: ColocatedTask,
+  #   external_id: 123423,
+  #   title: "poa_clarification",
+  #   instructions: "poa is missing"
+  # }
+  # for ama appeal = POST /tasks,
+  # { type: ColocatedTask,
+  #   external_id: "2CE3BEB0-FA7D-4ACA-A8D2-1F7D2BDFB1E7",
+  #   title: "something",
+  #   parent_id: 2
+  #  }
+  #
+  # To create attorney task
+  # e.g, for ama appeal => POST /tasks,
+  # { type: AttorneyTask,
+  #   external_id: "2CE3BEB0-FA7D-4ACA-A8D2-1F7D2BDFB1E7",
+  #   title: "something",
+  #   parent_id: 2,
+  #   assigned_to_id: 23
+  #  }
   def create
     return invalid_type_error unless task_class
 
@@ -37,8 +59,19 @@ class TasksController < ApplicationController
     render json: { tasks: json_tasks(tasks) }, status: :created
   end
 
+  # To update attorney task
+  # e.g, for ama/legacy appeal => PATCH /tasks/:id,
+  # { type: AttorneyTask,
+  #   assigned_to_id: 23
+  # }
+  # To update colocated task
+  # e.g, for ama/legacy appeal => PATCH /tasks/:id,
+  # { type: ColocatedtTask,
+  #   status: :on_hold,
+  #   on_hold_duration: "something"
+  # }
   def update
-    if task.assigned_to != current_user
+    if task.assigned_to != current_user && task.assigned_by != current_user
       redirect_to "/unauthorized"
       return
     end
@@ -51,7 +84,7 @@ class TasksController < ApplicationController
   private
 
   def queue_class
-    QUEUES[params[:role].try(:to_sym)]
+    QUEUES[params[:role].downcase.try(:to_sym)]
   end
 
   def user
@@ -87,7 +120,7 @@ class TasksController < ApplicationController
 
   def update_params
     params.require("task")
-      .permit(:status, :on_hold_duration)
+      .permit(:status, :on_hold_duration, :assigned_to_id)
   end
 
   def json_tasks(tasks)
