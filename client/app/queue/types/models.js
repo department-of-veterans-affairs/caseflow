@@ -56,7 +56,8 @@ export type Task = {
   documentId: string,
   assignedByFirstName: string,
   assignedByLastName: string,
-  workProduct: string
+  workProduct: string,
+  previousTaskAssignedOn: string
 };
 
 export type Tasks = { [string]: Task };

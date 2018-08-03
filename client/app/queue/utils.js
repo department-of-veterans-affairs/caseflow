@@ -43,7 +43,8 @@ export const prepareTasksForStore =
         documentId: task.attributes.document_id,
         assignedByFirstName: task.attributes.assigned_by_first_name,
         assignedByLastName: task.attributes.assigned_by_last_name,
-        workProduct: task.attributes.work_product
+        workProduct: task.attributes.work_product,
+        previousTaskAssignedOn: task.attributes.previous_task.assigned_on
       };
     });
 
@@ -88,21 +89,6 @@ export const prepareAppealDetailsForStore =
     LegacyAppeals => {
     return _.pickBy(_.keyBy(appeals, 'attributes.external_id'), (appeal) => appeal);
   };
-
-/*
-* Sorting hierarchy:
-*  1 AOD vets and CAVC remands
-*  2 All other appeals (originals, remands, etc)
-*
-*  Sort by docket date (form 9 date) oldest to
-*  newest within each group
-*/
-export const sortTasks = ({ tasks = {}, appeals = {} }: {tasks: Tasks, appeals: LegacyAppeals}) => _(tasks).
-  partition((task) =>
-    appeals[task.appealId].attributes.aod || appeals[task.appealId].attributes.type === 'Court Remand'
-  ).
-  flatMap((taskList) => _.sortBy(taskList, (task) => new Date(task.attributes.docket_date))).
-  value();
 
 export const renderAppealType = (appeal: BasicAppeal) => {
   const {
