@@ -38,7 +38,7 @@ class Veteran < ApplicationRecord
   end
 
   def country_requires_state?
-    country == "USA"
+    country.upcase == "USA"
   end
 
   # Convert to hash used in AppealRepository.establish_claim!
