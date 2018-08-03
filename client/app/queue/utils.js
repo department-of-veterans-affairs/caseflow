@@ -72,7 +72,7 @@ export const sortTasks = ({ tasks = {}, appeals = {} }: {tasks: Tasks, appeals: 
   flatMap((taskList) => _.sortBy(taskList, (task) => new Date(task.attributes.docket_date))).
   value();
 
-export const renderAppealType = ({aod, type}: {aod: boolean, type: string}) => {
+export const renderAppealType = ({ aod, type }: {aod: boolean, type: string}) => {
   const cavc = type === 'Court Remand';
 
   return <React.Fragment>

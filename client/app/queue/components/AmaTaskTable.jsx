@@ -36,7 +36,8 @@ class AmaTaskTable extends React.PureComponent<Props> {
 
   caseTypeColumn = () => ({
     header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
-    valueFunction: (task: AmaTask) => renderAppealType({ aod: task.attributes.aod, type: task.attributes.case_type})
+    valueFunction: (task: AmaTask) => renderAppealType({ aod: task.attributes.aod,
+      type: task.attributes.case_type })
   })
 
   caseTaskColumn = () => ({
