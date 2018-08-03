@@ -10,6 +10,7 @@ import ReaderLink from '../ReaderLink';
 import { CATEGORIES } from '../constants';
 import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
+import { renderAppealType } from '../utils';
 
 import type {
   AmaTask
@@ -32,6 +33,11 @@ class AmaTaskTable extends React.PureComponent<Props> {
           {task.attributes.veteran_name} ({task.attributes.veteran_file_number})</a>
     };
   }
+
+  caseTypeColumn = () => ({
+    header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
+    valueFunction: (task: AmaTask) => renderAppealType({ aod: task.attributes.aod, type: task.attributes.case_type})
+  })
 
   caseTaskColumn = () => ({
     header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
@@ -65,6 +71,7 @@ class AmaTaskTable extends React.PureComponent<Props> {
   getQueueColumns = () : Array<{ header: string, span?: Function, valueFunction: Function, getSortValue?: Function }> =>
     _.compact([
       this.caseDetailsColumn(),
+      this.caseTypeColumn(),
       this.caseTaskColumn(),
       this.caseDocketNumberColumn(),
       this.caseDaysWaitingColumn(),
