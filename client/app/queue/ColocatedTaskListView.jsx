@@ -16,8 +16,7 @@ import type { AmaTask } from './types/models';
 import type { State } from './types/state';
 
 type Params = {|
-  userId: number,
-  success: string
+  userId: number
 |};
 
 type Props = Params & {|
