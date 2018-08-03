@@ -28,9 +28,21 @@ class TasksController < ApplicationController
     render json: { tasks: json_tasks(tasks) }
   end
 
+  # To create colocated task
   # e.g, for legacy appeal => POST /tasks,
-  # { type: ColocatedTask, external_id: 123423, title: "poa_clarification", instructions: "poa is missing" }
+  # { type: ColocatedTask,
+  #   external_id: 123423,
+  #   title: "poa_clarification",
+  #   instructions: "poa is missing"
+  # }
+  # for ama appeal = POST /tasks,
+  # { type: ColocatedTask,
+  #   external_id: "2CE3BEB0-FA7D-4ACA-A8D2-1F7D2BDFB1E7",
+  #   title: "something",
+  #   parent_id: 2
+  #  }
   #
+  # To create attorney task
   # e.g, for ama appeal => POST /tasks,
   # { type: AttorneyTask,
   #   external_id: "2CE3BEB0-FA7D-4ACA-A8D2-1F7D2BDFB1E7",
@@ -47,10 +59,12 @@ class TasksController < ApplicationController
     render json: { tasks: json_tasks(tasks) }, status: :created
   end
 
+  # To update attorney task
   # e.g, for ama/legacy appeal => PATCH /tasks/:id,
   # { type: AttorneyTask,
   #   assigned_to_id: 23
   # }
+  # To update colocated task
   # e.g, for ama/legacy appeal => PATCH /tasks/:id,
   # { type: ColocatedtTask,
   #   status: :on_hold,
