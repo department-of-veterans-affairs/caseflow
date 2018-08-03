@@ -16,7 +16,7 @@ import {
   setIssueDecisionDate
 } from '../../actions/ama';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
-import { getIntakeStatus } from '../../selectors';
+import { getIntakeStatus, issueCountSelector } from '../../selectors';
 import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
 class Finish extends React.PureComponent {
@@ -100,7 +100,7 @@ class FinishNextButton extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
-      disabled={!this.props.supplementalClaim.issueCount}
+      disabled={!this.props.issueCount}
     >
       Establish EP
     </Button>;
@@ -110,18 +110,21 @@ const FinishNextButtonConnected = connect(
   ({ supplementalClaim, intake }) => ({
     requestState: supplementalClaim.requestStatus.completeIntake,
     intakeId: intake.id,
-    supplementalClaim
+    supplementalClaim,
+    issueCount: issueCountSelector(supplementalClaim)
   }),
   (dispatch) => bindActionCreators({
     completeIntake
   }, dispatch)
 )(FinishNextButton);
 
-const IssueCounterConnected = connect(
-  ({ supplementalClaim }) => ({
-    issueCount: supplementalClaim.issueCount
-  })
-)(IssueCounter);
+const mapStateToProps = (state) => {
+  return {
+    issueCount: issueCountSelector(state.supplementalClaim)
+  };
+};
+
+const IssueCounterConnected = connect(mapStateToProps)(IssueCounter);
 
 export class FinishButtons extends React.PureComponent {
   render = () =>
