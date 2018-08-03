@@ -10,9 +10,8 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import { associateTasksWithAppeals } from './utils';
 
-import { setActiveAppeal, setActiveTask } from './CaseDetail/CaseDetailActions';
 import { onReceiveQueue, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
-import type { LegacyAppeal, LegacyAppeals, Tasks } from './types/models';
+import type { LegacyAppeals, Tasks } from './types/models';
 import type { State, UsersById } from './types/state';
 import { USER_ROLES } from './constants';
 
@@ -31,12 +30,9 @@ type Props = Params & {|
   tasks: Tasks,
   appeals: LegacyAppeals,
   loadedUserId: number,
-  activeAppeal: LegacyAppeal,
   judges: UsersById,
   // Action creators
   onReceiveQueue: typeof onReceiveQueue,
-  setActiveAppeal: typeof setActiveAppeal,
-  setActiveTask: typeof setActiveTask,
   setAttorneysOfJudge: typeof setAttorneysOfJudge,
   fetchAllAttorneys: typeof fetchAllAttorneys
 |};
@@ -45,9 +41,6 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
   loadRelevantCases = () => {
     const promises = [];
 
-    if (this.props.appealId) {
-      promises.push(this.loadActiveAppealAndTask(this.props.appealId));
-    }
     promises.push(this.loadQueue());
 
     return Promise.all(promises);
@@ -72,38 +65,6 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
         ...associateTasksWithAppeals(JSON.parse(response.text)),
         userId
       }));
-  };
-
-  loadActiveAppealAndTask = (appealId) => {
-    const {
-      activeAppeal,
-      appeals,
-      tasks,
-      userRole
-    } = this.props;
-
-    if (activeAppeal) {
-      return Promise.resolve();
-    }
-
-    if (appeals && appealId in appeals) {
-      this.props.setActiveAppeal(appeals[appealId]);
-      this.props.setActiveTask(tasks[appealId]);
-
-      return Promise.resolve();
-    }
-
-    return Promise.all([
-      ApiUtil.get(`/appeals/${appealId}`).then((response) => {
-        this.props.setActiveAppeal(response.body.appeal);
-      }),
-      ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
-        const task = response.body.tasks[0];
-
-        task.appealId = task.id;
-        this.props.setActiveTask(task);
-      })
-    ]);
   };
 
   loadAttorneysOfJudge = () => {
@@ -172,15 +133,12 @@ const mapStateToProps = (state: State) => {
   return {
     tasks,
     appeals,
-    activeAppeal: state.caseDetail.activeAppeal,
     loadedUserId: state.ui.loadedUserId
   };
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue,
-  setActiveAppeal,
-  setActiveTask,
   setAttorneysOfJudge,
   fetchAllAttorneys
 }, dispatch);

@@ -2,7 +2,6 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -18,7 +17,6 @@ import StickyNavContentArea from './StickyNavContentArea';
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
 
-import { clearActiveAppealAndTask } from './CaseDetail/CaseDetailActions';
 import { tasksForAppealAssignedToUserSelector } from './selectors';
 
 // TODO: Pull this horizontal rule styling out somewhere.
@@ -32,11 +30,8 @@ const horizontalRuleStyling = css({
 const PowerOfAttorneyDetail = ({ poa }) => <p>{poa.representative_type} - {poa.representative_name}</p>;
 
 class CaseDetailsView extends React.PureComponent {
-  componentWillUnmount = () => {
-    this.props.clearActiveAppealAndTask();
-  };
-
   componentDidMount = () => window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
+
   render = () => {
     const {
       appealId,
@@ -89,8 +84,4 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  clearActiveAppealAndTask
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(CaseDetailsView);
+export default connect(mapStateToProps, null)(CaseDetailsView);

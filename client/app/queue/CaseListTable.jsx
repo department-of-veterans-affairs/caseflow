@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import CaseDetailsLink from './CaseDetailsLink';
 import Table from '../components/Table';
@@ -9,8 +8,6 @@ import Table from '../components/Table';
 import { DateString } from '../util/DateUtil';
 import { renderAppealType } from './utils';
 import COPY from '../../COPY.json';
-
-import { setActiveAppeal } from './CaseDetail/CaseDetailActions';
 
 const labelForLocation = (locationCode) => {
   if (!locationCode) {
@@ -29,8 +26,7 @@ class CaseListTable extends React.PureComponent {
       valueFunction: (appeal) => <React.Fragment>
         <CaseDetailsLink
           appeal={appeal}
-          getLinkText={() => appeal.attributes.docket_number}
-          onClick={() => this.props.setActiveAppeal(appeal)} />
+          getLinkText={() => appeal.attributes.docket_number} />
       </React.Fragment>
     },
     {
@@ -70,9 +66,5 @@ CaseListTable.propTypes = {
 
 const mapStateToProps = () => ({});
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setActiveAppeal
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(CaseListTable);
+export default connect(mapStateToProps)(CaseListTable);
 

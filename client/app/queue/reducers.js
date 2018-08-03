@@ -8,10 +8,8 @@ import _ from 'lodash';
 
 import { ACTIONS } from './constants';
 
-import caseDetailReducer from './CaseDetail/CaseDetailReducer';
 import caseListReducer from './CaseList/CaseListReducer';
 import uiReducer from './uiReducer/uiReducer';
-import * as CASE_DETAIL_ACTIONS from './CaseDetail/actionTypes';
 import type { QueueState } from './types/state';
 
 // TODO: Remove this when we move entirely over to the appeals search.
@@ -326,34 +324,12 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
         }
       }
     });
-  case CASE_DETAIL_ACTIONS.SET_ACTIVE_APPEAL:
-    return {
-      ...state,
-      appeals: {
-        ...state.appeals,
-        [action.payload.appeal.attributes.external_id]: action.payload.appeal
-      }
-    };
-  case CASE_DETAIL_ACTIONS.SET_ACTIVE_TASK: {
-    if (!action.payload.taskObj) {
-      return state;
-    }
-
-    return {
-      ...state,
-      tasks: {
-        ...state.tasks,
-        [action.payload.taskObj.appealId]: action.payload.taskObj
-      }
-    };
-  }
   default:
     return state;
   }
 };
 
 const rootReducer = combineReducers({
-  caseDetail: caseDetailReducer,
   caseList: caseListReducer,
   caseSelect: caseSelectReducer,
   queue: workQueueReducer,

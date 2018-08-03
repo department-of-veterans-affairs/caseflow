@@ -27,10 +27,7 @@ export const prepareTasksForStore =
     Tasks => {
     const mappedLegacyTasks = tasks.map((task) => {
       return {
-        type: task.attributes.type,
-        title: task.attributes.title,
         appealId: task.attributes.appeal_id,
-        appealType: task.attributes.appeal_type,
         externalAppealId: task.attributes.external_appeal_id,
         assignedOn: task.attributes.assigned_on,
         dueOn: task.attributes.due_on,
