@@ -1,6 +1,5 @@
 // @flow
 import _ from 'lodash';
-import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -21,7 +20,7 @@ type Params = {|
   userCssId: string,
   userRole: string,
   appealId?: string,
-  children: React.ChildrenArray<React.Node>,
+  children: React.Node,
   userCanAccessQueue: boolean,
   urlToLoad?: string
 |};
@@ -168,11 +167,6 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
     </div>;
   };
 }
-
-QueueLoadingScreen.propTypes = {
-  userId: PropTypes.number.isRequired,
-  appealId: PropTypes.string
-};
 
 const mapStateToProps = (state: State) => {
   const { tasks, appeals } = state.queue;
