@@ -28,10 +28,6 @@ class Appeal < AmaReview
     "Original"
   end
 
-  def aod
-    advanced_on_docket
-  end
-
   def docket_name
     docket_type
   end

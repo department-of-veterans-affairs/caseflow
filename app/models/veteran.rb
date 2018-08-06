@@ -34,11 +34,11 @@ class Veteran < ApplicationRecord
   end
 
   def country_requires_zip?
-    COUNTRIES_REQUIRING_ZIP.include?(country)
+    COUNTRIES_REQUIRING_ZIP.include?(country && country.upcase)
   end
 
   def country_requires_state?
-    country == "USA"
+    country.casecmp("USA") == 0
   end
 
   # Convert to hash used in AppealRepository.establish_claim!
