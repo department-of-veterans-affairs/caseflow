@@ -11,7 +11,8 @@ import {
   onClickConfirmAssignments,
   onClickCloseModal,
   onSchedulePeriodError,
-  removeSchedulePeriodError
+  removeSchedulePeriodError,
+  setVacolsUpload
 } from '../actions';
 
 export class ReviewAssignmentsContainer extends React.Component {
@@ -22,6 +23,7 @@ export class ReviewAssignmentsContainer extends React.Component {
 
   onConfirmAssignmentsUpload = () => {
     this.props.onClickCloseModal();
+    this.props.setVacolsUpload();
     this.props.history.push('/schedule/build');
   };
 
@@ -75,7 +77,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onClickConfirmAssignments,
   onClickCloseModal,
   onSchedulePeriodError,
-  removeSchedulePeriodError
+  removeSchedulePeriodError,
+  setVacolsUpload
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ReviewAssignmentsContainer));

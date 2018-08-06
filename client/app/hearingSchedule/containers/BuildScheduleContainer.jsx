@@ -23,7 +23,11 @@ class BuildScheduleContainer extends React.PureComponent {
     });
   };
 
-  shouldNotSendAssignments = () => _.isEmpty(this.props.schedulePeriod) || this.props.schedulePeriod.finalized === true;
+  shouldNotSendAssignments = () => {
+    return _.isEmpty(this.props.schedulePeriod) ||
+      this.props.schedulePeriod.finalized === true ||
+      !this.props.vacolsUpload;
+  };
 
   sendAssignments = () => {
     if (this.shouldNotSendAssignments()) {
@@ -69,6 +73,7 @@ class BuildScheduleContainer extends React.PureComponent {
 const mapStateToProps = (state) => ({
   pastUploads: state.pastUploads,
   schedulePeriod: state.schedulePeriod,
+  vacolsUpload: state.vacolsUpload,
   displaySuccessMessage: state.displaySuccessMessage
 });
 
