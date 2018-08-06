@@ -10,7 +10,7 @@ class WorkQueue::BeaamSerializer < ActiveModel::Serializer
   end
 
   attribute :case_type do
-    object.type
+    "BEAAM"
   end
 
   attribute :docket_number do
