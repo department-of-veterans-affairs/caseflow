@@ -115,7 +115,7 @@ class AppealsController < ApplicationController
     if err.class.method_defined? :serialize_response
       render err.serialize_response
     else
-      render SerializableError.new(code: 500, message: err.to_s).serialize_response
+      render Caseflow::Error::SerializableError.new(code: 500, message: err.to_s).serialize_response
     end
   end
 
