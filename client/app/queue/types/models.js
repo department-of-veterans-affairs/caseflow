@@ -69,6 +69,7 @@ export type AmaTask = {
   attributes: {
     aod: boolean,
     appeal_id: string,
+    assigned_at: string,
     assigned_by: User,
     assigned_to: User,
     case_type: string,
