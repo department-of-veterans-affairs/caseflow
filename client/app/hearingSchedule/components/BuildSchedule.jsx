@@ -73,7 +73,7 @@ export default class BuildSchedule extends React.Component {
         valueName: 'download'
       }
     ];
-    
+
     const sortPastUploads = _.orderBy(pastUploads, (sortUploads) => sortUploads.createdAt, 'asc');
 
     const pastUploadsRows = _.map(pastUploads, (pastUpload) => ({
