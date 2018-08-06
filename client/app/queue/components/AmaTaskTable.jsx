@@ -25,12 +25,22 @@ type Props = Params;
 class AmaTaskTable extends React.PureComponent<Props> {
   getKeyForRow = (rowNumber, task) => task.id
 
+  formattedVetNameOfTask = (task: AmaTask) => {
+    if (!task.attributes.veteran_name) {
+      return '';
+    }
+
+    const [ln, fn, mi] = task.attributes.veteran_name.split(', ');
+
+    return _.compact([fn, mi, ln]).join(' ');
+  }
+
   caseDetailsColumn = () => {
     return {
       header: COPY.CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE,
       valueFunction:
         (task: AmaTask) => <a href={`/queue/appeals/${task.attributes.external_id}`}>
-          {task.attributes.veteran_name} ({task.attributes.veteran_file_number})</a>,
+          {this.formattedVetNameOfTask(task)} ({task.attributes.veteran_file_number})</a>,
       getSortValue: (task) => task.attributes.veteran_name
     };
   }
