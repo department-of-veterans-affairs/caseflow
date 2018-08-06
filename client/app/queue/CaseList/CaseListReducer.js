@@ -10,7 +10,9 @@ export const initialState = {
   search: {
     errorType: null,
     queryResultingInError: null
-  }
+  },
+  casesForVeteran: {},
+  isRequestingCasesForVeteran: false
 };
 
 export const caseListReducer = (state = initialState, action = {}) => {
@@ -39,6 +41,19 @@ export const caseListReducer = (state = initialState, action = {}) => {
       isRequestingAppealsUsingVeteranId: { $set: initialState.isRequestingAppealsUsingVeteranId },
       receivedAppeals: { $set: action.payload.appeals },
       search: { $set: initialState.search }
+    });
+  case Constants.REQUEST_CASES_FOR_VETERAN:
+    return update(state, {
+      isRequestingCasesForVeteran: { $set: true }
+    });
+  case Constants.SET_CASES_FOR_VETERAN:
+    return update(state, {
+      casesForVeteran: { $merge: { [action.payload.veteranId]: action.payload.cases } },
+      isRequestingCasesForVeteran: { $set: false }
+    });
+  case Constants.DONE_REQUESTING_CASES_FOR_VETERAN:
+    return update(state, {
+      isRequestingCasesForVeteran: { $set: false }
     });
   case Constants.REQUEST_APPEAL_USING_VETERAN_ID:
     return update(state, {

@@ -1,10 +1,16 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { CATEGORIES } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import ReaderLink from './ReaderLink';
+
+import { toggleVeteranCaseList } from './CaseDetail/CaseDetailActions';
 
 const containingDivStyling = css({
   borderBottom: `1px solid ${COLORS.GREY_LIGHT}`,
@@ -36,7 +42,11 @@ const listItemStyling = css({
   ':not(:first-child)': { paddingLeft: '1.5rem' }
 });
 
-export default class CaseTitle extends React.PureComponent {
+const viewCasesStyling = css({
+  cursor: 'pointer'
+});
+
+class CaseTitle extends React.PureComponent {
   render = () => {
     const {
       appeal,
@@ -55,6 +65,7 @@ export default class CaseTitle extends React.PureComponent {
         appeal={appeal}
         taskType={taskType}
         longMessage />
+      <span {...viewCasesStyling}><Link onClick={this.props.toggleVeteranCaseList}>View all cases</Link></span>
     </CaseTitleScaffolding>;
   }
 }
@@ -71,6 +82,12 @@ CaseTitle.defaultProps = {
   taskType: 'Draft Decision',
   analyticsSource: 'queue_task'
 };
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  toggleVeteranCaseList
+}, dispatch);
+
+export default connect(null, mapDispatchToProps)(CaseTitle);
 
 const CaseTitleScaffolding = (props) => <div {...containingDivStyling}>
   <h1 {...headerStyling}>{props.heading}</h1>
