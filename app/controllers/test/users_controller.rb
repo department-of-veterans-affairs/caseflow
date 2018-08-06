@@ -4,7 +4,7 @@ Rake::Task.clear # necessary to avoid tasks being loaded several times in dev mo
 CaseflowCertification::Application.load_tasks
 
 class Test::UsersController < ApplicationController
-  before_action :require_demo, only: [:set_user, :set_end_products, :reseed]
+  before_action :require_demo, only: [:set_user, :set_end_products, :reseed, :toggle_feature]
   before_action :require_global_admin, only: :log_in_as_user
 
   APPS = [
@@ -70,6 +70,7 @@ class Test::UsersController < ApplicationController
   # :nocov:
   def index
     @test_users = User.all
+    @features_list = FeatureToggle.features
     @ep_types = %w[full partial none all]
     render "index"
   end
@@ -101,6 +102,20 @@ class Test::UsersController < ApplicationController
 
       Rake::Task["local:vacols:seed"].reenable
       Rake::Task["local:vacols:seed"].invoke
+    end
+  end
+
+  def toggle_feature
+    if params[:enable]
+      params[:enable].each do |f|
+        FeatureToggle.enable!(f[:value])
+      end
+    end
+
+    if params[:disable]
+      params[:disable].each do |f|
+        FeatureToggle.disable!(f[:value])
+      end
     end
   end
 

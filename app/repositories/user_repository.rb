@@ -32,7 +32,27 @@ class UserRepository
       true
     end
 
+    def css_ids_by_vlj_ids(vlj_ids)
+      users = VACOLS::Staff.where(sattyid: vlj_ids)
+
+      results = {}
+      users.each do |user|
+        results.merge!(user.sattyid => { css_id: user.sdomainid,
+                                         first_name: user.snamef,
+                                         last_name: user.snamel })
+      end
+      results
+    end
+
+    # This method is only used in dev/demo mode to test the judge spreadsheet functionality in hearing scheduling
     # :nocov:
+    def create_judge_in_vacols(first_name, last_name, vlj_id)
+      return unless Rails.env.development? || Rails.env.demo?
+
+      css_id = ["BVA", first_name.first, last_name].join
+      VACOLS::Staff.create(snamef: first_name, snamel: last_name, sdomainid: css_id, sattyid: vlj_id)
+    end
+
     def css_id_by_full_name(full_name)
       name = full_name.split(" ")
       first_name = name.first

@@ -11,6 +11,7 @@ RSpec.feature "Higher-Level Review Intake" do
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
   end
 
   after do
@@ -20,6 +21,13 @@ RSpec.feature "Higher-Level Review Intake" do
 
   let(:veteran) do
     Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
+  end
+
+  let(:veteran_no_ratings) do
+    Generators::Veteran.build(file_number: "55555555",
+                              first_name: "Nora",
+                              last_name: "Attings",
+                              participant_id: "44444444")
   end
 
   let(:inaccessible) { false }
@@ -180,8 +188,7 @@ RSpec.feature "Higher-Level Review Intake" do
 
     fill_in "Issue description", with: "Description for Active Duty Adjustments"
 
-    # To do: Change this to one issue once we implement decision date into issue count
-    expect(page).to have_content("2 issues")
+    expect(page).to have_content("1 issue")
 
     fill_in "Decision date", with: "04/25/2018"
 
@@ -216,6 +223,15 @@ RSpec.feature "Higher-Level Review Intake" do
       claim_id: "IAMANEPID",
       contention_descriptions: ["Description for Active Duty Adjustments", "PTSD denied"],
       special_issues: []
+    )
+
+    rated_issue = higher_level_review.request_issues.find_by(description: "PTSD denied")
+
+    expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+      claim_id: "IAMANEPID",
+      rated_issue_contention_map: {
+        rated_issue.rating_issue_reference_id => rated_issue.contention_reference_id
+      }
     )
 
     intake.reload
@@ -329,5 +345,49 @@ RSpec.feature "Higher-Level Review Intake" do
 
     expect(page).to have_content("Something went wrong")
     expect(page).to have_current_path("/intake/review-request")
+  end
+
+  it "Allows a Veteran without ratings to create an intake" do
+    higher_level_review = HigherLevelReview.create!(
+      veteran_file_number: veteran_no_ratings.file_number,
+      receipt_date: 2.days.ago,
+      informal_conference: false,
+      same_office: false
+    )
+
+    HigherLevelReviewIntake.create!(
+      veteran_file_number: veteran_no_ratings.file_number,
+      user: current_user,
+      started_at: 5.minutes.ago,
+      detail: higher_level_review
+    )
+
+    Claimant.create!(
+      review_request: higher_level_review,
+      participant_id: veteran_no_ratings.participant_id
+    )
+
+    higher_level_review.start_review!
+
+    visit "/intake"
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_content("This Veteran has no rated, disability issues")
+
+    safe_click "#button-add-issue"
+
+    safe_click ".Select"
+
+    fill_in "Issue category", with: "Active Duty Adjustments"
+    find("#issue-category").send_keys :enter
+    fill_in "Issue description", with: "Description for Active Duty Adjustments"
+    fill_in "Decision date", with: "04/19/2018"
+
+    expect(page).to have_content("1 issue")
+
+    safe_click "#button-finish-intake"
+
+    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988) has been processed.")
   end
 end

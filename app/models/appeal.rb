@@ -25,7 +25,7 @@ class Appeal < AmaReview
   end
 
   def type
-    [advanced_on_docket? ? "AOD" : nil].compact.join(" ,")
+    "Original"
   end
 
   def docket_name
@@ -36,7 +36,10 @@ class Appeal < AmaReview
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
-  delegate :name, to: :veteran, prefix: true, allow_nil: true
+  def veteran_name
+    # For consistency with LegacyAppeal.veteran_name
+    veteran && veteran.name.formatted(:form)
+  end
 
   def create_issues!(request_issues_data:)
     request_issues.destroy_all unless request_issues.empty?
@@ -57,4 +60,8 @@ class Appeal < AmaReview
   end
 
   delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
+
+  def external_id
+    uuid
+  end
 end

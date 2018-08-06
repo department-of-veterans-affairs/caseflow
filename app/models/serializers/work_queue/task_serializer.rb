@@ -1,6 +1,6 @@
 class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :type
-  attribute :title
+  attribute :action
   attribute :appeal_id
   attribute :status
   attribute :assigned_to
@@ -30,5 +30,13 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
 
   attribute :veteran_file_number do
     object.appeal.veteran_file_number
+  end
+
+  attribute :external_id do
+    object.appeal.external_id
+  end
+
+  attribute :aod do
+    object.appeal.advanced_on_docket
   end
 end

@@ -9,13 +9,13 @@ describe HearingDay do
     context "add a hearing with only required attributes" do
       let(:hearing_hash) do
         { hearing_type: "C",
-          hearing_date: VacolsHelper.local_date_with_utc_timezone,
+          hearing_date: VacolsHelper.local_date_with_utc_timezone.to_date,
           room_info: "1" }
       end
 
       it "creates hearing with required attributes" do
         expect(hearing.hearing_type).to eq "C"
-        expect(hearing.hearing_date).to eq VacolsHelper.local_date_with_utc_timezone
+        expect(hearing.hearing_date).to eq VacolsHelper.local_date_with_utc_timezone.to_date
         expect(hearing.room).to eq "1"
       end
     end
@@ -23,14 +23,14 @@ describe HearingDay do
     context "add a video hearing" do
       let(:hearing_hash) do
         { hearing_type: "C",
-          hearing_date: VacolsHelper.local_date_with_utc_timezone,
+          hearing_date: VacolsHelper.local_date_with_utc_timezone.to_date,
           regional_office: "RO89",
           room_info: "5" }
       end
 
       it "creates a video hearing" do
         expect(hearing.hearing_type).to eq "C"
-        expect(hearing.hearing_date).to eq VacolsHelper.local_date_with_utc_timezone
+        expect(hearing.hearing_date).to eq VacolsHelper.local_date_with_utc_timezone.to_date
         expect(hearing.folder_nr).to eq "VIDEO RO89"
         expect(hearing.room).to eq "5"
       end
