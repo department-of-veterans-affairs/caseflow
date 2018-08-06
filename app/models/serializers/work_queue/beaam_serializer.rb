@@ -17,7 +17,7 @@ class WorkQueue::BeaamSerializer < ActiveModel::Serializer
     object.docket_number
   end
 
-  attribute :veteran_name do
+  attribute :veteran_full_name do
     object.veteran_name
   end
 

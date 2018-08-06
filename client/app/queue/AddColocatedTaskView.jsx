@@ -64,7 +64,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
         tasks: [{
           ...this.state,
           type: 'ColocatedTask',
-          external_id: this.props.appeal.attributes.vacols_id
+          external_id: this.props.appeal.attributes.external_id
         }]
       }
     };

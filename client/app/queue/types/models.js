@@ -129,7 +129,8 @@ export type BasicAppeal = {
   docketNumber: string,
   veteranFullName: string,
   veteranFileNumber: string,
-  isPaperCase: Boolean
+  isPaperCase: Boolean,
+  tasks: ?Array<Task>
 };
 
 export type BasicAppeals = { [string]: BasicAppeal };

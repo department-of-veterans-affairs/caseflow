@@ -18,6 +18,7 @@ import { CATEGORIES, redText } from '../constants';
 import COPY from '../../../COPY.json';
 
 import type {
+  BasicAppeal,
   LegacyAppeal,
   LegacyAppeals
 } from '../types/models';
@@ -56,7 +57,7 @@ class TaskTable extends React.PureComponent<Props> {
     return isTaskSelected[externalAppealId] || false;
   }
 
-  appealHasDASRecord = (appeal) => {
+  appealHasDASRecord = (appeal: BasicAppeal) => {
     if (this.props.requireDasRecord && appeal.tasks) {
       return appeal.tasks.some((task) => task.taskId);
     }
@@ -151,7 +152,7 @@ class TaskTable extends React.PureComponent<Props> {
   caseTypeColumn = () => {
     return this.props.includeType ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
-      valueFunction: (appeal: LegacyAppeal) => this.appealHasDASRecord(appeal) ?
+      valueFunction: (appeal: BasicAppeal) => this.appealHasDASRecord(appeal) ?
         renderAppealType(appeal) :
         <span {...redText}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE}</span>,
       span: (appeal) => this.appealHasDASRecord(appeal) ? 1 : 5,

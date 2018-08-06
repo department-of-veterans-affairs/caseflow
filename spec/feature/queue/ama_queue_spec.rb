@@ -74,7 +74,6 @@ RSpec.feature "AmaQueue" do
 
     scenario "veteran is the appellant" do
       visit "/queue/beaam"
-      binding.pry
       click_on appeals.first.veteran.first_name
 
       expect(page).to have_content("About the Veteran")

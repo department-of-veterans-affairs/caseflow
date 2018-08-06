@@ -48,14 +48,15 @@ const snapshotChildResponsiveWrapFixStyling = css({
 });
 
 type Params = {|
-  appeal: LegacyAppeal,
-  taskAssignedToUser: Task,
+  appealId: string,
   hideDropdown?: boolean
 |};
 
 type Props = Params & {|
   featureToggles: Object,
   userRole: string,
+  appeal: LegacyAppeal,
+  taskAssignedToUser: Task,
   taskAssignedToAttorney: Task
 |};
 
