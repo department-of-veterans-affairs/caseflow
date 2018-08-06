@@ -21,6 +21,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
     object.appellant_middle_initial
   end
   attribute :appellant_last_name
+  attribute :appellant_name_suffix
   attribute :file_number do
     object.sanitized_vbms_id
   end
@@ -37,7 +38,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
       ).as_json[:data][:attributes]
     end
   end
-  
+
   # TODO: - expand rep name into separate fields
   attribute :representative_name do
     object.power_of_attorney.vacols_representative_name
