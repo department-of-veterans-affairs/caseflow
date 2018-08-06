@@ -40,32 +40,47 @@ class AmaTaskTable extends React.PureComponent<Props> {
       header: COPY.CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE,
       valueFunction:
         (task: AmaTask) => <a href={`/queue/appeals/${task.attributes.external_id}`}>
-          {this.formattedVetNameOfTask(task)} ({task.attributes.veteran_file_number})</a>
+          {this.formattedVetNameOfTask(task)} ({task.attributes.veteran_file_number})</a>,
+      getSortValue: (task) => task.attributes.veteran_name
     };
   }
+
+  actionNameOfTask = (task: AmaTask) => CO_LOCATED_ADMIN_ACTIONS[task.attributes.action]
+
+  caseTaskColumn = () => ({
+    header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
+    valueFunction: (task) => this.actionNameOfTask(task),
+    getSortValue: (task) => this.actionNameOfTask(task)
+  })
 
   caseTypeColumn = () => ({
     header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
     valueFunction: (task: AmaTask) => renderAppealType({ aod: task.attributes.aod,
-      type: task.attributes.case_type })
-  })
+      type: task.attributes.case_type }),
+    getSortValue: (task: AmaTask) => {
+      // We prepend a * to the docket number if it's a priority case since * comes before
+      // numbers in sort order, this forces these cases to the top of the sort.
+      if (task.attributes.aod || task.attributes.case_type === 'Court Remand') {
+        return `*${task.attributes.docket_number}`;
+      }
 
-  caseTaskColumn = () => ({
-    header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
-    valueFunction: (task: AmaTask) => CO_LOCATED_ADMIN_ACTIONS[task.attributes.title]
+      return task.attributes.docket_number;
+    }
   })
 
   caseDocketNumberColumn = () => ({
     header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
-    valueFunction: (task) => task.attributes.docket_number
+    valueFunction: (task: AmaTask) => task.attributes.docket_number,
+    getSortValue: (task: AmaTask) => task.attributes.docket_number
   })
+
+  daysWaitingOfTask = (task: AmaTask) => moment().startOf('day').
+    diff(moment(task.attributes.assigned_at), 'days')
 
   caseDaysWaitingColumn = () => ({
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
-    valueFunction: (task) => {
-      return moment().startOf('day').
-        diff(moment(task.attributes.assigned_at), 'days');
-    }
+    valueFunction: (task: AmaTask) => this.daysWaitingOfTask(task),
+    getSortValue: (task: AmaTask) => this.daysWaitingOfTask(task)
   })
 
   caseReaderLinkColumn = () => ({
@@ -82,8 +97,8 @@ class AmaTaskTable extends React.PureComponent<Props> {
   getQueueColumns = () : Array<{ header: string, span?: Function, valueFunction: Function, getSortValue?: Function }> =>
     _.compact([
       this.caseDetailsColumn(),
-      this.caseTypeColumn(),
       this.caseTaskColumn(),
+      this.caseTypeColumn(),
       this.caseDocketNumberColumn(),
       this.caseDaysWaitingColumn(),
       this.caseReaderLinkColumn()
@@ -95,7 +110,8 @@ class AmaTaskTable extends React.PureComponent<Props> {
     return <Table
       columns={this.getQueueColumns}
       rowObjects={tasks}
-      getKeyForRow={this.getKeyForRow} />;
+      getKeyForRow={this.getKeyForRow}
+      defaultSort={{ sortColIdx: 2 }} />;
   }
 }
 
