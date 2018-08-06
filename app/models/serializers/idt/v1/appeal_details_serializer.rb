@@ -8,6 +8,11 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
     object.veteran_middle_initial
   end
   attribute :veteran_last_name
+  attribute :veteran_gender
+  attribute :veteran_is_deceased do
+    !!object.notice_of_death_date
+  end
+
   attribute :appellant_not_veteran do
     !!object.appellant_first_name
   end
@@ -19,11 +24,13 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :file_number do
     object.sanitized_vbms_id
   end
+  attribute :citation_number
   attribute :docket_number
   attribute :number_of_issues do
     object.issues.length
   end
 
+  # TODO - expand rep name into separate fields
   attribute :representative_name do
     object.power_of_attorney.vacols_representative_name
   end  
@@ -43,4 +50,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :aod
   attribute :cavc
   attribute :status
+
+  # TODO: add outstanding mail
+  # TODO: add document numbers
 end
