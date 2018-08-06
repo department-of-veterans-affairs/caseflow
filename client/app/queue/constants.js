@@ -47,7 +47,8 @@ export const ACTIONS = {
   TASK_INITIAL_ASSIGNED: 'TASK_INITIAL_ASSIGNED',
   TASK_REASSIGNED: 'TASK_REASSIGNED',
   RECEIVE_ALL_ATTORNEYS: 'RECEIVE_ALL_ATTORNEYS',
-  ERROR_LOADING_ATTORNEYS: 'ERROR_LOADING_ATTORNEYS'
+  ERROR_LOADING_ATTORNEYS: 'ERROR_LOADING_ATTORNEYS',
+  AMA_TASKS_RECEIVED: 'AMA_TASKS_RECEIVED'
 };
 
 // 'red' isn't contrasty enough w/white; it raises Sniffybara::PageNotAccessibleError when testing
@@ -140,7 +141,8 @@ export const DOCUMENT_ID_MAX_LENGTH = 30;
 // todo: replace with user_role_types
 export const USER_ROLES = {
   ATTORNEY: USER_ROLE_TYPES.attorney,
-  JUDGE: USER_ROLE_TYPES.judge
+  JUDGE: USER_ROLE_TYPES.judge,
+  COLOCATED: USER_ROLE_TYPES.colocated
 };
 
 export const PAGE_TITLES = {
