@@ -33,8 +33,8 @@ class RoSchedulePeriod < SchedulePeriod
             acc << HearingDayMapper.hearing_day_field_validations(
               hearing_type: :video,
               hearing_date: Time.use_zone("Eastern Time (US & Canada)") do
-                    Time.zone.local(date.year, date.month, date.day, 8, 30, 0).to_datetime
-                  end,
+                Time.zone.local(date.year, date.month, date.day, 8, 30, 0).to_datetime
+              end,
               room_info: room[:room_num],
               regional_office: ro_key
             )
