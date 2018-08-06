@@ -58,7 +58,8 @@ class AmaTaskTable extends React.PureComponent<Props> {
 
   caseDocketNumberColumn = () => ({
     header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
-    valueFunction: (task) => task.attributes.docket_number
+    valueFunction: (task: AmaTask) => task.attributes.docket_number,
+    getSortValue: (task: AmaTask) => task.attributes.docket_number
   })
 
   caseDaysWaitingColumn = () => ({
