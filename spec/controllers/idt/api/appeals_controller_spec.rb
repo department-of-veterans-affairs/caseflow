@@ -59,7 +59,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         end
       end
 
-      context "and user is an attorney", focus: true do
+      context "and user is an attorney" do
         let(:role) { :attorney_role }
 
         before do
