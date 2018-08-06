@@ -19,7 +19,6 @@ import COPY from '../../../COPY.json';
 
 import type {
   BasicAppeal,
-  LegacyAppeal,
   LegacyAppeals
 } from '../types/models';
 
