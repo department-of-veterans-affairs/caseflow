@@ -317,7 +317,7 @@ dd {
   background-color: $color-white;
 
   &::after {
-//    background: image-url('arrow-down.svg') 50% 100% no-repeat;
+    background: url(#{$image-url}/arrow-down.svg) 50% 100% no-repeat;
     background-size: .75em;
     content: ' ';
     display: inline-block;
@@ -332,7 +332,7 @@ dd {
 
   &.usa-button {
     &::after {
-//      background: image-url('icons/icon-down-arrow.svg') 50% 100% no-repeat;
+    background: url(#{$image-url}/icons/icon-down-arrow.svg) 50% 100% no-repeat;
     }
   }
 }
@@ -1212,7 +1212,7 @@ button {
       display: inline-block;
       width: 0;
       height: 0;
-//      background: image-url('icons/loading-pill.svg') center center no-repeat;
+      background: url(#{$image-url}/icons/loading-pill.svg) center center no-repeat;
     }
   }
 
@@ -1231,7 +1231,7 @@ button {
   &.cf-cert {
     .cf-loading-icon-back {
       &::after {
-//        background: image-url('icons/loading-pill-cf-cert.svg') center center no-repeat;
+      background: url(#{$image-url}/icons/loading-pill-cf-cert.svg) center center no-repeat;
       }
     }
   }
@@ -1239,7 +1239,7 @@ button {
   &.cf-dispatch {
     .cf-loading-icon-back {
       &::after {
-//        background: image-url('icons/loading-pill-cf-dispatch.svg') center center no-repeat;
+      background: url(#{$image-url}/loading-pill-cf-dispatch.svg) center center no-repeat;
       }
     }
   }
@@ -1287,10 +1287,10 @@ button {
 }
 
 .usa-accordion-button {
-  background-image: url(asset-path('minus.svg'));
+  background-image: url(#{$image-url}/minus.svg);
 
   &[aria-expanded=false] {
-    background-image: url(asset-path('plus.svg'));
+    background-image: url(#{$image-url}/plus.svg);
   }
 }
 
