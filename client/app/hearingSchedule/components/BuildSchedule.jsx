@@ -73,10 +73,11 @@ export default class BuildSchedule extends React.Component {
         valueName: 'download'
       }
     ];
-
     const sortPastUploads = _.orderBy(pastUploads, (sortUploads) => sortUploads.createdAt, 'asc');
 
-    const pastUploadsRows = _.map(pastUploads, (pastUpload) => ({
+    const pastFinalized = _.filter(pastUploads, (uploads) => uploads.finalized === true);
+
+    const pastUploadsRows = _.map(pastFinalized, (pastUpload) => ({
       date: `${formatDateStr(pastUpload.startDate)} - ${formatDateStr(pastUpload.endDate)}`,
       type: SPREADSHEET_TYPES[pastUpload.type].shortDisplay,
       uploaded: formatDate(sortPastUploads),
