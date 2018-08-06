@@ -62,12 +62,12 @@ class AmaTaskTable extends React.PureComponent<Props> {
     getSortValue: (task: AmaTask) => task.attributes.docket_number
   })
 
+  daysWaitingOfTask = (task: AmaTask) => moment().startOf('day').diff(moment(task.attributes.assigned_at), 'days')
+
   caseDaysWaitingColumn = () => ({
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
-    valueFunction: (task) => {
-      return moment().startOf('day').
-        diff(moment(task.attributes.assigned_at), 'days');
-    }
+    valueFunction: (task: AmaTask) => this.daysWaitingOfTask(task),
+    getSortValue: (task: AmaTask) => this.daysWaitingOfTask(task)
   })
 
   caseReaderLinkColumn = () => ({
