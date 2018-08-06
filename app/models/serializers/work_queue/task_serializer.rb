@@ -25,7 +25,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   end
 
   attribute :veteran_name do
-    object.appeal.veteran_name
+    object.appeal.veteran ? object.appeal.veteran.name.formatted(:readable_full) : nil
   end
 
   attribute :veteran_file_number do
