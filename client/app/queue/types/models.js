@@ -67,8 +67,10 @@ export type AmaTask = {
   id: string,
   type: string,
   attributes: {
+    action: string,
     aod: boolean,
     appeal_id: string,
+    assigned_at: string,
     assigned_by: User,
     assigned_to: User,
     case_type: string,
@@ -80,7 +82,6 @@ export type AmaTask = {
     placed_on_hold_at: ?string,
     started_at: ?string,
     status: string,
-    title: string,
     type: string,
     veteran_file_number: string,
     veteran_name: ?string
