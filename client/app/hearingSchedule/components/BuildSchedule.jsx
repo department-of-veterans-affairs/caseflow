@@ -73,11 +73,13 @@ export default class BuildSchedule extends React.Component {
         valueName: 'download'
       }
     ];
+    
+    const sortPastUploads = _.orderBy(pastUploads, (sortUploads) => sortUploads.createdAt, 'asc');
 
     const pastUploadsRows = _.map(pastUploads, (pastUpload) => ({
       date: `${formatDateStr(pastUpload.startDate)} - ${formatDateStr(pastUpload.endDate)}`,
       type: SPREADSHEET_TYPES[pastUpload.type].shortDisplay,
-      uploaded: formatDate(pastUpload.createdAt),
+      uploaded: formatDate(sortPastUploads),
       uploadedBy: pastUpload.userFullName,
       download: <Button name="download"
         linkStyling
@@ -88,8 +90,6 @@ export default class BuildSchedule extends React.Component {
          Download {downloadIcon(COLORS.PRIMARY)}
       </Button>
     }));
-
-    const uploadHistory = pastUploadsRows.reverse();
 
     const displayJudgeSuccessMessage = displaySuccessMessage &&
       schedulePeriod.type === SPREADSHEET_TYPES.JudgeSchedulePeriod.value;
@@ -143,7 +143,7 @@ export default class BuildSchedule extends React.Component {
         {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK}</Link>
       <Table
         columns={pastUploadsColumns}
-        rowObjects={uploadHistory}
+        rowObjects={pastUploadsRows}
         summary="past-uploads"
       />
     </AppSegment>;
