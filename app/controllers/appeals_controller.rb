@@ -112,11 +112,10 @@ class AppealsController < ApplicationController
   end
 
   def handle_non_fatal_error(err)
-    if err.class.method_defined? :serialize_response
-      render err.serialize_response
-    else
-      render Caseflow::Error::SerializableError.new(code: 500, message: err.to_s).serialize_response
+    if !err.class.method_defined? :serialize_response
+      err = Caseflow::Error::SerializableError.new(code: 500, message: err.to_s)
     end
+    render err.serialize_response
   end
 
   def json_appeals(appeals)
