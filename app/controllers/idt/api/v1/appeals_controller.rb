@@ -2,10 +2,6 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
   before_action :verify_access
 
-  def index
-    params[:appeal_id] ? details : list
-  end
-
   def list
     appeals = file_number ? appeals_by_file_number : appeals_assigned_to_user
 
@@ -15,6 +11,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   def details
     # TODO: add AMA appeals
     tasks, appeals = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(params[:appeal_id], "attorney")
+    return render json: {}, status: 404 if appeals.empty?
     render json: json_appeal_details(tasks[0], appeals[0])
   end
 

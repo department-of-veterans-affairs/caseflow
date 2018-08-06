@@ -76,7 +76,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
         context "and appeal id URL parameter not is passed" do
           it "succeeds" do
-            get :index
+            get :list
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["data"]
             expect(response_body.first["attributes"]["veteran_first_name"]).to eq appeals.first.veteran_first_name
@@ -93,7 +93,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           let(:params) { { appeal_id: appeals.first.vacols_id } }
 
           it "succeeds" do
-            get :index, params: params
+            get :details, params: params
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["data"]
 

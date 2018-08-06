@@ -36,7 +36,8 @@ Rails.application.routes.draw do
     namespace :api do
       namespace :v1 do
         get 'token', to: 'tokens#generate_token'
-        get 'appeals', to: 'appeals#index'
+        get 'appeals', to: 'appeals#list'
+        get 'appeals/:appeal_id', to: 'appeals#details'
         get 'judges', to: 'judges#index'
         get 'user', to: 'users#index'
       end
