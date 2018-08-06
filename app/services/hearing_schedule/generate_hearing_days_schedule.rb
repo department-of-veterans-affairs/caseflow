@@ -198,7 +198,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   end
 
   def remove_available_day_from_ros(date)
-    if @date_allocated[date] >= 10
+    if @date_allocated[date] >= MAX_NUMBER_OF_DAYS_PER_DATE
       @ros.each do |k, v|
         @ros[k][:available_days] -= [date] if !v[:assigned]
       end
