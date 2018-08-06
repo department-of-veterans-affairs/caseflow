@@ -20,7 +20,7 @@ type Params = {|
   userCssId: string,
   userRole: string,
   appealId: string,
-  children: React.ChildrenArray<React.Node>,
+  children: React.Node,
   userCanAccessQueue: boolean
 |};
 
@@ -114,11 +114,6 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
     </div>;
   };
 }
-
-CaseDetailLoadingScreen.propTypes = {
-  userId: PropTypes.number.isRequired,
-  appealId: PropTypes.string
-};
 
 const mapStateToProps = (state: State) => {
   const { tasks, appealDetails } = state.queue;

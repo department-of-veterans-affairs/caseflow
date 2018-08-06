@@ -14,11 +14,9 @@ import type {
 } from './types/models';
 
 export const selectedTasksSelector = (state: State, userId: string) => {
-  const flatTasks = _.flatten(_.values(state.queue.tasks));
-
   return _.flatMap(
     state.queue.isTaskAssignedToUserSelected[userId] || {},
-    (selected, id) => selected ? [_.find(flatTasks, { taskId: id })] : []
+    (selected, id) => selected ? [state.queue.tasks[id]] : []
   );
 };
 
@@ -48,9 +46,7 @@ export const appealsWithTasksSelector = createSelector(
   [getTasks, getAppeals],
   (tasks: Tasks, appeals: LegacyAppeals) => {
     return _.map(appeals, (appeal) => {
-      appeal.tasks = _.filter(tasks, (task) => task.externalAppealId === appeal.externalId);
-
-      return appeal;
+      return { ...appeal, tasks: _.filter(tasks, (task) => task.externalAppealId === appeal.externalId) };
     });
   }
 );

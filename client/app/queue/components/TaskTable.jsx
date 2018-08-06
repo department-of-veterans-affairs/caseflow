@@ -45,14 +45,14 @@ type Props = Params & {|
 class TaskTable extends React.PureComponent<Props> {
   getKeyForRow = (rowNumber, object) => object.id
 
-  isTaskSelected = (taskId) => {
+  isTaskSelected = (externalAppealId) => {
     if (!this.props.isTaskAssignedToUserSelected) {
       return false;
     }
 
     const isTaskSelected = this.props.isTaskAssignedToUserSelected[this.props.userId] || {};
 
-    return isTaskSelected[taskId] || false;
+    return isTaskSelected[externalAppealId] || false;
   }
 
   appealHasDASRecord = (appeal) => {
@@ -95,16 +95,14 @@ class TaskTable extends React.PureComponent<Props> {
           }
 
           return <Checkbox
-            name={task.taskId}
+            name={task.externalAppealId}
             hideLabel
-            value={this.isTaskSelected(task.taskId)}
+            value={this.isTaskSelected(task.externalAppealId)}
             onChange={
-              (checked) => {
-                this.props.setSelectionOfTaskOfUser(
+              (checked) => this.props.setSelectionOfTaskOfUser(
                   { userId: this.props.userId,
-                    taskId: task.taskId,
+                    taskId: task.externalAppealId,
                     selected: checked });
-              }
             } />;
         }
     } : null;

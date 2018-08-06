@@ -16,6 +16,8 @@ import { DateString } from '../util/DateUtil';
 import type { LegacyAppeal, Task } from './types/models';
 import type { State } from './types/state';
 
+import { tasksForAppealAssignedToUserSelector } from './selectors';
+
 const snapshotParentContainerStyling = css({
   backgroundColor: COLORS.GREY_BACKGROUND,
   display: 'flex',
@@ -49,7 +51,7 @@ const snapshotChildResponsiveWrapFixStyling = css({
 
 type Params = {|
   appeal: LegacyAppeal,
-  task: Task,
+  taskAssignedToUser: Task,
   hideDropdown?: boolean
 |};
 
@@ -61,9 +63,9 @@ type Props = Params & {|
 
 export class CaseSnapshot extends React.PureComponent<Props> {
   daysSinceTaskAssignmentListItem = () => {
-    if (this.props.task) {
+    if (this.props.taskAssignedToUser) {
       const today = moment();
-      const dateAssigned = moment(this.props.task.assignedOn);
+      const dateAssigned = moment(this.props.taskAssignedToUser.assignedOn);
       const dayCountSinceAssignment = today.diff(dateAssigned, 'days');
 
       return <React.Fragment>
@@ -79,35 +81,35 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.attributes.location_code}</dd>
     </React.Fragment>;
 
-    if (!this.props.task) {
+    if (!this.props.taskAssignedToUser) {
       return assignedToListItem;
     }
 
-    const task = this.props.task;
+    const taskAssignedToUser = this.props.taskAssignedToUser;
 
     if (this.props.userRole === USER_ROLES.JUDGE) {
-      if (!task.assignedByFirstName || !task.assignedByLastName || !task.documentId) {
+      if (!taskAssignedToUser.assignedByFirstName || !taskAssignedToUser.assignedByLastName || !taskAssignedToUser.documentId) {
         return assignedToListItem;
       }
 
-      const firstInitial = String.fromCodePoint(task.assignedByFirstName.codePointAt(0));
-      const nameAbbrev = `${firstInitial}. ${task.assignedByLastName}`;
+      const firstInitial = String.fromCodePoint(taskAssignedToUser.assignedByFirstName.codePointAt(0));
+      const nameAbbrev = `${firstInitial}. ${taskAssignedToUser.assignedByLastName}`;
 
       return <React.Fragment>
         <dt>{COPY.CASE_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{nameAbbrev}</dd>
-        <dt>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</dt><dd>{task.documentId}</dd>
+        <dt>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</dt><dd>{taskAssignedToUser.documentId}</dd>
       </React.Fragment>;
     }
 
     return <React.Fragment>
-      { task.addedByName && <React.Fragment>
+      { taskAssignedToUser.addedByName && <React.Fragment>
         <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNOR_LABEL}</dt>
-        <dd>{task.addedByName}</dd>
+        <dd>{taskAssignedToUser.addedByName}</dd>
       </React.Fragment> }
       <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
-      <dd><DateString date={task.assignedOn} dateFormat="MM/DD/YY" /></dd>
+      <dd><DateString date={taskAssignedToUser.assignedOn} dateFormat="MM/DD/YY" /></dd>
       <dt>{COPY.CASE_SNAPSHOT_TASK_DUE_DATE_LABEL}</dt>
-      <dd><DateString date={task.dueOn} dateFormat="MM/DD/YY" /></dd>
+      <dd><DateString date={taskAssignedToUser.dueOn} dateFormat="MM/DD/YY" /></dd>
     </React.Fragment>;
   };
 
@@ -115,7 +117,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     if (this.props.hideDropdown) {
       return false;
     }
-    if (this.props.task) {
+    if (this.props.taskAssignedToUser) {
       return true;
     }
     if (this.props.taskAssignedToAttorney) {
@@ -165,13 +167,14 @@ export class CaseSnapshot extends React.PureComponent<Props> {
   };
 }
 
-const mapStateToProps = (state: State, ownProps: Object) => {
+const mapStateToProps = (state: State, ownProps: Params) => {
   const { featureToggles, userRole } = state.ui;
 
   return {
     appeal: state.queue.appealDetails[ownProps.appealId],
     featureToggles,
     userRole,
+    taskAssignedToUser: tasksForAppealAssignedToUserSelector(state, ownProps)[0],
     taskAssignedToAttorney: tasksForAppealAssignedToAttorneySelector(state, ownProps)[0]
   };
 };

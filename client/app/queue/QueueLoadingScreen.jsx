@@ -9,7 +9,6 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import { associateTasksWithAppeals } from './utils';
 
-import { setActiveAppeal, setActiveTask } from './CaseDetail/CaseDetailActions';
 import { onReceiveQueue, setAttorneysOfJudge, fetchAllAttorneys, fetchAmaTasksOfUser } from './QueueActions';
 import type { LegacyAppeals, Tasks } from './types/models';
 import type { State, UsersById } from './types/state';

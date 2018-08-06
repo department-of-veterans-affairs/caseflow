@@ -45,7 +45,7 @@ export const prepareTasksForStore =
       };
     });
 
-    return _.pickBy(_.keyBy(mappedLegacyTasks, 'taskId'), (task) => task);
+    return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.externalAppealId), (task) => task);
   };
 
 export const associateTasksWithAppeals =
@@ -84,7 +84,7 @@ export const associateTasksWithAppeals =
 export const prepareAppealDetailsForStore =
   (appeals: Array<LegacyAppeal>):
     LegacyAppeals => {
-    return _.pickBy(_.keyBy(appeals, 'attributes.external_id'), (appeal) => appeal);
+    return _.pickBy(_.keyBy(appeals, (appeal) => appeal.attributes.external_id), (appeal) => appeal);
   };
 
 export const renderAppealType = (appeal: BasicAppeal) => {

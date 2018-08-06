@@ -8,7 +8,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 
 const getLinkText = (appeal) => <React.Fragment>{appeal.veteranName} ({appeal.veteranFileNumber})</React.Fragment>;
 
-class CaseDetailsLink extends React.PureComponent {
+export default class CaseDetailsLink extends React.PureComponent {
   render() {
     const {
       appeal,
@@ -41,5 +41,3 @@ CaseDetailsLink.propTypes = {
 CaseDetailsLink.defaultProps = {
   getLinkText
 };
-
-export default connect()(CaseDetailsLink);
