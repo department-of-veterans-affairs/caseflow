@@ -56,7 +56,8 @@ RSpec.describe "Hearing Schedule", type: :request do
       RequestStore[:current_user] = user
       Generators::Vacols::CaseHearing.create(
         [{ hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "7-Jun-2017 09:00:00.000-4:00", room: "1" },
-         { hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "9-Jun-2017 13:00:00.000-4:00", room: "3", judge_id: 105 },
+         { hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "9-Jun-2017 13:00:00.000-4:00", room: "3",
+           judge_id: 105 },
          { hearing_type: HearingDay::HEARING_TYPES[:video], hearing_date: "15-Jun-2017 08:30:00.000-4:00",
            regional_office: "RO27", room: "4" }]
       )
