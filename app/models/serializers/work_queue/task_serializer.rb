@@ -1,6 +1,6 @@
 class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :type
-  attribute :title
+  attribute :action
   attribute :appeal_id
   attribute :status
   attribute :assigned_to
