@@ -10,7 +10,7 @@ import { CATEGORIES } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import ReaderLink from './ReaderLink';
 
-import { toggleVeteranCaseList } from './CaseDetail/CaseDetailActions';
+import { toggleVeteranCaseList } from './uiReducer/uiActions';
 
 const containingDivStyling = css({
   borderBottom: `1px solid ${COLORS.GREY_LIGHT}`,
@@ -53,7 +53,8 @@ class CaseTitle extends React.PureComponent {
       appealId,
       redirectUrl,
       taskType,
-      analyticsSource
+      analyticsSource,
+      veteranCaseListIsVisible
     } = this.props;
 
     return <CaseTitleScaffolding heading={appeal.attributes.veteran_full_name}>
@@ -65,7 +66,11 @@ class CaseTitle extends React.PureComponent {
         appeal={appeal}
         taskType={taskType}
         longMessage />
-      <span {...viewCasesStyling}><Link onClick={this.props.toggleVeteranCaseList}>View all cases</Link></span>
+      <span {...viewCasesStyling}>
+        <Link onClick={this.props.toggleVeteranCaseList}>
+          { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
+        </Link>
+      </span>
     </CaseTitleScaffolding>;
   }
 }
@@ -83,11 +88,15 @@ CaseTitle.defaultProps = {
   analyticsSource: 'queue_task'
 };
 
+const mapStateToProps = (state) => ({
+  veteranCaseListIsVisible: state.ui.veteranCaseListIsVisible
+});
+
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   toggleVeteranCaseList
 }, dispatch);
 
-export default connect(null, mapDispatchToProps)(CaseTitle);
+export default connect(mapStateToProps, mapDispatchToProps)(CaseTitle);
 
 const CaseTitleScaffolding = (props) => <div {...containingDivStyling}>
   <h1 {...headerStyling}>{props.heading}</h1>

@@ -5,8 +5,7 @@ import type { CaseDetailState } from '../types/state';
 
 export const initialState = {
   activeAppeal: null,
-  activeTask: null,
-  veteranCaseListIsVisible: false
+  activeTask: null
 };
 
 export const caseDetailReducer = (state: CaseDetailState = initialState, action: {[string]: Object} = {}) => {
@@ -20,10 +19,6 @@ export const caseDetailReducer = (state: CaseDetailState = initialState, action:
   case Constants.SET_ACTIVE_TASK:
     return update(state, {
       activeTask: { $set: action.payload.taskObj }
-    });
-  case Constants.TOGGLE_VETERAN_CASE_LIST:
-    return update(state, {
-      veteranCaseListIsVisible: { $set: !state.veteranCaseListIsVisible }
     });
   default:
     return state;

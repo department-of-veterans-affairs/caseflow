@@ -13,7 +13,3 @@ export const setActiveTask = (taskObj) => ({
   type: Constants.SET_ACTIVE_TASK,
   payload: { taskObj }
 });
-
-export const toggleVeteranCaseList = () => ({
-  type: Constants.TOGGLE_VETERAN_CASE_LIST
-});

@@ -80,8 +80,9 @@ CaseDetailsView.propTypes = {
 };
 
 const mapStateToProps = (state) => {
-  const { activeAppeal, activeTask, veteranCaseListIsVisible } = state.caseDetail;
+  const { activeAppeal, activeTask } = state.caseDetail;
   const { appeals, tasks } = state.queue;
+  const { veteranCaseListIsVisible } = state.ui;
   const { success, error } = state.ui.messages;
 
   return {
