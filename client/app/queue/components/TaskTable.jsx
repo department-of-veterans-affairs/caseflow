@@ -117,7 +117,7 @@ class TaskTable extends React.PureComponent<Props> {
         appeal={appeal}
         disabled={!this.appealHasDASRecord(appeal)} />,
       getSortValue: (appeal) => {
-        const vetName = appeal.veteranName.split(' ');
+        const vetName = appeal.veteranFullName.split(' ');
         // only take last, first names. ignore middle names/initials
 
         return `${_.last(vetName)} ${vetName[0]}`;

@@ -39,7 +39,10 @@ class CaseListTable extends React.PureComponent {
     },
     {
       header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
-      valueFunction: (appeal) => renderLegacyAppealType(appeal)
+      valueFunction: (appeal) => renderLegacyAppealType({
+        aod: appeal.attributes.aod,
+        type: appeal.attributes.type
+      })
     },
     {
       header: COPY.CASE_LIST_TABLE_DECISION_DATE_COLUMN_TITLE,

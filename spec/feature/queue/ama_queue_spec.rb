@@ -6,13 +6,28 @@ RSpec.feature "AmaQueue" do
 
     Fakes::Initializer.load!
     FeatureToggle.enable!(:queue_beaam_appeals)
+    FeatureToggle.enable!(:test_facols)
   end
   after do
+    FeatureToggle.disable!(:test_facols)
     FeatureToggle.disable!(:queue_beaam_appeals)
   end
 
-  let!(:attorney_user) do
-    User.authenticate!(roles: ["System Admin"])
+  let(:attorney_first_name) { "Robby" }
+  let(:attorney_last_name) { "McDobby" }
+  let!(:attorney_user) { FactoryBot.create(:user, full_name: "#{attorney_first_name} #{attorney_last_name}") }
+  let!(:vacols_atty) do
+    FactoryBot.create(
+      :staff,
+      :attorney_role,
+      sdomainid: attorney_user.css_id,
+      snamef: attorney_first_name,
+      snamel: attorney_last_name
+    )
+  end
+
+  let!(:user) do
+    User.authenticate!(user: attorney_user)
   end
 
   context "loads appellant detail view" do
@@ -59,7 +74,7 @@ RSpec.feature "AmaQueue" do
 
     scenario "veteran is the appellant" do
       visit "/queue/beaam"
-
+      binding.pry
       click_on appeals.first.veteran.first_name
 
       expect(page).to have_content("About the Veteran")

@@ -127,7 +127,7 @@ export type BasicAppeal = {
   isAdvancedOnDocket: Boolean,
   issues: Array<Object>,
   docketNumber: string,
-  veteranName: string,
+  veteranFullName: string,
   veteranFileNumber: string,
   isPaperCase: Boolean
 };

@@ -5,7 +5,7 @@ import COPY from '../../COPY.json';
 import { subHeadTextStyle } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-const getLinkText = (appeal) => <React.Fragment>{appeal.veteranName} ({appeal.veteranFileNumber})</React.Fragment>;
+const getLinkText = (appeal) => <React.Fragment>{appeal.veteranFullName} ({appeal.veteranFileNumber})</React.Fragment>;
 
 export default class CaseDetailsLink extends React.PureComponent {
   render() {
@@ -14,6 +14,9 @@ export default class CaseDetailsLink extends React.PureComponent {
       disabled
     } = this.props;
 
+    // For now while only the basic appeal info is named properly this is necessary. To be removed later.
+    const isPaperCase = (appeal.paperCase || (appeal.attributes && appeal.attributes.paper_case));
+
     return <React.Fragment>
       <Link
         to={`/queue/appeals/${appeal.externalId || appeal.attributes.external_id}`}
@@ -21,7 +24,7 @@ export default class CaseDetailsLink extends React.PureComponent {
         onClick={this.props.onClick}>
         {this.props.getLinkText(appeal)}
       </Link>
-      {appeal.paperCase && <React.Fragment>
+      {isPaperCase && <React.Fragment>
         <br />
         <span {...subHeadTextStyle}>{COPY.IS_PAPER_CASE}</span>
       </React.Fragment>}

@@ -40,8 +40,8 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
     object.appeal.docket_number
   end
 
-  attribute :veteran_name do
-    object.appeal.veteran_name
+  attribute :veteran_full_name do
+    object.appeal.veteran_full_name
   end
 
   attribute :veteran_file_number do
