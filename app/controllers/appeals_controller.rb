@@ -21,14 +21,14 @@ class AppealsController < ApplicationController
 
   def document_count
     render json: { document_count: appeal.number_of_documents }
-  rescue Caseflow::Error::ClientRequestError, Caseflow::Error::EfolderAccessForbidden => e
-    render e.serialize_response
+  rescue StandardError => e
+    return handle_non_fatal_error(e)
   end
 
   def new_documents
     render json: { new_documents: appeal.new_documents_for_user(current_user) }
-  rescue Caseflow::Error::ClientRequestError, Caseflow::Error::EfolderAccessForbidden => e
-    render e.serialize_response
+  rescue StandardError => e
+    return handle_non_fatal_error(e)
   end
 
   def tasks
@@ -109,6 +109,14 @@ class AppealsController < ApplicationController
         "detail": "Veteran ID should be included as HTTP_VETERAN_ID element of request headers"
       ]
     }, status: 400
+  end
+
+  def handle_non_fatal_error(err)
+    if err.class.method_defined? :serialize_response
+      render err.serialize_response
+    else
+      render SerializableError.new(code: 500, message: err.to_s).serialize_response
+    end
   end
 
   def json_appeals(appeals)
