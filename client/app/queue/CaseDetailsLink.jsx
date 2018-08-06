@@ -15,7 +15,7 @@ export default class CaseDetailsLink extends React.PureComponent {
     } = this.props;
 
     // For now while only the basic appeal info is named properly this is necessary. To be removed later.
-    const isPaperCase = (appeal.paperCase || (appeal.attributes && appeal.attributes.paper_case));
+    const isPaperCase = appeal.isPaperCase || (appeal.attributes && appeal.attributes.paper_case);
 
     return <React.Fragment>
       <Link

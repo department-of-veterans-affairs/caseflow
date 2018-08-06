@@ -18,8 +18,10 @@ const documentCountStyling = css({
 class AppealDocumentCount extends React.PureComponent {
   componentDidMount = () => {
     const appeal = this.props.appeal;
+    // For now while only the basic appeal info is named properly this is necessary. To be removed later.
+    const isPaperCase = appeal.isPaperCase || (appeal.attributes && appeal.attributes.paper_case);
 
-    if (appeal.paperCase) {
+    if (isPaperCase) {
       return;
     }
 
