@@ -30,14 +30,24 @@ class AmaTaskTable extends React.PureComponent<Props> {
       header: COPY.CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE,
       valueFunction:
         (task: AmaTask) => <a href={`/queue/appeals/${task.attributes.external_id}`}>
-          {task.attributes.veteran_name} ({task.attributes.veteran_file_number})</a>
+          {task.attributes.veteran_name} ({task.attributes.veteran_file_number})</a>,
+      getSortValue: (task) => task.attributes.veteran_name
     };
   }
 
   caseTypeColumn = () => ({
     header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
     valueFunction: (task: AmaTask) => renderAppealType({ aod: task.attributes.aod,
-      type: task.attributes.case_type })
+      type: task.attributes.case_type }),
+    getSortValue: (task: AmaTask) => {
+      // We prepend a * to the docket number if it's a priority case since * comes before
+      // numbers in sort order, this forces these cases to the top of the sort.
+      if (task.attributes.aod || task.attributes.case_type === 'Court Remand') {
+        return `*${task.attributes.docket_number}`;
+      }
+
+      return task.attributes.docket_number;
+    }
   })
 
   caseTaskColumn = () => ({
@@ -85,7 +95,8 @@ class AmaTaskTable extends React.PureComponent<Props> {
     return <Table
       columns={this.getQueueColumns}
       rowObjects={tasks}
-      getKeyForRow={this.getKeyForRow} />;
+      getKeyForRow={this.getKeyForRow}
+      defaultSort={{sortColIdx: 1}} />;
   }
 }
 
