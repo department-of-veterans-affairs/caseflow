@@ -37,7 +37,8 @@ class AmaTaskTable extends React.PureComponent<Props> {
 
   caseTaskColumn = () => ({
     header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
-    valueFunction: (task: AmaTask) => CO_LOCATED_ADMIN_ACTIONS[task.attributes.title]
+    valueFunction: (task: AmaTask) => CO_LOCATED_ADMIN_ACTIONS[task.attributes.title],
+    getSortValue: (task: AmaTask) => CO_LOCATED_ADMIN_ACTIONS[task.attributes.title]
   })
 
   caseTypeColumn = () => ({
