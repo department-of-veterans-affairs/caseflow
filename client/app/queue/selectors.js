@@ -51,7 +51,7 @@ export const appealsWithTasksSelector = createSelector(
   }
 );
 
-export const getTasksForAppeals = createSelector(
+export const getTasksForAppeal = createSelector(
   [getTasks, getAppealId],
   (tasks: Tasks, appealId: number) => {
     return _.filter(tasks, (task) => task.externalAppealId === appealId);
@@ -59,14 +59,14 @@ export const getTasksForAppeals = createSelector(
 );
 
 export const tasksForAppealAssignedToUserSelector = createSelector(
-  [getTasksForAppeals, getUserCssId],
+  [getTasksForAppeal, getUserCssId],
   (tasks: Tasks, cssId: string) => {
     return _.filter(tasks, (task) => task.userId === cssId);
   }
 );
 
 export const tasksForAppealAssignedToAttorneySelector = createSelector(
-  [getTasksForAppeals, getAttorneys],
+  [getTasksForAppeal, getAttorneys],
   (tasks: Tasks, attorneys: Array<User>) => {
     return _.filter(tasks, (task) => _.some(attorneys, (attorney) => task.userId === attorney.css_id));
   }

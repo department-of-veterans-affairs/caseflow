@@ -231,7 +231,7 @@ const mapStateToProps = (state, ownProps) => {
     appeal,
     judges,
     // Attorneys should only have one task assigned to them from this appeal.
-    task: tasksForAppealAssignedToUserSelector(state, ownProps)[0],
+    task: tasksForAppealAssignedToUserSelector(state, { appealId: ownProps.appealId })[0],
     decision,
     error,
     userRole,

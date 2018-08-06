@@ -174,8 +174,8 @@ const mapStateToProps = (state: State, ownProps: Params) => {
     appeal: state.queue.appealDetails[ownProps.appealId],
     featureToggles,
     userRole,
-    taskAssignedToUser: tasksForAppealAssignedToUserSelector(state, ownProps)[0],
-    taskAssignedToAttorney: tasksForAppealAssignedToAttorneySelector(state, ownProps)[0]
+    taskAssignedToUser: tasksForAppealAssignedToUserSelector(state, { appealId: ownProps.appealId })[0],
+    taskAssignedToAttorney: tasksForAppealAssignedToAttorneySelector(state, { appealId: ownProps.appealId })[0]
   };
 };
 

@@ -84,7 +84,7 @@ CaseListView.defaultProps = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeals: appealsByCaseflowVeteranId(state, ownProps)
+  appeals: appealsByCaseflowVeteranId(state, { caseflowVeteranId: ownProps.caseflowVeteranId })
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
