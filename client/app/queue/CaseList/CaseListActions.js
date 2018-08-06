@@ -130,7 +130,7 @@ export const fetchCasesForVeteran = (veteranId) => (dispatch) => new Promise((re
       const returnedObject = JSON.parse(response.text);
 
       if (!returnedObject.appeals.length) {
-        return reject();
+        return reject(response);
       }
 
       dispatch(setCasesForVeteran(veteranId, returnedObject.appeals));

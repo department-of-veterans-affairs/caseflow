@@ -49,7 +49,7 @@ class LoadingDataDisplay extends React.PureComponent {
         }
 
         this.setState({ promiseResult: PROMISE_RESULTS.FAILURE,
-          statusCode: response ? response.status : null });
+          statusCode: response.status });
         window.clearInterval(this.intervalId);
         // eslint-disable-next-line no-console
         console.log(response);
