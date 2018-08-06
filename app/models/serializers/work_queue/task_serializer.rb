@@ -1,6 +1,6 @@
 class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :type
-  attribute :title
+  attribute :action
   attribute :appeal_id
   attribute :status
   attribute :assigned_to
@@ -37,6 +37,6 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   end
 
   attribute :aod do
-    object.appeal.aod
+    object.appeal.advanced_on_docket
   end
 end

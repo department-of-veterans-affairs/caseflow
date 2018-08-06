@@ -16,7 +16,7 @@ import {
   setIssueDecisionDate
 } from '../../actions/ama';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
-import { getIntakeStatus } from '../../selectors';
+import { getIntakeStatus, issueCountSelector } from '../../selectors';
 import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
 class Finish extends React.PureComponent {
@@ -89,7 +89,7 @@ class FinishNextButton extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
-      disabled={!this.props.higherLevelReview.issueCount}
+      disabled={!this.props.issueCount}
     >
       Establish EP
     </Button>;
@@ -99,18 +99,21 @@ const FinishNextButtonConnected = connect(
   ({ higherLevelReview, intake }) => ({
     requestState: higherLevelReview.requestStatus.completeIntake,
     intakeId: intake.id,
-    higherLevelReview
+    higherLevelReview,
+    issueCount: issueCountSelector(higherLevelReview)
   }),
   (dispatch) => bindActionCreators({
     completeIntake
   }, dispatch)
 )(FinishNextButton);
 
-const IssueCounterConnected = connect(
-  ({ higherLevelReview }) => ({
-    issueCount: higherLevelReview.issueCount
-  })
-)(IssueCounter);
+const mapStateToProps = (state) => {
+  return {
+    issueCount: issueCountSelector(state.higherLevelReview)
+  };
+};
+
+const IssueCounterConnected = connect(mapStateToProps)(IssueCounter);
 
 const RatedIssues = connect(
   ({ higherLevelReview, intake }) => ({

@@ -26,7 +26,7 @@ import type { LegacyAppeal } from './types/models';
 import type { UiStateMessage } from './types/state';
 
 type ComponentState = {|
-  title: ?string,
+  action: ?string,
   instructions: string
 |};
 
@@ -49,7 +49,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
     super(props);
 
     this.state = {
-      title: null,
+      action: null,
       instructions: ''
     };
   }
@@ -69,7 +69,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
       }
     };
     const successMsg = {
-      title: sprintf(COPY.ADD_COLOCATED_TASK_CONFIRMATION_TITLE, CO_LOCATED_ADMIN_ACTIONS[this.state.title]),
+      title: sprintf(COPY.ADD_COLOCATED_TASK_CONFIRMATION_TITLE, CO_LOCATED_ADMIN_ACTIONS[this.state.action]),
       detail: COPY.ADD_COLOCATED_TASK_CONFIRMATION_DETAIL
     };
 
@@ -79,7 +79,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
 
   render = () => {
     const { highlightFormItems, error } = this.props;
-    const { title, instructions } = this.state;
+    const { action, instructions } = this.state;
 
     return <React.Fragment>
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
@@ -91,15 +91,15 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
       </Alert>}
       <div {...marginTop(4)}>
         <SearchableDropdown
-          errorMessage={highlightFormItems && !title ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+          errorMessage={highlightFormItems && !action ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
           name={COPY.ADD_COLOCATED_TASK_ACTION_TYPE_LABEL}
           placeholder="Select an action type"
           options={_.map(CO_LOCATED_ADMIN_ACTIONS, (label: string, value: string) => ({
             label,
             value
           }))}
-          onChange={({ value }) => this.setState({ title: value })}
-          value={this.state.title} />
+          onChange={({ value }) => this.setState({ action: value })}
+          value={this.state.action} />
       </div>
       <div {...marginTop(4)}>
         <TextareaField
