@@ -139,3 +139,7 @@ export const setSelectedAssigneeSecondary = ({ assigneeId }: targetAssignee) => 
     assigneeId
   }
 });
+
+export const toggleVeteranCaseList = () => ({
+  type: ACTIONS.TOGGLE_VETERAN_CASE_LIST
+});

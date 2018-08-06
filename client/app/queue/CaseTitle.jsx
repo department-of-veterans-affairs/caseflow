@@ -10,7 +10,7 @@ import { CATEGORIES } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import ReaderLink from './ReaderLink';
 
-import { toggleVeteranCaseList } from './CaseDetail/CaseDetailActions';
+import { toggleVeteranCaseList } from './uiReducer/uiActions';
 
 const containingDivStyling = css({
   borderBottom: `1px solid ${COLORS.GREY_LIGHT}`,
