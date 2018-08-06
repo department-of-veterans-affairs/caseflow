@@ -22,13 +22,13 @@ class AppealsController < ApplicationController
   def document_count
     render json: { document_count: appeal.number_of_documents }
   rescue StandardError => e
-    return handle_non_fatal_error(e)
+    return handle_non_critical_error("document_count", e)
   end
 
   def new_documents
     render json: { new_documents: appeal.new_documents_for_user(current_user) }
   rescue StandardError => e
-    return handle_non_fatal_error(e)
+    return handle_non_critical_error("new_documents", e)
   end
 
   def tasks
@@ -111,10 +111,20 @@ class AppealsController < ApplicationController
     }, status: 400
   end
 
-  def handle_non_fatal_error(err)
+  def handle_non_critical_error(endpoint, err)
     if !err.class.method_defined? :serialize_response
       err = Caseflow::Error::SerializableError.new(code: 500, message: err.to_s)
     end
+
+    DataDogService.increment_counter(
+      metric_group: "business",
+      metric_name: "non_critical_error",
+      app_name: RequestStore[:application],
+      attrs: {
+        endpoint: endpoint
+      }
+    )
+
     render err.serialize_response
   end
 
