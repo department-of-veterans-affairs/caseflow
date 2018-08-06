@@ -8,13 +8,13 @@ RSpec.describe "Hearing Schedule", type: :request do
   describe "Create a schedule slot" do
     it "Create one schedule" do
       post "/hearings/hearing_day", params: { hearing_type: HearingDay::HEARING_TYPES[:central],
-                                              hearing_date: "7-Jun-2018 05:00:00.000-4:00", room_info: "1",
+                                              hearing_date: "7-Jun-2018 09:00:00.000-4:00", room_info: "1",
                                               regional_office: "RO17" }
       expect(response).to have_http_status(:success)
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["hearing_date"])
       expect(actual_date).to eq(Date.new(2018, 6, 7))
-      actual_time = Date.parse(JSON.parse(response.body)["hearing"]["hearing_date"]).strftime("%H:%M:%S")
-      expect(actual_time).to eq("00:00:00")
+      actual_time = Time.zone.parse(JSON.parse(response.body)["hearing"]["hearing_date"]).strftime("%H:%M:%S")
+      expect(actual_time).to eq("09:00:00")
       expect(JSON.parse(response.body)["hearing"]["hearing_type"]).to eq("Central")
       expect(JSON.parse(response.body)["hearing"]["room_info"]).to eq("1 (1W200A)")
     end
@@ -55,10 +55,10 @@ RSpec.describe "Hearing Schedule", type: :request do
     let!(:hearings) do
       RequestStore[:current_user] = user
       Generators::Vacols::CaseHearing.create(
-        [{ hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "7-Jun-2017", room: "1" },
-         { hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "9-Jun-2017", room: "3", judge_id: 105 },
-         { hearing_type: HearingDay::HEARING_TYPES[:video], hearing_date: "15-Jun-2017",
-           regional_office: "RO27", room: "3" }]
+        [{ hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "7-Jun-2017 09:00:00.000-4:00", room: "1" },
+         { hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "9-Jun-2017 13:00:00.000-4:00", room: "3", judge_id: 105 },
+         { hearing_type: HearingDay::HEARING_TYPES[:video], hearing_date: "15-Jun-2017 08:30:00.000-4:00",
+           regional_office: "RO27", room: "4" }]
       )
       Generators::Vacols::TravelBoardSchedule.create(tbmem1: "955")
       Generators::Vacols::Staff.create(sattyid: "955")
@@ -82,9 +82,9 @@ RSpec.describe "Hearing Schedule", type: :request do
       RequestStore[:current_user] = user
       Generators::Vacols::CaseHearing.create(
         [{ hearing_type: HearingDay::HEARING_TYPES[:central],
-           hearing_date: (Time.zone.today.beginning_of_day - 15.days).to_date, room: "1" },
+           hearing_date: (Time.zone.today - 15.days).to_date, room: "1" },
          { hearing_type: HearingDay::HEARING_TYPES[:central],
-           hearing_date: (Time.zone.today.beginning_of_day + 315.days).to_date, room: "3" }]
+           hearing_date: (Time.zone.today + 315.days).to_date, room: "3" }]
       )
       Generators::Vacols::TravelBoardSchedule.create(tbmem1: "955")
       Generators::Vacols::Staff.create(sattyid: "955")
@@ -106,9 +106,9 @@ RSpec.describe "Hearing Schedule", type: :request do
     let!(:hearings) do
       RequestStore[:current_user] = user
       Generators::Vacols::CaseHearing.create(
-        [{ hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "7-Jun-2017", room: "1",
+        [{ hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "7-Jun-2017 09:00:00.000-4:00", room: "1",
            regional_office: "RO17" },
-         { hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "9-Jun-2017", room: "3",
+         { hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "9-Jun-2017 09:00:00.000-4:00", room: "3",
            regional_office: "RO27" }]
       )
       Generators::Vacols::TravelBoardSchedule.create(tbmem1: "955")

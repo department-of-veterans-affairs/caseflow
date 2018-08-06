@@ -24,6 +24,7 @@ class RoSchedulePeriod < SchedulePeriod
 
   private
 
+  # Video hearings master records reflect 8:30 am start time.
   def format_ro_data(ro_allocations)
     ro_allocations.reduce([]) do |acc, (ro_key, ro_info)|
       ro_info[:allocated_dates].each_value do |dates|
@@ -31,7 +32,7 @@ class RoSchedulePeriod < SchedulePeriod
           rooms.each do |room|
             acc << HearingDayMapper.hearing_day_field_validations(
               hearing_type: :video,
-              hearing_date: date,
+              hearing_date: Time.zone.local(date.year, date.month, date.day, 8, 30, 0).to_datetime,
               room_info: room[:room_num],
               regional_office: ro_key
             )
