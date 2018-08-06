@@ -139,28 +139,28 @@ body {
 }
 
 .cf-logo-image-default {
-  background-image: $image-path('caseflow-default-logo.svg');
+  background-image: url(#{$image-url}/caseflow-default-logo.svg);
   width: 32px;
   height: 32px;
   background-size: 32px 32px;
 }
 
 .cf-logo-image-certification {
-  background-image: url(image-path('caseflow-certification-logo.svg'));
+  background-image: url(#{$image-url}/caseflow-certification-logo.svg);
   width: 32px;
   height: 32px;
   background-size: 32px 32px;
 }
 
 .cf-logo-image-dispatch {
-  background-image: url(image-path('caseflow-dispatch-logo.svg'));
+  background-image: url(#{$image-url}/caseflow-dispatch-logo.svg);
   width: 32px;
   height: 32px;
   background-size: 32px 32px;
 }
 
 .cf-logo-image-intake {
-  background-image: url(image-path('caseflow-intake-logo.svg'));
+  background-image: url(#{$image-url}/caseflow-intake-logo.svg);
   width: 32px;
   height: 32px;
   background-size: 32px 32px;
