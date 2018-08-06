@@ -136,9 +136,9 @@ export const fetchCasesForVeteran = (veteranId) => (dispatch) => new Promise((re
       dispatch(setCasesForVeteran(veteranId, returnedObject.appeals));
 
       return resolve();
-    }, () => {
+    }, (resp) => {
       dispatch(doneRequestingCasesForVeteran());
 
-      return reject();
+      return reject(resp);
     });
 });
