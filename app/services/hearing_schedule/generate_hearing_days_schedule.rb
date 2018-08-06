@@ -118,11 +118,17 @@ class HearingSchedule::GenerateHearingDaysSchedule
     end
   end
 
+  def allocated_days_for_ro(ro_key)
+    @ros[ro_key][:allocated_days].ceil
+  end
+
   def allocations_by_month(ro_key)
+    # raise error if there are not enough available days
     verify_total_available_days(ro_key)
+
     self.class.validate_and_evenly_distribute_monthly_allocations(
       @ros[ro_key][:allocated_dates],
-      monthly_distributed_days(@ros[ro_key][:allocated_days].ceil),
+      monthly_distributed_days(allocated_days_for_ro(ro_key)),
       @ros[ro_key][:num_of_rooms]
     )
   end
@@ -134,7 +140,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   def verify_total_available_days(ro_key)
     max_hearing_day_assignments = get_max_hearing_days_assignments(ro_key)
 
-    unless @ros[ro_key][:allocated_days].ceil.to_i <= max_hearing_day_assignments 
+    unless allocated_days_for_ro(ro_key).to_i <= max_hearing_day_assignments
       fail NotEnoughAvailableDays, "#{ro_key} can only hold #{max_hearing_day_assignments} hearing days."
     end
   end
@@ -163,8 +169,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   #
   def allocate_hearing_days_to_individual_ro(ro_key, monthly_allocations, date_index)
     grouped_shuffled_monthly_dates = @ros[ro_key][:allocated_dates]
-    
-    binding.pry if monthly_allocations.values.inject(:+) == 0
+
     # looping through all the monthly allocations
     # and assigning rooms to the datess
     monthly_allocations.each_key do |month|
