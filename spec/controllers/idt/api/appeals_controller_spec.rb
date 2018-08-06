@@ -7,7 +7,6 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
     FeatureToggle.disable!(:test_facols)
   end
 
-
   describe "GET /idt/api/v1/appeals" do
     let(:user) { create(:user, css_id: "TEST_ID") }
 
@@ -88,20 +87,22 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             expect(response_body.second["attributes"]["veteran_last_name"]).to eq appeals.second.veteran_last_name
             expect(response_body.second["attributes"]["file_number"]).to eq appeals.second.veteran_file_number
           end
-        end        
+        end
 
         context "and legacy appeal id URL parameter is passed" do
           let(:params) { { appeal_id: appeals.first.vacols_id } }
 
           it "succeeds" do
-            get :index, { params: params }
+            get :index, params: params
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["data"]
 
             expect(response_body["attributes"]["veteran_first_name"]).to eq appeals.first.veteran_first_name
             expect(response_body["attributes"]["veteran_last_name"]).to eq appeals.first.veteran_last_name
             expect(response_body["attributes"]["file_number"]).to eq appeals.first.veteran_file_number
-            expect(response_body["attributes"]["representative_type"]).to eq appeals.first.power_of_attorney.vacols_representative_type
+            expect(response_body["attributes"]["representative_type"]).to eq(
+              appeals.first.power_of_attorney.vacols_representative_type
+            )
             expect(response_body["attributes"]["aod"]).to eq appeals.first.aod
             expect(response_body["attributes"]["cavc"]).to eq appeals.first.cavc
             expect(response_body["attributes"]["issues"]).to eq appeals.first.issues

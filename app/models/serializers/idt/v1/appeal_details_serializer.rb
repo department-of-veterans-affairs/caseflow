@@ -47,7 +47,6 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
     object.power_of_attorney.vacols_representative_type
   end
 
-
   attribute :aod
   attribute :cavc
   attribute :status

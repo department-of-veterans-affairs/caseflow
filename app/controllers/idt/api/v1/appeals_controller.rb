@@ -6,7 +6,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     params[:appeal_id] ? details : list
   end
 
-  def list 
+  def list
     appeals = file_number ? appeals_by_file_number : appeals_assigned_to_user
 
     render json: json_appeals(appeals)

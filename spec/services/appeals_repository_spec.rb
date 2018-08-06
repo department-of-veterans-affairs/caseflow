@@ -16,7 +16,7 @@ describe AppealRepository do
       sspare2: "M",
       sspare3: "Johnston",
       susrtyp: "Brother",
-      sfnod: 100.days.ago,
+      sfnod: 100.days.ago
     )
   end
 
