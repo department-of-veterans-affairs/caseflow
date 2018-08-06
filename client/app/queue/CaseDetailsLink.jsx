@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
 
 import COPY from '../../COPY.json';
 import { subHeadTextStyle } from './constants';

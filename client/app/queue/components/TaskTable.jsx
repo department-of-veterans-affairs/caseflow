@@ -101,9 +101,9 @@ class TaskTable extends React.PureComponent<Props> {
             value={this.isTaskSelected(task.externalAppealId)}
             onChange={
               (checked) => this.props.setSelectionOfTaskOfUser(
-                  { userId: this.props.userId,
-                    taskId: task.externalAppealId,
-                    selected: checked });
+                { userId: this.props.userId,
+                  taskId: task.externalAppealId,
+                  selected: checked })
             } />;
         }
     } : null;
@@ -152,7 +152,7 @@ class TaskTable extends React.PureComponent<Props> {
     return this.props.includeType ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
       valueFunction: (appeal: LegacyAppeal) => this.appealHasDASRecord(appeal) ?
-        renderAppealType(appeal.attributes) :
+        renderAppealType(appeal) :
         <span {...redText}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE}</span>,
       span: (appeal) => this.appealHasDASRecord(appeal) ? 1 : 5,
       getSortValue: (appeal) => {

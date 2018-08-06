@@ -46,7 +46,8 @@ export const appealsWithTasksSelector = createSelector(
   [getTasks, getAppeals],
   (tasks: Tasks, appeals: LegacyAppeals) => {
     return _.map(appeals, (appeal) => {
-      return { ...appeal, tasks: _.filter(tasks, (task) => task.externalAppealId === appeal.externalId) };
+      return { ...appeal,
+        tasks: _.filter(tasks, (task) => task.externalAppealId === appeal.externalId) };
     });
   }
 );

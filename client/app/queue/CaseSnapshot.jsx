@@ -4,7 +4,7 @@ import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { tasksForAppealAssignedToAttorneySelector } from './selectors';
+import { tasksForAppealAssignedToAttorneySelector, tasksForAppealAssignedToUserSelector } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import JudgeActionsDropdown from './components/JudgeActionsDropdown';
@@ -15,8 +15,6 @@ import { renderLegacyAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
 import type { LegacyAppeal, Task } from './types/models';
 import type { State } from './types/state';
-
-import { tasksForAppealAssignedToUserSelector } from './selectors';
 
 const snapshotParentContainerStyling = css({
   backgroundColor: COLORS.GREY_BACKGROUND,
@@ -88,7 +86,9 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     const taskAssignedToUser = this.props.taskAssignedToUser;
 
     if (this.props.userRole === USER_ROLES.JUDGE) {
-      if (!taskAssignedToUser.assignedByFirstName || !taskAssignedToUser.assignedByLastName || !taskAssignedToUser.documentId) {
+      if (!taskAssignedToUser.assignedByFirstName ||
+          !taskAssignedToUser.assignedByLastName ||
+          !taskAssignedToUser.documentId) {
         return assignedToListItem;
       }
 

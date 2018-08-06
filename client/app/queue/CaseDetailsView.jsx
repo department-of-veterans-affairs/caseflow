@@ -34,7 +34,6 @@ class CaseDetailsView extends React.PureComponent {
     const {
       appealId,
       appeal,
-      task,
       error,
       success
     } = this.props;
