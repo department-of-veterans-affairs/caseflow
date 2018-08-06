@@ -1,8 +1,9 @@
 $asset-path: '/' !default;
-$font-path:  '~uswds/src/fonts';
-$image-path:  '~uswds/src/img';
 
+
+//USWDS
 @import '~uswds/dist/scss/lib/_bourbon.scss';
+@import '~uswds/src/stylesheets/uswds.scss';
 @import '~uswds/src/stylesheets/core/_variables.scss';
 
 @import '_variables.scss';
@@ -15,6 +16,9 @@ $image-path:  '~uswds/src/img';
 @import 'hearings/_hearings_styles_root.scss';
 @import '_style_guide.scss';
 @import '_main.scss';
-@import '~uswds/src/stylesheets/uswds.scss';
 @import '_commons.scss';
+
+// Needed to import files
+$font-path:  '~uswds/src/fonts';
+$image-path:  '~uswds/src/img';
 

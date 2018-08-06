@@ -27,7 +27,7 @@ const config = {
     alias: {
       // This does not actually appear to be necessary, but it does silence
       // a warning from superagent-no-cache.
-      ie: 'component-ie'
+      ie: 'component-ie',
     }
   },
   devtool: 'source-map',
@@ -54,7 +54,7 @@ const config = {
         {
           loader: 'css-loader',
           options: {
-            sourceMap: true
+            sourceMap: false
           }
         },
         {
