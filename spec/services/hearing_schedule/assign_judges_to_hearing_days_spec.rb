@@ -52,7 +52,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
         # creating a judge and n/a with nil date.
         judge = FactoryBot.create(:user)
         create(:judge_non_availability, object_identifier: judge.css_id,
-          date: nil, schedule_period_id: schedule_period.id)
+                                        date: nil, schedule_period_id: schedule_period.id)
         create(:staff, :hearing_judge, sdomainid: judge.css_id)
       end
 
