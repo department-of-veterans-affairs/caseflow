@@ -35,6 +35,11 @@ class AmaTaskTable extends React.PureComponent<Props> {
     };
   }
 
+  caseTaskColumn = () => ({
+    header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
+    valueFunction: (task: AmaTask) => CO_LOCATED_ADMIN_ACTIONS[task.attributes.title]
+  })
+
   caseTypeColumn = () => ({
     header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
     valueFunction: (task: AmaTask) => renderAppealType({ aod: task.attributes.aod,
@@ -48,11 +53,6 @@ class AmaTaskTable extends React.PureComponent<Props> {
 
       return task.attributes.docket_number;
     }
-  })
-
-  caseTaskColumn = () => ({
-    header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
-    valueFunction: (task: AmaTask) => CO_LOCATED_ADMIN_ACTIONS[task.attributes.title]
   })
 
   caseDocketNumberColumn = () => ({
@@ -82,8 +82,8 @@ class AmaTaskTable extends React.PureComponent<Props> {
   getQueueColumns = () : Array<{ header: string, span?: Function, valueFunction: Function, getSortValue?: Function }> =>
     _.compact([
       this.caseDetailsColumn(),
-      this.caseTypeColumn(),
       this.caseTaskColumn(),
+      this.caseTypeColumn(),
       this.caseDocketNumberColumn(),
       this.caseDaysWaitingColumn(),
       this.caseReaderLinkColumn()
@@ -96,7 +96,7 @@ class AmaTaskTable extends React.PureComponent<Props> {
       columns={this.getQueueColumns}
       rowObjects={tasks}
       getKeyForRow={this.getKeyForRow}
-      defaultSort={{sortColIdx: 1}} />;
+      defaultSort={{sortColIdx: 2}} />;
   }
 }
 
