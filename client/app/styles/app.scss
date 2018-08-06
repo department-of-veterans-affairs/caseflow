@@ -1,6 +1,8 @@
 $asset-path: '/' !default;
-@import '~uswds/dist/scss/lib/_bourbon.scss';
+$font-path:  '~uswds/src/fonts';
+$image-path:  '~uswds/src/img';
 
+@import '~uswds/dist/scss/lib/_bourbon.scss';
 @import '~uswds/src/stylesheets/core/_variables.scss';
 
 @import '_variables.scss';
