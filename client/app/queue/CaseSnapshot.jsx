@@ -148,7 +148,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
         <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TITLE}</h3>
         <CaseDetailsDescriptionList>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</dt>
-          <dd>{renderAppealType(this.props.appeal)}</dd>
+          <dd>{renderAppealType(this.props.appeal.attributes)}</dd>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
           <dd>{appeal.docket_number}</dd>
           {this.daysSinceTaskAssignmentListItem()}

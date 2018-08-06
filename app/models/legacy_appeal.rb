@@ -57,6 +57,10 @@ class LegacyAppeal < ApplicationRecord
     self.class.repository.aod(vacols_id)
   end
 
+  def advanced_on_docket
+    aod
+  end
+
   cache_attribute :dic do
     issues.map(&:dic).include?(true)
   end
