@@ -1,14 +1,31 @@
+import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
-import { LOGO_COLORS } from '../constants/AppConstants';
+import { COLORS, LOGO_COLORS } from '../constants/AppConstants';
 import CaseListTable from './CaseListTable';
 import { fetchCasesForVeteran } from './CaseList/CaseListActions';
 
 import COPY from '../../COPY.json';
+
+const containerStyling = css({
+  backgroundColor: COLORS.GREY_BACKGROUND,
+  border: `1px solid ${COLORS.GREY_LIGHT}`,
+  borderBottom: 0,
+  borderRadius: '0.5rem 0.5rem 0 0',
+  marginTop: '3rem',
+  '& > h2': {
+    marginBottom: '-3rem',
+    padding: '1rem 2rem'
+  }
+});
+
+const caseListStyling = css({
+  marginBottom: '0 !important'
+});
 
 class VeteranCasesView extends React.PureComponent {
   createLoadPromise = () => {
@@ -19,7 +36,10 @@ class VeteranCasesView extends React.PureComponent {
     return this.props.fetchCasesForVeteran(this.props.veteranId);
   };
 
-  caseListTable = () => <CaseListTable appeals={this.props.appeals[this.props.veteranId]} />;
+  caseListTable = () => <div {...containerStyling}>
+    <h2>All Cases</h2>
+    <CaseListTable appeals={this.props.appeals[this.props.veteranId]} styling={caseListStyling} />
+  </div>;
 
   render() {
     // Do not display the loading spinner if we already have the cases.
