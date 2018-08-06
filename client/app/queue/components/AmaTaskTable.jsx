@@ -30,7 +30,7 @@ class AmaTaskTable extends React.PureComponent<Props> {
       return '';
     }
 
-    const [ln, fn, mi] = task.attributes.veteran_name.split(', ')
+    const [ln, fn, mi] = task.attributes.veteran_name.split(', ');
 
     return _.compact([fn, mi, ln]).join(' ');
   }
