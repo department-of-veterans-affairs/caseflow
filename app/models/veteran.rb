@@ -34,7 +34,7 @@ class Veteran < ApplicationRecord
   end
 
   def country_requires_zip?
-    COUNTRIES_REQUIRING_ZIP.include?(country.upcase)
+    COUNTRIES_REQUIRING_ZIP.include?(country && country.upcase)
   end
 
   def country_requires_state?
