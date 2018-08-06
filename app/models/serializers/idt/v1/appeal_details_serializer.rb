@@ -3,7 +3,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
     object.vacols_id
   end
 
-  attribute :veteran_first_name 
+  attribute :veteran_first_name
   attribute :veteran_middle_name do
     object.veteran_middle_initial
   end
@@ -13,7 +13,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
     !!object.notice_of_death_date
   end
 
-  attribute :appellant_not_veteran do
+  attribute :appellant_is_not_veteran do
     !!object.appellant_first_name
   end
   attribute :appellant_first_name
@@ -29,15 +29,6 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :number_of_issues do
     object.issues.length
   end
-
-  # TODO - expand rep name into separate fields
-  attribute :representative_name do
-    object.power_of_attorney.vacols_representative_name
-  end  
-  attribute :representative_type do
-    object.power_of_attorney.vacols_representative_type
-  end
-
   attribute :issues do
     object.issues.map do |issue|
       ActiveModelSerializers::SerializableResource.new(
@@ -46,6 +37,15 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
       ).as_json[:data][:attributes]
     end
   end
+  
+  # TODO: - expand rep name into separate fields
+  attribute :representative_name do
+    object.power_of_attorney.vacols_representative_name
+  end
+  attribute :representative_type do
+    object.power_of_attorney.vacols_representative_type
+  end
+
 
   attribute :aod
   attribute :cavc
