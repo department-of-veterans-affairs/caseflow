@@ -18,11 +18,11 @@ describe ColocatedTask do
       subject do
         ColocatedTask.create([{
                                assigned_by: attorney,
-                               title: :aoj,
+                               action: :aoj,
                                appeal: appeal
                              },
                               { assigned_by: attorney,
-                                title: :poa_clarification,
+                                action: :poa_clarification,
                                 appeal: appeal }])
       end
 
@@ -31,26 +31,26 @@ describe ColocatedTask do
         expect(subject.first.reload.status).to eq "assigned"
         expect(subject.first.assigned_at).to_not eq nil
         expect(subject.first.assigned_by).to eq attorney
-        expect(subject.first.title).to eq "aoj"
+        expect(subject.first.action).to eq "aoj"
         expect(subject.first.assigned_to).to eq User.find_by(css_id: "BVATEST1")
 
         expect(subject.second.valid?).to be true
         expect(subject.second.reload.status).to eq "assigned"
         expect(subject.second.assigned_at).to_not eq nil
         expect(subject.second.assigned_by).to eq attorney
-        expect(subject.second.title).to eq "poa_clarification"
+        expect(subject.second.action).to eq "poa_clarification"
         expect(subject.second.assigned_to).to eq User.find_by(css_id: "BVATEST1")
 
         expect(vacols_case.reload.bfcurloc).to eq "CASEFLOW"
 
-        record = ColocatedTask.create(assigned_by: attorney, title: :aoj, appeal: appeal)
+        record = ColocatedTask.create(assigned_by: attorney, action: :aoj, appeal: appeal)
         expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST2")
 
-        record = ColocatedTask.create(assigned_by: attorney, title: :aoj, appeal: appeal)
+        record = ColocatedTask.create(assigned_by: attorney, action: :aoj, appeal: appeal)
         expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST3")
 
         # should start from index 0
-        record = ColocatedTask.create(assigned_by: attorney, title: :aoj, appeal: appeal)
+        record = ColocatedTask.create(assigned_by: attorney, action: :aoj, appeal: appeal)
         expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST1")
       end
     end
@@ -59,7 +59,7 @@ describe ColocatedTask do
       subject do
         ColocatedTask.create([{
                                assigned_by: attorney,
-                               title: :aoj,
+                               action: :aoj,
                                parent: create(:ama_attorney_task),
                                appeal: create(:appeal)
                              }])
@@ -70,7 +70,7 @@ describe ColocatedTask do
         expect(subject.first.reload.status).to eq "assigned"
         expect(subject.first.assigned_at).to_not eq nil
         expect(subject.first.assigned_by).to eq attorney
-        expect(subject.first.title).to eq "aoj"
+        expect(subject.first.action).to eq "aoj"
         expect(subject.first.assigned_to).to eq User.find_by(css_id: "BVATEST1")
 
         expect(AppealRepository).to_not receive(:update_location!)
@@ -81,7 +81,7 @@ describe ColocatedTask do
       subject do
         ColocatedTask.create(
           assigned_by: attorney,
-          title: :aoj
+          action: :aoj
         )
       end
       it "does not create a co-located task" do
@@ -98,7 +98,7 @@ describe ColocatedTask do
       subject do
         ColocatedTask.create(
           assigned_by: attorney,
-          title: :aoj,
+          action: :aoj,
           appeal: appeal
         )
       end
@@ -108,17 +108,17 @@ describe ColocatedTask do
       end
     end
 
-    context "when title is not valid" do
+    context "when action is not valid" do
       subject do
         ColocatedTask.create(
           assigned_by: attorney,
-          title: :test,
+          action: :test,
           appeal: appeal
         )
       end
       it "does not create a co-located task" do
         expect(subject.first.valid?).to be false
-        expect(subject.first.errors.full_messages).to eq ["Title is not included in the list"]
+        expect(subject.first.errors.full_messages).to eq ["Action is not included in the list"]
       end
     end
   end

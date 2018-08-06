@@ -100,13 +100,7 @@ export const renderAppealType = (appeal: BasicAppeal) => {
   </React.Fragment>;
 };
 
-export const renderLegacyAppealType = (appeal: LegacyAppeal) => {
-  const {
-    attributes: {
-      aod,
-      type
-    }
-  } = appeal;
+export const renderLegacyAppealType = ({ aod, type }: {aod: boolean, type: string}) => {
   const cavc = type === 'Court Remand';
 
   return <React.Fragment>
