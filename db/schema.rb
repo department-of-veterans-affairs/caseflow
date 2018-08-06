@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180724145953) do
+ActiveRecord::Schema.define(version: 20180803183202) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -558,7 +558,7 @@ ActiveRecord::Schema.define(version: 20180724145953) do
     t.integer "appeal_id", null: false
     t.string "status", default: "assigned"
     t.string "type"
-    t.text "title"
+    t.text "action"
     t.text "instructions"
     t.integer "assigned_to_id"
     t.integer "assigned_by_id"
