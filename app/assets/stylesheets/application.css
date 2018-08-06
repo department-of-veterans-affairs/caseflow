@@ -11,4 +11,5 @@
  * file per style scope.
  *
  *= require _pdf_viewer.css
+ *= require ./_react-draft-wysiwyg.css
  */
