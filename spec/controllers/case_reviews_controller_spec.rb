@@ -60,8 +60,8 @@ RSpec.describe CaseReviewsController, type: :controller do
             "document_id": "123456789.1234",
             "overtime": true,
             "note": "something",
-            "issues": [{ "disposition": "3", "vacols_sequence_id": vacols_issue_remanded.issseq },
-                       { "disposition": "1", "vacols_sequence_id": vacols_issue_allowed.issseq }]
+            "issues": [{ "disposition": "3", "id": vacols_issue_remanded.issseq },
+                       { "disposition": "1", "id": vacols_issue_allowed.issseq }]
           }
         end
 
@@ -137,8 +137,8 @@ RSpec.describe CaseReviewsController, type: :controller do
             "comment": "do this",
             "factors_not_considered": %w[theory_contention relevant_records],
             "areas_for_improvement": ["process_violations"],
-            "issues": [{ "disposition": "1", "vacols_sequence_id": vacols_issue_remanded.issseq },
-                       { "disposition": "3", "vacols_sequence_id": vacols_issue_allowed.issseq }]
+            "issues": [{ "disposition": "1", "id": vacols_issue_remanded.issseq },
+                       { "disposition": "3", "id": vacols_issue_allowed.issseq }]
           }
         end
 
