@@ -5,15 +5,15 @@ import { NewFileIcon } from '../../components/RenderFunctions';
 import { bindActionCreators } from 'redux';
 import { getNewDocuments } from '../QueueActions';
 import type {
-  Appeal,
-  LegacyAppeal
+  BasicAppeal
 } from '../types/models';
 
 type Params = {|
-  appeal: Appeal | LegacyAppeal
+  appeal: BasicAppeal
 |};
 
 type Props = Params & {|
+  externalId: string,
   docs: Array<Object>,
   error: string,
   getNewDocuments: Function
@@ -22,7 +22,7 @@ type Props = Params & {|
 class NewFile extends React.Component<Props> {
   componentDidMount = () => {
     if (!this.props.docs) {
-      this.props.getNewDocuments(this.props.appeal.attributes.vacols_id);
+      this.props.getNewDocuments(this.props.externalId);
     }
   }
 
@@ -37,9 +37,11 @@ class NewFile extends React.Component<Props> {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const documentObject = state.queue.newDocsForAppeal[ownProps.appeal.attributes.vacols_id];
+  const externalId = ownProps.appeal.externalId || ownProps.appeal.attributes.external_id;
+  const documentObject = state.queue.newDocsForAppeal[externalId];
 
   return {
+    externalId,
     docs: documentObject ? documentObject.docs : null,
     error: documentObject ? documentObject.error : null
   };

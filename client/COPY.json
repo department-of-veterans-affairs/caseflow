@@ -56,8 +56,6 @@
   "SWITCH_TO_ASSIGN_MODE_LINK_LABEL": "Switch to Assign Cases",
 
   "IS_PAPER_CASE": "This is a paper case",
-  "CASE_DIFF_VETERAN_AND_APPELLANT": "Veteran is not the appellant.",
-  "CASE_SAME_VETERAN_AND_APPELLANT": "The veteran is the appellant.",
 
   "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_VHA": "OMO - VHA",
   "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_IME": "OMO - IME",

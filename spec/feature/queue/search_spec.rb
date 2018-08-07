@@ -98,6 +98,7 @@ RSpec.feature "Search" do
       let!(:paper_appeal) do
         FactoryBot.create(
           :legacy_appeal,
+          :with_veteran,
           vacols_case: FactoryBot.create(
             :case,
             folder: FactoryBot.build(:folder, :paper_case)
