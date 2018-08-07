@@ -9,6 +9,7 @@ import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
 import DECASS_WORK_PRODUCT_TYPES from '../../../constants/DECASS_WORK_PRODUCT_TYPES.json';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
+import { tasksForAppealAssignedToAttorneySelector, tasksForAppealAssignedToUserSelector } from '../selectors';
 
 import { buildCaseReviewPayload } from '../utils';
 import { requestSave } from '../uiReducer/uiActions';
@@ -91,7 +92,7 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
       const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, { location: 'omo_office' });
       const successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name);
 
-      this.props.requestSave(`/case_reviews/${task.attributes.task_id}/complete`, payload, { title: successMsg }).
+      this.props.requestSave(`/case_reviews/${task.taskId}/complete`, payload, { title: successMsg }).
         then(() => {
           history.push('');
           history.replace('/queue');
@@ -118,7 +119,7 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
   handleAssignment =
     ({ tasks, assigneeId, previousAssigneeId }:
       { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) => {
-      if (tasks[0].attributes.task_type === 'Assign') {
+      if (tasks[0].taskType === 'Assign') {
         return this.props.initialAssignTasksToUser({ tasks,
           assigneeId,
           previousAssigneeId });
@@ -142,8 +143,8 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
     } = this.props;
     const options = [];
 
-    if (task.attributes.task_type === 'Review') {
-      options.push(DECASS_WORK_PRODUCT_TYPES.OMO_REQUEST.includes(task.attributes.work_product) ?
+    if (task.taskType === 'Review') {
+      options.push(DECASS_WORK_PRODUCT_TYPES.OMO_REQUEST.includes(task.workProduct) ?
         JUDGE_DECISION_OPTIONS.OMO_REQUEST :
         JUDGE_DECISION_OPTIONS.DRAFT_DECISION);
     } else {
@@ -163,15 +164,16 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
       {this.assignWidgetVisible() &&
         <AssignWidget
           onTaskAssignment={this.handleAssignment}
-          previousAssigneeId={task.attributes.assigned_to_pg_id.toString()}
+          previousAssigneeId={task.assignedToPgId.toString()}
           selectedTasks={[task]} />}
     </React.Fragment>;
   }
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => ({
-  appeal: state.queue.appeals[ownProps.appealId],
-  task: state.queue.tasks[ownProps.appealId],
+  appeal: state.queue.appealDetails[ownProps.appealId],
+  task: tasksForAppealAssignedToAttorneySelector(state, ownProps)[0] ||
+    tasksForAppealAssignedToUserSelector(state, ownProps)[0],
   changedAppeals: Object.keys(state.queue.stagedChanges.appeals),
   decision: state.queue.stagedChanges.taskDecision,
   userRole: state.ui.userRole

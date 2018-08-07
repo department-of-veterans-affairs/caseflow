@@ -74,7 +74,11 @@ export default class BuildSchedule extends React.Component {
       }
     ];
 
-    const pastUploadsRows = _.map(pastUploads, (pastUpload) => ({
+    const pastFinalized = _.filter(pastUploads, (uploads) => uploads.finalized === true);
+
+    const sortPastUploads = _.orderBy(pastFinalized, (sortUploads) => sortUploads.createdAt, 'asc');
+
+    const pastUploadsRows = _.map(sortPastUploads, (pastUpload) => ({
       date: `${formatDateStr(pastUpload.startDate)} - ${formatDateStr(pastUpload.endDate)}`,
       type: SPREADSHEET_TYPES[pastUpload.type].shortDisplay,
       uploaded: formatDate(pastUpload.createdAt),
@@ -161,3 +165,4 @@ BuildSchedule.propTypes = {
   schedulePeriod: PropTypes.object,
   displaySuccessMessage: PropTypes.bool
 };
+

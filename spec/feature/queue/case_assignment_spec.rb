@@ -83,9 +83,8 @@ RSpec.feature "Case Assignment flows" do
 
       click_on "Assign Action"
 
-      sleep 1
-      expect(page.current_path).to eq "/queue"
       expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, selected_opt))
+      expect(page.current_path).to eq "/queue"
     end
   end
 end
