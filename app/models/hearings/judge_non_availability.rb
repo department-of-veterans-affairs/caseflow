@@ -7,8 +7,9 @@ class JudgeNonAvailability < NonAvailability
       transaction do
         dates.each do |date|
           css_id = judges[date["vlj_id"]][:css_id]
+          date = (date["date"] == "N/A") ? nil : date["date"]
           judge_non_availability << JudgeNonAvailability.create!(schedule_period: schedule_period,
-                                                                 date: date["date"],
+                                                                 date: date,
                                                                  object_identifier: css_id)
         end
       end
