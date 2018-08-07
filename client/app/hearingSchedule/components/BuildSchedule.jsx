@@ -73,14 +73,15 @@ export default class BuildSchedule extends React.Component {
         valueName: 'download'
       }
     ];
-    const sortPastUploads = _.orderBy(pastUploads, (sortUploads) => sortUploads.createdAt, 'asc');
 
     const pastFinalized = _.filter(pastUploads, (uploads) => uploads.finalized === true);
 
-    const pastUploadsRows = _.map(pastFinalized, (pastUpload) => ({
+    const sortPastUploads = _.orderBy(pastFinalized, (sortUploads) => sortUploads.createdAt, 'asc');
+
+    const pastUploadsRows = _.map(sortPastUploads, (pastUpload) => ({
       date: `${formatDateStr(pastUpload.startDate)} - ${formatDateStr(pastUpload.endDate)}`,
       type: SPREADSHEET_TYPES[pastUpload.type].shortDisplay,
-      uploaded: formatDate(sortPastUploads),
+      uploaded: formatDate(pastUpload.createdAt),
       uploadedBy: pastUpload.userFullName,
       download: <Button name="download"
         linkStyling
@@ -164,3 +165,4 @@ BuildSchedule.propTypes = {
   schedulePeriod: PropTypes.object,
   displaySuccessMessage: PropTypes.bool
 };
+
