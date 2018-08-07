@@ -24,6 +24,7 @@ import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import Alert from '../components/Alert';
 import JudgeSelectComponent from './JudgeSelectComponent';
+import { tasksForAppealAssignedToUserSelector } from './selectors';
 
 import {
   fullWidth,
@@ -110,12 +111,12 @@ class SubmitDecisionView extends React.PureComponent<Props> {
 
   goToNextStep = () => {
     const {
-      task: { attributes: { task_id: taskId } },
+      task: { taskId },
       appeal: {
         attributes: {
           issues,
           veteran_full_name,
-          vacols_id: appealId
+          external_id: appealId
         }
       },
       decision,
@@ -193,7 +194,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         value={decisionOpts.document_id}
         maxLength={DOCUMENT_ID_MAX_LENGTH}
       />
-      <JudgeSelectComponent assignedByCssId={this.props.task.attributes.added_by_css_id} />
+      <JudgeSelectComponent assignedByCssId={this.props.task.addedByCssId} />
       <TextareaField
         label="Notes:"
         name="notes"
@@ -215,9 +216,6 @@ const mapStateToProps = (state, ownProps) => {
           [ownProps.appealId]: appeal
         },
         taskDecision: decision
-      },
-      tasks: {
-        [ownProps.appealId]: task
       }
     },
     ui: {
@@ -232,7 +230,8 @@ const mapStateToProps = (state, ownProps) => {
   return {
     appeal,
     judges,
-    task,
+    // Attorneys should only have one task assigned to them from this appeal.
+    task: tasksForAppealAssignedToUserSelector(state, { appealId: ownProps.appealId })[0],
     decision,
     error,
     userRole,
