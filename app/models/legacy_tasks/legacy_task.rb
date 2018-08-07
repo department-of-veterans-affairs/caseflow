@@ -26,6 +26,11 @@ class LegacyTask
   def task_type
     type
   end
+
+  def appeal
+    LegacyAppeal.find(appeal_id)
+  end
+
   ### Serializer Methods End
 
   def self.from_vacols(record, appeal, user)

@@ -35,7 +35,7 @@ class AttorneyTaskListView extends React.PureComponent {
     this.props.clearCaseSelectSearch();
     this.props.resetErrorMessages();
 
-    if (_.some(this.props.tasks, (task) => !task.attributes.task_id)) {
+    if (_.some(this.props.tasks, (task) => !task.taskId)) {
       this.props.showErrorMessage({
         title: COPY.TASKS_NEED_ASSIGNMENT_ERROR_TITLE,
         detail: COPY.TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE
