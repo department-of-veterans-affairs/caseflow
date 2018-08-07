@@ -1,7 +1,7 @@
 class VACOLS::Representative < VACOLS::Record
   # :nocov:
   self.table_name = "vacols.rep"
-  self.primary_key = "repkey"
+  self.primary_keys = :repkey, :repaddtime
 
   class InvalidRepTypeError < StandardError; end
 
@@ -27,6 +27,33 @@ class VACOLS::Representative < VACOLS::Record
   end
 
   def self.update_vacols_rep_name!(bfkey:, first_name:, middle_initial:, last_name:)
+    conn = connection
+    first_name = conn.quote(first_name)
+    middle_initial = conn.quote(middle_initial)
+    last_name = conn.quote(last_name)
+    case_id = conn.quote(bfkey)
+
+    MetricsService.record("VACOLS: update_vacols_rep_first_name! #{case_id}",
+                          service: :vacols,
+                          name: "update_vacols_rep_first_name") do
+      conn.transaction do
+        conn.execute(<<-SQL)
+          MERGE INTO REP USING dual ON ( REPKEY=#{case_id} )
+          WHEN MATCHED THEN
+            UPDATE SET REPFIRST=#{first_name}, REPMI=#{middle_initial}, REPLAST=#{last_name}
+          WHEN NOT MATCHED THEN INSERT (REPKEY, REPFIRST, REPMI, REPLAST)
+            VALUES ( #{case_id}, #{first_name}, #{middle_initial}, #{last_name} )
+        SQL
+      end
+    end
+  end  
+
+
+  def self.update_vacols_rep_name!(bfkey:, first_name:, middle_initial:, last_name:)
+
+    # 
+    byebug  
+
     conn = connection
     first_name = conn.quote(first_name)
     middle_initial = conn.quote(middle_initial)
