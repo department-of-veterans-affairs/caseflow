@@ -6,6 +6,7 @@ class LegacyTask
            :docket_date, :added_by, :task_id, :type, :document_id, :assigned_by, :work_product].freeze
 
   attr_accessor(*ATTRS)
+  attr_writer :appeal
 
   ### Serializer Methods Start
   def assigned_on
@@ -28,7 +29,7 @@ class LegacyTask
   end
 
   def appeal
-    LegacyAppeal.find(appeal_id)
+    @appeal ||= LegacyAppeal.find(appeal_id)
   end
 
   ### Serializer Methods End
