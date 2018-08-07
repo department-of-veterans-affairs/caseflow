@@ -39,7 +39,7 @@
 }
 
 .Select-arrow-zone {
-  background-image: image-url('arrow-down.svg');
+  background-image: url(#{$image-url}/arrow-down.svg);
   background-repeat: no-repeat;
   background-position: right 1.3rem center;
   background-repeat: no-repeat;

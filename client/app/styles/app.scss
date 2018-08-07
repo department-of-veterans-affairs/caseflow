@@ -1,6 +1,6 @@
 $asset-path: '/' !default;
 $image-url: '#{$asset-path}assets/' !default;
-
+$image-path: $image-url;
 
 //USWDS
 @import '~uswds/src/stylesheets/uswds.scss';
@@ -21,4 +21,3 @@ $image-url: '#{$asset-path}assets/' !default;
 
 // Needed to import files
 $font-path:  '~uswds/src/fonts';
-$image-path:  '~uswds/src/img';
