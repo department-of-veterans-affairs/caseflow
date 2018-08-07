@@ -19,6 +19,7 @@ import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import AppFrame from '../components/AppFrame';
 import QueueLoadingScreen from './QueueLoadingScreen';
+import CaseDetailsLoadingScreen from './CaseDetailsLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
 import ColocatedTaskListView from './ColocatedTaskListView';
 import JudgeReviewTaskListView from './JudgeReviewTaskListView';
@@ -102,11 +103,11 @@ class QueueApp extends React.PureComponent<Props> {
       <JudgeReviewTaskListView {...this.props} />}
   </QueueLoadingScreen>;
 
-  routedQueueDetail = (props) => <QueueLoadingScreen
+  routedQueueDetail = (props) => <CaseDetailsLoadingScreen
     {...this.propsForQueueLoadingScreen()}
     appealId={props.match.params.appealId}>
     <CaseDetailsView appealId={props.match.params.appealId} />
-  </QueueLoadingScreen>;
+  </CaseDetailsLoadingScreen>;
 
   routedSubmitDecision = (props) => <SubmitDecisionView
     appealId={props.match.params.appealId}
