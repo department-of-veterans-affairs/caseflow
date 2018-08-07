@@ -42,6 +42,7 @@ describe JudgeCaseReview do
     let!(:vacols_issue1) { create(:case_issue, isskey: "123456") }
     let!(:vacols_issue2) { create(:case_issue, isskey: "123456") }
     let!(:judge_staff) { create(:staff, :judge_role, slogid: "CFS456", sdomainid: judge.css_id) }
+    let(:probability) { JudgeCaseReview::QUALITY_REVIEW_SELECTION_PROBABILITY }
     subject { JudgeCaseReview.complete(params) }
 
     context "when all parameters are present to sign a decision and VACOLS update is successful" do
@@ -78,7 +79,6 @@ describe JudgeCaseReview do
           ]
         end
         let(:work_product) { "DEC" }
-        let(:probability) { JudgeCaseReview::QUALITY_REVIEW_SELECTION_PROBABILITY }
 
         it "should create judge case review and change the location to quality review" do
           allow_any_instance_of(JudgeCaseReview).to receive(:rand).and_return(probability / 2)
@@ -156,6 +156,7 @@ describe JudgeCaseReview do
         let(:work_product) { "DEC" }
 
         it "should create Judge Case Review" do
+          allow_any_instance_of(JudgeCaseReview).to receive(:rand).and_return(probability + probability)
           expect(subject.valid?).to eq true
           expect(subject.location).to eq "bva_dispatch"
           expect(subject.complexity).to eq "hard"
@@ -213,7 +214,7 @@ describe JudgeCaseReview do
         let(:work_product) { "IME" }
 
         it "should create Judge Case Review" do
-          allow_any_instance_of(JudgeCaseReview).to receive(:rand).and_return(0.02)
+          allow_any_instance_of(JudgeCaseReview).to receive(:rand).and_return(probability + probability)
           expect(subject.valid?).to eq true
           expect(subject.location).to eq "omo_office"
           expect(subject.judge).to eq judge
