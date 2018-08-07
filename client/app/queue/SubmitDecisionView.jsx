@@ -94,7 +94,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
   getPrevStepUrl = () => {
     const {
       decision: { type: decisionType },
-      appeal: { attributes: appeal },
+      appeal,
       appealId
     } = this.props;
     const dispositions = _.map(appeal.issues, (issue) => issue.disposition);

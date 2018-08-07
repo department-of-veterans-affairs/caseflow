@@ -17,6 +17,8 @@ import StickyNavContentArea from './StickyNavContentArea';
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
 
+import { appealWithDetailSelector } from './selectors';
+
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
   border: 0,
@@ -70,11 +72,10 @@ CaseDetailsView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const { appealDetails } = state.queue;
   const { success, error } = state.ui.messages;
 
   return {
-    appeal: appealDetails[ownProps.appealId],
+    appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     success,
     error
   };

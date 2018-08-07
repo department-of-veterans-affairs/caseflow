@@ -10,6 +10,7 @@ import type {
   AmaTasks,
   LegacyAppeal,
   LegacyAppeals,
+  BasicAppeals,
   User
 } from './types/models';
 
@@ -52,6 +53,20 @@ export const appealsWithTasksSelector = createSelector(
   }
 );
 
+export const appealsWithDetailsSelector = createSelector(
+  [getAppeals, getAppealDetails],
+  (appeals: BasicAppeals, appealDetails: LegacyAppeals) => {
+    return _.merge(appeals, appealDetails);
+  }
+);
+
+export const appealWithDetailSelector = createSelector(
+  [appealsWithDetailsSelector, getAppealId],
+  (appeals: LegacyAppeals, appealId: string) => {
+    return appeals[appealId];
+  }
+);
+
 export const getTasksForAppeal = createSelector(
   [getTasks, getAppealId],
   (tasks: Tasks, appealId: number) => {
@@ -74,7 +89,7 @@ export const tasksForAppealAssignedToAttorneySelector = createSelector(
 );
 
 export const appealsByCaseflowVeteranId = createSelector(
-  [getAppealDetails, getCaseflowVeteranId],
+  [appealsWithDetailsSelector, getCaseflowVeteranId],
   (appeals: LegacyAppeals, caseflowVeteranId: string) =>
     _.filter(appeals, (appeal: LegacyAppeal) => appeal.caseflowVeteranId &&
       appeal.caseflowVeteranId.toString() === caseflowVeteranId)

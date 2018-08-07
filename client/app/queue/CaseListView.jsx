@@ -46,7 +46,7 @@ class CaseListView extends React.PureComponent {
     // the same for all appeals in the list.
     const firstAppeal = this.props.appeals[0];
     const heading = `${appealsCount} ${pluralize('case', appealsCount)} found for
-        “${firstAppeal.veteranFullName} (${firstAppeal.vbmsId})”`;
+        “${firstAppeal.veteranFullName} (${firstAppeal.veteranFileNumber})”`;
 
     return <div>
       <h1 className="cf-push-left" {...fullWidth}>{heading}</h1>

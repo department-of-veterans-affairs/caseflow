@@ -47,7 +47,7 @@ export default class CaseTitle extends React.PureComponent {
     } = this.props;
 
     return <CaseTitleScaffolding heading={appeal.veteranFullName}>
-      <React.Fragment>Veteran ID: <b>{appeal.vbmsId}</b></React.Fragment>
+      <React.Fragment>Veteran ID: <b>{appeal.veteranFileNumber}</b></React.Fragment>
       <ReaderLink
         appealId={appealId}
         analyticsSource={CATEGORIES[analyticsSource.toUpperCase()]}

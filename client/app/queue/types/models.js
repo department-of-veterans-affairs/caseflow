@@ -89,34 +89,27 @@ export type AmaTask = {
 
 export type AmaTasks = { [string]: AmaTask };
 
-export type LegacyAppeal = {
-  id: string,
-  attributes: {
-    isLegacyAppeal: boolean,
-    issues: Array<Object>,
-    hearings: Array<Object>,
-    appellantFullName: string,
-    appellantAddress: AppellantAddress,
-    appellantRelationship: string,
-    locationCode: string,
-    veteranFullName: string,
-    veteranDateOfBirth: string,
-    veteranGender: string,
-    vbmsID: string,
-    externalID: string,
-    type: string,
-    aod: boolean,
-    docketNumber: string,
-    status: string,
-    decisionDate: string,
-    certificationDate: string,
-    paperCase: boolean,
-    powerOfAttorney: string,
-    regionalOffice: Object,
-    caseflowVeteranID: ?string
-  },
+export type AppealDetail = {
+  isLegacyAppeal: boolean,
+  issues: Array<Object>,
+  hearings: Array<Object>,
+  appellantFullName: string,
+  appellantAddress: AppellantAddress,
+  appellantRelationship: string,
+  locationCode: string,
+  veteranDateOfBirth: string,
+  veteranGender: string,
+  externalId: string,
+  status: string,
+  decisionDate: string,
+  certificationDate: string,
+  powerOfAttorney: string,
+  regionalOffice: Object,
+  caseflowVeteranId: ?string,
   tasks: ?Array<Task>
 };
+
+export type AppealDetails = { [string]: AppealDetail};
 
 export type BasicAppeal = {
   id: string,
@@ -124,12 +117,12 @@ export type BasicAppeal = {
   externalId: string,
   docketName: string,
   caseType: string,
-  isAdvancedOnDocket: Boolean,
+  isAdvancedOnDocket: boolean,
   issues: Array<Object>,
   docketNumber: string,
   veteranFullName: string,
   veteranFileNumber: string,
-  isPaperCase: Boolean,
+  isPaperCase: boolean,
   tasks: ?Array<Task>
 };
 
@@ -138,7 +131,7 @@ export type BasicAppeals = { [string]: BasicAppeal };
 export type Appeal = {
   id: string,
   attributes: {
-    isLegacyAppeal: Boolean,
+    isLegacyAppeal: boolean,
     issues: Array<Object>,
     hearings: Array<Object>,
     appellantFullName: string,
@@ -147,18 +140,20 @@ export type Appeal = {
     veteranFullName: string,
     veteranDateOfBirth: string,
     veteranGender: string,
-    vbmsID: string,
-    externalID: string,
+    veteranFileNumber: string,
+    externalId: string,
     type: string,
-    aod: Boolean,
+    aod: boolean,
     docketNumber: string,
     status: string,
     decisionDate: string,
-    paperCase: Boolean,
+    paperCase: boolean,
     powerOfAttorney: string,
-    caseflowVeteranID: ?string
+    caseflowVeteranId: ?string
   }
 };
+
+export type LegacyAppeal = AppealDetail & BasicAppeal;
 
 export type LegacyAppeals = { [string]: LegacyAppeal };
 

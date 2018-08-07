@@ -51,17 +51,17 @@ class AmaTaskTable extends React.PureComponent<Props> {
       // We prepend a * to the docket number if it's a priority case since * comes before
       // numbers in sort order, this forces these cases to the top of the sort.
       if (task.attributes.aod || task.attributes.case_type === 'Court Remand') {
-        return `*${task.docketNumber}`;
+        return `*${task.attributes.docket_number}`;
       }
 
-      return task.docketNumber;
+      return task.attributes.docket_number;
     }
   })
 
   caseDocketNumberColumn = () => ({
     header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
-    valueFunction: (task: AmaTask) => task.docketNumber,
-    getSortValue: (task: AmaTask) => task.docketNumber
+    valueFunction: (task: AmaTask) => task.attributes.docket_number,
+    getSortValue: (task: AmaTask) => task.attributes.docket_number
   })
 
   daysWaitingOfTask = (task: AmaTask) => moment().startOf('day').
@@ -79,8 +79,8 @@ class AmaTaskTable extends React.PureComponent<Props> {
       return <ReaderLink appealId={task.attributes.external_id}
         analyticsSource={CATEGORIES.QUEUE_TABLE}
         redirectUrl={window.location.pathname}
-        appeal={{ vacolsId: task.attributes.external_id,
-          isPaperCase: false }} />;
+        appeal={{ attributes: { vacols_id: task.attributes.external_id,
+          paper_case: false } }} />;
     }
   })
 

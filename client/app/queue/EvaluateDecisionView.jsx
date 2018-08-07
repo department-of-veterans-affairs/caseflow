@@ -19,7 +19,7 @@ import Alert from '../components/Alert';
 import { deleteAppeal } from './QueueActions';
 import { requestSave } from './uiReducer/uiActions';
 import { buildCaseReviewPayload } from './utils';
-import { tasksForAppealAssignedToUserSelector } from './selectors';
+import { appealWithDetailSelector, tasksForAppealAssignedToUserSelector } from './selectors';
 
 import COPY from '../../COPY.json';
 import JUDGE_CASE_REVIEW_OPTIONS from '../../constants/JUDGE_CASE_REVIEW_OPTIONS.json';
@@ -283,7 +283,7 @@ EvaluateDecisionView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.appealDetails[ownProps.appealId],
+  appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
   highlight: state.ui.highlightFormItems,
   taskOptions: state.queue.stagedChanges.taskDecision.opts,
   task: tasksForAppealAssignedToUserSelector(state, ownProps)[0],

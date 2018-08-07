@@ -10,10 +10,9 @@ import {
 import type {
   Task,
   Tasks,
-  LegacyAppeal,
-  LegacyAppeals,
   BasicAppeal,
   BasicAppeals,
+  AppealDetails,
   Issue,
   Issues
 } from './types/models';
@@ -82,8 +81,8 @@ export const associateTasksWithAppeals =
   };
 
 export const prepareAppealForStore =
-  (appeals: Array<LegacyAppeal>):
-    LegacyAppeals => {
+  (appeals: Array<Object>):
+    { appeals: BasicAppeals, appealDetails: AppealDetails } => {
 
     const appealHash = appeals.reduce((accumulator, appeal) => {
       if (!accumulator[appeal.attributes.external_id]) {
@@ -132,7 +131,7 @@ export const prepareAppealForStore =
     return {
       appeals: appealHash,
       appealDetails: appealDetailsHash
-    }
+    };
   };
 
 export const renderAppealType = (appeal: BasicAppeal) => {

@@ -9,7 +9,11 @@ import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
 import DECASS_WORK_PRODUCT_TYPES from '../../../constants/DECASS_WORK_PRODUCT_TYPES.json';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
-import { tasksForAppealAssignedToAttorneySelector, tasksForAppealAssignedToUserSelector } from '../selectors';
+import {
+  appealWithDetailSelector,
+  tasksForAppealAssignedToAttorneySelector,
+  tasksForAppealAssignedToUserSelector
+} from '../selectors';
 
 import { buildCaseReviewPayload } from '../utils';
 import { requestSave } from '../uiReducer/uiActions';
@@ -171,7 +175,7 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => ({
-  appeal: state.queue.appealDetails[ownProps.appealId],
+  appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
   task: tasksForAppealAssignedToAttorneySelector(state, ownProps)[0] ||
     tasksForAppealAssignedToUserSelector(state, ownProps)[0],
   changedAppeals: Object.keys(state.queue.stagedChanges.appeals),

@@ -14,6 +14,8 @@ import type { LegacyAppeal, LegacyAppeals, Tasks } from './types/models';
 import type { State, UsersById } from './types/state';
 import { USER_ROLES } from './constants';
 
+import { appealsWithDetailsSelector } from './selectors';
+
 type Params = {|
   userId: number,
   userCssId: string,
@@ -115,11 +117,11 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State) => {
-  const { tasks, appealDetails } = state.queue;
+  const { tasks } = state.queue;
 
   return {
     tasks,
-    appealDetails,
+    appealDetails: appealsWithDetailsSelector(state),
     loadedUserId: state.ui.loadedUserId
   };
 };

@@ -4,7 +4,11 @@ import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { tasksForAppealAssignedToAttorneySelector, tasksForAppealAssignedToUserSelector } from './selectors';
+import {
+  appealWithDetailSelector,
+  tasksForAppealAssignedToAttorneySelector,
+  tasksForAppealAssignedToUserSelector
+} from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import JudgeActionsDropdown from './components/JudgeActionsDropdown';
@@ -147,8 +151,8 @@ export class CaseSnapshot extends React.PureComponent<Props> {
         <CaseDetailsDescriptionList>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</dt>
           <dd>{renderLegacyAppealType({
-            aod: appeal.aod,
-            type: appeal.type
+            aod: appeal.isAdvancedOnDocket,
+            type: appeal.caseType
           })}</dd>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
           <dd>{appeal.docketNumber}</dd>
@@ -175,7 +179,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   const { featureToggles, userRole } = state.ui;
 
   return {
-    appeal: state.queue.appealDetails[ownProps.appealId],
+    appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     featureToggles,
     userRole,
     taskAssignedToUser: tasksForAppealAssignedToUserSelector(state, { appealId: ownProps.appealId })[0],
