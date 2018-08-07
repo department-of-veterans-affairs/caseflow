@@ -1,16 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import CaseDetailsLink from './CaseDetailsLink';
 import Table from '../components/Table';
 
 import { DateString } from '../util/DateUtil';
-import { renderAppealType } from './utils';
+import { renderLegacyAppealType } from './utils';
 import COPY from '../../COPY.json';
-
-import { setActiveAppeal } from './CaseDetail/CaseDetailActions';
 
 const labelForLocation = (locationCode) => {
   if (!locationCode) {
@@ -29,8 +26,7 @@ class CaseListTable extends React.PureComponent {
       valueFunction: (appeal) => <React.Fragment>
         <CaseDetailsLink
           appeal={appeal}
-          getLinkText={() => appeal.attributes.docket_number}
-          onClick={() => this.props.setActiveAppeal(appeal)} />
+          getLinkText={() => appeal.attributes.docket_number} />
       </React.Fragment>
     },
     {
@@ -43,7 +39,10 @@ class CaseListTable extends React.PureComponent {
     },
     {
       header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
-      valueFunction: (appeal) => renderAppealType(appeal.attributes)
+      valueFunction: (appeal) => renderLegacyAppealType({
+        aod: appeal.attributes.aod,
+        type: appeal.attributes.type
+      })
     },
     {
       header: COPY.CASE_LIST_TABLE_DECISION_DATE_COLUMN_TITLE,
@@ -72,9 +71,5 @@ CaseListTable.propTypes = {
 
 const mapStateToProps = () => ({});
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setActiveAppeal
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(CaseListTable);
+export default connect(mapStateToProps)(CaseListTable);
 

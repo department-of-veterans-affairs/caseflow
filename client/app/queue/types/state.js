@@ -4,6 +4,7 @@ import type {
   Tasks,
   AmaTasks,
   LegacyAppeals,
+  BasicAppeals,
   User,
   Attorneys
 } from './models';
@@ -52,8 +53,9 @@ export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 export type QueueState = {
   judges: UsersById,
   tasks: Tasks,
+  appeals: BasicAppeals,
+  appealDetails: LegacyAppeals,
   amaTasks: AmaTasks,
-  appeals: LegacyAppeals,
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},
   stagedChanges: {
