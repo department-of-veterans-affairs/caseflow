@@ -8,6 +8,7 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { COLORS, LOGO_COLORS } from '../constants/AppConstants';
 import CaseListTable from './CaseListTable';
 import { fetchCasesForVeteran } from './CaseList/CaseListActions';
+import { hideVeteranCaseList } from './uiReducer/uiActions';
 
 import COPY from '../../COPY.json';
 
@@ -28,6 +29,8 @@ const caseListStyling = css({
 });
 
 class VeteranCasesView extends React.PureComponent {
+  componentWillUnmount = () => this.props.hideVeteranCaseList();
+
   createLoadPromise = () => {
     if (this.props.requestInProgress) {
       return Promise.resolve();
@@ -79,7 +82,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  fetchCasesForVeteran
+  fetchCasesForVeteran,
+  hideVeteranCaseList
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(VeteranCasesView);

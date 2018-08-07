@@ -125,6 +125,10 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
     return update(state, {
       veteranCaseListIsVisible: { $set: !state.veteranCaseListIsVisible }
     });
+  case ACTIONS.HIDE_VETERAN_CASE_LIST:
+    return update(state, {
+      veteranCaseListIsVisible: { $set: false }
+    });
   case QUEUE_ACTIONS.RECEIVE_QUEUE_DETAILS:
     return update(state, {
       loadedUserId: { $set: action.payload.userId }
