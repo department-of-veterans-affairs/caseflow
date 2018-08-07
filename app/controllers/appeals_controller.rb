@@ -117,8 +117,8 @@ class AppealsController < ApplicationController
     end
 
     DataDogService.increment_counter(
-      metric_group: "business",
-      metric_name: "non_critical_error",
+      metric_group: "errors",
+      metric_name: "non_critical",
       app_name: RequestStore[:application],
       attrs: {
         endpoint: endpoint
