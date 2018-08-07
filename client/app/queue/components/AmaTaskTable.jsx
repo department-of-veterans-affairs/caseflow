@@ -10,7 +10,7 @@ import ReaderLink from '../ReaderLink';
 import { CATEGORIES } from '../constants';
 import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
-import { renderAppealType } from '../utils';
+import { renderLegacyAppealType } from '../utils';
 
 import type {
   AmaTask
@@ -45,7 +45,7 @@ class AmaTaskTable extends React.PureComponent<Props> {
 
   caseTypeColumn = () => ({
     header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
-    valueFunction: (task: AmaTask) => renderAppealType({ aod: task.attributes.aod,
+    valueFunction: (task: AmaTask) => renderLegacyAppealType({ aod: task.attributes.aod,
       type: task.attributes.case_type }),
     getSortValue: (task: AmaTask) => {
       // We prepend a * to the docket number if it's a priority case since * comes before
