@@ -3,7 +3,7 @@ import ApiUtil from '../../util/ApiUtil';
 import * as Constants from './actionTypes';
 import _ from 'lodash';
 import { onReceiveAppealDetails } from '../QueueActions';
-import { prepareAppealDetailsForStore } from '../utils';
+import { prepareAppealForStore } from '../utils';
 
 export const clearCaseListSearch = () => ({
   type: Constants.CLEAR_CASE_LIST_SEARCH
@@ -46,7 +46,7 @@ export const fetchedNoAppealsUsingVeteranId = (searchQuery) => ({
 });
 
 export const onReceiveAppealsUsingVeteranId = (appeals) => (dispatch) => {
-  dispatch(onReceiveAppealDetails({ appeals: prepareAppealDetailsForStore(appeals) }));
+  dispatch(onReceiveAppealDetails(prepareAppealForStore(appeals)));
   dispatch({
     type: Constants.RECEIVED_APPEALS_USING_VETERAN_ID_SUCCESS
   });
@@ -100,7 +100,7 @@ export const fetchAppealsUsingVeteranId = (searchQuery) =>
         dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
 
         // Expect all of the appeals will be for the same Caseflow Veteran ID so we pull off the first for the URL.
-        const caseflowVeteranId = returnedObject.appeals[0].attributes.caseflow_veteran_id;
+        const caseflowVeteranId = returnedObject.appeals[0].caseflowVeteranId;
 
         return resolve(caseflowVeteranId);
 

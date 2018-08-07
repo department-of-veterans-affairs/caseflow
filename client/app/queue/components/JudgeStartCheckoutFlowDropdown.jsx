@@ -27,7 +27,7 @@ import {
 class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
   changeRoute = (props) => {
     const {
-      appeal: { attributes: appeal },
+      appeal,
       task,
       appealId,
       history,
@@ -40,9 +40,9 @@ class JudgeStartCheckoutFlowDropdown extends React.PureComponent {
 
     if (actionType === DECISION_TYPES.OMO_REQUEST) {
       const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, { location: 'omo_office' });
-      const successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name);
+      const successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
 
-      this.props.requestSave(`/case_reviews/${task.attributes.task_id}/complete`, payload, { title: successMsg }).
+      this.props.requestSave(`/case_reviews/${task.taskId}/complete`, payload, { title: successMsg }).
         then(() => {
           this.props.deleteAppeal(appealId);
           history.push('');

@@ -26,33 +26,33 @@ class CaseListTable extends React.PureComponent {
       valueFunction: (appeal) => <React.Fragment>
         <CaseDetailsLink
           appeal={appeal}
-          getLinkText={() => appeal.attributes.docket_number} />
+          getLinkText={() => appeal.docketNumber} />
       </React.Fragment>
     },
     {
       header: COPY.CASE_LIST_TABLE_APPELLANT_NAME_COLUMN_TITLE,
-      valueFunction: (appeal) => appeal.attributes.appellant_full_name || appeal.attributes.veteran_full_name
+      valueFunction: (appeal) => appeal.appellantFullName || appeal.veteranFullName
     },
     {
       header: COPY.CASE_LIST_TABLE_APPEAL_STATUS_COLUMN_TITLE,
-      valueFunction: (appeal) => appeal.attributes.status
+      valueFunction: (appeal) => appeal.status
     },
     {
       header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
       valueFunction: (appeal) => renderLegacyAppealType({
-        aod: appeal.attributes.aod,
-        type: appeal.attributes.type
+        aod: appeal.aod,
+        type: appeal.type
       })
     },
     {
       header: COPY.CASE_LIST_TABLE_DECISION_DATE_COLUMN_TITLE,
-      valueFunction: (appeal) => appeal.attributes.decision_date ?
-        <DateString date={appeal.attributes.decision_date} /> :
+      valueFunction: (appeal) => appeal.decisionDate ?
+        <DateString date={appeal.decisionDate} /> :
         ''
     },
     {
       header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
-      valueFunction: (appeal) => labelForLocation(appeal.attributes.location_code)
+      valueFunction: (appeal) => labelForLocation(appeal.locationCode)
     }
   ];
 

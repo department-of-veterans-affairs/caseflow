@@ -57,8 +57,11 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
     });
   case ACTIONS.RECEIVE_APPEAL_DETAILS:
     return update(state, {
-      appealDetails: {
+      appeals: {
         $merge: action.payload.appeals
+      },
+      appealDetails: {
+        $merge: action.payload.appealDetails
       }
     });
   case ACTIONS.RECEIVE_TASKS:

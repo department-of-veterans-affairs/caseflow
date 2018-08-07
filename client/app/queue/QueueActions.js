@@ -25,11 +25,12 @@ export const onReceiveQueue = (
 });
 
 export const onReceiveAppealDetails = (
-  { appeals }: { appeals: LegacyAppeals }
+  { appeals, appealDetails }: { appeals: BasicAppeals, appealDetails: LegacyAppeals }
 ) => ({
   type: ACTIONS.RECEIVE_APPEAL_DETAILS,
   payload: {
-    appeals
+    appeals,
+    appealDetails
   }
 });
 

@@ -51,14 +51,14 @@ class CaseDetailsView extends React.PureComponent {
       <StickyNavContentArea>
         <CaseDetailsIssueList
           title="Issues"
-          isLegacyAppeal={appeal.attributes.is_legacy_appeal}
-          issues={appeal.attributes.issues}
+          isLegacyAppeal={appeal.isLegacyAppeal}
+          issues={appeal.issues}
         />
-        <PowerOfAttorneyDetail title="Power of Attorney" poa={appeal.attributes.power_of_attorney} />
-        {appeal.attributes.hearings.length &&
+        <PowerOfAttorneyDetail title="Power of Attorney" poa={appeal.powerOfAttorney} />
+        {appeal.hearings.length &&
         <CaseHearingsDetail title="Hearings" appeal={appeal} />}
         <VeteranDetail title="About the Veteran" appeal={appeal} />
-        {!_.isNull(appeal.attributes.appellant_full_name) &&
+        {!_.isNull(appeal.appellantFullName) &&
         <AppellantDetail title="About the Appellant" appeal={appeal} />}
       </StickyNavContentArea>
     </AppSegment>;

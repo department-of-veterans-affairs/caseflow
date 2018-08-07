@@ -113,11 +113,9 @@ class SubmitDecisionView extends React.PureComponent<Props> {
     const {
       task: { taskId },
       appeal: {
-        attributes: {
-          issues,
-          veteran_full_name,
-          external_id: appealId
-        }
+        issues,
+        veteranFullName,
+        externalId: appealId
       },
       decision,
       userRole,
@@ -129,7 +127,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
     const fields = {
       type: decision.type === DECISION_TYPES.DRAFT_DECISION ?
         'decision' : 'outside medical opinion (OMO) request',
-      veteran: veteran_full_name,
+      veteran: veteranFullName,
       judge: judges[decision.opts.reviewing_judge_id].full_name
     };
     const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's

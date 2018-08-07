@@ -96,7 +96,7 @@ class AddEditIssueView extends React.Component {
     const {
       issue,
       appeal,
-      appeal: { attributes: { issues } }
+      appeal: { issues }
     } = this.props;
     const params = {
       data: {
@@ -126,7 +126,7 @@ class AddEditIssueView extends React.Component {
   };
 
   updateIssuesFromServer = (response) => {
-    const { appeal: { attributes: appeal } } = this.props;
+    const { appeal } = this.props;
     const serverIssues = response.issues;
 
     const issues = _.map(serverIssues, (issue) => {
@@ -149,7 +149,7 @@ class AddEditIssueView extends React.Component {
     const {
       issue,
       appeal,
-      appeal: { attributes: { issues } },
+      appeal: { issues },
       appealId,
       issueId
     } = this.props;

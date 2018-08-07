@@ -81,10 +81,58 @@ export const associateTasksWithAppeals =
     };
   };
 
-export const prepareAppealDetailsForStore =
+export const prepareAppealForStore =
   (appeals: Array<LegacyAppeal>):
     LegacyAppeals => {
-    return _.pickBy(_.keyBy(appeals, (appeal) => appeal.attributes.external_id), (appeal) => appeal);
+
+    const appealHash = appeals.reduce((accumulator, appeal) => {
+      if (!accumulator[appeal.attributes.external_id]) {
+        accumulator[appeal.attributes.external_id] = {
+          id: appeal.id,
+          externalId: appeal.attributes.external_id,
+          docketName: appeal.attributes.docket_name,
+          caseType: appeal.attributes.type,
+          isAdvancedOnDocket: appeal.attributes.aod,
+          issueCount: appeal.attributes.issues.length,
+          docketNumber: appeal.attributes.docket_number,
+          veteranFullName: appeal.attributes.veteran_full_name,
+          veteranFileNumber: appeal.attributes.veteran_file_number,
+          isPaperCase: appeal.attributes.paper_case
+        };
+      }
+
+      return accumulator;
+    }, {});
+
+    const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
+      if (!accumulator[appeal.attributes.external_id]) {
+        accumulator[appeal.attributes.external_id] = {
+          isLegacyAppeal: appeal.attributes.is_legacy_appeal,
+          issues: appeal.attributes.issues,
+          hearings: appeal.attributes.hearings,
+          appellantFullName: appeal.attributes.appellant_full_name,
+          appellantAddress: appeal.attributes.appellant_address,
+          appellantRelationship: appeal.attributes.appellant_relationship,
+          locationCode: appeal.attributes.location_code,
+          veteranDateOfBirth: appeal.attributes.veteran_date_of_birth,
+          veteranGender: appeal.attributes.veteran_gender,
+          externalId: appeal.attributes.external_id,
+          status: appeal.attributes.status,
+          decisionDate: appeal.attributes.decision_date,
+          certificationDate: appeal.attributes.certification_date,
+          powerOfAttorney: appeal.attributes.power_of_attorney,
+          regionalOffice: appeal.attributes.regional_office,
+          caseflowVeteranId: appeal.attributes.caseflow_veteran_id
+        };
+      }
+
+      return accumulator;
+    }, {});
+
+    return {
+      appeals: appealHash,
+      appealDetails: appealDetailsHash
+    }
   };
 
 export const renderAppealType = (appeal: BasicAppeal) => {

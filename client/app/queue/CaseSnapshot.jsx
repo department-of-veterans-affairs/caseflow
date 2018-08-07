@@ -77,7 +77,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
 
   taskAssignmentListItems = () => {
     const assignedToListItem = <React.Fragment>
-      <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.attributes.location_code}</dd>
+      <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.locationCode}</dd>
     </React.Fragment>;
 
     if (!this.props.taskAssignedToUser) {
@@ -130,15 +130,15 @@ export class CaseSnapshot extends React.PureComponent<Props> {
 
   render = () => {
     const {
-      appeal: { attributes: appeal },
+      appeal,
       userRole
     } = this.props;
     let CheckoutDropdown = <React.Fragment />;
 
     if (userRole === USER_ROLES.ATTORNEY) {
-      CheckoutDropdown = <SelectCheckoutFlowDropdown appealId={appeal.external_id} />;
+      CheckoutDropdown = <SelectCheckoutFlowDropdown appealId={appeal.externalId} />;
     } else if (userRole === USER_ROLES.JUDGE && this.props.featureToggles.judge_case_review_checkout) {
-      CheckoutDropdown = <JudgeActionsDropdown appealId={appeal.external_id} />;
+      CheckoutDropdown = <JudgeActionsDropdown appealId={appeal.externalId} />;
     }
 
     return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
@@ -151,7 +151,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
             type: appeal.type
           })}</dd>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
-          <dd>{appeal.docket_number}</dd>
+          <dd>{appeal.docketNumber}</dd>
           {this.daysSinceTaskAssignmentListItem()}
         </CaseDetailsDescriptionList>
       </div>
