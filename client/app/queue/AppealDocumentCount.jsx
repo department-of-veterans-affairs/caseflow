@@ -17,9 +17,11 @@ const documentCountStyling = css({
 
 class AppealDocumentCount extends React.PureComponent {
   componentDidMount = () => {
-    const appeal = this.props.appeal.attributes;
+    const appeal = this.props.appeal;
+    // For now while only the basic appeal info is named properly this is necessary. To be removed later.
+    const isPaperCase = appeal.isPaperCase || (appeal.attributes && appeal.attributes.paper_case);
 
-    if (appeal.paper_case) {
+    if (isPaperCase) {
       return;
     }
 
@@ -29,10 +31,10 @@ class AppealDocumentCount extends React.PureComponent {
         timeout: true
       };
 
-      ApiUtil.get(`/appeals/${appeal.vacols_id}/document_count`, requestOptions).then((response) => {
+      ApiUtil.get(`/appeals/${this.props.externalId}/document_count`, requestOptions).then((response) => {
         const resp = JSON.parse(response.text);
 
-        this.props.setAppealDocCount(appeal.vacols_id, resp.document_count);
+        this.props.setAppealDocCount(this.props.externalId, resp.document_count);
       });
     }
   }
@@ -57,9 +59,14 @@ AppealDocumentCount.propTypes = {
   loadingText: PropTypes.bool
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  docCountForAppeal: state.queue.docCountForAppeal[ownProps.appeal.attributes.vacols_id] || null
-});
+const mapStateToProps = (state, ownProps) => {
+  const externalId = ownProps.appeal.externalId || ownProps.appeal.attributes.external_id;
+
+  return {
+    externalId,
+    docCountForAppeal: state.queue.docCountForAppeal[externalId] || null
+  };
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setAppealDocCount
