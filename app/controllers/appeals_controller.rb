@@ -21,14 +21,14 @@ class AppealsController < ApplicationController
 
   def document_count
     render json: { document_count: appeal.number_of_documents }
-  rescue Caseflow::Error::ClientRequestError, Caseflow::Error::EfolderAccessForbidden => e
-    render e.serialize_response
+  rescue StandardError => e
+    return handle_non_critical_error("document_count", e)
   end
 
   def new_documents
     render json: { new_documents: appeal.new_documents_for_user(current_user) }
-  rescue Caseflow::Error::ClientRequestError, Caseflow::Error::EfolderAccessForbidden => e
-    render e.serialize_response
+  rescue StandardError => e
+    return handle_non_critical_error("new_documents", e)
   end
 
   def tasks
@@ -136,6 +136,24 @@ class AppealsController < ApplicationController
     render json: {
       tasks: json_legacy_tasks(tasks)[:data]
     }
+  end
+
+  def handle_non_critical_error(endpoint, err)
+    if !err.class.method_defined? :serialize_response
+      code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
+      err = Caseflow::Error::SerializableError.new(code: code, message: err.to_s)
+    end
+
+    DataDogService.increment_counter(
+      metric_group: "errors",
+      metric_name: "non_critical",
+      app_name: RequestStore[:application],
+      attrs: {
+        endpoint: endpoint
+      }
+    )
+
+    render err.serialize_response
   end
 
   def json_appeals(appeals)
