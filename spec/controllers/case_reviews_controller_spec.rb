@@ -153,8 +153,11 @@ RSpec.describe CaseReviewsController, type: :controller do
         before do
           User.stub = judge
           expect(QueueRepository).to receive(:sign_decision_or_create_omo!).and_return(true)
+          # Do not select the case for quaility review
+          allow_any_instance_of(JudgeCaseReview).to receive(:rand).and_return(probability + probability)
         end
 
+        let(:probability) { JudgeCaseReview::QUALITY_REVIEW_SELECTION_PROBABILITY }
         let(:vacols_case) { create(:case, :assigned, bfcurloc: judge_staff.slogid) }
 
         context "when all parameters are present to send to omo office" do
