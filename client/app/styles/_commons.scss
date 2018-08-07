@@ -1108,7 +1108,7 @@ fieldset {
   list-style-type: none;
 
   li {
-    //background: url('icons/icon-check.svg') no-repeat left top transparent;
+    background: url(#{$image-url}/icon-check.svg) no-repeat left top transparent;
     background-size: 22px 17px;
     background-position-y: 7px;
     padding-left: 38px;
