@@ -81,21 +81,21 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def load_days_for_range(start_date, end_date)
-      select_schedule_days.where("hearing_date between ? and ?", start_date, end_date).order(:hearing_date)
+      select_schedule_days.where("trunc(hearing_date) between ? and ?", start_date, end_date).order(:hearing_date)
     end
 
     def load_days_for_regional_office(regional_office, start_date, end_date)
-      select_schedule_days.where("folder_nr = ? and hearing_date between ? and ?",
+      select_schedule_days.where("folder_nr = ? and trunc(hearing_date) between ? and ?",
                                  "VIDEO #{regional_office}", start_date, end_date)
     end
 
     def create_hearing!(hearing_info)
       attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
       attrs.except!(nil)
-      # Remove time component from hearing_date if client sent one and set timezone to UTC.
+      # Store time value in UTC to VACOLS
       hear_date = attrs[:hearing_date]
-      converted_date = hear_date.is_a?(Date) ? hear_date : Date.parse(hear_date)
-      attrs[:hearing_date] = VacolsHelper.format_date_with_utc_timezone(converted_date)
+      converted_date = hear_date.is_a?(Date) ? hear_date : Time.zone.parse(hear_date).to_datetime
+      attrs[:hearing_date] = VacolsHelper.format_datetime_with_utc_timezone(converted_date)
       MetricsService.record("VACOLS: create_hearing!",
                             service: :vacols,
                             name: "create_hearing") do

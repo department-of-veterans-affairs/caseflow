@@ -30,7 +30,7 @@ export default class StuckTasks extends Component {
   getKeyForRow = (index, task) => task.id
 
   render() {
-    return <div className="cf-app-segment--alt">
+    return <div className="cf-app-segment--alt cf-app-segment">
       <h1 className="title">Oldest Unassigned Tasks with Uploaded Decisions</h1>
 
       <Table

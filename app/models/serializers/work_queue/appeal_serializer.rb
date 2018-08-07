@@ -53,7 +53,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.veteran_file_number
   end
 
-  attribute :vacols_id do
+  attribute :external_id do
     object.uuid
   end
 
