@@ -1,6 +1,6 @@
 @mixin focus {
   &:focus {
-    box-shadow: $focus-shadow;
+    box-shadow: $box-shadow;
     outline: 0;
   }
 }
