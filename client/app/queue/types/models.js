@@ -118,6 +118,8 @@ export type LegacyAppeal = {
   tasks: ?Array<Task>
 };
 
+export type LegacyAppeals = { [string]: LegacyAppeal };
+
 export type BasicAppeal = {
   id: string,
   type: string,
@@ -160,7 +162,7 @@ export type Appeal = {
   }
 };
 
-export type LegacyAppeals = { [string]: LegacyAppeal };
+export type Appeals = { [string]: Appeal };
 
 export type Attorneys = {
   data?: Array<User>,

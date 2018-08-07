@@ -10,6 +10,8 @@ import { COLORS, LOGO_COLORS } from '../constants/AppConstants';
 import CaseListTable from './CaseListTable';
 import { setFetchedAllCasesFor } from './CaseList/CaseListActions';
 import { hideVeteranCaseList } from './uiReducer/uiActions';
+import { onReceiveAppealDetails } from './QueueActions';
+import { appealsByCaseflowVeteranId } from './selectors';
 
 import COPY from '../../COPY.json';
 
@@ -33,7 +35,7 @@ class VeteranCasesView extends React.PureComponent {
   componentWillUnmount = () => this.props.hideVeteranCaseList();
 
   createLoadPromise = () => {
-    const { veteranId } = this.props;
+    const { caseflowVeteranId, veteranId } = this.props;
 
     return ApiUtil.get('/appeals', { headers: { 'veteran-id': veteranId } }).
       then((response) => {
@@ -43,7 +45,14 @@ class VeteranCasesView extends React.PureComponent {
           return Promise.reject(response);
         }
 
-        this.props.setFetchedAllCasesFor(veteranId, returnedObject.appeals);
+        const appealMap = returnedObject.appeals.reduce((acc, curr) => {
+          acc[curr.attributes.external_id] = curr;
+
+          return acc;
+        }, {});
+
+        this.props.onReceiveAppealDetails({ appeals: appealMap });
+        this.props.setFetchedAllCasesFor(caseflowVeteranId);
 
         return Promise.resolve();
       });
@@ -51,12 +60,12 @@ class VeteranCasesView extends React.PureComponent {
 
   caseListTable = () => <div {...containerStyling}>
     <h2>All Cases</h2>
-    <CaseListTable appeals={this.props.appeals[this.props.veteranId]} styling={caseListStyling} />
+    <CaseListTable appeals={this.props.appeals} styling={caseListStyling} />
   </div>;
 
   render() {
     // Do not display the loading spinner if we already have the cases.
-    if (this.props.veteranId in this.props.appeals) {
+    if (this.props.caseflowVeteranId in this.props.fetchedAllCasesFor) {
       return this.caseListTable();
     }
 
@@ -79,20 +88,25 @@ class VeteranCasesView extends React.PureComponent {
 }
 
 VeteranCasesView.propTypes = {
+  caseflowVeteranId: PropTypes.number,
   veteranId: PropTypes.string
 };
 
 VeteranCasesView.defaultProps = {
+  caseflowVeteranId: 0,
   veteranId: ''
 };
 
-const mapStateToProps = (state) => ({
-  appeals: state.caseList.casesForVeteran
+const mapStateToProps = (state, ownProps) => ({
+  appeals: appealsByCaseflowVeteranId(state, { caseflowVeteranId: ownProps.caseflowVeteranId }),
+  details: state.queue.appealDetails,
+  fetchedAllCasesFor: state.caseList.fetchedAllCasesFor
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setFetchedAllCasesFor,
-  hideVeteranCaseList
+  hideVeteranCaseList,
+  onReceiveAppealDetails,
+  setFetchedAllCasesFor
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(VeteranCasesView);

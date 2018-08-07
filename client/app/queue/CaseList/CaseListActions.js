@@ -111,8 +111,7 @@ export const fetchAppealsUsingVeteranId = (searchQuery) =>
       });
   });
 
-export const setFetchedAllCasesFor = (veteranId, cases) => ({
+export const setFetchedAllCasesFor = (caseflowVeteranId) => ({
   type: Constants.SET_FETCHED_ALL_CASES_FOR,
-  payload: { veteranId,
-    cases }
+  payload: { caseflowVeteranId }
 });

@@ -10,7 +10,7 @@ export const initialState = {
     errorType: null,
     queryResultingInError: null
   },
-  casesForVeteran: {}
+  fetchedAllCasesFor: {}
 };
 
 export const caseListReducer = (state = initialState, action = {}) => {
@@ -40,7 +40,7 @@ export const caseListReducer = (state = initialState, action = {}) => {
     });
   case Constants.SET_FETCHED_ALL_CASES_FOR:
     return update(state, {
-      casesForVeteran: { $merge: { [action.payload.veteranId]: action.payload.cases } }
+      fetchedAllCasesFor: { $merge: { [action.payload.caseflowVeteranId]: true } }
     });
   case Constants.REQUEST_APPEAL_USING_VETERAN_ID:
     return update(state, {
