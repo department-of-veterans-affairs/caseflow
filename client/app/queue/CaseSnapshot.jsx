@@ -1,22 +1,20 @@
 // @flow
 import { css } from 'glamor';
 import moment from 'moment';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 
-import { appealsByAssigneeCssIdSelector } from './selectors';
+import { tasksForAppealAssignedToAttorneySelector, tasksForAppealAssignedToUserSelector } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import JudgeActionsDropdown from './components/JudgeActionsDropdown';
 import COPY from '../../COPY.json';
 import { USER_ROLES } from './constants';
 import { COLORS } from '../constants/AppConstants';
-import { renderAppealType } from './utils';
+import { renderLegacyAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
 import type { LegacyAppeal, Task } from './types/models';
-import type { State, AttorneysOfJudge } from './types/state';
+import type { State } from './types/state';
 
 const snapshotParentContainerStyling = css({
   backgroundColor: COLORS.GREY_BACKGROUND,
@@ -50,23 +48,23 @@ const snapshotChildResponsiveWrapFixStyling = css({
 });
 
 type Params = {|
-  appeal: LegacyAppeal,
-  task: Task,
+  appealId: string,
   hideDropdown?: boolean
 |};
 
 type Props = Params & {|
   featureToggles: Object,
-  appealsAssignedToCurrentUser: Array<LegacyAppeal>,
   userRole: string,
-  attorneysOfJudge: AttorneysOfJudge
+  appeal: LegacyAppeal,
+  taskAssignedToUser: Task,
+  taskAssignedToAttorney: Task
 |};
 
 export class CaseSnapshot extends React.PureComponent<Props> {
   daysSinceTaskAssignmentListItem = () => {
-    if (this.props.task) {
+    if (this.props.taskAssignedToUser) {
       const today = moment();
-      const dateAssigned = moment(this.props.task.attributes.assigned_on);
+      const dateAssigned = moment(this.props.taskAssignedToUser.assignedOn);
       const dayCountSinceAssignment = today.diff(dateAssigned, 'days');
 
       return <React.Fragment>
@@ -82,35 +80,37 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.attributes.location_code}</dd>
     </React.Fragment>;
 
-    if (!this.props.task) {
+    if (!this.props.taskAssignedToUser) {
       return assignedToListItem;
     }
 
-    const task = this.props.task.attributes;
+    const taskAssignedToUser = this.props.taskAssignedToUser;
 
     if (this.props.userRole === USER_ROLES.JUDGE) {
-      if (!task.assigned_by_first_name || !task.assigned_by_last_name || !task.document_id) {
+      if (!taskAssignedToUser.assignedByFirstName ||
+          !taskAssignedToUser.assignedByLastName ||
+          !taskAssignedToUser.documentId) {
         return assignedToListItem;
       }
 
-      const firstInitial = String.fromCodePoint(task.assigned_by_first_name.codePointAt(0));
-      const nameAbbrev = `${firstInitial}. ${task.assigned_by_last_name}`;
+      const firstInitial = String.fromCodePoint(taskAssignedToUser.assignedByFirstName.codePointAt(0));
+      const nameAbbrev = `${firstInitial}. ${taskAssignedToUser.assignedByLastName}`;
 
       return <React.Fragment>
         <dt>{COPY.CASE_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{nameAbbrev}</dd>
-        <dt>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</dt><dd>{task.document_id}</dd>
+        <dt>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</dt><dd>{taskAssignedToUser.documentId}</dd>
       </React.Fragment>;
     }
 
     return <React.Fragment>
-      { task.added_by_name && <React.Fragment>
+      { taskAssignedToUser.addedByName && <React.Fragment>
         <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNOR_LABEL}</dt>
-        <dd>{task.added_by_name}</dd>
+        <dd>{taskAssignedToUser.addedByName}</dd>
       </React.Fragment> }
       <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
-      <dd><DateString date={task.assigned_on} dateFormat="MM/DD/YY" /></dd>
+      <dd><DateString date={taskAssignedToUser.assignedOn} dateFormat="MM/DD/YY" /></dd>
       <dt>{COPY.CASE_SNAPSHOT_TASK_DUE_DATE_LABEL}</dt>
-      <dd><DateString date={task.due_on} dateFormat="MM/DD/YY" /></dd>
+      <dd><DateString date={taskAssignedToUser.dueOn} dateFormat="MM/DD/YY" /></dd>
     </React.Fragment>;
   };
 
@@ -118,16 +118,14 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     if (this.props.hideDropdown) {
       return false;
     }
-    if (this.props.appealsAssignedToCurrentUser.
-      some((appealIterator) => appealIterator.attributes.vacols_id === this.props.appeal.attributes.vacols_id)) {
+    if (this.props.taskAssignedToUser) {
       return true;
     }
-    if (!this.props.task) {
-      return false;
+    if (this.props.taskAssignedToAttorney) {
+      return true;
     }
 
-    return _.some(
-      this.props.attorneysOfJudge, (attorney) => attorney.id === this.props.task.attributes.assigned_to_pg_id);
+    return false;
   }
 
   render = () => {
@@ -138,9 +136,9 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     let CheckoutDropdown = <React.Fragment />;
 
     if (userRole === USER_ROLES.ATTORNEY) {
-      CheckoutDropdown = <SelectCheckoutFlowDropdown appealId={appeal.vacols_id} />;
+      CheckoutDropdown = <SelectCheckoutFlowDropdown appealId={appeal.external_id} />;
     } else if (userRole === USER_ROLES.JUDGE && this.props.featureToggles.judge_case_review_checkout) {
-      CheckoutDropdown = <JudgeActionsDropdown appealId={appeal.vacols_id} />;
+      CheckoutDropdown = <JudgeActionsDropdown appealId={appeal.external_id} />;
     }
 
     return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
@@ -148,7 +146,10 @@ export class CaseSnapshot extends React.PureComponent<Props> {
         <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TITLE}</h3>
         <CaseDetailsDescriptionList>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</dt>
-          <dd>{renderAppealType(this.props.appeal.attributes)}</dd>
+          <dd>{renderLegacyAppealType({
+            aod: appeal.aod,
+            type: appeal.type
+          })}</dd>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
           <dd>{appeal.docket_number}</dd>
           {this.daysSinceTaskAssignmentListItem()}
@@ -170,23 +171,15 @@ export class CaseSnapshot extends React.PureComponent<Props> {
   };
 }
 
-CaseSnapshot.propTypes = {
-  appeal: PropTypes.object.isRequired,
-  featureToggles: PropTypes.object,
-  appealsAssignedToCurrentUser: PropTypes.array,
-  task: PropTypes.object,
-  userRole: PropTypes.string,
-  hideDropdown: PropTypes.bool
-};
-
-const mapStateToProps = (state: State) => {
+const mapStateToProps = (state: State, ownProps: Params) => {
   const { featureToggles, userRole } = state.ui;
 
   return {
+    appeal: state.queue.appealDetails[ownProps.appealId],
     featureToggles,
     userRole,
-    appealsAssignedToCurrentUser: appealsByAssigneeCssIdSelector(state),
-    attorneysOfJudge: state.queue.attorneysOfJudge
+    taskAssignedToUser: tasksForAppealAssignedToUserSelector(state, { appealId: ownProps.appealId })[0],
+    taskAssignedToAttorney: tasksForAppealAssignedToAttorneySelector(state, { appealId: ownProps.appealId })[0]
   };
 };
 
