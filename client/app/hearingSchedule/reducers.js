@@ -33,6 +33,12 @@ const reducers = (state = initialState, action = {}) => {
     return update(state, {
       $unset: ['schedulePeriodError']
     });
+  case ACTIONS.SET_VACOLS_UPLOAD:
+    return update(state, {
+      vacolsUpload: {
+        $set: true
+      }
+    });
   case ACTIONS.UPDATE_UPLOAD_FORM_ERRORS:
     return update(state, {
       uploadFormErrors: {
@@ -141,7 +147,8 @@ const reducers = (state = initialState, action = {}) => {
         'roCoFileUpload',
         'judgeStartDate',
         'judgeEndDate',
-        'judgeFileUpload'
+        'judgeFileUpload',
+        'vacolsUpload'
       ]
     });
   case ACTIONS.UNSET_SUCCESS_MESSAGE:
