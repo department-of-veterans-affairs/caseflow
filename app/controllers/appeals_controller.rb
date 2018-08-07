@@ -37,10 +37,15 @@ class AppealsController < ApplicationController
     role = params[:role].downcase
     return invalid_role_error unless ROLES.include?(role)
 
-    if role.eql? "colocated"
-      json_colocated_tasks_by_appeal_id(appeal.try(:id))
-    else
+    if %w[attorney judge].include?(role)
       json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], role)
+    else
+      appeal_db_id = if Appeal::UUID_REGEX.match(params[:appeal_id])
+                       Appeal.all.where(uuid: params[:appeal_id]).pluck(:id).first
+                     else
+                       LegacyAppeal.all.where(vacols_id: params[:appeal_id]).pluck(:id).first
+                     end
+      json_tasks_by_appeal_id(appeal_db_id)
     end
   end
 
@@ -113,8 +118,12 @@ class AppealsController < ApplicationController
     }, status: 400
   end
 
-  def json_colocated_tasks_by_appeal_id(appeal_id)
-    tasks = ColocatedQueue.new.tasks_by_appeal_id(appeal_id)
+  def queue_class
+    TasksController::QUEUES[params[:role].downcase.try(:to_sym)]
+  end
+
+  def json_tasks_by_appeal_id(appeal_db_id)
+    tasks = queue_class.new.tasks_by_appeal_id(appeal_db_id)
 
     render json: {
       tasks: json_tasks(tasks)[:data]

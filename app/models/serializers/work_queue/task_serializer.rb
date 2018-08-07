@@ -11,11 +11,6 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :placed_on_hold_at
   attribute :instructions
   attribute :appeal_type
-  attribute :previous_task do
-    {
-      assigned_on: object.assigned_at
-    }
-  end
 
   attribute :docket_name do
     object.appeal.docket_name
