@@ -3,6 +3,7 @@ class AttorneyCaseReview < ApplicationRecord
 
   belongs_to :reviewing_judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
+  belongs_to :task
 
   validates :attorney, :document_type, :task_id, :reviewing_judge, :document_id, :work_product, presence: true
   validates :overtime, inclusion: { in: [true, false] }
@@ -20,6 +21,13 @@ class AttorneyCaseReview < ApplicationRecord
                                 name: document_type) do
       reassign_case_to_judge_in_vacols!
       update_issue_dispositions_in_vacols! if draft_decision?
+    end
+  end
+
+  def update_issue_dispositions
+    issues.each do |issue|
+      decision_issue = appeal.decision_issues.find_by(id: issue["id"])
+      decision_issue.update(disposition: issue["disposition"]) if decision_issue
     end
   end
 
@@ -54,12 +62,7 @@ class AttorneyCaseReview < ApplicationRecord
       ActiveRecord::Base.multi_transaction do
         record = create(params)
         return record unless record.valid?
-
-        if record.legacy?
-          record.update_in_vacols!
-          return record
-        end
-
+        record.legacy? ? record.update_in_vacols! : record.update_issue_dispositions
         record
       end
     end

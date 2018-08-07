@@ -2,6 +2,7 @@ class Appeal < AmaReview
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
+  has_many :decision_issues, through: :request_issues
 
   validates :receipt_date, :docket_type, presence: { message: "blank" }, on: :intake_review
 
