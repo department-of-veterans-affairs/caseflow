@@ -24,12 +24,10 @@ class QueueRepository
     end
 
     # rubocop:disable Metrics/MethodLength
-    def appeals_from_tasks(tasks)
-      vacols_ids = tasks.map(&:vacols_id)
-
+    def appeals_by_vacols_ids(vacols_ids)
       appeals = MetricsService.record("VACOLS: fetch appeals and associated info for tasks",
                                       service: :vacols,
-                                      name: "appeals_from_tasks") do
+                                      name: "appeals_by_vacols_ids") do
 
         # Run queries to fetch different types of data so the # of queries doesn't increase with
         # the # of appeals. Combine that data manually.
