@@ -31,13 +31,7 @@ const caseListStyling = css({
 class VeteranCasesView extends React.PureComponent {
   componentWillUnmount = () => this.props.hideVeteranCaseList();
 
-  createLoadPromise = () => {
-    if (this.props.requestInProgress) {
-      return Promise.resolve();
-    }
-
-    return this.props.fetchCasesForVeteran(this.props.veteranId);
-  };
+  createLoadPromise = () => this.props.fetchCasesForVeteran(this.props.veteranId);
 
   caseListTable = () => <div {...containerStyling}>
     <h2>All Cases</h2>
@@ -77,8 +71,7 @@ VeteranCasesView.defaultProps = {
 };
 
 const mapStateToProps = (state) => ({
-  appeals: state.caseList.casesForVeteran,
-  requestInProgress: state.caseList.isRequestingCasesForVeteran
+  appeals: state.caseList.casesForVeteran
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
