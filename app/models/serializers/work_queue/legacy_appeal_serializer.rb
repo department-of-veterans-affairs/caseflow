@@ -50,7 +50,9 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :vbms_id do
     object.sanitized_vbms_id
   end
-  attribute :vacols_id
+  attribute :external_id do
+    object.vacols_id
+  end
   attribute :type
   attribute :aod
   attribute :docket_number

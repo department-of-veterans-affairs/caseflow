@@ -19,6 +19,7 @@ import Alert from '../components/Alert';
 import { deleteAppeal } from './QueueActions';
 import { requestSave } from './uiReducer/uiActions';
 import { buildCaseReviewPayload } from './utils';
+import { tasksForAppealAssignedToUserSelector } from './selectors';
 
 import COPY from '../../COPY.json';
 import JUDGE_CASE_REVIEW_OPTIONS from '../../constants/JUDGE_CASE_REVIEW_OPTIONS.json';
@@ -121,7 +122,7 @@ class EvaluateDecisionView extends React.PureComponent {
 
   goToNextStep = () => {
     const {
-      task: { attributes: task },
+      task,
       appeal: { attributes: appeal },
       decision,
       userRole,
@@ -133,7 +134,7 @@ class EvaluateDecisionView extends React.PureComponent {
     });
     const successMsg = sprintf(COPY.JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name);
 
-    this.props.requestSave(`/case_reviews/${task.task_id}/complete`, payload, { title: successMsg }).
+    this.props.requestSave(`/case_reviews/${task.taskId}/complete`, payload, { title: successMsg }).
       then(() => this.props.deleteAppeal(appealId));
   }
 
@@ -161,13 +162,13 @@ class EvaluateDecisionView extends React.PureComponent {
   render = () => {
     const {
       appeal: { attributes: appeal },
-      task: { attributes: task },
+      task,
       appealId,
       highlight,
       error
     } = this.props;
-    const dateAssigned = moment(task.assigned_on);
-    const decisionSubmitted = moment(task.previous_task.assigned_on);
+    const dateAssigned = moment(task.assignedOn);
+    const decisionSubmitted = moment(task.previousTaskAssignedOn);
     const daysWorked = moment().startOf('day').
       diff(dateAssigned, 'days');
 
@@ -185,7 +186,7 @@ class EvaluateDecisionView extends React.PureComponent {
       {error && <Alert title={error.title} type="error" styling={css(marginTop(0), marginBottom(1))}>
         {error.detail}
       </Alert>}
-      <CaseSnapshot appeal={this.props.appeal} task={this.props.task} hideDropdown />
+      <CaseSnapshot appealId={appealId} hideDropdown />
       <hr {...hrStyling} />
 
       <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
@@ -282,10 +283,10 @@ EvaluateDecisionView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.appeals[ownProps.appealId],
-  task: state.queue.tasks[ownProps.appealId],
+  appeal: state.queue.appealDetails[ownProps.appealId],
   highlight: state.ui.highlightFormItems,
   taskOptions: state.queue.stagedChanges.taskDecision.opts,
+  task: tasksForAppealAssignedToUserSelector(state, ownProps)[0],
   decision: state.queue.stagedChanges.taskDecision,
   userRole: state.ui.userRole,
   error: state.ui.messages.error
