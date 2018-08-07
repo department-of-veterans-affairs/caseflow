@@ -45,7 +45,8 @@ class LegacyTask
       assigned_to: user,
       task_id: record.created_at ? record.vacols_id + "-" + record.created_at.strftime("%Y-%m-%d") : nil,
       document_id: record.document_id,
-      assigned_by: record.assigned_by
+      assigned_by: record.assigned_by,
+      appeal: appeal
     )
   end
 
