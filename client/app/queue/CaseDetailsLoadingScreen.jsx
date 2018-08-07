@@ -10,7 +10,7 @@ import ApiUtil from '../util/ApiUtil';
 import { prepareAppealDetailsForStore, prepareTasksForStore } from './utils';
 
 import { onReceiveAppealDetails, onReceiveTasks, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
-import type { LegacyAppeal, LegacyAppeals, Tasks } from './types/models';
+import type { LegacyAppeal, LegacyAppeals, LegacyTasks } from './types/models';
 import type { State, UsersById } from './types/state';
 import { USER_ROLES } from './constants';
 
@@ -25,7 +25,7 @@ type Params = {|
 
 type Props = Params & {|
   // From state
-  tasks: Tasks,
+  tasks: LegacyTasks,
   appealDetails: LegacyAppeals,
   loadedUserId: number,
   activeAppeal: LegacyAppeal,

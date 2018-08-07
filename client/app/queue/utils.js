@@ -8,8 +8,8 @@ import {
   USER_ROLES
 } from './constants';
 import type {
-  Task,
-  Tasks,
+  LegacyTask,
+  LegacyTasks,
   LegacyAppeal,
   LegacyAppeals,
   BasicAppeal,
@@ -24,7 +24,7 @@ import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
 export const prepareTasksForStore =
   (tasks: Array<Object>):
-    Tasks => {
+    LegacyTasks => {
     const mappedLegacyTasks = tasks.map((task) => {
       return {
         appealId: task.attributes.appeal_id,
@@ -50,7 +50,7 @@ export const prepareTasksForStore =
 
 export const associateTasksWithAppeals =
   (serverData: { tasks: { data: Array<Object> } }):
-    { appeals: BasicAppeals, tasks: Tasks } => {
+    { appeals: BasicAppeals, tasks: LegacyTasks } => {
     const {
       tasks: { data: tasks }
     } = serverData;
@@ -220,5 +220,5 @@ export const validateWorkProductTypeAndId = (decision: {opts: Object}) => {
   return oldFormat.test(documentId) || newFormat.test(documentId);
 };
 
-export const getTaskDaysWaiting = (task: Task) => moment().startOf('day').
+export const getTaskDaysWaiting = (task: LegacyTask) => moment().startOf('day').
   diff(moment(task.assignedOn), 'days');
