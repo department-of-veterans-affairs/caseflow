@@ -14,7 +14,7 @@
 # get the `create(attrs)` method for free by extending Generators::Base
 module Generators::Base
   def generate_external_id(seed = nil)
-    return seed % 1_000_000 if seed
+    return (seed % 1_000_000).to_s if seed
     RANDOM.rand(1_000_000).to_s
   end
 
@@ -25,7 +25,7 @@ module Generators::Base
   end
 
   def generate_last_name(seed = nil)
-    lnames = %w[Washington King Jefferson Anthony Madison Jackson VanBuren Merica].sample
+    lnames = %w[Washington King Jefferson Anthony Madison Jackson VanBuren Merica]
     return lnames[seed % lnames.length] if seed
     lnames[RANDOM.rand(lnames.length)]
   end
