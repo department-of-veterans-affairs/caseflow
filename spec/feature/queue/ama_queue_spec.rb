@@ -15,7 +15,7 @@ RSpec.feature "AmaQueue" do
 
   let(:attorney_first_name) { "Robby" }
   let(:attorney_last_name) { "McDobby" }
-  let!(:attorney_user) { FactoryBot.create(:user, full_name: "#{attorney_first_name} #{attorney_last_name}") }
+  let!(:attorney_user) { FactoryBot.create(:user, roles: ["Reader"], full_name: "#{attorney_first_name} #{attorney_last_name}") }
   let!(:vacols_atty) do
     FactoryBot.create(
       :staff,
@@ -89,11 +89,12 @@ RSpec.feature "AmaQueue" do
       expect(page).to have_content("5 docs")
 
       click_on "View Veteran's documents"
+      expect(page).to have_content("Claims Folder")
 
       visit "/queue/beaam"
       click_on appeals.first.veteran.first_name
 
       expect(page).not_to have_selector("text", id: "NEW")
     end
-  end
+  end    
 end
