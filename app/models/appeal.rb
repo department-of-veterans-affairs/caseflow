@@ -56,7 +56,7 @@ class Appeal < AmaReview
   end
 
   def docket_number
-    return "Missing Docket Number" unless receipt_date 
+    return "Missing Docket Number" unless receipt_date
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 

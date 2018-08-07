@@ -19,10 +19,10 @@ describe Appeal do
     end
   end
 
-  context "#docket_number" do
+  context "#docket_number", focus: true do
     context "when receipt_date is defined" do
       let(:appeal) do
-        create(:appeal, receipt_date: Time.new("2018", "04", "05"))
+        create(:appeal, receipt_date: Time.new("2018", "04", "05").utc)
       end
 
       it "returns a docket number if receipt_date is defined" do
