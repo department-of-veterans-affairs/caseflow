@@ -61,8 +61,9 @@ class AttorneyCaseReview < ApplicationRecord
     def complete(params)
       ActiveRecord::Base.multi_transaction do
         record = create(params)
-        return record unless record.valid?
-        record.legacy? ? record.update_in_vacols! : record.update_issue_dispositions
+        if record.valid?
+          record.legacy? ? record.update_in_vacols! : record.update_issue_dispositions
+        end
         record
       end
     end
