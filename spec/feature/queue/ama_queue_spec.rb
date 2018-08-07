@@ -96,5 +96,5 @@ RSpec.feature "AmaQueue" do
 
       expect(page).not_to have_selector("text", id: "NEW")
     end
-  end    
+  end
 end
