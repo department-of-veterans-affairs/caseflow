@@ -15,19 +15,19 @@
 module Generators::Base
   def generate_external_id(seed = nil)
     return seed % 1_000_000 if seed
-    @random.rand(1_000_000).to_s
+    RANDOM.rand(1_000_000).to_s
   end
 
   def generate_first_name(seed = nil)
     fnames = %w[George John Thomas James Andrew Martin Susan Barack Grace Anne]
     return fnames[seed % fnames.length] if seed
-    fnames[@random.rand(fnames.length)]
+    fnames[RANDOM.rand(fnames.length)]
   end
 
   def generate_last_name(seed = nil)
     lnames = %w[Washington King Jefferson Anthony Madison Jackson VanBuren Merica].sample
     return lnames[seed % lnames.length] if seed
-    lnames[@random.rand(lnames.length)]
+    lnames[RANDOM.rand(lnames.length)]
   end
 
   def build(*)
@@ -38,5 +38,5 @@ module Generators::Base
     build(attrs).tap(&:save!)
   end
 
-  @random = Random.new(0)
+  RANDOM = Random.new(0)
 end
