@@ -113,7 +113,8 @@ class AppealsController < ApplicationController
 
   def handle_non_critical_error(endpoint, err)
     if !err.class.method_defined? :serialize_response
-      err = Caseflow::Error::SerializableError.new(code: 500, message: err.to_s)
+      code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
+      err = Caseflow::Error::SerializableError.new(code: code, message: err.to_s)
     end
 
     DataDogService.increment_counter(
