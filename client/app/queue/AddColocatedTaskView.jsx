@@ -64,7 +64,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
         tasks: [{
           ...this.state,
           type: 'ColocatedTask',
-          external_id: this.props.appeal.attributes.vacols_id
+          external_id: this.props.appeal.attributes.external_id
         }]
       }
     };
@@ -115,7 +115,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
 const mapStateToProps = (state, ownProps) => ({
   highlightFormItems: state.ui.highlightFormItems,
   error: state.ui.messages.error,
-  appeal: state.queue.appeals[ownProps.appealId]
+  appeal: state.queue.appealDetails[ownProps.appealId]
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
