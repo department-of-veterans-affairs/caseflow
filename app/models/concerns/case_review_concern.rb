@@ -28,7 +28,7 @@ module CaseReviewConcern
   end
 
   def legacy?
-    task_id =~ /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i ? true : false
+    (task_id =~ /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i) ? true : false
   end
 
   def vacols_id

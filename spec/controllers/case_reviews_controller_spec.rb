@@ -10,7 +10,7 @@ RSpec.describe CaseReviewsController, type: :controller do
   end
 
   context "Ama appeal" do
-     describe "POST case_reviews/:task_id/complete" do
+    describe "POST case_reviews/:task_id/complete" do
       let(:judge) { create(:user, station_id: User::BOARD_STATION_ID) }
       let(:attorney) { create(:user, station_id: User::BOARD_STATION_ID) }
 
@@ -21,7 +21,6 @@ RSpec.describe CaseReviewsController, type: :controller do
       let(:request_issue2) { create(:request_issue, review_request: task.appeal) }
       let(:decision_issue1) { create(:decision_issue, request_issue: request_issue1) }
       let(:decision_issue2) { create(:decision_issue, request_issue: request_issue2) }
-
 
       context "Attorney Case Review" do
         before do

@@ -17,8 +17,8 @@ class AttorneyCaseReview < ApplicationRecord
 
   def update_in_vacols!
     MetricsService.record("VACOLS: reassign_case_to_judge #{task_id}",
-                                service: :vacols,
-                                name: document_type) do
+                          service: :vacols,
+                          name: document_type) do
       reassign_case_to_judge_in_vacols!
       update_issue_dispositions_in_vacols! if draft_decision?
     end

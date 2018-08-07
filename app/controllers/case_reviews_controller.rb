@@ -17,11 +17,11 @@ class CaseReviewsController < ApplicationController
     return invalid_record_error(record) unless record.valid?
 
     response = { task: record }
-    if record.legacy?
-      response[:issues] = record.appeal.issues
-    else
-      response[:issues] = record.appeal.decision_issues
-    end
+    response[:issues] = if record.legacy?
+                          record.appeal.issues
+                        else
+                          record.appeal.decision_issues
+                        end
     render json: response
   end
 
