@@ -36,10 +36,12 @@ class AppealsController < ApplicationController
 
     role = params[:role].downcase
     return invalid_role_error unless ROLES.include?(role)
-    tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(params[:appeal_id], role)
-    render json: {
-      tasks: json_tasks(tasks)[:data]
-    }
+
+    if role.eql? "colocated"
+      json_colocated_tasks_by_appeal_id(appeal.try(:id))
+    else
+      json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], role)
+    end
   end
 
   def show
@@ -111,16 +113,39 @@ class AppealsController < ApplicationController
     }, status: 400
   end
 
+  def json_colocated_tasks_by_appeal_id(appeal_id)
+    tasks = ColocatedQueue.new.tasks_by_appeal_id(appeal_id)
+
+    render json: {
+      tasks: json_tasks(tasks)[:data]
+    }
+  end
+
+  def json_tasks_by_legacy_appeal_id_and_role(appeal_id, role)
+    tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal_id, role)
+
+    render json: {
+      tasks: json_legacy_tasks(tasks)[:data]
+    }
+  end
+
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
       appeals
     ).as_json
   end
 
-  def json_tasks(tasks)
+  def json_legacy_tasks(tasks)
     ActiveModelSerializers::SerializableResource.new(
       tasks,
       each_serializer: ::WorkQueue::LegacyTaskSerializer
+    ).as_json
+  end
+
+  def json_tasks(tasks)
+    ActiveModelSerializers::SerializableResource.new(
+      tasks,
+      each_serializer: ::WorkQueue::TaskSerializer
     ).as_json
   end
 end
