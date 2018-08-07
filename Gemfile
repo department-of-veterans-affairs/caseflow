@@ -111,7 +111,6 @@ group :stubbed, :test, :development, :demo do
   # Linters
   gem "jshint", platforms: :ruby
   gem "rubocop", "~> 0.52.1", require: false
-  gem "scss_lint", require: false
 
   # Security scanners
   gem "brakeman"

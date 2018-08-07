@@ -4,9 +4,6 @@ require "rainbow"
 desc "shortcut to run all linting tools, at the same time."
 task(:lint).clear
 task :lint do
-  puts "running scss-lint..."
-  scss_result = ShellCommand.run("scss-lint --color")
-
   opts = ENV["CI"] ? "" : "--auto-correct"
   puts "running rubocop..."
   rubocop_result = ShellCommand.run("rubocop #{opts} --color")
@@ -19,7 +16,7 @@ task :lint do
   flow_result = ShellCommand.run("cd ./client && yarn run flow check")
 
   puts "\n"
-  if scss_result && rubocop_result && eslint_result && flow_result
+  if rubocop_result && eslint_result && flow_result
     puts Rainbow("Passed. Everything looks stylish! " \
       "But there may have been auto-corrections that you now need to check in.").green
   else
