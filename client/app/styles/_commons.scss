@@ -253,7 +253,7 @@ dd {
 }
 
 .cf-icon-success--bg {
-//  background: image-url('icons/icon-check.svg') bottom no-repeat;
+  background: url(#{$image-url}/icon-check.svg) bottom no-repeat;
   background-size: auto 2rem;
   display: inline-block;
   height: 3rem;
