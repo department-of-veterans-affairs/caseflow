@@ -47,13 +47,13 @@ RSpec.describe TasksController, type: :controller do
         expect(response_body.first["attributes"]["status"]).to eq "on_hold"
         expect(response_body.first["attributes"]["assigned_by"]["id"]).to eq user.id
         expect(response_body.first["attributes"]["placed_on_hold_at"]).to_not be nil
-        expect(response_body.first["attributes"]["veteran_name"]).to eq task1.appeal.veteran_name
+        expect(response_body.first["attributes"]["veteran_name"]).to eq task1.appeal.veteran_full_name
         expect(response_body.first["attributes"]["veteran_file_number"]).to eq task1.appeal.veteran_file_number
 
         expect(response_body.second["attributes"]["status"]).to eq "on_hold"
         expect(response_body.second["attributes"]["assigned_by"]["id"]).to eq user.id
         expect(response_body.second["attributes"]["placed_on_hold_at"]).to_not be nil
-        expect(response_body.second["attributes"]["veteran_name"]).to eq task2.appeal.veteran_name
+        expect(response_body.second["attributes"]["veteran_name"]).to eq task2.appeal.veteran_full_name
         expect(response_body.second["attributes"]["veteran_file_number"]).to eq task2.appeal.veteran_file_number
       end
     end
