@@ -111,25 +111,8 @@ export const fetchAppealsUsingVeteranId = (searchQuery) =>
       });
   });
 
-export const setCasesForVeteran = (veteranId, cases) => ({
-  type: Constants.SET_CASES_FOR_VETERAN,
+export const setFetchedAllCasesFor = (veteranId, cases) => ({
+  type: Constants.SET_FETCHED_ALL_CASES_FOR,
   payload: { veteranId,
     cases }
-});
-
-export const fetchCasesForVeteran = (veteranId) => (dispatch) => new Promise((resolve, reject) => {
-  ApiUtil.get('/appeals', { headers: { 'veteran-id': veteranId } }).
-    then((response) => {
-      const returnedObject = JSON.parse(response.text);
-
-      if (!returnedObject.appeals.length) {
-        return reject(response);
-      }
-
-      dispatch(setCasesForVeteran(veteranId, returnedObject.appeals));
-
-      return resolve();
-    }, (resp) => {
-      return reject(resp);
-    });
 });

@@ -4,10 +4,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { COLORS, LOGO_COLORS } from '../constants/AppConstants';
 import CaseListTable from './CaseListTable';
-import { fetchCasesForVeteran } from './CaseList/CaseListActions';
+import { setFetchedAllCasesFor } from './CaseList/CaseListActions';
 import { hideVeteranCaseList } from './uiReducer/uiActions';
 
 import COPY from '../../COPY.json';
@@ -31,7 +32,22 @@ const caseListStyling = css({
 class VeteranCasesView extends React.PureComponent {
   componentWillUnmount = () => this.props.hideVeteranCaseList();
 
-  createLoadPromise = () => this.props.fetchCasesForVeteran(this.props.veteranId);
+  createLoadPromise = () => {
+    const { veteranId } = this.props;
+
+    return ApiUtil.get('/appeals', { headers: { 'veteran-id': veteranId } }).
+      then((response) => {
+        const returnedObject = JSON.parse(response.text);
+
+        if (!returnedObject.appeals.length) {
+          return Promise.reject(response);
+        }
+
+        this.props.setFetchedAllCasesFor(veteranId, returnedObject.appeals);
+
+        return Promise.resolve();
+      });
+  }
 
   caseListTable = () => <div {...containerStyling}>
     <h2>All Cases</h2>
@@ -75,7 +91,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  fetchCasesForVeteran,
+  setFetchedAllCasesFor,
   hideVeteranCaseList
 }, dispatch);
 

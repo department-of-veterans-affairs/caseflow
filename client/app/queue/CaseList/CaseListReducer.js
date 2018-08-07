@@ -38,7 +38,7 @@ export const caseListReducer = (state = initialState, action = {}) => {
       isRequestingAppealsUsingVeteranId: { $set: initialState.isRequestingAppealsUsingVeteranId },
       search: { $set: initialState.search }
     });
-  case Constants.SET_CASES_FOR_VETERAN:
+  case Constants.SET_FETCHED_ALL_CASES_FOR:
     return update(state, {
       casesForVeteran: { $merge: { [action.payload.veteranId]: action.payload.cases } }
     });
