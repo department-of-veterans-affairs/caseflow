@@ -36,6 +36,10 @@ export const onReceiveHearingSchedule = (hearingSchedule) => ({
   }
 });
 
+export const setVacolsUpload = () => ({
+  type: ACTIONS.SET_VACOLS_UPLOAD
+});
+
 export const onRoCoStartDateChange = (startDate) => ({
   type: ACTIONS.RO_CO_START_DATE_CHANGE,
   payload: {
