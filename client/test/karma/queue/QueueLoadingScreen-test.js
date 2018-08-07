@@ -45,7 +45,7 @@ describe('QueueLoadingScreen', () => {
     const { tasks } = associateTasksWithAppeals(serverData);
 
     expect(tasks).to.deep.equal({
-      '3625593-2018-07-11': {
+      '3625593': {
         appealId: 3,
         externalAppealId: '3625593',
         assignedOn: '2018-08-02T17:37:03.000Z',
