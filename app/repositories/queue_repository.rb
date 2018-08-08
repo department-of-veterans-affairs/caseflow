@@ -179,7 +179,7 @@ class QueueRepository
       update_decass_record(decass_record, decass_attrs)
       # When the DAS final review is done by the VLJ and the case is charged to 4E the VLJ,
       # Attorney and Team get updated in the BRIEFF table
-      decass_record.case.update(
+      decass_record.reload.case.update(
         bfmemid: decass_record.dememid,
         bfattid: decass_record.deatty,
         bfboard: decass_record.deteam
