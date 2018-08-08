@@ -7,7 +7,7 @@ import AmaTaskTable from './components/AmaTaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import {
-  amaTasksNewAssignedTo
+  amaTasksNewByAssigneeCssIdSelector
 } from './selectors';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import TabWindow from '../components/TabWindow';
@@ -15,7 +15,6 @@ import type { AmaTask } from './types/models';
 import type { State } from './types/state';
 
 type Params = {|
-  userId: number
 |};
 
 type Props = Params & {|
@@ -24,7 +23,7 @@ type Props = Params & {|
 |};
 
 const NewTasksTab = connect(
-  (state: State, ownProps) => ({ tasks: amaTasksNewAssignedTo(state, { userId: ownProps.userId }) }))(
+  (state: State) => ({ tasks: amaTasksNewByAssigneeCssIdSelector(state) }))(
   (props: { tasks: Array<AmaTask> }) => {
     return <div>
       <p>These are new administrative actions that have been assigned to you.</p>
@@ -38,7 +37,7 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
   };
 
   pageNew = () => {
-    return <NewTasksTab userId={this.props.userId} />;
+    return <NewTasksTab />;
   }
 
   render = () => {
