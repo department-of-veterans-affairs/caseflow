@@ -24,10 +24,11 @@ class CertificationHelp extends React.Component {
         <li><a href="#how-to-access-hearing-prep">3. How do I get access to Hearing Prep?</a></li>
         <li><a href="#launch-hearing-prep">4. How do I launch Hearing Prep?</a></li>
         <li><a href="#view-docket">5. How do I view my hearing docket for a specific day?</a></li>
-        <li><a href="#how-to-access-hearing-worksheet">6. How do I access the Hearing Worksheet?</a></li>
-        <li><a href="#notes-on-daily-docket">7. Where do the Notes on the Daily Docket come from?</a></li>
-        <li><a href="#transcript-requested-box">8. What is the Transcript Requested box used for?</a><a></a></li><a>
-        </a><li><a></a><a href="#return-to-upcoming">9. How do I return to the Upcoming Hearing Days page?</a></li>
+        <li><a href="#information-included-on-hearing-worksheet">6. What information is included on the Hearing Worksheet?</a></li> 
+        <li><a href="#how-to-access-hearing-worksheet">7. How do I access the Hearing Worksheet?</a></li>
+        <li><a href="#notes-on-daily-docket">8. Where do the Notes on the Daily Docket come from?</a></li>
+        <li><a href="#transcript-requested-box">9. What is the Transcript Requested box used for?</a><a></a></li><a>
+        </a><li><a></a><a href="#return-to-upcoming">10. How do I return to the Upcoming Hearing Days page?</a></li>
         <li><a href="#delete-issues-hearing-worksheet">10. How do I add or delete issues on the Hearing Worksheet?</a></li>
         <li><a href="#review-appellaant-eFolder">11. How do I review the appellant’s eFolder?</a></li>
         <li><a href="#issue-descriptions-hearing-worksheet">12. Where do the Issue Descriptions on the Hearing Worksheet come from?</a></li>
@@ -71,8 +72,14 @@ class CertificationHelp extends React.Component {
 
       <h2 id="view-docket">5. How do I view my hearing docket for a specific day?</h2>
 
-      <p>To view your hearing docket for a specific day, on the Upcoming Hearing Days page, click on the date that you would like to view. You will be taken to the Daily Docket for that specific date and will be able to view all the hearings scheduled for that day.
+      <p>To view your hearing docket for a specific day, on the <b> Your Hearing Days </b> page (days with scheduled hearing), click on the date that you would like to view. You will be taken to the <b>Daily Docket</b> for that specific date and will be able to view all the hearings scheduled for that day.
+      You will be able to click on a hearing date up to 30 days before the hearing. We pull in the most recent updates as close as possible to the hearing date. You may also access <b>Hearing Worksheets</b> from hearings held within the past year from the <b> Your Hearing Days Past</b> hearings tab.
       </p>
+
+      <h2 id="information-included-on-hearing-worksheet">6. What information is included on the Hearing Worksheet?</h2>
+       
+      <p> On the <b> Hearing Worksheet </b>, you will be able to view “Appellant/Veteran Information”, “Procedural History” and issues on appeal. You can type notes in these fields: “Contentions”,
+       “Periods and circumstances of service”, “Evidence”, and “Comments and special instructions to attorneys”.</p>
 
       <h2 id="how-to-access-hearing-worksheet">6. How do I access the Hearing Worksheet?</h2>
 
@@ -143,7 +150,7 @@ class CertificationHelp extends React.Component {
       <p>If you require further assistance after reviewing the  <a href="#faq"> FAQs</a>, <a target="_blank" rel="noopener noreferrer"href="/assets/hearingprep_quickreference-ab220e981c81dbd346c0e83631ada13474051d2355ab193bcbcfbddd14432aca.pdf">Quick Reference</a>, or <a target="_blank" href="/assets/hearingprep_trainingguide-700f99a0935b6f978096a0a13e593fa5ccfdc60f0c1b106f0c1a44672065f474.pdf">Training Guide</a>, please contact the Caseflow Product Support Team by phone (1-844-876-5548) or email <a href="mailto: caseflow@va.gov">(caseflow@va.gov)</a>. We look forward to assisting you.
       </p>
 
-    </div>;
+    </div>
     /* eslint-disable max-len */
   }
 }
