@@ -43,29 +43,29 @@ describe JudgeSchedulePeriod do
     end
 
     it "verifies judge algo cannot assign judge to this one week period" do
-      expect {
+      expect do
         single_nonavail_date_judge_schedule_period.algorithm_assignments
-      }.to raise_error(HearingSchedule::AssignJudgesToHearingDays::CannotAssignJudges)
+      end.to raise_error(HearingSchedule::AssignJudgesToHearingDays::CannotAssignJudges)
     end
 
     subject { two_in_july_judge_schedule_period.algorithm_assignments }
     it "evenly splits the week between two judges" do
-        expect(subject.count).to eq(hearing_days.count)
-        judge_860 = subject.reduce(0) do |sum, hearing_day|
-          sum += 1 unless hearing_day[:judge_id] != "860"
-          sum
-        end
-        judge_861 = subject.reduce(0) do |sum, hearing_day|
-          sum += 1 unless hearing_day[:judge_id] != "861"
-          sum
-        end
-        not_july_31 = false
-        subject.each do | hearing_day |
-          hearing_day[:hearing_date] == Date.new(2018,7,31) && hearing_day[:judge_id] == "860"
-        end
-        expect(not_july_31).to be_falsey
-        expect(judge_860 + judge_861).to eq(hearing_days.count)
+      expect(subject.count).to eq(hearing_days.count)
+      judge_860 = subject.reduce(0) do |sum, hearing_day|
+        sum += 1 unless hearing_day[:judge_id] != "860"
+        sum
       end
+      judge_861 = subject.reduce(0) do |sum, hearing_day|
+        sum += 1 unless hearing_day[:judge_id] != "861"
+        sum
+      end
+      not_july_31 = false
+      subject.each do |hearing_day|
+        hearing_day[:hearing_date] == Date.new(2018, 7, 31) && hearing_day[:judge_id] == "860"
+      end
+      expect(not_july_31).to be_falsey
+      expect(judge_860 + judge_861).to eq(hearing_days.count)
+    end
   end
 
   context " judges are not assigned hearings on their travel board days, the week before, or the week after" do
@@ -80,9 +80,9 @@ describe JudgeSchedulePeriod do
     end
 
     it "verifies judge algo cannot assign judge to week prior or after assigned TB week" do
-      expect {
+      expect do
         one_month_judge_schedule_period.algorithm_assignments
-      }.to raise_error(HearingSchedule::AssignJudgesToHearingDays::CannotAssignJudges)
+      end.to raise_error(HearingSchedule::AssignJudgesToHearingDays::CannotAssignJudges)
     end
 
     subject { one_month_two_judge_schedule_period.algorithm_assignments }
@@ -137,9 +137,9 @@ describe JudgeSchedulePeriod do
     end
 
     it "verifies judge algo cannot assign judge to multiple hearing days" do
-      expect {
+      expect do
         one_week_one_judge_schedule_period.algorithm_assignments
-      }.to raise_error(HearingSchedule::AssignJudgesToHearingDays::CannotAssignJudges)
+      end.to raise_error(HearingSchedule::AssignJudgesToHearingDays::CannotAssignJudges)
     end
 
     subject { one_week_two_judge_schedule_period.algorithm_assignments }
