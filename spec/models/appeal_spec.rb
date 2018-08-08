@@ -19,6 +19,28 @@ describe Appeal do
     end
   end
 
+  context "#docket_number" do
+    context "when receipt_date is defined" do
+      let(:appeal) do
+        create(:appeal, receipt_date: Time.new("2018", "04", "05").utc)
+      end
+
+      it "returns a docket number if receipt_date is defined" do
+        expect(appeal.docket_number).to eq("180405-#{appeal.id}")
+      end
+    end
+
+    context "when receipt_date is nil" do
+      let(:appeal) do
+        create(:appeal, receipt_date: nil)
+      end
+
+      it "returns Missing Docket Number" do
+        expect(appeal.docket_number).to eq("Missing Docket Number")
+      end
+    end
+  end
+
   context "#find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id" do
     context "with a uuid (AMA appeal id)" do
       let(:veteran_file_number) { "64205050" }
