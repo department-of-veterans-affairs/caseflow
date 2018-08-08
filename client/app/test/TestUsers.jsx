@@ -12,6 +12,8 @@ import AppFrame from '../components/AppFrame';
 import { BrowserRouter } from 'react-router-dom';
 import Alert from '../components/Alert';
 import _ from 'lodash';
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+
 
 export default class TestUsers extends React.PureComponent {
   constructor(props) {
@@ -133,11 +135,15 @@ export default class TestUsers extends React.PureComponent {
     });
 
     return <BrowserRouter>
-      <div>
-        <NavigationBar
+        <div>
+          <NavigationBar
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
-          appName="Test Users" />
+          appName="Test Users"
+          logoProps={{
+            accentColor: COLORS.GREY_DARK,
+            overlapColor: COLORS.GREY_DARK
+          }} />
         <AppFrame>
           <AppSegment filledBackground>
             <h1>Welcome to the Caseflow admin page.</h1>
