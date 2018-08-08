@@ -1,5 +1,5 @@
 // @flow
-import { associateTasksWithAppeals, prepareTasksForStore } from './utils';
+import { associateTasksWithAppeals, prepareLegacyTasksForStore } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
@@ -8,6 +8,7 @@ import type { Dispatch } from './types/state';
 import type {
   LegacyTask,
   LegacyTasks,
+  AmaTasks,
   Appeals,
   BasicAppeals,
   User
@@ -34,7 +35,7 @@ export const onReceiveAppealDetails = (
 });
 
 export const onReceiveTasks = (
-  { tasks }: { tasks: LegacyTasks }
+  { tasks }: { tasks: LegacyTasks | AmaTasks }
 ) => ({
   type: ACTIONS.RECEIVE_TASKS,
   payload: {
@@ -269,7 +270,7 @@ export const initialAssignTasksToUser =
             (resp) => {
               const { task: { data: task } } = resp;
 
-              dispatch(onReceiveTasks({ tasks: prepareTasksForStore([task]) }));
+              dispatch(onReceiveTasks({ tasks: prepareLegacyTasksForStore([task]) }));
               dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
                 taskId: task.id,
                 selected: false }));
@@ -289,7 +290,7 @@ export const reassignTasksToUser =
             (resp) => {
               const { task: { data: task } } = resp;
 
-              dispatch(onReceiveTasks({ tasks: prepareTasksForStore([task]) }));
+              dispatch(onReceiveTasks({ tasks: prepareLegacyTasksForStore([task]) }));
               dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
                 taskId: task.id,
                 selected: false }));
