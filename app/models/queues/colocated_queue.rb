@@ -8,7 +8,7 @@ class ColocatedQueue
   end
 
   def tasks_by_appeal_id(appeal_id)
-    incomplete_tasks.where(appeal_id: appeal_id)
+    incomplete_tasks.where(appeal_id: appeal_id, appeal_type: "Appeal")
   end
 
   private
