@@ -7,7 +7,7 @@ import AmaTaskTable from './components/AmaTaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import {
-  amaTasksAssignedTo
+  amaTasksNewAssignedTo
 } from './selectors';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import TabWindow from '../components/TabWindow';
@@ -24,7 +24,7 @@ type Props = Params & {|
 |};
 
 const NewTasksTab = connect(
-  (state: State, ownProps) => ({ tasks: amaTasksAssignedTo(state, { userId: ownProps.userId }) }))(
+  (state: State, ownProps) => ({ tasks: amaTasksNewAssignedTo(state, { userId: ownProps.userId }) }))(
   (props: { tasks: Array<AmaTask> }) => {
     return <div>
       <p>These are new administrative actions that have been assigned to you.</p>

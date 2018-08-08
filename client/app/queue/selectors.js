@@ -43,6 +43,11 @@ export const amaTasksAssignedTo: (State, { userId: number }) => { [number]: AmaT
   (tasks: AmaTasks, userId: number) => _.filter(tasks, (task) => task.attributes.assigned_to.id === userId)
 );
 
+export const amaTasksNewAssignedTo: (State, { userId: number }) => { [number]: AmaTask } = createSelector(
+  [amaTasksAssignedTo],
+  (tasks: Array<AmaTask>) => tasks.filter((task) => !task.attributes.placed_on_hold_at)
+);
+
 export const appealsWithTasksSelector = createSelector(
   [getTasks, getAppeals],
   (tasks: Tasks, appeals: LegacyAppeals) => {
