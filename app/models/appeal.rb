@@ -61,7 +61,8 @@ class Appeal < AmaReview
   end
 
   def docket_number
-    "#{established_at.strftime('%y%m%d')}-#{id}"
+    return "Missing Docket Number" unless receipt_date
+    "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 
   def power_of_attorney
