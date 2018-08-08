@@ -21,6 +21,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     claimant: {
       $set: serverIntake.claimant_not_veteran ? serverIntake.claimant : null
     },
+    payee: {
+      $set: serverIntake.payee
+    },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
     },
@@ -94,6 +97,12 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
     return update(state, {
       claimant: {
         $set: action.payload.claimant
+      }
+    });
+  case ACTIONS.SET_PAYEE:
+    return update(state, {
+      payee: {
+        $set: action.payload.payee
       }
     });
   case ACTIONS.SUBMIT_REVIEW_START:
