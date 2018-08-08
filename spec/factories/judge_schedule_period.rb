@@ -13,50 +13,50 @@ FactoryBot.define do
     end
 
     factory :single_nonavail_date_judge_schedule_period do
-      start_date { Date.parse("2018-07-30") }
-      end_date { Date.parse("2018-08-03") }
+      start_date { Date.parse("2018-07-29") }
+      end_date { Date.parse("2018-08-04") }
       file_name { "singleNonAvailJudgeSpreadsheet.xlsx" }
       user { create(:user) }
     end
 
     factory :two_in_july_judge_schedule_period do
-      start_date { Date.parse("2018-07-30") }
-      end_date { Date.parse("2018-08-03") }
+      start_date { Date.parse("2018-07-29") }
+      end_date { Date.parse("2018-08-04") }
       file_name { "twoInJulyJudgeSpreadsheet.xlsx" }
       user { create(:user) }
     end
 
     factory :one_month_judge_schedule_period do
-      start_date { Date.parse("2018-07-23") }
-      end_date { Date.parse("2018-08-17") }
+      start_date { Date.parse("2018-07-22") }
+      end_date { Date.parse("2018-08-18") }
       file_name { "oneAllAvailJudgeSpreadsheet.xlsx" }
       user { create(:user) }
     end
 
     factory :one_month_two_judge_schedule_period do
-      start_date { Date.parse("2018-07-23") }
-      end_date { Date.parse("2018-08-17") }
-      file_name { "twoInJulyJudgeSpreadsheet.xlsx" }
+      start_date { Date.parse("2018-07-22") }
+      end_date { Date.parse("2018-08-18") }
+      file_name { "twoAllAvailJudgeSpreadsheet.xlsx" }
       user { create(:user) }
     end
 
     factory :one_month_many_noavail_judge_schedule_period do
-      start_date { Date.parse("2018-07-23") }
-      end_date { Date.parse("2018-08-17") }
+      start_date { Date.parse("2018-07-22") }
+      end_date { Date.parse("2018-08-18") }
       file_name { "manyNonAvailJudgeSpreadsheet.xlsx" }
       user { create(:user) }
     end
 
     factory :one_week_one_judge_schedule_period do
-      start_date { Date.parse("2018-07-30") }
-      end_date { Date.parse("2018-08-03") }
+      start_date { Date.parse("2018-07-29") }
+      end_date { Date.parse("2018-08-04") }
       file_name { "oneAllAvailJudgeSpreadsheet.xlsx" }
       user { create(:user) }
     end
 
     factory :one_week_two_judge_schedule_period do
-      start_date { Date.parse("2018-07-30") }
-      end_date { Date.parse("2018-08-03") }
+      start_date { Date.parse("2018-07-29") }
+      end_date { Date.parse("2018-08-04") }
       file_name { "twoAllAvailJudgeSpreadsheet.xlsx" }
       user { create(:user) }
     end

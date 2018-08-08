@@ -4,7 +4,7 @@ module FakeDateHelper
                                exclude_weekends = true)
     dates = Set.new
 
-    # return nil if (end_date - start_date) < num_of_dates
+    return nil if (end_date - start_date) < num_of_dates
 
     holidays = Holidays.between(start_date, end_date, :federal_reserve)
 
