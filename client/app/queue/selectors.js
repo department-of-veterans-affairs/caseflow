@@ -44,7 +44,7 @@ const amaTasksByAssigneeCssIdSelector = createSelector(
   (tasks: AmaTasks, cssId: string) => _.filter(tasks, (task) => task.attributes.assigned_to.css_id === cssId)
 );
 
-export const amaTasksNewByAssigneeCssIdSelector: (State) => { [number]: AmaTask } = createSelector(
+export const amaTasksNewByAssigneeCssIdSelector: (State) => Array<AmaTask> = createSelector(
   [amaTasksByAssigneeCssIdSelector],
   (tasks: Array<AmaTask>) => tasks.filter((task) => !task.attributes.placed_on_hold_at)
 );
