@@ -25,10 +25,12 @@ class AttorneyCaseReview < ApplicationRecord
   end
 
   def update_issue_dispositions
-    (issues || []).each do |issue|
-      decision_issue = appeal.decision_issues.find_by(id: issue["id"])
-      decision_issue.update(disposition: issue["disposition"]) if decision_issue
-    end if appeal
+    if appeal
+      (issues || []).each do |issue|
+        decision_issue = appeal.decision_issues.find_by(id: issue["id"])
+        decision_issue.update(disposition: issue["disposition"]) if decision_issue
+      end
+    end
   end
 
   private
