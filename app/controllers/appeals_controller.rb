@@ -41,7 +41,7 @@ class AppealsController < ApplicationController
       return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], role)
     end
 
-    json_tasks_by_appeal_id(appeal.id)
+    json_tasks_by_appeal_id(appeal.id, appeal.class.to_s)
   end
 
   def show
@@ -117,8 +117,8 @@ class AppealsController < ApplicationController
     TasksController::QUEUES[params[:role].downcase.try(:to_sym)]
   end
 
-  def json_tasks_by_appeal_id(appeal_db_id)
-    tasks = queue_class.new.tasks_by_appeal_id(appeal_db_id)
+  def json_tasks_by_appeal_id(appeal_db_id, appeal_type)
+    tasks = queue_class.new.tasks_by_appeal_id(appeal_db_id, appeal_type)
 
     render json: {
       tasks: json_tasks(tasks)[:data]
