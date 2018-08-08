@@ -64,7 +64,7 @@ const NewTasksTab = connect(
   (props: { tasks: Array<AmaTask> }) => {
     return <div>
       <p>{COPY.COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION}</p>
-      <AmaTaskTable tasks={props.tasks} />
+      <AmaTaskTable tasks={props.tasks} includeDaysWaiting />
     </div>;
   });
 

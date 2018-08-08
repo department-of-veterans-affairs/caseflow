@@ -17,7 +17,8 @@ import type {
 } from '../types/models';
 
 type Params = {|
-  tasks: Array<AmaTask>
+  tasks: Array<AmaTask>,
+  includeDaysWaiting?: boolean
 |};
 
 type Props = Params;
@@ -67,11 +68,11 @@ class AmaTaskTable extends React.PureComponent<Props> {
   daysWaitingOfTask = (task: AmaTask) => moment().startOf('day').
     diff(moment(task.attributes.assigned_at), 'days')
 
-  caseDaysWaitingColumn = () => ({
+  caseDaysWaitingColumn = () => (this.props.includeDaysWaiting ? {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
     valueFunction: (task: AmaTask) => this.daysWaitingOfTask(task),
     getSortValue: (task: AmaTask) => this.daysWaitingOfTask(task)
-  })
+  } : null)
 
   caseReaderLinkColumn = () => ({
     header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
