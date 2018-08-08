@@ -158,5 +158,5 @@ export const getClaimTypeDetailInfo = (claim) => {
   </div>;
 };
 
-export const shouldFetchAppeal = (appeal, vacolsIdFromUrl) => (_.isEmpty(appeal) ||
-    (appeal.vacols_id !== vacolsIdFromUrl));
+export const shouldFetchAppeal = (appeal, vacolsIdFromUrl) =>  (_.isEmpty(appeal) ||
+    ((appeal.vacols_id || appeal.external_id) !== vacolsIdFromUrl));
