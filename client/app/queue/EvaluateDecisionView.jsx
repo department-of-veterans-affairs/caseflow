@@ -110,7 +110,7 @@ class EvaluateDecisionView extends React.PureComponent {
   getPrevStepUrl = () => {
     const {
       appealId,
-      appeal: { attributes: appeal }
+      appeal
     } = this.props;
     const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
     const prevUrl = `/queue/appeals/${appealId}`;
