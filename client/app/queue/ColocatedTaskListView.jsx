@@ -65,6 +65,6 @@ const OnHoldTasksTab = connect(
   (state: State) => ({ tasks: amaTasksOnHoldByAssigneeCssIdSelector(state) }))(
   (props: { tasks: Array<AmaTask> }) => {
     return <div>
-      <p></p>
+      <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
     </div>;
   });
