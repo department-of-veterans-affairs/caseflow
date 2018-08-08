@@ -63,7 +63,9 @@ export const appealsWithDetailsSelector = createSelector(
 export const appealWithDetailSelector = createSelector(
   [appealsWithDetailsSelector, getAppealId],
   (appeals: LegacyAppeals, appealId: string) => {
-    return appeals[appealId];
+    // We specify empty hearings and issues in case the details haven't yet been loaded,
+    // then code that's referencing hearings and issues will still work.
+    return { hearings: [], issues: [], ...appeals[appealId] } ;
   }
 );
 

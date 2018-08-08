@@ -283,7 +283,7 @@ EvaluateDecisionView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
+  appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
   highlight: state.ui.highlightFormItems,
   taskOptions: state.queue.stagedChanges.taskDecision.opts,
   task: tasksForAppealAssignedToUserSelector(state, ownProps)[0],
