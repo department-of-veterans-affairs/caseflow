@@ -80,8 +80,8 @@ describe JudgeCaseReview do
         end
         let(:issues) do
           [
-            { disposition: "5", vacols_sequence_id: vacols_issue1.issseq, readjudication: true },
-            { disposition: "3", vacols_sequence_id: vacols_issue2.issseq,
+            { disposition: "5", id: vacols_issue1.issseq, readjudication: true },
+            { disposition: "3", id: vacols_issue2.issseq,
               remand_reasons: [{ code: "AB", after_certification: true }] }
           ]
         end
@@ -160,8 +160,8 @@ describe JudgeCaseReview do
         end
         let(:issues) do
           [
-            { disposition: "5", vacols_sequence_id: vacols_issue1.issseq, readjudication: true },
-            { disposition: "3", vacols_sequence_id: vacols_issue2.issseq,
+            { disposition: "5", id: vacols_issue1.issseq, readjudication: true },
+            { disposition: "3", id: vacols_issue2.issseq,
               remand_reasons: [{ code: "AB", after_certification: true }] }
           ]
         end
