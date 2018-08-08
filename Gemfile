@@ -11,7 +11,6 @@ gem "rails", "5.1.6"
 gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
 gem "sqlite3", platforms: [:ruby, :mswin, :mingw, :mswin, :x64_mingw]
 
-gem 'composite_primary_keys', "~>10.0"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Use Uglifier as compressor for JavaScript assets

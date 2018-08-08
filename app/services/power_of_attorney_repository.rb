@@ -1,36 +1,24 @@
 class PowerOfAttorneyRepository
   include PowerOfAttorneyMapper
 
-  # :nocov:
-  def self.appellant_poa_query(poa)
-    # In rare cases, there may be more than one result for this query. If so, return the most recent one.
-    VACOLS::Representative.where(repkey: "2657116", reptype: ["A", "C"]).order("repaddtime DESC").first
-  end
-  # :nocov:
-
-  def self.poa_query(poa)
-
-  end
-
-  # returns either the data or false
   def self.load_vacols_data(poa)
-    case_record = MetricsService.record("VACOLS POA: load_vacols_data #{poa.vacols_id}",
-                                        service: :vacols,
-                                        name: "PowerOfAttorneyRepository.load_vacols_data") do
-      appellant_poa_query(poa)
+    case_record, representative = MetricsService.record("VACOLS POA: load_vacols_data #{poa.vacols_id}",
+                                                        service: :vacols,
+                                                        name: "PowerOfAttorneyRepository.load_vacols_data") do
+      [VACOLS::Case.find(poa.vacols_id), VACOLS::Representative.appellant_representative(poa.vacols_id)]
     end
 
-    set_vacols_values(poa: poa, case_record: case_record)
+    set_vacols_values(poa: poa, case_record: case_record, representative: representative)
 
     true
   rescue ActiveRecord::RecordNotFound
     return false
   end
 
-  def self.set_vacols_values(poa:, case_record:)
+  def self.set_vacols_values(poa:, case_record:, representative:)
     rep_info = get_poa_from_vacols_poa(
       vacols_code: case_record.bfso,
-      representative_record: case_record.representative
+      representative_record: representative
     )
 
     poa.assign_from_vacols(

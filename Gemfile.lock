@@ -173,8 +173,6 @@ GEM
     cliver (0.3.2)
     coderay (1.1.2)
     colored2 (3.1.2)
-    composite_primary_keys (10.0.5)
-      activerecord (~> 5.1.0, >= 5.1.6)
     concurrent-ruby (1.0.5)
     connection_pool (2.2.1)
     cork (0.3.0)
@@ -507,7 +505,6 @@ DEPENDENCIES
   capybara
   capybara-screenshot
   caseflow!
-  composite_primary_keys (~> 10.0)
   connect_vbms!
   danger (= 5.5.5)
   database_cleaner

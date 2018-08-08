@@ -1,31 +1,36 @@
+
 class VACOLS::Representative < VACOLS::Record
   # :nocov:
   self.table_name = "vacols.rep"
-  self.primary_keys = :repkey, :repaddtime
+  self.primary_key = "repkey"
 
   class InvalidRepTypeError < StandardError; end
 
   ACTIVE_REPTYPES = {
-    "Appellant's Attorney": "A",
-    "Appellant's Agent": "G",
-    # "Fee Agreement": "F", # deprecated
-    "Contesting Claimant": "C", 
-    "Contesting Claimant's Attorney": "D", 
-    "Contesting Claimant's Agent": "E", 
-    # "Fee Attorney reference list": "R", # deprecated
+    appellant_attorney: "A",
+    appellant_agent: "G",
+    # :fee_agreement: "F", # deprecated
+    contesting_claimant_organization: "C", 
+    contesting_claimant_attorney: "D", 
+    contesting_claimant_agent: "E"
+    # :fee_attorney_reference_list: "R", # deprecated
   }
 
-  def self.representatives(bfkey)
+  def self.representatives
+    VACOLS::Representative.where(repkey: bfkey, reptype: ACTIVE_REPTYPES.values)
+  end
+
+  def self.all_representatives(bfkey)
     VACOLS::Representative.where(repkey: bfkey)
   end
 
-  def self.appellant_representative
-    appellant_reptypes = [REPTYPES["Appellant's Attorney"], REPTYPES["Appellant's Agent"]]
+  def self.appellant_representative(bfkey)
+    appellant_reptypes = [ACTIVE_REPTYPES[:appellant_attorney], ACTIVE_REPTYPES[:appellant_agent]]
 
     # In rare cases, there may be more than one result for this query. If so, return the most recent one.
-    representatives.where(reptype: appellant_reptypes).order("repaddtime DESC").first
+    # TODO: for Queue use cases, we should return all appellant representatives
+    all_representatives(bfkey).where(reptype: appellant_reptypes).order("repaddtime DESC").first
   end
-
 
   def self.update_vacols_rep_type!(bfkey:, rep_type:)
     fail(InvalidRepTypeError) unless VACOLS::Case::REPRESENTATIVES.include?(rep_type)
@@ -53,11 +58,13 @@ class VACOLS::Representative < VACOLS::Record
                           service: :vacols,
                           name: "update_vacols_rep_type") do
       attrs = { repfirst: first_name, repmi: middle_initial, replast: last_name } 
-      rep = get_appellant_representative(bfkey)
-      rep.update!(attrs)
-    rescue ActiveRecord::RecordNotFound
-      create!({repkey: bfkey}.merge(attrs))
-    end  
+      rep = appellant_representative(bfkey)
+      # TODO: to be 100% safe, we should pass the repaddtime value
+      # down to the client. It's *possible* that if a user
+      # started a certification, then added a new POA row for that appeal,
+      # then completed the certification, we could be updating the wrong POA row.
+      # However, this is very unlikely given the way current business processes operate.
+      rep ? update_rep(bfkey, rep.repaddtime, attrs) : create_rep!(attrs)
   end
 
   def self.update_vacols_rep_address!(bfkey:, address:)
@@ -71,10 +78,51 @@ class VACOLS::Representative < VACOLS::Record
         state: address[:state], 
         zip: address[:zip]
       } 
-      rep = get_appellant_representative(bfkey)
-      rep.update!(attrs)
-    rescue ActiveRecord::RecordNotFound
-      create!({repkey: bfkey}.merge(attrs))
+
+      rep = appellant_representative(bfkey)
+      # TODO: to be 100% safe, we should pass the repaddtime value
+      # down to the client. It's *possible* that if a user
+      # started a certification, then added a new POA row for that appeal,
+      # then completed the certification, we could be updating the wrong POA row.
+      # However, this is very unlikely given the way current business processes operate.
+      rep ? update_rep(bfkey, rep.repaddtime, attrs) : create_rep!(attrs)
     end
+  end
+
+  def self.update_rep!(repkey, repaddtime, rep_attrs)
+    where(repkey: repkey, repaddtime: repaddtime).update_all(rep_attrs)
+  end  
+
+  def self.create_rep!(rep_attrs)
+    create!(rep_attrs.merge(repaddtime: VacolsHelper.local_date_with_utc_timezone))
+  end
+
+  def update(*)
+    update_error_message
+  end
+
+  def update!(*)
+    update_error_message
+  end
+
+  def delete
+    delete_error_message
+  end
+
+  def destroy
+    delete_error_message
+  end
+
+  private
+
+  def update_error_message
+    fail RepError, "Since the primary key is not unique, `update` will update all results
+      with the same `repkey`. Instead use VACOLS::Representative.update_rep!
+      that uses `repkey` and `repaddtime` to safely update one record."
+  end
+
+  def delete_error_message
+    fail RepError, "Since the primary key is not unique, `delete` or `destroy`
+      will delete all results with the same `repkey`. Use `repkey` and `repaddtime` to safely delete one record."
   end
 end
