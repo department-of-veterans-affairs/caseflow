@@ -60,11 +60,13 @@ class CaseListTable extends React.PureComponent {
     columns={this.getColumns}
     rowObjects={this.props.appeals}
     getKeyForRow={this.getKeyForRow}
+    styling={this.props.styling}
   />;
 }
 
 CaseListTable.propTypes = {
-  appeals: PropTypes.arrayOf(PropTypes.object).isRequired
+  appeals: PropTypes.arrayOf(PropTypes.object).isRequired,
+  styling: PropTypes.object
 };
 
 const mapStateToProps = () => ({});

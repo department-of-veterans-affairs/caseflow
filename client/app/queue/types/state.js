@@ -43,7 +43,8 @@ export type UiState = {
   selectedAssigneeSecondary: ?string,
   loadedUserId: ?number,
   userRole: string,
-  userCssId: string
+  userCssId: string,
+  veteranCaseListIsVisible: boolean
 };
 
 export type UsersById = { [number]: ?User };

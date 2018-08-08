@@ -8,8 +8,8 @@ import type { Dispatch } from './types/state';
 import type {
   LegacyTask,
   LegacyTasks,
+  Appeals,
   BasicAppeals,
-  LegacyAppeals,
   User
 } from './types/models';
 
@@ -25,7 +25,7 @@ export const onReceiveQueue = (
 });
 
 export const onReceiveAppealDetails = (
-  { appeals }: { appeals: LegacyAppeals }
+  { appeals }: { appeals: $ReadOnly<Appeals> }
 ) => ({
   type: ACTIONS.RECEIVE_APPEAL_DETAILS,
   payload: {
