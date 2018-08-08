@@ -37,16 +37,11 @@ class AppealsController < ApplicationController
     role = params[:role].downcase
     return invalid_role_error unless ROLES.include?(role)
 
-    if %w[attorney judge].include?(role)
-      json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], role)
-    else
-      appeal_db_id = if Appeal::UUID_REGEX.match(params[:appeal_id])
-                       Appeal.all.where(uuid: params[:appeal_id]).pluck(:id).first
-                     else
-                       LegacyAppeal.all.where(vacols_id: params[:appeal_id]).pluck(:id).first
-                     end
-      json_tasks_by_appeal_id(appeal_db_id)
+    if %w[attorney judge].include?(role) && appeal.class == LegacyAppeal
+      return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], role)
     end
+
+    json_tasks_by_appeal_id(appeal.id)
   end
 
   def show
