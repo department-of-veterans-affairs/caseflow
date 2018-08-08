@@ -5,6 +5,28 @@ class VACOLS::Representative < VACOLS::Record
 
   class InvalidRepTypeError < StandardError; end
 
+  ACTIVE_REPTYPES = {
+    "Appellant's Attorney": "A",
+    "Appellant's Agent": "G",
+    # "Fee Agreement": "F", # deprecated
+    "Contesting Claimant": "C", 
+    "Contesting Claimant's Attorney": "D", 
+    "Contesting Claimant's Agent": "E", 
+    # "Fee Attorney reference list": "R", # deprecated
+  }
+
+  def self.representatives(bfkey)
+    VACOLS::Representative.where(repkey: bfkey)
+  end
+
+  def self.appellant_representative
+    appellant_reptypes = [REPTYPES["Appellant's Attorney"], REPTYPES["Appellant's Agent"]]
+
+    # In rare cases, there may be more than one result for this query. If so, return the most recent one.
+    representatives.where(reptype: appellant_reptypes).order("repaddtime DESC").first
+  end
+
+
   def self.update_vacols_rep_type!(bfkey:, rep_type:)
     fail(InvalidRepTypeError) unless VACOLS::Case::REPRESENTATIVES.include?(rep_type)
 
@@ -27,84 +49,32 @@ class VACOLS::Representative < VACOLS::Record
   end
 
   def self.update_vacols_rep_name!(bfkey:, first_name:, middle_initial:, last_name:)
-    conn = connection
-    first_name = conn.quote(first_name)
-    middle_initial = conn.quote(middle_initial)
-    last_name = conn.quote(last_name)
-    case_id = conn.quote(bfkey)
-
-    MetricsService.record("VACOLS: update_vacols_rep_first_name! #{case_id}",
+    MetricsService.record("VACOLS: update_vacols_rep_type! #{case_id}",
                           service: :vacols,
-                          name: "update_vacols_rep_first_name") do
-      conn.transaction do
-        conn.execute(<<-SQL)
-          MERGE INTO REP USING dual ON ( REPKEY=#{case_id} )
-          WHEN MATCHED THEN
-            UPDATE SET REPFIRST=#{first_name}, REPMI=#{middle_initial}, REPLAST=#{last_name}
-          WHEN NOT MATCHED THEN INSERT (REPKEY, REPFIRST, REPMI, REPLAST)
-            VALUES ( #{case_id}, #{first_name}, #{middle_initial}, #{last_name} )
-        SQL
-      end
-    end
-  end  
-
-
-  def self.update_vacols_rep_name!(bfkey:, first_name:, middle_initial:, last_name:)
-
-    # 
-    byebug  
-
-    conn = connection
-    first_name = conn.quote(first_name)
-    middle_initial = conn.quote(middle_initial)
-    last_name = conn.quote(last_name)
-    case_id = conn.quote(bfkey)
-
-    MetricsService.record("VACOLS: update_vacols_rep_first_name! #{case_id}",
-                          service: :vacols,
-                          name: "update_vacols_rep_first_name") do
-      conn.transaction do
-        conn.execute(<<-SQL)
-          MERGE INTO REP USING dual ON ( REPKEY=#{case_id} )
-          WHEN MATCHED THEN
-            UPDATE SET REPFIRST=#{first_name}, REPMI=#{middle_initial}, REPLAST=#{last_name}
-          WHEN NOT MATCHED THEN INSERT (REPKEY, REPFIRST, REPMI, REPLAST)
-            VALUES ( #{case_id}, #{first_name}, #{middle_initial}, #{last_name} )
-        SQL
-      end
-    end
+                          name: "update_vacols_rep_type") do
+      attrs = { repfirst: first_name, repmi: middle_initial, replast: last_name } 
+      rep = get_appellant_representative(bfkey)
+      rep.update!(attrs)
+    rescue ActiveRecord::RecordNotFound
+      create!({repkey: bfkey}.merge(attrs))
+    end  
   end
 
-  # rubocop:disable Metrics/MethodLength
   def self.update_vacols_rep_address!(bfkey:, address:)
-    conn = connection
-
-    address_one = conn.quote(address[:address_one])
-    address_two = conn.quote(address[:address_two])
-    city = conn.quote(address[:city])
-    state = conn.quote(address[:state])
-    zip = conn.quote(address[:zip])
-    case_id = conn.quote(bfkey)
-
     MetricsService.record("VACOLS: update_vacols_rep_address! #{case_id}",
                           service: :vacols,
                           name: "update_vacols_rep_address") do
-      conn.transaction do
-        conn.execute(<<-SQL)
-          MERGE INTO REP USING dual ON ( REPKEY=#{case_id} )
-          WHEN MATCHED THEN
-            UPDATE
-            SET REPADDR1 = #{address_one},
-                REPADDR2 = #{address_two},
-                REPCITY = #{city},
-                REPST = #{state},
-                REPZIP = #{zip}
-          WHEN NOT MATCHED THEN INSERT (REPKEY, REPADDR1, REPADDR2, REPCITY, REPST, REPZIP)
-            VALUES ( #{case_id}, #{address_one}, #{address_two}, #{city}, #{state}, #{zip} )
-        SQL
-      end
+      attrs = { 
+        repaddr1: address[:address_one], 
+        repaddr2: address[:address_two], 
+        city: address[:city], 
+        state: address[:state], 
+        zip: address[:zip]
+      } 
+      rep = get_appellant_representative(bfkey)
+      rep.update!(attrs)
+    rescue ActiveRecord::RecordNotFound
+      create!({repkey: bfkey}.merge(attrs))
     end
   end
-  # rubocop:enable Metrics/MethodLength
-  # :nocov:
 end
