@@ -77,7 +77,7 @@ export const tasksForAppealAssignedToAttorneySelector = createSelector(
 
 export const appealsByCaseflowVeteranId = createSelector(
   [getAppealDetails, getCaseflowVeteranId],
-  (appeals: Appeals, caseflowVeteranId: string) => 
+  (appeals: Appeals, caseflowVeteranId: string) =>
     _.filter(appeals, (appeal: Appeal) => appeal.attributes.caseflow_veteran_id &&
       appeal.attributes.caseflow_veteran_id.toString() === caseflowVeteranId.toString())
 );
