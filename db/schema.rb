@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180806210221) do
+ActiveRecord::Schema.define(version: 20180808215503) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -158,6 +158,7 @@ ActiveRecord::Schema.define(version: 20180806210221) do
     t.string "review_request_type", null: false
     t.bigint "review_request_id", null: false
     t.string "participant_id", null: false
+    t.string "payee_cd"
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
