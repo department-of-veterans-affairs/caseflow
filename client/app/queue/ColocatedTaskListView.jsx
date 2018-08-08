@@ -12,6 +12,8 @@ import {
 } from './selectors';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import TabWindow from '../components/TabWindow';
+import COPY from '../../COPY.json';
+
 import type { AmaTask } from './types/models';
 import type { State } from './types/state';
 
@@ -54,7 +56,7 @@ const NewTasksTab = connect(
   (state: State) => ({ tasks: amaTasksNewByAssigneeCssIdSelector(state) }))(
   (props: { tasks: Array<AmaTask> }) => {
     return <div>
-      <p>These are new administrative actions that have been assigned to you.</p>
+      <p>{COPY.COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION}</p>
       <AmaTaskTable tasks={props.tasks} />
     </div>;
   });
