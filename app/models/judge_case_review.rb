@@ -33,7 +33,8 @@ class JudgeCaseReview < ApplicationRecord
         quality: quality,
         deficiencies: factors_not_considered + areas_for_improvement,
         comment: comment,
-        modifying_user: modifying_user
+        modifying_user: modifying_user,
+        board_member_id: judge.vacols_attorney_id
       }
     )
   end
