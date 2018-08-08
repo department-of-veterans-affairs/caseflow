@@ -37,11 +37,18 @@ describe JudgeCaseReview do
   context ".create" do
     let(:judge) { User.create(css_id: "CFS123", station_id: User::BOARD_STATION_ID) }
     let(:attorney) { User.create(css_id: "CFS456", station_id: "317") }
-    let!(:decass) { create(:decass, deadtim: "2013-12-06".to_date, defolder: "123456", deprod: work_product) }
-    let!(:vacols_case) { create(:case, bfkey: "123456", bfmemid: "AA", bfboard: "BB") }
+    let!(:decass) do
+      create(:decass,
+             deadtim: "2013-12-06".to_date,
+             defolder: "123456",
+             deprod: work_product,
+             deatty: "102",
+             deteam: "BB")
+    end
+    let!(:vacols_case) { create(:case, bfkey: "123456") }
     let!(:vacols_issue1) { create(:case_issue, isskey: "123456") }
     let!(:vacols_issue2) { create(:case_issue, isskey: "123456") }
-    let!(:judge_staff) { create(:staff, :judge_role, slogid: "CFS456", sdomainid: judge.css_id) }
+    let!(:judge_staff) { create(:staff, :judge_role, slogid: "CFS456", sdomainid: judge.css_id, sattyid: "AA") }
     let(:probability) { JudgeCaseReview::QUALITY_REVIEW_SELECTION_PROBABILITY }
     subject { JudgeCaseReview.complete(params) }
 
@@ -100,7 +107,12 @@ describe JudgeCaseReview do
           expect(decass.deqr1).to eq nil
           expect(decass.deqr3).to eq nil
           expect(decass.deqr4).to eq nil
+          expect(decass.dememid).to eq "AA"
+
           expect(vacols_case.reload.bfcurloc).to eq "48"
+          expect(vacols_case.bfmemid).to eq "AA"
+          expect(vacols_case.bfattid).to eq "102"
+          expect(vacols_case.bfboard).to eq "BB"
 
           vacols_issues = VACOLS::CaseIssue.where(isskey: "123456")
           # 1 vacated, 1 remanded and 1 blank issue created because of vacated disposition
