@@ -91,7 +91,7 @@ export type AmaTasks = { [string]: AmaTask };
 
 export type LegacyAppeal = {
   id: string,
-  attributes: {
+  +attributes: {
     is_legacy_appeal: boolean,
     issues: Array<Object>,
     hearings: Array<Object>,
@@ -139,8 +139,8 @@ export type BasicAppeals = { [string]: BasicAppeal };
 
 export type Appeal = {
   id: string,
-  attributes: {
-    is_legacy_appeal: Boolean,
+  +attributes: {
+    is_legacy_appeal: boolean,
     issues: Array<Object>,
     hearings: Array<Object>,
     appellant_full_name: string,
@@ -152,11 +152,11 @@ export type Appeal = {
     vbms_id: string,
     external_id: string,
     type: string,
-    aod: Boolean,
+    aod: boolean,
     docket_number: string,
     status: string,
     decision_date: string,
-    paper_case: Boolean,
+    paper_case: boolean,
     power_of_attorney: string,
     caseflow_veteran_id: ?string
   }

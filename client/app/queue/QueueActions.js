@@ -25,7 +25,7 @@ export const onReceiveQueue = (
 });
 
 export const onReceiveAppealDetails = (
-  { appeals }: { appeals: Appeals }
+  { appeals }: { appeals: $ReadOnly<Appeals> } // eslint-disable-line no-undef
 ) => ({
   type: ACTIONS.RECEIVE_APPEAL_DETAILS,
   payload: {
