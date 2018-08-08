@@ -1,13 +1,10 @@
-$asset-path: '/' !default;
-$image-url: '#{$asset-path}assets' !default;
-$image-path: $image-url;
-
+//Local variables
+@import '_variables.scss';
 //USWDS
 @import '~uswds/src/stylesheets/uswds.scss';
 @import '~uswds/dist/scss/lib/_bourbon.scss';
 @import '~uswds/src/stylesheets/core/_variables.scss';
 
-@import '_variables.scss';
 @import '_tabs.scss';
 @import '_stats.scss';
 @import '_intake.scss';
@@ -18,6 +15,3 @@ $image-path: $image-url;
 @import '_style_guide.scss';
 @import '_main.scss';
 @import '_commons.scss';
-
-// Needed to import files
-$font-path:  '~uswds/src/fonts';

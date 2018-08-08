@@ -1239,7 +1239,7 @@ button {
   &.cf-dispatch {
     .cf-loading-icon-back {
       &::after {
-      background: url(#{$image-url}/loading-pill-cf-dispatch.svg) center center no-repeat;
+      background: url(#{$image-url}/icons/loading-pill-cf-dispatch.svg) center center no-repeat;
       }
     }
   }

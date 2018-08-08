@@ -1,5 +1,8 @@
-@import '~uswds/src/stylesheets/uswds.scss';
-@import '~uswds/src/stylesheets/core/_variables.scss';
+
+$asset-path: '/' !default;
+$image-url: '#{$asset-path}assets' !default;
+$image-path: $image-url;
+$asset-pipeine: true;
 
 $cf-30px: 1.765em;
 $color-dropdown-shadow: rgba(102, 175, 233, 0.6);
@@ -12,8 +15,3 @@ $cf-background: #f9f9f9;
 $cf-link: #0872b9;
 $cf-drop-shadow-color: rgba(91, 97, 107, 0.5);
 $cf-drop-shadow: 1px 1px 5px 0 $cf-drop-shadow-color;
-
-$asset-pipeine: true;
-
-
-
