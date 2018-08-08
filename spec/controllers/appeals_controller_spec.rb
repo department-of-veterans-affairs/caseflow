@@ -159,7 +159,7 @@ RSpec.describe AppealsController, type: :controller do
     end
 
     let!(:colocated_task) { create(:colocated_task, appeal: legacy_appeal) }
-    let!(:ama_colocated_task) { create(:ama_colocated_task, appeal: appeal, assigned_to: colocated_user)}
+    let!(:ama_colocated_task) { create(:ama_colocated_task, appeal: appeal, assigned_to: colocated_user) }
 
     it "should return AttorneyLegacyTasks" do
       get :tasks, params: { appeal_id: legacy_appeal.vacols_id, role: "attorney" }
