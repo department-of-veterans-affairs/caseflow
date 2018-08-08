@@ -6,10 +6,10 @@ import ApiUtil from '../util/ApiUtil';
 import _ from 'lodash';
 import type { Dispatch } from './types/state';
 import type {
+  Appeals,
   Task,
   Tasks,
   BasicAppeals,
-  LegacyAppeals,
   User
 } from './types/models';
 
@@ -25,7 +25,7 @@ export const onReceiveQueue = (
 });
 
 export const onReceiveAppealDetails = (
-  { appeals }: { appeals: LegacyAppeals }
+  { appeals }: { appeals: $ReadOnly<Appeals> }
 ) => ({
   type: ACTIONS.RECEIVE_APPEAL_DETAILS,
   payload: {

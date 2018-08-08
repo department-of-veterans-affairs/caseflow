@@ -110,3 +110,8 @@ export const fetchAppealsUsingVeteranId = (searchQuery) =>
         return reject();
       });
   });
+
+export const setFetchedAllCasesFor = (caseflowVeteranId) => ({
+  type: Constants.SET_FETCHED_ALL_CASES_FOR,
+  payload: { caseflowVeteranId }
+});

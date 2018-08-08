@@ -9,5 +9,8 @@ module.exports = {
   rules: {
     'prefer-const': 'off',
     'max-statements': 'off'
+  },
+  globals: {
+    $ReadOnly: true
   }
 };
