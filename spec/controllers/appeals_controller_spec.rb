@@ -174,7 +174,7 @@ RSpec.describe AppealsController, type: :controller do
       expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
     end
 
-    it "should return ColocatedTasks", :focus => true do
+    it "should return ColocatedTasks" do
       get :tasks, params: { appeal_id: appeal.uuid, role: "colocated" }
 
       assert_response :success
