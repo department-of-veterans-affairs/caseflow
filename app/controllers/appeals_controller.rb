@@ -37,7 +37,7 @@ class AppealsController < ApplicationController
     role = params[:role].downcase
     return invalid_role_error unless ROLES.include?(role)
 
-    if %w[attorney judge].include?(role) && appeal.class == LegacyAppeal
+    if %w[attorney judge].include?(role) && appeal.class.name == "LegacyAppeal"
       return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], role)
     end
 
