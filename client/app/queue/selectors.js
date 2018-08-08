@@ -1,6 +1,7 @@
 // @flow
 import { createSelector } from 'reselect';
 import _ from 'lodash';
+import moment from 'moment';
 
 import type { State } from './types/state';
 import type {
@@ -47,6 +48,13 @@ const amaTasksByAssigneeCssIdSelector = createSelector(
 export const amaTasksNewByAssigneeCssIdSelector: (State) => Array<AmaTask> = createSelector(
   [amaTasksByAssigneeCssIdSelector],
   (tasks: Array<AmaTask>) => tasks.filter((task) => !task.attributes.placed_on_hold_at)
+);
+
+export const amaTasksOnHoldByAssigneeCssIdSelector: (State) => Array<AmaTask> = createSelector(
+  [amaTasksByAssigneeCssIdSelector],
+  (tasks: Array<AmaTask>) =>
+    tasks.filter(
+      (task) => moment().diff(moment(task.attributes.placed_on_hold_at), 'days') < task.attributes.on_hold_duration)
 );
 
 export const appealsWithTasksSelector = createSelector(

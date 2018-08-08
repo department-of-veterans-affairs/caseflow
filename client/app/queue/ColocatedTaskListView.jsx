@@ -34,10 +34,17 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
     return <NewTasksTab />;
   }
 
+  pageOnHold = () => {
+    return <OnHoldTasksTab />;
+  }
+
   render = () => {
     const tabs = [{
       label: 'New',
       page: this.pageNew()
+    }, {
+      label: 'On hold',
+      page: this.pageOnHold()
     }];
 
     return <AppSegment filledBackground>
@@ -66,5 +73,6 @@ const OnHoldTasksTab = connect(
   (props: { tasks: Array<AmaTask> }) => {
     return <div>
       <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
+      <AmaTaskTable tasks={props.tasks} />
     </div>;
   });
