@@ -29,6 +29,10 @@ class Appeal < AmaReview
     "Original"
   end
 
+  def issues
+    { decision_issues: decision_issues, request_issues: request_issues }
+  end
+
   def docket_name
     docket_type
   end

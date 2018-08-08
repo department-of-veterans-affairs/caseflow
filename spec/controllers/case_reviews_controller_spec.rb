@@ -50,7 +50,8 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(response_body["task"]["overtime"]).to eq true
             expect(response_body["task"]["note"]).to eq "something"
             expect(response_body.keys).to include "issues"
-            expect(response_body["issues"].size).to eq 2
+            expect(response_body["issues"]["decision_issues"].size).to eq 2
+            expect(response_body["issues"]["request_issues"].size).to eq 2
             expect(decision_issue1.reload.disposition).to eq "allowed"
             expect(decision_issue2.reload.disposition).to eq "remanded"
           end
