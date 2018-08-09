@@ -1,4 +1,3 @@
-
 class VACOLS::Representative < VACOLS::Record
   # :nocov:
   self.table_name = "vacols.rep"
@@ -56,7 +55,6 @@ class VACOLS::Representative < VACOLS::Record
                           name: "update_vacols_rep_name") do
       attrs = { repfirst: first_name, repmi: middle_initial, replast: last_name } 
       rep = appellant_representative(bfkey)
-      byebug
       # TODO: to be 100% safe, we should pass the repaddtime value
       # down to the client. It's *possible* that if a user
       # started a certification, then added a new POA row for that appeal,
@@ -73,11 +71,10 @@ class VACOLS::Representative < VACOLS::Record
       attrs = { 
         repaddr1: address[:address_one], 
         repaddr2: address[:address_two], 
-        city: address[:city], 
-        state: address[:state], 
-        zip: address[:zip]
+        repcity: address[:city], 
+        repst: address[:state], 
+        repzip: address[:zip]
       } 
-
       rep = appellant_representative(bfkey)
       # TODO: to be 100% safe, we should pass the repaddtime value
       # down to the client. It's *possible* that if a user
@@ -89,7 +86,19 @@ class VACOLS::Representative < VACOLS::Record
   end
 
   def self.update_rep!(repkey, repaddtime, rep_attrs)
-    where(repkey: repkey, repaddtime: repaddtime).update_all(rep_attrs)
+    # VACOLS itself uses repkey + repaddtime as the unique key for this table,
+    # so although this will select more than one row in some cases, we can't
+    # really do any better than this.
+    # Ruby's date equality rules prevent us from comparing the date object
+    # directly. VACOLS only stores dates, not datetimes, so
+    # comparing year/month/day should be no less accurate. 
+    
+    VACOLS::Representative.
+      where(repkey: repkey).
+      where('extract(year  from repaddtime) = ?', repaddtime.year).
+      where('extract(month from repaddtime) = ?', repaddtime.month).
+      where('extract(day   from repaddtime) = ?', repaddtime.day).
+      update_all(rep_attrs)
   end  
 
   def self.create_rep!(rep_attrs)
