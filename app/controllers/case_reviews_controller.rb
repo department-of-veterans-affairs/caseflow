@@ -12,7 +12,7 @@ class CaseReviewsController < ApplicationController
 
   def complete
     return invalid_type_error unless case_review_class
-    binding.pry
+
     record = case_review_class.complete(complete_params)
     return invalid_record_error(record) unless record.valid?
 

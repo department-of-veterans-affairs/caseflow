@@ -48,20 +48,22 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
       userRole
     } = this.props;
 
-    const appealPromise = ApiUtil.get(`/appeals/${appealId}`).then((response) => {
-      this.props.onReceiveAppealDetails(prepareAppealForStore([response.body.appeal]));
-    });
-    const taskPromise = ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
-      this.props.onReceiveTasks({ tasks: prepareTasksForStore(response.body.tasks) });
-    });
     const promises = [];
 
     if (!appealDetails || !(appealId in appealDetails)) {
-      promises.push(appealPromise);
+      promises.push(
+        ApiUtil.get(`/appeals/${appealId}`).then((response) => {
+          this.props.onReceiveAppealDetails(prepareAppealForStore([response.body.appeal]));
+        })
+      );
     }
 
     if (!tasks || _.filter(tasks, (task) => task.externalAppealId === appealId).length > 0) {
-      promises.push(taskPromise);
+      promises.push(
+        ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
+          this.props.onReceiveTasks({ tasks: prepareTasksForStore(response.body.tasks) });
+        })
+      );
     }
 
     return Promise.all(promises);
@@ -117,11 +119,11 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State) => {
-  const { tasks } = state.queue;
+  const { tasks, appealDetails } = state.queue;
 
   return {
     tasks,
-    appealDetails: appealsWithDetailsSelector(state),
+    appealDetails,
     loadedUserId: state.ui.loadedUserId
   };
 };
