@@ -20,7 +20,8 @@ describe('ColocatedTaskListView', () => {
             attributes: {
               action: 'ihp',
               aod: false,
-              assigned_at: moment().subtract(47, 'hours').format(),
+              assigned_at: moment().subtract(47, 'hours').
+                format(),
               assigned_to: {
                 css_id: userCssId
               },
@@ -40,7 +41,7 @@ describe('ColocatedTaskListView', () => {
       }
     };
     const store = createStore(
-      (state) => state,
+      (xState) => xState,
       state,
       applyMiddleware(thunk)
     );
@@ -52,13 +53,16 @@ describe('ColocatedTaskListView', () => {
     );
 
     const cells = wrapper.find('td');
+
     expect(cells).to.have.length(6);
     const wrappers = [];
+
     for (let i = 0; i < cells.length; i++) {
       wrappers.push(cells.at(i));
     }
     const [caseDetails, tasks, types, docketNumber, daysWaiting, documents] = wrappers;
     const task = state.queue.amaTasks[taskId];
+
     expect(caseDetails.text()).to.include(task.attributes.veteran_name);
     expect(caseDetails.text()).to.include(task.attributes.veteran_file_number);
     expect(tasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.attributes.action]);
