@@ -52,7 +52,8 @@ describe SupplementalClaimIntake do
     let!(:claimant) do
       Claimant.create!(
         review_request: detail,
-        participant_id: "1234"
+        participant_id: "1234",
+        payee_cd: "10"
       )
     end
 
@@ -72,6 +73,10 @@ describe SupplementalClaimIntake do
   context "#review!" do
     subject { intake.review!(params) }
 
+    let(:receipt_date) { 1.day.ago }
+    let(:claimant) { nil }
+    let(:payee) { nil }
+
     let(:detail) do
       SupplementalClaim.create!(
         veteran_file_number: "64205555",
@@ -79,38 +84,37 @@ describe SupplementalClaimIntake do
       )
     end
 
-    context "Veteran is claimant" do
-      let(:params) do
-        ActionController::Parameters.new(
-          receipt_date: 1.day.ago,
-          claimant: nil
-        )
-      end
+    let(:params) do
+      ActionController::Parameters.new(
+        receipt_date: receipt_date,
+        claimant: claimant,
+        payee: payee
+      )
+    end
 
+    context "Veteran is claimant" do
       it "adds veteran to claimants" do
         subject
 
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
-          participant_id: intake.veteran.participant_id
+          participant_id: intake.veteran.participant_id,
+          payee_cd: "00"
         )
       end
     end
 
     context "Claimant is different than Veteran" do
-      let(:params) do
-        ActionController::Parameters.new(
-          receipt_date: 1.day.ago,
-          claimant: "1234"
-        )
-      end
+      let(:claimant) { "1234" }
+      let(:payee) { "10" }
 
       it "adds other relationship to claimants" do
         subject
 
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
-          participant_id: "1234"
+          participant_id: "1234",
+          payee_cd: "10"
         )
       end
     end
