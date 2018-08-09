@@ -55,10 +55,10 @@ class FetchDocumentsForReaderUserJob < ApplicationJob
       rescue Caseflow::Error::EfolderAccessForbidden
         Rails.logger.error "Encountered access forbidden error when fetching documents for appeal #{appeal.id}"
         next
-      rescue Caseflow::Error::ClientRequestError
+      rescue Caseflow::Error::ClientRequestError, Caseflow::Error::DocumentRetrievalError
         Rails.logger.error "Encountered client request error when fetching documents for appeal #{appeal.id}"
         next
-      end
+      end      
     end
   end
 
