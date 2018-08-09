@@ -23,7 +23,7 @@ const labelForLocation = (locationCode, userId) => {
   const regex = new RegExp(`\\b(?:BVA|VACO|VHAISA)${locationCode}\\b`);
 
   if (userId.match(regex) !== null) {
-    return <span {...currentAssigneeStyling}>Assigned to you</span>;
+    return <span {...currentAssigneeStyling}>{COPY.CASE_LIST_TABLE_ASSIGNEE_IS_CURRENT_USER_LABEL}</span>;
   }
 
   return locationCode;
