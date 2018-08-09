@@ -39,7 +39,7 @@ export type Issue = {
 
 export type Issues = Array<Issue>;
 
-export type Task = {
+export type LegacyTask = {
   type: string,
   title: string,
   appealId: string,
@@ -60,7 +60,7 @@ export type Task = {
   previousTaskAssignedOn: string
 };
 
-export type Tasks = { [string]: Task };
+export type LegacyTasks = { [string]: LegacyTask };
 
 export type AmaTask = {
   id: string,
@@ -106,7 +106,7 @@ export type AppealDetail = {
   powerOfAttorney: string,
   regionalOffice: Object,
   caseflowVeteranId: ?string,
-  tasks: ?Array<Task>
+  tasks: ?Array<LegacyTask>
 };
 
 export type AppealDetails = { [string]: AppealDetail};
@@ -123,7 +123,7 @@ export type BasicAppeal = {
   veteranFullName: string,
   veteranFileNumber: string,
   isPaperCase: boolean,
-  tasks: ?Array<Task>
+  tasks: ?Array<LegacyTask>
 };
 
 export type BasicAppeals = { [string]: BasicAppeal };
