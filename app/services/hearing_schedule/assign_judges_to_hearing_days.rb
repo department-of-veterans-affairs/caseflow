@@ -5,6 +5,7 @@ class HearingSchedule::AssignJudgesToHearingDays
   attr_reader :judges, :video_co_hearing_days
 
   TB_ADDITIONAL_NA_DAYS = 3
+  CO_ROOM_NUM = 1
 
   class HearingDaysNotAllocated < StandardError; end
   class NoJudgesProvided < StandardError; end
@@ -41,8 +42,7 @@ class HearingSchedule::AssignJudgesToHearingDays
           while index < hearing_days.length
             current_hearing_day = hearing_days[index]
             unless can_day_be_assigned(current_hearing_day, assigned_hearing_days, css_id)
-              assigned_hearing_days << assign_judge_to_hearing_day(current_hearing_day, css_id)
-              hearing_days.delete_at(index)
+              assigned_hearing_days.push(*assign_judge_to_hearing_day(current_hearing_day, css_id))
               hearing_days_assigned = (total_hearing_day_count == assigned_hearing_days.length)
               break
             end
@@ -128,18 +128,31 @@ class HearingSchedule::AssignJudgesToHearingDays
     @judges.sort_by { |_k, v| v[:non_availabilities].count }.to_h.keys.reverse
   end
 
-  def assign_judge_to_hearing_day(hearing_day, css_id)
-    is_central_hearing = co_hearing_day?(hearing_day)
+  def hearing_days_by_date(date)
+    @video_co_hearing_days.select do |day|
+      day.hearing_date == date && co_hearing_day?(day)
+    end
+  end
 
-    HearingDayMapper.hearing_day_field_validations(
-      hearing_pkseq: hearing_day.hearing_pkseq,
-      hearing_type: get_hearing_type(is_central_hearing),
-      hearing_date: hearing_day.hearing_date,
-      room_info: hearing_day.room,
-      regional_office: is_central_hearing ? nil : hearing_day.folder_nr.split(" ")[1],
-      judge_id: @judges[css_id][:staff_info].sattyid,
-      judge_name: get_judge_name(css_id)
-    )
+  def assign_judge_to_hearing_day(day, css_id)
+    is_central_hearing = co_hearing_day?(day)
+    date = day.hearing_date
+
+    hearing_days = is_central_hearing ? hearing_days_by_date(date) : [day]
+
+    hearing_days.map do |hearing_day|
+      @video_co_hearing_days.delete(hearing_day)
+
+      HearingDayMapper.hearing_day_field_validations(
+        hearing_pkseq: hearing_day.hearing_pkseq,
+        hearing_type: get_hearing_type(is_central_hearing),
+        hearing_date: hearing_day.hearing_date,
+        room_info: hearing_day.room,
+        regional_office: is_central_hearing ? nil : hearing_day.folder_nr.split(" ")[1],
+        judge_id: @judges[css_id][:staff_info].sattyid,
+        judge_name: get_judge_name(css_id)
+      )
+    end
   end
 
   def get_hearing_type(is_central_hearing)
@@ -186,7 +199,7 @@ class HearingSchedule::AssignJudgesToHearingDays
       day.hearing_date = day.hearing_date.to_date
 
       unless (co_hearing_day?(day) && !day.hearing_date.wednesday?) ||
-             hearing_day_already_assigned(day)
+             hearing_day_already_assigned(day) && day.room != CO_ROOM_NUM
         day
       end
     end.compact
