@@ -39,7 +39,7 @@ export type Issue = {
 
 export type Issues = Array<Issue>;
 
-export type Task = {
+export type LegacyTask = {
   type: string,
   title: string,
   appealId: string,
@@ -60,7 +60,7 @@ export type Task = {
   previousTaskAssignedOn: string
 };
 
-export type Tasks = { [string]: Task };
+export type LegacyTasks = { [string]: LegacyTask };
 
 export type AmaTask = {
   id: string,
@@ -91,7 +91,7 @@ export type AmaTasks = { [string]: AmaTask };
 
 export type LegacyAppeal = {
   id: string,
-  attributes: {
+  +attributes: {
     is_legacy_appeal: boolean,
     issues: Array<Object>,
     hearings: Array<Object>,
@@ -115,8 +115,10 @@ export type LegacyAppeal = {
     regional_office: Object,
     caseflow_veteran_id: ?string
   },
-  tasks: ?Array<Task>
+  tasks: ?Array<LegacyTask>
 };
+
+export type LegacyAppeals = { [string]: LegacyAppeal };
 
 export type BasicAppeal = {
   id: string,
@@ -130,15 +132,15 @@ export type BasicAppeal = {
   veteranFullName: string,
   veteranFileNumber: string,
   isPaperCase: Boolean,
-  tasks: ?Array<Task>
+  tasks: ?Array<LegacyTask>
 };
 
 export type BasicAppeals = { [string]: BasicAppeal };
 
 export type Appeal = {
   id: string,
-  attributes: {
-    is_legacy_appeal: Boolean,
+  +attributes: {
+    is_legacy_appeal: boolean,
     issues: Array<Object>,
     hearings: Array<Object>,
     appellant_full_name: string,
@@ -150,17 +152,17 @@ export type Appeal = {
     vbms_id: string,
     external_id: string,
     type: string,
-    aod: Boolean,
+    aod: boolean,
     docket_number: string,
     status: string,
     decision_date: string,
-    paper_case: Boolean,
+    paper_case: boolean,
     power_of_attorney: string,
     caseflow_veteran_id: ?string
   }
 };
 
-export type LegacyAppeals = { [string]: LegacyAppeal };
+export type Appeals = { [string]: Appeal };
 
 export type Attorneys = {
   data?: Array<User>,

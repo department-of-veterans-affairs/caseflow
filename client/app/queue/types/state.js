@@ -1,7 +1,7 @@
 // @flow
 import type {
-  Task,
-  Tasks,
+  LegacyTask,
+  LegacyTasks,
   AmaTasks,
   LegacyAppeals,
   BasicAppeals,
@@ -12,7 +12,7 @@ import type {
 export type AttorneyAppealsLoadingState = {
   [string]: {
     state: string,
-    data: {tasks: Tasks, appeals: LegacyAppeals},
+    data: {tasks: LegacyTasks, appeals: LegacyAppeals},
     error: {status: number, response: Object}
   }
 };
@@ -21,7 +21,7 @@ export type AttorneysOfJudge = Array<User>;
 
 export type CaseDetailState = {|
   activeAppeal: ?Object,
-  activeTask: ?Task
+  activeTask: ?LegacyTask
 |};
 
 export type UiStateMessage = { title: string, detail?: string };
@@ -43,7 +43,8 @@ export type UiState = {
   selectedAssigneeSecondary: ?string,
   loadedUserId: ?number,
   userRole: string,
-  userCssId: string
+  userCssId: string,
+  veteranCaseListIsVisible: boolean
 };
 
 export type UsersById = { [number]: ?User };
@@ -52,7 +53,7 @@ export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 
 export type QueueState = {
   judges: UsersById,
-  tasks: Tasks,
+  tasks: LegacyTasks,
   appeals: BasicAppeals,
   appealDetails: LegacyAppeals,
   amaTasks: AmaTasks,

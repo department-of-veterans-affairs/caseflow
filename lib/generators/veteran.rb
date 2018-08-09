@@ -3,7 +3,7 @@ class Generators::Veteran
 
   class << self
     # rubocop:disable Metrics/MethodLength
-    def default_attrs
+    def default_attrs(seed = nil)
       {
         address_line1: "1234 FAKE ST",
         address_line2: nil,
@@ -32,9 +32,9 @@ class Generators::Veteran
         fiduciary_decision_category_type_code: nil,
         fiduciary_folder_location: nil,
         file_number: "111223334",
-        first_name: generate_first_name,
+        first_name: generate_first_name(seed),
         foreign_code: nil,
-        last_name: generate_last_name,
+        last_name: generate_last_name(seed),
         middle_name: "E",
         military_post_office_type_code: nil,
         military_postal_type_code: nil,
@@ -47,7 +47,7 @@ class Generators::Veteran
         phone_type_name_two: nil,
         prep_phrase_type: nil,
         province_name: nil,
-        ptcpnt_id: generate_external_id,
+        ptcpnt_id: generate_external_id(seed),
         ptcpnt_relationship: nil,
         return_code: "SHAR 9999",
         return_message: "Records found.",
@@ -88,7 +88,7 @@ class Generators::Veteran
 
     def build(attrs = {})
       Fakes::BGSService.veteran_records ||= {}
-      Fakes::BGSService.veteran_records[attrs[:file_number]] = default_attrs.merge(attrs)
+      Fakes::BGSService.veteran_records[attrs[:file_number]] = default_attrs(attrs[:file_number].hash).merge(attrs)
       Veteran.new(file_number: attrs[:file_number])
     end
   end
