@@ -4,6 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import CopyToClipboard from 'react-copy-to-clipboard';
+import ReactTooltip from 'react-tooltip';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
@@ -11,6 +12,7 @@ import { CATEGORIES } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import ReaderLink from './ReaderLink';
 import { ClipboardIcon } from '../components/RenderFunctions';
+import COPY from '../../COPY.json';
 
 import { toggleVeteranCaseList } from './uiReducer/uiActions';
 
@@ -63,6 +65,17 @@ const clipboardButtonStyling = css({
   '&:hover > svg path': { fill: COLORS.PRIMARY }
 });
 
+const clipboardTooltipID = 'clipboard-tooltip';
+
+const tooltipStyling = css({
+  display: 'inline-block',
+  [`& > #${clipboardTooltipID}`]: {
+    backgroundColor: COLORS.GREY_DARK,
+    padding: '0.5rem 1rem'
+  },
+  [`& > #${clipboardTooltipID}:after`]: { display: 'none' }
+});
+
 class CaseTitle extends React.PureComponent {
   render = () => {
     const {
@@ -78,14 +91,17 @@ class CaseTitle extends React.PureComponent {
       <React.Fragment>
         Veteran ID:&nbsp;
         <CopyToClipboard text={appeal.attributes.vbms_id}>
-          <button type="submit"
-            title="Click to copy Veteran ID"
-            className="cf-apppeal-id"
-            {...clipboardButtonStyling} >
-            {appeal.attributes.vbms_id}&nbsp;
-            <ClipboardIcon />
-          </button>
+          <span data-tip data-for={clipboardTooltipID}>
+            <button type="submit" className="cf-apppeal-id" {...clipboardButtonStyling}>
+              {appeal.attributes.vbms_id}&nbsp;<ClipboardIcon />
+            </button>
+          </span>
         </CopyToClipboard>
+        <span {...tooltipStyling}>
+          <ReactTooltip effect="solid" id={clipboardTooltipID} offset={{ bottom: '0' }} place="bottom">
+            {COPY.CASE_TITLE_VETERAN_ID_BUTTON_TOOLTIP}
+          </ReactTooltip>
+        </span>
       </React.Fragment>
 
       <ReaderLink
