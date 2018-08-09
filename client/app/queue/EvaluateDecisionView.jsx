@@ -29,7 +29,10 @@ import {
   redText, PAGE_TITLES,
   ISSUE_DISPOSITIONS
 } from './constants';
-const setWidth = (width) => css({ width, maxWidth: width });
+const setWidth = (width) => css({
+  width,
+  maxWidth: width
+});
 const headerStyling = marginBottom(1.5);
 const inlineHeaderStyling = css(headerStyling, { float: 'left' });
 const hrStyling = css(marginTop(2), marginBottom(3));
