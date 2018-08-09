@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import _ from 'lodash';
-import ReactTooltip from 'react-tooltip';
 
+import Tooltip from './Tooltip';
 import {
   SortArrowDown,
   SortArrowUp,
@@ -47,28 +47,24 @@ const HeaderRow = (props) => {
   return <thead className={props.headerClassName}>
     <tr>
       {getColumns(props).map((column, columnNumber) => {
-        const tooltipProps = {
-          'data-tip': true,
-          'data-for': `${columnNumber}-tooltip`
-        };
-        let columnContent = <span {...tooltipProps}>{column.header || ''}</span>;
+        let columnContent = <span>{column.header || ''}</span>;
 
         if (column.getSortValue) {
           const sortIndicator = props.sortAscending ? <SortArrowUp /> : <SortArrowDown />;
           const notSortedIndicator = <DoubleArrow />;
 
           columnContent = <span
-            {...sortableHeaderStyle} {...tooltipProps}
+            {...sortableHeaderStyle}
             onClick={() => props.setSortOrder(columnNumber)}>
             {column.header || ''} {props.sortColIdx === columnNumber ? sortIndicator : notSortedIndicator}
           </span>;
         }
 
         return <th scope="col" key={columnNumber} className={cellClasses(column)}>
-          {column.tooltip && <ReactTooltip id={`${columnNumber}-tooltip`} effect="solid" multiline>
-            {column.tooltip}
-          </ReactTooltip>}
-          {columnContent}
+          { column.tooltip ?
+            <Tooltip id={`tooltip-${columnNumber}`} text={column.tooltip}>{columnContent}</Tooltip> :
+            <React.Fragment>{columnContent}</React.Fragment>
+          }
         </th>;
       })}
     </tr>
