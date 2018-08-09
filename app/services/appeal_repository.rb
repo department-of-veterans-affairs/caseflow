@@ -43,7 +43,7 @@ class AppealRepository
                           service: :vacols,
                           name: "appeals_by_vbms_id_with_preloaded_status_api_attrs") do
       cases = VACOLS::Case.where(bfcorlid: vbms_id)
-        .includes(:folder, :correspondent, folder: :outcoder)
+        .includes(:folder, :correspondent, :representatives, folder: :outcoder)
         .references(:folder, :correspondent, folder: :outcoder)
 
       vacols_ids = cases.map(&:bfkey)
@@ -83,7 +83,7 @@ class AppealRepository
       VACOLS::Case.where(bfcorlid: vbms_id)
         .where.not(bfd19: nil)
         .where("bfddec is NULL or bfmpro = 'REM'")
-        .includes(:folder, :correspondent, :representative)
+        .includes(:folder, :correspondent, :representatives)
     end
 
     cases.map { |case_record| build_appeal(case_record, true) }
@@ -96,7 +96,7 @@ class AppealRepository
                  when "Partial Grant or Remand"
                    VACOLS::Case.remands_ready_for_claims_establishment
                  else
-                   VACOLS::Case.includes(:folder, :correspondent)
+                   VACOLS::Case.includes(:folder, :correspondent, :representatives)
                  end
 
     case_records = MetricsService.record("VACOLS: load_vacols_data_by_vbms_id #{appeal.vbms_id}",
@@ -133,7 +133,7 @@ class AppealRepository
       vbms_id: case_record.bfcorlid,
       type: VACOLS::Case::TYPES[case_record.bfac],
       file_type: folder_type_from(folder_record),
-      contested_claim: case_record.representative.try(:reptype) == "C",
+      contested_claim: case_record.representatives.any? { |r| r.reptype == "C" }
       veteran_first_name: correspondent_record.snamef,
       veteran_middle_initial: correspondent_record.snamemi,
       veteran_last_name: correspondent_record.snamel,

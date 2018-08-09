@@ -10,7 +10,7 @@ class VACOLS::Representative < VACOLS::Record
     appellant_attorney: "A",
     appellant_agent: "G",
     # :fee_agreement: "F", # deprecated
-    contesting_claimant_organization: "C", 
+    contesting_claimant: "C", 
     contesting_claimant_attorney: "D", 
     contesting_claimant_agent: "E"
     # :fee_attorney_reference_list: "R", # deprecated
