@@ -12,6 +12,7 @@ import AppFrame from '../components/AppFrame';
 import { BrowserRouter } from 'react-router-dom';
 import Alert from '../components/Alert';
 import _ from 'lodash';
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export default class TestUsers extends React.PureComponent {
   constructor(props) {
@@ -137,7 +138,11 @@ export default class TestUsers extends React.PureComponent {
         <NavigationBar
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
-          appName="Test Users" />
+          appName="Test Users"
+          logoProps={{
+            accentColor: COLORS.GREY_DARK,
+            overlapColor: COLORS.GREY_DARK
+          }} />
         <AppFrame>
           <AppSegment filledBackground>
             <h1>Welcome to the Caseflow admin page.</h1>
@@ -146,10 +151,7 @@ export default class TestUsers extends React.PureComponent {
                 <p>
                   Here you can test out different user stories by selecting
                   a Test User and accessing different parts of the application.</p>
-                <p>
-                  Some of our users come from different stations across the country,
-                  therefore selecting station 405 might lead to an extra Login screen.</p>
-                <strong>User Selector:</strong>
+                <h3>User Selector:</h3>
                 <SearchableDropdown
                   name="Test user dropdown"
                   hideLabel
@@ -161,28 +163,27 @@ export default class TestUsers extends React.PureComponent {
                   name="Switch user"
                   loading={this.state.isSwitching}
                   loadingText="Switching users" />
-                <br /><br />
+                <br /> <br />
+                <h3>App Selector:</h3>
+                <TabWindow
+                  tabs={tabs} />
                 <p>
                 Not all applications are available to every user. Additionally,
-                some users have access to different parts of the same application.</p>
-                <p>This button reseeds the database with default values.</p>
+                some users have access to different parts of the same application.
+                  <br />This button reseeds the database with default values.</p>
                 {this.state.reseedingError &&
                   <Alert
                     message={this.state.reseedingError.toString()}
                     type="error"
                   />
                 }
-                <br />
                 <Button
                   onClick={this.reseed}
                   name="Reseed the DB"
                   loading={this.state.isReseeding}
                   loadingText="Reseeding the DB" />
-                <br /><br />
-                <strong>App Selector:</strong>
-                <TabWindow
-                  tabs={tabs} />
-                <strong>Global Feature Toggles Enabled:</strong>
+                <br /> <br />
+                <h3>Global Feature Toggles Enabled:</h3>
                 <SearchableDropdown
                   name="feature_toggles"
                   label="Remove or add new feature toggles"
