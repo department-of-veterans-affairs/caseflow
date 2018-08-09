@@ -14,11 +14,7 @@ import {
   resetSuccessMessages
 } from './uiReducer/uiActions';
 import Alert from '../components/Alert';
-<<<<<<< HEAD
-import type { Task, Appeals } from './types/models';
-=======
-import type { LegacyTask, LegacyAppeals } from './types/models';
->>>>>>> 53d29d7314c4402a3451cd6b7c5f166270b7204f
+import type { LegacyTask, Appeals } from './types/models';
 import type { AttorneysOfJudge, AttorneyAppealsLoadingState, UiStateMessage, State } from './types/state';
 
 type Params = {|
