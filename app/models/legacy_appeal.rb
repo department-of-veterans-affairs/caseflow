@@ -188,7 +188,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def power_of_attorney
-    # TODO: this will only return a single power of attorney — there are sometimes multiple values, eg.
+    # TODO: this will only return a single power of attorney. There are sometimes multiple values, eg.
     # when a contesting claimant is present.
     @poa ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id).tap do |poa|
       # Set the VACOLS properties of the PowerOfAttorney object here explicitly so we only query the database once.
