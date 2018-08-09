@@ -39,7 +39,8 @@ import BeaamAppealListView from './BeaamAppealListView';
 import OrganizationQueue from './OrganizationQueue';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { PAGE_TITLES, USER_ROLES } from './constants';
+import { PAGE_TITLES } from './constants';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import type { State } from './types/state';
 
@@ -77,11 +78,11 @@ class QueueApp extends React.PureComponent<Props> {
   viewForUserRole = () => {
     const { userRole } = this.props;
 
-    if (userRole === USER_ROLES.ATTORNEY) {
+    if (userRole === USER_ROLE_TYPES.attorney) {
       return <AttorneyTaskListView {...this.props} />;
-    } else if (userRole === USER_ROLES.JUDGE) {
+    } else if (userRole === USER_ROLE_TYPES.judge) {
       return <JudgeReviewTaskListView {...this.props} />;
-    } else if (userRole === USER_ROLES.COLOCATED) {
+    } else if (userRole === USER_ROLE_TYPES.colocated) {
       return <ColocatedTaskListView userId={this.props.userId} />;
     }
   }
@@ -137,7 +138,7 @@ class QueueApp extends React.PureComponent<Props> {
     <OrganizationQueue {...this.props} />
   </QueueLoadingScreen>
 
-  queueName = () => this.props.userRole === USER_ROLES.ATTORNEY ? 'Your Queue' : 'Review Cases';
+  queueName = () => this.props.userRole === USER_ROLE_TYPES.attorney ? 'Your Queue' : 'Review Cases';
 
   propsForQueueLoadingScreen = () => {
     const {

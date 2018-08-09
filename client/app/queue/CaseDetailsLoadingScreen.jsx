@@ -12,7 +12,7 @@ import { prepareAppealDetailsForStore, prepareLegacyTasksForStore, prepareTasksF
 import { onReceiveAppealDetails, onReceiveTasks, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
 import type { LegacyAppeal, LegacyAppeals, LegacyTasks } from './types/models';
 import type { State, UsersById } from './types/state';
-import { USER_ROLES } from './constants';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 type Params = {|
   userId: number,
@@ -51,7 +51,7 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
     });
     const taskPromise = ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
       const legacyTasks = _.every(response.body.tasks, (task) => task.attributes.appeal_type === 'LegacyAppeal');
-      const preparedTasks = legacyTasks && [USER_ROLES.ATTORNEY, USER_ROLES.JUDGE].includes(userRole) ?
+      const preparedTasks = legacyTasks && [USER_ROLE_TYPES.attorney, USER_ROLE_TYPES.judge].includes(userRole) ?
         prepareLegacyTasksForStore(response.body.tasks) :
         prepareTasksForStore(response.body.tasks);
 
@@ -79,7 +79,7 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
   }
 
   maybeLoadJudgeData = () => {
-    if (this.props.userRole !== USER_ROLES.JUDGE) {
+    if (this.props.userRole !== USER_ROLE_TYPES.judge) {
       return Promise.resolve();
     }
     this.props.fetchAllAttorneys();

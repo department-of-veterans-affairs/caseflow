@@ -3,10 +3,8 @@ import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 import StringUtil from '../util/StringUtil';
-import {
-  redText,
-  USER_ROLES
-} from './constants';
+import { redText } from './constants';
+
 import type {
   AmaTask,
   AmaTasks,
@@ -19,10 +17,12 @@ import type {
   Issue,
   Issues
 } from './types/models';
+
 import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 export const prepareTasksForStore = (tasks: Array<Object>): AmaTasks => tasks.reduce((acc, curr: AmaTask) => {
   acc[curr.attributes.external_id] = curr;
@@ -175,7 +175,7 @@ export const buildCaseReviewPayload = (
     }
   };
 
-  if (userRole === USER_ROLES.ATTORNEY) {
+  if (userRole === USER_ROLE_TYPES.attorney) {
     _.extend(payload.data.tasks, { document_type: decision.type });
   } else {
     args.factors_not_considered = _.keys(args.factors_not_considered);

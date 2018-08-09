@@ -5,12 +5,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { tasksForAppealAssignedToAttorneySelector, tasksForAppealAssignedToUserSelector } from './selectors';
+
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import JudgeActionsDropdown from './components/JudgeActionsDropdown';
 import COPY from '../../COPY.json';
-import { USER_ROLES } from './constants';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import { COLORS } from '../constants/AppConstants';
+
 import { renderLegacyAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
 import type { LegacyAppeal, LegacyTask } from './types/models';
@@ -86,7 +88,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
 
     const taskAssignedToUser = this.props.taskAssignedToUser;
 
-    if (this.props.userRole === USER_ROLES.JUDGE) {
+    if (this.props.userRole === USER_ROLE_TYPES.judge) {
       if (!taskAssignedToUser.assignedByFirstName ||
           !taskAssignedToUser.assignedByLastName ||
           !taskAssignedToUser.documentId) {
@@ -135,9 +137,9 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     } = this.props;
     let CheckoutDropdown = <React.Fragment />;
 
-    if (userRole === USER_ROLES.ATTORNEY) {
+    if (userRole === USER_ROLE_TYPES.attorney) {
       CheckoutDropdown = <SelectCheckoutFlowDropdown appealId={appeal.external_id} />;
-    } else if (userRole === USER_ROLES.JUDGE && this.props.featureToggles.judge_case_review_checkout) {
+    } else if (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout) {
       CheckoutDropdown = <JudgeActionsDropdown appealId={appeal.external_id} />;
     }
 

@@ -12,7 +12,7 @@ import { associateTasksWithAppeals } from './utils';
 import { onReceiveQueue, setAttorneysOfJudge, fetchAllAttorneys, fetchAmaTasksOfUser } from './QueueActions';
 import type { LegacyAppeals, LegacyTasks } from './types/models';
 import type { State, UsersById } from './types/state';
-import { USER_ROLES } from './constants';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 type Params = {|
   userId: number,
@@ -56,7 +56,7 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
       userRole
     } = this.props;
 
-    if (userRole !== USER_ROLES.ATTORNEY && userRole !== USER_ROLES.JUDGE) {
+    if (userRole !== USER_ROLE_TYPES.attorney && userRole !== USER_ROLE_TYPES.judge) {
       return Promise.resolve();
     }
 
@@ -83,7 +83,7 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
   }
 
   maybeLoadJudgeData = () => {
-    if (this.props.userRole !== USER_ROLES.JUDGE) {
+    if (this.props.userRole !== USER_ROLE_TYPES.judge) {
       return Promise.resolve();
     }
     this.props.fetchAllAttorneys();
