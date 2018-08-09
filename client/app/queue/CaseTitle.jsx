@@ -3,12 +3,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import CopyToClipboard from 'react-copy-to-clipboard';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { CATEGORIES } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import ReaderLink from './ReaderLink';
+import { ClipboardIcon } from '../components/RenderFunctions';
 
 import { toggleVeteranCaseList } from './uiReducer/uiActions';
 
@@ -46,6 +48,21 @@ const viewCasesStyling = css({
   cursor: 'pointer'
 });
 
+const clipboardButtonStyling = css({
+  borderColor: COLORS.GREY_LIGHT,
+  borderWidth: '1px',
+  color: COLORS.GREY_DARK,
+  padding: '0.75rem',
+  ':hover': {
+    backgroundColor: 'transparent',
+    color: COLORS.GREY_DARK,
+    borderColor: COLORS.PRIMARY,
+    borderBottomWidth: '1px'
+  },
+  '& > svg path': { fill: COLORS.GREY_LIGHT },
+  '&:hover > svg path': { fill: COLORS.PRIMARY }
+});
+
 class CaseTitle extends React.PureComponent {
   render = () => {
     const {
@@ -58,7 +75,19 @@ class CaseTitle extends React.PureComponent {
     } = this.props;
 
     return <CaseTitleScaffolding heading={appeal.attributes.veteran_full_name}>
-      <React.Fragment>Veteran ID: <b>{appeal.attributes.vbms_id}</b></React.Fragment>
+      <React.Fragment>
+        Veteran ID:&nbsp;
+        <CopyToClipboard text={appeal.attributes.vbms_id}>
+          <button type="submit"
+            title="Click to copy Veteran ID"
+            className="cf-apppeal-id"
+            {...clipboardButtonStyling} >
+            {appeal.attributes.vbms_id}&nbsp;
+            <ClipboardIcon />
+          </button>
+        </CopyToClipboard>
+      </React.Fragment>
+
       <ReaderLink
         appealId={appealId}
         analyticsSource={CATEGORIES[analyticsSource.toUpperCase()]}
@@ -66,6 +95,7 @@ class CaseTitle extends React.PureComponent {
         appeal={appeal}
         taskType={taskType}
         longMessage />
+
       <span {...viewCasesStyling}>
         <Link onClick={this.props.toggleVeteranCaseList}>
           { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
