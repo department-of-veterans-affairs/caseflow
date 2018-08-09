@@ -58,7 +58,7 @@ class FetchDocumentsForReaderUserJob < ApplicationJob
       rescue Caseflow::Error::ClientRequestError
         Rails.logger.error "Encountered client request error when fetching documents for appeal #{appeal.id}"
         next
-      end      
+      end
     end
   end
 

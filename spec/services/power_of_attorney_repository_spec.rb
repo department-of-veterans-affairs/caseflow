@@ -122,7 +122,6 @@ describe PowerOfAttorneyRepository do
       end
 
       it "sets the values in VACOLS" do
-
         expect(appellant_representative.repfirst).to eq(nil)
         expect(appellant_representative.repmi).to eq(nil)
         expect(appellant_representative.replast).to eq(nil)

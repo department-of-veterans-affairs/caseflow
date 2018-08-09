@@ -10,11 +10,11 @@ class VACOLS::Representative < VACOLS::Record
     appellant_attorney: "A",
     appellant_agent: "G",
     # :fee_agreement: "F", # deprecated
-    contesting_claimant: "C", 
-    contesting_claimant_attorney: "D", 
+    contesting_claimant: "C",
+    contesting_claimant_attorney: "D",
     contesting_claimant_agent: "E"
     # :fee_attorney_reference_list: "R", # deprecated
-  }
+  }.freeze
 
   def self.representatives(bfkey)
     where(repkey: bfkey, reptype: ACTIVE_REPTYPES.values)
@@ -55,22 +55,22 @@ class VACOLS::Representative < VACOLS::Record
     MetricsService.record("VACOLS: update_vacols_rep_name! #{bfkey}",
                           service: :vacols,
                           name: "update_vacols_rep_name") do
-      name_attrs = { 
-        repfirst: name[:first_name][0, 24], 
-        repmi: name[:middle_initial][0, 4], 
-        replast: name[:last_name][0, 40] 
-      }       
-      address_attrs = { 
-        repaddr1: address[:address_one][0, 50], 
-        repaddr2: address[:address_two][0, 50], 
-        repcity: address[:city][0, 20], 
-        repst: address[:state][0, 4], 
+      name_attrs = {
+        repfirst: name[:first_name][0, 24],
+        repmi: name[:middle_initial][0, 4],
+        replast: name[:last_name][0, 40]
+      }
+      address_attrs = {
+        repaddr1: address[:address_one][0, 50],
+        repaddr2: address[:address_two][0, 50],
+        repcity: address[:city][0, 20],
+        repst: address[:state][0, 4],
         repzip: address[:zip][0, 10]
-      } 
-      attrs = {} 
+      }
+      attrs = {}
       attrs = attrs.merge(name_attrs) unless name.empty?
       attrs = attrs.merge(address_attrs) unless address.empty?
-      attrs = attrs.merge({reptype: ACTIVE_REPTYPES[type]})
+      attrs = attrs.merge(reptype: ACTIVE_REPTYPES[type])
       rep = appellant_representative(bfkey)
 
       # TODO: to be 100% safe, we should pass the repaddtime value
@@ -86,14 +86,14 @@ class VACOLS::Representative < VACOLS::Record
     # VACOLS has a unique constraint on repkey + repaddtime.
     # Ruby's date equality rules prevent us from comparing the date object
     # directly. VACOLS only stores dates, not datetimes, so
-    # comparing year/month/day should be no less accurate. 
-    VACOLS::Representative.
-      where(repkey: repkey).
-      where('extract(year  from repaddtime) = ?', repaddtime.year).
-      where('extract(month from repaddtime) = ?', repaddtime.month).
-      where('extract(day   from repaddtime) = ?', repaddtime.day).
-      update_all(rep_attrs)
-  end  
+    # comparing year/month/day should be no less accurate.
+    VACOLS::Representative
+      .where(repkey: repkey)
+      .where("extract(year  from repaddtime) = ?", repaddtime.year)
+      .where("extract(month from repaddtime) = ?", repaddtime.month)
+      .where("extract(day   from repaddtime) = ?", repaddtime.day)
+      .update_all(rep_attrs)
+  end
 
   def self.create_rep!(bfkey, rep_attrs)
     create!(rep_attrs.merge(repaddtime: VacolsHelper.local_date_with_utc_timezone, repkey: bfkey))
