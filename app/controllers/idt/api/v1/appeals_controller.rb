@@ -2,14 +2,17 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
   before_action :verify_access
 
-  def index
+  def list
     appeals = file_number ? appeals_by_file_number : appeals_assigned_to_user
 
     render json: json_appeals(appeals)
   end
 
   def details
-    # TODO: implement
+    # TODO: add AMA appeals
+    tasks, appeals = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(params[:appeal_id], "attorney")
+    return render json: { message: "Appeal not found" }, status: 404 if appeals.empty?
+    render json: json_appeal_details(tasks[0], appeals[0])
   end
 
   def appeals_assigned_to_user
@@ -22,10 +25,23 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     LegacyAppeal.fetch_appeals_by_file_number(file_number).select(&:active?)
   end
 
+  def json_appeal_details(task, appeal)
+    json_details = json_appeal(appeal)
+    json_details[:data][:attributes][:assigned_by] = task.added_by.try(:name)
+    json_details
+  end
+
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
       appeals,
       each_serializer: ::Idt::V1::AppealSerializer
+    ).as_json
+  end
+
+  def json_appeal(appeal)
+    ActiveModelSerializers::SerializableResource.new(
+      appeal,
+      serializer: ::Idt::V1::AppealDetailsSerializer
     ).as_json
   end
 end

@@ -32,6 +32,7 @@ module PowerOfAttorneyMapper
       # the information we have.
       {
         representative_name: get_rep_name_from_rep_record(representative_record),
+        # TODO: alex to map rep.repso and rep.reptype based on values provided by Jed.
         representative_type: nil
       }
     elsif get_short_name(vacols_code) == "None"
