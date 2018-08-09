@@ -18,8 +18,10 @@ class RoSchedulePeriod < SchedulePeriod
   end
 
   def schedule_confirmed(hearing_schedule)
-    HearingDay.create_schedule(hearing_schedule)
-    super
+    transaction do
+      HearingDay.create_schedule(hearing_schedule)
+      super
+    end
   end
 
   private
