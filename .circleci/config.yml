@@ -41,35 +41,35 @@ jobs:
           keys:
             - dot-rbenv-cache-v4-{{ arch }}-{{ checksum ".ruby-version" }}
 
-      - run:
-          name: Setup Ruby
-          command: rbenv install --skip-existing $(cat ~/project/.ruby-version)
+      # - run:
+      #     name: Setup Ruby
+      #     command: rbenv install --skip-existing $(cat ~/project/.ruby-version)
 
-      - run:
-          name: Setup Bundler
-          command: gem install bundler
+      # - run:
+      #     name: Setup Bundler
+      #     command: gem install bundler
 
-      - save_cache:
-          key: dot-rbenv-cache-v4-{{ arch }}-{{ checksum ".ruby-version" }}
-          paths:
-            - ~/.rbenv
+      # - save_cache:
+      #     key: dot-rbenv-cache-v4-{{ arch }}-{{ checksum ".ruby-version" }}
+      #     paths:
+      #       - ~/.rbenv
 
       - run:
           name: Ruby version
           command: ruby -v
 
-      - restore_cache:
-          keys:
-            - vendor-bundle-v4-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+      # - restore_cache:
+      #     keys:
+      #       - vendor-bundle-v4-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
 
       - run:
           name: Bundle install
           command: bundle install --path vendor/bundle
 
-      - save_cache:
-          key: vendor-bundle-v4-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
+      # - save_cache:
+      #     key: vendor-bundle-v4-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+      #     paths:
+      #       - vendor/bundle
 
       - restore_cache:
           name: Restore yarn cache
