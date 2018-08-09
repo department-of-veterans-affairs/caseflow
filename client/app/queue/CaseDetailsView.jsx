@@ -9,6 +9,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Alert from '../components/Alert';
 import AppellantDetail from './AppellantDetail';
 import VeteranDetail from './VeteranDetail';
+import VeteranCasesView from './VeteranCasesView';
 import CaseHearingsDetail from './CaseHearingsDetail';
 import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
@@ -48,6 +49,12 @@ class CaseDetailsView extends React.PureComponent {
       {success && <Alert type="success" title={success.title} scrollOnAlert={false}>
         {success.detail}
       </Alert>}
+      { this.props.veteranCaseListIsVisible &&
+        <VeteranCasesView
+          caseflowVeteranId={appeal.caseflowVeteranId}
+          veteranId={appeal.veteranFileNumber}
+        />
+      }
       <CaseSnapshot appealId={appealId} />
       <hr {...horizontalRuleStyling} />
       <StickyNavContentArea>
@@ -73,11 +80,13 @@ CaseDetailsView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const { success, error } = state.ui.messages;
+  const { veteranCaseListIsVisible } = state.ui;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     success,
-    error
+    error,
+    veteranCaseListIsVisible
   };
 };
 

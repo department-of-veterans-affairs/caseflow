@@ -47,14 +47,10 @@ export const prepareTasksForStore =
     return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.externalAppealId), (task) => task);
   };
 
-export const associateTasksWithAppeals =
-  (serverData: { tasks: { data: Array<Object> } }):
-    { appeals: BasicAppeals, tasks: Tasks } => {
-    const {
-      tasks: { data: tasks }
-    } = serverData;
-
-    const appealHash = tasks.reduce((accumulator, task) => {
+const extractAppealsFromTasks =
+  (tasks: Array<Object>):
+    BasicAppeals => {
+    return tasks.reduce((accumulator, task) => {
       if (!accumulator[task.attributes.external_appeal_id]) {
         accumulator[task.attributes.external_appeal_id] = {
           id: task.attributes.appeal_id,
@@ -73,10 +69,18 @@ export const associateTasksWithAppeals =
 
       return accumulator;
     }, {});
+  };
+
+export const associateTasksWithAppeals =
+  (serverData: { tasks: { data: Array<Object> } }):
+    { appeals: BasicAppeals, tasks: Tasks } => {
+    const {
+      tasks: { data: tasks }
+    } = serverData;
 
     return {
       tasks: prepareTasksForStore(tasks),
-      appeals: appealHash
+      appeals: extractAppealsFromTasks(tasks)
     };
   };
 
@@ -226,8 +230,9 @@ export const buildCaseReviewPayload = (
   }
 
   payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => _.extend({},
-    _.pick(issue, ['vacols_sequence_id', 'remand_reasons', 'type', 'readjudication']),
-    { disposition: _.capitalize(issue.disposition) }
+    _.pick(issue, ['remand_reasons', 'type', 'readjudication']),
+    { disposition: _.capitalize(issue.disposition) },
+    { id: issue.vacols_sequence_id }
   ));
 
   return payload;

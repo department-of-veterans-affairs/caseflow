@@ -38,7 +38,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
     context "assigning non-available days to judges" do
       before do
-        @num_non_available_days = [10, 5, 15]
+        @num_non_available_days = [10, 5, 15, 0]
         @num_non_available_days.count.times do |i|
           judge = FactoryBot.create(:user)
           get_unique_dates_between(schedule_period.start_date, schedule_period.end_date,
@@ -48,6 +48,12 @@ describe HearingSchedule::AssignJudgesToHearingDays do
           end
           create(:staff, :hearing_judge, sdomainid: judge.css_id)
         end
+
+        # creating a judge and n/a with nil date.
+        judge = FactoryBot.create(:user)
+        create(:judge_non_availability, object_identifier: judge.css_id,
+                                        date: nil, schedule_period_id: schedule_period.id)
+        create(:staff, :hearing_judge, sdomainid: judge.css_id)
       end
 
       let(:assign_judges_to_hearing_days) do
@@ -57,7 +63,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
       subject { assign_judges_to_hearing_days }
 
       it "assigns non availabilities to judges" do
-        expect(subject.judges.count).to eq(3)
+        expect(subject.judges.count).to eq(4)
         subject.judges.keys.each_with_index do |css_id, index|
           expect(subject.judges[css_id][:non_availabilities].count).to eq(@num_non_available_days[index])
         end

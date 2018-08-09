@@ -17,6 +17,7 @@ FactoryBot.define do
     end
 
     established_at { Time.zone.now }
+    receipt_date { Time.zone.yesterday }
 
     after(:create) do |appeal, _evaluator|
       appeal.request_issues.each do |issue|

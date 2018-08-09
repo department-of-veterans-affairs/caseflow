@@ -129,29 +129,22 @@ export type BasicAppeal = {
 export type BasicAppeals = { [string]: BasicAppeal };
 
 export type Appeal = {
-  id: string,
-  attributes: {
-    isLegacyAppeal: boolean,
-    issues: Array<Object>,
-    hearings: Array<Object>,
-    appellantFullName: string,
-    appellantAddress: AppellantAddress,
-    appellantRelationship: string,
-    veteranFullName: string,
-    veteranDateOfBirth: string,
-    veteranGender: string,
-    veteranFileNumber: string,
-    externalId: string,
-    type: string,
-    aod: boolean,
-    docketNumber: string,
-    status: string,
-    decisionDate: string,
-    paperCase: boolean,
-    powerOfAttorney: string,
-    caseflowVeteranId: ?string
-  }
+  isLegacyAppeal: boolean,
+  issues: Array<Object>,
+  hearings: Array<Object>,
+  appellantFullName: string,
+  appellantAddress: AppellantAddress,
+  appellantRelationship: string,
+  veteranDateOfBirth: string,
+  veteranGender: string,
+  externalId: string,
+  status: string,
+  decisionDate: string,
+  powerOfAttorney: string,
+  caseflowVeteranId: ?string,
+  tasks: ?Array<Task>
 };
+export type Appeals = { [string]: Appeal };
 
 export type LegacyAppeal = AppealDetail & BasicAppeal;
 

@@ -4,6 +4,8 @@ import _ from 'lodash';
 
 import type { State } from './types/state';
 import type {
+  Appeal,
+  Appeals,
   Task,
   Tasks,
   AmaTask,
@@ -94,7 +96,7 @@ export const appealsByCaseflowVeteranId = createSelector(
   [appealsWithDetailsSelector, getCaseflowVeteranId],
   (appeals: LegacyAppeals, caseflowVeteranId: string) =>
     _.filter(appeals, (appeal: LegacyAppeal) => appeal.caseflowVeteranId &&
-      appeal.caseflowVeteranId.toString() === caseflowVeteranId)
+      appeal.caseflowVeteranId.toString() === caseflowVeteranId.toString())
 );
 
 export const appealsByAssigneeCssIdSelector = createSelector(

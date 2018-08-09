@@ -167,7 +167,7 @@ class HearingSchedule::AssignJudgesToHearingDays
       css_id = non_availability.object_identifier
       @judges[css_id] ||= {}
       @judges[css_id][:non_availabilities] ||= Set.new
-      @judges[css_id][:non_availabilities] << non_availability.date
+      @judges[css_id][:non_availabilities] << non_availability.date if non_availability.date
     end
   end
 
