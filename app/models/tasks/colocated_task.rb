@@ -3,6 +3,7 @@ class ColocatedTask < Task
   validate :assigned_by_role_is_valid
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
+  validate :on_hold_duration_is_set, on: :update
 
   class << self
     def create(tasks)
@@ -48,6 +49,12 @@ class ColocatedTask < Task
   end
 
   private
+
+  def on_hold_duration_is_set
+    if saved_change_to_status? && on_hold? && !on_hold_duration
+      errors.add(:on_hold_duration, "has to be specified")
+    end
+  end
 
   def assigned_by_role_is_valid
     errors.add(:assigned_by, "has to be an attorney") if assigned_by && !assigned_by.attorney_in_vacols?
