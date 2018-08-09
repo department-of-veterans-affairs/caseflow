@@ -30,7 +30,7 @@ class Task < ApplicationRecord
   private
 
   def update_parent_status
-    if saved_change_to_status? && completed?
+    if saved_change_to_status? && completed? && parent
       parent.update(status: :in_progress)
     end
   end
