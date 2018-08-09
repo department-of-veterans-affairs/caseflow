@@ -7,10 +7,6 @@
 # This class exposes information from both systems
 # and lets the user modify VACOLS with BGS information
 # (but not the other way around).
-#
-# TODO: we query VACOLS when the vacols methods are
-# called, even if we've also queried VACOLS outside of this
-# model but in the same request. is this something we should optimize?
 class PowerOfAttorney
   include ActiveModel::Model
   include AssociatedVacolsModel
