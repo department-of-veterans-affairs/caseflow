@@ -1537,7 +1537,7 @@ describe LegacyAppeal do
 
   context "#contested_claim", focus: true do
     subject { appeal.contested_claim }
-    let(:vacols_case){ create(:case) }
+    let(:vacols_case) { create(:case) }
 
     context "when there is no contesting claimant" do
       it { is_expected.to eq false }
@@ -1545,9 +1545,12 @@ describe LegacyAppeal do
 
     context "when there is a contesting claimant" do
       let(:vacols_case) do
-        c = create(:case_with_multiple_rep_rows)
-        create(:representative, reptype: "C", repkey: c.bfkey)
-        c
+        vacols_c = create(:case)
+
+        byebug
+        create(:representative, reptype: "A", repkey: vacols_c.bfkey, repaddtime: 2.days.ago)
+        create(:representative, reptype: "C", repkey: vacols_c.bfkey, repaddtime: 1.day.ago)
+        vacols_c
       end
 
       it { is_expected.to eq true }

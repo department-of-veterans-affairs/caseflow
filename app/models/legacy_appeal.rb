@@ -237,9 +237,7 @@ class LegacyAppeal < ApplicationRecord
     power_of_attorney.vacols_representative_type
   end
 
-  def representatives
-    case_record.representatives
-  end
+  delegate :representatives, to: :case_record
 
   def contested_claim
     representatives.any? { |r| r.reptype == "C" }

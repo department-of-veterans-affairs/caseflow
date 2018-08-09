@@ -8,6 +8,6 @@ describe VACOLS::Representative do
   end
 
   context ".update and .delete" do
-  	it "will error if attempting to update"
+    it "will error if attempting to update"
   end
 end
