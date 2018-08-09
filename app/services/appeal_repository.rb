@@ -133,7 +133,6 @@ class AppealRepository
       vbms_id: case_record.bfcorlid,
       type: VACOLS::Case::TYPES[case_record.bfac],
       file_type: folder_type_from(folder_record),
-      contested_claim: case_record.representatives.any? { |r| r.reptype == "C" }
       veteran_first_name: correspondent_record.snamef,
       veteran_middle_initial: correspondent_record.snamemi,
       veteran_last_name: correspondent_record.snamel,

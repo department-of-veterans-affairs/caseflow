@@ -49,50 +49,44 @@ class VACOLS::Representative < VACOLS::Record
     end
   end
 
-  def self.update_vacols_rep_name!(bfkey:, first_name:, middle_initial:, last_name:)
+  def self.update_vacols_rep_table!(bfkey:, name:, address:, type:)
+    fail(InvalidRepTypeError) if ACTIVE_REPTYPES[type].empty?
+
     MetricsService.record("VACOLS: update_vacols_rep_name! #{bfkey}",
                           service: :vacols,
                           name: "update_vacols_rep_name") do
-      attrs = { repfirst: first_name, repmi: middle_initial, replast: last_name } 
-      rep = appellant_representative(bfkey)
-      # TODO: to be 100% safe, we should pass the repaddtime value
-      # down to the client. It's *possible* that if a user
-      # started a certification, then added a new POA row for that appeal,
-      # then completed the certification, we could be updating the wrong POA row.
-      # However, this is very unlikely given the way current business processes operate.
-      rep ? update_rep!(bfkey, rep.repaddtime, attrs) : create_rep!(attrs)
-    end
-  end
-
-  def self.update_vacols_rep_address!(bfkey:, address:)
-    MetricsService.record("VACOLS: update_vacols_rep_address! #{bfkey}",
-                          service: :vacols,
-                          name: "update_vacols_rep_address") do
-      attrs = { 
-        repaddr1: address[:address_one], 
-        repaddr2: address[:address_two], 
-        repcity: address[:city], 
-        repst: address[:state], 
-        repzip: address[:zip]
+      name_attrs = { 
+        repfirst: name[:first_name][0, 24], 
+        repmi: name[:middle_initial][0, 4], 
+        replast: name[:last_name][0, 40] 
+      }       
+      address_attrs = { 
+        repaddr1: address[:address_one][0, 50], 
+        repaddr2: address[:address_two][0, 50], 
+        repcity: address[:city][0, 20], 
+        repst: address[:state][0, 4], 
+        repzip: address[:zip][0, 10]
       } 
+      attrs = {} 
+      attrs = attrs.merge(name_attrs) unless name.empty?
+      attrs = attrs.merge(address_attrs) unless address.empty?
+      attrs = attrs.merge({reptype: ACTIVE_REPTYPES[type]})
       rep = appellant_representative(bfkey)
+
       # TODO: to be 100% safe, we should pass the repaddtime value
       # down to the client. It's *possible* that if a user
       # started a certification, then added a new POA row for that appeal,
       # then completed the certification, we could be updating the wrong POA row.
       # However, this is very unlikely given the way current business processes operate.
-      rep ? update_rep!(bfkey, rep.repaddtime, attrs) : create_rep!(attrs)
+      rep ? update_rep!(bfkey, rep.repaddtime, attrs) : create_rep!(bfkey, attrs)
     end
   end
 
   def self.update_rep!(repkey, repaddtime, rep_attrs)
-    # VACOLS itself uses repkey + repaddtime as the unique key for this table,
-    # so although this will select more than one row in some cases, we can't
-    # really do any better than this.
+    # VACOLS has a unique constraint on repkey + repaddtime.
     # Ruby's date equality rules prevent us from comparing the date object
     # directly. VACOLS only stores dates, not datetimes, so
     # comparing year/month/day should be no less accurate. 
-    
     VACOLS::Representative.
       where(repkey: repkey).
       where('extract(year  from repaddtime) = ?', repaddtime.year).
@@ -101,8 +95,8 @@ class VACOLS::Representative < VACOLS::Record
       update_all(rep_attrs)
   end  
 
-  def self.create_rep!(rep_attrs)
-    create!(rep_attrs.merge(repaddtime: VacolsHelper.local_date_with_utc_timezone))
+  def self.create_rep!(bfkey, rep_attrs)
+    create!(rep_attrs.merge(repaddtime: VacolsHelper.local_date_with_utc_timezone, repkey: bfkey))
   end
 
   def update(*)

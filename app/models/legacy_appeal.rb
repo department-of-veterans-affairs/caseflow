@@ -26,7 +26,6 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :appellant_relationship, :appellant_ssn
   vacols_attr_accessor :appellant_address_line_1, :appellant_address_line_2
   vacols_attr_accessor :appellant_city, :appellant_state, :appellant_country, :appellant_zip
-  vacols_attr_accessor :contested_claim
   vacols_attr_accessor :hearing_request_type, :video_hearing_requested
   vacols_attr_accessor :hearing_requested, :hearing_held
   vacols_attr_accessor :regional_office_key
@@ -233,6 +232,10 @@ class LegacyAppeal < ApplicationRecord
 
   def representative_type
     power_of_attorney.vacols_representative_type
+  end
+
+  def contested_claim
+    representatives.any? { |r| r.reptype == "C" } 
   end
 
   def docket_name

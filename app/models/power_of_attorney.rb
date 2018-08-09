@@ -39,10 +39,14 @@ class PowerOfAttorney
 
     # If the POA should be stored in the REP table, update that too.
     if repo.rep_name_found_in_rep_table?(vacols_code)
+      rep_type = :appellant_attorney if vacols_code == "T"
+      rep_type = :appellant_agent if vacols_code == "U"
+
       repo.update_vacols_rep_table!(
         appeal: appeal,
         representative_name: representative_name,
-        address: address
+        address: address,
+        rep_type: rep_type
       )
     end
   end

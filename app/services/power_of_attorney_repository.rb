@@ -31,50 +31,26 @@ class PowerOfAttorneyRepository
   def self.update_vacols_rep_type!(case_record:, vacols_rep_type:)
     VACOLS::Representative.update_vacols_rep_type!(bfkey: case_record.bfkey, rep_type: vacols_rep_type)
   end
+  #:nocov
 
-  def self.update_vacols_rep_name!(case_record:, first_name:, middle_initial:, last_name:)
-    VACOLS::Representative.update_vacols_rep_name!(
-      bfkey: case_record.bfkey,
-      first_name: first_name[0, 24],
-      middle_initial: middle_initial[0, 4],
-      last_name: last_name[0, 40]
-    )
-  end
-
-  def self.update_vacols_rep_address!(case_record:, address:)
-    VACOLS::Representative.update_vacols_rep_address!(
-      bfkey: case_record.bfkey,
-      address: {
-        address_one: address[:address_one][0, 50],
-        address_two: address[:address_two][0, 50],
-        city: address[:city][0, 20],
-        state: address[:state][0, 4],
-        zip: address[:zip][0, 10]
-      }
-    )
-  end
-  # :nocov:
-
-  # TODO: Consider changing this logic. Move the entire name into one field.
-  def self.update_vacols_rep_table!(appeal:, representative_name:, address:)
+  def self.update_vacols_rep_table!(appeal:, representative_name:, address:, rep_type:)
     first, middle, last = split_representative_name(representative_name)
-    update_vacols_rep_name!(
-      case_record: appeal.case_record,
-      first_name: first,
-      middle_initial: middle,
-      last_name: last
-    )
-
     address_one, address_two = get_address_one_and_two(representative_name, address)
-    update_vacols_rep_address!(
-      case_record: appeal.case_record,
+    VACOLS::Representative.update_vacols_rep_table!(
+      bfkey: appeal.vacols_id,
+      name: {
+        first_name: first,
+        middle_initial: middle,
+        last_name: last
+      },
       address: {
         address_one: address_one,
         address_two: address_two,
         city: address[:city] || "",
         state: address[:state] || "",
         zip: address[:zip] || ""
-      }
+      },
+      type: rep_type
     )
   end
 
