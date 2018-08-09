@@ -129,21 +129,16 @@ class HearingSchedule::AssignJudgesToHearingDays
   end
 
   def hearing_days_by_date(date)
-    @video_co_hearing_days.select do |day| 
+    @video_co_hearing_days.select do |day|
       day.hearing_date == date && co_hearing_day?(day)
     end
   end
 
-  def assign_judge_to_hearing_day(hearing_day, css_id)
-    is_central_hearing = co_hearing_day?(hearing_day)
-    date = hearing_day.hearing_date
+  def assign_judge_to_hearing_day(day, css_id)
+    is_central_hearing = co_hearing_day?(day)
+    date = day.hearing_date
 
-    hearing_days = is_central_hearing ? hearing_days_by_date(date) : [hearing_day]
-    if is_central_hearing
-      hearing_days = hearing_days_by_date(date)
-    else
-      hearing_days = [hearing_day]
-    end
+    hearing_days = is_central_hearing ? hearing_days_by_date(date) : [day]
 
     hearing_days.map do |hearing_day|
       @video_co_hearing_days.delete(hearing_day)
