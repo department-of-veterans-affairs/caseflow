@@ -5,6 +5,10 @@ import { BOOLEAN_RADIO_OPTIONS } from '../constants';
 import { PAYEE_CODES } from '../constants';
 
 export default class SelectClaimant extends React.PureComponent {
+  handlePayeeChange(event) {
+    this.props.setPayee(event ? event.value : null);
+  }
+
   render = () => {
     const {
       claimantNotVeteran,
@@ -12,8 +16,7 @@ export default class SelectClaimant extends React.PureComponent {
       claimant,
       setClaimant,
       relationships,
-      payee,
-      setPayee
+      payee
     } = this.props;
 
     let showClaimants = ['true', true].includes(claimantNotVeteran);
@@ -40,7 +43,7 @@ export default class SelectClaimant extends React.PureComponent {
           placeholder="Select"
           options={PAYEE_CODES}
           value={payee}
-          onChange={setPayee} />
+          onChange={(event) => this.handlePayeeChange(event)} />
 
       </div>;
     };

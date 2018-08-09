@@ -12,7 +12,7 @@ class HigherLevelReviewIntake < Intake
       informal_conference: detail.informal_conference,
       claimant: detail.claimant_participant_id,
       claimant_not_veteran: detail.claimant_not_veteran,
-      payee_cd: detail.claimants.first.payee_cd,
+      payee: detail.payee_cd,
       end_product_description: detail.end_product_description,
       ratings: detail.cached_serialized_timely_ratings
     )
