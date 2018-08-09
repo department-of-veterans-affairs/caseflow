@@ -22,7 +22,7 @@ import {
 import COPY from '../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
-import type { LegacyAppeal } from './types/models';
+import type { Appeal } from './types/models';
 import type { UiStateMessage } from './types/state';
 
 type ComponentState = {|
@@ -38,7 +38,7 @@ type Props = Params & {|
   // store
   highlightFormItems: boolean,
   error: ?UiStateMessage,
-  appeal: LegacyAppeal,
+  appeal: Appeal,
   // dispatch
   requestSave: typeof requestSave,
   deleteAppeal: typeof deleteAppeal

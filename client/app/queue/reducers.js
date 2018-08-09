@@ -146,7 +146,7 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
       stagedChanges: {
         appeals: {
           [action.payload.appealId]: {
-            $set: state.appealDetails[action.payload.appealId]
+            $set: { ...state.appeals[action.payload.appealId], ...state.appealDetails[action.payload.appealId] }
           }
         }
       }

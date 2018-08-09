@@ -44,7 +44,7 @@ const radioFieldStyling = css(marginBottom(0), marginTop(2), {
 
 import type {
   Task,
-  LegacyAppeal,
+  Appeal,
   Judges
 } from './types/models';
 import type { UiStateMessage } from './types/state';
@@ -56,7 +56,7 @@ type Params = {|
 
 type Props = Params & {|
   // state
-  appeal: LegacyAppeal,
+  appeal: Appeal,
   judges: Judges,
   decision: Object,
   task: Task,

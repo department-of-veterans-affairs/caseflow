@@ -3,7 +3,7 @@ import type {
   Task,
   Tasks,
   AmaTasks,
-  LegacyAppeals,
+  Appeals,
   BasicAppeals,
   User,
   Attorneys
@@ -12,7 +12,7 @@ import type {
 export type AttorneyAppealsLoadingState = {
   [string]: {
     state: string,
-    data: {tasks: Tasks, appeals: LegacyAppeals},
+    data: {tasks: Tasks, appeals: Appeals},
     error: {status: number, response: Object}
   }
 };
@@ -55,7 +55,7 @@ export type QueueState = {
   judges: UsersById,
   tasks: Tasks,
   appeals: BasicAppeals,
-  appealDetails: LegacyAppeals,
+  appealDetails: Appeals,
   amaTasks: AmaTasks,
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},

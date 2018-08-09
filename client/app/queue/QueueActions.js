@@ -6,7 +6,6 @@ import ApiUtil from '../util/ApiUtil';
 import _ from 'lodash';
 import type { Dispatch } from './types/state';
 import type {
-  Appeals,
   Task,
   Tasks,
   BasicAppeals,

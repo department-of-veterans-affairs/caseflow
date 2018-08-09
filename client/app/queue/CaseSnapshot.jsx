@@ -17,7 +17,7 @@ import { USER_ROLES } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import { renderLegacyAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
-import type { LegacyAppeal, Task } from './types/models';
+import type { Appeal, Task } from './types/models';
 import type { State } from './types/state';
 
 const snapshotParentContainerStyling = css({
@@ -59,7 +59,7 @@ type Params = {|
 type Props = Params & {|
   featureToggles: Object,
   userRole: string,
-  appeal: LegacyAppeal,
+  appeal: Appeal,
   taskAssignedToUser: Task,
   taskAssignedToAttorney: Task
 |};

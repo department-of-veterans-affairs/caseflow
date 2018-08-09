@@ -10,8 +10,6 @@ import type {
   Tasks,
   AmaTask,
   AmaTasks,
-  LegacyAppeal,
-  LegacyAppeals,
   BasicAppeals,
   User
 } from './types/models';
@@ -47,7 +45,7 @@ export const amaTasksByAssigneeId: (State) => { [number]: AmaTask } = createSele
 
 export const appealsWithTasksSelector = createSelector(
   [getTasks, getAppeals],
-  (tasks: Tasks, appeals: LegacyAppeals) => {
+  (tasks: Tasks, appeals: Appeals) => {
     return _.map(appeals, (appeal) => {
       return { ...appeal,
         tasks: _.filter(tasks, (task) => task.externalAppealId === appeal.externalId) };
@@ -57,17 +55,19 @@ export const appealsWithTasksSelector = createSelector(
 
 export const appealsWithDetailsSelector = createSelector(
   [getAppeals, getAppealDetails],
-  (appeals: BasicAppeals, appealDetails: LegacyAppeals) => {
+  (appeals: BasicAppeals, appealDetails: Appeals) => {
     return _.merge(appeals, appealDetails);
   }
 );
 
 export const appealWithDetailSelector = createSelector(
   [appealsWithDetailsSelector, getAppealId],
-  (appeals: LegacyAppeals, appealId: string) => {
+  (appeals: Appeals, appealId: string) => {
     // We specify empty hearings and issues in case the details haven't yet been loaded,
     // then code that's referencing hearings and issues will still work.
-    return { hearings: [], issues: [], ...appeals[appealId] } ;
+    return { hearings: [],
+      issues: [],
+      ...appeals[appealId] };
   }
 );
 
@@ -94,29 +94,29 @@ export const tasksForAppealAssignedToAttorneySelector = createSelector(
 
 export const appealsByCaseflowVeteranId = createSelector(
   [appealsWithDetailsSelector, getCaseflowVeteranId],
-  (appeals: LegacyAppeals, caseflowVeteranId: string) =>
-    _.filter(appeals, (appeal: LegacyAppeal) => appeal.caseflowVeteranId &&
+  (appeals: Appeals, caseflowVeteranId: string) =>
+    _.filter(appeals, (appeal: Appeal) => appeal.caseflowVeteranId &&
       appeal.caseflowVeteranId.toString() === caseflowVeteranId.toString())
 );
 
 export const appealsByAssigneeCssIdSelector = createSelector(
   [appealsWithTasksSelector, getUserCssId],
-  (appeals: LegacyAppeals, cssId: string) =>
-    _.filter(appeals, (appeal: LegacyAppeal) =>
+  (appeals: Appeals, cssId: string) =>
+    _.filter(appeals, (appeal: Appeal) =>
       _.some(appeal.tasks, (task) => task.userId === cssId))
 );
 
 export const judgeReviewAppealsSelector = createSelector(
   [appealsByAssigneeCssIdSelector],
-  (appeals: LegacyAppeals) =>
-    _.filter(appeals, (appeal: LegacyAppeal) => appeal.tasks &&
+  (appeals: Appeals) =>
+    _.filter(appeals, (appeal: Appeal) => appeal.tasks &&
       _.some(appeal.tasks, (task) => task.taskType === 'Review'))
 );
 
 export const judgeAssignAppealsSelector = createSelector(
   [appealsByAssigneeCssIdSelector],
-  (appeals: LegacyAppeals) =>
-    _.filter(appeals, (appeal: LegacyAppeal) => appeal.tasks &&
+  (appeals: Appeals) =>
+    _.filter(appeals, (appeal: Appeal) => appeal.tasks &&
       _.some(appeal.tasks, (task) => task.taskType === 'Assign'))
 );
 
@@ -135,7 +135,7 @@ export const getAssignedAppeals = (state: State, attorneyId: string) => {
   const attorney = getAttorney(state, attorneyId);
   const cssId = attorney ? attorney.css_id : null;
 
-  return _.filter(appeals, (appeal: LegacyAppeal) =>
+  return _.filter(appeals, (appeal: Appeal) =>
     _.some(appeal.tasks, (task) => task.userId === cssId));
 };
 
@@ -144,7 +144,7 @@ export const getAppealsByUserId = (state: State) => {
   const attorneys = state.queue.attorneysOfJudge;
   const attorneysByCssId = _.keyBy(attorneys, 'css_id');
 
-  return _.reduce(appeals, (appealsByUserId: Object, appeal: LegacyAppeal) => {
+  return _.reduce(appeals, (appealsByUserId: Object, appeal: Appeal) => {
     const appealCssId = appeal.tasks ? appeal.tasks[0].userId : null;
     const attorney = attorneysByCssId[appealCssId];
 

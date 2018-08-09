@@ -19,7 +19,7 @@ def generate_words(n_words)
   end.join(" ")
 end
 
-RSpec.feature "Checkout flows", focus: true do
+RSpec.feature "Checkout flows" do
   let(:attorney_user) { FactoryBot.create(:user) }
   let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 

@@ -12,7 +12,7 @@ import { setFetchedAllCasesFor } from './CaseList/CaseListActions';
 import { hideVeteranCaseList } from './uiReducer/uiActions';
 import { onReceiveAppealDetails } from './QueueActions';
 import { appealsByCaseflowVeteranId } from './selectors';
-import { prepareAppealForStore } from './utils'
+import { prepareAppealForStore } from './utils';
 
 import COPY from '../../COPY.json';
 

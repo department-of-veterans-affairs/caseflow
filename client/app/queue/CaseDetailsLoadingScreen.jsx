@@ -10,11 +10,9 @@ import ApiUtil from '../util/ApiUtil';
 import { prepareAppealForStore, prepareTasksForStore } from './utils';
 
 import { onReceiveAppealDetails, onReceiveTasks, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
-import type { LegacyAppeal, LegacyAppeals, Tasks } from './types/models';
+import type { Appeal, Appeals, Tasks } from './types/models';
 import type { State, UsersById } from './types/state';
 import { USER_ROLES } from './constants';
-
-import { appealsWithDetailsSelector } from './selectors';
 
 type Params = {|
   userId: number,
@@ -28,9 +26,9 @@ type Params = {|
 type Props = Params & {|
   // From state
   tasks: Tasks,
-  appealDetails: LegacyAppeals,
+  appealDetails: Appeals,
   loadedUserId: number,
-  activeAppeal: LegacyAppeal,
+  activeAppeal: Appeal,
   judges: UsersById,
   // Action creators
   setAttorneysOfJudge: typeof setAttorneysOfJudge,
@@ -58,7 +56,7 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
       );
     }
 
-    if (!tasks || _.filter(tasks, (task) => task.externalAppealId === appealId).length > 0) {
+    if (!tasks || _.filter(tasks, (task) => task.externalAppealId === appealId).length === 0) {
       promises.push(
         ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
           this.props.onReceiveTasks({ tasks: prepareTasksForStore(response.body.tasks) });

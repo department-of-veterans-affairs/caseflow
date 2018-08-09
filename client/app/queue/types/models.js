@@ -96,13 +96,13 @@ export type AppealDetail = {
   appellantFullName: string,
   appellantAddress: AppellantAddress,
   appellantRelationship: string,
-  locationCode: string,
+  locationCode: ?string,
   veteranDateOfBirth: string,
   veteranGender: string,
   externalId: string,
   status: string,
   decisionDate: string,
-  certificationDate: string,
+  certificationDate: ?string,
   powerOfAttorney: string,
   regionalOffice: Object,
   caseflowVeteranId: ?string,
@@ -128,27 +128,9 @@ export type BasicAppeal = {
 
 export type BasicAppeals = { [string]: BasicAppeal };
 
-export type Appeal = {
-  isLegacyAppeal: boolean,
-  issues: Array<Object>,
-  hearings: Array<Object>,
-  appellantFullName: string,
-  appellantAddress: AppellantAddress,
-  appellantRelationship: string,
-  veteranDateOfBirth: string,
-  veteranGender: string,
-  externalId: string,
-  status: string,
-  decisionDate: string,
-  powerOfAttorney: string,
-  caseflowVeteranId: ?string,
-  tasks: ?Array<Task>
-};
+export type Appeal = AppealDetail & BasicAppeal;
+
 export type Appeals = { [string]: Appeal };
-
-export type LegacyAppeal = AppealDetail & BasicAppeal;
-
-export type LegacyAppeals = { [string]: LegacyAppeal };
 
 export type Attorneys = {
   data?: Array<User>,
