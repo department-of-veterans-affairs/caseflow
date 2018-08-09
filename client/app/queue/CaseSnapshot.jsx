@@ -13,7 +13,7 @@ import { USER_ROLES } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import { renderLegacyAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
-import type { LegacyAppeal, Task } from './types/models';
+import type { LegacyAppeal, LegacyTask } from './types/models';
 import type { State } from './types/state';
 
 const snapshotParentContainerStyling = css({
@@ -56,8 +56,8 @@ type Props = Params & {|
   featureToggles: Object,
   userRole: string,
   appeal: LegacyAppeal,
-  taskAssignedToUser: Task,
-  taskAssignedToAttorney: Task
+  taskAssignedToUser: LegacyTask,
+  taskAssignedToAttorney: LegacyTask
 |};
 
 export class CaseSnapshot extends React.PureComponent<Props> {
