@@ -297,7 +297,7 @@ GEM
       byebug (~> 9.1)
       pry (~> 0.10)
     public_suffix (3.0.1)
-    puma (2.16.0)
+    puma (3.12.0)
     quantile (0.2.0)
     rack (2.0.5)
     rack-test (1.0.0)
@@ -531,7 +531,7 @@ DEPENDENCIES
   prometheus-client (~> 0.7.1)
   pry
   pry-byebug
-  puma (~> 2.16.0)
+  puma
   rails (= 5.1.6)
   rails_stdout_logging
   rainbow
