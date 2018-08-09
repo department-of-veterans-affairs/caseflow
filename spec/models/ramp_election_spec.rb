@@ -153,6 +153,20 @@ describe RampElection do
         expect(EndProductEstablishment.find_by(source: ramp_election.reload).reference_id).to eq("454545")
       end
 
+      context "with a higher level review" do
+        let(:option_selected) { "higher_level_review" }
+
+        it "should use the modifier 682" do
+          allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+
+          expect(subject).to eq(:created)
+
+          expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+            hash_including(claim_hash: hash_including(end_product_modifier: "682"))
+          )
+        end
+      end
+
       context "if matching RAMP ep already exists" do
         let!(:matching_ep) do
           Generators::EndProduct.build(
