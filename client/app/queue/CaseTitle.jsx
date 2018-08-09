@@ -79,16 +79,16 @@ class CaseTitle extends React.PureComponent {
     return <CaseTitleScaffolding heading={appeal.attributes.veteran_full_name}>
       <React.Fragment>
         Veteran ID:&nbsp;
-        <CopyToClipboard text={appeal.attributes.vbms_id}>
-          <Tooltip text={COPY.CASE_TITLE_VETERAN_ID_BUTTON_TOOLTIP} position="bottom">
+        <Tooltip text={COPY.CASE_TITLE_VETERAN_ID_BUTTON_TOOLTIP} position="bottom">
+          <CopyToClipboard text={appeal.attributes.vbms_id}>
             <button type="submit"
               className="cf-apppeal-id"
               {...clipboardButtonStyling} >
               {appeal.attributes.vbms_id}&nbsp;
               <ClipboardIcon />
             </button>
-          </Tooltip>
-        </CopyToClipboard>
+          </CopyToClipboard>
+        </Tooltip>
       </React.Fragment>
 
       <ReaderLink
