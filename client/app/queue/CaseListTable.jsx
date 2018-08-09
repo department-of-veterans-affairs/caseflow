@@ -1,20 +1,29 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { css } from 'glamor';
 
 import CaseDetailsLink from './CaseDetailsLink';
 import Table from '../components/Table';
+import { COLORS } from '../constants/AppConstants';
 
 import { DateString } from '../util/DateUtil';
-import { renderAppealType } from './utils';
+import { renderLegacyAppealType } from './utils';
 import COPY from '../../COPY.json';
 
-import { setActiveAppeal } from './CaseDetail/CaseDetailActions';
+const currentAssigneeStyling = css({
+  color: COLORS.GREEN
+});
 
-const labelForLocation = (locationCode) => {
+const labelForLocation = (locationCode, userId) => {
   if (!locationCode) {
     return '';
+  }
+
+  const regex = new RegExp(`\\b(?:BVA|VACO|VHAISA)${locationCode}\\b`);
+
+  if (userId.match(regex) !== null) {
+    return <span {...currentAssigneeStyling}>{COPY.CASE_LIST_TABLE_ASSIGNEE_IS_CURRENT_USER_LABEL}</span>;
   }
 
   return locationCode;
@@ -29,8 +38,7 @@ class CaseListTable extends React.PureComponent {
       valueFunction: (appeal) => <React.Fragment>
         <CaseDetailsLink
           appeal={appeal}
-          getLinkText={() => appeal.attributes.docket_number}
-          onClick={() => this.props.setActiveAppeal(appeal)} />
+          getLinkText={() => appeal.attributes.docket_number} />
       </React.Fragment>
     },
     {
@@ -43,7 +51,10 @@ class CaseListTable extends React.PureComponent {
     },
     {
       header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
-      valueFunction: (appeal) => renderAppealType(appeal.attributes)
+      valueFunction: (appeal) => renderLegacyAppealType({
+        aod: appeal.attributes.aod,
+        type: appeal.attributes.type
+      })
     },
     {
       header: COPY.CASE_LIST_TABLE_DECISION_DATE_COLUMN_TITLE,
@@ -53,7 +64,7 @@ class CaseListTable extends React.PureComponent {
     },
     {
       header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
-      valueFunction: (appeal) => labelForLocation(appeal.attributes.location_code)
+      valueFunction: (appeal) => labelForLocation(appeal.attributes.location_code, this.props.userCssId)
     }
   ];
 
@@ -61,18 +72,18 @@ class CaseListTable extends React.PureComponent {
     columns={this.getColumns}
     rowObjects={this.props.appeals}
     getKeyForRow={this.getKeyForRow}
+    styling={this.props.styling}
   />;
 }
 
 CaseListTable.propTypes = {
-  appeals: PropTypes.arrayOf(PropTypes.object).isRequired
+  appeals: PropTypes.arrayOf(PropTypes.object).isRequired,
+  styling: PropTypes.object
 };
 
-const mapStateToProps = () => ({});
+const mapStateToProps = (state) => ({
+  userCssId: state.ui.userCssId
+});
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setActiveAppeal
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(CaseListTable);
+export default connect(mapStateToProps)(CaseListTable);
 

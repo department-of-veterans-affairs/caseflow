@@ -12,10 +12,72 @@ FactoryBot.define do
       user { create(:user) }
     end
 
+    factory :single_nonavail_date_judge_schedule_period do
+      start_date { Date.parse("2018-07-29") }
+      end_date { Date.parse("2018-08-04") }
+      file_name { "singleNonAvailJudgeSpreadsheet.xlsx" }
+      user { create(:user) }
+    end
+
+    factory :two_in_july_judge_schedule_period do
+      start_date { Date.parse("2018-07-29") }
+      end_date { Date.parse("2018-08-04") }
+      file_name { "twoInJulyJudgeSpreadsheet.xlsx" }
+      user { create(:user) }
+    end
+
+    factory :one_month_judge_schedule_period do
+      start_date { Date.parse("2018-07-22") }
+      end_date { Date.parse("2018-08-18") }
+      file_name { "oneAllAvailJudgeSpreadsheet.xlsx" }
+      user { create(:user) }
+    end
+
+    factory :one_month_two_judge_schedule_period do
+      start_date { Date.parse("2018-07-22") }
+      end_date { Date.parse("2018-08-18") }
+      file_name { "twoAllAvailJudgeSpreadsheet.xlsx" }
+      user { create(:user) }
+    end
+
+    factory :one_month_many_noavail_judge_schedule_period do
+      start_date { Date.parse("2018-07-22") }
+      end_date { Date.parse("2018-08-18") }
+      file_name { "manyNonAvailJudgeSpreadsheet.xlsx" }
+      user { create(:user) }
+    end
+
+    factory :one_week_one_judge_schedule_period do
+      start_date { Date.parse("2018-07-29") }
+      end_date { Date.parse("2018-08-04") }
+      file_name { "oneAllAvailJudgeSpreadsheet.xlsx" }
+      user { create(:user) }
+    end
+
+    factory :one_week_two_judge_schedule_period do
+      start_date { Date.parse("2018-07-29") }
+      end_date { Date.parse("2018-08-04") }
+      file_name { "twoAllAvailJudgeSpreadsheet.xlsx" }
+      user { create(:user) }
+    end
+
     before(:create) do
-      S3Service.store_file("validJudgeSpreadsheet.xlsx", "spec/support/validJudgeSpreadsheet.xlsx", :filepath)
-      S3Service.store_file("blankJudgeSpreadsheet.xlsx", "spec/support/blankJudgeSpreadsheet.xlsx", :filepath)
+      S3Service.store_file("validJudgeSpreadsheet.xlsx",
+                           "spec/support/validJudgeSpreadsheet.xlsx", :filepath)
+      S3Service.store_file("blankJudgeSpreadsheet.xlsx",
+                           "spec/support/blankJudgeSpreadsheet.xlsx", :filepath)
+      S3Service.store_file("singleNonAvailJudgeSpreadsheet.xlsx",
+                           "spec/support/singleNonAvailJudgeSpreadsheet.xlsx", :filepath)
+      S3Service.store_file("twoInJulyJudgeSpreadsheet.xlsx",
+                           "spec/support/twoInJulyJudgeSpreadsheet.xlsx", :filepath)
+      S3Service.store_file("oneAllAvailJudgeSpreadsheet.xlsx",
+                           "spec/support/oneAllAvailJudgeSpreadsheet.xlsx", :filepath)
+      S3Service.store_file("manyNonAvailJudgeSpreadsheet.xlsx",
+                           "spec/support/manyNonAvailJudgeSpreadsheet.xlsx", :filepath)
+      S3Service.store_file("twoAllAvailJudgeSpreadsheet.xlsx",
+                           "spec/support/twoAllAvailJudgeSpreadsheet.xlsx", :filepath)
       create(:staff, sattyid: "860", snamef: "Stuart", snamel: "Huels")
+      create(:staff, sattyid: "861", snamef: "Doris", snamel: "Lamphere")
     end
 
     after(:create) do |schedule_period|

@@ -1,25 +1,45 @@
 // @flow
-import { associateTasksWithAppeals } from './utils';
+import { associateTasksWithAppeals, prepareLegacyTasksForStore } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
 import _ from 'lodash';
 import type { Dispatch } from './types/state';
 import type {
-  Task,
-  Tasks,
-  LegacyAppeals,
+  LegacyTask,
+  LegacyTasks,
+  AmaTasks,
+  Appeals,
+  BasicAppeals,
   User
 } from './types/models';
 
 export const onReceiveQueue = (
-  { tasks, appeals, userId }: { tasks: Tasks, appeals: LegacyAppeals, userId: number }
+  { tasks, appeals, userId }: { tasks: LegacyTasks, appeals: BasicAppeals, userId: number }
 ) => ({
   type: ACTIONS.RECEIVE_QUEUE_DETAILS,
   payload: {
     tasks,
     appeals,
     userId
+  }
+});
+
+export const onReceiveAppealDetails = (
+  { appeals }: { appeals: $ReadOnly<Appeals> }
+) => ({
+  type: ACTIONS.RECEIVE_APPEAL_DETAILS,
+  payload: {
+    appeals
+  }
+});
+
+export const onReceiveTasks = (
+  { tasks }: { tasks: LegacyTasks | AmaTasks }
+) => ({
+  type: ACTIONS.RECEIVE_TASKS,
+  payload: {
+    tasks
   }
 });
 
@@ -235,62 +255,42 @@ export const setSelectionOfTaskOfUser =
     }
   });
 
-const initialTaskAssignment = ({ task, assigneeId }) => ({
-  type: ACTIONS.TASK_INITIAL_ASSIGNED,
-  payload: {
-    task,
-    assigneeId
-  }
-});
-
 export const initialAssignTasksToUser =
-  ({ tasks, assigneeId, previousAssigneeId }: { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) =>
+  ({ tasks, assigneeId, previousAssigneeId }:
+     { tasks: Array<LegacyTask>, assigneeId: string, previousAssigneeId: string}) =>
     (dispatch: Dispatch) =>
       Promise.all(tasks.map((oldTask) => {
         return ApiUtil.post(
           '/legacy_tasks',
           { data: { tasks: { assigned_to_id: assigneeId,
             type: 'JudgeCaseAssignmentToAttorney',
-            appeal_id: oldTask.attributes.appeal_id } } }).
+            appeal_id: oldTask.appealId } } }).
           then((resp) => resp.body).
           then(
             (resp) => {
               const { task: { data: task } } = resp;
 
-              task.appealId = task.id;
-              dispatch(initialTaskAssignment({ task,
-                assigneeId }));
+              dispatch(onReceiveTasks({ tasks: prepareLegacyTasksForStore([task]) }));
               dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
                 taskId: task.id,
                 selected: false }));
             });
       }));
 
-const taskReassignment = ({ task, assigneeId, previousAssigneeId }) => ({
-  type: ACTIONS.TASK_REASSIGNED,
-  payload: {
-    task,
-    assigneeId,
-    previousAssigneeId
-  }
-});
-
 export const reassignTasksToUser =
-  ({ tasks, assigneeId, previousAssigneeId }: { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) =>
+  ({ tasks, assigneeId, previousAssigneeId }:
+     { tasks: Array<LegacyTask>, assigneeId: string, previousAssigneeId: string}) =>
     (dispatch: Dispatch) =>
       Promise.all(tasks.map((oldTask) => {
         return ApiUtil.patch(
-          `/legacy_tasks/${oldTask.attributes.task_id}`,
+          `/legacy_tasks/${oldTask.taskId}`,
           { data: { tasks: { assigned_to_id: assigneeId } } }).
           then((resp) => resp.body).
           then(
             (resp) => {
               const { task: { data: task } } = resp;
 
-              task.appealId = task.id;
-              dispatch(taskReassignment({ task,
-                assigneeId,
-                previousAssigneeId }));
+              dispatch(onReceiveTasks({ tasks: prepareLegacyTasksForStore([task]) }));
               dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
                 taskId: task.id,
                 selected: false }));

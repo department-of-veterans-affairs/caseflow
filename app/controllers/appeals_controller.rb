@@ -21,14 +21,14 @@ class AppealsController < ApplicationController
 
   def document_count
     render json: { document_count: appeal.number_of_documents }
-  rescue Caseflow::Error::ClientRequestError, Caseflow::Error::EfolderAccessForbidden => e
-    render e.serialize_response
+  rescue StandardError => e
+    return handle_non_critical_error("document_count", e)
   end
 
   def new_documents
     render json: { new_documents: appeal.new_documents_for_user(current_user) }
-  rescue Caseflow::Error::ClientRequestError, Caseflow::Error::EfolderAccessForbidden => e
-    render e.serialize_response
+  rescue StandardError => e
+    return handle_non_critical_error("new_documents", e)
   end
 
   def tasks
@@ -36,10 +36,12 @@ class AppealsController < ApplicationController
 
     role = params[:role].downcase
     return invalid_role_error unless ROLES.include?(role)
-    tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(params[:appeal_id], role)
-    render json: {
-      tasks: json_tasks(tasks)[:data]
-    }
+
+    if %w[attorney judge].include?(role) && appeal.class.name == "LegacyAppeal"
+      return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], role)
+    end
+
+    json_tasks_by_appeal_id(appeal.id, appeal.class.to_s)
   end
 
   def show
@@ -111,16 +113,61 @@ class AppealsController < ApplicationController
     }, status: 400
   end
 
+  def queue_class
+    TasksController::QUEUES[params[:role].downcase.try(:to_sym)]
+  end
+
+  def json_tasks_by_appeal_id(appeal_db_id, appeal_type)
+    tasks = queue_class.new.tasks_by_appeal_id(appeal_db_id, appeal_type)
+
+    render json: {
+      tasks: json_tasks(tasks)[:data]
+    }
+  end
+
+  def json_tasks_by_legacy_appeal_id_and_role(appeal_id, role)
+    tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal_id, role)
+
+    render json: {
+      tasks: json_legacy_tasks(tasks)[:data]
+    }
+  end
+
+  def handle_non_critical_error(endpoint, err)
+    if !err.class.method_defined? :serialize_response
+      code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
+      err = Caseflow::Error::SerializableError.new(code: code, message: err.to_s)
+    end
+
+    DataDogService.increment_counter(
+      metric_group: "errors",
+      metric_name: "non_critical",
+      app_name: RequestStore[:application],
+      attrs: {
+        endpoint: endpoint
+      }
+    )
+
+    render err.serialize_response
+  end
+
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
       appeals
     ).as_json
   end
 
-  def json_tasks(tasks)
+  def json_legacy_tasks(tasks)
     ActiveModelSerializers::SerializableResource.new(
       tasks,
       each_serializer: ::WorkQueue::LegacyTaskSerializer
+    ).as_json
+  end
+
+  def json_tasks(tasks)
+    ActiveModelSerializers::SerializableResource.new(
+      tasks,
+      each_serializer: ::WorkQueue::TaskSerializer
     ).as_json
   end
 end

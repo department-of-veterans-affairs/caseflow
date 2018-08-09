@@ -55,7 +55,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
 
   def validate_judge_non_availability_dates
     vacols_judges = User.css_ids_by_vlj_ids(@spreadsheet_data.pluck("vlj_id").uniq)
-    unless @spreadsheet_data.all? { |row| row["date"].instance_of?(Date) }
+    unless @spreadsheet_data.all? { |row| row["date"].instance_of?(Date) || row["date"] == "N/A" }
       @errors << JudgeDatesNotCorrectFormat
     end
     unless @spreadsheet_data.uniq == @spreadsheet_data

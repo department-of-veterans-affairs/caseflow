@@ -19,4 +19,40 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
       assigned_on: object.assigned_at
     }
   end
+
+  attribute :docket_name do
+    "Legacy"
+  end
+
+  attribute :case_type do
+    object.appeal.type
+  end
+
+  attribute :aod do
+    object.appeal.aod
+  end
+
+  attribute :external_appeal_id do
+    object.appeal.vacols_id
+  end
+
+  attribute :docket_number do
+    object.appeal.docket_number
+  end
+
+  attribute :veteran_full_name do
+    object.appeal.veteran_full_name
+  end
+
+  attribute :veteran_file_number do
+    object.appeal.veteran_file_number
+  end
+
+  attribute :issue_count do
+    object.appeal.issues.count
+  end
+
+  attribute :paper_case do
+    object.appeal.file_type.eql? "Paper"
+  end
 end
