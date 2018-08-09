@@ -31,6 +31,9 @@ module PowerOfAttorneyMapper
       # so let's grab that if we can, since we want to show all
       # the information we have.
       {
+        representative_first_name: rep_record.repfirst,
+        representative_middle_initial: rep_record.repmi,
+        representative_last_name: rep_record.replast,
         representative_name: get_rep_name_from_rep_record(representative_record),
         # TODO: alex to map rep.repso and rep.reptype based on values provided by Jed.
         representative_type: nil
@@ -48,6 +51,9 @@ module PowerOfAttorneyMapper
       # Otherwise we have to look up the specific name of the rep
       # in the REP table.
       {
+        representative_first_name: rep_record.repfirst,
+        representative_middle_initial: rep_record.repmi,
+        representative_last_name: rep_record.replast,
         representative_name: get_rep_name_from_rep_record(representative_record),
         representative_type: get_short_name(vacols_code)
       }

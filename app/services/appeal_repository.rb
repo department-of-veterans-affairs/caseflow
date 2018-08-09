@@ -43,7 +43,7 @@ class AppealRepository
                           service: :vacols,
                           name: "appeals_by_vbms_id_with_preloaded_status_api_attrs") do
       cases = VACOLS::Case.where(bfcorlid: vbms_id)
-        .includes(:folder, :correspondent, :representatives, folder: :outcoder)
+        .includes(:folder, :correspondent, folder: :outcoder)
         .references(:folder, :correspondent, folder: :outcoder)
 
       vacols_ids = cases.map(&:bfkey)
@@ -96,7 +96,7 @@ class AppealRepository
                  when "Partial Grant or Remand"
                    VACOLS::Case.remands_ready_for_claims_establishment
                  else
-                   VACOLS::Case.includes(:folder, :correspondent, :representatives)
+                   VACOLS::Case.includes(:folder, :correspondent)
                  end
 
     case_records = MetricsService.record("VACOLS: load_vacols_data_by_vbms_id #{appeal.vbms_id}",

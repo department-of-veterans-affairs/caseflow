@@ -1535,6 +1535,25 @@ describe LegacyAppeal do
     end
   end
 
+  context "#contested_claim", focus: true do
+    subject { appeal.contested_claim }
+    let(:vacols_case){ create(:case) }
+
+    context "when there is no contesting claimant" do
+      it { is_expected.to eq false }
+    end
+
+    context "when there is a contesting claimant" do
+      let(:vacols_case) do
+        c = create(:case_with_multiple_rep_rows)
+        create(:representative, reptype: "C", repkey: c.bfkey)
+        c
+      end
+
+      it { is_expected.to eq true }
+    end
+  end
+
   context "#update" do
     subject { appeal.update(appeals_hash) }
     let(:vacols_case) { create(:case) }
