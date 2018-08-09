@@ -26,7 +26,7 @@ import {
   JUDGE_DECISION_OPTIONS
 } from '../constants';
 import AssignWidget from './AssignWidget';
-import type { Task, LegacyAppeal } from '../types/models';
+import type { LegacyTask, LegacyAppeal } from '../types/models';
 import type { State } from '../types/state';
 
 const ASSIGN = 'ASSIGN';
@@ -38,7 +38,7 @@ type Params = {|
 type Props = Params & {|
   // From store
   appeal: LegacyAppeal,
-  task: Task,
+  task: LegacyTask,
   changedAppeals: Array<string>,
   decision: Object,
   userRole: string,
@@ -118,7 +118,7 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
 
   handleAssignment =
     ({ tasks, assigneeId, previousAssigneeId }:
-      { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) => {
+      { tasks: Array<LegacyTask>, assigneeId: string, previousAssigneeId: string}) => {
       if (tasks[0].taskType === 'Assign') {
         return this.props.initialAssignTasksToUser({ tasks,
           assigneeId,

@@ -7,10 +7,10 @@ import _ from 'lodash';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
-import { prepareAppealDetailsForStore, prepareTasksForStore } from './utils';
+import { prepareAppealDetailsForStore, prepareLegacyTasksForStore, prepareTasksForStore } from './utils';
 
 import { onReceiveAppealDetails, onReceiveTasks, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
-import type { LegacyAppeal, LegacyAppeals, Tasks } from './types/models';
+import type { LegacyAppeal, LegacyAppeals, LegacyTasks } from './types/models';
 import type { State, UsersById } from './types/state';
 import { USER_ROLES } from './constants';
 
@@ -25,7 +25,7 @@ type Params = {|
 
 type Props = Params & {|
   // From state
-  tasks: Tasks,
+  tasks: LegacyTasks,
   appealDetails: LegacyAppeals,
   loadedUserId: number,
   activeAppeal: LegacyAppeal,
@@ -50,7 +50,12 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
       this.props.onReceiveAppealDetails({ appeals: prepareAppealDetailsForStore([response.body.appeal]) });
     });
     const taskPromise = ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
-      this.props.onReceiveTasks({ tasks: prepareTasksForStore(response.body.tasks) });
+      const legacyTasks = _.every(response.body.tasks, (task) => task.attributes.appeal_type === 'LegacyAppeal');
+      const preparedTasks = legacyTasks && [USER_ROLES.ATTORNEY, USER_ROLES.JUDGE].includes(userRole) ?
+        prepareLegacyTasksForStore(response.body.tasks) :
+        prepareTasksForStore(response.body.tasks);
+
+      this.props.onReceiveTasks({ tasks: preparedTasks });
     });
     const promises = [];
 
