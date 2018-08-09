@@ -55,22 +55,6 @@ class VACOLS::Representative < VACOLS::Record
     MetricsService.record("VACOLS: update_vacols_rep_name! #{bfkey}",
                           service: :vacols,
                           name: "update_vacols_rep_name") do
-      name_attrs = {
-        repfirst: name[:first_name][0, 24],
-        repmi: name[:middle_initial][0, 4],
-        replast: name[:last_name][0, 40]
-      }
-      address_attrs = {
-        repaddr1: address[:address_one][0, 50],
-        repaddr2: address[:address_two][0, 50],
-        repcity: address[:city][0, 20],
-        repst: address[:state][0, 4],
-        repzip: address[:zip][0, 10]
-      }
-      attrs = {}
-      attrs = attrs.merge(name_attrs) unless name.empty?
-      attrs = attrs.merge(address_attrs) unless address.empty?
-      attrs = attrs.merge(reptype: ACTIVE_REPTYPES[type])
       rep = appellant_representative(bfkey)
 
       # TODO: to be 100% safe, we should pass the repaddtime value
@@ -78,7 +62,33 @@ class VACOLS::Representative < VACOLS::Record
       # started a certification, then added a new POA row for that appeal,
       # then completed the certification, we could be updating the wrong POA row.
       # However, this is very unlikely given the way current business processes operate.
-      rep ? update_rep!(bfkey, rep.repaddtime, attrs) : create_rep!(bfkey, attrs)
+      if rep
+        update_rep!(bfkey, rep.repaddtime, format_attrs(name, address, type))
+      else
+        create_rep!(bfkey, attrs)
+      end
+    end
+  end
+
+  def self.format_attrs(name, address, reptype)
+    attrs = { 
+      reptype: reptype: ACTIVE_REPTYPES[type]
+    }
+    unless name.empty?
+      attrs = attrs.merge({
+        repfirst: name[:first_name][0, 24],
+        repmi: name[:middle_initial][0, 4],
+        replast: name[:last_name][0, 40]
+      })
+    end
+    unless address.empty?
+      attrs = attrs.merge({
+        repaddr1: address[:address_one][0, 50],
+        repaddr2: address[:address_two][0, 50],
+        repcity: address[:city][0, 20],
+        repst: address[:state][0, 4],
+        repzip: address[:zip][0, 10]
+      })
     end
   end
 

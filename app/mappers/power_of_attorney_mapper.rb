@@ -25,20 +25,7 @@ module PowerOfAttorneyMapper
   end
 
   def get_poa_from_vacols_poa(vacols_code:, representative_record: nil)
-    if vacols_code.blank? || get_short_name(vacols_code).blank?
-      # If VACOLS doesn't have a rep code in its dropdown,
-      # it still may have a representative name in the REP table
-      # so let's grab that if we can, since we want to show all
-      # the information we have.
-      {
-        representative_first_name: rep_record.repfirst,
-        representative_middle_initial: rep_record.repmi,
-        representative_last_name: rep_record.replast,
-        representative_name: get_rep_name_from_rep_record(representative_record),
-        # TODO: alex to map rep.repso and rep.reptype based on values provided by Jed.
-        representative_type: nil
-      }
-    elsif get_short_name(vacols_code) == "None"
+    if get_short_name(vacols_code) == "None"
       { representative_type: "None" }
     elsif !rep_name_found_in_rep_table?(vacols_code)
       # VACOLS lists many Service Organizations by name in the dropdown.
@@ -51,9 +38,6 @@ module PowerOfAttorneyMapper
       # Otherwise we have to look up the specific name of the rep
       # in the REP table.
       {
-        representative_first_name: rep_record.repfirst,
-        representative_middle_initial: rep_record.repmi,
-        representative_last_name: rep_record.replast,
         representative_name: get_rep_name_from_rep_record(representative_record),
         representative_type: get_short_name(vacols_code)
       }
