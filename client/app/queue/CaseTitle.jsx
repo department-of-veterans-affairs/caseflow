@@ -12,6 +12,7 @@ import { CATEGORIES } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import ReaderLink from './ReaderLink';
 import { ClipboardIcon } from '../components/RenderFunctions';
+import COPY from '../../COPY.json';
 
 import { toggleVeteranCaseList } from './uiReducer/uiActions';
 
@@ -98,7 +99,7 @@ class CaseTitle extends React.PureComponent {
         </CopyToClipboard>
         <span {...tooltipStyling}>
           <ReactTooltip effect="solid" id={clipboardTooltipID} offset={{ bottom: '0' }} place="bottom">
-            Click to copy Veteran ID
+            {COPY.CASE_TITLE_VETERAN_ID_BUTTON_TOOLTIP}
           </ReactTooltip>
         </span>
       </React.Fragment>
