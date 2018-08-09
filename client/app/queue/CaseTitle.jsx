@@ -52,6 +52,7 @@ const clipboardButtonStyling = css({
   borderColor: COLORS.GREY_LIGHT,
   borderWidth: '1px',
   color: COLORS.GREY_DARK,
+  padding: '0.75rem',
   ':hover': {
     backgroundColor: 'transparent',
     color: COLORS.GREY_DARK,
