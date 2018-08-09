@@ -73,6 +73,6 @@ const OnHoldTasksTab = connect(
   (props: { tasks: Array<AmaTask> }) => {
     return <div>
       <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
-      <AmaTaskTable tasks={props.tasks} />
+      <AmaTaskTable tasks={props.tasks} includeDaysOnHold />
     </div>;
   });
