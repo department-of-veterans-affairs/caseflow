@@ -72,15 +72,6 @@ RSpec.feature "Task queue" do
       expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort.reverse
     end
 
-    it "displays special text indicating an assigned case has a claimant who is not the Veteran" do
-      vna_appeal_row = find("tbody").find("#table-row-#{non_veteran_claimant_appeal.id}")
-      first_cell = vna_appeal_row.find_all("td").first
-      expect(first_cell).to have_content(
-        "#{non_veteran_claimant_appeal.veteran_full_name} (#{non_veteran_claimant_appeal.sanitized_vbms_id})"
-      )
-      expect(first_cell).to have_content(COPY::CASE_DIFF_VETERAN_AND_APPELLANT)
-    end
-
     it "displays special text indicating an assigned case has paper documents" do
       pc_appeal_row = find("tbody").find("#table-row-#{paper_appeal.id}")
       first_cell = pc_appeal_row.find_all("td").first

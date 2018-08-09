@@ -11,7 +11,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   def details
     # TODO: add AMA appeals
     tasks, appeals = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(params[:appeal_id], "attorney")
-    return render json: {}, status: 404 if appeals.empty?
+    return render json: { message: "Appeal not found" }, status: 404 if appeals.empty?
     render json: json_appeal_details(tasks[0], appeals[0])
   end
 

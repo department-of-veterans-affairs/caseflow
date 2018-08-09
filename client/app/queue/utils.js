@@ -8,10 +8,14 @@ import {
   USER_ROLES
 } from './constants';
 import type {
-  Task,
-  Tasks,
+  AmaTask,
+  AmaTasks,
+  LegacyTask,
+  LegacyTasks,
   LegacyAppeal,
   LegacyAppeals,
+  BasicAppeal,
+  BasicAppeals,
   Issue,
   Issues
 } from './types/models';
@@ -20,59 +24,89 @@ import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRI
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
+export const prepareTasksForStore = (tasks: Array<Object>): AmaTasks => tasks.reduce((acc, curr: AmaTask) => {
+  acc[curr.attributes.external_id] = curr;
+
+  return acc;
+}, {});
+
+export const prepareLegacyTasksForStore = (tasks: Array<Object>): LegacyTasks => {
+  const mappedLegacyTasks = tasks.map((task) => {
+    return {
+      appealId: task.attributes.appeal_id,
+      externalAppealId: task.attributes.external_appeal_id,
+      assignedOn: task.attributes.assigned_on,
+      dueOn: task.attributes.due_on,
+      userId: task.attributes.user_id,
+      assignedToPgId: task.attributes.assigned_to_pg_id,
+      addedByName: task.attributes.added_by_name,
+      addedByCssId: task.attributes.added_by_css_id,
+      taskId: task.attributes.task_id,
+      taskType: task.attributes.task_type,
+      documentId: task.attributes.document_id,
+      assignedByFirstName: task.attributes.assigned_by_first_name,
+      assignedByLastName: task.attributes.assigned_by_last_name,
+      workProduct: task.attributes.work_product,
+      previousTaskAssignedOn: task.attributes.previous_task.assigned_on
+    };
+  });
+
+  return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.externalAppealId), (task) => task);
+};
+
 export const associateTasksWithAppeals =
-  (serverData: { appeals: { data: Array<LegacyAppeal> }, tasks: Array<void> | { data: Array<Task> } }):
-    { appeals: LegacyAppeals, tasks: Tasks } => {
+  (serverData: { tasks: { data: Array<Object> } }):
+    { appeals: BasicAppeals, tasks: LegacyTasks } => {
     const {
-      appeals: { data: appeals },
-      tasks: outerTasks
+      tasks: { data: tasks }
     } = serverData;
 
-    const result = {
-      appeals: {},
-      tasks: {}
+    const appealHash = tasks.reduce((accumulator, task) => {
+      if (!accumulator[task.attributes.external_appeal_id]) {
+        accumulator[task.attributes.external_appeal_id] = {
+          id: task.attributes.appeal_id,
+          type: task.attributes.appeal_type,
+          externalId: task.attributes.external_appeal_id,
+          docketName: task.attributes.docket_name,
+          caseType: task.attributes.case_type,
+          isAdvancedOnDocket: task.attributes.aod,
+          issueCount: task.attributes.issue_count,
+          docketNumber: task.attributes.docket_number,
+          veteranFullName: task.attributes.veteran_full_name,
+          veteranFileNumber: task.attributes.veteran_file_number,
+          isPaperCase: task.attributes.paper_case
+        };
+      }
+
+      return accumulator;
+    }, {});
+
+    return {
+      tasks: prepareLegacyTasksForStore(tasks),
+      appeals: appealHash
     };
-
-    for (const appeal of appeals) {
-      if (appeal) {
-        result.appeals[appeal.attributes.vacols_id] = appeal;
-      }
-    }
-    if (Array.isArray(outerTasks)) {
-      return result;
-    }
-
-    const tasks = outerTasks.data;
-
-    _.each(tasks, (task) => {
-      task.appealId = task.id;
-    });
-
-    for (const task of tasks) {
-      if (task) {
-        result.tasks[task.id] = task;
-      }
-    }
-
-    return result;
   };
 
-/*
-* Sorting hierarchy:
-*  1 AOD vets and CAVC remands
-*  2 All other appeals (originals, remands, etc)
-*
-*  Sort by docket date (form 9 date) oldest to
-*  newest within each group
-*/
-export const sortTasks = ({ tasks = {}, appeals = {} }: {tasks: Tasks, appeals: LegacyAppeals}) => _(tasks).
-  partition((task) =>
-    appeals[task.appealId].attributes.aod || appeals[task.appealId].attributes.type === 'Court Remand'
-  ).
-  flatMap((taskList) => _.sortBy(taskList, (task) => new Date(task.attributes.docket_date))).
-  value();
+export const prepareAppealDetailsForStore =
+  (appeals: Array<LegacyAppeal>):
+    LegacyAppeals => {
+    return _.pickBy(_.keyBy(appeals, (appeal) => appeal.attributes.external_id), (appeal) => appeal);
+  };
 
-export const renderAppealType = ({ aod, type }: {aod: boolean, type: string}) => {
+export const renderAppealType = (appeal: BasicAppeal) => {
+  const {
+    isAdvancedOnDocket,
+    caseType
+  } = appeal;
+  const cavc = caseType === 'Court Remand';
+
+  return <React.Fragment>
+    {isAdvancedOnDocket && <span><span {...redText}>AOD</span>, </span>}
+    {cavc ? <span {...redText}>CAVC</span> : <span>{caseType}</span>}
+  </React.Fragment>;
+};
+
+export const renderLegacyAppealType = ({ aod, type }: {aod: boolean, type: string}) => {
   const cavc = type === 'Court Remand';
 
   return <React.Fragment>
@@ -151,8 +185,9 @@ export const buildCaseReviewPayload = (
   }
 
   payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => _.extend({},
-    _.pick(issue, ['vacols_sequence_id', 'remand_reasons', 'type', 'readjudication']),
-    { disposition: _.capitalize(issue.disposition) }
+    _.pick(issue, ['remand_reasons', 'type', 'readjudication']),
+    { disposition: _.capitalize(issue.disposition) },
+    { id: issue.vacols_sequence_id }
   ));
 
   return payload;
@@ -192,5 +227,5 @@ export const validateWorkProductTypeAndId = (decision: {opts: Object}) => {
   return oldFormat.test(documentId) || newFormat.test(documentId);
 };
 
-export const getTaskDaysWaiting = (task: Task) => moment().startOf('day').
-  diff(moment(task.attributes.assigned_on), 'days');
+export const getTaskDaysWaiting = (task: LegacyTask) => moment().startOf('day').
+  diff(moment(task.assignedOn), 'days');

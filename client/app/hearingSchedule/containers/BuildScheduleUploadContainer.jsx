@@ -88,8 +88,12 @@ export class BuildScheduleUploadContainer extends React.Component {
     return ApiUtil.convertToSnakeCase(schedulePeriod);
   };
 
-  async createSchedulePeriod() {
+  createSchedulePeriod = () => {
+    this.props.toggleUploadContinueLoading();
+
     if (!this.validateData()) {
+      this.props.toggleUploadContinueLoading();
+
       return;
     }
 
@@ -104,9 +108,11 @@ export class BuildScheduleUploadContainer extends React.Component {
           if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
             this.props.updateJudgeUploadFormErrors(response.body.error);
           }
+          this.props.toggleUploadContinueLoading();
 
           return;
         }
+        this.props.toggleUploadContinueLoading();
         this.props.history.push(`/schedule/build/upload/${response.body.id}`);
       }, () => {
         if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
@@ -115,13 +121,8 @@ export class BuildScheduleUploadContainer extends React.Component {
         if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
           this.props.updateJudgeUploadFormErrors('ValidationError::UnspecifiedError');
         }
+        this.props.toggleUploadContinueLoading();
       });
-  }
-
-  onUploadContinue = () => {
-    this.props.toggleUploadContinueLoading();
-    Promise.resolve(this.createSchedulePeriod()).
-      then(this.props.toggleUploadContinueLoading());
   };
 
   render() {
@@ -144,7 +145,7 @@ export class BuildScheduleUploadContainer extends React.Component {
       uploadRoCoFormErrors={this.props.uploadRoCoFormErrors}
       uploadJudgeFormErrors={this.props.uploadJudgeFormErrors}
       uploadContinueLoading={this.props.uploadContinueLoading}
-      onUploadContinue={this.onUploadContinue}
+      onUploadContinue={this.createSchedulePeriod}
     />;
   }
 }

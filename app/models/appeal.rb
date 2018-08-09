@@ -2,6 +2,7 @@ class Appeal < AmaReview
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
+  has_many :decision_issues, through: :request_issues
 
   validates :receipt_date, :docket_type, presence: { message: "blank" }, on: :intake_review
 
@@ -28,6 +29,10 @@ class Appeal < AmaReview
     "Original"
   end
 
+  def issues
+    { decision_issues: decision_issues, request_issues: request_issues }
+  end
+
   def docket_name
     docket_type
   end
@@ -41,6 +46,10 @@ class Appeal < AmaReview
     veteran && veteran.name.formatted(:form)
   end
 
+  def veteran_full_name
+    veteran && veteran.name.formatted(:readable_full)
+  end
+
   def create_issues!(request_issues_data:)
     request_issues.destroy_all unless request_issues.empty?
 
@@ -52,7 +61,8 @@ class Appeal < AmaReview
   end
 
   def docket_number
-    "#{established_at.strftime('%y%m%d')}-#{id}"
+    return "Missing Docket Number" unless receipt_date
+    "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 
   def power_of_attorney

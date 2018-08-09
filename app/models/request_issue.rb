@@ -1,5 +1,6 @@
 class RequestIssue < ApplicationRecord
   belongs_to :review_request, polymorphic: true
+  has_many :decision_issues
 
   def self.create_from_intake_data!(data)
     create!(
