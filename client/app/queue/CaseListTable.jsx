@@ -1,17 +1,29 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { css } from 'glamor';
 
 import CaseDetailsLink from './CaseDetailsLink';
 import Table from '../components/Table';
+import { COLORS } from '../constants/AppConstants';
 
 import { DateString } from '../util/DateUtil';
 import { renderLegacyAppealType } from './utils';
 import COPY from '../../COPY.json';
 
-const labelForLocation = (locationCode) => {
+const currentAssigneeStyling = css({
+  color: COLORS.GREEN
+});
+
+const labelForLocation = (locationCode, userId) => {
   if (!locationCode) {
     return '';
+  }
+
+  const regex = new RegExp(`\\b(?:BVA|VACO|VHAISA)${locationCode}\\b`);
+
+  if (userId.match(regex) !== null) {
+    return <span {...currentAssigneeStyling}>Assigned to you</span>;
   }
 
   return locationCode;
@@ -52,7 +64,7 @@ class CaseListTable extends React.PureComponent {
     },
     {
       header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
-      valueFunction: (appeal) => labelForLocation(appeal.attributes.location_code)
+      valueFunction: (appeal) => labelForLocation(appeal.attributes.location_code, this.props.userCssId)
     }
   ];
 
@@ -69,7 +81,9 @@ CaseListTable.propTypes = {
   styling: PropTypes.object
 };
 
-const mapStateToProps = () => ({});
+const mapStateToProps = (state) => ({
+  userCssId: state.ui.userCssId
+});
 
 export default connect(mapStateToProps)(CaseListTable);
 
