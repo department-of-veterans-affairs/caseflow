@@ -18,4 +18,8 @@ class AttorneyQueue
       result
     end.flatten
   end
+
+  def tasks_by_appeal_id(appeal_id, appeal_type)
+    tasks.select { |task| task.appeal_id == appeal_id && task.appeal_type == appeal_type }
+  end
 end
