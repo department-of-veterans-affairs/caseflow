@@ -65,6 +65,7 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
 
         this.props.onReceiveTasks({ tasks: preparedTasks });
       });
+
       promises.push(taskPromise);
     }
 

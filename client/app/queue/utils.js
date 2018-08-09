@@ -12,8 +12,6 @@ import type {
   AmaTasks,
   LegacyTask,
   LegacyTasks,
-  Appeal,
-  Appeals,
   BasicAppeal,
   BasicAppeals,
   AppealDetails,

@@ -148,7 +148,6 @@ class AddEditIssueView extends React.Component {
   deleteIssue = () => {
     const {
       issue,
-      appeal,
       appeal: { issues },
       appealId,
       issueId
