@@ -9,6 +9,8 @@ import { tasksForAppealAssignedToAttorneySelector, tasksForAppealAssignedToUserS
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import JudgeActionsDropdown from './components/JudgeActionsDropdown';
+import ColocatedActionsDropdown from './components/ColocatedActionsDropdown';
+
 import COPY from '../../COPY.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import { COLORS } from '../constants/AppConstants';
@@ -136,11 +138,14 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       userRole
     } = this.props;
     let CheckoutDropdown = <React.Fragment />;
+    const dropdownArgs = { appealId: appeal.external_id };
 
     if (userRole === USER_ROLE_TYPES.attorney) {
-      CheckoutDropdown = <SelectCheckoutFlowDropdown appealId={appeal.external_id} />;
+      CheckoutDropdown = <SelectCheckoutFlowDropdown {...dropdownArgs} />;
     } else if (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout) {
-      CheckoutDropdown = <JudgeActionsDropdown appealId={appeal.external_id} />;
+      CheckoutDropdown = <JudgeActionsDropdown {...dropdownArgs} />;
+    } else if (userRole === USER_ROLE_TYPES.colocated) {
+      CheckoutDropdown = <ColocatedActionsDropdown {...dropdownArgs} />;
     }
 
     return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>

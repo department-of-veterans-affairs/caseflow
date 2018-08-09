@@ -7,6 +7,7 @@ import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import StringUtil from '../util/StringUtil';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
+import CO_LOCATED_ACTIONS from '../../constants/CO_LOCATED_ACTIONS.json';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -78,6 +79,14 @@ export const TASK_ACTIONS = {
   VIEW_APPEAL_INFO: 'view-appeal-info',
   QUEUE_TO_READER: 'queue-to-reader'
 };
+
+export const COLOCATED_ACTIONS = [{
+  // label: COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM,
+  // value: CO_LOCATED_ACTIONS.SEND_TO_TEAM
+// }, {
+  label: COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
+  value: CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY
+}];
 
 export const JUDGE_DECISION_OPTIONS = {
   DRAFT_DECISION: {

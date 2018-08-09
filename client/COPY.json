@@ -139,5 +139,8 @@
   "ADD_COLOCATED_TASK_CONFIRMATION_TITLE": "Your %s request was submitted successfully",
   "ADD_COLOCATED_TASK_CONFIRMATION_DETAIL": "If you need to make any changes, please manage this case in DAS.",
 
+  "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM": "Send to another team",
+  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY": "Send back to attorney",
+
   "MODAL_CANCEL_ATTORNEY_CHECKOUT": "All changes made to this page will be lost, except for the adding, editing, and deleting of issues."
 }
