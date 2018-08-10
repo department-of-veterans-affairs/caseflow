@@ -39,6 +39,7 @@ export default class SelectClaimant extends React.PureComponent {
 
         <SearchableDropdown
           name="cf-payee-code"
+          strongLabel
           label="What is the payee code for this claimant?"
           placeholder="Select"
           options={PAYEE_CODES}

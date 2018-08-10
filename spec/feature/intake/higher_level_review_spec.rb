@@ -121,15 +121,20 @@ RSpec.feature "Higher-Level Review Intake" do
     end
 
     expect(page).to_not have_content("Please select the claimant listed on the form.")
+    expect(page).to_not have_content("What is the payee code for this claimant?")
     within_fieldset("Is the claimant someone other than the Veteran?") do
       find("label", text: "Yes", match: :prefer_exact).click
     end
 
     expect(page).to have_content("Please select the claimant listed on the form.")
+    expect(page).to have_content("What is the payee code for this claimant?")
     expect(page).to have_content("Bob Vance, Spouse")
     expect(page).to_not have_content("Cathy Smith, Child")
 
     find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
+
+    fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
+    find("#form-select").send_keys :enter
 
     safe_click "#button-submit-review"
 
@@ -165,7 +170,8 @@ RSpec.feature "Higher-Level Review Intake" do
     expect(higher_level_review.informal_conference).to eq(true)
     expect(higher_level_review.same_office).to eq(false)
     expect(higher_level_review.claimants.first).to have_attributes(
-      participant_id: "5382910292"
+      participant_id: "5382910292",
+      payee_code: "10"
     )
 
     intake = Intake.find_by(veteran_file_number: "12341234")
@@ -204,7 +210,7 @@ RSpec.feature "Higher-Level Review Intake" do
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
       claim_hash: {
         benefit_type_code: "1",
-        payee_code: "00",
+        payee_code: "10",
         predischarge: false,
         claim_type: "Claim",
         station_of_jurisdiction: "397",
@@ -364,7 +370,8 @@ RSpec.feature "Higher-Level Review Intake" do
 
     Claimant.create!(
       review_request: higher_level_review,
-      participant_id: veteran_no_ratings.participant_id
+      participant_id: veteran_no_ratings.participant_id,
+      payee_code: "00"
     )
 
     higher_level_review.start_review!

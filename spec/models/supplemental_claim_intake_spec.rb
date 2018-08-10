@@ -53,7 +53,7 @@ describe SupplementalClaimIntake do
       Claimant.create!(
         review_request: detail,
         participant_id: "1234",
-        payee_cd: "10"
+        payee_code: "10"
       )
     end
 
@@ -99,7 +99,7 @@ describe SupplementalClaimIntake do
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
           participant_id: intake.veteran.participant_id,
-          payee_cd: "00"
+          payee_code: "00"
         )
       end
     end
@@ -114,7 +114,7 @@ describe SupplementalClaimIntake do
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
           participant_id: "1234",
-          payee_cd: "10"
+          payee_code: "10"
         )
       end
     end

@@ -10,7 +10,7 @@ class SupplementalClaimIntake < Intake
       receipt_date: detail.receipt_date,
       claimant: detail.claimant_participant_id,
       claimant_not_veteran: detail.claimant_not_veteran,
-      payee: detail.payee_cd,
+      payee: detail.payee_code,
       end_product_description: detail.end_product_description,
       ratings: detail.cached_serialized_timely_ratings
     )
@@ -25,7 +25,7 @@ class SupplementalClaimIntake < Intake
     detail.start_review!
     detail.create_claimants!(
       participant_id: request_params[:claimant] || veteran.participant_id,
-      payee_cd: request_params[:payee] || "00"
+      payee_code: request_params[:payee] || "00"
     )
     detail.update(request_params.permit(:receipt_date))
   end

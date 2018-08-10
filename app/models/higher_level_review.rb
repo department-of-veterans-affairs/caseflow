@@ -41,6 +41,7 @@ class HigherLevelReview < AmaReview
       reference_id: end_product_reference_id,
       claim_date: receipt_date,
       code: "030HLRR",
+      payee_code: payee_code,
       valid_modifiers: END_PRODUCT_MODIFIERS,
       source: self,
       station: "397" # AMC

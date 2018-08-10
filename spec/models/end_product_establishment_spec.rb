@@ -6,6 +6,7 @@ describe EndProductEstablishment do
   let(:veteran_file_number) { "12341234" }
   let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number) }
   let(:code) { "030HLRR" }
+  let(:payee_code) { "00" }
   let(:reference_id) { nil }
   let(:source) { create(:ramp_election) }
 
@@ -14,6 +15,7 @@ describe EndProductEstablishment do
       source: source,
       veteran_file_number: veteran_file_number,
       code: code,
+      payee_code: payee_code,
       claim_date: 2.days.ago,
       station: "397",
       valid_modifiers: ["030"],

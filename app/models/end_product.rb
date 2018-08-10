@@ -57,11 +57,11 @@ class EndProduct
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 
-  attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code,
+  attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code, :payee_code,
                 :station_of_jurisdiction, :gulf_war_registry, :suppress_acknowledgement_letter
 
   # Validators are used for validating the EP before we create it in VBMS
-  validates :modifier, :claim_type_code, :station_of_jurisdiction, :claim_date, presence: true
+  validates :modifier, :claim_type_code, :station_of_jurisdiction, :claim_date, :payee_code, presence: true
   validates :claim_type_code, inclusion: { in: CODES.keys }
   validates :gulf_war_registry, :suppress_acknowledgement_letter, inclusion: { in: [true, false] }
 
@@ -104,7 +104,7 @@ class EndProduct
   def to_vbms_hash
     {
       benefit_type_code: "1",
-      payee_code: "00",
+      payee_code: payee_code,
       predischarge: false,
       claim_type: "Claim",
       end_product_modifier: modifier,

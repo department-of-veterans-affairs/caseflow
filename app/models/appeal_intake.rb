@@ -8,7 +8,7 @@ class AppealIntake < Intake
       receipt_date: detail.receipt_date,
       claimant: detail.claimant_participant_id,
       claimant_not_veteran: detail.claimant_not_veteran,
-      payee: detail.payee_cd,
+      payee: detail.payee_code,
       docket_type: detail.docket_type,
       ratings: detail.cached_serialized_timely_ratings
     )
@@ -22,7 +22,7 @@ class AppealIntake < Intake
   def review!(request_params)
     detail.create_claimants!(
       participant_id: request_params[:claimant] || veteran.participant_id,
-      payee_cd: request_params[:payee] || "00"
+      payee_code: request_params[:payee] || "00"
     )
     detail.assign_attributes(request_params.permit(:receipt_date, :docket_type))
     detail.save(context: :intake_review)

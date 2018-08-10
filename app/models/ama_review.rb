@@ -20,9 +20,9 @@ class AmaReview < ApplicationRecord
     @saving_review = true
   end
 
-  def create_claimants!(participant_id:, payee_cd:)
+  def create_claimants!(participant_id:, payee_code:)
     claimants.destroy_all unless claimants.empty?
-    claimants.create_from_intake_data!(participant_id: participant_id, payee_cd: payee_cd)
+    claimants.create_from_intake_data!(participant_id: participant_id, payee_code: payee_code)
   end
 
   def remove_claimants!
@@ -38,9 +38,9 @@ class AmaReview < ApplicationRecord
     claimant_participant_id && claimant_participant_id != veteran.participant_id
   end
 
-  def payee_cd
+  def payee_code
     return nil if claimants.empty?
-    claimants.first.payee_cd
+    claimants.first.payee_code
   end
 
   def create_issues!(request_issues_data:)

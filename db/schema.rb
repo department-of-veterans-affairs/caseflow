@@ -158,7 +158,7 @@ ActiveRecord::Schema.define(version: 20180808215503) do
     t.string "review_request_type", null: false
     t.bigint "review_request_id", null: false
     t.string "participant_id", null: false
-    t.string "payee_cd"
+    t.string "payee_code"
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
