@@ -22,11 +22,11 @@ class HigherLevelReview < AmaReview
     [{ code: "SSR", narrative: "Same Station Review" }]
   end
 
-  def create_contentions_in_vbms
+  def create_contentions_in_vbms(rated: true)
     VBMSService.create_contentions!(
       veteran_file_number: veteran_file_number,
       claim_id: end_product_establishment.reference_id,
-      contention_descriptions: contention_descriptions_to_create,
+      contention_descriptions: issue_descriptions_to_create(rated: rated),
       special_issues: special_issues
     )
   end
@@ -34,11 +34,11 @@ class HigherLevelReview < AmaReview
   private
 
   def find_end_product_establishment(ep_code)
-    @preexisting_end_product_establishment ||= EndProductEstablishment.find_by(source: self, code: ep_code)
+    EndProductEstablishment.find_by(source: self, code: ep_code)
   end
 
   def new_end_product_establishment(ep_code)
-    @new_end_product_establishment ||= EndProductEstablishment.new(
+    EndProductEstablishment.new(
       veteran_file_number: veteran_file_number,
       reference_id: end_product_reference_id,
       claim_date: receipt_date,
@@ -51,10 +51,12 @@ class HigherLevelReview < AmaReview
 
   def end_product_establishment(rated: true)
     ep_code = issue_code(rated)
-    find_end_product_establishment(ep_code) || new_end_product_establishment(ep_code)
+    @end_product_establishments ||= {}
+    @end_product_establishments[rated] ||=
+      find_end_product_establishment(ep_code) || new_end_product_establishment(ep_code)
   end
 
   def issue_code(rated)
-    @issue_code ||= rated ? END_PRODUCT_RATED_CODE : END_PRODUCT_NONRATED_CODE
+    rated ? END_PRODUCT_RATED_CODE : END_PRODUCT_NONRATED_CODE
   end
 end

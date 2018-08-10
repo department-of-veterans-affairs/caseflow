@@ -45,11 +45,23 @@ class AmaReview < ApplicationRecord
   end
 
   def create_end_product_and_contentions!
-    return nil if contention_descriptions_to_create.empty?
-    end_product_establishment.perform!
-    create_contentions_on_new_end_product!
-    create_associated_rated_issues_in_vbms!
+    return nil if rated_issue_descriptions_to_create.empty? && nonrated_issue_descriptions_to_create.empty?
+    create_ratings_end_product_and_contentions!
+    create_nonratings_end_product_and_contentions!
     update! established_at: Time.zone.now
+  end
+
+  def create_ratings_end_product_and_contentions!
+    return nil if rated_issue_descriptions_to_create.empty?
+    end_product_establishment(rated: true).perform!
+    create_contentions_on_new_end_product!(rated: true)
+    create_associated_rated_issues_in_vbms!
+  end
+
+  def create_nonratings_end_product_and_contentions!
+    return nil if nonrated_issue_descriptions_to_create.empty?
+    end_product_establishment(rated: false).perform!
+    create_contentions_on_new_end_product!(rated: false)
   end
 
   def veteran
@@ -70,18 +82,29 @@ class AmaReview < ApplicationRecord
     receipt_date ? receipt_date.to_formatted_s(:short_date) : ""
   end
 
-  def contention_descriptions_to_create
-    @contention_descriptions_to_create ||=
-      request_issues.where(contention_reference_id: nil).pluck(:description)
+  def rated_issue_descriptions_to_create
+    @rated_issue_descriptions_to_create ||= rated_issues_to_create.pluck(:description)
   end
 
-  def rated_contentions
-    request_issues.where.not(contention_reference_id: nil, rating_issue_profile_date: nil)
+  def rated_issues_to_create
+    @rated_issues_to_create ||= request_issues.rated.where(contention_reference_id: nil)
+  end
+
+  def nonrated_issue_descriptions_to_create
+    @nonrated_issue_descriptions_to_create ||= nonrated_issues_to_create.pluck(:description)
+  end
+
+  def issue_descriptions_to_create(rated: true)
+    rated ? rated_issue_descriptions_to_create : nonrated_issue_descriptions_to_create
+  end
+
+  def nonrated_issues_to_create
+    @nonrated_issues_to_create ||= request_issues.nonrated.where(contention_reference_id: nil)
   end
 
   def create_rated_issue_contention_map
     issue_contention_map = {}
-    rated_contentions.each do |contention|
+    request_issues.where.not(rating_issue_reference_id: nil).find_each do |contention|
       issue_contention_map[contention.rating_issue_reference_id] = contention.contention_reference_id
     end
     issue_contention_map
@@ -94,12 +117,13 @@ class AmaReview < ApplicationRecord
   # VBMS will return ALL contentions on a end product when you create contentions,
   # not just the ones that were just created. This method assumes there are no
   # pre-existing contentions on the end product. Since it was also just created.
-  def create_contentions_on_new_end_product!
+  def create_contentions_on_new_end_product!(rated: true)
+    issues_to_create = rated ? rated_issues_to_create : nonrated_issues_to_create
     # Load all the issues so we can match them in memory
-    request_issues.all.tap do |issues|
+    issues_to_create.all.tap do |issues|
       # Currently not making any assumptions about the order in which VBMS returns
       # the created contentions. Instead find the issue by matching text.
-      create_contentions_in_vbms.each do |contention|
+      create_contentions_in_vbms(rated: rated).each do |contention|
         matching_issue = issues.find { |issue| issue.description == contention.text }
         matching_issue && matching_issue.update!(contention_reference_id: contention.id)
       end
@@ -108,18 +132,18 @@ class AmaReview < ApplicationRecord
     end
   end
 
-  def create_contentions_in_vbms
+  def create_contentions_in_vbms(rated: true)
     VBMSService.create_contentions!(
       veteran_file_number: veteran_file_number,
-      claim_id: end_product_establishment.reference_id,
-      contention_descriptions: contention_descriptions_to_create
+      claim_id: end_product_establishment(rated: rated).reference_id,
+      contention_descriptions: issue_descriptions_to_create(rated: rated)
     )
   end
 
   def create_associated_rated_issues_in_vbms!
     return if rated_issue_contention_map.blank?
     VBMSService.associate_rated_issues!(
-      claim_id: end_product_establishment.reference_id,
+      claim_id: end_product_establishment(rated: true).reference_id,
       rated_issue_contention_map: rated_issue_contention_map
     )
   end

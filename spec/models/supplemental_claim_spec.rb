@@ -110,7 +110,9 @@ describe SupplementalClaim do
     let!(:request_issues_data) do
       [
         { reference_id: "abc", profile_date: "2018-04-04", decision_text: "hello" },
-        { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" }
+        { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" },
+        { issue_category: "Unknown issue category", decision_text: "Description for Unknown" },
+        { issue_category: "Apportionment", decision_text: "Description for Apportionment", decision_date: "2018-04-08" }
       ]
     end
     before do
@@ -164,11 +166,13 @@ describe SupplementalClaim do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: veteran_file_number,
         claim_id: "454545",
-        contention_descriptions: %w[goodbye hello]
+        contention_descriptions: ["Description for Unknown", "goodbye", "hello"]
       )
       request_issues = supplemental_claim.request_issues
       expect(request_issues.first.contention_reference_id).to_not be_nil
       expect(request_issues.second.contention_reference_id).to_not be_nil
+      expect(request_issues.third.contention_reference_id).to_not be_nil
+      expect(request_issues.last.contention_reference_id).to_not be_nil
     end
 
     it "maps rated issues to contentions" do

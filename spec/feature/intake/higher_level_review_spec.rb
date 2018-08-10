@@ -221,7 +221,14 @@ RSpec.feature "Higher-Level Review Intake" do
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: "12341234",
       claim_id: "IAMANEPID",
-      contention_descriptions: ["Description for Active Duty Adjustments", "PTSD denied"],
+      contention_descriptions: ["PTSD denied"],
+      special_issues: []
+    )
+
+    expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+      veteran_file_number: "12341234",
+      claim_id: "IAMANEPID",
+      contention_descriptions: ["Description for Active Duty Adjustments"],
       special_issues: []
     )
 

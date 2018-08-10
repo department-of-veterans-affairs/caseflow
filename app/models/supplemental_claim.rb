@@ -17,11 +17,11 @@ class SupplementalClaim < AmaReview
   private
 
   def find_end_product_establishment(ep_code)
-    @preexisting_end_product_establishment ||= EndProductEstablishment.find_by(source: self, code: ep_code)
+    EndProductEstablishment.find_by(source: self, code: ep_code)
   end
 
   def new_end_product_establishment(ep_code)
-    @new_end_product_establishment ||= EndProductEstablishment.new(
+    EndProductEstablishment.new(
       veteran_file_number: veteran_file_number,
       reference_id: end_product_reference_id,
       claim_date: receipt_date,
@@ -34,10 +34,12 @@ class SupplementalClaim < AmaReview
 
   def end_product_establishment(rated: true)
     ep_code = issue_code(rated)
-    find_end_product_establishment(ep_code) || new_end_product_establishment(ep_code)
+    @end_product_establishments ||= {}
+    @end_product_establishments[rated] ||=
+      find_end_product_establishment(ep_code) || new_end_product_establishment(ep_code)
   end
 
   def issue_code(rated)
-    @issue_code ||= rated ? END_PRODUCT_RATED_CODE : END_PRODUCT_NONRATED_CODE
+    rated ? END_PRODUCT_RATED_CODE : END_PRODUCT_NONRATED_CODE
   end
 end
