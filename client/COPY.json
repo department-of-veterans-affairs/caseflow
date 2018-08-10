@@ -71,7 +71,9 @@
   "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_SUBHEAD": "How would you rate the complexity of this case?",
   "JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL": "Quality of work",
   "JUDGE_EVALUATE_DECISION_CASE_QUALITY_SUBHEAD": "How would you rate the overall quality of this case?",
-  "JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL": "Were there any areas of improvement?",
+  "JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL": "Identify areas for improvement",
+  "JUDGE_EVALUATE_DECISION_IMPROVEMENT_NOT_CONSIDERED": "The attorney did not properly consider and apply:",
+  "JUDGE_EVALUATE_DECISION_IMPROVEMENT_AREAS_FOR_IMPROVEMENT": "Other areas for improvement:",
 
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL": "Case Timeliness",
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE": "Date assigned to attorney",
