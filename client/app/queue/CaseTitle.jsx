@@ -80,11 +80,11 @@ class CaseTitle extends React.PureComponent {
       <React.Fragment>
         Veteran ID:&nbsp;
         <Tooltip text={COPY.CASE_TITLE_VETERAN_ID_BUTTON_TOOLTIP} position="bottom">
-          <CopyToClipboard text={appeal.attributes.veteranFileNumber}>
+          <CopyToClipboard text={appeal.veteranFileNumber}>
             <button type="submit"
               className="cf-apppeal-id"
               {...clipboardButtonStyling} >
-              {appeal.attributes.veteranFileNumber}&nbsp;
+              {appeal.veteranFileNumber}&nbsp;
               <ClipboardIcon />
             </button>
           </CopyToClipboard>
