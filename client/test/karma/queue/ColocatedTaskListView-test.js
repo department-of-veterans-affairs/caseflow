@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
@@ -7,31 +8,34 @@ import { createStore, applyMiddleware } from 'redux';
 import moment from 'moment';
 import thunk from 'redux-thunk';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
+import rootReducer from '../../../app/queue/reducers';
+import { onReceiveQueue } from '../../../app/queue/QueueActions';
 
 describe('ColocatedTaskListView', () => {
+  const a: number = 3;
+  const amaTaskTemplate = {
+    id: '1',
+    attributes: {
+      action: 'ihp',
+      aod: false,
+      assigned_at: moment().subtract(47, 'hours').format(),
+      assigned_to: {
+        css_id: 'BVALSPORER'
+      },
+      case_type: 'Original',
+      docket_number: '123456',
+      external_id: '12345678',
+      veteran_file_number: '123456789',
+      veteran_name: 'Jane Smith'
+    }
+  };
   it('shows only new tasks', () => {
     const userCssId = 'BVALSPORER';
     const taskId = '1';
     const state = {
       queue: {
         amaTasks: {
-          [taskId]: {
-            id: taskId,
-            attributes: {
-              action: 'ihp',
-              aod: false,
-              assigned_at: moment().subtract(47, 'hours').
-                format(),
-              assigned_to: {
-                css_id: userCssId
-              },
-              case_type: 'Original',
-              docket_number: '123456',
-              external_id: '12345678',
-              veteran_file_number: '123456789',
-              veteran_name: 'Jane Smith'
-            }
-          }
+          [taskId]: { ...amaTaskTemplate, id: taskId }
         },
         docCountForAppeal: {},
         newDocsForAppeal: {}
@@ -41,7 +45,7 @@ describe('ColocatedTaskListView', () => {
       }
     };
     const store = createStore(
-      (xState) => xState,
+      rootReducer,
       state,
       applyMiddleware(thunk)
     );
