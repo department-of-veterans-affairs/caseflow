@@ -30,21 +30,13 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
     this.props.clearCaseSelectSearch();
   };
 
-  pageNew = () => {
-    return <NewTasksTab />;
-  }
-
-  pageOnHold = () => {
-    return <OnHoldTasksTab />;
-  }
-
   render = () => {
     const tabs = [{
       label: 'New',
       page: <NewTasksTab />
     }, {
       label: 'On hold',
-      page: this.pageOnHold()
+      page: <OnHoldTasksTab />
     }];
 
     return <AppSegment filledBackground>

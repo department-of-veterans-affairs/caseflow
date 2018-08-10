@@ -76,7 +76,10 @@ class AmaTaskTable extends React.PureComponent<Props> {
   } : null)
 
   caseDaysOnHold = () => (this.props.includeDaysOnHold ? {
-    header: COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE
+    header: COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE,
+    valueFunction: (task: AmaTask) => {
+      return `${moment().diff(task.attributes.placed_on_hold_at, 'days')} of ${task.attributes.on_hold_duration || '?'}`;
+    }
   } : null)
 
   caseReaderLinkColumn = () => ({
