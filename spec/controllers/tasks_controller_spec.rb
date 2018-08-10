@@ -162,9 +162,14 @@ RSpec.describe TasksController, type: :controller do
           response_body = JSON.parse(response.body)["tasks"]["data"]
           expect(response_body.first["attributes"]["type"]).to eq "AttorneyTask"
           expect(response_body.first["attributes"]["appeal_id"]).to eq ama_appeal.id
-          expect(response_body.first["attributes"]["appeal_id"]).to eq ama_appeal.id
           expect(response_body.first["attributes"]["docket_number"]).to eq ama_appeal.docket_number
           expect(response_body.first["attributes"]["appeal_type"]).to eq "Appeal"
+
+          attorney_task = AttorneyTask.find_by(appeal: ama_appeal)
+          expect(attorney_task.status).to eq "assigned"
+          expect(attorney_task.assigned_to).to eq attorney
+          expect(attorney_task.parent_id).to eq ama_judge_task.id
+          expect(ama_judge_task.reload.status).to eq "on_hold"
         end
       end
     end
