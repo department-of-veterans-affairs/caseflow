@@ -99,6 +99,7 @@ describe RampRefiling do
         let!(:issue_to_fail) do
           ramp_refiling.issues.create!(description: "FAIL ME")
         end
+        let(:modifier) { RampReview::END_PRODUCT_DATA_BY_OPTION[option_selected][:modifier] }
 
         it "raises ContentionCreationFailed" do
           expect { subject }.to raise_error(RampRefiling::ContentionCreationFailed)
@@ -112,11 +113,9 @@ describe RampRefiling do
       it "sends requests to VBMS to create both the end_product and the uncreated issues" do
         subject
 
-        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(hash_including(
-          claim_hash: hash_including(
-            end_product_modifier: RampReview::END_PRODUCT_DATA_BY_OPTION[option_selected][:modifier]
-          )
-        ))
+        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          hash_including(claim_hash: hash_including(end_product_modifier: modifier))
+        )
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: "64205555",
           claim_id: "1337",
