@@ -320,13 +320,18 @@ export const fetchAllAttorneys = () => (dispatch: Dispatch) => {
     catch((error) => Promise.reject(dispatch(errorAllAttorneys(error))));
 };
 
+export const amaTasksReceived = (amaTasks: AmaTasks) => ({
+  type: ACTIONS.AMA_TASKS_RECEIVED,
+  payload: {
+    amaTasks
+  }
+});
+
 export const fetchAmaTasksOfUser = (userId: number, userRole: string) => (dispatch: Dispatch) => {
   return ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
     then((resp) => resp.body).
-    then((body) => dispatch({
-      type: ACTIONS.AMA_TASKS_RECEIVED,
-      payload: {
+    then((body) => dispatch(
+      amaTasksReceived({
         amaTasks: _.pickBy(_.keyBy(body.tasks.data, (task) => task.id), (task) => task)
-      }
-    }));
+      })));
 };

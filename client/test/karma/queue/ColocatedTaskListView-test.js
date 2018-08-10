@@ -9,46 +9,94 @@ import moment from 'moment';
 import thunk from 'redux-thunk';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import rootReducer from '../../../app/queue/reducers';
-import { onReceiveQueue } from '../../../app/queue/QueueActions';
+import { amaTasksReceived } from '../../../app/queue/QueueActions';
+import { setUserCssId } from '../../../app/queue/uiReducer/uiActions';
 
 describe('ColocatedTaskListView', () => {
-  const a: number = 3;
   const amaTaskTemplate = {
-    id: '1',
-    attributes: {
-      action: 'ihp',
-      aod: false,
-      assigned_at: moment().subtract(47, 'hours').format(),
-      assigned_to: {
-        css_id: 'BVALSPORER'
+    "id": "8",
+    "type": "colocated_tasks",
+    "attributes": {
+      "type": "ColocatedTask",
+      "action": "new_rep_arguments",
+      "appeal_id": 5,
+      "status": "assigned",
+      "assigned_to": {
+        "id": 7,
+        "station_id": "101",
+        "css_id": "BVALSPORER",
+        "full_name": "Co-located no cases",
+        "email": null,
+        "roles": [
+          "BVALSPORER"
+        ],
+        "selected_regional_office": null,
+        "display_name": "BVALSPORER (VACO)",
+        "judge_css_id": null
       },
-      case_type: 'Original',
-      docket_number: '123456',
-      external_id: '12345678',
-      veteran_file_number: '123456789',
-      veteran_name: 'Jane Smith'
+      "assigned_by": {
+        "id": 1,
+        "station_id": "101",
+        "css_id": "BVASCASPER1",
+        "full_name": "Attorney with cases",
+        "email": null,
+        "roles": [
+          "BVASCASPER1"
+        ],
+        "selected_regional_office": null,
+        "display_name": "BVASCASPER1 (VACO)",
+        "judge_css_id": "BVAOSCHOWALT"
+      },
+      "assigned_at": moment().subtract(47, 'hours').format(),
+      "started_at": null,
+      "completed_at": null,
+      "placed_on_hold_at": null,
+      "on_hold_duration": null,
+      "instructions": "poa is missing",
+      "appeal_type": "Appeal",
+      "docket_name": null,
+      "case_type": "Original",
+      "docket_number": "Missing Docket Number",
+      "veteran_name": "Andrew Merica",
+      "veteran_file_number": "152003980",
+      "external_id": "3bd1567a-4f07-473c-aefc-3738a6cf58fe",
+      "aod": false
     }
   };
   it('shows only new tasks', () => {
     const userCssId = 'BVALSPORER';
     const taskId = '1';
-    const state = {
-      queue: {
-        amaTasks: {
-          [taskId]: { ...amaTaskTemplate, id: taskId }
-        },
-        docCountForAppeal: {},
-        newDocsForAppeal: {}
+    const idUnassigned = '5';
+    const amaTasks = {
+      [taskId]: {
+        ...amaTaskTemplate,
+        id: taskId,
+        attributes: {
+          ...amaTaskTemplate.attributes,
+          assigned_to: {
+            ...amaTaskTemplate.attributes.assigned_to,
+            css_id: userCssId
+          }
+        }
       },
-      ui: {
-        userCssId
+      [idUnassigned]: {
+        ...amaTaskTemplate,
+        id: idUnassigned,
+        attributes: {
+          ...amaTaskTemplate.attributes,
+          assigned_to: {
+            ...amaTaskTemplate.attributes.assigned_to,
+            css_id: 'BVANOTSPORER'
+          }
+        }
       }
     };
     const store = createStore(
       rootReducer,
-      state,
       applyMiddleware(thunk)
     );
+    store.dispatch(amaTasksReceived(amaTasks));
+    store.dispatch(setUserCssId(userCssId));
 
     const wrapper = mount(
       <Provider store={store}>
@@ -65,7 +113,7 @@ describe('ColocatedTaskListView', () => {
       wrappers.push(cells.at(i));
     }
     const [caseDetails, tasks, types, docketNumber, daysWaiting, documents] = wrappers;
-    const task = state.queue.amaTasks[taskId];
+    const task = amaTasks[taskId];
 
     expect(caseDetails.text()).to.include(task.attributes.veteran_name);
     expect(caseDetails.text()).to.include(task.attributes.veteran_file_number);

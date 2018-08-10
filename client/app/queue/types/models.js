@@ -6,7 +6,7 @@ export type User = {
   css_id: string,
   full_name: string,
   email: ?string,
-  roles: Array<String>,
+  roles: Array<string>,
   selected_regional_office: ?string,
   display_name: string,
   judge_css_id: ?string
@@ -68,7 +68,7 @@ export type AmaTask = {
   attributes: {
     action: string,
     aod: boolean,
-    appeal_id: string,
+    appeal_id: number,
     assigned_at: string,
     assigned_by: User,
     assigned_to: User,
