@@ -118,6 +118,4 @@ class AmaTaskTable extends React.PureComponent<Props> {
   }
 }
 
-const mapStateToProps = () => ({});
-
-export default (connect(mapStateToProps)(AmaTaskTable): React.ComponentType<Params>);
+export default (connect(null)(AmaTaskTable): React.ComponentType<Params>);
