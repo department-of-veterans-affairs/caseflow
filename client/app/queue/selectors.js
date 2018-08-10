@@ -38,9 +38,14 @@ export const tasksByAssigneeCssIdSelector = createSelector(
   )
 );
 
-export const amaTasksByAssigneeId: (State) => { [number]: AmaTask } = createSelector(
-  [getAmaTasks],
-  (tasks: AmaTasks) => _.groupBy(tasks, (task) => task.attributes.assigned_to.id)
+const amaTasksByAssigneeCssIdSelector = createSelector(
+  [getAmaTasks, getUserCssId],
+  (tasks: AmaTasks, cssId: string) => _.filter(tasks, (task) => task.attributes.assigned_to.css_id === cssId)
+);
+
+export const amaTasksNewByAssigneeCssIdSelector: (State) => Array<AmaTask> = createSelector(
+  [amaTasksByAssigneeCssIdSelector],
+  (tasks: Array<AmaTask>) => tasks.filter((task) => !task.attributes.placed_on_hold_at)
 );
 
 export const appealsWithTasksSelector = createSelector(

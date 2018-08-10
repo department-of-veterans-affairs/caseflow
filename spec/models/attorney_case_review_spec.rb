@@ -47,9 +47,7 @@ describe AttorneyCaseReview do
       context "when incorrect format" do
         let(:task_id) { "#{vacols_case.bfkey}-#{vacols_case.decass[0].deadtim.strftime('%D')}" }
 
-        it "should raise ActiveRecord::RecordNotFound" do
-          expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
-        end
+        it { is_expected.to_not be_valid }
       end
     end
 

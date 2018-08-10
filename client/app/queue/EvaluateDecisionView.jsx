@@ -25,27 +25,24 @@ import COPY from '../../COPY.json';
 import JUDGE_CASE_REVIEW_OPTIONS from '../../constants/JUDGE_CASE_REVIEW_OPTIONS.json';
 import {
   marginBottom, marginTop,
-  marginRight, paddingLeft,
-  fullWidth, redText, PAGE_TITLES,
+  paddingLeft, fullWidth,
+  redText, PAGE_TITLES,
   ISSUE_DISPOSITIONS
 } from './constants';
-const setWidth = (width) => css({ width });
+const setWidth = (width) => css({
+  width,
+  maxWidth: width
+});
 const headerStyling = marginBottom(1.5);
 const inlineHeaderStyling = css(headerStyling, { float: 'left' });
 const hrStyling = css(marginTop(2), marginBottom(3));
 const qualityOfWorkAlertStyling = css({ borderLeft: '0.5rem solid #59BDE1' });
 const errorStylingNoTopMargin = css({ '&.usa-input-error': marginTop(0) });
-
-const twoColumnContainerStyling = css({
-  display: 'inline-flex',
-  width: '100%'
-});
-const leftColumnStyling = css({
-  '@media(min-width: 950px)': setWidth('calc(50% - 2rem)'),
-  '@media(max-width: 949px)': setWidth('calc(100% - 2rem)')
-});
 const subH2Styling = css(paddingLeft(1), { lineHeight: 2 });
 const subH3Styling = css(paddingLeft(1), { lineHeight: 1.75 });
+const fullWidthCheckboxLabels = css({
+  '& .question-label': setWidth('100%')
+});
 
 class EvaluateDecisionView extends React.PureComponent {
   constructor(props) {
@@ -243,24 +240,26 @@ class EvaluateDecisionView extends React.PureComponent {
         </h3>
         {this.qualityIsDeficient() && <span {...css(subH3Styling, redText)}>Choose at least one</span>}
       </div>
-      <div {...twoColumnContainerStyling}>
-        <div className="cf-push-left" {...css(marginRight(2), leftColumnStyling)}>
-          <CheckboxGroup
-            hideLabel vertical
-            name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
-            onChange={this.setAreasOfImprovement}
-            errorState={highlight && this.qualityIsDeficient() && _.isEmpty(this.state.areas_for_improvement)}
-            value={this.state.areas_for_improvement}
-            options={this.getDisplayOptions('areas_for_improvement')} />
-        </div>
-        <div className="cf-push-left">
-          <CheckboxGroup
-            hideLabel vertical
-            name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
-            onChange={this.setStateAttrList}
-            value={this.state.factors_not_considered}
-            options={this.getDisplayOptions('factors_not_considered')} />
-        </div>
+      <div className="cf-push-left" {...fullWidth}>
+        <h4>{COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_NOT_CONSIDERED}</h4>
+        <CheckboxGroup
+          hideLabel vertical
+          name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
+          onChange={this.setStateAttrList}
+          value={this.state.factors_not_considered}
+          options={this.getDisplayOptions('factors_not_considered')}
+          styling={fullWidthCheckboxLabels} />
+      </div>
+      <div className="cf-push-left" {...fullWidth}>
+        <h4>{COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_AREAS_FOR_IMPROVEMENT}</h4>
+        <CheckboxGroup
+          hideLabel vertical
+          name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
+          onChange={this.setAreasOfImprovement}
+          errorState={highlight && this.qualityIsDeficient() && _.isEmpty(this.state.areas_for_improvement)}
+          value={this.state.areas_for_improvement}
+          options={this.getDisplayOptions('areas_for_improvement')}
+          styling={fullWidthCheckboxLabels} />
       </div>
 
       <hr {...hrStyling} />

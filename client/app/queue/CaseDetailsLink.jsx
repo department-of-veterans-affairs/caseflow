@@ -14,9 +14,6 @@ export default class CaseDetailsLink extends React.PureComponent {
       disabled
     } = this.props;
 
-    // For now while only the basic appeal info is named properly this is necessary. To be removed later.
-    const isPaperCase = appeal.isPaperCase;
-
     return <React.Fragment>
       <Link
         to={`/queue/appeals/${appeal.externalId}`}
@@ -24,7 +21,7 @@ export default class CaseDetailsLink extends React.PureComponent {
         onClick={this.props.onClick}>
         {this.props.getLinkText(appeal)}
       </Link>
-      {isPaperCase && <React.Fragment>
+      {appeal.isPaperCase && <React.Fragment>
         <br />
         <span {...subHeadTextStyle}>{COPY.IS_PAPER_CASE}</span>
       </React.Fragment>}
