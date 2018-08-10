@@ -85,8 +85,8 @@ class AmaTaskTable extends React.PureComponent<Props> {
       return <ReaderLink appealId={task.attributes.external_id}
         analyticsSource={CATEGORIES.QUEUE_TABLE}
         redirectUrl={window.location.pathname}
-        appeal={{ attributes: { vacols_id: task.attributes.external_id,
-          paper_case: false } }} />;
+        appeal={{ externalId: task.attributes.external_id,
+          isPaperCase: false }} />;
     }
   })
 

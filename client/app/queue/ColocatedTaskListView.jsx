@@ -41,7 +41,7 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
   render = () => {
     const tabs = [{
       label: 'New',
-      page: this.pageNew()
+      page: <NewTasksTab />
     }, {
       label: 'On hold',
       page: this.pageOnHold()
