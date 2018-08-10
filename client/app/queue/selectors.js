@@ -30,17 +30,9 @@ const getAppealId = (state: State, props: Object) => props.appealId;
 const getAttorneys = (state: State) => state.queue.attorneysOfJudge;
 const getCaseflowVeteranId = (state: State, props: Object) => props.caseflowVeteranId;
 
-export const tasksByAssigneeCssIdSelector = createSelector(
-  [getTasks, getUserCssId],
-  (tasks: LegacyTasks, cssId: string) => _.keyBy(
-    _.filter(tasks, (task: LegacyTask) => task.userId === cssId),
-    (task: LegacyTask) => task.taskId
-  )
-);
-
 const amaTasksByAssigneeCssIdSelector = createSelector(
   [getAmaTasks, getUserCssId],
-  (tasks: AmaTasks, cssId: string) => _.filter(tasks, (task) => task.attributes.assigned_to.css_id === cssId)
+  (tasks: AmaTasks, cssId: string) => _.filter(tasks, (task) => task.assignedTo.css_id === cssId)
 );
 
 export const amaTasksNewByAssigneeCssIdSelector: (State) => Array<AmaTask> = createSelector(
@@ -59,6 +51,24 @@ export const appealsWithTasksSelector = createSelector(
         ]
       };
     });
+  }
+);
+
+export const tasksWithAppealSelector = createSelector(
+  [getTasks, getAmaTasks, getAppeals],
+  (tasks: LegacyTasks, amaTasks: AmaTasks, appeals: Appeals) => {
+    return [
+      ..._.map(tasks, (task) => {
+        return { ...task,
+          appeal: _.find(appeals, (appeal) => task.externalAppealId === appeal.externalId)
+        };
+      }),
+      ..._.map(amaTasks, (amaTask) => {
+        return { ...amaTask,
+          appeal: _.find(appeals, (appeal) => amaTask.externalAppealId === appeal.externalId)
+        };
+      })
+    ];
   }
 );
 
@@ -108,25 +118,21 @@ export const appealsByCaseflowVeteranId = createSelector(
       appeal.caseflowVeteranId.toString() === caseflowVeteranId.toString())
 );
 
-export const appealsByAssigneeCssIdSelector = createSelector(
-  [appealsWithTasksSelector, getUserCssId],
-  (appeals: Appeals, cssId: string) =>
-    _.filter(appeals, (appeal: Appeal) =>
-      _.some(appeal.tasks, (task) => task.userId === cssId || task.assignedTo.css_id === cssId))
+export const tasksByAssigneeCssIdSelector = createSelector(
+  [tasksWithAppealSelector, getUserCssId],
+  (tasks: Array<AmaTask | LegacyTask>, cssId: string) =>
+    _.filter(tasks, (task) => task.userId === cssId || (task.assignedTo && task.assignedTo.css_id === cssId))
 );
 
-export const judgeReviewAppealsSelector = createSelector(
-  [appealsByAssigneeCssIdSelector],
-  (appeals: Appeals) =>
-    _.filter(appeals, (appeal: Appeal) => appeal.tasks &&
-      _.some(appeal.tasks, (task) => task.taskType === 'Review' || task.taskType === null))
+export const judgeReviewTasksSelector = createSelector(
+  [tasksByAssigneeCssIdSelector],
+  (tasks) =>
+    _.filter(tasks, (task: AmaTask | LegacyTask) => task.taskType === 'Review' || task.taskType === null)
 );
 
-export const judgeAssignAppealsSelector = createSelector(
-  [appealsByAssigneeCssIdSelector],
-  (appeals: Appeals) =>
-    _.filter(appeals, (appeal: Appeal) => appeal.tasks &&
-      _.some(appeal.tasks, (task) => task.taskType === 'Assign'))
+export const judgeAssignTasksSelector = createSelector(
+  [tasksByAssigneeCssIdSelector],
+  (tasks) => _.filter(tasks, (task) => task.taskType === 'Assign')
 );
 
 // ***************** Non-memoized selectors *****************
@@ -139,13 +145,12 @@ const getAttorney = (state: State, attorneyId: string) => {
   return _.find(state.queue.attorneysOfJudge, (attorney: User) => attorney.id.toString() === attorneyId);
 };
 
-export const getAssignedAppeals = (state: State, attorneyId: string) => {
-  const appeals = appealsWithTasksSelector(state);
+export const getAssignedTasks = (state: State, attorneyId: string) => {
+  const tasks = tasksWithAppealSelector(state);
   const attorney = getAttorney(state, attorneyId);
   const cssId = attorney ? attorney.css_id : null;
 
-  return _.filter(appeals, (appeal: Appeal) =>
-    _.some(appeal.tasks, (task) => task.userId === cssId));
+  return _.filter(tasks, (task) => task.userId === cssId);
 };
 
 export const getAppealsByUserId = (state: State) => {

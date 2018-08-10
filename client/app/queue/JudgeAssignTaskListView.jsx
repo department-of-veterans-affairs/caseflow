@@ -20,7 +20,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import {
   fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser
 } from './QueueActions';
-import { judgeAssignAppealsSelector, getAppealsByUserId } from './selectors';
+import { judgeAssignTasksSelector, getAppealsByUserId } from './selectors';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
 import UnassignedCasesPage from './UnassignedCasesPage';
@@ -63,7 +63,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
     return <AppSegment filledBackground>
       <div>
         <div {...fullWidth} {...css({ marginBottom: '2em' })}>
-          <h1>Assign {this.props.unassignedAppealsCount} Cases</h1>
+          <h1>Assign {this.props.unassignedTasksCount} Cases</h1>
           {this.switchLink()}
         </div>
         <div className="usa-width-one-fourth">
@@ -81,7 +81,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
             <ul className="usa-sidenav-list">
               <li>
                 <NavLink to={`/queue/${userId}/assign`} activeClassName="usa-current" exact>
-                  Cases to Assign ({this.props.unassignedAppealsCount})
+                  Cases to Assign ({this.props.unassignedTasksCount})
                 </NavLink>
               </li>
               {attorneysOfJudge.
@@ -130,7 +130,7 @@ const mapStateToProps = (state) => {
   } = state;
 
   return {
-    unassignedAppealsCount: judgeAssignAppealsSelector(state).length,
+    unassignedTasksCount: judgeAssignTasksSelector(state).length,
     appealsByUserId: getAppealsByUserId(state),
     attorneysOfJudge,
     attorneyAppealsLoadingState,

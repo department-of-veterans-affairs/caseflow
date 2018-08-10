@@ -45,7 +45,7 @@ class AttorneyTaskListView extends React.PureComponent {
 
   render = () => {
     const { messages } = this.props;
-    const noTasks = !_.size(this.props.tasks) && !_.size(this.props.appeals);
+    const noTasks = !_.size(this.props.tasks);
     let tableContent;
 
     if (noTasks) {
@@ -69,7 +69,7 @@ class AttorneyTaskListView extends React.PureComponent {
           includeDueDate
           includeReaderLink
           requireDasRecord
-          appeals={this.props.appeals}
+          tasks={this.props.tasks}
         />
       </div>;
     }
@@ -82,7 +82,6 @@ class AttorneyTaskListView extends React.PureComponent {
 
 AttorneyTaskListView.propTypes = {
   tasks: PropTypes.object.isRequired,
-  appeals: PropTypes.array.isRequired
 };
 
 const mapStateToProps = (state) => {
@@ -98,7 +97,6 @@ const mapStateToProps = (state) => {
   } = state;
 
   return ({
-    appeals: appealsByAssigneeCssIdSelector(state),
     tasks: tasksByAssigneeCssIdSelector(state),
     messages,
     taskDecision

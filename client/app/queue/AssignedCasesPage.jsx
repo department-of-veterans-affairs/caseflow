@@ -7,7 +7,7 @@ import TaskTable from './components/TaskTable';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { reassignTasksToUser } from './QueueActions';
-import { selectedTasksSelector, getAssignedAppeals } from './selectors';
+import { selectedTasksSelector, getAssignedTasks } from './selectors';
 import AssignWidget from './components/AssignWidget';
 import {
   resetErrorMessages,
@@ -92,7 +92,7 @@ class AssignedCasesPage extends React.Component<Props> {
         includeIssueCount
         includeDaysWaiting
         includeReaderLink
-        appeals={this.props.appealsOfAttorney}
+        tasks={this.props.tasksOfAttorney}
         userId={attorneyId} />
     </React.Fragment>;
   }
@@ -110,7 +110,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   const { attorneyId } = ownProps.match.params;
 
   return {
-    appealsOfAttorney: getAssignedAppeals(state, attorneyId),
+    tasksOfAttorney: getAssignedTasks(state, attorneyId),
     attorneyAppealsLoadingState,
     attorneysOfJudge,
     featureToggles,
