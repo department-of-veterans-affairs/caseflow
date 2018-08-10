@@ -16,7 +16,7 @@ RSpec.describe CaseReviewsController, type: :controller do
 
       let!(:judge_staff) { create(:staff, :judge_role, slogid: "CSF444", sdomainid: judge.css_id) }
       let!(:attorney_staff) { create(:staff, :attorney_role, slogid: "CSF555", sdomainid: attorney.css_id) }
-      let(:task) { create(:ama_attorney_task) }
+      let(:task) { create(:ama_attorney_task, assigned_to: attorney, assigned_by: judge) }
       let(:request_issue1) { create(:request_issue, review_request: task.appeal) }
       let(:request_issue2) { create(:request_issue, review_request: task.appeal) }
       let(:decision_issue1) { create(:decision_issue, request_issue: request_issue1) }
@@ -54,6 +54,9 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(response_body["issues"]["request_issues"].size).to eq 2
             expect(decision_issue1.reload.disposition).to eq "allowed"
             expect(decision_issue2.reload.disposition).to eq "remanded"
+            expect(task.reload.status).to eq "completed"
+            expect(task.completed_at).to_not eq nil
+            expect(task.parent.status).to eq "in_progress"
           end
         end
       end
