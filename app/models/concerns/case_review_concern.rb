@@ -1,22 +1,21 @@
-module LegacyTaskConcern
+module CaseReviewConcern
   extend ActiveSupport::Concern
-
-  included do
-    # task ID is vacols_id concatenated with the date assigned
-    validates :task_id, format: { with: /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }, allow_blank: true
-  end
 
   attr_accessor :issues
 
   def appeal
-    @appeal ||= LegacyAppeal.find_or_create_by(vacols_id: vacols_id)
+    @appeal ||= if legacy?
+                  LegacyAppeal.find_or_create_by(vacols_id: vacols_id)
+                else
+                  Task.find(task_id).appeal
+                end
   end
 
-  def update_issue_dispositions!
+  def update_issue_dispositions_in_vacols!
     (issues || []).each do |issue_attrs|
       Issue.update_in_vacols!(
         vacols_id: vacols_id,
-        vacols_sequence_id: issue_attrs[:vacols_sequence_id],
+        vacols_sequence_id: issue_attrs[:id],
         issue_attrs: {
           vacols_user_id: modifying_user,
           disposition: issue_attrs[:disposition],
@@ -26,6 +25,10 @@ module LegacyTaskConcern
         }
       )
     end
+  end
+
+  def legacy?
+    (task_id =~ /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i) ? true : false
   end
 
   def vacols_id

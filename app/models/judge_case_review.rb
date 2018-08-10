@@ -1,5 +1,5 @@
 class JudgeCaseReview < ApplicationRecord
-  include LegacyTaskConcern
+  include CaseReviewConcern
 
   belongs_to :judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
@@ -33,7 +33,8 @@ class JudgeCaseReview < ApplicationRecord
         quality: quality,
         deficiencies: factors_not_considered + areas_for_improvement,
         comment: comment,
-        modifying_user: modifying_user
+        modifying_user: modifying_user,
+        board_member_id: judge.vacols_attorney_id
       }
     )
   end
@@ -60,7 +61,7 @@ class JudgeCaseReview < ApplicationRecord
                                 service: :vacols,
                                 name: "judge_case_review_" + record.location) do
             record.sign_decision_or_create_omo!
-            record.update_issue_dispositions! if record.bva_dispatch? || record.quality_review?
+            record.update_issue_dispositions_in_vacols! if record.bva_dispatch? || record.quality_review?
           end
         end
         record

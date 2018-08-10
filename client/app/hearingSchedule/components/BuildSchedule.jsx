@@ -114,14 +114,14 @@ export default class BuildSchedule extends React.Component {
       {displayJudgeSuccessMessage && <Alert
         type="success"
         title={`You have successfully assigned judges to hearings between
-          ${schedulePeriod.startDate} and ${schedulePeriod.endDate}`}
+          ${formatDateStr(schedulePeriod.startDate)} and ${formatDateStr(schedulePeriod.endDate)}`}
         message={successMessage}
         styling={alertStyling}
       />}
       {displayRoCoSuccessMessage && <Alert
         type="success"
         title={`You have successfully assigned hearings between
-          ${schedulePeriod.startDate} and ${schedulePeriod.endDate}`}
+          ${formatDateStr(schedulePeriod.startDate)} and ${formatDateStr(schedulePeriod.endDate)}`}
         message={successMessage}
         styling={alertStyling}
       />}
