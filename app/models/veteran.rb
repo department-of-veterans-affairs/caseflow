@@ -136,9 +136,10 @@ class Veteran < ApplicationRecord
   def fetch_end_products
     bgs_end_products = self.class.bgs.get_end_products(file_number)
 
-    # Check that we are not getting this back: [{:number_of_records=>"0", :return_code=>"SHAR 9999", :return_message=>"Records found"}]
+    # Check that we are not getting this back from BGS:
+    # [{:number_of_records=>"0", :return_code=>"SHAR 9999", :return_message=>"Records found"}]
     return if bgs_end_products.first && bgs_end_products.first[:number_of_records] == "0"
-    
+
     bgs_end_products.map do |issue|{ |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
   end
 
