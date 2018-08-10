@@ -36,7 +36,7 @@ class SendToAssigningAttorneyModal extends React.Component<Props> {
 
   render = () => {
     const { task } = this.props;
-    const assignedByFullName = `${task.assignedByFirstName} ${task.assignedByLastName}`
+    const assignedByFullName = `${task.assignedByFirstName[0]}. ${task.assignedByLastName}`
 
     return <Modal
       title={COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY}
@@ -53,7 +53,8 @@ class SendToAssigningAttorneyModal extends React.Component<Props> {
         }
       }]}
       closeHandler={this.closeModal}>
-      {sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY, assignedByFullName)}
+      {COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY}&nbsp;
+      <b>{sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY_ATTORNEY_NAME, assignedByFullName)}</b>
     </Modal>;
   };
 }
