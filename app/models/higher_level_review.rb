@@ -34,19 +34,11 @@ class HigherLevelReview < AmaReview
   private
 
   def find_end_product_establishment(ep_code)
-<<<<<<< HEAD
     EndProductEstablishment.find_by(source: self, code: ep_code)
   end
 
   def new_end_product_establishment(ep_code)
     EndProductEstablishment.new(
-=======
-    @preexisting_end_product_establishment ||= EndProductEstablishment.find_by(source: self, code: ep_code)
-  end
-
-  def new_end_product_establishment(ep_code)
-    @new_end_product_establishment ||= EndProductEstablishment.new(
->>>>>>> Allow end product establishments to use the correct code for nonrated
       veteran_file_number: veteran_file_number,
       reference_id: end_product_reference_id,
       claim_date: receipt_date,
@@ -59,7 +51,6 @@ class HigherLevelReview < AmaReview
 
   def end_product_establishment(rated: true)
     ep_code = issue_code(rated)
-<<<<<<< HEAD
     @end_product_establishments ||= {}
     @end_product_establishments[rated] ||=
       find_end_product_establishment(ep_code) || new_end_product_establishment(ep_code)
@@ -67,12 +58,5 @@ class HigherLevelReview < AmaReview
 
   def issue_code(rated)
     rated ? END_PRODUCT_RATED_CODE : END_PRODUCT_NONRATED_CODE
-=======
-    find_end_product_establishment(ep_code) || new_end_product_establishment(ep_code)
-  end
-
-  def issue_code(rated)
-    @issue_code ||= rated ? END_PRODUCT_RATED_CODE : END_PRODUCT_NONRATED_CODE
->>>>>>> Allow end product establishments to use the correct code for nonrated
   end
 end
