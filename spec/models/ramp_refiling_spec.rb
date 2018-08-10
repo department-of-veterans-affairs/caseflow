@@ -93,13 +93,13 @@ describe RampRefiling do
           ramp_refiling.issues.create!(description: "Arm")
         ]
       end
+      let(:modifier) { RampReview::END_PRODUCT_DATA_BY_OPTION[option_selected][:modifier] }
 
       context "when an issue is not created in VBMS" do
         # Issues with the description "FAIL ME" are configured to fail in Fakes::VBMSService
         let!(:issue_to_fail) do
           ramp_refiling.issues.create!(description: "FAIL ME")
         end
-        let(:modifier) { RampReview::END_PRODUCT_DATA_BY_OPTION[option_selected][:modifier] }
 
         it "raises ContentionCreationFailed" do
           expect { subject }.to raise_error(RampRefiling::ContentionCreationFailed)
