@@ -145,22 +145,46 @@ RSpec.describe AppealsController, type: :controller do
   end
 
   describe "GET appeals/:id/tasks" do
-    let(:user) { create(:user) }
-    let(:appeal) do
-      create(:legacy_appeal, vacols_case: create(:case, :assigned, bfcorlid: "0000000000S", user: user))
+    let(:attorney_user) { create(:user) }
+    let(:colocated_user) { create(:user) }
+
+    let(:attorney_staff) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+    let(:colocated_staff) { create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
+
+    let!(:legacy_appeal) do
+      create(:legacy_appeal, vacols_case: create(:case, :assigned, bfcorlid: "0000000000S", user: attorney_user))
+    end
+    let!(:appeal) do
+      create(:appeal, veteran: create(:veteran))
     end
 
-    it "should succeed" do
-      get :tasks, params: { appeal_id: appeal.vacols_id, role: "attorney" }
+    let!(:colocated_task) { create(:colocated_task, appeal: legacy_appeal) }
+    let!(:ama_colocated_task) { create(:ama_colocated_task, appeal: appeal, assigned_to: colocated_user) }
+
+    it "should return AttorneyLegacyTasks" do
+      get :tasks, params: { appeal_id: legacy_appeal.vacols_id, role: "attorney" }
 
       assert_response :success
       response_body = JSON.parse(response.body)
       expect(response_body["tasks"].length).to eq 1
       task = response_body["tasks"][0]
-      expect(task["id"]).to eq(appeal.vacols_id)
+      expect(task["id"]).to eq(legacy_appeal.vacols_id)
       expect(task["type"]).to eq("attorney_legacy_tasks")
-      expect(task["attributes"]["user_id"]).to eq(user.css_id)
-      expect(task["attributes"]["appeal_id"]).to eq(appeal.id)
+      expect(task["attributes"]["user_id"]).to eq(attorney_user.css_id)
+      expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
+    end
+
+    it "should return ColocatedTasks" do
+      get :tasks, params: { appeal_id: appeal.uuid, role: "colocated" }
+
+      assert_response :success
+      response_body = JSON.parse(response.body)
+      expect(response_body["tasks"].length).to eq 1
+
+      task = response_body["tasks"][0]
+      expect(task["type"]).to eq "colocated_tasks"
+      expect(task["attributes"]["assigned_to"]["css_id"]).to eq colocated_user.css_id
+      expect(task["attributes"]["appeal_id"]).to eq appeal.id
     end
   end
 end

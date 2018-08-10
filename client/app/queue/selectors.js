@@ -4,10 +4,10 @@ import _ from 'lodash';
 
 import type { State } from './types/state';
 import type {
+  LegacyTask,
+  LegacyTasks,
   Appeal,
   Appeals,
-  Task,
-  Tasks,
   AmaTask,
   AmaTasks,
   LegacyAppeal,
@@ -33,20 +33,25 @@ const getCaseflowVeteranId = (state: State, props: Object) => props.caseflowVete
 
 export const tasksByAssigneeCssIdSelector = createSelector(
   [getTasks, getUserCssId],
-  (tasks: Tasks, cssId: string) => _.keyBy(
-    _.filter(tasks, (task: Task) => task.userId === cssId),
-    (task: Task) => task.taskId
+  (tasks: LegacyTasks, cssId: string) => _.keyBy(
+    _.filter(tasks, (task: LegacyTask) => task.userId === cssId),
+    (task: LegacyTask) => task.taskId
   )
 );
 
-export const amaTasksByAssigneeId: (State) => { [number]: AmaTask } = createSelector(
-  [getAmaTasks],
-  (tasks: AmaTasks) => _.groupBy(tasks, (task) => task.attributes.assigned_to.id)
+const amaTasksByAssigneeCssIdSelector = createSelector(
+  [getAmaTasks, getUserCssId],
+  (tasks: AmaTasks, cssId: string) => _.filter(tasks, (task) => task.attributes.assigned_to.css_id === cssId)
+);
+
+export const amaTasksNewByAssigneeCssIdSelector: (State) => Array<AmaTask> = createSelector(
+  [amaTasksByAssigneeCssIdSelector],
+  (tasks: Array<AmaTask>) => tasks.filter((task) => !task.attributes.placed_on_hold_at)
 );
 
 export const appealsWithTasksSelector = createSelector(
   [getTasks, getAppeals],
-  (tasks: Tasks, appeals: LegacyAppeals) => {
+  (tasks: LegacyTasks, appeals: LegacyAppeals) => {
     return _.map(appeals, (appeal) => {
       return { ...appeal,
         tasks: _.filter(tasks, (task) => task.externalAppealId === appeal.externalId) };
@@ -56,21 +61,21 @@ export const appealsWithTasksSelector = createSelector(
 
 export const getTasksForAppeal = createSelector(
   [getTasks, getAppealId],
-  (tasks: Tasks, appealId: number) => {
+  (tasks: LegacyTasks, appealId: number) => {
     return _.filter(tasks, (task) => task.externalAppealId === appealId);
   }
 );
 
 export const tasksForAppealAssignedToUserSelector = createSelector(
   [getTasksForAppeal, getUserCssId],
-  (tasks: Tasks, cssId: string) => {
+  (tasks: LegacyTasks, cssId: string) => {
     return _.filter(tasks, (task) => task.userId === cssId);
   }
 );
 
 export const tasksForAppealAssignedToAttorneySelector = createSelector(
   [getTasksForAppeal, getAttorneys],
-  (tasks: Tasks, attorneys: Array<User>) => {
+  (tasks: LegacyTasks, attorneys: Array<User>) => {
     return _.filter(tasks, (task) => _.some(attorneys, (attorney) => task.userId === attorney.css_id));
   }
 );
