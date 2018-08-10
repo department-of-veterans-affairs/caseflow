@@ -21,6 +21,17 @@ class JudgeCaseReview < ApplicationRecord
   MONTHLY_LIMIT_OF_QUAILITY_REVIEWS = 24
   QUALITY_REVIEW_SELECTION_PROBABILITY = 0.04
 
+  def update_in_vacols!
+    MetricsService.record("VACOLS: judge_case_review #{record.task_id}",
+                          service: :vacols,
+                          name: "judge_case_review_" + record.location) do
+      record.sign_decision_or_create_omo!
+      record.update_issue_dispositions_in_vacols! if record.bva_dispatch? || record.quality_review?
+    end
+  end
+
+  private
+
   def sign_decision_or_create_omo!
     judge.access_to_task?(vacols_id)
 
@@ -57,12 +68,7 @@ class JudgeCaseReview < ApplicationRecord
       ActiveRecord::Base.multi_transaction do
         record = create(params)
         if record.valid?
-          MetricsService.record("VACOLS: judge_case_review #{record.task_id}",
-                                service: :vacols,
-                                name: "judge_case_review_" + record.location) do
-            record.sign_decision_or_create_omo!
-            record.update_issue_dispositions_in_vacols! if record.bva_dispatch? || record.quality_review?
-          end
+          record.legacy? ? record.update_in_vacols! : record.update_issue_dispositions
         end
         record
       end
