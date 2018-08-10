@@ -93,6 +93,7 @@ describe RampRefiling do
           ramp_refiling.issues.create!(description: "Arm")
         ]
       end
+      let(:modifier) { RampReview::END_PRODUCT_DATA_BY_OPTION[option_selected][:modifier] }
 
       context "when an issue is not created in VBMS" do
         # Issues with the description "FAIL ME" are configured to fail in Fakes::VBMSService
@@ -112,7 +113,9 @@ describe RampRefiling do
       it "sends requests to VBMS to create both the end_product and the uncreated issues" do
         subject
 
-        expect(Fakes::VBMSService).to have_received(:establish_claim!)
+        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          hash_including(claim_hash: hash_including(end_product_modifier: modifier))
+        )
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: "64205555",
           claim_id: "1337",

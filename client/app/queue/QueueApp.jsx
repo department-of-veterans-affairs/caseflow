@@ -82,7 +82,7 @@ class QueueApp extends React.PureComponent<Props> {
     } else if (userRole === USER_ROLES.JUDGE) {
       return <JudgeReviewTaskListView {...this.props} />;
     } else if (userRole === USER_ROLES.COLOCATED) {
-      return <ColocatedTaskListView userId={this.props.userId} />;
+      return <ColocatedTaskListView />;
     }
   }
 
