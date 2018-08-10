@@ -12,6 +12,8 @@ class Task < ApplicationRecord
 
   after_update :update_location_in_vacols, :update_parent_status
 
+  validate :on_hold_duration_is_set, on: :update
+
   enum status: {
     assigned: "assigned",
     in_progress: "in_progress",
@@ -28,6 +30,12 @@ class Task < ApplicationRecord
   end
 
   private
+
+  def on_hold_duration_is_set
+    if saved_change_to_status? && on_hold? && !on_hold_duration && type == ColocatedtTask
+      errors.add(:on_hold_duration, "has to be specified")
+    end
+  end
 
   def update_parent_status
     if saved_change_to_status? && completed? && parent
