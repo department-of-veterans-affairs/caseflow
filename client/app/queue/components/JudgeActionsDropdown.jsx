@@ -9,7 +9,11 @@ import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
 import DECASS_WORK_PRODUCT_TYPES from '../../../constants/DECASS_WORK_PRODUCT_TYPES.json';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
-import { tasksForAppealAssignedToAttorneySelector, tasksForAppealAssignedToUserSelector } from '../selectors';
+import {
+  appealWithDetailSelector,
+  tasksForAppealAssignedToAttorneySelector,
+  tasksForAppealAssignedToUserSelector
+} from '../selectors';
 
 import { buildCaseReviewPayload } from '../utils';
 import { requestSave } from '../uiReducer/uiActions';
@@ -26,7 +30,7 @@ import {
   JUDGE_DECISION_OPTIONS
 } from '../constants';
 import AssignWidget from './AssignWidget';
-import type { LegacyTask, LegacyAppeal } from '../types/models';
+import type { LegacyTask, Appeal } from '../types/models';
 import type { State } from '../types/state';
 
 const ASSIGN = 'ASSIGN';
@@ -37,7 +41,7 @@ type Params = {|
 
 type Props = Params & {|
   // From store
-  appeal: LegacyAppeal,
+  appeal: Appeal,
   task: LegacyTask,
   changedAppeals: Array<string>,
   decision: Object,
@@ -77,7 +81,7 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
     }
 
     const {
-      appeal: { attributes: appeal },
+      appeal,
       task,
       appealId,
       history,
@@ -90,7 +94,7 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
 
     if (actionType === DECISION_TYPES.OMO_REQUEST) {
       const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, { location: 'omo_office' });
-      const successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name);
+      const successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
 
       this.props.requestSave(`/case_reviews/${task.taskId}/complete`, payload, { title: successMsg }).
         then(() => {
@@ -171,7 +175,7 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => ({
-  appeal: state.queue.appealDetails[ownProps.appealId],
+  appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
   task: tasksForAppealAssignedToAttorneySelector(state, ownProps)[0] ||
     tasksForAppealAssignedToUserSelector(state, ownProps)[0],
   changedAppeals: Object.keys(state.queue.stagedChanges.appeals),

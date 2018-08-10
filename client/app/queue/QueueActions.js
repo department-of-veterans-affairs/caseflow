@@ -9,8 +9,8 @@ import type {
   LegacyTask,
   LegacyTasks,
   AmaTasks,
-  Appeals,
   BasicAppeals,
+  AppealDetails,
   User
 } from './types/models';
 
@@ -26,11 +26,12 @@ export const onReceiveQueue = (
 });
 
 export const onReceiveAppealDetails = (
-  { appeals }: { appeals: $ReadOnly<Appeals> }
+  { appeals, appealDetails }: { appeals: BasicAppeals, appealDetails: AppealDetails }
 ) => ({
   type: ACTIONS.RECEIVE_APPEAL_DETAILS,
   payload: {
-    appeals
+    appeals,
+    appealDetails
   }
 });
 

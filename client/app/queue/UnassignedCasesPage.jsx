@@ -13,7 +13,7 @@ import {
   resetSuccessMessages
 } from './uiReducer/uiActions';
 import { judgeAssignAppealsSelector, selectedTasksSelector } from './selectors';
-import type { LegacyTask, LegacyAppeals } from './types/models';
+import type { LegacyTask, Appeals } from './types/models';
 import Alert from '../components/Alert';
 import type { UiStateMessage } from './types/state';
 
@@ -27,7 +27,7 @@ type Props = Params & {|
   selectedTasks: Array<LegacyTask>,
   error: ?UiStateMessage,
   success: ?UiStateMessage,
-  appeals: LegacyAppeals,
+  appeals: Appeals,
   // Action creators
   initialAssignTasksToUser: typeof initialAssignTasksToUser,
   resetErrorMessages: typeof resetErrorMessages,
