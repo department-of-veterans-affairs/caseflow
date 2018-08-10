@@ -18,7 +18,7 @@ class VACOLS::Representative < VACOLS::Record
   }.freeze
 
   def self.reptype_name_from_code(reptype)
-    ACTIVE_REPTYPES.values.find{ |obj| obj[:code] == reptype }.try(:[], :name)
+    ACTIVE_REPTYPES.values.find { |obj| obj[:code] == reptype }.try(:[], :name)
   end
 
   def self.representatives(bfkey)
@@ -76,25 +76,26 @@ class VACOLS::Representative < VACOLS::Record
   end
 
   def self.format_attrs(name, address, reptype)
-    attrs = { 
-      reptype: ACTIVE_REPTYPES[type][:code]
+    attrs = {
+      reptype: ACTIVE_REPTYPES[reptype][:code]
     }
     unless name.empty?
-      attrs = attrs.merge({
+      attrs = attrs.merge(
         repfirst: name[:first_name][0, 24],
         repmi: name[:middle_initial][0, 4],
         replast: name[:last_name][0, 40]
-      })
+      )
     end
     unless address.empty?
-      attrs = attrs.merge({
+      attrs = attrs.merge(
         repaddr1: address[:address_one][0, 50],
         repaddr2: address[:address_two][0, 50],
         repcity: address[:city][0, 20],
         repst: address[:state][0, 4],
         repzip: address[:zip][0, 10]
-      })
+      )
     end
+    attrs
   end
 
   def self.update_rep!(repkey, repaddtime, rep_attrs)
