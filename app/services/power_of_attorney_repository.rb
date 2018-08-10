@@ -15,7 +15,7 @@ class PowerOfAttorneyRepository
     return false
   end
 
-  def set_vacols_values(poa:, case_record:, representative:)
+  def self.set_vacols_values(poa:, case_record:, representative:)
     poa.assign_from_vacols(
       get_poa_from_vacols_poa(
         vacols_code: case_record.bfso,
