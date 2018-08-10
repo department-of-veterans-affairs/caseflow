@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ModuleLength
 module PowerOfAttorneyMapper
   # TODO: break this module up into BGS and VACOLS-specific POA parsers
   # This is here so when we include this module
@@ -140,3 +141,4 @@ module PowerOfAttorneyMapper
     "WOUNDED WARRIOR PROJECT" => "2"
   }.freeze
 end
+# rubocop:enable Metrics/ModuleLength
