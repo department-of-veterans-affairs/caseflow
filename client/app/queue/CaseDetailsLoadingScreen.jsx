@@ -59,11 +59,11 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
     if (!tasks || _.filter(tasks, (task) => task.externalAppealId === appealId).length === 0) {
       const taskPromise = ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
         const legacyTasks = _.every(response.body.tasks, (task) => task.attributes.appeal_type === 'LegacyAppeal');
-        const preparedTasks = legacyTasks && [USER_ROLES.ATTORNEY, USER_ROLES.JUDGE].includes(userRole) ?
-          prepareLegacyTasksForStore(response.body.tasks) :
-          prepareTasksForStore(response.body.tasks);
-
-        this.props.onReceiveTasks({ tasks: preparedTasks });
+        if (legacyTasks && [USER_ROLES.ATTORNEY, USER_ROLES.JUDGE].includes(userRole)) {
+          this.props.onReceiveTasks({ tasks: prepareLegacyTasksForStore(response.body.tasks) });
+        } else {
+          this.props.onReceiveTasks({ amaTasks: prepareTasksForStore(response.body.tasks) });
+        }
       });
 
       promises.push(taskPromise);

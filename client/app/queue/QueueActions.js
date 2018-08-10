@@ -1,5 +1,5 @@
 // @flow
-import { associateTasksWithAppeals, prepareLegacyTasksForStore } from './utils';
+import { associateTasksWithAppeals, prepareLegacyTasksForStore, extractAppealsAndTasks } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
@@ -15,11 +15,12 @@ import type {
 } from './types/models';
 
 export const onReceiveQueue = (
-  { tasks, appeals, userId }: { tasks: LegacyTasks, appeals: BasicAppeals, userId: number }
+  { tasks, amaTasks, appeals, userId }: { tasks: LegacyTasks, amaTasks: AmaTasks, appeals: BasicAppeals, userId: number }
 ) => ({
   type: ACTIONS.RECEIVE_QUEUE_DETAILS,
   payload: {
     tasks,
+    amaTasks,
     appeals,
     userId
   }
@@ -324,10 +325,5 @@ export const fetchAllAttorneys = () => (dispatch: Dispatch) => {
 export const fetchAmaTasksOfUser = (userId: number, userRole: string) => (dispatch: Dispatch) => {
   return ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
     then((resp) => resp.body).
-    then((body) => dispatch({
-      type: ACTIONS.AMA_TASKS_RECEIVED,
-      payload: {
-        amaTasks: _.pickBy(_.keyBy(body.tasks.data, (task) => task.id), (task) => task)
-      }
-    }));
+    then((body) => dispatch(onReceiveQueue(extractAppealsAndTasks(body.tasks.data))));
 };

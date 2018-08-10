@@ -34,7 +34,7 @@ type Params = {|
   includeReaderLink?: boolean,
   includeDocumentCount?: boolean,
   requireDasRecord?: boolean,
-  appeals: Appeals,
+  tasks: T,
   userId?: string,
 |};
 

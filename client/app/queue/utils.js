@@ -23,11 +23,30 @@ import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRI
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
-export const prepareTasksForStore = (tasks: Array<Object>): AmaTasks => tasks.reduce((acc, curr: AmaTask) => {
-  acc[curr.attributes.external_id] = curr;
+export const prepareTasksForStore = (tasks: Array<Object>): AmaTasks => {
+  const taskHash = tasks.reduce((acc, task: AmaTask) => {
+    acc[task.attributes.external_appeal_id] = {
+      appealId: task.attributes.appeal_id,
+      externalAppealId: task.attributes.external_appeal_id,
+      assignedOn: task.attributes.started_at,
+      dueOn: null,
+      assignedTo: task.attributes.assigned_to,
+      assignedBy: task.attributes.assigned_by,
+      taskId: task.id,
+      taskType: task.attributes.action,
+      documentId: null,
+      workProduct: null,
+      previousTaskAssignedOn: null
+    };
 
-  return acc;
-}, {});
+    return acc;
+  }, {});
+
+  return taskHash;
+}
+
+export const extractAppealsAndTasks = (tasks: Array<Object>): { appeals: BasicAppeals, tasks: AmaTasks } => ({
+  appeals: extractAppealsFromTasks(tasks), amaTasks: prepareTasksForStore(tasks) });
 
 export const prepareLegacyTasksForStore = (tasks: Array<Object>): LegacyTasks => {
   const mappedLegacyTasks = tasks.map((task) => {

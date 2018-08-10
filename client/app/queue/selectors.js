@@ -49,11 +49,15 @@ export const amaTasksNewByAssigneeCssIdSelector: (State) => Array<AmaTask> = cre
 );
 
 export const appealsWithTasksSelector = createSelector(
-  [getTasks, getAppeals],
-  (tasks: LegacyTasks, appeals: Appeals) => {
+  [getTasks, getAmaTasks, getAppeals],
+  (tasks: LegacyTasks, amaTasks: AmaTasks, appeals: Appeals) => {
     return _.map(appeals, (appeal) => {
       return { ...appeal,
-        tasks: _.filter(tasks, (task) => task.externalAppealId === appeal.externalId) };
+        tasks: [
+          ..._.filter(tasks, (task) => task.externalAppealId === appeal.externalId),
+          ..._.filter(amaTasks, (amaTask) => amaTask.externalAppealId === appeal.externalId),
+        ]
+      };
     });
   }
 );
@@ -108,14 +112,14 @@ export const appealsByAssigneeCssIdSelector = createSelector(
   [appealsWithTasksSelector, getUserCssId],
   (appeals: Appeals, cssId: string) =>
     _.filter(appeals, (appeal: Appeal) =>
-      _.some(appeal.tasks, (task) => task.userId === cssId))
+      _.some(appeal.tasks, (task) => task.userId === cssId || task.assignedTo.css_id === cssId))
 );
 
 export const judgeReviewAppealsSelector = createSelector(
   [appealsByAssigneeCssIdSelector],
   (appeals: Appeals) =>
     _.filter(appeals, (appeal: Appeal) => appeal.tasks &&
-      _.some(appeal.tasks, (task) => task.taskType === 'Review'))
+      _.some(appeal.tasks, (task) => task.taskType === 'Review' || task.taskType === null))
 );
 
 export const judgeAssignAppealsSelector = createSelector(
