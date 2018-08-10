@@ -10,7 +10,7 @@ import ApiUtil from '../util/ApiUtil';
 import { associateTasksWithAppeals } from './utils';
 
 import { onReceiveQueue, setAttorneysOfJudge, fetchAllAttorneys, fetchAmaTasksOfUser } from './QueueActions';
-import type { LegacyAppeals, LegacyTasks } from './types/models';
+import type { Appeals, LegacyTasks } from './types/models';
 import type { State, UsersById } from './types/state';
 import { USER_ROLES } from './constants';
 
@@ -27,7 +27,7 @@ type Params = {|
 type Props = Params & {|
   // From state
   tasks: LegacyTasks,
-  appeals: LegacyAppeals,
+  appeals: Appeals,
   loadedUserId: number,
   judges: UsersById,
   // Action creators

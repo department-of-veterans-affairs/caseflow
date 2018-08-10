@@ -18,6 +18,8 @@ import StickyNavContentArea from './StickyNavContentArea';
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
 
+import { appealWithDetailSelector } from './selectors';
+
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
   border: 0,
@@ -49,8 +51,8 @@ class CaseDetailsView extends React.PureComponent {
       </Alert>}
       { this.props.veteranCaseListIsVisible &&
         <VeteranCasesView
-          caseflowVeteranId={appeal.attributes.caseflow_veteran_id}
-          veteranId={appeal.attributes.vbms_id}
+          caseflowVeteranId={appeal.caseflowVeteranId}
+          veteranId={appeal.veteranFileNumber}
         />
       }
       <CaseSnapshot appealId={appealId} />
@@ -58,14 +60,14 @@ class CaseDetailsView extends React.PureComponent {
       <StickyNavContentArea>
         <CaseDetailsIssueList
           title="Issues"
-          isLegacyAppeal={appeal.attributes.is_legacy_appeal}
-          issues={appeal.attributes.issues}
+          isLegacyAppeal={appeal.isLegacyAppeal}
+          issues={appeal.issues}
         />
-        <PowerOfAttorneyDetail title="Power of Attorney" poa={appeal.attributes.power_of_attorney} />
-        {appeal.attributes.hearings.length &&
+        <PowerOfAttorneyDetail title="Power of Attorney" poa={appeal.powerOfAttorney} />
+        {appeal.hearings.length &&
         <CaseHearingsDetail title="Hearings" appeal={appeal} />}
         <VeteranDetail title="About the Veteran" appeal={appeal} />
-        {!_.isNull(appeal.attributes.appellant_full_name) &&
+        {!_.isNull(appeal.appellantFullName) &&
         <AppellantDetail title="About the Appellant" appeal={appeal} />}
       </StickyNavContentArea>
     </AppSegment>;
@@ -77,12 +79,11 @@ CaseDetailsView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const { appealDetails } = state.queue;
   const { success, error } = state.ui.messages;
   const { veteranCaseListIsVisible } = state.ui;
 
   return {
-    appeal: appealDetails[ownProps.appealId],
+    appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     success,
     error,
     veteranCaseListIsVisible

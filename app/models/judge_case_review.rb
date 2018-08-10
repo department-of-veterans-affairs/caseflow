@@ -34,7 +34,8 @@ class JudgeCaseReview < ApplicationRecord
         deficiencies: factors_not_considered + areas_for_improvement,
         comment: comment,
         modifying_user: modifying_user,
-        board_member_id: judge.vacols_attorney_id
+        board_member_id: judge.vacols_attorney_id,
+        completion_date: VacolsHelper.local_date_with_utc_timezone
       }
     )
   end
