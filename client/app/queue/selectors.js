@@ -61,7 +61,7 @@ export const appealsWithTasksSelector = createSelector(
 
 export const getTasksForAppeal = createSelector(
   [getTasks, getAppealId],
-  (tasks: LegacyTasks, appealId: number) => {
+  (tasks: LegacyTasks | AmaTasks, appealId: number) => {
     return _.filter(tasks, (task) => task.externalAppealId === appealId);
   }
 );

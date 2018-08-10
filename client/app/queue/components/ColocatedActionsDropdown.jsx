@@ -10,6 +10,7 @@ import {
   stageAppeal,
   checkoutStagedAppeal
 } from '../QueueActions';
+import { showModal } from '../uiReducer/uiActions';
 
 import {
   dropdownStyling,
@@ -27,6 +28,7 @@ type Props = Params & {|
   // state
   changedAppeals: Array<number>,
   // dispatch
+  showModal: typeof showModal,
   stageAppeal: typeof stageAppeal,
   checkoutStagedAppeal: typeof checkoutStagedAppeal,
   // withrouter
@@ -44,8 +46,7 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
     this.stageAppeal();
 
     if (actionType === CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY) {
-      debugger;
-      return true;
+      return this.props.showModal('sendToAttorney');
     }
 
     const routes = {
@@ -81,8 +82,11 @@ const mapStateToProps = (state: State) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  showModal,
   stageAppeal,
   checkoutStagedAppeal
 }, dispatch);
 
-export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(ColocatedActionsDropdown)): React.ComponentType<{}>);
+export default (withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(ColocatedActionsDropdown)
+): React.ComponentType<Params>);

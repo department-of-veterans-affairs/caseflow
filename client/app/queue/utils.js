@@ -25,9 +25,14 @@ import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 export const prepareTasksForStore = (tasks: Array<Object>): AmaTasks => tasks.reduce((acc, curr: AmaTask) => {
-  acc[curr.attributes.external_id] = _.extend({}, curr, {
+  const externalAppealId = curr.attributes.external_id;
+  const assignedByName = curr.attributes.assigned_by.full_name.split(' ');
+
+  acc[externalAppealId] = _.extend({}, curr, {
+    externalAppealId,
     userId: curr.attributes.assigned_to.css_id,
-    externalAppealId: curr.attributes.external_id
+    assignedByFirstName: assignedByName[0],
+    assignedByLastName: _.last(assignedByName)
   });
 
   return acc;

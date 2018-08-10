@@ -65,6 +65,10 @@ export type LegacyTasks = { [string]: LegacyTask };
 export type AmaTask = {
   id: string,
   type: string,
+  userId: string,
+  externalAppealId: string,
+  assignedByFirstName: string,
+  assignedByLastName: string,
   attributes: {
     action: string,
     aod: boolean,
