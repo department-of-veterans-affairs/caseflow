@@ -75,11 +75,14 @@ class AmaTaskTable extends React.PureComponent<Props> {
     getSortValue: (task: AmaTask) => this.daysWaitingOfTask(task)
   } : null)
 
+  numDaysOnHold = (task: AmaTask) => moment().diff(task.attributes.placed_on_hold_at, 'days')
+
   caseDaysOnHold = () => (this.props.includeDaysOnHold ? {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE,
     valueFunction: (task: AmaTask) => {
-      return `${moment().diff(task.attributes.placed_on_hold_at, 'days')} of ${task.attributes.on_hold_duration || '?'}`;
-    }
+      return `${this.numDaysOnHold(task)} of ${task.attributes.on_hold_duration || '?'}`;
+    },
+    getSortValue: (task: AmaTask) => this.numDaysOnHold(task)
   } : null)
 
   caseReaderLinkColumn = () => ({
