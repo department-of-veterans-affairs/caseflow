@@ -19,7 +19,7 @@ import COPY from '../../../COPY.json';
 
 import type {
   BasicAppeal,
-  LegacyAppeals
+  Appeals
 } from '../types/models';
 
 type Params = {|
@@ -34,7 +34,7 @@ type Params = {|
   includeReaderLink?: boolean,
   includeDocumentCount?: boolean,
   requireDasRecord?: boolean,
-  appeals: LegacyAppeals,
+  appeals: Appeals,
   userId?: string,
 |};
 

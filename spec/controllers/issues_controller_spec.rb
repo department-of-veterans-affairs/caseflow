@@ -33,7 +33,7 @@ RSpec.describe IssuesController, type: :controller do
       end
 
       it "should be successful" do
-        post :create, params: { appeal_id: appeal.id, issues: params }
+        post :create, params: { appeal_id: appeal.vacols_id, issues: params }
         expect(response.status).to eq 201
         response_body = JSON.parse(response.body)["issues"].first
         expect(response_body["codes"]).to eq %w[03 5252]
@@ -72,7 +72,7 @@ RSpec.describe IssuesController, type: :controller do
       end
 
       it "should return bad request" do
-        post :create, params: { appeal_id: appeal.id, issues: params }
+        post :create, params: { appeal_id: appeal.vacols_id, issues: params }
         expect(response.status).to eq 400
         error = JSON.parse(response.body)["errors"].first
         expect(error["title"]).to eq "Caseflow::Error::IssueRepositoryError"
@@ -105,7 +105,7 @@ RSpec.describe IssuesController, type: :controller do
       end
 
       it "should be successful" do
-        post :update, params: { appeal_id: appeal.id, vacols_sequence_id: case_issue.issseq, issues: params }
+        post :update, params: { appeal_id: appeal.vacols_id, vacols_sequence_id: case_issue.issseq, issues: params }
         expect(response.status).to eq 200
       end
     end
@@ -138,7 +138,7 @@ RSpec.describe IssuesController, type: :controller do
       end
 
       it "should not be successful" do
-        post :update, params: { appeal_id: appeal.id, vacols_sequence_id: case_issue.issseq, issues: params }
+        post :update, params: { appeal_id: appeal.vacols_id, vacols_sequence_id: case_issue.issseq, issues: params }
         expect(response.status).to eq 400
         error = JSON.parse(response.body)["errors"].first
         expect(error["title"]).to eq "Caseflow::Error::IssueRepositoryError"
@@ -158,7 +158,7 @@ RSpec.describe IssuesController, type: :controller do
         }
       end
       it "should be successful" do
-        post :destroy, params: { appeal_id: appeal.id, vacols_sequence_id: case_issue.issseq }
+        post :destroy, params: { appeal_id: appeal.vacols_id, vacols_sequence_id: case_issue.issseq }
         expect(response.status).to eq 200
       end
     end
@@ -178,7 +178,7 @@ RSpec.describe IssuesController, type: :controller do
         }
       end
       it "should not be successful" do
-        post :destroy, params: { appeal_id: appeal.id, vacols_sequence_id: case_issue.issseq + 1 }
+        post :destroy, params: { appeal_id: appeal.vacols_id, vacols_sequence_id: case_issue.issseq + 1 }
         expect(response.status).to eq 400
         error = JSON.parse(response.body)["errors"].first
         expect(error["title"]).to eq "Caseflow::Error::IssueRepositoryError"

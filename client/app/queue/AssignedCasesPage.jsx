@@ -14,7 +14,7 @@ import {
   resetSuccessMessages
 } from './uiReducer/uiActions';
 import Alert from '../components/Alert';
-import type { LegacyTask, LegacyAppeals } from './types/models';
+import type { LegacyTask, Appeals } from './types/models';
 import type { AttorneysOfJudge, AttorneyAppealsLoadingState, UiStateMessage, State } from './types/state';
 
 type Params = {|
@@ -24,7 +24,7 @@ type Params = {|
 type Props = Params & {|
   // From state
   attorneysOfJudge: AttorneysOfJudge,
-  appealsOfAttorney: LegacyAppeals,
+  appealsOfAttorney: Appeals,
   featureToggles: Object,
   selectedTasks: Array<LegacyTask>,
   attorneyAppealsLoadingState: AttorneyAppealsLoadingState,
