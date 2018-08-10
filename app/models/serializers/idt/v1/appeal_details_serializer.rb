@@ -39,12 +39,15 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
     end
   end
 
-  # TODO: - expand rep name into separate fields
-  attribute :representative_name do
-    object.power_of_attorney.vacols_representative_name
-  end
-  attribute :representative_type do
-    object.power_of_attorney.vacols_representative_type
+  attribute :representative do
+    {
+      type: object.power_of_attorney.vacols_representative_type,
+      org_name: object.power_of_attorney.vacols_org_name,
+      first_name: object.power_of_attorney.vacols_first_name,
+      middle_initial: object.power_of_attorney.vacols_middle_initial,
+      last_name: object.power_of_attorney.vacols_last_name,
+      suffix: object.power_of_attorney.vacols_suffix
+    }
   end
 
   attribute :aod

@@ -8,16 +8,20 @@ class PowerOfAttorneyRepository
       [VACOLS::Case.find(poa.vacols_id), VACOLS::Representative.appellant_representative(poa.vacols_id)]
     end
 
+    set_vacols_values(poa: poa, case_record: case_record, representative: representative)
+
+    true
+  rescue ActiveRecord::RecordNotFound
+    return false
+  end
+
+  def set_vacols_values(poa:, case_record:, representative:)
     poa.assign_from_vacols(
       get_poa_from_vacols_poa(
         vacols_code: case_record.bfso,
         rep_record: representative
       )
     )
-
-    true
-  rescue ActiveRecord::RecordNotFound
-    return false
   end
 
   # :nocov:
