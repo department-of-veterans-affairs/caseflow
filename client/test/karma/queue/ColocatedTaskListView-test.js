@@ -63,64 +63,59 @@ describe('ColocatedTaskListView', () => {
       "aod": false
     }
   };
-  it('shows only new tasks', () => {
-    const userCssId = 'BVALSPORER';
-    const taskId = '1';
-    const idUnassigned = '5';
-    const amaTasks = {
-      [taskId]: {
-        ...amaTaskTemplate,
-        id: taskId,
-        attributes: {
-          ...amaTaskTemplate.attributes,
-          assigned_to: {
-            ...amaTaskTemplate.attributes.assigned_to,
-            css_id: userCssId
-          }
-        }
-      },
-      [idUnassigned]: {
-        ...amaTaskTemplate,
-        id: idUnassigned,
-        attributes: {
-          ...amaTaskTemplate.attributes,
-          assigned_to: {
-            ...amaTaskTemplate.attributes.assigned_to,
-            css_id: 'BVANOTSPORER'
-          }
-        }
+
+  const amaTaskWith = ({id, cssIdAssignee}) => ({
+    ...amaTaskTemplate,
+    id,
+    attributes: {
+      ...amaTaskTemplate.attributes,
+      assigned_to: {
+        ...amaTaskTemplate.attributes.assigned_to,
+        css_id: cssIdAssignee
       }
-    };
-    const store = createStore(
-      rootReducer,
-      applyMiddleware(thunk)
-    );
-    store.dispatch(amaTasksReceived(amaTasks));
-    store.dispatch(setUserCssId(userCssId));
-
-    const wrapper = mount(
-      <Provider store={store}>
-        <ColocatedTaskListView />
-      </Provider>
-    );
-
-    const cells = wrapper.find('td');
-
-    expect(cells).to.have.length(6);
-    const wrappers = [];
-
-    for (let i = 0; i < cells.length; i++) {
-      wrappers.push(cells.at(i));
     }
-    const [caseDetails, tasks, types, docketNumber, daysWaiting, documents] = wrappers;
-    const task = amaTasks[taskId];
+  });
 
-    expect(caseDetails.text()).to.include(task.attributes.veteran_name);
-    expect(caseDetails.text()).to.include(task.attributes.veteran_file_number);
-    expect(tasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.attributes.action]);
-    expect(types.text()).to.include(task.attributes.case_type);
-    expect(docketNumber.text()).to.include(task.attributes.docket_number);
-    expect(daysWaiting.text()).to.equal('1');
-    expect(documents.html()).to.include(`/reader/appeal/${task.attributes.external_id}/documents`);
+  describe('New tab', () => {
+    it('shows only new tasks', () => {
+      const userCssId = 'BVALSPORER';
+      const taskId = '1';
+      const idUnassigned = '5';
+      const amaTasks = {
+        [taskId]: amaTaskWith({id: taskId, cssIdAssignee: userCssId}),
+        [idUnassigned]: amaTaskWith({id: idUnassigned, cssIdAssignee: 'NOTBVALSPORER'})
+      };
+      const store = createStore(
+        rootReducer,
+        applyMiddleware(thunk)
+      );
+      store.dispatch(amaTasksReceived(amaTasks));
+      store.dispatch(setUserCssId(userCssId));
+
+      const wrapper = mount(
+        <Provider store={store}>
+          <ColocatedTaskListView />
+        </Provider>
+      );
+
+      const cells = wrapper.find('td');
+
+      expect(cells).to.have.length(6);
+      const wrappers = [];
+
+      for (let i = 0; i < cells.length; i++) {
+        wrappers.push(cells.at(i));
+      }
+      const [caseDetails, tasks, types, docketNumber, daysWaiting, documents] = wrappers;
+      const task = amaTasks[taskId];
+
+      expect(caseDetails.text()).to.include(task.attributes.veteran_name);
+      expect(caseDetails.text()).to.include(task.attributes.veteran_file_number);
+      expect(tasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.attributes.action]);
+      expect(types.text()).to.include(task.attributes.case_type);
+      expect(docketNumber.text()).to.include(task.attributes.docket_number);
+      expect(daysWaiting.text()).to.equal('1');
+      expect(documents.html()).to.include(`/reader/appeal/${task.attributes.external_id}/documents`);
+    });
   });
 });
