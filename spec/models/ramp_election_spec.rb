@@ -119,6 +119,7 @@ describe RampElection do
     context "when option_selected is set" do
       let(:veteran) { Veteran.create(file_number: veteran_file_number) }
       let(:option_selected) { "supplemental_claim" }
+      let(:modifier) { RampReview::END_PRODUCT_DATA_BY_OPTION[option_selected][:modifier] }
 
       context "when option receipt_date is nil" do
         let(:receipt_date) { nil }
@@ -141,7 +142,7 @@ describe RampElection do
             claim_type: "Claim",
             station_of_jurisdiction: "397",
             date: receipt_date.to_date,
-            end_product_modifier: "683",
+            end_product_modifier: modifier,
             end_product_label: "Supplemental Claim Review Rating",
             end_product_code: "683SCRRRAMP",
             gulf_war_registry: false,
@@ -151,6 +152,20 @@ describe RampElection do
         )
 
         expect(EndProductEstablishment.find_by(source: ramp_election.reload).reference_id).to eq("454545")
+      end
+
+      context "with a higher level review" do
+        let(:option_selected) { "higher_level_review" }
+
+        it "should use the modifier 682" do
+          allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+
+          expect(subject).to eq(:created)
+
+          expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+            hash_including(claim_hash: hash_including(end_product_modifier: modifier))
+          )
+        end
       end
 
       context "if matching RAMP ep already exists" do
