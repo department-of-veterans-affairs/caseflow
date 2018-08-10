@@ -32,7 +32,7 @@ class Task < ApplicationRecord
   private
 
   def on_hold_duration_is_set
-    if saved_change_to_status? && on_hold? && !on_hold_duration && type == ColocatedtTask
+    if saved_change_to_status? && on_hold? && !on_hold_duration && type == "ColocatedTask"
       errors.add(:on_hold_duration, "has to be specified")
     end
   end
