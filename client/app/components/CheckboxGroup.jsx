@@ -32,7 +32,8 @@ export default class CheckboxGroup extends React.Component {
       values,
       errorMessage,
       errorState,
-      getCheckbox
+      getCheckbox,
+      styling
     } = this.props;
 
     let fieldClasses = `checkbox-wrapper-${name} cf-form-checkboxes`;
@@ -47,7 +48,7 @@ export default class CheckboxGroup extends React.Component {
 
     let legendClasses = (hideLabel) ? 'hidden-field' : '';
 
-    return <fieldset className={fieldClasses}>
+    return <fieldset className={fieldClasses} {...styling}>
       <legend className={legendClasses}>
         {required && <span className="cf-required">Required</span>}
         {label || name}
@@ -80,5 +81,6 @@ CheckboxGroup.propTypes = {
   values: PropTypes.object,
   errorMessage: PropTypes.string,
   errorState: PropTypes.bool,
-  getCheckbox: PropTypes.func
+  getCheckbox: PropTypes.func,
+  styling: PropTypes.object
 };
