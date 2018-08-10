@@ -19,29 +19,24 @@ module PowerOfAttorneyMapper
     }
   end
 
-  def get_rep_name_from_rep_record(rep_record)
-    return if !rep_record || (rep_record.repfirst.blank? && rep_record.replast.blank?)
-    "#{rep_record.repfirst} #{rep_record.repmi} #{rep_record.replast} #{rep_record.repsuf}".strip
-  end
+  def get_poa_from_vacols_poa(vacols_code:, rep_record: {})
+    return { vacols_representative_type: "None" } if get_short_name(vacols_code) == "None"
 
-  def get_poa_from_vacols_poa(vacols_code:, representative_record: nil)
-    if get_short_name(vacols_code) == "None"
-      { representative_type: "None" }
-    elsif !rep_name_found_in_rep_table?(vacols_code)
+    unless vacols_code.empty? || rep_name_found_in_rep_table?(vacols_code)
       # VACOLS lists many Service Organizations by name in the dropdown.
       # If the selection is one of those, use that as the rep name.
-      {
-        representative_name: get_full_name(vacols_code),
-        representative_type: "Service Organization"
-      }
-    else
-      # Otherwise we have to look up the specific name of the rep
-      # in the REP table.
-      {
-        representative_name: get_rep_name_from_rep_record(representative_record),
-        representative_type: get_short_name(vacols_code)
+      return {
+        vacols_org_name: get_full_name(vacols_code),
+        vacols_representative_type: "Service Organization"
       }
     end
+    {
+      vacols_first_name: rep_record.try(:repfirst),
+      vacols_middle_initial: rep_record.try(:repmi),
+      vacols_last_name: rep_record.try(:replast),
+      vacols_suffix: rep_record.try(:repsuf),
+      vacols_representative_type: VACOLS::Representative.reptype_name_from_code(rep_record.try(:reptype))
+    }
   end
 
   def get_vacols_rep_code_from_poa(rep_type, rep_name)
@@ -65,7 +60,7 @@ module PowerOfAttorneyMapper
   end
 
   def rep_name_found_in_rep_table?(vacols_code)
-    !!vacols_representatives[vacols_code][:rep_name_in_rep_table]
+    !!vacols_representatives[vacols_code].try(:[], :rep_name_in_rep_table)
   end
 
   private
@@ -75,13 +70,11 @@ module PowerOfAttorneyMapper
   end
 
   def get_short_name(vacols_code)
-    return if vacols_representatives[vacols_code].blank?
-    vacols_representatives[vacols_code][:short]
+    vacols_representatives[vacols_code].try(:[], :short)
   end
 
   def get_full_name(vacols_code)
-    return if vacols_representatives[vacols_code].blank?
-    vacols_representatives[vacols_code][:full_name]
+    vacols_representatives[vacols_code].try(:[], :full_name)
   end
 
   # TODO: fill out this hash for "Other" and "No Representative"

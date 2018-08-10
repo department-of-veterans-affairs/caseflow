@@ -38,7 +38,7 @@ class VACOLS::Case < VACOLS::Record
     "CAV" => "CAVC" # Case has been remanded from CAVC to BVA
   }.freeze
 
-  # corresponds to BRIEFF.bfso
+  # mapping of values in BRIEFF.BFSOs
   REPRESENTATIVES = {
     "A" => { full_name: "The American Legion", short: "American Legion" },
     "B" => { full_name: "AMVETS", short: "AmVets" },
@@ -56,7 +56,7 @@ class VACOLS::Case < VACOLS::Record
     "N" => { full_name: "Non-Commissioned Officers Association", short: "NCOA" },
     # TODO: double check that "Other Service Organization" is the correct full name.
     # Possibly this should just be "Other"
-    "O" => { full_name: "Other Service Organization", short: "Other" },
+    "O" => { full_name: "Other Service Organization", short: "Other", rep_name_in_rep_table: true },
     "P" => { full_name: "Army & Air Force Mutual Aid Assn.", short: "Army Mut Aid" },
     "Q" => { full_name: "Catholic War Veterans", short: "Catholic War Vets" },
     "R" => { full_name: "Fleet Reserve Association", short: "Fleet Reserve" },
@@ -64,7 +64,7 @@ class VACOLS::Case < VACOLS::Record
     "T" => { full_name: "Attorney", short: "Attorney", rep_name_in_rep_table: true },
     "U" => { full_name: "Agent", short: "Agent", rep_name_in_rep_table: true },
     "V" => { full_name: "Vietnam Veterans of America", short: "VVA" },
-    "W" => { full_name: "One Time Representative", short: "One Time Rep" },
+    "W" => { full_name: "One Time Representative", short: "One Time Rep", rep_name_in_rep_table: true },
     "X" => { full_name: "American Ex-Prisoners of War", short: "EXPOW" },
     "Y" => { full_name: "Blinded Veterans Association", short: "Blinded Vet Assoc" },
     "Z" => { full_name: "National Veterans Legal Services Program", short: "NVLSP" },

@@ -12,7 +12,11 @@ class PowerOfAttorney
   include AssociatedVacolsModel
 
   vacols_attr_accessor  :vacols_representative_type,
-                        :vacols_representative_name
+                        :vacols_first_name,
+                        :vacols_middle_initial,
+                        :vacols_last_name,
+                        :vacols_suffix,
+                        :vacols_org_name
 
   attr_accessor :vacols_id,
                 :file_number
@@ -45,6 +49,11 @@ class PowerOfAttorney
         rep_type: rep_type
       )
     end
+  end
+
+  def vacols_representative_name
+    return vacols_org_name unless vacols_org_name.empty?
+    "#{vacols_first_name} #{vacols_middle_initial} #{vacols_last_name} #{vacols_suffix}".strip
   end
 
   private

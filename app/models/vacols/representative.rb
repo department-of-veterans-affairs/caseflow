@@ -6,22 +6,27 @@ class VACOLS::Representative < VACOLS::Record
   class RepError < StandardError; end
   class InvalidRepTypeError < RepError; end
 
+  # mapping of values in REP.REPTYPE
   ACTIVE_REPTYPES = {
-    appellant_attorney: "A",
-    appellant_agent: "G",
+    appellant_attorney: { code: "A", name: "Attorney" },
+    appellant_agent: { code: "G", name: "Agent" },
     # :fee_agreement: "F", # deprecated
-    contesting_claimant: "C",
-    contesting_claimant_attorney: "D",
-    contesting_claimant_agent: "E"
+    contesting_claimant: { code: "C", name: "Contesting Claimant" },
+    contesting_claimant_attorney: { code: "D", name: "Contesting Claimant's Attorney" },
+    contesting_claimant_agent: { code: "E", name: "Contesting Claimant's Agent" }
     # :fee_attorney_reference_list: "R", # deprecated
   }.freeze
+
+  def self.reptype_name_from_code(reptype)
+    ACTIVE_REPTYPES.values.find{ |obj| obj[:code] == reptype }.try(:[], :name)
+  end
 
   def self.representatives(bfkey)
     where(repkey: bfkey, reptype: ACTIVE_REPTYPES.values)
   end
 
   def self.appellant_representative(bfkey)
-    appellant_reptypes = [ACTIVE_REPTYPES[:appellant_attorney], ACTIVE_REPTYPES[:appellant_agent]]
+    appellant_reptypes = [ACTIVE_REPTYPES[:appellant_attorney][:code], ACTIVE_REPTYPES[:appellant_agent][:code]]
 
     # In rare cases, there may be more than one result for this query. If so, return the most recent one.
     # TODO: for Queue use cases, we should return all appellant representatives
@@ -72,7 +77,7 @@ class VACOLS::Representative < VACOLS::Record
 
   def self.format_attrs(name, address, reptype)
     attrs = { 
-      reptype: reptype: ACTIVE_REPTYPES[type]
+      reptype: ACTIVE_REPTYPES[type][:code]
     }
     unless name.empty?
       attrs = attrs.merge({
