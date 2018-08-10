@@ -11,6 +11,8 @@ import { CATEGORIES } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import ReaderLink from './ReaderLink';
 import { ClipboardIcon } from '../components/RenderFunctions';
+import Tooltip from '../components/Tooltip';
+import COPY from '../../COPY.json';
 
 import { toggleVeteranCaseList } from './uiReducer/uiActions';
 
@@ -77,15 +79,16 @@ class CaseTitle extends React.PureComponent {
     return <CaseTitleScaffolding heading={appeal.attributes.veteran_full_name}>
       <React.Fragment>
         Veteran ID:&nbsp;
-        <CopyToClipboard text={appeal.attributes.vbms_id}>
-          <button type="submit"
-            title="Click to copy Veteran ID"
-            className="cf-apppeal-id"
-            {...clipboardButtonStyling} >
-            {appeal.attributes.vbms_id}&nbsp;
-            <ClipboardIcon />
-          </button>
-        </CopyToClipboard>
+        <Tooltip text={COPY.CASE_TITLE_VETERAN_ID_BUTTON_TOOLTIP} position="bottom">
+          <CopyToClipboard text={appeal.attributes.vbms_id}>
+            <button type="submit"
+              className="cf-apppeal-id"
+              {...clipboardButtonStyling} >
+              {appeal.attributes.vbms_id}&nbsp;
+              <ClipboardIcon />
+            </button>
+          </CopyToClipboard>
+        </Tooltip>
       </React.Fragment>
 
       <ReaderLink

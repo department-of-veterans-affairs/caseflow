@@ -2,11 +2,13 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { NewFileIcon } from '../../components/RenderFunctions';
+import Tooltip from '../../components/Tooltip';
 import { bindActionCreators } from 'redux';
 import { getNewDocuments } from '../QueueActions';
 import type {
   BasicAppeal
 } from '../types/models';
+import COPY from '../../../COPY.json';
 
 type Params = {|
   appeal: BasicAppeal
@@ -28,7 +30,9 @@ class NewFile extends React.Component<Props> {
 
   render = () => {
     if (this.props.docs && this.props.docs.length > 0) {
-      return <NewFileIcon />;
+      return <Tooltip id="newfile-tip" text={COPY.NEW_FILE_ICON_TOOLTIP} offset={{ top: '-10px' }}>
+        <NewFileIcon />
+      </Tooltip>;
     }
 
     return null;
