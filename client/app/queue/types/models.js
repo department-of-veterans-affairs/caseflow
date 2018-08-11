@@ -48,7 +48,10 @@ export type LegacyTask = {
   assignedOn: string,
   dueOn: string,
   userId: string,
-  assignedToPgId: string,
+  assignedTo: {
+    cssId: string,
+    id: number
+  }
   addedByName: string,
   addedByCssId: string,
   taskId: string,

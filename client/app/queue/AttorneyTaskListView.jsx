@@ -10,7 +10,6 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Alert from '../components/Alert';
 
 import {
-  appealsByAssigneeCssIdSelector,
   tasksByAssigneeCssIdSelector
 } from './selectors';
 import {
@@ -81,7 +80,7 @@ class AttorneyTaskListView extends React.PureComponent {
 }
 
 AttorneyTaskListView.propTypes = {
-  tasks: PropTypes.object.isRequired,
+  tasks: PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => {

@@ -30,16 +30,6 @@ const getAppealId = (state: State, props: Object) => props.appealId;
 const getAttorneys = (state: State) => state.queue.attorneysOfJudge;
 const getCaseflowVeteranId = (state: State, props: Object) => props.caseflowVeteranId;
 
-const amaTasksByAssigneeCssIdSelector = createSelector(
-  [getAmaTasks, getUserCssId],
-  (tasks: AmaTasks, cssId: string) => _.filter(tasks, (task) => task.assignedTo.css_id === cssId)
-);
-
-export const amaTasksNewByAssigneeCssIdSelector: (State) => Array<AmaTask> = createSelector(
-  [amaTasksByAssigneeCssIdSelector],
-  (tasks: Array<AmaTask>) => tasks.filter((task) => !task.attributes.placed_on_hold_at)
-);
-
 export const appealsWithTasksSelector = createSelector(
   [getTasks, getAmaTasks, getAppeals],
   (tasks: LegacyTasks, amaTasks: AmaTasks, appeals: Appeals) => {
@@ -47,7 +37,7 @@ export const appealsWithTasksSelector = createSelector(
       return { ...appeal,
         tasks: [
           ..._.filter(tasks, (task) => task.externalAppealId === appeal.externalId),
-          ..._.filter(amaTasks, (amaTask) => amaTask.externalAppealId === appeal.externalId),
+          ..._.filter(amaTasks, (amaTask) => amaTask.externalAppealId === appeal.externalId)
         ]
       };
     });
@@ -81,13 +71,7 @@ export const appealsWithDetailsSelector = createSelector(
 
 export const appealWithDetailSelector = createSelector(
   [appealsWithDetailsSelector, getAppealId],
-  (appeals: Appeals, appealId: string) => {
-    // We specify empty hearings and issues in case the details haven't yet been loaded,
-    // then code that's referencing hearings and issues will still work.
-    return { hearings: [],
-      issues: [],
-      ...appeals[appealId] };
-  }
+  (appeals: Appeals, appealId: string) => appeals[appealId]
 );
 
 export const getTasksForAppeal = createSelector(
@@ -100,14 +84,14 @@ export const getTasksForAppeal = createSelector(
 export const tasksForAppealAssignedToUserSelector = createSelector(
   [getTasksForAppeal, getUserCssId],
   (tasks: LegacyTasks, cssId: string) => {
-    return _.filter(tasks, (task) => task.userId === cssId);
+    return _.filter(tasks, (task) => task.assignedTo.cssId === cssId);
   }
 );
 
 export const tasksForAppealAssignedToAttorneySelector = createSelector(
   [getTasksForAppeal, getAttorneys],
   (tasks: LegacyTasks, attorneys: Array<User>) => {
-    return _.filter(tasks, (task) => _.some(attorneys, (attorney) => task.userId === attorney.css_id));
+    return _.filter(tasks, (task) => _.some(attorneys, (attorney) => task.assignedTo.cssId === attorney.css_id));
   }
 );
 
@@ -121,8 +105,14 @@ export const appealsByCaseflowVeteranId = createSelector(
 export const tasksByAssigneeCssIdSelector = createSelector(
   [tasksWithAppealSelector, getUserCssId],
   (tasks: Array<AmaTask | LegacyTask>, cssId: string) =>
-    _.filter(tasks, (task) => task.userId === cssId || (task.assignedTo && task.assignedTo.css_id === cssId))
+    _.filter(tasks, (task) => task.assignedTo.cssId === cssId)
 );
+
+export const newTasksByAssigneeCssIdSelector = createSelector(
+  [tasksByAssigneeCssIdSelector],
+  (tasks: Array<AmaTask | LegacyTask>) => tasks.filter((task) => !task.placedOnHoldAt)
+);
+
 
 export const judgeReviewTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
@@ -150,23 +140,23 @@ export const getAssignedTasks = (state: State, attorneyId: string) => {
   const attorney = getAttorney(state, attorneyId);
   const cssId = attorney ? attorney.css_id : null;
 
-  return _.filter(tasks, (task) => task.userId === cssId);
+  return _.filter(tasks, (task) => task.assignedTo.cssId === cssId);
 };
 
-export const getAppealsByUserId = (state: State) => {
-  const appeals = appealsWithTasksSelector(state);
+export const getTasksByUserId = (state: State) => {
+  const tasks = tasksWithAppealSelector(state);
   const attorneys = state.queue.attorneysOfJudge;
   const attorneysByCssId = _.keyBy(attorneys, 'css_id');
 
-  return _.reduce(appeals, (appealsByUserId: Object, appeal: Appeal) => {
-    const appealCssId = appeal.tasks ? appeal.tasks[0].userId : null;
+  return _.reduce(tasks, (appealsByUserId: Object, task: Appeal) => {
+    const appealCssId = task.assignedTo.cssId;
     const attorney = attorneysByCssId[appealCssId];
 
     if (!attorney) {
       return appealsByUserId;
     }
 
-    appealsByUserId[attorney.id] = [...(appealsByUserId[attorney.id] || []), appeal];
+    appealsByUserId[attorney.id] = [...(appealsByUserId[attorney.id] || []), task];
 
     return appealsByUserId;
   }, {});

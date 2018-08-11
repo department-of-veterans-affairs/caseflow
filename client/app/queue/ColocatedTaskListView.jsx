@@ -3,11 +3,11 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import AmaTaskTable from './components/AmaTaskTable';
+import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import {
-  amaTasksNewByAssigneeCssIdSelector
+  newTasksByAssigneeCssIdSelector
 } from './selectors';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import TabWindow from '../components/TabWindow';
@@ -48,10 +48,18 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 export default (connect(null, mapDispatchToProps)(ColocatedTaskListView): React.ComponentType<Params>);
 
 const NewTasksTab = connect(
-  (state: State) => ({ tasks: amaTasksNewByAssigneeCssIdSelector(state) }))(
+  (state: State) => ({ tasks: newTasksByAssigneeCssIdSelector(state) }))(
   (props: { tasks: Array<AmaTask> }) => {
     return <div>
       <p>{COPY.COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION}</p>
-      <AmaTaskTable tasks={props.tasks} />
+      <TaskTable
+        includeDetailsLink
+        includeTask
+        includeType
+        includeDocketNumber
+        includeDaysWaiting
+        includeReaderLink
+        tasks={props.tasks}
+      />
     </div>;
   });

@@ -13,7 +13,7 @@ import {
   resetSuccessMessages
 } from './uiReducer/uiActions';
 import { judgeAssignTasksSelector, selectedTasksSelector } from './selectors';
-import type { LegacyTask, AmaTask, Appeals } from './types/models';
+import type { LegacyTask, AmaTask } from './types/models';
 import Alert from '../components/Alert';
 import type { UiStateMessage } from './types/state';
 

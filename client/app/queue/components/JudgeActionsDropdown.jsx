@@ -168,7 +168,7 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
       {this.assignWidgetVisible() &&
         <AssignWidget
           onTaskAssignment={this.handleAssignment}
-          previousAssigneeId={task.assignedToPgId.toString()}
+          previousAssigneeId={task.assignedTo.id.toString()}
           selectedTasks={[task]} />}
     </React.Fragment>;
   }

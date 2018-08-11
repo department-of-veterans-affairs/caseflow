@@ -30,46 +30,23 @@ export const prepareTasksForStore = (tasks: Array<Object>): AmaTasks => {
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.started_at,
       dueOn: null,
-      assignedTo: task.attributes.assigned_to,
+      assignedTo: {
+        cssId: task.attributes.assigned_to.css_id,
+        id: task.attributes.assigned_to.id
+      },
       assignedBy: task.attributes.assigned_by,
       taskId: task.id,
-      taskType: task.attributes.action,
+      action: task.attributes.action,
       documentId: null,
       workProduct: null,
-      previousTaskAssignedOn: null
+      previousTaskAssignedOn: null,
+      placedOnHoldAt: task.attributes.placed_on_hold_at
     };
 
     return acc;
   }, {});
 
   return taskHash;
-}
-
-export const extractAppealsAndTasks = (tasks: Array<Object>): { appeals: BasicAppeals, tasks: AmaTasks } => ({
-  appeals: extractAppealsFromTasks(tasks), amaTasks: prepareTasksForStore(tasks) });
-
-export const prepareLegacyTasksForStore = (tasks: Array<Object>): LegacyTasks => {
-  const mappedLegacyTasks = tasks.map((task) => {
-    return {
-      appealId: task.attributes.appeal_id,
-      externalAppealId: task.attributes.external_appeal_id,
-      assignedOn: task.attributes.assigned_on,
-      dueOn: task.attributes.due_on,
-      userId: task.attributes.user_id,
-      assignedToPgId: task.attributes.assigned_to_pg_id,
-      addedByName: task.attributes.added_by_name,
-      addedByCssId: task.attributes.added_by_css_id,
-      taskId: task.attributes.task_id,
-      taskType: task.attributes.task_type,
-      documentId: task.attributes.document_id,
-      assignedByFirstName: task.attributes.assigned_by_first_name,
-      assignedByLastName: task.attributes.assigned_by_last_name,
-      workProduct: task.attributes.work_product,
-      previousTaskAssignedOn: task.attributes.previous_task.assigned_on
-    };
-  });
-
-  return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.externalAppealId), (task) => task);
 };
 
 const extractAppealsFromTasks =
@@ -95,6 +72,36 @@ const extractAppealsFromTasks =
       return accumulator;
     }, {});
   };
+
+export const extractAppealsAndTasks = (tasks: Array<Object>): { appeals: BasicAppeals, tasks: AmaTasks } => ({
+  appeals: extractAppealsFromTasks(tasks),
+  amaTasks: prepareTasksForStore(tasks) });
+
+export const prepareLegacyTasksForStore = (tasks: Array<Object>): LegacyTasks => {
+  const mappedLegacyTasks = tasks.map((task) => {
+    return {
+      appealId: task.attributes.appeal_id,
+      externalAppealId: task.attributes.external_appeal_id,
+      assignedOn: task.attributes.assigned_on,
+      dueOn: task.attributes.due_on,
+      assignedTo: {
+        cssId: task.attributes.user_id,
+        id: task.attributes.assigned_to_pg_id
+      },
+      addedByName: task.attributes.added_by_name,
+      addedByCssId: task.attributes.added_by_css_id,
+      taskId: task.attributes.task_id,
+      taskType: task.attributes.task_type,
+      documentId: task.attributes.document_id,
+      assignedByFirstName: task.attributes.assigned_by_first_name,
+      assignedByLastName: task.attributes.assigned_by_last_name,
+      workProduct: task.attributes.work_product,
+      previousTaskAssignedOn: task.attributes.previous_task.assigned_on
+    };
+  });
+
+  return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.externalAppealId), (task) => task);
+};
 
 export const associateTasksWithAppeals =
   (serverData: { tasks: { data: Array<Object> } }):

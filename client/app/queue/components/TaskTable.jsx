@@ -16,12 +16,13 @@ import { renderAppealType } from '../utils';
 import { DateString } from '../../util/DateUtil';
 import { CATEGORIES, redText } from '../constants';
 import COPY from '../../../COPY.json';
+import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 import type {
-  BasicAppeal,
-  Appeals,
-  Tasks,
-  LegacyTasks
+  AmaTasks,
+  AmaTask,
+  LegacyTasks,
+  LegacyTask
 } from '../types/models';
 
 type Params = {|
@@ -58,7 +59,7 @@ class TaskTable extends React.PureComponent<Props> {
     return isTaskSelected[externalAppealId] || false;
   }
 
-  taskHasDASRecord = (task: Task | LegacyTask) => {
+  taskHasDASRecord = (task: AmaTask | LegacyTask) => {
     if (this.props.requireDasRecord) {
       return task.taskId || task.docketName !== 'Legacy';
     }
@@ -103,6 +104,16 @@ class TaskTable extends React.PureComponent<Props> {
     } : null;
   }
 
+  actionNameOfTask = (task: AmaTask) => CO_LOCATED_ADMIN_ACTIONS[task.action]
+
+  caseTaskColumn = () => {
+    return this.props.includeTask ? {
+      header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
+      valueFunction: (task) => this.actionNameOfTask(task),
+      getSortValue: (task) => this.actionNameOfTask(task)
+    } : null;
+  }
+
   caseDocumentIdColumn = () => {
     return this.props.includeDocumentId ? {
       header: COPY.CASE_LIST_TABLE_DOCUMENT_ID_COLUMN_TITLE,
@@ -123,7 +134,7 @@ class TaskTable extends React.PureComponent<Props> {
   caseTypeColumn = () => {
     return this.props.includeType ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
-      valueFunction: (task: Task | LegacyTask) => this.taskHasDASRecord(task) ?
+      valueFunction: (task: AmaTask | LegacyTask) => this.taskHasDASRecord(task) ?
         renderAppealType(task.appeal) :
         <span {...redText}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE}</span>,
       span: (task) => this.taskHasDASRecord(task) ? 1 : 5,
@@ -216,6 +227,7 @@ class TaskTable extends React.PureComponent<Props> {
     _.compact([
       this.caseSelectColumn(),
       this.caseDetailsColumn(),
+      this.caseTaskColumn(),
       this.caseDocumentIdColumn(),
       this.caseTypeColumn(),
       this.caseDocketNumberColumn(),

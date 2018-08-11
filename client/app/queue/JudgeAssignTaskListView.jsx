@@ -20,7 +20,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import {
   fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser
 } from './QueueActions';
-import { judgeAssignTasksSelector, getAppealsByUserId } from './selectors';
+import { judgeAssignTasksSelector, getTasksByUserId } from './selectors';
 import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
 import UnassignedCasesPage from './UnassignedCasesPage';
@@ -47,11 +47,11 @@ class JudgeAssignTaskListView extends React.PureComponent {
   }
 
   caseCountOfAttorney = (attorneyId) => {
-    const { attorneyAppealsLoadingState, appealsByUserId } = this.props;
+    const { attorneyAppealsLoadingState, tasksByUserId } = this.props;
 
     if (attorneyId in attorneyAppealsLoadingState &&
       attorneyAppealsLoadingState[attorneyId].state === 'LOADED') {
-      return appealsByUserId[attorneyId] ? appealsByUserId[attorneyId].length : 0;
+      return tasksByUserId[attorneyId] ? tasksByUserId[attorneyId].length : 0;
     }
 
     return '?';
@@ -131,7 +131,7 @@ const mapStateToProps = (state) => {
 
   return {
     unassignedTasksCount: judgeAssignTasksSelector(state).length,
-    appealsByUserId: getAppealsByUserId(state),
+    tasksByUserId: getTasksByUserId(state),
     attorneysOfJudge,
     attorneyAppealsLoadingState,
     featureToggles

@@ -15,7 +15,8 @@ import type {
 } from './types/models';
 
 export const onReceiveQueue = (
-  { tasks, amaTasks, appeals, userId }: { tasks: LegacyTasks, amaTasks: AmaTasks, appeals: BasicAppeals, userId: number }
+  { tasks, amaTasks, appeals, userId }:
+  { tasks: LegacyTasks, amaTasks: AmaTasks, appeals: BasicAppeals, userId: number }
 ) => ({
   type: ACTIONS.RECEIVE_QUEUE_DETAILS,
   payload: {
