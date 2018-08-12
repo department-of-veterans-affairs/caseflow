@@ -5,7 +5,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:latest
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:mwf-test
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
@@ -39,48 +39,48 @@ jobs:
 
       - restore_cache:
           keys:
-            - dot-rbenv-cache-v3-{{ arch }}-{{ checksum ".ruby-version" }}
+            - dot-rbenv-cache-v4-{{ arch }}-{{ checksum ".ruby-version" }}
 
-      - run:
-          name: Setup Ruby
-          command: rbenv install --skip-existing $(cat ~/project/.ruby-version)
+      # - run:
+      #     name: Setup Ruby
+      #     command: rbenv install --skip-existing $(cat ~/project/.ruby-version)
 
-      - run:
-          name: Setup Bundler
-          command: gem install bundler
+      # - run:
+      #     name: Setup Bundler
+      #     command: gem install bundler
 
-      - save_cache:
-          key: dot-rbenv-cache-v3-{{ arch }}-{{ checksum ".ruby-version" }}
-          paths:
-            - ~/.rbenv
+      # - save_cache:
+      #     key: dot-rbenv-cache-v4-{{ arch }}-{{ checksum ".ruby-version" }}
+      #     paths:
+      #       - ~/.rbenv
 
       - run:
           name: Ruby version
           command: ruby -v
 
-      - restore_cache:
-          keys:
-            - vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+      # - restore_cache:
+      #     keys:
+      #       - vendor-bundle-v4-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
 
       - run:
           name: Bundle install
           command: bundle install --path vendor/bundle
 
-      - save_cache:
-          key: vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
+      # - save_cache:
+      #     key: vendor-bundle-v4-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+      #     paths:
+      #       - vendor/bundle
 
       - restore_cache:
           name: Restore yarn cache
-          key: dot-cache-yarn-v1-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          key: dot-cache-yarn-v4-{{ arch }}-{{ checksum "client/yarn.lock" }}
 
       - run:
           name: yarn install
           command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
       - save_cache:
-          key: dot-cache-yarn-v1-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          key: dot-cache-yarn-v4-{{ arch }}-{{ checksum "client/yarn.lock" }}
           paths:
             - ~/.cache/yarn
 

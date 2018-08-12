@@ -1,6 +1,4 @@
-# NOTE: Once we are no longer using the default Ruby environment, we should upgrade
-# our base container to something more recent.
-FROM circleci/ruby:2.2-node-browsers
+FROM circleci/ruby:2.5.1-node-browsers
 
 USER root
 

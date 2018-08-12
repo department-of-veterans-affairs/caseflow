@@ -41,7 +41,7 @@ gem "acts_as_tree"
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
-gem "puma", "~> 2.16.0"
+gem "puma"
 
 # use to_b method to convert string to boolean
 gem "wannabe_bool"
