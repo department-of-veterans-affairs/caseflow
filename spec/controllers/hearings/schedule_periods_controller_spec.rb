@@ -26,6 +26,27 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
     end
   end
 
+  context "show judge" do
+    let!(:co_hearing_days) do
+      get_unique_dates_between(judge_schedule_period.start_date, judge_schedule_period.end_date, 5).map do |date|
+        create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13")
+        create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: nil)
+      end
+    end
+    
+    it "returns a schedule period and its hearing days with judges assigned" do
+      get :show, params: { schedule_period_id: judge_schedule_period.id }, as: :json
+      expect(response.status).to eq 200
+      response_body = JSON.parse(response.body)
+            
+      num_of_co_days = co_hearing_days.count { |day| day.hearing_date.wednesday? }
+      expect(response_body["schedule_period"]["hearing_days"].count).to eq 5 + num_of_co_days
+      expect(response_body["schedule_period"]["file_name"]).to eq "validJudgeSpreadsheet.xlsx"
+      expect(response_body["schedule_period"]["start_date"]).to eq "2018-04-01"
+      expect(response_body["schedule_period"]["end_date"]).to eq "2018-09-30"
+    end
+  end
+
   context "create" do
     it "creates a new schedule period" do
       id = SchedulePeriod.last.id + 1
