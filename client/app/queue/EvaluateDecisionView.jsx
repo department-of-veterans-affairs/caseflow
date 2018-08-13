@@ -127,6 +127,7 @@ class EvaluateDecisionView extends React.PureComponent {
     } = this.props;
     const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, {
       location: 'bva_dispatch',
+      attorney_id: task.assignedByPgId,
       ...this.state
     });
     const successMsg = sprintf(COPY.JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);

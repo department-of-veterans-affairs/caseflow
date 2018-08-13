@@ -12,6 +12,7 @@ const serverData = {
           appeal_id: 3,
           assigned_by_first_name: 'Stephen',
           assigned_by_last_name: 'Casper',
+          assigned_by_pg_id: 10,
           assigned_on: '2018-08-02T17:37:03.000Z',
           assigned_to_pg_id: 130,
           case_type: 'Post Remand',
@@ -59,6 +60,7 @@ describe('QueueLoadingScreen', () => {
         documentId: '12345-12345678',
         assignedByFirstName: 'Stephen',
         assignedByLastName: 'Casper',
+        assignedByPgId: 10,
         workProduct: 'OTD',
         previousTaskAssignedOn: '2018-08-02T17:37:03.000Z'
       }

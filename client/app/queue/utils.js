@@ -43,8 +43,9 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): LegacyTasks =>
       taskId: task.attributes.task_id,
       taskType: task.attributes.task_type,
       documentId: task.attributes.document_id,
-      assignedByFirstName: task.attributes.assigned_by_first_name,
-      assignedByLastName: task.attributes.assigned_by_last_name,
+      assignedByFirstName: task.attributes.assigned_by.first_name,
+      assignedByLastName: task.attributes.assigned_by.last_name,
+      assignedByPgId: task.attributes.assigned_by.pg_id,
       workProduct: task.attributes.work_product,
       previousTaskAssignedOn: task.attributes.previous_task.assigned_on
     };

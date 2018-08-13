@@ -56,6 +56,7 @@ export type LegacyTask = {
   documentId: string,
   assignedByFirstName: string,
   assignedByLastName: string,
+  assignedByPgId: string,
   workProduct: string,
   previousTaskAssignedOn: string
 };
