@@ -69,7 +69,7 @@ RSpec.feature "Task queue" do
       docket_number_column_vals = page.find_all(:xpath, "//tbody/tr/td[3]")
       expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort.reverse
       docket_number_column_header.click
-      expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort
+      expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort.reverse
     end
 
     it "displays special text indicating an assigned case has paper documents" do
