@@ -50,6 +50,10 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :vbms_id do
     object.sanitized_vbms_id
   end
+  # Aliasing the vbms_id to make it clear what we're returning.
+  attribute :veteran_file_number do
+    object.sanitized_vbms_id
+  end
   attribute :external_id do
     object.vacols_id
   end
