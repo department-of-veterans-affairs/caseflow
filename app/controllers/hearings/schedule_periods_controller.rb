@@ -10,8 +10,7 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
     sp = if schedule_period.can_be_finalized?
            schedule_period.to_hash.merge(
              hearing_days: schedule_period.algorithm_assignments.map do |hearing_day|
-               regional_office = RegionalOffice::CITIES[hearing_day[:regional_office]]
-               hearing_day[:regional_office] = "#{regional_office[:city]}, #{regional_office[:state]}"
+               hearing_day[:regional_office] = RegionalOffice.city_state_by_key(hearing_day[:regional_office])
                hearing_day
              end
            )
