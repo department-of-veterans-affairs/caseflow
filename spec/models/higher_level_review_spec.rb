@@ -143,9 +143,8 @@ describe HigherLevelReview do
       [
         { reference_id: "abc", profile_date: "2018-04-04", decision_text: "hello" },
         { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" },
-        { decision_text: "non-rated issue decision text",
-          issue_category: "test issue category",
-          decision_date: "2018-12-25" }
+        { issue_category: "Unknown issue category", decision_text: "Description for Unknown" },
+        { issue_category: "Apportionment", decision_text: "Description for Apportionment", decision_date: "2018-04-08" }
       ]
     end
 
@@ -159,16 +158,22 @@ describe HigherLevelReview do
 
     it "creates issues from request_issues_data" do
       subject
-      expect(higher_level_review.request_issues.count).to eq(3)
+      expect(higher_level_review.request_issues.count).to eq(4)
       expect(higher_level_review.request_issues.find_by(rating_issue_reference_id: "abc")).to have_attributes(
         rating_issue_profile_date: Date.new(2018, 4, 4),
         description: "hello"
       )
       expect(higher_level_review.request_issues.find_by(
-               description: "non-rated issue decision text"
+               description: "Description for Unknown"
       )).to have_attributes(
-        issue_category: "test issue category",
-        decision_date: Date.new(2018, 12, 25)
+        issue_category: "Unknown issue category",
+        decision_date: nil
+      )
+      expect(higher_level_review.request_issues.find_by(
+               description: "Description for Apportionment"
+      )).to have_attributes(
+        issue_category: "Apportionment",
+        decision_date: Date.new(2018, 4, 8)
       )
     end
   end
@@ -180,17 +185,14 @@ describe HigherLevelReview do
     let!(:request_issues_data) do
       [
         { reference_id: "abc", profile_date: "2018-04-04", decision_text: "hello" },
-        { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" }
+        { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" },
+        { issue_category: "Unknown issue category", decision_text: "Description for Unknown" },
+        { issue_category: "Apportionment", decision_text: "Description for Apportionment", decision_date: "2018-04-08" }
       ]
     end
     before do
       higher_level_review.save!
       higher_level_review.create_issues!(request_issues_data: request_issues_data)
-    end
-
-    # Stub the id of the end product being created
-    before do
-      Fakes::VBMSService.end_product_claim_id = "454545"
     end
 
     context "when option receipt_date is nil" do
@@ -206,6 +208,7 @@ describe HigherLevelReview do
 
       subject
 
+      # ratings issues end product
       expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
         claim_hash: {
           benefit_type_code: "1",
@@ -222,24 +225,51 @@ describe HigherLevelReview do
         },
         veteran_hash: veteran.to_vbms_hash
       )
+      # nonratings issues end product
+      expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+        claim_hash: {
+          benefit_type_code: "1",
+          payee_code: "00",
+          predischarge: false,
+          claim_type: "Claim",
+          station_of_jurisdiction: "397",
+          date: receipt_date.to_date,
+          end_product_modifier: "030",
+          end_product_label: "Higher-Level Review Nonrating",
+          end_product_code: "030HLRNR",
+          gulf_war_registry: false,
+          suppress_acknowledgement_letter: false
+        },
+        veteran_hash: veteran.to_vbms_hash
+      )
 
-      expect(EndProductEstablishment.find_by(source: higher_level_review.reload).reference_id).to eq("454545")
+      expect(EndProductEstablishment.find_by(source: higher_level_review.reload, code: "030HLRR").
+        reference_id).to_not be_nil
+      expect(EndProductEstablishment.find_by(source: higher_level_review.reload, code: "030HLRNR").
+        reference_id).to_not be_nil
     end
+
 
     it "creates contentions" do
       allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
 
       subject
 
-      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(hash_including(
         veteran_file_number: veteran_file_number,
-        claim_id: "454545",
-        contention_descriptions: %w[goodbye hello],
+        contention_descriptions: ["Description for Unknown", "goodbye", "hello"],
         special_issues: []
-      )
+      ))
+      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(hash_including(
+        veteran_file_number: veteran_file_number,
+        contention_descriptions: ["Description for Apportionment"],
+        special_issues: []
+      ))
       request_issues = higher_level_review.request_issues
       expect(request_issues.first.contention_reference_id).to_not be_nil
       expect(request_issues.second.contention_reference_id).to_not be_nil
+      expect(request_issues.third.contention_reference_id).to_not be_nil
+      expect(request_issues.last.contention_reference_id).to_not be_nil
     end
 
     it "maps rated issues to contentions" do
@@ -248,13 +278,12 @@ describe HigherLevelReview do
       subject
 
       request_issues = higher_level_review.request_issues
-      expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
-        claim_id: "454545",
+      expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(hash_including(
         rated_issue_contention_map: {
           "def" => request_issues.find_by(rating_issue_reference_id: "def").contention_reference_id,
           "abc" => request_issues.find_by(rating_issue_reference_id: "abc").contention_reference_id
         }
-      )
+      ))
     end
 
     context "when VBMS throws an error" do
