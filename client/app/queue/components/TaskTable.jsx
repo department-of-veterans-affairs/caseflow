@@ -58,8 +58,8 @@ class TaskTable extends React.PureComponent<Props> {
   }
 
   taskHasDASRecord = (task: TaskWithAppeal) => {
-    if (this.props.requireDasRecord) {
-      return task.appeal.docketName !== 'Legacy';
+    if (task.appeal.docketName === 'Legacy' && this.props.requireDasRecord) {
+      return task.taskId;
     }
 
     return true;
