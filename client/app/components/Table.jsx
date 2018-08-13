@@ -40,9 +40,12 @@ const getColumns = (props) => {
 
 const HeaderRow = (props) => {
   const sortableHeaderStyle = css({ display: 'table-row' }, hover({ cursor: 'pointer' }));
-  const sortArrowsStyle = css({ display: 'table-cell',
+  const sortArrowsStyle = css({
+    display: 'table-cell',
     paddingLeft: '1rem',
-    verticalAlign: 'middle' });
+    paddingTop: '0.3rem',
+    verticalAlign: 'middle'
+  });
 
   return <thead className={props.headerClassName}>
     <tr>
@@ -50,8 +53,12 @@ const HeaderRow = (props) => {
         let columnContent = <span>{column.header || ''}</span>;
 
         if (column.getSortValue) {
-          let topColor = props.sortColIdx === columnNumber && !props.sortAscending ? COLORS.PRIMARY : COLORS.GREY_LIGHT;
-          let botColor = props.sortColIdx === columnNumber && props.sortAscending ? COLORS.PRIMARY : COLORS.GREY_LIGHT;
+          const topColor = props.sortColIdx === columnNumber && !props.sortAscending ?
+            COLORS.PRIMARY :
+            COLORS.GREY_LIGHT;
+          const botColor = props.sortColIdx === columnNumber && props.sortAscending ?
+            COLORS.PRIMARY :
+            COLORS.GREY_LIGHT;
 
           columnContent = <span {...sortableHeaderStyle} onClick={() => props.setSortOrder(columnNumber)}>
             <span>{column.header || ''}</span>
