@@ -3,12 +3,24 @@ module CaseReviewConcern
 
   attr_accessor :issues
 
+  included do
+    validates :task, presence: true, unless: :legacy?
+  end
+
   def appeal
     @appeal ||= if legacy?
                   LegacyAppeal.find_or_create_by(vacols_id: vacols_id)
                 else
                   Task.find(task_id).appeal
                 end
+  end
+
+  def update_task_and_issue_dispositions
+    task.update(status: :completed)
+    (issues || []).each do |issue|
+      decision_issue = appeal.decision_issues.find_by(id: issue["id"]) if appeal
+      decision_issue.update(disposition: issue["disposition"]) if decision_issue
+    end
   end
 
   def update_issue_dispositions_in_vacols!
