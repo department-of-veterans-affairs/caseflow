@@ -187,7 +187,6 @@ class HearingSchedule::AssignJudgesToHearingDays
   def fetch_hearing_days_for_schedule_period
     hearing_days = HearingDay.load_days(@schedule_period.start_date, @schedule_period.end_date)
     @video_co_hearing_days = filter_co_hearings(hearing_days[0].to_a)
-    binding.pry
 
     # raises an exception if hearing days have not already been allocated
     fail HearingDaysNotAllocated if @video_co_hearing_days.empty?
