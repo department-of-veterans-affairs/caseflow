@@ -82,6 +82,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
       select_tasks.where("brieff.bfkey = #{id}")
     end
 
+    # rubocop:disable Metrics/MethodLength
     def select_tasks
       select("brieff.bfkey as vacols_id",
              "brieff.bfcorlid as vbms_id",
@@ -116,6 +117,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
             ON decass.demdusr = s3.slogid
         SQL
     end
+    # rubocop:enable Metrics/MethodLength
 
     def exists_for_appeals(vacols_ids)
       conn = connection
