@@ -12,10 +12,9 @@ import type {
   AmaTasks,
   LegacyTask,
   LegacyTasks,
-  LegacyAppeal,
-  LegacyAppeals,
   BasicAppeal,
   BasicAppeals,
+  AppealDetails,
   Issue,
   Issues
 } from './types/models';
@@ -54,14 +53,10 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): LegacyTasks =>
   return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.externalAppealId), (task) => task);
 };
 
-export const associateTasksWithAppeals =
-  (serverData: { tasks: { data: Array<Object> } }):
-    { appeals: BasicAppeals, tasks: LegacyTasks } => {
-    const {
-      tasks: { data: tasks }
-    } = serverData;
-
-    const appealHash = tasks.reduce((accumulator, task) => {
+const extractAppealsFromTasks =
+  (tasks: Array<Object>):
+    BasicAppeals => {
+    return tasks.reduce((accumulator, task) => {
       if (!accumulator[task.attributes.external_appeal_id]) {
         accumulator[task.attributes.external_appeal_id] = {
           id: task.attributes.appeal_id,
@@ -80,17 +75,69 @@ export const associateTasksWithAppeals =
 
       return accumulator;
     }, {});
+  };
+
+export const associateTasksWithAppeals =
+  (serverData: { tasks: { data: Array<Object> } }):
+    { appeals: BasicAppeals, tasks: LegacyTasks } => {
+    const {
+      tasks: { data: tasks }
+    } = serverData;
 
     return {
       tasks: prepareLegacyTasksForStore(tasks),
-      appeals: appealHash
+      appeals: extractAppealsFromTasks(tasks)
     };
   };
 
-export const prepareAppealDetailsForStore =
-  (appeals: Array<LegacyAppeal>):
-    LegacyAppeals => {
-    return _.pickBy(_.keyBy(appeals, (appeal) => appeal.attributes.external_id), (appeal) => appeal);
+export const prepareAppealForStore =
+  (appeals: Array<Object>):
+    { appeals: BasicAppeals, appealDetails: AppealDetails } => {
+
+    const appealHash = appeals.reduce((accumulator, appeal) => {
+      accumulator[appeal.attributes.external_id] = {
+        id: appeal.id,
+        externalId: appeal.attributes.external_id,
+        docketName: appeal.attributes.docket_name,
+        caseType: appeal.attributes.type,
+        isAdvancedOnDocket: appeal.attributes.aod,
+        issueCount: appeal.attributes.issues.length,
+        docketNumber: appeal.attributes.docket_number,
+        veteranFullName: appeal.attributes.veteran_full_name,
+        veteranFileNumber: appeal.attributes.veteran_file_number,
+        isPaperCase: appeal.attributes.paper_case
+      };
+
+      return accumulator;
+    }, {});
+
+    const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
+      accumulator[appeal.attributes.external_id] = {
+        isLegacyAppeal: appeal.attributes.is_legacy_appeal,
+        issues: appeal.attributes.issues,
+        hearings: appeal.attributes.hearings,
+        appellantFullName: appeal.attributes.appellant_full_name,
+        appellantAddress: appeal.attributes.appellant_address,
+        appellantRelationship: appeal.attributes.appellant_relationship,
+        locationCode: appeal.attributes.location_code,
+        veteranDateOfBirth: appeal.attributes.veteran_date_of_birth,
+        veteranGender: appeal.attributes.veteran_gender,
+        externalId: appeal.attributes.external_id,
+        status: appeal.attributes.status,
+        decisionDate: appeal.attributes.decision_date,
+        certificationDate: appeal.attributes.certification_date,
+        powerOfAttorney: appeal.attributes.power_of_attorney,
+        regionalOffice: appeal.attributes.regional_office,
+        caseflowVeteranId: appeal.attributes.caseflow_veteran_id
+      };
+
+      return accumulator;
+    }, {});
+
+    return {
+      appeals: appealHash,
+      appealDetails: appealDetailsHash
+    };
   };
 
 export const renderAppealType = (appeal: BasicAppeal) => {
@@ -136,8 +183,6 @@ export const getIssueTypeDescription = (issue: Issue) => {
     program,
     type
   } = issue;
-
-  console.log(`program: ${program}`); // eslint-disable-line no-console
 
   return _.get(ISSUE_INFO[program].levels, `${type}.description`);
 };

@@ -76,15 +76,15 @@ class CaseTitle extends React.PureComponent {
       veteranCaseListIsVisible
     } = this.props;
 
-    return <CaseTitleScaffolding heading={appeal.attributes.veteran_full_name}>
+    return <CaseTitleScaffolding heading={appeal.veteranFullName}>
       <React.Fragment>
         Veteran ID:&nbsp;
         <Tooltip text={COPY.CASE_TITLE_VETERAN_ID_BUTTON_TOOLTIP} position="bottom">
-          <CopyToClipboard text={appeal.attributes.vbms_id}>
+          <CopyToClipboard text={appeal.veteranFileNumber}>
             <button type="submit"
               className="cf-apppeal-id"
               {...clipboardButtonStyling} >
-              {appeal.attributes.vbms_id}&nbsp;
+              {appeal.veteranFileNumber}&nbsp;
               <ClipboardIcon />
             </button>
           </CopyToClipboard>
