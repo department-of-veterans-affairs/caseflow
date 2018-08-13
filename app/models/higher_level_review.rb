@@ -25,7 +25,7 @@ class HigherLevelReview < AmaReview
   def create_contentions_in_vbms(rated: true)
     VBMSService.create_contentions!(
       veteran_file_number: veteran_file_number,
-      claim_id: end_product_establishment.reference_id,
+      claim_id: end_product_establishment(rated: rated).reference_id,
       contention_descriptions: issue_descriptions_to_create(rated: rated),
       special_issues: special_issues
     )

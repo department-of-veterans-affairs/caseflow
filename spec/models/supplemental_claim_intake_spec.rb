@@ -142,7 +142,14 @@ describe SupplementalClaimIntake do
 
       subject
 
-      resultant_end_product_establishment = EndProductEstablishment.find_by(source: intake.reload.detail)
+      ratings_end_product_establishment = EndProductEstablishment.find_by(
+        source: intake.reload.detail,
+        code: "030SCR"
+      )
+      nonratings_end_product_establishment = EndProductEstablishment.find_by(
+        source: intake.detail,
+        code: "030SCNR"
+      )
       expect(intake).to be_success
       expect(intake.detail.established_at).to eq(Time.zone.now)
       expect(resultant_end_product_establishment).to_not be_nil
@@ -162,11 +169,16 @@ describe SupplementalClaimIntake do
       )
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: intake.detail.veteran_file_number,
-        claim_id: resultant_end_product_establishment.reference_id,
-        contention_descriptions: ["non-rated issue decision text", "decision text"]
+        claim_id: ratings_end_product_establishment.reference_id,
+        contention_descriptions: ["decision text"]
+      )
+      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+        veteran_file_number: intake.detail.veteran_file_number,
+        claim_id: nonratings_end_product_establishment.reference_id,
+        contention_descriptions: ["non-rated issue decision text"]
       )
       expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
-        claim_id: resultant_end_product_establishment.reference_id,
+        claim_id: ratings_end_product_establishment.reference_id,
         rated_issue_contention_map: { "reference-id" => request_issues.first.contention_reference_id }
       )
     end
