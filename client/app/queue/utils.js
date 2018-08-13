@@ -200,13 +200,23 @@ export const getIssueDiagnosticCodeLabel = (code: string) => {
 /**
  * For attorney checkout flow, filter out already-decided issues. Undecided
  * disposition IDs are all numerical (1-9), decided IDs are alphabetical (A-X).
+ * Filter out disposition 9 because it is no longer used.
  *
  * @param {Array} issues
  * @returns {Array}
  */
-export const getUndecidedIssues = (issues: Issues) => _.filter(issues, (issue) =>
-  !issue.disposition || (Number(issue.disposition) && issue.disposition in VACOLS_DISPOSITIONS_BY_ID)
-);
+
+export const getUndecidedIssues = (issues: Issues) => _.filter(issues, (issue) => {
+  if (!issue.disposition) {
+    return true;
+  }
+
+  const disposition = Number(issue.disposition);
+
+  if (disposition && disposition < 9 && issue.disposition in VACOLS_DISPOSITIONS_BY_ID) {
+    return true;
+  }
+});
 
 export const buildCaseReviewPayload = (
   decision: Object, userRole: string, issues: Issues, args: Object = {}
