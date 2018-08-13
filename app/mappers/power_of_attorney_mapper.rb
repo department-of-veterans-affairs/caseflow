@@ -21,11 +21,11 @@ module PowerOfAttorneyMapper
     }
   end
 
-  def get_poa_from_vacols_poa(vacols_code:, rep_record: {})
+  def get_poa_from_vacols_poa(vacols_code, rep_record: {})
     # TODO: refactor to remove the autoloading behavior that requires
     # us to set all these keys, evern if they're empty.
     return none_poa if get_short_name(vacols_code) == "None"
-    return none_poa if vacols_code.empty? && rep_record.empty?
+    return none_poa if rep_record.empty? && !!vacols_code
     return service_org_poa(vacols_code) if get_full_name(vacols_code) && !rep_name_found_in_rep_table?(vacols_code)
     rep_table_poa(rep_record)
   end
