@@ -22,7 +22,7 @@ const noTopBottomMargin = css({
 });
 
 export default class CaseHearingsDetail extends React.PureComponent {
-  getAppealAttr = (attr) => _.get(this.props.appeal.attributes, attr);
+  getAppealAttr = (attr) => _.get(this.props.appeal, attr);
 
   getHearingAttrs = (hearing) => {
     const listElements = [{

@@ -11,7 +11,6 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 20180806210221) do
-
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -167,6 +166,13 @@ ActiveRecord::Schema.define(version: 20180806210221) do
     t.string "query"
     t.datetime "created_at"
     t.string "appeal_type", null: false
+  end
+
+  create_table "decision_issues", force: :cascade do |t|
+    t.string "disposition"
+    t.string "disposition_date"
+    t.string "description"
+    t.integer "request_issue_id"
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|

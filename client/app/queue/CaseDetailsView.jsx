@@ -9,6 +9,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Alert from '../components/Alert';
 import AppellantDetail from './AppellantDetail';
 import VeteranDetail from './VeteranDetail';
+import VeteranCasesView from './VeteranCasesView';
 import CaseHearingsDetail from './CaseHearingsDetail';
 import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
@@ -16,6 +17,8 @@ import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
+
+import { appealWithDetailSelector } from './selectors';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -46,19 +49,25 @@ class CaseDetailsView extends React.PureComponent {
       {success && <Alert type="success" title={success.title} scrollOnAlert={false}>
         {success.detail}
       </Alert>}
+      { this.props.veteranCaseListIsVisible &&
+        <VeteranCasesView
+          caseflowVeteranId={appeal.caseflowVeteranId}
+          veteranId={appeal.veteranFileNumber}
+        />
+      }
       <CaseSnapshot appealId={appealId} />
       <hr {...horizontalRuleStyling} />
       <StickyNavContentArea>
         <CaseDetailsIssueList
           title="Issues"
-          isLegacyAppeal={appeal.attributes.is_legacy_appeal}
-          issues={appeal.attributes.issues}
+          isLegacyAppeal={appeal.isLegacyAppeal}
+          issues={appeal.issues}
         />
-        <PowerOfAttorneyDetail title="Power of Attorney" poa={appeal.attributes.power_of_attorney} />
-        {appeal.attributes.hearings.length &&
+        <PowerOfAttorneyDetail title="Power of Attorney" poa={appeal.powerOfAttorney} />
+        {appeal.hearings.length &&
         <CaseHearingsDetail title="Hearings" appeal={appeal} />}
         <VeteranDetail title="About the Veteran" appeal={appeal} />
-        {!_.isNull(appeal.attributes.appellant_full_name) &&
+        {!_.isNull(appeal.appellantFullName) &&
         <AppellantDetail title="About the Appellant" appeal={appeal} />}
       </StickyNavContentArea>
     </AppSegment>;
@@ -70,13 +79,14 @@ CaseDetailsView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const { appealDetails } = state.queue;
   const { success, error } = state.ui.messages;
+  const { veteranCaseListIsVisible } = state.ui;
 
   return {
-    appeal: appealDetails[ownProps.appealId],
+    appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     success,
-    error
+    error,
+    veteranCaseListIsVisible
   };
 };
 
