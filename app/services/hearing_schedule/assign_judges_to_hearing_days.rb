@@ -211,7 +211,7 @@ class HearingSchedule::AssignJudgesToHearingDays
       day = OpenStruct.new(hearing_day.attributes)
       day.hearing_date = day.hearing_date.to_date
 
-      day if (valid_co_day?(day) || valid_ro_hearing_day?(day))
+      day if (valid_co_day?(day) || valid_ro_hearing_day?(day)) && !hearing_day_already_assigned(day)
     end.compact
   end
 
