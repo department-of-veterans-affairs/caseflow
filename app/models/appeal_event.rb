@@ -7,7 +7,7 @@ class AppealEvent
       "Denied",
       "Vacated",
       "Dismissed, Death",
-      "Dismissed, Other"
+      "Dismissed, Withdrawn"
     ],
     bva_remand: [
       "Remanded",
@@ -76,7 +76,7 @@ class AppealEvent
       "Vacated"
     ],
     other_close: [
-      "Dismissed, Other"
+      "Dismissed, Withdrawn"
     ]
   }.freeze
 
