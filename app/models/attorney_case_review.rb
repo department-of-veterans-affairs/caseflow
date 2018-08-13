@@ -10,8 +10,6 @@ class AttorneyCaseReview < ApplicationRecord
   validates :work_product, inclusion: { in: QueueMapper::WORK_PRODUCTS.values }
   validates :note, length: { maximum: 350 }
 
-  validates :task, presence: true, unless: :legacy?
-
   enum document_type: {
     omo_request: Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"],
     draft_decision: Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"]
@@ -23,14 +21,6 @@ class AttorneyCaseReview < ApplicationRecord
                           name: document_type) do
       reassign_case_to_judge_in_vacols!
       update_issue_dispositions_in_vacols! if draft_decision?
-    end
-  end
-
-  def update_task_and_issue_dispositions
-    task.update(status: :completed)
-    (issues || []).each do |issue|
-      decision_issue = appeal.decision_issues.find_by(id: issue["id"]) if appeal
-      decision_issue.update(disposition: issue["disposition"]) if decision_issue
     end
   end
 
