@@ -80,8 +80,8 @@ describe JudgeCaseReview do
         end
         let(:issues) do
           [
-            { disposition: "5", vacols_sequence_id: vacols_issue1.issseq, readjudication: true },
-            { disposition: "3", vacols_sequence_id: vacols_issue2.issseq,
+            { disposition: "5", id: vacols_issue1.issseq, readjudication: true },
+            { disposition: "3", id: vacols_issue2.issseq,
               remand_reasons: [{ code: "AB", after_certification: true }] }
           ]
         end
@@ -108,6 +108,7 @@ describe JudgeCaseReview do
           expect(decass.deqr3).to eq nil
           expect(decass.deqr4).to eq nil
           expect(decass.dememid).to eq "AA"
+          expect(decass.decomp).to eq VacolsHelper.local_date_with_utc_timezone
 
           expect(vacols_case.reload.bfcurloc).to eq "48"
           expect(vacols_case.bfmemid).to eq "AA"
@@ -160,8 +161,8 @@ describe JudgeCaseReview do
         end
         let(:issues) do
           [
-            { disposition: "5", vacols_sequence_id: vacols_issue1.issseq, readjudication: true },
-            { disposition: "3", vacols_sequence_id: vacols_issue2.issseq,
+            { disposition: "5", id: vacols_issue1.issseq, readjudication: true },
+            { disposition: "3", id: vacols_issue2.issseq,
               remand_reasons: [{ code: "AB", after_certification: true }] }
           ]
         end
@@ -187,6 +188,8 @@ describe JudgeCaseReview do
           expect(decass.deqr1).to eq nil
           expect(decass.deqr3).to eq nil
           expect(decass.deqr4).to eq nil
+          expect(decass.decomp).to eq VacolsHelper.local_date_with_utc_timezone
+
           expect(vacols_case.reload.bfcurloc).to eq "4E"
 
           vacols_issues = VACOLS::CaseIssue.where(isskey: "123456")

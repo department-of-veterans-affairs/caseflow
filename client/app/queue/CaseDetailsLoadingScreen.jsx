@@ -7,10 +7,10 @@ import _ from 'lodash';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
-import { prepareAppealDetailsForStore, prepareTasksForStore } from './utils';
+import { prepareAppealForStore, prepareLegacyTasksForStore, prepareTasksForStore } from './utils';
 
 import { onReceiveAppealDetails, onReceiveTasks, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
-import type { LegacyAppeal, LegacyAppeals, Tasks } from './types/models';
+import type { Appeal, Appeals, LegacyTasks } from './types/models';
 import type { State, UsersById } from './types/state';
 import { USER_ROLES } from './constants';
 
@@ -25,10 +25,10 @@ type Params = {|
 
 type Props = Params & {|
   // From state
-  tasks: Tasks,
-  appealDetails: LegacyAppeals,
+  tasks: LegacyTasks,
+  appealDetails: Appeals,
   loadedUserId: number,
-  activeAppeal: LegacyAppeal,
+  activeAppeal: Appeal,
   judges: UsersById,
   // Action creators
   setAttorneysOfJudge: typeof setAttorneysOfJudge,
@@ -46,19 +46,26 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
       userRole
     } = this.props;
 
-    const appealPromise = ApiUtil.get(`/appeals/${appealId}`).then((response) => {
-      this.props.onReceiveAppealDetails({ appeals: prepareAppealDetailsForStore([response.body.appeal]) });
-    });
-    const taskPromise = ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
-      this.props.onReceiveTasks({ tasks: prepareTasksForStore(response.body.tasks) });
-    });
     const promises = [];
 
     if (!appealDetails || !(appealId in appealDetails)) {
-      promises.push(appealPromise);
+      promises.push(
+        ApiUtil.get(`/appeals/${appealId}`).then((response) => {
+          this.props.onReceiveAppealDetails(prepareAppealForStore([response.body.appeal]));
+        })
+      );
     }
 
-    if (!tasks || _.filter(tasks, (task) => task.externalAppealId === appealId).length > 0) {
+    if (!tasks || _.filter(tasks, (task) => task.externalAppealId === appealId).length === 0) {
+      const taskPromise = ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
+        const legacyTasks = _.every(response.body.tasks, (task) => task.attributes.appeal_type === 'LegacyAppeal');
+        const preparedTasks = legacyTasks && [USER_ROLES.ATTORNEY, USER_ROLES.JUDGE].includes(userRole) ?
+          prepareLegacyTasksForStore(response.body.tasks) :
+          prepareTasksForStore(response.body.tasks);
+
+        this.props.onReceiveTasks({ tasks: preparedTasks });
+      });
+
       promises.push(taskPromise);
     }
 

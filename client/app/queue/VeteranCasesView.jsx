@@ -12,6 +12,7 @@ import { setFetchedAllCasesFor } from './CaseList/CaseListActions';
 import { hideVeteranCaseList } from './uiReducer/uiActions';
 import { onReceiveAppealDetails } from './QueueActions';
 import { appealsByCaseflowVeteranId } from './selectors';
+import { prepareAppealForStore } from './utils';
 
 import COPY from '../../COPY.json';
 
@@ -45,13 +46,7 @@ class VeteranCasesView extends React.PureComponent {
           return Promise.reject(response);
         }
 
-        const appealMap = returnedObject.appeals.reduce((acc, curr) => {
-          acc[curr.attributes.external_id] = curr;
-
-          return acc;
-        }, {});
-
-        this.props.onReceiveAppealDetails({ appeals: appealMap });
+        this.props.onReceiveAppealDetails(prepareAppealForStore(returnedObject.appeals));
         this.props.setFetchedAllCasesFor(caseflowVeteranId);
 
         return Promise.resolve();
@@ -99,7 +94,6 @@ VeteranCasesView.defaultProps = {
 
 const mapStateToProps = (state, ownProps) => ({
   appeals: appealsByCaseflowVeteranId(state, { caseflowVeteranId: ownProps.caseflowVeteranId }),
-  details: state.queue.appealDetails,
   fetchedAllCasesFor: state.caseList.fetchedAllCasesFor
 });
 
