@@ -70,7 +70,7 @@ class VACOLS::Representative < VACOLS::Record
       if rep
         update_rep!(bfkey, rep.repaddtime, format_attrs(name, address, type))
       else
-        create_rep!(bfkey, attrs)
+        create_rep!(bfkey, format_attrs(name, address, type))
       end
     end
   end
