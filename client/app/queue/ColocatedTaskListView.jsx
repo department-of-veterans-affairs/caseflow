@@ -13,7 +13,7 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import TabWindow from '../components/TabWindow';
 import COPY from '../../COPY.json';
 
-import type { AmaTask } from './types/models';
+import type { TaskWithAppeal } from './types/models';
 import type { State } from './types/state';
 
 type Params = {|
@@ -49,7 +49,7 @@ export default (connect(null, mapDispatchToProps)(ColocatedTaskListView): React.
 
 const NewTasksTab = connect(
   (state: State) => ({ tasks: newTasksByAssigneeCssIdSelector(state) }))(
-  (props: { tasks: Array<AmaTask> }) => {
+  (props: { tasks: Array<TaskWithAppeal> }) => {
     return <div>
       <p>{COPY.COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION}</p>
       <TaskTable

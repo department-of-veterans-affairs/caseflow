@@ -8,10 +8,8 @@ import {
   USER_ROLES
 } from './constants';
 import type {
-  AmaTask,
-  AmaTasks,
-  LegacyTask,
-  LegacyTasks,
+  Task,
+  Tasks,
   BasicAppeal,
   BasicAppeals,
   AppealDetails,
@@ -23,8 +21,8 @@ import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRI
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
-export const prepareTasksForStore = (tasks: Array<Object>): AmaTasks => {
-  const taskHash = tasks.reduce((acc, task: AmaTask) => {
+export const prepareTasksForStore = (tasks: Array<Object>): Tasks => {
+  const taskHash = tasks.reduce((acc, task: Object) => {
     acc[task.attributes.external_appeal_id] = {
       appealId: task.attributes.appeal_id,
       externalAppealId: task.attributes.external_appeal_id,
@@ -73,11 +71,13 @@ const extractAppealsFromTasks =
     }, {});
   };
 
-export const extractAppealsAndTasks = (tasks: Array<Object>): { appeals: BasicAppeals, tasks: AmaTasks } => ({
+export const extractAppealsAndAmaTasks =
+(tasks: Array<Object>): { appeals: BasicAppeals, amaTasks: Tasks, tasks: Tasks } => ({
+  tasks: {},
   appeals: extractAppealsFromTasks(tasks),
   amaTasks: prepareTasksForStore(tasks) });
 
-export const prepareLegacyTasksForStore = (tasks: Array<Object>): LegacyTasks => {
+export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
   const mappedLegacyTasks = tasks.map((task) => {
     return {
       appealId: task.attributes.appeal_id,
@@ -105,7 +105,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): LegacyTasks =>
 
 export const associateTasksWithAppeals =
   (serverData: { tasks: { data: Array<Object> } }):
-    { appeals: BasicAppeals, tasks: LegacyTasks } => {
+    { appeals: BasicAppeals, tasks: Tasks } => {
     const {
       tasks: { data: tasks }
     } = serverData;
@@ -298,5 +298,5 @@ export const validateWorkProductTypeAndId = (decision: {opts: Object}) => {
   return oldFormat.test(documentId) || newFormat.test(documentId);
 };
 
-export const getTaskDaysWaiting = (task: LegacyTask) => moment().startOf('day').
+export const getTaskDaysWaiting = (task: Task) => moment().startOf('day').
   diff(moment(task.assignedOn), 'days');

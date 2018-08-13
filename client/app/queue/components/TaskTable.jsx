@@ -19,15 +19,13 @@ import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 import type {
-  AmaTasks,
-  AmaTask,
-  LegacyTasks,
-  LegacyTask
+  TaskWithAppeal
 } from '../types/models';
 
 type Params = {|
   includeSelect?: boolean,
   includeDetailsLink?: boolean,
+  includeTask?: boolean,
   includeDocumentId?: boolean,
   includeType?: boolean,
   includeDocketNumber?: boolean,
@@ -37,7 +35,7 @@ type Params = {|
   includeReaderLink?: boolean,
   includeDocumentCount?: boolean,
   requireDasRecord?: boolean,
-  tasks: Tasks | LegacyTasks,
+  tasks: Array<TaskWithAppeal>,
   userId?: string,
 |};
 
@@ -59,9 +57,9 @@ class TaskTable extends React.PureComponent<Props> {
     return isTaskSelected[externalAppealId] || false;
   }
 
-  taskHasDASRecord = (task: AmaTask | LegacyTask) => {
+  taskHasDASRecord = (task: TaskWithAppeal) => {
     if (this.props.requireDasRecord) {
-      return task.taskId || task.docketName !== 'Legacy';
+      return task.appeal.docketName !== 'Legacy';
     }
 
     return true;
@@ -104,7 +102,7 @@ class TaskTable extends React.PureComponent<Props> {
     } : null;
   }
 
-  actionNameOfTask = (task: AmaTask) => CO_LOCATED_ADMIN_ACTIONS[task.action]
+  actionNameOfTask = (task: TaskWithAppeal) => CO_LOCATED_ADMIN_ACTIONS[task.action]
 
   caseTaskColumn = () => {
     return this.props.includeTask ? {
@@ -134,7 +132,7 @@ class TaskTable extends React.PureComponent<Props> {
   caseTypeColumn = () => {
     return this.props.includeType ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
-      valueFunction: (task: AmaTask | LegacyTask) => this.taskHasDASRecord(task) ?
+      valueFunction: (task) => this.taskHasDASRecord(task) ?
         renderAppealType(task.appeal) :
         <span {...redText}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE}</span>,
       span: (task) => this.taskHasDASRecord(task) ? 1 : 5,
