@@ -5,7 +5,7 @@ class HearingSchedule::AssignJudgesToHearingDays
   attr_reader :judges, :video_co_hearing_days
 
   TB_ADDITIONAL_NA_DAYS = 3
-  CO_ROOM_NUM = "1"
+  CO_ROOM_NUM = "1".freeze
 
   class HearingDaysNotAllocated < StandardError; end
   class NoJudgesProvided < StandardError; end
