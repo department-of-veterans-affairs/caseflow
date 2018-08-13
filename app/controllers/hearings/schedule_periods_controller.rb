@@ -37,6 +37,8 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
       schedule_period.schedule_confirmed(schedule_period.algorithm_assignments)
     end
     render json: { id: schedule_period.id }
+  rescue ActiveRecord::StatementInvalid => error
+    render json: { error: error.message }
   end
 
   def download

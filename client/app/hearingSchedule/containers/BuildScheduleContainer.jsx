@@ -33,9 +33,25 @@ class BuildScheduleContainer extends React.PureComponent {
       return Promise.resolve();
     }
 
-    return ApiUtil.patch(`/hearings/schedule_periods/${this.props.schedulePeriod.id}`).then(() => {
-      this.props.onConfirmAssignmentsUpload();
-    });
+    return ApiUtil.patch(`/hearings/schedule_periods/${this.props.schedulePeriod.id}`)
+      .then((response) => {
+        console.log("error message: ", response.body)
+        if (_.has(response.body, 'error')) {
+          if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
+            this.props.updateRoCoUploadFormErrors(response.body.error);
+          }
+          if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
+            this.props.updateJudgeUploadFormErrors(response.body.error);
+          }
+          this.props.onConfirmAssignmentsUpload();
+
+          return;
+        }
+        this.props.onConfirmAssignmentsUpload();
+        // this.props.history.push(`/schedule/build/upload/${response.body.id}`);
+    }, () => {
+        this.props.onConfirmAssignmentsUpload();
+      });
   };
 
   createLoadPromise = () => Promise.all([
