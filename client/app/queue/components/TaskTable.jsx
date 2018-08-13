@@ -45,7 +45,7 @@ type Props = Params & {|
 |};
 
 class TaskTable extends React.PureComponent<Props> {
-  getKeyForRow = (rowNumber, object) => object.id
+  getKeyForRow = (rowNumber, object) => object.appeal.id
 
   isTaskSelected = (externalAppealId) => {
     if (!this.props.isTaskAssignedToUserSelected) {
