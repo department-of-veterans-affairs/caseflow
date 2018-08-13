@@ -49,7 +49,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.veteran ? object.veteran.sex : "Cannot locate"
   end
 
-  attribute :vbms_id do
+  attribute :veteran_file_number do
     object.veteran_file_number
   end
 
