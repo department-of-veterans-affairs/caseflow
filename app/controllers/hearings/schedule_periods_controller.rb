@@ -7,21 +7,17 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
   end
 
   def show
-    begin
-      sp = if schedule_period.can_be_finalized?
-            schedule_period.to_hash.merge(
-              hearing_days: schedule_period.algorithm_assignments.map do |hearing_day|
-                hearing_day[:regional_office] = ro_information(hearing_day[:regional_office])
-                hearing_day
-              end
-            )
-          else
-            schedule_period.to_hash
-          end
-      render json: { schedule_period: sp }
-    rescue HearingSchedule::Errors::NotEnoughAvailableDays => error
-      render json: { error: error.message, details: error.details }, :status => 422
-    end
+    sp = if schedule_period.can_be_finalized?
+           schedule_period.to_hash.merge(
+             hearing_days: schedule_period.algorithm_assignments.map do |hearing_day|
+               hearing_day[:regional_office] = RegionalOffice.city_state_by_key(hearing_day[:regional_office])
+               hearing_day
+             end
+           )
+         else
+           schedule_period.to_hash
+         end
+    render json: { schedule_period: sp }
   end
 
   def create
@@ -58,16 +54,5 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
 
   def schedule_period
     SchedulePeriod.find(params[:schedule_period_id])
-  end
-
-  private
-
-  def ro_information(ro_key)
-    regional_office = RegionalOffice::CITIES[ro_key]
-    if regional_office
-      "#{regional_office[:city]}, #{regional_office[:state]}"
-    else
-      nil
-    end
   end
 end
