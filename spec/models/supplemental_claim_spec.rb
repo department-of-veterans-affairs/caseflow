@@ -103,8 +103,8 @@ describe SupplementalClaim do
     end
   end
 
-  context "#create_end_product_and_contentions!" do
-    subject { supplemental_claim.create_end_product_and_contentions! }
+  context "#create_end_products_and_contentions!" do
+    subject { supplemental_claim.create_end_products_and_contentions! }
     let(:veteran) { Veteran.create(file_number: veteran_file_number) }
     let(:receipt_date) { 2.days.ago }
     let!(:request_issues_data) do
@@ -167,8 +167,10 @@ describe SupplementalClaim do
         veteran_hash: veteran.to_vbms_hash
       )
 
-      expect(EndProductEstablishment.find_by(source: supplemental_claim.reload, code: "040SCR").reference_id).to_not be_nil
-      expect(EndProductEstablishment.find_by(source: supplemental_claim.reload, code: "040SCNR").reference_id).to_not be_nil
+      expect(EndProductEstablishment.find_by(source: supplemental_claim.reload, code: "040SCR").reference_id)
+        .to_not be_nil
+      expect(EndProductEstablishment.find_by(source: supplemental_claim.reload, code: "040SCNR").reference_id)
+        .to_not be_nil
     end
 
     it "creates contentions" do
@@ -176,15 +178,19 @@ describe SupplementalClaim do
 
       subject
 
-      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(hash_including(
-        veteran_file_number: veteran_file_number,
-        contention_descriptions: ["Description for Unknown", "goodbye", "hello"]
-      ))
+      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+        hash_including(
+          veteran_file_number: veteran_file_number,
+          contention_descriptions: array_including("Description for Unknown", "goodbye", "hello")
+        )
+      )
 
-      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(hash_including(
-        veteran_file_number: veteran_file_number,
-        contention_descriptions: ["Description for Apportionment"]
-      ))
+      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+        hash_including(
+          veteran_file_number: veteran_file_number,
+          contention_descriptions: ["Description for Apportionment"]
+        )
+      )
       request_issues = supplemental_claim.request_issues
       expect(request_issues.first.contention_reference_id).to_not be_nil
       expect(request_issues.second.contention_reference_id).to_not be_nil
@@ -198,12 +204,14 @@ describe SupplementalClaim do
       subject
 
       request_issues = supplemental_claim.request_issues
-      expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(hash_including(
-        rated_issue_contention_map: {
-          "def" => request_issues.find_by(rating_issue_reference_id: "def").contention_reference_id,
-          "abc" => request_issues.find_by(rating_issue_reference_id: "abc").contention_reference_id
-        }
-      ))
+      expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+        hash_including(
+          rated_issue_contention_map: {
+            "def" => request_issues.find_by(rating_issue_reference_id: "def").contention_reference_id,
+            "abc" => request_issues.find_by(rating_issue_reference_id: "abc").contention_reference_id
+          }
+        )
+      )
     end
 
     context "when VBMS throws an error" do

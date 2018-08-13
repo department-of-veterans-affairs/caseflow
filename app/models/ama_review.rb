@@ -44,24 +44,20 @@ class AmaReview < ApplicationRecord
     request_issues_data.map { |data| request_issues.create_from_intake_data!(data) }
   end
 
-  def create_end_product_and_contentions!
-    return nil if rated_issue_descriptions_to_create.empty? && nonrated_issue_descriptions_to_create.empty?
-    create_ratings_end_product_and_contentions!
-    create_nonratings_end_product_and_contentions!
+  def create_end_products_and_contentions!
+    return nil if issue_descriptions_to_create(rated: true).empty? && issue_descriptions_to_create(rated: false).empty?
+    # create ratings end product and contentions and associate any ratings issues
+    create_end_product_and_contentions!(rated: true)
+    # create nonratings end product and contentions
+    create_end_product_and_contentions!(rated: false)
     update! established_at: Time.zone.now
   end
 
-  def create_ratings_end_product_and_contentions!
-    return nil if rated_issue_descriptions_to_create.empty?
-    end_product_establishment(rated: true).perform!
-    create_contentions_on_new_end_product!(rated: true)
-    create_associated_rated_issues_in_vbms!
-  end
-
-  def create_nonratings_end_product_and_contentions!
-    return nil if nonrated_issue_descriptions_to_create.empty?
-    end_product_establishment(rated: false).perform!
-    create_contentions_on_new_end_product!(rated: false)
+  def create_end_product_and_contentions!(rated: true)
+    return nil if issue_descriptions_to_create(rated: rated).empty?
+    end_product_establishment(rated: rated).perform!
+    create_contentions_on_new_end_product!(rated: rated)
+    create_associated_rated_issues_in_vbms! if rated
   end
 
   def veteran
@@ -82,24 +78,16 @@ class AmaReview < ApplicationRecord
     receipt_date ? receipt_date.to_formatted_s(:short_date) : ""
   end
 
-  def rated_issue_descriptions_to_create
-    @rated_issue_descriptions_to_create ||= rated_issues_to_create.pluck(:description)
-  end
-
   def rated_issues_to_create
     @rated_issues_to_create ||= request_issues.rated.where(contention_reference_id: nil)
   end
 
-  def nonrated_issue_descriptions_to_create
-    @nonrated_issue_descriptions_to_create ||= nonrated_issues_to_create.pluck(:description)
+  def nonrated_issues_to_create
+    @nonrated_issues_to_create ||= request_issues.nonrated.where(contention_reference_id: nil)
   end
 
   def issue_descriptions_to_create(rated: true)
-    rated ? rated_issue_descriptions_to_create : nonrated_issue_descriptions_to_create
-  end
-
-  def nonrated_issues_to_create
-    @nonrated_issues_to_create ||= request_issues.nonrated.where(contention_reference_id: nil)
+    (rated ? rated_issues_to_create : nonrated_issues_to_create).pluck(:description)
   end
 
   def create_rated_issue_contention_map

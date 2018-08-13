@@ -217,7 +217,7 @@ describe SupplementalClaimIntake do
 
       it "clears pending status" do
         allow_any_instance_of(SupplementalClaim).to receive(
-          :create_end_product_and_contentions!
+          :create_end_products_and_contentions!
         ).and_raise(unknown_error)
 
         expect { subject }.to raise_exception
