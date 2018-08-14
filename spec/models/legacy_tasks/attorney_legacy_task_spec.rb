@@ -21,7 +21,7 @@ describe AttorneyLegacyTask do
         OpenStruct.new(
           vacols_id: vacols_id,
           date_due: 1.day.ago,
-          assigned_to_attorney_date: 5.days.ago,
+          assigned_to_location_date: 5.days.ago,
           created_at: 6.days.ago,
           docket_date: nil
         )
