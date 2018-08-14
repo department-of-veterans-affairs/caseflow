@@ -125,14 +125,14 @@ describe IssueMapper do
         context "when valid disposition" do
           let(:issue_attrs) do
             {
-              disposition: "9",
+              disposition: "6",
               disposition_date: VacolsHelper.local_date_with_utc_timezone,
               vacols_user_id: "TEST1"
             }
           end
           let(:expected_result) do
             {
-              issdc: "9",
+              issdc: "6",
               issdcls: VacolsHelper.local_date_with_utc_timezone,
               issmduser: "TEST1",
               issmdtime: VacolsHelper.local_time_with_utc_timezone

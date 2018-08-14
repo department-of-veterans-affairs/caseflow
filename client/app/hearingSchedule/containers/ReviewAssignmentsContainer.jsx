@@ -33,8 +33,8 @@ export class ReviewAssignmentsContainer extends React.Component {
       const schedulePeriod = resp.schedulePeriod;
 
       this.props.onReceiveSchedulePeriod(schedulePeriod);
-    }, () => {
-      this.props.onSchedulePeriodError();
+    }, (error) => {
+      this.props.onSchedulePeriodError(error.response.body);
     });
   };
 
@@ -59,6 +59,7 @@ export class ReviewAssignmentsContainer extends React.Component {
         onClickCloseModal={this.props.onClickCloseModal}
         displayConfirmationModal={this.props.displayConfirmationModal}
         onConfirmAssignmentsUpload={this.onConfirmAssignmentsUpload}
+        spErrorDetails={this.props.spErrorDetails}
       />
     </LoadingDataDisplay>;
 
@@ -69,6 +70,7 @@ export class ReviewAssignmentsContainer extends React.Component {
 const mapStateToProps = (state) => ({
   schedulePeriod: state.schedulePeriod,
   schedulePeriodError: state.schedulePeriodError,
+  spErrorDetails: state.spErrorDetails,
   displayConfirmationModal: state.displayConfirmationModal
 });
 
