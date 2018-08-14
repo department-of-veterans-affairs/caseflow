@@ -124,10 +124,10 @@ class RampReview < ApplicationRecord
 
   def rollback_ramp_review
     RampElectionRollback.create!(
-     ramp_election: self,
-     user: User.system_user,
-     reason: "Automatic roll back due to EP #{end_product_establishment.modifier} cancelation"
-   )
+      ramp_election: self,
+      user: User.system_user,
+      reason: "Automatic roll back due to EP #{end_product_establishment.modifier} cancelation"
+    )
   end
 
   def veteran

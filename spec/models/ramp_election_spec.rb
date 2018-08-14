@@ -349,7 +349,7 @@ describe RampElection do
     end
 
     context "updates to canceled" do
-      let(:option_selected) { "supplemental_claim"}
+      let(:option_selected) { "supplemental_claim" }
       let(:end_product_status) { "PEND" }
       let!(:established_end_product) do
         EndProductEstablishment.create(
