@@ -16,7 +16,7 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
            )
          else
            schedule_period.to_hash
-        end
+         end
     render json: { schedule_period: sp }
   rescue HearingSchedule::Errors::NotEnoughAvailableDays => error
     render json: { error: error.message, details: error.details }, status: 422
