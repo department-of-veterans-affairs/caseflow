@@ -84,6 +84,9 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "s1.snamef as added_by_first_name",
              "s1.snamemi as added_by_middle_name",
              "s1.snamel as added_by_last_name",
+             "s4.snamef as attorney_first_name",
+             "s4.snamemi as attorney_middle_name",
+             "s4.snamel as attorney_last_name",
              "s1.sdomainid as added_by_css_id",
              "decass.dedeadline as date_due",
              "decass.deadtim as created_at",
@@ -102,6 +105,8 @@ class VACOLS::CaseAssignment < VACOLS::Record
             ON brieff.bfkey = folder.ticknum
           LEFT JOIN staff s3
             ON decass.demdusr = s3.slogid
+          LEFT JOIN staff s4
+            ON decass.deatty = s4.sattyid
         SQL
     end
 

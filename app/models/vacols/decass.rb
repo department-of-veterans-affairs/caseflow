@@ -27,6 +27,10 @@ class VACOLS::Decass < VACOLS::Record
     update_error_message
   end
 
+  def self.document_ids(vacols_id)
+    where(defolder: vacols_id).map(&:dedocid)
+  end
+
   private
 
   def update_error_message

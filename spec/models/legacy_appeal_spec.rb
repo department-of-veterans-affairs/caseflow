@@ -1770,6 +1770,19 @@ describe LegacyAppeal do
     end
   end
 
+  context "#has_outstanding_vacols_mail?" do
+    subject { appeal.has_outstanding_vacols_mail? }
+
+    it "Returns false when there is no outstanding mail" do
+      it { is_expected.to eq false } 
+    end
+
+    it "Returns true when there is outstanding mail" do
+      let(:vacols_case) { create(:case, :outstanding_mail) }
+      it { is_expected.to eq true } 
+    end
+  end
+
   context "#destroy_legacy_appeal" do
     let :appeal do
       LegacyAppeal.create!(

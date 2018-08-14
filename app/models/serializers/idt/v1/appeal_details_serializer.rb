@@ -51,6 +51,26 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :cavc
   attribute :status
 
-  # TODO: add outstanding mail
-  # TODO: add document numbers
+  attribute :previously_selected_for_quality_review do
+    # TODO: — if this endpoint is slow, make this a join
+    object.previously_selected_for_quality_review
+  end
+
+  attribute :documents do
+    tasks.map do |task|
+      {
+        added_by_first_name: task.added_by_first_name, 
+        added_by_middle_name: task.added_by_middle_name, 
+        added_by_last_name: task.added_by_last_name,
+        written_by_first_name: task.attorney_first_name,
+        written_by_middle_name: task.attorney_middle_name,
+        written_by_last_name: task.attorney_last_name,
+        document_id: task.document_id
+      }
+    end
+  end
+
+  attribute :has_outstanding_mail do
+    object.has_outstanding_vacols_mail?
+  end
 end
