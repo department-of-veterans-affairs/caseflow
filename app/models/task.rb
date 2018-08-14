@@ -39,7 +39,7 @@ class Task < ApplicationRecord
 
   def update_parent_status
     if saved_change_to_status? && completed? && parent
-      parent.update(status: :in_progress)
+      parent.update(status: :assigned)
     end
   end
 
@@ -61,6 +61,7 @@ class Task < ApplicationRecord
 
   def set_timestamps
     if will_save_change_to_status?
+      self.assigned_at = updated_at if assigned?
       self.started_at = updated_at if in_progress?
       self.placed_on_hold_at = updated_at if on_hold?
       self.completed_at = updated_at if completed?
