@@ -87,15 +87,26 @@ export default class ReviewAssignments extends React.Component {
 
   render() {
 
+    const { spErrorDetails } = this.props;
+
     if (this.props.schedulePeriodError) {
+      let message = <span>Please confirm the information in the spreadsheet is valid and
+        <Link to="/schedule/build/upload"> try again</Link>. If the issue persists, please
+        contact the Help Desk.
+      </span>;
+
+      if (spErrorDetails) {
+        message = <span>You have allocated too many hearing days to the {spErrorDetails.details.ro_key},
+        the maximum number of allocations is {spErrorDetails.details.max_allocation}.<br></br>
+        Please check your spreadsheet and upload the file again using the "Go back" link below.<br></br>
+          <Link to="/schedule/build/upload"> Go back</Link>
+        </span>;
+      }
+
       return <StatusMessage
         type="alert"
         title="The assignments algorithm was unable to run successfully."
-        messageText={
-          <div>Please confirm the information in the spreadsheet is valid and
-            <Link to="/schedule/build/upload"> try again</Link>. If the issue persists, please
-            contact the Help Desk.
-          </div>}
+        messageText={message}
       />;
     }
 
@@ -173,11 +184,16 @@ export default class ReviewAssignments extends React.Component {
   }
 }
 
+ReviewAssignments.defaultProps = {
+  schedulePeriod: {}
+};
+
 ReviewAssignments.propTypes = {
   schedulePeriod: PropTypes.object,
   schedulePeriodError: PropTypes.bool,
   displayConfirmationModal: PropTypes.bool,
   onClickConfirmAssignments: PropTypes.func,
   onClickCloseModal: PropTypes.func,
-  onConfirmAssignmentsUpload: PropTypes.func
+  onConfirmAssignmentsUpload: PropTypes.func,
+  spErrorDetails: PropTypes.object
 };
