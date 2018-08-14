@@ -12,11 +12,11 @@ import { hideModal } from '../uiReducer/uiActions';
 import { checkoutStagedAppeal } from '../QueueActions';
 
 import type { State } from '../types/state';
-import type { LegacyTask, AmaTask } from '../types/models';
+import type { Task } from '../types/models';
 
 type Params = {|
   appealId: string,
-  task: LegacyTask | AmaTask
+  task: Task
 |};
 
 type Props = Params & {|

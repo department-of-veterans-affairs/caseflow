@@ -141,7 +141,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       userRole
     } = this.props;
     let CheckoutDropdown = <React.Fragment />;
-    const dropdownArgs = { appealId: appeal.external_id };
+    const dropdownArgs = { appealId: appeal.externalId };
 
     if (userRole === USER_ROLE_TYPES.attorney) {
       CheckoutDropdown = <SelectCheckoutFlowDropdown {...dropdownArgs} />;
