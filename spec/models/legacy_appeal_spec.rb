@@ -1770,16 +1770,20 @@ describe LegacyAppeal do
     end
   end
 
-  context "#has_outstanding_vacols_mail?" do
+  context "#has_outstanding_vacols_mail?", focus: true do
     subject { appeal.has_outstanding_vacols_mail? }
 
-    it "Returns false when there is no outstanding mail" do
-      it { is_expected.to eq false } 
+    context "when no mail is outstanding" do
+      it "returns false" do
+        expect(subject).to eq false
+      end
     end
 
-    it "Returns true when there is outstanding mail" do
+    context "when mail is outstanding" do
       let(:vacols_case) { create(:case, :outstanding_mail) }
-      it { is_expected.to eq true } 
+      it "returns true" do
+        expect(subject).to eq true
+      end
     end
   end
 

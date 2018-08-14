@@ -54,7 +54,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
     object.previously_selected_for_quality_review
   end
 
-  attribute :has_outstanding_mail do
-    object.has_outstanding_vacols_mail?
+  attribute :outstanding_mail do
+    object.outstanding_vacols_mail?
   end
 end

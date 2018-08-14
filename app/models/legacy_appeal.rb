@@ -468,8 +468,8 @@ class LegacyAppeal < ApplicationRecord
     case_record.decision_quality_reviews.empty?
   end
 
-  def has_outstanding_vacols_mail?
-    case_record.mail.any?(&:is_outstanding?)
+  def outstanding_vacols_mail?
+    case_record.mail.any?(&:outstanding?)
   end
 
   # VACOLS stores the VBA veteran unique identifier a little

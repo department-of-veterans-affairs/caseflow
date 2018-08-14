@@ -10,7 +10,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def details
     # TODO: add AMA appeals
-    # We query the case assignment table here so we can get information for 
+    # We query the case assignment table here so we can get information for
     # who wrote the case decision docs/OMO request and what their doc ids are.
     # For AMA appeals, we should get that information from our attorney and judge case review tables.
     tasks = QueueRepository.tasks_for_appeal(params[:appeal_id])
@@ -36,7 +36,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     ).as_json
 
     appeal_details[:data][:attributes][:documents] = ActiveModelSerializers::SerializableResource.new(
-      tasks, 
+      tasks,
       each_serializer: ::Idt::V1::TaskSerializer
     ).as_json[:data].map { |task| task[:attributes] }
 

@@ -4,4 +4,3 @@ FactoryBot.define do
     mltype "02"
   end
 end
-
