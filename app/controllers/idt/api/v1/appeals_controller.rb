@@ -29,19 +29,24 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     LegacyAppeal.fetch_appeals_by_file_number(file_number).select(&:active?)
   end
 
-  def json_appeal_details(task, appeal)
-    ActiveModelSerializers::SerializableResource.new(
+  def json_appeal_details(tasks, appeal)
+    appeal_details = ActiveModelSerializers::SerializableResource.new(
       { tasks: tasks, appeal }
       serializer: ::Idt::V1::AppealDetailsSerializer
     ).as_json
+
+    appeal_details[:data][:attributes][:documents] = ActiveModelSerializers.SerializableResource.new(
+      tasks,
+      each_serializer: Idt::V1::TaskSerializer
+    ).as_json[:data][:attributes]
+
+    appeal_details
   end
 
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
+      appeals,
       each_serializer: ::Idt::V1::AppealSerializer
     ).as_json
-  end
-
-  def json_appeal(tasks, appeal)
   end
 end
