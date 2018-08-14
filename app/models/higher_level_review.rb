@@ -50,7 +50,7 @@ class HigherLevelReview < AmaReview
     )
   end
 
-  def end_product_establishment(rated: true, invalid_modifiers: invalid_modifiers)
+  def end_product_establishment(rated: true, invalid_modifiers: [])
     ep_code = issue_code(rated)
     @end_product_establishments ||= {}
     @end_product_establishments[rated] ||=

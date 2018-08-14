@@ -151,7 +151,7 @@ describe HigherLevelReviewIntake do
         source: intake.reload.detail,
         code: "030HLRNR"
       )
-      
+
       expect(intake).to be_success
       expect(intake.detail.established_at).to eq(Time.zone.now)
       expect(ratings_end_product_establishment).to_not be_nil
@@ -218,7 +218,7 @@ describe HigherLevelReviewIntake do
         )
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: intake.detail.veteran_file_number,
-          claim_id: ratings_end_product_establishment.reference_id,
+          claim_id: nonratings_end_product_establishment.reference_id,
           contention_descriptions: ["non-rated issue text"],
           special_issues: [{ code: "SSR", narrative: "Same Station Review" }]
         )

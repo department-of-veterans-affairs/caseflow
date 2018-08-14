@@ -17,7 +17,7 @@ describe EndProductEstablishment do
       code: code,
       claim_date: 2.days.ago,
       station: "397",
-      valid_modifiers: ["030", "031", "032"],
+      valid_modifiers: %w[030 031 032],
       reference_id: reference_id,
       invalid_modifiers: invalid_modifiers
     )

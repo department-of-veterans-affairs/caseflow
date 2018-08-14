@@ -203,6 +203,16 @@ describe HigherLevelReview do
       end
     end
 
+    context "when neither a ratings or nonratings end product are established" do
+      let!(:request_issues_data) { [] }
+      it "should not update established at" do
+        allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+        subject
+        expect(Fakes::VBMSService).not_to have_received(:establish_claim!)
+        expect(higher_level_review.reload.established_at).to be_nil
+      end
+    end
+
     it "creates end product" do
       allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 
