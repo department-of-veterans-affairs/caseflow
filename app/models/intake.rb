@@ -205,7 +205,7 @@ class Intake < ApplicationRecord
   end
 
   def create_end_product_and_contentions
-    detail.create_end_product_and_contentions!
+    detail.create_end_products_and_contentions!
   rescue StandardError => e
     abort_completion!
     raise e
