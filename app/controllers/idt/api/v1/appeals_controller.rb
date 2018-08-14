@@ -31,7 +31,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def json_appeal_details(tasks, appeal)
     appeal_details = ActiveModelSerializers::SerializableResource.new(
-      { tasks: tasks, appeal }
+      appeal,
       serializer: ::Idt::V1::AppealDetailsSerializer
     ).as_json
 
