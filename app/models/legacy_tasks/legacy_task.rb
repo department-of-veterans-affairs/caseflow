@@ -32,6 +32,11 @@ class LegacyTask
     @appeal ||= LegacyAppeal.find(appeal_id)
   end
 
+  def appeal_type
+    appeal.class.name
+    # "LegacyAppeal"
+  end
+
   ### Serializer Methods End
 
   def self.from_vacols(record, appeal, user)
