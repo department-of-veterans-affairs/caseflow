@@ -12,6 +12,7 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
   attribute :task_type
   attribute :document_id
   attribute :work_product
+  attribute :appeal_type
   attribute :previous_task do
     {
       assigned_on: object.previous_task.try(:assigned_at)
