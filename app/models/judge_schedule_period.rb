@@ -20,9 +20,14 @@ class JudgeSchedulePeriod < SchedulePeriod
       hearing_day.slice(:hearing_pkseq, :judge_id)
     end
 
-    transaction do
-      HearingDay.update_schedule(hearing_days)
-      super
+    update!(finalized: false)
+    begin
+      transaction do
+        HearingDay.update_schedule(hearing_days)
+        update!(finalized: true)
+      end
+    rescue
+      update!(finalized: nil)
     end
   end
 
