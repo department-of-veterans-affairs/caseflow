@@ -168,7 +168,7 @@ describe SupplementalClaim do
           claim_type: "Claim",
           station_of_jurisdiction: "397",
           date: receipt_date.to_date,
-          end_product_modifier: "040",
+          end_product_modifier: "041",
           end_product_label: "Supplemental Claim Nonrating",
           end_product_code: "040SCNR",
           gulf_war_registry: false,
