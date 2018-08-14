@@ -13,6 +13,24 @@ import { amaTasksReceived } from '../../../app/queue/QueueActions';
 import { setUserCssId } from '../../../app/queue/uiReducer/uiActions';
 
 describe('ColocatedTaskListView', () => {
+  let wrapperColocatedTaskListView = null;
+  const getWrapperColocatedTaskListView = (store) => {
+    const wrapper = mount(
+      <Provider store={store}>
+        <ColocatedTaskListView />
+      </Provider>
+    );
+
+    return wrapper;
+  };
+
+  afterEach(() => {
+    if (wrapperColocatedTaskListView) {
+      wrapperColocatedTaskListView.unmount();
+      wrapperColocatedTaskListView = null;
+    }
+  });
+
   const amaTaskTemplate = {
     "id": "8",
     "type": "colocated_tasks",
@@ -76,6 +94,8 @@ describe('ColocatedTaskListView', () => {
     }
   });
 
+  const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
+
   describe('New tab', () => {
     it('shows only new tasks', () => {
       const userCssId = 'BVALSPORER';
@@ -85,18 +105,11 @@ describe('ColocatedTaskListView', () => {
         [taskId]: amaTaskWith({id: taskId, cssIdAssignee: userCssId}),
         [idUnassigned]: amaTaskWith({id: idUnassigned, cssIdAssignee: 'NOTBVALSPORER'})
       };
-      const store = createStore(
-        rootReducer,
-        applyMiddleware(thunk)
-      );
+      const store = getStore();
       store.dispatch(amaTasksReceived(amaTasks));
       store.dispatch(setUserCssId(userCssId));
 
-      const wrapper = mount(
-        <Provider store={store}>
-          <ColocatedTaskListView />
-        </Provider>
-      );
+      const wrapper = getWrapperColocatedTaskListView(store);
 
       const cells = wrapper.find('td');
 
@@ -116,6 +129,23 @@ describe('ColocatedTaskListView', () => {
       expect(docketNumber.text()).to.include(task.attributes.docket_number);
       expect(daysWaiting.text()).to.equal('1');
       expect(documents.html()).to.include(`/reader/appeal/${task.attributes.external_id}/documents`);
+    });
+  });
+
+  describe('On hold tab', () => {
+    it('shows only on-hold tasks', () => {
+      const userCssId = 'BVALSPORER';
+      const taskId = '1';
+      const idUnassigned = '5';
+      const amaTasks = {
+        [taskId]: amaTaskWith({id: taskId, cssIdAssignee: userCssId}),
+        [idUnassigned]: amaTaskWith({id: idUnassigned, cssIdAssignee: 'NOTBVALSPORER'})
+      };
+      const store = getStore();
+      store.dispatch(amaTasksReceived(amaTasks));
+      store.dispatch(setUserCssId(userCssId));
+
+      const wrapper = getWrapperColocatedTaskListView(store);
     });
   });
 });
