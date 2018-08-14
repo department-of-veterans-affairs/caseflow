@@ -118,20 +118,6 @@ const editAppeal = (appealId, attributes) => ({
   }
 });
 
-const deleteLegacyTask = (taskId: string) => ({
-  type: ACTIONS.DELETE_TASK,
-  payload: { taskId }
-});
-
-const deleteAmaTask = (taskId: string) => ({
-  type: ACTIONS.DELETE_AMA_TASK,
-  payload: { taskId }
-});
-
-export const deleteTask = (taskId: string, taskType: string) => (dispatch: Dispatch) => dispatch(
-  taskType.includes('Legacy') ? deleteLegacyTask(taskId) : deleteAmaTask(taskId)
-);
-
 export const deleteAppeal = (appealId: string) => ({
   type: ACTIONS.DELETE_APPEAL,
   payload: {
