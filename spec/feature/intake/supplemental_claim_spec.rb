@@ -206,7 +206,7 @@ RSpec.feature "Supplemental Claim Intake" do
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "041",
         end_product_label: "Supplemental Claim Rating",
-        end_product_code: SupplementalClaim::END_PRODUCT_RATED_CODE,
+        end_product_code: SupplementalClaim::END_PRODUCT_RATING_CODE,
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false
       },
@@ -214,7 +214,7 @@ RSpec.feature "Supplemental Claim Intake" do
     )
     ratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
-      code: SupplementalClaim::END_PRODUCT_RATED_CODE
+      code: SupplementalClaim::END_PRODUCT_RATING_CODE
     )
 
     # nonratings end product
@@ -226,10 +226,9 @@ RSpec.feature "Supplemental Claim Intake" do
         claim_type: "Claim",
         station_of_jurisdiction: "397",
         date: supplemental_claim.receipt_date.to_date,
-        # FIXME
-        end_product_modifier: "041",
+        end_product_modifier: "042",
         end_product_label: "Supplemental Claim Nonrating",
-        end_product_code: SupplementalClaim::END_PRODUCT_NONRATED_CODE,
+        end_product_code: SupplementalClaim::END_PRODUCT_NONRATING_CODE,
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false
       },
@@ -237,7 +236,7 @@ RSpec.feature "Supplemental Claim Intake" do
     )
     nonratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
-      code: SupplementalClaim::END_PRODUCT_NONRATED_CODE
+      code: SupplementalClaim::END_PRODUCT_NONRATING_CODE
     )
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(

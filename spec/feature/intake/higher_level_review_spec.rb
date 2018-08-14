@@ -210,7 +210,7 @@ RSpec.feature "Higher-Level Review Intake" do
         date: higher_level_review.receipt_date.to_date,
         end_product_modifier: "032",
         end_product_label: "Higher-Level Review Rating",
-        end_product_code: HigherLevelReview::END_PRODUCT_RATED_CODE,
+        end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false
       },
@@ -218,7 +218,7 @@ RSpec.feature "Higher-Level Review Intake" do
     )
     ratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
-      code: HigherLevelReview::END_PRODUCT_RATED_CODE
+      code: HigherLevelReview::END_PRODUCT_RATING_CODE
     )
 
     # nonratings end product
@@ -230,10 +230,9 @@ RSpec.feature "Higher-Level Review Intake" do
         claim_type: "Claim",
         station_of_jurisdiction: "397",
         date: higher_level_review.receipt_date.to_date,
-        # FIXME
         end_product_modifier: "033",
         end_product_label: "Higher-Level Review Nonrating",
-        end_product_code: HigherLevelReview::END_PRODUCT_NONRATED_CODE,
+        end_product_code: HigherLevelReview::END_PRODUCT_NONRATING_CODE,
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false
       ),
@@ -241,7 +240,7 @@ RSpec.feature "Higher-Level Review Intake" do
     )
     nonratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
-      code: HigherLevelReview::END_PRODUCT_NONRATED_CODE
+      code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
     )
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(hash_including(

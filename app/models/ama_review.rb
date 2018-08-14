@@ -45,19 +45,23 @@ class AmaReview < ApplicationRecord
   end
 
   def create_end_products_and_contentions!
-    return nil if issue_descriptions_to_create(rated: true).empty? && issue_descriptions_to_create(rated: false).empty?
-    # create ratings end product and contentions and associate any ratings issues
-    create_end_product_and_contentions!(rated: true)
-    # create nonratings end product and contentions
-    create_end_product_and_contentions!(rated: false)
-    update! established_at: Time.zone.now
+    rating_establishment = create_end_product_and_contentions!(rated: true)
+    invalid_modifiers = rating_establishment ? [rating_establishment.modifier] : []
+    nonrating_establishment = create_end_product_and_contentions!(rated: false, invalid_modifiers: invalid_modifiers)
+
+    if rating_establishment || nonrating_establishment
+      update! established_at: Time.zone.now
+    end
   end
 
-  def create_end_product_and_contentions!(rated: true)
+  def create_end_product_and_contentions!(rated: true, invalid_modifiers: [])
     return nil if issue_descriptions_to_create(rated: rated).empty?
-    end_product_establishment(rated: rated).perform!
-    create_contentions_on_new_end_product!(rated: rated)
-    create_associated_rated_issues_in_vbms! if rated
+
+    end_product_establishment(rated: rated, invalid_modifiers: invalid_modifiers).tap do |establishment|
+      establishment.perform!
+      create_contentions_on_new_end_product!(rated: rated)
+      create_associated_rated_issues_in_vbms! if rated
+    end
   end
 
   def veteran
