@@ -244,7 +244,7 @@ describe HigherLevelReview do
           claim_type: "Claim",
           station_of_jurisdiction: "397",
           date: receipt_date.to_date,
-          end_product_modifier: "030",
+          end_product_modifier: "031",
           end_product_label: "Higher-Level Review Nonrating",
           end_product_code: "030HLRNR",
           gulf_war_registry: false,

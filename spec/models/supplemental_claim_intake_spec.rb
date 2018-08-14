@@ -136,7 +136,7 @@ describe SupplementalClaimIntake do
     end
 
     it "completes the intake and creates an end product" do
-      expect(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
       allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
       allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
 
@@ -144,16 +144,20 @@ describe SupplementalClaimIntake do
 
       ratings_end_product_establishment = EndProductEstablishment.find_by(
         source: intake.reload.detail,
-        code: "030SCR"
+        code: "040SCR"
       )
       nonratings_end_product_establishment = EndProductEstablishment.find_by(
         source: intake.detail,
-        code: "030SCNR"
+        code: "040SCNR"
       )
       expect(intake).to be_success
       expect(intake.detail.established_at).to eq(Time.zone.now)
-      expect(resultant_end_product_establishment).to_not be_nil
-      expect(resultant_end_product_establishment.established_at).to eq(Time.zone.now)
+      expect(ratings_end_product_establishment).to_not be_nil
+      expect(ratings_end_product_establishment.established_at).to eq(Time.zone.now)
+      expect(intake.detail.established_at).to eq(Time.zone.now)
+      expect(nonratings_end_product_establishment).to_not be_nil
+      expect(nonratings_end_product_establishment.established_at).to eq(Time.zone.now)
+      expect(intake.detail.established_at).to eq(Time.zone.now)
 
       request_issues = intake.detail.request_issues
       expect(request_issues.count).to eq 2
