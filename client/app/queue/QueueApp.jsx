@@ -37,6 +37,7 @@ import SelectRemandReasonsView from './SelectRemandReasonsView';
 import SearchBar from './SearchBar';
 import BeaamAppealListView from './BeaamAppealListView';
 import OrganizationQueue from './OrganizationQueue';
+import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -131,12 +132,11 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedAddColocatedTask = (props) => <AddColocatedTaskView nextStep="/queue" {...props.match.params} />;
 
-  routedOrganization = (props) => <QueueLoadingScreen
-    {...this.propsForQueueLoadingScreen()}
+  routedOrganization = (props) => <OrganizationQueueLoadingScreen
     urlToLoad={`${props.location.pathname}/tasks`}>
     <SearchBar feedbackUrl={this.props.feedbackUrl} />
     <OrganizationQueue {...this.props} />
-  </QueueLoadingScreen>
+  </OrganizationQueueLoadingScreen>
 
   queueName = () => this.props.userRole === USER_ROLE_TYPES.attorney ? 'Your Queue' : 'Review Cases';
 
