@@ -221,7 +221,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
           create(:allocation, regional_office: "RO17", allocated_days: 255, schedule_period: schedule_period)
         ]
       end
-      it { expect { subject }.to raise_error(HearingSchedule::RoAllocation::NotEnoughAvailableDays) }
+      it { expect { subject }.to raise_error(HearingSchedule::Errors::NotEnoughAvailableDays) }
     end
 
     context "too many allocated days for an RO with one room" do
@@ -230,7 +230,7 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
           create(:allocation, regional_office: "RO16", allocated_days: 128, schedule_period: schedule_period)
         ]
       end
-      it { expect { subject }.to raise_error(HearingSchedule::RoAllocation::NotEnoughAvailableDays) }
+      it { expect { subject }.to raise_error(HearingSchedule::Errors::NotEnoughAvailableDays) }
     end
 
     context "too many ro non-availability days" do

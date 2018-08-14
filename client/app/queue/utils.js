@@ -8,10 +8,8 @@ import {
   USER_ROLES
 } from './constants';
 import type {
-  AmaTask,
-  AmaTasks,
-  LegacyTask,
-  LegacyTasks,
+  Task,
+  Tasks,
   BasicAppeal,
   BasicAppeals,
   AppealDetails,
@@ -23,34 +21,30 @@ import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRI
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 
-export const prepareTasksForStore = (tasks: Array<Object>): AmaTasks => tasks.reduce((acc, curr: AmaTask) => {
-  acc[curr.attributes.external_id] = curr;
-
-  return acc;
-}, {});
-
-export const prepareLegacyTasksForStore = (tasks: Array<Object>): LegacyTasks => {
-  const mappedLegacyTasks = tasks.map((task) => {
-    return {
+export const prepareTasksForStore = (tasks: Array<Object>): Tasks => {
+  const taskHash = tasks.reduce((acc, task: Object) => {
+    acc[task.attributes.external_appeal_id] = {
       appealId: task.attributes.appeal_id,
       externalAppealId: task.attributes.external_appeal_id,
-      assignedOn: task.attributes.assigned_on,
-      dueOn: task.attributes.due_on,
-      userId: task.attributes.user_id,
-      assignedToPgId: task.attributes.assigned_to_pg_id,
-      addedByName: task.attributes.added_by_name,
-      addedByCssId: task.attributes.added_by_css_id,
-      taskId: task.attributes.task_id,
-      taskType: task.attributes.task_type,
-      documentId: task.attributes.document_id,
-      assignedByFirstName: task.attributes.assigned_by_first_name,
-      assignedByLastName: task.attributes.assigned_by_last_name,
-      workProduct: task.attributes.work_product,
-      previousTaskAssignedOn: task.attributes.previous_task.assigned_on
+      assignedOn: task.attributes.started_at,
+      dueOn: null,
+      assignedTo: {
+        cssId: task.attributes.assigned_to.css_id,
+        id: task.attributes.assigned_to.id
+      },
+      assignedBy: task.attributes.assigned_by,
+      taskId: task.id,
+      action: task.attributes.action,
+      documentId: null,
+      workProduct: null,
+      previousTaskAssignedOn: null,
+      placedOnHoldAt: task.attributes.placed_on_hold_at
     };
-  });
 
-  return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.externalAppealId), (task) => task);
+    return acc;
+  }, {});
+
+  return taskHash;
 };
 
 const extractAppealsFromTasks =
@@ -77,9 +71,42 @@ const extractAppealsFromTasks =
     }, {});
   };
 
+export const extractAppealsAndAmaTasks =
+(tasks: Array<Object>): { appeals: BasicAppeals, amaTasks: Tasks, tasks: Tasks } => ({
+  tasks: {},
+  appeals: extractAppealsFromTasks(tasks),
+  amaTasks: prepareTasksForStore(tasks) });
+
+export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
+  const mappedLegacyTasks = tasks.map((task) => {
+    return {
+      appealId: task.attributes.appeal_id,
+      externalAppealId: task.attributes.external_appeal_id,
+      assignedOn: task.attributes.assigned_on,
+      dueOn: task.attributes.due_on,
+      assignedTo: {
+        cssId: task.attributes.user_id,
+        id: task.attributes.assigned_to_pg_id
+      },
+      addedByName: task.attributes.added_by_name,
+      addedByCssId: task.attributes.added_by_css_id,
+      taskId: task.attributes.task_id,
+      taskType: task.attributes.task_type,
+      documentId: task.attributes.document_id,
+      assignedByFirstName: task.attributes.assigned_by.first_name,
+      assignedByLastName: task.attributes.assigned_by.last_name,
+      assignedByPgId: task.attributes.assigned_by.pg_id,
+      workProduct: task.attributes.work_product,
+      previousTaskAssignedOn: task.attributes.previous_task.assigned_on
+    };
+  });
+
+  return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.externalAppealId), (task) => task);
+};
+
 export const associateTasksWithAppeals =
   (serverData: { tasks: { data: Array<Object> } }):
-    { appeals: BasicAppeals, tasks: LegacyTasks } => {
+    { appeals: BasicAppeals, tasks: Tasks } => {
     const {
       tasks: { data: tasks }
     } = serverData;
@@ -282,5 +309,5 @@ export const validateWorkProductTypeAndId = (decision: {opts: Object}) => {
   return oldFormat.test(documentId) || newFormat.test(documentId);
 };
 
-export const getTaskDaysWaiting = (task: LegacyTask) => moment().startOf('day').
+export const getTaskDaysWaiting = (task: Task) => moment().startOf('day').
   diff(moment(task.assignedOn), 'days');

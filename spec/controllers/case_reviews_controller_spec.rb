@@ -58,7 +58,7 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(decision_issue2.reload.disposition).to eq "remanded"
             expect(task.reload.status).to eq "completed"
             expect(task.completed_at).to_not eq nil
-            expect(task.parent.status).to eq "in_progress"
+            expect(task.parent.status).to eq "assigned"
           end
         end
       end
