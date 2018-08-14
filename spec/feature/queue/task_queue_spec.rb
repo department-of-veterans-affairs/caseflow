@@ -73,10 +73,8 @@ RSpec.feature "Task queue" do
     end
 
     it "displays special text indicating an assigned case has paper documents" do
-      pc_appeal_row = find("tbody").find("#table-row-#{paper_appeal.id}")
-      first_cell = pc_appeal_row.find_all("td").first
-      expect(first_cell).to have_content("#{paper_appeal.veteran_full_name} (#{paper_appeal.vbms_id.delete('S')})")
-      expect(first_cell).to have_content(COPY::IS_PAPER_CASE)
+      expect(page).to have_content("#{paper_appeal.veteran_full_name} (#{paper_appeal.vbms_id.delete('S')})")
+      expect(page).to have_content(COPY::IS_PAPER_CASE)
     end
   end
 end
