@@ -5,7 +5,7 @@ class JudgeCaseReview < ApplicationRecord
   belongs_to :attorney, class_name: "User"
   belongs_to :task
 
-  validates :task_id, :location, presence: true
+  validates :task_id, :location, :judge, :attorney, presence: true
   validates :complexity, :quality, presence: true, if: :bva_dispatch?
 
   after_create :select_case_for_quality_review
