@@ -7,7 +7,8 @@ import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import {
-  newTasksByAssigneeCssIdSelector
+  newTasksByAssigneeCssIdSelector,
+  onHoldTasksByAssigneeCssIdSelector
 } from './selectors';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import TabWindow from '../components/TabWindow';
@@ -68,8 +69,8 @@ const NewTasksTab = connect(
   });
 
 const OnHoldTasksTab = connect(
-  (state: State) => ({ tasks: amaTasksOnHoldByAssigneeCssIdSelector(state) }))(
-  (props: { tasks: Array<AmaTask> }) => {
+  (state: State) => ({ tasks: onHoldTasksByAssigneeCssIdSelector(state) }))(
+  (props: { tasks: Array<TaskWithAppeal> }) => {
     return <div>
       <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
       <TaskTable

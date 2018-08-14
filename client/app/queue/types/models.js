@@ -62,6 +62,7 @@ export type Task = {
   assignedByLastName: string,
   workProduct: string,
   placedOnHoldAt: string,
+  onHoldDuration: number,
   previousTaskAssignedOn: string
 };
 

@@ -55,13 +55,6 @@ export const appealsWithDetailsSelector = createSelector(
   }
 );
 
-export const amaTasksOnHoldByAssigneeCssIdSelector: (State) => Array<AmaTask> = createSelector(
-  [amaTasksByAssigneeCssIdSelector],
-  (tasks: Array<AmaTask>) =>
-    tasks.filter(
-      (task) => moment().diff(moment(task.attributes.placed_on_hold_at), 'days') < task.attributes.on_hold_duration)
-);
-
 export const appealWithDetailSelector = createSelector(
   [appealsWithDetailsSelector, getAppealId],
   (appeals: Appeals, appealId: string) => appeals[appealId]
@@ -104,6 +97,12 @@ export const tasksByAssigneeCssIdSelector = createSelector(
 export const newTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks: Array<Task>) => tasks.filter((task) => !task.placedOnHoldAt)
+);
+
+export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
+  [tasksByAssigneeCssIdSelector],
+  (tasks: Array<Task>) =>
+    tasks.filter((task) => moment().diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration)
 );
 
 export const judgeReviewTasksSelector = createSelector(

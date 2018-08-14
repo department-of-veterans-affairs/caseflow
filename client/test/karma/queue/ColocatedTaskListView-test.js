@@ -9,11 +9,13 @@ import moment from 'moment';
 import thunk from 'redux-thunk';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import rootReducer from '../../../app/queue/reducers';
-import { amaTasksReceived } from '../../../app/queue/QueueActions';
+import { onReceiveQueue } from '../../../app/queue/QueueActions';
 import { setUserCssId } from '../../../app/queue/uiReducer/uiActions';
+import { extractAppealsAndAmaTasks } from '../../../app/queue/utils';
 
 describe('ColocatedTaskListView', () => {
   let wrapperColocatedTaskListView = null;
+
   const getWrapperColocatedTaskListView = (store) => {
     const wrapper = mount(
       <Provider store={store}>
@@ -101,12 +103,14 @@ describe('ColocatedTaskListView', () => {
       const userCssId = 'BVALSPORER';
       const taskId = '1';
       const idUnassigned = '5';
-      const amaTasks = {
-        [taskId]: amaTaskWith({id: taskId, cssIdAssignee: userCssId}),
-        [idUnassigned]: amaTaskWith({id: idUnassigned, cssIdAssignee: 'NOTBVALSPORER'})
-      };
+      const taskNewAssigned = amaTaskWith({id: taskId, cssIdAssignee: userCssId});
+      const taskUnassigned = amaTaskWith({id: idUnassigned, cssIdAssignee: 'NOTBVALSPORER'});
+      const amaTasks = [
+        taskNewAssigned,
+        taskUnassigned
+      ];
       const store = getStore();
-      store.dispatch(amaTasksReceived(amaTasks));
+      store.dispatch(onReceiveQueue(extractAppealsAndAmaTasks((amaTasks))));
       store.dispatch(setUserCssId(userCssId));
 
       const wrapper = getWrapperColocatedTaskListView(store);
@@ -120,7 +124,7 @@ describe('ColocatedTaskListView', () => {
         wrappers.push(cells.at(i));
       }
       const [caseDetails, tasks, types, docketNumber, daysWaiting, documents] = wrappers;
-      const task = amaTasks[taskId];
+      const task = taskNewAssigned;
 
       expect(caseDetails.text()).to.include(task.attributes.veteran_name);
       expect(caseDetails.text()).to.include(task.attributes.veteran_file_number);
@@ -137,12 +141,12 @@ describe('ColocatedTaskListView', () => {
       const userCssId = 'BVALSPORER';
       const taskId = '1';
       const idUnassigned = '5';
-      const amaTasks = {
-        [taskId]: amaTaskWith({id: taskId, cssIdAssignee: userCssId}),
-        [idUnassigned]: amaTaskWith({id: idUnassigned, cssIdAssignee: 'NOTBVALSPORER'})
-      };
+      const amaTasks = [
+        amaTaskWith({id: taskId, cssIdAssignee: userCssId}),
+        amaTaskWith({id: idUnassigned, cssIdAssignee: 'NOTBVALSPORER'})
+      ];
       const store = getStore();
-      store.dispatch(amaTasksReceived(amaTasks));
+      store.dispatch(onReceiveQueue(extractAppealsAndAmaTasks((amaTasks))));
       store.dispatch(setUserCssId(userCssId));
 
       const wrapper = getWrapperColocatedTaskListView(store);

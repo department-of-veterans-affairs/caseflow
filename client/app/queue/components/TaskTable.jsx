@@ -193,6 +193,7 @@ class TaskTable extends React.PureComponent<Props> {
     return this.props.includeDaysWaiting ? {
       header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
       valueFunction: (task) => {
+        console.log(task);
         return moment().startOf('day').
           diff(moment(task.assignedOn), 'days');
       },
