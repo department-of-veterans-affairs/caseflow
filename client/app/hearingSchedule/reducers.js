@@ -25,6 +25,9 @@ const reducers = (state = initialState, action = {}) => {
     });
   case ACTIONS.SCHEDULE_PERIOD_ERROR:
     return update(state, {
+      spErrorDetails: {
+        $set: action.payload.error
+      },
       schedulePeriodError: {
         $set: true
       }
