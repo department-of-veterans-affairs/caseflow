@@ -13,7 +13,7 @@ const serverData = {
           assigned_by: {
             first_name: 'Stephen',
             last_name: 'Casper',
-            pg_id: 10,
+            pg_id: 10
           },
           assigned_on: '2018-08-02T17:37:03.000Z',
           assigned_to_pg_id: 130,
