@@ -27,7 +27,7 @@ class Fakes::QueueRepository
   end
   # rubocop:enable Metrics/MethodLength
 
-  def self.appeals_from_tasks(_tasks)
+  def self.appeals_by_vacols_ids(_vacols_ids)
     appeals = appeal_records || Fakes::Data::AppealData.default_queue_records
     appeal = appeals.first
 

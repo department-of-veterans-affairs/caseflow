@@ -24,15 +24,6 @@ class AttorneyCaseReview < ApplicationRecord
     end
   end
 
-  def update_issue_dispositions
-    if appeal
-      (issues || []).each do |issue|
-        decision_issue = appeal.decision_issues.find_by(id: issue["id"])
-        decision_issue.update(disposition: issue["disposition"]) if decision_issue
-      end
-    end
-  end
-
   private
 
   def reassign_case_to_judge_in_vacols!
@@ -64,7 +55,7 @@ class AttorneyCaseReview < ApplicationRecord
       ActiveRecord::Base.multi_transaction do
         record = create(params)
         if record.valid?
-          record.legacy? ? record.update_in_vacols! : record.update_issue_dispositions
+          record.legacy? ? record.update_in_vacols! : record.update_task_and_issue_dispositions
         end
         record
       end

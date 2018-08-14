@@ -39,7 +39,7 @@ RSpec.describe TasksController, type: :controller do
     context "when user is an attorney" do
       let(:role) { :attorney_role }
 
-      it "should process the request succesfully" do
+      it "should process the request successfully" do
         get :index, params: { user_id: user.id, role: "attorney" }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
@@ -47,13 +47,13 @@ RSpec.describe TasksController, type: :controller do
         expect(response_body.first["attributes"]["status"]).to eq "on_hold"
         expect(response_body.first["attributes"]["assigned_by"]["id"]).to eq user.id
         expect(response_body.first["attributes"]["placed_on_hold_at"]).to_not be nil
-        expect(response_body.first["attributes"]["veteran_name"]).to eq task1.appeal.veteran_full_name
+        expect(response_body.first["attributes"]["veteran_full_name"]).to eq task1.appeal.veteran_full_name
         expect(response_body.first["attributes"]["veteran_file_number"]).to eq task1.appeal.veteran_file_number
 
         expect(response_body.second["attributes"]["status"]).to eq "on_hold"
         expect(response_body.second["attributes"]["assigned_by"]["id"]).to eq user.id
         expect(response_body.second["attributes"]["placed_on_hold_at"]).to_not be nil
-        expect(response_body.second["attributes"]["veteran_name"]).to eq task2.appeal.veteran_full_name
+        expect(response_body.second["attributes"]["veteran_full_name"]).to eq task2.appeal.veteran_full_name
         expect(response_body.second["attributes"]["veteran_file_number"]).to eq task2.appeal.veteran_file_number
       end
     end
@@ -162,9 +162,14 @@ RSpec.describe TasksController, type: :controller do
           response_body = JSON.parse(response.body)["tasks"]["data"]
           expect(response_body.first["attributes"]["type"]).to eq "AttorneyTask"
           expect(response_body.first["attributes"]["appeal_id"]).to eq ama_appeal.id
-          expect(response_body.first["attributes"]["appeal_id"]).to eq ama_appeal.id
           expect(response_body.first["attributes"]["docket_number"]).to eq ama_appeal.docket_number
           expect(response_body.first["attributes"]["appeal_type"]).to eq "Appeal"
+
+          attorney_task = AttorneyTask.find_by(appeal: ama_appeal)
+          expect(attorney_task.status).to eq "assigned"
+          expect(attorney_task.assigned_to).to eq attorney
+          expect(attorney_task.parent_id).to eq ama_judge_task.id
+          expect(ama_judge_task.reload.status).to eq "on_hold"
         end
       end
     end

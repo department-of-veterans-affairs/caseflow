@@ -16,7 +16,7 @@ RSpec.describe CaseReviewsController, type: :controller do
 
       let!(:judge_staff) { create(:staff, :judge_role, slogid: "CSF444", sdomainid: judge.css_id) }
       let!(:attorney_staff) { create(:staff, :attorney_role, slogid: "CSF555", sdomainid: attorney.css_id) }
-      let(:task) { create(:ama_attorney_task) }
+
       let(:request_issue1) { create(:request_issue, review_request: task.appeal) }
       let(:request_issue2) { create(:request_issue, review_request: task.appeal) }
       let(:decision_issue1) { create(:decision_issue, request_issue: request_issue1) }
@@ -26,6 +26,8 @@ RSpec.describe CaseReviewsController, type: :controller do
         before do
           User.stub = attorney
         end
+
+        let(:task) { create(:ama_attorney_task, assigned_to: attorney, assigned_by: judge) }
 
         context "when all parameters are present to create Draft Decision" do
           let(:params) do
@@ -54,6 +56,56 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(response_body["issues"]["request_issues"].size).to eq 2
             expect(decision_issue1.reload.disposition).to eq "allowed"
             expect(decision_issue2.reload.disposition).to eq "remanded"
+            expect(task.reload.status).to eq "completed"
+            expect(task.completed_at).to_not eq nil
+            expect(task.parent.status).to eq "assigned"
+          end
+        end
+      end
+
+      context "Judge Case Review" do
+        before do
+          User.stub = judge
+        end
+
+        let(:task) { create(:ama_judge_task, assigned_to: judge) }
+
+        context "when all parameters are present to send to sign a decision" do
+          let(:params) do
+            {
+              "type": "JudgeCaseReview",
+              "location": "bva_dispatch",
+              "attorney_id": attorney.id,
+              "complexity": "easy",
+              "quality": "meets_expectations",
+              "comment": "do this",
+              "factors_not_considered": %w[theory_contention relevant_records],
+              "areas_for_improvement": ["process_violations"],
+              "issues": [{ "disposition": "denied", "id": decision_issue1.id },
+                         { "disposition": "remanded", "id": decision_issue2.id }]
+            }
+          end
+
+          it "should be successful" do
+            post :complete, params: { task_id: task.id, tasks: params }
+            expect(response.status).to eq 200
+            response_body = JSON.parse(response.body)
+            expect(response_body["task"]["location"]).to eq "bva_dispatch"
+            expect(response_body["task"]["judge_id"]).to eq judge.id
+            expect(response_body["task"]["attorney_id"]).to eq attorney.id
+            expect(response_body["task"]["complexity"]).to eq "easy"
+            expect(response_body["task"]["quality"]).to eq "meets_expectations"
+            expect(response_body["task"]["comment"]).to eq "do this"
+            expect(response_body["task"]["factors_not_considered"]).to eq %w[theory_contention relevant_records]
+            expect(response_body["task"]["areas_for_improvement"]).to eq ["process_violations"]
+            expect(response_body.keys).to include "issues"
+            expect(response_body["issues"]["decision_issues"].size).to eq 2
+            expect(response_body["issues"]["request_issues"].size).to eq 2
+            expect(decision_issue1.reload.disposition).to eq "denied"
+            expect(decision_issue2.reload.disposition).to eq "remanded"
+            expect(task.reload.status).to eq "completed"
+            expect(task.completed_at).to_not eq nil
+            expect(task.parent).to be nil
           end
         end
       end

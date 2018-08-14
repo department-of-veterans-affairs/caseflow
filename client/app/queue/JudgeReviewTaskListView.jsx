@@ -16,7 +16,7 @@ import {
   resetSaveState
 } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
-import { judgeReviewAppealsSelector } from './selectors';
+import { judgeReviewTasksSelector } from './selectors';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
@@ -37,9 +37,9 @@ class JudgeReviewTaskListView extends React.PureComponent {
     const {
       userId,
       messages,
-      appeals
+      tasks
     } = this.props;
-    const reviewableCount = appeals.length;
+    const reviewableCount = tasks.length;
     let tableContent;
 
     if (reviewableCount === 0) {
@@ -54,7 +54,7 @@ class JudgeReviewTaskListView extends React.PureComponent {
         includeDocketNumber
         includeIssueCount
         includeDaysWaiting
-        appeals={this.props.appeals}
+        tasks={this.props.tasks}
       />;
     }
 
@@ -73,7 +73,7 @@ class JudgeReviewTaskListView extends React.PureComponent {
 }
 
 JudgeReviewTaskListView.propTypes = {
-  appeals: PropTypes.array.isRequired
+  tasks: PropTypes.array.isRequired
 };
 
 const mapStateToProps = (state) => {
@@ -84,7 +84,7 @@ const mapStateToProps = (state) => {
   } = state;
 
   return {
-    appeals: judgeReviewAppealsSelector(state),
+    tasks: judgeReviewTasksSelector(state),
     messages
   };
 };

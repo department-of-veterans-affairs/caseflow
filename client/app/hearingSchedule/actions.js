@@ -14,8 +14,11 @@ export const onReceiveSchedulePeriod = (schedulePeriod) => ({
   }
 });
 
-export const onSchedulePeriodError = () => ({
-  type: ACTIONS.SCHEDULE_PERIOD_ERROR
+export const onSchedulePeriodError = (error) => ({
+  type: ACTIONS.SCHEDULE_PERIOD_ERROR,
+  payload: {
+    error
+  }
 });
 
 export const removeSchedulePeriodError = () => ({

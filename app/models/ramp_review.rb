@@ -55,7 +55,7 @@ class RampReview < ApplicationRecord
   end
 
   def end_product_base_modifier
-    end_product_establishment.valid_modifiers.first
+    end_product_modifier
   end
 
   def end_product_active?

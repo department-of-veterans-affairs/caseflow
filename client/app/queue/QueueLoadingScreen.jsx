@@ -10,7 +10,8 @@ import ApiUtil from '../util/ApiUtil';
 import { associateTasksWithAppeals } from './utils';
 
 import { onReceiveQueue, setAttorneysOfJudge, fetchAllAttorneys, fetchAmaTasksOfUser } from './QueueActions';
-import type { LegacyAppeals, LegacyTasks } from './types/models';
+import { setUserId } from './uiReducer/uiActions';
+import type { Appeals, Tasks } from './types/models';
 import type { State, UsersById } from './types/state';
 import { USER_ROLES } from './constants';
 
@@ -26,15 +27,16 @@ type Params = {|
 
 type Props = Params & {|
   // From state
-  tasks: LegacyTasks,
-  appeals: LegacyAppeals,
+  tasks: Tasks,
+  appeals: Appeals,
   loadedUserId: number,
   judges: UsersById,
   // Action creators
   onReceiveQueue: typeof onReceiveQueue,
   setAttorneysOfJudge: typeof setAttorneysOfJudge,
   fetchAllAttorneys: typeof fetchAllAttorneys,
-  fetchAmaTasksOfUser: typeof fetchAmaTasksOfUser
+  fetchAmaTasksOfUser: typeof fetchAmaTasksOfUser,
+  setUserId: typeof setUserId
 |};
 
 class QueueLoadingScreen extends React.PureComponent<Props> {
@@ -67,11 +69,13 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
       return Promise.resolve();
     }
 
-    return ApiUtil.get(urlToLoad, { timeout: { response: 5 * 60 * 1000 } }).then((response) =>
+    return ApiUtil.get(urlToLoad, { timeout: { response: 5 * 60 * 1000 } }).then((response) => {
       this.props.onReceiveQueue({
-        ...associateTasksWithAppeals(JSON.parse(response.text)),
-        userId
-      }));
+        amaTasks: {},
+        ...associateTasksWithAppeals(JSON.parse(response.text))
+      });
+      this.props.setUserId(userId);
+    });
   };
 
   loadAttorneysOfJudge = () => {
@@ -143,7 +147,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue,
   setAttorneysOfJudge,
   fetchAllAttorneys,
-  fetchAmaTasksOfUser
+  fetchAmaTasksOfUser,
+  setUserId
 }, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen): React.ComponentType<Params>);
