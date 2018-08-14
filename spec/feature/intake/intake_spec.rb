@@ -150,7 +150,9 @@ RSpec.feature "Intake" do
 
         expect(page).to have_current_path("/intake/search")
         expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
-        expect(page).to have_content("the corporate database, then retry establishing the EP in Caseflow: ssn, sex, country.")
+        expect(page).to have_content(
+          "the corporate database, then retry establishing the EP in Caseflow: ssn, sex, country."
+        )
       end
     end
 
