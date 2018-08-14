@@ -106,7 +106,7 @@ SelectRemandReasonsView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
-  const issues = appeal.attributes.issues;
+  const issues = appeal.issues;
 
   return {
     appeal,

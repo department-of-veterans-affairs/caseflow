@@ -167,6 +167,8 @@ describe JudgeSchedulePeriod do
         create(:case_hearing, hearing_type: "C", hearing_date: date, room: 1)
         create(:case_hearing, hearing_type: "C", hearing_date: date, room: 1)
         create(:case_hearing, hearing_type: "C", hearing_date: date, room: 1)
+        create(:case_hearing, hearing_type: "C", hearing_date: date, room: 3)
+        create(:case_hearing, hearing_type: "C", hearing_date: date, room: 3)
       end
     end
 

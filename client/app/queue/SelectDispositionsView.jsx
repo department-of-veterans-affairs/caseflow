@@ -55,9 +55,7 @@ class SelectDispositionsView extends React.PureComponent {
     const {
       appealId,
       userRole,
-      appeal: {
-        attributes: { issues }
-      }
+      appeal: { issues }
     } = this.props;
     let nextStep;
     const baseUrl = `/queue/appeals/${appealId}`;
@@ -88,7 +86,7 @@ class SelectDispositionsView extends React.PureComponent {
   };
 
   validateForm = () => {
-    const { appeal: { attributes: { issues } } } = this.props;
+    const { appeal: { issues } } = this.props;
     const issuesWithoutDisposition = _.reject(issues, 'disposition');
 
     return !issuesWithoutDisposition.length;
@@ -121,7 +119,7 @@ class SelectDispositionsView extends React.PureComponent {
     const {
       success,
       appealId,
-      appeal: { attributes: { issues } }
+      appeal: { issues }
     } = this.props;
 
     return <React.Fragment>

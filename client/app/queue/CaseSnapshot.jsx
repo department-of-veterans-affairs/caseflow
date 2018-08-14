@@ -4,8 +4,11 @@ import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { tasksForAppealAssignedToAttorneySelector, tasksForAppealAssignedToUserSelector } from './selectors';
-
+import {
+  appealWithDetailSelector,
+  tasksForAppealAssignedToAttorneySelector,
+  tasksForAppealAssignedToUserSelector
+} from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import JudgeActionsDropdown from './components/JudgeActionsDropdown';
@@ -17,7 +20,7 @@ import { COLORS } from '../constants/AppConstants';
 
 import { renderLegacyAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
-import type { LegacyAppeal, LegacyTask } from './types/models';
+import type { Appeal, Task } from './types/models';
 import type { State } from './types/state';
 
 const snapshotParentContainerStyling = css({
@@ -59,9 +62,9 @@ type Params = {|
 type Props = Params & {|
   featureToggles: Object,
   userRole: string,
-  appeal: LegacyAppeal,
-  taskAssignedToUser: LegacyTask,
-  taskAssignedToAttorney: LegacyTask
+  appeal: Appeal,
+  taskAssignedToUser: Task,
+  taskAssignedToAttorney: Task
 |};
 
 export class CaseSnapshot extends React.PureComponent<Props> {
@@ -81,7 +84,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
 
   taskAssignmentListItems = () => {
     const assignedToListItem = <React.Fragment>
-      <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.attributes.location_code}</dd>
+      <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.locationCode}</dd>
     </React.Fragment>;
 
     if (!this.props.taskAssignedToUser) {
@@ -134,7 +137,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
 
   render = () => {
     const {
-      appeal: { attributes: appeal },
+      appeal,
       userRole
     } = this.props;
     let CheckoutDropdown = <React.Fragment />;
@@ -154,11 +157,11 @@ export class CaseSnapshot extends React.PureComponent<Props> {
         <CaseDetailsDescriptionList>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</dt>
           <dd>{renderLegacyAppealType({
-            aod: appeal.aod,
-            type: appeal.type
+            aod: appeal.isAdvancedOnDocket,
+            type: appeal.caseType
           })}</dd>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
-          <dd>{appeal.docket_number}</dd>
+          <dd>{appeal.docketNumber}</dd>
           {this.daysSinceTaskAssignmentListItem()}
         </CaseDetailsDescriptionList>
       </div>
@@ -182,7 +185,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   const { featureToggles, userRole } = state.ui;
 
   return {
-    appeal: state.queue.appealDetails[ownProps.appealId],
+    appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     featureToggles,
     userRole,
     taskAssignedToUser: tasksForAppealAssignedToUserSelector(state, { appealId: ownProps.appealId })[0],

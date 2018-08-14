@@ -3,6 +3,7 @@ class JudgeCaseReview < ApplicationRecord
 
   belongs_to :judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
+  belongs_to :task
 
   validates :task_id, :location, presence: true
   validates :complexity, :quality, presence: true, if: :bva_dispatch?
@@ -21,6 +22,17 @@ class JudgeCaseReview < ApplicationRecord
   MONTHLY_LIMIT_OF_QUAILITY_REVIEWS = 24
   QUALITY_REVIEW_SELECTION_PROBABILITY = 0.04
 
+  def update_in_vacols!
+    MetricsService.record("VACOLS: judge_case_review #{task_id}",
+                          service: :vacols,
+                          name: "judge_case_review_" + location) do
+      sign_decision_or_create_omo!
+      update_issue_dispositions_in_vacols! if bva_dispatch? || quality_review?
+    end
+  end
+
+  private
+
   def sign_decision_or_create_omo!
     judge.access_to_task?(vacols_id)
 
@@ -34,7 +46,8 @@ class JudgeCaseReview < ApplicationRecord
         deficiencies: factors_not_considered + areas_for_improvement,
         comment: comment,
         modifying_user: modifying_user,
-        board_member_id: judge.vacols_attorney_id
+        board_member_id: judge.vacols_attorney_id,
+        completion_date: VacolsHelper.local_date_with_utc_timezone
       }
     )
   end
@@ -57,12 +70,7 @@ class JudgeCaseReview < ApplicationRecord
       ActiveRecord::Base.multi_transaction do
         record = create(params)
         if record.valid?
-          MetricsService.record("VACOLS: judge_case_review #{record.task_id}",
-                                service: :vacols,
-                                name: "judge_case_review_" + record.location) do
-            record.sign_decision_or_create_omo!
-            record.update_issue_dispositions_in_vacols! if record.bva_dispatch? || record.quality_review?
-          end
+          record.legacy? ? record.update_in_vacols! : record.update_task_and_issue_dispositions
         end
         record
       end

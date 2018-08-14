@@ -107,7 +107,7 @@ class EvaluateDecisionView extends React.PureComponent {
   getPrevStepUrl = () => {
     const {
       appealId,
-      appeal: { attributes: appeal }
+      appeal
     } = this.props;
     const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
     const prevUrl = `/queue/appeals/${appealId}`;
@@ -120,7 +120,7 @@ class EvaluateDecisionView extends React.PureComponent {
   goToNextStep = () => {
     const {
       task,
-      appeal: { attributes: appeal },
+      appeal,
       decision,
       userRole,
       appealId
@@ -129,7 +129,7 @@ class EvaluateDecisionView extends React.PureComponent {
       location: 'bva_dispatch',
       ...this.state
     });
-    const successMsg = sprintf(COPY.JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name);
+    const successMsg = sprintf(COPY.JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
 
     this.props.requestSave(`/case_reviews/${task.taskId}/complete`, payload, { title: successMsg }).
       then(() => this.props.deleteAppeal(appealId));
@@ -158,7 +158,7 @@ class EvaluateDecisionView extends React.PureComponent {
 
   render = () => {
     const {
-      appeal: { attributes: appeal },
+      appeal,
       task,
       appealId,
       highlight,
@@ -171,7 +171,7 @@ class EvaluateDecisionView extends React.PureComponent {
 
     return <React.Fragment>
       <CaseTitle
-        heading={appeal.veteran_full_name}
+        heading={appeal.veteranFullName}
         appealId={appealId}
         appeal={this.props.appeal}
         analyticsSource="evaluate_decision"
@@ -282,7 +282,7 @@ EvaluateDecisionView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.appealDetails[ownProps.appealId],
+  appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
   highlight: state.ui.highlightFormItems,
   taskOptions: state.queue.stagedChanges.taskDecision.opts,
   task: tasksForAppealAssignedToUserSelector(state, ownProps)[0],
