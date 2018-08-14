@@ -3,24 +3,36 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { sprintf } from 'sprintf-js';
+import { withRouter } from 'react-router-dom';
 import COPY from '../../../COPY.json';
 
 import Modal from '../../components/Modal';
 
 import { getTasksForAppeal } from '../selectors';
-import { hideModal } from '../uiReducer/uiActions';
-import { checkoutStagedAppeal } from '../QueueActions';
+import {
+  checkoutStagedAppeal,
+  deleteTask
+} from '../QueueActions';
+import {
+  hideModal,
+  requestSave
+} from '../uiReducer/uiActions';
 
 import type { State } from '../types/state';
-import type { Task } from '../types/models';
+import type { Task, Appeal } from '../types/models';
 
 type Params = {|
-  appealId: string,
-  task: Task
+  task: Task,
+  appeal: Appeal,
+  appealId: string
 |};
 
 type Props = Params & {|
   hideModal: typeof hideModal,
+  // requestSave: typeof requestSave,
+  requestSave: Function,
+  deleteTask: typeof deleteTask,
+  history: Object,
   checkoutStagedAppeal: typeof checkoutStagedAppeal
 |};
 
@@ -31,7 +43,25 @@ class SendToAssigningAttorneyModal extends React.Component<Props> {
   }
 
   sendToAttorney = () => {
-    return true;
+    const {
+      task,
+      appeal
+    } = this.props;
+    const payload = {
+      data: {
+        task: {
+          type: 'ColocatedTask',
+          assigned_to_id: task.assignedByPgId
+        }
+      }
+    }
+    const successMsg = { title: 'Reassignment success' };
+
+    this.props.requestSave(`/tasks/${task.taskId}`, payload, successMsg, 'patch').
+      then(() => {
+        this.props.history.push('/queue');
+        this.props.deleteTask(task.taskId, appeal.isLegacyAppeal ? 'Legacy' : 'Ama');
+      });
   }
 
   render = () => {
@@ -60,15 +90,17 @@ class SendToAssigningAttorneyModal extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => ({
-  task: getTasksForAppeal(state, ownProps)[0]
+  task: getTasksForAppeal(state, ownProps)[0],
+  appeal: state.queue.appeals[ownProps.appealId]
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   hideModal,
+  deleteTask,
+  requestSave,
   checkoutStagedAppeal
 }, dispatch);
 
-export default (
-  connect(mapStateToProps, mapDispatchToProps)(SendToAssigningAttorneyModal):
-  React.ComponentType<Params>
-);
+export default (withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(SendToAssigningAttorneyModal)
+): React.ComponentType<Params>);

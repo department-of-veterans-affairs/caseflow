@@ -6,22 +6,25 @@ import { bindActionCreators } from 'redux';
 import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
-import {
-  newTasksByAssigneeCssIdSelector
-} from './selectors';
+import { newTasksByAssigneeCssIdSelector } from './selectors';
+import { hideSuccessMessage } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
-import TabWindow from '../components/TabWindow';
 import COPY from '../../COPY.json';
 
-import type { TaskWithAppeal } from './types/models';
-import type { State } from './types/state';
+import Alert from '../components/Alert';
+import TabWindow from '../components/TabWindow';
 
-type Params = {|
-|};
+import type { TaskWithAppeal } from './types/models';
+import type { State, UiStateMessage } from './types/state';
+
+type Params = {||};
 
 type Props = Params & {|
+  // store
+  success: UiStateMessage,
   // Action creators
-  clearCaseSelectSearch: typeof clearCaseSelectSearch
+  clearCaseSelectSearch: typeof clearCaseSelectSearch,
+  hideSuccessMessage: typeof hideSuccessMessage
 |};
 
 class ColocatedTaskListView extends React.PureComponent<Props> {
@@ -29,23 +32,36 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
     this.props.clearCaseSelectSearch();
   };
 
+  componentWillUnmount = () => this.props.hideSuccessMessage();
+
   render = () => {
+    const { success } = this.props;
     const tabs = [{
       label: 'New',
       page: <NewTasksTab />
     }];
 
     return <AppSegment filledBackground>
+      {success && <Alert type="success" title={success.title} detail={success.detail} />}
       <TabWindow name="tasks-tabwindow" tabs={tabs} />
     </AppSegment>;
   };
 }
 
+const mapStateToProps = (state) => {
+  const { success } = state.ui.messages;
+
+  return {
+    success
+  };
+};
+
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  clearCaseSelectSearch
+  clearCaseSelectSearch,
+  hideSuccessMessage
 }, dispatch);
 
-export default (connect(null, mapDispatchToProps)(ColocatedTaskListView): React.ComponentType<Params>);
+export default (connect(mapStateToProps, mapDispatchToProps)(ColocatedTaskListView): React.ComponentType<Params>);
 
 const NewTasksTab = connect(
   (state: State) => ({ tasks: newTasksByAssigneeCssIdSelector(state) }))(

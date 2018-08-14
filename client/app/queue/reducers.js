@@ -327,6 +327,14 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
         }
       }
     });
+  case ACTIONS.DELETE_TASK:
+    return update(state, {
+      tasks: { $unset: action.payload.taskId }
+    });
+  case ACTIONS.DELETE_AMA_TASK:
+    return update(state, {
+      amaTasks: { $unset: action.payload.taskId }
+    });
   default:
     return state;
   }
