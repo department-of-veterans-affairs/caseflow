@@ -7,14 +7,14 @@ import TaskTable from './components/TaskTable';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { reassignTasksToUser } from './QueueActions';
-import { selectedTasksSelector, getAssignedAppeals } from './selectors';
+import { selectedTasksSelector, getAssignedTasks } from './selectors';
 import AssignWidget from './components/AssignWidget';
 import {
   resetErrorMessages,
   resetSuccessMessages
 } from './uiReducer/uiActions';
 import Alert from '../components/Alert';
-import type { LegacyTask, Appeals } from './types/models';
+import type { Task, TaskWithAppeal, Appeals } from './types/models';
 import type { AttorneysOfJudge, AttorneyAppealsLoadingState, UiStateMessage, State } from './types/state';
 
 type Params = {|
@@ -26,7 +26,8 @@ type Props = Params & {|
   attorneysOfJudge: AttorneysOfJudge,
   appealsOfAttorney: Appeals,
   featureToggles: Object,
-  selectedTasks: Array<LegacyTask>,
+  selectedTasks: Array<Task>,
+  tasksOfAttorney: Array<TaskWithAppeal>,
   attorneyAppealsLoadingState: AttorneyAppealsLoadingState,
   success: ?UiStateMessage,
   error: ?UiStateMessage,
@@ -92,7 +93,7 @@ class AssignedCasesPage extends React.Component<Props> {
         includeIssueCount
         includeDaysWaiting
         includeReaderLink
-        appeals={this.props.appealsOfAttorney}
+        tasks={this.props.tasksOfAttorney}
         userId={attorneyId} />
     </React.Fragment>;
   }
@@ -110,7 +111,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   const { attorneyId } = ownProps.match.params;
 
   return {
-    appealsOfAttorney: getAssignedAppeals(state, attorneyId),
+    tasksOfAttorney: getAssignedTasks(state, attorneyId),
     attorneyAppealsLoadingState,
     attorneysOfJudge,
     featureToggles,

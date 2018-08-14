@@ -10,7 +10,7 @@ import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import {
-  appealsWithTasksSelector
+  tasksWithAppealSelector
 } from './selectors';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
@@ -40,7 +40,7 @@ class OrganizationQueue extends React.PureComponent {
           includeIssueCount
           includeDaysWaiting
           includeReaderLink
-          appeals={this.props.appeals}
+          tasks={this.props.tasks}
         />
       </div>;
     }
@@ -52,12 +52,12 @@ class OrganizationQueue extends React.PureComponent {
 }
 
 OrganizationQueue.propTypes = {
-  appeals: PropTypes.array.isRequired
+  tasks: PropTypes.array.isRequired
 };
 
 const mapStateToProps = (state) => {
   return ({
-    appeals: appealsWithTasksSelector(state)
+    tasks: tasksWithAppealSelector(state)
   });
 };
 

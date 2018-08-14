@@ -43,7 +43,7 @@ const radioFieldStyling = css(marginBottom(0), marginTop(2), {
 });
 
 import type {
-  LegacyTask,
+  Task,
   Appeal,
   Judges
 } from './types/models';
@@ -59,7 +59,7 @@ type Props = Params & {|
   appeal: Appeal,
   judges: Judges,
   decision: Object,
-  task: LegacyTask,
+  task: Task,
   highlightFormItems: Boolean,
   userRole: string,
   error: ?UiStateMessage,
