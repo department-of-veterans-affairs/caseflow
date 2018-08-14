@@ -60,10 +60,11 @@ class SendToAssigningAttorneyModal extends React.Component<Props> {
           assigned_to_id: task.assignedByPgId
         }
       }
-    }
+    };
+    const attorneyName = this.getAttorneyName();
     const successMsg = {
-      title: sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION, appeal.veteranFullName, this.getAttorneyName()),
-      detail: sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION_DETAIL, this.getAttorneyName())
+      title: sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION, appeal.veteranFullName, attorneyName),
+      detail: sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION_DETAIL, attorneyName)
     };
 
     this.props.requestSave(`/tasks/${task.taskId}`, payload, successMsg, 'patch').
