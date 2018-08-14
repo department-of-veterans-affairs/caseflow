@@ -96,7 +96,7 @@ class AddEditIssueView extends React.Component {
     const {
       issue,
       appeal,
-      appeal: { attributes: { issues } }
+      appeal: { issues }
     } = this.props;
     const params = {
       data: {
@@ -110,7 +110,7 @@ class AddEditIssueView extends React.Component {
       }
     };
     const issueIndex = _.map(issues, 'vacols_sequence_id').indexOf(issue.vacols_sequence_id);
-    const url = `/appeals/${appeal.id}/issues`;
+    const url = `/appeals/${appeal.externalId}/issues`;
     let requestPromise;
 
     if (this.props.action === 'add') {
@@ -126,7 +126,7 @@ class AddEditIssueView extends React.Component {
   };
 
   updateIssuesFromServer = (response) => {
-    const { appeal: { attributes: appeal } } = this.props;
+    const { appeal } = this.props;
     const serverIssues = response.issues;
 
     const issues = _.map(serverIssues, (issue) => {
@@ -148,8 +148,7 @@ class AddEditIssueView extends React.Component {
   deleteIssue = () => {
     const {
       issue,
-      appeal,
-      appeal: { attributes: { issues } },
+      appeal: { issues },
       appealId,
       issueId
     } = this.props;
@@ -158,7 +157,7 @@ class AddEditIssueView extends React.Component {
     this.props.hideModal('deleteIssue');
 
     this.props.requestDelete(
-      `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`, {},
+      `/appeals/${appealId}/issues/${issue.vacols_sequence_id}`, {},
       { title: `You deleted issue ${issueIndex + 1}.` }
     ).then((resp) => this.props.deleteEditingAppealIssue(appealId, issueId, JSON.parse(resp.text)));
   };

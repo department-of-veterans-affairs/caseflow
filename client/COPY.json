@@ -41,6 +41,10 @@
   "CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL": "Document ID",
   "CASE_SNAPSHOT_ACTION_BOX_TITLE": "Actions",
 
+  "CASE_TITLE_VETERAN_ID_BUTTON_TOOLTIP": "Click to copy Veteran ID",
+
+  "NEW_FILE_ICON_TOOLTIP": "This case has new documents",
+
   "NO_TASKS_IN_ATTORNEY_QUEUE_TITLE": "Cases not found",
   "NO_TASKS_IN_ATTORNEY_QUEUE_MESSAGE": "Sorry! We couldn't find any cases for you.",
   "ATTORNEY_QUEUE_TABLE_TITLE": "Your Queue",
@@ -73,7 +77,9 @@
   "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_SUBHEAD": "How would you rate the complexity of this case?",
   "JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL": "Quality of work",
   "JUDGE_EVALUATE_DECISION_CASE_QUALITY_SUBHEAD": "How would you rate the overall quality of this case?",
-  "JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL": "Were there any areas of improvement?",
+  "JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL": "Identify areas for improvement",
+  "JUDGE_EVALUATE_DECISION_IMPROVEMENT_NOT_CONSIDERED": "The attorney did not properly consider and apply:",
+  "JUDGE_EVALUATE_DECISION_IMPROVEMENT_AREAS_FOR_IMPROVEMENT": "Other areas for improvement:",
 
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL": "Case Timeliness",
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE": "Date assigned to attorney",

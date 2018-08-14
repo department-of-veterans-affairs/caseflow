@@ -12,8 +12,8 @@ import {
   resetErrorMessages,
   resetSuccessMessages
 } from './uiReducer/uiActions';
-import { judgeAssignAppealsSelector, selectedTasksSelector } from './selectors';
-import type { LegacyTask, LegacyAppeals } from './types/models';
+import { judgeAssignTasksSelector, selectedTasksSelector } from './selectors';
+import type { Task, TaskWithAppeal } from './types/models';
 import Alert from '../components/Alert';
 import type { UiStateMessage } from './types/state';
 
@@ -24,10 +24,10 @@ type Params = {|
 type Props = Params & {|
   // Props
   featureToggles: Object,
-  selectedTasks: Array<LegacyTask>,
+  selectedTasks: Array<Task>,
   error: ?UiStateMessage,
   success: ?UiStateMessage,
-  appeals: LegacyAppeals,
+  tasks: Array<TaskWithAppeal>,
   // Action creators
   initialAssignTasksToUser: typeof initialAssignTasksToUser,
   resetErrorMessages: typeof resetErrorMessages,
@@ -60,7 +60,7 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
         includeIssueCount
         includeDaysWaiting
         includeReaderLink
-        appeals={this.props.appeals}
+        tasks={this.props.tasks}
         userId={userId} />
     </React.Fragment>;
   }
@@ -81,7 +81,7 @@ const mapStateToProps = (state, ownProps) => {
   } = state;
 
   return {
-    appeals: judgeAssignAppealsSelector(state),
+    tasks: judgeAssignTasksSelector(state),
     isTaskAssignedToUserSelected,
     featureToggles,
     selectedTasks: selectedTasksSelector(state, ownProps.userId),

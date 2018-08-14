@@ -25,7 +25,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
     object.appeal.docket_number
   end
 
-  attribute :veteran_name do
+  attribute :veteran_full_name do
     object.appeal.veteran_full_name
   end
 
@@ -33,11 +33,15 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
     object.appeal.veteran_file_number
   end
 
-  attribute :external_id do
+  attribute :external_appeal_id do
     object.appeal.external_id
   end
 
   attribute :aod do
     object.appeal.advanced_on_docket
+  end
+
+  attribute :issue_count do
+    object.appeal.issues.count
   end
 end

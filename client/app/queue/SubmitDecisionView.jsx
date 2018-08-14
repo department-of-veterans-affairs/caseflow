@@ -43,8 +43,8 @@ const radioFieldStyling = css(marginBottom(0), marginTop(2), {
 });
 
 import type {
-  LegacyTask,
-  LegacyAppeal,
+  Task,
+  Appeal,
   Judges
 } from './types/models';
 import type { UiStateMessage } from './types/state';
@@ -56,10 +56,10 @@ type Params = {|
 
 type Props = Params & {|
   // state
-  appeal: LegacyAppeal,
+  appeal: Appeal,
   judges: Judges,
   decision: Object,
-  task: LegacyTask,
+  task: Task,
   highlightFormItems: Boolean,
   userRole: string,
   error: ?UiStateMessage,
@@ -94,7 +94,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
   getPrevStepUrl = () => {
     const {
       decision: { type: decisionType },
-      appeal: { attributes: appeal },
+      appeal,
       appealId
     } = this.props;
     const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
@@ -113,11 +113,9 @@ class SubmitDecisionView extends React.PureComponent<Props> {
     const {
       task: { taskId },
       appeal: {
-        attributes: {
-          issues,
-          veteran_full_name,
-          external_id: appealId
-        }
+        issues,
+        veteranFullName,
+        externalId: appealId
       },
       decision,
       userRole,
@@ -129,7 +127,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
     const fields = {
       type: decision.type === DECISION_TYPES.DRAFT_DECISION ?
         'decision' : 'outside medical opinion (OMO) request',
-      veteran: veteran_full_name,
+      veteran: veteranFullName,
       judge: judges[decision.opts.reviewing_judge_id].full_name
     };
     const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's
