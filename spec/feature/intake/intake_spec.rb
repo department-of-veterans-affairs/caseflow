@@ -134,7 +134,7 @@ RSpec.feature "Intake" do
 
     context "Veteran has missing information" do
       let(:veteran) do
-        Generators::Veteran.build(file_number: "12341234", sex: nil, ssn: nil)
+        Generators::Veteran.build(file_number: "12341234", sex: nil, ssn: nil, country: nil)
       end
 
       scenario "Search for a veteran with a validation error" do
@@ -150,7 +150,7 @@ RSpec.feature "Intake" do
 
         expect(page).to have_current_path("/intake/search")
         expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
-        expect(page).to have_content("the corporate database, then retry establishing the EP in Caseflow: ssn, sex.")
+        expect(page).to have_content("the corporate database, then retry establishing the EP in Caseflow: ssn, sex, country.")
       end
     end
 
