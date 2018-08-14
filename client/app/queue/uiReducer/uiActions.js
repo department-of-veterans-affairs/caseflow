@@ -124,6 +124,11 @@ export const setUserCssId = (cssId: string) => ({
   payload: { cssId }
 });
 
+export const setUserId = (userId: number) => ({
+  type: ACTIONS.SET_USER_ID,
+  payload: { userId }
+});
+
 type targetAssignee = { assigneeId: string };
 
 export const setSelectedAssignee = ({ assigneeId }: targetAssignee) => ({
