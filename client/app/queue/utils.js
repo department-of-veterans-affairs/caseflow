@@ -24,6 +24,7 @@ import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
   tasks.reduce((acc, task: Object): Tasks => {
     acc[task.attributes.external_appeal_id] = {
+      addedByCssId: null,
       assignedByFirstName: task.attributes.assigned_by.first_name,
       assignedByLastName: task.attributes.assigned_by.last_name,
       assignedByPgId: task.attributes.assigned_by.pg_id,

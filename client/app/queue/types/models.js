@@ -53,7 +53,7 @@ export type Task = {
     id: number
   },
   addedByName?: string,
-  addedByCssId?: string,
+  addedByCssId: ?string,
   taskId: string,
   taskType?: string,
   documentId: ?string,

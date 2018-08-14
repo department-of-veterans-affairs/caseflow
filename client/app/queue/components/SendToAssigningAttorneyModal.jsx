@@ -36,7 +36,7 @@ class SendToAssigningAttorneyModal extends React.Component<Props> {
 
   render = () => {
     const { task } = this.props;
-    const assignedByFullName = `${task.assignedByFirstName[0]}. ${task.assignedByLastName}`
+    const assignedByFullName = `${task.assignedByFirstName[0]}. ${task.assignedByLastName}`;
 
     return <Modal
       title={COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY}
@@ -48,7 +48,7 @@ class SendToAssigningAttorneyModal extends React.Component<Props> {
         classNames: ['usa-button-primary', 'usa-button-hover'],
         name: 'Send back to attorney',
         onClick: () => {
-          this.sendToAttorney()
+          this.sendToAttorney();
           this.closeModal();
         }
       }]}
@@ -68,4 +68,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   checkoutStagedAppeal
 }, dispatch);
 
-export default (connect(mapStateToProps, mapDispatchToProps)(SendToAssigningAttorneyModal): React.ComponentType<Params>);
+export default (
+  connect(mapStateToProps, mapDispatchToProps)(SendToAssigningAttorneyModal):
+  React.ComponentType<Params>
+);

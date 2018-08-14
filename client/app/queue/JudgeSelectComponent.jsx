@@ -23,7 +23,7 @@ import type {
 } from './types/models';
 
 type Params = {|
-  assignedByCssId: string
+  assignedByCssId: ?string
 |};
 
 type Props = Params & {|

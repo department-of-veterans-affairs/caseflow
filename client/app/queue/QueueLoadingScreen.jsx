@@ -93,6 +93,7 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
     }
 
     this.props.fetchAllAttorneys();
+
     return ApiUtil.get(`/users?role=Attorney&judge_css_id=${this.props.userCssId}`).
       then((resp) => this.props.setAttorneysOfJudge(resp.body.attorneys));
   }

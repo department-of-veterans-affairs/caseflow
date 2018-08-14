@@ -12,7 +12,7 @@ import IssueRemandReasonsOptions from './components/IssueRemandReasonsOptions';
 import {
   fullWidth,
   ISSUE_DISPOSITIONS,
-  PAGE_TITLES,
+  PAGE_TITLES
 } from './constants';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 const subHeadStyling = css({ marginBottom: '2rem' });
