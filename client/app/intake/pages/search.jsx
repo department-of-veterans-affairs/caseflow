@@ -95,8 +95,8 @@ class Search extends React.PureComponent {
       },
       ramp_election_is_active: {
         title: 'This Veteran has a pending RAMP EP in VBMS',
-        body: 'If this Veteran has not yet received a RAMP decision on their RAMP Opt-In' +
-          ' Election Form, notify them using the “RAMP Ineligible Letter” (premature election).'
+        body: 'If this Veteran has not yet received a decision for their RAMP Opt-In Election,' +
+          ' notify them using the “RAMP Ineligible Letter” (premature election).'
       },
       ramp_election_no_issues: {
         title: 'This Veteran has a pending RAMP EP with no contentions',

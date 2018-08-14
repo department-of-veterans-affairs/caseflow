@@ -532,6 +532,13 @@ class RegionalOffice
     !!location_hash[:city]
   end
 
+  def self.city_state_by_key(ro_key)
+    regional_office = CITIES[ro_key]
+    if regional_office
+      "#{regional_office[:city]}, #{regional_office[:state]}"
+    end
+  end
+
   private
 
   def location_hash
