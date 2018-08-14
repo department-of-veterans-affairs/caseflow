@@ -19,7 +19,8 @@ import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 import type {
-  TaskWithAppeal
+  TaskWithAppeal,
+  Task
 } from '../types/models';
 
 type Params = {|
@@ -32,6 +33,7 @@ type Params = {|
   includeIssueCount?: boolean,
   includeDueDate?: boolean,
   includeDaysWaiting?: boolean,
+  includeDaysOnHold?: boolean,
   includeReaderLink?: boolean,
   includeDocumentCount?: boolean,
   requireDasRecord?: boolean,
@@ -205,6 +207,16 @@ class TaskTable extends React.PureComponent<Props> {
     } : null;
   }
 
+  numDaysOnHold = (task: Task) => moment().diff(task.placedOnHoldAt, 'days')
+
+  caseDaysOnHoldColumn = () => (this.props.includeDaysOnHold ? {
+    header: COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE,
+    valueFunction: (task: Task) => {
+      return `${this.numDaysOnHold(task)} of ${task.onHoldDuration || '?'}`;
+    },
+    getSortValue: (task: Task) => this.numDaysOnHold(task)
+  } : null)
+
   caseReaderLinkColumn = () => {
     return this.props.includeReaderLink ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
@@ -233,6 +245,7 @@ class TaskTable extends React.PureComponent<Props> {
       this.caseIssueCountColumn(),
       this.caseDueDateColumn(),
       this.caseDaysWaitingColumn(),
+      this.caseDaysOnHoldColumn(),
       this.caseReaderLinkColumn()
     ]);
 

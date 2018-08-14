@@ -78,7 +78,7 @@ const OnHoldTasksTab = connect(
         includeTask
         includeType
         includeDocketNumber
-        includeDaysWaiting
+        includeDaysOnHold
         includeReaderLink
         tasks={props.tasks}
       />
