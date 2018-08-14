@@ -142,7 +142,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
     unless allocated_days_for_ro(ro_key).to_i <= max_allocation
       fail HearingSchedule::Errors::NotEnoughAvailableDays.new("#{ro_key} can only hold #{max_allocation} hearing days.",
-        { ro_key: ro_key, max_allocation: max_allocation })
+                                                               ro_key: ro_key, max_allocation: max_allocation)
     end
   end
 

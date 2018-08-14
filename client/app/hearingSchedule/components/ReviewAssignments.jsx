@@ -195,5 +195,5 @@ ReviewAssignments.propTypes = {
   onClickConfirmAssignments: PropTypes.func,
   onClickCloseModal: PropTypes.func,
   onConfirmAssignmentsUpload: PropTypes.func,
-  errorDetails: PropTypes.object
+  spErrorDetails: PropTypes.object
 };
