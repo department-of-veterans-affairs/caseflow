@@ -48,7 +48,6 @@ export type Task = {
   externalAppealId: string,
   assignedOn: string,
   dueOn: string,
-  userId: string,
   assignedTo: {
     cssId: string,
     id: number
@@ -60,6 +59,7 @@ export type Task = {
   documentId: string,
   assignedByFirstName: string,
   assignedByLastName: string,
+  assignedByPgId: string,
   workProduct: string,
   placedOnHoldAt: string,
   previousTaskAssignedOn: string
@@ -87,7 +87,7 @@ export type AppealDetail = {
   tasks: ?Array<Task>
 };
 
-export type AppealDetails = { [string]: AppealDetail};
+export type AppealDetails = { [string]: AppealDetail };
 
 export type BasicAppeal = {
   id: string,
