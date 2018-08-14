@@ -1,5 +1,5 @@
 class IntakesController < ApplicationController
-  before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application, :check_out_of_service
+  before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application, :check_intake_out_of_service
 
   def index
     no_cache
@@ -73,7 +73,6 @@ class IntakesController < ApplicationController
   def verify_feature_enabled
     redirect_to "/unauthorized" unless FeatureToggle.enabled?(:intake)
   end
-
 
   def check_intake_out_of_service
     render "out_of_service", layout: "application" if Rails.cache.read("intake_out_of_service")
