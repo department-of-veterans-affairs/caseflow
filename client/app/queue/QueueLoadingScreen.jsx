@@ -29,24 +29,33 @@ type Props = Params & {|
   // From state
   tasks: Tasks,
   appeals: Appeals,
+  amaTasks: Tasks,
   loadedUserId: number,
   judges: UsersById,
   // Action creators
   onReceiveQueue: typeof onReceiveQueue,
   setAttorneysOfJudge: typeof setAttorneysOfJudge,
   fetchAllAttorneys: typeof fetchAllAttorneys,
-  fetchAmaTasksOfUser: typeof fetchAmaTasksOfUser,
+  fetchAmaTasksOfUser: Function,
   setUserId: typeof setUserId
 |};
 
 class QueueLoadingScreen extends React.PureComponent<Props> {
-  loadRelevantCases = () => {
-    const promises = [];
+  maybeLoadAmaQueue = () => {
+    const {
+      userId,
+      appeals,
+      amaTasks,
+      userRole,
+      loadedUserId
+    } = this.props;
 
-    promises.push(this.maybeLoadLegacyQueue());
-    promises.push(this.props.fetchAmaTasksOfUser(this.props.userId, this.props.userRole));
+    if (!_.isEmpty(amaTasks) && !_.isEmpty(appeals) && loadedUserId === userId) {
+      return Promise.resolve();
+    }
 
-    return Promise.all(promises);
+    return this.props.fetchAmaTasksOfUser(userId, userRole).
+      then(() => this.props.setUserId(userId));
   }
 
   maybeLoadLegacyQueue = () => {
@@ -78,25 +87,19 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
     });
   };
 
-  loadAttorneysOfJudge = () => {
-    return ApiUtil.get(`/users?role=Attorney&judge_css_id=${this.props.userCssId}`).
-      then(
-        (resp) => {
-          this.props.setAttorneysOfJudge(resp.body.attorneys);
-        });
-  }
-
   maybeLoadJudgeData = () => {
     if (this.props.userRole !== USER_ROLE_TYPES.judge) {
       return Promise.resolve();
     }
-    this.props.fetchAllAttorneys();
 
-    return this.loadAttorneysOfJudge();
+    this.props.fetchAllAttorneys();
+    return ApiUtil.get(`/users?role=Attorney&judge_css_id=${this.props.userCssId}`).
+      then((resp) => this.props.setAttorneysOfJudge(resp.body.attorneys));
   }
 
   createLoadPromise = () => Promise.all([
-    this.loadRelevantCases(),
+    this.maybeLoadAmaQueue(),
+    this.maybeLoadLegacyQueue(),
     this.maybeLoadJudgeData()
   ]);
 
@@ -134,11 +137,12 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State) => {
-  const { tasks, appeals } = state.queue;
+  const { tasks, amaTasks, appeals } = state.queue;
 
   return {
     tasks,
     appeals,
+    amaTasks,
     loadedUserId: state.ui.loadedUserId
   };
 };
