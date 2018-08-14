@@ -50,8 +50,10 @@ describe('QueueLoadingScreen', () => {
         externalAppealId: '3625593',
         assignedOn: '2018-08-02T17:37:03.000Z',
         dueOn: '2018-08-11T00:00:00.000Z',
-        userId: 'BVANKUVALIS',
-        assignedToPgId: 130,
+        assignedTo: {
+          cssId: 'BVANKUVALIS',
+          id: 130
+        },
         addedByName: 'Nash X Kuvalis',
         addedByCssId: 'BVANKUVALIS',
         taskId: '3625593-2018-07-11',
