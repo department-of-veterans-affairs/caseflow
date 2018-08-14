@@ -210,6 +210,14 @@ describe ColocatedTask do
         expect(colocated_admin_action.reload.started_at).to eq time5
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
         expect(colocated_admin_action.completed_at).to eq time6
+
+        time7 = Time.utc(2015, 1, 9, 12, 0, 0)
+        Timecop.freeze(time7)
+        colocated_admin_action.update(status: "assigned")
+        # go back to in-progres - should reset date
+        expect(colocated_admin_action.reload.started_at).to eq time5
+        expect(colocated_admin_action.placed_on_hold_at).to eq time3
+        expect(colocated_admin_action.completed_at).to eq time6
       end
     end
   end
