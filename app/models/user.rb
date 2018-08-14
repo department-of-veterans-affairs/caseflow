@@ -238,9 +238,9 @@ class User < ApplicationRecord
     # :nocov:
 
     def system_user
-      new(
+      find_or_initialize_by(
         station_id: "283",
-        css_id: Rails.deploy_env?(:prod) ? "CSFLOW" : "CASEFLOW1"
+        css_id: Rails.deploy_env?(:prod) ? "CSFLOW" : "CASEFLOW1",
       )
     end
 
