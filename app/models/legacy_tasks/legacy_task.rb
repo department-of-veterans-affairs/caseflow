@@ -40,7 +40,7 @@ class LegacyTask
       due_on: record.date_due,
       docket_name: "legacy",
       added_by: record.added_by,
-      docket_date: record.docket_date,
+      docket_date: record.docket_date.try(:to_date),
       appeal_id: appeal.id,
       assigned_to: user,
       task_id: record.created_at ? record.vacols_id + "-" + record.created_at.strftime("%Y-%m-%d") : nil,
