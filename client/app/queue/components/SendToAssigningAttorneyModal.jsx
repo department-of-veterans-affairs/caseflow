@@ -42,6 +42,12 @@ class SendToAssigningAttorneyModal extends React.Component<Props> {
     this.props.checkoutStagedAppeal(this.props.appealId);
   }
 
+  getAttorneyName = () => {
+    const { task } = this.props;
+
+    return `${task.assignedByFirstName[0]}. ${task.assignedByLastName}`;
+  }
+
   sendToAttorney = () => {
     const {
       task,
@@ -55,7 +61,10 @@ class SendToAssigningAttorneyModal extends React.Component<Props> {
         }
       }
     }
-    const successMsg = { title: 'Reassignment success' };
+    const successMsg = {
+      title: sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION, appeal.veteranFullName, this.getAttorneyName()),
+      detail: sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION_DETAIL, this.getAttorneyName())
+    };
 
     this.props.requestSave(`/tasks/${task.taskId}`, payload, successMsg, 'patch').
       then(() => {
@@ -64,29 +73,24 @@ class SendToAssigningAttorneyModal extends React.Component<Props> {
       });
   }
 
-  render = () => {
-    const { task } = this.props;
-    const assignedByFullName = `${task.assignedByFirstName[0]}. ${task.assignedByLastName}`;
-
-    return <Modal
-      title={COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY}
-      buttons={[{
-        classNames: ['usa-button', 'cf-btn-link'],
-        name: 'Cancel',
-        onClick: this.closeModal
-      }, {
-        classNames: ['usa-button-primary', 'usa-button-hover'],
-        name: 'Send back to attorney',
-        onClick: () => {
-          this.sendToAttorney();
-          this.closeModal();
-        }
-      }]}
-      closeHandler={this.closeModal}>
-      {COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY}&nbsp;
-      <b>{sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY_ATTORNEY_NAME, assignedByFullName)}</b>
-    </Modal>;
-  };
+  render = () => <Modal
+    title={COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY}
+    buttons={[{
+      classNames: ['usa-button', 'cf-btn-link'],
+      name: 'Cancel',
+      onClick: this.closeModal
+    }, {
+      classNames: ['usa-button-primary', 'usa-button-hover'],
+      name: 'Send back to attorney',
+      onClick: () => {
+        this.sendToAttorney();
+        this.closeModal();
+      }
+    }]}
+    closeHandler={this.closeModal}>
+    {COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY}&nbsp;
+    <b>{sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY_ATTORNEY_NAME, this.getAttorneyName())}</b>
+  </Modal>;
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => ({

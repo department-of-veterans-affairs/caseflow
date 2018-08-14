@@ -42,7 +42,7 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
     }];
 
     return <AppSegment filledBackground>
-      {success && <Alert type="success" title={success.title} detail={success.detail} />}
+      {success && <Alert type="success" title={success.title} message={success.detail} />}
       <TabWindow name="tasks-tabwindow" tabs={tabs} />
     </AppSegment>;
   };

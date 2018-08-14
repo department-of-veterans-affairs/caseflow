@@ -151,6 +151,8 @@
   "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY": "Send back to attorney",
   "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY": "You are sending your completed administrative action back to",
   "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY_ATTORNEY_NAME": "%s (assigning attorney)",
+  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION": "%s's case has been sent back to %s (Assigning Attorney)",
+  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION_DETAIL": "If you've made a mistake, please email %s to manage any changes.",
 
   "MODAL_CANCEL_ATTORNEY_CHECKOUT": "All changes made to this page will be lost, except for the adding, editing, and deleting of issues."
 }
