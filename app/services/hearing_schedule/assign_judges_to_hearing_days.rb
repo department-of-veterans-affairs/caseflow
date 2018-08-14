@@ -5,7 +5,7 @@ class HearingSchedule::AssignJudgesToHearingDays
   attr_reader :judges, :video_co_hearing_days
 
   TB_ADDITIONAL_NA_DAYS = 3
-  CO_ROOM_NUM = 1
+  CO_ROOM_NUM = "1".freeze
 
   class HearingDaysNotAllocated < StandardError; end
   class NoJudgesProvided < StandardError; end
@@ -53,7 +53,7 @@ class HearingSchedule::AssignJudgesToHearingDays
         verify_assignments(num_days_assigned, assigned_hearing_days, hearing_days_assigned)
       end
     end
-    assigned_hearing_days
+    assigned_hearing_days.sort_by { |day| day[:hearing_date] }
   end
   # rubocop:enable Metrics/MethodLength
 
@@ -193,15 +193,24 @@ class HearingSchedule::AssignJudgesToHearingDays
     filter_travel_board_hearing_days(hearing_days[1])
   end
 
+  def co_hearing_day?(hearing_day)
+    hearing_day.folder_nr.nil?
+  end
+
+  def valid_co_day?(day)
+    co_hearing_day?(day) && day.hearing_date.to_date.wednesday? && day.room == CO_ROOM_NUM
+  end
+
+  def valid_ro_hearing_day?(day)
+    day.folder_nr && day.folder_nr.include?("RO")
+  end
+
   def filter_co_hearings(video_co_hearing_days)
     video_co_hearing_days.map do |hearing_day|
       day = OpenStruct.new(hearing_day.attributes)
       day.hearing_date = day.hearing_date.to_date
 
-      unless (co_hearing_day?(day) && !day.hearing_date.wednesday?) ||
-             hearing_day_already_assigned(day) && day.room != CO_ROOM_NUM
-        day
-      end
+      day if (valid_co_day?(day) || valid_ro_hearing_day?(day)) && !hearing_day_already_assigned(day)
     end.compact
   end
 
@@ -216,10 +225,6 @@ class HearingSchedule::AssignJudgesToHearingDays
       end
     end
     assigned
-  end
-
-  def co_hearing_day?(hearing_day)
-    hearing_day.folder_nr.nil?
   end
 
   # Adds 3 days and 3 days prior non-available days for each Judge assigned to a

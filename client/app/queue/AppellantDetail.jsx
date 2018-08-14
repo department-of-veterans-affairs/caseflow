@@ -17,7 +17,7 @@ const addressIndentStyling = (secondLine) => css({
 });
 
 export default class AppellantDetail extends React.PureComponent {
-  getAppealAttr = (attr) => _.get(this.props.appeal.attributes, attr);
+  getAppealAttr = (attr) => _.get(this.props.appeal, attr);
 
   formatAddress = (addressFieldName) => {
     const {
@@ -86,9 +86,9 @@ export default class AppellantDetail extends React.PureComponent {
 
   render = () => <ul {...detailListStyling}>
     {this.getDetails({
-      nameField: 'appellant_full_name',
-      addressField: 'appellant_address',
-      relationField: 'appellant_relationship'
+      nameField: 'appellantFullName',
+      addressField: 'appellantAddress',
+      relationField: 'appellantRelationship'
     })}
   </ul>;
 }

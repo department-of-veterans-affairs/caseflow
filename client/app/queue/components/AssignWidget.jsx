@@ -23,7 +23,7 @@ import type {
   AttorneysOfJudge, State
 } from '../types/state';
 import type {
-  LegacyTask, Attorneys
+  Task, Attorneys
 } from '../types/models';
 
 const OTHER = 'OTHER';
@@ -31,7 +31,7 @@ const OTHER = 'OTHER';
 type Params = {|
   previousAssigneeId: string,
   onTaskAssignment: Function,
-  selectedTasks: Array<LegacyTask>
+  selectedTasks: Array<Task>
 |};
 
 type Props = Params & {|
@@ -89,7 +89,7 @@ class AssignWidget extends React.PureComponent<Props> {
     this.assignTasks(selectedTasks, selectedAssigneeSecondary);
   }
 
-  assignTasks = (selectedTasks: Array<LegacyTask>, assigneeId: string) => {
+  assignTasks = (selectedTasks: Array<Task>, assigneeId: string) => {
     const { previousAssigneeId } = this.props;
 
     this.props.onTaskAssignment(
