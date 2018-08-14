@@ -90,17 +90,17 @@ export default class ReviewAssignments extends React.Component {
     const { spErrorDetails } = this.props;
 
     if (this.props.schedulePeriodError) {
-      let message = <div>Please confirm the information in the spreadsheet is valid and
+      let message = <span>Please confirm the information in the spreadsheet is valid and
         <Link to="/schedule/build/upload"> try again</Link>. If the issue persists, please
         contact the Help Desk.
-      </div>;
+      </span>;
 
       if (spErrorDetails) {
-        message = <div>You have allocated too many hearing days to the {spErrorDetails.details.ro_key},
+        message = <span>You have allocated too many hearing days to the {spErrorDetails.details.ro_key},
         the maximum number of allocations is {spErrorDetails.details.max_allocation}.<br></br>
         Please check your spreadsheet and upload the file again using the "Go back" link below.<br></br>
           <Link to="/schedule/build/upload"> Go back</Link>
-        </div>;
+        </span>;
       }
 
       return <StatusMessage
