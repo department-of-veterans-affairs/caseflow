@@ -165,9 +165,10 @@ class EvaluateDecisionView extends React.PureComponent {
       highlight,
       error
     } = this.props;
-    const dateAssigned = moment(task.assignedOn);
-    const decisionSubmitted = moment(task.previousTaskAssignedOn);
-    const daysWorked = moment().startOf('day').
+
+    const dateAssigned = moment(task.previousTaskAssignedOn);
+    const decisionSubmitted = moment(task.assignedOn);
+    const daysWorked = decisionSubmitted.startOf('day').
       diff(dateAssigned, 'days');
 
     return <React.Fragment>
