@@ -24,6 +24,7 @@ export default class ReaderLink extends React.PureComponent {
       appeal,
       longMessage
     } = this.props;
+    console.log(JSON.stringify(appeal));
 
     return longMessage ?
       <React.Fragment>View Veteran's documents <NewFile appeal={appeal} /></React.Fragment> :

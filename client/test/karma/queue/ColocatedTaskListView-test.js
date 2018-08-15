@@ -12,6 +12,8 @@ import rootReducer from '../../../app/queue/reducers';
 import { onReceiveQueue } from '../../../app/queue/QueueActions';
 import { setUserCssId } from '../../../app/queue/uiReducer/uiActions';
 import { extractAppealsAndAmaTasks } from '../../../app/queue/utils';
+import { BrowserRouter } from 'react-router-dom';
+import { Task, BasicAppeal } from '../../../app/queue/types/models';
 
 describe('ColocatedTaskListView', () => {
   let wrapperColocatedTaskListView = null;
@@ -19,7 +21,9 @@ describe('ColocatedTaskListView', () => {
   const getWrapperColocatedTaskListView = (store) => {
     const wrapper = mount(
       <Provider store={store}>
-        <ColocatedTaskListView />
+        <BrowserRouter>
+          <ColocatedTaskListView />
+        </BrowserRouter>
       </Provider>
     );
 
@@ -79,9 +83,23 @@ describe('ColocatedTaskListView', () => {
       "docket_number": "Missing Docket Number",
       "veteran_name": "Andrew Merica",
       "veteran_file_number": "152003980",
-      "external_id": "3bd1567a-4f07-473c-aefc-3738a6cf58fe",
+      "external_appeal_id": "3bd1567a-4f07-473c-aefc-3738a6cf58fe",
       "aod": false
     }
+  };
+
+  const amaTaskTemplate2: Task = {};
+  const appeal: BasicAppeal = {
+    "id": 5,
+    "type": "Appeal",
+    "externalId": "3bd1567a-4f07-473c-aefc-3738a6cf58fe",
+    "docketName": null,
+    "caseType": "Original",
+    "isAdvancedOnDocket": false,
+    "issueCount": 2,
+    "docketNumber": "Missing Docket Number",
+    "veteranFullName": "Andrew Van Buren",
+    "veteranFileNumber": "152003980"
   };
 
   const amaTaskWith = ({id, cssIdAssignee}) => ({
@@ -132,24 +150,45 @@ describe('ColocatedTaskListView', () => {
       expect(types.text()).to.include(task.attributes.case_type);
       expect(docketNumber.text()).to.include(task.attributes.docket_number);
       expect(daysWaiting.text()).to.equal('1');
-      expect(documents.html()).to.include(`/reader/appeal/${task.attributes.external_id}/documents`);
+      expect(documents.html()).to.include(`/reader/appeal/${task.attributes.external_appeal_id}/documents`);
     });
   });
 
   describe('On hold tab', () => {
     it('shows only on-hold tasks', () => {
       const userCssId = 'BVALSPORER';
-      const taskId = '1';
-      const idUnassigned = '5';
+      const task = amaTaskWith({id: '1', cssIdAssignee: userCssId, placedOnHoldAt: moment().subtract(1, 'days'), onHoldDuration: 30});
       const amaTasks = [
-        amaTaskWith({id: taskId, cssIdAssignee: userCssId}),
-        amaTaskWith({id: idUnassigned, cssIdAssignee: 'NOTBVALSPORER'})
+        task,
+        amaTaskWith({id: '5', cssIdAssignee: 'NOTBVALSPORER', placedOnHoldAt: moment().subtract(1, 'days'), onHoldDuration: 30}),
+        amaTaskWith({id: '6', cssIdAssignee: userCssId})
       ];
       const store = getStore();
+      console.log(JSON.stringify(extractAppealsAndAmaTasks((amaTasks))));
       store.dispatch(onReceiveQueue(extractAppealsAndAmaTasks((amaTasks))));
       store.dispatch(setUserCssId(userCssId));
 
       const wrapper = getWrapperColocatedTaskListView(store);
+
+      wrapper.find('[aria-label="On hold tab window"]').simulate('click');
+
+      const cells = wrapper.find('td');
+
+      expect(cells).to.have.length(6);
+      const wrappers = [];
+
+      for (let i = 0; i < cells.length; i++) {
+        wrappers.push(cells.at(i));
+      }
+      const [caseDetails, tasks, types, docketNumber, daysOnHold, documents] = wrappers;
+
+      expect(caseDetails.text()).to.include(task.attributes.veteran_name);
+      expect(caseDetails.text()).to.include(task.attributes.veteran_file_number);
+      expect(tasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.attributes.action]);
+      expect(types.text()).to.include(task.attributes.case_type);
+      expect(docketNumber.text()).to.include(task.attributes.docket_number);
+      expect(daysOnHold.text()).to.equal('1');
+      expect(documents.html()).to.include(`/reader/appeal/${task.attributes.external_appeal_id}/documents`);
     });
   });
 });
