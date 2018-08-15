@@ -149,8 +149,7 @@ describe PowerOfAttorneyRepository do
             city: "Arlington",
             state: "VA",
             zip: "22202"
-          },
-          rep_type: :appellant_agent
+          }
         )
       end
 
