@@ -8,7 +8,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
   end
 
   describe "GET /idt/api/v1/appeals" do
-    let(:user) { create(:user, css_id: "TEST_ID") }
+    let(:user) { create(:user, css_id: "TEST_ID", full_name: "George Michael") }
 
     let(:token) do
       key, token = Idt::Token.generate_one_time_key_and_proposed_token
@@ -92,7 +92,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         context "and legacy appeal id URL parameter is passed" do
           let(:params) { { appeal_id: appeals.first.vacols_id } }
 
-          it "succeeds" do
+          it "succeeds and passes appeal info" do
             get :details, params: params
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["data"]
@@ -109,6 +109,34 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             expect(response_body["attributes"]["status"]).to eq appeals.first.status
             expect(response_body["attributes"]["veteran_is_deceased"]).to eq !!appeals.first.notice_of_death_date
             expect(response_body["attributes"]["appellant_is_not_veteran"]).to eq !!appeals.first.appellant_first_name
+          end
+
+          context "and case is selected for quality review and has outstanding mail" do
+            let(:assigner) { create(:user, css_id: "ANOTHER_TEST_ID", full_name: "Lyor Cohen") }
+
+            let(:appeals) do
+              c = create(:case,
+                         :outstanding_mail,
+                         :selected_for_quality_review,
+                         :assigned,
+                         user: user,
+                         document_id: "1234",
+                         assigner: assigner)
+              [create(:legacy_appeal, vacols_case: c)]
+            end
+
+            it "returns the correct values" do
+              get :details, params: params
+              expect(response.status).to eq 200
+              response_body = JSON.parse(response.body)["data"]
+
+              expect(response_body["attributes"]["previously_selected_for_quality_review"]).to eq true
+              expect(response_body["attributes"]["outstanding_mail"]).to eq true
+              document = response_body["attributes"]["documents"][0]
+              expect(document["assigned_by"]).to eq "Lyor Cohen"
+              expect(document["written_by"]).to eq "George Michael"
+              expect(document["document_id"]).to eq "1234"
+            end
           end
         end
       end
