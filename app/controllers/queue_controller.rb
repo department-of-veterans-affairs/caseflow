@@ -23,5 +23,7 @@ class QueueController < ApplicationController
     Vso.where.not(feature: nil).each do |vso|
       return redirect_to vso.path if FeatureToggle.enabled?(vso.feature.to_sym, user: current_user)
     end
+
+    redirect_to "/unauthorized"
   end
 end
