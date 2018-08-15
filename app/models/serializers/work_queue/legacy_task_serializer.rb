@@ -11,12 +11,19 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
   attribute :task_id
   attribute :task_type
   attribute :document_id
-  attribute :assigned_by_first_name
-  attribute :assigned_by_last_name
   attribute :work_product
+  attribute :appeal_type
   attribute :previous_task do
     {
       assigned_on: object.previous_task.try(:assigned_at)
+    }
+  end
+
+  attribute :assigned_by do
+    {
+      first_name: object.assigned_by_first_name,
+      last_name: object.assigned_by_last_name,
+      pg_id: object.assigned_by_pg_id
     }
   end
 
