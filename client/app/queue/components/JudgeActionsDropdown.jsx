@@ -93,7 +93,10 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
     this.props.setCaseReviewActionType(actionType);
 
     if (actionType === DECISION_TYPES.OMO_REQUEST) {
-      const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, { location: 'omo_office' });
+      const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, {
+        location: 'omo_office',
+        attorney_id: task.assignedByPgId
+      });
       const successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
 
       this.props.requestSave(`/case_reviews/${task.taskId}/complete`, payload, { title: successMsg }).

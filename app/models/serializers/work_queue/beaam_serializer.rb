@@ -5,6 +5,14 @@ class WorkQueue::BeaamSerializer < ActiveModel::Serializer
     }
   end
 
+  attribute :assigned_by do
+    {
+      first_name: nil,
+      last_name: nil,
+      pg_id: nil
+    }
+  end
+
   attribute :docket_name do
     object.docket_name
   end
