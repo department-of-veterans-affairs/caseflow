@@ -5,7 +5,7 @@ class VACOLS::Representative < VACOLS::Record
 
   class InvalidRepTypeError < StandardError; end
 
-    # mapping of values in REP.REPTYPE
+  # mapping of values in REP.REPTYPE
   ACTIVE_REPTYPES = {
     appellant_attorney: { code: "A", name: "Attorney" },
     appellant_agent: { code: "G", name: "Agent" },
