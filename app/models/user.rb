@@ -125,6 +125,10 @@ class User < ApplicationRecord
     Functions.granted?("Global Admin", css_id)
   end
 
+  def vso_employee?
+    Functions.granted?("VSO", css_id)
+  end
+
   def granted?(thing)
     Functions.granted?(thing, css_id)
   end
