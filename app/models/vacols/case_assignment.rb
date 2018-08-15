@@ -15,7 +15,18 @@ class VACOLS::CaseAssignment < VACOLS::Record
   end
 
   def assigned_by
-    OpenStruct.new(first_name: assigned_by_first_name, last_name: assigned_by_last_name)
+    assigned_by_user_id = if assigned_by_css_id
+                            User.find_or_create_by(
+                              css_id: assigned_by_css_id,
+                              station_id: User::BOARD_STATION_ID
+                            ).id
+                          end
+
+    OpenStruct.new(
+      first_name: assigned_by_first_name,
+      last_name: assigned_by_last_name,
+      pg_id: assigned_by_user_id
+    )
   end
 
   class << self
@@ -94,6 +105,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "folder.tinum as docket_number",
              "s3.snamef as assigned_by_first_name",
              "s3.snamel as assigned_by_last_name",
+             "s3.sdomainid as assigned_by_css_id",
              "s2.sdomainid as assigned_to_css_id")
         .joins(<<-SQL)
           LEFT JOIN decass
