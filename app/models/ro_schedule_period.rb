@@ -18,14 +18,9 @@ class RoSchedulePeriod < SchedulePeriod
   end
 
   def schedule_confirmed(hearing_schedule)
-    update!(finalized: false)
-    begin
-      transaction do
-        HearingDay.create_schedule(hearing_schedule)
-        update!(finalized: true)
-      end
-    rescue
-      update!(finalized: nil)
+    transaction do
+      HearingDay.create_schedule(hearing_schedule)
+      super
     end
   end
 

@@ -45,7 +45,8 @@ class BuildScheduleContainer extends React.PureComponent {
 
   render = () => {
 
-    const vacolsLoadingMessage = 'We are uploading your assignments to VACOLS';
+    const vacolsLoadingMessage = 'We are uploading to VACOLS. Please don\'t click the back or refresh buttons until ' +
+      'the upload is finished.';
     const pastScheduleLoadingMessage = 'Loading past schedule uploads...';
     const loadingMessage = this.shouldNotSendAssignments() ? pastScheduleLoadingMessage : vacolsLoadingMessage;
 
