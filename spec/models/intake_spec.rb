@@ -10,6 +10,7 @@ describe Intake do
 
   class TestIntake < Intake
     def find_or_build_initial_detail
+      # Just putting any ole database object here for testing
       Generators::User.build
     end
   end
