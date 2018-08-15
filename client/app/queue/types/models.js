@@ -40,30 +40,27 @@ export type Issue = {
 export type Issues = Array<Issue>;
 
 export type Task = {
-  type: string,
-  title: string,
   action?: string,
-  appealId: string,
-  appealType: string,
+  appealId: number,
   externalAppealId: string,
   assignedOn: string,
-  dueOn: string,
+  dueOn: ?string,
   assignedTo: {
     cssId: string,
     id: number
   },
-  addedByName: string,
-  addedByCssId: string,
+  addedByName?: string,
+  addedByCssId?: string,
   taskId: string,
   taskType?: string,
-  documentId: string,
-  assignedByFirstName: string,
-  assignedByLastName: string,
-  assignedByPgId: string,
-  workProduct: string,
-  placedOnHoldAt: string,
-  onHoldDuration: number,
-  previousTaskAssignedOn: string
+  documentId: ?string,
+  assignedByFirstName?: string,
+  assignedByLastName?: string,
+  assignedByPgId?: string,
+  workProduct: ?string,
+  placedOnHoldAt?: ?string,
+  onHoldDuration?: ?number,
+  previousTaskAssignedOn: ?string
 };
 
 export type Tasks = { [string]: Task };
@@ -91,18 +88,17 @@ export type AppealDetail = {
 export type AppealDetails = { [string]: AppealDetail };
 
 export type BasicAppeal = {
-  id: string,
+  id: number,
   type: string,
   externalId: string,
-  docketName: string,
+  docketName: ?string,
   caseType: string,
   isAdvancedOnDocket: boolean,
-  issues: Array<Object>,
   docketNumber: string,
   veteranFullName: string,
   veteranFileNumber: string,
-  isPaperCase: boolean,
-  tasks: ?Array<Task>
+  isPaperCase: ?boolean,
+  tasks?: Array<Task>
 };
 
 export type BasicAppeals = { [string]: BasicAppeal };

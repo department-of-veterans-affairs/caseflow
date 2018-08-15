@@ -13,7 +13,7 @@ import { onReceiveQueue } from '../../../app/queue/QueueActions';
 import { setUserCssId } from '../../../app/queue/uiReducer/uiActions';
 import { extractAppealsAndAmaTasks } from '../../../app/queue/utils';
 import { BrowserRouter } from 'react-router-dom';
-import { Task, BasicAppeal } from '../../../app/queue/types/models';
+import type { Task, BasicAppeal } from '../../../app/queue/types/models';
 
 describe('ColocatedTaskListView', () => {
   let wrapperColocatedTaskListView = null;
@@ -88,7 +88,36 @@ describe('ColocatedTaskListView', () => {
     }
   };
 
-  const amaTaskTemplate2: Task = {};
+  const amaTaskTemplate2: Task = {
+    "appealId": 5,
+    "externalAppealId": "3bd1567a-4f07-473c-aefc-3738a6cf58fe",
+    "assignedOn": "2018-08-02T11:39:55.148-04:00",
+    "dueOn": null,
+    "assignedTo": {
+      "cssId": "BVALSPORER",
+      "id": 7
+    },
+    "assignedBy": {
+      "id": 1,
+      "station_id": "101",
+      "css_id": "BVASCASPER1",
+      "full_name": "Attorney with cases",
+      "email": null,
+      "roles": [
+        "BVASCASPER1"
+      ],
+      "selected_regional_office": null,
+      "display_name": "BVASCASPER1 (VACO)",
+      "judge_css_id": "BVAOSCHOWALT"
+    },
+    "taskId": "8",
+    "action": "new_rep_arguments",
+    "documentId": null,
+    "workProduct": null,
+    "previousTaskAssignedOn": null,
+    "placedOnHoldAt": null,
+    "onHoldDuration": null
+  };
   const appeal: BasicAppeal = {
     "id": 5,
     "type": "Appeal",
@@ -99,7 +128,8 @@ describe('ColocatedTaskListView', () => {
     "issueCount": 2,
     "docketNumber": "Missing Docket Number",
     "veteranFullName": "Andrew Van Buren",
-    "veteranFileNumber": "152003980"
+    "veteranFileNumber": "152003980",
+    "isPaperCase": undefined
   };
 
   const amaTaskWith = ({id, cssIdAssignee}) => ({
