@@ -41,7 +41,7 @@ FactoryBot.define do
           demdusr: assigner_slogid ? assigner_slogid : "ASSIGNER",
           dereceive: (evaluator.user && evaluator.user.vacols_roles.include?("judge")) ? Time.zone.today : nil,
           dedocid: evaluator.document_id || nil,
-          deatty: sattyid
+          deatty: sattyid ? sattyid || ''
         )
       end
     end
