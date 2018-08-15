@@ -12,6 +12,7 @@ describe Intake do
   class AnotherTestIntake < Intake; end
 
   let(:veteran_file_number) { "64205050" }
+  let(:country) { "USA" }
 
   let(:detail) do
     build(:ramp_election, veteran_file_number: veteran_file_number, notice_date: Time.zone.now)
@@ -31,7 +32,7 @@ describe Intake do
     )
   end
 
-  let!(:veteran) { Generators::Veteran.build(file_number: "64205050") }
+  let!(:veteran) { Generators::Veteran.build(file_number: "64205050", country: country) }
 
   let(:completion_status) { nil }
   let(:completion_started_at) { nil }
@@ -238,6 +239,15 @@ describe Intake do
       it "adds invalid_file_number and returns false" do
         expect(subject).to eq(false)
         expect(intake.error_code).to eq("invalid_file_number")
+      end
+    end
+
+    context "country is null" do
+      let(:country) { nil }
+
+      it "adds invalid_file_number and returns false" do
+        expect(subject).to eq(false)
+        expect(intake.error_code).to eq("veteran_not_valid")
       end
     end
 
