@@ -38,101 +38,102 @@ describe('ColocatedTaskListView', () => {
   });
 
   const amaTaskTemplate = {
-    "id": "8",
-    "type": "colocated_tasks",
-    "attributes": {
-      "type": "ColocatedTask",
-      "action": "new_rep_arguments",
-      "appeal_id": 5,
-      "status": "assigned",
-      "assigned_to": {
-        "id": 7,
-        "station_id": "101",
-        "css_id": "BVALSPORER",
-        "full_name": "Co-located no cases",
-        "email": null,
-        "roles": [
-          "BVALSPORER"
+    id: '8',
+    type: 'colocated_tasks',
+    attributes: {
+      type: 'ColocatedTask',
+      action: 'new_rep_arguments',
+      appeal_id: 5,
+      status: 'assigned',
+      assigned_to: {
+        id: 7,
+        station_id: '101',
+        css_id: 'BVALSPORER',
+        full_name: 'Co-located no cases',
+        email: null,
+        roles: [
+          'BVALSPORER'
         ],
-        "selected_regional_office": null,
-        "display_name": "BVALSPORER (VACO)",
-        "judge_css_id": null
+        selected_regional_office: null,
+        display_name: 'BVALSPORER (VACO)',
+        judge_css_id: null
       },
-      "assigned_by": {
-        "id": 1,
-        "station_id": "101",
-        "css_id": "BVASCASPER1",
-        "full_name": "Attorney with cases",
-        "email": null,
-        "roles": [
-          "BVASCASPER1"
+      assigned_by: {
+        id: 1,
+        station_id: '101',
+        css_id: 'BVASCASPER1',
+        full_name: 'Attorney with cases',
+        email: null,
+        roles: [
+          'BVASCASPER1'
         ],
-        "selected_regional_office": null,
-        "display_name": "BVASCASPER1 (VACO)",
-        "judge_css_id": "BVAOSCHOWALT"
+        selected_regional_office: null,
+        display_name: 'BVASCASPER1 (VACO)',
+        judge_css_id: 'BVAOSCHOWALT'
       },
-      "assigned_at": moment().subtract(47, 'hours').format(),
-      "started_at": null,
-      "completed_at": null,
-      "placed_on_hold_at": null,
-      "on_hold_duration": null,
-      "instructions": "poa is missing",
-      "appeal_type": "Appeal",
-      "docket_name": null,
-      "case_type": "Original",
-      "docket_number": "Missing Docket Number",
-      "veteran_name": "Andrew Merica",
-      "veteran_file_number": "152003980",
-      "external_appeal_id": "3bd1567a-4f07-473c-aefc-3738a6cf58fe",
-      "aod": false
+      assigned_at: moment().subtract(47, 'hours').
+        format(),
+      started_at: null,
+      completed_at: null,
+      placed_on_hold_at: null,
+      on_hold_duration: null,
+      instructions: 'poa is missing',
+      appeal_type: 'Appeal',
+      docket_name: null,
+      case_type: 'Original',
+      docket_number: 'Missing Docket Number',
+      veteran_name: 'Andrew Merica',
+      veteran_file_number: '152003980',
+      external_appeal_id: '3bd1567a-4f07-473c-aefc-3738a6cf58fe',
+      aod: false
     }
   };
 
   const amaTaskTemplate2: Task = {
-    "appealId": 5,
-    "externalAppealId": "3bd1567a-4f07-473c-aefc-3738a6cf58fe",
-    "assignedOn": "2018-08-02T11:39:55.148-04:00",
-    "dueOn": null,
-    "assignedTo": {
-      "cssId": "BVALSPORER",
-      "id": 7
+    appealId: 5,
+    externalAppealId: '3bd1567a-4f07-473c-aefc-3738a6cf58fe',
+    assignedOn: '2018-08-02T11:39:55.148-04:00',
+    dueOn: null,
+    assignedTo: {
+      cssId: 'BVALSPORER',
+      id: 7
     },
-    "assignedBy": {
-      "id": 1,
-      "station_id": "101",
-      "css_id": "BVASCASPER1",
-      "full_name": "Attorney with cases",
-      "email": null,
-      "roles": [
-        "BVASCASPER1"
+    assignedBy: {
+      id: 1,
+      station_id: '101',
+      css_id: 'BVASCASPER1',
+      full_name: 'Attorney with cases',
+      email: null,
+      roles: [
+        'BVASCASPER1'
       ],
-      "selected_regional_office": null,
-      "display_name": "BVASCASPER1 (VACO)",
-      "judge_css_id": "BVAOSCHOWALT"
+      selected_regional_office: null,
+      display_name: 'BVASCASPER1 (VACO)',
+      judge_css_id: 'BVAOSCHOWALT'
     },
-    "taskId": "8",
-    "action": "new_rep_arguments",
-    "documentId": null,
-    "workProduct": null,
-    "previousTaskAssignedOn": null,
-    "placedOnHoldAt": null,
-    "onHoldDuration": null
+    taskId: '8',
+    action: 'new_rep_arguments',
+    documentId: null,
+    workProduct: null,
+    previousTaskAssignedOn: null,
+    placedOnHoldAt: null,
+    onHoldDuration: null
   };
   const appeal: BasicAppeal = {
-    "id": 5,
-    "type": "Appeal",
-    "externalId": "3bd1567a-4f07-473c-aefc-3738a6cf58fe",
-    "docketName": null,
-    "caseType": "Original",
-    "isAdvancedOnDocket": false,
-    "issueCount": 2,
-    "docketNumber": "Missing Docket Number",
-    "veteranFullName": "Andrew Van Buren",
-    "veteranFileNumber": "152003980",
-    "isPaperCase": undefined
+    id: 5,
+    type: 'Appeal',
+    externalId: '3bd1567a-4f07-473c-aefc-3738a6cf58fe',
+    docketName: null,
+    caseType: 'Original',
+    isAdvancedOnDocket: false,
+    issueCount: 2,
+    docketNumber: 'Missing Docket Number',
+    veteranFullName: 'Andrew Van Buren',
+    veteranFileNumber: '152003980',
+    isPaperCase: undefined
   };
 
-  const amaTaskWith = ({id, cssIdAssignee}) => ({
+  const amaTaskWith = ({ id, cssIdAssignee }) => ({
     ...amaTaskTemplate,
     id,
     attributes: {
@@ -151,13 +152,16 @@ describe('ColocatedTaskListView', () => {
       const userCssId = 'BVALSPORER';
       const taskId = '1';
       const idUnassigned = '5';
-      const taskNewAssigned = amaTaskWith({id: taskId, cssIdAssignee: userCssId});
-      const taskUnassigned = amaTaskWith({id: idUnassigned, cssIdAssignee: 'NOTBVALSPORER'});
+      const taskNewAssigned = amaTaskWith({ id: taskId,
+        cssIdAssignee: userCssId });
+      const taskUnassigned = amaTaskWith({ id: idUnassigned,
+        cssIdAssignee: 'NOTBVALSPORER' });
       const amaTasks = [
         taskNewAssigned,
         taskUnassigned
       ];
       const store = getStore();
+
       store.dispatch(onReceiveQueue(extractAppealsAndAmaTasks((amaTasks))));
       store.dispatch(setUserCssId(userCssId));
 
@@ -187,13 +191,21 @@ describe('ColocatedTaskListView', () => {
   describe('On hold tab', () => {
     it('shows only on-hold tasks', () => {
       const userCssId = 'BVALSPORER';
-      const task = amaTaskWith({id: '1', cssIdAssignee: userCssId, placedOnHoldAt: moment().subtract(1, 'days'), onHoldDuration: 30});
+      const task = amaTaskWith({ id: '1',
+        cssIdAssignee: userCssId,
+        placedOnHoldAt: moment().subtract(1, 'days'),
+        onHoldDuration: 30 });
       const amaTasks = [
         task,
-        amaTaskWith({id: '5', cssIdAssignee: 'NOTBVALSPORER', placedOnHoldAt: moment().subtract(1, 'days'), onHoldDuration: 30}),
-        amaTaskWith({id: '6', cssIdAssignee: userCssId})
+        amaTaskWith({ id: '5',
+          cssIdAssignee: 'NOTBVALSPORER',
+          placedOnHoldAt: moment().subtract(1, 'days'),
+          onHoldDuration: 30 }),
+        amaTaskWith({ id: '6',
+          cssIdAssignee: userCssId })
       ];
       const store = getStore();
+
       console.log(JSON.stringify(extractAppealsAndAmaTasks((amaTasks))));
       store.dispatch(onReceiveQueue(extractAppealsAndAmaTasks((amaTasks))));
       store.dispatch(setUserCssId(userCssId));

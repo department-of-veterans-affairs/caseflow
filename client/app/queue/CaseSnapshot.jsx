@@ -93,6 +93,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     if (this.props.userRole === USER_ROLES.JUDGE) {
       const assignedByFirstName = taskAssignedToUser.assignedByFirstName;
       const assignedByLastName = taskAssignedToUser.assignedByLastName;
+
       if (!assignedByFirstName ||
           !assignedByLastName ||
           !taskAssignedToUser.documentId) {
