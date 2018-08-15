@@ -79,7 +79,7 @@ class AppealsController < ApplicationController
   def get_appeals_for_file_number(file_number)
     return file_number_not_found_error unless file_number
 
-    return veteran_file_access_prohibited_error unless BGSService.new.can_access?(file_number)
+    return veteran_file_access_prohibited_error if current_user.can?("VSO") && !BGSService.new.can_access?(file_number)
 
     MetricsService.record("VACOLS: Get appeal information for file_number #{file_number}",
                           service: :queue,
