@@ -136,7 +136,7 @@ FactoryBot.define do
 
     trait :outstanding_mail do
       after(:create) do |vacols_case|
-        create(:mail, mlfolder: vacols_case.bfkey, mltype: "05")
+        create(:mail, mlfolder: vacols_case.bfkey, mltype: "05", mlcompdate: nil)
       end
     end
 

@@ -1770,8 +1770,9 @@ describe LegacyAppeal do
     end
   end
 
-  context "#has_outstanding_vacols_mail?", focus: true do
-    subject { appeal.has_outstanding_vacols_mail? }
+  context "#has_outstanding_vacols_mail?" do
+    let(:vacols_case) { create(:case) }
+    subject { appeal.outstanding_vacols_mail? }
 
     context "when no mail is outstanding" do
       it "returns false" do
