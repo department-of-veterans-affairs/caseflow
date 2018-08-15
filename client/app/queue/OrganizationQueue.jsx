@@ -23,10 +23,10 @@ class OrganizationQueue extends React.PureComponent {
   }
 
   render = () => {
-    const noAppeals = !_.size(this.props.appeals);
+    const noTasks = !_.size(this.props.tasks);
     let tableContent;
 
-    if (noAppeals) {
+    if (noTasks) {
       tableContent = <StatusMessage title={COPY.NO_TASKS_IN_ATTORNEY_QUEUE_TITLE}>
         {COPY.NO_TASKS_IN_ATTORNEY_QUEUE_MESSAGE}
       </StatusMessage>;

@@ -94,8 +94,6 @@ RSpec.feature "Supplemental Claim Intake" do
       bgs_attrs: { end_product_type_code: "040" }
     )
 
-    Fakes::VBMSService.end_product_claim_id = "IAMANEPID"
-
     visit "/intake"
     safe_click ".Select"
     expect(page).to have_css(".cf-form-dropdown")
@@ -197,6 +195,7 @@ RSpec.feature "Supplemental Claim Intake" do
       "Established EP: 040SCR - Supplemental Claim Rating for Station 397 - ARC"
     )
 
+    # ratings end product
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
       claim_hash: {
         benefit_type_code: "1",
@@ -207,32 +206,54 @@ RSpec.feature "Supplemental Claim Intake" do
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "041",
         end_product_label: "Supplemental Claim Rating",
-        end_product_code: "040SCR",
+        end_product_code: SupplementalClaim::END_PRODUCT_RATING_CODE,
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false
       },
       veteran_hash: intake.veteran.to_vbms_hash
     )
+    ratings_end_product_establishment = EndProductEstablishment.find_by(
+      source: intake.detail,
+      code: SupplementalClaim::END_PRODUCT_RATING_CODE
+    )
+
+    # nonratings end product
+    expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+      claim_hash: {
+        benefit_type_code: "1",
+        payee_code: "00",
+        predischarge: false,
+        claim_type: "Claim",
+        station_of_jurisdiction: "397",
+        date: supplemental_claim.receipt_date.to_date,
+        end_product_modifier: "042",
+        end_product_label: "Supplemental Claim Nonrating",
+        end_product_code: SupplementalClaim::END_PRODUCT_NONRATING_CODE,
+        gulf_war_registry: false,
+        suppress_acknowledgement_letter: false
+      },
+      veteran_hash: intake.veteran.to_vbms_hash
+    )
+    nonratings_end_product_establishment = EndProductEstablishment.find_by(
+      source: intake.detail,
+      code: SupplementalClaim::END_PRODUCT_NONRATING_CODE
+    )
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: "12341234",
-      claim_id: "IAMANEPID",
-      contention_descriptions: ["Description for Active Duty Adjustments", "PTSD denied"]
+      claim_id: ratings_end_product_establishment.reference_id,
+      contention_descriptions: ["PTSD denied"]
+    )
+    expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+      veteran_file_number: "12341234",
+      claim_id: nonratings_end_product_establishment.reference_id,
+      contention_descriptions: ["Description for Active Duty Adjustments"]
     )
 
     rated_issue = supplemental_claim.request_issues.find_by(description: "PTSD denied")
 
     expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
-      claim_id: "IAMANEPID",
-      rated_issue_contention_map: {
-        rated_issue.rating_issue_reference_id => rated_issue.contention_reference_id
-      }
-    )
-
-    rated_issue = supplemental_claim.request_issues.find_by(description: "PTSD denied")
-
-    expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
-      claim_id: "IAMANEPID",
+      claim_id: ratings_end_product_establishment.reference_id,
       rated_issue_contention_map: {
         rated_issue.rating_issue_reference_id => rated_issue.contention_reference_id
       }
@@ -243,8 +264,6 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(intake).to be_success
 
-    resultant_end_product_establishment = EndProductEstablishment.find_by(source: supplemental_claim.reload)
-    expect(resultant_end_product_establishment.reference_id).to eq("IAMANEPID")
     expect(supplemental_claim.request_issues.count).to eq 2
     expect(supplemental_claim.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
@@ -260,7 +279,10 @@ RSpec.feature "Supplemental Claim Intake" do
       decision_date: 1.month.ago.to_date
     )
 
-    visit "/supplemental_claims/IAMANEPID/edit"
+    visit "/supplemental_claims/#{ratings_end_product_establishment.reference_id}/edit"
+    expect(page).to have_content("Veteran Name: Ed Merica")
+
+    visit "/supplemental_claims/#{nonratings_end_product_establishment.reference_id}/edit"
     expect(page).to have_content("Veteran Name: Ed Merica")
 
     visit "/supplemental_claims/4321/edit"
