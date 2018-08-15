@@ -138,10 +138,13 @@ class HearingSchedule::GenerateHearingDaysSchedule
   end
 
   def verify_total_available_days(ro_key)
-    max_hearing_day_assignments = get_max_hearing_days_assignments(ro_key)
+    max_allocation = get_max_hearing_days_assignments(ro_key)
 
-    unless allocated_days_for_ro(ro_key).to_i <= max_hearing_day_assignments
-      fail NotEnoughAvailableDays, "#{ro_key} can only hold #{max_hearing_day_assignments} hearing days."
+    unless allocated_days_for_ro(ro_key).to_i <= max_allocation
+      fail HearingSchedule::Errors::NotEnoughAvailableDays.new(
+        "#{ro_key} can only hold #{max_allocation} hearing days.",
+        ro_key: ro_key, max_allocation: max_allocation
+      )
     end
   end
 
