@@ -94,12 +94,17 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     const taskAssignedToUser = this.props.taskAssignedToUser;
 
     if (this.props.userRole === USER_ROLE_TYPES.judge) {
-      if (!taskAssignedToUser.assignedBy.name || !taskAssignedToUser.documentId) {
+      if (!taskAssignedToUser.assignedBy.firstName ||
+          !taskAssignedToUser.assignedBy.lastName ||
+          !taskAssignedToUser.documentId) {
         return assignedToListItem;
       }
 
+      const firstInitial = String.fromCodePoint(taskAssignedToUser.assignedBy.firstName.codePointAt(0));
+      const nameAbbrev = `${firstInitial}. ${taskAssignedToUser.assignedBy.lastName}`;
+
       return <React.Fragment>
-        <dt>{COPY.CASE_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{taskAssignedToUser.assignedBy.name}</dd>
+        <dt>{COPY.CASE_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{nameAbbrev}</dd>
         <dt>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</dt><dd>{taskAssignedToUser.documentId}</dd>
       </React.Fragment>;
     }

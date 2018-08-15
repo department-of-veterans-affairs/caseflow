@@ -116,12 +116,14 @@ class TaskTable extends React.PureComponent<Props> {
     return this.props.includeDocumentId ? {
       header: COPY.CASE_LIST_TABLE_DOCUMENT_ID_COLUMN_TITLE,
       valueFunction: (task) => {
-        if (!task.assignedBy.name) {
+        if (!task.assignedBy.firstName) {
           return task.documentId;
         }
+        const firstInitial = String.fromCodePoint(task.assignedBy.firstName.codePointAt(0));
+        const nameAbbrev = `${firstInitial}. ${task.assignedBy.lastName}`;
 
         return <React.Fragment>
-          {task.documentId}<br />from {task.assignedBy.name}
+          {task.documentId}<br />from {nameAbbrev}
         </React.Fragment>;
       }
     } : null;
