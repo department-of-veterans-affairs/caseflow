@@ -58,6 +58,7 @@ export type Task = {
   documentId: ?string,
   assignedByFirstName: string,
   assignedByLastName: string,
+  assignedByCssId: string,
   assignedByPgId: string,
   workProduct: ?string,
   placedOnHoldAt?: string,

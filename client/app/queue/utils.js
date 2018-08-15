@@ -27,6 +27,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       addedByCssId: null,
       assignedByFirstName: task.attributes.assigned_by.first_name,
       assignedByLastName: task.attributes.assigned_by.last_name,
+      assignedByCssId: task.attributes.assigned_by.css_id,
       assignedByPgId: task.attributes.assigned_by.pg_id,
       appealId: task.attributes.appeal_id,
       externalAppealId: task.attributes.external_appeal_id,
@@ -95,6 +96,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       documentId: task.attributes.document_id,
       assignedByFirstName: task.attributes.assigned_by.first_name,
       assignedByLastName: task.attributes.assigned_by.last_name,
+      assignedByCssId: task.attributes.assigned_by.css_id,
       assignedByPgId: task.attributes.assigned_by.pg_id,
       workProduct: task.attributes.work_product,
       previousTaskAssignedOn: task.attributes.previous_task.assigned_on

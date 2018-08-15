@@ -15,6 +15,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
     {
       first_name: object.assigned_by.full_name.split(" ").first,
       last_name: object.assigned_by.full_name.split(" ").last,
+      css_id: object.assigned_by.css_id,
       pg_id: object.assigned_by.id
     }
   end

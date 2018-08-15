@@ -9,7 +9,10 @@ import COPY from '../../../COPY.json';
 import Modal from '../../components/Modal';
 
 import { getTasksForAppeal } from '../selectors';
-import { checkoutStagedAppeal } from '../QueueActions';
+import {
+  checkoutStagedAppeal,
+  setTaskAssignment
+} from '../QueueActions';
 import {
   hideModal,
   requestSave
@@ -26,9 +29,9 @@ type Params = {|
 
 type Props = Params & {|
   hideModal: typeof hideModal,
-  // requestSave: typeof requestSave,
-  requestSave: Function,
+  requestSave: typeof requestSave,
   history: Object,
+  setTaskAssignment: Function,
   checkoutStagedAppeal: typeof checkoutStagedAppeal
 |};
 
@@ -66,7 +69,7 @@ class SendToAssigningAttorneyModal extends React.Component<Props> {
     this.props.requestSave(`/tasks/${task.taskId}`, payload, successMsg, 'patch').
       then(() => {
         this.props.history.push('/queue');
-        // todo: change task.assignedTo.cssId so task disappears
+        this.props.setTaskAssignment(task.externalAppealId, task.assignedByCssId, task.assignedByPgId);
       });
   }
 
@@ -98,6 +101,7 @@ const mapStateToProps = (state: State, ownProps: Params) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   hideModal,
   requestSave,
+  setTaskAssignment,
   checkoutStagedAppeal
 }, dispatch);
 
