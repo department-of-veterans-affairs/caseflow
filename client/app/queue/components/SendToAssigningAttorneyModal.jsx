@@ -44,7 +44,7 @@ class SendToAssigningAttorneyModal extends React.Component<Props> {
   getAttorneyName = () => {
     const { task } = this.props;
 
-    return `${task.assignedByFirstName[0]}. ${task.assignedByLastName}`;
+    return `${task.assignedBy.firstName[0]}. ${task.assignedBy.lastName}`;
   }
 
   sendToAttorney = () => {
@@ -56,7 +56,7 @@ class SendToAssigningAttorneyModal extends React.Component<Props> {
       data: {
         task: {
           type: 'ColocatedTask',
-          assigned_to_id: task.assignedByPgId
+          assigned_to_id: task.assignedBy.pgId
         }
       }
     };
@@ -69,7 +69,7 @@ class SendToAssigningAttorneyModal extends React.Component<Props> {
     this.props.requestSave(`/tasks/${task.taskId}`, payload, successMsg, 'patch').
       then(() => {
         this.props.history.push('/queue');
-        this.props.setTaskAssignment(task.externalAppealId, task.assignedByCssId, task.assignedByPgId);
+        this.props.setTaskAssignment(task.externalAppealId, task.assignedBy.cssId, task.assignedBy.pgId);
       });
   }
 

@@ -51,15 +51,17 @@ export type Task = {
     cssId: string,
     id: number
   },
+  assignedBy: {
+    firstName: string,
+    lastName: string,
+    cssId: string,
+    pgId: number,
+  },
   addedByName?: string,
   addedByCssId: ?string,
   taskId: string,
   taskType?: string,
   documentId: ?string,
-  assignedByFirstName: string,
-  assignedByLastName: string,
-  assignedByCssId: string,
-  assignedByPgId: string,
   workProduct: ?string,
   placedOnHoldAt?: string,
   previousTaskAssignedOn: ?string

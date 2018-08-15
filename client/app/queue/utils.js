@@ -25,10 +25,6 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
   tasks.reduce((acc, task: Object): Tasks => {
     acc[task.attributes.external_appeal_id] = {
       addedByCssId: null,
-      assignedByFirstName: task.attributes.assigned_by.first_name,
-      assignedByLastName: task.attributes.assigned_by.last_name,
-      assignedByCssId: task.attributes.assigned_by.css_id,
-      assignedByPgId: task.attributes.assigned_by.pg_id,
       appealId: task.attributes.appeal_id,
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.started_at,
@@ -36,6 +32,12 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
         id: task.attributes.assigned_to.id
+      },
+      assignedBy: {
+        firstName: task.attributes.assigned_by.first_name,
+        lastName: task.attributes.assigned_by.last_name,
+        cssId: task.attributes.assigned_by.css_id,
+        pgId: task.attributes.assigned_by.pg_id
       },
       taskId: task.id,
       action: task.attributes.action,
@@ -89,15 +91,17 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
         cssId: task.attributes.user_id,
         id: task.attributes.assigned_to_pg_id
       },
+      assignedBy: {
+        firstName: task.attributes.assigned_by.first_name,
+        lastName: task.attributes.assigned_by.last_name,
+        cssId: task.attributes.assigned_by.css_id,
+        pgId: task.attributes.assigned_by.pg_id
+      },
       addedByName: task.attributes.added_by_name,
       addedByCssId: task.attributes.added_by_css_id,
       taskId: task.attributes.task_id,
       taskType: task.attributes.task_type,
       documentId: task.attributes.document_id,
-      assignedByFirstName: task.attributes.assigned_by.first_name,
-      assignedByLastName: task.attributes.assigned_by.last_name,
-      assignedByCssId: task.attributes.assigned_by.css_id,
-      assignedByPgId: task.attributes.assigned_by.pg_id,
       workProduct: task.attributes.work_product,
       previousTaskAssignedOn: task.attributes.previous_task.assigned_on
     };
