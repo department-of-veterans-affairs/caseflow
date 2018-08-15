@@ -39,7 +39,8 @@ class RampElectionRollback < ApplicationRecord
   # We currently don't cancel the associated ramp election EP, we
   # require that it was canceled manually beforehand
   def validate_canceled_end_product
-    unless ramp_election && EndProductEstablishment.find_by(source: ramp_election).status_canceled?
+    establishment = EndProductEstablishment.find_by(source: ramp_election)
+    unless establishment && establishment.status_canceled?
       errors.add(:ramp_election, "end_product_not_canceled")
     end
   end
