@@ -465,7 +465,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def previously_selected_for_quality_review
-    case_record.decision_quality_reviews.empty?
+    !case_record.decision_quality_reviews.empty?
   end
 
   def outstanding_vacols_mail?

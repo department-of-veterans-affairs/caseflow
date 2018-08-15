@@ -2,18 +2,15 @@ class Idt::V1::TaskSerializer < ActiveModel::Serializer
   def id
     object.vacols_id
   end
+  attribute :assigned_by do
+    css_id = object.assigned_by_css_id
 
-  attribute :added_by_first_name
-  attribute :added_by_middle_name
-  attribute :added_by_last_name
-  attribute :written_by_first_name do
-    object.attorney_first_name
+    css_id ? User.find_by(css_id: object.assigned_by_css_id).full_name : ""
   end
-  attribute :written_by_middle_name do
-    object.attorney_middle_name
-  end
-  attribute :written_by_last_name do
-    object.attorney_last_name
+  attribute :written_by do
+    css_id = object.assigned_to_css_id
+
+    css_id ? User.find_by(css_id: object.assigned_to_css_id).full_name : ""
   end
   attribute :document_id
 end

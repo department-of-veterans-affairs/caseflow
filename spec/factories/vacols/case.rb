@@ -22,13 +22,16 @@ FactoryBot.define do
       after(:create) do |vacols_case, evaluator|
         if evaluator.user
           existing_staff = VACOLS::Staff.find_by_sdomainid(evaluator.user.css_id)
-          slogid = (existing_staff || create(:staff, user: evaluator.user)).slogid
+          staff = (existing_staff || create(:staff, user: evaluator.user))
+          slogid = staff.slogid
+          sattyid = staff.sattyid
         end
         if evaluator.assigner
           existing_assigner = VACOLS::Staff.find_by_sdomainid(evaluator.assigner.css_id)
           assigner_slogid = (existing_assigner || create(:staff, user: evaluator.assigner)).slogid
         end
         vacols_case.update!(bfcurloc: slogid) if slogid
+
         create_list(
           :decass,
           evaluator.decass_count,
@@ -37,7 +40,8 @@ FactoryBot.define do
           deadusr: slogid ? slogid : "TEST",
           demdusr: assigner_slogid ? assigner_slogid : "ASSIGNER",
           dereceive: (evaluator.user && evaluator.user.vacols_roles.include?("judge")) ? Time.zone.today : nil,
-          dedocid: evaluator.document_id || nil
+          dedocid: evaluator.document_id || nil,
+          deatty: sattyid
         )
       end
     end
@@ -136,7 +140,7 @@ FactoryBot.define do
 
     trait :outstanding_mail do
       after(:create) do |vacols_case|
-        create(:mail, mlfolder: vacols_case.bfkey, mltype: "05", mlcompdate: nil)
+        create(:mail, mlfolder: vacols_case.bfkey, mltype: "05")
       end
     end
 
