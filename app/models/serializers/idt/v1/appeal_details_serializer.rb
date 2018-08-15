@@ -50,9 +50,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :aod
   attribute :cavc
   attribute :status
-  attribute :previously_selected_for_quality_review do
-    object.previously_selected_for_quality_review
-  end
+  attribute :previously_selected_for_quality_review
 
   attribute :outstanding_mail do
     object.outstanding_vacols_mail?
