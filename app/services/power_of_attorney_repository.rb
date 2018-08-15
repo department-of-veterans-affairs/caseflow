@@ -22,7 +22,10 @@ class PowerOfAttorneyRepository
       representative_record: representative
     )
 
-    poa.assign_from_vacols(rep_info)
+    poa.assign_from_vacols(
+      vacols_representative_name: rep_info[:representative_name],
+      vacols_representative_type: rep_info[:representative_type]
+    )
   end
 
   # :nocov:
