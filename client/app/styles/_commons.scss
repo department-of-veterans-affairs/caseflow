@@ -696,27 +696,6 @@ div {
 // Form controls
 // =========================*/
 
-input,
-[type="text"],
-[type="email"],
-[type="password"],
-[type="url"],
-[type="tel"],
-[type="number"],
-[type="search"],
-[type="file"],
-[type="date"],
-[type="datetime-local"],
-[type="month"],
-[type="time"],
-[type="week"],
-textarea,
-select,
-[type="checkbox"] + label,
-[type="radio"] + label {
-  margin-bottom: 0;
-}
-
 // Overrides USWDS */
 textarea {
   max-width: 100%;
@@ -726,8 +705,6 @@ textarea {
   }
 }
 
-
-// Overrides USWDS */
 form {
   max-width: none;
 }
