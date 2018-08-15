@@ -8,6 +8,8 @@ class EndProductEstablishment < ApplicationRecord
 
   class InvalidEndProductError < StandardError; end
 
+  CANCELED_STATUS = "CAN".freeze
+
   def perform!
     fail InvalidEndProductError unless end_product_to_establish.valid?
     establish_claim_in_vbms(end_product_to_establish).tap do |result|
@@ -65,7 +67,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def status_canceled?
-    synced_status == "CAN".freeze
+    synced_status == CANCELED_STATUS
   end
 
   delegate :contentions, to: :cached_result
