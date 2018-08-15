@@ -1,6 +1,9 @@
 class EndProductEstablishment < ApplicationRecord
   class EstablishedEndProductNotFound < StandardError; end
   attr_accessor :valid_modifiers
+  # In AMA reviews, we may create 2 end products at the same time. To avoid using
+  # the same modifier, we add used modifiers to the invalid_modifiers array.
+  attr_writer :invalid_modifiers
   belongs_to :source, polymorphic: true
 
   class InvalidEndProductError < StandardError; end
@@ -8,7 +11,11 @@ class EndProductEstablishment < ApplicationRecord
   def perform!
     fail InvalidEndProductError unless end_product_to_establish.valid?
     establish_claim_in_vbms(end_product_to_establish).tap do |result|
-      update!(reference_id: result.claim_id, established_at: Time.zone.now)
+      update!(
+        reference_id: result.claim_id,
+        established_at: Time.zone.now,
+        modifier: end_product_to_establish.modifier
+      )
     end
   rescue VBMS::HTTPError => error
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
@@ -65,6 +72,10 @@ class EndProductEstablishment < ApplicationRecord
 
   private
 
+  def invalid_modifiers
+    @invalid_modifiers || []
+  end
+
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
@@ -99,11 +110,15 @@ class EndProductEstablishment < ApplicationRecord
     result
   end
 
+  def taken_modifiers
+    @taken_modifiers ||= veteran.end_products.map(&:modifier)
+  end
+
   def find_open_modifier
     return valid_modifiers.first if valid_modifiers.count == 1
 
     valid_modifiers.each do |modifier|
-      if veteran.end_products.select { |ep| ep.modifier == modifier }.empty?
+      if !(taken_modifiers + invalid_modifiers).include?(modifier)
         return modifier
       end
     end
