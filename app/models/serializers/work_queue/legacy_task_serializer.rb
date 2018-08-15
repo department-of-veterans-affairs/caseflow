@@ -21,8 +21,7 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
 
   attribute :assigned_by do
     {
-      first_name: object.assigned_by_first_name,
-      last_name: object.assigned_by_last_name,
+      name: object.assigned_by_display_name,
       css_id: object.assigned_by_css_id,
       pg_id: object.assigned_by_pg_id
     }

@@ -34,8 +34,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
         id: task.attributes.assigned_to.id
       },
       assignedBy: {
-        firstName: task.attributes.assigned_by.first_name,
-        lastName: task.attributes.assigned_by.last_name,
+        name: task.attributes.assigned_by.name,
         cssId: task.attributes.assigned_by.css_id,
         pgId: task.attributes.assigned_by.pg_id
       },
@@ -92,8 +91,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
         id: task.attributes.assigned_to_pg_id
       },
       assignedBy: {
-        firstName: task.attributes.assigned_by.first_name,
-        lastName: task.attributes.assigned_by.last_name,
+        name: task.attributes.assigned_by.name,
         cssId: task.attributes.assigned_by.css_id,
         pgId: task.attributes.assigned_by.pg_id
       },

@@ -52,8 +52,7 @@ export type Task = {
     id: number
   },
   assignedBy: {
-    firstName: string,
-    lastName: string,
+    name: string,
     cssId: string,
     pgId: number,
   },

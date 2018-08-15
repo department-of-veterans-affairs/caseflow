@@ -13,8 +13,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
 
   attribute :assigned_by do
     {
-      first_name: object.assigned_by.full_name.split(" ").first,
-      last_name: object.assigned_by.full_name.split(" ").last,
+      name: object.assigned_by_display_name,
       css_id: object.assigned_by.css_id,
       pg_id: object.assigned_by.id
     }

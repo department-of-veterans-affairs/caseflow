@@ -41,12 +41,6 @@ class SendToAssigningAttorneyModal extends React.Component<Props> {
     this.props.checkoutStagedAppeal(this.props.appealId);
   }
 
-  getAttorneyName = () => {
-    const { task } = this.props;
-
-    return `${task.assignedBy.firstName[0]}. ${task.assignedBy.lastName}`;
-  }
-
   sendToAttorney = () => {
     const {
       task,
@@ -60,7 +54,7 @@ class SendToAssigningAttorneyModal extends React.Component<Props> {
         }
       }
     };
-    const attorneyName = this.getAttorneyName();
+    const attorneyName = task.assignedBy.name;
     const successMsg = {
       title: sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION, appeal.veteranFullName, attorneyName),
       detail: sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION_DETAIL, attorneyName)
@@ -89,7 +83,7 @@ class SendToAssigningAttorneyModal extends React.Component<Props> {
     }]}
     closeHandler={this.closeModal}>
     {COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY}&nbsp;
-    <b>{sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY_ATTORNEY_NAME, this.getAttorneyName())}</b>
+    <b>{sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY_ATTORNEY_NAME, this.props.task.assignedBy.name)}</b>
   </Modal>;
 }
 
