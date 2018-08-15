@@ -399,60 +399,29 @@ describe RampElectionIntake do
     subject { intake.start! }
     let!(:ramp_appeal) { vacols_case }
 
-    context "not valid to start" do
-      let(:veteran_file_number) { "NOTVALID" }
+    context "RAMP election with notice_date exists" do
+      let!(:ramp_election) do
+        create(:ramp_election, veteran_file_number: "64205555", notice_date: 5.days.ago)
+      end
 
-      it "does not save intake and returns false" do
-        expect(subject).to be_falsey
+      it "saves intake and sets detail to a new ramp election" do
+        expect(subject).to be_truthy
 
-        expect(intake).to have_attributes(
-          started_at: Time.zone.now,
-          completed_at: Time.zone.now,
-          completion_status: "error",
-          error_code: "invalid_file_number",
-          detail: nil
+        expect(intake.detail).to have_attributes(
+          id: ramp_election.id,
+          veteran_file_number: "64205555",
+          notice_date: 5.days.ago.to_date
         )
       end
     end
 
-    context "valid to start" do
-      context "RAMP election with notice_date exists" do
-        let!(:ramp_election) do
-          create(:ramp_election, veteran_file_number: "64205555", notice_date: 5.days.ago)
-        end
-        let(:new_ramp_election) { RampElection.where(veteran_file_number: "64205555").last }
+    context "matching RAMP election does not exist" do
+      it "creates a new RAMP election with no notice_date" do
+        expect(subject).to be_truthy
 
-        it "saves intake and sets detail to a new ramp election" do
-          expect(subject).to be_truthy
-
-          expect(intake.started_at).to eq(Time.zone.now)
-          expect(intake.detail).to eq(new_ramp_election)
-          expect(new_ramp_election).to_not be_nil
-          expect(new_ramp_election.notice_date).to be_nil
-        end
-      end
-
-      context "matching RAMP election does not exist" do
-        let(:ramp_election) { RampElection.where(veteran_file_number: "64205555").first }
-
-        it "creates a new RAMP election with no notice_date" do
-          expect(subject).to be_truthy
-
-          expect(ramp_election).to_not be_nil
-          expect(ramp_election.notice_date).to be_nil
-        end
-      end
-
-      context "intake is already in progress" do
-        it "should not create another intake" do
-          RampElectionIntake.new(
-            user: user,
-            veteran_file_number: veteran_file_number
-          ).start!
-
-          expect(intake).to_not be_nil
-          expect(subject).to eq(false)
-        end
+        expect(intake.detail).to have_attributes(
+          veteran_file_number: "64205555"
+        )
       end
     end
   end
