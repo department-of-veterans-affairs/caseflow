@@ -4,7 +4,6 @@ FactoryBot.define do
     sequence(:bfcorkey)
     sequence(:bfcorlid, 100_000_000) { |n| "#{n}S" }
 
-    association :representative, factory: :representative, repkey: :bfkey
     association :correspondent, factory: :correspondent
     association :folder, factory: :folder, ticknum: :bfkey
 
@@ -72,6 +71,18 @@ FactoryBot.define do
       form9_document []
       ssoc_documents []
       decision_document []
+    end
+
+    factory :case_with_multiple_rep_rows do
+      transient do
+        rep_count 2
+      end
+
+      bfso "T"
+
+      after(:create) do |_c, evaluator|
+        create_list(:representative, evaluator.rep_count)
+      end
     end
 
     factory :case_with_nod do
