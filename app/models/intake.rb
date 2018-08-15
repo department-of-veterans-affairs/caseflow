@@ -33,11 +33,11 @@ class Intake < ApplicationRecord
   attr_reader :error_data
 
   def self.in_progress
-    where(completed_at: nil).where(started_at: IN_PROGRESS_EXPIRES_AFTER.ago...Time.zone.now)
+    where(completed_at: nil).where(started_at: IN_PROGRESS_EXPIRES_AFTER.ago..Time.zone.now)
   end
 
   def self.expired
-    where(completed_at: nil).where(started_at: Time.zone.at(0)..IN_PROGRESS_EXPIRES_AFTER.ago)
+    where(completed_at: nil).where(started_at: Time.zone.at(0)...IN_PROGRESS_EXPIRES_AFTER.ago)
   end
 
   def self.build(form_type:, veteran_file_number:, user:)

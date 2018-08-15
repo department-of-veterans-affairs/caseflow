@@ -11,7 +11,7 @@ describe Intake do
   class TestIntake < Intake
     def find_or_build_initial_detail
       # Just putting any ole database object here for testing
-      Generators::User.build
+      @detail ||= Generators::User.build
     end
   end
 
@@ -436,13 +436,20 @@ describe Intake do
         Intake.create!(
           veteran_file_number: veteran_file_number,
           detail: detail,
-          user: another_user,
+          user: user,
           started_at: 25.hours.ago
         )
       end
 
-      it "clears expired intakes" do
+      it "clears expired intakes and creates new intake" do
         subject
+
+        expect(intake).to have_attributes(
+          veteran_file_number: veteran_file_number,
+          started_at: Time.zone.now,
+          detail: intake.find_or_build_initial_detail,
+          user: user
+        )
 
         expect(expired_intake.reload).to have_attributes(completion_status: "expired")
       end
@@ -475,7 +482,6 @@ describe Intake do
 
   context "#pending?" do
     subject { intake.pending? }
-    let(:completion_status) { "pending" }
 
     context "when completion_started_at is nil" do
       it { is_expected.to be false }
