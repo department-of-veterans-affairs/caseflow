@@ -88,6 +88,7 @@ export default class ReviewAssignments extends React.Component {
   render() {
 
     const { spErrorDetails } = this.props;
+    let title = "The assignments algorithm was unable to run successfully.";
 
     if (this.props.schedulePeriodError) {
       let message = <span>Please confirm the information in the spreadsheet is valid and
@@ -96,16 +97,26 @@ export default class ReviewAssignments extends React.Component {
       </span>;
 
       if (spErrorDetails) {
-        message = <span>You have allocated too many hearing days to the {spErrorDetails.details.ro_key},
-        the maximum number of allocations is {spErrorDetails.details.max_allocation}.<br></br>
-        Please check your spreadsheet and upload the file again using the "Go back" link below.<br></br>
-          <Link to="/schedule/build/upload"> Go back</Link>
-        </span>;
+        if (this.props.schedulePeriod.type === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
+          message = <span>You have allocated too many hearing days to the {spErrorDetails.details.ro_key},
+          the maximum number of allocations is {spErrorDetails.details.max_allocation}.<br></br>
+          Please check your spreadsheet and upload the file again using the "Go back" link below.<br></br>
+            <Link to="/schedule/build/upload"> Go back</Link>
+          </span>;
+        } else if (this.props.schedulePeriod.type === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
+          title = 'We were unable to assign judges to the schedule.';
+
+          message = <span>We could not assign a judge to every hearing day. Please check the following dates in
+          your file and try again using the "Go back" link below:<br></br>
+            {spErrorDetails.details.dates && spErrorDetails.details.dates.map((date) => <span>{date}</span>)};
+            <Link to="/schedule/build/upload"> Go back</Link>
+          </span>;
+        }
       }
 
       return <StatusMessage
         type="alert"
-        title="The assignments algorithm was unable to run successfully."
+        title={title}
         messageText={message}
       />;
     }
