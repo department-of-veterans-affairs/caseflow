@@ -1,7 +1,7 @@
 class VACOLS::Representative < VACOLS::Record
   # :nocov:
   self.table_name = "vacols.rep"
-  # self.primary_key = "repkey"
+  self.primary_key = "repkey"
 
   class InvalidRepTypeError < StandardError; end
 
