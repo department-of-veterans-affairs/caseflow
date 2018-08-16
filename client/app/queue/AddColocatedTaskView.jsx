@@ -11,6 +11,7 @@ import TextareaField from '../components/TextareaField';
 import SearchableDropdown from '../components/SearchableDropdown';
 import Alert from '../components/Alert';
 
+import { appealWithDetailSelector } from './selectors';
 import { requestSave } from './uiReducer/uiActions';
 import { deleteAppeal } from './QueueActions';
 
@@ -115,7 +116,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
 const mapStateToProps = (state, ownProps) => ({
   highlightFormItems: state.ui.highlightFormItems,
   error: state.ui.messages.error,
-  appeal: state.queue.appealDetails[ownProps.appealId]
+  appeal: appealWithDetailSelector(state, ownProps)
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

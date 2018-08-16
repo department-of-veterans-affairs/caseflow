@@ -54,7 +54,6 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
     };
     const route = routes[actionType];
 
-    history.push('');
     history.push(`/queue/appeals/${appealId}/${route}`);
   }
 

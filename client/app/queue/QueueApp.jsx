@@ -26,6 +26,7 @@ import JudgeReviewTaskListView from './JudgeReviewTaskListView';
 import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
+import SendToAnotherTeamView from './SendToAnotherTeamView';
 
 import CaseListView from './CaseListView';
 import CaseSearchSheet from './CaseSearchSheet';
@@ -131,6 +132,8 @@ class QueueApp extends React.PureComponent<Props> {
   routedEvaluateDecision = (props) => <EvaluateDecisionView nextStep="/queue" {...props.match.params} />;
 
   routedAddColocatedTask = (props) => <AddColocatedTaskView nextStep="/queue" {...props.match.params} />;
+
+  routedSendToAnotherTeam = (props) => <SendToAnotherTeamView nextStep="/queue" {...props.match.params} />;
 
   routedOrganization = (props) => <OrganizationQueueLoadingScreen
     urlToLoad={`${props.location.pathname}/tasks`}>
@@ -258,6 +261,11 @@ class QueueApp extends React.PureComponent<Props> {
             path="/queue/appeals/:appealId/colocated_task"
             title="Add Colocated Task | Caseflow"
             render={this.routedAddColocatedTask} />
+          <PageRoute
+            exact
+            path="/queue/appeals/:appealId/send_to_team"
+            title="Send to Another Team | Caseflow"
+            render={this.routedSendToAnotherTeam} />
           <PageRoute
             exact
             path="/organizations/:organization"
