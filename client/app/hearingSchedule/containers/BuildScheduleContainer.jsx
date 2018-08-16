@@ -9,7 +9,8 @@ import { LOGO_COLORS } from '../../constants/AppConstants';
 import BuildSchedule from '../components/BuildSchedule';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-const vacolsLoadingMessage = 'We are uploading your assignments to VACOLS';
+const vacolsLoadingMessage = 'We are uploading to VACOLS. Please don\'t click the back or refresh buttons until ' +
+  'the upload is finished.';
 const pastScheduleLoadingMessage = 'Loading past schedule uploads...';
 
 const vacolsLoadingErrorTitle = { title: 'We could not complete your VACOLS upload' };
@@ -65,7 +66,6 @@ class BuildScheduleContainer extends React.PureComponent {
   ]);
 
   render = () => {
-
     const loadingMessage = this.shouldNotSendAssignments() ? pastScheduleLoadingMessage : vacolsLoadingMessage;
     const errorTitle = this.shouldNotSendAssignments() ? pastScheduleLoadingErrorTitle : vacolsLoadingErrorTitle;
     const errorMsg = this.shouldNotSendAssignments() ? pastScheduleLoadingErrorMsg : vacolsLoadingErrorMsg;
