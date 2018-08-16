@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
+import classNames from 'classnames';
 import { css } from 'glamor';
 
 import COPY from '../../COPY.json';
@@ -13,7 +14,11 @@ import {
   getTasksForAppeal,
   appealWithDetailSelector
 } from './selectors';
-import { requestSave } from './uiReducer/uiActions';
+import {
+  requestSave,
+  showSuccessMessage
+} from './uiReducer/uiActions';
+import { setTaskAssignment } from './QueueActions';
 
 import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -37,10 +42,13 @@ type Params = {|
 |};
 
 type Props = Params & {|
-  error: ?UiStateMessage,
-  appeal: Appeal,
   task: Task,
-  requestSave: typeof requestSave
+  appeal: Appeal,
+  error: ?UiStateMessage,
+  highlightFormItems: boolean,
+  requestSave: typeof requestSave,
+  setTaskAssignment: typeof setTaskAssignment,
+  showSuccessMessage: typeof showSuccessMessage
 |};
 
 class SendToAnotherTeamView extends React.Component<Props, ViewState> {
@@ -58,11 +66,15 @@ class SendToAnotherTeamView extends React.Component<Props, ViewState> {
   getPrevStepUrl = () => `/queue/appeals/${this.props.appealId}`;
 
   goToNextStep = () => {
+    const { appeal } = this.props;
     // const payload = {};
-    // const successMsg = {
-    //   title: 'success',
-    //   detail: ''
-    // };
+    const successMsg = {
+      title: `Task for ${appeal.veteranFullName}'s appeal assigned to ${CO_LOCATED_TEAMS[this.state.team]} team.`,
+      detail: ''
+    };
+
+    this.props.setTaskAssignment(appeal.externalId, this.state.team, 0);
+    this.props.showSuccessMessage(successMsg);
 
     return true;
     // this.props.requestSave('/tasks', payload, successMsg);
@@ -72,11 +84,15 @@ class SendToAnotherTeamView extends React.Component<Props, ViewState> {
     const {
       task,
       error,
-      appeal
+      appeal,
+      highlightFormItems
     } = this.props;
     const columnStyling = css({
       width: '50%',
       maxWidth: '25rem'
+    });
+    const errorClass = classNames({
+      'usa-input-error': highlightFormItems && !this.state.team
     });
 
     return <React.Fragment>
@@ -94,31 +110,44 @@ class SendToAnotherTeamView extends React.Component<Props, ViewState> {
       <hr />
       {error && <Alert type="error" title={error.title} message={error.detail} />}
       <h4 {...marginTop(3)}>{COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_SUBHEAD}</h4>
-      <p {...css({ maxWidth: '70rem' }, marginTop(1))}>
+      <p {...css({ maxWidth: '70rem' }, marginTop(1), marginBottom(1))}>
         {COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY}
       </p>
-      <SearchableDropdown
-        name="Select a team"
-        hideLabel
-        placeholder="Select a team"
-        value={this.state.team}
-        onChange={({ value }) => this.setState({ team: value })}
-        options={Object.keys(CO_LOCATED_TEAMS).map((value) => ({
-          label: CO_LOCATED_TEAMS[value],
-          value
-        }))} />
+      <div className={errorClass} {...marginTop(1)}>
+        <SearchableDropdown
+          name="Select a team"
+          hideLabel
+          errorMessage={highlightFormItems && !this.state.team ? 'Choose one' : null}
+          placeholder="Select a team"
+          value={this.state.team}
+          onChange={({ value }) => this.setState({ team: value })}
+          options={Object.keys(CO_LOCATED_TEAMS).map((value) => ({
+            label: CO_LOCATED_TEAMS[value],
+            value
+          }))} />
+      </div>
     </React.Fragment>;
   }
 }
 
-const mapStateToProps = (state: State, ownProps: Params) => ({
-  error: state.ui.messages.error,
-  task: getTasksForAppeal(state, ownProps)[0],
-  appeal: appealWithDetailSelector(state, ownProps)
-});
+const mapStateToProps = (state: State, ownProps: Params) => {
+  const {
+    highlightFormItems,
+    messages: { error }
+  } = state.ui;
+
+  return {
+    error,
+    highlightFormItems,
+    task: getTasksForAppeal(state, ownProps)[0],
+    appeal: appealWithDetailSelector(state, ownProps)
+  }
+}
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestSave
+  requestSave,
+  setTaskAssignment,
+  showSuccessMessage
 }, dispatch);
 
 const WrappedComponent = decisionViewBase(SendToAnotherTeamView, {

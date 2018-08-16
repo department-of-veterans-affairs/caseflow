@@ -31,7 +31,7 @@ type Props = Params & {|
   hideModal: typeof hideModal,
   requestSave: typeof requestSave,
   history: Object,
-  setTaskAssignment: Function,
+  setTaskAssignment: typeof setTaskAssignment,
   checkoutStagedAppeal: typeof checkoutStagedAppeal
 |};
 
