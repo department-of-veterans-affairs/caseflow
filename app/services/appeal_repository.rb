@@ -476,7 +476,6 @@ class AppealRepository
         timdtime: VacolsHelper.local_time_with_utc_timezone,
         timduser: user.regional_office
       )
-
       # Reopen any issues that have the same close information as the appeal
       case_record.case_issues
         .where(issdc: close_disposition, issdcls: close_date)

@@ -61,9 +61,10 @@ export const appealWithDetailSelector = createSelector(
 );
 
 export const getTasksForAppeal = createSelector(
-  [getTasks, getAppealId],
-  (tasks: Tasks, appealId: number) => {
-    return _.filter(tasks, (task) => task.externalAppealId === appealId);
+  [getTasks, getAmaTasks, getAppealId],
+  (tasks: Tasks, amaTasks: Tasks, appealId: string) => {
+    return _.filter(tasks, (task) => task.externalAppealId === appealId).
+      concat(_.filter(amaTasks, (task) => task.externalAppealId === appealId));
   }
 );
 

@@ -8,7 +8,7 @@ class AttorneyCaseReview < ApplicationRecord
   validates :attorney, :document_type, :task_id, :reviewing_judge, :document_id, :work_product, presence: true
   validates :overtime, inclusion: { in: [true, false] }
   validates :work_product, inclusion: { in: QueueMapper::WORK_PRODUCTS.values }
-  validates :note, length: { maximum: 350 }
+  validates :note, length: { maximum: Constants::VACOLS_COLUMN_MAX_LENGTHS["DECASS"]["DEATCOM"] }
 
   enum document_type: {
     omo_request: Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"],

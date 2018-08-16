@@ -37,27 +37,20 @@ describe('ColocatedTaskListView', () => {
   });
 
   const amaTaskTemplate: Task = {
+    addedByCssId: null,
     appealId: 5,
     externalAppealId: '3bd1567a-4f07-473c-aefc-3738a6cf58fe',
-    assignedOn: moment().subtract(47, 'hours').
-      format(),
+    assignedOn: moment().subtract(47, 'hours').format(),
     dueOn: null,
     assignedTo: {
       cssId: 'BVALSPORER',
       id: 7
     },
     assignedBy: {
-      id: 1,
-      station_id: '101',
-      css_id: 'BVASCASPER1',
-      full_name: 'Attorney with cases',
-      email: null,
-      roles: [
-        'BVASCASPER1'
-      ],
-      selected_regional_office: null,
-      display_name: 'BVASCASPER1 (VACO)',
-      judge_css_id: 'BVAOSCHOWALT'
+      firstName: 'Attorney',
+      lastName: 'cases',
+      cssId: 'BVASCASPER1',
+      pgId: 1
     },
     taskId: '8',
     action: 'new_rep_arguments',

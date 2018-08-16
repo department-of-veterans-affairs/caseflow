@@ -4,7 +4,6 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :appeal_id
   attribute :status
   attribute :assigned_to
-  attribute :assigned_by
   attribute :assigned_at
   attribute :started_at
   attribute :completed_at
@@ -12,6 +11,15 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :on_hold_duration
   attribute :instructions
   attribute :appeal_type
+
+  attribute :assigned_by do
+    {
+      first_name: object.assigned_by_display_name.first,
+      last_name: object.assigned_by_display_name.last,
+      css_id: object.assigned_by.css_id,
+      pg_id: object.assigned_by.id
+    }
+  end
 
   attribute :docket_name do
     object.appeal.docket_name

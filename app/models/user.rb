@@ -125,6 +125,10 @@ class User < ApplicationRecord
     Functions.granted?("Global Admin", css_id)
   end
 
+  def vso_employee?
+    Functions.granted?("VSO", css_id)
+  end
+
   def granted?(thing)
     Functions.granted?(thing, css_id)
   end
@@ -238,7 +242,7 @@ class User < ApplicationRecord
     # :nocov:
 
     def system_user
-      new(
+      find_or_initialize_by(
         station_id: "283",
         css_id: Rails.deploy_env?(:prod) ? "CSFLOW" : "CASEFLOW1"
       )

@@ -3,10 +3,8 @@ import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 import StringUtil from '../util/StringUtil';
-import {
-  redText,
-  USER_ROLES
-} from './constants';
+import { redText } from './constants';
+
 import type {
   Task,
   Tasks,
@@ -16,14 +14,17 @@ import type {
   Issue,
   Issues
 } from './types/models';
+
 import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
-export const prepareTasksForStore = (tasks: Array<Object>): Tasks => {
-  const taskHash = tasks.reduce((acc, task: Object) => {
+export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
+  tasks.reduce((acc, task: Object): Tasks => {
     acc[task.attributes.external_appeal_id] = {
+      addedByCssId: null,
       appealId: task.attributes.appeal_id,
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_at,
@@ -32,7 +33,12 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks => {
         cssId: task.attributes.assigned_to.css_id,
         id: task.attributes.assigned_to.id
       },
-      assignedBy: task.attributes.assigned_by,
+      assignedBy: {
+        firstName: task.attributes.assigned_by.first_name,
+        lastName: task.attributes.assigned_by.last_name,
+        cssId: task.attributes.assigned_by.css_id,
+        pgId: task.attributes.assigned_by.pg_id
+      },
       taskId: task.id,
       action: task.attributes.action,
       documentId: null,
@@ -44,9 +50,6 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks => {
 
     return acc;
   }, {});
-
-  return taskHash;
-};
 
 const extractAppealsFromTasks =
   (tasks: Array<Object>):
@@ -79,7 +82,7 @@ export const extractAppealsAndAmaTasks =
   amaTasks: prepareTasksForStore(tasks) });
 
 export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
-  const mappedLegacyTasks = tasks.map((task) => {
+  const mappedLegacyTasks = tasks.map((task): Task => {
     return {
       appealId: task.attributes.appeal_id,
       externalAppealId: task.attributes.external_appeal_id,
@@ -89,14 +92,17 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
         cssId: task.attributes.user_id,
         id: task.attributes.assigned_to_pg_id
       },
+      assignedBy: {
+        firstName: task.attributes.assigned_by.first_name,
+        lastName: task.attributes.assigned_by.last_name,
+        cssId: task.attributes.assigned_by.css_id,
+        pgId: task.attributes.assigned_by.pg_id
+      },
       addedByName: task.attributes.added_by_name,
       addedByCssId: task.attributes.added_by_css_id,
       taskId: task.attributes.task_id,
       taskType: task.attributes.task_type,
       documentId: task.attributes.document_id,
-      assignedByFirstName: task.attributes.assigned_by.first_name,
-      assignedByLastName: task.attributes.assigned_by.last_name,
-      assignedByPgId: task.attributes.assigned_by.pg_id,
       workProduct: task.attributes.work_product,
       previousTaskAssignedOn: task.attributes.previous_task.assigned_on
     };
@@ -258,7 +264,7 @@ export const buildCaseReviewPayload = (
     }
   };
 
-  if (userRole === USER_ROLES.ATTORNEY) {
+  if (userRole === USER_ROLE_TYPES.attorney) {
     _.extend(payload.data.tasks, { document_type: decision.type });
   } else {
     args.factors_not_considered = _.keys(args.factors_not_considered);
