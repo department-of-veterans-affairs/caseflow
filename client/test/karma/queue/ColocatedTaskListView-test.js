@@ -11,7 +11,6 @@ import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTION
 import rootReducer from '../../../app/queue/reducers';
 import { onReceiveQueue } from '../../../app/queue/QueueActions';
 import { setUserCssId } from '../../../app/queue/uiReducer/uiActions';
-import { extractAppealsAndAmaTasks } from '../../../app/queue/utils';
 import { BrowserRouter } from 'react-router-dom';
 import type { Task, BasicAppeal } from '../../../app/queue/types/models';
 
@@ -40,7 +39,8 @@ describe('ColocatedTaskListView', () => {
   const amaTaskTemplate: Task = {
     appealId: 5,
     externalAppealId: '3bd1567a-4f07-473c-aefc-3738a6cf58fe',
-    assignedOn: moment().subtract(47, 'hours').format(),
+    assignedOn: moment().subtract(47, 'hours').
+      format(),
     dueOn: null,
     assignedTo: {
       cssId: 'BVALSPORER',
@@ -79,7 +79,7 @@ describe('ColocatedTaskListView', () => {
     docketNumber: 'Missing Docket Number',
     veteranFullName: 'Andrew Van Buren',
     veteranFileNumber: '152003980',
-    isPaperCase: undefined
+    isPaperCase: null
   };
 
   const amaTaskWith = ({ cssIdAssignee, ...rest }) => ({
@@ -111,7 +111,10 @@ describe('ColocatedTaskListView', () => {
       };
 
       const store = getStore();
-      store.dispatch(onReceiveQueue({ tasks, amaTasks, appeals}));
+
+      store.dispatch(onReceiveQueue({ tasks,
+        amaTasks,
+        appeals }));
       store.dispatch(setUserCssId(taskNewAssigned.assignedTo.cssId));
 
       const wrapper = getWrapperColocatedTaskListView(store);
@@ -164,7 +167,10 @@ describe('ColocatedTaskListView', () => {
         [appeal.id]: appeal
       };
       const store = getStore();
-      store.dispatch(onReceiveQueue({ tasks, amaTasks, appeals }));
+
+      store.dispatch(onReceiveQueue({ tasks,
+        amaTasks,
+        appeals }));
       store.dispatch(setUserCssId(task.assignedTo.cssId));
 
       const wrapper = getWrapperColocatedTaskListView(store);
