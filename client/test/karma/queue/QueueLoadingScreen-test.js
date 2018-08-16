@@ -13,6 +13,7 @@ const serverData = {
           assigned_by: {
             first_name: 'Stephen',
             last_name: 'Casper',
+            css_id: 'BVASCASPER1',
             pg_id: 10
           },
           assigned_on: '2018-08-02T17:37:03.000Z',
@@ -62,9 +63,12 @@ describe('QueueLoadingScreen', () => {
         taskId: '3625593-2018-07-11',
         taskType: 'Review',
         documentId: '12345-12345678',
-        assignedByFirstName: 'Stephen',
-        assignedByLastName: 'Casper',
-        assignedByPgId: 10,
+        assignedBy: {
+          firstName: 'Stephen',
+          lastName: 'Casper',
+          cssId: 'BVASCASPER1',
+          pgId: 10
+        },
         workProduct: 'OTD',
         previousTaskAssignedOn: '2018-08-02T17:37:03.000Z'
       }

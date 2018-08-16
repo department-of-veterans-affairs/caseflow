@@ -12,9 +12,12 @@ import {
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
 import JudgeActionsDropdown from './components/JudgeActionsDropdown';
+import ColocatedActionsDropdown from './components/ColocatedActionsDropdown';
+
 import COPY from '../../COPY.json';
-import { USER_ROLES } from './constants';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import { COLORS } from '../constants/AppConstants';
+
 import { renderLegacyAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
 import type { Appeal, Task } from './types/models';
@@ -90,15 +93,15 @@ export class CaseSnapshot extends React.PureComponent<Props> {
 
     const taskAssignedToUser = this.props.taskAssignedToUser;
 
-    if (this.props.userRole === USER_ROLES.JUDGE) {
-      if (!taskAssignedToUser.assignedByFirstName ||
-          !taskAssignedToUser.assignedByLastName ||
+    if (this.props.userRole === USER_ROLE_TYPES.judge) {
+      if (!taskAssignedToUser.assignedBy.firstName ||
+          !taskAssignedToUser.assignedBy.lastName ||
           !taskAssignedToUser.documentId) {
         return assignedToListItem;
       }
 
-      const firstInitial = String.fromCodePoint(taskAssignedToUser.assignedByFirstName.codePointAt(0));
-      const nameAbbrev = `${firstInitial}. ${taskAssignedToUser.assignedByLastName}`;
+      const firstInitial = String.fromCodePoint(taskAssignedToUser.assignedBy.firstName.codePointAt(0));
+      const nameAbbrev = `${firstInitial}. ${taskAssignedToUser.assignedBy.lastName}`;
 
       return <React.Fragment>
         <dt>{COPY.CASE_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{nameAbbrev}</dd>
@@ -138,11 +141,14 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       userRole
     } = this.props;
     let CheckoutDropdown = <React.Fragment />;
+    const dropdownArgs = { appealId: appeal.externalId };
 
-    if (userRole === USER_ROLES.ATTORNEY) {
-      CheckoutDropdown = <SelectCheckoutFlowDropdown appealId={appeal.externalId} />;
-    } else if (userRole === USER_ROLES.JUDGE && this.props.featureToggles.judge_case_review_checkout) {
-      CheckoutDropdown = <JudgeActionsDropdown appealId={appeal.externalId} />;
+    if (userRole === USER_ROLE_TYPES.attorney) {
+      CheckoutDropdown = <SelectCheckoutFlowDropdown {...dropdownArgs} />;
+    } else if (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout) {
+      CheckoutDropdown = <JudgeActionsDropdown {...dropdownArgs} />;
+    } else if (userRole === USER_ROLE_TYPES.colocated) {
+      CheckoutDropdown = <ColocatedActionsDropdown {...dropdownArgs} />;
     }
 
     return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
