@@ -1,7 +1,7 @@
 class VACOLS::Representative < VACOLS::Record
   # :nocov:
   self.table_name = "vacols.rep"
-  self.primary_key = "repkey"
+  # self.primary_key = "repkey"
 
   class InvalidRepTypeError < StandardError; end
 
@@ -21,12 +21,14 @@ class VACOLS::Representative < VACOLS::Record
   end
 
   def self.representatives(bfkey)
-    where(repkey: bfkey, reptype: ACTIVE_REPTYPES.values)
+    where(repkey: bfkey, reptype: ACTIVE_REPTYPES.values.map { |v| v[:code] })
+  end
+
+  def self.appellant_reptypes
+    [ACTIVE_REPTYPES[:appellant_attorney][:code], ACTIVE_REPTYPES[:appellant_agent][:code]]
   end
 
   def self.appellant_representative(bfkey)
-    appellant_reptypes = [ACTIVE_REPTYPES[:appellant_attorney][:code], ACTIVE_REPTYPES[:appellant_agent][:code]]
-
     # In rare cases, there may be more than one result for this query. If so, return the most recent one.
     # TODO: for Queue use cases, we should return all appellant representatives
     where(repkey: bfkey, reptype: appellant_reptypes).order("repaddtime DESC").first

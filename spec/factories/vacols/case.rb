@@ -81,15 +81,11 @@ FactoryBot.define do
       decision_document []
     end
 
-    factory :case_with_multiple_rep_rows do
+    factory :case_with_rep_table_record do
       transient do
-        rep_count 2
-      end
-
-      bfso "T"
-
-      after(:create) do |_c, evaluator|
-        create_list(:representative, evaluator.rep_count)
+        after(:create) do |vacols_case|
+          create(:representative, repkey: vacols_case.bfkey)
+        end
       end
     end
 
