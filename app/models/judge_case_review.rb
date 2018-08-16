@@ -7,7 +7,7 @@ class JudgeCaseReview < ApplicationRecord
 
   validates :task_id, :location, :judge, :attorney, presence: true
   validates :complexity, :quality, presence: true, if: :bva_dispatch?
-  validates :comment, length: { maximum: 600 }
+  validates :comment, length: { maximum: Constants::VACOLS_COLUMN_MAX_LENGTHS["DECASS"]["DEBMCOM"] }
 
   after_create :select_case_for_quality_review
 
