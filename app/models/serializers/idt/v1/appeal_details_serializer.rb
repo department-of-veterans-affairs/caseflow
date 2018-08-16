@@ -50,7 +50,9 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :aod
   attribute :cavc
   attribute :status
+  attribute :previously_selected_for_quality_review
 
-  # TODO: add outstanding mail
-  # TODO: add document numbers
+  attribute :outstanding_mail do
+    object.outstanding_vacols_mail?
+  end
 end
