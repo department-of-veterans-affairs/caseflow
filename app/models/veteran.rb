@@ -21,7 +21,8 @@ class Veteran < ApplicationRecord
     "DIS" => "Discharge"
   }.freeze
 
-  COUNTRIES_REQUIRING_ZIP = %w[USA CANADA GERMANY].freeze
+  # Germany and Australia should be temporary additions until VBMS bug is fixed
+  COUNTRIES_REQUIRING_ZIP = %w[USA CANADA GERMANY AUSTRALIA].freeze
 
   validates :ssn, :sex, :first_name, :last_name, :city,
             :address_line1, :country, presence: true, on: :bgs
