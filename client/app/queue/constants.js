@@ -145,6 +145,8 @@ export const ISSUE_DESCRIPTION_MAX_LENGTH = 100;
 export const ATTORNEY_COMMENTS_MAX_LENGTH = 350;
 // max length for document id `DECASS.DEDOCID`
 export const DOCUMENT_ID_MAX_LENGTH = 30;
+// max length for VLJ comment `DECASS.DEBMCOM`
+export const JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH = 600;
 
 export const PAGE_TITLES = {
   DISPOSITIONS: {
