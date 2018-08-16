@@ -20,11 +20,14 @@ def generate_words(n_words)
 end
 
 RSpec.feature "Checkout flows" do
-  let(:attorney_user) { FactoryBot.create(:user) }
+  let(:attorney_user) { FactoryBot.create(:default_user) }
   let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 
   let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
   let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+
+  let(:colocated_user) { FactoryBot.create(:user) }
+  let!(:vacols_colocated) { FactoryBot.create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
 
   before do
     FeatureToggle.enable!(:test_facols)
@@ -445,6 +448,62 @@ RSpec.feature "Checkout flows" do
 
         expect(page).to have_content(COPY::JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
       end
+    end
+  end
+
+  context "given a valid legacy appeal and a colocated user" do
+    let!(:appeal) do
+      FactoryBot.create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: FactoryBot.create(
+          :case,
+          :assigned,
+          user: colocated_user,
+          case_issues: FactoryBot.create_list(:case_issue, 1)
+        )
+      )
+    end
+    let!(:colocated_action) do
+      FactoryBot.create(
+        :colocated_task,
+        appeal: appeal,
+        assigned_to: colocated_user,
+        assigned_by: attorney_user
+      )
+    end
+    let!(:ama_colocated_action) do
+      FactoryBot.create(
+        :ama_colocated_task,
+        assigned_to: colocated_user,
+        assigned_by: attorney_user
+      )
+    end
+
+    before do
+      FeatureToggle.enable!(:colocated_queue)
+      User.authenticate!(user: colocated_user)
+    end
+
+    after do
+      FeatureToggle.disable!(:colocated_queue)
+    end
+
+    scenario "reassigns task to assigning attorney" do
+      visit "/queue"
+
+      vet_name = colocated_action.appeal.veteran_full_name
+      attorney_name = colocated_action.assigned_by_display_name
+      attorney_name_display = "#{attorney_name.first[0]}. #{attorney_name.last}"
+
+      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
+      click_dropdown 0
+      expect(page).to have_content("Send back to attorney")
+      click_on "Send back to attorney"
+
+      expect(page).to have_content(
+        format(COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION, vet_name, attorney_name_display)
+      )
     end
   end
 end

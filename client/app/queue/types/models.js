@@ -40,29 +40,31 @@ export type Issue = {
 export type Issues = Array<Issue>;
 
 export type Task = {
-  type: string,
-  title: string,
+  type?: string,
+  title?: string,
   action?: string,
   appealId: string,
-  appealType: string,
   externalAppealId: string,
   assignedOn: string,
-  dueOn: string,
+  dueOn: ?string,
   assignedTo: {
     cssId: string,
     id: number
   },
-  addedByName: string,
-  addedByCssId: string,
+  assignedBy: {
+    firstName: string,
+    lastName: string,
+    cssId: string,
+    pgId: number,
+  },
+  addedByName?: string,
+  addedByCssId: ?string,
   taskId: string,
   taskType?: string,
-  documentId: string,
-  assignedByFirstName: string,
-  assignedByLastName: string,
-  assignedByPgId: string,
-  workProduct: string,
-  placedOnHoldAt: string,
-  previousTaskAssignedOn: string
+  documentId: ?string,
+  workProduct: ?string,
+  placedOnHoldAt?: string,
+  previousTaskAssignedOn: ?string
 };
 
 export type Tasks = { [string]: Task };
