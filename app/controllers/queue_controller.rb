@@ -1,13 +1,15 @@
 class QueueController < ApplicationController
   before_action :react_routed, :check_queue_out_of_service
   before_action :verify_queue_access
-  before_action :redirect_vso_queue_requests
 
   def set_application
     RequestStore.store[:application] = "queue"
   end
 
   def index
+    path = vso_organization_queue_path
+    redirect_to(path) && return if path
+
     render "queue/index"
   end
 
@@ -17,13 +19,13 @@ class QueueController < ApplicationController
 
   private
 
-  def redirect_vso_queue_requests
+  def vso_organization_queue_path
     return unless current_user.vso_employee?
 
     Vso.where.not(feature: nil).each do |vso|
-      return redirect_to vso.path if FeatureToggle.enabled?(vso.feature.to_sym, user: current_user)
+      return vso.path if FeatureToggle.enabled?(vso.feature.to_sym, user: current_user)
     end
 
-    redirect_to "/unauthorized"
+    "/unauthorized"
   end
 end
