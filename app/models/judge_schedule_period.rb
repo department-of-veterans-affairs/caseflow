@@ -20,8 +20,10 @@ class JudgeSchedulePeriod < SchedulePeriod
       hearing_day.slice(:hearing_pkseq, :judge_id)
     end
 
-    HearingDay.update_schedule(hearing_days)
-    super
+    transaction do
+      HearingDay.update_schedule(hearing_days)
+      super
+    end
   end
 
   private
