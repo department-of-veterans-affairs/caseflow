@@ -1534,7 +1534,7 @@ describe LegacyAppeal do
     end
   end
 
-  context "#contested_claim", focus: true do
+  context "#contested_claim" do
     subject { appeal.contested_claim }
     let(:vacols_case) { create(:case) }
 
