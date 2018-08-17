@@ -15,11 +15,7 @@ import {
   getTasksForAppeal,
   appealWithDetailSelector
 } from './selectors';
-import {
-  requestSave,
-  showSuccessMessage
-} from './uiReducer/uiActions';
-import { setTaskAssignment } from './QueueActions';
+import { requestSave } from './uiReducer/uiActions';
 
 import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -49,9 +45,7 @@ type Props = Params & {|
   appeal: Appeal,
   error: ?UiStateMessage,
   highlightFormItems: boolean,
-  requestSave: typeof requestSave,
-  setTaskAssignment: typeof setTaskAssignment,
-  showSuccessMessage: typeof showSuccessMessage
+  requestSave: typeof requestSave
 |};
 
 class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
@@ -81,8 +75,18 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
   getPrevStepUrl = () => `/queue/appeals/${this.props.appealId}`;
 
   goToNextStep = () => {
-    const { appeal } = this.props;
-    // const payload = {};
+    const {
+      task,
+      appeal
+    } = this.props;
+    const payload = {
+      data: {
+        task: {
+          status: 'on_hold',
+          on_hold_duration: this.state.customHold || this.state.hold
+        }
+      }
+    };
     const successMsg = {
       title: sprintf(
         COPY.COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION,
@@ -92,11 +96,7 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
       detail: COPY.COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION_DETAIL
     };
 
-    // this.props.setTaskAssignment(appeal.externalId, this.state.hold, 0);
-    this.props.showSuccessMessage(successMsg);
-
-    return true;
-    // this.props.requestSave('/tasks', payload, successMsg);
+    this.props.requestSave(`/tasks/${task.taskId}`, payload, successMsg, 'patch');
   }
 
   render = () => {
@@ -173,9 +173,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestSave,
-  setTaskAssignment,
-  showSuccessMessage
+  requestSave
 }, dispatch);
 
 const WrappedComponent = decisionViewBase(ColocatedPlaceHoldView, {
