@@ -27,7 +27,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       addedByCssId: null,
       appealId: task.attributes.appeal_id,
       externalAppealId: task.attributes.external_appeal_id,
-      assignedOn: task.attributes.started_at,
+      assignedOn: task.attributes.assigned_at,
       dueOn: null,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
@@ -45,7 +45,8 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       workProduct: null,
       previousTaskAssignedOn: null,
       placedOnHoldAt: task.attributes.placed_on_hold_at,
-      status: task.attributes.status
+      status: task.attributes.status,
+      onHoldDuration: task.attributes.on_hold_duration
     };
 
     return acc;
