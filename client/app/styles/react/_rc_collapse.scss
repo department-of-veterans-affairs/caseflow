@@ -64,12 +64,18 @@
     > .rc-collapse-header {
 
       .arrow {
-        // scss-lint:disable IdSelector
+
         #arrow > {
           @include bottom(3px, 4px, $color-gray);
         }
-        //scss-lint:enable IdSelector
       }
     }
+  }
+}
+
+.usa-accordion-content {
+  &:not([aria-hidden]) {
+    position: relative;
+    left: 0;
   }
 }
