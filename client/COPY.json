@@ -23,8 +23,8 @@
   "CASE_LIST_TABLE_DOCUMENT_ID_COLUMN_TITLE": "Document ID",
   "CASE_LIST_TABLE_SELECT_COLUMN_TITLE": "Select",
   "CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE": "Days Waiting",
-  "CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE": "Veteran Documents",
   "CASE_LIST_TABLE_TASKS_COLUMN_TITLE": "Task(s)",
+  "CASE_LIST_TABLE_ASSIGNEE_IS_CURRENT_USER_LABEL": "Assigned to you",
 
   "CASE_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
   "CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL": "Type",
@@ -39,6 +39,10 @@
   "CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL": "Document ID",
   "CASE_SNAPSHOT_ACTION_BOX_TITLE": "Actions",
 
+  "CASE_TITLE_VETERAN_ID_BUTTON_TOOLTIP": "Click to copy Veteran ID",
+
+  "NEW_FILE_ICON_TOOLTIP": "This case has new documents",
+
   "NO_TASKS_IN_ATTORNEY_QUEUE_TITLE": "Cases not found",
   "NO_TASKS_IN_ATTORNEY_QUEUE_MESSAGE": "Sorry! We couldn't find any cases for you.",
   "ATTORNEY_QUEUE_TABLE_TITLE": "Your Queue",
@@ -49,6 +53,8 @@
   "TASKS_NEED_ASSIGNMENT_ERROR_TITLE": "Some cases need preliminary DAS assignments",
   "TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE": "Cases marked with exclamation points need to be assigned to you through DAS. Please contact your judge or senior counsel to create preliminary DAS assignments.",
   "JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE": "Cases to Assign",
+
+  "COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION": "These are new administrative actions that have been assigned to you.",
 
   "NO_CASES_FOR_JUDGE_REVIEW_TITLE": "Cases not found",
   "NO_CASES_FOR_JUDGE_REVIEW_MESSAGE": "Congratulations! You don't have any decisions to sign.",
@@ -68,7 +74,9 @@
   "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_SUBHEAD": "How would you rate the complexity of this case?",
   "JUDGE_EVALUATE_DECISION_CASE_QUALITY_LABEL": "Quality of work",
   "JUDGE_EVALUATE_DECISION_CASE_QUALITY_SUBHEAD": "How would you rate the overall quality of this case?",
-  "JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL": "Were there any areas of improvement?",
+  "JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL": "Identify areas for improvement",
+  "JUDGE_EVALUATE_DECISION_IMPROVEMENT_NOT_CONSIDERED": "The attorney did not properly consider and apply:",
+  "JUDGE_EVALUATE_DECISION_IMPROVEMENT_AREAS_FOR_IMPROVEMENT": "Other areas for improvement:",
 
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL": "Case Timeliness",
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE": "Date assigned to attorney",
@@ -138,6 +146,13 @@
   "ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL": "Provide instructions and context for this action:",
   "ADD_COLOCATED_TASK_CONFIRMATION_TITLE": "Your %s request was submitted successfully",
   "ADD_COLOCATED_TASK_CONFIRMATION_DETAIL": "If you need to make any changes, please manage this case in DAS.",
+
+  "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM": "Send to another team",
+  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY": "Send back to attorney",
+  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY": "You are sending your completed administrative action back to",
+  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY_ATTORNEY_NAME": "%s (assigning attorney)",
+  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION": "%s's case has been sent back to %s (Assigning Attorney)",
+  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION_DETAIL": "If you've made a mistake, please email %s to manage any changes.",
 
   "MODAL_CANCEL_ATTORNEY_CHECKOUT": "All changes made to this page will be lost, except for the adding, editing, and deleting of issues."
 }

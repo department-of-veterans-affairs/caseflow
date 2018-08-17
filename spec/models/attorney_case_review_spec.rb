@@ -46,6 +46,7 @@ describe AttorneyCaseReview do
 
       context "when incorrect format" do
         let(:task_id) { "#{vacols_case.bfkey}-#{vacols_case.decass[0].deadtim.strftime('%D')}" }
+
         it { is_expected.to_not be_valid }
       end
     end
@@ -102,10 +103,10 @@ describe AttorneyCaseReview do
       let(:issues) do
         [
           { disposition: case_issues[0].issdc,
-            vacols_sequence_id: case_issues[0].issseq,
+            id: case_issues[0].issseq,
             readjudication: true },
           { disposition: case_issues[1].issdc,
-            vacols_sequence_id: case_issues[1].issseq,
+            id: case_issues[1].issseq,
             remand_reasons: [{ code: remand_reason.rmdval, after_certification: true }] }
         ]
       end

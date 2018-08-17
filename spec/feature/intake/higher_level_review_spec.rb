@@ -83,8 +83,6 @@ RSpec.feature "Higher-Level Review Intake" do
       bgs_attrs: { end_product_type_code: "031" }
     )
 
-    Fakes::VBMSService.end_product_claim_id = "IAMANEPID"
-
     visit "/intake"
     safe_click ".Select"
 
@@ -207,6 +205,7 @@ RSpec.feature "Higher-Level Review Intake" do
       "Established EP: 030HLRR - Higher-Level Review Rating for Station 397 - ARC"
     )
 
+    # ratings end product
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
       claim_hash: {
         benefit_type_code: "1",
@@ -217,24 +216,61 @@ RSpec.feature "Higher-Level Review Intake" do
         date: higher_level_review.receipt_date.to_date,
         end_product_modifier: "032",
         end_product_label: "Higher-Level Review Rating",
-        end_product_code: "030HLRR",
+        end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false
       },
       veteran_hash: intake.veteran.to_vbms_hash
     )
+    ratings_end_product_establishment = EndProductEstablishment.find_by(
+      source: intake.detail,
+      code: HigherLevelReview::END_PRODUCT_RATING_CODE
+    )
+
+    # nonratings end product
+    expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+      claim_hash: hash_including(
+        benefit_type_code: "1",
+        payee_code: "00",
+        predischarge: false,
+        claim_type: "Claim",
+        station_of_jurisdiction: "397",
+        date: higher_level_review.receipt_date.to_date,
+        end_product_modifier: "033",
+        end_product_label: "Higher-Level Review Nonrating",
+        end_product_code: HigherLevelReview::END_PRODUCT_NONRATING_CODE,
+        gulf_war_registry: false,
+        suppress_acknowledgement_letter: false
+      ),
+      veteran_hash: intake.veteran.to_vbms_hash
+    )
+    nonratings_end_product_establishment = EndProductEstablishment.find_by(
+      source: intake.detail,
+      code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
+    )
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
-      veteran_file_number: "12341234",
-      claim_id: "IAMANEPID",
-      contention_descriptions: ["Description for Active Duty Adjustments", "PTSD denied"],
-      special_issues: []
+      hash_including(
+        veteran_file_number: "12341234",
+        claim_id: ratings_end_product_establishment.reference_id,
+        contention_descriptions: ["PTSD denied"],
+        special_issues: []
+      )
+    )
+
+    expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+      hash_including(
+        veteran_file_number: "12341234",
+        claim_id: nonratings_end_product_establishment.reference_id,
+        contention_descriptions: ["Description for Active Duty Adjustments"],
+        special_issues: []
+      )
     )
 
     rated_issue = higher_level_review.request_issues.find_by(description: "PTSD denied")
 
     expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
-      claim_id: "IAMANEPID",
+      claim_id: ratings_end_product_establishment.reference_id,
       rated_issue_contention_map: {
         rated_issue.rating_issue_reference_id => rated_issue.contention_reference_id
       }
@@ -245,8 +281,6 @@ RSpec.feature "Higher-Level Review Intake" do
 
     expect(intake).to be_success
 
-    resultant_end_product_establishment = EndProductEstablishment.find_by(source: higher_level_review.reload)
-    expect(resultant_end_product_establishment.reference_id).to eq("IAMANEPID")
     expect(higher_level_review.request_issues.count).to eq 2
     expect(higher_level_review.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
@@ -263,7 +297,10 @@ RSpec.feature "Higher-Level Review Intake" do
       decision_date: 1.month.ago.to_date
     )
 
-    visit "/higher_level_reviews/IAMANEPID/edit"
+    visit "/higher_level_reviews/#{ratings_end_product_establishment.reference_id}/edit"
+    expect(page).to have_content("Veteran Name: Ed Merica")
+
+    visit "/higher_level_reviews/#{nonratings_end_product_establishment.reference_id}/edit"
     expect(page).to have_content("Veteran Name: Ed Merica")
 
     visit "/higher_level_reviews/4321/edit"

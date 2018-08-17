@@ -55,7 +55,7 @@ class RampReview < ApplicationRecord
   end
 
   def end_product_base_modifier
-    end_product_establishment.valid_modifiers.first
+    end_product_modifier
   end
 
   def end_product_active?
@@ -74,6 +74,10 @@ class RampReview < ApplicationRecord
     ## TODO: Remove this once all the data is backfilled
     if (saved_end_product_establishment = EndProductEstablishment.find_by(source: self))
       saved_end_product_establishment.sync!
+      if FeatureToggle.enabled?(:automatic_ramp_rollback) && saved_end_product_establishment.status_canceled?
+        rollback_ramp_review
+      end
+      true
     end
   end
 
@@ -117,6 +121,14 @@ class RampReview < ApplicationRecord
 
   def end_product_establishment
     find_end_product_establishment || new_end_product_establishment
+  end
+
+  def rollback_ramp_review
+    RampElectionRollback.create!(
+      ramp_election: self,
+      user: User.system_user,
+      reason: "Automatic roll back due to EP #{end_product_establishment.modifier} cancelation"
+    )
   end
 
   def veteran

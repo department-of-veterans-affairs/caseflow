@@ -37,7 +37,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
         value={issue.disposition}
         hideLabel
         errorMessage={(highlight && !issue.disposition) ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
-        options={Object.entries(VACOLS_DISPOSITIONS_BY_ID).slice(0, 7).
+        options={Object.entries(VACOLS_DISPOSITIONS_BY_ID).slice(0, 6).
           map((opt) => ({
             label: `${opt[0]} - ${opt[1]}`,
             value: opt[0]

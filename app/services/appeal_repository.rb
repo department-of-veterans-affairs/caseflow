@@ -145,6 +145,7 @@ class AppealRepository
       appellant_first_name: correspondent_record.sspare1,
       appellant_middle_initial: correspondent_record.sspare2,
       appellant_last_name: correspondent_record.sspare3,
+      appellant_name_suffix: correspondent_record.sspare4,
       appellant_relationship: correspondent_record.sspare1 ? correspondent_record.susrtyp : "",
       appellant_ssn: correspondent_record.ssn,
       appellant_address_line_1: correspondent_record.saddrst1,
@@ -158,6 +159,7 @@ class AppealRepository
       nod_date: normalize_vacols_date(case_record.bfdnod),
       soc_date: normalize_vacols_date(case_record.bfdsoc),
       form9_date: normalize_vacols_date(case_record.bfd19),
+      notice_of_death_date: normalize_vacols_date(correspondent_record.sfnod),
       ssoc_dates: ssoc_dates_from(case_record),
       hearing_request_type: VACOLS::Case::HEARING_REQUEST_TYPES[case_record.bfhr],
       video_hearing_requested: case_record.bfdocind == "V",
@@ -166,6 +168,7 @@ class AppealRepository
       regional_office_key: case_record.bfregoff,
       certification_date: case_record.bf41stat,
       case_review_date: folder_record.tidktime,
+      citation_number: folder_record.tiread2,
       case_record: case_record,
       disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[case_record.bfdc],
       location_code: case_record.bfcurloc,
@@ -473,7 +476,6 @@ class AppealRepository
         timdtime: VacolsHelper.local_time_with_utc_timezone,
         timduser: user.regional_office
       )
-
       # Reopen any issues that have the same close information as the appeal
       case_record.case_issues
         .where(issdc: close_disposition, issdcls: close_date)

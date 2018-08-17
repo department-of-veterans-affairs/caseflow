@@ -36,10 +36,12 @@ class AppealsController < ApplicationController
 
     role = params[:role].downcase
     return invalid_role_error unless ROLES.include?(role)
-    tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(params[:appeal_id], role)
-    render json: {
-      tasks: json_tasks(tasks)[:data]
-    }
+
+    if %w[attorney judge].include?(role) && appeal.class.name == "LegacyAppeal"
+      return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], role)
+    end
+
+    json_tasks_by_appeal_id(appeal.id, appeal.class.to_s)
   end
 
   def show
@@ -77,6 +79,8 @@ class AppealsController < ApplicationController
   def get_appeals_for_file_number(file_number)
     return file_number_not_found_error unless file_number
 
+    return file_access_prohibited_error if current_user.vso_employee? && !BGSService.new.can_access?(file_number)
+
     MetricsService.record("VACOLS: Get appeal information for file_number #{file_number}",
                           service: :queue,
                           name: "AppealsController.index") do
@@ -102,6 +106,15 @@ class AppealsController < ApplicationController
     @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
   end
 
+  def file_access_prohibited_error
+    render json: {
+      "errors": [
+        "title": "Access to Veteran file prohibited",
+        "detail": "User is prohibited from accessing files associated with provided Veteran ID"
+      ]
+    }, status: 403
+  end
+
   def file_number_not_found_error
     render json: {
       "errors": [
@@ -109,6 +122,26 @@ class AppealsController < ApplicationController
         "detail": "Veteran ID should be included as HTTP_VETERAN_ID element of request headers"
       ]
     }, status: 400
+  end
+
+  def queue_class
+    TasksController::QUEUES[params[:role].downcase.try(:to_sym)]
+  end
+
+  def json_tasks_by_appeal_id(appeal_db_id, appeal_type)
+    tasks = queue_class.new.tasks_by_appeal_id(appeal_db_id, appeal_type)
+
+    render json: {
+      tasks: json_tasks(tasks)[:data]
+    }
+  end
+
+  def json_tasks_by_legacy_appeal_id_and_role(appeal_id, role)
+    tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal_id, role)
+
+    render json: {
+      tasks: json_legacy_tasks(tasks)[:data]
+    }
   end
 
   def handle_non_critical_error(endpoint, err)
@@ -135,10 +168,17 @@ class AppealsController < ApplicationController
     ).as_json
   end
 
-  def json_tasks(tasks)
+  def json_legacy_tasks(tasks)
     ActiveModelSerializers::SerializableResource.new(
       tasks,
       each_serializer: ::WorkQueue::LegacyTaskSerializer
+    ).as_json
+  end
+
+  def json_tasks(tasks)
+    ActiveModelSerializers::SerializableResource.new(
+      tasks,
+      each_serializer: ::WorkQueue::TaskSerializer
     ).as_json
   end
 end

@@ -2,8 +2,7 @@
 import type {
   Task,
   Tasks,
-  AmaTasks,
-  LegacyAppeals,
+  Appeals,
   BasicAppeals,
   User,
   Attorneys
@@ -12,7 +11,7 @@ import type {
 export type AttorneyAppealsLoadingState = {
   [string]: {
     state: string,
-    data: {tasks: Tasks, appeals: LegacyAppeals},
+    data: {tasks: Tasks, appeals: Appeals},
     error: {status: number, response: Object}
   }
 };
@@ -43,7 +42,8 @@ export type UiState = {
   selectedAssigneeSecondary: ?string,
   loadedUserId: ?number,
   userRole: string,
-  userCssId: string
+  userCssId: string,
+  veteranCaseListIsVisible: boolean
 };
 
 export type UsersById = { [number]: ?User };
@@ -54,8 +54,8 @@ export type QueueState = {
   judges: UsersById,
   tasks: Tasks,
   appeals: BasicAppeals,
-  appealDetails: LegacyAppeals,
-  amaTasks: AmaTasks,
+  appealDetails: Appeals,
+  amaTasks: Tasks,
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},
   stagedChanges: {

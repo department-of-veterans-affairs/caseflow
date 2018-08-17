@@ -94,6 +94,7 @@ class ApplicationController < ApplicationBaseController
   helper_method :certification_header
 
   def can_access_queue?
+    return true if current_user.vso_employee?
     return true if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
     return true if current_user.colocated_in_vacols? && feature_enabled?(:colocated_queue)
     false

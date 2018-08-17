@@ -20,7 +20,8 @@ class LegacyAppeal < ApplicationRecord
   # fetch the data from VACOLS if it does not already exist in memory
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
   vacols_attr_accessor :veteran_date_of_birth, :veteran_gender
-  vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
+  vacols_attr_accessor :appellant_first_name, :appellant_middle_initial
+  vacols_attr_accessor :appellant_last_name, :appellant_name_suffix
   vacols_attr_accessor :outcoder_first_name, :outcoder_middle_initial, :outcoder_last_name
   vacols_attr_accessor :appellant_relationship, :appellant_ssn
   vacols_attr_accessor :appellant_address_line_1, :appellant_address_line_2
@@ -31,7 +32,7 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :regional_office_key
   vacols_attr_accessor :insurance_loan_number
   vacols_attr_accessor :notification_date, :nod_date, :soc_date, :form9_date, :ssoc_dates
-  vacols_attr_accessor :certification_date, :case_review_date
+  vacols_attr_accessor :certification_date, :case_review_date, :notice_of_death_date
   vacols_attr_accessor :type
   vacols_attr_accessor :disposition, :decision_date, :status
   vacols_attr_accessor :location_code
@@ -39,7 +40,7 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :case_record
   vacols_attr_accessor :outcoding_date
   vacols_attr_accessor :last_location_change_date
-  vacols_attr_accessor :docket_number, :docket_date
+  vacols_attr_accessor :docket_number, :docket_date, :citation_number
 
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
@@ -461,6 +462,14 @@ class LegacyAppeal < ApplicationRecord
       end
     end
     super
+  end
+
+  def previously_selected_for_quality_review
+    !case_record.decision_quality_reviews.empty?
+  end
+
+  def outstanding_vacols_mail?
+    case_record.mail.any?(&:outstanding?)
   end
 
   # VACOLS stores the VBA veteran unique identifier a little

@@ -124,6 +124,11 @@ export const setUserCssId = (cssId: string) => ({
   payload: { cssId }
 });
 
+export const setUserId = (userId: number) => ({
+  type: ACTIONS.SET_USER_ID,
+  payload: { userId }
+});
+
 type targetAssignee = { assigneeId: string };
 
 export const setSelectedAssignee = ({ assigneeId }: targetAssignee) => ({
@@ -138,4 +143,12 @@ export const setSelectedAssigneeSecondary = ({ assigneeId }: targetAssignee) => 
   payload: {
     assigneeId
   }
+});
+
+export const toggleVeteranCaseList = () => ({
+  type: ACTIONS.TOGGLE_VETERAN_CASE_LIST
+});
+
+export const hideVeteranCaseList = () => ({
+  type: ACTIONS.HIDE_VETERAN_CASE_LIST
 });

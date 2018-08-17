@@ -18,8 +18,10 @@ class RoSchedulePeriod < SchedulePeriod
   end
 
   def schedule_confirmed(hearing_schedule)
-    HearingDay.create_schedule(hearing_schedule)
-    super
+    transaction do
+      HearingDay.create_schedule(hearing_schedule)
+      super
+    end
   end
 
   private
@@ -47,6 +49,7 @@ class RoSchedulePeriod < SchedulePeriod
 
   def generate_ro_hearing_schedule
     generate_hearings_days = HearingSchedule::GenerateHearingDaysSchedule.new(self)
-    format_ro_data(generate_hearings_days.allocate_hearing_days_to_ros)
+    hearing_days = format_ro_data(generate_hearings_days.allocate_hearing_days_to_ros)
+    hearing_days.sort_by { |day| day[:hearing_date] }
   end
 end

@@ -25,27 +25,25 @@ import COPY from '../../COPY.json';
 import JUDGE_CASE_REVIEW_OPTIONS from '../../constants/JUDGE_CASE_REVIEW_OPTIONS.json';
 import {
   marginBottom, marginTop,
-  marginRight, paddingLeft,
-  fullWidth, redText, PAGE_TITLES,
-  ISSUE_DISPOSITIONS
+  paddingLeft, fullWidth,
+  redText, PAGE_TITLES,
+  ISSUE_DISPOSITIONS,
+  JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH
 } from './constants';
-const setWidth = (width) => css({ width });
+const setWidth = (width) => css({
+  width,
+  maxWidth: width
+});
 const headerStyling = marginBottom(1.5);
 const inlineHeaderStyling = css(headerStyling, { float: 'left' });
 const hrStyling = css(marginTop(2), marginBottom(3));
 const qualityOfWorkAlertStyling = css({ borderLeft: '0.5rem solid #59BDE1' });
 const errorStylingNoTopMargin = css({ '&.usa-input-error': marginTop(0) });
-
-const twoColumnContainerStyling = css({
-  display: 'inline-flex',
-  width: '100%'
-});
-const leftColumnStyling = css({
-  '@media(min-width: 950px)': setWidth('calc(50% - 2rem)'),
-  '@media(max-width: 949px)': setWidth('calc(100% - 2rem)')
-});
 const subH2Styling = css(paddingLeft(1), { lineHeight: 2 });
 const subH3Styling = css(paddingLeft(1), { lineHeight: 1.75 });
+const fullWidthCheckboxLabels = css({
+  '& .question-label': setWidth('100%')
+});
 
 class EvaluateDecisionView extends React.PureComponent {
   constructor(props) {
@@ -110,7 +108,7 @@ class EvaluateDecisionView extends React.PureComponent {
   getPrevStepUrl = () => {
     const {
       appealId,
-      appeal: { attributes: appeal }
+      appeal
     } = this.props;
     const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
     const prevUrl = `/queue/appeals/${appealId}`;
@@ -123,16 +121,17 @@ class EvaluateDecisionView extends React.PureComponent {
   goToNextStep = () => {
     const {
       task,
-      appeal: { attributes: appeal },
+      appeal,
       decision,
       userRole,
       appealId
     } = this.props;
     const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, {
       location: 'bva_dispatch',
+      attorney_id: task.assignedBy.pgId,
       ...this.state
     });
-    const successMsg = sprintf(COPY.JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name);
+    const successMsg = sprintf(COPY.JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
 
     this.props.requestSave(`/case_reviews/${task.taskId}/complete`, payload, { title: successMsg }).
       then(() => this.props.deleteAppeal(appealId));
@@ -161,20 +160,21 @@ class EvaluateDecisionView extends React.PureComponent {
 
   render = () => {
     const {
-      appeal: { attributes: appeal },
+      appeal,
       task,
       appealId,
       highlight,
       error
     } = this.props;
-    const dateAssigned = moment(task.assignedOn);
-    const decisionSubmitted = moment(task.previousTaskAssignedOn);
-    const daysWorked = moment().startOf('day').
+
+    const dateAssigned = moment(task.previousTaskAssignedOn);
+    const decisionSubmitted = moment(task.assignedOn);
+    const daysWorked = decisionSubmitted.startOf('day').
       diff(dateAssigned, 'days');
 
     return <React.Fragment>
       <CaseTitle
-        heading={appeal.veteran_full_name}
+        heading={appeal.veteranFullName}
         appealId={appealId}
         appeal={this.props.appeal}
         analyticsSource="evaluate_decision"
@@ -243,24 +243,26 @@ class EvaluateDecisionView extends React.PureComponent {
         </h3>
         {this.qualityIsDeficient() && <span {...css(subH3Styling, redText)}>Choose at least one</span>}
       </div>
-      <div {...twoColumnContainerStyling}>
-        <div className="cf-push-left" {...css(marginRight(2), leftColumnStyling)}>
-          <CheckboxGroup
-            hideLabel vertical
-            name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
-            onChange={this.setAreasOfImprovement}
-            errorState={highlight && this.qualityIsDeficient() && _.isEmpty(this.state.areas_for_improvement)}
-            value={this.state.areas_for_improvement}
-            options={this.getDisplayOptions('areas_for_improvement')} />
-        </div>
-        <div className="cf-push-left">
-          <CheckboxGroup
-            hideLabel vertical
-            name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
-            onChange={this.setStateAttrList}
-            value={this.state.factors_not_considered}
-            options={this.getDisplayOptions('factors_not_considered')} />
-        </div>
+      <div className="cf-push-left" {...fullWidth}>
+        <h4>{COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_NOT_CONSIDERED}</h4>
+        <CheckboxGroup
+          hideLabel vertical
+          name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
+          onChange={this.setStateAttrList}
+          value={this.state.factors_not_considered}
+          options={this.getDisplayOptions('factors_not_considered')}
+          styling={fullWidthCheckboxLabels} />
+      </div>
+      <div className="cf-push-left" {...fullWidth}>
+        <h4>{COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_AREAS_FOR_IMPROVEMENT}</h4>
+        <CheckboxGroup
+          hideLabel vertical
+          name={COPY.JUDGE_EVALUATE_DECISION_IMPROVEMENT_LABEL}
+          onChange={this.setAreasOfImprovement}
+          errorState={highlight && this.qualityIsDeficient() && _.isEmpty(this.state.areas_for_improvement)}
+          value={this.state.areas_for_improvement}
+          options={this.getDisplayOptions('areas_for_improvement')}
+          styling={fullWidthCheckboxLabels} />
       </div>
 
       <hr {...hrStyling} />
@@ -272,6 +274,7 @@ class EvaluateDecisionView extends React.PureComponent {
         name="additional-factors"
         label={COPY.JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_SUBHEAD}
         hideLabel
+        maxlength={JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH}
         value={this.state.comment}
         onChange={(comment) => this.setState({ comment })} />
     </React.Fragment>;
@@ -283,7 +286,7 @@ EvaluateDecisionView.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.appealDetails[ownProps.appealId],
+  appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
   highlight: state.ui.highlightFormItems,
   taskOptions: state.queue.stagedChanges.taskDecision.opts,
   task: tasksForAppealAssignedToUserSelector(state, ownProps)[0],

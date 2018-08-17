@@ -119,6 +119,7 @@ describe RampElection do
     context "when option_selected is set" do
       let(:veteran) { Veteran.create(file_number: veteran_file_number) }
       let(:option_selected) { "supplemental_claim" }
+      let(:modifier) { RampReview::END_PRODUCT_DATA_BY_OPTION[option_selected][:modifier] }
 
       context "when option receipt_date is nil" do
         let(:receipt_date) { nil }
@@ -141,7 +142,7 @@ describe RampElection do
             claim_type: "Claim",
             station_of_jurisdiction: "397",
             date: receipt_date.to_date,
-            end_product_modifier: "683",
+            end_product_modifier: modifier,
             end_product_label: "Supplemental Claim Review Rating",
             end_product_code: "683SCRRRAMP",
             gulf_war_registry: false,
@@ -151,6 +152,20 @@ describe RampElection do
         )
 
         expect(EndProductEstablishment.find_by(source: ramp_election.reload).reference_id).to eq("454545")
+      end
+
+      context "with a higher level review" do
+        let(:option_selected) { "higher_level_review" }
+
+        it "should use the modifier 682" do
+          allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+
+          expect(subject).to eq(:created)
+
+          expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+            hash_including(claim_hash: hash_including(end_product_modifier: modifier))
+          )
+        end
       end
 
       context "if matching RAMP ep already exists" do
@@ -305,25 +320,25 @@ describe RampElection do
     subject { ramp_election.sync_ep_status! }
 
     let(:end_product_reference_id) { "9" }
-    let!(:established_end_product) do
-      EndProductEstablishment.create(
-        veteran_file_number: ramp_election.veteran_file_number,
-        source: ramp_election,
-        reference_id: end_product_reference_id,
-        synced_status: end_product_status,
-        last_synced_at: 3.days.ago
-      )
-      Generators::EndProduct.build(
-        veteran_file_number: ramp_election.veteran_file_number,
-        bgs_attrs: {
-          benefit_claim_id: end_product_reference_id,
-          status_type_code: "WAZZAP"
-        }
-      )
-    end
 
     context "cached end product status is active" do
       let(:end_product_status) { "PEND" }
+      let!(:established_end_product) do
+        EndProductEstablishment.create(
+          veteran_file_number: ramp_election.veteran_file_number,
+          source: ramp_election,
+          reference_id: end_product_reference_id,
+          synced_status: end_product_status,
+          last_synced_at: 3.days.ago
+        )
+        Generators::EndProduct.build(
+          veteran_file_number: ramp_election.veteran_file_number,
+          bgs_attrs: {
+            benefit_claim_id: end_product_reference_id,
+            status_type_code: "WAZZAP"
+          }
+        )
+      end
 
       it "updates values properly and returns true" do
         expect(subject).to be_truthy
@@ -333,8 +348,94 @@ describe RampElection do
       end
     end
 
+    context "updates to canceled" do
+      let(:option_selected) { "supplemental_claim" }
+      let(:end_product_status) { "PEND" }
+      let!(:established_end_product) do
+        EndProductEstablishment.create(
+          veteran_file_number: ramp_election.veteran_file_number,
+          source: ramp_election,
+          reference_id: end_product_reference_id,
+          synced_status: end_product_status,
+          last_synced_at: 3.days.ago,
+          modifier: "683"
+        )
+        Generators::EndProduct.build(
+          veteran_file_number: ramp_election.veteran_file_number,
+          bgs_attrs: {
+            benefit_claim_id: end_product_reference_id,
+            status_type_code: "CAN"
+          }
+        )
+      end
+      let!(:appeals_to_reopen) do
+        %w[12345 23456].map do |vacols_id|
+          ramp_election.ramp_closed_appeals.create!(vacols_id: vacols_id)
+          create(:legacy_appeal,
+                 vacols_case: create(
+                   :case_with_decision,
+                   :type_original,
+                   :status_complete,
+                   :disposition_ramp,
+                   :reopenable,
+                   bfboard: "00",
+                   bfkey: vacols_id,
+                   bfcorlid: veteran_file_number + "C"
+                 ))
+        end
+      end
+
+      it "updates the value" do
+        expect(subject).to be_truthy
+        establishment = EndProductEstablishment.find_by(source: ramp_election.reload)
+        expect(establishment.synced_status).to eq("CAN")
+        expect(establishment.last_synced_at).to eq(Time.zone.now)
+      end
+
+      context "if automatic ramp rollback is enabled" do
+        before do
+          FeatureToggle.enable!(:automatic_ramp_rollback)
+          RequestStore[:current_user] = User.system_user
+        end
+
+        after { FeatureToggle.disable!(:automatic_ramp_rollback) }
+
+        it "rolls back the ramp election" do
+          expect(subject).to be_truthy
+          expect(RampElectionRollback.last).to have_attributes(
+            ramp_election: ramp_election,
+            user: User.system_user,
+            reason: "Automatic roll back due to EP 683 cancelation"
+          )
+        end
+      end
+
+      context "if automatic ramp rollback is disabled" do
+        it "doesn't roll back the ramp election" do
+          expect(subject).to be_truthy
+          expect(RampElectionRollback.find_by(ramp_election: ramp_election)).to be_nil
+        end
+      end
+    end
+
     context "cached end product status not active" do
       let(:end_product_status) { "CAN" }
+      let!(:established_end_product) do
+        EndProductEstablishment.create(
+          veteran_file_number: ramp_election.veteran_file_number,
+          source: ramp_election,
+          reference_id: end_product_reference_id,
+          synced_status: end_product_status,
+          last_synced_at: 3.days.ago
+        )
+        Generators::EndProduct.build(
+          veteran_file_number: ramp_election.veteran_file_number,
+          bgs_attrs: {
+            benefit_claim_id: end_product_reference_id,
+            status_type_code: "WAZZAP"
+          }
+        )
+      end
 
       it "does not update any values and returns true" do
         expect(subject).to be_truthy

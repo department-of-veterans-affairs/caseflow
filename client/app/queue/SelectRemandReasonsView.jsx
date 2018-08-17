@@ -12,9 +12,9 @@ import IssueRemandReasonsOptions from './components/IssueRemandReasonsOptions';
 import {
   fullWidth,
   ISSUE_DISPOSITIONS,
-  PAGE_TITLES,
-  USER_ROLES
+  PAGE_TITLES
 } from './constants';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 const subHeadStyling = css({ marginBottom: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 
@@ -34,7 +34,7 @@ class SelectRemandReasonsView extends React.Component {
     const { appealId, userRole } = this.props;
     const baseUrl = `/queue/appeals/${appealId}`;
 
-    return `${baseUrl}/${userRole === USER_ROLES.JUDGE ? 'evaluate' : 'submit'}`;
+    return `${baseUrl}/${userRole === USER_ROLE_TYPES.judge ? 'evaluate' : 'submit'}`;
   }
 
   goToPrevStep = () => _.each(this.state.renderedChildren, (child) => child.updateStoreIssue());
@@ -84,7 +84,7 @@ class SelectRemandReasonsView extends React.Component {
     <p className="cf-lead-paragraph" {...subHeadStyling}>
       {sprintf(
         COPY.REMAND_REASONS_SCREEN_SUBHEAD_LABEL,
-        this.props.userRole === USER_ROLES.ATTORNEY ? 'select' : 'review'
+        this.props.userRole === USER_ROLE_TYPES.attorney ? 'select' : 'review'
       )}
     </p>
     <hr />
@@ -106,7 +106,7 @@ SelectRemandReasonsView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
-  const issues = appeal.attributes.issues;
+  const issues = appeal.issues;
 
   return {
     appeal,

@@ -19,7 +19,9 @@ class EndProduct
   # TODO: Put real codes in here when we know them
   AMA_CODES = {
     "030HLRR" => "Higher-Level Review Rating",
-    "040SCR" => "Supplemental Claim Rating"
+    "030HLRNR" => "Higher-Level Review Nonrating",
+    "040SCR" => "Supplemental Claim Rating",
+    "040SCNR" => "Supplemental Claim Nonrating"
   }.freeze
 
   DISPATCH_CODES = {

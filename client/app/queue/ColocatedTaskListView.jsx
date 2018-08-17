@@ -3,27 +3,28 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import AmaTaskTable from './components/AmaTaskTable';
+import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
-import {
-  amaTasksByAssigneeId
-} from './selectors';
+import { newTasksByAssigneeCssIdSelector } from './selectors';
+import { hideSuccessMessage } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
+import COPY from '../../COPY.json';
 
-import { fullWidth } from './constants';
-import type { AmaTask } from './types/models';
-import type { State } from './types/state';
+import Alert from '../components/Alert';
+import TabWindow from '../components/TabWindow';
 
-type Params = {|
-  userId: number
-|};
+import type { TaskWithAppeal } from './types/models';
+import type { State, UiStateMessage } from './types/state';
+
+type Params = {||};
 
 type Props = Params & {|
-  // From state
-  amaTasks: Array<AmaTask>,
+  // store
+  success: UiStateMessage,
   // Action creators
-  clearCaseSelectSearch: typeof clearCaseSelectSearch
+  clearCaseSelectSearch: typeof clearCaseSelectSearch,
+  hideSuccessMessage: typeof hideSuccessMessage
 |};
 
 class ColocatedTaskListView extends React.PureComponent<Props> {
@@ -31,26 +32,50 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
     this.props.clearCaseSelectSearch();
   };
 
+  componentWillUnmount = () => this.props.hideSuccessMessage();
+
   render = () => {
-    const tableContent = <div>
-      <h1 {...fullWidth}></h1>
-      <AmaTaskTable tasks={this.props.amaTasks} />
-    </div>;
+    const { success } = this.props;
+    const tabs = [{
+      label: 'New',
+      page: <NewTasksTab />
+    }];
 
     return <AppSegment filledBackground>
-      {tableContent}
+      {success && <Alert type="success" title={success.title} message={success.detail} />}
+      <TabWindow name="tasks-tabwindow" tabs={tabs} />
     </AppSegment>;
   };
 }
 
-const mapStateToProps = (state: State, ownProps: Params) => {
+const mapStateToProps = (state) => {
+  const { success } = state.ui.messages;
+
   return {
-    amaTasks: amaTasksByAssigneeId(state)[ownProps.userId]
+    success
   };
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  clearCaseSelectSearch
+  clearCaseSelectSearch,
+  hideSuccessMessage
 }, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(ColocatedTaskListView): React.ComponentType<Params>);
+
+const NewTasksTab = connect(
+  (state: State) => ({ tasks: newTasksByAssigneeCssIdSelector(state) }))(
+  (props: { tasks: Array<TaskWithAppeal> }) => {
+    return <div>
+      <p>{COPY.COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION}</p>
+      <TaskTable
+        includeDetailsLink
+        includeTask
+        includeType
+        includeDocketNumber
+        includeDaysWaiting
+        includeReaderLink
+        tasks={props.tasks}
+      />
+    </div>;
+  });

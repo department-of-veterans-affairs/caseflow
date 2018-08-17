@@ -23,7 +23,8 @@ export const initialState = {
   userCssId: '',
   loadedUserId: null,
   selectedAssignee: null,
-  selectedAssigneeSecondary: null
+  selectedAssigneeSecondary: null,
+  veteranCaseListIsVisible: false
 };
 
 const setMessageState = (state, message, msgType) => update(state, {
@@ -120,7 +121,15 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
         $set: action.payload.featureToggles
       }
     });
-  case QUEUE_ACTIONS.RECEIVE_QUEUE_DETAILS:
+  case ACTIONS.TOGGLE_VETERAN_CASE_LIST:
+    return update(state, {
+      veteranCaseListIsVisible: { $set: !state.veteranCaseListIsVisible }
+    });
+  case ACTIONS.HIDE_VETERAN_CASE_LIST:
+    return update(state, {
+      veteranCaseListIsVisible: { $set: false }
+    });
+  case QUEUE_ACTIONS.SET_USER_ID:
     return update(state, {
       loadedUserId: { $set: action.payload.userId }
     });

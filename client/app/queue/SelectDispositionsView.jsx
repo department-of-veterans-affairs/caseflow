@@ -24,9 +24,9 @@ import {
   marginBottom,
   marginLeft,
   PAGE_TITLES,
-  USER_ROLES,
   ISSUE_DISPOSITIONS
 } from './constants';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import { getUndecidedIssues } from './utils';
 
 const tableStyling = css({
@@ -55,16 +55,14 @@ class SelectDispositionsView extends React.PureComponent {
     const {
       appealId,
       userRole,
-      appeal: {
-        attributes: { issues }
-      }
+      appeal: { issues }
     } = this.props;
     let nextStep;
     const baseUrl = `/queue/appeals/${appealId}`;
 
     if (_.map(issues, 'disposition').includes(ISSUE_DISPOSITIONS.REMANDED)) {
       nextStep = 'remands';
-    } else if (userRole === USER_ROLES.JUDGE) {
+    } else if (userRole === USER_ROLE_TYPES.judge) {
       nextStep = 'evaluate';
     } else {
       nextStep = 'submit';
@@ -75,7 +73,7 @@ class SelectDispositionsView extends React.PureComponent {
 
   componentWillUnmount = () => this.props.hideSuccessMessage();
   componentDidMount = () => {
-    if (this.props.userRole === USER_ROLES.ATTORNEY) {
+    if (this.props.userRole === USER_ROLE_TYPES.attorney) {
       this.props.setDecisionOptions({ work_product: 'Decision' });
     }
   }
@@ -88,7 +86,7 @@ class SelectDispositionsView extends React.PureComponent {
   };
 
   validateForm = () => {
-    const { appeal: { attributes: { issues } } } = this.props;
+    const { appeal: { issues } } = this.props;
     const issuesWithoutDisposition = _.reject(issues, 'disposition');
 
     return !issuesWithoutDisposition.length;
@@ -121,7 +119,7 @@ class SelectDispositionsView extends React.PureComponent {
     const {
       success,
       appealId,
-      appeal: { attributes: { issues } }
+      appeal: { issues }
     } = this.props;
 
     return <React.Fragment>
