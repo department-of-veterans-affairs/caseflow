@@ -62,6 +62,20 @@ class Fakes::BGSService
           source: hlr
         )
         hlr
+      when "has_ramp_election_with_contentions"
+        claim_id = "123456"
+        ramp_election = RampElection.find_or_create_by!(
+          veteran_file_number: veteran.file_number
+        )
+        EndProductEstablishment.find_or_create_by!(
+          reference_id: claim_id,
+          veteran_file_number: veteran.file_number,
+          source: ramp_election,
+          synced_status: "CLR",
+          last_synced_at: 10.minutes.ago
+        )
+        Generators::Contention.build(text: "A contention!", claim_id: claim_id)
+        ramp_election
       end
     end
   end
