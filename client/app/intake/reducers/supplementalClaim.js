@@ -46,6 +46,9 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
   updateFromServerIntake({
     receiptDate: null,
     receiptDateError: null,
+    claimantNotVeteran: null,
+    claimant: null,
+    payee: null,
     isStarted: false,
     isReviewed: false,
     isComplete: false,

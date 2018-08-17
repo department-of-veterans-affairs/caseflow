@@ -10,6 +10,7 @@ describe EndProduct do
       claim_date: claim_date,
       claim_type_code: claim_type_code,
       status_type_code: status_type_code,
+      payee_code: payee_code,
       modifier: modifier,
       station_of_jurisdiction: station_of_jurisdiction,
       gulf_war_registry: gulf_war_registry,
@@ -24,6 +25,7 @@ describe EndProduct do
   let(:station_of_jurisdiction) { "489" }
   let(:gulf_war_registry) { false }
   let(:suppress_acknowledgement_letter) { true }
+  let(:payee_code) { "00" }
 
   context "#claim_type" do
     subject { end_product.claim_type }
@@ -193,6 +195,11 @@ describe EndProduct do
       let(:suppress_acknowledgement_letter) { "shane" }
       it { is_expected.to be_falsey }
     end
+
+    context "when payee code is missing" do
+      let(:payee_code) {nil }
+      it { is_expected.to be_falsey }
+    end
   end
 
   context "#serializable_hash" do
@@ -236,6 +243,7 @@ describe EndProduct do
 
     let(:modifier) { "170" }
     let(:claim_type_code) { "930RC" }
+    let(:payee_code) { "00" }
     let(:station_of_jurisdiction) { "313" }
     let(:gulf_war_registry) { true }
     let(:suppress_acknowledgement_letter) { false }

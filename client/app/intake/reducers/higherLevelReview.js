@@ -67,6 +67,7 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     sameOfficeError: null,
     claimantNotVeteran: null,
     claimant: null,
+    payee: null,
     isStarted: false,
     isReviewed: false,
     isComplete: false,
