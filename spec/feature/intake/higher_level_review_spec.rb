@@ -223,9 +223,15 @@ RSpec.feature "Higher-Level Review Intake" do
       },
       veteran_hash: intake.veteran.to_vbms_hash
     )
+
     ratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
       code: HigherLevelReview::END_PRODUCT_RATING_CODE
+    )
+
+    expect(ratings_end_product_establishment).to have_attributes(
+      claimant_participant_id: "5382910292",
+      payee_code: "10"
     )
 
     # nonratings end product
@@ -245,9 +251,15 @@ RSpec.feature "Higher-Level Review Intake" do
       ),
       veteran_hash: intake.veteran.to_vbms_hash
     )
+
     nonratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
       code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
+    )
+
+    expect(nonratings_end_product_establishment).to have_attributes(
+      claimant_participant_id: "5382910292",
+      payee_code: "10"
     )
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(

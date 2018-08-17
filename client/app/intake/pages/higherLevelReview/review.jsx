@@ -8,7 +8,7 @@ import CancelButton from '../../components/CancelButton';
 import Button from '../../../components/Button';
 import SelectClaimant from '../../components/SelectClaimant';
 import { setInformalConference, setSameOffice } from '../../actions/higherLevelReview';
-import { submitReview, setClaimantNotVeteran, setClaimant, setPayee } from '../../actions/ama';
+import { submitReview, setClaimantNotVeteran, setClaimant, setPayeeCode } from '../../actions/ama';
 import { setReceiptDate } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
@@ -81,13 +81,13 @@ const SelectClaimantConnected = connect(
   ({ higherLevelReview }) => ({
     claimantNotVeteran: higherLevelReview.claimantNotVeteran,
     claimant: higherLevelReview.claimant,
-    payee: higherLevelReview.payee,
+    payeeCode: higherLevelReview.payeeCode,
     relationships: higherLevelReview.relationships
   }),
   (dispatch) => bindActionCreators({
     setClaimantNotVeteran,
     setClaimant,
-    setPayee
+    setPayeeCode
   }, dispatch)
 )(SelectClaimant);
 

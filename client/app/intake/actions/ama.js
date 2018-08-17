@@ -114,10 +114,10 @@ export const setClaimant = (claimant) => ({
   }
 });
 
-export const setPayee = (payee) => ({
-  type: ACTIONS.SET_PAYEE,
+export const setPayeeCode = (payeeCode) => ({
+  type: ACTIONS.SET_PAYEE_CODE,
   payload: {
-    payee
+    payee_code
   }
 });
 

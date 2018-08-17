@@ -135,6 +135,9 @@ RSpec.feature "Supplemental Claim Intake" do
 
     find("label", text: "Baz Qux, Child", match: :prefer_exact).click
 
+    fill_in "What is the payee code for this claimant?", with: "11 - C&P First Child"
+    find("#cf-payee-code").send_keys :enter
+
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
@@ -160,7 +163,8 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(supplemental_claim).to_not be_nil
     expect(supplemental_claim.receipt_date).to eq(receipt_date)
     expect(supplemental_claim.claimants.first).to have_attributes(
-      participant_id: "5382910293"
+      participant_id: "5382910293",
+      payee_code: "11"
     )
     intake = Intake.find_by(veteran_file_number: "12341234")
 
@@ -199,7 +203,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
       claim_hash: {
         benefit_type_code: "1",
-        payee_code: "00",
+        payee_code: "11",
         predischarge: false,
         claim_type: "Claim",
         station_of_jurisdiction: "397",
@@ -213,16 +217,22 @@ RSpec.feature "Supplemental Claim Intake" do
       },
       veteran_hash: intake.veteran.to_vbms_hash
     )
+
     ratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
       code: SupplementalClaim::END_PRODUCT_RATING_CODE
+    )
+
+    expect(ratings_end_product_establishment).to have_attributes(
+      claimant_participant_id: "5382910293",
+      payee_code: "11"
     )
 
     # nonratings end product
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
       claim_hash: {
         benefit_type_code: "1",
-        payee_code: "00",
+        payee_code: "11",
         predischarge: false,
         claim_type: "Claim",
         station_of_jurisdiction: "397",
@@ -238,6 +248,11 @@ RSpec.feature "Supplemental Claim Intake" do
     nonratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
       code: SupplementalClaim::END_PRODUCT_NONRATING_CODE
+    )
+
+    expect(nonratings_end_product_establishment).to have_attributes(
+      claimant_participant_id: "5382910293",
+      payee_code: "11"
     )
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(

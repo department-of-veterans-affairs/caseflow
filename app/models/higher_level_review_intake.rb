@@ -12,7 +12,7 @@ class HigherLevelReviewIntake < Intake
       informal_conference: detail.informal_conference,
       claimant: detail.claimant_participant_id,
       claimant_not_veteran: detail.claimant_not_veteran,
-      payee: detail.payee_code,
+      payee_code: detail.payee_code,
       end_product_description: detail.end_product_description,
       ratings: detail.cached_serialized_timely_ratings
     )
@@ -27,7 +27,7 @@ class HigherLevelReviewIntake < Intake
     detail.start_review!
     detail.create_claimants!(
       participant_id: request_params[:claimant] || veteran.participant_id,
-      payee_code: request_params[:payee] || "00"
+      payee_code: request_params[:payee_code] || "00"
     )
     detail.update(request_params.permit(:receipt_date, :informal_conference, :same_office))
   end
