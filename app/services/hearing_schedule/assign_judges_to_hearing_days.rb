@@ -53,7 +53,7 @@ class HearingSchedule::AssignJudgesToHearingDays
         verify_assignments(num_days_assigned, assigned_hearing_days, hearing_days_assigned)
       end
     end
-    assigned_hearing_days
+    assigned_hearing_days.sort_by { |day| day[:hearing_date] }
   end
   # rubocop:enable Metrics/MethodLength
 

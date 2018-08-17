@@ -27,7 +27,8 @@ import {
   marginBottom, marginTop,
   paddingLeft, fullWidth,
   redText, PAGE_TITLES,
-  ISSUE_DISPOSITIONS
+  ISSUE_DISPOSITIONS,
+  JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH
 } from './constants';
 const setWidth = (width) => css({
   width,
@@ -127,6 +128,7 @@ class EvaluateDecisionView extends React.PureComponent {
     } = this.props;
     const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, {
       location: 'bva_dispatch',
+      attorney_id: task.assignedBy.pgId,
       ...this.state
     });
     const successMsg = sprintf(COPY.JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
@@ -164,9 +166,10 @@ class EvaluateDecisionView extends React.PureComponent {
       highlight,
       error
     } = this.props;
-    const dateAssigned = moment(task.assignedOn);
-    const decisionSubmitted = moment(task.previousTaskAssignedOn);
-    const daysWorked = moment().startOf('day').
+
+    const dateAssigned = moment(task.previousTaskAssignedOn);
+    const decisionSubmitted = moment(task.assignedOn);
+    const daysWorked = decisionSubmitted.startOf('day').
       diff(dateAssigned, 'days');
 
     return <React.Fragment>
@@ -271,6 +274,7 @@ class EvaluateDecisionView extends React.PureComponent {
         name="additional-factors"
         label={COPY.JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_SUBHEAD}
         hideLabel
+        maxlength={JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH}
         value={this.state.comment}
         onChange={(comment) => this.setState({ comment })} />
     </React.Fragment>;

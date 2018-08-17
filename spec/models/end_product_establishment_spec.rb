@@ -8,6 +8,7 @@ describe EndProductEstablishment do
   let(:code) { "030HLRR" }
   let(:reference_id) { nil }
   let(:source) { create(:ramp_election) }
+  let(:invalid_modifiers) { nil }
 
   let(:end_product_establishment) do
     EndProductEstablishment.new(
@@ -16,8 +17,9 @@ describe EndProductEstablishment do
       code: code,
       claim_date: 2.days.ago,
       station: "397",
-      valid_modifiers: ["030"],
-      reference_id: reference_id
+      valid_modifiers: %w[030 031 032],
+      reference_id: reference_id,
+      invalid_modifiers: invalid_modifiers
     )
   end
 
@@ -27,6 +29,7 @@ describe EndProductEstablishment do
     before do
       Fakes::VBMSService.end_product_claim_ids_by_file_number ||= {}
       Fakes::VBMSService.end_product_claim_ids_by_file_number[veteran.file_number] = "FAKECLAIMID"
+      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     end
 
     context "when end product is not valid" do
@@ -49,13 +52,88 @@ describe EndProductEstablishment do
       end
     end
 
+    context "when an ep with a valid modifier already exists" do
+      let!(:past_created_ep) do
+        Generators::EndProduct.build(
+          veteran_file_number: "12341234",
+          bgs_attrs: { end_product_type_code: "030" }
+        )
+      end
+
+      it "creates an end product with the next valid modifier" do
+        subject
+        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          claim_hash: {
+            benefit_type_code: "1",
+            payee_code: "00",
+            predischarge: false,
+            claim_type: "Claim",
+            station_of_jurisdiction: "397",
+            date: 2.days.ago.to_date,
+            end_product_modifier: "031",
+            end_product_label: "Higher-Level Review Rating",
+            end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
+            gulf_war_registry: false,
+            suppress_acknowledgement_letter: false
+          },
+          veteran_hash: veteran.to_vbms_hash
+        )
+        expect(end_product_establishment.reload).to have_attributes(
+          modifier: "031"
+        )
+      end
+
+      context "when invalid modifiers is set" do
+        let(:invalid_modifiers) { ["031"] }
+        it "creates an ep with the next valid modifier" do
+          subject
+          expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+            claim_hash: {
+              benefit_type_code: "1",
+              payee_code: "00",
+              predischarge: false,
+              claim_type: "Claim",
+              station_of_jurisdiction: "397",
+              date: 2.days.ago.to_date,
+              end_product_modifier: "032",
+              end_product_label: "Higher-Level Review Rating",
+              end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
+              gulf_war_registry: false,
+              suppress_acknowledgement_letter: false
+            },
+            veteran_hash: veteran.to_vbms_hash
+          )
+          expect(end_product_establishment.reload).to have_attributes(
+            modifier: "032"
+          )
+        end
+      end
+    end
+
     context "when all goes well" do
       it "creates end product and sets reference_id" do
         subject
         expect(end_product_establishment.reload).to have_attributes(
           reference_id: "FAKECLAIMID",
           veteran_file_number: veteran_file_number,
-          established_at: Time.zone.now
+          established_at: Time.zone.now,
+          modifier: "030"
+        )
+        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          claim_hash: {
+            benefit_type_code: "1",
+            payee_code: "00",
+            predischarge: false,
+            claim_type: "Claim",
+            station_of_jurisdiction: "397",
+            date: 2.days.ago.to_date,
+            end_product_modifier: "030",
+            end_product_label: "Higher-Level Review Rating",
+            end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
+            gulf_war_registry: false,
+            suppress_acknowledgement_letter: false
+          },
+          veteran_hash: veteran.to_vbms_hash
         )
       end
     end
