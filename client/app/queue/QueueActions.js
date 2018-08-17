@@ -324,7 +324,7 @@ export const fetchAmaTasksOfUser = (userId: number, userRole: string) => (dispat
   ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
     then((resp) => dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data))));
 
-export const setTaskAssignment = (externalAppealId: number, cssId: string, pgId: number) => ({
+export const setTaskAssignment = (externalAppealId: string, cssId: string, pgId: number) => ({
   type: ACTIONS.SET_TASK_ASSIGNMENT,
   payload: {
     externalAppealId,
