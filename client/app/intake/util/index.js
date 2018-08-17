@@ -129,13 +129,13 @@ export const prepareReviewData = (intakeData, intakeType) => {
       docket_type: intakeData.docketType,
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
-      payeeCode: intakeData.payeeCode
+      payee_code: intakeData.payeeCode
     };
   case 'supplementalClaim':
     return {
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
-      payeeCode: intakeData.payeeCode
+      payee_code: intakeData.payeeCode
     };
   case 'higherLevelReview':
     return {
@@ -143,13 +143,13 @@ export const prepareReviewData = (intakeData, intakeType) => {
       same_office: intakeData.sameOffice,
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
-      payeeCode: intakeData.payeeCode
+      payee_code: intakeData.payeeCode
     };
   default:
     return {
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
-      payeeCode: intakeData.payeeCode
+      payee_code: intakeData.payeeCode
     };
   }
 };
