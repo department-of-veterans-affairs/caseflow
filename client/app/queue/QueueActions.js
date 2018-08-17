@@ -332,3 +332,11 @@ export const setTaskAssignment = (externalAppealId: string, cssId: string, pgId:
     pgId
   }
 });
+
+export const setTaskAttrs = (externalAppealId: string, attributes: Object) => ({
+  type: ACTIONS.SET_TASK_ATTRS,
+  payload: {
+    externalAppealId,
+    attributes
+  }
+});

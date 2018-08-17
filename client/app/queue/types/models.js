@@ -64,7 +64,8 @@ export type Task = {
   documentId: ?string,
   workProduct: ?string,
   placedOnHoldAt?: string,
-  previousTaskAssignedOn: ?string
+  previousTaskAssignedOn: ?string,
+  status?: string
 };
 
 export type Tasks = { [string]: Task };

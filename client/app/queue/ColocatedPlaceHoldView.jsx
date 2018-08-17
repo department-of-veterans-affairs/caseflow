@@ -15,7 +15,9 @@ import {
   getTasksForAppeal,
   appealWithDetailSelector
 } from './selectors';
+import { setTaskAttrs } from './QueueActions';
 import { requestSave } from './uiReducer/uiActions';
+import { prepareTasksForStore } from './utils';
 
 import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -45,7 +47,8 @@ type Props = Params & {|
   appeal: Appeal,
   error: ?UiStateMessage,
   highlightFormItems: boolean,
-  requestSave: typeof requestSave
+  requestSave: typeof requestSave,
+  setTaskAttrs: typeof setTaskAttrs
 |};
 
 class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
@@ -65,7 +68,6 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
     if (Number(this.state.hold)) {
       return true;
     }
-
     if (this.state.hold === 'Custom') {
       return Number(this.state.customHold);
     }
@@ -96,7 +98,13 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
       detail: COPY.COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION_DETAIL
     };
 
-    this.props.requestSave(`/tasks/${task.taskId}`, payload, successMsg, 'patch');
+    this.props.requestSave(`/tasks/${task.taskId}`, payload, successMsg, 'patch').
+      then((resp) => {
+        const response = JSON.parse(resp.text);
+        const preparedTasks = prepareTasksForStore(response.tasks.data);
+
+        this.props.setTaskAttrs(task.externalAppealId, preparedTasks[task.externalAppealId]);
+      });
   }
 
   render = () => {
@@ -149,7 +157,7 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
             name={COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY}
             type="number"
             value={this.state.customHold}
-            onChange={(value) => this.setState({ customHold: value })}
+            onChange={(customHold) => this.setState({ customHold })}
             errorMessage={highlightFormItems && !this.state.customHold ? 'Please enter a number greater than 0' : null}
             label={false} />
         </div>
@@ -173,7 +181,8 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestSave
+  requestSave,
+  setTaskAttrs
 }, dispatch);
 
 const WrappedComponent = decisionViewBase(ColocatedPlaceHoldView, {

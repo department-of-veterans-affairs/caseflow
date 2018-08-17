@@ -44,7 +44,8 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       documentId: null,
       workProduct: null,
       previousTaskAssignedOn: null,
-      placedOnHoldAt: task.attributes.placed_on_hold_at
+      placedOnHoldAt: task.attributes.placed_on_hold_at,
+      status: task.attributes.status
     };
 
     return acc;
@@ -103,7 +104,8 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       taskType: task.attributes.task_type,
       documentId: task.attributes.document_id,
       workProduct: task.attributes.work_product,
-      previousTaskAssignedOn: task.attributes.previous_task.assigned_on
+      previousTaskAssignedOn: task.attributes.previous_task.assigned_on,
+      status: task.attributes.status
     };
   });
 
