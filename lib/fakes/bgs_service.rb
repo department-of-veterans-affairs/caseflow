@@ -16,6 +16,7 @@ class Fakes::BGSService
   attr_accessor :client
 
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def self.create_veteran_records
     file_path = Rails.root.join("local", "vacols", "bgs_setup.csv")
 
@@ -79,6 +80,7 @@ class Fakes::BGSService
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   def self.all_grants
     default_date = 10.days.ago.to_formatted_s(:short_date)
