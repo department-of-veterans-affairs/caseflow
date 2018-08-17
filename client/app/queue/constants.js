@@ -8,6 +8,7 @@ import StringUtil from '../util/StringUtil';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
 import CO_LOCATED_ACTIONS from '../../constants/CO_LOCATED_ACTIONS.json';
+import VACOLS_COLUMN_MAX_LENGTHS from '../../constants/VACOLS_COLUMN_MAX_LENGTHS.json';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -139,12 +140,10 @@ export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
   Object.keys(VACOLS_DISPOSITIONS_BY_ID)
 ));
 
-// max length of VACOLS issue description field `ISSUES.ISSDESC`
-export const ISSUE_DESCRIPTION_MAX_LENGTH = 100;
-// max length for Attorney comments `DECASS.DEATCOM`
-export const ATTORNEY_COMMENTS_MAX_LENGTH = 350;
-// max length for document id `DECASS.DEDOCID`
-export const DOCUMENT_ID_MAX_LENGTH = 30;
+export const ISSUE_DESCRIPTION_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.ISSUES.ISSDESC;
+export const ATTORNEY_COMMENTS_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.DECASS.DEATCOM;
+export const DOCUMENT_ID_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.DECASS.DEDOCID;
+export const JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.DECASS.DEBMCOM;
 
 export const PAGE_TITLES = {
   DISPOSITIONS: {

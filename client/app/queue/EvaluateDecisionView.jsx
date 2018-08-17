@@ -27,7 +27,8 @@ import {
   marginBottom, marginTop,
   paddingLeft, fullWidth,
   redText, PAGE_TITLES,
-  ISSUE_DISPOSITIONS
+  ISSUE_DISPOSITIONS,
+  JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH
 } from './constants';
 const setWidth = (width) => css({
   width,
@@ -273,6 +274,7 @@ class EvaluateDecisionView extends React.PureComponent {
         name="additional-factors"
         label={COPY.JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_SUBHEAD}
         hideLabel
+        maxlength={JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH}
         value={this.state.comment}
         onChange={(comment) => this.setState({ comment })} />
     </React.Fragment>;

@@ -425,7 +425,9 @@ RSpec.feature "Checkout flows" do
         # areas of improvement
         page.find_all(".question-label").sample(2).each(&:double_click)
 
-        fill_in "additional-factors", with: "this is the note"
+        dummy_note = generate_words 200
+        fill_in "additional-factors", with: dummy_note
+        expect(page).to have_content(dummy_note[0..599])
 
         click_on "Continue"
 
