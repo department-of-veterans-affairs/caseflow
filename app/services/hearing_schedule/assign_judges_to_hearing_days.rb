@@ -105,10 +105,12 @@ class HearingSchedule::AssignJudgesToHearingDays
   end
 
   def verify_assignments(num_days_assigned, assigned_hearing_days, hearing_days_assigned)
+    dates = @video_co_hearing_days.map(&:hearing_date)
+
     if @algo_counter >= 20
       fail HearingSchedule::Errors::CannotAssignJudges.new(
         "Hearing days on these dates couldn't be assigned #{dates}.",
-        dates: @video_co_hearing_days.map(&:hearing_date)
+        dates: dates
       )
     end
 
