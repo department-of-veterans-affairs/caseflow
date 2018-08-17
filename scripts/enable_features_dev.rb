@@ -7,6 +7,10 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
+          feature: "automatic_ramp_rollback",
+          enable_all: true
+        },
+        {
           feature: "hearings",
           users: ["CASEFLOW_397", "CASEFLOW1"]
         },

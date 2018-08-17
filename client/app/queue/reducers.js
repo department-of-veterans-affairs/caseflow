@@ -52,7 +52,10 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
         $merge: action.payload.appeals
       },
       tasks: {
-        $merge: action.payload.tasks
+        $merge: action.payload.tasks ? action.payload.tasks : {}
+      },
+      amaTasks: {
+        $merge: action.payload.amaTasks ? action.payload.amaTasks : {}
       }
     });
   case ACTIONS.RECEIVE_APPEAL_DETAILS:
@@ -67,7 +70,10 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
   case ACTIONS.RECEIVE_TASKS:
     return update(state, {
       tasks: {
-        $merge: action.payload.tasks
+        $merge: action.payload.tasks ? action.payload.tasks : {}
+      },
+      amaTasks: {
+        $merge: action.payload.amaTasks ? action.payload.amaTasks : {}
       }
     });
   case ACTIONS.RECEIVE_JUDGE_DETAILS:
@@ -321,14 +327,23 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
         }
       }
     });
-  case ACTIONS.AMA_TASKS_RECEIVED:
-    return {
-      ...state,
-      amaTasks: {
-        ...state.amaTasks,
-        ...action.payload.amaTasks
+  case ACTIONS.SET_TASK_ASSIGNMENT: {
+    const { externalAppealId } = action.payload;
+    const taskType = externalAppealId in state.amaTasks ? 'amaTasks' : 'tasks';
+
+    return update(state, {
+      [taskType]: {
+        [externalAppealId]: {
+          assignedTo: {
+            $set: {
+              cssId: action.payload.cssId,
+              id: action.payload.pgId
+            }
+          }
+        }
       }
-    };
+    });
+  }
   default:
     return state;
   }

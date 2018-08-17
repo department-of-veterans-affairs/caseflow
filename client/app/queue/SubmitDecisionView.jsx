@@ -43,7 +43,7 @@ const radioFieldStyling = css(marginBottom(0), marginTop(2), {
 });
 
 import type {
-  LegacyTask,
+  Task,
   Appeal,
   Judges
 } from './types/models';
@@ -59,7 +59,7 @@ type Props = Params & {|
   appeal: Appeal,
   judges: Judges,
   decision: Object,
-  task: LegacyTask,
+  task: Task,
   highlightFormItems: Boolean,
   userRole: string,
   error: ?UiStateMessage,
@@ -192,7 +192,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         value={decisionOpts.document_id}
         maxLength={DOCUMENT_ID_MAX_LENGTH}
       />
-      <JudgeSelectComponent assignedByCssId={this.props.task.addedByCssId} />
+      <JudgeSelectComponent assignedByCssId={this.props.task.addedByCssId || '' /* not compatible with AMA tasks */} />
       <TextareaField
         label="Notes:"
         name="notes"

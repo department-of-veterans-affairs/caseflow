@@ -1534,7 +1534,7 @@ describe LegacyAppeal do
     end
   end
 
-  context "#contested_claim", focus: true do
+  context "#contested_claim" do
     subject { appeal.contested_claim }
     let(:vacols_case) { create(:case) }
 
@@ -1785,6 +1785,24 @@ describe LegacyAppeal do
     it "Updates a legacy_appeal when an appeal is updated" do
       appeal.update!(rice_compliance: TRUE)
       expect(legacy_appeal.attributes).to eq(appeal.attributes)
+    end
+  end
+
+  context "#has_outstanding_vacols_mail?" do
+    let(:vacols_case) { create(:case) }
+    subject { appeal.outstanding_vacols_mail? }
+
+    context "when no mail is outstanding" do
+      it "returns false" do
+        expect(subject).to eq false
+      end
+    end
+
+    context "when mail is outstanding" do
+      let(:vacols_case) { create(:case, :outstanding_mail) }
+      it "returns true" do
+        expect(subject).to eq true
+      end
     end
   end
 

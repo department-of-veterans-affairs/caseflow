@@ -30,7 +30,7 @@ import {
   JUDGE_DECISION_OPTIONS
 } from '../constants';
 import AssignWidget from './AssignWidget';
-import type { LegacyTask, Appeal } from '../types/models';
+import type { Task, Appeal } from '../types/models';
 import type { State } from '../types/state';
 
 const ASSIGN = 'ASSIGN';
@@ -42,7 +42,7 @@ type Params = {|
 type Props = Params & {|
   // From store
   appeal: Appeal,
-  task: LegacyTask,
+  task: Task,
   changedAppeals: Array<string>,
   decision: Object,
   userRole: string,
@@ -93,7 +93,10 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
     this.props.setCaseReviewActionType(actionType);
 
     if (actionType === DECISION_TYPES.OMO_REQUEST) {
-      const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, { location: 'omo_office' });
+      const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, {
+        location: 'omo_office',
+        attorney_id: task.assignedBy.pgId
+      });
       const successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
 
       this.props.requestSave(`/case_reviews/${task.taskId}/complete`, payload, { title: successMsg }).
@@ -122,7 +125,7 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
 
   handleAssignment =
     ({ tasks, assigneeId, previousAssigneeId }:
-      { tasks: Array<LegacyTask>, assigneeId: string, previousAssigneeId: string}) => {
+      { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) => {
       if (tasks[0].taskType === 'Assign') {
         return this.props.initialAssignTasksToUser({ tasks,
           assigneeId,
@@ -168,7 +171,7 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
       {this.assignWidgetVisible() &&
         <AssignWidget
           onTaskAssignment={this.handleAssignment}
-          previousAssigneeId={task.assignedToPgId.toString()}
+          previousAssigneeId={task.assignedTo.id.toString()}
           selectedTasks={[task]} />}
     </React.Fragment>;
   }

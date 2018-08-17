@@ -475,6 +475,14 @@ class LegacyAppeal < ApplicationRecord
     super
   end
 
+  def previously_selected_for_quality_review
+    !case_record.decision_quality_reviews.empty?
+  end
+
+  def outstanding_vacols_mail?
+    case_record.mail.any?(&:outstanding?)
+  end
+
   # VACOLS stores the VBA veteran unique identifier a little
   # differently from BGS and VBMS. vbms_id correlates to the
   # VACOLS formatted veteran identifier, sanitized_vbms_id
