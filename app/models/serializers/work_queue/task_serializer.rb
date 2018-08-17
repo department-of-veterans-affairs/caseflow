@@ -8,6 +8,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :started_at
   attribute :completed_at
   attribute :placed_on_hold_at
+  attribute :on_hold_duration
   attribute :instructions
   attribute :appeal_type
 

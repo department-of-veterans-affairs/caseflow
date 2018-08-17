@@ -6,7 +6,10 @@ import { bindActionCreators } from 'redux';
 import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
-import { newTasksByAssigneeCssIdSelector } from './selectors';
+import {
+  newTasksByAssigneeCssIdSelector,
+  onHoldTasksByAssigneeCssIdSelector
+} from './selectors';
 import { hideSuccessMessage } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import COPY from '../../COPY.json';
@@ -39,6 +42,9 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
     const tabs = [{
       label: 'New',
       page: <NewTasksTab />
+    }, {
+      label: 'On hold',
+      page: <OnHoldTasksTab />
     }];
 
     return <AppSegment filledBackground>
@@ -74,6 +80,23 @@ const NewTasksTab = connect(
         includeType
         includeDocketNumber
         includeDaysWaiting
+        includeReaderLink
+        tasks={props.tasks}
+      />
+    </div>;
+  });
+
+const OnHoldTasksTab = connect(
+  (state: State) => ({ tasks: onHoldTasksByAssigneeCssIdSelector(state) }))(
+  (props: { tasks: Array<TaskWithAppeal> }) => {
+    return <div>
+      <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
+      <TaskTable
+        includeDetailsLink
+        includeTask
+        includeType
+        includeDocketNumber
+        includeDaysOnHold
         includeReaderLink
         tasks={props.tasks}
       />
