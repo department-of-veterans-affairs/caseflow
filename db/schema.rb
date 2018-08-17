@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180808215503) do
+ActiveRecord::Schema.define(version: 20180817195432) do
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -249,6 +250,8 @@ ActiveRecord::Schema.define(version: 20180808215503) do
     t.string "modifier"
     t.string "station"
     t.datetime "last_synced_at"
+    t.string "payee_code"
+    t.string "claimant_participant_id"
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
   end

@@ -132,7 +132,7 @@ RSpec.feature "Higher-Level Review Intake" do
     find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
 
     fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
-    find("#form-select").send_keys :enter
+    find("#cf-payee-code").send_keys :enter
 
     safe_click "#button-submit-review"
 
@@ -231,7 +231,7 @@ RSpec.feature "Higher-Level Review Intake" do
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
       claim_hash: hash_including(
         benefit_type_code: "1",
-        payee_code: "00",
+        payee_code: "10",
         predischarge: false,
         claim_type: "Claim",
         station_of_jurisdiction: "397",

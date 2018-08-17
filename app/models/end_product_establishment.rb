@@ -1,6 +1,6 @@
 class EndProductEstablishment < ApplicationRecord
   class EstablishedEndProductNotFound < StandardError; end
-  attr_accessor :valid_modifiers, :payee_code
+  attr_accessor :valid_modifiers
   # In AMA reviews, we may create 2 end products at the same time. To avoid using
   # the same modifier, we add used modifiers to the invalid_modifiers array.
   attr_writer :invalid_modifiers
@@ -34,7 +34,7 @@ class EndProductEstablishment < ApplicationRecord
       claim_id: reference_id,
       claim_date: claim_date,
       claim_type_code: code,
-      payee_code: source.payee_code,
+      payee_code: payee_code,
       modifier: modifier,
       suppress_acknowledgement_letter: false,
       gulf_war_registry: false,
@@ -95,7 +95,7 @@ class EndProductEstablishment < ApplicationRecord
       claim_id: reference_id,
       claim_date: claim_date,
       claim_type_code: code,
-      payee_code: source.payee_code,
+      payee_code: payee_code,
       modifier: find_open_modifier,
       suppress_acknowledgement_letter: false,
       gulf_war_registry: false,
