@@ -23,6 +23,7 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
     {
       first_name: object.assigned_by_first_name,
       last_name: object.assigned_by_last_name,
+      css_id: object.assigned_by_css_id,
       pg_id: object.assigned_by_pg_id
     }
   end
