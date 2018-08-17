@@ -50,11 +50,11 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
     }
 
     const routes = {
-      [CO_LOCATED_ACTIONS.SEND_TO_TEAM]: 'send_to_team'
+      [CO_LOCATED_ACTIONS.SEND_TO_TEAM]: 'send_to_team',
+      [CO_LOCATED_ACTIONS.PLACE_HOLD]: 'place_hold'
     };
     const route = routes[actionType];
 
-    history.push('');
     history.push(`/queue/appeals/${appealId}/${route}`);
   }
 

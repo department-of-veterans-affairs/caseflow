@@ -154,5 +154,7 @@
   "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION": "%s's case has been sent back to %s (Assigning Attorney)",
   "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION_DETAIL": "If you've made a mistake, please email %s to manage any changes.",
 
+  "COLOCATED_ACTION_PLACE_HOLD": "Place hold",
+
   "MODAL_CANCEL_ATTORNEY_CHECKOUT": "All changes made to this page will be lost, except for the adding, editing, and deleting of issues."
 }
