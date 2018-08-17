@@ -117,7 +117,7 @@ export const setClaimant = (claimant) => ({
 export const setPayeeCode = (payeeCode) => ({
   type: ACTIONS.SET_PAYEE_CODE,
   payload: {
-    payee_code
+    payeeCode
   }
 });
 

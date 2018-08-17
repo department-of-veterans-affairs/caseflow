@@ -199,7 +199,7 @@ describe EndProduct do
     end
 
     context "when payee code is missing" do
-      let(:payee_code) {nil }
+      let(:payee_code) { nil }
       it { is_expected.to be_falsey }
     end
   end

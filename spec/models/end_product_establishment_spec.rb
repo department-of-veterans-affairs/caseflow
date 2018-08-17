@@ -22,7 +22,7 @@ describe EndProductEstablishment do
       station: "397",
       valid_modifiers: %w[030 031 032],
       reference_id: reference_id,
-      invalid_modifiers: invalid_modifiers
+      invalid_modifiers: invalid_modifiers,
       claimant_participant_id: veteran_participant_id
     )
   end
@@ -127,6 +127,7 @@ describe EndProductEstablishment do
           claim_hash: {
             benefit_type_code: "1",
             payee_code: "00",
+            claimant_participant_id: veteran_participant_id,
             predischarge: false,
             claim_type: "Claim",
             station_of_jurisdiction: "397",
@@ -138,7 +139,6 @@ describe EndProductEstablishment do
             suppress_acknowledgement_letter: false
           },
           veteran_hash: veteran.to_vbms_hash
-          claimant_participant_id: veteran_participant_id
         )
       end
     end
