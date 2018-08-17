@@ -26,7 +26,6 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :appellant_relationship, :appellant_ssn
   vacols_attr_accessor :appellant_address_line_1, :appellant_address_line_2
   vacols_attr_accessor :appellant_city, :appellant_state, :appellant_country, :appellant_zip
-  vacols_attr_accessor :contested_claim
   vacols_attr_accessor :hearing_request_type, :video_hearing_requested
   vacols_attr_accessor :hearing_requested, :hearing_held
   vacols_attr_accessor :regional_office_key
@@ -38,6 +37,7 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :location_code
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
+
   vacols_attr_accessor :outcoding_date
   vacols_attr_accessor :last_location_change_date
   vacols_attr_accessor :docket_number, :docket_date, :citation_number
@@ -188,10 +188,15 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def power_of_attorney
+    # TODO: this will only return a single power of attorney. There are sometimes multiple values, eg.
+    # when a contesting claimant is present. Refactor so we surface all POA data.
     @poa ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id).tap do |poa|
       # Set the VACOLS properties of the PowerOfAttorney object here explicitly so we only query the database once.
-      poa.class.repository.set_vacols_values(poa: poa, case_record: case_record)
-      poa
+      poa.class.repository.set_vacols_values(
+        poa: poa,
+        case_record: case_record,
+        representative: VACOLS::Representative.appellant_representative(vacols_id)
+      )
     end
   end
 
@@ -233,6 +238,12 @@ class LegacyAppeal < ApplicationRecord
 
   def representative_type
     power_of_attorney.vacols_representative_type
+  end
+
+  delegate :representatives, to: :case_record
+
+  def contested_claim
+    representatives.any? { |r| r.reptype == "C" }
   end
 
   def docket_name
@@ -462,6 +473,14 @@ class LegacyAppeal < ApplicationRecord
       end
     end
     super
+  end
+
+  def previously_selected_for_quality_review
+    !case_record.decision_quality_reviews.empty?
+  end
+
+  def outstanding_vacols_mail?
+    case_record.mail.any?(&:outstanding?)
   end
 
   # VACOLS stores the VBA veteran unique identifier a little

@@ -15,6 +15,8 @@ import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
+import SendToAssigningAttorneyModal from './components/SendToAssigningAttorneyModal';
+
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
 
@@ -38,10 +40,12 @@ class CaseDetailsView extends React.PureComponent {
       appealId,
       appeal,
       error,
-      success
+      success,
+      modal
     } = this.props;
 
     return <AppSegment filledBackground>
+      {modal && <SendToAssigningAttorneyModal appealId={appealId} />}
       <CaseTitle appeal={appeal} appealId={appealId} redirectUrl={window.location.pathname} />
       {error && <Alert title={error.title} type="error">
         {error.detail}
@@ -80,14 +84,15 @@ CaseDetailsView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const { success, error } = state.ui.messages;
-  const { veteranCaseListIsVisible } = state.ui;
+  const { veteranCaseListIsVisible, modal } = state.ui;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     success,
     error,
-    veteranCaseListIsVisible
+    veteranCaseListIsVisible,
+    modal: modal.sendToAttorney
   };
 };
 
-export default connect(mapStateToProps, null)(CaseDetailsView);
+export default connect(mapStateToProps)(CaseDetailsView);

@@ -21,6 +21,14 @@ class Task < ApplicationRecord
     completed: "completed"
   }
 
+  def assigned_by_display_name
+    if assigned_by.try(:full_name)
+      return assigned_by.full_name.split(" ")
+    end
+
+    ["", ""]
+  end
+
   def legacy?
     appeal_type == "LegacyAppeal"
   end
