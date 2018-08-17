@@ -6,7 +6,7 @@ export type User = {
   css_id: string,
   full_name: string,
   email: ?string,
-  roles: Array<String>,
+  roles: Array<string>,
   selected_regional_office: ?string,
   display_name: string,
   judge_css_id: ?string
@@ -40,10 +40,8 @@ export type Issue = {
 export type Issues = Array<Issue>;
 
 export type Task = {
-  type?: string,
-  title?: string,
   action?: string,
-  appealId: string,
+  appealId: number,
   externalAppealId: string,
   assignedOn: string,
   dueOn: ?string,
@@ -63,7 +61,8 @@ export type Task = {
   taskType?: string,
   documentId: ?string,
   workProduct: ?string,
-  placedOnHoldAt?: string,
+  placedOnHoldAt?: ?string,
+  onHoldDuration?: ?number,
   previousTaskAssignedOn: ?string
 };
 
@@ -92,18 +91,17 @@ export type AppealDetail = {
 export type AppealDetails = { [string]: AppealDetail };
 
 export type BasicAppeal = {
-  id: string,
+  id: number,
   type: string,
   externalId: string,
-  docketName: string,
+  docketName: ?string,
   caseType: string,
   isAdvancedOnDocket: boolean,
-  issues: Array<Object>,
   docketNumber: string,
   veteranFullName: string,
   veteranFileNumber: string,
-  isPaperCase: boolean,
-  tasks: ?Array<Task>
+  isPaperCase: ?boolean,
+  tasks?: Array<Task>
 };
 
 export type BasicAppeals = { [string]: BasicAppeal };
