@@ -158,7 +158,8 @@
   "COLOCATED_ACTION_PLACE_HOLD_HEAD": "Place %s's case (%s) on hold",
   "COLOCATED_ACTION_PLACE_HOLD_COPY": "Select the total number of days for the hold",
   "COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY": "Enter a custom number of days for the hold",
-  "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION": "Task for %s has been placed on hold for %s days.",
+  "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION": "%s's case has been placed on hold for %s days.",
+  "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION_DETAIL": "When the hold has been completed, the case will automatically return to the In Progress tab.",
 
   "MODAL_CANCEL_ATTORNEY_CHECKOUT": "All changes made to this page will be lost, except for the adding, editing, and deleting of issues."
 }

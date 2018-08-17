@@ -89,7 +89,7 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
         appeal.veteranFullName,
         this.state.customHold || this.state.hold
       ),
-      detail: ''
+      detail: COPY.COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION_DETAIL
     };
 
     // this.props.setTaskAssignment(appeal.externalId, this.state.hold, 0);
