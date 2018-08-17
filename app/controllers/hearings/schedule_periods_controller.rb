@@ -20,7 +20,7 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
     render json: { schedule_period: sp }
   rescue HearingSchedule::Errors::NotEnoughAvailableDays,
          HearingSchedule::Errors::CannotAssignJudges => error
-    render json: { error: error.message, details: error.details }, status: 422
+    render json: { error: error.message, details: error.details, type: schedule_period.type }, status: 422
   end
 
   def create

@@ -9,7 +9,6 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   class HearingDaysNotAllocated < StandardError; end
   class NoJudgesProvided < StandardError; end
-  class CannotAssignJudges < StandardError; end
 
   def initialize(schedule_period)
     @video_co_hearing_days = []
