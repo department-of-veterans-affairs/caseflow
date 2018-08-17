@@ -3,4 +3,3 @@ class HearingSchedule::Errors::CannotAssignJudges < HearingSchedule::Errors::Sta
     super(message, details)
   end
 end
-
