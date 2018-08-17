@@ -12,7 +12,7 @@ RSpec.describe TasksController, type: :controller do
   end
 
   describe "GET tasks/xxx" do
-    let(:user) { create(:user) }
+    let(:user) { create(:default_user) }
     before do
       User.stub = user
       create(:staff, role, sdomainid: user.css_id)
@@ -32,9 +32,9 @@ RSpec.describe TasksController, type: :controller do
     let!(:task6) { create(:colocated_task, assigned_to: user, status: "completed") }
     let!(:task7) { create(:colocated_task) }
 
-    let!(:task8) { create(:ama_judge_task, assigned_to: user) }
-    let!(:task9) { create(:ama_judge_task, :in_progress, assigned_to: user) }
-    let!(:task10) { create(:ama_judge_task, :completed, assigned_to: user) }
+    let!(:task8) { create(:ama_judge_task, assigned_to: user, assigned_by: user) }
+    let!(:task9) { create(:ama_judge_task, :in_progress, assigned_to: user, assigned_by: user) }
+    let!(:task10) { create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user) }
 
     context "when user is an attorney" do
       let(:role) { :attorney_role }
@@ -45,13 +45,13 @@ RSpec.describe TasksController, type: :controller do
         response_body = JSON.parse(response.body)["tasks"]["data"]
         expect(response_body.size).to eq 2
         expect(response_body.first["attributes"]["status"]).to eq "on_hold"
-        expect(response_body.first["attributes"]["assigned_by"]["id"]).to eq user.id
+        expect(response_body.first["attributes"]["assigned_by"]["pg_id"]).to eq user.id
         expect(response_body.first["attributes"]["placed_on_hold_at"]).to_not be nil
         expect(response_body.first["attributes"]["veteran_full_name"]).to eq task1.appeal.veteran_full_name
         expect(response_body.first["attributes"]["veteran_file_number"]).to eq task1.appeal.veteran_file_number
 
         expect(response_body.second["attributes"]["status"]).to eq "on_hold"
-        expect(response_body.second["attributes"]["assigned_by"]["id"]).to eq user.id
+        expect(response_body.second["attributes"]["assigned_by"]["pg_id"]).to eq user.id
         expect(response_body.second["attributes"]["placed_on_hold_at"]).to_not be nil
         expect(response_body.second["attributes"]["veteran_full_name"]).to eq task2.appeal.veteran_full_name
         expect(response_body.second["attributes"]["veteran_file_number"]).to eq task2.appeal.veteran_file_number

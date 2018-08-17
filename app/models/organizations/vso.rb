@@ -5,6 +5,10 @@ class Vso < Organization
     participant_ids.include?(participant_id)
   end
 
+  def path
+    "/queue/organization/#{url}"
+  end
+
   private
 
   def bgs

@@ -23,22 +23,6 @@ describe SupplementalClaimIntake do
     )
   end
 
-  context "#start!" do
-    subject { intake.start! }
-
-    context "intake is already in progress" do
-      it "should not create another intake" do
-        SupplementalClaimIntake.new(
-          user: user,
-          veteran_file_number: veteran_file_number
-        ).start!
-
-        expect(intake).to_not be_nil
-        expect(subject).to eq(false)
-      end
-    end
-  end
-
   context "#cancel!" do
     subject { intake.cancel!(reason: "system_error", other: nil) }
 
@@ -136,17 +120,28 @@ describe SupplementalClaimIntake do
     end
 
     it "completes the intake and creates an end product" do
-      expect(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
       allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
       allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
 
       subject
 
-      resultant_end_product_establishment = EndProductEstablishment.find_by(source: intake.reload.detail)
+      ratings_end_product_establishment = EndProductEstablishment.find_by(
+        source: intake.reload.detail,
+        code: "040SCR"
+      )
+      nonratings_end_product_establishment = EndProductEstablishment.find_by(
+        source: intake.detail,
+        code: "040SCNR"
+      )
       expect(intake).to be_success
       expect(intake.detail.established_at).to eq(Time.zone.now)
-      expect(resultant_end_product_establishment).to_not be_nil
-      expect(resultant_end_product_establishment.established_at).to eq(Time.zone.now)
+      expect(ratings_end_product_establishment).to_not be_nil
+      expect(ratings_end_product_establishment.established_at).to eq(Time.zone.now)
+      expect(intake.detail.established_at).to eq(Time.zone.now)
+      expect(nonratings_end_product_establishment).to_not be_nil
+      expect(nonratings_end_product_establishment.established_at).to eq(Time.zone.now)
+      expect(intake.detail.established_at).to eq(Time.zone.now)
 
       request_issues = intake.detail.request_issues
       expect(request_issues.count).to eq 2
@@ -162,11 +157,16 @@ describe SupplementalClaimIntake do
       )
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: intake.detail.veteran_file_number,
-        claim_id: resultant_end_product_establishment.reference_id,
-        contention_descriptions: ["non-rated issue decision text", "decision text"]
+        claim_id: ratings_end_product_establishment.reference_id,
+        contention_descriptions: ["decision text"]
+      )
+      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+        veteran_file_number: intake.detail.veteran_file_number,
+        claim_id: nonratings_end_product_establishment.reference_id,
+        contention_descriptions: ["non-rated issue decision text"]
       )
       expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
-        claim_id: resultant_end_product_establishment.reference_id,
+        claim_id: ratings_end_product_establishment.reference_id,
         rated_issue_contention_map: { "reference-id" => request_issues.first.contention_reference_id }
       )
     end
@@ -217,7 +217,7 @@ describe SupplementalClaimIntake do
 
       it "clears pending status" do
         allow_any_instance_of(SupplementalClaim).to receive(
-          :create_end_product_and_contentions!
+          :create_end_products_and_contentions!
         ).and_raise(unknown_error)
 
         expect { subject }.to raise_exception

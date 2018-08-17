@@ -14,7 +14,7 @@ class LegacyTask
   end
 
   delegate :css_id, :name, to: :added_by, prefix: true
-  delegate :first_name, :last_name, :pg_id, to: :assigned_by, prefix: true
+  delegate :first_name, :last_name, :pg_id, :css_id, to: :assigned_by, prefix: true
 
   def user_id
     assigned_to && assigned_to.css_id

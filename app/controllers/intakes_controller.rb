@@ -84,6 +84,7 @@ class IntakesController < ApplicationController
     response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
   end
 
+  # TODO: This could be moved to the model.
   def intake_in_progress
     return @intake_in_progress unless @intake_in_progress.nil?
     @intake_in_progress = Intake.in_progress.find_by(user: current_user) || false
