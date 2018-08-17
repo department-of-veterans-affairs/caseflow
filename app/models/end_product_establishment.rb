@@ -35,6 +35,7 @@ class EndProductEstablishment < ApplicationRecord
       claim_date: claim_date,
       claim_type_code: code,
       payee_code: payee_code,
+      claimant_participant_id: claimant_participant_id
       modifier: modifier,
       suppress_acknowledgement_letter: false,
       gulf_war_registry: false,

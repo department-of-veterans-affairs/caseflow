@@ -39,7 +39,6 @@ class AmaReview < ApplicationRecord
   end
 
   def payee_code
-    # binding.pry
     return nil if claimants.empty?
     claimants.first.payee_code
   end
