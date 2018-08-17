@@ -4,7 +4,8 @@ describe EndProductEstablishment do
   end
 
   let(:veteran_file_number) { "12341234" }
-  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number) }
+  let(:veteran_participant_id) { "11223344" }
+  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number, participant_id: veteran_participant_id) }
   let(:code) { "030HLRR" }
   let(:payee_code) { "00" }
   let(:reference_id) { nil }
@@ -22,6 +23,7 @@ describe EndProductEstablishment do
       valid_modifiers: %w[030 031 032],
       reference_id: reference_id,
       invalid_modifiers: invalid_modifiers
+      claimant_participant_id: veteran_participant_id
     )
   end
 
@@ -136,6 +138,7 @@ describe EndProductEstablishment do
             suppress_acknowledgement_letter: false
           },
           veteran_hash: veteran.to_vbms_hash
+          claimant_participant_id: veteran_participant_id
         )
       end
     end

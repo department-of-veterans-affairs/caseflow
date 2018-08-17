@@ -180,7 +180,6 @@ describe HigherLevelReview do
 
   context "#create_end_products_and_contentions!" do
     subject { higher_level_review.create_end_products_and_contentions! }
-    let(:veteran) { Veteran.create(file_number: veteran_file_number) }
     let(:receipt_date) { 2.days.ago }
     let!(:request_issues_data) do
       [
@@ -193,6 +192,7 @@ describe HigherLevelReview do
     before do
       higher_level_review.save!
       higher_level_review.create_issues!(request_issues_data: request_issues_data)
+      higher_level_review.create_claimants!(claimant_data: "12345")
     end
 
     context "when option receipt_date is nil" do
@@ -231,7 +231,8 @@ describe HigherLevelReview do
           end_product_label: "Higher-Level Review Rating",
           end_product_code: "030HLRR",
           gulf_war_registry: false,
-          suppress_acknowledgement_letter: false
+          suppress_acknowledgement_letter: false,
+          claimant_participant_id: "12345"
         },
         veteran_hash: veteran.to_vbms_hash
       )

@@ -208,7 +208,8 @@ RSpec.feature "Supplemental Claim Intake" do
         end_product_label: "Supplemental Claim Rating",
         end_product_code: SupplementalClaim::END_PRODUCT_RATING_CODE,
         gulf_war_registry: false,
-        suppress_acknowledgement_letter: false
+        suppress_acknowledgement_letter: false,
+        claimant_participant_id: "5382910293"
       },
       veteran_hash: intake.veteran.to_vbms_hash
     )

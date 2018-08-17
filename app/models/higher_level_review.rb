@@ -46,6 +46,7 @@ class HigherLevelReview < AmaReview
       code: ep_code,
       valid_modifiers: END_PRODUCT_MODIFIERS,
       invalid_modifiers: invalid_modifiers,
+      claimant_participant_id: claimant_participant_id,
       source: self,
       station: "397" # AMC
     )

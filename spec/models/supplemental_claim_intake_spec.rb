@@ -123,6 +123,13 @@ describe SupplementalClaimIntake do
       )
     end
 
+    let!(:claimant) do
+      Claimant.create!(
+        review_request: detail,
+        participant_id: "1234"
+      )
+    end
+
     it "completes the intake and creates an end product" do
       allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
       allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
@@ -198,7 +205,8 @@ describe SupplementalClaimIntake do
           end_product_label: "Supplemental Claim Rating",
           end_product_code: "040SCR",
           gulf_war_registry: false,
-          suppress_acknowledgement_letter: false
+          suppress_acknowledgement_letter: false,
+          claimant_participant_id: claimant.participant_id
         },
         veteran_hash: intake.veteran.to_vbms_hash
       )

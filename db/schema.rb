@@ -250,7 +250,10 @@ ActiveRecord::Schema.define(version: 20180817195432) do
     t.string "modifier"
     t.string "station"
     t.datetime "last_synced_at"
+<<<<<<< HEAD
     t.string "payee_code"
+=======
+>>>>>>> sm6098-set-claimant
     t.string "claimant_participant_id"
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"

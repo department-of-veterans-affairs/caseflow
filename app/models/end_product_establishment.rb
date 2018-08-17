@@ -99,7 +99,8 @@ class EndProductEstablishment < ApplicationRecord
       modifier: find_open_modifier,
       suppress_acknowledgement_letter: false,
       gulf_war_registry: false,
-      station_of_jurisdiction: station
+      station_of_jurisdiction: station,
+      claimant_participant_id: claimant_participant_id
     )
   end
 

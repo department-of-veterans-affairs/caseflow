@@ -218,7 +218,8 @@ RSpec.feature "Higher-Level Review Intake" do
         end_product_label: "Higher-Level Review Rating",
         end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
         gulf_war_registry: false,
-        suppress_acknowledgement_letter: false
+        suppress_acknowledgement_letter: false,
+        claimant_participant_id: "5382910292"
       },
       veteran_hash: intake.veteran.to_vbms_hash
     )
