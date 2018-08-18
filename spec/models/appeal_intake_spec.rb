@@ -60,7 +60,7 @@ describe AppealIntake do
     let(:receipt_date) { "2018-05-25" }
     let(:docket_type) { "hearing" }
     let(:claimant) { nil }
-    let(:payee) { nil }
+    let(:payee_code) { nil }
     let(:detail) { Appeal.create!(veteran_file_number: veteran_file_number) }
 
     let(:request_params) do
@@ -68,7 +68,7 @@ describe AppealIntake do
         receipt_date: receipt_date,
         docket_type: docket_type,
         claimant: claimant,
-        payee: payee
+        payee_code: payee_code
       )
     end
 
@@ -105,7 +105,7 @@ describe AppealIntake do
 
     context "Claimant is different than Veteran" do
       let(:claimant) { "1234" }
-      let(:payee) { "10" }
+      let(:payee_code) { "10" }
 
       it "adds other relationship to claimants" do
         subject

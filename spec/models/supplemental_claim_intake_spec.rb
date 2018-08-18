@@ -59,7 +59,7 @@ describe SupplementalClaimIntake do
 
     let(:receipt_date) { 1.day.ago }
     let(:claimant) { nil }
-    let(:payee) { nil }
+    let(:payee_code) { nil }
 
     let(:detail) do
       SupplementalClaim.create!(
@@ -72,7 +72,7 @@ describe SupplementalClaimIntake do
       ActionController::Parameters.new(
         receipt_date: receipt_date,
         claimant: claimant,
-        payee: payee
+        payee_code: payee_code
       )
     end
 
@@ -90,7 +90,7 @@ describe SupplementalClaimIntake do
 
     context "Claimant is different than Veteran" do
       let(:claimant) { "1234" }
-      let(:payee) { "10" }
+      let(:payee_code) { "10" }
 
       it "adds other relationship to claimants" do
         subject

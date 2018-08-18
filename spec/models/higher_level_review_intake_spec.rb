@@ -61,7 +61,7 @@ describe HigherLevelReviewIntake do
     let(:informal_conference) { false }
     let(:same_office) { false }
     let(:claimant) { nil }
-    let(:payee) { nil }
+    let(:payee_code) { nil }
 
     let(:detail) do
       HigherLevelReview.create!(
@@ -76,7 +76,7 @@ describe HigherLevelReviewIntake do
         informal_conference: informal_conference,
         same_office: same_office,
         claimant: claimant,
-        payee: payee
+        payee_code: payee_code
       )
     end
 
@@ -94,7 +94,7 @@ describe HigherLevelReviewIntake do
 
     context "Claimant is different than Veteran" do
       let(:claimant) { "1234" }
-      let(:payee) { "10" }
+      let(:payee_code) { "10" }
 
       it "adds other relationship to claimants" do
         subject

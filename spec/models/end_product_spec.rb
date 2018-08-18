@@ -197,11 +197,6 @@ describe EndProduct do
       let(:suppress_acknowledgement_letter) { "shane" }
       it { is_expected.to be_falsey }
     end
-
-    context "when payee code is missing" do
-      let(:payee_code) { nil }
-      it { is_expected.to be_falsey }
-    end
   end
 
   context "#serializable_hash" do

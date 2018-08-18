@@ -72,13 +72,14 @@ describe EndProductEstablishment do
             payee_code: "00",
             predischarge: false,
             claim_type: "Claim",
+            end_product_modifier: "031",
+            end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
+            end_product_label: "Higher-Level Review Rating",
             station_of_jurisdiction: "397",
             date: 2.days.ago.to_date,
-            end_product_modifier: "031",
-            end_product_label: "Higher-Level Review Rating",
-            end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
+            suppress_acknowledgement_letter: false,
             gulf_war_registry: false,
-            suppress_acknowledgement_letter: false
+            claimant_participant_id: "11223344"
           },
           veteran_hash: veteran.to_vbms_hash
         )
@@ -97,13 +98,14 @@ describe EndProductEstablishment do
               payee_code: "00",
               predischarge: false,
               claim_type: "Claim",
+              end_product_modifier: "032",
+              end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
+              end_product_label: "Higher-Level Review Rating",
               station_of_jurisdiction: "397",
               date: 2.days.ago.to_date,
-              end_product_modifier: "032",
-              end_product_label: "Higher-Level Review Rating",
-              end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
+              suppress_acknowledgement_letter: false,
               gulf_war_registry: false,
-              suppress_acknowledgement_letter: false
+              claimant_participant_id: "11223344"
             },
             veteran_hash: veteran.to_vbms_hash
           )
