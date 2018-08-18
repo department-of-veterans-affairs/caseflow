@@ -69,11 +69,11 @@ class EndProduct
   validates :gulf_war_registry, :suppress_acknowledgement_letter, inclusion: { in: [true, false] }
 
   def payee_code
-    @payee_code || "00"
+    @payee_code ||= "00"
   end
 
   def claimant_participant_id
-    @claimant_participant_id || nil
+    @claimant_participant_id ||= nil
   end
 
   def claim_type
