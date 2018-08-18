@@ -4,8 +4,10 @@ describe EndProductEstablishment do
   end
 
   let(:veteran_file_number) { "12341234" }
-  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number) }
+  let(:veteran_participant_id) { "11223344" }
+  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number, participant_id: veteran_participant_id) }
   let(:code) { "030HLRR" }
+  let(:payee_code) { "00" }
   let(:reference_id) { nil }
   let(:source) { create(:ramp_election) }
   let(:invalid_modifiers) { nil }
@@ -15,11 +17,13 @@ describe EndProductEstablishment do
       source: source,
       veteran_file_number: veteran_file_number,
       code: code,
+      payee_code: payee_code,
       claim_date: 2.days.ago,
       station: "397",
       valid_modifiers: %w[030 031 032],
       reference_id: reference_id,
-      invalid_modifiers: invalid_modifiers
+      invalid_modifiers: invalid_modifiers,
+      claimant_participant_id: veteran_participant_id
     )
   end
 
@@ -68,13 +72,14 @@ describe EndProductEstablishment do
             payee_code: "00",
             predischarge: false,
             claim_type: "Claim",
+            end_product_modifier: "031",
+            end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
+            end_product_label: "Higher-Level Review Rating",
             station_of_jurisdiction: "397",
             date: 2.days.ago.to_date,
-            end_product_modifier: "031",
-            end_product_label: "Higher-Level Review Rating",
-            end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
+            suppress_acknowledgement_letter: false,
             gulf_war_registry: false,
-            suppress_acknowledgement_letter: false
+            claimant_participant_id: "11223344"
           },
           veteran_hash: veteran.to_vbms_hash
         )
@@ -93,13 +98,14 @@ describe EndProductEstablishment do
               payee_code: "00",
               predischarge: false,
               claim_type: "Claim",
+              end_product_modifier: "032",
+              end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
+              end_product_label: "Higher-Level Review Rating",
               station_of_jurisdiction: "397",
               date: 2.days.ago.to_date,
-              end_product_modifier: "032",
-              end_product_label: "Higher-Level Review Rating",
-              end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
+              suppress_acknowledgement_letter: false,
               gulf_war_registry: false,
-              suppress_acknowledgement_letter: false
+              claimant_participant_id: "11223344"
             },
             veteran_hash: veteran.to_vbms_hash
           )
@@ -123,6 +129,7 @@ describe EndProductEstablishment do
           claim_hash: {
             benefit_type_code: "1",
             payee_code: "00",
+            claimant_participant_id: veteran_participant_id,
             predischarge: false,
             claim_type: "Claim",
             station_of_jurisdiction: "397",
