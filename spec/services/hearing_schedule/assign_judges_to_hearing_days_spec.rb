@@ -269,7 +269,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
       subject { assign_judges_to_hearing_days.match_hearing_days_to_judges }
 
       it do
-        expect { subject }.to raise_error(HearingSchedule::AssignJudgesToHearingDays::CannotAssignJudges)
+        expect { subject }.to raise_error(HearingSchedule::Errors::CannotAssignJudges)
       end
     end
 
