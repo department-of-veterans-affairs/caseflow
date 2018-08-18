@@ -118,7 +118,7 @@ describe SupplementalClaim do
     before do
       supplemental_claim.save!
       supplemental_claim.create_issues!(request_issues_data: request_issues_data)
-      supplemental_claim.create_claimants!(claimant_data: "12345")
+      supplemental_claim.create_claimants!(participant_id: "12345", payee_code: "10")
     end
 
     context "when option receipt_date is nil" do
@@ -147,7 +147,7 @@ describe SupplementalClaim do
       expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
         claim_hash: {
           benefit_type_code: "1",
-          payee_code: "00",
+          payee_code: "10",
           predischarge: false,
           claim_type: "Claim",
           station_of_jurisdiction: "397",
@@ -165,7 +165,7 @@ describe SupplementalClaim do
       expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
         claim_hash: {
           benefit_type_code: "1",
-          payee_code: "00",
+          payee_code: "10",
           predischarge: false,
           claim_type: "Claim",
           station_of_jurisdiction: "397",
@@ -174,7 +174,8 @@ describe SupplementalClaim do
           end_product_label: "Supplemental Claim Nonrating",
           end_product_code: "040SCNR",
           gulf_war_registry: false,
-          suppress_acknowledgement_letter: false
+          suppress_acknowledgement_letter: false,
+          claimant_participant_id: "12345"
         },
         veteran_hash: veteran.to_vbms_hash
       )

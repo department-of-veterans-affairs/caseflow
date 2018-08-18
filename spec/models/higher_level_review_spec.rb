@@ -97,17 +97,40 @@ describe HigherLevelReview do
 
     it "returns claimant's participant ID" do
       higher_level_review.save!
-      higher_level_review.create_claimants!(claimant_data: "12345")
+      higher_level_review.create_claimants!(participant_id: "12345", payee_code: "00")
       higher_level_review.save!
       expect(subject).to eql("12345")
     end
 
     it "returns new claimant's participant ID if replaced" do
       higher_level_review.save!
-      higher_level_review.create_claimants!(claimant_data: "12345")
-      higher_level_review.create_claimants!(claimant_data: "23456")
+      higher_level_review.create_claimants!(participant_id: "12345", payee_code: "00")
+      higher_level_review.create_claimants!(participant_id: "23456", payee_code: "00")
       higher_level_review.reload
       expect(subject).to eql("23456")
+    end
+
+    it "returns nil when there are no claimants" do
+      expect(subject).to be_nil
+    end
+  end
+
+  context "#payee_code" do
+    subject { higher_level_review.payee_code }
+
+    it "returns claimant's payee_code" do
+      higher_level_review.save!
+      higher_level_review.create_claimants!(participant_id: "12345", payee_code: "10")
+      higher_level_review.save!
+      expect(subject).to eql("10")
+    end
+
+    it "returns new claimant's payee_code if replaced" do
+      higher_level_review.save!
+      higher_level_review.create_claimants!(participant_id: "12345", payee_code: "10")
+      higher_level_review.create_claimants!(participant_id: "23456", payee_code: "11")
+      higher_level_review.reload
+      expect(subject).to eql("11")
     end
 
     it "returns nil when there are no claimants" do
@@ -120,13 +143,13 @@ describe HigherLevelReview do
 
     it "returns true if claimant is not veteran" do
       higher_level_review.save!
-      higher_level_review.create_claimants!(claimant_data: "12345")
+      higher_level_review.create_claimants!(participant_id: "12345", payee_code: "10")
       expect(subject).to be true
     end
 
     it "returns false if claimant is veteran" do
       higher_level_review.save!
-      higher_level_review.create_claimants!(claimant_data: veteran.participant_id)
+      higher_level_review.create_claimants!(participant_id: veteran.participant_id, payee_code: "00")
       expect(subject).to be false
     end
 
@@ -192,7 +215,7 @@ describe HigherLevelReview do
     before do
       higher_level_review.save!
       higher_level_review.create_issues!(request_issues_data: request_issues_data)
-      higher_level_review.create_claimants!(claimant_data: "12345")
+      higher_level_review.create_claimants!(participant_id: "12345", payee_code: "10")
     end
 
     context "when option receipt_date is nil" do
@@ -222,7 +245,7 @@ describe HigherLevelReview do
       expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
         claim_hash: {
           benefit_type_code: "1",
-          payee_code: "00",
+          payee_code: "10",
           predischarge: false,
           claim_type: "Claim",
           station_of_jurisdiction: "397",
@@ -240,7 +263,7 @@ describe HigherLevelReview do
       expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
         claim_hash: {
           benefit_type_code: "1",
-          payee_code: "00",
+          payee_code: "10",
           predischarge: false,
           claim_type: "Claim",
           station_of_jurisdiction: "397",
@@ -249,7 +272,8 @@ describe HigherLevelReview do
           end_product_label: "Higher-Level Review Nonrating",
           end_product_code: "030HLRNR",
           gulf_war_registry: false,
-          suppress_acknowledgement_letter: false
+          suppress_acknowledgement_letter: false,
+          claimant_participant_id: "12345"
         },
         veteran_hash: veteran.to_vbms_hash
       )
