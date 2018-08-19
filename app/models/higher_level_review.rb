@@ -42,9 +42,11 @@ class HigherLevelReview < AmaReview
       veteran_file_number: veteran_file_number,
       reference_id: end_product_reference_id,
       claim_date: receipt_date,
+      payee_code: payee_code,
       code: ep_code,
       valid_modifiers: END_PRODUCT_MODIFIERS,
       invalid_modifiers: invalid_modifiers,
+      claimant_participant_id: claimant_participant_id,
       source: self,
       station: "397" # AMC
     )

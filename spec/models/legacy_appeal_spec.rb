@@ -1344,7 +1344,6 @@ describe LegacyAppeal do
     end
 
     it "returns correct eps" do
-      puts BGSService.end_product_records
       expect(result.length).to eq(2)
 
       expect(result.first.claim_type_code).to eq("172GRANT")
@@ -1532,6 +1531,25 @@ describe LegacyAppeal do
         create(:case, case_issues: [create(:case_issue), create(:case_issue)])
       end
       it { is_expected.to eq 2 }
+    end
+  end
+
+  context "#contested_claim" do
+    subject { appeal.contested_claim }
+    let(:vacols_case) { create(:case) }
+
+    context "when there is no contesting claimant" do
+      it { is_expected.to eq false }
+    end
+
+    context "when there is a contesting claimant" do
+      let(:vacols_case) do
+        vacols_c = create(:case)
+        create(:representative, reptype: "C", repkey: vacols_c.bfkey)
+        vacols_c
+      end
+
+      it { is_expected.to eq true }
     end
   end
 
