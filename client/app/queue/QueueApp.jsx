@@ -46,8 +46,6 @@ import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import type { State } from './types/state';
 
-const appStyling = css({ paddingTop: '3rem' });
-
 type Props = {|
   userDisplayName: string,
   feedbackUrl: string,
@@ -172,7 +170,7 @@ class QueueApp extends React.PureComponent<Props> {
       appName="">
       <AppFrame wideApp>
         <ScrollToTop />
-        <div className="cf-wide-app" {...appStyling}>
+        <div className="cf-wide-app">
           <PageRoute
             exact
             path="/"
