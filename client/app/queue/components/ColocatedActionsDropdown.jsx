@@ -7,6 +7,10 @@ import { withRouter } from 'react-router-dom';
 import SearchableDropdown from '../../components/SearchableDropdown';
 
 import {
+  appealWithDetailSelector,
+  getTasksForAppeal
+} from '../selectors';
+import {
   stageAppeal,
   checkoutStagedAppeal
 } from '../QueueActions';
@@ -17,8 +21,10 @@ import {
   COLOCATED_ACTIONS
 } from '../constants';
 import CO_LOCATED_ACTIONS from '../../../constants/CO_LOCATED_ACTIONS.json';
+import COPY from '../../../COPY.json';
 
 import type { State } from '../types/state';
+import type { Task } from '../types/models';
 
 type Params = {|
   appealId: string
@@ -26,7 +32,7 @@ type Params = {|
 
 type Props = Params & {|
   // state
-  changedAppeals: Array<number>,
+  task: Task,
   // dispatch
   showModal: typeof showModal,
   stageAppeal: typeof stageAppeal,
@@ -57,17 +63,30 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
     history.push(`/queue/appeals/${appealId}/${route}`);
   }
 
+  getOptions = () => {
+    const { task } = this.props;
+
+    if (task.status !== 'on_hold') {
+      return [...COLOCATED_ACTIONS, {
+        label: COPY.COLOCATED_ACTION_PLACE_HOLD,
+        value: CO_LOCATED_ACTIONS.PLACE_HOLD
+      }]
+    }
+
+    return COLOCATED_ACTIONS;
+  }
+
   render = () => <SearchableDropdown
     name={`start-colocated-action-flow-${this.props.appealId}`}
     placeholder="Select an action&hellip;"
-    options={COLOCATED_ACTIONS}
+    options={this.getOptions()}
     onChange={this.onChange}
     hideLabel
     dropdownStyling={dropdownStyling} />;
 }
 
-const mapStateToProps = (state: State) => ({
-  changedAppeals: Object.keys(state.queue.stagedChanges.appeals)
+const mapStateToProps = (state: State, ownProps: Params) => ({
+  task: getTasksForAppeal(state, ownProps)[0]
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
