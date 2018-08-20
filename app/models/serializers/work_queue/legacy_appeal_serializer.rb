@@ -45,7 +45,9 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :appellant_relationship
   attribute :location_code
   attribute :veteran_full_name
-  attribute :veteran_date_of_birth
+  attribute :veteran_date_of_birth do
+    object.veteran_date_of_birth ? object.veteran_date_of_birth.strftime("%m/%d/%Y") : nil
+  end
   attribute :veteran_gender
   attribute :vbms_id do
     object.sanitized_vbms_id
