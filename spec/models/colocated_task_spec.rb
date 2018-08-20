@@ -199,7 +199,7 @@ describe ColocatedTask do
             appeal: appeal,
             appeal_type: "LegacyAppeal",
             assigned_by: judge,
-            assigned_to: attorney,
+            assigned_to: attorney
           )
         end
 

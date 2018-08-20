@@ -53,9 +53,9 @@ class ColocatedTask < Task
 
   def update_location_in_vacols
     if saved_change_to_status? &&
-      completed? &&
-      appeal_type == "LegacyAppeal" &&
-      all_tasks_completed_for_appeal?
+       completed? &&
+       appeal_type == "LegacyAppeal" &&
+       all_tasks_completed_for_appeal?
       AppealRepository.update_location!(appeal, location_based_on_action)
     end
   end
