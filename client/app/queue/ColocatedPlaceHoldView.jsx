@@ -73,9 +73,6 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
     }
   }
 
-  // todo: make this a default (method) in decisionViewBase?
-  getPrevStepUrl = () => `/queue/appeals/${this.props.appealId}`;
-
   goToNextStep = () => {
     const {
       task,
