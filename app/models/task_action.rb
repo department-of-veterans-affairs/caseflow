@@ -7,8 +7,8 @@ class TaskAction < ApplicationRecord
   }
 
   def act(task, child_task_assignee_id)
-    update_task_status(task)
     create_child_task(task, child_task_assignee_id)
+    update_task_status(task)
   end
 
   def update_task_status(task)
