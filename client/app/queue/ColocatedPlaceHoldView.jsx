@@ -155,7 +155,9 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
             type="number"
             value={this.state.customHold}
             onChange={(customHold) => this.setState({ customHold })}
-            errorMessage={highlightFormItems && !this.state.customHold ? 'Please enter a number greater than 0' : null}
+            errorMessage={highlightFormItems && !this.state.customHold ?
+              COPY.COLOCATED_ACTION_PLACE_CUSTOM_HOLD_INVALID_VALUE : null
+            }
             label={false} />
         </div>
       </React.Fragment>}
@@ -184,7 +186,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 
 const WrappedComponent = decisionViewBase(ColocatedPlaceHoldView, {
   hideCancelButton: true,
-  continueBtnText: 'Place case on hold'
+  continueBtnText: COPY.COLOCATED_ACTION_PLACE_HOLD_BUTTON_COPY
 });
 
 export default (withRouter(
