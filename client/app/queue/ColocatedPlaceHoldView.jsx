@@ -9,7 +9,6 @@ import { sprintf } from 'sprintf-js';
 
 import COPY from '../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
-import CO_LOCATED_HOLD_DURATIONS from '../../constants/CO_LOCATED_HOLD_DURATIONS.json';
 
 import {
   getTasksForAppeal,
@@ -27,7 +26,8 @@ import Alert from '../components/Alert';
 import {
   fullWidth,
   marginBottom,
-  marginTop
+  marginTop,
+  COLOCATED_HOLD_DURATIONS
 } from './constants';
 
 import type { State, UiStateMessage } from './types/state';
@@ -62,7 +62,7 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
   }
 
   validateForm = () => {
-    if (!CO_LOCATED_HOLD_DURATIONS.includes(this.state.hold)) {
+    if (!COLOCATED_HOLD_DURATIONS.includes(this.state.hold)) {
       return false;
     }
     if (Number(this.state.hold)) {
@@ -142,7 +142,7 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
           placeholder="Select number of days"
           value={this.state.hold}
           onChange={({ value }) => this.setState({ hold: value })}
-          options={CO_LOCATED_HOLD_DURATIONS.map((value) => ({
+          options={COLOCATED_HOLD_DURATIONS.map((value) => ({
             label: Number(value) ? `${value} days` : value,
             value
           }))} />
