@@ -39,6 +39,8 @@ describe RampClosedAppeal do
     )
   end
 
+  let!(:appeal_veteran) { Generators::Veteran.build(file_number: appeal.veteran_file_number, participant_id: "323232") }
+
   context "#partial?" do
     subject { ramp_closed_appeal.partial? }
 
@@ -130,7 +132,7 @@ describe RampClosedAppeal do
       ]
     end
 
-    let(:veteran) { Generators::Veteran.build(file_number: "23232323") }
+    let(:veteran) { Generators::Veteran.build(file_number: "23232323", participant_id: "323232") }
 
     let(:ramp_election_canceled_ep) do
       create(:ramp_election,

@@ -134,6 +134,8 @@ RSpec.feature "Appeal Intake" do
       intake.veteran.participant_id
     )
 
+    expect(appeal.payee_code).to eq("00")
+
     expect(page).to have_content("Decision date: 04/14/2017")
     expect(page).to have_content("Left knee granted")
     expect(page).to_not have_content("Untimely rating issue 1")

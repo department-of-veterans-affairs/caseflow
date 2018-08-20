@@ -128,24 +128,28 @@ export const prepareReviewData = (intakeData, intakeType) => {
     return {
       docket_type: intakeData.docketType,
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
-      claimant: intakeData.claimant
+      claimant: intakeData.claimant,
+      payee_code: intakeData.payeeCode
     };
   case 'supplementalClaim':
     return {
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
-      claimant: intakeData.claimant
+      claimant: intakeData.claimant,
+      payee_code: intakeData.payeeCode
     };
   case 'higherLevelReview':
     return {
       informal_conference: intakeData.informalConference,
       same_office: intakeData.sameOffice,
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
-      claimant: intakeData.claimant
+      claimant: intakeData.claimant,
+      payee_code: intakeData.payeeCode
     };
   default:
     return {
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
-      claimant: intakeData.claimant
+      claimant: intakeData.claimant,
+      payee_code: intakeData.payeeCode
     };
   }
 };
