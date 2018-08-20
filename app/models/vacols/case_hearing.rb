@@ -59,7 +59,6 @@ class VACOLS::CaseHearing < VACOLS::Record
 
       select_hearings.where("staff.sdomainid = #{id}")
         .where("hearing_date > ?", 1.year.ago.beginning_of_day)
-        .where("bfddec is NULL or bfmpro = 'REM'")
     end
 
     def for_appeal(appeal_vacols_id)
