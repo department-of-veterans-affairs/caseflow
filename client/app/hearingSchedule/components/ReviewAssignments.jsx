@@ -161,7 +161,12 @@ export default class ReviewAssignments extends React.Component {
       });
     }
 
-    const hearingAssignmentRows = _.map(this.props.schedulePeriod.hearingDays, (hearingDay) => ({
+    const hearingDays = this.props.schedulePeriod.hearingDays;
+
+    const hearingsGroupedByDay = _.groupBy(hearingDays, (day) => day.hearingDate && day.roomInfo);
+    // const hearingsGroupedByDayByRoom = _.groupBy(hearingsGroupedByDay, (daysHearings) => daysHearings.roomInfo);
+
+    const hearingAssignmentRows = _.map(hearingsGroupedByDay, (hearingDay) => ({
       date: formatDateStr(hearingDay.hearingDate),
       type: HEARING_TYPE_LABELS[hearingDay.hearingType],
       regionalOffice: hearingDay.regionalOffice,
