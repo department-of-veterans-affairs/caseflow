@@ -53,8 +53,12 @@ export default class ListSchedule extends React.Component {
       }
     ];
 
-    const hearingScheduleRows = _.map(hearingSchedule, (hearingDay) => ({
-      hearingDate: `${formatDate(hearingDay.hearingDate)}`,
+    const hearingsGroupedByDay = _.groupBy(hearingSchedule, (day) => day.hearingDate);
+
+    const hearingsGroupedByDayRoom = _.groupBy(hearingsGroupedByDay, (daysHearings) => daysHearings.roomInfo);
+
+    const hearingScheduleRows = _.map(hearingsGroupedByDayRoom, (hearingDay) => ({
+      hearingDate: formatDate(hearingDay.hearingDate),
       hearingType: hearingDay.hearingType,
       regionalOffice: hearingDay.regionalOffice,
       room: hearingDay.roomInfo,
