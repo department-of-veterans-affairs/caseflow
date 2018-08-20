@@ -21,6 +21,10 @@ class Task < ApplicationRecord
     completed: "completed"
   }
 
+  def self.create_root_task(appeal_id)
+    create(appeal_id: appeal_id, action: "Root task", assigned_to_type: "Organization", appeal_type: "Appeal")
+  end
+
   def assigned_by_display_name
     if assigned_by.try(:full_name)
       return assigned_by.full_name.split(" ")
