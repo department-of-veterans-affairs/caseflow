@@ -158,4 +158,4 @@ export const PAGE_TITLES = {
   EVALUATE: 'Evaluate Decision'
 };
 
-export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, "Custom"]
+export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, 'Custom'];
