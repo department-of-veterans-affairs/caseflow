@@ -507,5 +507,32 @@ RSpec.feature "Checkout flows" do
         format(COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION, vet_name, attorney_name_display)
       )
     end
+
+    scenario "places task on hold" do
+      visit "/queue"
+
+      vet_name = colocated_action.appeal.veteran_full_name
+      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
+
+      click_dropdown 1
+
+      expect(page).to have_content(
+        format(COPY::COLOCATED_ACTION_PLACE_HOLD_HEAD, vet_name, colocated_action.appeal.sanitized_vbms_id)
+      )
+
+      click_dropdown 6
+      expect(page).to have_content(COPY::COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY)
+
+      hold_duration = rand(100)
+      fill_in COPY::COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY, with: hold_duration
+
+      click_on "Place case on hold"
+
+      expect(page).to have_content(
+        format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, vet_name, hold_duration)
+      )
+      expect(colocated_action.reload.on_hold_duration).to eq hold_duration
+      expect(colocated_action.status).to eq "on_hold"
+    end
   end
 end
