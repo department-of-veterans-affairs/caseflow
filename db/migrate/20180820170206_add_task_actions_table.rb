@@ -3,7 +3,7 @@ class AddTaskActionsTable < ActiveRecord::Migration[5.1]
     create_table :task_actions do |t|
       t.string "name", null: false
       t.string "status_after"
-      t.string "child_task_owner_type"
+      t.string "child_task_assignee_type"
       t.datetime "created_at", null: false
       t.datetime "updated_at", null: false
     end
