@@ -112,7 +112,9 @@ class RampReview < ApplicationRecord
       reference_id: end_product_reference_id,
       claim_date: receipt_date,
       code: end_product_code,
+      payee_code: payee_code,
       valid_modifiers: [end_product_modifier],
+      claimant_participant_id: claimant_participant_id,
       source: self,
       station: "397" # AMC
     )
@@ -151,6 +153,14 @@ class RampReview < ApplicationRecord
 
   def end_product_modifier
     (END_PRODUCT_DATA_BY_OPTION[option_selected] || {})[:modifier]
+  end
+
+  def payee_code
+    "00" # payee is Veteran for RAMP intakes
+  end
+
+  def claimant_participant_id
+    veteran.participant_id
   end
 
   def validate_receipt_date_not_before_ramp

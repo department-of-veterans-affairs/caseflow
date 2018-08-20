@@ -395,7 +395,8 @@ RSpec.feature "RAMP Refiling Intake" do
           end_product_label: "Supplemental Claim Review Rating",
           end_product_code: "683SCRRRAMP",
           gulf_war_registry: false,
-          suppress_acknowledgement_letter: false
+          suppress_acknowledgement_letter: false,
+          claimant_participant_id: veteran.participant_id
         },
         veteran_hash: intake.veteran.to_vbms_hash
       )
