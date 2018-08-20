@@ -37,19 +37,11 @@ class Task < ApplicationRecord
     appeal_type == "Appeal"
   end
 
+  def colocated_task?
+    type == "ColocatedTask"
+  end
+
   private
-
-  def on_hold_duration_is_set
-    if saved_change_to_status? && on_hold? && !on_hold_duration && type == "ColocatedTask"
-      errors.add(:on_hold_duration, "has to be specified")
-    end
-  end
-
-  def update_parent_status
-    if saved_change_to_status? && completed? && parent
-      parent.update(status: :assigned)
-    end
-  end
 
   def update_location_in_vacols
     if saved_change_to_status? &&
@@ -57,6 +49,18 @@ class Task < ApplicationRecord
        appeal_type == "LegacyAppeal" &&
        appeal.tasks.map(&:status).uniq == ["completed"]
       AppealRepository.update_location!(appeal, assigned_by.vacols_uniq_id)
+    end
+  end
+
+  def on_hold_duration_is_set
+    if saved_change_to_status? && on_hold? && !on_hold_duration && colocated_task?
+      errors.add(:on_hold_duration, "has to be specified")
+    end
+  end
+
+  def update_parent_status
+    if saved_change_to_status? && completed? && parent
+      parent.update(status: :assigned)
     end
   end
 

@@ -164,7 +164,7 @@ describe ColocatedTask do
 
         it "should update location in vacols" do
           expect(vacols_case.bfcurloc).to_not eq staff.slogid
-          colocated_admin_action.update(status: "completed")
+          colocated_admin_action.update!(status: "completed")
           expect(vacols_case.reload.bfcurloc).to eq staff.slogid
         end
       end
