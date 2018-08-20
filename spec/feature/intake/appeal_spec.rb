@@ -135,12 +135,7 @@ RSpec.feature "Appeal Intake" do
     )
 
     expect(appeal.payee_code).to eq("00")
-<<<<<<< HEAD
-
-    expect(page).to have_content("Decision date: 04/14/2017")
-=======
     expect(page).to have_content("Decision date: 04/17/2017")
->>>>>>> Fix tests
     expect(page).to have_content("Left knee granted")
     expect(page).to_not have_content("Untimely rating issue 1")
 
