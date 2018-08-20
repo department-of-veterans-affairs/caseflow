@@ -10,7 +10,7 @@ class Task < ApplicationRecord
   before_create :set_assigned_at_and_update_parent_status
   before_update :set_timestamps
 
-  after_update :update_location_in_vacols, :update_parent_status
+  after_update :update_parent_status
 
   validate :on_hold_duration_is_set, on: :update
 
@@ -42,15 +42,6 @@ class Task < ApplicationRecord
   end
 
   private
-
-  def update_location_in_vacols
-    if saved_change_to_status? &&
-       completed? &&
-       appeal_type == "LegacyAppeal" &&
-       appeal.tasks.map(&:status).uniq == ["completed"]
-      AppealRepository.update_location!(appeal, assigned_by.vacols_uniq_id)
-    end
-  end
 
   def on_hold_duration_is_set
     if saved_change_to_status? && on_hold? && !on_hold_duration && colocated_task?

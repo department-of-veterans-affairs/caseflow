@@ -4,6 +4,8 @@ class ColocatedTask < Task
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
 
+  after_update :update_location_in_vacols
+
   class << self
     def create(tasks)
       ActiveRecord::Base.multi_transaction do
@@ -48,6 +50,28 @@ class ColocatedTask < Task
   end
 
   private
+
+  def update_location_in_vacols
+    if saved_change_to_status? &&
+      completed? &&
+      appeal_type == "LegacyAppeal" &&
+      all_tasks_completed_for_appeal?
+      AppealRepository.update_location!(appeal, location_based_on_action)
+    end
+  end
+
+  def location_based_on_action
+    case action.to_sym
+    when :translation, :schedule_hearing
+      LegacyAppeal::LOCATION_CODES[action.to_sym]
+    else
+      assigned_by.vacols_uniq_id
+    end
+  end
+
+  def all_tasks_completed_for_appeal?
+    appeal.tasks.where(type: "ColocatedTask").map(&:status).uniq == ["completed"]
+  end
 
   def assigned_by_role_is_valid
     errors.add(:assigned_by, "has to be an attorney") if assigned_by && !assigned_by.attorney_in_vacols?
