@@ -6,10 +6,7 @@ import { withRouter } from 'react-router-dom';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 
-import {
-  appealWithDetailSelector,
-  getTasksForAppeal
-} from '../selectors';
+import { getTasksForAppeal } from '../selectors';
 import {
   stageAppeal,
   checkoutStagedAppeal
