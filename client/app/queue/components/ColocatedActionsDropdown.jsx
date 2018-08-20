@@ -67,7 +67,7 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
       return [...COLOCATED_ACTIONS, {
         label: COPY.COLOCATED_ACTION_PLACE_HOLD,
         value: CO_LOCATED_ACTIONS.PLACE_HOLD
-      }]
+      }];
     }
 
     return COLOCATED_ACTIONS;
