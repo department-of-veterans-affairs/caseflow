@@ -42,7 +42,7 @@ export default class StyleLogos extends React.PureComponent {
       {
         accentColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
         overlapColor: LOGO_COLORS.HEARING_SCHEDULE.OVERLAP,
-        appName: 'Hearings Schedule'
+        appName: 'Hearing Schedule'
       },
       {
         accentColor: LOGO_COLORS.EFOLDER.ACCENT,
