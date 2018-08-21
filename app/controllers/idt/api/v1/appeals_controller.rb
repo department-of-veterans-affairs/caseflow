@@ -35,10 +35,11 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
       serializer: ::Idt::V1::AppealDetailsSerializer
     ).as_json
 
-    appeal_details[:data][:attributes][:documents] = ActiveModelSerializers::SerializableResource.new(
-      tasks,
-      each_serializer: ::Idt::V1::TaskSerializer
-    ).as_json[:data].map { |task| task[:attributes] }
+    return appeal_details unless tasks.length?
+
+    assigned_by = tasks.sort_by(&:created_at).last.assigned_by_css_id
+    appeal_details[:data][:attributes][:assigned_by] = assigned_by
+    appeal_details[:data][:attributes][:documents] = json_documents(tasks)
 
     appeal_details
   end
@@ -48,5 +49,14 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
       appeals,
       each_serializer: ::Idt::V1::AppealSerializer
     ).as_json
+  end
+
+  def json_documents(tasks) 
+    tasks_with_documents = tasks.reject { |t| t.document_id.empty? }
+
+    ActiveModelSerializers::SerializableResource.new(
+      tasks_with_documents,  
+      each_serializer: ::Idt::V1::TaskSerializer
+    ).as_json[:data].map { |task| task[:attributes] }
   end
 end
