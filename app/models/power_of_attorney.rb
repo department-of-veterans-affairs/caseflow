@@ -7,16 +7,16 @@
 # This class exposes information from both systems
 # and lets the user modify VACOLS with BGS information
 # (but not the other way around).
+#
+# TODO: we query VACOLS when the vacols methods are
+# called, even if we've also queried VACOLS outside of this
+# model but in the same request. is this something we should optimize?
 class PowerOfAttorney
   include ActiveModel::Model
   include AssociatedVacolsModel
 
   vacols_attr_accessor  :vacols_representative_type,
-                        :vacols_first_name,
-                        :vacols_middle_initial,
-                        :vacols_last_name,
-                        :vacols_suffix,
-                        :vacols_org_name
+                        :vacols_representative_name
 
   attr_accessor :vacols_id,
                 :file_number
@@ -48,11 +48,6 @@ class PowerOfAttorney
         rep_type: rep_type
       )
     end
-  end
-
-  def vacols_representative_name
-    return vacols_org_name unless vacols_org_name.empty?
-    "#{vacols_first_name} #{vacols_middle_initial} #{vacols_last_name} #{vacols_suffix}".strip
   end
 
   private
