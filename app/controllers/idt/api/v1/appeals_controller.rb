@@ -56,7 +56,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
     ActiveModelSerializers::SerializableResource.new(
       tasks_with_documents,  
-      each_serializer: ::Idt::V1::TaskSerializer
-    ).as_json[:data].map { |task| task[:attributes] }
+      each_serializer: ::Idt::V1::DocumentSerializer
+    ).as_json[:data].map { |doc| doc[:attributes] }
   end
 end
