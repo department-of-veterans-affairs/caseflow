@@ -31,7 +31,7 @@ Rails.application.routes.draw do
     end
   end
 
-  namespace :idt do    
+  namespace :idt do
     get 'auth', to: 'authentications#index'
     namespace :api do
       namespace :v1 do
