@@ -114,6 +114,13 @@ export const setClaimant = (claimant) => ({
   }
 });
 
+export const setPayeeCode = (payeeCode) => ({
+  type: ACTIONS.SET_PAYEE_CODE,
+  payload: {
+    payeeCode
+  }
+});
+
 export const setIssueSelected = (profileDate, issueId, isSelected) => ({
   type: ACTIONS.SET_ISSUE_SELECTED,
   payload: {

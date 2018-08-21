@@ -55,7 +55,6 @@ class SendToAssigningAttorneyModal extends React.Component<Props> {
     const payload = {
       data: {
         task: {
-          type: 'ColocatedTask',
           assigned_to_id: task.assignedBy.pgId
         }
       }

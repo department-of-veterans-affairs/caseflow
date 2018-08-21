@@ -23,6 +23,7 @@
   "CASE_LIST_TABLE_DOCUMENT_ID_COLUMN_TITLE": "Document ID",
   "CASE_LIST_TABLE_SELECT_COLUMN_TITLE": "Select",
   "CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE": "Days Waiting",
+  "CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE": "Days on Hold",
   "CASE_LIST_TABLE_TASKS_COLUMN_TITLE": "Task(s)",
   "CASE_LIST_TABLE_ASSIGNEE_IS_CURRENT_USER_LABEL": "Assigned to you",
 
@@ -37,6 +38,9 @@
   "CASE_SNAPSHOT_TASK_DUE_DATE_LABEL": "Due",
   "CASE_SNAPSHOT_DECISION_PREPARER_LABEL": "Prepared by",
   "CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL": "Document ID",
+  "CASE_SNAPSHOT_TASK_TYPE_LABEL": "Task",
+  "CASE_SNAPSHOT_TASK_FROM_LABEL": "From",
+  "CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL": "Task instructions",
   "CASE_SNAPSHOT_ACTION_BOX_TITLE": "Actions",
 
   "CASE_TITLE_VETERAN_ID_BUTTON_TOOLTIP": "Click to copy Veteran ID",
@@ -55,6 +59,7 @@
   "JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE": "Cases to Assign",
 
   "COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION": "These are new administrative actions that have been assigned to you.",
+  "COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "When a hold is complete, the case will automatically return to the Pending action tab.",
 
   "NO_CASES_FOR_JUDGE_REVIEW_TITLE": "Cases not found",
   "NO_CASES_FOR_JUDGE_REVIEW_MESSAGE": "Congratulations! You don't have any decisions to sign.",
@@ -158,6 +163,14 @@
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD": "Send action to another team",
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_SUBHEAD": "Select the team you'd like to send this administrative action to",
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY": "When you select a team and click 'send action', this action and case will be sent to the respective team's VACOLS location. To send this action back to the assigning attorney instead, please return to the case details page, and select \"Send back to attoney\" from the list of available actions.",
+  "COLOCATED_ACTION_PLACE_HOLD": "Place hold",
+  "COLOCATED_ACTION_PLACE_HOLD_HEAD": "Place %s's case (%s) on hold",
+  "COLOCATED_ACTION_PLACE_HOLD_COPY": "Select the total number of days for the hold",
+  "COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY": "Enter a custom number of days for the hold",
+  "COLOCATED_ACTION_PLACE_CUSTOM_HOLD_INVALID_VALUE": "Please enter a number greater than 0",
+  "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION": "%s's case has been placed on hold for %s days.",
+  "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION_DETAIL": "When the hold has been completed, the case will automatically return to the In Progress tab.",
+  "COLOCATED_ACTION_PLACE_HOLD_BUTTON_COPY": "Place case on hold",
 
   "MODAL_CANCEL_ATTORNEY_CHECKOUT": "All changes made to this page will be lost, except for the adding, editing, and deleting of issues."
 }

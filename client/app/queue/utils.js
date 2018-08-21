@@ -27,7 +27,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       addedByCssId: null,
       appealId: task.attributes.appeal_id,
       externalAppealId: task.attributes.external_appeal_id,
-      assignedOn: task.attributes.started_at,
+      assignedOn: task.attributes.assigned_at,
       dueOn: null,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
@@ -44,7 +44,10 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       documentId: null,
       workProduct: null,
       previousTaskAssignedOn: null,
-      placedOnHoldAt: task.attributes.placed_on_hold_at
+      placedOnHoldAt: task.attributes.placed_on_hold_at,
+      status: task.attributes.status,
+      onHoldDuration: task.attributes.on_hold_duration,
+      instructions: task.attributes.instructions
     };
 
     return acc;
@@ -103,7 +106,8 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       taskType: task.attributes.task_type,
       documentId: task.attributes.document_id,
       workProduct: task.attributes.work_product,
-      previousTaskAssignedOn: task.attributes.previous_task.assigned_on
+      previousTaskAssignedOn: task.attributes.previous_task.assigned_on,
+      status: task.attributes.status
     };
   });
 

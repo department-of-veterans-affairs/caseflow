@@ -62,9 +62,6 @@ class SendToAnotherTeamView extends React.Component<Props, ViewState> {
 
   validateForm = () => Object.keys(CO_LOCATED_TEAMS).includes(this.state.team);
 
-  // todo: make this a default (method) in decisionViewBase?
-  getPrevStepUrl = () => `/queue/appeals/${this.props.appealId}`;
-
   goToNextStep = () => {
     const { appeal } = this.props;
     // const payload = {};

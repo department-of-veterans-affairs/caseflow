@@ -53,7 +53,7 @@ export default class VeteranDetail extends React.PureComponent {
     if (dobField && this.getAppealAttr(dobField)) {
       details.push({
         label: 'Date of birth',
-        value: <DateString date={this.getAppealAttr(dobField)} dateFormat="M/D/YYYY" />
+        value: <DateString date={this.getAppealAttr(dobField)} inputFormat="MM/DD/YYYY" dateFormat="M/D/YYYY" />
       });
     }
     if (relationField && this.getAppealAttr(relationField)) {

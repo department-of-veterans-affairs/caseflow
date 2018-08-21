@@ -1,9 +1,9 @@
-Connects #{github issue number}
+Resolves #{github issue number}
 
 ### Description
 Please explain the changes you made here.
 
-### Acceptance Criteria 
+### Acceptance Criteria
 - [ ] Code compiles correctly
 
 ### Testing Plan

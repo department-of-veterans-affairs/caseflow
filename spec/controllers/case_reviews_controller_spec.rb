@@ -90,7 +90,9 @@ RSpec.describe CaseReviewsController, type: :controller do
             post :complete, params: { task_id: task.id, tasks: params }
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)
-            expect(response_body["task"]["location"]).to eq "bva_dispatch"
+            location = response_body["task"]["location"]
+            # We send a sampling of cases to quality review, either location is correct
+            expect(location == "bva_dispatch" || location == "quality_review").to eq true
             expect(response_body["task"]["judge_id"]).to eq judge.id
             expect(response_body["task"]["attorney_id"]).to eq attorney.id
             expect(response_body["task"]["complexity"]).to eq "easy"

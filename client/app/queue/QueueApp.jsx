@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { BrowserRouter, Switch } from 'react-router-dom';
-import { css } from 'glamor';
 import StringUtil from '../util/StringUtil';
 
 import {
@@ -27,6 +26,7 @@ import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
 import SendToAnotherTeamView from './SendToAnotherTeamView';
+import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 
 import CaseListView from './CaseListView';
 import CaseSearchSheet from './CaseSearchSheet';
@@ -45,8 +45,6 @@ import { PAGE_TITLES } from './constants';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import type { State } from './types/state';
-
-const appStyling = css({ paddingTop: '3rem' });
 
 type Props = {|
   userDisplayName: string,
@@ -135,6 +133,8 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedSendToAnotherTeam = (props) => <SendToAnotherTeamView nextStep="/queue" {...props.match.params} />;
 
+  routedColocatedPlaceHold = (props) => <ColocatedPlaceHoldView nextStep="/queue" {...props.match.params} />;
+
   routedOrganization = (props) => <OrganizationQueueLoadingScreen
     urlToLoad={`${props.location.pathname}/tasks`}>
     <SearchBar feedbackUrl={this.props.feedbackUrl} />
@@ -172,7 +172,7 @@ class QueueApp extends React.PureComponent<Props> {
       appName="">
       <AppFrame wideApp>
         <ScrollToTop />
-        <div className="cf-wide-app" {...appStyling}>
+        <div className="cf-wide-app">
           <PageRoute
             exact
             path="/"
@@ -266,6 +266,11 @@ class QueueApp extends React.PureComponent<Props> {
             path="/queue/appeals/:appealId/send_to_team"
             title="Send to Another Team | Caseflow"
             render={this.routedSendToAnotherTeam} />
+          <PageRoute
+            exact
+            path="/queue/appeals/:appealId/place_hold"
+            title="Place Hold | Caseflow"
+            render={this.routedColocatedPlaceHold} />
           <PageRoute
             exact
             path="/organizations/:organization"

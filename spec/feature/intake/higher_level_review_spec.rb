@@ -119,15 +119,20 @@ RSpec.feature "Higher-Level Review Intake" do
     end
 
     expect(page).to_not have_content("Please select the claimant listed on the form.")
+    expect(page).to_not have_content("What is the payee code for this claimant?")
     within_fieldset("Is the claimant someone other than the Veteran?") do
       find("label", text: "Yes", match: :prefer_exact).click
     end
 
     expect(page).to have_content("Please select the claimant listed on the form.")
+    expect(page).to have_content("What is the payee code for this claimant?")
     expect(page).to have_content("Bob Vance, Spouse")
     expect(page).to_not have_content("Cathy Smith, Child")
 
     find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
+
+    fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
+    find("#cf-payee-code").send_keys :enter
 
     safe_click "#button-submit-review"
 
@@ -151,7 +156,7 @@ RSpec.feature "Higher-Level Review Intake" do
     expect(page).to have_current_path("/intake/finish")
 
     expect(page).to have_content("Identify issues on")
-    expect(page).to have_content("Decision date: 04/14/2017")
+    expect(page).to have_content("Decision date: 04/17/2017")
     expect(page).to have_content("Left knee granted")
     expect(page).to_not have_content("Untimely rating issue 1")
     expect(page).to have_button("Establish EP", disabled: true)
@@ -163,7 +168,8 @@ RSpec.feature "Higher-Level Review Intake" do
     expect(higher_level_review.informal_conference).to eq(true)
     expect(higher_level_review.same_office).to eq(false)
     expect(higher_level_review.claimants.first).to have_attributes(
-      participant_id: "5382910292"
+      participant_id: "5382910292",
+      payee_code: "10"
     )
 
     intake = Intake.find_by(veteran_file_number: "12341234")
@@ -203,7 +209,7 @@ RSpec.feature "Higher-Level Review Intake" do
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
       claim_hash: {
         benefit_type_code: "1",
-        payee_code: "00",
+        payee_code: "10",
         predischarge: false,
         claim_type: "Claim",
         station_of_jurisdiction: "397",
@@ -212,20 +218,27 @@ RSpec.feature "Higher-Level Review Intake" do
         end_product_label: "Higher-Level Review Rating",
         end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
         gulf_war_registry: false,
-        suppress_acknowledgement_letter: false
+        suppress_acknowledgement_letter: false,
+        claimant_participant_id: "5382910292"
       },
       veteran_hash: intake.veteran.to_vbms_hash
     )
+
     ratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
       code: HigherLevelReview::END_PRODUCT_RATING_CODE
+    )
+
+    expect(ratings_end_product_establishment).to have_attributes(
+      claimant_participant_id: "5382910292",
+      payee_code: "10"
     )
 
     # nonratings end product
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
       claim_hash: hash_including(
         benefit_type_code: "1",
-        payee_code: "00",
+        payee_code: "10",
         predischarge: false,
         claim_type: "Claim",
         station_of_jurisdiction: "397",
@@ -238,9 +251,15 @@ RSpec.feature "Higher-Level Review Intake" do
       ),
       veteran_hash: intake.veteran.to_vbms_hash
     )
+
     nonratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
       code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
+    )
+
+    expect(nonratings_end_product_establishment).to have_attributes(
+      claimant_participant_id: "5382910292",
+      payee_code: "10"
     )
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
@@ -401,7 +420,8 @@ RSpec.feature "Higher-Level Review Intake" do
 
     Claimant.create!(
       review_request: higher_level_review,
-      participant_id: veteran_no_ratings.participant_id
+      participant_id: veteran_no_ratings.participant_id,
+      payee_code: "00"
     )
 
     higher_level_review.start_review!
