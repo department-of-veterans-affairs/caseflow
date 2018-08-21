@@ -81,8 +81,6 @@ class VACOLS::CaseAssignment < VACOLS::Record
 
       select_tasks.where("brieff.bfkey = #{id}")
     end
-
-    # rubocop:disable Metrics/MethodLength
     def select_tasks
       select("brieff.bfkey as vacols_id",
              "brieff.bfcorlid as vbms_id",
@@ -99,12 +97,12 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "s1.sdomainid as added_by_css_id",
              "decass.dedeadline as date_due",
              "decass.deadtim as created_at",
-             "decass.deatty as written_by_attorney_id",
              "folder.tinum as docket_number",
              "s3.snamef as assigned_by_first_name",
              "s3.snamel as assigned_by_last_name",
              "s3.sdomainid as assigned_by_css_id",
-             "s2.sdomainid as assigned_to_css_id")
+             "s2.sdomainid as assigned_to_css_id",
+             "s4.sdomainid as written_by_css_id")
         .joins(<<-SQL)
           LEFT JOIN decass
             ON brieff.bfkey = decass.defolder
@@ -115,7 +113,9 @@ class VACOLS::CaseAssignment < VACOLS::Record
           JOIN folder
             ON brieff.bfkey = folder.ticknum
           LEFT JOIN staff s3
-            ON decass.demdusr = s3.slogid
+            ON decass.demdusr = s3.slogid          
+          LEFT JOIN staff s4
+            ON decass.deatty = s3.sattyid
         SQL
     end
     # rubocop:enable Metrics/MethodLength

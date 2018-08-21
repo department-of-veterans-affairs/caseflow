@@ -3,9 +3,7 @@ class Idt::V1::DocumentSerializer < ActiveModel::Serializer
     object.vacols_id
   end
   attribute :written_by do
-    attorney_id = object.written_by_attorney_id
-
-    attorney_id ? AttorneyRepository.find_by_attorney_id(attorney_id).sdomainid : ""
+    object.written_by_css_id ? User.find_by(object.written_by_css_id).full_name : ""
   end
   attribute :document_id
 end
