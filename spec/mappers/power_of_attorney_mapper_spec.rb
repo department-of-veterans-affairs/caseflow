@@ -5,33 +5,40 @@ describe PowerOfAttorneyMapper do
     context "#get_poa_from_vacols_poa" do
       it "returns None if there's no rep" do
         poa = poa_mapper.new.get_poa_from_vacols_poa(vacols_code: "L")
-        expect(poa[:vacols_representative_type]).to eq("None")
+        expect(poa[:representative_type]).to eq("None")
       end
 
-      it "returns organization info if vacols case record contains it" do
+      it "returns poa if rep name is found in vacols case record" do
         poa = poa_mapper.new.get_poa_from_vacols_poa(vacols_code: "M")
-        expect(poa[:vacols_org_name]).to eq("Navy Mutual Aid Association")
-        expect(poa[:vacols_representative_type]).to eq("Service Organization")
+        expect(poa[:representative_name]).to eq("Navy Mutual Aid Association")
+        expect(poa[:representative_type]).to eq("Service Organization")
       end
 
-      it "returns poa from rep table if rep name is found in rep table" do
-        representative_record = OpenStruct.new(repfirst: "Brad", repmi: "B", replast: "Pitt", reptype: "G")
-        poa = poa_mapper.new.get_poa_from_vacols_poa(vacols_code: "O", rep_record: representative_record)
-        expect(poa[:vacols_first_name]).to eq("Brad")
-        expect(poa[:vacols_representative_type]).to eq("Agent")
-      end
-
-      it "returns blank for name and type if vacols case record points to rep table but rep record is nil" do
-        poa = poa_mapper.new.get_poa_from_vacols_poa(vacols_code: "U")
-        expect(poa[:vacols_first_name]).to eq nil
-        expect(poa[:vacols_representative_type]).to eq(nil)
-      end
-
-      it "returns name from rep table if vacols code is blank but rep record exists" do
+      it "returns poa if rep name is found in rep table" do
         representative_record = OpenStruct.new(repfirst: "Brad", repmi: "B", replast: "Pitt")
-        poa = poa_mapper.new.get_poa_from_vacols_poa(vacols_code: "", rep_record: representative_record)
-        expect(poa[:vacols_representative_type]).to eq nil
-        expect(poa[:vacols_last_name]).to eq("Pitt")
+        poa = poa_mapper.new.get_poa_from_vacols_poa(vacols_code: "O", representative_record: representative_record)
+        expect(poa[:representative_name]).to eq("Brad B Pitt")
+        expect(poa[:representative_type]).to eq("Other")
+      end
+
+      it "returns blank for representative_name if first and last names are blank in rep table" do
+        representative_record = OpenStruct.new(repmi: "B")
+        poa = poa_mapper.new.get_poa_from_vacols_poa(vacols_code: "T", representative_record: representative_record)
+        expect(poa[:representative_name]).to eq nil
+        expect(poa[:representative_type]).to eq("Attorney")
+      end
+
+      it "returns blank for representative_name if representative record is nil" do
+        poa = poa_mapper.new.get_poa_from_vacols_poa(vacols_code: "U")
+        expect(poa[:representative_name]).to eq nil
+        expect(poa[:representative_type]).to eq("Agent")
+      end
+
+      it "returns name from rep table if vacols code is blank" do
+        representative_record = OpenStruct.new(repfirst: "Brad", repmi: "B", replast: "Pitt")
+        poa = poa_mapper.new.get_poa_from_vacols_poa(vacols_code: " ", representative_record: representative_record)
+        expect(poa[:representative_type]).to eq nil
+        expect(poa[:representative_name]).to eq("Brad B Pitt")
       end
     end
 

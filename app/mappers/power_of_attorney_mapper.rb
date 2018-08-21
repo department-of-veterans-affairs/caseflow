@@ -1,6 +1,4 @@
-# rubocop:disable Metrics/ModuleLength
 module PowerOfAttorneyMapper
-  # TODO: break this module up into BGS and VACOLS-specific POA parsers
   # This is here so when we include this module
   # in classes (e.g. in PoaRepository),
   # the class itself and not just its instance
@@ -21,46 +19,39 @@ module PowerOfAttorneyMapper
     }
   end
 
-  def get_poa_from_vacols_poa(vacols_code:, rep_record: {})
-    # TODO: refactor to remove the autoloading behavior that requires
-    # us to set all these keys, evern if they're empty.
-    return none_poa if get_short_name(vacols_code) == "None"
-    return none_poa if rep_record.blank? && vacols_code.blank?
-    return service_org_poa(vacols_code) if get_full_name(vacols_code) && !rep_name_found_in_rep_table?(vacols_code)
-    rep_table_poa(rep_record: rep_record)
+  def get_rep_name_from_rep_record(rep_record)
+    return if !rep_record || (rep_record.repfirst.blank? && rep_record.replast.blank?)
+    "#{rep_record.repfirst} #{rep_record.repmi} #{rep_record.replast} #{rep_record.repsuf}".strip
   end
 
-  def rep_table_poa(rep_record: {})
-    {
-      vacols_org_name: "",
-      vacols_representative_type: VACOLS::Representative.reptype_name_from_code(rep_record.try(:reptype)),
-      vacols_first_name: rep_record.try(:repfirst),
-      vacols_middle_initial: rep_record.try(:repmi),
-      vacols_last_name: rep_record.try(:replast),
-      vacols_suffix: rep_record.try(:repsuf)
-    }
-  end
-
-  def service_org_poa(vacols_code)
-    {
-      vacols_org_name: get_full_name(vacols_code),
-      vacols_representative_type: "Service Organization",
-      vacols_first_name: "",
-      vacols_middle_initial: "",
-      vacols_last_name: "",
-      vacols_suffix: ""
-    }
-  end
-
-  def none_poa
-    {
-      vacols_org_name: "",
-      vacols_representative_type: "None",
-      vacols_first_name: "",
-      vacols_middle_initial: "",
-      vacols_last_name: "",
-      vacols_suffix: ""
-    }
+  def get_poa_from_vacols_poa(vacols_code:, representative_record: nil)
+    if vacols_code.blank? || get_short_name(vacols_code).blank?
+      # If VACOLS doesn't have a rep code in its dropdown,
+      # it still may have a representative name in the REP table
+      # so let's grab that if we can, since we want to show all
+      # the information we have.
+      {
+        representative_name: get_rep_name_from_rep_record(representative_record),
+        # TODO: alex to map rep.repso and rep.reptype based on values provided by Jed.
+        representative_type: nil
+      }
+    elsif get_short_name(vacols_code) == "None"
+      { representative_type: "None" }
+    elsif !rep_name_found_in_rep_table?(vacols_code)
+      # VACOLS lists many Service Organizations by name in the dropdown.
+      # If the selection is one of those, use that as the rep name.
+      {
+        representative_name: get_full_name(vacols_code),
+        representative_type: "Service Organization"
+      }
+    else
+      # Otherwise we have to look up the specific name of the rep
+      # in the REP table.
+      {
+        representative_name: get_rep_name_from_rep_record(representative_record),
+        representative_type: get_short_name(vacols_code)
+      }
+    end
   end
 
   def get_vacols_rep_code_from_poa(rep_type, rep_name)
@@ -84,7 +75,7 @@ module PowerOfAttorneyMapper
   end
 
   def rep_name_found_in_rep_table?(vacols_code)
-    !!vacols_representatives[vacols_code].try(:[], :rep_name_in_rep_table)
+    !!vacols_representatives[vacols_code][:rep_name_in_rep_table]
   end
 
   private
@@ -94,11 +85,13 @@ module PowerOfAttorneyMapper
   end
 
   def get_short_name(vacols_code)
-    vacols_representatives[vacols_code].try(:[], :short)
+    return if vacols_representatives[vacols_code].blank?
+    vacols_representatives[vacols_code][:short]
   end
 
   def get_full_name(vacols_code)
-    vacols_representatives[vacols_code].try(:[], :full_name)
+    return if vacols_representatives[vacols_code].blank?
+    vacols_representatives[vacols_code][:full_name]
   end
 
   # TODO: fill out this hash for "Other" and "No Representative"
@@ -141,4 +134,3 @@ module PowerOfAttorneyMapper
     "WOUNDED WARRIOR PROJECT" => "2"
   }.freeze
 end
-# rubocop:enable Metrics/ModuleLength
