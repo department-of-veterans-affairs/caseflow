@@ -27,6 +27,9 @@ RSpec.feature "Case details" do
     )
   end
 
+  let(:colocated_user) { FactoryBot.create(:user) }
+  let!(:vacols_colocated) { FactoryBot.create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
+
   before do
     FeatureToggle.enable!(:test_facols)
 
@@ -242,6 +245,51 @@ RSpec.feature "Case details" do
       preparer_name = "#{task.assigned_by.first_name[0]}. #{task.assigned_by.last_name}"
       expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_PREPARER_LABEL} #{preparer_name}/i)
       expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} #{task.document_id}/i)
+    end
+  end
+
+  context "loads colocated task detail views" do
+    let!(:appeal) do
+      FactoryBot.create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: FactoryBot.create(
+          :case,
+          :assigned,
+          user: colocated_user,
+          case_issues: FactoryBot.create_list(:case_issue, 1)
+        )
+      )
+    end
+    let!(:colocated_action) do
+      FactoryBot.create(
+        :colocated_task,
+        appeal: appeal,
+        assigned_to: colocated_user,
+        assigned_by: attorney_user
+      )
+    end
+
+    before do
+      FeatureToggle.enable!(:colocated_queue)
+      User.authenticate!(user: colocated_user)
+    end
+
+    after do
+      FeatureToggle.disable!(:colocated_queue)
+    end
+
+    scenario "displays task information" do
+      visit "/queue"
+
+      vet_name = colocated_action.appeal.veteran_full_name
+      assigner_name = colocated_action.assigned_by_display_name
+
+      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
+
+      expect(page).to have_content("TASK #{Constants::CO_LOCATED_ADMIN_ACTIONS[colocated_action.action]}")
+      expect(page).to have_content("TASK INSTRUCTIONS #{colocated_action.instructions}")
+      expect(page).to have_content("#{assigner_name.first[0]}. #{assigner_name.last}")
     end
   end
 end
