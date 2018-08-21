@@ -50,18 +50,18 @@ class Task < ApplicationRecord
     update_status_if_children_tasks_are_complete
   end
 
+  def update_status_if_children_tasks_are_complete
+    unless children.reject { |t| t.status == :completed }.length
+      return mark_as_complete! if assigned_to.is_a?(Organization)
+      return update!(status: :assigned) if on_hold?
+    end
+  end
+
   private
 
   def on_hold_duration_is_set
     if saved_change_to_status? && on_hold? && !on_hold_duration && colocated_task?
       errors.add(:on_hold_duration, "has to be specified")
-    end
-  end
-
-  def update_status_if_children_tasks_are_complete
-    unless children.reject { |t| t.status == :completed }.length
-      return mark_as_complete! if assigned_to.is_a?(Organization)
-      return update!(status: :assigned) if on_hold?
     end
   end
 
