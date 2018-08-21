@@ -9,7 +9,13 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import { associateTasksWithAppeals } from './utils';
 
-import { onReceiveQueue, setAttorneysOfJudge, fetchAllAttorneys, fetchAmaTasksOfUser, getNewDocuments } from './QueueActions';
+import {
+  onReceiveQueue,
+  setAttorneysOfJudge,
+  fetchAllAttorneys,
+  fetchAmaTasksOfUser,
+  getNewDocuments
+} from './QueueActions';
 import { setUserId } from './uiReducer/uiActions';
 import type { BasicAppeals, Tasks } from './types/models';
 import type { State, UsersById } from './types/state';
@@ -37,7 +43,8 @@ type Props = Params & {|
   setAttorneysOfJudge: typeof setAttorneysOfJudge,
   fetchAllAttorneys: typeof fetchAllAttorneys,
   fetchAmaTasksOfUser: (number, string) => Promise<{ payload: { amaTasks: Tasks, appeals: BasicAppeals } }>,
-  setUserId: typeof setUserId
+  setUserId: typeof setUserId,
+  getNewDocuments: typeof getNewDocuments
 |};
 
 class QueueLoadingScreen extends React.PureComponent<Props> {

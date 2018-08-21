@@ -59,17 +59,22 @@ export const fetchJudges = () => (dispatch: Dispatch) => {
   });
 };
 
+export const receiveNewDocuments = ({ appealId, newDocuments }: { appealId: string, newDocuments: Array<Object> }) => ({
+  type: ACTIONS.RECEIVE_NEW_FILES,
+  payload: {
+    appealId,
+    newDocuments
+  }
+});
+
 export const getNewDocuments = (appealId: string) => (dispatch: Dispatch) => {
   ApiUtil.get(`/appeals/${appealId}/new_documents`).then((response) => {
     const resp = JSON.parse(response.text);
 
-    dispatch({
-      type: ACTIONS.RECEIVE_NEW_FILES,
-      payload: {
-        appealId,
-        newDocuments: resp.new_documents
-      }
-    });
+    dispatch(receiveNewDocuments({
+      appealId,
+      newDocuments: resp.new_documents
+    }));
   }, (error) => {
     dispatch({
       type: ACTIONS.ERROR_ON_RECEIVE_NEW_FILES,
