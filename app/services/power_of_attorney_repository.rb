@@ -31,7 +31,7 @@ class PowerOfAttorneyRepository
   def self.update_vacols_rep_type!(case_record:, vacols_rep_type:)
     VACOLS::Representative.update_vacols_rep_type!(bfkey: case_record.bfkey, rep_type: vacols_rep_type)
   end
-  #:nocov
+
 
   def self.update_vacols_rep_table!(appeal:, rep_name:, address:, rep_type:)
     first, middle, last = split_representative_name(rep_name)
@@ -53,6 +53,7 @@ class PowerOfAttorneyRepository
       type: rep_type
     )
   end
+  # :nocov
 
   def self.get_address_one_and_two(representative_name, address)
     # for non-person representative name, put the name in REP.REPADDR1
