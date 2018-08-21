@@ -7,6 +7,6 @@ class AttorneyRepository
   end
 
   def self.find_by_attorney_id(id)
-  	VACOLS::Staff.find_by(sattyid: id)
+    VACOLS::Staff.find_by(sattyid: id)
   end
 end

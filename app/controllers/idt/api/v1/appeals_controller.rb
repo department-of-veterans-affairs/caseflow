@@ -51,11 +51,11 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     ).as_json
   end
 
-  def json_documents(tasks) 
+  def json_documents(tasks)
     tasks_with_documents = tasks.reject { |t| t.document_id.empty? }
 
     ActiveModelSerializers::SerializableResource.new(
-      tasks_with_documents,  
+      tasks_with_documents,
       each_serializer: ::Idt::V1::DocumentSerializer
     ).as_json[:data].map { |doc| doc[:attributes] }
   end
