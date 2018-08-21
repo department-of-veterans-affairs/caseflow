@@ -39,15 +39,11 @@ class Task < ApplicationRecord
 
   def mark_as_complete!
     update!(status: :completed)
-    parent.child_completed if parent
+    parent.when_child_task_completed if parent
   end
 
-  # For now, only take action if all child tasks have been completed
-  def child_completed
-    unless children.reject { |t| t.status == :completed }.length
-      return mark_as_complete! if assigned_to.is_a?(Organization)
-      return update(status: :in_progress) if on_hold?
-    end
+  def when_child_task_completed
+    update_status_if_children_tasks_are_complete
   end
 
   private
@@ -58,10 +54,15 @@ class Task < ApplicationRecord
     end
   end
 
-  def update_parent_status
-    if saved_change_to_status? && completed? && parent
-      parent.update(status: :assigned)
+  def update_status_if_children_tasks_are_complete
+    unless children.reject { |t| t.status == :completed }.length
+      return mark_as_complete! if assigned_to.is_a?(Organization)
+      return update!(status: :assigned) if on_hold?
     end
+  end
+
+  def update_parent_status
+    parent.update_status_if_children_tasks_are_complete if saved_change_to_status? && parent
   end
 
   def update_location_in_vacols
