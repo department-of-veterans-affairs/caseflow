@@ -39,7 +39,7 @@ class PowerOfAttorney
 
     # Update VACOLS with an attorney or agent we found from BGS.
     if representative_type == "Attorney" || representative_type == "Agent"
-      rep_type = representative_type == "Attorney" ? :appellant_attorney : :appellant_agent
+      rep_type = (representative_type == "Attorney") ? :appellant_attorney : :appellant_agent
 
       repo.update_vacols_rep_table!(
         appeal: appeal,
