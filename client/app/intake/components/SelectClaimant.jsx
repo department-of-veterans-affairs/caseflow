@@ -1,15 +1,21 @@
 import React from 'react';
 import RadioField from '../../components/RadioField';
-import { BOOLEAN_RADIO_OPTIONS } from '../constants';
+import SearchableDropdown from '../../components/SearchableDropdown';
+import { BOOLEAN_RADIO_OPTIONS, PAYEE_CODES } from '../constants';
 
 export default class SelectClaimant extends React.PureComponent {
+  handlePayeeCodeChange(event) {
+    this.props.setPayeeCode(event ? event.value : null);
+  }
+
   render = () => {
     const {
       claimantNotVeteran,
       setClaimantNotVeteran,
       claimant,
       setClaimant,
-      relationships
+      relationships,
+      payeeCode
     } = this.props;
 
     let showClaimants = ['true', true].includes(claimantNotVeteran);
@@ -29,6 +35,16 @@ export default class SelectClaimant extends React.PureComponent {
           onChange={setClaimant}
           value={claimant}
         />
+
+        <SearchableDropdown
+          name="cf-payee-code"
+          strongLabel
+          label="What is the payee code for this claimant?"
+          placeholder="Select"
+          options={PAYEE_CODES}
+          value={payeeCode}
+          onChange={(event) => this.handlePayeeCodeChange(event)} />
+
       </div>;
     };
 

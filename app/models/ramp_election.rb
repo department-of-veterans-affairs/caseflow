@@ -97,10 +97,12 @@ class RampElection < RampReview
       reference_id: end_product_reference_id,
       claim_date: end_product_establishment.result.claim_date,
       code: end_product_establishment.result.claim_type_code,
+      payee_code: payee_code,
       modifier: end_product_establishment.result.modifier,
       synced_status: end_product_status,
       last_synced_at: end_product_status_last_synced_at,
-      station: "397"
+      station: "397",
+      claimant_participant_id: claimant_participant_id
     )
   end
 

@@ -289,7 +289,8 @@ RSpec.feature "RAMP Election Intake" do
         end_product_label: "Higher-Level Review Rating",
         end_product_code: "682HLRRRAMP",
         gulf_war_registry: false,
-        suppress_acknowledgement_letter: false
+        suppress_acknowledgement_letter: false,
+        claimant_participant_id: veteran.participant_id
       },
       veteran_hash: intake.veteran.to_vbms_hash
     )
