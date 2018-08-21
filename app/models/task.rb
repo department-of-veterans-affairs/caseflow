@@ -37,7 +37,7 @@ class Task < ApplicationRecord
     appeal_type == "Appeal"
   end
 
-  def mark_complete!
+  def mark_as_complete!
     update!(status: :completed)
     parent.child_completed
   end
@@ -45,7 +45,7 @@ class Task < ApplicationRecord
   # For now, only take action if all child tasks have been completed
   def child_completed
     unless children.reject { |t| t.status == :completed }.length
-      return mark_complete! if assigned_to.is_a?(Organization)
+      return mark_as_complete! if assigned_to.is_a?(Organization)
       return update(status: :in_progress) if on_hold?
     end
   end
