@@ -54,9 +54,7 @@ class Fakes::Initializer
     def load_fakes_and_seed!(rails_env:, app_name: nil)
       load!(rails_env: rails_env)
 
-      User.authentication_service.vacols_regional_offices = {
-        "DSUSER" => "DSUSER", "RO13" => "RO13"
-      }
+      User.authentication_service.vacols_regional_offices = { "DSUSER" => "DSUSER", "RO13" => "RO13" }
 
       User.authentication_service.user_session = {
         "id" => "Fake User", "css_id" => "FAKEUSER",
@@ -69,6 +67,8 @@ class Fakes::Initializer
 
       # FACOLS needs to match veteran records through Fakes::BGSService for Dispatch(EPs)
       if rails_env.development?
+        Fakes::BGSService.rating_issue_records = {}
+        Fakes::BGSService.rating_records = {}
         Fakes::BGSService.create_veteran_records
         return
       end

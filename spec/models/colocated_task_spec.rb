@@ -143,28 +143,69 @@ describe ColocatedTask do
     context "when status is updated to completed" do
       let!(:staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
       let(:colocated_admin_action) do
-        create(:colocated_task, appeal: appeal, appeal_type: appeal_type, assigned_by: attorney)
+        ColocatedTask.create!(
+          appeal: appeal,
+          appeal_type: "LegacyAppeal",
+          assigned_by: attorney,
+          assigned_to: create(:user),
+          action: action
+        )
       end
 
-      context "when more than one task per appeal and not all tasks are completed" do
-        let(:appeal_type) { "LegacyAppeal" }
+      context "when more than one task per appeal and not all colocated tasks are completed" do
+        let(:action) { :poa_clarification }
 
         let!(:colocated_admin_action2) do
-          create(:colocated_task, appeal: appeal, appeal_type: appeal_type, assigned_by: attorney)
+          ColocatedTask.create!(
+            appeal: appeal,
+            appeal_type: "LegacyAppeal",
+            assigned_by: attorney,
+            assigned_to: create(:user),
+            action: :poa_clarification
+          )
         end
 
-        it "should not update location in vacols" do
+        it "should not update location to assignor in vacols" do
           colocated_admin_action.update(status: "completed")
           expect(vacols_case.reload.bfcurloc).to_not eq staff.slogid
         end
       end
 
-      context "when legacy appeal" do
-        let(:appeal_type) { "LegacyAppeal" }
-
-        it "should update location in vacols" do
+      context "when completing a translation task" do
+        let(:action) { :translation }
+        it "should update location to translation in vacols" do
           expect(vacols_case.bfcurloc).to_not eq staff.slogid
-          colocated_admin_action.update(status: "completed")
+          colocated_admin_action.update!(status: "completed")
+          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:translation]
+        end
+      end
+
+      context "when completing a schedule hearing task" do
+        let(:action) { :schedule_hearing }
+        it "should update location to schedule hearing in vacols" do
+          expect(vacols_case.bfcurloc).to_not eq staff.slogid
+          colocated_admin_action.update!(status: "completed")
+          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:schedule_hearing]
+        end
+      end
+
+      context "when all colocated tasks are completed for this appeal" do
+        let(:judge) { create(:user) }
+        let!(:staff2) { create(:staff, :judge_role, sdomainid: judge.css_id) }
+        let(:action) { :poa_clarification }
+
+        let!(:task2) do
+          AttorneyTask.create!(
+            appeal: appeal,
+            appeal_type: "LegacyAppeal",
+            assigned_by: judge,
+            assigned_to: attorney
+          )
+        end
+
+        it "should update location to assignor in vacols" do
+          expect(vacols_case.bfcurloc).to_not eq staff.slogid
+          colocated_admin_action.update!(status: "completed")
           expect(vacols_case.reload.bfcurloc).to eq staff.slogid
         end
       end
