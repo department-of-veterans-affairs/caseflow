@@ -14,6 +14,10 @@ class SupplementalClaim < AmaReview
     end_product_establishment.valid_modifiers.first
   end
 
+  def end_product_claim_id
+    end_product_establishment.reference_id
+  end
+
   private
 
   def find_end_product_establishment(ep_code)

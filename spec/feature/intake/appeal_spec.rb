@@ -82,7 +82,7 @@ RSpec.feature "Appeal Intake" do
 
     click_on "Search"
 
-    expect(page).to have_current_path("/intake/review-request")
+    expect(page).to have_current_path("/intake/review_request")
 
     fill_in "What is the Receipt Date of this form?", with: "05/25/2018"
     safe_click "#button-submit-review"
@@ -113,7 +113,7 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_current_path("/intake/finish")
 
-    visit "/intake/review-request"
+    visit "/intake/review_request"
 
     expect(find_field("Evidence Submission", visible: false)).to be_checked
 
@@ -209,7 +209,7 @@ RSpec.feature "Appeal Intake" do
     safe_click "#button-submit-review"
 
     expect(page).to have_content("Something went wrong")
-    expect(page).to have_current_path("/intake/review-request")
+    expect(page).to have_current_path("/intake/review_request")
   end
 
   it "Allows a Veteran without ratings to create an intake" do
