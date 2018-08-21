@@ -32,7 +32,6 @@ class PowerOfAttorneyRepository
     VACOLS::Representative.update_vacols_rep_type!(bfkey: case_record.bfkey, rep_type: vacols_rep_type)
   end
 
-
   def self.update_vacols_rep_table!(appeal:, rep_name:, address:, rep_type:)
     first, middle, last = split_representative_name(rep_name)
     address_one, address_two = get_address_one_and_two(rep_name, address)
