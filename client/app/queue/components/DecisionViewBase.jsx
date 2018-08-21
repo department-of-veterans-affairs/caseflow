@@ -81,8 +81,22 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
       history.push(`/queue/appeals/${appealId}`);
     }
 
-    getPrevStepUrl = () => _.invoke(this.state.wrapped, 'getPrevStepUrl') || this.props.prevStep;
-    getNextStepUrl = () => _.invoke(this.state.wrapped, 'getNextStepUrl') || this.props.nextStep;
+    getPrevStepUrl = () => {
+      const { getPrevStepUrl = null } = this.state.wrapped;
+      const {
+        appealId,
+        prevStep
+      } = this.props;
+
+      return (getPrevStepUrl && getPrevStepUrl()) || prevStep || `/queue/appeals/${appealId}`;
+    }
+
+    getNextStepUrl = () => {
+      const { getNextStepUrl = null } = this.state.wrapped;
+      const { nextStep } = this.props;
+
+      return (getNextStepUrl && getNextStepUrl()) || nextStep;
+    }
 
     goToPrevStep = () => {
       const { goToPrevStep: prevStepHook = null } = this.state.wrapped;

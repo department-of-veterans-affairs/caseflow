@@ -133,19 +133,23 @@ export const editStagedAppeal = (appealId: string, attributes: Object) => ({
   }
 });
 
-export const stageAppeal = (appealId: string) => ({
-  type: ACTIONS.STAGE_APPEAL,
-  payload: {
-    appealId
-  }
-});
-
 export const checkoutStagedAppeal = (appealId: string) => ({
   type: ACTIONS.CHECKOUT_STAGED_APPEAL,
   payload: {
     appealId
   }
 });
+
+export const stageAppeal = (appealId: string) => (dispatch: Dispatch) => {
+  dispatch(checkoutStagedAppeal(appealId));
+
+  dispatch({
+    type: ACTIONS.STAGE_APPEAL,
+    payload: {
+      appealId
+    }
+  });
+};
 
 export const updateEditingAppealIssue = (attributes: Object) => ({
   type: ACTIONS.UPDATE_EDITING_APPEAL_ISSUE,
@@ -324,11 +328,19 @@ export const fetchAmaTasksOfUser = (userId: number, userRole: string) => (dispat
   ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
     then((resp) => dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data))));
 
-export const setTaskAssignment = (externalAppealId: number, cssId: string, pgId: number) => ({
+export const setTaskAssignment = (externalAppealId: string, cssId: string, pgId: number) => ({
   type: ACTIONS.SET_TASK_ASSIGNMENT,
   payload: {
     externalAppealId,
     cssId,
     pgId
+  }
+});
+
+export const setTaskAttrs = (externalAppealId: string, attributes: Object) => ({
+  type: ACTIONS.SET_TASK_ATTRS,
+  payload: {
+    externalAppealId,
+    attributes
   }
 });

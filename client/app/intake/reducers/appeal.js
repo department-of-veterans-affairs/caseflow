@@ -29,6 +29,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     claimant: {
       $set: serverIntake.claimant_not_veteran ? serverIntake.claimant : null
     },
+    payeeCode: {
+      $set: serverIntake.payee_code
+    },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
     },
@@ -50,6 +53,9 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     receiptDateError: null,
     docketType: null,
     docketTypeError: null,
+    claimantNotVeteran: null,
+    claimant: null,
+    payeeCode: null,
     isStarted: false,
     isReviewed: false,
     isComplete: false,
@@ -106,6 +112,12 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
     return update(state, {
       claimant: {
         $set: action.payload.claimant
+      }
+    });
+  case ACTIONS.SET_PAYEE_CODE:
+    return update(state, {
+      payeeCode: {
+        $set: action.payload.payeeCode
       }
     });
   case ACTIONS.SUBMIT_REVIEW_START:
