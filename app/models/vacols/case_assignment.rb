@@ -115,7 +115,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
           LEFT JOIN staff s3
             ON decass.demdusr = s3.slogid          
           LEFT JOIN staff s4
-            ON decass.deatty = s3.sattyid
+            ON decass.deatty = s4.sattyid
         SQL
     end
     # rubocop:enable Metrics/MethodLength

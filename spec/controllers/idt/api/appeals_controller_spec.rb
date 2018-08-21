@@ -122,20 +122,30 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
                          user: user,
                          document_id: "1234",
                          assigner: assigner)
-              [create(:legacy_appeal, vacols_case: c)]
+              # second document associated with appeal, but 
+              # create(:decass, defolder: c.bfkey, deatty: user.vacols_attorney_id, deadusr: user.vacols_uniq_id)
+              appeals = [create(:legacy_appeal, vacols_case: c)]
             end
 
-            it "returns the correct values" do
+            it "returns the correct values for the appeal" do
               get :details, params: params
               expect(response.status).to eq 200
               response_body = JSON.parse(response.body)["data"]
 
               expect(response_body["attributes"]["previously_selected_for_quality_review"]).to eq true
               expect(response_body["attributes"]["outstanding_mail"]).to eq true
-              document = response_body["attributes"]["documents"][0]
-              expect(document["assigned_by"]).to eq "Lyor Cohen"
-              expect(document["written_by"]).to eq "George Michael"
-              expect(document["document_id"]).to eq "1234"
+              expect(response_body["attributes"]["assigned_by"]).to eq "Lyor Cohen"
+            end
+
+            it "filters out documents without ids and returns the correct doc values" do
+              get :details, params: params
+              expect(response.status).to eq 200
+              response_body = JSON.parse(response.body)["data"]
+
+              documents = response_body["attributes"]["documents"]
+              expect(documents.length).to eq 1
+              expect(documents[0]["written_by"]).to eq "George Michael"
+              expect(documents[0]["document_id"]).to eq "1234"
             end
           end
         end
