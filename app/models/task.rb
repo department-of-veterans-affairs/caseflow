@@ -39,7 +39,7 @@ class Task < ApplicationRecord
 
   def mark_as_complete!
     update!(status: :completed)
-    parent.child_completed
+    parent.child_completed if parent
   end
 
   # For now, only take action if all child tasks have been completed
