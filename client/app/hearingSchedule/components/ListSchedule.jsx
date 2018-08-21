@@ -53,11 +53,18 @@ export default class ListSchedule extends React.Component {
       }
     ];
 
-    const hearingsGroupedByDay = _.groupBy(hearingSchedule, (day) => day.hearingDate);
+    // const hearingsGroupedByDay = _.groupBy(hearingSchedule, (day) => day.hearingDate);
 
-    const hearingsGroupedByDayRoom = _.groupBy(hearingsGroupedByDay, (daysHearings) => daysHearings.roomInfo);
+    // const hearingsGroupedByDayRoom = _.groupBy(hearingsGroupedByDay, (daysHearings) => daysHearings.roomInfo);
 
-    const hearingScheduleRows = _.map(hearingsGroupedByDayRoom, (hearingDay) => ({
+    const hearingInfo = _.values(hearingSchedule);
+    const hearingsGroupedByDay = _.groupBy(hearingInfo, 'hearingDate');
+
+    _.each(hearingsGroupedByDay, (dayHearings, dateStr) => {
+      hearingsGroupedByDay[dateStr] = _.sortBy(dayHearings, 'roomInfo');
+    });
+
+    const hearingScheduleRows = _.flatten(Object.values(hearingsGroupedByDay)).map((hearingDay) => ({
       hearingDate: formatDate(hearingDay.hearingDate),
       hearingType: hearingDay.hearingType,
       regionalOffice: hearingDay.regionalOffice,

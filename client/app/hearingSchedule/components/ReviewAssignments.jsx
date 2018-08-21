@@ -163,10 +163,17 @@ export default class ReviewAssignments extends React.Component {
 
     const hearingDays = this.props.schedulePeriod.hearingDays;
 
-    const hearingsGroupedByDay = _.groupBy(hearingDays, (day) => day.hearingDate && day.roomInfo);
+    // const hearingsGroupedByDay = _.groupBy(hearingDays, (day) => day.hearingDate && day.roomInfo);
     // const hearingsGroupedByDayByRoom = _.groupBy(hearingsGroupedByDay, (daysHearings) => daysHearings.roomInfo);
 
-    const hearingAssignmentRows = _.map(hearingsGroupedByDay, (hearingDay) => ({
+    const hearingInfo = _.values(hearingDays);
+    const hearingsGroupedByDay = _.groupBy(hearingInfo, 'hearingDate');
+
+    _.each(hearingsGroupedByDay, (dayHearings, dateStr) => {
+      hearingsGroupedByDay[dateStr] = _.sortBy(dayHearings, 'roomInfo');
+    });
+
+    const hearingAssignmentRows = _.flatten(Object.values(hearingsGroupedByDay)).map((hearingDay) => ({
       date: formatDateStr(hearingDay.hearingDate),
       type: HEARING_TYPE_LABELS[hearingDay.hearingType],
       regionalOffice: hearingDay.regionalOffice,
