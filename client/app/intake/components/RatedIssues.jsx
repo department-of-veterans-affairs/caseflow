@@ -32,7 +32,7 @@ export default class RatedIssuesUnconnected extends React.PureComponent {
 
       return (<div className="cf-intake-ratings" key={rating.profile_date}>
         <h3>
-          Decision date: { formatDateStr(rating.promulgation_date) }
+          Decision date: { formatDateStr(rating.profile_date) }
         </h3>
 
         { ratedIssueCheckboxes }
