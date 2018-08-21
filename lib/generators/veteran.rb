@@ -4,7 +4,9 @@ class Generators::Veteran
   class << self
     # rubocop:disable Metrics/MethodLength
     def default_attrs(seed = nil)
-      seed_int = Random.new(seed.to_i).rand(5_000_000_000)
+      # We need to convert to a string as some generators use
+      # a symbol :default for veteran file number
+      seed_int = Random.new(seed.to_s.to_i).rand(5_000_000_000)
       {
         address_line1: "1234 FAKE ST",
         address_line2: nil,
