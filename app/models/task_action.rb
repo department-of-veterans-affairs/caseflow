@@ -1,5 +1,5 @@
 class TaskAction < ApplicationRecord
-  enum status_after: {
+  enum status_after_action: {
     assigned: "assigned",
     in_progress: "in_progress",
     on_hold: "on_hold",
@@ -12,9 +12,9 @@ class TaskAction < ApplicationRecord
   end
 
   def update_task_status(task)
-    return unless status_after
+    return unless status_after_action
 
-    case status_after
+    case status_after_action
     when "completed"
       task.mark_complete!
     when "on_hold"
@@ -23,7 +23,7 @@ class TaskAction < ApplicationRecord
   end
 
   def create_child_task(task, child_task_assignee_id)
-    return unless child_task_type
+    return unless child_task_assignee_type
 
     Task.create!(
       appeal_id: task.appeal_id,
