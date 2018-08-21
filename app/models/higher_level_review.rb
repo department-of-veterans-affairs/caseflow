@@ -17,6 +17,10 @@ class HigherLevelReview < AmaReview
     end_product_establishment.valid_modifiers.first
   end
 
+  def end_product_claim_id
+    end_product_establishment.reference_id
+  end
+
   def special_issues
     return [] unless same_office
     [{ code: "SSR", narrative: "Same Station Review" }]
