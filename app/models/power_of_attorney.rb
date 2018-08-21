@@ -43,7 +43,7 @@ class PowerOfAttorney
 
       repo.update_vacols_rep_table!(
         appeal: appeal,
-        representative_name: representative_name,
+        rep_name: representative_name,
         address: address,
         rep_type: rep_type
       )
