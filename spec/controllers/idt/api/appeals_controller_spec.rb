@@ -122,9 +122,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
                          user: user,
                          document_id: "1234",
                          assigner: assigner)
-              # second document associated with appeal, but 
-              # create(:decass, defolder: c.bfkey, deatty: user.vacols_attorney_id, deadusr: user.vacols_uniq_id)
-              appeals = [create(:legacy_appeal, vacols_case: c)]
+              [create(:legacy_appeal, vacols_case: c)]
             end
 
             it "returns the correct values for the appeal" do

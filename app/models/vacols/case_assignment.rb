@@ -81,6 +81,8 @@ class VACOLS::CaseAssignment < VACOLS::Record
 
       select_tasks.where("brieff.bfkey = #{id}")
     end
+
+    # rubocop:disable Metrics/MethodLength
     def select_tasks
       select("brieff.bfkey as vacols_id",
              "brieff.bfcorlid as vbms_id",
@@ -113,7 +115,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
           JOIN folder
             ON brieff.bfkey = folder.ticknum
           LEFT JOIN staff s3
-            ON decass.demdusr = s3.slogid          
+            ON decass.demdusr = s3.slogid
           LEFT JOIN staff s4
             ON decass.deatty = s4.sattyid
         SQL
