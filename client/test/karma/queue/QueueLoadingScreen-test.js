@@ -10,8 +10,12 @@ const serverData = {
           added_by_name: 'Nash X Kuvalis',
           aod: false,
           appeal_id: 3,
-          assigned_by_first_name: 'Stephen',
-          assigned_by_last_name: 'Casper',
+          assigned_by: {
+            first_name: 'Stephen',
+            last_name: 'Casper',
+            css_id: 'BVASCASPER1',
+            pg_id: 10
+          },
           assigned_on: '2018-08-02T17:37:03.000Z',
           assigned_to_pg_id: 130,
           case_type: 'Post Remand',
@@ -50,15 +54,21 @@ describe('QueueLoadingScreen', () => {
         externalAppealId: '3625593',
         assignedOn: '2018-08-02T17:37:03.000Z',
         dueOn: '2018-08-11T00:00:00.000Z',
-        userId: 'BVANKUVALIS',
-        assignedToPgId: 130,
+        assignedTo: {
+          cssId: 'BVANKUVALIS',
+          id: 130
+        },
         addedByName: 'Nash X Kuvalis',
         addedByCssId: 'BVANKUVALIS',
         taskId: '3625593-2018-07-11',
         taskType: 'Review',
         documentId: '12345-12345678',
-        assignedByFirstName: 'Stephen',
-        assignedByLastName: 'Casper',
+        assignedBy: {
+          firstName: 'Stephen',
+          lastName: 'Casper',
+          cssId: 'BVASCASPER1',
+          pgId: 10
+        },
         workProduct: 'OTD',
         previousTaskAssignedOn: '2018-08-02T17:37:03.000Z'
       }
