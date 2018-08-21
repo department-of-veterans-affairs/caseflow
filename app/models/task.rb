@@ -51,7 +51,7 @@ class Task < ApplicationRecord
   end
 
   def update_status_if_children_tasks_are_complete
-    unless children.reject { |t| t.status == :completed }.length
+    if children.reject { |t| t.status == "completed" }.empty?
       return mark_as_complete! if assigned_to.is_a?(Organization)
       return update!(status: :assigned) if on_hold?
     end
