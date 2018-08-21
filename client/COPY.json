@@ -38,6 +38,9 @@
   "CASE_SNAPSHOT_TASK_DUE_DATE_LABEL": "Due",
   "CASE_SNAPSHOT_DECISION_PREPARER_LABEL": "Prepared by",
   "CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL": "Document ID",
+  "CASE_SNAPSHOT_TASK_TYPE_LABEL": "Task",
+  "CASE_SNAPSHOT_TASK_FROM_LABEL": "From",
+  "CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL": "Task instructions",
   "CASE_SNAPSHOT_ACTION_BOX_TITLE": "Actions",
 
   "CASE_TITLE_VETERAN_ID_BUTTON_TOOLTIP": "Click to copy Veteran ID",
@@ -155,6 +158,15 @@
   "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY_ATTORNEY_NAME": "%s (assigning attorney)",
   "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION": "%s's case has been sent back to %s (Assigning Attorney)",
   "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION_DETAIL": "If you've made a mistake, please email %s to manage any changes.",
+
+  "COLOCATED_ACTION_PLACE_HOLD": "Place hold",
+  "COLOCATED_ACTION_PLACE_HOLD_HEAD": "Place %s's case (%s) on hold",
+  "COLOCATED_ACTION_PLACE_HOLD_COPY": "Select the total number of days for the hold",
+  "COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY": "Enter a custom number of days for the hold",
+  "COLOCATED_ACTION_PLACE_CUSTOM_HOLD_INVALID_VALUE": "Please enter a number greater than 0",
+  "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION": "%s's case has been placed on hold for %s days.",
+  "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION_DETAIL": "When the hold has been completed, the case will automatically return to the In Progress tab.",
+  "COLOCATED_ACTION_PLACE_HOLD_BUTTON_COPY": "Place case on hold",
 
   "MODAL_CANCEL_ATTORNEY_CHECKOUT": "All changes made to this page will be lost, except for the adding, editing, and deleting of issues."
 }

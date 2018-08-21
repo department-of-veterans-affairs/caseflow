@@ -118,7 +118,9 @@ class LegacyAppeal < ApplicationRecord
     bva_dispatch: "4E",
     omo_office: "20",
     caseflow: "CASEFLOW",
-    quality_review: "48"
+    quality_review: "48",
+    translation: "14",
+    schedule_hearing: "57"
   }.freeze
 
   def document_fetcher

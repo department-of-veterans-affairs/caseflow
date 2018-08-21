@@ -61,12 +61,12 @@ class TasksController < ApplicationController
 
   # To update attorney task
   # e.g, for ama/legacy appeal => PATCH /tasks/:id,
-  # { type: AttorneyTask,
+  # {
   #   assigned_to_id: 23
   # }
   # To update colocated task
   # e.g, for ama/legacy appeal => PATCH /tasks/:id,
-  # { type: ColocatedtTask,
+  # {
   #   status: :on_hold,
   #   on_hold_duration: "something"
   # }

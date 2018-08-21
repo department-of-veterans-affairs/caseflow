@@ -61,9 +61,11 @@ export type Task = {
   taskType?: string,
   documentId: ?string,
   workProduct: ?string,
+  status?: string,
   placedOnHoldAt?: ?string,
   onHoldDuration?: ?number,
-  previousTaskAssignedOn: ?string
+  previousTaskAssignedOn: ?string,
+  instructions? :string
 };
 
 export type Tasks = { [string]: Task };
