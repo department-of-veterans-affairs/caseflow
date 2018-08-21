@@ -64,7 +64,8 @@ export type Task = {
   status?: string,
   placedOnHoldAt?: ?string,
   onHoldDuration?: ?number,
-  previousTaskAssignedOn: ?string
+  previousTaskAssignedOn: ?string,
+  instructions? :string
 };
 
 export type Tasks = { [string]: Task };
