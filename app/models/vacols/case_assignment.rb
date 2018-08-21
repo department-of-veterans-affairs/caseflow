@@ -99,7 +99,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "s1.sdomainid as added_by_css_id",
              "decass.dedeadline as date_due",
              "decass.deadtim as created_at",
-             "decass.deattyid as written_by_attorney_id",
+             "decass.deatty as written_by_attorney_id",
              "folder.tinum as docket_number",
              "s3.snamef as assigned_by_first_name",
              "s3.snamel as assigned_by_last_name",
