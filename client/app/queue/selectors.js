@@ -3,7 +3,7 @@ import { createSelector } from 'reselect';
 import _ from 'lodash';
 import moment from 'moment';
 
-import type { State } from './types/state';
+import type { State, NewDocsForAppeal } from './types/state';
 import type {
   Task,
   Tasks,
@@ -104,7 +104,7 @@ const getNewDocsForAppeal = (state: State) => state.queue.newDocsForAppeal;
 
 export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
   [tasksByAssigneeCssIdSelector, getNewDocsForAppeal],
-  (tasks: Array<Task>, newDocsForAppeal: {[string]: Array<Object>}) =>
+  (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) =>
     tasks.filter((task) => moment().diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration && (!newDocsForAppeal[task.externalAppealId] || newDocsForAppeal[task.externalAppealId].length == 0))
 );
 
