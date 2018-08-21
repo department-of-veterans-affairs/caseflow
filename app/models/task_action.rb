@@ -23,7 +23,7 @@ class TaskAction < ApplicationRecord
   end
 
   def create_child_task(task, child_task_assignee_id)
-    return unless child_task_assignee_type
+    return unless child_task_assignee_id && child_task_assignee_type
 
     Task.create!(
       appeal_id: task.appeal_id,
