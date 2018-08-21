@@ -45,7 +45,7 @@ describe JudgeSchedulePeriod do
     it "verifies judge algo cannot assign judge to this one week period" do
       expect do
         single_nonavail_date_judge_schedule_period.algorithm_assignments
-      end.to raise_error(HearingSchedule::AssignJudgesToHearingDays::CannotAssignJudges)
+      end.to raise_error(HearingSchedule::Errors::CannotAssignJudges)
     end
 
     subject { two_in_july_judge_schedule_period.algorithm_assignments }
@@ -82,7 +82,7 @@ describe JudgeSchedulePeriod do
     it "verifies judge algo cannot assign judge to week prior or after assigned TB week" do
       expect do
         one_month_judge_schedule_period.algorithm_assignments
-      end.to raise_error(HearingSchedule::AssignJudgesToHearingDays::CannotAssignJudges)
+      end.to raise_error(HearingSchedule::Errors::CannotAssignJudges)
     end
 
     subject { one_month_two_judge_schedule_period.algorithm_assignments }
@@ -139,7 +139,7 @@ describe JudgeSchedulePeriod do
     it "verifies judge algo cannot assign judge to multiple hearing days" do
       expect do
         one_week_one_judge_schedule_period.algorithm_assignments
-      end.to raise_error(HearingSchedule::AssignJudgesToHearingDays::CannotAssignJudges)
+      end.to raise_error(HearingSchedule::Errors::CannotAssignJudges)
     end
 
     subject { one_week_two_judge_schedule_period.algorithm_assignments }

@@ -36,7 +36,8 @@ describe AppealIntake do
     let!(:claimant) do
       Claimant.create!(
         review_request: detail,
-        participant_id: "1234"
+        participant_id: "1234",
+        payee_code: "10"
       )
     end
 
@@ -59,10 +60,16 @@ describe AppealIntake do
     let(:receipt_date) { "2018-05-25" }
     let(:docket_type) { "hearing" }
     let(:claimant) { nil }
+    let(:payee_code) { nil }
     let(:detail) { Appeal.create!(veteran_file_number: veteran_file_number) }
 
     let(:request_params) do
-      ActionController::Parameters.new(receipt_date: receipt_date, docket_type: docket_type, claimant: claimant)
+      ActionController::Parameters.new(
+        receipt_date: receipt_date,
+        docket_type: docket_type,
+        claimant: claimant,
+        payee_code: payee_code
+      )
     end
 
     it "updates appeal with values" do
@@ -79,7 +86,8 @@ describe AppealIntake do
 
       expect(intake.detail.claimants.count).to eq 1
       expect(intake.detail.claimants.first).to have_attributes(
-        participant_id: intake.veteran.participant_id
+        participant_id: intake.veteran.participant_id,
+        payee_code: "00"
       )
     end
 
@@ -97,13 +105,15 @@ describe AppealIntake do
 
     context "Claimant is different than Veteran" do
       let(:claimant) { "1234" }
+      let(:payee_code) { "10" }
 
       it "adds other relationship to claimants" do
         subject
 
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
-          participant_id: "1234"
+          participant_id: "1234",
+          payee_code: "10"
         )
       end
     end

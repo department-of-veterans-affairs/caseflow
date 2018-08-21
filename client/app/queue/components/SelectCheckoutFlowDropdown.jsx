@@ -53,7 +53,7 @@ class SelectCheckoutFlowDropdown extends React.PureComponent<Props> {
     };
     const route = routes[decisionType];
 
-    this.stageAppeal();
+    this.props.stageAppeal(appealId);
 
     this.props.resetDecisionOptions();
     this.props.setCaseReviewActionType(decisionType);
@@ -61,16 +61,6 @@ class SelectCheckoutFlowDropdown extends React.PureComponent<Props> {
     history.push('');
     history.replace(`/queue/appeals/${appealId}/${route}`);
   };
-
-  stageAppeal = () => {
-    const { appealId } = this.props;
-
-    if (this.props.changedAppeals.includes(appealId)) {
-      this.props.checkoutStagedAppeal(appealId);
-    }
-
-    this.props.stageAppeal(appealId);
-  }
 
   getOptions = () => {
     const { featureToggles } = this.props;
