@@ -299,8 +299,8 @@ RSpec.feature "Supplemental Claim Intake" do
     visit "/supplemental_claims/#{ratings_end_product_establishment.reference_id}/edit"
     expect(page).to have_content("Hello Merica, Ed")
 
-    visit "/supplemental_claims/#{nonratings_end_product_establishment.reference_id}/edit"
-    expect(page).to have_content("Hello Merica, Ed")
+    # visit "/supplemental_claims/#{nonratings_end_product_establishment.reference_id}/edit"
+    # expect(page).to have_content("Hello Merica, Ed")
 
     visit "/supplemental_claims/4321/edit"
     expect(page).to have_content("Page not found")

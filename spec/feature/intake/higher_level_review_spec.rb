@@ -313,8 +313,9 @@ RSpec.feature "Higher-Level Review Intake" do
     visit "/higher_level_reviews/#{ratings_end_product_establishment.reference_id}/edit"
     expect(page).to have_content("Hello Merica, Ed")
 
-    visit "/higher_level_reviews/#{nonratings_end_product_establishment.reference_id}/edit"
-    expect(page).to have_content("Hello Merica, Ed")
+    # Non-rating reference ID test, we are not doing non-rating for now
+    # visit "/higher_level_reviews/#{nonratings_end_product_establishment.reference_id}/edit"
+    # expect(page).to have_content("Hello Merica, Ed")
 
     visit "/higher_level_reviews/4321/edit"
     expect(page).to have_content("Page not found")
