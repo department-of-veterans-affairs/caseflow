@@ -344,6 +344,18 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
       }
     });
   }
+  case ACTIONS.SET_TASK_ATTRS: {
+    const { externalAppealId } = action.payload;
+    const taskType = externalAppealId in state.amaTasks ? 'amaTasks' : 'tasks';
+
+    return update(state, {
+      [taskType]: {
+        [externalAppealId]: {
+          $merge: action.payload.attributes
+        }
+      }
+    });
+  }
   default:
     return state;
   }
