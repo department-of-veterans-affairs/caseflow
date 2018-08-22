@@ -41,6 +41,10 @@ class Task < ApplicationRecord
     type == "ColocatedTask"
   end
 
+  def judge_task?
+    type == "JudgeTask"
+  end
+
   private
 
   def on_hold_duration_is_set
@@ -51,7 +55,9 @@ class Task < ApplicationRecord
 
   def update_parent_status
     if saved_change_to_status? && completed? && parent
-      parent.update(status: :assigned)
+      parent.status = :assigned
+      parent.action = :review if parent.judge_task?
+      parent.save
     end
   end
 
