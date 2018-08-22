@@ -41,10 +41,6 @@ class Task < ApplicationRecord
     type == "ColocatedTask"
   end
 
-  def judge_task?
-    type == "JudgeTask"
-  end
-
   def mark_as_complete!
     update!(status: :completed)
     parent.when_child_task_completed if parent
