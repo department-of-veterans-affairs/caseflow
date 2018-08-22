@@ -106,21 +106,11 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
           this.props.deleteAppeal(appealId);
         });
     } else {
-      this.stageAppeal();
+      this.props.stageAppeal(appealId);
 
       history.push('');
       history.replace(`/queue/appeals/${appealId}/dispositions`);
     }
-  }
-
-  stageAppeal = () => {
-    const { appealId } = this.props;
-
-    if (this.props.changedAppeals.includes(appealId)) {
-      this.props.checkoutStagedAppeal(appealId);
-    }
-
-    this.props.stageAppeal(appealId);
   }
 
   handleAssignment =

@@ -6,9 +6,10 @@ class Claimant < ApplicationRecord
   bgs_attr_accessor :name, :relationship,
                     :address_line_1, :address_line_2, :city, :country, :state, :zip
 
-  def self.create_from_intake_data!(data)
+  def self.create_from_intake_data!(participant_id:, payee_code:)
     create!(
-      participant_id: data
+      participant_id: participant_id,
+      payee_code: payee_code
     )
   end
 

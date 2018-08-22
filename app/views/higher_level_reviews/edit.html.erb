@@ -1,6 +1,12 @@
-<div>
-  Claim ID: <%= params[:claim_id] %>
-</div>
-<div>
-  Veteran Name: <%= higher_level_review.veteran.name %>
-</div>
+<% content_for :full_page_content do %>
+  <%= react_component("IntakeEdit", props: {
+    userDisplayName: current_user.display_name,
+    veteranFormName: higher_level_review.veteran.name.formatted(:form),
+    veteranFileNumber: higher_level_review.veteran_file_number,
+    claimId: higher_level_review.end_product_claim_id,
+    formType: "higher_level_review",
+    dropdownUrls: dropdown_urls,
+    feedbackUrl: feedback_url,
+    buildDate: build_date
+  }) %>
+<% end %>
