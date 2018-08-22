@@ -104,7 +104,8 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "s3.snamel as assigned_by_last_name",
              "s3.sdomainid as assigned_by_css_id",
              "s2.sdomainid as assigned_to_css_id",
-             "s4.sdomainid as written_by_css_id")
+             "s4.snamef as written_by_first_name",
+             "s4.snamel as written_by_last_name")
         .joins(<<-SQL)
           LEFT JOIN decass
             ON brieff.bfkey = decass.defolder

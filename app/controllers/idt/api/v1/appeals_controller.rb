@@ -37,15 +37,14 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
     return appeal_details if tasks.empty?
 
-    appeal_details[:data][:attributes][:assigned_by] = assigned_by_user(tasks)
+    appeal_details[:data][:attributes][:assigned_by] = assigned_by_user(tasks.last)
     appeal_details[:data][:attributes][:documents] = json_documents(tasks)
 
     appeal_details
   end
 
-  def assigned_by_user(tasks)
-    css_id = tasks.sort_by(&:created_at).last.assigned_by_css_id
-    css_id ? User.find_by(css_id: css_id).full_name : ""
+  def assigned_by_user(task)
+    [task.assigned_by_first_name, task.assigned_by_last_name].join(" ")
   end
 
   def json_appeals(appeals)
