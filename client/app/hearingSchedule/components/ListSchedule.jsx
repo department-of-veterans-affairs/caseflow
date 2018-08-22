@@ -56,6 +56,17 @@ export default class ListSchedule extends React.Component {
     // const hearingsGroupedByDay = _.groupBy(hearingSchedule, (day) => day.hearingDate);
 
     // const hearingsGroupedByDayRoom = _.groupBy(hearingsGroupedByDay, (daysHearings) => daysHearings.roomInfo);
+    let filteredHearings = {};
+    
+    Object.values(hearingSchedule).forEach((hearingDay) => {
+      console.log(hearingDay.hearingDate);
+      // if (Object.keys(filteredHearings).includes(hearingDay.hearingDate))
+      // if (hearingDay.hearingDate in filteredHearings) {
+      //   return filteredHearings.push(hearingDay.hearingDate);
+      // }
+
+
+  });
 
     const hearingInfo = _.values(hearingSchedule);
     const hearingsGroupedByDay = _.groupBy(hearingInfo, 'hearingDate');
@@ -71,7 +82,9 @@ export default class ListSchedule extends React.Component {
       room: hearingDay.roomInfo,
       vlj: hearingDay.judgeName
     }));
-
+      
+    console.log(hearingScheduleRows);
+    
     return <AppSegment filledBackground>
       <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
       <span className="cf-push-right"><Link button="primary" to="/schedule/build">Build Schedule</Link></span>

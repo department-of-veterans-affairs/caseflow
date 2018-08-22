@@ -169,6 +169,30 @@ export default class ReviewAssignments extends React.Component {
     const hearingInfo = _.values(hearingDays);
     const hearingsGroupedByDay = _.groupBy(hearingInfo, 'hearingDate');
 
+    // { '8-10-2018': [{}, {}], '10-2-1029': [{ judge, room }] }
+    const filtered = {};
+    _.each(hearingsGroupedByDay, (dayHearings, dateStr) => {
+      // if (!filtered[dateStr]) {
+      //   filtered[dateStr] = [dayHearings]
+      // }
+
+      // if (any of dayHearings' judges are in filtered[dateStr]) {
+      //   pass
+      // } else {
+      //   filtered[dateStr].push(dayHearing)
+      // }
+    })
+    let _filtered = {
+      '8-10-2018': [
+        { judge: 'abshire', room: 1 },
+        { judge: 'abshire', room: 2 },
+        { judge: 'kuvalis', room: 1 }
+      ],
+      '9-11-2018': [
+        { judge: 'abshire', room: 1 }
+      ]
+    }
+
     _.each(hearingsGroupedByDay, (dayHearings, dateStr) => {
       hearingsGroupedByDay[dateStr] = _.sortBy(dayHearings, 'roomInfo');
     });
