@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { INTAKE_STATES } from './constants';
-import { formatIssues } from './util/index';
+import { formatIssues } from '../intakeCommon/util/issueUtil';
 import _ from 'lodash';
 
 const getIntakeDetailStatus = (intakeDetail) => {

@@ -1,6 +1,7 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
-import { formatIssues, prepareReviewData } from '../util';
+import { prepareReviewData } from '../util';
+import { formatIssues } from '../../intakeCommon/util/issueUtil';
 import _ from 'lodash';
 
 const analytics = true;
