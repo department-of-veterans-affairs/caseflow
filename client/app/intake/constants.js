@@ -1,7 +1,7 @@
 export const PAGE_PATHS = {
   BEGIN: '/',
   SEARCH: '/search',
-  REVIEW: '/review-request',
+  REVIEW: '/review_request',
   FINISH: '/finish',
   COMPLETED: '/completed'
 };
