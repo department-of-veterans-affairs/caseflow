@@ -119,7 +119,7 @@ RSpec.feature "RAMP Election Intake" do
     fill_in "Search small", with: "12341234"
     click_on "Search"
 
-    expect(page).to have_current_path("/intake/review-request")
+    expect(page).to have_current_path("/intake/review_request")
     expect(page).to have_content("Review Ed Merica's Opt-In Election Form")
   end
 
@@ -130,7 +130,7 @@ RSpec.feature "RAMP Election Intake" do
     visit "/intake/completed"
     expect(page).to have_content("Welcome to Caseflow Intake!")
 
-    visit "/intake/review-request"
+    visit "/intake/review_request"
 
     within_fieldset("Which form are you processing?") do
       find("label", text: "RAMP Opt-In Election Form").click
@@ -140,7 +140,7 @@ RSpec.feature "RAMP Election Intake" do
     fill_in "Search small", with: "12341234"
     click_on "Search"
 
-    expect(page).to have_current_path("/intake/review-request")
+    expect(page).to have_current_path("/intake/review_request")
     expect(page).to have_content("Review Ed Merica's Opt-In Election Form")
 
     intake = RampElectionIntake.find_by(veteran_file_number: "12341234")
@@ -220,7 +220,7 @@ RSpec.feature "RAMP Election Intake" do
     safe_click "#button-submit-review"
 
     expect(page).to have_content("Something went wrong")
-    expect(page).to have_current_path("/intake/review-request")
+    expect(page).to have_current_path("/intake/review_request")
   end
 
   scenario "Complete intake for RAMP Election form" do
