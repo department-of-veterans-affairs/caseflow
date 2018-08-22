@@ -108,7 +108,7 @@ describe PowerOfAttorneyRepository do
       before do
         PowerOfAttorney.repository.update_vacols_rep_table!(
           appeal: appeal,
-          representative_name: "This is not a name!",
+          rep_name: "This is not a name!",
           address: {
             address_line_1: "122 Mullberry St.",
             address_line_2: "PO BOX 123",
@@ -116,7 +116,8 @@ describe PowerOfAttorneyRepository do
             city: "Arlington",
             state: "VA",
             zip: "22202"
-          }
+          },
+          rep_type: :appellant_attorney
         )
       end
 
@@ -142,7 +143,7 @@ describe PowerOfAttorneyRepository do
       before do
         PowerOfAttorney.repository.update_vacols_rep_table!(
           appeal: appeal,
-          representative_name: "Jane M Smith",
+          rep_name: "Jane M Smith",
           address: {
             address_line_1: "122 Mullberry St.",
             address_line_2: "PO BOX 123",
@@ -150,7 +151,8 @@ describe PowerOfAttorneyRepository do
             city: "Arlington",
             state: "VA",
             zip: "22202"
-          }
+          },
+          rep_type: :appellant_agent
         )
       end
 
