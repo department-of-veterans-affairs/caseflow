@@ -16,6 +16,7 @@ import ColocatedActionsDropdown from './components/ColocatedActionsDropdown';
 
 import COPY from '../../COPY.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
+import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import { COLORS } from '../constants/AppConstants';
 
 import { renderLegacyAppealType } from './utils';
@@ -83,30 +84,44 @@ export class CaseSnapshot extends React.PureComponent<Props> {
   };
 
   taskAssignmentListItems = () => {
+    const {
+      userRole,
+      taskAssignedToUser
+    } = this.props;
+
     const assignedToListItem = <React.Fragment>
       <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.locationCode}</dd>
     </React.Fragment>;
 
-    if (!this.props.taskAssignedToUser) {
+    if (!taskAssignedToUser) {
       return assignedToListItem;
     }
 
-    const taskAssignedToUser = this.props.taskAssignedToUser;
+    if ([USER_ROLE_TYPES.judge, USER_ROLE_TYPES.colocated].includes(userRole)) {
+      const assignedByFirstName = taskAssignedToUser.assignedBy.firstName;
+      const assignedByLastName = taskAssignedToUser.assignedBy.lastName;
 
-    if (this.props.userRole === USER_ROLE_TYPES.judge) {
-      if (!taskAssignedToUser.assignedBy.firstName ||
-          !taskAssignedToUser.assignedBy.lastName ||
-          !taskAssignedToUser.documentId) {
+      if (!assignedByFirstName ||
+          !assignedByLastName ||
+          (userRole === USER_ROLE_TYPES.judge && !taskAssignedToUser.documentId)) {
         return assignedToListItem;
       }
 
-      const firstInitial = String.fromCodePoint(taskAssignedToUser.assignedBy.firstName.codePointAt(0));
-      const nameAbbrev = `${firstInitial}. ${taskAssignedToUser.assignedBy.lastName}`;
+      const firstInitial = String.fromCodePoint(assignedByFirstName.codePointAt(0));
+      const nameAbbrev = `${firstInitial}. ${assignedByLastName}`;
 
-      return <React.Fragment>
-        <dt>{COPY.CASE_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{nameAbbrev}</dd>
-        <dt>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</dt><dd>{taskAssignedToUser.documentId}</dd>
-      </React.Fragment>;
+      if (userRole === USER_ROLE_TYPES.judge) {
+        return <React.Fragment>
+          <dt>{COPY.CASE_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{nameAbbrev}</dd>
+          <dt>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</dt><dd>{taskAssignedToUser.documentId}</dd>
+        </React.Fragment>;
+      } else if (userRole === USER_ROLE_TYPES.colocated) {
+        return <React.Fragment>
+          <dt>{COPY.CASE_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{CO_LOCATED_ADMIN_ACTIONS[taskAssignedToUser.action]}</dd>
+          <dt>{COPY.CASE_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{nameAbbrev}</dd>
+          <dt>{COPY.CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt><dd>{taskAssignedToUser.instructions}</dd>
+        </React.Fragment>;
+      }
     }
 
     return <React.Fragment>

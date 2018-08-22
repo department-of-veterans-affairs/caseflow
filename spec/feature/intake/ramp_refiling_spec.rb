@@ -207,7 +207,7 @@ RSpec.feature "RAMP Refiling Intake" do
       safe_click "#button-submit-review"
 
       expect(page).to have_content("Something went wrong")
-      expect(page).to have_current_path("/intake/review-request")
+      expect(page).to have_current_path("/intake/review_request")
     end
 
     scenario "Complete a RAMP refiling for an appeal" do
@@ -255,7 +255,7 @@ RSpec.feature "RAMP Refiling Intake" do
       fill_in "Search small", with: "12341234"
       click_on "Search"
 
-      expect(page).to have_current_path("/intake/review-request")
+      expect(page).to have_current_path("/intake/review_request")
 
       # Validate issues have been created based on contentions
       expect(ramp_election.issues.count).to eq(2)
@@ -395,7 +395,8 @@ RSpec.feature "RAMP Refiling Intake" do
           end_product_label: "Supplemental Claim Review Rating",
           end_product_code: "683SCRRRAMP",
           gulf_war_registry: false,
-          suppress_acknowledgement_letter: false
+          suppress_acknowledgement_letter: false,
+          claimant_participant_id: veteran.participant_id
         },
         veteran_hash: intake.veteran.to_vbms_hash
       )

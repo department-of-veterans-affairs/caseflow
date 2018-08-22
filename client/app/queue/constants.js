@@ -49,7 +49,8 @@ export const ACTIONS = {
   ERROR_LOADING_ATTORNEYS: 'ERROR_LOADING_ATTORNEYS',
   RECEIVE_TASKS: 'RECEIVE_TASKS',
   RECEIVE_APPEAL_DETAILS: 'RECEIVE_APPEAL_DETAILS',
-  SET_TASK_ASSIGNMENT: 'SET_TASK_ASSIGNMENT'
+  SET_TASK_ASSIGNMENT: 'SET_TASK_ASSIGNMENT',
+  SET_TASK_ATTRS: 'SET_TASK_ATTRS'
 };
 
 // 'red' isn't contrasty enough w/white; it raises Sniffybara::PageNotAccessibleError when testing
@@ -156,3 +157,5 @@ export const PAGE_TITLES = {
   },
   EVALUATE: 'Evaluate Decision'
 };
+
+export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, 'Custom'];

@@ -28,10 +28,6 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
     }
   end
 
-  attribute :docket_name do
-    "Legacy"
-  end
-
   attribute :case_type do
     object.appeal.type
   end

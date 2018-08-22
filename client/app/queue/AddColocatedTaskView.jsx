@@ -57,8 +57,6 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
 
   validateForm = () => Object.values(this.state).every(Boolean);
 
-  getPrevStepUrl = () => `/queue/appeals/${this.props.appealId}`;
-
   goToNextStep = () => {
     const payload = {
       data: {
