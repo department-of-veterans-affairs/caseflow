@@ -68,6 +68,12 @@ export const receiveNewDocuments = ({ appealId, newDocuments }: { appealId: stri
 });
 
 export const getNewDocuments = (appealId: string) => (dispatch: Dispatch) => {
+  dispatch({
+    type: ACTIONS.STARTED_LOADING_DOCUMENTS,
+    payload: {
+      appealId
+    }
+  });
   ApiUtil.get(`/appeals/${appealId}/new_documents`).then((response) => {
     const resp = JSON.parse(response.text);
 

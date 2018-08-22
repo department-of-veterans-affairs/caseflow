@@ -106,8 +106,9 @@ const hasNewDocuments = (newDocsForAppeal: NewDocsForAppeal, task: Task) => {
   if (!newDocsForAppeal[task.externalAppealId] || !newDocsForAppeal[task.externalAppealId].docs) {
     return false;
   }
+
   return newDocsForAppeal[task.externalAppealId].docs.length > 0;
-}
+};
 
 export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
   [tasksByAssigneeCssIdSelector, getNewDocsForAppeal],
