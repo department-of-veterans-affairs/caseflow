@@ -43,7 +43,9 @@ describe JudgeCaseReview do
              defolder: "123456",
              deprod: work_product,
              deatty: "102",
-             deteam: "BB")
+             deteam: "BB",
+             dereceive: 4.days.ago,
+             dedeadline: 6.days.ago)
     end
     let!(:vacols_case) { create(:case, bfkey: "123456") }
     let!(:vacols_issue1) { create(:case_issue, isskey: "123456") }
@@ -109,6 +111,7 @@ describe JudgeCaseReview do
           expect(decass.deqr4).to eq nil
           expect(decass.dememid).to eq "AA"
           expect(decass.decomp).to eq VacolsHelper.local_date_with_utc_timezone
+          expect(decass.detrem).to eq "N"
 
           expect(vacols_case.reload.bfcurloc).to eq "48"
           expect(vacols_case.bfmemid).to eq "AA"
@@ -189,6 +192,7 @@ describe JudgeCaseReview do
           expect(decass.deqr3).to eq nil
           expect(decass.deqr4).to eq nil
           expect(decass.decomp).to eq VacolsHelper.local_date_with_utc_timezone
+          expect(decass.detrem).to eq "N"
 
           expect(vacols_case.reload.bfcurloc).to eq "4E"
 
