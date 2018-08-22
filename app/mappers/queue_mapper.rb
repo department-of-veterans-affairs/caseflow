@@ -13,7 +13,8 @@ module QueueMapper
     complexity: :defdiff,
     quality: :deoq,
     comment: :debmcom,
-    completion_date: :decomp
+    completion_date: :decomp,
+    timeliness: :detrem
   }.freeze
 
   DEFICIENCIES = {
