@@ -50,7 +50,7 @@ export type UsersById = { [number]: ?User };
 
 export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 
-export type NewDocsForAppeal = {[string]: Array<Object>}
+export type NewDocsForAppeal = {[string]: {docs?: Array<Object>, error?: Object}}
 
 export type QueueState = {
   judges: UsersById,

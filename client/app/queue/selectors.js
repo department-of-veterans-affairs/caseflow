@@ -102,13 +102,20 @@ export const newTasksByAssigneeCssIdSelector = createSelector(
 
 const getNewDocsForAppeal = (state: State) => state.queue.newDocsForAppeal;
 
+const hasNewDocuments = (newDocsForAppeal: NewDocsForAppeal, task: Task) => {
+  if (!newDocsForAppeal[task.externalAppealId] || !newDocsForAppeal[task.externalAppealId].docs) {
+    return false;
+  }
+  return newDocsForAppeal[task.externalAppealId].docs.length > 0;
+}
+
 export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
   [tasksByAssigneeCssIdSelector, getNewDocsForAppeal],
   (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) =>
     tasks.filter(
       (task) =>
         moment().diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration &&
-          (!newDocsForAppeal[task.externalAppealId] || newDocsForAppeal[task.externalAppealId].length === 0))
+          !hasNewDocuments(newDocsForAppeal, task))
 );
 
 export const judgeReviewTasksSelector = createSelector(
