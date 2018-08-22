@@ -1,11 +1,7 @@
 class JudgeTask < Task
   validates :action, inclusion: { in: %w[assign review] }
 
-  before_create :set_action
-
-  private
-
-  def set_action
-    self.action = :assign
+  def self.create(params)
+    super(params.merge(action: "assign"))
   end
 end
