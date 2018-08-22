@@ -62,8 +62,11 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
     }
 
     this.props.setUserId(userId);
+
     return this.props.fetchAmaTasksOfUser(userId, userRole).
-      then(({ payload: { appeals } }) => _.map(appeals, (appeal) => this.props.getNewDocuments(appeal.externalId)));
+      then(
+        ({ payload: { appeals: appealsFromServer } }) =>
+          _.map(appealsFromServer, (appeal) => this.props.getNewDocuments(appeal.externalId)));
   }
 
   maybeLoadLegacyQueue = () => {
