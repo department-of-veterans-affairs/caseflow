@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Table from '../../components/Table';
-import { FORM_TYPES } from '../../intake/constants'
+import { FORM_TYPES } from '../../intake/constants';
 import { formatDate } from '../../util/DateUtil';
 import _ from 'lodash';
 
@@ -16,14 +16,19 @@ class Landing extends Component {
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const veteranInfo = `${veteran.name.first_name} ${veteran.name.last_name} (${veteran.fileNumber})`;
 
-    const issueContent = (issues) =>  {
-      return <SelectedIssues issues={issues} />
-    }
+    const issueContent = (issues) => {
+      return <SelectedIssues issues={issues} />;
+    };
 
-    const editIssuesLink = (formType, claimId) => {
-      const url = `/${formType}s/${claimId}/edit/select-issues`
-      return <a href={url}>Edit issues <i className="fa fa-pencil" aria-hidden="true"></i></a>
-    }
+    const editIssuesLink = () => {
+      const url = `/${formType}s/${intake.claimId}/edit/select_issues`;
+
+      return (
+        <a className="cf-edit-issues-link" href={url}>
+          Edit issues <i className="fa fa-pencil" aria-hidden="true"></i>
+        </a>
+      );
+    };
 
     const columns = [
       { valueName: 'field' },
@@ -32,22 +37,30 @@ class Landing extends Component {
     ];
 
     let rowObjects = [
-      {field: 'Form being processed', content: selectedForm.name},
-      {field: 'Veteran', content: veteranInfo},
-      {field: 'Receipt date of this form', content: formatDate(intake.receiptDate)}
+      { field: 'Form being processed',
+        content: selectedForm.name },
+      { field: 'Veteran',
+        content: veteranInfo },
+      { field: 'Receipt date of this form',
+        content: formatDate(intake.receiptDate) }
     ];
 
-    if (formType == 'higher_level_review') {
+    if (formType === 'higher_level_review') {
       const higherLevelReviewRows = [
-        {field: 'Informal conference request', content: intake.informalConference ? "Yes" : "No"},
-        {field: 'Same office request', content: intake.sameOffice ? "Yes" : "No"}
-      ]
-      rowObjects = rowObjects.concat(higherLevelReviewRows)
+        { field: 'Informal conference request',
+          content: intake.informalConference ? 'Yes' : 'No' },
+        { field: 'Same office request',
+          content: intake.sameOffice ? 'Yes' : 'No' }
+      ];
+
+      rowObjects = rowObjects.concat(higherLevelReviewRows);
     }
 
-    const issuesRow = [{field: 'Issues', content: issueContent(intake.issues), link: editIssuesLink(formType, intake.claimId)}]
+    const issuesRow = [{ field: 'Issues',
+      content: issueContent(intake.issues),
+      link: editIssuesLink() }];
 
-    rowObjects = rowObjects.concat(issuesRow)
+    rowObjects = rowObjects.concat(issuesRow);
 
     return <div className="cf-intake-edit">
       <h1 className="cf-txt-c">Edit Claim Issues</h1>
@@ -60,28 +73,28 @@ class Landing extends Component {
         slowReRendersAreOk />
     </div>;
   }
-};
+}
 
 class SelectedIssues extends React.PureComponent {
   render () {
     const issueListItems = _.map(this.props.issues, (issue, index) => {
       return (
         <li key={index}>{issue.description}</li>
-      )
-    })
+      );
+    });
 
     return (
       <ol>
-      { issueListItems }
+        { issueListItems }
       </ol>
-    )
+    );
   }
 }
 
 export default connect(
   ({ veteran, intake, formType }) => ({
-    veteran: veteran,
-    intake: intake,
-    formType: formType
+    veteran,
+    intake,
+    formType
   })
 )(Landing);

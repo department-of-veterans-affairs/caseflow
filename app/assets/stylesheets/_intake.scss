@@ -68,10 +68,11 @@
     font-weight: 700;
     font-size: 52px;
     line-height: 1.3em;
+    color: $usa-color-gray;
   }
 
   th {
-    padding: 0px;
+    padding: 0;
   }
 
   td {
@@ -87,7 +88,7 @@
   }
 
   ol {
-    margin: 0px;
+    margin: 0;
   }
 
   p {
@@ -95,5 +96,6 @@
     font-family: 'Source Sans Pro';
     font-size: 20px;
     line-height: 1.3em;
+    color: $usa-color-gray;
   }
 }

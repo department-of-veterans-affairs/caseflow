@@ -4,14 +4,13 @@ import { connect } from 'react-redux';
 class SelectIssues extends Component {
   render() {
     return <div>
-      What up {this.props.veteranFormName}
+      What up {this.props.veteran.formName}
     </div>;
   }
 }
 
 export default connect(
   ({ veteran }) => ({
-    veteranFormName: veteran.formName,
-    veteranFileNumber: veteran.fileNumber
+    veteran
   })
 )(SelectIssues);
