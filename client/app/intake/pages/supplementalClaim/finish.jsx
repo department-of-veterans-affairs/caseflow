@@ -74,8 +74,7 @@ const NonRatedIssues = connect(
 )(NonRatedIssuesUnconnected);
 
 const RatedIssues = connect(
-  ({ supplementalClaim, intake }) => ({
-    intakeId: intake.id,
+  ({ supplementalClaim }) => ({
     reviewState: supplementalClaim
   }),
   (dispatch) => bindActionCreators({

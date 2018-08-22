@@ -116,8 +116,7 @@ const mapStateToProps = (state) => {
 const IssueCounterConnected = connect(mapStateToProps)(IssueCounter);
 
 const RatedIssues = connect(
-  ({ higherLevelReview, intake }) => ({
-    intakeId: intake.id,
+  ({ higherLevelReview }) => ({
     reviewState: higherLevelReview
   }),
   (dispatch) => bindActionCreators({
