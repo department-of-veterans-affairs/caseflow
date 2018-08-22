@@ -6,7 +6,7 @@ class JudgeTask < Task
   end
 
   def when_child_task_completed
-    update!(status: :review)
+    update!(action: :review)
     super
   end
 end
