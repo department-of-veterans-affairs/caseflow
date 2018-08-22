@@ -69,15 +69,6 @@ class Task < ApplicationRecord
     parent.update_status_if_children_tasks_are_complete if saved_change_to_status? && parent
   end
 
-  def update_location_in_vacols
-    if saved_change_to_status? &&
-       completed? &&
-       appeal_type == "LegacyAppeal" &&
-       appeal.tasks.map(&:status).uniq == ["completed"]
-      AppealRepository.update_location!(appeal, assigned_by.vacols_uniq_id)
-    end
-  end
-
   def set_assigned_at_and_update_parent_status
     self.assigned_at = created_at
     if ama? && parent
