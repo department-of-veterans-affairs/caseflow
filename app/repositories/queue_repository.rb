@@ -175,7 +175,7 @@ class QueueRepository
         fail Caseflow::Error::QueueRepositoryError, msg
       end
       if decass_record.dereceive && decass_record.dedeadline
-        timeliness = decass_record.dereceive > decass_record.dedeadline ? "N" : "Y"
+        timeliness = (decass_record.dereceive > decass_record.dedeadline) ? "N" : "Y"
       end
 
       update_decass_record(decass_record, decass_attrs.merge(timeliness: timeliness))
