@@ -9,7 +9,7 @@ import moment from 'moment';
 import thunk from 'redux-thunk';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import rootReducer from '../../../app/queue/reducers';
-import { onReceiveQueue } from '../../../app/queue/QueueActions';
+import { onReceiveQueue, receiveNewDocuments } from '../../../app/queue/QueueActions';
 import { setUserCssId } from '../../../app/queue/uiReducer/uiActions';
 import { BrowserRouter } from 'react-router-dom';
 import type { Task, BasicAppeal } from '../../../app/queue/types/models';
@@ -140,25 +140,39 @@ describe('ColocatedTaskListView', () => {
         id: '1',
         cssIdAssignee: 'BVALSPORER',
         placedOnHoldAt: moment().subtract(2, 'days'),
-        onHoldDuration: 30 });
+        onHoldDuration: 30
+      });
       const taskNotAssigned = amaTaskWith({
+        ...task,
         id: '5',
-        cssIdAssignee: 'NOTBVALSPORER',
-        placedOnHoldAt: moment().subtract(2, 'days'),
-        onHoldDuration: 30 });
+        cssIdAssignee: 'NOTBVALSPORER'
+      });
+      const taskWithNewDocs = {
+        ...task,
+        id: '4',
+        externalAppealId: '44'
+      };
       const taskNew = amaTaskWith({
         id: '6',
-        cssIdAssignee: task.assignedTo.cssId });
+        cssIdAssignee: task.assignedTo.cssId
+      });
       const appeal = appealTemplate;
+      const appealWithNewDocs = {
+        ...appeal,
+        id: '6',
+        externalId: taskWithNewDocs.externalAppealId
+      };
 
       const tasks = {};
       const amaTasks = {
         [task.id]: task,
         [taskNotAssigned.id]: taskNotAssigned,
+        [taskWithNewDocs.id]: taskWithNewDocs,
         [taskNew.id]: taskNew
       };
       const appeals = {
-        [appeal.id]: appeal
+        [appeal.id]: appeal,
+        [appealWithNewDocs.id]: appealWithNewDocs
       };
       const store = getStore();
 
@@ -166,6 +180,10 @@ describe('ColocatedTaskListView', () => {
         amaTasks,
         appeals }));
       store.dispatch(setUserCssId(task.assignedTo.cssId));
+      store.dispatch(receiveNewDocuments({
+        appealId: appealWithNewDocs.externalId,
+        newDocuments: [{}]
+      }));
 
       const wrapper = getWrapperColocatedTaskListView(store);
 
