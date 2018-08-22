@@ -1,15 +1,21 @@
 <% content_for :full_page_content do %>
   <%= react_component("IntakeEdit", props: {
     userDisplayName: current_user.display_name,
-    veteranFormName: higher_level_review.veteran.name.formatted(:form),
-    veteranFileNumber: higher_level_review.veteran_file_number,
-    claimId: higher_level_review.end_product_claim_id,
-    receiptDate: higher_level_review.receipt_date,
-    sameOffice: higher_level_review.same_office,
-    issues: higher_level_review.request_issues,
-    formType: "higher_level_review",
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
-    buildDate: build_date
+    buildDate: build_date,
+    formType: "higher_level_review",
+    veteran: {
+      formName: higher_level_review.veteran.name.formatted(:form),
+      name: higher_level_review.veteran.name,
+      fileNumber: higher_level_review.veteran_file_number
+    },
+    intake: {
+      claimId: higher_level_review.end_product_claim_id,
+      receiptDate: higher_level_review.receipt_date,
+      issues: higher_level_review.request_issues,
+      sameOffice: higher_level_review.same_office,
+      informalConference: higher_level_review.informal_conference
+    }
   }) %>
 <% end %>

@@ -1,29 +1,20 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Table from '../../components/Table';
-import { FORM_TYPES, BOOLEAN_RADIO_OPTIONS } from '../../intake/constants'
+import { FORM_TYPES } from '../../intake/constants'
 import { formatDate } from '../../util/DateUtil';
 import _ from 'lodash';
-
-const columns = [
-  { valueName: 'field' },
-  { valueName: 'content' },
-  { valueName: 'link' }
-];
 
 class Landing extends Component {
   render() {
     const {
+      veteran,
       intake,
-      formType,
-      claimId,
-      issues,
-      veteranFormName,
-      veteranFileNumber
+      formType
     } = this.props;
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
-    const veteranInfo = `${veteranFormName} (${veteranFileNumber})`;
+    const veteranInfo = `${veteran.name.first_name} ${veteran.name.last_name} (${veteran.fileNumber})`;
 
     const issueContent = (issues) =>  {
       return <SelectedIssues issues={issues} />
@@ -31,8 +22,14 @@ class Landing extends Component {
 
     const editIssuesLink = (formType, claimId) => {
       const url = `/${formType}s/${claimId}/edit/select-issues`
-      return <a href={url}>Edit issues</a>
+      return <a href={url}>Edit issues <i className="fa fa-pencil" aria-hidden="true"></i></a>
     }
+
+    const columns = [
+      { valueName: 'field' },
+      { valueName: 'content' },
+      { valueName: 'link' }
+    ];
 
     let rowObjects = [
       {field: 'Form being processed', content: selectedForm.name},
@@ -48,7 +45,7 @@ class Landing extends Component {
       rowObjects = rowObjects.concat(higherLevelReviewRows)
     }
 
-    const issuesRow = [{field: 'Issues', content: issueContent(intake.issues), link: editIssuesLink(formType, claimId)}]
+    const issuesRow = [{field: 'Issues', content: issueContent(intake.issues), link: editIssuesLink(formType, intake.claimId)}]
 
     rowObjects = rowObjects.concat(issuesRow)
 
@@ -82,12 +79,9 @@ class SelectedIssues extends React.PureComponent {
 }
 
 export default connect(
-  ({ veteran, intake }) => ({
+  ({ veteran, intake, formType }) => ({
+    veteran: veteran,
     intake: intake,
-    formType: intake.formType,
-    claimId: intake.claimId,
-    issues: intake.issues,
-    veteranFormName: veteran.formName,
-    veteranFileNumber: veteran.fileNumber,
+    formType: formType
   })
 )(Landing);

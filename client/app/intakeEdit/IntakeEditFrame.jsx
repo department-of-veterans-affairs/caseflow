@@ -13,14 +13,20 @@ import SelectIssuesPage from './pages/selectIssues';
 
 class IntakeEditFrame extends React.PureComponent {
   render() {
+    const {
+      veteran,
+      intake,
+      formType
+    } = this.props;
+
     const appName = 'Intake';
 
     const Router = this.props.router || BrowserRouter;
 
-    const topMessage = this.props.veteran.fileNumber ?
-      `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
+    const topMessage = veteran.fileNumber ?
+      `${veteran.formName} (${veteran.fileNumber})` : null;
 
-    const basename = `/${this.props.formType}s/${this.props.claimId}/edit/`;
+    const basename = `/${formType}s/${intake.claimId}/edit/`;
 
     return <Router basename={basename} {...this.props.routerTestProps}>
       <div>

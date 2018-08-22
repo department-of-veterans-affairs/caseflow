@@ -63,8 +63,37 @@
 }
 
 .cf-intake-edit {
+  h1 {
+    font-family: 'Source Sans Pro';
+    font-weight: 700;
+    font-size: 52px;
+    line-height: 1.3em;
+  }
+
+  th {
+    padding: 0px;
+  }
+
+  td {
+    vertical-align: top;
+  }
+
   td:first-child {
     font-weight: 700;
-    vertical-align: top;
+  }
+
+  td:last-child {
+    min-width: 130px;
+  }
+
+  ol {
+    margin: 0px;
+  }
+
+  p {
+    margin: .5rem;
+    font-family: 'Source Sans Pro';
+    font-size: 20px;
+    line-height: 1.3em;
   }
 }
