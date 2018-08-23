@@ -134,6 +134,91 @@ describe('ColocatedTaskListView', () => {
     });
   });
 
+  describe('Pending tab', () => {
+    it('shows only pending tasks', () => {
+      const task = amaTaskWith({
+        id: '1',
+        cssIdAssignee: 'BVALSPORER',
+        placedOnHoldAt: moment().subtract(30, 'days'),
+        onHoldDuration: 30
+      });
+      const taskWithNewDocs = amaTaskWith({
+        id: '4',
+        cssIdAssignee: 'BVALSPORER',
+        externalAppealId: '44',
+        placedOnHoldAt: moment().subtract(2, 'days'),
+        onHoldDuration: 30
+      });
+      const taskNotAssigned = amaTaskWith({
+        ...task,
+        id: '5',
+        cssIdAssignee: 'NOTBVALSPORER'
+      });
+      const taskNew = amaTaskWith({
+        id: '6',
+        cssIdAssignee: task.assignedTo.cssId
+      });
+      const appeal = appealTemplate;
+      const appealWithNewDocs = {
+        ...appeal,
+        id: '6',
+        externalId: taskWithNewDocs.externalAppealId
+      };
+
+      const tasks = {};
+      const amaTasks = {
+        [task.id]: task,
+        [taskNotAssigned.id]: taskNotAssigned,
+        [taskWithNewDocs.id]: taskWithNewDocs,
+        [taskNew.id]: taskNew
+      };
+      const appeals = {
+        [appeal.id]: appeal,
+        [appealWithNewDocs.id]: appealWithNewDocs
+      };
+      const store = getStore();
+
+      store.dispatch(onReceiveQueue({ tasks,
+        amaTasks,
+        appeals }));
+      store.dispatch(setUserCssId(task.assignedTo.cssId));
+      store.dispatch(receiveNewDocuments({
+        appealId: appealWithNewDocs.externalId,
+        newDocuments: [{}]
+      }));
+
+      const wrapper = getWrapperColocatedTaskListView(store);
+
+      wrapper.find('[aria-label="Pending tab window"]').simulate('click');
+
+      const cells = wrapper.find('td');
+
+      expect(cells).to.have.length(12);
+      const wrappers = [];
+
+      for (let i = 0; i < cells.length; i++) {
+        wrappers.push(cells.at(i));
+      }
+      {
+        const [caseDetails, columnTasks, types, docketNumber, daysOnHold, documents] = wrappers;
+
+        expect(caseDetails.text()).to.include(appeal.veteranFullName);
+        expect(caseDetails.text()).to.include(appeal.veteranFileNumber);
+        expect(columnTasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.action]);
+        expect(types.text()).to.include(appeal.caseType);
+        expect(docketNumber.text()).to.include(appeal.docketNumber);
+        expect(daysOnHold.text()).to.equal('30 of 30');
+        expect(documents.html()).to.include(`/reader/appeal/${task.externalAppealId}/documents`);
+      }
+      {
+        const [caseDetails, columnTasks, types, docketNumber, daysOnHold, documents] = wrappers.slice(6);
+
+        expect(daysOnHold.text()).to.equal('2 of 30');
+        expect(documents.html()).to.include(`/reader/appeal/${taskWithNewDocs.externalAppealId}/documents`);
+      }
+    });
+  });
+
   describe('On hold tab', () => {
     it('shows only on-hold tasks', () => {
       const task = amaTaskWith({
