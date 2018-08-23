@@ -6,7 +6,7 @@ class Task < ApplicationRecord
   belongs_to :appeal, polymorphic: true
 
   validates :appeal, :type, :status, presence: true
-  validates :assigned_to, presence: true, unless: :skip_assigned_to_validation
+  validates :assigned_to, presence: true, unless: proc { |t| t.type == "RootTask" }
 
   before_create :set_assigned_at_and_update_parent_status
   before_update :set_timestamps
@@ -84,9 +84,5 @@ class Task < ApplicationRecord
       self.placed_on_hold_at = updated_at if on_hold?
       self.completed_at = updated_at if completed?
     end
-  end
-
-  def skip_assigned_to_validation
-    false
   end
 end
