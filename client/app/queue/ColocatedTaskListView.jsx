@@ -8,6 +8,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 
 import {
   newTasksByAssigneeCssIdSelector,
+  pendingTasksByAssigneeCssIdSelector,
   onHoldTasksByAssigneeCssIdSelector
 } from './selectors';
 import { hideSuccessMessage } from './uiReducer/uiActions';
@@ -94,7 +95,7 @@ const NewTasksTab = connect(
   });
 
 const PendingTasksTab = connect(
-  (state: State) => ({ tasks: onHoldTasksByAssigneeCssIdSelector(state) }))(
+  (state: State) => ({ tasks: pendingTasksByAssigneeCssIdSelector(state) }))(
   (props: { tasks: Array<TaskWithAppeal> }) => {
     return <div>
       <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
