@@ -5,7 +5,8 @@ class Task < ApplicationRecord
   belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
 
-  validates :assigned_to, :appeal, :type, :status, presence: true
+  validates :appeal, :type, :status, presence: true
+  validates :assigned_to, presence: true, unless: proc { |t| t.type == "RootTask" }
 
   before_create :set_assigned_at_and_update_parent_status
   before_update :set_timestamps
@@ -41,7 +42,23 @@ class Task < ApplicationRecord
     type == "ColocatedTask"
   end
 
+  def mark_as_complete!
+    update!(status: :completed)
+    parent.when_child_task_completed if parent
+  end
+
+  def when_child_task_completed
+    update_status_if_children_tasks_are_complete
+  end
+
   private
+
+  def update_status_if_children_tasks_are_complete
+    if children.any? && children.reject { |t| t.status == "completed" }.empty?
+      return mark_as_complete! if assigned_to.is_a?(Organization)
+      return update!(status: :assigned) if on_hold?
+    end
+  end
 
   def on_hold_duration_is_set
     if saved_change_to_status? && on_hold? && !on_hold_duration && colocated_task?
@@ -50,9 +67,7 @@ class Task < ApplicationRecord
   end
 
   def update_parent_status
-    if saved_change_to_status? && completed? && parent
-      parent.update(status: :assigned)
-    end
+    parent.when_child_task_completed if saved_change_to_status? && parent
   end
 
   def set_assigned_at_and_update_parent_status
