@@ -25,6 +25,9 @@ type Params = {||};
 type Props = Params & {|
   // store
   success: UiStateMessage,
+  numNewTasks: number,
+  numPendingTasks: number,
+  numOnHoldTasks: number,
   // Action creators
   clearCaseSelectSearch: typeof clearCaseSelectSearch,
   hideSuccessMessage: typeof hideSuccessMessage
@@ -58,7 +61,10 @@ const mapStateToProps = (state) => {
   const { success } = state.ui.messages;
 
   return {
-    success
+    success,
+    numNewTasks: newTasksByAssigneeCssIdSelector(state).length,
+    numPendingTasks: pendingTasksByAssigneeCssIdSelector(state).length,
+    numOnHoldTasks: onHoldTasksByAssigneeCssIdSelector(state).length
   };
 };
 
