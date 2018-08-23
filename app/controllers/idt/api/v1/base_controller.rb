@@ -26,4 +26,8 @@ class Idt::Api::V1::BaseController < ActionController::Base
   def css_id
     Idt::Token.associated_css_id(token)
   end
+
+  def feature_enabled?(feature)
+    FeatureToggle.enabled?(feature, user: current_user)
+  end
 end

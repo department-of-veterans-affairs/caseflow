@@ -173,6 +173,10 @@ class LegacyAppeal < ApplicationRecord
     (decision_date + 120.days).to_date
   end
 
+  def number_of_issues
+    issues.length
+  end
+
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end

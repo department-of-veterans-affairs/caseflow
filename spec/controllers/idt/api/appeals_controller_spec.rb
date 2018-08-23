@@ -74,6 +74,39 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           ]
         end
 
+        context "with AMA appeals" do
+          let(:veteran1) { create(:veteran) }
+          let(:veteran2) { create(:veteran) }
+
+          let!(:tasks) do
+            [
+              create(:ama_attorney_task, assigned_to: user, appeal: create(:appeal, veteran: veteran1)),
+              create(:ama_attorney_task, assigned_to: user, appeal: create(:appeal, veteran: veteran2))
+            ]
+          end
+
+          before do
+            FeatureToggle.enable!(:idt_ama_appeals)
+          end
+
+          after do
+            FeatureToggle.disable!(:idt_ama_appeals)
+          end
+
+          it "succeeds" do
+            get :list
+            expect(response.status).to eq 200
+            response_body = JSON.parse(response.body)["data"]
+            ama_appeals = response_body.select { |appeal| appeal["type"] == "appeals" }
+            expect(ama_appeals.size).to eq 2
+            expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.first.appeal.docket_number
+            expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.name.first_name
+
+            expect(ama_appeals.second["attributes"]["docket_number"]).to eq tasks.second.appeal.docket_number
+            expect(ama_appeals.second["attributes"]["veteran_first_name"]).to eq veteran2.name.first_name
+          end
+        end
+
         context "and appeal id URL parameter not is passed" do
           it "succeeds" do
             get :list
