@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { sprintf } from 'sprintf-js';
 
 import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -42,18 +43,23 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
   componentWillUnmount = () => this.props.hideSuccessMessage();
 
   render = () => {
-    const { success } = this.props;
+    const {
+      success,
+      numNewTasks,
+      numPendingTasks,
+      numOnHoldTasks
+    } = this.props;
     const tabs = [
       {
-        label: COPY.COLOCATED_QUEUE_PAGE_NEW_TAB_TITLE,
+        label: sprintf(COPY.COLOCATED_QUEUE_PAGE_NEW_TAB_TITLE, { numNewTasks }),
         page: <NewTasksTab />
       },
       {
-        label: COPY.COLOCATED_QUEUE_PAGE_PENDING_TAB_TITLE,
+        label: sprintf(COPY.COLOCATED_QUEUE_PAGE_PENDING_TAB_TITLE, { numPendingTasks }),
         page: <PendingTasksTab />
       },
       {
-        label: COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TAB_TITLE,
+        label: sprintf(COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TAB_TITLE, { numOnHoldTasks }),
         page: <OnHoldTasksTab />
       }
     ];
