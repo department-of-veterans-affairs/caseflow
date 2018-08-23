@@ -6,7 +6,7 @@ class Vso < Organization
   end
 
   def path
-    "/queue/organization/#{url}"
+    "/organization/#{url}"
   end
 
   private
