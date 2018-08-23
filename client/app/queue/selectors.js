@@ -29,6 +29,12 @@ const getUserCssId = (state: State) => state.ui.userCssId;
 const getAppealId = (state: State, props: Object) => props.appealId;
 const getAttorneys = (state: State) => state.queue.attorneysOfJudge;
 const getCaseflowVeteranId = (state: State, props: Object) => props.caseflowVeteranId;
+const getModals = (state: State) => state.ui.modal;
+
+export const getActiveModalType = createSelector(
+  [getModals],
+  (modals: { String: boolean }) => _.find(Object.keys(modals), (modalName) => modals[modalName])
+);
 
 export const tasksWithAppealSelector = createSelector(
   [getTasks, getAmaTasks, getAppeals],

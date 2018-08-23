@@ -167,6 +167,9 @@
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD": "Send action to another team",
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_SUBHEAD": "Select the team you'd like to send this administrative action to",
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY": "When you select a team and click 'send action', this action and case will be sent to the respective team's VACOLS location. To send this action back to the assigning attorney instead, please return to the case details page, and select \"Send back to attoney\" from the list of available actions.",
+  "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_PROMPT": "%s's case will be sent to the %s team.",
+  "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_CONFIRMATION": "%s's case has been sent to the %s team.",
+
   "COLOCATED_ACTION_PLACE_HOLD": "Place hold",
   "COLOCATED_ACTION_PLACE_HOLD_HEAD": "Place %s's case (%s) on hold",
   "COLOCATED_ACTION_PLACE_HOLD_COPY": "Select the total number of days for the hold",

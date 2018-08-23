@@ -5,11 +5,13 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import classNames from 'classnames';
 import { css } from 'glamor';
+import { sprintf } from 'sprintf-js';
 
 import COPY from '../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import CO_LOCATED_TEAMS from '../../constants/CO_LOCATED_TEAMS.json';
 
+import { prepareTasksForStore } from './utils';
 import {
   getTasksForAppeal,
   appealWithDetailSelector
@@ -18,7 +20,7 @@ import {
   requestSave,
   showSuccessMessage
 } from './uiReducer/uiActions';
-import { setTaskAssignment } from './QueueActions';
+import { setTaskAttrs } from './QueueActions';
 
 import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -47,7 +49,7 @@ type Props = Params & {|
   error: ?UiStateMessage,
   highlightFormItems: boolean,
   requestSave: typeof requestSave,
-  setTaskAssignment: typeof setTaskAssignment,
+  setTaskAttrs: typeof setTaskAttrs,
   showSuccessMessage: typeof showSuccessMessage
 |};
 
@@ -63,18 +65,31 @@ class SendToAnotherTeamView extends React.Component<Props, ViewState> {
   validateForm = () => Object.keys(CO_LOCATED_TEAMS).includes(this.state.team);
 
   goToNextStep = () => {
-    const { appeal } = this.props;
-    // const payload = {};
+    const {
+      task,
+      appeal
+    } = this.props;
+    const payload = {
+      data: {
+        task: {
+          action: this.state.team
+        }
+      }
+    };
     const successMsg = {
-      title: `Task for ${appeal.veteranFullName}'s appeal assigned to ${CO_LOCATED_TEAMS[this.state.team]} team.`,
-      detail: ''
+      title: sprintf(
+        COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_CONFIRMATION,
+        appeal.veteranFullName, CO_LOCATED_TEAMS[this.state.team]
+      )
     };
 
-    this.props.setTaskAssignment(appeal.externalId, this.state.team, 0);
-    this.props.showSuccessMessage(successMsg);
+    this.props.requestSave(`/tasks/${task.taskId}`, payload, successMsg, 'patch').
+      then((resp) => {
+        const response = JSON.parse(resp.text);
+        const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-    return true;
-    // this.props.requestSave('/tasks', payload, successMsg);
+        this.props.setTaskAttrs(task.externalAppealId, preparedTasks[task.externalAppealId]);
+      });
   }
 
   render = () => {
@@ -138,12 +153,12 @@ const mapStateToProps = (state: State, ownProps: Params) => {
     highlightFormItems,
     task: getTasksForAppeal(state, ownProps)[0],
     appeal: appealWithDetailSelector(state, ownProps)
-  }
-}
+  };
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
-  setTaskAssignment,
+  setTaskAttrs,
   showSuccessMessage
 }, dispatch);
 

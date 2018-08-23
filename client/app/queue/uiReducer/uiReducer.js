@@ -16,6 +16,7 @@ export const initialState = {
     error: null
   },
   saveState: initialSaveState,
+  // todo: modal -> modals
   modal: {},
   featureToggles: {},
   userRole: '',
