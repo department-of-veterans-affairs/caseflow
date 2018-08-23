@@ -53,38 +53,16 @@ export default class ListSchedule extends React.Component {
       }
     ];
 
-    // const hearingsGroupedByDay = _.groupBy(hearingSchedule, (day) => day.hearingDate);
-
-    // const hearingsGroupedByDayRoom = _.groupBy(hearingsGroupedByDay, (daysHearings) => daysHearings.roomInfo);
-    let filteredHearings = {};
-    
-    Object.values(hearingSchedule).forEach((hearingDay) => {
-      console.log(hearingDay.hearingDate);
-      // if (Object.keys(filteredHearings).includes(hearingDay.hearingDate))
-      // if (hearingDay.hearingDate in filteredHearings) {
-      //   return filteredHearings.push(hearingDay.hearingDate);
-      // }
-
-
-  });
-
-    const hearingInfo = _.values(hearingSchedule);
-    const hearingsGroupedByDay = _.groupBy(hearingInfo, 'hearingDate');
-
-    _.each(hearingsGroupedByDay, (dayHearings, dateStr) => {
-      hearingsGroupedByDay[dateStr] = _.sortBy(dayHearings, 'roomInfo');
-    });
-
-    const hearingScheduleRows = _.flatten(Object.values(hearingsGroupedByDay)).map((hearingDay) => ({
+    const hearingScheduleRows = _.map(hearingSchedule, (hearingDay) => ({
       hearingDate: formatDate(hearingDay.hearingDate),
       hearingType: hearingDay.hearingType,
       regionalOffice: hearingDay.regionalOffice,
       room: hearingDay.roomInfo,
       vlj: hearingDay.judgeName
     }));
-      
-    console.log(hearingScheduleRows);
-    
+
+    const removeDuplidatedDate = _.uniqBy(hearingScheduleRows, 'hearingDate');
+
     return <AppSegment filledBackground>
       <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
       <span className="cf-push-right"><Link button="primary" to="/schedule/build">Build Schedule</Link></span>
@@ -113,7 +91,7 @@ export default class ListSchedule extends React.Component {
       </div>
       <Table
         columns={hearingScheduleColumns}
-        rowObjects={hearingScheduleRows}
+        rowObjects={removeDuplidatedDate}
         summary="hearing-schedule"
       />
     </AppSegment>;

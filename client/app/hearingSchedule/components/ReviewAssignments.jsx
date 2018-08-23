@@ -161,43 +161,7 @@ export default class ReviewAssignments extends React.Component {
       });
     }
 
-    const hearingDays = this.props.schedulePeriod.hearingDays;
-
-    // const hearingsGroupedByDay = _.groupBy(hearingDays, (day) => day.hearingDate && day.roomInfo);
-    // const hearingsGroupedByDayByRoom = _.groupBy(hearingsGroupedByDay, (daysHearings) => daysHearings.roomInfo);
-
-    const hearingInfo = _.values(hearingDays);
-    const hearingsGroupedByDay = _.groupBy(hearingInfo, 'hearingDate');
-
-    // { '8-10-2018': [{}, {}], '10-2-1029': [{ judge, room }] }
-    const filtered = {};
-    _.each(hearingsGroupedByDay, (dayHearings, dateStr) => {
-      // if (!filtered[dateStr]) {
-      //   filtered[dateStr] = [dayHearings]
-      // }
-
-      // if (any of dayHearings' judges are in filtered[dateStr]) {
-      //   pass
-      // } else {
-      //   filtered[dateStr].push(dayHearing)
-      // }
-    })
-    let _filtered = {
-      '8-10-2018': [
-        { judge: 'abshire', room: 1 },
-        { judge: 'abshire', room: 2 },
-        { judge: 'kuvalis', room: 1 }
-      ],
-      '9-11-2018': [
-        { judge: 'abshire', room: 1 }
-      ]
-    }
-
-    _.each(hearingsGroupedByDay, (dayHearings, dateStr) => {
-      hearingsGroupedByDay[dateStr] = _.sortBy(dayHearings, 'roomInfo');
-    });
-
-    const hearingAssignmentRows = _.flatten(Object.values(hearingsGroupedByDay)).map((hearingDay) => ({
+    const hearingAssignmentRows = _.map(this.props.schedulePeriod.hearingDays, (hearingDay) => ({
       date: formatDateStr(hearingDay.hearingDate),
       type: HEARING_TYPE_LABELS[hearingDay.hearingType],
       regionalOffice: hearingDay.regionalOffice,
