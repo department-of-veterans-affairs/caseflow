@@ -8,6 +8,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 
 import {
   newTasksByAssigneeCssIdSelector,
+  pendingTasksByAssigneeCssIdSelector,
   onHoldTasksByAssigneeCssIdSelector
 } from './selectors';
 import { hideSuccessMessage } from './uiReducer/uiActions';
@@ -42,13 +43,20 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
 
   render = () => {
     const { success } = this.props;
-    const tabs = [{
-      label: 'New',
-      page: <NewTasksTab />
-    }, {
-      label: 'On hold',
-      page: <OnHoldTasksTab />
-    }];
+    const tabs = [
+      {
+        label: COPY.COLOCATED_QUEUE_PAGE_NEW_TAB_TITLE,
+        page: <NewTasksTab />
+      },
+      {
+        label: COPY.COLOCATED_QUEUE_PAGE_PENDING_TAB_TITLE,
+        page: <PendingTasksTab />
+      },
+      {
+        label: COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TAB_TITLE,
+        page: <OnHoldTasksTab />
+      }
+    ];
 
     return <AppSegment filledBackground>
       {success && <Alert type="success" title={success.title} message={success.detail} />}
@@ -78,7 +86,7 @@ export default (connect(mapStateToProps, mapDispatchToProps)(ColocatedTaskListVi
 const NewTasksTab = connect(
   (state: State) => ({ tasks: newTasksByAssigneeCssIdSelector(state) }))(
   (props: { tasks: Array<TaskWithAppeal> }) => {
-    return <div>
+    return <React.Fragment>
       <p>{COPY.COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION}</p>
       <TaskTable
         includeDetailsLink
@@ -89,13 +97,30 @@ const NewTasksTab = connect(
         includeReaderLink
         tasks={props.tasks}
       />
-    </div>;
+    </React.Fragment>;
+  });
+
+const PendingTasksTab = connect(
+  (state: State) => ({ tasks: pendingTasksByAssigneeCssIdSelector(state) }))(
+  (props: { tasks: Array<TaskWithAppeal> }) => {
+    return <React.Fragment>
+      <p>{COPY.COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION}</p>
+      <TaskTable
+        includeDetailsLink
+        includeTask
+        includeType
+        includeDocketNumber
+        includeDaysOnHold
+        includeReaderLink
+        tasks={props.tasks}
+      />
+    </React.Fragment>;
   });
 
 const OnHoldTasksTab = connect(
   (state: State) => ({ tasks: onHoldTasksByAssigneeCssIdSelector(state) }))(
   (props: { tasks: Array<TaskWithAppeal> }) => {
-    return <div>
+    return <React.Fragment>
       <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
       <TaskTable
         includeDetailsLink
@@ -106,5 +131,5 @@ const OnHoldTasksTab = connect(
         includeReaderLink
         tasks={props.tasks}
       />
-    </div>;
+    </React.Fragment>;
   });
