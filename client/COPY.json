@@ -62,6 +62,7 @@
   "COLOCATED_QUEUE_PAGE_PENDING_TAB_TITLE": "Pending",
   "COLOCATED_QUEUE_PAGE_ON_HOLD_TAB_TITLE": "On hold",
   "COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION": "These are new administrative actions that have been assigned to you.",
+  "COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION": "When a hold is complete, the case will appear here.",
   "COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "When a hold is complete, the case will automatically return to the Pending action tab.",
 
   "NO_CASES_FOR_JUDGE_REVIEW_TITLE": "Cases not found",

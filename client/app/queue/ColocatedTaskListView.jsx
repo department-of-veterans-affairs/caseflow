@@ -98,7 +98,7 @@ const PendingTasksTab = connect(
   (state: State) => ({ tasks: pendingTasksByAssigneeCssIdSelector(state) }))(
   (props: { tasks: Array<TaskWithAppeal> }) => {
     return <div>
-      <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
+      <p>{COPY.COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION}</p>
       <TaskTable
         includeDetailsLink
         includeTask
