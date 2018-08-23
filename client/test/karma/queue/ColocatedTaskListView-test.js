@@ -211,7 +211,7 @@ describe('ColocatedTaskListView', () => {
         expect(documents.html()).to.include(`/reader/appeal/${task.externalAppealId}/documents`);
       }
       {
-        const [caseDetails, columnTasks, types, docketNumber, daysOnHold, documents] = wrappers.slice(6);
+        const [daysOnHold, documents] = wrappers.slice(10);
 
         expect(daysOnHold.text()).to.equal('2 of 30');
         expect(documents.html()).to.include(`/reader/appeal/${taskWithNewDocs.externalAppealId}/documents`);
