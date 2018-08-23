@@ -7,6 +7,6 @@
     formType: "higher_level_review",
     review: higher_level_review.ui_hash,
     ratings: higher_level_review.cached_serialized_timely_ratings,
-    requestIssues: higher_level_review.request_issues.map(&:ui_hash)
+    ratedRequestIssues: higher_level_review.request_issues.rated.map(&:ui_hash)
   }) %>
 <% end %>
