@@ -153,8 +153,8 @@ const mapStateToProps = (state: State, ownProps: Params) => {
     highlightFormItems,
     task: getTasksForAppeal(state, ownProps)[0],
     appeal: appealWithDetailSelector(state, ownProps)
-  }
-}
+  };
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,

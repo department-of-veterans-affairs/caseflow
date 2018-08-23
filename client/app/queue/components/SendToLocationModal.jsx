@@ -2,12 +2,10 @@
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 
 import COPY from '../../../COPY.json';
-import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import CO_LOCATED_TEAMS from '../../../constants/CO_LOCATED_TEAMS.json';
 
 import Modal from '../../components/Modal';
@@ -68,7 +66,7 @@ const SEND_TO_LOCATION_MODAL_TYPES = {
     </React.Fragment>,
     buttonText: 'Send action'
   }
-}
+};
 
 class SendToLocationModal extends React.Component<Props> {
   closeModal = () => this.props.hideModal(this.props.modalType);

@@ -49,16 +49,16 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
     this.props.stageAppeal(appealId);
 
     switch (actionType) {
-      case CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY:
-        return this.props.showModal('sendToAttorney');
-      case CO_LOCATED_ACTIONS.SEND_TO_TEAM: {
-        return this.props.showModal('sendToTeam');
-      }
-      case CO_LOCATED_ACTIONS.PLACE_HOLD:
-        history.push(`/queue/appeals/${appealId}/place_hold`);
-        break;
-      default:
-        break;
+    case CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY:
+      return this.props.showModal('sendToAttorney');
+    case CO_LOCATED_ACTIONS.SEND_TO_TEAM: {
+      return this.props.showModal('sendToTeam');
+    }
+    case CO_LOCATED_ACTIONS.PLACE_HOLD:
+      history.push(`/queue/appeals/${appealId}/place_hold`);
+      break;
+    default:
+      break;
     }
   }
 

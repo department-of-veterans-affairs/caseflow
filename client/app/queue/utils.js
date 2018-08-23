@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import _ from 'lodash';
-import moment from 'moment';
 import StringUtil from '../util/StringUtil';
 import { redText } from './constants';
 

@@ -34,7 +34,7 @@ const getModals = (state: State) => state.ui.modal;
 export const getActiveModalType = createSelector(
   [getModals],
   (modals: { String: boolean }) => _.find(Object.keys(modals), (modalName) => modals[modalName])
-)
+);
 
 export const tasksWithAppealSelector = createSelector(
   [getTasks, getAmaTasks, getAppeals],
