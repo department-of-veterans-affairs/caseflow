@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { BrowserRouter } from 'react-router-dom';
