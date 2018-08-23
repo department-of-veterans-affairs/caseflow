@@ -5,15 +5,7 @@
     feedbackUrl: feedback_url,
     buildDate: build_date,
     formType: "supplemental_claim",
-    veteran: {
-      formName: supplemental_claim.veteran.name.formatted(:form),
-      name: supplemental_claim.veteran.name,
-      fileNumber: supplemental_claim.veteran_file_number
-    },
-    intake: {
-      claimId: supplemental_claim.end_product_claim_id,
-      receiptDate: supplemental_claim.receipt_date,
-      issues: supplemental_claim.request_issues
+    review: higher_level_review.ui_hash
     }
   }) %>
 <% end %>

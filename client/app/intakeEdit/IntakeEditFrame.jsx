@@ -11,11 +11,10 @@ import { PAGE_PATHS } from './constants';
 import LandingPage from './pages/landing';
 import SelectIssuesPage from './pages/selectIssues';
 
-class IntakeEditFrame extends React.PureComponent {
+export default class IntakeEditFrame extends React.PureComponent {
   render() {
     const {
-      veteran,
-      intake,
+      review,
       formType
     } = this.props;
 
@@ -23,10 +22,10 @@ class IntakeEditFrame extends React.PureComponent {
 
     const Router = this.props.router || BrowserRouter;
 
-    const topMessage = veteran.fileNumber ?
-      `${veteran.formName} (${veteran.fileNumber})` : null;
+    const topMessage = review.veteranFileNumber ?
+      `${review.veteranFormName} (${review.veteranFileNumber})` : null;
 
-    const basename = `/${formType}s/${intake.claimId}/edit/`;
+    const basename = `/${formType}s/${review.claimId}/edit/`;
 
     return <Router basename={basename} {...this.props.routerTestProps}>
       <div>
@@ -66,9 +65,3 @@ class IntakeEditFrame extends React.PureComponent {
     </Router>;
   }
 }
-
-export default connect(
-  ({ veteran }) => ({
-    veteran
-  })
-)(IntakeEditFrame);

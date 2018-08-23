@@ -1,8 +1,7 @@
 export const mapDataToInitialState = function(props = {}) {
   return {
-    veteran: props.veteran,
     formType: props.formType,
-    intake: props.intake
+    review: props.review
   };
 };
 

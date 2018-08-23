@@ -5,17 +5,6 @@
     feedbackUrl: feedback_url,
     buildDate: build_date,
     formType: "higher_level_review",
-    veteran: {
-      formName: higher_level_review.veteran.name.formatted(:form),
-      name: higher_level_review.veteran.name,
-      fileNumber: higher_level_review.veteran_file_number
-    },
-    intake: {
-      claimId: higher_level_review.end_product_claim_id,
-      receiptDate: higher_level_review.receipt_date,
-      issues: higher_level_review.request_issues,
-      sameOffice: higher_level_review.same_office,
-      informalConference: higher_level_review.informal_conference
-    }
+    review: higher_level_review.ui_hash
   }) %>
 <% end %>

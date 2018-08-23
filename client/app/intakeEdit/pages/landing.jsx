@@ -1,27 +1,26 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Table from '../../components/Table';
-import { FORM_TYPES } from '../../intake/constants';
+import { FORM_TYPES } from '../../intakeCommon/constants';
 import { formatDate } from '../../util/DateUtil';
 import _ from 'lodash';
 
 class Landing extends Component {
   render() {
     const {
-      veteran,
-      intake,
+      review,
       formType
     } = this.props;
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
-    const veteranInfo = `${veteran.name.first_name} ${veteran.name.last_name} (${veteran.fileNumber})`;
+    const veteranInfo = `${review.veteranName.first_name} ${review.veteranName.last_name} (${review.veteranFileNumber})`;
 
     const issueContent = (issues) => {
       return <SelectedIssues issues={issues} />;
     };
 
     const editIssuesLink = () => {
-      const url = `/${formType}s/${intake.claimId}/edit/select_issues`;
+      const url = `/${formType}s/${review.claimId}/edit/select_issues`;
 
       return (
         <a className="cf-edit-issues-link" href={url}>
@@ -42,22 +41,22 @@ class Landing extends Component {
       { field: 'Veteran',
         content: veteranInfo },
       { field: 'Receipt date of this form',
-        content: formatDate(intake.receiptDate) }
+        content: formatDate(review.receiptDate) }
     ];
 
     if (formType === 'higher_level_review') {
       const higherLevelReviewRows = [
         { field: 'Informal conference request',
-          content: intake.informalConference ? 'Yes' : 'No' },
+          content: review.informalConference ? 'Yes' : 'No' },
         { field: 'Same office request',
-          content: intake.sameOffice ? 'Yes' : 'No' }
+          content: review.sameOffice ? 'Yes' : 'No' }
       ];
 
       rowObjects = rowObjects.concat(higherLevelReviewRows);
     }
 
     const issuesRow = [{ field: 'Issues',
-      content: issueContent(intake.issues),
+      content: issueContent(review.issues),
       link: editIssuesLink() }];
 
     rowObjects = rowObjects.concat(issuesRow);
@@ -92,9 +91,8 @@ class SelectedIssues extends React.PureComponent {
 }
 
 export default connect(
-  ({ veteran, intake, formType }) => ({
-    veteran,
-    intake,
+  ({ review, formType }) => ({
+    review,
     formType
   })
 )(Landing);
