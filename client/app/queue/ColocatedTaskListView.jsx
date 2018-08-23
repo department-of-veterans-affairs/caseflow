@@ -39,13 +39,20 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
 
   render = () => {
     const { success } = this.props;
-    const tabs = [{
-      label: 'New',
-      page: <NewTasksTab />
-    }, {
-      label: 'On hold',
-      page: <OnHoldTasksTab />
-    }];
+    const tabs = [
+      {
+        label: COPY.COLOCATED_QUEUE_PAGE_NEW_TAB_TITLE,
+        page: <NewTasksTab />
+      },
+      {
+        label: COPY.COLOCATED_QUEUE_PAGE_PENDING_TAB_TITLE,
+        page: <PendingTasksTab />
+      },
+      {
+        label: COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TAB_TITLE,
+        page: <OnHoldTasksTab />
+      }
+    ];
 
     return <AppSegment filledBackground>
       {success && <Alert type="success" title={success.title} message={success.detail} />}
@@ -80,6 +87,23 @@ const NewTasksTab = connect(
         includeType
         includeDocketNumber
         includeDaysWaiting
+        includeReaderLink
+        tasks={props.tasks}
+      />
+    </div>;
+  });
+
+const PendingTasksTab = connect(
+  (state: State) => ({ tasks: onHoldTasksByAssigneeCssIdSelector(state) }))(
+  (props: { tasks: Array<TaskWithAppeal> }) => {
+    return <div>
+      <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
+      <TaskTable
+        includeDetailsLink
+        includeTask
+        includeType
+        includeDocketNumber
+        includeDaysOnHold
         includeReaderLink
         tasks={props.tasks}
       />
