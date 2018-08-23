@@ -26,8 +26,6 @@ import { prepareTasksForStore } from '../utils';
 
 import type { State } from '../types/state';
 import type { Task, Appeal } from '../types/models';
-import { marginBottom, marginTop } from '../constants';
-import { css } from 'glamor';
 
 type Params = {|
   task: Task,
@@ -64,9 +62,10 @@ const SEND_TO_LOCATION_MODAL_TYPES = {
       )
     }),
     title: COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD,
-    getContent: ({ teamName }: { teamName: string }) => <p {...css({ maxWidth: '70rem' }, marginTop(1), marginBottom(1))}>
-      {COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY}
-    </p>,
+    getContent: ({ vetName, teamName }: { vetName: string, teamName: string }) => <React.Fragment>
+      <p>{COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY}</p>
+      {sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_PROMPT, vetName, teamName)}
+    </React.Fragment>,
     buttonText: 'Send action'
   }
 }
@@ -86,6 +85,12 @@ class SendToLocationModal extends React.Component<Props> {
     return { assigned_to_id: task.assignedBy.pgId };
   }
 
+  getContentArgs = () => ({
+    assignerName: this.getTaskAssignerName(),
+    teamName: CO_LOCATED_TEAMS[this.props.task.action],
+    vetName: this.props.appeal.veteranFullName
+  });
+
   sendToLocation = () => {
     const {
       task,
@@ -97,10 +102,7 @@ class SendToLocationModal extends React.Component<Props> {
         task: this.buildPayload()
       }
     };
-    const successMsg = SEND_TO_LOCATION_MODAL_TYPES[modalType].buildSuccessMsg(appeal, {
-      assignerName: this.getTaskAssignerName(),
-      teamName: CO_LOCATED_TEAMS[task.taskType]
-    });
+    const successMsg = SEND_TO_LOCATION_MODAL_TYPES[modalType].buildSuccessMsg(appeal, this.getContentArgs());
 
     this.props.requestSave(`/tasks/${task.taskId}`, payload, successMsg, 'patch').
       then((resp) => {
@@ -113,10 +115,7 @@ class SendToLocationModal extends React.Component<Props> {
   }
 
   render = () => {
-    const {
-      task,
-      modalType
-    } = this.props;
+    const { modalType } = this.props;
 
     return <Modal
       title={SEND_TO_LOCATION_MODAL_TYPES[modalType].title}
@@ -133,10 +132,7 @@ class SendToLocationModal extends React.Component<Props> {
         }
       }]}
       closeHandler={this.closeModal}>
-      {SEND_TO_LOCATION_MODAL_TYPES[modalType].getContent({
-        assignerName: this.getTaskAssignerName(),
-        teamName: CO_LOCATED_TEAMS[task.taskType]
-      })}
+      {SEND_TO_LOCATION_MODAL_TYPES[modalType].getContent(this.getContentArgs())}
     </Modal>;
   };
 }
