@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import RatedIssuesUnconnected from '../../intakeCommon/components/RatedIssues';
 import { setIssueSelected } from '../../intake/actions/ama';
@@ -31,7 +32,7 @@ class SelectIssues extends React.PureComponent {
 
 const RatedIssues = connect(
   ({ ratings }) => ({
-    ratings: ratings
+    ratings
   }),
   (dispatch) => bindActionCreators({
     setIssueSelected
@@ -39,13 +40,8 @@ const RatedIssues = connect(
 )(RatedIssuesUnconnected);
 
 export default connect(
-<<<<<<< HEAD
-  ({ review }) => ({
-    review
-=======
   (state) => ({
     veteranName: state.veteran.name,
     formType: state.formType
->>>>>>> Show selected ratings issues
   })
 )(SelectIssues);

@@ -48,12 +48,12 @@ RSpec.feature "Edit issues" do
       )
     end
     let!(:request_issue) do
-        RequestIssue.create!(
-          rating_issue_reference_id: "abc123",
-          rating_issue_profile_date: rating.profile_date,
-          review_request: higher_level_review,
-          description: "Left knee granted"
-        )
+      RequestIssue.create!(
+        rating_issue_reference_id: "abc123",
+        rating_issue_profile_date: rating.profile_date,
+        review_request: higher_level_review,
+        description: "Left knee granted"
+      )
     end
 
     before do
