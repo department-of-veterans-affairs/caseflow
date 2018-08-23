@@ -17,12 +17,10 @@ class GenericTask < Task
     parent = Task.find(params[:parent_id])
 
     GenericTask.create!(
-      appeal_id: parent.appeal_id,
+      appeal: parent.appeal,
       assigned_by_id: parent.assigned_to_id,
-      appeal_type: parent.appeal_type,
       parent_id: parent.id,
-      assigned_to_id: assignee.id,
-      assigned_to_type: assignee.class.name
+      assigned_to: assignee
     )
   end
 
