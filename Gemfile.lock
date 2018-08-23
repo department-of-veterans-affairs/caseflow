@@ -30,14 +30,14 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
-  revision: 08735e11cd9fc196c8f889093580b9054fd2f094
-  ref: 08735e11cd9fc196c8f889093580b9054fd2f094
+  revision: 1bbc41ca8a521fb4655cc27f6294c86d48c081ca
+  ref: 1bbc41ca8a521fb4655cc27f6294c86d48c081ca
   specs:
     connect_vbms (1.2.0)
       httpclient (~> 2.8.0)
       httpi (~> 2.4)
       mail
-      nokogiri (>= 1.8.2)
+      nokogiri (>= 1.8.4)
       nori
       xmldsig (~> 0.3.1)
       xmlenc

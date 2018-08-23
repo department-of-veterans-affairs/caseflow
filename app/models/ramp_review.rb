@@ -74,6 +74,10 @@ class RampReview < ApplicationRecord
     ## TODO: Remove this once all the data is backfilled
     if (saved_end_product_establishment = EndProductEstablishment.find_by(source: self))
       saved_end_product_establishment.sync!
+      if FeatureToggle.enabled?(:automatic_ramp_rollback) && saved_end_product_establishment.status_canceled?
+        rollback_ramp_review
+      end
+      true
     end
   end
 
@@ -108,7 +112,9 @@ class RampReview < ApplicationRecord
       reference_id: end_product_reference_id,
       claim_date: receipt_date,
       code: end_product_code,
+      payee_code: payee_code,
       valid_modifiers: [end_product_modifier],
+      claimant_participant_id: claimant_participant_id,
       source: self,
       station: "397" # AMC
     )
@@ -116,6 +122,14 @@ class RampReview < ApplicationRecord
 
   def end_product_establishment
     find_end_product_establishment || new_end_product_establishment
+  end
+
+  def rollback_ramp_review
+    RampElectionRollback.create!(
+      ramp_election: self,
+      user: User.system_user,
+      reason: "Automatic roll back due to EP #{end_product_establishment.modifier} cancelation"
+    )
   end
 
   def veteran
@@ -139,6 +153,14 @@ class RampReview < ApplicationRecord
 
   def end_product_modifier
     (END_PRODUCT_DATA_BY_OPTION[option_selected] || {})[:modifier]
+  end
+
+  def payee_code
+    "00" # payee is Veteran for RAMP intakes
+  end
+
+  def claimant_participant_id
+    veteran.participant_id
   end
 
   def validate_receipt_date_not_before_ramp

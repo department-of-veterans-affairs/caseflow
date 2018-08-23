@@ -100,7 +100,8 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
       newDocsForAppeal: {
         [action.payload.appealId]: {
           $set: {
-            docs: action.payload.newDocuments
+            docs: action.payload.newDocuments,
+            loading: false
           }
         }
       }
@@ -110,11 +111,22 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
       newDocsForAppeal: {
         [action.payload.appealId]: {
           $set: {
-            error: action.payload.error
+            error: action.payload.error,
+            loading: false
           }
         }
       }
     });
+  case ACTIONS.STARTED_LOADING_DOCUMENTS:
+    return {
+      ...state,
+      newDocsForAppeal: {
+        ...state.newDocsForAppeal,
+        [action.payload.appealId]: {
+          loading: true
+        }
+      }
+    };
   case ACTIONS.SET_APPEAL_DOC_COUNT:
     return update(state, {
       docCountForAppeal: {
@@ -327,6 +339,35 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
         }
       }
     });
+  case ACTIONS.SET_TASK_ASSIGNMENT: {
+    const { externalAppealId } = action.payload;
+    const taskType = externalAppealId in state.amaTasks ? 'amaTasks' : 'tasks';
+
+    return update(state, {
+      [taskType]: {
+        [externalAppealId]: {
+          assignedTo: {
+            $set: {
+              cssId: action.payload.cssId,
+              id: action.payload.pgId
+            }
+          }
+        }
+      }
+    });
+  }
+  case ACTIONS.SET_TASK_ATTRS: {
+    const { externalAppealId } = action.payload;
+    const taskType = externalAppealId in state.amaTasks ? 'amaTasks' : 'tasks';
+
+    return update(state, {
+      [taskType]: {
+        [externalAppealId]: {
+          $merge: action.payload.attributes
+        }
+      }
+    });
+  }
   default:
     return state;
   }

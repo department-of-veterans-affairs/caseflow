@@ -16,7 +16,7 @@ class AppealRepository
     case_record = MetricsService.record("VACOLS: load_vacols_data #{appeal.vacols_id}",
                                         service: :vacols,
                                         name: "load_vacols_data") do
-      VACOLS::Case.includes(:folder, :correspondent).find(appeal.vacols_id)
+      VACOLS::Case.includes(:folder, :correspondent, :representatives).find(appeal.vacols_id)
     end
 
     set_vacols_values(appeal: appeal, case_record: case_record)
@@ -30,7 +30,7 @@ class AppealRepository
     cases = MetricsService.record("VACOLS: appeals_by_vbms_id",
                                   service: :vacols,
                                   name: "appeals_by_vbms_id") do
-      VACOLS::Case.where(bfcorlid: vbms_id).includes(:folder, :correspondent)
+      VACOLS::Case.where(bfcorlid: vbms_id).includes(:folder, :correspondent, :representatives)
     end
 
     cases.map { |case_record| build_appeal(case_record) }
@@ -83,7 +83,7 @@ class AppealRepository
       VACOLS::Case.where(bfcorlid: vbms_id)
         .where.not(bfd19: nil)
         .where("bfddec is NULL or bfmpro = 'REM'")
-        .includes(:folder, :correspondent, :representative)
+        .includes(:folder, :correspondent, :representatives)
     end
 
     cases.map { |case_record| build_appeal(case_record, true) }
@@ -133,7 +133,6 @@ class AppealRepository
       vbms_id: case_record.bfcorlid,
       type: VACOLS::Case::TYPES[case_record.bfac],
       file_type: folder_type_from(folder_record),
-      contested_claim: case_record.representative.try(:reptype) == "C",
       veteran_first_name: correspondent_record.snamef,
       veteran_middle_initial: correspondent_record.snamemi,
       veteran_last_name: correspondent_record.snamel,
@@ -476,7 +475,6 @@ class AppealRepository
         timdtime: VacolsHelper.local_time_with_utc_timezone,
         timduser: user.regional_office
       )
-
       # Reopen any issues that have the same close information as the appeal
       case_record.case_issues
         .where(issdc: close_disposition, issdcls: close_date)

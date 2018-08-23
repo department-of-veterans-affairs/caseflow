@@ -19,7 +19,8 @@ import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 import type {
-  TaskWithAppeal
+  TaskWithAppeal,
+  Task
 } from '../types/models';
 
 type Params = {|
@@ -32,6 +33,7 @@ type Params = {|
   includeIssueCount?: boolean,
   includeDueDate?: boolean,
   includeDaysWaiting?: boolean,
+  includeDaysOnHold?: boolean,
   includeReaderLink?: boolean,
   includeDocumentCount?: boolean,
   requireDasRecord?: boolean,
@@ -58,7 +60,7 @@ class TaskTable extends React.PureComponent<Props> {
   }
 
   taskHasDASRecord = (task: TaskWithAppeal) => {
-    if (task.appeal.docketName === 'Legacy' && this.props.requireDasRecord) {
+    if (task.appeal.docketName === 'legacy' && this.props.requireDasRecord) {
       return task.taskId;
     }
 
@@ -116,11 +118,11 @@ class TaskTable extends React.PureComponent<Props> {
     return this.props.includeDocumentId ? {
       header: COPY.CASE_LIST_TABLE_DOCUMENT_ID_COLUMN_TITLE,
       valueFunction: (task) => {
-        if (!task.assignedByFirstName) {
+        if (!task.assignedBy.firstName) {
           return task.documentId;
         }
-        const firstInitial = String.fromCodePoint(task.assignedByFirstName.codePointAt(0));
-        const nameAbbrev = `${firstInitial}. ${task.assignedByLastName}`;
+        const firstInitial = String.fromCodePoint(task.assignedBy.firstName.codePointAt(0));
+        const nameAbbrev = `${firstInitial}. ${task.assignedBy.lastName}`;
 
         return <React.Fragment>
           {task.documentId}<br />from {nameAbbrev}
@@ -204,6 +206,16 @@ class TaskTable extends React.PureComponent<Props> {
     } : null;
   }
 
+  numDaysOnHold = (task: Task) => moment().diff(task.placedOnHoldAt, 'days')
+
+  caseDaysOnHoldColumn = () => (this.props.includeDaysOnHold ? {
+    header: COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE,
+    valueFunction: (task: Task) => {
+      return `${this.numDaysOnHold(task)} of ${task.onHoldDuration || '?'}`;
+    },
+    getSortValue: (task: Task) => this.numDaysOnHold(task)
+  } : null)
+
   caseReaderLinkColumn = () => {
     return this.props.includeReaderLink ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
@@ -232,6 +244,7 @@ class TaskTable extends React.PureComponent<Props> {
       this.caseIssueCountColumn(),
       this.caseDueDateColumn(),
       this.caseDaysWaitingColumn(),
+      this.caseDaysOnHoldColumn(),
       this.caseReaderLinkColumn()
     ]);
 

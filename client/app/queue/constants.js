@@ -7,7 +7,8 @@ import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import StringUtil from '../util/StringUtil';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
-import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
+import CO_LOCATED_ACTIONS from '../../constants/CO_LOCATED_ACTIONS.json';
+import VACOLS_COLUMN_MAX_LENGTHS from '../../constants/VACOLS_COLUMN_MAX_LENGTHS.json';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -22,6 +23,7 @@ export const ACTIONS = {
   RECEIVE_JUDGE_DETAILS: 'RECEIVE_JUDGE_DETAILS',
   RECEIVE_NEW_FILES: 'RECEIVE_NEW_FILES',
   ERROR_ON_RECEIVE_NEW_FILES: 'ERROR_ON_RECEIVE_NEW_FILES',
+  STARTED_LOADING_DOCUMENTS: 'STARTED_LOADING_DOCUMENTS',
   SET_LOADED_QUEUE_ID: 'SET_LOADED_QUEUE_ID',
   SET_APPEAL_DOC_COUNT: 'SET_APPEAL_DOC_COUNT',
   SET_REVIEW_ACTION_TYPE: 'SET_REVIEW_ACTION_TYPE',
@@ -47,7 +49,9 @@ export const ACTIONS = {
   RECEIVE_ALL_ATTORNEYS: 'RECEIVE_ALL_ATTORNEYS',
   ERROR_LOADING_ATTORNEYS: 'ERROR_LOADING_ATTORNEYS',
   RECEIVE_TASKS: 'RECEIVE_TASKS',
-  RECEIVE_APPEAL_DETAILS: 'RECEIVE_APPEAL_DETAILS'
+  RECEIVE_APPEAL_DETAILS: 'RECEIVE_APPEAL_DETAILS',
+  SET_TASK_ASSIGNMENT: 'SET_TASK_ASSIGNMENT',
+  SET_TASK_ATTRS: 'SET_TASK_ATTRS'
 };
 
 // 'red' isn't contrasty enough w/white; it raises Sniffybara::PageNotAccessibleError when testing
@@ -78,6 +82,14 @@ export const TASK_ACTIONS = {
   VIEW_APPEAL_INFO: 'view-appeal-info',
   QUEUE_TO_READER: 'queue-to-reader'
 };
+
+export const COLOCATED_ACTIONS = [{
+  // label: COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM,
+  // value: CO_LOCATED_ACTIONS.SEND_TO_TEAM
+// }, {
+  label: COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
+  value: CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY
+}];
 
 export const JUDGE_DECISION_OPTIONS = {
   DRAFT_DECISION: {
@@ -130,19 +142,10 @@ export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
   Object.keys(VACOLS_DISPOSITIONS_BY_ID)
 ));
 
-// max length of VACOLS issue description field `ISSUES.ISSDESC`
-export const ISSUE_DESCRIPTION_MAX_LENGTH = 100;
-// max length for Attorney comments `DECASS.DEATCOM`
-export const ATTORNEY_COMMENTS_MAX_LENGTH = 350;
-// max length for document id `DECASS.DEDOCID`
-export const DOCUMENT_ID_MAX_LENGTH = 30;
-
-// todo: replace with user_role_types
-export const USER_ROLES = {
-  ATTORNEY: USER_ROLE_TYPES.attorney,
-  JUDGE: USER_ROLE_TYPES.judge,
-  COLOCATED: USER_ROLE_TYPES.colocated
-};
+export const ISSUE_DESCRIPTION_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.ISSUES.ISSDESC;
+export const ATTORNEY_COMMENTS_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.DECASS.DEATCOM;
+export const DOCUMENT_ID_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.DECASS.DEDOCID;
+export const JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.DECASS.DEBMCOM;
 
 export const PAGE_TITLES = {
   DISPOSITIONS: {
@@ -155,3 +158,5 @@ export const PAGE_TITLES = {
   },
   EVALUATE: 'Evaluate Decision'
 };
+
+export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, 'Custom'];

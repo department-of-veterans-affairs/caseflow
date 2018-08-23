@@ -59,17 +59,28 @@ export const fetchJudges = () => (dispatch: Dispatch) => {
   });
 };
 
+export const receiveNewDocuments = ({ appealId, newDocuments }: { appealId: string, newDocuments: Array<Object> }) => ({
+  type: ACTIONS.RECEIVE_NEW_FILES,
+  payload: {
+    appealId,
+    newDocuments
+  }
+});
+
 export const getNewDocuments = (appealId: string) => (dispatch: Dispatch) => {
+  dispatch({
+    type: ACTIONS.STARTED_LOADING_DOCUMENTS,
+    payload: {
+      appealId
+    }
+  });
   ApiUtil.get(`/appeals/${appealId}/new_documents`).then((response) => {
     const resp = JSON.parse(response.text);
 
-    dispatch({
-      type: ACTIONS.RECEIVE_NEW_FILES,
-      payload: {
-        appealId,
-        newDocuments: resp.new_documents
-      }
-    });
+    dispatch(receiveNewDocuments({
+      appealId,
+      newDocuments: resp.new_documents
+    }));
   }, (error) => {
     dispatch({
       type: ACTIONS.ERROR_ON_RECEIVE_NEW_FILES,
@@ -133,19 +144,23 @@ export const editStagedAppeal = (appealId: string, attributes: Object) => ({
   }
 });
 
-export const stageAppeal = (appealId: string) => ({
-  type: ACTIONS.STAGE_APPEAL,
-  payload: {
-    appealId
-  }
-});
-
 export const checkoutStagedAppeal = (appealId: string) => ({
   type: ACTIONS.CHECKOUT_STAGED_APPEAL,
   payload: {
     appealId
   }
 });
+
+export const stageAppeal = (appealId: string) => (dispatch: Dispatch) => {
+  dispatch(checkoutStagedAppeal(appealId));
+
+  dispatch({
+    type: ACTIONS.STAGE_APPEAL,
+    payload: {
+      appealId
+    }
+  });
+};
 
 export const updateEditingAppealIssue = (attributes: Object) => ({
   type: ACTIONS.UPDATE_EDITING_APPEAL_ISSUE,
@@ -315,17 +330,28 @@ const errorAllAttorneys = (error) => ({
   }
 });
 
-export const fetchAllAttorneys = () => (dispatch: Dispatch) => {
-  return ApiUtil.get(
-    '/users?role=Attorney').
-    then((resp) => resp.body).
-    then(
-      (resp) => dispatch(receiveAllAttorneys(resp.attorneys))).
+export const fetchAllAttorneys = () => (dispatch: Dispatch) =>
+  ApiUtil.get('/users?role=Attorney').
+    then((resp) => dispatch(receiveAllAttorneys(resp.body.attorneys))).
     catch((error) => Promise.reject(dispatch(errorAllAttorneys(error))));
-};
 
-export const fetchAmaTasksOfUser = (userId: number, userRole: string) => (dispatch: Dispatch) => {
-  return ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
-    then((resp) => resp.body).
-    then((body) => dispatch(onReceiveQueue(extractAppealsAndAmaTasks(body.tasks.data))));
-};
+export const fetchAmaTasksOfUser = (userId: number, userRole: string) => (dispatch: Dispatch) =>
+  ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
+    then((resp) => dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data))));
+
+export const setTaskAssignment = (externalAppealId: string, cssId: string, pgId: number) => ({
+  type: ACTIONS.SET_TASK_ASSIGNMENT,
+  payload: {
+    externalAppealId,
+    cssId,
+    pgId
+  }
+});
+
+export const setTaskAttrs = (externalAppealId: string, attributes: Object) => ({
+  type: ACTIONS.SET_TASK_ATTRS,
+  payload: {
+    externalAppealId,
+    attributes
+  }
+});

@@ -59,7 +59,6 @@ class VACOLS::CaseHearing < VACOLS::Record
 
       select_hearings.where("staff.sdomainid = #{id}")
         .where("hearing_date > ?", 1.year.ago.beginning_of_day)
-        .where("bfddec is NULL or bfmpro = 'REM'")
     end
 
     def for_appeal(appeal_vacols_id)
@@ -137,14 +136,14 @@ class VACOLS::CaseHearing < VACOLS::Record
       select(:hearing_pkseq,
              :hearing_date,
              "CASE WHEN folder_nr LIKE 'VIDEO%' THEN 'V' ELSE hearing_type END AS hearing_type",
-             :folder_nr,
+             "CASE WHEN folder_nr LIKE 'VIDEO%' or folder_nr is null THEN folder_nr ELSE null END AS folder_nr",
              :room,
              :board_member,
              "snamel || ' ' || snamemi || ' ' || snamef as judge_name",
              :mduser,
              :mdtime)
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
-        .where("folder_nr is null or folder_nr like ?", "VIDEO %")
+        .where("hearing_type = ? and (folder_nr != ? or folder_nr is null)", "C", "1779233")
     end
   end
 

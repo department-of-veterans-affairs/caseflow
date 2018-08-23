@@ -1,7 +1,6 @@
 // @flow
 import { update } from '../../util/ReducerUtil';
 import { ACTIONS } from './uiConstants';
-import { ACTIONS as QUEUE_ACTIONS } from '../constants';
 import type { UiState } from '../types/state';
 
 const initialSaveState = {
@@ -129,7 +128,7 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
     return update(state, {
       veteranCaseListIsVisible: { $set: false }
     });
-  case QUEUE_ACTIONS.SET_USER_ID:
+  case ACTIONS.SET_USER_ID:
     return update(state, {
       loadedUserId: { $set: action.payload.userId }
     });

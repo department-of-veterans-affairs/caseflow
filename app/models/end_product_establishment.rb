@@ -8,6 +8,8 @@ class EndProductEstablishment < ApplicationRecord
 
   class InvalidEndProductError < StandardError; end
 
+  CANCELED_STATUS = "CAN".freeze
+
   def perform!
     fail InvalidEndProductError unless end_product_to_establish.valid?
     establish_claim_in_vbms(end_product_to_establish).tap do |result|
@@ -32,6 +34,8 @@ class EndProductEstablishment < ApplicationRecord
       claim_id: reference_id,
       claim_date: claim_date,
       claim_type_code: code,
+      payee_code: payee_code,
+      claimant_participant_id: claimant_participant_id,
       modifier: modifier,
       suppress_acknowledgement_letter: false,
       gulf_war_registry: false,
@@ -65,7 +69,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def status_canceled?
-    synced_status == "CAN".freeze
+    synced_status == CANCELED_STATUS
   end
 
   delegate :contentions, to: :cached_result
@@ -92,6 +96,8 @@ class EndProductEstablishment < ApplicationRecord
       claim_id: reference_id,
       claim_date: claim_date,
       claim_type_code: code,
+      payee_code: payee_code,
+      claimant_participant_id: claimant_participant_id,
       modifier: find_open_modifier,
       suppress_acknowledgement_letter: false,
       gulf_war_registry: false,

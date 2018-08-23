@@ -13,6 +13,7 @@ const serverData = {
           assigned_by: {
             first_name: 'Stephen',
             last_name: 'Casper',
+            css_id: 'BVASCASPER1',
             pg_id: 10
           },
           assigned_on: '2018-08-02T17:37:03.000Z',
@@ -34,7 +35,8 @@ const serverData = {
           user_id: 'BVANKUVALIS',
           veteran_file_number: '767574947',
           veteran_name: 'Mills, Beulah, J',
-          work_product: 'OTD'
+          work_product: 'OTD',
+          status: 'Assigned'
         },
         id: '3625593',
         type: 'judge_legacy_tasks'
@@ -62,11 +64,15 @@ describe('QueueLoadingScreen', () => {
         taskId: '3625593-2018-07-11',
         taskType: 'Review',
         documentId: '12345-12345678',
-        assignedByFirstName: 'Stephen',
-        assignedByLastName: 'Casper',
-        assignedByPgId: 10,
+        assignedBy: {
+          firstName: 'Stephen',
+          lastName: 'Casper',
+          cssId: 'BVASCASPER1',
+          pgId: 10
+        },
         workProduct: 'OTD',
-        previousTaskAssignedOn: '2018-08-02T17:37:03.000Z'
+        previousTaskAssignedOn: '2018-08-02T17:37:03.000Z',
+        status: 'Assigned'
       }
     });
   });

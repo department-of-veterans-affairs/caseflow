@@ -97,7 +97,7 @@ class QueueRepository
     end
 
     def appeal_info_query(vacols_ids)
-      VACOLS::Case.includes(:folder, :correspondent, :representative)
+      VACOLS::Case.includes(:folder, :correspondent, :representatives)
         .find(vacols_ids)
     end
 
@@ -174,7 +174,11 @@ class QueueRepository
         msg = "The work product is not decision"
         fail Caseflow::Error::QueueRepositoryError, msg
       end
-      update_decass_record(decass_record, decass_attrs)
+      if decass_record.dereceive && decass_record.dedeadline
+        timeliness = (decass_record.dereceive > decass_record.dedeadline) ? "N" : "Y"
+      end
+
+      update_decass_record(decass_record, decass_attrs.merge(timeliness: timeliness))
       # When the DAS final review is done by the VLJ and the case is charged to 4E the VLJ,
       # Attorney and Team get updated in the BRIEFF table
       decass_record.reload.case.update(

@@ -20,11 +20,14 @@ def generate_words(n_words)
 end
 
 RSpec.feature "Checkout flows" do
-  let(:attorney_user) { FactoryBot.create(:user) }
+  let(:attorney_user) { FactoryBot.create(:default_user) }
   let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 
   let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
   let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+
+  let(:colocated_user) { FactoryBot.create(:user) }
+  let!(:vacols_colocated) { FactoryBot.create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
 
   before do
     FeatureToggle.enable!(:test_facols)
@@ -422,7 +425,9 @@ RSpec.feature "Checkout flows" do
         # areas of improvement
         page.find_all(".question-label").sample(2).each(&:double_click)
 
-        fill_in "additional-factors", with: "this is the note"
+        dummy_note = generate_words 200
+        fill_in "additional-factors", with: dummy_note
+        expect(page).to have_content(dummy_note[0..599])
 
         click_on "Continue"
 
@@ -445,6 +450,89 @@ RSpec.feature "Checkout flows" do
 
         expect(page).to have_content(COPY::JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
       end
+    end
+  end
+
+  context "given a valid legacy appeal and a colocated user" do
+    let!(:appeal) do
+      FactoryBot.create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: FactoryBot.create(
+          :case,
+          :assigned,
+          user: colocated_user,
+          case_issues: FactoryBot.create_list(:case_issue, 1)
+        )
+      )
+    end
+    let!(:colocated_action) do
+      FactoryBot.create(
+        :colocated_task,
+        appeal: appeal,
+        assigned_to: colocated_user,
+        assigned_by: attorney_user
+      )
+    end
+    let!(:ama_colocated_action) do
+      FactoryBot.create(
+        :ama_colocated_task,
+        assigned_to: colocated_user,
+        assigned_by: attorney_user
+      )
+    end
+
+    before do
+      FeatureToggle.enable!(:colocated_queue)
+      User.authenticate!(user: colocated_user)
+    end
+
+    after do
+      FeatureToggle.disable!(:colocated_queue)
+    end
+
+    scenario "reassigns task to assigning attorney" do
+      visit "/queue"
+
+      vet_name = colocated_action.appeal.veteran_full_name
+      attorney_name = colocated_action.assigned_by_display_name
+      attorney_name_display = "#{attorney_name.first[0]}. #{attorney_name.last}"
+
+      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
+      click_dropdown 0
+      expect(page).to have_content("Send back to attorney")
+      click_on "Send back to attorney"
+
+      expect(page).to have_content(
+        format(COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION, vet_name, attorney_name_display)
+      )
+    end
+
+    scenario "places task on hold" do
+      visit "/queue"
+
+      vet_name = colocated_action.appeal.veteran_full_name
+      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
+
+      click_dropdown 1
+
+      expect(page).to have_content(
+        format(COPY::COLOCATED_ACTION_PLACE_HOLD_HEAD, vet_name, colocated_action.appeal.sanitized_vbms_id)
+      )
+
+      click_dropdown 6
+      expect(page).to have_content(COPY::COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY)
+
+      hold_duration = rand(100)
+      fill_in COPY::COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY, with: hold_duration
+
+      click_on "Place case on hold"
+
+      expect(page).to have_content(
+        format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, vet_name, hold_duration)
+      )
+      expect(colocated_action.reload.on_hold_duration).to eq hold_duration
+      expect(colocated_action.status).to eq "on_hold"
     end
   end
 end

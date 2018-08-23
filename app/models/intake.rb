@@ -5,13 +5,13 @@ class Intake < ApplicationRecord
   belongs_to :detail, polymorphic: true
 
   COMPLETION_TIMEOUT = 5.minutes
+  IN_PROGRESS_EXPIRES_AFTER = 1.day
 
   enum completion_status: {
     success: "success",
     canceled: "canceled",
     error: "error",
-    # TODO: This status is now unused. Remove after we verify no intakes have it.
-    pending: "pending"
+    expired: "expired"
   }
 
   ERROR_CODES = {
@@ -33,7 +33,11 @@ class Intake < ApplicationRecord
   attr_reader :error_data
 
   def self.in_progress
-    where(completed_at: nil).where.not(started_at: nil)
+    where(completed_at: nil).where(started_at: IN_PROGRESS_EXPIRES_AFTER.ago..Time.zone.now)
+  end
+
+  def self.expired
+    where(completed_at: nil).where(started_at: Time.zone.at(0)...IN_PROGRESS_EXPIRES_AFTER.ago)
   end
 
   def self.build(form_type:, veteran_file_number:, user:)
@@ -83,6 +87,8 @@ class Intake < ApplicationRecord
     preload_intake_data!
 
     if validate_start
+      close_expired_intakes!
+
       update_attributes(
         started_at: Time.zone.now,
         detail: find_or_build_initial_detail
@@ -212,6 +218,10 @@ class Intake < ApplicationRecord
   end
 
   private
+
+  def close_expired_intakes!
+    Intake.expired.each { |intake| intake.complete_with_status!(:expired) }
+  end
 
   def file_number_valid?
     return false unless veteran_file_number

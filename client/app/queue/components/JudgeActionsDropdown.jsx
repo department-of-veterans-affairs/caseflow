@@ -95,7 +95,7 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
     if (actionType === DECISION_TYPES.OMO_REQUEST) {
       const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, {
         location: 'omo_office',
-        attorney_id: task.assignedByPgId
+        attorney_id: task.assignedBy.pgId
       });
       const successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
 
@@ -106,21 +106,11 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
           this.props.deleteAppeal(appealId);
         });
     } else {
-      this.stageAppeal();
+      this.props.stageAppeal(appealId);
 
       history.push('');
       history.replace(`/queue/appeals/${appealId}/dispositions`);
     }
-  }
-
-  stageAppeal = () => {
-    const { appealId } = this.props;
-
-    if (this.props.changedAppeals.includes(appealId)) {
-      this.props.checkoutStagedAppeal(appealId);
-    }
-
-    this.props.stageAppeal(appealId);
   }
 
   handleAssignment =
