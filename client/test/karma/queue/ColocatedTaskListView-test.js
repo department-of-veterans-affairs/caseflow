@@ -189,7 +189,7 @@ describe('ColocatedTaskListView', () => {
 
       const wrapper = getWrapperColocatedTaskListView(store);
 
-      wrapper.find('[aria-label="Pending tab window"]').simulate('click');
+      wrapper.find('[aria-label="Pending (2) tab window"]').simulate('click');
 
       const cells = wrapper.find('td');
 
@@ -272,7 +272,7 @@ describe('ColocatedTaskListView', () => {
 
       const wrapper = getWrapperColocatedTaskListView(store);
 
-      wrapper.find('[aria-label="On hold tab window"]').simulate('click');
+      wrapper.find('[aria-label="On hold (1) tab window"]').simulate('click');
 
       const cells = wrapper.find('td');
 
