@@ -24,10 +24,11 @@ export default class ReaderLink extends React.PureComponent {
       appeal,
       longMessage
     } = this.props;
+    const externalId = appeal.externalId || appeal.attributes.external_id;
 
     return longMessage ?
-      <React.Fragment>View Veteran's documents <NewFile appeal={appeal} /></React.Fragment> :
-      <React.Fragment>View docs <NewFile appeal={appeal} /></React.Fragment>;
+      <React.Fragment>View Veteran's documents <NewFile externalAppealId={externalId} /></React.Fragment> :
+      <React.Fragment>View docs <NewFile externalAppealId={externalId} /></React.Fragment>;
   };
 
   getAppealDocumentCount = () => {
