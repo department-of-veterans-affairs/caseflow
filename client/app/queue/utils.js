@@ -318,6 +318,3 @@ export const validateWorkProductTypeAndId = (decision: {opts: Object}) => {
 
   return oldFormat.test(documentId) || newFormat.test(documentId);
 };
-
-export const getTaskDaysWaiting = (task: Task) => moment().startOf('day').
-  diff(moment(task.assignedOn), 'days');

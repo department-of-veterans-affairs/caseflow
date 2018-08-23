@@ -15,12 +15,15 @@ import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
-import SendToAssigningAttorneyModal from './components/SendToAssigningAttorneyModal';
+import SendToLocationModal from './components/SendToLocationModal';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
 
-import { appealWithDetailSelector } from './selectors';
+import {
+  appealWithDetailSelector,
+  getActiveModalType
+} from './selectors';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -45,7 +48,7 @@ class CaseDetailsView extends React.PureComponent {
     } = this.props;
 
     return <AppSegment filledBackground>
-      {modal && <SendToAssigningAttorneyModal appealId={appealId} />}
+      {modal && <SendToLocationModal appealId={appealId} />}
       <CaseTitle appeal={appeal} appealId={appealId} redirectUrl={window.location.pathname} />
       {error && <Alert title={error.title} type="error">
         {error.detail}
@@ -85,13 +88,15 @@ CaseDetailsView.propTypes = {
 const mapStateToProps = (state, ownProps) => {
   const { success, error } = state.ui.messages;
   const { veteranCaseListIsVisible, modal } = state.ui;
+  const modalType = getActiveModalType(state);
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     success,
     error,
     veteranCaseListIsVisible,
-    modal: modal.sendToAttorney
+    modal: modal[modalType],
+    modalType
   };
 };
 
