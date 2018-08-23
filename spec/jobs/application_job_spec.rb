@@ -11,8 +11,9 @@ end
 describe "ApplicationJob" do
   context ".application_attr" do
     it "sets extra context" do
-      allow()
-      expect(true).to be false
+      allow(Raven).to receive(:extra_context)
+      TestJob.perform_now
+      expect(Raven).to have_received(:extra_context).with(application: "fake")
     end
   end
 end
