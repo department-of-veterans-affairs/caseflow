@@ -5,7 +5,8 @@ class Task < ApplicationRecord
   belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
 
-  validates :assigned_to, :appeal, :type, :status, presence: true
+  validates :appeal, :type, :status, presence: true
+  validates :assigned_to, presence: true, unless: :skip_assigned_to_validation
 
   before_create :set_assigned_at_and_update_parent_status
   before_update :set_timestamps
@@ -20,10 +21,6 @@ class Task < ApplicationRecord
     on_hold: "on_hold",
     completed: "completed"
   }
-
-  def self.create_root_task(appeal_id)
-    create(appeal_id: appeal_id, action: "Root task", assigned_to_type: "Organization", appeal_type: "Appeal")
-  end
 
   def assigned_by_display_name
     if assigned_by.try(:full_name)
@@ -87,5 +84,9 @@ class Task < ApplicationRecord
       self.placed_on_hold_at = updated_at if on_hold?
       self.completed_at = updated_at if completed?
     end
+  end
+
+  def skip_assigned_to_validation
+    false
   end
 end
