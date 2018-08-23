@@ -3,7 +3,7 @@ class ApplicationJob < ActiveJob::Base
     def application_attr(app_name)
       @app_name = app_name
     end
-    
+
     attr_reader :app_name
   end
 
