@@ -474,11 +474,13 @@ RSpec.feature "Checkout flows" do
         assigned_by: attorney_user
       )
     end
-    let!(:ama_colocated_action) do
+    let!(:translation_action) do
       FactoryBot.create(
-        :ama_colocated_task,
+        :colocated_task,
+        appeal: appeal,
         assigned_to: colocated_user,
-        assigned_by: attorney_user
+        assigned_by: attorney_user,
+        action: "translation"
       )
     end
 
@@ -533,6 +535,31 @@ RSpec.feature "Checkout flows" do
       )
       expect(colocated_action.reload.on_hold_duration).to eq hold_duration
       expect(colocated_action.status).to eq "on_hold"
+    end
+
+    scenario "sends task to team" do
+      visit "/queue"
+
+      team_name = Constants::CO_LOCATED_TEAMS[translation_action.action]
+      vet_name = translation_action.appeal.veteran_full_name
+      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
+
+      click_dropdown 1
+
+      expect(page).to have_content(COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD)
+      expect(page).to have_content(
+        format(COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_PROMPT, vet_name, team_name)
+      )
+
+      click_on "Send action"
+
+      expect(page).to have_content(
+        format(COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_CONFIRMATION, vet_name, team_name)
+      )
+
+      expect(translation_action.reload.status).to eq "completed"
+      vacols_case = translation_action.appeal.case_record
+      expect(vacols_case.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[translation_action.action.to_sym]
     end
   end
 end
