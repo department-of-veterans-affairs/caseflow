@@ -3,7 +3,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import Button from '../../components/Button';
 import DateSelector from '../../components/DateSelector';
-import { ISSUE_CATEGORIES } from '../../intake/constants';
+import { ISSUE_CATEGORIES } from '../constants';
 import _ from 'lodash';
 
 export default class NonRatedIssuesUnconnected extends React.PureComponent {
