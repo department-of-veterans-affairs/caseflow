@@ -57,7 +57,7 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
     buildSuccessMsg: (appeal: Appeal, { teamName }: { teamName: string }) => ({
       title: sprintf(
         COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_CONFIRMATION,
-        appeal.veteranFullName, CO_LOCATED_TEAMS[teamName]
+        appeal.veteranFullName, teamName
       )
     }),
     title: COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD,

@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
+import { sprintf } from 'sprintf-js';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 
@@ -15,10 +16,10 @@ import { showModal } from '../uiReducer/uiActions';
 
 import {
   dropdownStyling,
-  COLOCATED_ACTIONS,
   SEND_TO_LOCATION_MODAL_TYPES
 } from '../constants';
 import CO_LOCATED_ACTIONS from '../../../constants/CO_LOCATED_ACTIONS.json';
+import CO_LOCATED_TEAMS from '../../../constants/CO_LOCATED_TEAMS.json';
 import COPY from '../../../COPY.json';
 
 import type { State } from '../types/state';
@@ -65,15 +66,25 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
 
   getOptions = () => {
     const { task } = this.props;
+    let options = [{
+      label: COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
+      value: CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY
+    }];
 
+    if (Object.keys(CO_LOCATED_TEAMS).includes(task.action)) {
+      options.push({
+        label: sprintf(COPY.COLOCATED_ACTION_SEND_TO_TEAM, CO_LOCATED_TEAMS[task.action]),
+        value: CO_LOCATED_ACTIONS.SEND_TO_TEAM
+      });
+    }
     if (task.status !== 'on_hold') {
-      return [...COLOCATED_ACTIONS, {
+      options.push({
         label: COPY.COLOCATED_ACTION_PLACE_HOLD,
         value: CO_LOCATED_ACTIONS.PLACE_HOLD
-      }];
+      });
     }
 
-    return COLOCATED_ACTIONS;
+    return options;
   }
 
   render = () => <SearchableDropdown
