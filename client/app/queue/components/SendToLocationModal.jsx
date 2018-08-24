@@ -21,6 +21,7 @@ import {
   requestSave
 } from '../uiReducer/uiActions';
 import { prepareTasksForStore } from '../utils';
+import { SEND_TO_LOCATION_MODAL_TYPES } from '../constants';
 
 import type { State } from '../types/state';
 import type { Task, Appeal } from '../types/models';
@@ -39,8 +40,8 @@ type Props = Params & {|
   setTaskAttrs: typeof setTaskAttrs
 |};
 
-const SEND_TO_LOCATION_MODAL_TYPES = {
-  sendToAttorney: {
+const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
+  [SEND_TO_LOCATION_MODAL_TYPES.attorney]: {
     buildSuccessMsg: (appeal: Appeal, { assignerName }: { assignerName: string}) => ({
       title: sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION, appeal.veteranFullName, assignerName),
       detail: sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION_DETAIL, assignerName)
@@ -52,7 +53,7 @@ const SEND_TO_LOCATION_MODAL_TYPES = {
     </React.Fragment>,
     buttonText: 'Send back to attorney'
   },
-  sendToTeam: {
+  [SEND_TO_LOCATION_MODAL_TYPES.team]: {
     buildSuccessMsg: (appeal: Appeal, { teamName }: { teamName: string }) => ({
       title: sprintf(
         COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_CONFIRMATION,
@@ -78,9 +79,19 @@ class SendToLocationModal extends React.Component<Props> {
   };
 
   buildPayload = () => {
-    const { task } = this.props;
+    const {
+      task,
+      modalType
+    } = this.props;
+    const payload = {};
 
-    return { assigned_to_id: task.assignedBy.pgId };
+    if (modalType === SEND_TO_LOCATION_MODAL_TYPES.attorney) {
+      payload.assigned_to_id = task.assignedBy.pgId;
+    } else if (modalType === SEND_TO_LOCATION_MODAL_TYPES.team) {
+      payload.status = 'completed';
+    }
+
+    return payload;
   }
 
   getContentArgs = () => ({
@@ -100,7 +111,7 @@ class SendToLocationModal extends React.Component<Props> {
         task: this.buildPayload()
       }
     };
-    const successMsg = SEND_TO_LOCATION_MODAL_TYPES[modalType].buildSuccessMsg(appeal, this.getContentArgs());
+    const successMsg = SEND_TO_LOCATION_MODAL_TYPE_ATTRS[modalType].buildSuccessMsg(appeal, this.getContentArgs());
 
     this.props.requestSave(`/tasks/${task.taskId}`, payload, successMsg, 'patch').
       then((resp) => {
@@ -116,21 +127,21 @@ class SendToLocationModal extends React.Component<Props> {
     const { modalType } = this.props;
 
     return <Modal
-      title={SEND_TO_LOCATION_MODAL_TYPES[modalType].title}
+      title={SEND_TO_LOCATION_MODAL_TYPE_ATTRS[modalType].title}
       buttons={[{
         classNames: ['usa-button', 'cf-btn-link'],
         name: 'Cancel',
         onClick: this.closeModal
       }, {
         classNames: ['usa-button-primary', 'usa-button-hover'],
-        name: SEND_TO_LOCATION_MODAL_TYPES[modalType].buttonText,
+        name: SEND_TO_LOCATION_MODAL_TYPE_ATTRS[modalType].buttonText,
         onClick: () => {
           this.sendToLocation();
           this.closeModal();
         }
       }]}
       closeHandler={this.closeModal}>
-      {SEND_TO_LOCATION_MODAL_TYPES[modalType].getContent(this.getContentArgs())}
+      {SEND_TO_LOCATION_MODAL_TYPE_ATTRS[modalType].getContent(this.getContentArgs())}
     </Modal>;
   };
 }

@@ -15,7 +15,8 @@ import { showModal } from '../uiReducer/uiActions';
 
 import {
   dropdownStyling,
-  COLOCATED_ACTIONS
+  COLOCATED_ACTIONS,
+  SEND_TO_LOCATION_MODAL_TYPES
 } from '../constants';
 import CO_LOCATED_ACTIONS from '../../../constants/CO_LOCATED_ACTIONS.json';
 import COPY from '../../../COPY.json';
@@ -50,9 +51,9 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
 
     switch (actionType) {
     case CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY:
-      return this.props.showModal('sendToAttorney');
+      return this.props.showModal(SEND_TO_LOCATION_MODAL_TYPES.attorney);
     case CO_LOCATED_ACTIONS.SEND_TO_TEAM: {
-      return this.props.showModal('sendToTeam');
+      return this.props.showModal(SEND_TO_LOCATION_MODAL_TYPES.team);
     }
     case CO_LOCATED_ACTIONS.PLACE_HOLD:
       history.push(`/queue/appeals/${appealId}/place_hold`);

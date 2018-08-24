@@ -160,3 +160,8 @@ export const PAGE_TITLES = {
 };
 
 export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, 'Custom'];
+
+export const SEND_TO_LOCATION_MODAL_TYPES = {
+  attorney: 'sendToAttorney',
+  team: 'sendToTeam'
+};
