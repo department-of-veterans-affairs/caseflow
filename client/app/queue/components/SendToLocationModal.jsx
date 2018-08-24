@@ -46,7 +46,7 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
       title: sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION, appeal.veteranFullName, assignerName),
       detail: sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION_DETAIL, assignerName)
     }),
-    title: COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
+    title: () => COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
     getContent: ({ assignerName }: { assignerName: string }) => <React.Fragment>
       {COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY}&nbsp;
       <b>{sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY_ATTORNEY_NAME, assignerName)}</b>
@@ -60,10 +60,9 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
         appeal.veteranFullName, teamName
       )
     }),
-    title: COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD,
-    getContent: ({ vetName, teamName }: { vetName: string, teamName: string }) => <React.Fragment>
+    title: ({ teamName }: { teamName: string }) => sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD, teamName),
+    getContent: ({ teamName }: { teamName: string }) => <React.Fragment>
       <p>{sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY, teamName)}</p>
-      {sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_PROMPT, vetName, teamName)}
     </React.Fragment>,
     buttonText: 'Send action'
   }
@@ -96,8 +95,7 @@ class SendToLocationModal extends React.Component<Props> {
 
   getContentArgs = () => ({
     assignerName: this.getTaskAssignerName(),
-    teamName: CO_LOCATED_ADMIN_ACTIONS[this.props.task.action],
-    vetName: this.props.appeal.veteranFullName
+    teamName: CO_LOCATED_ADMIN_ACTIONS[this.props.task.action]
   });
 
   sendToLocation = () => {
@@ -127,7 +125,7 @@ class SendToLocationModal extends React.Component<Props> {
     const { modalType } = this.props;
 
     return <Modal
-      title={SEND_TO_LOCATION_MODAL_TYPE_ATTRS[modalType].title}
+      title={SEND_TO_LOCATION_MODAL_TYPE_ATTRS[modalType].title(this.getContentArgs())}
       buttons={[{
         classNames: ['usa-button', 'cf-btn-link'],
         name: 'Cancel',
