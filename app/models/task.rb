@@ -5,7 +5,8 @@ class Task < ApplicationRecord
   belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
 
-  validates :assigned_to, :appeal, :type, :status, presence: true
+  validates :appeal, :type, :status, presence: true
+  validates :assigned_to, presence: true, unless: proc { |t| t.type == "RootTask" }
 
   before_create :set_assigned_at_and_update_parent_status
   before_update :set_timestamps
