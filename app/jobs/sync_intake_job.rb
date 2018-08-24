@@ -2,9 +2,9 @@
 # EP known to Intake
 class SyncIntakeJob < CaseflowJob
   queue_as :low_priority
+  application_attr :intake
 
   def perform
-    self.class.application_attr :intake
     # Set user to system_user to avoid sensitivity errors
     RequestStore.store[:current_user] = User.system_user
 
