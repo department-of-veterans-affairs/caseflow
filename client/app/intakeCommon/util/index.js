@@ -1,6 +1,20 @@
 import _ from 'lodash';
 import { formatDateStringForApi } from '../../util/DateUtil';
 
+export const formatRatings = (ratings, requestIssues = []) => {
+  const result = _.keyBy(_.map(ratings, (rating) => {
+    return _.assign(rating,
+      { issues: _.keyBy(rating.issues, 'reference_id') }
+    );
+  }), 'profile_date');
+
+  _.forEach(requestIssues, (requestIssue) => {
+    result[requestIssue.profile_date].issues[requestIssue.reference_id].isSelected = true;
+  });
+
+  return result;
+};
+
 export const validateDate = (date) => {
   const datePattern = /^(0[1-9]|1[0-2])[/](0[1-9]|[12][0-9]|3[01])[/](19|20)\d\d$/;
 

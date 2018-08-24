@@ -1,6 +1,6 @@
 import { ACTIONS } from '../../intake/constants';
 import { update } from '../../util/ReducerUtil';
-import { formatRatings } from '../../intake/util';
+import { formatRatings } from '../../intakeCommon/util';
 
 export const mapDataToInitialState = function(props = {}) {
   return {

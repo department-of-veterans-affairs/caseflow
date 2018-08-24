@@ -32,20 +32,6 @@ export const toggleIneligibleError = (hasInvalidOption, selectedOption) => (
     selectedOption === REVIEW_OPTIONS.HIGHER_LEVEL_REVIEW_WITH_HEARING.key)
 );
 
-export const formatRatings = (ratings, requestIssues = []) => {
-  const result = _.keyBy(_.map(ratings, (rating) => {
-    return _.assign(rating,
-      { issues: _.keyBy(rating.issues, 'reference_id') }
-    );
-  }), 'profile_date');
-
-  _.forEach(requestIssues, (requestIssue) => {
-    result[requestIssue.profile_date].issues[requestIssue.reference_id].isSelected = true;
-  });
-
-  return result;
-};
-
 export const formatRelationships = (relationships) => {
   return relationships.map((relationship) => {
     const first = _.capitalize(relationship.first_name);
