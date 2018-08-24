@@ -4,9 +4,9 @@ import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import CancelButton from '../../components/CancelButton';
-import NonRatedIssuesUnconnected from '../../components/NonRatedIssues';
-import RatedIssuesUnconnected from '../../components/RatedIssues';
-import IssueCounter from '../../components/IssueCounter';
+import NonRatedIssuesUnconnected from '../../../intakeCommon/components/NonRatedIssues';
+import RatedIssuesUnconnected from '../../../intakeCommon/components/RatedIssues';
+import IssueCounter from '../../../intakeCommon/components/IssueCounter';
 import {
   completeIntake,
   setIssueSelected,
@@ -73,9 +73,8 @@ const NonRatedIssues = connect(
 )(NonRatedIssuesUnconnected);
 
 const RatedIssues = connect(
-  ({ appeal, intake }) => ({
-    intakeId: intake.id,
-    reviewState: appeal
+  ({ appeal }) => ({
+    ratings: appeal.ratings
   }),
   (dispatch) => bindActionCreators({
     setIssueSelected
