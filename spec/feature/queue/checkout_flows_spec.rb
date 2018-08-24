@@ -466,6 +466,18 @@ RSpec.feature "Checkout flows" do
         )
       )
     end
+    let!(:appeal_with_translation_task) do
+      FactoryBot.create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: FactoryBot.create(
+          :case,
+          :assigned,
+          user: colocated_user,
+          case_issues: FactoryBot.create_list(:case_issue, 1)
+        )
+      )
+    end
     let!(:colocated_action) do
       FactoryBot.create(
         :colocated_task,
@@ -477,7 +489,7 @@ RSpec.feature "Checkout flows" do
     let!(:translation_action) do
       FactoryBot.create(
         :colocated_task,
-        appeal: appeal,
+        appeal: appeal_with_translation_task,
         assigned_to: colocated_user,
         assigned_by: attorney_user,
         action: "translation"
@@ -496,11 +508,13 @@ RSpec.feature "Checkout flows" do
     scenario "reassigns task to assigning attorney" do
       visit "/queue"
 
-      vet_name = colocated_action.appeal.veteran_full_name
+      appeal = colocated_action.appeal
+
+      vet_name = appeal.veteran_full_name
       attorney_name = colocated_action.assigned_by_display_name
       attorney_name_display = "#{attorney_name.first[0]}. #{attorney_name.last}"
 
-      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
+      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
       click_dropdown 0
       expect(page).to have_content("Send back to attorney")
       click_on "Send back to attorney"
@@ -513,13 +527,15 @@ RSpec.feature "Checkout flows" do
     scenario "places task on hold" do
       visit "/queue"
 
-      vet_name = colocated_action.appeal.veteran_full_name
-      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
+      appeal = colocated_action.appeal
+
+      vet_name = appeal.veteran_full_name
+      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
 
       click_dropdown 1
 
       expect(page).to have_content(
-        format(COPY::COLOCATED_ACTION_PLACE_HOLD_HEAD, vet_name, colocated_action.appeal.sanitized_vbms_id)
+        format(COPY::COLOCATED_ACTION_PLACE_HOLD_HEAD, vet_name, appeal.sanitized_vbms_id)
       )
 
       click_dropdown 6
@@ -540,9 +556,12 @@ RSpec.feature "Checkout flows" do
     scenario "sends task to team" do
       visit "/queue"
 
+      appeal = translation_action.appeal
+      vacols_case = appeal.case_record
+
       team_name = Constants::CO_LOCATED_TEAMS[translation_action.action]
-      vet_name = translation_action.appeal.veteran_full_name
-      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
+      vet_name = appeal.veteran_full_name
+      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
 
       click_dropdown 1
 
@@ -558,8 +577,7 @@ RSpec.feature "Checkout flows" do
       )
 
       expect(translation_action.reload.status).to eq "completed"
-      vacols_case = translation_action.appeal.case_record
-      expect(vacols_case.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[translation_action.action.to_sym]
+      expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[translation_action.action.to_sym]
     end
   end
 end
