@@ -114,7 +114,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     click_on "Search"
 
-    expect(page).to have_current_path("/intake/review-request")
+    expect(page).to have_current_path("/intake/review_request")
 
     fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
     safe_click "#button-submit-review"
@@ -142,7 +142,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(page).to have_current_path("/intake/finish")
 
-    visit "/intake/review-request"
+    visit "/intake/review_request"
 
     expect(find("#different-claimant-option_true", visible: false)).to be_checked
     expect(find_field("Baz Qux, Child", visible: false)).to be_checked
@@ -152,7 +152,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_current_path("/intake/finish")
 
     expect(page).to have_content("Identify issues on")
-    expect(page).to have_content("Decision date: 04/14/2017")
+    expect(page).to have_content("Decision date: 04/17/2017")
     expect(page).to have_content("Left knee granted")
     expect(page).to_not have_content("Untimely rating issue 1")
     expect(page).to have_button("Establish EP", disabled: true)
@@ -297,10 +297,10 @@ RSpec.feature "Supplemental Claim Intake" do
     )
 
     visit "/supplemental_claims/#{ratings_end_product_establishment.reference_id}/edit"
-    expect(page).to have_content("Veteran Name: Ed Merica")
+    expect(page).to have_content("Hello Merica, Ed")
 
-    visit "/supplemental_claims/#{nonratings_end_product_establishment.reference_id}/edit"
-    expect(page).to have_content("Veteran Name: Ed Merica")
+    # visit "/supplemental_claims/#{nonratings_end_product_establishment.reference_id}/edit"
+    # expect(page).to have_content("Hello Merica, Ed")
 
     visit "/supplemental_claims/4321/edit"
     expect(page).to have_content("Page not found")
@@ -324,7 +324,7 @@ RSpec.feature "Supplemental Claim Intake" do
     safe_click "#button-submit-review"
 
     expect(page).to have_content("Something went wrong")
-    expect(page).to have_current_path("/intake/review-request")
+    expect(page).to have_current_path("/intake/review_request")
   end
 
   it "Allows a Veteran without ratings to create an intake" do

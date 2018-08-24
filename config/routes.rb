@@ -31,7 +31,7 @@ Rails.application.routes.draw do
     end
   end
 
-  namespace :idt do    
+  namespace :idt do
     get 'auth', to: 'authentications#index'
     namespace :api do
       namespace :v1 do
@@ -151,8 +151,10 @@ Rails.application.routes.draw do
   end
 
   resources :higher_level_reviews, param: :claim_id, only: [:edit]
+  match '/higher_level_reviews/:claim_id/edit/:any' => 'higher_level_reviews#edit', via: [:get]
 
   resources :supplemental_claims, param: :claim_id, only: [:edit]
+  match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
 
   resources :users, only: [:index]
 
