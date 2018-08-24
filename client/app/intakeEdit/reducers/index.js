@@ -1,9 +1,7 @@
 export const mapDataToInitialState = function(props = {}) {
   return {
-    veteran: {
-      fileNumber: props.veteranFileNumber,
-      formName: props.veteranFormName
-    }
+    formType: props.formType,
+    review: props.review
   };
 };
 

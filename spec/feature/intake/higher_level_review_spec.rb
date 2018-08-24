@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Higher-Level Review Intake" do
+RSpec.feature "Higher-Level Review" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
@@ -311,11 +311,19 @@ RSpec.feature "Higher-Level Review Intake" do
     )
 
     visit "/higher_level_reviews/#{ratings_end_product_establishment.reference_id}/edit"
-    expect(page).to have_content("Hello Merica, Ed")
+    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988)")
+    expect(page).to have_content("Ed Merica (12341234)")
+    expect(page).to have_content("04/20/2018")
+    expect(find("#table-row-3")).to have_content("Yes")
+    expect(find("#table-row-4")).to have_content("No")
+    expect(page).to have_content("PTSD denied")
 
-    # Non-rating reference ID test, we are not doing non-rating for now
-    # visit "/higher_level_reviews/#{nonratings_end_product_establishment.reference_id}/edit"
-    # expect(page).to have_content("Hello Merica, Ed")
+    safe_click ".cf-edit-issues-link"
+
+    expect(page).to have_current_path(
+      "/higher_level_reviews/#{ratings_end_product_establishment.reference_id}/edit/select_issues"
+    )
+    expect(page).to have_content("What up Merica, Ed")
 
     visit "/higher_level_reviews/4321/edit"
     expect(page).to have_content("Page not found")

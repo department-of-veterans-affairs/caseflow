@@ -5,6 +5,17 @@ class SupplementalClaim < AmaReview
   END_PRODUCT_NONRATING_CODE = "040SCNR".freeze
   END_PRODUCT_MODIFIERS = %w[040 041 042 043 044 045 046 047 048 049].freeze
 
+  def ui_hash
+    {
+      veteranFormName: veteran.name.formatted(:form),
+      veteranName: veteran.name,
+      veteranFileNumber: veteran_file_number,
+      claimId: end_product_claim_id,
+      receiptDate: receipt_date,
+      issues: request_issues
+    }
+  end
+
   def end_product_description
     end_product_establishment.description
   end
