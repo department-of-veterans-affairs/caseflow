@@ -559,7 +559,7 @@ RSpec.feature "Checkout flows" do
       appeal = translation_action.appeal
       vacols_case = appeal.case_record
 
-      team_name = Constants::CO_LOCATED_TEAMS[translation_action.action]
+      team_name = Constants::CO_LOCATED_ADMIN_ACTIONS[translation_action.action]
       vet_name = appeal.veteran_full_name
       click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
 

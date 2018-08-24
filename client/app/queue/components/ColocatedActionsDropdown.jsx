@@ -19,7 +19,7 @@ import {
   SEND_TO_LOCATION_MODAL_TYPES
 } from '../constants';
 import CO_LOCATED_ACTIONS from '../../../constants/CO_LOCATED_ACTIONS.json';
-import CO_LOCATED_TEAMS from '../../../constants/CO_LOCATED_TEAMS.json';
+import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import COPY from '../../../COPY.json';
 
 import type { State } from '../types/state';
@@ -71,9 +71,9 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
       value: CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY
     }];
 
-    if (Object.keys(CO_LOCATED_TEAMS).includes(task.action)) {
+    if (['translation', 'schedule_hearing'].includes(task.action)) {
       options.push({
-        label: sprintf(COPY.COLOCATED_ACTION_SEND_TO_TEAM, CO_LOCATED_TEAMS[task.action]),
+        label: sprintf(COPY.COLOCATED_ACTION_SEND_TO_TEAM, CO_LOCATED_ADMIN_ACTIONS[task.action]),
         value: CO_LOCATED_ACTIONS.SEND_TO_TEAM
       });
     }

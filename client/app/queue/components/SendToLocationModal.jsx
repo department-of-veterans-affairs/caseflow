@@ -6,7 +6,7 @@ import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 
 import COPY from '../../../COPY.json';
-import CO_LOCATED_TEAMS from '../../../constants/CO_LOCATED_TEAMS.json';
+import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 import Modal from '../../components/Modal';
 
@@ -96,7 +96,7 @@ class SendToLocationModal extends React.Component<Props> {
 
   getContentArgs = () => ({
     assignerName: this.getTaskAssignerName(),
-    teamName: CO_LOCATED_TEAMS[this.props.task.action],
+    teamName: CO_LOCATED_ADMIN_ACTIONS[this.props.task.action],
     vetName: this.props.appeal.veteranFullName
   });
 
