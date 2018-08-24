@@ -8,6 +8,10 @@ class OrganizationsController < ApplicationController
     render "organizations/show"
   end
 
+  def members
+    render json: { members: organization.members.map { |m| { id: m.id, css_id: m.css_id, full_name: m.full_name } } }
+  end
+
   private
 
   def verify_organization_access
@@ -15,7 +19,7 @@ class OrganizationsController < ApplicationController
   end
 
   def verify_role_access
-    verify_authorized_roles(organization.role)
+    verify_authorized_roles(organization.role) if organization.role
   end
 
   def verify_feature_access

@@ -173,6 +173,7 @@ Rails.application.routes.draw do
 
   resources :organizations, only: [:show], param: :url do
     resources :tasks, only: [:index], controller: 'organizations/tasks'
+    get 'members', on: :member
   end
 
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
