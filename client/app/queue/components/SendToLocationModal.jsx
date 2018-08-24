@@ -62,7 +62,7 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
     }),
     title: COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD,
     getContent: ({ vetName, teamName }: { vetName: string, teamName: string }) => <React.Fragment>
-      <p>{COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY}</p>
+      <p>{sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY, teamName)}</p>
       {sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_PROMPT, vetName, teamName)}
     </React.Fragment>,
     buttonText: 'Send action'
