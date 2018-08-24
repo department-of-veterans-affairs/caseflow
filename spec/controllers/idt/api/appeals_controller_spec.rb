@@ -93,7 +93,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             FeatureToggle.disable!(:idt_ama_appeals)
           end
 
-          it "succeeds" do
+          it "returns a list of assigned appeals" do
             get :list
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["data"]
@@ -104,6 +104,18 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
             expect(ama_appeals.second["attributes"]["docket_number"]).to eq tasks.second.appeal.docket_number
             expect(ama_appeals.second["attributes"]["veteran_first_name"]).to eq veteran2.name.first_name
+          end
+
+          it "returns appeals associated with a file number" do
+            headers = { 'FILENUMBER' => tasks.first.appeal.veteran_file_number }
+            request.headers.merge! headers
+            get :list
+            expect(response.status).to eq 200
+            response_body = JSON.parse(response.body)["data"]
+            ama_appeals = response_body.select { |appeal| appeal["type"] == "appeals" }
+            expect(ama_appeals.size).to eq 1
+            expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.first.appeal.docket_number
+            expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.name.first_name
           end
         end
 
