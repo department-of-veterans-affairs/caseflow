@@ -29,7 +29,7 @@ class Task < ApplicationRecord
     ["", ""]
   end
 
-  def create_from_params(params)
+  def self.create_from_params(params)
     create(params)
   end
 
