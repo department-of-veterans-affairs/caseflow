@@ -26,6 +26,12 @@ FactoryBot.define do
       completed_at Time.zone.now
     end
 
+    factory :generic_task do
+      type "GenericTask"
+      appeal_type "Appeal"
+      appeal { create(:appeal) }
+    end
+
     factory :colocated_task do
       type "ColocatedTask"
       action { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample }
