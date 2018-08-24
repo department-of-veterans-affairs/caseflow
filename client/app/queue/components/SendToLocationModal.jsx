@@ -51,7 +51,7 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
       {COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY}&nbsp;
       <b>{sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY_ATTORNEY_NAME, assignerName)}</b>
     </React.Fragment>,
-    buttonText: 'Send back to attorney'
+    buttonText: COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_BUTTON
   },
   [SEND_TO_LOCATION_MODAL_TYPES.team]: {
     buildSuccessMsg: (appeal: Appeal, { teamName }: { teamName: string }) => ({
@@ -61,10 +61,12 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
       )
     }),
     title: ({ teamName }: { teamName: string }) => sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD, teamName),
-    getContent: ({ teamName }: { teamName: string }) => <React.Fragment>
-      <p>{sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY, teamName)}</p>
+    getContent: ({ appeal, teamName }: { appeal: Appeal, teamName: string }) => <React.Fragment>
+      {sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY, { ...appeal })} <strong>
+      {teamName}
+    </strong>
     </React.Fragment>,
-    buttonText: 'Send action'
+    buttonText: COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_BUTTON
   }
 };
 
@@ -95,7 +97,8 @@ class SendToLocationModal extends React.Component<Props> {
 
   getContentArgs = () => ({
     assignerName: this.getTaskAssignerName(),
-    teamName: CO_LOCATED_ADMIN_ACTIONS[this.props.task.action]
+    teamName: CO_LOCATED_ADMIN_ACTIONS[this.props.task.action],
+    appeal: this.props.appeal
   });
 
   sendToLocation = () => {
