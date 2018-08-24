@@ -29,7 +29,7 @@ const getUserCssId = (state: State) => state.ui.userCssId;
 const getAppealId = (state: State, props: Object) => props.appealId;
 const getAttorneys = (state: State) => state.queue.attorneysOfJudge;
 const getCaseflowVeteranId = (state: State, props: Object) => props.caseflowVeteranId;
-const getModals = (state: State) => state.ui.modal;
+const getModals = (state: State) => state.ui.modals;
 
 export const getActiveModalType = createSelector(
   [getModals],

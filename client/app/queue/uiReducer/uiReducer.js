@@ -16,8 +16,7 @@ export const initialState = {
     error: null
   },
   saveState: initialSaveState,
-  // todo: modal -> modals
-  modal: {},
+  modals: {},
   featureToggles: {},
   userRole: '',
   userCssId: '',
@@ -44,7 +43,7 @@ const hideSuccessMessage = (state) => setSuccessMessageState(state, null);
 const showSuccessMessage = (state, message = { title: 'Success' }) => setSuccessMessageState(state, message);
 
 const setModalState = (state, visibility, modalType) => update(state, {
-  modal: {
+  modals: {
     [modalType]: {
       $set: visibility
     }

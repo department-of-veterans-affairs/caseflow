@@ -87,7 +87,7 @@ CaseDetailsView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const { success, error } = state.ui.messages;
-  const { veteranCaseListIsVisible, modal } = state.ui;
+  const { veteranCaseListIsVisible, modals } = state.ui;
   const modalType = getActiveModalType(state);
 
   return {
@@ -95,7 +95,7 @@ const mapStateToProps = (state, ownProps) => {
     success,
     error,
     veteranCaseListIsVisible,
-    modal: modal[modalType],
+    modal: modals[modalType],
     modalType
   };
 };

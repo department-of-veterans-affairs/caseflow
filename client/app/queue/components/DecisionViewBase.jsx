@@ -174,7 +174,7 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
     const { savePending, saveSuccessful } = state.ui.saveState;
 
     return {
-      cancelCheckoutModal: state.ui.modal.cancelCheckout,
+      cancelCheckoutModal: state.ui.modals.cancelCheckout,
       savePending,
       saveSuccessful,
       stagedAppeals: Object.keys(state.queue.stagedChanges.appeals),

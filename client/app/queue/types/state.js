@@ -36,7 +36,12 @@ export type UiState = {
     savePending: boolean,
     saveSuccessful: ?boolean
   },
-  modal: Object,
+  modals: {|
+    deleteIssue?: boolean,
+    cancelCheckout?: boolean,
+    sendToAttorney?: boolean,
+    sendToTeam?: boolean
+  |},
   featureToggles: Object,
   selectedAssignee: ?string,
   selectedAssigneeSecondary: ?string,
