@@ -25,3 +25,31 @@ export const FORM_TYPES = {
     category: 'ama'
   }
 };
+
+const issueCategoriesArray = [
+  'Unknown issue category',
+  'Apportionment',
+  'Incarceration Adjustments',
+  'Audit Error Worksheet (DFAS)',
+  'Active Duty Adjustments',
+  'Drill Pay Adjustments',
+  'Character of discharge determinations',
+  'Income/net worth (pension)',
+  'Dependent child - Adopted',
+  'Dependent child - Stepchild',
+  'Dependent child - Biological',
+  'Dependency Spouse - Common law marriage',
+  'Dependency Spouse - Inference of marriage',
+  'Dependency Spouse - Deemed valid marriage',
+  'Military Retired Pay',
+  'Contested Claims (other than apportionment)',
+  'Lack of Qualifying Service',
+  'Other non-rated'
+];
+
+export const ISSUE_CATEGORIES = issueCategoriesArray.map((category) => {
+  return {
+    value: category,
+    label: category
+  };
+});

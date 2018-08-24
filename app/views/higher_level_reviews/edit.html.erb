@@ -5,6 +5,8 @@
     feedbackUrl: feedback_url,
     buildDate: build_date,
     formType: "higher_level_review",
-    review: higher_level_review.ui_hash
+    review: higher_level_review.ui_hash,
+    ratings: higher_level_review.cached_serialized_timely_ratings,
+    ratedRequestIssues: higher_level_review.request_issues.rated.map(&:ui_hash)
   }) %>
 <% end %>

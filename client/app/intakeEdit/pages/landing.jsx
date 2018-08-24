@@ -13,8 +13,7 @@ class Landing extends Component {
     } = this.props;
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
-    const veteranInfo =
-      `${review.veteranName.first_name} ${review.veteranName.last_name} (${review.veteranFileNumber})`;
+    const veteranInfo = `${review.veteranName} (${review.veteranFileNumber})`;
 
     const issueContent = (issues) => {
       return <SelectedIssues issues={issues} />;
