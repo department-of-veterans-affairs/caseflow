@@ -21,4 +21,8 @@ class RequestIssue < ApplicationRecord
       issue_category: data[:issue_category]
     )
   end
+
+  def ui_hash
+    { reference_id: rating_issue_reference_id, profile_date: rating_issue_profile_date }
+  end
 end

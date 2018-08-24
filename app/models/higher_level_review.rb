@@ -11,7 +11,7 @@ class HigherLevelReview < AmaReview
   def ui_hash
     {
       veteranFormName: veteran.name.formatted(:form),
-      veteranName: veteran.name,
+      veteranName: veteran.name.formatted(:readable_short),
       veteranFileNumber: veteran_file_number,
       claimId: end_product_claim_id,
       receiptDate: receipt_date,
