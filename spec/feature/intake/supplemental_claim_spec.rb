@@ -309,7 +309,6 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_current_path(
       "/supplemental_claims/#{ratings_end_product_establishment.reference_id}/edit/select_issues"
     )
-    expect(page).to have_content("What up Merica, Ed")
 
     visit "/supplemental_claims/4321/edit"
     expect(page).to have_content("Page not found")
