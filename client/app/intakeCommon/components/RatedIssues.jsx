@@ -8,15 +8,15 @@ export default class RatedIssuesUnconnected extends React.PureComponent {
 
   render() {
 
-    const { reviewState } = this.props;
+    const { ratings } = this.props;
 
-    const veteranHasNoRatings = _.isEmpty(reviewState.ratings);
+    const veteranHasNoRatings = _.isEmpty(ratings);
 
     const noRatedIssuesMessage = 'This Veteran has no rated, disability issues within the one-year timeframe ' +
     'for requesting a review. If the Veteran listed non-rated issues, add them below. Otherwise, cancel the ' +
     'intake and follow your standard operating procedures for notifying the Veteran.';
 
-    const ratedIssuesSections = _.map(reviewState.ratings, (rating) => {
+    const ratedIssuesSections = _.map(ratings, (rating) => {
       const ratedIssueCheckboxes = _.map(rating.issues, (issue) => {
         return (
           <Checkbox

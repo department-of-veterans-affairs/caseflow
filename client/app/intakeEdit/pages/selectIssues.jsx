@@ -1,16 +1,47 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
+import { bindActionCreators } from 'redux';
+import RatedIssuesUnconnected from '../../intakeCommon/components/RatedIssues';
+import { setIssueSelected } from '../../intake/actions/ama';
+import { FORM_TYPES } from '../../intakeCommon/constants';
 
-class SelectIssues extends Component {
+// This page shouldn't matter that much which type of Review it is.
+class SelectIssues extends React.PureComponent {
   render() {
+    const {
+      veteranName,
+      formType
+    } = this.props;
+
+    const reviewForm = _.find(FORM_TYPES, { key: formType });
+
     return <div>
-      What up {this.props.review.veteranFormName}
+      <h1>Issues on { veteranName }'s { reviewForm.name }</h1>
+
+      <p>
+        Please select all the issues that best match the Veteran's request on the form.
+        The list below includes issues claimed by the Veteran in the last year.
+      </p>
+
+      <RatedIssues />
+
     </div>;
   }
 }
 
+const RatedIssues = connect(
+  ({ ratings }) => ({
+    ratings
+  }),
+  (dispatch) => bindActionCreators({
+    setIssueSelected
+  }, dispatch)
+)(RatedIssuesUnconnected);
+
 export default connect(
-  ({ review }) => ({
-    review
+  (state) => ({
+    veteranName: state.review.veteranName,
+    formType: state.formType
   })
 )(SelectIssues);

@@ -5,6 +5,8 @@
     feedbackUrl: feedback_url,
     buildDate: build_date,
     formType: "supplemental_claim",
-    review: supplemental_claim.ui_hash
+    review: supplemental_claim.ui_hash,
+    ratings: supplemental_claim.cached_serialized_timely_ratings,
+    ratedRequestIssues: supplemental_claim.request_issues.rated.map(&:ui_hash)
   }) %>
 <% end %>

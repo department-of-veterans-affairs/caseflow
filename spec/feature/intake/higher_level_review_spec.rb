@@ -323,7 +323,6 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_current_path(
       "/higher_level_reviews/#{ratings_end_product_establishment.reference_id}/edit/select_issues"
     )
-    expect(page).to have_content("What up Merica, Ed")
 
     visit "/higher_level_reviews/4321/edit"
     expect(page).to have_content("Page not found")
