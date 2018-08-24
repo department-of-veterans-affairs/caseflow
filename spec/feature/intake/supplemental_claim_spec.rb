@@ -299,7 +299,7 @@ RSpec.feature "Supplemental Claim Intake" do
     visit "/supplemental_claims/#{ratings_end_product_establishment.reference_id}/edit"
     expect(page).to have_content("Supplemental Claim (VA Form 21-526b)")
     expect(page).to have_content("Ed Merica (12341234)")
-    expect(page).to have_content("04/19/2018")
+    expect(page).to have_content("04/20/2018")
     expect(page).to_not have_content("Informal conference request")
     expect(page).to_not have_content("Same office request")
     expect(page).to have_content("PTSD denied")
