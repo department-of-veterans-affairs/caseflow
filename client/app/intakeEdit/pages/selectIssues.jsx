@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import RatedIssuesUnconnected from '../../intakeCommon/components/RatedIssues';
 import { setIssueSelected } from '../../intake/actions/ama';
-import { FORM_TYPES } from '../../intake/constants';
+import { FORM_TYPES } from '../../intakeCommon/constants';
 
 // This page shouldn't matter that much which type of Review it is.
 class SelectIssues extends React.PureComponent {
@@ -41,7 +41,7 @@ const RatedIssues = connect(
 
 export default connect(
   (state) => ({
-    veteranName: state.veteran.name,
+    veteranName: state.review.veteranName,
     formType: state.formType
   })
 )(SelectIssues);

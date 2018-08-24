@@ -47,6 +47,7 @@ RSpec.feature "Edit issues" do
         established_at: Time.zone.today
       )
     end
+
     let!(:request_issue) do
       RequestIssue.create!(
         rating_issue_reference_id: "abc123",
@@ -62,6 +63,35 @@ RSpec.feature "Edit issues" do
 
     it "shows selected issues" do
       visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit/select_issues"
+      expect(find_field("PTSD denied", visible: false)).to_not be_checked
+      expect(find_field("Left knee granted", visible: false)).to be_checked
+    end
+  end
+
+  context "Supplemental claims" do
+    let!(:supplemental_claim) do
+      SupplementalClaim.create!(
+        veteran_file_number: veteran.file_number,
+        receipt_date: receipt_date,
+        established_at: Time.zone.today
+      )
+    end
+
+    let!(:request_issue) do
+      RequestIssue.create!(
+        rating_issue_reference_id: "abc123",
+        rating_issue_profile_date: rating.profile_date,
+        review_request: supplemental_claim,
+        description: "Left knee granted"
+      )
+    end
+
+    before do
+      supplemental_claim.create_end_product_and_contentions!
+    end
+
+    it "shows selected issues" do
+      visit "supplemental_claims/#{supplemental_claim.end_product_claim_id}/edit/select_issues"
       expect(find_field("PTSD denied", visible: false)).to_not be_checked
       expect(find_field("Left knee granted", visible: false)).to be_checked
     end
