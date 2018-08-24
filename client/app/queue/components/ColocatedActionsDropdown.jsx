@@ -66,7 +66,7 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
 
   getOptions = () => {
     const { task } = this.props;
-    let options = [{
+    const options = [{
       label: COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
       value: CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY
     }];
