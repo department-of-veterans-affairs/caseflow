@@ -58,9 +58,9 @@
   "TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE": "Cases marked with exclamation points need to be assigned to you through DAS. Please contact your judge or senior counsel to create preliminary DAS assignments.",
   "JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE": "Cases to Assign",
 
-  "COLOCATED_QUEUE_PAGE_NEW_TAB_TITLE": "New",
-  "COLOCATED_QUEUE_PAGE_PENDING_TAB_TITLE": "Pending",
-  "COLOCATED_QUEUE_PAGE_ON_HOLD_TAB_TITLE": "On hold",
+  "COLOCATED_QUEUE_PAGE_NEW_TAB_TITLE": "New (%(numNewTasks)d)",
+  "COLOCATED_QUEUE_PAGE_PENDING_TAB_TITLE": "Pending (%(numPendingTasks)d)",
+  "COLOCATED_QUEUE_PAGE_ON_HOLD_TAB_TITLE": "On hold (%(numOnHoldTasks)d)",
   "COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION": "These are new administrative actions that have been assigned to you.",
   "COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION": "When a hold is complete, the case will appear here.",
   "COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "When a hold is complete, the case will automatically return to the Pending action tab.",
