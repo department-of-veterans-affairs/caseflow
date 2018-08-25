@@ -12,10 +12,16 @@ class OrganizationsController < ApplicationController
     render json: { members: organization.members.map { |m| { id: m.id, css_id: m.css_id, full_name: m.full_name } } }
   end
 
+  def list
+    render json: {
+      organizations: Organization.all.reject { |o| o.type && o.type == "Vso" }.map { |o| { id: o.id, name: o.name } }
+    }
+  end
+
   private
 
   def verify_organization_access
-    redirect_to "/unauthorized" unless organization.user_has_access?(current_user)
+    redirect_to "/unauthorized" unless organization && organization.user_has_access?(current_user)
   end
 
   def verify_role_access
@@ -37,7 +43,9 @@ class OrganizationsController < ApplicationController
   end
 
   def organization
-    Organization.find_by(url: organization_url)
+    # Allow the url to be the ID of the row in the table since this will be what is associated with
+    # tasks assigned to the organization in the tasks table.
+    Organization.find_by(url: organization_url) || Organization.find(organization_url)
   end
   helper_method :organization
 end
