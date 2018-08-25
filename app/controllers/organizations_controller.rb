@@ -1,8 +1,14 @@
 class OrganizationsController < ApplicationController
-  before_action :verify_organization_access
-  before_action :verify_role_access
-  before_action :verify_feature_access
+  before_action :verify_organization_access, except: [:index]
+  before_action :verify_role_access, except: [:index]
+  before_action :verify_feature_access, except: [:index]
   before_action :set_application
+
+  def index
+    render json: {
+      organizations: Organization.all.reject { |o| o.type && o.type == "Vso" }.map { |o| { id: o.id, name: o.name } }
+    }
+  end
 
   def show
     render "organizations/show"
@@ -10,12 +16,6 @@ class OrganizationsController < ApplicationController
 
   def members
     render json: { members: organization.members.map { |m| { id: m.id, css_id: m.css_id, full_name: m.full_name } } }
-  end
-
-  def list
-    render json: {
-      organizations: Organization.all.reject { |o| o.type && o.type == "Vso" }.map { |o| { id: o.id, name: o.name } }
-    }
   end
 
   private
