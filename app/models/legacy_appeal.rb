@@ -169,7 +169,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def cavc_due_date
-    return unless decision_date
+    return unless decided_by_bva?
     (decision_date + 120.days).to_date
   end
 
