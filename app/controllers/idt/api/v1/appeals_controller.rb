@@ -20,13 +20,19 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   end
 
   def appeals_assigned_to_user
-    # TODO: add AMA appeals
-    LegacyWorkQueue.tasks_with_appeals(user, "attorney")[1].select(&:active?)
+    appeals = LegacyWorkQueue.tasks_with_appeals(user, "attorney")[1].select(&:active?)
+    if feature_enabled?(:idt_ama_appeals)
+      appeals += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold]).map(&:appeal)
+    end
+    appeals
   end
 
   def appeals_by_file_number
-    # TODO: add AMA appeals
-    LegacyAppeal.fetch_appeals_by_file_number(file_number).select(&:active?)
+    appeals = LegacyAppeal.fetch_appeals_by_file_number(file_number).select(&:active?)
+    if feature_enabled?(:idt_ama_appeals)
+      appeals += Appeal.where(veteran_file_number: file_number)
+    end
+    appeals
   end
 
   def json_appeal_details(tasks, appeal)
