@@ -12,6 +12,7 @@ class Organization < ApplicationRecord
   private
 
   def member_css_ids
-    FeatureToggle.details_for(feature.to_sym)[:users]
+    details = FeatureToggle.details_for(feature.to_sym)
+    details && details[:users] || []
   end
 end
