@@ -7,11 +7,11 @@ import { sprintf } from 'sprintf-js';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 
-import { getTasksForAppeal } from '../selectors';
 import {
-  stageAppeal,
-  checkoutStagedAppeal
-} from '../QueueActions';
+  getTasksForAppeal,
+  appealWithDetailSelector
+} from '../selectors';
+import { stageAppeal } from '../QueueActions';
 import { showModal } from '../uiReducer/uiActions';
 
 import {
@@ -23,7 +23,7 @@ import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTION
 import COPY from '../../../COPY.json';
 
 import type { State } from '../types/state';
-import type { Task } from '../types/models';
+import type { Task, Appeal } from '../types/models';
 
 type Params = {|
   appealId: string
@@ -32,10 +32,10 @@ type Params = {|
 type Props = Params & {|
   // state
   task: Task,
+  appeal: Appeal,
   // dispatch
   showModal: typeof showModal,
   stageAppeal: typeof stageAppeal,
-  checkoutStagedAppeal: typeof checkoutStagedAppeal,
   // withrouter
   history: Object
 |};
@@ -65,13 +65,13 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
   }
 
   getOptions = () => {
-    const { task } = this.props;
+    const { task, appeal } = this.props;
     const options = [{
       label: COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
       value: CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY
     }];
 
-    if (['translation', 'schedule_hearing'].includes(task.action)) {
+    if (['translation', 'schedule_hearing'].includes(task.action) && appeal.isLegacyAppeal) {
       options.push({
         label: sprintf(COPY.COLOCATED_ACTION_SEND_TO_TEAM, CO_LOCATED_ADMIN_ACTIONS[task.action]),
         value: CO_LOCATED_ACTIONS.SEND_TO_TEAM
@@ -97,13 +97,13 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => ({
-  task: getTasksForAppeal(state, ownProps)[0]
+  task: getTasksForAppeal(state, ownProps)[0],
+  appeal: appealWithDetailSelector(state, ownProps)
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   showModal,
-  stageAppeal,
-  checkoutStagedAppeal
+  stageAppeal
 }, dispatch);
 
 export default (withRouter(
