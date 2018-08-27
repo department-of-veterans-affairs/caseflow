@@ -1,6 +1,6 @@
 class Idt::V1::AppealSerializer < ActiveModel::Serializer
   def id
-    object.is_a?(LegacyAppeal) ? object.vacols_id : object.id
+    object.is_a?(LegacyAppeal) ? object.vacols_id : object.uuid
   end
 
   attribute :veteran_first_name
