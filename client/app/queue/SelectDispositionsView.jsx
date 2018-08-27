@@ -81,6 +81,8 @@ class SelectDispositionsView extends React.PureComponent {
   updateIssue = (issueId, attributes) => {
     const { appealId } = this.props;
 
+    debugger;
+
     this.props.startEditingAppealIssue(appealId, issueId, attributes);
     this.props.saveEditedAppealIssue(appealId);
   };
@@ -103,14 +105,14 @@ class SelectDispositionsView extends React.PureComponent {
   }, {
     header: 'Actions',
     valueFunction: (issue) => <Link
-      to={`/queue/appeals/${this.props.appealId}/dispositions/edit/${issue.vacols_sequence_id}`}
+      to={`/queue/appeals/${this.props.appealId}/dispositions/edit/${issue.id}`}
     >
       Edit Issue
     </Link>
   }, {
     header: 'Dispositions',
     valueFunction: (issue) => <SelectIssueDispositionDropdown
-      updateIssue={_.partial(this.updateIssue, issue.vacols_sequence_id)}
+      updateIssue={_.partial(this.updateIssue, issue.id)}
       issue={issue}
       appealId={this.props.appealId} />
   }];

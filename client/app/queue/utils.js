@@ -148,11 +148,23 @@ export const prepareAppealForStore =
       return accumulator;
     }, {});
 
+
     const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
+      // Give even legacy issues an 'id' property, because other issues will have it,
+      // so we can refer to this property and phase out use of vacols_sequence_id.
+      let issues;
+      if (!appeal.attributes.is_legacy_appeal) {
+        issues = appeal.attributes.issues;
+      } else {
+        issues =  appeal.attributes.issues.map((issue)=> {
+          issue.id = issue.vacols_sequence_id;
+          return issue;
+        });
+      }
       accumulator[appeal.attributes.external_id] = {
         isLegacyAppeal: appeal.attributes.is_legacy_appeal,
-        issues: appeal.attributes.issues,
         hearings: appeal.attributes.hearings,
+        issues: issues,
         appellantFullName: appeal.attributes.appellant_full_name,
         appellantAddress: appeal.attributes.appellant_address,
         appellantRelationship: appeal.attributes.appellant_relationship,
