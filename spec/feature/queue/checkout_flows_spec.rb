@@ -524,7 +524,7 @@ RSpec.feature "Checkout flows" do
       )
 
       expect(colocated_action.reload.assigned_to).to eq colocated_action.assigned_by
-      expect(colocated_action.assigned_at.to_date).to eq Date.today
+      expect(colocated_action.assigned_at.to_date).to eq Time.zone.today
     end
 
     scenario "places task on hold" do
