@@ -47,7 +47,8 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       placedOnHoldAt: task.attributes.placed_on_hold_at,
       status: task.attributes.status,
       onHoldDuration: task.attributes.on_hold_duration,
-      instructions: task.attributes.instructions
+      instructions: task.attributes.instructions,
+      parentId: task.attributes.parent_id
     };
 
     return acc;
@@ -150,7 +151,6 @@ export const prepareAppealForStore =
 
     const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
       accumulator[appeal.attributes.external_id] = {
-        isLegacyAppeal: appeal.attributes.is_legacy_appeal,
         issues: appeal.attributes.issues,
         hearings: appeal.attributes.hearings,
         appellantFullName: appeal.attributes.appellant_full_name,

@@ -1,8 +1,4 @@
 class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
-  attribute :is_legacy_appeal do
-    true
-  end
-
   attribute :issues do
     object.issues.map do |issue|
       ActiveModelSerializers::SerializableResource.new(

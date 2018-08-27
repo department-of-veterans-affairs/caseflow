@@ -15,6 +15,10 @@ import { requestSave } from './uiReducer/uiActions';
 import { deleteAppeal } from './QueueActions';
 
 import {
+  appealWithDetailSelector,
+  getTasksForAppeal
+} from './selectors';
+import {
   fullWidth,
   marginBottom,
   marginTop
@@ -22,7 +26,7 @@ import {
 import COPY from '../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
-import type { Appeal } from './types/models';
+import type { Appeal, Task } from './types/models';
 import type { UiStateMessage } from './types/state';
 
 type ComponentState = {|
@@ -39,6 +43,7 @@ type Props = Params & {|
   highlightFormItems: boolean,
   error: ?UiStateMessage,
   appeal: Appeal,
+  tasks: Array<Task>,
   // dispatch
   requestSave: typeof requestSave,
   deleteAppeal: typeof deleteAppeal
@@ -56,14 +61,28 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
 
   validateForm = () => Object.values(this.state).every(Boolean);
 
+  buildPayload = () => {
+    const { tasks, appeal } = this.props;
+
+    return _.map([tasks[0]], (task: Task) => {
+      const mapped: Object = {
+        ...this.state,
+        type: 'ColocatedTask',
+        external_id: appeal.externalId
+      };
+
+      if (appeal.docketName !== 'legacy') {
+        mapped.parent_id = task.parentId;
+      }
+
+      return mapped;
+    });
+  }
+
   goToNextStep = () => {
     const payload = {
       data: {
-        tasks: [{
-          ...this.state,
-          type: 'ColocatedTask',
-          external_id: this.props.appeal.externalId
-        }]
+        tasks: this.buildPayload()
       }
     };
     const successMsg = {
@@ -113,7 +132,8 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
 const mapStateToProps = (state, ownProps) => ({
   highlightFormItems: state.ui.highlightFormItems,
   error: state.ui.messages.error,
-  appeal: state.queue.appealDetails[ownProps.appealId]
+  appeal: appealWithDetailSelector(state, ownProps),
+  tasks: getTasksForAppeal(state, ownProps)
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
