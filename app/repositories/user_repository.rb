@@ -95,7 +95,7 @@ class UserRepository
     def check_other_staff_fields(staff_record)
       return ["attorney"] if staff_record.sattyid
       return ["colocated"] if staff_record.stitle == "A1" || staff_record.stitle == "A2"
-      return ["dispatch"] if staff_record.sdept = "DSP"
+      return ["dispatch"] if staff_record.sdept == "DSP"
       []
     end
 
