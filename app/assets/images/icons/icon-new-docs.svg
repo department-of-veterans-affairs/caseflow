@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="35px" height="11px" viewBox="0 0 35 11" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>icon-new-docs</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="icon-new-docs" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group" transform="translate(0.000000, -3.000000)">
+            <g id="icon" transform="translate(0.000000, 3.000000)">
+                <path d="M0.5,0.5 L0.5,10.5 L8.5,10.5 L8.5,0.5 L0.5,0.5 Z" id="Path" stroke="#844E9F"></path>
+                <polygon id="Path" fill="#844E9F" points="2.25 3 2.25 4 6.75 4 6.75 3"></polygon>
+                <polygon id="Path-Copy" fill="#844E9F" points="2.25 5 2.25 6 6.75 6 6.75 5"></polygon>
+                <polygon id="Path-Copy-2" fill="#844E9F" points="2.25 7 2.25 8 6.75 8 6.75 7"></polygon>
+            </g>
+            <text id="NEW" font-family="SourceSansPro-Regular, Source Sans Pro" font-size="13" font-weight="normal" letter-spacing="-0.75" fill="#844E9F">
+                <tspan x="10" y="13">N</tspan>
+                <tspan x="17.661" y="13">E</tspan>
+                <tspan x="24.512" y="13">W</tspan>
+            </text>
+        </g>
+    </g>
+</svg>
