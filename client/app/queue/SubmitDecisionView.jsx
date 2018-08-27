@@ -12,7 +12,6 @@ import {
 
 import {
   setDecisionOptions,
-  resetDecisionOptions,
   deleteAppeal
 } from './QueueActions';
 import { requestSave } from './uiReducer/uiActions';
@@ -65,7 +64,6 @@ type Props = Params & {|
   error: ?UiStateMessage,
   // dispatch
   setDecisionOptions: typeof setDecisionOptions,
-  resetDecisionOptions: typeof resetDecisionOptions,
   requestSave: typeof requestSave,
   deleteAppeal: typeof deleteAppeal
 |};
@@ -239,7 +237,6 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDecisionOptions,
-  resetDecisionOptions,
   requestSave,
   deleteAppeal
 }, dispatch);
