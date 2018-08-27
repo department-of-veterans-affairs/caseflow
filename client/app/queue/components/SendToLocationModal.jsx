@@ -34,6 +34,7 @@ type Params = {|
 |};
 
 type Props = Params & {|
+  saveState: boolean,
   history: Object,
   hideModal: typeof hideModal,
   requestSave: typeof requestSave,
@@ -62,9 +63,8 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
     }),
     title: ({ teamName }: { teamName: string }) => sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD, teamName),
     getContent: ({ appeal, teamName }: { appeal: Appeal, teamName: string }) => <React.Fragment>
-      {sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY, { ...appeal })} <strong>
-      {teamName}
-    </strong>
+      {sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY, { ...appeal })}&nbsp;
+      <strong>{teamName}</strong>.
     </React.Fragment>,
     buttonText: COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_BUTTON
   }
@@ -119,13 +119,14 @@ class SendToLocationModal extends React.Component<Props> {
         const response = JSON.parse(resp.text);
         const preparedTasks = prepareTasksForStore(response.tasks.data);
 
+        this.closeModal();
         this.props.history.push('/queue');
         this.props.setTaskAttrs(task.externalAppealId, preparedTasks[task.externalAppealId]);
       });
   }
 
   render = () => {
-    const { modalType } = this.props;
+    const { modalType, saveState } = this.props;
 
     return <Modal
       title={SEND_TO_LOCATION_MODAL_TYPE_ATTRS[modalType].title(this.getContentArgs())}
@@ -136,10 +137,8 @@ class SendToLocationModal extends React.Component<Props> {
       }, {
         classNames: ['usa-button-primary', 'usa-button-hover'],
         name: SEND_TO_LOCATION_MODAL_TYPE_ATTRS[modalType].buttonText,
-        onClick: () => {
-          this.sendToLocation();
-          this.closeModal();
-        }
+        onClick: this.sendToLocation,
+        loading: saveState
       }]}
       closeHandler={this.closeModal}>
       {SEND_TO_LOCATION_MODAL_TYPE_ATTRS[modalType].getContent(this.getContentArgs())}
@@ -150,7 +149,8 @@ class SendToLocationModal extends React.Component<Props> {
 const mapStateToProps = (state: State, ownProps: Params) => ({
   task: getTasksForAppeal(state, ownProps)[0],
   appeal: appealWithDetailSelector(state, ownProps),
-  modalType: getActiveModalType(state)
+  modalType: getActiveModalType(state),
+  saveState: state.ui.saveState.savePending
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
