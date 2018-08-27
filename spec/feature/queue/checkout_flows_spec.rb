@@ -516,12 +516,15 @@ RSpec.feature "Checkout flows" do
 
       click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
       click_dropdown 0
-      expect(page).to have_content("Send back to attorney")
-      click_on "Send back to attorney"
+      expect(page).to have_content(COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_BUTTON)
+      click_on COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_BUTTON
 
       expect(page).to have_content(
         format(COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION, vet_name, attorney_name_display)
       )
+
+      # todo: check days waiting/assigned_on/assigned_at
+      expect(colocated_action.reload.assigned_to).to eq colocated_action.assigned_by
     end
 
     scenario "places task on hold" do
