@@ -61,3 +61,35 @@
     margin-bottom: 8px;
   }
 }
+
+.cf-intake-edit {
+  h1 {
+    font-weight: 700;
+    font-size: 52px;
+  }
+
+  th {
+    padding: 0;
+  }
+
+  td {
+    vertical-align: top;
+  }
+
+  td:first-child {
+    font-weight: 700;
+  }
+
+  td:last-child {
+    min-width: 130px;
+  }
+
+  ol {
+    margin: 0;
+    padding-left: 1em;
+  }
+
+  p {
+    margin: .5rem;
+  }
+}

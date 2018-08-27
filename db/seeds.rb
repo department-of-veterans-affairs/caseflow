@@ -216,7 +216,16 @@ class SeedDB
     vso = Organization.find_by(name: "American Legion")
 
     FactoryBot.create(:ama_judge_task, assigned_to: judge, appeal: @ama_appeals[0])
-    FactoryBot.create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: @ama_appeals[1])
+
+    parent = FactoryBot.create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: @ama_appeals[1])
+    FactoryBot.create(
+      :ama_attorney_task,
+      assigned_to: attorney,
+      assigned_by: judge,
+      parent: parent,
+      appeal: @ama_appeals[1]
+    ).update(status: :completed)
+
     parent = FactoryBot.create(:ama_judge_task, :on_hold, assigned_to: judge, appeal: @ama_appeals[2])
 
     FactoryBot.create(
@@ -287,6 +296,7 @@ class SeedDB
       url: "american-legion",
       participant_id: "2452415"
     )
+    Bva.create(name: "Board of Veterans' Appeals")
   end
 
   def clean_db

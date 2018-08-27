@@ -2,12 +2,14 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { sprintf } from 'sprintf-js';
 
 import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import {
   newTasksByAssigneeCssIdSelector,
+  pendingTasksByAssigneeCssIdSelector,
   onHoldTasksByAssigneeCssIdSelector
 } from './selectors';
 import { hideSuccessMessage } from './uiReducer/uiActions';
@@ -25,6 +27,9 @@ type Params = {||};
 type Props = Params & {|
   // store
   success: UiStateMessage,
+  numNewTasks: number,
+  numPendingTasks: number,
+  numOnHoldTasks: number,
   // Action creators
   clearCaseSelectSearch: typeof clearCaseSelectSearch,
   hideSuccessMessage: typeof hideSuccessMessage
@@ -38,14 +43,26 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
   componentWillUnmount = () => this.props.hideSuccessMessage();
 
   render = () => {
-    const { success } = this.props;
-    const tabs = [{
-      label: 'New',
-      page: <NewTasksTab />
-    }, {
-      label: 'On hold',
-      page: <OnHoldTasksTab />
-    }];
+    const {
+      success,
+      numNewTasks,
+      numPendingTasks,
+      numOnHoldTasks
+    } = this.props;
+    const tabs = [
+      {
+        label: sprintf(COPY.COLOCATED_QUEUE_PAGE_NEW_TAB_TITLE, { numNewTasks }),
+        page: <NewTasksTab />
+      },
+      {
+        label: sprintf(COPY.COLOCATED_QUEUE_PAGE_PENDING_TAB_TITLE, { numPendingTasks }),
+        page: <PendingTasksTab />
+      },
+      {
+        label: sprintf(COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TAB_TITLE, { numOnHoldTasks }),
+        page: <OnHoldTasksTab />
+      }
+    ];
 
     return <AppSegment filledBackground>
       {success && <Alert type="success" title={success.title} message={success.detail} />}
@@ -58,7 +75,10 @@ const mapStateToProps = (state) => {
   const { success } = state.ui.messages;
 
   return {
-    success
+    success,
+    numNewTasks: newTasksByAssigneeCssIdSelector(state).length,
+    numPendingTasks: pendingTasksByAssigneeCssIdSelector(state).length,
+    numOnHoldTasks: onHoldTasksByAssigneeCssIdSelector(state).length
   };
 };
 
@@ -72,7 +92,7 @@ export default (connect(mapStateToProps, mapDispatchToProps)(ColocatedTaskListVi
 const NewTasksTab = connect(
   (state: State) => ({ tasks: newTasksByAssigneeCssIdSelector(state) }))(
   (props: { tasks: Array<TaskWithAppeal> }) => {
-    return <div>
+    return <React.Fragment>
       <p>{COPY.COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION}</p>
       <TaskTable
         includeDetailsLink
@@ -83,13 +103,30 @@ const NewTasksTab = connect(
         includeReaderLink
         tasks={props.tasks}
       />
-    </div>;
+    </React.Fragment>;
+  });
+
+const PendingTasksTab = connect(
+  (state: State) => ({ tasks: pendingTasksByAssigneeCssIdSelector(state) }))(
+  (props: { tasks: Array<TaskWithAppeal> }) => {
+    return <React.Fragment>
+      <p>{COPY.COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION}</p>
+      <TaskTable
+        includeDetailsLink
+        includeTask
+        includeType
+        includeDocketNumber
+        includeDaysOnHold
+        includeReaderLink
+        tasks={props.tasks}
+      />
+    </React.Fragment>;
   });
 
 const OnHoldTasksTab = connect(
   (state: State) => ({ tasks: onHoldTasksByAssigneeCssIdSelector(state) }))(
   (props: { tasks: Array<TaskWithAppeal> }) => {
-    return <div>
+    return <React.Fragment>
       <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
       <TaskTable
         includeDetailsLink
@@ -100,5 +137,5 @@ const OnHoldTasksTab = connect(
         includeReaderLink
         tasks={props.tasks}
       />
-    </div>;
+    </React.Fragment>;
   });

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Higher-Level Review Intake" do
+RSpec.feature "Higher-Level Review" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
@@ -97,7 +97,7 @@ RSpec.feature "Higher-Level Review Intake" do
 
     click_on "Search"
 
-    expect(page).to have_current_path("/intake/review-request")
+    expect(page).to have_current_path("/intake/review_request")
 
     fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
     safe_click "#button-submit-review"
@@ -138,7 +138,7 @@ RSpec.feature "Higher-Level Review Intake" do
 
     expect(page).to have_current_path("/intake/finish")
 
-    visit "/intake/review-request"
+    visit "/intake/review_request"
 
     within_fieldset("Did the Veteran request an informal conference?") do
       expect(find_field("Yes", visible: false)).to be_checked
@@ -311,10 +311,18 @@ RSpec.feature "Higher-Level Review Intake" do
     )
 
     visit "/higher_level_reviews/#{ratings_end_product_establishment.reference_id}/edit"
-    expect(page).to have_content("Veteran Name: Ed Merica")
+    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988)")
+    expect(page).to have_content("Ed Merica (12341234)")
+    expect(page).to have_content("04/20/2018")
+    expect(find("#table-row-3")).to have_content("Yes")
+    expect(find("#table-row-4")).to have_content("No")
+    expect(page).to have_content("PTSD denied")
 
-    visit "/higher_level_reviews/#{nonratings_end_product_establishment.reference_id}/edit"
-    expect(page).to have_content("Veteran Name: Ed Merica")
+    safe_click ".cf-edit-issues-link"
+
+    expect(page).to have_current_path(
+      "/higher_level_reviews/#{ratings_end_product_establishment.reference_id}/edit/select_issues"
+    )
 
     visit "/higher_level_reviews/4321/edit"
     expect(page).to have_content("Page not found")
@@ -400,7 +408,7 @@ RSpec.feature "Higher-Level Review Intake" do
     safe_click "#button-submit-review"
 
     expect(page).to have_content("Something went wrong")
-    expect(page).to have_current_path("/intake/review-request")
+    expect(page).to have_current_path("/intake/review_request")
   end
 
   it "Allows a Veteran without ratings to create an intake" do
