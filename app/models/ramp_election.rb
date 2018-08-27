@@ -80,33 +80,25 @@ class RampElection < RampReview
   end
 
   # Synced metadata is not used in this method, but is needed for Claim Reviews.
-  def on_sync(_synced_metadata)
+  def on_sync(end_product_establishment)
     sync!
+    if FeatureToggle.enabled?(:automatic_ramp_rollback) && end_product_establishment.status_canceled?
+      rollback_ramp_review
+    end
   end
 
   private
 
-  def create_end_product_establishment_if_missing
-    return if EndProductEstablishment.find_by(source: self)
-
-    EndProductEstablishment.create!(
-      veteran_file_number: veteran_file_number,
-      source: self,
-      established_at: established_at,
-      reference_id: end_product_reference_id,
-      claim_date: end_product_establishment.result.claim_date,
-      code: end_product_establishment.result.claim_type_code,
-      payee_code: payee_code,
-      modifier: end_product_establishment.result.modifier,
-      synced_status: end_product_status,
-      last_synced_at: end_product_status_last_synced_at,
-      station: "397",
-      claimant_participant_id: claimant_participant_id
-    )
-  end
-
   def any_matching_refiling_ramp_issues?
     RampIssue.where(source_issue_id: issues.map(&:id)).any?
+  end
+
+  def rollback_ramp_review
+    RampElectionRollback.create!(
+      ramp_election: self,
+      user: User.system_user,
+      reason: "Automatic roll back due to EP #{end_product_establishment.modifier} cancelation"
+    )
   end
 
   def validate_receipt_date

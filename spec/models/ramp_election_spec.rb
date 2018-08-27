@@ -284,30 +284,6 @@ describe RampElection do
     end
   end
 
-  context "#end_product_active?" do
-    subject { ramp_election.end_product_active? }
-
-    let(:end_product_reference_id) { "9" }
-    let!(:established_end_product) do
-      create(:end_product_establishment,
-             veteran_file_number: ramp_election.veteran_file_number,
-             source: ramp_election,
-             synced_status: status_type_code)
-    end
-
-    context "when the EP is cleared" do
-      let(:status_type_code) { "CLR" }
-
-      it { is_expected.to eq(false) }
-    end
-
-    context "when the EP is pending" do
-      let(:status_type_code) { "PEND" }
-
-      it { is_expected.to eq(true) }
-    end
-  end
-
   context "#sync_ep_status!" do
     subject { ramp_election.sync_ep_status! }
 
@@ -435,39 +411,6 @@ describe RampElection do
         expect(establishment.synced_status).to eq("CAN")
         expect(establishment.last_synced_at).to eq(3.days.ago)
       end
-    end
-  end
-
-  context "#end_product_canceled?" do
-    subject { ramp_election.end_product_canceled? }
-
-    let(:end_product_reference_id) { "9" }
-    let!(:established_end_product) do
-      EndProductEstablishment.create(
-        veteran_file_number: ramp_election.veteran_file_number,
-        source: ramp_election,
-        reference_id: end_product_reference_id,
-        synced_status: ep_status
-      )
-      Generators::EndProduct.build(
-        veteran_file_number: ramp_election.veteran_file_number,
-        bgs_attrs: {
-          benefit_claim_id: end_product_reference_id,
-          status_type_code: ep_status
-        }
-      )
-    end
-
-    context "when end product is canceled" do
-      let(:ep_status) { "CAN" }
-
-      it { is_expected.to be true }
-    end
-
-    context "when end product is not canceled" do
-      let(:ep_status) { "PEND" }
-
-      it { is_expected.to be false }
     end
   end
 

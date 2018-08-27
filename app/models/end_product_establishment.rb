@@ -84,19 +84,24 @@ class EndProductEstablishment < ApplicationRecord
     fail EstablishedEndProductNotFound unless result
 
     transaction do
-      if source && source.respond_to?(:on_sync)
-        source.on_sync(end_product_establishment: self, new_status: result.status_type_code)
-      end
-
       update!(
         synced_status: result.status_type_code,
         last_synced_at: Time.zone.now
       )
+
+      if source && source.respond_to?(:on_sync)
+        source.on_sync(self)
+      end
     end
   end
 
   def status_canceled?
     synced_status == CANCELED_STATUS
+  end
+
+  def status_active?(sync: false)
+    sync! if sync
+    !EndProduct::INACTIVE_STATUSES.include?(synced_status)
   end
 
   delegate :contentions, to: :cached_result
@@ -155,9 +160,5 @@ class EndProductEstablishment < ApplicationRecord
         return modifier
       end
     end
-  end
-
-  def status_active?
-    !EndProduct::INACTIVE_STATUSES.include?(synced_status)
   end
 end

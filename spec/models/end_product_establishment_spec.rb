@@ -11,6 +11,7 @@ describe EndProductEstablishment do
   let(:reference_id) { nil }
   let(:source) { create(:ramp_election) }
   let(:invalid_modifiers) { nil }
+  let(:synced_status) { nil }
 
   let(:end_product_establishment) do
     EndProductEstablishment.new(
@@ -23,7 +24,8 @@ describe EndProductEstablishment do
       valid_modifiers: %w[030 031 032],
       reference_id: reference_id,
       invalid_modifiers: invalid_modifiers,
-      claimant_participant_id: veteran_participant_id
+      claimant_participant_id: veteran_participant_id,
+      synced_status: synced_status
     )
   end
 
@@ -173,11 +175,58 @@ describe EndProductEstablishment do
     end
   end
 
+  context "#status_active?" do
+    let(:end_product) do
+      Generators::EndProduct.build(
+        veteran_file_number: veteran_file_number,
+        bgs_attrs: { status_type_code: ep_status_code }
+      )
+    end
+
+    let(:ep_status_code) { "PEND" }
+
+    let(:reference_id) { end_product.claim_id }
+
+    context "when sync is set" do
+      subject { end_product_establishment.status_active?(sync: true) }
+
+      context "when the EP is cleared" do
+        let(:synced_status) { "PEND" }
+        let(:ep_status_code) { "CLR" }
+
+        it { is_expected.to eq(false) }
+      end
+
+      context "when the EP is pending" do
+        let(:ep_status_code) { "PEND" }
+
+        it { is_expected.to eq(true) }
+      end
+    end
+
+    context "when sync is not set" do
+      subject { end_product_establishment.status_active? }
+
+      context "when the EP is cleared" do
+        let(:synced_status) { "CLR" }
+
+        it { is_expected.to eq(false) }
+      end
+
+      context "when synced status is pending" do
+        let(:synced_status) { "PEND" }
+        let(:ep_status_code) { "CLR" }
+
+        it { is_expected.to eq(true) }
+      end
+    end
+  end
+
   context "#sync!" do
     subject { end_product_establishment.sync! }
 
     context "returns true if inactive" do
-      before { end_product_establishment.update! synced_status: EndProduct::INACTIVE_STATUSES.first }
+      let(:synced_status) { EndProduct::INACTIVE_STATUSES.first }
 
       it { is_expected.to eq(true) }
     end
@@ -197,6 +246,21 @@ describe EndProductEstablishment do
         )
       end
 
+      context "when source exists" do
+        context "when source implements on_sync" do
+          it "syncs the source as well" do
+            expect(source).to receive(:on_sync).with(end_product_establishment)
+            subject
+          end
+        end
+
+        context "when source does not implement on_sync" do
+          it "does not fail" do
+            subject
+          end
+        end
+      end
+
       it "updates last_synced_at and synced_status" do
         subject
         expect(end_product_establishment.reload.last_synced_at).to eq(Time.zone.now)
@@ -209,13 +273,13 @@ describe EndProductEstablishment do
     subject { end_product_establishment.status_canceled? }
 
     context "returns true if canceled" do
-      before { end_product_establishment.synced_status = "CAN" }
+      let(:synced_status) { "CAN" }
 
       it { is_expected.to eq(true) }
     end
 
     context "returns false if any other status" do
-      before { end_product_establishment.synced_status = "NOTCANCELED" }
+      let(:synced_status) { "NOTCANCELED" }
 
       it { is_expected.to eq(false) }
     end
