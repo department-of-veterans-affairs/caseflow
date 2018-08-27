@@ -523,8 +523,8 @@ RSpec.feature "Checkout flows" do
         format(COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION, vet_name, attorney_name_display)
       )
 
-      # todo: check days waiting/assigned_on/assigned_at
       expect(colocated_action.reload.assigned_to).to eq colocated_action.assigned_by
+      expect(colocated_action.assigned_at.to_date).to eq Date.today
     end
 
     scenario "places task on hold" do
