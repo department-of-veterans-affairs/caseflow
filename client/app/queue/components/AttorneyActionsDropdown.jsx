@@ -39,7 +39,7 @@ type Props = Params & {|
   history: Object
 |};
 
-class SelectCheckoutFlowDropdown extends React.PureComponent<Props> {
+class AttorneyActionsDropdown extends React.PureComponent<Props> {
   changeRoute = (props) => {
     const {
       appealId,
@@ -98,5 +98,5 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export default (withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(SelectCheckoutFlowDropdown)
+  connect(mapStateToProps, mapDispatchToProps)(AttorneyActionsDropdown)
 ): React.ComponentType<Params>);
