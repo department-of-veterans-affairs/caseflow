@@ -61,7 +61,7 @@ export default class ListSchedule extends React.Component {
       vlj: hearingDay.judgeName
     }));
 
-    const removeDuplidatedDate = _.uniqBy(hearingScheduleRows, (row) => [row.hearingDate, row.roomInfo].join());
+    const removeCoDuplicates = _.uniqBy(hearingScheduleRows, (row) => [row.hearingDate, row.roomInfo].join());
 
     return <AppSegment filledBackground>
       <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
@@ -91,7 +91,7 @@ export default class ListSchedule extends React.Component {
       </div>
       <Table
         columns={hearingScheduleColumns}
-        rowObjects={removeDuplidatedDate}
+        rowObjects={removeCoDuplicates}
         summary="hearing-schedule"
       />
     </AppSegment>;
