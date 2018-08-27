@@ -30,6 +30,14 @@ class Task < ApplicationRecord
     ["", ""]
   end
 
+  def self.create_from_params(params)
+    create(params)
+  end
+
+  def update_from_params(params)
+    update(params)
+  end
+
   def legacy?
     appeal_type == "LegacyAppeal"
   end
