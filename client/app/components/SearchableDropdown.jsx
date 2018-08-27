@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+// @flow
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 import _ from 'lodash';
@@ -9,20 +10,58 @@ const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
 const NO_RESULTS_TEXT = 'Not an option';
 const DEFAULT_PLACEHOLDER = 'Select option';
 
-class SearchableDropdown extends Component {
+type OptionType = {
+  value: string,
+  label: string,
+  tagId?: string
+};
+type OptionsType = Array<OptionType>;
+type ValueType = OptionType | OptionsType | null | void;
 
-  constructor(props) {
+type Params = {|
+  value?: ?ValueType,
+  creatable?: boolean,
+  errorMessage?: string,
+  label?: string,
+  hideLabel?: boolean,
+  name: string,
+  onChange: Function,
+  options: Array<Value>,
+  readOnly?: boolean,
+  required?: boolean,
+  placeholder: string | Object,
+  creatableOptions?: {
+    tagAlreadyExistsMsg: string,
+    promptTextCreator: Function
+  },
+  dropdownStyling?: Object,
+  styling?: Object,
+  multi?: boolean,
+  selfManageValueState?: boolean,
+  searchable?: boolean
+|};
+
+type Props = Params;
+
+type ComponentState = {|
+  value: ?Value
+|};
+
+class SearchableDropdown extends React.Component<Props, ComponentState> {
+
+  constructor(props: Props) {
     super(props);
+
     this.state = {
       value: props.value
     };
   }
 
-  componentWillReceiveProps = (nextProps) => {
+  componentWillReceiveProps = (nextProps: Props) => {
     this.setState({ value: nextProps.value });
   };
 
-  onChange = (value) => {
+  onChange = (value: Value) => {
     let newValue = value;
     let deletedValue = null;
 
