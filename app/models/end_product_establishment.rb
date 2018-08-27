@@ -10,6 +10,26 @@ class EndProductEstablishment < ApplicationRecord
 
   CANCELED_STATUS = "CAN".freeze
 
+  class << self
+    def order_by_sync_priority
+      active.order("last_synced_at IS NOT NULL, last_synced_at ASC")
+    end
+
+    private
+
+    def established
+      where.not("established_at IS NULL")
+    end
+
+    def active
+      # We only know the set of inactive EP statuses
+      # We also only know the EP status after fetching it from BGS
+      # Therefore, our definition of active is when the EP is either
+      #   not known or not known to be inactive
+      established.where("synced_status NOT IN (?) OR synced_status IS NULL", EndProduct::INACTIVE_STATUSES)
+    end
+  end
+
   def perform!
     fail InvalidEndProductError unless end_product_to_establish.valid?
     establish_claim_in_vbms(end_product_to_establish).tap do |result|
@@ -62,10 +82,17 @@ class EndProductEstablishment < ApplicationRecord
     return true unless status_active?
 
     fail EstablishedEndProductNotFound unless result
-    update!(
-      synced_status: result.status_type_code,
-      last_synced_at: Time.zone.now
-    )
+
+    transaction do
+      if source && source.respond_to?(:on_sync)
+        source.on_sync(end_product_establishment: self, new_status: result.status_type_code)
+      end
+
+      update!(
+        synced_status: result.status_type_code,
+        last_synced_at: Time.zone.now
+      )
+    end
   end
 
   def status_canceled?

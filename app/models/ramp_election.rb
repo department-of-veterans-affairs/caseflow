@@ -74,15 +74,14 @@ class RampElection < RampReview
   end
 
   def sync!
-    create_end_product_establishment_if_missing
     recreate_issues_from_contentions!
-    sync_ep_status!
   rescue StandardError => e
     Raven.capture_exception(BGSEndProductSyncError.new(e, self))
   end
 
-  def self.order_by_sync_priority
-    active.order("end_product_status_last_synced_at IS NOT NULL, end_product_status_last_synced_at ASC")
+  # Synced metadata is not used in this method, but is needed for Claim Reviews.
+  def on_sync(_synced_metadata)
+    sync!
   end
 
   private

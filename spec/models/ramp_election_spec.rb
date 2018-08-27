@@ -82,20 +82,19 @@ describe RampElection do
       end
     end
 
-    it "calls recreate_issues_from_contentions! and sync_ep_status!" do
+    it "calls recreate_issues_from_contentions!" do
       expect(ramp_election).to receive(:recreate_issues_from_contentions!)
-      expect(ramp_election).to receive(:sync_ep_status!)
 
       subject
     end
 
     context "when error is raised" do
       before do
-        expect(ramp_election).to receive(:sync_ep_status!).and_raise(ActiveRecord::RecordInvalid)
+        # TODO: What kind of error would be realistic to be raised here?
+        expect(ramp_election).to receive(:recreate_issues_from_contentions!).and_raise(ActiveRecord::RecordInvalid)
       end
 
       it "sends error to sentry but does not re-raise" do
-        expect(ramp_election).to receive(:recreate_issues_from_contentions!)
         expect(Raven).to receive(:capture_exception)
 
         subject
@@ -290,19 +289,10 @@ describe RampElection do
 
     let(:end_product_reference_id) { "9" }
     let!(:established_end_product) do
-      Generators::EndProduct.build(
-        veteran_file_number: ramp_election.veteran_file_number,
-        bgs_attrs: {
-          benefit_claim_id: end_product_reference_id,
-          status_type_code: status_type_code
-        }
-      )
-      EndProductEstablishment.create(
-        veteran_file_number: ramp_election.veteran_file_number,
-        source: ramp_election,
-        synced_status: status_type_code,
-        reference_id: end_product_reference_id
-      )
+      create(:end_product_establishment,
+             veteran_file_number: ramp_election.veteran_file_number,
+             source: ramp_election,
+             synced_status: status_type_code)
     end
 
     context "when the EP is cleared" do
