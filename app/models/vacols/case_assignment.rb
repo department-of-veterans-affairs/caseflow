@@ -103,7 +103,9 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "s3.snamef as assigned_by_first_name",
              "s3.snamel as assigned_by_last_name",
              "s3.sdomainid as assigned_by_css_id",
-             "s2.sdomainid as assigned_to_css_id")
+             "s2.sdomainid as assigned_to_css_id",
+             "s4.snamef as written_by_first_name",
+             "s4.snamel as written_by_last_name")
         .joins(<<-SQL)
           LEFT JOIN decass
             ON brieff.bfkey = decass.defolder
@@ -115,6 +117,8 @@ class VACOLS::CaseAssignment < VACOLS::Record
             ON brieff.bfkey = folder.ticknum
           LEFT JOIN staff s3
             ON decass.demdusr = s3.slogid
+          LEFT JOIN staff s4
+            ON decass.deatty = s4.sattyid
         SQL
     end
     # rubocop:enable Metrics/MethodLength
