@@ -8,8 +8,8 @@ class Idt::Api::V1::BaseController < ActionController::Base
   end
 
   def verify_access
-    return true if user.attorney_in_vacols? || user.judge_in_vacols? || user.colocated_in_vacols?
-    return render json: { message: "User must be attorney, judge, or colocated" }, status: 403
+    has_access = user.attorney_in_vacols? || user.judge_in_vacols? || user.colocated_in_vacols?
+    return render json: { message: "User must be attorney, judge, or colocated" }, status: 403 unless has_access
   end
 
   def user
