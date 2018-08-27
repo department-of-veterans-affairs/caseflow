@@ -40,6 +40,12 @@ FactoryBot.define do
       sattyid nil
     end
 
+    trait :dispatch_role do
+      sdept "DSP"
+      sactive "A"
+      sattyid nil
+    end
+
     trait :has_location_code do
       slogid "55"
     end
