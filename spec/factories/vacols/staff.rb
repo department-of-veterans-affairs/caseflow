@@ -15,6 +15,8 @@ FactoryBot.define do
       end
     end
 
+    sactive "A"
+
     trait :attorney_role do
       sactive "A"
     end
