@@ -7,10 +7,7 @@ import { withRouter } from 'react-router-dom';
 import SearchableDropdown from '../../components/SearchableDropdown';
 
 import { getTasksForAppeal } from '../selectors';
-import {
-  stageAppeal,
-  checkoutStagedAppeal
-} from '../QueueActions';
+import { stageAppeal } from '../QueueActions';
 import { showModal } from '../uiReducer/uiActions';
 
 import {
@@ -33,7 +30,6 @@ type Props = Params & {|
   // dispatch
   showModal: typeof showModal,
   stageAppeal: typeof stageAppeal,
-  checkoutStagedAppeal: typeof checkoutStagedAppeal,
   // withrouter
   history: Object
 |};
@@ -88,8 +84,7 @@ const mapStateToProps = (state: State, ownProps: Params) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   showModal,
-  stageAppeal,
-  checkoutStagedAppeal
+  stageAppeal
 }, dispatch);
 
 export default (withRouter(

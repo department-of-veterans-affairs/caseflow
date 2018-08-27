@@ -10,7 +10,6 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import {
   setCaseReviewActionType,
   resetDecisionOptions,
-  checkoutStagedAppeal,
   stageAppeal
 } from '../QueueActions';
 import {
@@ -33,7 +32,6 @@ type Props = Params & {|
   // dispatch
   stageAppeal: typeof stageAppeal,
   resetDecisionOptions: typeof resetDecisionOptions,
-  checkoutStagedAppeal: typeof checkoutStagedAppeal,
   setCaseReviewActionType: typeof setCaseReviewActionType,
   // withrouter
   history: Object
@@ -93,7 +91,6 @@ const mapStateToProps = (state: State, ownProps) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setCaseReviewActionType,
   resetDecisionOptions,
-  checkoutStagedAppeal,
   stageAppeal
 }, dispatch);
 

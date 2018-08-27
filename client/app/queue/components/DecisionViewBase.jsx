@@ -40,24 +40,24 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
     getWrappedComponentRef = (ref) => this.setState({ wrapped: ref });
 
     componentDidMount = () => {
-      // const { history } = this.props;
+      const { history } = this.props;
 
       this.props.highlightInvalidFormItems(false);
 
-      // this.unblock = history.block((location) => {
-      //   const { pathname } = location;
-      //   const newPathInCheckoutFlow = /^\/queue\/appeals\/[a-zA-Z0-9-]+(?:\/\S+)/;
-      //
-      //   if (!newPathInCheckoutFlow.exec(pathname)) {
-      //     // todo: how to run this.cancelFlow if user says yes?
-      //     return `${COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT} ${COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT}`;
-      //   }
-      //
-      //   return true;
-      // });
+      this.unblock = history.block((location) => {
+        const { pathname } = location;
+        const newPathInCheckoutFlow = /^\/queue\/appeals\/[a-zA-Z0-9-]+(?:\/\S+)/;
+
+        if (!newPathInCheckoutFlow.exec(pathname)) {
+          // todo: how to run this.cancelFlow if user says yes?
+          return `${COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT} ${COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT}`;
+        }
+
+        return true;
+      });
     }
 
-    // componentWillUnmount = () => this.unblock();
+    componentWillUnmount = () => this.unblock();
 
     getFooterButtons = () => {
       const buttons = [{
