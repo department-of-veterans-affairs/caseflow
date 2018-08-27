@@ -9,9 +9,15 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import { associateTasksWithAppeals } from './utils';
 
-import { onReceiveQueue, setAttorneysOfJudge, fetchAllAttorneys, fetchAmaTasksOfUser } from './QueueActions';
+import {
+  onReceiveQueue,
+  setAttorneysOfJudge,
+  fetchAllAttorneys,
+  fetchAmaTasksOfUser,
+  getNewDocuments
+} from './QueueActions';
 import { setUserId } from './uiReducer/uiActions';
-import type { Appeals, Tasks } from './types/models';
+import type { BasicAppeals, Tasks } from './types/models';
 import type { State, UsersById } from './types/state';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
@@ -28,7 +34,7 @@ type Params = {|
 type Props = Params & {|
   // From state
   tasks: Tasks,
-  appeals: Appeals,
+  appeals: BasicAppeals,
   amaTasks: Tasks,
   loadedUserId: number,
   judges: UsersById,
@@ -36,8 +42,9 @@ type Props = Params & {|
   onReceiveQueue: typeof onReceiveQueue,
   setAttorneysOfJudge: typeof setAttorneysOfJudge,
   fetchAllAttorneys: typeof fetchAllAttorneys,
-  fetchAmaTasksOfUser: Function,
-  setUserId: typeof setUserId
+  fetchAmaTasksOfUser: (number, string) => Promise<{ payload: { amaTasks: Tasks, appeals: BasicAppeals } }>,
+  setUserId: typeof setUserId,
+  getNewDocuments: typeof getNewDocuments
 |};
 
 class QueueLoadingScreen extends React.PureComponent<Props> {
@@ -54,8 +61,12 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
       return Promise.resolve();
     }
 
+    this.props.setUserId(userId);
+
     return this.props.fetchAmaTasksOfUser(userId, userRole).
-      then(() => this.props.setUserId(userId));
+      then(
+        ({ payload: { appeals: appealsFromServer } }) =>
+          _.map(appealsFromServer, (appeal) => this.props.getNewDocuments(appeal.externalId)));
   }
 
   maybeLoadLegacyQueue = () => {
@@ -153,7 +164,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setAttorneysOfJudge,
   fetchAllAttorneys,
   fetchAmaTasksOfUser,
-  setUserId
+  setUserId,
+  getNewDocuments
 }, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen): React.ComponentType<Params>);
