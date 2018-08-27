@@ -63,7 +63,6 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         let(:role) { :attorney_role }
 
         before do
-          create(:staff, role, sdomainid: user.css_id)
           request.headers["TOKEN"] = token
         end
 
@@ -113,6 +112,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
           context "and case is selected for quality review and has outstanding mail" do
             let(:assigner) { create(:user, css_id: "ANOTHER_TEST_ID", full_name: "Lyor Cohen") }
+            let(:user) { create(:user, css_id: "TEST_ID", full_name: "George Michael") }
 
             let(:appeals) do
               c = create(:case,
