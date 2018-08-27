@@ -107,7 +107,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           end
 
           it "returns appeals associated with a file number" do
-            headers = { 'FILENUMBER' => tasks.first.appeal.veteran_file_number }
+            headers = { "FILENUMBER" => tasks.first.appeal.veteran_file_number }
             request.headers.merge! headers
             get :list
             expect(response.status).to eq 200

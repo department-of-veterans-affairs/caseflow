@@ -28,6 +28,6 @@ class Idt::Api::V1::BaseController < ActionController::Base
   end
 
   def feature_enabled?(feature)
-    FeatureToggle.enabled?(feature, user: current_user)
+    FeatureToggle.enabled?(feature, user: user)
   end
 end
