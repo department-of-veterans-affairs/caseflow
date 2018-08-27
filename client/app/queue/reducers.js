@@ -100,7 +100,8 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
       newDocsForAppeal: {
         [action.payload.appealId]: {
           $set: {
-            docs: action.payload.newDocuments
+            docs: action.payload.newDocuments,
+            loading: false
           }
         }
       }
@@ -110,11 +111,22 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
       newDocsForAppeal: {
         [action.payload.appealId]: {
           $set: {
-            error: action.payload.error
+            error: action.payload.error,
+            loading: false
           }
         }
       }
     });
+  case ACTIONS.STARTED_LOADING_DOCUMENTS:
+    return {
+      ...state,
+      newDocsForAppeal: {
+        ...state.newDocsForAppeal,
+        [action.payload.appealId]: {
+          loading: true
+        }
+      }
+    };
   case ACTIONS.SET_APPEAL_DOC_COUNT:
     return update(state, {
       docCountForAppeal: {
