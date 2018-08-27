@@ -183,9 +183,17 @@ describe LegacyAppeal do
       it { is_expected.to eq(nil) }
     end
 
+    context "when the case has a non-Board disposition" do
+      let(:vacols_case) do
+        create(:case, :disposition_ramp)
+      end
+
+      it { is_expected.to eq(nil) }
+    end
+
     context "when there is a decision date" do
       let(:vacols_case) do
-        create(:case_with_decision, bfddec: 30.days.ago)
+        create(:case_with_decision, :disposition_allowed, bfddec: 30.days.ago)
       end
 
       it { is_expected.to eq(90.days.from_now.to_date) }
