@@ -18,7 +18,7 @@ import {
 import { setTaskAttrs } from '../QueueActions';
 import {
   hideModal,
-  requestSave
+  requestPatch
 } from '../uiReducer/uiActions';
 import { prepareTasksForStore } from '../utils';
 import { SEND_TO_LOCATION_MODAL_TYPES } from '../constants';
@@ -37,7 +37,7 @@ type Props = Params & {|
   saveState: boolean,
   history: Object,
   hideModal: typeof hideModal,
-  requestSave: typeof requestSave,
+  requestPatch: typeof requestPatch,
   setTaskAttrs: typeof setTaskAttrs
 |};
 
@@ -114,7 +114,7 @@ class SendToLocationModal extends React.Component<Props> {
     };
     const successMsg = SEND_TO_LOCATION_MODAL_TYPE_ATTRS[modalType].buildSuccessMsg(appeal, this.getContentArgs());
 
-    this.props.requestSave(`/tasks/${task.taskId}`, payload, successMsg, 'patch').
+    this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
         const response = JSON.parse(resp.text);
         const preparedTasks = prepareTasksForStore(response.tasks.data);
@@ -155,7 +155,7 @@ const mapStateToProps = (state: State, ownProps: Params) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   hideModal,
-  requestSave,
+  requestPatch,
   setTaskAttrs
 }, dispatch);
 
