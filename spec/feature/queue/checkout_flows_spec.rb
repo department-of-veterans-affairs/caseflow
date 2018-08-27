@@ -565,12 +565,14 @@ RSpec.feature "Checkout flows" do
 
       click_dropdown 1
 
-      expect(page).to have_content(COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD)
       expect(page).to have_content(
-        format(COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_PROMPT, vet_name, team_name)
+        format(COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD, team_name)
+      )
+      expect(page).to have_content(
+        format(COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY, vet_name, appeal.sanitized_vbms_id)
       )
 
-      click_on "Send action"
+      click_on COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_BUTTON
 
       expect(page).to have_content(
         format(COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_CONFIRMATION, vet_name, team_name)

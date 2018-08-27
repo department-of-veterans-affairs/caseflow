@@ -63,7 +63,7 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
     }),
     title: ({ teamName }: { teamName: string }) => sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD, teamName),
     getContent: ({ appeal, teamName }: { appeal: Appeal, teamName: string }) => <React.Fragment>
-      {sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY, { ...appeal })}&nbsp;
+      {sprintf(COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY, appeal.veteranFullName, appeal.veteranFileNumber)}&nbsp;
       <strong>{teamName}</strong>.
     </React.Fragment>,
     buttonText: COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_BUTTON

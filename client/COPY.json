@@ -167,7 +167,7 @@
 
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD": "Send action to %s",
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_SUBHEAD": "Select the team you'd like to send this administrative action to",
-  "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY": "You are sending %(veteranFullName)s's case (%(veteranFileNumber)d) to ",
+  "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY": "You are sending %s's case (%d) to ",
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_CONFIRMATION": "%s's case has been sent to the %s team.",
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_BUTTON": "Send case",
 
