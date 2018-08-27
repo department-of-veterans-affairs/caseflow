@@ -193,7 +193,7 @@ describe LegacyAppeal do
 
     context "when there is a decision date" do
       let(:vacols_case) do
-        create(:case_with_decision, :disposition_allowed, bfddec: 30.days.ago)
+        create(:case, :status_complete, :disposition_allowed, bfddec: 30.days.ago)
       end
 
       it { is_expected.to eq(90.days.from_now.to_date) }
