@@ -51,7 +51,6 @@ class SeedDB
       roles: ["VSO"]
     )
     FeatureToggle.enable!(:vso_queue_aml, users: [u.css_id])
-    Functions.grant!("VSO", users: [u.css_id])
   end
 
   def create_dispatch_tasks(number)
@@ -299,7 +298,7 @@ class SeedDB
   def create_organizations
     Vso.create(
       name: "American Legion",
-      feature: "vso_queue_aml"
+      feature: "vso_queue_aml",
       role: "VSO",
       url: "american-legion",
       participant_id: "2452415"
