@@ -10,23 +10,28 @@ const dateSeparator = css({
   display: 'inline-block'
 });
 
+const hearingSchedStyling = css({
+  paddingLeft: '5rem'
+});
+
 export default class BasicDateRangeSelector extends React.Component {
   render() {
     return <div>
-      {this.props.messageLabel && <p><i>Please input a date range</i></p>}
+      {/* {this.props.messageLabel && <p><i>Please input a date range</i></p>} */}
       <InlineForm>
-        <DateSelector
+        <DateSelector {...hearingSchedStyling}
           name={this.props.startDateName}
-          label={this.props.startDateLabel}
+          label="Start Date"
           value={this.props.startDateValue}
           onChange={this.props.onStartDateChange}
           type="date"
+          {...dateSeparator}
         />
         {/* &nbsp;{this.props.messageLabel && 'to'}&nbsp; */}
         <div {...dateSeparator} ></div> 
         <DateSelector
           name={this.props.endDateName}
-          label={this.props.endDateLabel}
+          label= "End Date"
           value={this.props.endDateValue}
           onChange={this.props.onEndDateChange}
           type="date"

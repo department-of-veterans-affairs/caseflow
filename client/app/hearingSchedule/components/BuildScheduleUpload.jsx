@@ -37,7 +37,7 @@ export default class BuildScheduleUpload extends React.Component {
           <span className="usa-input-error-message">{this.getErrorMessage(this.props.uploadRoCoFormErrors)}</span>}
         <InlineForm>
           <BasicDateRangeSelector
-            messageLabel
+            // messageLabel
             startDateName="startDate"
             startDateValue={this.props.roCoStartDate}
             startDateLabel={false}
