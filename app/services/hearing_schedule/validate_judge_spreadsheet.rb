@@ -36,6 +36,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
        vacols_judges[vlj_id][:last_name] == name.split(", ")[0].strip
       true
     else
+      binding.pry
       User.create_judge_in_vacols(name.split(", ")[1].strip, name.split(", ")[0].strip, vlj_id)
     end
   end
@@ -50,7 +51,9 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   end
 
   def check_range_of_dates(date)
-    !date.instance_of?(Date) || (date >= @start_date && date <= @end_date)
+    if !date.instance_of?(Date) || (date >= @start_date && date <= @end_date)
+      return true
+    end
   end
 
   def validate_judge_non_availability_dates
