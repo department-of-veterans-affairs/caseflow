@@ -36,7 +36,6 @@ class HearingSchedule::ValidateJudgeSpreadsheet
        vacols_judges[vlj_id][:last_name] == name.split(", ")[0].strip
       true
     else
-      binding.pry
       User.create_judge_in_vacols(name.split(", ")[1].strip, name.split(", ")[0].strip, vlj_id)
     end
   end
