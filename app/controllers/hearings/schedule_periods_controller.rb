@@ -15,7 +15,7 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
              end
            )
          else
-           schedule_period.to_hash
+           schedule_period.to_hash.merge(cannot_finalize: true)
          end
     render json: { schedule_period: sp }
   rescue HearingSchedule::Errors::NotEnoughAvailableDays,
