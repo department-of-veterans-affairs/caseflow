@@ -15,6 +15,8 @@ FactoryBot.define do
       end
     end
 
+    sactive "A"
+
     trait :attorney_role do
       sactive "A"
     end
@@ -36,6 +38,12 @@ FactoryBot.define do
 
     trait :colocated_role do
       stitle %w[A1 A2].sample
+      sactive "A"
+      sattyid nil
+    end
+
+    trait :dispatch_role do
+      sdept "DSP"
       sactive "A"
       sattyid nil
     end
