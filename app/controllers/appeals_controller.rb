@@ -141,7 +141,7 @@ class AppealsController < ApplicationController
   end
 
   def json_vso_tasks_by_appeal_id(appeal_db_id, appeal_type)
-    tasks = queue_class.new.tasks_by_appeal_id(appeal_db_id, appeal_type)
+    tasks = queue_class.new.tasks_by_appeal_id(appeal_db_id, appeal_type).where(assigned_to: current_user)
 
     render json: {
       tasks: json_tasks(tasks)[:data]
