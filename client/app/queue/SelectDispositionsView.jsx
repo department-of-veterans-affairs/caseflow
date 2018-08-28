@@ -81,8 +81,6 @@ class SelectDispositionsView extends React.PureComponent {
   updateIssue = (issueId, attributes) => {
     const { appealId } = this.props;
 
-    debugger;
-
     this.props.startEditingAppealIssue(appealId, issueId, attributes);
     this.props.saveEditedAppealIssue(appealId);
   };
