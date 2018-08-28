@@ -1,0 +1,2 @@
+class Bva < Organization
+end
