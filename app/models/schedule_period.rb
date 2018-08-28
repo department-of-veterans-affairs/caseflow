@@ -38,7 +38,7 @@ class SchedulePeriod < ApplicationRecord
     update(finalized: true)
   end
 
-  def have_dates_already_been_finalized
+  def dates_already_finalized?
     sps = SchedulePeriod.all.select(&:finalized)
     sps.any? do |schedule_period|
       schedule_period.start_date <= start_date && start_date <= schedule_period.end_date
@@ -47,6 +47,6 @@ class SchedulePeriod < ApplicationRecord
 
   def can_be_finalized?
     nbr_of_days = updated_at.beginning_of_day - Time.zone.today.beginning_of_day
-    ((nbr_of_days < 5) && !have_dates_already_been_finalized) && !finalized
+    ((nbr_of_days < 5) && !dates_already_finalized?) && !finalized
   end
 end
