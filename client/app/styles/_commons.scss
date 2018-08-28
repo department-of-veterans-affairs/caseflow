@@ -253,7 +253,7 @@ dd {
 }
 
 .cf-icon-success--bg {
-  background: url(#{$image-url}/icon-check.svg) bottom no-repeat;
+  background: url(#{$image-url}/icons/icon-check.svg) bottom no-repeat;
   background-size: auto 2rem;
   display: inline-block;
   height: 3rem;
@@ -317,7 +317,7 @@ dd {
   background-color: $color-white;
 
   &::after {
-    background: url(#{$image-url}/arrow-down.svg) 50% 100% no-repeat;
+    background: url(#{$image-path}/arrow-down.svg) 50% 100% no-repeat;
     background-size: .75em;
     content: ' ';
     display: inline-block;
@@ -1264,10 +1264,10 @@ button {
 }
 
 .usa-accordion-button {
-  background-image: url(#{$image-url}/minus.svg);
+  background-image: url(#{$image-path}/minus.svg);
 
   &[aria-expanded=false] {
-    background-image: url(#{$image-url}/plus.svg);
+    background-image: url(#{$image-path}/plus.svg);
   }
 }
 

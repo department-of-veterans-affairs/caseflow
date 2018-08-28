@@ -44,7 +44,7 @@ const config = {
       },
       {
         test: /\.(ttf|eot|woff|woff2)$/,
-        loader: 'url-loader?limit=1024&name=fonts/[name].[ext]&outputPath=../../../public/'
+        loader: 'url-loader?limit=1024&name=fonts/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/'
       },
       {
         test: /\.scss?$/,
@@ -67,7 +67,7 @@ const config = {
       {
         test: /\.(png|svg|jpg|gif)$/,
         use: [
-          'url-loader?limit=1024&name=images/[name].[ext]&outputPath=../../../public/'
+          'url-loader?limit=1024&name=images/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/'
         ]
       }
     ]

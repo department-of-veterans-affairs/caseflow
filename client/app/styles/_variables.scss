@@ -1,8 +1,7 @@
+$image-url: '../images' !default;
 
-$asset-path: '/' !default;
-$image-url: '#{$asset-path}assets' !default;
-$image-path: $image-url;
-$asset-pipeine: true;
+$font-path:  '~uswds/src/fonts';
+$image-path:  '~uswds/src/img';
 
 $cf-30px: 1.765em;
 $color-dropdown-shadow: rgba(102, 175, 233, 0.6);
