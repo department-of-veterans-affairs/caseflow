@@ -39,7 +39,7 @@ class SchedulePeriod < ApplicationRecord
   end
 
   def have_dates_already_been_finalized
-    sps = SchedulePeriod.all.select { |sp| sp.finalized }
+    sps = SchedulePeriod.all.select(&:finalized)
     sps.any? do |schedule_period|
       schedule_period.start_date <= start_date && start_date <= schedule_period.end_date
     end
