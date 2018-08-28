@@ -30,6 +30,7 @@ type Params = {|
 type Props = Params & {|
   // state
   featureToggles: Object,
+  appeal: Object,
   changedAppeals: Array<number>,
   // dispatch
   stageAppeal: typeof stageAppeal,

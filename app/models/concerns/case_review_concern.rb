@@ -18,7 +18,7 @@ module CaseReviewConcern
   def update_task_and_issue_dispositions
     task.update(status: :completed)
 
-    if (task.type == "AttorneyTask" && task.assigned_by_id != reviewing_judge_id)
+    if task.type == "AttorneyTask" && task.assigned_by_id != reviewing_judge_id
       task.parent.update(assigned_to_id: reviewing_judge_id)
     end
     (issues || []).each do |issue|

@@ -153,14 +153,14 @@ export const prepareAppealForStore =
       // so we can refer to this property and phase out use of vacols_sequence_id.
       let issues;
 
-      if (!appeal.attributes.is_legacy_appeal) {
-        issues = appeal.attributes.issues;
-      } else {
+      if (appeal.attributes.is_legacy_appeal) {
         issues = appeal.attributes.issues.map((issue) => {
           issue.id = issue.vacols_sequence_id;
 
           return issue;
         });
+      } else {
+        issues = appeal.attributes.issues;
       }
       accumulator[appeal.attributes.external_id] = {
         isLegacyAppeal: appeal.attributes.is_legacy_appeal,
