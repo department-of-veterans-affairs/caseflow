@@ -1,7 +1,8 @@
 class TasksController < ApplicationController
   include Errors
 
-  before_action :verify_queue_access
+  before_action :verify_queue_access, except: [:index]
+  before_action :verify_queue_access_or_vso, only: [:index]
   before_action :verify_task_assignment_access, only: [:create]
 
   TASK_CLASSES = {

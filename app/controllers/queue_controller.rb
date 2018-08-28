@@ -1,6 +1,6 @@
 class QueueController < ApplicationController
   before_action :react_routed, :check_queue_out_of_service
-  before_action :verify_queue_access
+  before_action :verify_queue_access_or_vso
 
   def set_application
     RequestStore.store[:application] = "queue"
@@ -20,6 +20,7 @@ class QueueController < ApplicationController
   private
 
   def vso_organization_queue_path
+    return nil
     return unless current_user.vso_employee?
 
     Vso.where.not(feature: nil).each do |vso|

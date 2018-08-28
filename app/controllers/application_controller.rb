@@ -94,7 +94,6 @@ class ApplicationController < ApplicationBaseController
   helper_method :certification_header
 
   def can_access_queue?
-    return true if current_user.vso_employee?
     return true if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
     return true if current_user.colocated_in_vacols? && feature_enabled?(:colocated_queue)
     false
@@ -103,6 +102,10 @@ class ApplicationController < ApplicationBaseController
 
   def verify_queue_access
     redirect_to "/unauthorized" unless can_access_queue?
+  end
+
+  def verify_queue_access_or_vso
+    redirect_to "/unauthorized" unless can_access_queue? || current_user.vso_employee?
   end
 
   def verify_task_assignment_access

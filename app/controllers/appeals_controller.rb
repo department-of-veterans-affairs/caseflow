@@ -35,10 +35,14 @@ class AppealsController < ApplicationController
     no_cache
 
     role = params[:role].downcase
-    return invalid_role_error unless ROLES.include?(role)
+    return invalid_role_error if !ROLES.include?(role) && appeal.class.name == "LegacyAppeal"
 
     if %w[attorney judge].include?(role) && appeal.class.name == "LegacyAppeal"
       return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], role)
+    end
+
+    if current_user.vso_employee?
+
     end
 
     json_tasks_by_appeal_id(appeal.id, appeal.class.to_s)
@@ -125,10 +129,18 @@ class AppealsController < ApplicationController
   end
 
   def queue_class
-    TasksController::QUEUES[params[:role].downcase.try(:to_sym)]
+    TasksController::QUEUES[params[:role].downcase.try(:to_sym)] || GenericQueue
   end
 
   def json_tasks_by_appeal_id(appeal_db_id, appeal_type)
+    tasks = queue_class.new.tasks_by_appeal_id(appeal_db_id, appeal_type)
+
+    render json: {
+      tasks: json_tasks(tasks)[:data]
+    }
+  end
+
+  def json_vso_tasks_by_appeal_id(appeal_db_id, appeal_type)
     tasks = queue_class.new.tasks_by_appeal_id(appeal_db_id, appeal_type)
 
     render json: {
