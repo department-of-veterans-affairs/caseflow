@@ -7,6 +7,7 @@ class Task < ApplicationRecord
 
   validates :assigned_to, :appeal, :type, :status, presence: true
 
+  before_create :verify_user_access
   before_create :set_assigned_at_and_update_parent_status
   before_update :set_timestamps
 
@@ -56,6 +57,15 @@ class Task < ApplicationRecord
 
   def when_child_task_completed
     update_status_if_children_tasks_are_complete
+  end
+
+  def verify_user_access
+    u = RequestStore.store[:current_user]
+
+    return if u.attorney_in_vacols? && FeatureToggle.enabled?(:attorney_assignment_to_colocated, user: u)
+    return if u.judge_in_vacols? && FeatureToggle.enabled?(:judge_assignment_to_attorney, user: u)
+
+    fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot assign this task"
   end
 
   private
