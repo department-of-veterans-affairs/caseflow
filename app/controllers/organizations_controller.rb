@@ -5,9 +5,7 @@ class OrganizationsController < ApplicationController
   before_action :set_application
 
   def index
-    render json: {
-      organizations: Organization.all.reject { |o| o.type && o.type == "Vso" }.map { |o| { id: o.id, name: o.name } }
-    }
+    render json: { organizations: Organization.where(type: nil).map { |o| { id: o.id, name: o.name } } }
   end
 
   def show
