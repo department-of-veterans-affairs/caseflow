@@ -24,33 +24,33 @@ class HearingSchedule::AssignJudgesToHearingDays
   # rubocop:disable Metrics/MethodLength
   def match_hearing_days_to_judges
     assigned_hearing_days = []
-    hearing_days = fetch_hearing_days_for_matching
+    unassigned_hearing_days = fetch_hearing_days_for_matching
     sorted_judges = fetch_judges_for_matching
 
     total_hearing_day_count = @video_co_hearing_days.length
 
     assigned_hearing_days = []
-    hearing_days_assigned = false
+    all_hearing_days_assigned = false
 
-    until hearing_days_assigned
+    until all_hearing_days_assigned
       catch :hearing_days_assigned do
-        num_days_assigned = assigned_hearing_days.length
+        prior_iter_days_assigned = assigned_hearing_days.length
         sorted_judges.each do |css_id|
           index = 0
 
-          while index < hearing_days.length
-            current_hearing_day = hearing_days[index]
+          while index < unassigned_hearing_days.length
+            current_hearing_day = unassigned_hearing_days[index]
             unless can_day_be_assigned(current_hearing_day, assigned_hearing_days, css_id)
               assigned_hearing_days.push(*assign_judge_to_hearing_day(current_hearing_day, css_id))
-              hearing_days.delete(current_hearing_day)
-              hearing_days_assigned = (total_hearing_day_count == assigned_hearing_days.length)
+              unassigned_hearing_days.delete(current_hearing_day)
+              all_hearing_days_assigned = (total_hearing_day_count == assigned_hearing_days.length)
               break
             end
             index += 1
-            throw :hearing_days_assigned if hearing_days_assigned
+            throw :hearing_days_assigned if all_hearing_days_assigned
           end
         end
-        verify_assignments(num_days_assigned, assigned_hearing_days, hearing_days_assigned, hearing_days)
+        verify_assignments(unassigned_hearing_days, prior_iter_days_assigned, assigned_hearing_days)
       end
     end
     assigned_hearing_days.sort_by { |day| day[:hearing_date] }
@@ -105,9 +105,10 @@ class HearingSchedule::AssignJudgesToHearingDays
     end
   end
 
-  def verify_assignments(num_days_assigned, assigned_hearing_days, hearing_days_assigned, hearing_days)
-    if (num_days_assigned == assigned_hearing_days.length) && !hearing_days_assigned
-      dates = hearing_days.map(&:hearing_date)
+  def verify_assignments(unassigned_hearing_days, prior_iter_days_assigned, assigned_hearing_days)
+    if (prior_iter_days_assigned == assigned_hearing_days.length) &&
+        !(assigned_hearing_days.length == @video_co_hearing_days.length)
+      dates = unassigned_hearing_days.map(&:hearing_date)
 
       if @algo_counter >= 20
         fail HearingSchedule::Errors::CannotAssignJudges.new(
