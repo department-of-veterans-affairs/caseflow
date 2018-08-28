@@ -17,9 +17,18 @@ module CaseReviewConcern
 
   def update_task_and_issue_dispositions
     task.update(status: :completed)
+
+    if (task.type == "AttorneyTask" && task.assigned_by_id != reviewing_judge_id)
+      task.parent.update(assigned_to_id: reviewing_judge_id)
+    end
     (issues || []).each do |issue|
-      decision_issue = appeal.decision_issues.find_by(id: issue["id"]) if appeal
-      decision_issue.update(disposition: issue["disposition"]) if decision_issue
+      # TODO: update request issues for RAMP appeals for now. When we build out
+      # decision issues further, we'll update those.
+      # decision_issue = appeal.decision_issues.find_by(id: issue["id"]) if appeal
+      request_issue = appeal.request_issues.find_by(id: issue["id"]) if appeal
+
+      # decision_issue.update(disposition: issue["disposition"]) if decision_issue
+      request_issue.update(disposition: issue["disposition"]) if request_issue
     end
   end
 
