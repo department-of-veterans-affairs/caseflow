@@ -50,9 +50,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   end
 
   def check_range_of_dates(date)
-    if !date.instance_of?(Date) || (date >= @start_date && date <= @end_date)
-      return true
-    end
+    !date.instance_of?(Date) || (date >= @start_date && date <= @end_date)
   end
 
   def validate_judge_non_availability_dates
