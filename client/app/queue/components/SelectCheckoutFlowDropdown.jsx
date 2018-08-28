@@ -66,7 +66,7 @@ class SelectCheckoutFlowDropdown extends React.PureComponent<Props> {
   getOptions = () => {
     const { featureToggles, appeal } = this.props;
 
-    const options = appeal.isLegacyAppeal ? DRAFT_DECISION_LEGACY_OPTIONS : DRAFT_DECISION_OPTIONS
+    const options = appeal.isLegacyAppeal ? DRAFT_DECISION_LEGACY_OPTIONS : DRAFT_DECISION_OPTIONS;
 
     if (featureToggles.attorney_assignment_to_colocated) {
       return [...options, {
