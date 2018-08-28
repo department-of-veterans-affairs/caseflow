@@ -291,7 +291,7 @@ export const buildCaseReviewPayload = (
   payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => _.extend({},
     _.pick(issue, ['remand_reasons', 'type', 'readjudication']),
     { disposition: _.capitalize(issue.disposition) },
-    { id: issue.vacols_sequence_id }
+    { id: issue.id }
   ));
 
   return payload;
