@@ -165,7 +165,7 @@ describe AppealSeriesAlerts do
         let(:decision_date) { 121.days.ago }
 
         it "does not include an alert" do
-          expect(alerts.find { |a| a[:type] == :held_for_evidence }).to be_nil
+          expect(alerts.find { |a| a[:type] == :cavc_option }).to be_nil
         end
       end
 
@@ -173,7 +173,7 @@ describe AppealSeriesAlerts do
         let(:disposition) { "B" }
 
         it "does not include an alert" do
-          expect(alerts.find { |a| a[:type] == :held_for_evidence }).to be_nil
+          expect(alerts.find { |a| a[:type] == :cavc_option }).to be_nil
         end
       end
     end
