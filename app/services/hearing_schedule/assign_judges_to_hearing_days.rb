@@ -107,7 +107,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   def verify_assignments(unassigned_hearing_days, prior_iter_days_assigned, assigned_hearing_days)
     if (prior_iter_days_assigned == assigned_hearing_days.length) &&
-        !(assigned_hearing_days.length == @video_co_hearing_days.length)
+       assigned_hearing_days.length != @video_co_hearing_days.length
       dates = unassigned_hearing_days.map(&:hearing_date)
 
       if @algo_counter >= 20
@@ -149,7 +149,6 @@ class HearingSchedule::AssignJudgesToHearingDays
     hearing_days = is_central_hearing ? hearing_days_by_date(date) : [day]
 
     hearing_days.map do |hearing_day|
-
       HearingDayMapper.hearing_day_field_validations(
         hearing_pkseq: hearing_day.hearing_pkseq,
         hearing_type: get_hearing_type(is_central_hearing),
