@@ -37,8 +37,10 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
   def update
     if schedule_period.can_be_finalized?
       schedule_period.schedule_confirmed(schedule_period.algorithm_assignments)
+      render json: { id: schedule_period.id }
+    else
+      render json: { error: "This schedule period cannot be finalized." }, status: 422
     end
-    render json: { id: schedule_period.id }
   end
 
   def download
