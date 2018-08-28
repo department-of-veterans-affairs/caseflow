@@ -18,7 +18,6 @@ class CaseReviewsController < ApplicationController
 
     response = { task: record }
     response[:issues] = record.appeal.issues
-
     render json: response
   end
 
