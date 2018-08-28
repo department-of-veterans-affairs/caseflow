@@ -7,7 +7,6 @@ class Task < ApplicationRecord
 
   validates :assigned_to, :appeal, :type, :status, presence: true
 
-  before_create :verify_user_access
   before_create :set_assigned_at_and_update_parent_status
   before_update :set_timestamps
 
@@ -31,6 +30,7 @@ class Task < ApplicationRecord
   end
 
   def self.create_from_params(params)
+    verify_user_access
     create(params)
   end
 
