@@ -41,14 +41,14 @@ describe RequestIssuesUpdate do
         rating_issue_profile_date: Date.new(2017, 4, 5),
         rating_issue_reference_id: "issue1",
         contention_reference_id: request_issue_contentions[0].id,
-        description: request_issue_contentions[0].text,
+        description: request_issue_contentions[0].text
       ),
       RequestIssue.create!(
         review_request: review,
         rating_issue_profile_date: Date.new(2017, 4, 6),
         rating_issue_reference_id: "issue2",
         contention_reference_id: request_issue_contentions[1].id,
-        description: request_issue_contentions[1].text,
+        description: request_issue_contentions[1].text
       )
     ]
   end
@@ -70,7 +70,7 @@ describe RequestIssuesUpdate do
       {
         reference_id: issue.rating_issue_reference_id,
         # TODO: validate the string format this comes in
-        profile_date: issue.rating_issue_profile_date, 
+        profile_date: issue.rating_issue_profile_date,
         description: issue.description
       }
     end
@@ -155,7 +155,7 @@ describe RequestIssuesUpdate do
         )
 
         expect(request_issues_update.after_request_issue_ids).to contain_exactly(
-          *(existing_request_issues.map(&:id) + [ review.request_issues.last.id ])
+          *(existing_request_issues.map(&:id) + [review.request_issues.last.id])
         )
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
@@ -197,7 +197,7 @@ describe RequestIssuesUpdate do
 
         removed_issue = existing_request_issues.last.reload
         expect(removed_issue).to have_attributes(
-          review_request: nil,
+          review_request: nil
         )
 
         expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)

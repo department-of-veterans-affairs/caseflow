@@ -74,10 +74,10 @@ class RequestIssuesUpdate < ApplicationRecord
   end
 
   def validate_before_perform
-    if !@request_issues_data || @request_issues_data.empty?
-      @error_code = :request_issues_data_empty 
+    if @request_issues_data.blank?
+      @error_code = :request_issues_data_empty
     elsif !changes?
-      @error_code = :no_changes 
+      @error_code = :no_changes
     end
 
     !@error_code
