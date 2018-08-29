@@ -50,6 +50,10 @@ class User < ApplicationRecord
     vacols_roles.include?("colocated")
   end
 
+  def dispatch_user_in_vacols?
+    vacols_roles.include?("dispatch")
+  end
+
   def vacols_uniq_id
     @vacols_uniq_id ||= user_info[:uniq_id]
   end

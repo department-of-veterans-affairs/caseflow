@@ -98,10 +98,7 @@ class AppealsController < ApplicationController
                           service: :queue,
                           name: "AppealsController.index") do
 
-      appeals = []
-      if FeatureToggle.enabled?(:queue_beaam_appeals, user: current_user)
-        appeals.concat(Appeal.where(veteran_file_number: file_number).to_a)
-      end
+      appeals = Appeal.where(veteran_file_number: file_number).to_a
       # rubocop:disable Lint/HandleExceptions
       begin
         appeals.concat(LegacyAppeal.fetch_appeals_by_file_number(file_number))
