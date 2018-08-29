@@ -1,4 +1,4 @@
-class SupplementalClaim < AmaReview
+class SupplementalClaim < ClaimReview
   validates :receipt_date, presence: { message: "blank" }, if: :saving_review
 
   END_PRODUCT_RATING_CODE = "040SCR".freeze
