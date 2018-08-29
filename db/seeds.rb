@@ -297,6 +297,7 @@ class SeedDB
       url: "american-legion",
       participant_id: "2452415"
     )
+    Bva.create(name: "Board of Veterans' Appeals")
   end
 
   def clean_db

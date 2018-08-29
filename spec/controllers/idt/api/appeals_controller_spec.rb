@@ -63,7 +63,6 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         let(:role) { :attorney_role }
 
         before do
-          create(:staff, role, sdomainid: user.css_id)
           request.headers["TOKEN"] = token
         end
 
@@ -72,6 +71,53 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user)),
             create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user))
           ]
+        end
+
+        context "with AMA appeals" do
+          let(:veteran1) { create(:veteran) }
+          let(:veteran2) { create(:veteran) }
+
+          let!(:tasks) do
+            [
+              create(:ama_attorney_task, assigned_to: user, appeal: create(:appeal, veteran: veteran1)),
+              create(:ama_attorney_task, assigned_to: user, appeal: create(:appeal, veteran: veteran2))
+            ]
+          end
+
+          before do
+            FeatureToggle.enable!(:idt_ama_appeals)
+          end
+
+          after do
+            FeatureToggle.disable!(:idt_ama_appeals)
+          end
+
+          it "returns a list of assigned appeals" do
+            get :list
+            expect(response.status).to eq 200
+            response_body = JSON.parse(response.body)["data"]
+            ama_appeals = response_body.select { |appeal| appeal["type"] == "appeals" }
+            expect(ama_appeals.size).to eq 2
+            expect(ama_appeals.first["id"]).to eq tasks.first.appeal.uuid
+            expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.first.appeal.docket_number
+            expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.name.first_name
+
+            expect(ama_appeals.second["id"]).to eq tasks.second.appeal.uuid
+            expect(ama_appeals.second["attributes"]["docket_number"]).to eq tasks.second.appeal.docket_number
+            expect(ama_appeals.second["attributes"]["veteran_first_name"]).to eq veteran2.name.first_name
+          end
+
+          it "returns appeals associated with a file number" do
+            headers = { "FILENUMBER" => tasks.first.appeal.veteran_file_number }
+            request.headers.merge! headers
+            get :list
+            expect(response.status).to eq 200
+            response_body = JSON.parse(response.body)["data"]
+            ama_appeals = response_body.select { |appeal| appeal["type"] == "appeals" }
+            expect(ama_appeals.size).to eq 1
+            expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.first.appeal.docket_number
+            expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.name.first_name
+          end
         end
 
         context "and appeal id URL parameter not is passed" do
@@ -125,17 +171,25 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               [create(:legacy_appeal, vacols_case: c)]
             end
 
-            it "returns the correct values" do
+            it "returns the correct values for the appeal" do
               get :details, params: params
               expect(response.status).to eq 200
               response_body = JSON.parse(response.body)["data"]
 
               expect(response_body["attributes"]["previously_selected_for_quality_review"]).to eq true
               expect(response_body["attributes"]["outstanding_mail"]).to eq true
-              document = response_body["attributes"]["documents"][0]
-              expect(document["assigned_by"]).to eq "Lyor Cohen"
-              expect(document["written_by"]).to eq "George Michael"
-              expect(document["document_id"]).to eq "1234"
+              expect(response_body["attributes"]["assigned_by"]).to eq "Lyor Cohen"
+            end
+
+            it "filters out documents without ids and returns the correct doc values" do
+              get :details, params: params
+              expect(response.status).to eq 200
+              response_body = JSON.parse(response.body)["data"]
+
+              documents = response_body["attributes"]["documents"]
+              expect(documents.length).to eq 1
+              expect(documents[0]["written_by"]).to eq "George Michael"
+              expect(documents[0]["document_id"]).to eq "1234"
             end
           end
         end
