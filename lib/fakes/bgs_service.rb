@@ -310,6 +310,36 @@ class Fakes::BGSService
     []
   end
 
+  def fetch_poas_by_participant_ids(participant_ids)
+    get_hash_of_poa_from_bgs_poas(
+      participant_ids.each_with_index.map do |participant_id, i|
+        if i == 1
+          vso = {
+            legacy_poa_cd: "070",
+            nm: "VIETNAM VETERANS OF AMERICA",
+            org_type_nm: "POA National Organization",
+            ptcpnt_id: "2452415"
+          }
+        elsif i == 2
+          vso = {
+            legacy_poa_cd: "071",
+            nm: "PARALYZED VETERANS OF AMERICA, INC.",
+            org_type_nm: "POA National Organization",
+            ptcpnt_id: "2452383"
+          }
+        else
+          vso = { }
+        end
+
+        {
+          file_number: Veteran.find_by(participant_id: participant_id).file_number,
+          ptcpnt_id: participant_id,
+          power_of_attorney: vso
+        }
+      end
+    )
+  end
+
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
     address = (self.class.address_records || {})[participant_id]

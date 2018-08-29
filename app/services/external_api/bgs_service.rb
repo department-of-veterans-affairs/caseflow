@@ -74,16 +74,28 @@ class ExternalApi::BGSService
   def fetch_poas_by_participant_id(participant_id)
     DBService.release_db_connections
 
-    unless @poas[participant_id]
+    unless @poa_by_participant_ids[participant_id]
       bgs_poas = MetricsService.record("BGS: fetch poas for participant id: #{participant_id}",
                                        service: :bgs,
                                        name: "org.find_poas_by_participant_id") do
         client.org.find_poas_by_ptcpnt_id(participant_id)
       end
-      @poas[participant_id] = bgs_poas.map { |poa| get_poa_from_bgs_poa(poa) }
+      @poa_by_participant_ids[participant_id] = bgs_poas.map { |poa| get_poa_from_bgs_poa(poa) }
     end
 
-    @poas[participant_id]
+    @poa_by_participant_ids[participant_id]
+  end
+
+  def fetch_poas_by_participant_ids(participant_ids)
+    DBService.release_db_connections
+
+    bgs_poas = MetricsService.record("BGS: fetch poas for participant ids: #{participant_ids}",
+                                     service: :bgs,
+                                     name: "org.find_poas_by_participant_ids") do
+      client.org.find_poas_by_ptcpnt_ids(participant_ids)
+    end
+
+    get_hash_of_poa_from_bgs_poas(bgs_poas)
   end
 
   def find_address_by_participant_id(participant_id)

@@ -67,12 +67,12 @@ class Veteran < ApplicationRecord
     now.year - dob.year - ((now.month > dob.month || (now.month == dob.month && now.day >= dob.day)) ? 0 : 1)
   end
 
-  def self.bgs
+  def bgs
     BGSService.new
   end
 
   def fetch_bgs_record
-    result = self.class.bgs.fetch_veteran_info(file_number)
+    result = bgs.fetch_veteran_info(file_number)
 
     # If the result is nil, the veteran wasn't found.
     # If the file number is nil, that's another way of saying the veteran wasn't found.
@@ -89,7 +89,7 @@ class Veteran < ApplicationRecord
   end
 
   def accessible?
-    self.class.bgs.can_access?(file_number)
+    bgs.can_access?(file_number)
   end
 
   def relationships
@@ -103,6 +103,19 @@ class Veteran < ApplicationRecord
 
   def timely_ratings(from_date:)
     @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id, from_date: from_date)
+  end
+
+  def appeals_vso_has_access_to(vso_participant_ids)
+    appeals = Appeal.where(veteran_file_number: file_number).includes(:claimants)
+    claimants_participant_ids = appeals.map { |appeal| appeal.claimants.pluck(:participant_id) }.flatten
+
+    poas = bgs.fetch_poas_by_participant_ids(claimants_participant_ids)
+
+    appeals.select do |appeal|
+      appeal.claimants.any do |claimant|
+        vso_participants_ids.include?(poas[claimant[:participant_id]][:participant_id])
+      end
+    end
   end
 
   def participant_id
@@ -135,7 +148,7 @@ class Veteran < ApplicationRecord
   private
 
   def fetch_end_products
-    bgs_end_products = self.class.bgs.get_end_products(file_number)
+    bgs_end_products = bgs.get_end_products(file_number)
 
     # Check that we are not getting this back from BGS:
     # [{:number_of_records=>"0", :return_code=>"SHAR 9999", :return_message=>"Records found"}]
@@ -145,7 +158,7 @@ class Veteran < ApplicationRecord
   end
 
   def fetch_relationships
-    relationships = self.class.bgs.find_all_relationships(
+    relationships = bgs.find_all_relationships(
       participant_id: participant_id
     )
     relationships_array = Array.wrap(relationships)

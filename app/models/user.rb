@@ -77,11 +77,11 @@ class User < ApplicationRecord
   end
 
   def participant_id
-    bgs.get_participant_id_for_user(user)
+    @participant_id ||= bgs.get_participant_id_for_user(user)
   end
 
   def vsos
-    participant_ids = bgs.fetch_poas_by_participant_id(participant_id)
+    @vso_participant_ids ||= bgs.fetch_poas_by_participant_id(participant_id)
   end
 
   def access_to_task?(vacols_id)
