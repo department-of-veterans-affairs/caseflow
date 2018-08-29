@@ -523,7 +523,7 @@ RSpec.feature "Checkout flows" do
         format(COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION, vet_name, attorney_name_display)
       )
 
-      expect(colocated_action.reload.assigned_to).to eq colocated_action.assigned_by
+      expect(colocated_action.reload.status).to eq "completed"
       expect(colocated_action.assigned_at.to_date).to eq Time.zone.today
     end
 
@@ -566,7 +566,7 @@ RSpec.feature "Checkout flows" do
       vet_name = appeal.veteran_full_name
       click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
 
-      click_dropdown 1
+      click_dropdown 0
 
       expect(page).to have_content(
         format(COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD, team_name)
