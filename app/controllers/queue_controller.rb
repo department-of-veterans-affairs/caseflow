@@ -20,7 +20,6 @@ class QueueController < ApplicationController
   private
 
   def vso_organization_queue_path
-    return nil
     return unless current_user.vso_employee?
 
     Vso.where.not(feature: nil).each do |vso|

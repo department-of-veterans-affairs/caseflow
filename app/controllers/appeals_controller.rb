@@ -36,12 +36,13 @@ class AppealsController < ApplicationController
   def tasks
     no_cache
 
+    # VSO users should only get tasks assigned to them or their organization.
     if current_user.vso_employee?
-      return json_vso_tasks_by_appeal_id
+      return json_vso_tasks
     end
 
     role = params[:role].downcase
-    return invalid_role_error if !ROLES.include?(role) && appeal.class.name == "LegacyAppeal"
+    return invalid_role_error unless ROLES.include?(role)
 
     if %w[attorney judge].include?(role) && appeal.class.name == "LegacyAppeal"
       return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], role)
@@ -138,7 +139,7 @@ class AppealsController < ApplicationController
   end
 
   def queue_class
-    TasksController::QUEUES[params[:role].downcase.try(:to_sym)] || GenericQueue
+    TasksController::QUEUES[params[:role].downcase.try(:to_sym)]
   end
 
   def json_tasks_by_appeal_id(appeal_db_id, appeal_type)
@@ -149,7 +150,7 @@ class AppealsController < ApplicationController
     }
   end
 
-  def json_vso_tasks_by_appeal_id
+  def json_vso_tasks
     # For now we just return tasks that are assigned to the user. In the future,
     # we will add tasks that are assigned to the user's organization.
     tasks = GenericQueue.new(user: current_user).tasks
