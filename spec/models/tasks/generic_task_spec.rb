@@ -76,5 +76,46 @@ describe GenericTask do
         expect(parent.status).to eq(good_params[:status])
       end
     end
+
+    context "when parent task is assigned to a user" do
+      context "when there is no current user" do
+        it "should create child task assigned by parent assignee" do
+          child = GenericTask.create_from_params(good_params)
+          expect(child.assigned_by_id).to eq(parent.assigned_to_id)
+        end
+      end
+
+      context "when there is a currently logged-in user" do
+        let(:current_user) { FactoryBot.create(:user) }
+        before { User.authenticate!(user: current_user) }
+        it "should create child task assigned by currently logged-in user" do
+          child = GenericTask.create_from_params(good_params)
+          expect(child.assigned_by_id).to eq(current_user.id)
+        end
+      end
+    end
+
+    context "when parent task is assigned to an organization" do
+      let(:org) { FactoryBot.create(:organization) }
+      let(:parent) do
+        t = FactoryBot.create(:generic_task, :in_progress, assigned_to: org)
+        GenericTask.find(t.id)
+      end
+      context "when there is no current user" do
+        it "should create child task assigned by nobody" do
+          child = GenericTask.create_from_params(good_params)
+          expect(child.assigned_by_id).to eq(nil)
+        end
+      end
+
+      context "when there is a currently logged-in user" do
+        let(:current_user) { FactoryBot.create(:user) }
+        before { User.authenticate!(user: current_user) }
+        it "should create child task assigned by currently logged-in user" do
+          child = GenericTask.create_from_params(good_params)
+          expect(child.assigned_by_id).to eq(current_user.id)
+        end
+      end
+    end
   end
 end
