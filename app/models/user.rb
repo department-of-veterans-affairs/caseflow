@@ -76,6 +76,14 @@ class User < ApplicationRecord
     nil
   end
 
+  def participant_id
+    bgs.get_participant_id_for_user(user)
+  end
+
+  def vsos
+    participant_ids = bgs.fetch_poas_by_participant_id(participant_id)
+  end
+
   def access_to_task?(vacols_id)
     self.class.user_repository.can_access_task?(css_id, vacols_id)
   end
@@ -201,6 +209,10 @@ class User < ApplicationRecord
   end
 
   private
+
+  def bgs
+    @bgs ||= BGSService.new
+  end
 
   def user_info
     @user_info ||= self.class.user_repository.user_info_from_vacols(css_id)
