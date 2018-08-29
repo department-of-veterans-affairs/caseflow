@@ -82,4 +82,8 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :caseflow_veteran_id do
     object.veteran ? object.veteran.id : nil
   end
+
+  attribute :docket_name do
+    "legacy"
+  end
 end
