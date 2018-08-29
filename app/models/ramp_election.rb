@@ -6,15 +6,6 @@ class RampElection < RampReview
 
   validate :validate_receipt_date
 
-  class BGSEndProductSyncError < RuntimeError
-    def initialize(error, ramp_election)
-      Raven.extra_context(ramp_election_id: ramp_election.id)
-      super(error.message).tap do |result|
-        result.set_backtrace(error.backtrace)
-      end
-    end
-  end
-
   # RAMP letters request that Veterans respond within 60 days; elections will
   # be accepted after this point, however, so this "due date" is soft.
   def due_date
@@ -49,9 +40,7 @@ class RampElection < RampReview
   end
 
   def successful_intake
-    @successful_intake ||= intakes.where(completion_status: "success")
-      .order(:completed_at)
-      .last
+    @successful_intake ||= intakes.where(completion_status: "success").order(:completed_at).last
   end
 
   def rollback!
@@ -73,15 +62,9 @@ class RampElection < RampReview
     end
   end
 
-  def sync!
-    recreate_issues_from_contentions!
-  rescue StandardError => e
-    Raven.capture_exception(BGSEndProductSyncError.new(e, self))
-  end
-
-  # Synced metadata is not used in this method, but is needed for Claim Reviews.
   def on_sync(end_product_establishment)
-    sync!
+    recreate_issues_from_contentions!
+
     if FeatureToggle.enabled?(:automatic_ramp_rollback) && end_product_establishment.status_canceled?
       rollback_ramp_review
     end

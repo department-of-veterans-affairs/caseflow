@@ -8,6 +8,15 @@ class EndProductEstablishment < ApplicationRecord
 
   class InvalidEndProductError < StandardError; end
 
+  class BGSSyncError < RuntimeError
+    def initialize(error, end_product_establishment)
+      Raven.extra_context(end_product_establishment: end_product_establishment.id)
+      super(error.message).tap do |result|
+        result.set_backtrace(error.backtrace)
+      end
+    end
+  end
+
   CANCELED_STATUS = "CAN".freeze
 
   class << self
@@ -89,10 +98,13 @@ class EndProductEstablishment < ApplicationRecord
         last_synced_at: Time.zone.now
       )
 
-      if source && source.respond_to?(:on_sync)
-        source.on_sync(self)
-      end
+      sync_source!
     end
+
+    # TODO: This is sort of janky. Let's rethink the error handling logic here
+  rescue StandardError => e
+    raise e if e.is_a?(EstablishedEndProductNotFound)
+    raise BGSSyncError.new(e, self)
   end
 
   def status_canceled?
@@ -160,5 +172,10 @@ class EndProductEstablishment < ApplicationRecord
         return modifier
       end
     end
+  end
+
+  def sync_source!
+    return unless source && source.respond_to?(:on_sync)
+    source.on_sync(self)
   end
 end

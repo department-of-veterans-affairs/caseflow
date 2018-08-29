@@ -246,6 +246,16 @@ describe EndProductEstablishment do
         )
       end
 
+      context "when BGS throws an error" do
+        before do
+          allow_any_instance_of(BGSService).to receive(:get_end_products).and_raise(BGS::ShareError.new("E"))
+        end
+
+        it "re-raises  error" do
+          expect { subject }.to raise_error(EndProductEstablishment::BGSSyncError)
+        end
+      end
+
       context "when source exists" do
         context "when source implements on_sync" do
           it "syncs the source as well" do
