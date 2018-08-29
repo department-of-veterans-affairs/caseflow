@@ -7,8 +7,7 @@ describe EndProductSyncJob do
     create(:end_product_establishment,
            source: ramp_election,
            last_synced_at: nil,
-           established_at: 4.days.ago
-    )
+           established_at: 4.days.ago)
   end
 
   context "#perform" do
