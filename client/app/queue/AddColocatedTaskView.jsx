@@ -12,8 +12,9 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import Alert from '../components/Alert';
 
 import { requestSave } from './uiReducer/uiActions';
-import { deleteAppeal } from './QueueActions';
+import { setTaskAttrs } from './QueueActions';
 
+import { prepareTasksForStore } from './utils';
 import {
   appealWithDetailSelector,
   getTasksForAppeal
@@ -46,7 +47,7 @@ type Props = Params & {|
   tasks: Array<Task>,
   // dispatch
   requestSave: typeof requestSave,
-  deleteAppeal: typeof deleteAppeal
+  setTaskAttrs: typeof setTaskAttrs
 |};
 
 class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
@@ -80,6 +81,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
   }
 
   goToNextStep = () => {
+    const { tasks } = this.props;
     const payload = {
       data: {
         tasks: this.buildPayload()
@@ -91,7 +93,12 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
     };
 
     this.props.requestSave('/tasks', payload, successMsg).
-      then(() => this.props.deleteAppeal(this.props.appealId));
+      then((resp) => {
+        const response = JSON.parse(resp.text);
+        const preparedTasks = prepareTasksForStore(response.tasks.data);
+
+        this.props.setTaskAttrs(tasks[0].externalAppealId, preparedTasks[tasks[0].externalAppealId]);
+      });
   }
 
   render = () => {
@@ -138,7 +145,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
-  deleteAppeal
+  setTaskAttrs
 }, dispatch);
 
 const WrappedComponent = decisionViewBase(AddColocatedTaskView, {
