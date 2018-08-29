@@ -79,22 +79,6 @@ class SendToLocationModal extends React.Component<Props> {
     return `${String.fromCodePoint(assignedBy.firstName.codePointAt(0))}. ${assignedBy.lastName}`;
   };
 
-  buildPayload = () => {
-    const {
-      task,
-      modalType
-    } = this.props;
-    const payload = {};
-
-    if (modalType === SEND_TO_LOCATION_MODAL_TYPES.attorney) {
-      payload.assigned_to_id = task.assignedBy.pgId;
-    } else if (modalType === SEND_TO_LOCATION_MODAL_TYPES.team) {
-      payload.status = 'completed';
-    }
-
-    return payload;
-  }
-
   getContentArgs = () => ({
     assignerName: this.getTaskAssignerName(),
     teamName: CO_LOCATED_ADMIN_ACTIONS[this.props.task.action],
@@ -109,7 +93,9 @@ class SendToLocationModal extends React.Component<Props> {
     } = this.props;
     const payload = {
       data: {
-        task: this.buildPayload()
+        task: {
+          status: 'completed'
+        }
       }
     };
     const successMsg = SEND_TO_LOCATION_MODAL_TYPE_ATTRS[modalType].buildSuccessMsg(appeal, this.getContentArgs());
