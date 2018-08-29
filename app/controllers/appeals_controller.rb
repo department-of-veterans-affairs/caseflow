@@ -3,6 +3,8 @@ class AppealsController < ApplicationController
 
   before_action :react_routed
   before_action :set_application, only: [:document_count, :new_documents]
+  # Only whitelist endpoints VSOs should have access to.
+  before_action :deny_vso_access, except: [:index, :show_case_list, :show, :tasks]
 
   ROLES = Constants::USER_ROLE_TYPES.keys.freeze
 
@@ -34,15 +36,15 @@ class AppealsController < ApplicationController
   def tasks
     no_cache
 
+    if current_user.vso_employee?
+      return json_vso_tasks_by_appeal_id
+    end
+
     role = params[:role].downcase
     return invalid_role_error if !ROLES.include?(role) && appeal.class.name == "LegacyAppeal"
 
     if %w[attorney judge].include?(role) && appeal.class.name == "LegacyAppeal"
       return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], role)
-    end
-
-    if current_user.vso_employee?
-
     end
 
     json_tasks_by_appeal_id(appeal.id, appeal.class.to_s)
@@ -59,6 +61,9 @@ class AppealsController < ApplicationController
                               service: :queue,
                               name: "AppealsController.show") do
           appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
+
+          return file_access_prohibited_error if !BGSService.new.can_access?(appeal.veteran_file_number)
+
           render json: { appeal: json_appeals([appeal])[:data][0] }
         end
       end
@@ -80,10 +85,14 @@ class AppealsController < ApplicationController
     # :nocov:
   end
 
+  def deny_vso_access
+    redirect_to "/unauthorized" if current_user.vso_employee?
+  end
+
   def get_appeals_for_file_number(file_number)
     return file_number_not_found_error unless file_number
 
-    return file_access_prohibited_error if current_user.vso_employee? && !BGSService.new.can_access?(file_number)
+    return file_access_prohibited_error if !BGSService.new.can_access?(file_number)
 
     MetricsService.record("VACOLS: Get appeal information for file_number #{file_number}",
                           service: :queue,
@@ -140,8 +149,10 @@ class AppealsController < ApplicationController
     }
   end
 
-  def json_vso_tasks_by_appeal_id(appeal_db_id, appeal_type)
-    tasks = queue_class.new.tasks_by_appeal_id(appeal_db_id, appeal_type).where(assigned_to: current_user)
+  def json_vso_tasks_by_appeal_id
+    # For now we just return tasks that are assigned to the user. In the future,
+    # we will add tasks that are assigned to the user's organization.
+    tasks = GenericQueue.new(user: current_user).tasks
 
     render json: {
       tasks: json_tasks(tasks)[:data]

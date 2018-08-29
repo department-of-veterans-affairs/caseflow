@@ -18,6 +18,10 @@ class Fakes::BGSService
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def self.create_veteran_records
+    return if @veteran_records_created
+
+    @veteran_records_created = true
+
     file_path = Rails.root.join("local", "vacols", "bgs_setup.csv")
 
     CSV.foreach(file_path, headers: true) do |row|
