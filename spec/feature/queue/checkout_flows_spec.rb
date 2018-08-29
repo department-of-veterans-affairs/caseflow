@@ -59,7 +59,7 @@ RSpec.feature "Checkout flows" do
         appeal: appeal
       )
 
-      User.authenticate!(user: attorney_user) 
+      User.authenticate!(user: attorney_user)
     end
 
     scenario "submits draft decision" do
@@ -93,7 +93,6 @@ RSpec.feature "Checkout flows" do
     end
   end
 
-
   context "given a valid legacy appeal and an attorney user" do
     let!(:appeal) do
       FactoryBot.create(
@@ -106,7 +105,7 @@ RSpec.feature "Checkout flows" do
           case_issues: case_issues
         )
       )
-    end    
+    end
 
     before { User.authenticate!(user: attorney_user) }
 
