@@ -5,6 +5,7 @@ class ApplicationController < ApplicationBaseController
   before_action :set_raven_user
   before_action :verify_authentication
   before_action :set_paper_trail_whodunnit
+  before_action :deny_vso_access, except: [:unauthorized]
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from VBMS::ClientError, with: :on_vbms_error
@@ -94,6 +95,7 @@ class ApplicationController < ApplicationBaseController
   helper_method :certification_header
 
   def can_access_queue?
+    return true if current_user.vso_employee?
     return true if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
     return true if current_user.colocated_in_vacols? && feature_enabled?(:colocated_queue)
     false
@@ -104,8 +106,8 @@ class ApplicationController < ApplicationBaseController
     redirect_to "/unauthorized" unless can_access_queue?
   end
 
-  def verify_queue_access_or_vso
-    redirect_to "/unauthorized" unless can_access_queue? || current_user.vso_employee?
+  def deny_vso_access
+    redirect_to "/unauthorized" if current_user.vso_employee?
   end
 
   def verify_task_assignment_access
