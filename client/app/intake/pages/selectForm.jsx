@@ -6,7 +6,8 @@ import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setFormType, clearSearchErrors } from '../actions/common';
-import { FORM_TYPES, PAGE_PATHS } from '../constants';
+import { PAGE_PATHS } from '../constants';
+import { FORM_TYPES } from '../../intakeCommon/constants';
 import _ from 'lodash';
 
 class SelectForm extends React.PureComponent {

@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { BrowserRouter } from 'react-router-dom';
@@ -11,16 +10,21 @@ import { PAGE_PATHS } from './constants';
 import LandingPage from './pages/landing';
 import SelectIssuesPage from './pages/selectIssues';
 
-class IntakeEditFrame extends React.PureComponent {
+export default class IntakeEditFrame extends React.PureComponent {
   render() {
+    const {
+      review,
+      formType
+    } = this.props;
+
     const appName = 'Intake';
 
     const Router = this.props.router || BrowserRouter;
 
-    const topMessage = this.props.veteran.fileNumber ?
-      `${this.props.veteran.formName} (${this.props.veteran.fileNumber})` : null;
+    const topMessage = review.veteranFileNumber ?
+      `${review.veteranFormName} (${review.veteranFileNumber})` : null;
 
-    const basename = `/${this.props.formType}s/${this.props.claimId}/edit/`;
+    const basename = `/${formType}s/${review.claimId}/edit/`;
 
     return <Router basename={basename} {...this.props.routerTestProps}>
       <div>
@@ -60,9 +64,3 @@ class IntakeEditFrame extends React.PureComponent {
     </Router>;
   }
 }
-
-export default connect(
-  ({ veteran }) => ({
-    veteran
-  })
-)(IntakeEditFrame);
