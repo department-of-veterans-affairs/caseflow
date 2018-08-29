@@ -130,7 +130,7 @@ class User < ApplicationRecord
   end
 
   def vso_employee?
-    Functions.granted?("VSO", css_id)
+    roles.include?("VSO")
   end
 
   def granted?(thing)
