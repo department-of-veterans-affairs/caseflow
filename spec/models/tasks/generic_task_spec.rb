@@ -15,33 +15,32 @@ describe GenericTask do
     end
 
     context "task assignee is current user" do
-      let(:assignee) {user}
+      let(:assignee) { user }
       it "should not raise an error" do
-        expect {task.verify_user_access}.to_not raise_error
+        expect { task.verify_user_access }.to_not raise_error
       end
     end
 
     context "task assignee is organization to which current user belongs" do
-      let(:assignee) {org}
+      let(:assignee) { org }
       it "should not raise an error" do
-        expect {task.verify_user_access}.to_not raise_error
+        expect { task.verify_user_access }.to_not raise_error
       end
     end
 
     context "task assignee is a different person" do
-      let(:assignee) {other_user}
+      let(:assignee) { other_user }
       it "should raise an error" do
-        expect {task.verify_user_access}.to raise_error(Caseflow::Error::ActionForbiddenError)
+        expect { task.verify_user_access }.to raise_error(Caseflow::Error::ActionForbiddenError)
       end
     end
 
     context "task assignee is organization to which current user does not belong" do
-      let(:assignee) {other_org}
+      let(:assignee) { other_org }
       it "should raise an error" do
-        expect {task.verify_user_access}.to raise_error(Caseflow::Error::ActionForbiddenError)
+        expect { task.verify_user_access }.to raise_error(Caseflow::Error::ActionForbiddenError)
       end
     end
-
   end
 
   describe ".update_from_params" do
@@ -53,13 +52,13 @@ describe GenericTask do
     end
 
     context "task is assigned to an organization" do
-      let(:assignee) {org}
+      let(:assignee) { org }
 
       context "and current user does not belong to that organization" do
         before { User.authenticate!(user: user) }
 
         it "should raise an error when trying to call Task.mark_as_complete!" do
-          expect {task.update_from_params({})}.to raise_error(Caseflow::Error::ActionForbiddenError)
+          expect { task.update_from_params({}) }.to raise_error(Caseflow::Error::ActionForbiddenError)
         end
       end
 
@@ -78,12 +77,12 @@ describe GenericTask do
 
     context "task is assigned to a person" do
       let(:other_user) { FactoryBot.create(:user) }
-      let(:assignee) {user}
+      let(:assignee) { user }
 
       context "who is not the current user" do
         before { User.authenticate!(user: other_user) }
         it "should raise an error when trying to call Task.mark_as_complete!" do
-          expect {task.update_from_params({})}.to raise_error(Caseflow::Error::ActionForbiddenError)
+          expect { task.update_from_params({}) }.to raise_error(Caseflow::Error::ActionForbiddenError)
         end
       end
 
