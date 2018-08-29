@@ -68,7 +68,6 @@ class UserRepository
     private
 
     def roles_based_on_staff_fields(staff_record)
-      return [] if staff_record.sactive != "A"
       case staff_record.svlj
       when "J"
         ["judge"]
