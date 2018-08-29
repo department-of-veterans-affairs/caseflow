@@ -37,12 +37,11 @@ RSpec.feature "Checkout flows" do
     FeatureToggle.disable!(:test_facols)
   end
 
-  context "given a valid appeal and an attorney user", focus: true do
-    let(:appeal) do
+  context "given a valid appeal and an attorney user" do
+    let!(:appeal) do
       FactoryBot.create(
         :appeal,
         :appellant_not_veteran,
-        veteran_file_number: "228081153",
         request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
       )
     end
@@ -64,11 +63,11 @@ RSpec.feature "Checkout flows" do
 
     scenario "submits draft decision" do
       visit "/queue"
-      click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+      click_on "(#{appeal.veteran_file_number})"
       click_dropdown 0
 
       issue_rows = page.find_all("tr[id^='table-row-']")
-      expect(issue_rows.length).to eq(appeal.issues.length)
+      expect(issue_rows.length).to eq(appeal.request_issues.length)
 
       issue_rows.each do |row|
         row.find(".Select-control").click
@@ -85,7 +84,7 @@ RSpec.feature "Checkout flows" do
       fill_in "notes", with: "note"
 
       safe_click "#select-judge"
-      click_dropdown 1
+      click_dropdown 0
 
       click_on "Continue"
       sleep 5
