@@ -153,6 +153,14 @@ class ExternalApi::VBMSService
     send_and_log_request(claim_id, request)
   end
 
+  def self.get_dispositions!(claim_id:)
+    @vbms_client ||= init_vbms_client
+
+    request = VBMS::Requests::GetDispositions.new(claim_id: claim_id)
+
+    send_and_log_request(claim_id, request)
+  end
+
   def self.current_user
     RequestStore[:current_user]
   end
