@@ -12,11 +12,7 @@ class SchedulePeriod < ApplicationRecord
   delegate :full_name, to: :user, prefix: true
 
   def validate_schedule_period
-    SchedulePeriod.where(type: type, finalized: true).find_each do |sp|
-      if sp.start_date <= start_date && start_date <= sp.end_date
-        errors[:base] << OverlappingSchedulePeriods
-      end
-    end
+    errors[:base] << OverlappingSchedulePeriods if dates_already_finalized?
   end
 
   def spreadsheet_location
@@ -39,8 +35,7 @@ class SchedulePeriod < ApplicationRecord
   end
 
   def dates_already_finalized?
-    sps = SchedulePeriod.all.select(&:finalized)
-    sps.any? do |schedule_period|
+    SchedulePeriod.where(type: type, finalized: true).any? do |schedule_period|
       schedule_period.start_date <= start_date && start_date <= schedule_period.end_date
     end
   end
