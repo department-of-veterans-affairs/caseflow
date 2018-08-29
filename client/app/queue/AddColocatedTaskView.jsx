@@ -73,7 +73,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
       };
 
       if (appeal.docketName !== 'legacy') {
-        mapped.parent_id = task.parentId;
+        mapped.parent_id = task.taskId;
       }
 
       return mapped;

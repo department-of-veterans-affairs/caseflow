@@ -11,7 +11,6 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :on_hold_duration
   attribute :instructions
   attribute :appeal_type
-  attribute :parent_id
 
   attribute :assigned_by do
     {

@@ -47,8 +47,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       placedOnHoldAt: task.attributes.placed_on_hold_at,
       status: task.attributes.status,
       onHoldDuration: task.attributes.on_hold_duration,
-      instructions: task.attributes.instructions,
-      parentId: task.attributes.parent_id
+      instructions: task.attributes.instructions
     };
 
     return acc;
