@@ -40,8 +40,8 @@ RSpec.describe CaseReviewsController, type: :controller do
               "document_id": "123456789.1234",
               "overtime": true,
               "note": "something",
-              "issues": [{ "disposition": "allowed", "id": decision_issue1.id },
-                         { "disposition": "remanded", "id": decision_issue2.id }]
+              "issues": [{ "disposition": "allowed", "id": request_issue1.id },
+                         { "disposition": "remanded", "id": request_issue2.id }]
             }
           end
 
@@ -53,10 +53,11 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(response_body["task"]["overtime"]).to eq true
             expect(response_body["task"]["note"]).to eq "something"
             expect(response_body.keys).to include "issues"
-            expect(response_body["issues"]["decision_issues"].size).to eq 2
+            # TODO: uncomment when we use decision issues
+            # expect(response_body["issues"]["decision_issues"].size).to eq 2
             expect(response_body["issues"]["request_issues"].size).to eq 2
-            expect(decision_issue1.reload.disposition).to eq "allowed"
-            expect(decision_issue2.reload.disposition).to eq "remanded"
+            expect(request_issue1.reload.disposition).to eq "allowed"
+            expect(request_issue2.reload.disposition).to eq "remanded"
             expect(task.reload.status).to eq "completed"
             expect(task.completed_at).to_not eq nil
             expect(task.parent.reload.status).to eq "assigned"
@@ -83,8 +84,8 @@ RSpec.describe CaseReviewsController, type: :controller do
               "comment": "do this",
               "factors_not_considered": %w[theory_contention relevant_records],
               "areas_for_improvement": ["process_violations"],
-              "issues": [{ "disposition": "denied", "id": decision_issue1.id },
-                         { "disposition": "remanded", "id": decision_issue2.id }]
+              "issues": [{ "disposition": "denied", "id": request_issue1.id },
+                         { "disposition": "remanded", "id": request_issue2.id }]
             }
           end
 
@@ -103,10 +104,11 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(response_body["task"]["factors_not_considered"]).to eq %w[theory_contention relevant_records]
             expect(response_body["task"]["areas_for_improvement"]).to eq ["process_violations"]
             expect(response_body.keys).to include "issues"
-            expect(response_body["issues"]["decision_issues"].size).to eq 2
+            # TODO: uncomment when we use decision issues
+            # expect(response_body["issues"]["decision_issues"].size).to eq 2
             expect(response_body["issues"]["request_issues"].size).to eq 2
-            expect(decision_issue1.reload.disposition).to eq "denied"
-            expect(decision_issue2.reload.disposition).to eq "remanded"
+            expect(request_issue1.reload.disposition).to eq "denied"
+            expect(request_issue2.reload.disposition).to eq "remanded"
             expect(task.reload.status).to eq "completed"
             expect(task.completed_at).to_not eq nil
             expect(task.parent).to be nil
