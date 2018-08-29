@@ -1,21 +1,110 @@
 describe GenericTask do
-  describe ".update_from_params" do
+  describe ".verify_user_access" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:other_user) { FactoryBot.create(:user) }
+    let(:org) { FactoryBot.create(:organization) }
+    let(:other_org) { FactoryBot.create(:organization) }
     let(:task) do
-      t = FactoryBot.create(:generic_task, :in_progress)
+      t = FactoryBot.create(:generic_task, :in_progress, assigned_to: assignee)
       GenericTask.find(t.id)
     end
-    it "should call Task.mark_as_complete!" do
-      expect_any_instance_of(GenericTask).to receive(:mark_as_complete!)
-      task.update_from_params({})
+
+    before do
+      FeatureToggle.enable!(org.feature.to_sym, users: [user.css_id])
+      User.authenticate!(user: user)
+    end
+
+    context "task assignee is current user" do
+      let(:assignee) {user}
+      it "should not raise an error" do
+        expect {task.verify_user_access}.to_not raise_error
+      end
+    end
+
+    context "task assignee is organization to which current user belongs" do
+      let(:assignee) {org}
+      it "should not raise an error" do
+        expect {task.verify_user_access}.to_not raise_error
+      end
+    end
+
+    context "task assignee is a different person" do
+      let(:assignee) {other_user}
+      it "should raise an error" do
+        expect {task.verify_user_access}.to raise_error(Caseflow::Error::ActionForbiddenError)
+      end
+    end
+
+    context "task assignee is organization to which current user does not belong" do
+      let(:assignee) {other_org}
+      it "should raise an error" do
+        expect {task.verify_user_access}.to raise_error(Caseflow::Error::ActionForbiddenError)
+      end
+    end
+
+  end
+
+  describe ".update_from_params" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:org) { FactoryBot.create(:organization) }
+    let(:task) do
+      t = FactoryBot.create(:generic_task, :in_progress, assigned_to: assignee)
+      GenericTask.find(t.id)
+    end
+
+    context "task is assigned to an organization" do
+      let(:assignee) {org}
+
+      context "and current user does not belong to that organization" do
+        before { User.authenticate!(user: user) }
+
+        it "should raise an error when trying to call Task.mark_as_complete!" do
+          expect {task.update_from_params({})}.to raise_error(Caseflow::Error::ActionForbiddenError)
+        end
+      end
+
+      context "and current user belongs to that organization" do
+        before do
+          FeatureToggle.enable!(org.feature.to_sym, users: [user.css_id])
+          User.authenticate!(user: user)
+        end
+
+        it "should call Task.mark_as_complete!" do
+          expect_any_instance_of(GenericTask).to receive(:mark_as_complete!)
+          task.update_from_params({})
+        end
+      end
+    end
+
+    context "task is assigned to a person" do
+      let(:other_user) { FactoryBot.create(:user) }
+      let(:assignee) {user}
+
+      context "who is not the current user" do
+        before { User.authenticate!(user: other_user) }
+        it "should raise an error when trying to call Task.mark_as_complete!" do
+          expect {task.update_from_params({})}.to raise_error(Caseflow::Error::ActionForbiddenError)
+        end
+      end
+
+      context "who is the current user" do
+        before { User.authenticate!(user: user) }
+        it "should call Task.mark_as_complete!" do
+          expect_any_instance_of(GenericTask).to receive(:mark_as_complete!)
+          task.update_from_params({})
+        end
+      end
     end
   end
 
   describe ".create_from_params" do
-    let(:assignee) { FactoryBot.create(:user) }
+    let(:user) { FactoryBot.create(:user) }
     let(:parent) do
-      t = FactoryBot.create(:generic_task, :in_progress)
+      t = FactoryBot.create(:generic_task, :in_progress, assigned_to: user)
       GenericTask.find(t.id)
     end
+
+    let(:assignee) { FactoryBot.create(:user) }
     let(:good_params) do
       {
         status: "completed",
@@ -24,6 +113,8 @@ describe GenericTask do
         assigned_to_id: assignee.id
       }
     end
+
+    before { User.authenticate!(user: user) }
 
     context "when missing assignee parameter" do
       let(:params) do
