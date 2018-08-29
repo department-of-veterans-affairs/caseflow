@@ -149,6 +149,7 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   def master_record_type
     return :video if folder_nr =~ /VIDEO/
+    return :central if folder_nr.nil?
   end
 
   def update_hearing!(hearing_info)
