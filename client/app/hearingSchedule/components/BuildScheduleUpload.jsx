@@ -16,6 +16,10 @@ const fileUploadStyling = css({
   marginTop: '70px'
 });
 
+const inlineFormStyling = css({
+  marginTop: '10px'
+});
+
 export default class BuildScheduleUpload extends React.Component {
 
   getErrorMessage = (errors) => {
@@ -35,29 +39,31 @@ export default class BuildScheduleUpload extends React.Component {
       <div>
         {this.props.uploadRoCoFormErrors &&
           <span className="usa-input-error-message">{this.getErrorMessage(this.props.uploadRoCoFormErrors)}</span>}
-        <InlineForm>
-          <BasicDateRangeSelector
+        <div {...inlineFormStyling} >
+          <InlineForm>
+            <BasicDateRangeSelector
             // messageLabel
-            startDateName="startDate"
-            startDateValue={this.props.roCoStartDate}
-            startDateLabel={false}
-            endDateName="endDate"
-            endDateValue={this.props.roCoEndDate}
-            endDateLabel={false}
-            onStartDateChange={this.props.onRoCoStartDateChange}
-            onEndDateChange={this.props.onRoCoEndDateChange}
-          />
-          <div {...fileUploadStyling} >
-            <FileUpload {...fileUploadStyling}
-              preUploadText="Select a file for upload"
-              postUploadText="Choose a different file"
-              id="ro_co_file_upload"
-              fileType=".xlsx"
-              onChange={this.props.onRoCoFileUpload}
-              value={this.props.roCoFileUpload}
+              startDateName="startDate"
+              startDateValue={this.props.roCoStartDate}
+              startDateLabel= {COPY.HEARING_SCHEDULE_UPLOAD_START_DATE_LABEL}
+              endDateName="endDate"
+              endDateValue={this.props.roCoEndDate}
+              endDateLabel={COPY.HEARING_SCHEDULE_UPLOAD_END_DATE_LABEL}
+              onStartDateChange={this.props.onRoCoStartDateChange}
+              onEndDateChange={this.props.onRoCoEndDateChange}
             />
-          </div>
-        </InlineForm>
+            <div {...fileUploadStyling} >
+              <FileUpload {...fileUploadStyling}
+                preUploadText="Select a file for upload"
+                postUploadText="Choose a different file"
+                id="ro_co_file_upload"
+                fileType=".xlsx"
+                onChange={this.props.onRoCoFileUpload}
+                value={this.props.roCoFileUpload}
+              />
+            </div>
+          </InlineForm>
+        </div>
       </div>}
     </div>;
   };
@@ -70,13 +76,13 @@ export default class BuildScheduleUpload extends React.Component {
           <span className="usa-input-error-message">{this.getErrorMessage(this.props.uploadJudgeFormErrors)}</span>}
         <InlineForm>
           <BasicDateRangeSelector
-            messageLabel
+            // messageLabel
             startDateName="startDate"
             startDateValue={this.props.judgeStartDate}
-            startDateLabel={false}
+            startDateLabel={COPY.HEARING_SCHEDULE_UPLOAD_START_DATE_LABEL}
             endDateName="endDate"
             endDateValue={this.props.judgeEndDate}
-            endDateLabel={false}
+            endDateLabel={COPY.HEARING_SCHEDULE_UPLOAD_END_DATE_LABEL}
             onStartDateChange={this.props.onJudgeStartDateChange}
             onEndDateChange={this.props.onJudgeEndDateChange}
           />

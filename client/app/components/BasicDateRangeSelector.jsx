@@ -2,31 +2,23 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import InlineForm from './InlineForm';
 import DateSelector from './DateSelector';
-import { css } from 'glamor';
-
-
-const dateSeparator = css({
-  paddingLeft: '2rem',
-  display: 'inline-block'
-});
 
 export default class BasicDateRangeSelector extends React.Component {
   render() {
     return <div>
-      {/* {this.props.messageLabel && <p><i>Please input a date range</i></p>} */}
+      {this.props.messageLabel && <p><i>Please input a date range</i></p>}
       <InlineForm>
-        <DateSelector {...hearingSchedStyling}
+        <DateSelector
           name={this.props.startDateName}
-          label="Start Date"
+          label={this.props.startDateLabel}
           value={this.props.startDateValue}
           onChange={this.props.onStartDateChange}
           type="date"
         />
-        {/* &nbsp;{this.props.messageLabel && 'to'}&nbsp; */}
-        <div {...dateSeparator} ></div> 
+        &nbsp;{this.props.messageLabel && 'to'}&nbsp;
         <DateSelector
           name={this.props.endDateName}
-          label= "End Date"
+          label={this.props.endDateLabel}
           value={this.props.endDateValue}
           onChange={this.props.onEndDateChange}
           type="date"
