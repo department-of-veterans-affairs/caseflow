@@ -18,7 +18,7 @@ jobs:
           - COVERAGE_DIR: /home/circleci/coverage
           - POSTGRES_HOST: localhost
           - POSTGRES_USER: root
-          - LD_LIBRARY_PATH: ~/project/oracle_libs/
+          - LD_LIBRARY_PATH: /home/circleci/project/oracle_libs/
       # This is the circleci provided Postgres container. We can
       # configure it via environment variables.
       - image: circleci/postgres:10.2
@@ -66,7 +66,7 @@ jobs:
             command: |
                 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH
                 env
-                
+
         - run:
             name: Bundle install
             command: sudo env LD_LIBRARY_PATH=$LD_LIBRARY_PATH bundle install --path vendor/bundle
