@@ -140,11 +140,11 @@ RSpec.feature "Certification Stats Dashboard" do
     find("#time-to-certify-toggle").click
 
     expect(page).to have_content("Overall (95th percentile)")
-    expect(page).to have_content("December 6")
+    expect(page).to have_content("December 17")
 
     # Scroll once more to see December 16 have no stats
     page.driver.execute_script(leftarrow)
-    expect(page).to have_content("December 5")
+    expect(page).to have_content("December 16")
     expect(page).to have_content("Overall (95th percentile)")
 
     find("#time-to-certify-toggle").click
