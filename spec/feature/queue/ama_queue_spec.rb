@@ -66,7 +66,7 @@ RSpec.feature "AmaQueue" do
         ),
         create(
           :appeal,
-          :appellant_not_veteran,
+          number_of_claimants: 1,
           veteran: create(:veteran),
           documents: create_list(:document, 3),
           request_issues: build_list(:request_issue, 1, description: "Tinnitus")

@@ -87,7 +87,7 @@ class AppealsController < ApplicationController
   def get_appeals_for_file_number(file_number)
     return file_number_not_found_error unless file_number
 
-    return file_access_prohibited_error if current_user.vso_employee? && !BGSService.new.can_access?(file_number)
+    return get_vso_appeals_for_file_number(file_number) if current_user.vso_employee?
 
     MetricsService.record("VACOLS: Get appeal information for file_number #{file_number}",
                           service: :queue,
@@ -101,6 +101,21 @@ class AppealsController < ApplicationController
       end
       # rubocop:enable Lint/HandleExceptions
 
+      render json: {
+        appeals: json_appeals(appeals)[:data]
+      }
+    end
+  end
+
+  def get_vso_appeals_for_file_number(file_number)
+    return file_access_prohibited_error if current_user.vso_employee? && !BGSService.new.can_access?(file_number)
+
+    MetricsService.record("VACOLS: Get vso appeals information for file_number #{file_number}",
+                          service: :queue,
+                          name: "AppealsController.get_vso_appeals_for_file_number") do
+      vso_participant_ids = current_user.vsos.map { |poa| poa[:participant_id] }
+
+      appeals = Veteran.find_by(file_number: file_number).appeals_vso_has_access_to(vso_participant_ids)
       render json: {
         appeals: json_appeals(appeals)[:data]
       }

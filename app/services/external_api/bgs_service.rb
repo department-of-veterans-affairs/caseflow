@@ -15,6 +15,7 @@ class ExternalApi::BGSService
     @end_products = {}
     @veteran_info = {}
     @poas = {}
+    poa_by_participant_ids = {}
     @poa_addresses = {}
     @people_by_ssn = {}
   end

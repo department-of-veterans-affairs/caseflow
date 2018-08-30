@@ -1,15 +1,15 @@
 FactoryBot.define do
   factory :appeal do
-    trait :appellant_not_veteran do
-      after(:create) do |appeal|
-        appeal.claimants = [create(:claimant)]
-      end
+    transient do
+      number_of_claimants nil
     end
 
     sequence(:veteran_file_number, 500_000_000)
 
     transient do
-      veteran nil
+      veteran do
+        Veteran.find_by(file_number: veteran_file_number) || create(:veteran, file_number: veteran_file_number)
+      end
     end
 
     uuid do
@@ -37,6 +37,26 @@ FactoryBot.define do
 
       Fakes::VBMSService.document_records ||= {}
       Fakes::VBMSService.document_records[appeal.veteran_file_number] = evaluator.documents
+    end
+
+    after(:create) do |appeal, evaluator|
+      if !appeal.claimants.empty?
+        appeal.claimants.each do |claimant|
+          claimant.review_request = appeal
+          claimant.save
+        end
+      else
+        if evaluator.number_of_claimants
+          appeal.claimants = create_list(:claimant, evaluator.number_of_claimants, review_request: appeal)
+        else
+          appeal.claimants = [create(
+            :claimant,
+            participant_id: appeal.veteran.participant_id,
+            review_request: appeal,
+            payee_code: "00"
+          )]
+        end
+      end
     end
   end
 end

@@ -179,6 +179,16 @@ class SeedDB
       veteran_file_number: "701305078",
       request_issues: FactoryBot.build_list(:request_issue, 3, description: "Knee pain")
     )
+    @appeal_with_vso = FactoryBot.create(
+      :appeal,
+      claimants: [
+        FactoryBot.build(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO"),
+        FactoryBot.build(:claimant, participant_id: "OTHER_CLAIMANT")
+      ],
+      veteran_file_number: "701305078",
+      request_issues: FactoryBot.build_list(:request_issue, 3, description: "Head trauma")
+    )
+    @ama_appeals << @appeal_with_vso
     @ama_appeals << FactoryBot.create(
       :appeal,
       veteran_file_number: "963360019",
@@ -186,25 +196,25 @@ class SeedDB
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
-      :appellant_not_veteran,
+      number_of_claimants: 1,
       veteran_file_number: "604969679",
       request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
-      :appellant_not_veteran,
+      number_of_claimants: 1,
       veteran_file_number: "228081153",
       request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
-      :appellant_not_veteran,
+      number_of_claimants: 1,
       veteran_file_number: "152003980",
       request_issues: FactoryBot.build_list(:request_issue, 3, description: "PTSD")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
-      :appellant_not_veteran,
+      number_of_claimants: 1,
       veteran_file_number: "375273128",
       request_issues: FactoryBot.build_list(:request_issue, 1, description: "Knee pain")
     )
@@ -268,7 +278,7 @@ class SeedDB
                       parent: parent,
                       appeal: @ama_appeals[5])
 
-    FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @ama_appeals[0])
+    FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @appeal_with_vso)
 
     # Colocated tasks with legacy appeals
     FactoryBot.create(:colocated_task,
