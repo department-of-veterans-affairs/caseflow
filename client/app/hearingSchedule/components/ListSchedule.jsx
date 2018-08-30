@@ -61,7 +61,7 @@ export default class ListSchedule extends React.Component {
       vlj: hearingDay.judgeName
     }));
 
-    const removeCoDuplicates = _.uniqBy(hearingScheduleRows, (row) => [row.hearingDate, row.roomInfo].join());
+    const removeCoDuplicates = _.uniqWith(hearingScheduleRows, _.isEqual);
 
     return <AppSegment filledBackground>
       <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
