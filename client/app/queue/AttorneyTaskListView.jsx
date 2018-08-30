@@ -9,9 +9,7 @@ import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Alert from '../components/Alert';
 
-import {
-  tasksByAssigneeCssIdSelector
-} from './selectors';
+import { workableTasksByAssigneeCssIdSelector } from './selectors';
 import {
   resetErrorMessages,
   resetSuccessMessages,
@@ -96,7 +94,7 @@ const mapStateToProps = (state) => {
   } = state;
 
   return ({
-    tasks: tasksByAssigneeCssIdSelector(state),
+    tasks: workableTasksByAssigneeCssIdSelector(state),
     messages,
     taskDecision
   });

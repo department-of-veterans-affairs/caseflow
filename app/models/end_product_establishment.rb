@@ -1,6 +1,15 @@
+# EndProductEstablishment represents an end product that Caseflow has either established or attempted to
+# establish (if the establishment was successful `established_at` will be set). The purpose of the
+# end product is determined by the `source`.
+#
+# Most columns on EndProductEstablishment are intended to be immutable, representing the attributes of the
+# end product when it was created. Exceptions are `synced_status` and `last_synced_at`, used to record
+# the current status of the EP when the EndProductEstablishment is synced.
+
 class EndProductEstablishment < ApplicationRecord
   class EstablishedEndProductNotFound < StandardError; end
-  attr_accessor :valid_modifiers
+
+  attr_accessor :valid_modifiers, :special_issues
   # In AMA reviews, we may create 2 end products at the same time. To avoid using
   # the same modifier, we add used modifiers to the invalid_modifiers array.
   attr_writer :invalid_modifiers
@@ -8,7 +17,36 @@ class EndProductEstablishment < ApplicationRecord
 
   class InvalidEndProductError < StandardError; end
 
+  class BGSSyncError < RuntimeError
+    def initialize(error, end_product_establishment)
+      Raven.extra_context(end_product_establishment: end_product_establishment.id)
+      super(error.message).tap do |result|
+        result.set_backtrace(error.backtrace)
+      end
+    end
+  end
+
   CANCELED_STATUS = "CAN".freeze
+
+  class << self
+    def order_by_sync_priority
+      active.order("last_synced_at IS NOT NULL, last_synced_at ASC")
+    end
+
+    private
+
+    def established
+      where.not("established_at IS NULL")
+    end
+
+    def active
+      # We only know the set of inactive EP statuses
+      # We also only know the EP status after fetching it from BGS
+      # Therefore, our definition of active is when the EP is either
+      #   not known or not known to be inactive
+      established.where("synced_status NOT IN (?) OR synced_status IS NULL", EndProduct::INACTIVE_STATUSES)
+    end
+  end
 
   def perform!
     fail InvalidEndProductError unless end_product_to_establish.valid?
@@ -62,17 +100,49 @@ class EndProductEstablishment < ApplicationRecord
     return true unless status_active?
 
     fail EstablishedEndProductNotFound unless result
-    update!(
-      synced_status: result.status_type_code,
-      last_synced_at: Time.zone.now
-    )
+
+    transaction do
+      update!(
+        synced_status: result.status_type_code,
+        last_synced_at: Time.zone.now
+      )
+
+      sync_source!
+    end
+
+    # TODO: This is sort of janky. Let's rethink the error handling logic here
+  rescue StandardError => e
+    raise e if e.is_a?(EstablishedEndProductNotFound)
+    raise BGSSyncError.new(e, self)
   end
 
   def status_canceled?
     synced_status == CANCELED_STATUS
   end
 
+  def status_active?(sync: false)
+    sync! if sync
+    !EndProduct::INACTIVE_STATUSES.include?(synced_status)
+  end
+
   delegate :contentions, to: :cached_result
+
+  # VBMS will return ALL contentions on a end product when you create contentions,
+  # not just the ones that were just created.
+  def create_contentions!(for_objects)
+    # Currently not making any assumptions about the order in which VBMS returns
+    # the created contentions. Instead find the issue by matching text.
+    create_contentions_in_vbms(for_objects.pluck(:description)).each do |contention|
+      matching_object = for_objects.find { |object| object.description == contention.text }
+      matching_object && matching_object.update!(contention_reference_id: contention.id)
+    end
+
+    fail ContentionCreationFailed if for_objects.any? { |object| !object.contention_reference_id }
+  end
+
+  def remove_contention!(for_object)
+    VBMSService.remove_contention!(contention_for_object(for_object))
+  end
 
   private
 
@@ -130,7 +200,21 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
-  def status_active?
-    !EndProduct::INACTIVE_STATUSES.include?(synced_status)
+  def sync_source!
+    return unless source && source.respond_to?(:on_sync)
+    source.on_sync(self)
+  end
+
+  def create_contentions_in_vbms(descriptions)
+    VBMSService.create_contentions!(
+      veteran_file_number: veteran_file_number,
+      claim_id: reference_id,
+      contention_descriptions: descriptions,
+      special_issues: special_issues || []
+    )
+  end
+
+  def contention_for_object(for_object)
+    contentions.find { |contention| contention.id == for_object.contention_reference_id }
   end
 end
