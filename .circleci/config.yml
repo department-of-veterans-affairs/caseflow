@@ -33,45 +33,45 @@ jobs:
     parallelism: 5
     resource_class: large
     steps:
-      - checkout
+        - checkout
 
-      - run:
+        - run:
             name: Install pdftk
             command: apt-get install pdftk
-     - run:
+        - run:
             name: Print working directory
             command: |
                 pwd
                 ls -lsa
-                
-      - run:
+
+        - run:
             name: Set Oracle Env Variables
             command: export LD_LIBRARY_PATH=oracle_libs/
 
-      - run:
-          name: Setup testfiles directory
-          command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
+        - run:
+            name: Setup testfiles directory
+            command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
-      - run:
-          name: Ruby version
-          command: ruby -v
+        - run:
+            name: Ruby version
+            command: ruby -v
 
-      - restore_cache:
-          keys:
-            - vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+        - restore_cache:
+            keys:
+                - vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
 
-      - run:
-          name: Bundle install
-          command: bundle install --path vendor/bundle
+        - run:
+            name: Bundle install
+            command: bundle install --path vendor/bundle
 
-      - save_cache:
-          key: vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
+        - save_cache:
+            key: vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+            paths:
+                - vendor/bundle
 
-      - restore_cache:
-          name: Restore yarn cache
-          key: dot-cache-yarn-v1-{{ arch }}-{{ checksum "client/yarn.lock" }}
+        - restore_cache:
+            name: Restore yarn cache
+            key: dot-cache-yarn-v1-{{ arch }}-{{ checksum "client/yarn.lock" }}
 
       - run:
           name: yarn install
