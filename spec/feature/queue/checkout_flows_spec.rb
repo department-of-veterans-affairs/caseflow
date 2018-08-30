@@ -231,11 +231,9 @@ RSpec.feature "Checkout flows" do
 
         expect(page).to have_content("You deleted issue #{issue_idx + 1}.")
 
-        issue_rows = page.find_all("tr[id^='table-row-']")
-        expect(issue_rows.length).to eq(old_issues_count - 1)
-
         visit "/queue"
-        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.id}']/td[4]").text
+
+        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
         expect(issue_count.to_i).to eq(old_issues_count - 1)
       end
     end
@@ -351,8 +349,7 @@ RSpec.feature "Checkout flows" do
 
         visit "/queue"
 
-        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.id}']/td[4]").text
-        expect(issue_count).to eq "2"
+        expect(appeal.reload.issues.length).to eq 2
       end
     end
   end
@@ -466,19 +463,34 @@ RSpec.feature "Checkout flows" do
         )
       )
     end
+    let!(:appeal_with_translation_task) do
+      FactoryBot.create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: FactoryBot.create(
+          :case,
+          :assigned,
+          user: colocated_user,
+          case_issues: FactoryBot.create_list(:case_issue, 1)
+        )
+      )
+    end
     let!(:colocated_action) do
       FactoryBot.create(
         :colocated_task,
         appeal: appeal,
         assigned_to: colocated_user,
-        assigned_by: attorney_user
+        assigned_by: attorney_user,
+        action: "pending_scanning_vbms"
       )
     end
-    let!(:ama_colocated_action) do
+    let!(:translation_action) do
       FactoryBot.create(
-        :ama_colocated_task,
+        :colocated_task,
+        appeal: appeal_with_translation_task,
         assigned_to: colocated_user,
-        assigned_by: attorney_user
+        assigned_by: attorney_user,
+        action: "translation"
       )
     end
 
@@ -494,30 +506,37 @@ RSpec.feature "Checkout flows" do
     scenario "reassigns task to assigning attorney" do
       visit "/queue"
 
-      vet_name = colocated_action.appeal.veteran_full_name
+      appeal = colocated_action.appeal
+
+      vet_name = appeal.veteran_full_name
       attorney_name = colocated_action.assigned_by_display_name
       attorney_name_display = "#{attorney_name.first[0]}. #{attorney_name.last}"
 
-      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
+      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
       click_dropdown 0
-      expect(page).to have_content("Send back to attorney")
-      click_on "Send back to attorney"
+      expect(page).to have_content(COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_BUTTON)
+      click_on COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_BUTTON
 
       expect(page).to have_content(
         format(COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION, vet_name, attorney_name_display)
       )
+
+      expect(colocated_action.reload.status).to eq "completed"
+      expect(colocated_action.assigned_at.to_date).to eq Time.zone.today
     end
 
     scenario "places task on hold" do
       visit "/queue"
 
-      vet_name = colocated_action.appeal.veteran_full_name
-      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
+      appeal = colocated_action.appeal
+
+      vet_name = appeal.veteran_full_name
+      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
 
       click_dropdown 1
 
       expect(page).to have_content(
-        format(COPY::COLOCATED_ACTION_PLACE_HOLD_HEAD, vet_name, colocated_action.appeal.sanitized_vbms_id)
+        format(COPY::COLOCATED_ACTION_PLACE_HOLD_HEAD, vet_name, appeal.sanitized_vbms_id)
       )
 
       click_dropdown 6
@@ -533,6 +552,35 @@ RSpec.feature "Checkout flows" do
       )
       expect(colocated_action.reload.on_hold_duration).to eq hold_duration
       expect(colocated_action.status).to eq "on_hold"
+    end
+
+    scenario "sends task to team" do
+      visit "/queue"
+
+      appeal = translation_action.appeal
+      vacols_case = appeal.case_record
+
+      team_name = Constants::CO_LOCATED_ADMIN_ACTIONS[translation_action.action]
+      vet_name = appeal.veteran_full_name
+      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
+
+      click_dropdown 0
+
+      expect(page).to have_content(
+        format(COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD, team_name)
+      )
+      expect(page).to have_content(
+        format(COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY, vet_name, appeal.sanitized_vbms_id)
+      )
+
+      click_on COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_BUTTON
+
+      expect(page).to have_content(
+        format(COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_CONFIRMATION, vet_name, team_name)
+      )
+
+      expect(translation_action.reload.status).to eq "completed"
+      expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[translation_action.action.to_sym]
     end
   end
 end

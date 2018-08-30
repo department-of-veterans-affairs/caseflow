@@ -274,7 +274,8 @@ class SeedDB
     FactoryBot.create(:colocated_task,
                       appeal: LegacyAppeal.find_by(vacols_id: "2096907"),
                       assigned_by: attorney,
-                      assigned_to: colocated)
+                      assigned_to: colocated,
+                      action: "schedule_hearing")
 
     FactoryBot.create(:colocated_task,
                       :in_progress,
