@@ -413,6 +413,9 @@ GEM
     sawyer (0.8.1)
       addressable (>= 2.3.5, < 2.6)
       faraday (~> 0.8, < 1.0)
+    scss_lint (0.57.0)
+      rake (>= 0.9, < 13)
+      sass (~> 3.5.5)
     sdoc (0.4.2)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
@@ -534,6 +537,7 @@ DEPENDENCIES
   rubocop (~> 0.52.1)
   ruby-oci8
   sass-rails (~> 5.0)
+  scss_lint
   sdoc (~> 0.4.0)
   sentry-raven
   shoryuken (= 3.1.11)
