@@ -77,7 +77,7 @@ class TasksController < ApplicationController
       redirect_to "/unauthorized"
       return
     end
-    task.update_from_params(update_params)
+    task.update_from_params(update_params, current_user)
 
     return invalid_record_error(task) unless task.valid?
     render json: { tasks: json_tasks([task]) }
