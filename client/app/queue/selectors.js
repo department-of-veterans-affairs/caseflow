@@ -29,6 +29,12 @@ const getUserCssId = (state: State) => state.ui.userCssId;
 const getAppealId = (state: State, props: Object) => props.appealId;
 const getAttorneys = (state: State) => state.queue.attorneysOfJudge;
 const getCaseflowVeteranId = (state: State, props: Object) => props.caseflowVeteranId;
+const getModals = (state: State) => state.ui.modals;
+
+export const getActiveModalType = createSelector(
+  [getModals],
+  (modals: { String: boolean }) => _.find(Object.keys(modals), (modalName) => modals[modalName])
+);
 
 export const tasksWithAppealSelector = createSelector(
   [getTasks, getAmaTasks, getAppeals],
@@ -91,13 +97,25 @@ export const appealsByCaseflowVeteranId = createSelector(
 
 export const tasksByAssigneeCssIdSelector = createSelector(
   [tasksWithAppealSelector, getUserCssId],
-  (tasks: Array<Task>, cssId: string) =>
+  (tasks: Array<TaskWithAppeal>, cssId: string) =>
     _.filter(tasks, (task) => task.assignedTo.cssId === cssId)
 );
 
-export const newTasksByAssigneeCssIdSelector = createSelector(
+export const incompleteTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
+  (tasks: Array<Task>) => tasks.filter((task) => task.status !== 'completed')
+);
+
+export const newTasksByAssigneeCssIdSelector = createSelector(
+  [incompleteTasksByAssigneeCssIdSelector],
   (tasks: Array<Task>) => tasks.filter((task) => !task.placedOnHoldAt)
+);
+
+export const workableTasksByAssigneeCssIdSelector = createSelector(
+  [tasksByAssigneeCssIdSelector],
+  (tasks: Array<TaskWithAppeal>) => tasks.filter(
+    (task) => task.appeal.docketName === 'legacy' || task.status !== 'on_hold'
+  )
 );
 
 const getNewDocsForAppeal = (state: State) => state.queue.newDocsForAppeal;
@@ -111,7 +129,7 @@ const hasNewDocuments = (newDocsForAppeal: NewDocsForAppeal, task: Task) => {
 };
 
 export const pendingTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
-  [tasksByAssigneeCssIdSelector, getNewDocsForAppeal],
+  [incompleteTasksByAssigneeCssIdSelector, getNewDocsForAppeal],
   (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) =>
     tasks.filter(
       (task) =>
@@ -121,7 +139,7 @@ export const pendingTasksByAssigneeCssIdSelector: (State) => Array<Task> = creat
 );
 
 export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
-  [tasksByAssigneeCssIdSelector, getNewDocsForAppeal],
+  [incompleteTasksByAssigneeCssIdSelector, getNewDocsForAppeal],
   (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) =>
     tasks.filter(
       (task) =>
@@ -132,13 +150,12 @@ export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = create
 
 export const judgeReviewTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) =>
-    _.filter(tasks, (task: Task) => task.taskType === 'Review' || task.taskType === null)
+  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => task.taskType === 'Review' || task.taskType === null)
 );
 
 export const judgeAssignTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) => _.filter(tasks, (task) => task.taskType === 'Assign')
+  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => task.taskType === 'Assign')
 );
 
 // ***************** Non-memoized selectors *****************

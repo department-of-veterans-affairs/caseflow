@@ -11,8 +11,8 @@ class SyncReviewsJob < CaseflowJob
     # specified limit of end products that will be synced
     limit = args["limit"] || DEFAULT_EP_LIMIT
 
-    RampElection.order_by_sync_priority.limit(limit).each do |ramp_election|
-      RampElectionSyncJob.perform_later(ramp_election.id)
+    EndProductEstablishment.order_by_sync_priority.limit(limit).each do |end_product_establishment|
+      EndProductSyncJob.perform_later(end_product_establishment.id)
     end
   end
 end

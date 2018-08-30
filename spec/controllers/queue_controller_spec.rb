@@ -14,17 +14,12 @@ RSpec.describe QueueController, type: :controller do
     end
 
     context "when user is a VSO employee" do
-      let(:vso_user) { FactoryBot.create(:user) }
-
+      let(:vso_user) { FactoryBot.create(:user, roles: ["VSO"]) }
       let(:url) { "american-legion" }
       let(:feature) { "org_queue_american_legion" }
       let!(:vso) { Vso.create(url: url, feature: feature) }
 
-      before do
-        Functions.grant!("VSO", users: [vso_user.css_id])
-        User.authenticate!(user: vso_user)
-      end
-
+      before { User.authenticate!(user: vso_user) }
       after { User.unauthenticate! }
 
       context "but user does not have feature toggle for any organization" do

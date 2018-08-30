@@ -1,8 +1,4 @@
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
-  attribute :is_legacy_appeal do
-    false
-  end
-
   attribute :issues do
     object.request_issues
   end

@@ -63,4 +63,8 @@ class VACOLS::TravelBoardSchedule < VACOLS::Record
   def vdkey
     nil
   end
+
+  def folder_nr
+    :fake_folder_nr
+  end
 end

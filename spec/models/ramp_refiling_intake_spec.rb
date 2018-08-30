@@ -156,10 +156,11 @@ describe RampRefilingIntake do
         let(:end_product_status) { "PEND" }
 
         let!(:end_product_establishment) do
-          EndProductEstablishment.create(
-            source: ramp_election,
-            reference_id: end_product.claim_id,
+          create(
+            :end_product_establishment,
             veteran_file_number: veteran_file_number,
+            source: ramp_election,
+            established_at: Time.zone.now,
             synced_status: end_product_status
           )
         end
@@ -171,6 +172,16 @@ describe RampRefilingIntake do
       end
 
       context "the EP associated with original RampElection is closed" do
+        let!(:end_product_establishment) do
+          create(
+            :end_product_establishment,
+            :cleared,
+            veteran_file_number: veteran_file_number,
+            source: ramp_election,
+            established_at: Time.zone.now
+          )
+        end
+
         context "there are no contentions on the EP" do
           it "adds ramp_election_no_issues and returns false" do
             expect(subject).to eq(false)

@@ -17,7 +17,12 @@ class Fakes::BGSService
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/CyclomaticComplexity
   def self.create_veteran_records
+    return if @veteran_records_created
+
+    @veteran_records_created = true
+
     file_path = Rails.root.join("local", "vacols", "bgs_setup.csv")
 
     CSV.foreach(file_path, headers: true) do |row|
@@ -81,6 +86,7 @@ class Fakes::BGSService
     end
   end
   # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def self.all_grants
     default_date = 10.days.ago.to_formatted_s(:short_date)

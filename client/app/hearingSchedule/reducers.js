@@ -158,7 +158,8 @@ const reducers = (state = initialState, action = {}) => {
     return update(state, {
       $unset: [
         'displaySuccessMessage',
-        'schedulePeriod'
+        'schedulePeriod',
+        'vacolsUpload'
       ]
     });
   default:
