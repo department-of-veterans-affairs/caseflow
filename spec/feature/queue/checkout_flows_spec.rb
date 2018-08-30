@@ -235,7 +235,6 @@ RSpec.feature "Checkout flows" do
 
         issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.id}']/td[4]").text
         expect(issue_count.to_i).to eq(old_issues_count - 1)
-        expect(appeal.reload.issues.length).to eq(old_issues_count - 1)
       end
     end
 
