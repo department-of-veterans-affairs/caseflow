@@ -259,12 +259,14 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: "12341234",
       claim_id: ratings_end_product_establishment.reference_id,
-      contention_descriptions: ["PTSD denied"]
+      contention_descriptions: ["PTSD denied"],
+      special_issues: []
     )
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: "12341234",
       claim_id: nonratings_end_product_establishment.reference_id,
-      contention_descriptions: ["Description for Active Duty Adjustments"]
+      contention_descriptions: ["Description for Active Duty Adjustments"],
+      special_issues: []
     )
 
     rated_issue = supplemental_claim.request_issues.find_by(description: "PTSD denied")
@@ -297,10 +299,18 @@ RSpec.feature "Supplemental Claim Intake" do
     )
 
     visit "/supplemental_claims/#{ratings_end_product_establishment.reference_id}/edit"
-    expect(page).to have_content("Hello Merica, Ed")
+    expect(page).to have_content("Supplemental Claim (VA Form 21-526b)")
+    expect(page).to have_content("Ed Merica (12341234)")
+    expect(page).to have_content("04/20/2018")
+    expect(page).to_not have_content("Informal conference request")
+    expect(page).to_not have_content("Same office request")
+    expect(page).to have_content("PTSD denied")
 
-    # visit "/supplemental_claims/#{nonratings_end_product_establishment.reference_id}/edit"
-    # expect(page).to have_content("Hello Merica, Ed")
+    safe_click ".cf-edit-issues-link"
+
+    expect(page).to have_current_path(
+      "/supplemental_claims/#{ratings_end_product_establishment.reference_id}/edit/select_issues"
+    )
 
     visit "/supplemental_claims/4321/edit"
     expect(page).to have_content("Page not found")

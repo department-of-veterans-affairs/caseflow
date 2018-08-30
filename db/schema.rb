@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180817195432) do
+
+ActiveRecord::Schema.define(version: 20180827194153) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -524,15 +525,27 @@ ActiveRecord::Schema.define(version: 20180817195432) do
   end
 
   create_table "request_issues", force: :cascade do |t|
-    t.string "review_request_type", null: false
-    t.bigint "review_request_id", null: false
+    t.string "review_request_type"
+    t.bigint "review_request_id"
     t.string "rating_issue_reference_id"
     t.date "rating_issue_profile_date"
     t.string "contention_reference_id"
     t.string "description"
     t.string "issue_category"
     t.date "decision_date"
+    t.string "disposition"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
+  end
+
+  create_table "request_issues_updates", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "review_type", null: false
+    t.bigint "review_id", null: false
+    t.integer "before_request_issue_ids", null: false, array: true
+    t.integer "after_request_issue_ids", null: false, array: true
+    t.datetime "processed_at"
+    t.index ["review_type", "review_id"], name: "index_request_issues_updates_on_review_type_and_review_id"
+    t.index ["user_id"], name: "index_request_issues_updates_on_user_id"
   end
 
   create_table "schedule_periods", force: :cascade do |t|

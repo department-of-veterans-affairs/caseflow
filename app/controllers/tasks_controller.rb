@@ -3,10 +3,12 @@ class TasksController < ApplicationController
 
   before_action :verify_queue_access
   before_action :verify_task_assignment_access, only: [:create]
+  skip_before_action :deny_vso_access, only: [:index]
 
   TASK_CLASSES = {
     ColocatedTask: ColocatedTask,
-    AttorneyTask: AttorneyTask
+    AttorneyTask: AttorneyTask,
+    GenericTask: GenericTask
   }.freeze
 
   QUEUES = {
@@ -53,7 +55,7 @@ class TasksController < ApplicationController
   def create
     return invalid_type_error unless task_class
 
-    tasks = task_class.create(create_params)
+    tasks = task_class.create_from_params(create_params, current_user)
 
     tasks.each { |task| return invalid_record_error(task) unless task.valid? }
     render json: { tasks: json_tasks(tasks) }, status: :created
@@ -75,7 +77,7 @@ class TasksController < ApplicationController
       redirect_to "/unauthorized"
       return
     end
-    task.update(update_params)
+    task.update_from_params(update_params)
 
     return invalid_record_error(task) unless task.valid?
     render json: { tasks: json_tasks([task]) }

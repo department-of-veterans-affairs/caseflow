@@ -1,4 +1,4 @@
-class HigherLevelReview < AmaReview
+class HigherLevelReview < ClaimReview
   with_options if: :saving_review do
     validates :receipt_date, presence: { message: "blank" }
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
@@ -7,6 +7,19 @@ class HigherLevelReview < AmaReview
   END_PRODUCT_RATING_CODE = "030HLRR".freeze
   END_PRODUCT_NONRATING_CODE = "030HLRNR".freeze
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 033 035 036 037 038 039].freeze
+
+  def ui_hash
+    {
+      veteranFormName: veteran.name.formatted(:form),
+      veteranName: veteran.name.formatted(:readable_short),
+      veteranFileNumber: veteran_file_number,
+      claimId: end_product_claim_id,
+      receiptDate: receipt_date,
+      issues: request_issues,
+      sameOffice: same_office,
+      informalConference: informal_conference
+    }
+  end
 
   def end_product_description
     end_product_establishment.description
@@ -26,15 +39,6 @@ class HigherLevelReview < AmaReview
     [{ code: "SSR", narrative: "Same Station Review" }]
   end
 
-  def create_contentions_in_vbms(rated: true)
-    VBMSService.create_contentions!(
-      veteran_file_number: veteran_file_number,
-      claim_id: end_product_establishment(rated: rated).reference_id,
-      contention_descriptions: issue_descriptions_to_create(rated: rated),
-      special_issues: special_issues
-    )
-  end
-
   private
 
   def find_end_product_establishment(ep_code)
@@ -52,7 +56,8 @@ class HigherLevelReview < AmaReview
       invalid_modifiers: invalid_modifiers,
       claimant_participant_id: claimant_participant_id,
       source: self,
-      station: "397" # AMC
+      station: "397", # AMC
+      special_issues: special_issues
     )
   end
 

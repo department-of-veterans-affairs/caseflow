@@ -130,6 +130,17 @@ class ExternalApi::VBMSService
     send_and_log_request(claim_id, request)
   end
 
+  def self.remove_contention!(contention)
+    @vbms_client ||= init_vbms_client
+
+    request = VBMS::Requests::RemoveContention.new(
+      contention: contention,
+      v5: FeatureToggle.enabled?(:claims_service_v5)
+    )
+
+    send_and_log_request(claim_id, request)
+  end
+
   def self.associate_rated_issues!(claim_id:, rated_issue_contention_map:)
     # rated_issue_contention_map format: { issue_id: contention_id, issue_id2: contention_id2 }
     @vbms_client ||= init_vbms_client
@@ -138,6 +149,14 @@ class ExternalApi::VBMSService
       claim_id: claim_id,
       rated_issue_contention_map: rated_issue_contention_map
     )
+
+    send_and_log_request(claim_id, request)
+  end
+
+  def self.get_dispositions!(claim_id:)
+    @vbms_client ||= init_vbms_client
+
+    request = VBMS::Requests::GetDispositions.new(claim_id: claim_id)
 
     send_and_log_request(claim_id, request)
   end

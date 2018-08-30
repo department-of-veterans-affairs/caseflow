@@ -30,29 +30,13 @@ jobs:
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.10
     parallelism: 5
+    resource_class: large
     steps:
       - checkout
 
       - run:
           name: Setup testfiles directory
           command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
-
-      - restore_cache:
-          keys:
-            - dot-rbenv-cache-v3-{{ arch }}-{{ checksum ".ruby-version" }}
-
-      - run:
-          name: Setup Ruby
-          command: rbenv install --skip-existing $(cat ~/project/.ruby-version)
-
-      - run:
-          name: Setup Bundler
-          command: gem install bundler
-
-      - save_cache:
-          key: dot-rbenv-cache-v3-{{ arch }}-{{ checksum ".ruby-version" }}
-          paths:
-            - ~/.rbenv
 
       - run:
           name: Ruby version

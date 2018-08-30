@@ -1,7 +1,9 @@
-import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
+import { ACTIONS, REQUEST_STATE } from '../constants';
+import { FORM_TYPES } from '../../intakeCommon/constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, getPageError, formatRatings, formatRelationships } from '../util';
+import { getReceiptDateError, getPageError, formatRelationships } from '../util';
+import { formatRatings } from '../../intakeCommon/util';
 
 const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.SUPPLEMENTAL_CLAIM.key) {
