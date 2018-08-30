@@ -171,7 +171,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   def get_judge_name(css_id)
     staff_info = @judges[css_id][:staff_info]
-    "#{staff_info.snamel} #{staff_info.snamemi} #{staff_info.snamef}"
+    "#{staff_info.snamel}, #{staff_info.snamemi} #{staff_info.snamef}"
   end
 
   def weekend?(day)
