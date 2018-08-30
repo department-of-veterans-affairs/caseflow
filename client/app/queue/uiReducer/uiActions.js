@@ -90,6 +90,8 @@ export const requestSave = (
   );
 };
 
+export const requestPatch = (url: string, params: Object, successMessage: UiStateMessage) =>
+  requestSave(url, params, successMessage, 'patch');
 export const requestUpdate = (url: string, params: Object, successMessage: UiStateMessage) =>
   requestSave(url, params, successMessage, 'put');
 export const requestDelete = (url: string, params: Object, successMessage: UiStateMessage) =>
