@@ -189,5 +189,27 @@ RSpec.describe AppealsController, type: :controller do
       expect(task["attributes"]["assigned_to"]["css_id"]).to eq colocated_user.css_id
       expect(task["attributes"]["appeal_id"]).to eq appeal.id
     end
+
+    context "when user is VSO" do
+      let(:vso_user) { create(:user, roles: ["VSO"]) }
+      let!(:vso_task) do
+        create(:ama_colocated_task, appeal: appeal, assigned_to: vso_user, assigned_by: assigning_user)
+      end
+      before { User.authenticate!(user: vso_user) }
+
+      it "should only return VSO tasks" do
+        get :tasks, params: { appeal_id: appeal.uuid }
+
+        response_body = JSON.parse(response.body)
+        expect(response_body["tasks"].length).to eq 1
+
+        task = response_body["tasks"][0]
+        expect(task["type"]).to eq "colocated_tasks"
+        expect(task["attributes"]["assigned_to"]["css_id"]).to eq vso_user.css_id
+        expect(task["attributes"]["appeal_id"]).to eq appeal.id
+
+        expect(appeal.tasks.count).to eq 2
+      end
+    end
   end
 end

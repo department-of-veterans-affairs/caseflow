@@ -66,13 +66,13 @@ export type Task = {
   placedOnHoldAt?: ?string,
   onHoldDuration?: ?number,
   previousTaskAssignedOn: ?string,
-  instructions? :string
+  instructions? :string,
+  parentId?: number
 };
 
 export type Tasks = { [string]: Task };
 
 export type AppealDetail = {
-  isLegacyAppeal: boolean,
   issues: Array<Object>,
   hearings: Array<Object>,
   appellantFullName: string,
