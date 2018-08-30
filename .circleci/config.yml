@@ -46,7 +46,11 @@ jobs:
 
         - run:
             name: Set Oracle Env Variables
-            command: export LD_LIBRARY_PATH=oracle_libs/
+            command: echo 'LD_LIBRARY_PATH="~/project/oracle_libs/"' >> $BASH_ENV 
+        
+        - run:
+            name: Print env variables
+            command: env
 
         - run:
             name: Setup testfiles directory
