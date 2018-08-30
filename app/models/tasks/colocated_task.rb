@@ -24,7 +24,7 @@ class ColocatedTask < Task
     private
 
     def next_assignee
-      User.find_or_create_by(css_id: next_assignee_css_id, station_id: User::BOARD_STATION_ID)
+      User.find_by_css_id_or_create_with_default_station_id(next_assignee_css_id)
     end
 
     def latest_task
