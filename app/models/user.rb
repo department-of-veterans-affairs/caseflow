@@ -138,7 +138,7 @@ class User < ApplicationRecord
   end
 
   def vso_employee?
-    Functions.granted?("VSO", css_id)
+    roles.include?("VSO")
   end
 
   def granted?(thing)
@@ -276,6 +276,10 @@ class User < ApplicationRecord
         u.regional_office = session[:regional_office]
         u.save
       end
+    end
+
+    def find_by_css_id_or_create_with_default_station_id(css_id)
+      User.find_by(css_id: css_id) || User.create(css_id: css_id, station_id: BOARD_STATION_ID)
     end
 
     def authentication_service
