@@ -5,7 +5,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:latest
+      - image: circleci:ruby
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
@@ -33,6 +33,21 @@ jobs:
     resource_class: large
     steps:
       - checkout
+
+      - run:
+            name: Install pdftk
+            command: apt-get install pdftk
+    
+     - run:
+            name: Print working directory
+            command: |
+                pwd
+                ls -lsa
+    
+      - run:
+            name: Set Oracle Env Variables
+            command: export LD_LIBRARY_PATH=oracle_libs/
+
 
       - run:
           name: Setup testfiles directory
