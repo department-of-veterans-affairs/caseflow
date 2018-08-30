@@ -232,7 +232,8 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content("You deleted issue #{issue_idx + 1}.")
 
         issue_rows = page.find_all("tr[id^='table-row-']")
-        expect(issue_rows.length).to eq(old_issues_count - 1)
+        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.id}']/td[4]").text
+        expect(issue_count.to_i).to eq(old_issues_count - 1)
 
         visit "/queue"
         expect(appeal.reload.issues.length).to eq(old_issues_count - 1)
