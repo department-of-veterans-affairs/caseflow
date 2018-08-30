@@ -1,21 +1,30 @@
 class OrganizationsController < ApplicationController
-  before_action :verify_organization_access
-  before_action :verify_role_access
-  before_action :verify_feature_access
+  before_action :verify_organization_access, except: [:index]
+  before_action :verify_role_access, except: [:index]
+  before_action :verify_feature_access, except: [:index]
   before_action :set_application
+  skip_before_action :deny_vso_access
+
+  def index
+    render json: { organizations: Organization.where(type: nil).map { |o| { id: o.id, name: o.name } } }
+  end
 
   def show
     render "organizations/show"
   end
 
+  def members
+    render json: { members: organization.members.map { |m| { id: m.id, css_id: m.css_id, full_name: m.full_name } } }
+  end
+
   private
 
   def verify_organization_access
-    redirect_to "/unauthorized" unless organization.user_has_access?(current_user)
+    redirect_to "/unauthorized" unless organization && organization.user_has_access?(current_user)
   end
 
   def verify_role_access
-    verify_authorized_roles(organization.role)
+    verify_authorized_roles(organization.role) if organization.role
   end
 
   def verify_feature_access
@@ -33,7 +42,9 @@ class OrganizationsController < ApplicationController
   end
 
   def organization
-    Organization.find_by(url: organization_url)
+    # Allow the url to be the ID of the row in the table since this will be what is associated with
+    # tasks assigned to the organization in the tasks table.
+    Organization.find_by(url: organization_url) || Organization.find(organization_url)
   end
   helper_method :organization
 end

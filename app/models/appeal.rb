@@ -50,6 +50,22 @@ class Appeal < AmaReview
     veteran && veteran.name.formatted(:readable_full)
   end
 
+  def veteran_first_name
+    veteran.name.first_name if veteran
+  end
+
+  def veteran_middle_initial
+    veteran.name.middle_initial if veteran
+  end
+
+  def veteran_last_name
+    veteran.name.last_name if veteran
+  end
+
+  def number_of_issues
+    issues[:request_issues].size
+  end
+
   def create_issues!(request_issues_data:)
     request_issues.destroy_all unless request_issues.empty?
 
