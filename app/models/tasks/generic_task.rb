@@ -5,29 +5,28 @@ class GenericTask < Task
   end
 
   class << self
-    def create_from_params(params)
+    def create_from_params(params, current_user)
       parent = Task.find(params[:parent_id])
-      child = create_child_task(parent, params)
+      child = create_child_task(parent, current_user, params)
       update_status(parent, params[:status])
       child
     end
 
     private
 
-    def create_child_task(parent, params)
+    def create_child_task(parent, current_user, params)
       # Create an assignee from the input arguments so we throw an error if the assignee does not exist.
       assignee = Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
 
       GenericTask.create!(
         appeal: parent.appeal,
-        assigned_by_id: child_assigned_by_id(parent),
+        assigned_by_id: child_assigned_by_id(parent, current_user),
         parent_id: parent.id,
         assigned_to: assignee
       )
     end
 
-    def child_assigned_by_id(parent)
-      current_user = RequestStore[:current_user]
+    def child_assigned_by_id(parent, current_user)
       return current_user.id if current_user
       return parent.assigned_to_id if parent && parent.assigned_to_type == User.name
     end

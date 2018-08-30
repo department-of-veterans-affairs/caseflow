@@ -11,6 +11,7 @@ describe GenericTask do
   end
 
   describe ".create_from_params" do
+    let(:current_user) { FactoryBot.create(:user) }
     let(:assignee) { FactoryBot.create(:user) }
     let(:parent) do
       t = FactoryBot.create(:generic_task, :in_progress)
@@ -34,7 +35,7 @@ describe GenericTask do
         }
       end
       it "should raise error before not creating child task nor update status" do
-        expect { GenericTask.create_from_params(params) }.to raise_error(TypeError)
+        expect { GenericTask.create_from_params(params, current_user) }.to raise_error(TypeError)
       end
     end
 
@@ -47,7 +48,7 @@ describe GenericTask do
         }
       end
       it "should raise error before not creating child task nor update status" do
-        expect { GenericTask.create_from_params(params) }.to raise_error(ActiveRecord::RecordNotFound)
+        expect { GenericTask.create_from_params(params, current_user) }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
@@ -61,7 +62,7 @@ describe GenericTask do
       end
       it "should create child task and not update parent task's status" do
         status_before = parent.status
-        GenericTask.create_from_params(params)
+        GenericTask.create_from_params(params, current_user)
         expect(GenericTask.where(params).count).to eq(1)
         expect(parent.status).to eq(status_before)
       end
@@ -70,7 +71,7 @@ describe GenericTask do
     context "when all parameters present" do
       it "should create child task and update parent task's status" do
         status_before = parent.status
-        GenericTask.create_from_params(good_params)
+        GenericTask.create_from_params(good_params, current_user)
         expect(GenericTask.where(good_params.except(:status)).count).to eq(1)
         expect(parent.reload.status).to_not eq(status_before)
         expect(parent.status).to eq(good_params[:status])
@@ -80,16 +81,14 @@ describe GenericTask do
     context "when parent task is assigned to a user" do
       context "when there is no current user" do
         it "should create child task assigned by parent assignee" do
-          child = GenericTask.create_from_params(good_params)
+          child = GenericTask.create_from_params(good_params, nil)
           expect(child.assigned_by_id).to eq(parent.assigned_to_id)
         end
       end
 
       context "when there is a currently logged-in user" do
-        let(:current_user) { FactoryBot.create(:user) }
-        before { User.authenticate!(user: current_user) }
         it "should create child task assigned by currently logged-in user" do
-          child = GenericTask.create_from_params(good_params)
+          child = GenericTask.create_from_params(good_params, current_user)
           expect(child.assigned_by_id).to eq(current_user.id)
         end
       end
@@ -103,16 +102,14 @@ describe GenericTask do
       end
       context "when there is no current user" do
         it "should create child task assigned by nobody" do
-          child = GenericTask.create_from_params(good_params)
+          child = GenericTask.create_from_params(good_params, nil)
           expect(child.assigned_by_id).to eq(nil)
         end
       end
 
       context "when there is a currently logged-in user" do
-        let(:current_user) { FactoryBot.create(:user) }
-        before { User.authenticate!(user: current_user) }
         it "should create child task assigned by currently logged-in user" do
-          child = GenericTask.create_from_params(good_params)
+          child = GenericTask.create_from_params(good_params, current_user)
           expect(child.assigned_by_id).to eq(current_user.id)
         end
       end
