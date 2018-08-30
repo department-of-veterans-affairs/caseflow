@@ -197,7 +197,7 @@ RSpec.describe AppealsController, type: :controller do
       end
       before { User.authenticate!(user: vso_user) }
 
-      it "should only return VSO tasks", focus: true do
+      it "should only return VSO tasks" do
         get :tasks, params: { appeal_id: appeal.uuid }
 
         response_body = JSON.parse(response.body)
