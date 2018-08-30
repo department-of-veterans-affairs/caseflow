@@ -7,7 +7,6 @@ import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import StringUtil from '../util/StringUtil';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
-import CO_LOCATED_ACTIONS from '../../constants/CO_LOCATED_ACTIONS.json';
 import VACOLS_COLUMN_MAX_LENGTHS from '../../constants/VACOLS_COLUMN_MAX_LENGTHS.json';
 
 export const COLORS = {
@@ -83,14 +82,6 @@ export const TASK_ACTIONS = {
   QUEUE_TO_READER: 'queue-to-reader'
 };
 
-export const COLOCATED_ACTIONS = [{
-  // label: COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM,
-  // value: CO_LOCATED_ACTIONS.SEND_TO_TEAM
-// }, {
-  label: COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
-  value: CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY
-}];
-
 export const JUDGE_DECISION_OPTIONS = {
   DRAFT_DECISION: {
     label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
@@ -160,3 +151,8 @@ export const PAGE_TITLES = {
 };
 
 export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, 'Custom'];
+
+export const SEND_TO_LOCATION_MODAL_TYPES = {
+  attorney: 'sendToAttorney',
+  team: 'sendToTeam'
+};

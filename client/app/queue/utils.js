@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import _ from 'lodash';
-import moment from 'moment';
 import StringUtil from '../util/StringUtil';
 import { redText } from './constants';
 
@@ -317,6 +316,3 @@ export const validateWorkProductTypeAndId = (decision: {opts: Object}) => {
 
   return oldFormat.test(documentId) || newFormat.test(documentId);
 };
-
-export const getTaskDaysWaiting = (task: Task) => moment().startOf('day').
-  diff(moment(task.assignedOn), 'days');

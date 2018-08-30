@@ -341,7 +341,7 @@ const mapStateToProps = (state, ownProps) => ({
   task: state.queue.tasks[ownProps.appealId],
   issue: state.queue.editingIssue,
   error: state.ui.messages.error,
-  deleteIssueModal: state.ui.modal.deleteIssue
+  deleteIssueModal: state.ui.modals.deleteIssue
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
