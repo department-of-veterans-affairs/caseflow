@@ -139,7 +139,7 @@ class VACOLS::CaseHearing < VACOLS::Record
              "CASE WHEN folder_nr LIKE 'VIDEO%' or folder_nr is null THEN folder_nr ELSE null END AS folder_nr",
              :room,
              :board_member,
-             "snamel || ' ' || snamemi || ' ' || snamef as judge_name",
+             "snamel || ',' || snamemi || ' ' || snamef as judge_name",
              :mduser,
              :mdtime)
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
