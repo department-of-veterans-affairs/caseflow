@@ -480,7 +480,8 @@ RSpec.feature "Checkout flows" do
         :colocated_task,
         appeal: appeal,
         assigned_to: colocated_user,
-        assigned_by: attorney_user
+        assigned_by: attorney_user,
+        action: "pending_scanning_vbms"
       )
     end
     let!(:translation_action) do
