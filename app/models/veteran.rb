@@ -107,7 +107,7 @@ class Veteran < ApplicationRecord
 
   def appeals_vso_has_access_to(vso_participant_ids)
     appeals = Appeal.where(veteran_file_number: file_number).includes(:claimants)
-    binding.pry
+
     claimants_participant_ids = appeals.map { |appeal| appeal.claimants.pluck(:participant_id) }.flatten
 
     poas = bgs.fetch_poas_by_participant_ids(claimants_participant_ids)
