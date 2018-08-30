@@ -160,4 +160,11 @@ class Fakes::VBMSService
 
     true
   end
+
+  def self.remove_contention!(contention)
+    Rails.logger.info("Submitting remove contention request to VBMS...")
+    Rails.logger.info("Contention: #{contention.inspect}")
+
+    true
+  end
 end
