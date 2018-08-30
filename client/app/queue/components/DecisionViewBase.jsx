@@ -49,7 +49,6 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
         const newPathInCheckoutFlow = /^\/queue\/appeals\/[a-zA-Z0-9-]+(?:\/\S+)/;
 
         if (!newPathInCheckoutFlow.exec(pathname) && pathname !== '/queue') {
-          // todo: how to run this.cancelFlow if user says yes?
           return `${COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT} ${COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT}`;
         }
 
