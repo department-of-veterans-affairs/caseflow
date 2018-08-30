@@ -30,7 +30,7 @@ class Task < ApplicationRecord
   end
 
   def self.create_from_params(params)
-    verify_user_access
+    new.verify_user_access
     create(params)
   end
 
