@@ -52,7 +52,10 @@ const config = {
           loader: 'style-loader'
         },
         {
-          loader: 'css-loader'
+          loader: 'css-loader',
+          options: {
+            sourceMap: true
+          }
         },
         {
           loader: 'sass-loader',
