@@ -29,6 +29,12 @@ const getUserCssId = (state: State) => state.ui.userCssId;
 const getAppealId = (state: State, props: Object) => props.appealId;
 const getAttorneys = (state: State) => state.queue.attorneysOfJudge;
 const getCaseflowVeteranId = (state: State, props: Object) => props.caseflowVeteranId;
+const getModals = (state: State) => state.ui.modals;
+
+export const getActiveModalType = createSelector(
+  [getModals],
+  (modals: { String: boolean }) => _.find(Object.keys(modals), (modalName) => modals[modalName])
+);
 
 export const tasksWithAppealSelector = createSelector(
   [getTasks, getAmaTasks, getAppeals],
@@ -95,16 +101,21 @@ export const tasksByAssigneeCssIdSelector = createSelector(
     _.filter(tasks, (task) => task.assignedTo.cssId === cssId)
 );
 
+export const incompleteTasksByAssigneeCssIdSelector = createSelector(
+  [tasksByAssigneeCssIdSelector],
+  (tasks: Array<Task>) => tasks.filter((task) => task.status !== 'completed')
+);
+
+export const newTasksByAssigneeCssIdSelector = createSelector(
+  [incompleteTasksByAssigneeCssIdSelector],
+  (tasks: Array<Task>) => tasks.filter((task) => !task.placedOnHoldAt)
+);
+
 export const workableTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks: Array<TaskWithAppeal>) => tasks.filter(
     (task) => task.appeal.docketName === 'legacy' || task.status !== 'on_hold'
   )
-);
-
-export const newTasksByAssigneeCssIdSelector = createSelector(
-  [tasksByAssigneeCssIdSelector],
-  (tasks: Array<TaskWithAppeal>) => tasks.filter((task) => !task.placedOnHoldAt)
 );
 
 const getNewDocsForAppeal = (state: State) => state.queue.newDocsForAppeal;
@@ -118,8 +129,8 @@ const hasNewDocuments = (newDocsForAppeal: NewDocsForAppeal, task: Task) => {
 };
 
 export const pendingTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
-  [tasksByAssigneeCssIdSelector, getNewDocsForAppeal],
-  (tasks: Array<TaskWithAppeal>, newDocsForAppeal: NewDocsForAppeal) =>
+  [incompleteTasksByAssigneeCssIdSelector, getNewDocsForAppeal],
+  (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) =>
     tasks.filter(
       (task) =>
         task.placedOnHoldAt &&
@@ -128,8 +139,8 @@ export const pendingTasksByAssigneeCssIdSelector: (State) => Array<Task> = creat
 );
 
 export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
-  [tasksByAssigneeCssIdSelector, getNewDocsForAppeal],
-  (tasks: Array<TaskWithAppeal>, newDocsForAppeal: NewDocsForAppeal) =>
+  [incompleteTasksByAssigneeCssIdSelector, getNewDocsForAppeal],
+  (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) =>
     tasks.filter(
       (task) =>
         task.placedOnHoldAt &&
