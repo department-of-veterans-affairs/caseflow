@@ -62,8 +62,14 @@ jobs:
                 - vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
 
         - run:
+            name: Print Oracle env variable
+            command: |
+                export LD_LIBRARY_PATH=$LD_LIBRARY_PATH
+                env
+                
+        - run:
             name: Bundle install
-            command: bundle install --path vendor/bundle
+            command: sudo env LD_LIBRARY_PATH=$LD_LIBRARY_PATH bundle install --path vendor/bundle
 
         - save_cache:
             key: vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
