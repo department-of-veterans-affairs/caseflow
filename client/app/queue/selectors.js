@@ -97,7 +97,7 @@ export const appealsByCaseflowVeteranId = createSelector(
 
 export const tasksByAssigneeCssIdSelector = createSelector(
   [tasksWithAppealSelector, getUserCssId],
-  (tasks: Array<Task>, cssId: string) =>
+  (tasks: Array<TaskWithAppeal>, cssId: string) =>
     _.filter(tasks, (task) => task.assignedTo.cssId === cssId)
 );
 
@@ -109,6 +109,13 @@ export const incompleteTasksByAssigneeCssIdSelector = createSelector(
 export const newTasksByAssigneeCssIdSelector = createSelector(
   [incompleteTasksByAssigneeCssIdSelector],
   (tasks: Array<Task>) => tasks.filter((task) => !task.placedOnHoldAt)
+)
+
+export const workableTasksByAssigneeCssIdSelector = createSelector(
+  [tasksByAssigneeCssIdSelector],
+  (tasks: Array<TaskWithAppeal>) => tasks.filter(
+    (task) => task.appeal.docketName === 'legacy' || task.status !== 'on_hold'
+  )
 );
 
 const getNewDocsForAppeal = (state: State) => state.queue.newDocsForAppeal;
@@ -143,13 +150,12 @@ export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = create
 
 export const judgeReviewTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) =>
-    _.filter(tasks, (task: Task) => task.taskType === 'Review' || task.taskType === null)
+  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => task.taskType === 'Review' || task.taskType === null)
 );
 
 export const judgeAssignTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) => _.filter(tasks, (task) => task.taskType === 'Assign')
+  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => task.taskType === 'Assign')
 );
 
 // ***************** Non-memoized selectors *****************

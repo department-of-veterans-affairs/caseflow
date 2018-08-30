@@ -11,10 +11,14 @@ import TextareaField from '../components/TextareaField';
 import SearchableDropdown from '../components/SearchableDropdown';
 import Alert from '../components/Alert';
 
-import { appealWithDetailSelector } from './selectors';
 import { requestSave } from './uiReducer/uiActions';
-import { deleteAppeal } from './QueueActions';
+import { setTaskAttrs } from './QueueActions';
 
+import { prepareTasksForStore } from './utils';
+import {
+  appealWithDetailSelector,
+  getTasksForAppeal
+} from './selectors';
 import {
   fullWidth,
   marginBottom,
@@ -23,7 +27,7 @@ import {
 import COPY from '../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
-import type { Appeal } from './types/models';
+import type { Appeal, Task } from './types/models';
 import type { UiStateMessage } from './types/state';
 
 type ComponentState = {|
@@ -40,9 +44,10 @@ type Props = Params & {|
   highlightFormItems: boolean,
   error: ?UiStateMessage,
   appeal: Appeal,
+  tasks: Array<Task>,
   // dispatch
   requestSave: typeof requestSave,
-  deleteAppeal: typeof deleteAppeal
+  setTaskAttrs: typeof setTaskAttrs
 |};
 
 class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
@@ -57,14 +62,29 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
 
   validateForm = () => Object.values(this.state).every(Boolean);
 
+  buildPayload = () => {
+    const { tasks, appeal } = this.props;
+
+    return _.map([tasks[0]], (task: Task) => {
+      const mapped: Object = {
+        ...this.state,
+        type: 'ColocatedTask',
+        external_id: appeal.externalId
+      };
+
+      if (appeal.docketName !== 'legacy') {
+        mapped.parent_id = task.taskId;
+      }
+
+      return mapped;
+    });
+  }
+
   goToNextStep = () => {
+    const { tasks } = this.props;
     const payload = {
       data: {
-        tasks: [{
-          ...this.state,
-          type: 'ColocatedTask',
-          external_id: this.props.appeal.externalId
-        }]
+        tasks: this.buildPayload()
       }
     };
     const successMsg = {
@@ -73,7 +93,12 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
     };
 
     this.props.requestSave('/tasks', payload, successMsg).
-      then(() => this.props.deleteAppeal(this.props.appealId));
+      then((resp) => {
+        const response = JSON.parse(resp.text);
+        const preparedTasks = prepareTasksForStore(response.tasks.data);
+
+        this.props.setTaskAttrs(tasks[0].externalAppealId, preparedTasks[tasks[0].externalAppealId]);
+      });
   }
 
   render = () => {
@@ -114,12 +139,13 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
 const mapStateToProps = (state, ownProps) => ({
   highlightFormItems: state.ui.highlightFormItems,
   error: state.ui.messages.error,
-  appeal: appealWithDetailSelector(state, ownProps)
+  appeal: appealWithDetailSelector(state, ownProps),
+  tasks: getTasksForAppeal(state, ownProps)
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
-  deleteAppeal
+  setTaskAttrs
 }, dispatch);
 
 const WrappedComponent = decisionViewBase(AddColocatedTaskView, {

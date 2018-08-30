@@ -149,7 +149,6 @@ export const prepareAppealForStore =
 
     const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
       accumulator[appeal.attributes.external_id] = {
-        isLegacyAppeal: appeal.attributes.is_legacy_appeal,
         issues: appeal.attributes.issues,
         hearings: appeal.attributes.hearings,
         appellantFullName: appeal.attributes.appellant_full_name,
