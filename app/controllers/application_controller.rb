@@ -107,7 +107,7 @@ class ApplicationController < ApplicationBaseController
   end
 
   def deny_vso_access
-    redirect_to "/unauthorized" if current_user.vso_employee?
+    redirect_to "/unauthorized" if current_user && current_user.vso_employee?
   end
 
   def verify_task_assignment_access
