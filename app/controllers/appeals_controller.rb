@@ -108,7 +108,7 @@ class AppealsController < ApplicationController
   end
 
   def get_vso_appeals_for_file_number(file_number)
-    return file_access_prohibited_error if current_user.vso_employee? && !BGSService.new.can_access?(file_number)
+    return file_access_prohibited_error if !BGSService.new.can_access?(file_number)
 
     MetricsService.record("VACOLS: Get vso appeals information for file_number #{file_number}",
                           service: :queue,
