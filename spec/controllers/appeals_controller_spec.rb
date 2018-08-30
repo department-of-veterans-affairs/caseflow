@@ -143,4 +143,73 @@ RSpec.describe AppealsController, type: :controller do
       assert_response :success
     end
   end
+
+  describe "GET appeals/:id/tasks" do
+    let(:assigning_user) { create(:default_user) }
+    let(:attorney_user) { create(:user) }
+    let(:colocated_user) { create(:user) }
+
+    let(:attorney_staff) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+    let(:colocated_staff) { create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
+
+    let!(:legacy_appeal) do
+      create(:legacy_appeal, vacols_case: create(:case, :assigned, bfcorlid: "0000000000S", user: attorney_user))
+    end
+    let!(:appeal) do
+      create(:appeal, veteran: create(:veteran))
+    end
+
+    let!(:colocated_task) { create(:colocated_task, appeal: legacy_appeal, assigned_by: assigning_user) }
+    let!(:ama_colocated_task) do
+      create(:ama_colocated_task, appeal: appeal, assigned_to: colocated_user, assigned_by: assigning_user)
+    end
+
+    it "should return AttorneyLegacyTasks" do
+      get :tasks, params: { appeal_id: legacy_appeal.vacols_id, role: "attorney" }
+
+      assert_response :success
+      response_body = JSON.parse(response.body)
+      expect(response_body["tasks"].length).to eq 1
+      task = response_body["tasks"][0]
+      expect(task["id"]).to eq(legacy_appeal.vacols_id)
+      expect(task["type"]).to eq("attorney_legacy_tasks")
+      expect(task["attributes"]["user_id"]).to eq(attorney_user.css_id)
+      expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
+    end
+
+    it "should return ColocatedTasks" do
+      get :tasks, params: { appeal_id: appeal.uuid, role: "colocated" }
+
+      assert_response :success
+      response_body = JSON.parse(response.body)
+      expect(response_body["tasks"].length).to eq 1
+
+      task = response_body["tasks"][0]
+      expect(task["type"]).to eq "colocated_tasks"
+      expect(task["attributes"]["assigned_to"]["css_id"]).to eq colocated_user.css_id
+      expect(task["attributes"]["appeal_id"]).to eq appeal.id
+    end
+
+    context "when user is VSO" do
+      let(:vso_user) { create(:user, roles: ["VSO"]) }
+      let!(:vso_task) do
+        create(:ama_colocated_task, appeal: appeal, assigned_to: vso_user, assigned_by: assigning_user)
+      end
+      before { User.authenticate!(user: vso_user) }
+
+      it "should only return VSO tasks" do
+        get :tasks, params: { appeal_id: appeal.uuid }
+
+        response_body = JSON.parse(response.body)
+        expect(response_body["tasks"].length).to eq 1
+
+        task = response_body["tasks"][0]
+        expect(task["type"]).to eq "colocated_tasks"
+        expect(task["attributes"]["assigned_to"]["css_id"]).to eq vso_user.css_id
+        expect(task["attributes"]["appeal_id"]).to eq appeal.id
+
+        expect(appeal.tasks.count).to eq 2
+      end
+    end
+  end
 end

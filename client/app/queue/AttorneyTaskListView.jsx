@@ -5,10 +5,11 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 import StatusMessage from '../components/StatusMessage';
-import AttorneyTaskTable from './AttorneyTaskTable';
+import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Alert from '../components/Alert';
 
+import { workableTasksByAssigneeCssIdSelector } from './selectors';
 import {
   resetErrorMessages,
   resetSuccessMessages,
@@ -31,7 +32,7 @@ class AttorneyTaskListView extends React.PureComponent {
     this.props.clearCaseSelectSearch();
     this.props.resetErrorMessages();
 
-    if (_.some(this.props.loadedQueueTasks, (task) => !this.props.tasks[task.id].attributes.task_id)) {
+    if (_.some(this.props.tasks, (task) => !task.taskId)) {
       this.props.showErrorMessage({
         title: COPY.TASKS_NEED_ASSIGNMENT_ERROR_TITLE,
         detail: COPY.TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE
@@ -41,7 +42,7 @@ class AttorneyTaskListView extends React.PureComponent {
 
   render = () => {
     const { messages } = this.props;
-    const noTasks = !_.size(this.props.loadedQueueTasks) && !_.size(this.props.appeals);
+    const noTasks = !_.size(this.props.tasks);
     let tableContent;
 
     if (noTasks) {
@@ -54,10 +55,19 @@ class AttorneyTaskListView extends React.PureComponent {
         {messages.error && <Alert type="error" title={messages.error.title}>
           {messages.error.detail}
         </Alert>}
-        {messages.success && <Alert type="success" title={messages.success}>
-          {COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
+        {messages.success && <Alert type="success" title={messages.success.title}>
+          {messages.success.detail || COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
         </Alert>}
-        <AttorneyTaskTable />
+        <TaskTable
+          includeDetailsLink
+          includeType
+          includeDocketNumber
+          includeIssueCount
+          includeDueDate
+          includeReaderLink
+          requireDasRecord
+          tasks={this.props.tasks}
+        />
       </div>;
     }
 
@@ -68,22 +78,15 @@ class AttorneyTaskListView extends React.PureComponent {
 }
 
 AttorneyTaskListView.propTypes = {
-  loadedQueueTasks: PropTypes.object.isRequired,
-  appeals: PropTypes.object.isRequired
+  tasks: PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => {
   const {
     queue: {
-      loadedQueue: {
-        appeals,
-        tasks: loadedQueueTasks
-      },
       stagedChanges: {
         taskDecision
-      },
-      tasks,
-      judges
+      }
     },
     ui: {
       messages
@@ -91,12 +94,9 @@ const mapStateToProps = (state) => {
   } = state;
 
   return ({
-    appeals,
+    tasks: workableTasksByAssigneeCssIdSelector(state),
     messages,
-    taskDecision,
-    tasks,
-    judges,
-    loadedQueueTasks
+    taskDecision
   });
 };
 

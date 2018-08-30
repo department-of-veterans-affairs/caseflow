@@ -6,6 +6,7 @@ class LegacyTask
            :docket_date, :added_by, :task_id, :type, :document_id, :assigned_by, :work_product].freeze
 
   attr_accessor(*ATTRS)
+  attr_writer :appeal
 
   ### Serializer Methods Start
   def assigned_on
@@ -13,15 +14,29 @@ class LegacyTask
   end
 
   delegate :css_id, :name, to: :added_by, prefix: true
-  delegate :first_name, :last_name, to: :assigned_by, prefix: true
+  delegate :first_name, :last_name, :pg_id, :css_id, to: :assigned_by, prefix: true
 
   def user_id
-    assigned_to.css_id
+    assigned_to && assigned_to.css_id
+  end
+
+  def assigned_to_pg_id
+    assigned_to && assigned_to.id
   end
 
   def task_type
     type
   end
+
+  def appeal
+    @appeal ||= LegacyAppeal.find(appeal_id)
+  end
+
+  def appeal_type
+    appeal.class.name
+    # "LegacyAppeal"
+  end
+
   ### Serializer Methods End
 
   def self.from_vacols(record, appeal, user)
@@ -30,12 +45,13 @@ class LegacyTask
       due_on: record.date_due,
       docket_name: "legacy",
       added_by: record.added_by,
-      docket_date: record.docket_date,
+      docket_date: record.docket_date.try(:to_date),
       appeal_id: appeal.id,
       assigned_to: user,
       task_id: record.created_at ? record.vacols_id + "-" + record.created_at.strftime("%Y-%m-%d") : nil,
       document_id: record.document_id,
-      assigned_by: record.assigned_by
+      assigned_by: record.assigned_by,
+      appeal: appeal
     )
   end
 

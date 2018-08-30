@@ -15,6 +15,7 @@ import {
   resetDecisionOptions
 } from '../QueueActions';
 
+import COPY from '../../../COPY.json';
 import DecisionViewFooter from './DecisionViewFooter';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Modal from '../../components/Modal';
@@ -23,47 +24,50 @@ const getDisplayName = (WrappedComponent) => {
   return WrappedComponent.displayName || WrappedComponent.name || 'WrappedComponent';
 };
 
-export default function decisionViewBase(ComponentToWrap) {
+const defaultTopLevelProps = {
+  continueBtnText: 'Continue',
+  hideCancelButton: false
+};
+
+export default function decisionViewBase(ComponentToWrap, topLevelProps = defaultTopLevelProps) {
   class WrappedComponent extends React.Component {
     constructor(props) {
       super(props);
 
-      this.state = { wrapped: {} };
+      this.state = { wrapped: null };
     }
 
-    getWrappedComponentRef = (ref) => this.setState({ wrapped: ref })
+    getWrappedComponentRef = (ref) => this.setState({ wrapped: ref });
 
     componentDidMount = () => this.props.highlightInvalidFormItems(false);
 
     getFooterButtons = () => {
-      const cancelButton = {
+      const buttons = [{
         classNames: ['cf-btn-link'],
         callback: () => this.props.showModal('cancelCheckout'),
         name: 'cancel-button',
         displayText: 'Cancel',
         willNeverBeLoading: true
-      };
-      const nextButton = {
+      }, {
         classNames: ['cf-right-side', 'cf-next-step'],
         callback: this.goToNextStep,
         loading: this.props.savePending,
         name: 'next-button',
-        displayText: 'Continue',
+        displayText: this.props.continueBtnText,
         loadingText: 'Submitting...',
         styling: css({ marginLeft: '1rem' })
-      };
-      const backButton = {
+      }, {
         classNames: ['cf-right-side', 'cf-prev-step', 'usa-button-outline'],
-        callback: this.goToPrevStep,
+        callback: this.props.hideCancelButton ? this.cancelFlow : this.goToPrevStep,
         name: 'back-button',
-        displayText: 'Back',
+        displayText: this.props.hideCancelButton ? 'Cancel' : 'Back',
         willNeverBeLoading: true
-      };
+      }];
 
-      return [cancelButton, nextButton, backButton];
-    };
+      return this.props.hideCancelButton ? buttons.slice(1) : buttons;
+    }
 
-    cancelCheckoutFlow = () => {
+    cancelFlow = () => {
       const {
         history,
         stagedAppeals,
@@ -77,15 +81,30 @@ export default function decisionViewBase(ComponentToWrap) {
       history.push(`/queue/appeals/${appealId}`);
     }
 
+    getPrevStepUrl = () => {
+      const { getPrevStepUrl = null } = this.state.wrapped;
+      const {
+        appealId,
+        prevStep
+      } = this.props;
+
+      return (getPrevStepUrl && getPrevStepUrl()) || prevStep || `/queue/appeals/${appealId}`;
+    }
+
+    getNextStepUrl = () => {
+      const { getNextStepUrl = null } = this.state.wrapped;
+      const { nextStep } = this.props;
+
+      return (getNextStepUrl && getNextStepUrl()) || nextStep;
+    }
+
     goToPrevStep = () => {
-      const prevStepHook = _.get(this.state.wrapped, 'goToPrevStep');
+      const { goToPrevStep: prevStepHook = null } = this.state.wrapped;
 
       if (!prevStepHook || prevStepHook()) {
-        return this.props.history.push(this.props.prevStep);
+        return this.props.history.push(this.getPrevStepUrl());
       }
     };
-
-    getNextStepUrl = () => _.invoke(this.state.wrapped, 'getNextStepUrl') || this.props.nextStep;
 
     goToNextStep = () => {
       // This handles moving to the next step in the flow. The wrapped
@@ -93,8 +112,10 @@ export default function decisionViewBase(ComponentToWrap) {
       // elements. If present, the wrapped goToNextStep hook dispatches
       // a proceed/invalid action asynchronously, which this responds
       // to in componentDidUpdate.
-      const validation = _.get(this.state.wrapped, 'validateForm');
-      const nextStepHook = _.get(this.state.wrapped, 'goToNextStep');
+      const {
+        validateForm: validation = null,
+        goToNextStep: nextStepHook = null
+      } = this.state.wrapped;
 
       if (!validation || !validation()) {
         return this.props.highlightInvalidFormItems(true);
@@ -134,11 +155,10 @@ export default function decisionViewBase(ComponentToWrap) {
           }, {
             classNames: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
             name: 'Yes, cancel',
-            onClick: this.cancelCheckoutFlow
+            onClick: this.cancelFlow
           }]}
           closeHandler={() => this.props.hideModal('cancelCheckout')}>
-          All changes made to this page will be lost, except for the adding,
-          editing, and deleting of issues.
+          {COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT}
         </Modal>
       </div>}
       <AppSegment filledBackground>
@@ -150,11 +170,17 @@ export default function decisionViewBase(ComponentToWrap) {
 
   WrappedComponent.displayName = `DecisionViewBase(${getDisplayName(WrappedComponent)})`;
 
-  const mapStateToProps = (state) => ({
-    cancelCheckoutModal: state.ui.modal.cancelCheckout,
-    ..._.pick(state.ui.saveState, 'savePending', 'saveSuccessful'),
-    stagedAppeals: _.keys(state.queue.stagedChanges.appeals)
-  });
+  const mapStateToProps = (state) => {
+    const { savePending, saveSuccessful } = state.ui.saveState;
+
+    return {
+      cancelCheckoutModal: state.ui.modal.cancelCheckout,
+      savePending,
+      saveSuccessful,
+      stagedAppeals: Object.keys(state.queue.stagedChanges.appeals),
+      ...topLevelProps
+    };
+  };
   const mapDispatchToProps = (dispatch) => bindActionCreators({
     highlightInvalidFormItems,
     showModal,

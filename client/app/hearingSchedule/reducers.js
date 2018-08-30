@@ -23,11 +23,56 @@ const reducers = (state = initialState, action = {}) => {
         $set: action.payload.schedulePeriod
       }
     });
+  case ACTIONS.SCHEDULE_PERIOD_ERROR:
+    return update(state, {
+      spErrorDetails: {
+        $set: action.payload.error
+      },
+      schedulePeriodError: {
+        $set: true
+      }
+    });
+  case ACTIONS.REMOVE_SCHEDULE_PERIOD_ERROR:
+    return update(state, {
+      $unset: ['schedulePeriodError']
+    });
+  case ACTIONS.SET_VACOLS_UPLOAD:
+    return update(state, {
+      vacolsUpload: {
+        $set: true
+      }
+    });
+  case ACTIONS.UPDATE_UPLOAD_FORM_ERRORS:
+    return update(state, {
+      uploadFormErrors: {
+        $set: action.payload.errors
+      }
+    });
+  case ACTIONS.UPDATE_RO_CO_UPLOAD_FORM_ERRORS:
+    return update(state, {
+      uploadRoCoFormErrors: {
+        $set: action.payload.errors
+      }
+    });
+  case ACTIONS.UPDATE_JUDGE_UPLOAD_FORM_ERRORS:
+    return update(state, {
+      uploadJudgeFormErrors: {
+        $set: action.payload.errors
+      }
+    });
+  case ACTIONS.UNSET_UPLOAD_ERRORS:
+    return update(state, {
+      $unset: [
+        'uploadRoCoFormErrors',
+        'uploadJudgeFormErrors'
+      ]
+    });
   case ACTIONS.FILE_TYPE_CHANGE:
     return update(state, {
       fileType: {
         $set: action.payload.fileType
-      }
+      },
+      $unset: ['uploadFormErrors']
     });
   case ACTIONS.RO_CO_START_DATE_CHANGE:
     return update(state, {
@@ -92,6 +137,30 @@ const reducers = (state = initialState, action = {}) => {
       displayConfirmationModal: {
         $set: false
       }
+    });
+  case ACTIONS.CONFIRM_ASSIGNMENTS_UPLOAD:
+    return update(state, {
+      displaySuccessMessage: {
+        $set: true
+      },
+      $unset: [
+        'fileType',
+        'roCoStartDate',
+        'roCoEndDate',
+        'roCoFileUpload',
+        'judgeStartDate',
+        'judgeEndDate',
+        'judgeFileUpload',
+        'vacolsUpload'
+      ]
+    });
+  case ACTIONS.UNSET_SUCCESS_MESSAGE:
+    return update(state, {
+      $unset: [
+        'displaySuccessMessage',
+        'schedulePeriod',
+        'vacolsUpload'
+      ]
     });
   default:
     return state;

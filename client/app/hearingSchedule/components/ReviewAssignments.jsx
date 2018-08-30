@@ -1,13 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Redirect } from 'react-router-dom';
+import _ from 'lodash';
+import { css } from 'glamor';
 import COPY from '../../../COPY.json';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../../components/Alert';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
+import Table from '../../components/Table';
+import StatusMessage from '../../components/StatusMessage';
+import { formatDateStr } from '../../util/DateUtil';
 import { SPREADSHEET_TYPES } from '../constants';
+
+const tableStyling = css({
+  '& > thead > tr > th': { backgroundColor: '#f1f1f1' },
+  border: '1px solid #dadbdc'
+});
+
+/* eslint-disable id-length */
+const HEARING_TYPE_LABELS = {
+  V: 'Video',
+  C: 'Central',
+  T: 'Travel'
+};
+/* eslint-enable id-length */
 
 export default class ReviewAssignments extends React.Component {
 
@@ -70,9 +87,88 @@ export default class ReviewAssignments extends React.Component {
 
   render() {
 
-    if (this.props.schedulePeriod.finalized) {
-      return <Redirect to="/schedule/build" />;
+    const { spErrorDetails } = this.props;
+    let title = 'The assignments algorithm was unable to run successfully.';
+
+    if (this.props.schedulePeriodError) {
+      let message = <span>Please confirm the information in the spreadsheet is valid and
+        <Link to="/schedule/build/upload"> try again</Link>. If the issue persists, please
+        contact the Help Desk.
+      </span>;
+
+      if (spErrorDetails) {
+        if (this.props.spErrorDetails.type === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
+          message = <span>You have allocated too many hearing days to the {spErrorDetails.details.ro_key},
+          the maximum number of allocations is {spErrorDetails.details.max_allocation}.<br></br>
+          Please check your spreadsheet and upload the file again using the "Go back" link below.<br></br>
+            <Link to="/schedule/build/upload"> Go back</Link>
+          </span>;
+        } else if (this.props.spErrorDetails.type === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
+          title = 'We were unable to assign judges to the schedule.';
+
+          message = <span>We could not assign a judge to every hearing day. Please check the following dates in<br></br>
+          your file and try again using the "Go back" link below:<br></br>
+            {spErrorDetails.details.dates &&
+            spErrorDetails.details.dates.map((date, i) => <span key={i}>{date}<br></br></span>)}
+            <span className="cf-push-left" ><Link to="/schedule/build/upload">{'<'} Go back</Link></span>
+          </span>;
+        }
+      }
+
+      return <StatusMessage
+        type="alert"
+        title={title}
+        messageText={message}
+      />;
     }
+
+    if (this.props.schedulePeriod.finalized ||
+        this.props.schedulePeriod.cannotFinalize) {
+      return <StatusMessage
+        type="status"
+        title="This page has expired."
+        messageText={<Link to="/schedule">Go back to home</Link>}
+      />;
+    }
+
+    let hearingAssignmentColumns = [
+      {
+        header: 'Date',
+        align: 'left',
+        valueName: 'date'
+      },
+      {
+        header: 'Type',
+        align: 'left',
+        valueName: 'type'
+      },
+      {
+        header: 'Regional Office',
+        align: 'left',
+        valueName: 'regionalOffice'
+      },
+      {
+        header: 'Room',
+        align: 'left',
+        valueName: 'room'
+      }
+    ];
+
+    if (this.props.schedulePeriod.type === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
+      hearingAssignmentColumns.push({
+        header: 'VLJ',
+        align: 'left',
+        valueName: 'judge'
+      });
+    }
+
+    const hearingAssignmentRows = _.map(this.props.schedulePeriod.hearingDays, (hearingDay) => ({
+      date: formatDateStr(hearingDay.hearingDate),
+      type: HEARING_TYPE_LABELS[hearingDay.hearingType],
+      regionalOffice: hearingDay.regionalOffice,
+      room: hearingDay.roomInfo,
+      judge: hearingDay.judgeName
+    }));
 
     return <AppSegment filledBackground>
       {this.props.displayConfirmationModal && <div className="cf-modal-scroll">
@@ -91,14 +187,26 @@ export default class ReviewAssignments extends React.Component {
         title={this.getAlertTitle()}
         message={<div>{this.getAlertMessage()}{this.getAlertButtons()}</div>}
       />
+      <Table
+        styling={tableStyling}
+        columns={hearingAssignmentColumns}
+        rowObjects={hearingAssignmentRows}
+        summary="hearing-assignments"
+      />
     </AppSegment>;
   }
 }
 
+ReviewAssignments.defaultProps = {
+  schedulePeriod: {}
+};
+
 ReviewAssignments.propTypes = {
   schedulePeriod: PropTypes.object,
+  schedulePeriodError: PropTypes.bool,
   displayConfirmationModal: PropTypes.bool,
   onClickConfirmAssignments: PropTypes.func,
   onClickCloseModal: PropTypes.func,
-  onConfirmAssignmentsUpload: PropTypes.func
+  onConfirmAssignmentsUpload: PropTypes.func,
+  spErrorDetails: PropTypes.object
 };

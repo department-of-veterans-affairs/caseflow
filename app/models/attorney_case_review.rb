@@ -1,18 +1,30 @@
 class AttorneyCaseReview < ApplicationRecord
-  include LegacyTaskConcern
+  include CaseReviewConcern
 
   belongs_to :reviewing_judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
+  belongs_to :task
 
   validates :attorney, :document_type, :task_id, :reviewing_judge, :document_id, :work_product, presence: true
   validates :overtime, inclusion: { in: [true, false] }
   validates :work_product, inclusion: { in: QueueMapper::WORK_PRODUCTS.values }
-  validates :note, length: { maximum: 350 }
+  validates :note, length: { maximum: Constants::VACOLS_COLUMN_MAX_LENGTHS["DECASS"]["DEATCOM"] }
 
   enum document_type: {
     omo_request: Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"],
     draft_decision: Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"]
   }
+
+  def update_in_vacols!
+    MetricsService.record("VACOLS: reassign_case_to_judge #{task_id}",
+                          service: :vacols,
+                          name: document_type) do
+      reassign_case_to_judge_in_vacols!
+      update_issue_dispositions_in_vacols! if draft_decision?
+    end
+  end
+
+  private
 
   def reassign_case_to_judge_in_vacols!
     attorney.access_to_task?(vacols_id)
@@ -43,12 +55,7 @@ class AttorneyCaseReview < ApplicationRecord
       ActiveRecord::Base.multi_transaction do
         record = create(params)
         if record.valid?
-          MetricsService.record("VACOLS: reassign_case_to_judge #{record.task_id}",
-                                service: :vacols,
-                                name: record.document_type) do
-            record.reassign_case_to_judge_in_vacols!
-            record.update_issue_dispositions! if record.draft_decision?
-          end
+          record.legacy? ? record.update_in_vacols! : record.update_task_and_issue_dispositions
         end
         record
       end

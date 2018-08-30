@@ -14,6 +14,17 @@ export const onReceiveSchedulePeriod = (schedulePeriod) => ({
   }
 });
 
+export const onSchedulePeriodError = (error) => ({
+  type: ACTIONS.SCHEDULE_PERIOD_ERROR,
+  payload: {
+    error
+  }
+});
+
+export const removeSchedulePeriodError = () => ({
+  type: ACTIONS.REMOVE_SCHEDULE_PERIOD_ERROR
+});
+
 export const onFileTypeChange = (fileType) => ({
   type: ACTIONS.FILE_TYPE_CHANGE,
   payload: {
@@ -26,6 +37,10 @@ export const onReceiveHearingSchedule = (hearingSchedule) => ({
   payload: {
     hearingSchedule
   }
+});
+
+export const setVacolsUpload = () => ({
+  type: ACTIONS.SET_VACOLS_UPLOAD
 });
 
 export const onRoCoStartDateChange = (startDate) => ({
@@ -63,6 +78,31 @@ export const onJudgeEndDateChange = (endDate) => ({
   }
 });
 
+export const updateUploadFormErrors = (errors) => ({
+  type: ACTIONS.UPDATE_UPLOAD_FORM_ERRORS,
+  payload: {
+    errors
+  }
+});
+
+export const updateRoCoUploadFormErrors = (errors) => ({
+  type: ACTIONS.UPDATE_RO_CO_UPLOAD_FORM_ERRORS,
+  payload: {
+    errors
+  }
+});
+
+export const updateJudgeUploadFormErrors = (errors) => ({
+  type: ACTIONS.UPDATE_JUDGE_UPLOAD_FORM_ERRORS,
+  payload: {
+    errors
+  }
+});
+
+export const unsetUploadErrors = () => ({
+  type: ACTIONS.UNSET_UPLOAD_ERRORS
+});
+
 export const onViewStartDateChange = (viewStartDate) => ({
   type: ACTIONS.VIEW_START_DATE_CHANGE,
   payload: {
@@ -94,4 +134,12 @@ export const onClickConfirmAssignments = () => ({
 
 export const onClickCloseModal = () => ({
   type: ACTIONS.CLICK_CLOSE_MODAL
+});
+
+export const onConfirmAssignmentsUpload = () => ({
+  type: ACTIONS.CONFIRM_ASSIGNMENTS_UPLOAD
+});
+
+export const unsetSuccessMessage = () => ({
+  type: ACTIONS.UNSET_SUCCESS_MESSAGE
 });

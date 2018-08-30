@@ -1,5 +1,10 @@
+require "rake"
+
+Rake::Task.clear # necessary to avoid tasks being loaded several times in dev mode
+CaseflowCertification::Application.load_tasks
+
 class Test::UsersController < ApplicationController
-  before_action :require_demo, only: [:set_user, :set_end_products]
+  before_action :require_demo, only: [:set_user, :set_end_products, :reseed, :toggle_feature]
   before_action :require_global_admin, only: :log_in_as_user
 
   APPS = [
@@ -32,8 +37,7 @@ class Test::UsersController < ApplicationController
     {
       name: "Reader",
       links: {
-        welcome_gate: "/reader/appeal",
-        document_list: "/reader/appeal/111111/documents"
+        document_list: "/reader/appeal/3626186/documents"
       }
     },
     {
@@ -51,7 +55,7 @@ class Test::UsersController < ApplicationController
     {
       name: "Hearing Schedule",
       links: {
-        current_schedule: "/hearings/schedule/build"
+        current_schedule: "/hearings/schedule"
       }
     },
     {
@@ -66,6 +70,7 @@ class Test::UsersController < ApplicationController
   # :nocov:
   def index
     @test_users = User.all
+    @features_list = FeatureToggle.features
     @ep_types = %w[full partial none all]
     render "index"
   end
@@ -87,6 +92,31 @@ class Test::UsersController < ApplicationController
     session["user"] = user.to_session_hash
     session[:regional_office] = user.selected_regional_office ? user.selected_regional_office : user.regional_office
     head :ok
+  end
+
+  def reseed
+    # Adding this check a second time out of paranoia
+    if Rails.deploy_env?(:demo)
+      Rake::Task["db:seed"].reenable
+      Rake::Task["db:seed"].invoke
+
+      Rake::Task["local:vacols:seed"].reenable
+      Rake::Task["local:vacols:seed"].invoke
+    end
+  end
+
+  def toggle_feature
+    if params[:enable]
+      params[:enable].each do |f|
+        FeatureToggle.enable!(f[:value])
+      end
+    end
+
+    if params[:disable]
+      params[:disable].each do |f|
+        FeatureToggle.disable!(f[:value])
+      end
+    end
   end
 
   def save_admin_login_attempt

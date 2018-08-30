@@ -10,7 +10,6 @@ RSpec.feature "Search" do
   let!(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: FactoryBot.create(:case)) }
 
   before do
-    FeatureToggle.enable!(:queue_phase_two)
     FeatureToggle.enable!(:test_facols)
 
     User.authenticate!(user: attorney_user)
@@ -18,7 +17,6 @@ RSpec.feature "Search" do
 
   after do
     FeatureToggle.disable!(:test_facols)
-    FeatureToggle.disable!(:queue_phase_two)
   end
 
   context "queue case search for appeals using veteran id" do
@@ -100,6 +98,7 @@ RSpec.feature "Search" do
       let!(:paper_appeal) do
         FactoryBot.create(
           :legacy_appeal,
+          :with_veteran,
           vacols_case: FactoryBot.create(
             :case,
             folder: FactoryBot.build(:folder, :paper_case)

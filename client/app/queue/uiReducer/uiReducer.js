@@ -1,7 +1,7 @@
 // @flow
 import { update } from '../../util/ReducerUtil';
 import { ACTIONS } from './uiConstants';
-import type { UiState } from '../types';
+import type { UiState } from '../types/state';
 
 const initialSaveState = {
   savePending: false,
@@ -16,13 +16,14 @@ export const initialState = {
     error: null
   },
   saveState: initialSaveState,
-  modal: {
-    cancelCheckout: false,
-    deleteIssue: false
-  },
+  modal: {},
   featureToggles: {},
   userRole: '',
-  selectedAssignee: null
+  userCssId: '',
+  loadedUserId: null,
+  selectedAssignee: null,
+  selectedAssigneeSecondary: null,
+  veteranCaseListIsVisible: false
 };
 
 const setMessageState = (state, message, msgType) => update(state, {
@@ -35,11 +36,11 @@ const setMessageState = (state, message, msgType) => update(state, {
 
 const setErrorMessageState = (state, message) => setMessageState(state, message, 'error');
 const hideErrorMessage = (state) => setErrorMessageState(state, null);
-const showErrorMessage = (state, errorMsg = 'Error') => setErrorMessageState(state, errorMsg);
+const showErrorMessage = (state, errorMsg = { title: 'Error' }) => setErrorMessageState(state, errorMsg);
 
 const setSuccessMessageState = (state, message) => setMessageState(state, message, 'success');
 const hideSuccessMessage = (state) => setSuccessMessageState(state, null);
-const showSuccessMessage = (state, message = 'Success') => setSuccessMessageState(state, message);
+const showSuccessMessage = (state, message = { title: 'Success' }) => setSuccessMessageState(state, message);
 
 const setModalState = (state, visibility, modalType) => update(state, {
   modal: {
@@ -119,13 +120,35 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
         $set: action.payload.featureToggles
       }
     });
+  case ACTIONS.TOGGLE_VETERAN_CASE_LIST:
+    return update(state, {
+      veteranCaseListIsVisible: { $set: !state.veteranCaseListIsVisible }
+    });
+  case ACTIONS.HIDE_VETERAN_CASE_LIST:
+    return update(state, {
+      veteranCaseListIsVisible: { $set: false }
+    });
+  case ACTIONS.SET_USER_ID:
+    return update(state, {
+      loadedUserId: { $set: action.payload.userId }
+    });
   case ACTIONS.SET_USER_ROLE:
     return update(state, {
       userRole: { $set: action.payload.userRole }
     });
+  case ACTIONS.SET_USER_CSS_ID:
+    return update(state, {
+      userCssId: { $set: action.payload.cssId }
+    });
   case ACTIONS.SET_SELECTED_ASSIGNEE:
     return update(state, {
       selectedAssignee: {
+        $set: action.payload.assigneeId
+      }
+    });
+  case ACTIONS.SET_SELECTED_ASSIGNEE_SECONDARY:
+    return update(state, {
+      selectedAssigneeSecondary: {
         $set: action.payload.assigneeId
       }
     });

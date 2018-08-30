@@ -1,19 +1,43 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import StatusMessage from '../components/StatusMessage';
-import JudgeAssignTaskTable from './JudgeAssignTaskTable';
+import TaskTable from './components/TaskTable';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { reassignTasksToUser } from './QueueActions';
-import { sortTasks } from './utils';
+import { selectedTasksSelector, getAssignedTasks } from './selectors';
 import AssignWidget from './components/AssignWidget';
 import {
   resetErrorMessages,
   resetSuccessMessages
 } from './uiReducer/uiActions';
+import Alert from '../components/Alert';
+import type { Task, TaskWithAppeal, Appeals } from './types/models';
+import type { AttorneysOfJudge, AttorneyAppealsLoadingState, UiStateMessage, State } from './types/state';
 
-class AssignedCasesPage extends React.PureComponent {
+type Params = {|
+  match: Object
+|};
+
+type Props = Params & {|
+  // From state
+  attorneysOfJudge: AttorneysOfJudge,
+  appealsOfAttorney: Appeals,
+  featureToggles: Object,
+  selectedTasks: Array<Task>,
+  tasksOfAttorney: Array<TaskWithAppeal>,
+  attorneyAppealsLoadingState: AttorneyAppealsLoadingState,
+  success: ?UiStateMessage,
+  error: ?UiStateMessage,
+  // Action creators
+  resetSuccessMessages: typeof resetSuccessMessages,
+  resetErrorMessages: typeof resetErrorMessages,
+  reassignTasksToUser: typeof reassignTasksToUser
+|};
+
+class AssignedCasesPage extends React.Component<Props> {
   componentDidMount = () => {
     this.props.resetSuccessMessages();
     this.props.resetErrorMessages();
@@ -32,67 +56,75 @@ class AssignedCasesPage extends React.PureComponent {
   render = () => {
     const props = this.props;
     const {
-      match, attorneysOfJudge, tasksAndAppealsOfAttorney, tasks, featureToggles
+      match, attorneysOfJudge, attorneyAppealsLoadingState, featureToggles, selectedTasks, success, error
     } = props;
     const { attorneyId } = match.params;
 
-    if (!(attorneyId in tasksAndAppealsOfAttorney) || tasksAndAppealsOfAttorney[attorneyId].state === 'LOADING') {
+    if (!(attorneyId in attorneyAppealsLoadingState) || attorneyAppealsLoadingState[attorneyId].state === 'LOADING') {
       return <SmallLoader message="Loading..." spinnerColor={LOGO_COLORS.QUEUE.ACCENT} />;
     }
 
-    if (tasksAndAppealsOfAttorney[attorneyId].state === 'FAILED') {
-      const { error } = tasksAndAppealsOfAttorney[attorneyId];
+    if (attorneyAppealsLoadingState[attorneyId].state === 'FAILED') {
+      const { error: loadingError } = attorneyAppealsLoadingState[attorneyId];
 
-      if (!error.response) {
+      if (!loadingError.response) {
         return <StatusMessage title="Timeout">Error fetching cases</StatusMessage>;
       }
 
-      return <StatusMessage title={error.response.statusText}>Error fetching cases</StatusMessage>;
+      return <StatusMessage title={loadingError.response.statusText}>Error fetching cases</StatusMessage>;
     }
 
     const attorneyName = attorneysOfJudge.filter((attorney) => attorney.id.toString() === attorneyId)[0].full_name;
-    const { tasks: taskIdsOfAttorney, appeals } = tasksAndAppealsOfAttorney[attorneyId].data;
-    const tasksOfAttorney = {};
-
-    for (const taskId of Object.keys(taskIdsOfAttorney)) {
-      tasksOfAttorney[taskId] = tasks[taskId];
-    }
 
     return <React.Fragment>
       <h2>{attorneyName}'s Cases</h2>
-      {featureToggles.judge_assign_cases &&
+      {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}
+      {success && <Alert type="success" title={success.title} message={success.detail} scrollOnAlert={false} />}
+      {featureToggles.judge_assignment_to_attorney &&
         <AssignWidget
           previousAssigneeId={attorneyId}
-          onTaskAssignment={(params) => props.reassignTasksToUser(params)} />}
-      <JudgeAssignTaskTable
-        tasksAndAppeals={
-          sortTasks({
-            tasks: tasksOfAttorney,
-            appeals
-          }).
-            map((task) => ({
-              task,
-              appeal: appeals[task.appealId] }))
-        }
+          onTaskAssignment={(params) => props.reassignTasksToUser(params)}
+          selectedTasks={selectedTasks} />}
+      <TaskTable
+        includeSelect
+        includeDetailsLink
+        includeType
+        includeDocketNumber
+        includeIssueCount
+        includeDaysWaiting
+        includeReaderLink
+        tasks={this.props.tasksOfAttorney}
         userId={attorneyId} />
     </React.Fragment>;
   }
 }
 
-const mapStateToProps = (state) => {
-  const { tasksAndAppealsOfAttorney, attorneysOfJudge, tasks } = state.queue;
-  const { featureToggles } = state.ui;
+const mapStateToProps = (state: State, ownProps: Params) => {
+  const { attorneyAppealsLoadingState, attorneysOfJudge } = state.queue;
+  const {
+    featureToggles,
+    messages: {
+      success,
+      error
+    }
+  } = state.ui;
+  const { attorneyId } = ownProps.match.params;
 
-  return { tasksAndAppealsOfAttorney,
+  return {
+    tasksOfAttorney: getAssignedTasks(state, attorneyId),
+    attorneyAppealsLoadingState,
     attorneysOfJudge,
-    tasks,
-    featureToggles };
+    featureToggles,
+    selectedTasks: selectedTasksSelector(state, attorneyId),
+    success,
+    error
+  };
 };
 
-export default connect(
+export default (connect(
   mapStateToProps,
   (dispatch) => (bindActionCreators({
     reassignTasksToUser,
     resetErrorMessages,
     resetSuccessMessages
-  }, dispatch)))(AssignedCasesPage);
+  }, dispatch)))(AssignedCasesPage): React.ComponentType<Params>);

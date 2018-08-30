@@ -15,7 +15,18 @@ class VACOLS::CaseAssignment < VACOLS::Record
   end
 
   def assigned_by
-    OpenStruct.new(first_name: assigned_by_first_name, last_name: assigned_by_last_name)
+    assigned_by_user_id = if assigned_by_css_id
+                            User.find_or_create_by(
+                              css_id: assigned_by_css_id,
+                              station_id: User::BOARD_STATION_ID
+                            ).id
+                          end
+
+    OpenStruct.new(
+      first_name: assigned_by_first_name,
+      last_name: assigned_by_last_name,
+      pg_id: assigned_by_user_id
+    )
   end
 
   class << self
@@ -65,6 +76,13 @@ class VACOLS::CaseAssignment < VACOLS::Record
       select_tasks.where("s2.sdomainid = #{id}")
     end
 
+    def tasks_for_appeal(appeal_id)
+      id = connection.quote(appeal_id)
+
+      select_tasks.where("brieff.bfkey = #{id}")
+    end
+
+    # rubocop:disable Metrics/MethodLength
     def select_tasks
       select("brieff.bfkey as vacols_id",
              "brieff.bfcorlid as vbms_id",
@@ -78,13 +96,16 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "s1.snamef as added_by_first_name",
              "s1.snamemi as added_by_middle_name",
              "s1.snamel as added_by_last_name",
-             "decass.deadusr as added_by_css_id",
+             "s1.sdomainid as added_by_css_id",
              "decass.dedeadline as date_due",
-             "decass.deadusr as added_by",
              "decass.deadtim as created_at",
              "folder.tinum as docket_number",
              "s3.snamef as assigned_by_first_name",
-             "s3.snamel as assigned_by_last_name")
+             "s3.snamel as assigned_by_last_name",
+             "s3.sdomainid as assigned_by_css_id",
+             "s2.sdomainid as assigned_to_css_id",
+             "s4.snamef as written_by_first_name",
+             "s4.snamel as written_by_last_name")
         .joins(<<-SQL)
           LEFT JOIN decass
             ON brieff.bfkey = decass.defolder
@@ -96,6 +117,8 @@ class VACOLS::CaseAssignment < VACOLS::Record
             ON brieff.bfkey = folder.ticknum
           LEFT JOIN staff s3
             ON decass.demdusr = s3.slogid
+          LEFT JOIN staff s4
+            ON decass.deatty = s4.sattyid
         SQL
     end
     # rubocop:enable Metrics/MethodLength

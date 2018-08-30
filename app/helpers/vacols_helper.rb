@@ -11,6 +11,11 @@ module VacolsHelper
     local_time_with_utc_timezone.beginning_of_day
   end
 
+  def self.format_datetime_with_utc_timezone(input_datetime)
+    value = input_datetime.in_time_zone("Eastern Time (US & Canada)")
+    Time.utc(value.year, value.month, value.day, value.hour, value.min, value.sec)
+  end
+
   # dates in VACOLS are incorrectly recorded as UTC.
   def self.normalize_vacols_datetime(datetime)
     return nil unless datetime

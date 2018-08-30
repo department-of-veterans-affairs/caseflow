@@ -5,6 +5,7 @@ class ApplicationController < ApplicationBaseController
   before_action :set_raven_user
   before_action :verify_authentication
   before_action :set_paper_trail_whodunnit
+  before_action :deny_vso_access, except: [:unauthorized]
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from VBMS::ClientError, with: :on_vbms_error
@@ -94,8 +95,8 @@ class ApplicationController < ApplicationBaseController
   helper_method :certification_header
 
   def can_access_queue?
-    return true if current_user.attorney_in_vacols?
-    return true if current_user.judge_in_vacols? && feature_enabled?(:judge_queue)
+    return true if current_user.vso_employee?
+    return true if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
     return true if current_user.colocated_in_vacols? && feature_enabled?(:colocated_queue)
     false
   end
@@ -105,20 +106,16 @@ class ApplicationController < ApplicationBaseController
     redirect_to "/unauthorized" unless can_access_queue?
   end
 
-  def verify_case_review_access
-    # :nocov:
-    # This feature toggle controls access of attorneys to Draft Decision/OMO Request creation.
-    return true if feature_enabled?(:queue_phase_two)
-    redirect_to "/unauthorized"
-    # :nocov:
+  def deny_vso_access
+    redirect_to "/unauthorized" if current_user && current_user.vso_employee?
   end
 
   def verify_task_assignment_access
     # :nocov:
     # This feature toggle control access of attorneys to create admin actions for co-located users
-    return true if current_user.attorney_in_vacols? && feature_enabled?(:attorney_assignment)
+    return true if current_user.attorney_in_vacols? && feature_enabled?(:attorney_assignment_to_colocated)
     # This feature toggle control access of judges to assign cases to attorneys
-    return true if current_user.judge_in_vacols? && feature_enabled?(:judge_assignment)
+    return true if current_user.judge_in_vacols? && feature_enabled?(:judge_assignment_to_attorney)
     redirect_to "/unauthorized"
     # :nocov:
   end
@@ -228,6 +225,7 @@ class ApplicationController < ApplicationBaseController
       "dispatch" => "Caseflow Dispatch",
       "certifications" => "Caseflow Certification",
       "reader" => "Caseflow Reader",
+      "schedule" => "Caseflow Hearing Schedule",
       "hearings" => "Caseflow Hearing Prep",
       "intake" => "Caseflow Intake",
       "queue" => "Caseflow Queue"
@@ -245,7 +243,6 @@ class ApplicationController < ApplicationBaseController
 
     redirect_url = redirect || request.original_url
     param_object = { redirect: redirect_url, subject: feedback_subject }
-
     ENV["CASEFLOW_FEEDBACK_URL"] + "?" + param_object.to_param
   end
   helper_method :feedback_url

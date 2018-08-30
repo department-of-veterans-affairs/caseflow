@@ -27,8 +27,10 @@ RSpec.feature "Case details" do
     )
   end
 
+  let(:colocated_user) { FactoryBot.create(:user) }
+  let!(:vacols_colocated) { FactoryBot.create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
+
   before do
-    FeatureToggle.enable!(:queue_phase_two)
     FeatureToggle.enable!(:test_facols)
 
     User.authenticate!(user: attorney_user)
@@ -36,7 +38,6 @@ RSpec.feature "Case details" do
 
   after do
     FeatureToggle.disable!(:test_facols)
-    FeatureToggle.disable!(:queue_phase_two)
   end
 
   context "hearings pane on attorney task detail view" do
@@ -132,11 +133,9 @@ RSpec.feature "Case details" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
-        expect(page).to have_content("Veteran Details")
-        expect(page).to have_content("The veteran is the appellant.")
+        expect(page).to have_content("About the Veteran")
         expect(page).to have_content("She/Her")
         expect(page).to have_content(appeal.veteran_date_of_birth.strftime("%-m/%e/%Y"))
-        expect(page).to have_content("The veteran is the appellant.")
       end
     end
 
@@ -163,9 +162,8 @@ RSpec.feature "Case details" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
-        expect(page).to have_content("Appellant Details")
-        expect(page).to have_content("Veteran Details")
-        expect(page).to have_content(COPY::CASE_DIFF_VETERAN_AND_APPELLANT)
+        expect(page).to have_content("About the Appellant")
+        expect(page).to have_content("About the Veteran")
         expect(page).to have_content(appeal.appellant_name)
         expect(page).to have_content(appeal.appellant_relationship)
         expect(page).to have_content(appeal.appellant_address_line_1)
@@ -190,14 +188,11 @@ RSpec.feature "Case details" do
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
       # TODO: Why isn't the document count coming through here?
       # click_on "View #{appeal.documents.count} documents"
-      click_on "View documents"
+      click_on "View Veteran's documents"
 
       # ["Caseflow", "> Reader"] are two elements, space handled by margin-left on second
       expect(page).to have_content("Caseflow> Reader")
       expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
-
-      click_on "Caseflow"
-      expect(page.current_path).to eq "/queue"
     end
   end
 
@@ -236,15 +231,7 @@ RSpec.feature "Case details" do
     end
 
     before do
-      FeatureToggle.enable!(:judge_queue)
-      FeatureToggle.enable!(:judge_assignment)
-
       User.authenticate!(user: judge_user)
-    end
-
-    after do
-      FeatureToggle.disable!(:judge_assignment)
-      FeatureToggle.disable!(:judge_queue)
     end
 
     scenario "displays who prepared task" do
@@ -258,6 +245,51 @@ RSpec.feature "Case details" do
       preparer_name = "#{task.assigned_by.first_name[0]}. #{task.assigned_by.last_name}"
       expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_PREPARER_LABEL} #{preparer_name}/i)
       expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} #{task.document_id}/i)
+    end
+  end
+
+  context "loads colocated task detail views" do
+    let!(:appeal) do
+      FactoryBot.create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: FactoryBot.create(
+          :case,
+          :assigned,
+          user: colocated_user,
+          case_issues: FactoryBot.create_list(:case_issue, 1)
+        )
+      )
+    end
+    let!(:colocated_action) do
+      FactoryBot.create(
+        :colocated_task,
+        appeal: appeal,
+        assigned_to: colocated_user,
+        assigned_by: attorney_user
+      )
+    end
+
+    before do
+      FeatureToggle.enable!(:colocated_queue)
+      User.authenticate!(user: colocated_user)
+    end
+
+    after do
+      FeatureToggle.disable!(:colocated_queue)
+    end
+
+    scenario "displays task information" do
+      visit "/queue"
+
+      vet_name = colocated_action.appeal.veteran_full_name
+      assigner_name = colocated_action.assigned_by_display_name
+
+      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
+
+      expect(page).to have_content("TASK #{Constants::CO_LOCATED_ADMIN_ACTIONS[colocated_action.action]}")
+      expect(page).to have_content("TASK INSTRUCTIONS #{colocated_action.instructions}")
+      expect(page).to have_content("#{assigner_name.first[0]}. #{assigner_name.last}")
     end
   end
 end

@@ -14,6 +14,10 @@ const hearingSchedStyling = css({
   marginTop: '70px'
 });
 
+const inlineFormStyling = css({
+  marginTop: '80px'
+});
+
 export default class ListSchedule extends React.Component {
 
   render() {
@@ -50,39 +54,44 @@ export default class ListSchedule extends React.Component {
     ];
 
     const hearingScheduleRows = _.map(hearingSchedule, (hearingDay) => ({
-      hearingDate: `${formatDate(hearingDay.hearingDate)}`,
+      hearingDate: formatDate(hearingDay.hearingDate),
       hearingType: hearingDay.hearingType,
-      regionalOffice: hearingDay.folderNr,
+      regionalOffice: hearingDay.regionalOffice,
       room: hearingDay.roomInfo,
-      vlj: hearingDay.judgeId
+      vlj: hearingDay.judgeName
     }));
 
+    const removeCoDuplicates = _.uniqBy(hearingScheduleRows, (row) => [row.hearingDate, row.roomInfo].join());
+
     return <AppSegment filledBackground>
-      <h1>{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
-      <InlineForm>
-        <BasicDateRangeSelector
-          startDateName="fromDate"
-          startDateValue={this.props.startDateValue}
-          startDateLabel={COPY.HEARING_SCHEDULE_VIEW_START_DATE_LABEL}
-          endDateName="toDate"
-          endDateValue={this.props.endDateValue}
-          endDateLabel={COPY.HEARING_SCHEDULE_VIEW_END_DATE_LABEL}
-          onStartDateChange={this.props.startDateChange}
-          onEndDateChange={this.props.endDateChange}
-        />
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <div {...hearingSchedStyling}>
-          <Link
-            name="apply"
-            to="/schedule"
-            onClick={this.props.onApply}>
-            {COPY.HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK}
-          </Link>
-        </div>
-      </InlineForm>
+      <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
+      <span className="cf-push-right"><Link button="primary" to="/schedule/build">Build Schedule</Link></span>
+      <div {...inlineFormStyling} >
+        <InlineForm>
+          <BasicDateRangeSelector
+            startDateName="fromDate"
+            startDateValue={this.props.startDateValue}
+            startDateLabel={COPY.HEARING_SCHEDULE_VIEW_START_DATE_LABEL}
+            endDateName="toDate"
+            endDateValue={this.props.endDateValue}
+            endDateLabel={COPY.HEARING_SCHEDULE_VIEW_END_DATE_LABEL}
+            onStartDateChange={this.props.startDateChange}
+            onEndDateChange={this.props.endDateChange}
+          />
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          <div {...hearingSchedStyling}>
+            <Link
+              name="apply"
+              to="/schedule"
+              onClick={this.props.onApply}>
+              {COPY.HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK}
+            </Link>
+          </div>
+        </InlineForm>
+      </div>
       <Table
         columns={hearingScheduleColumns}
-        rowObjects={hearingScheduleRows}
+        rowObjects={removeCoDuplicates}
         summary="hearing-schedule"
       />
     </AppSegment>;
@@ -93,9 +102,10 @@ ListSchedule.propTypes = {
   hearingSchedule: PropTypes.shape({
     hearingDate: PropTypes.string,
     hearingType: PropTypes.string,
-    folderNr: PropTypes.string,
+    regionalOffice: PropTypes.string,
     roomInfo: PropTypes.string,
     judgeId: PropTypes.string,
+    judgeName: PropTypes.string,
     updatedOn: PropTypes.string,
     updatedBy: PropTypes.string
   }),

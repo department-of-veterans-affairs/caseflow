@@ -15,8 +15,15 @@ FactoryBot.define do
       end
     end
 
+    sactive "A"
+
     trait :attorney_role do
       sactive "A"
+    end
+
+    trait :hearing_judge do
+      stitle "D#{Random.rand(1..5)}"
+      svlj "A"
     end
 
     trait :judge_role do
@@ -31,6 +38,12 @@ FactoryBot.define do
 
     trait :colocated_role do
       stitle %w[A1 A2].sample
+      sactive "A"
+      sattyid nil
+    end
+
+    trait :dispatch_role do
+      sdept "DSP"
       sactive "A"
       sattyid nil
     end

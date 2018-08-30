@@ -1,5 +1,5 @@
 class IntakesController < ApplicationController
-  before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application
+  before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application, :check_intake_out_of_service
 
   def index
     no_cache
@@ -10,10 +10,10 @@ class IntakesController < ApplicationController
   end
 
   def create
-    return render json: intake_in_progress.ui_hash if intake_in_progress
+    return render json: intake_in_progress.ui_hash(ama_enabled?) if intake_in_progress
 
     if new_intake.start!
-      render json: new_intake.ui_hash
+      render json: new_intake.ui_hash(ama_enabled?)
     else
       render json: {
         error_code: new_intake.error_code,
@@ -29,7 +29,7 @@ class IntakesController < ApplicationController
 
   def review
     if intake.review!(params)
-      render json: intake.ui_hash
+      render json: intake.ui_hash(ama_enabled?)
     else
       render json: { error_codes: intake.review_errors }, status: 422
     end
@@ -40,7 +40,7 @@ class IntakesController < ApplicationController
 
   def complete
     intake.complete!(params)
-    render json: intake.ui_hash
+    render json: intake.ui_hash(ama_enabled?)
 
     # TODO: This should probably be pushed into the model, since it is very
     # end product specific
@@ -58,6 +58,10 @@ class IntakesController < ApplicationController
 
   private
 
+  def ama_enabled?
+    FeatureToggle.enabled?(:intakeAma, user: current_user)
+  end
+
   def set_application
     RequestStore.store[:application] = "intake"
   end
@@ -70,12 +74,17 @@ class IntakesController < ApplicationController
     redirect_to "/unauthorized" unless FeatureToggle.enabled?(:intake)
   end
 
+  def check_intake_out_of_service
+    render "out_of_service", layout: "application" if Rails.cache.read("intake_out_of_service")
+  end
+
   def no_cache
     response.headers["Cache-Control"] = "no-cache, no-store"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
   end
 
+  # TODO: This could be moved to the model.
   def intake_in_progress
     return @intake_in_progress unless @intake_in_progress.nil?
     @intake_in_progress = Intake.in_progress.find_by(user: current_user) || false

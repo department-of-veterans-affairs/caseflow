@@ -2,7 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import _ from 'lodash';
-import ReactTooltip from 'react-tooltip';
+
+import Tooltip from './Tooltip';
+import { DoubleArrow } from './RenderFunctions';
+import { COLORS } from '../constants/AppConstants';
+import { css, hover } from 'glamor';
 
 /**
  * This component can be used to easily build tables.
@@ -35,16 +39,40 @@ const getColumns = (props) => {
 };
 
 const HeaderRow = (props) => {
+  const sortableHeaderStyle = css({ display: 'table-row' }, hover({ cursor: 'pointer' }));
+  const sortArrowsStyle = css({
+    display: 'table-cell',
+    paddingLeft: '1rem',
+    paddingTop: '0.3rem',
+    verticalAlign: 'middle'
+  });
+
   return <thead className={props.headerClassName}>
     <tr>
-      {getColumns(props).map((column, columnNumber) =>
-        <th scope="col" key={columnNumber} className={cellClasses(column)}>
-          {column.tooltip && <ReactTooltip id={`${columnNumber}-tooltip`} effect="solid" multiline>
-            {column.tooltip}
-          </ReactTooltip>}
-          <span data-tip data-for={`${columnNumber}-tooltip`}>{column.header || ''}</span>
-        </th>
-      )}
+      {getColumns(props).map((column, columnNumber) => {
+        let columnContent = <span>{column.header || ''}</span>;
+
+        if (column.getSortValue) {
+          const topColor = props.sortColIdx === columnNumber && !props.sortAscending ?
+            COLORS.PRIMARY :
+            COLORS.GREY_LIGHT;
+          const botColor = props.sortColIdx === columnNumber && props.sortAscending ?
+            COLORS.PRIMARY :
+            COLORS.GREY_LIGHT;
+
+          columnContent = <span {...sortableHeaderStyle} onClick={() => props.setSortOrder(columnNumber)}>
+            <span>{column.header || ''}</span>
+            <span {...sortArrowsStyle}><DoubleArrow topColor={topColor} bottomColor={botColor} /></span>
+          </span>;
+        }
+
+        return <th scope="col" key={columnNumber} className={cellClasses(column)}>
+          { column.tooltip ?
+            <Tooltip id={`tooltip-${columnNumber}`} text={column.tooltip}>{columnContent}</Tooltip> :
+            <React.Fragment>{columnContent}</React.Fragment>
+          }
+        </th>;
+      })}
     </tr>
   </thead>;
 };
@@ -68,6 +96,7 @@ const getCellSpan = (rowObject, column) => {
   return 1;
 };
 
+// todo: make these functional components?
 class Row extends React.PureComponent {
   render() {
     const props = this.props;
@@ -123,12 +152,46 @@ class FooterRow extends React.PureComponent {
 }
 
 export default class Table extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    const { defaultSort } = this.props;
+    const state = {
+      sortAscending: true,
+      sortColIdx: null
+    };
+
+    if (defaultSort) {
+      Object.assign(state, defaultSort);
+    }
+
+    this.state = state;
+  }
+
   defaultRowClassNames = () => ''
+
+  sortRowObjects = () => {
+    const { rowObjects } = this.props;
+    const {
+      sortColIdx,
+      sortAscending
+    } = this.state;
+
+    if (sortColIdx === null) {
+      return rowObjects;
+    }
+
+    const builtColumns = getColumns(this.props);
+
+    return _.orderBy(rowObjects,
+      (row) => builtColumns[sortColIdx].getSortValue(row),
+      sortAscending ? 'asc' : 'desc'
+    );
+  }
 
   render() {
     let {
       columns,
-      rowObjects,
       summary,
       headerClassName = '',
       bodyClassName = '',
@@ -142,6 +205,7 @@ export default class Table extends React.PureComponent {
       styling,
       bodyStyling
     } = this.props;
+    const rowObjects = this.sortRowObjects();
 
     let keyGetter = getKeyForRow;
 
@@ -161,7 +225,14 @@ export default class Table extends React.PureComponent {
 
       { caption && <caption className="usa-sr-only">{ caption }</caption> }
 
-      <HeaderRow columns={columns} headerClassName={headerClassName} />
+      <HeaderRow
+        columns={columns}
+        headerClassName={headerClassName}
+        setSortOrder={(colIdx, ascending = !this.state.sortAscending) => this.setState({
+          sortColIdx: colIdx,
+          sortAscending: ascending
+        })}
+        {...this.state} />
       <BodyRows
         id={tbodyId}
         tbodyRef={tbodyRef}
@@ -170,7 +241,8 @@ export default class Table extends React.PureComponent {
         rowObjects={rowObjects}
         bodyClassName={bodyClassName}
         rowClassNames={rowClassNames}
-        bodyStyling={bodyStyling} />
+        bodyStyling={bodyStyling}
+        {...this.state} />
       <FooterRow columns={columns} />
     </table>;
   }
@@ -191,5 +263,9 @@ Table.propTypes = {
   className: PropTypes.string,
   caption: PropTypes.string,
   id: PropTypes.string,
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  defaultSort: PropTypes.shape({
+    sortColIdx: PropTypes.number,
+    sortAscending: PropTypes.bool
+  })
 };

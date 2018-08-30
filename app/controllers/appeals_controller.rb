@@ -1,6 +1,12 @@
 class AppealsController < ApplicationController
+  include Errors
+
   before_action :react_routed
-  before_action :set_application, only: :document_count
+  before_action :set_application, only: [:document_count, :new_documents]
+  # Only whitelist endpoints VSOs should have access to.
+  skip_before_action :deny_vso_access, only: [:index, :show_case_list, :show, :tasks]
+
+  ROLES = Constants::USER_ROLE_TYPES.keys.freeze
 
   def index
     get_appeals_for_file_number(request.headers["HTTP_VETERAN_ID"]) && return
@@ -17,8 +23,32 @@ class AppealsController < ApplicationController
 
   def document_count
     render json: { document_count: appeal.number_of_documents }
-  rescue Caseflow::Error::ClientRequestError, Caseflow::Error::EfolderAccessForbidden => e
-    render e.serialize_response
+  rescue StandardError => e
+    return handle_non_critical_error("document_count", e)
+  end
+
+  def new_documents
+    render json: { new_documents: appeal.new_documents_for_user(current_user) }
+  rescue StandardError => e
+    return handle_non_critical_error("new_documents", e)
+  end
+
+  def tasks
+    no_cache
+
+    # VSO users should only get tasks assigned to them or their organization.
+    if current_user.vso_employee?
+      return json_vso_tasks
+    end
+
+    role = params[:role].downcase
+    return invalid_role_error unless ROLES.include?(role)
+
+    if %w[attorney judge].include?(role) && appeal.class.name == "LegacyAppeal"
+      return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], role)
+    end
+
+    json_tasks_by_appeal_id(appeal.id, appeal.class.to_s)
   end
 
   def show
@@ -32,6 +62,7 @@ class AppealsController < ApplicationController
                               service: :queue,
                               name: "AppealsController.show") do
           appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
+
           render json: { appeal: json_appeals([appeal])[:data][0] }
         end
       end
@@ -56,14 +87,13 @@ class AppealsController < ApplicationController
   def get_appeals_for_file_number(file_number)
     return file_number_not_found_error unless file_number
 
+    return file_access_prohibited_error if current_user.vso_employee? && !BGSService.new.can_access?(file_number)
+
     MetricsService.record("VACOLS: Get appeal information for file_number #{file_number}",
                           service: :queue,
                           name: "AppealsController.index") do
 
-      appeals = []
-      if FeatureToggle.enabled?(:queue_beaam_appeals, user: current_user)
-        appeals.concat(Appeal.where(veteran_file_number: file_number).to_a)
-      end
+      appeals = Appeal.where(veteran_file_number: file_number).to_a
       # rubocop:disable Lint/HandleExceptions
       begin
         appeals.concat(LegacyAppeal.fetch_appeals_by_file_number(file_number))
@@ -81,6 +111,15 @@ class AppealsController < ApplicationController
     @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
   end
 
+  def file_access_prohibited_error
+    render json: {
+      "errors": [
+        "title": "Access to Veteran file prohibited",
+        "detail": "User is prohibited from accessing files associated with provided Veteran ID"
+      ]
+    }, status: 403
+  end
+
   def file_number_not_found_error
     render json: {
       "errors": [
@@ -90,9 +129,71 @@ class AppealsController < ApplicationController
     }, status: 400
   end
 
+  def queue_class
+    TasksController::QUEUES[params[:role].downcase.try(:to_sym)]
+  end
+
+  def json_tasks_by_appeal_id(appeal_db_id, appeal_type)
+    tasks = queue_class.new.tasks_by_appeal_id(appeal_db_id, appeal_type)
+
+    render json: {
+      tasks: json_tasks(tasks)[:data]
+    }
+  end
+
+  def json_vso_tasks
+    # For now we just return tasks that are assigned to the user. In the future,
+    # we will add tasks that are assigned to the user's organization.
+    tasks = GenericQueue.new(user: current_user).tasks
+
+    render json: {
+      tasks: json_tasks(tasks)[:data]
+    }
+  end
+
+  def json_tasks_by_legacy_appeal_id_and_role(appeal_id, role)
+    tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal_id, role)
+
+    render json: {
+      tasks: json_legacy_tasks(tasks)[:data]
+    }
+  end
+
+  def handle_non_critical_error(endpoint, err)
+    if !err.class.method_defined? :serialize_response
+      code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
+      err = Caseflow::Error::SerializableError.new(code: code, message: err.to_s)
+    end
+
+    DataDogService.increment_counter(
+      metric_group: "errors",
+      metric_name: "non_critical",
+      app_name: RequestStore[:application],
+      attrs: {
+        endpoint: endpoint
+      }
+    )
+
+    render err.serialize_response
+  end
+
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
       appeals
+    ).as_json
+  end
+
+  def json_legacy_tasks(tasks)
+    ActiveModelSerializers::SerializableResource.new(
+      tasks,
+      each_serializer: ::WorkQueue::LegacyTaskSerializer
+    ).as_json
+  end
+
+  def json_tasks(tasks)
+    ActiveModelSerializers::SerializableResource.new(
+      tasks,
+      each_serializer: ::WorkQueue::TaskSerializer
     ).as_json
   end
 end

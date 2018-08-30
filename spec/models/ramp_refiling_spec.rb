@@ -23,7 +23,6 @@ describe RampRefiling do
            notice_date: 3.days.ago,
            receipt_date: 2.days.ago,
            option_selected: original_election_option,
-           end_product_reference_id: "123",
            established_at: 1.day.ago)
   end
 
@@ -94,6 +93,7 @@ describe RampRefiling do
           ramp_refiling.issues.create!(description: "Arm")
         ]
       end
+      let(:modifier) { RampReview::END_PRODUCT_DATA_BY_OPTION[option_selected][:modifier] }
 
       context "when an issue is not created in VBMS" do
         # Issues with the description "FAIL ME" are configured to fail in Fakes::VBMSService
@@ -113,7 +113,9 @@ describe RampRefiling do
       it "sends requests to VBMS to create both the end_product and the uncreated issues" do
         subject
 
-        expect(Fakes::VBMSService).to have_received(:establish_claim!)
+        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          hash_including(claim_hash: hash_including(end_product_modifier: modifier))
+        )
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: "64205555",
           claim_id: "1337",
@@ -158,10 +160,10 @@ describe RampRefiling do
     end
 
     context "option_selected" do
-      context "when orginal election was higher level review" do
+      context "when orginal election was Higher-Level Review" do
         let(:original_election_option) { "higher_level_review" }
 
-        context "when higher level review" do
+        context "when Higher-Level Review" do
           let(:option_selected) { "higher_level_review" }
 
           it "adds an error to option_selected" do
@@ -170,7 +172,7 @@ describe RampRefiling do
           end
         end
 
-        context "when higher level review with hearing" do
+        context "when Higher-Level Review with hearing" do
           let(:option_selected) { "higher_level_review_with_hearing" }
 
           it "adds an error to option_selected" do
@@ -190,10 +192,10 @@ describe RampRefiling do
         end
       end
 
-      context "when orginal election was higher level review with hearing" do
+      context "when orginal election was Higher-Level Review with hearing" do
         let(:original_election_option) { "higher_level_review_with_hearing" }
 
-        context "when higher level review" do
+        context "when Higher-Level Review" do
           let(:option_selected) { "higher_level_review" }
 
           it "adds an error to option_selected" do
@@ -202,7 +204,7 @@ describe RampRefiling do
           end
         end
 
-        context "when higher level review with hearing" do
+        context "when Higher-Level Review with hearing" do
           let(:option_selected) { "higher_level_review_with_hearing" }
 
           it "adds an error to option_selected" do
@@ -221,7 +223,7 @@ describe RampRefiling do
       context "when orginal election was supplemental claim" do
         let(:original_election_option) { "supplemental_claim" }
 
-        context "when higher level review" do
+        context "when Higher-Level Review" do
           let(:option_selected) { "higher_level_review" }
           it { is_expected.to be true }
         end

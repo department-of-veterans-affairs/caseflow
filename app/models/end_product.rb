@@ -12,14 +12,15 @@ class EndProduct
   INACTIVE_STATUSES = %w[CAN CLR].freeze
 
   RAMP_CODES = {
-    "682HLRRRAMP" => "Higher Level Review Rating",
+    "682HLRRRAMP" => "Higher-Level Review Rating",
     "683SCRRRAMP" => "Supplemental Claim Review Rating"
   }.freeze
 
-  # TODO: Put real codes in here when we know them
   AMA_CODES = {
-    "030HLRR" => "Higher Level Review Rating",
-    "040SCR" => "Supplemental Claim Rating"
+    "030HLRR" => "Higher-Level Review Rating",
+    "030HLRNR" => "Higher-Level Review Nonrating",
+    "040SCR" => "Supplemental Claim Rating",
+    "040SCNR" => "Supplemental Claim Nonrating"
   }.freeze
 
   DISPATCH_CODES = {
@@ -60,10 +61,20 @@ class EndProduct
   attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code,
                 :station_of_jurisdiction, :gulf_war_registry, :suppress_acknowledgement_letter
 
+  attr_writer :payee_code, :claimant_participant_id
+
   # Validators are used for validating the EP before we create it in VBMS
   validates :modifier, :claim_type_code, :station_of_jurisdiction, :claim_date, presence: true
   validates :claim_type_code, inclusion: { in: CODES.keys }
   validates :gulf_war_registry, :suppress_acknowledgement_letter, inclusion: { in: [true, false] }
+
+  def payee_code
+    @payee_code ||= "00"
+  end
+
+  def claimant_participant_id
+    @claimant_participant_id ||= nil
+  end
 
   def claim_type
     label || claim_type_code
@@ -104,7 +115,7 @@ class EndProduct
   def to_vbms_hash
     {
       benefit_type_code: "1",
-      payee_code: "00",
+      payee_code: payee_code,
       predischarge: false,
       claim_type: "Claim",
       end_product_modifier: modifier,
@@ -113,7 +124,8 @@ class EndProduct
       station_of_jurisdiction: station_of_jurisdiction,
       date: claim_date.to_date,
       suppress_acknowledgement_letter: suppress_acknowledgement_letter,
-      gulf_war_registry: gulf_war_registry
+      gulf_war_registry: gulf_war_registry,
+      claimant_participant_id: claimant_participant_id
     }
   end
 

@@ -152,4 +152,19 @@ class Fakes::VBMSService
       Generators::Contention.build(text: description, claim_id: claim_id)
     end
   end
+
+  def self.associate_rated_issues!(claim_id:, rated_issue_contention_map:)
+    Rails.logger.info("Submitting rated issues to VBMS...")
+    Rails.logger.info("Claim id:\n #{claim_id}")
+    Rails.logger.info("Rated issue contention map: #{rated_issue_contention_map.inspect}")
+
+    true
+  end
+
+  def self.remove_contention!(contention)
+    Rails.logger.info("Submitting remove contention request to VBMS...")
+    Rails.logger.info("Contention: #{contention.inspect}")
+
+    true
+  end
 end

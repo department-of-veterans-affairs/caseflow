@@ -23,22 +23,6 @@ describe SupplementalClaimIntake do
     )
   end
 
-  context "#start!" do
-    subject { intake.start! }
-
-    context "intake is already in progress" do
-      it "should not create another intake" do
-        SupplementalClaimIntake.new(
-          user: user,
-          veteran_file_number: veteran_file_number
-        ).start!
-
-        expect(intake).to_not be_nil
-        expect(subject).to eq(false)
-      end
-    end
-  end
-
   context "#cancel!" do
     subject { intake.cancel!(reason: "system_error", other: nil) }
 
@@ -52,7 +36,8 @@ describe SupplementalClaimIntake do
     let!(:claimant) do
       Claimant.create!(
         review_request: detail,
-        participant_id: "1234"
+        participant_id: "1234",
+        payee_code: "10"
       )
     end
 
@@ -72,6 +57,10 @@ describe SupplementalClaimIntake do
   context "#review!" do
     subject { intake.review!(params) }
 
+    let(:receipt_date) { 1.day.ago }
+    let(:claimant) { nil }
+    let(:payee_code) { nil }
+
     let(:detail) do
       SupplementalClaim.create!(
         veteran_file_number: "64205555",
@@ -79,38 +68,37 @@ describe SupplementalClaimIntake do
       )
     end
 
-    context "Veteran is claimant" do
-      let(:params) do
-        ActionController::Parameters.new(
-          receipt_date: 1.day.ago,
-          claimant: nil
-        )
-      end
+    let(:params) do
+      ActionController::Parameters.new(
+        receipt_date: receipt_date,
+        claimant: claimant,
+        payee_code: payee_code
+      )
+    end
 
+    context "Veteran is claimant" do
       it "adds veteran to claimants" do
         subject
 
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
-          participant_id: intake.veteran.participant_id
+          participant_id: intake.veteran.participant_id,
+          payee_code: "00"
         )
       end
     end
 
     context "Claimant is different than Veteran" do
-      let(:params) do
-        ActionController::Parameters.new(
-          receipt_date: 1.day.ago,
-          claimant: "1234"
-        )
-      end
+      let(:claimant) { "1234" }
+      let(:payee_code) { "10" }
 
       it "adds other relationship to claimants" do
         subject
 
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
-          participant_id: "1234"
+          participant_id: "1234",
+          payee_code: "10"
         )
       end
     end
@@ -121,7 +109,10 @@ describe SupplementalClaimIntake do
 
     let(:params) do
       { request_issues: [
-        { profile_date: "2018-04-30", reference_id: "reference-id", decision_text: "decision text" }
+        { profile_date: "2018-04-30", reference_id: "reference-id", decision_text: "decision text" },
+        { decision_text: "non-rated issue decision text",
+          issue_category: "test issue category",
+          decision_date: "2018-12-25" }
       ] }
     end
 
@@ -132,25 +123,64 @@ describe SupplementalClaimIntake do
       )
     end
 
+    let!(:claimant) do
+      Claimant.create!(
+        review_request: detail,
+        participant_id: "1234"
+      )
+    end
+
     it "completes the intake and creates an end product" do
-      expect(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
       allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+      allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
 
       subject
 
-      expect(intake.reload).to be_success
-      expect(intake.detail.established_at).to_not be_nil
-      expect(intake.detail.end_product_reference_id).to_not be_nil
-      expect(intake.detail.request_issues.count).to eq 1
-      expect(intake.detail.request_issues.first).to have_attributes(
+      ratings_end_product_establishment = EndProductEstablishment.find_by(
+        source: intake.reload.detail,
+        code: "040SCR"
+      )
+      nonratings_end_product_establishment = EndProductEstablishment.find_by(
+        source: intake.detail,
+        code: "040SCNR"
+      )
+      expect(intake).to be_success
+      expect(intake.detail.established_at).to eq(Time.zone.now)
+      expect(ratings_end_product_establishment).to_not be_nil
+      expect(ratings_end_product_establishment.established_at).to eq(Time.zone.now)
+      expect(intake.detail.established_at).to eq(Time.zone.now)
+      expect(nonratings_end_product_establishment).to_not be_nil
+      expect(nonratings_end_product_establishment.established_at).to eq(Time.zone.now)
+      expect(intake.detail.established_at).to eq(Time.zone.now)
+
+      request_issues = intake.detail.request_issues
+      expect(request_issues.count).to eq 2
+      expect(request_issues.first).to have_attributes(
         rating_issue_reference_id: "reference-id",
         rating_issue_profile_date: Date.new(2018, 4, 30),
         description: "decision text"
       )
+      expect(request_issues.second).to have_attributes(
+        issue_category: "test issue category",
+        decision_date: Date.new(2018, 12, 25),
+        description: "non-rated issue decision text"
+      )
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: intake.detail.veteran_file_number,
-        claim_id: intake.detail.end_product_reference_id,
-        contention_descriptions: ["decision text"]
+        claim_id: ratings_end_product_establishment.reference_id,
+        contention_descriptions: ["decision text"],
+        special_issues: []
+      )
+      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+        veteran_file_number: intake.detail.veteran_file_number,
+        claim_id: nonratings_end_product_establishment.reference_id,
+        contention_descriptions: ["non-rated issue decision text"],
+        special_issues: []
+      )
+      expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+        claim_id: ratings_end_product_establishment.reference_id,
+        rated_issue_contention_map: { "reference-id" => request_issues.first.contention_reference_id }
       )
     end
 
@@ -177,7 +207,8 @@ describe SupplementalClaimIntake do
           end_product_label: "Supplemental Claim Rating",
           end_product_code: "040SCR",
           gulf_war_registry: false,
-          suppress_acknowledgement_letter: false
+          suppress_acknowledgement_letter: false,
+          claimant_participant_id: claimant.participant_id
         },
         veteran_hash: intake.veteran.to_vbms_hash
       )
@@ -200,7 +231,7 @@ describe SupplementalClaimIntake do
 
       it "clears pending status" do
         allow_any_instance_of(SupplementalClaim).to receive(
-          :create_end_product_and_contentions!
+          :create_end_products_and_contentions!
         ).and_raise(unknown_error)
 
         expect { subject }.to raise_exception

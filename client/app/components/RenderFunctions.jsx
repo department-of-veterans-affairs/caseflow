@@ -502,27 +502,24 @@ export class SortArrowDown extends React.PureComponent {
   }
 }
 
-export class DoubleArrow extends React.PureComponent {
-// eslint-disable-next-line class-methods-use-this
-  render () {
-    return <svg width="13px" height="16px" className="table-icon" viewBox="0 0 13 16" version="1.1" xmlns="http://www.w3.org/2000/svg">
-      <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-        <g fillRule="nonzero" fill={COLORS.GREY_DARK}>
-          <g transform="translate(2.000000, 1.000000)">
-            <g transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) ">
-              <path d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z" id="Shape"></path>
-            </g>
+export const DoubleArrow = ({ topColor = COLORS.GREY_DARK, bottomColor = COLORS.GREY_DARK }) => <React.Fragment>
+  <svg width="13px" height="16px" className="table-icon" viewBox="0 0 13 16" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+      <g fillRule="nonzero">
+        <g fill={topColor} transform="translate(2.000000, 1.000000)">
+          <g transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) ">
+            <path d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z" id="Shape"></path>
           </g>
-          <g transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)">
-            <g transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) ">
-              <path d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z" id="Shape"></path>
-            </g>
+        </g>
+        <g fill={bottomColor} transform="translate(7.000000, 11.666667) scale(1, -1) translate(-7.000000, -11.666667) translate(2.000000, 9.000000)">
+          <g transform="translate(5.000000, 2.666667) scale(-1, 1) rotate(-180.000000) translate(-5.000000, -2.666667) ">
+            <path d="M9.48148147,0.592592593 C9.48148147,0.75308642 9.42283953,0.891975307 9.30555553,1.00925926 L5.15740741,5.15740741 C5.04012346,5.27469136 4.90123457,5.33333333 4.74074074,5.33333333 C4.58024691,5.33333333 4.44135803,5.27469136 4.32407407,5.15740741 L0.175925926,1.00925926 C0.0586419753,0.891975307 0,0.75308642 0,0.592592593 C0,0.432098765 0.0586419753,0.293209877 0.175925926,0.175925926 C0.293209877,0.0586419753 0.432098765,0 0.592592593,0 L8.88888887,0 C9.04938273,0 9.1882716,0.0586419753 9.30555553,0.175925926 C9.42283953,0.293209877 9.48148147,0.432098765 9.48148147,0.592592593 Z" id="Shape"></path>
           </g>
         </g>
       </g>
-    </svg>;
-  }
-}
+    </g>
+  </svg>
+</React.Fragment>;
 
 export class ExternalLink extends React.PureComponent {
   // eslint-disable-next-line class-methods-use-this
@@ -610,6 +607,28 @@ export class ClipboardIcon extends React.PureComponent {
             12.378v-2.043h2.112l-2.11 2.043zm2.665-3.356H14.68v3.867H7.992v-11.6h10.682v7.733z"
         fill="#5B616B" fillRule="evenodd" /></svg>;
 
+  }
+}
+
+export class NewFileIcon extends React.PureComponent {
+  render() {
+    return <svg width="35px" height="11px" viewBox="0 0 35 11" xmlns="http://www.w3.org/2000/svg" version="1.1">
+      <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+        <g id="Group" transform="translate(0.000000, -3.000000)">
+          <g id="icon" transform="translate(0.000000, 3.000000)">
+            <path d="M0.5,0.5 L0.5,10.5 L8.5,10.5 L8.5,0.5 L0.5,0.5 Z" id="Path" stroke="#844E9F"></path>
+            <polygon id="Path" fill="#844E9F" points="2.25 3 2.25 4 6.75 4 6.75 3"></polygon>
+            <polygon id="Path-Copy" fill="#844E9F" points="2.25 5 2.25 6 6.75 6 6.75 5"></polygon>
+            <polygon id="Path-Copy-2" fill="#844E9F" points="2.25 7 2.25 8 6.75 8 6.75 7"></polygon>
+          </g>
+          <text id="NEW" fontFamily="SourceSansPro-Regular, Source Sans Pro" fontSize="13" fontWeight="normal" letterSpacing="-0.75" fill="#844E9F">
+            <tspan x="10" y="13">N</tspan>
+            <tspan x="17.661" y="13">E</tspan>
+            <tspan x="24.512" y="13">W</tspan>
+          </text>
+        </g>
+      </g>
+    </svg>;
   }
 }
 

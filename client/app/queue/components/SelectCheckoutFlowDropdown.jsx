@@ -1,7 +1,7 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
 
@@ -17,18 +17,43 @@ import {
   dropdownStyling,
   DRAFT_DECISION_OPTIONS
 } from '../constants';
-import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
 
-class SelectCheckoutFlowDropdown extends React.PureComponent {
+import type {
+  State
+} from '../types/state';
+
+type Params = {|
+  appealId: string
+|};
+
+type Props = Params & {|
+  // state
+  featureToggles: Object,
+  changedAppeals: Array<number>,
+  // dispatch
+  stageAppeal: typeof stageAppeal,
+  resetDecisionOptions: typeof resetDecisionOptions,
+  checkoutStagedAppeal: typeof checkoutStagedAppeal,
+  setCaseReviewActionType: typeof setCaseReviewActionType,
+  // withrouter
+  history: Object
+|};
+
+class SelectCheckoutFlowDropdown extends React.PureComponent<Props> {
   changeRoute = (props) => {
     const {
       appealId,
       history
     } = this.props;
     const decisionType = props.value;
-    const route = decisionType === DECISION_TYPES.OMO_REQUEST ? 'submit' : 'dispositions';
+    const routes = {
+      omo_request: 'submit',
+      draft_decision: 'dispositions',
+      colocated_task: 'colocated_task'
+    };
+    const route = routes[decisionType];
 
-    this.stageAppeal();
+    this.props.stageAppeal(appealId);
 
     this.props.resetDecisionOptions();
     this.props.setCaseReviewActionType(decisionType);
@@ -37,32 +62,32 @@ class SelectCheckoutFlowDropdown extends React.PureComponent {
     history.replace(`/queue/appeals/${appealId}/${route}`);
   };
 
-  stageAppeal = () => {
-    const { appealId } = this.props;
+  getOptions = () => {
+    const { featureToggles } = this.props;
 
-    if (this.props.changedAppeals.includes(appealId)) {
-      this.props.checkoutStagedAppeal(appealId);
+    if (featureToggles.attorney_assignment_to_colocated) {
+      return [...DRAFT_DECISION_OPTIONS, {
+        label: 'Add Colocated Task',
+        value: 'colocated_task'
+      }];
     }
 
-    this.props.stageAppeal(appealId);
+    return DRAFT_DECISION_OPTIONS;
   }
 
   render = () => <SearchableDropdown
     name={`start-checkout-flow-${this.props.appealId}`}
     placeholder="Select an action&hellip;"
-    options={DRAFT_DECISION_OPTIONS}
+    options={this.getOptions()}
     onChange={this.changeRoute}
     hideLabel
     dropdownStyling={dropdownStyling} />;
 }
 
-SelectCheckoutFlowDropdown.propTypes = {
-  appealId: PropTypes.string.isRequired
-};
-
-const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.loadedQueue.appeals[ownProps.appealId],
-  changedAppeals: _.keys(state.queue.stagedChanges.appeals)
+const mapStateToProps = (state: State, ownProps) => ({
+  appeal: state.queue.appeals[ownProps.appealId],
+  changedAppeals: _.keys(state.queue.stagedChanges.appeals),
+  featureToggles: state.ui.featureToggles
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -72,4 +97,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   stageAppeal
 }, dispatch);
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SelectCheckoutFlowDropdown));
+export default (withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(SelectCheckoutFlowDropdown)
+): React.ComponentType<Params>);

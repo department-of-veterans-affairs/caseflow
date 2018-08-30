@@ -6,7 +6,7 @@ class HearingDay
   HEARING_TYPES = {
     video: "V",
     travel: "T",
-    central_office: "C"
+    central: "C"
   }.freeze
 
   class << self
@@ -16,6 +16,14 @@ class HearingDay
 
     def update_hearing_day(hearing, hearing_hash)
       HearingDayRepository.update_vacols_hearing!(hearing, hearing_hash)
+    end
+
+    def create_schedule(scheduled_hearings)
+      HearingDayRepository.create_schedule(scheduled_hearings)
+    end
+
+    def update_schedule(updated_hearings)
+      HearingDayRepository.update_schedule(updated_hearings)
     end
 
     def load_days(start_date, end_date, regional_office = nil)

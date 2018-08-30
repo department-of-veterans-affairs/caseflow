@@ -11,6 +11,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
   end
 
   after do
@@ -20,6 +21,13 @@ RSpec.feature "Supplemental Claim Intake" do
 
   let(:veteran) do
     Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
+  end
+
+  let(:veteran_no_ratings) do
+    Generators::Veteran.build(file_number: "55555555",
+                              first_name: "Nora",
+                              last_name: "Attings",
+                              participant_id: "44444444")
   end
 
   let(:issues) do
@@ -86,8 +94,6 @@ RSpec.feature "Supplemental Claim Intake" do
       bgs_attrs: { end_product_type_code: "040" }
     )
 
-    Fakes::VBMSService.end_product_claim_id = "IAMANEPID"
-
     visit "/intake"
     safe_click ".Select"
     expect(page).to have_css(".cf-form-dropdown")
@@ -108,7 +114,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     click_on "Search"
 
-    expect(page).to have_current_path("/intake/review-request")
+    expect(page).to have_current_path("/intake/review_request")
 
     fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
     safe_click "#button-submit-review"
@@ -129,11 +135,14 @@ RSpec.feature "Supplemental Claim Intake" do
 
     find("label", text: "Baz Qux, Child", match: :prefer_exact).click
 
+    fill_in "What is the payee code for this claimant?", with: "11 - C&P First Child"
+    find("#cf-payee-code").send_keys :enter
+
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
 
-    visit "/intake/review-request"
+    visit "/intake/review_request"
 
     expect(find("#different-claimant-option_true", visible: false)).to be_checked
     expect(find_field("Baz Qux, Child", visible: false)).to be_checked
@@ -143,7 +152,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_current_path("/intake/finish")
 
     expect(page).to have_content("Identify issues on")
-    expect(page).to have_content("Decision date: 04/14/2017")
+    expect(page).to have_content("Decision date: 04/17/2017")
     expect(page).to have_content("Left knee granted")
     expect(page).to_not have_content("Untimely rating issue 1")
     expect(page).to have_button("Establish EP", disabled: true)
@@ -154,7 +163,8 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(supplemental_claim).to_not be_nil
     expect(supplemental_claim.receipt_date).to eq(receipt_date)
     expect(supplemental_claim.claimants.first).to have_attributes(
-      participant_id: "5382910293"
+      participant_id: "5382910293",
+      payee_code: "11"
     )
     intake = Intake.find_by(veteran_file_number: "12341234")
 
@@ -176,6 +186,10 @@ RSpec.feature "Supplemental Claim Intake" do
 
     fill_in "Issue description", with: "Description for Active Duty Adjustments"
 
+    expect(page).to have_content("1 issue")
+
+    fill_in "Decision date", with: "04/25/2018"
+
     expect(page).to have_content("2 issues")
 
     safe_click "#button-finish-intake"
@@ -185,27 +199,83 @@ RSpec.feature "Supplemental Claim Intake" do
       "Established EP: 040SCR - Supplemental Claim Rating for Station 397 - ARC"
     )
 
+    # ratings end product
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
       claim_hash: {
         benefit_type_code: "1",
-        payee_code: "00",
+        payee_code: "11",
         predischarge: false,
         claim_type: "Claim",
         station_of_jurisdiction: "397",
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "041",
         end_product_label: "Supplemental Claim Rating",
-        end_product_code: "040SCR",
+        end_product_code: SupplementalClaim::END_PRODUCT_RATING_CODE,
         gulf_war_registry: false,
-        suppress_acknowledgement_letter: false
+        suppress_acknowledgement_letter: false,
+        claimant_participant_id: "5382910293"
       },
       veteran_hash: intake.veteran.to_vbms_hash
     )
 
+    ratings_end_product_establishment = EndProductEstablishment.find_by(
+      source: intake.detail,
+      code: SupplementalClaim::END_PRODUCT_RATING_CODE
+    )
+
+    expect(ratings_end_product_establishment).to have_attributes(
+      claimant_participant_id: "5382910293",
+      payee_code: "11"
+    )
+
+    # nonratings end product
+    expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+      claim_hash: {
+        benefit_type_code: "1",
+        payee_code: "11",
+        predischarge: false,
+        claim_type: "Claim",
+        station_of_jurisdiction: "397",
+        date: supplemental_claim.receipt_date.to_date,
+        end_product_modifier: "042",
+        end_product_label: "Supplemental Claim Nonrating",
+        end_product_code: SupplementalClaim::END_PRODUCT_NONRATING_CODE,
+        gulf_war_registry: false,
+        suppress_acknowledgement_letter: false,
+        claimant_participant_id: "5382910293"
+      },
+      veteran_hash: intake.veteran.to_vbms_hash
+    )
+    nonratings_end_product_establishment = EndProductEstablishment.find_by(
+      source: intake.detail,
+      code: SupplementalClaim::END_PRODUCT_NONRATING_CODE
+    )
+
+    expect(nonratings_end_product_establishment).to have_attributes(
+      claimant_participant_id: "5382910293",
+      payee_code: "11"
+    )
+
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: "12341234",
-      claim_id: "IAMANEPID",
-      contention_descriptions: ["Description for Active Duty Adjustments", "PTSD denied"]
+      claim_id: ratings_end_product_establishment.reference_id,
+      contention_descriptions: ["PTSD denied"],
+      special_issues: []
+    )
+    expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+      veteran_file_number: "12341234",
+      claim_id: nonratings_end_product_establishment.reference_id,
+      contention_descriptions: ["Description for Active Duty Adjustments"],
+      special_issues: []
+    )
+
+    rated_issue = supplemental_claim.request_issues.find_by(description: "PTSD denied")
+
+    expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+      claim_id: ratings_end_product_establishment.reference_id,
+      rated_issue_contention_map: {
+        rated_issue.rating_issue_reference_id => rated_issue.contention_reference_id
+      }
     )
 
     intake.reload
@@ -213,23 +283,34 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(intake).to be_success
 
-    supplemental_claim.reload
-    expect(supplemental_claim.end_product_reference_id).to eq("IAMANEPID")
     expect(supplemental_claim.request_issues.count).to eq 2
     expect(supplemental_claim.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
       rating_issue_profile_date: receipt_date - untimely_days + 4.days,
-      description: "PTSD denied"
+      description: "PTSD denied",
+      decision_date: nil
     )
     expect(supplemental_claim.request_issues.last).to have_attributes(
       rating_issue_reference_id: nil,
       rating_issue_profile_date: nil,
       issue_category: "Active Duty Adjustments",
-      description: "Description for Active Duty Adjustments"
+      description: "Description for Active Duty Adjustments",
+      decision_date: 1.month.ago.to_date
     )
 
-    visit "/supplemental_claims/IAMANEPID/edit"
-    expect(page).to have_content("Veteran Name: Ed Merica")
+    visit "/supplemental_claims/#{ratings_end_product_establishment.reference_id}/edit"
+    expect(page).to have_content("Supplemental Claim (VA Form 21-526b)")
+    expect(page).to have_content("Ed Merica (12341234)")
+    expect(page).to have_content("04/20/2018")
+    expect(page).to_not have_content("Informal conference request")
+    expect(page).to_not have_content("Same office request")
+    expect(page).to have_content("PTSD denied")
+
+    safe_click ".cf-edit-issues-link"
+
+    expect(page).to have_current_path(
+      "/supplemental_claims/#{ratings_end_product_establishment.reference_id}/edit/select_issues"
+    )
 
     visit "/supplemental_claims/4321/edit"
     expect(page).to have_content("Page not found")
@@ -253,6 +334,48 @@ RSpec.feature "Supplemental Claim Intake" do
     safe_click "#button-submit-review"
 
     expect(page).to have_content("Something went wrong")
-    expect(page).to have_current_path("/intake/review-request")
+    expect(page).to have_current_path("/intake/review_request")
+  end
+
+  it "Allows a Veteran without ratings to create an intake" do
+    supplemental_claim = SupplementalClaim.create!(
+      veteran_file_number: veteran_no_ratings.file_number,
+      receipt_date: 2.days.ago
+    )
+
+    SupplementalClaimIntake.create!(
+      veteran_file_number: veteran_no_ratings.file_number,
+      user: current_user,
+      started_at: 5.minutes.ago,
+      detail: supplemental_claim
+    )
+
+    Claimant.create!(
+      review_request: supplemental_claim,
+      participant_id: veteran_no_ratings.participant_id
+    )
+
+    supplemental_claim.start_review!
+
+    visit "/intake"
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_content("This Veteran has no rated, disability issues")
+
+    safe_click "#button-add-issue"
+
+    safe_click ".Select"
+
+    fill_in "Issue category", with: "Active Duty Adjustments"
+    find("#issue-category").send_keys :enter
+    fill_in "Issue description", with: "Description for Active Duty Adjustments"
+    fill_in "Decision date", with: "04/19/2018"
+
+    expect(page).to have_content("1 issue")
+
+    safe_click "#button-finish-intake"
+
+    expect(page).to have_content("Request for Supplemental Claim (VA Form 21-526b) has been processed.")
   end
 end

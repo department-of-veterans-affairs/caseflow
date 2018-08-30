@@ -16,7 +16,9 @@ class Hearings::HearingDayController < HearingScheduleController
       format.json do
         render json: {
           hearings: json_hearings(video_and_co),
-          tbhearings: json_tb_hearings(travel_board)
+          tbhearings: json_tb_hearings(travel_board),
+          startDate: start_date,
+          endDate: end_date
         }
       end
     end
@@ -27,7 +29,7 @@ class Hearings::HearingDayController < HearingScheduleController
     hearing = HearingDay.create_hearing_day(create_params)
     return invalid_record_error(hearing) unless hearing.valid?
     render json: {
-      hearing: json_hearings(hearing)
+      hearing: json_created_hearings(hearing)
     }, status: :created
   end
 
@@ -35,19 +37,26 @@ class Hearings::HearingDayController < HearingScheduleController
     return record_not_found unless hearing
 
     updated_hearing = HearingDay.update_hearing_day(hearing, update_params)
+
+    json_hearing = if updated_hearing.class.equal?(TrueClass)
+                     json_created_hearings(hearing)
+                   else
+                     json_tb_hearings(updated_hearing)
+                   end
+
     render json: {
-      hearing: updated_hearing.class.equal?(TrueClass) ? json_hearings(hearing) : json_tb_hearings(updated_hearing)
+      hearing: json_hearing
     }, status: :ok
   end
 
   private
 
   def hearing
-    @hearing ||= HearingDay.find_hearing_day(params[:hearing_type], params[:hearing_key])
+    @hearing ||= HearingDay.find_hearing_day(update_params[:hearing_type], update_params[:hearing_key])
   end
 
   def update_params
-    params.permit(:judge_id, :regional_office)
+    params.permit(:judge_id, :regional_office, :hearing_key, :hearing_type)
   end
 
   def create_params
@@ -79,6 +88,15 @@ class Hearings::HearingDayController < HearingScheduleController
         "detail": "Record with that ID is not found"
       ]
     }, status: 404
+  end
+
+  def json_created_hearings(hearings)
+    json_hash = ActiveModelSerializers::SerializableResource.new(
+      hearings,
+      each_serializer: ::Hearings::HearingDayCreateSerializer
+    ).as_json
+
+    format_for_client(json_hash)
   end
 
   def json_hearings(hearings)

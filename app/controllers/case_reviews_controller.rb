@@ -1,6 +1,5 @@
 class CaseReviewsController < ApplicationController
   before_action :verify_queue_access
-  before_action :verify_case_review_access, only: :complete
 
   CASE_REVIEW_CLASSES = {
     AttorneyCaseReview: AttorneyCaseReview,
@@ -49,7 +48,7 @@ class CaseReviewsController < ApplicationController
                                    :work_product,
                                    :overtime,
                                    :note,
-                                   issues: [:disposition, :vacols_sequence_id, :readjudication,
+                                   issues: [:id, :disposition, :readjudication,
                                             remand_reasons: [:code, :after_certification]])
       .merge(attorney: current_user, task_id: params[:task_id])
   end
@@ -62,7 +61,7 @@ class CaseReviewsController < ApplicationController
                                    :comment,
                                    factors_not_considered: [],
                                    areas_for_improvement: [],
-                                   issues: [:disposition, :vacols_sequence_id, :readjudication,
+                                   issues: [:id, :disposition, :readjudication,
                                             remand_reasons: [:code, :after_certification]])
       .merge(judge: current_user, task_id: params[:task_id])
   end

@@ -1,6 +1,7 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
-import { formatIssues, prepareReviewData } from '../util';
+import { prepareReviewData } from '../util';
+import { formatIssues } from '../../intakeCommon/util';
 import _ from 'lodash';
 
 const analytics = true;
@@ -114,6 +115,13 @@ export const setClaimant = (claimant) => ({
   }
 });
 
+export const setPayeeCode = (payeeCode) => ({
+  type: ACTIONS.SET_PAYEE_CODE,
+  payload: {
+    payeeCode
+  }
+});
+
 export const setIssueSelected = (profileDate, issueId, isSelected) => ({
   type: ACTIONS.SET_ISSUE_SELECTED,
   payload: {
@@ -158,6 +166,19 @@ export const setIssueDescription = (issueId, description) => ({
   meta: {
     analytics: {
       label: description
+    }
+  }
+});
+
+export const setIssueDecisionDate = (issueId, decisionDate) => ({
+  type: ACTIONS.SET_ISSUE_DECISION_DATE,
+  payload: {
+    issueId,
+    decisionDate
+  },
+  meta: {
+    analytics: {
+      label: decisionDate
     }
   }
 });

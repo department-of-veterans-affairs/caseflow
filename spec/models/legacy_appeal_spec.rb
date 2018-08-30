@@ -183,9 +183,17 @@ describe LegacyAppeal do
       it { is_expected.to eq(nil) }
     end
 
+    context "when the case has a non-Board disposition" do
+      let(:vacols_case) do
+        create(:case, :disposition_ramp)
+      end
+
+      it { is_expected.to eq(nil) }
+    end
+
     context "when there is a decision date" do
       let(:vacols_case) do
-        create(:case_with_decision, bfddec: 30.days.ago)
+        create(:case, :status_complete, :disposition_allowed, bfddec: 30.days.ago)
       end
 
       it { is_expected.to eq(90.days.from_now.to_date) }
@@ -1344,7 +1352,6 @@ describe LegacyAppeal do
     end
 
     it "returns correct eps" do
-      puts BGSService.end_product_records
       expect(result.length).to eq(2)
 
       expect(result.first.claim_type_code).to eq("172GRANT")
@@ -1532,6 +1539,25 @@ describe LegacyAppeal do
         create(:case, case_issues: [create(:case_issue), create(:case_issue)])
       end
       it { is_expected.to eq 2 }
+    end
+  end
+
+  context "#contested_claim" do
+    subject { appeal.contested_claim }
+    let(:vacols_case) { create(:case) }
+
+    context "when there is no contesting claimant" do
+      it { is_expected.to eq false }
+    end
+
+    context "when there is a contesting claimant" do
+      let(:vacols_case) do
+        vacols_c = create(:case)
+        create(:representative, reptype: "C", repkey: vacols_c.bfkey)
+        vacols_c
+      end
+
+      it { is_expected.to eq true }
     end
   end
 
@@ -1767,6 +1793,24 @@ describe LegacyAppeal do
     it "Updates a legacy_appeal when an appeal is updated" do
       appeal.update!(rice_compliance: TRUE)
       expect(legacy_appeal.attributes).to eq(appeal.attributes)
+    end
+  end
+
+  context "#has_outstanding_vacols_mail?" do
+    let(:vacols_case) { create(:case) }
+    subject { appeal.outstanding_vacols_mail? }
+
+    context "when no mail is outstanding" do
+      it "returns false" do
+        expect(subject).to eq false
+      end
+    end
+
+    context "when mail is outstanding" do
+      let(:vacols_case) { create(:case, :outstanding_mail) }
+      it "returns true" do
+        expect(subject).to eq true
+      end
     end
   end
 

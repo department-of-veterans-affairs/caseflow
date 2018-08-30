@@ -16,7 +16,7 @@ class AppealRepository
     case_record = MetricsService.record("VACOLS: load_vacols_data #{appeal.vacols_id}",
                                         service: :vacols,
                                         name: "load_vacols_data") do
-      VACOLS::Case.includes(:folder, :correspondent).find(appeal.vacols_id)
+      VACOLS::Case.includes(:folder, :correspondent, :representatives).find(appeal.vacols_id)
     end
 
     set_vacols_values(appeal: appeal, case_record: case_record)
@@ -30,7 +30,7 @@ class AppealRepository
     cases = MetricsService.record("VACOLS: appeals_by_vbms_id",
                                   service: :vacols,
                                   name: "appeals_by_vbms_id") do
-      VACOLS::Case.where(bfcorlid: vbms_id).includes(:folder, :correspondent)
+      VACOLS::Case.where(bfcorlid: vbms_id).includes(:folder, :correspondent, :representatives)
     end
 
     cases.map { |case_record| build_appeal(case_record) }
@@ -45,20 +45,27 @@ class AppealRepository
       cases = VACOLS::Case.where(bfcorlid: vbms_id)
         .includes(:folder, :correspondent, folder: :outcoder)
         .references(:folder, :correspondent, folder: :outcoder)
-        .joins(VACOLS::Case::JOIN_AOD, VACOLS::Case::JOIN_REMAND_RETURN)
+
       vacols_ids = cases.map(&:bfkey)
       # Load issues, but note that we do so without including descriptions
       issues = VACOLS::CaseIssue.where(isskey: vacols_ids).group_by(&:isskey)
       hearings = Hearing.repository.hearings_for_appeals(vacols_ids)
       cavc_decisions = CAVCDecision.repository.cavc_decisions_by_appeals(vacols_ids)
 
+      aod_and_rem_return = VACOLS::Case.where(bfkey: vacols_ids)
+        .joins(VACOLS::Case::JOIN_AOD, VACOLS::Case::JOIN_REMAND_RETURN)
+        .select("bfkey", "aod", "rem_return")
+        .each_with_object({}) do |row, memo|
+          memo[(row["bfkey"]).to_s] = row
+        end
+
       cases.map do |case_record|
         appeal = build_appeal(case_record)
-        appeal.aod = case_record["aod"] == 1
+        appeal.aod = aod_and_rem_return[appeal.vacols_id].aod == 1
         appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
         appeal.hearings = hearings[appeal.vacols_id] || []
         appeal.cavc_decisions = cavc_decisions[appeal.vacols_id] || []
-        appeal.remand_return_date = (case_record["rem_return"] || false) unless appeal.active?
+        appeal.remand_return_date = (aod_and_rem_return[appeal.vacols_id].rem_return || false) unless appeal.active?
         appeal.save
         appeal
       end
@@ -76,7 +83,7 @@ class AppealRepository
       VACOLS::Case.where(bfcorlid: vbms_id)
         .where.not(bfd19: nil)
         .where("bfddec is NULL or bfmpro = 'REM'")
-        .includes(:folder, :correspondent, :representative)
+        .includes(:folder, :correspondent, :representatives)
     end
 
     cases.map { |case_record| build_appeal(case_record, true) }
@@ -126,7 +133,6 @@ class AppealRepository
       vbms_id: case_record.bfcorlid,
       type: VACOLS::Case::TYPES[case_record.bfac],
       file_type: folder_type_from(folder_record),
-      contested_claim: case_record.representative.try(:reptype) == "C",
       veteran_first_name: correspondent_record.snamef,
       veteran_middle_initial: correspondent_record.snamemi,
       veteran_last_name: correspondent_record.snamel,
@@ -138,6 +144,7 @@ class AppealRepository
       appellant_first_name: correspondent_record.sspare1,
       appellant_middle_initial: correspondent_record.sspare2,
       appellant_last_name: correspondent_record.sspare3,
+      appellant_name_suffix: correspondent_record.sspare4,
       appellant_relationship: correspondent_record.sspare1 ? correspondent_record.susrtyp : "",
       appellant_ssn: correspondent_record.ssn,
       appellant_address_line_1: correspondent_record.saddrst1,
@@ -151,6 +158,7 @@ class AppealRepository
       nod_date: normalize_vacols_date(case_record.bfdnod),
       soc_date: normalize_vacols_date(case_record.bfdsoc),
       form9_date: normalize_vacols_date(case_record.bfd19),
+      notice_of_death_date: normalize_vacols_date(correspondent_record.sfnod),
       ssoc_dates: ssoc_dates_from(case_record),
       hearing_request_type: VACOLS::Case::HEARING_REQUEST_TYPES[case_record.bfhr],
       video_hearing_requested: case_record.bfdocind == "V",
@@ -159,6 +167,7 @@ class AppealRepository
       regional_office_key: case_record.bfregoff,
       certification_date: case_record.bf41stat,
       case_review_date: folder_record.tidktime,
+      citation_number: folder_record.tiread2,
       case_record: case_record,
       disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[case_record.bfdc],
       location_code: case_record.bfcurloc,
@@ -466,7 +475,6 @@ class AppealRepository
         timdtime: VacolsHelper.local_time_with_utc_timezone,
         timduser: user.regional_office
       )
-
       # Reopen any issues that have the same close information as the appeal
       case_record.case_issues
         .where(issdc: close_disposition, issdcls: close_date)

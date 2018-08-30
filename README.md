@@ -1,13 +1,57 @@
 # Caseflow
 [![CircleCI](https://circleci.com/gh/department-of-veterans-affairs/caseflow.svg?style=svg)](https://circleci.com/gh/department-of-veterans-affairs/caseflow)
 
-Clerical errors have the potential to delay the resolution of a veteran's appeal by **months**. Caseflow Certification uses automated error checking, and user-centered design to greatly reduce the number of clerical errors made when certifying appeals from offices around the nation to the Board of Veteran's Appeals in Washington DC.
+Caseflow is a suite of web-based tools to manage VA appeals. It's currently in development by the Appeals Modernization team (est. 2016). It will replace the current system of record for appeals, the Veterans Appeals Control and Location System (VACOLS), which was created in 1979 on now-outdated infrastructure. Additionally, Caseflow will allow the Board of Veterans' Appeals to process appeals under the new guidelines created by the Veterans Appeals Improvement and Modernization Act of 2017, which goes into effect February 14th, 2019.
 
-[You can read more about the project here](https://medium.com/the-u-s-digital-service/new-tool-launches-to-improve-the-benefits-claim-appeals-process-at-the-va-59c2557a4a1c#.t1qhhz7h8).
+The Appeals Modernization team's mission is to empower employees with technology to increase timely, accurate appeals decisions and improve the Veteran experience. Most of the team's products live here, in the main Caseflow repository.
 
-![Screenshot of Caseflow Certification (Fake data, No PII here)](certification-screenshot.png "Caseflow Certification")
+## Caseflow products in heavy development
 
-## Setup
+### Intake
+
+Tracking Appeals Modernization Act reviews in a single system.
+
+### Queue
+
+Workflow management at the Board of Veterans' Appeals.
+
+### Reader
+
+Increases the speed with which attorneys and Veterans Law Judges (VLJs)
+review and annotate electronic case files.
+
+### Hearing Schedule
+
+Scheduling and supporting Board of Veterans' Appeals hearings.
+
+## Caseflow products in a mature state 
+
+### Dispatch 
+
+Facilitates the transfer of cases from the Agency of Original Jurisdiction (AOJ) to
+the Board of Veterans' Appeals (the Board).
+
+### Hearing Prep
+
+Improving the timeliness and Veteran experience of Board hearings.
+
+### API
+
+Providing Veterans transparent information about the status of their appeal
+
+### Certification
+
+Facilitates the transfer of cases from the Agency of Original Jurisdiction (AOJ) to the Board of Veterans' Appeals (the Board).
+
+## Other Caseflow Products
+| Product | GitHub Repository | CI |
+| --- | --- | ---|
+| Caseflow | [caseflow](https://github.com/department-of-veterans-affairs/caseflow) | [CircleCI - Caseflow](https://circleci.com/gh/department-of-veterans-affairs/caseflow) |
+| eFolder Express | [caseflow-efolder](https://github.com/department-of-veterans-affairs/caseflow-efolder) | [Travis CI - eFolder](https://travis-ci.org/department-of-veterans-affairs/caseflow-efolder) |
+| Caseflow Feedback | [caseflow-feedback](https://github.com/department-of-veterans-affairs/caseflow-feedback) | [Travis CI - Caseflow Feedback](https://travis-ci.org/department-of-veterans-affairs/caseflow-feedback) |
+| Commons | [caseflow-commons](https://github.com/department-of-veterans-affairs/caseflow-commons) | [Travis CI - Commons](https://travis-ci.org/department-of-veterans-affairs/caseflow-commons) |
+
+## Developer Setup
 
 ### Install the Xcode commandline tools
 
@@ -20,6 +64,7 @@ Install the base dependencies via Homebrew:
     brew install rbenv nodenv yarn
     brew tap ouchxp/nodenv
     brew install nodenv-nvmrc
+    brew install postgresql
     brew tap caskroom/cask
     brew cask install chromedriver
 
@@ -39,6 +84,10 @@ Once you've done that, close your terminal window and open a new one. Verify tha
 
 If you don't see both, stop and debug.
 
+### Git 2-factor authentication
+
+We are using 2-factor authentication with Github so, for example, when you access a repository using Git on the command line using commands like `git clone`, `git fetch`, `git pull` or `git push` with HTTPS URLs, you must provide your GitHub username and your personal access token when prompted for a username and password. Follow directions [here](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) on how to do that.
+
 ### Install [PDFtk Server](https://www.pdflabs.com/tools/pdftk-server/)
 
 Unfortunately, the link on the website points to a version for older macOS that doesn't work on current versions. Use this link found on a Stack Overflow post instead:
@@ -47,7 +96,7 @@ Unfortunately, the link on the website points to a version for older macOS that 
 
 ### Install Docker
 
-Install [Docker](https://docs.docker.com/docker-for-mac/install/) on your machine. Once it's installed, go into the Docker preferences and limit Docker to 2 CPUs in order to keep FACOLS from consuming your Macbook.
+Install [Docker](https://docs.docker.com/docker-for-mac/install/) on your machine. Once it's installed, go into the Docker's advanced preferences and limit Docker's resources in order to keep FACOLS from consuming your Macbook.  Recommended settings are 4 CPUs, 8 GiB of internal memory, and 512 MiB of swap.
 
 After installation is complete, run:
 ```
@@ -68,8 +117,10 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 
 3) Install via Homebrew:
 
+```
     brew tap InstantClientTap/instantclient
     brew install instantclient-basic instantclient-sdk
+```
 
 #### Windows
 1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit.
@@ -119,13 +170,15 @@ This should install clean. If you have errors, try ... FIXME.
 
 ### Setup the development Postgres user
 
-Add these to your `.bashrc`:
+Add these to your `.bash_profile`:
 
 ```
 export POSTGRES_HOST=localhost
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
 ```
+
+(Reload the file `source ~/.bash_profile`)
 
 ### Cleanup the old dev environment (not needed for new Macbooks)
 
@@ -151,7 +204,7 @@ bundle exec rake local:build
 The above shortcut runs a set of commands in sequence that should build your local environment. If you need to troubleshoot the process, you can copy each individual step out of the task and run them independently.
 
 ### Debugging FACOLS setup
-Sometimes the above setup fails, or the app cannot connect to the DB. Here are some frequently encountered scenarios.
+FACOLS (short for fake-VACOLS) is our name for the Oracle DB with mock VACOLS data that we run locally. Sometimes the above setup fails at FACOLS steps, or the app cannot connect to the FACOLS DB. Here are some frequently encountered scenarios.
 
 1) Running `rake local:vacols:setup` logs out:
 ```
@@ -221,15 +274,6 @@ You can access the site at [http://localhost:3000/test/users](http://localhost:3
 When a VA employee logs in through the VA's unified login system (CSS) a session begins with the user.
 Within this session the user gets a set of roles. These roles determine what pages a user has access to.
 In dev mode, we don't log in with CSS and instead take on the [identity of a user in the database](#changing-between-test-users).
-
-## Dispatch (Dev Mode)
-To view the dispatch pages head to [http://localhost:3000/dispatch](http://localhost:3000/dispatch).
-
-To see the manager view, you need the following roles: [Establish Claim, Manage Claim Establishment].
-The database is seeded with a number of tasks, users, and appeals.
-
-To see the worker view, you need the following role: [Establish Claim].
-From this view you can start a new task and go through the flow of establishing a claim.
 
 ## Running Caseflow connected to external depedencies
 To test the app connected to external dependencies, you'll need to set up Oracle, decrypt the environment variables, install staging gems, and run the app.
@@ -352,16 +396,3 @@ When Caseflow Monitor starts working again, switch the banner back to automatic 
 ```
 Rails.cache.write(:degraded_service_banner, :auto)
 ```
-
-# Other Caseflow Products
-| Product | GitHub Repository | CI |
-| --- | --- | ---|
-| Caseflow | [caseflow](https://github.com/department-of-veterans-affairs/caseflow) | [CircleCI - Caseflow](https://circleci.com/gh/department-of-veterans-affairs/caseflow) |
-| eFolder Express | [caseflow-efolder](https://github.com/department-of-veterans-affairs/caseflow-efolder) | [Travis CI - eFolder](https://travis-ci.org/department-of-veterans-affairs/caseflow-efolder) |
-| Caseflow Feedback | [caseflow-feedback](https://github.com/department-of-veterans-affairs/caseflow-feedback) | [Travis CI - Caseflow Feedback](https://travis-ci.org/department-of-veterans-affairs/caseflow-feedback) |
-| Commons | [caseflow-commons](https://github.com/department-of-veterans-affairs/caseflow-commons) | [Travis CI - Commons](https://travis-ci.org/department-of-veterans-affairs/caseflow-commons) |
-
-# Support
-![BrowserStack logo](./browserstack-logo.png)
-
-Thanks to [BrowserStack](https://www.browserstack.com/) for providing free support to this open-source project.

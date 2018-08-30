@@ -15,13 +15,19 @@ class QueueRepository
       end
     end
 
-    # rubocop:disable Metrics/MethodLength
-    def appeals_from_tasks(tasks)
-      vacols_ids = tasks.map(&:vacols_id)
+    def tasks_for_appeal(appeal_id)
+      MetricsService.record("VACOLS: fetch appeal tasks",
+                            service: :vacols,
+                            name: "tasks_for_appeal") do
+        tasks_for_appeal_query(appeal_id)
+      end
+    end
 
+    # rubocop:disable Metrics/MethodLength
+    def appeals_by_vacols_ids(vacols_ids)
       appeals = MetricsService.record("VACOLS: fetch appeals and associated info for tasks",
                                       service: :vacols,
-                                      name: "appeals_from_tasks") do
+                                      name: "appeals_by_vacols_ids") do
 
         # Run queries to fetch different types of data so the # of queries doesn't increase with
         # the # of appeals. Combine that data manually.
@@ -68,20 +74,16 @@ class QueueRepository
     end
 
     def sign_decision_or_create_omo!(vacols_id:, created_in_vacols_date:, location:, decass_attrs:)
-      transaction do
-        decass_record = find_decass_record(vacols_id, created_in_vacols_date)
-        case location
-        when :bva_dispatch
-          unless decass_record.draft_decision?
-            msg = "The work product is not decision"
-            fail Caseflow::Error::QueueRepositoryError, msg
-          end
-          update_decass_record(decass_record, decass_attrs)
-        when :omo_office
-          fail Caseflow::Error::QueueRepositoryError, "The work product is not OMO" unless decass_record.omo_request?
-        end
-        decass_record.update_vacols_location!(LegacyAppeal::LOCATION_CODES[location])
+      decass_record = find_decass_record(vacols_id, created_in_vacols_date)
+      case location
+      when :bva_dispatch, :quality_review
+        update_vacols_for_bva_dispatch(decass_record, location, decass_attrs)
+      when :omo_office
+        fail Caseflow::Error::QueueRepositoryError, "The work product is not OMO" unless decass_record.omo_request?
+      else
+        fail Caseflow::Error::QueueRepositoryError, "Invalid location"
       end
+      decass_record.update_vacols_location!(LegacyAppeal::LOCATION_CODES[location])
     end
 
     def tasks_query(css_id)
@@ -89,8 +91,13 @@ class QueueRepository
       filter_duplicate_tasks(records)
     end
 
+    def tasks_for_appeal_query(appeal_id)
+      records = VACOLS::CaseAssignment.tasks_for_appeal(appeal_id)
+      filter_duplicate_tasks(records)
+    end
+
     def appeal_info_query(vacols_ids)
-      VACOLS::Case.includes(:folder, :correspondent, :representative)
+      VACOLS::Case.includes(:folder, :correspondent, :representatives)
         .find(vacols_ids)
     end
 
@@ -156,8 +163,40 @@ class QueueRepository
 
     def update_location_to_attorney(vacols_id, attorney)
       vacols_case = VACOLS::Case.find(vacols_id)
+      fail VACOLS::Case::InvalidLocationError, "Invalid location \"#{attorney.vacols_uniq_id}\"" unless
+        attorney.vacols_uniq_id
       vacols_case.update_vacols_location!(attorney.vacols_uniq_id)
       vacols_case.update(bfattid: attorney.vacols_attorney_id)
+    end
+
+    def update_vacols_for_bva_dispatch(decass_record, location, decass_attrs)
+      unless decass_record.draft_decision?
+        msg = "The work product is not decision"
+        fail Caseflow::Error::QueueRepositoryError, msg
+      end
+      if decass_record.dereceive && decass_record.dedeadline
+        timeliness = (decass_record.dereceive > decass_record.dedeadline) ? "N" : "Y"
+      end
+
+      update_decass_record(decass_record, decass_attrs.merge(timeliness: timeliness))
+      # When the DAS final review is done by the VLJ and the case is charged to 4E the VLJ,
+      # Attorney and Team get updated in the BRIEFF table
+      decass_record.reload.case.update(
+        bfmemid: decass_record.dememid,
+        bfattid: decass_record.deatty,
+        bfboard: decass_record.deteam
+      )
+      assign_case_for_quality_review(decass_record.case) if location == :quality_review
+    end
+
+    def assign_case_for_quality_review(vacols_case)
+      VACOLS::DecisionQualityReview.create(
+        qryymm: Time.zone.now.strftime("%y") + Time.zone.now.strftime("%m"),
+        qrsmem: vacols_case.bfmemid,
+        qrfolder: vacols_case.bfkey,
+        qrseldate: VacolsHelper.local_date_with_utc_timezone,
+        qrteam: vacols_case.bfboard[0..1]
+      )
     end
 
     def decass_complexity_rating(vacols_id)

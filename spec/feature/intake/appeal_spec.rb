@@ -3,7 +3,8 @@ require "rails_helper"
 RSpec.feature "Appeal Intake" do
   before do
     FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
+    # Test that this works when only enabled on the current user
+    FeatureToggle.enable!(:intakeAma, users: [current_user.css_id])
     FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
@@ -19,13 +20,20 @@ RSpec.feature "Appeal Intake" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:veteran) do
+  let!(:veteran) do
     Generators::Veteran.build(
       file_number: "22334455",
       first_name: "Ed",
       last_name: "Merica",
       participant_id: "55443322"
     )
+  end
+
+  let(:veteran_no_ratings) do
+    Generators::Veteran.build(file_number: "55555555",
+                              first_name: "Nora",
+                              last_name: "Attings",
+                              participant_id: "44444444")
   end
 
   let(:receipt_date) { Date.new(2018, 4, 20) }
@@ -74,7 +82,7 @@ RSpec.feature "Appeal Intake" do
 
     click_on "Search"
 
-    expect(page).to have_current_path("/intake/review-request")
+    expect(page).to have_current_path("/intake/review_request")
 
     fill_in "What is the Receipt Date of this form?", with: "05/25/2018"
     safe_click "#button-submit-review"
@@ -105,7 +113,7 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_current_path("/intake/finish")
 
-    visit "/intake/review-request"
+    visit "/intake/review_request"
 
     expect(find_field("Evidence Submission", visible: false)).to be_checked
 
@@ -119,12 +127,15 @@ RSpec.feature "Appeal Intake" do
     expect(appeal).to_not be_nil
     expect(appeal.receipt_date).to eq(receipt_date)
     expect(appeal.docket_type).to eq("evidence_submission")
-    expect(appeal.claimants.first).to have_attributes(
-      participant_id: veteran.participant_id
-    )
 
     expect(page).to have_content("Identify issues on")
-    expect(page).to have_content("Decision date: 04/14/2017")
+
+    expect(appeal.claimant_participant_id).to eq(
+      intake.veteran.participant_id
+    )
+
+    expect(appeal.payee_code).to eq("00")
+    expect(page).to have_content("Decision date: 04/17/2017")
     expect(page).to have_content("Left knee granted")
     expect(page).to_not have_content("Untimely rating issue 1")
 
@@ -133,6 +144,7 @@ RSpec.feature "Appeal Intake" do
     safe_click "#button-add-issue"
 
     safe_click ".Select"
+    expect(page).to have_content("1 issue")
 
     fill_in "Issue category", with: "Active Duty Adjustments"
     find("#issue-category").send_keys :enter
@@ -140,6 +152,10 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content("1 issue")
 
     fill_in "Issue description", with: "Description for Active Duty Adjustments"
+
+    expect(page).to have_content("1 issue")
+
+    fill_in "Decision date", with: "04/19/2018"
 
     expect(page).to have_content("2 issues")
 
@@ -157,14 +173,16 @@ RSpec.feature "Appeal Intake" do
     expect(appeal.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
       rating_issue_profile_date: receipt_date - untimely_days + 4.days,
-      description: "PTSD denied"
+      description: "PTSD denied",
+      decision_date: nil
     )
 
     expect(appeal.request_issues.last).to have_attributes(
       rating_issue_reference_id: nil,
       rating_issue_profile_date: nil,
       issue_category: "Active Duty Adjustments",
-      description: "Description for Active Duty Adjustments"
+      description: "Description for Active Duty Adjustments",
+      decision_date: 1.month.ago.to_date
     )
   end
 
@@ -190,6 +208,49 @@ RSpec.feature "Appeal Intake" do
     safe_click "#button-submit-review"
 
     expect(page).to have_content("Something went wrong")
-    expect(page).to have_current_path("/intake/review-request")
+    expect(page).to have_current_path("/intake/review_request")
+  end
+
+  it "Allows a Veteran without ratings to create an intake" do
+    appeal = Appeal.create!(
+      veteran_file_number: veteran_no_ratings.file_number,
+      receipt_date: 2.days.ago,
+      docket_type: "evidence_submission"
+    )
+
+    AppealIntake.create!(
+      veteran_file_number: veteran_no_ratings.file_number,
+      user: current_user,
+      started_at: 5.minutes.ago,
+      detail: appeal
+    )
+
+    Claimant.create!(
+      review_request: appeal,
+      participant_id: veteran_no_ratings.participant_id
+    )
+
+    appeal.start_review!
+
+    visit "/intake"
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_content("This Veteran has no rated, disability issues")
+
+    safe_click "#button-add-issue"
+
+    safe_click ".Select"
+
+    fill_in "Issue category", with: "Active Duty Adjustments"
+    find("#issue-category").send_keys :enter
+    fill_in "Issue description", with: "Description for Active Duty Adjustments"
+    fill_in "Decision date", with: "04/19/2018"
+
+    expect(page).to have_content("1 issue")
+
+    safe_click "#button-finish-intake"
+
+    expect(page).to have_content("Notice of Disagreement (VA Form 10182) has been processed.")
   end
 end

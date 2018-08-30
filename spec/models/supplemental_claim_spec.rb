@@ -11,7 +11,6 @@ describe SupplementalClaim do
   let(:veteran_file_number) { "64205555" }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
   let(:receipt_date) { nil }
-  let(:end_product_reference_id) { nil }
   let(:established_at) { nil }
   let(:end_product_status) { nil }
 
@@ -19,9 +18,7 @@ describe SupplementalClaim do
     SupplementalClaim.new(
       veteran_file_number: veteran_file_number,
       receipt_date: receipt_date,
-      end_product_reference_id: end_product_reference_id,
-      established_at: established_at,
-      end_product_status: end_product_status
+      established_at: established_at
     )
   end
 
@@ -73,7 +70,12 @@ describe SupplementalClaim do
     let!(:request_issues_data) do
       [
         { reference_id: "abc", profile_date: "2018-04-04", decision_text: "hello" },
-        { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" }
+        { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" },
+        {
+          decision_text: "non-rated issue decision text",
+          issue_category: "test issue category",
+          decision_date: "2018-12-25"
+        }
       ]
     end
 
@@ -87,32 +89,36 @@ describe SupplementalClaim do
 
     it "creates issues from request_issues_data" do
       subject
-      expect(supplemental_claim.request_issues.count).to eq(2)
+      expect(supplemental_claim.request_issues.count).to eq(3)
       expect(supplemental_claim.request_issues.find_by(rating_issue_reference_id: "abc")).to have_attributes(
         rating_issue_profile_date: Date.new(2018, 4, 4),
         description: "hello"
       )
+      expect(supplemental_claim.request_issues.find_by(
+               description: "non-rated issue decision text"
+      )).to have_attributes(
+        issue_category: "test issue category",
+        decision_date: Date.new(2018, 12, 25)
+      )
     end
   end
 
-  context "#create_end_product_and_contentions!" do
-    subject { supplemental_claim.create_end_product_and_contentions! }
-    let(:veteran) { Veteran.new(file_number: veteran_file_number) }
+  context "#create_end_products_and_contentions!" do
+    subject { supplemental_claim.create_end_products_and_contentions! }
+    let(:veteran) { Veteran.create(file_number: veteran_file_number) }
     let(:receipt_date) { 2.days.ago }
     let!(:request_issues_data) do
       [
         { reference_id: "abc", profile_date: "2018-04-04", decision_text: "hello" },
-        { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" }
+        { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" },
+        { issue_category: "Unknown issue category", decision_text: "Description for Unknown" },
+        { issue_category: "Apportionment", decision_text: "Description for Apportionment", decision_date: "2018-04-08" }
       ]
     end
     before do
       supplemental_claim.save!
       supplemental_claim.create_issues!(request_issues_data: request_issues_data)
-    end
-
-    # Stub the id of the end product being created
-    before do
-      Fakes::VBMSService.end_product_claim_id = "454545"
+      supplemental_claim.create_claimants!(participant_id: "12345", payee_code: "10")
     end
 
     context "when option receipt_date is nil" do
@@ -123,7 +129,17 @@ describe SupplementalClaim do
       end
     end
 
-    it "creates end product and saves end_product_reference_id" do
+    context "when neither a ratings or nonratings end product are established" do
+      let!(:request_issues_data) { [] }
+      it "should not update established at" do
+        allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+        subject
+        expect(Fakes::VBMSService).not_to have_received(:establish_claim!)
+        expect(supplemental_claim.reload.established_at).to be_nil
+      end
+    end
+
+    it "creates end product and saves end_product_establishment" do
       allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 
       subject
@@ -131,7 +147,7 @@ describe SupplementalClaim do
       expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
         claim_hash: {
           benefit_type_code: "1",
-          payee_code: "00",
+          payee_code: "10",
           predischarge: false,
           claim_type: "Claim",
           station_of_jurisdiction: "397",
@@ -140,12 +156,75 @@ describe SupplementalClaim do
           end_product_label: "Supplemental Claim Rating",
           end_product_code: "040SCR",
           gulf_war_registry: false,
-          suppress_acknowledgement_letter: false
+          suppress_acknowledgement_letter: false,
+          claimant_participant_id: "12345"
         },
         veteran_hash: veteran.to_vbms_hash
       )
 
-      expect(supplemental_claim.reload.end_product_reference_id).to eq("454545")
+      expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+        claim_hash: {
+          benefit_type_code: "1",
+          payee_code: "10",
+          predischarge: false,
+          claim_type: "Claim",
+          station_of_jurisdiction: "397",
+          date: receipt_date.to_date,
+          end_product_modifier: "041",
+          end_product_label: "Supplemental Claim Nonrating",
+          end_product_code: "040SCNR",
+          gulf_war_registry: false,
+          suppress_acknowledgement_letter: false,
+          claimant_participant_id: "12345"
+        },
+        veteran_hash: veteran.to_vbms_hash
+      )
+
+      expect(EndProductEstablishment.find_by(source: supplemental_claim.reload, code: "040SCR").reference_id)
+        .to_not be_nil
+      expect(EndProductEstablishment.find_by(source: supplemental_claim.reload, code: "040SCNR").reference_id)
+        .to_not be_nil
+    end
+
+    it "creates contentions" do
+      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+
+      subject
+
+      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+        hash_including(
+          veteran_file_number: veteran_file_number,
+          contention_descriptions: array_including("Description for Unknown", "goodbye", "hello")
+        )
+      )
+
+      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+        hash_including(
+          veteran_file_number: veteran_file_number,
+          contention_descriptions: ["Description for Apportionment"]
+        )
+      )
+      request_issues = supplemental_claim.request_issues
+      expect(request_issues.first.contention_reference_id).to_not be_nil
+      expect(request_issues.second.contention_reference_id).to_not be_nil
+      expect(request_issues.third.contention_reference_id).to_not be_nil
+      expect(request_issues.last.contention_reference_id).to_not be_nil
+    end
+
+    it "maps rated issues to contentions" do
+      allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+
+      subject
+
+      request_issues = supplemental_claim.request_issues
+      expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+        hash_including(
+          rated_issue_contention_map: {
+            "def" => request_issues.find_by(rating_issue_reference_id: "def").contention_reference_id,
+            "abc" => request_issues.find_by(rating_issue_reference_id: "abc").contention_reference_id
+          }
+        )
+      )
     end
 
     context "when VBMS throws an error" do

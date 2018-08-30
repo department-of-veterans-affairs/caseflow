@@ -8,7 +8,7 @@ import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import SelectClaimant from '../../components/SelectClaimant';
 import { setDocketType } from '../../actions/appeal';
-import { submitReview, setClaimantNotVeteran, setClaimant } from '../../actions/ama';
+import { submitReview, setClaimantNotVeteran, setClaimant, setPayeeCode } from '../../actions/ama';
 import { setReceiptDate } from '../../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
@@ -77,11 +77,13 @@ const SelectClaimantConnected = connect(
   ({ appeal }) => ({
     claimantNotVeteran: appeal.claimantNotVeteran,
     claimant: appeal.claimant,
+    payeeCode: appeal.payeeCode,
     relationships: appeal.relationships
   }),
   (dispatch) => bindActionCreators({
     setClaimantNotVeteran,
-    setClaimant
+    setClaimant,
+    setPayeeCode
   }, dispatch)
 )(SelectClaimant);
 

@@ -1,7 +1,9 @@
-import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
+import { ACTIONS, REQUEST_STATE } from '../constants';
+import { FORM_TYPES } from '../../intakeCommon/constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, getPageError, formatRatings, formatRelationships, nonRatedIssueCounter } from '../util';
+import { getReceiptDateError, getPageError, formatRelationships } from '../util';
+import { formatRatings } from '../../intakeCommon/util';
 import _ from 'lodash';
 
 const getInformalConferenceError = (responseErrorCodes) => (
@@ -36,6 +38,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     claimant: {
       $set: serverIntake.claimant_not_veteran ? serverIntake.claimant : null
     },
+    payeeCode: {
+      $set: serverIntake.payee_code
+    },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
     },
@@ -64,6 +69,7 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     sameOfficeError: null,
     claimantNotVeteran: null,
     claimant: null,
+    payeeCode: null,
     isStarted: false,
     isReviewed: false,
     isComplete: false,
@@ -127,6 +133,12 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
     return update(state, {
       claimant: {
         $set: action.payload.claimant
+      }
+    });
+  case ACTIONS.SET_PAYEE_CODE:
+    return update(state, {
+      payeeCode: {
+        $set: action.payload.payeeCode
       }
     });
   case ACTIONS.SUBMIT_REVIEW_START:
@@ -233,7 +245,8 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         [Object.keys(state.nonRatedIssues).length]: {
           $set: {
             category: null,
-            description: null
+            description: null,
+            decisionDate: null
           }
         }
       }
@@ -246,9 +259,6 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
             $set: action.payload.category
           }
         }
-      },
-      issueCount: {
-        $set: nonRatedIssueCounter(state, action)
       }
     });
   case ACTIONS.SET_ISSUE_DESCRIPTION:
@@ -259,9 +269,16 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
             $set: action.payload.description
           }
         }
-      },
-      issueCount: {
-        $set: nonRatedIssueCounter(state, action)
+      }
+    });
+  case ACTIONS.SET_ISSUE_DECISION_DATE:
+    return update(state, {
+      nonRatedIssues: {
+        [action.payload.issueId]: {
+          decisionDate: {
+            $set: action.payload.decisionDate
+          }
+        }
       }
     });
   default:

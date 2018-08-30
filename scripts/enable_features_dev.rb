@@ -7,35 +7,7 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
-          feature: "appeals_status",
-          enable_all: true
-        },
-        {
-          feature: "queue_welcome_gate",
-          enable_all: true
-        },
-        {
-          feature: "queue_phase_two",
-          enable_all: true
-        },
-        {
-          feature: "dispatch_full_grants",
-          enable_all: true
-        },
-        {
-          feature: "dispatch_partial_grants_remands",
-          regional_offices: ["RO97"]
-        },
-        {
-          feature: "dispatch_full_grants_with_pa",
-          enable_all: true
-        },
-        {
-          feature: "efolder_api_v2",
-          enable_all: true
-        },
-        {
-          feature: "efolder_docs_api",
+          feature: "automatic_ramp_rollback",
           enable_all: true
         },
         {
@@ -55,19 +27,11 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
-          feature: "vbms_efolder_service_v1",
-          enable_all: true
-        },
-        {
-          feature: "judge_queue",
-          enable_all: true
-        },
-        {
           feature: "colocated_queue",
           enable_all: true
         },
         {
-          feature: "judge_assignment",
+          feature: "judge_case_review_checkout",
           enable_all: true
         },
         {
@@ -75,7 +39,15 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
-          feature: "judge_assign_cases",
+          feature: "judge_assignment_to_attorney",
+          enable_all: true
+        },
+        {
+          feature: "attorney_assignment_to_colocated",
+          enable_all: true
+        },
+        {
+          feature: "idt_ama_appeals",
           enable_all: true
         }
   ]

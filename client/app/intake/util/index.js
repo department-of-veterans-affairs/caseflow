@@ -32,14 +32,6 @@ export const toggleIneligibleError = (hasInvalidOption, selectedOption) => (
     selectedOption === REVIEW_OPTIONS.HIGHER_LEVEL_REVIEW_WITH_HEARING.key)
 );
 
-export const formatRatings = (ratings) => {
-  return _.keyBy(_.map(ratings, (rating) => {
-    return _.assign(rating,
-      { issues: _.keyBy(rating.issues, 'reference_id') }
-    );
-  }), 'profile_date');
-};
-
 export const formatRelationships = (relationships) => {
   return relationships.map((relationship) => {
     const first = _.capitalize(relationship.first_name);
@@ -53,84 +45,34 @@ export const formatRelationships = (relationships) => {
   });
 };
 
-export const formatIssues = (intakeState) => {
-  const ratingData = {
-    request_issues:
-      _(intakeState.ratings).
-        map((rating) => {
-          return _.map(rating.issues, (issue) => {
-            return _.merge(issue, { profile_date: rating.profile_date });
-          });
-        }).
-        flatten().
-        filter('isSelected')
-  };
-
-  const nonRatingData = {
-    request_issues:
-      _(intakeState.nonRatedIssues).
-        filter((issue) => {
-          return issue.category && issue.description;
-        }).
-        map((issue) => {
-          return {
-            decision_text: issue.description,
-            issue_category: issue.category
-          };
-        })
-  };
-
-  const data = {
-    request_issues: _.concat(ratingData.request_issues.value(), nonRatingData.request_issues.value())
-  };
-
-  return data;
-};
-
-export const nonRatedIssueCounter = (state, action) => {
-  const selectedIssues = formatIssues(state).request_issues;
-  const selectedIssueCount = selectedIssues ? selectedIssues.length : 0;
-  const currentIssue = state.nonRatedIssues[action.payload.issueId];
-  const descriptionCounter = !currentIssue.description && currentIssue.category ? 1 : 0;
-  const categoryCounter = !currentIssue.category && currentIssue.description ? 1 : 0;
-
-  if (selectedIssueCount && !action.payload.category && !action.payload.description) {
-    return selectedIssueCount - 1;
-  }
-
-  if (action.payload.description) {
-    return selectedIssueCount + descriptionCounter;
-  }
-
-  if (action.payload.category) {
-    return selectedIssueCount + categoryCounter;
-  }
-};
-
 export const prepareReviewData = (intakeData, intakeType) => {
   switch (intakeType) {
   case 'appeal':
     return {
       docket_type: intakeData.docketType,
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
-      claimant: intakeData.claimant
+      claimant: intakeData.claimant,
+      payee_code: intakeData.payeeCode
     };
   case 'supplementalClaim':
     return {
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
-      claimant: intakeData.claimant
+      claimant: intakeData.claimant,
+      payee_code: intakeData.payeeCode
     };
   case 'higherLevelReview':
     return {
       informal_conference: intakeData.informalConference,
       same_office: intakeData.sameOffice,
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
-      claimant: intakeData.claimant
+      claimant: intakeData.claimant,
+      payee_code: intakeData.payeeCode
     };
   default:
     return {
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
-      claimant: intakeData.claimant
+      claimant: intakeData.claimant,
+      payee_code: intakeData.payeeCode
     };
   }
 };

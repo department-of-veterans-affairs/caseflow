@@ -2,6 +2,7 @@ class Appeal < AmaReview
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
+  has_many :decision_issues, through: :request_issues
 
   validates :receipt_date, :docket_type, presence: { message: "blank" }, on: :intake_review
 
@@ -13,7 +14,8 @@ class Appeal < AmaReview
     )
   end
 
-  delegate :documents, :number_of_documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
+  delegate :documents, :number_of_documents, :manifest_vbms_fetched_at,
+           :new_documents_for_user, :manifest_vva_fetched_at, to: :document_fetcher
 
   def self.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
     if UUID_REGEX.match(id)
@@ -23,8 +25,45 @@ class Appeal < AmaReview
     end
   end
 
+  def type
+    "Original"
+  end
+
+  def issues
+    { decision_issues: decision_issues, request_issues: request_issues }
+  end
+
+  def docket_name
+    docket_type
+  end
+
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
+  end
+
+  def veteran_name
+    # For consistency with LegacyAppeal.veteran_name
+    veteran && veteran.name.formatted(:form)
+  end
+
+  def veteran_full_name
+    veteran && veteran.name.formatted(:readable_full)
+  end
+
+  def veteran_first_name
+    veteran.name.first_name if veteran
+  end
+
+  def veteran_middle_initial
+    veteran.name.middle_initial if veteran
+  end
+
+  def veteran_last_name
+    veteran.name.last_name if veteran
+  end
+
+  def number_of_issues
+    issues[:request_issues].size
   end
 
   def create_issues!(request_issues_data:)
@@ -38,7 +77,8 @@ class Appeal < AmaReview
   end
 
   def docket_number
-    "#{established_at.strftime('%y%m%d')}-#{id}"
+    return "Missing Docket Number" unless receipt_date
+    "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 
   def power_of_attorney
@@ -46,4 +86,8 @@ class Appeal < AmaReview
   end
 
   delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
+
+  def external_id
+    uuid
+  end
 end
