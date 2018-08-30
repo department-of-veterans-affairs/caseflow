@@ -54,12 +54,14 @@ export default class ListSchedule extends React.Component {
     ];
 
     const hearingScheduleRows = _.map(hearingSchedule, (hearingDay) => ({
-      hearingDate: `${formatDate(hearingDay.hearingDate)}`,
+      hearingDate: formatDate(hearingDay.hearingDate),
       hearingType: hearingDay.hearingType,
       regionalOffice: hearingDay.regionalOffice,
       room: hearingDay.roomInfo,
       vlj: hearingDay.judgeName
     }));
+
+    const removeCoDuplicates = _.uniqBy(hearingScheduleRows, (row) => [row.hearingDate, row.roomInfo].join());
 
     return <AppSegment filledBackground>
       <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
@@ -89,7 +91,7 @@ export default class ListSchedule extends React.Component {
       </div>
       <Table
         columns={hearingScheduleColumns}
-        rowObjects={hearingScheduleRows}
+        rowObjects={removeCoDuplicates}
         summary="hearing-schedule"
       />
     </AppSegment>;
