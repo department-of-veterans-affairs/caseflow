@@ -114,7 +114,7 @@ class AmaReview < ApplicationRecord
   def create_contentions_on_new_end_product!(rated: true)
     issues_to_create = (rated ? rated_issues_to_create : nonrated_issues_to_create).all
 
-    end_product_establishment(rated: rated).create_contentions!(from_objects: issues_to_create)
+    end_product_establishment(rated: rated).create_contentions!(issues_to_create)
   end
 
   def create_associated_rated_issues_in_vbms!
