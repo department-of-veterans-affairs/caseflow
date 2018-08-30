@@ -6,15 +6,6 @@ class RampElection < RampReview
 
   validate :validate_receipt_date
 
-  class BGSEndProductSyncError < RuntimeError
-    def initialize(error, ramp_election)
-      Raven.extra_context(ramp_election_id: ramp_election.id)
-      super(error.message).tap do |result|
-        result.set_backtrace(error.backtrace)
-      end
-    end
-  end
-
   # RAMP letters request that Veterans respond within 60 days; elections will
   # be accepted after this point, however, so this "due date" is soft.
   def due_date
@@ -49,9 +40,7 @@ class RampElection < RampReview
   end
 
   def successful_intake
-    @successful_intake ||= intakes.where(completion_status: "success")
-      .order(:completed_at)
-      .last
+    @successful_intake ||= intakes.where(completion_status: "success").order(:completed_at).last
   end
 
   def rollback!
@@ -73,41 +62,26 @@ class RampElection < RampReview
     end
   end
 
-  def sync!
-    create_end_product_establishment_if_missing
+  def on_sync(end_product_establishment)
     recreate_issues_from_contentions!
-    sync_ep_status!
-  rescue StandardError => e
-    Raven.capture_exception(BGSEndProductSyncError.new(e, self))
-  end
 
-  def self.order_by_sync_priority
-    active.order("end_product_status_last_synced_at IS NOT NULL, end_product_status_last_synced_at ASC")
+    if FeatureToggle.enabled?(:automatic_ramp_rollback) && end_product_establishment.status_canceled?
+      rollback_ramp_review
+    end
   end
 
   private
 
-  def create_end_product_establishment_if_missing
-    return if EndProductEstablishment.find_by(source: self)
-
-    EndProductEstablishment.create!(
-      veteran_file_number: veteran_file_number,
-      source: self,
-      established_at: established_at,
-      reference_id: end_product_reference_id,
-      claim_date: end_product_establishment.result.claim_date,
-      code: end_product_establishment.result.claim_type_code,
-      payee_code: payee_code,
-      modifier: end_product_establishment.result.modifier,
-      synced_status: end_product_status,
-      last_synced_at: end_product_status_last_synced_at,
-      station: "397",
-      claimant_participant_id: claimant_participant_id
-    )
-  end
-
   def any_matching_refiling_ramp_issues?
     RampIssue.where(source_issue_id: issues.map(&:id)).any?
+  end
+
+  def rollback_ramp_review
+    RampElectionRollback.create!(
+      ramp_election: self,
+      user: User.system_user,
+      reason: "Automatic roll back due to EP #{end_product_establishment.modifier} cancelation"
+    )
   end
 
   def validate_receipt_date
