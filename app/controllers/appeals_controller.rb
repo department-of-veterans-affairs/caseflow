@@ -3,6 +3,8 @@ class AppealsController < ApplicationController
 
   before_action :react_routed
   before_action :set_application, only: [:document_count, :new_documents]
+  # Only whitelist endpoints VSOs should have access to.
+  skip_before_action :deny_vso_access, only: [:index, :show_case_list, :show, :tasks]
 
   ROLES = Constants::USER_ROLE_TYPES.keys.freeze
 
@@ -34,6 +36,11 @@ class AppealsController < ApplicationController
   def tasks
     no_cache
 
+    # VSO users should only get tasks assigned to them or their organization.
+    if current_user.vso_employee?
+      return json_vso_tasks
+    end
+
     role = params[:role].downcase
     return invalid_role_error unless ROLES.include?(role)
 
@@ -55,6 +62,7 @@ class AppealsController < ApplicationController
                               service: :queue,
                               name: "AppealsController.show") do
           appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
+
           render json: { appeal: json_appeals([appeal])[:data][0] }
         end
       end
@@ -127,6 +135,16 @@ class AppealsController < ApplicationController
 
   def json_tasks_by_appeal_id(appeal_db_id, appeal_type)
     tasks = queue_class.new.tasks_by_appeal_id(appeal_db_id, appeal_type)
+
+    render json: {
+      tasks: json_tasks(tasks)[:data]
+    }
+  end
+
+  def json_vso_tasks
+    # For now we just return tasks that are assigned to the user. In the future,
+    # we will add tasks that are assigned to the user's organization.
+    tasks = GenericQueue.new(user: current_user).tasks
 
     render json: {
       tasks: json_tasks(tasks)[:data]
