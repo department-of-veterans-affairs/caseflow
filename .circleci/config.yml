@@ -38,17 +38,15 @@ jobs:
       - run:
             name: Install pdftk
             command: apt-get install pdftk
-    
      - run:
             name: Print working directory
             command: |
                 pwd
                 ls -lsa
-    
+                
       - run:
             name: Set Oracle Env Variables
             command: export LD_LIBRARY_PATH=oracle_libs/
-
 
       - run:
           name: Setup testfiles directory
