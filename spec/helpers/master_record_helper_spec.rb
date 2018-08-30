@@ -8,14 +8,14 @@ RSpec.describe MasterRecordHelper, type: :helper do
     subject { MasterRecordHelper.remove_master_records_with_children(records) }
 
     context "when master records have children" do
-      let(:video_parent1) { OpenStruct.new(master_record_type: :video, hearing_pkseq: 1234) }
-      let(:video_parent2) { OpenStruct.new(master_record_type: :video, hearing_pkseq: 5678) }
-      let(:video_child1) { OpenStruct.new(hearing_pkseq: 9999, vdkey: "1234") }
-      let(:video_child2) { OpenStruct.new(hearing_pkseq: 8888, vdkey: "1234") }
-      let(:co_child1) { OpenStruct.new(hearing_pkseq: 7777) }
-      let(:tb_parent1) { OpenStruct.new(master_record_type: :travel_board, tbsched_vdkey: "2012-26-1") }
-      let(:tb_parent2) { OpenStruct.new(master_record_type: :travel_board, tbsched_vdkey: "2013-12-1") }
-      let(:tb_child2) { OpenStruct.new(hearing_pkseq: 6666, vdkey: "2013-12-1") }
+      let(:video_parent1) { OpenStruct.new(master_record_type: :video, hearing_pkseq: 1234, folder_nr: "1234") }
+      let(:video_parent2) { OpenStruct.new(master_record_type: :video, hearing_pkseq: 5678, folder_nr: "5678") }
+      let(:video_child1) { OpenStruct.new(hearing_pkseq: 9999, vdkey: "1234", folder_nr: "1234") }
+      let(:video_child2) { OpenStruct.new(hearing_pkseq: 8888, vdkey: "1234", folder_nr: "5678") }
+      let(:co_child1) { OpenStruct.new(hearing_pkseq: 7777, folder_nr: "1234") }
+      let(:tb_parent1) { OpenStruct.new(master_record_type: :travel_board, tbsched_vdkey: "2012-26-1", folder_nr: "1") }
+      let(:tb_parent2) { OpenStruct.new(master_record_type: :travel_board, tbsched_vdkey: "2013-12-1", folder_nr: "1") }
+      let(:tb_child2) { OpenStruct.new(hearing_pkseq: 6666, vdkey: "2013-12-1", folder_nr: "12") }
 
       let(:records) do
         [video_parent1, video_parent2, video_child1, video_child2, co_child1, tb_parent1, tb_parent2, tb_child2]
