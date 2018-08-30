@@ -26,6 +26,20 @@ class RampReview < ApplicationRecord
 
   validates :receipt_date, :option_selected, presence: { message: "blank" }, if: :saving_review
 
+  class << self
+    def established
+      where.not(established_at: nil)
+    end
+
+    def active
+      # We only know the set of inactive EP statuses
+      # We also only know the EP status after fetching it from BGS
+      # Therefore, our definition of active is when the EP is either
+      #   not known or not known to be inactive
+      established.where("end_product_status NOT IN (?) OR end_product_status IS NULL", EndProduct::INACTIVE_STATUSES)
+    end
+  end
+
   def established?
     !!established_at
   end
@@ -59,26 +73,7 @@ class RampReview < ApplicationRecord
   end
 
   def end_product_active?
-    sync_ep_status! && cached_status_active?
-  end
-
-  def end_product_canceled?
-    sync_ep_status! && end_product_establishment.status_canceled?
-  end
-
-  def sync_ep_status!
-    # There is no need to sync end_product_status if the status
-    # is already inactive since an EP can never leave that state
-    return true unless cached_status_active?
-
-    ## TODO: Remove this once all the data is backfilled
-    if (saved_end_product_establishment = EndProductEstablishment.find_by(source: self))
-      saved_end_product_establishment.sync!
-      if FeatureToggle.enabled?(:automatic_ramp_rollback) && saved_end_product_establishment.status_canceled?
-        rollback_ramp_review
-      end
-      true
-    end
+    end_product_establishment.status_active?(sync: true)
   end
 
   def establish_end_product!
@@ -86,18 +81,8 @@ class RampReview < ApplicationRecord
     update! established_at: Time.zone.now
   end
 
-  class << self
-    def established
-      where.not(established_at: nil)
-    end
-
-    def active
-      # We only know the set of inactive EP statuses
-      # We also only know the EP status after fetching it from BGS
-      # Therefore, our definition of active is when the EP is either
-      #   not known or not known to be inactive
-      established.where("end_product_status NOT IN (?) OR end_product_status IS NULL", EndProduct::INACTIVE_STATUSES)
-    end
+  def end_product_establishment
+    find_end_product_establishment || new_end_product_establishment
   end
 
   private
@@ -120,18 +105,6 @@ class RampReview < ApplicationRecord
     )
   end
 
-  def end_product_establishment
-    find_end_product_establishment || new_end_product_establishment
-  end
-
-  def rollback_ramp_review
-    RampElectionRollback.create!(
-      ramp_election: self,
-      user: User.system_user,
-      reason: "Automatic roll back due to EP #{end_product_establishment.modifier} cancelation"
-    )
-  end
-
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
@@ -141,10 +114,6 @@ class RampReview < ApplicationRecord
       end_product_reference_id: end_product_establishment.preexisting_end_product.claim_id,
       established_at: Time.zone.now
     ) && :connected
-  end
-
-  def cached_status_active?
-    !EndProduct::INACTIVE_STATUSES.include?(end_product_establishment.synced_status)
   end
 
   def end_product_code
