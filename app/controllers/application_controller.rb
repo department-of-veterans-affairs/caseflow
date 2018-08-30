@@ -7,6 +7,12 @@ class ApplicationController < ApplicationBaseController
   before_action :set_paper_trail_whodunnit
   before_action :deny_vso_access, except: [:unauthorized]
 
+  rescue_from StandardError do |e|
+    fail e unless e.class.method_defined?(:serialize_response)
+    Raven.capture_exception(e)
+    render(e.serialize_response)
+  end
+
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from VBMS::ClientError, with: :on_vbms_error
 
@@ -14,12 +20,6 @@ class ApplicationController < ApplicationBaseController
     Rails.logger.error "Vacols error occured: #{e.message}"
     Raven.capture_exception(e)
     render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
-  end
-
-  rescue_from StandardError do |e|
-    fail e unless e.class.method_defined?(:serialize_response)
-    Raven.capture_exception(e)
-    render(e.serialize_response)
   end
 
   private
