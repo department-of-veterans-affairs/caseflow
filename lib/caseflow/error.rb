@@ -17,6 +17,13 @@ module Caseflow::Error
   class EfolderAccessForbidden < EfolderError; end
   class ClientRequestError < EfolderError; end
 
+  class ActionForbiddenError < SerializableError
+    def initialize(args)
+      @code = args[:code] || 403
+      @message = args[:message] || "Action forbidden"
+    end
+  end
+
   class MultipleAppealsByVBMSID < StandardError; end
   class CertificationMissingData < StandardError; end
   class InvalidSSN < StandardError; end
