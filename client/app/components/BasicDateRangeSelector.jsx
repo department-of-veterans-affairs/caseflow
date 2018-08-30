@@ -10,10 +10,6 @@ const dateSeparator = css({
   display: 'inline-block'
 });
 
-const hearingSchedStyling = css({
-  paddingLeft: '5rem'
-});
-
 export default class BasicDateRangeSelector extends React.Component {
   render() {
     return <div>
@@ -25,7 +21,6 @@ export default class BasicDateRangeSelector extends React.Component {
           value={this.props.startDateValue}
           onChange={this.props.onStartDateChange}
           type="date"
-          {...dateSeparator}
         />
         {/* &nbsp;{this.props.messageLabel && 'to'}&nbsp; */}
         <div {...dateSeparator} ></div> 

@@ -533,10 +533,19 @@
   label {
     padding-bottom: 0;
     margin-bottom: 0;
+    padding-left: 0;
   }
 
   p {
     font-size: 11px;
     margin-top: 0;
+  }
+}
+
+.cf-inline-form {
+  // line-height: 4em;
+
+  label, .cf-form-textinput{
+    line-height: 3rem;
   }
 }
