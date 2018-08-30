@@ -191,8 +191,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         maxLength={DOCUMENT_ID_MAX_LENGTH}
       />
       <JudgeSelectComponent assignedByCssId={
-        /* not compatible with AMA tasks */
-        (this.props.task && this.props.task.addedByCssId) || ''
+        (this.props.task && this.props.task.addedByCssId) || '' /* not compatible with AMA tasks */
       } />
       <TextareaField
         label="Notes:"
