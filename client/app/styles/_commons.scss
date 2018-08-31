@@ -340,6 +340,11 @@ dd {
     height: 1rem;
     margin-left: 1rem;
     width: 1rem;
+
+    &:hover {
+      color: $color-white;
+    }
+
   }
 
   &:hover {
