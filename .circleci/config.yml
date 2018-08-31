@@ -42,7 +42,9 @@ jobs:
         
         - run:
             name: Install Oracle Client
-            command: sudo apt-get install /home/circleci/project/oracle_libs/*.rpm
+            command: |
+                unzip /home/circleci/project/oracle_libs/*.zip
+                ls -lsa /home/circleci/project/oracle_libs/
 
         - run:
             name: Print working directory
@@ -70,8 +72,8 @@ jobs:
         - run:
             name: Print Oracle env variable
             command: |
-                export LD_LIBRARY_PATH=/home/circleci/project/oracle_libs/
-                echo 'export LD_LIBRARY_PATH="/home/circleci/project/oracle_libs/:$LD_LIBRARY_PATH"' >> $BASH_ENV
+                export LD_LIBRARY_PATH=/home/circleci/project/oracle_libs/instantclient_12_1/
+                echo 'export LD_LIBRARY_PATH="/home/circleci/project/oracle_libs/instantclient_12_1/:$LD_LIBRARY_PATH"' >> $BASH_ENV
                 env
 
         - run:
