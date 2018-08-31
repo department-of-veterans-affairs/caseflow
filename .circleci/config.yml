@@ -3,17 +3,17 @@ jobs:
     build:
         docker:
             - image: circleci/ruby:2.2-node-browsers
-                environment:
-                    - DBUS_SESSION_BUS_ADDRESS: /dev/null
-                    - RAILS_ENV: test
-                    - NODE_ENV: test
-                    - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
-                    - BUNDLE_PATH: vendor/bundle
-                    - KARMA_JUNIT_OUTPUT_DIR: /home/circleci/karma-test-results/karma
-                    - KARMA_JUNIT_OUTPUT_FILE: /home/circleci/karma-test-results/karma/karma.xml
-                    - COVERAGE_DIR: /home/circleci/coverage
-                    - POSTGRES_HOST: localhost
-                    - POSTGRES_USER: root
+            environment:
+                - DBUS_SESSION_BUS_ADDRESS: /dev/null
+                - RAILS_ENV: test
+                - NODE_ENV: test
+                - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
+                - BUNDLE_PATH: vendor/bundle
+                - KARMA_JUNIT_OUTPUT_DIR:   /home/circleci/karma-test-results/karma
+                - KARMA_JUNIT_OUTPUT_FILE:  /home/circleci/karma-test-results/karma/karma.xml
+                - COVERAGE_DIR: /home/circleci/coverage
+                - POSTGRES_HOST: localhost
+                - POSTGRES_USER: root
 
             - image: circleci/postgres:10.2
                 environment:
