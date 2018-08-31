@@ -3,7 +3,7 @@ jobs:
     build:
         docker:
             - image: circleci/ruby:2.2-node-browsers
-            environment:
+              environment:
                 - DBUS_SESSION_BUS_ADDRESS: /dev/null
                 - RAILS_ENV: test
                 - NODE_ENV: test
