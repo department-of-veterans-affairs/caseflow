@@ -45,17 +45,15 @@ FactoryBot.define do
           claimant.review_request = appeal
           claimant.save
         end
+      elsif evaluator.number_of_claimants
+        appeal.claimants = create_list(:claimant, evaluator.number_of_claimants, review_request: appeal)
       else
-        if evaluator.number_of_claimants
-          appeal.claimants = create_list(:claimant, evaluator.number_of_claimants, review_request: appeal)
-        else
-          appeal.claimants = [create(
-            :claimant,
-            participant_id: appeal.veteran.participant_id,
-            review_request: appeal,
-            payee_code: "00"
-          )]
-        end
+        appeal.claimants = [create(
+          :claimant,
+          participant_id: appeal.veteran.participant_id,
+          review_request: appeal,
+          payee_code: "00"
+        )]
       end
     end
   end

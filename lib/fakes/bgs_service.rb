@@ -319,16 +319,16 @@ class Fakes::BGSService
   def fetch_poas_by_participant_ids(participant_ids)
     get_hash_of_poa_from_bgs_poas(
       participant_ids.map do |participant_id|
-        if participant_id == "CLAIMANT_WITH_PVA_AS_VSO"
-          vso = {
-            legacy_poa_cd: "071",
-            nm: "PARALYZED VETERANS OF AMERICA, INC.",
-            org_type_nm: "POA National Organization",
-            ptcpnt_id: "2452383"
-          }
-        else
-          vso = { }
-        end
+        vso = if participant_id == "CLAIMANT_WITH_PVA_AS_VSO"
+                {
+                  legacy_poa_cd: "071",
+                  nm: "PARALYZED VETERANS OF AMERICA, INC.",
+                  org_type_nm: "POA National Organization",
+                  ptcpnt_id: "2452383"
+                }
+              else
+                {}
+              end
 
         {
           ptcpnt_id: participant_id,

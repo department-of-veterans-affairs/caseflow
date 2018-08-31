@@ -339,7 +339,7 @@ describe Veteran do
         },
         {
           ptcpnt_id: participant_id_without_vso,
-          power_of_attorney: { }
+          power_of_attorney: {}
         }
       ]
     end

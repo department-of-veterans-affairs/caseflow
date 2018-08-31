@@ -134,7 +134,7 @@ RSpec.feature "AmaQueue" do
             participant_id: vso_participant_id
           },
           {
-            representative_type: "PARALYZED VETERANS OF AMERICA, INC.",
+            representative_name: "PARALYZED VETERANS OF AMERICA, INC.",
             representative_type: "POA National Organization",
             participant_id: "2452383"
           }
@@ -144,7 +144,7 @@ RSpec.feature "AmaQueue" do
       let(:poas) do
         {
           participant_id => {
-            representative_type: "PARALYZED VETERANS OF AMERICA, INC.",
+            representative_name: "PARALYZED VETERANS OF AMERICA, INC.",
             representative_type: "POA National Organization",
             participant_id: vso_participant_id
           },
