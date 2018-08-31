@@ -65,7 +65,9 @@ jobs:
         - run:
             name: Print Oracle env variable
             command: |
-                export LD_LIBRARY_PATH=$LD_LIBRARY_PATH
+                export LD_LIBRARY_PATH=/home/circleci/project/oracle_libs/
+                echo 'export PATH="$GOPATH/bin:$PATH"' >> $BASH_ENV
+                echo 'export LD_LIBRARY_PATH="/home/circleci/project/oracle_libs/:$LD_LIBRARY_PATH" >> $BASH_ENV
                 env
 
         - run:
