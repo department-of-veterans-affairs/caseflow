@@ -158,7 +158,7 @@ RSpec.feature "AmaQueue" do
         allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).and_return(poas)
       end
 
-      scenario "when searching for cases", focus: true do
+      scenario "when searching for cases" do
         visit "/organizations/#{url}"
 
         fill_in "searchBar", with: veteran.file_number
