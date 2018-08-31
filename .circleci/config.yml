@@ -224,7 +224,6 @@ workflows:
                     - danger
                     - lint
                     - security
-                    - facols_ready
                     - mocha
                     - rspec
                     - karma
