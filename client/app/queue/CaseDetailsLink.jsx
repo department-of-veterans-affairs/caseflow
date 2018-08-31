@@ -1,15 +1,42 @@
-import PropTypes from 'prop-types';
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { css } from 'glamor';
 
+import ApiUtil from '../util/ApiUtil';
 import COPY from '../../COPY.json';
 import { subHeadTextStyle } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-const getLinkText = (appeal) => <React.Fragment>{appeal.veteranFullName} ({appeal.veteranFileNumber})</React.Fragment>;
+const defaultLinkText = (appeal, task) => {
+  const linkStyling = css({
+    fontWeight: task.status === 'assigned' ? 'bold' : null
+  });
+
+  return <React.Fragment {...linkStyling}>
+    {appeal.veteranFullName} ({appeal.veteranFileNumber})
+  </React.Fragment>;
+};
 
 export default class CaseDetailsLink extends React.PureComponent {
+  onClick = () => {
+    const { task } = this.props;
+    const payload = {
+      data: {
+        task: {
+          status: 'in_progress'
+        }
+      }
+    };
+    ApiUtil.patch(`/tasks/${task.taskId}`, payload);
+
+    return this.props.onClick ? this.props.onClick(arguments) : true;
+  }
+
   render() {
     const {
+      task,
       appeal,
       disabled
     } = this.props;
@@ -18,8 +45,8 @@ export default class CaseDetailsLink extends React.PureComponent {
       <Link
         to={`/queue/appeals/${appeal.externalId}`}
         disabled={disabled}
-        onClick={this.props.onClick}>
-        {this.props.getLinkText(appeal)}
+        onClick={this.onClick}>
+        {this.props.getLinkText(appeal, task)}
       </Link>
       {appeal.isPaperCase && <React.Fragment>
         <br />
@@ -38,5 +65,5 @@ CaseDetailsLink.propTypes = {
 };
 
 CaseDetailsLink.defaultProps = {
-  getLinkText
+  getLinkText: defaultLinkText
 };
