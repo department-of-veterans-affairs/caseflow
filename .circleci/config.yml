@@ -1,9 +1,7 @@
 version: 2
 jobs:
     build:
-        docker:
-            # main image from circle ci 
-            # we can have 2.2 or 2.5.1 depending on the original image
+      docker:
             - image: circleci/ruby:2.2-node-browsers
               environment:
                 - DBUS_SESSION_BUS_ADDRESS: /dev/null
@@ -27,9 +25,8 @@ jobs:
 
             # This is the circleci provided Redis container.
             - image: circleci/redis:4.0.10
-        parallelism: 5
-        resource_class: large
-        steps:
+         
+      steps:
             - checkout
 
             - run:
@@ -99,85 +96,138 @@ jobs:
                 command: |
                     ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
 
-            - run:
-                name: Danger
-                command: |
-                    ~/project/ci-bin/capture-log "bundle exec danger"
+    danger:
+      steps:
+        - run:
+            name: Danger
+            command: |
+                ~/project/ci-bin/capture-log "bundle exec danger"
     
-            - run:
-                name: Lint
-                command: |
-                    ~/project/ci-bin/capture-log "bundle exec rake lint"
+    lint:
+      steps:
+        - run:
+            name: Lint
+            command: |
+              ~/project/ci-bin/capture-log "bundle exec rake lint"
     
-            - run:
-                name: Security
-                command: |
-                    ~/project/ci-bin/capture-log "bundle exec rake security_caseflow"
+    security:
+      steps:
+          - run:
+              name: Security
+              command: |
+                  ~/project/ci-bin/capture-log "bundle exec rake security_caseflow"
             
-            - run:
-                name: Mocha
-                command: |
-                    mkdir -p ~/test-results/mocha
-                    pushd client
-                    testfiles=$(circleci tests glob "test/node/**/*.js" | circleci tests split --split-by timings)
-                    echo $testfiles > ~/project/tmp/testfiles/mocha_testfiles.txt
-                    ~/project/ci-bin/capture-log "node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --compilers jsx:babel-core/register test/node/setup.js ${testfiles}"
+    mocha:
+      steps:
+        - run:
+            name: Mocha
+            command: |
+              mkdir -p ~/test-results/mocha
+              pushd client
+              testfiles=$(circleci tests glob "test/node/**/*.js  circleci tests split --split-by timings)
+              echo $testfile  ~/project/tmp/testfiles/mocha_testfiles.txt
+              ~/project/ci-bin/capture-log "node_modules/.bin/mo  --reporter mocha-junit-reporter --recursive --compil  jsx:babel-core/register test/node/setup.js ${testfiles}"
     
-            - run:
-                name: RSpec
-                command: |
-                    mkdir -p ~/test-results/rspec
-                    testfiles=$(circleci tests glob "spec/**/*spec.rb" | circleci tests split --split-by timings)
-                    echo $testfiles > ~/project/tmp/testfiles/rspec_testfiles.txt
-                    ~/project/ci-bin/capture-log "bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}"
+    rspec:
+      steps:
+        - run:
+            name: RSpec
+            command: |
+              mkdir -p ~/test-results/rspec
+              testfiles=$(circleci tests glob "spec/**/*spec.rb circleci tests split --split-by timings)
+              echo $testfile  ~/project/tmp/testfiles/rspec_testfiles.txt
+              ~/project/ci-bin/capture-log "bundle exec rspec --no-co --format progress --format RspecJunitFormatter ~/test-results/rspec/rspec.xml -- ${testfiles}"
 
-                name: Karma
-                command: |
-                    mkdir -p ~/karma-test-results/karma
-                    pushd client
-                    ~/project/ci-bin/capture-log "node_modules/.bin/karma start --reporters junit"
+    karma:
+      steps:
+        - deploy:
+            name: Karma
+            command: |
+              mkdir -p ~/karma-test-results/karma
+              pushd client
+              ~/project/ci-bin/capture-log "node_modules/.bin/karma start --reporters junit"
 
             # Karma gets its own test results directory because otherwise
             # we would upload the test results directory twice, doubling
             # the perceived test count.
-            - store_test_results:
-                path: ~/karma-test-results
+        - store_test_results:
+            path: ~/karma-test-results
 
-            - store_test_results:
-                name: Store test results as summary
-                path: ~/test-results
+    save_results:
+      steps:
+        - store_test_results:
+            name: Store test results as summary
+            path: ~/test-results
 
-            - store_artifacts:
-                name: Store test results as artifact
-                path: ~/test-results
+        - store_artifacts:
+            name: Store test results as artifact
+            path: ~/test-results
 
-            - store_artifacts:
-                name: Store code coverage
-                path: ~/coverage
+        - store_artifacts:
+            name: Store code coverage
+            path: ~/coverage
 
-            - store_artifacts:
-                name: Store capybara screenshots
-                path: ~/project/tmp/capybara
+        - store_artifacts:
+            name: Store capybara screenshots
+            path: ~/project/tmp/capybara
 
-            - store_artifacts:
-                name: Store testfile ordering
-                path: ~/project/tmp/testfiles
+        - store_artifacts:
+            name: Store testfile ordering
+            path: ~/project/tmp/testfiles
 
-            - store_artifacts:
-                name: Store run logs
-                path: ~/logs
+        - store_artifacts:
+            name: Store run logs
+            path: ~/logs
 
-            - deploy:
-                name: Verify code coverage
-                command: |
-                    ~/project/ci-bin/capture-log "bundle exec rake ci:circleci_verify_code_coverage"
+    finish:
+      steps:
+        - deploy:
+            name: Verify code coverage
+            command: |
+              ~/project/ci-bin/capture-log "bundle exec rake ci:circleci_verify_code_coverage"
 
-            - deploy:
-                name: Concatenate all logs
-                command: |
-                    ~/project/ci-bin/concatenate-log.rb >> ~/all_logs.log
-                when: always
+        - deploy:
+            name: Concatenate all logs
+            command: |
+              ~/project/ci-bin/concatenate-log.rb >> ~/all_logs.log
+            when: always
 
-            - store_artifacts:
-                name: Store concatenated logs
-                path: ~/all_logs.log
+        - store_artifacts:
+            name: Store concatenated logs
+            path: ~/all_logs.log
+
+workflows:
+    version: 2
+    build-test-and-deploy:
+        jobs:
+            - build
+            - danger:
+                requires: 
+                    - build
+            - lint:
+                requires:
+                    - build
+            - security:
+                requires: 
+                    - build
+            - mocha:
+                requires:
+                    - build
+            - rspec:
+                requires:
+                    - build
+            - karma:
+                requires: 
+                    - build
+            - save_results:
+                requires:
+                    - danger
+                    - lint
+                    - security
+                    - facols_ready
+                    - mocha
+                    - rspec
+                    - karma
+            - finish:
+                requires: 
+                    - save_results
