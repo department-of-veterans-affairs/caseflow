@@ -180,6 +180,11 @@ jobs:
     rspec:
         docker:
             - image: circleci/redis:4.0.10
+            - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_2
+            - image: circleci/postgres:10.2
+              environment:
+                - POSTGRES_USER: root
+                - POSTGRES_DB: caseflow_certification_test
             - image: circleci/ruby:2.2-node-browsers
               environment:
                 - DBUS_SESSION_BUS_ADDRESS: /dev/null
@@ -200,7 +205,16 @@ jobs:
 
     karma:
         docker:
+            - image: circleci/redis:4.0.10
             - image: circleci/ruby:2.2-node-browsers
+              environment:
+                - DBUS_SESSION_BUS_ADDRESS: /dev/null
+                - RAILS_ENV: test
+                - NODE_ENV: test
+                - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
+                - BUNDLE_PATH: vendor/bundle
+                - KARMA_JUNIT_OUTPUT_DIR:   /home/circleci/karma-test-results/karma
+                - KARMA_JUNIT_OUTPUT_FILE:  /home/circleci/karma-test-results/karma/karma.xml
         steps:
             - deploy:
                 name: Karma
@@ -217,6 +231,7 @@ jobs:
 
     save_results:
         docker:
+            - image: circleci/redis:4.0.10
             - image: circleci/ruby:2.2-node-browsers
         steps:
         - store_test_results:
@@ -245,6 +260,7 @@ jobs:
 
     finish:
         docker:
+            - image: circleci/redis:4.0.10
             - image: circleci/ruby:2.2-node-browsers
         steps:
         - deploy:
