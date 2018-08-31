@@ -113,9 +113,9 @@ class AppealsController < ApplicationController
     MetricsService.record("VACOLS: Get vso appeals information for file_number #{file_number}",
                           service: :queue,
                           name: "AppealsController.get_vso_appeals_for_file_number") do
-      vso_participant_ids = current_user.vsos.map { |poa| poa[:participant_id] }
+      vso_participant_ids = current_user.vsos_user_represents.map { |poa| poa[:participant_id] }
 
-      appeals = Veteran.find_by(file_number: file_number).appeals_vso_has_access_to(vso_participant_ids)
+      appeals = Veteran.find_by(file_number: file_number).accessible_appeals_for_poa(vso_participant_ids)
       render json: {
         appeals: json_appeals(appeals)[:data]
       }

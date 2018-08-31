@@ -105,7 +105,7 @@ class Veteran < ApplicationRecord
     @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id, from_date: from_date)
   end
 
-  def appeals_vso_has_access_to(vso_participant_ids)
+  def accessible_appeals_for_poa(poa_participant_ids)
     appeals = Appeal.where(veteran_file_number: file_number).includes(:claimants)
 
     claimants_participant_ids = appeals.map { |appeal| appeal.claimants.pluck(:participant_id) }.flatten
@@ -114,7 +114,7 @@ class Veteran < ApplicationRecord
 
     appeals.select do |appeal|
       appeal.claimants.any? do |claimant|
-        vso_participant_ids.include?(poas[claimant[:participant_id]][:participant_id])
+        poa_participant_ids.include?(poas[claimant[:participant_id]][:participant_id])
       end
     end
   end

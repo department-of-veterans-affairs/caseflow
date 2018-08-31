@@ -247,9 +247,9 @@ describe User do
       end
     end
 
-    context "#vsos" do
+    context "#vsos_user_represents" do
       it "returns a list of VSOs" do
-        expect(user.vsos.first[:participant_id]).to eq(vso_participant_id)
+        expect(user.vsos_user_represents.first[:participant_id]).to eq(vso_participant_id)
       end
     end
   end

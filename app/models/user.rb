@@ -80,8 +80,8 @@ class User < ApplicationRecord
     @participant_id ||= bgs.get_participant_id_for_user(self)
   end
 
-  def vsos
-    @vsos ||= bgs.fetch_poas_by_participant_id(participant_id)
+  def vsos_user_represents
+    @vsos_user_represents ||= bgs.fetch_poas_by_participant_id(participant_id)
   end
 
   def access_to_task?(vacols_id)

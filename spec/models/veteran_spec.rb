@@ -313,7 +313,7 @@ describe Veteran do
     end
   end
 
-  context "#appeals_vso_has_access_to" do
+  context "#accessible_appeals_for_poa" do
     let!(:appeals) do
       [
         create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id)]),
@@ -357,7 +357,7 @@ describe Veteran do
     end
 
     it "returns only the case with vso assigned to it" do
-      returned_appeals = veteran.appeals_vso_has_access_to([vso_participant_id, "other vso participant id"])
+      returned_appeals = veteran.accessible_appeals_for_poa([vso_participant_id, "other vso participant id"])
       expect(returned_appeals.count).to eq 1
       expect(returned_appeals.first).to eq appeals.first
     end
