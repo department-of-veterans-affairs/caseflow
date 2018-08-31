@@ -78,7 +78,7 @@ class QueueApp extends React.PureComponent<Props> {
     const { userRole } = this.props;
 
     if (userRole === USER_ROLE_TYPES.attorney) {
-      return <AttorneyTaskListView {...this.props} />;
+      return <AttorneyTaskListView />;
     } else if (userRole === USER_ROLE_TYPES.judge) {
       return <JudgeReviewTaskListView {...this.props} />;
     } else if (userRole === USER_ROLE_TYPES.colocated) {
