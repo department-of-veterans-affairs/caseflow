@@ -5,7 +5,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: circleci/ruby
+      - image: circleci/ruby:2.5.1-node-browsers
         environment:
           - dev: enrique
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
@@ -46,6 +46,7 @@ jobs:
                 tar xvzf /home/circleci/project/oracle_libs/*.gz
                 cd /home/circleci/project/oracle_libs/instantclient_12_1/
                 ln -s libclntsh.so.12.1 libclntsh.so
+                cd ~/project
 
         - run:
             name: Print working directory
@@ -57,7 +58,6 @@ jobs:
         - run:
             name: Print env variables
             command: env
-
 
         - run:
             name: Setup testfiles directory
