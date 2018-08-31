@@ -49,17 +49,6 @@ jobs:
                 cd ~/project
 
         - run:
-            name: Print working directory
-            command: |
-                pwd
-                ls -lsa
-                echo $LD_LIBRARY_PATH
-        
-        - run:
-            name: Print env variables
-            command: env
-
-        - run:
             name: Setup testfiles directory
             command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
@@ -80,7 +69,9 @@ jobs:
 
         - run:
             name: Bundle install
-            command: sudo env LD_LIBRARY_PATH=$LD_LIBRARY_PATH bundle install --path vendor/bundle
+            command: |
+                sudo env LD_LIBRARY_PATH=$LD_LIBRARY_PATH bundle install --path vendor/bundle
+                bundle update rake
 
         - save_cache:
             key: vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
