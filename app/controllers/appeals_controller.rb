@@ -4,9 +4,7 @@ class AppealsController < ApplicationController
   before_action :react_routed
   before_action :set_application, only: [:document_count, :new_documents]
   # Only whitelist endpoints VSOs should have access to.
-  skip_before_action :deny_vso_access, only: [:index, :show_case_list, :show, :tasks]
-
-  ROLES = Constants::USER_ROLE_TYPES.keys.freeze
+  skip_before_action :deny_vso_access, only: [:index, :show_case_list, :show]
 
   def index
     get_appeals_for_file_number(request.headers["HTTP_VETERAN_ID"]) && return
@@ -33,24 +31,6 @@ class AppealsController < ApplicationController
     return handle_non_critical_error("new_documents", e)
   end
 
-  def tasks
-    no_cache
-
-    # VSO users should only get tasks assigned to them or their organization.
-    if current_user.vso_employee?
-      return json_vso_tasks
-    end
-
-    role = params[:role].downcase
-    return invalid_role_error unless ROLES.include?(role)
-
-    if %w[attorney judge].include?(role) && appeal.class.name == "LegacyAppeal"
-      return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], role)
-    end
-
-    json_tasks_by_appeal_id(appeal.id, appeal.class.to_s)
-  end
-
   def show
     no_cache
 
@@ -73,15 +53,6 @@ class AppealsController < ApplicationController
 
   def set_application
     RequestStore.store[:application] = "queue"
-  end
-
-  # https://stackoverflow.com/a/748646
-  def no_cache
-    # :nocov:
-    response.headers["Cache-Control"] = "no-cache, no-store"
-    response.headers["Pragma"] = "no-cache"
-    response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
-    # :nocov:
   end
 
   def get_appeals_for_file_number(file_number)
@@ -129,36 +100,6 @@ class AppealsController < ApplicationController
     }, status: 400
   end
 
-  def queue_class
-    TasksController::QUEUES[params[:role].downcase.try(:to_sym)]
-  end
-
-  def json_tasks_by_appeal_id(appeal_db_id, appeal_type)
-    tasks = queue_class.new.tasks_by_appeal_id(appeal_db_id, appeal_type)
-
-    render json: {
-      tasks: json_tasks(tasks)[:data]
-    }
-  end
-
-  def json_vso_tasks
-    # For now we just return tasks that are assigned to the user. In the future,
-    # we will add tasks that are assigned to the user's organization.
-    tasks = GenericQueue.new(user: current_user).tasks
-
-    render json: {
-      tasks: json_tasks(tasks)[:data]
-    }
-  end
-
-  def json_tasks_by_legacy_appeal_id_and_role(appeal_id, role)
-    tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal_id, role)
-
-    render json: {
-      tasks: json_legacy_tasks(tasks)[:data]
-    }
-  end
-
   def handle_non_critical_error(endpoint, err)
     if !err.class.method_defined? :serialize_response
       code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
@@ -180,20 +121,6 @@ class AppealsController < ApplicationController
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
       appeals
-    ).as_json
-  end
-
-  def json_legacy_tasks(tasks)
-    ActiveModelSerializers::SerializableResource.new(
-      tasks,
-      each_serializer: ::WorkQueue::LegacyTaskSerializer
-    ).as_json
-  end
-
-  def json_tasks(tasks)
-    ActiveModelSerializers::SerializableResource.new(
-      tasks,
-      each_serializer: ::WorkQueue::TaskSerializer
     ).as_json
   end
 end
