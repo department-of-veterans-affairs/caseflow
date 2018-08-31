@@ -45,6 +45,7 @@ jobs:
             command: |
                 unzip /home/circleci/project/oracle_libs/*.zip
                 ls -lsa /home/circleci/project/oracle_libs/
+                ln -s /home/circleci/project/oracle_libs/instantclient_12_1/libclntsh.so.12.1 /home/circleci/project/oracle_libs/instantclient_12_1/libclntsh.so
 
         - run:
             name: Print working directory
