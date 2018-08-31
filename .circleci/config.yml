@@ -199,35 +199,35 @@ jobs:
 workflows:
     version: 2
     caseflow-magic:
-    jobs:
-        - build
-        - danger:
-            requires: 
-                - build
-        - lint:
-            requires:
-                - build
-        - security:
-            requires: 
-                - build
-        - mocha:
-            requires:
-                - build
-        - rspec:
-            requires:
-                - build
-        - karma:
-            requires: 
-                - build
-        - save_results:
-            requires:
-                - danger
-                - lint
-                - security
-                - facols_ready
-                - mocha
-                - rspec
-                - karma
-        - finish:
-            requires: 
-                - save_results
+        jobs:
+            - build
+            - danger:
+                requires: 
+                    - build
+            - lint:
+                requires:
+                    - build
+            - security:
+                requires: 
+                    - build
+            - mocha:
+                requires:
+                    - build
+            - rspec:
+                requires:
+                    - build
+            - karma:
+                requires: 
+                    - build
+            - save_results:
+                requires:
+                    - danger
+                    - lint
+                    - security
+                    - facols_ready
+                    - mocha
+                    - rspec
+                    - karma
+            - finish:
+                requires: 
+                    - save_results
