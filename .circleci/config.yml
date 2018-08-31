@@ -27,7 +27,7 @@ jobs:
 
             # This is the circleci provided Redis container.
             - image: circleci/redis:4.0.10
-        parallelism: 3
+        parallelism: 10
         resource_class: large
         steps:
             - checkout
@@ -99,29 +99,21 @@ jobs:
                 command: |
                     ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
 
-    danger:
-        steps:
             - run:
                 name: Danger
                 command: |
                     ~/project/ci-bin/capture-log "bundle exec danger"
     
-    lint:
-        steps:
             - run:
                 name: Lint
                 command: |
                     ~/project/ci-bin/capture-log "bundle exec rake lint"
     
-    security:
-        steps:
             - run:
                 name: Security
                 command: |
                     ~/project/ci-bin/capture-log "bundle exec rake security_caseflow"
             
-    mocha:
-        steps:
             - run:
                 name: Mocha
                 command: |
@@ -131,8 +123,6 @@ jobs:
                     echo $testfiles > ~/project/tmp/testfiles/mocha_testfiles.txt
                     ~/project/ci-bin/capture-log "node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --compilers jsx:babel-core/register test/node/setup.js ${testfiles}"
     
-    rspec:
-        steps:
             - run:
                 name: RSpec
                 command: |
@@ -141,9 +131,6 @@ jobs:
                     echo $testfiles > ~/project/tmp/testfiles/rspec_testfiles.txt
                     ~/project/ci-bin/capture-log "bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}"
 
-    karma:
-        steps:
-            - deploy:
                 name: Karma
                 command: |
                     mkdir -p ~/karma-test-results/karma
@@ -156,7 +143,6 @@ jobs:
             - store_test_results:
                 path: ~/karma-test-results
 
-    save_results:
             - store_test_results:
                 name: Store test results as summary
                 path: ~/test-results
@@ -181,8 +167,6 @@ jobs:
                 name: Store run logs
                 path: ~/logs
 
-    finish:
-        steps:
             - deploy:
                 name: Verify code coverage
                 command: |
@@ -197,39 +181,3 @@ jobs:
             - store_artifacts:
                 name: Store concatenated logs
                 path: ~/all_logs.log
-
-workflows:
-    version: 2
-    build-test-and-deploy:
-        jobs:
-            - build
-            - danger:
-                requires: 
-                    - build
-            - lint:
-                requires:
-                    - build
-            - security:
-                requires: 
-                    - build
-            - mocha:
-                requires:
-                    - build
-            - rspec:
-                requires:
-                    - build
-            - karma:
-                requires: 
-                    - build
-            - save_results:
-                requires:
-                    - danger
-                    - lint
-                    - security
-                    - facols_ready
-                    - mocha
-                    - rspec
-                    - karma
-            - finish:
-                requires: 
-                    - save_results
