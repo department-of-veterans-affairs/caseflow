@@ -43,9 +43,7 @@ jobs:
             name: Install Oracle Client
             command: |
                 cd /home/circleci/project/oracle_libs/
-                unzip /home/circleci/project/oracle_libs/*.zip
-                pwd
-                ls -lsa
+                tar xvzf /home/circleci/project/oracle_libs/*.gz
                 cd /home/circleci/project/oracle_libs/instantclient_12_1/
                 ln -s libclntsh.so.12.1 libclntsh.so
 
