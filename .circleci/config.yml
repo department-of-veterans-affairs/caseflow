@@ -3,7 +3,7 @@ jobs:
     build:
         docker:
             # main image from circle ci 
-            # we can have 2.2 or 2.5.1
+            # we can have 2.2 or 2.5.1 depending on the original image
             - image: circleci/ruby:2.2-node-browsers
               environment:
                 - DBUS_SESSION_BUS_ADDRESS: /dev/null
