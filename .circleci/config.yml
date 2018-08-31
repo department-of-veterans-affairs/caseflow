@@ -1,189 +1,237 @@
 version: 2
 jobs:
-  build:
-    docker:
-      # The first image listed is the image that all steps run inside of.
-      # This can be modified by steps, or can be built as a separate
-      # customized container.
-      - image: circleci/ruby:2.2-node-browsers
-        environment:
-          - dev: enrique
-          - DBUS_SESSION_BUS_ADDRESS: /dev/null
-          - RAILS_ENV: test
-          - NODE_ENV: test
-          - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
-          - BUNDLE_PATH: vendor/bundle
-          - KARMA_JUNIT_OUTPUT_DIR: /home/circleci/karma-test-results/karma
-          - KARMA_JUNIT_OUTPUT_FILE: /home/circleci/karma-test-results/karma/karma.xml
-          - COVERAGE_DIR: /home/circleci/coverage
-          - POSTGRES_HOST: localhost
-          - POSTGRES_USER: root
-      # This is the circleci provided Postgres container. We can
-      # configure it via environment variables.
-      - image: circleci/postgres:10.2
-        environment:
-          - POSTGRES_USER: root
-            POSTGRES_DB: caseflow_certification_test
+    build:
+        docker:
+        # The first image listed is the image that all steps run inside of.
+        # This can be modified by steps, or can be built as a separate
+        # customized container.
+        - image: circleci/ruby:2.2-node-browsers
+            environment:
+            - dev: enrique
+            - DBUS_SESSION_BUS_ADDRESS: /dev/null
+            - RAILS_ENV: test
+            - NODE_ENV: test
+            - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
+            - BUNDLE_PATH: vendor/bundle
+            - KARMA_JUNIT_OUTPUT_DIR: /home/circleci/karma-test-results/karma
+            - KARMA_JUNIT_OUTPUT_FILE: /home/circleci/karma-test-results/karma/karma.xml
+            - COVERAGE_DIR: /home/circleci/coverage
+            - POSTGRES_HOST: localhost
+            - POSTGRES_USER: root
+        # This is the circleci provided Postgres container. We can
+        # configure it via environment variables.
+        - image: circleci/postgres:10.2
+            environment:
+            - POSTGRES_USER: root
+                POSTGRES_DB: caseflow_certification_test
 
-      # This is our homespun VACOLS container. An oracle db with some special sauce.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_2
+        # This is our homespun VACOLS container. An oracle db with some special sauce.
+        - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_2
 
-      # This is the circleci provided Redis container.
-      - image: circleci/redis:4.0.10
-    parallelism: 3
-    resource_class: large
-    steps:
-        - checkout
+        # This is the circleci provided Redis container.
+        - image: circleci/redis:4.0.10
+        parallelism: 3
+        resource_class: large
+        steps:
+            - checkout
 
-        - run:
-            name: Install dependencies
-            command: sudo apt-get install pdftk libaio1 libaio-dev
-        
-        - run:
-            name: Install Oracle Client
-            command: |
-                cd /home/circleci/project/oracle_libs/
-                tar xvzf /home/circleci/project/oracle_libs/*.gz
-                cd /home/circleci/project/oracle_libs/instantclient_12_1/
-                ln -s libclntsh.so.12.1 libclntsh.so
-                cd ~/project
+            - run:
+                name: Install dependencies
+                command: sudo apt-get install pdftk libaio1 libaio-dev
+            
+            - run:
+                name: Install Oracle Client
+                command: |
+                    cd /home/circleci/project/oracle_libs/
+                    tar xvzf /home/circleci/project/oracle_libs/*.gz
+                    cd /home/circleci/project/oracle_libs/instantclient_12_1/
+                    ln -s libclntsh.so.12.1 libclntsh.so
+                    cd ~/project
 
-        - run:
-            name: Setup testfiles directory
-            command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
+            - run:
+                name: Setup testfiles directory
+                command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
-        - run:
-            name: Ruby version
-            command: ruby -v
+            - run:
+                name: Ruby version
+                command: ruby -v
 
-        - restore_cache:
-            keys:
-                - vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+            - restore_cache:
+                keys:
+                    - vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
 
-        - run:
-            name: Print Oracle env variable
-            command: |
-                export LD_LIBRARY_PATH=/home/circleci/project/oracle_libs/instantclient_12_1/
-                echo 'export LD_LIBRARY_PATH="/home/circleci/project/oracle_libs/instantclient_12_1/:$LD_LIBRARY_PATH"' >> $BASH_ENV
-                env
+            - run:
+                name: Print Oracle env variable
+                command: |
+                    export LD_LIBRARY_PATH=/home/circleci/project/oracle_libs/instantclient_12_1/
+                    echo 'export LD_LIBRARY_PATH="/home/circleci/project/oracle_libs/instantclient_12_1/:$LD_LIBRARY_PATH"' >> $BASH_ENV
+                    env
 
-        - run:
-            name: Bundle install
-            command: |
-                sudo env LD_LIBRARY_PATH=$LD_LIBRARY_PATH bundle install --path vendor/bundle
-                bundle update rake
+            - run:
+                name: Bundle install
+                command: |
+                    sudo env LD_LIBRARY_PATH=$LD_LIBRARY_PATH bundle install --path vendor/bundle
+                    bundle update rake
 
-        - save_cache:
-            key: vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
-            paths:
-                - vendor/bundle
+            - save_cache:
+                key: vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+                paths:
+                    - vendor/bundle
 
-        - restore_cache:
-            name: Restore yarn cache
-            key: dot-cache-yarn-v1-{{ arch }}-{{ checksum "client/yarn.lock" }}
+            - restore_cache:
+                name: Restore yarn cache
+                key: dot-cache-yarn-v1-{{ arch }}-{{ checksum "client/yarn.lock" }}
 
-        - run:
-            name: yarn install
-            command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
+            - run:
+                name: yarn install
+                command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
-        - save_cache:
-            key: dot-cache-yarn-v1-{{ arch }}-{{ checksum "client/yarn.lock" }}
-            paths:
-                - ~/.cache/yarn
+            - save_cache:
+                key: dot-cache-yarn-v1-{{ arch }}-{{ checksum "client/yarn.lock" }}
+                paths:
+                    - ~/.cache/yarn
 
-        - run:
-            name: Database setup
-            command: |
-                ~/project/ci-bin/capture-log "bundle exec rake db:create"
-                ~/project/ci-bin/capture-log "bundle exec rake db:schema:load"
+            - run:
+                name: Database setup
+                command: |
+                    ~/project/ci-bin/capture-log "bundle exec rake db:create"
+                    ~/project/ci-bin/capture-log "bundle exec rake db:schema:load"
+            
+            - run:
+                name: Wait for FACOLS to be ready
+                command: |
+                    ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
 
-        - run:
-            name: Danger
-            command: |
-                ~/project/ci-bin/capture-log "bundle exec danger"
+    danger:
+        steps:
+            - run:
+                name: Danger
+                command: |
+                    ~/project/ci-bin/capture-log "bundle exec danger"
+    lint:
+        steps:
+            - run:
+                name: Lint
+                command: |
+                    ~/project/ci-bin/capture-log "bundle exec rake lint"
+    security:
+        steps:
+            - run:
+                name: Security
+                command: |
+                    ~/project/ci-bin/capture-log "bundle exec rake security_caseflow"
+            
+    mocha:
+        steps:
+            - run:
+                name: Mocha
+                command: |
+                    mkdir -p ~/test-results/mocha
+                    pushd client
+                    testfiles=$(circleci tests glob "test/node/**/*.js" | circleci tests split --split-by timings)
+                    echo $testfiles > ~/project/tmp/testfiles/mocha_testfiles.txt
+                    ~/project/ci-bin/capture-log "node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --compilers jsx:babel-core/register test/node/setup.js ${testfiles}"
+    rspec:
+        steps:
+            - run:
+                name: RSpec
+                command: |
+                    mkdir -p ~/test-results/rspec
+                    testfiles=$(circleci tests glob "spec/**/*spec.rb" | circleci tests split --split-by timings)
+                    echo $testfiles > ~/project/tmp/testfiles/rspec_testfiles.txt
+                    ~/project/ci-bin/capture-log "bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}"
 
-        - run:
-            name: Lint
-            command: |
-                ~/project/ci-bin/capture-log "bundle exec rake lint"
+    karma:
+        steps:
+            - deploy:
+                name: Karma
+                command: |
+                    mkdir -p ~/karma-test-results/karma
+                    pushd client
+                    ~/project/ci-bin/capture-log "node_modules/.bin/karma start --reporters junit"
 
-        - run:
-            name: Security
-            command: |
-                ~/project/ci-bin/capture-log "bundle exec rake security_caseflow"
+            # Karma gets its own test results directory because otherwise
+            # we would upload the test results directory twice, doubling
+            # the perceived test count.
+            - store_test_results:
+                path: ~/karma-test-results
 
-        - run:
-            name: Wait for FACOLS to be ready
-            command: |
-                ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
+    save_results:
+            - store_test_results:
+                name: Store test results as summary
+                path: ~/test-results
 
-        - run:
-            name: Mocha
-            command: |
-                mkdir -p ~/test-results/mocha
-                pushd client
-                testfiles=$(circleci tests glob "test/node/**/*.js" | circleci tests split --split-by timings)
-                echo $testfiles > ~/project/tmp/testfiles/mocha_testfiles.txt
-                ~/project/ci-bin/capture-log "node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --compilers jsx:babel-core/register test/node/setup.js ${testfiles}"
+            - store_artifacts:
+                name: Store test results as artifact
+                path: ~/test-results
 
-        - run:
-            name: RSpec
-            command: |
-                mkdir -p ~/test-results/rspec
-                testfiles=$(circleci tests glob "spec/**/*spec.rb" | circleci tests split --split-by timings)
-                echo $testfiles > ~/project/tmp/testfiles/rspec_testfiles.txt
-                ~/project/ci-bin/capture-log "bundle exec rspec --no-color --format progress --format RspecJunitFormatter -o ~/test-results/rspec/rspec.xml -- ${testfiles}"
+            - store_artifacts:
+                name: Store code coverage
+                path: ~/coverage
 
-        - store_test_results:
-            name: Store test results as summary
-            path: ~/test-results
+            - store_artifacts:
+                name: Store capybara screenshots
+                path: ~/project/tmp/capybara
 
-        - store_artifacts:
-            name: Store test results as artifact
-            path: ~/test-results
+            - store_artifacts:
+                name: Store testfile ordering
+                path: ~/project/tmp/testfiles
 
-        - store_artifacts:
-            name: Store code coverage
-            path: ~/coverage
+            - store_artifacts:
+                name: Store run logs
+                path: ~/logs
 
-        - store_artifacts:
-            name: Store capybara screenshots
-            path: ~/project/tmp/capybara
 
-        - store_artifacts:
-            name: Store testfile ordering
-            path: ~/project/tmp/testfiles
+    finish:
+        steps:
+            - deploy:
+                name: Verify code coverage
+                command: |
+                    ~/project/ci-bin/capture-log "bundle exec rake ci:circleci_verify_code_coverage"
 
-        - store_artifacts:
-            name: Store run logs
-            path: ~/logs
+            - deploy:
+                name: Concatenate all logs
+                command: |
+                    ~/project/ci-bin/concatenate-log.rb >> ~/all_logs.log
+                when: always
 
-        # Karma JavaScript tests are a deploy step because currently they are not
-        # able to be run in parallel.
-        - deploy:
-            name: Karma
-            command: |
-                mkdir -p ~/karma-test-results/karma
-                pushd client
-                ~/project/ci-bin/capture-log "node_modules/.bin/karma start --reporters junit"
+            - store_artifacts:
+                name: Store concatenated logs
+                path: ~/all_logs.log
 
-        # Karma gets its own test results directory because otherwise
-        # we would upload the test results directory twice, doubling
-        # the perceived test count.
-        - store_test_results:
-            path: ~/karma-test-results
+workflows:
+  version: 2
+  caseflow-magic:
+    jobs:
+        - build
+        - danger:
+            requires: 
+                - build
+        - lint:
+            requires:
+                - build
+        - security:
+            requires: 
+                - build
+        - mocha:
+            requires:
+                - build
+        - rspec:
+            requires:
+                - build
+        - karma:
+            requires: 
+                - build
+        - save_results:
+            requires:
+                - danger
+                - lint
+                - security
+                - facols_ready
+                - mocha
+                - rspec
+                - karma
 
-        - deploy:
-            name: Verify code coverage
-            command: |
-                ~/project/ci-bin/capture-log "bundle exec rake ci:circleci_verify_code_coverage"
-
-        - deploy:
-            name: Concatenate all logs
-            command: |
-                ~/project/ci-bin/concatenate-log.rb >> ~/all_logs.log
-            when: always
-
-        - store_artifacts:
-            name: Store concatenated logs
-            path: ~/all_logs.log
+        - finish:
+            requires: 
+                - save_results
