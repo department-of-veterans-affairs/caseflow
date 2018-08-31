@@ -37,8 +37,13 @@ jobs:
         - checkout
 
         - run:
-            name: Install pdftk
-            command: sudo apt-get install pdftk
+            name: Install dependencies
+            command: sudo apt-get install pdftk libaio1 libaio-dev
+        
+        - run:
+            name: Install Oracle Client
+            command: sudo apt-get install /home/circleci/project/oracle_libs/*.rpm
+
         - run:
             name: Print working directory
             command: |
