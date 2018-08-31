@@ -27,6 +27,7 @@ const dropdownStyling = (highlight, issueDisposition) => {
 class SelectIssueDispositionDropdown extends React.PureComponent {
   render = () => {
     const {
+      appeal,
       highlight,
       issue
     } = this.props;
@@ -48,7 +49,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
           remand_reasons: []
         })}
         name={`dispositions_dropdown_${issue.vacols_sequence_id}`} />
-      {issue.disposition === ISSUE_DISPOSITIONS.VACATED && <Checkbox
+      {appeal.docketName === 'legacy' && issue.disposition === ISSUE_DISPOSITIONS.VACATED && <Checkbox
         name={`duplicate-vacated-issue-${issue.vacols_sequence_id}`}
         styling={css({
           marginBottom: 0,
@@ -63,7 +64,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
 
 SelectIssueDispositionDropdown.propTypes = {
   issue: PropTypes.object.isRequired,
-  appealId: PropTypes.string.isRequired,
+  appeal: PropTypes.object.isRequired,
   highlight: PropTypes.bool,
   updateIssue: PropTypes.func.isRequired
 };

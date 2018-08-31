@@ -111,7 +111,7 @@ class SelectDispositionsView extends React.PureComponent {
       valueFunction: (issue) => <SelectIssueDispositionDropdown
         updateIssue={_.partial(this.updateIssue, issue.vacols_sequence_id)}
         issue={issue}
-        appealId={this.props.appealId} />
+        appeal={appeal} />
     }];
 
     if (appeal.docketName === 'legacy') {
