@@ -200,7 +200,7 @@ jobs:
 
 workflows:
     version: 2
-    caseflow-magic:
+    build-test-and-deploy:
         jobs:
             - build
             - danger:
