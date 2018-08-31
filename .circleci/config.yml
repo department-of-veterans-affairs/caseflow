@@ -24,8 +24,7 @@ jobs:
             - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_2
 
             # This is the circleci provided Redis container.
-            - image: circleci/redis:4.0.10
-         
+            - image: circleci/redis:4.0.10     
       steps:
             - checkout
 
@@ -97,7 +96,7 @@ jobs:
                     ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
 
     danger:
-        docker:
+      docker:
             - image: circleci/ruby:2.2-node-browsers
               environment:
                 - DBUS_SESSION_BUS_ADDRESS: /dev/null
@@ -116,96 +115,19 @@ jobs:
                 - POSTGRES_USER: root
                 - POSTGRES_DB: caseflow_certification_test
 
+            # This is our homespun VACOLS container. An oracle db with some special sauce.
             - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_2
 
             # This is the circleci provided Redis container.
             - image: circleci/redis:4.0.10
-        steps:
-            - run:
-                name: Danger
-                command: |
-                    ~/project/ci-bin/capture-log "bundle exec danger"
+      steps:
+        - run:
+            name: Danger
+            command: |
+                ~/project/ci-bin/capture-log "bundle exec danger"
     
     lint:
-        docker:
-            - image: circleci/redis:4.0.10
-            - image: circleci/ruby:2.2-node-browsers
-              environment:
-                - DBUS_SESSION_BUS_ADDRESS: /dev/null
-                - RAILS_ENV: test
-                - NODE_ENV: test
-                - BUNDLE_PATH: vendor/bundle
-        steps:
-            - run:
-                name: Lint
-                command: |
-                ~/project/ci-bin/capture-log "bundle exec rake lint"
-    
-    security:
-        docker:
-            - image: circleci/redis:4.0.10
-            - image: circleci/ruby:2.2-node-browsers
-              environment:
-                - DBUS_SESSION_BUS_ADDRESS: /dev/null
-                - RAILS_ENV: test
-                - NODE_ENV: test
-                - BUNDLE_PATH: vendor/bundle
-        steps:
-            - run:
-                name: Security
-                command: |
-                    ~/project/ci-bin/capture-log "bundle exec rake security_caseflow"
-            
-    mocha:
-        docker:
-            - image: circleci/redis:4.0.10
-            - image: circleci/ruby:2.2-node-browsers
-              environment:
-                - DBUS_SESSION_BUS_ADDRESS: /dev/null
-                - RAILS_ENV: test
-                - NODE_ENV: test
-                - BUNDLE_PATH: vendor/bundle
-                - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
-
-        steps:
-            - run:
-                name: Mocha
-                command: |
-                mkdir -p ~/test-results/mocha
-                pushd client
-                testfiles=$(circleci tests glob "test/node/**/*.js  circleci tests split --split-by timings)
-                echo $testfile  ~/project/tmp/testfiles/mocha_testfiles.txt
-                ~/project/ci-bin/capture-log "node_modules/.bin/mo  --reporter mocha-junit-reporter --recursive --compil  jsx:babel-core/register test/node/setup.js ${testfiles}"
-    
-    rspec:
-        docker:
-            - image: circleci/redis:4.0.10
-            - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_2
-            - image: circleci/postgres:10.2
-              environment:
-                - POSTGRES_USER: root
-                - POSTGRES_DB: caseflow_certification_test
-            - image: circleci/ruby:2.2-node-browsers
-              environment:
-                - DBUS_SESSION_BUS_ADDRESS: /dev/null
-                - RAILS_ENV: test
-                - NODE_ENV: test
-                - BUNDLE_PATH: vendor/bundle
-                - POSTGRES_HOST: localhost
-                - POSTGRES_USER: root
-
-        steps:
-            - run:
-                name: RSpec
-                command: |
-                mkdir -p ~/test-results/rspec
-                testfiles=$(circleci tests glob "spec/**/*spec.rb circleci tests split --split-by timings)
-                echo $testfile  ~/project/tmp/testfiles/rspec_testfiles.txt
-                ~/project/ci-bin/capture-log "bundle exec rspec --no-co --format progress --format RspecJunitFormatter ~/test-results/rspec/rspec.xml -- ${testfiles}"
-
-    karma:
-        docker:
-            - image: circleci/redis:4.0.10
+      docker:
             - image: circleci/ruby:2.2-node-browsers
               environment:
                 - DBUS_SESSION_BUS_ADDRESS: /dev/null
@@ -215,25 +137,191 @@ jobs:
                 - BUNDLE_PATH: vendor/bundle
                 - KARMA_JUNIT_OUTPUT_DIR:   /home/circleci/karma-test-results/karma
                 - KARMA_JUNIT_OUTPUT_FILE:  /home/circleci/karma-test-results/karma/karma.xml
-        steps:
-            - deploy:
-                name: Karma
-                command: |
-                mkdir -p ~/karma-test-results/karma
-                pushd client
-                ~/project/ci-bin/capture-log "node_modules/.bin/karma start --reporters junit"
+                - COVERAGE_DIR: /home/circleci/coverage
+                - POSTGRES_HOST: localhost
+                - POSTGRES_USER: root
+
+            - image: circleci/postgres:10.2
+              environment:
+                - POSTGRES_USER: root
+                - POSTGRES_DB: caseflow_certification_test
+
+            # This is our homespun VACOLS container. An oracle db with some special sauce.
+            - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_2
+
+            # This is the circleci provided Redis container.
+            - image: circleci/redis:4.0.10
+      steps:
+        - run:
+            name: Lint
+            command: |
+              ~/project/ci-bin/capture-log "bundle exec rake lint"
+    
+    security:
+      docker:
+            - image: circleci/ruby:2.2-node-browsers
+              environment:
+                - DBUS_SESSION_BUS_ADDRESS: /dev/null
+                - RAILS_ENV: test
+                - NODE_ENV: test
+                - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
+                - BUNDLE_PATH: vendor/bundle
+                - KARMA_JUNIT_OUTPUT_DIR:   /home/circleci/karma-test-results/karma
+                - KARMA_JUNIT_OUTPUT_FILE:  /home/circleci/karma-test-results/karma/karma.xml
+                - COVERAGE_DIR: /home/circleci/coverage
+                - POSTGRES_HOST: localhost
+                - POSTGRES_USER: root
+
+            - image: circleci/postgres:10.2
+              environment:
+                - POSTGRES_USER: root
+                - POSTGRES_DB: caseflow_certification_test
+
+            # This is our homespun VACOLS container. An oracle db with some special sauce.
+            - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_2
+
+            # This is the circleci provided Redis container.
+            - image: circleci/redis:4.0.10
+      steps:
+          - run:
+              name: Security
+              command: |
+                  ~/project/ci-bin/capture-log "bundle exec rake security_caseflow"
+            
+    mocha:
+      docker:
+            - image: circleci/ruby:2.2-node-browsers
+              environment:
+                - DBUS_SESSION_BUS_ADDRESS: /dev/null
+                - RAILS_ENV: test
+                - NODE_ENV: test
+                - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
+                - BUNDLE_PATH: vendor/bundle
+                - KARMA_JUNIT_OUTPUT_DIR:   /home/circleci/karma-test-results/karma
+                - KARMA_JUNIT_OUTPUT_FILE:  /home/circleci/karma-test-results/karma/karma.xml
+                - COVERAGE_DIR: /home/circleci/coverage
+                - POSTGRES_HOST: localhost
+                - POSTGRES_USER: root
+
+            - image: circleci/postgres:10.2
+              environment:
+                - POSTGRES_USER: root
+                - POSTGRES_DB: caseflow_certification_test
+
+            # This is our homespun VACOLS container. An oracle db with some special sauce.
+            - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_2
+
+            # This is the circleci provided Redis container.
+            - image: circleci/redis:4.0.10
+      steps:
+        - run:
+            name: Mocha
+            command: |
+              mkdir -p ~/test-results/mocha
+              pushd client
+              testfiles=$(circleci tests glob "test/node/**/*.js  circleci tests split --split-by timings)
+              echo $testfile  ~/project/tmp/testfiles/mocha_testfiles.txt
+              ~/project/ci-bin/capture-log "node_modules/.bin/mo  --reporter mocha-junit-reporter --recursive --compil  jsx:babel-core/register test/node/setup.js ${testfiles}"
+    
+    rspec:
+      docker:
+            - image: circleci/ruby:2.2-node-browsers
+              environment:
+                - DBUS_SESSION_BUS_ADDRESS: /dev/null
+                - RAILS_ENV: test
+                - NODE_ENV: test
+                - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
+                - BUNDLE_PATH: vendor/bundle
+                - KARMA_JUNIT_OUTPUT_DIR:   /home/circleci/karma-test-results/karma
+                - KARMA_JUNIT_OUTPUT_FILE:  /home/circleci/karma-test-results/karma/karma.xml
+                - COVERAGE_DIR: /home/circleci/coverage
+                - POSTGRES_HOST: localhost
+                - POSTGRES_USER: root
+
+            - image: circleci/postgres:10.2
+              environment:
+                - POSTGRES_USER: root
+                - POSTGRES_DB: caseflow_certification_test
+
+            # This is our homespun VACOLS container. An oracle db with some special sauce.
+            - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_2
+
+            # This is the circleci provided Redis container.
+            - image: circleci/redis:4.0.10
+      steps:
+        - run:
+            name: RSpec
+            command: |
+              mkdir -p ~/test-results/rspec
+              testfiles=$(circleci tests glob "spec/**/*spec.rb circleci tests split --split-by timings)
+              echo $testfile  ~/project/tmp/testfiles/rspec_testfiles.txt
+              ~/project/ci-bin/capture-log "bundle exec rspec --no-co --format progress --format RspecJunitFormatter ~/test-results/rspec/rspec.xml -- ${testfiles}"
+
+    karma:
+      docker:
+            - image: circleci/ruby:2.2-node-browsers
+              environment:
+                - DBUS_SESSION_BUS_ADDRESS: /dev/null
+                - RAILS_ENV: test
+                - NODE_ENV: test
+                - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
+                - BUNDLE_PATH: vendor/bundle
+                - KARMA_JUNIT_OUTPUT_DIR:   /home/circleci/karma-test-results/karma
+                - KARMA_JUNIT_OUTPUT_FILE:  /home/circleci/karma-test-results/karma/karma.xml
+                - COVERAGE_DIR: /home/circleci/coverage
+                - POSTGRES_HOST: localhost
+                - POSTGRES_USER: root
+
+            - image: circleci/postgres:10.2
+              environment:
+                - POSTGRES_USER: root
+                - POSTGRES_DB: caseflow_certification_test
+
+            # This is our homespun VACOLS container. An oracle db with some special sauce.
+            - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_2
+
+            # This is the circleci provided Redis container.
+            - image: circleci/redis:4.0.10
+      steps:
+        - deploy:
+            name: Karma
+            command: |
+              mkdir -p ~/karma-test-results/karma
+              pushd client
+              ~/project/ci-bin/capture-log "node_modules/.bin/karma start --reporters junit"
 
             # Karma gets its own test results directory because otherwise
             # we would upload the test results directory twice, doubling
             # the perceived test count.
-            - store_test_results:
-                path: ~/karma-test-results
+        - store_test_results:
+            path: ~/karma-test-results
 
     save_results:
-        docker:
-            - image: circleci/redis:4.0.10
+      docker:
             - image: circleci/ruby:2.2-node-browsers
-        steps:
+              environment:
+                - DBUS_SESSION_BUS_ADDRESS: /dev/null
+                - RAILS_ENV: test
+                - NODE_ENV: test
+                - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
+                - BUNDLE_PATH: vendor/bundle
+                - KARMA_JUNIT_OUTPUT_DIR:   /home/circleci/karma-test-results/karma
+                - KARMA_JUNIT_OUTPUT_FILE:  /home/circleci/karma-test-results/karma/karma.xml
+                - COVERAGE_DIR: /home/circleci/coverage
+                - POSTGRES_HOST: localhost
+                - POSTGRES_USER: root
+
+            - image: circleci/postgres:10.2
+              environment:
+                - POSTGRES_USER: root
+                - POSTGRES_DB: caseflow_certification_test
+
+            # This is our homespun VACOLS container. An oracle db with some special sauce.
+            - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_2
+
+            # This is the circleci provided Redis container.
+            - image: circleci/redis:4.0.10
+      steps:
         - store_test_results:
             name: Store test results as summary
             path: ~/test-results
@@ -259,10 +347,31 @@ jobs:
             path: ~/logs
 
     finish:
-        docker:
-            - image: circleci/redis:4.0.10
+      docker:
             - image: circleci/ruby:2.2-node-browsers
-        steps:
+              environment:
+                - DBUS_SESSION_BUS_ADDRESS: /dev/null
+                - RAILS_ENV: test
+                - NODE_ENV: test
+                - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
+                - BUNDLE_PATH: vendor/bundle
+                - KARMA_JUNIT_OUTPUT_DIR:   /home/circleci/karma-test-results/karma
+                - KARMA_JUNIT_OUTPUT_FILE:  /home/circleci/karma-test-results/karma/karma.xml
+                - COVERAGE_DIR: /home/circleci/coverage
+                - POSTGRES_HOST: localhost
+                - POSTGRES_USER: root
+
+            - image: circleci/postgres:10.2
+              environment:
+                - POSTGRES_USER: root
+                - POSTGRES_DB: caseflow_certification_test
+
+            # This is our homespun VACOLS container. An oracle db with some special sauce.
+            - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_2
+
+            # This is the circleci provided Redis container.
+            - image: circleci/redis:4.0.10
+      steps:
         - deploy:
             name: Verify code coverage
             command: |
@@ -306,6 +415,7 @@ workflows:
                     - danger
                     - lint
                     - security
+                    - facols_ready
                     - mocha
                     - rspec
                     - karma
