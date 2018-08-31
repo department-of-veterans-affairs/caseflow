@@ -18,4 +18,24 @@ class ClaimReview < AmaReview
       end_product_establishment(rated: true).remove_contention!(request_issue)
     end
   end
+
+  def on_sync(end_product_establishment)
+    if end_product_establishment.status_cleared?
+      sync_dispositions(end_product_establishment.reference_id)
+    end
+  end
+
+  private
+
+  def sync_dispositions(reference_id)
+    dispositions = VBMSService.get_dispositions!(claim_id: reference_id)
+    dispositions.each do |disposition|
+      binding.pry
+      matching_request_issue(disposition[:contention_id]).update!(disposition: disposition[:disposition])
+    end
+  end
+
+  def matching_request_issue(contention_id)
+    RequestIssue.find_by!(contention_reference_id: contention_id)
+  end
 end

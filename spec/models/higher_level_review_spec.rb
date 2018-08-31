@@ -14,7 +14,6 @@ describe HigherLevelReview do
   let(:informal_conference) { nil }
   let(:same_office) { nil }
   let(:established_at) { nil }
-  let(:end_product_status) { nil }
 
   let(:higher_level_review) do
     HigherLevelReview.new(
@@ -22,8 +21,7 @@ describe HigherLevelReview do
       receipt_date: receipt_date,
       informal_conference: informal_conference,
       same_office: same_office,
-      established_at: established_at,
-      end_product_status: end_product_status
+      established_at: established_at
     )
   end
 
@@ -343,6 +341,56 @@ describe HigherLevelReview do
           expect(error.error_code).to eq("duplicate_ep")
         end
       end
+    end
+  end
+
+  context "#on_sync" do
+    subject { higher_level_review.on_sync(end_product_establishment) }
+    let!(:end_product_establishment) do
+      create(
+        :end_product_establishment,
+        :cleared,
+        veteran_file_number: veteran_file_number,
+        source: higher_level_review,
+        last_synced_at: Time.zone.now
+      )
+    end
+
+    let(:request_issues_data) do
+      [
+        { reference_id: "abc", profile_date: "2018-04-04", decision_text: "hello" },
+        { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" }
+      ]
+    end
+
+    let(:disposition_records) do
+      [
+        { claim_id: end_product_establishment.reference_id,
+          contention_id: "12345",
+          disposition: "Granted" },
+        { claim_id: end_product_establishment.reference_id,
+          contention_id: "67890",
+          disposition: "Denied" },
+      ]
+    end
+
+    before do
+      higher_level_review.create_issues!(request_issues_data: request_issues_data)
+      RequestIssue.find_by(review_request: higher_level_review, rating_issue_reference_id: "abc").tap do |ri|
+        ri.update!(contention_reference_id: "12345")
+      end
+      RequestIssue.find_by(review_request: higher_level_review, rating_issue_reference_id: "def").tap do |ri|
+        ri.update!(contention_reference_id: "67890")
+      end
+      VBMSService.disposition_records = disposition_records
+    end
+
+    it "should add dispositions to the issues" do
+      subject
+
+      binding.pry
+      expect(RequestIssue.find_by(review_request: higher_level_review, rating_issue_reference_id: "abc").disposition).to eq("Granted")
+      expect(RequestIssue.find_by(review_request: higher_level_review, rating_issue_reference_id: "def").disposition).to eq("Denied")
     end
   end
 end

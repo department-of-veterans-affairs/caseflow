@@ -28,6 +28,7 @@ class Fakes::VBMSService
     attr_accessor :manifest_vbms_fetched_at, :manifest_vva_fetched_at
     attr_accessor :contention_records
     attr_accessor :end_product_claim_ids_by_file_number
+    attr_accessor :disposition_records
   end
 
   def self.load_vbms_ids_mappings
@@ -131,6 +132,10 @@ class Fakes::VBMSService
 
     # return fake end product
     OpenStruct.new(claim_id: claim_id)
+  end
+
+  def self.get_dispositions!(claim_id:)
+    disposition_records || []
   end
 
   def self.fetch_contentions(claim_id:)
