@@ -4,7 +4,6 @@ jobs:
         docker:
             - image: circleci/ruby:2.2-node-browsers
                 environment:
-                    - dev: enrique
                     - DBUS_SESSION_BUS_ADDRESS: /dev/null
                     - RAILS_ENV: test
                     - NODE_ENV: test
@@ -198,8 +197,8 @@ jobs:
                 path: ~/all_logs.log
 
 workflows:
-  version: 2
-  caseflow-magic:
+    version: 2
+    caseflow-magic:
     jobs:
         - build
         - danger:
@@ -229,7 +228,6 @@ workflows:
                 - mocha
                 - rspec
                 - karma
-
         - finish:
             requires: 
                 - save_results
