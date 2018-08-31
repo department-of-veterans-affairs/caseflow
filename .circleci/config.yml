@@ -16,9 +16,9 @@ jobs:
                 - POSTGRES_USER: root
 
             - image: circleci/postgres:10.2
-                environment:
-                    - POSTGRES_USER: root
-                        POSTGRES_DB: caseflow_certification_test
+              environment:
+                - POSTGRES_USER: root
+                - POSTGRES_DB: caseflow_certification_test
 
             # This is our homespun VACOLS container. An oracle db with some special sauce.
             - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_2
