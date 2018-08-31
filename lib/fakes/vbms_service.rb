@@ -134,7 +134,7 @@ class Fakes::VBMSService
     OpenStruct.new(claim_id: claim_id)
   end
 
-  def self.get_dispositions!(claim_id:)
+  def self.get_dispositions!(_claim_id:)
     disposition_records || []
   end
 

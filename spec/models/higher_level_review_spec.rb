@@ -370,7 +370,7 @@ describe HigherLevelReview do
           disposition: "Granted" },
         { claim_id: end_product_establishment.reference_id,
           contention_id: "67890",
-          disposition: "Denied" },
+          disposition: "Denied" }
       ]
     end
 
@@ -388,9 +388,10 @@ describe HigherLevelReview do
     it "should add dispositions to the issues" do
       subject
 
-      binding.pry
-      expect(RequestIssue.find_by(review_request: higher_level_review, rating_issue_reference_id: "abc").disposition).to eq("Granted")
-      expect(RequestIssue.find_by(review_request: higher_level_review, rating_issue_reference_id: "def").disposition).to eq("Denied")
+      expect(RequestIssue.find_by(review_request: higher_level_review, rating_issue_reference_id: "abc").disposition).
+        to eq("Granted")
+      expect(RequestIssue.find_by(review_request: higher_level_review, rating_issue_reference_id: "def").disposition).
+        to eq("Denied")
     end
   end
 end

@@ -30,7 +30,6 @@ class ClaimReview < AmaReview
   def sync_dispositions(reference_id)
     dispositions = VBMSService.get_dispositions!(claim_id: reference_id)
     dispositions.each do |disposition|
-      binding.pry
       matching_request_issue(disposition[:contention_id]).update!(disposition: disposition[:disposition])
     end
   end
