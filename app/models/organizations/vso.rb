@@ -5,6 +5,6 @@ class Vso < Organization
   end
 
   def path
-    "/organization/#{url}"
+    "/organizations/#{url}"
   end
 end

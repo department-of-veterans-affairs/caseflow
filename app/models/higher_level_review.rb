@@ -1,4 +1,4 @@
-class HigherLevelReview < AmaReview
+class HigherLevelReview < ClaimReview
   with_options if: :saving_review do
     validates :receipt_date, presence: { message: "blank" }
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
@@ -39,15 +39,6 @@ class HigherLevelReview < AmaReview
     [{ code: "SSR", narrative: "Same Station Review" }]
   end
 
-  def create_contentions_in_vbms(rated: true)
-    VBMSService.create_contentions!(
-      veteran_file_number: veteran_file_number,
-      claim_id: end_product_establishment(rated: rated).reference_id,
-      contention_descriptions: issue_descriptions_to_create(rated: rated),
-      special_issues: special_issues
-    )
-  end
-
   private
 
   def find_end_product_establishment(ep_code)
@@ -65,7 +56,8 @@ class HigherLevelReview < AmaReview
       invalid_modifiers: invalid_modifiers,
       claimant_participant_id: claimant_participant_id,
       source: self,
-      station: "397" # AMC
+      station: "397", # AMC
+      special_issues: special_issues
     )
   end
 

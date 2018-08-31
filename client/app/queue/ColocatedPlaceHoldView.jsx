@@ -15,7 +15,7 @@ import {
   appealWithDetailSelector
 } from './selectors';
 import { setTaskAttrs } from './QueueActions';
-import { requestSave } from './uiReducer/uiActions';
+import { requestPatch } from './uiReducer/uiActions';
 import { prepareTasksForStore } from './utils';
 
 import decisionViewBase from './components/DecisionViewBase';
@@ -47,7 +47,7 @@ type Props = Params & {|
   appeal: Appeal,
   error: ?UiStateMessage,
   highlightFormItems: boolean,
-  requestSave: typeof requestSave,
+  requestPatch: typeof requestPatch,
   setTaskAttrs: typeof setTaskAttrs
 |};
 
@@ -95,7 +95,7 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
       detail: COPY.COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION_DETAIL
     };
 
-    this.props.requestSave(`/tasks/${task.taskId}`, payload, successMsg, 'patch').
+    this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
         const response = JSON.parse(resp.text);
         const preparedTasks = prepareTasksForStore(response.tasks.data);
@@ -180,7 +180,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestSave,
+  requestPatch,
   setTaskAttrs
 }, dispatch);
 

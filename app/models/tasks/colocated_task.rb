@@ -41,6 +41,7 @@ class ColocatedTask < Task
 
     def next_assignee_index
       return 0 unless last_assignee_css_id
+      return 0 unless list_of_assignees.index(last_assignee_css_id)
       (list_of_assignees.index(last_assignee_css_id) + 1) % list_of_assignees.length
     end
 
