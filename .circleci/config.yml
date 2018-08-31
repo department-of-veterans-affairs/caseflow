@@ -2,34 +2,30 @@ version: 2
 jobs:
     build:
         docker:
-        # The first image listed is the image that all steps run inside of.
-        # This can be modified by steps, or can be built as a separate
-        # customized container.
-        - image: circleci/ruby:2.2-node-browsers
-            environment:
-            - dev: enrique
-            - DBUS_SESSION_BUS_ADDRESS: /dev/null
-            - RAILS_ENV: test
-            - NODE_ENV: test
-            - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
-            - BUNDLE_PATH: vendor/bundle
-            - KARMA_JUNIT_OUTPUT_DIR: /home/circleci/karma-test-results/karma
-            - KARMA_JUNIT_OUTPUT_FILE: /home/circleci/karma-test-results/karma/karma.xml
-            - COVERAGE_DIR: /home/circleci/coverage
-            - POSTGRES_HOST: localhost
-            - POSTGRES_USER: root
-        # This is the circleci provided Postgres container. We can
-        # configure it via environment variables.
-        - image: circleci/postgres:10.2
-            environment:
-            - POSTGRES_USER: root
-                POSTGRES_DB: caseflow_certification_test
+            - image: circleci/ruby:2.2-node-browsers
+                environment:
+                    - dev: enrique
+                    - DBUS_SESSION_BUS_ADDRESS: /dev/null
+                    - RAILS_ENV: test
+                    - NODE_ENV: test
+                    - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
+                    - BUNDLE_PATH: vendor/bundle
+                    - KARMA_JUNIT_OUTPUT_DIR: /home/circleci/karma-test-results/karma
+                    - KARMA_JUNIT_OUTPUT_FILE: /home/circleci/karma-test-results/karma/karma.xml
+                    - COVERAGE_DIR: /home/circleci/coverage
+                    - POSTGRES_HOST: localhost
+                    - POSTGRES_USER: root
 
-        # This is our homespun VACOLS container. An oracle db with some special sauce.
-        - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_2
+            - image: circleci/postgres:10.2
+                environment:
+                    - POSTGRES_USER: root
+                        POSTGRES_DB: caseflow_certification_test
 
-        # This is the circleci provided Redis container.
-        - image: circleci/redis:4.0.10
+            # This is our homespun VACOLS container. An oracle db with some special sauce.
+            - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_2
+
+            # This is the circleci provided Redis container.
+            - image: circleci/redis:4.0.10
         parallelism: 3
         resource_class: large
         steps:
@@ -108,12 +104,14 @@ jobs:
                 name: Danger
                 command: |
                     ~/project/ci-bin/capture-log "bundle exec danger"
+    
     lint:
         steps:
             - run:
                 name: Lint
                 command: |
                     ~/project/ci-bin/capture-log "bundle exec rake lint"
+    
     security:
         steps:
             - run:
@@ -131,6 +129,7 @@ jobs:
                     testfiles=$(circleci tests glob "test/node/**/*.js" | circleci tests split --split-by timings)
                     echo $testfiles > ~/project/tmp/testfiles/mocha_testfiles.txt
                     ~/project/ci-bin/capture-log "node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --compilers jsx:babel-core/register test/node/setup.js ${testfiles}"
+    
     rspec:
         steps:
             - run:
@@ -180,7 +179,6 @@ jobs:
             - store_artifacts:
                 name: Store run logs
                 path: ~/logs
-
 
     finish:
         steps:
