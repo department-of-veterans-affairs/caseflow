@@ -39,33 +39,22 @@ class HigherLevelReview < ClaimReview
     [{ code: "SSR", narrative: "Same Station Review" }]
   end
 
-  private
-
-  def find_end_product_establishment(ep_code)
-    EndProductEstablishment.find_by(source: self, code: ep_code)
+  def valid_modifiers
+    END_PRODUCT_MODIFIERS
   end
 
-  def new_end_product_establishment(ep_code, invalid_modifiers)
-    EndProductEstablishment.new(
+  private
+
+  def new_end_product_establishment(ep_code)
+    end_product_establishments.build(
       veteran_file_number: veteran_file_number,
       reference_id: end_product_reference_id,
       claim_date: receipt_date,
       payee_code: payee_code,
       code: ep_code,
-      valid_modifiers: END_PRODUCT_MODIFIERS,
-      invalid_modifiers: invalid_modifiers,
       claimant_participant_id: claimant_participant_id,
-      source: self,
-      station: "397", # AMC
-      special_issues: special_issues
+      station: "397" # AMC
     )
-  end
-
-  def end_product_establishment(rated: true, invalid_modifiers: [])
-    ep_code = issue_code(rated)
-    @end_product_establishments ||= {}
-    @end_product_establishments[rated] ||=
-      find_end_product_establishment(ep_code) || new_end_product_establishment(ep_code, invalid_modifiers)
   end
 
   def issue_code(rated)
