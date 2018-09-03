@@ -58,7 +58,7 @@ RSpec.feature "Edit issues" do
     end
 
     before do
-      higher_level_review.create_issues!([ request_issue ])
+      higher_level_review.create_issues!([request_issue])
       higher_level_review.process_end_product_establishments!
     end
 
@@ -88,7 +88,7 @@ RSpec.feature "Edit issues" do
     end
 
     before do
-      supplemental_claim.create_issues!([ request_issue ])
+      supplemental_claim.create_issues!([request_issue])
       supplemental_claim.process_end_product_establishments!
     end
 
