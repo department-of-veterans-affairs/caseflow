@@ -103,6 +103,7 @@ class RampReview < ApplicationRecord
       code: end_product_code,
       payee_code: payee_code,
       claimant_participant_id: claimant_participant_id,
+      valid_modifiers: valid_modifiers,
       source: self,
       station: "397" # AMC
     )
