@@ -14,24 +14,27 @@ class HigherLevelReview < ClaimReview
       veteranName: veteran.name.formatted(:readable_short),
       veteranFileNumber: veteran_file_number,
       claimId: end_product_claim_id,
-      receiptDate: receipt_date,
+      receiptDate: receipt_date.to_formatted_s(:json_date),
       issues: request_issues,
       sameOffice: same_office,
       informalConference: informal_conference
     }
   end
 
+  def rating_end_product_establishment
+    @rating_end_product_establishment ||= end_product_establishments.find_by(code: END_PRODUCT_RATING_CODE)
+  end
+
   def end_product_description
-    end_product_establishment.description
+    rating_end_product_establishment && rating_end_product_establishment.description
   end
 
   def end_product_base_modifier
-    # This is for EPs not yet created or that failed to create
-    end_product_establishment.valid_modifiers.first
+    valid_modifiers.first
   end
 
   def end_product_claim_id
-    end_product_establishment.reference_id
+    rating_end_product_establishment && rating_end_product_establishment.reference_id
   end
 
   def special_issues

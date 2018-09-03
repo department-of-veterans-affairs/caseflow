@@ -40,6 +40,7 @@ class HigherLevelReviewIntake < Intake
     return if complete? || pending?
 
     start_completion!
+    detail.request_issues.destroy_all unless detail.request_issues.empty?
     detail.create_issues!(build_issues(request_params[:request_issues] || []))
     detail.process_end_product_establishments!
     detail.update!(established_at: Time.zone.now)
