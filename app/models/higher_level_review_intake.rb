@@ -38,11 +38,12 @@ class HigherLevelReviewIntake < Intake
 
   def complete!(request_params)
     return if complete? || pending?
+
     start_completion!
-    detail.create_issues!(request_issues_data: request_params[:request_issues] || [])
-
-    create_end_product_and_contentions
-
+    detail.request_issues.destroy_all unless detail.request_issues.empty?
+    detail.create_issues!(build_issues(request_params[:request_issues] || []))
+    detail.process_end_product_establishments!
+    detail.update!(established_at: Time.zone.now)
     complete_with_status!(:success)
   end
 end

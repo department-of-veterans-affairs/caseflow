@@ -84,8 +84,10 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
     });
   case ACTIONS.DELETE_APPEAL:
     return update(state, {
+      tasks: { $unset: action.payload.appealId },
+      amaTasks: { $unset: action.payload.appealId },
       appeals: { $unset: action.payload.appealId },
-      tasks: { $unset: action.payload.appealId }
+      appealDetails: { $unset: action.payload.appealId }
     });
   case ACTIONS.EDIT_APPEAL:
     return update(state, {
@@ -194,7 +196,7 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
 
     return update(state, {
       editingIssue: {
-        $set: _.find(issues, (issue) => issue.vacols_sequence_id === Number(issueId))
+        $set: _.find(issues, (issue) => issue.id === Number(issueId))
       }
     });
   }
@@ -219,11 +221,11 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
     const issues = appeals[appealId].issues;
     let updatedIssues = [];
 
-    const editingIssueId = Number(editingIssue.vacols_sequence_id);
-    const editingExistingIssue = _.map(issues, 'vacols_sequence_id').includes(editingIssueId);
+    const editingIssueId = Number(editingIssue.id);
+    const editingExistingIssue = _.map(issues, 'id').includes(editingIssueId);
 
     if (editingExistingIssue) {
-      updatedIssues = _.map(issues, (issue) => issue.vacols_sequence_id === editingIssueId ? editingIssue : issue);
+      updatedIssues = _.map(issues, (issue) => issue.id === editingIssueId ? editingIssue : issue);
     } else {
       updatedIssues = issues.concat(editingIssue);
     }
