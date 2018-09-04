@@ -126,6 +126,21 @@ export const associateTasksWithAppeals =
     };
   };
 
+export const prepareAppealIssuesForStore = (appeal: { attributes: Object }) => {
+  // Give even legacy issues an 'id' property, because other issues will have it,
+  // so we can refer to this property and phase out use of vacols_sequence_id.
+  let issues = appeal.attributes.issues;
+
+  if (appeal.attributes.docket_name === 'legacy') {
+    issues = issues.map((issue) => ({
+      id: issue.vacols_sequence_id,
+      ...issue
+    }));
+  }
+
+  return issues;
+};
+
 export const prepareAppealForStore =
   (appeals: Array<Object>):
     { appeals: BasicAppeals, appealDetails: AppealDetails } => {
@@ -149,8 +164,8 @@ export const prepareAppealForStore =
 
     const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
       accumulator[appeal.attributes.external_id] = {
-        issues: appeal.attributes.issues,
         hearings: appeal.attributes.hearings,
+        issues: prepareAppealIssuesForStore(appeal),
         appellantFullName: appeal.attributes.appellant_full_name,
         appellantAddress: appeal.attributes.appellant_address,
         appellantRelationship: appeal.attributes.appellant_relationship,
@@ -277,7 +292,7 @@ export const buildCaseReviewPayload = (
   payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => _.extend({},
     _.pick(issue, ['remand_reasons', 'type', 'readjudication']),
     { disposition: _.capitalize(issue.disposition) },
-    { id: issue.vacols_sequence_id }
+    { id: issue.id }
   ));
 
   return payload;
