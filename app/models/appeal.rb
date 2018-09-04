@@ -81,13 +81,28 @@ class Appeal < AmaReview
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 
+  # For now power_of_attorney returns the first claimant's power of attorney
   def power_of_attorney
-    @bgs_poa ||= BgsPowerOfAttorney.new(file_number: veteran_file_number)
+    claimants.first.power_of_attorney
   end
-
   delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
+
+  def power_of_attorneys
+    claimants.map(&:power_of_attorney)
+  end
 
   def external_id
     uuid
+  end
+
+  def create_initial_tasks!
+    RootTask.create!(self)
+    VsoTask.create_tasks_for_appeal!(self)
+  end
+
+  private
+
+  def bgs
+    BGSService.new
   end
 end

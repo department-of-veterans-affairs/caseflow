@@ -38,6 +38,7 @@ class AppealIntake < Intake
 
     detail.create_issues!(request_issues_data: request_params[:request_issues] || [])
     detail.update!(established_at: Time.zone.now)
+    detail.create_initial_tasks!
     complete_with_status!(:success)
   end
 end

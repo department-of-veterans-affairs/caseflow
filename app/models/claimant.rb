@@ -13,6 +13,11 @@ class Claimant < ApplicationRecord
     )
   end
 
+  def power_of_attorney
+    ClaimantPowerOfAttorney.new(claimant_participant_id: participant_id)
+  end
+  delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
+
   def self.bgs
     BGSService.new
   end
