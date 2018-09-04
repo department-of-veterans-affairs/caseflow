@@ -30,7 +30,6 @@ const config = {
       ie: 'component-ie'
     }
   },
-  devtool: 'source-map',
   module: {
     loaders: [
       {
