@@ -109,7 +109,7 @@ class SelectDispositionsView extends React.PureComponent {
     }, {
       header: 'Dispositions',
       valueFunction: (issue) => <SelectIssueDispositionDropdown
-        updateIssue={_.partial(this.updateIssue, issue.vacols_sequence_id)}
+        updateIssue={_.partial(this.updateIssue, issue.id)}
         issue={issue}
         appeal={appeal} />
     }];
@@ -117,7 +117,7 @@ class SelectDispositionsView extends React.PureComponent {
     if (appeal.docketName === 'legacy') {
       columns.splice(1, 0, {
         header: 'Actions',
-        valueFunction: (issue) => <Link to={`/queue/appeals/${appealId}/dispositions/edit/${issue.vacols_sequence_id}`}>
+        valueFunction: (issue) => <Link to={`/queue/appeals/${appealId}/dispositions/edit/${issue.id}`}>
           Edit Issue
         </Link>
       });

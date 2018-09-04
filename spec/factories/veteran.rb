@@ -10,11 +10,12 @@ FactoryBot.define do
     end
 
     sequence(:file_number, 100_000_000)
+    sequence(:participant_id, 500_000_000)
 
     after(:build) do |veteran, evaluator|
       Fakes::BGSService.veteran_records ||= {}
       Fakes::BGSService.veteran_records[veteran.file_number] =
-        evaluator.bgs_veteran_record.merge(file_number: veteran.file_number)
+        evaluator.bgs_veteran_record.merge(file_number: veteran.file_number, participant_id: veteran.participant_id)
     end
   end
 end
