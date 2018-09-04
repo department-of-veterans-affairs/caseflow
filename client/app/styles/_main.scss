@@ -1,8 +1,3 @@
-// Add scss includes explicitly here.
-@import 'global/fonts';
-@import 'uswds_rails_overrides/core/defaults';
-@import 'uswds/all';
-@import 'variables';
 
 html,
 body {
@@ -144,28 +139,28 @@ body {
 }
 
 .cf-logo-image-default {
-  background-image: url(asset-path('caseflow-default-logo.svg'));
+  background-image: url(#{$image-url}/caseflow-default-logo.svg);
   width: 32px;
   height: 32px;
   background-size: 32px 32px;
 }
 
 .cf-logo-image-certification {
-  background-image: url(asset-path('caseflow-certification-logo.svg'));
+  background-image: url(#{$image-url}/caseflow-certification-logo.svg);
   width: 32px;
   height: 32px;
   background-size: 32px 32px;
 }
 
 .cf-logo-image-dispatch {
-  background-image: url(asset-path('caseflow-dispatch-logo.svg'));
+  background-image: url(#{$image-url}/caseflow-dispatch-logo.svg);
   width: 32px;
   height: 32px;
   background-size: 32px 32px;
 }
 
 .cf-logo-image-intake {
-  background-image: url(asset-path('caseflow-intake-logo.svg'));
+  background-image: url(#{$image-url}/caseflow-intake-logo.svg);
   width: 32px;
   height: 32px;
   background-size: 32px 32px;
@@ -344,6 +339,12 @@ select {
 
     .usa-alert-text {
       font-size: 19px;
+    }
+  }
+
+  button {
+    &:last-child {
+      margin-right: 2rem;
     }
   }
 }
