@@ -41,7 +41,7 @@ RSpec.feature "Checkout flows" do
     let!(:appeal) do
       FactoryBot.create(
         :appeal,
-        :appellant_not_veteran,
+        number_of_claimants: 1,
         request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
       )
     end
