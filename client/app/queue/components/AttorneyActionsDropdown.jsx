@@ -14,7 +14,8 @@ import {
 } from '../QueueActions';
 import {
   dropdownStyling,
-  DRAFT_DECISION_OPTIONS
+  DRAFT_DECISION_OPTIONS,
+  DRAFT_DECISION_LEGACY_OPTIONS
 } from '../constants';
 
 import type {
@@ -28,6 +29,7 @@ type Params = {|
 type Props = Params & {|
   // state
   featureToggles: Object,
+  appeal: Object,
   changedAppeals: Array<number>,
   // dispatch
   stageAppeal: typeof stageAppeal,
@@ -61,16 +63,18 @@ class AttorneyActionsDropdown extends React.PureComponent<Props> {
   };
 
   getOptions = () => {
-    const { featureToggles } = this.props;
+    const { featureToggles, appeal } = this.props;
+
+    const options = appeal.docketName === 'legacy' ? DRAFT_DECISION_LEGACY_OPTIONS : DRAFT_DECISION_OPTIONS;
 
     if (featureToggles.attorney_assignment_to_colocated) {
-      return [...DRAFT_DECISION_OPTIONS, {
+      return [...options, {
         label: 'Add Colocated Task',
         value: 'colocated_task'
       }];
     }
 
-    return DRAFT_DECISION_OPTIONS;
+    return options;
   }
 
   render = () => <SearchableDropdown
