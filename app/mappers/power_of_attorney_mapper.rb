@@ -19,6 +19,12 @@ module PowerOfAttorneyMapper
     }
   end
 
+  def get_hash_of_poa_from_bgs_poas(bgs_resp)
+    bgs_resp.each_with_object({}) do |poa, hsh|
+      hsh[poa[:ptcpnt_id]] = get_poa_from_bgs_poa(poa[:power_of_attorney])
+    end
+  end
+
   def get_rep_name_from_rep_record(rep_record)
     return if !rep_record || (rep_record.repfirst.blank? && rep_record.replast.blank?)
     "#{rep_record.repfirst} #{rep_record.repmi} #{rep_record.replast} #{rep_record.repsuf}".strip
