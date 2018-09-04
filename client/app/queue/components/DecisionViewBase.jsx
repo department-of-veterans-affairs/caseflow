@@ -40,23 +40,29 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
     getWrappedComponentRef = (ref) => this.setState({ wrapped: ref });
 
     componentDidMount = () => {
-      const { history } = this.props;
-
       this.props.highlightInvalidFormItems(false);
 
-      this.unblock = history.block((location) => {
-        const { pathname } = location;
-        const newPathInCheckoutFlow = /^\/queue\/appeals\/[a-zA-Z0-9-]+(?:\/\S+)/;
-
-        if (!newPathInCheckoutFlow.exec(pathname) && pathname !== '/queue') {
-          return `${COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT} ${COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT}`;
-        }
-
-        return true;
-      });
+      this.blockTransitions();
     }
 
-    componentWillUnmount = () => this.unblock();
+    blockTransitions = () => this.unblockTransitions = this.props.history.block((location) => {
+      const { pathname } = location;
+      const newPathInCheckoutFlow = /^\/queue\/appeals\/[a-zA-Z0-9-]+(?:\/\S+)/;
+
+      if (!newPathInCheckoutFlow.exec(pathname) && pathname !== '/queue') {
+        return `${COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT} ${COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT}`;
+      }
+
+      return true;
+    });
+
+    withUnblockedTransition = (callback = _.noop) => {
+      this.unblockTransitions();
+      callback();
+      this.blockTransitions();
+    }
+
+    componentWillUnmount = () => this.unblockTransitions();
 
     getFooterButtons = () => {
       const buttons = [{
@@ -95,7 +101,9 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
       this.props.resetDecisionOptions();
       _.each(stagedAppeals, this.props.checkoutStagedAppeal);
 
-      history.replace(`/queue/appeals/${appealId}`);
+      this.withUnblockedTransition(
+        history.replace(`/queue/appeals/${appealId}`)
+      );
     }
 
     getPrevStepUrl = () => {
@@ -143,10 +151,8 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
         return this.props.history.replace(this.getNextStepUrl());
       }
 
-      const hookResult = nextStepHook();
-
       // nextStepHook may return a Promise, in which case do nothing here.
-      if (hookResult === true) {
+      if (nextStepHook() === true) {
         return this.props.history.replace(this.getNextStepUrl());
       }
     };
