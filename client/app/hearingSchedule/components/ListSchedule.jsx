@@ -10,6 +10,7 @@ import Button from '../../components/Button';
 import PropTypes from 'prop-types';
 import BasicDateRangeSelector from '../../components/BasicDateRangeSelector';
 import InlineForm from '../../components/InlineForm';
+import { CSVLink } from 'react-csv';
 
 const hearingSchedStyling = css({
   marginTop: '70px'
@@ -89,9 +90,14 @@ export default class ListSchedule extends React.Component {
       </div>
       <div className="cf-push-right" {...hearingSchedStyling}>
         <Button
-          name="Download schedule"
-          classNames={['usa-button-outline']}
-        />
+          classNames={['usa-button-outline']}>
+          <CSVLink
+            data={removeCoDuplicates}
+            target="_blank"
+            filename={"HearingSchedule.csv"}>
+            Download current view
+          </CSVLink>
+        </Button>
       </div>
       <div {...hearingSchedStyling}>
         <Table
