@@ -87,30 +87,28 @@ describe Appeal do
 
     let(:appeal) do
       create(:appeal, claimants: [
-        create(:claimant, participant_id: participant_id_with_pva),
-        create(:claimant, participant_id: participant_id_with_aml)
-      ])
+               create(:claimant, participant_id: participant_id_with_pva),
+               create(:claimant, participant_id: participant_id_with_aml)
+             ])
     end
 
     before do
-      allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with([participant_id_with_pva]).and_return(
-        {
+      allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
+        .with([participant_id_with_pva]).and_return(
           participant_id_with_pva => {
             representative_name: "PARALYZED VETERANS OF AMERICA, INC.",
             representative_type: "POA National Organization",
             participant_id: "9876"
           }
-        }
-      )
-      allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with([participant_id_with_aml]).and_return(
-        {
+        )
+      allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
+        .with([participant_id_with_aml]).and_return(
           participant_id_with_aml => {
             representative_name: "AMERICAN LEGION",
             representative_type: "POA National Organization",
             participant_id: "54321"
           }
-        }
-      )
+        )
     end
 
     context "#power_of_attorney" do
