@@ -94,7 +94,7 @@ export default class ListSchedule extends React.Component {
           <CSVLink
             data={removeCoDuplicates}
             target="_blank"
-            filename={"HearingSchedule.csv"}>
+            filename="HearingSchedule.csv">
             Download current view
           </CSVLink>
         </Button>
