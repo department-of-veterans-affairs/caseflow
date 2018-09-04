@@ -139,7 +139,7 @@ export const prepareAppealIssuesForStore = (appeal: { attributes: Object }) => {
   }
 
   return issues;
-}
+};
 
 export const prepareAppealForStore =
   (appeals: Array<Object>):
