@@ -170,6 +170,7 @@ gem "paper_trail", "8.1.2"
 gem "holidays", "~> 6.4"
 
 gem "roo", "~> 2.7"
+gem "rubyzip", "~> 1.2.2"
 
 gem "business_time", "~> 0.9.3"
 # rubocop:enable Metrics/LineLength
