@@ -37,6 +37,61 @@ RSpec.feature "Checkout flows" do
     FeatureToggle.disable!(:test_facols)
   end
 
+  context "given a valid appeal and an attorney user" do
+    let!(:appeal) do
+      FactoryBot.create(
+        :appeal,
+        number_of_claimants: 1,
+        request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
+      )
+    end
+
+    before do
+      parent_task = FactoryBot.create(:ama_judge_task, assigned_to: judge_user, appeal: appeal)
+
+      FactoryBot.create(
+        :ama_attorney_task,
+        :in_progress,
+        assigned_to: attorney_user,
+        assigned_by: judge_user,
+        parent: parent_task,
+        appeal: appeal
+      )
+
+      User.authenticate!(user: attorney_user)
+    end
+
+    scenario "submits draft decision" do
+      visit "/queue"
+      click_on "(#{appeal.veteran_file_number})"
+      click_dropdown 0
+
+      issue_rows = page.find_all("tr[id^='table-row-']")
+      expect(issue_rows.length).to eq(appeal.request_issues.length)
+
+      issue_rows.each do |row|
+        row.find(".Select-control").click
+        row.find("div[id$='--option-0']").click
+      end
+
+      click_on "Continue"
+      expect(page).to have_content("Submit Draft Decision for Review")
+
+      document_id = Array.new(35).map { rand(10) }.join
+      fill_in "document_id", with: document_id
+      expect(page.find("#document_id").value.length).to eq 30
+
+      fill_in "notes", with: "note"
+
+      safe_click "#select-judge"
+      click_dropdown 0
+
+      click_on "Continue"
+      sleep 5
+      expect(page.current_path).to eq("/queue")
+    end
+  end
+
   context "given a valid legacy appeal and an attorney user" do
     let!(:appeal) do
       FactoryBot.create(
