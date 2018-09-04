@@ -5,6 +5,7 @@ FactoryBot.define do
     assigned_to { create(:user) }
     appeal { create(:legacy_appeal, vacols_case: create(:case)) }
     appeal_type "LegacyAppeal"
+    action { nil }
 
     trait :in_progress do
       status "in_progress"

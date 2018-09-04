@@ -55,7 +55,7 @@ class TasksController < ApplicationController
   def create
     return invalid_type_error unless task_class
 
-    tasks = task_class.create_from_params(create_params)
+    tasks = task_class.create_from_params(create_params, current_user)
 
     tasks.each { |task| return invalid_record_error(task) unless task.valid? }
     render json: { tasks: json_tasks(tasks) }, status: :created
@@ -77,7 +77,7 @@ class TasksController < ApplicationController
       redirect_to "/unauthorized"
       return
     end
-    task.update_from_params(update_params)
+    task.update_from_params(update_params, current_user)
 
     return invalid_record_error(task) unless task.valid?
     render json: { tasks: json_tasks([task]) }

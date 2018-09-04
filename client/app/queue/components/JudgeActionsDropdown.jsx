@@ -19,7 +19,6 @@ import { buildCaseReviewPayload } from '../utils';
 import { requestSave } from '../uiReducer/uiActions';
 import {
   deleteAppeal,
-  checkoutStagedAppeal,
   stageAppeal,
   setCaseReviewActionType,
   initialAssignTasksToUser,
@@ -49,7 +48,6 @@ type Props = Params & {|
   // Action creators
   requestSave: typeof requestSave,
   deleteAppeal: typeof deleteAppeal,
-  checkoutStagedAppeal: typeof checkoutStagedAppeal,
   stageAppeal: typeof stageAppeal,
   setCaseReviewActionType: typeof setCaseReviewActionType,
   initialAssignTasksToUser: typeof initialAssignTasksToUser,
@@ -179,7 +177,6 @@ const mapStateToProps = (state: State, ownProps: Params) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
   deleteAppeal,
-  checkoutStagedAppeal,
   stageAppeal,
   setCaseReviewActionType,
   initialAssignTasksToUser,
