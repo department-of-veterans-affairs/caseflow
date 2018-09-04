@@ -61,6 +61,8 @@ export default class ListSchedule extends React.Component {
 
     const removeCoDuplicates = _.uniqWith(hearingScheduleRows, _.isEqual);
 
+    const fileName = `HearingSchedule ${this.props.startDateValue}-${this.props.endDateValue}.csv`;
+
     return <AppSegment filledBackground>
       <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
       <span className="cf-push-right"><Link button="primary" to="/schedule/build">Build schedule</Link></span>
@@ -94,7 +96,7 @@ export default class ListSchedule extends React.Component {
           <CSVLink
             data={removeCoDuplicates}
             target="_blank"
-            filename="HearingSchedule.csv">
+            filename={fileName}>
             Download current view
           </CSVLink>
         </Button>
