@@ -46,11 +46,8 @@ gem "puma", "~> 3.12.0"
 # use to_b method to convert string to boolean
 gem "wannabe_bool"
 
-# Style
-gem "uswds-rails", git: "https://github.com/18F/uswds-rails-gem.git"
-
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "c527f49c1cc8e448af0aa0eaf07341b94e19c865"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "48d3e0deeaf2151e1e43c026848c195691d05bac"
 
 # PDF Tools
 gem "pdf-forms"
@@ -83,8 +80,6 @@ gem "request_store"
 
 # State machine
 gem "aasm", "4.11.0"
-
-gem "font-awesome-sass"
 
 gem "redis-namespace"
 
@@ -170,6 +165,7 @@ gem "paper_trail", "8.1.2"
 gem "holidays", "~> 6.4"
 
 gem "roo", "~> 2.7"
+gem "rubyzip", "~> 1.2.2"
 
 gem "business_time", "~> 0.9.3"
 # rubocop:enable Metrics/LineLength

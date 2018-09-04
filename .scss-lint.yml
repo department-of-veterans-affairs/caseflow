@@ -1,4 +1,4 @@
-scss_files: 'app/assets/stylesheets/**/*.scss'
+scss_files: 'client/app/styles/**/*.scss'
 
 linters:
   BangFormat:
@@ -45,7 +45,7 @@ linters:
   ImportantRule:
     enabled: true
   ImportPath:
-    enabled: true
+    enabled: false
     leading_underscore: false
     filename_extension: false
   Indentation:
