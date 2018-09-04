@@ -4,7 +4,8 @@ RSpec.feature "Build Hearing Schedule" do
       User.authenticate!(roles: ["Build HearSched"])
     end
 
-    scenario "RO assignment process" do
+    scenario "RO assignment process",
+             skip: "See https://github.com/department-of-veterans-affairs/caseflow/issues/6821" do
       visit "hearings/schedule/build"
       click_on "Upload files"
       find("label", text: "RO/CO hearings").click
@@ -30,7 +31,8 @@ RSpec.feature "Build Hearing Schedule" do
       expect(hearing_day_count).to eq(allocation_count)
     end
 
-    context "Build Judge Hearing Schedule" do
+    context "Build Judge Hearing Schedule",
+            skip: "See https://github.com/department-of-veterans-affairs/caseflow/issues/6821" do
       before do
         create(:staff, sattyid: "860", snamef: "Stuart", snamel: "Huels")
         create(:staff, sattyid: "861", snamef: "Doris", snamel: "Lamphere")
