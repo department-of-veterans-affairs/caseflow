@@ -1,6 +1,12 @@
 describe EndProductEstablishment do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
+
+    if source.is_a?(HigherLevelReview)
+      source.stub(:valid_modifiers).and_return(%w[030 031 032])
+      source.stub(:invalid_modifiers).and_return(invalid_modifiers)
+      source.stub(:special_issues).and_return(special_issues)
+    end
   end
 
   let(:veteran_file_number) { "12341234" }
@@ -9,9 +15,10 @@ describe EndProductEstablishment do
   let(:code) { "030HLRR" }
   let(:payee_code) { "00" }
   let(:reference_id) { nil }
-  let(:source) { create(:ramp_election) }
+  let(:source) { HigherLevelReview.new(veteran_file_number: veteran_file_number) }
   let(:invalid_modifiers) { nil }
   let(:synced_status) { nil }
+  let(:special_issues) { nil }
 
   let(:end_product_establishment) do
     EndProductEstablishment.new(
@@ -21,9 +28,7 @@ describe EndProductEstablishment do
       payee_code: payee_code,
       claim_date: 2.days.ago,
       station: "397",
-      valid_modifiers: %w[030 031 032],
       reference_id: reference_id,
-      invalid_modifiers: invalid_modifiers,
       claimant_participant_id: veteran_participant_id,
       synced_status: synced_status
     )
@@ -36,6 +41,15 @@ describe EndProductEstablishment do
       Fakes::VBMSService.end_product_claim_ids_by_file_number ||= {}
       Fakes::VBMSService.end_product_claim_ids_by_file_number[veteran.file_number] = "FAKECLAIMID"
       allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+    end
+
+    context "when end product and contentions are already established" do
+      let(:reference_id) { "reference-id" }
+
+      it "does nothing and returns" do
+        subject
+        expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
+      end
     end
 
     context "when end product is not valid" do
@@ -58,7 +72,7 @@ describe EndProductEstablishment do
       end
     end
 
-    context "when an ep with a valid modifier already exists" do
+    context "when eps with a valid modifiers already exist" do
       let!(:past_created_ep) do
         Generators::EndProduct.build(
           veteran_file_number: "12341234",
@@ -92,6 +106,7 @@ describe EndProductEstablishment do
 
       context "when invalid modifiers is set" do
         let(:invalid_modifiers) { ["031"] }
+
         it "creates an ep with the next valid modifier" do
           subject
           expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
@@ -145,6 +160,93 @@ describe EndProductEstablishment do
           veteran_hash: veteran.to_vbms_hash
         )
       end
+    end
+  end
+
+  context "#create_contentions!" do
+    before do
+      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    end
+
+    subject { end_product_establishment.create_contentions!(for_objects) }
+
+    let(:reference_id) { "stevenasmith" }
+
+    let(:for_objects) do
+      [
+        RequestIssue.new(
+          review_request: source,
+          rating_issue_reference_id: "reference-id",
+          rating_issue_profile_date: Date.new(2018, 4, 30),
+          description: "this is a big decision"
+        ),
+        RequestIssue.new(
+          review_request: source,
+          rating_issue_reference_id: "reference-id",
+          rating_issue_profile_date: Date.new(2018, 4, 30),
+          description: "more decisionz"
+        )
+      ]
+    end
+
+    it "creates contentions and saves them to objects" do
+      subject
+
+      expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
+        veteran_file_number: veteran_file_number,
+        claim_id: end_product_establishment.reference_id,
+        contention_descriptions: ["this is a big decision", "more decisionz"],
+        special_issues: []
+      )
+
+      expect(end_product_establishment.contentions.map(&:id)).to contain_exactly(
+        *for_objects.map(&:reload).map(&:contention_reference_id)
+      )
+    end
+
+    context "when source has special issues" do
+      let(:special_issues) { "SPECIALISSUES!" }
+
+      it "sets special issues when creating the contentions" do
+        subject
+
+        expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
+          veteran_file_number: veteran_file_number,
+          claim_id: end_product_establishment.reference_id,
+          contention_descriptions: ["this is a big decision", "more decisionz"],
+          special_issues: "SPECIALISSUES!"
+        )
+      end
+    end
+  end
+
+  context "#remove_contention!" do
+    before do
+      allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
+    end
+
+    let(:reference_id) { "stevenasmith" }
+
+    let(:for_object) do
+      RequestIssue.new(
+        review_request: source,
+        rating_issue_reference_id: "reference-id",
+        rating_issue_profile_date: Date.new(2018, 4, 30),
+        description: "this is a big decision",
+        contention_reference_id: "skipbayless"
+      )
+    end
+
+    let!(:contention) do
+      Generators::Contention.build(id: "skipbayless", claim_id: reference_id, text: "Left knee")
+    end
+
+    subject { end_product_establishment.remove_contention!(for_object) }
+
+    it "calls VBMS with the appropriate arguments to remove the contention" do
+      subject
+
+      expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(contention)
     end
   end
 
@@ -258,6 +360,8 @@ describe EndProductEstablishment do
 
       context "when source exists" do
         context "when source implements on_sync" do
+          let(:source) { create(:ramp_election) }
+
           it "syncs the source as well" do
             expect(source).to receive(:on_sync).with(end_product_establishment)
             subject

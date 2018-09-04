@@ -12,11 +12,7 @@ class RequestIssuesUpdate < ApplicationRecord
     return false unless validate_before_perform
 
     transaction do
-      # TODO: Investigate making each request issue responsible for determining its own
-      # end product establishment. This will remove the need for the review to be responsible
-      # for creating and removing the appropriate contentions
-      new_issues.each(&:save!)
-
+      review.create_issues!(new_issues)
       strip_removed_issues!
 
       update!(
