@@ -37,8 +37,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: c527f49c1cc8e448af0aa0eaf07341b94e19c865
-  ref: c527f49c1cc8e448af0aa0eaf07341b94e19c865
+  revision: 48d3e0deeaf2151e1e43c026848c195691d05bac
+  ref: 48d3e0deeaf2151e1e43c026848c195691d05bac
   specs:
     bgs (0.2)
       nokogiri (~> 1.8.2)
@@ -389,7 +389,7 @@ GEM
     ruby-oci8 (2.2.5.1)
     ruby-plsql (0.6.0)
     ruby-progressbar (1.9.0)
-    rubyzip (1.2.1)
+    rubyzip (1.2.2)
     safe_shell (1.1.0)
     sass (3.5.5)
       sass-listen (~> 4.0.0)
@@ -536,6 +536,7 @@ DEPENDENCIES
   rspec_junit_formatter
   rubocop (~> 0.52.1)
   ruby-oci8
+  rubyzip (~> 1.2.2)
   sass-rails (~> 5.0)
   scss_lint
   sdoc (~> 0.4.0)
@@ -553,4 +554,4 @@ DEPENDENCIES
   zero_downtime_migrations
 
 BUNDLED WITH
-   1.16.3
+   1.16.4
