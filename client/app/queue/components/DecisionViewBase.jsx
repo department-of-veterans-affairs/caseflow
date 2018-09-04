@@ -102,7 +102,7 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
       _.each(stagedAppeals, this.props.checkoutStagedAppeal);
 
       this.withUnblockedTransition(
-        history.replace(`/queue/appeals/${appealId}`)
+        () => history.replace(`/queue/appeals/${appealId}`)
       );
     }
 
