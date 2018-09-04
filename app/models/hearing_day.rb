@@ -2,16 +2,22 @@
 # and repository class. Eventually may persist data to
 # Caseflow DB. For now all schedule data is sent to the
 # VACOLS DB (Aug 2018 implementation).
-class HearingDay
+class HearingDay < ApplicationRecord
   HEARING_TYPES = {
     video: "V",
     travel: "T",
     central: "C"
   }.freeze
 
+  CASEFLOW_SCHEDULE_DATE = Date.new(2019, 3, 31).freeze
+
   class << self
     def create_hearing_day(hearing_hash)
-      HearingDayRepository.create_vacols_hearing!(hearing_hash)
+      if (hearing_hash[:hearing_date] > CASEFLOW_SCHEDULE_DATE)
+        create(hearing_hash)
+      else
+        HearingDayRepository.create_vacols_hearing!(hearing_hash)
+      end
     end
 
     def update_hearing_day(hearing, hearing_hash)
