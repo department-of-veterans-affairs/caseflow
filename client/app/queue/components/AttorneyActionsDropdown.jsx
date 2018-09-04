@@ -10,7 +10,6 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import {
   setCaseReviewActionType,
   resetDecisionOptions,
-  checkoutStagedAppeal,
   stageAppeal
 } from '../QueueActions';
 import {
@@ -33,13 +32,12 @@ type Props = Params & {|
   // dispatch
   stageAppeal: typeof stageAppeal,
   resetDecisionOptions: typeof resetDecisionOptions,
-  checkoutStagedAppeal: typeof checkoutStagedAppeal,
   setCaseReviewActionType: typeof setCaseReviewActionType,
   // withrouter
   history: Object
 |};
 
-class SelectCheckoutFlowDropdown extends React.PureComponent<Props> {
+class AttorneyActionsDropdown extends React.PureComponent<Props> {
   changeRoute = (props) => {
     const {
       appealId,
@@ -93,10 +91,9 @@ const mapStateToProps = (state: State, ownProps) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setCaseReviewActionType,
   resetDecisionOptions,
-  checkoutStagedAppeal,
   stageAppeal
 }, dispatch);
 
 export default (withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(SelectCheckoutFlowDropdown)
+  connect(mapStateToProps, mapDispatchToProps)(AttorneyActionsDropdown)
 ): React.ComponentType<Params>);
