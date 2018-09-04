@@ -47,7 +47,9 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
     object.is_a?(LegacyAppeal) ? object.power_of_attorney.vacols_representative_type : object.representative_type
   end
 
-  attribute :advanced_on_docket
+  attribute :aod do
+    object.advanced_on_docket
+  end
   attribute :cavc
   attribute :status
   attribute :previously_selected_for_quality_review
