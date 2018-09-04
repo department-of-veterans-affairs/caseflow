@@ -16,8 +16,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 8dde00d67b7c629e4b871f8dcb3617bfe989b3db
-  ref: 8dde00d67b7c629e4b871f8dcb3617bfe989b3db
+  revision: 99045065e1940891ef51b404601f95790b6f2993
+  ref: 99045065e1940891ef51b404601f95790b6f2993
   specs:
     caseflow (0.3.8)
       aws-sdk (~> 2.10)
@@ -178,7 +178,7 @@ GEM
     cork (0.3.0)
       colored2 (~> 3.1)
     crass (1.0.3)
-    d3-rails (4.13.0)
+    d3-rails (5.5.0)
       railties (>= 3.1)
     danger (5.5.5)
       claide (~> 1.0)
@@ -263,7 +263,7 @@ GEM
     multi_json (1.12.2)
     multipart-post (2.0.0)
     nap (1.1.0)
-    neat (2.1.0)
+    neat (3.0.0)
       sass (~> 3.4)
       thor (~> 0.19)
     newrelic_rpm (4.7.1.340)
