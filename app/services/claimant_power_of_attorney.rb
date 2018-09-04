@@ -1,8 +1,6 @@
 class ClaimantPowerOfAttorney < BgsPowerOfAttorney
-  include ActiveModel::Model
-  include AssociatedBgsRecord
-
   attr_accessor :claimant_participant_id
+  bgs_attr_accessor :representative_name, :representative_type, :participant_id
 
   private
 

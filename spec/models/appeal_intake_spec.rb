@@ -154,6 +154,7 @@ describe AppealIntake do
         decision_date: Date.new(2018, 12, 25),
         description: "non-rated issue decision text"
       )
+      expect(intake.detail.tasks.count).to eq 1
     end
   end
 end

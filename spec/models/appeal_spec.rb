@@ -80,4 +80,63 @@ describe Appeal do
       end
     end
   end
+
+  context "when claimants have different poas" do
+    let(:participant_id_with_pva) { "1234" }
+    let(:participant_id_with_aml) { "5678" }
+
+    let(:appeal) do
+      create(:appeal, claimants: [
+        create(:claimant, participant_id: participant_id_with_pva),
+        create(:claimant, participant_id: participant_id_with_aml)
+      ])
+    end
+
+    before do
+      allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with([participant_id_with_pva]).and_return(
+        {
+          participant_id_with_pva => {
+            representative_name: "PARALYZED VETERANS OF AMERICA, INC.",
+            representative_type: "POA National Organization",
+            participant_id: "9876"
+          }
+        }
+      )
+      allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).with([participant_id_with_aml]).and_return(
+        {
+          participant_id_with_aml => {
+            representative_name: "AMERICAN LEGION",
+            representative_type: "POA National Organization",
+            participant_id: "54321"
+          }
+        }
+      )
+    end
+
+    context "#power_of_attorney" do
+      it "returns the first claimant's power of attorney" do
+        expect(appeal.power_of_attorney.representative_name).to eq("PARALYZED VETERANS OF AMERICA, INC.")
+      end
+    end
+
+    context "#power_of_attorneys" do
+      it "returns all claimants power of attorneys" do
+        expect(appeal.power_of_attorneys[0].representative_name).to eq("PARALYZED VETERANS OF AMERICA, INC.")
+        expect(appeal.power_of_attorneys[1].representative_name).to eq("AMERICAN LEGION")
+      end
+    end
+  end
+
+  context "#create_initial_tasks!" do
+    let(:appeal) do
+      create(:appeal)
+    end
+
+    it "creates root and vso tasks" do
+      expect(RootTask).to receive(:create!).once
+      expect(VsoTask).to receive(:create_tasks_for_appeal!).once
+
+      appeal.create_initial_tasks!
+    end
+  end
 end
