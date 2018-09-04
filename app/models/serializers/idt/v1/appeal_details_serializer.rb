@@ -35,17 +35,16 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
         ).as_json[:data][:attributes]
       end
     else
-      # TODO: implement AMA logic
-      []
+      object.request_issues
     end
   end
 
   # TODO: - expand rep name into separate fields
   attribute :representative_name do
-    object.is_a?(LegacyAppeal) ? object.power_of_attorney.vacols_representative_name : "not implemented"
+    object.is_a?(LegacyAppeal) ? object.power_of_attorney.vacols_representative_name : object.representative_name
   end
   attribute :representative_type do
-    object.is_a?(LegacyAppeal) ? object.power_of_attorney.vacols_representative_type : "not implemented"
+    object.is_a?(LegacyAppeal) ? object.power_of_attorney.vacols_representative_type : object.representative_type
   end
 
   attribute :advanced_on_docket

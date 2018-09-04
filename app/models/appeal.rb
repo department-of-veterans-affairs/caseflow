@@ -85,7 +85,7 @@ class Appeal < AmaReview
     "not implemented"
   end
 
-  # TODO: implement for AMA
+  # TODO: implement for AMA - grab it from BGS
   def veteran_is_deceased
     "not implemented"
   end
@@ -95,7 +95,7 @@ class Appeal < AmaReview
   end
 
   def status
-    "active"
+    nil
   end
 
   def previously_selected_for_quality_review
