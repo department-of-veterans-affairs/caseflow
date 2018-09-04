@@ -115,7 +115,16 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 
 2) Copy both zip files into `~/Library/Caches/Homebrew` and leave them zipped.
 
-3) Install via Homebrew:
+3) If you are on Homebrew 1.7.2, a change was made to cached file names that breaks the tap cache logic. You need to move both zip files to a different location & name in order for the install to work. See https://github.com/InstantClientTap/homebrew-instantclient/issues/25 for details on why this is currently needed.
+
+```
+cd ~/Library/Caches/Homebrew
+mkdir downloads
+mv instantclient-basic-macos.x64-12.2.0.1.0-2.zip downloads/830f38b2362ecb9cfdbf184e940b1fd7c2b55c389a674c14cb6129520cc7d08b--
+mv instantclient-sdk-macos.x64-12.2.0.1.0-2.zip downloads/61971ac46afc5676ed29559867a213dd92abb6469a5c584ab90588fa5df275cb--
+```
+
+4) Install via Homebrew:
 
 ```
     brew tap InstantClientTap/instantclient
