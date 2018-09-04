@@ -17,7 +17,11 @@ const fileUploadStyling = css({
 });
 
 const inlineFormStyling = css({
-  marginTop: '10px'
+  marginTop: '5px'
+});
+
+const inlineStyling = css({
+  paddingLeft: '9rem'
 });
 
 export default class BuildScheduleUpload extends React.Component {
@@ -41,7 +45,7 @@ export default class BuildScheduleUpload extends React.Component {
           <span className="usa-input-error-message">{this.getErrorMessage(this.props.uploadRoCoFormErrors)}</span>}
         <div {...inlineFormStyling} >
           <InlineForm>
-            <BasicDateRangeSelector
+            <BasicDateRangeSelector 
             // messageLabel
               startDateName="startDate"
               startDateValue={this.props.roCoStartDate}
@@ -51,6 +55,7 @@ export default class BuildScheduleUpload extends React.Component {
               endDateLabel={COPY.HEARING_SCHEDULE_UPLOAD_END_DATE_LABEL}
               onStartDateChange={this.props.onRoCoStartDateChange}
               onEndDateChange={this.props.onRoCoEndDateChange}
+              styling={css({ paddingLeft: '30rem' })}
             />
             <div {...fileUploadStyling} >
               <FileUpload {...fileUploadStyling}
