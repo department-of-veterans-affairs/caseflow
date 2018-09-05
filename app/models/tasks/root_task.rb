@@ -1,10 +1,9 @@
 class RootTask < Task
-  def when_child_task_completed
-  end
+  def when_child_task_completed; end
 
   class << self
     def create_root_and_sub_tasks!(appeal)
-      root_task = create!({ appeal_id: appeal.id, appeal_type: appeal.class.name, assigned_to: Bva.singleton })
+      root_task = create!(appeal_id: appeal.id, appeal_type: appeal.class.name, assigned_to: Bva.singleton)
       create_vso_subtask!(appeal, root_task)
     end
 
