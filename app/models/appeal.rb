@@ -3,7 +3,6 @@ class Appeal < AmaReview
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
   has_many :decision_issues, through: :request_issues
-  has_many :advance_on_docket_grants
 
   validates :receipt_date, :docket_type, presence: { message: "blank" }, on: :intake_review
 
@@ -64,15 +63,7 @@ class Appeal < AmaReview
   end
 
   def advanced_on_docket
-    over_seventy_five = claimants.any? do |claimant|
-      claimant.date_of_birth < 75.years.ago
-    end
-
-    advanced_on_docket_granted = advance_on_docket_grants.any? do |advance_on_docket_grant|
-      receipt_date < advanced_on_docket.created_at
-    end
-
-    over_seventy_five || advanced_on_docket_granted
+    claimants.any? { |claimant| claimant.advanced_on_docket }
   end
 
   def number_of_issues
