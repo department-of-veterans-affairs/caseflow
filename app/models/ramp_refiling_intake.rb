@@ -41,6 +41,7 @@ class RampRefilingIntake < Intake
 
   def cancel_detail!
     detail.issues.destroy_all unless detail.issues.empty?
+    super
   end
 
   def review_errors
