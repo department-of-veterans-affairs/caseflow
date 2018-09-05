@@ -31,7 +31,7 @@ export type Issue = {
   disposition: string,
   close_date: Date,
   note: string,
-  vacols_sequence_id: Number,
+  vacols_sequence_id: Number, // deprecated
   id: Number,
   labels: Array<string>,
   readjudication: Boolean,
