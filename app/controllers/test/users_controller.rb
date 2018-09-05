@@ -6,7 +6,7 @@ CaseflowCertification::Application.load_tasks
 class Test::UsersController < ApplicationController
   before_action :require_demo, only: [:set_user, :set_end_products, :reseed, :toggle_feature]
   before_action :require_global_admin, only: :log_in_as_user
-  skip_before_action :deny_vso_access, only: :index
+  skip_before_action :deny_vso_access, only: [:index, :set_user]
 
   APPS = [
     {
