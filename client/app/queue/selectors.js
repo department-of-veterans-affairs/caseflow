@@ -152,15 +152,13 @@ export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = create
 export const judgeReviewTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks: Array<TaskWithAppeal>) => _.filter(tasks, (task) =>
-    // for ama tasks, filter by 'action' (values lower case)
-    // for legacy tasks, filter by 'taskType' (values title case)
-    ['Review', null].includes(task.taskType) || task.action === 'review'
+    ['review', null].includes(task.action)
   )
 );
 
 export const judgeAssignTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => task.taskType === 'Assign')
+  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => task.action === 'assign')
 );
 
 // ***************** Non-memoized selectors *****************

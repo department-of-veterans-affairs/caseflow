@@ -63,7 +63,6 @@ type ComponentState = {
   }
 };
 
-// todo: make StartCheckoutFlowDropdownBase
 class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
   constructor(props) {
     super(props);
@@ -111,19 +110,22 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
     }
   }
 
-  handleAssignment =
-    ({ tasks, assigneeId, previousAssigneeId }:
-      { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) => {
-      if (tasks[0].taskType === 'Assign') {
-        return this.props.initialAssignTasksToUser({ tasks,
+  handleAssignment = (
+    { tasks, assigneeId, previousAssigneeId }: { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}
+  ) => {
+      if (tasks[0].action === 'assign') {
+        return this.props.initialAssignTasksToUser({
+          tasks,
           assigneeId,
-          previousAssigneeId });
+          previousAssigneeId
+        });
       }
 
-      return this.props.reassignTasksToUser({ tasks,
+      return this.props.reassignTasksToUser({
+        tasks,
         assigneeId,
-        previousAssigneeId });
-
+        previousAssigneeId
+      });
     }
 
   assignWidgetVisible = () => {
@@ -138,13 +140,16 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
     } = this.props;
     const options = [];
 
-    if (task.taskType === 'Review') {
+    if (task.action === 'review') {
       options.push(DECASS_WORK_PRODUCT_TYPES.OMO_REQUEST.includes(task.workProduct) ?
         JUDGE_DECISION_OPTIONS.OMO_REQUEST :
-        JUDGE_DECISION_OPTIONS.DRAFT_DECISION);
+        JUDGE_DECISION_OPTIONS.DRAFT_DECISION
+      );
     } else {
-      options.push({ label: 'Assign to attorney',
-        value: ASSIGN });
+      options.push({
+        label: 'Assign to attorney',
+        value: ASSIGN
+      });
     }
 
     return <React.Fragment>
@@ -183,6 +188,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   reassignTasksToUser
 }, dispatch);
 
-export default (
-  withRouter(
-    connect(mapStateToProps, mapDispatchToProps)(JudgeActionsDropdown)): React.ComponentType<Params>);
+export default (withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(JudgeActionsDropdown)
+): React.ComponentType<Params>);

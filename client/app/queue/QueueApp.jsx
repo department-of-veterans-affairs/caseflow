@@ -96,9 +96,9 @@ class QueueApp extends React.PureComponent<Props> {
     <BeaamAppealListView {...this.props} />
   </QueueLoadingScreen>;
 
-  routedJudgeQueueList = (taskType) => ({ match }) => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
+  routedJudgeQueueList = (action) => ({ match }) => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
     <SearchBar feedbackUrl={this.props.feedbackUrl} />
-    {taskType === 'Assign' ?
+    {action === 'assign' ?
       <JudgeAssignTaskListView {...this.props} match={match} /> :
       <JudgeReviewTaskListView {...this.props} />}
   </QueueLoadingScreen>;
