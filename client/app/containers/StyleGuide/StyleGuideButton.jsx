@@ -44,11 +44,6 @@ export default class StyleGuideButton extends React.PureComponent {
             classNames={['button_wrapper']}>
           Sign up
           </Button><br /><br />
-          <Button
-            name="signup-button"
-            classNames={['usa-button-secondary']}>
-          Sign up
-          </Button>
         </div>
         <div className="usa-width-one-third">
           <h3 className="styleguide-grey-header">Hover</h3>
@@ -57,11 +52,6 @@ export default class StyleGuideButton extends React.PureComponent {
             classNames={['usa-button-hover']}>
           Sign up
           </Button><br /><br />
-          <Button
-            name="signup-hover"
-            classNames={['usa-button-secondary usa-button-hover']}>
-          Sign up
-          </Button>
         </div>
         <div className="usa-width-one-third">
           <h3 className="styleguide-grey-header">Active</h3>
@@ -70,37 +60,32 @@ export default class StyleGuideButton extends React.PureComponent {
             classNames={['usa-button-active']}>
           Sign up
           </Button><br /><br />
-          <Button
-            name="signup-secondary"
-            classNames={['usa-button-secondary usa-button-active']}>
-          Sign up
-          </Button>
         </div>
       </div><br /><br />
       <h3 id="secondary">Secondary buttons</h3>
       <div className="usa-grid">
         <div className="usa-width-one-third">
           <h3 className="styleguide-grey-header">Default</h3>
-          <Button
-            name="signup-outline"
-            classNames={['usa-button-outline']}>
+              <Button
+            name="signup-button"
+            classNames={['usa-button-secondary']}>
           Sign up
           </Button>
         </div>
         <div className="usa-width-one-third">
           <h3 className="styleguide-grey-header">Hover</h3>
           <Button
-            name="signup-"
-            classNames={['usa-button-outline usa-button-hover']}>
+            name="signup-hover"
+            classNames={['usa-button-secondary usa-button-hover']}>
           Sign up
           </Button>
         </div>
         <div className="usa-width-one-third">
           <h3 className="styleguide-grey-header">Active</h3>
-          <Button
-            name="signup-9"
-            classNames={['usa-button-outline usa-button-active']}>
-         Sign up
+           <Button
+            name="signup-secondary"
+            classNames={['usa-button-secondary usa-button-active']}>
+          Sign up
           </Button>
         </div>
       </div><br /><br />
