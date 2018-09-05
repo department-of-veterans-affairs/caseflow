@@ -66,7 +66,7 @@ export default class StyleGuideButton extends React.PureComponent {
       <div className="usa-grid">
         <div className="usa-width-one-third">
           <h3 className="styleguide-grey-header">Default</h3>
-              <Button
+          <Button
             name="signup-button"
             classNames={['usa-button-secondary']}>
           Sign up
@@ -82,7 +82,7 @@ export default class StyleGuideButton extends React.PureComponent {
         </div>
         <div className="usa-width-one-third">
           <h3 className="styleguide-grey-header">Active</h3>
-           <Button
+          <Button
             name="signup-secondary"
             classNames={['usa-button-secondary usa-button-active']}>
           Sign up
