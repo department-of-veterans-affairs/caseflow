@@ -90,7 +90,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   componentDidMount = () => {
     const {
       issue: {
-        vacols_sequence_id: issueId,
+        id: issueId,
         remand_reasons: remandReasons
       },
       issues
@@ -103,7 +103,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       }
     }));
 
-    if (_.map(issues, 'vacols_sequence_id').indexOf(issueId) > 0) {
+    if (_.map(issues, 'id').indexOf(issueId) > 0) {
       this.scrollTo();
     }
   };
