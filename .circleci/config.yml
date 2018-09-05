@@ -68,7 +68,7 @@ jobs:
                 env
 
         - run:
-            name: Bundle install
+            name: Bundle install and update rake
             command: |
                 sudo env LD_LIBRARY_PATH=$LD_LIBRARY_PATH bundle install --path vendor/bundle
                 bundle update rake
