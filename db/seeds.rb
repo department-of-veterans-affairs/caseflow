@@ -51,6 +51,10 @@ class SeedDB
       roles: ["VSO"]
     )
     FeatureToggle.enable!(:vso_queue_aml, users: [u.css_id])
+
+    q = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER", full_name: "Org Q User")
+    FeatureToggle.enable!(:org_queue_translation, users: [q.css_id])
+    FeatureToggle.enable!(:org_queue_translation, users: [q.css_id])
   end
 
   def create_dispatch_tasks(number)
@@ -179,6 +183,16 @@ class SeedDB
       veteran_file_number: "701305078",
       request_issues: FactoryBot.build_list(:request_issue, 3, description: "Knee pain")
     )
+    @appeal_with_vso = FactoryBot.create(
+      :appeal,
+      claimants: [
+        FactoryBot.build(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO"),
+        FactoryBot.build(:claimant, participant_id: "OTHER_CLAIMANT")
+      ],
+      veteran_file_number: "701305078",
+      request_issues: FactoryBot.build_list(:request_issue, 3, description: "Head trauma")
+    )
+    @ama_appeals << @appeal_with_vso
     @ama_appeals << FactoryBot.create(
       :appeal,
       veteran_file_number: "963360019",
@@ -186,25 +200,25 @@ class SeedDB
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
-      :appellant_not_veteran,
+      number_of_claimants: 1,
       veteran_file_number: "604969679",
       request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
-      :appellant_not_veteran,
+      number_of_claimants: 1,
       veteran_file_number: "228081153",
       request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
-      :appellant_not_veteran,
+      number_of_claimants: 1,
       veteran_file_number: "152003980",
       request_issues: FactoryBot.build_list(:request_issue, 3, description: "PTSD")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
-      :appellant_not_veteran,
+      number_of_claimants: 1,
       veteran_file_number: "375273128",
       request_issues: FactoryBot.build_list(:request_issue, 1, description: "Knee pain")
     )
@@ -220,6 +234,7 @@ class SeedDB
     judge = User.find_by(css_id: "BVAAABSHIRE")
     colocated = User.find_by(css_id: "BVALSPORER")
     vso = Organization.find_by(name: "American Legion")
+    translation_org = Organization.find_by(name: "Translation")
 
     FactoryBot.create(:ama_judge_task, assigned_to: judge, appeal: @ama_appeals[0])
 
@@ -268,7 +283,7 @@ class SeedDB
                       parent: parent,
                       appeal: @ama_appeals[5])
 
-    FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @ama_appeals[0])
+    FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @appeal_with_vso)
 
     # Colocated tasks with legacy appeals
     FactoryBot.create(:colocated_task,
@@ -294,6 +309,8 @@ class SeedDB
                       appeal: LegacyAppeal.find_by(vacols_id: "2306397"),
                       assigned_by: attorney,
                       assigned_to: colocated)
+
+    FactoryBot.create(:generic_task, assigned_by: judge, assigned_to: translation_org)
   end
 
   def create_organizations
@@ -304,6 +321,7 @@ class SeedDB
       url: "american-legion",
       participant_id: "2452415"
     )
+    Organization.create!(name: "Translation", feature: "org_queue_translation", url: "translation")
     Bva.create(name: "Board of Veterans' Appeals")
   end
 
