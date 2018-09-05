@@ -10,23 +10,15 @@ const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
 const NO_RESULTS_TEXT = 'Not an option';
 const DEFAULT_PLACEHOLDER = 'Select option';
 
-type OptionType = {
-  value: string,
-  label: string,
-  tagId?: string
-};
-type OptionsType = Array<OptionType>;
-type ValueType = OptionType | OptionsType | null | void;
-
-type Params = {|
-  value?: ?ValueType,
+type Props<T> = {|
+  value?: ?T,
   creatable?: boolean,
-  errorMessage?: string,
+  errorMessage?: ?string,
   label?: string,
   hideLabel?: boolean,
   name: string,
-  onChange: Function,
-  options: Array<Value>,
+  onChange: (value: ?T, deletedValue?: Array<any>) => mixed,
+  options: Array<T>,
   readOnly?: boolean,
   required?: boolean,
   placeholder: string | Object,
@@ -38,18 +30,17 @@ type Params = {|
   styling?: Object,
   multi?: boolean,
   selfManageValueState?: boolean,
-  searchable?: boolean
+  searchable?: boolean,
+  noResultsText?: string
 |};
 
-type Props = Params;
-
-type ComponentState = {|
-  value: ?Value
+type ComponentState<T> = {|
+  value?: ?T
 |};
 
-class SearchableDropdown extends React.Component<Props, ComponentState> {
+class SearchableDropdown<T> extends React.Component<Props<T>, ComponentState<T>> {
 
-  constructor(props: Props) {
+  constructor(props: Props<T>) {
     super(props);
 
     this.state = {
@@ -57,11 +48,11 @@ class SearchableDropdown extends React.Component<Props, ComponentState> {
     };
   }
 
-  componentWillReceiveProps = (nextProps: Props) => {
+  componentWillReceiveProps = (nextProps: any) => {
     this.setState({ value: nextProps.value });
   };
 
-  onChange = (value: Value) => {
+  onChange = (value: T) => {
     let newValue = value;
     let deletedValue = null;
 
@@ -80,7 +71,11 @@ class SearchableDropdown extends React.Component<Props, ComponentState> {
       this.setState({ value: newValue });
     }
 
-    if ((this.state.value && value) && value.length < this.state.value.length) {
+    if (this.state.value &&
+        value &&
+        Array.isArray(value) &&
+        Array.isArray(this.state.value) &&
+        value.length < this.state.value.length) {
       deletedValue = _.differenceWith(this.state.value, value, _.isEqual);
     }
     if (this.props.onChange) {

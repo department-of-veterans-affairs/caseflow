@@ -45,6 +45,9 @@ class SelectCheckoutFlowDropdown extends React.PureComponent<Props> {
       appealId,
       history
     } = this.props;
+    if (!props || !props.value) {
+      return;
+    }
     const decisionType = props.value;
     const routes = {
       omo_request: 'submit',

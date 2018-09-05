@@ -32,6 +32,7 @@ import {
 import AssignWidget from './AssignWidget';
 import type { Task, Appeal } from '../types/models';
 import type { State } from '../types/state';
+import type { OptionType } from '../../components/SearchableDropdown';
 
 const ASSIGN = 'ASSIGN';
 
@@ -59,10 +60,7 @@ type Props = Params & {|
 |};
 
 type ComponentState = {
-  selectedOption: ?{
-    label: string,
-    value: string
-  }
+  selectedOption: ?OptionType
 };
 
 // todo: make StartCheckoutFlowDropdownBase
