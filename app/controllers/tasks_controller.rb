@@ -82,7 +82,7 @@ class TasksController < ApplicationController
     # Rescue from the error and redirect to unauthorized when we throw an error.
     if task.assigned_to != current_user &&
        task.assigned_by != current_user &&
-       (!task.class.method_defined?(:verify_user_access) || !task.verify_user_access(current_user))
+       (task.class.name != GenericTask.name || !task.verify_user_access(current_user))
       redirect_to "/unauthorized"
       return
     end
