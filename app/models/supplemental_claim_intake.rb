@@ -18,7 +18,6 @@ class SupplementalClaimIntake < Intake
 
   def cancel_detail!
     detail.remove_claimants!
-    detail.request_issues.destroy_all unless detail.request_issues.empty?
     super
   end
 

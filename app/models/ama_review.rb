@@ -21,7 +21,7 @@ class AmaReview < ApplicationRecord
   end
 
   def create_claimants!(participant_id:, payee_code:)
-    claimants.destroy_all unless claimants.empty?
+    remove_claimants!
     claimants.create_from_intake_data!(participant_id: participant_id, payee_code: payee_code)
   end
 
@@ -45,6 +45,10 @@ class AmaReview < ApplicationRecord
 
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
+  end
+
+  def remove_issues!
+    request_issues.destroy_all unless request_issues.empty?
   end
 
   private

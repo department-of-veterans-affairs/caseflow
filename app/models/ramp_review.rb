@@ -89,6 +89,10 @@ class RampReview < ApplicationRecord
     [end_product_modifier]
   end
 
+  def remove_issues!
+    issues.destroy_all unless issues.empty?
+  end
+
   private
 
   def find_end_product_establishment

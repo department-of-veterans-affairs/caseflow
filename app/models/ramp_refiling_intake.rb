@@ -39,11 +39,6 @@ class RampRefilingIntake < Intake
     detail.update!(established_at: Time.zone.now) unless detail.established_at
   end
 
-  def cancel_detail!
-    detail.issues.destroy_all unless detail.issues.empty?
-    super
-  end
-
   def review_errors
     detail.errors.messages
   end
