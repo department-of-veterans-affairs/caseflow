@@ -3,6 +3,7 @@ class TasksController < ApplicationController
 
   before_action :verify_queue_access
   before_action :verify_task_assignment_access, only: [:create]
+  skip_before_action :deny_vso_access, only: [:index, :for_appeal]
 
   TASK_CLASSES = {
     ColocatedTask: ColocatedTask,
@@ -54,7 +55,7 @@ class TasksController < ApplicationController
   def create
     return invalid_type_error unless task_class
 
-    tasks = task_class.create_from_params(create_params)
+    tasks = task_class.create_from_params(create_params, current_user)
 
     tasks.each { |task| return invalid_record_error(task) unless task.valid? }
     render json: { tasks: json_tasks(tasks) }, status: :created
@@ -76,10 +77,28 @@ class TasksController < ApplicationController
       redirect_to "/unauthorized"
       return
     end
-    task.update_from_params(update_params)
+    task.update_from_params(update_params, current_user)
 
     return invalid_record_error(task) unless task.valid?
     render json: { tasks: json_tasks([task]) }
+  end
+
+  def for_appeal
+    no_cache
+
+    # VSO users should only get tasks assigned to them or their organization.
+    if current_user.vso_employee?
+      return json_vso_tasks
+    end
+
+    role = params[:role].downcase
+    return invalid_role_error unless QUEUES.keys.include?(role.try(:to_sym))
+
+    if %w[attorney judge].include?(role) && appeal.class.name == LegacyAppeal.name
+      return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], role)
+    end
+
+    json_tasks_by_appeal_id(appeal.id, appeal.class.to_s)
   end
 
   private
@@ -95,6 +114,10 @@ class TasksController < ApplicationController
 
   def task_class
     TASK_CLASSES[create_params.first[:type].try(:to_sym)]
+  end
+
+  def appeal
+    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
   end
 
   def invalid_type_error
@@ -122,6 +145,39 @@ class TasksController < ApplicationController
   def update_params
     params.require("task")
       .permit(:status, :on_hold_duration, :assigned_to_id)
+  end
+
+  def json_vso_tasks
+    # For now we just return tasks that are assigned to the user. In the future,
+    # we will add tasks that are assigned to the user's organization.
+    tasks = GenericQueue.new(user: current_user).tasks
+
+    render json: {
+      tasks: json_tasks(tasks)[:data]
+    }
+  end
+
+  def json_tasks_by_legacy_appeal_id_and_role(appeal_id, role)
+    tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal_id, role)
+
+    render json: {
+      tasks: json_legacy_tasks(tasks)[:data]
+    }
+  end
+
+  def json_tasks_by_appeal_id(appeal_db_id, appeal_type)
+    tasks = queue_class.new.tasks_by_appeal_id(appeal_db_id, appeal_type)
+
+    render json: {
+      tasks: json_tasks(tasks)[:data]
+    }
+  end
+
+  def json_legacy_tasks(tasks)
+    ActiveModelSerializers::SerializableResource.new(
+      tasks,
+      each_serializer: ::WorkQueue::LegacyTaskSerializer
+    ).as_json
   end
 
   def json_tasks(tasks)

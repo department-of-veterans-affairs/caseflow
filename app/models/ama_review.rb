@@ -43,41 +43,11 @@ class AmaReview < ApplicationRecord
     claimants.first.payee_code
   end
 
-  def create_issues!(request_issues_data:)
-    request_issues.destroy_all unless request_issues.empty?
-
-    request_issues_data.map { |data| request_issues.create_from_intake_data!(data) }
-  end
-
-  def create_end_products_and_contentions!
-    rating_establishment = create_end_product_and_contentions!(rated: true)
-    invalid_modifiers = rating_establishment ? [rating_establishment.modifier] : []
-    nonrating_establishment = create_end_product_and_contentions!(rated: false, invalid_modifiers: invalid_modifiers)
-
-    if rating_establishment || nonrating_establishment
-      update! established_at: Time.zone.now
-    end
-  end
-
-  def create_end_product_and_contentions!(rated: true, invalid_modifiers: [])
-    return nil if issue_descriptions_to_create(rated: rated).empty?
-
-    end_product_establishment(rated: rated, invalid_modifiers: invalid_modifiers).tap do |establishment|
-      establishment.perform!
-      create_contentions_on_new_end_product!(rated: rated)
-      create_associated_rated_issues_in_vbms! if rated
-    end
-  end
-
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
   private
-
-  def end_product_establishment
-    fail Caseflow::Error::MustImplementInSubclass
-  end
 
   def timely_ratings_cache_key
     "#{veteran_file_number}-#{formatted_receipt_date}"
@@ -85,64 +55,6 @@ class AmaReview < ApplicationRecord
 
   def formatted_receipt_date
     receipt_date ? receipt_date.to_formatted_s(:short_date) : ""
-  end
-
-  def rated_issues_to_create
-    @rated_issues_to_create ||= request_issues.rated.where(contention_reference_id: nil)
-  end
-
-  def nonrated_issues_to_create
-    @nonrated_issues_to_create ||= request_issues.nonrated.where(contention_reference_id: nil)
-  end
-
-  def issue_descriptions_to_create(rated: true)
-    (rated ? rated_issues_to_create : nonrated_issues_to_create).pluck(:description)
-  end
-
-  def create_rated_issue_contention_map
-    issue_contention_map = {}
-    request_issues.where.not(rating_issue_reference_id: nil).find_each do |contention|
-      issue_contention_map[contention.rating_issue_reference_id] = contention.contention_reference_id
-    end
-    issue_contention_map
-  end
-
-  def rated_issue_contention_map
-    @rated_issue_contention_map ||= create_rated_issue_contention_map
-  end
-
-  # VBMS will return ALL contentions on a end product when you create contentions,
-  # not just the ones that were just created. This method assumes there are no
-  # pre-existing contentions on the end product. Since it was also just created.
-  def create_contentions_on_new_end_product!(rated: true)
-    issues_to_create = rated ? rated_issues_to_create : nonrated_issues_to_create
-    # Load all the issues so we can match them in memory
-    issues_to_create.all.tap do |issues|
-      # Currently not making any assumptions about the order in which VBMS returns
-      # the created contentions. Instead find the issue by matching text.
-      create_contentions_in_vbms(rated: rated).each do |contention|
-        matching_issue = issues.find { |issue| issue.description == contention.text }
-        matching_issue && matching_issue.update!(contention_reference_id: contention.id)
-      end
-
-      fail ContentionCreationFailed if issues.any? { |issue| !issue.contention_reference_id }
-    end
-  end
-
-  def create_contentions_in_vbms(rated: true)
-    VBMSService.create_contentions!(
-      veteran_file_number: veteran_file_number,
-      claim_id: end_product_establishment(rated: rated).reference_id,
-      contention_descriptions: issue_descriptions_to_create(rated: rated)
-    )
-  end
-
-  def create_associated_rated_issues_in_vbms!
-    return if rated_issue_contention_map.blank?
-    VBMSService.associate_rated_issues!(
-      claim_id: end_product_establishment(rated: true).reference_id,
-      rated_issue_contention_map: rated_issue_contention_map
-    )
   end
 
   def end_product_station

@@ -17,7 +17,12 @@ class Fakes::BGSService
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/CyclomaticComplexity
   def self.create_veteran_records
+    return if @veteran_records_created
+
+    @veteran_records_created = true
+
     file_path = Rails.root.join("local", "vacols", "bgs_setup.csv")
 
     CSV.foreach(file_path, headers: true) do |row|
@@ -81,6 +86,7 @@ class Fakes::BGSService
     end
   end
   # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def self.all_grants
     default_date = 10.days.ago.to_formatted_s(:short_date)
@@ -290,6 +296,39 @@ class Fakes::BGSService
     (self.class.veteran_records || {})[vbms_id]
   end
 
+  def fetch_person_info(participant_id)
+    # This is a limited set of test data, more fields are available.
+    if participant_id == "5382910292"
+      # This claimant is over 75 years old so they get automatic AOD
+      {
+        brthdy_dt: "Sun, 05 Sep 1943 00:00:00 -0500",
+        first_nm: "Bob",
+        gender_cd: "M",
+        last_nm: "Vance",
+        ptcpnt_id: participant_id,
+        ssn_nbr: "123456789"
+      }
+    elsif participant_id == "1129318238"
+      {
+        brthdy_dt: "Sat, 05 Sep 1998 00:00:00 -0500",
+        first_nm: "Cathy",
+        gender_cd: "",
+        last_nm: "Smith",
+        ptcpnt_id: participant_id,
+        ssn_nbr: nil
+      }
+    else
+      {
+        brthdy_dt: "Sat, 05 Sep 1998 00:00:00 -0500",
+        first_nm: "Other",
+        gender_cd: "",
+        last_nm: "Person",
+        ptcpnt_id: participant_id,
+        ssn_nbr: nil
+      }
+    end
+  end
+
   def can_access?(vbms_id)
     !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
   end
@@ -308,6 +347,28 @@ class Fakes::BGSService
       return default_vsos_by_participant_id.map { |poa| get_poa_from_bgs_poa(poa) }
     end
     []
+  end
+
+  def fetch_poas_by_participant_ids(participant_ids)
+    get_hash_of_poa_from_bgs_poas(
+      participant_ids.map do |participant_id|
+        vso = if participant_id == "CLAIMANT_WITH_PVA_AS_VSO"
+                {
+                  legacy_poa_cd: "071",
+                  nm: "PARALYZED VETERANS OF AMERICA, INC.",
+                  org_type_nm: "POA National Organization",
+                  ptcpnt_id: "2452383"
+                }
+              else
+                {}
+              end
+
+        {
+          ptcpnt_id: participant_id,
+          power_of_attorney: vso
+        }
+      end
+    )
   end
 
   # TODO: add more test cases

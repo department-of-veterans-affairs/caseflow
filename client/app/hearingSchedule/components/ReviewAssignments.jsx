@@ -47,13 +47,13 @@ export default class ReviewAssignments extends React.Component {
   };
 
   getAlertButtons = () => {
-    return <div>
-      <Link
+    return <React.Fragment>
+      <Button
         name="go-back"
-        button="secondary"
+        button="primary"
         to="/schedule/build/upload">
         Go back
-      </Link>
+      </Button>
       <Button
         name="confirmAssignments"
         button="primary"
@@ -62,7 +62,7 @@ export default class ReviewAssignments extends React.Component {
       >
         Confirm assignments
       </Button>
-    </div>;
+    </React.Fragment>;
   };
 
   modalConfirmButton = () => {
@@ -122,7 +122,8 @@ export default class ReviewAssignments extends React.Component {
       />;
     }
 
-    if (this.props.schedulePeriod.finalized) {
+    if (this.props.schedulePeriod.finalized ||
+        this.props.schedulePeriod.cannotFinalize) {
       return <StatusMessage
         type="status"
         title="This page has expired."

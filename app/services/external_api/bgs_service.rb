@@ -14,7 +14,9 @@ class ExternalApi::BGSService
     # respective requests
     @end_products = {}
     @veteran_info = {}
+    @person_info = {}
     @poas = {}
+    @poa_by_participant_ids = {}
     @poa_addresses = {}
     @people_by_ssn = {}
   end
@@ -40,6 +42,17 @@ class ExternalApi::BGSService
                             service: :bgs,
                             name: "veteran.find_by_file_number") do
         client.veteran.find_by_file_number(vbms_id)
+      end
+  end
+
+  def fetch_person_info(participant_id)
+    DBService.release_db_connections
+
+    @person_info[participant_id] ||=
+      MetricsService.record("BGS: fetch veteran info for participant_id: #{participant_id}",
+                            service: :bgs,
+                            name: "veteran.find_by_file_number") do
+        client.people.find_person_by_ptcpnt_id(participant_id)
       end
   end
 
@@ -74,16 +87,28 @@ class ExternalApi::BGSService
   def fetch_poas_by_participant_id(participant_id)
     DBService.release_db_connections
 
-    unless @poas[participant_id]
+    unless @poa_by_participant_ids[participant_id]
       bgs_poas = MetricsService.record("BGS: fetch poas for participant id: #{participant_id}",
                                        service: :bgs,
                                        name: "org.find_poas_by_participant_id") do
         client.org.find_poas_by_ptcpnt_id(participant_id)
       end
-      @poas[participant_id] = bgs_poas.map { |poa| get_poa_from_bgs_poa(poa) }
+      @poa_by_participant_ids[participant_id] = bgs_poas.map { |poa| get_poa_from_bgs_poa(poa) }
     end
 
-    @poas[participant_id]
+    @poa_by_participant_ids[participant_id]
+  end
+
+  def fetch_poas_by_participant_ids(participant_ids)
+    DBService.release_db_connections
+
+    bgs_poas = MetricsService.record("BGS: fetch poas for participant ids: #{participant_ids}",
+                                     service: :bgs,
+                                     name: "org.find_poas_by_participant_ids") do
+      client.org.find_poas_by_ptcpnt_ids(participant_ids)
+    end
+
+    get_hash_of_poa_from_bgs_poas(bgs_poas)
   end
 
   def find_address_by_participant_id(participant_id)

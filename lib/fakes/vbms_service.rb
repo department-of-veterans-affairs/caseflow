@@ -28,6 +28,7 @@ class Fakes::VBMSService
     attr_accessor :manifest_vbms_fetched_at, :manifest_vva_fetched_at
     attr_accessor :contention_records
     attr_accessor :end_product_claim_ids_by_file_number
+    attr_accessor :disposition_records
   end
 
   def self.load_vbms_ids_mappings
@@ -133,6 +134,10 @@ class Fakes::VBMSService
     OpenStruct.new(claim_id: claim_id)
   end
 
+  def self.get_dispositions!(claim_id:)
+    (disposition_records && disposition_records[claim_id]) || []
+  end
+
   def self.fetch_contentions(claim_id:)
     (contention_records || {})[claim_id] || []
   end
@@ -157,6 +162,13 @@ class Fakes::VBMSService
     Rails.logger.info("Submitting rated issues to VBMS...")
     Rails.logger.info("Claim id:\n #{claim_id}")
     Rails.logger.info("Rated issue contention map: #{rated_issue_contention_map.inspect}")
+
+    true
+  end
+
+  def self.remove_contention!(contention)
+    Rails.logger.info("Submitting remove contention request to VBMS...")
+    Rails.logger.info("Contention: #{contention.inspect}")
 
     true
   end

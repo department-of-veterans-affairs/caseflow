@@ -82,7 +82,7 @@ class Appeal < AmaReview
   def create_issues!(request_issues_data:)
     request_issues.destroy_all unless request_issues.empty?
 
-    request_issues_data.map { |data| request_issues.create_from_intake_data!(data) }
+    request_issues_data.map { |data| request_issues.from_intake_data(data).save! }
   end
 
   def serializer_class

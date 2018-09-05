@@ -21,7 +21,10 @@ import {
   hideModal,
   requestSave
 } from './uiReducer/uiActions';
-import { getIssueDiagnosticCodeLabel } from './utils';
+import {
+  getIssueDiagnosticCodeLabel,
+  prepareAppealIssuesForStore
+} from './utils';
 
 import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -142,7 +145,14 @@ class AddEditIssueView extends React.Component {
       };
     });
 
-    this.props.saveEditedAppealIssue(this.props.appealId, { issues });
+    this.props.saveEditedAppealIssue(this.props.appealId, {
+      issues: prepareAppealIssuesForStore({
+        attributes: {
+          issues,
+          docket_name: appeal.docketName
+        }
+      })
+    });
   }
 
   deleteIssue = () => {
@@ -341,7 +351,7 @@ const mapStateToProps = (state, ownProps) => ({
   task: state.queue.tasks[ownProps.appealId],
   issue: state.queue.editingIssue,
   error: state.ui.messages.error,
-  deleteIssueModal: state.ui.modal.deleteIssue
+  deleteIssueModal: state.ui.modals.deleteIssue
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

@@ -3,6 +3,7 @@ class OrganizationsController < ApplicationController
   before_action :verify_role_access, except: [:index]
   before_action :verify_feature_access, except: [:index]
   before_action :set_application
+  skip_before_action :deny_vso_access
 
   def index
     render json: { organizations: Organization.where(type: nil).map { |o| { id: o.id, name: o.name } } }
