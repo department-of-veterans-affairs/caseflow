@@ -47,9 +47,9 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
           readjudication: false,
           remand_reasons: []
         })}
-        name={`dispositions_dropdown_${issue.vacols_sequence_id}`} />
+        name={`dispositions_dropdown_${issue.id}`} />
       {issue.disposition === ISSUE_DISPOSITIONS.VACATED && <Checkbox
-        name={`duplicate-vacated-issue-${issue.vacols_sequence_id}`}
+        name={`duplicate-vacated-issue-${issue.id}`}
         styling={css({
           marginBottom: 0,
           marginTop: '1rem'

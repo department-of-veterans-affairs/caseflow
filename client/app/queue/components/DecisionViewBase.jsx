@@ -39,7 +39,30 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
 
     getWrappedComponentRef = (ref) => this.setState({ wrapped: ref });
 
-    componentDidMount = () => this.props.highlightInvalidFormItems(false);
+    componentDidMount = () => {
+      this.props.highlightInvalidFormItems(false);
+
+      this.blockTransitions();
+    }
+
+    blockTransitions = () => this.unblockTransitions = this.props.history.block((location) => {
+      const { pathname } = location;
+      const newPathInCheckoutFlow = /^\/queue\/appeals\/[a-zA-Z0-9-]+(?:\/\S+)/;
+
+      if (!newPathInCheckoutFlow.exec(pathname) && pathname !== '/queue') {
+        return `${COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT} ${COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT}`;
+      }
+
+      return true;
+    });
+
+    withUnblockedTransition = (callback = _.noop) => {
+      this.unblockTransitions();
+      callback();
+      this.blockTransitions();
+    }
+
+    componentWillUnmount = () => this.unblockTransitions();
 
     getFooterButtons = () => {
       const buttons = [{
@@ -57,7 +80,7 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
         loadingText: 'Submitting...',
         styling: css({ marginLeft: '1rem' })
       }, {
-        classNames: ['cf-right-side', 'cf-prev-step', 'usa-button-outline'],
+        classNames: ['cf-right-side', 'cf-prev-step', 'usa-button-secondary'],
         callback: this.props.hideCancelButton ? this.cancelFlow : this.goToPrevStep,
         name: 'back-button',
         displayText: this.props.hideCancelButton ? 'Cancel' : 'Back',
@@ -78,7 +101,9 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
       this.props.resetDecisionOptions();
       _.each(stagedAppeals, this.props.checkoutStagedAppeal);
 
-      history.push(`/queue/appeals/${appealId}`);
+      this.withUnblockedTransition(
+        () => history.replace(`/queue/appeals/${appealId}`)
+      );
     }
 
     getPrevStepUrl = () => {
@@ -102,7 +127,7 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
       const { goToPrevStep: prevStepHook = null } = this.state.wrapped;
 
       if (!prevStepHook || prevStepHook()) {
-        return this.props.history.push(this.getPrevStepUrl());
+        return this.props.history.replace(this.getPrevStepUrl());
       }
     };
 
@@ -123,21 +148,19 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
       this.props.highlightInvalidFormItems(false);
 
       if (!nextStepHook) {
-        return this.props.history.push(this.getNextStepUrl());
+        return this.props.history.replace(this.getNextStepUrl());
       }
 
-      const hookResult = nextStepHook();
-
       // nextStepHook may return a Promise, in which case do nothing here.
-      if (hookResult === true) {
-        return this.props.history.push(this.getNextStepUrl());
+      if (nextStepHook() === true) {
+        return this.props.history.replace(this.getNextStepUrl());
       }
     };
 
     componentDidUpdate = (prevProps) => {
       if (prevProps.savePending && !this.props.savePending) {
         if (this.props.saveSuccessful) {
-          this.props.history.push(this.getNextStepUrl());
+          this.props.history.replace(this.getNextStepUrl());
         } else {
           this.props.highlightInvalidFormItems(true);
         }
@@ -147,7 +170,7 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
     render = () => <React.Fragment>
       {this.props.cancelCheckoutModal && <div className="cf-modal-scroll">
         <Modal
-          title="Are you sure you want to cancel?"
+          title={COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT}
           buttons={[{
             classNames: ['usa-button', 'cf-btn-link'],
             name: 'Return to editing',
