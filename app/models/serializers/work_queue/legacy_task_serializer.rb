@@ -5,7 +5,6 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
   attribute :docket_date
   attribute :appeal_id
   attribute :user_id
-  attribute :assigned_to_pg_id
   attribute :added_by_name
   attribute :added_by_css_id
   attribute :task_id
@@ -25,6 +24,14 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
       last_name: object.assigned_by_last_name,
       css_id: object.assigned_by_css_id,
       pg_id: object.assigned_by_pg_id
+    }
+  end
+
+  attribute :assigned_to do
+    {
+      css_id: object.user_id,
+      type: "User",
+      id: object.assigned_to_pg_id
     }
   end
 

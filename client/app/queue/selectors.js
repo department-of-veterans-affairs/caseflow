@@ -26,6 +26,7 @@ const getAmaTasks = (state: State) => state.queue.amaTasks;
 const getAppeals = (state: State) => state.queue.appeals;
 const getAppealDetails = (state: State) => state.queue.appealDetails;
 const getUserCssId = (state: State) => state.ui.userCssId;
+const getOrganizationId = (state: State) => state.queue.organizationId;
 const getAppealId = (state: State, props: Object) => props.appealId;
 const getAttorneys = (state: State) => state.queue.attorneysOfJudge;
 const getCaseflowVeteranId = (state: State, props: Object) => props.caseflowVeteranId;
@@ -85,6 +86,13 @@ export const tasksForAppealAssignedToAttorneySelector = createSelector(
   [getTasksForAppeal, getAttorneys],
   (tasks: Tasks, attorneys: Array<User>) => {
     return _.filter(tasks, (task) => _.some(attorneys, (attorney) => task.assignedTo.cssId === attorney.css_id));
+  }
+);
+
+export const tasksForAppealAssignedToOrganizationSelector = createSelector(
+  [getTasksForAppeal, getOrganizationId],
+  (tasks: Tasks, id: Number) => {
+    return _.filter(tasks, (task) => task.assignedTo.id === id && task.status !== 'completed');
   }
 );
 

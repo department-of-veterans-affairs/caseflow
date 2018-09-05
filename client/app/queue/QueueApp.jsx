@@ -26,6 +26,7 @@ import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
+import MarkTaskCompleteView from './MarkTaskCompleteView';
 
 import CaseListView from './CaseListView';
 import CaseSearchSheet from './CaseSearchSheet';
@@ -131,6 +132,10 @@ class QueueApp extends React.PureComponent<Props> {
   routedAddColocatedTask = (props) => <AddColocatedTaskView nextStep="/queue" {...props.match.params} />;
 
   routedColocatedPlaceHold = (props) => <ColocatedPlaceHoldView nextStep="/queue" {...props.match.params} />;
+
+  routedMarkTaskComplete = (props) => <MarkTaskCompleteView
+    nextStep={`/queue/appeals/${props.match.params.appealId}`}
+    {...props.match.params} />;
 
   routedOrganization = (props) => <OrganizationQueueLoadingScreen
     urlToLoad={`${props.location.pathname}/tasks`}>
@@ -263,6 +268,11 @@ class QueueApp extends React.PureComponent<Props> {
             path="/queue/appeals/:appealId/place_hold"
             title="Place Hold | Caseflow"
             render={this.routedColocatedPlaceHold} />
+          <PageRoute
+            exact
+            path="/queue/appeals/:appealId/mark_task_complete"
+            title="Mark Task Complete | Caseflow"
+            render={this.routedMarkTaskComplete} />
           <PageRoute
             exact
             path="/organizations/:organization"

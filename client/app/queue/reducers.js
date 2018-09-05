@@ -40,7 +40,8 @@ export const initialState = {
   attorneysOfJudge: [],
   attorneyAppealsLoadingState: {},
   isTaskAssignedToUserSelected: {},
-  attorneys: {}
+  attorneys: {},
+  organizationId: null
 };
 
 // eslint-disable-next-line max-statements
@@ -370,6 +371,12 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
       }
     });
   }
+  case ACTIONS.SET_ORGANIZATION_ID:
+    return update(state, {
+      organizationId: {
+        $set: action.payload.id
+      }
+    });
   default:
     return state;
   }

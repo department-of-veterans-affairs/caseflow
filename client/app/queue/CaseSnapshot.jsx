@@ -7,12 +7,14 @@ import { connect } from 'react-redux';
 import {
   appealWithDetailSelector,
   tasksForAppealAssignedToAttorneySelector,
-  tasksForAppealAssignedToUserSelector
+  tasksForAppealAssignedToUserSelector,
+  tasksForAppealAssignedToOrganizationSelector
 } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import AttorneyActionsDropdown from './components/AttorneyActionsDropdown';
 import JudgeActionsDropdown from './components/JudgeActionsDropdown';
 import ColocatedActionsDropdown from './components/ColocatedActionsDropdown';
+import GenericTaskActionsDropdown from './components/GenericTaskActionsDropdown';
 
 import COPY from '../../COPY.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
@@ -146,6 +148,9 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     if (this.props.taskAssignedToAttorney) {
       return true;
     }
+    if (this.props.taskAssignedToOrganization) {
+      return true;
+    }
 
     return false;
   }
@@ -164,6 +169,8 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       CheckoutDropdown = <JudgeActionsDropdown {...dropdownArgs} />;
     } else if (userRole === USER_ROLE_TYPES.colocated) {
       CheckoutDropdown = <ColocatedActionsDropdown {...dropdownArgs} />;
+    } else {
+      CheckoutDropdown = <GenericTaskActionsDropdown {...dropdownArgs} />;
     }
 
     return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
@@ -198,13 +205,16 @@ export class CaseSnapshot extends React.PureComponent<Props> {
 
 const mapStateToProps = (state: State, ownProps: Params) => {
   const { featureToggles, userRole } = state.ui;
+  const { organizationId } = state.queue;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     featureToggles,
     userRole,
+    organizationId,
     taskAssignedToUser: tasksForAppealAssignedToUserSelector(state, { appealId: ownProps.appealId })[0],
-    taskAssignedToAttorney: tasksForAppealAssignedToAttorneySelector(state, { appealId: ownProps.appealId })[0]
+    taskAssignedToAttorney: tasksForAppealAssignedToAttorneySelector(state, { appealId: ownProps.appealId })[0],
+    taskAssignedToOrganization: tasksForAppealAssignedToOrganizationSelector(state, { appealId: ownProps.appealId })[0]
   };
 };
 

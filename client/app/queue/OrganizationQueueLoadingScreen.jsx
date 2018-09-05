@@ -8,7 +8,10 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import { extractAppealsAndAmaTasks } from './utils';
 
-import { onReceiveQueue } from './QueueActions';
+import {
+  onReceiveQueue,
+  setOrganizationId
+} from './QueueActions';
 
 type Params = {|
   children: React.Node,
@@ -17,7 +20,8 @@ type Params = {|
 
 type Props = Params & {|
   // Action creators
-  onReceiveQueue: typeof onReceiveQueue
+  onReceiveQueue: typeof onReceiveQueue,
+  setOrganizationId: typeof setOrganizationId
 |};
 
 class OrganizationQueueLoadingScreen extends React.PureComponent<Props> {
@@ -26,6 +30,9 @@ class OrganizationQueueLoadingScreen extends React.PureComponent<Props> {
     (response) => {
       const { tasks: { data: tasks } } = JSON.parse(response.text);
 
+      if (tasks[0]) {
+        this.props.setOrganizationId(tasks[0].attributes.assigned_to.id);
+      }
       this.props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));
     }
   );
@@ -58,7 +65,8 @@ class OrganizationQueueLoadingScreen extends React.PureComponent<Props> {
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceiveQueue
+  onReceiveQueue,
+  setOrganizationId
 }, dispatch);
 
 export default (connect(null, mapDispatchToProps)(OrganizationQueueLoadingScreen): React.ComponentType<Params>);
