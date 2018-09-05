@@ -36,6 +36,8 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
       end
     else
       object.request_issues.map do |issue|
+        # Hard code program for October 1st Pilot, we don't have all the info for how we'll 
+        # break down request issues yet but all RAMP appeals will be 'compensation'
         { id: issue.id, disposition: issue.disposition, program: "Compensation" }
       end
     end
