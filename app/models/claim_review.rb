@@ -38,6 +38,12 @@ class ClaimReview < AmaReview
     end_product_establishments.map(&:modifier).reject(&:nil?)
   end
 
+  def on_sync(end_product_establishment)
+    if end_product_establishment.status_cleared?
+      sync_dispositions(end_product_establishment.reference_id)
+    end
+  end
+
   private
 
   def end_product_establishment_for_issue(issue)
@@ -80,19 +86,14 @@ class ClaimReview < AmaReview
     end
   end
 
-  def on_sync(end_product_establishment)
-    if end_product_establishment.status_cleared?
-      sync_dispositions(end_product_establishment.reference_id)
+  def sync_dispositions(reference_id)
+    fetch_dispositions_from_vbms(reference_id).each do |disposition|
+      matching_request_issue(disposition[:contention_id]).update!(disposition: disposition[:disposition])
     end
   end
 
-  private
-
-  def sync_dispositions(reference_id)
-    dispositions = VBMSService.get_dispositions!(claim_id: reference_id)
-    dispositions.each do |disposition|
-      matching_request_issue(disposition[:contention_id]).update!(disposition: disposition[:disposition])
-    end
+  def fetch_dispositions_from_vbms(reference_id)
+    VBMSService.get_dispositions!(claim_id: reference_id)
   end
 
   def matching_request_issue(contention_id)

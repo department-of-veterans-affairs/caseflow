@@ -134,8 +134,8 @@ class Fakes::VBMSService
     OpenStruct.new(claim_id: claim_id)
   end
 
-  def self.get_dispositions!(_claim_id:)
-    disposition_records || []
+  def self.get_dispositions!(claim_id:)
+    (disposition_records && disposition_records[claim_id]) || []
   end
 
   def self.fetch_contentions(claim_id:)
