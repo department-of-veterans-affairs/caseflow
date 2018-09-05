@@ -66,7 +66,7 @@ RSpec.feature "AmaQueue" do
         ),
         create(
           :appeal,
-          :appellant_not_veteran,
+          number_of_claimants: 1,
           veteran: create(:veteran),
           documents: create_list(:document, 3),
           request_issues: build_list(:request_issue, 1, description: "Tinnitus")
@@ -74,7 +74,7 @@ RSpec.feature "AmaQueue" do
       ]
     end
 
-    xscenario "veteran is the appellant" do
+    scenario "veteran is the appellant" do
       visit "/queue/beaam"
       click_on appeals.first.veteran.first_name
 
@@ -97,6 +97,76 @@ RSpec.feature "AmaQueue" do
       click_on appeals.first.veteran.first_name
 
       expect(page).not_to have_selector("text", id: "NEW")
+    end
+
+    context "when user is a vso" do
+      let!(:user) do
+        User.authenticate!(user: create(:user, roles: ["VSO"]))
+      end
+
+      let!(:appeals) do
+        [
+          create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id)]),
+          create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id_without_vso)])
+        ]
+      end
+
+      let(:veteran) { create(:veteran, file_number: "44556677") }
+
+      let(:participant_id) { "1234" }
+      let(:participant_id_without_vso) { "5678" }
+      let(:vso_participant_id) { "2452383" }
+      let(:participant_ids) { [participant_id, participant_id_without_vso] }
+      let(:url) { "vietnam-veterans" }
+
+      let!(:vso) do
+        Vso.create(
+          participant_id: vso_participant_id,
+          url: url
+        )
+      end
+
+      let(:vso_participant_ids) do
+        [
+          {
+            representative_name: "VIETNAM VETERANS OF AMERICA",
+            representative_type: "POA National Organization",
+            participant_id: vso_participant_id
+          },
+          {
+            representative_name: "PARALYZED VETERANS OF AMERICA, INC.",
+            representative_type: "POA National Organization",
+            participant_id: "2452383"
+          }
+        ]
+      end
+
+      let(:poas) do
+        {
+          participant_id => {
+            representative_name: "PARALYZED VETERANS OF AMERICA, INC.",
+            representative_type: "POA National Organization",
+            participant_id: vso_participant_id
+          },
+          participant_id_without_vso => {}
+        }
+      end
+
+      before do
+        allow_any_instance_of(BGSService).to receive(:get_participant_id_for_user).and_return(participant_id)
+        allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_id).and_return(vso_participant_ids)
+        allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).and_return(poas)
+      end
+
+      scenario "when searching for cases" do
+        visit "/organizations/#{url}"
+
+        fill_in "searchBar", with: veteran.file_number
+        click_on "Search"
+
+        expect(page).to have_content(appeals.first.docket_number)
+        expect(page).to_not have_content(appeals.second.docket_number)
+      end
     end
   end
 end
