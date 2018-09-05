@@ -43,7 +43,7 @@ export default class StyleGuideButton extends React.PureComponent {
             name="signup-1"
             classNames={['button_wrapper']}>
           Sign up
-          </Button><br /><br />
+          </Button>
         </div>
         <div className="usa-width-one-third">
           <h3 className="styleguide-grey-header">Hover</h3>
@@ -51,7 +51,7 @@ export default class StyleGuideButton extends React.PureComponent {
             name="signup-3"
             classNames={['usa-button-hover']}>
           Sign up
-          </Button><br /><br />
+          </Button>
         </div>
         <div className="usa-width-one-third">
           <h3 className="styleguide-grey-header">Active</h3>
@@ -59,7 +59,7 @@ export default class StyleGuideButton extends React.PureComponent {
             name="signup-active"
             classNames={['usa-button-active']}>
           Sign up
-          </Button><br /><br />
+          </Button>
         </div>
       </div><br /><br />
       <h3 id="secondary">Secondary buttons</h3>
