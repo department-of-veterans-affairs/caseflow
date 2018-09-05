@@ -249,4 +249,51 @@ describe ClaimReview do
       end
     end
   end
+
+  context "#on_sync" do
+    subject { claim_review.on_sync(end_product_establishment) }
+
+    let!(:end_product_establishment) do
+      create(
+        :end_product_establishment,
+        :cleared,
+        veteran_file_number: veteran_file_number,
+        source: claim_review,
+        last_synced_at: Time.zone.now
+      )
+    end
+
+    let(:contentions) do
+      [
+        Generators::Contention.build(
+          claim_id: end_product_establishment.reference_id,
+          text: "hello",
+          disposition: "Granted"
+        ),
+        Generators::Contention.build(
+          claim_id: end_product_establishment.reference_id,
+          text: "goodbye",
+          disposition: "Denied"
+        )
+      ]
+    end
+
+    let!(:request_issues) do
+      contentions.map do |contention|
+        claim_review.request_issues.create!(
+          review_request: claim_review,
+          end_product_establishment: end_product_establishment,
+          description: contention.text,
+          contention_reference_id: contention.id
+        )
+      end
+    end
+
+    it "should add dispositions to the issues" do
+      subject
+
+      expect(request_issues.first.reload.disposition).to eq("Granted")
+      expect(request_issues.last.reload.disposition).to eq("Denied")
+    end
+  end
 end

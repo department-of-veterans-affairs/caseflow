@@ -12,7 +12,6 @@ describe SupplementalClaim do
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
   let(:receipt_date) { nil }
   let(:established_at) { nil }
-  let(:end_product_status) { nil }
 
   let(:supplemental_claim) do
     SupplementalClaim.new(

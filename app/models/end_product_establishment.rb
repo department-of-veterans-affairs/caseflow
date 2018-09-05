@@ -27,6 +27,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   CANCELED_STATUS = "CAN".freeze
+  CLEARED_STATUS = "CLR".freeze
 
   class << self
     def order_by_sync_priority
@@ -130,6 +131,10 @@ class EndProductEstablishment < ApplicationRecord
 
   def status_canceled?
     synced_status == CANCELED_STATUS
+  end
+
+  def status_cleared?
+    synced_status == CLEARED_STATUS
   end
 
   def status_active?(sync: false)

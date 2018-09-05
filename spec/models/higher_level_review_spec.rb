@@ -14,7 +14,6 @@ describe HigherLevelReview do
   let(:informal_conference) { nil }
   let(:same_office) { nil }
   let(:established_at) { nil }
-  let(:end_product_status) { nil }
 
   let(:higher_level_review) do
     HigherLevelReview.new(
@@ -22,8 +21,7 @@ describe HigherLevelReview do
       receipt_date: receipt_date,
       informal_conference: informal_conference,
       same_office: same_office,
-      established_at: established_at,
-      end_product_status: end_product_status
+      established_at: established_at
     )
   end
 
