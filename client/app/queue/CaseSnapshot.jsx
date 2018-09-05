@@ -205,13 +205,11 @@ export class CaseSnapshot extends React.PureComponent<Props> {
 
 const mapStateToProps = (state: State, ownProps: Params) => {
   const { featureToggles, userRole } = state.ui;
-  const { organizationId } = state.queue;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     featureToggles,
     userRole,
-    organizationId,
     taskAssignedToUser: tasksForAppealAssignedToUserSelector(state, { appealId: ownProps.appealId })[0],
     taskAssignedToAttorney: tasksForAppealAssignedToAttorneySelector(state, { appealId: ownProps.appealId })[0],
     taskAssignedToOrganization: tasksForAppealAssignedToOrganizationSelector(state, { appealId: ownProps.appealId })[0]
