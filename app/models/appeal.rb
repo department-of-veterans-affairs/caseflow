@@ -63,7 +63,7 @@ class Appeal < AmaReview
   end
 
   def advanced_on_docket
-    claimants.any? { |claimant| claimant.advanced_on_docket }
+    claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
   end
 
   def number_of_issues

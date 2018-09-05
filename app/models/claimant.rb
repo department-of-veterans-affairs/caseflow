@@ -15,12 +15,8 @@ class Claimant < ApplicationRecord
     )
   end
 
-  def advanced_on_docket
-    advance_on_docket_grants.any? do |advance_on_docket_grant|
-      receipt_date < advanced_on_docket.created_at
-    end
-
-    date_of_birth < 75.years.ago || advanced_on_docket_granted
+  def advanced_on_docket(appeal_receipt_date)
+    advanced_on_docket_based_on_age || advanced_on_docket_motion_granted(appeal_receipt_date)
   end
 
   def bgs
@@ -32,5 +28,17 @@ class Claimant < ApplicationRecord
     general_info = bgs.fetch_claimant_info_by_participant_id(participant_id)
 
     bgs_record.merge(general_info)
+  end
+
+  private
+
+  def advanced_on_docket_based_on_age
+    date_of_birth && date_of_birth < 75.years.ago
+  end
+
+  def advanced_on_docket_motion_granted(appeal_receipt_date)
+    advance_on_docket_grants.any? do |advance_on_docket_grant|
+      appeal_receipt_date < advance_on_docket_grant.created_at
+    end 
   end
 end
