@@ -3,11 +3,11 @@ jobs:
   build:
     docker:
       # The first image listed is the image that all steps run inside of.
-      # This can be modified by steps, or can be built as a separate
-      # customized container.
+      # If we want to use circle ci ruby 2.2 just change this image to:
+      # - image: circleci/ruby:2.2-node-browsers
+      # running circle ci ruby 2.5.1
       - image: circleci/ruby:2.2-node-browsers
         environment:
-          - dev: enrique
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
           - NODE_ENV: test
