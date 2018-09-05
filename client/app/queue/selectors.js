@@ -128,29 +128,34 @@ const hasNewDocuments = (newDocsForAppeal: NewDocsForAppeal, task: Task) => {
   return newDocsForAppeal[task.externalAppealId].docs.length > 0;
 };
 
+const incompleteTasksWithHold: (State) => Array<Task> = createSelector(
+  [incompleteTasksByAssigneeCssIdSelector],
+  (tasks: Array<Task>) => tasks.filter((task) => task.placedOnHoldAt)
+);
+
 export const pendingTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
-  [incompleteTasksByAssigneeCssIdSelector, getNewDocsForAppeal],
-  (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) =>
-    tasks.filter(
-      (task) =>
-        task.placedOnHoldAt &&
-          (moment().diff(moment(task.placedOnHoldAt), 'days') >= task.onHoldDuration ||
-            hasNewDocuments(newDocsForAppeal, task)))
+  [incompleteTasksWithHold, getNewDocsForAppeal],
+  (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) => tasks.filter((task) =>
+    moment().diff(moment(task.placedOnHoldAt), 'days') >= task.onHoldDuration ||
+    hasNewDocuments(newDocsForAppeal, task)
+  )
 );
 
 export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
-  [incompleteTasksByAssigneeCssIdSelector, getNewDocsForAppeal],
-  (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) =>
-    tasks.filter(
-      (task) =>
-        task.placedOnHoldAt &&
-          (moment().diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration &&
-            !hasNewDocuments(newDocsForAppeal, task)))
+  [incompleteTasksWithHold, getNewDocsForAppeal],
+  (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) => tasks.filter((task) =>
+    moment().diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration &&
+    !hasNewDocuments(newDocsForAppeal, task)
+  )
 );
 
 export const judgeReviewTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => task.taskType === 'Review' || task.taskType === null)
+  (tasks: Array<TaskWithAppeal>) => _.filter(tasks, (task) =>
+    // for ama tasks, filter by 'action' (values lower case)
+    // for legacy tasks, filter by 'taskType' (values title case)
+    ['review', null].includes(task.taskType) || task.action === 'review'
+  )
 );
 
 export const judgeAssignTasksSelector = createSelector(
