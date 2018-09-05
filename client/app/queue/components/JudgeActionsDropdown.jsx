@@ -113,20 +113,20 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
   handleAssignment = (
     { tasks, assigneeId, previousAssigneeId }: { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}
   ) => {
-      if (tasks[0].action === 'assign') {
-        return this.props.initialAssignTasksToUser({
-          tasks,
-          assigneeId,
-          previousAssigneeId
-        });
-      }
-
-      return this.props.reassignTasksToUser({
+    if (tasks[0].action === 'assign') {
+      return this.props.initialAssignTasksToUser({
         tasks,
         assigneeId,
         previousAssigneeId
       });
     }
+
+    return this.props.reassignTasksToUser({
+      tasks,
+      assigneeId,
+      previousAssigneeId
+    });
+  }
 
   assignWidgetVisible = () => {
     const { selectedOption } = this.state;
