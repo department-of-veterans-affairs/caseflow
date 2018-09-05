@@ -26,7 +26,7 @@ class AmaReview < ApplicationRecord
   end
 
   def remove_claimants!
-    claimants.destroy_all
+    claimants.destroy_all unless claimants.empty?
   end
 
   def claimant_participant_id

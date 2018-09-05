@@ -58,6 +58,7 @@ class RampElectionIntake < Intake
       receipt_date: nil,
       option_selected: nil
     )
+    detail.issues.destroy_all unless detail.issues.empty?
   end
 
   cache_attribute :cached_serialized_appeal_issues, expires_in: 10.minutes do

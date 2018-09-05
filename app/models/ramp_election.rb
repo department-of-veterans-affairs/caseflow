@@ -57,7 +57,7 @@ class RampElection < RampReview
       # End product should already be cancelled, so we don't need to pay attention to the establishment that we already
       # had created. We will create a new one if the ramp election is recreated.
       end_product_establishment.destroy!
-
+      issues.destroy_all
       ramp_closed_appeals.destroy_all
     end
   end
