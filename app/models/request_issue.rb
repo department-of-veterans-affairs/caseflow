@@ -1,5 +1,6 @@
 class RequestIssue < ApplicationRecord
   belongs_to :review_request, polymorphic: true
+  belongs_to :end_product_establishment
   has_many :decision_issues
 
   def self.rated
@@ -12,8 +13,12 @@ class RequestIssue < ApplicationRecord
       .where.not(issue_category: [nil, "Unknown issue category"])
   end
 
-  def self.create_from_intake_data!(data)
-    create!(
+  def rated?
+    rating_issue_reference_id && rating_issue_profile_date
+  end
+
+  def self.from_intake_data(data)
+    new(
       rating_issue_reference_id: data[:reference_id],
       rating_issue_profile_date: data[:profile_date],
       description: data[:decision_text],
