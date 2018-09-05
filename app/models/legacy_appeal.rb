@@ -177,6 +177,10 @@ class LegacyAppeal < ApplicationRecord
     issues.length
   end
 
+  def appellant_is_not_veteran
+    !!appellant_first_name
+  end
+
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
@@ -225,6 +229,10 @@ class LegacyAppeal < ApplicationRecord
     when :travel_board
       video_hearing_requested ? :video : :travel_board
     end
+  end
+
+  def veteran_is_deceased
+    !!notice_of_death_date
   end
 
   attr_writer :cavc_decisions
