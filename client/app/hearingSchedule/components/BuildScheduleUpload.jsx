@@ -13,15 +13,25 @@ import InlineForm from '../../components/InlineForm';
 import { SPREADSHEET_TYPES, ERROR_MAPPINGS } from '../constants';
 
 const fileUploadStyling = css({
-  marginTop: '70px'
+  marginTop: '40px'
 });
 
 const inlineFormStyling = css({
-  marginTop: '5px'
-});
-
-const inlineStyling = css({
-  paddingLeft: '9rem'
+  '> div': {
+    ' & .cf-inline-form': {
+      lineHeight: '2em',
+      marginTop: '20px'
+    },
+    '& .question-label': {
+      paddingLeft: 0
+    },
+    '& .cf-form-textinput': {
+      marginTop: 0
+    },
+    '& input': {
+      marginRight: 0
+    }
+  }
 });
 
 export default class BuildScheduleUpload extends React.Component {
@@ -43,10 +53,9 @@ export default class BuildScheduleUpload extends React.Component {
       <div>
         {this.props.uploadRoCoFormErrors &&
           <span className="usa-input-error-message">{this.getErrorMessage(this.props.uploadRoCoFormErrors)}</span>}
-        <div {...inlineFormStyling} >
-          <InlineForm>
-            <BasicDateRangeSelector 
-            // messageLabel
+        <InlineForm>
+          <div {...inlineFormStyling} >
+            <BasicDateRangeSelector
               startDateName="startDate"
               startDateValue={this.props.roCoStartDate}
               startDateLabel= {COPY.HEARING_SCHEDULE_UPLOAD_START_DATE_LABEL}
@@ -55,20 +64,19 @@ export default class BuildScheduleUpload extends React.Component {
               endDateLabel={COPY.HEARING_SCHEDULE_UPLOAD_END_DATE_LABEL}
               onStartDateChange={this.props.onRoCoStartDateChange}
               onEndDateChange={this.props.onRoCoEndDateChange}
-              styling={css({ paddingLeft: '30rem' })}
             />
-            <div {...fileUploadStyling} >
-              <FileUpload {...fileUploadStyling}
-                preUploadText="Select a file for upload"
-                postUploadText="Choose a different file"
-                id="ro_co_file_upload"
-                fileType=".xlsx"
-                onChange={this.props.onRoCoFileUpload}
-                value={this.props.roCoFileUpload}
-              />
-            </div>
-          </InlineForm>
-        </div>
+          </div>
+          <div {...fileUploadStyling} >
+            <FileUpload {...fileUploadStyling}
+              preUploadText="Select a file for upload"
+              postUploadText="Choose a different file"
+              id="ro_co_file_upload"
+              fileType=".xlsx"
+              onChange={this.props.onRoCoFileUpload}
+              value={this.props.roCoFileUpload}
+            />
+          </div>
+        </InlineForm>
       </div>}
     </div>;
   };
@@ -80,17 +88,18 @@ export default class BuildScheduleUpload extends React.Component {
         {this.props.uploadJudgeFormErrors &&
           <span className="usa-input-error-message">{this.getErrorMessage(this.props.uploadJudgeFormErrors)}</span>}
         <InlineForm>
-          <BasicDateRangeSelector
-            // messageLabel
-            startDateName="startDate"
-            startDateValue={this.props.judgeStartDate}
-            startDateLabel={COPY.HEARING_SCHEDULE_UPLOAD_START_DATE_LABEL}
-            endDateName="endDate"
-            endDateValue={this.props.judgeEndDate}
-            endDateLabel={COPY.HEARING_SCHEDULE_UPLOAD_END_DATE_LABEL}
-            onStartDateChange={this.props.onJudgeStartDateChange}
-            onEndDateChange={this.props.onJudgeEndDateChange}
-          />
+          <div {...inlineFormStyling}>
+            <BasicDateRangeSelector
+              startDateName="startDate"
+              startDateValue={this.props.judgeStartDate}
+              startDateLabel={COPY.HEARING_SCHEDULE_UPLOAD_START_DATE_LABEL}
+              endDateName="endDate"
+              endDateValue={this.props.judgeEndDate}
+              endDateLabel={COPY.HEARING_SCHEDULE_UPLOAD_END_DATE_LABEL}
+              onStartDateChange={this.props.onJudgeStartDateChange}
+              onEndDateChange={this.props.onJudgeEndDateChange}
+            />
+          </div>
           <div {...fileUploadStyling} >
             <FileUpload
               preUploadText="Select a file for upload"
