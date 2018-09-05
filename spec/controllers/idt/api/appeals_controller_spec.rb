@@ -144,6 +144,9 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
         context "and AMA appeal id URL parameter is passed" do
           let(:params) { { appeal_id:  ama_appeals.first.uuid } }
+          let!(:request_issue1) { create(:request_issue, review_request: ama_appeals.first) }
+          let!(:request_issue2) { create(:request_issue, review_request: ama_appeals.first) }
+
 
           it "succeeds and passes appeal info" do
             get :details, params: params
@@ -158,7 +161,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             )
             expect(response_body["attributes"]["aod"]).to eq ama_appeals.first.advanced_on_docket
             expect(response_body["attributes"]["cavc"]).to eq "not implemented"
-            expect(response_body["attributes"]["issues"]).to eq []
+            expect(response_body["attributes"]["issues"].first["program"]).to eq "Compensation"
+            expect(response_body["attributes"]["issues"].second["program"]).to eq "Compensation"
             expect(response_body["attributes"]["status"]).to eq nil
             expect(response_body["attributes"]["veteran_is_deceased"]).to eq "not implemented"
             expect(response_body["attributes"]["appellant_is_not_veteran"]).to eq true

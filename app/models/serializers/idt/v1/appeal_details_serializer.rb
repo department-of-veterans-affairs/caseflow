@@ -35,7 +35,9 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
         ).as_json[:data][:attributes]
       end
     else
-      object.request_issues
+      object.request_issues.map do |issue|
+        { id: issue.id, disposition: issue.disposition, program: "Compensation" }
+      end
     end
   end
 
