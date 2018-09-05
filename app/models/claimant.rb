@@ -9,17 +9,18 @@ class Claimant < ApplicationRecord
   def self.create_from_intake_data!(participant_id:, payee_code:)
     create!(
       participant_id: participant_id,
-      payee_code: payee_code
+      payee_code: payee_code,
+      birthdate: bgs.fetch_person_info(14968495)[:brthdy_dt]
     )
   end
 
-  def self.bgs
+  def bgs
     BGSService.new
   end
 
   def fetch_bgs_record
-    bgs_record = self.class.bgs.find_address_by_participant_id(participant_id)
-    general_info = self.class.bgs.fetch_claimant_info_by_participant_id(participant_id)
+    bgs_record = bgs.find_address_by_participant_id(participant_id)
+    general_info = bgs.fetch_claimant_info_by_participant_id(participant_id)
 
     bgs_record.merge(general_info)
   end

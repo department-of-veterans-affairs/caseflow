@@ -14,6 +14,7 @@ class ExternalApi::BGSService
     # respective requests
     @end_products = {}
     @veteran_info = {}
+    @person_info = {}
     @poas = {}
     @poa_by_participant_ids = {}
     @poa_addresses = {}
@@ -41,6 +42,17 @@ class ExternalApi::BGSService
                             service: :bgs,
                             name: "veteran.find_by_file_number") do
         client.veteran.find_by_file_number(vbms_id)
+      end
+  end
+
+  def fetch_person_info(participant_id)
+    DBService.release_db_connections
+
+    @person_info[participant_id] ||=
+      MetricsService.record("BGS: fetch veteran info for participant_id: #{participant_id}",
+                            service: :bgs,
+                            name: "veteran.find_by_file_number") do
+        client.people.find_person_by_ptcpnt_id(participant_id)
       end
   end
 
