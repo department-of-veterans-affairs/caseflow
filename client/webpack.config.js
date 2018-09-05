@@ -53,7 +53,8 @@ const config = {
         {
           loader: 'css-loader',
           options: {
-            sourceMap: true
+            sourceMap: true,
+            url: false
           }
         },
         {
