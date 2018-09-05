@@ -99,7 +99,7 @@ Rails.application.routes.draw do
     get :document_count
     get :new_documents
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
-    get :tasks
+    get 'tasks', to: "tasks#for_appeal"
   end
 
   resources :beaam_appeals, only: [:index]

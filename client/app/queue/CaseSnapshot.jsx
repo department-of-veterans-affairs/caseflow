@@ -10,7 +10,7 @@ import {
   tasksForAppealAssignedToUserSelector
 } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
-import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
+import AttorneyActionsDropdown from './components/AttorneyActionsDropdown';
 import JudgeActionsDropdown from './components/JudgeActionsDropdown';
 import ColocatedActionsDropdown from './components/ColocatedActionsDropdown';
 
@@ -159,7 +159,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     const dropdownArgs = { appealId: appeal.externalId };
 
     if (userRole === USER_ROLE_TYPES.attorney) {
-      CheckoutDropdown = <SelectCheckoutFlowDropdown {...dropdownArgs} />;
+      CheckoutDropdown = <AttorneyActionsDropdown {...dropdownArgs} />;
     } else if (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout) {
       CheckoutDropdown = <JudgeActionsDropdown {...dropdownArgs} />;
     } else if (userRole === USER_ROLE_TYPES.colocated) {
