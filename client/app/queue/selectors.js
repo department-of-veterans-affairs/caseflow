@@ -150,7 +150,7 @@ export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = create
 
 export const judgeReviewTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => task.taskType === 'Review' || task.taskType === null)
+  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => [null, undefined, 'Review'].includes(task.taskType))
 );
 
 export const judgeAssignTasksSelector = createSelector(

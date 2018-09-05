@@ -14,9 +14,9 @@ const defaultLinkText = (appeal, task) => {
     fontWeight: task.status === 'assigned' ? 'bold' : null
   });
 
-  return <React.Fragment {...linkStyling}>
+  return <span {...linkStyling}>
     {appeal.veteranFullName} ({appeal.veteranFileNumber})
-  </React.Fragment>;
+  </span>;
 };
 
 export default class CaseDetailsLink extends React.PureComponent {
