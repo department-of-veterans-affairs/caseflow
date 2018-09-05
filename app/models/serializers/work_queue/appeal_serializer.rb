@@ -65,10 +65,6 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.docket_number
   end
 
-  attribute :status do
-    nil
-  end
-
   attribute :decision_date do
     nil
   end
