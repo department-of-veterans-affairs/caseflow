@@ -154,7 +154,7 @@ export const judgeReviewTasksSelector = createSelector(
   (tasks: Array<TaskWithAppeal>) => _.filter(tasks, (task) =>
     // for ama tasks, filter by 'action' (values lower case)
     // for legacy tasks, filter by 'taskType' (values title case)
-    ['review', null].includes(task.taskType) || task.action === 'review'
+    ['Review', null].includes(task.taskType) || task.action === 'review'
   )
 );
 
