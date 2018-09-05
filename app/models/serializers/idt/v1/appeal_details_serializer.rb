@@ -55,6 +55,6 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :previously_selected_for_quality_review
 
   attribute :outstanding_mail do
-    object.is_a?(LegacyAppeal) ? object.outstanding_vacols_mail? : "not implemented"
+    object.is_a?(LegacyAppeal) ? object.outstanding_vacols_mail? : false
   end
 end
