@@ -60,7 +60,7 @@ export class AssociatePage extends React.Component {
   ];
 
   getClassAssignButtonClasses = (loadingFlag, claimId) => {
-    let classes = ['usa-button-outline'];
+    let classes = ['usa-button-secondary'];
 
     if (loadingFlag) {
       classes.push('usa-button-disabled');
