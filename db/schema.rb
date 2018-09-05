@@ -10,11 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180831162601) do
+ActiveRecord::Schema.define(version: 20180905201441) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
+
+  create_table "advance_on_docket_grants", force: :cascade do |t|
+    t.bigint "claimant_id"
+    t.bigint "user_id"
+    t.string "reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["claimant_id"], name: "index_advance_on_docket_grants_on_claimant_id"
+    t.index ["user_id"], name: "index_advance_on_docket_grants_on_user_id"
+  end
 
   create_table "allocations", force: :cascade do |t|
     t.bigint "schedule_period_id", null: false
@@ -159,6 +169,8 @@ ActiveRecord::Schema.define(version: 20180831162601) do
     t.bigint "review_request_id", null: false
     t.string "participant_id", null: false
     t.string "payee_code"
+    t.date "date_of_birth"
+    t.index ["date_of_birth"], name: "index_claimants_on_date_of_birth"
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 

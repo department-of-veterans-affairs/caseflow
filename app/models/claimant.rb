@@ -10,7 +10,7 @@ class Claimant < ApplicationRecord
     create!(
       participant_id: participant_id,
       payee_code: payee_code,
-      birthdate: bgs.fetch_person_info(14968495)[:brthdy_dt]
+      date_of_birth: bgs.fetch_person_info(14968495)[:brthdy_dt]
     )
   end
 
