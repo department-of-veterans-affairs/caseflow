@@ -64,7 +64,7 @@ class HearingWorksheetStream extends Component {
           />
           {!this.props.print && !prior &&
           <Button
-            classNames={['usa-button-outline', 'hearings-add-issue']}
+            classNames={['usa-button-secondary', 'hearings-add-issue']}
             name="+ Add Issue"
             id={`button-addIssue-${appeal.id}`}
             onClick={this.onAddIssue(appeal.id)}

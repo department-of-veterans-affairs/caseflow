@@ -92,7 +92,7 @@ class Search extends React.PureComponent {
         title: 'No RAMP Opt-In Election',
         body: 'A RAMP Opt-In Election Form was not yet processed in Caseflow, so this Veteran' +
           ' is not eligible to request a RAMP re-filing. Notify the Veteran using the' +
-          ' “RAMP Ineligible Letter”.'
+          ' “RAMP Ineligible Letter.”'
       },
       ramp_election_is_active: {
         title: 'This Veteran has a pending RAMP EP in VBMS',

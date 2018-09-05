@@ -13,6 +13,22 @@ class Claimant < ApplicationRecord
     )
   end
 
+  def first_name
+    name && name.first
+  end
+
+  def last_name
+    name && name.last
+  end
+
+  def middle_initial
+    ""
+  end
+
+  def name_suffix
+    ""
+  end
+
   def self.bgs
     BGSService.new
   end
