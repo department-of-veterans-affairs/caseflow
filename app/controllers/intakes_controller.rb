@@ -78,12 +78,6 @@ class IntakesController < ApplicationController
     render "out_of_service", layout: "application" if Rails.cache.read("intake_out_of_service")
   end
 
-  def no_cache
-    response.headers["Cache-Control"] = "no-cache, no-store"
-    response.headers["Pragma"] = "no-cache"
-    response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
-  end
-
   # TODO: This could be moved to the model.
   def intake_in_progress
     return @intake_in_progress unless @intake_in_progress.nil?

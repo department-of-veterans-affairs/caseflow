@@ -85,6 +85,10 @@ class RampReview < ApplicationRecord
     find_end_product_establishment || new_end_product_establishment
   end
 
+  def valid_modifiers
+    [end_product_modifier]
+  end
+
   private
 
   def find_end_product_establishment
@@ -98,8 +102,8 @@ class RampReview < ApplicationRecord
       claim_date: receipt_date,
       code: end_product_code,
       payee_code: payee_code,
-      valid_modifiers: [end_product_modifier],
       claimant_participant_id: claimant_participant_id,
+      valid_modifiers: valid_modifiers,
       source: self,
       station: "397" # AMC
     )
