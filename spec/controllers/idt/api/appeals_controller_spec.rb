@@ -147,7 +147,6 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           let!(:request_issue1) { create(:request_issue, review_request: ama_appeals.first) }
           let!(:request_issue2) { create(:request_issue, review_request: ama_appeals.first) }
 
-
           it "succeeds and passes appeal info" do
             get :details, params: params
             expect(response.status).to eq 200
