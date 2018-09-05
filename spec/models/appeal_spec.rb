@@ -92,6 +92,15 @@ describe Appeal do
              ])
     end
 
+    let!(:vso) do
+      Vso.create(
+        name: "Paralyzed Veterans Of America",
+        role: "VSO",
+        url: "paralyzed-veterans-of-america",
+        participant_id: "9876"
+      )
+    end
+
     before do
       allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
         .with([participant_id_with_pva]).and_return(
@@ -123,9 +132,16 @@ describe Appeal do
         expect(appeal.power_of_attorneys[1].representative_name).to eq("AMERICAN LEGION")
       end
     end
+
+    context "#vsos" do
+      it "returns all vsos this appeal has that exist in our DB" do
+        expect(appeal.vsos.count).to eq(1)
+        expect(appeal.vsos.first.name).to eq("Paralyzed Veterans Of America")
+      end
+    end
   end
 
-  context "#create_initial_tasks!" do
+  context ".create_tasks_on_intake_success!" do
     let(:appeal) do
       create(:appeal)
     end
@@ -134,7 +150,7 @@ describe Appeal do
       expect(RootTask).to receive(:create!).once
       expect(VsoTask).to receive(:create_tasks_for_appeal!).once
 
-      appeal.create_initial_tasks!
+      appeal.create_tasks_on_intake_success!
     end
   end
 end

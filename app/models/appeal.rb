@@ -91,13 +91,17 @@ class Appeal < AmaReview
     claimants.map(&:power_of_attorney)
   end
 
+  def vsos
+    vso_participant_ids = power_of_attorneys.map(&:participant_id)
+    Vso.where(participant_id: vso_participant_ids)
+  end
+
   def external_id
     uuid
   end
 
-  def create_initial_tasks!
-    RootTask.create!(self)
-    VsoTask.create_tasks_for_appeal!(self)
+  def create_tasks_on_intake_success!
+    RootTask.create_root_and_sub_tasks!(self)
   end
 
   private
