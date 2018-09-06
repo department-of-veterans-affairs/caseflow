@@ -31,7 +31,6 @@ export type Issue = {
   disposition: string,
   close_date: Date,
   note: string,
-  vacols_sequence_id: Number,
   id: Number,
   labels: Array<string>,
   readjudication: Boolean,
@@ -41,7 +40,7 @@ export type Issue = {
 export type Issues = Array<Issue>;
 
 export type Task = {
-  action?: string,
+  action: string,
   appealId: number,
   externalAppealId: string,
   assignedOn: string,
@@ -59,7 +58,6 @@ export type Task = {
   addedByName?: string,
   addedByCssId: ?string,
   taskId: string,
-  taskType?: string,
   documentId: ?string,
   workProduct: ?string,
   status?: string,
