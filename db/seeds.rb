@@ -51,6 +51,10 @@ class SeedDB
       roles: ["VSO"]
     )
     FeatureToggle.enable!(:vso_queue_aml, users: [u.css_id])
+
+    q = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER", full_name: "Org Q User")
+    FeatureToggle.enable!(:org_queue_translation, users: [q.css_id])
+    FeatureToggle.enable!(:org_queue_translation, users: [q.css_id])
   end
 
   def create_dispatch_tasks(number)
@@ -230,6 +234,7 @@ class SeedDB
     judge = User.find_by(css_id: "BVAAABSHIRE")
     colocated = User.find_by(css_id: "BVALSPORER")
     vso = Organization.find_by(name: "American Legion")
+    translation_org = Organization.find_by(name: "Translation")
 
     FactoryBot.create(:ama_judge_task, assigned_to: judge, appeal: @ama_appeals[0])
 
@@ -304,6 +309,8 @@ class SeedDB
                       appeal: LegacyAppeal.find_by(vacols_id: "2306397"),
                       assigned_by: attorney,
                       assigned_to: colocated)
+
+    FactoryBot.create(:generic_task, assigned_by: judge, assigned_to: translation_org)
   end
 
   def create_organizations
@@ -328,6 +335,9 @@ class SeedDB
       url: "paralyzed-veterans-of-america",
       participant_id: "2452383"
     )
+
+    Organization.create!(name: "Translation", feature: "org_queue_translation", url: "translation")
+
     Bva.create(name: "Board of Veterans' Appeals")
   end
 

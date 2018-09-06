@@ -18,6 +18,22 @@ class Claimant < ApplicationRecord
   end
   delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
 
+  def first_name
+    name && name.first
+  end
+
+  def last_name
+    name && name.last
+  end
+
+  def middle_initial
+    ""
+  end
+
+  def name_suffix
+    ""
+  end
+
   def self.bgs
     BGSService.new
   end

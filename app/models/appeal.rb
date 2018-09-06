@@ -51,19 +51,55 @@ class Appeal < AmaReview
   end
 
   def veteran_first_name
-    veteran.name.first_name if veteran
+    veteran && veteran.name.first_name
   end
 
   def veteran_middle_initial
-    veteran.name.middle_initial if veteran
+    veteran && veteran.name.middle_initial
   end
 
   def veteran_last_name
-    veteran.name.last_name if veteran
+    veteran && veteran.name.last_name
+  end
+
+  def veteran_gender
+    veteran && veteran.sex
   end
 
   def number_of_issues
     issues[:request_issues].size
+  end
+
+  def appellant
+    claimants.first
+  end
+
+  delegate :first_name, :last_name, :middle_initial, :name_suffix, to: :appellant, prefix: true
+
+  def appellant_is_not_veteran
+    appellant ? appellant.relationship.present? : false
+  end
+
+  # TODO: implement for AMA
+  def citation_number
+    "not implemented"
+  end
+
+  # TODO: implement for AMA - grab it from BGS
+  def veteran_is_deceased
+    "not implemented"
+  end
+
+  def cavc
+    "not implemented"
+  end
+
+  def status
+    nil
+  end
+
+  def previously_selected_for_quality_review
+    "not implemented"
   end
 
   def create_issues!(request_issues_data:)
