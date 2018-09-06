@@ -179,7 +179,6 @@ class SeedDB
   def create_ama_appeals
     @ama_appeals << FactoryBot.create(
       :appeal,
-      advanced_on_docket: true,
       veteran_file_number: "701305078",
       request_issues: FactoryBot.build_list(:request_issue, 3, description: "Knee pain")
     )
