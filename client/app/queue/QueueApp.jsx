@@ -201,11 +201,11 @@ class QueueApp extends React.PureComponent<Props> {
             exact
             path="/queue/:userId/review"
             title="Review Cases | Caseflow"
-            render={this.routedJudgeQueueList('Review')} />
+            render={this.routedJudgeQueueList('review')} />
           <PageRoute
             path="/queue/:userId/assign"
             title="Unassigned Cases | Caseflow"
-            render={this.routedJudgeQueueList('Assign')} />
+            render={this.routedJudgeQueueList('assign')} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"
