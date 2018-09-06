@@ -90,7 +90,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   componentDidMount = () => {
     const {
       issue: {
-        vacols_sequence_id: issueId,
+        id: issueId,
         remand_reasons: remandReasons
       },
       issues
@@ -103,7 +103,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       }
     }));
 
-    if (_.map(issues, 'vacols_sequence_id').indexOf(issueId) > 0) {
+    if (_.map(issues, 'id').indexOf(issueId) > 0) {
       this.scrollTo();
     }
   };
@@ -149,7 +149,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   });
 
   getCheckbox = (option, onChange, values) => {
-    const rowOptId = `${this.props.issue.vacols_sequence_id}-${option.id}`;
+    const rowOptId = `${this.props.issue.id}-${option.id}`;
 
     return <React.Fragment key={option.id}>
       <Checkbox
@@ -196,7 +196,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       values: this.state
     };
 
-    return <div key={`remand-reasons-${issue.vacols_sequence_id}`}>
+    return <div key={`remand-reasons-${issue.id}`}>
       <h2 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
         Issue {idx + 1} {issues.length > 1 ? ` of ${issues.length}` : ''}
       </h2>
@@ -259,7 +259,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     appeal,
     issues: _.filter(issues, (issue) => issue.disposition === ISSUE_DISPOSITIONS.REMANDED),
-    issue: _.find(issues, (issue) => issue.vacols_sequence_id === ownProps.issueId),
+    issue: _.find(issues, (issue) => issue.id === ownProps.issueId),
     highlight: state.ui.highlightFormItems
   };
 };
