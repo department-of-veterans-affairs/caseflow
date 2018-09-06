@@ -21,6 +21,7 @@ class SchedulePeriod < ApplicationRecord
   end
 
   def start_confirming_schedule
+    clear_submitted_to_vacols
     @confirming_to_vacols = true
     submitting_to_vacols
   end
