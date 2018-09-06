@@ -17,7 +17,9 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
     object.is_a?(LegacyAppeal) ? object.appellant_middle_initial : object.appellant_middle_name
   end
   attribute :appellant_last_name
-  attribute :appellant_name_suffix
+  attribute :appellant_name_suffix do
+    object.is_a?(LegacyAppeal) ? object.appellant_name_suffix : ""
+  end
 
   attribute :file_number do
     object.is_a?(LegacyAppeal) ? object.sanitized_vbms_id : object.veteran_file_number

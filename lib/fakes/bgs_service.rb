@@ -339,7 +339,7 @@ class Fakes::BGSService
   end
 
   def fetch_person_info(_participant_id)
-    { first_name: %w[Tom Patricia].sample, last_name: %w[Brady Charles].sample, middle_name: %w[Edward Aaron].sample }
+    { first_name: "Tom", last_name: "Brady", middle_name: "Edward" }
   end
 
   # TODO: add more test cases
@@ -469,7 +469,6 @@ class Fakes::BGSService
 
   def default_claimant_info
     {
-      name: "Harry Carey",
       relationship: "Spouse"
     }
   end
