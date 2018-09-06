@@ -92,7 +92,7 @@ export default class ListSchedule extends React.Component {
       </div>
       <div className="cf-push-right" {...hearingSchedStyling}>
         <Button
-          classNames={['usa-button-outline']}>
+          classNames={['usa-button-secondary']}>
           <CSVLink
             data={removeCoDuplicates}
             target="_blank"
