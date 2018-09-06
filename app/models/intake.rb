@@ -126,7 +126,6 @@ class Intake < ApplicationRecord
 
   def cancel_detail!
     detail.destroy!
-    detail.remove_issues!
   end
 
   def save_error!(*)

@@ -12,6 +12,8 @@ class AmaReview < ApplicationRecord
   has_many :request_issues, as: :review_request
   has_many :claimants, as: :review_request
 
+  before_destroy :remove_issues!
+
   cache_attribute :cached_serialized_timely_ratings, cache_key: :timely_ratings_cache_key, expires_in: 1.day do
     receipt_date && veteran.timely_ratings(from_date: receipt_date).map(&:ui_hash)
   end

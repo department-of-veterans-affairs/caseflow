@@ -26,6 +26,8 @@ class RampReview < ApplicationRecord
 
   validates :receipt_date, :option_selected, presence: { message: "blank" }, if: :saving_review
 
+  before_destroy :remove_issues!
+
   class << self
     def established
       where.not(established_at: nil)
