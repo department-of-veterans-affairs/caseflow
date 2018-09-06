@@ -31,7 +31,7 @@ class Generators::Veteran
         eft_account_number: nil,
         eft_account_type: nil,
         eft_routing_number: nil,
-        date_of_death: ["05/25/2016", nil].sample,
+        date_of_death: nil,
         email_address: nil,
         fiduciary_decision_category_type_code: nil,
         fiduciary_folder_location: nil,
