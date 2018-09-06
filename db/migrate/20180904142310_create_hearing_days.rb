@@ -2,7 +2,7 @@ class CreateHearingDays < ActiveRecord::Migration[5.1]
   def change
     create_table  :hearing_days do |t|
       t.datetime  :hearing_date,      null: false
-      t.string    :hearing_day_type,  null: false
+      t.string    :hearing_type,      null: false
       t.string    :regional_office
       t.string    :judge_id
       t.string    :room_info,         null: false
