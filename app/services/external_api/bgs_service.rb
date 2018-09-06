@@ -179,7 +179,7 @@ class ExternalApi::BGSService
                            participant_id = #{participant_id}",
                           service: :bgs,
                           name: "claimants.find_general_information_by_participant_id") do
-      basic_info = client.claimants.find_general_information_by_participant_id(participant_id)
+      bgs_info = client.claimants.find_general_information_by_participant_id(participant_id)
       bgs_info ? { relationship: bgs_info[:payee_type_name] } : {}
     end
   end
