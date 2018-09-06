@@ -46,7 +46,7 @@ const serverData = {
 };
 
 describe('QueueLoadingScreen', () => {
-  it.only('associates queue decisions/appeals and tasks', () => {
+  it('associates queue decisions/appeals and tasks', () => {
     const { tasks } = associateTasksWithAppeals(serverData);
 
     expect(tasks).to.deep.equal({
