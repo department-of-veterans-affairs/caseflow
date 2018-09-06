@@ -26,6 +26,7 @@ class RoSchedulePeriod < SchedulePeriod
         end
         super
       rescue StandardError
+        end_confirming_schedule
         raise ActiveRecord::Rollback
       end
       end_confirming_schedule

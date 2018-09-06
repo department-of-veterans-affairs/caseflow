@@ -128,7 +128,7 @@ export default class ReviewAssignments extends React.Component {
         title="This page has expired."
         messageText={<Link to="/schedule">Go back to home</Link>}
       />;
-    } else if (this.props.schedulePeriod.cannotFinalize) {
+    } else if (this.props.schedulePeriod.canFinalize === false) {
       return <StatusMessage
         type="status"
         title="Schedule is being submitted to VACOLS."
