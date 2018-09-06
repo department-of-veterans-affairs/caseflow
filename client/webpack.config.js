@@ -74,12 +74,6 @@ const config = {
             sourceMap: true,
             url: false
           }
-        },
-        {
-          loader: 'sass-loader',
-          options: {
-            sourceMap: true
-          }
         }]
       },
       {
