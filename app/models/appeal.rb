@@ -85,9 +85,8 @@ class Appeal < AmaReview
     "not implemented"
   end
 
-  # TODO: implement for AMA - grab it from BGS
   def veteran_is_deceased
-    "not implemented"
+    veteran && veteran.date_of_death.present?
   end
 
   def cavc
