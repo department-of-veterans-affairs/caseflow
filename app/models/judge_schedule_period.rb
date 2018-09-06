@@ -20,10 +20,18 @@ class JudgeSchedulePeriod < SchedulePeriod
       hearing_day.slice(:hearing_pkseq, :judge_id)
     end
 
-    transaction do
-      HearingDay.update_schedule(hearing_days)
-      super
+    start_confirming_schedule
+    JudgeSchedulePeriod.transaction do
+      begin
+        transaction do
+          HearingDay.update_schedule(hearing_days)
+        end
+        super
+      rescue StandardError => e
+        raise ActiveRecord::Rollback
+      end
     end
+    end_confirming_schedule
   end
 
   private

@@ -129,6 +129,12 @@ export default class ReviewAssignments extends React.Component {
         title="This page has expired."
         messageText={<Link to="/schedule">Go back to home</Link>}
       />;
+    } else if (this.props.schedulePeriod.isConfirming) {
+      return <StatusMessage
+        type="status"
+        title="Schedule is being submitted to VACOLS."
+        messageText={<Link to="/schedule">Go back to home</Link>}
+      />;
     }
 
     let hearingAssignmentColumns = [

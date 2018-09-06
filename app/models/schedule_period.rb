@@ -10,6 +10,26 @@ class SchedulePeriod < ApplicationRecord
   has_many :non_availabilities
 
   delegate :full_name, to: :user, prefix: true
+  attr_accessor :confirming_to_vacols
+
+  cache_attribute :submitting_to_vacols, expires_in: 1.day do
+    confirming_to_vacols
+  end
+
+  def clear_submitted_to_vacols
+    clear_cached_attr!(:submitting_to_vacols)
+  end
+
+  def start_confirming_schedule
+    @confirming_to_vacols = true
+    submitting_to_vacols
+  end
+
+  def end_confirming_schedule
+    clear_submitted_to_vacols
+    @confirming_to_vacols = false
+    submitting_to_vacols
+  end
 
   def validate_schedule_period
     errors[:base] << OverlappingSchedulePeriods if dates_already_finalized?
@@ -35,8 +55,8 @@ class SchedulePeriod < ApplicationRecord
   end
 
   def dates_already_finalized?
-    SchedulePeriod.where(type: type, finalized: true).any? do |schedule_period|
-      schedule_period.start_date <= start_date && start_date <= schedule_period.end_date
+    SchedulePeriod.where(type: type).any? do |schedule_period|
+      (schedule_period.start_date <= start_date && start_date <= schedule_period.end_date) && (schedule_period.submitting_to_vacols || schedule_period.finalized)
     end
   end
 
