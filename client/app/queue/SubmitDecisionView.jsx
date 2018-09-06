@@ -150,7 +150,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
 
     if (!decisionOpts.document_id) {
       documentIdErrorMessage = COPY.FORM_ERROR_FIELD_REQUIRED;
-    } else if (!validateWorkProductTypeAndId(this.props.decision)) {
+    } else if (decisionType === DECISION_TYPES.OMO_REQUEST && !validateWorkProductTypeAndId(this.props.decision)) {
       documentIdErrorMessage = COPY.FORM_ERROR_FIELD_INVALID;
     }
 
