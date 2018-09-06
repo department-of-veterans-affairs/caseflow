@@ -9,7 +9,6 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
   def show
     sp = if schedule_period.can_be_finalized? && !schedule_period.submitting_to_vacols
            schedule_period.to_hash.merge(
-             is_confirming: schedule_period.submitting_to_vacols,
              hearing_days: schedule_period.algorithm_assignments.map do |hearing_day|
                hearing_day[:regional_office] = RegionalOffice.city_state_by_key(hearing_day[:regional_office])
                hearing_day
@@ -17,8 +16,7 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
            )
          else
            schedule_period.to_hash.merge(
-             cannot_finalize: !schedule_period.can_be_finalized?,
-             is_confirming: schedule_period.submitting_to_vacols
+             cannot_finalize: !schedule_period.can_be_finalized?           
            )
          end
     render json: { schedule_period: sp }
