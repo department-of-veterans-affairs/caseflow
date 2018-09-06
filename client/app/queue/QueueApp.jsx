@@ -41,10 +41,7 @@ import OrganizationQueue from './OrganizationQueue';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
-import {
-  PAGE_TITLES,
-  SEND_TO_LOCATION_MODAL_TYPES
-} from './constants';
+import { PAGE_TITLES } from './constants';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import type { State } from './types/state';
@@ -136,9 +133,7 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedColocatedPlaceHold = (props) => <ColocatedPlaceHoldView nextStep="/queue" {...props.match.params} />;
 
-  routedSendColocatedTaskToTeam = () => <TriggerModal modal={SEND_TO_LOCATION_MODAL_TYPES.team} />;
-
-  routedSendColocatedTaskToAttorney = () => <TriggerModal modal={SEND_TO_LOCATION_MODAL_TYPES.attorney} />;
+  triggerModal = (props) => <TriggerModal modal={props.match.params.modalType} />;
 
   routedOrganization = (props) => <OrganizationQueueLoadingScreen
     urlToLoad={`${props.location.pathname}/tasks`}>
@@ -273,14 +268,9 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedColocatedPlaceHold} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/send_to_team"
-            title="Send to Team | Caseflow"
-            render={this.routedSendColocatedTaskToTeam} />
-          <PageRoute
-            exact
-            path="/queue/appeals/:appealId/send_to_attorney"
-            title="Send to Attorney | Caseflow"
-            render={this.routedSendColocatedTaskToAttorney} />
+            path="/queue/modal/:modalType"
+            title="Caseflow"
+            render={this.triggerModal} />
           <PageRoute
             exact
             path="/organizations/:organization"
