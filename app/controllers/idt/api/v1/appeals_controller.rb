@@ -13,10 +13,13 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     # We query the case assignment table here so we can get information for
     # who wrote the case decision docs/OMO request and what their doc ids are.
     # For AMA appeals, we should get that information from our attorney and judge case review tables.
-    tasks = QueueRepository.tasks_for_appeal(params[:appeal_id])
-    appeals = QueueRepository.appeals_by_vacols_ids([params[:appeal_id]])
-    return render json: { message: "Appeal not found" }, status: 404 if appeals.empty?
-    render json: json_appeal_details(tasks, appeals[0])
+    tasks = if appeal.is_a?(LegacyAppeal)
+              QueueRepository.tasks_for_appeal(appeal.vacols_id)
+            else
+              []
+            end
+    return render json: { message: "Appeal not found" }, status: 404 unless appeal
+    render json: json_appeal_details(tasks, appeal)
   end
 
   def appeals_assigned_to_user
@@ -47,6 +50,10 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     appeal_details[:data][:attributes][:documents] = json_documents(tasks)
 
     appeal_details
+  end
+
+  def appeal
+    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
   end
 
   def assigned_by_user(task)
