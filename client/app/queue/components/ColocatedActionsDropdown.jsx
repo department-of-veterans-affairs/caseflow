@@ -14,10 +14,7 @@ import {
 import { stageAppeal } from '../QueueActions';
 import { showModal } from '../uiReducer/uiActions';
 
-import {
-  dropdownStyling,
-  SEND_TO_LOCATION_MODAL_TYPES
-} from '../constants';
+import { dropdownStyling } from '../constants';
 import CO_LOCATED_ACTIONS from '../../../constants/CO_LOCATED_ACTIONS.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import COPY from '../../../COPY.json';
@@ -52,10 +49,11 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
 
     switch (actionType) {
     case CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY:
-      return this.props.showModal(SEND_TO_LOCATION_MODAL_TYPES.attorney);
-    case CO_LOCATED_ACTIONS.SEND_TO_TEAM: {
-      return this.props.showModal(SEND_TO_LOCATION_MODAL_TYPES.team);
-    }
+      history.push(`/queue/appeals/${appealId}/send_to_attorney`);
+      break;
+    case CO_LOCATED_ACTIONS.SEND_TO_TEAM:
+      history.push(`/queue/appeals/${appealId}/send_to_team`);
+      break;
     case CO_LOCATED_ACTIONS.PLACE_HOLD:
       history.push(`/queue/appeals/${appealId}/place_hold`);
       break;
