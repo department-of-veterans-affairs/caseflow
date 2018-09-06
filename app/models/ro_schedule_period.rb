@@ -25,7 +25,7 @@ class RoSchedulePeriod < SchedulePeriod
           HearingDay.create_schedule(hearing_schedule)
         end
         super
-      rescue StandardError => e
+      rescue StandardError
         raise ActiveRecord::Rollback
       end
       end_confirming_schedule

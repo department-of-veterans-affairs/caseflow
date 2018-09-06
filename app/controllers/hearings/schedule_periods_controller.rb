@@ -16,10 +16,10 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
              end
            )
          else
-          schedule_period.to_hash.merge(
-            cannot_finalize: (schedule_period.can_be_finalized? == false),
-            is_confirming: schedule_period.submitting_to_vacols
-          )
+           schedule_period.to_hash.merge(
+             cannot_finalize: !schedule_period.can_be_finalized?,
+             is_confirming: schedule_period.submitting_to_vacols
+           )
          end
     render json: { schedule_period: sp }
   rescue HearingSchedule::Errors::NotEnoughAvailableDays,

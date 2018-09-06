@@ -32,7 +32,7 @@ class SchedulePeriod < ApplicationRecord
   end
 
   def validate_schedule_period
-    errors[:base] << OverlappingSchedulePeriods if dates_already_finalized?
+    errors[:base] << OverlappingSchedulePeriods if dates_finalized_or_being_finalized?
   end
 
   def spreadsheet_location
@@ -54,14 +54,15 @@ class SchedulePeriod < ApplicationRecord
     update(finalized: true)
   end
 
-  def dates_already_finalized?
+  def dates_finalized_or_being_finalized?
     SchedulePeriod.where(type: type).any? do |schedule_period|
-      (schedule_period.start_date <= start_date && start_date <= schedule_period.end_date) && (schedule_period.submitting_to_vacols || schedule_period.finalized)
+      (schedule_period.start_date <= start_date && start_date <= schedule_period.end_date) &&
+        (schedule_period.submitting_to_vacols || schedule_period.finalized)
     end
   end
 
   def can_be_finalized?
     nbr_of_days = updated_at.beginning_of_day - Time.zone.today.beginning_of_day
-    ((nbr_of_days < 5) && !dates_already_finalized?) && !finalized
+    ((nbr_of_days < 5) && !dates_finalized_or_being_finalized?) && !finalized
   end
 end

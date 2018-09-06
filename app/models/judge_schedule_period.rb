@@ -27,7 +27,7 @@ class JudgeSchedulePeriod < SchedulePeriod
           HearingDay.update_schedule(hearing_days)
         end
         super
-      rescue StandardError => e
+      rescue StandardError
         raise ActiveRecord::Rollback
       end
     end
