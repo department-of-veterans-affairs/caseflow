@@ -191,7 +191,7 @@ export class HearingWorksheet extends React.PureComponent {
       {!this.props.print &&
         <div className="cf-push-right">
           <Button
-            classNames={['usa-button-outline']}
+            classNames={['usa-button-secondary']}
             name="Save as PDF"
             onClick={this.openPdf(worksheet, worksheetIssues)}
             aria-label="Save as PDF"

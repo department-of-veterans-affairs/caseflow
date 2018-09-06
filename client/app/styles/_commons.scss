@@ -311,7 +311,7 @@ dd {
     }
   }
 
-  .usa-button-outline {
+  .usa-button-secondary {
     box-shadow: inset 0 0 0 2px $color-primary;
 
     &:hover {
@@ -845,6 +845,7 @@ table {
 
 // Overrides table th, table td classes
 // from web design standards
+// TODO remove all table overrides
 .cf-table-borderless {
   th,
   td {
@@ -859,6 +860,11 @@ table {
     background-color: $color-white;
   }
 
+  th {
+    &:first-child {
+      padding-left: 1.5rem;
+    }
+  }
 }
 
 // ===========================*
@@ -943,8 +949,6 @@ input {
 }
 
 fieldset {
-  margin-bottom: rem(40px);
-
   > *,
   .cf-form-textinput {
     margin-bottom: 0;
