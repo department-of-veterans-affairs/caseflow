@@ -18,16 +18,8 @@ class Claimant < ApplicationRecord
   end
   delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
 
-  def first_name
-    name && name.first
-  end
-
-  def last_name
-    name && name.last
-  end
-
-  def middle_initial
-    ""
+  def name
+    FullName.new(first_name, "", last_name)
   end
 
   def name_suffix

@@ -74,7 +74,7 @@ class Appeal < AmaReview
     claimants.first
   end
 
-  delegate :first_name, :last_name, :middle_initial, :name_suffix, to: :appellant, prefix: true
+  delegate :first_name, :last_name, :middle_name, :name_suffix, to: :appellant, prefix: true
 
   def appellant_is_not_veteran
     appellant ? appellant.relationship.present? : false
