@@ -37,7 +37,7 @@ describe JudgeLegacyTask do
           expect(subject.id).to eq("1111")
           expect(subject.due_on).to eq 1.day.ago
           expect(subject.assigned_on).to eq 3.days.ago.to_date
-          expect(subject.task_type).to eq "Review"
+          expect(subject.action).to eq "review"
           expect(subject.task_id).to eq "1111-2015-01-25"
           expect(subject.document_id).to eq "173341517.524"
           expect(subject.assigned_by_first_name).to eq "Joe"
@@ -55,7 +55,7 @@ describe JudgeLegacyTask do
           expect(subject.id).to eq("1111")
           expect(subject.due_on).to eq 1.day.ago
           expect(subject.assigned_on).to eq 3.days.ago.to_date
-          expect(subject.task_type).to eq "Assign"
+          expect(subject.action).to eq "assign"
           expect(subject.task_id).to eq "1111-2015-01-25"
           expect(subject.previous_task).to eq nil
         end

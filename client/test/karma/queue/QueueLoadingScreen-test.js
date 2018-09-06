@@ -31,7 +31,7 @@ const serverData = {
             assigned_on: '2018-08-02T17:37:03.000Z'
           },
           task_id: '3625593-2018-07-11',
-          task_type: 'Review',
+          action: 'review',
           user_id: 'BVANKUVALIS',
           veteran_file_number: '767574947',
           veteran_name: 'Mills, Beulah, J',
@@ -62,7 +62,7 @@ describe('QueueLoadingScreen', () => {
         addedByName: 'Nash X Kuvalis',
         addedByCssId: 'BVANKUVALIS',
         taskId: '3625593-2018-07-11',
-        taskType: 'Review',
+        action: 'review',
         documentId: '12345-12345678',
         assignedBy: {
           firstName: 'Stephen',
