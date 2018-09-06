@@ -147,8 +147,7 @@ describe Appeal do
     end
 
     it "creates root and vso tasks" do
-      expect(RootTask).to receive(:create!).once
-      expect(GenericTask).to receive(:create_tasks_for_appeal!).once
+      expect(RootTask).to receive(:create_root_and_sub_tasks!).once
 
       appeal.create_tasks_on_intake_success!
     end

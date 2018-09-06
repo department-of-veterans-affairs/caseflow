@@ -70,7 +70,7 @@ RSpec.feature "AmaQueue" do
       ]
     end
 
-    scenario "veteran is the appellant", focus: true do
+    scenario "veteran is the appellant" do
       visit "/queue/beaam"
       click_on appeals.first.veteran.first_name
 
