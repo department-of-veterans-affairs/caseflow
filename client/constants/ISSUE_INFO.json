@@ -1075,6 +1075,22 @@
       "01": {
         "description": "Fiduciary Appointment",
         "plain_description": "Fiduciary Appointment"
+      },
+      "02": {
+        "description": "Hub Manager removal of a fiduciary under §13.500",
+        "plain_description": "Hub Manager removal of a fiduciary under §13.500"
+      },
+      "03": {
+        "description": "Hub Manager misuse determination under §13.400",
+        "plain_description": "Hub Manager misuse determination under §13.400"
+      },
+      "04": {
+        "description": "RO Director decision upon recon of a misuse determ",
+        "plain_description": "RO Director decision upon recon of a misuse determ"
+      },
+      "05": {
+        "description": "Dir of PFS negligence determination for reissuance",
+        "plain_description": "Dir of PFS negligence determination for reissuance"
       }
     }
   }
