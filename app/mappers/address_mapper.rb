@@ -11,11 +11,4 @@ module AddressMapper
       zip: bgs_address[:zip_prefix_nbr]
     }
   end
-
-  def get_relationship_from_bgs_info(bgs_info)
-    return {} unless bgs_info
-    {
-      relationship: bgs_info[:payee_type_name]
-    }
-  end
 end
