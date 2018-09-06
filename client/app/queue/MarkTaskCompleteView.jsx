@@ -53,7 +53,7 @@ class MarkTaskCompleteView extends React.Component<Props> {
       detail: `Task for ${appeal.veteranFullName} completed`
     };
 
-    const payload = { data: { task: { status: 'VALUE DOESNT MATTER' } } };
+    const payload = { data: { task: { status: '' } } };
 
     this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
