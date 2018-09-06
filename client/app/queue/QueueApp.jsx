@@ -26,8 +26,7 @@ import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
-import ColocatedSendTaskToTeamView from './ColocatedSendTaskToTeamView';
-import ColocatedSendTaskToAttorneyView from './ColocatedSendTaskToAttorneyView';
+import TriggerModal from './TriggerModal';
 
 import CaseListView from './CaseListView';
 import CaseSearchSheet from './CaseSearchSheet';
@@ -42,7 +41,10 @@ import OrganizationQueue from './OrganizationQueue';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { PAGE_TITLES } from './constants';
+import {
+  PAGE_TITLES,
+  SEND_TO_LOCATION_MODAL_TYPES
+} from './constants';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import type { State } from './types/state';
@@ -134,13 +136,9 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedColocatedPlaceHold = (props) => <ColocatedPlaceHoldView nextStep="/queue" {...props.match.params} />;
 
-  routedSendColocatedTaskToTeam = (props) => <ColocatedSendTaskToTeamView>
-    {this.routedQueueDetail(props)}
-  </ColocatedSendTaskToTeamView>;
+  routedSendColocatedTaskToTeam = () => <TriggerModal modal={SEND_TO_LOCATION_MODAL_TYPES.team} />;
 
-  routedSendColocatedTaskToAttorney = (props) => <ColocatedSendTaskToAttorneyView>
-    {this.routedQueueDetail(props)}
-  </ColocatedSendTaskToAttorneyView>;
+  routedSendColocatedTaskToAttorney = () => <TriggerModal modal={SEND_TO_LOCATION_MODAL_TYPES.attorney} />;
 
   routedOrganization = (props) => <OrganizationQueueLoadingScreen
     urlToLoad={`${props.location.pathname}/tasks`}>
