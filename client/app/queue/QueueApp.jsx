@@ -79,7 +79,7 @@ class QueueApp extends React.PureComponent<Props> {
     const { userRole } = this.props;
 
     if (userRole === USER_ROLE_TYPES.attorney) {
-      return <AttorneyTaskListView {...this.props} />;
+      return <AttorneyTaskListView />;
     } else if (userRole === USER_ROLE_TYPES.judge) {
       return <JudgeReviewTaskListView {...this.props} />;
     } else if (userRole === USER_ROLE_TYPES.colocated) {
@@ -97,9 +97,9 @@ class QueueApp extends React.PureComponent<Props> {
     <BeaamAppealListView {...this.props} />
   </QueueLoadingScreen>;
 
-  routedJudgeQueueList = (taskType) => ({ match }) => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
+  routedJudgeQueueList = (action) => ({ match }) => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
     <SearchBar feedbackUrl={this.props.feedbackUrl} />
-    {taskType === 'Assign' ?
+    {action === 'assign' ?
       <JudgeAssignTaskListView {...this.props} match={match} /> :
       <JudgeReviewTaskListView {...this.props} />}
   </QueueLoadingScreen>;
@@ -206,11 +206,11 @@ class QueueApp extends React.PureComponent<Props> {
             exact
             path="/queue/:userId/review"
             title="Review Cases | Caseflow"
-            render={this.routedJudgeQueueList('Review')} />
+            render={this.routedJudgeQueueList('review')} />
           <PageRoute
             path="/queue/:userId/assign"
             title="Unassigned Cases | Caseflow"
-            render={this.routedJudgeQueueList('Assign')} />
+            render={this.routedJudgeQueueList('assign')} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"

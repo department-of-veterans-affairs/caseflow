@@ -104,7 +104,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       addedByName: task.attributes.added_by_name,
       addedByCssId: task.attributes.added_by_css_id,
       taskId: task.attributes.task_id,
-      taskType: task.attributes.task_type,
+      action: task.attributes.action,
       documentId: task.attributes.document_id,
       workProduct: task.attributes.work_product,
       previousTaskAssignedOn: task.attributes.previous_task.assigned_on,
