@@ -249,8 +249,7 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
     const { appealId, issueId } = action.payload;
     const { stagedChanges: { appeals } } = state;
 
-    const issues = _.reject(appeals[appealId].issues,
-      (issue) => issue.vacols_sequence_id === Number(issueId));
+    const issues = _.reject(appeals[appealId].issues, (issue) => issue.id === Number(issueId));
 
     return update(state, {
       stagedChanges: {
