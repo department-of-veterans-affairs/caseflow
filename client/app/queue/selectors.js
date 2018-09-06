@@ -89,19 +89,14 @@ export const tasksForAppealAssignedToAttorneySelector = createSelector(
   }
 );
 
-export const tasksForAppealAssignedToOrganizationSelector = createSelector(
-  [getTasksForAppeal, getOrganizationId],
-  (tasks: Tasks, id: Number) => {
-    return _.filter(tasks, (task) => task.assignedTo.id === id && task.status !== 'completed');
-  }
-);
-
 export const appealsByCaseflowVeteranId = createSelector(
   [appealsWithDetailsSelector, getCaseflowVeteranId],
   (appeals: Appeals, caseflowVeteranId: string) =>
     _.filter(appeals, (appeal: Appeal) => appeal.caseflowVeteranId &&
       appeal.caseflowVeteranId.toString() === caseflowVeteranId.toString())
 );
+
+const incompleteTasksSelector = (tasks: Array<Task>) => tasks.filter((task) => task.status !== 'completed');
 
 export const tasksByAssigneeCssIdSelector = createSelector(
   [tasksWithAppealSelector, getUserCssId],
@@ -111,7 +106,17 @@ export const tasksByAssigneeCssIdSelector = createSelector(
 
 export const incompleteTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks: Array<Task>) => tasks.filter((task) => task.status !== 'completed')
+  (tasks: Array<Task>) => incompleteTasksSelector(tasks)
+);
+
+export const organizationTasksByAssigneeIdSelector = createSelector(
+  [getTasksForAppeal, getOrganizationId],
+  (tasks: Tasks, id: Number) => _.filter(tasks, (task) => task.assignedTo.id === id)
+);
+
+export const incompleteOrganizationTasksByAssigneeIdSelector = createSelector(
+  [organizationTasksByAssigneeIdSelector],
+  (tasks: Tasks) => incompleteTasksSelector(tasks)
 );
 
 export const newTasksByAssigneeCssIdSelector = createSelector(
