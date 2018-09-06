@@ -63,6 +63,25 @@ const config = {
           }
         }]
       },
+            {
+        test: /\.css?$/,
+        use: [{
+          loader: 'style-loader'
+        },
+        {
+          loader: 'css-loader',
+          options: {
+            sourceMap: true,
+            url: false
+          }
+        },
+        {
+          loader: 'sass-loader',
+          options: {
+            sourceMap: true
+          }
+        }]
+      },
       {
         test: /\.(png|svg|jpg|gif)$/,
         use: [
