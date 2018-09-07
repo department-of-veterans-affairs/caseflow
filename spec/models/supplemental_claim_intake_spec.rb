@@ -143,7 +143,7 @@ describe SupplementalClaimIntake do
       subject
 
       expect(intake).to be_success
-      expect(intake.detail.established_at).to eq(Time.zone.now)
+      expect(intake.detail.establishment_submitted_at).to eq(Time.zone.now)
       expect(ratings_end_product_establishment).to_not be_nil
       expect(ratings_end_product_establishment.established_at).to eq(Time.zone.now)
 

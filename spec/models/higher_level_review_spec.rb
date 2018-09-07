@@ -13,15 +13,13 @@ describe HigherLevelReview do
   let(:receipt_date) { SupplementalClaim::AMA_BEGIN_DATE + 1 }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
-  let(:established_at) { nil }
 
   let(:higher_level_review) do
     HigherLevelReview.new(
       veteran_file_number: veteran_file_number,
       receipt_date: receipt_date,
       informal_conference: informal_conference,
-      same_office: same_office,
-      established_at: established_at
+      same_office: same_office
     )
   end
 
