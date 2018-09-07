@@ -30,7 +30,7 @@ class Task < ApplicationRecord
   end
 
   def self.create_from_params(params, current_user)
-    new.verify_user_access(current_user)
+    verify_user_can_assign(current_user)
     create(params)
   end
 
@@ -59,7 +59,18 @@ class Task < ApplicationRecord
     update_status_if_children_tasks_are_complete
   end
 
+  def can_user_access?(user)
+    return true if task.assigned_to == user || task.assigned_by == user
+    false
+  end
+
   def verify_user_access(user)
+    unless can_user_access?(user)
+      fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot access this task"
+    end
+  end
+
+  def self.verify_user_can_assign(user)
     unless (user.attorney_in_vacols? && FeatureToggle.enabled?(:attorney_assignment_to_colocated, user: user)) ||
            (user.judge_in_vacols? && FeatureToggle.enabled?(:judge_assignment_to_attorney, user: user))
       fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot assign this task"

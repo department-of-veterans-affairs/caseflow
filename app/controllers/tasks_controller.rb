@@ -74,18 +74,8 @@ class TasksController < ApplicationController
   #   on_hold_duration: "something"
   # }
   def update
-    # GenericTasks may be assigned to the organization and not the user, and not assigned by the current user either.
-    # GenericTask.update_from_params() will throw an error if the current user is not allowed to act on it though so
-    # we should be covered in that case.
-    #
-    # TODO: This logic should probably live in the Task model itself (when we call update_from_params probably).
-    # Rescue from the error and redirect to unauthorized when we throw an error.
-    if task.assigned_to != current_user &&
-       task.assigned_by != current_user &&
-       (task.class.name != GenericTask.name || !task.verify_user_access(current_user))
-      redirect_to "/unauthorized"
-      return
-    end
+    redirect_to("/unauthorized") && return unless task.can_user_access?(current_user)
+
     task.update_from_params(update_params, current_user)
 
     return invalid_record_error(task) unless task.valid?
@@ -102,7 +92,7 @@ class TasksController < ApplicationController
 
     return invalid_role_error unless QUEUES.keys.include?(user_role.try(:to_sym))
 
-    if %w[attorney judge].include?(user_role) && appeal.class.name == LegacyAppeal.name
+    if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
       return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], user_role)
     end
 
