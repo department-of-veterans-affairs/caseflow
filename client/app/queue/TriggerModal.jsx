@@ -9,7 +9,7 @@ class TriggerModal extends React.Component {
   constructor(props) {
     super(props);
     this.props.showModal(props.modal);
-    this.props.history.replace(this.props.history.location.state.previous);
+    this.props.history.goBack();
   }
 
   render = () => null;
