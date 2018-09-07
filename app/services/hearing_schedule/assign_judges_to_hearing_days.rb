@@ -6,6 +6,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   TB_ADDITIONAL_NA_DAYS = 3
   CO_ROOM_NUM = "1".freeze
+  DAYS_OF_SEPERATION = 3
 
   class HearingDaysNotAllocated < StandardError; end
   class NoJudgesProvided < StandardError; end
@@ -21,60 +22,78 @@ class HearingSchedule::AssignJudgesToHearingDays
     fetch_hearing_days_for_schedule_period
   end
 
-  # rubocop:disable Metrics/MethodLength
   def match_hearing_days_to_judges
-    assigned_hearing_days = []
-    unassigned_hearing_days = fetch_hearing_days_for_matching
-    sorted_judges = fetch_judges_for_matching
+    @assigned_hearing_days = []
+    @unassigned_hearing_days = @video_co_hearing_days.shuffle
 
-    total_hearing_day_count = @video_co_hearing_days.length
-
-    assigned_hearing_days = []
-    all_hearing_days_assigned = false
-
-    until all_hearing_days_assigned
-      catch :hearing_days_assigned do
-        prior_iter_days_assigned = assigned_hearing_days.length
-        sorted_judges.each do |css_id|
-          index = 0
-
-          while index < unassigned_hearing_days.length
-            current_hearing_day = unassigned_hearing_days[index]
-            unless can_day_be_assigned(current_hearing_day, assigned_hearing_days, css_id)
-              assigned_hearing_days.push(*assign_judge_to_hearing_day(current_hearing_day, css_id))
-              unassigned_hearing_days.delete(current_hearing_day)
-              all_hearing_days_assigned = (total_hearing_day_count == assigned_hearing_days.length)
-              break
-            end
-            index += 1
-            throw :hearing_days_assigned if all_hearing_days_assigned
-          end
-        end
-        verify_assignments(unassigned_hearing_days, prior_iter_days_assigned, assigned_hearing_days)
-      end
-    end
-    assigned_hearing_days.sort_by { |day| day[:hearing_date] }
+    evenly_assign_judges_to_hearing_days
+    assign_remaining_hearing_days
+    verify_assignments(unassigned_hearing_days)
+    @assigned_hearing_days.sort_by { |day| day[:hearing_date] }
   end
-  # rubocop:enable Metrics/MethodLength
 
   private
 
-  def can_day_be_assigned(current_hearing_day, assigned_hearing_days, css_id)
+  def evenly_assign_judges_to_hearing_days
+    sorted_judges = fetch_judges_for_matching
+
+    judge_count = sorted_judges.length
+    total_hearing_day_count = @video_co_hearing_days.length
+    max_days_per_judge = (total_hearing_day_count.to_f / judge_count).floor
+
+    days_of_separation = 3
+
+    sorted_judges.each do |css_id|
+      days_assigned = 0
+
+      @unassigned_hearing_days.delete_if do |current_hearing_day|
+        break if days_assigned >= max_days_per_judge
+        unless can_day_be_assigned(current_hearing_day, @assigned_hearing_days, css_id)
+          @assigned_hearing_days.push(*assign_judge_to_hearing_day(current_hearing_day, css_id))
+          days_assigned += 1
+          next true
+        end
+      end
+    end
+  end
+
+  def assign_remaining_hearing_days
+    @unassigned_hearing_days.each do |current_hearing_day|
+      sorted_judges = get_sorted_judges_by_assignments
+      sorted_judges.each do |css_id|
+        unless can_day_be_assigned(current_hearing_day, css_id)
+          @assigned_hearing_days.push(*assign_judge_to_hearing_day(current_hearing_day, css_id))
+          break
+        end
+      end
+    end
+  end 
+
+  def get_sorted_judges_by_assignments
+    @assigned_hearing_days.reduce({}) do |acc, hearing_day|
+      acc[hearing_day[:css_id]] ||= 0
+      acc[hearing_day[:css_id]] += 1
+      acc
+    end.sort_by { |_k, v| v }.reverse.to_h.keys
+  end
+
+  def can_day_be_assigned(current_hearing_day, css_id)
     hearing_date = current_hearing_day.hearing_date
 
     @judges[css_id][:non_availabilities].include?(hearing_date) ||
-      hearing_day_already_assigned_to_judge?(assigned_hearing_days,
+      hearing_day_already_assigned_to_judge?(@assigned_hearing_days,
                                              current_hearing_day.hearing_pkseq) ||
-      date_already_assigned_to_judge?(assigned_hearing_days,
+      date_already_assigned_to_judge?(@assigned_hearing_days,
                                       @judges[css_id][:staff_info].sattyid, hearing_date)
+      
   end
 
   def fetch_hearing_days_for_matching
-    (@algo_counter > 0) ? @video_co_hearing_days.shuffle : sort_hearing_days_by_non_avail
+    @video_co_hearing_days.shuffle
   end
 
   def fetch_judges_for_matching
-    (@algo_counter > 0) ? @judges.keys.shuffle : sort_judge_by_non_available_days
+    sort_judge_by_non_available_days
   end
 
   def sort_hearing_days_by_non_avail
@@ -95,22 +114,20 @@ class HearingSchedule::AssignJudgesToHearingDays
     sorted_hearings.map { |day| day[:day] }
   end
 
-  def hearing_day_already_assigned_to_judge?(assigned_hearing_days, hearing_pkseq)
-    assigned_hearing_days.any? { |day| day[:hearing_pkseq] == hearing_pkseq }
+  def hearing_day_already_assigned_to_judge?(hearing_pkseq)
+    @assigned_hearing_days.any? { |day| day[:hearing_pkseq] == hearing_pkseq }
   end
 
-  def date_already_assigned_to_judge?(assigned_hearing_days, sattyid, date)
-    assigned_hearing_days.any? do |day|
-      day[:judge_id] == sattyid && day[:hearing_date] == date
+  def date_already_assigned_to_judge?(sattyid, date)
+    @assigned_hearing_days.any? do |day|
+      day[:judge_id] == sattyid && (day[:hearing_date] - date).abs <= DAYS_OF_SEPERATION
     end
   end
 
-  def verify_assignments(unassigned_hearing_days, prior_iter_days_assigned, assigned_hearing_days)
-    if (prior_iter_days_assigned == assigned_hearing_days.length) &&
-       assigned_hearing_days.length != @video_co_hearing_days.length
-      dates = unassigned_hearing_days.map(&:hearing_date)
-
+  def verify_assignments
+    if @assigned_hearing_days.length != @video_co_hearing_days.length
       if @algo_counter >= 20
+        dates = @unassigned_hearing_days.map(&:hearing_date)
         fail HearingSchedule::Errors::CannotAssignJudges.new(
           "Hearing days on these dates couldn't be assigned #{dates}.",
           dates: dates
@@ -157,7 +174,7 @@ class HearingSchedule::AssignJudgesToHearingDays
         regional_office: is_central_hearing ? nil : hearing_day.folder_nr.split(" ")[1],
         judge_id: @judges[css_id][:staff_info].sattyid,
         judge_name: get_judge_name(css_id)
-      )
+      ).merge(css_id: css_id)
     end
   end
 
