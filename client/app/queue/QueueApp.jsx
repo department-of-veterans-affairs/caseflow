@@ -26,6 +26,7 @@ import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
+import TriggerModal from './TriggerModal';
 
 import CaseListView from './CaseListView';
 import CaseSearchSheet from './CaseSearchSheet';
@@ -132,6 +133,8 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedColocatedPlaceHold = (props) => <ColocatedPlaceHoldView nextStep="/queue" {...props.match.params} />;
 
+  triggerModal = (props) => <TriggerModal modal={props.match.params.modalType} />;
+
   routedOrganization = (props) => <OrganizationQueueLoadingScreen
     urlToLoad={`${props.location.pathname}/tasks`}>
     <SearchBar feedbackUrl={this.props.feedbackUrl} />
@@ -201,11 +204,11 @@ class QueueApp extends React.PureComponent<Props> {
             exact
             path="/queue/:userId/review"
             title="Review Cases | Caseflow"
-            render={this.routedJudgeQueueList('Review')} />
+            render={this.routedJudgeQueueList('review')} />
           <PageRoute
             path="/queue/:userId/assign"
             title="Unassigned Cases | Caseflow"
-            render={this.routedJudgeQueueList('Assign')} />
+            render={this.routedJudgeQueueList('assign')} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"
@@ -263,6 +266,11 @@ class QueueApp extends React.PureComponent<Props> {
             path="/queue/appeals/:appealId/place_hold"
             title="Place Hold | Caseflow"
             render={this.routedColocatedPlaceHold} />
+          <PageRoute
+            exact
+            path="/queue/modal/:modalType"
+            title="Caseflow"
+            render={this.triggerModal} />
           <PageRoute
             exact
             path="/organizations/:organization"
