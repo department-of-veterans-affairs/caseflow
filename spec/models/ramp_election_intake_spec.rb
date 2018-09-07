@@ -50,6 +50,15 @@ describe RampElectionIntake do
              receipt_date: 3.days.ago)
     end
 
+    let!(:ramp_issue) do
+      RampIssue.new(
+        review_type: detail,
+        contention_reference_id: "1234",
+        description: "description",
+        source_issue_id: "12345"
+      )
+    end
+
     it "cancels and clears detail values" do
       subject
 
@@ -62,6 +71,7 @@ describe RampElectionIntake do
         option_selected: nil,
         receipt_date: nil
       )
+      expect { ramp_issue.reload }.to raise_error ActiveRecord::RecordNotFound
     end
 
     context "when already complete" do

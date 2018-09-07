@@ -128,34 +128,35 @@ const hasNewDocuments = (newDocsForAppeal: NewDocsForAppeal, task: Task) => {
   return newDocsForAppeal[task.externalAppealId].docs.length > 0;
 };
 
+const incompleteTasksWithHold: (State) => Array<Task> = createSelector(
+  [incompleteTasksByAssigneeCssIdSelector],
+  (tasks: Array<Task>) => tasks.filter((task) => task.placedOnHoldAt)
+);
+
 export const pendingTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
-  [incompleteTasksByAssigneeCssIdSelector, getNewDocsForAppeal],
-  (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) =>
-    tasks.filter(
-      (task) =>
-        task.placedOnHoldAt &&
-          (moment().diff(moment(task.placedOnHoldAt), 'days') >= task.onHoldDuration ||
-            hasNewDocuments(newDocsForAppeal, task)))
+  [incompleteTasksWithHold, getNewDocsForAppeal],
+  (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) => tasks.filter((task) =>
+    moment().diff(moment(task.placedOnHoldAt), 'days') >= task.onHoldDuration ||
+    hasNewDocuments(newDocsForAppeal, task)
+  )
 );
 
 export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
-  [incompleteTasksByAssigneeCssIdSelector, getNewDocsForAppeal],
-  (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) =>
-    tasks.filter(
-      (task) =>
-        task.placedOnHoldAt &&
-          (moment().diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration &&
-            !hasNewDocuments(newDocsForAppeal, task)))
+  [incompleteTasksWithHold, getNewDocsForAppeal],
+  (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) => tasks.filter((task) =>
+    moment().diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration &&
+    !hasNewDocuments(newDocsForAppeal, task)
+  )
 );
 
 export const judgeReviewTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => [null, undefined, 'Review'].includes(task.taskType))
+  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => [null, undefined, 'review'].includes(task.action))
 );
 
 export const judgeAssignTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => task.taskType === 'Assign')
+  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => task.action === 'assign')
 );
 
 // ***************** Non-memoized selectors *****************

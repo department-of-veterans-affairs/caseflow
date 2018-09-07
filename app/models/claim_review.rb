@@ -22,6 +22,8 @@ class ClaimReview < AmaReview
       end_product_establishment.perform!
       create_contentions_for_end_product_establishment(end_product_establishment)
     end
+
+    end_product_establishments.each(&:commit!)
   end
 
   # NOTE: Choosing not to test this method because it is fully tested in RequestIssuesUpdate.perform!
