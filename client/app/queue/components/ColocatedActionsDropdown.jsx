@@ -12,7 +12,6 @@ import {
   appealWithDetailSelector
 } from '../selectors';
 import { stageAppeal } from '../QueueActions';
-import { showModal } from '../uiReducer/uiActions';
 
 import {
   dropdownStyling,
@@ -34,7 +33,6 @@ type Props = Params & {|
   task: Task,
   appeal: Appeal,
   // dispatch
-  showModal: typeof showModal,
   stageAppeal: typeof stageAppeal,
   // withrouter
   history: Object
@@ -106,7 +104,6 @@ const mapStateToProps = (state: State, ownProps: Params) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  showModal,
   stageAppeal
 }, dispatch);
 
