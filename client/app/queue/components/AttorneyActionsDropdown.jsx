@@ -48,7 +48,7 @@ class AttorneyActionsDropdown extends React.PureComponent<Props> {
     const decisionType = props.value;
     const routes = {
       omo_request: 'submit',
-      draft_decision: 'dispositions',
+      draft_decision: 'special_issues',
       colocated_task: 'colocated_task'
     };
     const route = routes[decisionType];

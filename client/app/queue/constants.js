@@ -50,7 +50,8 @@ export const ACTIONS = {
   RECEIVE_TASKS: 'RECEIVE_TASKS',
   RECEIVE_APPEAL_DETAILS: 'RECEIVE_APPEAL_DETAILS',
   SET_TASK_ASSIGNMENT: 'SET_TASK_ASSIGNMENT',
-  SET_TASK_ATTRS: 'SET_TASK_ATTRS'
+  SET_TASK_ATTRS: 'SET_TASK_ATTRS',
+  SET_SPECIAL_ISSUE: 'SET_SPECIAL_ISSUE'
 };
 
 // 'red' isn't contrasty enough w/white; it raises Sniffybara::PageNotAccessibleError when testing

@@ -355,3 +355,10 @@ export const setTaskAttrs = (externalAppealId: string, attributes: Object) => ({
     attributes
   }
 });
+
+export const setSpecialIssues = (specialIssues: Object) => ({
+  type: ACTIONS.SET_SPECIAL_ISSUE,
+  payload: {
+    specialIssues
+  }
+});
