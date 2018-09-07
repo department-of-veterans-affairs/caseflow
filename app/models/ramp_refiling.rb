@@ -28,9 +28,11 @@ class RampRefiling < RampReview
     # TODO: consider using create_or_connect_end_product! instead to make this atomic
     # however this has further implications here if there are already contentions on
     # the end product being connected.
-    establish_end_product!
+    establish_end_product!(commit: false)
 
     create_contentions_on_new_end_product!
+
+    end_product_establishment.commit!
   end
 
   def election_receipt_date
