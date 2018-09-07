@@ -76,10 +76,6 @@ class Appeal < AmaReview
 
   delegate :first_name, :last_name, :middle_initial, :name_suffix, to: :appellant, prefix: true
 
-  def appellant_is_not_veteran
-    appellant ? appellant.relationship.present? : false
-  end
-
   # TODO: implement for AMA
   def citation_number
     "not implemented"
