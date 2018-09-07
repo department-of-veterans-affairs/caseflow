@@ -14,13 +14,21 @@ import type {
   User
 } from './types/models';
 
+
+
 export const selectedTasksSelector = (state: State, userId: string) => {
   return _.flatMap(
     state.queue.isTaskAssignedToUserSelected[userId] || {},
-    (selected, id) => selected ? [state.queue.tasks[id]] : []
+    (selected, id) => {
+      const task = state.queue.tasks[id] || state.queue.amaTasks[id];
+      return selected ? [task] : []
+    }
   );
 };
 
+const getTask = (state: State, id: string) => {
+  
+}
 const getTasks = (state: State) => state.queue.tasks;
 const getAmaTasks = (state: State) => state.queue.amaTasks;
 const getAppeals = (state: State) => state.queue.appeals;
@@ -155,7 +163,7 @@ export const judgeReviewTasksSelector = createSelector(
 
 export const judgeAssignTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => task.taskType === 'Assign')
+  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => task.taskType === 'Assign' || (task.action === 'assign' && task.status === 'in_progress'))
 );
 
 // ***************** Non-memoized selectors *****************

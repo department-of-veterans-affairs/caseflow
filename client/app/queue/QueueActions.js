@@ -275,7 +275,8 @@ export const setSelectionOfTaskOfUser =
 export const initialAssignTasksToUser =
   ({ tasks, assigneeId, previousAssigneeId }:
      { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) =>
-    (dispatch: Dispatch) =>
+    (dispatch: Dispatch) => {
+      debugger;
       Promise.all(tasks.map((oldTask) => {
         return ApiUtil.post(
           '/legacy_tasks',
@@ -293,12 +294,13 @@ export const initialAssignTasksToUser =
                 taskId: task.id,
                 selected: false }));
             });
-      }));
+      }))};
 
 export const reassignTasksToUser =
   ({ tasks, assigneeId, previousAssigneeId }:
      { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) =>
-    (dispatch: Dispatch) =>
+    (dispatch: Dispatch) => {
+      debugger;
       Promise.all(tasks.map((oldTask) => {
         return ApiUtil.patch(
           `/legacy_tasks/${oldTask.taskId}`,
@@ -314,7 +316,7 @@ export const reassignTasksToUser =
                 taskId: task.id,
                 selected: false }));
             });
-      }));
+      }))};
 
 const receiveAllAttorneys = (attorneys) => ({
   type: ACTIONS.RECEIVE_ALL_ATTORNEYS,
