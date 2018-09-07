@@ -338,6 +338,10 @@ class Fakes::BGSService
     )
   end
 
+  def fetch_person_info(_participant_id)
+    { first_name: "Tom", last_name: "Brady", middle_name: "Edward" }
+  end
+
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
     address = (self.class.address_records || {})[participant_id]
@@ -465,7 +469,6 @@ class Fakes::BGSService
 
   def default_claimant_info
     {
-      name: "Harry Carey",
       relationship: "Spouse"
     }
   end
