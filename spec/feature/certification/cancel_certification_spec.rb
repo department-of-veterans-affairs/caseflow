@@ -36,7 +36,7 @@ RSpec.feature "Cancel certification" do
       FeatureToggle.disable!(:test_facols)
     end
 
-    scenario "Validate Input Fields" do
+    scenario "Validate Input Fields", skip: true do
       visit "certifications/new/#{appeal.vacols_id}"
       click_on "Cancel Certification"
       expect(page).to have_content("Please explain why this case cannot be certified with Caseflow.")
