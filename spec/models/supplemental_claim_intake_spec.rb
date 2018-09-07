@@ -43,6 +43,16 @@ describe SupplementalClaimIntake do
       )
     end
 
+    let!(:request_issue) do
+      RequestIssue.new(
+        review_request: detail,
+        rating_issue_profile_date: Date.new(2017, 4, 5),
+        rating_issue_reference_id: "issue1",
+        contention_reference_id: "1234",
+        description: "description"
+      )
+    end
+
     it "cancels and deletes the supplemental claim record created" do
       subject
 
@@ -53,6 +63,7 @@ describe SupplementalClaimIntake do
         cancel_other: nil
       )
       expect { claimant.reload }.to raise_error ActiveRecord::RecordNotFound
+      expect { request_issue.reload }.to raise_error ActiveRecord::RecordNotFound
     end
   end
 
