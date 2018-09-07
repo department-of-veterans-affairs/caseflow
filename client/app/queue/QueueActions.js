@@ -276,16 +276,48 @@ export const initialAssignTasksToUser =
   ({ tasks, assigneeId, previousAssigneeId }:
      { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) =>
     (dispatch: Dispatch) => {
-      debugger;
+
+    // { type: AttorneyTask,
+    //   external_id: "2CE3BEB0-FA7D-4ACA-A8D2-1F7D2BDFB1E7",
+    //   title: "something",
+    //   parent_id: 2,
+    //   assigned_to_id: 23 }
+
+
       Promise.all(tasks.map((oldTask) => {
-        return ApiUtil.post(
-          '/legacy_tasks',
-          { data: { tasks: { assigned_to_id: assigneeId,
-            type: 'JudgeCaseAssignmentToAttorney',
-            appeal_id: oldTask.appealId } } }).
+        let url, params;
+        if (oldTask.externalAppealId.length === 36){
+          url = '/tasks';
+          params = {
+            data: {
+              tasks: [{
+                type: "AttorneyTask",
+                external_id: oldTask.externalAppealId,
+                parent_id: oldTask.taskId,
+                assigned_to_id: assigneeId
+              }]
+            }
+          };
+        } else {
+          url = '/legacy_tasks';
+          params = { 
+            data: { 
+              tasks: { 
+                assigned_to_id: assigneeId,
+                type: 'JudgeCaseAssignmentToAttorney',
+                appeal_id: oldTask.appealId 
+              } 
+            } 
+          };
+        }
+
+        debugger;
+
+        return ApiUtil.post(url, params).
           then((resp) => resp.body).
           then(
             (resp) => {
+              debugger;
               const { task: { data: task } } = resp;
 
               dispatch(onReceiveTasks({ amaTasks: {},
@@ -300,14 +332,40 @@ export const reassignTasksToUser =
   ({ tasks, assigneeId, previousAssigneeId }:
      { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) =>
     (dispatch: Dispatch) => {
-      debugger;
       Promise.all(tasks.map((oldTask) => {
-        return ApiUtil.patch(
-          `/legacy_tasks/${oldTask.taskId}`,
-          { data: { tasks: { assigned_to_id: assigneeId } } }).
+        debugger;
+
+        let url, params;
+        if (externalAppealId.length === 36){
+          url = `/tasks/${oldTask.taskId}`;
+          params = {
+            data: {
+              tasks: [{
+                type: "AttorneyTask",
+                external_id: oldTask.externalAppealId,
+                parent_id: oldTask.taskId,
+                assigned_to_id: assigneeId
+              }]
+            }
+          };
+        } else {
+          url = `/legacy_tasks/${oldTask.taskId}`;
+          params = { 
+            data: { 
+              tasks: { 
+                assigned_to_id: assigneeId,
+                type: 'JudgeCaseAssignmentToAttorney',
+                appeal_id: oldTask.appealId 
+              } 
+            } 
+          };
+        }
+
+        return ApiUtil.patch(url, params).
           then((resp) => resp.body).
           then(
             (resp) => {
+
               const { task: { data: task } } = resp;
 
               dispatch(onReceiveTasks({ amaTasks: {},

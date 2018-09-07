@@ -26,9 +26,6 @@ export const selectedTasksSelector = (state: State, userId: string) => {
   );
 };
 
-const getTask = (state: State, id: string) => {
-  
-}
 const getTasks = (state: State) => state.queue.tasks;
 const getAmaTasks = (state: State) => state.queue.amaTasks;
 const getAppeals = (state: State) => state.queue.appeals;

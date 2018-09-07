@@ -86,15 +86,12 @@ class AssignWidget extends React.PureComponent<Props> {
 
       return;
     }
-    debugger;
 
     this.assignTasks(selectedTasks, selectedAssigneeSecondary);
   }
 
   assignTasks = (selectedTasks: Array<Task>, assigneeId: string) => {
     const { previousAssigneeId } = this.props;
-
-    debugger;
 
     this.props.onTaskAssignment(
       { tasks: selectedTasks,
