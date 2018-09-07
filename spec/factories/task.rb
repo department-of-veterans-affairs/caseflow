@@ -62,7 +62,7 @@ FactoryBot.define do
     end
 
     factory :ama_vso_task do
-      type "VsoTask"
+      type "GenericTask"
       appeal_type "Appeal"
     end
   end

@@ -9,7 +9,7 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
   attribute :added_by_name
   attribute :added_by_css_id
   attribute :task_id
-  attribute :task_type
+  attribute :action
   attribute :document_id
   attribute :work_product
   attribute :appeal_type
