@@ -15,6 +15,7 @@ import {
 import { hideSuccessMessage } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import COPY from '../../COPY.json';
+import { fullWidth } from './constants';
 
 import Alert from '../components/Alert';
 import TabWindow from '../components/TabWindow';
@@ -66,6 +67,7 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
 
     return <AppSegment filledBackground>
       {success && <Alert type="success" title={success.title} message={success.detail} />}
+      <h1 {...fullWidth}>{COPY.COLOCATED_QUEUE_PAGE_TABLE_TITLE}</h1>
       <TabWindow name="tasks-tabwindow" tabs={tabs} />
     </AppSegment>;
   };
