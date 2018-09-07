@@ -63,7 +63,7 @@ class RampReview < ApplicationRecord
   def create_or_connect_end_product!
     return connect_end_product! if end_product_establishment.preexisting_end_product
 
-    establish_end_product! && :created
+    establish_end_product!(commit: true) && :created
   end
 
   def end_product_description
@@ -78,8 +78,8 @@ class RampReview < ApplicationRecord
     end_product_establishment.status_active?(sync: true)
   end
 
-  def establish_end_product!
-    end_product_establishment.perform!
+  def establish_end_product!(commit:)
+    end_product_establishment.perform!(commit: commit)
     update! established_at: Time.zone.now
   end
 
