@@ -370,7 +370,6 @@ ActiveRecord::Schema.define(version: 20180907003818) do
     t.date "receipt_date"
     t.boolean "informal_conference"
     t.boolean "same_office"
-    t.datetime "established_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
@@ -569,7 +568,6 @@ ActiveRecord::Schema.define(version: 20180907003818) do
   create_table "supplemental_claims", force: :cascade do |t|
     t.string "veteran_file_number", null: false
     t.date "receipt_date"
-    t.datetime "established_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
