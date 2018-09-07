@@ -60,7 +60,7 @@ class Task < ApplicationRecord
   end
 
   def can_user_access?(user)
-    return true if task.assigned_to == user || task.assigned_by == user
+    return true if assigned_to == user || assigned_by == user
     false
   end
 
