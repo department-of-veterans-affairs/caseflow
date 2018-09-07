@@ -24,11 +24,10 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   def match_hearing_days_to_judges
     @assigned_hearing_days = []
-    @unassigned_hearing_days = @video_co_hearing_days.shuffle
-
+    @unassigned_hearing_days = dedupe_co_hearing_days
     evenly_assign_judges_to_hearing_days
     assign_remaining_hearing_days
-    verify_assignments(unassigned_hearing_days)
+    verify_assignments
     @assigned_hearing_days.sort_by { |day| day[:hearing_date] }
   end
 
@@ -38,17 +37,14 @@ class HearingSchedule::AssignJudgesToHearingDays
     sorted_judges = fetch_judges_for_matching
 
     judge_count = sorted_judges.length
-    total_hearing_day_count = @video_co_hearing_days.length
+    total_hearing_day_count = @unassigned_hearing_days.length
     max_days_per_judge = (total_hearing_day_count.to_f / judge_count).floor
-
-    days_of_separation = 3
-
     sorted_judges.each do |css_id|
       days_assigned = 0
 
       @unassigned_hearing_days.delete_if do |current_hearing_day|
         break if days_assigned >= max_days_per_judge
-        unless can_day_be_assigned(current_hearing_day, @assigned_hearing_days, css_id)
+        unless can_day_be_assigned(current_hearing_day, css_id)
           @assigned_hearing_days.push(*assign_judge_to_hearing_day(current_hearing_day, css_id))
           days_assigned += 1
           next true
@@ -57,35 +53,82 @@ class HearingSchedule::AssignJudgesToHearingDays
     end
   end
 
+
+
   def assign_remaining_hearing_days
-    @unassigned_hearing_days.each do |current_hearing_day|
+    index = 0
+
+    unassigned_hearing_days = @unassigned_hearing_days.map { |day| day }
+    while index < unassigned_hearing_days.length
       sorted_judges = get_sorted_judges_by_assignments
+      current_hearing_day = unassigned_hearing_days[index]
+
       sorted_judges.each do |css_id|
         unless can_day_be_assigned(current_hearing_day, css_id)
           @assigned_hearing_days.push(*assign_judge_to_hearing_day(current_hearing_day, css_id))
+          @unassigned_hearing_days.delete(current_hearing_day)
           break
         end
       end
+      index = index + 1
     end
-  end 
+  end
 
   def get_sorted_judges_by_assignments
-    @assigned_hearing_days.reduce({}) do |acc, hearing_day|
+    dedupe_assigned_co_hearing_days.reduce({}) do |acc, hearing_day|
       acc[hearing_day[:css_id]] ||= 0
       acc[hearing_day[:css_id]] += 1
       acc
-    end.sort_by { |_k, v| v }.reverse.to_h.keys
+    end.sort_by { |_k, v| v }.to_h.keys
+  end
+
+  def dedupe_assigned_co_hearing_days
+    co_assigned = []
+
+    days = @assigned_hearing_days.map do |day|
+      if day[:hearing_type] == HearingDay::HEARING_TYPES[:video]
+        day
+      else
+        if !co_assigned.include?(day[:hearing_date])
+          co_assigned.push(day[:hearing_date])
+          day
+        end
+      end
+    end.compact
+  end
+
+  def dedupe_co_hearing_days
+    co_assigned = []
+
+    days = @video_co_hearing_days.shuffle.map do |day|
+      if !co_hearing_day?(day)
+        day
+      else
+        if !co_assigned.include?(day.hearing_date)
+          co_assigned.push(day.hearing_date)
+          day
+        end
+      end
+    end.compact
   end
 
   def can_day_be_assigned(current_hearing_day, css_id)
     hearing_date = current_hearing_day.hearing_date
 
     @judges[css_id][:non_availabilities].include?(hearing_date) ||
-      hearing_day_already_assigned_to_judge?(@assigned_hearing_days,
-                                             current_hearing_day.hearing_pkseq) ||
-      date_already_assigned_to_judge?(@assigned_hearing_days,
-                                      @judges[css_id][:staff_info].sattyid, hearing_date)
-      
+      hearing_day_already_assigned_to_judge?(current_hearing_day.hearing_pkseq) ||
+      date_already_assigned_to_judge?(@judges[css_id][:staff_info].sattyid, hearing_date) ||
+      judge_already_assigned_to_co?(current_hearing_day, @judges[css_id][:staff_info].sattyid)
+  end
+
+  def judge_already_assigned_to_co?(current_hearing_day, sattyid)
+    if co_hearing_day?(current_hearing_day)
+      @assigned_hearing_days.any? do |day|
+        day[:hearing_type] == HearingDay::HEARING_TYPES[:central] && day[:judge_id] == sattyid
+      end
+    else
+      false
+    end
   end
 
   def fetch_hearing_days_for_matching
@@ -225,7 +268,7 @@ class HearingSchedule::AssignJudgesToHearingDays
   end
 
   def valid_ro_hearing_day?(day)
-    day.folder_nr && day.folder_nr.include?("RO")
+    day.folder_nr && day.folder_nr.include?("VIDEO")
   end
 
   def filter_co_hearings(video_co_hearing_days)
