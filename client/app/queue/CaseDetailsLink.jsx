@@ -24,6 +24,7 @@ class CaseDetailsLink extends React.PureComponent {
           }
         }
       };
+
       ApiUtil.patch(`/tasks/${task.taskId}`, payload);
     }
 
