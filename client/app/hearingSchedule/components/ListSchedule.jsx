@@ -51,6 +51,8 @@ export default class ListSchedule extends React.Component {
       }
     ];
 
+    // const formatVljName = hearingSchedule.judgeName;
+
     const hearingScheduleRows = _.map(hearingSchedule, (hearingDay) => ({
       hearingDate: formatDate(hearingDay.hearingDate),
       hearingType: hearingDay.hearingType,
