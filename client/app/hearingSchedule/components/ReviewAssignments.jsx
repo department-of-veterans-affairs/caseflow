@@ -48,12 +48,12 @@ export default class ReviewAssignments extends React.Component {
 
   getAlertButtons = () => {
     return <React.Fragment>
-      <Button
+      <Link
         name="go-back"
         button="primary"
         to="/schedule/build/upload">
         Go back
-      </Button>
+      </Link>
       <Button
         name="confirmAssignments"
         button="primary"
