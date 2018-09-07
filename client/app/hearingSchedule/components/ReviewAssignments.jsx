@@ -50,7 +50,7 @@ export default class ReviewAssignments extends React.Component {
     return <React.Fragment>
       <Link
         name="go-back"
-        button="primary"
+        button="secondary"
         to="/schedule/build/upload">
         Go back
       </Link>
