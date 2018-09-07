@@ -11,7 +11,9 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :veteran_gender
   attribute :veteran_is_deceased
 
-  attribute :appellant_is_not_veteran
+  attribute :appellant_is_not_veteran do
+    object.is_a?(LegacyAppeal) ? object.appellant_is_not_veteran : object.claimant_not_veteran
+  end
   attribute :appellant_first_name
   attribute :appellant_middle_name do
     object.is_a?(LegacyAppeal) ? object.appellant_middle_initial : object.appellant_middle_name
