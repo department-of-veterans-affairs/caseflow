@@ -12,7 +12,6 @@ import {
   appealWithDetailSelector
 } from '../selectors';
 import { stageAppeal } from '../QueueActions';
-import { showModal } from '../uiReducer/uiActions';
 
 import {
   dropdownStyling,
@@ -34,7 +33,6 @@ type Props = Params & {|
   task: Task,
   appeal: Appeal,
   // dispatch
-  showModal: typeof showModal,
   stageAppeal: typeof stageAppeal,
   // withrouter
   history: Object
@@ -52,10 +50,11 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
 
     switch (actionType) {
     case CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY:
-      return this.props.showModal(SEND_TO_LOCATION_MODAL_TYPES.attorney);
-    case CO_LOCATED_ACTIONS.SEND_TO_TEAM: {
-      return this.props.showModal(SEND_TO_LOCATION_MODAL_TYPES.team);
-    }
+      history.push(`/queue/modal/${SEND_TO_LOCATION_MODAL_TYPES.attorney}`);
+      break;
+    case CO_LOCATED_ACTIONS.SEND_TO_TEAM:
+      history.push(`/queue/modal/${SEND_TO_LOCATION_MODAL_TYPES.team}`);
+      break;
     case CO_LOCATED_ACTIONS.PLACE_HOLD:
       history.push(`/queue/appeals/${appealId}/place_hold`);
       break;
@@ -105,7 +104,6 @@ const mapStateToProps = (state: State, ownProps: Params) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  showModal,
   stageAppeal
 }, dispatch);
 

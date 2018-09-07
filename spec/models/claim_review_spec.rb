@@ -52,6 +52,10 @@ describe ClaimReview do
     )
   end
 
+  let(:vbms_error) do
+    VBMS::HTTPError.new("500", "More EPs more problems")
+  end
+
   context "#create_issues!" do
     before { claim_review.save! }
     subject { claim_review.create_issues!(issues) }
@@ -128,6 +132,19 @@ describe ClaimReview do
             "reference-id2" => second_rating_request_issue.reload.contention_reference_id
           }
         )
+
+        expect(claim_review.end_product_establishments.first).to be_committed
+      end
+
+      context "when associate rated issues fails" do
+        before do
+          allow(VBMSService).to receive(:associate_rated_issues!).and_raise(vbms_error)
+        end
+
+        it "does not commit the end product establishment" do
+          expect { subject }.to raise_error(vbms_error)
+          expect(claim_review.end_product_establishments.first).to_not be_committed
+        end
       end
 
       context "when there are no rating issues" do
@@ -244,6 +261,9 @@ describe ClaimReview do
           contention_descriptions: ["Issue text"],
           special_issues: []
         )
+
+        expect(claim_review.end_product_establishments.first).to be_committed
+        expect(claim_review.end_product_establishments.last).to be_committed
       end
     end
   end
