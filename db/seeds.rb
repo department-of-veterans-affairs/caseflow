@@ -179,7 +179,6 @@ class SeedDB
   def create_ama_appeals
     @ama_appeals << FactoryBot.create(
       :appeal,
-      advanced_on_docket: true,
       veteran_file_number: "701305078",
       request_issues: FactoryBot.build_list(:request_issue, 3, description: "Knee pain")
     )
@@ -321,7 +320,23 @@ class SeedDB
       url: "american-legion",
       participant_id: "2452415"
     )
+    Vso.create(
+      name: "Vietnam Veterans Of America",
+      feature: "vso_queue_vva",
+      role: "VSO",
+      url: "vietnam-veterans-of-america",
+      participant_id: "2452415"
+    )
+    Vso.create(
+      name: "Paralyzed Veterans Of America",
+      feature: "vso_queue_pva",
+      role: "VSO",
+      url: "paralyzed-veterans-of-america",
+      participant_id: "2452383"
+    )
+
     Organization.create!(name: "Translation", feature: "org_queue_translation", url: "translation")
+
     Bva.create(name: "Board of Veterans' Appeals")
   end
 
@@ -333,11 +348,11 @@ class SeedDB
     clean_db
     # Annotations and tags don't come from VACOLS, so our seeding should
     # create them in all envs
+    create_organizations
     create_annotations
     create_tags
     create_ama_appeals
     create_users
-    create_organizations
     create_tasks
 
     return if Rails.env.development?
