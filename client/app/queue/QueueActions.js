@@ -356,7 +356,7 @@ export const setTaskAttrs = (externalAppealId: string, attributes: Object) => ({
   }
 });
 
-export const setOrganizationId = (id) => ({
+export const setOrganizationId = (id: number) => ({
   type: ACTIONS.SET_ORGANIZATION_ID,
   payload: { id }
 });
