@@ -6,7 +6,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   TB_ADDITIONAL_NA_DAYS = 3
   CO_ROOM_NUM = "1".freeze
-  DAYS_OF_SEPERATION = 3
+  DAYS_OF_SEPARATION = 3
 
   class HearingDaysNotAllocated < StandardError; end
   class NoJudgesProvided < StandardError; end
@@ -34,7 +34,7 @@ class HearingSchedule::AssignJudgesToHearingDays
   private
 
   def evenly_assign_judges_to_hearing_days
-    sorted_judges = fetch_judges_for_matching
+    sorted_judges = sort_judge_by_non_available_days
 
     judge_count = sorted_judges.length
     total_hearing_day_count = @unassigned_hearing_days.length
@@ -131,14 +131,6 @@ class HearingSchedule::AssignJudgesToHearingDays
     end
   end
 
-  def fetch_hearing_days_for_matching
-    @video_co_hearing_days.shuffle
-  end
-
-  def fetch_judges_for_matching
-    sort_judge_by_non_available_days
-  end
-
   def sort_hearing_days_by_non_avail
     hearing_days = @video_co_hearing_days.reduce({}) do |acc, hearing_day|
       acc[hearing_day[:hearing_pkseq]] ||= {
@@ -163,7 +155,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   def date_already_assigned_to_judge?(sattyid, date)
     @assigned_hearing_days.any? do |day|
-      day[:judge_id] == sattyid && (day[:hearing_date] - date).abs <= DAYS_OF_SEPERATION
+      day[:judge_id] == sattyid && (day[:hearing_date] - date).abs <= DAYS_OF_SEPARATION
     end
   end
 
