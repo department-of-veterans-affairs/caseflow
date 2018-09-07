@@ -6,13 +6,15 @@ module HearingDayMapper
     hearing_pkseq: :id,
     hearing_type: :hearing_type,
     hearing_date: :hearing_date,
-    folder_nr: :regional_office,
-    room: :room_info,
+    folder_nr:    :regional_office,
+    room:         :room_info,
     board_member: :judge_id,
-    judge_name: :judge_name,
-    team: :team,
-    mduser: :updated_by,
-    mdtime: :updated_on
+    judge_name:   :judge_name,
+    team:         :team,
+    adduser:      :created_by,
+    addtime:      :created_at,
+    mduser:       :updated_by,
+    mdtime:       :updated_at
   }.freeze
 
   class << self

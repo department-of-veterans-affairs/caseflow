@@ -5,7 +5,7 @@ RSpec.describe "Hearing Schedule", type: :request do
     User.authenticate!(roles: ["Build HearSched"])
   end
 
-  describe "Create a schedule slot - VACOLS", focus: true do
+  describe "Create a schedule slot - VACOLS" do
     it "Create one schedule day" do
       post "/hearings/hearing_day", params: { hearing_type: HearingDay::HEARING_TYPES[:central],
                                               hearing_date: "7-Jun-2018 09:00:00.000-4:00", room_info: "1",
@@ -20,7 +20,7 @@ RSpec.describe "Hearing Schedule", type: :request do
     end
   end
 
-  describe "Create a schedule slot - Caseflow", focus: true do
+  describe "Create a schedule slot - Caseflow" do
     it "Create one schedule day" do
       post "/hearings/hearing_day", params: { hearing_type: HearingDay::HEARING_TYPES[:central],
                                               hearing_date: "7-Jun-2019 09:00:00.000-4:00", room_info: "1",
