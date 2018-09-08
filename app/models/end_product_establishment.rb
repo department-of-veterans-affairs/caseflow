@@ -84,6 +84,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def remove_contention!(for_object)
     VBMSService.remove_contention!(contention_for_object(for_object))
+    for_object.update!(removed_at: Time.zone.now)
   end
 
   def ep_created?
