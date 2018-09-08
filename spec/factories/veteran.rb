@@ -4,7 +4,8 @@ FactoryBot.define do
       bgs_veteran_record do
         {
           first_name: "Bob",
-          last_name: "Smith"
+          last_name: "Smith",
+          date_of_death: "05/25/2016"
         }
       end
     end

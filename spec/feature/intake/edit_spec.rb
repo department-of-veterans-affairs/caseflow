@@ -43,8 +43,7 @@ RSpec.feature "Edit issues" do
         veteran_file_number: veteran.file_number,
         receipt_date: receipt_date,
         informal_conference: false,
-        same_office: false,
-        established_at: Time.zone.today
+        same_office: false
       )
     end
 
@@ -73,8 +72,7 @@ RSpec.feature "Edit issues" do
     let!(:supplemental_claim) do
       SupplementalClaim.create!(
         veteran_file_number: veteran.file_number,
-        receipt_date: receipt_date,
-        established_at: Time.zone.today
+        receipt_date: receipt_date
       )
     end
 

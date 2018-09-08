@@ -73,7 +73,7 @@ class SelectRemandReasonsView extends React.Component {
     }
 
     this.setState({
-      renderedChildren: this.state.renderedChildren.concat(ref.getWrappedInstance())
+      renderedChildren: [...this.state.renderedChildren, ref.getWrappedInstance()]
     });
   }
 
@@ -91,7 +91,7 @@ class SelectRemandReasonsView extends React.Component {
     {_.map(_.range(this.state.issuesRendered), (idx) =>
       <IssueRemandReasonsOptions
         appealId={this.props.appealId}
-        issueId={this.props.issues[idx].vacols_sequence_id}
+        issueId={this.props.issues[idx].id}
         key={`remand-reasons-options-${idx}`}
         ref={this.getChildRef}
         idx={idx} />
