@@ -78,8 +78,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
         let!(:ama_appeals) do
           [
-            create(:appeal, veteran: veteran1),
-            create(:appeal, veteran: veteran2)
+            create(:appeal, veteran: veteran1, number_of_claimants: 2),
+            create(:appeal, veteran: veteran2, number_of_claimants: 1)
           ]
         end
 

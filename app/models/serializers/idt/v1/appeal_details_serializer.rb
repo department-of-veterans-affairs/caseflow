@@ -11,13 +11,17 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :veteran_gender
   attribute :veteran_is_deceased
 
-  attribute :appellant_is_not_veteran
+  attribute :appellant_is_not_veteran do
+    object.is_a?(LegacyAppeal) ? object.appellant_is_not_veteran : object.claimant_not_veteran
+  end
   attribute :appellant_first_name
   attribute :appellant_middle_name do
-    object.appellant_middle_initial
+    object.is_a?(LegacyAppeal) ? object.appellant_middle_initial : object.appellant_middle_name
   end
   attribute :appellant_last_name
-  attribute :appellant_name_suffix
+  attribute :appellant_name_suffix do
+    object.is_a?(LegacyAppeal) ? object.appellant_name_suffix : ""
+  end
 
   attribute :file_number do
     object.is_a?(LegacyAppeal) ? object.sanitized_vbms_id : object.veteran_file_number
@@ -38,7 +42,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
       object.request_issues.map do |issue|
         # Hard code program for October 1st Pilot, we don't have all the info for how we'll
         # break down request issues yet but all RAMP appeals will be 'compensation'
-        { id: issue.id, disposition: issue.disposition, program: "Compensation" }
+        { id: issue.id, disposition: issue.disposition, program: "Compensation", description: issue.description }
       end
     end
   end
