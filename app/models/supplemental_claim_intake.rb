@@ -40,8 +40,8 @@ class SupplementalClaimIntake < Intake
     start_completion!
     detail.request_issues.destroy_all unless detail.request_issues.empty?
     detail.create_issues!(build_issues(request_params[:request_issues] || []))
+    detail.update!(establishment_submitted_at: Time.zone.now)
     detail.process_end_product_establishments!
-    detail.update!(established_at: Time.zone.now)
     complete_with_status!(:success)
   end
 end
