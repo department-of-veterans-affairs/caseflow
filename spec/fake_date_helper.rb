@@ -46,8 +46,7 @@ module FakeDateHelper
 
     while date < end_date
       while (exclude_weekends && (date.saturday? || date.sunday?)) ||
-        holidays.find { |holiday| holiday[:date] == date }.present?
-
+            holidays.find { |holiday| holiday[:date] == date }.present?
         date += 1
       end
 

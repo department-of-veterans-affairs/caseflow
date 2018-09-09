@@ -37,7 +37,7 @@ describe JudgeSchedulePeriod do
   context "Judges are not assigned hearings on their non-availability days" do
     let!(:hearing_days) do
       get_every_nth_date_between(single_nonavail_date_judge_schedule_period.start_date,
-                                 single_nonavail_date_judge_schedule_period.end_date, n = 4).map do |date|
+                                 single_nonavail_date_judge_schedule_period.end_date, 4).map do |date|
         create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13", room: 4)
       end
     end
@@ -74,7 +74,7 @@ describe JudgeSchedulePeriod do
     end
     let!(:hearing_days) do
       get_every_nth_date_between(one_month_judge_schedule_period.start_date,
-                                 one_month_judge_schedule_period.end_date, n = 4).map do |date|
+                                 one_month_judge_schedule_period.end_date, 4).map do |date|
         create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13", room: 4)
       end
     end
@@ -105,7 +105,7 @@ describe JudgeSchedulePeriod do
   context "A judge with a lot of non-availability days still gets as many hearings as possible" do
     let!(:hearing_days) do
       get_every_nth_date_between(one_month_many_noavail_judge_schedule_period.start_date,
-                                 one_month_many_noavail_judge_schedule_period.end_date, n = 4).map do |date|
+                                 one_month_many_noavail_judge_schedule_period.end_date, 4).map do |date|
         create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13", room: 4)
       end
     end
@@ -130,7 +130,7 @@ describe JudgeSchedulePeriod do
   context "Judges cannot be assigned multiple hearing days on the same day" do
     let!(:hearing_days) do
       get_every_nth_date_between(one_week_one_judge_schedule_period.start_date,
-                                 one_week_one_judge_schedule_period.end_date, n = 4).map do |date|
+                                 one_week_one_judge_schedule_period.end_date, 4).map do |date|
         create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13", room: 4)
         create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO17", room: 5)
       end
