@@ -38,4 +38,24 @@ module FakeDateHelper
       create(:ro_non_availability, date: date, schedule_period_id: schedule_period.id, object_identifier: ro_name)
     end
   end
+
+  def get_every_nth_date_between(start_date, end_date, n = 2, exclude_weekends = true)
+    dates = []
+    holidays = Holidays.between(start_date, end_date, :federal_reserve)
+    date = start_date
+
+    while date < end_date
+      while (exclude_weekends && (date.saturday? || date.sunday?)) ||
+        holidays.find { |holiday| holiday[:date] == date }.present?
+
+        date += 1
+      end
+
+      dates.push(date)
+
+      date += n
+    end
+
+    dates
+  end
 end
