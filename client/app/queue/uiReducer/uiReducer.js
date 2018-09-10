@@ -20,6 +20,7 @@ export const initialState = {
   featureToggles: {},
   userRole: '',
   userCssId: '',
+  userIsVsoEmployee: false,
   loadedUserId: null,
   selectedAssignee: null,
   selectedAssigneeSecondary: null,
@@ -139,6 +140,10 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
   case ACTIONS.SET_USER_CSS_ID:
     return update(state, {
       userCssId: { $set: action.payload.cssId }
+    });
+  case ACTIONS.SET_USER_IS_VSO_EMPLOYEE:
+    return update(state, {
+      userIsVsoEmployee: { $set: action.payload.userIsVsoEmployee }
     });
   case ACTIONS.SET_SELECTED_ASSIGNEE:
     return update(state, {

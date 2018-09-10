@@ -131,6 +131,11 @@ export const setUserId = (userId: number) => ({
   payload: { userId }
 });
 
+export const setUserIsVsoEmployee = (userIsVsoEmployee: ?boolean) => ({
+  type: ACTIONS.SET_USER_IS_VSO_EMPLOYEE,
+  payload: { userIsVsoEmployee }
+});
+
 type targetAssignee = { assigneeId: string };
 
 export const setSelectedAssignee = ({ assigneeId }: targetAssignee) => ({
