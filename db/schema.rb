@@ -563,6 +563,7 @@ ActiveRecord::Schema.define(version: 20180907184617) do
   end
 
   create_table "special_issues", force: :cascade do |t|
+    t.string "appeal_type"
     t.bigint "appeal_id"
     t.boolean "rice_compliance", default: false
     t.boolean "private_attorney_or_agent", default: false
@@ -589,7 +590,7 @@ ActiveRecord::Schema.define(version: 20180907184617) do
     t.boolean "foreign_pension_dic_mexico_central_and_south_america_caribb", default: false
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
-    t.index ["appeal_id"], name: "index_special_issues_on_appeal_id"
+    t.index ["appeal_type", "appeal_id"], name: "index_special_issues_on_appeal_type_and_appeal_id"
   end
 
   create_table "supplemental_claims", force: :cascade do |t|

@@ -7,7 +7,7 @@ class SpecialIssuesController < ApplicationController
     if appeal.special_issue
       appeal.special_issue.update(speical_issue_params)
     else
-      appeal.special_issue = SpecialIssue.create(speical_issue_params)
+      appeal.special_issue = SpecialIssue.create(speical_issue_params, appeal: appeal)
     end
 
     render json: appeal.special_issue.as_json
