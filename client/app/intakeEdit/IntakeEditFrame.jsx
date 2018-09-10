@@ -1,7 +1,7 @@
 import React from 'react';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 import PageRoute from '../components/PageRoute';
 import AppFrame from '../components/AppFrame';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -9,6 +9,13 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_PATHS } from './constants';
 import LandingPage from './pages/landing';
 import SelectIssuesPage from './pages/selectIssues';
+import { css } from 'glamor';
+import CancelEdit from './components/CancelEdit';
+import CancelOrSave from './components/CancelOrSave';
+
+const textAlignRightStyling = css({
+  textAlign: 'right'
+});
 
 export default class IntakeEditFrame extends React.PureComponent {
   render() {
@@ -26,6 +33,7 @@ export default class IntakeEditFrame extends React.PureComponent {
 
     const basename = `/${formType}s/${review.claimId}/edit/`;
 
+    console.log("rendering intake edit frame", this.props, basename)
     return <Router basename={basename} {...this.props.routerTestProps}>
       <div>
         <NavigationBar
@@ -53,8 +61,16 @@ export default class IntakeEditFrame extends React.PureComponent {
                   component={SelectIssuesPage} />
               </div>
             </AppSegment>
+            <AppSegment styling={textAlignRightStyling}>
+              <Route
+                exact
+                path={PAGE_PATHS.BEGIN}
+                component={CancelEdit}
+              />
+            </AppSegment>
           </AppFrame>
         </NavigationBar>
+
         <Footer
           appName={appName}
           feedbackUrl={this.props.feedbackUrl}
