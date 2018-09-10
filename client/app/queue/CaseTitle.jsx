@@ -99,11 +99,11 @@ class CaseTitle extends React.PureComponent {
         taskType={taskType}
         longMessage /> }
 
-      { !this.props.userIsVsoEmployee && <span {...viewCasesStyling}>
+      <span {...viewCasesStyling}>
         <Link onClick={this.props.toggleVeteranCaseList}>
           { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
         </Link>
-      </span> }
+      </span>
     </CaseTitleScaffolding>;
   }
 }
