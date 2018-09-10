@@ -28,6 +28,7 @@ module HearingDayMapper
         regional_office: validate_regional_office(hearing_info[:regional_office]),
         judge_id: hearing_info[:judge_id],
         team: hearing_info[:team],
+        judge_name: hearing_info[:judge_name],
         judge_last_name: hearing_info[:judge_last_name],
         judge_middle_name: hearing_info[:judge_middle_name],
         judge_first_name: hearing_info[:judge_first_name]
