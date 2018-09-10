@@ -30,8 +30,8 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       dueOn: null,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
-        type: task.attributes.assigned_to.type,
-        id: task.attributes.assigned_to.id
+        id: task.attributes.assigned_to.id,
+        type: task.attributes.assigned_to.type
       },
       assignedBy: {
         firstName: task.attributes.assigned_by.first_name,
