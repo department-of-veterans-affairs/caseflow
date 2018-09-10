@@ -64,7 +64,6 @@ Install the base dependencies via Homebrew:
     brew install rbenv nodenv yarn
     brew tap ouchxp/nodenv
     brew install nodenv-nvmrc
-    brew install postgresql
     brew tap caskroom/cask
     brew cask install chromedriver
 
@@ -167,18 +166,6 @@ This should install clean. If you have errors, you probably missed a dependency 
     yarn install
 
 This should install clean. If you have errors, try ... FIXME.
-
-### Setup the development Postgres user
-
-Add these to your `.bash_profile`:
-
-```
-export POSTGRES_HOST=localhost
-export POSTGRES_USER=postgres
-export POSTGRES_PASSWORD=postgres
-```
-
-(Reload the file `source ~/.bash_profile`)
 
 ### Cleanup the old dev environment (not needed for new Macbooks)
 
