@@ -8,6 +8,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_PATHS } from './constants';
 import LandingPage from './pages/landing';
+import CancelPage from './pages/cancelled';
 import SelectIssuesPage from './pages/selectIssues';
 import { css } from 'glamor';
 import CancelEdit from './components/CancelEdit';
@@ -59,6 +60,11 @@ export default class IntakeEditFrame extends React.PureComponent {
                   path={PAGE_PATHS.SELECT_ISSUES}
                   title="Edit Claim Issues | Caseflow Intake"
                   component={SelectIssuesPage} />
+                <PageRoute
+                  exact
+                  path={PAGE_PATHS.CANCEL_ISSUES}
+                  title="Edit Claim Issues | Caseflow Intake"
+                  component={CancelPage} />
               </div>
             </AppSegment>
             <AppSegment styling={textAlignRightStyling}>
@@ -66,6 +72,11 @@ export default class IntakeEditFrame extends React.PureComponent {
                 exact
                 path={PAGE_PATHS.BEGIN}
                 component={CancelEdit}
+              />
+              <Route
+                exact
+                path={PAGE_PATHS.SELECT_ISSUES}
+                component={CancelOrSave}
               />
             </AppSegment>
           </AppFrame>

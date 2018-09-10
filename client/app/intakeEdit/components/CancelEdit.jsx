@@ -2,21 +2,17 @@ import React from 'react';
 import Button from '../../components/Button';
 
 class CancelEdit extends React.PureComponent {
-  closeWindow = () => {
-    window.open('', '_self', '');
-    window.close();
-  }
-
-  render = () =>
-    <Button
-      id="cancel-intake"
+  render = () => {
+    return <Button
+      id="cancel-edit"
       legacyStyling={false}
       linkStyling
       willNeverBeLoading
-      onClick={this.closeWindow}
+      onClick={() => {this.props.history.push('/cancel')}}
     >
-      Cancel Edit
+      Cancel edit
     </Button>
+  }
 }
 
 export default CancelEdit;
