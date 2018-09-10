@@ -16,6 +16,9 @@ class CaseReviewsController < ApplicationController
     record = case_review_class.complete(complete_params)
     return invalid_record_error(record) unless record.valid?
 
+    root_task = Task.find(params[:task_id]).root_task
+    BvaDispatchTask.create_and_assign(root_task)
+
     response = { task: record }
     response[:issues] = record.appeal.issues
     render json: response

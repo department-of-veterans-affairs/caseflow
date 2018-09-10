@@ -77,6 +77,12 @@ class Task < ApplicationRecord
     end
   end
 
+  def root_task
+    return parent.root_task if parent
+    return self if type == RootTask.name
+    fail "No RootTask"
+  end
+
   private
 
   def update_status_if_children_tasks_are_complete
