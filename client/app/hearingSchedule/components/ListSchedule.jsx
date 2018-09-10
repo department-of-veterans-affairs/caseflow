@@ -52,8 +52,8 @@ export default class ListSchedule extends React.Component {
     ];
 
     const formatVljName = (hearing) => {
-      if (hearing.judgeFirstName && hearing.judgeMiddleName) {
-        return `${hearing.judgeFirstName}, ${hearing.judgeMiddleName} ${hearing.judgeLastName}`;
+      if (hearing.judgeFirstName && hearing.judgeLastName) {
+        return `${hearing.judgeLastName}, ${hearing.judgeMiddleName} ${hearing.judgeFirstName}`;
       }
     };
 
