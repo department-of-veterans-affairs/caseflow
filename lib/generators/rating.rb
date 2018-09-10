@@ -85,7 +85,7 @@ class Generators::Rating
       # gives a unique id to each issue that is tied to a specific participant_id
       prev_count = get_prev_issues_count(attrs[:participant_id])
       attrs[:issues].each_with_index.map do |issue, i|
-        issue[:reference_id] ||= "#{attrs[:participant_id]}#{prev_count+i}"
+        issue[:reference_id] ||= "#{attrs[:participant_id]}#{prev_count + i}"
         issue
       end
     end
