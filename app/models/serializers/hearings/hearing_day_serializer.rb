@@ -13,7 +13,6 @@ class Hearings::HearingDaySerializer < ActiveModel::Serializer
              :judge_middle_name,
              :judge_first_name
 
-
   def attributes(attributes)
     hash = super
     self.class.resolved_attributes(hash)
