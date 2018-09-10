@@ -34,7 +34,6 @@ export default class IntakeEditFrame extends React.PureComponent {
 
     const basename = `/${formType}s/${review.claimId}/edit/`;
 
-    console.log("rendering intake edit frame", this.props, basename)
     return <Router basename={basename} {...this.props.routerTestProps}>
       <div>
         <NavigationBar

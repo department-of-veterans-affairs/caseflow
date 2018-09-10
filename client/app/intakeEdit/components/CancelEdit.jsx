@@ -8,10 +8,14 @@ class CancelEdit extends React.PureComponent {
       legacyStyling={false}
       linkStyling
       willNeverBeLoading
-      onClick={() => {this.props.history.push('/cancel')}}
+      onClick={
+        () => {
+          this.props.history.push('/cancel');
+        }
+      }
     >
       Cancel edit
-    </Button>
+    </Button>;
   }
 }
 
