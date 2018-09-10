@@ -48,6 +48,7 @@ export type UiState = {
   loadedUserId: ?number,
   userRole: string,
   userCssId: string,
+  userIsVsoEmployee: boolean,
   veteranCaseListIsVisible: boolean
 };
 
