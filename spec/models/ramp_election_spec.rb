@@ -139,7 +139,10 @@ describe RampElection do
           veteran_hash: veteran.to_vbms_hash
         )
 
-        expect(EndProductEstablishment.find_by(source: ramp_election.reload).reference_id).to eq("454545")
+        expect(EndProductEstablishment.find_by(source: ramp_election.reload)).to have_attributes(
+          reference_id: "454545",
+          committed_at: Time.zone.now
+        )
       end
 
       context "with a higher level review" do
