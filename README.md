@@ -102,7 +102,7 @@ After installation is complete, run:
 docker login -u dsvaappeals
 ```
 
-The password is in the DSVA 1Password account. Note you can use your personal account as well, you'll just have to accept the license agreement for the [Oracle Database docker image](https://store.docker.com/images/oracle-database-enterprise-edition).
+The password is in the DSVA 1Password account. Note you can use your personal account as well, you'll just have to accept the license agreement for the [Oracle Database docker image](https://store.docker.com/images/oracle-database-enterprise-edition). To accept the agreement, checkout with the Oracle image on the docker store.
 
 ### Install the Oracle client libraries
 
