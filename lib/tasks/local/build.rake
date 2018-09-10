@@ -13,6 +13,8 @@ namespace :local do
       print "."
       sleep 1
     end
+    # Wait a bit longer - the FACOLS container is not responsive yet
+    sleep 30
     # Add a new line so that this scipt's output is more readable.
     puts ""
 
