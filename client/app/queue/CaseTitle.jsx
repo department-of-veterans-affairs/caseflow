@@ -91,13 +91,13 @@ class CaseTitle extends React.PureComponent {
         </Tooltip>
       </React.Fragment>
 
-      <ReaderLink
+      { !this.props.userIsVsoEmployee && <ReaderLink
         appealId={appealId}
         analyticsSource={CATEGORIES[analyticsSource.toUpperCase()]}
         redirectUrl={redirectUrl}
         appeal={appeal}
         taskType={taskType}
-        longMessage />
+        longMessage /> }
 
       <span {...viewCasesStyling}>
         <Link onClick={this.props.toggleVeteranCaseList}>
@@ -122,7 +122,8 @@ CaseTitle.defaultProps = {
 };
 
 const mapStateToProps = (state) => ({
-  veteranCaseListIsVisible: state.ui.veteranCaseListIsVisible
+  veteranCaseListIsVisible: state.ui.veteranCaseListIsVisible,
+  userIsVsoEmployee: state.ui.userIsVsoEmployee
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -134,6 +135,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(CaseTitle);
 const CaseTitleScaffolding = (props) => <div {...containingDivStyling}>
   <h1 {...headerStyling}>{props.heading}</h1>
   <ul {...listStyling}>
-    {props.children.map((child, i) => <li key={i} {...listItemStyling}>{child}</li>)}
+    {props.children.map((child, i) => child && <li key={i} {...listItemStyling}>{child}</li>)}
   </ul>
 </div>;
