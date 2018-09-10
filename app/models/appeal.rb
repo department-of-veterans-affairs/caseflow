@@ -74,7 +74,7 @@ class Appeal < AmaReview
     claimants.first
   end
 
-  delegate :first_name, :last_name, :middle_name, :name_suffix, to: :appellant, prefix: true
+  delegate :first_name, :last_name, :middle_name, :name_suffix, to: :appellant, prefix: true, allow_nil: true
 
   # TODO: implement for AMA
   def citation_number
