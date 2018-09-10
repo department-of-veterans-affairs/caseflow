@@ -51,7 +51,6 @@ class HigherLevelReview < ClaimReview
   def new_end_product_establishment(ep_code)
     end_product_establishments.build(
       veteran_file_number: veteran_file_number,
-      reference_id: end_product_reference_id,
       claim_date: receipt_date,
       payee_code: payee_code,
       code: ep_code,

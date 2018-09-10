@@ -64,6 +64,19 @@ const config = {
         }]
       },
       {
+        test: /\.css?$/,
+        use: [{
+          loader: 'style-loader'
+        },
+        {
+          loader: 'css-loader',
+          options: {
+            sourceMap: true,
+            url: false
+          }
+        }]
+      },
+      {
         test: /\.(png|svg|jpg|gif)$/,
         use: [
           'url-loader?limit=1024&name=images/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/'

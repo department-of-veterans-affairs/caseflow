@@ -43,6 +43,16 @@ describe HigherLevelReviewIntake do
       )
     end
 
+    let!(:request_issue) do
+      RequestIssue.new(
+        review_request: detail,
+        rating_issue_profile_date: Date.new(2017, 4, 5),
+        rating_issue_reference_id: "issue1",
+        contention_reference_id: "1234",
+        description: "description"
+      )
+    end
+
     it "cancels and deletes the Higher-Level Review record created" do
       subject
 
@@ -53,6 +63,7 @@ describe HigherLevelReviewIntake do
         cancel_other: nil
       )
       expect { claimant.reload }.to raise_error ActiveRecord::RecordNotFound
+      expect { request_issue.reload }.to raise_error ActiveRecord::RecordNotFound
     end
   end
 
@@ -140,7 +151,7 @@ describe HigherLevelReviewIntake do
       subject
 
       expect(intake).to be_success
-      expect(intake.detail.established_at).to eq(Time.zone.now)
+      expect(intake.detail.establishment_submitted_at).to eq(Time.zone.now)
       expect(ratings_end_product_establishment).to_not be_nil
       expect(ratings_end_product_establishment.established_at).to eq(Time.zone.now)
 

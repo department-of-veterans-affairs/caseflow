@@ -13,8 +13,6 @@ describe ClaimReview do
   let(:receipt_date) { SupplementalClaim::AMA_BEGIN_DATE + 1 }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
-  let(:established_at) { nil }
-  let(:end_product_status) { nil }
 
   let(:rating_request_issue) do
     RequestIssue.new(
@@ -48,10 +46,12 @@ describe ClaimReview do
       veteran_file_number: veteran_file_number,
       receipt_date: receipt_date,
       informal_conference: informal_conference,
-      same_office: same_office,
-      established_at: established_at,
-      end_product_status: end_product_status
+      same_office: same_office
     )
+  end
+
+  let(:vbms_error) do
+    VBMS::HTTPError.new("500", "More EPs more problems")
   end
 
   context "#create_issues!" do
@@ -130,6 +130,19 @@ describe ClaimReview do
             "reference-id2" => second_rating_request_issue.reload.contention_reference_id
           }
         )
+
+        expect(claim_review.end_product_establishments.first).to be_committed
+      end
+
+      context "when associate rated issues fails" do
+        before do
+          allow(VBMSService).to receive(:associate_rated_issues!).and_raise(vbms_error)
+        end
+
+        it "does not commit the end product establishment" do
+          expect { subject }.to raise_error(vbms_error)
+          expect(claim_review.end_product_establishments.first).to_not be_committed
+        end
       end
 
       context "when there are no rating issues" do
@@ -246,6 +259,9 @@ describe ClaimReview do
           contention_descriptions: ["Issue text"],
           special_issues: []
         )
+
+        expect(claim_review.end_product_establishments.first).to be_committed
+        expect(claim_review.end_product_establishments.last).to be_committed
       end
     end
   end

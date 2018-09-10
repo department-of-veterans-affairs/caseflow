@@ -338,6 +338,10 @@ class Fakes::BGSService
     )
   end
 
+  def fetch_person_info(_participant_id)
+    { first_name: "Tom", last_name: "Brady", middle_name: "Edward" }
+  end
+
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
     address = (self.class.address_records || {})[participant_id]
@@ -418,7 +422,7 @@ class Fakes::BGSService
         middle_name: "D",
         poa: "DISABLED AMERICAN VETERANS",
         proof_of_dependecy_ind: nil,
-        ptcpnt_id: "5382910292",
+        ptcpnt_id: "CLAIMANT_WITH_PVA_AS_VSO",
         relationship_begin_date: nil,
         relationship_end_date: nil,
         relationship_type: "Spouse",
@@ -465,7 +469,6 @@ class Fakes::BGSService
 
   def default_claimant_info
     {
-      name: "Harry Carey",
       relationship: "Spouse"
     }
   end
