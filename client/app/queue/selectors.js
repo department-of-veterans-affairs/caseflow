@@ -14,14 +14,13 @@ import type {
   User
 } from './types/models';
 
-
-
 export const selectedTasksSelector = (state: State, userId: string) => {
   return _.flatMap(
     state.queue.isTaskAssignedToUserSelected[userId] || {},
     (selected, id) => {
       const task = state.queue.tasks[id] || state.queue.amaTasks[id];
-      return selected ? [task] : []
+
+      return selected ? [task] : [];
     }
   );
 };

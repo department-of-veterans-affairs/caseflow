@@ -53,7 +53,6 @@ class AssignWidget extends React.PureComponent<Props> {
   handleButtonClick = () => {
     const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
 
-
     this.props.resetSuccessMessages();
     this.props.resetErrorMessages();
 
