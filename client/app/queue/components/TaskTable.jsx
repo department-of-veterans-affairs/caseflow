@@ -43,7 +43,8 @@ type Params = {|
 
 type Props = Params & {|
   setSelectionOfTaskOfUser: Function,
-  isTaskAssignedToUserSelected?: Object
+  isTaskAssignedToUserSelected?: Object,
+  userIsVsoEmployee: boolean
 |};
 
 class TaskTable extends React.PureComponent<Props> {
@@ -217,7 +218,7 @@ class TaskTable extends React.PureComponent<Props> {
   } : null)
 
   caseReaderLinkColumn = () => {
-    return this.props.includeReaderLink ? {
+    return !this.props.userIsVsoEmployee && this.props.includeReaderLink ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
       span: this.collapseColumnIfNoDASRecord,
       valueFunction: (task) => {
@@ -272,7 +273,10 @@ class TaskTable extends React.PureComponent<Props> {
   }
 }
 
-const mapStateToProps = (state) => _.pick(state.queue, 'isTaskAssignedToUserSelected');
+const mapStateToProps = (state) => ({
+  isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,
+  userIsVsoEmployee: state.ui.userIsVsoEmployee
+});
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
