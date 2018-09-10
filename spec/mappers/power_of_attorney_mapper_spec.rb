@@ -46,7 +46,7 @@ describe PowerOfAttorneyMapper do
       let(:participant_id) { "123456" }
       let(:second_participant_id) { "7890" }
 
-      it "returns None if there's no rep" do
+      it "returns representative information if there's a rep" do
         poas = poa_mapper.new.get_hash_of_poa_from_bgs_poas(
           [
             {
@@ -71,6 +71,13 @@ describe PowerOfAttorneyMapper do
         )
         expect(poas[participant_id][:representative_name]).to eq("TEST ORG")
         expect(poas[second_participant_id][:representative_name]).to eq("DIFFERENT ORG")
+      end
+
+      it "returns none if there's no rep" do
+        poas = poa_mapper.new.get_hash_of_poa_from_bgs_poas(
+          { message: "No POA found for 2452383", ptcpnt_id: "2452383" }
+        )
+        expect(poas).to be {}
       end
     end
 

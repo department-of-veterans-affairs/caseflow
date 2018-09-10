@@ -114,7 +114,7 @@ class Appeal < AmaReview
 
   # For now power_of_attorney returns the first claimant's power of attorney
   def power_of_attorney
-    claimants.first.power_of_attorney
+    claimants.first.power_of_attorney if claimants.first
   end
   delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
 
