@@ -137,6 +137,7 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
       <div className={errorClass} {...marginTop(1)}>
         <SearchableDropdown
           name="Select number of days"
+          searchable={false}
           hideLabel
           errorMessage={highlightFormItems && !this.state.hold ? 'Choose one' : null}
           placeholder="Select number of days"
