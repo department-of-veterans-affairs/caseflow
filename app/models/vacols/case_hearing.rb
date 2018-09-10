@@ -171,7 +171,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   end
 
   def create_or_update_diaries
-    create_or_update_abeyance_diary if holddays_changed?
+    create_or_update_extension_diary if holddays_changed?
     create_or_update_aod_diary if aod_changed?
   end
 
@@ -179,7 +179,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     @case_id ||= brieff.bfkey
   end
 
-  def create_or_update_abeyance_diary
+  def create_or_update_extension_diary
     # If hold open is set to nil or 0, delete the diary
     return delete_diary([:EXT]) if !holddays || holddays == 0
 
