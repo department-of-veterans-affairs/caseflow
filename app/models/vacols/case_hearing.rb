@@ -183,8 +183,6 @@ class VACOLS::CaseHearing < VACOLS::Record
     # If hold open is set to nil or 0, delete the diary
     return delete_diary([:EXT]) if !holddays || holddays == 0
 
-    binding.pry
-
     VACOLS::Note.update_or_create!(case_id: case_id,
                                    text: "Record held open by VLJ at hearing for additional evidence.",
                                    code: :EXT,
