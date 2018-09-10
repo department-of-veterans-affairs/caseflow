@@ -75,9 +75,9 @@ describe PowerOfAttorneyMapper do
 
       it "returns none if there's no rep" do
         poas = poa_mapper.new.get_hash_of_poa_from_bgs_poas(
-          { message: "No POA found for 2452383", ptcpnt_id: "2452383" }
+          message: "No POA found for 2452383", ptcpnt_id: "2452383"
         )
-        expect(poas).to be {}
+        expect(poas["2452383"]).to be_empty
       end
     end
 
