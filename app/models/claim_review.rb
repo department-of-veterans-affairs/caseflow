@@ -80,9 +80,9 @@ class ClaimReview < AmaReview
       rated_issue_contention_map: rated_issue_contention_map(request_issues_to_associate)
     )
 
-    request_issues_to_associate.each do |request_issue|
-      request_issue.update!(rating_issue_associated_at: Time.zone.now)
-    end
+    RequestIssue.where(id: request_issues_to_associate.map(&:id)).update_all(
+      rating_issue_associated_at: Time.zone.now
+    )
   end
 
   def rated_issue_contention_map(request_issues_to_associate)
