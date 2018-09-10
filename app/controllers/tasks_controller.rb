@@ -14,7 +14,8 @@ class TasksController < ApplicationController
   QUEUES = {
     attorney: AttorneyQueue,
     colocated: ColocatedQueue,
-    judge: JudgeQueue
+    judge: JudgeQueue,
+    generic: GenericQueue
   }.freeze
 
   def set_application
@@ -25,7 +26,7 @@ class TasksController < ApplicationController
   #      GET /tasks?user_id=xxx&role=attorney
   #      GET /tasks?user_id=xxx&role=judge
   def index
-    return invalid_role_error unless QUEUES.keys.include?(params[:role].downcase.try(:to_sym))
+    return invalid_role_error unless QUEUES.keys.include?(user_role.try(:to_sym))
     tasks = queue_class.new(user: user).tasks
     render json: { tasks: json_tasks(tasks) }
   end
@@ -73,10 +74,8 @@ class TasksController < ApplicationController
   #   on_hold_duration: "something"
   # }
   def update
-    if task.assigned_to != current_user && task.assigned_by != current_user
-      redirect_to "/unauthorized"
-      return
-    end
+    redirect_to("/unauthorized") && return unless task.can_user_access?(current_user)
+
     task.update_from_params(update_params, current_user)
 
     return invalid_record_error(task) unless task.valid?
@@ -91,11 +90,10 @@ class TasksController < ApplicationController
       return json_vso_tasks
     end
 
-    role = params[:role].downcase
-    return invalid_role_error unless QUEUES.keys.include?(role.try(:to_sym))
+    return invalid_role_error unless QUEUES.keys.include?(user_role.try(:to_sym))
 
-    if %w[attorney judge].include?(role) && appeal.class.name == LegacyAppeal.name
-      return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], role)
+    if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
+      return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], user_role)
     end
 
     json_tasks_by_appeal_id(appeal.id, appeal.class.to_s)
@@ -104,7 +102,13 @@ class TasksController < ApplicationController
   private
 
   def queue_class
-    QUEUES[params[:role].downcase.try(:to_sym)]
+    QUEUES[user_role.try(:to_sym)]
+  end
+
+  def user_role
+    return params[:role].downcase unless params[:role].to_s.empty?
+
+    current_user.organization_queue_user? ? "generic" : nil
   end
 
   def user

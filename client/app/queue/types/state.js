@@ -76,7 +76,8 @@ export type QueueState = {|
   attorneyAppealsLoadingState: AttorneyAppealsLoadingState,
   isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
   attorneys: Attorneys,
-  newDocsForAppeal: NewDocsForAppeal
+  newDocsForAppeal: NewDocsForAppeal,
+  organizationId: ?number
 |};
 
 export type State = {

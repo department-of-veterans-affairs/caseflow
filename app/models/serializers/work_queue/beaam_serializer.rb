@@ -13,6 +13,14 @@ class WorkQueue::BeaamSerializer < ActiveModel::Serializer
     }
   end
 
+  attribute :assigned_to do
+    {
+      css_id: nil,
+      type: nil,
+      id: nil
+    }
+  end
+
   attribute :docket_name do
     object.docket_name
   end
