@@ -26,7 +26,7 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
   def create
     file_name = params["schedule_period"]["type"] + Time.zone.now.to_s + ".xlsx"
     uploaded_file = Base64Service.to_file(params["file"], file_name)
-    S3Service.store_file(file_name, uploaded_file.tempfile, :filepath)
+    S3Service.store_file(S3_SUB_BUCKET + "/" + file_name, uploaded_file.tempfile, :filepath)
     schedule_period = SchedulePeriod.create!(schedule_period_params.merge(user_id: current_user.id,
                                                                           file_name: file_name))
     render json: { id: schedule_period.id }
