@@ -5,12 +5,10 @@ class GenericTask < Task
     mark_as_complete!
   end
 
-  def verify_user_access(user)
-    return if assigned_to && assigned_to == user
-
-    unless user && assigned_to.class.method_defined?(:user_has_access?) && assigned_to.user_has_access?(user)
-      fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot act on this task"
-    end
+  def can_user_access?(user)
+    return true if assigned_to && assigned_to == user
+    return true if user && assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
+    false
   end
 
   class << self
