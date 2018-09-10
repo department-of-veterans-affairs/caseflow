@@ -1,13 +1,13 @@
 class SpecialIssuesController < ApplicationController
-  # before_action :validate_access_to_task
+  before_action :validate_access_to_appeal
 
   def create
     return record_not_found unless appeal
 
     if appeal.special_issue
-      appeal.special_issue.update(speical_issue_params)
+      appeal.special_issue.update(special_issue_params)
     else
-      appeal.special_issue = SpecialIssue.create(speical_issue_params, appeal: appeal)
+      appeal.special_issue = SpecialIssue.create(special_issue_params, appeal: appeal)
     end
 
     render json: appeal.special_issue.as_json
@@ -16,6 +16,8 @@ class SpecialIssuesController < ApplicationController
   def index
     return record_not_found unless appeal
 
+    appeal.special_issue = SpecialIssue.create(appeal: appeal) if !appeal.special_issue
+
     render json: appeal.special_issue.as_json
   end
 
@@ -23,7 +25,11 @@ class SpecialIssuesController < ApplicationController
     @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
   end
 
-  def speical_issue_params
+  def validate_access_to_appeal
+    redirect_to "/unauthorized" unless current_user.access_to_appeal?(appeal)
+  end
+
+  def special_issue_params
     params.require("special_issues").permit(:rice_compliance, :private_attorney_or_agent,
       :waiver_of_overpayment, :pension_united_states, :vamc, :incarcerated_veterans,
       :dic_death_or_accrued_benefits_united_states, :vocational_rehab,

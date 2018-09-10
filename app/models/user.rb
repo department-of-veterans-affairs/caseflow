@@ -84,8 +84,18 @@ class User < ApplicationRecord
     @vsos_user_represents ||= bgs.fetch_poas_by_participant_id(participant_id)
   end
 
-  def access_to_task?(vacols_id)
+  def access_to_legacy_task?(vacols_id)
     self.class.user_repository.can_access_task?(css_id, vacols_id)
+  end
+
+  def access_to_appeal?(appeal)
+    if appeal.class.name == "LegacyAppeal"
+      access_to_legacy_task?(appeal.vacols_id)
+    else
+      appeal.tasks.any? do |task|
+        task.assigned_to == self
+      end
+    end
   end
 
   def ro_is_ambiguous_from_station_office?
