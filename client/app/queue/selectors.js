@@ -29,6 +29,7 @@ const getAmaTasks = (state: State) => state.queue.amaTasks;
 const getAppeals = (state: State) => state.queue.appeals;
 const getAppealDetails = (state: State) => state.queue.appealDetails;
 const getUserCssId = (state: State) => state.ui.userCssId;
+const getOrganizationId = (state: State) => state.queue.organizationId;
 const getAppealId = (state: State, props: Object) => props.appealId;
 const getAttorneys = (state: State) => state.queue.attorneysOfJudge;
 const getCaseflowVeteranId = (state: State, props: Object) => props.caseflowVeteranId;
@@ -99,6 +100,8 @@ export const appealsByCaseflowVeteranId = createSelector(
       appeal.caseflowVeteranId.toString() === caseflowVeteranId.toString())
 );
 
+const incompleteTasksSelector = (tasks: Tasks) => _.filter(tasks, (task) => task.status !== 'completed');
+
 export const tasksByAssigneeCssIdSelector = createSelector(
   [tasksWithAppealSelector, getUserCssId],
   (tasks: Array<TaskWithAppeal>, cssId: string) =>
@@ -107,7 +110,18 @@ export const tasksByAssigneeCssIdSelector = createSelector(
 
 export const incompleteTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks: Array<Task>) => tasks.filter((task) => task.status !== 'completed')
+  (tasks: Tasks) => incompleteTasksSelector(tasks)
+);
+
+export const organizationTasksByAssigneeIdSelector = createSelector(
+  [getTasksForAppeal, getOrganizationId],
+  (tasks: Tasks, id: Number) =>
+    _.filter(tasks, (task) => task.assignedTo.id === id && task.assignedTo.type === 'Organization')
+);
+
+export const incompleteOrganizationTasksByAssigneeIdSelector = createSelector(
+  [organizationTasksByAssigneeIdSelector],
+  (tasks: Tasks) => incompleteTasksSelector(tasks)
 );
 
 export const newTasksByAssigneeCssIdSelector = createSelector(
