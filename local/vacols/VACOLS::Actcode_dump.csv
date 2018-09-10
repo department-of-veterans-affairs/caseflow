@@ -2,4 +2,5 @@ actckey,actcdesc,actcsec,actcukey,actcdtc,actadusr,actadtim,actmdusr,actmdtim,ac
 A,"A - Abeyance",,,60,MBROWN,1997-06-19,,,I,BVA,,25,,
 B,"B - Advance on Docket (VLJ)",,,30,JWAGNER,1996-03-14,,,A,BVA,,59,,
 B1,"B1 - Advance on Docket (VSO)",,,15,JWAGNER,2011-07-05,,,I,BVA,,59,,
+EXT,"EXT - Extension Request",,,60,JWAGNER,2017-10-31,,,A,BVA,,,,
 VBA30,OTHER,,,30,JWAGNER,1999-08-17,,,A,RO,,,,

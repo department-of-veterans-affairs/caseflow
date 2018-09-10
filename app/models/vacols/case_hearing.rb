@@ -181,14 +181,16 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   def create_or_update_abeyance_diary
     # If hold open is set to nil or 0, delete the diary
-    return delete_diary([:A]) if !holddays || holddays == 0
+    return delete_diary([:EXT]) if !holddays || holddays == 0
+
+    binding.pry
 
     VACOLS::Note.update_or_create!(case_id: case_id,
                                    text: "Record held open by VLJ at hearing for additional evidence.",
-                                   code: :A,
+                                   code: :EXT,
                                    days_to_complete: holddays + 5,
                                    days_til_due: holddays + 5,
-                                   assigned_to: VACOLS::Note.assignee(:A),
+                                   assigned_to: VACOLS::Note.assignee(:EXT),
                                    user_id: current_user_css_id)
   end
 
