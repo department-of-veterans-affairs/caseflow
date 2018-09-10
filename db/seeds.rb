@@ -54,7 +54,7 @@ class SeedDB
 
     q = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER", full_name: "Org Q User")
     FeatureToggle.enable!(:org_queue_translation, users: [q.css_id])
-    FeatureToggle.enable!(:org_queue_translation, users: [q.css_id])
+    FeatureToggle.enable!(:organization_queue, users: [q.css_id])
   end
 
   def create_dispatch_tasks(number)
