@@ -280,6 +280,7 @@ describe EndProductEstablishment do
       subject
 
       expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(contention)
+      expect(for_object.removed_at).to eq(Time.zone.now)
     end
   end
 
