@@ -12,7 +12,9 @@ import {
 
 import {
   setDecisionOptions,
-  deleteAppeal
+  deleteAppeal,
+  resetDecisionOptions,
+  setCaseReviewActionType
 } from './QueueActions';
 import { requestSave } from './uiReducer/uiActions';
 
@@ -65,7 +67,9 @@ type Props = Params & {|
   // dispatch
   setDecisionOptions: typeof setDecisionOptions,
   requestSave: typeof requestSave,
-  deleteAppeal: typeof deleteAppeal
+  deleteAppeal: typeof deleteAppeal,
+  resetDecisionOptions: typeof resetDecisionOptions,
+  setCaseReviewActionType: typeof setCaseReviewActionType
 |};
 
 class SubmitDecisionView extends React.PureComponent<Props> {
@@ -87,6 +91,11 @@ class SubmitDecisionView extends React.PureComponent<Props> {
     const missingParams = _.filter(requiredParams, (param) => !_.has(decisionOpts, param) || !decisionOpts[param]);
 
     return !missingParams.length;
+  };
+
+  componentDidMount = () => {
+    this.props.resetDecisionOptions();
+    this.props.setCaseReviewActionType('omo_request');
   };
 
   getPrevStepUrl = () => {
@@ -240,7 +249,9 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDecisionOptions,
   requestSave,
-  deleteAppeal
+  deleteAppeal,
+  resetDecisionOptions,
+  setCaseReviewActionType
 }, dispatch);
 
 export default (connect(

@@ -14,6 +14,8 @@ import Alert from '../components/Alert';
 
 import {
   updateEditingAppealIssue,
+  resetDecisionOptions,
+  setCaseReviewActionType,
   setDecisionOptions,
   startEditingAppealIssue,
   saveEditedAppealIssue
@@ -73,6 +75,9 @@ class SelectDispositionsView extends React.PureComponent {
 
   componentWillUnmount = () => this.props.hideSuccessMessage();
   componentDidMount = () => {
+    this.props.resetDecisionOptions();
+    this.props.setCaseReviewActionType('draft_decision');
+
     if (this.props.userRole === USER_ROLE_TYPES.attorney) {
       this.props.setDecisionOptions({ work_product: 'Decision' });
     }
@@ -173,7 +178,9 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDecisionOptions,
   startEditingAppealIssue,
   saveEditedAppealIssue,
-  hideSuccessMessage
+  hideSuccessMessage,
+  resetDecisionOptions,
+  setCaseReviewActionType
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SelectDispositionsView));
