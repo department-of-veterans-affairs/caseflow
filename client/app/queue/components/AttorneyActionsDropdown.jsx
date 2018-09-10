@@ -7,11 +7,7 @@ import { withRouter } from 'react-router-dom';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 
-import {
-  setCaseReviewActionType,
-  resetDecisionOptions,
-  stageAppeal
-} from '../QueueActions';
+import { stageAppeal } from '../QueueActions';
 import {
   dropdownStyling,
   DRAFT_DECISION_OPTIONS,
@@ -33,8 +29,6 @@ type Props = Params & {|
   changedAppeals: Array<number>,
   // dispatch
   stageAppeal: typeof stageAppeal,
-  resetDecisionOptions: typeof resetDecisionOptions,
-  setCaseReviewActionType: typeof setCaseReviewActionType,
   // withrouter
   history: Object
 |};
@@ -55,11 +49,7 @@ class AttorneyActionsDropdown extends React.PureComponent<Props> {
 
     this.props.stageAppeal(appealId);
 
-    this.props.resetDecisionOptions();
-    this.props.setCaseReviewActionType(decisionType);
-
-    history.push('');
-    history.replace(`/queue/appeals/${appealId}/${route}`);
+    history.push(`/queue/appeals/${appealId}/${route}`);
   };
 
   getOptions = () => {
@@ -93,8 +83,6 @@ const mapStateToProps = (state: State, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setCaseReviewActionType,
-  resetDecisionOptions,
   stageAppeal
 }, dispatch);
 

@@ -12,7 +12,11 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import Alert from '../components/Alert';
 
 import { requestSave } from './uiReducer/uiActions';
-import { setTaskAttrs } from './QueueActions';
+import {
+  resetDecisionOptions,
+  setCaseReviewActionType,
+  setTaskAttrs
+} from './QueueActions';
 
 import { prepareTasksForStore } from './utils';
 import {
@@ -47,7 +51,9 @@ type Props = Params & {|
   tasks: Array<Task>,
   // dispatch
   requestSave: typeof requestSave,
-  setTaskAttrs: typeof setTaskAttrs
+  setTaskAttrs: typeof setTaskAttrs,
+  resetDecisionOptions: typeof resetDecisionOptions,
+  setCaseReviewActionType: typeof setCaseReviewActionType
 |};
 
 class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
@@ -58,6 +64,11 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
       action: null,
       instructions: ''
     };
+  }
+
+  componentDidMount = () => {
+    this.props.resetDecisionOptions();
+    this.props.setCaseReviewActionType('colocated_task');
   }
 
   validateForm = () => Object.values(this.state).every(Boolean);
@@ -145,6 +156,8 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
+  resetDecisionOptions,
+  setCaseReviewActionType,
   setTaskAttrs
 }, dispatch);
 
