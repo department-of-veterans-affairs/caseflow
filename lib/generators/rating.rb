@@ -28,6 +28,8 @@ class Generators::Rating
 
       attrs[:profile_date] ||= generate_profile_date(attrs[:participant_id])
 
+      attrs[:issues] = populate_issue_ids(attrs)
+
       existing_rating = Fakes::BGSService.rating_issue_records[attrs[:participant_id]][attrs[:profile_date]]
       fail "You may not override an existing rating for #{attrs[:profile_date]}" if existing_rating
 
@@ -63,7 +65,6 @@ class Generators::Rating
     def init_fakes(participant_id)
       Fakes::BGSService.rating_issue_records ||= {}
       Fakes::BGSService.rating_issue_records[participant_id] ||= {}
-
       Fakes::BGSService.rating_records ||= {}
       Fakes::BGSService.rating_records[participant_id] ||= []
     end
@@ -73,6 +74,19 @@ class Generators::Rating
 
       dates.find do |date|
         !Fakes::BGSService.rating_issue_records[participant_id][date]
+      end
+    end
+
+    def get_prev_issues_count(participant_id)
+      Fakes::BGSService.rating_issue_records[participant_id].values.flatten(1).count
+    end
+
+    def populate_issue_ids(attrs)
+      # gives a unique id to each issue that is tied to a specific participant_id
+      prev_count = get_prev_issues_count(attrs[:participant_id])
+      attrs[:issues].each_with_index.map do |issue, i|
+        issue[:reference_id] ||= "#{attrs[:participant_id]}#{prev_count+i}"
+        issue
       end
     end
   end
