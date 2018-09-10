@@ -13,8 +13,6 @@ describe ClaimReview do
   let(:receipt_date) { SupplementalClaim::AMA_BEGIN_DATE + 1 }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
-  let(:established_at) { nil }
-  let(:end_product_status) { nil }
 
   let(:rating_request_issue) do
     RequestIssue.new(
@@ -48,9 +46,7 @@ describe ClaimReview do
       veteran_file_number: veteran_file_number,
       receipt_date: receipt_date,
       informal_conference: informal_conference,
-      same_office: same_office,
-      established_at: established_at,
-      end_product_status: end_product_status
+      same_office: same_office
     )
   end
 
