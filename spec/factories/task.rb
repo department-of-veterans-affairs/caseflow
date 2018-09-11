@@ -32,7 +32,6 @@ FactoryBot.define do
       appeal_type "Appeal"
       appeal { create(:appeal) }
       assigned_by { nil }
-      assigned_to { Bva.singleton }
     end
 
     factory :generic_task do
