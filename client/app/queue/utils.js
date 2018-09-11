@@ -41,13 +41,17 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       },
       taskId: task.id,
       action: task.attributes.action,
-      documentId: null,
+      documentId: task.attributes.document_id,
       workProduct: null,
       previousTaskAssignedOn: null,
       placedOnHoldAt: task.attributes.placed_on_hold_at,
       status: task.attributes.status,
       onHoldDuration: task.attributes.on_hold_duration,
-      instructions: task.attributes.instructions
+      instructions: task.attributes.instructions,
+      decisionPreparedBy: {
+        firstName: task.attributes.decision_prepared_by.first_name,
+        lastName: task.attributes.decision_prepared_by.last_name
+      }
     };
 
     return acc;

@@ -54,6 +54,8 @@ module CaseflowCertification
     config.sqs_create_queues = false
     config.sqs_endpoint = nil
 
+    config.middleware.insert_before Rack::Sendfile, ActionDispatch::DebugLocks
+
     # sqs details
     config.active_job.queue_name_prefix = "caseflow_" + ENV['DEPLOY_ENV']
 
