@@ -100,13 +100,24 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :certification_header
 
+  # https://stackoverflow.com/a/748646
+  def no_cache
+    # :nocov:
+    response.headers["Cache-Control"] = "no-cache, no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+    # :nocov:
+  end
+
+  # rubocop:disable Metrics/CyclomaticComplexity
   def can_access_queue?
-    return true if current_user.vso_employee?
+    return true if current_user.organization_queue_user? || current_user.vso_employee?
     return true if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
     return true if current_user.colocated_in_vacols? && feature_enabled?(:colocated_queue)
     false
   end
   helper_method :can_access_queue?
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def verify_queue_access
     redirect_to "/unauthorized" unless can_access_queue?

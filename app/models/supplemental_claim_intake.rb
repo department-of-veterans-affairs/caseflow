@@ -36,12 +36,12 @@ class SupplementalClaimIntake < Intake
 
   def complete!(request_params)
     return if complete? || pending?
+
     start_completion!
-
-    detail.create_issues!(request_issues_data: request_params[:request_issues] || [])
-
-    create_end_product_and_contentions
-
+    detail.request_issues.destroy_all unless detail.request_issues.empty?
+    detail.create_issues!(build_issues(request_params[:request_issues] || []))
+    detail.update!(establishment_submitted_at: Time.zone.now)
+    detail.process_end_product_establishments!
     complete_with_status!(:success)
   end
 end

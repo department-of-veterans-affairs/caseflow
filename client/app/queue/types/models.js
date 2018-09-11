@@ -31,7 +31,7 @@ export type Issue = {
   disposition: string,
   close_date: Date,
   note: string,
-  vacols_sequence_id: Number,
+  id: Number,
   labels: Array<string>,
   readjudication: Boolean,
   remand_reasons: Array<Object>
@@ -40,13 +40,14 @@ export type Issue = {
 export type Issues = Array<Issue>;
 
 export type Task = {
-  action?: string,
+  action: string,
   appealId: number,
   externalAppealId: string,
   assignedOn: string,
   dueOn: ?string,
   assignedTo: {
-    cssId: string,
+    cssId: ?string,
+    type: string,
     id: number
   },
   assignedBy: {
@@ -58,7 +59,6 @@ export type Task = {
   addedByName?: string,
   addedByCssId: ?string,
   taskId: string,
-  taskType?: string,
   documentId: ?string,
   workProduct: ?string,
   status?: string,

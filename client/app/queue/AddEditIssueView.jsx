@@ -21,7 +21,10 @@ import {
   hideModal,
   requestSave
 } from './uiReducer/uiActions';
-import { getIssueDiagnosticCodeLabel } from './utils';
+import {
+  getIssueDiagnosticCodeLabel,
+  prepareAppealIssuesForStore
+} from './utils';
 
 import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -109,7 +112,7 @@ class AddEditIssueView extends React.Component {
         }
       }
     };
-    const issueIndex = _.map(issues, 'vacols_sequence_id').indexOf(issue.vacols_sequence_id);
+    const issueIndex = _.map(issues, 'id').indexOf(issue.id);
     const url = `/appeals/${appeal.externalId}/issues`;
     let requestPromise;
 
@@ -117,7 +120,7 @@ class AddEditIssueView extends React.Component {
       requestPromise = this.props.requestSave(url, params, { title: 'You created a new issue.' });
     } else {
       requestPromise = this.props.requestUpdate(
-        `${url}/${issue.vacols_sequence_id}`, params,
+        `${url}/${issue.id}`, params,
         { title: `You updated issue ${issueIndex + 1}.` }
       );
     }
@@ -132,7 +135,7 @@ class AddEditIssueView extends React.Component {
     const issues = _.map(serverIssues, (issue) => {
       // preserve locally-updated dispositions
       const disposition = _.get(
-        _.find(appeal.issues, (iss) => iss.vacols_sequence_id === issue.vacols_sequence_id),
+        _.find(appeal.issues, (iss) => iss.id === issue.id),
         'disposition'
       );
 
@@ -142,7 +145,14 @@ class AddEditIssueView extends React.Component {
       };
     });
 
-    this.props.saveEditedAppealIssue(this.props.appealId, { issues });
+    this.props.saveEditedAppealIssue(this.props.appealId, {
+      issues: prepareAppealIssuesForStore({
+        attributes: {
+          issues,
+          docket_name: appeal.docketName
+        }
+      })
+    });
   }
 
   deleteIssue = () => {
@@ -152,12 +162,12 @@ class AddEditIssueView extends React.Component {
       appealId,
       issueId
     } = this.props;
-    const issueIndex = _.map(issues, 'vacols_sequence_id').indexOf(issue.vacols_sequence_id);
+    const issueIndex = _.map(issues, 'id').indexOf(issue.id);
 
     this.props.hideModal('deleteIssue');
 
     this.props.requestDelete(
-      `/appeals/${appealId}/issues/${issue.vacols_sequence_id}`, {},
+      `/appeals/${appealId}/issues/${issue.id}`, {},
       { title: `You deleted issue ${issueIndex + 1}.` }
     ).then((resp) => this.props.deleteEditingAppealIssue(appealId, issueId, JSON.parse(resp.text)));
   };
@@ -243,7 +253,7 @@ class AddEditIssueView extends React.Component {
       <Button
         willNeverBeLoading
         linkStyling
-        disabled={!issue.vacols_sequence_id}
+        disabled={!issue.id}
         styling={noLeftPadding}
         onClick={() => this.props.showModal('deleteIssue')}>
         Delete Issue

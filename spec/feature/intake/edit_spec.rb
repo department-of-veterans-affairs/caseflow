@@ -43,8 +43,7 @@ RSpec.feature "Edit issues" do
         veteran_file_number: veteran.file_number,
         receipt_date: receipt_date,
         informal_conference: false,
-        same_office: false,
-        established_at: Time.zone.today
+        same_office: false
       )
     end
 
@@ -58,7 +57,8 @@ RSpec.feature "Edit issues" do
     end
 
     before do
-      higher_level_review.create_end_product_and_contentions!
+      higher_level_review.create_issues!([request_issue])
+      higher_level_review.process_end_product_establishments!
     end
 
     it "shows selected issues" do
@@ -72,8 +72,7 @@ RSpec.feature "Edit issues" do
     let!(:supplemental_claim) do
       SupplementalClaim.create!(
         veteran_file_number: veteran.file_number,
-        receipt_date: receipt_date,
-        established_at: Time.zone.today
+        receipt_date: receipt_date
       )
     end
 
@@ -87,7 +86,8 @@ RSpec.feature "Edit issues" do
     end
 
     before do
-      supplemental_claim.create_end_product_and_contentions!
+      supplemental_claim.create_issues!([request_issue])
+      supplemental_claim.process_end_product_establishments!
     end
 
     it "shows selected issues" do

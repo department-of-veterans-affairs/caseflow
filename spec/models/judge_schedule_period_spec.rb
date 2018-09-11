@@ -36,8 +36,8 @@ describe JudgeSchedulePeriod do
 
   context "Judges are not assigned hearings on their non-availability days" do
     let!(:hearing_days) do
-      get_unique_dates_between(single_nonavail_date_judge_schedule_period.start_date,
-                               single_nonavail_date_judge_schedule_period.end_date, 5).map do |date|
+      get_every_nth_date_between(single_nonavail_date_judge_schedule_period.start_date,
+                                 single_nonavail_date_judge_schedule_period.end_date, 4).map do |date|
         create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13", room: 4)
       end
     end
@@ -73,8 +73,8 @@ describe JudgeSchedulePeriod do
       create(:july_travel_board_schedule)
     end
     let!(:hearing_days) do
-      get_unique_dates_between(one_month_judge_schedule_period.start_date,
-                               one_month_judge_schedule_period.end_date, 20).map do |date|
+      get_every_nth_date_between(one_month_judge_schedule_period.start_date,
+                                 one_month_judge_schedule_period.end_date, 4).map do |date|
         create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13", room: 4)
       end
     end
@@ -96,16 +96,16 @@ describe JudgeSchedulePeriod do
         sum += 1 unless hearing_day[:judge_id] != "861"
         sum
       end
-      expect(judge_860).to eq(11)
-      expect(judge_861).to eq(9)
+      expect(judge_860).to eq(3)
+      expect(judge_861).to eq(3)
       expect(judge_860 + judge_861).to eq(hearing_days.count)
     end
   end
 
   context "A judge with a lot of non-availability days still gets as many hearings as possible" do
     let!(:hearing_days) do
-      get_unique_dates_between(one_month_many_noavail_judge_schedule_period.start_date,
-                               one_month_many_noavail_judge_schedule_period.end_date, 20).map do |date|
+      get_every_nth_date_between(one_month_many_noavail_judge_schedule_period.start_date,
+                                 one_month_many_noavail_judge_schedule_period.end_date, 4).map do |date|
         create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13", room: 4)
       end
     end
@@ -121,16 +121,16 @@ describe JudgeSchedulePeriod do
         sum += 1 unless hearing_day[:judge_id] != "861"
         sum
       end
-      expect(judge_860).to eq(5)
-      expect(judge_861).to eq(15)
+      expect(judge_860).to eq(2)
+      expect(judge_861).to eq(4)
       expect(judge_860 + judge_861).to eq(hearing_days.count)
     end
   end
 
   context "Judges cannot be assigned multiple hearing days on the same day" do
     let!(:hearing_days) do
-      get_unique_dates_between(one_week_one_judge_schedule_period.start_date,
-                               one_week_one_judge_schedule_period.end_date, 5).map do |date|
+      get_every_nth_date_between(one_week_one_judge_schedule_period.start_date,
+                                 one_week_one_judge_schedule_period.end_date, 4).map do |date|
         create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13", room: 4)
         create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO17", room: 5)
       end
@@ -144,6 +144,7 @@ describe JudgeSchedulePeriod do
 
     subject { one_week_two_judge_schedule_period.algorithm_assignments }
     it "evenly splits the rooms between two judges" do
+      expect(subject.count).to eq(4)
       # two rooms
       expect(subject.count).to eq(hearing_days.count * 2)
       judge_860 = subject.reduce(0) do |sum, hearing_day|
@@ -154,8 +155,8 @@ describe JudgeSchedulePeriod do
         sum += 1 unless hearing_day[:judge_id] != "861"
         sum
       end
-      expect(judge_860).to eq(5)
-      expect(judge_861).to eq(5)
+      expect(judge_860).to eq(2)
+      expect(judge_861).to eq(2)
       expect(judge_860 + judge_861).to eq(hearing_days.count * 2)
     end
   end
