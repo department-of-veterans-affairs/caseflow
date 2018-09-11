@@ -71,7 +71,8 @@ RSpec.feature "Edit issues" do
       def click_cancel(visit_page)
         visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit#{visit_page}"
         click_on "Cancel edit"
-        expect(page).to have_current_path("/higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit/cancel")
+        correct_path = "/higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit/cancel"
+        expect(page).to have_current_path(correct_path)
         expect(page).to have_content("Claim Edit Cancelled")
       end
 
