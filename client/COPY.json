@@ -58,9 +58,10 @@
   "TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE": "Cases marked with exclamation points need to be assigned to you through DAS. Please contact your judge or senior counsel to create preliminary DAS assignments.",
   "JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE": "Cases to Assign",
 
-  "COLOCATED_QUEUE_PAGE_NEW_TAB_TITLE": "New (%(numNewTasks)d)",
-  "COLOCATED_QUEUE_PAGE_PENDING_TAB_TITLE": "Pending (%(numPendingTasks)d)",
-  "COLOCATED_QUEUE_PAGE_ON_HOLD_TAB_TITLE": "On hold (%(numOnHoldTasks)d)",
+  "COLOCATED_QUEUE_PAGE_TABLE_TITLE": "Your cases",
+  "COLOCATED_QUEUE_PAGE_NEW_TAB_TITLE": "New (%d)",
+  "COLOCATED_QUEUE_PAGE_PENDING_TAB_TITLE": "Pending action (%d)",
+  "COLOCATED_QUEUE_PAGE_ON_HOLD_TAB_TITLE": "On hold (%d)",
   "COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION": "These are new administrative actions that have been assigned to you.",
   "COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION": "When a hold is complete, the case will appear here. Cases with new documents will also appear here.",
   "COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "When a hold is complete, the case will automatically return to the Pending action tab.",
@@ -76,6 +77,7 @@
   "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_IME": "OMO - IME",
   "ATTORNEY_CHECKOUT_OMO_LABEL": "Medical Request Ready for Review",
   "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision Ready for Review",
+  "ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL": "Add admin action",
 
   "REMAND_REASONS_SCREEN_SUBHEAD_LABEL": "Please %s the appropriate remand reason(s) for all the remand dispositions.",
 
@@ -179,7 +181,7 @@
   "COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY": "Enter a custom number of days for the hold",
   "COLOCATED_ACTION_PLACE_CUSTOM_HOLD_INVALID_VALUE": "Please enter a number greater than 0",
   "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION": "%s's case has been placed on hold for %s days.",
-  "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION_DETAIL": "When the hold has been completed, the case will automatically return to the In Progress tab.",
+  "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION_DETAIL": "When the hold has been completed, the case will be automatically moved to the Pending Action tab.",
   "COLOCATED_ACTION_PLACE_HOLD_BUTTON_COPY": "Place case on hold",
 
   "MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT": "Are you sure you want to cancel?",
