@@ -24,6 +24,10 @@ class AttorneyCaseReview < ApplicationRecord
     end
   end
 
+  def written_by_name
+    attorney.full_name
+  end
+
   private
 
   def reassign_case_to_judge_in_vacols!

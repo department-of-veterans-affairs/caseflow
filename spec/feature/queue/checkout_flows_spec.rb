@@ -598,9 +598,11 @@ RSpec.feature "Checkout flows" do
       click_dropdown 6
       expect(page).to have_content(COPY::COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY)
 
-      hold_duration = rand(100)
+      hold_duration = [rand(100), 1].min
       fill_in COPY::COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY, with: hold_duration
 
+      instructions = generate_words 50
+      fill_in "instructions", with: instructions
       click_on "Place case on hold"
 
       expect(page).to have_content(
@@ -608,6 +610,7 @@ RSpec.feature "Checkout flows" do
       )
       expect(colocated_action.reload.on_hold_duration).to eq hold_duration
       expect(colocated_action.status).to eq "on_hold"
+      expect(colocated_action.instructions).to eq instructions
     end
 
     scenario "sends task to team" do
