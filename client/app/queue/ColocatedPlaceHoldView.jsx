@@ -168,7 +168,7 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
       </React.Fragment>}
       <TextareaField
         label="Notes:"
-        name="notes"
+        name="instructions"
         value={this.state.instructions}
         onChange={(instructions) => this.setState({ instructions })}
         styling={marginTop(2)} />
