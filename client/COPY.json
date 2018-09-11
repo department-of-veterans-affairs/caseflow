@@ -29,7 +29,7 @@
 
   "CASE_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
   "CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL": "Type",
-  "CASE_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL": "Total days waiting",
+  "CASE_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL": "Days waiting",
   "CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL": "Docket",
   "CASE_SNAPSHOT_TASK_ASSIGNMENT_BOX_TITLE": "Task information",
   "CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL": "Assigned to",
@@ -49,7 +49,7 @@
 
   "NO_TASKS_IN_ATTORNEY_QUEUE_TITLE": "Cases not found",
   "NO_TASKS_IN_ATTORNEY_QUEUE_MESSAGE": "Sorry! We couldn't find any cases for you.",
-  "ATTORNEY_QUEUE_TABLE_TITLE": "Your Queue",
+  "ATTORNEY_QUEUE_TABLE_TITLE": "Your cases",
   "ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you made a mistake, please email your judge to resolve the issue.",
   "ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE": "Please ask your judge to assign this case to you in DAS",
   "ATTORNEY_QUEUE_TABLE_TASK_NO_DOCUMENTS_READER_LINK": "View in Reader",
