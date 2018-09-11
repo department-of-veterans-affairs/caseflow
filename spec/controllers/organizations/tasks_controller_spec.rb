@@ -52,14 +52,14 @@ RSpec.describe Organizations::TasksController, type: :controller do
           :task,
           appeal: create(:appeal, veteran: create(:veteran)),
           appeal_type: "Appeal",
-          type: :VsoTask,
+          type: :GenericTask,
           assigned_to: vso
         ),
         create(
           :task,
           appeal: create(:appeal, veteran: create(:veteran)),
           appeal_type: "Appeal",
-          type: :VsoTask,
+          type: :GenericTask,
           assigned_to: vso
         )
       ]
