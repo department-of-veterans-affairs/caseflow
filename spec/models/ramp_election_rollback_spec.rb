@@ -32,6 +32,15 @@ describe RampElectionRollback do
            receipt_date: 5.days.ago)
   end
 
+  let!(:ramp_issue) do
+    RampIssue.new(
+      review_type: ramp_election,
+      contention_reference_id: "1234",
+      description: "description",
+      source_issue_id: "12345"
+    )
+  end
+
   let(:rollback) do
     RampElectionRollback.new(
       ramp_election: ramp_election,
@@ -110,6 +119,7 @@ describe RampElectionRollback do
       resultant_end_product_establishment = EndProductEstablishment.find_by(source: ramp_election)
       expect(resultant_end_product_establishment).to eq(nil)
       expect(rollback.reload.reopened_vacols_ids).to eq(%w[12345 23456])
+      expect { ramp_issue.reload }.to raise_error ActiveRecord::RecordNotFound
     end
   end
 end

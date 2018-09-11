@@ -301,30 +301,24 @@ class Fakes::BGSService
     if participant_id == "5382910292"
       # This claimant is over 75 years old so they get automatic AOD
       {
-        brthdy_dt: "Sun, 05 Sep 1943 00:00:00 -0500",
-        first_nm: "Bob",
-        gender_cd: "M",
-        last_nm: "Vance",
-        ptcpnt_id: participant_id,
-        ssn_nbr: "123456789"
+        birth_date: "Sun, 05 Sep 1943 00:00:00 -0500",
+        first_name: "Bob",
+        middle_name: "Billy",
+        last_name: "Vance"
       }
     elsif participant_id == "1129318238"
       {
-        brthdy_dt: "Sat, 05 Sep 1998 00:00:00 -0500",
-        first_nm: "Cathy",
-        gender_cd: "",
-        last_nm: "Smith",
-        ptcpnt_id: participant_id,
-        ssn_nbr: nil
+        birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
+        first_name: "Cathy",
+        middle_name: "",
+        last_name: "Smith"
       }
     else
       {
-        brthdy_dt: "Sat, 05 Sep 1998 00:00:00 -0500",
-        first_nm: "Other",
-        gender_cd: "",
-        last_nm: "Person",
-        ptcpnt_id: participant_id,
-        ssn_nbr: nil
+        birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
+        first_name: "Other",
+        middle_name: "",
+        last_name: "Person"
       }
     end
   end
@@ -369,6 +363,10 @@ class Fakes::BGSService
         }
       end
     )
+  end
+
+  def fetch_person_info(_participant_id)
+    { first_name: "Tom", last_name: "Brady", middle_name: "Edward" }
   end
 
   # TODO: add more test cases
@@ -451,7 +449,7 @@ class Fakes::BGSService
         middle_name: "D",
         poa: "DISABLED AMERICAN VETERANS",
         proof_of_dependecy_ind: nil,
-        ptcpnt_id: "5382910292",
+        ptcpnt_id: "CLAIMANT_WITH_PVA_AS_VSO",
         relationship_begin_date: nil,
         relationship_end_date: nil,
         relationship_type: "Spouse",
@@ -498,7 +496,6 @@ class Fakes::BGSService
 
   def default_claimant_info
     {
-      name: "Harry Carey",
       relationship: "Spouse"
     }
   end

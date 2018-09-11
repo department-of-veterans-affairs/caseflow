@@ -9,7 +9,8 @@ import StringUtil from '../util/StringUtil';
 import {
   setFeatureToggles,
   setUserRole,
-  setUserCssId
+  setUserCssId,
+  setUserIsVsoEmployee
 } from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
@@ -26,6 +27,8 @@ import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
+import MarkTaskCompleteView from './MarkTaskCompleteView';
+import TriggerModal from './TriggerModal';
 
 import CaseListView from './CaseListView';
 import CaseSearchSheet from './CaseSearchSheet';
@@ -55,11 +58,13 @@ type Props = {|
   buildDate?: string,
   reviewActionType: string,
   userCanAccessQueue?: boolean,
+  userIsVsoEmployee?: boolean,
   featureToggles: Object,
   // Action creators
   setFeatureToggles: typeof setFeatureToggles,
   setUserRole: typeof setUserRole,
-  setUserCssId: typeof setUserCssId
+  setUserCssId: typeof setUserCssId,
+  setUserIsVsoEmployee: typeof setUserIsVsoEmployee
 |};
 
 class QueueApp extends React.PureComponent<Props> {
@@ -67,6 +72,7 @@ class QueueApp extends React.PureComponent<Props> {
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
+    this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
   }
 
   routedSearchResults = (props) => <React.Fragment>
@@ -78,7 +84,7 @@ class QueueApp extends React.PureComponent<Props> {
     const { userRole } = this.props;
 
     if (userRole === USER_ROLE_TYPES.attorney) {
-      return <AttorneyTaskListView {...this.props} />;
+      return <AttorneyTaskListView />;
     } else if (userRole === USER_ROLE_TYPES.judge) {
       return <JudgeReviewTaskListView {...this.props} />;
     } else if (userRole === USER_ROLE_TYPES.colocated) {
@@ -96,9 +102,9 @@ class QueueApp extends React.PureComponent<Props> {
     <BeaamAppealListView {...this.props} />
   </QueueLoadingScreen>;
 
-  routedJudgeQueueList = (taskType) => ({ match }) => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
+  routedJudgeQueueList = (action) => ({ match }) => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
     <SearchBar feedbackUrl={this.props.feedbackUrl} />
-    {taskType === 'Assign' ?
+    {action === 'assign' ?
       <JudgeAssignTaskListView {...this.props} match={match} /> :
       <JudgeReviewTaskListView {...this.props} />}
   </QueueLoadingScreen>;
@@ -131,6 +137,12 @@ class QueueApp extends React.PureComponent<Props> {
   routedAddColocatedTask = (props) => <AddColocatedTaskView nextStep="/queue" {...props.match.params} />;
 
   routedColocatedPlaceHold = (props) => <ColocatedPlaceHoldView nextStep="/queue" {...props.match.params} />;
+
+  routedMarkTaskComplete = (props) => <MarkTaskCompleteView
+    nextStep={`/queue/appeals/${props.match.params.appealId}`}
+    {...props.match.params} />;
+
+  triggerModal = (props) => <TriggerModal modal={props.match.params.modalType} />;
 
   routedOrganization = (props) => <OrganizationQueueLoadingScreen
     urlToLoad={`${props.location.pathname}/tasks`}>
@@ -201,11 +213,11 @@ class QueueApp extends React.PureComponent<Props> {
             exact
             path="/queue/:userId/review"
             title="Review Cases | Caseflow"
-            render={this.routedJudgeQueueList('Review')} />
+            render={this.routedJudgeQueueList('review')} />
           <PageRoute
             path="/queue/:userId/assign"
             title="Unassigned Cases | Caseflow"
-            render={this.routedJudgeQueueList('Assign')} />
+            render={this.routedJudgeQueueList('assign')} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"
@@ -265,6 +277,16 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedColocatedPlaceHold} />
           <PageRoute
             exact
+            path="/queue/appeals/:appealId/mark_task_complete"
+            title="Mark Task Complete | Caseflow"
+            render={this.routedMarkTaskComplete} />
+          <PageRoute
+            exact
+            path="/queue/modal/:modalType"
+            title="Caseflow"
+            render={this.triggerModal} />
+          <PageRoute
+            exact
             path="/organizations/:organization"
             title="Organization Queue | Caseflow"
             render={this.routedOrganization} />
@@ -296,7 +318,8 @@ const mapStateToProps = (state: State) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setFeatureToggles,
   setUserRole,
-  setUserCssId
+  setUserCssId,
+  setUserIsVsoEmployee
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueApp);

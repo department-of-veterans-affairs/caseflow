@@ -43,6 +43,16 @@ describe HigherLevelReviewIntake do
       )
     end
 
+    let!(:request_issue) do
+      RequestIssue.new(
+        review_request: detail,
+        rating_issue_profile_date: Date.new(2017, 4, 5),
+        rating_issue_reference_id: "issue1",
+        contention_reference_id: "1234",
+        description: "description"
+      )
+    end
+
     it "cancels and deletes the Higher-Level Review record created" do
       subject
 
@@ -53,6 +63,7 @@ describe HigherLevelReviewIntake do
         cancel_other: nil
       )
       expect { claimant.reload }.to raise_error ActiveRecord::RecordNotFound
+      expect { request_issue.reload }.to raise_error ActiveRecord::RecordNotFound
     end
   end
 
@@ -140,17 +151,9 @@ describe HigherLevelReviewIntake do
       subject
 
       expect(intake).to be_success
-      expect(intake.detail.established_at).to eq(Time.zone.now)
+      expect(intake.detail.establishment_submitted_at).to eq(Time.zone.now)
       expect(ratings_end_product_establishment).to_not be_nil
       expect(ratings_end_product_establishment.established_at).to eq(Time.zone.now)
-
-      expect(intake.detail.request_issues.count).to eq 1
-
-      expect(intake.detail.request_issues.first).to have_attributes(
-        rating_issue_reference_id: "reference-id",
-        rating_issue_profile_date: Date.new(2018, 4, 30),
-        description: "decision text"
-      )
 
       expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
         claim_hash: {
@@ -182,6 +185,14 @@ describe HigherLevelReviewIntake do
         rated_issue_contention_map: {
           "reference-id" => intake.detail.request_issues.first.contention_reference_id
         }
+      )
+
+      expect(intake.detail.request_issues.count).to eq 1
+      expect(intake.detail.request_issues.first).to have_attributes(
+        rating_issue_reference_id: "reference-id",
+        rating_issue_profile_date: Date.new(2018, 4, 30),
+        description: "decision text",
+        rating_issue_associated_at: Time.zone.now
       )
     end
 

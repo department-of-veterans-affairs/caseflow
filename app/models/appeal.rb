@@ -51,15 +51,19 @@ class Appeal < AmaReview
   end
 
   def veteran_first_name
-    veteran.name.first_name if veteran
+    veteran && veteran.name.first_name
   end
 
   def veteran_middle_initial
-    veteran.name.middle_initial if veteran
+    veteran && veteran.name.middle_initial
   end
 
   def veteran_last_name
-    veteran.name.last_name if veteran
+    veteran && veteran.name.last_name
+  end
+
+  def veteran_gender
+    veteran && veteran.sex
   end
 
   def advanced_on_docket
@@ -68,6 +72,33 @@ class Appeal < AmaReview
 
   def number_of_issues
     issues[:request_issues].size
+  end
+
+  def appellant
+    claimants.first
+  end
+
+  delegate :first_name, :last_name, :middle_name, :name_suffix, to: :appellant, prefix: true, allow_nil: true
+
+  # TODO: implement for AMA
+  def citation_number
+    "not implemented"
+  end
+
+  def veteran_is_deceased
+    veteran && veteran.date_of_death.present?
+  end
+
+  def cavc
+    "not implemented"
+  end
+
+  def status
+    nil
+  end
+
+  def previously_selected_for_quality_review
+    "not implemented"
   end
 
   def create_issues!(request_issues_data:)
@@ -85,13 +116,32 @@ class Appeal < AmaReview
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 
+  # For now power_of_attorney returns the first claimant's power of attorney
   def power_of_attorney
-    @bgs_poa ||= BgsPowerOfAttorney.new(file_number: veteran_file_number)
+    claimants.first.power_of_attorney if claimants.first
+  end
+  delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
+
+  def power_of_attorneys
+    claimants.map(&:power_of_attorney)
   end
 
-  delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
+  def vsos
+    vso_participant_ids = power_of_attorneys.map(&:participant_id)
+    Vso.where(participant_id: vso_participant_ids)
+  end
 
   def external_id
     uuid
+  end
+
+  def create_tasks_on_intake_success!
+    RootTask.create_root_and_sub_tasks!(self)
+  end
+
+  private
+
+  def bgs
+    BGSService.new
   end
 end

@@ -47,7 +47,7 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
 
     blockTransitions = () => this.unblockTransitions = this.props.history.block((location) => {
       const { pathname } = location;
-      const newPathInCheckoutFlow = /^\/queue\/appeals\/[a-zA-Z0-9-]+(?:\/\S+)/;
+      const newPathInCheckoutFlow = /^\/queue\/appeals\/[a-zA-Z0-9-]+(?:\/\S+)?/;
 
       if (!newPathInCheckoutFlow.exec(pathname) && pathname !== '/queue') {
         return `${COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT} ${COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT}`;
@@ -80,7 +80,7 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
         loadingText: 'Submitting...',
         styling: css({ marginLeft: '1rem' })
       }, {
-        classNames: ['cf-right-side', 'cf-prev-step', 'usa-button-outline'],
+        classNames: ['cf-right-side', 'cf-prev-step', 'usa-button-secondary'],
         callback: this.props.hideCancelButton ? this.cancelFlow : this.goToPrevStep,
         name: 'back-button',
         displayText: this.props.hideCancelButton ? 'Cancel' : 'Back',

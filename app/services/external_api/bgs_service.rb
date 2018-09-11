@@ -48,12 +48,18 @@ class ExternalApi::BGSService
   def fetch_person_info(participant_id)
     DBService.release_db_connections
 
-    @person_info[participant_id] ||=
-      MetricsService.record("BGS: fetch veteran info for participant_id: #{participant_id}",
-                            service: :bgs,
-                            name: "veteran.find_by_file_number") do
-        client.people.find_person_by_ptcpnt_id(participant_id)
-      end
+    bgs_info = MetricsService.record("BGS: fetch person info by participant id: #{participant_id}",
+                                     service: :bgs,
+                                     name: "people.find_person_by_ptcpnt_id") do
+      client.people.find_person_by_ptcpnt_id(participant_id)
+    end
+
+    @person_info[participant_id] ||= {
+      first_name: bgs_info[:first_nm],
+      last_name: bgs_info[:last_nm],
+      middle_name: bgs_info[:middle_nm],
+      birth_date: bgs_info[:brthdy_dt]
+    }
   end
 
   def fetch_file_number_by_ssn(ssn)
@@ -179,8 +185,8 @@ class ExternalApi::BGSService
                            participant_id = #{participant_id}",
                           service: :bgs,
                           name: "claimants.find_general_information_by_participant_id") do
-      basic_info = client.claimants.find_general_information_by_participant_id(participant_id)
-      get_name_and_address_from_bgs_info(basic_info)
+      bgs_info = client.claimants.find_general_information_by_participant_id(participant_id)
+      bgs_info ? { relationship: bgs_info[:payee_type_name] } : {}
     end
   end
 

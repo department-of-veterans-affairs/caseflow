@@ -20,7 +20,7 @@ module PowerOfAttorneyMapper
   end
 
   def get_hash_of_poa_from_bgs_poas(bgs_resp)
-    bgs_resp.each_with_object({}) do |poa, hsh|
+    [bgs_resp].flatten.each_with_object({}) do |poa, hsh|
       hsh[poa[:ptcpnt_id]] = get_poa_from_bgs_poa(poa[:power_of_attorney])
     end
   end
