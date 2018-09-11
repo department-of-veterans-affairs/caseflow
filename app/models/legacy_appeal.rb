@@ -501,7 +501,8 @@ class LegacyAppeal < ApplicationRecord
     case_record.mail.map do |row|
       {
         outstanding: row.outstanding?,
-        code: row.mltype
+        code: row.mltype,
+        description: VACOLS::Mail::TYPES[row.mltype]
       }
     end
   end

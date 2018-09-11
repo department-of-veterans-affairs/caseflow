@@ -162,7 +162,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               ama_appeals.first.representative_type
             )
             expect(response_body["attributes"]["aod"]).to eq ama_appeals.first.advanced_on_docket
-            expect(response_body["attributes"]["cavc"]).to eq "not implemented"
+            expect(response_body["attributes"]["cavc"]).to eq "not implemented for AMA"
             expect(response_body["attributes"]["issues"].first["program"]).to eq "Compensation"
             expect(response_body["attributes"]["issues"].second["program"]).to eq "Compensation"
             expect(response_body["attributes"]["status"]).to eq nil
@@ -225,7 +225,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
               expect(response_body["attributes"]["previously_selected_for_quality_review"]).to eq true
               expect(response_body["attributes"]["outstanding_mail"]).to eq [
-                { "outstanding" => false, "code" => "02" }, { "outstanding" => true, "code" => "05" }
+                { "outstanding" => false, "code" => "02", "description" => "Congressional Interest" },
+                { "outstanding" => true, "code" => "05", "description" => "Evidence or Argument" }
               ]
               expect(response_body["attributes"]["assigned_by"]).to eq "Lyor Cohen"
             end
