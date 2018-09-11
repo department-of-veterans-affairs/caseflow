@@ -12,6 +12,7 @@ import {
   resetDecisionOptions,
   stageAppeal
 } from '../QueueActions';
+import COPY from '../../../COPY.json';
 import {
   dropdownStyling,
   DRAFT_DECISION_OPTIONS,
@@ -69,7 +70,7 @@ class AttorneyActionsDropdown extends React.PureComponent<Props> {
 
     if (featureToggles.attorney_assignment_to_colocated) {
       return [...options, {
-        label: 'Add Colocated Task',
+        label: COPY.ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL,
         value: 'colocated_task'
       }];
     }
