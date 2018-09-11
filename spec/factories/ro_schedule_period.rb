@@ -1,7 +1,7 @@
 FactoryBot.define do
   before(:create) do
-    S3Service.store_file("validRoSpreadsheet.xlsx", "spec/support/validRoSpreadsheet.xlsx", :filepath)
-    S3Service.store_file("blankRoSpreadsheet.xlsx", "spec/support/blankRoSpreadsheet.xlsx", :filepath)
+    S3Service.store_file("hearing_schedule/validRoSpreadsheet.xlsx", "spec/support/validRoSpreadsheet.xlsx", :filepath)
+    S3Service.store_file("hearing_schedule/blankRoSpreadsheet.xlsx", "spec/support/blankRoSpreadsheet.xlsx", :filepath)
   end
 
   factory :ro_schedule_period do

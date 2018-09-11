@@ -50,7 +50,7 @@ describe Form8PdfService do
     end
 
     it "should save a file in s3" do
-      file_content = S3Service.files[form8.pdf_filename]
+      file_content = S3Service.files["form_8/" + form8.pdf_filename]
       expect(file_content).to_not be nil
     end
 

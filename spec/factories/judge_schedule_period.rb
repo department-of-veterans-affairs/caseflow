@@ -62,19 +62,19 @@ FactoryBot.define do
     end
 
     before(:create) do
-      S3Service.store_file("validJudgeSpreadsheet.xlsx",
+      S3Service.store_file("hearing_schedule/validJudgeSpreadsheet.xlsx",
                            "spec/support/validJudgeSpreadsheet.xlsx", :filepath)
-      S3Service.store_file("blankJudgeSpreadsheet.xlsx",
+      S3Service.store_file("hearing_schedule/blankJudgeSpreadsheet.xlsx",
                            "spec/support/blankJudgeSpreadsheet.xlsx", :filepath)
-      S3Service.store_file("singleNonAvailJudgeSpreadsheet.xlsx",
+      S3Service.store_file("hearing_schedule/singleNonAvailJudgeSpreadsheet.xlsx",
                            "spec/support/singleNonAvailJudgeSpreadsheet.xlsx", :filepath)
-      S3Service.store_file("twoInJulyJudgeSpreadsheet.xlsx",
+      S3Service.store_file("hearing_schedule/twoInJulyJudgeSpreadsheet.xlsx",
                            "spec/support/twoInJulyJudgeSpreadsheet.xlsx", :filepath)
-      S3Service.store_file("oneAllAvailJudgeSpreadsheet.xlsx",
+      S3Service.store_file("hearing_schedule/oneAllAvailJudgeSpreadsheet.xlsx",
                            "spec/support/oneAllAvailJudgeSpreadsheet.xlsx", :filepath)
-      S3Service.store_file("manyNonAvailJudgeSpreadsheet.xlsx",
+      S3Service.store_file("hearing_schedule/manyNonAvailJudgeSpreadsheet.xlsx",
                            "spec/support/manyNonAvailJudgeSpreadsheet.xlsx", :filepath)
-      S3Service.store_file("twoAllAvailJudgeSpreadsheet.xlsx",
+      S3Service.store_file("hearing_schedule/twoAllAvailJudgeSpreadsheet.xlsx",
                            "spec/support/twoAllAvailJudgeSpreadsheet.xlsx", :filepath)
       create(:staff, sattyid: "860", snamef: "Stuart", snamel: "Huels")
       create(:staff, sattyid: "861", snamef: "Doris", snamel: "Lamphere")
