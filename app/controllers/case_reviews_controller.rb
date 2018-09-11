@@ -28,7 +28,7 @@ class CaseReviewsController < ApplicationController
 
   def root_task_for_case_review(record)
     return record.task.root_task if record.task
-    RootTask.create!(appeal: record.appeal, assigned_to: Bva.singleton)
+    RootTask.create!(appeal: record.appeal)
   end
 
   def case_review_class
