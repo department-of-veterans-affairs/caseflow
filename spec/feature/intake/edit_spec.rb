@@ -67,7 +67,7 @@ RSpec.feature "Edit issues" do
       expect(find_field("Left knee granted", visible: false)).to be_checked
     end
 
-    feature "cancel edits", :focus => true do
+    feature "cancel edits" do
       def click_cancel(visit_page)
         visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit#{visit_page}"
         click_on "Cancel edit"
