@@ -235,7 +235,7 @@ class SeedDB
     vso = Organization.find_by(name: "American Legion")
     translation_org = Organization.find_by(name: "Translation")
 
-    FactoryBot.create(:ama_judge_task, assigned_to: judge, appeal: @ama_appeals[0])
+    FactoryBot.create(:ama_judge_task, assigned_to: judge, appeal: @ama_appeals[0], action: :review)
 
     parent = FactoryBot.create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: @ama_appeals[1])
     FactoryBot.create(
