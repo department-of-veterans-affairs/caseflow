@@ -6,8 +6,12 @@ module RoundRobinAssigner
       User.find_by_css_id_or_create_with_default_station_id(next_assignee_css_id)
     end
 
+    def latest_task
+      where(assigned_to_type: User.name).order("created_at").last
+    end
+
     def last_assignee_css_id
-      latest_round_robin_task ? latest_round_robin_task.assigned_to.css_id : nil
+      latest_task ? latest_task.assigned_to.css_id : nil
     end
 
     def next_assignee_css_id

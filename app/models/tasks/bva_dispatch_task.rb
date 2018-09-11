@@ -13,10 +13,6 @@ class BvaDispatchTask < GenericTask
 
     private
 
-    def latest_round_robin_task
-      nil
-    end
-
     def list_of_assignees
       Constants::BvaDispatchTeams::USERS[Rails.current_env]
     end
