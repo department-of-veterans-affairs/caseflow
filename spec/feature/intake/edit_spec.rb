@@ -66,6 +66,11 @@ RSpec.feature "Edit issues" do
       expect(find_field("PTSD denied", visible: false)).to_not be_checked
       expect(find_field("Left knee granted", visible: false)).to be_checked
     end
+
+    scenario "cancels edits" do
+      visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit/cancel"
+      expect(page).to have_content("Claim Edit Cancelled")
+    end
   end
 
   context "Supplemental claims" do
