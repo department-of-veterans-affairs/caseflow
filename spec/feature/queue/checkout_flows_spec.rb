@@ -65,6 +65,11 @@ RSpec.feature "Checkout flows" do
       visit "/queue"
       click_on "(#{appeal.veteran_file_number})"
       click_dropdown 0
+      click_label "radiation"
+
+      click_on "Continue"
+
+      expect(appeal.special_issue_list.radiation).to eq(true)
 
       issue_rows = page.find_all("tr[id^='table-row-']")
       expect(issue_rows.length).to eq(appeal.request_issues.length)

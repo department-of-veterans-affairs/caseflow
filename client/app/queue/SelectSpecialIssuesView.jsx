@@ -7,6 +7,7 @@ import { setSpecialIssues } from './QueueActions';
 import { requestSave } from './uiReducer/uiActions';
 
 import decisionViewBase from './components/DecisionViewBase';
+import Alert from '../components/Alert';
 import Checkbox from '../components/Checkbox';
 import SPECIAL_ISSUES from '../constants/SpecialIssues';
 import COPY from '../../COPY.json';
@@ -29,15 +30,20 @@ class SelectSpecialIssuesView extends React.PureComponent {
 
     const data = ApiUtil.convertToSnakeCase({ specialIssues });
 
-    this.props.requestSave(`/appeals/${appeal.externalId}/special_issues`, { data }, { title: 'Special issues saved' });
+    this.props.requestSave(`/appeals/${appeal.externalId}/special_issues`, { data }, null);
   };
 
   render = () => {
     const {
-      specialIssues
+      specialIssues,
+      error
     } = this.props;
 
     const specialIssueCheckboxes = SPECIAL_ISSUES.map((issue) => {
+      if (issue.nonCompensation) {
+        return null;
+      }
+
       return <Checkbox
         key={issue.specialIssue}
         label={issue.display}
@@ -51,6 +57,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
       <h1>
         {this.getPageName()}
       </h1>
+      {error && <Alert type="error" title={error.title} message={error.detail} />}
       <div className="cf-multiple-columns">
         {specialIssueCheckboxes}
       </div>
@@ -64,7 +71,8 @@ SelectSpecialIssuesView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
-  specialIssues: state.queue.specialIssues
+  specialIssues: state.queue.specialIssues,
+  error: state.ui.messages.error,
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
