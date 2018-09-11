@@ -43,6 +43,8 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
   render = () => {
     const { userId, featureToggles, selectedTasks, success, error } = this.props;
 
+    debugger;
+
     return <React.Fragment>
       <h2>{JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE}</h2>
       {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}

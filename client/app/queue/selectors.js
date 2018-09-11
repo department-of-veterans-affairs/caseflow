@@ -104,10 +104,8 @@ const incompleteTasksSelector = (tasks: Tasks) => _.filter(tasks, (task) => task
 
 export const tasksByAssigneeCssIdSelector = createSelector(
   [tasksWithAppealSelector, getUserCssId],
-  (tasks: Array<TaskWithAppeal>, cssId: string) => {
+  (tasks: Array<TaskWithAppeal>, cssId: string) =>
     _.filter(tasks, (task) => task.assignedTo.cssId === cssId)
-    debugger;
-  }
 );
 
 export const incompleteTasksByAssigneeCssIdSelector = createSelector(
@@ -176,7 +174,13 @@ export const judgeReviewTasksSelector = createSelector(
 
 export const judgeAssignTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => task.action === 'assign')
+  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => {
+    if (task.externalAppealId.length === 36) {
+      // AMA appeals
+      return  task.action === 'assign' && task.status === 'in_progress';
+    }
+    return task.action === 'assign';
+  })
 );
 
 // ***************** Non-memoized selectors *****************
@@ -193,6 +197,8 @@ export const getAssignedTasks = (state: State, attorneyId: string) => {
   const tasks = tasksWithAppealSelector(state);
   const attorney = getAttorney(state, attorneyId);
   const cssId = attorney ? attorney.css_id : null;
+
+  debugger;
 
   return _.filter(tasks, (task) => task.assignedTo.cssId === cssId);
 };
