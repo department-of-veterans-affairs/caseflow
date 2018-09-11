@@ -6,7 +6,6 @@ import { bindActionCreators } from 'redux';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
-import { extractAppealsAndAmaTasks } from './utils';
 
 import { setSpecialIssues } from './QueueActions';
 
@@ -21,8 +20,10 @@ type Props = Params & {|
 |};
 
 class SpecialIssueLoadingScreen extends React.PureComponent<Props> {
-  createLoadPromise = () => ApiUtil.get(`/appeals/${this.props.appealExternalId}/special_issues`, { timeout: { response: 5 * 60 * 1000 } }).then(
+  createLoadPromise = () => ApiUtil.get(
+    `/appeals/${this.props.appealExternalId}/special_issues`, { timeout: { response: 5 * 60 * 1000 } }).then(
     (response) => {
+      // eslint-disable-next-line no-unused-vars
       const { appeal_id, id, ...specialIssues } = JSON.parse(response.text);
 
       this.props.setSpecialIssues(specialIssues);

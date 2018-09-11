@@ -2,18 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { css } from 'glamor';
-import _ from 'lodash';
 
 import { setSpecialIssues } from './QueueActions';
 import { requestSave } from './uiReducer/uiActions';
 
 import decisionViewBase from './components/DecisionViewBase';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import IssueList from './components/IssueList';
-import SelectIssueDispositionDropdown from './components/SelectIssueDispositionDropdown';
 import Checkbox from '../components/Checkbox';
-import SPECIAL_ISSUES from '../constants/SpecialIssues'
+import SPECIAL_ISSUES from '../constants/SpecialIssues';
 import COPY from '../../COPY.json';
 import ApiUtil from '../util/ApiUtil';
 
@@ -34,12 +29,11 @@ class SelectSpecialIssuesView extends React.PureComponent {
 
     const data = ApiUtil.convertToSnakeCase({ specialIssues });
 
-    this.props.requestSave(`/appeals/${appeal.externalId}/special_issues`, { data }, { title: "Special issues saved" });
+    this.props.requestSave(`/appeals/${appeal.externalId}/special_issues`, { data }, { title: 'Special issues saved' });
   };
 
   render = () => {
     const {
-      appeal,
       specialIssues
     } = this.props;
 
@@ -50,8 +44,8 @@ class SelectSpecialIssuesView extends React.PureComponent {
         name={issue.specialIssue}
         value={specialIssues[issue.snakeCase]}
         onChange={this.onChangeSpecialIssue(issue)}
-      />
-    })
+      />;
+    });
 
     return <React.Fragment>
       <h1>
@@ -65,7 +59,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
 }
 
 SelectSpecialIssuesView.propTypes = {
-  appealId: PropTypes.string.isRequired,
+  appealId: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => ({

@@ -130,7 +130,7 @@ class QueueApp extends React.PureComponent<Props> {
     <SelectSpecialIssuesView
       appealId={props.match.params.appealId}
       prevStep={`/queue/appeals/${props.match.params.appealId}`}
-      nextStep={`/queue/appeals/${props.match.params.appealId}/dispositions` } />
+      nextStep={`/queue/appeals/${props.match.params.appealId}/dispositions`} />
   </SpecialIssueLoadingScreen>;
 
   routedAddEditIssue = (props) => <AddEditIssueView
