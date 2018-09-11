@@ -29,6 +29,14 @@ class VACOLS::CaseAssignment < VACOLS::Record
     )
   end
 
+  def assigned_by_name
+    [assigned_by_first_name, assigned_by_last_name].join(" ")
+  end
+
+  def written_by_name
+    [written_by_first_name, written_by_last_name].join(" ")
+  end
+
   class << self
     def active_cases_for_user(css_id)
       id = connection.quote(css_id.upcase)
