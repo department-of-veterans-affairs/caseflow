@@ -73,7 +73,7 @@ ActiveRecord::Schema.define(version: 20180907184617) do
     t.string "docket_type"
     t.datetime "established_at"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
-    t.boolean "advanced_on_docket"
+    t.boolean "advanced_on_docket", default: false
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
 
@@ -250,8 +250,8 @@ ActiveRecord::Schema.define(version: 20180907184617) do
     t.string "modifier"
     t.string "station"
     t.datetime "last_synced_at"
-    t.string "claimant_participant_id"
     t.string "payee_code"
+    t.string "claimant_participant_id"
     t.datetime "committed_at"
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
