@@ -222,7 +222,7 @@ bundle exec rake local:destroy
 bundle exec rake local:build
 ```
 
-More detailed errors and resolutions are located in the [Oracle Debugging readme](docs/oracle-debugging).
+More detailed errors and resolutions are located in the [Oracle Debugging readme](docs/oracle-debugging.md).
 
 ### Manually seeding your local VACOLS container
 To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
