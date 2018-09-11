@@ -1,7 +1,10 @@
 // @flow
 import { createSelector } from 'reselect';
 import _ from 'lodash';
-import moment from 'moment';
+import {
+  taskHasNewDocuments,
+  taskIsOnHold
+} from './utils';
 
 import type { State, NewDocsForAppeal } from './types/state';
 import type {
@@ -31,6 +34,7 @@ const getAppealId = (state: State, props: Object) => props.appealId;
 const getAttorneys = (state: State) => state.queue.attorneysOfJudge;
 const getCaseflowVeteranId = (state: State, props: Object) => props.caseflowVeteranId;
 const getModals = (state: State) => state.ui.modals;
+const getNewDocsForAppeal = (state: State) => state.queue.newDocsForAppeal;
 
 export const getActiveModalType = createSelector(
   [getModals],
@@ -132,16 +136,6 @@ export const workableTasksByAssigneeCssIdSelector = createSelector(
   )
 );
 
-const getNewDocsForAppeal = (state: State) => state.queue.newDocsForAppeal;
-
-const hasNewDocuments = (newDocsForAppeal: NewDocsForAppeal, task: Task) => {
-  if (!newDocsForAppeal[task.externalAppealId] || !newDocsForAppeal[task.externalAppealId].docs) {
-    return false;
-  }
-
-  return newDocsForAppeal[task.externalAppealId].docs.length > 0;
-};
-
 const incompleteTasksWithHold: (State) => Array<Task> = createSelector(
   [incompleteTasksByAssigneeCssIdSelector],
   (tasks: Array<Task>) => tasks.filter((task) => task.placedOnHoldAt)
@@ -150,16 +144,14 @@ const incompleteTasksWithHold: (State) => Array<Task> = createSelector(
 export const pendingTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
   [incompleteTasksWithHold, getNewDocsForAppeal],
   (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) => tasks.filter((task) =>
-    moment().diff(moment(task.placedOnHoldAt), 'days') >= task.onHoldDuration ||
-    hasNewDocuments(newDocsForAppeal, task)
+    !taskIsOnHold(task) || taskHasNewDocuments(task, newDocsForAppeal)
   )
 );
 
 export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
   [incompleteTasksWithHold, getNewDocsForAppeal],
   (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) => tasks.filter((task) =>
-    moment().diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration &&
-    !hasNewDocuments(newDocsForAppeal, task)
+    taskIsOnHold(task) && !taskHasNewDocuments(task, newDocsForAppeal)
   )
 );
 
