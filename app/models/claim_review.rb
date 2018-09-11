@@ -79,6 +79,10 @@ class ClaimReview < AmaReview
       claim_id: end_product_establishment.reference_id,
       rated_issue_contention_map: rated_issue_contention_map(request_issues_to_associate)
     )
+
+    RequestIssue.where(id: request_issues_to_associate.map(&:id)).update_all(
+      rating_issue_associated_at: Time.zone.now
+    )
   end
 
   def rated_issue_contention_map(request_issues_to_associate)
