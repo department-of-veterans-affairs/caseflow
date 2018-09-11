@@ -24,9 +24,9 @@ review and annotate electronic case files.
 
 Scheduling and supporting Board of Veterans' Appeals hearings.
 
-## Caseflow products in a mature state 
+## Caseflow products in a mature state
 
-### Dispatch 
+### Dispatch
 
 Facilitates the transfer of cases from the Agency of Original Jurisdiction (AOJ) to
 the Board of Veterans' Appeals (the Board).
@@ -166,6 +166,21 @@ This should install clean. If you have errors, you probably missed a dependency 
     yarn install
 
 This should install clean. If you have errors, try ... FIXME.
+
+### Setup the development Postgres user
+
+Add these to your `.bash_profile`:
+
+```
+export POSTGRES_HOST=localhost
+export POSTGRES_USER=postgres
+export POSTGRES_PASSWORD=postgres
+export NLS_LANG=American_America.UTF8
+```
+
+The last env var silences one of the Oracle warnings on startup.
+
+(Reload the file `source ~/.bash_profile`)
 
 ### Cleanup the old dev environment (not needed for new Macbooks)
 
