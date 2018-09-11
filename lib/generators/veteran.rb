@@ -93,7 +93,7 @@ class Generators::Veteran
     def build(attrs = {})
       Fakes::BGSService.veteran_records ||= {}
       Fakes::BGSService.veteran_records[attrs[:file_number]] = default_attrs(attrs[:file_number]).merge(attrs)
-      Veteran.new(file_number: attrs[:file_number])
+      Veteran.new(file_number: attrs[:file_number], first_name: attrs[:first_name], last_name: attrs[:last_name])
     end
   end
 end
