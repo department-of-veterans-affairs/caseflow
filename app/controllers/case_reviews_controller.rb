@@ -16,7 +16,7 @@ class CaseReviewsController < ApplicationController
     record = case_review_class.complete(complete_params)
     return invalid_record_error(record) unless record.valid?
 
-    create_bva_dispatch_task(record)
+    create_bva_dispatch_task(record) if case_review_class == JudgeCaseReview
 
     response = { task: record }
     response[:issues] = record.appeal.issues

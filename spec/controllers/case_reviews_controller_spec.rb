@@ -45,6 +45,7 @@ RSpec.describe CaseReviewsController, type: :controller do
                          { "disposition": "remanded", "id": request_issue2.id }]
             }
           end
+          let!(:bva_dispatch_task_count_before) { BvaDispatchTask.count }
 
           it "should be successful" do
             post :complete, params: { task_id: task.id, tasks: params }
@@ -63,6 +64,8 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(task.completed_at).to_not eq nil
             expect(task.parent.reload.status).to eq "assigned"
             expect(task.parent.action).to eq "review"
+
+            expect(bva_dispatch_task_count_before).to eq(BvaDispatchTask.count)
           end
         end
       end
@@ -113,6 +116,10 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(request_issue2.reload.disposition).to eq "remanded"
             expect(task.reload.status).to eq "completed"
             expect(task.completed_at).to_not eq nil
+
+            bva_dispatch_task = BvaDispatchTask.find_by(parent_id: root_task.id)
+            expect(bva_dispatch_task.assigned_to).to eq(BvaDispatch.singleton)
+            expect(bva_dispatch_task.children.length).to eq(1)
           end
         end
       end
@@ -150,6 +157,7 @@ RSpec.describe CaseReviewsController, type: :controller do
               "note": "something"
             }
           end
+          let!(:bva_dispatch_task_count_before) { BvaDispatchTask.count }
 
           it "should be successful" do
             post :complete, params: { task_id: task_id, tasks: params }
@@ -158,6 +166,7 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(response_body["task"]["document_id"]).to eq "123456789.1234"
             expect(response_body["task"]["overtime"]).to eq true
             expect(response_body["task"]["note"]).to eq "something"
+            expect(bva_dispatch_task_count_before).to eq(BvaDispatchTask.count)
           end
         end
 
@@ -175,6 +184,7 @@ RSpec.describe CaseReviewsController, type: :controller do
                          { "disposition": "1", "id": vacols_issue_allowed.issseq }]
             }
           end
+          let!(:bva_dispatch_task_count_before) { BvaDispatchTask.count }
 
           it "should be successful" do
             post :complete, params: { task_id: task_id, tasks: params }
@@ -184,6 +194,7 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(response_body["task"]["overtime"]).to eq true
             expect(response_body["task"]["note"]).to eq "something"
             expect(response_body.keys).to include "issues"
+            expect(bva_dispatch_task_count_before).to eq(BvaDispatchTask.count)
           end
         end
 
