@@ -54,7 +54,7 @@ class SeedDB
 
     q = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER", full_name: "Org Q User")
     FeatureToggle.enable!(:org_queue_translation, users: [q.css_id])
-    FeatureToggle.enable!(:org_queue_translation, users: [q.css_id])
+    FeatureToggle.enable!(:organization_queue, users: [q.css_id])
   end
 
   def create_dispatch_tasks(number)
@@ -275,12 +275,13 @@ class SeedDB
                       assigned_to: colocated)
 
     parent = FactoryBot.create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: @ama_appeals[5])
-    FactoryBot.create(:ama_attorney_task,
-                      :completed,
-                      assigned_to: attorney,
-                      assigned_by: judge,
-                      parent: parent,
-                      appeal: @ama_appeals[5])
+    child = FactoryBot.create(:ama_attorney_task,
+                              :completed,
+                              assigned_to: attorney,
+                              assigned_by: judge,
+                              parent: parent,
+                              appeal: @ama_appeals[5])
+    FactoryBot.create(:attorney_case_review, reviewing_judge: judge, attorney: attorney, task_id: child.id)
 
     FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @appeal_with_vso)
 

@@ -151,6 +151,10 @@ class User < ApplicationRecord
     roles.include?("VSO")
   end
 
+  def organization_queue_user?
+    FeatureToggle.enabled?(:organization_queue, user: self)
+  end
+
   def granted?(thing)
     Functions.granted?(thing, css_id)
   end

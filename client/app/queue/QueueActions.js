@@ -361,4 +361,8 @@ export const setSpecialIssues = (specialIssues: Object) => ({
   payload: {
     specialIssues
   }
+
+export const setOrganizationId = (id: number) => ({
+  type: ACTIONS.SET_ORGANIZATION_ID,
+  payload: { id }
 });

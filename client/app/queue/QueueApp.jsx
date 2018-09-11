@@ -9,7 +9,8 @@ import StringUtil from '../util/StringUtil';
 import {
   setFeatureToggles,
   setUserRole,
-  setUserCssId
+  setUserCssId,
+  setUserIsVsoEmployee
 } from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
@@ -26,6 +27,7 @@ import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
+import MarkTaskCompleteView from './MarkTaskCompleteView';
 import TriggerModal from './TriggerModal';
 
 import CaseListView from './CaseListView';
@@ -59,11 +61,13 @@ type Props = {|
   buildDate?: string,
   reviewActionType: string,
   userCanAccessQueue?: boolean,
+  userIsVsoEmployee?: boolean,
   featureToggles: Object,
   // Action creators
   setFeatureToggles: typeof setFeatureToggles,
   setUserRole: typeof setUserRole,
-  setUserCssId: typeof setUserCssId
+  setUserCssId: typeof setUserCssId,
+  setUserIsVsoEmployee: typeof setUserIsVsoEmployee
 |};
 
 class QueueApp extends React.PureComponent<Props> {
@@ -71,6 +75,7 @@ class QueueApp extends React.PureComponent<Props> {
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
+    this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
   }
 
   routedSearchResults = (props) => <React.Fragment>
@@ -142,6 +147,10 @@ class QueueApp extends React.PureComponent<Props> {
   routedAddColocatedTask = (props) => <AddColocatedTaskView nextStep="/queue" {...props.match.params} />;
 
   routedColocatedPlaceHold = (props) => <ColocatedPlaceHoldView nextStep="/queue" {...props.match.params} />;
+
+  routedMarkTaskComplete = (props) => <MarkTaskCompleteView
+    nextStep={`/queue/appeals/${props.match.params.appealId}`}
+    {...props.match.params} />;
 
   triggerModal = (props) => <TriggerModal modal={props.match.params.modalType} />;
 
@@ -283,6 +292,11 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedColocatedPlaceHold} />
           <PageRoute
             exact
+            path="/queue/appeals/:appealId/mark_task_complete"
+            title="Mark Task Complete | Caseflow"
+            render={this.routedMarkTaskComplete} />
+          <PageRoute
+            exact
             path="/queue/modal/:modalType"
             title="Caseflow"
             render={this.triggerModal} />
@@ -319,7 +333,8 @@ const mapStateToProps = (state: State) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setFeatureToggles,
   setUserRole,
-  setUserCssId
+  setUserCssId,
+  setUserIsVsoEmployee
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueApp);

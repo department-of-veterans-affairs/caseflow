@@ -75,11 +75,7 @@ class Appeal < AmaReview
     claimants.first
   end
 
-  delegate :first_name, :last_name, :middle_initial, :name_suffix, to: :appellant, prefix: true
-
-  def appellant_is_not_veteran
-    appellant ? appellant.relationship.present? : false
-  end
+  delegate :first_name, :last_name, :middle_name, :name_suffix, to: :appellant, prefix: true, allow_nil: true
 
   # TODO: implement for AMA
   def citation_number
@@ -119,7 +115,7 @@ class Appeal < AmaReview
 
   # For now power_of_attorney returns the first claimant's power of attorney
   def power_of_attorney
-    claimants.first.power_of_attorney
+    claimants.first.power_of_attorney if claimants.first
   end
   delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
 
