@@ -98,4 +98,49 @@ describe Task do
       end
     end
   end
+
+  context "#prepared_by_display_name" do
+    let(:task) { create(:task, type: "Task") }
+
+    context "when there is no attorney_case_review" do
+      it "should return nil" do
+        expect(task.prepared_by_display_name).to eq(nil)
+      end
+    end
+
+    context "when there is an attorney_case_review" do
+      let!(:child) { create(:task, type: "Task", parent_id: task.id) }
+      let!(:attorney_case_reviews) do
+          create(:attorney_case_review, task_id: child.id, attorney: create(:user, full_name: "Bob Smith"))
+      end
+
+      it "should return the most recent attorney case review" do
+        expect(task.prepared_by_display_name).to eq(["Bob", "Smith"])
+      end
+    end
+  end
+
+  context "#latest_attorney_case_review" do
+    let(:task) { create(:task, type: "Task") }
+
+    context "when there is no sub task" do
+      it "should return nil" do
+        expect(task.latest_attorney_case_review).to eq(nil)
+      end
+    end
+
+    context "when there is a sub task" do
+      let!(:child) { create(:task, type: "Task", parent_id: task.id) }
+      let!(:attorney_case_reviews) do
+        [
+          create(:attorney_case_review, task_id: child.id, created_at: 1.day.ago),
+          create(:attorney_case_review, task_id: child.id, created_at: 2.day.ago)
+        ]
+      end
+
+      it "should return the most recent attorney case review" do
+        expect(task.latest_attorney_case_review).to eq(attorney_case_reviews.first)
+      end
+    end
+  end
 end
