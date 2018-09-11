@@ -15,6 +15,8 @@ module RoundRobinAssigner
     end
 
     def next_assignee_css_id
+      fail "list_of_assignees cannot be empty" if list_of_assignees.blank?
+
       list_of_assignees[next_assignee_index]
     end
 
