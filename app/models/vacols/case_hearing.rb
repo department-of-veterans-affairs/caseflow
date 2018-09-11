@@ -181,6 +181,7 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   def create_or_update_extension_diary
     # If hold open is set to nil or 0, delete the diary
+    # We have to hardcode the assignee to 25 because not all ext diaries should default to 25
     return delete_diary([:EXT]) if !holddays || holddays == 0
 
     VACOLS::Note.update_or_create!(case_id: case_id,
@@ -188,7 +189,7 @@ class VACOLS::CaseHearing < VACOLS::Record
                                    code: :EXT,
                                    days_to_complete: holddays + 5,
                                    days_til_due: holddays + 5,
-                                   assigned_to: VACOLS::Note.assignee(:EXT),
+                                   assigned_to: "25",
                                    user_id: current_user_css_id)
   end
 
