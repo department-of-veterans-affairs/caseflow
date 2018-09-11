@@ -23,7 +23,7 @@ class ColocatedTask < Task
       end
     end
 
-  private
+    private
 
     def list_of_assignees
       Constants::CoLocatedTeams::USERS[Rails.current_env]
