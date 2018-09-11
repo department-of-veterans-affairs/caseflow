@@ -36,6 +36,10 @@ describe EndProductEstablishment do
     )
   end
 
+  let(:vbms_error) do
+    VBMS::HTTPError.new("500", "More EPs more problems")
+  end
+
   context "#perform!" do
     subject { end_product_establishment.perform! }
 
@@ -280,6 +284,18 @@ describe EndProductEstablishment do
       subject
 
       expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(contention)
+      expect(for_object.removed_at).to eq(Time.zone.now)
+    end
+
+    context "when VBMS throws an error" do
+      before do
+        allow(Fakes::VBMSService).to receive(:remove_contention!).and_raise(vbms_error)
+      end
+
+      it "does not remove contentions" do
+        expect { subject }.to raise_error(vbms_error)
+        expect(for_object.removed_at).to be_nil
+      end
     end
   end
 
