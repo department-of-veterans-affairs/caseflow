@@ -26,7 +26,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def legacy_appeal_details
     legacy_tasks = QueueRepository.tasks_for_appeal(appeal.vacols_id)
-    [legacy_tasks.last.assigned_by_name, legacy_tasks]
+    [legacy_tasks.last ? legacy_tasks.last.assigned_by_name : "", legacy_tasks]
   end
 
   def ama_appeal_details
