@@ -104,8 +104,10 @@ const incompleteTasksSelector = (tasks: Tasks) => _.filter(tasks, (task) => task
 
 export const tasksByAssigneeCssIdSelector = createSelector(
   [tasksWithAppealSelector, getUserCssId],
-  (tasks: Array<TaskWithAppeal>, cssId: string) =>
+  (tasks: Array<TaskWithAppeal>, cssId: string) => {
     _.filter(tasks, (task) => task.assignedTo.cssId === cssId)
+    debugger;
+  }
 );
 
 export const incompleteTasksByAssigneeCssIdSelector = createSelector(

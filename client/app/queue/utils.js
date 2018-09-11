@@ -20,6 +20,17 @@ import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
+
+export const prepareAllTasksForStore = (tasks: Array<Object>): Tasks => {
+  const amaTasks = tasks.filter((t) => { return t.attributes.appeal_type === 'Appeal'});
+  const legacyTasks = tasks.filter((t) => { return t.attributes.appeal_type === 'LegacyAppeal'});
+  debugger;
+  return {
+    amaTasks: prepareTasksForStore(amaTasks),
+    tasks: prepareLegacyTasksForStore(legacyTasks)
+  };
+};
+
 export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
   tasks.reduce((acc, task: Object): Tasks => {
     acc[task.attributes.external_appeal_id] = {

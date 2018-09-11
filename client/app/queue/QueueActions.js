@@ -2,6 +2,7 @@
 import { associateTasksWithAppeals,
   prepareLegacyTasksForStore,
   prepareTasksForStore,
+  prepareAllTasksForStore,
   extractAppealsAndAmaTasks } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage } from './uiReducer/uiActions';
@@ -319,12 +320,9 @@ export const initialAssignTasksToUser =
           then(
             (resp) => {
               debugger;
-              const task = resp.data.task.length ? resp.data.task[0] : resp.data.task;
-              const newAmaTasks = task.appeal_type === 'Appeal' ? prepareTasksForStore([task]) : {};
-              const newTasks = task.appeal_type === 'LegacyAppeal' ? prepareLegacyTasksForStore([task]) : {};
+              const task = resp.tasks ? resp.tasks.data[0] : resp.task.data;
 
-              dispatch(onReceiveTasks({ amaTasks: newAmaTasks,
-                tasks: newTasks }));
+              dispatch(onReceiveTasks(prepareAllTasksForStore([task])));
               dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
                 taskId: task.id,
                 selected: false }));
@@ -365,16 +363,15 @@ export const reassignTasksToUser =
           };
         }
 
+        debugger;
         return ApiUtil.patch(url, params).
           then((resp) => resp.body).
           then(
             (resp) => {
-              const task = resp.data.task.length ? resp.data.task[0] : resp.data.task;
-              const amaTasks = task.appeal_type === 'Appeal' ? prepareTasksForStore([task]) : {};
-              const tasks = task.appeal_type === 'LegacyAppeal' ? prepareLegacyTasksForStore([task]) : {};
+              debugger;
+              const task = resp.tasks ? resp.tasks.data[0] : resp.task.data;
 
-              dispatch(onReceiveTasks({ amaTasks: {},
-                tasks: prepareLegacyTasksForStore([task]) }));
+              dispatch(onReceiveTasks(prepareAllTasksForStore([task])));
               dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
                 taskId: task.id,
                 selected: false }));
