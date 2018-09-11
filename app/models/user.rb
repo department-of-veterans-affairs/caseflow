@@ -88,7 +88,7 @@ class User < ApplicationRecord
     self.class.user_repository.can_access_task?(css_id, vacols_id)
   end
 
-  def access_to_appeal?(appeal)
+  def appeal_has_task_assigned_to_user?(appeal)
     if appeal.class.name == "LegacyAppeal"
       access_to_legacy_task?(appeal.vacols_id)
     else

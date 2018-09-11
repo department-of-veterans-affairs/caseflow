@@ -371,10 +371,8 @@ ActiveRecord::Schema.define(version: 20180907184617) do
     t.date "receipt_date"
     t.boolean "informal_conference"
     t.boolean "same_office"
-    t.datetime "established_at"
-    t.string "end_product_reference_id"
-    t.string "end_product_status"
-    t.datetime "end_product_status_last_synced_at"
+    t.datetime "establishment_submitted_at"
+    t.datetime "establishment_processed_at"
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
@@ -494,6 +492,8 @@ ActiveRecord::Schema.define(version: 20180907184617) do
     t.datetime "established_at"
     t.string "end_product_status"
     t.datetime "end_product_status_last_synced_at"
+    t.datetime "establishment_submitted_at"
+    t.datetime "establishment_processed_at"
     t.index ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number"
   end
 
@@ -514,6 +514,8 @@ ActiveRecord::Schema.define(version: 20180907184617) do
     t.boolean "has_ineligible_issue"
     t.string "appeal_docket"
     t.datetime "established_at"
+    t.datetime "establishment_submitted_at"
+    t.datetime "establishment_processed_at"
     t.index ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number"
   end
 
@@ -535,6 +537,8 @@ ActiveRecord::Schema.define(version: 20180907184617) do
     t.date "decision_date"
     t.string "disposition"
     t.integer "end_product_establishment_id"
+    t.datetime "removed_at"
+    t.datetime "rating_issue_associated_at"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
   end
@@ -562,7 +566,7 @@ ActiveRecord::Schema.define(version: 20180907184617) do
     t.index ["user_id"], name: "index_schedule_periods_on_user_id"
   end
 
-  create_table "special_issues", force: :cascade do |t|
+  create_table "special_issue_lists", force: :cascade do |t|
     t.string "appeal_type"
     t.bigint "appeal_id"
     t.boolean "rice_compliance", default: false
@@ -590,16 +594,14 @@ ActiveRecord::Schema.define(version: 20180907184617) do
     t.boolean "foreign_pension_dic_mexico_central_and_south_america_caribb", default: false
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
-    t.index ["appeal_type", "appeal_id"], name: "index_special_issues_on_appeal_type_and_appeal_id"
+    t.index ["appeal_type", "appeal_id"], name: "index_special_issue_lists_on_appeal_type_and_appeal_id"
   end
 
   create_table "supplemental_claims", force: :cascade do |t|
     t.string "veteran_file_number", null: false
     t.date "receipt_date"
-    t.datetime "established_at"
-    t.string "end_product_reference_id"
-    t.string "end_product_status"
-    t.datetime "end_product_status_last_synced_at"
+    t.datetime "establishment_submitted_at"
+    t.datetime "establishment_processed_at"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 

@@ -1,6 +1,6 @@
-class AddSpecialIssuesTable < ActiveRecord::Migration[5.1]
+class AddSpecialIssueListsTable < ActiveRecord::Migration[5.1]
   def change
-    create_table :special_issues do |t|
+    create_table :special_issue_lists do |t|
       t.references :appeal, polymorphic: true
       t.boolean "rice_compliance", default: false
       t.boolean "private_attorney_or_agent", default: false

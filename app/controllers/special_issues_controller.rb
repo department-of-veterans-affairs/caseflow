@@ -4,21 +4,21 @@ class SpecialIssuesController < ApplicationController
   def create
     return record_not_found unless appeal
 
-    if appeal.special_issue
-      appeal.special_issue.update(special_issue_params)
+    if appeal.special_issue_list
+      appeal.special_issue_list.update(special_issue_params)
     else
-      appeal.special_issue = SpecialIssue.create(special_issue_params, appeal: appeal)
+      appeal.special_issue_list = SpecialIssueList.create(special_issue_params, appeal: appeal)
     end
 
-    render json: appeal.special_issue.as_json
+    render json: appeal.special_issue_list.as_json
   end
 
   def index
     return record_not_found unless appeal
 
-    appeal.special_issue = SpecialIssue.create(appeal: appeal) if !appeal.special_issue
+    appeal.special_issue_list = SpecialIssueList.create(appeal: appeal) if !appeal.special_issue_list
 
-    render json: appeal.special_issue.as_json
+    render json: appeal.special_issue_list.as_json
   end
 
   def appeal
@@ -26,7 +26,7 @@ class SpecialIssuesController < ApplicationController
   end
 
   def validate_access_to_appeal
-    redirect_to "/unauthorized" unless current_user.access_to_appeal?(appeal)
+    redirect_to "/unauthorized" unless current_user.appeal_has_task_assigned_to_user?(appeal)
   end
 
   def special_issue_params
