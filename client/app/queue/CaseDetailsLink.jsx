@@ -42,9 +42,9 @@ class CaseDetailsLink extends React.PureComponent {
       return this.props.getLinkText(appeal, task);
     }
 
-    // only bold links for colocated users, for 'assigned' tasks
-    const shouldBold = task.status === 'assigned' && userRole === USER_ROLE_TYPES.colocated;
-    const linkStyling = css({ fontWeight: shouldBold ? 'bold' : null });
+    const linkStyling = css({
+      fontWeight: (task.status === 'assigned' && userRole === USER_ROLE_TYPES.colocated) ? 'bold' : null
+    });
 
     return <span {...linkStyling}>
       {appeal.veteranFullName} ({appeal.veteranFileNumber})
