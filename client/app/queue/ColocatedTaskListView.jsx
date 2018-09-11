@@ -55,15 +55,15 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
     } = this.props;
     const tabs = [
       {
-        label: sprintf(COPY.COLOCATED_QUEUE_PAGE_NEW_TAB_TITLE, { numNewTasks }),
+        label: sprintf(COPY.COLOCATED_QUEUE_PAGE_NEW_TAB_TITLE, numNewTasks),
         page: <NewTasksTab />
       },
       {
-        label: sprintf(COPY.COLOCATED_QUEUE_PAGE_PENDING_TAB_TITLE, { numPendingTasks }),
+        label: sprintf(COPY.COLOCATED_QUEUE_PAGE_PENDING_TAB_TITLE, numPendingTasks),
         page: <PendingTasksTab />
       },
       {
-        label: sprintf(COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TAB_TITLE, { numOnHoldTasks }),
+        label: sprintf(COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TAB_TITLE, numOnHoldTasks),
         page: <OnHoldTasksTab />
       }
     ];
