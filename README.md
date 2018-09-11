@@ -176,7 +176,7 @@ Add these to your `.bash_profile`:
 export POSTGRES_HOST=localhost
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
-export NLS_LANG=American_America.UTF8
+export NLS_LANG=US7ASCII
 ```
 
 The last env var silences one of the Oracle warnings on startup.
