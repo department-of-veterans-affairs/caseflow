@@ -5,8 +5,8 @@
 class Veteran < ApplicationRecord
   include AssociatedBgsRecord
 
-  bgs_attr_accessor :ptcpnt_id, :sex, :first_name, :last_name, :ssn,
-                    :address_line1, :address_line2, :address_line3, :city,
+  bgs_attr_accessor :ptcpnt_id, :sex, :first_name, :last_name, :name_suffix,
+                    :ssn, :address_line1, :address_line2, :address_line3, :city,
                     :state, :country, :zip_code, :military_postal_type_code,
                     :military_post_office_type_code, :service, :date_of_birth,
                     :date_of_death

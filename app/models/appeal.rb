@@ -71,6 +71,8 @@ class Appeal < AmaReview
     claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
   end
 
+  delegate :name_suffix, to: :veteran, prefix: true
+
   def number_of_issues
     issues[:request_issues].size
   end
@@ -83,15 +85,19 @@ class Appeal < AmaReview
 
   # TODO: implement for AMA
   def citation_number
-    "not implemented"
+    "not implemented for AMA"
   end
 
   def veteran_is_deceased
-    veteran && veteran.date_of_death.present?
+    veteran_death_date.present?
+  end
+
+  def veteran_death_date
+    veteran && veteran.date_of_death
   end
 
   def cavc
-    "not implemented"
+    "not implemented for AMA"
   end
 
   def status
@@ -99,7 +105,7 @@ class Appeal < AmaReview
   end
 
   def previously_selected_for_quality_review
-    "not implemented"
+    "not implemented for AMA"
   end
 
   def create_issues!(request_issues_data:)
