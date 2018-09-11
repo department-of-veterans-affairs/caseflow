@@ -3,7 +3,7 @@ class BvaDispatchTask < GenericTask
 
   class << self
     def create_and_assign(root_task)
-      parent = create!(assigned_to: BvaDispatch.singleton, parent_id: root_task.id)
+      parent = create!(assigned_to: BvaDispatch.singleton, parent_id: root_task.id, appeal: root_task.appeal)
       create!(
         appeal: parent.appeal,
         parent_id: parent.id,
@@ -12,6 +12,10 @@ class BvaDispatchTask < GenericTask
     end
 
     private
+
+    def latest_round_robin_task
+      nil
+    end
 
     def list_of_assignees
       Constants::BvaDispatchTeams::USERS[Rails.current_env]

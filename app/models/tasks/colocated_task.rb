@@ -25,6 +25,10 @@ class ColocatedTask < Task
 
     private
 
+    def latest_round_robin_task
+      order("created_at").last
+    end
+
     def list_of_assignees
       Constants::CoLocatedTeams::USERS[Rails.current_env]
     end

@@ -27,8 +27,9 @@ RSpec.describe CaseReviewsController, type: :controller do
           User.stub = attorney
         end
 
+        let(:root_task) { create(:root_task) }
+        let(:judge_task) { create(:ama_judge_task, assigned_to: judge, parent: root_task) }
         let(:task) { create(:ama_attorney_task, assigned_to: attorney, assigned_by: judge, parent: judge_task) }
-        let(:judge_task) { create(:ama_judge_task, assigned_to: judge) }
 
         context "when all parameters are present to create Draft Decision" do
           let(:params) do
@@ -71,7 +72,8 @@ RSpec.describe CaseReviewsController, type: :controller do
           User.stub = judge
         end
 
-        let(:task) { create(:ama_judge_task, assigned_to: judge) }
+        let(:root_task) { create(:root_task) }
+        let(:task) { create(:ama_judge_task, assigned_to: judge, parent: root_task) }
 
         context "when all parameters are present to send to sign a decision" do
           let(:params) do
@@ -111,7 +113,6 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(request_issue2.reload.disposition).to eq "remanded"
             expect(task.reload.status).to eq "completed"
             expect(task.completed_at).to_not eq nil
-            expect(task.parent).to be nil
           end
         end
       end
