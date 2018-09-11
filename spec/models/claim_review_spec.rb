@@ -132,6 +132,8 @@ describe ClaimReview do
         )
 
         expect(claim_review.end_product_establishments.first).to be_committed
+        expect(rating_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
+        expect(second_rating_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
       end
 
       context "when associate rated issues fails" do
@@ -142,6 +144,8 @@ describe ClaimReview do
         it "does not commit the end product establishment" do
           expect { subject }.to raise_error(vbms_error)
           expect(claim_review.end_product_establishments.first).to_not be_committed
+          expect(rating_request_issue.rating_issue_associated_at).to be_nil
+          expect(second_rating_request_issue.rating_issue_associated_at).to be_nil
         end
       end
 
@@ -151,6 +155,7 @@ describe ClaimReview do
         it "does not associate_rated_issues" do
           subject
           expect(Fakes::VBMSService).to_not have_received(:associate_rated_issues!)
+          expect(non_rating_request_issue.rating_issue_associated_at).to be_nil
         end
       end
 
@@ -185,6 +190,9 @@ describe ClaimReview do
                 "reference-id2" => second_rating_request_issue.reload.contention_reference_id
               }
             )
+
+            expect(rating_request_issue.rating_issue_associated_at).to be_nil
+            expect(second_rating_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
           end
         end
 
@@ -199,6 +207,7 @@ describe ClaimReview do
 
             expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
             expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
+            expect(Fakes::VBMSService).to_not have_received(:associate_rated_issues!)
           end
         end
       end
@@ -235,6 +244,13 @@ describe ClaimReview do
           special_issues: []
         )
 
+        expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).once.with(
+          claim_id: claim_review.end_product_establishments.find_by(code: "030HLRR").reference_id,
+          rated_issue_contention_map: {
+            "reference-id" => rating_request_issue.reload.contention_reference_id
+          }
+        )
+
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
             benefit_type_code: "1",
@@ -262,6 +278,8 @@ describe ClaimReview do
 
         expect(claim_review.end_product_establishments.first).to be_committed
         expect(claim_review.end_product_establishments.last).to be_committed
+        expect(rating_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
+        expect(non_rating_request_issue.rating_issue_associated_at).to be_nil
       end
     end
   end
