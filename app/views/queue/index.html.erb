@@ -5,6 +5,7 @@
     userRole: (current_user.vacols_roles.first || "").capitalize,
     userCssId: current_user.css_id,
     userCanAccessQueue: can_access_queue?,
+    userIsVsoEmployee: current_user.vso_employee?,
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
     buildDate: build_date,

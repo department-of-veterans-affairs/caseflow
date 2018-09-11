@@ -17,7 +17,11 @@ const serverData = {
             pg_id: 10
           },
           assigned_on: '2018-08-02T17:37:03.000Z',
-          assigned_to_pg_id: 130,
+          assigned_to: {
+            css_id: 'BVANKUVALIS',
+            id: 130,
+            type: 'User'
+          },
           case_type: 'Post Remand',
           docket_date: '2008-08-31T00:00:00.000Z',
           docket_name: 'Legacy',
@@ -57,7 +61,8 @@ describe('QueueLoadingScreen', () => {
         dueOn: '2018-08-11T00:00:00.000Z',
         assignedTo: {
           cssId: 'BVANKUVALIS',
-          id: 130
+          id: 130,
+          type: 'User'
         },
         addedByName: 'Nash X Kuvalis',
         addedByCssId: 'BVANKUVALIS',

@@ -81,6 +81,25 @@ describe Appeal do
     end
   end
 
+  context "#appellant_first_name" do
+    subject { appeal.appellant_first_name }
+
+    context "when appeal has claimants" do
+      let(:appeal) { create(:appeal, number_of_claimants: 1) }
+
+      it "returns claimant's name" do
+        expect(subject).to_not eq nil
+        expect(subject).to eq appeal.claimants.first.first_name
+      end
+    end
+
+    context "when appeal doesn't have claimants" do
+      let(:appeal) { create(:appeal, number_of_claimants: 0) }
+
+      it { is_expected.to eq nil }
+    end
+  end
+
   context "when claimants have different poas" do
     let(:participant_id_with_pva) { "1234" }
     let(:participant_id_with_aml) { "5678" }
