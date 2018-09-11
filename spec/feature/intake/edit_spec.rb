@@ -66,6 +66,24 @@ RSpec.feature "Edit issues" do
       expect(find_field("PTSD denied", visible: false)).to_not be_checked
       expect(find_field("Left knee granted", visible: false)).to be_checked
     end
+
+    feature "cancel edits" do
+      def click_cancel(visit_page)
+        visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit#{visit_page}"
+        click_on "Cancel edit"
+        correct_path = "/higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit/cancel"
+        expect(page).to have_current_path(correct_path)
+        expect(page).to have_content("Claim Edit Cancelled")
+      end
+
+      scenario "from landing page" do
+        click_cancel("/")
+      end
+
+      scenario "from select_issues page" do
+        click_cancel("/select_issues")
+      end
+    end
   end
 
   context "Supplemental claims" do
