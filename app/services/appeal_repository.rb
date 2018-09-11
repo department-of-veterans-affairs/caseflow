@@ -449,6 +449,7 @@ class AppealRepository
     fail AppealNotValidToReopen unless previous_active_location
     fail AppealNotValidToReopen if %w[50 51 52 53 54 70 96 97 98 99].include? previous_active_location
 
+    adv_status = previous_active_location == "77"
     bfmpro = adv_status ? "ADV" : "ACT"
     tikeywrd = adv_status ? "ADVANCE" : "ACTIVE"
 
