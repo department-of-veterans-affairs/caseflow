@@ -89,7 +89,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
   };
 
   getAbbrevName = ({ firstName, lastName }) => {
-    return `${firstName.substring(0, 1)}. ${lastName ? lastName : ""}`;
+    return `${firstName.substring(0, 1)}. ${lastName}`;
   }
 
   getActionName = () => {
