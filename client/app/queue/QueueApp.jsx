@@ -61,7 +61,6 @@ type Props = {|
   buildDate?: string,
   reviewActionType: string,
   userIsVsoEmployee?: boolean,
-  caseSearchHomePage?: boolean,
   featureToggles: Object,
   // Action creators
   setFeatureToggles: typeof setFeatureToggles,
@@ -179,7 +178,7 @@ class QueueApp extends React.PureComponent<Props> {
   render = () => <BrowserRouter>
     <NavigationBar
       wideApp
-      defaultUrl={this.props.caseSearchHomePage ? '/' : '/queue'}
+      defaultUrl="/queue"
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
       logoProps={{
