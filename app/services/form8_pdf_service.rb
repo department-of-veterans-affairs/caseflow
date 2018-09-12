@@ -106,6 +106,7 @@ class Form8PdfService
       final_location
     )
 
+    S3Service.store_file(form8.pdf_filename, final_location, :filepath)
     S3Service.store_file(FORM8_S3_SUB_BUCKET + "/" + form8.pdf_filename, final_location, :filepath)
 
     # Remove it from the tmp_location, leaving it only in final_location
