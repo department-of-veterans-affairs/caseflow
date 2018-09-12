@@ -183,5 +183,7 @@
   "COLOCATED_ACTION_PLACE_HOLD_BUTTON_COPY": "Place case on hold",
 
   "MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT": "Are you sure you want to cancel?",
-  "MODAL_CANCEL_ATTORNEY_CHECKOUT": "All changes made to this page will be lost, except for the adding, editing, and deleting of issues."
+  "MODAL_CANCEL_ATTORNEY_CHECKOUT": "All changes made to this page will be lost, except for the adding, editing, and deleting of issues.",
+
+  "SPECIAL_ISSUES_PAGE_TITLE": "Select special issue(s)"
 }
