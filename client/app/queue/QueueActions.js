@@ -1,7 +1,5 @@
 // @flow
 import { associateTasksWithAppeals,
-  prepareLegacyTasksForStore,
-  prepareTasksForStore,
   prepareAllTasksForStore,
   extractAppealsAndAmaTasks } from './utils';
 import { ACTIONS } from './constants';
@@ -315,7 +313,10 @@ export const initialAssignTasksToUser =
             (resp) => {
               const task = resp.tasks ? resp.tasks.data[0] : resp.task.data;
 
-              dispatch(onReceiveTasks(prepareAllTasksForStore([task])));
+              const allTasks = prepareAllTasksForStore([task]);
+
+              dispatch(onReceiveTasks({ tasks: allTasks.tasks,
+                amaTasks: allTasks.amaTasks }));
               dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
                 taskId: task.attributes.external_appeal_id,
                 selected: false }));
@@ -360,7 +361,10 @@ export const reassignTasksToUser =
             (resp) => {
               const task = resp.tasks ? resp.tasks.data[0] : resp.task.data;
 
-              dispatch(onReceiveTasks(prepareAllTasksForStore([task])));
+              const allTasks = prepareAllTasksForStore([task]);
+
+              dispatch(onReceiveTasks({ tasks: allTasks.tasks,
+                amaTasks: allTasks.amaTasks }));
               dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
                 taskId: task.attributes.external_appeal_id,
                 selected: false }));

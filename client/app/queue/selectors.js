@@ -21,6 +21,7 @@ export const selectedTasksSelector = (state: State, userId: string) => {
       if (!selected) {
         return;
       }
+
       return state.queue.tasks[id] || state.queue.amaTasks[id];
     }
   ).filter(Boolean);
@@ -178,8 +179,9 @@ export const judgeAssignTasksSelector = createSelector(
   (tasks) => _.filter(tasks, (task: TaskWithAppeal) => {
     if (task.externalAppealId.length === 36) {
       // AMA appeals
-      return  task.action === 'assign' && task.status === 'in_progress';
+      return task.action === 'assign' && task.status === 'in_progress';
     }
+
     return task.action === 'assign';
   })
 );

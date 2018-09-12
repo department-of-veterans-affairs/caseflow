@@ -20,16 +20,6 @@ import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
-
-export const prepareAllTasksForStore = (tasks: Array<Object>): Tasks => {
-  const amaTasks = tasks.filter((t) => { return t.attributes.appeal_type === 'Appeal'});
-  const legacyTasks = tasks.filter((t) => { return t.attributes.appeal_type === 'LegacyAppeal'});
-  return {
-    amaTasks: prepareTasksForStore(amaTasks),
-    tasks: prepareLegacyTasksForStore(legacyTasks)
-  };
-};
-
 export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
   tasks.reduce((acc, task: Object): Tasks => {
     acc[task.attributes.external_appeal_id] = {
@@ -123,6 +113,20 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
   });
 
   return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.externalAppealId), (task) => task);
+};
+
+export const prepareAllTasksForStore = (tasks: Array<Object>): Tasks => {
+  const amaTasks = tasks.filter((task) => {
+    return task.attributes.appeal_type === 'Appeal';
+  });
+  const legacyTasks = tasks.filter((task) => {
+    return task.attributes.appeal_type === 'LegacyAppeal';
+  });
+
+  return {
+    amaTasks: prepareTasksForStore(amaTasks),
+    tasks: prepareLegacyTasksForStore(legacyTasks)
+  };
 };
 
 export const associateTasksWithAppeals =
