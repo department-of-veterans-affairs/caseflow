@@ -254,6 +254,34 @@ describe User do
     end
   end
 
+  context "#appeal_has_task_assigned_to_user?" do
+    context "when legacy appeal" do
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+
+      it "when access_to_legacy_task? returns true, should return true" do
+        expect(user).to receive(:access_to_legacy_task?).with(appeal.vacols_id).once.and_return(true)
+        expect(user.appeal_has_task_assigned_to_user?(appeal)).to eq(true)
+      end
+    end
+
+    context "when appeal has task assigned to user" do
+      let(:appeal) { create(:appeal) }
+      let!(:task) { create(:task, type: "GenericTask", appeal: appeal, assigned_to: user) }
+
+      it "should return true" do
+        expect(user.appeal_has_task_assigned_to_user?(appeal)).to eq(true)
+      end
+    end
+
+    context "when appeal doesn't have task assigned to user" do
+      let(:appeal) { create(:appeal) }
+
+      it "should return false" do
+        expect(user.appeal_has_task_assigned_to_user?(appeal)).to eq(false)
+      end
+    end
+  end
+
   context "#current_case_assignments_with_views" do
     subject { user.current_case_assignments_with_views[0] }
 
