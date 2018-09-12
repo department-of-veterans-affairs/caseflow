@@ -44,7 +44,7 @@ export default class BuildScheduleUpload extends React.Component {
           <BasicDateRangeSelector
             messageLabel
             startDateName="startDate"
-            startDateValue={formatDate(this.props.roCoStartDate)}
+            startDateValue={this.props.roCoStartDate}
             startDateLabel={false}
             endDateName="endDate"
             endDateValue={this.props.roCoEndDate}
