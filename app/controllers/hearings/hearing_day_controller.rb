@@ -35,11 +35,15 @@ class Hearings::HearingDayController < HearingScheduleController
 
   def update
     return record_not_found unless hearing
-
+    params.delete(:hearing_key)
     updated_hearing = HearingDay.update_hearing_day(hearing, update_params)
 
     json_hearing = if updated_hearing.class.equal?(TrueClass)
-                     json_created_hearings(hearing)
+                     if hearing.class.name === "HearingDay"
+                       hearing.to_hash
+                     else
+                       json_created_hearings(hearing)
+                     end
                    else
                      json_tb_hearings(updated_hearing)
                    end

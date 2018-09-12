@@ -22,7 +22,7 @@ class HearingDay < ApplicationRecord
 
     def update_hearing_day(hearing, hearing_hash)
       if hearing.class.name === "HearingDay"
-        hearing.update(hearing_hash).to_hash
+        hearing.update(hearing_hash)
       else
         HearingDayRepository.update_vacols_hearing!(hearing, hearing_hash)
       end
@@ -44,17 +44,17 @@ class HearingDay < ApplicationRecord
 
     def load_days(start_date, end_date, regional_office = nil)
       if regional_office.nil?
-        cf_video_and_co = where("hearing_date between ? and ?", start_date, end_date).each_with_object([]) do |hearing_day, result|
+        cf_video_and_co = where("DATE(hearing_date) between ? and ?", start_date, end_date).each_with_object([]) do |hearing_day, result|
           result << hearing_day.to_hash
         end
         video_and_co, travel_board = HearingDayRepository.load_days_for_range(start_date, end_date)
       else
-        cf_video_and_co = where("regional_office = ? and hearing_date between ? and ?",
+        cf_video_and_co = where("regional_office = ? and DATE(hearing_date) between ? and ?",
                                 regional_office, start_date, end_date).each_with_object([]) do |hearing_day, result|
           result << hearing_day.to_hash
         end
         video_and_co, travel_board =
-            HearingDayRepository.load_days_for_regional_office(regional_office, start_date, end_date)
+          HearingDayRepository.load_days_for_regional_office(regional_office, start_date, end_date)
       end
       total_video_and_co = cf_video_and_co + video_and_co
       [total_video_and_co, travel_board]
@@ -62,24 +62,23 @@ class HearingDay < ApplicationRecord
 
     def find_hearing_day(hearing_type, hearing_key)
       hearing_day = find(hearing_key)
-      rescue ActiveRecord::RecordNotFound
-        hearing_day = HearingDayRepository.find_hearing_day(hearing_type, hearing_key)
+    rescue ActiveRecord::RecordNotFound
+      hearing_day = HearingDayRepository.find_hearing_day(hearing_type, hearing_key)
       hearing_day
     end
   end
 
   def to_hash
     as_json.each_with_object({}) do |(k, v), result|
-      if k == "room_info"
-        result[k.to_sym] = HearingDayMapper.label_for_room(v)
-      elsif k == "regional_office" && !v.nil?
-        ro = v[6, v.length]
-        result[k.to_sym] = HearingDayMapper.city_for_regional_office(ro)
-      elsif k == "hearing_type"
-        result[k.to_sym] = HearingDayMapper.label_for_type(v)
-      else
-        result[k.to_sym] = v
-      end
+      result[k.to_sym] = if k == "room_info"
+                           HearingDayMapper.label_for_room(v)
+                         elsif k == "regional_office" && !v.nil?
+                           HearingDayMapper.city_for_regional_office(v)
+                         elsif k == "hearing_type"
+                           HearingDayMapper.label_for_type(v)
+                         else
+                           v
+                         end
     end
   end
 end
