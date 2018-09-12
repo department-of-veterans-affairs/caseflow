@@ -79,9 +79,9 @@ class SelectDispositionsView extends React.PureComponent {
 
     if (appeal.docketName === 'legacy') {
       return `/queue/appeals/${appealId}`;
-    } else {
-      return `/queue/appeals/${appealId}/special_issues`;
     }
+
+    return `/queue/appeals/${appealId}/special_issues`;
   }
 
   componentWillUnmount = () => this.props.hideSuccessMessage();

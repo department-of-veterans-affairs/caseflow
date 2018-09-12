@@ -77,7 +77,7 @@ RSpec.feature "Checkout flows" do
       click_dropdown 0
 
       # Radiation should still be checked
-      expect(page).to have_field('radiation', checked: true, visible: false)
+      expect(page).to have_field("radiation", checked: true, visible: false)
 
       # Radiation should also be marked in the database
       expect(appeal.special_issue_list.radiation).to eq(true)

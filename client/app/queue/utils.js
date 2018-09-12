@@ -231,12 +231,18 @@ export const getDecisionTypeDisplay = (decision: {type?: string} = {}) => {
   }
 };
 
-export const getIssueProgramDescription = (issue: Issue) => _.get(ISSUE_INFO[issue.program], 'description', '');
+export const getIssueProgramDescription = (issue: Issue) =>
+  _.get(ISSUE_INFO[issue.program], 'description', '') || 'Compensation';
 export const getIssueTypeDescription = (issue: Issue) => {
   const {
     program,
-    type
+    type,
+    description
   } = issue;
+
+  if (!program) {
+    return description;
+  }
 
   return _.get(ISSUE_INFO[program].levels, `${type}.description`);
 };
