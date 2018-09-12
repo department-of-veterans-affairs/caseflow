@@ -19,7 +19,8 @@ const SPECIAL_ISSUES = [
     unhandled: {
       emailAddress: 'PMC',
       regionalOffice: 'PMC'
-    }
+    },
+    nonCompensation: true
   },
   {
     display: 'Education - GI Bill, dependents educational assistance, ' +
@@ -31,7 +32,8 @@ const SPECIAL_ISSUES = [
     unhandled: {
       emailAddress: 'education',
       regionalOffice: 'education'
-    }
+    },
+    nonCompensation: true
   },
   {
     display: 'Foreign claim - compensation claims, dual claims, appeals',
@@ -51,7 +53,8 @@ const SPECIAL_ISSUES = [
     unhandled: {
       emailAddress: ['AppealsPMC.VAVBASPL@va.gov', 'Hillary.Hernandez@va.gov'],
       regionalOffice: 'RO83'
-    }
+    },
+    nonCompensation: true
   },
   {
     display: 'Foreign pension, DIC - all other foreign countries',
@@ -61,7 +64,8 @@ const SPECIAL_ISSUES = [
     unhandled: {
       emailAddess: 'PMC',
       regionalOffice: 'PMC'
-    }
+    },
+    nonCompensation: true
   },
   {
     display: 'Hearing - including travel board & video conference',
@@ -78,7 +82,8 @@ const SPECIAL_ISSUES = [
     unhandled: {
       emailAddress: ['jennifer.Tillery@va.gov'],
       regionalOffice: 'RO88'
-    }
+    },
+    nonCompensation: true
   },
   {
     display: 'Incarcerated Veterans',
@@ -95,7 +100,8 @@ const SPECIAL_ISSUES = [
     unhandled: {
       emailAddress: ['nancy.encarnado@va.gov'],
       regionalOffice: 'RO80'
-    }
+    },
+    nonCompensation: true
   },
   {
     display: 'Manlincon Compliance',
@@ -123,7 +129,8 @@ const SPECIAL_ISSUES = [
     unhandled: {
       emailAddress: ['richard.byersII@va.gov'],
       regionalOffice: 'RO98'
-    }
+    },
+    nonCompensation: true
   },
   {
     display: 'Non-rating issue',
@@ -140,7 +147,8 @@ const SPECIAL_ISSUES = [
     unhandled: {
       emailAddress: 'PMC',
       regionalOffice: 'PMC'
-    }
+    },
+    nonCompensation: true
   },
   {
     display: 'Private Attorney or Agent',
@@ -211,13 +219,15 @@ const SPECIAL_ISSUES = [
     unhandled: {
       emailAddress: ['Travis.Richardson@va.gov'],
       regionalOffice: 'RO99'
-    }
+    },
+    nonCompensation: true
   },
   {
     display: 'Vocational Rehab',
     specialIssue: 'vocationalRehab',
     snakeCase: 'vocational_rehab',
-    stationOfJurisdiction: 'regional'
+    stationOfJurisdiction: 'regional',
+    nonCompensation: true
   },
   {
     display: 'Waiver of Overpayment',
@@ -227,7 +237,8 @@ const SPECIAL_ISSUES = [
     unhandled: {
       emailAddress: 'COWC',
       regionalOffice: 'COWC'
-    }
+    },
+    nonCompensation: true
   }
 ];
 
