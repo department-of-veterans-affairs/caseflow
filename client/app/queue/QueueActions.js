@@ -267,7 +267,7 @@ export const fetchTasksAndAppealsOfAttorney = (attorneyId: string) => (dispatch:
 };
 
 export const setSelectionOfTaskOfUser =
-  ({ userId, taskId, selected }: {userId: string, taskId: string, selected: boolean}) => ({
+  ({ userId, taskId, selected }: {userId: string, taskId: string, selected: boolean}) =>({
     type: ACTIONS.SET_SELECTION_OF_TASK_OF_USER,
     payload: {
       userId,
@@ -323,7 +323,7 @@ export const initialAssignTasksToUser =
 
               dispatch(onReceiveTasks(prepareAllTasksForStore([task])));
               dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
-                taskId: task.attributes.externalAppealId,
+                taskId: task.attributes.external_appeal_id,
                 selected: false }));
             });
       }));
@@ -368,7 +368,7 @@ export const reassignTasksToUser =
 
               dispatch(onReceiveTasks(prepareAllTasksForStore([task])));
               dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
-                taskId: task.attributes.externalAppealId,
+                taskId: task.attributes.external_appeal_id,
                 selected: false }));
             });
       }));
