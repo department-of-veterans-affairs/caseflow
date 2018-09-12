@@ -241,6 +241,7 @@ export const getIssueTypeDescription = (issue: Issue) => {
   if (!program) {
     return description;
   }
+
   return _.get(ISSUE_INFO[program].levels, `${type}.description`);
 };
 

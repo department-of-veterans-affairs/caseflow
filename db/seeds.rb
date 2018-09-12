@@ -289,7 +289,8 @@ class SeedDB
                       appeal: @ama_appeals[5])
 
     FactoryBot.create(
-      :ama_judge_task, :in_progress, assigned_to: judge, appeal: @ama_appeal_with_decision, action: :review)
+      :ama_judge_task, :in_progress, assigned_to: judge, appeal: @ama_appeal_with_decision, action: :review
+    )
 
     FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @appeal_with_vso)
 
