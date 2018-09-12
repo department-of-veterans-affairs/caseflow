@@ -43,7 +43,7 @@ describe SyncReviewsJob do
 
     context "when there are ramp refilings that need to be reprocessed" do
       before do
-        allow(RampRefiling).to receive(:need_to_reprocess).and_return([ ramp_refiling, ramp_refiling2 ])
+        allow(RampRefiling).to receive(:need_to_reprocess).and_return([ramp_refiling, ramp_refiling2])
       end
 
       let(:ramp_refiling) { RampRefiling.new }
