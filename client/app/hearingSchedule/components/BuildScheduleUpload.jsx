@@ -12,6 +12,7 @@ import FileUpload from '../../components/FileUpload';
 import InlineForm from '../../components/InlineForm';
 import { SPREADSHEET_TYPES, ERROR_MAPPINGS } from '../constants';
 import { formatDateStr } from '../../util/DateUtil';
+import { formatDate} from '../../util/DateUtil';
 import moment from 'moment';
 
 
@@ -19,11 +20,8 @@ const fileUploadStyling = css({
   marginTop: '70px'
 });
 
-export default class BuildScheduleUpload extends React.Component {
 
-  getDate = (date) => {
-    return moment(date).format('MM-DD-YYYY');
-  }
+export default class BuildScheduleUpload extends React.Component {
 
   getErrorMessage = (errors) => {
     return <div className="usa-input-error">We have found the following errors with your upload. Please
@@ -46,7 +44,7 @@ export default class BuildScheduleUpload extends React.Component {
           <BasicDateRangeSelector
             messageLabel
             startDateName="startDate"
-            startDateValue={this.getDate(this.props.roCoStartDate)}
+            startDateValue={formatDate(this.props.roCoStartDate)}
             startDateLabel={false}
             endDateName="endDate"
             endDateValue={this.props.roCoEndDate}
