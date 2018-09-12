@@ -59,4 +59,9 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :issue_count do
     object.appeal.issues.count
   end
+
+  attribute :document_id do
+    attorney_case_review = object.attorney_case_reviews.last
+    attorney_case_review.document_id if attorney_case_review
+  end
 end
