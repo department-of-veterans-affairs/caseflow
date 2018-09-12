@@ -15,7 +15,7 @@ describe EndProductEstablishment do
     Generators::Veteran.build(
       file_number: veteran_file_number,
       participant_id: veteran_participant_id,
-      date_of_death: "05/01/2016",
+      date_of_death: "05/01/2016"
     )
   end
   let(:living_veteran_file_number) { "12345678" }
