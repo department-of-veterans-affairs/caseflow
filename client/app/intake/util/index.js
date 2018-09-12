@@ -10,6 +10,10 @@ export const getOptionSelectedError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.option_selected, 0) === 'blank') && 'Please select an option.'
 );
 
+export const getBenefitTypeError = (responseErrorCodes) => (
+  (_.get(responseErrorCodes.option_selected, 0) === 'blank') && 'Please select an option.'
+);
+
 export const getPageError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.other, 0) === 'unknown_error') && 'Unknown error.'
 );
@@ -57,6 +61,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
   case 'supplementalClaim':
     return {
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      benefit_type: intakeData.benefitType,
       claimant: intakeData.claimant,
       payee_code: intakeData.payeeCode
     };
@@ -64,6 +69,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
     return {
       informal_conference: intakeData.informalConference,
       same_office: intakeData.sameOffice,
+      benefit_type: intakeData.benefitType,
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
       payee_code: intakeData.payeeCode

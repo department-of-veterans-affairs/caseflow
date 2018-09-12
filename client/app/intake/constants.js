@@ -24,6 +24,7 @@ export const ACTIONS = {
   SET_OPTION_SELECTED: 'SET_OPTION_SELECTED',
   SET_INFORMAL_CONFERENCE: 'SET_INFORMAL_CONFERENCE',
   SET_SAME_OFFICE: 'SET_SAME_OFFICE',
+  SET_BENEFIT_TYPE: 'SET_BENEFIT_TYPE',
   SET_RECEIPT_DATE: 'SET_RECEIPT_DATE',
   SET_CLAIMANT_NOT_VETERAN: 'SET_CLAIMANT_NOT_VETERAN',
   SET_CLAIMANT: 'SET_CLAIMANT',
@@ -119,6 +120,27 @@ export const CANCELLATION_REASONS = {
     name: 'Other'
   }
 };
+
+export const BENEFIT_TYPES = [
+  { value: 'compensation',
+    displayText: 'Compensation' },
+  { value: 'pension',
+    displayText: 'Pension' },
+  { value: 'fiduciary',
+    displayText: 'Fiduciary' },
+  { value: 'insurance',
+    displayText: 'Insurance' },
+  { value: 'education',
+    displayText: 'Education' },
+  { value: 'voc_rehab',
+    displayText: 'Vocational Rehab. & Employment' },
+  { value: 'loan_guaranty',
+    displayText: 'Loan Guaranty' },
+  { value: 'vha',
+    displayText: 'VHA' },
+  { value: 'nca',
+    displayText: 'NCA' }
+];
 
 export const PAYEE_CODES = [
   { value: '00',

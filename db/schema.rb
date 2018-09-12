@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180907184617) do
+ActiveRecord::Schema.define(version: 20180912224413) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -373,6 +373,7 @@ ActiveRecord::Schema.define(version: 20180907184617) do
     t.boolean "same_office"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
+    t.string "benefit_type"
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
@@ -602,6 +603,7 @@ ActiveRecord::Schema.define(version: 20180907184617) do
     t.date "receipt_date"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
+    t.string "benefit_type"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 
