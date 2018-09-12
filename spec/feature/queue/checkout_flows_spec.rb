@@ -47,7 +47,8 @@ RSpec.feature "Checkout flows" do
     end
 
     before do
-      parent_task = FactoryBot.create(:ama_judge_task, assigned_to: judge_user, appeal: appeal)
+      root_task = FactoryBot.create(:root_task)
+      parent_task = FactoryBot.create(:ama_judge_task, assigned_to: judge_user, appeal: appeal, parent: root_task)
 
       FactoryBot.create(
         :ama_attorney_task,
