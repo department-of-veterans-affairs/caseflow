@@ -3,6 +3,7 @@ class BgsPowerOfAttorney
   include AssociatedBgsRecord
 
   attr_accessor :file_number
+  attr_accessor :claimant_participant_id
 
   bgs_attr_accessor :representative_name, :representative_type, :participant_id
 
@@ -17,7 +18,11 @@ class BgsPowerOfAttorney
   end
 
   def fetch_bgs_record
-    bgs.fetch_poa_by_file_number(file_number)
+    if claimant_participant_id
+      bgs.fetch_poas_by_participant_ids([claimant_participant_id])[claimant_participant_id]
+    else
+      bgs.fetch_poa_by_file_number(file_number)
+    end
   end
 
   def load_bgs_address!

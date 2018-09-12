@@ -175,6 +175,7 @@ describe Veteran do
         address_line1: "122 Mullberry St.",
         address_line2: "PO BOX 123",
         address_line3: "Daisies",
+        date_of_death: nil,
         city: "San Francisco",
         state: "CA",
         country: "USA",

@@ -6,16 +6,14 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Table from '../../components/Table';
 import { formatDate } from '../../util/DateUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import Button from '../../components/Button';
 import PropTypes from 'prop-types';
 import BasicDateRangeSelector from '../../components/BasicDateRangeSelector';
 import InlineForm from '../../components/InlineForm';
+import { CSVLink } from 'react-csv';
 
 const hearingSchedStyling = css({
   marginTop: '70px'
-});
-
-const inlineFormStyling = css({
-  marginTop: '80px'
 });
 
 export default class ListSchedule extends React.Component {
@@ -63,10 +61,13 @@ export default class ListSchedule extends React.Component {
 
     const removeCoDuplicates = _.uniqWith(hearingScheduleRows, _.isEqual);
 
+    const fileName = `HearingSchedule ${this.props.startDateValue}-${this.props.endDateValue}.csv`;
+
     return <AppSegment filledBackground>
       <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
-      <span className="cf-push-right"><Link button="primary" to="/schedule/build">Build Schedule</Link></span>
-      <div {...inlineFormStyling} >
+      <span className="cf-push-right"><Link button="primary" to="/schedule/build">Build schedule</Link></span>
+      <div className="cf-help-divider" {...hearingSchedStyling} ></div>
+      <div className="cf-push-left">
         <InlineForm>
           <BasicDateRangeSelector
             startDateName="fromDate"
@@ -89,11 +90,24 @@ export default class ListSchedule extends React.Component {
           </div>
         </InlineForm>
       </div>
-      <Table
-        columns={hearingScheduleColumns}
-        rowObjects={removeCoDuplicates}
-        summary="hearing-schedule"
-      />
+      <div className="cf-push-right" {...hearingSchedStyling}>
+        <Button
+          classNames={['usa-button-secondary']}>
+          <CSVLink
+            data={removeCoDuplicates}
+            target="_blank"
+            filename={fileName}>
+            Download current view
+          </CSVLink>
+        </Button>
+      </div>
+      <div {...hearingSchedStyling}>
+        <Table
+          columns={hearingScheduleColumns}
+          rowObjects={removeCoDuplicates}
+          summary="hearing-schedule"
+        />
+      </div>
     </AppSegment>;
   }
 }

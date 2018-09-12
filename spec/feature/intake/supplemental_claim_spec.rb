@@ -208,7 +208,7 @@ RSpec.feature "Supplemental Claim Intake" do
         claim_type: "Claim",
         station_of_jurisdiction: "397",
         date: supplemental_claim.receipt_date.to_date,
-        end_product_modifier: "041",
+        end_product_modifier: "042",
         end_product_label: "Supplemental Claim Rating",
         end_product_code: SupplementalClaim::END_PRODUCT_RATING_CODE,
         gulf_war_registry: false,
@@ -237,7 +237,7 @@ RSpec.feature "Supplemental Claim Intake" do
         claim_type: "Claim",
         station_of_jurisdiction: "397",
         date: supplemental_claim.receipt_date.to_date,
-        end_product_modifier: "042",
+        end_product_modifier: "041",
         end_product_label: "Supplemental Claim Nonrating",
         end_product_code: SupplementalClaim::END_PRODUCT_NONRATING_CODE,
         gulf_war_registry: false,
@@ -288,7 +288,8 @@ RSpec.feature "Supplemental Claim Intake" do
       rating_issue_reference_id: "def456",
       rating_issue_profile_date: receipt_date - untimely_days + 4.days,
       description: "PTSD denied",
-      decision_date: nil
+      decision_date: nil,
+      rating_issue_associated_at: Time.zone.now
     )
     expect(supplemental_claim.request_issues.last).to have_attributes(
       rating_issue_reference_id: nil,

@@ -214,7 +214,7 @@ RSpec.feature "Higher-Level Review" do
         claim_type: "Claim",
         station_of_jurisdiction: "397",
         date: higher_level_review.receipt_date.to_date,
-        end_product_modifier: "032",
+        end_product_modifier: "033",
         end_product_label: "Higher-Level Review Rating",
         end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
         gulf_war_registry: false,
@@ -243,7 +243,7 @@ RSpec.feature "Higher-Level Review" do
         claim_type: "Claim",
         station_of_jurisdiction: "397",
         date: higher_level_review.receipt_date.to_date,
-        end_product_modifier: "033",
+        end_product_modifier: "032",
         end_product_label: "Higher-Level Review Nonrating",
         end_product_code: HigherLevelReview::END_PRODUCT_NONRATING_CODE,
         gulf_war_registry: false,
@@ -299,7 +299,8 @@ RSpec.feature "Higher-Level Review" do
       rating_issue_reference_id: "def456",
       rating_issue_profile_date: receipt_date - untimely_days + 4.days,
       description: "PTSD denied",
-      decision_date: nil
+      decision_date: nil,
+      rating_issue_associated_at: Time.zone.now
     )
 
     expect(higher_level_review.request_issues.last).to have_attributes(
