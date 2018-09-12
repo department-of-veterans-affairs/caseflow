@@ -117,7 +117,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
   return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.externalAppealId), (task) => task);
 };
 
-export const prepareAllTasksForStore = (tasks: Array<Object>): Tasks => {
+export const prepareAllTasksForStore = (tasks: Array<Object>): { amaTasks: Tasks, tasks: Tasks } => {
   const amaTasks = tasks.filter((task) => {
     return task.attributes.appeal_type === 'Appeal';
   });
