@@ -92,7 +92,6 @@ class AssignWidget extends React.PureComponent<Props> {
   assignTasks = (selectedTasks: Array<Task>, assigneeId: string) => {
     const { previousAssigneeId } = this.props;
 
-    debugger;
     this.props.onTaskAssignment(
       { tasks: selectedTasks,
         assigneeId,
@@ -134,6 +133,8 @@ class AssignWidget extends React.PureComponent<Props> {
     if (attorneys.error) {
       placeholderOther = COPY.ASSIGN_WIDGET_ERROR_LOADING_ATTORNEYS;
     }
+
+    debugger;
 
     return <React.Fragment>
       <div {...css({

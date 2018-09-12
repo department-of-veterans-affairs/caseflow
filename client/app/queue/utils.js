@@ -24,7 +24,6 @@ import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 export const prepareAllTasksForStore = (tasks: Array<Object>): Tasks => {
   const amaTasks = tasks.filter((t) => { return t.attributes.appeal_type === 'Appeal'});
   const legacyTasks = tasks.filter((t) => { return t.attributes.appeal_type === 'LegacyAppeal'});
-  debugger;
   return {
     amaTasks: prepareTasksForStore(amaTasks),
     tasks: prepareLegacyTasksForStore(legacyTasks)

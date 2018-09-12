@@ -15,14 +15,15 @@ import type {
 } from './types/models';
 
 export const selectedTasksSelector = (state: State, userId: string) => {
-  return _.flatMap(
+  return _.map(
     state.queue.isTaskAssignedToUserSelected[userId] || {},
     (selected, id) => {
-      const task = state.queue.tasks[id] || state.queue.amaTasks[id];
-
-      return selected ? [task] : [];
+      if (!selected) {
+        return;
+      }
+      return state.queue.tasks[id] || state.queue.amaTasks[id];
     }
-  );
+  ).filter(Boolean);
 };
 
 const getTasks = (state: State) => state.queue.tasks;
@@ -197,8 +198,6 @@ export const getAssignedTasks = (state: State, attorneyId: string) => {
   const tasks = tasksWithAppealSelector(state);
   const attorney = getAttorney(state, attorneyId);
   const cssId = attorney ? attorney.css_id : null;
-
-  debugger;
 
   return _.filter(tasks, (task) => task.assignedTo.cssId === cssId);
 };

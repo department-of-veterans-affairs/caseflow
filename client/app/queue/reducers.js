@@ -311,6 +311,7 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
       }
     });
   case ACTIONS.SET_SELECTION_OF_TASK_OF_USER: {
+    debugger;
     const isTaskSelected = update(state.isTaskAssignedToUserSelected[action.payload.userId] || {}, {
       [action.payload.taskId]: {
         $set: action.payload.selected

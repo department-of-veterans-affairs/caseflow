@@ -319,12 +319,11 @@ export const initialAssignTasksToUser =
           then((resp) => resp.body).
           then(
             (resp) => {
-              debugger;
               const task = resp.tasks ? resp.tasks.data[0] : resp.task.data;
 
               dispatch(onReceiveTasks(prepareAllTasksForStore([task])));
               dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
-                taskId: task.id,
+                taskId: task.attributes.externalAppealId,
                 selected: false }));
             });
       }));
@@ -342,12 +341,10 @@ export const reassignTasksToUser =
           url = `/tasks/${oldTask.taskId}`;
           params = {
             data: {
-              tasks: [{
+              task: {
                 type: 'AttorneyTask',
-                external_id: oldTask.externalAppealId,
-                parent_id: oldTask.taskId,
                 assigned_to_id: assigneeId
-              }]
+              }
             }
           };
         } else {
@@ -363,17 +360,15 @@ export const reassignTasksToUser =
           };
         }
 
-        debugger;
         return ApiUtil.patch(url, params).
           then((resp) => resp.body).
           then(
             (resp) => {
-              debugger;
               const task = resp.tasks ? resp.tasks.data[0] : resp.task.data;
 
               dispatch(onReceiveTasks(prepareAllTasksForStore([task])));
               dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
-                taskId: task.id,
+                taskId: task.attributes.externalAppealId,
                 selected: false }));
             });
       }));
