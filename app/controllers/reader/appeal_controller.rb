@@ -2,7 +2,8 @@ class Reader::AppealController < Reader::ApplicationController
   def index
     respond_to do |format|
       format.html do
-        render(:index)
+        return redirect_to "/" if FeatureToggle.enabled?(:case_search_home_page, user: current_user)
+        return redirect_to "/queue" if can_access_queue?
       end
       format.json do
         MetricsService.record "Get assignments for #{current_user.id}" do
