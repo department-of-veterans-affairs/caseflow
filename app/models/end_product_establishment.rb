@@ -166,9 +166,13 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def benefit_type_code
-    @benefit_type_code ||= @veteran.date_of_death.nil?
-      ? EndProduct::BENEFIT_TYPE_CODE_LIVE
-      : EndProduct::BENEFIT_TYPE_CODE_DEATH
+    @benefit_type_code ||= begin
+      if veteran.date_of_death.nil?
+        EndProduct::BENEFIT_TYPE_CODE_LIVE
+      else
+        EndProduct::BENEFIT_TYPE_CODE_DEATH
+      end
+    end
   end
 
   def establish_claim_in_vbms(end_product)
