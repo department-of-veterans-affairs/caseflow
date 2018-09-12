@@ -221,6 +221,12 @@ class SeedDB
       veteran_file_number: "375273128",
       request_issues: FactoryBot.build_list(:request_issue, 1, description: "Knee pain")
     )
+    @ama_appeal_with_decision = FactoryBot.create(
+      :appeal,
+      number_of_claimants: 1,
+      veteran_file_number: "375273128",
+      request_issues: FactoryBot.build_list(:request_issue, 1, description: "Back pain")
+    )
 
     LegacyAppeal.create(vacols_id: "2096907", vbms_id: "228081153S")
     LegacyAppeal.create(vacols_id: "2226048", vbms_id: "213912991S")
@@ -235,7 +241,7 @@ class SeedDB
     vso = Organization.find_by(name: "American Legion")
     translation_org = Organization.find_by(name: "Translation")
 
-    FactoryBot.create(:ama_judge_task, assigned_to: judge, appeal: @ama_appeals[0], action: :review)
+    FactoryBot.create(:ama_judge_task, assigned_to: judge, appeal: @ama_appeals[0])
 
     parent = FactoryBot.create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: @ama_appeals[1])
     FactoryBot.create(
@@ -281,6 +287,9 @@ class SeedDB
                       assigned_by: judge,
                       parent: parent,
                       appeal: @ama_appeals[5])
+
+    FactoryBot.create(
+      :ama_judge_task, :in_progress, assigned_to: judge, appeal: @ama_appeal_with_decision, action: :review)
 
     FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @appeal_with_vso)
 
