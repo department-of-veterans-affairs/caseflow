@@ -89,7 +89,7 @@ describe Claimant do
       allow_any_instance_of(BGSService).to receive(:fetch_person_info).and_return(
         birth_date: date_of_birth,
         first_name: "Bob",
-        last_name: "Vance",
+        last_name: "Vance"
       )
     end
 
