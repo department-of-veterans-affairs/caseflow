@@ -62,7 +62,7 @@ RSpec.feature "Checkout flows" do
       User.authenticate!(user: attorney_user)
     end
 
-    scenario "submits draft decision", focus: true do
+    scenario "submits draft decision" do
       visit "/queue"
       click_on "(#{appeal.veteran_file_number})"
       click_dropdown 0
