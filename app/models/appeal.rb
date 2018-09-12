@@ -3,6 +3,7 @@ class Appeal < AmaReview
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
   has_many :decision_issues, through: :request_issues
+  has_one :special_issue_list
 
   validates :receipt_date, :docket_type, presence: { message: "blank" }, on: :intake_review
 
@@ -64,6 +65,10 @@ class Appeal < AmaReview
 
   def veteran_gender
     veteran && veteran.sex
+  end
+
+  def advanced_on_docket
+    claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
   end
 
   def number_of_issues

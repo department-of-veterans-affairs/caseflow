@@ -16,12 +16,19 @@ class CaseReviewsController < ApplicationController
     record = case_review_class.complete(complete_params)
     return invalid_record_error(record) unless record.valid?
 
+    create_bva_dispatch_task(record) if case_review_class == JudgeCaseReview
+
     response = { task: record }
     response[:issues] = record.appeal.issues
     render json: response
   end
 
   private
+
+  def create_bva_dispatch_task(record)
+    return if record.appeal.class == LegacyAppeal
+    BvaDispatchTask.create_and_assign(record.task.root_task)
+  end
 
   def case_review_class
     CASE_REVIEW_CLASSES[params["tasks"][:type].try(:to_sym)]

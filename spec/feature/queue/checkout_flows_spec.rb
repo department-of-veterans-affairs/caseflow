@@ -47,7 +47,8 @@ RSpec.feature "Checkout flows" do
     end
 
     before do
-      parent_task = FactoryBot.create(:ama_judge_task, assigned_to: judge_user, appeal: appeal)
+      root_task = FactoryBot.create(:root_task)
+      parent_task = FactoryBot.create(:ama_judge_task, assigned_to: judge_user, appeal: appeal, parent: root_task)
 
       FactoryBot.create(
         :ama_attorney_task,
@@ -65,6 +66,22 @@ RSpec.feature "Checkout flows" do
       visit "/queue"
       click_on "(#{appeal.veteran_file_number})"
       click_dropdown 0
+      click_label "radiation"
+
+      click_on "Continue"
+
+      # Ensure we can reload the flow and the special issue is saved
+      click_on "Cancel"
+      click_on "Yes, cancel"
+
+      click_dropdown 0
+
+      # Radiation should still be checked
+      expect(page).to have_field("radiation", checked: true, visible: false)
+
+      # Radiation should also be marked in the database
+      expect(appeal.special_issue_list.radiation).to eq(true)
+      click_on "Continue"
 
       issue_rows = page.find_all("tr[id^='table-row-']")
       expect(issue_rows.length).to eq(appeal.request_issues.length)
@@ -597,9 +614,11 @@ RSpec.feature "Checkout flows" do
       click_dropdown 6
       expect(page).to have_content(COPY::COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY)
 
-      hold_duration = rand(100)
+      hold_duration = [rand(100), 1].min
       fill_in COPY::COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY, with: hold_duration
 
+      instructions = generate_words 50
+      fill_in "instructions", with: instructions
       click_on "Place case on hold"
 
       expect(page).to have_content(
@@ -607,6 +626,7 @@ RSpec.feature "Checkout flows" do
       )
       expect(colocated_action.reload.on_hold_duration).to eq hold_duration
       expect(colocated_action.status).to eq "on_hold"
+      expect(colocated_action.instructions).to eq instructions
     end
 
     scenario "sends task to team" do

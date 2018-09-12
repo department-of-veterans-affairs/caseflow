@@ -35,6 +35,8 @@ import CaseSearchSheet from './CaseSearchSheet';
 import CaseDetailsView from './CaseDetailsView';
 import SubmitDecisionView from './SubmitDecisionView';
 import SelectDispositionsView from './SelectDispositionsView';
+import SelectSpecialIssuesView from './SelectSpecialIssuesView';
+import SpecialIssueLoadingScreen from './SpecialIssueLoadingScreen';
 import AddEditIssueView from './AddEditIssueView';
 import SelectRemandReasonsView from './SelectRemandReasonsView';
 import SearchBar from './SearchBar';
@@ -44,6 +46,7 @@ import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
+import COPY from '../../COPY.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import type { State } from './types/state';
@@ -120,8 +123,14 @@ class QueueApp extends React.PureComponent<Props> {
     nextStep="/queue" />;
 
   routedSelectDispositions = (props) => <SelectDispositionsView
-    prevStep={`/queue/appeals/${props.match.params.appealId}`}
     appealId={props.match.params.appealId} />;
+
+  routedSelectSpecialIssues = (props) => <SpecialIssueLoadingScreen appealExternalId={props.match.params.appealId}>
+    <SelectSpecialIssuesView
+      appealId={props.match.params.appealId}
+      prevStep={`/queue/appeals/${props.match.params.appealId}`}
+      nextStep={`/queue/appeals/${props.match.params.appealId}/dispositions`} />
+  </SpecialIssueLoadingScreen>;
 
   routedAddEditIssue = (props) => <AddEditIssueView
     nextStep={`/queue/appeals/${props.match.params.appealId}/dispositions`}
@@ -260,6 +269,11 @@ class QueueApp extends React.PureComponent<Props> {
             path="/queue/appeals/:appealId/dispositions"
             title={`Draft Decision | ${PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()]}`}
             render={this.routedSelectDispositions} />
+          <PageRoute
+            exact
+            path="/queue/appeals/:appealId/special_issues"
+            title={`Draft Decision | ${COPY.SPECIAL_ISSUES_PAGE_TITLE}`}
+            render={this.routedSelectSpecialIssues} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId/evaluate"
