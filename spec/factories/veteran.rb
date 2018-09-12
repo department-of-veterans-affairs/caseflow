@@ -1,8 +1,9 @@
 FactoryBot.define do
   factory :veteran do
+    first_name "Bob"
+    last_name "Smith"
+
     transient do
-      first_name "Bob"
-      last_name "Smith"
       bgs_veteran_record do
         {
           first_name: "Bob",

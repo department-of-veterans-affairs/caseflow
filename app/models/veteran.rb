@@ -152,6 +152,8 @@ class Veteran < ApplicationRecord
       before_create_veteran_by_file_number # Used to simulate race conditions
       veteran.tap do |v|
         v.update!(participant_id: v.ptcpnt_id)
+        # Check to see if veteran is accessible to make sure
+        # bgs_record is a hash and not :not_found
         if v.accessible?
           v.update!(
             first_name: v.bgs_record[:first_name],
