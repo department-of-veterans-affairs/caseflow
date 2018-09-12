@@ -51,9 +51,9 @@ export default class ListSchedule extends React.Component {
       }
     ];
 
-    const formatVljName = (lastName, firstName, middleName) => {
+    const formatVljName = (lastName, firstName) => {
       if (lastName && firstName) {
-        return `${lastName}, ${firstName} ${middleName}.`;
+        return `${lastName}, ${firstName}`;
       }
     };
 
@@ -62,7 +62,7 @@ export default class ListSchedule extends React.Component {
       hearingType: hearingDay.hearingType,
       regionalOffice: hearingDay.regionalOffice,
       room: hearingDay.roomInfo,
-      vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName, hearingDay.judgeMiddleName)
+      vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName)
     }));
 
     const removeCoDuplicates = _.uniqWith(hearingScheduleRows, _.isEqual);
