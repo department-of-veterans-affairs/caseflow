@@ -43,7 +43,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       },
       taskId: task.id,
       action: task.attributes.action,
-      documentId: null,
+      documentId: task.attributes.document_id,
       workProduct: null,
       previousTaskAssignedOn: null,
       placedOnHoldAt: task.attributes.placed_on_hold_at,
