@@ -39,7 +39,7 @@ class Hearings::HearingDayController < HearingScheduleController
     updated_hearing = HearingDay.update_hearing_day(hearing, update_params)
 
     json_hearing = if updated_hearing.class.equal?(TrueClass)
-                     if hearing.class.name === "HearingDay"
+                     if hearing.is_a?(HearingDay)
                        hearing.to_hash
                      else
                        json_created_hearings(hearing)

@@ -21,7 +21,7 @@ class HearingDay < ApplicationRecord
     end
 
     def update_hearing_day(hearing, hearing_hash)
-      if hearing.class.name === "HearingDay"
+      if hearing.is_a?(HearingDay)
         hearing.update(hearing_hash)
       else
         HearingDayRepository.update_vacols_hearing!(hearing, hearing_hash)
@@ -44,7 +44,8 @@ class HearingDay < ApplicationRecord
 
     def load_days(start_date, end_date, regional_office = nil)
       if regional_office.nil?
-        cf_video_and_co = where("DATE(hearing_date) between ? and ?", start_date, end_date).each_with_object([]) do |hearing_day, result|
+        cf_video_and_co = where("DATE(hearing_date) between ? and ?",
+                                start_date, end_date).each_with_object([]) do |hearing_day, result|
           result << hearing_day.to_hash
         end
         video_and_co, travel_board = HearingDayRepository.load_days_for_range(start_date, end_date)
@@ -61,10 +62,9 @@ class HearingDay < ApplicationRecord
     end
 
     def find_hearing_day(hearing_type, hearing_key)
-      hearing_day = find(hearing_key)
+      find(hearing_key)
     rescue ActiveRecord::RecordNotFound
-      hearing_day = HearingDayRepository.find_hearing_day(hearing_type, hearing_key)
-      hearing_day
+      HearingDayRepository.find_hearing_day(hearing_type, hearing_key)
     end
   end
 
