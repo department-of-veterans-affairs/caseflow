@@ -15,21 +15,25 @@ import { prepareTasksForStore } from './utils';
 class CaseDetailsLink extends React.PureComponent {
   onClick = () => {
     const { task } = this.props;
-    const payload = {
-      data: {
-        task: {
-          status: 'in_progress'
+
+    // when searching for a case, we only load appeal info, no tasks
+    if (task) {
+      const payload = {
+        data: {
+          task: {
+            status: 'in_progress'
+          }
         }
-      }
-    };
+      };
 
-    ApiUtil.patch(`/tasks/${task.taskId}`, payload).
-      then((resp) => {
-        const response = JSON.parse(resp.text);
-        const preparedTasks = prepareTasksForStore(response.tasks.data);
+      ApiUtil.patch(`/tasks/${task.taskId}`, payload).
+        then((resp) => {
+          const response = JSON.parse(resp.text);
+          const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        this.props.setTaskAttrs(task.externalAppealId, preparedTasks[task.externalAppealId]);
-      });
+          this.props.setTaskAttrs(task.externalAppealId, preparedTasks[task.externalAppealId]);
+        });
+    }
 
     return this.props.onClick ? this.props.onClick(arguments) : true;
   }
