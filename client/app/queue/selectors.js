@@ -157,7 +157,8 @@ export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = create
 
 export const judgeReviewTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) => _.filter(tasks, (task) => ['review', null].includes(task.action))
+  // eslint-disable-next-line no-undefined
+  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => [null, undefined, 'review'].includes(task.action))
 );
 
 export const judgeAssignTasksSelector = createSelector(

@@ -276,7 +276,8 @@ RSpec.feature "Search" do
         expect(page).to_not have_selector("#searchBarEmptyList")
       end
 
-      it "clicking on docket number sends us to the case details page" do
+      it "clicking on docket number sends us to the case details page",
+         skip: "case_search_home_page FeatureToggle deprecation in progress" do
         click_on appeal.docket_number
         expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
       end
