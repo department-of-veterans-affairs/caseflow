@@ -89,7 +89,7 @@ describe('ColocatedTaskListView', () => {
   const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
 
   describe('New tab', () => {
-    it('shows only new tasks', () => {
+    it.skip('shows only new tasks', () => {
       const taskNewAssigned = amaTaskWith({ id: '1',
         cssIdAssignee: 'BVALSPORER' });
       const taskUnassigned = amaTaskWith({ id: '5',
