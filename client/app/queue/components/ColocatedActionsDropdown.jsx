@@ -11,6 +11,10 @@ import {
   getTasksForAppeal,
   appealWithDetailSelector
 } from '../selectors';
+import {
+  taskIsOnHold,
+  taskHasNewDocuments
+} from '../utils';
 import { stageAppeal } from '../QueueActions';
 
 import {
@@ -21,7 +25,7 @@ import CO_LOCATED_ACTIONS from '../../../constants/CO_LOCATED_ACTIONS.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import COPY from '../../../COPY.json';
 
-import type { State } from '../types/state';
+import type { State, NewDocsForAppeal } from '../types/state';
 import type { Task, Appeal } from '../types/models';
 
 type Params = {|
@@ -32,6 +36,7 @@ type Props = Params & {|
   // state
   task: Task,
   appeal: Appeal,
+  newDocsForAppeal: NewDocsForAppeal,
   // dispatch
   stageAppeal: typeof stageAppeal,
   // withrouter
@@ -64,7 +69,11 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
   }
 
   getOptions = () => {
-    const { task, appeal } = this.props;
+    const {
+      task,
+      appeal,
+      newDocsForAppeal
+    } = this.props;
     const options = [];
 
     if (['translation', 'schedule_hearing'].includes(task.action) && appeal.docketName === 'legacy') {
@@ -79,7 +88,8 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
       });
     }
 
-    if (task.status !== 'on_hold') {
+    // todo: better encapsulation of task on hold / pending logic
+    if (!taskIsOnHold(task) || taskHasNewDocuments(task, newDocsForAppeal)) {
       options.push({
         label: COPY.COLOCATED_ACTION_PLACE_HOLD,
         value: CO_LOCATED_ACTIONS.PLACE_HOLD
@@ -100,7 +110,8 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
 
 const mapStateToProps = (state: State, ownProps: Params) => ({
   task: getTasksForAppeal(state, ownProps)[0],
-  appeal: appealWithDetailSelector(state, ownProps)
+  appeal: appealWithDetailSelector(state, ownProps),
+  newDocsForAppeal: state.queue.newDocsForAppeal
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

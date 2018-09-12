@@ -24,10 +24,14 @@ class AttorneyCaseReview < ApplicationRecord
     end
   end
 
+  def written_by_name
+    attorney.full_name
+  end
+
   private
 
   def reassign_case_to_judge_in_vacols!
-    attorney.access_to_task?(vacols_id)
+    attorney.access_to_legacy_task?(vacols_id)
 
     AttorneyCaseReview.repository.reassign_case_to_judge!(
       vacols_id: vacols_id,

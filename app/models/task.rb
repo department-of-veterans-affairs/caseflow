@@ -4,6 +4,7 @@ class Task < ApplicationRecord
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
+  has_many :attorney_case_reviews
 
   validates :assigned_to, :appeal, :type, :status, presence: true
 
@@ -75,6 +76,13 @@ class Task < ApplicationRecord
            (user.judge_in_vacols? && FeatureToggle.enabled?(:judge_assignment_to_attorney, user: user))
       fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot assign this task"
     end
+  end
+
+  def root_task(task_id = nil)
+    task_id = id if task_id.nil?
+    return parent.root_task(task_id) if parent
+    return self if type == RootTask.name
+    fail Caseflow::Error::NoRootTask, task_id: task_id
   end
 
   private
