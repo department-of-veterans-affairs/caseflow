@@ -25,7 +25,7 @@ export type AppellantAddress = {
 
 export type Issue = {
   levels: Array<string>,
-  program: string,
+  program?: string,
   type: string,
   codes: Array<string>,
   disposition: string,
@@ -34,7 +34,8 @@ export type Issue = {
   id: Number,
   labels: Array<string>,
   readjudication: Boolean,
-  remand_reasons: Array<Object>
+  remand_reasons: Array<Object>,
+  description?: string
 };
 
 export type Issues = Array<Issue>;
