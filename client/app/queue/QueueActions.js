@@ -1,5 +1,7 @@
 // @flow
-import { associateTasksWithAppeals, prepareLegacyTasksForStore, extractAppealsAndAmaTasks } from './utils';
+import { associateTasksWithAppeals,
+  prepareAllTasksForStore,
+  extractAppealsAndAmaTasks } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
@@ -275,46 +277,100 @@ export const setSelectionOfTaskOfUser =
 export const initialAssignTasksToUser =
   ({ tasks, assigneeId, previousAssigneeId }:
      { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) =>
-    (dispatch: Dispatch) =>
+    (dispatch: Dispatch) => {
+
       Promise.all(tasks.map((oldTask) => {
-        return ApiUtil.post(
-          '/legacy_tasks',
-          { data: { tasks: { assigned_to_id: assigneeId,
-            type: 'JudgeCaseAssignmentToAttorney',
-            appeal_id: oldTask.appealId } } }).
+        let params, url;
+
+        if (oldTask.externalAppealId.length === 36) {
+          url = '/tasks';
+          params = {
+            data: {
+              tasks: [{
+                type: 'AttorneyTask',
+                external_id: oldTask.externalAppealId,
+                parent_id: oldTask.taskId,
+                assigned_to_id: assigneeId
+              }]
+            }
+          };
+        } else {
+          url = '/legacy_tasks';
+          params = {
+            data: {
+              tasks: {
+                assigned_to_id: assigneeId,
+                type: 'JudgeCaseAssignmentToAttorney',
+                appeal_id: oldTask.appealId
+              }
+            }
+          };
+        }
+
+        return ApiUtil.post(url, params).
           then((resp) => resp.body).
           then(
             (resp) => {
-              const { task: { data: task } } = resp;
+              const task = resp.tasks ? resp.tasks.data[0] : resp.task.data;
 
-              dispatch(onReceiveTasks({ amaTasks: {},
-                tasks: prepareLegacyTasksForStore([task]) }));
+              const allTasks = prepareAllTasksForStore([task]);
+
+              dispatch(onReceiveTasks({ tasks: allTasks.tasks,
+                amaTasks: allTasks.amaTasks }));
               dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
-                taskId: task.id,
+                taskId: task.attributes.external_appeal_id,
                 selected: false }));
             });
       }));
+    };
 
 export const reassignTasksToUser =
   ({ tasks, assigneeId, previousAssigneeId }:
      { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) =>
-    (dispatch: Dispatch) =>
+    (dispatch: Dispatch) => {
       Promise.all(tasks.map((oldTask) => {
-        return ApiUtil.patch(
-          `/legacy_tasks/${oldTask.taskId}`,
-          { data: { tasks: { assigned_to_id: assigneeId } } }).
+
+        let params, url;
+
+        if (oldTask.externalAppealId.length === 36) {
+          url = `/tasks/${oldTask.taskId}`;
+          params = {
+            data: {
+              task: {
+                type: 'AttorneyTask',
+                assigned_to_id: assigneeId
+              }
+            }
+          };
+        } else {
+          url = `/legacy_tasks/${oldTask.taskId}`;
+          params = {
+            data: {
+              tasks: {
+                assigned_to_id: assigneeId,
+                type: 'JudgeCaseAssignmentToAttorney',
+                appeal_id: oldTask.appealId
+              }
+            }
+          };
+        }
+
+        return ApiUtil.patch(url, params).
           then((resp) => resp.body).
           then(
             (resp) => {
-              const { task: { data: task } } = resp;
+              const task = resp.tasks ? resp.tasks.data[0] : resp.task.data;
 
-              dispatch(onReceiveTasks({ amaTasks: {},
-                tasks: prepareLegacyTasksForStore([task]) }));
+              const allTasks = prepareAllTasksForStore([task]);
+
+              dispatch(onReceiveTasks({ tasks: allTasks.tasks,
+                amaTasks: allTasks.amaTasks }));
               dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
-                taskId: task.id,
+                taskId: task.attributes.external_appeal_id,
                 selected: false }));
             });
       }));
+    };
 
 const receiveAllAttorneys = (attorneys) => ({
   type: ACTIONS.RECEIVE_ALL_ATTORNEYS,

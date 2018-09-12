@@ -117,6 +117,20 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
   return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.externalAppealId), (task) => task);
 };
 
+export const prepareAllTasksForStore = (tasks: Array<Object>): { amaTasks: Tasks, tasks: Tasks } => {
+  const amaTasks = tasks.filter((task) => {
+    return task.attributes.appeal_type === 'Appeal';
+  });
+  const legacyTasks = tasks.filter((task) => {
+    return task.attributes.appeal_type === 'LegacyAppeal';
+  });
+
+  return {
+    amaTasks: prepareTasksForStore(amaTasks),
+    tasks: prepareLegacyTasksForStore(legacyTasks)
+  };
+};
+
 export const associateTasksWithAppeals =
   (serverData: { tasks: { data: Array<Object> } }):
     { appeals: BasicAppeals, tasks: Tasks } => {
