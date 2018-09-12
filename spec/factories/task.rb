@@ -26,6 +26,13 @@ FactoryBot.define do
       completed_at Time.zone.now
     end
 
+    factory :root_task do
+      type "RootTask"
+      appeal_type "Appeal"
+      appeal { create(:appeal) }
+      assigned_by { nil }
+    end
+
     factory :generic_task do
       type "GenericTask"
       appeal_type "Appeal"
