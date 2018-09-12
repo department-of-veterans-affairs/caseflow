@@ -1,5 +1,4 @@
 class UsersController < ApplicationController
-
   def index
     case params[:role]
     when Constants::USER_ROLE_TYPES["judge"]

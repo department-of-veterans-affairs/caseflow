@@ -1,5 +1,4 @@
 class CaseReviewsController < ApplicationController
-
   CASE_REVIEW_CLASSES = {
     AttorneyCaseReview: AttorneyCaseReview,
     JudgeCaseReview: JudgeCaseReview
