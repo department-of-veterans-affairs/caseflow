@@ -296,6 +296,35 @@ class Fakes::BGSService
     (self.class.veteran_records || {})[vbms_id]
   end
 
+  # rubocop:disable Metrics/MethodLength
+  def fetch_person_info(participant_id)
+    # This is a limited set of test data, more fields are available.
+    if participant_id == "5382910292"
+      # This claimant is over 75 years old so they get automatic AOD
+      {
+        birth_date: "Sun, 05 Sep 1943 00:00:00 -0500",
+        first_name: "Bob",
+        middle_name: "Billy",
+        last_name: "Vance"
+      }
+    elsif participant_id == "1129318238"
+      {
+        birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
+        first_name: "Cathy",
+        middle_name: "",
+        last_name: "Smith"
+      }
+    else
+      {
+        birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
+        first_name: "Tom",
+        middle_name: "Edward",
+        last_name: "Brady"
+      }
+    end
+  end
+  # rubocop:enable Metrics/MethodLength
+
   def can_access?(vbms_id)
     !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
   end
@@ -336,10 +365,6 @@ class Fakes::BGSService
         }
       end
     )
-  end
-
-  def fetch_person_info(_participant_id)
-    { first_name: "Tom", last_name: "Brady", middle_name: "Edward" }
   end
 
   # TODO: add more test cases
