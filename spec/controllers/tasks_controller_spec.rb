@@ -27,7 +27,7 @@ RSpec.describe TasksController, type: :controller do
     end
     let!(:task5) { create(:colocated_task, assigned_to: user, status: "in_progress") }
     let!(:task_ama_colocated_aod) do
-      create(:ama_colocated_task, assigned_to: user, appeal: create(:appeal, advanced_on_docket: true))
+      create(:ama_colocated_task, assigned_to: user, appeal: create(:appeal, :advanced_on_docket))
     end
     let!(:task6) { create(:colocated_task, assigned_to: user, status: "completed") }
     let!(:task7) { create(:colocated_task) }
