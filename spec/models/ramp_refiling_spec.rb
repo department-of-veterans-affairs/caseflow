@@ -137,6 +137,7 @@ describe RampRefiling do
           # Even though there was a failure, we should still save the contention ids that were created
           expect(issues.first.reload.contention_reference_id).to_not be_nil
           expect(issues.second.reload.contention_reference_id).to_not be_nil
+          expect(issue_to_fail.reload.contention_reference_id).to be_nil
 
           # When the contention fails the End Product Establishment should not be committed
           expect(ramp_refiling.end_product_establishment.established_at).to eq(Time.zone.now)
