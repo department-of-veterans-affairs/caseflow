@@ -35,7 +35,7 @@ class JudgeCaseReview < ApplicationRecord
   private
 
   def sign_decision_or_create_omo!
-    judge.access_to_task?(vacols_id)
+    judge.access_to_legacy_task?(vacols_id)
 
     JudgeCaseReview.repository.sign_decision_or_create_omo!(
       vacols_id: vacols_id,
