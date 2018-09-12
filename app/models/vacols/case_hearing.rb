@@ -174,7 +174,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   end
 
   def create_or_update_diaries
-    create_or_update_abeyance_diary if holddays_changed?
+    create_or_update_extension_diary if holddays_changed?
     create_or_update_aod_diary if aod_changed?
   end
 
@@ -182,16 +182,17 @@ class VACOLS::CaseHearing < VACOLS::Record
     @case_id ||= brieff.bfkey
   end
 
-  def create_or_update_abeyance_diary
+  def create_or_update_extension_diary
     # If hold open is set to nil or 0, delete the diary
-    return delete_diary([:A]) if !holddays || holddays == 0
+    # We have to hardcode the assignee to 25 because not all ext diaries should default to 25
+    return delete_diary([:EXT]) if !holddays || holddays == 0
 
     VACOLS::Note.update_or_create!(case_id: case_id,
                                    text: "Record held open by VLJ at hearing for additional evidence.",
-                                   code: :A,
+                                   code: :EXT,
                                    days_to_complete: holddays + 5,
                                    days_til_due: holddays + 5,
-                                   assigned_to: VACOLS::Note.assignee(:A),
+                                   assigned_to: "25",
                                    user_id: current_user_css_id)
   end
 

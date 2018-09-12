@@ -24,6 +24,7 @@ export const initialState = {
   editingIssue: {},
   docCountForAppeal: {},
   newDocsForAppeal: {},
+  specialIssues: {},
 
   /**
    * `stagedChanges` is an object of appeals that have been modified since
@@ -367,6 +368,13 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
         [externalAppealId]: {
           $merge: action.payload.attributes
         }
+      }
+    });
+  }
+  case ACTIONS.SET_SPECIAL_ISSUE: {
+    return update(state, {
+      specialIssues: {
+        $merge: action.payload.specialIssues
       }
     });
   }
