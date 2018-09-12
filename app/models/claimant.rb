@@ -11,7 +11,7 @@ class Claimant < ApplicationRecord
     create!(
       participant_id: participant_id,
       payee_code: payee_code,
-      date_of_birth: BGSService.new.fetch_person_info(participant_id)[:birthday_date]
+      date_of_birth: BGSService.new.fetch_person_info(participant_id)[:birth_date]
     )
   end
 

@@ -87,12 +87,9 @@ describe Claimant do
 
     before do
       allow_any_instance_of(BGSService).to receive(:fetch_person_info).and_return(
-        brthdy_dt: date_of_birth,
-        first_nm: "Bob",
-        gender_cd: "M",
-        last_nm: "Vance",
-        ptcpnt_id: participant_id,
-        ssn_nbr: "123456789"
+        birth_date: date_of_birth,
+        first_name: "Bob",
+        last_name: "Vance",
       )
     end
 
