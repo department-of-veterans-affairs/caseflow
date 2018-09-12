@@ -71,5 +71,11 @@ FactoryBot.define do
       type "GenericTask"
       appeal_type "Appeal"
     end
+
+    factory :bva_dispatch_task do
+      type "BvaDispatchTask"
+      appeal_type "Appeal"
+      appeal { create(:appeal) }
+    end
   end
 end
