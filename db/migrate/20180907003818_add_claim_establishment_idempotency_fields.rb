@@ -21,8 +21,7 @@ class AddClaimEstablishmentIdempotencyFields < ActiveRecord::Migration[5.1]
     remove_column :supplemental_claims, :end_product_status
     remove_column :supplemental_claims, :end_product_status_last_synced_at
 
-    ensure
-      ActiveRecord::Base.connection.execute "SET statement_timeout = 30000" # 30 seconds
-    end
+  ensure
+    ActiveRecord::Base.connection.execute "SET statement_timeout = 30000" # 30 seconds
   end
 end
