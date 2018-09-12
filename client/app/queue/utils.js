@@ -1,6 +1,7 @@
 // @flow
 import React from 'react';
 import _ from 'lodash';
+import moment from 'moment';
 import StringUtil from '../util/StringUtil';
 import { redText } from './constants';
 
@@ -13,6 +14,7 @@ import type {
   Issue,
   Issues
 } from './types/models';
+import type { NewDocsForAppeal } from './types/state';
 
 import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
@@ -338,3 +340,13 @@ export const validateWorkProductTypeAndId = (decision: {opts: Object}) => {
 
   return oldFormat.test(documentId) || newFormat.test(documentId);
 };
+
+export const taskHasNewDocuments = (task: Task, newDocsForAppeal: NewDocsForAppeal) => {
+  if (!newDocsForAppeal[task.externalAppealId] || !newDocsForAppeal[task.externalAppealId].docs) {
+    return false;
+  }
+
+  return newDocsForAppeal[task.externalAppealId].docs.length > 0;
+};
+
+export const taskIsOnHold = (task: Task) => moment().diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;

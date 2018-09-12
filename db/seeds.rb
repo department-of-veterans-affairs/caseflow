@@ -281,12 +281,13 @@ class SeedDB
                       assigned_to: colocated)
 
     parent = FactoryBot.create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: @ama_appeals[5])
-    FactoryBot.create(:ama_attorney_task,
-                      :completed,
-                      assigned_to: attorney,
-                      assigned_by: judge,
-                      parent: parent,
-                      appeal: @ama_appeals[5])
+    child = FactoryBot.create(:ama_attorney_task,
+                              :completed,
+                              assigned_to: attorney,
+                              assigned_by: judge,
+                              parent: parent,
+                              appeal: @ama_appeals[5])
+    FactoryBot.create(:attorney_case_review, reviewing_judge: judge, attorney: attorney, task_id: child.id)
 
     FactoryBot.create(
       :ama_judge_task, :in_progress, assigned_to: judge, appeal: @ama_appeal_with_decision, action: :review)
