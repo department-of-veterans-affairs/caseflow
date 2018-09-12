@@ -7,10 +7,7 @@ import { setSpecialIssues } from './QueueActions';
 import { requestSave } from './uiReducer/uiActions';
 
 import decisionViewBase from './components/DecisionViewBase';
-<<<<<<< HEAD
 import Alert from '../components/Alert';
-=======
->>>>>>> ff83a8c2f05bcd5703ec2962fc9efe6d159b817a
 import Checkbox from '../components/Checkbox';
 import SPECIAL_ISSUES from '../constants/SpecialIssues';
 import COPY from '../../COPY.json';
