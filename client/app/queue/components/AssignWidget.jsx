@@ -134,8 +134,6 @@ class AssignWidget extends React.PureComponent<Props> {
       placeholderOther = COPY.ASSIGN_WIDGET_ERROR_LOADING_ATTORNEYS;
     }
 
-    debugger;
-
     return <React.Fragment>
       <div {...css({
         display: 'flex',

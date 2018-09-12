@@ -267,7 +267,7 @@ export const fetchTasksAndAppealsOfAttorney = (attorneyId: string) => (dispatch:
 };
 
 export const setSelectionOfTaskOfUser =
-  ({ userId, taskId, selected }: {userId: string, taskId: string, selected: boolean}) =>({
+  ({ userId, taskId, selected }: {userId: string, taskId: string, selected: boolean}) => ({
     type: ACTIONS.SET_SELECTION_OF_TASK_OF_USER,
     payload: {
       userId,
@@ -280,12 +280,6 @@ export const initialAssignTasksToUser =
   ({ tasks, assigneeId, previousAssigneeId }:
      { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) =>
     (dispatch: Dispatch) => {
-
-    // { type: AttorneyTask,
-    //   external_id: "2CE3BEB0-FA7D-4ACA-A8D2-1F7D2BDFB1E7",
-    //   title: "something",
-    //   parent_id: 2,
-    //   assigned_to_id: 23 }
 
       Promise.all(tasks.map((oldTask) => {
         let params, url;
