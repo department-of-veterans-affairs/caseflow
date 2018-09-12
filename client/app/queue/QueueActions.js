@@ -282,7 +282,7 @@ export const initialAssignTasksToUser =
       Promise.all(tasks.map((oldTask) => {
         let params, url;
 
-        if (oldTask.externalAppealId.length === 36) {
+        if (oldTask.appealType === 'Appeal') {
           url = '/tasks';
           params = {
             data: {
@@ -332,7 +332,7 @@ export const reassignTasksToUser =
 
         let params, url;
 
-        if (oldTask.externalAppealId.length === 36) {
+        if (oldTask.appealType === 'Appeal') {
           url = `/tasks/${oldTask.taskId}`;
           params = {
             data: {

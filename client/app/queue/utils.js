@@ -23,6 +23,7 @@ import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
   tasks.reduce((acc, task: Object): Tasks => {
     acc[task.attributes.external_appeal_id] = {
+      appealType: task.attributes.appeal_type,
       addedByCssId: null,
       appealId: task.attributes.appeal_id,
       externalAppealId: task.attributes.external_appeal_id,
@@ -87,6 +88,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
   const mappedLegacyTasks = tasks.map((task): Task => {
     return {
       appealId: task.attributes.appeal_id,
+      appealType: task.attributes.appeal_type,
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_on,
       dueOn: task.attributes.due_on,
