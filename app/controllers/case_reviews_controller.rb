@@ -1,5 +1,4 @@
 class CaseReviewsController < ApplicationController
-  before_action :verify_queue_access
 
   CASE_REVIEW_CLASSES = {
     AttorneyCaseReview: AttorneyCaseReview,
