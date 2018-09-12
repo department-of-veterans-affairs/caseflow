@@ -202,13 +202,16 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       </h2>
       <div {...smallBottomMargin}>Program: {getIssueProgramDescription(issue)}</div>
       <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
-      <div {...smallBottomMargin}>
-        Code: {getIssueDiagnosticCodeLabel(_.last(issue.codes))}
-      </div>
-      <div {...smallBottomMargin} ref={(node) => this.elTopOfWarning = node}>
-        Certified: {formatDateStr(appeal.certificationDate)}
-      </div>
-      <div {...smallBottomMargin}>Note: {issue.note}</div>
+      {issue.program &&
+        <React.Fragment>
+          <div {...smallBottomMargin}>
+            Code: {getIssueDiagnosticCodeLabel(_.last(issue.codes))}
+          </div>
+          <div {...smallBottomMargin} ref={(node) => this.elTopOfWarning = node}>
+            Certified: {formatDateStr(appeal.certificationDate)}
+          </div>
+          <div {...smallBottomMargin}>Note: {issue.note}</div>
+        </React.Fragment>}
       {highlight && !this.getChosenOptions().length &&
         <div className="usa-input-error"
           {...css(redText, boldText, errorNoTopMargin)}>
