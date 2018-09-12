@@ -112,6 +112,9 @@ RSpec.feature "Edit issues" do
       visit "supplemental_claims/#{supplemental_claim.end_product_claim_id}/edit/select_issues"
       expect(find_field("PTSD denied", visible: false)).to_not be_checked
       expect(find_field("Left knee granted", visible: false)).to be_checked
+      find("label", text: "PTSD denied").click
+
+      safe_click("#button-submit-update")
     end
   end
 end

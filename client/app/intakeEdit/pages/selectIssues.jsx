@@ -1,10 +1,13 @@
 import React from 'react';
+import Button from '../../components/Button';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import RatedIssuesUnconnected from '../../intakeCommon/components/RatedIssues';
 import { setIssueSelected } from '../../intake/actions/ama';
 import { FORM_TYPES } from '../../intakeCommon/constants';
+import CancelEdit from '../components/CancelEdit';
+import { REQUEST_STATE } from '../../intake/constants';
 
 // This page shouldn't matter that much which type of Review it is.
 class SelectIssues extends React.PureComponent {
@@ -28,6 +31,25 @@ class SelectIssues extends React.PureComponent {
 
     </div>;
   }
+}
+
+export class CancelOrSave extends React.PureComponent {
+  handleClick = () => {
+
+  }
+
+  render = () =>
+    <div>
+      <CancelEdit history={this.props.history} />
+      <Button
+        name="submit-update"
+        onClick={this.handleClick}
+        loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
+        legacyStyling={false}
+      >
+        Save
+      </Button>
+    </div>;
 }
 
 const RatedIssues = connect(
