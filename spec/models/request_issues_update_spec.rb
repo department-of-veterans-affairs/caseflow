@@ -199,6 +199,7 @@ describe RequestIssuesUpdate do
         expect(removed_issue).to have_attributes(
           review_request: nil
         )
+        expect(removed_issue.removed_at).to_not be_nil
 
         expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
       end

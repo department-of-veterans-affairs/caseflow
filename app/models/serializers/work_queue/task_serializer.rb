@@ -3,7 +3,6 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :action
   attribute :appeal_id
   attribute :status
-  attribute :assigned_to
   attribute :assigned_at
   attribute :started_at
   attribute :completed_at
@@ -18,6 +17,14 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
       last_name: object.assigned_by_display_name.last,
       css_id: object.assigned_by.css_id,
       pg_id: object.assigned_by.id
+    }
+  end
+
+  attribute :assigned_to do
+    {
+      css_id: object.assigned_to.try(:css_id),
+      type: object.assigned_to.class.name,
+      id: object.assigned_to.id
     }
   end
 

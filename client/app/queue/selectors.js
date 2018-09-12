@@ -1,7 +1,10 @@
 // @flow
 import { createSelector } from 'reselect';
 import _ from 'lodash';
-import moment from 'moment';
+import {
+  taskHasNewDocuments,
+  taskIsOnHold
+} from './utils';
 
 import type { State, NewDocsForAppeal } from './types/state';
 import type {
@@ -26,10 +29,12 @@ const getAmaTasks = (state: State) => state.queue.amaTasks;
 const getAppeals = (state: State) => state.queue.appeals;
 const getAppealDetails = (state: State) => state.queue.appealDetails;
 const getUserCssId = (state: State) => state.ui.userCssId;
+const getOrganizationId = (state: State) => state.queue.organizationId;
 const getAppealId = (state: State, props: Object) => props.appealId;
 const getAttorneys = (state: State) => state.queue.attorneysOfJudge;
 const getCaseflowVeteranId = (state: State, props: Object) => props.caseflowVeteranId;
 const getModals = (state: State) => state.ui.modals;
+const getNewDocsForAppeal = (state: State) => state.queue.newDocsForAppeal;
 
 export const getActiveModalType = createSelector(
   [getModals],
@@ -95,6 +100,8 @@ export const appealsByCaseflowVeteranId = createSelector(
       appeal.caseflowVeteranId.toString() === caseflowVeteranId.toString())
 );
 
+const incompleteTasksSelector = (tasks: Tasks) => _.filter(tasks, (task) => task.status !== 'completed');
+
 export const tasksByAssigneeCssIdSelector = createSelector(
   [tasksWithAppealSelector, getUserCssId],
   (tasks: Array<TaskWithAppeal>, cssId: string) =>
@@ -103,7 +110,18 @@ export const tasksByAssigneeCssIdSelector = createSelector(
 
 export const incompleteTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks: Array<Task>) => tasks.filter((task) => task.status !== 'completed')
+  (tasks: Tasks) => incompleteTasksSelector(tasks)
+);
+
+export const organizationTasksByAssigneeIdSelector = createSelector(
+  [getTasksForAppeal, getOrganizationId],
+  (tasks: Tasks, id: Number) =>
+    _.filter(tasks, (task) => task.assignedTo.id === id && task.assignedTo.type === 'Organization')
+);
+
+export const incompleteOrganizationTasksByAssigneeIdSelector = createSelector(
+  [organizationTasksByAssigneeIdSelector],
+  (tasks: Tasks) => incompleteTasksSelector(tasks)
 );
 
 export const newTasksByAssigneeCssIdSelector = createSelector(
@@ -118,16 +136,6 @@ export const workableTasksByAssigneeCssIdSelector = createSelector(
   )
 );
 
-const getNewDocsForAppeal = (state: State) => state.queue.newDocsForAppeal;
-
-const hasNewDocuments = (newDocsForAppeal: NewDocsForAppeal, task: Task) => {
-  if (!newDocsForAppeal[task.externalAppealId] || !newDocsForAppeal[task.externalAppealId].docs) {
-    return false;
-  }
-
-  return newDocsForAppeal[task.externalAppealId].docs.length > 0;
-};
-
 const incompleteTasksWithHold: (State) => Array<Task> = createSelector(
   [incompleteTasksByAssigneeCssIdSelector],
   (tasks: Array<Task>) => tasks.filter((task) => task.placedOnHoldAt)
@@ -136,22 +144,21 @@ const incompleteTasksWithHold: (State) => Array<Task> = createSelector(
 export const pendingTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
   [incompleteTasksWithHold, getNewDocsForAppeal],
   (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) => tasks.filter((task) =>
-    moment().diff(moment(task.placedOnHoldAt), 'days') >= task.onHoldDuration ||
-    hasNewDocuments(newDocsForAppeal, task)
+    !taskIsOnHold(task) || taskHasNewDocuments(task, newDocsForAppeal)
   )
 );
 
 export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
   [incompleteTasksWithHold, getNewDocsForAppeal],
   (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) => tasks.filter((task) =>
-    moment().diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration &&
-    !hasNewDocuments(newDocsForAppeal, task)
+    taskIsOnHold(task) && !taskHasNewDocuments(task, newDocsForAppeal)
   )
 );
 
 export const judgeReviewTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) => _.filter(tasks, (task) => ['review', null].includes(task.action))
+  // eslint-disable-next-line no-undefined
+  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => [null, undefined, 'review'].includes(task.action))
 );
 
 export const judgeAssignTasksSelector = createSelector(

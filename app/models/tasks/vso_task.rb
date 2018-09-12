@@ -1,2 +1,0 @@
-class VsoTask < Task
-end

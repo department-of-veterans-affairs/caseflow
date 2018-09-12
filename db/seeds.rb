@@ -44,6 +44,12 @@ class SeedDB
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
+    create_vso_user
+    create_org_queue_user
+    create_bva_dispatch_user_with_tasks
+  end
+
+  def create_vso_user
     u = User.create(
       css_id: "VSO",
       station_id: 101,
@@ -51,10 +57,35 @@ class SeedDB
       roles: ["VSO"]
     )
     FeatureToggle.enable!(:vso_queue_aml, users: [u.css_id])
+  end
 
+  def create_org_queue_user
     q = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER", full_name: "Org Q User")
     FeatureToggle.enable!(:org_queue_translation, users: [q.css_id])
-    FeatureToggle.enable!(:org_queue_translation, users: [q.css_id])
+    FeatureToggle.enable!(:organization_queue, users: [q.css_id])
+  end
+
+  def create_bva_dispatch_user_with_tasks
+    u = User.create(
+      css_id: "BVA_DISPATCHER",
+      station_id: 101,
+      full_name: "BVA Dispatcher with tasks"
+    )
+    FeatureToggle.enable!(:organization_queue, users: [u.css_id])
+
+    root = FactoryBot.create(:root_task)
+    parent = FactoryBot.create(
+      :bva_dispatch_task,
+      assigned_to: BvaDispatch.singleton,
+      parent_id: root.id,
+      appeal: root.appeal
+    )
+    FactoryBot.create(
+      :bva_dispatch_task,
+      assigned_to: u,
+      parent_id: parent.id,
+      appeal: parent.appeal
+    )
   end
 
   def create_dispatch_tasks(number)
@@ -179,7 +210,6 @@ class SeedDB
   def create_ama_appeals
     @ama_appeals << FactoryBot.create(
       :appeal,
-      advanced_on_docket: true,
       veteran_file_number: "701305078",
       request_issues: FactoryBot.build_list(:request_issue, 3, description: "Knee pain")
     )
@@ -276,12 +306,13 @@ class SeedDB
                       assigned_to: colocated)
 
     parent = FactoryBot.create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: @ama_appeals[5])
-    FactoryBot.create(:ama_attorney_task,
-                      :completed,
-                      assigned_to: attorney,
-                      assigned_by: judge,
-                      parent: parent,
-                      appeal: @ama_appeals[5])
+    child = FactoryBot.create(:ama_attorney_task,
+                              :completed,
+                              assigned_to: attorney,
+                              assigned_by: judge,
+                              parent: parent,
+                              appeal: @ama_appeals[5])
+    FactoryBot.create(:attorney_case_review, reviewing_judge: judge, attorney: attorney, task_id: child.id)
 
     FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @appeal_with_vso)
 
@@ -321,7 +352,23 @@ class SeedDB
       url: "american-legion",
       participant_id: "2452415"
     )
+    Vso.create(
+      name: "Vietnam Veterans Of America",
+      feature: "vso_queue_vva",
+      role: "VSO",
+      url: "vietnam-veterans-of-america",
+      participant_id: "2452415"
+    )
+    Vso.create(
+      name: "Paralyzed Veterans Of America",
+      feature: "vso_queue_pva",
+      role: "VSO",
+      url: "paralyzed-veterans-of-america",
+      participant_id: "2452383"
+    )
+
     Organization.create!(name: "Translation", feature: "org_queue_translation", url: "translation")
+
     Bva.create(name: "Board of Veterans' Appeals")
   end
 
@@ -333,11 +380,11 @@ class SeedDB
     clean_db
     # Annotations and tags don't come from VACOLS, so our seeding should
     # create them in all envs
+    create_organizations
     create_annotations
     create_tags
     create_ama_appeals
     create_users
-    create_organizations
     create_tasks
 
     return if Rails.env.development?
