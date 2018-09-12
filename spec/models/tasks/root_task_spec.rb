@@ -66,6 +66,11 @@ describe RootTask do
         expect(GenericTask.first.assigned_to).to eq(pva)
         expect(GenericTask.second.assigned_to).to eq(vva)
       end
+
+      it "creates RootTask assigned to Bva organization" do
+        RootTask.create_root_and_sub_tasks!(appeal)
+        expect(RootTask.last.assigned_to).to eq(Bva.singleton)
+      end
     end
 
     context "when only one VSO exists in our organization table" do
