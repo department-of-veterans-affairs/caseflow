@@ -67,6 +67,7 @@ export default class TextField extends React.Component {
           placeholder={placeholder}
           title={title}
           maxLength={maxLength}
+          max={this.props.max}
         />
       }
 
