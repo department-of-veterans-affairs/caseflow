@@ -143,38 +143,90 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         end
 
         context "and AMA appeal id URL parameter is passed" do
+          before do
+            User.authenticate!(user: user)
+
+            allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
+              ama_appeals.first.claimants.first.participant_id => {
+                representative_name: "POA Name",
+                representative_type: "POA Attorney",
+                participant_id: "600153863"
+              }
+            )
+          end
+
           let(:params) { { appeal_id:  ama_appeals.first.uuid } }
           let!(:request_issue1) { create(:request_issue, review_request: ama_appeals.first) }
           let!(:request_issue2) { create(:request_issue, review_request: ama_appeals.first) }
           let!(:case_review1) { create(:attorney_case_review, task_id: tasks.first.id) }
           let!(:case_review2) { create(:attorney_case_review, task_id: tasks.first.id) }
 
-          it "succeeds and passes appeal info" do
-            get :details, params: params
-            expect(response.status).to eq 200
-            response_body = JSON.parse(response.body)["data"]
+          context "and addresses should not be queried" do
+            before do
+              expect_any_instance_of(Fakes::BGSService).to_not receive(:find_address_by_participant_id)
+            end
 
-            expect(response_body["attributes"]["veteran_first_name"]).to eq ama_appeals.first.veteran_first_name
-            expect(response_body["attributes"]["veteran_last_name"]).to eq ama_appeals.first.veteran_last_name
-            expect(response_body["attributes"]["file_number"]).to eq ama_appeals.first.veteran_file_number
-            expect(response_body["attributes"]["representative_type"]).to eq(
-              ama_appeals.first.representative_type
-            )
-            expect(response_body["attributes"]["aod"]).to eq ama_appeals.first.advanced_on_docket
-            expect(response_body["attributes"]["cavc"]).to eq "not implemented"
-            expect(response_body["attributes"]["issues"].first["program"]).to eq "Compensation"
-            expect(response_body["attributes"]["issues"].second["program"]).to eq "Compensation"
-            expect(response_body["attributes"]["status"]).to eq nil
-            expect(response_body["attributes"]["veteran_is_deceased"]).to eq true
-            expect(response_body["attributes"]["appellant_is_not_veteran"]).to eq true
-            expect(response_body["attributes"]["appellant_first_name"]).to eq ama_appeals.first.appellant_first_name
-            expect(response_body["attributes"]["appellant_last_name"]).to eq ama_appeals.first.appellant_last_name
-            expect(response_body["attributes"]["assigned_by"]).to eq tasks.first.assigned_by.full_name
-            expect(response_body["attributes"]["documents"].size).to eq 2
-            expect(response_body["attributes"]["documents"].first["written_by"]).to eq case_review1.attorney.full_name
-            expect(response_body["attributes"]["documents"].first["document_id"]).to eq case_review1.document_id
-            expect(response_body["attributes"]["documents"].second["written_by"]).to eq case_review2.attorney.full_name
-            expect(response_body["attributes"]["documents"].second["document_id"]).to eq case_review2.document_id
+            it "succeeds and passes appeal info" do
+              get :details, params: params
+              expect(response.status).to eq 200
+              response_body = JSON.parse(response.body)["data"]
+
+              expect(response_body["attributes"]["veteran_first_name"]).to eq ama_appeals.first.veteran_first_name
+              expect(response_body["attributes"]["veteran_last_name"]).to eq ama_appeals.first.veteran_last_name
+              expect(response_body["attributes"]["file_number"]).to eq ama_appeals.first.veteran_file_number
+              expect(response_body["attributes"]["representative_type"]).to eq(
+                ama_appeals.first.representative_type
+              )
+              expect(response_body["attributes"]["representative_address"]).to eq(nil)
+              expect(response_body["attributes"]["aod"]).to eq ama_appeals.first.advanced_on_docket
+              expect(response_body["attributes"]["cavc"]).to eq "not implemented"
+              expect(response_body["attributes"]["issues"].first["program"]).to eq "Compensation"
+              expect(response_body["attributes"]["issues"].second["program"]).to eq "Compensation"
+              expect(response_body["attributes"]["status"]).to eq nil
+              expect(response_body["attributes"]["veteran_is_deceased"]).to eq true
+              expect(response_body["attributes"]["appellant_is_not_veteran"]).to eq true
+              expect(response_body["attributes"]["appellants"][0]["first_name"]).to eq ama_appeals.first.appellant_first_name
+              expect(response_body["attributes"]["appellants"][0]["last_name"]).to eq ama_appeals.first.appellant_last_name
+              expect(response_body["attributes"]["appellants"][1]["first_name"]).to eq ama_appeals.first.claimants.second.first_name
+              expect(response_body["attributes"]["appellants"][1]["last_name"]).to eq ama_appeals.first.claimants.second.last_name
+              expect(response_body["attributes"]["assigned_by"]).to eq tasks.first.assigned_by.full_name
+              expect(response_body["attributes"]["documents"].size).to eq 2
+              expect(response_body["attributes"]["documents"].first["written_by"]).to eq case_review1.attorney.full_name
+              expect(response_body["attributes"]["documents"].first["document_id"]).to eq case_review1.document_id
+              expect(response_body["attributes"]["documents"].second["written_by"]).to eq case_review2.attorney.full_name
+              expect(response_body["attributes"]["documents"].second["document_id"]).to eq case_review2.document_id
+            end
+          end
+
+          context "and the user is from dispatch" do
+            # BVATEST1 is defined in Constants::BvaDispatchTeams
+            let(:user) { create(:user, css_id: "BVATEST1", full_name: "George Michael") }
+
+            before do
+              allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id).and_return(
+                address_line_1: "1234 K St.",
+                address_line_2: "APT 3",
+                address_line_3: "",
+                city: "Washington",
+                country: "USA",
+                state: "CA",
+                zip: "20001"
+              )
+            end
+
+            it "succeeds and passes address info" do
+              get :details, params: params
+              expect(response.status).to eq 200
+              response_body = JSON.parse(response.body)["data"]
+
+              expect(response_body["attributes"]["representative_address"]).to eq(
+                ama_appeals.first.representative_address.stringify_keys
+              )
+              expect(response_body["attributes"]["appellants"][0]["address"]["address_line_1"]).to eq ama_appeals.first.claimants.first.address_line_1
+              expect(response_body["attributes"]["appellants"][0]["address"]["city"]).to eq ama_appeals.first.claimants.first.city
+              expect(response_body["attributes"]["appellants"][1]["address"]["address_line_1"]).to eq ama_appeals.first.claimants.second.address_line_1
+              expect(response_body["attributes"]["appellants"][1]["address"]["city"]).to eq ama_appeals.first.claimants.second.city
+            end
           end
         end
 
