@@ -143,4 +143,41 @@ describe Task do
       end
     end
   end
+
+  describe ".root_task" do
+    context "when sub-sub-sub...task has a root task" do
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:task) do
+        t = FactoryBot.create(:generic_task, parent_id: root_task.id)
+        5.times { t = FactoryBot.create(:generic_task, parent_id: t.id) }
+        GenericTask.last
+      end
+
+      it "should return the root_task" do
+        expect(task.root_task.id).to eq(root_task.id)
+      end
+    end
+
+    context "when sub-sub-sub...task does not have a root task" do
+      let(:task) do
+        t = FactoryBot.create(:generic_task)
+        5.times { t = FactoryBot.create(:generic_task, parent_id: t.id) }
+        GenericTask.last
+      end
+
+      it "should throw an error" do
+        expect { task.root_task }.to(raise_error) do |e|
+          expect(e).to be_a(Caseflow::Error::NoRootTask)
+          expect(e.message).to eq("Could not find root task for task with ID #{task.id}")
+        end
+      end
+    end
+
+    context "task is root task" do
+      let(:task) { FactoryBot.create(:root_task) }
+      it "should return itself" do
+        expect(task.root_task.id).to eq(task.id)
+      end
+    end
+  end
 end

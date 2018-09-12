@@ -48,6 +48,7 @@ export type UiState = {
   loadedUserId: ?number,
   userRole: string,
   userCssId: string,
+  userIsVsoEmployee: boolean,
   veteranCaseListIsVisible: boolean
 };
 
@@ -77,7 +78,8 @@ export type QueueState = {|
   isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
   attorneys: Attorneys,
   newDocsForAppeal: NewDocsForAppeal,
-  organizationId: ?number
+  organizationId: ?number,
+  specialIssues: Object
 |};
 
 export type State = {
