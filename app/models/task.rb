@@ -78,6 +78,13 @@ class Task < ApplicationRecord
     end
   end
 
+  def root_task(task_id = nil)
+    task_id = id if task_id.nil?
+    return parent.root_task(task_id) if parent
+    return self if type == RootTask.name
+    fail Caseflow::Error::NoRootTask, task_id: task_id
+  end
+
   private
 
   def update_status_if_children_tasks_are_complete
