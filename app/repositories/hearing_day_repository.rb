@@ -24,7 +24,7 @@ class HearingDayRepository
 
     def load_days_for_range(start_date, end_date)
       video_and_co = VACOLS::CaseHearing.load_days_for_range(start_date, end_date)
-                         .each_with_object([]) do |hearing, result|
+        .each_with_object([]) do |hearing, result|
         result << to_canonical_hash(hearing)
       end
       travel_board = VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
@@ -33,7 +33,7 @@ class HearingDayRepository
 
     def load_days_for_regional_office(regional_office, start_date, end_date)
       video_and_co = VACOLS::CaseHearing.load_days_for_regional_office(regional_office, start_date, end_date)
-                         .each_with_object([]) do |hearing, result|
+        .each_with_object([]) do |hearing, result|
         result << to_canonical_hash(hearing)
       end
       travel_board = VACOLS::TravelBoardSchedule.load_days_for_regional_office(regional_office, start_date, end_date)
