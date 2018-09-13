@@ -139,6 +139,9 @@ class VACOLS::CaseHearing < VACOLS::Record
              "CASE WHEN folder_nr LIKE 'VIDEO%' or folder_nr is null THEN folder_nr ELSE null END AS folder_nr",
              :room,
              :board_member,
+             "snamel as judge_last_name",
+             "snamemi as judge_middle_name",
+             "snamef as judge_first_name",
              "snamel || ',' || snamemi || ' ' || snamef as judge_name",
              :mduser,
              :mdtime)
