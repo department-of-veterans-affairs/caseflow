@@ -206,10 +206,10 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
           value: 'true'
         }]}
         value={this.state[option.id].post_aoj}
-        onChange={(post_aoj) => this.setState({
+        onChange={(postAoj) => this.setState({
           [option.id]: {
             checked: true,
-            post_aoj
+            post_aoj: postAoj
           }
         })}
       />}
@@ -279,27 +279,27 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
             {...checkboxGroupProps} />
         </div>
       </div> :
-      <div {...flexContainer}>
-        <div {...flexColumn}>
-          <CheckboxGroup
-            label={<h3>Duty to notify</h3>}
-            name="duty-to-notify"
-            options={REMAND_REASONS.dutyToNotify}
-            {...checkboxGroupProps} />
-          <CheckboxGroup
-            label={<h3>Duty to assist</h3>}
-            name="duty-to-assist"
-            options={REMAND_REASONS.dutyToAssist}
-            {...checkboxGroupProps} />
-        </div>
-        <div {...flexColumn}>
-          <CheckboxGroup
-            label={<h3>Medical examination</h3>}
-            name="medical-exam"
-            options={REMAND_REASONS.medicalExam}
-            {...checkboxGroupProps} />
-        </div>
-      </div>}
+        <div {...flexContainer}>
+          <div {...flexColumn}>
+            <CheckboxGroup
+              label={<h3>Duty to notify</h3>}
+              name="duty-to-notify"
+              options={REMAND_REASONS.dutyToNotify}
+              {...checkboxGroupProps} />
+            <CheckboxGroup
+              label={<h3>Duty to assist</h3>}
+              name="duty-to-assist"
+              options={REMAND_REASONS.dutyToAssist}
+              {...checkboxGroupProps} />
+          </div>
+          <div {...flexColumn}>
+            <CheckboxGroup
+              label={<h3>Medical examination</h3>}
+              name="medical-exam"
+              options={REMAND_REASONS.medicalExam}
+              {...checkboxGroupProps} />
+          </div>
+        </div>}
     </div>;
   };
 }
@@ -323,5 +323,5 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 
 export default (connect(
   mapStateToProps, mapDispatchToProps, null, { withRef: true }
-  )(IssueRemandReasonsOptions): React.ComponentType<Props, State>
+)(IssueRemandReasonsOptions): React.ComponentType<Props, State>
 );
