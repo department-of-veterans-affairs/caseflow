@@ -48,32 +48,6 @@ RSpec.feature "AmaQueue" do
 
     let!(:root_task) { create(:root_task) }
     let!(:parent_task) { create(:ama_judge_task, assigned_to: judge_user, appeal: appeals.first, parent: root_task) }
-    let!(:attorney_tasks) do
-      [
-        create(
-          :ama_attorney_task,
-          :in_progress,
-          assigned_to: attorney_user,
-          assigned_by: judge_user,
-          parent: parent_task,
-          appeal: appeals.first
-        ),
-        create(
-          :ama_attorney_task,
-          :in_progress,
-          assigned_to: attorney_user,
-          assigned_by: judge_user,
-          appeal: appeals.second
-        ),
-        create(
-          :ama_attorney_task,
-          :in_progress,
-          assigned_to: attorney_user,
-          assigned_by: judge_user,
-          appeal: appeals.third
-        )
-      ]
-    end
 
     let(:poa_name) { "Test POA" }
     let(:veteran_participant_id) { "600085544" }
@@ -102,32 +76,61 @@ RSpec.feature "AmaQueue" do
       ]
     end
 
-    scenario "veteran is the appellant" do
-      visit "/queue"
+    context "when appeals have tasks" do
+      let!(:attorney_tasks) do
+        [
+          create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user,
+            assigned_by: judge_user,
+            parent: parent_task,
+            appeal: appeals.first
+          ),
+          create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user,
+            assigned_by: judge_user,
+            appeal: appeals.second
+          ),
+          create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user,
+            assigned_by: judge_user,
+            appeal: appeals.third
+          )
+        ]
+      end
 
-      click_on appeals.first.veteran.first_name
+      scenario "veteran is the appellant" do
+        visit "/queue"
 
-      expect(page).to have_content("A. Judge")
+        click_on appeals.first.veteran.first_name
 
-      expect(page).to have_content("About the Veteran")
+        expect(page).to have_content("A. Judge")
 
-      expect(page).to have_content("AOD")
+        expect(page).to have_content("About the Veteran")
 
-      expect(page).to have_content(appeals.first.request_issues.first.description)
-      expect(page).to have_content(appeals.first.docket_number)
-      expect(page).to have_content(poa_name)
+        expect(page).to have_content("AOD")
 
-      expect(page).to have_content("View Veteran's documents")
-      expect(page).to have_selector("text", id: "NEW")
-      expect(page).to have_content("5 docs")
+        expect(page).to have_content(appeals.first.request_issues.first.description)
+        expect(page).to have_content(appeals.first.docket_number)
+        expect(page).to have_content(poa_name)
 
-      click_on "View Veteran's documents"
-      expect(page).to have_content("Claims Folder")
+        expect(page).to have_content("View Veteran's documents")
+        expect(page).to have_selector("text", id: "NEW")
+        expect(page).to have_content("5 docs")
 
-      visit "/queue"
-      click_on appeals.first.veteran.first_name
+        click_on "View Veteran's documents"
+        expect(page).to have_content("Claims Folder")
 
-      expect(page).not_to have_selector("text", id: "NEW")
+        visit "/queue"
+        click_on appeals.first.veteran.first_name
+
+        expect(page).not_to have_selector("text", id: "NEW")
+      end
     end
 
     context "when user is a vso" do
