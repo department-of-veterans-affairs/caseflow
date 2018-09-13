@@ -199,7 +199,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             expect(response_body["attributes"]["cavc"]).to eq appeals.first.cavc
             expect(response_body["attributes"]["issues"]).to eq appeals.first.issues
             expect(response_body["attributes"]["status"]).to eq appeals.first.status
-            expect(response_body["attributes"]["veteran_is_deceased"]).to eq true
+            expect(response_body["attributes"]["veteran_is_deceased"]).to eq appeals.first.veteran_is_deceased
             expect(response_body["attributes"]["veteran_death_date"]).to eq "05/25/2016"
             expect(response_body["attributes"]["appellant_is_not_veteran"]).to eq !!appeals.first.appellant_first_name
           end
