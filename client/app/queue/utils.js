@@ -24,6 +24,11 @@ import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
   tasks.reduce((acc, task: Object): Tasks => {
+    const decisionPreparedBy = task.attributes.decision_prepared_by.first_name ? {
+      firstName: task.attributes.decision_prepared_by.first_name,
+      lastName: task.attributes.decision_prepared_by.last_name
+    } : undefined;
+
     acc[task.attributes.external_appeal_id] = {
       addedByCssId: null,
       appealId: task.attributes.appeal_id,
@@ -50,10 +55,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       status: task.attributes.status,
       onHoldDuration: task.attributes.on_hold_duration,
       instructions: task.attributes.instructions,
-      decisionPreparedBy: {
-        firstName: task.attributes.decision_prepared_by.first_name,
-        lastName: task.attributes.decision_prepared_by.last_name
-      }
+      decisionPreparedBy
     };
 
     return acc;

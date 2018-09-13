@@ -69,8 +69,8 @@ export type Task = {
   instructions? :string,
   parentId?: number,
   decisionPreparedBy?: {
-    firstName?: string,
-    lastName?: string,
+    firstName: string,
+    lastName: string,
   }
 };
 

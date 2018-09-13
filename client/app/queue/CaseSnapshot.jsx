@@ -112,8 +112,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     const assignedByAbbrev = taskAssignedToUser.assignedBy.firstName ?
       this.getAbbrevName(taskAssignedToUser.assignedBy) : null;
 
-    const decisionPreparedBy = taskAssignedToUser.decisionPreparedBy
-    const preparedByAbbrev = taskAssignedToUser.decisionPreparedBy && taskAssignedToUser.decisionPreparedBy.firstName ?
+    const preparedByAbbrev = taskAssignedToUser.decisionPreparedBy ?
       this.getAbbrevName(taskAssignedToUser.decisionPreparedBy) : null;
 
     return <React.Fragment>
