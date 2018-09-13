@@ -10,7 +10,6 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
 ActiveRecord::Schema.define(version: 20180912224413) do
 
   # These are extensions that must be enabled in order to support this database
@@ -171,6 +170,7 @@ ActiveRecord::Schema.define(version: 20180912224413) do
     t.string "participant_id", null: false
     t.string "payee_code"
     t.date "date_of_birth"
+    t.index ["date_of_birth"], name: "index_claimants_on_date_of_birth"
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
