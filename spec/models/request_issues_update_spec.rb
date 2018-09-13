@@ -13,12 +13,17 @@ describe RequestIssuesUpdate do
 
   # TODO: make it simpler to set up a completed claim review, with end product data
   # and contention data stubbed out properly
-  let(:review) { create(:higher_level_review) }
+  let(:review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
 
-  let!(:veteran) { Generators::Veteran.build(file_number: review.veteran_file_number) }
+  let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
 
   let(:rated_end_product_establishment) do
-    create(:end_product_establishment, source: review, code: "030HLRR")
+    create(
+      :end_product_establishment,
+      veteran_file_number: veteran.file_number,
+      source: review,
+      code: "030HLRR"
+    )
   end
 
   let(:request_issue_contentions) do
@@ -140,7 +145,7 @@ describe RequestIssuesUpdate do
       end
     end
 
-    context "when issues contain new issues not in existing issues", skip: "fails intermittently" do
+    context "when issues contain new issues not in existing issues" do
       let(:request_issues_data) { request_issues_data_with_new_issue }
 
       it "saves update, adds issues, and calls create contentions" do
