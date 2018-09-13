@@ -1,4 +1,4 @@
-Resolves #{github issue number}
+connects #{github issue number}
 
 ### Description
 Please explain the changes you made here.
