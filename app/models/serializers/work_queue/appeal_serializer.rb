@@ -30,7 +30,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :location_code do
-    "Not supported for BEAAM appeals"
+    nil
   end
 
   attribute :veteran_full_name do
