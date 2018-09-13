@@ -121,7 +121,7 @@ class ApplicationController < ApplicationBaseController
     end
     false
   end
-  helper_method :can_access_queue?
+  helper_method :case_search_home_page
   # rubocop:enable Metrics/PerceivedComplexity
   # rubocop:enable Metrics/CyclomaticComplexity
 
