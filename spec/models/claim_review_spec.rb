@@ -330,4 +330,85 @@ describe ClaimReview do
       expect(request_issues.last.reload.disposition).to eq("Denied")
     end
   end
+
+  context "#on_sync", :focus => true do
+    context "on a higher level review" do
+      # DTA Error – PMRs
+      # DTA Error – Fed Recs
+      # DTA Error – Other Recs
+      # DTA Error – Exam/MO
+
+      let(:issues) { [rating_request_issue, second_rating_request_issue, non_rating_request_issue] }
+      let(:rating_request_issue_disposition) do
+        {
+          claim_id: claim_review.id,
+          contention_id: rating_request_issue.id,
+          disposition: "DTA Error – PMRs"
+        }
+      end
+
+      let(:second_rating_request_issue_disposition) do
+        {
+          claim_id: claim_review.id,
+          contention_id: second_rating_request_issue.id,
+          disposition: "DTA Error – Fed Recs"
+        }
+      end
+
+      let(:non_rating_request_issue_disposition) do
+        {
+          claim_id: claim_review.id,
+          contention_id: non_rating_request_issue.id,
+          disposition: "DTA Error – Exam/MO"
+        }
+      end
+
+      let(:mock_end_product) do
+        {
+          status_cleared: true,
+          reference_id: claim_review.id
+        }
+      end
+
+      let(:dispositions) { [] }
+
+      before do
+        claim_review.save!
+        claim_review.create_issues!(issues)
+
+        allow(Fakes::VBMSService).to receive(:get_dispositions).and_return(dispositions)
+      end
+
+      context "when it gets back dispositions with DTAs" do
+        context "for rated issues" do
+          let(:disposions) { [
+            rating_request_issue_disposition,
+            second_rating_request_issue_disposition
+          ] }
+
+          it "creates a supplemental claim for non rated issues" do
+            claim_review.on_sync(mock_end_product)
+
+            # find a supplemental claim by veteran id?
+            expect(SupplementalClaim.find_by(
+              veteran_file_number: claim_review.veteran_file_number)
+            ).to_not be_nil
+            # find the new request ratings (should be 2)
+
+            # make sure that there's some link from original request ratings to new request ratings?
+
+            fail
+          end
+        end
+
+        context "for non-rated issues" do
+          let(:dispositions) { [non_rating_request_issue_disposition] }
+
+          it "creates a supplemental claim for rated issues" do
+            fail
+          end
+        end
+      end
+    end
+  end
 end
