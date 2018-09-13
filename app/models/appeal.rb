@@ -119,7 +119,7 @@ class Appeal < AmaReview
   def power_of_attorney
     claimants.first.power_of_attorney if claimants.first
   end
-  delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
+  delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney, allow_nil: true
 
   def power_of_attorneys
     claimants.map(&:power_of_attorney)
