@@ -329,10 +329,6 @@ RSpec.feature "Reader" do
 
         # Test that the header has breadcrumbs.
         expect(page).to have_link("Claims Folder", href: "/reader/appeal/#{appeal.vacols_id}/documents")
-
-        click_on "> Reader"
-        expect(page).to have_current_path("/reader/appeal/")
-        expect(page).to have_title("Assignments | Caseflow Reader")
       end
 
       context "search for appeals using veteran id" do
