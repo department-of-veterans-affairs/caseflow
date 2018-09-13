@@ -155,7 +155,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             )
           end
 
-          let(:params) { { appeal_id:  ama_appeals.first.uuid } }
+          let(:params) { { appeal_id: ama_appeals.first.uuid } }
           let!(:request_issue1) { create(:request_issue, review_request: ama_appeals.first) }
           let!(:request_issue2) { create(:request_issue, review_request: ama_appeals.first) }
           let!(:case_review1) { create(:attorney_case_review, task_id: tasks.first.id) }
@@ -185,15 +185,20 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               expect(response_body["attributes"]["status"]).to eq nil
               expect(response_body["attributes"]["veteran_is_deceased"]).to eq true
               expect(response_body["attributes"]["appellant_is_not_veteran"]).to eq true
-              expect(response_body["attributes"]["appellants"][0]["first_name"]).to eq ama_appeals.first.appellant_first_name
-              expect(response_body["attributes"]["appellants"][0]["last_name"]).to eq ama_appeals.first.appellant_last_name
-              expect(response_body["attributes"]["appellants"][1]["first_name"]).to eq ama_appeals.first.claimants.second.first_name
-              expect(response_body["attributes"]["appellants"][1]["last_name"]).to eq ama_appeals.first.claimants.second.last_name
+              expect(response_body["attributes"]["appellants"][0]["first_name"])
+                .to eq ama_appeals.first.appellant_first_name
+              expect(response_body["attributes"]["appellants"][0]["last_name"])
+                .to eq ama_appeals.first.appellant_last_name
+              expect(response_body["attributes"]["appellants"][1]["first_name"])
+                .to eq ama_appeals.first.claimants.second.first_name
+              expect(response_body["attributes"]["appellants"][1]["last_name"])
+                .to eq ama_appeals.first.claimants.second.last_name
               expect(response_body["attributes"]["assigned_by"]).to eq tasks.first.assigned_by.full_name
               expect(response_body["attributes"]["documents"].size).to eq 2
               expect(response_body["attributes"]["documents"].first["written_by"]).to eq case_review1.attorney.full_name
               expect(response_body["attributes"]["documents"].first["document_id"]).to eq case_review1.document_id
-              expect(response_body["attributes"]["documents"].second["written_by"]).to eq case_review2.attorney.full_name
+              expect(response_body["attributes"]["documents"].second["written_by"])
+                .to eq case_review2.attorney.full_name
               expect(response_body["attributes"]["documents"].second["document_id"]).to eq case_review2.document_id
             end
           end
@@ -222,10 +227,14 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               expect(response_body["attributes"]["representative_address"]).to eq(
                 ama_appeals.first.representative_address.stringify_keys
               )
-              expect(response_body["attributes"]["appellants"][0]["address"]["address_line_1"]).to eq ama_appeals.first.claimants.first.address_line_1
-              expect(response_body["attributes"]["appellants"][0]["address"]["city"]).to eq ama_appeals.first.claimants.first.city
-              expect(response_body["attributes"]["appellants"][1]["address"]["address_line_1"]).to eq ama_appeals.first.claimants.second.address_line_1
-              expect(response_body["attributes"]["appellants"][1]["address"]["city"]).to eq ama_appeals.first.claimants.second.city
+              expect(response_body["attributes"]["appellants"][0]["address"]["address_line_1"])
+                .to eq ama_appeals.first.claimants.first.address_line_1
+              expect(response_body["attributes"]["appellants"][0]["address"]["city"])
+                .to eq ama_appeals.first.claimants.first.city
+              expect(response_body["attributes"]["appellants"][1]["address"]["address_line_1"])
+                .to eq ama_appeals.first.claimants.second.address_line_1
+              expect(response_body["attributes"]["appellants"][1]["address"]["city"])
+                .to eq ama_appeals.first.claimants.second.city
             end
           end
         end

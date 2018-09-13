@@ -26,17 +26,15 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
     else
       object.claimants.map do |claimant|
         address = if @instance_options[:include_addresses] && !object.is_a?(LegacyAppeal)
-          {
-            address_line_1: claimant.address_line_1,
-            address_line_2: claimant.address_line_2,
-            city: claimant.city,
-            state: claimant.state,
-            zip: claimant.zip,
-            country: claimant.country
-          }
-        else
-          nil
-        end
+                    {
+                      address_line_1: claimant.address_line_1,
+                      address_line_2: claimant.address_line_2,
+                      city: claimant.city,
+                      state: claimant.state,
+                      zip: claimant.zip,
+                      country: claimant.country
+                    }
+                  end
 
         {
           first_name: claimant.first_name,
@@ -83,8 +81,6 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :representative_address do
     if @instance_options[:include_addresses] && !object.is_a?(LegacyAppeal)
       object.representative_address
-    else
-      nil
     end
   end
 
