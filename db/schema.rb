@@ -539,6 +539,15 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.index ["user_id"], name: "index_reader_users_on_user_id", unique: true
   end
 
+  create_table "remand_reasons", force: :cascade do |t|
+    t.bigint "request_issue_id"
+    t.boolean "post_aoj"
+    t.string "code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["request_issue_id"], name: "index_remand_reasons_on_request_issue_id"
+  end
+
   create_table "request_issues", force: :cascade do |t|
     t.string "review_request_type"
     t.bigint "review_request_id"
