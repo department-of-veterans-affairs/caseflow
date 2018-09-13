@@ -22,7 +22,7 @@ import {
 } from '../QueueActions';
 import {
   fullWidth,
-  REMAND_REASONS,
+  LEGACY_REMAND_REASONS,
   ISSUE_DISPOSITIONS,
   redText,
   boldText
@@ -47,7 +47,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    const options = _.concat(..._.values(REMAND_REASONS));
+    const options = _.concat(..._.values(LEGACY_REMAND_REASONS));
     const pairs = _.zip(
       _.map(options, 'id'),
       _.map(options, () => ({
@@ -224,24 +224,24 @@ class IssueRemandReasonsOptions extends React.PureComponent {
           <CheckboxGroup
             label={<h3>Medical examination and opinion</h3>}
             name="med-exam"
-            options={REMAND_REASONS.medicalExam}
+            options={LEGACY_REMAND_REASONS.medicalExam}
             {...checkboxGroupProps} />
           <CheckboxGroup
             label={<h3>Duty to assist records request</h3>}
             name="duty-to-assist"
-            options={REMAND_REASONS.dutyToAssistRecordsRequest}
+            options={LEGACY_REMAND_REASONS.dutyToAssistRecordsRequest}
             {...checkboxGroupProps} />
         </div>
         <div {...flexColumn}>
           <CheckboxGroup
             label={<h3>Duty to notify</h3>}
             name="duty-to-notify"
-            options={REMAND_REASONS.dutyToNotify}
+            options={LEGACY_REMAND_REASONS.dutyToNotify}
             {...checkboxGroupProps} />
           <CheckboxGroup
             label={<h3>Due process</h3>}
             name="due-process"
-            options={REMAND_REASONS.dueProcess}
+            options={LEGACY_REMAND_REASONS.dueProcess}
             {...checkboxGroupProps} />
         </div>
       </div>

@@ -1,0 +1,19 @@
+{
+  "dutyToNotify": [
+    "No notice sent",
+    "Incorrect notice sent",
+    "Legally inadequate notice"
+  ],
+  "dutyToAssist": [
+    "VA records",
+    "Private records",
+    "Service personnel records",
+    "Service treatment records",
+    "Other government records"
+  ],
+  "medicalExam": [
+    "Medical examinations",
+    "Medical opinions",
+    "Advisory medical opinion"
+  ]
+}
