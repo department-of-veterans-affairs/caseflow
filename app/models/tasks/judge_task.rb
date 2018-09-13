@@ -9,4 +9,9 @@ class JudgeTask < Task
     update!(action: :review)
     super
   end
+
+  def previous_task
+    fail Caseflow::Error::TooManyChildTasks, task_id: id if children.length > 1
+    children[0]
+  end
 end

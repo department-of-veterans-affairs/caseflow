@@ -59,4 +59,10 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :issue_count do
     object.appeal.issues.count
   end
+
+  attribute :previous_task do
+    {
+      assigned_at: object.previous_task.try(:assigned_at)
+    }
+  end
 end

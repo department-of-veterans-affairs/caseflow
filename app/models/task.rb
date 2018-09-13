@@ -85,6 +85,10 @@ class Task < ApplicationRecord
     fail Caseflow::Error::NoRootTask, task_id: task_id
   end
 
+  def previous_task
+    nil
+  end
+
   private
 
   def update_status_if_children_tasks_are_complete
