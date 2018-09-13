@@ -1,4 +1,6 @@
 class Hearings::SchedulePeriodsController < HearingScheduleController
+  before_action :verify_build_hearing_schedule_access
+
   def index
     respond_to do |format|
       format.html { render "hearing_schedule/index" }
