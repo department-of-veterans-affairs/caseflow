@@ -71,6 +71,19 @@ class SelectDispositionsView extends React.PureComponent {
     return `${baseUrl}/${nextStep}`;
   }
 
+  getPrevStepUrl = () => {
+    const {
+      appealId,
+      appeal
+    } = this.props;
+
+    if (appeal.docketName === 'legacy') {
+      return `/queue/appeals/${appealId}`;
+    }
+
+    return `/queue/appeals/${appealId}/special_issues`;
+  }
+
   componentWillUnmount = () => this.props.hideSuccessMessage();
   componentDidMount = () => {
     if (this.props.userRole === USER_ROLE_TYPES.attorney) {
