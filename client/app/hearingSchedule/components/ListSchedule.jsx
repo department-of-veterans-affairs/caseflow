@@ -51,12 +51,18 @@ export default class ListSchedule extends React.Component {
       }
     ];
 
+    const formatVljName = (lastName, firstName) => {
+      if (lastName && firstName) {
+        return `${lastName}, ${firstName}`;
+      }
+    };
+
     const hearingScheduleRows = _.map(hearingSchedule, (hearingDay) => ({
       hearingDate: formatDate(hearingDay.hearingDate),
       hearingType: hearingDay.hearingType,
       regionalOffice: hearingDay.regionalOffice,
       room: hearingDay.roomInfo,
-      vlj: hearingDay.judgeName
+      vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName)
     }));
 
     const removeCoDuplicates = _.uniqWith(hearingScheduleRows, _.isEqual);

@@ -66,6 +66,22 @@ RSpec.feature "Checkout flows" do
       visit "/queue"
       click_on "(#{appeal.veteran_file_number})"
       click_dropdown 0
+      click_label "radiation"
+
+      click_on "Continue"
+
+      # Ensure we can reload the flow and the special issue is saved
+      click_on "Cancel"
+      click_on "Yes, cancel"
+
+      click_dropdown 0
+
+      # Radiation should still be checked
+      expect(page).to have_field("radiation", checked: true, visible: false)
+
+      # Radiation should also be marked in the database
+      expect(appeal.special_issue_list.radiation).to eq(true)
+      click_on "Continue"
 
       issue_rows = page.find_all("tr[id^='table-row-']")
       expect(issue_rows.length).to eq(appeal.request_issues.length)

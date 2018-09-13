@@ -41,6 +41,28 @@ describe Appeal do
     end
   end
 
+  context "#advanced_on_docket" do
+    context "when a claimant is advanced_on_docket" do
+      let(:appeal) do
+        create(:appeal, claimants: [create(:claimant, date_of_birth: 80.years.ago)])
+      end
+
+      it "returns true" do
+        expect(appeal.advanced_on_docket).to eq(true)
+      end
+    end
+
+    context "when no claimant is advanced_on_docket" do
+      let(:appeal) do
+        create(:appeal)
+      end
+
+      it "returns false" do
+        expect(appeal.advanced_on_docket).to eq(false)
+      end
+    end
+  end
+
   context "#find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id" do
     context "with a uuid (AMA appeal id)" do
       let(:veteran_file_number) { "64205050" }
