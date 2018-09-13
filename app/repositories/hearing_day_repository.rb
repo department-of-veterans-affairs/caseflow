@@ -46,18 +46,13 @@ class HearingDayRepository
       end
       hearing_hash.delete(nil)
       values_hash = hearing_hash.each_with_object({}) do |(k, v), result|
-        if k.to_s == "room_info"
-          result[k] = HearingDayMapper.label_for_room(v)
-        elsif k.to_s == "regional_office" && !v.nil?
-          ro = v[6, v.length]
-          result[k] = HearingDayMapper.city_for_regional_office(ro)
-        elsif k.to_s == "hearing_type"
-          result[k] = HearingDayMapper.label_for_type(v)
-        elsif k.to_s == "hearing_date"
-          result[k] = VacolsHelper.normalize_vacols_datetime(v)
-        else
-          result[k] = v
-        end
+        result[k] = if k.to_s == "regional_office" && !v.nil?
+                      v[6, v.length]
+                    elsif k.to_s == "hearing_date"
+                      VacolsHelper.normalize_vacols_datetime(v)
+                    else
+                      v
+                    end
       end
       values_hash
     end

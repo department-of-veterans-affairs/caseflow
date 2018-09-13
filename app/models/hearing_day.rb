@@ -13,7 +13,9 @@ class HearingDay < ApplicationRecord
 
   class << self
     def create_hearing_day(hearing_hash)
-      if Date.parse(hearing_hash[:hearing_date]) > CASEFLOW_SCHEDULE_DATE
+      hearing_date = hearing_hash[:hearing_date]
+      hearing_date.is_a?(DateTime) ? hearing_date : Time.zone.parse(hear_date).to_datetime
+      if hearing_date > CASEFLOW_SCHEDULE_DATE
         create(hearing_hash).to_hash
       else
         HearingDayRepository.create_vacols_hearing!(hearing_hash)
@@ -70,15 +72,7 @@ class HearingDay < ApplicationRecord
 
   def to_hash
     as_json.each_with_object({}) do |(k, v), result|
-      result[k.to_sym] = if k == "room_info"
-                           HearingDayMapper.label_for_room(v)
-                         elsif k == "regional_office" && !v.nil?
-                           HearingDayMapper.city_for_regional_office(v)
-                         elsif k == "hearing_type"
-                           HearingDayMapper.label_for_type(v)
-                         else
-                           v
-                         end
+      result[k.to_sym] = v
     end
   end
 end
