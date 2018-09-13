@@ -357,6 +357,8 @@ describe RampRefilingIntake do
         expect(intake.detail.established_at).to eq(Time.zone.now)
         expect(intake.detail.issues.count).to eq(2)
         expect(intake.detail.has_ineligible_issue).to eq(true)
+        expect(intake.detail.establishment_submitted_at).to eq(Time.zone.now)
+        expect(intake.detail.establishment_processed_at).to eq(Time.zone.now)
       end
     end
 
