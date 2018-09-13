@@ -12,12 +12,12 @@ class AssignHearingsContainer extends React.PureComponent {
   render = () => {
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
-        loadingComponentProps={{
-          spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
-          message: "We are loading appeals to be scheduled for hearings."
-        }}>
-          <AssignHearings />
-        </LoadingDataDisplay>;
+      loadingComponentProps={{
+        spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
+        message: 'We are loading appeals to be scheduled for hearings.'
+      }}>
+      <AssignHearings />
+    </LoadingDataDisplay>;
 
     return <div>{loadingDataDisplay}</div>;
   }

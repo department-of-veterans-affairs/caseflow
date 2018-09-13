@@ -3,6 +3,6 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 
 export default class AssignHearings extends React.Component {
   render() {
-    return <AppSegment filledBackground />
+    return <AppSegment filledBackground />;
   }
 }
