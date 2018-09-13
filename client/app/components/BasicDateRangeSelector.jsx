@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import InlineForm from './InlineForm';
 import DateSelector from './DateSelector';
-import { formatDateStr } from '../util/DateUtil';
-import { formatDate} from '../util/DateUtil';
 
 export default class BasicDateRangeSelector extends React.Component {
   render() {

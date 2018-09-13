@@ -11,10 +11,6 @@ import BasicDateRangeSelector from '../../components/BasicDateRangeSelector';
 import FileUpload from '../../components/FileUpload';
 import InlineForm from '../../components/InlineForm';
 import { SPREADSHEET_TYPES, ERROR_MAPPINGS } from '../constants';
-import { formatDateStr } from '../../util/DateUtil';
-import { formatDate} from '../../util/DateUtil';
-import moment from 'moment';
-
 
 const fileUploadStyling = css({
   marginTop: '40px'
