@@ -297,41 +297,42 @@ describe ClaimReview do
       )
     end
 
-    let(:contentions) do
-      [
-        Generators::Contention.build(
-          claim_id: end_product_establishment.reference_id,
-          text: "hello",
-          disposition: "Granted"
-        ),
-        Generators::Contention.build(
-          claim_id: end_product_establishment.reference_id,
-          text: "goodbye",
-          disposition: "Denied"
-        )
-      ]
-    end
+    context "syncs dispositions" do
+      let(:contentions) do
+        [
+          Generators::Contention.build(
+            claim_id: end_product_establishment.reference_id,
+            text: "hello",
+            disposition: "Granted"
+          ),
+          Generators::Contention.build(
+            claim_id: end_product_establishment.reference_id,
+            text: "goodbye",
+            disposition: "Denied"
+          )
+        ]
+      end
 
-    let!(:request_issues) do
-      contentions.map do |contention|
-        claim_review.request_issues.create!(
-          review_request: claim_review,
-          end_product_establishment: end_product_establishment,
-          description: contention.text,
-          contention_reference_id: contention.id
-        )
+      let!(:request_issues) do
+        contentions.map do |contention|
+          claim_review.request_issues.create!(
+            review_request: claim_review,
+            end_product_establishment: end_product_establishment,
+            description: contention.text,
+            contention_reference_id: contention.id
+          )
+        end
+      end
+
+      it "changes request issue dispositions" do
+
+        subject
+
+        expect(request_issues.first.reload.disposition).to eq("Granted")
+        expect(request_issues.last.reload.disposition).to eq("Denied")
       end
     end
 
-    it "should add dispositions to the issues" do
-      subject
-
-      expect(request_issues.first.reload.disposition).to eq("Granted")
-      expect(request_issues.last.reload.disposition).to eq("Denied")
-    end
-  end
-
-  context "#on_sync", :focus => true do
     context "on a higher level review" do
       # DTA Error – PMRs
       # DTA Error – Fed Recs
@@ -339,70 +340,72 @@ describe ClaimReview do
       # DTA Error – Exam/MO
 
       let(:issues) { [rating_request_issue, second_rating_request_issue, non_rating_request_issue] }
-      let(:rating_request_issue_disposition) do
-        {
-          claim_id: claim_review.id,
-          contention_id: rating_request_issue.id,
+
+      let(:rating_contention) do
+        Generators::Contention.build(
+          claim_id: end_product_establishment.reference_id,
+          text: "decision text",
           disposition: "DTA Error – PMRs"
-        }
+        )
       end
 
-      let(:second_rating_request_issue_disposition) do
-        {
-          claim_id: claim_review.id,
-          contention_id: second_rating_request_issue.id,
+      let(:second_rating_contention) do
+        Generators::Contention.build(
+          claim_id: end_product_establishment.reference_id,
+          text: "another decision text",
           disposition: "DTA Error – Fed Recs"
-        }
+        )
       end
 
-      let(:non_rating_request_issue_disposition) do
-        {
-          claim_id: claim_review.id,
-          contention_id: non_rating_request_issue.id,
+      let(:non_rating_contention) do
+        Generators::Contention.build(
+          claim_id: end_product_establishment.reference_id,
+          text: "issue text",
           disposition: "DTA Error – Exam/MO"
-        }
+        )
       end
-
-      let(:mock_end_product) do
-        {
-          status_cleared: true,
-          reference_id: claim_review.id
-        }
-      end
-
-      let(:dispositions) { [] }
 
       before do
         claim_review.save!
         claim_review.create_issues!(issues)
-
-        allow(Fakes::VBMSService).to receive(:get_dispositions).and_return(dispositions)
       end
 
       context "when it gets back dispositions with DTAs" do
         context "for rated issues" do
-          let(:disposions) { [
-            rating_request_issue_disposition,
-            second_rating_request_issue_disposition
-          ] }
+          before do
+            [rating_contention, second_rating_contention].each do |contention|
+              RequestIssue.find_by(description: contention.text).update!(contention_reference_id: contention.id)
+            end
+          end
 
           it "creates a supplemental claim for non rated issues" do
-            claim_review.on_sync(mock_end_product)
+            claim_review.on_sync(end_product_establishment)
 
             # find a supplemental claim by veteran id?
-            expect(SupplementalClaim.find_by(
-              veteran_file_number: claim_review.veteran_file_number)
-            ).to_not be_nil
-            # find the new request ratings (should be 2)
+            supplemental_claim = SupplementalClaim.find_by(
+              veteran_file_number: claim_review.veteran_file_number,
+              receipt_date: Time.zone.now.to_date)
+            expect(supplemental_claim).to_not be_nil
+            # find the associated end_product_establishment
+            end_product_establishment = EndProductEstablishment.find_by(
+              code: "040HDENR",
+              veteran_file_number: claim_review.veteran_file_number
+            )
+            expect(end_product_establishment).to_not be_nil
+
+            # find the new request issues by the end product establishment id (should be 2)
 
             # make sure that there's some link from original request ratings to new request ratings?
 
-            fail
           end
         end
 
         context "for non-rated issues" do
-          let(:dispositions) { [non_rating_request_issue_disposition] }
+          before do
+            RequestIssue.find_by(
+              description: non_contention.text).update!(
+                contention_reference_id: non_rating_contention.id)
+          end
 
           it "creates a supplemental claim for rated issues" do
             fail

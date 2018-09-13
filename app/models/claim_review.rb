@@ -43,6 +43,7 @@ class ClaimReview < AmaReview
   def on_sync(end_product_establishment)
     if end_product_establishment.status_cleared?
       sync_dispositions(end_product_establishment.reference_id)
+      create_dta_supplemental_claim(end_product_establishment) if self.class == HigherLevelReview
     end
   end
 
@@ -94,8 +95,16 @@ class ClaimReview < AmaReview
 
   def sync_dispositions(reference_id)
     fetch_dispositions_from_vbms(reference_id).each do |disposition|
-      matching_request_issue(disposition[:contention_id]).update!(disposition: disposition[:disposition])
+      request_issue = matching_request_issue(disposition[:contention_id])
+      request_issue.update!(disposition: disposition[:disposition])
+      if (self.class == HigherLevelReview) && dta_errors.include?(disposition[:disposition])
+        dta_issues << request_issue
+      end
     end
+  end
+
+  def dta_issues
+    @dta_issues ||= []
   end
 
   def fetch_dispositions_from_vbms(reference_id)

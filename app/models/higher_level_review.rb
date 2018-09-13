@@ -7,6 +7,8 @@ class HigherLevelReview < ClaimReview
   END_PRODUCT_RATING_CODE = "030HLRR".freeze
   END_PRODUCT_NONRATING_CODE = "030HLRNR".freeze
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 033 035 036 037 038 039].freeze
+  DTA_ERRORS = ["DTA Error – PMRs", "DTA Error – Fed Recs", "DTA Error – Other Recs", "DTA Error – Exam/MO"].freeze
+  DTA_SUPPLEMENTAL_CLAIM_CODES = { rating: "040HDENR", nonrating: "040HDER"}
 
   def ui_hash
     {
@@ -46,7 +48,26 @@ class HigherLevelReview < ClaimReview
     END_PRODUCT_MODIFIERS
   end
 
+  def dta_errors
+    DTA_ERRORS
+  end
+
+  def create_dta_supplemental_claim(end_product_establishment)
+    return unless dta_issues
+    rating_code_type = dta_issues.first.rated? ? :rating : :nonrating
+    sc = create_supplemental_claim
+    ep = sc.new_end_product_establishment(DTA_SUPPLEMENTAL_CLAIM_CODES[rating_code_type])
+    ep.perform!
+  end
+
   private
+
+  def create_supplemental_claim
+    SupplementalClaim.create!(
+      veteran_file_number: veteran_file_number,
+      receipt_date: Time.zone.now.to_date
+    )
+  end
 
   def new_end_product_establishment(ep_code)
     end_product_establishments.build(
