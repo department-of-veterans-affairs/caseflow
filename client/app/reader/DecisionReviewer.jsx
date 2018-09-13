@@ -148,7 +148,8 @@ export class DecisionReviewer extends React.PureComponent {
         }}
         userDisplayName={this.props.userDisplayName}
         dropdownUrls={this.props.dropdownUrls}
-        defaultUrl="/">
+        defaultUrl="/queue"
+        outsideCurrentRouter>
         <PageRoute
           exact
           title="Document Viewer | Caseflow Reader"
