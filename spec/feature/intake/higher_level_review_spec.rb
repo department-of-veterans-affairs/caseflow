@@ -110,6 +110,10 @@ RSpec.feature "Higher-Level Review" do
       "Please select an option."
     )
 
+    expect(page).to have_content(
+      "Please select a Benefit Type option."
+    )
+
     within_fieldset("What is the Benefit Type?") do
       find("label", text: "Compensation", match: :prefer_exact).click
     end

@@ -11,7 +11,7 @@ export const getOptionSelectedError = (responseErrorCodes) => (
 );
 
 export const getBenefitTypeError = (responseErrorCodes) => (
-  (_.get(responseErrorCodes.benefit_type, 0) === 'blank') && 'Please select an option.'
+  (_.get(responseErrorCodes.benefit_type, 0) === 'blank') && 'Please select a Benefit Type option.'
 );
 
 export const getPageError = (responseErrorCodes) => (
@@ -46,6 +46,13 @@ export const formatRelationships = (relationships) => {
       value: relationship.participant_id,
       displayText: `${first} ${last}, ${type}`
     };
+  });
+};
+
+export const formatRadioOptions = (options) => {
+  return _.map(options, (value, key) => {
+    return { value: key,
+      displayText: value };
   });
 };
 

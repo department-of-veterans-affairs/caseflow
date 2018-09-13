@@ -1,6 +1,7 @@
 import React from 'react';
 import RadioField from '../../components/RadioField';
-import { BENEFIT_TYPES } from '../constants';
+import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES.json';
+import { formatRadioOptions } from '../util';
 
 export default class BenefitType extends React.PureComponent {
   render = () => {
@@ -16,7 +17,7 @@ export default class BenefitType extends React.PureComponent {
         label="What is the Benefit Type?"
         strongLabel
         vertical
-        options={BENEFIT_TYPES}
+        options={formatRadioOptions(BENEFIT_TYPES)}
         onChange={onChange}
         value={value}
         errorMessage={errorMessage}

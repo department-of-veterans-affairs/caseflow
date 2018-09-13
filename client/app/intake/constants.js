@@ -121,27 +121,6 @@ export const CANCELLATION_REASONS = {
   }
 };
 
-export const BENEFIT_TYPES = [
-  { value: 'compensation',
-    displayText: 'Compensation' },
-  { value: 'pension',
-    displayText: 'Pension' },
-  { value: 'fiduciary',
-    displayText: 'Fiduciary' },
-  { value: 'insurance',
-    displayText: 'Insurance' },
-  { value: 'education',
-    displayText: 'Education' },
-  { value: 'voc_rehab',
-    displayText: 'Vocational Rehab. & Employment' },
-  { value: 'loan_guaranty',
-    displayText: 'Loan Guaranty' },
-  { value: 'vha',
-    displayText: 'VHA' },
-  { value: 'nca',
-    displayText: 'NCA' }
-];
-
 export const PAYEE_CODES = [
   { value: '00',
     label: '00 - Veteran' },
