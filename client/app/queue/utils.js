@@ -27,7 +27,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
     const decisionPreparedBy = task.attributes.decision_prepared_by.first_name ? {
       firstName: task.attributes.decision_prepared_by.first_name,
       lastName: task.attributes.decision_prepared_by.last_name
-    } : undefined;
+    } : null;
 
     acc[task.attributes.external_appeal_id] = {
       addedByCssId: null,
@@ -116,7 +116,8 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       documentId: task.attributes.document_id,
       workProduct: task.attributes.work_product,
       previousTaskAssignedOn: task.attributes.previous_task.assigned_on,
-      status: task.attributes.status
+      status: task.attributes.status,
+      decisionPreparedBy: null
     };
   });
 

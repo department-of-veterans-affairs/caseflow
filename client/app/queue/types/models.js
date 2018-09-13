@@ -68,7 +68,7 @@ export type Task = {
   previousTaskAssignedOn: ?string,
   instructions? :string,
   parentId?: number,
-  decisionPreparedBy?: {
+  decisionPreparedBy: ?{
     firstName: string,
     lastName: string,
   }
