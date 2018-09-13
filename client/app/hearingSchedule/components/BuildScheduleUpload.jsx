@@ -34,7 +34,6 @@ const inlineFormStyling = css({
   }
 });
 
-
 export default class BuildScheduleUpload extends React.Component {
 
   getErrorMessage = (errors) => {
