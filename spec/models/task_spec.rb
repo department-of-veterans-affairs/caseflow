@@ -115,7 +115,7 @@ describe Task do
       end
 
       it "should return the most recent attorney case review" do
-        expect(task.prepared_by_display_name).to eq(%w"Bob Smith")
+        expect(task.prepared_by_display_name).to eq(%w[Bob Smith])
       end
     end
   end
