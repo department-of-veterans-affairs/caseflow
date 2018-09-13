@@ -1,12 +1,5 @@
 require "rails_helper"
 
-def click_dropdown(opt_idx, container = page)
-  dropdown = container.find(".Select-control")
-  dropdown.click
-  yield if block_given?
-  dropdown.sibling(".Select-menu-outer").find("div[id$='--option-#{opt_idx}']").click
-end
-
 RSpec.feature "Judge assignment to attorney" do
   # Note: these tests rely on the mapping in attorney_judge_teams.rb, the CSS IDs come from there.
 
@@ -38,8 +31,8 @@ RSpec.feature "Judge assignment to attorney" do
       click_on "Switch to Assign Cases"
 
       expect(page).to have_content("Cases to Assign (2)")
-
-      expect(page).to have_content("Assign 0 cases")
+      expect(page).to have_content("Moe Syzlak")
+      expect(page).to have_content("Alice Macgyvertwo")
 
       case_rows = page.find_all("tr[id^='table-row-']")
       expect(case_rows.length).to eq(2)
