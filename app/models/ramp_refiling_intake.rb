@@ -28,15 +28,22 @@ class RampRefilingIntake < Intake
 
   def complete!(request_params)
     return if complete? || pending?
+
     start_completion!
 
+    detail.update!(
+      establishment_submitted_at: Time.zone.now,
+      has_ineligible_issue: request_params[:has_ineligible_issue]
+    )
     detail.create_issues!(source_issue_ids: request_params[:issue_ids] || [])
-    detail.update!(has_ineligible_issue: request_params[:has_ineligible_issue])
 
     create_end_product_and_contentions
-
     complete_with_status!(:success)
+
     detail.update!(established_at: Time.zone.now) unless detail.established_at
+  rescue StandardError => e
+    abort_completion!
+    raise e
   end
 
   def review_errors
@@ -58,9 +65,6 @@ class RampRefilingIntake < Intake
 
   def create_end_product_and_contentions
     detail.create_end_product_and_contentions! if detail.needs_end_product?
-  rescue StandardError => e
-    abort_completion!
-    raise e
   end
 
   def validate_detail_on_start
