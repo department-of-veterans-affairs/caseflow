@@ -45,7 +45,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       action: task.attributes.action,
       documentId: null,
       workProduct: null,
-      previousTaskAssignedOn: null,
+      previousTaskAssignedOn: task.attributes.previous_task.assigned_at,
       placedOnHoldAt: task.attributes.placed_on_hold_at,
       status: task.attributes.status,
       onHoldDuration: task.attributes.on_hold_duration,
