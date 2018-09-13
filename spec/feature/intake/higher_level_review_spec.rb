@@ -108,6 +108,10 @@ RSpec.feature "Higher-Level Review" do
       "Please select an option."
     )
 
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Compensation", match: :prefer_exact).click
+    end
+
     fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
 
     within_fieldset("Did the Veteran request an informal conference?") do
@@ -165,6 +169,7 @@ RSpec.feature "Higher-Level Review" do
     higher_level_review = HigherLevelReview.find_by(veteran_file_number: "12341234")
     expect(higher_level_review).to_not be_nil
     expect(higher_level_review.receipt_date).to eq(receipt_date)
+    expect(higher_level_review.benefit_type).to eq(benefit_type)
     expect(higher_level_review.informal_conference).to eq(true)
     expect(higher_level_review.same_office).to eq(false)
     expect(higher_level_review.claimants.first).to have_attributes(

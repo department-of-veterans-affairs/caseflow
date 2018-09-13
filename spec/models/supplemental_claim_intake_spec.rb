@@ -71,6 +71,7 @@ describe SupplementalClaimIntake do
     subject { intake.review!(params) }
 
     let(:receipt_date) { 1.day.ago }
+    let(:receipt_date) { "compensation" }
     let(:claimant) { nil }
     let(:payee_code) { nil }
 
@@ -84,6 +85,7 @@ describe SupplementalClaimIntake do
     let(:params) do
       ActionController::Parameters.new(
         receipt_date: receipt_date,
+        benefit_type: benefit_type,
         claimant: claimant,
         payee_code: payee_code
       )

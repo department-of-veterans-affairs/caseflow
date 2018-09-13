@@ -11,7 +11,7 @@ export const getOptionSelectedError = (responseErrorCodes) => (
 );
 
 export const getBenefitTypeError = (responseErrorCodes) => (
-  (_.get(responseErrorCodes.option_selected, 0) === 'blank') && 'Please select an option.'
+  (_.get(responseErrorCodes.benefit_type, 0) === 'blank') && 'Please select an option.'
 );
 
 export const getPageError = (responseErrorCodes) => (
