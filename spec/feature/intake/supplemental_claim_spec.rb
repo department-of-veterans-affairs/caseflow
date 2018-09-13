@@ -348,7 +348,8 @@ RSpec.feature "Supplemental Claim Intake" do
   it "Allows a Veteran without ratings to create an intake" do
     supplemental_claim = SupplementalClaim.create!(
       veteran_file_number: veteran_no_ratings.file_number,
-      receipt_date: 2.days.ago
+      receipt_date: 2.days.ago,
+      benefit_type: "compensation"
     )
 
     SupplementalClaimIntake.create!(

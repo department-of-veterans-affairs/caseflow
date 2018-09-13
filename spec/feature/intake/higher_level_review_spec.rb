@@ -34,6 +34,8 @@ RSpec.feature "Higher-Level Review" do
 
   let(:receipt_date) { Date.new(2018, 4, 20) }
 
+  let(:benefit_type) { "compensation" }
+
   let(:untimely_days) { 372.days }
 
   let!(:current_user) do
@@ -349,6 +351,10 @@ RSpec.feature "Higher-Level Review" do
 
     click_on "Search"
 
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Compensation", match: :prefer_exact).click
+    end
+
     fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
 
     within_fieldset("Did the Veteran request an informal conference?") do
@@ -391,8 +397,9 @@ RSpec.feature "Higher-Level Review" do
 
     visit "/intake"
 
-    fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
-    safe_click "#button-submit-review"
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Compensation", match: :prefer_exact).click
+    end
 
     fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
 
@@ -422,7 +429,8 @@ RSpec.feature "Higher-Level Review" do
       veteran_file_number: veteran_no_ratings.file_number,
       receipt_date: 2.days.ago,
       informal_conference: false,
-      same_office: false
+      same_office: false,
+      benefit_type: "compensation"
     )
 
     HigherLevelReviewIntake.create!(

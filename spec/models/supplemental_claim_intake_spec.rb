@@ -71,7 +71,7 @@ describe SupplementalClaimIntake do
     subject { intake.review!(params) }
 
     let(:receipt_date) { 1.day.ago }
-    let(:receipt_date) { "compensation" }
+    let(:benefit_type) { "compensation" }
     let(:claimant) { nil }
     let(:payee_code) { nil }
 
