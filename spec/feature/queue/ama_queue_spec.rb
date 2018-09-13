@@ -18,6 +18,9 @@ RSpec.feature "AmaQueue" do
   let!(:attorney_user) do
     FactoryBot.create(:user, roles: ["Reader"], full_name: "#{attorney_first_name} #{attorney_last_name}")
   end
+
+  let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
+
   let!(:vacols_atty) do
     FactoryBot.create(
       :staff,
@@ -41,6 +44,35 @@ RSpec.feature "AmaQueue" do
           participant_id: "600153863"
         }
       )
+    end
+
+    let!(:root_task) { create(:root_task) }
+    let!(:parent_task) { create(:ama_judge_task, assigned_to: judge_user, appeal: appeals.first, parent: root_task) }
+    let!(:attorney_tasks) do
+      [
+        create(
+          :ama_attorney_task,
+          :in_progress,
+          assigned_to: attorney_user,
+          assigned_by: judge_user,
+          parent: parent_task,
+          appeal: appeals.first
+        ),
+        create(
+          :ama_attorney_task,
+          :in_progress,
+          assigned_to: attorney_user,
+          assigned_by: judge_user,
+          appeal: appeals.second
+        ),
+        create(
+          :ama_attorney_task,
+          :in_progress,
+          assigned_to: attorney_user,
+          assigned_by: judge_user,
+          appeal: appeals.third
+        )
+      ]
     end
 
     let(:poa_name) { "Test POA" }
@@ -71,8 +103,11 @@ RSpec.feature "AmaQueue" do
     end
 
     scenario "veteran is the appellant" do
-      visit "/queue/beaam"
+      visit "/queue"
+
       click_on appeals.first.veteran.first_name
+
+      expect(page).to have_content("A. Judge")
 
       expect(page).to have_content("About the Veteran")
 
@@ -89,7 +124,7 @@ RSpec.feature "AmaQueue" do
       click_on "View Veteran's documents"
       expect(page).to have_content("Claims Folder")
 
-      visit "/queue/beaam"
+      visit "/queue"
       click_on appeals.first.veteran.first_name
 
       expect(page).not_to have_selector("text", id: "NEW")

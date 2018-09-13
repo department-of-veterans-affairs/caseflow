@@ -114,7 +114,7 @@ describe Task do
         create(:attorney_case_review, task_id: child.id, attorney: create(:user, full_name: "Bob Smith"))
       end
 
-      it "should return the most recent attorney case review", focus: true do
+      it "should return the most recent attorney case review" do
         expect(task.prepared_by_display_name).to eq(%w"Bob Smith")
       end
     end
