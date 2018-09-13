@@ -356,48 +356,6 @@ class SeedDB
     Bva.create(name: "Board of Veterans' Appeals")
   end
 
-  def create_vacols_issues
-    # creates VACOLS::Issrefs added later than our sanitized UAT copy
-    fiduciary_issue = {
-      prog_code: "12",
-      prog_desc: "Fiduciary"
-    }
-
-    # Issref_dump.csv has 1 Fiduciary issue
-    return if VACOLS::Issref.where(**fiduciary_issue).count > 1
-
-    FactoryBot.create(
-      :issref,
-      **fiduciary_issue,
-      iss_code: "01",
-      iss_desc: "Fiduciary Appointment"
-    )
-    FactoryBot.create(
-      :issref,
-      **fiduciary_issue,
-      iss_code: "02",
-      iss_desc: "Hub Manager removal of a fiduciary under 13.500"
-    )
-    FactoryBot.create(
-      :issref,
-      **fiduciary_issue,
-      iss_code: "03",
-      iss_desc: "Hub Manager misuse determination under 13.400"
-    )
-    FactoryBot.create(
-      :issref,
-      **fiduciary_issue,
-      iss_code: "04",
-      iss_desc: "RO Director decision upon recon of a misuse determ"
-    )
-    FactoryBot.create(
-      :issref,
-      **fiduciary_issue,
-      iss_code: "05",
-      iss_desc: "Dir of PFS negligence determination for reissuance"
-    )
-  end
-
   def clean_db
     DatabaseCleaner.clean_with(:truncation)
   end
@@ -412,7 +370,6 @@ class SeedDB
     create_ama_appeals
     create_users
     create_tasks
-    create_vacols_issues
 
     return if Rails.env.development?
 
