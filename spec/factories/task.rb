@@ -4,7 +4,6 @@ FactoryBot.define do
     assigned_by { create(:user) }
     assigned_to { create(:user) }
     appeal { create(:legacy_appeal, vacols_case: create(:case)) }
-    appeal_type "LegacyAppeal"
     action { nil }
 
     trait :in_progress do
@@ -25,6 +24,13 @@ FactoryBot.define do
       placed_on_hold_at { rand(1..10).days.ago }
       on_hold_duration [30, 60, 90].sample
       completed_at Time.zone.now
+    end
+
+    factory :root_task do
+      type "RootTask"
+      appeal_type "Appeal"
+      appeal { create(:appeal) }
+      assigned_by { nil }
     end
 
     factory :generic_task do
@@ -62,8 +68,14 @@ FactoryBot.define do
     end
 
     factory :ama_vso_task do
-      type "VsoTask"
+      type "GenericTask"
       appeal_type "Appeal"
+    end
+
+    factory :bva_dispatch_task do
+      type "BvaDispatchTask"
+      appeal_type "Appeal"
+      appeal { create(:appeal) }
     end
   end
 end

@@ -34,27 +34,23 @@ RSpec.feature "AmaQueue" do
 
   context "loads appellant detail view" do
     before do
-      allow_any_instance_of(Fakes::BGSService).to receive(:default_power_of_attorney_record).and_return(
-        file_number: "633792224",
-        power_of_attorney:
-          {
-            legacy_poa_cd: "3QQ",
-            nm: poa_name,
-            org_type_nm: "POA Attorney",
-            ptcpnt_id: "600153863"
-          },
-        ptcpnt_id: "600085544"
+      allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
+        appeals.first.claimants.first.participant_id => {
+          representative_name: poa_name,
+          representative_type: "POA Attorney",
+          participant_id: "600153863"
+        }
       )
     end
 
     let(:poa_name) { "Test POA" }
-
+    let(:veteran_participant_id) { "600085544" }
     let!(:appeals) do
       [
         create(
           :appeal,
-          advanced_on_docket: true,
-          veteran: create(:veteran, bgs_veteran_record: { first_name: "Pal" }),
+          :advanced_on_docket,
+          veteran: create(:veteran, participant_id: veteran_participant_id, bgs_veteran_record: { first_name: "Pal" }),
           documents: create_list(:document, 5),
           request_issues: build_list(:request_issue, 3, description: "Knee pain")
         ),

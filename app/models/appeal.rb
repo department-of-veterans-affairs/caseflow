@@ -3,6 +3,7 @@ class Appeal < AmaReview
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
   has_many :decision_issues, through: :request_issues
+  has_one :special_issue_list
 
   validates :receipt_date, :docket_type, presence: { message: "blank" }, on: :intake_review
 
@@ -66,6 +67,10 @@ class Appeal < AmaReview
     veteran && veteran.sex
   end
 
+  def advanced_on_docket
+    claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
+  end
+
   def number_of_issues
     issues[:request_issues].size
   end
@@ -74,20 +79,15 @@ class Appeal < AmaReview
     claimants.first
   end
 
-  delegate :first_name, :last_name, :middle_initial, :name_suffix, to: :appellant, prefix: true
-
-  def appellant_is_not_veteran
-    appellant ? appellant.relationship.present? : false
-  end
+  delegate :first_name, :last_name, :middle_name, :name_suffix, to: :appellant, prefix: true, allow_nil: true
 
   # TODO: implement for AMA
   def citation_number
     "not implemented"
   end
 
-  # TODO: implement for AMA - grab it from BGS
   def veteran_is_deceased
-    "not implemented"
+    veteran && veteran.date_of_death.present?
   end
 
   def cavc
@@ -117,13 +117,32 @@ class Appeal < AmaReview
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 
+  # For now power_of_attorney returns the first claimant's power of attorney
   def power_of_attorney
-    @bgs_poa ||= BgsPowerOfAttorney.new(file_number: veteran_file_number)
+    claimants.first.power_of_attorney if claimants.first
+  end
+  delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
+
+  def power_of_attorneys
+    claimants.map(&:power_of_attorney)
   end
 
-  delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
+  def vsos
+    vso_participant_ids = power_of_attorneys.map(&:participant_id)
+    Vso.where(participant_id: vso_participant_ids)
+  end
 
   def external_id
     uuid
+  end
+
+  def create_tasks_on_intake_success!
+    RootTask.create_root_and_sub_tasks!(self)
+  end
+
+  private
+
+  def bgs
+    BGSService.new
   end
 end

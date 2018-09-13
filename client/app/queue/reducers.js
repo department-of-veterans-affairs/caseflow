@@ -24,6 +24,7 @@ export const initialState = {
   editingIssue: {},
   docCountForAppeal: {},
   newDocsForAppeal: {},
+  specialIssues: {},
 
   /**
    * `stagedChanges` is an object of appeals that have been modified since
@@ -40,7 +41,8 @@ export const initialState = {
   attorneysOfJudge: [],
   attorneyAppealsLoadingState: {},
   isTaskAssignedToUserSelected: {},
-  attorneys: {}
+  attorneys: {},
+  organizationId: null
 };
 
 // eslint-disable-next-line max-statements
@@ -249,8 +251,7 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
     const { appealId, issueId } = action.payload;
     const { stagedChanges: { appeals } } = state;
 
-    const issues = _.reject(appeals[appealId].issues,
-      (issue) => issue.vacols_sequence_id === Number(issueId));
+    const issues = _.reject(appeals[appealId].issues, (issue) => issue.id === Number(issueId));
 
     return update(state, {
       stagedChanges: {
@@ -370,6 +371,19 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
       }
     });
   }
+  case ACTIONS.SET_SPECIAL_ISSUE: {
+    return update(state, {
+      specialIssues: {
+        $merge: action.payload.specialIssues
+      }
+    });
+  }
+  case ACTIONS.SET_ORGANIZATION_ID:
+    return update(state, {
+      organizationId: {
+        $set: action.payload.id
+      }
+    });
   default:
     return state;
   }

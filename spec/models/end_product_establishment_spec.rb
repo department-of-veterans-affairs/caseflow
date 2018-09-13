@@ -19,6 +19,7 @@ describe EndProductEstablishment do
   let(:invalid_modifiers) { nil }
   let(:synced_status) { nil }
   let(:special_issues) { nil }
+  let(:committed_at) { nil }
 
   let(:end_product_establishment) do
     EndProductEstablishment.new(
@@ -30,8 +31,13 @@ describe EndProductEstablishment do
       station: "397",
       reference_id: reference_id,
       claimant_participant_id: veteran_participant_id,
-      synced_status: synced_status
+      synced_status: synced_status,
+      committed_at: committed_at
     )
+  end
+
+  let(:vbms_error) do
+    VBMS::HTTPError.new("500", "More EPs more problems")
   end
 
   context "#perform!" do
@@ -136,12 +142,15 @@ describe EndProductEstablishment do
     context "when all goes well" do
       it "creates end product and sets reference_id" do
         subject
+
         expect(end_product_establishment.reload).to have_attributes(
           reference_id: "FAKECLAIMID",
           veteran_file_number: veteran_file_number,
           established_at: Time.zone.now,
+          committed_at: nil,
           modifier: "030"
         )
+
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
             benefit_type_code: "1",
@@ -159,6 +168,16 @@ describe EndProductEstablishment do
           },
           veteran_hash: veteran.to_vbms_hash
         )
+      end
+
+      context "when commit is set" do
+        subject { end_product_establishment.perform!(commit: true) }
+
+        it "also commits the end product establishment" do
+          subject
+
+          expect(end_product_establishment.reload).to have_attributes(committed_at: Time.zone.now)
+        end
       end
     end
   end
@@ -220,6 +239,24 @@ describe EndProductEstablishment do
     end
   end
 
+  context "commit!" do
+    subject { end_product_establishment.commit! }
+
+    it "commits the end product establishment" do
+      subject
+      expect(end_product_establishment.committed_at).to eq(Time.zone.now)
+    end
+
+    context "when end_product_establishment is already committed" do
+      let(:committed_at) { 2.days.ago }
+
+      it "does not recommit the end product establishment" do
+        subject
+        expect(end_product_establishment.committed_at).to eq(2.days.ago)
+      end
+    end
+  end
+
   context "#remove_contention!" do
     before do
       allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
@@ -247,6 +284,18 @@ describe EndProductEstablishment do
       subject
 
       expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(contention)
+      expect(for_object.removed_at).to eq(Time.zone.now)
+    end
+
+    context "when VBMS throws an error" do
+      before do
+        allow(Fakes::VBMSService).to receive(:remove_contention!).and_raise(vbms_error)
+      end
+
+      it "does not remove contentions" do
+        expect { subject }.to raise_error(vbms_error)
+        expect(for_object.removed_at).to be_nil
+      end
     end
   end
 

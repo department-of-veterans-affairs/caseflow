@@ -1,13 +1,63 @@
-import PropTypes from 'prop-types';
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { css } from 'glamor';
 
+import { setTaskAttrs } from './QueueActions';
+import ApiUtil from '../util/ApiUtil';
 import COPY from '../../COPY.json';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import { subHeadTextStyle } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import { prepareTasksForStore } from './utils';
 
-const getLinkText = (appeal) => <React.Fragment>{appeal.veteranFullName} ({appeal.veteranFileNumber})</React.Fragment>;
+class CaseDetailsLink extends React.PureComponent {
+  onClick = () => {
+    const { task } = this.props;
 
-export default class CaseDetailsLink extends React.PureComponent {
+    // when searching for a case, we only load appeal info, no tasks
+    if (task) {
+      const payload = {
+        data: {
+          task: {
+            status: 'in_progress'
+          }
+        }
+      };
+
+      ApiUtil.patch(`/tasks/${task.taskId}`, payload).
+        then((resp) => {
+          const response = JSON.parse(resp.text);
+          const preparedTasks = prepareTasksForStore(response.tasks.data);
+
+          this.props.setTaskAttrs(task.externalAppealId, preparedTasks[task.externalAppealId]);
+        });
+    }
+
+    return this.props.onClick ? this.props.onClick(arguments) : true;
+  }
+
+  getLinkText = () => {
+    const {
+      task,
+      appeal,
+      userRole
+    } = this.props;
+
+    if (this.props.getLinkText) {
+      return this.props.getLinkText(appeal, task);
+    }
+
+    const linkStyling = css({
+      fontWeight: (task.status === 'assigned' && userRole === USER_ROLE_TYPES.colocated) ? 'bold' : null
+    });
+
+    return <span {...linkStyling}>
+      {appeal.veteranFullName} ({appeal.veteranFileNumber})
+    </span>;
+  }
+
   render() {
     const {
       appeal,
@@ -18,8 +68,8 @@ export default class CaseDetailsLink extends React.PureComponent {
       <Link
         to={`/queue/appeals/${appeal.externalId}`}
         disabled={disabled}
-        onClick={this.props.onClick}>
-        {this.props.getLinkText(appeal)}
+        onClick={this.onClick}>
+        {this.getLinkText()}
       </Link>
       {appeal.isPaperCase && <React.Fragment>
         <br />
@@ -33,10 +83,16 @@ CaseDetailsLink.propTypes = {
   task: PropTypes.object,
   appeal: PropTypes.object.isRequired,
   disabled: PropTypes.bool,
-  getLinkText: PropTypes.func.isRequired,
+  getLinkText: PropTypes.func,
   onClick: PropTypes.func
 };
 
-CaseDetailsLink.defaultProps = {
-  getLinkText
-};
+const mapStateToProps = (state) => ({
+  userRole: state.ui.userRole
+});
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setTaskAttrs
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(CaseDetailsLink);

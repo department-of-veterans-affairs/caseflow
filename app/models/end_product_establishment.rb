@@ -49,7 +49,7 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
-  def perform!
+  def perform!(commit: false)
     return if reference_id
 
     set_establishment_values_from_source
@@ -60,6 +60,7 @@ class EndProductEstablishment < ApplicationRecord
       update!(
         reference_id: result.claim_id,
         established_at: Time.zone.now,
+        committed_at: commit ? Time.zone.now : nil,
         modifier: end_product_to_establish.modifier
       )
     end
@@ -84,6 +85,18 @@ class EndProductEstablishment < ApplicationRecord
 
   def remove_contention!(for_object)
     VBMSService.remove_contention!(contention_for_object(for_object))
+    for_object.update!(removed_at: Time.zone.now)
+  end
+
+  # Committing an end product establishment is a way to signify that any other actions performed
+  # as part of a larger atomic operation containing the end product establishment are also complete.
+  # Those actions could be creating contentions or other end product establishments.
+  def commit!
+    update!(committed_at: Time.zone.now) unless committed?
+  end
+
+  def committed?
+    !!committed_at
   end
 
   def ep_created?

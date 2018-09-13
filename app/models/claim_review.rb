@@ -22,6 +22,8 @@ class ClaimReview < AmaReview
       end_product_establishment.perform!
       create_contentions_for_end_product_establishment(end_product_establishment)
     end
+
+    end_product_establishments.each(&:commit!)
   end
 
   # NOTE: Choosing not to test this method because it is fully tested in RequestIssuesUpdate.perform!
@@ -76,6 +78,10 @@ class ClaimReview < AmaReview
     VBMSService.associate_rated_issues!(
       claim_id: end_product_establishment.reference_id,
       rated_issue_contention_map: rated_issue_contention_map(request_issues_to_associate)
+    )
+
+    RequestIssue.where(id: request_issues_to_associate.map(&:id)).update_all(
+      rating_issue_associated_at: Time.zone.now
     )
   end
 
