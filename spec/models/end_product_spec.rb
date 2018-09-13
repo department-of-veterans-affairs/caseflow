@@ -7,6 +7,7 @@ describe EndProduct do
 
   let(:end_product) do
     EndProduct.new(
+      benefit_type_code: benefit_type_code,
       claim_date: claim_date,
       claim_type_code: claim_type_code,
       status_type_code: status_type_code,
@@ -28,6 +29,7 @@ describe EndProduct do
   let(:suppress_acknowledgement_letter) { true }
   let(:payee_code) { "00" }
   let(:claimant_participant_id) { nil }
+  let(:benefit_type_code) { "1" }
 
   context "#claim_type" do
     subject { end_product.claim_type }
@@ -241,6 +243,7 @@ describe EndProduct do
     let(:modifier) { "170" }
     let(:claim_type_code) { "930RC" }
     let(:payee_code) { "00" }
+    let(:benefit_type_code) { "1" }
     let(:station_of_jurisdiction) { "313" }
     let(:gulf_war_registry) { true }
     let(:suppress_acknowledgement_letter) { false }
