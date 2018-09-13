@@ -51,6 +51,7 @@ export default class DateSelector extends React.Component {
       type,
       validationError,
       value,
+      max,
       ...passthroughProps
     } = _.omit(this.props, 'onChange');
 
@@ -66,7 +67,7 @@ export default class DateSelector extends React.Component {
       placeholder={DEFAULT_TEXT}
       required={required}
       {...passthroughProps}
-      max="2100-08-26"
+      max="2100-12-26"
     />;
 
   }
