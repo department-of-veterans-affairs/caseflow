@@ -88,7 +88,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     return null;
   };
 
-  getAbbrevName = ({ firstName, lastName }) => {
+  getAbbrevName = ({ firstName, lastName } : { firstName: string, lastName: string }) => {
     return `${firstName.substring(0, 1)}. ${lastName}`;
   }
 
@@ -111,7 +111,9 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     } = this.props;
     const assignedByAbbrev = taskAssignedToUser.assignedBy.firstName ?
       this.getAbbrevName(taskAssignedToUser.assignedBy) : null;
-    const preparedByAbbrev = taskAssignedToUser.decisionPreparedBy.firstName ?
+
+    const decisionPreparedBy = taskAssignedToUser.decisionPreparedBy
+    const preparedByAbbrev = taskAssignedToUser.decisionPreparedBy && taskAssignedToUser.decisionPreparedBy.firstName ?
       this.getAbbrevName(taskAssignedToUser.decisionPreparedBy) : null;
 
     return <React.Fragment>
@@ -131,7 +133,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
         <React.Fragment>
           <dt>{COPY.CASE_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{preparedByAbbrev}</dd>
         </React.Fragment> }
-    </React.Fragment>
+    </React.Fragment>;
   }
 
   legacyTaskInformation = () => {

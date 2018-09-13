@@ -9,7 +9,6 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import { CATEGORIES } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import ReaderLink from './ReaderLink';
-import COPY from '../../COPY.json';
 import CopyTextButton from '../components/CopyTextButton';
 import { toggleVeteranCaseList } from './uiReducer/uiActions';
 

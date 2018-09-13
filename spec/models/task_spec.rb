@@ -111,11 +111,11 @@ describe Task do
     context "when there is an attorney_case_review" do
       let!(:child) { create(:task, type: "Task", parent_id: task.id) }
       let!(:attorney_case_reviews) do
-          create(:attorney_case_review, task_id: child.id, attorney: create(:user, full_name: "Bob Smith"))
+        create(:attorney_case_review, task_id: child.id, attorney: create(:user, full_name: "Bob Smith"))
       end
 
-      it "should return the most recent attorney case review" do
-        expect(task.prepared_by_display_name).to eq(["Bob", "Smith"])
+      it "should return the most recent attorney case review", focus: true do
+        expect(task.prepared_by_display_name).to eq(%w"Bob Smith")
       end
     end
   end
@@ -134,7 +134,7 @@ describe Task do
       let!(:attorney_case_reviews) do
         [
           create(:attorney_case_review, task_id: child.id, created_at: 1.day.ago),
-          create(:attorney_case_review, task_id: child.id, created_at: 2.day.ago)
+          create(:attorney_case_review, task_id: child.id, created_at: 2.days.ago)
         ]
       end
 
