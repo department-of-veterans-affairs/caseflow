@@ -51,16 +51,8 @@ class Appeal < AmaReview
     veteran && veteran.name.formatted(:readable_full)
   end
 
-  def veteran_first_name
-    veteran && veteran.name.first_name
-  end
-
   def veteran_middle_initial
     veteran && veteran.name.middle_initial
-  end
-
-  def veteran_last_name
-    veteran && veteran.name.last_name
   end
 
   def veteran_gender
@@ -71,7 +63,7 @@ class Appeal < AmaReview
     claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
   end
 
-  delegate :name_suffix, to: :veteran, prefix: true
+  delegate :first_name, :last_name, :name_suffix, to: :veteran, prefix: true, allow_nil: true
 
   def number_of_issues
     issues[:request_issues].size
