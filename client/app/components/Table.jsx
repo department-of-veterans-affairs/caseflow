@@ -256,7 +256,7 @@ Table.propTypes = {
     PropTypes.func]).isRequired,
   rowObjects: PropTypes.arrayOf(PropTypes.object).isRequired,
   rowClassNames: PropTypes.func,
-  keyGetter: PropTypes.func,
+  keyGetter: PropTypes.func.isRequired,
   slowReRendersAreOk: PropTypes.bool,
   summary: PropTypes.string,
   headerClassName: PropTypes.string,
