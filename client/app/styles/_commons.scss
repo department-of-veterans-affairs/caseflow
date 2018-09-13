@@ -828,11 +828,6 @@ form {
 }
 
 //--- Table styles ---*/
-
-table {
-  color: $color-gray-dark;
-}
-
 .cf-table-wrap {
   width: 100%;
   overflow-x: auto;
@@ -843,26 +838,10 @@ table {
   }
 }
 
-// Overrides table th, table td classes
-// from web design standards
-// TODO remove all table overrides
-.cf-table-borderless {
-  th,
+.usa-table-borderless {
   td {
-    border-width: 0;
-  }
-
-  tr {
-    border-bottom: 1px solid $color-gray-lighter;
-  }
-
-  thead th {
-    background-color: $color-white;
-  }
-
-  th {
     &:first-child {
-      padding-left: 1.5rem;
+      padding-left: 0;
     }
   }
 }
