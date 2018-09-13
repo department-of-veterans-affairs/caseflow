@@ -1,5 +1,7 @@
-RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
+RSpec.describe Idt::Api::V1::AppealsController, type: :controller, focus: true do
   before do
+    User.authenticate!(user: user)
+
     FeatureToggle.enable!(:test_facols)
   end
 
@@ -144,8 +146,6 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
         context "and AMA appeal id URL parameter is passed" do
           before do
-            User.authenticate!(user: user)
-
             allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
               ama_appeals.first.claimants.first.participant_id => {
                 representative_name: "POA Name",
