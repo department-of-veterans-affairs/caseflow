@@ -1,0 +1,21 @@
+// A natural box layout model to all elements
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  background-color: #fff;
+  color: $212121;
+  overflow-x: hidden;
+}
+
+// <p hidden>
+[hidden] {
+  display: none;
+}
