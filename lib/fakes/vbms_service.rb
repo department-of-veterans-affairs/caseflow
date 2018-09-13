@@ -128,7 +128,7 @@ class Fakes::VBMSService
     # A randomly generated id
     claim_id = end_product_claim_ids_by_file_number[veteran_hash[:file_number]] ||
                @end_product_claim_id ||
-               Generators::LegacyAppeal.generate_external_id
+               Generators::Random.external_id
 
     # return fake end product
     OpenStruct.new(claim_id: claim_id)

@@ -24,9 +24,9 @@ review and annotate electronic case files.
 
 Scheduling and supporting Board of Veterans' Appeals hearings.
 
-## Caseflow products in a mature state 
+## Caseflow products in a mature state
 
-### Dispatch 
+### Dispatch
 
 Facilitates the transfer of cases from the Agency of Original Jurisdiction (AOJ) to
 the Board of Veterans' Appeals (the Board).
@@ -103,7 +103,7 @@ After installation is complete, run:
 docker login -u dsvaappeals
 ```
 
-The password is in the DSVA 1Password account. Note you can use your personal account as well, you'll just have to accept the license agreement for the [Oracle Database docker image](https://store.docker.com/images/oracle-database-enterprise-edition).
+The password is in the DSVA 1Password account. Note you can use your personal account as well, you'll just have to accept the license agreement for the [Oracle Database docker image](https://store.docker.com/images/oracle-database-enterprise-edition). To accept the agreement, checkout with the Oracle image on the docker store.
 
 ### Install the Oracle client libraries
 
@@ -176,7 +176,10 @@ Add these to your `.bash_profile`:
 export POSTGRES_HOST=localhost
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
+export NLS_LANG=AMERICAN_AMERICA.US7ASCII
 ```
+
+The last env var silences one of the Oracle warnings on startup.
 
 (Reload the file `source ~/.bash_profile`)
 
