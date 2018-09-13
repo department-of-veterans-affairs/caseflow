@@ -289,13 +289,21 @@ class SeedDB
                       parent: parent,
                       appeal: @ama_appeals[5])
 
-    FactoryBot.create(
+    parent = FactoryBot.create(
       :ama_judge_task,
       :in_progress,
       assigned_to: judge,
       appeal: @ama_appeal_with_decision,
       action: :review,
       parent: root
+    )
+    FactoryBot.create(
+      :ama_attorney_task,
+      :completed,
+      assigned_to: attorney,
+      assigned_by: judge,
+      parent: parent,
+      appeal: @ama_appeal_with_decision
     )
 
     FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @appeal_with_vso)
