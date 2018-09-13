@@ -128,23 +128,17 @@ export const SEARCH_ERROR_FOR = {
   UNKNOWN_SERVER_ERROR: 'UNKNOWN_SERVER_ERROR'
 };
 
-export const LEGACY_REMAND_REASONS = Object.assign({},
-  ...Object.keys(LEGACY_REMAND_REASONS_BY_ID).map((reasonType) => ({
-    [reasonType]: _.map(LEGACY_REMAND_REASONS_BY_ID[reasonType], (label, reasonId) => ({
-      id: reasonId,
+const formatRemandReasons = (reasons) => Object.assign({},
+  ...Object.keys(reasons).map((reasonType) => ({
+    [reasonType]: _.map(reasons[reasonType], (label, id) => ({
+      id,
       label
     }))
   }))
 );
 
-export const REMAND_REASONS = Object.assign({},
-  ...Object.keys(REMAND_REASONS_BY_ID).map((reasonType) => ({
-    [reasonType]: _.map(REMAND_REASONS_BY_ID[reasonType], (label) => ({
-      id: StringUtil.parameterize(label),
-      label
-    }))
-  }))
-);
+export const LEGACY_REMAND_REASONS = formatRemandReasons(LEGACY_REMAND_REASONS_BY_ID);
+export const REMAND_REASONS = formatRemandReasons(REMAND_REASONS_BY_ID);
 
 const parameterizedDispositions = Object.values(VACOLS_DISPOSITIONS_BY_ID).
   map(StringUtil.parameterize);
