@@ -324,6 +324,8 @@ describe RampRefilingIntake do
         expect(intake.reload).to be_success
         expect(intake.detail.issues.count).to eq(2)
         expect(intake.detail.has_ineligible_issue).to eq(true)
+        expect(intake.detail.establishment_submitted_at).to eq(Time.zone.now)
+        expect(intake.detail.establishment_processed_at).to eq(Time.zone.now)
       end
 
       context "when source_issues is nil" do
@@ -370,6 +372,8 @@ describe RampRefilingIntake do
 
         expect { subject }.to raise_exception
         expect(intake.completion_status).to be_nil
+        expect(intake.detail.establishment_submitted_at).to eq(Time.zone.now)
+        expect(intake.detail.establishment_processed_at).to be_nil
       end
     end
 
