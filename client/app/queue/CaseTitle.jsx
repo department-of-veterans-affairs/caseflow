@@ -3,17 +3,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import CopyToClipboard from 'react-copy-to-clipboard';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { CATEGORIES } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import ReaderLink from './ReaderLink';
-import { ClipboardIcon } from '../components/RenderFunctions';
-import Tooltip from '../components/Tooltip';
-import COPY from '../../COPY.json';
-
+import CopyTextButton from '../components/CopyTextButton';
 import { toggleVeteranCaseList } from './uiReducer/uiActions';
 
 const containingDivStyling = css({
@@ -50,21 +46,6 @@ const viewCasesStyling = css({
   cursor: 'pointer'
 });
 
-const clipboardButtonStyling = css({
-  borderColor: COLORS.GREY_LIGHT,
-  borderWidth: '1px',
-  color: COLORS.GREY_DARK,
-  padding: '0.75rem',
-  ':hover': {
-    backgroundColor: 'transparent',
-    color: COLORS.GREY_DARK,
-    borderColor: COLORS.PRIMARY,
-    borderBottomWidth: '1px'
-  },
-  '& > svg path': { fill: COLORS.GREY_LIGHT },
-  '&:hover > svg path': { fill: COLORS.PRIMARY }
-});
-
 class CaseTitle extends React.PureComponent {
   render = () => {
     const {
@@ -79,16 +60,7 @@ class CaseTitle extends React.PureComponent {
     return <CaseTitleScaffolding heading={appeal.veteranFullName}>
       <React.Fragment>
         Veteran ID:&nbsp;
-        <Tooltip text={COPY.CASE_TITLE_VETERAN_ID_BUTTON_TOOLTIP} position="bottom">
-          <CopyToClipboard text={appeal.veteranFileNumber}>
-            <button type="submit"
-              className="cf-apppeal-id"
-              {...clipboardButtonStyling} >
-              {appeal.veteranFileNumber}&nbsp;
-              <ClipboardIcon />
-            </button>
-          </CopyToClipboard>
-        </Tooltip>
+        <CopyTextButton text={appeal.veteranFileNumber} />
       </React.Fragment>
 
       { !this.props.userIsVsoEmployee && <ReaderLink

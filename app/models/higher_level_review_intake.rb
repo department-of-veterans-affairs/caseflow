@@ -8,6 +8,7 @@ class HigherLevelReviewIntake < Intake
   def ui_hash(ama_enabled)
     super.merge(
       receipt_date: detail.receipt_date,
+      benefit_type: detail.benefit_type,
       same_office: detail.same_office,
       informal_conference: detail.informal_conference,
       claimant: detail.claimant_participant_id,
@@ -29,7 +30,7 @@ class HigherLevelReviewIntake < Intake
       participant_id: request_params[:claimant] || veteran.participant_id,
       payee_code: request_params[:payee_code] || "00"
     )
-    detail.update(request_params.permit(:receipt_date, :informal_conference, :same_office))
+    detail.update(request_params.permit(:receipt_date, :informal_conference, :same_office, :benefit_type))
   end
 
   def review_errors
