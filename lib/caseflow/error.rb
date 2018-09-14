@@ -40,7 +40,7 @@ module Caseflow::Error
       @user_id = args[:user_id]
       @appeal_id = args[:appeal_id]
       @tasks = args[:tasks]
-      @code = args[:code] || 500
+      @code = args[:code] || 400
       @message = args[:message] || "Expected 1 BvaDispatchTask received #{@tasks.count} tasks for"\
                                    " appeal #{@appeal_id}, user #{@user_id}"
     end

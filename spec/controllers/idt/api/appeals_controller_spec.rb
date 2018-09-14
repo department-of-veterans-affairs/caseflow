@@ -283,7 +283,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
       it "should throw an error" do
         post :outcode, params: params
-        expect(response.status).to eq(500)
+        expect(response.status).to eq(400)
         response_detail = JSON.parse(response.body)["errors"][0]["detail"]
         expect(response_detail).to eq("Expected 1 BvaDispatchTask received #{task_count} tasks for appeal "\
                                       "#{root_task.appeal.id}, user #{user.id}")
@@ -294,7 +294,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       let(:task_count) { 0 }
       it "should throw an error" do
         post :outcode, params: params
-        expect(response.status).to eq(500)
+        expect(response.status).to eq(400)
         response_detail = JSON.parse(response.body)["errors"][0]["detail"]
         expect(response_detail).to eq("Expected 1 BvaDispatchTask received #{task_count} tasks for appeal "\
                                       "#{root_task.appeal.id}, user #{user.id}")
