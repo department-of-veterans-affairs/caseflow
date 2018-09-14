@@ -17,7 +17,7 @@ type Props<T> = {|
   label?: string,
   hideLabel?: boolean,
   name: string,
-  onChange: (value: ?T, deletedValue?: Array<any>) => mixed,
+  onChange: (value: ?T, deletedValue?: ?Array<any>) => mixed,
   options: Array<T>,
   readOnly?: boolean,
   required?: boolean,
