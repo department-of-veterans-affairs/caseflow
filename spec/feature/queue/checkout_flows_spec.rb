@@ -604,13 +604,15 @@ RSpec.feature "Checkout flows" do
       expect(colocated_action.assigned_at.to_date).to eq Time.zone.today
     end
 
-    scenario "places task on hold" do
+    scenario "places task on hold", focus: true do
       visit "/queue"
 
       appeal = colocated_action.appeal
 
       vet_name = appeal.veteran_full_name
       click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
+
+      expect(page).to have_content("Actions")
 
       click_dropdown 1
 
@@ -621,10 +623,10 @@ RSpec.feature "Checkout flows" do
       click_dropdown 6
       expect(page).to have_content(COPY::COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY)
 
-      hold_duration = [rand(100), 1].min
+      hold_duration = [rand(100), 1].max
       fill_in COPY::COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY, with: hold_duration
 
-      instructions = generate_words 50
+      instructions = generate_words 5
       fill_in "instructions", with: instructions
       click_on "Place case on hold"
 
