@@ -66,6 +66,7 @@ export default class DateSelector extends React.Component {
       placeholder={DEFAULT_TEXT}
       required={required}
       {...passthroughProps}
+      max="9999-12-31"
     />;
 
   }

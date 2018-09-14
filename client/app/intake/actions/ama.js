@@ -101,6 +101,13 @@ export const completeIntake = (intakeId, intakeData) => (dispatch) => {
     );
 };
 
+export const setBenefitType = (benefitType) => ({
+  type: ACTIONS.SET_BENEFIT_TYPE,
+  payload: {
+    benefitType
+  }
+});
+
 export const setClaimantNotVeteran = (claimantNotVeteran) => ({
   type: ACTIONS.SET_CLAIMANT_NOT_VETERAN,
   payload: {
