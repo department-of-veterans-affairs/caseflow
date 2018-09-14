@@ -333,7 +333,7 @@ describe ClaimReview do
       end
     end
 
-    context "on a higher level review", :focus => true do
+    context "on a higher level review" do
       let(:issues) { [rating_request_issue, second_rating_request_issue, non_rating_request_issue] }
 
       let(:rating_contention) do
