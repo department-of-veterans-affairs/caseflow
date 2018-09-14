@@ -68,7 +68,7 @@ type Props = Params & {|
   featureToggles: Object,
   userRole: string,
   appeal: Appeal,
-  taskAssignedToUser: Task,
+  taskAssignedToUser: ?Task,
   taskAssignedToAttorney: Task,
   taskAssignedToOrganization: Task
 |};
@@ -150,7 +150,8 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       this.getAbbrevName(taskAssignedToUser.assignedBy) : null;
 
     const assignedToListItem = <React.Fragment>
-      <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.locationCode}</dd>
+      <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt>
+      <dd>{this.props.appeal.locationCode || (taskAssignedToUser && taskAssignedToUser.assignedTo.cssId)}</dd>
     </React.Fragment>;
 
     if (!taskAssignedToUser) {

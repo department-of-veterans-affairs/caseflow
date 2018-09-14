@@ -29,6 +29,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.claimants[0].relationship if object.claimants && object.claimants.any?
   end
 
+  attribute :location_code do
+    nil
+  end
+
   attribute :veteran_full_name do
     object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
   end
