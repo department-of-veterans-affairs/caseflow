@@ -83,6 +83,20 @@ describe HearingSchedule::ValidateRoSpreadsheet do
     end
   end
 
+  context "when RO city state is not case sensitive" do
+    subject do
+      HearingSchedule::ValidateRoSpreadsheet.new(
+        Roo::Spreadsheet.open("spec/support/roNotCaseSensitive.xlsx", extension: :xlsx),
+        Date.parse("01/01/2018"),
+        Date.parse("01/06/2018")
+      ).validate
+    end
+
+    it "returns RoNotCaseSensitive" do
+      expect(subject).to eq [HearingSchedule::ValidateRoSpreadsheet::RoNotCaseSensitive]
+    end
+  end
+
   context "when CO non-availaility dates are out of range" do
     subject do
       HearingSchedule::ValidateRoSpreadsheet.new(
