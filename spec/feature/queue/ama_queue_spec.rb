@@ -60,7 +60,8 @@ RSpec.feature "AmaQueue" do
             :veteran,
             participant_id: veteran_participant_id,
             first_name: "Pal",
-            bgs_veteran_record: { first_name: "Pal" }),
+            bgs_veteran_record: { first_name: "Pal" }
+          ),
           documents: create_list(:document, 5),
           request_issues: build_list(:request_issue, 3, description: "Knee pain")
         ),
