@@ -220,7 +220,7 @@ class Veteran < ApplicationRecord
   def vbms_attributes
     self.class.bgs_attributes \
       - [:military_postal_type_code, :military_post_office_type_code, :ptcpnt_id] \
-      + [:file_number, :address_type, :first_name, :last_name]
+      + [:file_number, :address_type, :first_name, :last_name, :name_suffix]
   end
 
   def military_address?
