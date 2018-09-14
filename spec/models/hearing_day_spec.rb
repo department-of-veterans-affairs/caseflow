@@ -1,5 +1,5 @@
 describe HearingDay do
-  context "#create", focus: true do
+  context "#create" do
     let(:hearing) do
       RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
       Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
@@ -22,7 +22,7 @@ describe HearingDay do
 
       it "creates hearing with required attributes" do
         expect(hearing[:hearing_type]).to eq "C"
-        expect(hearing[:hearing_date]).to eq test_hearing_date
+        expect(hearing[:hearing_date].strftime("%Y-%m-%d %H:%M:%S")).to eq test_hearing_date.strftime("%Y-%m-%d %H:%M:%S")
         expect(hearing[:room_info]).to eq "1"
       end
     end
@@ -37,8 +37,8 @@ describe HearingDay do
 
       it "creates a video hearing" do
         expect(hearing[:hearing_type]).to eq "C"
-        expect(hearing[:hearing_date]).to eq test_hearing_date
-        expect(hearing[:folder_nr]).to eq "RO89"
+        expect(hearing[:hearing_date].strftime("%Y-%m-%d %H:%M:%S")).to eq test_hearing_date.strftime("%Y-%m-%d %H:%M:%S")
+        expect(hearing[:regional_office]).to eq "RO89"
         expect(hearing[:room_info]).to eq "5"
       end
     end

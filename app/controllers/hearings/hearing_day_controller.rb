@@ -29,7 +29,7 @@ class Hearings::HearingDayController < HearingScheduleController
     hearing = HearingDay.create_hearing_day(create_params)
     return invalid_record_error(hearing) if hearing.nil?
     render json: {
-      hearing: hearing.as_json
+      hearing: json_hearing(hearing)
     }, status: :created
   end
 
@@ -40,7 +40,7 @@ class Hearings::HearingDayController < HearingScheduleController
 
     json_hearing = if updated_hearing.class.equal?(TrueClass)
                      if hearing.is_a?(HearingDay)
-                       hearing.to_hash
+                       json_hearing(hearing)
                      else
                        json_created_hearings(hearing)
                      end
@@ -107,18 +107,22 @@ class Hearings::HearingDayController < HearingScheduleController
 
   def json_hearings(hearings)
     hearings.each_with_object([]) do |hearing, result|
-      result << hearing.as_json.each_with_object({}) do |(k, v), converted|
-        converted[k] = if k.to_s == "room_info"
+      result << json_hearing(hearing)
+    end
+  end
+
+  def json_hearing(hearing)
+    hearing.as_json.each_with_object({}) do |(k, v), converted|
+        converted[k] = if k == "room_info"
                          HearingDayMapper.label_for_room(v)
-                       elsif k.to_s == "regional_office" && !v.nil?
+                       elsif k == "regional_office" && !v.nil?
                          HearingDayMapper.city_for_regional_office(v)
-                       elsif k.to_s == "hearing_type"
+                       elsif k == "hearing_type"
                          HearingDayMapper.label_for_type(v)
                        else
                          v
                        end
       end
-    end
   end
 
   def json_tb_hearings(tbhearings)
