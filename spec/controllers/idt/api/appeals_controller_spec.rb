@@ -1,4 +1,4 @@
-RSpec.describe Idt::Api::V1::AppealsController, type: :controller, focus: true do
+RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
   before do
     User.authenticate!(user: user)
 
@@ -180,7 +180,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller, focus: true d
               )
               expect(response_body["attributes"]["representative_address"]).to eq(nil)
               expect(response_body["attributes"]["aod"]).to eq ama_appeals.first.advanced_on_docket
-              expect(response_body["attributes"]["cavc"]).to eq "not implemented"
+              expect(response_body["attributes"]["cavc"]).to eq "not implemented for AMA"
               expect(response_body["attributes"]["issues"].first["program"]).to eq "Compensation"
               expect(response_body["attributes"]["issues"].second["program"]).to eq "Compensation"
               expect(response_body["attributes"]["status"]).to eq nil
