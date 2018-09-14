@@ -191,8 +191,10 @@ class TaskTable extends React.PureComponent<Props> {
       header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
       span: this.collapseColumnIfNoDASRecord,
       tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
-      valueFunction: (task) => moment().startOf('day').diff(moment(task.assignedOn), 'days'),
-      getSortValue: (task) => moment().startOf('day').diff(moment(task.assignedOn), 'days')
+      valueFunction: (task) => moment().startOf('day').
+        diff(moment(task.assignedOn), 'days'),
+      getSortValue: (task) => moment().startOf('day').
+        diff(moment(task.assignedOn), 'days')
     } : null;
   }
 
