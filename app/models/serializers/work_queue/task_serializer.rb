@@ -15,8 +15,8 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
     {
       first_name: object.assigned_by_display_name.first,
       last_name: object.assigned_by_display_name.last,
-      css_id: object.assigned_by.css_id,
-      pg_id: object.assigned_by.id
+      css_id: object.assigned_by.try(:css_id),
+      pg_id: object.assigned_by.try(:id)
     }
   end
 
