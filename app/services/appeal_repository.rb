@@ -136,6 +136,7 @@ class AppealRepository
       veteran_first_name: correspondent_record.snamef,
       veteran_middle_initial: correspondent_record.snamemi,
       veteran_last_name: correspondent_record.snamel,
+      veteran_name_suffix: correspondent_record.ssalut,
       veteran_date_of_birth: correspondent_record.sdob,
       veteran_gender: correspondent_record.sgender,
       outcoder_first_name: outcoder_record.try(:snamef),
