@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180911205053) do
+ActiveRecord::Schema.define(version: 20180914120847) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -550,6 +550,7 @@ ActiveRecord::Schema.define(version: 20180911205053) do
     t.integer "end_product_establishment_id"
     t.datetime "removed_at"
     t.datetime "rating_issue_associated_at"
+    t.integer "dta_issue_id"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
   end

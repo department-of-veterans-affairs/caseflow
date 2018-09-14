@@ -53,7 +53,6 @@ class EndProductEstablishment < ApplicationRecord
     return if reference_id
 
     set_establishment_values_from_source
-    binding.pry
 
     fail InvalidEndProductError unless end_product_to_establish.valid?
 

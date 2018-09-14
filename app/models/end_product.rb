@@ -16,6 +16,11 @@ class EndProduct
     "683SCRRRAMP" => "Supplemental Claim Review Rating"
   }.freeze
 
+  DTA_CODES = {
+    "040HDENR" => "Supplemental Claim Nonrating DTA",
+    "040HDER" => "Supplemental Claim Rating DTA"
+  }.freeze
+
   AMA_CODES = {
     "030HLRR" => "Higher-Level Review Rating",
     "030HLRNR" => "Higher-Level Review Nonrating",
@@ -54,7 +59,7 @@ class EndProduct
     "070RMBVAGPMC" => "PMC Remand with BVA Grant"
   }.freeze
 
-  CODES = DISPATCH_CODES.merge(RAMP_CODES).merge(AMA_CODES)
+  CODES = DISPATCH_CODES.merge(RAMP_CODES).merge(AMA_CODES).merge(DTA_CODES)
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 

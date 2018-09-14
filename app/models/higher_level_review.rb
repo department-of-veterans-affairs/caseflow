@@ -58,6 +58,18 @@ class HigherLevelReview < ClaimReview
     sc = create_supplemental_claim
     ep = sc.new_end_product_establishment(DTA_SUPPLEMENTAL_CLAIM_CODES[rating_code_type])
     ep.perform!
+
+    # create duplicate dta issues that link to original
+    new_issues = dta_issues.map do |dta_issue|
+      new_issue = dta_issue.dup
+      new_issue.assign_attributes(
+        dta_issue_id: dta_issue.id,
+        review_request_id: ep.id,
+        review_request_type: ep.source_type
+      )
+      new_issue
+    end
+    create_issues!(new_issues)
   end
 
   private

@@ -334,11 +334,6 @@ describe ClaimReview do
     end
 
     context "on a higher level review" do
-      # DTA Error – PMRs
-      # DTA Error – Fed Recs
-      # DTA Error – Other Recs
-      # DTA Error – Exam/MO
-
       let(:issues) { [rating_request_issue, second_rating_request_issue, non_rating_request_issue] }
 
       let(:rating_contention) do
@@ -360,7 +355,7 @@ describe ClaimReview do
       let(:non_rating_contention) do
         Generators::Contention.build(
           claim_id: end_product_establishment.reference_id,
-          text: "issue text",
+          text: "Issue text",
           disposition: "DTA Error – Exam/MO"
         )
       end
@@ -368,6 +363,19 @@ describe ClaimReview do
       before do
         claim_review.save!
         claim_review.create_issues!(issues)
+      end
+
+      def verify_followup_request_issue(end_product_id, orig_request_issue, contention)
+        follow_up_issue = RequestIssue.find_by(
+          review_request_id: end_product_id,
+          dta_issue_id: orig_request_issue.id
+        )
+
+        expect(follow_up_issue).to have_attributes(
+          :contention_reference_id => contention.id,
+          :description => orig_request_issue.description,
+          :review_request_type => "SupplementalClaim"
+        )
       end
 
       context "when it gets back dispositions with DTAs" do
@@ -381,7 +389,7 @@ describe ClaimReview do
           it "creates a supplemental claim for non rated issues" do
             claim_review.on_sync(end_product_establishment)
 
-            # find a supplemental claim by veteran id?
+            # find a supplemental claim by veteran id
             supplemental_claim = SupplementalClaim.find_by(
               veteran_file_number: claim_review.veteran_file_number,
               receipt_date: Time.zone.now.to_date)
@@ -394,21 +402,46 @@ describe ClaimReview do
             expect(end_product_establishment).to_not be_nil
 
             # find the new request issues by the end product establishment id (should be 2)
+            verify_followup_request_issue(
+              end_product_establishment.id,
+              rating_request_issue,
+              rating_contention
+            )
 
-            # make sure that there's some link from original request ratings to new request ratings?
-
+            verify_followup_request_issue(
+              end_product_establishment.id,
+              second_rating_request_issue,
+              second_rating_contention
+            )
           end
         end
 
         context "for non-rated issues" do
           before do
             RequestIssue.find_by(
-              description: non_contention.text).update!(
+              description: non_rating_contention.text).update!(
                 contention_reference_id: non_rating_contention.id)
           end
 
           it "creates a supplemental claim for rated issues" do
-            fail
+            claim_review.on_sync(end_product_establishment)
+
+            supplemental_claim = SupplementalClaim.find_by(
+              veteran_file_number: claim_review.veteran_file_number,
+              receipt_date: Time.zone.now.to_date)
+            expect(supplemental_claim).to_not be_nil
+
+            end_product_establishment = EndProductEstablishment.find_by(
+              code: "040HDER",
+              veteran_file_number: claim_review.veteran_file_number
+            )
+            expect(end_product_establishment).to_not be_nil
+
+            verify_followup_request_issue(
+              end_product_establishment.id,
+              non_rating_request_issue,
+              non_rating_contention
+            )
           end
         end
       end
