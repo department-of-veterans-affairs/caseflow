@@ -2,35 +2,45 @@ require "rails_helper"
 
 describe PrepareEstablishClaimTasksJob do
   before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
+  before do
     allow(VBMSService).to receive(:fetch_document_file) do |document|
       fail VBMS::ClientError, "Failure" if document.vbms_document_id == "2"
       "the decision file"
     end
   end
 
-  let!(:appeal_with_decision_document) do
-    Generators::LegacyAppeal.create(
-      vacols_record: { template: :remand_decided, decision_date: 7.days.ago },
-      documents: [Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago)]
-    )
+  let(:vacols_case_with_decision_document) do
+    create(:case_with_decision, :status_complete, case_issues:
+      [create(:case_issue, :education, :disposition_allowed)])
   end
 
-  let!(:appeal_with_failed_document) do
-    Generators::LegacyAppeal.create(
-      vacols_record: { template: :remand_decided, decision_date: 7.days.ago },
-      documents: [Generators::Document.build(
-        type: "BVA Decision",
-        received_at: 7.days.ago,
-        vbms_document_id: "2"
-      )]
-    )
+  let(:appeal_with_decision_document) do
+    create(:legacy_appeal, vacols_case: vacols_case_with_decision_document)
   end
 
-  let!(:appeal_without_decision_document) do
-    Generators::LegacyAppeal.create(
-      vacols_record: :remand_decided,
-      documents: [Generators::Document.build(type: "BVA Decision", received_at: 31.days.ago)]
-    )
+  let(:vacols_case_with_failed_document) do
+    create(:case_with_old_decision, :status_complete, case_issues:
+      [create(:case_issue, :education, :disposition_allowed)])
+  end
+
+  let(:appeal_with_failed_document) do
+    create(:legacy_appeal, vacols_case: vacols_case_with_failed_document)
+  end
+
+  let(:vacols_case_without_decision_document) do
+    create(:case, :status_complete, case_issues:
+        [create(:case_issue, :education, :disposition_allowed)], bfddec: 1.day.ago)
+  end
+
+  let(:appeal_without_decision_document) do
+    create(:legacy_appeal, vacols_case: vacols_case_without_decision_document)
   end
 
   let!(:preparable_task) do
@@ -52,8 +62,8 @@ describe PrepareEstablishClaimTasksJob do
       PrepareEstablishClaimTasksJob.perform_now
 
       expect(preparable_task.reload).to be_unassigned
-      expect(not_preparable_task.reload).to be_unprepared
       expect(failed_task.reload).to be_unprepared
+      expect(not_preparable_task.reload).to be_unprepared
 
       # Validate that the decision content is cached in S3
       expect(S3Service.files[filename]).to eq("the decision file")

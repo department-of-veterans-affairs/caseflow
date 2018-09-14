@@ -19,7 +19,7 @@ class LegacyAppeal < ApplicationRecord
   # This allows us to easily call `appeal.veteran_first_name` and dynamically
   # fetch the data from VACOLS if it does not already exist in memory
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
-  vacols_attr_accessor :veteran_date_of_birth, :veteran_gender
+  vacols_attr_accessor :veteran_name_suffix, :veteran_date_of_birth, :veteran_gender
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial
   vacols_attr_accessor :appellant_last_name, :appellant_name_suffix
   vacols_attr_accessor :outcoder_first_name, :outcoder_middle_initial, :outcoder_last_name
@@ -232,7 +232,11 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def veteran_is_deceased
-    !!notice_of_death_date
+    veteran_death_date.present?
+  end
+
+  def veteran_death_date
+    veteran && veteran.date_of_death
   end
 
   attr_writer :cavc_decisions
@@ -493,8 +497,14 @@ class LegacyAppeal < ApplicationRecord
     !case_record.decision_quality_reviews.empty?
   end
 
-  def outstanding_vacols_mail?
-    case_record.mail.any?(&:outstanding?)
+  def outstanding_vacols_mail
+    case_record.mail.map do |row|
+      {
+        outstanding: row.outstanding?,
+        code: row.mltype,
+        description: VACOLS::Mail::TYPES[row.mltype]
+      }
+    end
   end
 
   # VACOLS stores the VBA veteran unique identifier a little
