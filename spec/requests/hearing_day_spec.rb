@@ -123,6 +123,7 @@ RSpec.describe "Hearing Schedule", type: :request do
       Generators::Vacols::TravelBoardSchedule.create(tbyear: 2019, tbstdate: "2019-01-30 00:00:00",
                                                      tbenddate: "2019-02-03 00:00:00", tbmem1: "111")
       Generators::Vacols::Staff.create(sattyid: "111")
+      Generators::Vacols::Staff.create(sattyid: "105", snamel: "Randall", snamef: "Tony")
     end
 
     it "Get hearings for specified date range" do
@@ -133,6 +134,8 @@ RSpec.describe "Hearing Schedule", type: :request do
       get "/hearings/hearing_day", params: { start_date: "2019-01-01", end_date: "2019-06-15" }, headers: headers
       expect(response).to have_http_status(:success)
       expect(JSON.parse(response.body)["hearings"].size).to eq(3)
+      expect(JSON.parse(response.body)["hearings"][1]["judge_last_name"]).to eq("Randall")
+      expect(JSON.parse(response.body)["hearings"][1]["judge_first_name"]).to eq("Tony")
       expect(JSON.parse(response.body)["hearings"][2]["regional_office"]).to eq("Louisville, KY")
       expect(JSON.parse(response.body)["tbhearings"].size).to eq(1)
       expect(JSON.parse(response.body)["tbhearings"][0]["tbmem1"]).to eq("111")

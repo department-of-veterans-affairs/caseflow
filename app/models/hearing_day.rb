@@ -40,7 +40,7 @@ class HearingDay < ApplicationRecord
 
     def update_schedule(updated_hearings)
       updated_hearings.each do |hearing_hash|
-        hearing_to_update = HearingDay.find_hearing_day(hearing_hash[:hearing_type], hearing_hash[:hearing_key])
+        hearing_to_update = HearingDay.find_hearing_day(hearing_hash[:hearing_type], hearing_hash[:id])
         hearing_hash.delete(:hearing_key)
         HearingDay.update_hearing_day(hearing_to_update, hearing_hash)
       end
@@ -48,21 +48,37 @@ class HearingDay < ApplicationRecord
 
     def load_days(start_date, end_date, regional_office = nil)
       if regional_office.nil?
-        cf_video_and_co = where("DATE(hearing_date) between ? and ?",
-                                start_date, end_date).each_with_object([]) do |hearing_day, result|
-          result << hearing_day.to_hash
-        end
+        cf_video_and_co = where("DATE(hearing_date) between ? and ?", start_date, end_date).each_with_object([])
         video_and_co, travel_board = HearingDayRepository.load_days_for_range(start_date, end_date)
       else
         cf_video_and_co = where("regional_office = ? and DATE(hearing_date) between ? and ?",
-                                regional_office, start_date, end_date).each_with_object([]) do |hearing_day, result|
-          result << hearing_day.to_hash
-        end
+                                regional_office, start_date, end_date).each_with_object([])
         video_and_co, travel_board =
           HearingDayRepository.load_days_for_regional_office(regional_office, start_date, end_date)
       end
-      total_video_and_co = cf_video_and_co + video_and_co
+      cf_video_and_co = enrich_with_judge_names(cf_video_and_co)
+      total_video_and_co = video_and_co + cf_video_and_co
       [total_video_and_co, travel_board]
+    end
+
+    def enrich_with_judge_names(hearing_days)
+      vlj_ids = []
+      hearing_days_hash = []
+      hearing_days.each do |hearing_day|
+        hearing_days_hash << hearing_day.to_hash
+        vlj_ids << hearing_day[:judge_id]
+      end
+
+      judges = User.css_ids_by_vlj_ids(vlj_ids)
+
+      hearing_days_hash.each_with_object([]) do |hearing_day, result|
+        judge_info = judges[hearing_day[:judge_id]]
+        if !judge_info.nil?
+          hearing_day = hearing_day.merge(judge_first_name: judge_info[:first_name],
+                            judge_last_name: judge_info[:last_name])
+        end
+        result << hearing_day
+      end
     end
 
     def find_hearing_day(hearing_type, hearing_key)
