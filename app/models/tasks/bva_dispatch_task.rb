@@ -22,7 +22,7 @@ class BvaDispatchTask < GenericTask
     private
 
     def list_of_assignees
-      @list_of_assignees || Constants::BvaDispatchTeams::USERS[Rails.current_env]
+      Constants::BvaDispatchTeams::USERS[Rails.current_env]
     end
   end
 end
