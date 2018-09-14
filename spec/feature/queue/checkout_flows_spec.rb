@@ -83,6 +83,8 @@ RSpec.feature "Checkout flows" do
       expect(appeal.special_issue_list.radiation).to eq(true)
       click_on "Continue"
 
+      expect(page).to have_content "Select Dispositions"
+
       issue_rows = page.find_all("tr[id^='table-row-']")
       expect(issue_rows.length).to eq(appeal.request_issues.length)
 
@@ -401,22 +403,27 @@ RSpec.feature "Checkout flows" do
         delete_btn = find("button", text: "Delete Issue")
         expect(delete_btn.disabled?).to eq true
 
-        fields = page.find_all ".Select--single"
+        program = "BVA Original Jurisdiction"
+        issue = "Motions"
+        level = "Rule 608 motion to withdraw"
 
-        field_values = fields.map do |row|
-          next if row.matches_css? ".is-disabled"
+        find(".Select-control", text: "Select program").click
+        find("div", class: "Select-option", text: program).click
 
-          click_dropdown 0, row
-          row.find(".Select-value-label").text
-        end
+        find(".Select-control", text: "Select issue").click
+        find("div", class: "Select-option", text: issue).click
+
+        find(".Select-control", text: "Select level 1").click
+        find("div", class: "Select-option", text: level).click
+
         fill_in "Notes:", with: "added issue"
 
         click_on "Continue"
 
         expect(page).to have_content "You created a new issue."
-        expect(page).to have_content "Program: #{field_values.first}"
-        expect(page).to have_content "Issue: #{field_values.second}"
-        expect(page).to have_content field_values.last
+        expect(page).to have_content "Program: #{program}"
+        expect(page).to have_content "Issue: #{issue}"
+        expect(page).to have_content level
         expect(page).to have_content "Note: added issue"
 
         visit "/queue"

@@ -103,7 +103,10 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             get :list
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["data"]
-            ama_appeals = response_body.select { |appeal| appeal["type"] == "appeals" }
+            ama_appeals = response_body
+              .select { |appeal| appeal["type"] == "appeals" }
+              .sort_by { |appeal| appeal["attributes"]["file_number"]}
+
             expect(ama_appeals.size).to eq 2
             expect(ama_appeals.first["id"]).to eq tasks.first.appeal.uuid
             expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.first.appeal.docket_number
