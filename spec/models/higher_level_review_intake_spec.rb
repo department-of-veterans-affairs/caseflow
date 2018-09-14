@@ -71,6 +71,7 @@ describe HigherLevelReviewIntake do
     subject { intake.review!(params) }
 
     let(:receipt_date) { 1.day.ago }
+    let(:benefit_type) { "compensation" }
     let(:informal_conference) { false }
     let(:same_office) { false }
     let(:claimant) { nil }
@@ -86,6 +87,7 @@ describe HigherLevelReviewIntake do
     let(:params) do
       ActionController::Parameters.new(
         receipt_date: receipt_date,
+        benefit_type: benefit_type,
         informal_conference: informal_conference,
         same_office: same_office,
         claimant: claimant,

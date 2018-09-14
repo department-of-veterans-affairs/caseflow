@@ -12,10 +12,13 @@ describe SupplementalClaim do
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
   let(:receipt_date) { nil }
 
+  let(:benefit_type) { "compensation" }
+
   let(:supplemental_claim) do
     SupplementalClaim.new(
       veteran_file_number: veteran_file_number,
-      receipt_date: receipt_date
+      receipt_date: receipt_date,
+      benefit_type: benefit_type
     )
   end
 
