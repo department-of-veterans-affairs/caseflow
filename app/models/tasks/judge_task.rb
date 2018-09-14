@@ -11,7 +11,8 @@ class JudgeTask < Task
   end
 
   def previous_task
-    fail Caseflow::Error::TooManyChildTasks, task_id: id if children.length > 1
-    children[0]
+    children_attorney_tasks = children.where(type: "AttorneyTask")
+    fail Caseflow::Error::TooManyChildTasks, task_id: id if children_attorney_tasks.length > 1
+    children_attorney_tasks[0]
   end
 end
