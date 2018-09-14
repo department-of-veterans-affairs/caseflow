@@ -244,13 +244,15 @@ class SeedDB
     FactoryBot.create(:ama_judge_task, assigned_to: judge, appeal: @ama_appeals[0])
 
     parent = FactoryBot.create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: @ama_appeals[1], parent: root)
-    FactoryBot.create(
+    child = FactoryBot.create(
       :ama_attorney_task,
       assigned_to: attorney,
       assigned_by: judge,
       parent: parent,
       appeal: @ama_appeals[1]
-    ).update(status: :completed)
+    )
+    child.update(status: :completed)
+    FactoryBot.create(:attorney_case_review, task_id: child.id)
 
     parent = FactoryBot.create(:ama_judge_task, :on_hold, assigned_to: judge, appeal: @ama_appeals[2])
 
@@ -295,13 +297,15 @@ class SeedDB
       appeal: @ama_appeal_with_decision,
       parent: root
     )
-    FactoryBot.create(
+    child = FactoryBot.create(
       :ama_attorney_task,
       assigned_to: attorney,
       assigned_by: judge,
       parent: parent,
       appeal: @ama_appeal_with_decision
-    ).update(status: :completed)
+    )
+    child.update(status: :completed)
+    FactoryBot.create(:attorney_case_review, task_id: child.id)
 
     FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @appeal_with_vso)
 
