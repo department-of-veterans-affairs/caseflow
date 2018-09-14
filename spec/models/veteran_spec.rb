@@ -170,6 +170,7 @@ describe Veteran do
         sex: "M",
         first_name: "June",
         last_name: "Juniper",
+        name_suffix: nil,
         service: [{ branch_of_service: "army" }],
         ssn: "123456789",
         address_line1: "122 Mullberry St.",

@@ -159,16 +159,18 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
             expect(response_body["attributes"]["veteran_first_name"]).to eq ama_appeals.first.veteran_first_name
             expect(response_body["attributes"]["veteran_last_name"]).to eq ama_appeals.first.veteran_last_name
+            expect(response_body["attributes"]["veteran_name_suffix"]).to eq "II"
             expect(response_body["attributes"]["file_number"]).to eq ama_appeals.first.veteran_file_number
             expect(response_body["attributes"]["representative_type"]).to eq(
               ama_appeals.first.representative_type
             )
             expect(response_body["attributes"]["aod"]).to eq ama_appeals.first.advanced_on_docket
-            expect(response_body["attributes"]["cavc"]).to eq "not implemented"
+            expect(response_body["attributes"]["cavc"]).to eq "not implemented for AMA"
             expect(response_body["attributes"]["issues"].first["program"]).to eq "Compensation"
             expect(response_body["attributes"]["issues"].second["program"]).to eq "Compensation"
             expect(response_body["attributes"]["status"]).to eq nil
             expect(response_body["attributes"]["veteran_is_deceased"]).to eq true
+            expect(response_body["attributes"]["veteran_death_date"]).to eq "05/25/2016"
             expect(response_body["attributes"]["appellant_is_not_veteran"]).to eq true
             expect(response_body["attributes"]["appellant_first_name"]).to eq ama_appeals.first.appellant_first_name
             expect(response_body["attributes"]["appellant_last_name"]).to eq ama_appeals.first.appellant_last_name
@@ -191,6 +193,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
             expect(response_body["attributes"]["veteran_first_name"]).to eq appeals.first.veteran_first_name
             expect(response_body["attributes"]["veteran_last_name"]).to eq appeals.first.veteran_last_name
+            expect(response_body["attributes"]["veteran_name_suffix"]).to eq "PhD"
             expect(response_body["attributes"]["file_number"]).to eq appeals.first.veteran_file_number
             expect(response_body["attributes"]["representative_type"]).to eq(
               appeals.first.power_of_attorney.vacols_representative_type
@@ -199,7 +202,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             expect(response_body["attributes"]["cavc"]).to eq appeals.first.cavc
             expect(response_body["attributes"]["issues"]).to eq appeals.first.issues
             expect(response_body["attributes"]["status"]).to eq appeals.first.status
-            expect(response_body["attributes"]["veteran_is_deceased"]).to eq !!appeals.first.notice_of_death_date
+            expect(response_body["attributes"]["veteran_is_deceased"]).to eq appeals.first.veteran_is_deceased
+            expect(response_body["attributes"]["veteran_death_date"]).to eq appeals.first.veteran_death_date
             expect(response_body["attributes"]["appellant_is_not_veteran"]).to eq !!appeals.first.appellant_first_name
           end
 
@@ -223,7 +227,10 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               response_body = JSON.parse(response.body)["data"]
 
               expect(response_body["attributes"]["previously_selected_for_quality_review"]).to eq true
-              expect(response_body["attributes"]["outstanding_mail"]).to eq true
+              expect(response_body["attributes"]["outstanding_mail"]).to eq [
+                { "outstanding" => false, "code" => "02", "description" => "Congressional Interest" },
+                { "outstanding" => true, "code" => "05", "description" => "Evidence or Argument" }
+              ]
               expect(response_body["attributes"]["assigned_by"]).to eq "Lyor Cohen"
             end
 

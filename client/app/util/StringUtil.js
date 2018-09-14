@@ -62,6 +62,14 @@ const StringUtil = {
       }).
       join(' ');
   },
+
+  // convert snake_case to a sentence with the first letter capitalized
+  snakeCaseToSentence(variable) {
+    const sentence = variable.replace(/_/g, ' ');
+
+    return sentence[0].toUpperCase() + sentence.substring(1);
+  },
+
   html5CompliantId(str) {
     return str.replace(/[^A-Za-z0-9-]/g, '-').replace(/-+/g, '-');
   },
