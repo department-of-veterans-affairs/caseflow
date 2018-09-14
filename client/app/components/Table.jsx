@@ -219,7 +219,7 @@ export default class Table extends React.PureComponent {
 
     return <table
       id={id}
-      className={`usa-table-borderless cf-table-wrap ${this.props.className}`}
+      className={`usa-table-borderless ${this.props.className}`}
       summary={summary}
       {...styling} >
 
@@ -256,7 +256,7 @@ Table.propTypes = {
     PropTypes.func]).isRequired,
   rowObjects: PropTypes.arrayOf(PropTypes.object).isRequired,
   rowClassNames: PropTypes.func,
-  keyGetter: PropTypes.func.isRequired,
+  keyGetter: PropTypes.func,
   slowReRendersAreOk: PropTypes.bool,
   summary: PropTypes.string,
   headerClassName: PropTypes.string,

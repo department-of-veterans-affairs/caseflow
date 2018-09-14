@@ -828,19 +828,12 @@ form {
 }
 
 //--- Table styles ---*/
-.cf-table-wrap {
-  width: 100%;
-  overflow-x: auto;
-
-  table {
-    min-width: rem(400px);
-    width: 100%;
-  }
-}
-
 .usa-table-borderless {
-  tr {
-    border-bottom: 1px solid $color-gray-lighter;
+  width: 100%;
+
+  th,
+  td {
+    border-bottom-color: $color-gray-lighter;
   }
 
   td {
@@ -849,6 +842,7 @@ form {
     }
   }
 }
+
 
 // ===========================*
 // Form-related states
