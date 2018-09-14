@@ -35,12 +35,10 @@ export const ERROR_MAPPINGS = {
     'outside the range you selected.',
   'HearingSchedule::ValidateRoSpreadsheet::RoDatesNotCorrectFormat': 'The RO non-availability spreadsheet contains ' +
     'dates that are not in this format: mm/dd/yyyy.',
-  'HearingSchedule::ValidateRoSpreadsheet::RoTemplateNotFollowed': 'The RO non-availability spreadsheet contains ' +
-    'case insentive ro cites and states.',
-  'HearingSchedule::ValidateRoSpreadsheet::RoNotCaseSensitive': 'The RO non-availability spreadsheet contains ' +
-    'different ROs than we have in our system.',
+  'HearingSchedule::ValidateRoSpreadsheet::RoTemplateNotFollowed': 'The RO non-availability spreadsheet does not ' +
+    'follow the template.',
   'HearingSchedule::ValidateRoSpreadsheet::RoListedIncorrectly': 'The RO non-availability spreadsheet contains ' +
-      'different ROs than we have in our system.',
+    'different ROs than we have in our system.',
   'HearingSchedule::ValidateRoSpreadsheet::CoDatesNotUnique': 'The central office non-availability spreadsheet ' +
     'contains duplicate dates.',
   'HearingSchedule::ValidateRoSpreadsheet::CoDatesNotInRange': 'The central office non-availability spreadsheet ' +

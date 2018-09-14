@@ -47,8 +47,6 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     vacols_judges[vlj_id] &&
       vacols_judges[vlj_id][:first_name].downcase == name.split(", ")[1].strip.downcase &&
       vacols_judges[vlj_id][:last_name].downcase == name.split(", ")[0].strip.downcase
-      # vacols_judges[vlj_id][:first_name] == name.split(", ")[1].strip &&
-      # vacols_judges[vlj_id][:last_name] == name.split(", ")[0].strip
   end
 
   def check_range_of_dates(date)

@@ -44,13 +44,6 @@ class HearingSchedule::GetSpreadsheetData
     }
   end
 
-  def ro_non_availability_case_sensitive
-    {
-      title: ro_non_availability_sheet.row(1)[2],
-      ro_city_column: ro_non_availability_sheet.row(3).uniq,
-    }
-  end
-
   def ro_non_availability_data
     non_availability_dates = []
     ro_codes = ro_non_availability_sheet.row(2).drop(2)

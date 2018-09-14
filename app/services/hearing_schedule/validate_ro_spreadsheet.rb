@@ -4,7 +4,6 @@ class HearingSchedule::ValidateRoSpreadsheet
                                      Date.parse("2019/02/01"), Date.parse("2019/03/16"), Date.parse("2019/04/21"),
                                      Date.parse("2019/05/19")].freeze
   RO_NON_AVAILABILITY_EMPTY_COLUMN = [nil].freeze
-  RO_NON_AVAILABILITY_RO_CITY_COLUMN = ["ro city, state", "ithaca, ny", "boston, ma", "togus, me", "providence,ri"].freeze
 
   CO_SPREADSHEET_TITLE = "Board Non-Availability Dates and Holidays in Date Range".freeze
   CO_SPREADSHEET_EXAMPLE_ROW = ["Example", Date.parse("2018/10/31")].freeze
@@ -19,7 +18,6 @@ class HearingSchedule::ValidateRoSpreadsheet
   class RoDatesNotCorrectFormat < StandardError; end
   class RoTemplateNotFollowed < StandardError; end
   class RoListedIncorrectly < StandardError; end
-  class RoNotCaseSensitive < StandardError; end
   class CoDatesNotUnique < StandardError; end
   class CoDatesNotInRange < StandardError; end
   class CoDatesNotCorrectFormat < StandardError; end
@@ -34,7 +32,6 @@ class HearingSchedule::ValidateRoSpreadsheet
     @errors = []
     @ro_spreadsheet_template = get_spreadsheet_data.ro_non_availability_template
     @ro_spreadsheet_data = get_spreadsheet_data.ro_non_availability_data
-    @ro_spreadsheet_case_sensitive = get_spreadsheet_data.ro_non_availability_case_sensitive
     @co_spreadsheet_template = get_spreadsheet_data.co_non_availability_template
     @co_spreadsheet_data = get_spreadsheet_data.co_non_availability_data
     @allocation_spreadsheet_template = get_spreadsheet_data.allocation_template
@@ -63,13 +60,6 @@ class HearingSchedule::ValidateRoSpreadsheet
            @ro_spreadsheet_template[:example_row].compact == RO_NON_AVAILABILITY_EXAMPLE_ROW &&
            @ro_spreadsheet_template[:empty_column] == RO_NON_AVAILABILITY_EMPTY_COLUMN
       @errors << RoTemplateNotFollowed
-    end
-  end
-
-  def validate_ro_non_availability_case_insentive
-    unless @ro_spreadsheet_case_sensitive[:title] == RO_NON_AVAILABILITY_TITLE &&
-           @ro_spreadsheet_case_sensitive[:ro_city_column].compact == RO_NON_AVAILABILITY_RO_CITY_COLUMN &&
-      @errors << RoNotCaseSensitive
     end
   end
 
@@ -146,7 +136,6 @@ class HearingSchedule::ValidateRoSpreadsheet
     validate_co_non_availability_dates
     validate_hearing_allocation_template
     validate_hearing_allocation_days
-    validate_ro_non_availability_case_insentive
     @errors
   end
 end
