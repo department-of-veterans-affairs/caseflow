@@ -6,8 +6,6 @@ class Form8PdfService
   PDF_PAGE_1 = "form1[0].#subform[0].#area[0].".freeze
   PDF_PAGE_2 = "form1[0].#subform[1].".freeze
 
-  FORM8_S3_SUB_BUCKET = "form_8".freeze
-
   # Currently, the only thing on Page 2 of the VA Form 8 is the continued
   # remarks. As a result, we'll just say anything except for that is actually
   # on Page 1.
@@ -106,8 +104,7 @@ class Form8PdfService
       final_location
     )
 
-    S3Service.store_file(form8.pdf_filename, final_location, :filepath)
-    S3Service.store_file(FORM8_S3_SUB_BUCKET + "/" + form8.pdf_filename, final_location, :filepath)
+    S3Service.store_file(Form8::FORM8_S3_SUB_BUCKET + "/" + form8.pdf_filename, final_location, :filepath)
 
     # Remove it from the tmp_location, leaving it only in final_location
     File.delete(tmp_location)
