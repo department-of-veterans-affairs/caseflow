@@ -47,7 +47,7 @@ export default class ReviewAssignments extends React.Component {
   };
 
   getAlertButtons = () => {
-    return <div>
+    return <React.Fragment>
       <Link
         name="go-back"
         button="secondary"
@@ -62,7 +62,7 @@ export default class ReviewAssignments extends React.Component {
       >
         Confirm assignments
       </Button>
-    </div>;
+    </React.Fragment>;
   };
 
   modalConfirmButton = () => {

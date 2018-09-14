@@ -17,6 +17,29 @@ module Caseflow::Error
   class EfolderAccessForbidden < EfolderError; end
   class ClientRequestError < EfolderError; end
 
+  class ActionForbiddenError < SerializableError
+    def initialize(args)
+      @code = args[:code] || 403
+      @message = args[:message] || "Action forbidden"
+    end
+  end
+
+  class NoRootTask < SerializableError
+    def initialize(args)
+      @task_id = args[:task_id]
+      @code = args[:code] || 500
+      @message = args[:message] || "Could not find root task for task with ID #{@task_id}"
+    end
+  end
+
+  class TooManyChildTasks < SerializableError
+    def initialize(args)
+      @task_id = args[:task_id]
+      @code = args[:code] || 500
+      @message = args[:message] || "JudgeTask #{@task_id} has too many children"
+    end
+  end
+
   class MultipleAppealsByVBMSID < StandardError; end
   class CertificationMissingData < StandardError; end
   class InvalidSSN < StandardError; end

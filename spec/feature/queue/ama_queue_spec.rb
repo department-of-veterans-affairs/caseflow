@@ -18,6 +18,9 @@ RSpec.feature "AmaQueue" do
   let!(:attorney_user) do
     FactoryBot.create(:user, roles: ["Reader"], full_name: "#{attorney_first_name} #{attorney_last_name}")
   end
+
+  let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
+
   let!(:vacols_atty) do
     FactoryBot.create(
       :staff,
@@ -34,27 +37,26 @@ RSpec.feature "AmaQueue" do
 
   context "loads appellant detail view" do
     before do
-      allow_any_instance_of(Fakes::BGSService).to receive(:default_power_of_attorney_record).and_return(
-        file_number: "633792224",
-        power_of_attorney:
-          {
-            legacy_poa_cd: "3QQ",
-            nm: poa_name,
-            org_type_nm: "POA Attorney",
-            ptcpnt_id: "600153863"
-          },
-        ptcpnt_id: "600085544"
+      allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
+        appeals.first.claimants.first.participant_id => {
+          representative_name: poa_name,
+          representative_type: "POA Attorney",
+          participant_id: "600153863"
+        }
       )
     end
 
-    let(:poa_name) { "Test POA" }
+    let!(:root_task) { create(:root_task) }
+    let!(:parent_task) { create(:ama_judge_task, assigned_to: judge_user, appeal: appeals.first, parent: root_task) }
 
+    let(:poa_name) { "Test POA" }
+    let(:veteran_participant_id) { "600085544" }
     let!(:appeals) do
       [
         create(
           :appeal,
-          advanced_on_docket: true,
-          veteran: create(:veteran, bgs_veteran_record: { first_name: "Pal" }),
+          :advanced_on_docket,
+          veteran: create(:veteran, participant_id: veteran_participant_id, bgs_veteran_record: { first_name: "Pal" }),
           documents: create_list(:document, 5),
           request_issues: build_list(:request_issue, 3, description: "Knee pain")
         ),
@@ -66,7 +68,7 @@ RSpec.feature "AmaQueue" do
         ),
         create(
           :appeal,
-          :appellant_not_veteran,
+          number_of_claimants: 1,
           veteran: create(:veteran),
           documents: create_list(:document, 3),
           request_issues: build_list(:request_issue, 1, description: "Tinnitus")
@@ -74,29 +76,131 @@ RSpec.feature "AmaQueue" do
       ]
     end
 
-    xscenario "veteran is the appellant" do
-      visit "/queue/beaam"
-      click_on appeals.first.veteran.first_name
+    context "when appeals have tasks" do
+      let!(:attorney_tasks) do
+        [
+          create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user,
+            assigned_by: judge_user,
+            parent: parent_task,
+            appeal: appeals.first
+          ),
+          create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user,
+            assigned_by: judge_user,
+            appeal: appeals.second
+          ),
+          create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user,
+            assigned_by: judge_user,
+            appeal: appeals.third
+          )
+        ]
+      end
 
-      expect(page).to have_content("About the Veteran")
+      scenario "veteran is the appellant" do
+        visit "/queue"
 
-      expect(page).to have_content("AOD")
+        click_on appeals.first.veteran.first_name
 
-      expect(page).to have_content(appeals.first.request_issues.first.description)
-      expect(page).to have_content(appeals.first.docket_number)
-      expect(page).to have_content(poa_name)
+        expect(page).to have_content("A. Judge")
 
-      expect(page).to have_content("View Veteran's documents")
-      expect(page).to have_selector("text", id: "NEW")
-      expect(page).to have_content("5 docs")
+        expect(page).to have_content("About the Veteran")
 
-      click_on "View Veteran's documents"
-      expect(page).to have_content("Claims Folder")
+        expect(page).to have_content("AOD")
 
-      visit "/queue/beaam"
-      click_on appeals.first.veteran.first_name
+        expect(page).to have_content(appeals.first.request_issues.first.description)
+        expect(page).to have_content(appeals.first.docket_number)
+        expect(page).to have_content(poa_name)
 
-      expect(page).not_to have_selector("text", id: "NEW")
+        expect(page).to have_content("View Veteran's documents")
+        expect(page).to have_selector("text", id: "NEW")
+        expect(page).to have_content("5 docs")
+
+        click_on "View Veteran's documents"
+        expect(page).to have_content("Claims Folder")
+
+        visit "/queue"
+        click_on appeals.first.veteran.first_name
+
+        expect(page).not_to have_selector("text", id: "NEW")
+      end
+    end
+
+    context "when user is a vso" do
+      let!(:user) do
+        User.authenticate!(user: create(:user, roles: ["VSO"]))
+      end
+
+      let!(:appeals) do
+        [
+          create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id)]),
+          create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id_without_vso)])
+        ]
+      end
+
+      let(:veteran) { create(:veteran, file_number: "44556677") }
+
+      let(:participant_id) { "1234" }
+      let(:participant_id_without_vso) { "5678" }
+      let(:vso_participant_id) { "2452383" }
+      let(:participant_ids) { [participant_id, participant_id_without_vso] }
+      let(:url) { "vietnam-veterans" }
+
+      let!(:vso) do
+        Vso.create(
+          participant_id: vso_participant_id,
+          url: url
+        )
+      end
+
+      let(:vso_participant_ids) do
+        [
+          {
+            representative_name: "VIETNAM VETERANS OF AMERICA",
+            representative_type: "POA National Organization",
+            participant_id: vso_participant_id
+          },
+          {
+            representative_name: "PARALYZED VETERANS OF AMERICA, INC.",
+            representative_type: "POA National Organization",
+            participant_id: "2452383"
+          }
+        ]
+      end
+
+      let(:poas) do
+        {
+          participant_id => {
+            representative_name: "PARALYZED VETERANS OF AMERICA, INC.",
+            representative_type: "POA National Organization",
+            participant_id: vso_participant_id
+          },
+          participant_id_without_vso => {}
+        }
+      end
+
+      before do
+        allow_any_instance_of(BGSService).to receive(:get_participant_id_for_user).and_return(participant_id)
+        allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_id).and_return(vso_participant_ids)
+        allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids).and_return(poas)
+      end
+
+      scenario "when searching for cases" do
+        visit "/organizations/#{url}"
+
+        fill_in "searchBar", with: veteran.file_number
+        click_on "Search"
+
+        expect(page).to have_content(appeals.first.docket_number)
+        expect(page).to_not have_content(appeals.second.docket_number)
+      end
     end
   end
 end

@@ -27,8 +27,9 @@ RSpec.describe CaseReviewsController, type: :controller do
           User.stub = attorney
         end
 
+        let(:root_task) { create(:root_task) }
+        let(:judge_task) { create(:ama_judge_task, assigned_to: judge, parent: root_task) }
         let(:task) { create(:ama_attorney_task, assigned_to: attorney, assigned_by: judge, parent: judge_task) }
-        let(:judge_task) { create(:ama_judge_task, assigned_to: judge) }
 
         context "when all parameters are present to create Draft Decision" do
           let(:params) do
@@ -40,10 +41,11 @@ RSpec.describe CaseReviewsController, type: :controller do
               "document_id": "123456789.1234",
               "overtime": true,
               "note": "something",
-              "issues": [{ "disposition": "allowed", "id": decision_issue1.id },
-                         { "disposition": "remanded", "id": decision_issue2.id }]
+              "issues": [{ "disposition": "allowed", "id": request_issue1.id },
+                         { "disposition": "remanded", "id": request_issue2.id }]
             }
           end
+          let!(:bva_dispatch_task_count_before) { BvaDispatchTask.count }
 
           it "should be successful" do
             post :complete, params: { task_id: task.id, tasks: params }
@@ -53,14 +55,17 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(response_body["task"]["overtime"]).to eq true
             expect(response_body["task"]["note"]).to eq "something"
             expect(response_body.keys).to include "issues"
-            expect(response_body["issues"]["decision_issues"].size).to eq 2
+            # TODO: uncomment when we use decision issues
+            # expect(response_body["issues"]["decision_issues"].size).to eq 2
             expect(response_body["issues"]["request_issues"].size).to eq 2
-            expect(decision_issue1.reload.disposition).to eq "allowed"
-            expect(decision_issue2.reload.disposition).to eq "remanded"
+            expect(request_issue1.reload.disposition).to eq "allowed"
+            expect(request_issue2.reload.disposition).to eq "remanded"
             expect(task.reload.status).to eq "completed"
             expect(task.completed_at).to_not eq nil
             expect(task.parent.reload.status).to eq "assigned"
             expect(task.parent.action).to eq "review"
+
+            expect(bva_dispatch_task_count_before).to eq(BvaDispatchTask.count)
           end
         end
       end
@@ -70,7 +75,8 @@ RSpec.describe CaseReviewsController, type: :controller do
           User.stub = judge
         end
 
-        let(:task) { create(:ama_judge_task, assigned_to: judge) }
+        let(:root_task) { create(:root_task) }
+        let(:task) { create(:ama_judge_task, assigned_to: judge, parent: root_task) }
 
         context "when all parameters are present to send to sign a decision" do
           let(:params) do
@@ -83,8 +89,8 @@ RSpec.describe CaseReviewsController, type: :controller do
               "comment": "do this",
               "factors_not_considered": %w[theory_contention relevant_records],
               "areas_for_improvement": ["process_violations"],
-              "issues": [{ "disposition": "denied", "id": decision_issue1.id },
-                         { "disposition": "remanded", "id": decision_issue2.id }]
+              "issues": [{ "disposition": "denied", "id": request_issue1.id },
+                         { "disposition": "remanded", "id": request_issue2.id }]
             }
           end
 
@@ -103,13 +109,17 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(response_body["task"]["factors_not_considered"]).to eq %w[theory_contention relevant_records]
             expect(response_body["task"]["areas_for_improvement"]).to eq ["process_violations"]
             expect(response_body.keys).to include "issues"
-            expect(response_body["issues"]["decision_issues"].size).to eq 2
+            # TODO: uncomment when we use decision issues
+            # expect(response_body["issues"]["decision_issues"].size).to eq 2
             expect(response_body["issues"]["request_issues"].size).to eq 2
-            expect(decision_issue1.reload.disposition).to eq "denied"
-            expect(decision_issue2.reload.disposition).to eq "remanded"
+            expect(request_issue1.reload.disposition).to eq "denied"
+            expect(request_issue2.reload.disposition).to eq "remanded"
             expect(task.reload.status).to eq "completed"
             expect(task.completed_at).to_not eq nil
-            expect(task.parent).to be nil
+
+            bva_dispatch_task = BvaDispatchTask.find_by(parent_id: root_task.id)
+            expect(bva_dispatch_task.assigned_to).to eq(BvaDispatch.singleton)
+            expect(bva_dispatch_task.children.length).to eq(1)
           end
         end
       end
@@ -147,6 +157,7 @@ RSpec.describe CaseReviewsController, type: :controller do
               "note": "something"
             }
           end
+          let!(:bva_dispatch_task_count_before) { BvaDispatchTask.count }
 
           it "should be successful" do
             post :complete, params: { task_id: task_id, tasks: params }
@@ -155,6 +166,7 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(response_body["task"]["document_id"]).to eq "123456789.1234"
             expect(response_body["task"]["overtime"]).to eq true
             expect(response_body["task"]["note"]).to eq "something"
+            expect(bva_dispatch_task_count_before).to eq(BvaDispatchTask.count)
           end
         end
 
@@ -172,6 +184,7 @@ RSpec.describe CaseReviewsController, type: :controller do
                          { "disposition": "1", "id": vacols_issue_allowed.issseq }]
             }
           end
+          let!(:bva_dispatch_task_count_before) { BvaDispatchTask.count }
 
           it "should be successful" do
             post :complete, params: { task_id: task_id, tasks: params }
@@ -181,6 +194,7 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(response_body["task"]["overtime"]).to eq true
             expect(response_body["task"]["note"]).to eq "something"
             expect(response_body.keys).to include "issues"
+            expect(bva_dispatch_task_count_before).to eq(BvaDispatchTask.count)
           end
         end
 

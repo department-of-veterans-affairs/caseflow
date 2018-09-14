@@ -24,6 +24,7 @@ export const initialState = {
   editingIssue: {},
   docCountForAppeal: {},
   newDocsForAppeal: {},
+  specialIssues: {},
 
   /**
    * `stagedChanges` is an object of appeals that have been modified since
@@ -40,7 +41,8 @@ export const initialState = {
   attorneysOfJudge: [],
   attorneyAppealsLoadingState: {},
   isTaskAssignedToUserSelected: {},
-  attorneys: {}
+  attorneys: {},
+  organizationId: null
 };
 
 // eslint-disable-next-line max-statements
@@ -84,8 +86,10 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
     });
   case ACTIONS.DELETE_APPEAL:
     return update(state, {
+      tasks: { $unset: action.payload.appealId },
+      amaTasks: { $unset: action.payload.appealId },
       appeals: { $unset: action.payload.appealId },
-      tasks: { $unset: action.payload.appealId }
+      appealDetails: { $unset: action.payload.appealId }
     });
   case ACTIONS.EDIT_APPEAL:
     return update(state, {
@@ -194,7 +198,7 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
 
     return update(state, {
       editingIssue: {
-        $set: _.find(issues, (issue) => issue.vacols_sequence_id === Number(issueId))
+        $set: _.find(issues, (issue) => issue.id === Number(issueId))
       }
     });
   }
@@ -219,11 +223,11 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
     const issues = appeals[appealId].issues;
     let updatedIssues = [];
 
-    const editingIssueId = Number(editingIssue.vacols_sequence_id);
-    const editingExistingIssue = _.map(issues, 'vacols_sequence_id').includes(editingIssueId);
+    const editingIssueId = Number(editingIssue.id);
+    const editingExistingIssue = _.map(issues, 'id').includes(editingIssueId);
 
     if (editingExistingIssue) {
-      updatedIssues = _.map(issues, (issue) => issue.vacols_sequence_id === editingIssueId ? editingIssue : issue);
+      updatedIssues = _.map(issues, (issue) => issue.id === editingIssueId ? editingIssue : issue);
     } else {
       updatedIssues = issues.concat(editingIssue);
     }
@@ -247,8 +251,7 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
     const { appealId, issueId } = action.payload;
     const { stagedChanges: { appeals } } = state;
 
-    const issues = _.reject(appeals[appealId].issues,
-      (issue) => issue.vacols_sequence_id === Number(issueId));
+    const issues = _.reject(appeals[appealId].issues, (issue) => issue.id === Number(issueId));
 
     return update(state, {
       stagedChanges: {
@@ -368,6 +371,19 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
       }
     });
   }
+  case ACTIONS.SET_SPECIAL_ISSUE: {
+    return update(state, {
+      specialIssues: {
+        $merge: action.payload.specialIssues
+      }
+    });
+  }
+  case ACTIONS.SET_ORGANIZATION_ID:
+    return update(state, {
+      organizationId: {
+        $set: action.payload.id
+      }
+    });
   default:
     return state;
   }

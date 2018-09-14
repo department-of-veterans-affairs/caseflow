@@ -73,17 +73,24 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           ]
         end
 
+        let(:veteran1) { create(:veteran) }
+        let(:veteran2) { create(:veteran) }
+
+        let!(:ama_appeals) do
+          [
+            create(:appeal, veteran: veteran1, number_of_claimants: 2),
+            create(:appeal, veteran: veteran2, number_of_claimants: 1)
+          ]
+        end
+
+        let!(:tasks) do
+          [
+            create(:ama_attorney_task, assigned_to: user, appeal: ama_appeals.first),
+            create(:ama_attorney_task, assigned_to: user, appeal: ama_appeals.second)
+          ]
+        end
+
         context "with AMA appeals" do
-          let(:veteran1) { create(:veteran) }
-          let(:veteran2) { create(:veteran) }
-
-          let!(:tasks) do
-            [
-              create(:ama_attorney_task, assigned_to: user, appeal: create(:appeal, veteran: veteran1)),
-              create(:ama_attorney_task, assigned_to: user, appeal: create(:appeal, veteran: veteran2))
-            ]
-          end
-
           before do
             FeatureToggle.enable!(:idt_ama_appeals)
           end
@@ -96,7 +103,10 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             get :list
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["data"]
-            ama_appeals = response_body.select { |appeal| appeal["type"] == "appeals" }
+            ama_appeals = response_body
+              .select { |appeal| appeal["type"] == "appeals" }
+              .sort_by { |appeal| appeal["attributes"]["file_number"] }
+
             expect(ama_appeals.size).to eq 2
             expect(ama_appeals.first["id"]).to eq tasks.first.appeal.uuid
             expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.first.appeal.docket_number
@@ -135,6 +145,44 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           end
         end
 
+        context "and AMA appeal id URL parameter is passed" do
+          let(:params) { { appeal_id:  ama_appeals.first.uuid } }
+          let!(:request_issue1) { create(:request_issue, review_request: ama_appeals.first) }
+          let!(:request_issue2) { create(:request_issue, review_request: ama_appeals.first) }
+          let!(:case_review1) { create(:attorney_case_review, task_id: tasks.first.id) }
+          let!(:case_review2) { create(:attorney_case_review, task_id: tasks.first.id) }
+
+          it "succeeds and passes appeal info" do
+            get :details, params: params
+            expect(response.status).to eq 200
+            response_body = JSON.parse(response.body)["data"]
+
+            expect(response_body["attributes"]["veteran_first_name"]).to eq ama_appeals.first.veteran_first_name
+            expect(response_body["attributes"]["veteran_last_name"]).to eq ama_appeals.first.veteran_last_name
+            expect(response_body["attributes"]["veteran_name_suffix"]).to eq "II"
+            expect(response_body["attributes"]["file_number"]).to eq ama_appeals.first.veteran_file_number
+            expect(response_body["attributes"]["representative_type"]).to eq(
+              ama_appeals.first.representative_type
+            )
+            expect(response_body["attributes"]["aod"]).to eq ama_appeals.first.advanced_on_docket
+            expect(response_body["attributes"]["cavc"]).to eq "not implemented for AMA"
+            expect(response_body["attributes"]["issues"].first["program"]).to eq "Compensation"
+            expect(response_body["attributes"]["issues"].second["program"]).to eq "Compensation"
+            expect(response_body["attributes"]["status"]).to eq nil
+            expect(response_body["attributes"]["veteran_is_deceased"]).to eq true
+            expect(response_body["attributes"]["veteran_death_date"]).to eq "05/25/2016"
+            expect(response_body["attributes"]["appellant_is_not_veteran"]).to eq true
+            expect(response_body["attributes"]["appellant_first_name"]).to eq ama_appeals.first.appellant_first_name
+            expect(response_body["attributes"]["appellant_last_name"]).to eq ama_appeals.first.appellant_last_name
+            expect(response_body["attributes"]["assigned_by"]).to eq tasks.first.assigned_by.full_name
+            expect(response_body["attributes"]["documents"].size).to eq 2
+            expect(response_body["attributes"]["documents"].first["written_by"]).to eq case_review1.attorney.full_name
+            expect(response_body["attributes"]["documents"].first["document_id"]).to eq case_review1.document_id
+            expect(response_body["attributes"]["documents"].second["written_by"]).to eq case_review2.attorney.full_name
+            expect(response_body["attributes"]["documents"].second["document_id"]).to eq case_review2.document_id
+          end
+        end
+
         context "and legacy appeal id URL parameter is passed" do
           let(:params) { { appeal_id: appeals.first.vacols_id } }
 
@@ -145,6 +193,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
             expect(response_body["attributes"]["veteran_first_name"]).to eq appeals.first.veteran_first_name
             expect(response_body["attributes"]["veteran_last_name"]).to eq appeals.first.veteran_last_name
+            expect(response_body["attributes"]["veteran_name_suffix"]).to eq "PhD"
             expect(response_body["attributes"]["file_number"]).to eq appeals.first.veteran_file_number
             expect(response_body["attributes"]["representative_type"]).to eq(
               appeals.first.power_of_attorney.vacols_representative_type
@@ -153,7 +202,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             expect(response_body["attributes"]["cavc"]).to eq appeals.first.cavc
             expect(response_body["attributes"]["issues"]).to eq appeals.first.issues
             expect(response_body["attributes"]["status"]).to eq appeals.first.status
-            expect(response_body["attributes"]["veteran_is_deceased"]).to eq !!appeals.first.notice_of_death_date
+            expect(response_body["attributes"]["veteran_is_deceased"]).to eq appeals.first.veteran_is_deceased
+            expect(response_body["attributes"]["veteran_death_date"]).to eq appeals.first.veteran_death_date
             expect(response_body["attributes"]["appellant_is_not_veteran"]).to eq !!appeals.first.appellant_first_name
           end
 
@@ -177,7 +227,10 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               response_body = JSON.parse(response.body)["data"]
 
               expect(response_body["attributes"]["previously_selected_for_quality_review"]).to eq true
-              expect(response_body["attributes"]["outstanding_mail"]).to eq true
+              expect(response_body["attributes"]["outstanding_mail"]).to eq [
+                { "outstanding" => false, "code" => "02", "description" => "Congressional Interest" },
+                { "outstanding" => true, "code" => "05", "description" => "Evidence or Argument" }
+              ]
               expect(response_body["attributes"]["assigned_by"]).to eq "Lyor Cohen"
             end
 

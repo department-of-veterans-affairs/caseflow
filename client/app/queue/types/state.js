@@ -36,13 +36,19 @@ export type UiState = {
     savePending: boolean,
     saveSuccessful: ?boolean
   },
-  modal: Object,
+  modals: {|
+    deleteIssue?: boolean,
+    cancelCheckout?: boolean,
+    sendToAttorney?: boolean,
+    sendToTeam?: boolean
+  |},
   featureToggles: Object,
   selectedAssignee: ?string,
   selectedAssigneeSecondary: ?string,
   loadedUserId: ?number,
   userRole: string,
   userCssId: string,
+  userIsVsoEmployee: boolean,
   veteranCaseListIsVisible: boolean
 };
 
@@ -71,7 +77,9 @@ export type QueueState = {|
   attorneyAppealsLoadingState: AttorneyAppealsLoadingState,
   isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
   attorneys: Attorneys,
-  newDocsForAppeal: NewDocsForAppeal
+  newDocsForAppeal: NewDocsForAppeal,
+  organizationId: ?number,
+  specialIssues: Object
 |};
 
 export type State = {

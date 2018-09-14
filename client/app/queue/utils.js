@@ -14,6 +14,7 @@ import type {
   Issue,
   Issues
 } from './types/models';
+import type { NewDocsForAppeal } from './types/state';
 
 import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
@@ -23,6 +24,11 @@ import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
   tasks.reduce((acc, task: Object): Tasks => {
+    const decisionPreparedBy = task.attributes.decision_prepared_by.first_name ? {
+      firstName: task.attributes.decision_prepared_by.first_name,
+      lastName: task.attributes.decision_prepared_by.last_name
+    } : null;
+
     acc[task.attributes.external_appeal_id] = {
       addedByCssId: null,
       appealId: task.attributes.appeal_id,
@@ -31,7 +37,8 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       dueOn: null,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
-        id: task.attributes.assigned_to.id
+        id: task.attributes.assigned_to.id,
+        type: task.attributes.assigned_to.type
       },
       assignedBy: {
         firstName: task.attributes.assigned_by.first_name,
@@ -41,13 +48,14 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       },
       taskId: task.id,
       action: task.attributes.action,
-      documentId: null,
+      documentId: task.attributes.document_id,
       workProduct: null,
-      previousTaskAssignedOn: null,
+      previousTaskAssignedOn: task.attributes.previous_task.assigned_at,
       placedOnHoldAt: task.attributes.placed_on_hold_at,
       status: task.attributes.status,
       onHoldDuration: task.attributes.on_hold_duration,
-      instructions: task.attributes.instructions
+      instructions: task.attributes.instructions,
+      decisionPreparedBy
     };
 
     return acc;
@@ -91,8 +99,9 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       assignedOn: task.attributes.assigned_on,
       dueOn: task.attributes.due_on,
       assignedTo: {
-        cssId: task.attributes.user_id,
-        id: task.attributes.assigned_to_pg_id
+        cssId: task.attributes.assigned_to.css_id,
+        type: task.attributes.assigned_to.type,
+        id: task.attributes.assigned_to.id
       },
       assignedBy: {
         firstName: task.attributes.assigned_by.first_name,
@@ -103,11 +112,12 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       addedByName: task.attributes.added_by_name,
       addedByCssId: task.attributes.added_by_css_id,
       taskId: task.attributes.task_id,
-      taskType: task.attributes.task_type,
+      action: task.attributes.action,
       documentId: task.attributes.document_id,
       workProduct: task.attributes.work_product,
       previousTaskAssignedOn: task.attributes.previous_task.assigned_on,
-      status: task.attributes.status
+      status: task.attributes.status,
+      decisionPreparedBy: null
     };
   });
 
@@ -126,6 +136,21 @@ export const associateTasksWithAppeals =
       appeals: extractAppealsFromTasks(tasks)
     };
   };
+
+export const prepareAppealIssuesForStore = (appeal: { attributes: Object }) => {
+  // Give even legacy issues an 'id' property, because other issues will have it,
+  // so we can refer to this property and phase out use of vacols_sequence_id.
+  let issues = appeal.attributes.issues;
+
+  if (appeal.attributes.docket_name === 'legacy') {
+    issues = issues.map((issue) => ({
+      id: issue.vacols_sequence_id,
+      ...issue
+    }));
+  }
+
+  return issues;
+};
 
 export const prepareAppealForStore =
   (appeals: Array<Object>):
@@ -150,8 +175,8 @@ export const prepareAppealForStore =
 
     const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
       accumulator[appeal.attributes.external_id] = {
-        issues: appeal.attributes.issues,
         hearings: appeal.attributes.hearings,
+        issues: prepareAppealIssuesForStore(appeal),
         appellantFullName: appeal.attributes.appellant_full_name,
         appellantAddress: appeal.attributes.appellant_address,
         appellantRelationship: appeal.attributes.appellant_relationship,
@@ -213,12 +238,18 @@ export const getDecisionTypeDisplay = (decision: {type?: string} = {}) => {
   }
 };
 
-export const getIssueProgramDescription = (issue: Issue) => _.get(ISSUE_INFO[issue.program], 'description', '');
+export const getIssueProgramDescription = (issue: Issue) =>
+  _.get(ISSUE_INFO[issue.program], 'description', '') || 'Compensation';
 export const getIssueTypeDescription = (issue: Issue) => {
   const {
     program,
-    type
+    type,
+    description
   } = issue;
+
+  if (!program) {
+    return description;
+  }
 
   return _.get(ISSUE_INFO[program].levels, `${type}.description`);
 };
@@ -278,7 +309,7 @@ export const buildCaseReviewPayload = (
   payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => _.extend({},
     _.pick(issue, ['remand_reasons', 'type', 'readjudication']),
     { disposition: _.capitalize(issue.disposition) },
-    { id: issue.vacols_sequence_id }
+    { id: issue.id }
   ));
 
   return payload;
@@ -318,5 +349,12 @@ export const validateWorkProductTypeAndId = (decision: {opts: Object}) => {
   return oldFormat.test(documentId) || newFormat.test(documentId);
 };
 
-export const getTaskDaysWaiting = (task: Task) => moment().startOf('day').
-  diff(moment(task.assignedOn), 'days');
+export const taskHasNewDocuments = (task: Task, newDocsForAppeal: NewDocsForAppeal) => {
+  if (!newDocsForAppeal[task.externalAppealId] || !newDocsForAppeal[task.externalAppealId].docs) {
+    return false;
+  }
+
+  return newDocsForAppeal[task.externalAppealId].docs.length > 0;
+};
+
+export const taskIsOnHold = (task: Task) => moment().diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;

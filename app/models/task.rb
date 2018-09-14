@@ -4,6 +4,7 @@ class Task < ApplicationRecord
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
+  has_many :attorney_case_reviews
 
   validates :assigned_to, :appeal, :type, :status, presence: true
 
@@ -29,11 +30,12 @@ class Task < ApplicationRecord
     ["", ""]
   end
 
-  def self.create_from_params(params, _create_from_params)
+  def self.create_from_params(params, current_user)
+    verify_user_can_assign(current_user)
     create(params)
   end
 
-  def update_from_params(params)
+  def update_from_params(params, _current_user)
     update(params)
   end
 
@@ -49,6 +51,20 @@ class Task < ApplicationRecord
     type == "ColocatedTask"
   end
 
+  def latest_attorney_case_review
+    sub_task ? sub_task.attorney_case_reviews.order(:created_at).last : nil
+  end
+
+  def prepared_by_display_name
+    return nil unless latest_attorney_case_review
+
+    if latest_attorney_case_review.attorney.try(:full_name)
+      return latest_attorney_case_review.attorney.full_name.split(" ")
+    end
+
+    ["", ""]
+  end
+
   def mark_as_complete!
     update!(status: :completed)
     parent.when_child_task_completed if parent
@@ -58,7 +74,40 @@ class Task < ApplicationRecord
     update_status_if_children_tasks_are_complete
   end
 
+  def can_user_access?(user)
+    return true if assigned_to == user || assigned_by == user
+    false
+  end
+
+  def verify_user_access(user)
+    unless can_user_access?(user)
+      fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot access this task"
+    end
+  end
+
+  def self.verify_user_can_assign(user)
+    unless (user.attorney_in_vacols? && FeatureToggle.enabled?(:attorney_assignment_to_colocated, user: user)) ||
+           (user.judge_in_vacols? && FeatureToggle.enabled?(:judge_assignment_to_attorney, user: user))
+      fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot assign this task"
+    end
+  end
+
+  def root_task(task_id = nil)
+    task_id = id if task_id.nil?
+    return parent.root_task(task_id) if parent
+    return self if type == RootTask.name
+    fail Caseflow::Error::NoRootTask, task_id: task_id
+  end
+
+  def previous_task
+    nil
+  end
+
   private
+
+  def sub_task
+    children.first
+  end
 
   def update_status_if_children_tasks_are_complete
     if children.any? && children.reject { |t| t.status == "completed" }.empty?

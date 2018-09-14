@@ -7,17 +7,21 @@ import { connect } from 'react-redux';
 import {
   appealWithDetailSelector,
   tasksForAppealAssignedToAttorneySelector,
-  tasksForAppealAssignedToUserSelector
+  tasksForAppealAssignedToUserSelector,
+  incompleteOrganizationTasksByAssigneeIdSelector
 } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
-import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
+import AttorneyActionsDropdown from './components/AttorneyActionsDropdown';
 import JudgeActionsDropdown from './components/JudgeActionsDropdown';
 import ColocatedActionsDropdown from './components/ColocatedActionsDropdown';
+import GenericTaskActionsDropdown from './components/GenericTaskActionsDropdown';
+import CopyTextButton from '../components/CopyTextButton';
 
 import COPY from '../../COPY.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import { COLORS } from '../constants/AppConstants';
+import StringUtil from '../util/StringUtil';
 
 import { renderLegacyAppealType } from './utils';
 import { DateString } from '../util/DateUtil';
@@ -65,7 +69,8 @@ type Props = Params & {|
   userRole: string,
   appeal: Appeal,
   taskAssignedToUser: Task,
-  taskAssignedToAttorney: Task
+  taskAssignedToAttorney: Task,
+  taskAssignedToOrganization: Task
 |};
 
 export class CaseSnapshot extends React.PureComponent<Props> {
@@ -83,11 +88,66 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     return null;
   };
 
-  taskAssignmentListItems = () => {
+  getAbbrevName = ({ firstName, lastName } : { firstName: string, lastName: string }) => {
+    return `${firstName.substring(0, 1)}. ${lastName}`;
+  }
+
+  getActionName = () => {
+    const {
+      action
+    } = this.props.taskAssignedToUser;
+
+    // First see if there is a constant to convert the action, otherwise sentence-ify it
+    if (CO_LOCATED_ADMIN_ACTIONS[action]) {
+      return CO_LOCATED_ADMIN_ACTIONS[action];
+    }
+
+    return StringUtil.snakeCaseToSentence(action);
+  }
+
+  taskInformation = () => {
+    const {
+      taskAssignedToUser
+    } = this.props;
+    const assignedByAbbrev = taskAssignedToUser.assignedBy.firstName ?
+      this.getAbbrevName(taskAssignedToUser.assignedBy) : null;
+
+    const preparedByAbbrev = taskAssignedToUser.decisionPreparedBy ?
+      this.getAbbrevName(taskAssignedToUser.decisionPreparedBy) : null;
+
+    return <React.Fragment>
+      { taskAssignedToUser.action &&
+        <React.Fragment>
+          <dt>{COPY.CASE_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{this.getActionName()}</dd>
+        </React.Fragment> }
+      { assignedByAbbrev &&
+        <React.Fragment>
+          <dt>{COPY.CASE_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
+        </React.Fragment> }
+      { taskAssignedToUser.instructions &&
+        <React.Fragment>
+          <dt>{COPY.CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt><dd>{taskAssignedToUser.instructions}</dd>
+        </React.Fragment> }
+      { preparedByAbbrev &&
+        <React.Fragment>
+          <dt>{COPY.CASE_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{preparedByAbbrev}</dd>
+        </React.Fragment> }
+    </React.Fragment>;
+  }
+
+  legacyTaskInformation = () => {
+    // If this is not a task attached to a legacy appeal, use taskInformation.
+    if (!this.props.appeal.locationCode) {
+      return this.taskInformation();
+    }
+
     const {
       userRole,
       taskAssignedToUser
     } = this.props;
+
+    const assignedByAbbrev = taskAssignedToUser.assignedBy.firstName ?
+      this.getAbbrevName(taskAssignedToUser.assignedBy) : null;
 
     const assignedToListItem = <React.Fragment>
       <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.locationCode}</dd>
@@ -107,18 +167,14 @@ export class CaseSnapshot extends React.PureComponent<Props> {
         return assignedToListItem;
       }
 
-      const firstInitial = String.fromCodePoint(assignedByFirstName.codePointAt(0));
-      const nameAbbrev = `${firstInitial}. ${assignedByLastName}`;
-
       if (userRole === USER_ROLE_TYPES.judge) {
         return <React.Fragment>
-          <dt>{COPY.CASE_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{nameAbbrev}</dd>
-          <dt>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</dt><dd>{taskAssignedToUser.documentId}</dd>
+          <dt>{COPY.CASE_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{assignedByAbbrev}</dd>
         </React.Fragment>;
       } else if (userRole === USER_ROLE_TYPES.colocated) {
         return <React.Fragment>
           <dt>{COPY.CASE_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{CO_LOCATED_ADMIN_ACTIONS[taskAssignedToUser.action]}</dd>
-          <dt>{COPY.CASE_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{nameAbbrev}</dd>
+          <dt>{COPY.CASE_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
           <dt>{COPY.CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt><dd>{taskAssignedToUser.instructions}</dd>
         </React.Fragment>;
       }
@@ -146,6 +202,9 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     if (this.props.taskAssignedToAttorney) {
       return true;
     }
+    if (this.props.taskAssignedToOrganization && this.props.taskAssignedToOrganization.assignedTo.type !== 'Vso') {
+      return true;
+    }
 
     return false;
   }
@@ -153,17 +212,20 @@ export class CaseSnapshot extends React.PureComponent<Props> {
   render = () => {
     const {
       appeal,
+      taskAssignedToUser,
       userRole
     } = this.props;
     let CheckoutDropdown = <React.Fragment />;
     const dropdownArgs = { appealId: appeal.externalId };
 
     if (userRole === USER_ROLE_TYPES.attorney) {
-      CheckoutDropdown = <SelectCheckoutFlowDropdown {...dropdownArgs} />;
+      CheckoutDropdown = <AttorneyActionsDropdown {...dropdownArgs} />;
     } else if (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout) {
       CheckoutDropdown = <JudgeActionsDropdown {...dropdownArgs} />;
     } else if (userRole === USER_ROLE_TYPES.colocated) {
       CheckoutDropdown = <ColocatedActionsDropdown {...dropdownArgs} />;
+    } else {
+      CheckoutDropdown = <GenericTaskActionsDropdown {...dropdownArgs} />;
     }
 
     return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
@@ -178,12 +240,17 @@ export class CaseSnapshot extends React.PureComponent<Props> {
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
           <dd>{appeal.docketNumber}</dd>
           {this.daysSinceTaskAssignmentListItem()}
+          { taskAssignedToUser.documentId &&
+            <React.Fragment>
+              <dt>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</dt>
+              <dd><CopyTextButton text={taskAssignedToUser.documentId} /></dd>
+            </React.Fragment> }
         </CaseDetailsDescriptionList>
       </div>
       <div className="usa-width-one-fourth">
         <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_TASK_ASSIGNMENT_BOX_TITLE}</h3>
         <CaseDetailsDescriptionList>
-          {this.taskAssignmentListItems()}
+          {this.legacyTaskInformation()}
         </CaseDetailsDescriptionList>
       </div>
       {this.showActionsSection() &&
@@ -204,7 +271,9 @@ const mapStateToProps = (state: State, ownProps: Params) => {
     featureToggles,
     userRole,
     taskAssignedToUser: tasksForAppealAssignedToUserSelector(state, { appealId: ownProps.appealId })[0],
-    taskAssignedToAttorney: tasksForAppealAssignedToAttorneySelector(state, { appealId: ownProps.appealId })[0]
+    taskAssignedToAttorney: tasksForAppealAssignedToAttorneySelector(state, { appealId: ownProps.appealId })[0],
+    taskAssignedToOrganization: incompleteOrganizationTasksByAssigneeIdSelector(state,
+      { appealId: ownProps.appealId })[0]
   };
 };
 

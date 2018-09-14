@@ -71,6 +71,19 @@ class SelectDispositionsView extends React.PureComponent {
     return `${baseUrl}/${nextStep}`;
   }
 
+  getPrevStepUrl = () => {
+    const {
+      appealId,
+      appeal
+    } = this.props;
+
+    if (appeal.docketName === 'legacy') {
+      return `/queue/appeals/${appealId}`;
+    }
+
+    return `/queue/appeals/${appealId}/special_issues`;
+  }
+
   componentWillUnmount = () => this.props.hideSuccessMessage();
   componentDidMount = () => {
     if (this.props.userRole === USER_ROLE_TYPES.attorney) {
@@ -93,32 +106,44 @@ class SelectDispositionsView extends React.PureComponent {
   };
 
   getKeyForRow = (rowNumber) => rowNumber;
-  getColumns = () => [{
-    header: 'Issues',
-    valueFunction: (issue, idx) => <IssueList
-      appeal={{ issues: [issue] }}
-      idxToDisplay={idx + 1}
-      showDisposition={false}
-      stretchToFullWidth />
-  }, {
-    header: 'Actions',
-    valueFunction: (issue) => <Link
-      to={`/queue/appeals/${this.props.appealId}/dispositions/edit/${issue.vacols_sequence_id}`}
-    >
-      Edit Issue
-    </Link>
-  }, {
-    header: 'Dispositions',
-    valueFunction: (issue) => <SelectIssueDispositionDropdown
-      updateIssue={_.partial(this.updateIssue, issue.vacols_sequence_id)}
-      issue={issue}
-      appealId={this.props.appealId} />
-  }];
+  getColumns = () => {
+    const {
+      appeal,
+      appealId
+    } = this.props;
+
+    const columns = [{
+      header: 'Issues',
+      valueFunction: (issue, idx) => <IssueList
+        appeal={{ issues: [issue] }}
+        idxToDisplay={idx + 1}
+        showDisposition={false}
+        stretchToFullWidth />
+    }, {
+      header: 'Dispositions',
+      valueFunction: (issue) => <SelectIssueDispositionDropdown
+        updateIssue={_.partial(this.updateIssue, issue.id)}
+        issue={issue}
+        appeal={appeal} />
+    }];
+
+    if (appeal.docketName === 'legacy') {
+      columns.splice(1, 0, {
+        header: 'Actions',
+        valueFunction: (issue) => <Link to={`/queue/appeals/${appealId}/dispositions/edit/${issue.id}`}>
+          Edit Issue
+        </Link>
+      });
+    }
+
+    return columns;
+  };
 
   render = () => {
     const {
       success,
       appealId,
+      appeal,
       appeal: { issues }
     } = this.props;
 
@@ -138,9 +163,9 @@ class SelectDispositionsView extends React.PureComponent {
         styling={tableStyling}
         bodyStyling={tbodyStyling}
       />
-      <div {...marginLeft(1.5)}>
+      {appeal.docketName === 'legacy' && <div {...marginLeft(1.5)}>
         <Link to={`/queue/appeals/${appealId}/dispositions/add`}>Add Issue</Link>
-      </div>
+      </div>}
     </React.Fragment>;
   };
 }

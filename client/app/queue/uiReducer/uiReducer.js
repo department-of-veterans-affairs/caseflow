@@ -16,10 +16,11 @@ export const initialState = {
     error: null
   },
   saveState: initialSaveState,
-  modal: {},
+  modals: {},
   featureToggles: {},
   userRole: '',
   userCssId: '',
+  userIsVsoEmployee: false,
   loadedUserId: null,
   selectedAssignee: null,
   selectedAssigneeSecondary: null,
@@ -43,7 +44,7 @@ const hideSuccessMessage = (state) => setSuccessMessageState(state, null);
 const showSuccessMessage = (state, message = { title: 'Success' }) => setSuccessMessageState(state, message);
 
 const setModalState = (state, visibility, modalType) => update(state, {
-  modal: {
+  modals: {
     [modalType]: {
       $set: visibility
     }
@@ -139,6 +140,10 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
   case ACTIONS.SET_USER_CSS_ID:
     return update(state, {
       userCssId: { $set: action.payload.cssId }
+    });
+  case ACTIONS.SET_USER_IS_VSO_EMPLOYEE:
+    return update(state, {
+      userIsVsoEmployee: { $set: action.payload.userIsVsoEmployee }
     });
   case ACTIONS.SET_SELECTED_ASSIGNEE:
     return update(state, {

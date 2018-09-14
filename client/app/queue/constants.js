@@ -7,7 +7,6 @@ import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import StringUtil from '../util/StringUtil';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
-import CO_LOCATED_ACTIONS from '../../constants/CO_LOCATED_ACTIONS.json';
 import VACOLS_COLUMN_MAX_LENGTHS from '../../constants/VACOLS_COLUMN_MAX_LENGTHS.json';
 
 export const COLORS = {
@@ -50,8 +49,10 @@ export const ACTIONS = {
   ERROR_LOADING_ATTORNEYS: 'ERROR_LOADING_ATTORNEYS',
   RECEIVE_TASKS: 'RECEIVE_TASKS',
   RECEIVE_APPEAL_DETAILS: 'RECEIVE_APPEAL_DETAILS',
+  SET_ORGANIZATION_ID: 'SET_ORGANIZATION_ID',
   SET_TASK_ASSIGNMENT: 'SET_TASK_ASSIGNMENT',
-  SET_TASK_ATTRS: 'SET_TASK_ATTRS'
+  SET_TASK_ATTRS: 'SET_TASK_ATTRS',
+  SET_SPECIAL_ISSUE: 'SET_SPECIAL_ISSUE'
 };
 
 // 'red' isn't contrasty enough w/white; it raises Sniffybara::PageNotAccessibleError when testing
@@ -83,16 +84,12 @@ export const TASK_ACTIONS = {
   QUEUE_TO_READER: 'queue-to-reader'
 };
 
-export const COLOCATED_ACTIONS = [{
-  // label: COPY.COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM,
-  // value: CO_LOCATED_ACTIONS.SEND_TO_TEAM
-// }, {
-  label: COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
-  value: CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY
-}];
-
 export const JUDGE_DECISION_OPTIONS = {
   DRAFT_DECISION: {
+    label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
+    value: DECISION_TYPES.DISPATCH
+  },
+  SPECIAL_ISSUES: {
     label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
     value: DECISION_TYPES.DISPATCH
   },
@@ -102,12 +99,17 @@ export const JUDGE_DECISION_OPTIONS = {
   }
 };
 
-export const DRAFT_DECISION_OPTIONS = [{
+export const DRAFT_DECISION_LEGACY_OPTIONS = [{
   label: COPY.ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
   value: DECISION_TYPES.DRAFT_DECISION
 }, {
   label: COPY.ATTORNEY_CHECKOUT_OMO_LABEL,
   value: DECISION_TYPES.OMO_REQUEST
+}];
+
+export const DRAFT_DECISION_OPTIONS = [{
+  label: COPY.ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
+  value: DECISION_TYPES.DRAFT_DECISION
 }];
 
 export const OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES = [{
@@ -160,3 +162,8 @@ export const PAGE_TITLES = {
 };
 
 export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, 'Custom'];
+
+export const SEND_TO_LOCATION_MODAL_TYPES = {
+  attorney: 'sendToAttorney',
+  team: 'sendToTeam'
+};

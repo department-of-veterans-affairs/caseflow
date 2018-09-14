@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+// @flow
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
@@ -21,7 +21,21 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
 
-class AttorneyTaskListView extends React.PureComponent {
+import type { TaskWithAppeal } from './types/models';
+
+type Params = {||};
+
+type Props = Params & {|
+  tasks: Array<TaskWithAppeal>,
+  messages: Object,
+  resetSaveState: typeof resetSaveState,
+  resetSuccessMessages: typeof resetSuccessMessages,
+  resetErrorMessages: typeof resetErrorMessages,
+  clearCaseSelectSearch: typeof clearCaseSelectSearch,
+  showErrorMessage: typeof showErrorMessage,
+|};
+
+class AttorneyTaskListView extends React.PureComponent<Props> {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();
@@ -77,10 +91,6 @@ class AttorneyTaskListView extends React.PureComponent {
   };
 }
 
-AttorneyTaskListView.propTypes = {
-  tasks: PropTypes.object.isRequired
-};
-
 const mapStateToProps = (state) => {
   const {
     queue: {
@@ -110,4 +120,4 @@ const mapDispatchToProps = (dispatch) => ({
   }, dispatch)
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(AttorneyTaskListView);
+export default (connect(mapStateToProps, mapDispatchToProps)(AttorneyTaskListView): React.ComponentType<Params>);

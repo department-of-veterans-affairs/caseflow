@@ -1796,20 +1796,23 @@ describe LegacyAppeal do
     end
   end
 
-  context "#has_outstanding_vacols_mail?" do
+  context "#has_outstanding_vacols_mail" do
     let(:vacols_case) { create(:case) }
-    subject { appeal.outstanding_vacols_mail? }
+    subject { appeal.outstanding_vacols_mail }
 
     context "when no mail is outstanding" do
       it "returns false" do
-        expect(subject).to eq false
+        expect(subject).to eq [{ outstanding: false, code: "02", description: "Congressional Interest" }]
       end
     end
 
     context "when mail is outstanding" do
       let(:vacols_case) { create(:case, :outstanding_mail) }
       it "returns true" do
-        expect(subject).to eq true
+        expect(subject).to eq [
+          { outstanding: false, code: "02", description: "Congressional Interest" },
+          { outstanding: true, code: "05", description: "Evidence or Argument" }
+        ]
       end
     end
   end

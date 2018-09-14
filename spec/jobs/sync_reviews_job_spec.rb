@@ -40,5 +40,28 @@ describe SyncReviewsJob do
 
       SyncReviewsJob.perform_now("limit" => 2)
     end
+
+    context "when there are ramp refilings that need to be reprocessed" do
+      before do
+        allow(RampRefiling).to receive(:need_to_reprocess).and_return([ramp_refiling, ramp_refiling2])
+      end
+
+      let(:ramp_refiling) { RampRefiling.new }
+      let(:ramp_refiling2) { RampRefiling.new }
+
+      it "attempts to reproccess them" do
+        expect(ramp_refiling).to receive(:create_end_product_and_contentions!)
+        expect(ramp_refiling2).to receive(:create_end_product_and_contentions!)
+        SyncReviewsJob.perform_now
+      end
+
+      context "when an error is thrown" do
+        it "swallows it and carries on" do
+          allow(ramp_refiling).to receive(:create_end_product_and_contentions!).and_raise(StandardError.new)
+          expect(ramp_refiling2).to receive(:create_end_product_and_contentions!)
+          SyncReviewsJob.perform_now
+        end
+      end
+    end
   end
 end

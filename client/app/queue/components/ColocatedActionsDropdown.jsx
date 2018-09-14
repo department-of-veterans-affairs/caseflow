@@ -3,25 +3,30 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
+import { sprintf } from 'sprintf-js';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 
-import { getTasksForAppeal } from '../selectors';
 import {
-  stageAppeal,
-  checkoutStagedAppeal
-} from '../QueueActions';
-import { showModal } from '../uiReducer/uiActions';
+  getTasksForAppeal,
+  appealWithDetailSelector
+} from '../selectors';
+import {
+  taskIsOnHold,
+  taskHasNewDocuments
+} from '../utils';
+import { stageAppeal } from '../QueueActions';
 
 import {
   dropdownStyling,
-  COLOCATED_ACTIONS
+  SEND_TO_LOCATION_MODAL_TYPES
 } from '../constants';
 import CO_LOCATED_ACTIONS from '../../../constants/CO_LOCATED_ACTIONS.json';
+import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import COPY from '../../../COPY.json';
 
-import type { State } from '../types/state';
-import type { Task } from '../types/models';
+import type { State, NewDocsForAppeal } from '../types/state';
+import type { Task, Appeal } from '../types/models';
 
 type Params = {|
   appealId: string
@@ -30,10 +35,10 @@ type Params = {|
 type Props = Params & {|
   // state
   task: Task,
+  appeal: Appeal,
+  newDocsForAppeal: NewDocsForAppeal,
   // dispatch
-  showModal: typeof showModal,
   stageAppeal: typeof stageAppeal,
-  checkoutStagedAppeal: typeof checkoutStagedAppeal,
   // withrouter
   history: Object
 |};
@@ -48,29 +53,50 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
 
     this.props.stageAppeal(appealId);
 
-    if (actionType === CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY) {
-      return this.props.showModal('sendToAttorney');
+    switch (actionType) {
+    case CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY:
+      history.push(`/queue/modal/${SEND_TO_LOCATION_MODAL_TYPES.attorney}`);
+      break;
+    case CO_LOCATED_ACTIONS.SEND_TO_TEAM:
+      history.push(`/queue/modal/${SEND_TO_LOCATION_MODAL_TYPES.team}`);
+      break;
+    case CO_LOCATED_ACTIONS.PLACE_HOLD:
+      history.push(`/queue/appeals/${appealId}/place_hold`);
+      break;
+    default:
+      break;
     }
-
-    const route = {
-      [CO_LOCATED_ACTIONS.SEND_TO_TEAM]: 'send_to_team',
-      [CO_LOCATED_ACTIONS.PLACE_HOLD]: 'place_hold'
-    }[actionType];
-
-    history.push(`/queue/appeals/${appealId}/${route}`);
   }
 
   getOptions = () => {
-    const { task } = this.props;
+    const {
+      task,
+      appeal,
+      newDocsForAppeal
+    } = this.props;
+    const options = [];
 
-    if (task.status !== 'on_hold') {
-      return [...COLOCATED_ACTIONS, {
-        label: COPY.COLOCATED_ACTION_PLACE_HOLD,
-        value: CO_LOCATED_ACTIONS.PLACE_HOLD
-      }];
+    if (['translation', 'schedule_hearing'].includes(task.action) && appeal.docketName === 'legacy') {
+      options.push({
+        label: sprintf(COPY.COLOCATED_ACTION_SEND_TO_TEAM, CO_LOCATED_ADMIN_ACTIONS[task.action]),
+        value: CO_LOCATED_ACTIONS.SEND_TO_TEAM
+      });
+    } else {
+      options.push({
+        label: COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
+        value: CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY
+      });
     }
 
-    return COLOCATED_ACTIONS;
+    // todo: better encapsulation of task on hold / pending logic
+    if (!taskIsOnHold(task) || taskHasNewDocuments(task, newDocsForAppeal)) {
+      options.push({
+        label: COPY.COLOCATED_ACTION_PLACE_HOLD,
+        value: CO_LOCATED_ACTIONS.PLACE_HOLD
+      });
+    }
+
+    return options;
   }
 
   render = () => <SearchableDropdown
@@ -83,13 +109,13 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => ({
-  task: getTasksForAppeal(state, ownProps)[0]
+  task: getTasksForAppeal(state, ownProps)[0],
+  appeal: appealWithDetailSelector(state, ownProps),
+  newDocsForAppeal: state.queue.newDocsForAppeal
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  showModal,
-  stageAppeal,
-  checkoutStagedAppeal
+  stageAppeal
 }, dispatch);
 
 export default (withRouter(

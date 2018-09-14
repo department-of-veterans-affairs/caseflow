@@ -7,6 +7,12 @@ class ApplicationController < ApplicationBaseController
   before_action :set_paper_trail_whodunnit
   before_action :deny_vso_access, except: [:unauthorized]
 
+  rescue_from StandardError do |e|
+    fail e unless e.class.method_defined?(:serialize_response)
+    Raven.capture_exception(e)
+    render(e.serialize_response)
+  end
+
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from VBMS::ClientError, with: :on_vbms_error
 
@@ -94,13 +100,27 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :certification_header
 
+  # https://stackoverflow.com/a/748646
+  def no_cache
+    # :nocov:
+    response.headers["Cache-Control"] = "no-cache, no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+    # :nocov:
+  end
+
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
   def can_access_queue?
-    return true if current_user.vso_employee?
+    return true if current_user.admin?
+    return true if current_user.organization_queue_user? || current_user.vso_employee?
     return true if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
     return true if current_user.colocated_in_vacols? && feature_enabled?(:colocated_queue)
     false
   end
   helper_method :can_access_queue?
+  # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def verify_queue_access
     redirect_to "/unauthorized" unless can_access_queue?

@@ -12,7 +12,6 @@ import {
 
 import {
   setDecisionOptions,
-  resetDecisionOptions,
   deleteAppeal
 } from './QueueActions';
 import { requestSave } from './uiReducer/uiActions';
@@ -65,7 +64,6 @@ type Props = Params & {|
   error: ?UiStateMessage,
   // dispatch
   setDecisionOptions: typeof setDecisionOptions,
-  resetDecisionOptions: typeof resetDecisionOptions,
   requestSave: typeof requestSave,
   deleteAppeal: typeof deleteAppeal
 |};
@@ -152,7 +150,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
 
     if (!decisionOpts.document_id) {
       documentIdErrorMessage = COPY.FORM_ERROR_FIELD_REQUIRED;
-    } else if (!validateWorkProductTypeAndId(this.props.decision)) {
+    } else if (decisionType === DECISION_TYPES.OMO_REQUEST && !validateWorkProductTypeAndId(this.props.decision)) {
       documentIdErrorMessage = COPY.FORM_ERROR_FIELD_INVALID;
     }
 
@@ -192,7 +190,9 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         value={decisionOpts.document_id}
         maxLength={DOCUMENT_ID_MAX_LENGTH}
       />
-      <JudgeSelectComponent assignedByCssId={this.props.task.addedByCssId || '' /* not compatible with AMA tasks */} />
+      <JudgeSelectComponent assignedByCssId={
+        (this.props.task && this.props.task.addedByCssId) || '' /* not compatible with AMA tasks */
+      } />
       <TextareaField
         label="Notes:"
         name="notes"
@@ -239,7 +239,6 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDecisionOptions,
-  resetDecisionOptions,
   requestSave,
   deleteAppeal
 }, dispatch);

@@ -76,8 +76,26 @@ class User < ApplicationRecord
     nil
   end
 
-  def access_to_task?(vacols_id)
+  def participant_id
+    @participant_id ||= bgs.get_participant_id_for_user(self)
+  end
+
+  def vsos_user_represents
+    @vsos_user_represents ||= bgs.fetch_poas_by_participant_id(participant_id)
+  end
+
+  def access_to_legacy_task?(vacols_id)
     self.class.user_repository.can_access_task?(css_id, vacols_id)
+  end
+
+  def appeal_has_task_assigned_to_user?(appeal)
+    if appeal.class.name == "LegacyAppeal"
+      access_to_legacy_task?(appeal.vacols_id)
+    else
+      appeal.tasks.any? do |task|
+        task.assigned_to == self
+      end
+    end
   end
 
   def ro_is_ambiguous_from_station_office?
@@ -131,6 +149,10 @@ class User < ApplicationRecord
 
   def vso_employee?
     roles.include?("VSO")
+  end
+
+  def organization_queue_user?
+    FeatureToggle.enabled?(:organization_queue, user: self)
   end
 
   def granted?(thing)
@@ -201,6 +223,10 @@ class User < ApplicationRecord
   end
 
   private
+
+  def bgs
+    @bgs ||= BGSService.new
+  end
 
   def user_info
     @user_info ||= self.class.user_repository.user_info_from_vacols(css_id)

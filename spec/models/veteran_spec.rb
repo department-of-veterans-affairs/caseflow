@@ -170,11 +170,13 @@ describe Veteran do
         sex: "M",
         first_name: "June",
         last_name: "Juniper",
+        name_suffix: nil,
         service: [{ branch_of_service: "army" }],
         ssn: "123456789",
         address_line1: "122 Mullberry St.",
         address_line2: "PO BOX 123",
         address_line3: "Daisies",
+        date_of_death: nil,
         city: "San Francisco",
         state: "CA",
         country: "USA",
@@ -310,6 +312,56 @@ describe Veteran do
            char_of_svc_code: nil }]
       end
       it { is_expected.to eq ["Army 06/28/2002 - 06/28/2003"] }
+    end
+  end
+
+  context "#accessible_appeals_for_poa" do
+    let!(:appeals) do
+      [
+        create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id)]),
+        create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id_without_vso)])
+      ]
+    end
+
+    let(:participant_id) { "1234" }
+    let(:participant_id_without_vso) { "5678" }
+    let(:vso_participant_id) { "2452383" }
+    let(:participant_ids) { [participant_id, participant_id_without_vso] }
+
+    let(:poas) do
+      [
+        {
+          ptcpnt_id: participant_id,
+          power_of_attorney: {
+            legacy_poa_cd: "071",
+            nm: "PARALYZED VETERANS OF AMERICA, INC.",
+            org_type_nm: "POA National Organization",
+            ptcpnt_id: vso_participant_id
+          }
+        },
+        {
+          ptcpnt_id: participant_id_without_vso,
+          power_of_attorney: {}
+        }
+      ]
+    end
+
+    before do
+      BGSService = ExternalApi::BGSService
+      RequestStore[:current_user] = create(:user)
+
+      allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_ids)
+        .with(participant_ids).and_return(poas)
+    end
+
+    after do
+      BGSService = Fakes::BGSService
+    end
+
+    it "returns only the case with vso assigned to it" do
+      returned_appeals = veteran.accessible_appeals_for_poa([vso_participant_id, "other vso participant id"])
+      expect(returned_appeals.count).to eq 1
+      expect(returned_appeals.first).to eq appeals.first
     end
   end
 

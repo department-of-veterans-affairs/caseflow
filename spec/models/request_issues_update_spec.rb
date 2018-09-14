@@ -4,7 +4,7 @@ describe RequestIssuesUpdate do
   before do
     FeatureToggle.enable!(:test_facols)
 
-    rated_end_product_establishment.update!(reference_id: end_product.claim_id)
+    review.create_issues!(existing_request_issues)
   end
 
   after do
@@ -13,22 +13,27 @@ describe RequestIssuesUpdate do
 
   # TODO: make it simpler to set up a completed claim review, with end product data
   # and contention data stubbed out properly
-  let(:review) { create(:higher_level_review) }
+  let(:review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
+
+  let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
 
   let(:rated_end_product_establishment) do
-    review.send(:end_product_establishment, rated: true)
+    create(
+      :end_product_establishment,
+      veteran_file_number: veteran.file_number,
+      source: review,
+      code: "030HLRR"
+    )
   end
-
-  let(:end_product) { Generators::EndProduct.build }
 
   let(:request_issue_contentions) do
     [
       Generators::Contention.build(
-        claim_id: end_product.claim_id,
+        claim_id: rated_end_product_establishment.reference_id,
         text: "Service connection for PTSD was granted at 10 percent"
       ),
       Generators::Contention.build(
-        claim_id: end_product.claim_id,
+        claim_id: rated_end_product_establishment.reference_id,
         text: "Service connection for left knee immobility was denied"
       )
     ]
@@ -36,14 +41,14 @@ describe RequestIssuesUpdate do
 
   let!(:existing_request_issues) do
     [
-      RequestIssue.create!(
+      RequestIssue.new(
         review_request: review,
         rating_issue_profile_date: Date.new(2017, 4, 5),
         rating_issue_reference_id: "issue1",
         contention_reference_id: request_issue_contentions[0].id,
         description: request_issue_contentions[0].text
       ),
-      RequestIssue.create!(
+      RequestIssue.new(
         review_request: review,
         rating_issue_profile_date: Date.new(2017, 4, 6),
         rating_issue_reference_id: "issue2",
@@ -199,6 +204,7 @@ describe RequestIssuesUpdate do
         expect(removed_issue).to have_attributes(
           review_request: nil
         )
+        expect(removed_issue.removed_at).to_not be_nil
 
         expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
       end
