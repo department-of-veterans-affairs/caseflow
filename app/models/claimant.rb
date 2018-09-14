@@ -46,8 +46,6 @@ class Claimant < ApplicationRecord
     @bgs_address_service ||= BgsAddressService.new(participant_id: participant_id)
   end
 
-  private
-
   def advanced_on_docket_based_on_age
     date_of_birth && date_of_birth < 75.years.ago
   end

@@ -28,6 +28,6 @@ class BgsPowerOfAttorney
   def load_bgs_address!
     return nil if !participant_id
 
-    return BgsAddressService.new(participant_id: participant_id).fetch_bgs_record
+    BgsAddressService.new(participant_id: participant_id).fetch_bgs_record
   end
 end
