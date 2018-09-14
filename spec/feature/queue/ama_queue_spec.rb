@@ -18,6 +18,9 @@ RSpec.feature "AmaQueue" do
   let!(:attorney_user) do
     FactoryBot.create(:user, roles: ["Reader"], full_name: "#{attorney_first_name} #{attorney_last_name}")
   end
+
+  let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
+
   let!(:vacols_atty) do
     FactoryBot.create(
       :staff,
@@ -42,6 +45,9 @@ RSpec.feature "AmaQueue" do
         }
       )
     end
+
+    let!(:root_task) { create(:root_task) }
+    let!(:parent_task) { create(:ama_judge_task, assigned_to: judge_user, appeal: appeals.first, parent: root_task) }
 
     let(:poa_name) { "Test POA" }
     let(:veteran_participant_id) { "600085544" }
@@ -70,29 +76,61 @@ RSpec.feature "AmaQueue" do
       ]
     end
 
-    scenario "veteran is the appellant" do
-      visit "/queue/beaam"
-      click_on appeals.first.veteran.first_name
+    context "when appeals have tasks" do
+      let!(:attorney_tasks) do
+        [
+          create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user,
+            assigned_by: judge_user,
+            parent: parent_task,
+            appeal: appeals.first
+          ),
+          create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user,
+            assigned_by: judge_user,
+            appeal: appeals.second
+          ),
+          create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user,
+            assigned_by: judge_user,
+            appeal: appeals.third
+          )
+        ]
+      end
 
-      expect(page).to have_content("About the Veteran")
+      scenario "veteran is the appellant" do
+        visit "/queue"
 
-      expect(page).to have_content("AOD")
+        click_on appeals.first.veteran.first_name
 
-      expect(page).to have_content(appeals.first.request_issues.first.description)
-      expect(page).to have_content(appeals.first.docket_number)
-      expect(page).to have_content(poa_name)
+        expect(page).to have_content("A. Judge")
 
-      expect(page).to have_content("View Veteran's documents")
-      expect(page).to have_selector("text", id: "NEW")
-      expect(page).to have_content("5 docs")
+        expect(page).to have_content("About the Veteran")
 
-      click_on "View Veteran's documents"
-      expect(page).to have_content("Claims Folder")
+        expect(page).to have_content("AOD")
 
-      visit "/queue/beaam"
-      click_on appeals.first.veteran.first_name
+        expect(page).to have_content(appeals.first.request_issues.first.description)
+        expect(page).to have_content(appeals.first.docket_number)
+        expect(page).to have_content(poa_name)
 
-      expect(page).not_to have_selector("text", id: "NEW")
+        expect(page).to have_content("View Veteran's documents")
+        expect(page).to have_selector("text", id: "NEW")
+        expect(page).to have_content("5 docs")
+
+        click_on "View Veteran's documents"
+        expect(page).to have_content("Claims Folder")
+
+        visit "/queue"
+        click_on appeals.first.veteran.first_name
+
+        expect(page).not_to have_selector("text", id: "NEW")
+      end
     end
 
     context "when user is a vso" do
