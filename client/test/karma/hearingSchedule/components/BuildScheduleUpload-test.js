@@ -19,7 +19,7 @@ describe('BuildScheduleUpload', () => {
       fileType={SPREADSHEET_TYPES.JudgeSchedulePeriod.value}
     /></MemoryRouter>);
 
-    expect(wrapper.text()).to.include('Please input a date range');
+    expect(wrapper.text()).to.include('What are you uploading?');
   });
 
   it('displays errors when set', () => {

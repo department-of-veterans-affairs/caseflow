@@ -51,21 +51,19 @@ class Appeal < AmaReview
     veteran && veteran.name.formatted(:readable_full)
   end
 
-  def veteran_first_name
-    veteran && veteran.name.first_name
-  end
-
   def veteran_middle_initial
     veteran && veteran.name.middle_initial
-  end
-
-  def veteran_last_name
-    veteran && veteran.name.last_name
   end
 
   def veteran_gender
     veteran && veteran.sex
   end
+
+  def advanced_on_docket
+    claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
+  end
+
+  delegate :first_name, :last_name, :name_suffix, to: :veteran, prefix: true, allow_nil: true
 
   def number_of_issues
     issues[:request_issues].size
@@ -79,15 +77,19 @@ class Appeal < AmaReview
 
   # TODO: implement for AMA
   def citation_number
-    "not implemented"
+    "not implemented for AMA"
   end
 
   def veteran_is_deceased
-    veteran && veteran.date_of_death.present?
+    veteran_death_date.present?
+  end
+
+  def veteran_death_date
+    veteran && veteran.date_of_death
   end
 
   def cavc
-    "not implemented"
+    "not implemented for AMA"
   end
 
   def status
@@ -95,7 +97,7 @@ class Appeal < AmaReview
   end
 
   def previously_selected_for_quality_review
-    "not implemented"
+    "not implemented for AMA"
   end
 
   def create_issues!(request_issues_data:)
@@ -117,7 +119,7 @@ class Appeal < AmaReview
   def power_of_attorney
     claimants.first.power_of_attorney if claimants.first
   end
-  delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
+  delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney, allow_nil: true
 
   def power_of_attorneys
     claimants.map(&:power_of_attorney)

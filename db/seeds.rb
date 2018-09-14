@@ -191,7 +191,6 @@ class SeedDB
       veteran_file_number: "701305078",
       request_issues: FactoryBot.build_list(:request_issue, 3, description: "Head trauma")
     )
-    @ama_appeals << @appeal_with_vso
     @ama_appeals << FactoryBot.create(
       :appeal,
       veteran_file_number: "963360019",
@@ -244,7 +243,7 @@ class SeedDB
     root = FactoryBot.create(:root_task)
     FactoryBot.create(:ama_judge_task, assigned_to: judge, appeal: @ama_appeals[0])
 
-    parent = FactoryBot.create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: @ama_appeals[1])
+    parent = FactoryBot.create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: @ama_appeals[1], parent: root)
     FactoryBot.create(
       :ama_attorney_task,
       assigned_to: attorney,
@@ -289,15 +288,20 @@ class SeedDB
                       parent: parent,
                       appeal: @ama_appeals[5])
 
-    review_task_with_decision = FactoryBot.create(
+    parent = FactoryBot.create(
       :ama_judge_task,
       :in_progress,
       assigned_to: judge,
       appeal: @ama_appeal_with_decision,
-      action: :review,
       parent: root
     )
-    FactoryBot.create(:attorney_case_review, task_id: review_task_with_decision.id)
+    FactoryBot.create(
+      :ama_attorney_task,
+      assigned_to: attorney,
+      assigned_by: judge,
+      parent: parent,
+      appeal: @ama_appeal_with_decision
+    ).update(status: :completed)
 
     FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @appeal_with_vso)
 

@@ -51,6 +51,20 @@ class Task < ApplicationRecord
     type == "ColocatedTask"
   end
 
+  def latest_attorney_case_review
+    sub_task ? sub_task.attorney_case_reviews.order(:created_at).last : nil
+  end
+
+  def prepared_by_display_name
+    return nil unless latest_attorney_case_review
+
+    if latest_attorney_case_review.attorney.try(:full_name)
+      return latest_attorney_case_review.attorney.full_name.split(" ")
+    end
+
+    ["", ""]
+  end
+
   def mark_as_complete!
     update!(status: :completed)
     parent.when_child_task_completed if parent
@@ -85,7 +99,15 @@ class Task < ApplicationRecord
     fail Caseflow::Error::NoRootTask, task_id: task_id
   end
 
+  def previous_task
+    nil
+  end
+
   private
+
+  def sub_task
+    children.first
+  end
 
   def update_status_if_children_tasks_are_complete
     if children.any? && children.reject { |t| t.status == "completed" }.empty?

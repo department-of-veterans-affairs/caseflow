@@ -24,7 +24,13 @@ import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
   tasks.reduce((acc, task: Object): Tasks => {
+    const decisionPreparedBy = task.attributes.decision_prepared_by.first_name ? {
+      firstName: task.attributes.decision_prepared_by.first_name,
+      lastName: task.attributes.decision_prepared_by.last_name
+    } : null;
+
     acc[task.attributes.external_appeal_id] = {
+      appealType: task.attributes.appeal_type,
       addedByCssId: null,
       appealId: task.attributes.appeal_id,
       externalAppealId: task.attributes.external_appeal_id,
@@ -45,11 +51,12 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       action: task.attributes.action,
       documentId: task.attributes.document_id,
       workProduct: null,
-      previousTaskAssignedOn: null,
+      previousTaskAssignedOn: task.attributes.previous_task.assigned_at,
       placedOnHoldAt: task.attributes.placed_on_hold_at,
       status: task.attributes.status,
       onHoldDuration: task.attributes.on_hold_duration,
-      instructions: task.attributes.instructions
+      instructions: task.attributes.instructions,
+      decisionPreparedBy
     };
 
     return acc;
@@ -89,6 +96,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
   const mappedLegacyTasks = tasks.map((task): Task => {
     return {
       appealId: task.attributes.appeal_id,
+      appealType: task.attributes.appeal_type,
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_on,
       dueOn: task.attributes.due_on,
@@ -110,7 +118,8 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       documentId: task.attributes.document_id,
       workProduct: task.attributes.work_product,
       previousTaskAssignedOn: task.attributes.previous_task.assigned_on,
-      status: task.attributes.status
+      status: task.attributes.status,
+      decisionPreparedBy: null
     };
   });
 

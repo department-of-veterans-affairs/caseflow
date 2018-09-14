@@ -170,7 +170,7 @@ export const judgeReviewTasksSelector = createSelector(
 export const judgeAssignTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks) => _.filter(tasks, (task: TaskWithAppeal) => {
-    if (task.externalAppealId.length === 36) {
+    if (task.appealType === 'Appeal') {
       // AMA appeals
       return task.action === 'assign' && task.status === 'in_progress';
     }
