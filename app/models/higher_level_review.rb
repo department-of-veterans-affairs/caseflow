@@ -52,8 +52,8 @@ class HigherLevelReview < ClaimReview
     DTA_ERRORS
   end
 
-  def create_dta_supplemental_claim(end_product_establishment)
-    return unless dta_issues
+  def create_duty_to_assist_supplemental_claim_if_needed(end_product_establishment)
+    return if dta_issues.empty?
     rating_code_type = dta_issues.first.rated? ? :rating : :nonrating
     sc = create_supplemental_claim
     ep = sc.new_end_product_establishment(DTA_SUPPLEMENTAL_CLAIM_CODES[rating_code_type])
@@ -63,7 +63,7 @@ class HigherLevelReview < ClaimReview
     new_issues = dta_issues.map do |dta_issue|
       new_issue = dta_issue.dup
       new_issue.assign_attributes(
-        dta_issue_id: dta_issue.id,
+        parent_request_issue_id: dta_issue.id,
         review_request_id: ep.id,
         review_request_type: ep.source_type
       )

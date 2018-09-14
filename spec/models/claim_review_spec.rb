@@ -333,7 +333,7 @@ describe ClaimReview do
       end
     end
 
-    context "on a higher level review" do
+    context "on a higher level review", :focus => true do
       let(:issues) { [rating_request_issue, second_rating_request_issue, non_rating_request_issue] }
 
       let(:rating_contention) do
@@ -365,20 +365,28 @@ describe ClaimReview do
         claim_review.create_issues!(issues)
       end
 
-      def verify_followup_request_issue(end_product_id, orig_request_issue, contention)
-        follow_up_issue = RequestIssue.find_by(
-          review_request_id: end_product_id,
-          dta_issue_id: orig_request_issue.id
-        )
-
-        expect(follow_up_issue).to have_attributes(
-          :contention_reference_id => contention.id,
-          :description => orig_request_issue.description,
-          :review_request_type => "SupplementalClaim"
-        )
+      it "does not create a supplemental claim if there are no DTAs" do
+        claim_review.on_sync(end_product_establishment)
+        supplemental_claim = SupplementalClaim.find_by(
+            veteran_file_number: claim_review.veteran_file_number,
+            receipt_date: Time.zone.now.to_date)
+        expect(supplemental_claim).to be_nil
       end
 
       context "when it gets back dispositions with DTAs" do
+        def verify_followup_request_issue(end_product_id, orig_request_issue, contention)
+          follow_up_issue = RequestIssue.find_by(
+            review_request_id: end_product_id,
+            parent_request_issue_id: orig_request_issue.id
+          )
+
+          expect(follow_up_issue).to have_attributes(
+            :contention_reference_id => contention.id,
+            :description => orig_request_issue.description,
+            :review_request_type => "SupplementalClaim"
+          )
+        end
+
         context "for rated issues" do
           before do
             [rating_contention, second_rating_contention].each do |contention|
