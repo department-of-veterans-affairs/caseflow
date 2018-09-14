@@ -99,6 +99,10 @@ class Task < ApplicationRecord
     fail Caseflow::Error::NoRootTask, task_id: task_id
   end
 
+  def previous_task
+    nil
+  end
+
   private
 
   def sub_task
