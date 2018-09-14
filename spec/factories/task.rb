@@ -53,7 +53,7 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
-    factory :ama_judge_task do
+    factory :ama_judge_task, class: JudgeTask do
       type "JudgeTask"
       appeal_type "Appeal"
       action :assign

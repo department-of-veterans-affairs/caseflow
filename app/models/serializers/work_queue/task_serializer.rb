@@ -60,6 +60,12 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
     object.appeal.issues.count
   end
 
+  attribute :previous_task do
+    {
+      assigned_at: object.previous_task.try(:assigned_at)
+    }
+  end
+
   attribute :document_id do
     object.latest_attorney_case_review ? object.latest_attorney_case_review.document_id : nil
   end
