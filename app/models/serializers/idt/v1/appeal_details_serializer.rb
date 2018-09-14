@@ -8,8 +8,11 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
     object.veteran_middle_initial
   end
   attribute :veteran_last_name
+  attribute :veteran_name_suffix
   attribute :veteran_gender
+
   attribute :veteran_is_deceased
+  attribute :veteran_death_date
 
   attribute :appellant_is_not_veteran do
     object.is_a?(LegacyAppeal) ? object.appellant_is_not_veteran : object.claimant_not_veteran
@@ -63,6 +66,6 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :previously_selected_for_quality_review
 
   attribute :outstanding_mail do
-    object.is_a?(LegacyAppeal) ? object.outstanding_vacols_mail? : false
+    object.is_a?(LegacyAppeal) ? object.outstanding_vacols_mail : "not implemented for AMA"
   end
 end
