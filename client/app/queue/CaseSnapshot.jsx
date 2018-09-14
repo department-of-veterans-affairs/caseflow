@@ -93,7 +93,8 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     } = this.props;
 
     const assignedToListItem = <React.Fragment>
-      <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.locationCode || (taskAssignedToUser && taskAssignedToUser.assignedTo.cssId)}</dd>
+      <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt>
+      <dd>{this.props.appeal.locationCode || (taskAssignedToUser && taskAssignedToUser.assignedTo.cssId)}</dd>
     </React.Fragment>;
 
     if (!taskAssignedToUser) {
