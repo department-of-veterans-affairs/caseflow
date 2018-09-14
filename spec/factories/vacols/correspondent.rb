@@ -4,6 +4,7 @@ FactoryBot.define do
 
     snamef "Joshua"
     snamel "Chamberlain"
+    ssalut "PhD"
 
     transient do
       appellant_first_name nil
