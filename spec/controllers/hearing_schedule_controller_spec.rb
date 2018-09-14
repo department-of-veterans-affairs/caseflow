@@ -16,9 +16,27 @@ RSpec.describe HearingScheduleController, type: :controller do
     end
   end
 
-  context "when user has correct permissions" do
+  context "when user has build hearsched permissions" do
     before do
       User.authenticate!(roles: ["Build HearSched"])
+    end
+    it "returns a successful response" do
+      get :build_schedule_index
+      expect(response.status).to eq 200
+    end
+    it "returns a successful response" do
+      get :index
+      expect(response.status).to eq 200
+    end
+  end
+
+  context "when user has edit hearsched permissions" do
+    before do
+      User.authenticate!(roles: ["Edit HearSched"])
+    end
+    it "redirects" do
+      get :build_schedule_index
+      expect(response.status).to eq 302
     end
     it "returns a successful response" do
       get :index
