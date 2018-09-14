@@ -11,7 +11,7 @@ class BgsAddressService
   rescue Savon::Error
     # If there is no addresses for this participant id then we get an error.
     # catch it and return an empty array
-    {}
+    nil
   end
 
   def bgs
