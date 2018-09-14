@@ -83,7 +83,6 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.string "docket_type"
     t.datetime "established_at"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
-    t.boolean "advanced_on_docket", default: false
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
 
@@ -383,8 +382,10 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.date "receipt_date"
     t.boolean "informal_conference"
     t.boolean "same_office"
+    t.datetime "established_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
+    t.string "benefit_type"
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
@@ -612,8 +613,10 @@ ActiveRecord::Schema.define(version: 201809112051441) do
   create_table "supplemental_claims", force: :cascade do |t|
     t.string "veteran_file_number", null: false
     t.date "receipt_date"
+    t.datetime "established_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
+    t.string "benefit_type"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 
