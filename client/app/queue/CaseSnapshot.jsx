@@ -109,6 +109,11 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     const {
       taskAssignedToUser
     } = this.props;
+
+    if (!taskAssignedToUser) {
+      return null;
+    }
+
     const assignedByAbbrev = taskAssignedToUser.assignedBy.firstName ?
       this.getAbbrevName(taskAssignedToUser.assignedBy) : null;
 
@@ -240,7 +245,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
           <dd>{appeal.docketNumber}</dd>
           {this.daysSinceTaskAssignmentListItem()}
-          { taskAssignedToUser.documentId &&
+          { taskAssignedToUser && taskAssignedToUser.documentId &&
             <React.Fragment>
               <dt>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</dt>
               <dd><CopyTextButton text={taskAssignedToUser.documentId} /></dd>

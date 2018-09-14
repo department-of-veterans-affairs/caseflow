@@ -47,10 +47,10 @@ class SeedDB
     u = User.create(
       css_id: "VSO",
       station_id: 101,
-      full_name: "VSO user associated with american-legion",
+      full_name: "VSO user associated with PVA",
       roles: ["VSO"]
     )
-    FeatureToggle.enable!(:vso_queue_aml, users: [u.css_id])
+    FeatureToggle.enable!(:vso_queue_pva, users: [u.css_id])
 
     q = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER", full_name: "Org Q User")
     FeatureToggle.enable!(:org_queue_translation, users: [q.css_id])
