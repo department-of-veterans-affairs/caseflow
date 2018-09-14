@@ -59,4 +59,21 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :issue_count do
     object.appeal.issues.count
   end
+
+  attribute :previous_task do
+    {
+      assigned_at: object.previous_task.try(:assigned_at)
+    }
+  end
+
+  attribute :document_id do
+    object.latest_attorney_case_review ? object.latest_attorney_case_review.document_id : nil
+  end
+
+  attribute :decision_prepared_by do
+    {
+      first_name: object.prepared_by_display_name ? object.prepared_by_display_name.first : nil,
+      last_name: object.prepared_by_display_name ? object.prepared_by_display_name.last : nil
+    }
+  end
 end
