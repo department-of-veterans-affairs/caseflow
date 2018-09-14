@@ -113,16 +113,16 @@ class Hearings::HearingDayController < HearingScheduleController
 
   def json_hearing(hearing)
     hearing.as_json.each_with_object({}) do |(k, v), converted|
-        converted[k] = if k == "room_info"
-                         HearingDayMapper.label_for_room(v)
-                       elsif k == "regional_office" && !v.nil?
-                         HearingDayMapper.city_for_regional_office(v)
-                       elsif k == "hearing_type"
-                         HearingDayMapper.label_for_type(v)
-                       else
-                         v
-                       end
-      end
+      converted[k] = if k == "room_info"
+                       HearingDayMapper.label_for_room(v)
+                     elsif k == "regional_office" && !v.nil?
+                       HearingDayMapper.city_for_regional_office(v)
+                     elsif k == "hearing_type"
+                       HearingDayMapper.label_for_type(v)
+                     else
+                       v
+                     end
+    end
   end
 
   def json_tb_hearings(tbhearings)

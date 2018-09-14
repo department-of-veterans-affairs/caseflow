@@ -16,6 +16,7 @@ class HearingDay < ApplicationRecord
       hearing_date = hearing_hash[:hearing_date]
       hearing_date = hearing_date.is_a?(DateTime) ? hearing_date : Time.zone.parse(hearing_date).to_datetime
       if hearing_date > CASEFLOW_SCHEDULE_DATE
+        hearing_hash = hearing_hash.merge(created_by: current_user_css_id, updated_by: current_user_css_id)
         create(hearing_hash).to_hash
       else
         HearingDayRepository.create_vacols_hearing!(hearing_hash)
@@ -24,6 +25,7 @@ class HearingDay < ApplicationRecord
 
     def update_hearing_day(hearing, hearing_hash)
       if hearing.is_a?(HearingDay)
+        hearing_hash = hearing_hash.merge(updated_by: current_user_css_id)
         hearing.update(hearing_hash)
       else
         HearingDayRepository.update_vacols_hearing!(hearing, hearing_hash)
@@ -67,6 +69,12 @@ class HearingDay < ApplicationRecord
       find(hearing_key)
     rescue ActiveRecord::RecordNotFound
       HearingDayRepository.find_hearing_day(hearing_type, hearing_key)
+    end
+
+    private
+
+    def current_user_css_id
+      RequestStore.store[:current_user].css_id.upcase
     end
   end
 
