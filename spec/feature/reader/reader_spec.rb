@@ -110,7 +110,7 @@ RSpec.feature "Reader" do
     FeatureToggle.enable!(:test_facols)
     Time.zone = "America/New_York"
 
-    RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
+    RequestStore[:current_user] = User.find_or_create_by(css_id: "BVASCASPER1", station_id: 101)
     Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
   end
 
