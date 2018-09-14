@@ -81,7 +81,8 @@ describe('QueueLoadingScreen', () => {
         },
         workProduct: 'OTD',
         previousTaskAssignedOn: '2018-08-02T17:37:03.000Z',
-        status: 'Assigned'
+        status: 'Assigned',
+        decisionPreparedBy: null
       }
     });
   });

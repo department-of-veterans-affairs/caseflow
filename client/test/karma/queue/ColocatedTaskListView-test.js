@@ -61,7 +61,8 @@ describe('ColocatedTaskListView', () => {
     workProduct: null,
     previousTaskAssignedOn: null,
     placedOnHoldAt: null,
-    onHoldDuration: null
+    onHoldDuration: null,
+    decisionPreparedBy: null
   };
 
   const appealTemplate: BasicAppeal = {
