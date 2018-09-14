@@ -604,7 +604,7 @@ RSpec.feature "Checkout flows" do
       expect(colocated_action.assigned_at.to_date).to eq Time.zone.today
     end
 
-    scenario "places task on hold", focus: true do
+    scenario "places task on hold" do
       visit "/queue"
 
       appeal = colocated_action.appeal
