@@ -75,7 +75,7 @@ class HearingDay < ApplicationRecord
         judge_info = judges[hearing_day[:judge_id]]
         if !judge_info.nil?
           hearing_day = hearing_day.merge(judge_first_name: judge_info[:first_name],
-                            judge_last_name: judge_info[:last_name])
+                                          judge_last_name: judge_info[:last_name])
         end
         result << hearing_day
       end
