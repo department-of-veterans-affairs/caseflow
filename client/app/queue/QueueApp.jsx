@@ -123,7 +123,6 @@ class QueueApp extends React.PureComponent<Props> {
     nextStep="/queue" />;
 
   routedSelectDispositions = (props) => <SelectDispositionsView
-    prevStep={`/queue/appeals/${props.match.params.appealId}`}
     appealId={props.match.params.appealId} />;
 
   routedSelectSpecialIssues = (props) => <SpecialIssueLoadingScreen appealExternalId={props.match.params.appealId}>

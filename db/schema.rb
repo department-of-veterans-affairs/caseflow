@@ -16,6 +16,16 @@ ActiveRecord::Schema.define(version: 20180912142310) do
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
+  create_table "advance_on_docket_grants", force: :cascade do |t|
+    t.bigint "claimant_id"
+    t.bigint "user_id"
+    t.string "reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["claimant_id"], name: "index_advance_on_docket_grants_on_claimant_id"
+    t.index ["user_id"], name: "index_advance_on_docket_grants_on_user_id"
+  end
+
   create_table "allocations", force: :cascade do |t|
     t.bigint "schedule_period_id", null: false
     t.string "regional_office", null: false
@@ -73,7 +83,6 @@ ActiveRecord::Schema.define(version: 20180912142310) do
     t.string "docket_type"
     t.datetime "established_at"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
-    t.boolean "advanced_on_docket", default: false
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
 
@@ -159,6 +168,8 @@ ActiveRecord::Schema.define(version: 20180912142310) do
     t.bigint "review_request_id", null: false
     t.string "participant_id", null: false
     t.string "payee_code"
+    t.date "date_of_birth"
+    t.index ["date_of_birth"], name: "index_claimants_on_date_of_birth"
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
@@ -383,8 +394,10 @@ ActiveRecord::Schema.define(version: 20180912142310) do
     t.date "receipt_date"
     t.boolean "informal_conference"
     t.boolean "same_office"
+    t.datetime "established_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
+    t.string "benefit_type"
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
@@ -612,8 +625,10 @@ ActiveRecord::Schema.define(version: 20180912142310) do
   create_table "supplemental_claims", force: :cascade do |t|
     t.string "veteran_file_number", null: false
     t.date "receipt_date"
+    t.datetime "established_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
+    t.string "benefit_type"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 

@@ -110,7 +110,7 @@ RSpec.feature "Reader" do
     FeatureToggle.enable!(:test_facols)
     Time.zone = "America/New_York"
 
-    RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
+    RequestStore[:current_user] = User.find_or_create_by(css_id: "BVASCASPER1", station_id: 101)
     Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
   end
 
@@ -329,10 +329,6 @@ RSpec.feature "Reader" do
 
         # Test that the header has breadcrumbs.
         expect(page).to have_link("Claims Folder", href: "/reader/appeal/#{appeal.vacols_id}/documents")
-
-        click_on "> Reader"
-        expect(page).to have_current_path("/reader/appeal/")
-        expect(page).to have_title("Assignments | Caseflow Reader")
       end
 
       context "search for appeals using veteran id" do

@@ -40,6 +40,8 @@ RSpec.feature "Supplemental Claim Intake" do
 
   let(:receipt_date) { Date.new(2018, 4, 20) }
 
+  let(:benefit_type) { "compensation" }
+
   let(:untimely_days) { 372.days }
 
   let!(:current_user) do
@@ -116,6 +118,10 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(page).to have_current_path("/intake/review_request")
 
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Compensation", match: :prefer_exact).click
+    end
+
     fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
     safe_click "#button-submit-review"
     expect(page).to have_content(
@@ -162,6 +168,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(supplemental_claim).to_not be_nil
     expect(supplemental_claim.receipt_date).to eq(receipt_date)
+    expect(supplemental_claim.benefit_type).to eq(benefit_type)
     expect(supplemental_claim.claimants.first).to have_attributes(
       participant_id: "5382910293",
       payee_code: "11"
@@ -341,7 +348,8 @@ RSpec.feature "Supplemental Claim Intake" do
   it "Allows a Veteran without ratings to create an intake" do
     supplemental_claim = SupplementalClaim.create!(
       veteran_file_number: veteran_no_ratings.file_number,
-      receipt_date: 2.days.ago
+      receipt_date: 2.days.ago,
+      benefit_type: "compensation"
     )
 
     SupplementalClaimIntake.create!(
