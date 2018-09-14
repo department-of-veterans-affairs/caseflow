@@ -56,7 +56,12 @@ RSpec.feature "AmaQueue" do
         create(
           :appeal,
           :advanced_on_docket,
-          veteran: create(:veteran, participant_id: veteran_participant_id, bgs_veteran_record: { first_name: "Pal" }),
+          veteran: create(
+            :veteran,
+            participant_id: veteran_participant_id,
+            first_name: "Pal",
+            bgs_veteran_record: { first_name: "Pal" }
+          ),
           documents: create_list(:document, 5),
           request_issues: build_list(:request_issue, 3, description: "Knee pain")
         ),
