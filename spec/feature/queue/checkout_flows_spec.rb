@@ -83,6 +83,8 @@ RSpec.feature "Checkout flows" do
       expect(appeal.special_issue_list.radiation).to eq(true)
       click_on "Continue"
 
+      expect(page).to have_content "Select Dispositions"
+
       issue_rows = page.find_all("tr[id^='table-row-']")
       expect(issue_rows.length).to eq(appeal.request_issues.length)
 
@@ -401,22 +403,27 @@ RSpec.feature "Checkout flows" do
         delete_btn = find("button", text: "Delete Issue")
         expect(delete_btn.disabled?).to eq true
 
-        fields = page.find_all ".Select--single"
+        program = "BVA Original Jurisdiction"
+        issue = "Motions"
+        level = "Rule 608 motion to withdraw"
 
-        field_values = fields.map do |row|
-          next if row.matches_css? ".is-disabled"
+        find(".Select-control", text: "Select program").click
+        find("div", class: "Select-option", text: program).click
 
-          click_dropdown 0, row
-          row.find(".Select-value-label").text
-        end
+        find(".Select-control", text: "Select issue").click
+        find("div", class: "Select-option", text: issue).click
+
+        find(".Select-control", text: "Select level 1").click
+        find("div", class: "Select-option", text: level).click
+
         fill_in "Notes:", with: "added issue"
 
         click_on "Continue"
 
         expect(page).to have_content "You created a new issue."
-        expect(page).to have_content "Program: #{field_values.first}"
-        expect(page).to have_content "Issue: #{field_values.second}"
-        expect(page).to have_content field_values.last
+        expect(page).to have_content "Program: #{program}"
+        expect(page).to have_content "Issue: #{issue}"
+        expect(page).to have_content level
         expect(page).to have_content "Note: added issue"
 
         visit "/queue"
@@ -605,6 +612,8 @@ RSpec.feature "Checkout flows" do
       vet_name = appeal.veteran_full_name
       click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
 
+      expect(page).to have_content("Actions")
+
       click_dropdown 1
 
       expect(page).to have_content(
@@ -614,10 +623,10 @@ RSpec.feature "Checkout flows" do
       click_dropdown 6
       expect(page).to have_content(COPY::COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY)
 
-      hold_duration = [rand(100), 1].min
+      hold_duration = [rand(100), 1].max
       fill_in COPY::COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY, with: hold_duration
 
-      instructions = generate_words 50
+      instructions = generate_words 5
       fill_in "instructions", with: instructions
       click_on "Place case on hold"
 
