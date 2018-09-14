@@ -139,6 +139,14 @@ FactoryBot.define do
                   decision_document { [create(:document, type: "BVA Decision", received_at: 1.day.ago)] }
                 end
               end
+
+              factory :case_with_old_decision do
+                bfddec { 1.day.ago }
+
+                transient do
+                  decision_document { [create(:document, type: "BVA Decision", received_at: 7.days.ago)] }
+                end
+              end
             end
           end
         end

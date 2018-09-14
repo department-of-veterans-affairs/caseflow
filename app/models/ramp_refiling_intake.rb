@@ -64,7 +64,11 @@ class RampRefilingIntake < Intake
   private
 
   def create_end_product_and_contentions
-    detail.create_end_product_and_contentions! if detail.needs_end_product?
+    if detail.needs_end_product?
+      detail.create_end_product_and_contentions!
+    else
+      detail.update!(establishment_processed_at: Time.zone.now)
+    end
   end
 
   def validate_detail_on_start

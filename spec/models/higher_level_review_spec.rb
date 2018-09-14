@@ -10,7 +10,8 @@ describe HigherLevelReview do
 
   let(:veteran_file_number) { "64205555" }
   let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number) }
-  let(:receipt_date) { SupplementalClaim::AMA_BEGIN_DATE + 1 }
+  let(:receipt_date) { HigherLevelReview::AMA_BEGIN_DATE + 1 }
+  let(:benefit_type) { "compensation" }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
 
@@ -19,7 +20,8 @@ describe HigherLevelReview do
       veteran_file_number: veteran_file_number,
       receipt_date: receipt_date,
       informal_conference: informal_conference,
-      same_office: same_office
+      same_office: same_office,
+      benefit_type: benefit_type
     )
   end
 
