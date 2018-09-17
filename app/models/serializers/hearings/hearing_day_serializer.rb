@@ -1,4 +1,3 @@
-# Class used for queries where computed column judge_name is included.
 class Hearings::HearingDaySerializer < ActiveModel::Serializer
   attributes :hearing_pkseq,
              :hearing_type,
