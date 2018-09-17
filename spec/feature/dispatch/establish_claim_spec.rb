@@ -2,6 +2,14 @@ require "rails_helper"
 
 RSpec.feature "Establish Claim - ARC Dispatch" do
   before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
+  before do
     # Set the time zone to the current user's time zone for proper date conversion
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 1, 1))
@@ -14,8 +22,13 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     User.create(station_id: "123", css_id: "JANESMITH", full_name: "Jane Smith")
   end
 
+  let(:vacols_case_with_decision_document) do
+    create(:case_with_decision, :status_complete, case_issues:
+      [create(:case_issue, :education, :disposition_allowed)])
+  end
+
   let(:appeal) do
-    Generators::LegacyAppeal.create(vacols_record: vacols_record, documents: documents)
+    create(:legacy_appeal, vacols_case: vacols_case_with_decision_document)
   end
 
   let(:appeal_full_grant) do
