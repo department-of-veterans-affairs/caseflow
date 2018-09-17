@@ -37,7 +37,11 @@ jobs:
 
         - run:
             name: Install dependencies
-            command: sudo apt-get install pdftk libaio1 libaio-dev
+            command: |
+                apt-get -y -qq install pdftk libaio1 libaio-dev python3.4-dev
+                curl -O https://bootstrap.pypa.io/get-pip.py
+                python3.4 get-pip.py --user
+                pip install awscli --upgrade --user
         
         - run:
             name: Install Oracle Client
