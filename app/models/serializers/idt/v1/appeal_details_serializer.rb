@@ -17,19 +17,8 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :appellant_is_not_veteran do
     object.is_a?(LegacyAppeal) ? object.appellant_is_not_veteran : object.claimant_not_veteran
   end
-attribute :representative_name do
-    object.is_a?(LegacyAppeal) ? object.power_of_attorney.vacols_representative_name : 
-  end
-  attribute :representative_type do
-    object.is_a?(LegacyAppeal) ? object.power_of_attorney.vacols_representative_type : object.
-  end
-  attribute :representative_address do
-    if @instance_options[:include_addresses] && !object.is_a?(LegacyAppeal)
-      object.representative_address
-    end
-  end
+
   attribute :appellants do
-    # TODO: - expand rep name into separate fields
     if object.is_a?(LegacyAppeal)
       {
         first_name: object.appellant_first_name,
@@ -69,6 +58,10 @@ attribute :representative_name do
         }
       end
     end
+  end
+
+  attribute :congressional_interest do
+    object.is_a?(LegacyAppeal) ? object.congressional_interest : nil
   end
 
   attribute :file_number do

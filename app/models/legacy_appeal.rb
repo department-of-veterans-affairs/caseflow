@@ -191,6 +191,16 @@ class LegacyAppeal < ApplicationRecord
   # NOTE: we cannot currently match end products to a specific appeal.
   delegate :end_products, to: :veteran
 
+  def claimants
+
+  end
+
+  def congressional_interest
+    case_record.mail.map do |mail|
+      mail.congressional_address
+    end
+  end
+
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
   # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
   def disposition_remand_priority
@@ -262,6 +272,11 @@ class LegacyAppeal < ApplicationRecord
 
   def contested_claim
     representatives.any? { |r| r.reptype == "C" }
+  end
+
+  def contested_claimants
+    contested_claimants = representatives.where(reptype == "C")
+
   end
 
   def docket_name

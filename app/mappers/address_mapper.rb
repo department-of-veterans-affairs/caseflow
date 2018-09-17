@@ -11,4 +11,21 @@ module AddressMapper
       zip: bgs_address[:zip_prefix_nbr]
     }
   end
+
+  def get_address_from_corres_entry(corres_entry)
+    {
+      full_name: [
+        corres_entry.stitle,
+        corres_entry.snamef,
+        corres_entry.snamel,
+        corres_entry.ssalut
+      ].select(&:present?).join(" "),
+      address_line_1: corres_entry.saddrst1,
+      address_line_2: corres_entry.saddrst2,
+      city: corres_entry.saddrcty,
+      state: corres_entry.saddrstt,
+      country: corres_entry.saddrcnty,
+      zip_code: corres_entry.saddrzip
+    }
+  end
 end

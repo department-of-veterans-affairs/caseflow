@@ -1,9 +1,20 @@
 class VACOLS::Mail < VACOLS::Record
+  include AddressMapper
+
   self.table_name = "vacols.mail"
+
+  belongs_to :correspondent, foreign_key: :mlcorkey, primary_key: :stafkey
 
   def outstanding?
     return false if mlcompdate
     !%w[02 13].include?(mltype)
+  end
+
+  def congressional_address
+    # 02 is the congressional interest mail type
+    if mltype == "02"
+      get_address_from_corres_entry(correspondent)
+    end
   end
 
   TYPES = {
