@@ -127,7 +127,7 @@ class AssignWidget extends React.PureComponent<Props> {
     if (attorneys.data) {
       optionsOther = attorneys.data.map(optionFromAttorney);
       placeholderOther = COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER;
-      selectedOptionOther = _.find(optionsOther, (option) => option && option.value === selectedAssigneeSecondary);
+      selectedOptionOther = _.find(optionsOther, (option) => option.value === selectedAssigneeSecondary);
     }
 
     if (attorneys.error) {
