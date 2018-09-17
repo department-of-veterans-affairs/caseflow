@@ -192,7 +192,7 @@ class LegacyAppeal < ApplicationRecord
   # NOTE: we cannot currently match end products to a specific appeal.
   delegate :end_products, to: :veteran
 
-  def congressional_interest
+  def congressional_interest_addresses
     case_record.mail.map do |mail|
       mail.congressional_address
     end
@@ -265,22 +265,26 @@ class LegacyAppeal < ApplicationRecord
     power_of_attorney.vacols_representative_type
   end
 
+  def representative_address
+    power_of_attorney.vacols_representative_address
+  end
+
+  def representative_code
+    power_of_attorney.vacols_representative_code
+  end
+
   delegate :representatives, to: :case_record
 
   def contested_claim
     representatives.any? { |r| r.reptype == "C" }
   end
 
-  def contested_claimants
-    contested_claimants = representatives.where(reptype == "C")
-  end
-
   def claimants(include_addresses = false)
     representative = {
-      name: power_of_attorney.vacols_representative_name,
-      type: power_of_attorney.vacols_representative_type,
-      code: power_of_attorney.vacols_representative_code,
-      address: include_addresses ? get_address_from_rep_entry(case_record.representative) : nil
+      name: representative_name,
+      type: representative_type,
+      code: representative_code,
+      address: include_addresses ? representative_address : nil
     }
 
     claimant_array = if appellant_is_not_veteran
@@ -298,9 +302,10 @@ class LegacyAppeal < ApplicationRecord
       [
         {
           first_name: veteran_first_name,
-          middle_name: veteran_middle_name,
+          middle_name: veteran_middle_initial,
           last_name: veteran_last_name,
           name_suffix: veteran_name_suffix,
+          address: include_addresses ? get_address_from_corres_entry(case_record.correspondent) : nil,
           representative: representative
         }
       ]
@@ -309,11 +314,13 @@ class LegacyAppeal < ApplicationRecord
     claimant_array.concat(
       contested_claimants.map do |contested_claimant|
         {
+          type: contested_claimant.reptype,
           first_name: contested_claimant.repfirst,
           middle_name: contested_claimant.repmi,
           last_name: contested_claimant.replast,
           name_suffix: contested_claimant.repsuf,
-          address: include_addresses ? get_address_from_rep_entry(case_record.representative) : nil
+          address: include_addresses ? get_address_from_rep_entry(contested_claimant) : nil,
+          representative: nil
         }
       end
     )
@@ -642,6 +649,10 @@ class LegacyAppeal < ApplicationRecord
   end
 
   private
+
+  def contested_claimants
+    contested_claimants = representatives.where(reptype: ["C", "D", "E"])
+  end
 
   def matched_document(type, vacols_datetime)
     return nil unless vacols_datetime

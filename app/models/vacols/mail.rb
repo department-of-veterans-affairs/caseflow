@@ -11,16 +11,16 @@ class VACOLS::Mail < VACOLS::Record
   end
 
   def congressional_address
-    # 02 is the congressional interest mail type
-    if mltype == "02"
+    # 02 is the congressional interest mail type, unclear why mail type 13 can also count
+    if (mltype == "02" || (mltype == "13" && (mlsource == "G" || mlsource == "X"))) && correspondent
       {
         full_name: [
-          corres_entry.stitle,
-          corres_entry.snamef,
-          corres_entry.snamel,
-          corres_entry.ssalut
+          correspondent.stitle,
+          correspondent.snamef,
+          correspondent.snamel,
+          correspondent.ssalut
         ].select(&:present?).join(" "),
-        **get_address_from_corres_entry(corres_entry)
+        **get_address_from_corres_entry(correspondent)
       }
     end
   end

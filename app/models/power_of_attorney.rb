@@ -17,6 +17,7 @@ class PowerOfAttorney
 
   vacols_attr_accessor  :vacols_representative_type,
                         :vacols_representative_name,
+                        :vacols_representative_address,
                         :vacols_representative_code
 
   attr_accessor :vacols_id,

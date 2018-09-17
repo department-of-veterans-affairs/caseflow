@@ -52,8 +52,8 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
     end
   end
 
-  attribute :congressional_interest do
-    object.is_a?(LegacyAppeal) ? object.congressional_interest : nil
+  attribute :congressional_interest_addresses do
+    object.is_a?(LegacyAppeal) ? object.congressional_interest_addresses : "Not implemented for AMA"
   end
 
   attribute :file_number do

@@ -1,4 +1,6 @@
 module PowerOfAttorneyMapper
+  include AddressMapper
+
   # This is here so when we include this module
   # in classes (e.g. in PoaRepository),
   # the class itself and not just its instance
@@ -38,6 +40,7 @@ module PowerOfAttorneyMapper
       # the information we have.
       {
         representative_name: get_rep_name_from_rep_record(representative_record),
+        representative_address: get_address_from_rep_entry(representative_record),
         # TODO: alex to map rep.repso and rep.reptype based on values provided by Jed.
         representative_type: nil
       }
@@ -55,6 +58,7 @@ module PowerOfAttorneyMapper
       # in the REP table.
       {
         representative_name: get_rep_name_from_rep_record(representative_record),
+        representative_address: get_address_from_rep_entry(representative_record),
         representative_type: get_short_name(vacols_code)
       }
     end
