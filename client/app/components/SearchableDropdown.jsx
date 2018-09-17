@@ -10,16 +10,16 @@ const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
 const NO_RESULTS_TEXT = 'Not an option';
 const DEFAULT_PLACEHOLDER = 'Select option';
 
-export type OptionType<T> = ?{ value: T, label?: string };
+export type OptionType<T> = { value: T, label?: string };
 
 type Props<T> = {|
-  value?: OptionType<T> | T,
+  value?: ?OptionType<T> | T,
   creatable?: boolean,
   errorMessage?: ?string,
   label?: string,
   hideLabel?: boolean,
   name: string,
-  onChange: (value: OptionType<T>, deletedValue?: ?Array<any>) => mixed,
+  onChange: (value: ?OptionType<T>, deletedValue?: ?Array<any>) => mixed,
   options: Array<OptionType<T>>,
   readOnly?: boolean,
   required?: boolean,

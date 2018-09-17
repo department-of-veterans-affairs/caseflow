@@ -58,7 +58,7 @@ type Props = Params & {|
 |};
 
 type ComponentState = {
-  selectedOption: OptionType<string>
+  selectedOption: ?OptionType<string>
 };
 
 class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
