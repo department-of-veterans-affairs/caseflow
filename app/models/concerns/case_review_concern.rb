@@ -28,8 +28,23 @@ module CaseReviewConcern
       request_issue = appeal.request_issues.find_by(id: issue["id"]) if appeal
 
       # decision_issue.update(disposition: issue["disposition"]) if decision_issue
-      request_issue.update(disposition: issue["disposition"]) if request_issue
+      if request_issue
+        request_issue.update(disposition: issue["disposition"]) 
+        update_remand_reasons(request_issue, issue["remand_reasons"]) if issue["remand_reasons"] 
+      end
     end
+  end
+
+  def update_remand_reasons(request_issue, remand_reasons)
+    remand_reasons.each do |remand_reason| 
+      request_issue.remand_reasons.find_or_create_by(code: remand_reason["code"]).tap do |record|
+        record.update(post_aoj: remand_reason["post_aoj"])
+      end
+    end
+    # delete remand reasons that are not passed
+    existing_codes = request_issue.remand_reasons.pluck(:code)
+    codes_to_delete = existing_codes - issue["remand_reasons"].pluck(:code)
+    request_issue.remand_reasons.where(code: codes_to_delete).delete_all
   end
 
   def update_issue_dispositions_in_vacols!
