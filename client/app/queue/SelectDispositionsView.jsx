@@ -115,7 +115,7 @@ class SelectDispositionsView extends React.PureComponent {
     const columns = [{
       header: 'Issues',
       valueFunction: (issue, idx) => <IssueList
-        appeal={{ issues: [issue] }}
+        appeal={{ issues: [issue], docketName: appeal.docketName }}
         idxToDisplay={idx + 1}
         showDisposition={false}
         stretchToFullWidth />
