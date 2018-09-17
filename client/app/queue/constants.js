@@ -2,7 +2,8 @@
 import { css } from 'glamor';
 import _ from 'lodash';
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
-import REMAND_REASONS_BY_ID from '../../constants/ACTIVE_REMAND_REASONS_BY_ID.json';
+import LEGACY_REMAND_REASONS_BY_ID from '../../constants/LEGACY_ACTIVE_REMAND_REASONS_BY_ID.json';
+import REMAND_REASONS_BY_ID from '../../constants/AMA_REMAND_REASONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import StringUtil from '../util/StringUtil';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
@@ -127,14 +128,17 @@ export const SEARCH_ERROR_FOR = {
   UNKNOWN_SERVER_ERROR: 'UNKNOWN_SERVER_ERROR'
 };
 
-export const REMAND_REASONS = Object.assign({},
-  ...Object.keys(REMAND_REASONS_BY_ID).map((reasonType) => ({
-    [reasonType]: _.map(REMAND_REASONS_BY_ID[reasonType], (label, reasonId) => ({
-      id: reasonId,
+const formatRemandReasons = (reasons) => Object.assign({},
+  ...Object.keys(reasons).map((reasonType) => ({
+    [reasonType]: _.map(reasons[reasonType], (label, id) => ({
+      id,
       label
     }))
   }))
 );
+
+export const LEGACY_REMAND_REASONS = formatRemandReasons(LEGACY_REMAND_REASONS_BY_ID);
+export const REMAND_REASONS = formatRemandReasons(REMAND_REASONS_BY_ID);
 
 const parameterizedDispositions = Object.values(VACOLS_DISPOSITIONS_BY_ID).
   map(StringUtil.parameterize);

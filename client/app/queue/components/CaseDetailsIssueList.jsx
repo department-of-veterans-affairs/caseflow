@@ -74,7 +74,7 @@ const getDescriptionsFromCodes = (levels, codes, descriptions = []) => {
     }
 
     if (descriptions.length) {
-      descriptions.push(<br />);
+      descriptions.push(<br key={Object.keys(levels).indexOf(code)} />);
     }
     descriptions.push(innerLevel.description);
 
