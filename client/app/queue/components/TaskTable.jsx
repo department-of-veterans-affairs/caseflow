@@ -160,7 +160,7 @@ class TaskTable extends React.PureComponent<Props> {
 
         return <React.Fragment>
           <DocketTypeBadge name={task.appeal.docketName} number={task.appeal.docketNumber} />
-          {task.appeal.docketNumber}
+          <span>{task.appeal.docketNumber}</span>
         </React.Fragment>;
       },
       span: this.collapseColumnIfNoDASRecord,
