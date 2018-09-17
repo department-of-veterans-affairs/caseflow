@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import COPY from '../../../COPY.json';
@@ -10,11 +11,14 @@ export default class AssignHearings extends React.Component {
   regionalOfficeOptions = () => {
     let regionalOfficeDropdowns = [];
 
-    this.props.regionalOffices.forEach((value) => {
-      regionalOfficeDropdowns.push({label: value, value: value});
+    _.forEach(this.props.regionalOffices, (value, key) => {
+      regionalOfficeDropdowns.push({
+        label: `${value.city}, ${value.state}`,
+        value: key
+      });
     });
 
-    return regionalOfficeDropdowns;
+    return _.orderBy(regionalOfficeDropdowns, (ro) => ro.label, 'asc');
   };
 
   render() {
@@ -29,6 +33,8 @@ export default class AssignHearings extends React.Component {
         name="ro"
         label="Regional Office"
         options={this.regionalOfficeOptions()}
+        onChange={this.props.onRegionalOfficeChange}
+        value={this.props.selectedRegionalOffice}
         placeholder=""
       />
     </AppSegment>;
@@ -36,5 +42,7 @@ export default class AssignHearings extends React.Component {
 }
 
 AssignHearings.propTypes = {
-  regionalOffices: PropTypes.array
+  regionalOffices: PropTypes.object,
+  onRegionalOfficeChange: PropTypes.func,
+  selectedRegionalOffice: PropTypes.object
 };
