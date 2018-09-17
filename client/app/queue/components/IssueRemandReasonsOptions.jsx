@@ -216,44 +216,16 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
     </React.Fragment>;
   };
 
-  render = () => {
-    const {
-      issue,
-      issues,
-      idx,
-      highlight,
-      appeal
-    } = this.props;
+  getCheckboxGroup = () => {
+    const { appeal } = this.props;
     const checkboxGroupProps = {
       onChange: this.toggleRemandReason,
       getCheckbox: this.getCheckbox,
       values: this.state
     };
 
-    return <div key={`remand-reasons-${String(issue.id)}`}>
-      <h2 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
-        Issue {idx + 1} {issues.length > 1 ? ` of ${issues.length}` : ''}
-      </h2>
-      <div {...smallBottomMargin}>Program: {getIssueProgramDescription(issue)}</div>
-      <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
-      {issue.program &&
-        <React.Fragment>
-          <div {...smallBottomMargin}>
-            Code: {getIssueDiagnosticCodeLabel(_.last(issue.codes))}
-          </div>
-          <div {...smallBottomMargin} ref={(node) => this.elTopOfWarning = node}>
-            Certified: {formatDateStr(appeal.certificationDate)}
-          </div>
-          <div {...smallBottomMargin}>Note: {issue.note}</div>
-        </React.Fragment>}
-      {highlight && !this.getChosenOptions().length &&
-        <div className="usa-input-error"
-          {...css(redText, boldText, errorNoTopMargin)}>
-          Choose at least one
-        </div>
-      }
-
-      {appeal.docketName === 'legacy' ? <div {...flexContainer}>
+    if (appeal.docketName === 'legacy') {
+      return <div {...flexContainer}>
         <div {...flexColumn}>
           <CheckboxGroup
             label={<h3>Medical examination and opinion</h3>}
@@ -278,28 +250,64 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
             options={LEGACY_REMAND_REASONS.dueProcess}
             {...checkboxGroupProps} />
         </div>
-      </div> :
-        <div {...flexContainer}>
-          <div {...flexColumn}>
-            <CheckboxGroup
-              label={<h3>Duty to notify</h3>}
-              name="duty-to-notify"
-              options={REMAND_REASONS.dutyToNotify}
-              {...checkboxGroupProps} />
-            <CheckboxGroup
-              label={<h3>Duty to assist</h3>}
-              name="duty-to-assist"
-              options={REMAND_REASONS.dutyToAssist}
-              {...checkboxGroupProps} />
+      </div>;
+    }
+
+    return <div {...flexContainer}>
+      <div {...flexColumn}>
+        <CheckboxGroup
+          label={<h3>Duty to notify</h3>}
+          name="duty-to-notify"
+          options={REMAND_REASONS.dutyToNotify}
+          {...checkboxGroupProps} />
+        <CheckboxGroup
+          label={<h3>Duty to assist</h3>}
+          name="duty-to-assist"
+          options={REMAND_REASONS.dutyToAssist}
+          {...checkboxGroupProps} />
+      </div>
+      <div {...flexColumn}>
+        <CheckboxGroup
+          label={<h3>Medical examination</h3>}
+          name="medical-exam"
+          options={REMAND_REASONS.medicalExam}
+          {...checkboxGroupProps} />
+      </div>
+    </div>;
+  }
+
+  render = () => {
+    const {
+      issue,
+      issues,
+      idx,
+      highlight,
+      appeal
+    } = this.props;
+
+    return <div key={`remand-reasons-${String(issue.id)}`}>
+      <h2 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
+        Issue {idx + 1} {issues.length > 1 ? ` of ${issues.length}` : ''}
+      </h2>
+      <div {...smallBottomMargin}>Program: {getIssueProgramDescription(issue)}</div>
+      <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
+      {issue.program &&
+        <React.Fragment>
+          <div {...smallBottomMargin}>
+            Code: {getIssueDiagnosticCodeLabel(_.last(issue.codes))}
           </div>
-          <div {...flexColumn}>
-            <CheckboxGroup
-              label={<h3>Medical examination</h3>}
-              name="medical-exam"
-              options={REMAND_REASONS.medicalExam}
-              {...checkboxGroupProps} />
+          <div {...smallBottomMargin} ref={(node) => this.elTopOfWarning = node}>
+            Certified: {formatDateStr(appeal.certificationDate)}
           </div>
-        </div>}
+          <div {...smallBottomMargin}>Note: {issue.note}</div>
+        </React.Fragment>}
+      {highlight && !this.getChosenOptions().length &&
+        <div className="usa-input-error"
+          {...css(redText, boldText, errorNoTopMargin)}>
+          Choose at least one
+        </div>
+      }
+      {this.getCheckboxGroup()}
     </div>;
   };
 }
