@@ -70,19 +70,15 @@ class TaskTable extends React.PureComponent<Props> {
   caseSelectColumn = () => {
     return this.props.includeSelect ? {
       header: COPY.CASE_LIST_TABLE_SELECT_COLUMN_TITLE,
-      valueFunction:
-        (task) => {
-          return <Checkbox
-            name={task.externalAppealId}
-            hideLabel
-            value={this.isTaskSelected(task.externalAppealId)}
-            onChange={
-              (checked) => this.props.setSelectionOfTaskOfUser(
-                { userId: this.props.userId,
-                  taskId: task.externalAppealId,
-                  selected: checked })
-            } />;
-        }
+      valueFunction: (task) => <Checkbox
+        name={task.externalAppealId}
+        hideLabel
+        value={this.isTaskSelected(task.externalAppealId)}
+        onChange={(selected) => this.props.setSelectionOfTaskOfUser({
+          userId: this.props.userId,
+          taskId: task.externalAppealId,
+          selected
+        })} />
     } : null;
   }
 
@@ -186,24 +182,19 @@ class TaskTable extends React.PureComponent<Props> {
         </React.Fragment>;
       },
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (task) => {
-        return moment().diff(moment(task.assignedOn), 'days');
-      }
+      getSortValue: (task) => moment().diff(moment(task.assignedOn), 'days')
     } : null;
   }
 
   caseDaysWaitingColumn = () => {
     return this.props.includeDaysWaiting ? {
       header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
-      valueFunction: (task) => {
-        return moment().startOf('day').
-          diff(moment(task.assignedOn), 'days');
-      },
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (task) => {
-        return moment().startOf('day').
-          diff(moment(task.assignedOn), 'days');
-      }
+      tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
+      valueFunction: (task) => moment().startOf('day').
+        diff(moment(task.assignedOn), 'days'),
+      getSortValue: (task) => moment().startOf('day').
+        diff(moment(task.assignedOn), 'days')
     } : null;
   }
 

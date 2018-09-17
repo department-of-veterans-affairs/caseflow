@@ -110,11 +110,11 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             expect(ama_appeals.size).to eq 2
             expect(ama_appeals.first["id"]).to eq tasks.first.appeal.uuid
             expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.first.appeal.docket_number
-            expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.name.first_name
+            expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.reload.name.first_name
 
             expect(ama_appeals.second["id"]).to eq tasks.second.appeal.uuid
             expect(ama_appeals.second["attributes"]["docket_number"]).to eq tasks.second.appeal.docket_number
-            expect(ama_appeals.second["attributes"]["veteran_first_name"]).to eq veteran2.name.first_name
+            expect(ama_appeals.second["attributes"]["veteran_first_name"]).to eq veteran2.reload.name.first_name
           end
 
           it "returns appeals associated with a file number" do
@@ -126,7 +126,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             ama_appeals = response_body.select { |appeal| appeal["type"] == "appeals" }
             expect(ama_appeals.size).to eq 1
             expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.first.appeal.docket_number
-            expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.name.first_name
+            expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.reload.name.first_name
           end
         end
 
@@ -246,6 +246,58 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             end
           end
         end
+      end
+    end
+  end
+
+  describe "POST /idt/api/v1/appeals/:appeal_id/outcode" do
+    let(:user) { FactoryBot.create(:user) }
+    let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: user.css_id) }
+    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:params) { { appeal_id: root_task.appeal.external_id } }
+
+    before do
+      allow(BvaDispatchTask).to receive(:list_of_assignees).and_return([user.css_id])
+
+      key, t = Idt::Token.generate_one_time_key_and_proposed_token
+      Idt::Token.activate_proposed_token(key, user.css_id)
+      request.headers["TOKEN"] = t
+    end
+
+    context "when single BvaDispatchTask exists for user and appeal combination" do
+      before { BvaDispatchTask.create_and_assign(root_task) }
+
+      it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
+        post :outcode, params: params
+        tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)
+        expect(tasks.length).to eq(1)
+        task = tasks[0]
+        expect(task.status).to eq("completed")
+        expect(task.parent.status).to eq("completed")
+      end
+    end
+
+    context "when multiple BvaDispatchTasks exists for user and appeal combination" do
+      let(:task_count) { 4 }
+      before { task_count.times { BvaDispatchTask.create_and_assign(root_task) } }
+
+      it "should throw an error" do
+        post :outcode, params: params
+        expect(response.status).to eq(400)
+        response_detail = JSON.parse(response.body)["errors"][0]["detail"]
+        expect(response_detail).to eq("Expected 1 BvaDispatchTask received #{task_count} tasks for appeal "\
+                                      "#{root_task.appeal.id}, user #{user.id}")
+      end
+    end
+
+    context "when no BvaDispatchTasks exists for user and appeal combination" do
+      let(:task_count) { 0 }
+      it "should throw an error" do
+        post :outcode, params: params
+        expect(response.status).to eq(400)
+        response_detail = JSON.parse(response.body)["errors"][0]["detail"]
+        expect(response_detail).to eq("Expected 1 BvaDispatchTask received #{task_count} tasks for appeal "\
+                                      "#{root_task.appeal.id}, user #{user.id}")
       end
     end
   end

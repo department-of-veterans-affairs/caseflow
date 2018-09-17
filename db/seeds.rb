@@ -47,10 +47,10 @@ class SeedDB
     u = User.create(
       css_id: "VSO",
       station_id: 101,
-      full_name: "VSO user associated with american-legion",
+      full_name: "VSO user associated with PVA",
       roles: ["VSO"]
     )
-    FeatureToggle.enable!(:vso_queue_aml, users: [u.css_id])
+    FeatureToggle.enable!(:vso_queue_pva, users: [u.css_id])
 
     q = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER", full_name: "Org Q User")
     FeatureToggle.enable!(:org_queue_translation, users: [q.css_id])
@@ -191,7 +191,6 @@ class SeedDB
       veteran_file_number: "701305078",
       request_issues: FactoryBot.build_list(:request_issue, 3, description: "Head trauma")
     )
-    @ama_appeals << @appeal_with_vso
     @ama_appeals << FactoryBot.create(
       :appeal,
       veteran_file_number: "963360019",
@@ -244,14 +243,16 @@ class SeedDB
     root = FactoryBot.create(:root_task)
     FactoryBot.create(:ama_judge_task, assigned_to: judge, appeal: @ama_appeals[0])
 
-    parent = FactoryBot.create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: @ama_appeals[1])
-    FactoryBot.create(
+    parent = FactoryBot.create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: @ama_appeals[1], parent: root)
+    child = FactoryBot.create(
       :ama_attorney_task,
       assigned_to: attorney,
       assigned_by: judge,
       parent: parent,
       appeal: @ama_appeals[1]
-    ).update(status: :completed)
+    )
+    child.update(status: :completed)
+    FactoryBot.create(:attorney_case_review, task_id: child.id)
 
     parent = FactoryBot.create(:ama_judge_task, :on_hold, assigned_to: judge, appeal: @ama_appeals[2])
 
@@ -289,14 +290,22 @@ class SeedDB
                       parent: parent,
                       appeal: @ama_appeals[5])
 
-    FactoryBot.create(
+    parent = FactoryBot.create(
       :ama_judge_task,
       :in_progress,
       assigned_to: judge,
       appeal: @ama_appeal_with_decision,
-      action: :review,
       parent: root
     )
+    child = FactoryBot.create(
+      :ama_attorney_task,
+      assigned_to: attorney,
+      assigned_by: judge,
+      parent: parent,
+      appeal: @ama_appeal_with_decision
+    )
+    child.update(status: :completed)
+    FactoryBot.create(:attorney_case_review, task_id: child.id)
 
     FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @appeal_with_vso)
 

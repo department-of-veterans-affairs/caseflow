@@ -15,8 +15,8 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
     {
       first_name: object.assigned_by_display_name.first,
       last_name: object.assigned_by_display_name.last,
-      css_id: object.assigned_by.css_id,
-      pg_id: object.assigned_by.id
+      css_id: object.assigned_by.try(:css_id),
+      pg_id: object.assigned_by.try(:id)
     }
   end
 
@@ -58,6 +58,12 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
 
   attribute :issue_count do
     object.appeal.issues.count
+  end
+
+  attribute :previous_task do
+    {
+      assigned_at: object.previous_task.try(:assigned_at)
+    }
   end
 
   attribute :document_id do

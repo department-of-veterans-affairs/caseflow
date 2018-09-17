@@ -12,7 +12,7 @@ describe EndProductEstablishment do
   let(:veteran_file_number) { "12341234" }
   let(:veteran_participant_id) { "11223344" }
   let!(:veteran) do
-    Generators::Veteran.build(
+    Generators::Veteran.create(
       file_number: veteran_file_number,
       participant_id: veteran_participant_id,
       date_of_death: "05/01/2016"
@@ -21,7 +21,7 @@ describe EndProductEstablishment do
   let(:living_veteran_file_number) { "12345678" }
   let(:living_veteran_participant_id) { "55667788" }
   let!(:living_veteran) do
-    Generators::Veteran.build(
+    Generators::Veteran.create(
       file_number: living_veteran_file_number,
       participant_id: living_veteran_participant_id,
       date_of_death: nil, # default but explicit here for clarity
@@ -106,7 +106,7 @@ describe EndProductEstablishment do
           gulf_war_registry: false,
           suppress_acknowledgement_letter: false
         },
-        veteran_hash: living_veteran.to_vbms_hash
+        veteran_hash: living_veteran.reload.to_vbms_hash
       )
     end
   end
@@ -174,7 +174,7 @@ describe EndProductEstablishment do
             gulf_war_registry: false,
             claimant_participant_id: "11223344"
           },
-          veteran_hash: veteran.to_vbms_hash
+          veteran_hash: veteran.reload.to_vbms_hash
         )
         expect(end_product_establishment.reload).to have_attributes(
           modifier: "031"
@@ -201,7 +201,7 @@ describe EndProductEstablishment do
               gulf_war_registry: false,
               claimant_participant_id: "11223344"
             },
-            veteran_hash: veteran.to_vbms_hash
+            veteran_hash: veteran.reload.to_vbms_hash
           )
           expect(end_product_establishment.reload).to have_attributes(
             modifier: "032"
@@ -237,7 +237,7 @@ describe EndProductEstablishment do
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false
           },
-          veteran_hash: veteran.to_vbms_hash
+          veteran_hash: veteran.reload.to_vbms_hash
         )
       end
 
