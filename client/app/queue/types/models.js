@@ -43,6 +43,7 @@ export type Issues = Array<Issue>;
 export type Task = {
   action: string,
   appealId: number,
+  appealType: string,
   externalAppealId: string,
   assignedOn: string,
   dueOn: ?string,
