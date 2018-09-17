@@ -38,6 +38,7 @@ Rails.application.routes.draw do
         get 'token', to: 'tokens#generate_token'
         get 'appeals', to: 'appeals#list'
         get 'appeals/:appeal_id', to: 'appeals#details'
+        post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
         get 'judges', to: 'judges#index'
         get 'user', to: 'users#index'
       end

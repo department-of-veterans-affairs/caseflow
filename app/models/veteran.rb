@@ -5,11 +5,10 @@
 class Veteran < ApplicationRecord
   include AssociatedBgsRecord
 
-  bgs_attr_accessor :ptcpnt_id, :sex, :first_name, :last_name, :name_suffix,
-                    :ssn, :address_line1, :address_line2, :address_line3, :city,
-                    :state, :country, :zip_code, :military_postal_type_code,
-                    :military_post_office_type_code, :service, :date_of_birth,
-                    :date_of_death
+  bgs_attr_accessor :ptcpnt_id, :sex, :ssn, :address_line1, :address_line2,
+                    :address_line3, :city, :state, :country, :zip_code,
+                    :military_postal_type_code, :military_post_office_type_code,
+                    :service, :date_of_birth, :date_of_death
 
   CHARACTER_OF_SERVICE_CODES = {
     "HON" => "Honorable",
@@ -126,10 +125,24 @@ class Veteran < ApplicationRecord
 
   class << self
     def find_or_create_by_file_number(file_number)
-      find_by(file_number: file_number) || create_by_file_number(file_number)
+      find_and_maybe_backfill_name(file_number) || create_by_file_number(file_number)
     end
 
     private
+
+    def find_and_maybe_backfill_name(file_number)
+      veteran = find_by(file_number: file_number)
+      return nil unless veteran
+      if veteran.first_name.nil? && veteran.found?
+        veteran.update!(
+          first_name: veteran.bgs_record[:first_name],
+          last_name: veteran.bgs_record[:last_name],
+          middle_name: veteran.bgs_record[:middle_name],
+          name_suffix: veteran.bgs_record[:name_suffix]
+        )
+      end
+      veteran
+    end
 
     def create_by_file_number(file_number)
       veteran = Veteran.new(file_number: file_number)
@@ -137,7 +150,19 @@ class Veteran < ApplicationRecord
       return nil unless veteran.found?
 
       before_create_veteran_by_file_number # Used to simulate race conditions
-      veteran.tap { |v| v.update!(participant_id: v.ptcpnt_id) }
+      veteran.tap do |v|
+        v.update!(participant_id: v.ptcpnt_id)
+        # Check to see if veteran is accessible to make sure
+        # bgs_record is a hash and not :not_found
+        if v.accessible?
+          v.update!(
+            first_name: v.bgs_record[:first_name],
+            last_name: v.bgs_record[:last_name],
+            middle_name: v.bgs_record[:middle_name],
+            name_suffix: v.bgs_record[:name_suffix]
+          )
+        end
+      end
     rescue ActiveRecord::RecordNotUnique
       find_by(file_number: file_number)
     end
@@ -195,7 +220,7 @@ class Veteran < ApplicationRecord
   def vbms_attributes
     self.class.bgs_attributes \
       - [:military_postal_type_code, :military_post_office_type_code, :ptcpnt_id] \
-      + [:file_number, :address_type]
+      + [:file_number, :address_type, :first_name, :last_name, :name_suffix]
   end
 
   def military_address?

@@ -43,6 +43,9 @@
   "CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL": "Task instructions",
   "CASE_SNAPSHOT_ACTION_BOX_TITLE": "Actions",
 
+  "CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY": "View Hearing Worksheet",
+  "CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP": "This link opens a PDF copy of the Hearing Worksheet",
+
   "NEW_FILE_ICON_TOOLTIP": "This case has new documents",
 
   "NO_TASKS_IN_ATTORNEY_QUEUE_TITLE": "Cases not found",
@@ -78,6 +81,10 @@
   "ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL": "Add admin action",
 
   "REMAND_REASONS_SCREEN_SUBHEAD_LABEL": "Please %s the appropriate remand reason(s) for all the remand dispositions.",
+  "LEGACY_REMAND_REASON_POST_AOJ_LABEL_BEFORE": "Before certification",
+  "LEGACY_REMAND_REASON_POST_AOJ_LABEL_AFTER": "After certification",
+  "AMA_REMAND_REASON_POST_AOJ_LABEL_BEFORE": "Pre AOJ",
+  "AMA_REMAND_REASON_POST_AOJ_LABEL_AFTER": "Post AOJ",
 
   "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL": "Complexity of case",
   "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_SUBHEAD": "How would you rate the complexity of this case?",
