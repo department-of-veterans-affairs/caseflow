@@ -34,7 +34,7 @@ module CaseReviewConcern
     return unless request_issue
 
     request_issue.update(disposition: issue_attrs["disposition"])
-    # If disposition was remanded and now is changed to another dispostion, 
+    # If disposition was remanded and now is changed to another dispostion,
     # delete all remand reasons associated with the request issue
     update_remand_reasons(request_issue, issue_attrs["remand_reasons"] || [])
   end
