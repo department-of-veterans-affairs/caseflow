@@ -37,7 +37,7 @@ type Props<T> = {|
 |};
 
 type ComponentState<T> = {|
-  value?: ?T
+  value: ?OptionType<T> | T
 |};
 
 class SearchableDropdown<T> extends React.Component<Props<T>, ComponentState<T>> {
@@ -54,7 +54,7 @@ class SearchableDropdown<T> extends React.Component<Props<T>, ComponentState<T>>
     this.setState({ value: nextProps.value });
   };
 
-  onChange = (value: T) => {
+  onChange = (value: OptionType<T>) => {
     let newValue = value;
     let deletedValue = null;
 

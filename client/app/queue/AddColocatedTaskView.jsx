@@ -122,7 +122,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
             label,
             value
           }))}
-          onChange={({ value }) => this.setState({ action: value })}
+          onChange={(option) => option && this.setState({ action: option.value })}
           value={this.state.action} />
       </div>
       <div {...marginTop(4)}>
