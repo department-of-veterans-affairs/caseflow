@@ -67,7 +67,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent<Props> {
           remand_reasons: []
         })}
         name={`dispositions_dropdown_${String(issue.id)}`} />
-      {appeal.docketName === 'legacy' && issue.disposition === ISSUE_DISPOSITIONS.VACATED && <Checkbox
+      {appeal.isLegacyAppeal && issue.disposition === ISSUE_DISPOSITIONS.VACATED && <Checkbox
         name={`duplicate-vacated-issue-${String(issue.id)}`}
         styling={css({
           marginBottom: 0,

@@ -82,7 +82,7 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
     const { appeal } = this.props;
 
     const options = _.flatten(_.values(
-      appeal.docketName === 'legacy' ? LEGACY_REMAND_REASONS : REMAND_REASONS
+      appeal.isLegacyAppeal ? LEGACY_REMAND_REASONS : REMAND_REASONS
     ));
     const pairs = _.zip(
       _.map(options, 'id'),
@@ -183,7 +183,7 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
   getCheckbox = (option, onChange, values) => {
     const rowOptId = `${String(this.props.issue.id)}-${option.id}`;
     const { appeal } = this.props;
-    const copyPrefix = appeal.docketName === 'legacy' ? 'LEGACY' : 'AMA';
+    const copyPrefix = appeal.isLegacyAppeal ? 'LEGACY' : 'AMA';
 
     return <React.Fragment key={option.id}>
       <Checkbox
@@ -224,7 +224,7 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
       values: this.state
     };
 
-    if (appeal.docketName === 'legacy') {
+    if (appeal.isLegacyAppeal) {
       return <div {...flexContainer}>
         <div {...flexColumn}>
           <CheckboxGroup

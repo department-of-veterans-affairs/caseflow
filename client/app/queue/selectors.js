@@ -138,7 +138,7 @@ export const newTasksByAssigneeCssIdSelector = createSelector(
 export const workableTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks: Array<TaskWithAppeal>) => tasks.filter(
-    (task) => task.appeal.docketName === 'legacy' || task.status !== 'on_hold'
+    (task) => task.appeal.isLegacyAppeal || task.status !== 'on_hold'
   )
 );
 

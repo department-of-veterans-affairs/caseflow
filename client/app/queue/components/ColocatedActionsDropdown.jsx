@@ -76,7 +76,7 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
     } = this.props;
     const options = [];
 
-    if (['translation', 'schedule_hearing'].includes(task.action) && appeal.docketName === 'legacy') {
+    if (['translation', 'schedule_hearing'].includes(task.action) && appeal.isLegacyAppeal) {
       options.push({
         label: sprintf(COPY.COLOCATED_ACTION_SEND_TO_TEAM, CO_LOCATED_ADMIN_ACTIONS[task.action]),
         value: CO_LOCATED_ACTIONS.SEND_TO_TEAM

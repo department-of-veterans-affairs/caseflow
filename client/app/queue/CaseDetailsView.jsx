@@ -67,7 +67,7 @@ class CaseDetailsView extends React.PureComponent {
       <StickyNavContentArea>
         <CaseDetailsIssueList
           title="Issues"
-          isLegacyAppeal={appeal.docketName === 'legacy'}
+          isLegacyAppeal={appeal.isLegacyAppeal}
           issues={appeal.issues}
         />
         <PowerOfAttorneyDetail title="Power of Attorney" poa={appeal.powerOfAttorney} />
