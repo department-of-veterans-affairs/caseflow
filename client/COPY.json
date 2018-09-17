@@ -81,6 +81,10 @@
   "ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL": "Add admin action",
 
   "REMAND_REASONS_SCREEN_SUBHEAD_LABEL": "Please %s the appropriate remand reason(s) for all the remand dispositions.",
+  "LEGACY_REMAND_REASON_POST_AOJ_LABEL_BEFORE": "Before certification",
+  "LEGACY_REMAND_REASON_POST_AOJ_LABEL_AFTER": "After certification",
+  "AMA_REMAND_REASON_POST_AOJ_LABEL_BEFORE": "Pre AOJ",
+  "AMA_REMAND_REASON_POST_AOJ_LABEL_AFTER": "Post AOJ",
 
   "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL": "Complexity of case",
   "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_SUBHEAD": "How would you rate the complexity of this case?",
