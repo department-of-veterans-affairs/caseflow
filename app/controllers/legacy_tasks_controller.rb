@@ -1,7 +1,6 @@
 class LegacyTasksController < ApplicationController
   include Errors
 
-  before_action :verify_queue_access
   before_action :verify_task_assignment_access, only: [:create, :update]
 
   ROLES = Constants::USER_ROLE_TYPES.keys.freeze
