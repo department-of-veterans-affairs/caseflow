@@ -58,7 +58,7 @@ type Props = Params & {|
 |};
 
 type ComponentState = {
-  selectedOption: ?OptionType
+  selectedOption: OptionType<string>
 };
 
 class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
@@ -71,6 +71,9 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
   handleChange = (option) => {
     this.setState({ selectedOption: option });
 
+    if (!option) {
+      return;
+    }
     if (option.value === ASSIGN) {
       return;
     }
