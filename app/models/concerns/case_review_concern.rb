@@ -21,34 +21,34 @@ module CaseReviewConcern
     if task.type == "AttorneyTask" && task.assigned_by_id != reviewing_judge_id
       task.parent.update(assigned_to_id: reviewing_judge_id)
     end
-    (issues || []).each do |issue|
-      update_issue_disposition(issue)
+    (issues || []).each do |issue_attrs|
+      update_issue_disposition(issue_attrs)
     end
   end
 
-  def update_issue_disposition(issue)
+  def update_issue_disposition(issue_attrs)
     # TODO: update request issues for RAMP appeals for now. When we build out
     # decision issues further, we'll update those.
     # decision_issue = appeal.decision_issues.find_by(id: issue["id"]) if appeal
-    request_issue = appeal.request_issues.find_by(id: issue["id"]) if appeal
+    request_issue = appeal.request_issues.find_by(id: issue_attrs["id"]) if appeal
 
     # decision_issue.update(disposition: issue["disposition"]) if decision_issue
     return unless request_issue
-    request_issue.update(disposition: issue["disposition"])
+    request_issue.update(disposition: issue_attrs["disposition"])
     # if disposition is changed to other dispostion from remanded, delete all remand reasons
-    update_remand_reasons(request_issue, issue["remand_reasons"] || [])
+    update_remand_reasons(request_issue, issue_attrs["remand_reasons"] || [])
   end
 
-  def update_remand_reasons(request_issue, remand_reasons)
-    remand_reasons.each do |remand_reason|
-      request_issue.remand_reasons.find_or_initialize_by(code: remand_reason["code"]).tap do |record|
-        record.post_aoj = remand_reason["post_aoj"]
+  def update_remand_reasons(request_issue, remand_reasons_attrs)
+    remand_reasons_attrs.each do |remand_reason_attrs|
+      request_issue.remand_reasons.find_or_initialize_by(code: remand_reason_attrs["code"]).tap do |record|
+        record.post_aoj = remand_reason_attrs["post_aoj"]
         record.save!
       end
     end
     # delete remand reasons that are not passed
     existing_codes = request_issue.reload.remand_reasons.pluck(:code)
-    codes_to_delete = existing_codes - remand_reasons.pluck("code")
+    codes_to_delete = existing_codes - remand_reasons_attrs.pluck("code")
     request_issue.remand_reasons.where(code: codes_to_delete).delete_all
   end
 
