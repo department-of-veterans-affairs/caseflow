@@ -17,18 +17,34 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :appellant_is_not_veteran do
     object.is_a?(LegacyAppeal) ? object.appellant_is_not_veteran : object.claimant_not_veteran
   end
-
+attribute :representative_name do
+    object.is_a?(LegacyAppeal) ? object.power_of_attorney.vacols_representative_name : 
+  end
+  attribute :representative_type do
+    object.is_a?(LegacyAppeal) ? object.power_of_attorney.vacols_representative_type : object.
+  end
+  attribute :representative_address do
+    if @instance_options[:include_addresses] && !object.is_a?(LegacyAppeal)
+      object.representative_address
+    end
+  end
   attribute :appellants do
+    # TODO: - expand rep name into separate fields
     if object.is_a?(LegacyAppeal)
       {
         first_name: object.appellant_first_name,
         middle_name: object.appellant_middle_initial,
         last_name: object.appellant_last_name,
         name_suffix: object.appellant_name_suffix
+        representative: {
+          name: object.power_of_attorney.vacols_representative_name,
+          type: object.power_of_attorney.vacols_representative_type,
+          code: object.power_of_attorney.vacols_representative_code
+        }
       }
     else
       object.claimants.map do |claimant|
-        address = if @instance_options[:include_addresses] && !object.is_a?(LegacyAppeal)
+        address = if @instance_options[:include_addresses]
                     {
                       address_line_1: claimant.address_line_1,
                       address_line_2: claimant.address_line_2,
@@ -38,13 +54,18 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
                       country: claimant.country
                     }
                   end
-
         {
           first_name: claimant.first_name,
           middle_name: claimant.middle_name,
           last_name: claimant.last_name,
           name_suffix: "",
-          address: address
+          address: address,
+          representative: {
+            name: object.representative_name,
+            type: object.representative_type,
+            participant_id: object.representative_participant_id,
+            address: @instance_options[:include_addresses] ? object.representative_address : nil
+          }
         }
       end
     end
@@ -71,19 +92,6 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
         # break down request issues yet but all RAMP appeals will be 'compensation'
         { id: issue.id, disposition: issue.disposition, program: "Compensation", description: issue.description }
       end
-    end
-  end
-
-  # TODO: - expand rep name into separate fields
-  attribute :representative_name do
-    object.is_a?(LegacyAppeal) ? object.power_of_attorney.vacols_representative_name : object.representative_name
-  end
-  attribute :representative_type do
-    object.is_a?(LegacyAppeal) ? object.power_of_attorney.vacols_representative_type : object.representative_type
-  end
-  attribute :representative_address do
-    if @instance_options[:include_addresses] && !object.is_a?(LegacyAppeal)
-      object.representative_address
     end
   end
 

@@ -23,7 +23,8 @@ class PowerOfAttorneyRepository
 
     poa.assign_from_vacols(
       vacols_representative_name: rep_info[:representative_name],
-      vacols_representative_type: rep_info[:representative_type]
+      vacols_representative_type: rep_info[:representative_type],
+      vacols_representative_code: case_record.bfso
     )
   end
 
