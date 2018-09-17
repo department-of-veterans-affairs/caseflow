@@ -1,7 +1,6 @@
 class TasksController < ApplicationController
   include Errors
 
-  before_action :verify_queue_access
   before_action :verify_task_assignment_access, only: [:create]
   skip_before_action :deny_vso_access, only: [:index, :for_appeal]
 
@@ -106,9 +105,7 @@ class TasksController < ApplicationController
   end
 
   def user_role
-    return params[:role].downcase unless params[:role].to_s.empty?
-
-    current_user.organization_queue_user? ? "generic" : nil
+    params[:role].to_s.empty? ? "generic" : params[:role].downcase
   end
 
   def user
@@ -148,7 +145,7 @@ class TasksController < ApplicationController
 
   def update_params
     params.require("task")
-      .permit(:status, :on_hold_duration, :assigned_to_id)
+      .permit(:status, :on_hold_duration, :assigned_to_id, :instructions)
   end
 
   def json_vso_tasks
@@ -170,7 +167,7 @@ class TasksController < ApplicationController
   end
 
   def json_tasks_by_appeal_id(appeal_db_id, appeal_type)
-    tasks = queue_class.new.tasks_by_appeal_id(appeal_db_id, appeal_type)
+    tasks = queue_class.new(user: current_user).tasks_by_appeal_id(appeal_db_id, appeal_type)
 
     render json: {
       tasks: json_tasks(tasks)[:data]

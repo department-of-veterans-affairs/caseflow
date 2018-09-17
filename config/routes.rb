@@ -38,6 +38,7 @@ Rails.application.routes.draw do
         get 'token', to: 'tokens#generate_token'
         get 'appeals', to: 'appeals#list'
         get 'appeals/:appeal_id', to: 'appeals#details'
+        post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
         get 'judges', to: 'judges#index'
         get 'user', to: 'users#index'
       end
@@ -99,10 +100,13 @@ Rails.application.routes.draw do
     get :document_count
     get :new_documents
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
+    resources :special_issues, only: [:create, :index]
     get 'tasks', to: "tasks#for_appeal"
   end
 
   resources :beaam_appeals, only: [:index]
+
+  resources :regional_offices, only: [:index]
 
   namespace :hearings do
     resources :dockets, only: [:index, :show], param: :docket_date
@@ -114,9 +118,10 @@ Rails.application.routes.draw do
     resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
   get 'hearings/schedule', to: "hearings/hearing_day#index"
-  get 'hearings/schedule/build', to: "hearing_schedule#index"
-  get 'hearings/schedule/build/upload', to: "hearing_schedule#index"
-  get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearing_schedule#index"
+  get 'hearings/schedule/build', to: "hearing_schedule#build_schedule_index"
+  get 'hearings/schedule/build/upload', to: "hearing_schedule#build_schedule_index"
+  get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearing_schedule#build_schedule_index"
+  get 'hearings/schedule/assign', to: "hearing_schedule#index"
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show_print"
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"

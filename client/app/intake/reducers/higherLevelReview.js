@@ -2,7 +2,7 @@ import { ACTIONS, REQUEST_STATE } from '../constants';
 import { FORM_TYPES } from '../../intakeCommon/constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, getPageError, formatRelationships } from '../util';
+import { getReceiptDateError, getBenefitTypeError, getPageError, formatRelationships } from '../util';
 import { formatRatings } from '../../intakeCommon/util';
 import _ from 'lodash';
 
@@ -31,6 +31,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     receiptDate: {
       $set: serverIntake.receipt_date && formatDateStr(serverIntake.receipt_date)
+    },
+    benefitType: {
+      $set: serverIntake.benefit_type
     },
     claimantNotVeteran: {
       $set: serverIntake.claimant_not_veteran
@@ -63,6 +66,8 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
   updateFromServerIntake({
     receiptDate: null,
     receiptDateError: null,
+    benefitType: null,
+    benefitTypeError: null,
     informalConference: null,
     informalConferenceError: null,
     sameOffice: null,
@@ -120,6 +125,12 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         $set: action.payload.receiptDate
       }
     });
+  case ACTIONS.SET_BENEFIT_TYPE:
+    return update(state, {
+      benefitType: {
+        $set: action.payload.benefitType
+      }
+    });
   case ACTIONS.SET_CLAIMANT_NOT_VETERAN:
     return update(state, {
       claimantNotVeteran: {
@@ -160,6 +171,9 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       receiptDateError: {
         $set: null
       },
+      benefitTypeError: {
+        $set: null
+      },
       isReviewed: {
         $set: true
       },
@@ -176,6 +190,9 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       },
       sameOfficeError: {
         $set: getSameOfficeError(action.payload.responseErrorCodes)
+      },
+      benefitTypeError: {
+        $set: getBenefitTypeError(action.payload.responseErrorCodes)
       },
       receiptDateError: {
         $set: getReceiptDateError(action.payload.responseErrorCodes, state)

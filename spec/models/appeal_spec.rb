@@ -41,6 +41,28 @@ describe Appeal do
     end
   end
 
+  context "#advanced_on_docket" do
+    context "when a claimant is advanced_on_docket" do
+      let(:appeal) do
+        create(:appeal, claimants: [create(:claimant, date_of_birth: 80.years.ago)])
+      end
+
+      it "returns true" do
+        expect(appeal.advanced_on_docket).to eq(true)
+      end
+    end
+
+    context "when no claimant is advanced_on_docket" do
+      let(:appeal) do
+        create(:appeal)
+      end
+
+      it "returns false" do
+        expect(appeal.advanced_on_docket).to eq(false)
+      end
+    end
+  end
+
   context "#find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id" do
     context "with a uuid (AMA appeal id)" do
       let(:veteran_file_number) { "64205050" }
@@ -78,6 +100,25 @@ describe Appeal do
           Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(made_up_non_uuid)
         end.to raise_exception(ActiveRecord::RecordNotFound)
       end
+    end
+  end
+
+  context "#appellant_first_name" do
+    subject { appeal.appellant_first_name }
+
+    context "when appeal has claimants" do
+      let(:appeal) { create(:appeal, number_of_claimants: 1) }
+
+      it "returns claimant's name" do
+        expect(subject).to_not eq nil
+        expect(subject).to eq appeal.claimants.first.first_name
+      end
+    end
+
+    context "when appeal doesn't have claimants" do
+      let(:appeal) { create(:appeal, number_of_claimants: 0) }
+
+      it { is_expected.to eq nil }
     end
   end
 

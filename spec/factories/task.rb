@@ -4,7 +4,6 @@ FactoryBot.define do
     assigned_by { create(:user) }
     assigned_to { create(:user) }
     appeal { create(:legacy_appeal, vacols_case: create(:case)) }
-    appeal_type "LegacyAppeal"
     action { nil }
 
     trait :in_progress do
@@ -27,6 +26,13 @@ FactoryBot.define do
       completed_at Time.zone.now
     end
 
+    factory :root_task do
+      type "RootTask"
+      appeal_type "Appeal"
+      appeal { create(:appeal) }
+      assigned_by { nil }
+    end
+
     factory :generic_task do
       type "GenericTask"
       appeal_type "Appeal"
@@ -47,7 +53,7 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
-    factory :ama_judge_task do
+    factory :ama_judge_task, class: JudgeTask do
       type "JudgeTask"
       appeal_type "Appeal"
       action :assign
@@ -64,6 +70,12 @@ FactoryBot.define do
     factory :ama_vso_task do
       type "GenericTask"
       appeal_type "Appeal"
+    end
+
+    factory :bva_dispatch_task do
+      type "BvaDispatchTask"
+      appeal_type "Appeal"
+      appeal { create(:appeal) }
     end
   end
 end

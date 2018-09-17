@@ -136,6 +136,7 @@ class AppealRepository
       veteran_first_name: correspondent_record.snamef,
       veteran_middle_initial: correspondent_record.snamemi,
       veteran_last_name: correspondent_record.snamel,
+      veteran_name_suffix: correspondent_record.ssalut,
       veteran_date_of_birth: correspondent_record.sdob,
       veteran_gender: correspondent_record.sgender,
       outcoder_first_name: outcoder_record.try(:snamef),
@@ -450,9 +451,6 @@ class AppealRepository
     fail AppealNotValidToReopen if %w[50 51 52 53 54 70 96 97 98 99].include? previous_active_location
 
     adv_status = previous_active_location == "77"
-    fail AppealNotValidToReopen if adv_status && (close_disposition == "9")
-    fail AppealNotValidToReopen if !adv_status && (close_disposition != "9")
-
     bfmpro = adv_status ? "ADV" : "ACT"
     tikeywrd = adv_status ? "ADVANCE" : "ACTIVE"
 

@@ -142,7 +142,7 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
         goToNextStep: nextStepHook = null
       } = this.state.wrapped;
 
-      if (!validation || !validation()) {
+      if (validation && !validation()) {
         return this.props.highlightInvalidFormItems(true);
       }
       this.props.highlightInvalidFormItems(false);

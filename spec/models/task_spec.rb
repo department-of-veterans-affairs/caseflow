@@ -98,4 +98,86 @@ describe Task do
       end
     end
   end
+
+  context "#prepared_by_display_name" do
+    let(:task) { create(:task, type: "Task") }
+
+    context "when there is no attorney_case_review" do
+      it "should return nil" do
+        expect(task.prepared_by_display_name).to eq(nil)
+      end
+    end
+
+    context "when there is an attorney_case_review" do
+      let!(:child) { create(:task, type: "Task", parent_id: task.id) }
+      let!(:attorney_case_reviews) do
+        create(:attorney_case_review, task_id: child.id, attorney: create(:user, full_name: "Bob Smith"))
+      end
+
+      it "should return the most recent attorney case review" do
+        expect(task.prepared_by_display_name).to eq(%w[Bob Smith])
+      end
+    end
+  end
+
+  context "#latest_attorney_case_review" do
+    let(:task) { create(:task, type: "Task") }
+
+    context "when there is no sub task" do
+      it "should return nil" do
+        expect(task.latest_attorney_case_review).to eq(nil)
+      end
+    end
+
+    context "when there is a sub task" do
+      let!(:child) { create(:task, type: "Task", parent_id: task.id) }
+      let!(:attorney_case_reviews) do
+        [
+          create(:attorney_case_review, task_id: child.id, created_at: 1.day.ago),
+          create(:attorney_case_review, task_id: child.id, created_at: 2.days.ago)
+        ]
+      end
+
+      it "should return the most recent attorney case review" do
+        expect(task.latest_attorney_case_review).to eq(attorney_case_reviews.first)
+      end
+    end
+  end
+
+  describe ".root_task" do
+    context "when sub-sub-sub...task has a root task" do
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:task) do
+        t = FactoryBot.create(:generic_task, parent_id: root_task.id)
+        5.times { t = FactoryBot.create(:generic_task, parent_id: t.id) }
+        GenericTask.last
+      end
+
+      it "should return the root_task" do
+        expect(task.root_task.id).to eq(root_task.id)
+      end
+    end
+
+    context "when sub-sub-sub...task does not have a root task" do
+      let(:task) do
+        t = FactoryBot.create(:generic_task)
+        5.times { t = FactoryBot.create(:generic_task, parent_id: t.id) }
+        GenericTask.last
+      end
+
+      it "should throw an error" do
+        expect { task.root_task }.to(raise_error) do |e|
+          expect(e).to be_a(Caseflow::Error::NoRootTask)
+          expect(e.message).to eq("Could not find root task for task with ID #{task.id}")
+        end
+      end
+    end
+
+    context "task is root task" do
+      let(:task) { FactoryBot.create(:root_task) }
+      it "should return itself" do
+        expect(task.root_task.id).to eq(task.id)
+      end
+    end
+  end
 end

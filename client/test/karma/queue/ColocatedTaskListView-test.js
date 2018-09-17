@@ -37,6 +37,7 @@ describe('ColocatedTaskListView', () => {
   });
 
   const amaTaskTemplate: Task = {
+    appealType: 'Appeal',
     addedByCssId: null,
     appealId: 5,
     externalAppealId: '3bd1567a-4f07-473c-aefc-3738a6cf58fe',
@@ -60,7 +61,8 @@ describe('ColocatedTaskListView', () => {
     workProduct: null,
     previousTaskAssignedOn: null,
     placedOnHoldAt: null,
-    onHoldDuration: null
+    onHoldDuration: null,
+    decisionPreparedBy: null
   };
 
   const appealTemplate: BasicAppeal = {
@@ -190,7 +192,7 @@ describe('ColocatedTaskListView', () => {
 
       const wrapper = getWrapperColocatedTaskListView(store);
 
-      wrapper.find('[aria-label="Pending (2) tab window"]').simulate('click');
+      wrapper.find('[aria-label="Pending action (2) tab window"]').simulate('click');
 
       const cells = wrapper.find('td');
 

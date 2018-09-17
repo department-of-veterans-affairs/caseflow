@@ -14,6 +14,20 @@ export const onReceiveSchedulePeriod = (schedulePeriod) => ({
   }
 });
 
+export const onReceiveRegionalOffices = (regionalOffices) => ({
+  type: ACTIONS.RECEIVE_REGIONAL_OFFICES,
+  payload: {
+    regionalOffices
+  }
+});
+
+export const onRegionalOfficeChange = (regionalOffice) => ({
+  type: ACTIONS.REGIONAL_OFFICE_CHANGE,
+  payload: {
+    regionalOffice
+  }
+});
+
 export const onSchedulePeriodError = (error) => ({
   type: ACTIONS.SCHEDULE_PERIOD_ERROR,
   payload: {

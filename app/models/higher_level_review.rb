@@ -1,6 +1,6 @@
 class HigherLevelReview < ClaimReview
   with_options if: :saving_review do
-    validates :receipt_date, presence: { message: "blank" }
+    validates :receipt_date, :benefit_type, presence: { message: "blank" }
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
   end
 
@@ -15,6 +15,7 @@ class HigherLevelReview < ClaimReview
       veteranFileNumber: veteran_file_number,
       claimId: end_product_claim_id,
       receiptDate: receipt_date.to_formatted_s(:json_date),
+      benefitType: benefit_type,
       issues: request_issues,
       sameOffice: same_office,
       informalConference: informal_conference

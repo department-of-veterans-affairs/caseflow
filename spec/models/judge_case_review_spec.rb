@@ -84,7 +84,7 @@ describe JudgeCaseReview do
           [
             { disposition: "5", id: vacols_issue1.issseq, readjudication: true },
             { disposition: "3", id: vacols_issue2.issseq,
-              remand_reasons: [{ code: "AB", after_certification: true }] }
+              remand_reasons: [{ code: "AB", post_aoj: true }] }
           ]
         end
         let(:work_product) { "DEC" }
@@ -166,7 +166,7 @@ describe JudgeCaseReview do
           [
             { disposition: "5", id: vacols_issue1.issseq, readjudication: true },
             { disposition: "3", id: vacols_issue2.issseq,
-              remand_reasons: [{ code: "AB", after_certification: true }] }
+              remand_reasons: [{ code: "AB", post_aoj: true }] }
           ]
         end
         let(:work_product) { "DEC" }
