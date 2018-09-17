@@ -39,14 +39,15 @@ RSpec.describe "Hearing Schedule", type: :request do
     let!(:hearing) do
       RequestStore[:current_user] = user
       Generators::Vacols::Staff.create
-      Generators::Vacols::CaseHearing.create(hearing_type: HearingDay::HEARING_TYPES[:central],
-                                             hearing_date: "11-Jun-2017", room: "3")
+      Generators::Vacols::CaseHearing.create(hearing_type: HearingDay::HEARING_TYPES[:video],
+                                             hearing_date: "11-Jun-2017", regional_office: "RO27", room: "3")
     end
 
     it "Assign a judge to a schedule day" do
       put "/hearings/#{hearing.hearing_pkseq + 1}/hearing_day", params: { judge_id: "105" }
       expect(response).to have_http_status(:success)
       expect(JSON.parse(response.body)["hearing"]["judge_id"]).to eq("105")
+      expect(JSON.parse(response.body)["hearing"]["regional_office"]).to eq("Louisville, KY")
     end
   end
 
