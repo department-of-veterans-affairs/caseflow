@@ -698,6 +698,10 @@ ActiveRecord::Schema.define(version: 201809112051441) do
   create_table "veterans", force: :cascade do |t|
     t.string "file_number", null: false
     t.string "participant_id"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "middle_name"
+    t.string "name_suffix"
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
   end
 

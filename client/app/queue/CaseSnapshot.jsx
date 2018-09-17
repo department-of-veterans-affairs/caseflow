@@ -151,6 +151,10 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       taskAssignedToUser
     } = this.props;
 
+    if (!taskAssignedToUser) {
+      return null;
+    }
+
     const assignedByAbbrev = taskAssignedToUser.assignedBy.firstName ?
       this.getAbbrevName(taskAssignedToUser.assignedBy) : null;
 
