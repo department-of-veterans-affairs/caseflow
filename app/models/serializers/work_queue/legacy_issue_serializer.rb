@@ -1,4 +1,4 @@
-class WorkQueue::IssueSerializer < ActiveModel::Serializer
+class WorkQueue::LegacyIssueSerializer < ActiveModel::Serializer
   attribute :levels
   attribute(:program) { object.codes[0] }
   attribute(:type) { object.codes[1] }
