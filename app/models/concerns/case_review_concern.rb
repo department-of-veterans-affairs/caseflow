@@ -29,13 +29,13 @@ module CaseReviewConcern
   def update_issue_disposition(issue_attrs)
     # TODO: update request issues for RAMP appeals for now. When we build out
     # decision issues further, we'll update those.
-    # decision_issue = appeal.decision_issues.find_by(id: issue["id"]) if appeal
     request_issue = appeal.request_issues.find_by(id: issue_attrs["id"]) if appeal
-
-    # decision_issue.update(disposition: issue["disposition"]) if decision_issue
+    # TODO: throw error if request issue is not found
     return unless request_issue
+
     request_issue.update(disposition: issue_attrs["disposition"])
-    # if disposition is changed to other dispostion from remanded, delete all remand reasons
+    # If disposition was remanded and now is changed to another dispostion, 
+    # delete all remand reasons associated with the request issue
     update_remand_reasons(request_issue, issue_attrs["remand_reasons"] || [])
   end
 
@@ -46,7 +46,7 @@ module CaseReviewConcern
         record.save!
       end
     end
-    # delete remand reasons that are not passed
+    # Delete remand reasons that are not part of the request
     existing_codes = request_issue.reload.remand_reasons.pluck(:code)
     codes_to_delete = existing_codes - remand_reasons_attrs.pluck("code")
     request_issue.remand_reasons.where(code: codes_to_delete).delete_all
