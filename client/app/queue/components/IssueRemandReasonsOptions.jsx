@@ -289,9 +289,11 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
       <h2 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
         Issue {idx + 1} {issues.length > 1 ? ` of ${issues.length}` : ''}
       </h2>
-      <div {...smallBottomMargin}>Program: {getIssueProgramDescription(issue)}</div>
-      <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
-      {issue.program &&
+      <div {...smallBottomMargin}>
+        Program: {appeal.docketName === 'legacy' ? getIssueProgramDescription(issue) : issue.program}
+      </div>
+      {issue.type && <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>}
+      {_.isNumber(issue.program) &&
         <React.Fragment>
           <div {...smallBottomMargin}>
             Code: {getIssueDiagnosticCodeLabel(_.last(issue.codes))}
