@@ -39,7 +39,7 @@ class SeedDB
     User.create(css_id: "BVARERDMAN", station_id: 101, full_name: "Judge has attorneys with cases")
     User.create(css_id: "BVAOFRANECKI", station_id: 101, full_name: "Judge has case to sign")
     User.create(css_id: "BVAJWEHNER", station_id: 101, full_name: "Judge has case to assign no team")
-    User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located no cases")
+    User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located with cases")
     User.create(css_id: "BVATWARNER", station_id: 101, full_name: "Build Hearing Schedule")
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
@@ -223,7 +223,7 @@ class SeedDB
     @ama_appeal_with_decision = FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
-      veteran_file_number: "375273128",
+      veteran_file_number: "446647748",
       request_issues: FactoryBot.build_list(:request_issue, 1, description: "Back pain")
     )
 
@@ -283,12 +283,13 @@ class SeedDB
                       assigned_to: colocated)
 
     parent = FactoryBot.create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: @ama_appeals[5])
-    FactoryBot.create(:ama_attorney_task,
-                      :completed,
+    child = FactoryBot.create(:ama_attorney_task,
                       assigned_to: attorney,
                       assigned_by: judge,
                       parent: parent,
                       appeal: @ama_appeals[5])
+    child.update!(status: :completed)
+    FactoryBot.create(:attorney_case_review, task_id: child.id)
 
     parent = FactoryBot.create(
       :ama_judge_task,
