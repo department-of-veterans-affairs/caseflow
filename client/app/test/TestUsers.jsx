@@ -139,6 +139,7 @@ export default class TestUsers extends React.PureComponent {
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
           appName="Test Users"
+          defaultUrl="/"
           logoProps={{
             accentColor: COLORS.GREY_DARK,
             overlapColor: COLORS.GREY_DARK
