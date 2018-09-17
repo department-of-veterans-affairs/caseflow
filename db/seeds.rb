@@ -44,6 +44,13 @@ class SeedDB
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
+    create_vso_user
+    create_org_queue_user
+    create_bva_dispatch_user_with_tasks
+    create_case_search_only_user
+  end
+
+  def create_vso_user
     u = User.create(
       css_id: "VSO",
       station_id: 101,
@@ -55,6 +62,34 @@ class SeedDB
     q = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER", full_name: "Org Q User")
     FeatureToggle.enable!(:org_queue_translation, users: [q.css_id])
     FeatureToggle.enable!(:organization_queue, users: [q.css_id])
+  end
+
+  def create_bva_dispatch_user_with_tasks
+    u = User.create(
+      css_id: "BVA_DISPATCHER",
+      station_id: 101,
+      full_name: "BVA Dispatcher with tasks"
+    )
+    FeatureToggle.enable!(:organization_queue, users: [u.css_id])
+
+    root = FactoryBot.create(:root_task)
+    parent = FactoryBot.create(
+      :bva_dispatch_task,
+      assigned_to: BvaDispatch.singleton,
+      parent_id: root.id,
+      appeal: root.appeal
+    )
+    FactoryBot.create(
+      :bva_dispatch_task,
+      assigned_to: u,
+      parent_id: parent.id,
+      appeal: parent.appeal
+    )
+  end
+
+  def create_case_search_only_user
+    u = User.create!(station_id: 101, css_id: "CASE_SEARCHER_ONLY", full_name: "Case search access. No Queue access")
+    FeatureToggle.enable!(:case_search_home_page, users: [u.css_id])
   end
 
   def create_dispatch_tasks(number)
