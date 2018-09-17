@@ -85,6 +85,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def remove_contention!(for_object)
     VBMSService.remove_contention!(contention_for_object(for_object))
+    for_object.update!(removed_at: Time.zone.now)
   end
 
   # Committing an end product establishment is a way to signify that any other actions performed
@@ -164,6 +165,16 @@ class EndProductEstablishment < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
+  def benefit_type_code
+    @benefit_type_code ||= begin
+      if veteran.date_of_death.nil?
+        EndProduct::BENEFIT_TYPE_CODE_LIVE
+      else
+        EndProduct::BENEFIT_TYPE_CODE_DEATH
+      end
+    end
+  end
+
   def establish_claim_in_vbms(end_product)
     VBMSService.establish_claim!(
       claim_hash: end_product.to_vbms_hash,
@@ -176,6 +187,7 @@ class EndProductEstablishment < ApplicationRecord
       claim_id: reference_id,
       claim_date: claim_date,
       claim_type_code: code,
+      benefit_type_code: benefit_type_code,
       payee_code: payee_code,
       claimant_participant_id: claimant_participant_id,
       modifier: find_open_modifier,
@@ -195,6 +207,7 @@ class EndProductEstablishment < ApplicationRecord
       claim_date: claim_date,
       claim_type_code: code,
       payee_code: payee_code,
+      benefit_type_code: benefit_type_code,
       claimant_participant_id: claimant_participant_id,
       modifier: modifier,
       suppress_acknowledgement_letter: false,

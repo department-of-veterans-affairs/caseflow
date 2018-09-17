@@ -70,7 +70,7 @@ gem "therubyracer", platforms: :ruby
 
 gem "pg", platforms: :ruby
 
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "1bbc41ca8a521fb4655cc27f6294c86d48c081ca"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "44a3aee470f3ddd0e42eb2d07b87ed776b0f9fab"
 
 gem "redis-rails", "~> 5.0.2"
 
@@ -148,7 +148,6 @@ group :stubbed, :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem "dotenv-rails"
   gem "foreman"
-  gem "web-console", "~> 3.0", platforms: :ruby
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   # gem 'spring', platforms: :ruby

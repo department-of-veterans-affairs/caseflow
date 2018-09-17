@@ -25,7 +25,7 @@ export type AppellantAddress = {
 
 export type Issue = {
   levels: Array<string>,
-  program: string,
+  program?: string,
   type: string,
   codes: Array<string>,
   disposition: string,
@@ -34,7 +34,8 @@ export type Issue = {
   id: Number,
   labels: Array<string>,
   readjudication: Boolean,
-  remand_reasons: Array<Object>
+  remand_reasons: Array<Object>,
+  description?: string
 };
 
 export type Issues = Array<Issue>;
@@ -42,6 +43,7 @@ export type Issues = Array<Issue>;
 export type Task = {
   action: string,
   appealId: number,
+  appealType: string,
   externalAppealId: string,
   assignedOn: string,
   dueOn: ?string,
@@ -66,7 +68,11 @@ export type Task = {
   onHoldDuration?: ?number,
   previousTaskAssignedOn: ?string,
   instructions? :string,
-  parentId?: number
+  parentId?: number,
+  decisionPreparedBy: ?{
+    firstName: string,
+    lastName: string,
+  }
 };
 
 export type Tasks = { [string]: Task };

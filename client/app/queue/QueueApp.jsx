@@ -9,7 +9,8 @@ import StringUtil from '../util/StringUtil';
 import {
   setFeatureToggles,
   setUserRole,
-  setUserCssId
+  setUserCssId,
+  setUserIsVsoEmployee
 } from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
@@ -34,6 +35,8 @@ import CaseSearchSheet from './CaseSearchSheet';
 import CaseDetailsView from './CaseDetailsView';
 import SubmitDecisionView from './SubmitDecisionView';
 import SelectDispositionsView from './SelectDispositionsView';
+import SelectSpecialIssuesView from './SelectSpecialIssuesView';
+import SpecialIssueLoadingScreen from './SpecialIssueLoadingScreen';
 import AddEditIssueView from './AddEditIssueView';
 import SelectRemandReasonsView from './SelectRemandReasonsView';
 import SearchBar from './SearchBar';
@@ -43,6 +46,7 @@ import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
+import COPY from '../../COPY.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import type { State } from './types/state';
@@ -56,12 +60,14 @@ type Props = {|
   dropdownUrls: Array<string>,
   buildDate?: string,
   reviewActionType: string,
-  userCanAccessQueue?: boolean,
+  userIsVsoEmployee?: boolean,
+  caseSearchHomePage?: boolean,
   featureToggles: Object,
   // Action creators
   setFeatureToggles: typeof setFeatureToggles,
   setUserRole: typeof setUserRole,
-  setUserCssId: typeof setUserCssId
+  setUserCssId: typeof setUserCssId,
+  setUserIsVsoEmployee: typeof setUserIsVsoEmployee
 |};
 
 class QueueApp extends React.PureComponent<Props> {
@@ -69,6 +75,7 @@ class QueueApp extends React.PureComponent<Props> {
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
+    this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
   }
 
   routedSearchResults = (props) => <React.Fragment>
@@ -116,8 +123,14 @@ class QueueApp extends React.PureComponent<Props> {
     nextStep="/queue" />;
 
   routedSelectDispositions = (props) => <SelectDispositionsView
-    prevStep={`/queue/appeals/${props.match.params.appealId}`}
     appealId={props.match.params.appealId} />;
+
+  routedSelectSpecialIssues = (props) => <SpecialIssueLoadingScreen appealExternalId={props.match.params.appealId}>
+    <SelectSpecialIssuesView
+      appealId={props.match.params.appealId}
+      prevStep={`/queue/appeals/${props.match.params.appealId}`}
+      nextStep={`/queue/appeals/${props.match.params.appealId}/dispositions`} />
+  </SpecialIssueLoadingScreen>;
 
   routedAddEditIssue = (props) => <AddEditIssueView
     nextStep={`/queue/appeals/${props.match.params.appealId}/dispositions`}
@@ -152,22 +165,20 @@ class QueueApp extends React.PureComponent<Props> {
     const {
       userId,
       userCssId,
-      userRole,
-      userCanAccessQueue
+      userRole
     } = this.props;
 
     return {
       userId,
       userCssId,
-      userRole,
-      userCanAccessQueue
+      userRole
     };
   }
 
   render = () => <BrowserRouter>
     <NavigationBar
       wideApp
-      defaultUrl={this.props.userCanAccessQueue ? '/queue' : '/'}
+      defaultUrl={this.props.caseSearchHomePage ? '/' : '/queue'}
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
       logoProps={{
@@ -258,6 +269,11 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedSelectDispositions} />
           <PageRoute
             exact
+            path="/queue/appeals/:appealId/special_issues"
+            title={`Draft Decision | ${COPY.SPECIAL_ISSUES_PAGE_TITLE}`}
+            render={this.routedSelectSpecialIssues} />
+          <PageRoute
+            exact
             path="/queue/appeals/:appealId/evaluate"
             title="Evaluate Decision | Caseflow"
             render={this.routedEvaluateDecision} />
@@ -314,7 +330,8 @@ const mapStateToProps = (state: State) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setFeatureToggles,
   setUserRole,
-  setUserCssId
+  setUserCssId,
+  setUserIsVsoEmployee
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueApp);

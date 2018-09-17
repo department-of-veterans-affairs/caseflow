@@ -1,5 +1,5 @@
 class SupplementalClaim < ClaimReview
-  validates :receipt_date, presence: { message: "blank" }, if: :saving_review
+  validates :receipt_date, :benefit_type, presence: { message: "blank" }, if: :saving_review
 
   END_PRODUCT_RATING_CODE = "040SCR".freeze
   END_PRODUCT_NONRATING_CODE = "040SCNR".freeze
@@ -12,6 +12,7 @@ class SupplementalClaim < ClaimReview
       veteranFileNumber: veteran_file_number,
       claimId: end_product_claim_id,
       receiptDate: receipt_date && receipt_date.to_formatted_s(:json_date),
+      benefitType: benefit_type,
       issues: request_issues
     }
   end

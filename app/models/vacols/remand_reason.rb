@@ -5,8 +5,8 @@ class VACOLS::RemandReason < VACOLS::Record
 
   class RemandReasonError < StandardError; end
 
-  CODES = Constants::ACTIVE_REMAND_REASONS_BY_ID.values.flat_map(&:keys).concat(
-    Constants::INACTIVE_REMAND_REASONS_BY_ID.values.flat_map(&:keys)
+  CODES = Constants::LEGACY_ACTIVE_REMAND_REASONS_BY_ID.values.flat_map(&:keys).concat(
+    Constants::LEGACY_INACTIVE_REMAND_REASONS_BY_ID.values.flat_map(&:keys)
   ).freeze
 
   validates :rmdkey, :rmdissseq, :rmdval, :rmddev, :rmdmdusr, :rmdmdtim, presence: true, on: :create

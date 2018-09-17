@@ -33,15 +33,6 @@ RSpec.describe LegacyTasksController, type: :controller do
         expect(response.status).to eq 200
       end
     end
-
-    context "user is neither judge nor attorney" do
-      let(:role) { :colocated_role }
-
-      it "should redirect request to /unauthorized" do
-        get :index, params: { user_id: user.id }
-        expect(response.status).to eq 302
-      end
-    end
   end
 
   describe "POST /legacy_tasks" do
