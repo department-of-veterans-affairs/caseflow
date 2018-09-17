@@ -41,7 +41,7 @@ jobs:
                 sudo apt-get -y -qq install pdftk libaio1 libaio-dev python3-dev
                 sudo curl -O https://bootstrap.pypa.io/get-pip.py
                 python3 get-pip.py --user
-                pip install awscli --upgrade --user
+                /home/circleci/.local/bin/pip install awscli --upgrade --user
         
         - run:
             name: Install Oracle Client
