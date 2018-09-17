@@ -18,6 +18,11 @@ export default class AssignHearings extends React.Component {
       });
     });
 
+    regionalOfficeDropdowns.push({
+      label: 'Central Office',
+      value: 'CO'
+    });
+
     return _.orderBy(regionalOfficeDropdowns, (ro) => ro.label, 'asc');
   };
 
