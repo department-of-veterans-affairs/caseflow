@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
-import LegacyIssueListItem from './LegacyIssueListItem';
 
 const minimalLeftPadding = css({ paddingLeft: '0.5rem' });
 const leftAlignTd = css({
