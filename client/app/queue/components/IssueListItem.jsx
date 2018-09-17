@@ -14,21 +14,12 @@ export default class IssueListItem extends React.PureComponent {
     {this.props.idx}.
   </td>;
 
-  render = () => {
-    // Fall back on legacy issue list item if this is a legacy issue.
-    if (this.props.issue.program) {
-      return <LegacyIssueListItem {...this.props} />;
-    }
-
-    const description = this.props.issue.description;
-
-    return <React.Fragment>
-      {this.formatIdx()}
-      <td {...minimalLeftPadding}>
-        {description}
-      </td>
-    </React.Fragment>;
-  };
+  render = () => <React.Fragment>
+    {this.formatIdx()}
+    <td {...minimalLeftPadding}>
+      {this.props.issue.description}
+    </td>
+  </React.Fragment>;
 }
 
 IssueListItem.propTypes = {
