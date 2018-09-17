@@ -99,7 +99,7 @@ class Hearings::HearingDayController < HearingScheduleController
   def json_created_hearings(hearings)
     json_hash = ActiveModelSerializers::SerializableResource.new(
       hearings,
-      each_serializer: ::Hearings::HearingDayCreateSerializer
+      each_serializer: ::Hearings::HearingDaySerializer
     ).as_json
 
     format_for_client(json_hash)
