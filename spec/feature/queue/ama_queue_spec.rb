@@ -31,11 +31,11 @@ RSpec.feature "AmaQueue" do
     )
   end
 
-  let!(:user) do
-    User.authenticate!(user: attorney_user)
-  end
-
   context "loads appellant detail view" do
+    let!(:user) do
+      User.authenticate!(user: attorney_user)
+    end
+
     before do
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
         appeals.first.claimants.first.participant_id => {
@@ -206,6 +206,18 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content(appeals.first.docket_number)
         expect(page).to_not have_content(appeals.second.docket_number)
       end
+    end
+  end
+
+  context "when user is a judge" do
+    let!(:user) do
+      User.authenticate!(user: judge_user)
+    end
+
+    scenario "when viewing the review task queue" do
+      visit "/queue"
+
+      expect(page).to
     end
   end
 end
