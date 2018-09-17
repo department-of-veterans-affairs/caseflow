@@ -10,17 +10,17 @@ const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
 const NO_RESULTS_TEXT = 'Not an option';
 const DEFAULT_PLACEHOLDER = 'Select option';
 
-export type OptionType<T> = { value: T, label?: string };
+export type OptionType = { value: string, label?: string };
 
-type Props<T> = {|
-  value?: ?OptionType<T> | T,
+type Props = {|
+  value?: ?OptionType | string,
   creatable?: boolean,
   errorMessage?: ?string,
   label?: string,
   hideLabel?: boolean,
   name: string,
-  onChange: (value: ?OptionType<T>, deletedValue?: ?Array<any>) => mixed,
-  options: Array<OptionType<T>>,
+  onChange: (value: ?OptionType, deletedValue?: ?Array<any>) => mixed,
+  options: Array<OptionType>,
   readOnly?: boolean,
   required?: boolean,
   placeholder: string | Object,
@@ -36,13 +36,13 @@ type Props<T> = {|
   noResultsText?: string
 |};
 
-type ComponentState<T> = {|
-  value: ?OptionType<T> | T
+type ComponentState = {|
+  value: ?OptionType | string
 |};
 
-class SearchableDropdown<T> extends React.Component<Props<T>, ComponentState<T>> {
+class SearchableDropdown extends React.Component<Props, ComponentState> {
 
-  constructor(props: Props<T>) {
+  constructor(props: Props) {
     super(props);
 
     this.state = {
@@ -54,7 +54,7 @@ class SearchableDropdown<T> extends React.Component<Props<T>, ComponentState<T>>
     this.setState({ value: nextProps.value });
   };
 
-  onChange = (value: OptionType<T>) => {
+  onChange = (value: OptionType) => {
     let newValue = value;
     let deletedValue = null;
 
