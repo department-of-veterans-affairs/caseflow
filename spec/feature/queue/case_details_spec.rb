@@ -98,7 +98,7 @@ RSpec.feature "Case details" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
-        worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet/print']")
+        worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet/print?keep_open=true']")
         expect(worksheet_link.text).to eq("View Hearing Worksheet")
       end
     end
