@@ -164,7 +164,13 @@ export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = create
 export const judgeReviewTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   // eslint-disable-next-line no-undefined
-  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => [null, undefined, 'review'].includes(task.action))
+  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => {
+    if (task.appealType === 'Appeal') {
+      return [null, undefined, 'review'].includes(task.action) && (task.status === 'in_progress' || task.status === 'assigned');
+    }
+
+    return [null, undefined, 'review'].includes(task.action);
+  })
 );
 
 export const judgeAssignTasksSelector = createSelector(
@@ -172,7 +178,7 @@ export const judgeAssignTasksSelector = createSelector(
   (tasks) => _.filter(tasks, (task: TaskWithAppeal) => {
     if (task.appealType === 'Appeal') {
       // AMA appeals
-      return task.action === 'assign' && task.status === 'in_progress';
+      return task.action === 'assign' && (task.status === 'in_progress' || task.status === 'assigned');
     }
 
     return task.action === 'assign';
