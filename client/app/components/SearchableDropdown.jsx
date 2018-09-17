@@ -50,7 +50,7 @@ class SearchableDropdown extends React.Component<Props, ComponentState> {
     };
   }
 
-  componentWillReceiveProps = (nextProps: any) => {
+  componentWillReceiveProps = (nextProps: Props) => {
     this.setState({ value: nextProps.value });
   };
 
