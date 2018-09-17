@@ -17,13 +17,37 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :appellant_is_not_veteran do
     object.is_a?(LegacyAppeal) ? object.appellant_is_not_veteran : object.claimant_not_veteran
   end
-  attribute :appellant_first_name
-  attribute :appellant_middle_name do
-    object.is_a?(LegacyAppeal) ? object.appellant_middle_initial : object.appellant_middle_name
-  end
-  attribute :appellant_last_name
-  attribute :appellant_name_suffix do
-    object.is_a?(LegacyAppeal) ? object.appellant_name_suffix : ""
+
+  attribute :appellants do
+    if object.is_a?(LegacyAppeal)
+      {
+        first_name: object.appellant_first_name,
+        middle_name: object.appellant_middle_initial,
+        last_name: object.appellant_last_name,
+        name_suffix: object.appellant_name_suffix
+      }
+    else
+      object.claimants.map do |claimant|
+        address = if @instance_options[:include_addresses] && !object.is_a?(LegacyAppeal)
+                    {
+                      address_line_1: claimant.address_line_1,
+                      address_line_2: claimant.address_line_2,
+                      city: claimant.city,
+                      state: claimant.state,
+                      zip: claimant.zip,
+                      country: claimant.country
+                    }
+                  end
+
+        {
+          first_name: claimant.first_name,
+          middle_name: claimant.middle_name,
+          last_name: claimant.last_name,
+          name_suffix: "",
+          address: address
+        }
+      end
+    end
   end
 
   attribute :file_number do
@@ -56,6 +80,11 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   end
   attribute :representative_type do
     object.is_a?(LegacyAppeal) ? object.power_of_attorney.vacols_representative_type : object.representative_type
+  end
+  attribute :representative_address do
+    if @instance_options[:include_addresses] && !object.is_a?(LegacyAppeal)
+      object.representative_address
+    end
   end
 
   attribute :aod do
