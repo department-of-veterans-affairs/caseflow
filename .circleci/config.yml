@@ -47,7 +47,7 @@ jobs:
             name: Install Oracle Client
             command: |
                 mkdir -p /home/circleci/project/oracle_libs/
-                /home/circleci/.local/bin/aws s3 cp s3://shared-s3/dsva-appeals/instant-client-12-1.tar.gz instant-client-12-1.tar.gz 
+                /home/circleci/.local/bin/aws s3 cp --region us-gov-west-1 s3://shared-s3/dsva-appeals/instant-client-12-1.tar.gz instant-client-12-1.tar.gz 
                 tar xvzf /home/circleci/project/oracle_libs/*.gz
                 cd /home/circleci/project/oracle_libs/instantclient_12_1/
                 ln -s libclntsh.so.12.1 libclntsh.so
