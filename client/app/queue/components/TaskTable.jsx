@@ -308,7 +308,11 @@ const DocketTypeBadge = ({ name, number }) => {
     return null;
   }
 
-  return <Tooltip id={`badge-${number}`} text={_.startCase(_.toLower(name))} position="bottom">
-    <span {...badgeStyling}>{_.toUpper(name.charAt(0))}</span>
+  // "Hearing Request" docket type is stored in the database as "hearing".
+  // Change it here so later transformations affect it properly.
+  const docketName = name === 'hearing' ? 'hearing_request' : name;
+
+  return <Tooltip id={`badge-${number}`} text={_.startCase(_.toLower(docketName))} position="bottom">
+    <span {...badgeStyling}>{_.toUpper(docketName.charAt(0))}</span>
   </Tooltip>;
 };
