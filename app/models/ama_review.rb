@@ -12,6 +12,8 @@ class AmaReview < ApplicationRecord
   has_many :request_issues, as: :review_request
   has_many :claimants, as: :review_request
 
+  before_destroy :remove_issues!
+
   cache_attribute :cached_serialized_timely_ratings, cache_key: :timely_ratings_cache_key, expires_in: 1.day do
     receipt_date && veteran.timely_ratings(from_date: receipt_date).map(&:ui_hash)
   end
@@ -21,12 +23,12 @@ class AmaReview < ApplicationRecord
   end
 
   def create_claimants!(participant_id:, payee_code:)
-    claimants.destroy_all unless claimants.empty?
+    remove_claimants!
     claimants.create_from_intake_data!(participant_id: participant_id, payee_code: payee_code)
   end
 
   def remove_claimants!
-    claimants.destroy_all
+    claimants.destroy_all unless claimants.empty?
   end
 
   def claimant_participant_id
@@ -45,6 +47,10 @@ class AmaReview < ApplicationRecord
 
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
+  end
+
+  def remove_issues!
+    request_issues.destroy_all unless request_issues.empty?
   end
 
   private

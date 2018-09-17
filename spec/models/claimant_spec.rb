@@ -11,8 +11,14 @@ describe Claimant do
   let(:relationship_to_veteran) { nil }
   let(:claimant_info) do
     {
-      name: name,
       relationship: relationship_to_veteran
+    }
+  end
+
+  let(:name_info) do
+    {
+      first_name: first_name,
+      last_name: last_name
     }
   end
 
@@ -39,7 +45,8 @@ describe Claimant do
     let(:claimant) { FactoryBot.create(:claimant) }
 
     context "when claimant exists in BGS" do
-      let(:name) { "POTTER HARRY" }
+      let(:first_name) { "HARRY" }
+      let(:last_name) { "POTTER" }
       let(:relationship_to_veteran) { "SON" }
       let(:address_line_1) { "4 Privet Dr" }
       let(:address_line_2) { "Little Whinging" }
@@ -57,7 +64,11 @@ describe Claimant do
           receive(:fetch_claimant_info_by_participant_id).and_return(claimant_info)
         )
 
-        expect(claimant.name).to eq name
+        allow_any_instance_of(Fakes::BGSService).to(
+          receive(:fetch_person_info).and_return(name_info)
+        )
+
+        expect(claimant.name).to eq "Harry Potter"
         expect(claimant.relationship).to eq relationship_to_veteran
         expect(claimant.address_line_1).to eq address_line_1
         expect(claimant.address_line_2).to eq address_line_2

@@ -400,6 +400,15 @@ describe RampRefilingIntake do
 
     let(:detail) { RampRefiling.create!(veteran_file_number: veteran_file_number) }
 
+    let!(:ramp_issue) do
+      RampIssue.new(
+        review_type: detail,
+        contention_reference_id: "1234",
+        description: "description",
+        source_issue_id: "12345"
+      )
+    end
+
     it "cancels and deletes the refiling record created" do
       subject
 
@@ -409,6 +418,7 @@ describe RampRefilingIntake do
         cancel_reason: "system_error",
         cancel_other: nil
       )
+      expect { ramp_issue.reload }.to raise_error ActiveRecord::RecordNotFound
     end
 
     context "when already complete" do
