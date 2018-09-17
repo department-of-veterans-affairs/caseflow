@@ -24,7 +24,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
         first_name: object.appellant_first_name,
         middle_name: object.appellant_middle_initial,
         last_name: object.appellant_last_name,
-        name_suffix: object.appellant_name_suffix
+        name_suffix: object.appellant_name_suffix,
         representative: {
           name: object.power_of_attorney.vacols_representative_name,
           type: object.power_of_attorney.vacols_representative_type,

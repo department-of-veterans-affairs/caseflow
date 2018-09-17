@@ -3,6 +3,7 @@ class LegacyAppeal < ApplicationRecord
   include AppealConcern
   include AssociatedVacolsModel
   include CachedAttributes
+  include AddressMapper
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
@@ -191,10 +192,6 @@ class LegacyAppeal < ApplicationRecord
   # NOTE: we cannot currently match end products to a specific appeal.
   delegate :end_products, to: :veteran
 
-  def claimants
-
-  end
-
   def congressional_interest
     case_record.mail.map do |mail|
       mail.congressional_address
@@ -276,7 +273,48 @@ class LegacyAppeal < ApplicationRecord
 
   def contested_claimants
     contested_claimants = representatives.where(reptype == "C")
+  end
 
+  def claimants(include_addresses = false)
+    representative = {
+      name: power_of_attorney.vacols_representative_name,
+      type: power_of_attorney.vacols_representative_type,
+      code: power_of_attorney.vacols_representative_code,
+      address: include_addresses ? get_address_from_rep_entry(case_record.representative)
+    }
+
+    claimant_array = if appellant_is_not_veteran
+      [
+        {
+          first_name: appellant_first_name,
+          middle_name: appellant_middle_initial,
+          last_name: appellant_last_name,
+          name_suffix: appellant_name_suffix,
+          address: include_addresses ? get_address_from_corres_entry(case_record.correspondent) : nil
+          representative: representative
+        }
+      ]
+    else
+      [
+        {
+          first_name: veteran_first_name,
+          middle_name: veteran_middle_name,
+          last_name: veteran_last_name,
+          name_suffix: veteran_name_suffix,
+          representative: representative
+        }
+      ]
+    end
+
+    claimant_array.concat(
+      contested_claimants.map do |contested_claimant|
+        first_name: contested_claimant.repfirst,
+        middle_name: contested_claimant.repmi,
+        last_name: contested_claimant.replast,
+        name_suffix: contested_claimant.repsuf,
+        address: include_addresses ? get_address_from_rep_entry(case_record.representative)
+      end
+    )
   end
 
   def docket_name

@@ -13,7 +13,15 @@ class VACOLS::Mail < VACOLS::Record
   def congressional_address
     # 02 is the congressional interest mail type
     if mltype == "02"
-      get_address_from_corres_entry(correspondent)
+      {
+        full_name: [
+          corres_entry.stitle,
+          corres_entry.snamef,
+          corres_entry.snamel,
+          corres_entry.ssalut
+        ].select(&:present?).join(" "),
+        **get_address_from_corres_entry(corres_entry)
+      }
     end
   end
 

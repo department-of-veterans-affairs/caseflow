@@ -14,18 +14,23 @@ module AddressMapper
 
   def get_address_from_corres_entry(corres_entry)
     {
-      full_name: [
-        corres_entry.stitle,
-        corres_entry.snamef,
-        corres_entry.snamel,
-        corres_entry.ssalut
-      ].select(&:present?).join(" "),
       address_line_1: corres_entry.saddrst1,
       address_line_2: corres_entry.saddrst2,
       city: corres_entry.saddrcty,
       state: corres_entry.saddrstt,
       country: corres_entry.saddrcnty,
       zip_code: corres_entry.saddrzip
+    }
+  end
+
+  def get_address_from_rep_entry(rep_entry)
+    {
+      address_line_1: rep_entry.repaddrst1,
+      address_line_2: rep_entry.repaddrst2,
+      city: rep_entry.repaddrcty,
+      state: rep_entry.repaddrstt,
+      country: rep_entry.repaddrcnty,
+      zip_code: rep_entry.repaddrzip
     }
   end
 end
