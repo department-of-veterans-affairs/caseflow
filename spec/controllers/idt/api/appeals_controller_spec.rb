@@ -1,4 +1,4 @@
-RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
+RSpec.describe Idt::Api::V1::AppealsController, type: :controller, focus: true do
   before do
     User.authenticate!(user: user)
 

@@ -280,7 +280,7 @@ class LegacyAppeal < ApplicationRecord
       name: power_of_attorney.vacols_representative_name,
       type: power_of_attorney.vacols_representative_type,
       code: power_of_attorney.vacols_representative_code,
-      address: include_addresses ? get_address_from_rep_entry(case_record.representative)
+      address: include_addresses ? get_address_from_rep_entry(case_record.representative) : nil
     }
 
     claimant_array = if appellant_is_not_veteran
@@ -290,7 +290,7 @@ class LegacyAppeal < ApplicationRecord
           middle_name: appellant_middle_initial,
           last_name: appellant_last_name,
           name_suffix: appellant_name_suffix,
-          address: include_addresses ? get_address_from_corres_entry(case_record.correspondent) : nil
+          address: include_addresses ? get_address_from_corres_entry(case_record.correspondent) : nil,
           representative: representative
         }
       ]
@@ -308,13 +308,17 @@ class LegacyAppeal < ApplicationRecord
 
     claimant_array.concat(
       contested_claimants.map do |contested_claimant|
-        first_name: contested_claimant.repfirst,
-        middle_name: contested_claimant.repmi,
-        last_name: contested_claimant.replast,
-        name_suffix: contested_claimant.repsuf,
-        address: include_addresses ? get_address_from_rep_entry(case_record.representative)
+        {
+          first_name: contested_claimant.repfirst,
+          middle_name: contested_claimant.repmi,
+          last_name: contested_claimant.replast,
+          name_suffix: contested_claimant.repsuf,
+          address: include_addresses ? get_address_from_rep_entry(case_record.representative) : nil
+        }
       end
     )
+
+    claimant_array
   end
 
   def docket_name

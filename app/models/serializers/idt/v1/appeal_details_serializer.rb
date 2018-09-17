@@ -20,17 +20,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
 
   attribute :appellants do
     if object.is_a?(LegacyAppeal)
-      {
-        first_name: object.appellant_first_name,
-        middle_name: object.appellant_middle_initial,
-        last_name: object.appellant_last_name,
-        name_suffix: object.appellant_name_suffix,
-        representative: {
-          name: object.power_of_attorney.vacols_representative_name,
-          type: object.power_of_attorney.vacols_representative_type,
-          code: object.power_of_attorney.vacols_representative_code
-        }
-      }
+      object.claimants(@instance_options[:include_addresses])
     else
       object.claimants.map do |claimant|
         address = if @instance_options[:include_addresses]
@@ -43,18 +33,20 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
                       country: claimant.country
                     }
                   end
+        representative = {
+          name: object.representative_name,
+          type: object.representative_type,
+          participant_id: object.representative_participant_id,
+          address: @instance_options[:include_addresses] ? object.representative_address : nil
+        }
+
         {
           first_name: claimant.first_name,
           middle_name: claimant.middle_name,
           last_name: claimant.last_name,
           name_suffix: "",
           address: address,
-          representative: {
-            name: object.representative_name,
-            type: object.representative_type,
-            participant_id: object.representative_participant_id,
-            address: @instance_options[:include_addresses] ? object.representative_address : nil
-          }
+          representative: object.representative_name ? representative : nil
         }
       end
     end
