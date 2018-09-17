@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe Veteran do
-  let(:veteran) { Veteran.new(file_number: "44556677", first_name: "June", last_name: "Juniper") }
+  let(:veteran) { Veteran.new(file_number: "44556677") }
 
   before do
     Timecop.freeze(Time.utc(2022, 1, 15, 12, 0, 0))
@@ -15,9 +15,7 @@ describe Veteran do
       ptcpnt_id: "123123",
       sex: "M",
       first_name: "June",
-      middle_name: "Janice",
       last_name: "Juniper",
-      name_suffix: "II",
       ssn: "123456789",
       address_line1: "122 Mullberry St.",
       address_line2: "PO BOX 123",
@@ -59,13 +57,11 @@ describe Veteran do
 
       context "when veteran is found in BGS" do
         it "saves and returns veteran" do
+          expect(subject.participant_id).to eq("123123")
+
           expect(subject.reload).to have_attributes(
             file_number: "44556677",
-            participant_id: "123123",
-            first_name: "June",
-            middle_name: "Janice",
-            last_name: "Juniper",
-            name_suffix: "II"
+            participant_id: "123123"
           )
         end
 

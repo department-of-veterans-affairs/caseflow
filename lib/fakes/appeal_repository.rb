@@ -355,7 +355,7 @@ class Fakes::AppealRepository
       file_number = "#{i + 1}5555555"
       claim_id = "FAKEEP123#{i}"
 
-      Generators::Veteran.build(file_number: file_number, first_name: "Bob", last_name: "Smith")
+      Generators::Veteran.build(file_number: file_number)
       Generators::LegacyAppeal.build(
         vbms_id: "#{file_number}C",
         issues: (1..2).map { Generators::Issue.build },

@@ -112,11 +112,11 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             expect(ama_appeals.size).to eq 2
             expect(ama_appeals.first["id"]).to eq tasks.first.appeal.uuid
             expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.first.appeal.docket_number
-            expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.reload.name.first_name
+            expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.name.first_name
 
             expect(ama_appeals.second["id"]).to eq tasks.second.appeal.uuid
             expect(ama_appeals.second["attributes"]["docket_number"]).to eq tasks.second.appeal.docket_number
-            expect(ama_appeals.second["attributes"]["veteran_first_name"]).to eq veteran2.reload.name.first_name
+            expect(ama_appeals.second["attributes"]["veteran_first_name"]).to eq veteran2.name.first_name
           end
 
           it "returns appeals associated with a file number" do
@@ -128,7 +128,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             ama_appeals = response_body.select { |appeal| appeal["type"] == "appeals" }
             expect(ama_appeals.size).to eq 1
             expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.first.appeal.docket_number
-            expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.reload.name.first_name
+            expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.name.first_name
           end
         end
 

@@ -9,12 +9,7 @@ FactoryBot.define do
 
     trait :with_veteran do
       after(:create) do |legacy_appeal, evaluator|
-        veteran = create(
-          :veteran,
-          file_number: legacy_appeal.veteran_file_number,
-          first_name: "Bob",
-          last_name: "Smith"
-        )
+        veteran = create(:veteran, file_number: legacy_appeal.veteran_file_number)
 
         if evaluator.vacols_case
           evaluator.vacols_case.correspondent.snamef = veteran.first_name

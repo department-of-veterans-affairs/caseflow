@@ -8,8 +8,6 @@ RSpec.feature "Intake" do
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 12, 8))
 
-    Fakes::BGSService.inaccessible_appeal_vbms_ids = []
-
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
   end

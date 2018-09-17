@@ -261,8 +261,8 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.string "modifier"
     t.string "station"
     t.datetime "last_synced_at"
-    t.string "claimant_participant_id"
     t.string "payee_code"
+    t.string "claimant_participant_id"
     t.datetime "committed_at"
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
@@ -688,10 +688,6 @@ ActiveRecord::Schema.define(version: 201809112051441) do
   create_table "veterans", force: :cascade do |t|
     t.string "file_number", null: false
     t.string "participant_id"
-    t.string "first_name"
-    t.string "last_name"
-    t.string "middle_name"
-    t.string "name_suffix"
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
   end
 
