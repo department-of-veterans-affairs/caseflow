@@ -8,7 +8,7 @@ import COPY from '../../../COPY.json';
 import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
 import DECASS_WORK_PRODUCT_TYPES from '../../../constants/DECASS_WORK_PRODUCT_TYPES.json';
 
-import SearchableDropdown from '../../components/SearchableDropdown';
+import SearchableDropdown, { type OptionType } from '../../components/SearchableDropdown';
 import {
   appealWithDetailSelector,
   tasksForAppealAssignedToAttorneySelector,
@@ -31,7 +31,6 @@ import {
 import AssignWidget from './AssignWidget';
 import type { Task, Appeal } from '../types/models';
 import type { State } from '../types/state';
-import type { OptionType } from '../../components/SearchableDropdown';
 
 const ASSIGN = 'ASSIGN';
 

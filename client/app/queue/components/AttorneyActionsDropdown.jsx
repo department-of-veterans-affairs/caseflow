@@ -47,6 +47,7 @@ class AttorneyActionsDropdown extends React.PureComponent<Props> {
       history,
       appeal
     } = this.props;
+
     if (!props || !props.value) {
       return;
     }
