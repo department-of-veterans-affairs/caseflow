@@ -9,7 +9,7 @@ import Checkbox from '../../components/Checkbox';
 import { COLORS, VACOLS_DISPOSITIONS } from '../constants';
 import COPY from '../../../COPY.json';
 import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
-import ISSUE_DISPOSITIONS from '../../../constants/ISSUE_DISPOSITIONS.json';
+import ISSUE_DISPOSITIONS_BY_ID from '../../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
 
 import type {
   Appeal,
@@ -55,7 +55,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent<Props> {
         }));
     }
 
-    return Object.entries(ISSUE_DISPOSITIONS).map((opt) => ({
+    return Object.entries(ISSUE_DISPOSITIONS_BY_ID).map((opt) => ({
       label: opt[1],
       value: opt[0]
     }));
