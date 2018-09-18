@@ -1,5 +1,5 @@
 module Caseflow::Error
-  class EfolderError < StandardError
+  class SerializableError < StandardError
     attr_accessor :code, :message
 
     def initialize(args)
@@ -8,13 +8,51 @@ module Caseflow::Error
     end
 
     def serialize_response
-      { json: { "errors": ["status": code, "title": message, "detail": message] }, status: code }
+      { json: { "errors": [{ "status": code, "title": message, "detail": message }] }, status: code }
     end
   end
 
+  class EfolderError < SerializableError; end
   class DocumentRetrievalError < EfolderError; end
   class EfolderAccessForbidden < EfolderError; end
   class ClientRequestError < EfolderError; end
+
+  class ActionForbiddenError < SerializableError
+    def initialize(args)
+      @code = args[:code] || 403
+      @message = args[:message] || "Action forbidden"
+    end
+  end
+
+  class NoRootTask < SerializableError
+    def initialize(args)
+      @task_id = args[:task_id]
+      @code = args[:code] || 500
+      @message = args[:message] || "Could not find root task for task with ID #{@task_id}"
+    end
+  end
+
+  class BvaDispatchTaskCountMismatch < SerializableError
+    # Add attr_accessors for testing
+    attr_accessor :user_id, :appeal_id, :tasks
+
+    def initialize(args)
+      @user_id = args[:user_id]
+      @appeal_id = args[:appeal_id]
+      @tasks = args[:tasks]
+      @code = args[:code] || 400
+      @message = args[:message] || "Expected 1 BvaDispatchTask received #{@tasks.count} tasks for"\
+                                   " appeal #{@appeal_id}, user #{@user_id}"
+    end
+  end
+
+  class TooManyChildTasks < SerializableError
+    def initialize(args)
+      @task_id = args[:task_id]
+      @code = args[:code] || 500
+      @message = args[:message] || "JudgeTask #{@task_id} has too many children"
+    end
+  end
 
   class MultipleAppealsByVBMSID < StandardError; end
   class CertificationMissingData < StandardError; end
@@ -57,4 +95,7 @@ module Caseflow::Error
   class IssueRepositoryError < VacolsRepositoryError; end
   class QueueRepositoryError < VacolsRepositoryError; end
   class MissingRequiredFieldError < VacolsRepositoryError; end
+
+  class IdtApiError < StandardError; end
+  class InvalidOneTimeKey < IdtApiError; end
 end

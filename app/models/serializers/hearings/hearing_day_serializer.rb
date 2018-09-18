@@ -8,7 +8,10 @@ class Hearings::HearingDaySerializer < ActiveModel::Serializer
              :board_member,
              :judge_name,
              :mduser,
-             :mdtime
+             :mdtime,
+             :judge_last_name,
+             :judge_middle_name,
+             :judge_first_name
 
   def attributes(attributes)
     hash = super
@@ -26,6 +29,8 @@ class Hearings::HearingDaySerializer < ActiveModel::Serializer
         result[k] = HearingDayMapper.city_for_regional_office(ro)
       elsif k.to_s == "hearing_type"
         result[k] = HearingDayMapper.label_for_type(v)
+      elsif k.to_s == "hearing_date"
+        result[k] = VacolsHelper.normalize_vacols_datetime(v)
       else
         result[k] = v
       end

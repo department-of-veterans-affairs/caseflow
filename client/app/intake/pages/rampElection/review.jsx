@@ -55,7 +55,7 @@ class Review extends React.PureComponent {
 
       <RadioField
         name="opt-in-election"
-        label="Which review lane did the veteran select?"
+        label="Which review lane did the Veteran select?"
         strongLabel
         options={radioOptions}
         onChange={this.props.setOptionSelected}

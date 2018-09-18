@@ -3,6 +3,7 @@ class Rating
 
   attr_accessor :participant_id, :profile_date, :promulgation_date
 
+  # One week buffer was added
   TIMELY_DAYS = 372.days
 
   def issues
@@ -33,6 +34,8 @@ class Rating
     [response[:rating_issues]].flatten.map do |issue_data|
       RatingIssue.from_bgs_hash(issue_data)
     end
+  rescue Savon::Error
+    []
   end
 
   class << self
@@ -48,6 +51,8 @@ class Rating
       end
 
       unsorted.sort_by(&:promulgation_date).reverse
+    rescue Savon::Error
+      []
     end
 
     def from_bgs_hash(data)

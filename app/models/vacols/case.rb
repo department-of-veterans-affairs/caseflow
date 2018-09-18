@@ -4,7 +4,7 @@ class VACOLS::Case < VACOLS::Record
   self.primary_key = "bfkey"
 
   has_one    :folder,          foreign_key: :ticknum
-  has_one    :representative,  foreign_key: :repkey
+  has_many   :representatives, foreign_key: :repkey
   belongs_to :correspondent,   foreign_key: :bfcorkey, primary_key: :stafkey
   has_many   :case_issues,     foreign_key: :isskey
   has_many   :notes,           foreign_key: :tsktknm
@@ -12,6 +12,8 @@ class VACOLS::Case < VACOLS::Record
   has_many   :decass,          foreign_key: :defolder
   has_one    :staff,           foreign_key: :slogid, primary_key: :bfcurloc
   has_many   :priorloc,        foreign_key: :lockey
+  has_many   :decision_quality_reviews, foreign_key: :qrfolder
+  has_many   :mail,            foreign_key: :mlfolder
 
   class InvalidLocationError < StandardError; end
 
@@ -34,10 +36,11 @@ class VACOLS::Case < VACOLS::Record
     "ADV" => "Advance", # NOD Filed. Case currently at RO
     "REM" => "Remand", # Case has been Remanded to RO or AMC
     "HIS" => "Complete", # BVA action is complete
-    "MOT" => "Motion" # appellant has filed a motion for reconsideration
+    "MOT" => "Motion", # appellant has filed a motion for reconsideration
+    "CAV" => "CAVC" # Case has been remanded from CAVC to BVA
   }.freeze
 
-  # corresponds to BRIEFF.bfso
+  # mapping of values in BRIEFF.BFSOs
   REPRESENTATIVES = {
     "A" => { full_name: "The American Legion", short: "American Legion" },
     "B" => { full_name: "AMVETS", short: "AmVets" },
@@ -209,7 +212,12 @@ class VACOLS::Case < VACOLS::Record
 
   # rubocop:disable Metrics/MethodLength
   def update_vacols_location!(location)
-    return unless location
+    unless location
+      Rails.logger.error "THERE IS A BUG IN YOUR CODE! It attempted to assign a case to a falsy location. " \
+                         "Unfortunately, I can't throw an exception here because code may depend on this method " \
+                         "failing silently. Please validate before passing it to this method."
+      return
+    end
 
     conn = self.class.connection
 

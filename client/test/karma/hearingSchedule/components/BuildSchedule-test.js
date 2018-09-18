@@ -14,7 +14,8 @@ describe('BuildSchedule', () => {
           type: 'JudgeSchedulePeriod',
           createdAt: '07/03/2018',
           userFullName: 'Justin Madigan',
-          fileName: 'fake file name'
+          fileName: 'fake file name',
+          finalized: true
         }
       ]}
     /></MemoryRouter>);

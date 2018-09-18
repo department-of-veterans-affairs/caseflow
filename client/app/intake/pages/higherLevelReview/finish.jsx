@@ -4,18 +4,19 @@ import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import CancelButton from '../../components/CancelButton';
-import NonRatedIssuesUnconnected from '../../components/NonRatedIssues';
-import RatedIssuesUnconnected from '../../components/RatedIssues';
-import IssueCounter from '../../components/IssueCounter';
+import NonRatedIssuesUnconnected from '../../../intakeCommon/components/NonRatedIssues';
+import RatedIssuesUnconnected from '../../../intakeCommon/components/RatedIssues';
+import IssueCounter from '../../../intakeCommon/components/IssueCounter';
 import {
   completeIntake,
   setIssueSelected,
   addNonRatedIssue,
   setIssueCategory,
-  setIssueDescription
+  setIssueDescription,
+  setIssueDecisionDate
 } from '../../actions/ama';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
-import { getIntakeStatus } from '../../selectors';
+import { getIntakeStatus, issueCountSelector } from '../../selectors';
 import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
 class Finish extends React.PureComponent {
@@ -66,7 +67,8 @@ const NonRatedIssues = connect(
   (dispatch) => bindActionCreators({
     addNonRatedIssue,
     setIssueCategory,
-    setIssueDescription
+    setIssueDescription,
+    setIssueDecisionDate
   }, dispatch)
 )(NonRatedIssuesUnconnected);
 
@@ -87,7 +89,7 @@ class FinishNextButton extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
-      disabled={!this.props.higherLevelReview.issueCount}
+      disabled={!this.props.issueCount}
     >
       Establish EP
     </Button>;
@@ -97,23 +99,25 @@ const FinishNextButtonConnected = connect(
   ({ higherLevelReview, intake }) => ({
     requestState: higherLevelReview.requestStatus.completeIntake,
     intakeId: intake.id,
-    higherLevelReview
+    higherLevelReview,
+    issueCount: issueCountSelector(higherLevelReview)
   }),
   (dispatch) => bindActionCreators({
     completeIntake
   }, dispatch)
 )(FinishNextButton);
 
-const IssueCounterConnected = connect(
-  ({ higherLevelReview }) => ({
-    issueCount: higherLevelReview.issueCount
-  })
-)(IssueCounter);
+const mapStateToProps = (state) => {
+  return {
+    issueCount: issueCountSelector(state.higherLevelReview)
+  };
+};
+
+const IssueCounterConnected = connect(mapStateToProps)(IssueCounter);
 
 const RatedIssues = connect(
-  ({ higherLevelReview, intake }) => ({
-    intakeId: intake.id,
-    reviewState: higherLevelReview
+  ({ higherLevelReview }) => ({
+    ratings: higherLevelReview.ratings
   }),
   (dispatch) => bindActionCreators({
     setIssueSelected

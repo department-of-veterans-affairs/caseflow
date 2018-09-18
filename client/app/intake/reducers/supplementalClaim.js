@@ -1,7 +1,9 @@
-import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
+import { ACTIONS, REQUEST_STATE } from '../constants';
+import { FORM_TYPES } from '../../intakeCommon/constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, getPageError, formatRatings, formatRelationships, nonRatedIssueCounter } from '../util';
+import { getReceiptDateError, getBenefitTypeError, getPageError, formatRelationships } from '../util';
+import { formatRatings } from '../../intakeCommon/util';
 
 const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.SUPPLEMENTAL_CLAIM.key) {
@@ -15,11 +17,17 @@ const updateFromServerIntake = (state, serverIntake) => {
     receiptDate: {
       $set: serverIntake.receipt_date && formatDateStr(serverIntake.receipt_date)
     },
+    benefitType: {
+      $set: serverIntake.benefit_type
+    },
     claimantNotVeteran: {
       $set: serverIntake.claimant_not_veteran
     },
     claimant: {
       $set: serverIntake.claimant_not_veteran ? serverIntake.claimant : null
+    },
+    payeeCode: {
+      $set: serverIntake.payee_code
     },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
@@ -43,6 +51,11 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
   updateFromServerIntake({
     receiptDate: null,
     receiptDateError: null,
+    benefitType: null,
+    benefitTypeError: null,
+    claimantNotVeteran: null,
+    claimant: null,
+    payeeCode: null,
     isStarted: false,
     isReviewed: false,
     isComplete: false,
@@ -81,6 +94,12 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: action.payload.receiptDate
       }
     });
+  case ACTIONS.SET_BENEFIT_TYPE:
+    return update(state, {
+      benefitType: {
+        $set: action.payload.benefitType
+      }
+    });
   case ACTIONS.SET_CLAIMANT_NOT_VETERAN:
     return update(state, {
       claimantNotVeteran: {
@@ -96,6 +115,12 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: action.payload.claimant
       }
     });
+  case ACTIONS.SET_PAYEE_CODE:
+    return update(state, {
+      payeeCode: {
+        $set: action.payload.payeeCode
+      }
+    });
   case ACTIONS.SUBMIT_REVIEW_START:
     return update(state, {
       requestStatus: {
@@ -107,6 +132,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
   case ACTIONS.SUBMIT_REVIEW_SUCCEED:
     return updateFromServerIntake(update(state, {
       receiptDateError: {
+        $set: null
+      },
+      benefitTypeError: {
         $set: null
       },
       isReviewed: {
@@ -122,6 +150,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
     return update(state, {
       receiptDateError: {
         $set: getReceiptDateError(action.payload.responseErrorCodes, state)
+      },
+      benefitTypeError: {
+        $set: getBenefitTypeError(action.payload.responseErrorCodes)
       },
       requestStatus: {
         submitReview: {
@@ -188,7 +219,8 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         [Object.keys(state.nonRatedIssues).length]: {
           $set: {
             category: null,
-            description: null
+            description: null,
+            decisionDate: null
           }
         }
       }
@@ -201,9 +233,6 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
             $set: action.payload.category
           }
         }
-      },
-      issueCount: {
-        $set: nonRatedIssueCounter(state, action)
       }
     });
   case ACTIONS.SET_ISSUE_DESCRIPTION:
@@ -214,9 +243,16 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
             $set: action.payload.description
           }
         }
-      },
-      issueCount: {
-        $set: nonRatedIssueCounter(state, action)
+      }
+    });
+  case ACTIONS.SET_ISSUE_DECISION_DATE:
+    return update(state, {
+      nonRatedIssues: {
+        [action.payload.issueId]: {
+          decisionDate: {
+            $set: action.payload.decisionDate
+          }
+        }
       }
     });
   default:

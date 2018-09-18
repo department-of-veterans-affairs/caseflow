@@ -23,7 +23,6 @@ describe RampRefiling do
            notice_date: 3.days.ago,
            receipt_date: 2.days.ago,
            option_selected: original_election_option,
-           end_product_reference_id: "123",
            established_at: 1.day.ago)
   end
 
@@ -34,6 +33,36 @@ describe RampRefiling do
       option_selected: option_selected,
       appeal_docket: appeal_docket
     )
+  end
+
+  context ".need_to_reprocess" do
+    subject { RampRefiling.need_to_reprocess }
+
+    let!(:ramp_refiling_processed) do
+      RampRefiling.create!(
+        veteran_file_number: veteran_file_number,
+        establishment_submitted_at: 2.minutes.ago,
+        establishment_processed_at: 30.seconds.ago
+      )
+    end
+
+    let!(:ramp_refiling_recently_submitted) do
+      RampRefiling.create!(
+        veteran_file_number: veteran_file_number,
+        establishment_submitted_at: 1.minute.ago
+      )
+    end
+
+    let!(:ramp_refiling_not_processed) do
+      RampRefiling.create!(
+        veteran_file_number: veteran_file_number,
+        establishment_submitted_at: 2.minutes.ago
+      )
+    end
+
+    it "returns unprocessed ramp elections processed a long time ago" do
+      expect(subject).to contain_exactly(ramp_refiling_not_processed)
+    end
   end
 
   context "#create_issues!" do
@@ -94,6 +123,7 @@ describe RampRefiling do
           ramp_refiling.issues.create!(description: "Arm")
         ]
       end
+      let(:modifier) { RampReview::END_PRODUCT_DATA_BY_OPTION[option_selected][:modifier] }
 
       context "when an issue is not created in VBMS" do
         # Issues with the description "FAIL ME" are configured to fail in Fakes::VBMSService
@@ -101,19 +131,49 @@ describe RampRefiling do
           ramp_refiling.issues.create!(description: "FAIL ME")
         end
 
-        it "raises ContentionCreationFailed" do
-          expect { subject }.to raise_error(RampRefiling::ContentionCreationFailed)
+        it "doesn't raise error, but does not set establishment_processed_at" do
+          subject
 
           # Even though there was a failure, we should still save the contention ids that were created
           expect(issues.first.reload.contention_reference_id).to_not be_nil
           expect(issues.second.reload.contention_reference_id).to_not be_nil
+          expect(issue_to_fail.reload.contention_reference_id).to be_nil
+
+          # When the contention fails the End Product Establishment should not be committed
+          expect(ramp_refiling.end_product_establishment.established_at).to eq(Time.zone.now)
+          expect(ramp_refiling.end_product_establishment.committed_at).to be_nil
+          expect(ramp_refiling.establishment_processed_at).to be_nil
+        end
+      end
+
+      context "when the EP is already established" do
+        let!(:end_product_establishment) do
+          EndProductEstablishment.create!(
+            veteran_file_number: veteran_file_number,
+            reference_id: "testtest",
+            source: ramp_refiling
+          )
+        end
+
+        it "creates contentions but doesn't establish the claim" do
+          subject
+
+          expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
+
+          expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+            veteran_file_number: "64205555",
+            claim_id: "testtest",
+            contention_descriptions: %w[Arm Leg]
+          )
         end
       end
 
       it "sends requests to VBMS to create both the end_product and the uncreated issues" do
         subject
 
-        expect(Fakes::VBMSService).to have_received(:establish_claim!)
+        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          hash_including(claim_hash: hash_including(end_product_modifier: modifier))
+        )
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: "64205555",
           claim_id: "1337",
@@ -121,6 +181,8 @@ describe RampRefiling do
         )
 
         expect(issues.first.reload.contention_reference_id).to_not be_nil
+        expect(ramp_refiling.end_product_establishment.committed_at).to eq(Time.zone.now)
+        expect(ramp_refiling.establishment_processed_at).to eq(Time.zone.now)
       end
     end
   end
@@ -158,10 +220,10 @@ describe RampRefiling do
     end
 
     context "option_selected" do
-      context "when orginal election was higher level review" do
+      context "when orginal election was Higher-Level Review" do
         let(:original_election_option) { "higher_level_review" }
 
-        context "when higher level review" do
+        context "when Higher-Level Review" do
           let(:option_selected) { "higher_level_review" }
 
           it "adds an error to option_selected" do
@@ -170,7 +232,7 @@ describe RampRefiling do
           end
         end
 
-        context "when higher level review with hearing" do
+        context "when Higher-Level Review with hearing" do
           let(:option_selected) { "higher_level_review_with_hearing" }
 
           it "adds an error to option_selected" do
@@ -190,10 +252,10 @@ describe RampRefiling do
         end
       end
 
-      context "when orginal election was higher level review with hearing" do
+      context "when orginal election was Higher-Level Review with hearing" do
         let(:original_election_option) { "higher_level_review_with_hearing" }
 
-        context "when higher level review" do
+        context "when Higher-Level Review" do
           let(:option_selected) { "higher_level_review" }
 
           it "adds an error to option_selected" do
@@ -202,7 +264,7 @@ describe RampRefiling do
           end
         end
 
-        context "when higher level review with hearing" do
+        context "when Higher-Level Review with hearing" do
           let(:option_selected) { "higher_level_review_with_hearing" }
 
           it "adds an error to option_selected" do
@@ -221,7 +283,7 @@ describe RampRefiling do
       context "when orginal election was supplemental claim" do
         let(:original_election_option) { "supplemental_claim" }
 
-        context "when higher level review" do
+        context "when Higher-Level Review" do
           let(:option_selected) { "higher_level_review" }
           it { is_expected.to be true }
         end

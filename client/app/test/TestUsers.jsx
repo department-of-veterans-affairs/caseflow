@@ -10,6 +10,9 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import NavigationBar from '../components/NavigationBar';
 import AppFrame from '../components/AppFrame';
 import { BrowserRouter } from 'react-router-dom';
+import Alert from '../components/Alert';
+import _ from 'lodash';
+import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 
 export default class TestUsers extends React.PureComponent {
   constructor(props) {
@@ -18,7 +21,9 @@ export default class TestUsers extends React.PureComponent {
       currentUser: props.currentUser,
       userSelect: props.currentUser.id,
       isSwitching: false,
-      isLoggingIn: false
+      isLoggingIn: false,
+      reseedingError: null,
+      isReseeding: false
     };
   }
 
@@ -39,6 +44,15 @@ export default class TestUsers extends React.PureComponent {
 
   userIdOnChange = (value) => this.setState({ userId: value });
   stationIdOnChange = (value) => this.setState({ stationId: value });
+  featureToggleOnChange = (value, deletedValue) => {
+    ApiUtil.post('/test/toggle_feature', { data: {
+      enable: value,
+      disable: deletedValue
+    }
+    }).then(() => {
+      window.location.reload();
+    });
+  }
 
   handleLogInAsUser = () => {
     this.setState({ isLoggingIn: true });
@@ -55,11 +69,34 @@ export default class TestUsers extends React.PureComponent {
       });
   }
 
+  reseed = () => {
+    this.setState({ isReseeding: true });
+    ApiUtil.post('/test/reseed').then(() => {
+      this.setState({
+        reseedingError: null,
+        isReseeding: false
+      });
+    }, (err) => {
+      console.warn(err);
+      this.setState({
+        reseedingError: err,
+        isReseeding: false
+      });
+    });
+  }
+
   render() {
     const userOptions = this.props.testUsersList.map((user) => ({
       value: user.id,
-      label: `${user.css_id} at ${user.station_id}`
+      label: `${user.css_id} at ${user.station_id} - ${user.full_name}`
     }));
+
+    const featureOptions = this.props.featuresList.map((feature) => ({
+      value: feature,
+      label: feature,
+      tagId: feature
+    }));
+
     const tabs = this.props.appSelectList.map((app) => {
       let tab = {};
 
@@ -101,7 +138,11 @@ export default class TestUsers extends React.PureComponent {
         <NavigationBar
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
-          appName="Test Users" />
+          appName="Test Users"
+          logoProps={{
+            accentColor: COLORS.GREY_DARK,
+            overlapColor: COLORS.GREY_DARK
+          }} />
         <AppFrame>
           <AppSegment filledBackground>
             <h1>Welcome to the Caseflow admin page.</h1>
@@ -110,10 +151,7 @@ export default class TestUsers extends React.PureComponent {
                 <p>
                   Here you can test out different user stories by selecting
                   a Test User and accessing different parts of the application.</p>
-                <p>
-                  Some of our users come from different stations across the country,
-                  therefore selecting station 405 might lead to an extra Login screen.</p>
-                <strong>User Selector:</strong>
+                <h3>User Selector:</h3>
                 <SearchableDropdown
                   name="Test user dropdown"
                   hideLabel
@@ -125,13 +163,39 @@ export default class TestUsers extends React.PureComponent {
                   name="Switch user"
                   loading={this.state.isSwitching}
                   loadingText="Switching users" />
-                <br /><br />
-                <p>
-                Not all applications are available to every user. Additionally,
-                some users have access to different parts of the same application.</p>
-                <strong>App Selector:</strong>
+                <br /> <br />
+                <h3>App Selector:</h3>
                 <TabWindow
                   tabs={tabs} />
+                <p>
+                Not all applications are available to every user. Additionally,
+                some users have access to different parts of the same application.
+                  <br />This button reseeds the database with default values.</p>
+                {this.state.reseedingError &&
+                  <Alert
+                    message={this.state.reseedingError.toString()}
+                    type="error"
+                  />
+                }
+                <Button
+                  onClick={this.reseed}
+                  name="Reseed the DB"
+                  loading={this.state.isReseeding}
+                  loadingText="Reseeding the DB" />
+                <br /> <br />
+                <h3>Global Feature Toggles Enabled:</h3>
+                <SearchableDropdown
+                  name="feature_toggles"
+                  label="Remove or add new feature toggles"
+                  multi
+                  creatable
+                  options={featureOptions}
+                  placeholder=""
+                  value={featureOptions}
+                  selfManageValueState
+                  onChange={this.featureToggleOnChange}
+                  creatableOptions={{ promptTextCreator: (tagName) => `Enable feature toggle "${_.trim(tagName)}"` }}
+                />
               </div> }
             { this.props.isGlobalAdmin &&
             <div>
@@ -164,6 +228,7 @@ TestUsers.propTypes = {
   currentUser: PropTypes.object.isRequired,
   isGlobalAdmin: PropTypes.bool,
   testUsersList: PropTypes.array.isRequired,
+  featuresList: PropTypes.array.isRequired,
   appSelectList: PropTypes.array.isRequired,
   epTypes: PropTypes.array.isRequired
 };

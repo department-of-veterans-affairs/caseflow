@@ -5,6 +5,13 @@ class ApplicationController < ApplicationBaseController
   before_action :set_raven_user
   before_action :verify_authentication
   before_action :set_paper_trail_whodunnit
+  before_action :deny_vso_access, except: [:unauthorized]
+
+  rescue_from StandardError do |e|
+    fail e unless e.class.method_defined?(:serialize_response)
+    Raven.capture_exception(e)
+    render(e.serialize_response)
+  end
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from VBMS::ClientError, with: :on_vbms_error
@@ -93,25 +100,33 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :certification_header
 
-  def can_access_queue?
-    return true if current_user.attorney_in_vacols?
-    return true if current_user.judge_in_vacols? && feature_enabled?(:judge_queue)
-    return true if current_user.colocated_in_vacols? && feature_enabled?(:colocated_queue)
+  # https://stackoverflow.com/a/748646
+  def no_cache
+    # :nocov:
+    response.headers["Cache-Control"] = "no-cache, no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+    # :nocov:
+  end
+
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
+  def case_search_home_page
+    if feature_enabled?(:case_search_home_page)
+      return false if current_user.admin?
+      return false if current_user.organization_queue_user? || current_user.vso_employee?
+      return false if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
+      return false if current_user.colocated_in_vacols? && feature_enabled?(:colocated_queue)
+      return true
+    end
     false
   end
-  helper_method :can_access_queue?
+  helper_method :case_search_home_page
+  # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity
 
-  def verify_queue_access
-    redirect_to "/unauthorized" unless can_access_queue?
-  end
-
-  def verify_case_review_access
-    # :nocov:
-    # This feature toggle controls access of attorneys to Draft Decision/OMO Request creation.
-    # we can remove this feature toggle when attorney checkout is enabled for all
-    return true if feature_enabled?(:queue_phase_two)
-    redirect_to "/unauthorized"
-    # :nocov:
+  def deny_vso_access
+    redirect_to "/unauthorized" if current_user && current_user.vso_employee?
   end
 
   def verify_task_assignment_access

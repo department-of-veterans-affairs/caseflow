@@ -4,9 +4,7 @@
 
 const _ = require('lodash');
 const process = require('process');
-/* eslint-disable max-len */
-const webpackConfig = require('@department-of-veterans-affairs/caseflow-frontend-toolkit/config/getWebpackConfig')(__dirname);
-/* eslint-enable max-len */
+const webpackConfig = require('./webpack.config');
 
 const files = [
   'test/karma/test-index.js'

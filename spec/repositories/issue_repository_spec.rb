@@ -23,7 +23,7 @@ describe IssueRepository do
         readjudication: readjudication,
         vacols_sequence_id: "3",
         vacols_id: "123456",
-        remand_reasons: [{ code: "AB", after_certification: true }]
+        remand_reasons: [{ code: "AB", post_aoj: true }]
       }
     end
 

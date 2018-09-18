@@ -16,8 +16,8 @@ task :security_caseflow do
   Time.zone = "Eastern Time (US & Canada)"
 
   # Only ignore this vulnerability for a week.
-  audit_cmd = "bundle-audit check --ignore CVE-2016-10545"
-  if Time.zone.local(2018, 7, 5) < Time.zone.today - 1.week
+  audit_cmd = "bundle-audit check --ignore CVE-2018-1000201"
+  if Time.zone.local(2018, 9, 10) < Time.zone.today - 1.week
     audit_cmd = "bundle-audit check"
   end
   audit_result = ShellCommand.run(audit_cmd)

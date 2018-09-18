@@ -1,0 +1,28 @@
+FactoryBot.define do
+  factory :end_product_establishment do
+    sequence(:veteran_file_number, &:to_s)
+    sequence(:reference_id, &:to_s)
+    source { create(:ramp_election, veteran_file_number: veteran_file_number) }
+    code "030HLRR"
+    modifier "030"
+
+    trait :cleared do
+      synced_status "CLR"
+    end
+
+    trait :canceled do
+      synced_status "CAN"
+    end
+
+    after(:build) do |end_product_establishment, _evaluator|
+      Generators::EndProduct.build(
+        veteran_file_number: end_product_establishment.veteran_file_number,
+        bgs_attrs: {
+          claim_type_code: end_product_establishment.code,
+          end_product_type_code: end_product_establishment.modifier,
+          benefit_claim_id: end_product_establishment.reference_id
+        }
+      )
+    end
+  end
+end

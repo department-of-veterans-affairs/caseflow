@@ -7,13 +7,16 @@ describe EndProduct do
 
   let(:end_product) do
     EndProduct.new(
+      benefit_type_code: benefit_type_code,
       claim_date: claim_date,
       claim_type_code: claim_type_code,
       status_type_code: status_type_code,
+      payee_code: payee_code,
       modifier: modifier,
       station_of_jurisdiction: station_of_jurisdiction,
       gulf_war_registry: gulf_war_registry,
-      suppress_acknowledgement_letter: suppress_acknowledgement_letter
+      suppress_acknowledgement_letter: suppress_acknowledgement_letter,
+      claimant_participant_id: claimant_participant_id
     )
   end
 
@@ -24,6 +27,9 @@ describe EndProduct do
   let(:station_of_jurisdiction) { "489" }
   let(:gulf_war_registry) { false }
   let(:suppress_acknowledgement_letter) { true }
+  let(:payee_code) { "00" }
+  let(:claimant_participant_id) { nil }
+  let(:benefit_type_code) { "1" }
 
   context "#claim_type" do
     subject { end_product.claim_type }
@@ -236,10 +242,13 @@ describe EndProduct do
 
     let(:modifier) { "170" }
     let(:claim_type_code) { "930RC" }
+    let(:payee_code) { "00" }
+    let(:benefit_type_code) { "1" }
     let(:station_of_jurisdiction) { "313" }
     let(:gulf_war_registry) { true }
     let(:suppress_acknowledgement_letter) { false }
     let(:claim_date) { 7.days.from_now }
+    let(:claimant_participant_id) { "1234" }
 
     it "maps attributes correctly" do
       is_expected.to eq(
@@ -253,7 +262,8 @@ describe EndProduct do
         station_of_jurisdiction: "313",
         date: 7.days.from_now.to_date,
         suppress_acknowledgement_letter: false,
-        gulf_war_registry: true
+        gulf_war_registry: true,
+        claimant_participant_id: "1234"
       )
     end
   end

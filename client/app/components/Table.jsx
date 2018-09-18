@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import _ from 'lodash';
-import ReactTooltip from 'react-tooltip';
 
-import { ChevronUp, ChevronDown } from './RenderFunctions';
-import { css, hover } from 'glamor';
+import Tooltip from './Tooltip';
+import { DoubleArrow } from './RenderFunctions';
 import { COLORS } from '../constants/AppConstants';
+import { css, hover } from 'glamor';
 
 /**
  * This component can be used to easily build tables.
@@ -39,30 +39,40 @@ const getColumns = (props) => {
 };
 
 const HeaderRow = (props) => {
-  const sortableHeaderStyle = css(
-    { color: COLORS.PRIMARY },
-    hover({ cursor: 'pointer' })
-  );
+  const sortableHeaderStyle = css({ display: 'table-row' }, hover({ cursor: 'pointer' }));
+  const sortArrowsStyle = css({
+    display: 'table-cell',
+    paddingLeft: '1rem',
+    paddingTop: '0.3rem',
+    verticalAlign: 'middle'
+  });
 
   return <thead className={props.headerClassName}>
     <tr>
-      {getColumns(props).map((column, columnNumber) =>
-        <th scope="col" key={columnNumber} className={cellClasses(column)}>
-          {column.tooltip && <ReactTooltip id={`${columnNumber}-tooltip`} effect="solid" multiline>
-            {column.tooltip}
-          </ReactTooltip>}
-          {column.getSortValue ?
-            <span {...sortableHeaderStyle}
-              data-tip data-for={`${columnNumber}-tooltip`}
-              onClick={() => props.setSortOrder(columnNumber)}>
-              {column.header || ''} {props.sortColIdx === columnNumber && (
-                props.sortAscending ? <ChevronDown /> : <ChevronUp />
-              )}
-            </span> :
-            <span data-tip data-for={`${columnNumber}-tooltip`}>{column.header || ''}</span>
+      {getColumns(props).map((column, columnNumber) => {
+        let columnContent = <span>{column.header || ''}</span>;
+
+        if (column.getSortValue) {
+          const topColor = props.sortColIdx === columnNumber && !props.sortAscending ?
+            COLORS.PRIMARY :
+            COLORS.GREY_LIGHT;
+          const botColor = props.sortColIdx === columnNumber && props.sortAscending ?
+            COLORS.PRIMARY :
+            COLORS.GREY_LIGHT;
+
+          columnContent = <span {...sortableHeaderStyle} onClick={() => props.setSortOrder(columnNumber)}>
+            <span>{column.header || ''}</span>
+            <span {...sortArrowsStyle}><DoubleArrow topColor={topColor} bottomColor={botColor} /></span>
+          </span>;
+        }
+
+        return <th scope="col" key={columnNumber} className={cellClasses(column)}>
+          { column.tooltip ?
+            <Tooltip id={`tooltip-${columnNumber}`} text={column.tooltip}>{columnContent}</Tooltip> :
+            <React.Fragment>{columnContent}</React.Fragment>
           }
-        </th>
-      )}
+        </th>;
+      })}
     </tr>
   </thead>;
 };
@@ -145,10 +155,17 @@ export default class Table extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.state = {
+    const { defaultSort } = this.props;
+    const state = {
       sortAscending: true,
       sortColIdx: null
     };
+
+    if (defaultSort) {
+      Object.assign(state, defaultSort);
+    }
+
+    this.state = state;
   }
 
   defaultRowClassNames = () => ''
@@ -202,7 +219,7 @@ export default class Table extends React.PureComponent {
 
     return <table
       id={id}
-      className={`usa-table-borderless cf-table-borderless ${this.props.className}`}
+      className={`usa-table-borderless cf-table-borderless cf-table-wrap ${this.props.className}`}
       summary={summary}
       {...styling} >
 
@@ -246,5 +263,9 @@ Table.propTypes = {
   className: PropTypes.string,
   caption: PropTypes.string,
   id: PropTypes.string,
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  defaultSort: PropTypes.shape({
+    sortColIdx: PropTypes.number,
+    sortAscending: PropTypes.bool
+  })
 };

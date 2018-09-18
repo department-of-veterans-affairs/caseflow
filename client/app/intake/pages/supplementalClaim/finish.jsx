@@ -4,18 +4,19 @@ import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import CancelButton from '../../components/CancelButton';
-import NonRatedIssuesUnconnected from '../../components/NonRatedIssues';
-import RatedIssuesUnconnected from '../../components/RatedIssues';
-import IssueCounter from '../../components/IssueCounter';
+import NonRatedIssuesUnconnected from '../../../intakeCommon/components/NonRatedIssues';
+import RatedIssuesUnconnected from '../../../intakeCommon/components/RatedIssues';
+import IssueCounter from '../../../intakeCommon/components/IssueCounter';
 import {
   completeIntake,
   setIssueSelected,
   addNonRatedIssue,
   setIssueCategory,
-  setIssueDescription
+  setIssueDescription,
+  setIssueDecisionDate
 } from '../../actions/ama';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
-import { getIntakeStatus } from '../../selectors';
+import { getIntakeStatus, issueCountSelector } from '../../selectors';
 import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
 class Finish extends React.PureComponent {
@@ -67,14 +68,14 @@ const NonRatedIssues = connect(
   (dispatch) => bindActionCreators({
     addNonRatedIssue,
     setIssueCategory,
-    setIssueDescription
+    setIssueDescription,
+    setIssueDecisionDate
   }, dispatch)
 )(NonRatedIssuesUnconnected);
 
 const RatedIssues = connect(
-  ({ supplementalClaim, intake }) => ({
-    intakeId: intake.id,
-    reviewState: supplementalClaim
+  ({ supplementalClaim }) => ({
+    ratings: supplementalClaim.ratings
   }),
   (dispatch) => bindActionCreators({
     setIssueSelected
@@ -98,7 +99,7 @@ class FinishNextButton extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
-      disabled={!this.props.supplementalClaim.issueCount}
+      disabled={!this.props.issueCount}
     >
       Establish EP
     </Button>;
@@ -108,18 +109,21 @@ const FinishNextButtonConnected = connect(
   ({ supplementalClaim, intake }) => ({
     requestState: supplementalClaim.requestStatus.completeIntake,
     intakeId: intake.id,
-    supplementalClaim
+    supplementalClaim,
+    issueCount: issueCountSelector(supplementalClaim)
   }),
   (dispatch) => bindActionCreators({
     completeIntake
   }, dispatch)
 )(FinishNextButton);
 
-const IssueCounterConnected = connect(
-  ({ supplementalClaim }) => ({
-    issueCount: supplementalClaim.issueCount
-  })
-)(IssueCounter);
+const mapStateToProps = (state) => {
+  return {
+    issueCount: issueCountSelector(state.supplementalClaim)
+  };
+};
+
+const IssueCounterConnected = connect(mapStateToProps)(IssueCounter);
 
 export class FinishButtons extends React.PureComponent {
   render = () =>

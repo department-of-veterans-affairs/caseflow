@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
+import _ from 'lodash';
 import ApiUtil from '../../util/ApiUtil';
 import { SPREADSHEET_TYPES } from '../constants';
 import {
@@ -12,19 +13,53 @@ import {
   onJudgeStartDateChange,
   onJudgeEndDateChange,
   onJudgeFileUpload,
-  toggleUploadContinueLoading
+  toggleUploadContinueLoading,
+  updateUploadFormErrors,
+  updateRoCoUploadFormErrors,
+  updateJudgeUploadFormErrors,
+  unsetUploadErrors
 } from '../actions';
 import BuildScheduleUpload from '../components/BuildScheduleUpload';
 
 export class BuildScheduleUploadContainer extends React.Component {
 
+  componentWillUnmount = () => {
+    this.props.unsetUploadErrors();
+  };
+
+  validateDatesAndFile = (onFailure, startDate, endDate, file) => {
+    if (!(startDate && endDate && file)) {
+      onFailure('ValidationError::MissingStartDateEndDateFile');
+
+      return false;
+    }
+    if (endDate < startDate) {
+      onFailure('ValidationError::EndDateTooEarly');
+
+      return false;
+    }
+
+    return true;
+  };
+
   validateData = () => {
     if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
-      return this.props.roCoStartDate && this.props.roCoEndDate && this.props.roCoFileUpload;
+      return this.validateDatesAndFile(
+        this.props.updateRoCoUploadFormErrors,
+        this.props.roCoStartDate,
+        this.props.roCoEndDate,
+        this.props.roCoFileUpload
+      );
     }
     if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
-      return this.props.judgeStartDate && this.props.judgeEndDate && this.props.judgeFileUpload;
+      return this.validateDatesAndFile(
+        this.props.updateJudgeUploadFormErrors,
+        this.props.judgeStartDate,
+        this.props.judgeEndDate,
+        this.props.judgeFileUpload
+      );
     }
+    this.props.updateUploadFormErrors('Please select a file type.');
 
     return false;
   };
@@ -34,7 +69,7 @@ export class BuildScheduleUploadContainer extends React.Component {
 
     if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
       schedulePeriod = {
-        fileName: this.props.roCoFileUpload,
+        file: this.props.roCoFileUpload.file,
         startDate: this.props.roCoStartDate,
         endDate: this.props.roCoEndDate,
         type: this.props.fileType
@@ -43,7 +78,7 @@ export class BuildScheduleUploadContainer extends React.Component {
 
     if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
       schedulePeriod = {
-        fileName: this.props.judgeFileUpload,
+        file: this.props.judgeFileUpload.file,
         startDate: this.props.judgeStartDate,
         endDate: this.props.judgeEndDate,
         type: this.props.fileType
@@ -53,8 +88,12 @@ export class BuildScheduleUploadContainer extends React.Component {
     return ApiUtil.convertToSnakeCase(schedulePeriod);
   };
 
-  async createSchedulePeriod() {
+  createSchedulePeriod = () => {
+    this.props.toggleUploadContinueLoading();
+
     if (!this.validateData()) {
+      this.props.toggleUploadContinueLoading();
+
       return;
     }
 
@@ -62,14 +101,28 @@ export class BuildScheduleUploadContainer extends React.Component {
 
     ApiUtil.post('/hearings/schedule_periods', { data }).
       then((response) => {
-        this.props.history.push(`/schedule/build/upload/${response.body.id}`);
-      });
-  }
+        if (_.has(response.body, 'error')) {
+          if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
+            this.props.updateRoCoUploadFormErrors(response.body.error);
+          }
+          if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
+            this.props.updateJudgeUploadFormErrors(response.body.error);
+          }
+          this.props.toggleUploadContinueLoading();
 
-  onUploadContinue = () => {
-    this.props.toggleUploadContinueLoading();
-    Promise.resolve(this.createSchedulePeriod()).
-      then(this.props.toggleUploadContinueLoading());
+          return;
+        }
+        this.props.toggleUploadContinueLoading();
+        this.props.history.push(`/schedule/build/upload/${response.body.id}`);
+      }, () => {
+        if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
+          this.props.updateRoCoUploadFormErrors('ValidationError::UnspecifiedError');
+        }
+        if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
+          this.props.updateJudgeUploadFormErrors('ValidationError::UnspecifiedError');
+        }
+        this.props.toggleUploadContinueLoading();
+      });
   };
 
   render() {
@@ -88,8 +141,11 @@ export class BuildScheduleUploadContainer extends React.Component {
       onJudgeEndDateChange={this.props.onJudgeEndDateChange}
       judgeFileUpload={this.props.judgeFileUpload}
       onJudgeFileUpload={this.props.onJudgeFileUpload}
+      uploadFormErrors={this.props.uploadFormErrors}
+      uploadRoCoFormErrors={this.props.uploadRoCoFormErrors}
+      uploadJudgeFormErrors={this.props.uploadJudgeFormErrors}
       uploadContinueLoading={this.props.uploadContinueLoading}
-      onUploadContinue={this.onUploadContinue}
+      onUploadContinue={this.createSchedulePeriod}
     />;
   }
 }
@@ -102,6 +158,9 @@ const mapStateToProps = (state) => ({
   judgeStartDate: state.judgeStartDate,
   judgeEndDate: state.judgeEndDate,
   judgeFileUpload: state.judgeFileUpload,
+  uploadFormErrors: state.uploadFormErrors,
+  uploadRoCoFormErrors: state.uploadRoCoFormErrors,
+  uploadJudgeFormErrors: state.uploadJudgeFormErrors,
   uploadContinueLoading: state.uploadContinueLoading
 });
 
@@ -113,7 +172,11 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onJudgeStartDateChange,
   onJudgeEndDateChange,
   onJudgeFileUpload,
-  toggleUploadContinueLoading
+  toggleUploadContinueLoading,
+  updateUploadFormErrors,
+  updateRoCoUploadFormErrors,
+  updateJudgeUploadFormErrors,
+  unsetUploadErrors
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(BuildScheduleUploadContainer));

@@ -1,27 +1,98 @@
 // @flow
-import { associateTasksWithAppeals } from './utils';
+import { associateTasksWithAppeals,
+  prepareAllTasksForStore,
+  extractAppealsAndAmaTasks } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
-import type { Dispatch, UsersById, LoadedQueueTasks, LoadedQueueAppeals } from './types/state';
-import type { Task, User } from './types/models';
+import _ from 'lodash';
+import type { Dispatch } from './types/state';
+import type {
+  Task,
+  Tasks,
+  BasicAppeals,
+  AppealDetails,
+  User
+} from './types/models';
 
-export const onReceiveQueue =
-  ({ tasks, appeals, userId }: { tasks: LoadedQueueTasks, appeals: LoadedQueueAppeals, userId: string }) => ({
-    type: ACTIONS.RECEIVE_QUEUE_DETAILS,
-    payload: {
-      tasks,
-      appeals,
-      userId
-    }
-  });
-
-export const onReceiveJudges = (judges: UsersById) => ({
-  type: ACTIONS.RECEIVE_JUDGE_DETAILS,
+export const onReceiveQueue = (
+  { tasks, amaTasks, appeals }:
+  { tasks: Tasks, amaTasks: Tasks, appeals: BasicAppeals }
+) => ({
+  type: ACTIONS.RECEIVE_QUEUE_DETAILS,
   payload: {
-    judges
+    tasks,
+    amaTasks,
+    appeals
   }
 });
+
+export const onReceiveAppealDetails = (
+  { appeals, appealDetails }: { appeals: BasicAppeals, appealDetails: AppealDetails }
+) => ({
+  type: ACTIONS.RECEIVE_APPEAL_DETAILS,
+  payload: {
+    appeals,
+    appealDetails
+  }
+});
+
+export const onReceiveTasks = (
+  { tasks, amaTasks }: { tasks: Tasks, amaTasks: Tasks }
+) => ({
+  type: ACTIONS.RECEIVE_TASKS,
+  payload: {
+    tasks,
+    amaTasks
+  }
+});
+
+export const fetchJudges = () => (dispatch: Dispatch) => {
+  ApiUtil.get('/users?role=Judge').then((response) => {
+    const resp = JSON.parse(response.text);
+    const judges = _.keyBy(resp.judges, 'id');
+
+    dispatch({
+      type: ACTIONS.RECEIVE_JUDGE_DETAILS,
+      payload: {
+        judges
+      }
+    });
+  });
+};
+
+export const receiveNewDocuments = ({ appealId, newDocuments }: { appealId: string, newDocuments: Array<Object> }) => ({
+  type: ACTIONS.RECEIVE_NEW_FILES,
+  payload: {
+    appealId,
+    newDocuments
+  }
+});
+
+export const getNewDocuments = (appealId: string) => (dispatch: Dispatch) => {
+  dispatch({
+    type: ACTIONS.STARTED_LOADING_DOCUMENTS,
+    payload: {
+      appealId
+    }
+  });
+  ApiUtil.get(`/appeals/${appealId}/new_documents`).then((response) => {
+    const resp = JSON.parse(response.text);
+
+    dispatch(receiveNewDocuments({
+      appealId,
+      newDocuments: resp.new_documents
+    }));
+  }, (error) => {
+    dispatch({
+      type: ACTIONS.ERROR_ON_RECEIVE_NEW_FILES,
+      payload: {
+        appealId,
+        error
+      }
+    });
+  });
+};
 
 export const setAppealDocCount = (appealId: string, docCount: number) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,
@@ -75,19 +146,23 @@ export const editStagedAppeal = (appealId: string, attributes: Object) => ({
   }
 });
 
-export const stageAppeal = (appealId: string) => ({
-  type: ACTIONS.STAGE_APPEAL,
-  payload: {
-    appealId
-  }
-});
-
 export const checkoutStagedAppeal = (appealId: string) => ({
   type: ACTIONS.CHECKOUT_STAGED_APPEAL,
   payload: {
     appealId
   }
 });
+
+export const stageAppeal = (appealId: string) => (dispatch: Dispatch) => {
+  dispatch(checkoutStagedAppeal(appealId));
+
+  dispatch({
+    type: ACTIONS.STAGE_APPEAL,
+    payload: {
+      appealId
+    }
+  });
+};
 
 export const updateEditingAppealIssue = (attributes: Object) => ({
   type: ACTIONS.UPDATE_EDITING_APPEAL_ISSUE,
@@ -199,67 +274,105 @@ export const setSelectionOfTaskOfUser =
     }
   });
 
-const initialTaskAssignment = ({ task, assigneeId }) => ({
-  type: ACTIONS.TASK_INITIAL_ASSIGNED,
-  payload: {
-    task,
-    assigneeId
+export const initialAssignTasksToUser = ({
+  tasks, assigneeId, previousAssigneeId
+}: {
+  tasks: Array<Task>, assigneeId: string, previousAssigneeId: string
+}) => (dispatch: Dispatch) => Promise.all(tasks.map((oldTask) => {
+  let params, url;
+
+  if (oldTask.appealType === 'Appeal') {
+    url = '/tasks';
+    params = {
+      data: {
+        tasks: [{
+          type: 'AttorneyTask',
+          external_id: oldTask.externalAppealId,
+          parent_id: oldTask.taskId,
+          assigned_to_id: assigneeId
+        }]
+      }
+    };
+  } else {
+    url = '/legacy_tasks';
+    params = {
+      data: {
+        tasks: {
+          assigned_to_id: assigneeId,
+          type: 'JudgeCaseAssignmentToAttorney',
+          appeal_id: oldTask.appealId
+        }
+      }
+    };
   }
-});
 
-export const initialAssignTasksToUser =
-  ({ tasks, assigneeId, previousAssigneeId }: { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) =>
-    (dispatch: Dispatch) =>
-      Promise.all(tasks.map((oldTask) => {
-        return ApiUtil.post(
-          '/legacy_tasks',
-          { data: { tasks: { assigned_to_id: assigneeId,
-            type: 'JudgeCaseAssignmentToAttorney',
-            appeal_id: oldTask.attributes.appeal_id } } }).
-          then((resp) => resp.body).
-          then(
-            (resp) => {
-              const { task: { data: task } } = resp;
+  return ApiUtil.post(url, params).
+    then((resp) => resp.body).
+    then((resp) => {
+      const task = resp.tasks ? resp.tasks.data[0] : resp.task.data;
 
-              task.appealId = task.id;
-              dispatch(initialTaskAssignment({ task,
-                assigneeId }));
-              dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
-                taskId: task.id,
-                selected: false }));
-            });
+      const allTasks = prepareAllTasksForStore([task]);
+
+      dispatch(onReceiveTasks({
+        tasks: allTasks.tasks,
+        amaTasks: allTasks.amaTasks
       }));
+      dispatch(setSelectionOfTaskOfUser({
+        userId: previousAssigneeId,
+        taskId: task.attributes.external_appeal_id,
+        selected: false
+      }));
+    });
+}));
 
-const taskReassignment = ({ task, assigneeId, previousAssigneeId }) => ({
-  type: ACTIONS.TASK_REASSIGNED,
-  payload: {
-    task,
-    assigneeId,
-    previousAssigneeId
+export const reassignTasksToUser = ({
+  tasks, assigneeId, previousAssigneeId
+}: {
+  tasks: Array<Task>, assigneeId: string, previousAssigneeId: string
+}) => (dispatch: Dispatch) => Promise.all(tasks.map((oldTask) => {
+  let params, url;
+
+  if (oldTask.appealType === 'Appeal') {
+    url = `/tasks/${oldTask.taskId}`;
+    params = {
+      data: {
+        task: {
+          type: 'AttorneyTask',
+          assigned_to_id: assigneeId
+        }
+      }
+    };
+  } else {
+    url = `/legacy_tasks/${oldTask.taskId}`;
+    params = {
+      data: {
+        tasks: {
+          assigned_to_id: assigneeId,
+          type: 'JudgeCaseAssignmentToAttorney',
+          appeal_id: oldTask.appealId
+        }
+      }
+    };
   }
-});
 
-export const reassignTasksToUser =
-  ({ tasks, assigneeId, previousAssigneeId }: { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) =>
-    (dispatch: Dispatch) =>
-      Promise.all(tasks.map((oldTask) => {
-        return ApiUtil.patch(
-          `/legacy_tasks/${oldTask.attributes.task_id}`,
-          { data: { tasks: { assigned_to_id: assigneeId } } }).
-          then((resp) => resp.body).
-          then(
-            (resp) => {
-              const { task: { data: task } } = resp;
+  return ApiUtil.patch(url, params).
+    then((resp) => resp.body).
+    then((resp) => {
+      const task = resp.tasks ? resp.tasks.data[0] : resp.task.data;
 
-              task.appealId = task.id;
-              dispatch(taskReassignment({ task,
-                assigneeId,
-                previousAssigneeId }));
-              dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
-                taskId: task.id,
-                selected: false }));
-            });
+      const allTasks = prepareAllTasksForStore([task]);
+
+      dispatch(onReceiveTasks({
+        tasks: allTasks.tasks,
+        amaTasks: allTasks.amaTasks
       }));
+      dispatch(setSelectionOfTaskOfUser({
+        userId: previousAssigneeId,
+        taskId: task.attributes.external_appeal_id,
+        selected: false
+      }));
+    });
+}));
 
 const receiveAllAttorneys = (attorneys) => ({
   type: ACTIONS.RECEIVE_ALL_ATTORNEYS,
@@ -275,11 +388,40 @@ const errorAllAttorneys = (error) => ({
   }
 });
 
-export const fetchAllAttorneys = () => (dispatch: Dispatch) => {
-  return ApiUtil.get(
-    '/users?role=Attorney').
-    then((resp) => resp.body).
-    then(
-      (resp) => dispatch(receiveAllAttorneys(resp.attorneys))).
+export const fetchAllAttorneys = () => (dispatch: Dispatch) =>
+  ApiUtil.get('/users?role=Attorney').
+    then((resp) => dispatch(receiveAllAttorneys(resp.body.attorneys))).
     catch((error) => Promise.reject(dispatch(errorAllAttorneys(error))));
-};
+
+export const fetchAmaTasksOfUser = (userId: number, userRole: string) => (dispatch: Dispatch) =>
+  ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
+    then((resp) => dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data))));
+
+export const setTaskAssignment = (externalAppealId: string, cssId: string, pgId: number) => ({
+  type: ACTIONS.SET_TASK_ASSIGNMENT,
+  payload: {
+    externalAppealId,
+    cssId,
+    pgId
+  }
+});
+
+export const setTaskAttrs = (externalAppealId: string, attributes: Object) => ({
+  type: ACTIONS.SET_TASK_ATTRS,
+  payload: {
+    externalAppealId,
+    attributes
+  }
+});
+
+export const setSpecialIssues = (specialIssues: Object) => ({
+  type: ACTIONS.SET_SPECIAL_ISSUE,
+  payload: {
+    specialIssues
+  }
+});
+
+export const setOrganizationId = (id: number) => ({
+  type: ACTIONS.SET_ORGANIZATION_ID,
+  payload: { id }
+});

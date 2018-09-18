@@ -35,7 +35,7 @@ class Generators::LegacyAppeal
         appellant_city: "Huntingdon",
         appellant_state: "TN",
         docket_number: 4198,
-        contested_claim: true
+        case_record: OpenStruct.new(representatives: [OpenStruct.new(reptype: "C")])
       }
     end
     # rubocop:enable Metrics/MethodLength

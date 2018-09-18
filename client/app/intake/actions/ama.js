@@ -1,6 +1,7 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
-import { formatIssues, prepareReviewData } from '../util';
+import { prepareReviewData } from '../util';
+import { formatIssues } from '../../intakeCommon/util';
 import _ from 'lodash';
 
 const analytics = true;
@@ -100,6 +101,13 @@ export const completeIntake = (intakeId, intakeData) => (dispatch) => {
     );
 };
 
+export const setBenefitType = (benefitType) => ({
+  type: ACTIONS.SET_BENEFIT_TYPE,
+  payload: {
+    benefitType
+  }
+});
+
 export const setClaimantNotVeteran = (claimantNotVeteran) => ({
   type: ACTIONS.SET_CLAIMANT_NOT_VETERAN,
   payload: {
@@ -111,6 +119,13 @@ export const setClaimant = (claimant) => ({
   type: ACTIONS.SET_CLAIMANT,
   payload: {
     claimant
+  }
+});
+
+export const setPayeeCode = (payeeCode) => ({
+  type: ACTIONS.SET_PAYEE_CODE,
+  payload: {
+    payeeCode
   }
 });
 
@@ -158,6 +173,19 @@ export const setIssueDescription = (issueId, description) => ({
   meta: {
     analytics: {
       label: description
+    }
+  }
+});
+
+export const setIssueDecisionDate = (issueId, decisionDate) => ({
+  type: ACTIONS.SET_ISSUE_DECISION_DATE,
+  payload: {
+    issueId,
+    decisionDate
+  },
+  meta: {
+    analytics: {
+      label: decisionDate
     }
   }
 });

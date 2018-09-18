@@ -11,6 +11,7 @@ import BuildScheduleContainer from './containers/BuildScheduleContainer';
 import BuildScheduleUploadContainer from './containers/BuildScheduleUploadContainer';
 import ReviewAssignmentsContainer from './containers/ReviewAssignmentsContainer';
 import ListScheduleContainer from './containers/ListScheduleContainer';
+import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import ScrollToTop from '../components/ScrollToTop';
 
 class HearingScheduleApp extends React.PureComponent {
@@ -18,6 +19,7 @@ class HearingScheduleApp extends React.PureComponent {
   render = () => <BrowserRouter basename="/hearings">
     <NavigationBar
       wideApp
+      defaultUrl="/schedule"
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
       logoProps={{
@@ -30,27 +32,37 @@ class HearingScheduleApp extends React.PureComponent {
         <div className="cf-wide-app">
           <PageRoute
             exact
-            path="/schedule/build"
-            title="Caseflow Hearing Schedule"
-            component={BuildScheduleContainer}
-          />
-          <PageRoute
-            exact
             path="/schedule"
             title="Scheduled Hearings"
             component={ListScheduleContainer}
           />
           <PageRoute
             exact
+            path="/schedule/build"
+            title="Caseflow Hearing Schedule"
+            breadcrumb="Build"
+            component={BuildScheduleContainer}
+          />
+          <PageRoute
+            exact
             path="/schedule/build/upload"
             title="Upload Files"
+            breadcrumb="Upload"
             component={BuildScheduleUploadContainer}
           />
           <PageRoute
             exact
             path="/schedule/build/upload/:schedulePeriodId"
-            title="Upload Files"
+            title="Review Assignments"
+            breadcrumb="Review"
             component={ReviewAssignmentsContainer}
+          />
+          <PageRoute
+            exact
+            path="/schedule/assign"
+            title="Assign Hearings"
+            breadcrumb="Assign"
+            component={AssignHearingsContainer}
           />
         </div>
       </AppFrame>

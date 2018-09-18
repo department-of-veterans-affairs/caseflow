@@ -5,13 +5,15 @@ class HigherLevelReviewIntake < Intake
     HigherLevelReview.new(veteran_file_number: veteran_file_number)
   end
 
-  def ui_hash
+  def ui_hash(ama_enabled)
     super.merge(
       receipt_date: detail.receipt_date,
+      benefit_type: detail.benefit_type,
       same_office: detail.same_office,
       informal_conference: detail.informal_conference,
       claimant: detail.claimant_participant_id,
       claimant_not_veteran: detail.claimant_not_veteran,
+      payee_code: detail.payee_code,
       end_product_description: detail.end_product_description,
       ratings: detail.cached_serialized_timely_ratings
     )
@@ -24,8 +26,11 @@ class HigherLevelReviewIntake < Intake
 
   def review!(request_params)
     detail.start_review!
-    detail.create_claimants!(claimant_data: request_params[:claimant] || veteran.participant_id)
-    detail.update(request_params.permit(:receipt_date, :informal_conference, :same_office))
+    detail.create_claimants!(
+      participant_id: request_params[:claimant] || veteran.participant_id,
+      payee_code: request_params[:payee_code] || "00"
+    )
+    detail.update(request_params.permit(:receipt_date, :informal_conference, :same_office, :benefit_type))
   end
 
   def review_errors
@@ -34,12 +39,12 @@ class HigherLevelReviewIntake < Intake
 
   def complete!(request_params)
     return if complete? || pending?
+
     start_completion!
-
-    detail.create_issues!(request_issues_data: request_params[:request_issues] || [])
-
-    create_end_product_and_contentions
-
+    detail.request_issues.destroy_all unless detail.request_issues.empty?
+    detail.create_issues!(build_issues(request_params[:request_issues] || []))
+    detail.update!(establishment_submitted_at: Time.zone.now)
+    detail.process_end_product_establishments!
     complete_with_status!(:success)
   end
 end

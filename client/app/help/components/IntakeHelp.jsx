@@ -37,7 +37,7 @@ class IntakeHelp extends React.Component {
       <h2 id="what-is-caseflow-intake">1. What is Caseflow Intake?</h2>
       <p>Caseflow Intake (Intake) is a web-based application designed to support the Rapid Appeals
     Modernization Program (RAMP). It will help process legacy appeals for Veterans who have
-    chosen to opt-in for the new Supplemental Claim (SC) or Higher Level Review (HLR) options.
+    chosen to opt-in for the new Supplemental Claim (SC) or Higher-Level Review (HLR) options.
     Intake will serve as the single intake system for this process. It will allow for identifying the
     selected option (SC or HLR) and details for a given Veteran's issues (pulled from VBMS),
     creating an End Product (EP), sending notifications to the Appellant, routing the EP to the

@@ -10,7 +10,7 @@ import { onRepNameChange, onWitnessChange, onMilitaryServiceChange } from '../ac
 import { css } from 'glamor';
 import _ from 'lodash';
 import { DISPOSITION_OPTIONS } from '../constants/constants';
-import ReactTooltip from 'react-tooltip';
+import Tooltip from '../../components/Tooltip';
 
 class WorksheetFormEntry extends React.PureComponent {
   render() {
@@ -137,22 +137,20 @@ class WorksheetHeader extends React.PureComponent {
           <div className="cf-hearings-headers"><b>{worksheet.veteran_mi_formatted}</b></div>
         </div>
 
-        <ReactTooltip place="top" className="copy-paste-button" effect="solid" id="copy-vbms-id" />
-
         <div className="cf-hearings-worksheet-data-cell">
           <h5>VETERAN ID</h5>
           {!this.props.print &&
           <div {...copyButtonStyling}>
-            <CopyToClipboard text={worksheet.sanitized_vbms_id}>
-              <button
-                data-for="copy-vbms-id"
-                data-tip="Click to copy to clipboard"
-                name="Copy Veteran ID"
-                className={['usa-button-outline cf-copy-to-clipboard']}>
-                {worksheet.sanitized_vbms_id}
-                <ClipboardIcon />
-              </button>
-            </CopyToClipboard>
+            <Tooltip text="Click to copy to clipboard">
+              <CopyToClipboard text={worksheet.sanitized_vbms_id}>
+                <button
+                  name="Copy Veteran ID"
+                  className={['usa-button-secondary cf-copy-to-clipboard']}>
+                  {worksheet.sanitized_vbms_id}
+                  <ClipboardIcon />
+                </button>
+              </CopyToClipboard>
+            </Tooltip>
           </div>
           }
           {this.props.print &&

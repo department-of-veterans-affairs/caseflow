@@ -14,7 +14,9 @@ class ExternalApi::BGSService
     # respective requests
     @end_products = {}
     @veteran_info = {}
+    @person_info = {}
     @poas = {}
+    @poa_by_participant_ids = {}
     @poa_addresses = {}
     @people_by_ssn = {}
   end
@@ -43,6 +45,23 @@ class ExternalApi::BGSService
       end
   end
 
+  def fetch_person_info(participant_id)
+    DBService.release_db_connections
+
+    bgs_info = MetricsService.record("BGS: fetch person info by participant id: #{participant_id}",
+                                     service: :bgs,
+                                     name: "people.find_person_by_ptcpnt_id") do
+      client.people.find_person_by_ptcpnt_id(participant_id)
+    end
+
+    @person_info[participant_id] ||= {
+      first_name: bgs_info[:first_nm],
+      last_name: bgs_info[:last_nm],
+      middle_name: bgs_info[:middle_nm],
+      birth_date: bgs_info[:brthdy_dt]
+    }
+  end
+
   def fetch_file_number_by_ssn(ssn)
     DBService.release_db_connections
 
@@ -60,15 +79,42 @@ class ExternalApi::BGSService
     DBService.release_db_connections
 
     unless @poas[file_number]
-      bgs_poa = MetricsService.record("BGS: fetch veteran info for file number: #{file_number}",
+      bgs_poa = MetricsService.record("BGS: fetch poa for file number: #{file_number}",
                                       service: :bgs,
                                       name: "org.find_poas_by_file_number") do
         client.org.find_poas_by_file_number(file_number)
       end
-      @poas[file_number] = get_poa_from_bgs_poa(bgs_poa)
+      @poas[file_number] = get_poa_from_bgs_poa(bgs_poa[:power_of_attorney])
     end
 
     @poas[file_number]
+  end
+
+  def fetch_poas_by_participant_id(participant_id)
+    DBService.release_db_connections
+
+    unless @poa_by_participant_ids[participant_id]
+      bgs_poas = MetricsService.record("BGS: fetch poas for participant id: #{participant_id}",
+                                       service: :bgs,
+                                       name: "org.find_poas_by_participant_id") do
+        client.org.find_poas_by_ptcpnt_id(participant_id)
+      end
+      @poa_by_participant_ids[participant_id] = bgs_poas.map { |poa| get_poa_from_bgs_poa(poa) }
+    end
+
+    @poa_by_participant_ids[participant_id]
+  end
+
+  def fetch_poas_by_participant_ids(participant_ids)
+    DBService.release_db_connections
+
+    bgs_poas = MetricsService.record("BGS: fetch poas for participant ids: #{participant_ids}",
+                                     service: :bgs,
+                                     name: "org.find_poas_by_participant_ids") do
+      client.org.find_poas_by_ptcpnt_ids(participant_ids)
+    end
+
+    get_hash_of_poa_from_bgs_poas(bgs_poas)
   end
 
   def find_address_by_participant_id(participant_id)
@@ -139,8 +185,8 @@ class ExternalApi::BGSService
                            participant_id = #{participant_id}",
                           service: :bgs,
                           name: "claimants.find_general_information_by_participant_id") do
-      basic_info = client.claimants.find_general_information_by_participant_id(participant_id)
-      get_name_and_address_from_bgs_info(basic_info)
+      bgs_info = client.claimants.find_general_information_by_participant_id(participant_id)
+      bgs_info ? { relationship: bgs_info[:payee_type_name] } : {}
     end
   end
 
@@ -152,6 +198,16 @@ class ExternalApi::BGSService
                           service: :bgs,
                           name: "claimants.find_all_relationships") do
       client.claimants.find_all_relationships(participant_id) || []
+    end
+  end
+
+  def get_participant_id_for_user(user)
+    DBService.release_db_connections
+
+    MetricsService.record("BGS: find participant id for user #{user.css_id}, #{user.station_id}",
+                          service: :bgs,
+                          name: "security.find_participant_id") do
+      client.security.find_participant_id(css_id: user.css_id, station_id: user.station_id)
     end
   end
 

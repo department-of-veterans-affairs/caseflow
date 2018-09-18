@@ -10,14 +10,20 @@ import {
   onReceiveSchedulePeriod,
   onClickConfirmAssignments,
   onClickCloseModal,
-  onConfirmAssignmentsUpload
+  onSchedulePeriodError,
+  removeSchedulePeriodError,
+  setVacolsUpload
 } from '../actions';
 
 export class ReviewAssignmentsContainer extends React.Component {
 
+  componentWillUnmount = () => {
+    this.props.removeSchedulePeriodError();
+  };
+
   onConfirmAssignmentsUpload = () => {
     this.props.onClickCloseModal();
-    this.props.onConfirmAssignmentsUpload();
+    this.props.setVacolsUpload();
     this.props.history.push('/schedule/build');
   };
 
@@ -27,6 +33,8 @@ export class ReviewAssignmentsContainer extends React.Component {
       const schedulePeriod = resp.schedulePeriod;
 
       this.props.onReceiveSchedulePeriod(schedulePeriod);
+    }, (error) => {
+      this.props.onSchedulePeriodError(error.response.body);
     });
   };
 
@@ -46,10 +54,12 @@ export class ReviewAssignmentsContainer extends React.Component {
       }}>
       <ReviewAssignments
         schedulePeriod={this.props.schedulePeriod}
+        schedulePeriodError={this.props.schedulePeriodError}
         onClickConfirmAssignments={this.props.onClickConfirmAssignments}
         onClickCloseModal={this.props.onClickCloseModal}
         displayConfirmationModal={this.props.displayConfirmationModal}
         onConfirmAssignmentsUpload={this.onConfirmAssignmentsUpload}
+        spErrorDetails={this.props.spErrorDetails}
       />
     </LoadingDataDisplay>;
 
@@ -59,6 +69,8 @@ export class ReviewAssignmentsContainer extends React.Component {
 
 const mapStateToProps = (state) => ({
   schedulePeriod: state.schedulePeriod,
+  schedulePeriodError: state.schedulePeriodError,
+  spErrorDetails: state.spErrorDetails,
   displayConfirmationModal: state.displayConfirmationModal
 });
 
@@ -66,7 +78,9 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveSchedulePeriod,
   onClickConfirmAssignments,
   onClickCloseModal,
-  onConfirmAssignmentsUpload
+  onSchedulePeriodError,
+  removeSchedulePeriodError,
+  setVacolsUpload
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ReviewAssignmentsContainer));

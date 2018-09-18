@@ -69,7 +69,7 @@ class Finish extends React.PureComponent {
     const otherQuestions = [
       {
         id: 'ineligible-issue',
-        text: <span>The veteran's form lists at least one <strong>ineligible</strong> contention</span>,
+        text: <span>The Veteran's form lists at least one <strong>ineligible</strong> contention</span>,
         isSelected: hasIneligibleIssue,
         onChange: this.props.setHasIneligibleIssue
       }

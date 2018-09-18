@@ -12,11 +12,11 @@ describe AttorneyQueue do
     let!(:staff) { create(:staff, :attorney_role, sdomainid: user.css_id) }
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
 
-    let!(:action1) { create(:colocated_admin_action, assigned_by: user) }
-    let!(:action2) { create(:colocated_admin_action, appeal: appeal, assigned_by: user) }
-    let!(:action3) { create(:colocated_admin_action, appeal: appeal, assigned_by: user, status: "completed") }
-    let!(:action4) { create(:colocated_admin_action, assigned_by: user, status: "completed") }
-    let!(:action5) { create(:colocated_admin_action, assigned_by: user, status: "in_progress") }
+    let!(:action1) { create(:colocated_task, assigned_by: user) }
+    let!(:action2) { create(:colocated_task, appeal: appeal, assigned_by: user) }
+    let!(:action3) { create(:colocated_task, appeal: appeal, assigned_by: user, status: "completed") }
+    let!(:action4) { create(:colocated_task, assigned_by: user, status: "completed") }
+    let!(:action5) { create(:colocated_task, assigned_by: user, status: "in_progress") }
 
     subject { AttorneyQueue.new(user: user).tasks }
 

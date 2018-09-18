@@ -1,10 +1,12 @@
 class HigherLevelReviewsController < ApplicationController
   before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application
+  SOURCE_TYPE = "HigherLevelReview".freeze
 
   private
 
   def higher_level_review
-    @higher_level_review ||= HigherLevelReview.find_by!(end_product_reference_id: params[:claim_id])
+    @higher_level_review ||=
+      EndProductEstablishment.find_by!(reference_id: params[:claim_id], source_type: SOURCE_TYPE).source
   end
 
   helper_method :higher_level_review

@@ -39,7 +39,7 @@ describe HearingSchedule::RoAllocation do
         { [4, 2018] => 15, [5, 2018] => 21, [6, 2018] => 19,
           [7, 2018] => 17, [8, 2018] => 20, [9, 2018] => 16 }
       end
-      it { expect { subject }.to raise_error(HearingSchedule::RoAllocation::NotEnoughAvailableDays) }
+      it { expect { subject }.to raise_error(HearingSchedule::Errors::NotEnoughAvailableDays) }
     end
 
     context "move allocated days" do

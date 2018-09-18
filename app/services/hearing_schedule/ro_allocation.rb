@@ -1,6 +1,4 @@
 module HearingSchedule::RoAllocation
-  class NotEnoughAvailableDays < StandardError; end
-
   def self.included(base)
     base.extend ClassMethods
   end
@@ -72,7 +70,7 @@ module HearingSchedule::RoAllocation
     end
 
     def verify_total_available_days(allocated_days, available_days, num_of_rooms)
-      fail NotEnoughAvailableDays unless
+      fail HearingSchedule::Errors::NotEnoughAvailableDays unless
         allocated_days.values.inject(:+) <= (available_days.values.inject(:+) * num_of_rooms)
     end
 

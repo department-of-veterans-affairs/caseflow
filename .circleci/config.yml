@@ -30,6 +30,7 @@ jobs:
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.10
     parallelism: 5
+    resource_class: large
     steps:
       - checkout
 
@@ -37,27 +38,33 @@ jobs:
           name: Setup testfiles directory
           command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
+      - run:
+          name: Ruby version
+          command: ruby -v
+
       - restore_cache:
           keys:
-            - gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
 
-      - run: bundle install --path vendor/bundle
+      - run:
+          name: Bundle install
+          command: bundle install --path vendor/bundle
 
       - save_cache:
-          key: gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
           paths:
             - vendor/bundle
 
       - restore_cache:
           name: Restore yarn cache
-          key: dot-cache-yarn-v1-{{ checksum "client/yarn.lock" }}
+          key: dot-cache-yarn-v1-{{ arch }}-{{ checksum "client/yarn.lock" }}
 
       - run:
           name: yarn install
           command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
       - save_cache:
-          key: dot-cache-yarn-v1-{{ checksum "client/yarn.lock" }}
+          key: dot-cache-yarn-v1-{{ arch }}-{{ checksum "client/yarn.lock" }}
           paths:
             - ~/.cache/yarn
 

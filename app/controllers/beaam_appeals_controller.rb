@@ -4,8 +4,7 @@ class BeaamAppealsController < ApplicationController
   def index
     appeals = Appeal.all
     render json: {
-      appeals: json_appeals(appeals),
-      tasks: []
+      tasks: json_appeals(appeals)
     }
   end
 
@@ -18,7 +17,7 @@ class BeaamAppealsController < ApplicationController
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
       appeals,
-      each_serializer: ::WorkQueue::AppealSerializer
+      each_serializer: ::WorkQueue::BeaamSerializer
     ).as_json
   end
 end

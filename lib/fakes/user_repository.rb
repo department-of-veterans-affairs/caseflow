@@ -12,4 +12,8 @@ class Fakes::UserRepository
       full_name: %w[George John Thomas].sample + " " + %w[Washington King Jefferson].sample
     }
   end
+
+  def self.user_info_for_idt(_css_id)
+    {}
+  end
 end

@@ -8,15 +8,21 @@ module PowerOfAttorneyMapper
   end
 
   def get_poa_from_bgs_poa(bgs_rep = {})
-    return {} unless bgs_rep[:power_of_attorney]
+    return {} unless bgs_rep
 
-    bgs_type = bgs_rep[:power_of_attorney][:org_type_nm]
+    bgs_type = bgs_rep[:org_type_nm]
     {
       representative_type: BGS_REP_TYPE_TO_REP_TYPE[bgs_type] || "Other",
-      representative_name: bgs_rep[:power_of_attorney][:nm],
+      representative_name: bgs_rep[:nm],
       # Used to find the POA address
-      participant_id: bgs_rep[:power_of_attorney][:ptcpnt_id]
+      participant_id: bgs_rep[:ptcpnt_id]
     }
+  end
+
+  def get_hash_of_poa_from_bgs_poas(bgs_resp)
+    [bgs_resp].flatten.each_with_object({}) do |poa, hsh|
+      hsh[poa[:ptcpnt_id]] = get_poa_from_bgs_poa(poa[:power_of_attorney])
+    end
   end
 
   def get_rep_name_from_rep_record(rep_record)
@@ -32,6 +38,7 @@ module PowerOfAttorneyMapper
       # the information we have.
       {
         representative_name: get_rep_name_from_rep_record(representative_record),
+        # TODO: alex to map rep.repso and rep.reptype based on values provided by Jed.
         representative_type: nil
       }
     elsif get_short_name(vacols_code) == "None"

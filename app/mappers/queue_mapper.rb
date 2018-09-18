@@ -9,9 +9,12 @@ module QueueMapper
     deadline_date: :dedeadline,
     attorney_id: :deatty,
     group_name: :deteam,
+    board_member_id: :dememid,
     complexity: :defdiff,
     quality: :deoq,
-    comment: :debmcom
+    comment: :debmcom,
+    completion_date: :decomp,
+    timeliness: :detrem
   }.freeze
 
   DEFICIENCIES = {

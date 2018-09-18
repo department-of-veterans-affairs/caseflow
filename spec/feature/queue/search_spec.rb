@@ -10,7 +10,6 @@ RSpec.feature "Search" do
   let!(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: FactoryBot.create(:case)) }
 
   before do
-    FeatureToggle.enable!(:queue_phase_two)
     FeatureToggle.enable!(:test_facols)
 
     User.authenticate!(user: attorney_user)
@@ -18,7 +17,6 @@ RSpec.feature "Search" do
 
   after do
     FeatureToggle.disable!(:test_facols)
-    FeatureToggle.disable!(:queue_phase_two)
   end
 
   context "queue case search for appeals using veteran id" do
@@ -100,6 +98,7 @@ RSpec.feature "Search" do
       let!(:paper_appeal) do
         FactoryBot.create(
           :legacy_appeal,
+          :with_veteran,
           vacols_case: FactoryBot.create(
             :case,
             folder: FactoryBot.build(:folder, :paper_case)
@@ -277,7 +276,8 @@ RSpec.feature "Search" do
         expect(page).to_not have_selector("#searchBarEmptyList")
       end
 
-      it "clicking on docket number sends us to the case details page" do
+      it "clicking on docket number sends us to the case details page",
+         skip: "case_search_home_page FeatureToggle deprecation in progress" do
         click_on appeal.docket_number
         expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
       end

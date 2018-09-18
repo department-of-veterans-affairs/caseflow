@@ -10,13 +10,20 @@ const styling = css({
 export default class FileUpload extends React.Component {
 
   onUploadEvent = (event) => {
-    this.props.onChange(event.target.value);
+    const reader = new FileReader();
+    const file = event.target.files[0];
+
+    reader.onloadend = () => this.props.onChange({
+      file: reader.result,
+      fileName: file.name
+    });
+    reader.readAsDataURL(file);
   };
 
   render() {
     return <div>
       <label htmlFor={this.props.id}>
-        {this.props.value && <b>{this.props.value.split('\\').slice(-1)[0]}&nbsp;</b>}
+        {this.props.value && <b>{this.props.value.fileName}&nbsp;</b>}
         <Link
           onChange={this.props.onChange}
         >
@@ -26,6 +33,7 @@ export default class FileUpload extends React.Component {
       <div {...styling}>
         <input
           type="file"
+          accept={this.props.fileType}
           id={this.props.id}
           onChange={this.onUploadEvent}
         />
@@ -39,5 +47,6 @@ FileUpload.propTypes = {
   id: PropTypes.string.isRequired,
   preUploadText: PropTypes.string.isRequired,
   postUploadText: PropTypes.string.isRequired,
-  value: PropTypes.string
+  fileType: PropTypes.string,
+  value: PropTypes.object
 };

@@ -9,22 +9,36 @@ module HearingDayMapper
     folder_nr: :regional_office,
     room: :room_info,
     board_member: :judge_id,
-    judge_name: :judge_name,
     team: :team,
     mduser: :updated_by,
-    mdtime: :updated_on
+    mdtime: :updated_on,
+    judge_last_name: :judge_last_name,
+    judge_middle_name: :judge_middle_name,
+    judge_first_name: :judge_first_name
+
   }.freeze
 
   class << self
     def hearing_day_field_validations(hearing_info)
       {
-        hearing_type: hearing_info[:hearing_type],
+        hearing_pkseq: hearing_info[:hearing_pkseq],
+        hearing_type: translate_hearing_type(hearing_info[:hearing_type]),
         hearing_date: hearing_info[:hearing_date],
         room_info: hearing_info[:room_info],
         regional_office: validate_regional_office(hearing_info[:regional_office]),
         judge_id: hearing_info[:judge_id],
-        team: hearing_info[:team]
+        team: hearing_info[:team],
+        judge_name: hearing_info[:judge_name],
+        judge_last_name: hearing_info[:judge_last_name],
+        judge_middle_name: hearing_info[:judge_middle_name],
+        judge_first_name: hearing_info[:judge_first_name]
       }.select { |k, _v| hearing_info.keys.map(&:to_sym).include? k }
+    end
+
+    def translate_hearing_type(hearing_type)
+      return if hearing_type.nil?
+
+      (hearing_type.length > 1) ? HearingDay::HEARING_TYPES[hearing_type.to_sym] : hearing_type
     end
 
     def validate_regional_office(regional_office)

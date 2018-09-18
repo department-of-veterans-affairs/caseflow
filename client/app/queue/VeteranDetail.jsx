@@ -17,7 +17,7 @@ const addressIndentStyling = (secondLine) => css({
 });
 
 export default class VeteranDetail extends React.PureComponent {
-  getAppealAttr = (attr) => _.get(this.props.appeal.attributes, attr);
+  getAppealAttr = (attr) => _.get(this.props.appeal, attr);
 
   formatAddress = (addressFieldName) => {
     const {
@@ -53,7 +53,7 @@ export default class VeteranDetail extends React.PureComponent {
     if (dobField && this.getAppealAttr(dobField)) {
       details.push({
         label: 'Date of birth',
-        value: <DateString date={this.getAppealAttr(dobField)} dateFormat="M/D/YYYY" />
+        value: <DateString date={this.getAppealAttr(dobField)} inputFormat="MM/DD/YYYY" dateFormat="M/D/YYYY" />
       });
     }
     if (relationField && this.getAppealAttr(relationField)) {
@@ -86,11 +86,11 @@ export default class VeteranDetail extends React.PureComponent {
 
   render = () => <ul {...detailListStyling}>
     {this.getDetails({
-      nameField: 'veteran_full_name',
-      genderField: 'veteran_gender',
-      dobField: 'veteran_date_of_birth',
-      addressField: 'appellant_address',
-      regionalOfficeField: 'regional_office'
+      nameField: 'veteranFullName',
+      genderField: 'veteranGender',
+      dobField: 'veteranDateOfBirth',
+      addressField: 'appellantAddress',
+      regionalOfficeField: 'regionalOffice'
     })}
   </ul>;
 }

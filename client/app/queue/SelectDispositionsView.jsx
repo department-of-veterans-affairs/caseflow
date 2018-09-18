@@ -24,9 +24,9 @@ import {
   marginBottom,
   marginLeft,
   PAGE_TITLES,
-  USER_ROLES,
   ISSUE_DISPOSITIONS
 } from './constants';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import { getUndecidedIssues } from './utils';
 
 const tableStyling = css({
@@ -55,16 +55,14 @@ class SelectDispositionsView extends React.PureComponent {
     const {
       appealId,
       userRole,
-      appeal: {
-        attributes: { issues }
-      }
+      appeal: { issues }
     } = this.props;
     let nextStep;
     const baseUrl = `/queue/appeals/${appealId}`;
 
     if (_.map(issues, 'disposition').includes(ISSUE_DISPOSITIONS.REMANDED)) {
       nextStep = 'remands';
-    } else if (userRole === USER_ROLES.JUDGE) {
+    } else if (userRole === USER_ROLE_TYPES.judge) {
       nextStep = 'evaluate';
     } else {
       nextStep = 'submit';
@@ -73,9 +71,22 @@ class SelectDispositionsView extends React.PureComponent {
     return `${baseUrl}/${nextStep}`;
   }
 
+  getPrevStepUrl = () => {
+    const {
+      appealId,
+      appeal
+    } = this.props;
+
+    if (appeal.docketName === 'legacy') {
+      return `/queue/appeals/${appealId}`;
+    }
+
+    return `/queue/appeals/${appealId}/special_issues`;
+  }
+
   componentWillUnmount = () => this.props.hideSuccessMessage();
   componentDidMount = () => {
-    if (this.props.userRole === USER_ROLES.ATTORNEY) {
+    if (this.props.userRole === USER_ROLE_TYPES.attorney) {
       this.props.setDecisionOptions({ work_product: 'Decision' });
     }
   }
@@ -88,40 +99,52 @@ class SelectDispositionsView extends React.PureComponent {
   };
 
   validateForm = () => {
-    const { appeal: { attributes: { issues } } } = this.props;
+    const { appeal: { issues } } = this.props;
     const issuesWithoutDisposition = _.reject(issues, 'disposition');
 
     return !issuesWithoutDisposition.length;
   };
 
   getKeyForRow = (rowNumber) => rowNumber;
-  getColumns = () => [{
-    header: 'Issues',
-    valueFunction: (issue, idx) => <IssueList
-      appeal={{ issues: [issue] }}
-      idxToDisplay={idx + 1}
-      showDisposition={false}
-      stretchToFullWidth />
-  }, {
-    header: 'Actions',
-    valueFunction: (issue) => <Link
-      to={`/queue/appeals/${this.props.appealId}/dispositions/edit/${issue.vacols_sequence_id}`}
-    >
-      Edit Issue
-    </Link>
-  }, {
-    header: 'Dispositions',
-    valueFunction: (issue) => <SelectIssueDispositionDropdown
-      updateIssue={_.partial(this.updateIssue, issue.vacols_sequence_id)}
-      issue={issue}
-      appealId={this.props.appealId} />
-  }];
+  getColumns = () => {
+    const {
+      appeal,
+      appealId
+    } = this.props;
+
+    const columns = [{
+      header: 'Issues',
+      valueFunction: (issue, idx) => <IssueList
+        appeal={{ issues: [issue] }}
+        idxToDisplay={idx + 1}
+        showDisposition={false}
+        stretchToFullWidth />
+    }, {
+      header: 'Dispositions',
+      valueFunction: (issue) => <SelectIssueDispositionDropdown
+        updateIssue={_.partial(this.updateIssue, issue.id)}
+        issue={issue}
+        appeal={appeal} />
+    }];
+
+    if (appeal.docketName === 'legacy') {
+      columns.splice(1, 0, {
+        header: 'Actions',
+        valueFunction: (issue) => <Link to={`/queue/appeals/${appealId}/dispositions/edit/${issue.id}`}>
+          Edit Issue
+        </Link>
+      });
+    }
+
+    return columns;
+  };
 
   render = () => {
     const {
-      saveResult,
+      success,
       appealId,
-      appeal: { attributes: { issues } }
+      appeal,
+      appeal: { issues }
     } = this.props;
 
     return <React.Fragment>
@@ -131,7 +154,7 @@ class SelectDispositionsView extends React.PureComponent {
       <p className="cf-lead-paragraph" {...marginBottom(2)}>
         Review each issue and assign the appropriate dispositions.
       </p>
-      {saveResult && <Alert type="success" title={saveResult} styling={smallTopMargin} />}
+      {success && <Alert type="success" title={success.title} message={success.detail} styling={smallTopMargin} />}
       <hr />
       <Table
         columns={this.getColumns}
@@ -140,9 +163,9 @@ class SelectDispositionsView extends React.PureComponent {
         styling={tableStyling}
         bodyStyling={tbodyStyling}
       />
-      <div {...marginLeft(1.5)}>
+      {appeal.docketName === 'legacy' && <div {...marginLeft(1.5)}>
         <Link to={`/queue/appeals/${appealId}/dispositions/add`}>Add Issue</Link>
-      </div>
+      </div>}
     </React.Fragment>;
   };
 }
@@ -154,7 +177,7 @@ SelectDispositionsView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
-  saveResult: state.ui.messages.success,
+  success: state.ui.messages.success,
   ..._.pick(state.ui, 'userRole')
 });
 

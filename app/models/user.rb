@@ -4,6 +4,7 @@ class User < ApplicationRecord
   has_many :appeal_views
   has_many :hearing_views
   has_many :annotations
+  has_many :tasks, as: :assigned_to
 
   BOARD_STATION_ID = "101".freeze
 
@@ -49,6 +50,10 @@ class User < ApplicationRecord
     vacols_roles.include?("colocated")
   end
 
+  def dispatch_user_in_vacols?
+    vacols_roles.include?("dispatch")
+  end
+
   def vacols_uniq_id
     @vacols_uniq_id ||= user_info[:uniq_id]
   end
@@ -71,8 +76,26 @@ class User < ApplicationRecord
     nil
   end
 
-  def access_to_task?(vacols_id)
+  def participant_id
+    @participant_id ||= bgs.get_participant_id_for_user(self)
+  end
+
+  def vsos_user_represents
+    @vsos_user_represents ||= bgs.fetch_poas_by_participant_id(participant_id)
+  end
+
+  def access_to_legacy_task?(vacols_id)
     self.class.user_repository.can_access_task?(css_id, vacols_id)
+  end
+
+  def appeal_has_task_assigned_to_user?(appeal)
+    if appeal.class.name == "LegacyAppeal"
+      access_to_legacy_task?(appeal.vacols_id)
+    else
+      appeal.tasks.any? do |task|
+        task.assigned_to == self
+      end
+    end
   end
 
   def ro_is_ambiguous_from_station_office?
@@ -122,6 +145,14 @@ class User < ApplicationRecord
 
   def global_admin?
     Functions.granted?("Global Admin", css_id)
+  end
+
+  def vso_employee?
+    roles.include?("VSO")
+  end
+
+  def organization_queue_user?
+    FeatureToggle.enabled?(:organization_queue, user: self)
   end
 
   def granted?(thing)
@@ -187,7 +218,15 @@ class User < ApplicationRecord
     super(options).merge("judge_css_id" => judge_css_id)
   end
 
+  def user_info_for_idt
+    self.class.user_repository.user_info_for_idt(css_id)
+  end
+
   private
+
+  def bgs
+    @bgs ||= BGSService.new
+  end
 
   def user_info
     @user_info ||= self.class.user_repository.user_info_from_vacols(css_id)
@@ -219,8 +258,21 @@ class User < ApplicationRecord
     # Empty method used for testing purposes (required)
     def clear_current_user; end
 
+    def css_ids_by_vlj_ids(vlj_ids)
+      UserRepository.css_ids_by_vlj_ids(vlj_ids)
+    end
+
+    # This method is only used in dev/demo mode to test the judge spreadsheet functionality in hearing scheduling
+    # :nocov:
+    def create_judge_in_vacols(first_name, last_name, vlj_id)
+      return unless Rails.env.development? || Rails.env.demo?
+
+      UserRepository.create_judge_in_vacols(first_name, last_name, vlj_id)
+    end
+    # :nocov:
+
     def system_user
-      new(
+      find_or_initialize_by(
         station_id: "283",
         css_id: Rails.deploy_env?(:prod) ? "CSFLOW" : "CASEFLOW1"
       )
@@ -238,6 +290,10 @@ class User < ApplicationRecord
         u.regional_office = session[:regional_office]
         u.save
       end
+    end
+
+    def find_by_css_id_or_create_with_default_station_id(css_id)
+      User.find_by(css_id: css_id) || User.create(css_id: css_id, station_id: BOARD_STATION_ID)
     end
 
     def authentication_service

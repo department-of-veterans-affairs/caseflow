@@ -68,7 +68,10 @@ StatusMessage.defaultProps = {
 StatusMessage.props = {
   checklist: PropTypes.array,
   leadMessageList: PropTypes.array,
-  messageText: PropTypes.string,
+  messageText: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.node
+  ]),
   title: PropTypes.string,
   type: PropTypes.string
 };

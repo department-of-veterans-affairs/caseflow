@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Higher Level Review Intake" do
+RSpec.feature "Higher-Level Review" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
@@ -11,6 +11,7 @@ RSpec.feature "Higher Level Review Intake" do
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
   end
 
   after do
@@ -22,9 +23,18 @@ RSpec.feature "Higher Level Review Intake" do
     Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
   end
 
+  let(:veteran_no_ratings) do
+    Generators::Veteran.build(file_number: "55555555",
+                              first_name: "Nora",
+                              last_name: "Attings",
+                              participant_id: "44444444")
+  end
+
   let(:inaccessible) { false }
 
   let(:receipt_date) { Date.new(2018, 4, 20) }
+
+  let(:benefit_type) { "compensation" }
 
   let(:untimely_days) { 372.days }
 
@@ -75,8 +85,6 @@ RSpec.feature "Higher Level Review Intake" do
       bgs_attrs: { end_product_type_code: "031" }
     )
 
-    Fakes::VBMSService.end_product_claim_id = "IAMANEPID"
-
     visit "/intake"
     safe_click ".Select"
 
@@ -91,7 +99,7 @@ RSpec.feature "Higher Level Review Intake" do
 
     click_on "Search"
 
-    expect(page).to have_current_path("/intake/review-request")
+    expect(page).to have_current_path("/intake/review_request")
 
     fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
     safe_click "#button-submit-review"
@@ -101,6 +109,14 @@ RSpec.feature "Higher Level Review Intake" do
     expect(page).to have_content(
       "Please select an option."
     )
+
+    expect(page).to have_content(
+      "Please select a Benefit Type option."
+    )
+
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Compensation", match: :prefer_exact).click
+    end
 
     fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
 
@@ -113,21 +129,26 @@ RSpec.feature "Higher Level Review Intake" do
     end
 
     expect(page).to_not have_content("Please select the claimant listed on the form.")
+    expect(page).to_not have_content("What is the payee code for this claimant?")
     within_fieldset("Is the claimant someone other than the Veteran?") do
       find("label", text: "Yes", match: :prefer_exact).click
     end
 
     expect(page).to have_content("Please select the claimant listed on the form.")
+    expect(page).to have_content("What is the payee code for this claimant?")
     expect(page).to have_content("Bob Vance, Spouse")
     expect(page).to_not have_content("Cathy Smith, Child")
 
     find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
 
+    fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
+    find("#cf-payee-code").send_keys :enter
+
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
 
-    visit "/intake/review-request"
+    visit "/intake/review_request"
 
     within_fieldset("Did the Veteran request an informal conference?") do
       expect(find_field("Yes", visible: false)).to be_checked
@@ -145,7 +166,7 @@ RSpec.feature "Higher Level Review Intake" do
     expect(page).to have_current_path("/intake/finish")
 
     expect(page).to have_content("Identify issues on")
-    expect(page).to have_content("Decision date: 04/14/2017")
+    expect(page).to have_content("Decision date: 04/17/2017")
     expect(page).to have_content("Left knee granted")
     expect(page).to_not have_content("Untimely rating issue 1")
     expect(page).to have_button("Establish EP", disabled: true)
@@ -154,10 +175,12 @@ RSpec.feature "Higher Level Review Intake" do
     higher_level_review = HigherLevelReview.find_by(veteran_file_number: "12341234")
     expect(higher_level_review).to_not be_nil
     expect(higher_level_review.receipt_date).to eq(receipt_date)
+    expect(higher_level_review.benefit_type).to eq(benefit_type)
     expect(higher_level_review.informal_conference).to eq(true)
     expect(higher_level_review.same_office).to eq(false)
     expect(higher_level_review.claimants.first).to have_attributes(
-      participant_id: "5382910292"
+      participant_id: "5382910292",
+      payee_code: "10"
     )
 
     intake = Intake.find_by(veteran_file_number: "12341234")
@@ -180,37 +203,101 @@ RSpec.feature "Higher Level Review Intake" do
 
     fill_in "Issue description", with: "Description for Active Duty Adjustments"
 
+    expect(page).to have_content("1 issue")
+
+    fill_in "Decision date", with: "04/25/2018"
+
     expect(page).to have_content("2 issues")
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Request for Higher Level Review (VA Form 20-0988) has been processed.")
+    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988) has been processed.")
     expect(page).to have_content(
-      "Established EP: 030HLRR - Higher Level Review Rating for Station 397 - ARC"
+      "Established EP: 030HLRR - Higher-Level Review Rating for Station 397 - ARC"
     )
 
+    # ratings end product
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
       claim_hash: {
         benefit_type_code: "1",
-        payee_code: "00",
+        payee_code: "10",
+        predischarge: false,
+        claim_type: "Claim",
+        station_of_jurisdiction: "397",
+        date: higher_level_review.receipt_date.to_date,
+        end_product_modifier: "033",
+        end_product_label: "Higher-Level Review Rating",
+        end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
+        gulf_war_registry: false,
+        suppress_acknowledgement_letter: false,
+        claimant_participant_id: "5382910292"
+      },
+      veteran_hash: intake.veteran.to_vbms_hash
+    )
+
+    ratings_end_product_establishment = EndProductEstablishment.find_by(
+      source: intake.detail,
+      code: HigherLevelReview::END_PRODUCT_RATING_CODE
+    )
+
+    expect(ratings_end_product_establishment).to have_attributes(
+      claimant_participant_id: "5382910292",
+      payee_code: "10"
+    )
+
+    # nonratings end product
+    expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+      claim_hash: hash_including(
+        benefit_type_code: "1",
+        payee_code: "10",
         predischarge: false,
         claim_type: "Claim",
         station_of_jurisdiction: "397",
         date: higher_level_review.receipt_date.to_date,
         end_product_modifier: "032",
-        end_product_label: "Higher Level Review Rating",
-        end_product_code: "030HLRR",
+        end_product_label: "Higher-Level Review Nonrating",
+        end_product_code: HigherLevelReview::END_PRODUCT_NONRATING_CODE,
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false
-      },
+      ),
       veteran_hash: intake.veteran.to_vbms_hash
     )
 
+    nonratings_end_product_establishment = EndProductEstablishment.find_by(
+      source: intake.detail,
+      code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
+    )
+
+    expect(nonratings_end_product_establishment).to have_attributes(
+      claimant_participant_id: "5382910292",
+      payee_code: "10"
+    )
+
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
-      veteran_file_number: "12341234",
-      claim_id: "IAMANEPID",
-      contention_descriptions: ["Description for Active Duty Adjustments", "PTSD denied"],
-      special_issues: []
+      hash_including(
+        veteran_file_number: "12341234",
+        claim_id: ratings_end_product_establishment.reference_id,
+        contention_descriptions: ["PTSD denied"],
+        special_issues: []
+      )
+    )
+
+    expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+      hash_including(
+        veteran_file_number: "12341234",
+        claim_id: nonratings_end_product_establishment.reference_id,
+        contention_descriptions: ["Description for Active Duty Adjustments"],
+        special_issues: []
+      )
+    )
+
+    rated_issue = higher_level_review.request_issues.find_by(description: "PTSD denied")
+
+    expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+      claim_id: ratings_end_product_establishment.reference_id,
+      rated_issue_contention_map: {
+        rated_issue.rating_issue_reference_id => rated_issue.contention_reference_id
+      }
     )
 
     intake.reload
@@ -218,24 +305,36 @@ RSpec.feature "Higher Level Review Intake" do
 
     expect(intake).to be_success
 
-    higher_level_review.reload
-    expect(higher_level_review.end_product_reference_id).to eq("IAMANEPID")
     expect(higher_level_review.request_issues.count).to eq 2
     expect(higher_level_review.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
       rating_issue_profile_date: receipt_date - untimely_days + 4.days,
-      description: "PTSD denied"
+      description: "PTSD denied",
+      decision_date: nil,
+      rating_issue_associated_at: Time.zone.now
     )
 
     expect(higher_level_review.request_issues.last).to have_attributes(
       rating_issue_reference_id: nil,
       rating_issue_profile_date: nil,
       issue_category: "Active Duty Adjustments",
-      description: "Description for Active Duty Adjustments"
+      description: "Description for Active Duty Adjustments",
+      decision_date: 1.month.ago.to_date
     )
 
-    visit "/higher_level_reviews/IAMANEPID/edit"
-    expect(page).to have_content("Veteran Name: Ed Merica")
+    visit "/higher_level_reviews/#{ratings_end_product_establishment.reference_id}/edit"
+    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988)")
+    expect(page).to have_content("Ed Merica (12341234)")
+    expect(page).to have_content("04/20/2018")
+    expect(find("#table-row-3")).to have_content("Yes")
+    expect(find("#table-row-4")).to have_content("No")
+    expect(page).to have_content("PTSD denied")
+
+    safe_click ".cf-edit-issues-link"
+
+    expect(page).to have_current_path(
+      "/higher_level_reviews/#{ratings_end_product_establishment.reference_id}/edit/select_issues"
+    )
 
     visit "/higher_level_reviews/4321/edit"
     expect(page).to have_content("Page not found")
@@ -255,6 +354,10 @@ RSpec.feature "Higher Level Review Intake" do
     fill_in "Search small", with: "12341234"
 
     click_on "Search"
+
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Compensation", match: :prefer_exact).click
+    end
 
     fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
 
@@ -282,7 +385,7 @@ RSpec.feature "Higher Level Review Intake" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Request for Higher Level Review (VA Form 20-0988) has been processed.")
+    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988) has been processed.")
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: "12341234",
@@ -298,8 +401,9 @@ RSpec.feature "Higher Level Review Intake" do
 
     visit "/intake"
 
-    fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
-    safe_click "#button-submit-review"
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Compensation", match: :prefer_exact).click
+    end
 
     fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
 
@@ -321,6 +425,52 @@ RSpec.feature "Higher Level Review Intake" do
     safe_click "#button-submit-review"
 
     expect(page).to have_content("Something went wrong")
-    expect(page).to have_current_path("/intake/review-request")
+    expect(page).to have_current_path("/intake/review_request")
+  end
+
+  it "Allows a Veteran without ratings to create an intake" do
+    higher_level_review = HigherLevelReview.create!(
+      veteran_file_number: veteran_no_ratings.file_number,
+      receipt_date: 2.days.ago,
+      informal_conference: false,
+      same_office: false,
+      benefit_type: "compensation"
+    )
+
+    HigherLevelReviewIntake.create!(
+      veteran_file_number: veteran_no_ratings.file_number,
+      user: current_user,
+      started_at: 5.minutes.ago,
+      detail: higher_level_review
+    )
+
+    Claimant.create!(
+      review_request: higher_level_review,
+      participant_id: veteran_no_ratings.participant_id,
+      payee_code: "00"
+    )
+
+    higher_level_review.start_review!
+
+    visit "/intake"
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_content("This Veteran has no rated, disability issues")
+
+    safe_click "#button-add-issue"
+
+    safe_click ".Select"
+
+    fill_in "Issue category", with: "Active Duty Adjustments"
+    find("#issue-category").send_keys :enter
+    fill_in "Issue description", with: "Description for Active Duty Adjustments"
+    fill_in "Decision date", with: "04/19/2018"
+
+    expect(page).to have_content("1 issue")
+
+    safe_click "#button-finish-intake"
+
+    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988) has been processed.")
   end
 end

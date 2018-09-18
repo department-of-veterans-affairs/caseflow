@@ -5,8 +5,10 @@ AllCops:
     - '**/config.ru'
     - '**/Rakefile'
     - '**/*.rake'
+    - '**/seeds.rb'
   Exclude:
-    - 'db/**/*'
+    - 'db/migrate/*'
+    - 'db/schema.rb'
     - 'config/**/*'
     - 'script/**/*'
     - 'vendor/**/*'

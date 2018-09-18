@@ -7,11 +7,7 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
-          feature: "queue_welcome_gate",
-          enable_all: true
-        },
-        {
-          feature: "queue_phase_two",
+          feature: "automatic_ramp_rollback",
           enable_all: true
         },
         {
@@ -28,10 +24,6 @@ json_config = <<EOS.strip_heredoc
         },
         {
           feature: "search",
-          enable_all: true
-        },
-        {
-          feature: "judge_queue",
           enable_all: true
         },
         {
@@ -52,6 +44,10 @@ json_config = <<EOS.strip_heredoc
         },
         {
           feature: "attorney_assignment_to_colocated",
+          enable_all: true
+        },
+        {
+          feature: "idt_ama_appeals",
           enable_all: true
         }
   ]

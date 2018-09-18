@@ -1,5 +1,4 @@
 class IssuesController < ApplicationController
-  before_action :verify_case_review_access
   before_action :validate_access_to_task
 
   rescue_from ActiveRecord::RecordInvalid, Caseflow::Error::VacolsRepositoryError do |e|
@@ -49,11 +48,11 @@ class IssuesController < ApplicationController
   end
 
   def validate_access_to_task
-    current_user.access_to_task?(appeal.vacols_id)
+    current_user.access_to_legacy_task?(appeal.vacols_id)
   end
 
   def appeal
-    @appeal ||= LegacyAppeal.find(params[:appeal_id])
+    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
   end
 
   def issue_params

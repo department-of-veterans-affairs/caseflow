@@ -33,22 +33,21 @@ gem "paranoia", "~> 2.2"
 
 gem "dogstatsd-ruby"
 
+gem "acts_as_tree"
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
-gem "puma", "~> 2.16.0"
+gem "puma", "~> 3.12.0"
 
 # use to_b method to convert string to boolean
 gem "wannabe_bool"
 
-# Style
-gem "uswds-rails", git: "https://github.com/18F/uswds-rails-gem.git"
-
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "b8b6d0f918d855b61b31f03e01a39d802d587367"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "48d3e0deeaf2151e1e43c026848c195691d05bac"
 
 # PDF Tools
 gem "pdf-forms"
@@ -71,7 +70,7 @@ gem "therubyracer", platforms: :ruby
 
 gem "pg", platforms: :ruby
 
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "b4d61f190ac8f6f397db245a257a89238970a224"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "44a3aee470f3ddd0e42eb2d07b87ed776b0f9fab"
 
 gem "redis-rails", "~> 5.0.2"
 
@@ -81,8 +80,6 @@ gem "request_store"
 
 # State machine
 gem "aasm", "4.11.0"
-
-gem "font-awesome-sass"
 
 gem "redis-namespace"
 
@@ -151,7 +148,6 @@ group :stubbed, :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem "dotenv-rails"
   gem "foreman"
-  gem "web-console", "~> 3.0", platforms: :ruby
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   # gem 'spring', platforms: :ruby
@@ -164,8 +160,11 @@ end
 gem "shoryuken", "3.1.11"
 
 gem "paper_trail", "8.1.2"
-# rubocop:enable Metrics/LineLength
 
 gem "holidays", "~> 6.4"
 
 gem "roo", "~> 2.7"
+gem "rubyzip", "~> 1.2.2"
+
+gem "business_time", "~> 0.9.3"
+# rubocop:enable Metrics/LineLength

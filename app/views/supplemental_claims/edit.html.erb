@@ -1,6 +1,12 @@
-<div>
-  Claim ID: <%= params[:claim_id] %>
-</div>
-<div>
-  Veteran Name: <%= supplemental_claim.veteran.name %>
-</div>
+<% content_for :full_page_content do %>
+  <%= react_component("IntakeEdit", props: {
+    userDisplayName: current_user.display_name,
+    dropdownUrls: dropdown_urls,
+    feedbackUrl: feedback_url,
+    buildDate: build_date,
+    formType: "supplemental_claim",
+    review: supplemental_claim.ui_hash,
+    ratings: supplemental_claim.cached_serialized_timely_ratings,
+    ratedRequestIssues: supplemental_claim.request_issues.rated.map(&:ui_hash)
+  }) %>
+<% end %>

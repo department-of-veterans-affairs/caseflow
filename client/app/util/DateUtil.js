@@ -36,8 +36,8 @@ export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFor
   return moment(dateString, dateFormat).format(expectedFormat);
 };
 
-export const DateString = ({ date, dateFormat = 'MM/DD/YY', style }) => <span {...style}>
-  {formatDateStr(date, 'YYYY-MM-DD', dateFormat)}
+export const DateString = ({ date, dateFormat = 'MM/DD/YY', inputFormat = 'YYYY-MM-DD', style }) => <span {...style}>
+  {formatDateStr(date, inputFormat, dateFormat)}
 </span>;
 
 export const formatDateStringForApi = (dateString) => (

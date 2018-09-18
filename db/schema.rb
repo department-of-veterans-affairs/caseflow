@@ -10,11 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180710214914) do
+ActiveRecord::Schema.define(version: 201809112051441) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
+
+  create_table "advance_on_docket_grants", force: :cascade do |t|
+    t.bigint "claimant_id"
+    t.bigint "user_id"
+    t.string "reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["claimant_id"], name: "index_advance_on_docket_grants_on_claimant_id"
+    t.index ["user_id"], name: "index_advance_on_docket_grants_on_user_id"
+  end
 
   create_table "allocations", force: :cascade do |t|
     t.bigint "schedule_period_id", null: false
@@ -73,7 +83,6 @@ ActiveRecord::Schema.define(version: 20180710214914) do
     t.string "docket_type"
     t.datetime "established_at"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
-    t.boolean "advanced_on_docket", default: false
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
 
@@ -158,6 +167,9 @@ ActiveRecord::Schema.define(version: 20180710214914) do
     t.string "review_request_type", null: false
     t.bigint "review_request_id", null: false
     t.string "participant_id", null: false
+    t.string "payee_code"
+    t.date "date_of_birth"
+    t.index ["date_of_birth"], name: "index_claimants_on_date_of_birth"
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
@@ -167,6 +179,13 @@ ActiveRecord::Schema.define(version: 20180710214914) do
     t.string "query"
     t.datetime "created_at"
     t.string "appeal_type", null: false
+  end
+
+  create_table "decision_issues", force: :cascade do |t|
+    t.string "disposition"
+    t.string "disposition_date"
+    t.string "description"
+    t.integer "request_issue_id"
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
@@ -242,6 +261,9 @@ ActiveRecord::Schema.define(version: 20180710214914) do
     t.string "modifier"
     t.string "station"
     t.datetime "last_synced_at"
+    t.string "claimant_participant_id"
+    t.string "payee_code"
+    t.datetime "committed_at"
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
   end
@@ -361,9 +383,9 @@ ActiveRecord::Schema.define(version: 20180710214914) do
     t.boolean "informal_conference"
     t.boolean "same_office"
     t.datetime "established_at"
-    t.string "end_product_reference_id"
-    t.string "end_product_status"
-    t.datetime "end_product_status_last_synced_at"
+    t.datetime "establishment_submitted_at"
+    t.datetime "establishment_processed_at"
+    t.string "benefit_type"
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
@@ -439,11 +461,20 @@ ActiveRecord::Schema.define(version: 20180710214914) do
   create_table "non_availabilities", force: :cascade do |t|
     t.bigint "schedule_period_id", null: false
     t.string "type", null: false
-    t.date "date", null: false
+    t.date "date"
     t.string "object_identifier", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["schedule_period_id"], name: "index_non_availabilities_on_schedule_period_id"
+  end
+
+  create_table "organizations", force: :cascade do |t|
+    t.string "type"
+    t.string "name"
+    t.string "role"
+    t.string "feature"
+    t.string "url"
+    t.string "participant_id"
   end
 
   create_table "ramp_closed_appeals", id: :serial, force: :cascade do |t|
@@ -474,6 +505,8 @@ ActiveRecord::Schema.define(version: 20180710214914) do
     t.datetime "established_at"
     t.string "end_product_status"
     t.datetime "end_product_status_last_synced_at"
+    t.datetime "establishment_submitted_at"
+    t.datetime "establishment_processed_at"
     t.index ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number"
   end
 
@@ -494,6 +527,8 @@ ActiveRecord::Schema.define(version: 20180710214914) do
     t.boolean "has_ineligible_issue"
     t.string "appeal_docket"
     t.datetime "established_at"
+    t.datetime "establishment_submitted_at"
+    t.datetime "establishment_processed_at"
     t.index ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number"
   end
 
@@ -505,14 +540,31 @@ ActiveRecord::Schema.define(version: 20180710214914) do
   end
 
   create_table "request_issues", force: :cascade do |t|
-    t.string "review_request_type", null: false
-    t.bigint "review_request_id", null: false
+    t.string "review_request_type"
+    t.bigint "review_request_id"
     t.string "rating_issue_reference_id"
     t.date "rating_issue_profile_date"
     t.string "contention_reference_id"
     t.string "description"
     t.string "issue_category"
+    t.date "decision_date"
+    t.string "disposition"
+    t.integer "end_product_establishment_id"
+    t.datetime "removed_at"
+    t.datetime "rating_issue_associated_at"
+    t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
+  end
+
+  create_table "request_issues_updates", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "review_type", null: false
+    t.bigint "review_id", null: false
+    t.integer "before_request_issue_ids", null: false, array: true
+    t.integer "after_request_issue_ids", null: false, array: true
+    t.datetime "processed_at"
+    t.index ["review_type", "review_id"], name: "index_request_issues_updates_on_review_type_and_review_id"
+    t.index ["user_id"], name: "index_request_issues_updates_on_user_id"
   end
 
   create_table "schedule_periods", force: :cascade do |t|
@@ -527,13 +579,44 @@ ActiveRecord::Schema.define(version: 20180710214914) do
     t.index ["user_id"], name: "index_schedule_periods_on_user_id"
   end
 
+  create_table "special_issue_lists", force: :cascade do |t|
+    t.string "appeal_type"
+    t.bigint "appeal_id"
+    t.boolean "rice_compliance", default: false
+    t.boolean "private_attorney_or_agent", default: false
+    t.boolean "waiver_of_overpayment", default: false
+    t.boolean "pension_united_states", default: false
+    t.boolean "vamc", default: false
+    t.boolean "incarcerated_veterans", default: false
+    t.boolean "dic_death_or_accrued_benefits_united_states", default: false
+    t.boolean "vocational_rehab", default: false
+    t.boolean "foreign_claim_compensation_claims_dual_claims_appeals", default: false
+    t.boolean "manlincon_compliance", default: false
+    t.boolean "hearing_including_travel_board_video_conference", default: false
+    t.boolean "home_loan_guaranty", default: false
+    t.boolean "insurance", default: false
+    t.boolean "national_cemetery_administration", default: false
+    t.boolean "spina_bifida", default: false
+    t.boolean "radiation", default: false
+    t.boolean "nonrating_issue", default: false
+    t.boolean "us_territory_claim_philippines", default: false
+    t.boolean "contaminated_water_at_camp_lejeune", default: false
+    t.boolean "mustard_gas", default: false
+    t.boolean "education_gi_bill_dependents_educational_assistance_scholars", default: false
+    t.boolean "foreign_pension_dic_all_other_foreign_countries", default: false
+    t.boolean "foreign_pension_dic_mexico_central_and_south_america_caribb", default: false
+    t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
+    t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
+    t.index ["appeal_type", "appeal_id"], name: "index_special_issue_lists_on_appeal_type_and_appeal_id"
+  end
+
   create_table "supplemental_claims", force: :cascade do |t|
     t.string "veteran_file_number", null: false
     t.date "receipt_date"
     t.datetime "established_at"
-    t.string "end_product_reference_id"
-    t.string "end_product_status"
-    t.datetime "end_product_status_last_synced_at"
+    t.datetime "establishment_submitted_at"
+    t.datetime "establishment_processed_at"
+    t.string "benefit_type"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 
@@ -548,7 +631,7 @@ ActiveRecord::Schema.define(version: 20180710214914) do
     t.integer "appeal_id", null: false
     t.string "status", default: "assigned"
     t.string "type"
-    t.text "title"
+    t.text "action"
     t.text "instructions"
     t.integer "assigned_to_id"
     t.integer "assigned_by_id"
@@ -560,6 +643,8 @@ ActiveRecord::Schema.define(version: 20180710214914) do
     t.string "appeal_type", null: false
     t.datetime "placed_on_hold_at"
     t.integer "on_hold_duration"
+    t.string "assigned_to_type", null: false
+    t.integer "parent_id"
   end
 
   create_table "team_quotas", id: :serial, force: :cascade do |t|
@@ -603,6 +688,10 @@ ActiveRecord::Schema.define(version: 20180710214914) do
   create_table "veterans", force: :cascade do |t|
     t.string "file_number", null: false
     t.string "participant_id"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "middle_name"
+    t.string "name_suffix"
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
   end
 

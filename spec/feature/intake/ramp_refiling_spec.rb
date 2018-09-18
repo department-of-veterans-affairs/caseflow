@@ -75,14 +75,24 @@ RSpec.feature "RAMP Refiling Intake" do
 
     scenario "Attempt to start RAMP refiling for a veteran with an active RAMP Election EP" do
       # Create an RAMP election with a pending EP
-      create(:ramp_election,
-             veteran_file_number: "12341234",
-             notice_date: 3.days.ago,
-             established_at: 2.days.ago,
-             end_product_reference_id: Generators::EndProduct.build(
-               veteran_file_number: "12341234",
-               bgs_attrs: { status_type_code: "PEND" }
-             ).claim_id)
+      r = create(:ramp_election,
+                 veteran_file_number: veteran.file_number,
+                 notice_date: 3.days.ago,
+                 established_at: 2.days.ago)
+
+      claim_id = Generators::EndProduct.build(
+        veteran_file_number: veteran.file_number,
+        bgs_attrs: { status_type_code: "PEND" }
+      ).claim_id
+
+      EndProductEstablishment.create!(
+        veteran_file_number: veteran.file_number,
+        source: r,
+        established_at: 2.days.ago,
+        last_synced_at: 2.days.ago,
+        synced_status: "PEND",
+        reference_id: claim_id
+      )
 
       # Validate that you can't go directly to search
       visit "/intake"
@@ -104,20 +114,26 @@ RSpec.feature "RAMP Refiling Intake" do
     end
 
     scenario "Start a RAMP refiling with an invalid option" do
-      # Create an complete higher level review RAMP election
+      # Create an complete Higher-Level Review RAMP election
       ramp_election = create(:ramp_election,
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
                              option_selected: "higher_level_review_with_hearing",
                              receipt_date: 4.days.ago,
-                             established_at: 2.days.ago,
-                             end_product_reference_id: Generators::EndProduct.build(
-                               veteran_file_number: "12341234",
-                               bgs_attrs: { status_type_code: "CLR" }
-                             ).claim_id)
-
+                             established_at: 2.days.ago)
+      ep = Generators::EndProduct.build(
+        veteran_file_number: "12341234",
+        bgs_attrs: { status_type_code: "CLR" }
+      )
+      EndProductEstablishment.create(
+        source: ramp_election,
+        veteran_file_number: "12341234",
+        reference_id: ep.claim_id,
+        synced_status: "CLR",
+        last_synced_at: 2.days.ago
+      )
       Generators::Contention.build(
-        claim_id: ramp_election.end_product_reference_id,
+        claim_id: ep.claim_id,
         text: "Left knee"
       )
 
@@ -135,7 +151,7 @@ RSpec.feature "RAMP Refiling Intake" do
 
       fill_in "What is the Receipt Date of this form?", with: "11/03/2017"
       within_fieldset("Which review lane did the Veteran select?") do
-        find("label", text: "Higher Level Review", match: :prefer_exact).click
+        find("label", text: "Higher-Level Review", match: :prefer_exact).click
       end
       safe_click "#button-submit-review"
 
@@ -158,14 +174,21 @@ RSpec.feature "RAMP Refiling Intake" do
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
                              receipt_date: 4.days.ago,
-                             established_at: 2.days.ago,
-                             end_product_reference_id: Generators::EndProduct.build(
-                               veteran_file_number: "12341234",
-                               bgs_attrs: { status_type_code: "CLR" }
-                             ).claim_id)
+                             established_at: 2.days.ago)
 
+      ep = Generators::EndProduct.build(
+        veteran_file_number: "12341234",
+        bgs_attrs: { status_type_code: "CLR" }
+      )
+      EndProductEstablishment.create(
+        source: ramp_election,
+        veteran_file_number: "12341234",
+        reference_id: ep.claim_id,
+        synced_status: "CLR",
+        last_synced_at: 2.days.ago
+      )
       Generators::Contention.build(
-        claim_id: ramp_election.end_product_reference_id,
+        claim_id: ep.claim_id,
         text: "Left knee rating increase"
       )
 
@@ -176,7 +199,7 @@ RSpec.feature "RAMP Refiling Intake" do
 
       fill_in "What is the Receipt Date of this form?", with: "12/03/2017"
       within_fieldset("Which review lane did the Veteran select?") do
-        find("label", text: "Higher Level Review", match: :prefer_exact).click
+        find("label", text: "Higher-Level Review", match: :prefer_exact).click
       end
 
       expect_any_instance_of(RampRefilingIntake).to receive(:review!).and_raise("A random error. Oh no!")
@@ -184,7 +207,7 @@ RSpec.feature "RAMP Refiling Intake" do
       safe_click "#button-submit-review"
 
       expect(page).to have_content("Something went wrong")
-      expect(page).to have_current_path("/intake/review-request")
+      expect(page).to have_current_path("/intake/review_request")
     end
 
     scenario "Complete a RAMP refiling for an appeal" do
@@ -193,19 +216,27 @@ RSpec.feature "RAMP Refiling Intake" do
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
                              receipt_date: 4.days.ago,
-                             established_at: 2.days.ago,
-                             end_product_reference_id: Generators::EndProduct.build(
-                               veteran_file_number: "12341234",
-                               bgs_attrs: { status_type_code: "CLR" }
-                             ).claim_id)
+                             established_at: 2.days.ago)
+
+      ep = Generators::EndProduct.build(
+        veteran_file_number: "12341234",
+        bgs_attrs: { status_type_code: "CLR" }
+      )
+      EndProductEstablishment.create(
+        source: ramp_election,
+        veteran_file_number: "12341234",
+        reference_id: ep.claim_id,
+        synced_status: "CLR",
+        last_synced_at: 2.days.ago
+      )
 
       Generators::Contention.build(
-        claim_id: ramp_election.end_product_reference_id,
+        claim_id: ep.claim_id,
         text: "Left knee rating increase"
       )
 
       Generators::Contention.build(
-        claim_id: ramp_election.end_product_reference_id,
+        claim_id: ep.claim_id,
         text: "Left shoulder service connection"
       )
 
@@ -224,7 +255,7 @@ RSpec.feature "RAMP Refiling Intake" do
       fill_in "Search small", with: "12341234"
       click_on "Search"
 
-      expect(page).to have_current_path("/intake/review-request")
+      expect(page).to have_current_path("/intake/review_request")
 
       # Validate issues have been created based on contentions
       expect(ramp_election.issues.count).to eq(2)
@@ -275,7 +306,7 @@ RSpec.feature "RAMP Refiling Intake" do
 
       find("label", text: "Left knee rating increase").click
       find("label", text: "Left shoulder service connection").click
-      find("label", text: "The veteran's form lists at least one ineligible contention").click
+      find("label", text: "The Veteran's form lists at least one ineligible contention").click
 
       safe_click "#finish-intake"
 
@@ -289,20 +320,30 @@ RSpec.feature "RAMP Refiling Intake" do
     end
 
     scenario "Complete a RAMP Refiling for a supplemental claim" do
-      # Create an complete Higher level review RAMP election
+      # Create an complete Higher-Level Review RAMP election
       ramp_election = create(:ramp_election,
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
                              option_selected: "higher_level_review_with_hearing",
                              receipt_date: 4.days.ago,
-                             established_at: 2.days.ago,
-                             end_product_reference_id: Generators::EndProduct.build(
-                               veteran_file_number: "12341234",
-                               bgs_attrs: { status_type_code: "CLR" }
-                             ).claim_id)
+                             established_at: 2.days.ago)
+
+      claim_id = Generators::EndProduct.build(
+        veteran_file_number: "12341234",
+        bgs_attrs: { status_type_code: "CLR" }
+      ).claim_id
+
+      EndProductEstablishment.create!(
+        veteran_file_number: "12341234",
+        source: ramp_election,
+        established_at: 2.days.ago,
+        last_synced_at: 2.days.ago,
+        synced_status: "CLR",
+        reference_id: claim_id
+      )
 
       Generators::Contention.build(
-        claim_id: ramp_election.end_product_reference_id,
+        claim_id: claim_id,
         text: "Left knee rating increase"
       )
 
@@ -328,7 +369,7 @@ RSpec.feature "RAMP Refiling Intake" do
 
       click_label("confirm-outside-caseflow-steps")
       find("label", text: "Left knee rating increase").click
-      find("label", text: "The veteran's form lists at least one ineligible contention").click
+      find("label", text: "The Veteran's form lists at least one ineligible contention").click
 
       Fakes::VBMSService.hold_request!
       expect(page).to have_button("Cancel intake", disabled: false)
@@ -354,7 +395,8 @@ RSpec.feature "RAMP Refiling Intake" do
           end_product_label: "Supplemental Claim Review Rating",
           end_product_code: "683SCRRRAMP",
           gulf_war_registry: false,
-          suppress_acknowledgement_letter: false
+          suppress_acknowledgement_letter: false,
+          claimant_participant_id: veteran.participant_id
         },
         veteran_hash: intake.veteran.to_vbms_hash
       )
@@ -376,20 +418,26 @@ RSpec.feature "RAMP Refiling Intake" do
     end
 
     scenario "Complete a RAMP Refiling with only invalid issues" do
-      # Create an complete Higher level review RAMP election
+      # Create an complete Higher-Level Review RAMP election
       ramp_election = create(:ramp_election,
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
                              option_selected: "higher_level_review_with_hearing",
                              receipt_date: 4.days.ago,
-                             established_at: 2.days.ago,
-                             end_product_reference_id: Generators::EndProduct.build(
-                               veteran_file_number: "12341234",
-                               bgs_attrs: { status_type_code: "CLR" }
-                             ).claim_id)
-
+                             established_at: 2.days.ago)
+      ep = Generators::EndProduct.build(
+        veteran_file_number: "12341234",
+        bgs_attrs: { status_type_code: "CLR" }
+      )
+      EndProductEstablishment.create(
+        source: ramp_election,
+        veteran_file_number: "12341234",
+        reference_id: ep.claim_id,
+        synced_status: "CLR",
+        last_synced_at: 2.days.ago
+      )
       Generators::Contention.build(
-        claim_id: ramp_election.end_product_reference_id,
+        claim_id: ep.claim_id,
         text: "Left knee rating increase"
       )
 
@@ -412,7 +460,7 @@ RSpec.feature "RAMP Refiling Intake" do
       safe_click "#button-submit-review"
 
       click_label("confirm-outside-caseflow-steps")
-      find("label", text: "The veteran's form lists at least one ineligible contention").click
+      find("label", text: "The Veteran's form lists at least one ineligible contention").click
 
       safe_click "#finish-intake"
 
@@ -433,14 +481,21 @@ RSpec.feature "RAMP Refiling Intake" do
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
                              receipt_date: 4.days.ago,
-                             established_at: 2.days.ago,
-                             end_product_reference_id: Generators::EndProduct.build(
-                               veteran_file_number: "12341234",
-                               bgs_attrs: { status_type_code: "CLR" }
-                             ).claim_id)
+                             established_at: 2.days.ago)
 
+      ep = Generators::EndProduct.build(
+        veteran_file_number: "12341234",
+        bgs_attrs: { status_type_code: "CLR" }
+      )
+      EndProductEstablishment.create(
+        source: ramp_election,
+        veteran_file_number: "12341234",
+        reference_id: ep.claim_id,
+        synced_status: "CLR",
+        last_synced_at: 2.days.ago
+      )
       Generators::Contention.build(
-        claim_id: ramp_election.end_product_reference_id,
+        claim_id: ep.claim_id,
         text: "Left knee rating increase"
       )
 
@@ -454,12 +509,12 @@ RSpec.feature "RAMP Refiling Intake" do
       click_on "Search"
       fill_in "What is the Receipt Date of this form?", with: "12/03/2017"
       within_fieldset("Which review lane did the Veteran select?") do
-        find("label", text: "Higher Level Review", match: :prefer_exact).click
+        find("label", text: "Higher-Level Review", match: :prefer_exact).click
       end
       safe_click "#button-submit-review"
       click_label("confirm-outside-caseflow-steps")
       find("label", text: "Left knee rating increase").click
-      find("label", text: "The veteran's form lists at least one ineligible contention").click
+      find("label", text: "The Veteran's form lists at least one ineligible contention").click
       safe_click "#finish-intake"
 
       expect(page).to have_content("An EP 682 for this Veteran's claim was created outside Caseflow.")

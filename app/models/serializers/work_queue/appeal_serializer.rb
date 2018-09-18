@@ -1,8 +1,4 @@
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
-  attribute :is_legacy_appeal do
-    false
-  end
-
   attribute :issues do
     object.request_issues
   end
@@ -33,10 +29,6 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.claimants[0].relationship if object.claimants && object.claimants.any?
   end
 
-  attribute :location_code do
-    "Not supported for BEAAM appeals"
-  end
-
   attribute :veteran_full_name do
     object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
   end
@@ -49,11 +41,11 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.veteran ? object.veteran.sex : "Cannot locate"
   end
 
-  attribute :vbms_id do
+  attribute :veteran_file_number do
     object.veteran_file_number
   end
 
-  attribute :vacols_id do
+  attribute :external_id do
     object.uuid
   end
 
@@ -69,10 +61,6 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.docket_number
   end
 
-  attribute :status do
-    nil
-  end
-
   attribute :decision_date do
     nil
   end
@@ -83,10 +71,6 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
 
   attribute :paper_case do
     false
-  end
-
-  attribute :power_of_attorney do
-    object.representative_name
   end
 
   attribute :power_of_attorney do

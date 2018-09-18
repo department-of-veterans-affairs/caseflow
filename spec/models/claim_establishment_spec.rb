@@ -1,10 +1,27 @@
 describe ClaimEstablishment do
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
+  let(:vacols_remand_case) do
+    create(:case_with_decision, :status_remand)
+  end
+
+  let(:vacols_full_grant_case) do
+    create(:case_with_decision, :status_complete, case_issues:
+        [create(:case_issue, :education, :disposition_allowed)])
+  end
+
   let(:appeal_remand) do
-    Generators::LegacyAppeal.build(vacols_record: :remand_decided)
+    create(:legacy_appeal, vacols_case: vacols_remand_case)
   end
 
   let(:appeal_full_grant) do
-    Generators::LegacyAppeal.build(vacols_record: :full_grant_decided)
+    create(:legacy_appeal, vacols_case: vacols_full_grant_case)
   end
 
   context ".get_decision_type" do

@@ -1,8 +1,7 @@
 describe HearingSchedule::ValidateJudgeSpreadsheet do
-  let(:user) { create(:default_user) }
-
   before do
-    user.save!
+    create(:staff, sattyid: "860", snamef: "Stuart", snamel: "Huels")
+    create(:staff, sattyid: "861", snamef: "Doris", snamel: "Lamphere")
   end
 
   context "when judge non-availaility dates are duplicated" do
@@ -14,8 +13,8 @@ describe HearingSchedule::ValidateJudgeSpreadsheet do
       ).validate
     end
 
-    it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotUnique)
+    it "returns JudgeDatesNotUnique" do
+      expect(subject).to eq [HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotUnique]
     end
   end
 
@@ -28,8 +27,8 @@ describe HearingSchedule::ValidateJudgeSpreadsheet do
       ).validate
     end
 
-    it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotCorrectFormat)
+    it "returns JudgeDatesNotCorrectFormat" do
+      expect(subject).to eq [HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotCorrectFormat]
     end
   end
 
@@ -42,8 +41,8 @@ describe HearingSchedule::ValidateJudgeSpreadsheet do
       ).validate
     end
 
-    it "returns an error" do
-      expect { subject }.to raise_error(HearingSchedule::ValidateJudgeSpreadsheet::JudgeNotInDatabase)
+    it "returns JudgeNotInDatabase" do
+      expect(subject).to eq [HearingSchedule::ValidateJudgeSpreadsheet::JudgeNotInDatabase]
     end
   end
 
@@ -56,6 +55,8 @@ describe HearingSchedule::ValidateJudgeSpreadsheet do
       ).validate
     end
 
-    it { is_expected.to be true }
+    it "returns an empty array" do
+      expect(subject).to eq []
+    end
   end
 end

@@ -1,8 +1,4 @@
 class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
-  attribute :is_legacy_appeal do
-    true
-  end
-
   attribute :issues do
     object.issues.map do |issue|
       ActiveModelSerializers::SerializableResource.new(
@@ -45,12 +41,20 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :appellant_relationship
   attribute :location_code
   attribute :veteran_full_name
-  attribute :veteran_date_of_birth
+  attribute :veteran_date_of_birth do
+    object.veteran_date_of_birth ? object.veteran_date_of_birth.strftime("%m/%d/%Y") : nil
+  end
   attribute :veteran_gender
   attribute :vbms_id do
     object.sanitized_vbms_id
   end
-  attribute :vacols_id
+  # Aliasing the vbms_id to make it clear what we're returning.
+  attribute :veteran_file_number do
+    object.sanitized_vbms_id
+  end
+  attribute :external_id do
+    object.vacols_id
+  end
   attribute :type
   attribute :aod
   attribute :docket_number
@@ -77,5 +81,9 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   end
   attribute :caseflow_veteran_id do
     object.veteran ? object.veteran.id : nil
+  end
+
+  attribute :docket_name do
+    "legacy"
   end
 end

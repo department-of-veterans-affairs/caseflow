@@ -2,6 +2,8 @@ import { SEARCH_ERROR_FOR } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import * as Constants from './actionTypes';
 import _ from 'lodash';
+import { onReceiveAppealDetails } from '../QueueActions';
+import { prepareAppealForStore } from '../utils';
 
 export const clearCaseListSearch = () => ({
   type: Constants.CLEAR_CASE_LIST_SEARCH
@@ -43,10 +45,12 @@ export const fetchedNoAppealsUsingVeteranId = (searchQuery) => ({
   }
 });
 
-export const onReceiveAppealsUsingVeteranId = (appeals) => ({
-  type: Constants.RECEIVED_APPEALS_USING_VETERAN_ID_SUCCESS,
-  payload: { appeals }
-});
+export const onReceiveAppealsUsingVeteranId = (appeals) => (dispatch) => {
+  dispatch(onReceiveAppealDetails(prepareAppealForStore(appeals)));
+  dispatch({
+    type: Constants.RECEIVED_APPEALS_USING_VETERAN_ID_SUCCESS
+  });
+};
 
 export const fetchAppealUsingVeteranIdFailed = (searchQuery) => ({
   type: Constants.SEARCH_RESULTED_IN_ERROR,
@@ -106,3 +110,8 @@ export const fetchAppealsUsingVeteranId = (searchQuery) =>
         return reject();
       });
   });
+
+export const setFetchedAllCasesFor = (caseflowVeteranId) => ({
+  type: Constants.SET_FETCHED_ALL_CASES_FOR,
+  payload: { caseflowVeteranId }
+});

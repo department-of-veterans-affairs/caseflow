@@ -7,7 +7,7 @@ RSpec.describe IntakesController do
 
   describe "#complete" do
     # TODO: this is just testing the current implementation; should make this more behavioral
-    it "should call complete! and return a 500" do
+    it "should call complete! and return a 200" do
       intake = Intake.new(user_id: current_user.id, started_at: Time.zone.now)
       intake.save!
       allow_any_instance_of(Intake).to receive(:complete!)
@@ -45,6 +45,28 @@ RSpec.describe IntakesController do
           post :complete, params: { id: intake.id }
           expect(response.status).to eq(400)
         end
+      end
+    end
+
+    context "when intaking an AMA appeal" do
+      before { FeatureToggle.enable!(:intake, users: [current_user.css_id]) }
+
+      it "should return the ui hash with ama_enabled being true" do
+        intake = Intake.new(user_id: current_user.id, started_at: Time.zone.now)
+        intake.save!
+        allow_any_instance_of(Intake).to receive(:complete!)
+        allow_any_instance_of(Intake).to receive(:ui_hash).with(true)
+      end
+    end
+
+    context "when intaking an AMA appeal" do
+      before { FeatureToggle.disable!(:intake, users: [current_user.css_id]) }
+
+      it "should return the ui hash with ama_enabled being false" do
+        intake = Intake.new(user_id: current_user.id, started_at: Time.zone.now)
+        intake.save!
+        allow_any_instance_of(Intake).to receive(:complete!)
+        allow_any_instance_of(Intake).to receive(:ui_hash).with(false)
       end
     end
   end

@@ -4,14 +4,15 @@
     userId: current_user.id,
     userRole: (current_user.vacols_roles.first || "").capitalize,
     userCssId: current_user.css_id,
-    userCanAccessQueue: can_access_queue?,
+    userIsVsoEmployee: current_user.vso_employee?,
+    caseSearchHomePage: case_search_home_page,
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
     buildDate: build_date,
     featureToggles: {
-      phase_two: FeatureToggle.enabled?(:queue_phase_two, user: current_user),
       judge_case_review_checkout: FeatureToggle.enabled?(:judge_case_review_checkout, user: current_user),
-      judge_assignment_to_attorney: FeatureToggle.enabled?(:judge_assignment_to_attorney, user: current_user)
+      judge_assignment_to_attorney: FeatureToggle.enabled?(:judge_assignment_to_attorney, user: current_user),
+      attorney_assignment_to_colocated: FeatureToggle.enabled?(:attorney_assignment_to_colocated, user: current_user)
     }
   }) %>
 <% end %>

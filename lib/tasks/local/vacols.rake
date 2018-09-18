@@ -89,16 +89,8 @@ namespace :local do
       read_csv(VACOLS::Issref, date_shift)
       read_csv(VACOLS::TravelBoardSchedule, date_shift)
 
-      css_ids = VACOLS::Staff.where.not(sdomainid: nil).map do |s|
-        User.find_or_create_by(
-          css_id: s.sdomainid
-        ) do |user|
-          user.station_id = "101"
-          user.full_name = "#{s.snamef} #{s.snamel}"
-        end.css_id
-      end
-      Functions.grant!("System Admin", users: css_ids)
       setup_dispatch
+      create_issrefs
     end
 
     # Do not check in the result of running this without talking with Chris. We need to certify that there
@@ -188,6 +180,50 @@ namespace :local do
     rescue AASM::InvalidTransition
       Rails.logger.info("Taks prepare job skipped - tasks were already prepared...")
     end
+
+    # rubocop:disable Metrics/MethodLength
+    def create_issrefs
+      # creates VACOLS::Issrefs added later than our sanitized UAT copy
+      fiduciary_issue = {
+        prog_code: "12",
+        prog_desc: "Fiduciary"
+      }
+
+      # Issref_dump.csv has 1 Fiduciary issue
+      return if VACOLS::Issref.where(**fiduciary_issue).count > 1
+
+      FactoryBot.create(
+        :issref,
+        **fiduciary_issue,
+        iss_code: "01",
+        iss_desc: "Fiduciary Appointment"
+      )
+      FactoryBot.create(
+        :issref,
+        **fiduciary_issue,
+        iss_code: "02",
+        iss_desc: "Hub Manager removal of a fiduciary under 13.500"
+      )
+      FactoryBot.create(
+        :issref,
+        **fiduciary_issue,
+        iss_code: "03",
+        iss_desc: "Hub Manager misuse determination under 13.400"
+      )
+      FactoryBot.create(
+        :issref,
+        **fiduciary_issue,
+        iss_code: "04",
+        iss_desc: "RO Director decision upon recon of a misuse determ"
+      )
+      FactoryBot.create(
+        :issref,
+        **fiduciary_issue,
+        iss_code: "05",
+        iss_desc: "Dir of PFS negligence determination for reissuance"
+      )
+    end
+    # rubocop:enable Metrics/MethodLength
 
     def bgs_record_from_case(cases, case_descriptors)
       CSV.open(Rails.root.join("local/vacols", "bgs_setup.csv"), "wb") do |csv|

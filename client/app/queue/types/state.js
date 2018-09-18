@@ -2,18 +2,16 @@
 import type {
   Task,
   Tasks,
-  DeprecatedTask,
+  Appeals,
+  BasicAppeals,
   User,
   Attorneys
 } from './models';
 
-export type LoadedQueueTasks = { [string]: DeprecatedTask };
-export type LoadedQueueAppeals = { [string]: Object };
-
-export type TasksAndAppealsOfAttorney = {
+export type AttorneyAppealsLoadingState = {
   [string]: {
     state: string,
-    data: {tasks: LoadedQueueTasks, appeals: LoadedQueueAppeals},
+    data: {tasks: Tasks, appeals: Appeals},
     error: {status: number, response: Object}
   }
 };
@@ -25,40 +23,47 @@ export type CaseDetailState = {|
   activeTask: ?Task
 |};
 
-export type UiStateError = {title: string, detail: string}
+export type UiStateMessage = { title: string, detail?: string };
 
 export type UiState = {
   selectingJudge: boolean,
   highlightFormItems: boolean,
   messages: {
-    success: ?string,
-    error: ?UiStateError
+    success: ?UiStateMessage,
+    error: ?UiStateMessage
   },
   saveState: {
     savePending: boolean,
     saveSuccessful: ?boolean
   },
-  modal: {
-    cancelCheckout: boolean,
-    deleteIssue: boolean
-  },
+  modals: {|
+    deleteIssue?: boolean,
+    cancelCheckout?: boolean,
+    sendToAttorney?: boolean,
+    sendToTeam?: boolean
+  |},
   featureToggles: Object,
   selectedAssignee: ?string,
-  selectedAssigneeSecondary: ?string
+  selectedAssigneeSecondary: ?string,
+  loadedUserId: ?number,
+  userRole: string,
+  userCssId: string,
+  userIsVsoEmployee: boolean,
+  veteranCaseListIsVisible: boolean
 };
 
-export type UsersById = { [number]: User };
+export type UsersById = { [number]: ?User };
 
 export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 
-export type QueueState = {
+export type NewDocsForAppeal = {[string]: {docs?: Array<Object>, error?: Object, loading: boolean}}
+
+export type QueueState = {|
   judges: UsersById,
   tasks: Tasks,
-  loadedQueue: {
-    appeals: LoadedQueueAppeals,
-    tasks: LoadedQueueTasks,
-    loadedUserId: string
-  },
+  appeals: BasicAppeals,
+  appealDetails: Appeals,
+  amaTasks: Tasks,
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},
   stagedChanges: {
@@ -69,10 +74,13 @@ export type QueueState = {
     }
   },
   attorneysOfJudge: AttorneysOfJudge,
-  tasksAndAppealsOfAttorney: TasksAndAppealsOfAttorney,
+  attorneyAppealsLoadingState: AttorneyAppealsLoadingState,
   isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
-  attorneys: Attorneys
-};
+  attorneys: Attorneys,
+  newDocsForAppeal: NewDocsForAppeal,
+  organizationId: ?number,
+  specialIssues: Object
+|};
 
 export type State = {
   caseDetail: CaseDetailState,
@@ -82,7 +90,7 @@ export type State = {
   ui: UiState
 };
 
-type Action = { type: string, payload: Object };
+type Action = { type: string, payload?: Object };
 
 /* eslint-disable no-use-before-define */
 

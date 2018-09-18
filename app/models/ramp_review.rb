@@ -26,6 +26,22 @@ class RampReview < ApplicationRecord
 
   validates :receipt_date, :option_selected, presence: { message: "blank" }, if: :saving_review
 
+  before_destroy :remove_issues!
+
+  class << self
+    def established
+      where.not(established_at: nil)
+    end
+
+    def active
+      # We only know the set of inactive EP statuses
+      # We also only know the EP status after fetching it from BGS
+      # Therefore, our definition of active is when the EP is either
+      #   not known or not known to be inactive
+      established.where("end_product_status NOT IN (?) OR end_product_status IS NULL", EndProduct::INACTIVE_STATUSES)
+    end
+  end
+
   def established?
     !!established_at
   end
@@ -47,7 +63,7 @@ class RampReview < ApplicationRecord
   def create_or_connect_end_product!
     return connect_end_product! if end_product_establishment.preexisting_end_product
 
-    establish_end_product! && :created
+    establish_end_product!(commit: true) && :created
   end
 
   def end_product_description
@@ -55,65 +71,45 @@ class RampReview < ApplicationRecord
   end
 
   def end_product_base_modifier
-    end_product_establishment.valid_modifiers.first
+    end_product_modifier
   end
 
   def end_product_active?
-    sync_ep_status! && cached_status_active?
+    end_product_establishment.status_active?(sync: true)
   end
 
-  def end_product_canceled?
-    sync_ep_status! && end_product_status == "CAN"
+  def establish_end_product!(commit:)
+    end_product_establishment.perform!(commit: commit)
+    update! established_at: Time.zone.now
   end
 
-  def sync_ep_status!
-    # There is no need to sync end_product_status if the status
-    # is already inactive since an EP can never leave that state
-    return true unless cached_status_active?
-
-    ## TODO: Remove this once all the data is backfilled
-    if (saved_end_product_establishment = EndProductEstablishment.find_by(source: self))
-      saved_end_product_establishment.sync!
-    end
-
-    update!(
-      end_product_status: (saved_end_product_establishment || end_product_establishment).result.status_type_code,
-      end_product_status_last_synced_at: Time.zone.now
-    )
+  def end_product_establishment
+    find_end_product_establishment || new_end_product_establishment
   end
 
-  def establish_end_product!
-    end_product_establishment.perform!
-
-    update!(
-      end_product_reference_id: end_product_establishment.reference_id,
-      established_at: Time.zone.now
-    )
+  def valid_modifiers
+    [end_product_modifier]
   end
 
-  class << self
-    def established
-      where.not(established_at: nil)
-    end
-
-    def active
-      # We only know the set of inactive EP statuses
-      # We also only know the EP status after fetching it from BGS
-      # Therefore, our definition of active is when the EP is either
-      #   not known or not known to be inactive
-      established.where("end_product_status NOT IN (?) OR end_product_status IS NULL", EndProduct::INACTIVE_STATUSES)
-    end
+  def remove_issues!
+    issues.destroy_all unless issues.empty?
   end
 
   private
 
-  def end_product_establishment
-    @end_product_establishment ||= EndProductEstablishment.new(
+  def find_end_product_establishment
+    @preexisting_end_product_establishment ||= EndProductEstablishment.find_by(source: self)
+  end
+
+  def new_end_product_establishment
+    @new_end_product_establishment ||= EndProductEstablishment.new(
       veteran_file_number: veteran_file_number,
       reference_id: end_product_reference_id,
       claim_date: receipt_date,
       code: end_product_code,
-      valid_modifiers: [end_product_modifier],
+      payee_code: payee_code,
+      claimant_participant_id: claimant_participant_id,
+      valid_modifiers: valid_modifiers,
       source: self,
       station: "397" # AMC
     )
@@ -130,16 +126,20 @@ class RampReview < ApplicationRecord
     ) && :connected
   end
 
-  def cached_status_active?
-    !EndProduct::INACTIVE_STATUSES.include?(end_product_status)
-  end
-
   def end_product_code
     (END_PRODUCT_DATA_BY_OPTION[option_selected] || {})[:code]
   end
 
   def end_product_modifier
     (END_PRODUCT_DATA_BY_OPTION[option_selected] || {})[:modifier]
+  end
+
+  def payee_code
+    "00" # payee is Veteran for RAMP intakes
+  end
+
+  def claimant_participant_id
+    veteran.participant_id
   end
 
   def validate_receipt_date_not_before_ramp
