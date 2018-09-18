@@ -61,8 +61,8 @@ class SelectIssueDispositionDropdown extends React.PureComponent<Props> {
             label: `${opt[0]} - ${String(opt[1])}`,
             value: opt[0]
           }))}
-        onChange={({ value }) => this.props.updateIssue({
-          disposition: value,
+        onChange={(option) => this.props.updateIssue({
+          disposition: option ? option.value : null,
           readjudication: false,
           remand_reasons: []
         })}

@@ -41,13 +41,17 @@ type Props = Params & {|
 |};
 
 class AttorneyActionsDropdown extends React.PureComponent<Props> {
-  changeRoute = (props) => {
+  changeRoute = (option) => {
     const {
       appealId,
       history,
       appeal
     } = this.props;
-    const decisionType = props.value;
+
+    if (!option) {
+      return;
+    }
+    const decisionType = option.value;
     const routes = {
       omo_request: 'submit',
       draft_decision: appeal.isLegacyAppeal ? 'dispositions' : 'special_issues',

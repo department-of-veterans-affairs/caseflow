@@ -44,12 +44,15 @@ type Props = Params & {|
 |};
 
 class ColocatedActionsDropdown extends React.PureComponent<Props> {
-  onChange = (props) => {
+  onChange = (option) => {
+    if (!option) {
+      return;
+    }
     const {
       appealId,
       history
     } = this.props;
-    const actionType = props.value;
+    const actionType = option.value;
 
     this.props.stageAppeal(appealId);
 

@@ -123,7 +123,7 @@ class Task < ApplicationRecord
   end
 
   def update_parent_status
-    parent.when_child_task_completed if saved_change_to_status? && parent
+    parent.when_child_task_completed if saved_change_to_status? && completed? && parent
   end
 
   def set_assigned_at_and_update_parent_status

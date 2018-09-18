@@ -60,8 +60,8 @@ type Props = {|
   dropdownUrls: Array<string>,
   buildDate?: string,
   reviewActionType: string,
-  userCanAccessQueue?: boolean,
   userIsVsoEmployee?: boolean,
+  caseSearchHomePage?: boolean,
   featureToggles: Object,
   // Action creators
   setFeatureToggles: typeof setFeatureToggles,
@@ -165,22 +165,20 @@ class QueueApp extends React.PureComponent<Props> {
     const {
       userId,
       userCssId,
-      userRole,
-      userCanAccessQueue
+      userRole
     } = this.props;
 
     return {
       userId,
       userCssId,
-      userRole,
-      userCanAccessQueue
+      userRole
     };
   }
 
   render = () => <BrowserRouter>
     <NavigationBar
       wideApp
-      defaultUrl={this.props.userCanAccessQueue ? '/queue' : '/'}
+      defaultUrl={this.props.caseSearchHomePage ? '/' : '/queue'}
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
       logoProps={{
