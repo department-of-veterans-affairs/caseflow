@@ -283,8 +283,8 @@ export const getIssueDiagnosticCodeLabel = (code: string) => {
 };
 
 /**
- * For attorney checkout flow, filter out already-decided issues. Undecided
- * disposition IDs are all numerical (1-9), decided IDs are alphabetical (A-X).
+ * For legacy attorney checkout flow, filter out already-decided issues. Undecided
+ * VACOLS disposition IDs are all numerical (1-9), decided IDs are alphabetical (A-X).
  * Filter out disposition 9 because it is no longer used.
  *
  * @param {Array} issues
@@ -324,11 +324,17 @@ export const buildCaseReviewPayload = (
     _.extend(payload.data.tasks, args);
   }
 
-  payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => _.extend({},
-    _.pick(issue, ['remand_reasons', 'type', 'readjudication']),
-    { disposition: _.capitalize(issue.disposition) },
-    { id: issue.id }
-  ));
+  const legacyAppealIssues = _.every(issues, (issue) => !isNaN(issue.disposition));
+
+  if (legacyAppealIssues) {
+    payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => _.extend({},
+      _.pick(issue, ['remand_reasons', 'type', 'readjudication']),
+      { disposition: _.capitalize(issue.disposition) },
+      { id: issue.id }
+    ));
+  } else {
+    payload.data.tasks.issues = issues;
+  }
 
   return payload;
 };
