@@ -43,6 +43,12 @@ class HearingDayRepository
       [video_and_co, travel_board]
     end
 
+    def load_days_for_central_office(start_date, end_date)
+      video_and_co = VACOLS::CaseHearing.load_days_for_central_office(start_date, end_date)
+      travel_board = []
+      [video_and_co, travel_board]
+    end
+
     def load_days_for_regional_office(regional_office, start_date, end_date)
       video_and_co = VACOLS::CaseHearing.load_days_for_regional_office(regional_office, start_date, end_date)
       travel_board = VACOLS::TravelBoardSchedule.load_days_for_regional_office(regional_office, start_date, end_date)

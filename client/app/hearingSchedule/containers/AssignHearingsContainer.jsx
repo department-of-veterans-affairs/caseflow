@@ -12,7 +12,7 @@ class AssignHearingsContainer extends React.PureComponent {
 
   componentDidUpdate = (prevProps) => {
     if (this.props.selectedRegionalOffice !== prevProps.selectedRegionalOffice) {
-      this.loadUpcomingHearingDays()
+      this.loadUpcomingHearingDays();
     }
   };
 

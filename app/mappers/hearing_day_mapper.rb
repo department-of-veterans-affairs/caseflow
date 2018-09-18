@@ -43,6 +43,7 @@ module HearingDayMapper
 
     def validate_regional_office(regional_office)
       return if regional_office.nil?
+      return "CO" if regional_office == "CO"
 
       ro = RegionalOffice.find!(regional_office)
       fail(InvalidRegionalOfficeError) if ro.nil?
