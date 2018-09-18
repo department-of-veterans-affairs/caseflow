@@ -117,7 +117,7 @@ class EvaluateDecisionView extends React.PureComponent {
       VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
     ].includes(disposition));
 
-    return `${prevUrl}/${remandedIssues ? 'remands' : 'dispositions'}`
+    return `${prevUrl}/${remandedIssues ? 'remands' : 'dispositions'}`;
   }
 
   goToNextStep = () => {
