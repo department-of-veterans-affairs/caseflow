@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+// @flow
+import * as React from 'react';
 import { css } from 'glamor';
 
 import IssueListItem from './IssueListItem';
@@ -23,7 +23,18 @@ const bottomBorder = (singleIssue) => css({
   borderBottom: singleIssue ? 'none !important' : ''
 });
 
-export default class IssueList extends React.PureComponent {
+import type {
+  Appeal
+} from '../types/models';
+
+type Props = {
+  appeal: Appeal,
+  idxToDisplay?: number,
+  issuesOnly?: boolean,
+  stretchToFullWidth?: boolean
+};
+
+export default class IssueList extends React.PureComponent<Props> {
   getIssues = () => {
     const {
       appeal: {
@@ -55,18 +66,3 @@ export default class IssueList extends React.PureComponent {
     </table>
   </div>;
 }
-
-IssueList.propTypes = {
-  appeal: PropTypes.shape({
-    issues: PropTypes.array,
-    docketName: PropTypes.string
-  }).isRequired,
-  issuesOnly: PropTypes.bool,
-  idxToDisplay: PropTypes.number,
-  stretchToFullWidth: PropTypes.bool
-};
-
-IssueList.defaultProps = {
-  issuesOnly: false,
-  stretchToFullWidth: false
-};

@@ -292,9 +292,9 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
       <div {...smallBottomMargin}>
         Program: {appeal.docketName === 'legacy' ? getIssueProgramDescription(issue) : issue.program}
       </div>
-      {issue.type && <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>}
-      {_.isNumber(issue.program) &&
+      {appeal.docketName === 'legacy' &&
         <React.Fragment>
+          <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
           <div {...smallBottomMargin}>
             Code: {getIssueDiagnosticCodeLabel(_.last(issue.codes))}
           </div>
