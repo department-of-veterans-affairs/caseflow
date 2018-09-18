@@ -155,13 +155,15 @@ Rails.application.routes.draw do
     patch 'error', on: :member
   end
 
-  resources :higher_level_reviews, param: :claim_id, only: [:edit]
+  resources :higher_level_reviews, param: :claim_id, only: [:edit] do
+    patch 'update', on: :member
+  end
   match '/higher_level_reviews/:claim_id/edit/:any' => 'higher_level_reviews#edit', via: [:get]
-  match '/higher_level_reviews/:claim_id/update_issues' => 'higher_level_reviews#update_issues', via: [:patch]
 
-  resources :supplemental_claims, param: :claim_id, only: [:edit]
+  resources :supplemental_claims, param: :claim_id, only: [:edit] do
+    patch 'update', on: :member
+  end
   match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
-  match '/supplemental_claims/:claim_id/update_issues' => 'supplemental_claims#update_issues', via: [:patch]
 
   resources :users, only: [:index]
 

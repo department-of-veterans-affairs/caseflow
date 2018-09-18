@@ -42,7 +42,7 @@ class SelectIssues extends React.PureComponent {
 
 class SaveButtonUnconnected extends React.PureComponent {
   handleClick = () => {
-    this.props.requestIssuesUpdate(this.props.claimId, {
+    this.props.requestIssuesUpdate(this.props.claimId, this.props.formType, {
       ratings: this.props.ratings,
       nonRatedIssues: this.props.nonRatedIssues
     });
@@ -60,8 +60,9 @@ class SaveButtonUnconnected extends React.PureComponent {
 }
 
 const SaveButton = connect(
-  ({ review, requestStatus, ratings }) => ({
+  ({ review, formType, requestStatus, ratings }) => ({
     claimId: review.claimId,
+    formType,
     requestStatus,
     ratings
   }),
