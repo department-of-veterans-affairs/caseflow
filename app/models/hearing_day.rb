@@ -29,7 +29,7 @@ class HearingDay
     def load_days(start_date, end_date, regional_office = nil)
       if regional_office.nil?
         HearingDayRepository.load_days_for_range(start_date, end_date)
-      elsif regional_office == "CO"
+      elsif regional_office == HEARING_TYPES[:central]
         HearingDayRepository.load_days_for_central_office(start_date, end_date)
       else
         HearingDayRepository.load_days_for_regional_office(regional_office, start_date, end_date)
