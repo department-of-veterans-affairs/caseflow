@@ -9,7 +9,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_PATHS } from './constants';
 import LandingPage from './pages/landing';
 import CancelPage from './pages/cancelled';
-import SelectIssuesPage, { CancelOrSave } from './pages/selectIssues';
+import SelectIssuesPage, { SelectIssuesButtons } from './pages/selectIssues';
 import { css } from 'glamor';
 import CancelEdit from './components/CancelEdit';
 
@@ -74,7 +74,7 @@ export default class IntakeEditFrame extends React.PureComponent {
               <Route
                 exact
                 path={PAGE_PATHS.SELECT_ISSUES}
-                component={CancelOrSave}
+                component={SelectIssuesButtons}
               />
             </AppSegment>
           </AppFrame>
