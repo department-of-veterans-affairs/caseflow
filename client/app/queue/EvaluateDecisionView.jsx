@@ -23,12 +23,12 @@ import { tasksForAppealAssignedToUserSelector } from './selectors';
 
 import COPY from '../../COPY.json';
 import JUDGE_CASE_REVIEW_OPTIONS from '../../constants/JUDGE_CASE_REVIEW_OPTIONS.json';
-import ISSUE_DISPOSITIONS from '../../constants/ISSUE_DISPOSITIONS.json';
 import {
   marginBottom, marginTop,
   paddingLeft, fullWidth,
   redText, PAGE_TITLES,
   VACOLS_DISPOSITIONS,
+  ISSUE_DISPOSITIONS,
   JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH
 } from './constants';
 const setWidth = (width) => css({
@@ -111,12 +111,13 @@ class EvaluateDecisionView extends React.PureComponent {
       appealId,
       appeal
     } = this.props;
-    const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
     const prevUrl = `/queue/appeals/${appealId}`;
+    const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
+    const remandedIssues = _.some(dispositions, (disp) => [
+      VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
+    ].includes(disp));
 
-    return dispositions.includes(VACOLS_DISPOSITIONS.REMANDED) || dispositions.includes(ISSUE_DISPOSITIONS.remanded) ?
-      `${prevUrl}/remands` :
-      `${prevUrl}/dispositions`;
+    return remandedIssues ? `${prevUrl}/remands` : `${prevUrl}/dispositions`;
   }
 
   goToNextStep = () => {

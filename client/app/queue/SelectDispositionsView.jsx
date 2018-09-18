@@ -24,9 +24,9 @@ import {
   marginBottom,
   marginLeft,
   PAGE_TITLES,
-  VACOLS_DISPOSITIONS
+  VACOLS_DISPOSITIONS,
+  ISSUE_DISPOSITIONS
 } from './constants';
-import ISSUE_DISPOSITIONS from '../../constants/ISSUE_DISPOSITIONS.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import { getUndecidedIssues } from './utils';
 
@@ -59,10 +59,12 @@ class SelectDispositionsView extends React.PureComponent {
       appeal: { issues }
     } = this.props;
     let nextStep;
-    const baseUrl = `/queue/appeals/${appealId}`;
     const dispositions = issues.map((issue) => issue.disposition);
+    const remandedIssues = _.some(dispositions, (disp) => [
+      VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
+    ].includes(disp));
 
-    if (_.some(dispositions, (disp) => [VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.remanded].includes(disp))) {
+    if (remandedIssues) {
       nextStep = 'remands';
     } else if (userRole === USER_ROLE_TYPES.judge) {
       nextStep = 'evaluate';
@@ -70,7 +72,7 @@ class SelectDispositionsView extends React.PureComponent {
       nextStep = 'submit';
     }
 
-    return `${baseUrl}/${nextStep}`;
+    return `/queue/appeals/${appealId}/${nextStep}`;
   }
 
   getPrevStepUrl = () => {
