@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import _ from 'lodash';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import ApiUtil from '../../util/ApiUtil';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
@@ -23,7 +24,7 @@ class AssignHearingsContainer extends React.PureComponent {
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
-      this.props.onReceiveUpcomingHearingDays(resp.hearings);
+      this.props.onReceiveUpcomingHearingDays(_.keyBy(resp.hearings, 'id'));
     });
   };
 
@@ -43,6 +44,7 @@ class AssignHearingsContainer extends React.PureComponent {
         regionalOffices={this.props.regionalOffices}
         onRegionalOfficeChange={this.props.onRegionalOfficeChange}
         selectedRegionalOffice={this.props.selectedRegionalOffice}
+        upcomingHearingDays={this.props.upcomingHearingDays}
       />
     </LoadingDataDisplay>;
 
@@ -52,7 +54,8 @@ class AssignHearingsContainer extends React.PureComponent {
 
 const mapStateToProps = (state) => ({
   regionalOffices: state.regionalOffices,
-  selectedRegionalOffice: state.selectedRegionalOffice
+  selectedRegionalOffice: state.selectedRegionalOffice,
+  upcomingHearingDays: state.upcomingHearingDays
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

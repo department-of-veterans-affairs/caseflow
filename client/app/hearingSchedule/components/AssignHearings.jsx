@@ -4,11 +4,20 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import COPY from '../../../COPY.json';
 import StickyNavContentArea from '../../components/StickyNavContentArea';
+import { formatDateStr } from '../../util/DateUtil';
 import RoSelectorDropdown from './RoSelectorDropdown';
 import AvailableHearingDay from './AvailableHearingDay';
 
 export default class AssignHearings extends React.Component {
   render() {
+
+    const availableHearingDays = Object.values(this.props.upcomingHearingDays).map((hearingDay) => {
+      return <AvailableHearingDay
+        key={hearingDay.id}
+        title={formatDateStr(hearingDay.hearingDate)}
+      />
+    });
+
     return <AppSegment filledBackground>
       <h1>{COPY.HEARING_SCHEDULE_ASSIGN_HEARINGS_HEADER}</h1>
       <Link
@@ -21,14 +30,9 @@ export default class AssignHearings extends React.Component {
         onChange={this.props.onRegionalOfficeChange}
         value={this.props.selectedRegionalOffice}
       />
-      <StickyNavContentArea>
-        <AvailableHearingDay
-          title="Hearing day #1"
-        />
-        <AvailableHearingDay
-          title="Hearing day #2"
-        />
-      </StickyNavContentArea>
+      { this.props.upcomingHearingDays && <StickyNavContentArea>
+        {availableHearingDays}
+      </StickyNavContentArea> }
     </AppSegment>;
   }
 }
@@ -36,5 +40,6 @@ export default class AssignHearings extends React.Component {
 AssignHearings.propTypes = {
   regionalOffices: PropTypes.object,
   onRegionalOfficeChange: PropTypes.func,
-  selectedRegionalOffice: PropTypes.object
+  selectedRegionalOffice: PropTypes.object,
+  upcomingHearingDays: PropTypes.object
 };
