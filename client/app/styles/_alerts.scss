@@ -1,0 +1,26 @@
+// Additional Alerts options
+// Fixed/No-Title
+
+.usa-alert {
+
+  &.fixed {
+    position: fixed;
+    top: 0;
+    margin-top: 0;
+    z-index: 999;
+    left: 50%;
+    transform: translate(-50%, 0);
+  }
+
+  &.no-title {
+    background-size: 4rem;
+
+    .usa-alert-body {
+      padding-left: 3.5rem;
+    }
+
+    .usa-alert-text {
+      font-size: 2rem;
+    }
+  }
+}

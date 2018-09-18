@@ -11,8 +11,6 @@ export default class Alert extends React.Component {
     }
   }
 
-  // determine if role should be added to main wrapper div
-  // in order to be 508 accessible
   getRole() {
     let attrs = {};
 
@@ -26,7 +24,6 @@ export default class Alert extends React.Component {
   render() {
     let {
       fixed,
-      lowerMargin,
       children,
       message,
       title,
@@ -60,6 +57,6 @@ Alert.propTypes = {
   message: PropTypes.node,
   title: PropTypes.string,
   type: PropTypes.oneOf(['success', 'error', 'warning', 'info']).isRequired,
-  styling: PropTypes.object,
+  styling: PropTypes.string,
   scrollOnAlert: PropTypes.bool
 };
