@@ -103,6 +103,7 @@ export type BasicAppeal = {
   type: string,
   externalId: string,
   docketName: ?string,
+  isLegacyAppeal: boolean,
   caseType: string,
   isAdvancedOnDocket: boolean,
   docketNumber: string,
