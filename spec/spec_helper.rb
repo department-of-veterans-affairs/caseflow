@@ -33,6 +33,10 @@ RSpec.configure do |config|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end
 
+  config.before(:each) do
+    puts "In #{self.class.description}"
+  end
+
   config.after :each do |_example|
     page.driver.restart if defined?(page.driver.restart)
   end
