@@ -7,6 +7,7 @@ import Tooltip from './Tooltip';
 import { DoubleArrow } from './RenderFunctions';
 import { COLORS } from '../constants/AppConstants';
 import { css, hover } from 'glamor';
+import FilterIcon from './FilterIcon';
 
 /**
  * This component can be used to easily build tables.
@@ -38,6 +39,8 @@ const getColumns = (props) => {
     props.columns(props.rowObject) : props.columns;
 };
 
+const getFilterIconRef = (tagFilterIcon) => this.tagFilterIcon = tagFilterIcon;
+
 const HeaderRow = (props) => {
   const sortableHeaderStyle = css({ display: 'table-row' }, hover({ cursor: 'pointer' }));
   const sortArrowsStyle = css({
@@ -63,6 +66,17 @@ const HeaderRow = (props) => {
           columnContent = <span {...sortableHeaderStyle} onClick={() => props.setSortOrder(columnNumber)}>
             <span>{column.header || ''}</span>
             <span {...sortArrowsStyle}><DoubleArrow topColor={topColor} bottomColor={botColor} /></span>
+          </span>;
+        }
+
+        if (column.getFilterDropDown) {
+          columnContent = <span><span>{column.header || ''}</span>
+            <span><FilterIcon
+              label={column.label}
+              idPrefix={column.idPrefix}
+              getRef={this.getFilterIconRef}
+              selected={props.isDropdownFilterOpen || props.anyFiltersAreSet}
+              handleActivate={props.toggleDropdownFilterVisiblity} /></span>
           </span>;
         }
 

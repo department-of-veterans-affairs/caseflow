@@ -22,7 +22,7 @@ import {
   SortArrowUp, SortArrowDown, DoubleArrow } from '../components/RenderFunctions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
-import FilterIcon from './FilterIcon';
+import FilterIcon from '../components/FilterIcon';
 import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
 
