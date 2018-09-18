@@ -115,11 +115,11 @@ class EvaluateDecisionView extends React.PureComponent {
     } = this.props;
     const prevUrl = `/queue/appeals/${appealId}`;
     const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
-    const remandedIssues = _.some(dispositions, (disp) => [
+    const remandedIssues = _.some(dispositions, (disposition) => [
       VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
-    ].includes(disp));
+    ].includes(disposition));
 
-    return remandedIssues ? `${prevUrl}/remands` : `${prevUrl}/dispositions`;
+    return `${prevUrl}/${remandedIssues ? 'remands' : 'dispositions'}`
   }
 
   goToNextStep = () => {
