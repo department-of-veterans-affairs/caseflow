@@ -142,6 +142,9 @@ group :stubbed, :test, :development, :demo do
 
   # Added at 2018-05-16 22:09:10 -0400 by mdbenjam:
   gem "factory_bot_rails", "~> 4.8"
+
+  # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
+  gem 'bootsnap', require: false
 end
 
 group :stubbed, :development do
