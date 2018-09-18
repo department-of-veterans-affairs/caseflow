@@ -146,7 +146,7 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
           errorMessage={highlightFormItems && !this.state.hold ? 'Choose one' : null}
           placeholder="Select number of days"
           value={this.state.hold}
-          onChange={({ value }) => this.setState({ hold: value })}
+          onChange={(option) => option && this.setState({ hold: option.value })}
           options={COLOCATED_HOLD_DURATIONS.map((value) => ({
             label: Number(value) ? `${value} days` : value,
             value
