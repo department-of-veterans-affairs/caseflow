@@ -45,7 +45,6 @@ class SeedDB
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
     create_vso_user
-    create_org_queue_user
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
   end
