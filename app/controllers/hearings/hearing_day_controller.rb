@@ -27,19 +27,23 @@ class Hearings::HearingDayController < HearingScheduleController
   # Create a hearing schedule day
   def create
     hearing = HearingDay.create_hearing_day(create_params)
-    return invalid_record_error(hearing) unless hearing.valid?
+    return invalid_record_error(hearing) if hearing.nil?
     render json: {
-      hearing: json_created_hearings(hearing)
+      hearing: json_hearing(hearing)
     }, status: :created
   end
 
   def update
     return record_not_found unless hearing
-
+    params.delete(:hearing_key)
     updated_hearing = HearingDay.update_hearing_day(hearing, update_params)
 
     json_hearing = if updated_hearing.class.equal?(TrueClass)
-                     json_created_hearings(hearing)
+                     if hearing.is_a?(HearingDay)
+                       json_hearing(hearing)
+                     else
+                       json_created_hearings(hearing)
+                     end
                    else
                      json_tb_hearings(updated_hearing)
                    end
@@ -57,6 +61,7 @@ class Hearings::HearingDayController < HearingScheduleController
 
   def update_params
     params.permit(:judge_id, :regional_office, :hearing_key, :hearing_type)
+      .merge(updated_by: current_user)
   end
 
   def create_params
@@ -65,6 +70,7 @@ class Hearings::HearingDayController < HearingScheduleController
                   :room_info,
                   :judge_id,
                   :regional_office)
+      .merge(created_by: current_user, updated_by: current_user)
   end
 
   def validate_start_date(start_date)
@@ -93,19 +99,30 @@ class Hearings::HearingDayController < HearingScheduleController
   def json_created_hearings(hearings)
     json_hash = ActiveModelSerializers::SerializableResource.new(
       hearings,
-      each_serializer: ::Hearings::HearingDayCreateSerializer
+      each_serializer: ::Hearings::HearingDaySerializer
     ).as_json
 
     format_for_client(json_hash)
   end
 
   def json_hearings(hearings)
-    json_hash = ActiveModelSerializers::SerializableResource.new(
-      hearings,
-      each_serializer: ::Hearings::HearingDaySerializer
-    ).as_json
+    hearings.each_with_object([]) do |hearing, result|
+      result << json_hearing(hearing)
+    end
+  end
 
-    format_for_client(json_hash)
+  def json_hearing(hearing)
+    hearing.as_json.each_with_object({}) do |(k, v), converted|
+      converted[k] = if k == "room_info"
+                       HearingDayMapper.label_for_room(v)
+                     elsif k == "regional_office" && !v.nil?
+                       HearingDayMapper.city_for_regional_office(v)
+                     elsif k == "hearing_type"
+                       HearingDayMapper.label_for_type(v)
+                     else
+                       v
+                     end
+    end
   end
 
   def json_tb_hearings(tbhearings)
