@@ -1791,7 +1791,7 @@ describe LegacyAppeal do
     end
 
     it "Updates a legacy_appeal when an appeal is updated" do
-      appeal.update!(rice_compliance: TRUE)
+      appeal.update!(rice_compliance: true)
       expect(legacy_appeal.attributes).to eq(appeal.attributes)
     end
   end
