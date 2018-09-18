@@ -194,7 +194,7 @@ class TaskTable extends React.PureComponent<Props> {
           diff(moment(task.assignedOn), 'days');
 
         return <React.Fragment>
-          {daysWaiting} {pluralize('day', daysWaiting)} - <DateString date={task.dueOn} />
+          {daysWaiting} {pluralize('day', daysWaiting)} | <DateString date={task.dueOn} />
         </React.Fragment>;
       },
       span: this.collapseColumnIfNoDASRecord,
