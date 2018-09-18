@@ -193,9 +193,7 @@ class LegacyAppeal < ApplicationRecord
   delegate :end_products, to: :veteran
 
   def congressional_interest_addresses
-    case_record.mail.map do |mail|
-      mail.congressional_address
-    end
+    case_record.mail.map(&:congressional_address)
   end
 
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
@@ -279,6 +277,7 @@ class LegacyAppeal < ApplicationRecord
     representatives.any? { |r| r.reptype == "C" }
   end
 
+  # rubocop:disable Metrics/MethodLength
   def claimants(include_addresses = false)
     representative = {
       name: representative_name,
@@ -288,28 +287,28 @@ class LegacyAppeal < ApplicationRecord
     }
 
     claimant_array = if appellant_is_not_veteran
-      [
-        {
-          first_name: appellant_first_name,
-          middle_name: appellant_middle_initial,
-          last_name: appellant_last_name,
-          name_suffix: appellant_name_suffix,
-          address: include_addresses ? get_address_from_corres_entry(case_record.correspondent) : nil,
-          representative: representative
-        }
-      ]
-    else
-      [
-        {
-          first_name: veteran_first_name,
-          middle_name: veteran_middle_initial,
-          last_name: veteran_last_name,
-          name_suffix: veteran_name_suffix,
-          address: include_addresses ? get_address_from_corres_entry(case_record.correspondent) : nil,
-          representative: representative
-        }
-      ]
-    end
+                       [
+                         {
+                           first_name: appellant_first_name,
+                           middle_name: appellant_middle_initial,
+                           last_name: appellant_last_name,
+                           name_suffix: appellant_name_suffix,
+                           address: include_addresses ? get_address_from_corres_entry(case_record.correspondent) : nil,
+                           representative: representative
+                         }
+                       ]
+                     else
+                       [
+                         {
+                           first_name: veteran_first_name,
+                           middle_name: veteran_middle_initial,
+                           last_name: veteran_last_name,
+                           name_suffix: veteran_name_suffix,
+                           address: include_addresses ? get_address_from_corres_entry(case_record.correspondent) : nil,
+                           representative: representative
+                         }
+                       ]
+                     end
 
     claimant_array.concat(
       contested_claimants.map do |contested_claimant|
@@ -327,6 +326,7 @@ class LegacyAppeal < ApplicationRecord
 
     claimant_array
   end
+  # rubocop:enable Metrics/MethodLength
 
   def docket_name
     "legacy"
@@ -651,7 +651,7 @@ class LegacyAppeal < ApplicationRecord
   private
 
   def contested_claimants
-    contested_claimants = representatives.where(reptype: ["C", "D", "E"])
+    representatives.where(reptype: %w[C D E])
   end
 
   def matched_document(type, vacols_datetime)

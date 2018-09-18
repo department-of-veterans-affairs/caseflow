@@ -29,13 +29,13 @@ describe PowerOfAttorney do
     end
 
     it "sets the address" do
-      expect(power_of_attorney.vacols_representative_address).to eq({
+      expect(power_of_attorney.vacols_representative_address).to eq(
         address_line_1: "123 Maple Ave.",
         address_line_2: "Apt 3",
         city: "Jersey City",
         state: "NJ",
         zip: "10001"
-      })
+      )
     end
   end
 
