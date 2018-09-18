@@ -5,14 +5,12 @@ import _ from 'lodash';
 import moment from 'moment';
 import pluralize from 'pluralize';
 import { bindActionCreators } from 'redux';
-import { css } from 'glamor';
 
-import Tooltip from '../../components/Tooltip';
 import Table from '../../components/Table';
 import Checkbox from '../../components/Checkbox';
+import DocketTypeBadge from './DocketTypeBadge';
 import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
-import { COLORS } from '../../constants/AppConstants';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { renderAppealType } from '../utils';
@@ -294,25 +292,3 @@ const mapDispatchToProps = (dispatch) => (
 );
 
 export default (connect(mapStateToProps, mapDispatchToProps)(TaskTable): React.ComponentType<Params>);
-
-const badgeStyling = css({
-  display: 'inline-block',
-  background: COLORS.GREY_LIGHT,
-  borderRadius: '1rem',
-  padding: '0 1rem',
-  marginRight: '0.5rem'
-});
-
-const DocketTypeBadge = ({ name, number }) => {
-  if (!name) {
-    return null;
-  }
-
-  // "Hearing Request" docket type is stored in the database as "hearing".
-  // Change it here so later transformations affect it properly.
-  const docketName = name === 'hearing' ? 'hearing_request' : name;
-
-  return <Tooltip id={`badge-${number}`} text={_.startCase(_.toLower(docketName))} position="bottom">
-    <span {...badgeStyling}>{_.toUpper(docketName.charAt(0))}</span>
-  </Tooltip>;
-};
