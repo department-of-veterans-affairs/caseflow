@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import ApiUtil from '../../util/ApiUtil';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
-import { onReceiveRegionalOffices, onRegionalOfficeChange } from '../actions';
+import { onReceiveRegionalOffices, onRegionalOfficeChange, onReceiveUpcomingHearingDays } from '../actions';
 import AssignHearings from '../components/AssignHearings';
 
 class AssignHearingsContainer extends React.PureComponent {
@@ -17,8 +17,19 @@ class AssignHearingsContainer extends React.PureComponent {
     });
   };
 
+  loadUpcomingHearingDays = () => {
+    const requestUrl = `/hearings/hearing_day?regional_office=RO04`;
+
+    return ApiUtil.get(requestUrl).then((response) => {
+      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+
+      this.props.onReceiveUpcomingHearingDays(resp.hearings);
+    });
+  };
+
   createLoadPromise = () => Promise.all([
-    this.loadRegionalOffices()
+    this.loadRegionalOffices(),
+    this.loadUpcomingHearingDays()
   ]);
 
   render = () => {
@@ -46,7 +57,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveRegionalOffices,
-  onRegionalOfficeChange
+  onRegionalOfficeChange,
+  onReceiveUpcomingHearingDays
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssignHearingsContainer);

@@ -7,6 +7,8 @@ class Hearings::HearingDayController < HearingScheduleController
     end_date = validate_end_date(params[:end_date])
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
+    binding.pry
+
     video_and_co, travel_board = HearingDay.load_days(start_date, end_date, regional_office)
 
     respond_to do |format|
