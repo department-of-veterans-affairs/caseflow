@@ -3,6 +3,10 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
     object.is_a?(LegacyAppeal) ? object.vacols_id : object.uuid
   end
 
+  attribute :case_details_url do
+    "#{@instance_options[:base_url]}/queue/appeals/#{object.external_id}"
+  end
+
   attribute :veteran_first_name
   attribute :veteran_middle_name do
     object.veteran_middle_initial
@@ -34,10 +38,10 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
                     }
                   end
         representative = {
-          name: object.representative_name,
-          type: object.representative_type,
-          participant_id: object.representative_participant_id,
-          address: @instance_options[:include_addresses] ? object.representative_address : nil
+          name: claimant.representative_name,
+          type: claimant.representative_type,
+          participant_id: claimant.representative_participant_id,
+          address: @instance_options[:include_addresses] ? claimant.representative_address : nil
         }
 
         {
@@ -46,7 +50,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
           last_name: claimant.last_name,
           name_suffix: "",
           address: address,
-          representative: object.representative_name ? representative : nil
+          representative: claimant.representative_name ? representative : nil
         }
       end
     end

@@ -62,7 +62,8 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     appeal_details = ActiveModelSerializers::SerializableResource.new(
       appeal,
       serializer: ::Idt::V1::AppealDetailsSerializer,
-      include_addresses: Constants::BvaDispatchTeams::USERS[Rails.current_env].include?(current_user.css_id)
+      include_addresses: Constants::BvaDispatchTeams::USERS[Rails.current_env].include?(current_user.css_id),
+      base_url: request.base_url
     ).as_json
 
     assigned_by_name, documents = appeal.is_a?(LegacyAppeal) ? legacy_appeal_details : ama_appeal_details

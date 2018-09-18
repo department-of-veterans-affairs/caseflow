@@ -14,6 +14,31 @@ describe PowerOfAttorney do
     expect(power_of_attorney.vacols_representative_name).to eq "The American Legion"
   end
 
+  context "when there is an attorney" do
+    let!(:vacols_case) { create(:case) }
+    let!(:representative) do
+      create(
+        :representative,
+        repkey: vacols_case.bfkey,
+        repaddr1: "123 Maple Ave.",
+        repaddr2: "Apt 3",
+        repcity: "Jersey City",
+        repst: "NJ",
+        repzip: "10001"
+      )
+    end
+
+    it "sets the address" do
+      expect(power_of_attorney.vacols_representative_address).to eq({
+        address_line_1: "123 Maple Ave.",
+        address_line_2: "Apt 3",
+        city: "Jersey City",
+        state: "NJ",
+        zip: "10001"
+      })
+    end
+  end
+
   it "returns bgs values" do
     expect(power_of_attorney.bgs_representative_name).to eq "Clarence Darrow"
   end

@@ -29,7 +29,7 @@ module PowerOfAttorneyMapper
 
   def get_rep_name_from_rep_record(rep_record)
     return if !rep_record || (rep_record.repfirst.blank? && rep_record.replast.blank?)
-    "#{rep_record.repfirst} #{rep_record.repmi} #{rep_record.replast} #{rep_record.repsuf}".strip
+    [rep_record.repfirst, rep_record.repmi, rep_record.replast, rep_record.repsuf].select(&:present?).join(" ").strip
   end
 
   def get_poa_from_vacols_poa(vacols_code:, representative_record: nil)

@@ -149,12 +149,6 @@ FactoryBot.define do
       end
     end
 
-    trait :outstanding_mail do
-      after(:create) do |vacols_case|
-        create(:mail, mlfolder: vacols_case.bfkey, mltype: "05")
-      end
-    end
-
     trait :selected_for_quality_review do
       after(:create) do |vacols_case|
         create(:decision_quality_review, qrfolder: vacols_case.bfkey)

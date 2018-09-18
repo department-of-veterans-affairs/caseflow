@@ -1807,7 +1807,14 @@ describe LegacyAppeal do
     end
 
     context "when mail is outstanding" do
-      let(:vacols_case) { create(:case, :outstanding_mail) }
+      let(:vacols_case) { create(:case) }
+      let!(:outstanding_mail) do
+        [
+          create(:mail, mlfolder: vacols_case.bfkey, mltype: "02"),
+          create(:mail, mlfolder: vacols_case.bfkey, mltype: "05")
+        ]
+      end
+
       it "returns true" do
         expect(subject).to eq [
           { outstanding: false, code: "02", description: "Congressional Interest" },
@@ -1902,7 +1909,7 @@ describe LegacyAppeal do
     end
   end
 
-  context "#claimants", focus: true do
+  context "#claimants" do
     let(:correspondent) do
       create(:correspondent,
         snamef: "Bobby",
