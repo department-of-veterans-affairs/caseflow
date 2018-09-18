@@ -99,7 +99,11 @@ describe ClaimReview do
       allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
     end
 
-    subject { claim_review.process_end_product_establishments! }
+    subject do
+      3.times do
+        claim_review.process_end_product_establishments!
+      end
+    end
 
     context "when there is just one end_product_establishment" do
       let(:issues) { [rating_request_issue, second_rating_request_issue] }
