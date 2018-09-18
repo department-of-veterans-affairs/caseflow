@@ -67,6 +67,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.advanced_on_docket
   end
 
+  attribute :docket_name do
+    object.docket_name
+  end
+
   attribute :docket_number do
     object.docket_number
   end
