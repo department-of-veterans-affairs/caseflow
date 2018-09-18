@@ -24,8 +24,9 @@ import {
   marginBottom,
   marginLeft,
   PAGE_TITLES,
-  ISSUE_DISPOSITIONS
+  VACOLS_DISPOSITIONS
 } from './constants';
+import ISSUE_DISPOSITIONS from '../../constants/ISSUE_DISPOSITIONS.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import { getUndecidedIssues } from './utils';
 
@@ -59,8 +60,9 @@ class SelectDispositionsView extends React.PureComponent {
     } = this.props;
     let nextStep;
     const baseUrl = `/queue/appeals/${appealId}`;
+    const dispositions = issues.map((issue) => issue.disposition);
 
-    if (_.map(issues, 'disposition').includes(ISSUE_DISPOSITIONS.REMANDED)) {
+    if (_.any(dispositions, (disp) => [VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.remanded].includes(disp))) {
       nextStep = 'remands';
     } else if (userRole === USER_ROLE_TYPES.judge) {
       nextStep = 'evaluate';
