@@ -476,6 +476,10 @@ class LegacyAppeal < ApplicationRecord
     @issues ||= self.class.repository.issues(vacols_id)
   end
 
+  def issue_count
+    issues.count
+  end
+
   # A uniqued list of issue categories on appeal, that is the combination of ISSPROG and ISSCODE
   def issue_categories
     issues.map(&:category).uniq

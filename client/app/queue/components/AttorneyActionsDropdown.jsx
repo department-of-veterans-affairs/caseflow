@@ -41,16 +41,20 @@ type Props = Params & {|
 |};
 
 class AttorneyActionsDropdown extends React.PureComponent<Props> {
-  changeRoute = (props) => {
+  changeRoute = (option) => {
     const {
       appealId,
       history,
       appeal
     } = this.props;
-    const decisionType = props.value;
+
+    if (!option) {
+      return;
+    }
+    const decisionType = option.value;
     const routes = {
       omo_request: 'submit',
-      draft_decision: appeal.docketName === 'legacy' ? 'dispositions' : 'special_issues',
+      draft_decision: appeal.isLegacyAppeal ? 'dispositions' : 'special_issues',
       colocated_task: 'colocated_task'
     };
     const route = routes[decisionType];
@@ -67,7 +71,7 @@ class AttorneyActionsDropdown extends React.PureComponent<Props> {
   getOptions = () => {
     const { featureToggles, appeal } = this.props;
 
-    const options = appeal.docketName === 'legacy' ? DRAFT_DECISION_LEGACY_OPTIONS : DRAFT_DECISION_OPTIONS;
+    const options = appeal.isLegacyAppeal ? DRAFT_DECISION_LEGACY_OPTIONS : DRAFT_DECISION_OPTIONS;
 
     if (featureToggles.attorney_assignment_to_colocated) {
       return [...options, {

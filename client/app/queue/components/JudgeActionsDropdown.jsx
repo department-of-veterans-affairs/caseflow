@@ -8,7 +8,7 @@ import COPY from '../../../COPY.json';
 import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
 import DECASS_WORK_PRODUCT_TYPES from '../../../constants/DECASS_WORK_PRODUCT_TYPES.json';
 
-import SearchableDropdown from '../../components/SearchableDropdown';
+import SearchableDropdown, { type OptionType } from '../../components/SearchableDropdown';
 import {
   appealWithDetailSelector,
   tasksForAppealAssignedToAttorneySelector,
@@ -57,10 +57,7 @@ type Props = Params & {|
 |};
 
 type ComponentState = {
-  selectedOption: ?{
-    label: string,
-    value: string
-  }
+  selectedOption: ?OptionType
 };
 
 class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
@@ -73,6 +70,9 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
   handleChange = (option) => {
     this.setState({ selectedOption: option });
 
+    if (!option) {
+      return;
+    }
     if (option.value === ASSIGN) {
       return;
     }
@@ -103,7 +103,7 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
           this.props.deleteAppeal(appealId);
         });
     } else {
-      const nextPage = appeal.docketName === 'legacy' ? 'dispositions' : 'special_issues';
+      const nextPage = appeal.isLegacyAppeal ? 'dispositions' : 'special_issues';
 
       this.props.stageAppeal(appealId);
 
