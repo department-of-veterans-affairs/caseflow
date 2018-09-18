@@ -142,7 +142,6 @@ group :stubbed, :test, :development, :demo do
 
   # Added at 2018-05-16 22:09:10 -0400 by mdbenjam:
   gem "factory_bot_rails", "~> 4.8"
-
 end
 
 group :stubbed, :development do
