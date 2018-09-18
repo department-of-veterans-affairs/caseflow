@@ -77,7 +77,7 @@ class SelectDispositionsView extends React.PureComponent {
       appeal
     } = this.props;
 
-    if (appeal.docketName === 'legacy') {
+    if (appeal.isLegacyAppeal) {
       return `/queue/appeals/${appealId}`;
     }
 
@@ -127,7 +127,7 @@ class SelectDispositionsView extends React.PureComponent {
         appeal={appeal} />
     }];
 
-    if (appeal.docketName === 'legacy') {
+    if (appeal.isLegacyAppeal) {
       columns.splice(1, 0, {
         header: 'Actions',
         valueFunction: (issue) => <Link to={`/queue/appeals/${appealId}/dispositions/edit/${issue.id}`}>
@@ -163,7 +163,7 @@ class SelectDispositionsView extends React.PureComponent {
         styling={tableStyling}
         bodyStyling={tbodyStyling}
       />
-      {appeal.docketName === 'legacy' && <div {...marginLeft(1.5)}>
+      {appeal.isLegacyAppeal && <div {...marginLeft(1.5)}>
         <Link to={`/queue/appeals/${appealId}/dispositions/add`}>Add Issue</Link>
       </div>}
     </React.Fragment>;
