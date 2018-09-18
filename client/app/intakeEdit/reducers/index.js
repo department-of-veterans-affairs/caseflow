@@ -10,8 +10,7 @@ export const mapDataToInitialState = function(props = {}) {
     requestStatus: {
       requestIssuesUpdate: REQUEST_STATE.NOT_STARTED
     },
-    responseErrorCode: '',
-    responseErrorData: null
+    responseErrorCode: null
   };
 };
 
@@ -31,7 +30,7 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
         }
       }
     });
-  case ACTIONS.REQUEST_ISSUE_UPDATE_START:
+  case ACTIONS.REQUEST_ISSUES_UPDATE_START:
     return update(state, {
       requestStatus: {
         requestIssuesUpdate: {
@@ -39,7 +38,7 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
         }
       }
     });
-  case ACTIONS.REQUEST_ISSUE_UPDATE_SUCCEED:
+  case ACTIONS.REQUEST_ISSUES_UPDATE_SUCCEED:
     return update(state, {
       requestStatus: {
         requestIssuesUpdate: {
@@ -49,19 +48,16 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
       ratings: {
         $set: formatRatings(action.payload.ratings, action.payload.ratedRequestIssues)
       },
-      responseErrorCode: { $set: '' },
-      responseErrorData: { $set: null }
+      responseErrorCode: { $set: null }
     });
-  case ACTIONS.REQUEST_ISSUE_UPDATE_FAIL:
-    const serverIssues = [];
+  case ACTIONS.REQUEST_ISSUES_UPDATE_FAIL:
     return update(state, {
       requestStatus: {
         requestIssuesUpdate: {
           $set: REQUEST_STATE.FAILED
         }
       },
-      responseErrorCode: { $set: action.payload.responseErrorCode },
-      responseErrorData: { $set: action.payload.responseErrorData }
+      responseErrorCode: { $set: action.payload.responseErrorCode }
     });
   default:
     return state;

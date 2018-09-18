@@ -9,6 +9,7 @@ import { requestIssuesUpdate } from '../actions/selectIssues';
 import { FORM_TYPES } from '../../intakeCommon/constants';
 import CancelEdit from '../components/CancelEdit';
 import { REQUEST_STATE } from '../constants';
+import RequestIssuesUpdateErrorAlert from '../components/RequestIssuesUpdateErrorAlert';
 
 // This page shouldn't matter that much which type of Review it is.
 class SelectIssues extends React.PureComponent {
@@ -16,8 +17,6 @@ class SelectIssues extends React.PureComponent {
     const {
       veteranName,
       formType,
-      requestStatus,
-      responseErrorData,
       responseErrorCode
     } = this.props;
 
@@ -26,9 +25,10 @@ class SelectIssues extends React.PureComponent {
     return <div>
       <h1>Issues on { veteranName }'s { reviewForm.name }</h1>
 
-      <p>status of request: { requestStatus }</p>
-      <p>response data: { responseErrorData }</p>
-      <p>response code: { responseErrorCode }</p>
+      { responseErrorCode &&
+        <RequestIssuesUpdateErrorAlert responseErrorCode={responseErrorCode} />
+      }
+
       <p>
         Please select all the issues that best match the Veteran's request on the form.
         The list below includes issues claimed by the Veteran in the last year.
@@ -93,7 +93,6 @@ export default connect(
     veteranName: state.review.veteranName,
     formType: state.formType,
     requestStatus: state.requestStatus.requestIssuesUpdate,
-    responseErrorCode: state.responseErrorCode,
-    responseErrorData: state.responseErrorData
+    responseErrorCode: state.responseErrorCode
   })
 )(SelectIssues);
