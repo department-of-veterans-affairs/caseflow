@@ -11,12 +11,12 @@ import AvailableHearingDay from './AvailableHearingDay';
 export default class AssignHearings extends React.Component {
   render() {
 
-    const availableHearingDays = Object.values(this.props.upcomingHearingDays).map((hearingDay) => {
+    const availableHearingDays = this.props.upcomingHearingDays ? Object.values(this.props.upcomingHearingDays).map((hearingDay) => {
       return <AvailableHearingDay
         key={hearingDay.id}
         title={formatDateStr(hearingDay.hearingDate)}
       />
-    });
+    }) : null;
 
     return <AppSegment filledBackground>
       <h1>{COPY.HEARING_SCHEDULE_ASSIGN_HEARINGS_HEADER}</h1>

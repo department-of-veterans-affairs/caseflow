@@ -10,6 +10,12 @@ import AssignHearings from '../components/AssignHearings';
 
 class AssignHearingsContainer extends React.PureComponent {
 
+  componentDidUpdate = (prevProps) => {
+    if (this.props.selectedRegionalOffice !== prevProps.selectedRegionalOffice) {
+      this.loadUpcomingHearingDays()
+    }
+  };
+
   loadRegionalOffices = () => {
     return ApiUtil.get('/regional_offices.json').then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
@@ -19,7 +25,11 @@ class AssignHearingsContainer extends React.PureComponent {
   };
 
   loadUpcomingHearingDays = () => {
-    const requestUrl = `/hearings/hearing_day?regional_office=RO04`;
+    if (!this.props.selectedRegionalOffice) {
+      return;
+    }
+
+    const requestUrl = `/hearings/hearing_day?regional_office=${this.props.selectedRegionalOffice.value}`;
 
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));

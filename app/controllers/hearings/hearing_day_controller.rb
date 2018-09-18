@@ -68,7 +68,7 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def validate_start_date(start_date)
-    start_date.nil? ? (Time.zone.today.beginning_of_day - 30.days) : Date.parse(start_date)
+    start_date.nil? ? (Time.zone.today.beginning_of_day - 365.days) : Date.parse(start_date)
   end
 
   def validate_end_date(end_date)
