@@ -27,27 +27,32 @@ export default class ListSchedule extends React.Component {
       {
         header: 'Date',
         align: 'left',
-        valueName: 'hearingDate'
+        valueName: 'hearingDate',
+        getSortValue: (hearingDay) => { return hearingDay.hearingDate}
       },
       {
         header: 'Type',
         align: 'left',
-        valueName: 'hearingType'
+        valueName: 'hearingType',
+        getSortValue: (hearingDay) => { return hearingDay.hearingType}
       },
       {
         header: 'Regional Office',
         align: 'left',
-        valueName: 'regionalOffice'
+        valueName: 'regionalOffice',
+        getSortValue: (hearingDay) => { return hearingDay.regionalOffice}
       },
       {
         header: 'Room',
         align: 'left',
-        valueName: 'room'
+        valueName: 'room',
+        getSortValue: (hearingDay) => { return hearingDay.room}
       },
       {
         header: 'VLJ',
         align: 'left',
-        valueName: 'vlj'
+        valueName: 'vlj',
+        getSortValue: (hearingDay) => { return hearingDay.vlj}
       }
     ];
 
