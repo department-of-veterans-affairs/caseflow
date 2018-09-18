@@ -17,7 +17,7 @@ class CaseDetailsLink extends React.PureComponent {
     const { task } = this.props;
 
     // when searching for a case, we only load appeal info, no tasks
-    if (task) {
+    if (task && task.status && task.status == 'assigned') {
       const payload = {
         data: {
           task: {
