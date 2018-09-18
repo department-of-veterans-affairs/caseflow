@@ -107,7 +107,7 @@ describe AttorneyCaseReview do
             readjudication: true },
           { disposition: case_issues[1].issdc,
             id: case_issues[1].issseq,
-            remand_reasons: [{ code: remand_reason.rmdval, after_certification: true }] }
+            remand_reasons: [{ code: remand_reason.rmdval, post_aoj: true }] }
         ]
       end
 

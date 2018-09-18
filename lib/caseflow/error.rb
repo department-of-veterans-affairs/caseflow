@@ -32,6 +32,28 @@ module Caseflow::Error
     end
   end
 
+  class BvaDispatchTaskCountMismatch < SerializableError
+    # Add attr_accessors for testing
+    attr_accessor :user_id, :appeal_id, :tasks
+
+    def initialize(args)
+      @user_id = args[:user_id]
+      @appeal_id = args[:appeal_id]
+      @tasks = args[:tasks]
+      @code = args[:code] || 400
+      @message = args[:message] || "Expected 1 BvaDispatchTask received #{@tasks.count} tasks for"\
+                                   " appeal #{@appeal_id}, user #{@user_id}"
+    end
+  end
+
+  class TooManyChildTasks < SerializableError
+    def initialize(args)
+      @task_id = args[:task_id]
+      @code = args[:code] || 500
+      @message = args[:message] || "JudgeTask #{@task_id} has too many children"
+    end
+  end
+
   class MultipleAppealsByVBMSID < StandardError; end
   class CertificationMissingData < StandardError; end
   class InvalidSSN < StandardError; end

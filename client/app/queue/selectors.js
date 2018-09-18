@@ -18,10 +18,16 @@ import type {
 } from './types/models';
 
 export const selectedTasksSelector = (state: State, userId: string) => {
-  return _.flatMap(
+  return _.map(
     state.queue.isTaskAssignedToUserSelected[userId] || {},
-    (selected, id) => selected ? [state.queue.tasks[id]] : []
-  );
+    (selected, id) => {
+      if (!selected) {
+        return;
+      }
+
+      return state.queue.tasks[id] || state.queue.amaTasks[id];
+    }
+  ).filter(Boolean);
 };
 
 const getTasks = (state: State) => state.queue.tasks;
@@ -157,13 +163,25 @@ export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = create
 
 export const judgeReviewTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
-  // eslint-disable-next-line no-undefined
-  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => [null, undefined, 'review'].includes(task.action))
+  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => {
+    if (task.appealType === 'Appeal') {
+      return task.action === 'review' && (task.status === 'in_progress' || task.status === 'assigned');
+    }
+
+    // eslint-disable-next-line no-undefined
+    return [null, undefined, 'review'].includes(task.action);
+  })
 );
 
 export const judgeAssignTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => task.action === 'assign')
+  (tasks) => _.filter(tasks, (task: TaskWithAppeal) => {
+    if (task.appealType === 'Appeal') {
+      return task.action === 'assign' && (task.status === 'in_progress' || task.status === 'assigned');
+    }
+
+    return task.action === 'assign';
+  })
 );
 
 // ***************** Non-memoized selectors *****************

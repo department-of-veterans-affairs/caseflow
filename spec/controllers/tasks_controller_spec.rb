@@ -223,7 +223,7 @@ RSpec.describe TasksController, type: :controller do
              {
                "external_id": appeal.vacols_id,
                "type": "ColocatedTask",
-               "action": "substitution_determination",
+               "action": "missing_records",
                "instructions": "another one"
              }]
           end
@@ -242,7 +242,7 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.second["attributes"]["status"]).to eq "assigned"
             expect(response_body.second["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.second["attributes"]["instructions"]).to eq "another one"
-            expect(response_body.second["attributes"]["action"]).to eq "substitution_determination"
+            expect(response_body.second["attributes"]["action"]).to eq "missing_records"
             # assignee should be the same person
             id = response_body.second["attributes"]["assigned_to"]["id"]
             expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq id

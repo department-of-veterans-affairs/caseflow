@@ -2,6 +2,12 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
   before_action :verify_access
 
+  rescue_from StandardError do |e|
+    fail e unless e.class.method_defined?(:serialize_response)
+    Raven.capture_exception(e)
+    render(e.serialize_response)
+  end
+
   def list
     appeals = file_number ? appeals_by_file_number : appeals_assigned_to_user
 
@@ -10,6 +16,11 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def details
     return render json: { message: "Appeal not found" }, status: 404 unless appeal
+    render json: json_appeal_details
+  end
+
+  def outcode
+    BvaDispatchTask.outcode(appeal, user)
     render json: json_appeal_details
   end
 
@@ -50,7 +61,8 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   def json_appeal_details
     appeal_details = ActiveModelSerializers::SerializableResource.new(
       appeal,
-      serializer: ::Idt::V1::AppealDetailsSerializer
+      serializer: ::Idt::V1::AppealDetailsSerializer,
+      include_addresses: Constants::BvaDispatchTeams::USERS[Rails.current_env].include?(current_user.css_id)
     ).as_json
 
     assigned_by_name, documents = appeal.is_a?(LegacyAppeal) ? legacy_appeal_details : ama_appeal_details

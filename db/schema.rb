@@ -83,7 +83,6 @@ ActiveRecord::Schema.define(version: 20180914201526) do
     t.string "docket_type"
     t.datetime "established_at"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
-    t.boolean "advanced_on_docket", default: false
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
 
@@ -170,6 +169,7 @@ ActiveRecord::Schema.define(version: 20180914201526) do
     t.string "participant_id", null: false
     t.string "payee_code"
     t.date "date_of_birth"
+    t.index ["date_of_birth"], name: "index_claimants_on_date_of_birth"
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
@@ -261,8 +261,8 @@ ActiveRecord::Schema.define(version: 20180914201526) do
     t.string "modifier"
     t.string "station"
     t.datetime "last_synced_at"
-    t.string "payee_code"
     t.string "claimant_participant_id"
+    t.string "payee_code"
     t.datetime "committed_at"
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
@@ -382,8 +382,10 @@ ActiveRecord::Schema.define(version: 20180914201526) do
     t.date "receipt_date"
     t.boolean "informal_conference"
     t.boolean "same_office"
+    t.datetime "established_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
+    t.string "benefit_type"
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
@@ -612,8 +614,10 @@ ActiveRecord::Schema.define(version: 20180914201526) do
   create_table "supplemental_claims", force: :cascade do |t|
     t.string "veteran_file_number", null: false
     t.date "receipt_date"
+    t.datetime "established_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
+    t.string "benefit_type"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 
@@ -685,6 +689,10 @@ ActiveRecord::Schema.define(version: 20180914201526) do
   create_table "veterans", force: :cascade do |t|
     t.string "file_number", null: false
     t.string "participant_id"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "middle_name"
+    t.string "name_suffix"
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
   end
 

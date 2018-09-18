@@ -165,6 +165,16 @@ class EndProductEstablishment < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
+  def benefit_type_code
+    @benefit_type_code ||= begin
+      if veteran.date_of_death.nil?
+        EndProduct::BENEFIT_TYPE_CODE_LIVE
+      else
+        EndProduct::BENEFIT_TYPE_CODE_DEATH
+      end
+    end
+  end
+
   def establish_claim_in_vbms(end_product)
     VBMSService.establish_claim!(
       claim_hash: end_product.to_vbms_hash,
@@ -173,17 +183,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def end_product_to_establish
-    @end_product_to_establish ||= EndProduct.new(
-      claim_id: reference_id,
-      claim_date: claim_date,
-      claim_type_code: code,
-      payee_code: payee_code,
-      claimant_participant_id: claimant_participant_id,
-      modifier: find_open_modifier,
-      suppress_acknowledgement_letter: false,
-      gulf_war_registry: false,
-      station_of_jurisdiction: station
-    )
+    @end_product_to_establish ||= end_product_with_modifier(find_open_modifier)
   end
 
   def fetched_result
@@ -191,13 +191,19 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def cached_result
-    @cached_result ||= EndProduct.new(
+    @cached_result ||= end_product_with_modifier
+  end
+
+  def end_product_with_modifier(the_modifier = nil)
+    the_modifier ||= modifier
+    EndProduct.new(
       claim_id: reference_id,
       claim_date: claim_date,
       claim_type_code: code,
       payee_code: payee_code,
+      benefit_type_code: benefit_type_code,
       claimant_participant_id: claimant_participant_id,
-      modifier: modifier,
+      modifier: the_modifier,
       suppress_acknowledgement_letter: false,
       gulf_war_registry: false,
       station_of_jurisdiction: station
