@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 201809112051441) do
+ActiveRecord::Schema.define(version: 20180912224413) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -169,7 +169,6 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.string "participant_id", null: false
     t.string "payee_code"
     t.date "date_of_birth"
-    t.index ["date_of_birth"], name: "index_claimants_on_date_of_birth"
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
@@ -382,7 +381,6 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.date "receipt_date"
     t.boolean "informal_conference"
     t.boolean "same_office"
-    t.datetime "established_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
     t.string "benefit_type"
@@ -613,7 +611,6 @@ ActiveRecord::Schema.define(version: 201809112051441) do
   create_table "supplemental_claims", force: :cascade do |t|
     t.string "veteran_file_number", null: false
     t.date "receipt_date"
-    t.datetime "established_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
     t.string "benefit_type"
