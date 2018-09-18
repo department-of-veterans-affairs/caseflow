@@ -89,7 +89,12 @@ class JudgeSelectComponent extends React.PureComponent<Props> {
           name="Select a judge"
           placeholder="Select a judge&hellip;"
           options={judgeOptions}
-          onChange={({ value }) => {
+          onChange={(option) => {
+            if (!option) {
+              return;
+            }
+            const { value } = option;
+
             this.props.setSelectingJudge(false);
             this.props.setDecisionOptions({ reviewing_judge_id: value });
           }}

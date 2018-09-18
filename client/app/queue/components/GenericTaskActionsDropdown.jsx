@@ -34,7 +34,11 @@ type Props = Params & {|
 |};
 
 class GenericTaskActionsDropdown extends React.PureComponent<Props> {
-  onChange = (props) => {
+  onChange = (option) => {
+    if (!option) {
+      return;
+    }
+
     const {
       appealId,
       history
@@ -42,7 +46,7 @@ class GenericTaskActionsDropdown extends React.PureComponent<Props> {
 
     this.props.stageAppeal(appealId);
 
-    switch (props.value) {
+    switch (option.value) {
     case 'mark-task-complete':
       history.push(`/queue/appeals/${appealId}/mark_task_complete`);
       break;

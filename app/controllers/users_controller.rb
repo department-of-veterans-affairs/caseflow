@@ -1,6 +1,4 @@
 class UsersController < ApplicationController
-  before_action :verify_queue_access, only: :index
-
   def index
     case params[:role]
     when Constants::USER_ROLE_TYPES["judge"]

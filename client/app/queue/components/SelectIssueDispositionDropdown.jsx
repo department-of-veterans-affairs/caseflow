@@ -61,13 +61,13 @@ class SelectIssueDispositionDropdown extends React.PureComponent<Props> {
             label: `${opt[0]} - ${String(opt[1])}`,
             value: opt[0]
           }))}
-        onChange={({ value }) => this.props.updateIssue({
-          disposition: value,
+        onChange={(option) => this.props.updateIssue({
+          disposition: option ? option.value : null,
           readjudication: false,
           remand_reasons: []
         })}
         name={`dispositions_dropdown_${String(issue.id)}`} />
-      {appeal.docketName === 'legacy' && issue.disposition === ISSUE_DISPOSITIONS.VACATED && <Checkbox
+      {appeal.isLegacyAppeal && issue.disposition === ISSUE_DISPOSITIONS.VACATED && <Checkbox
         name={`duplicate-vacated-issue-${String(issue.id)}`}
         styling={css({
           marginBottom: 0,
