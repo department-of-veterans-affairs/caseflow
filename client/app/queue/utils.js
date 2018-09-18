@@ -30,6 +30,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
     } : null;
 
     acc[task.attributes.external_appeal_id] = {
+      appealType: task.attributes.appeal_type,
       addedByCssId: null,
       appealId: task.attributes.appeal_id,
       externalAppealId: task.attributes.external_appeal_id,
@@ -71,6 +72,7 @@ const extractAppealsFromTasks =
           type: task.attributes.appeal_type,
           externalId: task.attributes.external_appeal_id,
           docketName: task.attributes.docket_name,
+          isLegacyAppeal: task.attributes.docket_name === 'legacy',
           caseType: task.attributes.case_type,
           isAdvancedOnDocket: task.attributes.aod,
           issueCount: task.attributes.issue_count,
@@ -95,6 +97,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
   const mappedLegacyTasks = tasks.map((task): Task => {
     return {
       appealId: task.attributes.appeal_id,
+      appealType: task.attributes.appeal_type,
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_on,
       dueOn: task.attributes.due_on,
@@ -122,6 +125,20 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
   });
 
   return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.externalAppealId), (task) => task);
+};
+
+export const prepareAllTasksForStore = (tasks: Array<Object>): { amaTasks: Tasks, tasks: Tasks } => {
+  const amaTasks = tasks.filter((task) => {
+    return task.attributes.appeal_type === 'Appeal';
+  });
+  const legacyTasks = tasks.filter((task) => {
+    return task.attributes.appeal_type === 'LegacyAppeal';
+  });
+
+  return {
+    amaTasks: prepareTasksForStore(amaTasks),
+    tasks: prepareLegacyTasksForStore(legacyTasks)
+  };
 };
 
 export const associateTasksWithAppeals =
@@ -161,6 +178,7 @@ export const prepareAppealForStore =
         id: appeal.id,
         externalId: appeal.attributes.external_id,
         docketName: appeal.attributes.docket_name,
+        isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
         caseType: appeal.attributes.type,
         isAdvancedOnDocket: appeal.attributes.aod,
         issueCount: appeal.attributes.issues.length,

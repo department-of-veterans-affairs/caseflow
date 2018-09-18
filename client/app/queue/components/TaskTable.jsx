@@ -5,11 +5,14 @@ import _ from 'lodash';
 import moment from 'moment';
 import pluralize from 'pluralize';
 import { bindActionCreators } from 'redux';
+import { css } from 'glamor';
 
+import Tooltip from '../../components/Tooltip';
 import Table from '../../components/Table';
 import Checkbox from '../../components/Checkbox';
 import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
+import { COLORS } from '../../constants/AppConstants';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { renderAppealType } from '../utils';
@@ -58,7 +61,7 @@ class TaskTable extends React.PureComponent<Props> {
   }
 
   taskHasDASRecord = (task: TaskWithAppeal) => {
-    if (task.appeal.docketName === 'legacy' && this.props.requireDasRecord) {
+    if (task.appeal.isLegacyAppeal && this.props.requireDasRecord) {
       return task.taskId;
     }
 
@@ -70,19 +73,15 @@ class TaskTable extends React.PureComponent<Props> {
   caseSelectColumn = () => {
     return this.props.includeSelect ? {
       header: COPY.CASE_LIST_TABLE_SELECT_COLUMN_TITLE,
-      valueFunction:
-        (task) => {
-          return <Checkbox
-            name={task.externalAppealId}
-            hideLabel
-            value={this.isTaskSelected(task.externalAppealId)}
-            onChange={
-              (checked) => this.props.setSelectionOfTaskOfUser(
-                { userId: this.props.userId,
-                  taskId: task.externalAppealId,
-                  selected: checked })
-            } />;
-        }
+      valueFunction: (task) => <Checkbox
+        name={task.externalAppealId}
+        hideLabel
+        value={this.isTaskSelected(task.externalAppealId)}
+        onChange={(selected) => this.props.setSelectionOfTaskOfUser({
+          userId: this.props.userId,
+          taskId: task.externalAppealId,
+          selected
+        })} />
     } : null;
   }
 
@@ -154,9 +153,24 @@ class TaskTable extends React.PureComponent<Props> {
   caseDocketNumberColumn = () => {
     return this.props.includeDocketNumber ? {
       header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
-      valueFunction: (task) => this.taskHasDASRecord(task) ? task.appeal.docketNumber : null,
+      valueFunction: (task) => {
+        if (!this.taskHasDASRecord(task)) {
+          return null;
+        }
+
+        return <React.Fragment>
+          <DocketTypeBadge name={task.appeal.docketName} number={task.appeal.docketNumber} />
+          <span>{task.appeal.docketNumber}</span>
+        </React.Fragment>;
+      },
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (task) => this.taskHasDASRecord(task) ? task.appeal.docketNumber : null
+      getSortValue: (task) => {
+        if (!this.taskHasDASRecord(task)) {
+          return null;
+        }
+
+        return `${task.appeal.docketName} ${task.appeal.docketNumber}`;
+      }
     } : null;
   }
 
@@ -186,24 +200,19 @@ class TaskTable extends React.PureComponent<Props> {
         </React.Fragment>;
       },
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (task) => {
-        return moment().diff(moment(task.assignedOn), 'days');
-      }
+      getSortValue: (task) => moment().diff(moment(task.assignedOn), 'days')
     } : null;
   }
 
   caseDaysWaitingColumn = () => {
     return this.props.includeDaysWaiting ? {
       header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
-      valueFunction: (task) => {
-        return moment().startOf('day').
-          diff(moment(task.assignedOn), 'days');
-      },
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (task) => {
-        return moment().startOf('day').
-          diff(moment(task.assignedOn), 'days');
-      }
+      tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
+      valueFunction: (task) => moment().startOf('day').
+        diff(moment(task.assignedOn), 'days'),
+      getSortValue: (task) => moment().startOf('day').
+        diff(moment(task.assignedOn), 'days')
     } : null;
   }
 
@@ -285,3 +294,25 @@ const mapDispatchToProps = (dispatch) => (
 );
 
 export default (connect(mapStateToProps, mapDispatchToProps)(TaskTable): React.ComponentType<Params>);
+
+const badgeStyling = css({
+  display: 'inline-block',
+  background: COLORS.GREY_LIGHT,
+  borderRadius: '1rem',
+  padding: '0 1rem',
+  marginRight: '0.5rem'
+});
+
+const DocketTypeBadge = ({ name, number }) => {
+  if (!name) {
+    return null;
+  }
+
+  // "Hearing Request" docket type is stored in the database as "hearing".
+  // Change it here so later transformations affect it properly.
+  const docketName = name === 'hearing' ? 'hearing_request' : name;
+
+  return <Tooltip id={`badge-${number}`} text={_.startCase(_.toLower(docketName))} position="bottom">
+    <span {...badgeStyling}>{_.toUpper(docketName.charAt(0))}</span>
+  </Tooltip>;
+};
