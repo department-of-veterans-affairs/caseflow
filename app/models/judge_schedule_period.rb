@@ -17,7 +17,7 @@ class JudgeSchedulePeriod < SchedulePeriod
 
   def schedule_confirmed(hearing_schedule)
     hearing_days = hearing_schedule.map do |hearing_day|
-      hearing_day.slice(:hearing_pkseq, :judge_id)
+      hearing_day.slice(:id, :judge_id)
     end
 
     transaction do
