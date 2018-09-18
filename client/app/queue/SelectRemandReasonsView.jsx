@@ -11,9 +11,10 @@ import IssueRemandReasonsOptions from './components/IssueRemandReasonsOptions';
 
 import {
   fullWidth,
-  ISSUE_DISPOSITIONS,
+  VACOLS_DISPOSITIONS,
   PAGE_TITLES
 } from './constants';
+import ISSUE_DISPOSITIONS from '../../constants/ISSUE_DISPOSITIONS.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 const subHeadStyling = css({ marginBottom: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
@@ -110,7 +111,9 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal,
-    issues: _.filter(issues, (issue) => issue.disposition === ISSUE_DISPOSITIONS.REMANDED),
+    issues: _.filter(issues, (issue) => [
+      VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.remanded
+    ].includes(issue.disposition)),
     ..._.pick(state.ui, 'userRole')
   };
 };

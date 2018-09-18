@@ -23,11 +23,12 @@ import { tasksForAppealAssignedToUserSelector } from './selectors';
 
 import COPY from '../../COPY.json';
 import JUDGE_CASE_REVIEW_OPTIONS from '../../constants/JUDGE_CASE_REVIEW_OPTIONS.json';
+import ISSUE_DISPOSITIONS from '../../constants/ISSUE_DISPOSITIONS.json';
 import {
   marginBottom, marginTop,
   paddingLeft, fullWidth,
   redText, PAGE_TITLES,
-  ISSUE_DISPOSITIONS,
+  VACOLS_DISPOSITIONS,
   JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH
 } from './constants';
 import DispatchSuccessDetail from './components/DispatchSuccessDetail';
@@ -115,7 +116,7 @@ class EvaluateDecisionView extends React.PureComponent {
     const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
     const prevUrl = `/queue/appeals/${appealId}`;
 
-    return dispositions.includes(ISSUE_DISPOSITIONS.REMANDED) ?
+    return dispositions.includes(VACOLS_DISPOSITIONS.REMANDED) || dispositions.includes(ISSUE_DISPOSITIONS.remanded) ?
       `${prevUrl}/remands` :
       `${prevUrl}/dispositions`;
   }

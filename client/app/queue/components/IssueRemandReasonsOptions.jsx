@@ -8,6 +8,7 @@ import { formatDateStr } from '../../util/DateUtil';
 import scrollToComponent from 'react-scroll-to-component';
 
 import COPY from '../../../COPY.json';
+import ISSUE_DISPOSITIONS from '../../../constants/ISSUE_DISPOSITIONS.json';
 import Checkbox from '../../components/Checkbox';
 import CheckboxGroup from '../../components/CheckboxGroup';
 import RadioField from '../../components/RadioField';
@@ -25,7 +26,7 @@ import {
   fullWidth,
   REMAND_REASONS,
   LEGACY_REMAND_REASONS,
-  ISSUE_DISPOSITIONS,
+  VACOLS_DISPOSITIONS,
   redText,
   boldText
 } from '../constants';
@@ -320,7 +321,9 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal,
-    issues: _.filter(issues, (issue) => issue.disposition === ISSUE_DISPOSITIONS.REMANDED),
+    issues: _.filter(issues, (issue) => [
+      VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.remanded
+    ].includes(issue.disposition)),
     issue: _.find(issues, (issue) => issue.id === ownProps.issueId),
     highlight: state.ui.highlightFormItems
   };
