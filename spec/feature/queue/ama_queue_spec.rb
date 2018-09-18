@@ -19,7 +19,11 @@ RSpec.feature "AmaQueue" do
     FactoryBot.create(:user, roles: ["Reader"], full_name: "#{attorney_first_name} #{attorney_last_name}")
   end
 
-  let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
+  let!(:judge_user) do
+    user = FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge")
+    FactoryBot.create(:staff, :judge_role, sdomainid: user.css_id)
+    user
+  end
 
   let!(:vacols_atty) do
     FactoryBot.create(
@@ -210,14 +214,41 @@ RSpec.feature "AmaQueue" do
   end
 
   context "when user is a judge" do
-    let!(:user) do
-      User.authenticate!(user: judge_user)
-    end
+    let!(:user) { User.authenticate!(user: judge_user) }
 
     scenario "when viewing the review task queue" do
+      judge_review_task = create(:ama_judge_task, assigned_to: judge_user, action: :review)
+      appeal_review = judge_review_task.appeal
+      vet = appeal_review.veteran
+      attorney_completed_task = create(:ama_attorney_task, :completed, appeal: appeal_review, parent: judge_review_task)
+      case_review = create(:attorney_case_review, task_id: attorney_completed_task.id)
+
       visit "/queue"
 
-      expect(page).to
+      expect(appeal_review).to be(judge_review_task.appeal)
+      expect(page).to have_content("Review 1 Cases")
+      expect(page).to have_content("#{vet.first_name} #{vet.last_name}")
+      expect(page).to have_content(judge_review_task.appeal.veteran_file_number)
+      expect(page).to have_content(case_review.document_id)
+      expect(page).to have_content("Original")
+      expect(page).to have_content(appeal_review.docket_number)
+    end
+
+    scenario "when viewing the assign task queue" do
+      judge_assign_task = create(:ama_judge_task, assigned_to: judge_user)
+      puts judge_user.css_id
+      appeal_review = judge_assign_task.appeal
+
+      visit "/queue"
+
+      click_on "Switch to Assign Cases"
+
+      expect(page).to have_content("Assign 1 Cases")
+      vet = appeal_assign.veteran
+      expect(page).to have_content("#{vet.first_name} #{vet.last_name}")
+      expect(page).to have_content(appeal_assign.veteran_file_number)
+      expect(page).to have_content("Original")
+      expect(page).to have_content(appeal_assign.docket_number)
     end
   end
 end
