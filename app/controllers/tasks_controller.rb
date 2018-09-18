@@ -1,7 +1,6 @@
 class TasksController < ApplicationController
   include Errors
 
-  before_action :verify_queue_access
   before_action :verify_task_assignment_access, only: [:create]
   skip_before_action :deny_vso_access, only: [:index, :for_appeal]
 
@@ -106,9 +105,7 @@ class TasksController < ApplicationController
   end
 
   def user_role
-    return params[:role].downcase unless params[:role].to_s.empty?
-
-    current_user.organization_queue_user? ? "generic" : nil
+    params[:role].to_s.empty? ? "generic" : params[:role].downcase
   end
 
   def user

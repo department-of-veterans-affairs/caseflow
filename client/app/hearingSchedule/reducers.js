@@ -23,6 +23,18 @@ const reducers = (state = initialState, action = {}) => {
         $set: action.payload.schedulePeriod
       }
     });
+  case ACTIONS.RECEIVE_REGIONAL_OFFICES:
+    return update(state, {
+      regionalOffices: {
+        $set: action.payload.regionalOffices
+      }
+    });
+  case ACTIONS.REGIONAL_OFFICE_CHANGE:
+    return update(state, {
+      selectedRegionalOffice: {
+        $set: action.payload.regionalOffice
+      }
+    });
   case ACTIONS.SCHEDULE_PERIOD_ERROR:
     return update(state, {
       spErrorDetails: {
