@@ -36,6 +36,14 @@ class SupplementalClaim < ClaimReview
     END_PRODUCT_MODIFIERS
   end
 
+  def create_end_product_establishment!(ep_code)
+    ep = new_end_product_establishment(ep_code)
+    ep.perform!
+    ep
+  end
+
+  private
+
   def new_end_product_establishment(ep_code)
     end_product_establishments.build(
       veteran_file_number: veteran_file_number,
@@ -46,8 +54,6 @@ class SupplementalClaim < ClaimReview
       station: "397" # AMC
     )
   end
-
-  private
 
   def issue_code(rated)
     rated ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE

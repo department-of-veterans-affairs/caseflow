@@ -52,15 +52,23 @@ class HigherLevelReview < ClaimReview
     DTA_ERRORS
   end
 
-  def create_duty_to_assist_supplemental_claim_if_needed(end_product_establishment)
+  def create_dta_supplemental_claim(end_product_establishment)
     return if dta_issues.empty?
     rating_code_type = dta_issues.first.rated? ? :rating : :nonrating
-    sc = create_supplemental_claim
-    ep = sc.new_end_product_establishment(DTA_SUPPLEMENTAL_CLAIM_CODES[rating_code_type])
-    ep.perform!
 
-    # create duplicate dta issues that link to original
-    new_issues = dta_issues.map do |dta_issue|
+    ep = dta_supplemental_claim.create_end_product_establishment!(DTA_SUPPLEMENTAL_CLAIM_CODES[rating_code_type])
+    dta_supplemental_claim.create_issues!(build_follow_up_dta_issues(ep))
+  end
+
+  def on_sync(end_product_establishment)
+    # for higher level reviews, also create supplemental claim on dta errors
+    super { create_dta_supplemental_claim(end_product_establishment) }
+  end
+
+  private
+
+  def build_follow_up_dta_issues(ep)
+    dta_issues.map do |dta_issue|
       new_issue = dta_issue.dup
       new_issue.assign_attributes(
         parent_request_issue_id: dta_issue.id,
@@ -69,13 +77,20 @@ class HigherLevelReview < ClaimReview
       )
       new_issue
     end
-    create_issues!(new_issues)
   end
 
-  private
+  def sync_dispositions(reference_id)
+    super do |disposition, request_issue|
+      dta_issues << request_issue
+    end
+  end
 
-  def create_supplemental_claim
-    SupplementalClaim.create!(
+  def dta_issues
+    @dta_issues ||= []
+  end
+
+  def dta_supplemental_claim
+    @dta_supplemental_claim ||= SupplementalClaim.create!(
       veteran_file_number: veteran_file_number,
       receipt_date: Time.zone.now.to_date
     )
