@@ -4,6 +4,6 @@ module Constants::BvaDispatchTeams
     uat: %w[CF_SPOCK_317 CF_KHAN_397],
     test: %w[BVATEST1 BVATEST2 BVATEST3],
     development: %w[BVAGWHITE],
-    prod: %w[]
+    prod: %w[BVAEJAMES VSCWDAVI]
   }.freeze
 end

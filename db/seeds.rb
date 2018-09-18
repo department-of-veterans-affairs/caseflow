@@ -41,6 +41,7 @@ class SeedDB
     User.create(css_id: "BVAJWEHNER", station_id: 101, full_name: "Judge has case to assign no team")
     User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located with cases")
     User.create(css_id: "BVATWARNER", station_id: 101, full_name: "Build Hearing Schedule")
+    User.create(css_id: "BVAGWHITE", station_id: 101, full_name: "BVA Dispatch user with cases")
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
@@ -65,26 +66,30 @@ class SeedDB
   end
 
   def create_bva_dispatch_user_with_tasks
-    u = User.create(
-      css_id: "BVA_DISPATCHER",
-      station_id: 101,
-      full_name: "BVA Dispatcher with tasks"
-    )
+    u = User.find_by(css_id: "BVAGWHITE")
     FeatureToggle.enable!(:organization_queue, users: [u.css_id])
 
-    root = FactoryBot.create(:root_task)
-    parent = FactoryBot.create(
-      :bva_dispatch_task,
-      assigned_to: BvaDispatch.singleton,
-      parent_id: root.id,
-      appeal: root.appeal
-    )
-    FactoryBot.create(
-      :bva_dispatch_task,
-      assigned_to: u,
-      parent_id: parent.id,
-      appeal: parent.appeal
-    )
+    3.times do
+      root = FactoryBot.create(:root_task)
+      FactoryBot.create_list(
+        :request_issue,
+        [3, 4, 5].sample,
+        description: "Kidney problems",
+        review_request: root.appeal
+      )
+      parent = FactoryBot.create(
+        :bva_dispatch_task,
+        assigned_to: BvaDispatch.singleton,
+        parent_id: root.id,
+        appeal: root.appeal
+      )
+      FactoryBot.create(
+        :bva_dispatch_task,
+        assigned_to: u,
+        parent_id: parent.id,
+        appeal: parent.appeal
+      )
+    end
   end
 
   def create_case_search_only_user
@@ -219,59 +224,59 @@ class SeedDB
         FactoryBot.build(:claimant, participant_id: "OTHER_CLAIMANT")
       ],
       veteran_file_number: "701305078",
-      request_issues: FactoryBot.build_list(:request_issue, 3, description: "Head trauma")
+      request_issues: FactoryBot.create_list(:request_issue, 3, description: "Head trauma")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       veteran_file_number: "123468949",
-      request_issues: FactoryBot.build_list(:request_issue, 3, description: "Knee pain")
+      request_issues: FactoryBot.create_list(:request_issue, 3, description: "Knee pain")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       veteran_file_number: "963360019",
-      request_issues: FactoryBot.build_list(:request_issue, 2, description: "PTSD")
+      request_issues: FactoryBot.create_list(:request_issue, 2, description: "PTSD")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "604969679",
-      request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
+      request_issues: FactoryBot.create_list(:request_issue, 1, description: "Tinnitus")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "228081153",
-      request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
+      request_issues: FactoryBot.create_list(:request_issue, 1, description: "Tinnitus")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "152003980",
-      request_issues: FactoryBot.build_list(:request_issue, 3, description: "PTSD")
+      request_issues: FactoryBot.create_list(:request_issue, 3, description: "PTSD")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "375273128",
-      request_issues: FactoryBot.build_list(:request_issue, 1, description: "Knee pain")
+      request_issues: FactoryBot.create_list(:request_issue, 1, description: "Knee pain")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "157863454",
-      request_issues: FactoryBot.build_list(:request_issue, 5, description: "Veteran reports hearing loss in left ear")
+      request_issues: FactoryBot.create_list(:request_issue, 5, description: "Veteran reports hearing loss in left ear")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "446647748",
-      request_issues: FactoryBot.build_list(:request_issue, 1, description: "Back pain")
+      request_issues: FactoryBot.create_list(:request_issue, 1, description: "Back pain")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "876434576",
-      request_issues: FactoryBot.build_list(:request_issue, 8, description: "Kidney problems")
+      request_issues: FactoryBot.create_list(:request_issue, 8, description: "Kidney problems")
     )
 
     LegacyAppeal.create(vacols_id: "2096907", vbms_id: "228081153S")
