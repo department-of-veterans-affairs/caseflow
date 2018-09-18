@@ -154,13 +154,11 @@ class Search extends React.PureComponent {
     return <div>
       { searchErrorCode && this.getSearchErrorAlert(searchErrorCode, searchErrorData) }
 
-      <h1>Search for Veteran by ID</h1>
-      <p>
-        Enter the Veteran's ID below to process this {selectedForm.name}.
-      </p>
+      <h1>Search for Veteran ID</h1>
 
       <SearchBar
         size="small"
+        title="Enter the Veteran's ID"
         onSubmit={this.handleSearchSubmit}
         onChange={this.props.setFileNumberSearch}
         onClearSearch={this.clearSearch}
