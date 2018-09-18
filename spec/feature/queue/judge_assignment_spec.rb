@@ -49,4 +49,40 @@ RSpec.feature "Judge assignment to attorney" do
       end
     end
   end
+
+  context "Can view their queue" do
+    scenario "when viewing the review task queue" do
+      judge_review_task = create(:ama_judge_task, :in_progress, assigned_to: judge, action: :review)
+      appeal_review = judge_review_task.appeal
+      vet = appeal_review.veteran
+      attorney_completed_task = create(:ama_attorney_task, :completed, appeal: appeal_review, parent: judge_review_task)
+      case_review = create(:attorney_case_review, task_id: attorney_completed_task.id)
+
+      visit "/queue"
+
+      expect(appeal_review).to be(judge_review_task.appeal)
+      expect(page).to have_content("Review 1 Cases")
+      expect(page).to have_content("#{vet.first_name} #{vet.last_name}")
+      expect(page).to have_content(judge_review_task.appeal.veteran_file_number)
+      expect(page).to have_content(case_review.document_id)
+      expect(page).to have_content("Original")
+      expect(page).to have_content(appeal_review.docket_number)
+    end
+
+    scenario "when viewing the assign task queue" do
+      judge_assign_task = create(:ama_judge_task, :in_progress, assigned_to: judge)
+      appeal_assign = judge_assign_task.appeal
+      vet = appeal_assign.veteran
+
+      visit "/queue"
+
+      click_on "Switch to Assign Cases"
+
+      expect(page).to have_content("Assign 3 Cases")
+      expect(page).to have_content("#{vet.first_name} #{vet.last_name}")
+      expect(page).to have_content(appeal_assign.veteran_file_number)
+      expect(page).to have_content("Original")
+      expect(page).to have_content(appeal_assign.docket_number)
+    end
+  end
 end

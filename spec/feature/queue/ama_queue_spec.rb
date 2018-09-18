@@ -19,11 +19,7 @@ RSpec.feature "AmaQueue" do
     FactoryBot.create(:user, roles: ["Reader"], full_name: "#{attorney_first_name} #{attorney_last_name}")
   end
 
-  let!(:judge_user) do
-    user = FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge")
-    FactoryBot.create(:staff, :judge_role, sdomainid: user.css_id)
-    user
-  end
+  let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
 
   let!(:vacols_atty) do
     FactoryBot.create(
@@ -35,11 +31,11 @@ RSpec.feature "AmaQueue" do
     )
   end
 
-  context "loads appellant detail view" do
-    let!(:user) do
-      User.authenticate!(user: attorney_user)
-    end
+  let!(:user) do
+    User.authenticate!(user: attorney_user)
+  end
 
+  context "loads appellant detail view" do
     before do
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
         appeals.first.claimants.first.participant_id => {
@@ -210,44 +206,6 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content(appeals.first.docket_number)
         expect(page).to_not have_content(appeals.second.docket_number)
       end
-    end
-  end
-
-  context "when user is a judge" do
-    let!(:user) { User.authenticate!(user: judge_user) }
-
-    scenario "when viewing the review task queue" do
-      judge_review_task = create(:ama_judge_task, :in_progress, assigned_to: judge_user, action: :review)
-      appeal_review = judge_review_task.appeal
-      vet = appeal_review.veteran
-      attorney_completed_task = create(:ama_attorney_task, :completed, appeal: appeal_review, parent: judge_review_task)
-      case_review = create(:attorney_case_review, task_id: attorney_completed_task.id)
-
-      visit "/queue"
-
-      expect(appeal_review).to be(judge_review_task.appeal)
-      expect(page).to have_content("Review 1 Cases")
-      expect(page).to have_content("#{vet.first_name} #{vet.last_name}")
-      expect(page).to have_content(judge_review_task.appeal.veteran_file_number)
-      expect(page).to have_content(case_review.document_id)
-      expect(page).to have_content("Original")
-      expect(page).to have_content(appeal_review.docket_number)
-    end
-
-    scenario "when viewing the assign task queue" do
-      judge_assign_task = create(:ama_judge_task, :in_progress, assigned_to: judge_user)
-      appeal_assign = judge_assign_task.appeal
-      vet = appeal_assign.veteran
-
-      visit "/queue"
-
-      click_on "Switch to Assign Cases"
-
-      expect(page).to have_content("Assign 1 Cases")
-      expect(page).to have_content("#{vet.first_name} #{vet.last_name}")
-      expect(page).to have_content(appeal_assign.veteran_file_number)
-      expect(page).to have_content("Original")
-      expect(page).to have_content(appeal_assign.docket_number)
     end
   end
 end
