@@ -57,11 +57,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   end
 
   attribute :issue_count do
-    if object.appeal.class.name.eql? "LegacyAppeal"
-      object.appeal.issues.count
-    else
-      object.appeal.request_issues.count
-    end
+    object.appeal.issue_count
   end
 
   attribute :previous_task do
