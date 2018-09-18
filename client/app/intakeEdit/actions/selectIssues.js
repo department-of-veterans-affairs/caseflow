@@ -40,13 +40,11 @@ export const requestIssuesUpdate = (claimId, formType, state) => (dispatch) => {
         } catch (ex) { /* pass */ }
 
         const responseErrorCode = responseObject.error_code;
-        const responseErrorData = responseObject.error_data;
 
         dispatch({
           type: ACTIONS.REQUEST_ISSUES_UPDATE_FAIL,
           payload: {
-            responseErrorCode,
-            responseErrorData
+            responseErrorCode
           },
           meta: { analytics }
         });
