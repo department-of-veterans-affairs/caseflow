@@ -217,7 +217,7 @@ RSpec.feature "AmaQueue" do
     let!(:user) { User.authenticate!(user: judge_user) }
 
     scenario "when viewing the review task queue" do
-      judge_review_task = create(:ama_judge_task, assigned_to: judge_user, action: :review)
+      judge_review_task = create(:ama_judge_task, :in_progress, assigned_to: judge_user, action: :review)
       appeal_review = judge_review_task.appeal
       vet = appeal_review.veteran
       attorney_completed_task = create(:ama_attorney_task, :completed, appeal: appeal_review, parent: judge_review_task)
@@ -235,16 +235,15 @@ RSpec.feature "AmaQueue" do
     end
 
     scenario "when viewing the assign task queue" do
-      judge_assign_task = create(:ama_judge_task, assigned_to: judge_user)
-      puts judge_user.css_id
-      appeal_review = judge_assign_task.appeal
+      judge_assign_task = create(:ama_judge_task, :in_progress, assigned_to: judge_user)
+      appeal_assign = judge_assign_task.appeal
+      vet = appeal_assign.veteran
 
       visit "/queue"
 
       click_on "Switch to Assign Cases"
 
       expect(page).to have_content("Assign 1 Cases")
-      vet = appeal_assign.veteran
       expect(page).to have_content("#{vet.first_name} #{vet.last_name}")
       expect(page).to have_content(appeal_assign.veteran_file_number)
       expect(page).to have_content("Original")
