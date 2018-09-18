@@ -405,7 +405,7 @@ describe ClaimReview do
             expect(supplemental_claim).to_not be_nil
             # find the associated end_product_establishment
             end_product_establishment = EndProductEstablishment.find_by(
-              code: "040HDENR",
+              code: "040HDER",
               veteran_file_number: claim_review.veteran_file_number
             )
             expect(end_product_establishment).to_not be_nil
@@ -444,7 +444,7 @@ describe ClaimReview do
             expect(supplemental_claim).to_not be_nil
 
             end_product_establishment = EndProductEstablishment.find_by(
-              code: "040HDER",
+              code: "040HDENR",
               veteran_file_number: claim_review.veteran_file_number
             )
             expect(end_product_establishment).to_not be_nil

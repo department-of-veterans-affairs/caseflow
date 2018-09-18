@@ -8,7 +8,7 @@ class HigherLevelReview < ClaimReview
   END_PRODUCT_NONRATING_CODE = "030HLRNR".freeze
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 033 035 036 037 038 039].freeze
   DTA_ERRORS = ["DTA Error – PMRs", "DTA Error – Fed Recs", "DTA Error – Other Recs", "DTA Error – Exam/MO"].freeze
-  DTA_SUPPLEMENTAL_CLAIM_CODES = { rating: "040HDENR", nonrating: "040HDER" }.freeze
+  DTA_SUPPLEMENTAL_CLAIM_CODES = { rating: "040HDER", nonrating: "040HDENR" }.freeze
 
   def ui_hash
     {
