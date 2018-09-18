@@ -320,10 +320,6 @@ select {
 }
 
 .usa-alert {
-  &.lower-margin {
-    // This value is copied from USWDS.
-    margin-bottom: 1.5em;
-  }
 
   &.fixed {
     position: fixed;
@@ -338,7 +334,7 @@ select {
     background-position: 1rem 1.5rem;
 
     .usa-alert-text {
-      font-size: 19px;
+      font-size: 2rem;
     }
   }
 
