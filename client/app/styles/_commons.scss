@@ -824,44 +824,21 @@ form {
 }
 
 //--- Table styles ---*/
-
-table {
-  color: $color-gray-dark;
-}
-
-.cf-table-wrap {
+.usa-table-borderless {
   width: 100%;
-  overflow-x: auto;
 
-  table {
-    min-width: rem(400px);
-    width: 100%;
-  }
-}
-
-// Overrides table th, table td classes
-// from web design standards
-// TODO remove all table overrides
-.cf-table-borderless {
   th,
   td {
-    border-width: 0;
+    border-bottom-color: $color-gray-lighter;
   }
 
-  tr {
-    border-bottom: 1px solid $color-gray-lighter;
-  }
-
-  thead th {
-    background-color: $color-white;
-  }
-
-  th {
+  td {
     &:first-child {
-      padding-left: 1.5rem;
+      padding-left: 0;
     }
   }
 }
+
 
 // ===========================*
 // Form-related states
