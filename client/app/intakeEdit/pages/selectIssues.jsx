@@ -63,8 +63,7 @@ const SaveButton = connect(
   ({ review, requestStatus, ratings }) => ({
     claimId: review.claimId,
     requestStatus,
-    ratings,
-    nonRatedIssues: [] // add this later when we can edit non rated issues
+    ratings
   }),
   (dispatch) => bindActionCreators({
     requestIssuesUpdate
