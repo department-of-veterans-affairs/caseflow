@@ -325,7 +325,6 @@ describe ClaimReview do
       end
 
       it "changes request issue dispositions" do
-
         subject
 
         expect(request_issues.first.reload.disposition).to eq("Granted")
@@ -368,8 +367,9 @@ describe ClaimReview do
       it "does not create a supplemental claim if there are no DTAs" do
         claim_review.on_sync(end_product_establishment)
         supplemental_claim = SupplementalClaim.find_by(
-            veteran_file_number: claim_review.veteran_file_number,
-            receipt_date: Time.zone.now.to_date)
+          veteran_file_number: claim_review.veteran_file_number,
+          receipt_date: Time.zone.now.to_date
+        )
         expect(supplemental_claim).to be_nil
       end
 
@@ -381,9 +381,9 @@ describe ClaimReview do
           )
 
           expect(follow_up_issue).to have_attributes(
-            :contention_reference_id => contention.id,
-            :description => orig_request_issue.description,
-            :review_request_type => "SupplementalClaim"
+            contention_reference_id: contention.id,
+            description: orig_request_issue.description,
+            review_request_type: "SupplementalClaim"
           )
         end
 
@@ -400,7 +400,8 @@ describe ClaimReview do
             # find a supplemental claim by veteran id
             supplemental_claim = SupplementalClaim.find_by(
               veteran_file_number: claim_review.veteran_file_number,
-              receipt_date: Time.zone.now.to_date)
+              receipt_date: Time.zone.now.to_date
+            )
             expect(supplemental_claim).to_not be_nil
             # find the associated end_product_establishment
             end_product_establishment = EndProductEstablishment.find_by(
@@ -427,8 +428,10 @@ describe ClaimReview do
         context "for non-rated issues" do
           before do
             RequestIssue.find_by(
-              description: non_rating_contention.text).update!(
-                contention_reference_id: non_rating_contention.id)
+              description: non_rating_contention.text
+            ).update!(
+              contention_reference_id: non_rating_contention.id
+            )
           end
 
           it "creates a supplemental claim for rated issues" do
@@ -436,7 +439,8 @@ describe ClaimReview do
 
             supplemental_claim = SupplementalClaim.find_by(
               veteran_file_number: claim_review.veteran_file_number,
-              receipt_date: Time.zone.now.to_date)
+              receipt_date: Time.zone.now.to_date
+            )
             expect(supplemental_claim).to_not be_nil
 
             end_product_establishment = EndProductEstablishment.find_by(

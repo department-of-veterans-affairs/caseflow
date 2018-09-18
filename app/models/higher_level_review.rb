@@ -8,7 +8,7 @@ class HigherLevelReview < ClaimReview
   END_PRODUCT_NONRATING_CODE = "030HLRNR".freeze
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 033 035 036 037 038 039].freeze
   DTA_ERRORS = ["DTA Error – PMRs", "DTA Error – Fed Recs", "DTA Error – Other Recs", "DTA Error – Exam/MO"].freeze
-  DTA_SUPPLEMENTAL_CLAIM_CODES = { rating: "040HDENR", nonrating: "040HDER"}
+  DTA_SUPPLEMENTAL_CLAIM_CODES = { rating: "040HDENR", nonrating: "040HDER" }.freeze
 
   def ui_hash
     {
@@ -52,7 +52,7 @@ class HigherLevelReview < ClaimReview
     DTA_ERRORS
   end
 
-  def create_dta_supplemental_claim(end_product_establishment)
+  def create_dta_supplemental_claim(_end_product_establishment)
     return if dta_issues.empty?
     rating_code_type = dta_issues.first.rated? ? :rating : :nonrating
 
@@ -80,7 +80,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def sync_dispositions(reference_id)
-    super do |disposition, request_issue|
+    super do |request_issue|
       dta_issues << request_issue
     end
   end
