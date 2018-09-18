@@ -39,11 +39,11 @@ export default class IssueList extends React.PureComponent<Props> {
     const {
       appeal: {
         issues,
-        docketName
+        isLegacyAppeal
       }
     } = this.props;
     const singleIssue = issues.length === 1;
-    const ListItem = docketName === 'legacy' ? LegacyIssueListItem : IssueListItem;
+    const ListItem = isLegacyAppeal ? LegacyIssueListItem : IssueListItem;
 
     if (!issues.length) {
       return <tr>
