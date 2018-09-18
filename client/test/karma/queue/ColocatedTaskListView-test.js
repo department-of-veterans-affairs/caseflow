@@ -68,6 +68,7 @@ describe('ColocatedTaskListView', () => {
   const appealTemplate: BasicAppeal = {
     id: 5,
     type: 'Appeal',
+    isLegacyAppeal: false,
     externalId: '3bd1567a-4f07-473c-aefc-3738a6cf58fe',
     docketName: null,
     caseType: 'Original',
