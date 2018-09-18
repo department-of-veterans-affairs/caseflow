@@ -1,4 +1,5 @@
-import { ACTIONS, REQUEST_STATE } from '../constants';
+import { ACTIONS } from '../constants';
+import { REQUEST_STATE } from '../../intakeCommon/constants';
 import { update } from '../../util/ReducerUtil';
 import { formatRatings } from '../../intakeCommon/util';
 

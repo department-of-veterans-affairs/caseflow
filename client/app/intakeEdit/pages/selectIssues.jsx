@@ -6,9 +6,8 @@ import { bindActionCreators } from 'redux';
 import RatedIssuesUnconnected from '../../intakeCommon/components/RatedIssues';
 import { setIssueSelected } from '../../intake/actions/ama';
 import { requestIssuesUpdate } from '../actions/selectIssues';
-import { FORM_TYPES } from '../../intakeCommon/constants';
+import { FORM_TYPES, REQUEST_STATE } from '../../intakeCommon/constants';
 import CancelEdit from '../components/CancelEdit';
-import { REQUEST_STATE } from '../constants';
 import RequestIssuesUpdateErrorAlert from '../components/RequestIssuesUpdateErrorAlert';
 
 // This page shouldn't matter that much which type of Review it is.
