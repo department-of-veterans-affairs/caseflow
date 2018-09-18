@@ -53,17 +53,19 @@ class SaveButtonUnconnected extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestStatus.requestIssuesUpdate === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
+      disabled={!this.props.ratingsChanged}
     >
       Save
     </Button>;
 }
 
 const SaveButton = connect(
-  ({ review, formType, requestStatus, ratings }) => ({
+  ({ review, formType, requestStatus, ratings, ratingsChanged }) => ({
     claimId: review.claimId,
     formType,
     requestStatus,
-    ratings
+    ratings,
+    ratingsChanged
   }),
   (dispatch) => bindActionCreators({
     requestIssuesUpdate
