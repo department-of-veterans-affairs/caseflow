@@ -163,7 +163,7 @@ class SelectDispositionsView extends React.PureComponent {
       <hr />
       <Table
         columns={this.getColumns}
-        rowObjects={getUndecidedIssues(issues)}
+        rowObjects={appeal.isLegacyAppeal ? getUndecidedIssues(issues) : issues}
         getKeyForRow={this.getKeyForRow}
         styling={tableStyling}
         bodyStyling={tbodyStyling}
