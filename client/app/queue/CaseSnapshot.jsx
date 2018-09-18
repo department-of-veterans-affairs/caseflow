@@ -11,6 +11,7 @@ import {
   incompleteOrganizationTasksByAssigneeIdSelector
 } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
+import DocketTypeBadge from './components/DocketTypeBadge';
 import AttorneyActionsDropdown from './components/AttorneyActionsDropdown';
 import JudgeActionsDropdown from './components/JudgeActionsDropdown';
 import ColocatedActionsDropdown from './components/ColocatedActionsDropdown';
@@ -247,7 +248,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
             type: appeal.caseType
           })}</dd>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
-          <dd>{appeal.docketNumber}</dd>
+          <dd><DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}</dd>
           {this.daysSinceTaskAssignmentListItem()}
           { taskAssignedToUser && taskAssignedToUser.documentId &&
             <React.Fragment>

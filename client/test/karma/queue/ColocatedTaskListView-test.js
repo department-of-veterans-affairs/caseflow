@@ -68,6 +68,7 @@ describe('ColocatedTaskListView', () => {
   const appealTemplate: BasicAppeal = {
     id: 5,
     type: 'Appeal',
+    isLegacyAppeal: false,
     externalId: '3bd1567a-4f07-473c-aefc-3738a6cf58fe',
     docketName: null,
     caseType: 'Original',
@@ -91,7 +92,7 @@ describe('ColocatedTaskListView', () => {
   const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
 
   describe('New tab', () => {
-    it.skip('shows only new tasks', () => {
+    it('shows only new tasks', () => {
       const taskNewAssigned = amaTaskWith({ id: '1',
         cssIdAssignee: 'BVALSPORER' });
       const taskUnassigned = amaTaskWith({ id: '5',

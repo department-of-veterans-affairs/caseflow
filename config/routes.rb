@@ -106,6 +106,8 @@ Rails.application.routes.draw do
 
   resources :beaam_appeals, only: [:index]
 
+  resources :regional_offices, only: [:index]
+
   namespace :hearings do
     resources :dockets, only: [:index, :show], param: :docket_date
     resources :worksheets, only: [:update, :show], param: :hearing_id

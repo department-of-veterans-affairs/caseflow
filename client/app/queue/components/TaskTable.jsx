@@ -8,6 +8,7 @@ import { bindActionCreators } from 'redux';
 
 import Table from '../../components/Table';
 import Checkbox from '../../components/Checkbox';
+import DocketTypeBadge from './DocketTypeBadge';
 import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
 
@@ -58,7 +59,7 @@ class TaskTable extends React.PureComponent<Props> {
   }
 
   taskHasDASRecord = (task: TaskWithAppeal) => {
-    if (task.appeal.docketName === 'legacy' && this.props.requireDasRecord) {
+    if (task.appeal.isLegacyAppeal && this.props.requireDasRecord) {
       return task.taskId;
     }
 
@@ -150,9 +151,24 @@ class TaskTable extends React.PureComponent<Props> {
   caseDocketNumberColumn = () => {
     return this.props.includeDocketNumber ? {
       header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
-      valueFunction: (task) => this.taskHasDASRecord(task) ? task.appeal.docketNumber : null,
+      valueFunction: (task) => {
+        if (!this.taskHasDASRecord(task)) {
+          return null;
+        }
+
+        return <React.Fragment>
+          <DocketTypeBadge name={task.appeal.docketName} number={task.appeal.docketNumber} />
+          <span>{task.appeal.docketNumber}</span>
+        </React.Fragment>;
+      },
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (task) => this.taskHasDASRecord(task) ? task.appeal.docketNumber : null
+      getSortValue: (task) => {
+        if (!this.taskHasDASRecord(task)) {
+          return null;
+        }
+
+        return `${task.appeal.docketName} ${task.appeal.docketNumber}`;
+      }
     } : null;
   }
 
