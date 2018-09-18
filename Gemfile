@@ -143,8 +143,6 @@ group :stubbed, :test, :development, :demo do
   # Added at 2018-05-16 22:09:10 -0400 by mdbenjam:
   gem "factory_bot_rails", "~> 4.8"
 
-  # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
-  gem 'bootsnap', require: false
 end
 
 group :stubbed, :development do
@@ -170,4 +168,8 @@ gem "roo", "~> 2.7"
 gem "rubyzip", "~> 1.2.2"
 
 gem "business_time", "~> 0.9.3"
+
+# Bootsnap speeds up app boot (and started to be a default gem in 5.2).
+gem 'bootsnap', require: false
+
 # rubocop:enable Metrics/LineLength
