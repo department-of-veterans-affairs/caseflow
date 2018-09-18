@@ -394,7 +394,7 @@ describe ClaimReview do
             end
           end
 
-          it "creates a supplemental claim for non rated issues" do
+          it "creates a supplemental claim for rated issues" do
             claim_review.on_sync(end_product_establishment)
 
             # find a supplemental claim by veteran id
@@ -434,7 +434,7 @@ describe ClaimReview do
             )
           end
 
-          it "creates a supplemental claim for rated issues" do
+          it "creates a supplemental claim for non-rated issues" do
             claim_review.on_sync(end_product_establishment)
 
             supplemental_claim = SupplementalClaim.find_by(
