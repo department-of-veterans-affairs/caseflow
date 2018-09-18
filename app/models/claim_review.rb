@@ -18,12 +18,14 @@ class ClaimReview < AmaReview
   # outstanding end product establishment. If all end products have been created then this
   # method does nothing
   def process_end_product_establishments!
+    return if establishment_processed_at
     end_product_establishments.each do |end_product_establishment|
       end_product_establishment.perform!
       create_contentions_for_end_product_establishment(end_product_establishment)
     end
 
     end_product_establishments.each(&:commit!)
+    update!(establishment_processed_at: Time.zone.now)
   end
 
   # NOTE: Choosing not to test this method because it is fully tested in RequestIssuesUpdate.perform!
