@@ -278,13 +278,6 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def claimant
-    representative = {
-      name: representative_name,
-      type: representative_type,
-      code: representative_code,
-      address: representative_address
-    }
-
     if appellant_is_not_veteran
       {
         first_name: appellant_first_name,
@@ -292,7 +285,7 @@ class LegacyAppeal < ApplicationRecord
         last_name: appellant_last_name,
         name_suffix: appellant_name_suffix,
         address: get_address_from_corres_entry(case_record.correspondent),
-        representative: representative
+        representative: representative_to_hash
       }
     else
       {
@@ -301,7 +294,7 @@ class LegacyAppeal < ApplicationRecord
         last_name: veteran_last_name,
         name_suffix: veteran_name_suffix,
         address: get_address_from_corres_entry(case_record.correspondent),
-        representative: representative
+        representative: representative_to_hash
       }
     end
   end
@@ -641,6 +634,15 @@ class LegacyAppeal < ApplicationRecord
   end
 
   private
+
+  def representative_to_hash
+    {
+      name: representative_name,
+      type: representative_type,
+      code: representative_code,
+      address: representative_address
+    }
+  end
 
   def matched_document(type, vacols_datetime)
     return nil unless vacols_datetime

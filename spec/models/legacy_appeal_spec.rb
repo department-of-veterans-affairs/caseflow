@@ -1940,32 +1940,32 @@ describe LegacyAppeal do
 
     context "when veteran is the appellant and addresses are included" do
       it "the veteran is returned with addresses" do
-        expect(appeal.claimant).to eq({
-                                         first_name: "Bobby",
-                                         middle_name: "F",
-                                         last_name: "Veteran",
-                                         name_suffix: nil,
-                                         address: {
-                                           address_line_1: "123 K St. NW",
-                                           address_line_2: "Suite 456",
-                                           city: "Washington",
-                                           state: "DC",
-                                           country: nil,
-                                           zip: "20001"
-                                         },
-                                         representative: {
-                                           name: "Attorney B Lawyer",
-                                           type: "Attorney",
-                                           code: "T",
-                                           address: {
-                                             address_line_1: "111 Magnolia St.",
-                                             address_line_2: "Suite 222",
-                                             city: "New York",
-                                             state: "NY",
-                                             zip: "10000"
-                                           }
-                                         }
-                                       })
+        expect(appeal.claimant).to eq(
+          first_name: "Bobby",
+          middle_name: "F",
+          last_name: "Veteran",
+          name_suffix: nil,
+          address: {
+            address_line_1: "123 K St. NW",
+            address_line_2: "Suite 456",
+            city: "Washington",
+            state: "DC",
+            country: nil,
+            zip: "20001"
+          },
+          representative: {
+            name: "Attorney B Lawyer",
+            type: "Attorney",
+            code: "T",
+            address: {
+              address_line_1: "111 Magnolia St.",
+              address_line_2: "Suite 222",
+              city: "New York",
+              state: "NY",
+              zip: "10000"
+            }
+          }
+        )
       end
     end
 
@@ -1987,32 +1987,32 @@ describe LegacyAppeal do
       end
 
       it "the appellant is returned" do
-        expect(appeal.claimant).to eq({
-                                               first_name: "Tommy",
-                                               middle_name: "G",
-                                               last_name: "Claimant",
-                                               name_suffix: nil,
-                                               address: {
-                                                 address_line_1: "123 K St. NW",
-                                                 address_line_2: "Suite 456",
-                                                 city: "Washington",
-                                                 state: "DC",
-                                                 country: nil,
-                                                 zip: "20001"
-                                               },
-                                               representative: {
-                                                 name: "Attorney B Lawyer",
-                                                 type: "Attorney",
-                                                 code: "T",
-                                                 address: {
-                                                   address_line_1: "111 Magnolia St.",
-                                                   address_line_2: "Suite 222",
-                                                   city: "New York",
-                                                   state: "NY",
-                                                   zip: "10000"
-                                                 }
-                                               }
-                                             })
+        expect(appeal.claimant).to eq(
+          first_name: "Tommy",
+          middle_name: "G",
+          last_name: "Claimant",
+          name_suffix: nil,
+          address: {
+            address_line_1: "123 K St. NW",
+            address_line_2: "Suite 456",
+            city: "Washington",
+            state: "DC",
+            country: nil,
+            zip: "20001"
+          },
+          representative: {
+            name: "Attorney B Lawyer",
+            type: "Attorney",
+            code: "T",
+            address: {
+              address_line_1: "111 Magnolia St.",
+              address_line_2: "Suite 222",
+              city: "New York",
+              state: "NY",
+              zip: "10000"
+            }
+          }
+        )
       end
     end
   end
@@ -2052,20 +2052,21 @@ describe LegacyAppeal do
 
       it "the contested claimant is returned" do
         expect(appeal.contested_claimants).to eq([
-                                              {
-                                                type: "Claimant",
-                                                first_name: "Contested",
-                                                middle_name: "H",
-                                                last_name: "Claimant",
-                                                name_suffix: nil,
-                                                address: {
-                                                  address_line_1: "123 Oak St.",
-                                                  address_line_2: "Suite 222",
-                                                  city: "New York",
-                                                  state: "NY",
-                                                  zip: "10000"
-                                                }
-                                              }])
+                                                   {
+                                                     type: "Claimant",
+                                                     first_name: "Contested",
+                                                     middle_name: "H",
+                                                     last_name: "Claimant",
+                                                     name_suffix: nil,
+                                                     address: {
+                                                       address_line_1: "123 Oak St.",
+                                                       address_line_2: "Suite 222",
+                                                       city: "New York",
+                                                       state: "NY",
+                                                       zip: "10000"
+                                                     }
+                                                   }
+                                                 ])
       end
     end
   end
@@ -2105,20 +2106,21 @@ describe LegacyAppeal do
 
       it "the contested claimant is returned" do
         expect(appeal.contested_claimant_agents).to eq([
-                                              {
-                                                type: "Attorney",
-                                                first_name: "Contested",
-                                                middle_name: "H",
-                                                last_name: "Claimant",
-                                                name_suffix: nil,
-                                                address: {
-                                                  address_line_1: "123 Oak St.",
-                                                  address_line_2: "Suite 222",
-                                                  city: "New York",
-                                                  state: "NY",
-                                                  zip: "10000"
-                                                }
-                                              }])
+                                                         {
+                                                           type: "Attorney",
+                                                           first_name: "Contested",
+                                                           middle_name: "H",
+                                                           last_name: "Claimant",
+                                                           name_suffix: nil,
+                                                           address: {
+                                                             address_line_1: "123 Oak St.",
+                                                             address_line_2: "Suite 222",
+                                                             city: "New York",
+                                                             state: "NY",
+                                                             zip: "10000"
+                                                           }
+                                                         }
+                                                       ])
       end
     end
   end
