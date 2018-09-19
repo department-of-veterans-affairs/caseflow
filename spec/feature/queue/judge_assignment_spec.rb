@@ -60,10 +60,11 @@ RSpec.feature "Judge assignment to attorney" do
 
       visit "/queue"
 
-      expect(appeal_review).to be(judge_review_task.appeal)
+      puts judge_review_task.id
+      expect(JudgeQueue.new(user: judge).tasks).to eq([])
       expect(page).to have_content("Review 1 Cases")
       expect(page).to have_content("#{vet.first_name} #{vet.last_name}")
-      expect(page).to have_content(judge_review_task.appeal.veteran_file_number)
+      expect(page).to have_content(appeal_review.veteran_file_number)
       expect(page).to have_content(case_review.document_id)
       expect(page).to have_content("Original")
       expect(page).to have_content(appeal_review.docket_number)
