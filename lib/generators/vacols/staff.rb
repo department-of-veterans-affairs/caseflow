@@ -56,9 +56,9 @@ class Generators::Vacols::Staff
     # rubocop:enable Metrics/MethodLength
 
     def create(attrs = {})
-      attrs = staff_attrs.merge(attrs)
+      merged_attrs = staff_attrs.merge(attrs)
 
-      VACOLS::Staff.create(attrs)
+      VACOLS::Staff.create(merged_attrs)
     end
   end
 end

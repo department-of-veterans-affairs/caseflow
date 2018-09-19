@@ -9,7 +9,7 @@ task :lint do
 
   opts = ENV["CI"] ? "" : "--auto-correct"
   puts "running rubocop..."
-  rubocop_result = ShellCommand.run("rubocop #{opts} --color")
+  rubocop_result = ShellCommand.run("rubocop #{opts} --color --parallel")
 
   puts "\nrunning eslint..."
   eslint_cmd = ENV["CI"] ? "lint" : "lint:fix"
