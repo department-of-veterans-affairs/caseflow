@@ -24,7 +24,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
 
   attribute :appellants do
     if object.is_a?(LegacyAppeal)
-      object.claimants(@instance_options[:include_addresses])
+      [object.claimant]
     else
       object.claimants.map do |claimant|
         address = if @instance_options[:include_addresses]
@@ -54,6 +54,14 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
         }
       end
     end
+  end
+
+  attribute :contested_claimants do
+    object.is_a?(LegacyAppeal) ? object.contested_claimants : nil
+  end
+
+  attribute :contested_claimant_agents do
+    object.is_a?(LegacyAppeal) ? object.contested_claimant_agents : nil
   end
 
   attribute :congressional_interest_addresses do

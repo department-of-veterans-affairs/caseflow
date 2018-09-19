@@ -1909,7 +1909,7 @@ describe LegacyAppeal do
     end
   end
 
-  context "#claimants" do
+  context "#claimant" do
     let(:correspondent) do
       create(:correspondent,
              snamef: "Bobby",
@@ -1940,48 +1940,32 @@ describe LegacyAppeal do
 
     context "when veteran is the appellant and addresses are included" do
       it "the veteran is returned with addresses" do
-        expect(appeal.claimants(true)).to eq([{
-                                               first_name: "Bobby",
-                                               middle_name: "F",
-                                               last_name: "Veteran",
-                                               name_suffix: nil,
-                                               address: {
-                                                 address_line_1: "123 K St. NW",
-                                                 address_line_2: "Suite 456",
-                                                 city: "Washington",
-                                                 state: "DC",
-                                                 country: nil,
-                                                 zip: "20001"
-                                               },
-                                               representative: {
-                                                 name: "Attorney B Lawyer",
-                                                 type: "Attorney",
-                                                 code: "T",
-                                                 address: {
-                                                   address_line_1: "111 Magnolia St.",
-                                                   address_line_2: "Suite 222",
-                                                   city: "New York",
-                                                   state: "NY",
-                                                   zip: "10000"
-                                                 }
-                                               }
-                                             }])
-      end
-
-      it "the veteran is returned without addresses when flag is false" do
-        expect(appeal.claimants(false)).to eq([{
-                                                first_name: "Bobby",
-                                                middle_name: "F",
-                                                last_name: "Veteran",
-                                                name_suffix: nil,
-                                                address: nil,
-                                                representative: {
-                                                  name: "Attorney B Lawyer",
-                                                  type: "Attorney",
-                                                  code: "T",
-                                                  address: nil
-                                                }
-                                              }])
+        expect(appeal.claimant).to eq({
+                                         first_name: "Bobby",
+                                         middle_name: "F",
+                                         last_name: "Veteran",
+                                         name_suffix: nil,
+                                         address: {
+                                           address_line_1: "123 K St. NW",
+                                           address_line_2: "Suite 456",
+                                           city: "Washington",
+                                           state: "DC",
+                                           country: nil,
+                                           zip: "20001"
+                                         },
+                                         representative: {
+                                           name: "Attorney B Lawyer",
+                                           type: "Attorney",
+                                           code: "T",
+                                           address: {
+                                             address_line_1: "111 Magnolia St.",
+                                             address_line_2: "Suite 222",
+                                             city: "New York",
+                                             state: "NY",
+                                             zip: "10000"
+                                           }
+                                         }
+                                       })
       end
     end
 
@@ -2003,7 +1987,7 @@ describe LegacyAppeal do
       end
 
       it "the appellant is returned" do
-        expect(appeal.claimants(true)).to eq([{
+        expect(appeal.claimant).to eq({
                                                first_name: "Tommy",
                                                middle_name: "G",
                                                last_name: "Claimant",
@@ -2028,10 +2012,12 @@ describe LegacyAppeal do
                                                    zip: "10000"
                                                  }
                                                }
-                                             }])
+                                             })
       end
     end
+  end
 
+  context "#contested_claimants" do
     context "when there are contested claimants" do
       let(:correspondent) do
         create(:correspondent,
@@ -2064,29 +2050,10 @@ describe LegacyAppeal do
       end
       let!(:vacols_case) { create(:case, correspondent: correspondent, bfso: "L") }
 
-      it "the appellant and contested claimant is returned" do
-        expect(appeal.claimants(true)).to eq([{
-                                               first_name: "Tommy",
-                                               middle_name: "G",
-                                               last_name: "Claimant",
-                                               name_suffix: nil,
-                                               address: {
-                                                 address_line_1: "123 K St. NW",
-                                                 address_line_2: "Suite 456",
-                                                 city: "Washington",
-                                                 state: "DC",
-                                                 country: nil,
-                                                 zip: "20001"
-                                               },
-                                               representative: {
-                                                 name: nil,
-                                                 type: "None",
-                                                 code: "L",
-                                                 address: nil
-                                               }
-                                             },
+      it "the contested claimant is returned" do
+        expect(appeal.contested_claimants).to eq([
                                               {
-                                                type: "C",
+                                                type: "Claimant",
                                                 first_name: "Contested",
                                                 middle_name: "H",
                                                 last_name: "Claimant",
@@ -2097,8 +2064,60 @@ describe LegacyAppeal do
                                                   city: "New York",
                                                   state: "NY",
                                                   zip: "10000"
-                                                },
-                                                representative: nil
+                                                }
+                                              }])
+      end
+    end
+  end
+
+  context "#contested_claimant_agents" do
+    context "when there are contested claimant agents" do
+      let(:correspondent) do
+        create(:correspondent,
+               snamef: "Bobby",
+               snamemi: "F",
+               snamel: "Veteran",
+               saddrst1: "123 K St. NW",
+               saddrst2: "Suite 456",
+               saddrcty: "Washington",
+               saddrstt: "DC",
+               saddrcnty: nil,
+               saddrzip: "20001",
+               sspare1: "Tommy",
+               sspare2: "G",
+               sspare3: "Claimant")
+      end
+
+      let!(:representative) do
+        create(:representative,
+               repkey: vacols_case.bfkey,
+               reptype: "D",
+               repfirst: "Contested",
+               repmi: "H",
+               replast: "Claimant",
+               repaddr1: "123 Oak St.",
+               repaddr2: "Suite 222",
+               repcity: "New York",
+               repst: "NY",
+               repzip: "10000")
+      end
+      let!(:vacols_case) { create(:case, correspondent: correspondent, bfso: "L") }
+
+      it "the contested claimant is returned" do
+        expect(appeal.contested_claimant_agents).to eq([
+                                              {
+                                                type: "Attorney",
+                                                first_name: "Contested",
+                                                middle_name: "H",
+                                                last_name: "Claimant",
+                                                name_suffix: nil,
+                                                address: {
+                                                  address_line_1: "123 Oak St.",
+                                                  address_line_2: "Suite 222",
+                                                  city: "New York",
+                                                  state: "NY",
+                                                  zip: "10000"
+                                                }
                                               }])
       end
     end

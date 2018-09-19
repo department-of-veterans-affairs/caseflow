@@ -277,56 +277,44 @@ class LegacyAppeal < ApplicationRecord
     representatives.any? { |r| r.reptype == "C" }
   end
 
-  # rubocop:disable Metrics/MethodLength
-  def claimants(include_addresses = false)
+  def claimant
     representative = {
       name: representative_name,
       type: representative_type,
       code: representative_code,
-      address: include_addresses ? representative_address : nil
+      address: representative_address
     }
 
-    claimant_array = if appellant_is_not_veteran
-                       [
-                         {
-                           first_name: appellant_first_name,
-                           middle_name: appellant_middle_initial,
-                           last_name: appellant_last_name,
-                           name_suffix: appellant_name_suffix,
-                           address: include_addresses ? get_address_from_corres_entry(case_record.correspondent) : nil,
-                           representative: representative
-                         }
-                       ]
-                     else
-                       [
-                         {
-                           first_name: veteran_first_name,
-                           middle_name: veteran_middle_initial,
-                           last_name: veteran_last_name,
-                           name_suffix: veteran_name_suffix,
-                           address: include_addresses ? get_address_from_corres_entry(case_record.correspondent) : nil,
-                           representative: representative
-                         }
-                       ]
-                     end
-
-    claimant_array.concat(
-      contested_claimants.map do |contested_claimant|
-        {
-          type: contested_claimant.reptype,
-          first_name: contested_claimant.repfirst,
-          middle_name: contested_claimant.repmi,
-          last_name: contested_claimant.replast,
-          name_suffix: contested_claimant.repsuf,
-          address: include_addresses ? get_address_from_rep_entry(contested_claimant) : nil,
-          representative: nil
-        }
-      end
-    )
-
-    claimant_array
+    if appellant_is_not_veteran
+      {
+        first_name: appellant_first_name,
+        middle_name: appellant_middle_initial,
+        last_name: appellant_last_name,
+        name_suffix: appellant_name_suffix,
+        address: get_address_from_corres_entry(case_record.correspondent),
+        representative: representative
+      }
+    else
+      {
+        first_name: veteran_first_name,
+        middle_name: veteran_middle_initial,
+        last_name: veteran_last_name,
+        name_suffix: veteran_name_suffix,
+        address: get_address_from_corres_entry(case_record.correspondent),
+        representative: representative
+      }
+    end
   end
-  # rubocop:enable Metrics/MethodLength
+
+  # reptype C is a contested claimant
+  def contested_claimants
+    representatives.where(reptype: "C").map(&:as_claimant)
+  end
+
+  # reptype D is contested claimant attorney, reptype E is contested claimant agent
+  def contested_claimant_agents
+    representatives.where(reptype: %w[D E]).map(&:as_claimant)
+  end
 
   def docket_name
     "legacy"
@@ -653,10 +641,6 @@ class LegacyAppeal < ApplicationRecord
   end
 
   private
-
-  def contested_claimants
-    representatives.where(reptype: %w[C D E])
-  end
 
   def matched_document(type, vacols_datetime)
     return nil unless vacols_datetime

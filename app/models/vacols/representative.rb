@@ -1,4 +1,6 @@
 class VACOLS::Representative < VACOLS::Record
+  include AddressMapper
+
   # :nocov:
   self.table_name = "vacols.rep"
   self.primary_key = "repkey"
@@ -131,6 +133,25 @@ class VACOLS::Representative < VACOLS::Record
 
   def destroy
     delete_error_message
+  end
+
+  def as_claimant
+    type = if reptype == "C"
+      "Claimant"
+    elsif reptype == "D"
+      "Attorney"
+    elsif reptype == "E"
+      "Agent"
+    end
+
+    {
+      type: type,
+      first_name: repfirst,
+      middle_name: repmi,
+      last_name: replast,
+      name_suffix: repsuf,
+      address: get_address_from_rep_entry(self)
+    }
   end
 
   private

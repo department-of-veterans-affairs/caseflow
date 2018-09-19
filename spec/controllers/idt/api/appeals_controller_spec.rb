@@ -291,6 +291,48 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             expect(response_body["attributes"]["appellant_is_not_veteran"]).to eq !!appeal.appellant_first_name
           end
 
+          # Unfortunately we need to make the contested claimant tests separate from the above since
+          # instantiating multiple representative records is hard because there is a unique index
+          # on the timestamp repaddtime. This timestamp is determined by the Oracle DB and so isn't
+          # manipulable from TimeCop, nor is it settable from FactoryBot
+          context "when contested claimant" do
+            let!(:representative) do
+              create(
+                :representative,
+                repkey: vacols_case.bfkey,
+                reptype: "C",
+                repfirst: "Contested",
+                replast: "Claimant"
+              )
+            end
+
+            it "returns contested claimant" do
+              get :details, params: params
+              response_body = JSON.parse(response.body)["data"]
+
+              expect(response_body["attributes"]["contested_claimants"][0]["first_name"]).to eq("Contested")
+            end
+          end
+
+          context "when contested claimant agent" do
+            let!(:representative) do
+              create(
+                :representative,
+                repkey: vacols_case.bfkey,
+                reptype: "D",
+                repfirst: "Contested Agent",
+                replast: "Claimant"
+              )
+            end
+
+            it "returns contested claimant" do
+              get :details, params: params
+              response_body = JSON.parse(response.body)["data"]
+
+              expect(response_body["attributes"]["contested_claimant_agents"][0]["first_name"]).to eq("Contested Agent")
+            end
+          end
+
           context "and case is selected for quality review and has outstanding mail" do
             let(:assigner) { create(:user, css_id: "ANOTHER_TEST_ID", full_name: "Lyor Cohen") }
 

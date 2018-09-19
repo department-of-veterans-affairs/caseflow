@@ -11,7 +11,9 @@ class VACOLS::Mail < VACOLS::Record
   end
 
   def congressional_address
-    # 02 is the congressional interest mail type, unclear why mail type 13 can also count
+    # 02 is the congressional interest mail type. According to Paul Saindon
+    # (and verified in prod), mail type 13 with source G and X
+    # is also congressional mail.
     if (mltype == "02" || (mltype == "13" && (mlsource == "G" || mlsource == "X"))) && correspondent
       {
         full_name: [
