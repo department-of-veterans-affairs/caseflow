@@ -66,18 +66,15 @@ class HigherLevelReview < ClaimReview
   def build_follow_up_dta_issues
     dta_issues.map do |dta_issue|
       # do not copy over end product establishment id,
-      # review request, or removed_at
+      # review request, removed_at, disposition, and contentions
       RequestIssue.new(
-        review_request_id: dta_supplemental_claim.id,
-        review_request_type: "SupplementalClaim",
+        review_request: dta_supplemental_claim,
         parent_request_issue_id: dta_issue.id,
         rating_issue_reference_id: dta_issue.rating_issue_reference_id,
         rating_issue_profile_date: dta_issue.rating_issue_profile_date,
-        contention_reference_id: dta_issue.contention_reference_id,
         description: dta_issue.description,
         issue_category: dta_issue.issue_category,
-        decision_date: dta_issue.decision_date,
-        disposition: dta_issue.disposition,
+        decision_date: dta_issue.decision_date
       )
     end
   end

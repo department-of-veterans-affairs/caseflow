@@ -1,10 +1,14 @@
 class SupplementalClaim < ClaimReview
   validates :receipt_date, :benefit_type, presence: { message: "blank" }, if: :saving_review
 
-  END_PRODUCT_RATING_CODE = "040SCR".freeze
-  END_PRODUCT_NONRATING_CODE = "040SCNR".freeze
+  END_PRODUCT_CODES = {
+    rating: "040SCR",
+    nonrating: "040SCNR",
+    dta_rating: "040HDER",
+    dta_nonrating: "040HDENR"
+  }.freeze
+
   END_PRODUCT_MODIFIERS = %w[040 041 042 043 044 045 046 047 048 049].freeze
-  DTA_SUPPLEMENTAL_CLAIM_CODES = { rating: "040HDER", nonrating: "040HDENR" }.freeze
 
   def ui_hash
     {
@@ -19,7 +23,7 @@ class SupplementalClaim < ClaimReview
   end
 
   def rating_end_product_establishment
-    @rating_end_product_establishment ||= end_product_establishments.find_by(code: END_PRODUCT_RATING_CODE)
+    @rating_end_product_establishment ||= end_product_establishments.find_by(code: END_PRODUCT_CODES[:rating])
   end
 
   def end_product_description
@@ -53,9 +57,9 @@ class SupplementalClaim < ClaimReview
 
   def issue_code(rated)
     if is_dta_error
-      rated ? DTA_SUPPLEMENTAL_CLAIM_CODES[:rating] : DTA_SUPPLEMENTAL_CLAIM_CODES[:nonrating]
+      rated ? END_PRODUCT_CODES[:dta_rating] : END_PRODUCT_CODES[:dta_nonrating]
     else
-      rated ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE
+      rated ? END_PRODUCT_CODES[:rating] : END_PRODUCT_CODES[:non_rating]
     end
   end
 end

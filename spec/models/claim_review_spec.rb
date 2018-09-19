@@ -374,14 +374,13 @@ describe ClaimReview do
       end
 
       context "when it gets back dispositions with DTAs" do
-        def verify_followup_request_issue(supplemental_claim_id, orig_request_issue, contention)
+        def verify_followup_request_issue(supplemental_claim_id, orig_request_issue)
           follow_up_issue = RequestIssue.find_by(
             review_request_id: supplemental_claim_id,
             parent_request_issue_id: orig_request_issue.id
           )
 
           expect(follow_up_issue).to have_attributes(
-            contention_reference_id: contention.id,
             description: orig_request_issue.description,
             review_request_type: "SupplementalClaim"
           )
@@ -414,14 +413,12 @@ describe ClaimReview do
             # find the new request issues by the new supplemental claim created
             verify_followup_request_issue(
               supplemental_claim.id,
-              rating_request_issue,
-              rating_contention
+              rating_request_issue
             )
 
             verify_followup_request_issue(
               supplemental_claim.id,
-              second_rating_request_issue,
-              second_rating_contention
+              second_rating_request_issue
             )
           end
         end
@@ -452,8 +449,7 @@ describe ClaimReview do
 
             verify_followup_request_issue(
               supplemental_claim.id,
-              non_rating_request_issue,
-              non_rating_contention
+              non_rating_request_issue
             )
           end
         end
