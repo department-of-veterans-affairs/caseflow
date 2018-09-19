@@ -103,7 +103,7 @@ RSpec.feature "Edit issues" do
 
       safe_click("#button-submit-update")
       # verify that we are redirected to index
-      expect(page).to have_current_path("/")
+      expect(page).to have_current_path("/higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit/")
 
       # reload to verify that the new issues populate the form
       visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit/select_issues"
@@ -220,7 +220,7 @@ RSpec.feature "Edit issues" do
 
       safe_click("#button-submit-update")
       # verify that we are redirected to index
-      expect(page).to have_current_path("/")
+      expect(page).to have_current_path("/supplemental_claims/#{supplemental_claim.end_product_claim_id}/edit/")
 
       # revisit to verify that the new issues populate the form
       visit "supplemental_claims/#{supplemental_claim.end_product_claim_id}/edit/select_issues"
