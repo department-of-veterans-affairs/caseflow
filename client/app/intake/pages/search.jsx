@@ -135,8 +135,6 @@ class Search extends React.PureComponent {
       formType
     } = this.props;
 
-    const selectedForm = _.find(FORM_TYPES, { key: formType });
-
     if (!formType) {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     }
