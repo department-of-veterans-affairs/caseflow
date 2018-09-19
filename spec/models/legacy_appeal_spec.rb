@@ -1796,12 +1796,17 @@ describe LegacyAppeal do
     end
   end
 
-  context "#has_outstanding_vacols_mail" do
+  context "#outstanding_vacols_mail" do
     let(:vacols_case) { create(:case) }
     subject { appeal.outstanding_vacols_mail }
+    let!(:outstanding_mail) do
+      [
+        create(:mail, mlfolder: vacols_case.bfkey, mltype: "02")
+      ]
+    end
 
     context "when no mail is outstanding" do
-      it "returns false" do
+      it "returns mail with type 02" do
         expect(subject).to eq [{ outstanding: false, code: "02", description: "Congressional Interest" }]
       end
     end
@@ -1883,17 +1888,19 @@ describe LegacyAppeal do
       let(:vacols_case) { create(:case) }
 
       it "returns the congress persons' address" do
-        expect(appeal.congressional_interest_addresses).to eq([
-                                                                {
-                                                                  full_name: "Rep. Henry Clay PhD",
-                                                                  address_line_1: "123 K St. NW",
-                                                                  address_line_2: "Suite 456",
-                                                                  city: "Washington",
-                                                                  state: "DC",
-                                                                  country: nil,
-                                                                  zip_code: "20001"
-                                                                }
-                                                              ])
+        expect(appeal.congressional_interest_addresses).to eq(
+          [
+            {
+              full_name: "Rep. Henry Clay PhD",
+              address_line_1: "123 K St. NW",
+              address_line_2: "Suite 456",
+              city: "Washington",
+              state: "DC",
+              country: nil,
+              zip: "20001"
+            }
+          ]
+        )
       end
     end
 
@@ -1902,9 +1909,7 @@ describe LegacyAppeal do
       let(:vacols_case) { create(:case) }
 
       it "returns nil" do
-        expect(appeal.congressional_interest_addresses).to eq([
-                                                                nil
-                                                              ])
+        expect(appeal.congressional_interest_addresses).to eq([nil])
       end
     end
   end
