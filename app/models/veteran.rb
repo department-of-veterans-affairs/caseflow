@@ -133,7 +133,7 @@ class Veteran < ApplicationRecord
     def find_and_maybe_backfill_name(file_number)
       veteran = find_by(file_number: file_number)
       return nil unless veteran
-      if veteran.first_name.nil? && veteran.found?
+      if veteran.first_name.nil? && veteran.accessible?
         veteran.update!(
           first_name: veteran.bgs_record[:first_name],
           last_name: veteran.bgs_record[:last_name],
