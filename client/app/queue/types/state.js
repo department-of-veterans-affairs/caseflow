@@ -1,4 +1,5 @@
 // @flow
+import * as React from 'react';
 import type {
   Task,
   Tasks,
@@ -23,7 +24,7 @@ export type CaseDetailState = {|
   activeTask: ?Task
 |};
 
-export type UiStateMessage = { title: string, detail?: string };
+export type UiStateMessage = { title: string, detail?: React.Node };
 
 export type UiState = {
   selectingJudge: boolean,

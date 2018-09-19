@@ -189,7 +189,6 @@ class EvaluateDecisionView extends React.PureComponent {
       <h1 {...css(fullWidth, marginBottom(2), marginTop(2))}>
         {this.getPageName()}
       </h1>
-      <DispatchSuccessDetail task={task} />
       {error && <Alert title={error.title} type="error" styling={css(marginTop(0), marginBottom(1))}>
         {error.detail}
       </Alert>}
