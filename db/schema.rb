@@ -358,6 +358,18 @@ ActiveRecord::Schema.define(version: 20180912224413) do
     t.index ["hearing_id", "appeal_id"], name: "index_hearing_appeal_stream_snapshots_hearing_and_appeal_ids", unique: true
   end
 
+  create_table "hearing_days", force: :cascade do |t|
+    t.datetime "hearing_date", null: false
+    t.string "hearing_type", null: false
+    t.string "regional_office"
+    t.string "judge_id"
+    t.string "room_info", null: false
+    t.datetime "created_at", null: false
+    t.string "created_by", null: false
+    t.datetime "updated_at", null: false
+    t.string "updated_by", null: false
+  end
+
   create_table "hearing_views", id: :serial, force: :cascade do |t|
     t.integer "hearing_id", null: false
     t.integer "user_id", null: false
