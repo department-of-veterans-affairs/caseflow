@@ -1,7 +1,5 @@
 RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
   before do
-    User.authenticate!(user: user)
-
     FeatureToggle.enable!(:test_facols)
   end
 

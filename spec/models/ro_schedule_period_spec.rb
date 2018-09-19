@@ -6,4 +6,12 @@ describe RoSchedulePeriod do
 
     it { is_expected.to be_truthy }
   end
+
+  context "Allocate RO Days Per Given Schedule" do
+    subject { ro_schedule_period.algorithm_assignments }
+
+    it "create schedule" do
+      is_expected.to be_truthy
+    end
+  end
 end
