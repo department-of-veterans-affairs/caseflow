@@ -54,7 +54,7 @@ import type {
 import type { UiStateMessage } from './types/state';
 
 type Props = {|
-  action: string, // PropTypes.oneOf(['add', 'edit'])
+  action: "add" | "edit",
   issueId: string,
   appealId: string,
   nextStep: string,
