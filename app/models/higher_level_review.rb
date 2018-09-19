@@ -48,6 +48,12 @@ class HigherLevelReview < ClaimReview
     END_PRODUCT_MODIFIERS
   end
 
+  def on_sync(end_product_establishment)
+    super { create_dta_supplemental_claim }
+  end
+
+  private
+
   def dta_errors
     DTA_ERRORS
   end
@@ -56,12 +62,6 @@ class HigherLevelReview < ClaimReview
     return if dta_issues.empty?
     dta_supplemental_claim.create_issues!(build_follow_up_dta_issues)
   end
-
-  def on_sync(end_product_establishment)
-    super { create_dta_supplemental_claim }
-  end
-
-  private
 
   def build_follow_up_dta_issues
     dta_issues.map do |dta_issue|
