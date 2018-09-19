@@ -264,8 +264,8 @@ class AddEditIssueView extends React.Component {
           name="Program:"
           placeholder="Select program"
           options={this.renderIssueAttrs(programs)}
-          onChange={({ value }) => this.updateIssue({
-            program: value,
+          onChange={(option) => option.value && this.updateIssue({
+            program: option.value,
             type: null,
             codes: []
           })}
@@ -279,8 +279,8 @@ class AddEditIssueView extends React.Component {
           placeholder="Select issue"
           readOnly={!issue.program}
           options={this.renderIssueAttrs(issues)}
-          onChange={({ value }) => this.updateIssue({
-            type: value,
+          onChange={(option) => option.value && this.updateIssue({
+            type: option.value,
             // unset issue levels for validation
             codes: []
           })}
@@ -293,7 +293,7 @@ class AddEditIssueView extends React.Component {
           name="Level 1:"
           placeholder="Select level 1"
           options={this.renderIssueAttrs(issueLevels[0])}
-          onChange={({ value }) => this.updateIssueCode(0, value)}
+          onChange={(option) => option.value && this.updateIssueCode(0, option.value)}
           readOnly={_.isEmpty(issueLevels[0])}
           errorMessage={errorHighlightConditions.level1 ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
           value={_.get(issue, 'codes[0]', '')} />
@@ -303,7 +303,7 @@ class AddEditIssueView extends React.Component {
           name="Level 2:"
           placeholder="Select level 2"
           options={this.renderIssueAttrs(issueLevels[1])}
-          onChange={({ value }) => this.updateIssueCode(1, value)}
+          onChange={(option) => option.value && this.updateIssueCode(1, option.value)}
           errorMessage={errorHighlightConditions.level2 ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
           value={_.get(issue, 'codes[1]', '')} />
       </div>}
@@ -312,13 +312,16 @@ class AddEditIssueView extends React.Component {
           name="Diagnostic code"
           placeholder="Select diagnostic code"
           options={this.renderDiagnosticCodes()}
-          onChange={({ value }) => {
+          onChange={(option) => {
+            if (!option || !option.value) {
+              return;
+            }
             const { codes } = issue;
 
             if (codes.length && _.last(codes).length === 4) {
-              codes.splice(codes.length - 1, 1, value);
+              codes.splice(codes.length - 1, 1, option.value);
             } else {
-              codes.push(value);
+              codes.push(option.value);
             }
 
             this.updateIssue({ codes });
