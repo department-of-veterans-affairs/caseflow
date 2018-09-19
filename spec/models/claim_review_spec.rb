@@ -411,7 +411,7 @@ describe ClaimReview do
             )
             expect(end_product_establishment).to_not be_nil
 
-            # find the new request issues by the end product establishment id (should be 2)
+            # find the new request issues by the new supplemental claim created
             verify_followup_request_issue(
               supplemental_claim.id,
               rating_request_issue,
