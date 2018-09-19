@@ -41,6 +41,15 @@ describe ClaimReview do
     )
   end
 
+  let(:second_non_rating_request_issue) do
+    RequestIssue.new(
+      review_request: claim_review,
+      description: "some other issue",
+      issue_category: "something",
+      decision_date: 3.days.ago.to_date
+    )
+  end
+
   let(:claim_review) do
     HigherLevelReview.new(
       veteran_file_number: veteran_file_number,
@@ -359,6 +368,14 @@ describe ClaimReview do
         )
       end
 
+      let(:second_non_rating_contention) do
+        Generators::Contention.build(
+          claim_id: end_product_establishment.reference_id,
+          text: "some other issue",
+          disposition: "Granted"
+        )
+      end
+
       before do
         claim_review.save!
         claim_review.create_issues!(issues)
@@ -425,11 +442,9 @@ describe ClaimReview do
 
         context "for non-rated issues" do
           before do
-            RequestIssue.find_by(
-              description: non_rating_contention.text
-            ).update!(
-              contention_reference_id: non_rating_contention.id
-            )
+            [non_rating_contention, second_non_rating_contention].each do |contention|
+              RequestIssue.find_by(description: contention.text).update!(contention_reference_id: contention.id)
+            end
           end
 
           it "creates a supplemental claim for non-rated issues" do
@@ -451,6 +466,14 @@ describe ClaimReview do
               supplemental_claim.id,
               non_rating_request_issue
             )
+
+            # make sure that that issues which come back without dta errors are not created
+            not_found_issue = RequestIssue.find_by(
+              review_request_id: supplemental_claim_id,
+              parent_request_issue_id: second_non_rating_request_issue.id
+            )
+
+            expect(not_found_issue).to be_nil
           end
         end
       end

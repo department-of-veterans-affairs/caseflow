@@ -54,10 +54,6 @@ class HigherLevelReview < ClaimReview
 
   private
 
-  def dta_errors
-    DTA_ERRORS
-  end
-
   def create_dta_supplemental_claim
     return if dta_issues.empty?
     dta_supplemental_claim.create_issues!(build_follow_up_dta_issues)
@@ -80,8 +76,10 @@ class HigherLevelReview < ClaimReview
   end
 
   def sync_dispositions(reference_id)
-    super do |request_issue|
-      dta_issues << request_issue
+    super do |disposition, request_issue|
+      if DTA_ERRORS.include?(disposition[:disposition])
+        dta_issues << request_issue
+      end
     end
   end
 

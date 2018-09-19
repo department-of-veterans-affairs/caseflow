@@ -56,10 +56,10 @@ class SupplementalClaim < ClaimReview
   end
 
   def issue_code(rated)
+    issue_code_type = rated ? :rating : :nonrating
     if is_dta_error
-      rated ? END_PRODUCT_CODES[:dta_rating] : END_PRODUCT_CODES[:dta_nonrating]
-    else
-      rated ? END_PRODUCT_CODES[:rating] : END_PRODUCT_CODES[:non_rating]
+      issue_code_type = rated ? :dta_rating : :dta_nonrating
     end
+    END_PRODUCT_CODES[issue_code_type]
   end
 end

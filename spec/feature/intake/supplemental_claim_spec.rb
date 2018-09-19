@@ -217,7 +217,7 @@ RSpec.feature "Supplemental Claim Intake" do
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "042",
         end_product_label: "Supplemental Claim Rating",
-        end_product_code: SupplementalClaim::END_PRODUCT_RATING_CODE,
+        end_product_code: SupplementalClaim::END_PRODUCT_CODES[:rating],
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293"
@@ -227,7 +227,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     ratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
-      code: SupplementalClaim::END_PRODUCT_RATING_CODE
+      code: SupplementalClaim::END_PRODUCT_CODES[:rating]
     )
 
     expect(ratings_end_product_establishment).to have_attributes(
@@ -246,7 +246,7 @@ RSpec.feature "Supplemental Claim Intake" do
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "041",
         end_product_label: "Supplemental Claim Nonrating",
-        end_product_code: SupplementalClaim::END_PRODUCT_NONRATING_CODE,
+        end_product_code: SupplementalClaim::END_PRODUCT_CODES[:nonrating],
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293"
@@ -255,7 +255,7 @@ RSpec.feature "Supplemental Claim Intake" do
     )
     nonratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
-      code: SupplementalClaim::END_PRODUCT_NONRATING_CODE
+      code: SupplementalClaim::END_PRODUCT_CODES[:nonrating]
     )
 
     expect(nonratings_end_product_establishment).to have_attributes(
