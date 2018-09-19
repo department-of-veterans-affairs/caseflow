@@ -38,7 +38,7 @@ export default class VeteranDetail extends React.PureComponent {
 
   getGenderPronoun = (genderFieldName) => this.getAppealAttr(genderFieldName) === 'F' ? 'She/Her' : 'He/His';
 
-  getDetails = ({ nameField, genderField, dobField, addressField, relationField, regionalOfficeField }) => {
+  getDetails = ({ nameField, genderField, dodField, dobField, addressField, relationField, regionalOfficeField }) => {
     const details = [{
       label: 'Name',
       value: this.getAppealAttr(nameField)
@@ -54,6 +54,12 @@ export default class VeteranDetail extends React.PureComponent {
       details.push({
         label: 'Date of birth',
         value: <DateString date={this.getAppealAttr(dobField)} inputFormat="MM/DD/YYYY" dateFormat="M/D/YYYY" />
+      });
+    }
+    if (dodField && this.getAppealAttr(dodField)) {
+      details.push({
+        label: 'Date of death',
+        value: <DateString date={this.getAppealAttr(dodField)} inputFormat="MM/DD/YYYY" dateFormat="M/D/YYYY" />
       });
     }
     if (relationField && this.getAppealAttr(relationField)) {
@@ -89,6 +95,7 @@ export default class VeteranDetail extends React.PureComponent {
       nameField: 'veteranFullName',
       genderField: 'veteranGender',
       dobField: 'veteranDateOfBirth',
+      dodField: 'veteranDateOfDeath',
       addressField: 'appellantAddress',
       regionalOfficeField: 'regionalOffice'
     })}

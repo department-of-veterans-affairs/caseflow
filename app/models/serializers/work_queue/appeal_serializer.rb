@@ -37,6 +37,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.veteran ? object.veteran.date_of_birth : "Cannot locate"
   end
 
+  attribute :veteran_date_of_death do
+    object.veteran ? object.veteran.date_of_death : "Cannot locate"
+  end
+
   attribute :veteran_gender do
     object.veteran ? object.veteran.sex : "Cannot locate"
   end
