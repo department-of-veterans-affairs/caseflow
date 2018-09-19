@@ -16,8 +16,8 @@ export const requestIssuesUpdate = (claimId, formType, state) => (dispatch) => {
     supplemental_claim: 'supplemental_claims'
   };
 
-  return ApiUtil.patch(`/${pathMap[formType]}/${claimId}/update`, { data }, ENDPOINT_NAMES.REQUEST_ISSUES_UPDATE)
-    .then(
+  return ApiUtil.patch(`/${pathMap[formType]}/${claimId}/update`, { data }, ENDPOINT_NAMES.REQUEST_ISSUES_UPDATE).
+    then(
       (response) => {
         const responseObject = JSON.parse(response.text);
 

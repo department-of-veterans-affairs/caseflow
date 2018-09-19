@@ -6,6 +6,7 @@ import _ from 'lodash';
 
 export const mapDataToInitialState = function(props = {}) {
   const ratings = formatRatings(props.ratings, props.ratedRequestIssues);
+
   return {
     formType: props.formType,
     review: props.review,
@@ -20,9 +21,13 @@ export const mapDataToInitialState = function(props = {}) {
 };
 
 export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
+  let newRatings;
+  let serverRatings;
+  let ratingsChanged;
+
   switch (action.type) {
   case ACTIONS.SET_ISSUE_SELECTED:
-    let newRatings = update(state.ratings, {
+    newRatings = update(state.ratings, {
       [action.payload.profileDate]: {
         issues: {
           [action.payload.issueId]: {
@@ -33,7 +38,8 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
         }
       }
     });
-    let ratingsChanged = !_.isEqual(getSelection(newRatings), state.originalSelection);
+    ratingsChanged = !_.isEqual(getSelection(newRatings), state.originalSelection);
+
     return update(state, {
       ratings: { $set: newRatings },
       ratingsChanged: { $set: ratingsChanged }
@@ -47,7 +53,8 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
       }
     });
   case ACTIONS.REQUEST_ISSUES_UPDATE_SUCCEED:
-    let serverRatings = formatRatings(action.payload.ratings, action.payload.ratedRequestIssues);
+    serverRatings = formatRatings(action.payload.ratings, action.payload.ratedRequestIssues);
+
     return update(state, {
       requestStatus: {
         requestIssuesUpdate: {

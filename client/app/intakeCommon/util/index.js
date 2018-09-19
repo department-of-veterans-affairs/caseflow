@@ -89,15 +89,18 @@ export const formatIssues = (state) => {
 
 // Returns a list of selected issues in the form of date:issueId
 // Useful for dirty checking, rather than deeply comparing two state objects
-export const getSelection = ratings => {
+export const getSelection = (ratings) => {
   const dates = Object.keys(ratings);
+
   return dates.reduce((selectedIssues, date) => {
     const issueIds = Object.keys(ratings[date].issues);
-    issueIds.forEach(issueId => {
+
+    issueIds.forEach((issueId) => {
       if (ratings[date].issues[issueId].isSelected) {
         selectedIssues.push(`${date}:${issueId}`);
       }
     });
+
     return selectedIssues;
   }, []);
 };
