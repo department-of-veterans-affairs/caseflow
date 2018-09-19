@@ -30,6 +30,8 @@ import {
   ISSUE_DISPOSITIONS,
   JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH
 } from './constants';
+import DispatchSuccessDetail from './components/DispatchSuccessDetail';
+
 const setWidth = (width) => css({
   width,
   maxWidth: width
@@ -124,7 +126,8 @@ class EvaluateDecisionView extends React.PureComponent {
       appeal,
       decision,
       userRole,
-      appealId
+      appealId,
+      feedbackUrl
     } = this.props;
     const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, {
       location: 'bva_dispatch',
@@ -133,8 +136,11 @@ class EvaluateDecisionView extends React.PureComponent {
     });
     const successMsg = sprintf(COPY.JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
 
-    this.props.requestSave(`/case_reviews/${task.taskId}/complete`, payload, { title: successMsg }).
-      then(() => this.props.deleteAppeal(appealId));
+    this.props.requestSave(
+      `/case_reviews/${task.taskId}/complete`,
+      payload,
+      { title: successMsg, detail: <DispatchSuccessDetail task={task} /> }).
+        then(() => this.props.deleteAppeal(appealId));
   }
 
   getDisplayOptions = (opts) => _.map(JUDGE_CASE_REVIEW_OPTIONS[opts.toUpperCase()],
@@ -173,6 +179,7 @@ class EvaluateDecisionView extends React.PureComponent {
       diff(dateAssigned, 'days');
 
     return <React.Fragment>
+      <DispatchSuccessDetail task={task} />
       <CaseTitle
         heading={appeal.veteranFullName}
         appealId={appealId}
@@ -292,7 +299,8 @@ const mapStateToProps = (state, ownProps) => ({
   task: tasksForAppealAssignedToUserSelector(state, ownProps)[0],
   decision: state.queue.stagedChanges.taskDecision,
   userRole: state.ui.userRole,
-  error: state.ui.messages.error
+  error: state.ui.messages.error,
+  feedbackUrl: 'https://google.com'
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
