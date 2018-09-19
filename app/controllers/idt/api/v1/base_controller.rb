@@ -8,7 +8,7 @@ class Idt::Api::V1::BaseController < ActionController::Base
   end
 
   def verify_access
-    has_access = user.attorney_in_vacols? || user.judge_in_vacols?
+    has_access = user.attorney_in_vacols? || user.judge_in_vacols? || user.dispatch_user_in_vacols?
     return render json: { message: "User must be attorney, judge, or dispatch" }, status: 403 unless has_access
   end
 
