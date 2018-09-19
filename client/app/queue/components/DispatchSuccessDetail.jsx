@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import COPY from '../../../COPY.json';
 import type { Task } from '../types/models';
+import type { State } from '../types/state';
 
 type Params = {|
   task: Task
@@ -28,4 +29,4 @@ const DispatchSuccessDetail = (props: Props) => {
   </React.Fragment>;
 }
 
-export default (connect((state) => { feedbackUrl: 'https://google.com' })(DispatchSuccessDetail): React.ComponentType<Params>);
+export default (connect((state: State) => ({ feedbackUrl: state.ui.feedbackUrl }))(DispatchSuccessDetail): React.ComponentType<Params>);
