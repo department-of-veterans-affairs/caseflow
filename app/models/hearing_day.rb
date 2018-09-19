@@ -48,11 +48,11 @@ class HearingDay < ApplicationRecord
 
     def load_days(start_date, end_date, regional_office = nil)
       if regional_office.nil?
-        HearingDayRepository.load_days_for_range(start_date, end_date)
-      elsif regional_office == HEARING_TYPES[:central]
-        HearingDayRepository.load_days_for_central_office(start_date, end_date)
         cf_video_and_co = where("DATE(hearing_date) between ? and ?", start_date, end_date).each_with_object([])
         video_and_co, travel_board = HearingDayRepository.load_days_for_range(start_date, end_date)
+      elsif regional_office == HEARING_TYPES[:central]
+        cf_video_and_co = []
+        video_and_co, travel_board = HearingDayRepository.load_days_for_central_office(start_date, end_date)
       else
         cf_video_and_co = where("regional_office = ? and DATE(hearing_date) between ? and ?",
                                 regional_office, start_date, end_date).each_with_object([])

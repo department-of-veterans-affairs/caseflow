@@ -33,6 +33,9 @@ class HearingDayRepository
 
     def load_days_for_central_office(start_date, end_date)
       video_and_co = VACOLS::CaseHearing.load_days_for_central_office(start_date, end_date)
+        .each_with_object([]) do |hearing, result|
+        result << to_canonical_hash(hearing)
+      end
       travel_board = []
       [video_and_co, travel_board]
     end
