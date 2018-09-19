@@ -11,7 +11,8 @@ class Hearings::HearingDaySerializer < ActiveModel::Serializer
              :mdtime,
              :judge_last_name,
              :judge_middle_name,
-             :judge_first_name
+             :judge_first_name,
+             :hearsched
 
   def attributes(attributes)
     hash = super

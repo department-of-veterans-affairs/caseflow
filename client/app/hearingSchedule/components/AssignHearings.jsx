@@ -17,7 +17,7 @@ export default class AssignHearings extends React.Component {
             return <li key={hearingDay.id} >
               <Link
                 to="#">
-                {formatDateStr(hearingDay.hearingDate)}
+                {`${formatDateStr(hearingDay.hearingDate)} ${hearingDay.roomInfo}`}
               </Link>
             </li>;
           })}
