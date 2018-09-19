@@ -272,11 +272,11 @@ export const getIssueTypeDescription = (issue: Issue) => {
   return _.get(ISSUE_INFO[program].levels, `${type}.description`);
 };
 
-export const getIssueDiagnosticCodeLabel = (code: string) => {
+export const getIssueDiagnosticCodeLabel = (code: string): ?string => {
   const readableLabel = DIAGNOSTIC_CODE_DESCRIPTIONS[code];
 
   if (!readableLabel) {
-    return false;
+    return null;
   }
 
   return `${code} - ${readableLabel.staff_description}`;
