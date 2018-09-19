@@ -4,11 +4,11 @@ class ColocatedQueue
   attr_accessor :user
 
   def tasks
-    incomplete_tasks.where(assigned_to: user)
+    incomplete_tasks.where(assigned_to: user).each { |t| t.update_if_hold_expired! }
   end
 
   def tasks_by_appeal_id(appeal_id, appeal_type)
-    incomplete_tasks.where(appeal_id: appeal_id, appeal_type: appeal_type)
+    incomplete_tasks.where(appeal_id: appeal_id, appeal_type: appeal_type).each { |t| t.update_if_hold_expired! }
   end
 
   private
