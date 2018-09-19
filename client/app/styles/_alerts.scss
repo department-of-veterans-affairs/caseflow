@@ -1,6 +1,3 @@
-// Additional Alerts options
-// Fixed/No-Title
-
 .usa-alert {
 
   &.fixed {
@@ -12,7 +9,7 @@
     transform: translate(-50%, 0);
   }
 
-  &.no-title {
+  &.usa-alert-slim {
     background-size: 4rem;
 
     .usa-alert-body {
