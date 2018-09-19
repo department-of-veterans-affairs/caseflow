@@ -437,7 +437,6 @@ class AppealRepository
 
     fail AppealNotValidToReopen unless case_record.bfmpro == "HIS"
     fail AppealNotValidToReopen unless case_record.bfcurloc == "99"
-    fail AppealNotValidToReopen unless case_record.bfboard == "00"
 
     close_date = case_record.bfddec
     close_disposition = case_record.bfdc
@@ -448,7 +447,7 @@ class AppealRepository
 
     previous_active_location = case_record.previous_active_location
     fail AppealNotValidToReopen unless previous_active_location
-    fail AppealNotValidToReopen if %w[50 51 52 53 54 70 96 97 98 99].include? previous_active_location
+    fail AppealNotValidToReopen if %w[50 51 52 53 54 96 97 98 99].include? previous_active_location
 
     adv_status = previous_active_location == "77"
     bfmpro = adv_status ? "ADV" : "ACT"
@@ -494,7 +493,7 @@ class AppealRepository
     fail AppealNotValidToReopen unless case_record.bfcurloc == "99"
 
     previous_active_location = case_record.previous_active_location
-    fail AppealNotValidToReopen unless %w[50 53 54 96 97 98].include? previous_active_location
+    fail AppealNotValidToReopen unless %w[50 53 54 70 96 97 98].include? previous_active_location
     fail AppealNotValidToReopen if disposition_code == "P" && %w[53 43].include?(previous_active_location)
 
     follow_up_appeal_key = "#{case_record.bfkey}#{disposition_code}"
