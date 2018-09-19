@@ -29,11 +29,11 @@ class Generators::Vacols::TravelBoardSchedule
 
     def create(attrs = [{}])
       if attrs.is_a?(Array)
-        attrs = attrs.map { |hearing| travel_board_sched_attrs.merge(hearing) }
+        attrs = attrs.map { |hearing| travel_board_sched_attrs.merge!(hearing) }
         attrs.collect { |attr| VACOLS::TravelBoardSchedule.create!(attr) }
       else
-        travel_board_sched_attrs.merge(attrs)
-        VACOLS::TravelBoardSchedule.create!(travel_board_sched_attrs)
+        merged_attrs = travel_board_sched_attrs.merge(attrs)
+        VACOLS::TravelBoardSchedule.create!(merged_attrs)
       end
     end
   end
