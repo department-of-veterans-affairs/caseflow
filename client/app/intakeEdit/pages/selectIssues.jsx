@@ -43,8 +43,8 @@ class SaveButtonUnconnected extends React.PureComponent {
   handleClick = () => {
     this.props.requestIssuesUpdate(this.props.claimId, this.props.formType, {
       ratings: this.props.ratings,
-      nonRatedIssues: this.props.nonRatedIssues
-    });
+    })
+    .then(() => this.props.history.push('/'));
   }
 
   render = () =>
@@ -85,7 +85,7 @@ export class SelectIssuesButtons extends React.PureComponent {
   render = () =>
     <div>
       <CancelEdit history={this.props.history} />
-      <SaveButton />
+      <SaveButton history={this.props.history} />
     </div>
 }
 

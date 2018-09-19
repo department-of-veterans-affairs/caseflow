@@ -91,6 +91,10 @@ RSpec.feature "Edit issues" do
     end
 
     it "updates selected issues" do
+      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+      allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+
       visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit/select_issues"
 
       find("label", text: "Left knee granted").click
@@ -98,18 +102,39 @@ RSpec.feature "Edit issues" do
       expect(page).to have_button("Save", disabled: false)
 
       safe_click("#button-submit-update")
-      # update happens, on success the button should be disabled again as state matches server
-      expect(page).to have_button("Save", disabled: true)
+      # verify that we are redirected to index
+      expect(page).to have_current_path("/")
 
       # reload to verify that the new issues populate the form
-      visit current_path
+      visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit/select_issues"
       expect(find_field("PTSD denied", visible: false)).to be_checked
       expect(find_field("Left knee granted", visible: false)).to_not be_checked
 
       # assert server has updated data
-      expect(higher_level_review.reload.request_issues.first.description).to eq("PTSD denied")
+      new_request_issue = higher_level_review.reload.request_issues.first
+      expect(new_request_issue.description).to eq("PTSD denied")
       expect(request_issue.reload.review_request_id).to be_nil
+
       # expect contentions to reflect issue update
+      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+        veteran_file_number: veteran.file_number,
+        claim_id: higher_level_review.end_product_claim_id,
+        contention_descriptions: ["PTSD denied"],
+        special_issues: []
+      )
+      expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+        claim_id: higher_level_review.end_product_claim_id,
+        rated_issue_contention_map: {
+          new_request_issue.rating_issue_reference_id => new_request_issue.contention_reference_id
+        }
+      )
+      expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(
+        Generators::Contention.build(
+          id: "skipbayless",
+          claim_id: higher_level_review.end_product_claim_id,
+          text: "Left knee granted"
+        )
+      )
     end
 
     feature "cancel edits" do
@@ -183,6 +208,10 @@ RSpec.feature "Edit issues" do
     end
 
     it "updates selected issues" do
+      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+      allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+
       visit "supplemental_claims/#{supplemental_claim.end_product_claim_id}/edit/select_issues"
 
       find("label", text: "Left knee granted").click
@@ -190,18 +219,39 @@ RSpec.feature "Edit issues" do
       expect(page).to have_button("Save", disabled: false)
 
       safe_click("#button-submit-update")
-      # update happens, on success the button should be disabled again as state matches server
-      expect(page).to have_button("Save", disabled: true)
+      # verify that we are redirected to index
+      expect(page).to have_current_path("/")
 
-      # reload to verify that the new issues populate the form
-      visit current_path
+      # revisit to verify that the new issues populate the form
+      visit "supplemental_claims/#{supplemental_claim.end_product_claim_id}/edit/select_issues"
       expect(find_field("PTSD denied", visible: false)).to be_checked
       expect(find_field("Left knee granted", visible: false)).to_not be_checked
 
       # assert server has updated data
-      expect(supplemental_claim.reload.request_issues.first.description).to eq("PTSD denied")
+      new_request_issue = supplemental_claim.reload.request_issues.first
+      expect(new_request_issue.description).to eq("PTSD denied")
       expect(request_issue.reload.review_request_id).to be_nil
+
       # expect contentions to reflect issue update
+      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+        veteran_file_number: veteran.file_number,
+        claim_id: supplemental_claim.end_product_claim_id,
+        contention_descriptions: ["PTSD denied"],
+        special_issues: []
+      )
+      expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+        claim_id: supplemental_claim.end_product_claim_id,
+        rated_issue_contention_map: {
+          new_request_issue.rating_issue_reference_id => new_request_issue.contention_reference_id
+        }
+      )
+      expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(
+        Generators::Contention.build(
+          id: "skipbayless",
+          claim_id: supplemental_claim.end_product_claim_id,
+          text: "Left knee granted"
+        )
+      )
     end
 
     feature "cancel edits" do
