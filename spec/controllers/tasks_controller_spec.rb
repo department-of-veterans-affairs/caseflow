@@ -126,9 +126,9 @@ RSpec.describe TasksController, type: :controller do
     context "when user has no role" do
       let(:role) { nil }
 
-      it "should return a 400 invalid role error" do
+      it "should return 200" do
         get :index, params: { user_id: user.id, role: "unknown" }
-        expect(response.status).to eq 400
+        expect(response.status).to eq 200
       end
     end
   end
