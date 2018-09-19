@@ -9,7 +9,7 @@ class SupplementalClaimsController < ApplicationController
         ratedRequestIssues: supplemental_claim.request_issues.rated.map(&:ui_hash)
       }
     else
-      render json: { error_codes: [request_issues_update.error_code] }, status: 422
+      render json: { error_code: request_issues_update.error_code }, status: 422
     end
   end
 

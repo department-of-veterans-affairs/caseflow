@@ -84,7 +84,7 @@ const RatedIssues = connect(
 export class SelectIssuesButtons extends React.PureComponent {
   render = () =>
     <div>
-      <CancelEdit />
+      <CancelEdit history={this.props.history} />
       <SaveButton />
     </div>
 }
