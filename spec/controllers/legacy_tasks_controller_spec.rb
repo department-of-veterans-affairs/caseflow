@@ -33,6 +33,15 @@ RSpec.describe LegacyTasksController, type: :controller do
         expect(response.status).to eq 200
       end
     end
+
+    context "user is a dispatch user" do
+      let(:role) { :dispatch_role }
+
+      it "should not process the request succesfully" do
+        get :index, params: { user_id: user.id }
+        expect(response.status).to eq 400
+      end
+    end
   end
 
   describe "POST /legacy_tasks" do

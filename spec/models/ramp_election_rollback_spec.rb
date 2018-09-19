@@ -107,6 +107,20 @@ describe RampElectionRollback do
       end
     end
 
+    let!(:appeal_already_open) do
+      ramp_election.ramp_closed_appeals.create!(vacols_id: "34567")
+
+      create(
+        :legacy_appeal,
+        vacols_case: create(
+          :case_with_soc,
+          :type_original,
+          bfboard: "00",
+          bfkey: "34567"
+        )
+      )
+    end
+
     it "reopens appeals and rolls back ramp election" do
       expect(LegacyAppeal).to receive(:reopen).with(
         appeals: appeals_to_reopen,

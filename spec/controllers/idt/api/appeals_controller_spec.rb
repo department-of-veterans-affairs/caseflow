@@ -1,7 +1,5 @@
 RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
   before do
-    User.authenticate!(user: user)
-
     FeatureToggle.enable!(:test_facols)
   end
 
@@ -104,6 +102,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           it "returns a list of assigned appeals" do
             get :list
             expect(response.status).to eq 200
+            expect(RequestStore[:current_user]).to eq user
             response_body = JSON.parse(response.body)["data"]
             ama_appeals = response_body
               .select { |appeal| appeal["type"] == "appeals" }
