@@ -356,7 +356,12 @@ class Fakes::BGSService
                   ptcpnt_id: "2452383"
                 }
               else
-                {}
+                {
+                  legacy_poa_cd: "100",
+                  nm: "Attorney McAttorneyFace",
+                  org_type_nm: "POA Attorney",
+                  ptcpnt_id: "1234567"
+                }
               end
 
         {

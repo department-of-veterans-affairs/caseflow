@@ -81,13 +81,6 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     false
   end
 
-  attribute :power_of_attorney do
-    {
-      representative_type: object.representative_type,
-      representative_name: object.representative_name
-    }
-  end
-
   attribute :regional_office do
   end
 
