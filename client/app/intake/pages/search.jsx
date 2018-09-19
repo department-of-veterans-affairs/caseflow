@@ -7,9 +7,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { doFileNumberSearch, setFileNumberSearch } from '../actions/common';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../constants';
-import { FORM_TYPES } from '../../intakeCommon/constants';
 import { getIntakeStatus } from '../selectors';
-import _ from 'lodash';
 
 const steps = [
   <span>
