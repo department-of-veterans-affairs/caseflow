@@ -8,7 +8,6 @@ class HigherLevelReview < ClaimReview
   END_PRODUCT_NONRATING_CODE = "030HLRNR".freeze
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 033 035 036 037 038 039].freeze
   DTA_ERRORS = ["DTA Error – PMRs", "DTA Error – Fed Recs", "DTA Error – Other Recs", "DTA Error – Exam/MO"].freeze
-  DTA_SUPPLEMENTAL_CLAIM_CODES = { rating: "040HDER", nonrating: "040HDENR" }.freeze
 
   def ui_hash
     {
@@ -53,30 +52,33 @@ class HigherLevelReview < ClaimReview
     DTA_ERRORS
   end
 
-  def create_dta_supplemental_claim(_end_product_establishment)
+  def create_dta_supplemental_claim
     return if dta_issues.empty?
-    rating_code_type = dta_issues.first.rated? ? :rating : :nonrating
-
-    ep = dta_supplemental_claim.create_end_product_establishment!(DTA_SUPPLEMENTAL_CLAIM_CODES[rating_code_type])
-    dta_supplemental_claim.create_issues!(build_follow_up_dta_issues(ep))
+    dta_supplemental_claim.create_issues!(build_follow_up_dta_issues)
   end
 
   def on_sync(end_product_establishment)
-    # for higher level reviews, also create supplemental claim on dta errors
-    super { create_dta_supplemental_claim(end_product_establishment) }
+    super { create_dta_supplemental_claim }
   end
 
   private
 
-  def build_follow_up_dta_issues(ep)
+  def build_follow_up_dta_issues
     dta_issues.map do |dta_issue|
-      new_issue = dta_issue.dup
-      new_issue.assign_attributes(
+      # do not copy over end product establishment id,
+      # review request, or removed_at
+      RequestIssue.new(
+        review_request_id: dta_supplemental_claim.id,
+        review_request_type: "SupplementalClaim",
         parent_request_issue_id: dta_issue.id,
-        review_request_id: ep.id,
-        review_request_type: ep.source_type
+        rating_issue_reference_id: dta_issue.rating_issue_reference_id,
+        rating_issue_profile_date: dta_issue.rating_issue_profile_date,
+        contention_reference_id: dta_issue.contention_reference_id,
+        description: dta_issue.description,
+        issue_category: dta_issue.issue_category,
+        decision_date: dta_issue.decision_date,
+        disposition: dta_issue.disposition,
       )
-      new_issue
     end
   end
 
@@ -93,7 +95,8 @@ class HigherLevelReview < ClaimReview
   def dta_supplemental_claim
     @dta_supplemental_claim ||= SupplementalClaim.create!(
       veteran_file_number: veteran_file_number,
-      receipt_date: Time.zone.now.to_date
+      receipt_date: Time.zone.now.to_date,
+      is_dta_error: true
     )
   end
 

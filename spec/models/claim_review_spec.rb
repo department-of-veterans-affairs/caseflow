@@ -374,9 +374,9 @@ describe ClaimReview do
       end
 
       context "when it gets back dispositions with DTAs" do
-        def verify_followup_request_issue(end_product_id, orig_request_issue, contention)
+        def verify_followup_request_issue(supplemental_claim_id, orig_request_issue, contention)
           follow_up_issue = RequestIssue.find_by(
-            review_request_id: end_product_id,
+            review_request_id: supplemental_claim_id,
             parent_request_issue_id: orig_request_issue.id
           )
 
@@ -400,7 +400,8 @@ describe ClaimReview do
             # find a supplemental claim by veteran id
             supplemental_claim = SupplementalClaim.find_by(
               veteran_file_number: claim_review.veteran_file_number,
-              receipt_date: Time.zone.now.to_date
+              receipt_date: Time.zone.now.to_date,
+              is_dta_error: true
             )
             expect(supplemental_claim).to_not be_nil
             # find the associated end_product_establishment
@@ -412,13 +413,13 @@ describe ClaimReview do
 
             # find the new request issues by the end product establishment id (should be 2)
             verify_followup_request_issue(
-              end_product_establishment.id,
+              supplemental_claim.id,
               rating_request_issue,
               rating_contention
             )
 
             verify_followup_request_issue(
-              end_product_establishment.id,
+              supplemental_claim.id,
               second_rating_request_issue,
               second_rating_contention
             )
@@ -450,7 +451,7 @@ describe ClaimReview do
             expect(end_product_establishment).to_not be_nil
 
             verify_followup_request_issue(
-              end_product_establishment.id,
+              supplemental_claim.id,
               non_rating_request_issue,
               non_rating_contention
             )

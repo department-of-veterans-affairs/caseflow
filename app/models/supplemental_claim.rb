@@ -4,6 +4,7 @@ class SupplementalClaim < ClaimReview
   END_PRODUCT_RATING_CODE = "040SCR".freeze
   END_PRODUCT_NONRATING_CODE = "040SCNR".freeze
   END_PRODUCT_MODIFIERS = %w[040 041 042 043 044 045 046 047 048 049].freeze
+  DTA_SUPPLEMENTAL_CLAIM_CODES = { rating: "040HDER", nonrating: "040HDENR" }.freeze
 
   def ui_hash
     {
@@ -37,12 +38,6 @@ class SupplementalClaim < ClaimReview
     END_PRODUCT_MODIFIERS
   end
 
-  def create_end_product_establishment!(ep_code)
-    ep = new_end_product_establishment(ep_code)
-    ep.perform!
-    ep
-  end
-
   private
 
   def new_end_product_establishment(ep_code)
@@ -57,6 +52,10 @@ class SupplementalClaim < ClaimReview
   end
 
   def issue_code(rated)
-    rated ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE
+    if is_dta_error
+      rated ? DTA_SUPPLEMENTAL_CLAIM_CODES[:rating] : DTA_SUPPLEMENTAL_CLAIM_CODES[:nonrating]
+    else
+      rated ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE
+    end
   end
 end
