@@ -10,7 +10,7 @@ const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
 const NO_RESULTS_TEXT = 'Not an option';
 const DEFAULT_PLACEHOLDER = 'Select option';
 
-export type OptionType = { value: string, label?: ?string };
+export type OptionType = { value: string, label?: string };
 
 type Props = {|
   value?: ?OptionType | string,
