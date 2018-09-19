@@ -3,7 +3,10 @@ import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 import StringUtil from '../util/StringUtil';
-import { redText } from './constants';
+import {
+  redText,
+  ISSUE_DISPOSITIONS
+} from './constants';
 
 import type {
   Task,
@@ -327,13 +330,25 @@ export const buildCaseReviewPayload = (
   const legacyAppealIssues = _.every(issues, (issue) => !isNaN(issue.disposition));
 
   if (legacyAppealIssues) {
-    payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => _.extend({},
-      _.pick(issue, ['remand_reasons', 'type', 'readjudication']),
-      { disposition: _.capitalize(issue.disposition) },
-      { id: issue.id }
-    ));
+    payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => {
+      const issueAttrs = ['type', 'readjudication', 'id'];
+
+      if (issue.disposition === VACOLS_DISPOSITIONS_BY_ID.REMANDED) {
+        issueAttrs.push('remand_reasons');
+      }
+
+      return _.extend({}, _.pick(issue, issueAttrs), {
+        disposition: _.capitalize(issue.disposition)
+      });
+    });
   } else {
-    payload.data.tasks.issues = issues;
+    payload.data.tasks.issues = issues.map((issue) => {
+      if (issue.disposition !== ISSUE_DISPOSITIONS.REMANDED) {
+        return _.omit(issue, 'remand_reasons');
+      }
+
+      return issue;
+    });
   }
 
   return payload;
