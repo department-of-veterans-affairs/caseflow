@@ -99,7 +99,7 @@ class ClaimReview < AmaReview
       request_issue = matching_request_issue(disposition[:contention_id])
       request_issue.update!(disposition: disposition[:disposition])
       # allow higher level reviews to do additional logic on dta errors
-      yield(disposition, request_issue) if block_given?
+      yield(request_issue) if block_given?
     end
   end
 
