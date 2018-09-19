@@ -326,7 +326,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
       it "all hearing days should be assigned to judges" do
         judge_count = {}
         subject.each do |hearing_day|
-          expected_day = hearing_days[hearing_day[:hearing_pkseq]]
+          expected_day = hearing_days[hearing_day[:id]]
           is_co = expected_day.folder_nr.nil?
           judge_count[hearing_day[:judge_id]] ||= 0
           judge_count[hearing_day[:judge_id]] += 1

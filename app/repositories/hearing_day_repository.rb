@@ -4,27 +4,12 @@ class HearingDayRepository
   class << self
     def create_vacols_hearing!(hearing_hash)
       hearing_hash = HearingDayMapper.hearing_day_field_validations(hearing_hash)
-      VACOLS::CaseHearing.create_hearing!(hearing_hash) if hearing_hash.present?
+      to_canonical_hash(VACOLS::CaseHearing.create_hearing!(hearing_hash)) if hearing_hash.present?
     end
 
     def update_vacols_hearing!(hearing, hearing_hash)
       hearing_hash = HearingDayMapper.hearing_day_field_validations(hearing_hash)
       hearing.update_hearing!(hearing_hash) if hearing_hash.present?
-    end
-
-    # Bulk Operations
-    def create_schedule(scheduled_hearings)
-      scheduled_hearings.each do |hearing|
-        create_vacols_hearing!(hearing)
-      end
-    end
-
-    def update_schedule(updated_hearings)
-      updated_hearings.each do |hearing|
-        hearing_to_update = VACOLS::CaseHearing.find(hearing[:hearing_pkseq])
-        hearing.delete(:hearing_pkseq)
-        update_vacols_hearing!(hearing_to_update, hearing)
-      end
     end
 
     # Query Operations
@@ -39,14 +24,37 @@ class HearingDayRepository
 
     def load_days_for_range(start_date, end_date)
       video_and_co = VACOLS::CaseHearing.load_days_for_range(start_date, end_date)
+        .each_with_object([]) do |hearing, result|
+        result << to_canonical_hash(hearing)
+      end
       travel_board = VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
       [video_and_co, travel_board]
     end
 
     def load_days_for_regional_office(regional_office, start_date, end_date)
       video_and_co = VACOLS::CaseHearing.load_days_for_regional_office(regional_office, start_date, end_date)
+        .each_with_object([]) do |hearing, result|
+        result << to_canonical_hash(hearing)
+      end
       travel_board = VACOLS::TravelBoardSchedule.load_days_for_regional_office(regional_office, start_date, end_date)
       [video_and_co, travel_board]
+    end
+
+    def to_canonical_hash(hearing)
+      hearing_hash = hearing.as_json.each_with_object({}) do |(k, v), result|
+        result[HearingDayMapper::COLUMN_NAME_REVERSE_MAP[k.to_sym]] = v
+      end
+      hearing_hash.delete(nil)
+      values_hash = hearing_hash.each_with_object({}) do |(k, v), result|
+        result[k] = if k.to_s == "regional_office" && !v.nil?
+                      v[6, v.length]
+                    elsif k.to_s == "hearing_date"
+                      VacolsHelper.normalize_vacols_datetime(v)
+                    else
+                      v
+                    end
+      end
+      values_hash
     end
   end
 end
