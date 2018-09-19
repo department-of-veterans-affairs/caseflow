@@ -94,6 +94,7 @@ RSpec.feature "Edit issues" do
       allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
       allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
       allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+      allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
 
       visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit/select_issues"
 
@@ -211,6 +212,7 @@ RSpec.feature "Edit issues" do
       allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
       allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
       allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+      allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
 
       visit "supplemental_claims/#{supplemental_claim.end_product_claim_id}/edit/select_issues"
 
