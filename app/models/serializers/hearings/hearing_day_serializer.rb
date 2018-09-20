@@ -6,8 +6,7 @@ class Hearings::HearingDaySerializer < ActiveModel::Serializer
              :folder_nr,
              :board_member,
              :mduser,
-             :mdtime,
-             :hearsched
+             :mdtime
 
   def attributes(attributes)
     hash = super

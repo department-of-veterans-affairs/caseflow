@@ -8,7 +8,6 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   has_one :staff, foreign_key: :sattyid, primary_key: :board_member
   has_one :brieff, foreign_key: :bfkey, primary_key: :folder_nr, class_name: "Case"
-  has_many :hearsched, foreign_key: :vdkey, primary_key: :hearing_pkseq, class_name: "CaseHearing"
 
   HEARING_TYPES = {
     V: :video,

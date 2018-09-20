@@ -24,6 +24,30 @@ class Hearings::HearingDayController < HearingScheduleController
     end
   end
 
+  def index_with_hearings
+    regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
+
+    video_and_co, travel_board = HearingDay.load_days(Time.zone.today.beginning_of_day - 365.days, Time.zone.today.beginning_of_day + 365.days, regional_office)
+
+    video_and_co.each do | hearing_day |
+      hearing_day[:slots] = 10
+      hearing_day[:hearings] = VACOLS::CaseHearing.last(5).each_with_object([]) do |hearing, result|
+        result << HearingDayRepository.to_canonical_hash(hearing)
+      end
+    end
+
+    respond_to do |format|
+      format.html do
+        render "hearing_schedule/index"
+      end
+      format.json do
+        render json: {
+          hearing_days: json_hearings(video_and_co)
+        }
+      end
+    end
+  end
+
   # Create a hearing schedule day
   def create
     hearing = HearingDay.create_hearing_day(create_params)
@@ -74,7 +98,7 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def validate_start_date(start_date)
-    start_date.nil? ? (Time.zone.today.beginning_of_day - 365.days) : Date.parse(start_date)
+    start_date.nil? ? (Time.zone.today.beginning_of_day - 30.days) : Date.parse(start_date)
   end
 
   def validate_end_date(end_date)

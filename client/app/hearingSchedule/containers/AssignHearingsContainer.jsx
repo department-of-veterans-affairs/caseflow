@@ -29,12 +29,12 @@ class AssignHearingsContainer extends React.PureComponent {
       return;
     }
 
-    const requestUrl = `/hearings/hearing_day?regional_office=${this.props.selectedRegionalOffice.value}`;
+    const requestUrl = `/hearings/schedule/assign/hearing_days?regional_office=${this.props.selectedRegionalOffice.value}`;
 
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
-      this.props.onReceiveUpcomingHearingDays(_.keyBy(resp.hearings, 'id'));
+      this.props.onReceiveUpcomingHearingDays(_.keyBy(resp.hearingDays, 'id'));
     });
   };
 
