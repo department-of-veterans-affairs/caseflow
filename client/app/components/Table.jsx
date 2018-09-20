@@ -8,6 +8,7 @@ import { DoubleArrow } from './RenderFunctions';
 import { COLORS } from '../constants/AppConstants';
 import { css, hover } from 'glamor';
 import FilterIcon from './FilterIcon';
+import DropdownFilter from './DropdownFilter';
 
 /**
  * This component can be used to easily build tables.
@@ -39,8 +40,6 @@ const getColumns = (props) => {
     props.columns(props.rowObject) : props.columns;
 };
 
-const getFilterIconRef = (tagFilterIcon) => this.tagFilterIcon = tagFilterIcon;
-
 const HeaderRow = (props) => {
   const sortableHeaderStyle = css({ display: 'table-row' }, hover({ cursor: 'pointer' }));
   const sortArrowsStyle = css({
@@ -69,14 +68,24 @@ const HeaderRow = (props) => {
           </span>;
         }
 
-        if (column.getFilterDropDown) {
+        if (column.getFilterValues) {
           columnContent = <span><span>{column.header || ''}</span>
             <span><FilterIcon
               label={column.label}
-              idPrefix={column.idPrefix}
-              getRef={this.getFilterIconRef}
-              selected={props.isDropdownFilterOpen || props.anyFiltersAreSet}
-              handleActivate={props.toggleDropdownFilterVisiblity} /></span>
+              idPrefix={column.valueName}
+              getRef={column.getFilterIconRef}
+              selected={column.isDropdownFilterOpen || column.anyFiltersAreSet}
+              handleActivate={column.toggleDropdownFilterVisiblity} />
+
+              {column.isDropdownFilterOpen &&
+              <DropdownFilter
+                name={column.valueName}
+                children={column.getFilterValues}
+                isClearEnabled={column.anyFiltersAreSet}
+                handleClose={column.toggleDropdownFilterVisiblity}>
+              </DropdownFilter>
+              }
+            </span>
           </span>;
         }
 

@@ -23,36 +23,51 @@ export default class ListSchedule extends React.Component {
       hearingSchedule
     } = this.props;
 
+    var options = React.createElement(
+      'ul', {
+        className: 'cf-form-dropdown'
+      },
+      React.createElement('li', {id: 'C'},'Central'),
+      React.createElement('li', {id: 'V'},'Video'),
+      React.createElement('li', {id: 'T'},'Travel Board')
+    );
+
     const hearingScheduleColumns = [
       {
         header: 'Date',
         align: 'left',
         valueName: 'hearingDate',
-        getSortValue: (hearingDay) => { return hearingDay.hearingDate}
+        getSortValue: (hearingDay) => {return hearingDay.hearingDate}
       },
       {
         header: 'Type',
+        cellClass: 'type-column',
         align: 'left',
         valueName: 'hearingType',
-        getSortValue: (hearingDay) => { return hearingDay.hearingType}
+        label: 'Filter by type',
+        getFilterIconRef: this.getTypeFilterIconRef,
+        getFilterValues: options,
+        isDropdownFilterOpen: false,
+        anyFiltersAreSet: false,
+        toggleDropdownFilterVisiblity: () => { return true }
       },
       {
         header: 'Regional Office',
         align: 'left',
         valueName: 'regionalOffice',
-        getSortValue: (hearingDay) => { return hearingDay.regionalOffice}
+        getSortValue: (hearingDay) => {return hearingDay.regionalOffice}
       },
       {
         header: 'Room',
         align: 'left',
         valueName: 'room',
-        getSortValue: (hearingDay) => { return hearingDay.room}
+        getSortValue: (hearingDay) => {return hearingDay.room}
       },
       {
         header: 'VLJ',
         align: 'left',
         valueName: 'vlj',
-        getSortValue: (hearingDay) => { return hearingDay.vlj}
+        getSortValue: (hearingDay) => {return hearingDay.vlj}
       }
     ];
 
@@ -112,7 +127,7 @@ export default class ListSchedule extends React.Component {
           </CSVLink>
         </Button>
       </div>
-      <div {...hearingSchedStyling}>
+      <div {...hearingSchedStyling} className="section-hearings-list">
         <Table
           columns={hearingScheduleColumns}
           rowObjects={removeCoDuplicates}

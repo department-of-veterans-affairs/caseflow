@@ -11,7 +11,7 @@ import TagTableColumn from './TagTableColumn';
 import Table from '../components/Table';
 import Button from '../components/Button';
 import CommentIndicator from './CommentIndicator';
-import DropdownFilter from './DropdownFilter';
+import DropdownFilter from '../components/DropdownFilter';
 import { bindActionCreators } from 'redux';
 import Highlight from '../components/Highlight';
 import { setDocListScrollPosition, changeSortState, clearTagFilters, clearCategoryFilters,
