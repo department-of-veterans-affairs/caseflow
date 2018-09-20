@@ -72,6 +72,9 @@ RSpec.feature "Supplemental Claim Intake" do
     )
   end
 
+  let(:search_bar_title) { "Enter the Veteran's ID" }
+  let(:search_page_title) { "Search for Veteran ID" }
+
   it "Creates an end product" do
     # Testing two relationships, tests 1 relationship in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
@@ -110,9 +113,9 @@ RSpec.feature "Supplemental Claim Intake" do
 
     safe_click ".cf-submit.usa-button"
 
-    expect(page).to have_content("process this Supplemental Claim (VA Form 21-526b).")
+    expect(page).to have_content(search_page_title)
 
-    fill_in "Search small", with: "12341234"
+    fill_in search_bar_title, with: "12341234"
 
     click_on "Search"
 

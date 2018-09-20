@@ -136,6 +136,11 @@ export const setUserIsVsoEmployee = (userIsVsoEmployee: ?boolean) => ({
   payload: { userIsVsoEmployee }
 });
 
+export const setFeedbackUrl = (feedbackUrl: string) => ({
+  type: ACTIONS.SET_FEEDBACK_URL,
+  payload: { feedbackUrl }
+});
+
 type targetAssignee = { assigneeId: string };
 
 export const setSelectedAssignee = ({ assigneeId }: targetAssignee) => ({
