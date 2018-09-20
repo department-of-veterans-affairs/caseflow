@@ -72,6 +72,8 @@ class EndProductEstablishment < ApplicationRecord
   # VBMS will return ALL contentions on a end product when you create contentions,
   # not just the ones that were just created.
   def create_contentions!(for_objects)
+    return if for_objects.empty?
+
     set_establishment_values_from_source
 
     # Currently not making any assumptions about the order in which VBMS returns

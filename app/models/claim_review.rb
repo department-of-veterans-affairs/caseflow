@@ -19,6 +19,7 @@ class ClaimReview < AmaReview
   # method does nothing
   def process_end_product_establishments!
     return if establishment_processed_at
+
     end_product_establishments.each do |end_product_establishment|
       end_product_establishment.perform!
       create_contentions_for_end_product_establishment(end_product_establishment)
@@ -67,14 +68,15 @@ class ClaimReview < AmaReview
       contention_reference_id: nil
     )
 
-    return if request_issues_without_contentions.empty?
-
     end_product_establishment.create_contentions!(request_issues_without_contentions)
-    create_associated_rated_issues!(end_product_establishment, request_issues_without_contentions)
+    create_associated_rated_issues!(end_product_establishment)
   end
 
-  def create_associated_rated_issues!(end_product_establishment, issues)
-    request_issues_to_associate = issues.select(&:rated?)
+  def create_associated_rated_issues!(end_product_establishment)
+    request_issues_to_associate = request_issues.rated.where(
+      end_product_establishment: end_product_establishment,
+      rating_issue_associated_at: nil
+    )
 
     return if end_product_establishment.code != issue_code(true)
     return if request_issues_to_associate.empty?
