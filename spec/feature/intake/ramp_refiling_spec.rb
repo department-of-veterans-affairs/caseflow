@@ -49,6 +49,9 @@ RSpec.feature "RAMP Refiling Intake" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
+  let(:search_bar_title) { "Enter the Veteran's ID" }
+  let(:search_page_title) { "Search for Veteran ID" }
+
   context "RAMP Refiling" do
     scenario "Attempt to start RAMP refiling for a veteran without a complete RAMP election" do
       # Create an incomplete RAMP election
@@ -66,7 +69,7 @@ RSpec.feature "RAMP Refiling Intake" do
       end
       safe_click ".cf-submit.usa-button"
 
-      fill_in "Search small", with: "12341234"
+      fill_in search_bar_title, with: "12341234"
       click_on "Search"
 
       expect(page).to have_content("No RAMP Opt-In Election")
@@ -106,7 +109,7 @@ RSpec.feature "RAMP Refiling Intake" do
       end
       safe_click ".cf-submit.usa-button"
 
-      fill_in "Search small", with: "12341234"
+      fill_in search_bar_title, with: "12341234"
       click_on "Search"
 
       expect(page).to have_content("This Veteran has a pending RAMP EP in VBMS")
@@ -252,7 +255,7 @@ RSpec.feature "RAMP Refiling Intake" do
       end
       safe_click ".cf-submit.usa-button"
 
-      fill_in "Search small", with: "12341234"
+      fill_in search_bar_title, with: "12341234"
       click_on "Search"
 
       expect(page).to have_current_path("/intake/review_request")
@@ -505,7 +508,7 @@ RSpec.feature "RAMP Refiling Intake" do
         find("label", text: "RAMP Selection (VA Form 21-4138)").click
       end
       safe_click ".cf-submit.usa-button"
-      fill_in "Search small", with: "12341234"
+      fill_in search_bar_title, with: "12341234"
       click_on "Search"
       fill_in "What is the Receipt Date of this form?", with: "12/03/2017"
       within_fieldset("Which review lane did the Veteran select?") do

@@ -12,6 +12,7 @@ class JudgeRepository
       { first_name: record.snamef,
         middle_name: record.snamemi,
         last_name: record.snamel,
+        is_acting_judge: record.svlj == "A",
         vacols_attorney_id: record.sattyid }
     end
   end
