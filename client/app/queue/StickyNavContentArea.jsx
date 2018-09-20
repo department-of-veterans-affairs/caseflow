@@ -1,8 +1,8 @@
 import { css } from 'glamor';
 import React from 'react';
 
-import StringUtil from '../../util/StringUtil';
-import { COLORS } from '../../constants/AppConstants';
+import StringUtil from '../util/StringUtil';
+import { COLORS } from '../constants/AppConstants';
 
 const sectionNavigationContainerStyling = css({
   float: 'left',

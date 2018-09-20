@@ -14,7 +14,7 @@ import CaseHearingsDetail from './CaseHearingsDetail';
 import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
-import StickyNavContentArea from '../components/queue/StickyNavContentArea';
+import StickyNavContentArea from './StickyNavContentArea';
 import SendToLocationModal from './components/SendToLocationModal';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
