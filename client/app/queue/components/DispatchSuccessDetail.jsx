@@ -24,7 +24,7 @@ const DispatchSuccessDetail = (props: Props) => {
   }
   return <React.Fragment>
     {COPY.CHECKOUT_DISPATCH_SUCCESS_DETAIL_AMA_BEFORE_LINK}
-    <a href={feedbackUrl}>{COPY.CHECKOUT_DISPATCH_SUCCESS_DETAIL_AMA_LINK}</a>
+    <a href={feedbackUrl} target="_blank">{COPY.CHECKOUT_DISPATCH_SUCCESS_DETAIL_AMA_LINK}</a>
     {COPY.CHECKOUT_DISPATCH_SUCCESS_DETAIL_AMA_AFTER_LINK}
   </React.Fragment>;
 }
