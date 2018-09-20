@@ -24,18 +24,20 @@ class ClaimReview < AmaReview
     end
   end
 
-  # Send the appropriate calls to VBMS to create the end products and contentions for any
-  # outstanding end product establishment. If all end products have been created then this
-  # method does nothing
+  # Idempotent method to create all the artifacts for this claim.
+  # If any external calls fail, it is safe to call this multiple times until
+  # establishment_processed_at is successfully set.
   def process_end_product_establishments!
     return if establishment_processed_at
 
     end_product_establishments.each do |end_product_establishment|
+      next if end_product_establishment.committed?
       end_product_establishment.perform!
-      create_contentions_for_end_product_establishment(end_product_establishment)
+      end_product_establishment.create_contentions!
+      end_product_establishment.create_associated_rated_issues!
+      end_product_establishment.commit!
     end
 
-    end_product_establishments.each(&:commit!)
     update!(establishment_processed_at: Time.zone.now)
   end
 
@@ -66,16 +68,6 @@ class ClaimReview < AmaReview
   def end_product_establishment_for_issue(issue)
     ep_code = issue.rated? ? self.class.rated_issue_code : self.class.nonrated_issue_code
     end_product_establishments.find_by(code: ep_code) || new_end_product_establishment(ep_code)
-  end
-
-  def create_contentions_for_end_product_establishment(end_product_establishment)
-    request_issues_without_contentions = request_issues.where(
-      end_product_establishment: end_product_establishment,
-      contention_reference_id: nil
-    )
-
-    end_product_establishment.create_contentions!(request_issues_without_contentions)
-    end_product_establishment.create_associated_rated_issues!
   end
 
   def sync_dispositions(reference_id)

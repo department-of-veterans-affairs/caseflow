@@ -71,19 +71,20 @@ class EndProductEstablishment < ApplicationRecord
 
   # VBMS will return ALL contentions on a end product when you create contentions,
   # not just the ones that were just created.
-  def create_contentions!(for_objects)
-    return if for_objects.empty?
+  def create_contentions!
+    issues_without_contentions = request_issues_without_contentions
+    return if issues_without_contentions.empty?
 
     set_establishment_values_from_source
 
     # Currently not making any assumptions about the order in which VBMS returns
     # the created contentions. Instead find the issue by matching text.
-    create_contentions_in_vbms(for_objects.pluck(:description)).each do |contention|
-      matching_object = for_objects.find { |object| object.description == contention.text }
-      matching_object && matching_object.update!(contention_reference_id: contention.id)
+    create_contentions_in_vbms(issues_without_contentions.pluck(:description)).each do |contention|
+      issue = issues_without_contentions.find { |issue| issue.description == contention.text }
+      issue && issue.update!(contention_reference_id: contention.id)
     end
 
-    fail ContentionCreationFailed if for_objects.any? { |object| !object.contention_reference_id }
+    fail ContentionCreationFailed if issues_without_contentions.any? { |issue| issue.contention_reference_id.nil? }
   end
 
   def remove_contention!(for_object)
@@ -186,6 +187,10 @@ class EndProductEstablishment < ApplicationRecord
 
   def unassociated_rated_request_issues
     rated_request_issues.select { |ri| ri.rating_issue_associated_at.nil? }
+  end
+
+  def request_issues_without_contentions
+    request_issues.select { |ri| ri.contention_reference_id.nil? }
   end
 
   def rated_issue_contention_map(request_issues_to_associate)
