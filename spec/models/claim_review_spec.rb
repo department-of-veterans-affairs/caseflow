@@ -246,7 +246,7 @@ describe ClaimReview do
           veteran_hash: veteran.to_vbms_hash
         )
 
-        expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+        expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRR").reference_id,
           contention_descriptions: ["decision text"],
@@ -382,6 +382,10 @@ describe ClaimReview do
       before do
         claim_review.save!
         claim_review.create_issues!(issues)
+
+        allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+        allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+        allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
       end
 
       it "does not create a supplemental claim if there are no DTAs" do
@@ -404,6 +408,36 @@ describe ClaimReview do
             description: orig_request_issue.description,
             review_request_type: "SupplementalClaim"
           )
+
+          follow_up_issue
+        end
+
+        def verify_vbms_called(end_product, issues)
+          # claim, contentions and associated issues should have been created
+          expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+            claim_hash: {
+              benefit_type_code: "1",
+              payee_code: "00",
+              predischarge: false,
+              claim_type: "Claim",
+              station_of_jurisdiction: "397",
+              date: Time.zone.now.to_date,
+              end_product_modifier: "040",
+              end_product_label: end_product[:label],
+              end_product_code: end_product[:code],
+              gulf_war_registry: false,
+              suppress_acknowledgement_letter: false,
+              claimant_participant_id: nil
+            },
+            veteran_hash: veteran.to_vbms_hash
+          )
+
+          expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+            veteran_file_number: veteran.file_number,
+            claim_id: end_product[:reference_id],
+            contention_descriptions: issues.map(&:description),
+            special_issues: []
+          )
         end
 
         context "for rated issues" do
@@ -423,22 +457,44 @@ describe ClaimReview do
               is_dta_error: true
             )
             expect(supplemental_claim).to_not be_nil
+
             # find the associated end_product_establishment
-            end_product_establishment = EndProductEstablishment.find_by(
+            supplemental_claim_end_product_establishment = EndProductEstablishment.find_by(
               code: "040HDER",
-              veteran_file_number: claim_review.veteran_file_number
+              veteran_file_number: claim_review.veteran_file_number,
+              source_type: "SupplementalClaim"
             )
-            expect(end_product_establishment).to_not be_nil
+            expect(supplemental_claim_end_product_establishment).to_not be_nil
 
             # find the new request issues by the new supplemental claim created
-            verify_followup_request_issue(
+            follow_up_issues = []
+            follow_up_issues << verify_followup_request_issue(
               supplemental_claim.id,
               rating_request_issue
             )
 
-            verify_followup_request_issue(
+            follow_up_issues << verify_followup_request_issue(
               supplemental_claim.id,
               second_rating_request_issue
+            )
+
+            verify_vbms_called(
+              {
+                code: "040HDER",
+                label: "Supplemental Claim Rating DTA",
+                reference_id: supplemental_claim_end_product_establishment.reference_id
+              },
+              [second_rating_request_issue, rating_request_issue]
+            )
+
+            # for rated issues, verify that this is called
+            expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).once.with(
+              claim_id: supplemental_claim_end_product_establishment.reference_id,
+              rated_issue_contention_map:
+              {
+                "reference-id" => follow_up_issues.first.reload.contention_reference_id,
+                "reference-id2" => follow_up_issues.second.reload.contention_reference_id
+              }
             )
           end
         end
@@ -459,13 +515,14 @@ describe ClaimReview do
             )
             expect(supplemental_claim).to_not be_nil
 
-            end_product_establishment = EndProductEstablishment.find_by(
+            supplemental_claim_end_product_establishment = EndProductEstablishment.find_by(
               code: "040HDENR",
               veteran_file_number: claim_review.veteran_file_number
             )
-            expect(end_product_establishment).to_not be_nil
+            expect(supplemental_claim_end_product_establishment).to_not be_nil
 
-            verify_followup_request_issue(
+            follow_up_issues = []
+            follow_up_issues << verify_followup_request_issue(
               supplemental_claim.id,
               non_rating_request_issue
             )
@@ -477,6 +534,15 @@ describe ClaimReview do
             )
 
             expect(not_found_issue).to be_nil
+
+            verify_vbms_called(
+              {
+                code: "040HDENR",
+                label: "Supplemental Claim Nonrating DTA",
+                reference_id: supplemental_claim_end_product_establishment.reference_id
+              },
+              [non_rating_request_issue]
+            )
           end
         end
       end

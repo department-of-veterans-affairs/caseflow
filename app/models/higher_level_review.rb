@@ -57,6 +57,7 @@ class HigherLevelReview < ClaimReview
   def create_dta_supplemental_claim
     return if dta_issues.empty?
     dta_supplemental_claim.create_issues!(build_follow_up_dta_issues)
+    dta_supplemental_claim.process_end_product_establishments!
   end
 
   def build_follow_up_dta_issues
