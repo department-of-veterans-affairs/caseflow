@@ -23,6 +23,10 @@ class Claimant < ApplicationRecord
   end
   delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
 
+  def representative_participant_id
+    power_of_attorney.participant_id
+  end
+
   def name
     FullName.new(first_name, "", last_name).formatted(:readable_short)
   end
