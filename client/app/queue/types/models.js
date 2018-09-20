@@ -107,6 +107,8 @@ export type BasicAppeal = {
   caseType: string,
   isAdvancedOnDocket: boolean,
   docketNumber: string,
+  assignedAttorney: ?User,
+  assignedJudge: ?User,
   veteranFullName: string,
   veteranFileNumber: string,
   isPaperCase: ?boolean,

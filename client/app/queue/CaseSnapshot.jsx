@@ -255,6 +255,16 @@ export class CaseSnapshot extends React.PureComponent<Props> {
           })}</dd>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
           <dd><DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}</dd>
+          { appeal.assignedJudge &&
+            <React.Fragment>
+              <dt>{COPY.CASE_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</dt>
+              <dd>{appeal.assignedJudge.full_name}</dd>
+            </React.Fragment> }
+          { appeal.assignedAttorney &&
+            <React.Fragment>
+              <dt>{COPY.CASE_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</dt>
+              <dd>{appeal.assignedAttorney.full_name}</dd>
+            </React.Fragment> }
           {this.daysSinceTaskAssignmentListItem()}
           { taskAssignedToUser && taskAssignedToUser.documentId &&
             <React.Fragment>
