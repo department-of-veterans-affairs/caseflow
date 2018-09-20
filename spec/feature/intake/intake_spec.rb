@@ -38,6 +38,9 @@ RSpec.feature "Intake" do
     )
   end
 
+  let(:search_bar_title) { "Enter the Veteran's ID" }
+  let(:search_page_title) { "Search for Veteran ID" }
+
   context "As a user with unauthorized role" do
     let!(:current_user) do
       User.authenticate!(roles: ["Not Mail Intake"])
@@ -82,7 +85,7 @@ RSpec.feature "Intake" do
       end
       safe_click ".cf-submit.usa-button"
 
-      fill_in "Search small", with: "5678"
+      fill_in search_bar_title, with: "5678"
       click_on "Search"
 
       expect(page).to have_current_path("/intake/search")
@@ -104,9 +107,9 @@ RSpec.feature "Intake" do
       end
       safe_click ".cf-submit.usa-button"
 
-      expect(page).to have_content("Enter the Veteran's ID below to process this RAMP Opt-In Election Form.")
+      expect(page).to have_content(search_page_title)
 
-      fill_in "Search small", with: "5678"
+      fill_in search_bar_title, with: "5678"
       click_on "Search"
 
       expect(page).to have_current_path("/intake/search")
@@ -126,7 +129,7 @@ RSpec.feature "Intake" do
         end
         safe_click ".cf-submit.usa-button"
 
-        fill_in "Search small", with: "12341234"
+        fill_in search_bar_title, with: "12341234"
         click_on "Search"
 
         expect(page).to have_current_path("/intake/search")
@@ -147,7 +150,7 @@ RSpec.feature "Intake" do
         end
         safe_click ".cf-submit.usa-button"
 
-        fill_in "Search small", with: "12341234"
+        fill_in search_bar_title, with: "12341234"
         click_on "Search"
 
         expect(page).to have_current_path("/intake/search")
@@ -173,7 +176,7 @@ RSpec.feature "Intake" do
       end
       safe_click ".cf-submit.usa-button"
 
-      fill_in "Search small", with: "12341234"
+      fill_in search_bar_title, with: "12341234"
       click_on "Search"
 
       expect(page).to have_current_path("/intake/search")

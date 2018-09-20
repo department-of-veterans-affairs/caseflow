@@ -66,6 +66,9 @@ RSpec.feature "Higher-Level Review" do
     )
   end
 
+  let(:search_bar_title) { "Enter the Veteran's ID" }
+  let(:search_page_title) { "Search for Veteran ID" }
+
   it "Creates an end product and contentions for it" do
     # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
@@ -93,9 +96,9 @@ RSpec.feature "Higher-Level Review" do
 
     safe_click ".cf-submit.usa-button"
 
-    expect(page).to have_content("Higher-Level Review (VA Form 20-0988)")
+    expect(page).to have_content(search_page_title)
 
-    fill_in "Search small", with: "12341234"
+    fill_in search_bar_title, with: "12341234"
 
     click_on "Search"
 
@@ -351,7 +354,7 @@ RSpec.feature "Higher-Level Review" do
 
     safe_click ".cf-submit.usa-button"
 
-    fill_in "Search small", with: "12341234"
+    fill_in search_bar_title, with: "12341234"
 
     click_on "Search"
 

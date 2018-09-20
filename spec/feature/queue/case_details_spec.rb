@@ -261,10 +261,10 @@ RSpec.feature "Case details" do
         )
       )
     end
-    let!(:colocated_action) do
+    let!(:on_hold_task) do
       FactoryBot.create(
         :colocated_task,
-        appeal: appeal,
+        :on_hold,
         assigned_to: colocated_user,
         assigned_by: attorney_user
       )
@@ -282,14 +282,17 @@ RSpec.feature "Case details" do
     scenario "displays task information" do
       visit "/queue"
 
-      vet_name = colocated_action.appeal.veteran_full_name
-      assigner_name = colocated_action.assigned_by_display_name
+      vet_name = on_hold_task.appeal.veteran_full_name
+      assigner_name = on_hold_task.assigned_by_display_name
 
+      click_on "On hold (1)"
       click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
 
-      expect(page).to have_content("TASK #{Constants::CO_LOCATED_ADMIN_ACTIONS[colocated_action.action]}")
-      expect(page).to have_content("TASK INSTRUCTIONS #{colocated_action.instructions}")
+      expect(page).to have_content("TASK #{Constants::CO_LOCATED_ADMIN_ACTIONS[on_hold_task.action]}")
+      expect(page).to have_content("TASK INSTRUCTIONS #{on_hold_task.instructions[0]}")
       expect(page).to have_content("#{assigner_name.first[0]}. #{assigner_name.last}")
+
+      expect(Task.find(on_hold_task.id).status).to eq("on_hold")
     end
   end
 end
