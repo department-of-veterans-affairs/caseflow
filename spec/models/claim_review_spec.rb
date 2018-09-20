@@ -342,7 +342,10 @@ describe ClaimReview do
     end
 
     context "on a higher level review" do
-      let(:issues) { [rating_request_issue, second_rating_request_issue, non_rating_request_issue] }
+      let(:issues) do
+        [rating_request_issue, second_rating_request_issue,
+         non_rating_request_issue, second_non_rating_request_issue]
+      end
 
       let(:rating_contention) do
         Generators::Contention.build(
@@ -469,7 +472,7 @@ describe ClaimReview do
 
             # make sure that that issues which come back without dta errors are not created
             not_found_issue = RequestIssue.find_by(
-              review_request_id: supplemental_claim_id,
+              review_request_id: supplemental_claim.id,
               parent_request_issue_id: second_non_rating_request_issue.id
             )
 
