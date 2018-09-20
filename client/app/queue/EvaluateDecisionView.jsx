@@ -126,8 +126,7 @@ class EvaluateDecisionView extends React.PureComponent {
       appeal,
       decision,
       userRole,
-      appealId,
-      feedbackUrl
+      appealId
     } = this.props;
     const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, {
       location: 'bva_dispatch',
@@ -298,8 +297,7 @@ const mapStateToProps = (state, ownProps) => ({
   task: tasksForAppealAssignedToUserSelector(state, ownProps)[0],
   decision: state.queue.stagedChanges.taskDecision,
   userRole: state.ui.userRole,
-  error: state.ui.messages.error,
-  feedbackUrl: 'https://google.com'
+  error: state.ui.messages.error
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
