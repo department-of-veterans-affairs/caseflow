@@ -67,7 +67,7 @@ export type Task = {
   placedOnHoldAt?: ?string,
   onHoldDuration?: ?number,
   previousTaskAssignedOn: ?string,
-  instructions? :string,
+  instructions?: Array<string>,
   parentId?: number,
   decisionPreparedBy: ?{
     firstName: string,

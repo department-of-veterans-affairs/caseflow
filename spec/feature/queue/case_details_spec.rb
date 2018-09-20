@@ -289,7 +289,7 @@ RSpec.feature "Case details" do
       click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
 
       expect(page).to have_content("TASK #{Constants::CO_LOCATED_ADMIN_ACTIONS[on_hold_task.action]}")
-      expect(page).to have_content("TASK INSTRUCTIONS #{on_hold_task.instructions}")
+      expect(page).to have_content("TASK INSTRUCTIONS #{on_hold_task.instructions[0]}")
       expect(page).to have_content("#{assigner_name.first[0]}. #{assigner_name.last}")
 
       expect(Task.find(on_hold_task.id).status).to eq("on_hold")
