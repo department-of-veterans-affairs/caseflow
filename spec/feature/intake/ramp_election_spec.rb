@@ -69,6 +69,9 @@ RSpec.feature "RAMP Election Intake" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
+  let(:search_bar_title) { "Enter the Veteran's ID" }
+  let(:search_page_title) { "Search for Veteran ID" }
+
   scenario "Search for a veteran with an no active appeals" do
     create(:ramp_election, veteran_file_number: "77776666", notice_date: 5.days.ago)
 
@@ -79,7 +82,7 @@ RSpec.feature "RAMP Election Intake" do
     end
     safe_click ".cf-submit.usa-button"
 
-    fill_in "Search small", with: "77776666"
+    fill_in search_bar_title, with: "77776666"
     click_on "Search"
 
     expect(page).to have_current_path("/intake/search")
@@ -96,7 +99,7 @@ RSpec.feature "RAMP Election Intake" do
     end
     safe_click ".cf-submit.usa-button"
 
-    fill_in "Search small", with: "77778888"
+    fill_in search_bar_title, with: "77778888"
     click_on "Search"
 
     expect(page).to have_current_path("/intake/search")
@@ -116,7 +119,7 @@ RSpec.feature "RAMP Election Intake" do
       veteran_file_number: "43214321"
     ).start!
 
-    fill_in "Search small", with: "12341234"
+    fill_in search_bar_title, with: "12341234"
     click_on "Search"
 
     expect(page).to have_current_path("/intake/review_request")
@@ -137,7 +140,7 @@ RSpec.feature "RAMP Election Intake" do
     end
     safe_click ".cf-submit.usa-button"
 
-    fill_in "Search small", with: "12341234"
+    fill_in search_bar_title, with: "12341234"
     click_on "Search"
 
     expect(page).to have_current_path("/intake/review_request")
