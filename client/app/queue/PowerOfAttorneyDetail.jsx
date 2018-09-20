@@ -27,7 +27,7 @@ export class PowerOfAttorneyDetail extends React.PureComponent {
 
     if (!powerOfAttorney) {
       if (loading) {
-        return <React.Fragment>COPY.CASE_DETAILS_LOADING</React.Fragment>;
+        return <React.Fragment>{COPY.CASE_DETAILS_LOADING}</React.Fragment>;
       }
       if (error) {
         return <React.Fragment>
@@ -39,7 +39,7 @@ export class PowerOfAttorneyDetail extends React.PureComponent {
     }
 
     return <React.Fragment>
-      <p><strong>Representative:</strong> {powerOfAttorney.representative_name}</p>
+      <p><strong>{powerOfAttorney.representative_type}:</strong> {powerOfAttorney.representative_name}</p>
       {powerOfAttorney.representative_address && 
         <p><strong>Address:</strong> <Address address={powerOfAttorney.representative_address} /></p>}
       <p><em>{COPY.CASE_DETAILS_INCORRECT_POA}</em></p>
