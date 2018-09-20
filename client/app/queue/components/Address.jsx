@@ -6,15 +6,16 @@ import type {
   Address as AddressType
 } from '../types/models';
 
-const addressIndentStyling = (secondLine) => css({
-  marginLeft: secondLine ? '7.5em' : 0
+const addressIndentStyling = css({
+  display: 'inline-block',
+  verticalAlign: 'top'
 });
 
 type Props = {|
   address: AddressType
 |};
 
-export class Address extends React.PureComponent<Props> {
+export default class Address extends React.PureComponent<Props> {
   render = () => {
     const {
       address_line_1: addressLine1,
@@ -26,11 +27,9 @@ export class Address extends React.PureComponent<Props> {
     } = this.props.address;
     const streetAddress = addressLine2 ? `${addressLine1} ${addressLine2}` : addressLine1;
 
-    return <React.Fragment>
+    return <span {...addressIndentStyling}>
       {streetAddress && <React.Fragment><span>{streetAddress},</span><br /></React.Fragment>}
-      <span {...addressIndentStyling(streetAddress)}>{city}, {state} {zip} {country === 'USA' ? '' : country}</span>
-    </React.Fragment>;
+      <span>{city}, {state} {zip} {country === 'USA' ? '' : country}</span>
+    </span>;
   };
 }
-
-export default Address;

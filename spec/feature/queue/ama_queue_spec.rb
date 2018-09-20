@@ -113,22 +113,18 @@ RSpec.feature "AmaQueue" do
 
       before do
         allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id).and_return(
-          {
-            address_line_1: "Veteran Address",
-            city: "Washington",
-            state: "DC",
-            zip: "20001"
-          }
+          address_line_1: "Veteran Address",
+          city: "Washington",
+          state: "DC",
+          zip: "20001"
         )
         allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id)
           .with(participant_id).and_return(
-          {
             address_line_1: poa_address,
             city: "Washington",
             state: "DC",
             zip: "20001"
-          }
-        )
+          )
       end
 
       scenario "veteran is the appellant" do
@@ -157,7 +153,6 @@ RSpec.feature "AmaQueue" do
 
         expect(page).not_to have_selector("text", id: "NEW")
       end
-
 
       context "when there is an error loading addresses" do
         before do
