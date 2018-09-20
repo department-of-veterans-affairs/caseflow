@@ -1,6 +1,9 @@
 require "rails_helper"
 
 RSpec.feature "Task queue" do
+  before { FeatureToggle.enable!(:test_facols) }
+  after { FeatureToggle.disable!(:test_facols) }
+
   let(:attorney_user) { FactoryBot.create(:user) }
   let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 
@@ -45,18 +48,11 @@ RSpec.feature "Task queue" do
 
   let(:vacols_tasks) { QueueRepository.tasks_for_user(attorney_user.css_id) }
 
-  before do
-    FeatureToggle.enable!(:test_facols)
-
-    User.authenticate!(user: attorney_user)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   context "attorney user with assigned tasks" do
-    before { visit "/queue" }
+    before do
+      User.authenticate!(user: attorney_user)
+      visit "/queue"
+    end
 
     it "displays a table with a row for each case assigned to the attorney" do
       expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
@@ -75,6 +71,24 @@ RSpec.feature "Task queue" do
     it "displays special text indicating an assigned case has paper documents" do
       expect(page).to have_content("#{paper_appeal.veteran_full_name} (#{paper_appeal.vbms_id.delete('S')})")
       expect(page).to have_content(COPY::IS_PAPER_CASE)
+    end
+  end
+
+  context "VSO employee" do
+    let(:vso) do
+      v = FactoryBot.create(:vso)
+      Vso.find(v.id)
+    end
+    let(:vso_employee) { FactoryBot.create(:user, :vso_role) }
+    before do
+      FeatureToggle.enable!(vso.feature.to_sym, users: [vso_employee.css_id])
+      User.authenticate!(user: vso_employee)
+      allow_any_instance_of(Vso).to receive(:user_has_access?).and_return(true)
+      visit "/queue"
+    end
+
+    it "should redirect to VSO's organizational task queue" do
+      expect(page.current_path).to eq(vso.path)
     end
   end
 end
