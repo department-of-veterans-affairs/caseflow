@@ -27,28 +27,17 @@ class Hearings::HearingDayController < HearingScheduleController
   def index_with_hearings
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    video_and_co, _travel_board = HearingDay.load_days(Time.zone.today.beginning_of_day,
+    video_and_co, _travel_board = HearingDay.load_days(Time.zone.today.beginning_of_day - 365.days,
                                                        Time.zone.today.beginning_of_day + 365.days,
                                                        regional_office)
 
     formatted_slots = HearingDayRepository.fetch_hearing_days_slots(video_and_co)
 
     formatted_slots.each do |hearing_day|
-      hearing_day[:hearings] = VACOLS::CaseHearing.last(5).each_with_object([]) do |hearing, result|
-        result << HearingDayRepository.to_canonical_hash(hearing)
-      end
+      hearing_day[:hearings] = VACOLS::CaseHearing.last(5)
     end
 
-    respond_to do |format|
-      format.html do
-        render "hearing_schedule/index"
-      end
-      format.json do
-        render json: {
-          hearing_days: json_hearings(formatted_slots)
-        }
-      end
-    end
+    render json: { hearing_days: json_hearings(formatted_slots) }
   end
 
   # Create a hearing schedule day

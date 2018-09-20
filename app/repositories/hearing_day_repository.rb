@@ -37,7 +37,7 @@ class HearingDayRepository
         result << to_canonical_hash(hearing)
       end
       travel_board = []
-      [video_and_co, travel_board]
+      [video_and_co.uniq { |hearing_day| hearing_day[:hearing_date] && hearing_day[:room_info] }, travel_board]
     end
 
     def load_days_for_regional_office(regional_office, start_date, end_date)
@@ -78,8 +78,8 @@ class HearingDayRepository
         slots_from_vacols = slots_based_on_type(staff: record,
                                                 type: hearing_day[:hearing_type],
                                                 date: hearing_day[:hearing_date])
-        slots_from_timezone = HearingDocket.SLOTS_BY_TIMEZONE[HearingMapper.timezone(hearing_day[:regional_office])]
-        slots = slots_from_vacols || slots_from_timezone
+        slots = slots_from_vacols || HearingDocket::SLOTS_BY_TIMEZONE[
+            HearingMapper.timezone(hearing_day[:regional_office])]
         hearing_day[:total_slots] = slots
       end
     end
