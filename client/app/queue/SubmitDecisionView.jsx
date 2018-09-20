@@ -37,10 +37,6 @@ import {
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import COPY from '../../COPY.json';
 
-const radioFieldStyling = css(marginBottom(0), marginTop(2), {
-  '& .question-label': marginBottom(0)
-});
-
 import type {
   Task,
   Appeal,
@@ -172,7 +168,6 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         value={decisionOpts.work_product}
         vertical
         options={OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES}
-        styling={radioFieldStyling}
         errorMessage={(highlightFormItems && !decisionOpts.work_product) ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
       />}
       <Checkbox

@@ -41,7 +41,7 @@ export default class RadioField extends React.Component {
       errorMessage ? 'usa-input-error' : ''
     );
 
-    let labelClass = 'question-label';
+    let labelClass = '';
 
     if (hideLabel) {
       labelClass += ' hidden-field';
