@@ -42,7 +42,7 @@ class SelectIssues extends React.PureComponent {
 class SaveButtonUnconnected extends React.PureComponent {
   handleClick = () => {
     this.props.requestIssuesUpdate(this.props.claimId, this.props.formType, {
-      ratings: this.props.ratings,
+      ratings: this.props.ratings
     })
     .then(() => this.props.history.push('/'));
   }
