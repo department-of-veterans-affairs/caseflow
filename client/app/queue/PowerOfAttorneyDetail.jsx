@@ -1,4 +1,5 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -6,8 +7,24 @@ import COPY from '../../COPY.json';
 import { getAppealValue } from './QueueActions';
 import { appealWithDetailSelector } from './selectors';
 import Address from './components/Address';
+import type {
+  PowerOfAttorney
+} from './types/models';
 
-export class PowerOfAttorneyDetail extends React.PureComponent {
+type Params = {|
+  appealId: string
+|};
+
+type Props = Params & {|
+  // state
+  powerOfAttorney: PowerOfAttorney,
+  loading: boolean,
+  error: Object,
+  // dispatch
+  getAppealValue: typeof getAppealValue
+|};
+
+export class PowerOfAttorneyDetail extends React.PureComponent<Props> {
   componentDidMount = () => {
     if (!this.props.powerOfAttorney) {
       this.props.getAppealValue(
@@ -40,7 +57,7 @@ export class PowerOfAttorneyDetail extends React.PureComponent {
 
     return <React.Fragment>
       <p><strong>{powerOfAttorney.representative_type}:</strong> {powerOfAttorney.representative_name}</p>
-      {powerOfAttorney.representative_address && 
+      {powerOfAttorney.representative_address &&
         <p><strong>Address:</strong> <Address address={powerOfAttorney.representative_address} /></p>}
       <p><em>{COPY.CASE_DETAILS_INCORRECT_POA}</em></p>
     </React.Fragment>;
@@ -61,4 +78,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   getAppealValue
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(PowerOfAttorneyDetail);
+export default (connect(mapStateToProps, mapDispatchToProps)(PowerOfAttorneyDetail): React.ComponentType<Params>);

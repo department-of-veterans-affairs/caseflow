@@ -1,11 +1,20 @@
+// @flow
 import * as React from 'react';
 import { css } from 'glamor';
+
+import type {
+  Address as AddressType
+} from '../types/models';
 
 const addressIndentStyling = (secondLine) => css({
   marginLeft: secondLine ? '7.5em' : 0
 });
 
-export class Address extends React.PureComponent {
+type Props = {|
+  address: AddressType
+|};
+
+export class Address extends React.PureComponent<Props> {
   render = () => {
     const {
       address_line_1: addressLine1,
