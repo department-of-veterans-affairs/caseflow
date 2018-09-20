@@ -158,7 +158,42 @@ class EndProductEstablishment < ApplicationRecord
     !EndProduct::INACTIVE_STATUSES.include?(synced_status)
   end
 
+  def create_associated_rated_issues!
+    request_issues_to_associate = unassociated_rated_request_issues
+
+    return if code != source.class.rated_issue_code
+    return if request_issues_to_associate.empty?
+
+    VBMSService.associate_rated_issues!(
+      claim_id: reference_id,
+      rated_issue_contention_map: rated_issue_contention_map(request_issues_to_associate)
+    )
+
+    RequestIssue.where(id: request_issues_to_associate.map(&:id)).update_all(
+      rating_issue_associated_at: Time.zone.now
+    )
+  end
+
   private
+
+  def request_issues
+    source.request_issues.select { |ri| ri.end_product_establishment == self }
+  end
+
+  def rated_request_issues
+    request_issues.select(&:rated?)
+  end
+
+  def unassociated_rated_request_issues
+    rated_request_issues.select { |ri| ri.rating_issue_associated_at.nil? }
+  end
+
+  def rated_issue_contention_map(request_issues_to_associate)
+    request_issues_to_associate.inject({}) do |contention_map, issue|
+      contention_map[issue.rating_issue_reference_id] = issue.contention_reference_id
+      contention_map
+    end
+  end
 
   def invalid_modifiers
     @invalid_modifiers || []

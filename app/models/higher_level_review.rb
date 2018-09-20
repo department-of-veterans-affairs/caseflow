@@ -106,8 +106,4 @@ class HigherLevelReview < ClaimReview
       station: "397" # AMC
     )
   end
-
-  def issue_code(rated)
-    rated ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE
-  end
 end

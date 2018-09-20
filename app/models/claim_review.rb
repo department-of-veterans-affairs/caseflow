@@ -6,6 +6,16 @@ class ClaimReview < AmaReview
 
   self.abstract_class = true
 
+  class << self
+    def rated_issue_code
+      self::END_PRODUCT_RATING_CODE
+    end
+
+    def nonrated_issue_code
+      self::END_PRODUCT_NONRATING_CODE
+    end
+  end
+
   # Save issues and assign it the appropriate end product establishment.
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
@@ -54,12 +64,8 @@ class ClaimReview < AmaReview
   private
 
   def end_product_establishment_for_issue(issue)
-    ep_code = issue_code(issue.rated?)
+    ep_code = issue.rated? ? self.class.rated_issue_code : self.class.nonrated_issue_code
     end_product_establishments.find_by(code: ep_code) || new_end_product_establishment(ep_code)
-  end
-
-  def issue_code(_rated)
-    fail Caseflow::Error::MustImplementInSubclass
   end
 
   def create_contentions_for_end_product_establishment(end_product_establishment)
@@ -69,33 +75,7 @@ class ClaimReview < AmaReview
     )
 
     end_product_establishment.create_contentions!(request_issues_without_contentions)
-    create_associated_rated_issues!(end_product_establishment)
-  end
-
-  def create_associated_rated_issues!(end_product_establishment)
-    request_issues_to_associate = request_issues.rated.where(
-      end_product_establishment: end_product_establishment,
-      rating_issue_associated_at: nil
-    )
-
-    return if end_product_establishment.code != issue_code(true)
-    return if request_issues_to_associate.empty?
-
-    VBMSService.associate_rated_issues!(
-      claim_id: end_product_establishment.reference_id,
-      rated_issue_contention_map: rated_issue_contention_map(request_issues_to_associate)
-    )
-
-    RequestIssue.where(id: request_issues_to_associate.map(&:id)).update_all(
-      rating_issue_associated_at: Time.zone.now
-    )
-  end
-
-  def rated_issue_contention_map(request_issues_to_associate)
-    request_issues_to_associate.inject({}) do |contention_map, issue|
-      contention_map[issue.rating_issue_reference_id] = issue.contention_reference_id
-      contention_map
-    end
+    end_product_establishment.create_associated_rated_issues!
   end
 
   def sync_dispositions(reference_id)
