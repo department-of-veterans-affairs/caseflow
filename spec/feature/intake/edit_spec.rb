@@ -130,6 +130,7 @@ RSpec.feature "Edit issues" do
         }
       )
       expect(Fakes::VBMSService).to have_received(:remove_contention!).once
+    end
 
     feature "cancel edits" do
       def click_cancel(visit_page)
