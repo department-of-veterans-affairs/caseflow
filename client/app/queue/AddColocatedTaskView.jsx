@@ -26,6 +26,7 @@ import {
 } from './constants';
 import COPY from '../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
+import DispatchSuccessDetail from './components/DispatchSuccessDetail';
 
 import type { Appeal, Task } from './types/models';
 import type { UiStateMessage } from './types/state';
@@ -89,7 +90,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
     };
     const successMsg = {
       title: sprintf(COPY.ADD_COLOCATED_TASK_CONFIRMATION_TITLE, CO_LOCATED_ADMIN_ACTIONS[this.state.action]),
-      detail: COPY.ADD_COLOCATED_TASK_CONFIRMATION_DETAIL
+      detail: <DispatchSuccessDetail task={tasks[0]} />
     };
 
     this.props.requestSave('/tasks', payload, successMsg).
