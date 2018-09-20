@@ -13,15 +13,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
 
   attribute :appellant_address do
     if object.claimants && object.claimants.any?
-      primary_appellant = object.claimants[0]
-      {
-        address_line_1: primary_appellant.address_line_1,
-        address_line_2: primary_appellant.address_line_2,
-        city: primary_appellant.city,
-        state: primary_appellant.state,
-        zip: primary_appellant.zip,
-        country: primary_appellant.country
-      }
+      object.claimants[0].address
     end
   end
 
