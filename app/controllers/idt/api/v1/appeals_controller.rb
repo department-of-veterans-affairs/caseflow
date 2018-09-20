@@ -4,8 +4,11 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   rescue_from StandardError do |e|
     Raven.capture_exception(e)
-    return render(e.serialize_response) if e.class.method_defined?(:serialize_response)
-    render json: { message: "Unexpected error" }, status: 500
+    if e.class.method_defined?(:serialize_response)
+      render(e.serialize_response) 
+    else
+      render json: { message: "Unexpected error" }, status: 500
+    end
   end
 
   def list
