@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 // @flow
 import { associateTasksWithAppeals,
   prepareAllTasksForStore,
