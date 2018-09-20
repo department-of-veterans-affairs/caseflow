@@ -14,10 +14,12 @@ export default class AssignHearings extends React.Component {
       <ul className="usa-sidenav-list">
         {Object.values(this.props.upcomingHearingDays).slice(0, 9).
           map((hearingDay) => {
+            const availableSlots = hearingDay.totalSlots - Object.keys(hearingDay.hearings).length;
+
             return <li key={hearingDay.id} >
               <Link
                 to="#">
-                {`${formatDateStr(hearingDay.hearingDate)} ${hearingDay.roomInfo}`}
+                {`${formatDateStr(hearingDay.hearingDate)} ${hearingDay.roomInfo} (${availableSlots} slots)`}
               </Link>
             </li>;
           })}

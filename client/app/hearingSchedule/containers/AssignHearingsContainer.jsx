@@ -29,7 +29,8 @@ class AssignHearingsContainer extends React.PureComponent {
       return;
     }
 
-    const requestUrl = `/hearings/schedule/assign/hearing_days?regional_office=${this.props.selectedRegionalOffice.value}`;
+    const regionalOfficeKey = this.props.selectedRegionalOffice.value;
+    const requestUrl = `/hearings/schedule/assign/hearing_days?regional_office=${regionalOfficeKey}`;
 
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
