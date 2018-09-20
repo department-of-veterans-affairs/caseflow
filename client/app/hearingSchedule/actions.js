@@ -1,4 +1,6 @@
 import { ACTIONS } from './constants';
+import * as Constants from "../reader/DocumentList/actionTypes";
+import {CATEGORIES} from "../reader/analytics";
 
 export const onReceivePastUploads = (pastUploads) => ({
   type: ACTIONS.RECEIVE_PAST_UPLOADS,
@@ -156,4 +158,11 @@ export const onConfirmAssignmentsUpload = () => ({
 
 export const unsetSuccessMessage = () => ({
   type: ACTIONS.UNSET_SUCCESS_MESSAGE
+});
+
+export const toggleDropdownFilterVisibility = (filterName) => ({
+  type: ACTIONS.TOGGLE_FILTER_DROPDOWN,
+  payload: {
+    filterName
+  },
 });

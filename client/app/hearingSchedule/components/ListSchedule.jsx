@@ -11,12 +11,15 @@ import PropTypes from 'prop-types';
 import BasicDateRangeSelector from '../../components/BasicDateRangeSelector';
 import InlineForm from '../../components/InlineForm';
 import { CSVLink } from 'react-csv';
+import { toggleDropdownFilterVisibility } from '../actions'
+import {bindActionCreators} from "redux";
+import connect from "react-redux/es/connect/connect";
 
 const hearingSchedStyling = css({
   marginTop: '70px'
 });
 
-export default class ListSchedule extends React.Component {
+class ListSchedule extends React.Component {
 
   render() {
     const {
@@ -45,11 +48,10 @@ export default class ListSchedule extends React.Component {
         align: 'left',
         valueName: 'hearingType',
         label: 'Filter by type',
-        getFilterIconRef: this.getTypeFilterIconRef,
         getFilterValues: options,
-        isDropdownFilterOpen: false,
+        isDropdownFilterOpen: this.props.filterDropdownIsOpen,
         anyFiltersAreSet: false,
-        toggleDropdownFilterVisiblity: () => { return true }
+        toggleDropdownFilterVisiblity: this.props.toggleDropdownFilterVisibility
       },
       {
         header: 'Regional Office',
@@ -91,7 +93,12 @@ export default class ListSchedule extends React.Component {
 
     return <AppSegment filledBackground>
       <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
-      <span className="cf-push-right"><Link button="primary" to="/schedule/build">Build schedule</Link></span>
+      {this.props.userRoleBuild &&
+        <span className="cf-push-right"><Link button="primary" to="/schedule/build">Build schedule</Link></span>
+      }
+      {this.props.userRoleAssign &&
+      < span className="cf-push-right"><Link button="primary" to="/schedule/assign">Assign hearings</Link></span>
+      }
       <div className="cf-help-divider" {...hearingSchedStyling} ></div>
       <div className="cf-push-left">
         <InlineForm>
@@ -153,5 +160,16 @@ ListSchedule.propTypes = {
   endDateValue: PropTypes.string,
   startDateChange: PropTypes.func,
   endDateChange: PropTypes.func,
-  onApply: PropTypes.func
+  onApply: PropTypes.func,
+  userRole: PropTypes.string
 };
+
+const mapStateToProps = (state) => ({
+  filterDropdownIsOpen: state.filterDropdownIsOpen
+});
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  toggleDropdownFilterVisibility,
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(ListSchedule);

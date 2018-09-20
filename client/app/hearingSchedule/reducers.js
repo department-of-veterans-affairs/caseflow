@@ -1,5 +1,7 @@
 import { ACTIONS } from './constants';
 import { update } from '../util/ReducerUtil';
+import * as Constants from "../reader/DocumentList/actionTypes";
+import _ from "lodash";
 
 export const initialState = {};
 
@@ -173,6 +175,10 @@ const reducers = (state = initialState, action = {}) => {
         'schedulePeriod',
         'vacolsUpload'
       ]
+    });
+  case ACTIONS.TOGGLE_FILTER_DROPDOWN:
+    return update(state, {
+      $toggle: ['filterDropdownIsOpen']
     });
   default:
     return state;

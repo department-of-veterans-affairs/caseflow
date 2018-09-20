@@ -13,8 +13,24 @@ import ReviewAssignmentsContainer from './containers/ReviewAssignmentsContainer'
 import ListScheduleContainer from './containers/ListScheduleContainer';
 import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import ScrollToTop from '../components/ScrollToTop';
+import QueueLoadingScreen from "../queue/QueueLoadingScreen";
+import SearchBar from "../queue/SearchBar";
 
 class HearingScheduleApp extends React.PureComponent {
+
+  propsForListScheduleContainer = () => {
+    const {
+      userRoleAssign,
+      userRoleBuild
+    } = this.props;
+
+    return {
+      userRoleAssign,
+      userRoleBuild
+    };
+  }
+
+  routeForListScheduleContainer = () => <ListScheduleContainer {...this.propsForListScheduleContainer()}/>;
 
   render = () => <BrowserRouter basename="/hearings">
     <NavigationBar
@@ -34,7 +50,7 @@ class HearingScheduleApp extends React.PureComponent {
             exact
             path="/schedule"
             title="Scheduled Hearings"
-            component={ListScheduleContainer}
+            render={this.routeForListScheduleContainer}
           />
           <PageRoute
             exact
@@ -78,6 +94,8 @@ class HearingScheduleApp extends React.PureComponent {
 
 HearingScheduleApp.propTypes = {
   userDisplayName: PropTypes.string,
+  userRoleAssign: PropTypes.bool,
+  userRoleBuild: PropTypes.bool,
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
   dropdownUrls: PropTypes.array
