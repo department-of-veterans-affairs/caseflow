@@ -412,7 +412,7 @@ describe ClaimReview do
           follow_up_issue
         end
 
-        def verify_vbms_called(end_product, issues)
+        def verify_establish_claim(end_product)
           # claim, contentions and associated issues should have been created
           expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
             claim_hash: {
@@ -431,10 +431,12 @@ describe ClaimReview do
             },
             veteran_hash: veteran.to_vbms_hash
           )
+        end
 
+        def verify_create_contents(reference_id, issues)
           expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
             veteran_file_number: veteran.file_number,
-            claim_id: end_product[:reference_id],
+            claim_id: reference_id,
             contention_descriptions: issues.map(&:description),
             special_issues: []
           )
@@ -478,12 +480,14 @@ describe ClaimReview do
               second_rating_request_issue
             )
 
-            verify_vbms_called(
-              {
-                code: "040HDER",
-                label: "Supplemental Claim Rating DTA",
-                reference_id: supplemental_claim_end_product_establishment.reference_id
-              },
+            verify_establish_claim(
+              code: "040HDER",
+              label: "Supplemental Claim Rating DTA",
+              reference_id: supplemental_claim_end_product_establishment.reference_id
+            )
+
+            verify_create_contents(
+              supplemental_claim_end_product_establishment.reference_id,
               [second_rating_request_issue, rating_request_issue]
             )
 
@@ -535,12 +539,14 @@ describe ClaimReview do
 
             expect(not_found_issue).to be_nil
 
-            verify_vbms_called(
-              {
-                code: "040HDENR",
-                label: "Supplemental Claim Nonrating DTA",
-                reference_id: supplemental_claim_end_product_establishment.reference_id
-              },
+            verify_establish_claim(
+              code: "040HDENR",
+              label: "Supplemental Claim Nonrating DTA",
+              reference_id: supplemental_claim_end_product_establishment.reference_id
+            )
+
+            verify_create_contents(
+              supplemental_claim_end_product_establishment.reference_id,
               [non_rating_request_issue]
             )
           end

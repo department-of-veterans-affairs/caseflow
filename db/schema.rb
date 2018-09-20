@@ -169,7 +169,6 @@ ActiveRecord::Schema.define(version: 20180919213618) do
     t.string "participant_id", null: false
     t.string "payee_code"
     t.date "date_of_birth"
-    t.index ["date_of_birth"], name: "index_claimants_on_date_of_birth"
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
@@ -261,8 +260,8 @@ ActiveRecord::Schema.define(version: 20180919213618) do
     t.string "modifier"
     t.string "station"
     t.datetime "last_synced_at"
-    t.string "payee_code"
     t.string "claimant_participant_id"
+    t.string "payee_code"
     t.datetime "committed_at"
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
