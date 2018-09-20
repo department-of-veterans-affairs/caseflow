@@ -179,8 +179,10 @@ describe ClaimReview do
         end
 
         context "when some of the contentions have already been saved" do
+          let(:one_day_ago) { 1.day.ago }
+
           before do
-            rating_request_issue.update!(contention_reference_id: "CONREFID")
+            rating_request_issue.update!(contention_reference_id: "CONREFID", rating_issue_associated_at: one_day_ago)
           end
 
           it "doesn't create them in VBMS" do
@@ -200,15 +202,19 @@ describe ClaimReview do
               }
             )
 
-            expect(rating_request_issue.rating_issue_associated_at).to be_nil
+            expect(rating_request_issue.rating_issue_associated_at).to eq(one_day_ago)
             expect(second_rating_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
           end
         end
 
         context "when all the contentions have already been saved" do
           before do
-            rating_request_issue.update!(contention_reference_id: "CONREFID")
-            second_rating_request_issue.update!(contention_reference_id: "CONREFID")
+            rating_request_issue.update!(
+              contention_reference_id: "CONREFID", rating_issue_associated_at: Time.zone.now
+            )
+            second_rating_request_issue.update!(
+              contention_reference_id: "CONREFID", rating_issue_associated_at: Time.zone.now
+            )
           end
 
           it "doesn't create them in VBMS" do
@@ -222,7 +228,6 @@ describe ClaimReview do
       end
 
       context "when called multiple times" do
-
         it "remains idempotent despite multiple VBMS failures" do
           raise_error_on_end_product_establishment_establish_claim
 
