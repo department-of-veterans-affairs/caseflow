@@ -111,6 +111,11 @@
   "JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you need to make any changes, please manage this case in DAS.",
   "JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE": "Thank you for reviewing %s's decision.",
 
+  "CHECKOUT_DISPATCH_SUCCESS_DETAIL_LEGACY": "If you need to make any changes, please manage this case in DAS.",
+  "CHECKOUT_DISPATCH_SUCCESS_DETAIL_AMA_BEFORE_LINK": "If you need to make any changes, please ",
+  "CHECKOUT_DISPATCH_SUCCESS_DETAIL_AMA_LINK": "submit feedback",
+  "CHECKOUT_DISPATCH_SUCCESS_DETAIL_AMA_AFTER_LINK": ".",
+
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_HEADER": "Build Schedule",
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_DESCRIPTION": "To build the schedule, please download one of the templates and fill it with the appropriate data. Then, click the \"Upload files\" button to import your completed .xlsx file.",
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_DOWNLOAD_LINK": "Download templates",
