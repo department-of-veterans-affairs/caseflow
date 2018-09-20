@@ -76,10 +76,9 @@ jobs:
                 env
 
         - run:
-            name: Bundle install and update rake
+            name: Bundle install
             command: |
                 sudo env LD_LIBRARY_PATH=$LD_LIBRARY_PATH bundle install --path vendor/bundle
-                bundle update rake
 
         - save_cache:
             key: vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
