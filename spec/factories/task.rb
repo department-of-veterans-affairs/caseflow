@@ -42,13 +42,13 @@ FactoryBot.define do
     factory :colocated_task do
       type "ColocatedTask"
       action { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample }
-      instructions "poa is missing"
+      instructions ["poa is missing"]
     end
 
     factory :ama_colocated_task do
       type "ColocatedTask"
       action { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample }
-      instructions "poa is missing"
+      instructions ["poa is missing"]
       appeal_type "Appeal"
       appeal { create(:appeal) }
     end
