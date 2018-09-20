@@ -7,9 +7,9 @@ task :lint do
   puts "running scss-lint..."
   scss_result = ShellCommand.run("scss-lint --color")
 
-  opts = ENV["CI"] ? "" : "--auto-correct"
+  opts = ENV["CI"] ? "--parallel" : "--auto-correct"
   puts "running rubocop..."
-  rubocop_result = ShellCommand.run("rubocop #{opts} --color --parallel")
+  rubocop_result = ShellCommand.run("rubocop #{opts} --color")
 
   puts "\nrunning eslint..."
   eslint_cmd = ENV["CI"] ? "lint" : "lint:fix"

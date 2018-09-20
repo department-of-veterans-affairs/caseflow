@@ -64,6 +64,9 @@ RSpec.feature "Appeal Intake" do
     )
   end
 
+  let(:search_bar_title) { "Enter the Veteran's ID" }
+  let(:search_page_title) { "Search for Veteran ID" }
+
   it "Creates an appeal" do
     # Testing no relationships in Appeal and Veteran is claimant, tests two relationships in HRL and one in SC
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(nil)
@@ -76,9 +79,9 @@ RSpec.feature "Appeal Intake" do
 
     safe_click ".cf-submit.usa-button"
 
-    expect(page).to have_content("Notice of Disagreement (VA Form 10182)")
+    expect(page).to have_content(search_page_title)
 
-    fill_in "Search small", with: "22334455"
+    fill_in search_bar_title, with: "22334455"
 
     click_on "Search"
 

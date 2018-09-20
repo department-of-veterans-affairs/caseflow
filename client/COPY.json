@@ -54,7 +54,7 @@
   "ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you made a mistake, please email your judge to resolve the issue.",
   "ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE": "Please ask your judge to assign this case to you in DAS",
   "ATTORNEY_QUEUE_TABLE_TASK_NO_DOCUMENTS_READER_LINK": "View in Reader",
-  "ORGANIZATION_QUEUE_TABLE_TITLE": "%s Queue",
+  "ORGANIZATION_QUEUE_TABLE_TITLE": "%s cases",
   "TASKS_NEED_ASSIGNMENT_ERROR_TITLE": "Some cases need preliminary DAS assignments",
   "TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE": "Cases marked with exclamation points need to be assigned to you through DAS. Please contact your judge or senior counsel to create preliminary DAS assignments.",
   "JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE": "Cases to Assign",
@@ -110,6 +110,11 @@
   "JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE": "You have successfully submitted an OMO for %s.",
   "JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you need to make any changes, please manage this case in DAS.",
   "JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE": "Thank you for reviewing %s's decision.",
+
+  "CHECKOUT_DISPATCH_SUCCESS_DETAIL_LEGACY": "If you need to make any changes, please manage this case in DAS.",
+  "CHECKOUT_DISPATCH_SUCCESS_DETAIL_AMA_BEFORE_LINK": "If you need to make any changes, please ",
+  "CHECKOUT_DISPATCH_SUCCESS_DETAIL_AMA_LINK": "submit feedback",
+  "CHECKOUT_DISPATCH_SUCCESS_DETAIL_AMA_AFTER_LINK": ".",
 
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_HEADER": "Build Schedule",
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_DESCRIPTION": "To build the schedule, please download one of the templates and fill it with the appropriate data. Then, click the \"Upload files\" button to import your completed .xlsx file.",

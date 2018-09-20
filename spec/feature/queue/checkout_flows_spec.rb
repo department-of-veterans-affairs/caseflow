@@ -273,8 +273,7 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content(judge_user.full_name)
 
         click_on "Continue"
-        sleep 1
-        expect(page.current_path).to eq("/queue")
+        expect(page).to have_content("Cases not found")
 
         case_review = AttorneyCaseReview.all.first
         expect(case_review.note.length).to eq 350
@@ -635,7 +634,7 @@ RSpec.feature "Checkout flows" do
       )
       expect(colocated_action.reload.on_hold_duration).to eq hold_duration
       expect(colocated_action.status).to eq "on_hold"
-      expect(colocated_action.instructions).to eq instructions
+      expect(colocated_action.instructions[1]).to eq instructions
     end
 
     scenario "sends task to team" do
