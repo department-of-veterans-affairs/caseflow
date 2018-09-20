@@ -112,15 +112,15 @@ class HearingSchedule::AssignJudgesToHearingDays
     judge_id = @judges[css_id][:staff_info].sattyid
 
     problems = @judges[css_id][:non_availabilities].include?(hearing_date) ||
-               hearing_day_already_assigned?(current_hearing_day.hearing_pkseq) ||
+               hearing_day_already_assigned?(current_hearing_day.id) ||
                judge_already_assigned_on_date?(judge_id, hearing_date) ||
                (co_hearing_day?(current_hearing_day) && judge_already_assigned_to_co?(judge_id))
 
     !problems
   end
 
-  def hearing_day_already_assigned?(hearing_pkseq)
-    @assigned_hearing_days.any? { |day| day[:hearing_pkseq] == hearing_pkseq }
+  def hearing_day_already_assigned?(id)
+    @assigned_hearing_days.any? { |day| day[:id] == id }
   end
 
   def judge_already_assigned_on_date?(judge_id, date)
@@ -177,15 +177,9 @@ class HearingSchedule::AssignJudgesToHearingDays
     hearing_days = is_central_hearing ? co_hearing_days_by_date(date) : [day]
 
     hearing_days.map do |hearing_day|
-      HearingDayMapper.hearing_day_field_validations(
-        hearing_pkseq: hearing_day.hearing_pkseq,
-        hearing_type: get_hearing_type(is_central_hearing),
-        hearing_date: hearing_day.hearing_date,
-        room_info: hearing_day.room,
-        regional_office: is_central_hearing ? nil : hearing_day.folder_nr.split(" ")[1],
-        judge_id: @judges[css_id][:staff_info].sattyid,
-        judge_name: get_judge_name(css_id)
-      ).merge(css_id: css_id)
+      hearing_day.judge_id = @judges[css_id][:staff_info].sattyid
+      hearing_day.judge_name = get_judge_name(css_id)
+      hearing_day.to_h.merge(css_id: css_id)
     end
   end
 
@@ -228,20 +222,20 @@ class HearingSchedule::AssignJudgesToHearingDays
   end
 
   def co_hearing_day?(hearing_day)
-    hearing_day.folder_nr.nil?
+    hearing_day.hearing_type == "C"
   end
 
   def valid_co_day?(day)
-    co_hearing_day?(day) && day.hearing_date.to_date.wednesday? && day.room == CO_ROOM_NUM
+    co_hearing_day?(day) && day.hearing_date.wednesday? && day.room_info == CO_ROOM_NUM
   end
 
   def valid_ro_hearing_day?(day)
-    day.folder_nr && day.folder_nr.include?("VIDEO")
+    !day.regional_office.nil?
   end
 
   def filter_co_hearings(video_co_hearing_days)
     video_co_hearing_days.map do |hearing_day|
-      day = OpenStruct.new(hearing_day.attributes)
+      day = OpenStruct.new(hearing_day)
       day.hearing_date = day.hearing_date.to_date
 
       day if (valid_co_day?(day) || valid_ro_hearing_day?(day)) && !hearing_day_already_assigned(day)
@@ -249,11 +243,11 @@ class HearingSchedule::AssignJudgesToHearingDays
   end
 
   def hearing_day_already_assigned(hearing_day)
-    assigned = !hearing_day.board_member.nil?
+    assigned = !hearing_day.judge_id.nil?
 
     if assigned
       @judges.each do |css_id, judge|
-        if judge[:staff_info].sattyid == hearing_day.board_member
+        if judge[:staff_info].sattyid == hearing_day.judge_id
           @judges[css_id][:non_availabilities] << hearing_day.hearing_date
         end
       end
