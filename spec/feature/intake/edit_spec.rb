@@ -129,14 +129,7 @@ RSpec.feature "Edit issues" do
           new_request_issue.rating_issue_reference_id => new_request_issue.contention_reference_id
         }
       )
-      expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(
-        Generators::Contention.build(
-          id: "skipbayless",
-          claim_id: higher_level_review.end_product_claim_id,
-          text: "Left knee granted"
-        )
-      )
-    end
+      expect(Fakes::VBMSService).to have_received(:remove_contention!).once
 
     feature "cancel edits" do
       def click_cancel(visit_page)
@@ -247,13 +240,7 @@ RSpec.feature "Edit issues" do
           new_request_issue.rating_issue_reference_id => new_request_issue.contention_reference_id
         }
       )
-      expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(
-        Generators::Contention.build(
-          id: "skipbayless",
-          claim_id: supplemental_claim.end_product_claim_id,
-          text: "Left knee granted"
-        )
-      )
+      expect(Fakes::VBMSService).to have_received(:remove_contention!).once
     end
 
     feature "cancel edits" do
