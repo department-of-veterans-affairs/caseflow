@@ -13,7 +13,11 @@ class Idt::Api::V1::BaseController < ActionController::Base
   end
 
   def user
-    @user ||= User.find_by(css_id: css_id)
+    @user ||= begin
+      user = User.find_by(css_id: css_id)
+      RequestStore.store[:current_user] = user
+      user
+    end
   end
 
   def file_number
