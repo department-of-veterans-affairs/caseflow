@@ -55,6 +55,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   end
   attribute :citation_number
   attribute :docket_number
+  attribute :docket_name
   attribute :number_of_issues
 
   attribute :issues do

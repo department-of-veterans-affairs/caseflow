@@ -3,9 +3,9 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   before_action :verify_access
 
   rescue_from StandardError do |e|
-    fail e unless e.class.method_defined?(:serialize_response)
     Raven.capture_exception(e)
-    render(e.serialize_response)
+    return render(e.serialize_response) if e.class.method_defined?(:serialize_response)
+    render json: { message: "Unexpected error" }, status: 500
   end
 
   def list
@@ -28,7 +28,6 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def appeals_assigned_to_user
     appeals = LegacyWorkQueue.tasks_with_appeals(user, "attorney")[1].select(&:active?)
-
     if feature_enabled?(:idt_ama_appeals)
       appeals += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold]).map(&:appeal)
     end
@@ -43,7 +42,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   def ama_appeal_details
     task = Task.where(assigned_to: user, appeal: appeal).where.not(status: [:completed, :on_hold]).last
     documents = Task.where(appeal: appeal).map(&:attorney_case_reviews).flatten
-    [task ? task.assigned_by.full_name : "", documents]
+    [task ? task.assigned_by.try(:full_name) : "", documents]
   end
 
   def appeal
