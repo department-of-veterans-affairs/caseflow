@@ -106,6 +106,10 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     return StringUtil.snakeCaseToSentence(action);
   }
 
+  taskInstructionsWithLineBreaks = (instructions?: Array<string>) => <React.Fragment>
+    {instructions && instructions.map((text, i) => <React.Fragment><span key={i}>{text}</span><br /></React.Fragment>)}
+  </React.Fragment>;
+
   taskInformation = () => {
     const {
       taskAssignedToUser
@@ -132,7 +136,8 @@ export class CaseSnapshot extends React.PureComponent<Props> {
         </React.Fragment> }
       { taskAssignedToUser.instructions &&
         <React.Fragment>
-          <dt>{COPY.CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt><dd>{taskAssignedToUser.instructions}</dd>
+          <dt>{COPY.CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
+          <dd>{this.taskInstructionsWithLineBreaks(taskAssignedToUser.instructions)}</dd>
         </React.Fragment> }
       { preparedByAbbrev &&
         <React.Fragment>
@@ -185,7 +190,8 @@ export class CaseSnapshot extends React.PureComponent<Props> {
         return <React.Fragment>
           <dt>{COPY.CASE_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{CO_LOCATED_ADMIN_ACTIONS[taskAssignedToUser.action]}</dd>
           <dt>{COPY.CASE_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
-          <dt>{COPY.CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt><dd>{taskAssignedToUser.instructions}</dd>
+          <dt>{COPY.CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
+          <dd>{this.taskInstructionsWithLineBreaks(taskAssignedToUser.instructions)}</dd>
         </React.Fragment>;
       }
     }
