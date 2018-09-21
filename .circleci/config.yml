@@ -44,14 +44,14 @@ jobs:
 
       - restore_cache:
           keys:
-            - vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+            - vendor-bundle-v1-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
 
       - run:
           name: Bundle install
           command: bundle install --path vendor/bundle
 
       - save_cache:
-          key: vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+          key: vendor-bundle-v1-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/project/vendor/bundle
 
