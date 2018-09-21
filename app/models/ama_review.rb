@@ -15,7 +15,7 @@ class AmaReview < ApplicationRecord
   before_destroy :remove_issues!
 
   cache_attribute :cached_serialized_timely_ratings, cache_key: :timely_ratings_cache_key, expires_in: 1.day do
-    receipt_date && veteran.timely_ratings(from_date: receipt_date).map(&:ui_hash)
+    receipt_date && veteran.timely_ratings(from_date: receipt_date).map(&:ui_hash).reject { |rating| rating[:issues].empty? }
   end
 
   def start_review!

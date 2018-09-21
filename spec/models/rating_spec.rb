@@ -43,6 +43,21 @@ describe Rating do
         issues: issues
       )
     end
+
+    context "when rating issues is nil" do
+      let(:issues) do
+        nil
+      end
+
+      it "should have no issues" do
+        is_expected.to match(
+          participant_id: rating.participant_id,
+          profile_date: rating.profile_date,
+          promulgation_date: rating.promulgation_date,
+          issues: []
+        )
+      end
+    end
   end
 
   context ".from_bgs_hash" do

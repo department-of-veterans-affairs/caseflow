@@ -54,6 +54,7 @@ class Generators::Rating
     end
 
     def bgs_rating_profile_data(attrs)
+      return if attrs[:issues].nil?
       attrs[:issues].map do |issue_data|
         {
           rba_issue_id: issue_data[:reference_id] || generate_external_id,
@@ -82,6 +83,7 @@ class Generators::Rating
     end
 
     def populate_issue_ids(attrs)
+      return if attrs[:issues].nil?
       # gives a unique id to each issue that is tied to a specific participant_id
       prev_count = get_prev_issues_count(attrs[:participant_id])
       attrs[:issues].each_with_index.map do |issue, i|
