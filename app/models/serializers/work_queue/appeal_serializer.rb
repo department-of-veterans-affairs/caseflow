@@ -1,4 +1,7 @@
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
+  attribute :assigned_attorney
+  attribute :assigned_judge
+
   attribute :issues do
     object.request_issues
   end

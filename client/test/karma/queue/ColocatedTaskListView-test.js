@@ -75,6 +75,8 @@ describe('ColocatedTaskListView', () => {
     isAdvancedOnDocket: false,
     issueCount: 2,
     docketNumber: 'Missing Docket Number',
+    assignedJudge: null,
+    assignedAttorney: null,
     veteranFullName: 'Andrew Van Buren',
     veteranFileNumber: '152003980',
     isPaperCase: null
