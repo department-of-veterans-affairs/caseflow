@@ -287,15 +287,15 @@ class SeedDB
     LegacyAppeal.create(vacols_id: "2306397", vbms_id: "779309925S")
   end
 
-  def create_root_task
-    FactoryBot.create(:root_task)
+  def create_root_task(appeal)
+    FactoryBot.create(:root_task, appeal: appeal)
   end
 
   def create_task_at_judge_assignment(appeal, judge)
     FactoryBot.create(:ama_judge_task,
                       assigned_to: judge,
                       appeal: appeal,
-                      parent: create_root_task)
+                      parent: create_root_task(appeal))
   end
 
   def create_task_at_judge_review(appeal, judge, attorney)
@@ -303,7 +303,7 @@ class SeedDB
                                :in_progress,
                                assigned_to: judge,
                                appeal: appeal,
-                               parent: create_root_task)
+                               parent: create_root_task(appeal))
     child = FactoryBot.create(
       :ama_attorney_task,
       assigned_to: attorney,
@@ -321,7 +321,7 @@ class SeedDB
       :on_hold,
       assigned_to: judge,
       appeal: appeal,
-      parent: create_root_task
+      parent: create_root_task(appeal)
     )
 
     child = FactoryBot.create(
@@ -346,7 +346,7 @@ class SeedDB
       :on_hold,
       assigned_to: judge,
       appeal: appeal,
-      parent: create_root_task
+      parent: create_root_task(appeal)
     )
 
     FactoryBot.create(
