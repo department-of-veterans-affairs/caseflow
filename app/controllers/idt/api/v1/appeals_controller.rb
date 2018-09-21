@@ -30,7 +30,8 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     appeals = LegacyWorkQueue.tasks_with_appeals(user, "attorney")[1].select(&:active?)
 
     if feature_enabled?(:idt_ama_appeals)
-      appeals += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold]).map(&:appeal)
+      appeals += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold])
+        .reject { |task| task.action == "assign" }.map(&:appeal)
     end
     appeals
   end

@@ -15,7 +15,8 @@ import {
   setIssueDescription,
   setIssueDecisionDate
 } from '../../actions/ama';
-import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES } from '../../constants';
+import { REQUEST_STATE } from '../../../intakeCommon/constants';
 import { getIntakeStatus, issueCountSelector } from '../../selectors';
 import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 

@@ -53,3 +53,10 @@ export const ISSUE_CATEGORIES = issueCategoriesArray.map((category) => {
     label: category
   };
 });
+
+export const REQUEST_STATE = {
+  NOT_STARTED: 'NOT_STARTED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  SUCCEEDED: 'SUCCEEDED',
+  FAILED: 'FAILED'
+};
