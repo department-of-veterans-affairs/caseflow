@@ -6,17 +6,7 @@ class ClaimReview < AmaReview
 
   self.abstract_class = true
 
-  class << self
-    def rated_issue_code
-      self::END_PRODUCT_RATING_CODE
-    end
-
-    def nonrated_issue_code
-      self::END_PRODUCT_NONRATING_CODE
-    end
-  end
-
-  def issue_code(rated)
+  def issue_code(_rated)
     fail Caseflow::Error::MustImplementInSubclass
   end
 
