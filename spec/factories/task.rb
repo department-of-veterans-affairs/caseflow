@@ -78,6 +78,7 @@ FactoryBot.define do
       type "BvaDispatchTask"
       appeal_type "Appeal"
       appeal { create(:appeal) }
+      assigned_by nil
     end
   end
 end

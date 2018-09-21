@@ -17,7 +17,7 @@ export default class RoSelectorDropdown extends React.Component {
 
     regionalOfficeDropdowns.push({
       label: 'Central Office',
-      value: 'CO'
+      value: 'C'
     });
 
     return _.orderBy(regionalOfficeDropdowns, (ro) => ro.label, 'asc');

@@ -4,6 +4,7 @@ import { css } from 'glamor';
 import _ from 'lodash';
 
 import BareList from '../components/BareList';
+import Address from './components/Address';
 import { boldText } from './constants';
 import { DateString } from '../util/DateUtil';
 
@@ -12,33 +13,13 @@ const detailListStyling = css({
   listStyle: 'none',
   marginBottom: '3rem'
 });
-const addressIndentStyling = (secondLine) => css({
-  marginLeft: secondLine ? '7.5em' : 0
-});
 
 export default class VeteranDetail extends React.PureComponent {
   getAppealAttr = (attr) => _.get(this.props.appeal, attr);
 
-  formatAddress = (addressFieldName) => {
-    const {
-      address_line_1: addressLine1,
-      address_line_2: addressLine2,
-      city,
-      state,
-      zip,
-      country
-    } = this.getAppealAttr(addressFieldName);
-    const streetAddress = addressLine2 ? `${addressLine1} ${addressLine2}` : addressLine1;
-
-    return <React.Fragment>
-      {streetAddress && <React.Fragment><span>{streetAddress},</span><br /></React.Fragment>}
-      <span {...addressIndentStyling(streetAddress)}>{city}, {state} {zip} {country === 'USA' ? '' : country}</span>
-    </React.Fragment>;
-  };
-
   getGenderPronoun = (genderFieldName) => this.getAppealAttr(genderFieldName) === 'F' ? 'She/Her' : 'He/His';
 
-  getDetails = ({ nameField, genderField, dobField, addressField, relationField, regionalOfficeField }) => {
+  getDetails = ({ nameField, genderField, dodField, dobField, addressField, relationField, regionalOfficeField }) => {
     const details = [{
       label: 'Name',
       value: this.getAppealAttr(nameField)
@@ -56,6 +37,12 @@ export default class VeteranDetail extends React.PureComponent {
         value: <DateString date={this.getAppealAttr(dobField)} inputFormat="MM/DD/YYYY" dateFormat="M/D/YYYY" />
       });
     }
+    if (dodField && this.getAppealAttr(dodField)) {
+      details.push({
+        label: 'Date of death',
+        value: <DateString date={this.getAppealAttr(dodField)} inputFormat="MM/DD/YYYY" dateFormat="M/D/YYYY" />
+      });
+    }
     if (relationField && this.getAppealAttr(relationField)) {
       details.push({
         label: 'Relation to Veteran',
@@ -65,7 +52,7 @@ export default class VeteranDetail extends React.PureComponent {
     if (addressField && this.getAppealAttr(addressField)) {
       details.push({
         label: 'Mailing Address',
-        value: this.formatAddress(addressField)
+        value: <Address address={this.getAppealAttr(addressField)} />
       });
     }
     if (regionalOfficeField && this.getAppealAttr(regionalOfficeField)) {
@@ -89,6 +76,7 @@ export default class VeteranDetail extends React.PureComponent {
       nameField: 'veteranFullName',
       genderField: 'veteranGender',
       dobField: 'veteranDateOfBirth',
+      dodField: 'veteranDateOfDeath',
       addressField: 'appellantAddress',
       regionalOfficeField: 'regionalOffice'
     })}
