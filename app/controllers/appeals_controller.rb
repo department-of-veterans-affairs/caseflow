@@ -31,6 +31,14 @@ class AppealsController < ApplicationController
     return handle_non_critical_error("new_documents", e)
   end
 
+  def power_of_attorney
+    render json: {
+      representative_type: appeal.representative_type,
+      representative_name: appeal.representative_name,
+      representative_address: appeal.representative_address
+    }
+  end
+
   def show
     no_cache
 
