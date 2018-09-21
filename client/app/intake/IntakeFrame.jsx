@@ -62,7 +62,6 @@ class IntakeFrame extends React.PureComponent {
                     'There was an error while canceling the current intake.' +
                     ' Please try again later.'
                   }
-                  lowerMargin
                 />
               }
               <div>
