@@ -24,8 +24,8 @@ class SideBarDocumentInformation extends PureComponent {
 
     if (this.props.didLoadAppealFail) {
       renderComponent = <Alert
-        title="Unable to retrieve claim details"
         type="error">
+        Unable to retrieve claim details <br />
         Please <a href="#" onClick={reload}>
         refresh this page</a> or try again later.
       </Alert>;

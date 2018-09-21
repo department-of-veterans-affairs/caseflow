@@ -37,37 +37,37 @@ export default class StyleGuideAlerts extends React.PureComponent {
       </Alert>
 
       <StyleGuideComponentTitle
-        title="Alerts lite"
-        id="alerts-lite"
+        title="Alerts Slim"
+        id="alerts-slim"
         link="StyleGuideAlerts.jsx"
       />
       <p>
-        Alert lite is a lighter version of our banner alerts designed for sections
+        Alert Slim is a lighter version of our banner alerts designed for sections
         in our app with a different layout, specifically to call out features with
         smaller dimensions. Currently it is being used in the Caseflow Reader Menu.
       </p>
-      <div className="cf-sg-alert-lite">
+      <div className="cf-sg-alert-slim">
         <Alert
           type="success">
-          Success status lite
+          Success status slim
         </Alert>
       </div>
-      <div className="cf-sg-alert-lite">
+      <div className="cf-sg-alert-slim">
         <Alert
           type="warning">
-          Warning status lite
+          Warning status slim
         </Alert>
       </div>
-      <div className="cf-sg-alert-lite">
+      <div className="cf-sg-alert-slim">
         <Alert
           type="error">
-          Error status lite
+          Error status slim
         </Alert>
       </div>
-      <div className="cf-sg-alert-lite">
+      <div className="cf-sg-alert-slim">
         <Alert
           type="info">
-          Informative status lite
+          Informative status slim
         </Alert>
       </div>
     </div>;
