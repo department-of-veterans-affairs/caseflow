@@ -41,7 +41,7 @@ export default class AutoSave extends React.Component {
       </div>;
     }
 
-    if (this.props.saveFailed) {
+    if (true) {
 
       const alertMessage = <div>
         Unable to save. Please check your internet connection and try again. <span>
@@ -56,6 +56,18 @@ export default class AutoSave extends React.Component {
       return <Alert
         message={alertMessage}
         type="error"
+        fixed
+        styling={alertStyling}
+      />;
+    }
+    else {
+      const successMessage = <div>
+        Unable to save. Please check your internet connection and try again.
+      </div>;
+
+      return <Alert
+        message={successMessage}
+        type="success"
         fixed
         styling={alertStyling}
       />;
