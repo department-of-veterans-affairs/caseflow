@@ -438,7 +438,7 @@ class AppealRepository
   def self.reopen_undecided_appeal!(appeal:, user:, safeguards:)
     case_record = appeal.case_record
     folder_record = case_record.folder
-    not_valid_to_reopen_err = AppealNotValidToReopen, appeal.id
+    not_valid_to_reopen_err = AppealNotValidToReopen.new(appeal.id)
 
     fail not_valid_to_reopen_err unless case_record.bfmpro == "HIS"
     fail not_valid_to_reopen_err unless case_record.bfcurloc == "99"
@@ -493,7 +493,7 @@ class AppealRepository
   def self.reopen_remand!(appeal:, user:, disposition_code:)
     case_record = appeal.case_record
     folder_record = case_record.folder
-    not_valid_to_reopen_err = AppealNotValidToReopen, appeal.id
+    not_valid_to_reopen_err = AppealNotValidToReopen.new(appeal.id)
 
     fail not_valid_to_reopen_err unless %w[P W].include? disposition_code
     fail not_valid_to_reopen_err unless case_record.bfmpro == "HIS"
