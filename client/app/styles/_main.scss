@@ -319,35 +319,6 @@ select {
   }
 }
 
-<<<<<<< HEAD
-.usa-alert {
-
-  &.fixed {
-    position: fixed;
-    top: 0;
-    margin-top: 0;
-    z-index: 999;
-    left: 50%;
-    transform: translate(-50%, 0);
-  }
-
-  &.no-title {
-    background-size: 4rem;
-
-    .usa-alert-text {
-      font-size: 2rem;
-    }
-  }
-
-  button {
-    &:last-child {
-      margin-right: 2rem;
-    }
-  }
-}
-
-=======
->>>>>>> 8432e3950972cfd53e56f1bc5617ca517eacb77a
 .cf-no-styling-list {
   margin: 0;
   padding: 0;
