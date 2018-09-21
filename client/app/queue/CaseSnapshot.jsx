@@ -218,7 +218,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     if (this.props.taskAssignedToAttorney) {
       return true;
     }
-    if (this.props.taskAssignedToOrganization && this.props.taskAssignedToOrganization.assignedTo.type !== 'Vso') {
+    if (this.props.taskAssignedToOrganization) {
       return true;
     }
 
