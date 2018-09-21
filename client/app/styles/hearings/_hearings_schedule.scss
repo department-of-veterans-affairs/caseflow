@@ -79,5 +79,9 @@
       stroke: $color-primary;
     }
   }
+  option:first-child {
+    font-weight: 400;
+    min-height: 1px;
+  }
 }
 

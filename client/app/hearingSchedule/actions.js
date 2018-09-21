@@ -160,9 +160,6 @@ export const unsetSuccessMessage = () => ({
   type: ACTIONS.UNSET_SUCCESS_MESSAGE
 });
 
-export const toggleDropdownFilterVisibility = (filterName) => ({
-  type: ACTIONS.TOGGLE_FILTER_DROPDOWN,
-  payload: {
-    filterName
-  },
+export const toggleDropdownFilterVisibility = () => ({
+  type: ACTIONS.TOGGLE_FILTER_DROPDOWN
 });

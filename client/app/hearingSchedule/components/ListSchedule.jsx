@@ -16,7 +16,25 @@ import {bindActionCreators} from "redux";
 import connect from "react-redux/es/connect/connect";
 
 const hearingSchedStyling = css({
-  marginTop: '70px'
+  marginTop: '50px'
+});
+
+const inlineFormStyling = css({
+  '> div': {
+    ' & .cf-inline-form': {
+      lineHeight: '2em',
+      marginTop: '20px'
+    },
+    '& .question-label': {
+      paddingLeft: 0
+    },
+    '& .cf-form-textinput': {
+      marginTop: 0
+    },
+    '& input': {
+      marginRight: 0
+    }
+  }
 });
 
 class ListSchedule extends React.Component {
@@ -26,14 +44,14 @@ class ListSchedule extends React.Component {
       hearingSchedule
     } = this.props;
 
-    var options = React.createElement(
-      'ul', {
-        className: 'cf-form-dropdown'
-      },
-      React.createElement('li', {id: 'C'},'Central'),
-      React.createElement('li', {id: 'V'},'Video'),
-      React.createElement('li', {id: 'T'},'Travel Board')
-    );
+    const setSelectedValue = (value) => {
+      console.log("this is the selected value: ", value);
+      this.props.toggleDropdownFilterVisibility();
+    };
+
+    var options = [{value: 'C', displayText: 'Central'},
+      {value: 'V', displayText: 'Video'},
+      {value: 'T', displayText: 'Travel Board'}];
 
     const hearingScheduleColumns = [
       {
@@ -51,7 +69,8 @@ class ListSchedule extends React.Component {
         getFilterValues: options,
         isDropdownFilterOpen: this.props.filterDropdownIsOpen,
         anyFiltersAreSet: false,
-        toggleDropdownFilterVisiblity: this.props.toggleDropdownFilterVisibility
+        toggleDropdownFilterVisiblity: this.props.toggleDropdownFilterVisibility,
+        setSelectedValue: setSelectedValue
       },
       {
         header: 'Regional Office',
@@ -100,7 +119,7 @@ class ListSchedule extends React.Component {
       < span className="cf-push-right"><Link button="primary" to="/schedule/assign">Assign hearings</Link></span>
       }
       <div className="cf-help-divider" {...hearingSchedStyling} ></div>
-      <div className="cf-push-left">
+      <div className="cf-push-left" {...inlineFormStyling} >
         <InlineForm>
           <BasicDateRangeSelector
             startDateName="fromDate"
@@ -123,7 +142,7 @@ class ListSchedule extends React.Component {
           </div>
         </InlineForm>
       </div>
-      <div className="cf-push-right" {...hearingSchedStyling}>
+      <div className="cf-push-right" >
         <Button
           classNames={['usa-button-secondary']}>
           <CSVLink
