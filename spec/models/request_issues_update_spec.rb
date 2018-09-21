@@ -76,7 +76,7 @@ describe RequestIssuesUpdate do
         reference_id: issue.rating_issue_reference_id,
         # TODO: validate the string format this comes in
         profile_date: issue.rating_issue_profile_date,
-        description: issue.description
+        decision_text: issue.description
       }
     end
   end
@@ -85,7 +85,7 @@ describe RequestIssuesUpdate do
     existing_request_issues_data + [{
       reference_id: "issue3",
       profile_date: Date.new(2017, 4, 7),
-      description: "Service connection for cancer was denied"
+      decision_text: "Service connection for cancer was denied"
     }]
   end
 

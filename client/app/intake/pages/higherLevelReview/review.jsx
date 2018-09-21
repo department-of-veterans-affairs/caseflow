@@ -11,7 +11,8 @@ import SelectClaimant from '../../components/SelectClaimant';
 import { setInformalConference, setSameOffice } from '../../actions/higherLevelReview';
 import { submitReview, setBenefitType, setClaimantNotVeteran, setClaimant, setPayeeCode } from '../../actions/ama';
 import { setReceiptDate } from '../../actions/common';
-import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
+import { REQUEST_STATE } from '../../../intakeCommon/constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 
