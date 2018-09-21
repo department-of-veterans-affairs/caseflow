@@ -18,6 +18,7 @@ class JudgeTask < Task
     children_attorney_tasks[0]
   end
 
+  #:nocov:
   # This function to be manually run in production when we need to assign judge tasks.
   def self.assign_judge_tasks_for_unassigned_ramp_appeals(dry_run: false)
     # Find all root tasks with no children, that means they are not assigned.
@@ -43,4 +44,5 @@ class JudgeTask < Task
   def self.list_of_assignees
     %w[BVAAABSHIRE BVAOFRANECKI]
   end
+  #:nocov:
 end
