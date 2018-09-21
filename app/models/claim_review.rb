@@ -16,6 +16,10 @@ class ClaimReview < AmaReview
     end
   end
 
+  def issue_code(rated)
+    fail Caseflow::Error::MustImplementInSubclass
+  end
+
   # Save issues and assign it the appropriate end product establishment.
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
@@ -66,7 +70,7 @@ class ClaimReview < AmaReview
   private
 
   def end_product_establishment_for_issue(issue)
-    ep_code = issue.rated? ? self.class.rated_issue_code : self.class.nonrated_issue_code
+    ep_code = issue_code(issue.rated?)
     end_product_establishments.find_by(code: ep_code) || new_end_product_establishment(ep_code)
   end
 

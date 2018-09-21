@@ -162,7 +162,8 @@ class EndProductEstablishment < ApplicationRecord
   def create_associated_rated_issues!
     request_issues_to_associate = unassociated_rated_request_issues
 
-    return if code != source.class.rated_issue_code
+    is_rated = true
+    return if code != source.issue_code(is_rated)
     return if request_issues_to_associate.empty?
 
     VBMSService.associate_rated_issues!(
