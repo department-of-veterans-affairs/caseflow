@@ -319,36 +319,6 @@ select {
   }
 }
 
-.usa-alert {
-  &.lower-margin {
-    // This value is copied from USWDS.
-    margin-bottom: 1.5em;
-  }
-
-  &.fixed {
-    position: fixed;
-    top: 0;
-    margin-top: 0;
-    z-index: 999;
-    left: 50%;
-    transform: translate(-50%, 0);
-  }
-
-  &.no-title {
-    background-position: 1rem 1.5rem;
-
-    .usa-alert-text {
-      font-size: 19px;
-    }
-  }
-
-  button {
-    &:last-child {
-      margin-right: 2rem;
-    }
-  }
-}
-
 .cf-no-styling-list {
   margin: 0;
   padding: 0;
