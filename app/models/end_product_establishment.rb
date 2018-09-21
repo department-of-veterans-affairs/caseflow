@@ -8,6 +8,7 @@
 
 class EndProductEstablishment < ApplicationRecord
   class EstablishedEndProductNotFound < StandardError; end
+  class ContentionCreationFailed < StandardError; end
 
   attr_accessor :valid_modifiers, :special_issues
   # In AMA reviews, we may create 2 end products at the same time. To avoid using
