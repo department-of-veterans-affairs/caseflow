@@ -108,12 +108,5 @@ RSpec.feature "Task queue" do
       expect(page).to have_content(COPY::TASK_MARKED_COMPLETE_NOTICE_TITLE)
       expect(Task.find(vso_task.id).status).to eq("completed")
     end
-
-    # it "should mark task complete when selecting the appropriate task action" do
-    #   byebug
-    #   # case_details_link = page.find(:xpath, "//tbody/tr/td[1]/a")
-    #   # case_details_link.click
-    #   # expect(page).to have_content(COPY::CASE_SNAPSHOT_ACTION_BOX_TITLE)
-    # end
   end
 end
