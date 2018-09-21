@@ -60,7 +60,7 @@ class RequestIssuesUpdate < ApplicationRecord
       review.request_issues.find_or_initialize_by(
         rating_issue_profile_date: issue_data[:profile_date],
         rating_issue_reference_id: issue_data[:reference_id],
-        description: issue_data[:description]
+        description: issue_data[:decision_text]
       )
     end
   end
