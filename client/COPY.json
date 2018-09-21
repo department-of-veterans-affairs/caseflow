@@ -47,6 +47,12 @@
 
   "CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY": "View Hearing Worksheet",
   "CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP": "This link opens a PDF copy of the Hearing Worksheet",
+  "CASE_DETAILS_INCORRECT_POA": "If the POA is incorrect, please send an email to an administrator with access to SHARE.",
+  "CASE_DETAILS_UNABLE_TO_LOAD": "We're unable to load this information. If the problem persists, please submit feedback through Caseflow",
+  "CASE_DETAILS_LOADING": "Loading...",
+  "CASE_DETAILS_POA_VSO": "Veteran Service Organization",
+  "CASE_DETAILS_POA_AGENT": "Private Agent",
+  "CASE_DETAILS_POA_ATTORNEY": "Private Attorney",
 
   "NEW_FILE_ICON_TOOLTIP": "This case has new documents",
 
