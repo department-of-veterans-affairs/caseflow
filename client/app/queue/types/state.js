@@ -81,7 +81,8 @@ export type QueueState = {|
   attorneys: Attorneys,
   newDocsForAppeal: NewDocsForAppeal,
   organizationId: ?number,
-  specialIssues: Object
+  specialIssues: Object,
+  loadingAppealDetail: Object
 |};
 
 export type State = {

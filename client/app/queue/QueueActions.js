@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 // @flow
 import { associateTasksWithAppeals,
   prepareAllTasksForStore,
@@ -88,6 +89,37 @@ export const getNewDocuments = (appealId: string) => (dispatch: Dispatch) => {
       type: ACTIONS.ERROR_ON_RECEIVE_NEW_FILES,
       payload: {
         appealId,
+        error
+      }
+    });
+  });
+};
+
+export const getAppealValue = (appealId: string, endpoint: string, name: string) => (dispatch: Dispatch) => {
+  dispatch({
+    type: ACTIONS.STARTED_LOADING_APPEAL_VALUE,
+    payload: {
+      appealId,
+      name
+    }
+  });
+  ApiUtil.get(`/appeals/${appealId}/${endpoint}`).then((resp) => {
+    const response = JSON.parse(resp.text);
+
+    dispatch({
+      type: ACTIONS.RECEIVE_APPEAL_VALUE,
+      payload: {
+        appealId,
+        name,
+        response
+      }
+    });
+  }, (error) => {
+    dispatch({
+      type: ACTIONS.ERROR_ON_RECEIVE_APPEAL_VALUE,
+      payload: {
+        appealId,
+        name,
         error
       }
     });

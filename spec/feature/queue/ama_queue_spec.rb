@@ -41,11 +41,13 @@ RSpec.feature "AmaQueue" do
         appeals.first.claimants.first.participant_id => {
           representative_name: poa_name,
           representative_type: "POA Attorney",
-          participant_id: "600153863"
+          participant_id: participant_id
         }
       )
     end
 
+    let(:poa_address) { "123 Poplar St." }
+    let(:participant_id) { "600153863" }
     let!(:root_task) { create(:root_task) }
     let!(:parent_task) { create(:ama_judge_task, assigned_to: judge_user, appeal: appeals.first, parent: root_task) }
 
@@ -109,20 +111,35 @@ RSpec.feature "AmaQueue" do
         ]
       end
 
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id).and_return(
+          address_line_1: "Veteran Address",
+          city: "Washington",
+          state: "DC",
+          zip: "20001"
+        )
+        allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id)
+          .with(participant_id).and_return(
+            address_line_1: poa_address,
+            city: "Washington",
+            state: "DC",
+            zip: "20001"
+          )
+      end
+
       scenario "veteran is the appellant" do
         visit "/queue"
 
         click_on appeals.first.veteran.first_name
-
         expect(page).to have_content("A. Judge")
 
         expect(page).to have_content("About the Veteran")
 
         expect(page).to have_content("AOD")
-
         expect(page).to have_content(appeals.first.request_issues.first.description)
         expect(page).to have_content(appeals.first.docket_number)
         expect(page).to have_content(poa_name)
+        expect(page).to have_content(poa_address)
 
         expect(page).to have_content("View Veteran's documents")
         expect(page).to have_selector("text", id: "NEW")
@@ -156,6 +173,19 @@ RSpec.feature "AmaQueue" do
 
         expect(motion.granted).to eq(true)
         expect(motion.reason).to eq("Serious illness")
+      end
+
+      context "when there is an error loading addresses" do
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id)
+            .with(participant_id).and_raise(StandardError.new)
+        end
+
+        scenario "loading data error message appears" do
+          visit "/queue/appeals/#{appeals.first.external_id}"
+
+          expect(page).to have_content(COPY::CASE_DETAILS_UNABLE_TO_LOAD)
+        end
       end
     end
 

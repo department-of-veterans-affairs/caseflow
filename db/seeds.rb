@@ -230,7 +230,7 @@ class SeedDB
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
-      veteran_file_number: "123468949",
+      veteran_file_number: "783740847",
       request_issues: FactoryBot.create_list(:request_issue, 3, description: "Knee pain")
     )
     @ama_appeals << FactoryBot.create(
@@ -265,19 +265,19 @@ class SeedDB
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
-      veteran_file_number: "157863454",
+      veteran_file_number: "682007349",
       request_issues: FactoryBot.create_list(:request_issue, 5, description: "Veteran reports hearing loss in left ear")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
-      veteran_file_number: "446647748",
+      veteran_file_number: "231439628S",
       request_issues: FactoryBot.create_list(:request_issue, 1, description: "Back pain")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
-      veteran_file_number: "876434576",
+      veteran_file_number: "975191063",
       request_issues: FactoryBot.create_list(:request_issue, 8, description: "Kidney problems")
     )
 
@@ -287,15 +287,15 @@ class SeedDB
     LegacyAppeal.create(vacols_id: "2306397", vbms_id: "779309925S")
   end
 
-  def create_root_task
-    FactoryBot.create(:root_task)
+  def create_root_task(appeal)
+    FactoryBot.create(:root_task, appeal: appeal)
   end
 
   def create_task_at_judge_assignment(appeal, judge)
     FactoryBot.create(:ama_judge_task,
                       assigned_to: judge,
                       appeal: appeal,
-                      parent: create_root_task)
+                      parent: create_root_task(appeal))
   end
 
   def create_task_at_judge_review(appeal, judge, attorney)
@@ -303,7 +303,7 @@ class SeedDB
                                :in_progress,
                                assigned_to: judge,
                                appeal: appeal,
-                               parent: create_root_task)
+                               parent: create_root_task(appeal))
     child = FactoryBot.create(
       :ama_attorney_task,
       assigned_to: attorney,
@@ -321,7 +321,7 @@ class SeedDB
       :on_hold,
       assigned_to: judge,
       appeal: appeal,
-      parent: create_root_task
+      parent: create_root_task(appeal)
     )
 
     child = FactoryBot.create(
@@ -346,7 +346,7 @@ class SeedDB
       :on_hold,
       assigned_to: judge,
       appeal: appeal,
-      parent: create_root_task
+      parent: create_root_task(appeal)
     )
 
     FactoryBot.create(

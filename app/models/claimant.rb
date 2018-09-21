@@ -35,7 +35,7 @@ class Claimant < ApplicationRecord
     BGSService.new
   end
 
-  delegate :address_line_1, :address_line_2, :city, :country, :state, :zip, to: :bgs_address_service
+  delegate :address, :address_line_1, :address_line_2, :city, :country, :state, :zip, to: :bgs_address_service
 
   def fetch_bgs_record
     general_info = bgs.fetch_claimant_info_by_participant_id(participant_id)

@@ -3,7 +3,7 @@ import Alert from '../../components/Alert';
 
 export default class ErrorAlert extends React.PureComponent {
   render() {
-    return <Alert title="Something went wrong" type="error" lowerMargin>
+    return <Alert title="Something went wrong" type="error">
       Please try again. If the problem persists, please contact Caseflow support.
     </Alert>;
   }

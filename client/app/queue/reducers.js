@@ -42,7 +42,8 @@ export const initialState = {
   attorneyAppealsLoadingState: {},
   isTaskAssignedToUserSelected: {},
   attorneys: {},
-  organizationId: null
+  organizationId: null,
+  loadingAppealDetail: {}
 };
 
 // eslint-disable-next-line max-statements
@@ -390,6 +391,50 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
         [action.payload.externalAppealId]: {
           isAdvancedOnDocket: {
             $set: true
+          }
+        }
+      }
+    });
+  case ACTIONS.STARTED_LOADING_APPEAL_VALUE:
+    return update(state, {
+      loadingAppealDetail: {
+        $merge: {
+          [action.payload.appealId]: {
+            [action.payload.name]: {
+              loading: true
+            }
+          }
+        }
+      }
+    });
+  case ACTIONS.RECEIVE_APPEAL_VALUE:
+    return update(state, {
+      loadingAppealDetail: {
+        $merge: {
+          [action.payload.appealId]: {
+            [action.payload.name]: {
+              loading: false
+            }
+          }
+        }
+      },
+      appealDetails: {
+        [action.payload.appealId]: {
+          $merge: {
+            [action.payload.name]: action.payload.response
+          }
+        }
+      }
+    });
+  case ACTIONS.ERROR_ON_RECEIVE_APPEAL_VALUE:
+    return update(state, {
+      loadingAppealDetail: {
+        $merge: {
+          [action.payload.appealId]: {
+            [action.payload.name]: {
+              loading: false,
+              error: action.payload.error
+            }
           }
         }
       }
