@@ -88,22 +88,19 @@ RSpec.feature "Task queue" do
       visit "/queue"
     end
 
-    it "should redirect to VSO's organizational task queue" do
+    it "should be able to take actions on task from VSO queue" do
+      # Redirect to VSO-specific URL
       expect(page.current_path).to eq(vso.path)
-    end
 
-    it "should display task actions dropdown" do
       case_details_link = page.find(:xpath, "//tbody/tr/td[1]/a")
       case_details_link.click
       expect(page).to have_content(COPY::CASE_SNAPSHOT_ACTION_BOX_TITLE)
 
       # Marking the task as complete correctly changes the task's status in the database.
-      dropdown = page.find(".Select-control")
-      dropdown.click
-      dropdown.sibling(".Select-menu-outer").find("div[id$='--option-0']").click
+      find(".Select-control", text: "Select an action…").click
+      find("div", class: "Select-option", text: "Mark task complete").click
 
-      complete_button = page.find("#button-next-button")
-      complete_button.click
+      find("button", id: "button-next-button", text: "Mark complete").click
 
       expect(page).to have_content(COPY::TASK_MARKED_COMPLETE_NOTICE_TITLE)
       expect(Task.find(vso_task.id).status).to eq("completed")
