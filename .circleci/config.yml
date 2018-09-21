@@ -19,7 +19,7 @@ jobs:
           - POSTGRES_USER: root
       # This is the circleci provided Postgres container. We can
       # configure it via environment variables.
-      - image: circleci/postgres:latest
+      - image: circleci/postgres:10.2
         environment:
           - POSTGRES_USER: root
             POSTGRES_DB: caseflow_certification_test
