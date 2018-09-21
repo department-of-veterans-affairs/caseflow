@@ -571,6 +571,7 @@ ActiveRecord::Schema.define(version: 20180919213618) do
     t.integer "end_product_establishment_id"
     t.datetime "removed_at"
     t.datetime "rating_issue_associated_at"
+    t.integer "parent_request_issue_id"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
   end
@@ -635,6 +636,7 @@ ActiveRecord::Schema.define(version: 20180919213618) do
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
     t.string "benefit_type"
+    t.boolean "is_dta_error"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 
