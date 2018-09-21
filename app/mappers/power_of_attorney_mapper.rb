@@ -1,4 +1,7 @@
+# rubocop:disable Metrics/ModuleLength
 module PowerOfAttorneyMapper
+  include AddressMapper
+
   # This is here so when we include this module
   # in classes (e.g. in PoaRepository),
   # the class itself and not just its instance
@@ -27,7 +30,7 @@ module PowerOfAttorneyMapper
 
   def get_rep_name_from_rep_record(rep_record)
     return if !rep_record || (rep_record.repfirst.blank? && rep_record.replast.blank?)
-    "#{rep_record.repfirst} #{rep_record.repmi} #{rep_record.replast} #{rep_record.repsuf}".strip
+    [rep_record.repfirst, rep_record.repmi, rep_record.replast, rep_record.repsuf].select(&:present?).join(" ").strip
   end
 
   def get_poa_from_vacols_poa(vacols_code:, representative_record: nil)
@@ -38,6 +41,7 @@ module PowerOfAttorneyMapper
       # the information we have.
       {
         representative_name: get_rep_name_from_rep_record(representative_record),
+        representative_address: get_address_from_rep_entry(representative_record),
         # TODO: alex to map rep.repso and rep.reptype based on values provided by Jed.
         representative_type: nil
       }
@@ -55,6 +59,7 @@ module PowerOfAttorneyMapper
       # in the REP table.
       {
         representative_name: get_rep_name_from_rep_record(representative_record),
+        representative_address: get_address_from_rep_entry(representative_record),
         representative_type: get_short_name(vacols_code)
       }
     end
@@ -140,3 +145,4 @@ module PowerOfAttorneyMapper
     "WOUNDED WARRIOR PROJECT" => "2"
   }.freeze
 end
+# rubocop:enable Metrics/ModuleLength

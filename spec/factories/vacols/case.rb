@@ -56,10 +56,6 @@ FactoryBot.define do
       end
     end
 
-    after(:create) do |vacols_case|
-      create(:mail, mlfolder: vacols_case.bfkey)
-    end
-
     transient do
       case_issues []
 
@@ -150,12 +146,6 @@ FactoryBot.define do
             end
           end
         end
-      end
-    end
-
-    trait :outstanding_mail do
-      after(:create) do |vacols_case|
-        create(:mail, mlfolder: vacols_case.bfkey, mltype: "05")
       end
     end
 

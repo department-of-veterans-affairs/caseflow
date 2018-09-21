@@ -1,9 +1,30 @@
 class VACOLS::Mail < VACOLS::Record
+  include AddressMapper
+
   self.table_name = "vacols.mail"
+
+  belongs_to :correspondent, foreign_key: :mlcorkey, primary_key: :stafkey
 
   def outstanding?
     return false if mlcompdate
     !%w[02 13].include?(mltype)
+  end
+
+  def congressional_address
+    # 02 is the congressional interest mail type. According to Paul Saindon
+    # (and verified in prod), mail type 13 with source G and X
+    # is also congressional mail.
+    if (mltype == "02" || (mltype == "13" && (mlsource == "G" || mlsource == "X"))) && correspondent
+      {
+        full_name: [
+          correspondent.stitle,
+          correspondent.snamef,
+          correspondent.snamel,
+          correspondent.ssalut
+        ].select(&:present?).join(" "),
+        **get_address_from_corres_entry(correspondent)
+      }
+    end
   end
 
   TYPES = {

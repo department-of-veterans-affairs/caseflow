@@ -30,7 +30,8 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     appeals = LegacyWorkQueue.tasks_with_appeals(user, "attorney")[1].select(&:active?)
 
     if feature_enabled?(:idt_ama_appeals)
-      appeals += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold]).map(&:appeal)
+      appeals += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold])
+        .reject { |task| task.action == "assign" }.map(&:appeal)
     end
     appeals
   end
@@ -62,7 +63,8 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     appeal_details = ActiveModelSerializers::SerializableResource.new(
       appeal,
       serializer: ::Idt::V1::AppealDetailsSerializer,
-      include_addresses: Constants::BvaDispatchTeams::USERS[Rails.current_env].include?(user.css_id)
+      include_addresses: Constants::BvaDispatchTeams::USERS[Rails.current_env].include?(user.css_id),
+      base_url: request.base_url
     ).as_json
 
     assigned_by_name, documents = appeal.is_a?(LegacyAppeal) ? legacy_appeal_details : ama_appeal_details

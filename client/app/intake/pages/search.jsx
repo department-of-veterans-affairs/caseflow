@@ -6,10 +6,9 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { doFileNumberSearch, setFileNumberSearch } from '../actions/common';
-import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../constants';
-import { FORM_TYPES } from '../../intakeCommon/constants';
+import { PAGE_PATHS, INTAKE_STATES } from '../constants';
+import { REQUEST_STATE } from '../../intakeCommon/constants';
 import { getIntakeStatus } from '../selectors';
-import _ from 'lodash';
 
 const steps = [
   <span>
@@ -135,8 +134,6 @@ class Search extends React.PureComponent {
       formType
     } = this.props;
 
-    const selectedForm = _.find(FORM_TYPES, { key: formType });
-
     if (!formType) {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     }
@@ -154,13 +151,11 @@ class Search extends React.PureComponent {
     return <div>
       { searchErrorCode && this.getSearchErrorAlert(searchErrorCode, searchErrorData) }
 
-      <h1>Search for Veteran by ID</h1>
-      <p>
-        Enter the Veteran's ID below to process this {selectedForm.name}.
-      </p>
+      <h1>Search for Veteran ID</h1>
 
       <SearchBar
         size="small"
+        title="Enter the Veteran's ID"
         onSubmit={this.handleSearchSubmit}
         onChange={this.props.setFileNumberSearch}
         onClearSearch={this.clearSearch}
