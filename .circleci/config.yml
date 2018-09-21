@@ -53,7 +53,7 @@ jobs:
       - save_cache:
           key: vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
           paths:
-            - vendor/bundle
+            - ~/project/vendor/bundle
 
       - restore_cache:
           name: Restore yarn cache
