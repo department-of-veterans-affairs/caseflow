@@ -2,7 +2,7 @@ class Claimant < ApplicationRecord
   include AssociatedBgsRecord
 
   belongs_to :review_request, polymorphic: true
-  has_many :advance_on_docket_grants
+  has_many :advance_on_docket_motions
 
   bgs_attr_accessor :first_name, :last_name, :middle_name, :relationship
 
@@ -55,7 +55,7 @@ class Claimant < ApplicationRecord
   end
 
   def advanced_on_docket_motion_granted(appeal_receipt_date)
-    advance_on_docket_grants.any? do |advance_on_docket_grant|
+    advance_on_docket_motions.any? do |advance_on_docket_grant|
       appeal_receipt_date < advance_on_docket_grant.created_at
     end
   end

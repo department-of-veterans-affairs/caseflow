@@ -17,6 +17,7 @@ import JudgeActionsDropdown from './components/JudgeActionsDropdown';
 import ColocatedActionsDropdown from './components/ColocatedActionsDropdown';
 import GenericTaskActionsDropdown from './components/GenericTaskActionsDropdown';
 import CopyTextButton from '../components/CopyTextButton';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import COPY from '../../COPY.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
@@ -275,6 +276,10 @@ export class CaseSnapshot extends React.PureComponent<Props> {
           {CheckoutDropdown}
         </div>
       }
+      <Link
+        to={`/queue/appeals/${appeal.externalId}/advanced_on_docket_motion`}>
+        Edit AOD
+      </Link>
     </div>;
   };
 }

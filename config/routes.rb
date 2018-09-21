@@ -101,6 +101,7 @@ Rails.application.routes.draw do
     get :new_documents
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
     resources :special_issues, only: [:create, :index]
+    resources :advance_on_docket_motions, only: [:create]
     get 'tasks', to: "tasks#for_appeal"
   end
 
