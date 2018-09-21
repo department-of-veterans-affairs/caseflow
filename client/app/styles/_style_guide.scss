@@ -48,6 +48,10 @@
 
 .cf-sg-content {
   padding-left: 12.5em;
+
+  .cf-sg-alert-slim {
+    max-width: 320px;
+  }
 }
 
 .usa-accordion {
@@ -255,8 +259,4 @@ pre {
 .cf-image-loader {
   width: 400px;
   height: 400px;
-}
-
-.cf-sg-alert-lite {
-  max-width: 320px;
 }
