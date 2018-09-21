@@ -93,7 +93,8 @@ gem "nokogiri", ">= 1.8.3"
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter"
-  gem "ruby-oci8"
+  # set require: 'oci8' here because bootsnap creates a warning: https://github.com/rails/rails/issues/32811#issuecomment-386541855
+  gem "ruby-oci8", require: "oci8"
 end
 
 # Development was ommited due to double logging issue (https://github.com/heroku/rails_stdout_logging/issues/1)
