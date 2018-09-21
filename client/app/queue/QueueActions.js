@@ -426,7 +426,7 @@ export const setOrganizationId = (id: number) => ({
   payload: { id }
 });
 
-export const setAppealAod = (externalAppealId: number) => ({
+export const setAppealAod = (externalAppealId: string) => ({
   type: ACTIONS.SET_APPEAL_AOD,
   payload: {
     externalAppealId

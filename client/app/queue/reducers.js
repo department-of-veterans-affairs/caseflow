@@ -393,7 +393,7 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
           }
         }
       }
-    })
+    });
   default:
     return state;
   }

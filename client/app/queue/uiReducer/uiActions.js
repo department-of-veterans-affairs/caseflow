@@ -63,8 +63,8 @@ const saveFailure = (resp: Object) => (dispatch: Dispatch) => {
   let responseObject = {
     errors: [{
       title: 'Error',
-      detail: 'There was an error processing your request.\
-        Please retry your action and contact support if errors persist.'
+      detail: 'There was an error processing your request. ' +
+        'Please retry your action and contact support if errors persist.'
     }]
   };
 
