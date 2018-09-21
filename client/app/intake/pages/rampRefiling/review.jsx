@@ -67,7 +67,7 @@ class Review extends React.PureComponent {
       { submitInvalidOptionError && <ErrorAlert />}
 
       { toggleIneligibleError(hasInvalidOption, optionSelected) &&
-        <Alert title="Ineligible for Higher-Level Review" type="error" lowerMargin>
+        <Alert title="Ineligible for Higher-Level Review" type="error" >
           Contact the Veteran to verify their lane selection. If you are unable to reach
           the Veteran, send a letter indicating that their selected lane is not available,
           and that they may clarify their lane selection within 30 days. <br />
