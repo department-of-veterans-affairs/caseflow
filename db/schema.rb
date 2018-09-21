@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180919213618) do
+ActiveRecord::Schema.define(version: 201809112051441) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -169,6 +169,7 @@ ActiveRecord::Schema.define(version: 20180919213618) do
     t.string "participant_id", null: false
     t.string "payee_code"
     t.date "date_of_birth"
+    t.index ["date_of_birth"], name: "index_claimants_on_date_of_birth"
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
@@ -393,6 +394,7 @@ ActiveRecord::Schema.define(version: 20180919213618) do
     t.date "receipt_date"
     t.boolean "informal_conference"
     t.boolean "same_office"
+    t.datetime "established_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
     t.string "benefit_type"
@@ -485,6 +487,13 @@ ActiveRecord::Schema.define(version: 20180919213618) do
     t.string "feature"
     t.string "url"
     t.string "participant_id"
+  end
+
+  create_table "persons", force: :cascade do |t|
+    t.string "participant_id", null: false
+    t.date "date_of_birth"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "ramp_closed_appeals", id: :serial, force: :cascade do |t|
@@ -633,6 +642,7 @@ ActiveRecord::Schema.define(version: 20180919213618) do
   create_table "supplemental_claims", force: :cascade do |t|
     t.string "veteran_file_number", null: false
     t.date "receipt_date"
+    t.datetime "established_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
     t.string "benefit_type"
