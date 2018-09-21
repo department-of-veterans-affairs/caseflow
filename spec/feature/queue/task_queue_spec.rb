@@ -80,6 +80,7 @@ RSpec.feature "Task queue" do
       Vso.find(v.id)
     end
     let(:vso_employee) { FactoryBot.create(:user, :vso_role) }
+    let!(:vso_task) { FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso) }
     before do
       FeatureToggle.enable!(vso.feature.to_sym, users: [vso_employee.css_id])
       User.authenticate!(user: vso_employee)
@@ -90,5 +91,29 @@ RSpec.feature "Task queue" do
     it "should redirect to VSO's organizational task queue" do
       expect(page.current_path).to eq(vso.path)
     end
+
+    it "should display task actions dropdown" do
+      case_details_link = page.find(:xpath, "//tbody/tr/td[1]/a")
+      case_details_link.click
+      expect(page).to have_content(COPY::CASE_SNAPSHOT_ACTION_BOX_TITLE)
+
+      # Marking the task as complete correctly changes the task's status in the database.
+      dropdown = page.find(".Select-control")
+      dropdown.click
+      dropdown.sibling(".Select-menu-outer").find("div[id$='--option-0']").click
+
+      complete_button = page.find("#button-next-button")
+      complete_button.click
+
+      expect(page).to have_content(COPY::TASK_MARKED_COMPLETE_NOTICE_TITLE)
+      expect(Task.find(vso_task.id).status).to eq("completed")
+    end
+
+    # it "should mark task complete when selecting the appropriate task action" do
+    #   byebug
+    #   # case_details_link = page.find(:xpath, "//tbody/tr/td[1]/a")
+    #   # case_details_link.click
+    #   # expect(page).to have_content(COPY::CASE_SNAPSHOT_ACTION_BOX_TITLE)
+    # end
   end
 end

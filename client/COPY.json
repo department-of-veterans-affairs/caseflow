@@ -167,6 +167,9 @@
 
   "HEARING_SCHEDULE_SUCCESS_MESSAGE": "You can view your uploaded schedule by clicking the link below",
 
+  "TASK_MARKED_COMPLETE_NOTICE_TITLE": "Task marked as complete",
+  "TASK_MARKED_COMPLETE_NOTICE_DETAIL": "Task for %s's case completed",
+
   "ADD_COLOCATED_TASK_SUBHEAD": "Submit admin action",
   "ADD_COLOCATED_TASK_ACTION_TYPE_LABEL": "Select the type of administrative action you'd like to assign:",
   "ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL": "Provide instructions and context for this action:",
