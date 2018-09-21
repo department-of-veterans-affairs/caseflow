@@ -120,7 +120,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       judges
     } = this.props;
 
-    const payload = buildCaseReviewPayload(decision, userRole, issues);
+    const payload = buildCaseReviewPayload(decision, userRole, issues, { isLegacyAppeal: true });
 
     const fields = {
       type: decision.type === DECISION_TYPES.DRAFT_DECISION ?

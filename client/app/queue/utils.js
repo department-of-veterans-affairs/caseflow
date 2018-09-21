@@ -317,6 +317,12 @@ export const buildCaseReviewPayload = (
       }
     }
   };
+  let isLegacyAppeal = false;
+
+  if ('isLegacyAppeal' in args) {
+    isLegacyAppeal = args.isLegacyAppeal;
+    delete args.isLegacyAppeal;
+  }
 
   if (userRole === USER_ROLE_TYPES.attorney) {
     _.extend(payload.data.tasks, { document_type: decision.type });
@@ -327,9 +333,7 @@ export const buildCaseReviewPayload = (
     _.extend(payload.data.tasks, args);
   }
 
-  const legacyAppealIssues = _.every(issues, (issue) => !isNaN(issue.disposition));
-
-  if (legacyAppealIssues) {
+  if (isLegacyAppeal) {
     payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => {
       const issueAttrs = ['type', 'readjudication', 'id'];
 
