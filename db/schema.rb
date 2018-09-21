@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 201809112051441) do
+ActiveRecord::Schema.define(version: 20180919213618) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -169,7 +169,6 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.string "participant_id", null: false
     t.string "payee_code"
     t.date "date_of_birth"
-    t.index ["date_of_birth"], name: "index_claimants_on_date_of_birth"
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
@@ -261,8 +260,8 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.string "modifier"
     t.string "station"
     t.datetime "last_synced_at"
-    t.string "payee_code"
     t.string "claimant_participant_id"
+    t.string "payee_code"
     t.datetime "committed_at"
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
@@ -563,6 +562,7 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.integer "end_product_establishment_id"
     t.datetime "removed_at"
     t.datetime "rating_issue_associated_at"
+    t.integer "parent_request_issue_id"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
   end
@@ -627,6 +627,7 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
     t.string "benefit_type"
+    t.boolean "is_dta_error"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 

@@ -59,6 +59,63 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         end
       end
 
+      context "and user is a judge" do
+        let(:role) { :judge_role }
+
+        before do
+          request.headers["TOKEN"] = token
+        end
+
+        let!(:appeals) do
+          [
+            create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user)),
+            create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user))
+          ]
+        end
+
+        let(:veteran1) { create(:veteran) }
+        let(:veteran2) { create(:veteran) }
+
+        let!(:ama_appeals) do
+          [
+            create(:appeal, veteran: veteran1, number_of_claimants: 2),
+            create(:appeal, veteran: veteran2, number_of_claimants: 1)
+          ]
+        end
+
+        let!(:tasks) do
+          [
+            create(:ama_judge_task, assigned_to: user, appeal: ama_appeals.first, action: "assign"),
+            create(:ama_judge_task, assigned_to: user, appeal: ama_appeals.second, action: "review")
+          ]
+        end
+
+        context "with AMA appeals" do
+          before do
+            FeatureToggle.enable!(:idt_ama_appeals)
+          end
+
+          after do
+            FeatureToggle.disable!(:idt_ama_appeals)
+          end
+
+          it "returns a list of assigned appeals" do
+            get :list
+            expect(response.status).to eq 200
+            expect(RequestStore[:current_user]).to eq user
+            response_body = JSON.parse(response.body)["data"]
+            ama_appeals = response_body
+              .select { |appeal| appeal["type"] == "appeals" }
+              .sort_by { |appeal| appeal["attributes"]["file_number"] }
+
+            expect(ama_appeals.size).to eq 1
+            expect(ama_appeals.first["id"]).to eq tasks.second.appeal.uuid
+            expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.second.appeal.docket_number
+            expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran2.reload.name.first_name
+          end
+        end
+      end
+
       context "and user is an attorney" do
         let(:role) { :attorney_role }
 
