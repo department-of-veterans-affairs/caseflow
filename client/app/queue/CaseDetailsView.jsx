@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { bindActionCreators } from 'redux';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -16,6 +17,7 @@ import CaseSnapshot from './CaseSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
 import SendToLocationModal from './components/SendToLocationModal';
+import { resetErrorMessages } from './uiReducer/uiActions';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
@@ -36,7 +38,10 @@ const horizontalRuleStyling = css({
 const PowerOfAttorneyDetail = ({ poa }) => <p>{poa.representative_type} - {poa.representative_name}</p>;
 
 class CaseDetailsView extends React.PureComponent {
-  componentDidMount = () => window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
+  componentDidMount = () => {
+    window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
+    this.props.resetErrorMessages();
+  }
 
   render = () => {
     const {
@@ -100,4 +105,10 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-export default connect(mapStateToProps)(CaseDetailsView);
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    resetErrorMessages
+  }, dispatch)
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(CaseDetailsView);

@@ -14,7 +14,7 @@ import {
   getTasksForAppeal,
   appealWithDetailSelector
 } from './selectors';
-import { setTaskAttrs } from './QueueActions';
+import { setTaskAttrs, setAppealAod } from './QueueActions';
 import { prepareTasksForStore } from './utils';
 
 import decisionViewBase from './components/DecisionViewBase';
@@ -69,7 +69,7 @@ class AdvancedOnDocketMotionView extends React.Component<Props> {
       data: {
         advance_on_docket_motions: {
           reason: this.state.reason,
-          granted: this.state.granted === "granted"
+          granted: this.state.granted
         }
       }
     };
@@ -78,7 +78,12 @@ class AdvancedOnDocketMotionView extends React.Component<Props> {
       detail: "Successful"
     };
 
-    this.props.requestSave(`/appeals/${appeal.externalId}/advance_on_docket_motions`, payload, successMsg);
+    this.props.requestSave(`/appeals/${appeal.externalId}/advance_on_docket_motions`, payload, successMsg).
+      then(() => {
+        if (this.state.granted)
+        this.props.setAppealAod(appeal.externalId);
+      });
+
   }
 
   render = () => {
@@ -90,29 +95,30 @@ class AdvancedOnDocketMotionView extends React.Component<Props> {
 
     return <React.Fragment>
       <h1>
-        Update Advanced on Docket (AOD) Status
+        {COPY.ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE}
       </h1>
+      {error && <Alert type="error" title={error.title} message={error.detail} />}
       <hr />
-      <h3>AOD Motion Disposition</h3>
+      <h3>{COPY.ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN}</h3>
       <SearchableDropdown
         name="AOD Motion Disposition"
         searchable={false}
         hideLabel
         errorMessage={highlightFormItems && !this.state.granted ? 'Choose one' : null}
-        placeholder="Select grant or deny"
+        placeholder={COPY.ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN_PLACEHOLDER}
         value={this.state.granted}
         onChange={(option) => option && this.setState({ granted: option.value })}
         options={[
-          { label: 'Granted', value: 'granted' },
-          { label: 'Denied', value: 'denied' }
+          { label: 'Granted', value: true },
+          { label: 'Denied', value: false }
         ]} />
-      <h3>Reason</h3>
+      <h3>{COPY.ADVANCE_ON_DOCKET_MOTION_REASON_DROPDOWN}</h3>
       <SearchableDropdown
         name="Reason"
         searchable={false}
         hideLabel
         errorMessage={highlightFormItems && !this.state.reason ? 'Choose one' : null}
-        placeholder="Select a type"
+        placeholder={COPY.ADVANCE_ON_DOCKET_MOTION_REASON_DROPDOWN_PLACEHOLDER}
         value={this.state.reason}
         onChange={(option) => option && this.setState({ reason: option.value })}
         options={[
@@ -140,6 +146,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
+  setAppealAod,
   setTaskAttrs
 }, dispatch);
 

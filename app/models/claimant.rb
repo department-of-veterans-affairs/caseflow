@@ -55,8 +55,8 @@ class Claimant < ApplicationRecord
   end
 
   def advanced_on_docket_motion_granted(appeal_receipt_date)
-    advance_on_docket_motions.any? do |advance_on_docket_grant|
-      appeal_receipt_date < advance_on_docket_grant.created_at
+    advance_on_docket_motions.any? do |advance_on_docket_motion|
+      advance_on_docket_motion.granted && appeal_receipt_date < advance_on_docket_motion.created_at
     end
   end
 end

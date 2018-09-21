@@ -136,6 +136,27 @@ RSpec.feature "AmaQueue" do
 
         expect(page).not_to have_selector("text", id: "NEW")
       end
+
+      scenario "setting aod", focus: true do
+        visit "/queue/appeals/#{appeals.first.external_id}"
+
+        click_on "Edit AOD"
+
+        find(".Select-control", text: "Select grant or deny").click
+        find("div", class: "Select-option", text: "Grant").click
+
+        find(".Select-control", text: "Select a type").click
+        find("div", class: "Select-option", text: "Serious illness").click
+
+        click_on "Submit"
+
+        expect(page).to have_content("Advanced on docket motion")
+        expect(page).to have_content("AOD")
+        motion = appeals.first.claimants.first.advance_on_docket_motions.first
+
+        expect(motion.granted).to eq(true)
+        expect(motion.reason).to eq("Serious illness")
+      end
     end
 
     context "when user is a vso" do

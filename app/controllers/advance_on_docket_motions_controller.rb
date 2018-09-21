@@ -5,6 +5,8 @@ class AdvanceOnDocketMotionsController < ApplicationController
       granted: aod_params[:granted],
       user_id: current_user.id
     )
+
+    render json: {}
   end
 
   def aod_params

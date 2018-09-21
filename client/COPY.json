@@ -200,5 +200,11 @@
   "MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT": "Are you sure you want to cancel?",
   "MODAL_CANCEL_ATTORNEY_CHECKOUT": "All changes made to this page will be lost, except for the adding, editing, and deleting of issues.",
 
-  "SPECIAL_ISSUES_PAGE_TITLE": "Select special issue(s)"
+  "SPECIAL_ISSUES_PAGE_TITLE": "Select special issue(s)",
+
+  "ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE": "Update Advanced on Docket (AOD) Status",
+  "ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN": "AOD Motion Disposition",
+  "ADVANCE_ON_DOCKET_MOTION_REASON_DROPDOWN": "Reason",
+  "ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN_PLACEHOLDER": "Select grant or deny",
+  "ADVANCE_ON_DOCKET_MOTION_REASON_DROPDOWN_PLACEHOLDER": "Select a type"
 }
