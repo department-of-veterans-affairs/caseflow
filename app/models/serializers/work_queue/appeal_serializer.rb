@@ -1,4 +1,7 @@
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
+  attribute :assigned_attorney
+  attribute :assigned_judge
+
   attribute :issues do
     object.request_issues.map do |issue|
       # Hard code program for October 1st Pilot, we don't have all the info for how we'll

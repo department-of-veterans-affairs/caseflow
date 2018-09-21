@@ -186,6 +186,8 @@ export const prepareAppealForStore =
         isAdvancedOnDocket: appeal.attributes.aod,
         issueCount: appeal.attributes.issues.length,
         docketNumber: appeal.attributes.docket_number,
+        assignedAttorney: appeal.attributes.assigned_attorney,
+        assignedJudge: appeal.attributes.assigned_judge,
         veteranFullName: appeal.attributes.veteran_full_name,
         veteranFileNumber: appeal.attributes.veteran_file_number,
         isPaperCase: appeal.attributes.paper_case
