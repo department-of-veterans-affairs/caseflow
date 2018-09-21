@@ -89,8 +89,8 @@ RSpec.feature "Task queue" do
     end
 
     it "should be able to take actions on task from VSO queue" do
-      # Redirect to VSO-specific URL
-      expect(page.current_path).to eq(vso.path)
+      # Redirect from personalized task queue to VSO-specific queue
+      expect(page).to have_content(COPY::ORGANIZATION_QUEUE_TABLE_TITLE % vso.name)
 
       case_details_link = page.find(:xpath, "//tbody/tr/td[1]/a")
       case_details_link.click
