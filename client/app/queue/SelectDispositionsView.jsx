@@ -121,7 +121,7 @@ class SelectDispositionsView extends React.PureComponent {
       valueFunction: (issue, idx) => <IssueList
         appeal={{
           issues: [issue],
-          docketName: appeal.docketName
+          isLegacyAppeal: appeal.isLegacyAppeal
         }}
         idxToDisplay={idx + 1}
         showDisposition={false}

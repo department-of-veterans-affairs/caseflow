@@ -24,11 +24,11 @@ const bottomBorder = (singleIssue) => css({
 });
 
 import type {
-  Appeal
+  Issue
 } from '../types/models';
 
 type Props = {
-  appeal: Appeal,
+  appeal: { issues: Array<Issue>, isLegacyAppeal: boolean },
   idxToDisplay?: number,
   issuesOnly?: boolean,
   stretchToFullWidth?: boolean
@@ -52,7 +52,7 @@ export default class IssueList extends React.PureComponent<Props> {
     }
 
     return <React.Fragment>{issues.map((issue, idx) =>
-      <tr key={`${issue.id}_${issue.id}`} {...bottomBorder(singleIssue)}>
+      <tr key={`${String(issue.id)}_${String(issue.id)}`} {...bottomBorder(singleIssue)}>
         <ListItem issue={issue} idx={this.props.idxToDisplay || (idx + 1)} {...this.props} />
       </tr>)
     }</React.Fragment>;
