@@ -121,7 +121,7 @@ class Search extends React.PureComponent {
 
     const error = searchErrors[searchErrorCode] || searchErrors.default;
 
-    return <Alert title={error.title} type="error" lowerMargin>
+    return <Alert title={error.title} type="error">
       { error.body }
     </Alert>;
   }
