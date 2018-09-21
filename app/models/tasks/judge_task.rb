@@ -24,16 +24,16 @@ class JudgeTask < Task
     root_tasks_needing_assignment = RootTask.left_outer_joins(:children).all.select { |t| t.children.empty? }
     root_tasks_needing_assignment.each do |root_task|
       if dry_run
-        puts "Dry run. Would assign judge task for #{root_task.appeal.id} to #{next_assignee.css_id}"
+        Rails.logger.info("Dry run. Would assign judge task for #{root_task.appeal.id} to #{next_assignee.css_id}")
       else
         task = create!(appeal: root_task.appeal,
                        parent: root_task,
                        action: "assign",
                        appeal_type: "Appeal",
-                       assigned_at: DateTime.now,
+                       assigned_at: Time.now,
                        assigned_to: next_assignee)
 
-        puts "Assigned judge task with id: #{task.id} to #{task.assigned_to}"
+        Rails.logger.info("Assigned judge task with id: #{task.id} to #{task.assigned_to}")
       end
     end
   end
