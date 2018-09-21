@@ -34,7 +34,6 @@ class SelectForm extends React.PureComponent {
 
     return <div>
       <h1>Welcome to Caseflow Intake!</h1>
-      <p>To get started, choose the form you are processing for intake.</p>
 
       {!enableSearchableDropdown && <RadioField
         name="form-select"
