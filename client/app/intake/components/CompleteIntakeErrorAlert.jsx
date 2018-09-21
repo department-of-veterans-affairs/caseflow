@@ -20,7 +20,7 @@ export default class CompleteIntakeErrorAlert extends React.PureComponent {
       }
     }[this.props.completeIntakeErrorCode || 'default'];
 
-    return <Alert title={errorObject.title} type="error" lowerMargin>
+    return <Alert title={errorObject.title} type="error" >
       {errorObject.body}
     </Alert>;
   }
