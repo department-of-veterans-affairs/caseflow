@@ -172,8 +172,8 @@
   "ADD_COLOCATED_TASK_SUBHEAD": "Submit admin action",
   "ADD_COLOCATED_TASK_ACTION_TYPE_LABEL": "Select the type of administrative action you'd like to assign:",
   "ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL": "Provide instructions and context for this action:",
-  "ADD_COLOCATED_TASK_CONFIRMATION_TITLE": "Your %s request was submitted successfully",
-  "ADD_COLOCATED_TASK_CONFIRMATION_DETAIL": "If you need to make any changes, please manage this case in DAS.",
+  "ADD_COLOCATED_TASK_CONFIRMATION_TITLE": "You have assigned an administrative action (%s)",
+  "ADD_COLOCATED_TASK_CONFIRMATION_DETAIL": "If you need to make any changes, please email your administration action team.",
 
   "COLOCATED_ACTION_SEND_TO_TEAM": "Send to %s team",
   "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY": "Send back to attorney",
