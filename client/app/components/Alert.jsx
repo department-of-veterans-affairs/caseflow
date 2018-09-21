@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import '../styles/_alerts.scss';
 import classnames from 'classnames';
 
 export default class Alert extends React.Component {

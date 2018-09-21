@@ -1,3 +1,4 @@
+
 .usa-alert {
 
   &.fixed {
@@ -9,6 +10,7 @@
     transform: translate(-50%, 0);
   }
 
+  // Remove after USWDS V.2.0
   &.usa-alert-slim {
     background-size: 4rem;
 
