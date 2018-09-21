@@ -21,23 +21,22 @@ class JudgeTask < Task
 
   # This function to be run in production when we need to ass
   def self.assign_judge_tasks_for_unassigned_ramp_appeals(dry_run: false)
-
-
     # Find all root tasks with no children, that means they are not assigned.
     root_tasks_needing_assignment = RootTask.left_outer_joins(:children).all.select { |t| t.children.empty? }
     root_tasks_needing_assignment.each do |root_task|
 
-    if (dry_run)
-      puts "Dry run. Would assign judge task for #{root_task.appeal.id} to #{next_assignee.css_id}"
-    else
-      task = create!(appeal: root_task.appeal, 
-        parent: root_task, 
-        action: "assign", 
-        appeal_type: "Appeal", 
-        assigned_at: DateTime.now,
-        assigned_to: next_assignee)
+      if (dry_run)
+        puts "Dry run. Would assign judge task for #{root_task.appeal.id} to #{next_assignee.css_id}"
+      else
+        task = create!(appeal: root_task.appeal, 
+          parent: root_task, 
+          action: "assign", 
+          appeal_type: "Appeal", 
+          assigned_at: DateTime.now,
+          assigned_to: next_assignee)
 
-      puts "Assigned judge task with id: #{task.id} to #{task.assigned_to}"
+        puts "Assigned judge task with id: #{task.id} to #{task.assigned_to}"
+      end
     end
   end
 
