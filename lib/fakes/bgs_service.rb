@@ -345,6 +345,7 @@ class Fakes::BGSService
     []
   end
 
+  # rubocop:disable Metrics/MethodLength
   def fetch_poas_by_participant_ids(participant_ids)
     get_hash_of_poa_from_bgs_poas(
       participant_ids.map do |participant_id|
@@ -356,7 +357,12 @@ class Fakes::BGSService
                   ptcpnt_id: "2452383"
                 }
               else
-                {}
+                {
+                  legacy_poa_cd: "100",
+                  nm: "Attorney McAttorneyFace",
+                  org_type_nm: "POA Attorney",
+                  ptcpnt_id: "1234567"
+                }
               end
 
         {
@@ -366,6 +372,7 @@ class Fakes::BGSService
       end
     )
   end
+  # rubocop:enable Metrics/MethodLength
 
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
