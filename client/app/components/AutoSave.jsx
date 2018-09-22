@@ -32,6 +32,13 @@ export default class AutoSave extends React.Component {
     clearInterval(this.setIntervalId);
   }
 
+
+  componentDidUpdate(prevProps) {
+    if(this.props.saveSuccess !== prevProps.saveSuccess) {
+     setInterval(() => this.props.saveSuccess(), this.props.saveSuccessTimeout);
+    }
+  }
+
   render() {
     if (this.props.isSaving) {
       const color = this.props.spinnerColor || COLORS.GREY_DARK;
@@ -41,7 +48,7 @@ export default class AutoSave extends React.Component {
       </div>;
     }
 
-    if (true) {
+    if (this.props.saveFailed) {
 
       const alertMessage = <div>
         Unable to save. Please check your internet connection and try again. <span>
@@ -60,9 +67,10 @@ export default class AutoSave extends React.Component {
         styling={alertStyling}
       />;
     }
-    else {
+
+    if (this.props.saveSuccess) {
       const successMessage = <div>
-        Unable to save. Please check your internet connection and try again.
+        Connected! Your hearing worksheet has been saved.
       </div>;
 
       return <Alert
@@ -83,9 +91,11 @@ AutoSave.propTypes = {
   intervalInMs: PropTypes.number,
   save: PropTypes.func.isRequired,
   timeSaved: PropTypes.string.isRequired,
-  saveFailed: PropTypes.bool
+  saveFailed: PropTypes.bool,
+  saveSuccess: PropTypes.bool
 };
 
 AutoSave.defaultProps = {
-  intervalInMs: 30000
+  intervalInMs: 30000,
+  saveSuccessTimeout: 5000
 };

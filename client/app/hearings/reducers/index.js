@@ -234,6 +234,11 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       saveDocketFailed: { $set: action.payload.saveFailed }
     });
 
+  case Constants.SET_DOCKET_SAVE_SUCCESS:
+    return update(state, {
+        saveDocketSuccess: { $set: action.payload.saveSuccess }
+    });
+
   case Constants.SET_WORKSHEET_SAVE_FAILED_STATUS:
     return update(state, {
       saveWorksheetFailed: { $set: action.payload.saveFailed }

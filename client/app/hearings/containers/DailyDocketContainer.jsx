@@ -54,6 +54,7 @@ export class DailyDocketContainer extends React.Component {
         isSaving={this.props.docketIsSaving}
         timeSaved={this.props.docketTimeSaved || now()}
         saveFailed={this.props.saveDocketFailed}
+        saveSuccess={this.props.saveDocketSuccess}
       />
       <div className="cf-hearings-daily-docket-container">
         <DailyDocket
@@ -71,7 +72,8 @@ const mapStateToProps = (state) => ({
   docketServerError: state.docketServerError,
   docketIsSaving: state.docketIsSaving,
   docketTimeSaved: state.docketTimeSaved,
-  saveDocketFailed: state.saveDocketFailed
+  saveDocketFailed: state.saveDocketFailed,
+  saveDocketSuccess: state.saveDocketSuccess
 });
 
 const mapDispatchToProps = (dispatch) => ({
