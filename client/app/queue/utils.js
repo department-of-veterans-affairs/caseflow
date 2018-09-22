@@ -183,6 +183,8 @@ export const prepareAppealForStore =
         isAdvancedOnDocket: appeal.attributes.aod,
         issueCount: appeal.attributes.issues.length,
         docketNumber: appeal.attributes.docket_number,
+        assignedAttorney: appeal.attributes.assigned_attorney,
+        assignedJudge: appeal.attributes.assigned_judge,
         veteranFullName: appeal.attributes.veteran_full_name,
         veteranFileNumber: appeal.attributes.veteran_file_number,
         isPaperCase: appeal.attributes.paper_case
@@ -200,6 +202,7 @@ export const prepareAppealForStore =
         appellantRelationship: appeal.attributes.appellant_relationship,
         locationCode: appeal.attributes.location_code,
         veteranDateOfBirth: appeal.attributes.veteran_date_of_birth,
+        veteranDateOfDeath: appeal.attributes.veteran_date_of_death,
         veteranGender: appeal.attributes.veteran_gender,
         externalId: appeal.attributes.external_id,
         status: appeal.attributes.status,

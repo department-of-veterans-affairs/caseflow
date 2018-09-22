@@ -70,6 +70,8 @@ FactoryBot.define do
     factory :ama_vso_task do
       type "GenericTask"
       appeal_type "Appeal"
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
     end
 
     factory :bva_dispatch_task do

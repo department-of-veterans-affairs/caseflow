@@ -230,7 +230,7 @@ class SeedDB
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
-      veteran_file_number: "123468949",
+      veteran_file_number: "783740847",
       request_issues: FactoryBot.create_list(:request_issue, 3, description: "Knee pain")
     )
     @ama_appeals << FactoryBot.create(
@@ -265,19 +265,19 @@ class SeedDB
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
-      veteran_file_number: "157863454",
+      veteran_file_number: "682007349",
       request_issues: FactoryBot.create_list(:request_issue, 5, description: "Veteran reports hearing loss in left ear")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
-      veteran_file_number: "446647748",
+      veteran_file_number: "231439628S",
       request_issues: FactoryBot.create_list(:request_issue, 1, description: "Back pain")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
-      veteran_file_number: "876434576",
+      veteran_file_number: "975191063",
       request_issues: FactoryBot.create_list(:request_issue, 8, description: "Kidney problems")
     )
 

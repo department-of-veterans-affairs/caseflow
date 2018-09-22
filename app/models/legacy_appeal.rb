@@ -4,6 +4,7 @@ class LegacyAppeal < ApplicationRecord
   include AssociatedVacolsModel
   include CachedAttributes
   include AddressMapper
+  include Taskable
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
