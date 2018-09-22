@@ -1,4 +1,7 @@
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
+  attribute :assigned_attorney
+  attribute :assigned_judge
+
   attribute :issues do
     object.request_issues
   end
@@ -13,15 +16,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
 
   attribute :appellant_address do
     if object.claimants && object.claimants.any?
-      primary_appellant = object.claimants[0]
-      {
-        address_line_1: primary_appellant.address_line_1,
-        address_line_2: primary_appellant.address_line_2,
-        city: primary_appellant.city,
-        state: primary_appellant.state,
-        zip: primary_appellant.zip,
-        country: primary_appellant.country
-      }
+      object.claimants[0].address
     end
   end
 
@@ -35,6 +30,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
 
   attribute :veteran_date_of_birth do
     object.veteran ? object.veteran.date_of_birth : "Cannot locate"
+  end
+
+  attribute :veteran_date_of_death do
+    object.veteran ? object.veteran.date_of_death : "Cannot locate"
   end
 
   attribute :veteran_gender do
@@ -75,13 +74,6 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
 
   attribute :paper_case do
     false
-  end
-
-  attribute :power_of_attorney do
-    {
-      representative_type: object.representative_type,
-      representative_name: object.representative_name
-    }
   end
 
   attribute :regional_office do

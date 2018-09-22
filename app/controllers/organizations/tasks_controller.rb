@@ -4,7 +4,7 @@ class Organizations::TasksController < OrganizationsController
   before_action :verify_feature_access, only: [:index]
 
   def index
-    tasks = organization.tasks.where.not(status: "completed")
+    tasks = GenericQueue.new(user: organization).tasks
     appeals = tasks.map(&:appeal).uniq
 
     render json: {

@@ -11,5 +11,9 @@ FactoryBot.define do
       email "test@example.com"
       roles ["Certify Appeal"]
     end
+
+    trait :vso_role do
+      roles ["VSO"]
+    end
   end
 end
