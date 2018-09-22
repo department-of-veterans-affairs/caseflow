@@ -24,10 +24,11 @@ class Veteran < ApplicationRecord
   # Germany and Australia should be temporary additions until VBMS bug is fixed
   COUNTRIES_REQUIRING_ZIP = %w[USA CANADA].freeze
 
-  validates :ssn, :sex, :first_name, :last_name, :city,
+  validates :ssn, :sex, :first_name, :last_name,
             :address_line1, :country, presence: true, on: :bgs
   validates :zip_code, presence: true, if: :country_requires_zip?, on: :bgs
-  validates :state, presence: true, if: :country_requires_state?, on: :bgs
+  validates :state, presence: true, if: :state_is_required?, on: :bgs
+  validates :city, presence: true, unless: :military_address?, on: :bgs
 
   # TODO: get middle initial from BGS
   def name
@@ -36,6 +37,10 @@ class Veteran < ApplicationRecord
 
   def country_requires_zip?
     COUNTRIES_REQUIRING_ZIP.include?(country && country.upcase)
+  end
+
+  def state_is_required?
+    military_address? ? false : country_requires_state?
   end
 
   def country_requires_state?
