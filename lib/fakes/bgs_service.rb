@@ -413,6 +413,9 @@ class Fakes::BGSService
         " and PRFL_DT = '#{profile_date}'"
     end
 
+    # Simulate BGS issue where no rating issues are returned in the response
+    return { rating_issues: [] } if rating_issues == :no_issues
+
     # BGS returns the data not as an array if there is only one issue
     rating_issues = rating_issues.first if rating_issues.count == 1
 

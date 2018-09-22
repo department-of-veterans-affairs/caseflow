@@ -45,9 +45,7 @@ describe Rating do
     end
 
     context "when rating issues is nil" do
-      let(:issues) do
-        nil
-      end
+      let(:issues) { :no_issues }
 
       it "should have no issues" do
         is_expected.to match(
