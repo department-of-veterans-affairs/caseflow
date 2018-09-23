@@ -304,6 +304,10 @@ export const saveDocket = (docket, date) => (dispatch) => () => {
     type: Constants.SET_DOCKET_SAVE_FAILED,
     payload: { saveFailed: false }
   });
+  // dispatch({
+  //   type: Constants.SET_DOCKET_SAVE_SUCCESS,
+  //   payload: {saveSuccess: false }
+  // });
 
   let apiRequests = [];
 
