@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { getDailyDocket, saveDocket } from '../actions/Dockets';
+import { getDailyDocket, saveDocket, resetDocketSaveSuccessStatus } from '../actions/Dockets';
 import _ from 'lodash';
 import LoadingContainer from '../../components/LoadingContainer';
 import StatusMessage from '../../components/StatusMessage';
@@ -55,6 +55,7 @@ export class DailyDocketContainer extends React.Component {
         timeSaved={this.props.docketTimeSaved || now()}
         saveFailed={this.props.saveDocketFailed}
         saveSuccess={this.props.saveDocketSuccess}
+        resetDocketSaveSuccessStatus={this.props.resetDocketSaveSuccessStatus}
       />
       <div className="cf-hearings-daily-docket-container">
         <DailyDocket
@@ -79,7 +80,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     getDailyDocket,
-    saveDocket
+    saveDocket,
+    resetDocketSaveSuccessStatus
   }, dispatch)
 });
 

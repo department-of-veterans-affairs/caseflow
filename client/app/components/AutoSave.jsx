@@ -34,7 +34,7 @@ export default class AutoSave extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.saveSuccess !== prevProps.saveSuccess) {
-      setInterval(() => this.props.saveSuccess(), this.props.saveSuccessTimeout);
+      setInterval(() => this.props.resetDocketSaveSuccessStatus(), this.props.saveSuccessTimeout);
     }
   }
 
