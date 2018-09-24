@@ -2,6 +2,7 @@ import React from 'react';
 import { css } from 'glamor';
 
 import { getIssueDiagnosticCodeLabel } from '../utils';
+import ISSUE_DISPOSITIONS_BY_ID from '../../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
 import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
 import CaseDetailsDescriptionList from './CaseDetailsDescriptionList';
 import { dispositionLabelForDescription } from './LegacyIssueListItem';
@@ -38,6 +39,9 @@ export default function CaseDetailsIssueList(props) {
 
 const AmaIssueDetails = (props) => <CaseDetailsDescriptionList>
   <dt>Description</dt><dd>{props.children.description}</dd>
+  {props.children.disposition && <React.Fragment>
+    <dt>Disposition</dt><dd>{ISSUE_DISPOSITIONS_BY_ID[props.children.disposition]}</dd>
+  </React.Fragment>}
 </CaseDetailsDescriptionList>;
 
 const LegacyIssueDetails = (props) => {
