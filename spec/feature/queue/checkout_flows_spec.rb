@@ -485,7 +485,7 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content("Choose one")
         sleep 2
 
-        radio_group_cls = "cf-form-showhide-radio cf-form-radio usa-input-error"
+        radio_group_cls = "cf-form-radio usa-input-error"
         case_complexity_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][1]//label")
         case_quality_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][2]//label")
 
