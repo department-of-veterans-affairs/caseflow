@@ -59,7 +59,8 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       status: task.attributes.status,
       onHoldDuration: task.attributes.on_hold_duration,
       instructions: task.attributes.instructions,
-      decisionPreparedBy
+      decisionPreparedBy,
+      availableActions: task.attributes.available_actions
     };
 
     return acc;
@@ -123,7 +124,8 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       workProduct: task.attributes.work_product,
       previousTaskAssignedOn: task.attributes.previous_task.assigned_on,
       status: task.attributes.status,
-      decisionPreparedBy: null
+      decisionPreparedBy: null,
+      availableActions: task.attributes.available_actions
     };
   });
 
@@ -247,18 +249,14 @@ export const renderLegacyAppealType = ({ aod, type }: {aod: boolean, type: strin
   </React.Fragment>;
 };
 
-export const getDecisionTypeDisplay = (decision: {type?: string} = {}) => {
-  const {
-    type: decisionType
-  } = decision;
-
-  switch (decisionType) {
+export const getDecisionTypeDisplay = (checkoutFlow) => {
+  switch (checkoutFlow) {
   case DECISION_TYPES.OMO_REQUEST:
     return 'OMO';
   case DECISION_TYPES.DRAFT_DECISION:
     return 'Draft Decision';
   default:
-    return StringUtil.titleCase(decisionType);
+    return StringUtil.titleCase(checkoutFlow);
   }
 };
 
@@ -310,7 +308,7 @@ export const getUndecidedIssues = (issues: Issues) => _.filter(issues, (issue) =
 });
 
 export const buildCaseReviewPayload = (
-  decision: Object, userRole: string, issues: Issues, args: Object = {}
+  checkoutFlow: string, decision: Object, userRole: string, issues: Issues, args: Object = {}
 ): Object => {
   const payload = {
     data: {
@@ -328,7 +326,7 @@ export const buildCaseReviewPayload = (
   }
 
   if (userRole === USER_ROLE_TYPES.attorney) {
-    _.extend(payload.data.tasks, { document_type: decision.type });
+    _.extend(payload.data.tasks, { document_type: checkoutFlow });
   } else {
     args.factors_not_considered = _.keys(args.factors_not_considered);
     args.areas_for_improvement = _.keys(args.areas_for_improvement);

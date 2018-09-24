@@ -33,6 +33,17 @@ class LegacyTask
     # "LegacyAppeal"
   end
 
+  def get_allowed_actions(role, user)
+    Constants::TaskActionList::ACCESS_CONTROL.each_with_object({ actions: [], endpoints: [] }) do |access, accumulator|
+      if access[:is_legacy] && access[:vacols_role].include?(role)
+        accumulator[:actions].concat(access[:actions])
+        accumulator[:endpoints].concat(access[:endpoints])
+      end
+
+      accumulator
+    end
+  end
+
   ### Serializer Methods End
 
   def self.from_vacols(record, appeal, user)

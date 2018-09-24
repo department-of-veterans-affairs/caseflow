@@ -12,6 +12,7 @@ import {
 } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import DocketTypeBadge from './components/DocketTypeBadge';
+import ActionsDropdown from './components/ActionsDropdown';
 import AttorneyActionsDropdown from './components/AttorneyActionsDropdown';
 import JudgeActionsDropdown from './components/JudgeActionsDropdown';
 import ColocatedActionsDropdown from './components/ColocatedActionsDropdown';
@@ -232,18 +233,19 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       taskAssignedToOrganization,
       userRole
     } = this.props;
-    let CheckoutDropdown = <React.Fragment />;
+    let ActionDropdown = <ActionsDropdown task={taskAssignedToUser} appealId={appeal.externalId} />;
     const dropdownArgs = { appealId: appeal.externalId };
 
-    if (userRole === USER_ROLE_TYPES.attorney) {
-      CheckoutDropdown = <AttorneyActionsDropdown {...dropdownArgs} />;
-    } else if (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout) {
-      CheckoutDropdown = <JudgeActionsDropdown {...dropdownArgs} />;
-    } else if (userRole === USER_ROLE_TYPES.colocated) {
-      CheckoutDropdown = <ColocatedActionsDropdown {...dropdownArgs} />;
-    } else {
-      CheckoutDropdown = <GenericTaskActionsDropdown {...dropdownArgs} />;
-    }
+
+    // if (userRole === USER_ROLE_TYPES.attorney) {
+    //   ActionDropdown = <AttorneyActionsDropdown {...dropdownArgs} />;
+    // } else if (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout) {
+    //   ActionDropdown = <JudgeActionsDropdown {...dropdownArgs} />;
+    // } else if (userRole === USER_ROLE_TYPES.colocated) {
+    //   ActionDropdown = <ColocatedActionsDropdown {...dropdownArgs} />;
+    // } else {
+    //   ActionDropdown = <GenericTaskActionsDropdown {...dropdownArgs} />;
+    // }
 
     const taskAssignedToVso = taskAssignedToOrganization && taskAssignedToOrganization.assignedTo.type === 'Vso';
 
@@ -285,7 +287,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       {this.showActionsSection() &&
         <div className="usa-width-one-half">
           <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-          {CheckoutDropdown}
+          {ActionDropdown}
         </div>
       }
     </div>;

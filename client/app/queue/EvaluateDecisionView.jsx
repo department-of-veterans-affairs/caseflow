@@ -111,9 +111,10 @@ class EvaluateDecisionView extends React.PureComponent {
   getPrevStepUrl = () => {
     const {
       appealId,
+      checkoutFlow,
       appeal
     } = this.props;
-    const prevUrl = `/queue/appeals/${appealId}`;
+    const prevUrl = `/queue/appeals/${appealId}/${checkoutFlow}`;
     const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
     const remandedIssues = _.some(dispositions, (disposition) => [
       VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
@@ -126,11 +127,12 @@ class EvaluateDecisionView extends React.PureComponent {
     const {
       task,
       appeal,
+      checkoutFlow,
       decision,
       userRole,
       appealId
     } = this.props;
-    const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, {
+    const payload = buildCaseReviewPayload(checkoutFlow, decision, userRole, appeal.issues, {
       location: 'bva_dispatch',
       attorney_id: task.assignedBy.pgId,
       isLegacyAppeal: appeal.isLegacyAppeal,
@@ -291,6 +293,7 @@ class EvaluateDecisionView extends React.PureComponent {
 }
 
 EvaluateDecisionView.propTypes = {
+  checkoutFlow: PropTypes.string.isRequired,
   appealId: PropTypes.string.isRequired
 };
 

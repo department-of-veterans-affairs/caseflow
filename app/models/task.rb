@@ -22,6 +22,17 @@ class Task < ApplicationRecord
     completed: "completed"
   }
 
+  def get_allowed_actions(user)
+    Constants::TaskActionList::ACCESS_CONTROL.reduce({ actions: [], endpoints: [] }) do |accumulator, access|
+      if !access[:is_legacy] && access[:task_type] == type
+        accumulator[:actions].concat(access[:actions])
+        accumulator[:endpoints].concat(access[:endpoints])
+      end
+
+      accumulator
+    end
+  end
+
   def assigned_by_display_name
     if assigned_by.try(:full_name)
       return assigned_by.full_name.split(" ")
