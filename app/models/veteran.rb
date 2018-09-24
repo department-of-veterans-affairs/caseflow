@@ -40,7 +40,7 @@ class Veteran < ApplicationRecord
   end
 
   def state_is_required?
-    military_address? ? false : country_requires_state?
+    !military_address? && country_requires_state?
   end
 
   def country_requires_state?
