@@ -44,7 +44,7 @@ describe Appeal do
   context "#advanced_on_docket" do
     context "when a claimant is advanced_on_docket" do
       let(:appeal) do
-        create(:appeal, claimants: [create(:claimant, date_of_birth: 80.years.ago)])
+        create(:appeal, claimants: [create(:claimant, :advanced_on_docket)])
       end
 
       it "returns true" do
