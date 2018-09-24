@@ -7,7 +7,7 @@ class Document < ApplicationRecord
 
   self.inheritance_column = nil
 
-  S3_BUCKET_NAME = 'documents'
+  S3_BUCKET_NAME = "documents".freeze
 
   # Document types are defined in the following file in
   # caseflow commons: /app/models/caseflow/document_types.rb
@@ -118,13 +118,13 @@ class Document < ApplicationRecord
   # of S3 integration.
   def fetch_and_cache_document_from_vbms
     @content = vbms.fetch_document_file(self)
-    S3Service.store_file(S3_BUCKET_NAME + '/' + file_name, @content)
+    S3Service.store_file(S3_BUCKET_NAME + "/" + file_name, @content)
     Rails.logger.info("File #{vbms_document_id} fetched from VBMS")
     @content
   end
 
   def fetch_content
-    content = S3Service.fetch_content(S3_BUCKET_NAME + '/' + file_name)
+    content = S3Service.fetch_content(S3_BUCKET_NAME + "/" + file_name)
     content && Rails.logger.info("File #{vbms_document_id} fetched from S3")
     content || fetch_and_cache_document_from_vbms
   end
