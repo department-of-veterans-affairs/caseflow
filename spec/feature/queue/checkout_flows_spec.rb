@@ -634,7 +634,7 @@ RSpec.feature "Checkout flows" do
       )
       expect(colocated_action.reload.on_hold_duration).to eq hold_duration
       expect(colocated_action.status).to eq "on_hold"
-      expect(colocated_action.instructions).to eq instructions
+      expect(colocated_action.instructions[1]).to eq instructions
     end
 
     scenario "sends task to team" do
