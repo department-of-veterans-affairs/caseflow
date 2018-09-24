@@ -12,7 +12,7 @@ class Organization < ApplicationRecord
   private
 
   def member_css_ids
-    details = FeatureToggle.details_for(feature.to_sym)
-    details && details[:users] || []
+    return [] unless staff_field_for_organization
+    VACOLS::Staff.where("#{staff_field_for_organization.name}": staff_field_for_organization.values).pluck(:sdomainid)
   end
 end
