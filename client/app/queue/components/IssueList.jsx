@@ -51,11 +51,15 @@ export default class IssueList extends React.PureComponent<Props> {
       </tr>;
     }
 
-    return <React.Fragment>{issues.map((issue, idx) =>
-      <tr key={`${String(issue.id)}_${String(issue.id)}`} {...bottomBorder(singleIssue)}>
+    return <React.Fragment>{issues.map((issue, idx) => {
+      // this component is used in Reader, where issue ids are only `vacols_sequence_id`
+      const issueId = String(isLegacyAppeal ? issue.vacols_sequence_id : issue.id);
+
+      return <tr key={`${issueId}_${issueId}`} {...bottomBorder(singleIssue)}>
         <ListItem issue={issue} idx={this.props.idxToDisplay || (idx + 1)} {...this.props} />
-      </tr>)
-    }</React.Fragment>;
+      </tr>;
+    })}
+    </React.Fragment>;
   };
 
   render = () => <div {...tableContainerStyling(this.props.issuesOnly || this.props.stretchToFullWidth)}>
