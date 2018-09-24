@@ -1,3 +1,4 @@
+#:nocov:
 module Constants::RampJudges
   USERS = {
     preprod: %w[],
@@ -7,3 +8,4 @@ module Constants::RampJudges
     prod: %w[]
   }.freeze
 end
+#:nocov:
