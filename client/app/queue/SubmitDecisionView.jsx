@@ -32,7 +32,7 @@ import {
   ATTORNEY_COMMENTS_MAX_LENGTH,
   DOCUMENT_ID_MAX_LENGTH,
   OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES,
-  ISSUE_DISPOSITIONS
+  VACOLS_DISPOSITIONS
 } from './constants';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import COPY from '../../COPY.json';
@@ -99,7 +99,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
     const prevUrl = `/queue/appeals/${appealId}`;
 
     if (decisionType === DECISION_TYPES.DRAFT_DECISION) {
-      return dispositions.includes(ISSUE_DISPOSITIONS.REMANDED) ?
+      return dispositions.includes(VACOLS_DISPOSITIONS.REMANDED) ?
         `${prevUrl}/remands` :
         `${prevUrl}/dispositions`;
     }
@@ -120,7 +120,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       judges
     } = this.props;
 
-    const payload = buildCaseReviewPayload(decision, userRole, issues);
+    const payload = buildCaseReviewPayload(decision, userRole, issues, { isLegacyAppeal: true });
 
     const fields = {
       type: decision.type === DECISION_TYPES.DRAFT_DECISION ?

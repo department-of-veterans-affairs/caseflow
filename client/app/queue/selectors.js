@@ -122,7 +122,7 @@ export const incompleteTasksByAssigneeCssIdSelector = createSelector(
 export const organizationTasksByAssigneeIdSelector = createSelector(
   [getTasksForAppeal, getOrganizationId],
   (tasks: Tasks, id: Number) =>
-    _.filter(tasks, (task) => task.assignedTo.id === id && task.assignedTo.type === 'Organization')
+    _.filter(tasks, (task) => task.assignedTo.id === id && ['Organization', 'Vso'].includes(task.assignedTo.type))
 );
 
 export const incompleteOrganizationTasksByAssigneeIdSelector = createSelector(
@@ -138,7 +138,7 @@ export const newTasksByAssigneeCssIdSelector = createSelector(
 export const workableTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks: Array<TaskWithAppeal>) => tasks.filter(
-    (task) => task.appeal.docketName === 'legacy' || task.status !== 'on_hold'
+    (task) => task.appeal.isLegacyAppeal || task.status !== 'on_hold'
   )
 );
 

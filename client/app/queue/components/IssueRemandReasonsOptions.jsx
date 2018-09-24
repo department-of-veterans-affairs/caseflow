@@ -25,6 +25,7 @@ import {
   fullWidth,
   REMAND_REASONS,
   LEGACY_REMAND_REASONS,
+  VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS,
   redText,
   boldText
@@ -82,7 +83,7 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
     const { appeal } = this.props;
 
     const options = _.flatten(_.values(
-      appeal.docketName === 'legacy' ? LEGACY_REMAND_REASONS : REMAND_REASONS
+      appeal.isLegacyAppeal ? LEGACY_REMAND_REASONS : REMAND_REASONS
     ));
     const pairs = _.zip(
       _.map(options, 'id'),
@@ -183,7 +184,7 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
   getCheckbox = (option, onChange, values) => {
     const rowOptId = `${String(this.props.issue.id)}-${option.id}`;
     const { appeal } = this.props;
-    const copyPrefix = appeal.docketName === 'legacy' ? 'LEGACY' : 'AMA';
+    const copyPrefix = appeal.isLegacyAppeal ? 'LEGACY' : 'AMA';
 
     return <React.Fragment key={option.id}>
       <Checkbox
@@ -224,7 +225,7 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
       values: this.state
     };
 
-    if (appeal.docketName === 'legacy') {
+    if (appeal.isLegacyAppeal) {
       return <div {...flexContainer}>
         <div {...flexColumn}>
           <CheckboxGroup
@@ -289,10 +290,12 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
       <h2 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
         Issue {idx + 1} {issues.length > 1 ? ` of ${issues.length}` : ''}
       </h2>
-      <div {...smallBottomMargin}>Program: {getIssueProgramDescription(issue)}</div>
-      <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
-      {issue.program &&
+      <div {...smallBottomMargin}>
+        Program: {appeal.isLegacyAppeal ? getIssueProgramDescription(issue) : issue.program}
+      </div>
+      {appeal.isLegacyAppeal &&
         <React.Fragment>
+          <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
           <div {...smallBottomMargin}>
             Code: {getIssueDiagnosticCodeLabel(_.last(issue.codes))}
           </div>
@@ -318,7 +321,9 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal,
-    issues: _.filter(issues, (issue) => issue.disposition === ISSUE_DISPOSITIONS.REMANDED),
+    issues: _.filter(issues, (issue) => [
+      VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
+    ].includes(issue.disposition)),
     issue: _.find(issues, (issue) => issue.id === ownProps.issueId),
     highlight: state.ui.highlightFormItems
   };

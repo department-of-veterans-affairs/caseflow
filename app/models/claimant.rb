@@ -23,6 +23,10 @@ class Claimant < ApplicationRecord
   end
   delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
 
+  def representative_participant_id
+    power_of_attorney.participant_id
+  end
+
   def name
     FullName.new(first_name, "", last_name).formatted(:readable_short)
   end
@@ -31,7 +35,7 @@ class Claimant < ApplicationRecord
     BGSService.new
   end
 
-  delegate :address_line_1, :address_line_2, :city, :country, :state, :zip, to: :bgs_address_service
+  delegate :address, :address_line_1, :address_line_2, :city, :country, :state, :zip, to: :bgs_address_service
 
   def fetch_bgs_record
     general_info = bgs.fetch_claimant_info_by_participant_id(participant_id)

@@ -3,7 +3,10 @@ import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 import StringUtil from '../util/StringUtil';
-import { redText } from './constants';
+import {
+  redText,
+  ISSUE_DISPOSITIONS
+} from './constants';
 
 import type {
   Task,
@@ -72,6 +75,7 @@ const extractAppealsFromTasks =
           type: task.attributes.appeal_type,
           externalId: task.attributes.external_appeal_id,
           docketName: task.attributes.docket_name,
+          isLegacyAppeal: task.attributes.docket_name === 'legacy',
           caseType: task.attributes.case_type,
           isAdvancedOnDocket: task.attributes.aod,
           issueCount: task.attributes.issue_count,
@@ -177,10 +181,13 @@ export const prepareAppealForStore =
         id: appeal.id,
         externalId: appeal.attributes.external_id,
         docketName: appeal.attributes.docket_name,
+        isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
         caseType: appeal.attributes.type,
         isAdvancedOnDocket: appeal.attributes.aod,
         issueCount: appeal.attributes.issues.length,
         docketNumber: appeal.attributes.docket_number,
+        assignedAttorney: appeal.attributes.assigned_attorney,
+        assignedJudge: appeal.attributes.assigned_judge,
         veteranFullName: appeal.attributes.veteran_full_name,
         veteranFileNumber: appeal.attributes.veteran_file_number,
         isPaperCase: appeal.attributes.paper_case
@@ -198,6 +205,7 @@ export const prepareAppealForStore =
         appellantRelationship: appeal.attributes.appellant_relationship,
         locationCode: appeal.attributes.location_code,
         veteranDateOfBirth: appeal.attributes.veteran_date_of_birth,
+        veteranDateOfDeath: appeal.attributes.veteran_date_of_death,
         veteranGender: appeal.attributes.veteran_gender,
         externalId: appeal.attributes.external_id,
         status: appeal.attributes.status,
@@ -270,19 +278,19 @@ export const getIssueTypeDescription = (issue: Issue) => {
   return _.get(ISSUE_INFO[program].levels, `${type}.description`);
 };
 
-export const getIssueDiagnosticCodeLabel = (code: string) => {
+export const getIssueDiagnosticCodeLabel = (code: string): string => {
   const readableLabel = DIAGNOSTIC_CODE_DESCRIPTIONS[code];
 
   if (!readableLabel) {
-    return false;
+    return '';
   }
 
   return `${code} - ${readableLabel.staff_description}`;
 };
 
 /**
- * For attorney checkout flow, filter out already-decided issues. Undecided
- * disposition IDs are all numerical (1-9), decided IDs are alphabetical (A-X).
+ * For legacy attorney checkout flow, filter out already-decided issues. Undecided
+ * VACOLS disposition IDs are all numerical (1-9), decided IDs are alphabetical (A-X).
  * Filter out disposition 9 because it is no longer used.
  *
  * @param {Array} issues
@@ -312,6 +320,12 @@ export const buildCaseReviewPayload = (
       }
     }
   };
+  let isLegacyAppeal = false;
+
+  if ('isLegacyAppeal' in args) {
+    isLegacyAppeal = args.isLegacyAppeal;
+    delete args.isLegacyAppeal;
+  }
 
   if (userRole === USER_ROLE_TYPES.attorney) {
     _.extend(payload.data.tasks, { document_type: decision.type });
@@ -322,11 +336,27 @@ export const buildCaseReviewPayload = (
     _.extend(payload.data.tasks, args);
   }
 
-  payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => _.extend({},
-    _.pick(issue, ['remand_reasons', 'type', 'readjudication']),
-    { disposition: _.capitalize(issue.disposition) },
-    { id: issue.id }
-  ));
+  if (isLegacyAppeal) {
+    payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => {
+      const issueAttrs = ['type', 'readjudication', 'id'];
+
+      if (issue.disposition === VACOLS_DISPOSITIONS_BY_ID.REMANDED) {
+        issueAttrs.push('remand_reasons');
+      }
+
+      return _.extend({}, _.pick(issue, issueAttrs), {
+        disposition: _.capitalize(issue.disposition)
+      });
+    });
+  } else {
+    payload.data.tasks.issues = issues.map((issue) => {
+      if (issue.disposition !== ISSUE_DISPOSITIONS.REMANDED) {
+        return _.omit(issue, 'remand_reasons');
+      }
+
+      return issue;
+    });
+  }
 
   return payload;
 };

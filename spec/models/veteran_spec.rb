@@ -52,6 +52,14 @@ describe Veteran do
       end
 
       it { is_expected.to eq(saved_veteran) }
+
+      context "when veteran isn't found in BGS" do
+        it "does not attempt to backfill name attributes" do
+          expect(subject.bgs_record).to eq(:not_found)
+          expect(subject.accessible?).to eq(true)
+          expect(subject.first_name).to be_nil
+        end
+      end
     end
 
     context "when veteran doesn't exist in the DB" do

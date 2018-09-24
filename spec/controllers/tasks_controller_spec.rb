@@ -126,9 +126,9 @@ RSpec.describe TasksController, type: :controller do
     context "when user has no role" do
       let(:role) { nil }
 
-      it "should return a 400 invalid role error" do
+      it "should return 200" do
         get :index, params: { user_id: user.id, role: "unknown" }
-        expect(response.status).to eq 400
+        expect(response.status).to eq 200
       end
     end
   end
@@ -236,12 +236,12 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.size).to eq 2
             expect(response_body.first["attributes"]["status"]).to eq "assigned"
             expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.first["attributes"]["instructions"]).to eq "do this"
+            expect(response_body.first["attributes"]["instructions"][0]).to eq "do this"
             expect(response_body.first["attributes"]["action"]).to eq "address_verification"
 
             expect(response_body.second["attributes"]["status"]).to eq "assigned"
             expect(response_body.second["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.second["attributes"]["instructions"]).to eq "another one"
+            expect(response_body.second["attributes"]["instructions"][0]).to eq "another one"
             expect(response_body.second["attributes"]["action"]).to eq "missing_records"
             # assignee should be the same person
             id = response_body.second["attributes"]["assigned_to"]["id"]
@@ -266,7 +266,7 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.size).to eq 1
             expect(response_body.first["attributes"]["status"]).to eq "assigned"
             expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.first["attributes"]["instructions"]).to eq "do this"
+            expect(response_body.first["attributes"]["instructions"][0]).to eq "do this"
             expect(response_body.first["attributes"]["action"]).to eq "address_verification"
           end
         end

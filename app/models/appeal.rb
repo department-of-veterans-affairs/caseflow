@@ -1,4 +1,6 @@
 class Appeal < AmaReview
+  include Taskable
+
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
@@ -32,6 +34,10 @@ class Appeal < AmaReview
 
   def issues
     { decision_issues: decision_issues, request_issues: request_issues }
+  end
+
+  def issue_count
+    request_issues.count
   end
 
   def docket_name

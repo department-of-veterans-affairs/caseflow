@@ -3,9 +3,12 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   before_action :verify_access
 
   rescue_from StandardError do |e|
-    fail e unless e.class.method_defined?(:serialize_response)
     Raven.capture_exception(e)
-    render(e.serialize_response)
+    if e.class.method_defined?(:serialize_response)
+      render(e.serialize_response)
+    else
+      render json: { message: "Unexpected error" }, status: 500
+    end
   end
 
   def list
@@ -30,7 +33,8 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     appeals = LegacyWorkQueue.tasks_with_appeals(user, "attorney")[1].select(&:active?)
 
     if feature_enabled?(:idt_ama_appeals)
-      appeals += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold]).map(&:appeal)
+      appeals += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold])
+        .reject { |task| task.action == "assign" }.map(&:appeal)
     end
     appeals
   end
@@ -43,7 +47,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   def ama_appeal_details
     task = Task.where(assigned_to: user, appeal: appeal).where.not(status: [:completed, :on_hold]).last
     documents = Task.where(appeal: appeal).map(&:attorney_case_reviews).flatten
-    [task ? task.assigned_by.full_name : "", documents]
+    [task ? task.assigned_by.try(:full_name) : "", documents]
   end
 
   def appeal
@@ -62,7 +66,8 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     appeal_details = ActiveModelSerializers::SerializableResource.new(
       appeal,
       serializer: ::Idt::V1::AppealDetailsSerializer,
-      include_addresses: Constants::BvaDispatchTeams::USERS[Rails.current_env].include?(current_user.css_id)
+      include_addresses: Constants::BvaDispatchTeams::USERS[Rails.current_env].include?(user.css_id),
+      base_url: request.base_url
     ).as_json
 
     assigned_by_name, documents = appeal.is_a?(LegacyAppeal) ? legacy_appeal_details : ama_appeal_details
