@@ -68,12 +68,8 @@ export default class AutoSave extends React.Component {
     }
 
     if (this.props.saveSuccess) {
-      const successMessage = <div>
-        Connected! Your hearing worksheet has been saved.
-      </div>;
-
       return <Alert
-        message={successMessage}
+        message="Connected! Your hearing worksheet has been saved."
         type="success"
         fixed
         styling={alertStyling}
