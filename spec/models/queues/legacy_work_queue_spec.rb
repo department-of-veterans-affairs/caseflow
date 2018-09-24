@@ -21,17 +21,17 @@ describe LegacyWorkQueue do
       let(:role) { "Attorney" }
 
       it "returns tasks" do
-        subject = LegacyWorkQueue.tasks_with_appeals(user, role)
+        tasks, = LegacyWorkQueue.tasks_with_appeals(user, role)
 
-        expect(subject[0].length).to eq(2)
-        expect(subject[0][0].class).to eq(AttorneyLegacyTask)
+        expect(tasks.length).to eq(2)
+        expect(tasks[0].class).to eq(AttorneyLegacyTask)
       end
 
       it "returns appeals" do
-        subject = LegacyWorkQueue.tasks_with_appeals(user, role)
+        _, appeals = LegacyWorkQueue.tasks_with_appeals(user, role)
 
-        expect(subject[1].length).to eq(2)
-        expect(subject[1][0].class).to eq(LegacyAppeal)
+        expect(appeals.length).to eq(2)
+        expect(appeals[0].class).to eq(LegacyAppeal)
       end
     end
 
@@ -39,17 +39,17 @@ describe LegacyWorkQueue do
       let(:role) { "Judge" }
 
       it "returns tasks" do
-        subject = LegacyWorkQueue.tasks_with_appeals(user, role)
+        tasks, = LegacyWorkQueue.tasks_with_appeals(user, role)
 
-        expect(subject[0].length).to eq(2)
-        expect(subject[0][0].class).to eq(JudgeLegacyTask)
+        expect(tasks.length).to eq(2)
+        expect(tasks[0].class).to eq(JudgeLegacyTask)
       end
 
       it "returns appeals" do
-        subject = LegacyWorkQueue.tasks_with_appeals(user, role)
+        _, appeals = LegacyWorkQueue.tasks_with_appeals(user, role)
 
-        expect(subject[1].length).to eq(2)
-        expect(subject[1][0].class).to eq(LegacyAppeal)
+        expect(appeals.length).to eq(2)
+        expect(appeals[0].class).to eq(LegacyAppeal)
       end
     end
   end
@@ -69,17 +69,17 @@ describe LegacyWorkQueue do
       let(:role) { "attorney" }
 
       it "returns a task" do
-        subject = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal.vacols_id, role)
+        tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal.vacols_id, role)
 
-        expect(subject[0].length).to eq(1)
-        expect(subject[0][0].class).to eq(AttorneyLegacyTask)
+        expect(tasks.length).to eq(1)
+        expect(tasks[0].class).to eq(AttorneyLegacyTask)
       end
 
       it "returns an appeal" do
-        subject = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal.vacols_id, role)
+        _, appeals = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal.vacols_id, role)
 
-        expect(subject[1].length).to eq(1)
-        expect(subject[1][0].class).to eq(LegacyAppeal)
+        expect(appeals.length).to eq(1)
+        expect(appeals[0].class).to eq(LegacyAppeal)
       end
     end
   end
