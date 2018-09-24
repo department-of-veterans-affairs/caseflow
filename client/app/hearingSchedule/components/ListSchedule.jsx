@@ -9,6 +9,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import Button from '../../components/Button';
 import PropTypes from 'prop-types';
 import BasicDateRangeSelector from '../../components/BasicDateRangeSelector';
+import RoSelectorDropdown from './RoSelectorDropdown'
 import InlineForm from '../../components/InlineForm';
 import { CSVLink } from 'react-csv';
 import { toggleDropdownFilterVisibility } from '../actions'
@@ -17,6 +18,10 @@ import connect from "react-redux/es/connect/connect";
 
 const hearingSchedStyling = css({
   marginTop: '50px'
+});
+
+const downloadButtonStyling = css({
+  marginTop: '60px'
 });
 
 const inlineFormStyling = css({
@@ -119,6 +124,13 @@ class ListSchedule extends React.Component {
       < span className="cf-push-right"><Link button="primary" to="/schedule/assign">Assign hearings</Link></span>
       }
       <div className="cf-help-divider" {...hearingSchedStyling} ></div>
+      <div>
+        <RoSelectorDropdown
+          regionalOffices={this.props.regionalOffices}
+          onChange={this.props.onRegionalOfficeChange}
+          value={this.props.selectedRegionalOffice}
+        />
+      </div>
       <div className="cf-push-left" {...inlineFormStyling} >
         <InlineForm>
           <BasicDateRangeSelector
@@ -142,7 +154,7 @@ class ListSchedule extends React.Component {
           </div>
         </InlineForm>
       </div>
-      <div className="cf-push-right" >
+      <div className="cf-push-right" {...downloadButtonStyling} >
         <Button
           classNames={['usa-button-secondary']}>
           <CSVLink
