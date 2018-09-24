@@ -31,6 +31,8 @@ class Rating
       profile_date: profile_date
     )
 
+    return [] if response[:rating_issues].nil?
+
     [response[:rating_issues]].flatten.map do |issue_data|
       RatingIssue.from_bgs_hash(issue_data)
     end

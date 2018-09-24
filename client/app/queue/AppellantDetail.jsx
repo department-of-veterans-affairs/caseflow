@@ -6,35 +6,16 @@ import _ from 'lodash';
 import BareList from '../components/BareList';
 import { boldText } from './constants';
 import { DateString } from '../util/DateUtil';
+import Address from './components/Address';
 
 const detailListStyling = css({
   paddingLeft: 0,
   listStyle: 'none',
   marginBottom: '3rem'
 });
-const addressIndentStyling = (secondLine) => css({
-  marginLeft: secondLine ? '7.5em' : 0
-});
 
 export default class AppellantDetail extends React.PureComponent {
   getAppealAttr = (attr) => _.get(this.props.appeal, attr);
-
-  formatAddress = (addressFieldName) => {
-    const {
-      address_line_1: addressLine1,
-      address_line_2: addressLine2,
-      city,
-      state,
-      zip,
-      country
-    } = this.getAppealAttr(addressFieldName);
-    const streetAddress = addressLine2 ? `${addressLine1} ${addressLine2}` : addressLine1;
-
-    return <React.Fragment>
-      {streetAddress && <React.Fragment><span>{streetAddress},</span><br /></React.Fragment>}
-      <span {...addressIndentStyling(streetAddress)}>{city}, {state} {zip} {country === 'USA' ? '' : country}</span>
-    </React.Fragment>;
-  };
 
   getGenderPronoun = (genderFieldName) => this.getAppealAttr(genderFieldName) === 'F' ? 'She/Her' : 'He/His';
 
@@ -65,7 +46,7 @@ export default class AppellantDetail extends React.PureComponent {
     if (addressField && this.getAppealAttr(addressField)) {
       details.push({
         label: 'Mailing Address',
-        value: this.formatAddress(addressField)
+        value: <Address address={this.getAppealAttr(addressField)} />
       });
     }
     if (regionalOfficeField && this.getAppealAttr(regionalOfficeField)) {

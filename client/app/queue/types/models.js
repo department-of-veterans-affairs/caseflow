@@ -14,7 +14,7 @@ export type User = {
 
 export type Judges = { [string]: User };
 
-export type AppellantAddress = {
+export type Address = {
   address_line_1: string,
   address_line_2: string,
   city: string,
@@ -32,6 +32,7 @@ export type Issue = {
   close_date: Date,
   note: string,
   id: Number,
+  vacols_sequence_id?: Number,
   labels: Array<string>,
   readjudication: Boolean,
   remand_reasons: Array<Object>,
@@ -77,11 +78,17 @@ export type Task = {
 
 export type Tasks = { [string]: Task };
 
+export type PowerOfAttorney = {
+  representative_type: ?string,
+  representative_name: ?string,
+  representative_address: ?Address
+}
+
 export type AppealDetail = {
   issues: Array<Object>,
   hearings: Array<Object>,
   appellantFullName: string,
-  appellantAddress: AppellantAddress,
+  appellantAddress: Address,
   appellantRelationship: string,
   locationCode: ?string,
   veteranDateOfBirth: string,
@@ -90,7 +97,7 @@ export type AppealDetail = {
   status: string,
   decisionDate: string,
   certificationDate: ?string,
-  powerOfAttorney: string,
+  powerOfAttorney: ?PowerOfAttorney,
   regionalOffice: Object,
   caseflowVeteranId: ?string,
   tasks: ?Array<Task>
@@ -107,6 +114,8 @@ export type BasicAppeal = {
   caseType: string,
   isAdvancedOnDocket: boolean,
   docketNumber: string,
+  assignedAttorney: ?User,
+  assignedJudge: ?User,
   veteranFullName: string,
   veteranFileNumber: string,
   isPaperCase: ?boolean,

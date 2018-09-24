@@ -9,6 +9,7 @@ FactoryBot.define do
         {
           first_name: "Bob",
           last_name: "Smith",
+          date_of_birth: "01/10/1935",
           date_of_death: "05/25/2016",
           name_suffix: "II"
         }
