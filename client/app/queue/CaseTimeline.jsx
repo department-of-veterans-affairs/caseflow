@@ -31,14 +31,14 @@ const tableCell = css({
 });
 
 export default class CaseTimeline extends React.PureComponent {
-  getEventRow = ({ title, date }, lastRow) => {
+  getEventRow = ({ title, pendingTitle, date }, lastRow) => {
     const formattedDate = date ? moment(date).format('MM/DD/YYYY') : null;
     const eventImage = date ? <GreenCheckmark /> : <GrayDot />;
 
     return <tr key={title}>
       <td {...tableCell}>{formattedDate}</td>
       <td {...tableCellWithIcon}>{eventImage}{!lastRow && <div {...grayLine} />}</td>
-      <td {...tableCell}>{title}</td>
+      <td {...tableCell}>{date ? title : pendingTitle}</td>
     </tr>;
   }
 
@@ -47,14 +47,23 @@ export default class CaseTimeline extends React.PureComponent {
 
     const events = [
       {
-        title: "BVA Decision pending",
+        title: "BVA Decision made",
+        pendingTitle: "BVA Decision pending",
         date: appeal.decisionDate
       },
       {
+        legacyOnly: true,
+        title: "Form 9 received",
+        pendingTitle: "Form 9 pending",
+        date: appeal.events.form9Date
+      },
+      {
         title: "Notice of disagreement received",
-        date: appeal.nodReceiptDate
+        pendingTitle: "Notice of disagreement pending",
+        date: appeal.events.nodReceiptDate
       }
-    ];
+    ].filter((event) => !event.legacyOnly || appeal.isLegacyAppeal);
+
     return <table>
       {events.map((event, index) => {
         return this.getEventRow(event, index === events.length - 1);

@@ -90,7 +90,10 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
     "legacy"
   end
 
-  attribute :nod_receipt_date do
-    object.nod_date
+  attribute :events do
+    {
+      nod_receipt_date: object.nod_date,
+      form9_date: object.form9_date
+    }
   end
 end

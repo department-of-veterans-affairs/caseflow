@@ -94,7 +94,9 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.veteran ? object.veteran.id : nil
   end
 
-  attribute :nod_receipt_date do
-    object.receipt_date
+  attribute :events do
+    {
+      nod_receipt_date: object.receipt_date
+    }
   end
 end
