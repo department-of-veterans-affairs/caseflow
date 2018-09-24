@@ -127,11 +127,6 @@ p {
   text-transform: uppercase;
 }
 
-// Use cf-push-row to wrap elements that float to the left or right
-.cf-push-row {
-  @include clearfix;
-}
-
 .cf-push-left {
   float: left;
 }
@@ -889,6 +884,7 @@ input {
 
 .cf-inline-form {
   line-height: 4em;
+  @include clearfix;
 
   label,
   input {
@@ -924,7 +920,6 @@ input {
 fieldset {
   > *,
   .cf-form-textinput {
-    margin-bottom: 0;
     color: $color-gray-dark;
   }
 }
@@ -967,7 +962,7 @@ fieldset {
   .cf-form-radio-option {
     float: left;
     padding-right: rem(30px);
-    margin-bottom: .5em;
+    margin: .5em 0;
   }
 }
 
@@ -995,12 +990,6 @@ fieldset {
 
   .cf-required {
     display: none;
-  }
-}
-
-[class*='cf-form-checkbox'] {
-  legend {
-    margin-bottom: .75em;
   }
 }
 

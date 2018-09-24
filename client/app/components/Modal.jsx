@@ -126,7 +126,7 @@ export default class Modal extends React.Component {
           {children}
         </div>
         {noDivider ? '' : <div className="cf-modal-divider"></div>}
-        <div className="cf-push-row cf-modal-controls">
+        <div className="cf-modal-controls">
           {modalButtons}
         </div>
       </div>
