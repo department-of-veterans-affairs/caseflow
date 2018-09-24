@@ -85,7 +85,7 @@ export default class RadioField extends React.Component {
 }
 
 RadioField.defaultProps = {
-  className: ['cf-form-showhide-radio']
+  className: ['usa-fieldset-inputs']
 };
 
 RadioField.propTypes = {
