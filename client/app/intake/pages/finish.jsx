@@ -5,11 +5,16 @@ import { PAGE_PATHS } from '../constants';
 import RampElectionPage, { FinishButtons as RampElectionButtons } from './rampElection/finish';
 import RampRefilingPage, { FinishButtons as RampRefilingButtons } from './rampRefiling/finish';
 import SupplementalClaimPage, { FinishButtons as SupplementalClaimButtons } from './supplementalClaim/finish';
-import HigherLevelReviewPage, { FinishButtons as HigherLevelReviewButtons } from './higherLevelReview/finish';
+import HigherLevelReviewFinishPage, { FinishButtons as HigherLevelReviewButtons } from './higherLevelReview/finish';
+import HigherLevelReviewAddIssuesPage from './higherLevelReview/addIssues';
 import AppealPage, { FinishButtons as AppealButtons } from './appeal/finish';
 import SwitchOnForm from '../components/SwitchOnForm';
 
 class Finish extends React.PureComponent {
+  const newAddIssuesFlow = this.props.featureToggles.intake_add_issues;
+
+  const HigherLevelReviewPage = newAddIssuesFlow ? HigherLevelReviewAddIssuesPage : HigherLevelReviewFinishPage;
+
   render = () =>
     <SwitchOnForm
       formComponentMapping={{
