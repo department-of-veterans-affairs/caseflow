@@ -168,7 +168,7 @@ ActiveRecord::Schema.define(version: 20180921145533) do
     t.bigint "review_request_id", null: false
     t.string "participant_id", null: false
     t.string "payee_code"
-    t.index ["date_of_birth"], name: "index_claimants_on_date_of_birth"
+    t.date "date_of_birth"
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
