@@ -39,7 +39,7 @@ class Claimant < ApplicationRecord
   end
 
   def person
-    @person ||= Person.find_by(participant_id: participant_id)
+    @person ||= Person.find_or_create_by(participant_id: participant_id)
   end
 
   delegate :date_of_birth, :advance_on_docket_grants, to: :person
