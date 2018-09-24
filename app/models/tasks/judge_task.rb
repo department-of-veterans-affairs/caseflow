@@ -25,7 +25,7 @@ class JudgeTask < Task
     root_tasks_needing_assignment = RootTask.left_outer_joins(:children).all.select { |t| t.children.empty? }
     root_tasks_needing_assignment.each do |root_task|
       if dry_run
-        Rails.logger.info("Dry run. Would assign judge task for #{root_task.appeal.id} to #{next_assignee.css_id}")
+        Rails.logger.info("Dry run. Would assign judge task for #{root_task.appeal.id}")
       else
         task = create!(appeal: root_task.appeal,
                        parent: root_task,
@@ -34,15 +34,13 @@ class JudgeTask < Task
                        assigned_at: Time.zone.now,
                        assigned_to: next_assignee)
 
-        Rails.logger.info("Assigned judge task with id: #{task.id} to #{task.assigned_to}")
+        Rails.logger.info("Assigned judge task with id: #{task.id} to #{task.assigned_to.css_id}")
       end
     end
   end
 
-  # 2 judges for now just to test
-  # TODO: add production list.
   def self.list_of_assignees
-    %w[BVAAABSHIRE BVAOFRANECKI]
+    Constants::RampJudges::USERS[Rails.current_env]
   end
   #:nocov:
 end
