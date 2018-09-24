@@ -24,6 +24,7 @@ import {
   marginBottom,
   marginLeft,
   PAGE_TITLES,
+  VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS
 } from './constants';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
@@ -58,9 +59,12 @@ class SelectDispositionsView extends React.PureComponent {
       appeal: { issues }
     } = this.props;
     let nextStep;
-    const baseUrl = `/queue/appeals/${appealId}`;
+    const dispositions = issues.map((issue) => issue.disposition);
+    const remandedIssues = _.some(dispositions, (disp) => [
+      VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
+    ].includes(disp));
 
-    if (_.map(issues, 'disposition').includes(ISSUE_DISPOSITIONS.REMANDED)) {
+    if (remandedIssues) {
       nextStep = 'remands';
     } else if (userRole === USER_ROLE_TYPES.judge) {
       nextStep = 'evaluate';
@@ -68,7 +72,7 @@ class SelectDispositionsView extends React.PureComponent {
       nextStep = 'submit';
     }
 
-    return `${baseUrl}/${nextStep}`;
+    return `/queue/appeals/${appealId}/${nextStep}`;
   }
 
   getPrevStepUrl = () => {
@@ -115,7 +119,10 @@ class SelectDispositionsView extends React.PureComponent {
     const columns = [{
       header: 'Issues',
       valueFunction: (issue, idx) => <IssueList
-        appeal={{ issues: [issue] }}
+        appeal={{
+          issues: [issue],
+          isLegacyAppeal: appeal.isLegacyAppeal
+        }}
         idxToDisplay={idx + 1}
         showDisposition={false}
         stretchToFullWidth />
@@ -158,7 +165,7 @@ class SelectDispositionsView extends React.PureComponent {
       <hr />
       <Table
         columns={this.getColumns}
-        rowObjects={getUndecidedIssues(issues)}
+        rowObjects={appeal.isLegacyAppeal ? getUndecidedIssues(issues) : issues}
         getKeyForRow={this.getKeyForRow}
         styling={tableStyling}
         bodyStyling={tbodyStyling}
