@@ -10,19 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180921145533) do
+ActiveRecord::Schema.define(version: 201809112051441) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
   create_table "advance_on_docket_grants", force: :cascade do |t|
-    t.bigint "claimant_id"
+    t.bigint "person_id"
     t.bigint "user_id"
     t.string "reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["claimant_id"], name: "index_advance_on_docket_grants_on_claimant_id"
+    t.index ["person_id"], name: "index_advance_on_docket_grants_on_person_id"
     t.index ["user_id"], name: "index_advance_on_docket_grants_on_user_id"
   end
 

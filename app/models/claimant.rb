@@ -2,7 +2,6 @@ class Claimant < ApplicationRecord
   include AssociatedBgsRecord
 
   belongs_to :review_request, polymorphic: true
-  has_many :advance_on_docket_grants
 
   bgs_attr_accessor :first_name, :last_name, :middle_name, :relationship
 
@@ -39,6 +38,11 @@ class Claimant < ApplicationRecord
     BGSService.new
   end
 
+  def person
+    @person ||= Person.find_by(participant_id: participant_id)
+  end
+
+  delegate :date_of_birth, :advance_on_docket_grants, to: :person
   delegate :address, :address_line_1, :address_line_2, :city, :country, :state, :zip, to: :bgs_address_service
 
   def fetch_bgs_record
