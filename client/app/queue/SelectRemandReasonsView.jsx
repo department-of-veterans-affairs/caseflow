@@ -11,6 +11,7 @@ import IssueRemandReasonsOptions from './components/IssueRemandReasonsOptions';
 
 import {
   fullWidth,
+  VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS,
   PAGE_TITLES
 } from './constants';
@@ -110,7 +111,9 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal,
-    issues: _.filter(issues, (issue) => issue.disposition === ISSUE_DISPOSITIONS.REMANDED),
+    issues: _.filter(issues, (issue) => [
+      VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
+    ].includes(issue.disposition)),
     ..._.pick(state.ui, 'userRole')
   };
 };

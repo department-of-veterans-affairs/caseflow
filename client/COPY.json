@@ -37,6 +37,8 @@
   "CASE_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL": "Assigned on",
   "CASE_SNAPSHOT_TASK_DUE_DATE_LABEL": "Due",
   "CASE_SNAPSHOT_DECISION_PREPARER_LABEL": "Prepared by",
+  "CASE_SNAPSHOT_ASSIGNED_JUDGE_LABEL": "VLJ",
+  "CASE_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL": "Senior counsel",
   "CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL": "Document ID",
   "CASE_SNAPSHOT_TASK_TYPE_LABEL": "Task",
   "CASE_SNAPSHOT_TASK_FROM_LABEL": "From",
@@ -45,6 +47,12 @@
 
   "CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY": "View Hearing Worksheet",
   "CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP": "This link opens a PDF copy of the Hearing Worksheet",
+  "CASE_DETAILS_INCORRECT_POA": "If the POA is incorrect, please send an email to an administrator with access to SHARE.",
+  "CASE_DETAILS_UNABLE_TO_LOAD": "We're unable to load this information. If the problem persists, please submit feedback through Caseflow",
+  "CASE_DETAILS_LOADING": "Loading...",
+  "CASE_DETAILS_POA_VSO": "Veteran Service Organization",
+  "CASE_DETAILS_POA_AGENT": "Private Agent",
+  "CASE_DETAILS_POA_ATTORNEY": "Private Attorney",
 
   "NEW_FILE_ICON_TOOLTIP": "This case has new documents",
 
@@ -167,11 +175,14 @@
 
   "HEARING_SCHEDULE_SUCCESS_MESSAGE": "You can view your uploaded schedule by clicking the link below",
 
+  "TASK_MARKED_COMPLETE_NOTICE_TITLE": "Task marked as complete",
+  "TASK_MARKED_COMPLETE_NOTICE_DETAIL": "Task for %s's case completed",
+
   "ADD_COLOCATED_TASK_SUBHEAD": "Submit admin action",
   "ADD_COLOCATED_TASK_ACTION_TYPE_LABEL": "Select the type of administrative action you'd like to assign:",
   "ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL": "Provide instructions and context for this action:",
-  "ADD_COLOCATED_TASK_CONFIRMATION_TITLE": "Your %s request was submitted successfully",
-  "ADD_COLOCATED_TASK_CONFIRMATION_DETAIL": "If you need to make any changes, please manage this case in DAS.",
+  "ADD_COLOCATED_TASK_CONFIRMATION_TITLE": "You have assigned an administrative action (%s)",
+  "ADD_COLOCATED_TASK_CONFIRMATION_DETAIL": "If you need to make any changes, please email your administration action team.",
 
   "COLOCATED_ACTION_SEND_TO_TEAM": "Send to %s team",
   "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY": "Send back to attorney",

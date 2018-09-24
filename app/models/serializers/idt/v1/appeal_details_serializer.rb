@@ -73,6 +73,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   end
   attribute :citation_number
   attribute :docket_number
+  attribute :docket_name
   attribute :number_of_issues
 
   attribute :issues do
@@ -80,7 +81,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
       object.issues.map do |issue|
         ActiveModelSerializers::SerializableResource.new(
           issue,
-          serializer: ::WorkQueue::IssueSerializer
+          serializer: ::WorkQueue::LegacyIssueSerializer
         ).as_json[:data][:attributes]
       end
     else

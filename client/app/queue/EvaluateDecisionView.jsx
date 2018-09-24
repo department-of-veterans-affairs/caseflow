@@ -27,6 +27,7 @@ import {
   marginBottom, marginTop,
   paddingLeft, fullWidth,
   redText, PAGE_TITLES,
+  VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS,
   JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH
 } from './constants';
@@ -112,12 +113,13 @@ class EvaluateDecisionView extends React.PureComponent {
       appealId,
       appeal
     } = this.props;
-    const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
     const prevUrl = `/queue/appeals/${appealId}`;
+    const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
+    const remandedIssues = _.some(dispositions, (disposition) => [
+      VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
+    ].includes(disposition));
 
-    return dispositions.includes(ISSUE_DISPOSITIONS.REMANDED) ?
-      `${prevUrl}/remands` :
-      `${prevUrl}/dispositions`;
+    return `${prevUrl}/${remandedIssues ? 'remands' : 'dispositions'}`;
   }
 
   goToNextStep = () => {
@@ -131,6 +133,7 @@ class EvaluateDecisionView extends React.PureComponent {
     const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, {
       location: 'bva_dispatch',
       attorney_id: task.assignedBy.pgId,
+      isLegacyAppeal: appeal.isLegacyAppeal,
       ...this.state
     });
     const successMsg = sprintf(COPY.JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
