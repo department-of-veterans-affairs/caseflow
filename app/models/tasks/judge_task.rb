@@ -23,6 +23,11 @@ class JudgeTask < Task
   def self.assign_ramp_judge_tasks(dry_run: false)
     # Find all root tasks with no children, that means they are not assigned.
     root_tasks_needing_assignment = RootTask.left_outer_joins(:children).all.select { |t| t.children.empty? }
+
+    if dry_run
+      Rails.logger.info("Dry run. First assignee would be #{next_assignee.css_id}")
+    end
+    
     root_tasks_needing_assignment.each do |root_task|
       if dry_run
         Rails.logger.info("Dry run. Would assign judge task for #{root_task.appeal.id}")
