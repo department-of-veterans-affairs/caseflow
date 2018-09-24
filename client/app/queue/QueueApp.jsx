@@ -10,7 +10,8 @@ import {
   setFeatureToggles,
   setUserRole,
   setUserCssId,
-  setUserIsVsoEmployee
+  setUserIsVsoEmployee,
+  setFeedbackUrl
 } from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
@@ -67,7 +68,8 @@ type Props = {|
   setFeatureToggles: typeof setFeatureToggles,
   setUserRole: typeof setUserRole,
   setUserCssId: typeof setUserCssId,
-  setUserIsVsoEmployee: typeof setUserIsVsoEmployee
+  setUserIsVsoEmployee: typeof setUserIsVsoEmployee,
+  setFeedbackUrl: typeof setFeedbackUrl
 |};
 
 class QueueApp extends React.PureComponent<Props> {
@@ -76,6 +78,7 @@ class QueueApp extends React.PureComponent<Props> {
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
+    this.props.setFeedbackUrl(this.props.feedbackUrl);
   }
 
   routedSearchResults = (props) => <React.Fragment>
@@ -331,7 +334,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setFeatureToggles,
   setUserRole,
   setUserCssId,
-  setUserIsVsoEmployee
+  setUserIsVsoEmployee,
+  setFeedbackUrl
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueApp);

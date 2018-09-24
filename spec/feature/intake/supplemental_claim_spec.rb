@@ -72,6 +72,9 @@ RSpec.feature "Supplemental Claim Intake" do
     )
   end
 
+  let(:search_bar_title) { "Enter the Veteran's ID" }
+  let(:search_page_title) { "Search for Veteran ID" }
+
   it "Creates an end product" do
     # Testing two relationships, tests 1 relationship in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
@@ -110,9 +113,9 @@ RSpec.feature "Supplemental Claim Intake" do
 
     safe_click ".cf-submit.usa-button"
 
-    expect(page).to have_content("process this Supplemental Claim (VA Form 21-526b).")
+    expect(page).to have_content(search_page_title)
 
-    fill_in "Search small", with: "12341234"
+    fill_in search_bar_title, with: "12341234"
 
     click_on "Search"
 
@@ -217,7 +220,7 @@ RSpec.feature "Supplemental Claim Intake" do
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "042",
         end_product_label: "Supplemental Claim Rating",
-        end_product_code: SupplementalClaim::END_PRODUCT_RATING_CODE,
+        end_product_code: SupplementalClaim::END_PRODUCT_CODES[:rating],
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293"
@@ -227,7 +230,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     ratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
-      code: SupplementalClaim::END_PRODUCT_RATING_CODE
+      code: SupplementalClaim::END_PRODUCT_CODES[:rating]
     )
 
     expect(ratings_end_product_establishment).to have_attributes(
@@ -246,7 +249,7 @@ RSpec.feature "Supplemental Claim Intake" do
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "041",
         end_product_label: "Supplemental Claim Nonrating",
-        end_product_code: SupplementalClaim::END_PRODUCT_NONRATING_CODE,
+        end_product_code: SupplementalClaim::END_PRODUCT_CODES[:nonrating],
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293"
@@ -255,7 +258,7 @@ RSpec.feature "Supplemental Claim Intake" do
     )
     nonratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
-      code: SupplementalClaim::END_PRODUCT_NONRATING_CODE
+      code: SupplementalClaim::END_PRODUCT_CODES[:nonrating]
     )
 
     expect(nonratings_end_product_establishment).to have_attributes(

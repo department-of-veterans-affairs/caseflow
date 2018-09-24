@@ -30,6 +30,13 @@ export const onRegionalOfficeChange = (regionalOffice) => ({
   }
 });
 
+export const onReceiveUpcomingHearingDays = (upcomingHearingDays) => ({
+  type: ACTIONS.RECEIVE_UPCOMING_HEARING_DAYS,
+  payload: {
+    upcomingHearingDays
+  }
+});
+
 export const onSchedulePeriodError = (error) => ({
   type: ACTIONS.SCHEDULE_PERIOD_ERROR,
   payload: {
