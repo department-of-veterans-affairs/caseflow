@@ -32,10 +32,9 @@ export default class AutoSave extends React.Component {
     clearInterval(this.setIntervalId);
   }
 
-
   componentDidUpdate(prevProps) {
-    if(this.props.saveSuccess !== prevProps.saveSuccess) {
-     setInterval(() => this.props.saveSuccess(), this.props.saveSuccessTimeout);
+    if (this.props.saveSuccess !== prevProps.saveSuccess) {
+      setInterval(() => this.props.saveSuccess(), this.props.saveSuccessTimeout);
     }
   }
 

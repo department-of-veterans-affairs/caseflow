@@ -306,7 +306,7 @@ export const saveDocket = (docket, date) => (dispatch) => () => {
   });
   dispatch({
     type: Constants.SET_DOCKET_SAVE_SUCCESS,
-    payload: {saveSuccess: false }
+    payload: { saveSuccess: false }
   });
 
   let apiRequests = [];
