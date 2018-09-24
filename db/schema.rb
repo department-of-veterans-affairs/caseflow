@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180912224413) do
+ActiveRecord::Schema.define(version: 20180919213618) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -549,6 +549,15 @@ ActiveRecord::Schema.define(version: 20180912224413) do
     t.index ["user_id"], name: "index_reader_users_on_user_id", unique: true
   end
 
+  create_table "remand_reasons", force: :cascade do |t|
+    t.bigint "request_issue_id"
+    t.boolean "post_aoj"
+    t.string "code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["request_issue_id"], name: "index_remand_reasons_on_request_issue_id"
+  end
+
   create_table "request_issues", force: :cascade do |t|
     t.string "review_request_type"
     t.bigint "review_request_id"
@@ -562,6 +571,7 @@ ActiveRecord::Schema.define(version: 20180912224413) do
     t.integer "end_product_establishment_id"
     t.datetime "removed_at"
     t.datetime "rating_issue_associated_at"
+    t.integer "parent_request_issue_id"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
   end
@@ -626,6 +636,7 @@ ActiveRecord::Schema.define(version: 20180912224413) do
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
     t.string "benefit_type"
+    t.boolean "is_dta_error"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 
@@ -641,7 +652,7 @@ ActiveRecord::Schema.define(version: 20180912224413) do
     t.string "status", default: "assigned"
     t.string "type"
     t.text "action"
-    t.text "instructions"
+    t.text "instructions", default: [], array: true
     t.integer "assigned_to_id"
     t.integer "assigned_by_id"
     t.datetime "assigned_at"

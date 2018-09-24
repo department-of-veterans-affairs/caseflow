@@ -1,4 +1,6 @@
 class Appeal < AmaReview
+  include Taskable
+
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal

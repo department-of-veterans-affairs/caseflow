@@ -32,10 +32,12 @@ class Task < ApplicationRecord
 
   def self.create_from_params(params, current_user)
     verify_user_can_assign(current_user)
+    params = params.each { |p| p["instructions"] = [p["instructions"]] if p.key?("instructions") }
     create(params)
   end
 
   def update_from_params(params, _current_user)
+    params["instructions"] = [instructions, params["instructions"]].flatten if params.key?("instructions")
     update(params)
   end
 

@@ -6,7 +6,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { doFileNumberSearch, setFileNumberSearch } from '../actions/common';
-import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../constants';
+import { PAGE_PATHS, INTAKE_STATES } from '../constants';
+import { REQUEST_STATE } from '../../intakeCommon/constants';
 import { getIntakeStatus } from '../selectors';
 
 const steps = [
@@ -120,7 +121,7 @@ class Search extends React.PureComponent {
 
     const error = searchErrors[searchErrorCode] || searchErrors.default;
 
-    return <Alert title={error.title} type="error" lowerMargin>
+    return <Alert title={error.title} type="error">
       { error.body }
     </Alert>;
   }
