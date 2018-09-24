@@ -25,6 +25,7 @@ import {
   fullWidth,
   REMAND_REASONS,
   LEGACY_REMAND_REASONS,
+  VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS,
   redText,
   boldText
@@ -289,10 +290,12 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
       <h2 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
         Issue {idx + 1} {issues.length > 1 ? ` of ${issues.length}` : ''}
       </h2>
-      <div {...smallBottomMargin}>Program: {getIssueProgramDescription(issue)}</div>
-      <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
-      {issue.program &&
+      <div {...smallBottomMargin}>
+        Program: {appeal.isLegacyAppeal ? getIssueProgramDescription(issue) : issue.program}
+      </div>
+      {appeal.isLegacyAppeal &&
         <React.Fragment>
+          <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
           <div {...smallBottomMargin}>
             Code: {getIssueDiagnosticCodeLabel(_.last(issue.codes))}
           </div>
@@ -318,7 +321,9 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal,
-    issues: _.filter(issues, (issue) => issue.disposition === ISSUE_DISPOSITIONS.REMANDED),
+    issues: _.filter(issues, (issue) => [
+      VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
+    ].includes(issue.disposition)),
     issue: _.find(issues, (issue) => issue.id === ownProps.issueId),
     highlight: state.ui.highlightFormItems
   };
