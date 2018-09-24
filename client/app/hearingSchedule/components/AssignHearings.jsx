@@ -34,7 +34,6 @@ export default class AssignHearings extends React.Component {
         {COPY.HEARING_SCHEDULE_ASSIGN_HEARINGS_VIEW_SCHEDULE_LINK}
       </Link>
       <RoSelectorDropdown
-        regionalOffices={this.props.regionalOffices}
         onChange={this.props.onRegionalOfficeChange}
         value={this.props.selectedRegionalOffice}
       />

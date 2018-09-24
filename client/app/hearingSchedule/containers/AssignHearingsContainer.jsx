@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import ApiUtil from '../../util/ApiUtil';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
-import { onReceiveRegionalOffices, onRegionalOfficeChange, onReceiveUpcomingHearingDays } from '../actions';
+import { onRegionalOfficeChange, onReceiveUpcomingHearingDays } from '../actions';
 import AssignHearings from '../components/AssignHearings';
 
 class AssignHearingsContainer extends React.PureComponent {
@@ -14,14 +14,6 @@ class AssignHearingsContainer extends React.PureComponent {
     if (this.props.selectedRegionalOffice !== prevProps.selectedRegionalOffice) {
       this.loadUpcomingHearingDays();
     }
-  };
-
-  loadRegionalOffices = () => {
-    return ApiUtil.get('/regional_offices.json').then((response) => {
-      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
-
-      this.props.onReceiveRegionalOffices(resp.regionalOffices);
-    });
   };
 
   loadUpcomingHearingDays = () => {
@@ -40,7 +32,6 @@ class AssignHearingsContainer extends React.PureComponent {
   };
 
   createLoadPromise = () => Promise.all([
-    this.loadRegionalOffices(),
     this.loadUpcomingHearingDays()
   ]);
 
@@ -52,7 +43,6 @@ class AssignHearingsContainer extends React.PureComponent {
         message: 'Loading appeals to be scheduled for hearings...'
       }}>
       <AssignHearings
-        regionalOffices={this.props.regionalOffices}
         onRegionalOfficeChange={this.props.onRegionalOfficeChange}
         selectedRegionalOffice={this.props.selectedRegionalOffice}
         upcomingHearingDays={this.props.upcomingHearingDays}
@@ -64,13 +54,11 @@ class AssignHearingsContainer extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  regionalOffices: state.regionalOffices,
   selectedRegionalOffice: state.selectedRegionalOffice,
   upcomingHearingDays: state.upcomingHearingDays
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceiveRegionalOffices,
   onRegionalOfficeChange,
   onReceiveUpcomingHearingDays
 }, dispatch);

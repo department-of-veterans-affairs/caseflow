@@ -2,11 +2,34 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import SearchableDropdown from '../../components/SearchableDropdown';
+import ApiUtil from "../../util/ApiUtil";
+import {onReceiveRegionalOffices} from '../actions';
+import {bindActionCreators} from "redux";
+import connect from "react-redux/es/connect/connect";
 
-export default class RoSelectorDropdown extends React.Component {
+const regionalOfficeDropdowns = [];
+
+class RoSelectorDropdown extends React.Component {
+
+  loadRegionalOffices = () => {
+    return ApiUtil.get('/regional_offices.json').then((response) => {
+      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+
+      this.props.onReceiveRegionalOffices(resp.regionalOffices);
+      this.regionalOfficeOptions();
+    });
+  };
+
+  componentWillMount(){
+    console.log("*** RO component did mount ***")
+    if (!this.props.regionalOffices) {
+      this.loadRegionalOffices();
+    }
+  };
+
+
 
   regionalOfficeOptions = () => {
-    let regionalOfficeDropdowns = [];
 
     _.forEach(this.props.regionalOffices, (value, key) => {
       regionalOfficeDropdowns.push({
@@ -27,10 +50,10 @@ export default class RoSelectorDropdown extends React.Component {
     return <SearchableDropdown
       name="ro"
       label="Regional Office"
-      options={this.regionalOfficeOptions()}
+      options={regionalOfficeDropdowns}
       onChange={this.props.onChange}
       value={this.props.value}
-      placeholder=""
+      placeholder={this.props.placeholder}
     />;
   }
 }
@@ -38,5 +61,16 @@ export default class RoSelectorDropdown extends React.Component {
 RoSelectorDropdown.propTypes = {
   regionalOffices: PropTypes.object,
   onChange: PropTypes.func,
-  value: PropTypes.object
+  value: PropTypes.object,
+  placeholder: PropTypes.string
 };
+
+const mapStateToProps = (state) => ({
+  regionalOffices: state.regionalOffices
+});
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  onReceiveRegionalOffices
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(RoSelectorDropdown);

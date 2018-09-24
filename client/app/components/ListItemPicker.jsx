@@ -22,14 +22,12 @@ const ListItemPicker = ({ options, setSelectedValue, dropdownFilterViewListStyle
     setSelectedValue(event.target.value);
   }
 
-  console.log("these are the options passed", options)
-
   return <ul {...dropdownFilterViewListStyle} {...listStyling}>
     {options.map((option, index) => {
       return <li key={index} {...dropdownFilterViewListItemStyle} {...listItemStyling} onClick={onClick}>
         <option
           value={option.value}
-          id={`${index}`}
+          id={`${index}-${option.value}`}
           key={index}>{option.displayText}
         </option>
       </li>;

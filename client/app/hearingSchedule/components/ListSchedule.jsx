@@ -12,7 +12,7 @@ import BasicDateRangeSelector from '../../components/BasicDateRangeSelector';
 import RoSelectorDropdown from './RoSelectorDropdown'
 import InlineForm from '../../components/InlineForm';
 import { CSVLink } from 'react-csv';
-import { toggleDropdownFilterVisibility } from '../actions'
+import { toggleTypeFilterVisibility, toggleLocationFilterVisibility, toggleVljFilterVisibility } from '../actions'
 import {bindActionCreators} from "redux";
 import connect from "react-redux/es/connect/connect";
 
@@ -42,6 +42,12 @@ const inlineFormStyling = css({
   }
 });
 
+const formatVljName = (lastName, firstName) => {
+  if (lastName && firstName) {
+    return `${lastName}, ${firstName}`;
+  }
+};
+
 class ListSchedule extends React.Component {
 
   render() {
@@ -49,10 +55,55 @@ class ListSchedule extends React.Component {
       hearingSchedule
     } = this.props;
 
-    const setSelectedValue = (value) => {
-      console.log("this is the selected value: ", value);
-      this.props.toggleDropdownFilterVisibility();
+    const setTypeSelectedValue = (value) => {
+      console.log("this is the Type selected value: ", value);
+      this.props.toggleTypeFilterVisibility();
     };
+
+    const setLocationSelectedValue = (value) => {
+      console.log("this is the Location selected value: ", value);
+      this.props.toggleLocationFilterVisibility();
+    };
+
+    const setVljSelectedValue = (value) => {
+      console.log("this is the VLJ selected value: ", value);
+      this.props.toggleVljFilterVisibility();
+    };
+
+    const setRoSelectedValue = (value) => {
+      console.log("this is the selected value: ", value);
+    };
+
+    const hearingScheduleRows = _.map(hearingSchedule, (hearingDay) => ({
+      hearingDate: formatDate(hearingDay.hearingDate),
+      hearingType: hearingDay.hearingType,
+      regionalOffice: hearingDay.regionalOffice,
+      room: hearingDay.roomInfo,
+      vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName)
+    }));
+
+    const removeCoDuplicates = _.uniqWith(hearingScheduleRows, _.isEqual);
+
+    let hearingTypeList = _.uniqBy(hearingScheduleRows, "hearingType");
+    let uniqueHearingTypes = _.map(hearingTypeList, (hearingDay) => {
+      return {value: hearingDay.hearingType, displayText: hearingDay.hearingType};
+    });
+    uniqueHearingTypes = _.sortBy(uniqueHearingTypes, "displayText");
+
+    let listOfVljs = _.uniqBy(hearingScheduleRows, "vlj");
+    let uniqueVljs = _.map(listOfVljs, (hearingDay) => {
+      return {value: hearingDay.vlj, displayText: hearingDay.vlj};
+    });
+    uniqueVljs = _.sortBy(uniqueVljs, "displayText");
+
+    let listOfLocations = _.countBy(hearingScheduleRows, "regionalOffice");
+    let uniqueLocations = [];
+    for (var location in listOfLocations) {
+      uniqueLocations.push({value: location, displayText: `${location} (${listOfLocations[location]})`});
+    };
+    uniqueLocations = _.sortBy(uniqueLocations, "displayText");
+
+    const fileName = `HearingSchedule ${this.props.startDateValue}-${this.props.endDateValue}.csv`;
 
     var options = [{value: 'C', displayText: 'Central'},
       {value: 'V', displayText: 'Video'},
@@ -71,17 +122,22 @@ class ListSchedule extends React.Component {
         align: 'left',
         valueName: 'hearingType',
         label: 'Filter by type',
-        getFilterValues: options,
-        isDropdownFilterOpen: this.props.filterDropdownIsOpen,
+        getFilterValues: uniqueHearingTypes,
+        isDropdownFilterOpen: this.props.filterTypeIsOpen,
         anyFiltersAreSet: false,
-        toggleDropdownFilterVisiblity: this.props.toggleDropdownFilterVisibility,
-        setSelectedValue: setSelectedValue
+        toggleDropdownFilterVisiblity: this.props.toggleTypeFilterVisibility,
+        setSelectedValue: setTypeSelectedValue
       },
       {
-        header: 'Regional Office',
+        header: 'Hearing Location',
         align: 'left',
         valueName: 'regionalOffice',
-        getSortValue: (hearingDay) => {return hearingDay.regionalOffice}
+        label: 'Filter by location',
+        getFilterValues: uniqueLocations,
+        isDropdownFilterOpen: this.props.filterLocationIsOpen,
+        anyFiltersAreSet: false,
+        toggleDropdownFilterVisiblity: this.props.toggleLocationFilterVisibility,
+        setSelectedValue: setLocationSelectedValue
       },
       {
         header: 'Room',
@@ -93,27 +149,14 @@ class ListSchedule extends React.Component {
         header: 'VLJ',
         align: 'left',
         valueName: 'vlj',
-        getSortValue: (hearingDay) => {return hearingDay.vlj}
+        label: 'Filter by VLJ',
+        getFilterValues: uniqueVljs,
+        isDropdownFilterOpen: this.props.filterVljIsOpen,
+        anyFiltersAreSet: false,
+        toggleDropdownFilterVisiblity: this.props.toggleVljFilterVisibility,
+        setSelectedValue: setVljSelectedValue
       }
     ];
-
-    const formatVljName = (lastName, firstName) => {
-      if (lastName && firstName) {
-        return `${lastName}, ${firstName}`;
-      }
-    };
-
-    const hearingScheduleRows = _.map(hearingSchedule, (hearingDay) => ({
-      hearingDate: formatDate(hearingDay.hearingDate),
-      hearingType: hearingDay.hearingType,
-      regionalOffice: hearingDay.regionalOffice,
-      room: hearingDay.roomInfo,
-      vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName)
-    }));
-
-    const removeCoDuplicates = _.uniqWith(hearingScheduleRows, _.isEqual);
-
-    const fileName = `HearingSchedule ${this.props.startDateValue}-${this.props.endDateValue}.csv`;
 
     return <AppSegment filledBackground>
       <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
@@ -126,9 +169,8 @@ class ListSchedule extends React.Component {
       <div className="cf-help-divider" {...hearingSchedStyling} ></div>
       <div>
         <RoSelectorDropdown
-          regionalOffices={this.props.regionalOffices}
-          onChange={this.props.onRegionalOfficeChange}
-          value={this.props.selectedRegionalOffice}
+          onChange={this.setRoSelectedValue}
+          placeholder="All"
         />
       </div>
       <div className="cf-push-left" {...inlineFormStyling} >
@@ -196,11 +238,15 @@ ListSchedule.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  filterDropdownIsOpen: state.filterDropdownIsOpen
+  filterTypeIsOpen: state.filterTypeIsOpen,
+  filterLocationIsOpen: state.filterLocationIsOpen,
+  filterVljIsOpen: state.filterVljIsOpen
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  toggleDropdownFilterVisibility,
+  toggleTypeFilterVisibility,
+  toggleLocationFilterVisibility,
+  toggleVljFilterVisibility
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListSchedule);
