@@ -273,19 +273,23 @@ describe EndProductEstablishment do
       allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
     end
 
-    subject { end_product_establishment.create_contentions!(for_objects) }
+    subject { end_product_establishment.create_contentions! }
 
     let(:reference_id) { "stevenasmith" }
 
-    let(:for_objects) do
+    let(:request_issues) do
       [
-        RequestIssue.new(
+        create(
+          :request_issue,
+          end_product_establishment: end_product_establishment,
           review_request: source,
           rating_issue_reference_id: "reference-id",
           rating_issue_profile_date: Date.new(2018, 4, 30),
           description: "this is a big decision"
         ),
-        RequestIssue.new(
+        create(
+          :request_issue,
+          end_product_establishment: end_product_establishment,
           review_request: source,
           rating_issue_reference_id: "reference-id",
           rating_issue_profile_date: Date.new(2018, 4, 30),
@@ -294,18 +298,21 @@ describe EndProductEstablishment do
       ]
     end
 
+    let(:contention_descriptions) { request_issues.map(&:description).reverse }
+
     it "creates contentions and saves them to objects" do
+      request_issues
       subject
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
         veteran_file_number: veteran_file_number,
         claim_id: end_product_establishment.reference_id,
-        contention_descriptions: ["this is a big decision", "more decisionz"],
+        contention_descriptions: contention_descriptions,
         special_issues: []
       )
 
       expect(end_product_establishment.contentions.map(&:id)).to contain_exactly(
-        *for_objects.map(&:reload).map(&:contention_reference_id)
+        *request_issues.map(&:reload).map(&:contention_reference_id)
       )
     end
 
@@ -313,12 +320,13 @@ describe EndProductEstablishment do
       let(:special_issues) { "SPECIALISSUES!" }
 
       it "sets special issues when creating the contentions" do
+        request_issues
         subject
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: end_product_establishment.reference_id,
-          contention_descriptions: ["this is a big decision", "more decisionz"],
+          contention_descriptions: contention_descriptions,
           special_issues: "SPECIALISSUES!"
         )
       end

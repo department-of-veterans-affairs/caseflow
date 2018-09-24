@@ -179,8 +179,10 @@ describe ClaimReview do
         end
 
         context "when some of the contentions have already been saved" do
+          let(:one_day_ago) { 1.day.ago }
+
           before do
-            rating_request_issue.update!(contention_reference_id: "CONREFID")
+            rating_request_issue.update!(contention_reference_id: "CONREFID", rating_issue_associated_at: one_day_ago)
           end
 
           it "doesn't create them in VBMS" do
@@ -200,15 +202,19 @@ describe ClaimReview do
               }
             )
 
-            expect(rating_request_issue.rating_issue_associated_at).to be_nil
+            expect(rating_request_issue.rating_issue_associated_at).to eq(one_day_ago)
             expect(second_rating_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
           end
         end
 
         context "when all the contentions have already been saved" do
           before do
-            rating_request_issue.update!(contention_reference_id: "CONREFID")
-            second_rating_request_issue.update!(contention_reference_id: "CONREFID")
+            rating_request_issue.update!(
+              contention_reference_id: "CONREFID", rating_issue_associated_at: Time.zone.now
+            )
+            second_rating_request_issue.update!(
+              contention_reference_id: "CONREFID", rating_issue_associated_at: Time.zone.now
+            )
           end
 
           it "doesn't create them in VBMS" do
@@ -218,6 +224,84 @@ describe ClaimReview do
             expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
             expect(Fakes::VBMSService).to_not have_received(:associate_rated_issues!)
           end
+        end
+      end
+
+      context "when called multiple times" do
+        it "remains idempotent despite multiple VBMS failures" do
+          raise_error_on_end_product_establishment_establish_claim
+
+          expect(Fakes::VBMSService).to receive(:establish_claim!).once
+          expect { subject }.to raise_error(vbms_error)
+          expect(claim_review.establishment_processed_at).to be_nil
+
+          allow_end_product_establishment_establish_claim
+          raise_error_on_create_contentions
+
+          expect(Fakes::VBMSService).to receive(:establish_claim!).once
+          expect(Fakes::VBMSService).to receive(:create_contentions!).once
+          expect { subject }.to raise_error(vbms_error)
+          expect(claim_review.establishment_processed_at).to be_nil
+          expect(epe.reference_id).to_not be_nil
+          expect(claim_contentions_for_all_issues_on_epe.count).to eq(0)
+
+          allow_create_contentions
+          raise_error_on_associate_rated_issues
+
+          expect(Fakes::VBMSService).to_not receive(:establish_claim!)
+          expect(Fakes::VBMSService).to receive(:create_contentions!).once
+          expect(Fakes::VBMSService).to receive(:associate_rated_issues!).once
+          expect { subject }.to raise_error(vbms_error)
+          expect(claim_review.establishment_processed_at).to be_nil
+
+          epe_contentions = claim_contentions_for_all_issues_on_epe
+          expect(epe_contentions.count).to eq(2)
+          expect(epe_contentions.where.not(rating_issue_associated_at: nil).count).to eq(0)
+
+          allow_associate_rated_issues
+
+          expect(Fakes::VBMSService).to_not receive(:establish_claim!)
+          expect(Fakes::VBMSService).to_not receive(:create_contentions!)
+          expect(Fakes::VBMSService).to receive(:associate_rated_issues!).once
+          subject
+          expect(claim_review.establishment_processed_at).to eq(Time.zone.now)
+
+          expect(Fakes::VBMSService).to_not receive(:establish_claim!)
+          expect(Fakes::VBMSService).to_not receive(:create_contentions!)
+          expect(Fakes::VBMSService).to_not receive(:associate_rated_issues!)
+          subject
+        end
+
+        def raise_error_on_end_product_establishment_establish_claim
+          allow(Fakes::VBMSService).to receive(:establish_claim!).and_raise(vbms_error)
+        end
+
+        def allow_end_product_establishment_establish_claim
+          allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+        end
+
+        def raise_error_on_create_contentions
+          allow(Fakes::VBMSService).to receive(:create_contentions!).and_raise(vbms_error)
+        end
+
+        def allow_create_contentions
+          allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+        end
+
+        def raise_error_on_associate_rated_issues
+          allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_raise(vbms_error)
+        end
+
+        def allow_associate_rated_issues
+          allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+        end
+
+        def claim_contentions_for_all_issues_on_epe
+          claim_review.request_issues.where(end_product_establishment: epe).where.not(contention_reference_id: nil)
+        end
+
+        def epe
+          claim_review.end_product_establishments.first
         end
       end
     end
