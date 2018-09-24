@@ -949,7 +949,6 @@ fieldset {
 // Wrapping element for each option */
 .cf-form-radio-options {
   @include clearfix;
-  margin-top: rem(10px);
 
   input {
     left: -999em;
@@ -962,7 +961,6 @@ fieldset {
 
 .cf-form-radio-option {
   @include clearfix;
-  margin-bottom: rem(20px);
 }
 
 .cf-form-radio-inline {
