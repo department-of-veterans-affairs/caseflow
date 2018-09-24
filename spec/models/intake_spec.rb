@@ -362,6 +362,15 @@ describe Intake do
       end
     end
 
+    context "veteran address is too long", focus: true do
+      let(:veteran_file_number) { "12341234C" }
+
+      it "adds veteran_address_too_long and returns false" do
+        expect(subject).to eq(false)
+        expect(intake.error_code).to eq("veteran_address_too_long")
+      end
+    end
+
     context "duplicate in progress intake already exists" do
       let!(:other_intake) do
         TestIntake.create!(
