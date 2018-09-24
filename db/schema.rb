@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 201809112051441) do
+ActiveRecord::Schema.define(version: 20180921145533) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -168,7 +168,6 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.bigint "review_request_id", null: false
     t.string "participant_id", null: false
     t.string "payee_code"
-    t.date "date_of_birth"
     t.index ["date_of_birth"], name: "index_claimants_on_date_of_birth"
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
@@ -394,7 +393,6 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.date "receipt_date"
     t.boolean "informal_conference"
     t.boolean "same_office"
-    t.datetime "established_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
     t.string "benefit_type"
@@ -558,15 +556,6 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.index ["user_id"], name: "index_reader_users_on_user_id", unique: true
   end
 
-  create_table "remand_reasons", force: :cascade do |t|
-    t.bigint "request_issue_id"
-    t.boolean "post_aoj"
-    t.string "code"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["request_issue_id"], name: "index_remand_reasons_on_request_issue_id"
-  end
-
   create_table "request_issues", force: :cascade do |t|
     t.string "review_request_type"
     t.bigint "review_request_id"
@@ -642,7 +631,6 @@ ActiveRecord::Schema.define(version: 201809112051441) do
   create_table "supplemental_claims", force: :cascade do |t|
     t.string "veteran_file_number", null: false
     t.date "receipt_date"
-    t.datetime "established_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
     t.string "benefit_type"
