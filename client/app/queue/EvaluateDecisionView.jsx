@@ -44,7 +44,7 @@ const qualityOfWorkAlertStyling = css({ borderLeft: '0.5rem solid #59BDE1' });
 const errorStylingNoTopMargin = css({ '&.usa-input-error': marginTop(0) });
 const subH2Styling = css(paddingLeft(1), { lineHeight: 2 });
 const subH3Styling = css(paddingLeft(1), { lineHeight: 1.75 });
-const fullWidthCheckboxLabels = css( setWidth('100%'));
+const fullWidthCheckboxLabels = css(setWidth('100%'));
 
 class EvaluateDecisionView extends React.PureComponent {
   constructor(props) {
