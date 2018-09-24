@@ -22,10 +22,8 @@ class ClaimReview < AmaReview
   # If any external calls fail, it is safe to call this multiple times until
   # establishment_processed_at is successfully set.
   def process_end_product_establishments!
-    return if establishment_processed_at
 
     end_product_establishments.each do |end_product_establishment|
-      next if end_product_establishment.committed?
       end_product_establishment.perform!
       end_product_establishment.create_contentions!
       end_product_establishment.create_associated_rated_issues!
