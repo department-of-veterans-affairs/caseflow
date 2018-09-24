@@ -96,6 +96,7 @@ export type AppealDetail = {
   externalId: string,
   status: string,
   decisionDate: string,
+  nodReceiptDate: string,
   certificationDate: ?string,
   powerOfAttorney: ?PowerOfAttorney,
   regionalOffice: Object,

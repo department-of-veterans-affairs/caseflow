@@ -209,6 +209,7 @@ export const prepareAppealForStore =
         veteranGender: appeal.attributes.veteran_gender,
         externalId: appeal.attributes.external_id,
         status: appeal.attributes.status,
+        nodReceiptDate: appeal.attributes.nod_receipt_date,
         decisionDate: appeal.attributes.decision_date,
         certificationDate: appeal.attributes.certification_date,
         powerOfAttorney: appeal.attributes.power_of_attorney,

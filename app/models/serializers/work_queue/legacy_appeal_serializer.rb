@@ -89,4 +89,8 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :docket_name do
     "legacy"
   end
+
+  attribute :nod_receipt_date do
+    object.nod_date
+  end
 end
