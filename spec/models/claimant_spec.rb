@@ -96,6 +96,9 @@ describe Claimant do
     it "saves date of birth" do
       claimant = appeal.claimants.create_from_intake_data!(participant_id: participant_id, payee_code: "1")
       expect(claimant.date_of_birth).to eq(date_of_birth.to_date)
+      person = Person.find_by(participant_id: participant_id)
+      expect(person).to_not eq nil
+      expect(person.date_of_birth).to eq(date_of_birth.to_date)
     end
   end
 

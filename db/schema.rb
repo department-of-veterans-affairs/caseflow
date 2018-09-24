@@ -489,7 +489,7 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.string "participant_id"
   end
 
-  create_table "persons", force: :cascade do |t|
+  create_table "people", force: :cascade do |t|
     t.string "participant_id", null: false
     t.date "date_of_birth"
     t.datetime "created_at", null: false

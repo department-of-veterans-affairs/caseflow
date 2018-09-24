@@ -7,11 +7,15 @@ class Claimant < ApplicationRecord
   bgs_attr_accessor :first_name, :last_name, :middle_name, :relationship
 
   def self.create_from_intake_data!(participant_id:, payee_code:)
+    birth_date = BGSService.new.fetch_person_info(participant_id)[:birth_date]
     create!(
       participant_id: participant_id,
       payee_code: payee_code,
-      date_of_birth: BGSService.new.fetch_person_info(participant_id)[:birth_date]
+      date_of_birth: birth_date
     )
+    Person.find_or_create_by(participant_id: participant_id).tap do |person|
+      person.update!(date_of_birth: birth_date)
+    end
   end
 
   def advanced_on_docket(appeal_receipt_date)
