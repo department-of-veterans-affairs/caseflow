@@ -77,7 +77,7 @@ type Props = Params & {|
 export class CaseSnapshot extends React.PureComponent<Props> {
   daysSinceTaskAssignmentListItem = () => {
     if (this.props.taskAssignedToUser) {
-      const today = moment();
+      const today = moment().startOf('day');
       const dateAssigned = moment(this.props.taskAssignedToUser.assignedOn);
       const dayCountSinceAssignment = today.diff(dateAssigned, 'days');
 
