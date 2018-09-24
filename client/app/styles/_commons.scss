@@ -860,18 +860,6 @@ form {
   }
 }
 
-.cf-form {
-  header {
-    border-bottom: 1px solid $color-gray-lighter;
-    margin-bottom: rem(30px);
-  }
-
-  .cf-btn-forward {
-    display: inline-block;
-    margin-right: 0;
-  }
-}
-
 input {
   &[type=number] {
     display: inline;
@@ -921,6 +909,7 @@ fieldset {
   > *,
   .cf-form-textinput {
     color: $color-gray-dark;
+    margin-top: 10px;
   }
 }
 
@@ -932,7 +921,7 @@ fieldset {
 }
 
 .cf-form-textarea {
-  clear: both;
+  @include clearfix;
   max-width: rem(455px);
   margin-bottom: 20px;
 

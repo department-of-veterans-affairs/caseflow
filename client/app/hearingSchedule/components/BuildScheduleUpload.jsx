@@ -26,7 +26,7 @@ const inlineFormStyling = css({
       paddingLeft: 0
     },
     '& .cf-form-textinput': {
-      marginTop: 0
+      marginTop: '10px'
     },
     '& input': {
       marginRight: 0
