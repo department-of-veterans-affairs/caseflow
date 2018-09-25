@@ -328,12 +328,8 @@
 
       .cf-form-checkbox {
 
-        .question-label {
+        label {
           display: block;
-        }
-
-        label:last-child {
-          margin-bottom: 0;
         }
       }
     }
