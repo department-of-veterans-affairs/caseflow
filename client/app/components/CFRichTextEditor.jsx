@@ -4,7 +4,7 @@ import { convertToRaw, EditorState, ContentState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
 import { Editor } from 'react-draft-wysiwyg';
-import classNamesFn from 'classnames';
+import classnames from 'classnames';
 import { css } from 'glamor';
 
 const styles = css({
@@ -56,7 +56,7 @@ export default class CFRichTextEditor extends React.PureComponent {
     } = this.props;
 
     return <div>
-      <label className={classNamesFn({ 'sr-only': hideLabel }, 'question-label')} htmlFor={id || name}>
+      <label className={classnames({ 'usa-sr-only': hideLabel })} htmlFor={id || name}>
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}

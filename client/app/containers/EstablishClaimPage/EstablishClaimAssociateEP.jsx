@@ -159,7 +159,7 @@ export class AssociatePage extends React.Component {
           type="warning">
           {alert}
         </Alert>
-        <div className="usa-grid-full">
+        <div className="usa-width-one-whole">
           <Table
             columns={this.getEndProductColumns()}
             rowObjects={this.state.sortedEndProducts}
