@@ -342,3 +342,11 @@ export const resetDocketSaveSuccessStatus = () => ({
     saveSuccess: false
   }
 });
+
+
+export const toggleWorksheetSucces = (saving) => ({
+  type: Constants.TOGGLE_WORKSHEET_SUCCESS,
+  payload: {
+    saving
+  }
+});
