@@ -151,8 +151,7 @@ class DocumentsTable extends React.Component {
               clearFilters={this.props.clearCategoryFilters}
               name="category"
               isClearEnabled={anyCategoryFiltersAreSet}
-              handleClose={this.toggleCategoryDropdownFilterVisiblity}
-              addClearFiltersRow={true}>
+              handleClose={this.toggleCategoryDropdownFilterVisiblity}>
               <DocCategoryPicker
                 categoryToggleStates={this.props.docFilterCriteria.category}
                 handleCategoryToggle={this.props.setCategoryFilter} />
@@ -204,8 +203,7 @@ class DocumentsTable extends React.Component {
               clearFilters={this.props.clearTagFilters}
               name="tag"
               isClearEnabled={anyTagFiltersAreSet}
-              handleClose={this.toggleTagDropdownFilterVisiblity}
-              addClearFiltersRow={true}>
+              handleClose={this.toggleTagDropdownFilterVisiblity}>
               <DocTagPicker
                 tags={this.props.tagOptions}
                 tagToggleStates={this.props.docFilterCriteria.tag}

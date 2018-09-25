@@ -7,7 +7,7 @@ import { LOGO_COLORS } from '../../constants/AppConstants';
 import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
 const dateFormatString = 'YYYY-MM-DD';
 
@@ -17,7 +17,8 @@ export class ListScheduleContainer extends React.Component {
     let requestUrl = '/hearings/hearing_day.json';
 
     if (this.props.selectedRegionalOffice && this.props.startDate && this.props.endDate) {
-      requestUrl = `${requestUrl}?regional_office=${this.props.selectedRegionalOffice.value}&start_date=${this.props.startDate}&end_date=${this.props.endDate}`;
+      requestUrl = `${requestUrl}?regional_office=${this.props.selectedRegionalOffice.value}`
+      + `&start_date=${this.props.startDate}&end_date=${this.props.endDate}`;
     }
 
     if (this.props.startDate && this.props.endDate) {

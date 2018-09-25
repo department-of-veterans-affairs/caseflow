@@ -1,7 +1,5 @@
 import { ACTIONS } from './constants';
 import { update } from '../util/ReducerUtil';
-import * as Constants from "../reader/DocumentList/actionTypes";
-import _ from "lodash";
 
 export const initialState = {};
 

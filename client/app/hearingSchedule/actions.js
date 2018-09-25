@@ -1,6 +1,4 @@
 import { ACTIONS } from './constants';
-import * as Constants from "../reader/DocumentList/actionTypes";
-import {CATEGORIES} from "../reader/analytics";
 
 export const onReceivePastUploads = (pastUploads) => ({
   type: ACTIONS.RECEIVE_PAST_UPLOADS,

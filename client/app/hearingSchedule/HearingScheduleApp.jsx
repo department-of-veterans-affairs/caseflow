@@ -13,8 +13,6 @@ import ReviewAssignmentsContainer from './containers/ReviewAssignmentsContainer'
 import ListScheduleContainer from './containers/ListScheduleContainer';
 import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import ScrollToTop from '../components/ScrollToTop';
-import QueueLoadingScreen from "../queue/QueueLoadingScreen";
-import SearchBar from "../queue/SearchBar";
 
 class HearingScheduleApp extends React.PureComponent {
 
@@ -28,9 +26,9 @@ class HearingScheduleApp extends React.PureComponent {
       userRoleAssign,
       userRoleBuild
     };
-  }
+  };
 
-  routeForListScheduleContainer = () => <ListScheduleContainer {...this.propsForListScheduleContainer()}/>;
+  routeForListScheduleContainer = () => <ListScheduleContainer {...this.propsForListScheduleContainer()} />;
 
   render = () => <BrowserRouter basename="/hearings">
     <NavigationBar

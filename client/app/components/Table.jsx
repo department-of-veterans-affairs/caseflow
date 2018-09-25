@@ -9,7 +9,7 @@ import { COLORS } from '../constants/AppConstants';
 import { css, hover } from 'glamor';
 import FilterIcon from './FilterIcon';
 import DropdownFilter from './DropdownFilter';
-import ListItemPicker from "./ListItemPicker";
+import ListItemPicker from './ListItemPicker';
 
 /**
  * This component can be used to easily build tables.
@@ -78,7 +78,7 @@ const HeaderRow = (props) => {
               selected={column.isDropdownFilterOpen || column.anyFiltersAreSet}
               handleActivate={column.toggleDropdownFilterVisiblity} />
 
-              {column.isDropdownFilterOpen &&
+            {column.isDropdownFilterOpen &&
               <DropdownFilter
                 name={column.valueName}
                 isClearEnabled={column.anyFiltersAreSet}
@@ -87,7 +87,7 @@ const HeaderRow = (props) => {
                   options={column.getFilterValues}
                   setSelectedValue={column.setSelectedValue} />
               </DropdownFilter>
-              }
+            }
             </span>
           </span>;
         }

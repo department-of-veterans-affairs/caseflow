@@ -16,11 +16,12 @@ const listItemStyling = css({
   padding: '1px'
 });
 
-const ListItemPicker = ({ options, setSelectedValue, dropdownFilterViewListStyle, dropdownFilterViewListItemStyle }) => {
+const ListItemPicker = ({ options, setSelectedValue,
+                          dropdownFilterViewListStyle, dropdownFilterViewListItemStyle }) => {
 
   const onClick = (event) => {
     setSelectedValue(event.target.value);
-  }
+  };
 
   return <ul {...dropdownFilterViewListStyle} {...listStyling}>
     {options.map((option, index) => {
@@ -37,7 +38,7 @@ const ListItemPicker = ({ options, setSelectedValue, dropdownFilterViewListStyle
 
 ListItemPicker.propTypes = {
   options: PropTypes.array.isRequired,
-  setSelectedValue: PropTypes.func.isRequired,
+  setSelectedValue: PropTypes.func.isRequired
 };
 
 export default ListItemPicker;

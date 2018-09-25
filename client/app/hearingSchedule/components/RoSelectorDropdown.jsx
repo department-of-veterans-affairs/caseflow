@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import ApiUtil from "../../util/ApiUtil";
-import {onReceiveRegionalOffices} from '../actions';
-import {bindActionCreators} from "redux";
-import connect from "react-redux/es/connect/connect";
+import { onReceiveRegionalOffices } from '../actions';
+import { bindActionCreators } from 'redux';
+import connect from 'react-redux/es/connect/connect';
 
 const regionalOfficeDropdowns = [];
 
@@ -20,13 +20,11 @@ class RoSelectorDropdown extends React.Component {
     });
   };
 
-  componentWillMount(){
+  componentWillMount() {
     if (!this.props.regionalOffices) {
       this.loadRegionalOffices();
     }
-  };
-
-
+  }
 
   regionalOfficeOptions = () => {
 
