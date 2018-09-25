@@ -22,11 +22,11 @@ const inlineFormStyling = css({
       lineHeight: '2em',
       marginTop: '20px'
     },
-    '& .question-label': {
+    '& label': {
       paddingLeft: 0
     },
     '& .cf-form-textinput': {
-      marginTop: '10px'
+      marginTop: 0
     },
     '& input': {
       marginRight: 0

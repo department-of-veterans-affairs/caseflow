@@ -121,7 +121,7 @@ export default class Modal extends React.Component {
         >
           {closeSymbolHtml()}
         </button>
-        <h2 className="cf-modal-title" id="modal_id-title">{title}</h2>
+        <h1 id="modal_id-title">{title}</h1>
         <div className="cf-modal-normal-text">
           {children}
         </div>
