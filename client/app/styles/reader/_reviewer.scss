@@ -307,13 +307,6 @@
 }
 
 .cf-sidebar-document-information {
-  .usa-alert-heading {
-    font-size: inherit;
-  }
-
-  .usa-alert-text {
-    font-size: 90%;
-  }
 
   .cf-pdf-meta-doc-info-issues {
     padding-left: 1em;
@@ -335,12 +328,8 @@
 
       .cf-form-checkbox {
 
-        .question-label {
+        label {
           display: block;
-        }
-
-        label:last-child {
-          margin-bottom: 0;
         }
       }
     }

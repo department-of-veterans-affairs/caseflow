@@ -2,7 +2,7 @@ class TasksController < ApplicationController
   include Errors
 
   before_action :verify_task_assignment_access, only: [:create]
-  skip_before_action :deny_vso_access, only: [:index, :for_appeal]
+  skip_before_action :deny_vso_access, only: [:index, :update, :for_appeal]
 
   TASK_CLASSES = {
     ColocatedTask: ColocatedTask,
@@ -25,7 +25,6 @@ class TasksController < ApplicationController
   #      GET /tasks?user_id=xxx&role=attorney
   #      GET /tasks?user_id=xxx&role=judge
   def index
-    return invalid_role_error unless QUEUES.keys.include?(user_role.try(:to_sym))
     tasks = queue_class.new(user: user).tasks
     render json: { tasks: json_tasks(tasks) }
   end
@@ -89,8 +88,6 @@ class TasksController < ApplicationController
       return json_vso_tasks
     end
 
-    return invalid_role_error unless QUEUES.keys.include?(user_role.try(:to_sym))
-
     if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
       return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], user_role)
     end
@@ -101,7 +98,7 @@ class TasksController < ApplicationController
   private
 
   def queue_class
-    QUEUES[user_role.try(:to_sym)]
+    QUEUES[user_role.try(:to_sym)] || QUEUES[:generic]
   end
 
   def user_role

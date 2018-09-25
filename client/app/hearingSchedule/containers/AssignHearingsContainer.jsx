@@ -1,13 +1,27 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import _ from 'lodash';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import ApiUtil from '../../util/ApiUtil';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
-import { onReceiveRegionalOffices, onRegionalOfficeChange } from '../actions';
+import {
+  onReceiveRegionalOffices,
+  onRegionalOfficeChange,
+  onReceiveUpcomingHearingDays,
+  onSelectedHearingDayChange,
+  onReceiveVeteransReadyForHearing
+} from '../actions';
 import AssignHearings from '../components/AssignHearings';
 
 class AssignHearingsContainer extends React.PureComponent {
+
+  componentDidUpdate = (prevProps) => {
+    if (this.props.selectedRegionalOffice !== prevProps.selectedRegionalOffice) {
+      this.loadUpcomingHearingDays();
+      this.loadVeteransReadyForHearing();
+    }
+  };
 
   loadRegionalOffices = () => {
     return ApiUtil.get('/regional_offices.json').then((response) => {
@@ -17,8 +31,40 @@ class AssignHearingsContainer extends React.PureComponent {
     });
   };
 
+  loadUpcomingHearingDays = () => {
+    if (!this.props.selectedRegionalOffice) {
+      return;
+    }
+
+    const regionalOfficeKey = this.props.selectedRegionalOffice.value;
+    const requestUrl = `/hearings/schedule/assign/hearing_days?regional_office=${regionalOfficeKey}`;
+
+    return ApiUtil.get(requestUrl).then((response) => {
+      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+
+      this.props.onReceiveUpcomingHearingDays(_.keyBy(resp.hearingDays, 'id'));
+      this.props.onSelectedHearingDayChange(resp.hearingDays[0]);
+    });
+  };
+
+  loadVeteransReadyForHearing = () => {
+    if (!this.props.selectedRegionalOffice) {
+      return;
+    }
+
+    const regionalOfficeKey = this.props.selectedRegionalOffice.value;
+    const requestUrl = `/hearings/schedule/assign/veterans?regional_office=${regionalOfficeKey}`;
+
+    return ApiUtil.get(requestUrl).then((response) => {
+      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+
+      this.props.onReceiveVeteransReadyForHearing(_.keyBy(resp.veterans, 'id'));
+    });
+  };
+
   createLoadPromise = () => Promise.all([
-    this.loadRegionalOffices()
+    this.loadRegionalOffices(),
+    this.loadUpcomingHearingDays()
   ]);
 
   render = () => {
@@ -32,6 +78,10 @@ class AssignHearingsContainer extends React.PureComponent {
         regionalOffices={this.props.regionalOffices}
         onRegionalOfficeChange={this.props.onRegionalOfficeChange}
         selectedRegionalOffice={this.props.selectedRegionalOffice}
+        upcomingHearingDays={this.props.upcomingHearingDays}
+        onSelectedHearingDayChange={this.props.onSelectedHearingDayChange}
+        selectedHearingDay={this.props.selectedHearingDay}
+        veteransReadyForHearing={this.props.veteransReadyForHearing}
       />
     </LoadingDataDisplay>;
 
@@ -41,12 +91,18 @@ class AssignHearingsContainer extends React.PureComponent {
 
 const mapStateToProps = (state) => ({
   regionalOffices: state.regionalOffices,
-  selectedRegionalOffice: state.selectedRegionalOffice
+  selectedRegionalOffice: state.selectedRegionalOffice,
+  upcomingHearingDays: state.upcomingHearingDays,
+  selectedHearingDay: state.selectedHearingDay,
+  veteransReadyForHearing: state.veteransReadyForHearing
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveRegionalOffices,
-  onRegionalOfficeChange
+  onRegionalOfficeChange,
+  onSelectedHearingDayChange,
+  onReceiveUpcomingHearingDays,
+  onReceiveVeteransReadyForHearing
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssignHearingsContainer);

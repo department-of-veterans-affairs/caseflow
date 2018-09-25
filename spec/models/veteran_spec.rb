@@ -22,8 +22,8 @@ describe Veteran do
       address_line1: "122 Mullberry St.",
       address_line2: "PO BOX 123",
       address_line3: address_line3,
-      city: "San Francisco",
-      state: "CA",
+      city: city,
+      state: state,
       country: country,
       date_of_birth: date_of_birth,
       zip_code: zip_code,
@@ -33,6 +33,8 @@ describe Veteran do
     }
   end
 
+  let(:city) { "San Francisco" }
+  let(:state) { "CA" }
   let(:military_post_office_type_code) { nil }
   let(:military_postal_type_code) { nil }
   let(:country) { "USA" }
@@ -52,6 +54,14 @@ describe Veteran do
       end
 
       it { is_expected.to eq(saved_veteran) }
+
+      context "when veteran isn't found in BGS" do
+        it "does not attempt to backfill name attributes" do
+          expect(subject.bgs_record).to eq(:not_found)
+          expect(subject.accessible?).to eq(true)
+          expect(subject.first_name).to be_nil
+        end
+      end
     end
 
     context "when veteran doesn't exist in the DB" do
@@ -385,6 +395,16 @@ describe Veteran do
     context "when the date has already passed this year" do
       let(:date_of_birth) { "1/1/1987" }
       it { is_expected.to eq(35) }
+    end
+  end
+
+  context "given a military address and nil city & state" do
+    let(:military_postal_type_code) { "AA" }
+    let(:city) { nil }
+    let(:state) { nil }
+
+    it "is considered a valid veteran from bgs" do
+      expect(veteran.valid?(:bgs)).to be true
     end
   end
 end

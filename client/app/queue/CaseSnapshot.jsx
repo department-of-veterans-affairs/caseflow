@@ -77,7 +77,7 @@ type Props = Params & {|
 export class CaseSnapshot extends React.PureComponent<Props> {
   daysSinceTaskAssignmentListItem = () => {
     if (this.props.taskAssignedToUser) {
-      const today = moment();
+      const today = moment().startOf('day');
       const dateAssigned = moment(this.props.taskAssignedToUser.assignedOn);
       const dayCountSinceAssignment = today.diff(dateAssigned, 'days');
 
@@ -106,6 +106,10 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     return StringUtil.snakeCaseToSentence(action);
   }
 
+  taskInstructionsWithLineBreaks = (instructions?: Array<string>) => <React.Fragment>
+    {instructions && instructions.map((text, i) => <React.Fragment><span key={i}>{text}</span><br /></React.Fragment>)}
+  </React.Fragment>;
+
   taskInformation = () => {
     const {
       taskAssignedToUser
@@ -132,7 +136,8 @@ export class CaseSnapshot extends React.PureComponent<Props> {
         </React.Fragment> }
       { taskAssignedToUser.instructions &&
         <React.Fragment>
-          <dt>{COPY.CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt><dd>{taskAssignedToUser.instructions}</dd>
+          <dt>{COPY.CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
+          <dd>{this.taskInstructionsWithLineBreaks(taskAssignedToUser.instructions)}</dd>
         </React.Fragment> }
       { preparedByAbbrev &&
         <React.Fragment>
@@ -185,7 +190,8 @@ export class CaseSnapshot extends React.PureComponent<Props> {
         return <React.Fragment>
           <dt>{COPY.CASE_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{CO_LOCATED_ADMIN_ACTIONS[taskAssignedToUser.action]}</dd>
           <dt>{COPY.CASE_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
-          <dt>{COPY.CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt><dd>{taskAssignedToUser.instructions}</dd>
+          <dt>{COPY.CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
+          <dd>{this.taskInstructionsWithLineBreaks(taskAssignedToUser.instructions)}</dd>
         </React.Fragment>;
       }
     }
@@ -212,7 +218,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     if (this.props.taskAssignedToAttorney) {
       return true;
     }
-    if (this.props.taskAssignedToOrganization && this.props.taskAssignedToOrganization.assignedTo.type !== 'Vso') {
+    if (this.props.taskAssignedToOrganization) {
       return true;
     }
 
@@ -223,6 +229,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     const {
       appeal,
       taskAssignedToUser,
+      taskAssignedToOrganization,
       userRole
     } = this.props;
     let CheckoutDropdown = <React.Fragment />;
@@ -238,6 +245,8 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       CheckoutDropdown = <GenericTaskActionsDropdown {...dropdownArgs} />;
     }
 
+    const taskAssignedToVso = taskAssignedToOrganization && taskAssignedToOrganization.assignedTo.type === 'Vso';
+
     return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
       <div className="usa-width-one-fourth">
         <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TITLE}</h3>
@@ -249,6 +258,16 @@ export class CaseSnapshot extends React.PureComponent<Props> {
           })}</dd>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
           <dd><DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}</dd>
+          { !taskAssignedToVso && appeal.assignedJudge &&
+            <React.Fragment>
+              <dt>{COPY.CASE_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</dt>
+              <dd>{appeal.assignedJudge.full_name}</dd>
+            </React.Fragment> }
+          { !taskAssignedToVso && appeal.assignedAttorney &&
+            <React.Fragment>
+              <dt>{COPY.CASE_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</dt>
+              <dd>{appeal.assignedAttorney.full_name}</dd>
+            </React.Fragment> }
           {this.daysSinceTaskAssignmentListItem()}
           { taskAssignedToUser && taskAssignedToUser.documentId &&
             <React.Fragment>

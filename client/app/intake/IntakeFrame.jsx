@@ -15,7 +15,8 @@ import SearchPage from './pages/search';
 import ReviewPage, { ReviewButtons } from './pages/review';
 import FinishPage, { FinishButtons } from './pages/finish';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
-import { PAGE_PATHS, REQUEST_STATE } from './constants';
+import { PAGE_PATHS } from './constants';
+import { REQUEST_STATE } from '../intakeCommon/constants';
 import { toggleCancelModal, submitCancel } from './actions/common';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { css } from 'glamor';
@@ -61,7 +62,6 @@ class IntakeFrame extends React.PureComponent {
                     'There was an error while canceling the current intake.' +
                     ' Please try again later.'
                   }
-                  lowerMargin
                 />
               }
               <div>

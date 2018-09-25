@@ -2,16 +2,17 @@ class Claimant < ApplicationRecord
   include AssociatedBgsRecord
 
   belongs_to :review_request, polymorphic: true
-  has_many :advance_on_docket_grants
 
   bgs_attr_accessor :first_name, :last_name, :middle_name, :relationship
 
   def self.create_from_intake_data!(participant_id:, payee_code:)
     create!(
       participant_id: participant_id,
-      payee_code: payee_code,
-      date_of_birth: BGSService.new.fetch_person_info(participant_id)[:birth_date]
+      payee_code: payee_code
     )
+    Person.find_or_create_by(participant_id: participant_id).tap do |person|
+      person.update!(date_of_birth: BGSService.new.fetch_person_info(participant_id)[:birth_date])
+    end
   end
 
   def advanced_on_docket(appeal_receipt_date)
@@ -23,6 +24,10 @@ class Claimant < ApplicationRecord
   end
   delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
 
+  def representative_participant_id
+    power_of_attorney.participant_id
+  end
+
   def name
     FullName.new(first_name, "", last_name).formatted(:readable_short)
   end
@@ -31,7 +36,12 @@ class Claimant < ApplicationRecord
     BGSService.new
   end
 
-  delegate :address_line_1, :address_line_2, :city, :country, :state, :zip, to: :bgs_address_service
+  def person
+    @person ||= Person.find_or_create_by(participant_id: participant_id)
+  end
+
+  delegate :date_of_birth, :advance_on_docket_grants, to: :person
+  delegate :address, :address_line_1, :address_line_2, :city, :country, :state, :zip, to: :bgs_address_service
 
   def fetch_bgs_record
     general_info = bgs.fetch_claimant_info_by_participant_id(participant_id)

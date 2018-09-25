@@ -83,6 +83,11 @@ class VACOLS::CaseHearing < VACOLS::Record
       select_schedule_days.where("trunc(hearing_date) between ? and ?", start_date, end_date).order(:hearing_date)
     end
 
+    def load_days_for_central_office(start_date, end_date)
+      select_schedule_days.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) between ? and ?",
+                                 "C", "%VIDEO%", start_date, end_date).order(:hearing_date)
+    end
+
     def load_days_for_regional_office(regional_office, start_date, end_date)
       select_schedule_days.where("folder_nr = ? and trunc(hearing_date) between ? and ?",
                                  "VIDEO #{regional_office}", start_date, end_date)

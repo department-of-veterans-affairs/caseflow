@@ -1,4 +1,12 @@
 RSpec.describe Idt::Api::V1::UsersController, type: :controller do
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
   describe "GET /idt/api/v1/user" do
     let(:user) { create(:user, css_id: "TEST_ID") }
 
@@ -20,6 +28,26 @@ RSpec.describe Idt::Api::V1::UsersController, type: :controller do
         it "succeeds" do
           get :index
           expect(response.status).to eq 200
+          response_body = JSON.parse(response.body)["data"]
+          expect(response_body["css_id"]).to eq "TEST_ID"
+          expect(response_body["roles"]).to eq ["attorney"]
+        end
+      end
+
+      context "and user is a dispatch user" do
+        let(:role) { :dispatch_role }
+
+        before do
+          create(:staff, role, sdomainid: user.css_id)
+          request.headers["TOKEN"] = token
+        end
+
+        it "succeeds" do
+          get :index
+          expect(response.status).to eq 200
+          response_body = JSON.parse(response.body)["data"]
+          expect(response_body["css_id"]).to eq "TEST_ID"
+          expect(response_body["roles"]).to eq ["dispatch"]
         end
       end
     end

@@ -99,6 +99,7 @@ Rails.application.routes.draw do
   resources :appeals, only: [:index, :show] do
     get :document_count
     get :new_documents
+    get :power_of_attorney
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
     resources :special_issues, only: [:create, :index]
     get 'tasks', to: "tasks#for_appeal"
@@ -127,6 +128,8 @@ Rails.application.routes.draw do
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"
   put 'hearings/:hearing_key/hearing_day', to: "hearings/hearing_day#update"
   get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"
+  get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
+  get 'hearings/schedule/assign/veterans', to: "hearings/hearing_day#veterans_ready_for_hearing"
 
   resources :hearings, only: [:update]
 
@@ -155,10 +158,14 @@ Rails.application.routes.draw do
     patch 'error', on: :member
   end
 
-  resources :higher_level_reviews, param: :claim_id, only: [:edit]
+  resources :higher_level_reviews, param: :claim_id, only: [:edit] do
+    patch 'update', on: :member
+  end
   match '/higher_level_reviews/:claim_id/edit/:any' => 'higher_level_reviews#edit', via: [:get]
 
-  resources :supplemental_claims, param: :claim_id, only: [:edit]
+  resources :supplemental_claims, param: :claim_id, only: [:edit] do
+    patch 'update', on: :member
+  end
   match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
 
   resources :users, only: [:index]

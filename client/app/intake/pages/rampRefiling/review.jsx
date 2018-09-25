@@ -8,7 +8,8 @@ import Button from '../../../components/Button';
 import Alert from '../../../components/Alert';
 import { Redirect } from 'react-router-dom';
 import _ from 'lodash';
-import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
+import { REQUEST_STATE } from '../../../intakeCommon/constants';
 import { setAppealDocket, submitReview, confirmIneligibleForm } from '../../actions/rampRefiling';
 import { setReceiptDate, setOptionSelected } from '../../actions/common';
 import { toggleIneligibleError } from '../../util';
@@ -66,7 +67,7 @@ class Review extends React.PureComponent {
       { submitInvalidOptionError && <ErrorAlert />}
 
       { toggleIneligibleError(hasInvalidOption, optionSelected) &&
-        <Alert title="Ineligible for Higher-Level Review" type="error" lowerMargin>
+        <Alert title="Ineligible for Higher-Level Review" type="error" >
           Contact the Veteran to verify their lane selection. If you are unable to reach
           the Veteran, send a letter indicating that their selected lane is not available,
           and that they may clarify their lane selection within 30 days. <br />

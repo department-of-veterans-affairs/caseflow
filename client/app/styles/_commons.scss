@@ -127,11 +127,6 @@ p {
   text-transform: uppercase;
 }
 
-// Use cf-push-row to wrap elements that float to the left or right
-.cf-push-row {
-  @include clearfix;
-}
-
 .cf-push-left {
   float: left;
 }
@@ -171,10 +166,6 @@ h5 {
   font-weight: 400;
   text-transform: uppercase;
   margin-bottom: 12px;
-}
-
-.usa-alert-heading {
-  font-family: 'Source Sans Pro';
 }
 
 h2 {
@@ -465,11 +456,6 @@ svg title {
   }
 }
 
-.cf-modal-title {
-  font-size: rem(35px);
-  text-align: left;
-}
-
 .cf-modal-close {
   background: transparent;
   height: 1.5rem;
@@ -570,7 +556,7 @@ div {
   position: relative;
   border-bottom: 1px solid $color-gray-lighter;
 
-  .usa-grid-full {
+  .usa-width-one-whole {
     position: relative;
     padding: 0 2rem;
   }
@@ -720,10 +706,6 @@ div {
 // Overrides USWDS */
 textarea {
   max-width: 100%;
-
-  &[id="Explanation"] {
-    width: 430px;
-  }
 }
 
 form {
@@ -788,7 +770,6 @@ form {
 
   &.usa-button-disabled {
     color: $color-gray-light;
-    background-color: $color-gray-light;
   }
 
   &--confirm {
@@ -869,18 +850,6 @@ form {
   }
 }
 
-.cf-form {
-  header {
-    border-bottom: 1px solid $color-gray-lighter;
-    margin-bottom: rem(30px);
-  }
-
-  .cf-btn-forward {
-    display: inline-block;
-    margin-right: 0;
-  }
-}
-
 input {
   &[type=number] {
     display: inline;
@@ -893,11 +862,12 @@ input {
 
 .cf-inline-form {
   line-height: 4em;
+  @include clearfix;
 
   label,
   input {
     display: inline;
-    margin-right: 10px;
+    margin: 0 10px;
   }
 
   input {
@@ -928,8 +898,8 @@ input {
 fieldset {
   > *,
   .cf-form-textinput {
-    margin-bottom: 0;
     color: $color-gray-dark;
+    margin-top: 10px;
   }
 }
 
@@ -941,7 +911,7 @@ fieldset {
 }
 
 .cf-form-textarea {
-  clear: both;
+  @include clearfix;
   max-width: rem(455px);
   margin-bottom: 20px;
 
@@ -953,7 +923,6 @@ fieldset {
 // Wrapping element for each option */
 .cf-form-radio-options {
   @include clearfix;
-  margin-top: rem(10px);
 
   input {
     left: -999em;
@@ -966,37 +935,25 @@ fieldset {
 
 .cf-form-radio-option {
   @include clearfix;
-  margin-bottom: rem(20px);
 
   label {
     max-width: 100%;
-    // This important can be removed when the latest USWDS
-    // are merged into the gem we use.
-    // scss-lint:disable ImportantRule
-    margin-bottom: 0 !important;
-    // scss-lint:enable ImportantRule
-  }
+   }
 }
 
 .cf-form-radio-inline {
   .cf-form-radio-option {
     float: left;
     padding-right: rem(30px);
-    margin-bottom: .5em;
-  }
-}
-
-.cf-form-showhide-radio {
-  .cf-required {
-    float: none;
+    margin: .5em 0;
   }
 }
 
 .cf-form-checkboxes {
   margin-top: rem(20px);
-  margin-bottom: rem(40px);
+  margin-bottom: rem(10px);
 
-  .usa-grid-full {
+  .usa-width-one-whole {
     margin-bottom: 0;
   }
 }
@@ -1016,12 +973,6 @@ fieldset {
 
   .cf-required {
     display: none;
-  }
-}
-
-[class*='cf-form-checkbox'] {
-  legend {
-    margin-bottom: .75em;
   }
 }
 
@@ -1261,13 +1212,6 @@ button {
       }
     }
   }
-}
-
-.cf-form-showhide-radio,
- .cf-form-checkboxes {
-  .question-label {
-    margin-bottom: 20px;
- }
 }
 
 .usa-accordion-button {

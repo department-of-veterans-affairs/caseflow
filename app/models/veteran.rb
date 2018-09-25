@@ -24,10 +24,11 @@ class Veteran < ApplicationRecord
   # Germany and Australia should be temporary additions until VBMS bug is fixed
   COUNTRIES_REQUIRING_ZIP = %w[USA CANADA].freeze
 
-  validates :ssn, :sex, :first_name, :last_name, :city,
+  validates :ssn, :sex, :first_name, :last_name,
             :address_line1, :country, presence: true, on: :bgs
   validates :zip_code, presence: true, if: :country_requires_zip?, on: :bgs
-  validates :state, presence: true, if: :country_requires_state?, on: :bgs
+  validates :state, presence: true, if: :state_is_required?, on: :bgs
+  validates :city, presence: true, unless: :military_address?, on: :bgs
 
   # TODO: get middle initial from BGS
   def name
@@ -36,6 +37,10 @@ class Veteran < ApplicationRecord
 
   def country_requires_zip?
     COUNTRIES_REQUIRING_ZIP.include?(country && country.upcase)
+  end
+
+  def state_is_required?
+    !military_address? && country_requires_state?
   end
 
   def country_requires_state?
@@ -133,7 +138,10 @@ class Veteran < ApplicationRecord
     def find_and_maybe_backfill_name(file_number)
       veteran = find_by(file_number: file_number)
       return nil unless veteran
-      if veteran.first_name.nil? && veteran.found?
+      # Check to see if veteran is accessible to make sure bgs_record is
+      # a hash and not :not_found. Also if it's not found, bgs_record returns
+      # a symbol that will blow up, so check if bgs_record is a hash first.
+      if veteran.first_name.nil? && veteran.accessible? && veteran.bgs_record.is_a?(Hash)
         veteran.update!(
           first_name: veteran.bgs_record[:first_name],
           last_name: veteran.bgs_record[:last_name],
