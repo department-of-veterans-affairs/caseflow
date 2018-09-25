@@ -77,10 +77,6 @@ class AdvancedOnDocketMotionView extends React.Component<Props, ViewState> {
       });
   }
 
-  closeHandler = () => {
-    this.props.history.push(`/queue/appeals/${this.props.appeal.externalId}`);
-  }
-
   render = () => {
     const {
       error,

@@ -239,8 +239,8 @@ export const renderLegacyAppealType = ({ aod, type }: {aod: boolean, type: strin
   const cavc = type === 'Court Remand';
 
   return <React.Fragment>
-    {aod && <span><span {...redText}>AOD</span>, </span>}
     {cavc ? <span {...redText}>CAVC</span> : <span>{type}</span>}
+    {aod && <span><span {...redText}>AOD</span>, </span>}
   </React.Fragment>;
 };
 

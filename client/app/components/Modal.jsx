@@ -113,6 +113,7 @@ export default class Modal extends React.Component {
       <ScrollLock />
       <div className="cf-modal-body" id={id || ''}>
         <button
+          type="button"
           id={`${this.buttonIdPrefix}close`}
           className="cf-modal-close"
           onClick={closeHandler}
