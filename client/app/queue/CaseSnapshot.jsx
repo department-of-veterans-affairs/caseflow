@@ -48,6 +48,10 @@ const headingStyling = css({
   marginBottom: '0.5rem'
 });
 
+const editButton = css({
+  float: 'right'
+});
+
 const snapshotChildResponsiveWrapFixStyling = css({
   '@media(max-width: 1200px)': {
     '& > .usa-width-one-half': {
@@ -253,10 +257,18 @@ export class CaseSnapshot extends React.PureComponent<Props> {
         <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TITLE}</h3>
         <CaseDetailsDescriptionList>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</dt>
-          <dd>{renderLegacyAppealType({
-            aod: appeal.isAdvancedOnDocket,
-            type: appeal.caseType
-          })}</dd>
+          <dd>
+            {renderLegacyAppealType({
+              aod: appeal.isAdvancedOnDocket,
+              type: appeal.caseType
+            })}
+            {!appeal.isLegacyAppeal && <span {...editButton}>
+              <Link
+                to={`/queue/appeals/${appeal.externalId}/modal/advanced_on_docket_motion`}>
+                Edit
+              </Link>
+            </span>}
+          </dd>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
           <dd><DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}</dd>
           { !taskAssignedToVso && appeal.assignedJudge &&
@@ -289,10 +301,6 @@ export class CaseSnapshot extends React.PureComponent<Props> {
           {CheckoutDropdown}
         </div>
       }
-      <Link
-        to={`/queue/appeals/${appeal.externalId}/advanced_on_docket_motion`}>
-        Edit AOD
-      </Link>
     </div>;
   };
 }

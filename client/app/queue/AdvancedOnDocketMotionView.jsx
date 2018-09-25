@@ -14,6 +14,7 @@ import { setAppealAod } from './QueueActions';
 import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
 import Alert from '../components/Alert';
+import editModalBase from './components/EditModalBase';
 import { requestSave } from './uiReducer/uiActions';
 
 import type { State, UiStateMessage } from './types/state';
@@ -52,7 +53,7 @@ class AdvancedOnDocketMotionView extends React.Component<Props, ViewState> {
     return this.state.granted !== null && this.state.reason !== null;
   }
 
-  goToNextStep = () => {
+  submit = () => {
     const {
       appeal
     } = this.props;
@@ -65,17 +66,19 @@ class AdvancedOnDocketMotionView extends React.Component<Props, ViewState> {
       }
     };
     const successMsg = {
-      title: 'Advanced on docket motion',
-      detail: 'Successful'
+      title: 'AOD status updated'
     };
 
-    this.props.requestSave(`/appeals/${appeal.externalId}/advance_on_docket_motions`, payload, successMsg).
+    return this.props.requestSave(`/appeals/${appeal.externalId}/advance_on_docket_motions`, payload, successMsg).
       then(() => {
         if (this.state.granted === GRANTED) {
           this.props.setAppealAod(appeal.externalId);
         }
       });
+  }
 
+  closeHandler = () => {
+    this.props.history.push(`/queue/appeals/${this.props.appeal.externalId}`);
   }
 
   render = () => {
@@ -85,11 +88,7 @@ class AdvancedOnDocketMotionView extends React.Component<Props, ViewState> {
     } = this.props;
 
     return <React.Fragment>
-      <h1>
-        {COPY.ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE}
-      </h1>
       {error && <Alert type="error" title={error.title} message={error.detail} />}
-      <hr />
       <h3>{COPY.ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN}</h3>
       <SearchableDropdown
         name="AOD Motion Disposition"
@@ -146,11 +145,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setAppealAod
 }, dispatch);
 
-const WrappedComponent = decisionViewBase(AdvancedOnDocketMotionView, {
-  hideCancelButton: true,
-  continueBtnText: 'Submit'
-});
-
 export default (withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(WrappedComponent)
+  connect(mapStateToProps, mapDispatchToProps)(editModalBase(AdvancedOnDocketMotionView, COPY.ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE))
 ): React.ComponentType<Params>);

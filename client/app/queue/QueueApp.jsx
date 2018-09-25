@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { BrowserRouter, Switch } from 'react-router-dom';
+import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import StringUtil from '../util/StringUtil';
 
 import {
@@ -116,10 +116,12 @@ class QueueApp extends React.PureComponent<Props> {
       <JudgeReviewTaskListView {...this.props} />}
   </QueueLoadingScreen>;
 
-  routedQueueDetail = (props) => <CaseDetailsLoadingScreen
+  routedQueueDetail = (props) => <CaseDetailsView appealId={props.match.params.appealId} />;
+
+  routedQueueDetailWithLoadingScreen = (props) => <CaseDetailsLoadingScreen
     {...this.propsForQueueLoadingScreen()}
     appealId={props.match.params.appealId}>
-    <CaseDetailsView appealId={props.match.params.appealId} />
+    {this.routedQueueDetail(props)}
   </CaseDetailsLoadingScreen>;
 
   routedSubmitDecision = (props) => <SubmitDecisionView
@@ -232,13 +234,17 @@ class QueueApp extends React.PureComponent<Props> {
             path="/queue/:userId/assign"
             title="Unassigned Cases | Caseflow"
             render={this.routedJudgeQueueList('assign')} />
-          <PageRoute
-            path="/queue/appeals/:appealId/edit/advanced_on_docket"
-            title="Case Details | Caseflow"
+          <Route
+            path="/queue/appeals/:appealId/modal/advanced_on_docket_motion"
             render={this.routedAdvancedOnDocketMotion} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"
+            title="Case Details | Caseflow"
+            render={this.routedQueueDetailWithLoadingScreen} />
+          <PageRoute
+            exact
+            path="/queue/appeals/:appealId/modal/:modalType"
             title="Case Details | Caseflow"
             render={this.routedQueueDetail} />
           <PageRoute

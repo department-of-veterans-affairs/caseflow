@@ -44,6 +44,7 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
 
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
+    this.props.resetSuccessMessages();
     this.props.resetErrorMessages();
 
     if (_.some(this.props.tasks, (task) => !task.taskId)) {
