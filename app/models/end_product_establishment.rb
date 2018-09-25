@@ -140,10 +140,9 @@ class EndProductEstablishment < ApplicationRecord
 
       sync_source!
     end
-
-    # TODO: This is sort of janky. Let's rethink the error handling logic here
+  rescue EstablishedEndProductNotFound => e
+    raise e
   rescue StandardError => e
-    raise e if e.is_a?(EstablishedEndProductNotFound)
     raise BGSSyncError.new(e, self)
   end
 
