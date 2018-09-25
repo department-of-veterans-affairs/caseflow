@@ -34,10 +34,28 @@ class Hearings::HearingDayController < HearingScheduleController
     formatted_slots = HearingDayRepository.fetch_hearing_days_slots(video_and_co)
 
     formatted_slots.each do |hearing_day|
-      hearing_day[:hearings] = VACOLS::CaseHearing.last(5)
+      hearing_day[:hearings] = [{
+        id: 1,
+        name: "Joe Snuffy",
+        type: "CAVC",
+        docket_number: "180203",
+        location: "Houston",
+        time: "8:30am"
+      }]
     end
 
     render json: { hearing_days: json_hearings(formatted_slots) }
+  end
+
+  def veterans_ready_for_hearing
+    render json: { veterans: [{
+      id: 1,
+      name: "Joe Snuffy",
+      type: "CAVC",
+      docket_number: "180203",
+      location: "Houston",
+      time: nil
+    }] }
   end
 
   # Create a hearing schedule day
