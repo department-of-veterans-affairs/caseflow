@@ -2,7 +2,7 @@ class Rating
   include ActiveModel::Model
 
   # WARNING: profile_date is a misnomer adopted from BGS terminology.
-  # It is not always a date and can include a date time.
+  # It is a datetime, not a date.
   attr_accessor :participant_id, :profile_date, :promulgation_date
 
   # One week buffer was added
