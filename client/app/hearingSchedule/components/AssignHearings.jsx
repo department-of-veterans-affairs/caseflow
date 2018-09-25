@@ -16,7 +16,7 @@ const centralOfficeStaticEntry = [{
 }];
 
 export default class AssignHearings extends React.Component {
-  
+
   // required to reset the RO Dropdown when moving from Viewing and Assigning.
   componentWillMount = () => {
     this.props.onRegionalOfficeChange('');
