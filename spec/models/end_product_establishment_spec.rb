@@ -210,6 +210,21 @@ describe EndProductEstablishment do
       end
     end
 
+    context "when there are no open modifiers" do
+      before do
+        %w[030 031 032].each do |modifier|
+          Generators::EndProduct.build(
+            veteran_file_number: "12341234",
+            bgs_attrs: { end_product_type_code: modifier }
+          )
+        end
+      end
+
+      it "returns NoAvailableModifiers error" do
+        expect { subject }.to raise_error(EndProductEstablishment::NoAvailableModifiers)
+      end
+    end
+
     context "when all goes well" do
       it "creates end product and sets reference_id" do
         subject

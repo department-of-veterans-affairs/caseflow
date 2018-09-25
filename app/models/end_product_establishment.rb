@@ -17,6 +17,7 @@ class EndProductEstablishment < ApplicationRecord
   belongs_to :source, polymorphic: true
 
   class InvalidEndProductError < StandardError; end
+  class NoAvailableModifiers < StandardError; end
 
   class BGSSyncError < RuntimeError
     def initialize(error, end_product_establishment)
@@ -277,6 +278,8 @@ class EndProductEstablishment < ApplicationRecord
         return modifier
       end
     end
+
+    fail NoAvailableModifiers
   end
 
   def sync_source!
