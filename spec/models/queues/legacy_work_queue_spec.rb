@@ -49,7 +49,7 @@ describe LegacyWorkQueue do
         tasks, = LegacyWorkQueue.tasks_with_appeals(user, role)
 
         expect(tasks.length).to eq(2)
-        if tasks[0].action == "assign" then
+        if tasks[0].action == "assign"
           assign, review = tasks
         else
           review, assign = tasks
