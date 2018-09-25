@@ -6,7 +6,7 @@ RSpec.describe Idt::Api::V1::UsersController, type: :controller do
   after do
     FeatureToggle.disable!(:test_facols)
   end
-  
+
   describe "GET /idt/api/v1/user" do
     let(:user) { create(:user, css_id: "TEST_ID") }
 
