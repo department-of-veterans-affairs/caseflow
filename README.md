@@ -355,13 +355,19 @@ To run the test suite:
 
     bundle exec rake
 
+### focus
+
 During development, it can be helpful to narrow the scope of tests being run. You can do this by
-adding `focus: true` to a `context` like so:
+adding [`focus: true`](https://relishapp.com/rspec/rspec-core/v/2-6/docs/filtering/inclusion-filters) to a `context` or `it` like so:
 
 ```diff
 -context "test my new feature" do
 +context "test my new feature", focus: true do
 ```
+
+Make sure to remove the `focus: true` before marking your pr ready to merge! Otherwise CI may only run the tests you've focused.
+
+### Guard
 
 In addition, if you are iterating on a subset of tests, [`guard`](https://github.com/guard/guard-rspec) is a useful tool that will
 automatically rerun some command when a watched set of files change - you can do this by
