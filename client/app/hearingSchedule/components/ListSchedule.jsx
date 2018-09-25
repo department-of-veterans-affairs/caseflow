@@ -61,13 +61,13 @@ const populateFilterDropDowns = (resultSet, filterName) => {
       });
     } else {
       uniqueOptions.push({
-        value: "<<blank>>",
+        value: '<<blank>>',
         displayText: `<<blank>> (${countByFilterName[key]})`
       });
     }
   }
 
-  return _.sortBy(uniqueOptions, "displayText");
+  return _.sortBy(uniqueOptions, 'displayText');
 };
 
 const filterSchedule = (scheduleToFilter, filterName, value) => {
@@ -123,7 +123,9 @@ class ListSchedule extends React.Component {
         header: 'Date',
         align: 'left',
         valueName: 'hearingDate',
-        getSortValue: (hearingDay) => { return hearingDay.hearingDate; }
+        getSortValue: (hearingDay) => {
+          return hearingDay.hearingDate;
+        }
       },
       {
         header: 'Type',
@@ -152,7 +154,9 @@ class ListSchedule extends React.Component {
         header: 'Room',
         align: 'left',
         valueName: 'room',
-        getSortValue: (hearingDay) => { return hearingDay.room; }
+        getSortValue: (hearingDay) => {
+          return hearingDay.room;
+        }
       },
       {
         header: 'VLJ',

@@ -17,7 +17,7 @@ const listItemStyling = css({
 });
 
 const ListItemPicker = ({ options, setSelectedValue,
-                          dropdownFilterViewListStyle, dropdownFilterViewListItemStyle }) => {
+  dropdownFilterViewListStyle, dropdownFilterViewListItemStyle }) => {
 
   const onClick = (event) => {
     setSelectedValue(event.target.value);
