@@ -254,7 +254,7 @@ RSpec.feature "Case details" do
       FactoryBot.create(
         :case,
         bfdnod: 2.days.ago,
-        bfd19: 1.days.ago
+        bfd19: 1.day.ago
       )
     end
 
@@ -266,8 +266,8 @@ RSpec.feature "Case details" do
       visit "/queue/appeals/#{appeal.external_id}"
 
       # Ensure we see a timeline where completed things are checked and incomplete are gray
-      expect(find('tr', text: "BVA Decision pending")).to have_selector(".gray-dot")
-      expect(find('tr', text: "Form 9 received")).to have_selector(".green-checkmark")
+      expect(find("tr", text: "BVA Decision pending")).to have_selector(".gray-dot")
+      expect(find("tr", text: "Form 9 received")).to have_selector(".green-checkmark")
     end
   end
 
