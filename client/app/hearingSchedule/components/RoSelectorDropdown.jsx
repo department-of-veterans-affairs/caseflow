@@ -7,8 +7,6 @@ import { onReceiveRegionalOffices } from '../actions';
 import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 
-const regionalOfficeDropdowns = [];
-
 class RoSelectorDropdown extends React.Component {
 
   loadRegionalOffices = () => {
@@ -28,6 +26,8 @@ class RoSelectorDropdown extends React.Component {
 
   regionalOfficeOptions = () => {
 
+    let regionalOfficeDropdowns = [];
+
     _.forEach(this.props.regionalOffices, (value, key) => {
       regionalOfficeDropdowns.push({
         label: `${value.city}, ${value.state}`,
@@ -35,10 +35,9 @@ class RoSelectorDropdown extends React.Component {
       });
     });
 
-    regionalOfficeDropdowns.push({
-      label: 'Central Office',
-      value: 'C'
-    });
+    if (this.props.staticOptions) {
+      regionalOfficeDropdowns.push(...this.props.staticOptions);
+    }
 
     return _.orderBy(regionalOfficeDropdowns, (ro) => ro.label, 'asc');
   };
@@ -47,7 +46,8 @@ class RoSelectorDropdown extends React.Component {
     return <SearchableDropdown
       name="ro"
       label="Regional Office"
-      options={regionalOfficeDropdowns}
+      options={this.regionalOfficeOptions()}
+      staticOptions={this.props.staticOptions}
       onChange={this.props.onChange}
       value={this.props.value}
       placeholder={this.props.placeholder}
@@ -59,7 +59,8 @@ RoSelectorDropdown.propTypes = {
   regionalOffices: PropTypes.object,
   onChange: PropTypes.func,
   value: PropTypes.object,
-  placeholder: PropTypes.string
+  placeholder: PropTypes.string,
+  staticOptions: PropTypes.array
 };
 
 const mapStateToProps = (state) => ({

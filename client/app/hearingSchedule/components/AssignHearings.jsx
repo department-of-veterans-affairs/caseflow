@@ -6,7 +6,18 @@ import COPY from '../../../COPY.json';
 import { formatDateStr } from '../../util/DateUtil';
 import RoSelectorDropdown from './RoSelectorDropdown';
 
+const centralOfficeStaticEntry = [{
+  label: 'Central',
+  value: 'C'
+}];
+
 export default class AssignHearings extends React.Component {
+
+  // required to reset the RO Dropdown when moving from Viewing and Assigning.
+  componentWillMount = () => {
+    this.props.onRegionalOfficeChange('');
+  }
+
   render() {
     const availableHearingDays = this.props.upcomingHearingDays && <div className="usa-width-one-fourth">
       <h3>Hearings to Schedule</h3>
@@ -36,6 +47,7 @@ export default class AssignHearings extends React.Component {
       <RoSelectorDropdown
         onChange={this.props.onRegionalOfficeChange}
         value={this.props.selectedRegionalOffice}
+        staticOptions={centralOfficeStaticEntry}
       />
       {availableHearingDays}
       <div></div>

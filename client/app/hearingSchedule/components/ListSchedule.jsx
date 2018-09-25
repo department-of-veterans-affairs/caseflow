@@ -82,7 +82,16 @@ const filterSchedule = (scheduleToFilter, filterName, value) => {
   return filteredSchedule;
 };
 
+const allStaticEntry = [{
+  label: 'All',
+  value: 'All'
+}];
+
 class ListSchedule extends React.Component {
+
+  componentWillMount = () => {
+    this.props.onRegionalOfficeChange('');
+  }
 
   render() {
     const {
@@ -184,7 +193,7 @@ class ListSchedule extends React.Component {
         <RoSelectorDropdown
           onChange={this.props.onRegionalOfficeChange}
           value={this.props.selectedRegionalOffice}
-          placeholder="All"
+          staticOptions={allStaticEntry}
         />
       </div>
       <div className="cf-push-left" {...inlineFormStyling} >
