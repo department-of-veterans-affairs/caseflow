@@ -14,7 +14,7 @@ FactoryBot.define do
     end
 
     trait :draft_decision do
-      deprod Constants::DECASS_WORK_PRODUCT_TYPES["DRAFT_DECISION"].sample
+      deprod Constants::DECASS_WORK_PRODUCT_TYPES["DRAFT_DECISION"].select{ |e| e != "REA"}.sample
     end
   end
 end
