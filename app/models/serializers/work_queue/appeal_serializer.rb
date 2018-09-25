@@ -75,7 +75,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :decision_date do
-    nil
+    task = object.tasks.where(type: "BvaDispatchTask", action: "review", status: "completed").last
+    task ? task.completed_at : nil
   end
 
   attribute :certification_date do
@@ -91,5 +92,11 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
 
   attribute :caseflow_veteran_id do
     object.veteran ? object.veteran.id : nil
+  end
+
+  attribute :events do
+    {
+      nod_receipt_date: object.receipt_date
+    }
   end
 end
