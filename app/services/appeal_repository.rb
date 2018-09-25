@@ -40,6 +40,15 @@ class AppealRepository
     cases.map { |case_record| build_appeal(case_record) }
   end
 
+  def self.appeals_with_hearings_by_vbms_id(vbms_id)
+    vacols_ids = VACOLS::Case.where(bfcorlid: vbms_id).pluck(:bfkey)
+    hearings = HearingRepository.hearings_for_appeals(vacols_ids)
+    # hearings = VACOLS::CaseHearing.where(folder_nr: vacols_ids)
+
+    hearings.keys
+    # hearings.pluck(:folder_nr)
+  end
+
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def self.appeals_by_vbms_id_with_preloaded_status_api_attrs(vbms_id)

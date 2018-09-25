@@ -20,6 +20,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     []
   end
 
+  attribute :appeal_ids_with_hearings do
+    []
+  end
+
   attribute :appellant_full_name do
     object.claimants[0].name if object.claimants && object.claimants.any?
   end

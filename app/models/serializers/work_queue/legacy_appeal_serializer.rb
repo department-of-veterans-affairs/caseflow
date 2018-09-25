@@ -26,6 +26,10 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
     end
   end
 
+  attribute :appeal_ids_with_hearings do
+    AppealRepository.appeals_with_hearings_by_vbms_id(object.veteran_file_number)
+  end
+
   attribute :appellant_full_name do
     object.appellant_name
   end

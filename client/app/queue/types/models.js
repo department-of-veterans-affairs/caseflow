@@ -87,6 +87,7 @@ export type PowerOfAttorney = {
 export type AppealDetail = {
   issues: Array<Object>,
   hearings: Array<Object>,
+  appealIdsWitHearings: Array<string>,
   appellantFullName: string,
   appellantAddress: Address,
   appellantRelationship: string,
