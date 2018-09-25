@@ -48,8 +48,8 @@ export default class CaseTimeline extends React.PureComponent {
       },
       {
         legacyOnly: true,
-        title: COPY.CASE_TIMELINE_FROM_9_RECEIVEDE,
-        pendingTitle: COPY.CASE_TIMELINE_FROM_9_PENDING,
+        title: COPY.CASE_TIMELINE_FORM_9_RECEIVED,
+        pendingTitle: COPY.CASE_TIMELINE_FORM_9_PENDING,
         date: appeal.events.form9Date
       },
       {
@@ -62,9 +62,11 @@ export default class CaseTimeline extends React.PureComponent {
     return <React.Fragment>
       {COPY.CASE_TIMELINE_HEADER}
       <table>
-        {events.map((event, index) => {
-          return this.getEventRow(event, index === events.length - 1);
-        })}
+        <tbody>
+          {events.map((event, index) => {
+            return this.getEventRow(event, index === events.length - 1);
+          })}
+        </tbody>
       </table>
     </React.Fragment>;
   };

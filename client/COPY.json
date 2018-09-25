@@ -216,8 +216,8 @@
   "CASE_TIMELINE_HEADER": "Below is the history of this case. Soon, you'll be able to see many more details.",
   "CASE_TIMELINE_DISPATCHED_FROM_BVA": "Dispatched from BVA",
   "CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING": "Dispatch from BVA pending",
-  "CASE_TIMELINE_FROM_9_RECEIVED": "Form 9 received",
-  "CASE_TIMELINE_FROM_9_PENDING": "Form 9 pending",
+  "CASE_TIMELINE_FORM_9_RECEIVED": "Form 9 received",
+  "CASE_TIMELINE_FORM_9_PENDING": "Form 9 pending",
   "CASE_TIMELINE_NOD_RECEIVED": "Notice of disagreement received",
   "CASE_TIMELINE_NOD_PENDING": "Notice of disagreement pending"
 }
