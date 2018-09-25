@@ -137,9 +137,15 @@ RSpec.feature "Intake" do
       end
     end
 
-    context "Veteran has missing information" do
+    context "Veteran has invalid information" do
       let(:veteran) do
-        Generators::Veteran.build(file_number: "12341234", sex: nil, ssn: nil, country: nil)
+        Generators::Veteran.build(
+          file_number: "12341234",
+          sex: nil,
+          ssn: nil,
+          country: nil,
+          address_line1: "this address is more than 20 chars"
+        )
       end
 
       scenario "Search for a veteran with a validation error" do
@@ -158,6 +164,7 @@ RSpec.feature "Intake" do
         expect(page).to have_content(
           "the corporate database, then retry establishing the EP in Caseflow: ssn, sex, country."
         )
+        expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
       end
     end
 
