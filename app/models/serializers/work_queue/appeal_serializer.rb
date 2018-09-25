@@ -59,7 +59,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :type do
-    "BEAAM"
+    "Original"
   end
 
   attribute :aod do
