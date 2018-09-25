@@ -16,8 +16,8 @@ export class ListScheduleContainer extends React.Component {
   loadHearingSchedule = () => {
     let requestUrl = '/hearings/hearing_day.json';
 
-    if ((this.props.selectedRegionalOffice && this.props.selectedRegionalOffice.value !== 'All')
-      && this.props.startDate && this.props.endDate) {
+    if ((this.props.selectedRegionalOffice && this.props.selectedRegionalOffice.value !== 'All') &&
+      this.props.startDate && this.props.endDate) {
       requestUrl = `${requestUrl}?regional_office=${this.props.selectedRegionalOffice.value}` +
       `&start_date=${this.props.startDate}&end_date=${this.props.endDate}`;
     }
