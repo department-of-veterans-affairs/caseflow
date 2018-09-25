@@ -191,9 +191,9 @@ RSpec.feature "Intake" do
 
       visit "/intake"
       safe_click "#cancel-intake"
-      expect(find(".cf-modal-title")).to have_content("Cancel Intake?")
+      expect(find("#modal_id-title")).to have_content("Cancel Intake?")
       safe_click ".close-modal"
-      expect(page).to_not have_css(".cf-modal-title")
+      expect(page).to_not have_css("#modal_id-title")
       safe_click "#cancel-intake"
 
       safe_click ".confirm-cancel"

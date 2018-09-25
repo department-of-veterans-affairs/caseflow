@@ -71,24 +71,20 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
       task,
       appeal
     } = this.props;
-    const options = [];
+    const options = [{
+      label: COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
+      value: CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY
+    }, {
+      label: COPY.COLOCATED_ACTION_PLACE_HOLD,
+      value: CO_LOCATED_ACTIONS.PLACE_HOLD
+    }];
 
     if (['translation', 'schedule_hearing'].includes(task.action) && appeal.isLegacyAppeal) {
-      options.push({
+      options.unshift({
         label: sprintf(COPY.COLOCATED_ACTION_SEND_TO_TEAM, CO_LOCATED_ADMIN_ACTIONS[task.action]),
         value: CO_LOCATED_ACTIONS.SEND_TO_TEAM
       });
-    } else {
-      options.push({
-        label: COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
-        value: CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY
-      });
     }
-
-    options.push({
-      label: COPY.COLOCATED_ACTION_PLACE_HOLD,
-      value: CO_LOCATED_ACTIONS.PLACE_HOLD
-    });
 
     return options;
   }
