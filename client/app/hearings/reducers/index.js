@@ -239,12 +239,12 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       saveDocketSuccess: { $set: action.payload.saveSuccess }
     });
 
-    // case Constants.SET_RESET_SAVE_STATUS:
-    //   return update(state, {
-    //     saveDocketSuccess: { $set: false },
-    //     saveDocketFailed: { $set: false }
-    //     saving: { $set: false }
-    // });
+  case Constants.RESET_SAVE_STATUS:
+    return update(state, {
+      saveDocketSuccess: { $set: false },
+      saveDocketFailed: { $set: false },
+      saving: { $set: false }
+    });
 
   case Constants.SET_WORKSHEET_SAVE_FAILED_STATUS:
     return update(state, {

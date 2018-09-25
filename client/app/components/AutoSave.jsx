@@ -5,6 +5,7 @@ import Alert from './Alert';
 import Button from './Button';
 import { loadingSymbolHtml } from '../components/RenderFunctions';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import _ from 'lodash';
 
 const alertStyling = css({
   width: '57%'
@@ -32,52 +33,57 @@ export default class AutoSave extends React.Component {
     clearInterval(this.setIntervalId);
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.saveSuccess !== prevProps.saveSuccess) {
-      setInterval(() => this.props.resetDocketSaveSuccessStatus(), this.props.saveSuccessTimeout);
-    }
-  }
+   debouncedResetSaveStatus = _.debounce(
+     () => this.props.resetSaveStatus,
+     this.props.saveSuccessTimeout
+   );
 
-  render() {
-    if (this.props.isSaving) {
-      const color = this.props.spinnerColor || COLORS.GREY_DARK;
+   componentDidUpdate(prevProps) {
+     if (this.props.saveSuccess !== prevProps.saveSuccess) {
+       this.debouncedResetSaveStatus();
+     }
+   }
 
-      return <div className="saving">
-        <div className="loadingSymbol">{loadingSymbolHtml('Saving...', '20px', color)}</div>
-      </div>;
-    }
+   render() {
+     if (this.props.isSaving) {
+       const color = this.props.spinnerColor || COLORS.GREY_DARK;
 
-    if (this.props.saveFailed) {
+       return <div className="saving">
+         <div className="loadingSymbol">{loadingSymbolHtml('Saving...', '20px', color)}</div>
+       </div>;
+     }
 
-      const alertMessage = <div>
+     if (this.props.saveFailed) {
+
+       const alertMessage = <div>
         Unable to save. Please check your internet connection and try again. <span>
-          <Button
-            name="RETRY"
-            onClick={this.props.save}
-            linkStyling
-          />
-        </span>
-      </div>;
+           <Button
+             name="RETRY"
+             onClick={this.props.save}
+             linkStyling
+           />
+         </span>
+       </div>;
 
-      return <Alert
-        message={alertMessage}
-        type="error"
-        fixed
-        styling={alertStyling}
-      />;
-    }
+       return <Alert
+         message={alertMessage}
+         type="error"
+         fixed
+         styling={alertStyling}
+       />;
+     }
 
-    if (this.props.saveSuccess) {
-      return <Alert
-        message="Connected! Your hearing worksheet has been saved."
-        type="success"
-        fixed
-        styling={alertStyling}
-      />;
-    }
+     if (this.props.saveSuccess) {
+       return <Alert
+         message="Connected! Your hearing worksheet has been saved."
+         type="success"
+         fixed
+         styling={alertStyling}
+       />;
+     }
 
-    return <span className="saving">Last saved at {this.props.timeSaved}</span>;
-  }
+     return <span className="saving">Last saved at {this.props.timeSaved}</span>;
+   }
 }
 
 AutoSave.propTypes = {
@@ -87,7 +93,8 @@ AutoSave.propTypes = {
   save: PropTypes.func.isRequired,
   timeSaved: PropTypes.string.isRequired,
   saveFailed: PropTypes.bool,
-  saveSuccess: PropTypes.bool
+  saveSuccess: PropTypes.bool,
+  resetSaveStatus: PropTypes.func
 };
 
 AutoSave.defaultProps = {

@@ -304,6 +304,10 @@ export const saveDocket = (docket, date) => (dispatch) => () => {
     type: Constants.SET_DOCKET_SAVE_FAILED,
     payload: { saveFailed: false }
   });
+  dispatch({
+    type: Constants.SET_DOCKET_SAVE_SUCCESS,
+    payload: { saveSuccess: false }
+  });
 
   let apiRequests = [];
 
@@ -333,20 +337,13 @@ export const saveDocket = (docket, date) => (dispatch) => () => {
       type: Constants.TOGGLE_DOCKET_SAVING,
       payload: { saving: false }
     });
+    dispatch({
+      type: Constants.SET_DOCKET_SAVE_SUCCESS,
+      payload: { saveSuccess: true }
+    });
   });
 };
 
-export const resetDocketSaveSuccessStatus = () => ({
-  type: Constants.SET_DOCKET_SAVE_SUCCESS,
-  payload: {
-    saveSuccess: false
-  }
-});
-
-
-export const toggleWorksheetSucces = (saving) => ({
-  type: Constants.TOGGLE_WORKSHEET_SUCCESS,
-  payload: {
-    saving
-  }
+export const resetDocketSaveStatus = () => ({
+  type: Constants.RESET_SAVE_STATUS
 });
