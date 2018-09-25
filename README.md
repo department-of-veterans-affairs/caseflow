@@ -355,6 +355,19 @@ To run the test suite:
 
     bundle exec rake
 
+During development, it can be helpful to narrow the scope of tests being run. You can do this by
+adding `focus: true` to a `context` like so:
+
+```diff
+-context "test my new feature" do
++context "test my new feature", focus: true do
+```
+
+In addition, if you are iterating on a subset of tests, [`guard`](https://github.com/guard/guard-rspec) is a useful tool that will
+automatically rerun some command when a watched set of files change - you can do this by
+running `bundle exec guard`, then editing a file (see Guardfile for details). In conjunction with
+the `focus` flag, you can get a short development loop.
+
 ## Feature Toggle and Functions
 
 See [Caseflow Commons](https://github.com/department-of-veterans-affairs/caseflow-commons)
