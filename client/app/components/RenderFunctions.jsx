@@ -635,7 +635,7 @@ export class NewFileIcon extends React.PureComponent {
 export class GreenCheckmark extends React.PureComponent {
   render() {
     return <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1">
-      <g id="Case-timeline" stroke="none" stroke-width="1" fill="none" fillRule="evenodd">
+      <g className="green-checkmark" stroke="none" stroke-width="1" fill="none" fillRule="evenodd">
         <g id="750-copy-12" transform="translate(-120.000000, -725.000000)">
           <g id="Group-11" transform="translate(124.000000, 729.000000)">
             <rect id="Background" stroke="#FFFFFF" strokeWidth="4" fill="#2E8540" x="-2" y="-2" width="36" height="36" rx="16"></rect>
@@ -650,7 +650,7 @@ export class GreenCheckmark extends React.PureComponent {
 export class GrayDot extends React.PureComponent {
   render() {
     return <svg width="25px" height="25px" viewBox="0 0 25 25" version="1.1">
-      <g id="Case-timeline" stroke="none" stroke-width="1" fill="none" fillRule="evenodd">
+      <g className="gray-dot" stroke="none" stroke-width="1" fill="none" fillRule="evenodd">
         <g id="750-copy-12" transform="translate(-128.000000, -670.000000)" fill="#D6D7D9" stroke="#FFFFFF" strokeWidth="4">
           <rect id="Background" x="130" y="672" width="21" height="21" rx="10.5"></rect>
         </g>

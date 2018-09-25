@@ -10,6 +10,7 @@ import Address from './components/Address';
 import { GrayDot, GreenCheckmark } from '../components/RenderFunctions';
 import moment from 'moment';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import COPY from '../../COPY.json';
 
 const grayLine = css({
   width: '5px',
@@ -64,11 +65,14 @@ export default class CaseTimeline extends React.PureComponent {
       }
     ].filter((event) => !event.legacyOnly || appeal.isLegacyAppeal);
 
-    return <table>
-      {events.map((event, index) => {
-        return this.getEventRow(event, index === events.length - 1);
-      })}
-    </table>
+    return <React.Fragment>
+      {COPY.CASE_TIMELINE_HEADER}
+      <table>
+        {events.map((event, index) => {
+          return this.getEventRow(event, index === events.length - 1);
+        })}
+      </table>
+    </React.Fragment>;
   };
 }
 
