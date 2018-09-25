@@ -32,6 +32,7 @@ export type Issue = {
   close_date: Date,
   note: string,
   id: Number,
+  vacols_sequence_id?: Number,
   labels: Array<string>,
   readjudication: Boolean,
   remand_reasons: Array<Object>,
@@ -95,6 +96,10 @@ export type AppealDetail = {
   externalId: string,
   status: string,
   decisionDate: string,
+  events: {
+    nodReceiptDate: ?string,
+    form9Date: ?string,
+  },
   certificationDate: ?string,
   powerOfAttorney: ?PowerOfAttorney,
   regionalOffice: Object,

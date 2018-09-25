@@ -2,6 +2,7 @@
 import { css } from 'glamor';
 import _ from 'lodash';
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
+import ISSUE_DISPOSITIONS_BY_ID from '../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
 import LEGACY_REMAND_REASONS_BY_ID from '../../constants/LEGACY_ACTIVE_REMAND_REASONS_BY_ID.json';
 import REMAND_REASONS_BY_ID from '../../constants/AMA_REMAND_REASONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
@@ -147,9 +148,14 @@ export const REMAND_REASONS = formatRemandReasons(REMAND_REASONS_BY_ID);
 const parameterizedDispositions = Object.values(VACOLS_DISPOSITIONS_BY_ID).
   map(StringUtil.parameterize);
 
-export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
+export const VACOLS_DISPOSITIONS = _.fromPairs(_.zip(
   _.invokeMap(parameterizedDispositions, 'toUpperCase'),
   Object.keys(VACOLS_DISPOSITIONS_BY_ID)
+));
+
+export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
+  _.invokeMap(_.keys(ISSUE_DISPOSITIONS_BY_ID), 'toUpperCase'),
+  _.keys(ISSUE_DISPOSITIONS_BY_ID)
 ));
 
 export const ISSUE_DESCRIPTION_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.ISSUES.ISSDESC;

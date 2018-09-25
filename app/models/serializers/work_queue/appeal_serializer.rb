@@ -3,7 +3,17 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :assigned_judge
 
   attribute :issues do
-    object.request_issues
+    object.request_issues.map do |issue|
+      # Hard code program for October 1st Pilot, we don't have all the info for how we'll
+      # break down request issues yet but all RAMP appeals will be 'compensation'
+      {
+        id: issue.id,
+        disposition: issue.disposition,
+        program: "Compensation",
+        description: issue.description,
+        remand_reasons: issue.remand_reasons
+      }
+    end
   end
 
   attribute :hearings do
@@ -49,7 +59,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :type do
-    "BEAAM"
+    "Original"
   end
 
   attribute :aod do
@@ -65,7 +75,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :decision_date do
-    nil
+    task = object.tasks.where(type: "BvaDispatchTask", action: "review", status: "completed").last
+    task ? task.completed_at : nil
   end
 
   attribute :certification_date do
@@ -81,5 +92,11 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
 
   attribute :caseflow_veteran_id do
     object.veteran ? object.veteran.id : nil
+  end
+
+  attribute :events do
+    {
+      nod_receipt_date: object.receipt_date
+    }
   end
 end

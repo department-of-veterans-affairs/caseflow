@@ -130,6 +130,7 @@ Rails.application.routes.draw do
   put 'hearings/:hearing_key/hearing_day', to: "hearings/hearing_day#update"
   get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
+  get 'hearings/schedule/assign/veterans', to: "hearings/hearing_day#veterans_ready_for_hearing"
 
   resources :hearings, only: [:update]
 

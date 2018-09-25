@@ -1,5 +1,5 @@
 class AdvanceOnDocketMotion < ApplicationRecord
-  belongs_to :claimants
+  belongs_to :people
   belongs_to :users
 
   enum status: {

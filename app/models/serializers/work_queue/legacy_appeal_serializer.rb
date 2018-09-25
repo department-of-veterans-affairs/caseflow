@@ -6,7 +6,7 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
     object.issues.map do |issue|
       ActiveModelSerializers::SerializableResource.new(
         issue,
-        serializer: ::WorkQueue::IssueSerializer
+        serializer: ::WorkQueue::LegacyIssueSerializer
       ).as_json[:data][:attributes]
     end
   end
@@ -88,5 +88,12 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
 
   attribute :docket_name do
     "legacy"
+  end
+
+  attribute :events do
+    {
+      nod_receipt_date: object.nod_date,
+      form9_date: object.form9_date
+    }
   end
 end

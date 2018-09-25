@@ -27,7 +27,7 @@ FactoryBot.define do
     end
 
     trait :advanced_on_docket do
-      claimants { [create(:claimant, date_of_birth: 76.years.ago)] }
+      claimants { [create(:claimant, :advanced_on_docket)] }
     end
 
     transient do

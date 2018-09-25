@@ -3,7 +3,10 @@ import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 import StringUtil from '../util/StringUtil';
-import { redText } from './constants';
+import {
+  redText,
+  ISSUE_DISPOSITIONS
+} from './constants';
 
 import type {
   Task,
@@ -206,6 +209,10 @@ export const prepareAppealForStore =
         veteranGender: appeal.attributes.veteran_gender,
         externalId: appeal.attributes.external_id,
         status: appeal.attributes.status,
+        events: {
+          nodReceiptDate: appeal.attributes.events.nod_receipt_date,
+          form9Date: appeal.attributes.events.form9_date
+        },
         decisionDate: appeal.attributes.decision_date,
         certificationDate: appeal.attributes.certification_date,
         powerOfAttorney: appeal.attributes.power_of_attorney,
@@ -286,8 +293,8 @@ export const getIssueDiagnosticCodeLabel = (code: string): string => {
 };
 
 /**
- * For attorney checkout flow, filter out already-decided issues. Undecided
- * disposition IDs are all numerical (1-9), decided IDs are alphabetical (A-X).
+ * For legacy attorney checkout flow, filter out already-decided issues. Undecided
+ * VACOLS disposition IDs are all numerical (1-9), decided IDs are alphabetical (A-X).
  * Filter out disposition 9 because it is no longer used.
  *
  * @param {Array} issues
@@ -317,6 +324,12 @@ export const buildCaseReviewPayload = (
       }
     }
   };
+  let isLegacyAppeal = false;
+
+  if ('isLegacyAppeal' in args) {
+    isLegacyAppeal = args.isLegacyAppeal;
+    delete args.isLegacyAppeal;
+  }
 
   if (userRole === USER_ROLE_TYPES.attorney) {
     _.extend(payload.data.tasks, { document_type: decision.type });
@@ -327,11 +340,27 @@ export const buildCaseReviewPayload = (
     _.extend(payload.data.tasks, args);
   }
 
-  payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => _.extend({},
-    _.pick(issue, ['remand_reasons', 'type', 'readjudication']),
-    { disposition: _.capitalize(issue.disposition) },
-    { id: issue.id }
-  ));
+  if (isLegacyAppeal) {
+    payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => {
+      const issueAttrs = ['type', 'readjudication', 'id'];
+
+      if (issue.disposition === VACOLS_DISPOSITIONS_BY_ID.REMANDED) {
+        issueAttrs.push('remand_reasons');
+      }
+
+      return _.extend({}, _.pick(issue, issueAttrs), {
+        disposition: _.capitalize(issue.disposition)
+      });
+    });
+  } else {
+    payload.data.tasks.issues = issues.map((issue) => {
+      if (issue.disposition !== ISSUE_DISPOSITIONS.REMANDED) {
+        return _.omit(issue, 'remand_reasons');
+      }
+
+      return issue;
+    });
+  }
 
   return payload;
 };
