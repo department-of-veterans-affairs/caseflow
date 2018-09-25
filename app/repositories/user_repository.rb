@@ -20,6 +20,7 @@ class UserRepository
         last_name: staff_record.snamel,
         attorney_id: vacols_attorney_id(staff_record),
         judge_status: judge_status(staff_record),
+        roles: vacols_roles(staff_record),
         css_id: css_id
       }
     end
