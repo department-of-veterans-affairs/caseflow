@@ -1,7 +1,4 @@
 .worksheet-header {
-  .question-label {
-    margin-bottom: 4px;
-  }
 
   .cf-push-right {
     padding-top: 25px;
@@ -410,7 +407,7 @@
   .cf-form-textarea {
     min-height: 48px;
 
-    .question-label {
+    label {
       position: absolute;
       left: -99999px;
     }

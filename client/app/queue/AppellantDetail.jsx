@@ -7,6 +7,7 @@ import BareList from '../components/BareList';
 import { boldText } from './constants';
 import { DateString } from '../util/DateUtil';
 import Address from './components/Address';
+import COPY from '../../COPY.json';
 
 const detailListStyling = css({
   paddingLeft: 0,
@@ -17,7 +18,9 @@ const detailListStyling = css({
 export default class AppellantDetail extends React.PureComponent {
   getAppealAttr = (attr) => _.get(this.props.appeal, attr);
 
-  getGenderPronoun = (genderFieldName) => this.getAppealAttr(genderFieldName) === 'F' ? 'She/Her' : 'He/His';
+  getGenderValue = (genderFieldName) => this.getAppealAttr(genderFieldName) === 'F' ?
+    COPY.CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE :
+    COPY.CASE_DETAILS_GENDER_FIELD_VALUE_MALE;
 
   getDetails = ({ nameField, genderField, dobField, addressField, relationField, regionalOfficeField }) => {
     const details = [{
@@ -27,8 +30,8 @@ export default class AppellantDetail extends React.PureComponent {
 
     if (genderField && this.getAppealAttr(genderField)) {
       details.push({
-        label: 'Gender pronoun',
-        value: this.getGenderPronoun(genderField)
+        label: COPY.CASE_DETAILS_GENDER_FIELD_LABEL,
+        value: this.getGenderValue(genderField)
       });
     }
     if (dobField && this.getAppealAttr(dobField)) {
