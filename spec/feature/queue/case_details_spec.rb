@@ -266,8 +266,8 @@ RSpec.feature "Case details" do
       visit "/queue/appeals/#{appeal.external_id}"
 
       # Ensure we see a timeline where completed things are checked and incomplete are gray
-      expect(find("tr", text: "BVA Decision pending")).to have_selector(".gray-dot")
-      expect(find("tr", text: "Form 9 received")).to have_selector(".green-checkmark")
+      expect(find("tr", text: COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING)).to have_selector(".gray-dot")
+      expect(find("tr", text: COPY::CASE_TIMELINE_FORM_9_RECEIVED)).to have_selector(".green-checkmark")
     end
   end
 
