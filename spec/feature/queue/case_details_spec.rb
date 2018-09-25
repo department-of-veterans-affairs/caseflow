@@ -134,7 +134,7 @@ RSpec.feature "Case details" do
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         expect(page).to have_content("About the Veteran")
-        expect(page).to have_content("She/Her")
+        expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to have_content(appeal.veteran_date_of_birth.strftime("%-m/%e/%Y"))
       end
     end
@@ -245,6 +245,29 @@ RSpec.feature "Case details" do
       preparer_name = "#{task.assigned_by.first_name[0]}. #{task.assigned_by.last_name}"
       expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_PREPARER_LABEL} #{preparer_name}/i)
       expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} #{task.document_id}/i)
+    end
+  end
+
+  context "when events are present" do
+    let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let!(:vacols_case) do
+      FactoryBot.create(
+        :case,
+        bfdnod: 2.days.ago,
+        bfd19: 1.day.ago
+      )
+    end
+
+    before do
+      User.authenticate!(user: judge_user)
+    end
+
+    scenario "displays case timeline" do
+      visit "/queue/appeals/#{appeal.external_id}"
+
+      # Ensure we see a timeline where completed things are checked and incomplete are gray
+      expect(find("tr", text: COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING)).to have_selector(".gray-dot")
+      expect(find("tr", text: COPY::CASE_TIMELINE_FORM_9_RECEIVED)).to have_selector(".green-checkmark")
     end
   end
 
