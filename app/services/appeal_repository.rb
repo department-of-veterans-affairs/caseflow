@@ -1,7 +1,11 @@
 # rubocop:disable Metrics/ClassLength
 class AppealRepository
   class AppealNotValidToClose < StandardError; end
-  class AppealNotValidToReopen < StandardError; end
+  class AppealNotValidToReopen < StandardError
+    def initialize(appeal_id)
+      super("Appeal id #{appeal_id} is not valid to reopen")
+    end
+  end
 
   # :nocov:
 
@@ -430,24 +434,26 @@ class AppealRepository
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-  # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/MethodLength
+  # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
   def self.reopen_undecided_appeal!(appeal:, user:, safeguards:)
     case_record = appeal.case_record
     folder_record = case_record.folder
+    not_valid_to_reopen_err = AppealNotValidToReopen.new(appeal.id)
 
-    fail AppealNotValidToReopen unless case_record.bfmpro == "HIS"
-    fail AppealNotValidToReopen unless case_record.bfcurloc == "99"
+    fail not_valid_to_reopen_err unless case_record.bfmpro == "HIS"
+    fail not_valid_to_reopen_err unless case_record.bfcurloc == "99"
 
     close_date = case_record.bfddec
     close_disposition = case_record.bfdc
 
     if safeguards
-      fail AppealNotValidToReopen unless %w[9 E F G P].include? close_disposition
+      fail not_valid_to_reopen_err unless %w[9 E F G P].include? close_disposition
     end
 
     previous_active_location = case_record.previous_active_location
-    fail AppealNotValidToReopen unless previous_active_location
-    fail AppealNotValidToReopen if %w[50 51 52 53 54 96 97 98 99].include? previous_active_location
+
+    fail not_valid_to_reopen_err unless previous_active_location
+    fail not_valid_to_reopen_err if %w[50 51 52 53 54 96 97 98 99].include? previous_active_location
 
     adv_status = previous_active_location == "77"
     bfmpro = adv_status ? "ADV" : "ACT"
@@ -481,23 +487,25 @@ class AppealRepository
         )
     end
   end
-  # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/MethodLength
+  # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
 
   # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
   def self.reopen_remand!(appeal:, user:, disposition_code:)
     case_record = appeal.case_record
     folder_record = case_record.folder
+    not_valid_to_reopen_err = AppealNotValidToReopen.new(appeal.id)
 
-    fail AppealNotValidToReopen unless %w[P W].include? disposition_code
-    fail AppealNotValidToReopen unless case_record.bfmpro == "HIS"
-    fail AppealNotValidToReopen unless case_record.bfcurloc == "99"
+    fail not_valid_to_reopen_err unless %w[P W].include? disposition_code
+    fail not_valid_to_reopen_err unless case_record.bfmpro == "HIS"
+    fail not_valid_to_reopen_err unless case_record.bfcurloc == "99"
 
     previous_active_location = case_record.previous_active_location
-    fail AppealNotValidToReopen unless %w[50 53 54 70 96 97 98].include? previous_active_location
-    fail AppealNotValidToReopen if disposition_code == "P" && %w[53 43].include?(previous_active_location)
+
+    fail not_valid_to_reopen_err unless %w[50 53 54 70 96 97 98].include? previous_active_location
+    fail not_valid_to_reopen_err if disposition_code == "P" && %w[53 43].include?(previous_active_location)
 
     follow_up_appeal_key = "#{case_record.bfkey}#{disposition_code}"
-    fail AppealNotValidToReopen unless VACOLS::Case.where(bfkey: follow_up_appeal_key).count == 1
+    fail not_valid_to_reopen_err unless VACOLS::Case.where(bfkey: follow_up_appeal_key).count == 1
 
     VACOLS::Case.transaction do
       case_record.update_attributes!(bfmpro: "REM")
