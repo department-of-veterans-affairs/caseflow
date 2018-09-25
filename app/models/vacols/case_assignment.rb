@@ -116,7 +116,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "s4.snamel as written_by_last_name")
         .joins(<<-SQL)
           LEFT JOIN decass
-            ON brieff.bfkey = decass.defolder
+            ON brieff.bfkey = decass.defolder and decass.deprod != 'REA'
           LEFT JOIN staff s1
             ON decass.deadusr = s1.slogid
           JOIN staff s2

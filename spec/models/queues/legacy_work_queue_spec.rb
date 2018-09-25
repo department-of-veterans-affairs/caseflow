@@ -17,6 +17,13 @@ describe LegacyWorkQueue do
       ]
     end
 
+    let!(:decass) do
+      [
+        create(:decass, defolder: appeals[0].vacols_id, dereceive: Date.new(2018, 9, 24), deprod: "DEC"),
+        create(:decass, defolder: appeals[1].vacols_id, dereceive: Date.new(2018, 9, 24), deprod: "REA")
+      ]
+    end
+
     context "when it is an attorney" do
       let(:role) { "Attorney" }
 
@@ -42,7 +49,14 @@ describe LegacyWorkQueue do
         tasks, = LegacyWorkQueue.tasks_with_appeals(user, role)
 
         expect(tasks.length).to eq(2)
-        expect(tasks[0].class).to eq(JudgeLegacyTask)
+        if tasks[0].action == "assign" then
+          assign, review = tasks
+        else
+          review, assign = tasks
+        end
+        expect(assign.class).to eq(JudgeLegacyTask)
+        expect(assign.action).to eq("assign")
+        expect(review.action).to eq("review")
       end
 
       it "returns appeals" do
