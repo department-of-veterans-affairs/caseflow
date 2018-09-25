@@ -13,12 +13,17 @@ describe RequestIssuesUpdate do
 
   # TODO: make it simpler to set up a completed claim review, with end product data
   # and contention data stubbed out properly
-  let(:review) { create(:higher_level_review) }
+  let(:review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
 
-  let!(:veteran) { Generators::Veteran.build(file_number: review.veteran_file_number) }
+  let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
 
   let(:rated_end_product_establishment) do
-    create(:end_product_establishment, source: review, code: "030HLRR")
+    create(
+      :end_product_establishment,
+      veteran_file_number: veteran.file_number,
+      source: review,
+      code: "030HLRR"
+    )
   end
 
   let(:request_issue_contentions) do
@@ -71,7 +76,7 @@ describe RequestIssuesUpdate do
         reference_id: issue.rating_issue_reference_id,
         # TODO: validate the string format this comes in
         profile_date: issue.rating_issue_profile_date,
-        description: issue.description
+        decision_text: issue.description
       }
     end
   end
@@ -80,7 +85,7 @@ describe RequestIssuesUpdate do
     existing_request_issues_data + [{
       reference_id: "issue3",
       profile_date: Date.new(2017, 4, 7),
-      description: "Service connection for cancer was denied"
+      decision_text: "Service connection for cancer was denied"
     }]
   end
 
@@ -199,6 +204,7 @@ describe RequestIssuesUpdate do
         expect(removed_issue).to have_attributes(
           review_request: nil
         )
+        expect(removed_issue.removed_at).to_not be_nil
 
         expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
       end

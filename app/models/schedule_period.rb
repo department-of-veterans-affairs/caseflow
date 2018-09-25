@@ -32,6 +32,8 @@ class SchedulePeriod < ApplicationRecord
     submitting_to_vacols
   end
 
+  S3_SUB_BUCKET = "hearing_schedule".freeze
+
   def validate_schedule_period
     errors[:base] << OverlappingSchedulePeriods if dates_finalized_or_being_finalized?
   end
@@ -40,8 +42,12 @@ class SchedulePeriod < ApplicationRecord
     File.join(Rails.root, "tmp", "hearing_schedule", "spreadsheets", file_name)
   end
 
+  def s3_file_location
+    S3_SUB_BUCKET + "/" + file_name
+  end
+
   def spreadsheet
-    S3Service.fetch_file(file_name, spreadsheet_location)
+    S3Service.fetch_file(s3_file_location, spreadsheet_location)
     Roo::Spreadsheet.open(spreadsheet_location, extension: :xlsx)
   end
 

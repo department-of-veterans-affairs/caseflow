@@ -1,5 +1,8 @@
+/* eslint-disable max-lines */
 // @flow
-import { associateTasksWithAppeals, prepareLegacyTasksForStore, extractAppealsAndAmaTasks } from './utils';
+import { associateTasksWithAppeals,
+  prepareAllTasksForStore,
+  extractAppealsAndAmaTasks } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
@@ -86,6 +89,37 @@ export const getNewDocuments = (appealId: string) => (dispatch: Dispatch) => {
       type: ACTIONS.ERROR_ON_RECEIVE_NEW_FILES,
       payload: {
         appealId,
+        error
+      }
+    });
+  });
+};
+
+export const getAppealValue = (appealId: string, endpoint: string, name: string) => (dispatch: Dispatch) => {
+  dispatch({
+    type: ACTIONS.STARTED_LOADING_APPEAL_VALUE,
+    payload: {
+      appealId,
+      name
+    }
+  });
+  ApiUtil.get(`/appeals/${appealId}/${endpoint}`).then((resp) => {
+    const response = JSON.parse(resp.text);
+
+    dispatch({
+      type: ACTIONS.RECEIVE_APPEAL_VALUE,
+      payload: {
+        appealId,
+        name,
+        response
+      }
+    });
+  }, (error) => {
+    dispatch({
+      type: ACTIONS.ERROR_ON_RECEIVE_APPEAL_VALUE,
+      payload: {
+        appealId,
+        name,
         error
       }
     });
@@ -272,49 +306,105 @@ export const setSelectionOfTaskOfUser =
     }
   });
 
-export const initialAssignTasksToUser =
-  ({ tasks, assigneeId, previousAssigneeId }:
-     { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) =>
-    (dispatch: Dispatch) =>
-      Promise.all(tasks.map((oldTask) => {
-        return ApiUtil.post(
-          '/legacy_tasks',
-          { data: { tasks: { assigned_to_id: assigneeId,
-            type: 'JudgeCaseAssignmentToAttorney',
-            appeal_id: oldTask.appealId } } }).
-          then((resp) => resp.body).
-          then(
-            (resp) => {
-              const { task: { data: task } } = resp;
+export const initialAssignTasksToUser = ({
+  tasks, assigneeId, previousAssigneeId
+}: {
+  tasks: Array<Task>, assigneeId: string, previousAssigneeId: string
+}) => (dispatch: Dispatch) => Promise.all(tasks.map((oldTask) => {
+  let params, url;
 
-              dispatch(onReceiveTasks({ amaTasks: {},
-                tasks: prepareLegacyTasksForStore([task]) }));
-              dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
-                taskId: task.id,
-                selected: false }));
-            });
+  if (oldTask.appealType === 'Appeal') {
+    url = '/tasks';
+    params = {
+      data: {
+        tasks: [{
+          type: 'AttorneyTask',
+          external_id: oldTask.externalAppealId,
+          parent_id: oldTask.taskId,
+          assigned_to_id: assigneeId
+        }]
+      }
+    };
+  } else {
+    url = '/legacy_tasks';
+    params = {
+      data: {
+        tasks: {
+          assigned_to_id: assigneeId,
+          type: 'JudgeCaseAssignmentToAttorney',
+          appeal_id: oldTask.appealId
+        }
+      }
+    };
+  }
+
+  return ApiUtil.post(url, params).
+    then((resp) => resp.body).
+    then((resp) => {
+      const task = resp.tasks ? resp.tasks.data[0] : resp.task.data;
+
+      const allTasks = prepareAllTasksForStore([task]);
+
+      dispatch(onReceiveTasks({
+        tasks: allTasks.tasks,
+        amaTasks: allTasks.amaTasks
       }));
-
-export const reassignTasksToUser =
-  ({ tasks, assigneeId, previousAssigneeId }:
-     { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}) =>
-    (dispatch: Dispatch) =>
-      Promise.all(tasks.map((oldTask) => {
-        return ApiUtil.patch(
-          `/legacy_tasks/${oldTask.taskId}`,
-          { data: { tasks: { assigned_to_id: assigneeId } } }).
-          then((resp) => resp.body).
-          then(
-            (resp) => {
-              const { task: { data: task } } = resp;
-
-              dispatch(onReceiveTasks({ amaTasks: {},
-                tasks: prepareLegacyTasksForStore([task]) }));
-              dispatch(setSelectionOfTaskOfUser({ userId: previousAssigneeId,
-                taskId: task.id,
-                selected: false }));
-            });
+      dispatch(setSelectionOfTaskOfUser({
+        userId: previousAssigneeId,
+        taskId: task.attributes.external_appeal_id,
+        selected: false
       }));
+    });
+}));
+
+export const reassignTasksToUser = ({
+  tasks, assigneeId, previousAssigneeId
+}: {
+  tasks: Array<Task>, assigneeId: string, previousAssigneeId: string
+}) => (dispatch: Dispatch) => Promise.all(tasks.map((oldTask) => {
+  let params, url;
+
+  if (oldTask.appealType === 'Appeal') {
+    url = `/tasks/${oldTask.taskId}`;
+    params = {
+      data: {
+        task: {
+          type: 'AttorneyTask',
+          assigned_to_id: assigneeId
+        }
+      }
+    };
+  } else {
+    url = `/legacy_tasks/${oldTask.taskId}`;
+    params = {
+      data: {
+        tasks: {
+          assigned_to_id: assigneeId,
+          type: 'JudgeCaseAssignmentToAttorney',
+          appeal_id: oldTask.appealId
+        }
+      }
+    };
+  }
+
+  return ApiUtil.patch(url, params).
+    then((resp) => resp.body).
+    then((resp) => {
+      const task = resp.tasks ? resp.tasks.data[0] : resp.task.data;
+
+      const allTasks = prepareAllTasksForStore([task]);
+
+      dispatch(onReceiveTasks({
+        tasks: allTasks.tasks,
+        amaTasks: allTasks.amaTasks
+      }));
+      dispatch(setSelectionOfTaskOfUser({
+        userId: previousAssigneeId,
+        taskId: task.attributes.external_appeal_id,
+        selected: false
+      }));
+    });
+}));
 
 const receiveAllAttorneys = (attorneys) => ({
   type: ACTIONS.RECEIVE_ALL_ATTORNEYS,
@@ -354,4 +444,16 @@ export const setTaskAttrs = (externalAppealId: string, attributes: Object) => ({
     externalAppealId,
     attributes
   }
+});
+
+export const setSpecialIssues = (specialIssues: Object) => ({
+  type: ACTIONS.SET_SPECIAL_ISSUE,
+  payload: {
+    specialIssues
+  }
+});
+
+export const setOrganizationId = (id: number) => ({
+  type: ACTIONS.SET_ORGANIZATION_ID,
+  payload: { id }
 });

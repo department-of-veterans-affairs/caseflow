@@ -270,6 +270,7 @@ body {
   width: auto;
 }
 
+// TODO remove Multiple column override
 @mixin column-count($column, $column-gap) {
   @include prefixer(column-count, $column, webkit moz spec);
   @include prefixer(column-gap, $column-gap, webkit moz spec)
@@ -316,36 +317,6 @@ select {
 
   div {
     font-weight: normal;
-  }
-}
-
-.usa-alert {
-  &.lower-margin {
-    // This value is copied from USWDS.
-    margin-bottom: 1.5em;
-  }
-
-  &.fixed {
-    position: fixed;
-    top: 0;
-    margin-top: 0;
-    z-index: 999;
-    left: 50%;
-    transform: translate(-50%, 0);
-  }
-
-  &.no-title {
-    background-position: 1rem 1.5rem;
-
-    .usa-alert-text {
-      font-size: 19px;
-    }
-  }
-
-  button {
-    &:last-child {
-      margin-right: 2rem;
-    }
   }
 }
 

@@ -3,15 +3,30 @@ describe EndProductEstablishment do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
 
     if source.is_a?(HigherLevelReview)
-      source.stub(:valid_modifiers).and_return(%w[030 031 032])
-      source.stub(:invalid_modifiers).and_return(invalid_modifiers)
-      source.stub(:special_issues).and_return(special_issues)
+      allow(source).to receive(:valid_modifiers).and_return(%w[030 031 032])
+      allow(source).to receive(:invalid_modifiers).and_return(invalid_modifiers)
+      allow(source).to receive(:special_issues).and_return(special_issues)
     end
   end
 
   let(:veteran_file_number) { "12341234" }
   let(:veteran_participant_id) { "11223344" }
-  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number, participant_id: veteran_participant_id) }
+  let!(:veteran) do
+    Generators::Veteran.create(
+      file_number: veteran_file_number,
+      participant_id: veteran_participant_id,
+      date_of_death: "05/01/2016"
+    )
+  end
+  let(:living_veteran_file_number) { "12345678" }
+  let(:living_veteran_participant_id) { "55667788" }
+  let!(:living_veteran) do
+    Generators::Veteran.create(
+      file_number: living_veteran_file_number,
+      participant_id: living_veteran_participant_id,
+      date_of_death: nil, # default but explicit here for clarity
+    )
+  end
   let(:code) { "030HLRR" }
   let(:payee_code) { "00" }
   let(:reference_id) { nil }
@@ -19,6 +34,8 @@ describe EndProductEstablishment do
   let(:invalid_modifiers) { nil }
   let(:synced_status) { nil }
   let(:special_issues) { nil }
+  let(:committed_at) { nil }
+  let(:fake_claim_id) { "FAKECLAIMID" }
 
   let(:end_product_establishment) do
     EndProductEstablishment.new(
@@ -30,8 +47,68 @@ describe EndProductEstablishment do
       station: "397",
       reference_id: reference_id,
       claimant_participant_id: veteran_participant_id,
-      synced_status: synced_status
+      synced_status: synced_status,
+      committed_at: committed_at
     )
+  end
+
+  let(:living_end_product_establishment) do
+    EndProductEstablishment.new(
+      source: source,
+      veteran_file_number: living_veteran_file_number,
+      code: code,
+      payee_code: payee_code,
+      claim_date: 2.days.ago,
+      station: "397",
+      reference_id: reference_id,
+      claimant_participant_id: living_veteran_participant_id,
+      synced_status: synced_status,
+      committed_at: committed_at
+    )
+  end
+
+  let(:vbms_error) do
+    VBMS::HTTPError.new("500", "More EPs more problems")
+  end
+
+  context "when veteran has nil date_of_death (is alive)" do
+    subject { living_end_product_establishment.perform! }
+
+    before do
+      Fakes::VBMSService.end_product_claim_ids_by_file_number ||= {}
+      Fakes::VBMSService.end_product_claim_ids_by_file_number[living_veteran.file_number] = fake_claim_id
+      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+    end
+
+    it "sends correct benefit_type_code" do
+      subject
+
+      expect(living_end_product_establishment.reload).to have_attributes(
+        reference_id: fake_claim_id,
+        veteran_file_number: living_veteran_file_number,
+        established_at: Time.zone.now,
+        committed_at: nil,
+        modifier: "030"
+      )
+
+      expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+        claim_hash: {
+          benefit_type_code: EndProduct::BENEFIT_TYPE_CODE_LIVE,
+          payee_code: "00",
+          claimant_participant_id: living_veteran_participant_id,
+          predischarge: false,
+          claim_type: "Claim",
+          station_of_jurisdiction: "397",
+          date: 2.days.ago.to_date,
+          end_product_modifier: "030",
+          end_product_label: "Higher-Level Review Rating",
+          end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
+          gulf_war_registry: false,
+          suppress_acknowledgement_letter: false
+        },
+        veteran_hash: living_veteran.reload.to_vbms_hash
+      )
+    end
   end
 
   context "#perform!" do
@@ -39,7 +116,7 @@ describe EndProductEstablishment do
 
     before do
       Fakes::VBMSService.end_product_claim_ids_by_file_number ||= {}
-      Fakes::VBMSService.end_product_claim_ids_by_file_number[veteran.file_number] = "FAKECLAIMID"
+      Fakes::VBMSService.end_product_claim_ids_by_file_number[veteran.file_number] = fake_claim_id
       allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     end
 
@@ -84,7 +161,7 @@ describe EndProductEstablishment do
         subject
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
-            benefit_type_code: "1",
+            benefit_type_code: EndProduct::BENEFIT_TYPE_CODE_DEATH,
             payee_code: "00",
             predischarge: false,
             claim_type: "Claim",
@@ -97,7 +174,7 @@ describe EndProductEstablishment do
             gulf_war_registry: false,
             claimant_participant_id: "11223344"
           },
-          veteran_hash: veteran.to_vbms_hash
+          veteran_hash: veteran.reload.to_vbms_hash
         )
         expect(end_product_establishment.reload).to have_attributes(
           modifier: "031"
@@ -111,7 +188,7 @@ describe EndProductEstablishment do
           subject
           expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
             claim_hash: {
-              benefit_type_code: "1",
+              benefit_type_code: EndProduct::BENEFIT_TYPE_CODE_DEATH,
               payee_code: "00",
               predischarge: false,
               claim_type: "Claim",
@@ -124,7 +201,7 @@ describe EndProductEstablishment do
               gulf_war_registry: false,
               claimant_participant_id: "11223344"
             },
-            veteran_hash: veteran.to_vbms_hash
+            veteran_hash: veteran.reload.to_vbms_hash
           )
           expect(end_product_establishment.reload).to have_attributes(
             modifier: "032"
@@ -133,18 +210,36 @@ describe EndProductEstablishment do
       end
     end
 
+    context "when there are no open modifiers" do
+      before do
+        %w[030 031 032].each do |modifier|
+          Generators::EndProduct.build(
+            veteran_file_number: "12341234",
+            bgs_attrs: { end_product_type_code: modifier }
+          )
+        end
+      end
+
+      it "returns NoAvailableModifiers error" do
+        expect { subject }.to raise_error(EndProductEstablishment::NoAvailableModifiers)
+      end
+    end
+
     context "when all goes well" do
       it "creates end product and sets reference_id" do
         subject
+
         expect(end_product_establishment.reload).to have_attributes(
-          reference_id: "FAKECLAIMID",
+          reference_id: fake_claim_id,
           veteran_file_number: veteran_file_number,
           established_at: Time.zone.now,
+          committed_at: nil,
           modifier: "030"
         )
+
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
-            benefit_type_code: "1",
+            benefit_type_code: EndProduct::BENEFIT_TYPE_CODE_DEATH,
             payee_code: "00",
             claimant_participant_id: veteran_participant_id,
             predischarge: false,
@@ -157,8 +252,18 @@ describe EndProductEstablishment do
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false
           },
-          veteran_hash: veteran.to_vbms_hash
+          veteran_hash: veteran.reload.to_vbms_hash
         )
+      end
+
+      context "when commit is set" do
+        subject { end_product_establishment.perform!(commit: true) }
+
+        it "also commits the end product establishment" do
+          subject
+
+          expect(end_product_establishment.reload).to have_attributes(committed_at: Time.zone.now)
+        end
       end
     end
   end
@@ -168,19 +273,23 @@ describe EndProductEstablishment do
       allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
     end
 
-    subject { end_product_establishment.create_contentions!(for_objects) }
+    subject { end_product_establishment.create_contentions! }
 
     let(:reference_id) { "stevenasmith" }
 
-    let(:for_objects) do
+    let(:request_issues) do
       [
-        RequestIssue.new(
+        create(
+          :request_issue,
+          end_product_establishment: end_product_establishment,
           review_request: source,
           rating_issue_reference_id: "reference-id",
           rating_issue_profile_date: Date.new(2018, 4, 30),
           description: "this is a big decision"
         ),
-        RequestIssue.new(
+        create(
+          :request_issue,
+          end_product_establishment: end_product_establishment,
           review_request: source,
           rating_issue_reference_id: "reference-id",
           rating_issue_profile_date: Date.new(2018, 4, 30),
@@ -189,18 +298,21 @@ describe EndProductEstablishment do
       ]
     end
 
+    let(:contention_descriptions) { request_issues.map(&:description).reverse }
+
     it "creates contentions and saves them to objects" do
+      request_issues
       subject
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
         veteran_file_number: veteran_file_number,
         claim_id: end_product_establishment.reference_id,
-        contention_descriptions: ["this is a big decision", "more decisionz"],
+        contention_descriptions: contention_descriptions,
         special_issues: []
       )
 
       expect(end_product_establishment.contentions.map(&:id)).to contain_exactly(
-        *for_objects.map(&:reload).map(&:contention_reference_id)
+        *request_issues.map(&:reload).map(&:contention_reference_id)
       )
     end
 
@@ -208,14 +320,33 @@ describe EndProductEstablishment do
       let(:special_issues) { "SPECIALISSUES!" }
 
       it "sets special issues when creating the contentions" do
+        request_issues
         subject
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: end_product_establishment.reference_id,
-          contention_descriptions: ["this is a big decision", "more decisionz"],
+          contention_descriptions: contention_descriptions,
           special_issues: "SPECIALISSUES!"
         )
+      end
+    end
+  end
+
+  context "commit!" do
+    subject { end_product_establishment.commit! }
+
+    it "commits the end product establishment" do
+      subject
+      expect(end_product_establishment.committed_at).to eq(Time.zone.now)
+    end
+
+    context "when end_product_establishment is already committed" do
+      let(:committed_at) { 2.days.ago }
+
+      it "does not recommit the end product establishment" do
+        subject
+        expect(end_product_establishment.committed_at).to eq(2.days.ago)
       end
     end
   end
@@ -247,6 +378,18 @@ describe EndProductEstablishment do
       subject
 
       expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(contention)
+      expect(for_object.removed_at).to eq(Time.zone.now)
+    end
+
+    context "when VBMS throws an error" do
+      before do
+        allow(Fakes::VBMSService).to receive(:remove_contention!).and_raise(vbms_error)
+      end
+
+      it "does not remove contentions" do
+        expect { subject }.to raise_error(vbms_error)
+        expect(for_object.removed_at).to be_nil
+      end
     end
   end
 

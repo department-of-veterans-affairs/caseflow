@@ -37,6 +37,7 @@ describe('ColocatedTaskListView', () => {
   });
 
   const amaTaskTemplate: Task = {
+    appealType: 'Appeal',
     addedByCssId: null,
     appealId: 5,
     externalAppealId: '3bd1567a-4f07-473c-aefc-3738a6cf58fe',
@@ -45,6 +46,7 @@ describe('ColocatedTaskListView', () => {
     dueOn: null,
     assignedTo: {
       cssId: 'BVALSPORER',
+      type: 'User',
       id: 7
     },
     assignedBy: {
@@ -59,18 +61,22 @@ describe('ColocatedTaskListView', () => {
     workProduct: null,
     previousTaskAssignedOn: null,
     placedOnHoldAt: null,
-    onHoldDuration: null
+    onHoldDuration: null,
+    decisionPreparedBy: null
   };
 
   const appealTemplate: BasicAppeal = {
     id: 5,
     type: 'Appeal',
+    isLegacyAppeal: false,
     externalId: '3bd1567a-4f07-473c-aefc-3738a6cf58fe',
     docketName: null,
     caseType: 'Original',
     isAdvancedOnDocket: false,
     issueCount: 2,
     docketNumber: 'Missing Docket Number',
+    assignedJudge: null,
+    assignedAttorney: null,
     veteranFullName: 'Andrew Van Buren',
     veteranFileNumber: '152003980',
     isPaperCase: null
@@ -189,7 +195,7 @@ describe('ColocatedTaskListView', () => {
 
       const wrapper = getWrapperColocatedTaskListView(store);
 
-      wrapper.find('[aria-label="Pending (2) tab window"]').simulate('click');
+      wrapper.find('[aria-label="Pending action (2) tab window"]').simulate('click');
 
       const cells = wrapper.find('td');
 

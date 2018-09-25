@@ -2,7 +2,9 @@
 import { css } from 'glamor';
 import _ from 'lodash';
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
-import REMAND_REASONS_BY_ID from '../../constants/ACTIVE_REMAND_REASONS_BY_ID.json';
+import ISSUE_DISPOSITIONS_BY_ID from '../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
+import LEGACY_REMAND_REASONS_BY_ID from '../../constants/LEGACY_ACTIVE_REMAND_REASONS_BY_ID.json';
+import REMAND_REASONS_BY_ID from '../../constants/AMA_REMAND_REASONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import StringUtil from '../util/StringUtil';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
@@ -49,8 +51,13 @@ export const ACTIONS = {
   ERROR_LOADING_ATTORNEYS: 'ERROR_LOADING_ATTORNEYS',
   RECEIVE_TASKS: 'RECEIVE_TASKS',
   RECEIVE_APPEAL_DETAILS: 'RECEIVE_APPEAL_DETAILS',
+  SET_ORGANIZATION_ID: 'SET_ORGANIZATION_ID',
   SET_TASK_ASSIGNMENT: 'SET_TASK_ASSIGNMENT',
-  SET_TASK_ATTRS: 'SET_TASK_ATTRS'
+  SET_TASK_ATTRS: 'SET_TASK_ATTRS',
+  SET_SPECIAL_ISSUE: 'SET_SPECIAL_ISSUE',
+  STARTED_LOADING_APPEAL_VALUE: 'STARTED_LOADING_APPEAL_VALUE',
+  RECEIVE_APPEAL_VALUE: 'RECEIVE_APPEAL_VALUE',
+  ERROR_ON_RECEIVE_APPEAL_VALUE: 'ERROR_ON_RECEIVE_APPEAL_VALUE'
 };
 
 // 'red' isn't contrasty enough w/white; it raises Sniffybara::PageNotAccessibleError when testing
@@ -84,6 +91,10 @@ export const TASK_ACTIONS = {
 
 export const JUDGE_DECISION_OPTIONS = {
   DRAFT_DECISION: {
+    label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
+    value: DECISION_TYPES.DISPATCH
+  },
+  SPECIAL_ISSUES: {
     label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
     value: DECISION_TYPES.DISPATCH
   },
@@ -121,21 +132,29 @@ export const SEARCH_ERROR_FOR = {
   UNKNOWN_SERVER_ERROR: 'UNKNOWN_SERVER_ERROR'
 };
 
-export const REMAND_REASONS = Object.assign({},
-  ...Object.keys(REMAND_REASONS_BY_ID).map((reasonType) => ({
-    [reasonType]: _.map(REMAND_REASONS_BY_ID[reasonType], (label, reasonId) => ({
-      id: reasonId,
+const formatRemandReasons = (reasons) => Object.assign({},
+  ...Object.keys(reasons).map((reasonType) => ({
+    [reasonType]: _.map(reasons[reasonType], (label, id) => ({
+      id,
       label
     }))
   }))
 );
 
+export const LEGACY_REMAND_REASONS = formatRemandReasons(LEGACY_REMAND_REASONS_BY_ID);
+export const REMAND_REASONS = formatRemandReasons(REMAND_REASONS_BY_ID);
+
 const parameterizedDispositions = Object.values(VACOLS_DISPOSITIONS_BY_ID).
   map(StringUtil.parameterize);
 
-export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
+export const VACOLS_DISPOSITIONS = _.fromPairs(_.zip(
   _.invokeMap(parameterizedDispositions, 'toUpperCase'),
   Object.keys(VACOLS_DISPOSITIONS_BY_ID)
+));
+
+export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
+  _.invokeMap(_.keys(ISSUE_DISPOSITIONS_BY_ID), 'toUpperCase'),
+  _.keys(ISSUE_DISPOSITIONS_BY_ID)
 ));
 
 export const ISSUE_DESCRIPTION_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.ISSUES.ISSDESC;

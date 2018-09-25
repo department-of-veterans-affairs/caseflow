@@ -1,8 +1,12 @@
 // @flow
 import React from 'react';
 import _ from 'lodash';
+import moment from 'moment';
 import StringUtil from '../util/StringUtil';
-import { redText } from './constants';
+import {
+  redText,
+  ISSUE_DISPOSITIONS
+} from './constants';
 
 import type {
   Task,
@@ -13,6 +17,7 @@ import type {
   Issue,
   Issues
 } from './types/models';
+import type { NewDocsForAppeal } from './types/state';
 
 import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
@@ -22,7 +27,13 @@ import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
   tasks.reduce((acc, task: Object): Tasks => {
+    const decisionPreparedBy = task.attributes.decision_prepared_by.first_name ? {
+      firstName: task.attributes.decision_prepared_by.first_name,
+      lastName: task.attributes.decision_prepared_by.last_name
+    } : null;
+
     acc[task.attributes.external_appeal_id] = {
+      appealType: task.attributes.appeal_type,
       addedByCssId: null,
       appealId: task.attributes.appeal_id,
       externalAppealId: task.attributes.external_appeal_id,
@@ -30,7 +41,8 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       dueOn: null,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
-        id: task.attributes.assigned_to.id
+        id: task.attributes.assigned_to.id,
+        type: task.attributes.assigned_to.type
       },
       assignedBy: {
         firstName: task.attributes.assigned_by.first_name,
@@ -40,13 +52,14 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       },
       taskId: task.id,
       action: task.attributes.action,
-      documentId: null,
+      documentId: task.attributes.document_id,
       workProduct: null,
-      previousTaskAssignedOn: null,
+      previousTaskAssignedOn: task.attributes.previous_task.assigned_at,
       placedOnHoldAt: task.attributes.placed_on_hold_at,
       status: task.attributes.status,
       onHoldDuration: task.attributes.on_hold_duration,
-      instructions: task.attributes.instructions
+      instructions: task.attributes.instructions,
+      decisionPreparedBy
     };
 
     return acc;
@@ -62,6 +75,7 @@ const extractAppealsFromTasks =
           type: task.attributes.appeal_type,
           externalId: task.attributes.external_appeal_id,
           docketName: task.attributes.docket_name,
+          isLegacyAppeal: task.attributes.docket_name === 'legacy',
           caseType: task.attributes.case_type,
           isAdvancedOnDocket: task.attributes.aod,
           issueCount: task.attributes.issue_count,
@@ -86,12 +100,14 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
   const mappedLegacyTasks = tasks.map((task): Task => {
     return {
       appealId: task.attributes.appeal_id,
+      appealType: task.attributes.appeal_type,
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_on,
       dueOn: task.attributes.due_on,
       assignedTo: {
-        cssId: task.attributes.user_id,
-        id: task.attributes.assigned_to_pg_id
+        cssId: task.attributes.assigned_to.css_id,
+        type: task.attributes.assigned_to.type,
+        id: task.attributes.assigned_to.id
       },
       assignedBy: {
         firstName: task.attributes.assigned_by.first_name,
@@ -106,11 +122,26 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       documentId: task.attributes.document_id,
       workProduct: task.attributes.work_product,
       previousTaskAssignedOn: task.attributes.previous_task.assigned_on,
-      status: task.attributes.status
+      status: task.attributes.status,
+      decisionPreparedBy: null
     };
   });
 
   return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.externalAppealId), (task) => task);
+};
+
+export const prepareAllTasksForStore = (tasks: Array<Object>): { amaTasks: Tasks, tasks: Tasks } => {
+  const amaTasks = tasks.filter((task) => {
+    return task.attributes.appeal_type === 'Appeal';
+  });
+  const legacyTasks = tasks.filter((task) => {
+    return task.attributes.appeal_type === 'LegacyAppeal';
+  });
+
+  return {
+    amaTasks: prepareTasksForStore(amaTasks),
+    tasks: prepareLegacyTasksForStore(legacyTasks)
+  };
 };
 
 export const associateTasksWithAppeals =
@@ -150,10 +181,13 @@ export const prepareAppealForStore =
         id: appeal.id,
         externalId: appeal.attributes.external_id,
         docketName: appeal.attributes.docket_name,
+        isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
         caseType: appeal.attributes.type,
         isAdvancedOnDocket: appeal.attributes.aod,
         issueCount: appeal.attributes.issues.length,
         docketNumber: appeal.attributes.docket_number,
+        assignedAttorney: appeal.attributes.assigned_attorney,
+        assignedJudge: appeal.attributes.assigned_judge,
         veteranFullName: appeal.attributes.veteran_full_name,
         veteranFileNumber: appeal.attributes.veteran_file_number,
         isPaperCase: appeal.attributes.paper_case
@@ -171,9 +205,14 @@ export const prepareAppealForStore =
         appellantRelationship: appeal.attributes.appellant_relationship,
         locationCode: appeal.attributes.location_code,
         veteranDateOfBirth: appeal.attributes.veteran_date_of_birth,
+        veteranDateOfDeath: appeal.attributes.veteran_date_of_death,
         veteranGender: appeal.attributes.veteran_gender,
         externalId: appeal.attributes.external_id,
         status: appeal.attributes.status,
+        events: {
+          nodReceiptDate: appeal.attributes.events.nod_receipt_date,
+          form9Date: appeal.attributes.events.form9_date
+        },
         decisionDate: appeal.attributes.decision_date,
         certificationDate: appeal.attributes.certification_date,
         powerOfAttorney: appeal.attributes.power_of_attorney,
@@ -227,29 +266,35 @@ export const getDecisionTypeDisplay = (decision: {type?: string} = {}) => {
   }
 };
 
-export const getIssueProgramDescription = (issue: Issue) => _.get(ISSUE_INFO[issue.program], 'description', '');
+export const getIssueProgramDescription = (issue: Issue) =>
+  _.get(ISSUE_INFO[issue.program], 'description', '') || 'Compensation';
 export const getIssueTypeDescription = (issue: Issue) => {
   const {
     program,
-    type
+    type,
+    description
   } = issue;
+
+  if (!program) {
+    return description;
+  }
 
   return _.get(ISSUE_INFO[program].levels, `${type}.description`);
 };
 
-export const getIssueDiagnosticCodeLabel = (code: string) => {
+export const getIssueDiagnosticCodeLabel = (code: string): string => {
   const readableLabel = DIAGNOSTIC_CODE_DESCRIPTIONS[code];
 
   if (!readableLabel) {
-    return false;
+    return '';
   }
 
   return `${code} - ${readableLabel.staff_description}`;
 };
 
 /**
- * For attorney checkout flow, filter out already-decided issues. Undecided
- * disposition IDs are all numerical (1-9), decided IDs are alphabetical (A-X).
+ * For legacy attorney checkout flow, filter out already-decided issues. Undecided
+ * VACOLS disposition IDs are all numerical (1-9), decided IDs are alphabetical (A-X).
  * Filter out disposition 9 because it is no longer used.
  *
  * @param {Array} issues
@@ -279,6 +324,12 @@ export const buildCaseReviewPayload = (
       }
     }
   };
+  let isLegacyAppeal = false;
+
+  if ('isLegacyAppeal' in args) {
+    isLegacyAppeal = args.isLegacyAppeal;
+    delete args.isLegacyAppeal;
+  }
 
   if (userRole === USER_ROLE_TYPES.attorney) {
     _.extend(payload.data.tasks, { document_type: decision.type });
@@ -289,11 +340,27 @@ export const buildCaseReviewPayload = (
     _.extend(payload.data.tasks, args);
   }
 
-  payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => _.extend({},
-    _.pick(issue, ['remand_reasons', 'type', 'readjudication']),
-    { disposition: _.capitalize(issue.disposition) },
-    { id: issue.id }
-  ));
+  if (isLegacyAppeal) {
+    payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => {
+      const issueAttrs = ['type', 'readjudication', 'id'];
+
+      if (issue.disposition === VACOLS_DISPOSITIONS_BY_ID.REMANDED) {
+        issueAttrs.push('remand_reasons');
+      }
+
+      return _.extend({}, _.pick(issue, issueAttrs), {
+        disposition: _.capitalize(issue.disposition)
+      });
+    });
+  } else {
+    payload.data.tasks.issues = issues.map((issue) => {
+      if (issue.disposition !== ISSUE_DISPOSITIONS.REMANDED) {
+        return _.omit(issue, 'remand_reasons');
+      }
+
+      return issue;
+    });
+  }
 
   return payload;
 };
@@ -331,3 +398,13 @@ export const validateWorkProductTypeAndId = (decision: {opts: Object}) => {
 
   return oldFormat.test(documentId) || newFormat.test(documentId);
 };
+
+export const taskHasNewDocuments = (task: Task, newDocsForAppeal: NewDocsForAppeal) => {
+  if (!newDocsForAppeal[task.externalAppealId] || !newDocsForAppeal[task.externalAppealId].docs) {
+    return false;
+  }
+
+  return newDocsForAppeal[task.externalAppealId].docs.length > 0;
+};
+
+export const taskIsOnHold = (task: Task) => moment().diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;

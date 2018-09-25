@@ -1,4 +1,5 @@
 // @flow
+import * as React from 'react';
 import type {
   Task,
   Tasks,
@@ -23,7 +24,7 @@ export type CaseDetailState = {|
   activeTask: ?Task
 |};
 
-export type UiStateMessage = { title: string, detail?: string };
+export type UiStateMessage = { title: string, detail?: React.Node };
 
 export type UiState = {
   selectingJudge: boolean,
@@ -48,6 +49,8 @@ export type UiState = {
   loadedUserId: ?number,
   userRole: string,
   userCssId: string,
+  userIsVsoEmployee: boolean,
+  feedbackUrl: string,
   veteranCaseListIsVisible: boolean
 };
 
@@ -76,7 +79,10 @@ export type QueueState = {|
   attorneyAppealsLoadingState: AttorneyAppealsLoadingState,
   isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
   attorneys: Attorneys,
-  newDocsForAppeal: NewDocsForAppeal
+  newDocsForAppeal: NewDocsForAppeal,
+  organizationId: ?number,
+  specialIssues: Object,
+  loadingAppealDetail: Object
 |};
 
 export type State = {

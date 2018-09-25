@@ -26,6 +26,10 @@ FactoryBot.define do
       end
     end
 
+    trait :advanced_on_docket do
+      claimants { [create(:claimant, :advanced_on_docket)] }
+    end
+
     transient do
       documents []
     end

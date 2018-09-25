@@ -40,6 +40,8 @@ RSpec.feature "Supplemental Claim Intake" do
 
   let(:receipt_date) { Date.new(2018, 4, 20) }
 
+  let(:benefit_type) { "compensation" }
+
   let(:untimely_days) { 372.days }
 
   let!(:current_user) do
@@ -69,6 +71,9 @@ RSpec.feature "Supplemental Claim Intake" do
       ]
     )
   end
+
+  let(:search_bar_title) { "Enter the Veteran's ID" }
+  let(:search_page_title) { "Search for Veteran ID" }
 
   it "Creates an end product" do
     # Testing two relationships, tests 1 relationship in HRL and nil in Appeal
@@ -108,13 +113,17 @@ RSpec.feature "Supplemental Claim Intake" do
 
     safe_click ".cf-submit.usa-button"
 
-    expect(page).to have_content("process this Supplemental Claim (VA Form 21-526b).")
+    expect(page).to have_content(search_page_title)
 
-    fill_in "Search small", with: "12341234"
+    fill_in search_bar_title, with: "12341234"
 
     click_on "Search"
 
     expect(page).to have_current_path("/intake/review_request")
+
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Compensation", match: :prefer_exact).click
+    end
 
     fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
     safe_click "#button-submit-review"
@@ -162,6 +171,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(supplemental_claim).to_not be_nil
     expect(supplemental_claim.receipt_date).to eq(receipt_date)
+    expect(supplemental_claim.benefit_type).to eq(benefit_type)
     expect(supplemental_claim.claimants.first).to have_attributes(
       participant_id: "5382910293",
       payee_code: "11"
@@ -210,7 +220,7 @@ RSpec.feature "Supplemental Claim Intake" do
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "042",
         end_product_label: "Supplemental Claim Rating",
-        end_product_code: SupplementalClaim::END_PRODUCT_RATING_CODE,
+        end_product_code: SupplementalClaim::END_PRODUCT_CODES[:rating],
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293"
@@ -220,7 +230,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     ratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
-      code: SupplementalClaim::END_PRODUCT_RATING_CODE
+      code: SupplementalClaim::END_PRODUCT_CODES[:rating]
     )
 
     expect(ratings_end_product_establishment).to have_attributes(
@@ -239,7 +249,7 @@ RSpec.feature "Supplemental Claim Intake" do
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "041",
         end_product_label: "Supplemental Claim Nonrating",
-        end_product_code: SupplementalClaim::END_PRODUCT_NONRATING_CODE,
+        end_product_code: SupplementalClaim::END_PRODUCT_CODES[:nonrating],
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293"
@@ -248,7 +258,7 @@ RSpec.feature "Supplemental Claim Intake" do
     )
     nonratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
-      code: SupplementalClaim::END_PRODUCT_NONRATING_CODE
+      code: SupplementalClaim::END_PRODUCT_CODES[:nonrating]
     )
 
     expect(nonratings_end_product_establishment).to have_attributes(
@@ -288,7 +298,8 @@ RSpec.feature "Supplemental Claim Intake" do
       rating_issue_reference_id: "def456",
       rating_issue_profile_date: receipt_date - untimely_days + 4.days,
       description: "PTSD denied",
-      decision_date: nil
+      decision_date: nil,
+      rating_issue_associated_at: Time.zone.now
     )
     expect(supplemental_claim.request_issues.last).to have_attributes(
       rating_issue_reference_id: nil,
@@ -340,7 +351,8 @@ RSpec.feature "Supplemental Claim Intake" do
   it "Allows a Veteran without ratings to create an intake" do
     supplemental_claim = SupplementalClaim.create!(
       veteran_file_number: veteran_no_ratings.file_number,
-      receipt_date: 2.days.ago
+      receipt_date: 2.days.ago,
+      benefit_type: "compensation"
     )
 
     SupplementalClaimIntake.create!(

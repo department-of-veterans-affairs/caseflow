@@ -12,11 +12,26 @@ module AddressMapper
     }
   end
 
-  def get_name_and_address_from_bgs_info(bgs_info)
-    return {} unless bgs_info
+  def get_address_from_corres_entry(corres_entry)
+    return {} unless corres_entry
     {
-      name: bgs_info[:payee_name] && bgs_info[:payee_name].gsub(/\s+/, " "),
-      relationship: bgs_info[:payee_type_name]
+      address_line_1: corres_entry.saddrst1,
+      address_line_2: corres_entry.saddrst2,
+      city: corres_entry.saddrcty,
+      state: corres_entry.saddrstt,
+      country: corres_entry.saddrcnty,
+      zip: corres_entry.saddrzip
+    }
+  end
+
+  def get_address_from_rep_entry(rep_entry)
+    return {} unless rep_entry
+    {
+      address_line_1: rep_entry.repaddr1,
+      address_line_2: rep_entry.repaddr2,
+      city: rep_entry.repcity,
+      state: rep_entry.repst,
+      zip: rep_entry.repzip
     }
   end
 end

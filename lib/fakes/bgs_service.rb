@@ -296,6 +296,35 @@ class Fakes::BGSService
     (self.class.veteran_records || {})[vbms_id]
   end
 
+  # rubocop:disable Metrics/MethodLength
+  def fetch_person_info(participant_id)
+    # This is a limited set of test data, more fields are available.
+    if participant_id == "5382910292"
+      # This claimant is over 75 years old so they get automatic AOD
+      {
+        birth_date: "Sun, 05 Sep 1943 00:00:00 -0500",
+        first_name: "Bob",
+        middle_name: "Billy",
+        last_name: "Vance"
+      }
+    elsif participant_id == "1129318238"
+      {
+        birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
+        first_name: "Cathy",
+        middle_name: "",
+        last_name: "Smith"
+      }
+    else
+      {
+        birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
+        first_name: "Tom",
+        middle_name: "Edward",
+        last_name: "Brady"
+      }
+    end
+  end
+  # rubocop:enable Metrics/MethodLength
+
   def can_access?(vbms_id)
     !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
   end
@@ -316,6 +345,7 @@ class Fakes::BGSService
     []
   end
 
+  # rubocop:disable Metrics/MethodLength
   def fetch_poas_by_participant_ids(participant_ids)
     get_hash_of_poa_from_bgs_poas(
       participant_ids.map do |participant_id|
@@ -327,7 +357,12 @@ class Fakes::BGSService
                   ptcpnt_id: "2452383"
                 }
               else
-                {}
+                {
+                  legacy_poa_cd: "100",
+                  nm: "Attorney McAttorneyFace",
+                  org_type_nm: "POA Attorney",
+                  ptcpnt_id: "1234567"
+                }
               end
 
         {
@@ -337,6 +372,7 @@ class Fakes::BGSService
       end
     )
   end
+  # rubocop:enable Metrics/MethodLength
 
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
@@ -384,6 +420,9 @@ class Fakes::BGSService
         " and PRFL_DT = '#{profile_date}'"
     end
 
+    # Simulate BGS issue where no rating issues are returned in the response
+    return { rating_issues: [] } if rating_issues == :no_issues
+
     # BGS returns the data not as an array if there is only one issue
     rating_issues = rating_issues.first if rating_issues.count == 1
 
@@ -418,7 +457,7 @@ class Fakes::BGSService
         middle_name: "D",
         poa: "DISABLED AMERICAN VETERANS",
         proof_of_dependecy_ind: nil,
-        ptcpnt_id: "5382910292",
+        ptcpnt_id: "CLAIMANT_WITH_PVA_AS_VSO",
         relationship_begin_date: nil,
         relationship_end_date: nil,
         relationship_type: "Spouse",
@@ -465,7 +504,6 @@ class Fakes::BGSService
 
   def default_claimant_info
     {
-      name: "Harry Carey",
       relationship: "Spouse"
     }
   end

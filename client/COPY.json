@@ -10,7 +10,7 @@
   "CASE_SEARCH_DATA_LOAD_FAILED_MESSAGE": "Unable to load cases",
 
   "CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE": "Case Details",
-  "CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE": "Docket Number",
+  "CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE": "Docket Type & Number",
   "CASE_LIST_TABLE_APPELLANT_NAME_COLUMN_TITLE": "Appellant Name",
   "CASE_LIST_TABLE_APPEAL_STATUS_COLUMN_TITLE": "Status",
   "CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE": "Type(s)",
@@ -29,7 +29,7 @@
 
   "CASE_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
   "CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL": "Type",
-  "CASE_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL": "Total days waiting",
+  "CASE_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL": "Days waiting",
   "CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL": "Docket",
   "CASE_SNAPSHOT_TASK_ASSIGNMENT_BOX_TITLE": "Task information",
   "CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL": "Assigned to",
@@ -37,30 +37,44 @@
   "CASE_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL": "Assigned on",
   "CASE_SNAPSHOT_TASK_DUE_DATE_LABEL": "Due",
   "CASE_SNAPSHOT_DECISION_PREPARER_LABEL": "Prepared by",
+  "CASE_SNAPSHOT_ASSIGNED_JUDGE_LABEL": "VLJ",
+  "CASE_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL": "Senior counsel",
   "CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL": "Document ID",
   "CASE_SNAPSHOT_TASK_TYPE_LABEL": "Task",
   "CASE_SNAPSHOT_TASK_FROM_LABEL": "From",
   "CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL": "Task instructions",
   "CASE_SNAPSHOT_ACTION_BOX_TITLE": "Actions",
 
-  "CASE_TITLE_VETERAN_ID_BUTTON_TOOLTIP": "Click to copy Veteran ID",
+  "CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY": "View Hearing Worksheet",
+  "CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP": "This link opens a PDF copy of the Hearing Worksheet",
+  "CASE_DETAILS_INCORRECT_POA": "If the POA is incorrect, please send an email to an administrator with access to SHARE.",
+  "CASE_DETAILS_UNABLE_TO_LOAD": "We're unable to load this information. If the problem persists, please submit feedback through Caseflow",
+  "CASE_DETAILS_LOADING": "Loading...",
+  "CASE_DETAILS_POA_VSO": "Veteran Service Organization",
+  "CASE_DETAILS_POA_AGENT": "Private Agent",
+  "CASE_DETAILS_POA_ATTORNEY": "Private Attorney",
+
+  "CASE_DETAILS_GENDER_FIELD_LABEL": "Gender",
+  "CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE": "Female",
+  "CASE_DETAILS_GENDER_FIELD_VALUE_MALE": "Male",
 
   "NEW_FILE_ICON_TOOLTIP": "This case has new documents",
 
   "NO_TASKS_IN_ATTORNEY_QUEUE_TITLE": "Cases not found",
   "NO_TASKS_IN_ATTORNEY_QUEUE_MESSAGE": "Sorry! We couldn't find any cases for you.",
-  "ATTORNEY_QUEUE_TABLE_TITLE": "Your Queue",
+  "ATTORNEY_QUEUE_TABLE_TITLE": "Your cases",
   "ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you made a mistake, please email your judge to resolve the issue.",
   "ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE": "Please ask your judge to assign this case to you in DAS",
   "ATTORNEY_QUEUE_TABLE_TASK_NO_DOCUMENTS_READER_LINK": "View in Reader",
-  "ORGANIZATION_QUEUE_TABLE_TITLE": "%s Queue",
+  "ORGANIZATION_QUEUE_TABLE_TITLE": "%s cases",
   "TASKS_NEED_ASSIGNMENT_ERROR_TITLE": "Some cases need preliminary DAS assignments",
   "TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE": "Cases marked with exclamation points need to be assigned to you through DAS. Please contact your judge or senior counsel to create preliminary DAS assignments.",
   "JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE": "Cases to Assign",
 
-  "COLOCATED_QUEUE_PAGE_NEW_TAB_TITLE": "New (%(numNewTasks)d)",
-  "COLOCATED_QUEUE_PAGE_PENDING_TAB_TITLE": "Pending (%(numPendingTasks)d)",
-  "COLOCATED_QUEUE_PAGE_ON_HOLD_TAB_TITLE": "On hold (%(numOnHoldTasks)d)",
+  "COLOCATED_QUEUE_PAGE_TABLE_TITLE": "Your cases",
+  "COLOCATED_QUEUE_PAGE_NEW_TAB_TITLE": "New (%d)",
+  "COLOCATED_QUEUE_PAGE_PENDING_TAB_TITLE": "Pending action (%d)",
+  "COLOCATED_QUEUE_PAGE_ON_HOLD_TAB_TITLE": "On hold (%d)",
   "COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION": "These are new administrative actions that have been assigned to you.",
   "COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION": "When a hold is complete, the case will appear here. Cases with new documents will also appear here.",
   "COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "When a hold is complete, the case will automatically return to the Pending action tab.",
@@ -76,8 +90,13 @@
   "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_IME": "OMO - IME",
   "ATTORNEY_CHECKOUT_OMO_LABEL": "Medical Request Ready for Review",
   "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision Ready for Review",
+  "ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL": "Add admin action",
 
   "REMAND_REASONS_SCREEN_SUBHEAD_LABEL": "Please %s the appropriate remand reason(s) for all the remand dispositions.",
+  "LEGACY_REMAND_REASON_POST_AOJ_LABEL_BEFORE": "Before certification",
+  "LEGACY_REMAND_REASON_POST_AOJ_LABEL_AFTER": "After certification",
+  "AMA_REMAND_REASON_POST_AOJ_LABEL_BEFORE": "Pre AOJ",
+  "AMA_REMAND_REASON_POST_AOJ_LABEL_AFTER": "Post AOJ",
 
   "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_LABEL": "Complexity of case",
   "JUDGE_EVALUATE_DECISION_CASE_COMPLEXITY_SUBHEAD": "How would you rate the complexity of this case?",
@@ -104,6 +123,11 @@
   "JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you need to make any changes, please manage this case in DAS.",
   "JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE": "Thank you for reviewing %s's decision.",
 
+  "CHECKOUT_DISPATCH_SUCCESS_DETAIL_LEGACY": "If you need to make any changes, please manage this case in DAS.",
+  "CHECKOUT_DISPATCH_SUCCESS_DETAIL_AMA_BEFORE_LINK": "If you need to make any changes, please ",
+  "CHECKOUT_DISPATCH_SUCCESS_DETAIL_AMA_LINK": "submit feedback",
+  "CHECKOUT_DISPATCH_SUCCESS_DETAIL_AMA_AFTER_LINK": ".",
+
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_HEADER": "Build Schedule",
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_BUILD_DESCRIPTION": "To build the schedule, please download one of the templates and fill it with the appropriate data. Then, click the \"Upload files\" button to import your completed .xlsx file.",
   "HEARING_SCHEDULE_BUILD_WELCOME_PAGE_DOWNLOAD_LINK": "Download templates",
@@ -114,6 +138,8 @@
   "HEARING_SCHEDULE_UPLOAD_PAGE_HEADER": "Upload Files",
   "HEARING_SCHEDULE_UPLOAD_PAGE_INSTRUCTIONS": "Please select the file you are uploading and choose a date range.",
   "HEARING_SCHEDULE_UPLOAD_PAGE_RADIO_FIELD_HEADER": "What are you uploading?",
+  "HEARING_SCHEDULE_UPLOAD_START_DATE_LABEL": "Start Date:",
+  "HEARING_SCHEDULE_UPLOAD_END_DATE_LABEL": "End Date:",
 
   "ASSIGN_WIDGET_OTHER": "Other",
   "ASSIGN_WIDGET_NO_ASSIGNEE_TITLE": "No assignee selected",
@@ -138,6 +164,9 @@
   "HEARING_SCHEDULE_VIEW_END_DATE_LABEL": "To:",
   "HEARING_SCHEDULE_VIEW_SCHEDULE": "View Schedule",
 
+  "HEARING_SCHEDULE_ASSIGN_HEARINGS_HEADER": "Assign Hearings",
+  "HEARING_SCHEDULE_ASSIGN_HEARINGS_VIEW_SCHEDULE_LINK": "View hearing schedule",
+
   "FORM_ERROR_FIELD_REQUIRED": "This field is required",
   "FORM_ERROR_FIELD_INVALID": "This field is invalid",
 
@@ -150,11 +179,14 @@
 
   "HEARING_SCHEDULE_SUCCESS_MESSAGE": "You can view your uploaded schedule by clicking the link below",
 
+  "TASK_MARKED_COMPLETE_NOTICE_TITLE": "Task marked as complete",
+  "TASK_MARKED_COMPLETE_NOTICE_DETAIL": "Task for %s's case completed",
+
   "ADD_COLOCATED_TASK_SUBHEAD": "Submit admin action",
   "ADD_COLOCATED_TASK_ACTION_TYPE_LABEL": "Select the type of administrative action you'd like to assign:",
   "ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL": "Provide instructions and context for this action:",
-  "ADD_COLOCATED_TASK_CONFIRMATION_TITLE": "Your %s request was submitted successfully",
-  "ADD_COLOCATED_TASK_CONFIRMATION_DETAIL": "If you need to make any changes, please manage this case in DAS.",
+  "ADD_COLOCATED_TASK_CONFIRMATION_TITLE": "You have assigned an administrative action (%s)",
+  "ADD_COLOCATED_TASK_CONFIRMATION_DETAIL": "If you need to make any changes, please email your administration action team.",
 
   "COLOCATED_ACTION_SEND_TO_TEAM": "Send to %s team",
   "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY": "Send back to attorney",
@@ -177,9 +209,19 @@
   "COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY": "Enter a custom number of days for the hold",
   "COLOCATED_ACTION_PLACE_CUSTOM_HOLD_INVALID_VALUE": "Please enter a number greater than 0",
   "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION": "%s's case has been placed on hold for %s days.",
-  "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION_DETAIL": "When the hold has been completed, the case will automatically return to the In Progress tab.",
+  "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION_DETAIL": "When the hold has been completed, the case will be automatically moved to the Pending Action tab.",
   "COLOCATED_ACTION_PLACE_HOLD_BUTTON_COPY": "Place case on hold",
 
   "MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT": "Are you sure you want to cancel?",
-  "MODAL_CANCEL_ATTORNEY_CHECKOUT": "All changes made to this page will be lost, except for the adding, editing, and deleting of issues."
+  "MODAL_CANCEL_ATTORNEY_CHECKOUT": "All changes made to this page will be lost, except for the adding, editing, and deleting of issues.",
+
+  "SPECIAL_ISSUES_PAGE_TITLE": "Select special issue(s)",
+
+  "CASE_TIMELINE_HEADER": "Below is the history of this case. Soon, you'll be able to see many more details.",
+  "CASE_TIMELINE_DISPATCHED_FROM_BVA": "Dispatched from BVA",
+  "CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING": "Dispatch from BVA pending",
+  "CASE_TIMELINE_FORM_9_RECEIVED": "Form 9 received",
+  "CASE_TIMELINE_FORM_9_PENDING": "Form 9 pending",
+  "CASE_TIMELINE_NOD_RECEIVED": "Notice of disagreement received",
+  "CASE_TIMELINE_NOD_PENDING": "Notice of disagreement pending"
 }

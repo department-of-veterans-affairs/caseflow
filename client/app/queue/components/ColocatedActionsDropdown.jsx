@@ -12,7 +12,6 @@ import {
   appealWithDetailSelector
 } from '../selectors';
 import { stageAppeal } from '../QueueActions';
-import { showModal } from '../uiReducer/uiActions';
 
 import {
   dropdownStyling,
@@ -34,28 +33,31 @@ type Props = Params & {|
   task: Task,
   appeal: Appeal,
   // dispatch
-  showModal: typeof showModal,
   stageAppeal: typeof stageAppeal,
   // withrouter
   history: Object
 |};
 
 class ColocatedActionsDropdown extends React.PureComponent<Props> {
-  onChange = (props) => {
+  onChange = (option) => {
+    if (!option) {
+      return;
+    }
     const {
       appealId,
       history
     } = this.props;
-    const actionType = props.value;
+    const actionType = option.value;
 
     this.props.stageAppeal(appealId);
 
     switch (actionType) {
     case CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY:
-      return this.props.showModal(SEND_TO_LOCATION_MODAL_TYPES.attorney);
-    case CO_LOCATED_ACTIONS.SEND_TO_TEAM: {
-      return this.props.showModal(SEND_TO_LOCATION_MODAL_TYPES.team);
-    }
+      history.push(`/queue/modal/${SEND_TO_LOCATION_MODAL_TYPES.attorney}`);
+      break;
+    case CO_LOCATED_ACTIONS.SEND_TO_TEAM:
+      history.push(`/queue/modal/${SEND_TO_LOCATION_MODAL_TYPES.team}`);
+      break;
     case CO_LOCATED_ACTIONS.PLACE_HOLD:
       history.push(`/queue/appeals/${appealId}/place_hold`);
       break;
@@ -65,25 +67,22 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
   }
 
   getOptions = () => {
-    const { task, appeal } = this.props;
-    const options = [];
+    const {
+      task,
+      appeal
+    } = this.props;
+    const options = [{
+      label: COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
+      value: CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY
+    }, {
+      label: COPY.COLOCATED_ACTION_PLACE_HOLD,
+      value: CO_LOCATED_ACTIONS.PLACE_HOLD
+    }];
 
-    if (['translation', 'schedule_hearing'].includes(task.action) && appeal.docketName === 'legacy') {
-      options.push({
+    if (['translation', 'schedule_hearing'].includes(task.action) && appeal.isLegacyAppeal) {
+      options.unshift({
         label: sprintf(COPY.COLOCATED_ACTION_SEND_TO_TEAM, CO_LOCATED_ADMIN_ACTIONS[task.action]),
         value: CO_LOCATED_ACTIONS.SEND_TO_TEAM
-      });
-    } else {
-      options.push({
-        label: COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
-        value: CO_LOCATED_ACTIONS.SEND_BACK_TO_ATTORNEY
-      });
-    }
-
-    if (task.status !== 'on_hold') {
-      options.push({
-        label: COPY.COLOCATED_ACTION_PLACE_HOLD,
-        value: CO_LOCATED_ACTIONS.PLACE_HOLD
       });
     }
 
@@ -105,7 +104,6 @@ const mapStateToProps = (state: State, ownProps: Params) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  showModal,
   stageAppeal
 }, dispatch);
 

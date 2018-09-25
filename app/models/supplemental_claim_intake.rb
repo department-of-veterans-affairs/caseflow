@@ -8,6 +8,7 @@ class SupplementalClaimIntake < Intake
   def ui_hash(ama_enabled)
     super.merge(
       receipt_date: detail.receipt_date,
+      benefit_type: detail.benefit_type,
       claimant: detail.claimant_participant_id,
       claimant_not_veteran: detail.claimant_not_veteran,
       payee_code: detail.payee_code,
@@ -27,7 +28,7 @@ class SupplementalClaimIntake < Intake
       participant_id: request_params[:claimant] || veteran.participant_id,
       payee_code: request_params[:payee_code] || "00"
     )
-    detail.update(request_params.permit(:receipt_date))
+    detail.update(request_params.permit(:receipt_date, :benefit_type))
   end
 
   def review_errors
@@ -40,8 +41,8 @@ class SupplementalClaimIntake < Intake
     start_completion!
     detail.request_issues.destroy_all unless detail.request_issues.empty?
     detail.create_issues!(build_issues(request_params[:request_issues] || []))
+    detail.update!(establishment_submitted_at: Time.zone.now)
     detail.process_end_product_establishments!
-    detail.update!(established_at: Time.zone.now)
     complete_with_status!(:success)
   end
 end

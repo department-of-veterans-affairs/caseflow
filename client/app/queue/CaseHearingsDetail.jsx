@@ -6,7 +6,9 @@ import _ from 'lodash';
 import BareList from '../components/BareList';
 import { boldText } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import Tooltip from '../components/Tooltip';
 
+import COPY from '../../COPY.json';
 import StringUtil from '../util/StringUtil';
 import { DateString } from '../util/DateUtil';
 
@@ -38,10 +40,12 @@ export default class CaseHearingsDetail extends React.PureComponent {
       label: 'Disposition',
       value: <React.Fragment>
         {StringUtil.snakeCaseToCapitalized(hearing.disposition)}&nbsp;&nbsp;
-        {hearing.viewed_by_judge && <Link rel="noopener" target="_blank"
-          href={`/hearings/${hearing.id}/worksheet/print`}>
-          View Hearing Worksheet
-        </Link>}
+        {hearing.viewed_by_judge &&
+        <Tooltip id="hearing-worksheet-tip" text={COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP}>
+          <Link rel="noopener" target="_blank" href={`/hearings/${hearing.id}/worksheet/print?keep_open=true`}>
+            {COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY}
+          </Link>
+        </Tooltip>}
       </React.Fragment>
     });
 

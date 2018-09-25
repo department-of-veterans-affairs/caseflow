@@ -9,7 +9,10 @@ export const formatRatings = (ratings, requestIssues = []) => {
   }), 'profile_date');
 
   _.forEach(requestIssues, (requestIssue) => {
-    result[requestIssue.profile_date].issues[requestIssue.reference_id].isSelected = true;
+    // filter out nil dates (request issues that are not yet rated)
+    if (requestIssue.profile_date && requestIssue.reference_id) {
+      result[requestIssue.profile_date].issues[requestIssue.reference_id].isSelected = true;
+    }
   });
 
   return result;
@@ -82,4 +85,22 @@ export const formatIssues = (state) => {
   };
 
   return data;
+};
+
+// Returns a list of selected issues in the form of date:issueId
+// Useful for dirty checking, rather than deeply comparing two state objects
+export const getSelection = (ratings) => {
+  const dates = Object.keys(ratings);
+
+  return dates.reduce((selectedIssues, date) => {
+    const issueIds = Object.keys(ratings[date].issues);
+
+    issueIds.forEach((issueId) => {
+      if (ratings[date].issues[issueId].isSelected) {
+        selectedIssues.push(`${date}:${issueId}`);
+      }
+    });
+
+    return selectedIssues;
+  }, []);
 };

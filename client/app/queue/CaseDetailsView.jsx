@@ -11,11 +11,13 @@ import AppellantDetail from './AppellantDetail';
 import VeteranDetail from './VeteranDetail';
 import VeteranCasesView from './VeteranCasesView';
 import CaseHearingsDetail from './CaseHearingsDetail';
+import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
 import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
 import SendToLocationModal from './components/SendToLocationModal';
+import CaseTimeline from './CaseTimeline';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
@@ -32,8 +34,6 @@ const horizontalRuleStyling = css({
   marginTop: '3rem',
   marginBottom: '3rem'
 });
-
-const PowerOfAttorneyDetail = ({ poa }) => <p>{poa.representative_type} - {poa.representative_name}</p>;
 
 class CaseDetailsView extends React.PureComponent {
   componentDidMount = () => window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
@@ -67,15 +67,16 @@ class CaseDetailsView extends React.PureComponent {
       <StickyNavContentArea>
         <CaseDetailsIssueList
           title="Issues"
-          isLegacyAppeal={appeal.docketName === 'legacy'}
+          isLegacyAppeal={appeal.isLegacyAppeal}
           issues={appeal.issues}
         />
-        <PowerOfAttorneyDetail title="Power of Attorney" poa={appeal.powerOfAttorney} />
+        <PowerOfAttorneyDetail title="Power of Attorney" appealId={appealId} />
         {appeal.hearings.length &&
         <CaseHearingsDetail title="Hearings" appeal={appeal} />}
         <VeteranDetail title="About the Veteran" appeal={appeal} />
         {!_.isNull(appeal.appellantFullName) &&
         <AppellantDetail title="About the Appellant" appeal={appeal} />}
+        <CaseTimeline title="Case Timeline" appeal={appeal} />}
       </StickyNavContentArea>
     </AppSegment>;
   };

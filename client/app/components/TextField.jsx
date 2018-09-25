@@ -22,7 +22,8 @@ export default class TextField extends React.Component {
       title,
       onKeyPress,
       strongLabel,
-      maxLength
+      maxLength,
+      max
     } = this.props;
 
     let textInputClass = className.concat(
@@ -44,7 +45,7 @@ export default class TextField extends React.Component {
 
     return <div className={textInputClass.join(' ')}>
       {label !== false &&
-        <label className="question-label" htmlFor={name}>
+        <label htmlFor={name}>
           {
             strongLabel ?
               <strong>{labelContents}</strong> :
@@ -67,6 +68,7 @@ export default class TextField extends React.Component {
           placeholder={placeholder}
           title={title}
           maxLength={maxLength}
+          max={max}
         />
       }
 

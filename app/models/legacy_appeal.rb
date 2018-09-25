@@ -3,6 +3,8 @@ class LegacyAppeal < ApplicationRecord
   include AppealConcern
   include AssociatedVacolsModel
   include CachedAttributes
+  include AddressMapper
+  include Taskable
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
@@ -19,7 +21,7 @@ class LegacyAppeal < ApplicationRecord
   # This allows us to easily call `appeal.veteran_first_name` and dynamically
   # fetch the data from VACOLS if it does not already exist in memory
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
-  vacols_attr_accessor :veteran_date_of_birth, :veteran_gender
+  vacols_attr_accessor :veteran_name_suffix, :veteran_date_of_birth, :veteran_gender
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial
   vacols_attr_accessor :appellant_last_name, :appellant_name_suffix
   vacols_attr_accessor :outcoder_first_name, :outcoder_middle_initial, :outcoder_last_name
@@ -191,6 +193,10 @@ class LegacyAppeal < ApplicationRecord
   # NOTE: we cannot currently match end products to a specific appeal.
   delegate :end_products, to: :veteran
 
+  def congressional_interest_addresses
+    case_record.mail.map(&:congressional_address)
+  end
+
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
   # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
   def disposition_remand_priority
@@ -232,7 +238,11 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def veteran_is_deceased
-    !!notice_of_death_date
+    veteran_death_date.present?
+  end
+
+  def veteran_death_date
+    veteran && veteran.date_of_death
   end
 
   attr_writer :cavc_decisions
@@ -254,10 +264,50 @@ class LegacyAppeal < ApplicationRecord
     power_of_attorney.vacols_representative_type
   end
 
+  def representative_address
+    power_of_attorney.vacols_representative_address
+  end
+
+  def representative_code
+    power_of_attorney.vacols_representative_code
+  end
+
   delegate :representatives, to: :case_record
 
   def contested_claim
     representatives.any? { |r| r.reptype == "C" }
+  end
+
+  def claimant
+    if appellant_is_not_veteran
+      {
+        first_name: appellant_first_name,
+        middle_name: appellant_middle_initial,
+        last_name: appellant_last_name,
+        name_suffix: appellant_name_suffix,
+        address: get_address_from_corres_entry(case_record.correspondent),
+        representative: representative_to_hash
+      }
+    else
+      {
+        first_name: veteran_first_name,
+        middle_name: veteran_middle_initial,
+        last_name: veteran_last_name,
+        name_suffix: veteran_name_suffix,
+        address: get_address_from_corres_entry(case_record.correspondent),
+        representative: representative_to_hash
+      }
+    end
+  end
+
+  # reptype C is a contested claimant
+  def contested_claimants
+    representatives.where(reptype: "C").map(&:as_claimant)
+  end
+
+  # reptype D is contested claimant attorney, reptype E is contested claimant agent
+  def contested_claimant_agents
+    representatives.where(reptype: %w[D E]).map(&:as_claimant)
   end
 
   def docket_name
@@ -472,6 +522,10 @@ class LegacyAppeal < ApplicationRecord
     @issues ||= self.class.repository.issues(vacols_id)
   end
 
+  def issue_count
+    issues.count
+  end
+
   # A uniqued list of issue categories on appeal, that is the combination of ISSPROG and ISSCODE
   def issue_categories
     issues.map(&:category).uniq
@@ -493,8 +547,14 @@ class LegacyAppeal < ApplicationRecord
     !case_record.decision_quality_reviews.empty?
   end
 
-  def outstanding_vacols_mail?
-    case_record.mail.any?(&:outstanding?)
+  def outstanding_vacols_mail
+    case_record.mail.map do |row|
+      {
+        outstanding: row.outstanding?,
+        code: row.mltype,
+        description: VACOLS::Mail::TYPES[row.mltype]
+      }
+    end
   end
 
   # VACOLS stores the VBA veteran unique identifier a little
@@ -575,6 +635,15 @@ class LegacyAppeal < ApplicationRecord
   end
 
   private
+
+  def representative_to_hash
+    {
+      name: representative_name,
+      type: representative_type,
+      code: representative_code,
+      address: representative_address
+    }
+  end
 
   def matched_document(type, vacols_datetime)
     return nil unless vacols_datetime

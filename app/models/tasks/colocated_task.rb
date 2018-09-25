@@ -1,4 +1,6 @@
 class ColocatedTask < Task
+  include RoundRobinAssigner
+
   validates :action, inclusion: { in: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s) }
   validate :assigned_by_role_is_valid
   validates :assigned_by, presence: true
@@ -23,31 +25,18 @@ class ColocatedTask < Task
 
     private
 
-    def next_assignee
-      User.find_by_css_id_or_create_with_default_station_id(next_assignee_css_id)
-    end
-
-    def latest_task
-      order("created_at").last
-    end
-
-    def last_assignee_css_id
-      latest_task ? latest_task.assigned_to.css_id : nil
-    end
-
-    def next_assignee_css_id
-      list_of_assignees[next_assignee_index]
-    end
-
-    def next_assignee_index
-      return 0 unless last_assignee_css_id
-      return 0 unless list_of_assignees.index(last_assignee_css_id)
-      (list_of_assignees.index(last_assignee_css_id) + 1) % list_of_assignees.length
-    end
-
     def list_of_assignees
       Constants::CoLocatedTeams::USERS[Rails.current_env]
     end
+  end
+
+  def update_if_hold_expired!
+    update!(status: "in_progress") if on_hold_expired?
+  end
+
+  def on_hold_expired?
+    return true if placed_on_hold_at && on_hold_duration && placed_on_hold_at + on_hold_duration.days < Time.zone.now
+    false
   end
 
   private

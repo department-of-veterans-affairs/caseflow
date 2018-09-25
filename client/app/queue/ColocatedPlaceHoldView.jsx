@@ -22,6 +22,7 @@ import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextField from '../components/TextField';
 import Alert from '../components/Alert';
+import TextareaField from '../components/TextareaField';
 
 import {
   fullWidth,
@@ -35,7 +36,8 @@ import type { Task, Appeal } from './types/models';
 
 type ViewState = {|
   hold: string,
-  customHold: ?number
+  customHold: ?number,
+  instructions: string
 |};
 
 type Params = {|
@@ -57,7 +59,8 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
 
     this.state = {
       hold: '',
-      customHold: null
+      customHold: null,
+      instructions: ''
     };
   }
 
@@ -82,7 +85,8 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
       data: {
         task: {
           status: 'on_hold',
-          on_hold_duration: this.state.customHold || this.state.hold
+          on_hold_duration: this.state.customHold || this.state.hold,
+          instructions: this.state.instructions
         }
       }
     };
@@ -137,11 +141,12 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
       <div className={errorClass} {...marginTop(1)}>
         <SearchableDropdown
           name="Select number of days"
+          searchable={false}
           hideLabel
           errorMessage={highlightFormItems && !this.state.hold ? 'Choose one' : null}
           placeholder="Select number of days"
           value={this.state.hold}
-          onChange={({ value }) => this.setState({ hold: value })}
+          onChange={(option) => option && this.setState({ hold: option.value })}
           options={COLOCATED_HOLD_DURATIONS.map((value) => ({
             label: Number(value) ? `${value} days` : value,
             value
@@ -161,6 +166,12 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
             label={false} />
         </div>
       </React.Fragment>}
+      <TextareaField
+        label="Notes:"
+        name="instructions"
+        value={this.state.instructions}
+        onChange={(instructions) => this.setState({ instructions })}
+        styling={marginTop(2)} />
     </React.Fragment>;
   }
 }

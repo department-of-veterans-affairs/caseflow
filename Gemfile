@@ -70,7 +70,7 @@ gem "therubyracer", platforms: :ruby
 
 gem "pg", platforms: :ruby
 
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "1bbc41ca8a521fb4655cc27f6294c86d48c081ca"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "44a3aee470f3ddd0e42eb2d07b87ed776b0f9fab"
 
 gem "redis-rails", "~> 5.0.2"
 
@@ -93,7 +93,8 @@ gem "nokogiri", ">= 1.8.3"
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter"
-  gem "ruby-oci8"
+  # set require: 'oci8' here because bootsnap creates a warning: https://github.com/rails/rails/issues/32811#issuecomment-386541855
+  gem "ruby-oci8", require: "oci8"
 end
 
 # Development was ommited due to double logging issue (https://github.com/heroku/rails_stdout_logging/issues/1)
@@ -148,7 +149,6 @@ group :stubbed, :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem "dotenv-rails"
   gem "foreman"
-  gem "web-console", "~> 3.0", platforms: :ruby
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   # gem 'spring', platforms: :ruby
@@ -168,4 +168,8 @@ gem "roo", "~> 2.7"
 gem "rubyzip", "~> 1.2.2"
 
 gem "business_time", "~> 0.9.3"
+
+# Bootsnap speeds up app boot (and started to be a default gem in 5.2).
+gem "bootsnap", require: false
+
 # rubocop:enable Metrics/LineLength

@@ -109,17 +109,21 @@ class ApplicationController < ApplicationBaseController
     # :nocov:
   end
 
-  def can_access_queue?
-    return true if current_user.vso_employee?
-    return true if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
-    return true if current_user.colocated_in_vacols? && feature_enabled?(:colocated_queue)
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
+  def case_search_home_page
+    if feature_enabled?(:case_search_home_page)
+      return false if current_user.admin?
+      return false if current_user.organization_queue_user? || current_user.vso_employee?
+      return false if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
+      return false if current_user.colocated_in_vacols? && feature_enabled?(:colocated_queue)
+      return true
+    end
     false
   end
-  helper_method :can_access_queue?
-
-  def verify_queue_access
-    redirect_to "/unauthorized" unless can_access_queue?
-  end
+  helper_method :case_search_home_page
+  # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def deny_vso_access
     redirect_to "/unauthorized" if current_user && current_user.vso_employee?

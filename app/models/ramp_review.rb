@@ -26,6 +26,8 @@ class RampReview < ApplicationRecord
 
   validates :receipt_date, :option_selected, presence: { message: "blank" }, if: :saving_review
 
+  before_destroy :remove_issues!
+
   class << self
     def established
       where.not(established_at: nil)
@@ -61,7 +63,7 @@ class RampReview < ApplicationRecord
   def create_or_connect_end_product!
     return connect_end_product! if end_product_establishment.preexisting_end_product
 
-    establish_end_product! && :created
+    establish_end_product!(commit: true) && :created
   end
 
   def end_product_description
@@ -76,8 +78,8 @@ class RampReview < ApplicationRecord
     end_product_establishment.status_active?(sync: true)
   end
 
-  def establish_end_product!
-    end_product_establishment.perform!
+  def establish_end_product!(commit:)
+    end_product_establishment.perform!(commit: commit)
     update! established_at: Time.zone.now
   end
 
@@ -87,6 +89,10 @@ class RampReview < ApplicationRecord
 
   def valid_modifiers
     [end_product_modifier]
+  end
+
+  def remove_issues!
+    issues.destroy_all unless issues.empty?
   end
 
   private

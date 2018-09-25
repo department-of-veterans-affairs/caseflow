@@ -27,6 +27,7 @@ class Generators::Veteran
         cp_payment_state: "PA",
         cp_payment_zip_code: "15701",
         date_of_birth: "05/04/1955",
+        date_of_death: nil,
         debit_card_ind: "N",
         eft_account_number: nil,
         eft_account_type: nil,
@@ -58,7 +59,7 @@ class Generators::Veteran
         sensitive_level_of_record: "0",
         ssn: "111223334",
         state: "VA",
-        suffix_name: nil,
+        suffix_name: "II",
         temporary_custodian_indicator: nil,
         territory_name: nil,
         treasury_mailing_address_line1: "Kat Stevens",
@@ -92,7 +93,11 @@ class Generators::Veteran
     def build(attrs = {})
       Fakes::BGSService.veteran_records ||= {}
       Fakes::BGSService.veteran_records[attrs[:file_number]] = default_attrs(attrs[:file_number]).merge(attrs)
-      Veteran.new(file_number: attrs[:file_number])
+      Veteran.new(file_number: attrs[:file_number],
+                  first_name: attrs[:first_name],
+                  last_name: attrs[:last_name],
+                  middle_name: attrs[:middle_name],
+                  name_suffix: attrs[:suffix_name])
     end
   end
 end

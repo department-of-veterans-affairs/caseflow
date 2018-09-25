@@ -14,7 +14,7 @@ export type User = {
 
 export type Judges = { [string]: User };
 
-export type AppellantAddress = {
+export type Address = {
   address_line_1: string,
   address_line_2: string,
   city: string,
@@ -25,16 +25,18 @@ export type AppellantAddress = {
 
 export type Issue = {
   levels: Array<string>,
-  program: string,
+  program?: string,
   type: string,
   codes: Array<string>,
   disposition: string,
   close_date: Date,
   note: string,
   id: Number,
+  vacols_sequence_id?: Number,
   labels: Array<string>,
   readjudication: Boolean,
-  remand_reasons: Array<Object>
+  remand_reasons: Array<Object>,
+  description?: string
 };
 
 export type Issues = Array<Issue>;
@@ -42,11 +44,13 @@ export type Issues = Array<Issue>;
 export type Task = {
   action: string,
   appealId: number,
+  appealType: string,
   externalAppealId: string,
   assignedOn: string,
   dueOn: ?string,
   assignedTo: {
-    cssId: string,
+    cssId: ?string,
+    type: string,
     id: number
   },
   assignedBy: {
@@ -64,17 +68,27 @@ export type Task = {
   placedOnHoldAt?: ?string,
   onHoldDuration?: ?number,
   previousTaskAssignedOn: ?string,
-  instructions? :string,
-  parentId?: number
+  instructions?: Array<string>,
+  parentId?: number,
+  decisionPreparedBy: ?{
+    firstName: string,
+    lastName: string,
+  }
 };
 
 export type Tasks = { [string]: Task };
+
+export type PowerOfAttorney = {
+  representative_type: ?string,
+  representative_name: ?string,
+  representative_address: ?Address
+}
 
 export type AppealDetail = {
   issues: Array<Object>,
   hearings: Array<Object>,
   appellantFullName: string,
-  appellantAddress: AppellantAddress,
+  appellantAddress: Address,
   appellantRelationship: string,
   locationCode: ?string,
   veteranDateOfBirth: string,
@@ -82,8 +96,12 @@ export type AppealDetail = {
   externalId: string,
   status: string,
   decisionDate: string,
+  events: {
+    nodReceiptDate: ?string,
+    form9Date: ?string,
+  },
   certificationDate: ?string,
-  powerOfAttorney: string,
+  powerOfAttorney: ?PowerOfAttorney,
   regionalOffice: Object,
   caseflowVeteranId: ?string,
   tasks: ?Array<Task>
@@ -96,9 +114,12 @@ export type BasicAppeal = {
   type: string,
   externalId: string,
   docketName: ?string,
+  isLegacyAppeal: boolean,
   caseType: string,
   isAdvancedOnDocket: boolean,
   docketNumber: string,
+  assignedAttorney: ?User,
+  assignedJudge: ?User,
   veteranFullName: string,
   veteranFileNumber: string,
   isPaperCase: ?boolean,

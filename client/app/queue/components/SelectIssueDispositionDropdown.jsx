@@ -6,9 +6,10 @@ import { css } from 'glamor';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
 
-import { COLORS, ISSUE_DISPOSITIONS } from '../constants';
+import { COLORS, VACOLS_DISPOSITIONS } from '../constants';
 import COPY from '../../../COPY.json';
 import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
+import ISSUE_DISPOSITIONS_BY_ID from '../../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
 
 import type {
   Appeal,
@@ -43,6 +44,23 @@ class SelectIssueDispositionDropdown extends React.PureComponent<Props> {
     return css({ minHeight: '12rem' });
   }
 
+  getDispositions = (): Array<Object> => {
+    const { appeal } = this.props;
+
+    if (appeal.isLegacyAppeal) {
+      return Object.entries(VACOLS_DISPOSITIONS_BY_ID).slice(0, 6).
+        map((opt) => ({
+          label: `${opt[0]} - ${String(opt[1])}`,
+          value: opt[0]
+        }));
+    }
+
+    return Object.entries(ISSUE_DISPOSITIONS_BY_ID).map((opt) => ({
+      label: opt[1],
+      value: opt[0]
+    }));
+  }
+
   render = () => {
     const {
       appeal,
@@ -56,18 +74,13 @@ class SelectIssueDispositionDropdown extends React.PureComponent<Props> {
         value={issue.disposition}
         hideLabel
         errorMessage={(highlight && !issue.disposition) ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
-        options={Object.entries(VACOLS_DISPOSITIONS_BY_ID).slice(0, 6).
-          map((opt) => ({
-            label: `${opt[0]} - ${String(opt[1])}`,
-            value: opt[0]
-          }))}
-        onChange={({ value }) => this.props.updateIssue({
-          disposition: value,
-          readjudication: false,
-          remand_reasons: []
+        options={this.getDispositions()}
+        onChange={(option) => this.props.updateIssue({
+          disposition: option ? option.value : null,
+          readjudication: false
         })}
         name={`dispositions_dropdown_${String(issue.id)}`} />
-      {appeal.docketName === 'legacy' && issue.disposition === ISSUE_DISPOSITIONS.VACATED && <Checkbox
+      {appeal.isLegacyAppeal && issue.disposition === VACOLS_DISPOSITIONS.VACATED && <Checkbox
         name={`duplicate-vacated-issue-${String(issue.id)}`}
         styling={css({
           marginBottom: 0,

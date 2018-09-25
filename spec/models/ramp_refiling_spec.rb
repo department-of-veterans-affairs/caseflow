@@ -35,6 +35,36 @@ describe RampRefiling do
     )
   end
 
+  context ".need_to_reprocess" do
+    subject { RampRefiling.need_to_reprocess }
+
+    let!(:ramp_refiling_processed) do
+      RampRefiling.create!(
+        veteran_file_number: veteran_file_number,
+        establishment_submitted_at: 2.minutes.ago,
+        establishment_processed_at: 30.seconds.ago
+      )
+    end
+
+    let!(:ramp_refiling_recently_submitted) do
+      RampRefiling.create!(
+        veteran_file_number: veteran_file_number,
+        establishment_submitted_at: 1.minute.ago
+      )
+    end
+
+    let!(:ramp_refiling_not_processed) do
+      RampRefiling.create!(
+        veteran_file_number: veteran_file_number,
+        establishment_submitted_at: 2.minutes.ago
+      )
+    end
+
+    it "returns unprocessed ramp elections processed a long time ago" do
+      expect(subject).to contain_exactly(ramp_refiling_not_processed)
+    end
+  end
+
   context "#create_issues!" do
     before { ramp_refiling.save! }
     subject { ramp_refiling.create_issues!(source_issue_ids: source_issues.map(&:id)) }
@@ -101,12 +131,40 @@ describe RampRefiling do
           ramp_refiling.issues.create!(description: "FAIL ME")
         end
 
-        it "raises ContentionCreationFailed" do
-          expect { subject }.to raise_error(RampRefiling::ContentionCreationFailed)
+        it "doesn't raise error, but does not set establishment_processed_at" do
+          subject
 
           # Even though there was a failure, we should still save the contention ids that were created
           expect(issues.first.reload.contention_reference_id).to_not be_nil
           expect(issues.second.reload.contention_reference_id).to_not be_nil
+          expect(issue_to_fail.reload.contention_reference_id).to be_nil
+
+          # When the contention fails the End Product Establishment should not be committed
+          expect(ramp_refiling.end_product_establishment.established_at).to eq(Time.zone.now)
+          expect(ramp_refiling.end_product_establishment.committed_at).to be_nil
+          expect(ramp_refiling.establishment_processed_at).to be_nil
+        end
+      end
+
+      context "when the EP is already established" do
+        let!(:end_product_establishment) do
+          EndProductEstablishment.create!(
+            veteran_file_number: veteran_file_number,
+            reference_id: "testtest",
+            source: ramp_refiling
+          )
+        end
+
+        it "creates contentions but doesn't establish the claim" do
+          subject
+
+          expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
+
+          expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+            veteran_file_number: "64205555",
+            claim_id: "testtest",
+            contention_descriptions: %w[Arm Leg]
+          )
         end
       end
 
@@ -123,6 +181,8 @@ describe RampRefiling do
         )
 
         expect(issues.first.reload.contention_reference_id).to_not be_nil
+        expect(ramp_refiling.end_product_establishment.committed_at).to eq(Time.zone.now)
+        expect(ramp_refiling.establishment_processed_at).to eq(Time.zone.now)
       end
     end
   end

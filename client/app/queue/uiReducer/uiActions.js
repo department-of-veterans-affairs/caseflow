@@ -121,7 +121,7 @@ export const setUserRole = (userRole: string) => ({
   payload: { userRole }
 });
 
-export const setUserCssId = (cssId: string) => ({
+export const setUserCssId = (cssId: ?string) => ({
   type: ACTIONS.SET_USER_CSS_ID,
   payload: { cssId }
 });
@@ -129,6 +129,16 @@ export const setUserCssId = (cssId: string) => ({
 export const setUserId = (userId: number) => ({
   type: ACTIONS.SET_USER_ID,
   payload: { userId }
+});
+
+export const setUserIsVsoEmployee = (userIsVsoEmployee: ?boolean) => ({
+  type: ACTIONS.SET_USER_IS_VSO_EMPLOYEE,
+  payload: { userIsVsoEmployee }
+});
+
+export const setFeedbackUrl = (feedbackUrl: string) => ({
+  type: ACTIONS.SET_FEEDBACK_URL,
+  payload: { feedbackUrl }
 });
 
 type targetAssignee = { assigneeId: string };

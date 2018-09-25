@@ -16,6 +16,11 @@ class EndProduct
     "683SCRRRAMP" => "Supplemental Claim Review Rating"
   }.freeze
 
+  DTA_CODES = {
+    "040HDENR" => "Supplemental Claim Nonrating DTA",
+    "040HDER" => "Supplemental Claim Rating DTA"
+  }.freeze
+
   AMA_CODES = {
     "030HLRR" => "Higher-Level Review Rating",
     "030HLRNR" => "Higher-Level Review Nonrating",
@@ -54,19 +59,27 @@ class EndProduct
     "070RMBVAGPMC" => "PMC Remand with BVA Grant"
   }.freeze
 
-  CODES = DISPATCH_CODES.merge(RAMP_CODES).merge(AMA_CODES)
+  CODES = DISPATCH_CODES.merge(RAMP_CODES).merge(AMA_CODES).merge(DTA_CODES)
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
+
+  # C&P Live = '1', C&P Death = '2'
+  BENEFIT_TYPE_CODE_LIVE = "1".freeze
+  BENEFIT_TYPE_CODE_DEATH = "2".freeze
 
   attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code,
                 :station_of_jurisdiction, :gulf_war_registry, :suppress_acknowledgement_letter
 
-  attr_writer :payee_code, :claimant_participant_id
+  attr_writer :payee_code, :claimant_participant_id, :benefit_type_code
 
   # Validators are used for validating the EP before we create it in VBMS
   validates :modifier, :claim_type_code, :station_of_jurisdiction, :claim_date, presence: true
   validates :claim_type_code, inclusion: { in: CODES.keys }
   validates :gulf_war_registry, :suppress_acknowledgement_letter, inclusion: { in: [true, false] }
+
+  def benefit_type_code
+    @benefit_type_code ||= BENEFIT_TYPE_CODE_LIVE
+  end
 
   def payee_code
     @payee_code ||= "00"
@@ -114,7 +127,7 @@ class EndProduct
 
   def to_vbms_hash
     {
-      benefit_type_code: "1",
+      benefit_type_code: benefit_type_code,
       payee_code: payee_code,
       predischarge: false,
       claim_type: "Claim",
