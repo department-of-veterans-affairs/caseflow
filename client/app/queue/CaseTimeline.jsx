@@ -1,12 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
-import _ from 'lodash';
 
-import BareList from '../components/BareList';
-import { boldText } from './constants';
-import { DateString } from '../util/DateUtil';
-import Address from './components/Address';
 import { GrayDot, GreenCheckmark } from '../components/RenderFunctions';
 import moment from 'moment';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
@@ -45,22 +40,21 @@ export default class CaseTimeline extends React.PureComponent {
 
   render = () => {
     const { appeal } = this.props;
-
     const events = [
       {
-        title: "BVA Decision made",
-        pendingTitle: "BVA Decision pending",
+        title: COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA,
+        pendingTitle: COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
         date: appeal.decisionDate
       },
       {
         legacyOnly: true,
-        title: "Form 9 received",
-        pendingTitle: "Form 9 pending",
+        title: COPY.CASE_TIMELINE_FROM_9_RECEIVEDE,
+        pendingTitle: COPY.CASE_TIMELINE_FROM_9_PENDING,
         date: appeal.events.form9Date
       },
       {
-        title: "Notice of disagreement received",
-        pendingTitle: "Notice of disagreement pending",
+        title: COPY.CASE_TIMELINE_NOD_RECEIVED,
+        pendingTitle: COPY.CASE_TIMELINE_NOD_PENDING,
         date: appeal.events.nodReceiptDate
       }
     ].filter((event) => !event.legacyOnly || appeal.isLegacyAppeal);
