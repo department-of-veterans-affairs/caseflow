@@ -35,6 +35,20 @@ export const onReceiveUpcomingHearingDays = (upcomingHearingDays) => ({
   }
 });
 
+export const onReceiveVeteransReadyForHearing = (veterans) => ({
+  type: ACTIONS.RECEIVE_VETERANS_READY_FOR_HEARING,
+  payload: {
+    veterans
+  }
+});
+
+export const onSelectedHearingDayChange = (selectedHearingDay) => ({
+  type: ACTIONS.SELECTED_HEARING_DAY_CHANGE,
+  payload: {
+    selectedHearingDay
+  }
+});
+
 export const onSchedulePeriodError = (error) => ({
   type: ACTIONS.SCHEDULE_PERIOD_ERROR,
   payload: {
