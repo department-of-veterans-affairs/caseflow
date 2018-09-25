@@ -38,8 +38,9 @@ const rampIneligibleInstructions = <div>
   <BareList items={stepFns} />
 </div>;
 
-const missingFieldsMessage = fields => <p>
-  Please fill in the following field(s) in the Veteran's profile in VBMS or the corporate database, then retry establishing the EP in Caseflow: {fields}.
+const missingFieldsMessage = (fields) => <p>
+  Please fill in the following field(s) in the Veteran's profile in VBMS or the corporate database,
+  then retry establishing the EP in Caseflow: {fields}.
 </p>;
 
 const addressTips = [
@@ -49,13 +50,17 @@ const addressTips = [
 ];
 
 const addressTooLongMessage = <Fragment>
-  <p>This Veteran's address is too long. Please edit it in VBMS or SHARE so each address field is no longer than 20 characters (including spaces) then try again.</p>
+  <p>
+    This Veteran's address is too long. Please edit it in VBMS or SHARE so each address field is no longer than
+    20 characters (including spaces) then try again.
+  </p>
   <p>Tips:</p>
-  <BareList items={addressTips} ListElementComponent='ul' />
+  <BareList items={addressTips} ListElementComponent="ul" />
 </Fragment>;
 
-const invalidVeteranInstructions = searchErrorData => <Fragment>
-  { searchErrorData.veteranMissingFields && searchErrorData.veteranMissingFields.length && missingFieldsMessage(searchErrorData.veteranMissingFields) }
+const invalidVeteranInstructions = (searchErrorData) => <Fragment>
+  { (_.get(searchErrorData.veteranMissingFields, 'length', 0) > 0) &&
+    missingFieldsMessage(searchErrorData.veteranMissingFields) }
   { searchErrorData.veteranAddressTooLong && addressTooLongMessage }
 </Fragment>;
 

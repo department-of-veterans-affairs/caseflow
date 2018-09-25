@@ -2,6 +2,7 @@ import { ACTIONS } from '../constants';
 import { REQUEST_STATE } from '../../intakeCommon/constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
+import _ from 'lodash';
 
 const updateFromServerIntake = (state, serverIntake) => {
   return update(state, {
