@@ -17,6 +17,7 @@ import CaseSnapshot from './CaseSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
 import SendToLocationModal from './components/SendToLocationModal';
+import CaseTimeline from './CaseTimeline';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
@@ -75,6 +76,7 @@ class CaseDetailsView extends React.PureComponent {
         <VeteranDetail title="About the Veteran" appeal={appeal} />
         {!_.isNull(appeal.appellantFullName) &&
         <AppellantDetail title="About the Appellant" appeal={appeal} />}
+        <CaseTimeline title="Case Timeline" appeal={appeal} />}
       </StickyNavContentArea>
     </AppSegment>;
   };

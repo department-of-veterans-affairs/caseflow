@@ -54,6 +54,10 @@
   "CASE_DETAILS_POA_AGENT": "Private Agent",
   "CASE_DETAILS_POA_ATTORNEY": "Private Attorney",
 
+  "CASE_DETAILS_GENDER_FIELD_LABEL": "Gender",
+  "CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE": "Female",
+  "CASE_DETAILS_GENDER_FIELD_VALUE_MALE": "Male",
+
   "NEW_FILE_ICON_TOOLTIP": "This case has new documents",
 
   "NO_TASKS_IN_ATTORNEY_QUEUE_TITLE": "Cases not found",
@@ -211,5 +215,13 @@
   "MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT": "Are you sure you want to cancel?",
   "MODAL_CANCEL_ATTORNEY_CHECKOUT": "All changes made to this page will be lost, except for the adding, editing, and deleting of issues.",
 
-  "SPECIAL_ISSUES_PAGE_TITLE": "Select special issue(s)"
+  "SPECIAL_ISSUES_PAGE_TITLE": "Select special issue(s)",
+
+  "CASE_TIMELINE_HEADER": "Below is the history of this case. Soon, you'll be able to see many more details.",
+  "CASE_TIMELINE_DISPATCHED_FROM_BVA": "Dispatched from BVA",
+  "CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING": "Dispatch from BVA pending",
+  "CASE_TIMELINE_FORM_9_RECEIVED": "Form 9 received",
+  "CASE_TIMELINE_FORM_9_PENDING": "Form 9 pending",
+  "CASE_TIMELINE_NOD_RECEIVED": "Notice of disagreement received",
+  "CASE_TIMELINE_NOD_PENDING": "Notice of disagreement pending"
 }
