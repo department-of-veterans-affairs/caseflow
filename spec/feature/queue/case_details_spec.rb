@@ -134,7 +134,7 @@ RSpec.feature "Case details" do
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         expect(page).to have_content("About the Veteran")
-        expect(page).to have_content("She/Her")
+        expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to have_content(appeal.veteran_date_of_birth.strftime("%-m/%e/%Y"))
       end
     end
