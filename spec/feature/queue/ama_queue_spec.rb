@@ -154,7 +154,7 @@ RSpec.feature "AmaQueue" do
         expect(page).not_to have_selector("text", id: "NEW")
       end
 
-      scenario "setting aod", focus: true do
+      scenario "setting aod" do
         visit "/queue/appeals/#{appeals.first.external_id}"
 
         click_on "Edit AOD"

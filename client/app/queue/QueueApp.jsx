@@ -233,6 +233,10 @@ class QueueApp extends React.PureComponent<Props> {
             title="Unassigned Cases | Caseflow"
             render={this.routedJudgeQueueList('assign')} />
           <PageRoute
+            path="/queue/appeals/:appealId/edit/advanced_on_docket"
+            title="Case Details | Caseflow"
+            render={this.routedAdvancedOnDocketMotion} />
+          <PageRoute
             exact
             path="/queue/appeals/:appealId"
             title="Case Details | Caseflow"
@@ -299,11 +303,6 @@ class QueueApp extends React.PureComponent<Props> {
             path="/queue/appeals/:appealId/mark_task_complete"
             title="Mark Task Complete | Caseflow"
             render={this.routedMarkTaskComplete} />
-          <PageRoute
-            exact
-            path="/queue/appeals/:appealId/advanced_on_docket_motion"
-            title="Advanced on Docket Motion | Caseflow"
-            render={this.routedAdvancedOnDocketMotion} />
           <PageRoute
             exact
             path="/queue/modal/:modalType"
