@@ -21,7 +21,6 @@ class RoSelectorDropdown extends React.Component {
   };
 
   componentWillMount(){
-    console.log("*** RO component did mount ***")
     if (!this.props.regionalOffices) {
       this.loadRegionalOffices();
     }

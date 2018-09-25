@@ -12,7 +12,8 @@ import BasicDateRangeSelector from '../../components/BasicDateRangeSelector';
 import RoSelectorDropdown from './RoSelectorDropdown'
 import InlineForm from '../../components/InlineForm';
 import { CSVLink } from 'react-csv';
-import { toggleTypeFilterVisibility, toggleLocationFilterVisibility, toggleVljFilterVisibility } from '../actions'
+import { toggleTypeFilterVisibility, toggleLocationFilterVisibility,
+  toggleVljFilterVisibility, onRegionalOfficeChange, onReceiveHearingSchedule } from '../actions'
 import {bindActionCreators} from "redux";
 import connect from "react-redux/es/connect/connect";
 
@@ -48,6 +49,29 @@ const formatVljName = (lastName, firstName) => {
   }
 };
 
+const populateFilterDropDowns = (resultSet, filterName) => {
+  let countByFilterName = _.countBy(resultSet, filterName);
+  let uniqueOptions = [];
+  for (var key in countByFilterName) {
+    if (key && key !== "null" && key !== "undefined") {
+      uniqueOptions.push({value: key, displayText: `${key} (${countByFilterName[key]})`});
+    }else {
+      uniqueOptions.push({value: "<<blank>>", displayText: `<<blank>> (${countByFilterName[key]})`});
+    }
+  }
+  return _.sortBy(uniqueOptions, "displayText");
+};
+
+const filterSchedule = (scheduleToFilter, filterName, value) => {
+  let filteredSchedule = {};
+  for(var key in scheduleToFilter){
+    if (scheduleToFilter[key][filterName] === value){
+      filteredSchedule[key] = scheduleToFilter[key];
+    }
+  }
+  return filteredSchedule;
+};
+
 class ListSchedule extends React.Component {
 
   render() {
@@ -56,22 +80,18 @@ class ListSchedule extends React.Component {
     } = this.props;
 
     const setTypeSelectedValue = (value) => {
-      console.log("this is the Type selected value: ", value);
+      this.props.onReceiveHearingSchedule(filterSchedule(hearingSchedule, "hearingType", value));
       this.props.toggleTypeFilterVisibility();
     };
 
     const setLocationSelectedValue = (value) => {
-      console.log("this is the Location selected value: ", value);
+      this.props.onReceiveHearingSchedule(filterSchedule(hearingSchedule, "regionalOffice", value));
       this.props.toggleLocationFilterVisibility();
     };
 
     const setVljSelectedValue = (value) => {
-      console.log("this is the VLJ selected value: ", value);
+      this.props.onReceiveHearingSchedule(filterSchedule(hearingSchedule, "judgeName", value));
       this.props.toggleVljFilterVisibility();
-    };
-
-    const setRoSelectedValue = (value) => {
-      console.log("this is the selected value: ", value);
     };
 
     const hearingScheduleRows = _.map(hearingSchedule, (hearingDay) => ({
@@ -83,26 +103,9 @@ class ListSchedule extends React.Component {
     }));
 
     const removeCoDuplicates = _.uniqWith(hearingScheduleRows, _.isEqual);
-
-    let hearingTypeList = _.uniqBy(hearingScheduleRows, "hearingType");
-    let uniqueHearingTypes = _.map(hearingTypeList, (hearingDay) => {
-      return {value: hearingDay.hearingType, displayText: hearingDay.hearingType};
-    });
-    uniqueHearingTypes = _.sortBy(uniqueHearingTypes, "displayText");
-
-    let listOfVljs = _.uniqBy(hearingScheduleRows, "vlj");
-    let uniqueVljs = _.map(listOfVljs, (hearingDay) => {
-      return {value: hearingDay.vlj, displayText: hearingDay.vlj};
-    });
-    uniqueVljs = _.sortBy(uniqueVljs, "displayText");
-
-    let listOfLocations = _.countBy(hearingScheduleRows, "regionalOffice");
-    let uniqueLocations = [];
-    for (var location in listOfLocations) {
-      uniqueLocations.push({value: location, displayText: `${location} (${listOfLocations[location]})`});
-    };
-    uniqueLocations = _.sortBy(uniqueLocations, "displayText");
-
+    const uniqueHearingTypes = populateFilterDropDowns(removeCoDuplicates, "hearingType");
+    const uniqueVljs = populateFilterDropDowns(removeCoDuplicates, "vlj");
+    const uniqueLocations = populateFilterDropDowns(removeCoDuplicates, "regionalOffice");
     const fileName = `HearingSchedule ${this.props.startDateValue}-${this.props.endDateValue}.csv`;
 
     var options = [{value: 'C', displayText: 'Central'},
@@ -169,7 +172,8 @@ class ListSchedule extends React.Component {
       <div className="cf-help-divider" {...hearingSchedStyling} ></div>
       <div>
         <RoSelectorDropdown
-          onChange={this.setRoSelectedValue}
+          onChange={this.props.onRegionalOfficeChange}
+          value={this.props.selectedRegionalOffice}
           placeholder="All"
         />
       </div>
@@ -240,13 +244,16 @@ ListSchedule.propTypes = {
 const mapStateToProps = (state) => ({
   filterTypeIsOpen: state.filterTypeIsOpen,
   filterLocationIsOpen: state.filterLocationIsOpen,
-  filterVljIsOpen: state.filterVljIsOpen
+  filterVljIsOpen: state.filterVljIsOpen,
+  selectedRegionalOffice: state.selectedRegionalOffice
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   toggleTypeFilterVisibility,
   toggleLocationFilterVisibility,
-  toggleVljFilterVisibility
+  toggleVljFilterVisibility,
+  onRegionalOfficeChange,
+  onReceiveHearingSchedule
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListSchedule);
