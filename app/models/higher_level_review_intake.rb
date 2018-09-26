@@ -1,4 +1,6 @@
 class HigherLevelReviewIntake < Intake
+  include ClaimReviewCompleteable
+
   enum error_code: Intake::ERROR_CODES
 
   def find_or_build_initial_detail
@@ -39,17 +41,6 @@ class HigherLevelReviewIntake < Intake
 
   def complete!(request_params)
     return if complete? || pending?
-
-    req_issues = request_params[:request_issues] || []
-    transaction do
-      intake.start_completion!
-      detail.request_issues.destroy_all unless detail.request_issues.empty?
-      detail.create_issues!(build_issues(req_issues))
-      detail.requires_processing!
-      unless run_async?
-        detail.process_end_product_establishments!
-      end
-      intake.complete_with_status!(:success)
-    end
+    complete_claim_review_async(request_params)
   end
 end

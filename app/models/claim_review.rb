@@ -26,12 +26,12 @@ class ClaimReview < AmaReview
       where(establishment_attempted_at: nil)
     end
 
-    def attempted_previously
+    def previously_attempted_ready_for_retry
       where("establishment_attempted_at < ?", REQUIRES_PROCESSING_RETRY_WINDOW_HOURS.hours.ago)
     end
 
     def attemptable
-      attempted_previously.or(never_attempted)
+      previously_attempted_ready_for_retry.or(never_attempted)
     end
 
     def order_by_oldest_submitted
@@ -49,7 +49,7 @@ class ClaimReview < AmaReview
     end
   end
 
-  def requires_processing!
+  def submit_for_processing!
     update!(establishment_submitted_at: Time.zone.now, establishment_processed_at: nil)
   end
 
