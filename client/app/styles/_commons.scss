@@ -95,17 +95,6 @@ p {
   font-weight: 300;
 }
 
-.cf-notice {
-  padding: 8px 20px;
-  text-align: center;
-  background-color: $color-primary;
-  color: $color-white;
-
-  a {
-    color: $color-white;
-  }
-}
-
 //----------------------------------*
 // Globals, Resets, and overrides
 //-----------------------------------*/
@@ -120,10 +109,6 @@ p {
 
 .cf-txt-l {
   text-align: left;
-}
-
-.cf-txt-uc {
-  text-transform: uppercase;
 }
 
 .cf-push-left {
@@ -650,54 +635,6 @@ div {
   }
 }
 
-
-//-----------------------------------*
-// CSS based on Web Design Guidelines.
-// - Uses Neat.bourbon.io as a grid
-// - Uses patterns and components
-//   from refills.bourbon.io/unstyled/
-//-----------------------------------*/
-
-//===========================
-// Tooltip
-// =========================*/
-
-.cf-tooltip {
-  display: inline-block;
-  position: relative;
-}
-
-.cf-tooltip-trigger {
-  &:hover + .cf-tooltip-text {
-    display: block;
-  }
-}
-
-.cf-tooltip-text {
-  @include transform(translateX(-50%));
-  background: $color-white;
-  box-shadow: 0 0 10px -3px $color-gray;
-  display: none;
-  left: 50%;
-  margin-top: rem(10px);
-  padding: rem(10px);
-  position: absolute;
-  width: rem(300px);
-
-  &::before {
-    @include transform(scaleX(1.2));
-    color: $color-white;
-    content: '\25B2';
-    display: block;
-    font-size: rem(15px);
-    text-align: center;
-    text-shadow: 0 -2px 2px rgba($color-gray, .5);
-    margin-top: rem(-25px);
-    position: relative;
-    z-index: -1;
-  }
-}
-
 //===========================
 // Form controls
 // =========================*/
@@ -835,7 +772,6 @@ form {
       content: '* ';
       color: $color-secondary;
       font-family: inherit;
-      font-weight: $font-normal;
       font-style: normal;
     }
   }
