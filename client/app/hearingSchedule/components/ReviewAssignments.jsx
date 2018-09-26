@@ -122,11 +122,16 @@ export default class ReviewAssignments extends React.Component {
       />;
     }
 
-    if (this.props.schedulePeriod.finalized ||
-        this.props.schedulePeriod.cannotFinalize) {
+    if (this.props.schedulePeriod.finalized) {
       return <StatusMessage
         type="status"
         title="This page has expired."
+        messageText={<Link to="/schedule">Go back to home</Link>}
+      />;
+    } else if (this.props.schedulePeriod.canFinalize === false) {
+      return <StatusMessage
+        type="status"
+        title="Schedule is being submitted to VACOLS."
         messageText={<Link to="/schedule">Go back to home</Link>}
       />;
     }
