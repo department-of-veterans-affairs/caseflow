@@ -71,18 +71,20 @@ p {
   margin-bottom: 30px;
 }
 
-.cf-display-1 {
-  font-weight: 700;
-  font-size: 52px;
+.cf-display-1,
+.cf-display-2 {
   line-height: 1.3em;
   margin-bottom: 40px;
 }
+// Usage h1 class for accessibility
+.cf-display-1 {
+  font-weight: $font-bold;
+  font-size: 52px;
+}
 
+// Candidate for deprecation/ Unused
 .cf-display-2 {
   font-size: 44px;
-  line-height: 1.3em;
-  margin-bottom: 40px;
-
 }
 
 .cf-red-text {

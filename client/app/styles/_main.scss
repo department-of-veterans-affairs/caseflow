@@ -187,10 +187,6 @@ body {
   color: $color-gray-dark;
 }
 
-.cf-button-associated-text {
-  color: $color-gray;
-}
-
 .cf-button-associated-text-right {
   color: $color-gray;
   margin-right: 30px;
@@ -391,4 +387,5 @@ select {
   line-height: 2.2;
   font-size: 22px;
   color: $color-gray-dark;
+  text-transform: uppercase;
 }
