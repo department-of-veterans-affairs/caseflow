@@ -187,8 +187,7 @@ class LegacyAppeal < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
-  delegate :age, to: :veteran, prefix: true
-  delegate :sex, to: :veteran, prefix: true
+  delegate :age, :sex, :ssn, to: :veteran, prefix: true
 
   # NOTE: we cannot currently match end products to a specific appeal.
   delegate :end_products, to: :veteran
