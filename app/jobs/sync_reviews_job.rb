@@ -24,5 +24,11 @@ class SyncReviewsJob < CaseflowJob
         Raven.capture_exception(e)
       end
     end
+
+    [HigherLevelReview, SupplementalClaim].each do |klass|
+      klass.requires_processing.limit(limit).each do |claim_review|
+        ClaimReviewProcessJob.perform_later(claim_review)
+      end
+    end
   end
 end

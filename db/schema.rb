@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 20180926143801) do
+ActiveRecord::Schema.define(version: 20180926182000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -407,6 +406,8 @@ ActiveRecord::Schema.define(version: 20180926143801) do
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
     t.string "benefit_type"
+    t.datetime "establishment_attempted_at"
+    t.string "establishment_error"
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
@@ -535,6 +536,8 @@ ActiveRecord::Schema.define(version: 20180926143801) do
     t.datetime "end_product_status_last_synced_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
+    t.datetime "establishment_attempted_at"
+    t.string "establishment_error"
     t.index ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number"
   end
 
@@ -557,6 +560,8 @@ ActiveRecord::Schema.define(version: 20180926143801) do
     t.datetime "established_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
+    t.datetime "establishment_attempted_at"
+    t.string "establishment_error"
     t.index ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number"
   end
 
@@ -655,6 +660,8 @@ ActiveRecord::Schema.define(version: 20180926143801) do
     t.datetime "establishment_processed_at"
     t.string "benefit_type"
     t.boolean "is_dta_error"
+    t.datetime "establishment_attempted_at"
+    t.string "establishment_error"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 

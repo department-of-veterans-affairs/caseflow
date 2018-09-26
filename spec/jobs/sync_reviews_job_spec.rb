@@ -12,6 +12,25 @@ describe SyncReviewsJob do
       create(:end_product_establishment, last_synced_at: nil, established_at: 4.days.ago)
     end
 
+    let!(:higher_level_review_requiring_processing) do
+      hlr = create(:higher_level_review)
+      hlr.requires_processing!
+      hlr
+    end
+
+    let!(:higher_level_review_processed) do
+      hlr = create(:higher_level_review)
+      hlr.processed!
+      hlr
+    end
+
+    let!(:higher_level_review_attempts_ended) do
+      create(
+        :higher_level_review,
+        establishment_attempted_at: (ClaimReview::REQUIRES_PROCESSING_WINDOW_DAYS + 1).days.ago
+      )
+    end
+
     context "when there are canceled or cleared end product establishments" do
       let!(:end_product_establishment_canceled) do
         create(:end_product_establishment, :canceled, established_at: 4.days.ago)
@@ -24,6 +43,17 @@ describe SyncReviewsJob do
       it "does not sync them" do
         expect(EndProductSyncJob).to_not receive(:perform_later).with(end_product_establishment_canceled.id)
         expect(EndProductSyncJob).to_not receive(:perform_later).with(end_product_establishment_cleared.id)
+
+        SyncReviewsJob.perform_now("limit" => 2)
+      end
+    end
+
+    context "where there are claim reviews awaiting processing" do
+      it "ignores completed and older expired reviews" do
+        expect(EndProductSyncJob).to receive(:perform_later).twice.and_return(true)
+        expect(ClaimReviewProcessJob).to_not receive(:perform_later).with(higher_level_review_attempts_ended.id)
+        expect(ClaimReviewProcessJob).to_not receive(:perform_later).with(higher_level_review_processed.id)
+        expect(ClaimReviewProcessJob).to receive(:perform_later).with(higher_level_review_requiring_processing.id)
 
         SyncReviewsJob.perform_now("limit" => 2)
       end

@@ -96,6 +96,8 @@ class EndProductEstablishment < ApplicationRecord
   # Committing an end product establishment is a way to signify that any other actions performed
   # as part of a larger atomic operation containing the end product establishment are also complete.
   # Those actions could be creating contentions or other end product establishments.
+  # NOTE that nothing prevents methods from being called (e.g. remove_contention) once
+  # a EPE is "committed". It is advisory, not transactional.
   def commit!
     update!(committed_at: Time.zone.now) unless committed?
   end

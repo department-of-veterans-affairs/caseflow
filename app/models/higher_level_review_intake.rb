@@ -40,10 +40,16 @@ class HigherLevelReviewIntake < Intake
   def complete!(request_params)
     return if complete? || pending?
 
-    if run_async?
-      CompleteIntakeJob.perform_later(self, (request_params[:request_issues] || []), RequestStore[:current_user])
-    else
-      CompleteIntakeJob.perform_now(self, (request_params[:request_issues] || []))
+    req_issues = request_params[:request_issues] || []
+    transaction do
+      intake.start_completion!
+      detail.request_issues.destroy_all unless detail.request_issues.empty?
+      detail.create_issues!(build_issues(req_issues))
+      detail.requires_processing!
+      unless run_async?
+        detail.process_end_product_establishments!
+      end
+      intake.complete_with_status!(:success)
     end
   end
 end
