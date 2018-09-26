@@ -19,19 +19,24 @@ class JudgeTask < Task
   end
 
   #:nocov:
-  # This function to be manually run in production when we need to assign judge tasks.
+  # This function to be manually run in production when we need to fetch all RAMP
+  # appeals that are eligible for assignment to judges, and assign them.
   def self.assign_ramp_judge_tasks(dry_run: false, batch_size: 10)
     # Find all root tasks with no children, that means they are not assigned.
-    tasks = unassigned_ramp_tasks.sort_by(&:created_at)[0..batch_size - 1]
+    tasks = unassigned_ramp_tasks[0..batch_size - 1]
 
     if dry_run
       Rails.logger.info("Dry run. Found #{unassigned_ramp_tasks.length} tasks to assign.")
-      Rails.logger.info("Would assign #{tasks.length} tasks.")
+      evidence_count = unassigned_ramp_tasks.select { |task| task.appeal.docket_name == "evidence_submission" }.count
+      direct_review_count = unassigned_ramp_tasks.select { |task| task.appeal.docket_name == "direct_review" }.count
+      Rails.logger.info("Found #{evidence_count.length} eligible evidence submission tasks.")
+      Rails.logger.info("Found #{direct_review_count.length} direct review tasks.")
+      Rails.logger.info("Would assign #{tasks.length}, batch size is #{batch_size}.")
       Rails.logger.info("First assignee would be #{next_assignee.css_id}")
       return
     end
 
-    assign_judge_tasks(tasks)
+    assign_judge_tasks_for_root_tasks(tasks)
   end
 
   def self.assign_judge_tasks_for_root_tasks(root_tasks)
@@ -47,7 +52,23 @@ class JudgeTask < Task
   end
 
   def self.unassigned_ramp_tasks
-    RootTask.left_outer_joins(:children).all.select { |t| t.children.empty? }
+    RootTask.order("created_at ASC").select { |t| eligible_for_assigment?(t) }
+  end
+
+  def eligible_for_assigment?(task)
+    # Hearing cases will not be processed until February 2019
+    return false if task.appeal.docket_name == "hearing"
+    
+    # If it's an evidence submission case, we need to wait until the
+    # evidence submission window is over
+    if task.appeal.docket_name == "evidence_submission"
+      return false if task.appeal.receipt_date > 90.days.ago
+    end
+    
+    # If the task already has been assigned to a judge, or if it 
+    # is a VSO task, it will have children tasks. We only want to
+    # assign tasks that have not been assigned yet.
+    return task.children.empty?
   end
 
   def self.list_of_assignees
