@@ -23,7 +23,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   end
 
   def outcode
-    BvaDispatchTask.outcode(appeal, user)
+    BvaDispatchTask.outcode(appeal, outcode_params, user)
     render json: json_appeal_details
   end
 
@@ -60,6 +60,10 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
       appeals += Appeal.where(veteran_file_number: file_number)
     end
     appeals
+  end
+
+  def outcode_params
+    params.require(:citation_number, :decision_date, :redacted_document_location)
   end
 
   def json_appeal_details
