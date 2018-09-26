@@ -42,7 +42,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
 
   createLoadPromise = () => {
     for (const attorney of this.props.attorneysOfJudge) {
-      this.props.fetchTasksAndAppealsOfAttorney(attorney.id);
+      this.props.fetchTasksAndAppealsOfAttorney(attorney.id, { role: 'attorney' });
       this.props.fetchAmaTasksOfUser(attorney.id, 'attorney');
     }
 
