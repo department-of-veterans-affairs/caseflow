@@ -286,8 +286,8 @@ export const fetchTasksAndAppealsOfAttorney = (attorneyId: string, params: Objec
 
   dispatch(requestTasksAndAppealsOfAttorney(attorneyId));
 
-  const p = Object.keys(params).map((k) => [k, params[k]].join('='));
-  const queryString = `?${p.join('&')}`;
+  const pairs = Object.keys(params).map((key) => [key, params[key]].join('='));
+  const queryString = `?${pairs.join('&')}`;
 
   return ApiUtil.get(`/queue/${attorneyId}${queryString}`, requestOptions).then(
     (resp) => dispatch(
