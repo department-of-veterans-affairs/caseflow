@@ -9,11 +9,11 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import Button from '../../components/Button';
 import PropTypes from 'prop-types';
 import BasicDateRangeSelector from '../../components/BasicDateRangeSelector';
-import RoSelectorDropdown from './RoSelectorDropdown';
+import FilterRibbon from '../../components/FilterRibbon'
 import InlineForm from '../../components/InlineForm';
 import { CSVLink } from 'react-csv';
 import { toggleTypeFilterVisibility, toggleLocationFilterVisibility,
-  toggleVljFilterVisibility, onRegionalOfficeChange, onReceiveHearingSchedule } from '../actions';
+  toggleVljFilterVisibility, onReceiveHearingSchedule } from '../actions';
 import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 
@@ -82,34 +82,55 @@ const filterSchedule = (scheduleToFilter, filterName, value) => {
   return filteredSchedule;
 };
 
-const allStaticEntry = [{
-  label: 'All',
-  value: 'All'
-}];
-
 class ListSchedule extends React.Component {
+  constructor(props) {
+    super(props);
 
-  componentWillMount = () => {
-    this.props.onRegionalOfficeChange('');
+    this.state = {
+      filteredByList: [],
+      originalSchedule: {}
+    };
   }
+
+  componentDidMount = () => {
+    this.setState({
+      originalSchedule: this.props.hearingSchedule
+    });
+  };
 
   render() {
     const {
       hearingSchedule
     } = this.props;
 
+    const clearFilteredByList = () => {
+      this.setState({
+        filteredByList: []
+      });
+      this.props.onReceiveHearingSchedule(this.state.originalSchedule);
+    };
+
     const setTypeSelectedValue = (value) => {
       this.props.onReceiveHearingSchedule(filterSchedule(hearingSchedule, 'hearingType', value));
+      this.setState({
+        filteredByList: this.state.filteredByList.concat(["Hearing Type"])
+      });
       this.props.toggleTypeFilterVisibility();
     };
 
     const setLocationSelectedValue = (value) => {
       this.props.onReceiveHearingSchedule(filterSchedule(hearingSchedule, 'regionalOffice', value));
+      this.setState({
+        filteredByList: this.state.filteredByList.concat(["Hearing Location"])
+      });
       this.props.toggleLocationFilterVisibility();
     };
 
     const setVljSelectedValue = (value) => {
       this.props.onReceiveHearingSchedule(filterSchedule(hearingSchedule, 'judgeName', value));
+      this.setState({
+        filteredByList: this.state.filteredByList.concat(["VLJ"])
+      })
       this.props.toggleVljFilterVisibility();
     };
 
@@ -149,7 +170,7 @@ class ListSchedule extends React.Component {
         setSelectedValue: setTypeSelectedValue
       },
       {
-        header: 'Hearing Location',
+        header: 'Regional Office',
         align: 'left',
         valueName: 'regionalOffice',
         label: 'Filter by location',
@@ -189,13 +210,6 @@ class ListSchedule extends React.Component {
         <span className="cf-push-right"><Link button="primary" to="/schedule/assign">Assign hearings</Link></span>
       }
       <div className="cf-help-divider" {...hearingSchedStyling} ></div>
-      <div>
-        <RoSelectorDropdown
-          onChange={this.props.onRegionalOfficeChange}
-          value={this.props.selectedRegionalOffice}
-          staticOptions={allStaticEntry}
-        />
-      </div>
       <div className="cf-push-left" {...inlineFormStyling} >
         <InlineForm>
           <BasicDateRangeSelector
@@ -214,10 +228,14 @@ class ListSchedule extends React.Component {
               name="apply"
               to="/schedule"
               onClick={this.props.onApply}>
-              {COPY.HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK}
+              &nbsp;&nbsp;&nbsp;{COPY.HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK}
             </Link>
           </div>
         </InlineForm>
+        <FilterRibbon
+          filteredByList={this.state.filteredByList}
+          clearAllFilters={clearFilteredByList}>
+        </FilterRibbon>
       </div>
       <div className="cf-push-right" {...downloadButtonStyling} >
         <Button
@@ -263,15 +281,13 @@ ListSchedule.propTypes = {
 const mapStateToProps = (state) => ({
   filterTypeIsOpen: state.filterTypeIsOpen,
   filterLocationIsOpen: state.filterLocationIsOpen,
-  filterVljIsOpen: state.filterVljIsOpen,
-  selectedRegionalOffice: state.selectedRegionalOffice
+  filterVljIsOpen: state.filterVljIsOpen
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   toggleTypeFilterVisibility,
   toggleLocationFilterVisibility,
   toggleVljFilterVisibility,
-  onRegionalOfficeChange,
   onReceiveHearingSchedule
 }, dispatch);
 
