@@ -20,28 +20,34 @@ class JudgeTask < Task
 
   #:nocov:
   # This function to be manually run in production when we need to assign judge tasks.
-  def self.assign_ramp_judge_tasks(dry_run: false)
+  def self.assign_ramp_judge_tasks(dry_run: false, batch_size: 10)
     # Find all root tasks with no children, that means they are not assigned.
-    root_tasks_needing_assignment = RootTask.left_outer_joins(:children).all.select { |t| t.children.empty? }
+    tasks = unassigned_ramp_tasks.sort_by(&:created_at)[0..batch_size - 1]
 
     if dry_run
-      Rails.logger.info("Dry run. First assignee would be #{next_assignee.css_id}")
+      Rails.logger.info("Dry run. Found #{unassigned_ramp_tasks.length} tasks to assign.")
+      Rails.logger.info("Would assign #{tasks.length} tasks.")
+      Rails.logger.info("First assignee would be #{next_assignee.css_id}")
+      return
     end
-    
-    root_tasks_needing_assignment.each do |root_task|
-      if dry_run
-        Rails.logger.info("Dry run. Would assign judge task for #{root_task.appeal.id}")
-      else
-        task = create!(appeal: root_task.appeal,
-                       parent: root_task,
-                       action: "assign",
-                       appeal_type: "Appeal",
-                       assigned_at: Time.zone.now,
-                       assigned_to: next_assignee)
 
-        Rails.logger.info("Assigned judge task with id: #{task.id} to #{task.assigned_to.css_id}")
-      end
+    assign_judge_tasks(tasks)
+  end
+
+  def self.assign_judge_tasks_for_root_tasks(root_tasks)
+    root_tasks.each do |root_task|
+      Rails.logger.info("Assigning judge task for appeal #{root_task.appeal.id}")
+      task = create(appeal: root_task.appeal,
+                    parent: root_task,
+                    appeal_type: "Appeal",
+                    assigned_at: Time.zone.now,
+                    assigned_to: next_assignee)
+      Rails.logger.info("Assigned judge task with task id #{task.id} to #{task.assigned_to.css_id}")
     end
+  end
+
+  def self.unassigned_ramp_tasks
+    RootTask.left_outer_joins(:children).all.select { |t| t.children.empty? }
   end
 
   def self.list_of_assignees
