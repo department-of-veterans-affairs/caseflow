@@ -51,9 +51,9 @@ describe SyncReviewsJob do
     context "where there are claim reviews awaiting processing" do
       it "ignores completed and older expired reviews" do
         expect(EndProductSyncJob).to receive(:perform_later).twice.and_return(true)
-        expect(ClaimReviewProcessJob).to_not receive(:perform_later).with(higher_level_review_attempts_ended.id)
-        expect(ClaimReviewProcessJob).to_not receive(:perform_later).with(higher_level_review_processed.id)
-        expect(ClaimReviewProcessJob).to receive(:perform_later).with(higher_level_review_requiring_processing.id)
+        expect(ClaimReviewProcessJob).to_not receive(:perform_later).with(higher_level_review_attempts_ended)
+        expect(ClaimReviewProcessJob).to_not receive(:perform_later).with(higher_level_review_processed)
+        expect(ClaimReviewProcessJob).to receive(:perform_later).with(higher_level_review_requiring_processing)
 
         SyncReviewsJob.perform_now("limit" => 2)
       end
