@@ -12,7 +12,6 @@ import {
 import { setAppealAod } from './QueueActions';
 
 import SearchableDropdown from '../components/SearchableDropdown';
-import Alert from '../components/Alert';
 import editModalBase from './components/EditModalBase';
 import { requestSave } from './uiReducer/uiActions';
 
@@ -83,7 +82,6 @@ class AdvancedOnDocketMotionView extends React.Component<Props, ViewState> {
     } = this.props;
 
     return <React.Fragment>
-      {error && <Alert type="error" title={error.title} message={error.detail} />}
       <h3>{COPY.ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN}</h3>
       <SearchableDropdown
         name="AOD Motion Disposition"

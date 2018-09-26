@@ -7,7 +7,7 @@ class AdvanceOnDocketMotion < ApplicationRecord
     denied: "denied"
   }
   enum reason: {
-    financial_distress: "financial distress",
+    financial_distress: "financial_distress",
     age: "age",
     serious_illness: "serious_illness",
     other: "other"

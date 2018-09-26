@@ -1,5 +1,12 @@
 import React from 'react';
 import Modal from '../../components/Modal';
+import { connect } from 'react-redux';
+import Alert from '../../components/Alert';
+import { css } from 'glamor';
+
+const bottomMargin = css({
+  marginBottom: '1.5rem'
+});
 
 export default function editModalBase(ComponentToWrap, title) {
   class WrappedComponent extends React.Component {
@@ -12,7 +19,7 @@ export default function editModalBase(ComponentToWrap, title) {
     getWrappedComponentRef = (ref) => this.wrappedComponent = ref;
 
     closeHandler = () => {
-      this.props.history.push(`/queue/appeals/${this.props.appeal.externalId}`);
+      this.props.history.goBack();
     }
 
     submit = () => {
@@ -26,8 +33,10 @@ export default function editModalBase(ComponentToWrap, title) {
       });
     }
 
-    render = () => <React.Fragment>
-      <Modal
+    render = () => {
+      const { error } = this.props;
+
+      return <Modal
         title={title}
         buttons={[{
           classNames: ['usa-button', 'cf-btn-link'],
@@ -40,10 +49,21 @@ export default function editModalBase(ComponentToWrap, title) {
           onClick: this.submit
         }]}
         closeHandler={this.closeHandler}>
+        {error &&
+          <div {...bottomMargin}>
+            <Alert type="error" title={error.title} message={error.detail} />
+          </div>
+        }
         <ComponentToWrap ref={this.getWrappedComponentRef} {...this.props} />
-      </Modal>
-    </React.Fragment>;
+      </Modal>;
+    }
   }
 
-  return WrappedComponent;
+  const mapStateToProps = (state) => {
+    return {
+      error: state.ui.messages.error
+    };
+  };
+
+  return connect(mapStateToProps)(WrappedComponent);
 }
