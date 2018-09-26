@@ -132,12 +132,6 @@ body {
   @include app-width('');
 }
 
-.cf-app-queue {
-  .cf-app-width {
-    @include app-width('queue');
-  }
-}
-
 .cf-logo-image-default {
   background-image: url(#{$image-url}/caseflow-default-logo.svg);
   width: 32px;
