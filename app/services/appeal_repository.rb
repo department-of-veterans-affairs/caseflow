@@ -271,6 +271,30 @@ class AppealRepository
     end
   end
 
+  def self.appeals_ready_for_hearing_schedule(regional_office)
+    if regional_office == HearingDay::HEARING_TYPES[:central]
+      return appeals_ready_for_co_hearing_schedule
+    end
+
+    cavc_cases = VACOLS::Case.joins(:folder).where(bfregoff: regional_office, bfcurloc: "57", bfac: "7")
+      .order("folder.tinum").limit(30)
+    aod_cases = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD).joins(:folder)
+      .where(bfregoff: regional_office, bfcurloc: "57").order("folder.tinum").limit(30)
+    other_cases = VACOLS::Case.joins(:folder).where(bfregoff: regional_office, bfcurloc: "57")
+      .order("folder.tinum").limit(30)
+
+    [cavc_cases + aod_cases + other_cases].uniq[0.30].map { |case_record| build_appeal(case_record, true) }
+  end
+
+  def self.appeals_ready_for_co_hearing_schedule
+    cavc_cases = VACOLS::Case.joins(:folder).where(bfhr: "1", bfcurloc: "57", bfac: "7").order("folder.tinum").limit(30)
+    aod_cases = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD)
+      .joins(:folder).where(bfhr: "1", bfcurloc: "57").order("folder.tinum").limit(30)
+    other_cases = VACOLS::Case.joins(:folder).where(bfhr: "1", bfcurloc: "57").order("folder.tinum").limit(30)
+
+    [cavc_cases + aod_cases + other_cases].uniq[0.30].map { |case_record| build_appeal(case_record, true) }
+  end
+
   def self.update_location_after_dispatch!(appeal:)
     location = location_after_dispatch(appeal: appeal)
 

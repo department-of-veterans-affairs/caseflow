@@ -48,14 +48,9 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def veterans_ready_for_hearing
-    render json: { veterans: [{
-      id: 1,
-      name: "Joe Snuffy",
-      type: "CAVC",
-      docket_number: "180203",
-      location: "Houston",
-      time: nil
-    }] }
+    ro = HearingDayMapper.validate_regional_office(params[:regional_office])
+
+    render json: { veterans: json_veterans(AppealRepository.appeals_ready_for_hearing_schedule(ro)) }
   end
 
   # Create a hearing schedule day
@@ -157,6 +152,23 @@ class Hearings::HearingDayController < HearingScheduleController
                        v
                      end
     end
+  end
+
+  def json_veterans(veterans)
+    veterans.each_with_object([]) do |veteran, result|
+      result << json_veteran(veteran)
+    end
+  end
+
+  def json_veteran(veteran)
+    {
+      id: veteran.vbms_id,
+      name: veteran.veteran_full_name,
+      type: veteran.type,
+      docket_number: veteran.docket_number,
+      location: HearingDayMapper.city_for_regional_office(veteran.regional_office_key),
+      time: nil
+    }
   end
 
   def json_tb_hearings(tbhearings)
