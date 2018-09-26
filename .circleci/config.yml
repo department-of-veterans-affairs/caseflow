@@ -138,7 +138,7 @@ jobs:
 
       - store_artifacts:
           name: Store rails test log
-          path: ~/project/logs/test.log
+          path: ~/project/log/test.log
 
       - store_artifacts:
           name: Store testfile ordering
