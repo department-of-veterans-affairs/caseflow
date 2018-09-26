@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180925223942) do
+
+ActiveRecord::Schema.define(version: 20180926143801) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -185,6 +186,17 @@ ActiveRecord::Schema.define(version: 20180925223942) do
     t.string "disposition_date"
     t.string "description"
     t.integer "request_issue_id"
+  end
+
+  create_table "decisions", force: :cascade do |t|
+    t.bigint "appeal_id"
+    t.string "citation_number"
+    t.date "decision_date"
+    t.string "redacted_document_location"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["appeal_id"], name: "index_decisions_on_appeal_id"
+    t.index ["citation_number"], name: "index_decisions_on_citation_number", unique: true
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
