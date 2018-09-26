@@ -49,8 +49,12 @@ RSpec.describe LegacyTasksController, type: :controller do
 
       it "should return an invalid role error" do
         get :index, params: { user_id: caseflow_only_user.id }
+        expect(response.status).to eq(400)
+      end
 
-        expect(response.status).to eq 400
+      it "should return a valid response when we explicitly pass the role as a parameter" do
+        get :index, params: { user_id: caseflow_only_user.id, role: "attorney" }
+        expect(response.status).to eq(200)
       end
     end
   end
