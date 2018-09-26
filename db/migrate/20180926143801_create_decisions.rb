@@ -7,5 +7,7 @@ class CreateDecisions < ActiveRecord::Migration[5.1]
       t.string :redacted_document_location
       t.timestamps null: false
     end
+
+    add_index(:decisions, :citation_number, unique: true)
   end
 end

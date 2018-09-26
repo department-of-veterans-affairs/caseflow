@@ -195,6 +195,7 @@ ActiveRecord::Schema.define(version: 20180926143801) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["appeal_id"], name: "index_decisions_on_appeal_id"
+    t.index ["citation_number"], name: "index_decisions_on_citation_number", unique: true
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
