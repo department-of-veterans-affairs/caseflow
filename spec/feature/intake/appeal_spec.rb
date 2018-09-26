@@ -214,15 +214,15 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  it "Allows a Veteran without ratings to create an intake" do
+  def start_appeal(test_veteran)
     appeal = Appeal.create!(
-      veteran_file_number: veteran_no_ratings.file_number,
+      veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
       docket_type: "evidence_submission"
     )
 
     AppealIntake.create!(
-      veteran_file_number: veteran_no_ratings.file_number,
+      veteran_file_number: test_veteran.file_number,
       user: current_user,
       started_at: 5.minutes.ago,
       detail: appeal
@@ -230,10 +230,14 @@ RSpec.feature "Appeal Intake" do
 
     Claimant.create!(
       review_request: appeal,
-      participant_id: veteran_no_ratings.participant_id
+      participant_id: test_veteran.participant_id
     )
 
     appeal.start_review!
+  end
+
+  it "Allows a Veteran without ratings to create an intake" do
+    start_appeal(veteran_no_ratings)
 
     visit "/intake"
 
@@ -255,5 +259,30 @@ RSpec.feature "Appeal Intake" do
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("Notice of Disagreement (VA Form 10182) has been processed.")
+  end
+
+  def check_row(label, text)
+    row = find("tr", text: label)
+    expect(row).to have_text(text)
+  end
+
+  scenario "For new Add Issues page" do
+    Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: receipt_date - 40.days,
+        profile_date: receipt_date - 50.days,
+        issues: [
+          { reference_id: "abc123", decision_text: "Left knee granted" },
+          { reference_id: "def456", decision_text: "PTSD denied" }
+        ]
+      )
+    start_appeal(veteran)
+
+    visit "/intake/add_issues"
+    binding.pry
+    expect(page).to have_content("Add Issues")
+    check_row("Form", "Notice of Disagreement (VA Form 10182)")
+    check_row("Review Option", "Evidence Submission")
+    check_row("Claimant", "Ed Merica")
   end
 end

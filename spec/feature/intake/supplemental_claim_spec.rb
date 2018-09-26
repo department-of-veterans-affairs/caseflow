@@ -348,15 +348,15 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  it "Allows a Veteran without ratings to create an intake" do
+  def start_sc(test_veteran, is_comp = true)
     supplemental_claim = SupplementalClaim.create!(
-      veteran_file_number: veteran_no_ratings.file_number,
+      veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
-      benefit_type: "compensation"
+      benefit_type: is_comp ? "compensation" : "education"
     )
 
     SupplementalClaimIntake.create!(
-      veteran_file_number: veteran_no_ratings.file_number,
+      veteran_file_number: test_veteran.file_number,
       user: current_user,
       started_at: 5.minutes.ago,
       detail: supplemental_claim
@@ -364,10 +364,14 @@ RSpec.feature "Supplemental Claim Intake" do
 
     Claimant.create!(
       review_request: supplemental_claim,
-      participant_id: veteran_no_ratings.participant_id
+      participant_id: test_veteran.participant_id
     )
 
     supplemental_claim.start_review!
+  end
+
+  it "Allows a Veteran without ratings to create an intake" do
+    start_sc(veteran_no_ratings)
 
     visit "/intake"
 
@@ -389,5 +393,44 @@ RSpec.feature "Supplemental Claim Intake" do
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("Request for Supplemental Claim (VA Form 21-526b) has been processed.")
+  end
+
+  context "For new Add Issues page" do
+    def check_row(label, text)
+      row = find("tr", text: label)
+      expect(row).to have_text(text)
+    end
+
+    let!(:timely_ratings) do
+      Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: receipt_date - 40.days,
+        profile_date: receipt_date - 50.days,
+        issues: [
+          { reference_id: "abc123", decision_text: "Left knee granted" },
+          { reference_id: "def456", decision_text: "PTSD denied" }
+        ]
+      )
+    end
+
+    scenario "SC comp" do
+      start_sc(veteran)
+      visit "/intake/add_issues"
+
+      expect(page).to have_content("Add Issues")
+      check_row("Form", "Supplemental Claim (VA Form 21-526b)")
+      check_row("Benefit type", "Compensation")
+      check_row("Claimant", "Ed Merica")
+    end
+
+    scenario "SC non-comp" do
+      start_sc(veteran, false)
+      visit "/intake/add_issues"
+
+      expect(page).to have_content("Add Issues")
+      check_row("Form", "Supplemental Claim (VA Form 21-526b)")
+      check_row("Benefit type", "Education")
+      expect(page).to_not have_content("Claimant")
+    end
   end
 end

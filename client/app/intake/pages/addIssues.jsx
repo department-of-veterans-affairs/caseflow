@@ -36,7 +36,7 @@ class AddIssues extends React.PureComponent {
     ];
 
     let sharedFields = [
-      { field: 'Form being processed',
+      { field: 'Form',
         content: selectedForm.name },
       { field: 'Veteran',
         content: veteranInfo },
@@ -44,11 +44,11 @@ class AddIssues extends React.PureComponent {
         content: formatDate(intakeData.receiptDate) }
     ];
 
-    let additionalFields = getAddIssuesFields(selectedForm.key, veteran, intakeData)
+    let additionalFields = getAddIssuesFields(selectedForm.key, veteran, intakeData);
     let rowObjects = sharedFields.concat(additionalFields).concat(
       { field: 'Requested issues',
         content: issueButton() }
-    )
+    );
 
     return <div className="cf-intake-edit">
       <h1 className="cf-txt-c">Add Issues</h1>
@@ -62,13 +62,13 @@ class AddIssues extends React.PureComponent {
 }
 
 export default connect(
-  ({ intake,  higherLevelReview, supplementalClaim, appeal}) => ({
+  ({ intake, higherLevelReview, supplementalClaim, appeal }) => ({
     intakeForms: {
       higher_level_review: higherLevelReview,
       supplemental_claim: supplementalClaim,
-      appeal: appeal
+      appeal
     },
     formType: intake.formType,
-    veteran: intake.veteran,
+    veteran: intake.veteran
   })
 )(AddIssues);
