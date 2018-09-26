@@ -19,6 +19,7 @@ class JudgeTask < Task
   end
 
   #:nocov:
+  # rubocop:disable Metrics/AbcSize
   # This function to be manually run in production when we need to fetch all RAMP
   # appeals that are eligible for assignment to judges, and assign them.
   def self.assign_ramp_judge_tasks(dry_run: false, batch_size: 10)
@@ -58,21 +59,22 @@ class JudgeTask < Task
   def eligible_for_assigment?(task)
     # Hearing cases will not be processed until February 2019
     return false if task.appeal.docket_name == "hearing"
-    
+
     # If it's an evidence submission case, we need to wait until the
     # evidence submission window is over
     if task.appeal.docket_name == "evidence_submission"
       return false if task.appeal.receipt_date > 90.days.ago
     end
-    
-    # If the task already has been assigned to a judge, or if it 
+
+    # If the task already has been assigned to a judge, or if it
     # is a VSO task, it will have children tasks. We only want to
     # assign tasks that have not been assigned yet.
-    return task.children.empty?
+    task.children.empty?
   end
 
   def self.list_of_assignees
     Constants::RampJudges::USERS[Rails.current_env]
   end
   #:nocov:
+  # rubocop:enable Metrics/AbcSize
 end
