@@ -29,7 +29,7 @@ class ExternalApi::BGSService
     @end_products[vbms_id] ||=
       MetricsService.record("BGS: get end products for vbms id: #{vbms_id}",
                             service: :bgs,
-                            name: "claim.find_by_vbms_file_number") do
+                            name: "claims.find_by_vbms_file_number") do
         client.claims.find_by_vbms_file_number(vbms_id.strip)
       end
   end
@@ -208,6 +208,36 @@ class ExternalApi::BGSService
                           service: :bgs,
                           name: "security.find_participant_id") do
       client.security.find_participant_id(css_id: user.css_id, station_id: user.station_id)
+    end
+  end
+
+  def find_claimant_letters(document_id)
+    DBService.release_db_connections
+
+    MetricsService.record("BGS: find claimat letter for document #{document_id}",
+                          service: :bgs,
+                          name: "documents.find_claimant_letters") do
+      client.documents.find_claimant_letters(document_id)
+    end
+  end
+
+  def manage_claimant_letter_V2(letter)
+    DBService.release_db_connections
+
+    MetricsService.record("BGS: creates the following claimant letter #{letter}",
+                          service: :bgs,
+                          name: "documents.manage_claimant_letter_V2") do
+      client.documents.manage_claimant_letter_V2(letter)
+    end
+  end
+
+  def generate_tracked_items(claim_id)
+    DBService.release_db_connections
+
+    MetricsService.record("BGS: generate tracked items for claim #{claim_id}",
+                          service: :bgs,
+                          name: "documents.generate_tracked_items") do
+      client.documents.generate_tracked_items(claim_id)
     end
   end
 

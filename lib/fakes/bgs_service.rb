@@ -497,6 +497,20 @@ class Fakes::BGSService
   end
   # rubocop:enable Metrics/MethodLength
 
+  def manage_claimant_letter_V2(letter)
+    "document_id"
+  end
+
+  def generate_tracked_items(claim_id)
+    {
+      benefit_claim: {
+        dvlpmt_items: {
+          dvlpmt_item_id: "development_item_id"
+        }
+      }
+    }
+  end
+
   private
 
   VSO_PARTICIPANT_ID = "4623321".freeze
