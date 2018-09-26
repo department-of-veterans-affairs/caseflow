@@ -10,7 +10,7 @@ class LegacyTasksController < ApplicationController
   end
 
   def index
-    current_role = (params[:role] || user.vacols_roles.first).downcase
+    current_role = (params[:role] || user.vacols_roles.first).try(:downcase)
     return invalid_role_error unless ROLES.include?(current_role)
     respond_to do |format|
       format.html do
