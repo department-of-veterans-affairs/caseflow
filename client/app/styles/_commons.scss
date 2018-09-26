@@ -40,7 +40,7 @@ abbr {
 }
 
 label {
-  font-weight: normal;
+  font-weight: $font-normal;
   margin-top: 0; // Override USWDS
 }
 
@@ -48,7 +48,6 @@ p {
   margin-top: rem(20px);
   margin-bottom: rem(24px);
   color: $color-gray-dark;
-  font-weight: 400;
   font-size: 17px;
   line-height: 1.5em;
 }
@@ -67,7 +66,6 @@ p {
 }
 
 .cf-lead-paragraph {
-  font-weight: 400;
   font-size: 19px;
   line-height: 1.5em;
   margin-bottom: 30px;
@@ -81,7 +79,6 @@ p {
 }
 
 .cf-display-2 {
-  font-weight: 400;
   font-size: 44px;
   line-height: 1.3em;
   margin-bottom: 40px;
@@ -163,7 +160,7 @@ h4 {
 
 h5 {
   font-size: 13px;
-  font-weight: 400;
+  font-weight: $font-normal;
   text-transform: uppercase;
   margin-bottom: 12px;
 }
@@ -540,7 +537,7 @@ div {
 
 .cf-progress-bar-not-activated {
   color: $color-gray-dark;
-  font-weight: 700;
+  font-weight: $font-bold;
   padding-bottom: 6px;
   border-bottom: 7px solid $color-gray-light;
 }
@@ -836,7 +833,7 @@ form {
       content: '* ';
       color: $color-secondary;
       font-family: inherit;
-      font-weight: bold;
+      font-weight: $font-normal;
       font-style: normal;
     }
   }
