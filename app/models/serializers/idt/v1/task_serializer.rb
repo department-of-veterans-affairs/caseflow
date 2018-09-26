@@ -34,8 +34,8 @@ class Idt::V1::TaskSerializer < ActiveModel::Serializer
 
   attribute :assigned_by_name
 
-  attribute :attorney_case_reviews do
-    object.documents.map do |document|
+  attribute :documents do
+    object.attorney_case_reviews.map do |document|
       { written_by: document.written_by_name, document_id: document.document_id }
     end
   end
