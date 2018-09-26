@@ -188,13 +188,13 @@ ActiveRecord::Schema.define(version: 20180926143801) do
   end
 
   create_table "decisions", force: :cascade do |t|
-    t.bigint "request_issue_id"
+    t.bigint "appeal_id"
     t.string "citation_number"
     t.date "decision_date"
     t.string "redacted_document_location"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["request_issue_id"], name: "index_decisions_on_request_issue_id"
+    t.index ["appeal_id"], name: "index_decisions_on_appeal_id"
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
