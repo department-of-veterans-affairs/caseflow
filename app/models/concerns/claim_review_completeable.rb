@@ -7,7 +7,7 @@ module ClaimReviewCompleteable
       intake.start_completion!
       detail.request_issues.destroy_all unless detail.request_issues.empty?
       detail.create_issues!(build_issues(req_issues))
-      detail.requires_processing!
+      detail.submit_for_processing!
       if run_async?
         ClaimReviewProcessJob.perform_later(detail)
       else
