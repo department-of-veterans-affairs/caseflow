@@ -134,7 +134,7 @@ describe HigherLevelReviewIntake do
 
     let(:issue_data) do
       {
-        profile_date: "2018-04-30",
+        profile_date: "2018-04-30T11:11:00.000-04:00",
         reference_id: "reference-id",
         decision_text: "decision text"
       }
@@ -196,7 +196,7 @@ describe HigherLevelReviewIntake do
       expect(intake.detail.request_issues.count).to eq 1
       expect(intake.detail.request_issues.first).to have_attributes(
         rating_issue_reference_id: "reference-id",
-        rating_issue_profile_date: Time.zone.local(2018, 4, 30),
+        rating_issue_profile_date: Time.zone.local(2018, 4, 30, 15, 11).utc,
         description: "decision text",
         rating_issue_associated_at: Time.zone.now
       )
