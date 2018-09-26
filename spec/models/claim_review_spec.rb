@@ -65,11 +65,11 @@ describe ClaimReview do
 
   context "async logic scopes" do
     let!(:claim_review_requiring_processing) do
-      create(:higher_level_review, receipt_date: receipt_date).tap { |hlr| hlr.submit_for_processing! }
+      create(:higher_level_review, receipt_date: receipt_date).tap(&:submit_for_processing!)
     end
 
     let!(:claim_review_processed) do
-      create(:higher_level_review, receipt_date: receipt_date).tap { |hlr| hlr.processed! }
+      create(:higher_level_review, receipt_date: receipt_date).tap(&:processed!)
     end
 
     let!(:claim_review_recently_attempted) do

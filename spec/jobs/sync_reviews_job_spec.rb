@@ -13,11 +13,11 @@ describe SyncReviewsJob do
     end
 
     let!(:higher_level_review_requiring_processing) do
-      create(:higher_level_review).tap { |hlr| hlr.submit_for_processing! }
+      create(:higher_level_review).tap(&:submit_for_processing!)
     end
 
     let!(:higher_level_review_processed) do
-      create(:higher_level_review).tap { |hlr| hlr.processed! }
+      create(:higher_level_review).tap(&:processed!)
     end
 
     let!(:higher_level_review_attempts_ended) do
