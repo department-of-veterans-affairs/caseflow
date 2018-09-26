@@ -137,6 +137,10 @@ jobs:
           path: ~/project/tmp/capybara
 
       - store_artifacts:
+          name: Store rails test log
+          path: ~/project/logs/test.log
+
+      - store_artifacts:
           name: Store testfile ordering
           path: ~/project/tmp/testfiles
 
