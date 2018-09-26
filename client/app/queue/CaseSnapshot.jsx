@@ -209,7 +209,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     </React.Fragment>;
   };
 
-  showActionsSection = () => {
+  showActionsSection = (): boolean => {
     if (this.props.hideDropdown) {
       return false;
     }
@@ -223,7 +223,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
 
     // users can end up at case details for appeals with no DAS
     // record (!task.taskId). prevent starting checkout flows
-    return tasks.length && _.every(tasks, (task) => task.taskId);
+    return Boolean(tasks.length && _.every(tasks, (task) => task.taskId));
   }
 
   render = () => {
