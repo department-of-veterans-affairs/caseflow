@@ -11,7 +11,6 @@ import {
 } from './selectors';
 import { setAppealAod } from './QueueActions';
 
-import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
 import Alert from '../components/Alert';
 import editModalBase from './components/EditModalBase';
@@ -141,6 +140,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setAppealAod
 }, dispatch);
 
-export default (withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(editModalBase(AdvancedOnDocketMotionView, COPY.ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE))
-): React.ComponentType<Params>);
+export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(
+  editModalBase(AdvancedOnDocketMotionView, COPY.ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE)
+)): React.ComponentType<Params>);

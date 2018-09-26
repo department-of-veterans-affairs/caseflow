@@ -1,9 +1,4 @@
 import React from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import _ from 'lodash';
-import { withRouter } from 'react-router-dom';
-import { css } from 'glamor';
 import Modal from '../../components/Modal';
 
 export default function editModalBase(ComponentToWrap, title) {
@@ -45,10 +40,10 @@ export default function editModalBase(ComponentToWrap, title) {
           onClick: this.submit
         }]}
         closeHandler={this.closeHandler}>
-        <ComponentToWrap ref={this.getWrappedComponentRef} {...this.props}/>
+        <ComponentToWrap ref={this.getWrappedComponentRef} {...this.props} />
       </Modal>
     </React.Fragment>;
   }
 
-  return withRouter(WrappedComponent);
+  return WrappedComponent;
 }
