@@ -33,57 +33,57 @@ export default class AutoSave extends React.Component {
     clearInterval(this.setIntervalId);
   }
 
-   debouncedResetSaveStatus = _.debounce(
-     () => this.props.resetSaveStatus,
-     this.props.saveSuccessTimeout
-   );
+  debouncedResetSaveStatus = _.debounce(
+    () => this.props.resetSaveStatus,
+    this.props.saveSuccessTimeout
+  );
 
-   componentDidUpdate(prevProps) {
-     if (this.props.saveSuccess !== prevProps.saveSuccess) {
-       this.debouncedResetSaveStatus();
-     }
-   }
+  componentDidUpdate(prevProps) {
+    if (this.props.saveSuccess !== prevProps.saveSuccess) {
+      this.debouncedResetSaveStatus();
+    }
+  }
 
-   render() {
-     if (this.props.isSaving) {
-       const color = this.props.spinnerColor || COLORS.GREY_DARK;
+  render() {
+    if (this.props.isSaving) {
+      const color = this.props.spinnerColor || COLORS.GREY_DARK;
 
-       return <div className="saving">
-         <div className="loadingSymbol">{loadingSymbolHtml('Saving...', '20px', color)}</div>
-       </div>;
-     }
+      return <div className="saving">
+        <div className="loadingSymbol">{loadingSymbolHtml('Saving...', '20px', color)}</div>
+      </div>;
+    }
 
-     if (this.props.saveFailed) {
+    if (this.props.saveFailed) {
 
-       const alertMessage = <div>
+      const alertMessage = <div>
         Unable to save. Please check your internet connection and try again. <span>
-           <Button
-             name="RETRY"
-             onClick={this.props.save}
-             linkStyling
-           />
-         </span>
-       </div>;
+          <Button
+            name="RETRY"
+            onClick={this.props.save}
+            linkStyling
+          />
+        </span>
+      </div>;
 
-       return <Alert
-         message={alertMessage}
-         type="error"
-         fixed
-         styling={alertStyling}
-       />;
-     }
+      return <Alert
+        message={alertMessage}
+        type="error"
+        fixed
+        styling={alertStyling}
+      />;
+    }
 
-     if (this.props.saveSuccess) {
-       return <Alert
-         message="Connected! Your hearing worksheet has been saved."
-         type="success"
-         fixed
-         styling={alertStyling}
-       />;
-     }
+    if (this.props.saveSuccess) {
+      return <Alert
+        message="Connected! Your Hearing has been saved."
+        type="success"
+        fixed
+        styling={alertStyling}
+      />;
+    }
 
-     return <span className="saving">Last saved at {this.props.timeSaved}</span>;
-   }
+    return <span className="saving">Last saved at {this.props.timeSaved}</span>;
+  }
 }
 
 AutoSave.propTypes = {

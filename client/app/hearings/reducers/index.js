@@ -239,7 +239,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       saveDocketSuccess: { $set: action.payload.saveSuccess }
     });
 
-  case Constants.RESET_SAVE_STATUS:
+  case Constants.RESET_DOCKET_SAVE_STATUS:
     return update(state, {
       saveDocketSuccess: { $set: false },
       saveDocketFailed: { $set: false },
@@ -249,6 +249,18 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_WORKSHEET_SAVE_FAILED_STATUS:
     return update(state, {
       saveWorksheetFailed: { $set: action.payload.saveFailed }
+    });
+
+  case Constants.SET_WORKSHEET_SAVE_SUCCESS_STATUS:
+    return update(state, {
+      saveWorksheetSuccess: { $set: action.payload.saveSuccess }
+    });
+
+  case Constants.RESET_WORKSHEET_SAVE_STATUS:
+    return update(state, {
+      saveWorksheetSuccess: { $set: false },
+      saveWorksheetFailed: { $set: false },
+      saving: { $set: false }
     });
 
   case Constants.SET_EDITED_FLAG_TO_FALSE:

@@ -224,6 +224,13 @@ export const setWorksheetSaveFailedStatus = (saveFailed) => ({
   }
 });
 
+export const setWorksheetSaveSuccessStatus = () => ({
+  type: Constants.SET_WORKSHEET_SAVE_SUCCESS_STATUS,
+  payload: {
+    saveSuccess: false
+  }
+});
+
 export const saveWorksheet = (worksheet) => (dispatch) => {
   if (!worksheet.edited) {
     dispatch(setWorksheetTimeSaved(now()));
@@ -233,6 +240,7 @@ export const saveWorksheet = (worksheet) => (dispatch) => {
 
   dispatch(toggleWorksheetSaving(true));
   dispatch(setWorksheetSaveFailedStatus(false));
+  // dispatch(setWorksheetSaveSuccessStatus(false));
 
   ApiUtil.patch(`/hearings/worksheets/${worksheet.id}`, { data: { worksheet } }).
     then(() => {
@@ -241,6 +249,8 @@ export const saveWorksheet = (worksheet) => (dispatch) => {
     () => {
       dispatch(setWorksheetSaveFailedStatus(true));
       dispatch(toggleWorksheetSaving(false));
+      // dispatch(setWorksheetSaveSuccessStatus(true));
+
     }).
     finally(() => {
       dispatch(setWorksheetTimeSaved(now()));
@@ -345,5 +355,9 @@ export const saveDocket = (docket, date) => (dispatch) => () => {
 };
 
 export const resetDocketSaveStatus = () => ({
-  type: Constants.RESET_SAVE_STATUS
+  type: Constants.RESET_DOCKET_SAVE_STATUS
+});
+
+export const resetWorksheetSaveStatus = () => ({
+  type: Constants.RESET_WORKSHEET_SAVE_STATUS
 });

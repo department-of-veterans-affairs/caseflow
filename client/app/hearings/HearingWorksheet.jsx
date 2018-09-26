@@ -25,6 +25,8 @@ import {
   toggleWorksheetSaving,
   setWorksheetTimeSaved,
   setWorksheetSaveFailedStatus,
+  setWorksheetSaveSuccessStatus,
+  resetWorksheetSaveStatus,
   saveWorksheet,
   saveDocket
 } from './actions/Dockets';
@@ -167,6 +169,8 @@ export class HearingWorksheet extends React.PureComponent {
               isSaving={this.props.worksheetIsSaving}
               timeSaved={this.props.worksheetTimeSaved || now()}
               saveFailed={this.props.saveWorksheetFailed}
+              saveSuccess={this.props.saveWorksheetSuccess}
+              resetSaveStatus={this.props.resetWorksheetSaveStatus}
             />
             <WorksheetHeaderVeteranSelection
               openPdf={this.openPdf}
@@ -207,6 +211,7 @@ const mapStateToProps = (state) => ({
   worksheetAppeals: state.worksheetAppeals,
   worksheetIssues: state.worksheetIssues,
   saveWorksheetFailed: state.saveWorksheetFailed,
+  saveWorksheetSuccess: state.saveWorksheetSuccess,
   worksheetIsSaving: state.worksheetIsSaving,
   worksheetTimeSaved: state.worksheetTimeSaved,
   fetchingWorksheet: state.fetchingWorksheet
@@ -218,8 +223,10 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setWorksheetTimeSaved,
   saveWorksheet,
   setWorksheetSaveFailedStatus,
+  setWorksheetSaveSuccessStatus,
   saveIssues,
-  saveDocket
+  saveDocket,
+  resetWorksheetSaveStatus
 }, dispatch);
 
 export default connect(
