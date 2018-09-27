@@ -14,4 +14,22 @@ class Idt::V1::AppealSerializer < ActiveModel::Serializer
   attribute :docket_number
   attribute :docket_name
   attribute :number_of_issues
+
+  attribute :day_waiting do
+    @instance_options[:task] ? @instance_options[:task].days_waiting : nil
+  end
+
+  attribute :assigned_by_name do
+    @instance_options[:task] ? @instance_options[:task].assigned_by_name : nil
+  end
+
+  attribute :documents do
+    if @instance_options[:task]
+      @instance_options[:task].attorney_case_reviews.map do |document|
+        { written_by: document.written_by_name, document_id: document.document_id }
+      end
+    else
+      nil
+    end
+  end
 end

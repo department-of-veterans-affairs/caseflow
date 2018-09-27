@@ -15,7 +15,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     if file_number.present?
       render json: json_appeals(appeals_by_file_number)
     else
-      render json: { data: json_tasks(tasks_assigned_to_user) }
+      render json: { data: json_appeals_with_tasks(tasks_assigned_to_user) }
     end
   end
 
@@ -66,11 +66,14 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     ).as_json
   end
 
-  def json_tasks(tasks)
-    ActiveModelSerializers::SerializableResource.new(
-      tasks,
-      each_serializer: ::Idt::V1::TaskSerializer
-    ).as_json
+  def json_appeals_with_tasks(tasks)
+    tasks.map do |task|
+      ActiveModelSerializers::SerializableResource.new(
+        task.appeal,
+        serializer: ::Idt::V1::AppealSerializer,
+        task: task
+      ).as_json[:data]
+    end
   end
 
   def json_appeals(appeals)
