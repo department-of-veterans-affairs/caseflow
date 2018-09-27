@@ -9,15 +9,18 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
   end
 
   def show
-    sp = if schedule_period.can_be_finalized?
+    sp = if schedule_period.can_be_finalized? && !schedule_period.submitting_to_vacols
            schedule_period.to_hash.merge(
+             can_finalize: schedule_period.can_be_finalized?,
              hearing_days: schedule_period.algorithm_assignments.map do |hearing_day|
                hearing_day[:regional_office] = RegionalOffice.city_state_by_key(hearing_day[:regional_office])
                hearing_day
              end
            )
          else
-           schedule_period.to_hash.merge(cannot_finalize: true)
+           schedule_period.to_hash.merge(
+             can_finalize: schedule_period.can_be_finalized?
+           )
          end
     render json: { schedule_period: sp }
   rescue HearingSchedule::Errors::NotEnoughAvailableDays,

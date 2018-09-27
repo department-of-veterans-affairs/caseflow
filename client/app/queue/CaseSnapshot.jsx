@@ -3,6 +3,7 @@ import { css } from 'glamor';
 import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import {
   appealWithDetailSelector,
@@ -77,7 +78,7 @@ type Props = Params & {|
 export class CaseSnapshot extends React.PureComponent<Props> {
   daysSinceTaskAssignmentListItem = () => {
     if (this.props.taskAssignedToUser) {
-      const today = moment();
+      const today = moment().startOf('day');
       const dateAssigned = moment(this.props.taskAssignedToUser.assignedOn);
       const dayCountSinceAssignment = today.diff(dateAssigned, 'days');
 
@@ -208,21 +209,21 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     </React.Fragment>;
   };
 
-  showActionsSection = () => {
+  showActionsSection = (): boolean => {
     if (this.props.hideDropdown) {
       return false;
     }
-    if (this.props.taskAssignedToUser) {
-      return true;
-    }
-    if (this.props.taskAssignedToAttorney) {
-      return true;
-    }
-    if (this.props.taskAssignedToOrganization) {
-      return true;
-    }
 
-    return false;
+    const {
+      taskAssignedToUser,
+      taskAssignedToAttorney,
+      taskAssignedToOrganization
+    } = this.props;
+    const tasks = _.compact([taskAssignedToUser, taskAssignedToAttorney, taskAssignedToOrganization]);
+
+    // users can end up at case details for appeals with no DAS
+    // record (!task.taskId). prevent starting checkout flows
+    return Boolean(tasks.length && _.every(tasks, (task) => task.taskId));
   }
 
   render = () => {

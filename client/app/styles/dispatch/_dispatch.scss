@@ -1,41 +1,11 @@
 .route-claim-confirmNote-wrapper {
-  .question-label {
+  label {
     max-width: 100%;
   }
 
   .cf-required {
     float: none;
   }
-}
-
-.cf-multiple-columns {
-  .cf-form-checkbox {
-
-    .question-label {
-      margin-bottom: 0;
-    }
-  }
-}
-
-.cf-vbms-note {
-  position: relative;
-
-  .cf-form-textarea {
-    width: 80%;
-    margin-left: 100px;
-}
-
-  .question-label {
-    font-weight: bold;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-  .copy-note-button {
-    width: 80%;
-    margin-left: 100px;
- }
 }
 
 .cf-email-header {

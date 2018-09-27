@@ -44,7 +44,7 @@ export default class UnpreparedTasksIndex extends React.Component {
         </div>
       </div>
 
-      <div className="usa-grid-full">
+      <div className="usa-width-one-whole">
         <Table
           columns={tableColumns}
           rowObjects={unpreparedTasks}

@@ -41,6 +41,18 @@ const reducers = (state = initialState, action = {}) => {
         $set: action.payload.upcomingHearingDays
       }
     });
+  case ACTIONS.RECEIVE_VETERANS_READY_FOR_HEARING:
+    return update(state, {
+      veteransReadyForHearing: {
+        $set: action.payload.veterans
+      }
+    });
+  case ACTIONS.SELECTED_HEARING_DAY_CHANGE:
+    return update(state, {
+      selectedHearingDay: {
+        $set: action.payload.selectedHearingDay
+      }
+    });
   case ACTIONS.SCHEDULE_PERIOD_ERROR:
     return update(state, {
       spErrorDetails: {
