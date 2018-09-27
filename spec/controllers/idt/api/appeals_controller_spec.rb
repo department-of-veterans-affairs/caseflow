@@ -126,10 +126,13 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         let(:assigner1) { create(:user, css_id: "ANOTHER_TEST_ID1", full_name: "Lyor Cohen") }
         let(:assigner2) { create(:user, css_id: "ANOTHER_TEST_ID2", full_name: "Grey White") }
 
+        let(:vacols_case1) { create(:case, :assigned, user: user, assigner: assigner1, document_id: "1234", bfdloout: 2.days.ago.to_date) }
+        let(:vacols_case2) { create(:case, :assigned, user: user, assigner: assigner2, document_id: "5678", bfdloout: 4.days.ago.to_date) }
+
         let!(:appeals) do
           [
-            create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user, assigner: assigner1, document_id: "1234")),
-            create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user, assigner: assigner2, document_id: "5678"))
+            create(:legacy_appeal, vacols_case: vacols_case1),
+            create(:legacy_appeal, vacols_case: vacols_case2)
           ]
         end
 
@@ -163,6 +166,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           end
 
           it "returns a list of assigned appeals" do
+            tasks.first.update(assigned_at: 5.days.ago)
+            tasks.second.update(assigned_at: 15.days.ago)
             get :list
             expect(response.status).to eq 200
             expect(RequestStore[:current_user]).to eq user
@@ -175,10 +180,12 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             expect(ama_appeals.first["id"]).to eq tasks.first.appeal.uuid
             expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.first.appeal.docket_number
             expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.reload.name.first_name
+            expect(ama_appeals.first["attributes"]["days_waiting"]).to eq 5
 
             expect(ama_appeals.second["id"]).to eq tasks.second.appeal.uuid
             expect(ama_appeals.second["attributes"]["docket_number"]).to eq tasks.second.appeal.docket_number
             expect(ama_appeals.second["attributes"]["veteran_first_name"]).to eq veteran2.reload.name.first_name
+            expect(ama_appeals.second["attributes"]["days_waiting"]).to eq 15
 
             expect(ama_appeals.first["attributes"]["assigned_by"]).to eq tasks.first.assigned_by.full_name
             expect(ama_appeals.first["attributes"]["documents"].size).to eq 2
@@ -217,11 +224,12 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             expect(response_body.second["attributes"]["veteran_last_name"]).to eq appeals.second.veteran_last_name
             expect(response_body.second["attributes"]["file_number"]).to eq appeals.second.veteran_file_number
 
+            expect(response_body.first["attributes"]["days_waiting"]).to eq 2
             expect(response_body.first["attributes"]["assigned_by"]).to eq "Lyor Cohen"
             expect(response_body.first["attributes"]["documents"].size).to eq 1
             expect(response_body.first["attributes"]["documents"].first["document_id"]).to eq "1234"
 
-
+            expect(response_body.second["attributes"]["days_waiting"]).to eq 4
             expect(response_body.second["attributes"]["assigned_by"]).to eq "Grey White"
             expect(response_body.second["attributes"]["documents"].size).to eq 1
             expect(response_body.second["attributes"]["documents"].first["document_id"]).to eq "5678"
