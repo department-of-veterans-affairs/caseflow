@@ -97,10 +97,10 @@ class AppealsController < ApplicationController
       veteran = Veteran.find_by(file_number: file_number)
 
       appeals = if veteran
-        veteran.accessible_appeals_for_poa(vso_participant_ids)
-      else
-        []
-      end
+                  veteran.accessible_appeals_for_poa(vso_participant_ids)
+                else
+                  []
+                end
       render json: {
         appeals: json_appeals(appeals)[:data]
       }
