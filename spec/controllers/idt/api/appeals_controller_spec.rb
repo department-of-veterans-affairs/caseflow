@@ -449,8 +449,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       { appeal_id: root_task.appeal.external_id,
         citation_number: citation_number,
         decision_date: Date.new(1989, 12, 13).to_s,
-        redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx"
-      }
+        redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx" }
     end
 
     before do
