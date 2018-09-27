@@ -89,28 +89,18 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
 
     this.props.setCaseReviewActionType(actionType);
 
-    if (actionType === DECISION_TYPES.OMO_REQUEST) {
-      const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, {
-        location: 'omo_office',
-        attorney_id: task.assignedBy.pgId,
-        isLegacyAppeal: appeal.isLegacyAppeal
-      });
-      const successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
-
-      this.props.requestSave(`/case_reviews/${task.taskId}/complete`, payload, { title: successMsg }).
-        then(() => {
-          history.push('');
-          history.replace('/queue');
-          this.props.deleteAppeal(appealId);
-        });
-    } else {
-      const nextPage = appeal.isLegacyAppeal ? 'dispositions' : 'special_issues';
-
-      this.props.stageAppeal(appealId);
-
-      history.push('');
-      history.replace(`/queue/appeals/${appealId}/${nextPage}`);
+    let nextPage = 'special_issues';
+    if (appeal.isLegacyAppeal) {
+      nextPage = 'dispositions';
     }
+    if (actionType === DECISION_TYPES.OMO_REQUEST) {
+      nextPage = 'evaluate';
+    }
+
+    this.props.stageAppeal(appealId);
+
+    history.push('');
+    history.replace(`/queue/appeals/${appealId}/${nextPage}`);
   }
 
   handleAssignment = (

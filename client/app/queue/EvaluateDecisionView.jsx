@@ -23,6 +23,7 @@ import { tasksForAppealAssignedToUserSelector } from './selectors';
 
 import COPY from '../../COPY.json';
 import JUDGE_CASE_REVIEW_OPTIONS from '../../constants/JUDGE_CASE_REVIEW_OPTIONS.json';
+import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import {
   marginBottom, marginTop,
   paddingLeft, fullWidth,
@@ -128,8 +129,12 @@ class EvaluateDecisionView extends React.PureComponent {
       userRole,
       appealId
     } = this.props;
+    let loc = 'bva_dispatch';
+    if (decision.type === DECISION_TYPES.OMO_REQUEST) {
+      loc = 'omo_office';
+    }
     const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, {
-      location: 'bva_dispatch',
+      location: loc,
       attorney_id: task.assignedBy.pgId,
       isLegacyAppeal: appeal.isLegacyAppeal,
       ...this.state

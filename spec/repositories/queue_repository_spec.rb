@@ -133,7 +133,6 @@ describe QueueRepository do
       )
     end
 
-    let(:judge) { User.create(css_id: "BAWS123", station_id: User::BOARD_STATION_ID) }
     let(:attorney) { User.create(css_id: "FATR456", station_id: User::BOARD_STATION_ID) }
     let(:vacols_case) { create(:case, bfcurloc: judge_staff.slogid) }
     let!(:judge_staff) do
@@ -195,9 +194,21 @@ describe QueueRepository do
     end
   end
 
-  context ".assign_case_to_attorney!" do
+  context ".sign_decision_or_create_omo!" do
+    let(:judge) { User.create(css_id: "BAWS123", station_id: User::BOARD_STATION_ID) }
+
     before do
       RequestStore.store[:current_user] = judge
+    end
+
+    it "should set decomp and deoq for decisions being signed" do
+      appeal = create(:legacy_appeal)
+
+      QueueRepository.assign_case_to_attorney!(
+        vacols_id: appeal.vacols_id,
+        created_in_vacols_date:,
+        location: :bva_dispatch,
+        decass_attrs:)
     end
   end
 end
