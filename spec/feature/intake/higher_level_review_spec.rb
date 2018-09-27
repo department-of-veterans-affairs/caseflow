@@ -433,17 +433,17 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  it "Allows a Veteran without ratings to create an intake" do
+  def start_higher_level_review(test_veteran, is_comp: true)
     higher_level_review = HigherLevelReview.create!(
-      veteran_file_number: veteran_no_ratings.file_number,
+      veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
       informal_conference: false,
       same_office: false,
-      benefit_type: "compensation"
+      benefit_type: is_comp ? "compensation" : "education"
     )
 
     HigherLevelReviewIntake.create!(
-      veteran_file_number: veteran_no_ratings.file_number,
+      veteran_file_number: test_veteran.file_number,
       user: current_user,
       started_at: 5.minutes.ago,
       detail: higher_level_review
@@ -451,11 +451,15 @@ RSpec.feature "Higher-Level Review" do
 
     Claimant.create!(
       review_request: higher_level_review,
-      participant_id: veteran_no_ratings.participant_id,
+      participant_id: test_veteran.participant_id,
       payee_code: "00"
     )
 
     higher_level_review.start_review!
+  end
+
+  it "Allows a Veteran without ratings to create an intake" do
+    start_higher_level_review(veteran_no_ratings)
 
     visit "/intake"
 
@@ -477,5 +481,44 @@ RSpec.feature "Higher-Level Review" do
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988) has been processed.")
+  end
+
+  context "For new Add Issues page" do
+    def check_row(label, text)
+      row = find("tr", text: label)
+      expect(row).to have_text(text)
+    end
+
+    let!(:timely_ratings) do
+      Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: receipt_date - 40.days,
+        profile_date: receipt_date - 50.days,
+        issues: [
+          { reference_id: "abc123", decision_text: "Left knee granted" },
+          { reference_id: "def456", decision_text: "PTSD denied" }
+        ]
+      )
+    end
+
+    scenario "HLR comp" do
+      start_higher_level_review(veteran)
+      visit "/intake/add_issues"
+
+      expect(page).to have_content("Add Issues")
+      check_row("Form", "Request for Higher-Level Review (VA Form 20-0988)")
+      check_row("Benefit type", "Compensation")
+      check_row("Claimant", "Ed Merica")
+    end
+
+    scenario "HLR non-comp" do
+      start_higher_level_review(veteran, is_comp: false)
+      visit "/intake/add_issues"
+
+      expect(page).to have_content("Add Issues")
+      check_row("Form", "Request for Higher-Level Review (VA Form 20-0988)")
+      check_row("Benefit type", "Education")
+      expect(page).to_not have_content("Claimant")
+    end
   end
 end

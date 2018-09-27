@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import SearchBar from '../../components/SearchBar';
 import Alert from '../../components/Alert';
 import BareList from '../../components/BareList';
@@ -9,6 +9,7 @@ import { doFileNumberSearch, setFileNumberSearch } from '../actions/common';
 import { PAGE_PATHS, INTAKE_STATES } from '../constants';
 import { REQUEST_STATE } from '../../intakeCommon/constants';
 import { getIntakeStatus } from '../selectors';
+import _ from 'lodash';
 
 const steps = [
   <span>
@@ -37,6 +38,32 @@ const rampIneligibleInstructions = <div>
   <BareList items={stepFns} />
 </div>;
 
+const missingFieldsMessage = (fields) => <p>
+  Please fill in the following field(s) in the Veteran's profile in VBMS or the corporate database,
+  then retry establishing the EP in Caseflow: {fields}.
+</p>;
+
+const addressTips = [
+  () => <Fragment>Do: move the last word(s) of the street address down to an another street address field</Fragment>,
+  () => <Fragment>Do: abbreviate to St. Ave. Rd. Blvd. Dr. Ter. Pl. Ct.</Fragment>,
+  () => <Fragment>Don't: edit street names or numbers</Fragment>
+];
+
+const addressTooLongMessage = <Fragment>
+  <p>
+    This Veteran's address is too long. Please edit it in VBMS or SHARE so each address field is no longer than
+    20 characters (including spaces) then try again.
+  </p>
+  <p>Tips:</p>
+  <BareList items={addressTips} ListElementComponent="ul" />
+</Fragment>;
+
+const invalidVeteranInstructions = (searchErrorData) => <Fragment>
+  { (_.get(searchErrorData.veteranMissingFields, 'length', 0) > 0) &&
+    missingFieldsMessage(searchErrorData.veteranMissingFields) }
+  { searchErrorData.veteranAddressTooLong && addressTooLongMessage }
+</Fragment>;
+
 class Search extends React.PureComponent {
   handleSearchSubmit = () => (
     this.props.doFileNumberSearch(this.props.formType, this.props.fileNumberSearchInput)
@@ -62,9 +89,8 @@ class Search extends React.PureComponent {
           ' Please alert your manager so they can assign the form to someone else.'
       },
       veteran_not_valid: {
-        title: 'The Veteran\'s profile is missing information required to create an EP.',
-        body: 'Please fill in the following field(s) in the Veteran\'s profile in VBMS or the corporate database,' +
-          ` then retry establishing the EP in Caseflow: ${searchErrorData.veteranMissingFields}.`
+        title: 'The Veteran\'s profile has missing or invalid information required to create an EP.',
+        body: invalidVeteranInstructions(searchErrorData)
       },
       did_not_receive_ramp_election: {
         title: 'A RAMP Opt-in Notice Letter was not sent to this Veteran.',
