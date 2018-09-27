@@ -39,7 +39,7 @@ export default class AutoSave extends React.Component {
   );
 
   componentDidUpdate(prevProps) {
-    if (this.props.saveSuccess !== prevProps.saveSuccess) {
+    if (this.props.saveFailed ==false && prevProps.saveFailed == true) {
       this.debouncedResetSaveStatus();
     }
   }
@@ -98,6 +98,6 @@ AutoSave.propTypes = {
 };
 
 AutoSave.defaultProps = {
-  intervalInMs: 30000,
+  intervalInMs: 5000,
   saveSuccessTimeout: 5000
 };
