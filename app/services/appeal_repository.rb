@@ -43,7 +43,9 @@ class AppealRepository
   def self.appeals_with_hearings_by_vbms_id(vbms_id)
     vacols_ids = VACOLS::Case.where(bfcorlid: vbms_id).pluck(:bfkey)
     hearings = HearingRepository.hearings_for_appeals(vacols_ids)
-    # hearings = VACOLS::CaseHearing.where(folder_nr: vacols_ids)
+    # hearings = VACOLS::CaseHearing.
+    #   where(hearing_type: VACOLS::CaseHearing::HEARING_TYPES.keys).
+    #   where(folder_nr: vacols_ids)
 
     hearings.keys
     # hearings.pluck(:folder_nr)
