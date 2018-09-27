@@ -407,4 +407,12 @@ describe Veteran do
       expect(veteran.valid?(:bgs)).to be true
     end
   end
+
+  context "given a long address" do
+    let(:address_line3) { "this address is longer than 20 chars" }
+
+    it "is considered an invalid veteran from bgs" do
+      expect(veteran.valid?(:bgs)).to be false
+    end
+  end
 end
