@@ -43,4 +43,10 @@ class SyncReviewsJob < CaseflowJob
       end
     end
   end
+
+  def perform_request_issues_update_processing(limit)
+    RequestIssuesUpdate.requires_processing(limit).each do |riu|
+      RequestIssuesUpdateJob.perform_later(riu)
+    end
+  end
 end
