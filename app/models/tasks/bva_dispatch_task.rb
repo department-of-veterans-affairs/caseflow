@@ -16,7 +16,10 @@ class BvaDispatchTask < GenericTask
       if tasks.count != 1
         fail Caseflow::Error::BvaDispatchTaskCountMismatch, appeal_id: appeal.id, user_id: user.id, tasks: tasks
       end
+
+      params[:appeal_id] = appeal.id
       Decision.create!(params)
+
       tasks[0].mark_as_complete!
     end
 

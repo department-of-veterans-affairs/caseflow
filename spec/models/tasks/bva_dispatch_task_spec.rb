@@ -22,13 +22,20 @@ describe BvaDispatchTask do
   describe ".outcode" do
     let(:user) { FactoryBot.create(:user) }
     let(:root_task) { FactoryBot.create(:root_task) }
+    let(:citation_number) { "A18123456" }
+    let(:params) do
+      { appeal_id: root_task.appeal.external_id,
+        citation_number: citation_number,
+        decision_date: Date.new(1989, 12, 13).to_s,
+        redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx" }
+    end
     before { allow(BvaDispatchTask).to receive(:list_of_assignees).and_return([user.css_id]) }
 
     context "when single BvaDispatchTask exists for user and appeal combination" do
       before { BvaDispatchTask.create_and_assign(root_task) }
 
       it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
-        BvaDispatchTask.outcode(root_task.appeal, user)
+        BvaDispatchTask.outcode(root_task.appeal, params, user)
         tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)
         expect(tasks.length).to eq(1)
         task = tasks[0]
@@ -42,7 +49,7 @@ describe BvaDispatchTask do
       before { task_count.times { BvaDispatchTask.create_and_assign(root_task) } }
 
       it "should throw an error" do
-        expect { BvaDispatchTask.outcode(root_task.appeal, user) }.to(raise_error) do |e|
+        expect { BvaDispatchTask.outcode(root_task.appeal, params, user) }.to(raise_error) do |e|
           expect(e.class).to eq(Caseflow::Error::BvaDispatchTaskCountMismatch)
           expect(e.tasks.count).to eq(task_count)
           expect(e.user_id).to eq(user.id)
@@ -53,11 +60,37 @@ describe BvaDispatchTask do
 
     context "when no BvaDispatchTasks exists for user and appeal combination" do
       it "should throw an error" do
-        expect { BvaDispatchTask.outcode(root_task.appeal, user) }.to(raise_error) do |e|
+        expect { BvaDispatchTask.outcode(root_task.appeal, params, user) }.to(raise_error) do |e|
           expect(e.class).to eq(Caseflow::Error::BvaDispatchTaskCountMismatch)
           expect(e.tasks.count).to eq(0)
           expect(e.user_id).to eq(user.id)
           expect(e.appeal_id).to eq(root_task.appeal.id)
+        end
+      end
+    end
+
+    context "when parameters do not pass vaidation" do
+      let(:citation_number) { "ABADCITATIONUMBER" }
+      before { BvaDispatchTask.create_and_assign(root_task) }
+
+      it "should throw an error" do
+        expect { BvaDispatchTask.outcode(root_task.appeal, params, user) }.to(raise_error) do |e|
+          expect(e.class).to eq(ActiveRecord::RecordInvalid)
+        end
+      end
+    end
+
+    context "when parameters do not include all required keys" do
+      let(:incomplete_params) do
+        p = params.clone
+        p.delete(:decision_date)
+        p
+      end
+      before { BvaDispatchTask.create_and_assign(root_task) }
+
+      it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
+        expect { BvaDispatchTask.outcode(root_task.appeal, incomplete_params, user) }.to(raise_error) do |e|
+          expect(e.class).to eq(ActiveRecord::NotNullViolation)
         end
       end
     end
