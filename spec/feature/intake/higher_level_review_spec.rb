@@ -431,7 +431,7 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  def start_hlr(test_veteran, is_comp = true)
+  def start_higher_level_review(test_veteran, is_comp: true)
     higher_level_review = HigherLevelReview.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
@@ -457,7 +457,7 @@ RSpec.feature "Higher-Level Review" do
   end
 
   it "Allows a Veteran without ratings to create an intake" do
-    start_hlr(veteran_no_ratings)
+    start_higher_level_review(veteran_no_ratings)
 
     visit "/intake"
 
@@ -500,7 +500,7 @@ RSpec.feature "Higher-Level Review" do
     end
 
     scenario "HLR comp" do
-      start_hlr(veteran)
+      start_higher_level_review(veteran)
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add Issues")
@@ -510,7 +510,7 @@ RSpec.feature "Higher-Level Review" do
     end
 
     scenario "HLR non-comp" do
-      start_hlr(veteran, false)
+      start_higher_level_review(veteran, is_comp: false)
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add Issues")

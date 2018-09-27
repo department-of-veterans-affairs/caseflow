@@ -348,7 +348,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  def start_sc(test_veteran, is_comp = true)
+  def start_supplemental_claim(test_veteran, is_comp: true)
     supplemental_claim = SupplementalClaim.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
@@ -371,7 +371,7 @@ RSpec.feature "Supplemental Claim Intake" do
   end
 
   it "Allows a Veteran without ratings to create an intake" do
-    start_sc(veteran_no_ratings)
+    start_supplemental_claim(veteran_no_ratings)
 
     visit "/intake"
 
@@ -414,7 +414,7 @@ RSpec.feature "Supplemental Claim Intake" do
     end
 
     scenario "SC comp" do
-      start_sc(veteran)
+      start_supplemental_claim(veteran)
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add Issues")
@@ -424,7 +424,7 @@ RSpec.feature "Supplemental Claim Intake" do
     end
 
     scenario "SC non-comp" do
-      start_sc(veteran, false)
+      start_supplemental_claim(veteran, is_comp: false)
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add Issues")

@@ -126,7 +126,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
   case 'appeal':
     fields = [
       { field: 'Review option',
-        content: _.startCase(intakeData.docketType.split("_").join(" ")) }
+        content: _.startCase(intakeData.docketType.split('_').join(' ')) }
     ];
     break;
   default:
