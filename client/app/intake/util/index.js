@@ -89,3 +89,51 @@ export const prepareReviewData = (intakeData, intakeType) => {
     };
   }
 };
+
+const getClaimantField = (formType, veteran, intakeData) => {
+  if (formType === 'appeal' || intakeData.benefitType === 'compensation') {
+    let claimant = intakeData.claimantNotVeteran ? `${intakeData.claimant} (Payee Code ${intakeData})` : veteran.name;
+
+    return [{
+      field: 'Claimant',
+      content: claimant
+    }];
+  }
+
+  return [];
+};
+
+export const getAddIssuesFields = (formType, veteran, intakeData) => {
+  let fields;
+
+  switch (formType) {
+  case 'higher_level_review':
+    fields = [
+      { field: 'Benefit type',
+        content: _.startCase(intakeData.benefitType) },
+      { field: 'Informal conference request',
+        content: intakeData.informalConference ? 'Yes' : 'No' },
+      { field: 'Same office request',
+        content: intakeData.sameOffice ? 'Yes' : 'No' }
+    ];
+    break;
+  case 'supplemental_claim':
+    fields = [
+      { field: 'Benefit type',
+        content: _.startCase(intakeData.benefitType) }
+    ];
+    break;
+  case 'appeal':
+    fields = [
+      { field: 'Review option',
+        content: _.startCase(intakeData.docketType.split('_').join(' ')) }
+    ];
+    break;
+  default:
+    fields = [];
+  }
+
+  let claimantField = getClaimantField(formType, veteran, intakeData);
+
+  return fields.concat(claimantField);
+};
