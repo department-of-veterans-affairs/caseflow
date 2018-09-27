@@ -43,7 +43,6 @@ describe SyncReviewsJob do
       )
     end
 
-
     context "when there are canceled or cleared end product establishments" do
       let!(:end_product_establishment_canceled) do
         create(:end_product_establishment, :canceled, established_at: 4.days.ago)
