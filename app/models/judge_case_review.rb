@@ -19,9 +19,10 @@ class JudgeCaseReview < ApplicationRecord
     quality_review: "quality_review"
   }
 
-  # This numbers need to be adjusted after a full rollout to judges
-  MONTHLY_LIMIT_OF_QUAILITY_REVIEWS = 24
-  QUALITY_REVIEW_SELECTION_PROBABILITY = 0.04
+  # This comment in the GH issue will explain the numbers
+  # https://github.com/department-of-veterans-affairs/caseflow/issues/6407#issuecomment-409271892
+  MONTHLY_LIMIT_OF_QUAILITY_REVIEWS = 136
+  QUALITY_REVIEW_SELECTION_PROBABILITY = 0.032
 
   def update_in_vacols!
     MetricsService.record("VACOLS: judge_case_review #{task_id}",
