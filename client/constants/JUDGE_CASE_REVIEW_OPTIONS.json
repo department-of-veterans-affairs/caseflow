@@ -16,7 +16,7 @@
   "FACTORS_NOT_CONSIDERED": {
     "theory_contention": "Theory contention",
     "caselaw": "Case law",
-    "statue_regulation": "Statue regulation",
+    "statute_regulation": "Statute/regulation",
     "admin_procedure": "Administrative procedure, procedure opinion",
     "relevant_records": "Relevant records (medical, service, employment)",
     "lay_evidence": "Lay evidence"
