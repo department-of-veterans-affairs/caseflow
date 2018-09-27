@@ -9,6 +9,12 @@ import TabWindow from '../../components/TabWindow';
 import Table from '../../components/Table';
 import { formatDateStr } from '../../util/DateUtil';
 import RoSelectorDropdown from './RoSelectorDropdown';
+import { css } from 'glamor';
+import classnames from 'classnames';
+
+const bottomMargin = css({
+  color: 'red'
+});
 
 export default class AssignHearings extends React.Component {
 
@@ -38,22 +44,20 @@ export default class AssignHearings extends React.Component {
     </div>;
   };
 
-  // const color = veteran.type === 'CAVC';
-  //
-  // const veteranClassNames = classNames({ 'cf-red-text': color });
-
-  colors = () => {
-    let type = ''
-    if (veteran.type === 'CAVC' && 'AOD') {
-     type.push('cf-red-text');
-    }
-    return type;
-  }
+  veteranTypeColor = (type) => {
+    let veteranType;
+     if (type  === 'CAVC') {
+      veteranType = <span {...bottomMargin}>CAVC</span>;
+     } else if (type === 'AOD') {
+       veteranType = <span {...bottomMargin}>AOD</span>;
+   }
+     return veteranType;
+   }
 
   tableRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
       caseDetails: veteran.name,
-      type: veteran.type,
+      type: this.veteranTypeColor(veteran.type),
       docketNumber: veteran.docketNumber,
       location: veteran.location,
       time: veteran.time
@@ -89,7 +93,6 @@ export default class AssignHearings extends React.Component {
         valueName: 'time'
       }
     ];
-
 
     const selectedHearingDay = this.props.selectedHearingDay;
 
