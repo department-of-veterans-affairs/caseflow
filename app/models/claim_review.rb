@@ -95,16 +95,6 @@ class ClaimReview < AmaReview
     processed!
   end
 
-  # NOTE: Choosing not to test this method because it is fully tested in RequestIssuesUpdate.perform!
-  # Hoping to figure out how to refactor this into a private method.
-  def on_request_issues_update!(request_issues_update)
-    process_end_product_establishments!
-
-    request_issues_update.removed_issues.each do |request_issue|
-      request_issue.end_product_establishment.remove_contention!(request_issue)
-    end
-  end
-
   def invalid_modifiers
     end_product_establishments.map(&:modifier).reject(&:nil?)
   end

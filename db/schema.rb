@@ -606,6 +606,9 @@ ActiveRecord::Schema.define(version: 20180926182000) do
     t.integer "before_request_issue_ids", null: false, array: true
     t.integer "after_request_issue_ids", null: false, array: true
     t.datetime "processed_at"
+    t.datetime "attempted_at"
+    t.datetime "submitted_at"
+    t.string "error"
     t.index ["review_type", "review_id"], name: "index_request_issues_updates_on_review_type_and_review_id"
     t.index ["user_id"], name: "index_request_issues_updates_on_user_id"
   end

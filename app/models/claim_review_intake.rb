@@ -34,7 +34,7 @@ class ClaimReviewIntake < Intake
       if run_async?
         ClaimReviewProcessJob.perform_later(detail)
       else
-        detail.process_end_product_establishments!
+        ClaimReviewProcessJob.perform_now(detail)
       end
       complete_with_status!(:success)
     end
