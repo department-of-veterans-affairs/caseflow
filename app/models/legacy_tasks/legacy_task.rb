@@ -28,7 +28,7 @@ class LegacyTask
     FullName.new(assigned_by_first_name,
                  "",
                  assigned_by_last_name)
-    .formatted(:readable_full)
+      .formatted(:readable_full)
   end
 
   def appeal
@@ -44,7 +44,7 @@ class LegacyTask
   end
 
   def days_waiting
-    (Date.today - assigned_at.to_date).to_i if assigned_at
+    (Time.zone.today - assigned_at.to_date).to_i if assigned_at
   end
 
   ### Serializer Methods End

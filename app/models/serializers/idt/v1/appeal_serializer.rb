@@ -28,8 +28,6 @@ class Idt::V1::AppealSerializer < ActiveModel::Serializer
       @instance_options[:task].attorney_case_reviews.map do |document|
         { written_by: document.written_by_name, document_id: document.document_id }
       end
-    else
-      nil
     end
   end
 end

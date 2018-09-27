@@ -50,7 +50,7 @@ class Task < ApplicationRecord
   end
 
   def days_waiting
-    (Date.today - assigned_at.to_date).to_i if assigned_at
+    (Time.zone.today - assigned_at.to_date).to_i if assigned_at
   end
 
   def assigned_by_name

@@ -126,8 +126,12 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         let(:assigner1) { create(:user, css_id: "ANOTHER_TEST_ID1", full_name: "Lyor Cohen") }
         let(:assigner2) { create(:user, css_id: "ANOTHER_TEST_ID2", full_name: "Grey White") }
 
-        let(:vacols_case1) { create(:case, :assigned, user: user, assigner: assigner1, document_id: "1234", bfdloout: 2.days.ago.to_date) }
-        let(:vacols_case2) { create(:case, :assigned, user: user, assigner: assigner2, document_id: "5678", bfdloout: 4.days.ago.to_date) }
+        let(:vacols_case1) do
+          create(:case, :assigned, user: user, assigner: assigner1, document_id: "1234", bfdloout: 2.days.ago.to_date)
+        end
+        let(:vacols_case2) do
+          create(:case, :assigned, user: user, assigner: assigner2, document_id: "5678", bfdloout: 4.days.ago.to_date)
+        end
 
         let!(:appeals) do
           [
@@ -189,11 +193,14 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
             expect(ama_appeals.first["attributes"]["assigned_by"]).to eq tasks.first.assigned_by.full_name
             expect(ama_appeals.first["attributes"]["documents"].size).to eq 2
-            expect(ama_appeals.first["attributes"]["documents"].first["written_by"]).to eq case_review1.attorney.full_name
-            expect(ama_appeals.first["attributes"]["documents"].first["document_id"]).to eq case_review1.document_id
+            expect(ama_appeals.first["attributes"]["documents"].first["written_by"])
+              .to eq case_review1.attorney.full_name
+            expect(ama_appeals.first["attributes"]["documents"].first["document_id"])
+              .to eq case_review1.document_id
             expect(ama_appeals.first["attributes"]["documents"].second["written_by"])
               .to eq case_review2.attorney.full_name
-            expect(ama_appeals.first["attributes"]["documents"].second["document_id"]).to eq case_review2.document_id
+            expect(ama_appeals.first["attributes"]["documents"].second["document_id"])
+              .to eq case_review2.document_id
           end
 
           it "returns appeals associated with a file number" do
