@@ -277,12 +277,11 @@ RSpec.feature "Appeal Intake" do
       ]
     )
     start_appeal(veteran)
-
     visit "/intake/add_issues"
 
     expect(page).to have_content("Add Issues")
     check_row("Form", "Notice of Disagreement (VA Form 10182)")
-    check_row("Review Option", "Evidence Submission")
+    check_row("Review option", "Evidence Submission")
     check_row("Claimant", "Ed Merica")
   end
 end
