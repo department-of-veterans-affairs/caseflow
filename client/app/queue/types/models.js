@@ -84,10 +84,19 @@ export type PowerOfAttorney = {
   representative_address: ?Address
 }
 
+export type Hearing = {
+  heldBy: string,
+  viewedByJudge: boolean,
+  date: string,
+  type: string,
+  id: string,
+  disposition: string
+};
+
 export type AppealDetail = {
   issues: Array<Object>,
-  hearings: Array<Object>,
-  appealIdsWitHearings: Array<string>,
+  hearings: Array<Hearing>,
+  appealIdsWithHearings: Array<string>,
   appellantFullName: string,
   appellantAddress: Address,
   appellantRelationship: string,

@@ -172,6 +172,16 @@ export const prepareAppealIssuesForStore = (appeal: { attributes: Object }) => {
   return issues;
 };
 
+export const prepareAppealHearingsForStore = (appeal: { attributes: Object }) => appeal.attributes.hearings.
+  map((hearing) => ({
+    heldBy: hearing.held_by,
+    viewedByJudge: hearing.held_by_judge,
+    date: hearing.date,
+    type: hearing.type,
+    id: hearing.id,
+    disposition: hearing.disposition
+  }));
+
 export const prepareAppealForStore =
   (appeals: Array<Object>):
     { appeals: BasicAppeals, appealDetails: AppealDetails } => {
@@ -198,7 +208,7 @@ export const prepareAppealForStore =
 
     const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
       accumulator[appeal.attributes.external_id] = {
-        hearings: appeal.attributes.hearings,
+        hearings: prepareAppealHearingsForStore(appeal),
         appealIdsWithHearings: appeal.attributes.appeal_ids_with_hearings,
         issues: prepareAppealIssuesForStore(appeal),
         appellantFullName: appeal.attributes.appellant_full_name,

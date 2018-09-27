@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+// @flow
+import * as React from 'react';
 import { css } from 'glamor';
 import _ from 'lodash';
 
@@ -23,10 +23,17 @@ const noTopBottomMargin = css({
   marginBottom: '1rem'
 });
 
-export default class CaseHearingsDetail extends React.PureComponent {
-  getAppealAttr = (attr) => _.get(this.props.appeal, attr);
+import type {
+  Appeal,
+  Hearing
+} from './types/models';
 
-  getHearingAttrs = (hearing) => {
+type Props = {|
+  appeal: Appeal,
+|};
+
+export default class CaseHearingsDetail extends React.PureComponent<Props> {
+  getHearingAttrs = (hearing: Hearing): Array<Object> => {
     const listElements = [{
       label: 'Type',
       value: StringUtil.snakeCaseToCapitalized(hearing.type)
@@ -40,7 +47,7 @@ export default class CaseHearingsDetail extends React.PureComponent {
       label: 'Disposition',
       value: <React.Fragment>
         {StringUtil.snakeCaseToCapitalized(hearing.disposition)}&nbsp;&nbsp;
-        {hearing.viewed_by_judge &&
+        {hearing.viewedByJudge &&
         <Tooltip id="hearing-worksheet-tip" text={COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP}>
           <Link rel="noopener" target="_blank" href={`/hearings/${hearing.id}/worksheet/print?keep_open=true`}>
             {COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY}
@@ -58,12 +65,15 @@ export default class CaseHearingsDetail extends React.PureComponent {
       value: <DateString date={hearing.date} dateFormat="M/D/YY" style={marginRight} />
     }, {
       label: 'Judge',
-      value: hearing.held_by
+      value: hearing.heldBy
     }]);
   }
 
   getHearingInfo = () => {
-    const orderedHearings = _.orderBy(this.getAppealAttr('hearings'), 'date', 'asc');
+    const {
+      appeal: { hearings }
+    } = this.props;
+    const orderedHearings = _.orderBy(hearings, 'date', 'asc');
     const hearingElementsStyle = css({
       '&:first-of-type': {
         marginTop: '1rem'
@@ -88,32 +98,42 @@ export default class CaseHearingsDetail extends React.PureComponent {
     </React.Fragment>;
   }
 
-  getDetailField = ({ label, valueFunction, value }) => () => <React.Fragment>
+  getDetailField = (
+    { label, valueFunction, value }: { label: string, valueFunction: Function, value?: string}
+  ) => () => <React.Fragment>
     {label && <span {...boldText}>{label}:</span>} {value || valueFunction()}
   </React.Fragment>;
 
   render = () => {
+    const {
+      appeal: {
+        hearings,
+        appealIdsWithHearings
+      }
+    } = this.props;
+
     const listElements = [{
-      label: this.getAppealAttr('hearings').length > 1 ? 'Hearings (Oldest to Newest)' : '',
+      label: hearings.length > 1 ? 'Hearings (Oldest to Newest)' : '',
       valueFunction: this.getHearingInfo
     }];
 
-    return <BareList
-      ListElementComponent="ul"
-      items={listElements.map(this.getDetailField)}
-      listStyle={css(appealSummaryUlStyling, {
-        '> li': {
-          paddingBottom: '1.5rem',
-          paddingTop: '1rem',
-          borderBottom: '1px solid grey'
-        },
-        '> li:last-child': {
-          borderBottom: 0
-        }
-      })} />;
+    return <React.Fragment>
+      {appealIdsWithHearings.length && <React.Fragment>
+        This vet has other appeals with hearings. Click View All Cases at top.
+      </React.Fragment>}
+      <BareList
+        ListElementComponent="ul"
+        items={listElements.map(this.getDetailField)}
+        listStyle={css(appealSummaryUlStyling, {
+          '> li': {
+            paddingBottom: '1.5rem',
+            paddingTop: '1rem',
+            borderBottom: '1px solid grey'
+          },
+          '> li:last-child': {
+            borderBottom: 0
+          }
+        })} />
+    </React.Fragment>;
   };
 }
-
-CaseHearingsDetail.propTypes = {
-  appeal: PropTypes.object.isRequired
-};
