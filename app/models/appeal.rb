@@ -44,6 +44,18 @@ class Appeal < AmaReview
     docket_type
   end
 
+  def hearing_docket?
+    docket_type == "hearing"
+  end
+
+  def evidence_submission_docket?
+    docket_type == "evidence_submission"
+  end
+
+  def direct_review_docket?
+    docket_type == "direct_review"
+  end
+
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end

@@ -28,8 +28,8 @@ class JudgeTask < Task
 
     if dry_run
       Rails.logger.info("Dry run. Found #{unassigned_ramp_tasks.length} tasks to assign.")
-      evidence_count = unassigned_ramp_tasks.select { |task| task.appeal.docket_name == "evidence_submission" }.count
-      direct_review_count = unassigned_ramp_tasks.select { |task| task.appeal.docket_name == "direct_review" }.count
+      evidence_count = unassigned_ramp_tasks.select { |task| task.appeal.evidence_submission_docket? }.count
+      direct_review_count = unassigned_ramp_tasks.select { |task| task.appeal.direct_review_docket? }.count
       Rails.logger.info("Found #{evidence_count.length} eligible evidence submission tasks.")
       Rails.logger.info("Found #{direct_review_count.length} direct review tasks.")
       Rails.logger.info("Would assign #{tasks.length}, batch size is #{batch_size}.")
@@ -45,7 +45,7 @@ class JudgeTask < Task
       Rails.logger.info("Assigning judge task for appeal #{root_task.appeal.id}")
       task = create(appeal: root_task.appeal,
                     parent: root_task,
-                    appeal_type: "Appeal",
+                    appeal_type: Appeal.name,
                     assigned_at: Time.zone.now,
                     assigned_to: next_assignee)
       Rails.logger.info("Assigned judge task with task id #{task.id} to #{task.assigned_to.css_id}")
