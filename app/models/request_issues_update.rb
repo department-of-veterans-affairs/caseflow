@@ -10,61 +10,6 @@ class RequestIssuesUpdate < ApplicationRecord
   attr_writer :request_issues_data
   attr_reader :error_code
 
-  REQUIRES_PROCESSING_WINDOW_DAYS = 4
-  REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 3
-
-  class << self
-    def unexpired
-      where("submitted_at > ?", REQUIRES_PROCESSING_WINDOW_DAYS.days.ago)
-    end
-
-    def processable
-      where.not(submitted_at: nil).where(processed_at: nil)
-    end
-
-    def never_attempted
-      where(attempted_at: nil)
-    end
-
-    def previously_attempted_ready_for_retry
-      where("attempted_at < ?", REQUIRES_PROCESSING_RETRY_WINDOW_HOURS.hours.ago)
-    end
-
-    def attemptable
-      previously_attempted_ready_for_retry.or(never_attempted)
-    end
-
-    def order_by_oldest_submitted
-      order("submitted_at ASC")
-    end
-
-    def requires_processing
-      processable.attemptable.unexpired.order_by_oldest_submitted
-    end
-
-    def expired_without_processing
-      where(processed_at: nil)
-        .where("submitted_at <= ?", REQUIRES_PROCESSING_WINDOW_DAYS.days.ago)
-        .order("submitted_at ASC")
-    end
-  end
-
-  def submit_for_processing!
-    update!(submitted_at: Time.zone.now, processed_at: nil)
-  end
-
-  def processed!
-    update!(processed_at: Time.zone.now) unless processed?
-  end
-
-  def attempted!
-    update!(attempted_at: Time.zone.now)
-  end
-
-  def processed?
-    !!processed_at
-  end
-
   def perform!
     return false unless validate_before_perform
     return false if processed?

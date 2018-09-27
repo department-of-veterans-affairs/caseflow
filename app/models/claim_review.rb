@@ -8,63 +8,23 @@ class ClaimReview < AmaReview
 
   self.abstract_class = true
 
+  # The Asyncable module requires we define these.
   # establishment_submitted_at - when our db is ready to push to exernal services
   # establishment_attempted_at - when our db attempted to push to external services
   # establishment_processed_at - when our db successfully pushed to external services
 
-  REQUIRES_PROCESSING_WINDOW_DAYS = 4
-  REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 3
-
   class << self
-    def unexpired
-      where("establishment_submitted_at > ?", REQUIRES_PROCESSING_WINDOW_DAYS.days.ago)
+    def submitted_at_column
+      :establishment_submitted_at
     end
 
-    def processable
-      where.not(establishment_submitted_at: nil).where(establishment_processed_at: nil)
+    def attempted_at_column
+      :establishment_attempted_at
     end
 
-    def never_attempted
-      where(establishment_attempted_at: nil)
+    def processed_at_column
+      :establishment_processed_at
     end
-
-    def previously_attempted_ready_for_retry
-      where("establishment_attempted_at < ?", REQUIRES_PROCESSING_RETRY_WINDOW_HOURS.hours.ago)
-    end
-
-    def attemptable
-      previously_attempted_ready_for_retry.or(never_attempted)
-    end
-
-    def order_by_oldest_submitted
-      order("establishment_submitted_at ASC")
-    end
-
-    def requires_processing
-      processable.attemptable.unexpired.order_by_oldest_submitted
-    end
-
-    def expired_without_processing
-      where(establishment_processed_at: nil)
-        .where("establishment_submitted_at <= ?", REQUIRES_PROCESSING_WINDOW_DAYS.days.ago)
-        .order("establishment_submitted_at ASC")
-    end
-  end
-
-  def submit_for_processing!
-    update!(establishment_submitted_at: Time.zone.now, establishment_processed_at: nil)
-  end
-
-  def processed!
-    update!(establishment_processed_at: Time.zone.now) unless processed?
-  end
-
-  def attempted!
-    update!(establishment_attempted_at: Time.zone.now)
-  end
-
-  def processed?
-    !!establishment_processed_at
   end
 
   def issue_code(_rated)
