@@ -107,7 +107,7 @@ class IntakeFrame extends React.PureComponent {
                 exact
                 path={PAGE_PATHS.REVIEW}
                 component={ReviewButtons} />
-              {[PAGE_PATHS.FINISH, PAGE_PATHS.ADD_ISSUES].map((path, index) =>
+              {[PAGE_PATHS.FINISH, PAGE_PATHS.ADD_ISSUES].map((path) =>
                 <Route
                   exact
                   path={path}
