@@ -45,4 +45,8 @@ class ClaimReviewIntake < Intake
   def review_params(_request_params)
     fail Caseflow::Error::MustImplementInSubclass
   end
+
+  def build_issues(request_issues_data)
+    request_issues_data.map { |data| detail.request_issues.from_intake_data(data) }
+  end
 end
