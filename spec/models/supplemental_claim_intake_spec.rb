@@ -1,6 +1,7 @@
 describe SupplementalClaimIntake do
   before do
     FeatureToggle.enable!(:test_facols)
+    Time.zone = "Eastern Time (US & Canada)"
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
 
@@ -199,7 +200,7 @@ describe SupplementalClaimIntake do
       expect(intake.detail.request_issues.count).to eq 1
       expect(intake.detail.request_issues.first).to have_attributes(
         rating_issue_reference_id: "reference-id",
-        rating_issue_profile_date: Time.zone.local(2018, 4, 30, 15, 11).utc,
+        rating_issue_profile_date: Time.zone.local(2018, 4, 30, 11, 11),
         description: "decision text",
         rating_issue_associated_at: Time.zone.now
       )
