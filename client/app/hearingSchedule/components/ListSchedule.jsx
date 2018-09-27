@@ -9,7 +9,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import Button from '../../components/Button';
 import PropTypes from 'prop-types';
 import BasicDateRangeSelector from '../../components/BasicDateRangeSelector';
-import FilterRibbon from '../../components/FilterRibbon'
+import FilterRibbon from '../../components/FilterRibbon';
 import InlineForm from '../../components/InlineForm';
 import { CSVLink } from 'react-csv';
 import { toggleTypeFilterVisibility, toggleLocationFilterVisibility,
@@ -113,7 +113,7 @@ class ListSchedule extends React.Component {
     const setTypeSelectedValue = (value) => {
       this.props.onReceiveHearingSchedule(filterSchedule(hearingSchedule, 'hearingType', value));
       this.setState({
-        filteredByList: this.state.filteredByList.concat(["Hearing Type"])
+        filteredByList: this.state.filteredByList.concat(['Hearing Type'])
       });
       this.props.toggleTypeFilterVisibility();
     };
@@ -121,7 +121,7 @@ class ListSchedule extends React.Component {
     const setLocationSelectedValue = (value) => {
       this.props.onReceiveHearingSchedule(filterSchedule(hearingSchedule, 'regionalOffice', value));
       this.setState({
-        filteredByList: this.state.filteredByList.concat(["Hearing Location"])
+        filteredByList: this.state.filteredByList.concat(['Hearing Location'])
       });
       this.props.toggleLocationFilterVisibility();
     };
@@ -129,8 +129,8 @@ class ListSchedule extends React.Component {
     const setVljSelectedValue = (value) => {
       this.props.onReceiveHearingSchedule(filterSchedule(hearingSchedule, 'judgeName', value));
       this.setState({
-        filteredByList: this.state.filteredByList.concat(["VLJ"])
-      })
+        filteredByList: this.state.filteredByList.concat(['VLJ'])
+      });
       this.props.toggleVljFilterVisibility();
     };
 
@@ -234,8 +234,7 @@ class ListSchedule extends React.Component {
         </InlineForm>
         <FilterRibbon
           filteredByList={this.state.filteredByList}
-          clearAllFilters={clearFilteredByList}>
-        </FilterRibbon>
+          clearAllFilters={clearFilteredByList} />
       </div>
       <div className="cf-push-right" {...downloadButtonStyling} >
         <Button
