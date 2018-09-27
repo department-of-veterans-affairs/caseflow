@@ -1,3 +1,4 @@
+# rubocop:disable Lint/LiteralAsCondition, Style/MultilineIfModifier
 require "rails_helper"
 
 def click_dropdown(opt_idx, container = page)
@@ -667,3 +668,4 @@ RSpec.feature "Checkout flows" do
     end
   end
 end if false
+# rubocop:enable Lint/LiteralAsCondition, Style/MultilineIfModifier

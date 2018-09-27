@@ -1,5 +1,5 @@
 require "rails_helper"
-# rubocop:disable Style/FormatString
+# rubocop:disable Style/FormatString, Lint/LiteralAsCondition, Style/MultilineIfModifier
 
 RSpec.feature "Search" do
   let(:attorney_user) { FactoryBot.create(:user) }
@@ -285,4 +285,4 @@ RSpec.feature "Search" do
   end
 end if false
 
-# rubocop:enable Style/FormatString
+# rubocop:enable Style/FormatString, Lint/LiteralAsCondition, Style/MultilineIfModifier
