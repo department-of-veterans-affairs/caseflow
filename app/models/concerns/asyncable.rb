@@ -79,7 +79,6 @@ module Asyncable
     !!self[self.class.processed_at_column]
   end
 
-
   private
 
   def run_async?
