@@ -444,7 +444,14 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
     let(:user) { FactoryBot.create(:user) }
     let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: user.css_id) }
     let(:root_task) { FactoryBot.create(:root_task) }
-    let(:params) { { appeal_id: root_task.appeal.external_id } }
+    let(:citation_number) { "A18123456" }
+    let(:params) do
+      { appeal_id: root_task.appeal.external_id,
+        citation_number: citation_number,
+        decision_date: Date.new(1989, 12, 13).to_s,
+        redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx"
+      }
+    end
 
     before do
       allow(BvaDispatchTask).to receive(:list_of_assignees).and_return([user.css_id])
@@ -452,6 +459,30 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       key, t = Idt::Token.generate_one_time_key_and_proposed_token
       Idt::Token.activate_proposed_token(key, user.css_id)
       request.headers["TOKEN"] = t
+    end
+
+    context "when some params are missing" do
+      let(:params) { { appeal_id: root_task.appeal.external_id } }
+      before { BvaDispatchTask.create_and_assign(root_task) }
+
+      it "should throw an error" do
+        post :outcode, params: params
+        expect(response.status).to eq(400)
+        err_msg = JSON.parse(response.body)["message"]
+        expect(err_msg).to match(/param is missing/)
+      end
+    end
+
+    context "when citation_number parameter fails validation" do
+      let(:citation_number) { "INVALID" }
+      before { BvaDispatchTask.create_and_assign(root_task) }
+
+      it "should throw an error" do
+        post :outcode, params: params
+        expect(response.status).to eq(500)
+        err_msg = JSON.parse(response.body)["message"]
+        expect(err_msg).to match(/Validation failed/)
+      end
     end
 
     context "when single BvaDispatchTask exists for user and appeal combination" do
