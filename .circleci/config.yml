@@ -44,27 +44,27 @@ jobs:
 
       - restore_cache:
           keys:
-            - vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+            - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
 
       - run:
           name: Bundle install
           command: bundle install --path vendor/bundle
 
       - save_cache:
-          key: vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+          key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/project/vendor/bundle
 
       - restore_cache:
           name: Restore yarn cache
-          key: dot-cache-yarn-v1-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
 
       - run:
           name: yarn install
           command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
       - save_cache:
-          key: dot-cache-yarn-v1-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
           paths:
             - ~/.cache/yarn
 
@@ -101,7 +101,8 @@ jobs:
 
       - run:
           name: Wait for FACOLS to be ready
-          command: dockerize -wait tcp://localhost:1521 -timeout 1m
+          command: |
+            ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
 
       - run:
           name: Mocha
@@ -135,6 +136,10 @@ jobs:
       - store_artifacts:
           name: Store capybara screenshots
           path: ~/project/tmp/capybara
+
+      - store_artifacts:
+          name: Store rails test log
+          path: ~/project/log/test.log
 
       - store_artifacts:
           name: Store testfile ordering

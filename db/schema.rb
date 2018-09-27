@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180927192511) do
+ActiveRecord::Schema.define(version: 20180926143801) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -168,7 +168,6 @@ ActiveRecord::Schema.define(version: 20180927192511) do
     t.bigint "review_request_id", null: false
     t.string "participant_id", null: false
     t.string "payee_code"
-    t.date "date_of_birth"
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
@@ -188,10 +187,10 @@ ActiveRecord::Schema.define(version: 20180927192511) do
   end
 
   create_table "decisions", force: :cascade do |t|
-    t.bigint "appeal_id", null: false
-    t.string "citation_number", null: false
-    t.date "decision_date", null: false
-    t.string "redacted_document_location", null: false
+    t.bigint "appeal_id"
+    t.string "citation_number"
+    t.date "decision_date"
+    t.string "redacted_document_location"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["appeal_id"], name: "index_decisions_on_appeal_id"
