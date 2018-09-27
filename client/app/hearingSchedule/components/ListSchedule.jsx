@@ -87,14 +87,13 @@ class ListSchedule extends React.Component {
     super(props);
 
     this.state = {
-      filteredByList: [],
-      originalSchedule: {}
+      filteredByList: []
     };
   }
 
   componentDidMount = () => {
     this.setState({
-      originalSchedule: this.props.hearingSchedule
+      filteredByList: []
     });
   };
 
@@ -107,7 +106,7 @@ class ListSchedule extends React.Component {
       this.setState({
         filteredByList: []
       });
-      this.props.onReceiveHearingSchedule(this.state.originalSchedule);
+      this.props.onApply();
     };
 
     const setTypeSelectedValue = (value) => {
