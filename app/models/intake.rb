@@ -1,4 +1,6 @@
 class Intake < ApplicationRecord
+  include Asyncable
+
   class FormTypeNotSupported < StandardError; end
 
   belongs_to :user
@@ -217,6 +219,22 @@ class Intake < ApplicationRecord
   end
 
   private
+
+  def complete_claim_review_async(request_params)
+    req_issues = request_params[:request_issues] || []
+    transaction do
+      start_completion!
+      detail.request_issues.destroy_all unless detail.request_issues.empty?
+      detail.create_issues!(build_issues(req_issues))
+      detail.submit_for_processing!
+      if run_async?
+        ClaimReviewProcessJob.perform_later(detail)
+      else
+        detail.process_end_product_establishments!
+      end
+      complete_with_status!(:success)
+    end
+  end
 
   def close_expired_intakes!
     Intake.expired.each { |intake| intake.complete_with_status!(:expired) }

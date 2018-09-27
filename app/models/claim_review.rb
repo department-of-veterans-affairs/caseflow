@@ -2,6 +2,8 @@
 # higher level review as defined in the Appeals Modernization Act of 2017
 
 class ClaimReview < AmaReview
+  include Asyncable
+
   has_many :end_product_establishments, as: :source
 
   self.abstract_class = true

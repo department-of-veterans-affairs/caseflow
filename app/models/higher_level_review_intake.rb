@@ -1,6 +1,4 @@
-class HigherLevelReviewIntake < Intake
-  include ClaimReviewCompleteable
-
+class HigherLevelReviewIntake < ClaimReviewIntake
   enum error_code: Intake::ERROR_CODES
 
   def find_or_build_initial_detail
@@ -21,26 +19,9 @@ class HigherLevelReviewIntake < Intake
     )
   end
 
-  def cancel_detail!
-    detail.remove_claimants!
-    super
-  end
+  private
 
-  def review!(request_params)
-    detail.start_review!
-    detail.create_claimants!(
-      participant_id: request_params[:claimant] || veteran.participant_id,
-      payee_code: request_params[:payee_code] || "00"
-    )
-    detail.update(request_params.permit(:receipt_date, :informal_conference, :same_office, :benefit_type))
-  end
-
-  def review_errors
-    detail.errors.messages
-  end
-
-  def complete!(request_params)
-    return if complete? || pending?
-    complete_claim_review_async(request_params)
+  def review_params(request_params)
+    request_params.permit(:receipt_date, :informal_conference, :same_office, :benefit_type)
   end
 end
