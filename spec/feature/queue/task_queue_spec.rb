@@ -85,11 +85,10 @@ RSpec.feature "Task queue" do
       FeatureToggle.enable!(vso.feature.to_sym, users: [vso_employee.css_id])
       User.authenticate!(user: vso_employee)
       allow_any_instance_of(Vso).to receive(:user_has_access?).and_return(true)
-      visit "/queue"
+      visit(vso.path)
     end
 
     it "should be able to take actions on task from VSO queue" do
-      # Redirect from personalized task queue to VSO-specific queue
       expect(page).to have_content(COPY::ORGANIZATION_QUEUE_TABLE_TITLE % vso.name)
 
       case_details_link = page.find(:xpath, "//tbody/tr/td[1]/a")
