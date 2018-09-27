@@ -38,6 +38,18 @@ export default class AssignHearings extends React.Component {
     </div>;
   };
 
+  // const color = veteran.type === 'CAVC';
+  //
+  // const veteranClassNames = classNames({ 'cf-red-text': color });
+
+  colors = () => {
+    let type = ''
+    if (veteran.type === 'CAVC' && 'AOD') {
+     type.push('cf-red-text');
+    }
+    return type;
+  }
+
   tableRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
       caseDetails: veteran.name,
@@ -77,6 +89,7 @@ export default class AssignHearings extends React.Component {
         valueName: 'time'
       }
     ];
+
 
     const selectedHearingDay = this.props.selectedHearingDay;
 
