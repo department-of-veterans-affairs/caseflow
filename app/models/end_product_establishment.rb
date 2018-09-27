@@ -31,6 +31,12 @@ class EndProductEstablishment < ApplicationRecord
   CANCELED_STATUS = "CAN".freeze
   CLEARED_STATUS = "CLR".freeze
 
+  # benefit_type_code => program_type_code
+  PROGRAM_TYPE_CODES = {
+    "1" => "CPL",
+    "2" => "CPD"
+  }.freeze
+
   class << self
     def order_by_sync_priority
       active.order("last_synced_at IS NOT NULL, last_synced_at ASC")
@@ -175,6 +181,25 @@ class EndProductEstablishment < ApplicationRecord
     RequestIssue.where(id: request_issues_to_associate.map(&:id)).update_all(
       rating_issue_associated_at: Time.zone.now
     )
+  end
+
+  def create_claimant_letter!
+    return if doc_id
+    BGSService.manage_claimant_letter_v2(
+      claim_id: reference_id,
+      program_type_cd: PROGRAM_TYPE_CODES[benefit_type_code],
+      claimant_participant_id: claimant_participant_id
+    )
+  end
+
+  def generate_tracked_item!
+    return if development_item_id
+    BGSService.generate_tracked_items(reference_id)
+  end
+
+  def generate_informal_conference_tracked_item!
+    create_claimant_letter!
+    generate_tracked_item!
   end
 
   private

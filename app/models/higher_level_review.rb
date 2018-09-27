@@ -58,6 +58,10 @@ class HigherLevelReview < ClaimReview
 
   private
 
+  def informal_conference?
+    !!informal_conference
+  end
+
   def create_dta_supplemental_claim
     return if dta_issues.empty?
     dta_supplemental_claim.create_issues!(build_follow_up_dta_issues)
