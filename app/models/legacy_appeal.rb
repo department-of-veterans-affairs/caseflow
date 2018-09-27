@@ -187,7 +187,11 @@ class LegacyAppeal < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
-  delegate :age, :sex, :ssn, to: :veteran, prefix: true
+  def veteran_ssn
+    vbms_id.ends_with?("C") ? (veteran && veteran.ssn) : sanitized_vbms_id
+  end
+
+  delegate :age, :sex, to: :veteran, prefix: true
 
   # NOTE: we cannot currently match end products to a specific appeal.
   delegate :end_products, to: :veteran

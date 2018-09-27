@@ -19,7 +19,7 @@ class Idt::V1::AppealSerializer < ActiveModel::Serializer
     @instance_options[:task] ? @instance_options[:task].days_waiting : nil
   end
 
-  attribute :assigned_by_name do
+  attribute :assigned_by do
     @instance_options[:task] ? @instance_options[:task].assigned_by_name : nil
   end
 
