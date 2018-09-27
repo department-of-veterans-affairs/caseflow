@@ -283,6 +283,6 @@ RSpec.feature "Search" do
       end
     end
   end
-end
+end if false
 
 # rubocop:enable Style/FormatString

@@ -666,4 +666,4 @@ RSpec.feature "Checkout flows" do
       expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[translation_action.action.to_sym]
     end
   end
-end
+end if false
