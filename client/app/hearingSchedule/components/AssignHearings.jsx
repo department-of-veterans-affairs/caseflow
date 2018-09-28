@@ -10,9 +10,17 @@ import Table from '../../components/Table';
 import RoSelectorDropdown from './RoSelectorDropdown';
 import moment from 'moment';
 import { css } from 'glamor';
+import { COLORS } from '../../constants/AppConstants';
 
 const colorAOD = css({
   color: 'red'
+});
+
+const hoverColor = css({
+  '&:hover': {
+    backgroundColor: COLORS.BASE,
+    color: 'white'
+  }
 });
 
 export default class AssignHearings extends React.Component {
@@ -44,6 +52,7 @@ export default class AssignHearings extends React.Component {
 
             return <li key={hearingDay.id} >
               <Button
+                styling={hoverColor}
                 onClick={this.onSelectedHearingDayChange(hearingDay)}
                 linkStyling
               >
