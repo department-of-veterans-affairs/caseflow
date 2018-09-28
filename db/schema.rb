@@ -656,14 +656,6 @@ ActiveRecord::Schema.define(version: 20180926182000) do
     t.index ["appeal_type", "appeal_id"], name: "index_special_issue_lists_on_appeal_type_and_appeal_id"
   end
 
-  create_table "staff_field_for_organizations", force: :cascade do |t|
-    t.bigint "organization_id", null: false
-    t.string "name", null: false
-    t.string "values", default: [], null: false, array: true
-    t.boolean "exclude", default: false
-    t.index ["organization_id"], name: "index_staff_field_for_organizations_on_organization_id"
-  end
-
   create_table "supplemental_claims", force: :cascade do |t|
     t.string "veteran_file_number", null: false
     t.date "receipt_date"
