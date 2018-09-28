@@ -16,6 +16,11 @@ const colorAOD = css({
   color: 'red'
 });
 
+const centralOfficeStaticEntry = [{
+  label: 'Central',
+  value: 'C'
+}];
+
 const hoverColor = css({
   '&:hover': {
     backgroundColor: COLORS.BASE,
@@ -24,6 +29,11 @@ const hoverColor = css({
 });
 
 export default class AssignHearings extends React.Component {
+
+  // required to reset the RO Dropdown when moving from Viewing and Assigning.
+  componentWillMount = () => {
+    this.props.onRegionalOfficeChange('');
+  }
 
   onSelectedHearingDayChange = (hearingDay) => () => {
     this.props.onSelectedHearingDayChange(hearingDay);
@@ -159,9 +169,9 @@ export default class AssignHearings extends React.Component {
         {COPY.HEARING_SCHEDULE_ASSIGN_HEARINGS_VIEW_SCHEDULE_LINK}
       </Link>
       <RoSelectorDropdown
-        regionalOffices={this.props.regionalOffices}
         onChange={this.props.onRegionalOfficeChange}
         value={this.props.selectedRegionalOffice}
+        staticOptions={centralOfficeStaticEntry}
       />
       {this.props.upcomingHearingDays && this.formatAvailableHearingDays()}
       {this.props.upcomingHearingDays &&
