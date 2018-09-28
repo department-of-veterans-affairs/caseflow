@@ -43,11 +43,6 @@ class CaseDetailsView extends React.PureComponent {
     this.props.resetErrorMessages();
   }
 
-  componentWillUnmount = () => {
-    this.props.resetSuccessMessages();
-    this.props.resetErrorMessages();
-  }
-
   render = () => {
     const {
       appealId,
