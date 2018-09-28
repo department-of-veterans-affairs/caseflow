@@ -1,5 +1,7 @@
 // @flow
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import _ from 'lodash';
 
@@ -11,6 +13,7 @@ import Tooltip from '../components/Tooltip';
 import COPY from '../../COPY.json';
 import StringUtil from '../util/StringUtil';
 import { DateString } from '../util/DateUtil';
+import { toggleVeteranCaseList } from './uiReducer/uiActions';
 
 const appealSummaryUlStyling = css({
   paddingLeft: 0,
@@ -32,7 +35,11 @@ type Props = {|
   appeal: Appeal,
 |};
 
-export default class CaseHearingsDetail extends React.PureComponent<Props> {
+type Params = Props & {|
+  toggleVeteranCaseList: typeof toggleVeteranCaseList
+|}
+
+class CaseHearingsDetail extends React.PureComponent<Params> {
   getHearingAttrs = (hearing: Hearing): Array<Object> => {
     const listElements = [{
       label: 'Type',
@@ -104,6 +111,12 @@ export default class CaseHearingsDetail extends React.PureComponent<Props> {
     {label && <span {...boldText}>{label}:</span>} {value || valueFunction()}
   </React.Fragment>;
 
+  scrollToCaseList = () => {
+    window.scrollTo(0, 0);
+    // todo: make showVeteranCaseList
+    this.props.toggleVeteranCaseList();
+  }
+
   render = () => {
     const {
       appeal: {
@@ -119,8 +132,8 @@ export default class CaseHearingsDetail extends React.PureComponent<Props> {
 
     return <React.Fragment>
       {Boolean(appealIdsWithHearings.length) && <React.Fragment>
-        {/* todo: move to COPY */}
-        This vet has other appeals with hearings. Click View All Cases at top.
+        {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL}
+        Click <Link onClick={this.scrollToCaseList}>View All Cases</Link> at top.
       </React.Fragment>}
       <BareList
         ListElementComponent="ul"
@@ -138,3 +151,9 @@ export default class CaseHearingsDetail extends React.PureComponent<Props> {
     </React.Fragment>;
   };
 }
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  toggleVeteranCaseList
+}, dispatch);
+
+export default (connect(null, mapDispatchToProps)(CaseHearingsDetail): React.ComponentType<Props>);

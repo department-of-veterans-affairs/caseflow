@@ -95,8 +95,7 @@ RSpec.feature "Case details" do
         page.find(:xpath, "//tr[@id='table-row-#{post_remanded_appeal.vacols_id}']/td[1]/a").click
 
         expect(page).to have_content("Select an action")
-        # TODO: replace w/COPY
-        expect(page).to have_content("This vet has other appeals with hearings. Click View All Cases at top.")
+        expect(page).to have_content(COPY::CASE_DETAILS_HEARING_ON_OTHER_APPEAL)
       end
     end
 
