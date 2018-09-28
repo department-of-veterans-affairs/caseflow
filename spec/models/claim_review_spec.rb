@@ -63,6 +63,65 @@ describe ClaimReview do
     VBMS::HTTPError.new("500", "More EPs more problems")
   end
 
+  context "async logic scopes" do
+    let!(:claim_review_requiring_processing) do
+      create(:higher_level_review, receipt_date: receipt_date).tap(&:submit_for_processing!)
+    end
+
+    let!(:claim_review_processed) do
+      create(:higher_level_review, receipt_date: receipt_date).tap(&:processed!)
+    end
+
+    let!(:claim_review_recently_attempted) do
+      create(
+        :higher_level_review,
+        receipt_date: receipt_date,
+        establishment_attempted_at: (ClaimReview::REQUIRES_PROCESSING_RETRY_WINDOW_HOURS - 1).hours.ago
+      )
+    end
+
+    let!(:claim_review_attempts_ended) do
+      create(
+        :higher_level_review,
+        receipt_date: receipt_date,
+        establishment_submitted_at: (ClaimReview::REQUIRES_PROCESSING_WINDOW_DAYS + 5).days.ago,
+        establishment_attempted_at: (ClaimReview::REQUIRES_PROCESSING_WINDOW_DAYS + 1).days.ago
+      )
+    end
+
+    context ".unexpired" do
+      it "matches reviews still inside the processing window" do
+        expect(HigherLevelReview.unexpired).to eq([claim_review_requiring_processing])
+      end
+    end
+
+    context ".processable" do
+      it "matches reviews eligible for processing" do
+        expect(HigherLevelReview.processable).to match_array(
+          [claim_review_requiring_processing, claim_review_attempts_ended]
+        )
+      end
+    end
+
+    context ".attemptable" do
+      it "matches reviews that could be attempted" do
+        expect(HigherLevelReview.attemptable).not_to include(claim_review_recently_attempted)
+      end
+    end
+
+    context ".requires_processing" do
+      it "matches reviews that must still be processed" do
+        expect(HigherLevelReview.requires_processing).to eq([claim_review_requiring_processing])
+      end
+    end
+
+    context ".expired_without_processing" do
+      it "matches reviews unfinished but outside the retry window" do
+        expect(HigherLevelReview.expired_without_processing).to eq([claim_review_attempts_ended])
+      end
+    end
+  end
+
   context "#create_issues!" do
     before { claim_review.save! }
     subject { claim_review.create_issues!(issues) }
