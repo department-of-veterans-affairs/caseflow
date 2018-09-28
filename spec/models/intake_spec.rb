@@ -300,7 +300,7 @@ describe Intake do
     context "country is null" do
       let(:country) { nil }
 
-      it "adds invalid_file_number and returns false" do
+      it "adds veteran_not_valid and returns false" do
         expect(subject).to eq(false)
         expect(intake.error_code).to eq("veteran_not_valid")
       end
@@ -359,6 +359,21 @@ describe Intake do
       it "adds veteran_not_accessible and returns false" do
         expect(subject).to eq(false)
         expect(intake.error_code).to eq("veteran_not_accessible")
+      end
+    end
+
+    context "veteran address is too long" do
+      let!(:veteran) do
+        Generators::Veteran.build(
+          file_number: "64205050",
+          country: country,
+          address_line1: "this address is more than 20 characters long"
+        )
+      end
+
+      it "adds veteran_not_valid and returns false" do
+        expect(subject).to eq(false)
+        expect(intake.error_code).to eq("veteran_not_valid")
       end
     end
 

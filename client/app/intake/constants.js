@@ -3,6 +3,7 @@ export const PAGE_PATHS = {
   SEARCH: '/search',
   REVIEW: '/review_request',
   FINISH: '/finish',
+  ADD_ISSUES: '/add_issues',
   COMPLETED: '/completed'
 };
 

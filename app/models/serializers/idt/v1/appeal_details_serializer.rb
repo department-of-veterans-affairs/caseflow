@@ -14,6 +14,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :veteran_last_name
   attribute :veteran_name_suffix
   attribute :veteran_gender
+  attribute :veteran_ssn
 
   attribute :veteran_is_deceased
   attribute :veteran_death_date

@@ -192,6 +192,18 @@ const reducers = (state = initialState, action = {}) => {
         'vacolsUpload'
       ]
     });
+  case ACTIONS.TOGGLE_TYPE_FILTER_DROPDOWN:
+    return update(state, {
+      $toggle: ['filterTypeIsOpen']
+    });
+  case ACTIONS.TOGGLE_LOCATION_FILTER_DROPDOWN:
+    return update(state, {
+      $toggle: ['filterLocationIsOpen']
+    });
+  case ACTIONS.TOGGLE_VLJ_FILTER_DROPDOWN:
+    return update(state, {
+      $toggle: ['filterVljIsOpen']
+    });
   default:
     return state;
   }
