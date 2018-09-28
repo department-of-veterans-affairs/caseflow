@@ -114,12 +114,12 @@ class Task < ApplicationRecord
   end
 
   def assignable_organizations
-    Organization.assignable_hash
+    Organization.assignable
   end
 
   def assignable_users
-    return assigned_to.assignable_members_hash if assigned_to.is_a?(Organization)
-    parent.assigned_to.assignable_members_hash if parent && parent.assigned_to.is_a?(Organization)
+    return assigned_to.members if assigned_to.is_a?(Organization)
+    parent.assigned_to.members if parent && parent.assigned_to.is_a?(Organization)
   end
 
   private
