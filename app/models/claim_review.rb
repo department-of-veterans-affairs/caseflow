@@ -26,7 +26,10 @@ class ClaimReview < AmaReview
       end_product_establishment.perform!
       end_product_establishment.create_contentions!
       end_product_establishment.create_associated_rated_issues!
-      end_product_establishment.generate_informal_conference_tracked_item! if informal_conference?
+      if informal_conference?
+        end_product_establishment.generate_claimant_letter!
+        end_product_establishment.generate_tracked_item!
+      end
       end_product_establishment.commit!
     end
 

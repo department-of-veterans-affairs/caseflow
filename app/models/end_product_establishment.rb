@@ -69,7 +69,8 @@ class EndProductEstablishment < ApplicationRecord
         reference_id: result.claim_id,
         established_at: Time.zone.now,
         committed_at: commit ? Time.zone.now : nil,
-        modifier: end_product_to_establish.modifier
+        modifier: end_product_to_establish.modifier,
+        benefit_type_code: end_product_to_establish.benefit_type_code
       )
     end
   rescue VBMS::HTTPError => error
@@ -183,23 +184,22 @@ class EndProductEstablishment < ApplicationRecord
     )
   end
 
-  def create_claimant_letter!
+  def generate_claimant_letter!
     return if doc_id
-    BGSService.manage_claimant_letter_v2(
-      claim_id: reference_id,
-      program_type_cd: PROGRAM_TYPE_CODES[benefit_type_code],
-      claimant_participant_id: claimant_participant_id
-    )
+    generate_claimant_letter_in_bgs.tap do |result|
+      update!(
+        doc_id: result
+      )
+    end
   end
 
   def generate_tracked_item!
     return if development_item_id
-    BGSService.generate_tracked_items(reference_id)
-  end
-
-  def generate_informal_conference_tracked_item!
-    create_claimant_letter!
-    generate_tracked_item!
+    generate_tracked_item_in_bgs.tap do |result|
+      update!(
+        development_item_id: result
+      )
+    end
   end
 
   private
@@ -333,5 +333,17 @@ class EndProductEstablishment < ApplicationRecord
       valid_modifiers: source.valid_modifiers,
       special_issues: source.respond_to?(:special_issues) && source.special_issues
     }
+  end
+
+  def generate_claimant_letter_in_bgs
+    BGSService.new.manage_claimant_letter_v2!(
+      claim_id: reference_id,
+      program_type_cd: PROGRAM_TYPE_CODES[benefit_type_code],
+      claimant_participant_id: claimant_participant_id
+    )
+  end
+
+  def generate_tracked_item_in_bgs
+    BGSService.new.generate_tracked_items!(reference_id)
   end
 end

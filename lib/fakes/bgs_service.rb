@@ -13,6 +13,8 @@ class Fakes::BGSService
   cattr_accessor :ssn_not_found
   cattr_accessor :rating_records
   cattr_accessor :rating_issue_records
+  cattr_accessor :manage_claimant_letter_v2_requests
+  cattr_accessor :generate_tracked_items_requests
   attr_accessor :client
 
   # rubocop:disable Metrics/MethodLength
@@ -497,18 +499,24 @@ class Fakes::BGSService
   end
   # rubocop:enable Metrics/MethodLength
 
-  def manage_claimant_letter_V2(letter)
-    "document_id"
+  # We're currently only using the document_id and development_item_id to track
+  # that the call succeeded, so I am just having the fakes return these dummy values
+  def manage_claimant_letter_v2!(claim_id:, program_type_cd:, claimant_participant_id:)
+    self.class.manage_claimant_letter_v2_requests ||= {}
+
+    self.class.manage_claimant_letter_v2_requests[claim_id] = {
+      program_type_cd: program_type_cd,
+      claimant_participant_id: claimant_participant_id
+    }
+
+    "doc_id_result"
   end
 
-  def generate_tracked_items(claim_id)
-    {
-      benefit_claim: {
-        dvlpmt_items: {
-          dvlpmt_item_id: "development_item_id"
-        }
-      }
-    }
+  def generate_tracked_items!(claim_id)
+    self.class.generate_tracked_items_requests ||= {}
+    self.class.generate_tracked_items_requests[claim_id] = true
+
+    "development_item_id_result"
   end
 
   private

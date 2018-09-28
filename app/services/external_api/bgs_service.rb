@@ -220,14 +220,14 @@ class ExternalApi::BGSService
     end
   end
 
-  def manage_claimant_letter_V2(claim_id:, program_type_cd:, claimant_participant_id:)
+  def manage_claimant_letter_v2!(claim_id:, program_type_cd:, claimant_participant_id:)
     DBService.release_db_connections
      MetricsService.record("BGS: creates the claimant letter for \
                             claim_id: #{claim_id}, program_type_cd: #{program_type_cd}, \
                             claimant_participant_id: #{claimant_participant_id}",
                           service: :bgs,
-                          name: "documents.manage_claimant_letter_V2") do
-      client.documents.manage_claimant_letter_V2(
+                          name: "documents.manage_claimant_letter_v2") do
+      client.documents.manage_claimant_letter_v2(
         claim_id: claim_id,
         program_type_cd: program_type_cd,
         claimant_participant_id: claimant_participant_id
@@ -235,7 +235,7 @@ class ExternalApi::BGSService
     end
   end
 
-  def generate_tracked_items(claim_id)
+  def generate_tracked_items!(claim_id)
     DBService.release_db_connections
      MetricsService.record("BGS: generate tracked items for claim #{claim_id}",
                           service: :bgs,
