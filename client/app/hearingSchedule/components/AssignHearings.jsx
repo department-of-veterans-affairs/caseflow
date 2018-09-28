@@ -7,8 +7,8 @@ import COPY from '../../../COPY.json';
 import Button from '../../components/Button';
 import TabWindow from '../../components/TabWindow';
 import Table from '../../components/Table';
-import { formatDateStr } from '../../util/DateUtil';
 import RoSelectorDropdown from './RoSelectorDropdown';
+import moment from 'moment';
 
 const centralOfficeStaticEntry = [{
   label: 'Central',
@@ -40,7 +40,8 @@ export default class AssignHearings extends React.Component {
                 onClick={this.onSelectedHearingDayChange(hearingDay)}
                 linkStyling
               >
-                {`${formatDateStr(hearingDay.hearingDate)} ${hearingDay.roomInfo} (${availableSlots} slots)`}
+                {`${moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}
+                ${hearingDay.roomInfo} (${availableSlots} slots)`}
               </Button>
             </li>;
           })}
@@ -94,7 +95,8 @@ export default class AssignHearings extends React.Component {
 
     return <div className="usa-width-three-fourths">
       <h1>
-        {formatDateStr(selectedHearingDay.hearingDate)} {selectedHearingDay.roomInfo} ({availableSlots} slots remaining)
+        {moment(selectedHearingDay.hearingDate).format('ddd M/DD/YYYY')}
+        {selectedHearingDay.roomInfo} ({availableSlots} slots remaining)
       </h1>
       <TabWindow
         name="scheduledHearings-tabwindow"
