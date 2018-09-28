@@ -18,17 +18,17 @@ class AddIssuesModal extends React.Component {
         return {
           displayText: issue.decision_text,
           value: issue.reference_id
-        }
+        };
       });
 
       return <RadioField
         vertical
         label={<h3>Past decisions from { formatDateStr(rating.profile_date) }</h3>}
-        name={ 'rating-radio-' + rating.profile_date }
-        options={ radioOptions }
-        key={ rating.profile_date }
+        name={`rating-radio-${rating.profile_date}`}
+        options={radioOptions}
+        key={rating.profile_date}
         // todo, implement onChange
-      />
+      />;
     });
 
     return <div>
@@ -39,23 +39,24 @@ class AddIssuesModal extends React.Component {
             onClick: closeHandler
           },
           { classNames: ['usa-button', 'usa-button-secondary', 'add-issue'],
-            name: 'Add Issue',
-            onClick: () => {}
+            name: 'Add Issue'
+            // todo, implement onClick
+            // onClick: () => {}
           }
         ]}
-
         visible
-        closeHandler={ closeHandler }
-        title='Add Issue'
-        >
+        closeHandler={closeHandler}
+        title="Add Issue"
+      >
         <div>
           <h2>
             Does this issue match any of these issues from past descriptions?
           </h2>
           <p>
-            Tip: sometimes applicants list desired outcome, not what the past decision was -- so select the best matching decision.
+            Tip: sometimes applicants list desired outcome, not what the past decision was
+             -- so select the best matching decision.
           </p>
-          <br/>
+          <br />
           { ratedIssuesSections }
         </div>
       </Modal>

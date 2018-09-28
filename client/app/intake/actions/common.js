@@ -123,7 +123,7 @@ export const toggleAddIssuesModal = () => ({
       }
     }
   }
-})
+});
 
 export const submitCancel = (data) => (dispatch) => {
   dispatch({

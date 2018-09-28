@@ -16,8 +16,7 @@ class AddIssues extends React.PureComponent {
     const {
       intakeForms,
       formType,
-      veteran,
-      toggleAddIssuesModal
+      veteran
     } = this.props;
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
@@ -30,8 +29,8 @@ class AddIssues extends React.PureComponent {
         name="add-issue"
         legacyStyling={false}
         classNames={['usa-button-secondary']}
-        onClick={toggleAddIssuesModal}
-        >
+        onClick={this.props.toggleAddIssuesModal}
+      >
         + Add issue
       </Button>;
     };
@@ -59,7 +58,7 @@ class AddIssues extends React.PureComponent {
     return <div className="cf-intake-edit">
       { intakeData.addIssuesModalVisible && <AddIssuesModal
         ratings={intakeData.ratings}
-        closeHandler={toggleAddIssuesModal} />
+        closeHandler={this.props.toggleAddIssuesModal} />
       }
       <h1 className="cf-txt-c">Add Issues</h1>
 
@@ -76,7 +75,7 @@ export default connect(
     intakeForms: {
       higher_level_review: higherLevelReview,
       supplemental_claim: supplementalClaim,
-      appeal,
+      appeal
     },
     formType: intake.formType,
     veteran: intake.veteran
