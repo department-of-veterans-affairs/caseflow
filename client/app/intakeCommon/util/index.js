@@ -10,8 +10,12 @@ export const formatRatings = (ratings, requestIssues = []) => {
 
   _.forEach(requestIssues, (requestIssue) => {
     // filter out nil dates (request issues that are not yet rated)
-    if (requestIssue.profile_date && requestIssue.reference_id) {
-      result[requestIssue.profile_date].issues[requestIssue.reference_id].isSelected = true;
+    if (requestIssue.reference_id) {
+      _.forEach(result, (rating) => {
+        if (rating.issues[requestIssue.reference_id]) {
+          rating.issues[requestIssue.reference_id].isSelected = true;
+        }
+      });
     }
   });
 

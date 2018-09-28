@@ -49,6 +49,14 @@ class Task < ApplicationRecord
     appeal_type == "Appeal"
   end
 
+  def days_waiting
+    (Time.zone.today - assigned_at.to_date).to_i if assigned_at
+  end
+
+  def assigned_by_name
+    assigned_by.try(:full_name)
+  end
+
   def colocated_task?
     type == "ColocatedTask"
   end
