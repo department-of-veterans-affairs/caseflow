@@ -13,9 +13,7 @@ import {
   tasksForAppealAssignedToUserSelector
 } from '../selectors';
 
-import { requestSave } from '../uiReducer/uiActions';
 import {
-  deleteAppeal,
   stageAppeal,
   setCaseReviewActionType,
   initialAssignTasksToUser,
@@ -43,8 +41,6 @@ type Props = Params & {|
   decision: Object,
   userRole: string,
   // Action creators
-  requestSave: typeof requestSave,
-  deleteAppeal: typeof deleteAppeal,
   stageAppeal: typeof stageAppeal,
   setCaseReviewActionType: typeof setCaseReviewActionType,
   initialAssignTasksToUser: typeof initialAssignTasksToUser,
@@ -169,8 +165,6 @@ const mapStateToProps = (state: State, ownProps: Params) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestSave,
-  deleteAppeal,
   stageAppeal,
   setCaseReviewActionType,
   initialAssignTasksToUser,
