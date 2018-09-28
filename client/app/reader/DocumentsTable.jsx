@@ -11,7 +11,7 @@ import TagTableColumn from './TagTableColumn';
 import Table from '../components/Table';
 import Button from '../components/Button';
 import CommentIndicator from './CommentIndicator';
-import DropdownFilter from './DropdownFilter';
+import DropdownFilter from '../components/DropdownFilter';
 import { bindActionCreators } from 'redux';
 import Highlight from '../components/Highlight';
 import { setDocListScrollPosition, changeSortState, clearTagFilters, clearCategoryFilters,
@@ -22,7 +22,7 @@ import {
   SortArrowUp, SortArrowDown, DoubleArrow } from '../components/RenderFunctions';
 import DocCategoryPicker from './DocCategoryPicker';
 import DocTagPicker from './DocTagPicker';
-import FilterIcon from './FilterIcon';
+import FilterIcon from '../components/FilterIcon';
 import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
 
@@ -151,7 +151,8 @@ class DocumentsTable extends React.Component {
               clearFilters={this.props.clearCategoryFilters}
               name="category"
               isClearEnabled={anyCategoryFiltersAreSet}
-              handleClose={this.toggleCategoryDropdownFilterVisiblity}>
+              handleClose={this.toggleCategoryDropdownFilterVisiblity}
+              addClearFiltersRow>
               <DocCategoryPicker
                 categoryToggleStates={this.props.docFilterCriteria.category}
                 handleCategoryToggle={this.props.setCategoryFilter} />
@@ -203,7 +204,8 @@ class DocumentsTable extends React.Component {
               clearFilters={this.props.clearTagFilters}
               name="tag"
               isClearEnabled={anyTagFiltersAreSet}
-              handleClose={this.toggleTagDropdownFilterVisiblity}>
+              handleClose={this.toggleTagDropdownFilterVisiblity}
+              addClearFiltersRow>
               <DocTagPicker
                 tags={this.props.tagOptions}
                 tagToggleStates={this.props.docFilterCriteria.tag}
