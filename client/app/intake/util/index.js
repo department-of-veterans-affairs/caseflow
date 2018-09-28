@@ -90,9 +90,17 @@ export const prepareReviewData = (intakeData, intakeType) => {
   }
 };
 
+const getNonVeteranClaimant = (intakeData) => {
+  let claimant = intakeData.relationships.filter((relationship) => {
+    return relationship.value === intakeData.claimant;
+  });
+
+  return `${claimant[0].displayText} (Payee Code ${intakeData.payeeCode})`;
+};
+
 const getClaimantField = (formType, veteran, intakeData) => {
   if (formType === 'appeal' || intakeData.benefitType === 'compensation') {
-    let claimant = intakeData.claimantNotVeteran ? `${intakeData.claimant} (Payee Code ${intakeData})` : veteran.name;
+    let claimant = intakeData.claimantNotVeteran ? getNonVeteranClaimant(intakeData) : veteran.name;
 
     return [{
       field: 'Claimant',
