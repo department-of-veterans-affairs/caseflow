@@ -190,7 +190,7 @@ class TaskTable extends React.PureComponent<Props> {
           return null;
         }
 
-        const daysWaiting = moment().
+        const daysWaiting = moment().startOf('day').
           diff(moment(task.assignedOn), 'days');
 
         return <React.Fragment>
@@ -198,7 +198,8 @@ class TaskTable extends React.PureComponent<Props> {
         </React.Fragment>;
       },
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (task) => moment().diff(moment(task.assignedOn), 'days')
+      getSortValue: (task) => moment().startOf('day').
+        diff(moment(task.assignedOn), 'days')
     } : null;
   }
 
