@@ -548,8 +548,9 @@ RSpec.feature "Checkout flows" do
         click_on "Continue"
 
         expect(page).to have_content(COPY::JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
-        # lookup Decass record
-        # confirm it has decomp and deoq
+        decass = VACOLS::Decass.find_by(defolder: appeal.vacols_id, deadtim: Date.today)
+        expect(decass.decomp).to eq(Date.today)
+        expect(decass.deoq).to eq("3")
       end
     end
   end
