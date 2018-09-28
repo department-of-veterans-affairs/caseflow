@@ -9,6 +9,11 @@ import TabWindow from '../../components/TabWindow';
 import Table from '../../components/Table';
 import RoSelectorDropdown from './RoSelectorDropdown';
 import moment from 'moment';
+import { css } from 'glamor';
+
+const colorAOD = css({
+  color: 'red'
+});
 
 export default class AssignHearings extends React.Component {
 
@@ -39,10 +44,22 @@ export default class AssignHearings extends React.Component {
     </div>;
   };
 
+  veteranTypeColor = (type) => {
+    let veteranType;
+
+    if (type === 'CAVC') {
+      veteranType = <span {...colorAOD}>CAVC</span>;
+    } else if (type === 'AOD') {
+      veteranType = <span {...colorAOD}>AOD</span>;
+    }
+
+    return veteranType;
+  }
+
   tableRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
       caseDetails: veteran.name,
-      type: veteran.type,
+      type: this.veteranTypeColor(veteran.type),
       docketNumber: veteran.docketNumber,
       location: veteran.location,
       time: veteran.time
