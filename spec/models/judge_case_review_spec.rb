@@ -17,6 +17,27 @@ def complete_params(judge:, attorney:, location:, vacols_issue1:, vacols_issue2:
   }
 end
 
+def expect_decass_to_be_up_to_date(decass)
+  decass.reload
+  expect(decass.demdusr).to eq "CFS456"
+  expect(decass.defdiff).to eq "3"
+  expect(decass.deoq).to eq "1"
+  expect(decass.deqr2).to eq "Y"
+  expect(decass.deqr6).to eq "Y"
+  expect(decass.deqr9).to eq "Y"
+  expect(decass.deqr1).to eq nil
+  expect(decass.deqr3).to eq nil
+  expect(decass.deqr4).to eq nil
+  expect(decass.decomp).to eq VacolsHelper.local_date_with_utc_timezone
+  expect(decass.detrem).to eq "N"
+end
+
+def expect_case_to_be_update_to_date(vacols_case, decass)
+  expect(vacols_case.bfmemid).to eq(decass.dememid)
+  expect(vacols_case.bfattid).to eq(decass.deatty)
+  expect(vacols_case.bfboard).to eq(decass.deteam)
+end
+
 describe JudgeCaseReview do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
@@ -185,26 +206,19 @@ describe JudgeCaseReview do
           allow_any_instance_of(JudgeCaseReview).to receive(:rand).and_return(probability + probability)
           expect(subject.valid?).to eq true
           expect(subject.location).to eq "bva_dispatch"
+          expect(subject.judge).to eq judge
+          expect(subject.attorney).to eq attorney
           expect(subject.complexity).to eq "hard"
           expect(subject.quality).to eq "does_not_meet_expectations"
           expect(subject.comment).to eq "do this"
           expect(subject.factors_not_considered).to eq %w[theory_contention relevant_records]
           expect(subject.areas_for_improvement).to eq ["process_violations"]
-          expect(subject.judge).to eq judge
-          expect(subject.attorney).to eq attorney
-          expect(decass.reload.demdusr).to eq "CFS456"
-          expect(decass.defdiff).to eq "3"
-          expect(decass.deoq).to eq "1"
-          expect(decass.deqr2).to eq "Y"
-          expect(decass.deqr6).to eq "Y"
-          expect(decass.deqr9).to eq "Y"
-          expect(decass.deqr1).to eq nil
-          expect(decass.deqr3).to eq nil
-          expect(decass.deqr4).to eq nil
-          expect(decass.decomp).to eq VacolsHelper.local_date_with_utc_timezone
-          expect(decass.detrem).to eq "N"
 
-          expect(vacols_case.reload.bfcurloc).to eq "4E"
+          expect_decass_to_be_up_to_date(decass)
+
+          vacols_case.reload
+          expect(vacols_case.bfcurloc).to eq "4E"
+          expect_case_to_be_update_to_date(vacols_case, decass)
 
           vacols_issues = VACOLS::CaseIssue.where(isskey: "123456")
           # 1 vacated, 1 remanded and 1 blank issue created because of vacated disposition
@@ -248,7 +262,11 @@ describe JudgeCaseReview do
           expect(subject.location).to eq "omo_office"
           expect(subject.judge).to eq judge
           expect(subject.attorney).to eq attorney
+
+          expect_decass_to_be_up_to_date(decass)
+
           expect(vacols_case.reload.bfcurloc).to eq "20"
+          expect_case_to_be_update_to_date(vacols_case, decass)
 
           expect(VACOLS::DecisionQualityReview.find_by(qrfolder: vacols_case.bfkey)).to eq nil
         end
