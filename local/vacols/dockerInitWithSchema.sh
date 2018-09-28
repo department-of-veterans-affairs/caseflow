@@ -81,11 +81,11 @@ term_handler() {
 # setup SIGTERM Handler
 trap 'kill ${!}; term_handler' SIGTERM
 
-/home/oracle/setup/loadSchema.sh &
+/home/oracle/setup/loadSchema.sh
 
 # keep container runing
 ALERT_LOG=/u01/app/oracle/diag/rdbms/${ORACLE_SID,,}/${ORACLE_SID}/trace/alert_${ORACLE_SID}.log
-tail -f $ALERT_LOG &
+#tail -f $ALERT_LOG &
 
 childPID=$!
 wait $childPID
