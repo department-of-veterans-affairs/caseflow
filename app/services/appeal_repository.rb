@@ -44,6 +44,7 @@ class AppealRepository
     vacols_ids = VACOLS::Case.where(bfcorlid: vbms_id).pluck(:bfkey)
     hearings = HearingRepository.hearings_for_appeals(vacols_ids)
 
+    # TODO: only return held hearings
     hearings.keys
   end
 

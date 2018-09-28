@@ -118,7 +118,8 @@ export default class CaseHearingsDetail extends React.PureComponent<Props> {
     }];
 
     return <React.Fragment>
-      {appealIdsWithHearings.length && <React.Fragment>
+      {Boolean(appealIdsWithHearings.length) && <React.Fragment>
+        {/* todo: move to COPY */}
         This vet has other appeals with hearings. Click View All Cases at top.
       </React.Fragment>}
       <BareList

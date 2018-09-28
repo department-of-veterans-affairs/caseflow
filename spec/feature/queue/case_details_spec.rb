@@ -41,14 +41,32 @@ RSpec.feature "Case details" do
   end
 
   context "hearings pane on attorney task detail view" do
+    let!(:veteran) do
+      FactoryBot.create(
+        :veteran,
+        file_number: 123_456_789
+      )
+    end
+    let!(:post_remanded_appeal) do
+      FactoryBot.create(
+        :legacy_appeal,
+        vacols_case: FactoryBot.create(
+          :case,
+          :assigned,
+          :type_post_remand,
+          bfcorlid: veteran.file_number,
+          user: attorney_user
+        )
+      )
+    end
     let!(:appeal) do
       FactoryBot.create(
         :legacy_appeal,
-        :with_veteran,
         vacols_case: FactoryBot.create(
           :case,
           :assigned,
           user: attorney_user,
+          bfcorlid: veteran.file_number,
           # Need a non-cancelled dispositon to show the full set of hearing attributes.
           case_hearings: case_hearings
         )
@@ -61,7 +79,7 @@ RSpec.feature "Case details" do
 
       scenario "Entire set of attributes for hearing are displayed" do
         visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
 
         expect(page).to have_content("Select an action")
 
@@ -70,6 +88,16 @@ RSpec.feature "Case details" do
         expect(page).to have_content("Date: #{hearing.date.strftime('%-m/%-e/%y')}")
         expect(page).to have_content("Judge: #{hearing.user.full_name}")
       end
+
+      scenario "Post remanded appeal shows indication of earlier appeal hearing" do
+        visit "/queue"
+
+        page.find(:xpath, "//tr[@id='table-row-#{post_remanded_appeal.vacols_id}']/td[1]/a").click
+
+        expect(page).to have_content("Select an action")
+        # TODO: replace w/COPY
+        expect(page).to have_content("This vet has other appeals with hearings. Click View All Cases at top.")
+      end
     end
 
     context "when appeal has a single hearing that was cancelled" do
@@ -77,7 +105,7 @@ RSpec.feature "Case details" do
 
       scenario "Fewer attributes of hearing are displayed" do
         visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
 
         hearing = appeal.hearings.first
         hearing_preference = hearing.type.to_s.split("_").map(&:capitalize).join(" ")
@@ -96,7 +124,7 @@ RSpec.feature "Case details" do
 
       scenario "Fewer attributes of hearing are displayed" do
         visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
 
         worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet/print?keep_open=true']")
         expect(worksheet_link.text).to eq("View Hearing Worksheet")
@@ -108,7 +136,7 @@ RSpec.feature "Case details" do
 
       scenario "Hearings info box is not displayed" do
         visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
         expect(page).not_to have_content("Hearing preference")
       end
     end

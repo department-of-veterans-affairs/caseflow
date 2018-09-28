@@ -175,7 +175,7 @@ export const prepareAppealIssuesForStore = (appeal: { attributes: Object }) => {
 export const prepareAppealHearingsForStore = (appeal: { attributes: Object }) => appeal.attributes.hearings.
   map((hearing) => ({
     heldBy: hearing.held_by,
-    viewedByJudge: hearing.held_by_judge,
+    viewedByJudge: hearing.viewed_by_judge,
     date: hearing.date,
     type: hearing.type,
     id: hearing.id,
