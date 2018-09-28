@@ -16,12 +16,13 @@ ActiveRecord::Schema.define(version: 20180927004213) do
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
-  create_table "advance_on_docket_grants", force: :cascade do |t|
+  create_table "advance_on_docket_motions", force: :cascade do |t|
     t.bigint "person_id"
     t.bigint "user_id"
     t.string "reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "granted"
     t.index ["person_id"], name: "index_advance_on_docket_grants_on_person_id"
     t.index ["user_id"], name: "index_advance_on_docket_grants_on_user_id"
   end

@@ -87,7 +87,9 @@ class EndProductEstablishment < ApplicationRecord
     # Currently not making any assumptions about the order in which VBMS returns
     # the created contentions. Instead find the issue by matching text.
     create_contentions_in_vbms(issues_without_contentions.pluck(:description)).each do |contention|
-      issue = issues_without_contentions.find { |i| i.description == contention.text }
+      issue = issues_without_contentions.find do |i|
+        i.description == contention.text && i.contention_reference_id.nil?
+      end
       issue && issue.update!(contention_reference_id: contention.id)
     end
 
