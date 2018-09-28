@@ -138,7 +138,7 @@ class ExternalApi::VBMSService
       v5: FeatureToggle.enabled?(:claims_service_v5)
     )
 
-    send_and_log_request(claim_id, request)
+    send_and_log_request(contention.claim_id, request)
   end
 
   def self.associate_rated_issues!(claim_id:, rated_issue_contention_map:)
