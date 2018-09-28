@@ -76,7 +76,6 @@ class SelectFormButtonUnconnected extends React.PureComponent {
     <Button
       name="continue-to-search"
       onClick={this.handleClick}
-      legacyStyling={false}
       disabled={!this.props.formType}
     >
       Continue to search

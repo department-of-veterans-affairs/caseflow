@@ -113,7 +113,6 @@ class ReviewNextButton extends React.PureComponent {
       name="submit-review"
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-      legacyStyling={false}
     >
       Continue to next step
     </Button>;

@@ -212,7 +212,7 @@ RSpec.feature "Reader" do
         # and focus goes back on the Document toggle.
         find("#clear-filters").click
         expect(page).not_to have_content("Filtering by:")
-        expect(find("#button-documents")["class"]).to have_content("cf-toggle-box-shadow")
+        expect(find("#button-documents")["class"]).to have_content("usa-button")
       end
     end
 
