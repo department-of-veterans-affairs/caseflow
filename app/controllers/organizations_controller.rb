@@ -1,20 +1,12 @@
 class OrganizationsController < ApplicationController
-  before_action :verify_organization_access, except: [:index]
-  before_action :verify_role_access, except: [:index]
-  before_action :verify_feature_access, except: [:index]
+  before_action :verify_organization_access
+  before_action :verify_role_access
+  before_action :verify_feature_access
   before_action :set_application
   skip_before_action :deny_vso_access
 
-  def index
-    render json: { organizations: Organization.assignable_hash }
-  end
-
   def show
     render "organizations/show"
-  end
-
-  def members
-    render json: { members: organization.assignable_members_hash }
   end
 
   private
