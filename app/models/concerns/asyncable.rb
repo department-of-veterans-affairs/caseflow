@@ -29,7 +29,7 @@ module Asyncable
     end
 
     def unexpired
-      where(arel_table[submitted_at_column].gt REQUIRES_PROCESSING_WINDOW_DAYS.days.ago)
+      where(arel_table[submitted_at_column].gt(REQUIRES_PROCESSING_WINDOW_DAYS.days.ago))
     end
 
     def processable
@@ -41,7 +41,7 @@ module Asyncable
     end
 
     def previously_attempted_ready_for_retry
-      where(arel_table[attempted_at_column].lt REQUIRES_PROCESSING_RETRY_WINDOW_HOURS.hours.ago)
+      where(arel_table[attempted_at_column].lt(REQUIRES_PROCESSING_RETRY_WINDOW_HOURS.hours.ago))
     end
 
     def attemptable
@@ -58,7 +58,7 @@ module Asyncable
 
     def expired_without_processing
       where(processed_at_column => nil)
-        .where(arel_table[submitted_at_column].lteq REQUIRES_PROCESSING_WINDOW_DAYS.days.ago)
+        .where(arel_table[submitted_at_column].lteq(REQUIRES_PROCESSING_WINDOW_DAYS.days.ago))
         .order_by_oldest_submitted
     end
   end
