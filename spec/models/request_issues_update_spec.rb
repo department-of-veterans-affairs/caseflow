@@ -89,6 +89,63 @@ describe RequestIssuesUpdate do
     }]
   end
 
+  context "async logic scopes" do
+    let!(:riu_requiring_processing) do
+      create(:request_issues_update).tap(&:submit_for_processing!)
+    end
+
+    let!(:riu_processed) do
+      create(:request_issues_update).tap(&:processed!)
+    end
+
+    let!(:riu_recently_attempted) do
+      create(
+        :request_issues_update,
+        attempted_at: (RequestIssuesUpdate::REQUIRES_PROCESSING_RETRY_WINDOW_HOURS - 1).hours.ago
+      )
+    end
+
+    let!(:riu_attempts_ended) do
+      create(
+        :request_issues_update,
+        submitted_at: (RequestIssuesUpdate::REQUIRES_PROCESSING_WINDOW_DAYS + 5).days.ago,
+        attempted_at: (RequestIssuesUpdate::REQUIRES_PROCESSING_WINDOW_DAYS + 1).days.ago
+      )
+    end
+
+    context ".unexpired" do
+      it "matches inside the processing window" do
+        expect(described_class.unexpired).to eq([riu_requiring_processing])
+      end
+    end
+
+    context ".processable" do
+      it "matches eligible for processing" do
+        expect(described_class.processable).to match_array(
+          [riu_requiring_processing, riu_attempts_ended]
+        )
+      end
+    end
+
+    context ".attemptable" do
+      it "matches could be attempted" do
+        expect(described_class.attemptable).not_to include(riu_recently_attempted)
+      end
+    end
+
+    context ".requires_processing" do
+      it "matches must still be processed" do
+        expect(described_class.requires_processing).to eq([riu_requiring_processing])
+      end
+    end
+
+    context ".expired_without_processing" do
+      it "matches unfinished but outside the retry window" do
+        expect(described_class.expired_without_processing).to eq([riu_attempts_ended])
+      end
+    end
+  end
+
   context "#created_issues" do
     subject { request_issues_update.created_issues }
     before { request_issues_update.perform! }
