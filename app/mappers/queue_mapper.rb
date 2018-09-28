@@ -21,7 +21,7 @@ module QueueMapper
     issues_are_not_addressed: :deqr1,
     theory_contention: :deqr2,
     caselaw: :deqr3,
-    statue_regulation: :deqr4,
+    statute_regulation: :deqr4,
     admin_procedure: :deqr5,
     relevant_records: :deqr6,
     lay_evidence: :deqr7,

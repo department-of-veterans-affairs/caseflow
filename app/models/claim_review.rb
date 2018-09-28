@@ -2,9 +2,30 @@
 # higher level review as defined in the Appeals Modernization Act of 2017
 
 class ClaimReview < AmaReview
+  include Asyncable
+
   has_many :end_product_establishments, as: :source
 
   self.abstract_class = true
+
+  # The Asyncable module requires we define these.
+  # establishment_submitted_at - when our db is ready to push to exernal services
+  # establishment_attempted_at - when our db attempted to push to external services
+  # establishment_processed_at - when our db successfully pushed to external services
+
+  class << self
+    def submitted_at_column
+      :establishment_submitted_at
+    end
+
+    def attempted_at_column
+      :establishment_attempted_at
+    end
+
+    def processed_at_column
+      :establishment_processed_at
+    end
+  end
 
   def issue_code(_rated)
     fail Caseflow::Error::MustImplementInSubclass
@@ -22,6 +43,8 @@ class ClaimReview < AmaReview
   # If any external calls fail, it is safe to call this multiple times until
   # establishment_processed_at is successfully set.
   def process_end_product_establishments!
+    attempted!
+
     end_product_establishments.each do |end_product_establishment|
       end_product_establishment.perform!
       end_product_establishment.create_contentions!
@@ -33,17 +56,7 @@ class ClaimReview < AmaReview
       end_product_establishment.commit!
     end
 
-    update!(establishment_processed_at: Time.zone.now)
-  end
-
-  # NOTE: Choosing not to test this method because it is fully tested in RequestIssuesUpdate.perform!
-  # Hoping to figure out how to refactor this into a private method.
-  def on_request_issues_update!(request_issues_update)
-    process_end_product_establishments!
-
-    request_issues_update.removed_issues.each do |request_issue|
-      request_issue.end_product_establishment.remove_contention!(request_issue)
-    end
+    processed!
   end
 
   def invalid_modifiers
