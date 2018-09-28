@@ -40,7 +40,7 @@ abbr {
 }
 
 label {
-  font-weight: normal;
+  font-weight: $font-normal;
   margin-top: 0; // Override USWDS
 }
 
@@ -48,7 +48,6 @@ p {
   margin-top: rem(20px);
   margin-bottom: rem(24px);
   color: $color-gray-dark;
-  font-weight: 400;
   font-size: 17px;
   line-height: 1.5em;
 }
@@ -67,25 +66,25 @@ p {
 }
 
 .cf-lead-paragraph {
-  font-weight: 400;
   font-size: 19px;
   line-height: 1.5em;
   margin-bottom: 30px;
 }
 
-.cf-display-1 {
-  font-weight: 700;
-  font-size: 52px;
+.cf-display-1,
+.cf-display-2 {
   line-height: 1.3em;
   margin-bottom: 40px;
 }
+// Usage h1 class for accessibility
+.cf-display-1 {
+  font-weight: $font-bold;
+  font-size: 52px;
+}
 
+// Candidate for deprecation/ Unused
 .cf-display-2 {
-  font-weight: 400;
   font-size: 44px;
-  line-height: 1.3em;
-  margin-bottom: 40px;
-
 }
 
 .cf-red-text {
@@ -94,17 +93,6 @@ p {
 
 .cf-font-light {
   font-weight: 300;
-}
-
-.cf-notice {
-  padding: 8px 20px;
-  text-align: center;
-  background-color: $color-primary;
-  color: $color-white;
-
-  a {
-    color: $color-white;
-  }
 }
 
 //----------------------------------*
@@ -121,10 +109,6 @@ p {
 
 .cf-txt-l {
   text-align: left;
-}
-
-.cf-txt-uc {
-  text-transform: uppercase;
 }
 
 .cf-push-left {
@@ -163,7 +147,7 @@ h4 {
 
 h5 {
   font-size: 13px;
-  font-weight: 400;
+  font-weight: $font-normal;
   text-transform: uppercase;
   margin-bottom: 12px;
 }
@@ -546,7 +530,7 @@ div {
 
 .cf-progress-bar-not-activated {
   color: $color-gray-dark;
-  font-weight: 700;
+  font-weight: $font-bold;
   padding-bottom: 6px;
   border-bottom: 7px solid $color-gray-light;
 }
@@ -654,54 +638,6 @@ div {
     padding: 50px 0;
     border-top: 1px solid $color-gray-lighter;
     overflow: hidden;
-  }
-}
-
-
-//-----------------------------------*
-// CSS based on Web Design Guidelines.
-// - Uses Neat.bourbon.io as a grid
-// - Uses patterns and components
-//   from refills.bourbon.io/unstyled/
-//-----------------------------------*/
-
-//===========================
-// Tooltip
-// =========================*/
-
-.cf-tooltip {
-  display: inline-block;
-  position: relative;
-}
-
-.cf-tooltip-trigger {
-  &:hover + .cf-tooltip-text {
-    display: block;
-  }
-}
-
-.cf-tooltip-text {
-  @include transform(translateX(-50%));
-  background: $color-white;
-  box-shadow: 0 0 10px -3px $color-gray;
-  display: none;
-  left: 50%;
-  margin-top: rem(10px);
-  padding: rem(10px);
-  position: absolute;
-  width: rem(300px);
-
-  &::before {
-    @include transform(scaleX(1.2));
-    color: $color-white;
-    content: '\25B2';
-    display: block;
-    font-size: rem(15px);
-    text-align: center;
-    text-shadow: 0 -2px 2px rgba($color-gray, .5);
-    margin-top: rem(-25px);
-    position: relative;
-    z-index: -1;
   }
 }
 
@@ -842,8 +778,6 @@ form {
       content: '* ';
       color: $color-secondary;
       font-family: inherit;
-      font-weight: bold;
-      font-style: normal;
     }
   }
 
