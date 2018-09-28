@@ -133,6 +133,7 @@ describe QueueRepository do
       )
     end
 
+    let(:judge) { User.create(css_id: "BAWS123", station_id: User::BOARD_STATION_ID) }
     let(:attorney) { User.create(css_id: "FATR456", station_id: User::BOARD_STATION_ID) }
     let(:vacols_case) { create(:case, bfcurloc: judge_staff.slogid) }
     let!(:judge_staff) do
