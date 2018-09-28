@@ -433,7 +433,7 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  def start_higher_level_review(test_veteran, is_comp: true)
+  def start_higher_level_review(test_veteran, is_comp: true, claim_participant_id: nil)
     higher_level_review = HigherLevelReview.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
@@ -451,8 +451,8 @@ RSpec.feature "Higher-Level Review" do
 
     Claimant.create!(
       review_request: higher_level_review,
-      participant_id: test_veteran.participant_id,
-      payee_code: "00"
+      participant_id: claim_participant_id ? claim_participant_id : test_veteran.participant_id,
+      payee_code: claim_participant_id ? "02" : "00"
     )
 
     higher_level_review.start_review!
@@ -502,13 +502,20 @@ RSpec.feature "Higher-Level Review" do
     end
 
     scenario "HLR comp" do
-      start_higher_level_review(veteran)
+      allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
+        first_name: "BOB",
+        last_name: "VANCE",
+        ptcpnt_id: "5382910292",
+        relationship_type: "Spouse"
+      )
+
+      start_higher_level_review(veteran, claim_participant_id: "5382910292")
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add Issues")
       check_row("Form", "Request for Higher-Level Review (VA Form 20-0988)")
       check_row("Benefit type", "Compensation")
-      check_row("Claimant", "Ed Merica")
+      check_row("Claimant", "Bob Vance, Spouse (payee code 02)")
 
       # clicking the add issues button should bring up the modal
       safe_click "#button-add-issue"
