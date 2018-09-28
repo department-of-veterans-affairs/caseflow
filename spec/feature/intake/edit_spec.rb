@@ -29,7 +29,7 @@ RSpec.feature "Edit issues" do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date + 1.day,
-      profile_date: receipt_date + 4.days,
+      profile_date: 24.days.ago,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
         { reference_id: "def456", decision_text: "PTSD denied" }
