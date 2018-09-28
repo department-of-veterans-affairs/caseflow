@@ -70,7 +70,7 @@ class Appeal < AmaReview
     claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
   end
 
-  delegate :first_name, :last_name, :name_suffix, to: :veteran, prefix: true, allow_nil: true
+  delegate :first_name, :last_name, :name_suffix, :ssn, to: :veteran, prefix: true, allow_nil: true
 
   def number_of_issues
     issues[:request_issues].size
