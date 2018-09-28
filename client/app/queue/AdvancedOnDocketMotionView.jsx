@@ -15,7 +15,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import editModalBase from './components/EditModalBase';
 import { requestSave } from './uiReducer/uiActions';
 
-import type { State, UiStateMessage } from './types/state';
+import type { State } from './types/state';
 import type { Appeal } from './types/models';
 
 type Params = {|
@@ -24,7 +24,6 @@ type Params = {|
 
 type Props = Params & {|
   appeal: Appeal,
-  error: ?UiStateMessage,
   highlightFormItems: boolean,
   requestSave: typeof requestSave,
   setAppealAod: typeof setAppealAod
@@ -77,7 +76,6 @@ class AdvancedOnDocketMotionView extends React.Component<Props, ViewState> {
 
   render = () => {
     const {
-      error,
       highlightFormItems
     } = this.props;
 
@@ -122,12 +120,10 @@ class AdvancedOnDocketMotionView extends React.Component<Props, ViewState> {
 
 const mapStateToProps = (state: State, ownProps: Params) => {
   const {
-    highlightFormItems,
-    messages: { error }
+    highlightFormItems
   } = state.ui;
 
   return {
-    error,
     highlightFormItems,
     appeal: appealWithDetailSelector(state, ownProps)
   };
