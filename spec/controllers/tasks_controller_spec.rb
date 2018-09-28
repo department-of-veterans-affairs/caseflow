@@ -63,9 +63,9 @@ RSpec.describe TasksController, type: :controller do
 
         ama_tasks = response_body.select { |task| task["type"] == "attorney_tasks" }
         expect(ama_tasks.size).to eq 3
-        expect(ama_tasks.first["attributes"]["status"]).to eq "assigned"
-        expect(ama_tasks.second["attributes"]["status"]).to eq "in_progress"
-        expect(ama_tasks.third["attributes"]["status"]).to eq "on_hold"
+        expect(ama_tasks.count { |task| task["attributes"]["status"] == "assigned" }).to eq 1
+        expect(ama_tasks.count { |task| task["attributes"]["status"] == "in_progress" }).to eq 1
+        expect(ama_tasks.count { |task| task["attributes"]["status"] == "on_hold" }).to eq 1
       end
     end
 

@@ -168,7 +168,6 @@ ActiveRecord::Schema.define(version: 20180927173613) do
     t.bigint "review_request_id", null: false
     t.string "participant_id", null: false
     t.string "payee_code"
-    t.date "date_of_birth"
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
@@ -580,7 +579,7 @@ ActiveRecord::Schema.define(version: 20180927173613) do
     t.string "review_request_type"
     t.bigint "review_request_id"
     t.string "rating_issue_reference_id"
-    t.date "rating_issue_profile_date"
+    t.datetime "rating_issue_profile_date"
     t.string "contention_reference_id"
     t.string "description"
     t.string "issue_category"
