@@ -83,13 +83,14 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
 
     this.props.setCaseReviewActionType(actionType);
 
-    let nextPage = 'special_issues';
+    let nextPage;
 
-    if (appeal.isLegacyAppeal) {
-      nextPage = 'dispositions';
-    }
     if (actionType === DECISION_TYPES.OMO_REQUEST) {
       nextPage = 'evaluate';
+    } else if (appeal.isLegacyAppeal) {
+      nextPage = 'dispositions';
+    } else {
+      nextPage = 'special_issues';
     }
 
     this.props.stageAppeal(appealId);
