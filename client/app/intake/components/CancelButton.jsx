@@ -9,7 +9,6 @@ class CancelButton extends React.PureComponent {
   render = () =>
     <Button
       id="cancel-intake"
-      legacyStyling={false}
       linkStyling
       willNeverBeLoading
       disabled={this.props.electionLoading || this.props.refilingLoading}

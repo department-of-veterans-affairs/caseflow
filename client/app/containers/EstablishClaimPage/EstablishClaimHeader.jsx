@@ -20,10 +20,10 @@ class EstablishClaimHeader extends React.Component {
     });
 
     return <section {...headerContainer}>
-      <React.Fragment> <div className="cf-txt-uc cf-veteran-name-control cf-push-left">
+      <React.Fragment> <div className="cf-veteran-name-control cf-push-left">
         {this.props.appeal.veteran_name} &nbsp;
       </div>
-      <div className="cf-txt-uc cf-apppeal-id-control cf-push-right">
+      <div className="cf-push-right">
           Veteran ID &nbsp;
         <CopyToClipboard text={this.props.appeal.vbms_id}>
           <button {...clipboardButton}
