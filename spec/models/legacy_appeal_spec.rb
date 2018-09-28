@@ -216,6 +216,27 @@ describe LegacyAppeal do
     end
   end
 
+  context "#veteran_ssn" do
+    subject { appeal.veteran_ssn }
+
+    context "when claim number is also ssn" do
+      let(:vacols_case) do
+        create(:case, bfcorlid: "228081153S")
+      end
+
+      it { is_expected.to eq "228081153" }
+    end
+
+    context "when claim number is not ssn" do
+      let(:vacols_case) do
+        create(:case, bfcorlid: "228081153C")
+      end
+      let(:appeal) { create(:legacy_appeal, :with_veteran, vacols_case: vacols_case) }
+
+      it { is_expected.to eq appeal.veteran.ssn }
+    end
+  end
+
   context "#documents_match?" do
     subject { appeal.documents_match? }
 
