@@ -305,10 +305,10 @@ RSpec.feature "Higher-Level Review" do
 
     letter_request = Fakes::BGSService.manage_claimant_letter_v2_requests
     expect(letter_request[ratings_end_product_establishment.reference_id]).to eq(
-      {:program_type_cd=>"CPL", :claimant_participant_id=>"5382910292"}
+      program_type_cd: "CPL", claimant_participant_id: "5382910292"
     )
     expect(letter_request[nonratings_end_product_establishment.reference_id]).to eq(
-      {:program_type_cd=>"CPL", :claimant_participant_id=>"5382910292"}
+      program_type_cd: "CPL", claimant_participant_id: "5382910292"
     )
 
     tracked_item_request = Fakes::BGSService.generate_tracked_items_requests
