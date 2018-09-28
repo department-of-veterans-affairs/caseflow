@@ -10,6 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+
 ActiveRecord::Schema.define(version: 20180926143801) do
 
   # These are extensions that must be enabled in order to support this database
@@ -579,7 +580,7 @@ ActiveRecord::Schema.define(version: 20180926143801) do
     t.string "review_request_type"
     t.bigint "review_request_id"
     t.string "rating_issue_reference_id"
-    t.date "rating_issue_profile_date"
+    t.datetime "rating_issue_profile_date"
     t.string "contention_reference_id"
     t.string "description"
     t.string "issue_category"
