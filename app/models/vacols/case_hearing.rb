@@ -147,7 +147,7 @@ class VACOLS::CaseHearing < VACOLS::Record
              "snamel as judge_last_name",
              "snamemi as judge_middle_name",
              "snamef as judge_first_name",
-             "snamel || ',' || snamemi || ' ' || snamef as judge_name",
+             "snamel || CASE WHEN snamel IS NULL THEN '' ELSE ', ' END || snamef AS judge_name",
              :mduser,
              :mdtime)
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
