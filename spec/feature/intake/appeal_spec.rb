@@ -283,5 +283,10 @@ RSpec.feature "Appeal Intake" do
     check_row("Form", "Notice of Disagreement (VA Form 10182)")
     check_row("Review option", "Evidence Submission")
     check_row("Claimant", "Ed Merica")
+
+    # clicking the add issues button should bring up the modal
+    safe_click "#button-add-issue"
+    expect(page).to have_content("Left knee granted")
+    expect(page).to have_content("PTSD denied")
   end
 end
