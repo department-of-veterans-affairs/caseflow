@@ -16,6 +16,20 @@ import ScrollToTop from '../components/ScrollToTop';
 
 class HearingScheduleApp extends React.PureComponent {
 
+  propsForListScheduleContainer = () => {
+    const {
+      userRoleAssign,
+      userRoleBuild
+    } = this.props;
+
+    return {
+      userRoleAssign,
+      userRoleBuild
+    };
+  };
+
+  routeForListScheduleContainer = () => <ListScheduleContainer {...this.propsForListScheduleContainer()} />;
+
   render = () => <BrowserRouter basename="/hearings">
     <NavigationBar
       wideApp
@@ -34,7 +48,7 @@ class HearingScheduleApp extends React.PureComponent {
             exact
             path="/schedule"
             title="Scheduled Hearings"
-            component={ListScheduleContainer}
+            render={this.routeForListScheduleContainer}
           />
           <PageRoute
             exact
@@ -78,6 +92,8 @@ class HearingScheduleApp extends React.PureComponent {
 
 HearingScheduleApp.propTypes = {
   userDisplayName: PropTypes.string,
+  userRoleAssign: PropTypes.bool,
+  userRoleBuild: PropTypes.bool,
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
   dropdownUrls: PropTypes.array
