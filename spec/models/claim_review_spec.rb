@@ -8,8 +8,17 @@ describe ClaimReview do
     FeatureToggle.disable!(:test_facols)
   end
 
-  let(:veteran_file_number) { "64205555" }
-  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number, first_name: "James", last_name: "Bond") }
+  let(:veteran_file_number)  { "64205555" }
+  let(:veteran_participant_id) { "123456" }
+  let(:veteran_date_of_death) { nil }
+  let!(:veteran) do
+    Generators::Veteran.build(
+    file_number: veteran_file_number,
+    first_name: "James",
+    last_name: "Bond",
+    participant_id: veteran_participant_id,
+    date_of_death: veteran_date_of_death
+  ) end
   let(:receipt_date) { SupplementalClaim::AMA_BEGIN_DATE + 1 }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
@@ -56,6 +65,14 @@ describe ClaimReview do
       receipt_date: receipt_date,
       informal_conference: informal_conference,
       same_office: same_office
+    )
+  end
+
+  let!(:claimant) do
+    Claimant.create!(
+      review_request: claim_review,
+      participant_id: veteran_participant_id,
+      payee_code: "00"
     )
   end
 
@@ -179,7 +196,7 @@ describe ClaimReview do
             end_product_code: "030HLRR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
-            claimant_participant_id: nil
+            claimant_participant_id: veteran_participant_id
           },
           veteran_hash: veteran.to_vbms_hash
         )
@@ -363,6 +380,27 @@ describe ClaimReview do
           claim_review.end_product_establishments.first
         end
       end
+
+      context "when informal conference is true" do
+        let(:informal_conference) { true }
+
+        it "generates claimant letter and tracked item" do
+          subject
+          epe = claim_review.end_product_establishments.last
+          expect(epe.reload).to have_attributes(
+            doc_id: "doc_id_result",
+            development_item_id: "development_item_id_result"
+          )
+
+          letter_request = Fakes::BGSService.manage_claimant_letter_v2_requests
+          expect(letter_request[epe.reference_id]).to eq(
+            program_type_cd: "CPL", claimant_participant_id: veteran_participant_id
+          )
+
+          tracked_item_request = Fakes::BGSService.generate_tracked_items_requests
+          expect(tracked_item_request[epe.reference_id]).to be(true)
+        end
+      end
     end
 
     context "when there are more than one end product establishments" do
@@ -384,7 +422,7 @@ describe ClaimReview do
             end_product_code: "030HLRR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
-            claimant_participant_id: nil
+            claimant_participant_id: veteran_participant_id
           },
           veteran_hash: veteran.to_vbms_hash
         )
@@ -416,7 +454,7 @@ describe ClaimReview do
             end_product_code: "030HLRNR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
-            claimant_participant_id: nil
+            claimant_participant_id: veteran_participant_id
           },
           veteran_hash: veteran.to_vbms_hash
         )
@@ -570,7 +608,7 @@ describe ClaimReview do
               end_product_code: end_product[:code],
               gulf_war_registry: false,
               suppress_acknowledgement_letter: false,
-              claimant_participant_id: nil
+              claimant_participant_id: veteran_participant_id
             },
             veteran_hash: veteran.to_vbms_hash
           )

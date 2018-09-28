@@ -36,6 +36,7 @@ describe EndProductEstablishment do
   let(:special_issues) { nil }
   let(:committed_at) { nil }
   let(:fake_claim_id) { "FAKECLAIMID" }
+  let(:benefit_type_code) { "2" }
 
   let(:end_product_establishment) do
     EndProductEstablishment.new(
@@ -48,7 +49,8 @@ describe EndProductEstablishment do
       reference_id: reference_id,
       claimant_participant_id: veteran_participant_id,
       synced_status: synced_status,
-      committed_at: committed_at
+      committed_at: committed_at,
+      benefit_type_code: benefit_type_code
     )
   end
 
@@ -63,7 +65,8 @@ describe EndProductEstablishment do
       reference_id: reference_id,
       claimant_participant_id: living_veteran_participant_id,
       synced_status: synced_status,
-      committed_at: committed_at
+      committed_at: committed_at,
+      benefit_type_code: "1"
     )
   end
 
@@ -93,7 +96,7 @@ describe EndProductEstablishment do
 
       expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
         claim_hash: {
-          benefit_type_code: EndProduct::BENEFIT_TYPE_CODE_LIVE,
+          benefit_type_code: Veteran::BENEFIT_TYPE_CODE_LIVE,
           payee_code: "00",
           claimant_participant_id: living_veteran_participant_id,
           predischarge: false,
@@ -161,7 +164,7 @@ describe EndProductEstablishment do
         subject
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
-            benefit_type_code: EndProduct::BENEFIT_TYPE_CODE_DEATH,
+            benefit_type_code: Veteran::BENEFIT_TYPE_CODE_DEATH,
             payee_code: "00",
             predischarge: false,
             claim_type: "Claim",
@@ -188,7 +191,7 @@ describe EndProductEstablishment do
           subject
           expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
             claim_hash: {
-              benefit_type_code: EndProduct::BENEFIT_TYPE_CODE_DEATH,
+              benefit_type_code: Veteran::BENEFIT_TYPE_CODE_DEATH,
               payee_code: "00",
               predischarge: false,
               claim_type: "Claim",
@@ -239,7 +242,7 @@ describe EndProductEstablishment do
 
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
-            benefit_type_code: EndProduct::BENEFIT_TYPE_CODE_DEATH,
+            benefit_type_code: Veteran::BENEFIT_TYPE_CODE_DEATH,
             payee_code: "00",
             claimant_participant_id: veteran_participant_id,
             predischarge: false,

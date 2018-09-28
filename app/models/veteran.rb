@@ -24,6 +24,10 @@ class Veteran < ApplicationRecord
   # Germany and Australia should be temporary additions until VBMS bug is fixed
   COUNTRIES_REQUIRING_ZIP = %w[USA CANADA].freeze
 
+  # C&P Live = '1', C&P Death = '2'
+  BENEFIT_TYPE_CODE_LIVE = "1".freeze
+  BENEFIT_TYPE_CODE_DEATH = "2".freeze
+
   validates :ssn, :sex, :first_name, :last_name,
             :address_line1, :country, presence: true, on: :bgs
   validates :zip_code, presence: true, if: :country_requires_zip?, on: :bgs
@@ -71,6 +75,16 @@ class Veteran < ApplicationRecord
     # Age calc copied from https://stackoverflow.com/a/2357790
     now = Time.now.utc.to_date
     now.year - dob.year - ((now.month > dob.month || (now.month == dob.month && now.day >= dob.day)) ? 0 : 1)
+  end
+
+  def benefit_type_code
+    @benefit_type_code ||= begin
+      if date_of_death.nil?
+        BENEFIT_TYPE_CODE_LIVE
+      else
+        BENEFIT_TYPE_CODE_DEATH
+      end
+    end
   end
 
   def bgs

@@ -69,8 +69,7 @@ class EndProductEstablishment < ApplicationRecord
         reference_id: result.claim_id,
         established_at: Time.zone.now,
         committed_at: commit ? Time.zone.now : nil,
-        modifier: end_product_to_establish.modifier,
-        benefit_type_code: end_product_to_establish.benefit_type_code
+        modifier: end_product_to_establish.modifier
       )
     end
   rescue VBMS::HTTPError => error
@@ -234,16 +233,6 @@ class EndProductEstablishment < ApplicationRecord
 
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
-  end
-
-  def benefit_type_code
-    @benefit_type_code ||= begin
-      if veteran.date_of_death.nil?
-        EndProduct::BENEFIT_TYPE_CODE_LIVE
-      else
-        EndProduct::BENEFIT_TYPE_CODE_DEATH
-      end
-    end
   end
 
   def establish_claim_in_vbms(end_product)
