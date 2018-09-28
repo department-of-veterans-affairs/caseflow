@@ -10,7 +10,6 @@ import Table from '../../components/Table';
 import { formatDateStr } from '../../util/DateUtil';
 import RoSelectorDropdown from './RoSelectorDropdown';
 import { css } from 'glamor';
-import classnames from 'classnames';
 
 const bottomMargin = css({
   color: 'red'
@@ -46,13 +45,15 @@ export default class AssignHearings extends React.Component {
 
   veteranTypeColor = (type) => {
     let veteranType;
-     if (type  === 'CAVC') {
+
+    if (type === 'CAVC') {
       veteranType = <span {...bottomMargin}>CAVC</span>;
-     } else if (type === 'AOD') {
-       veteranType = <span {...bottomMargin}>AOD</span>;
-   }
-     return veteranType;
-   }
+    } else if (type === 'AOD') {
+      veteranType = <span {...bottomMargin}>AOD</span>;
+    }
+
+    return veteranType;
+  }
 
   tableRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
