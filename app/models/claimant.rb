@@ -15,10 +15,6 @@ class Claimant < ApplicationRecord
     end
   end
 
-  def advanced_on_docket(appeal_receipt_date)
-    advanced_on_docket_based_on_age || advanced_on_docket_motion_granted(appeal_receipt_date)
-  end
-
   def power_of_attorney
     @bgs_power_of_attorney ||= BgsPowerOfAttorney.new(claimant_participant_id: participant_id)
   end
@@ -40,7 +36,7 @@ class Claimant < ApplicationRecord
     @person ||= Person.find_or_create_by(participant_id: participant_id)
   end
 
-  delegate :date_of_birth, :advance_on_docket_grants, to: :person
+  delegate :date_of_birth, :advanced_on_docket, to: :person
   delegate :address, :address_line_1, :address_line_2, :city, :country, :state, :zip, to: :bgs_address_service
 
   def fetch_bgs_record
@@ -54,15 +50,5 @@ class Claimant < ApplicationRecord
 
   def bgs_address_service
     @bgs_address_service ||= BgsAddressService.new(participant_id: participant_id)
-  end
-
-  def advanced_on_docket_based_on_age
-    date_of_birth && date_of_birth < 75.years.ago
-  end
-
-  def advanced_on_docket_motion_granted(appeal_receipt_date)
-    advance_on_docket_grants.any? do |advance_on_docket_grant|
-      appeal_receipt_date < advance_on_docket_grant.created_at
-    end
   end
 end
