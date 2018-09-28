@@ -29,6 +29,7 @@ class Veteran < ApplicationRecord
   validates :zip_code, presence: true, if: :country_requires_zip?, on: :bgs
   validates :state, presence: true, if: :state_is_required?, on: :bgs
   validates :city, presence: true, unless: :military_address?, on: :bgs
+  validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
 
   # TODO: get middle initial from BGS
   def name

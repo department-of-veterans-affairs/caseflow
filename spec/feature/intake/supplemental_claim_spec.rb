@@ -48,11 +48,13 @@ RSpec.feature "Supplemental Claim Intake" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
+  let(:profile_date) { (receipt_date - untimely_days + 4.days).to_time(:local) }
+
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - untimely_days + 1.day,
-      profile_date: receipt_date - untimely_days + 4.days,
+      profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
         { reference_id: "def456", decision_text: "PTSD denied" }
@@ -64,7 +66,7 @@ RSpec.feature "Supplemental Claim Intake" do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - untimely_days,
-      profile_date: receipt_date - untimely_days + 3.days,
+      profile_date: profile_date - 1.day,
       issues: [
         { reference_id: "abc123", decision_text: "Untimely rating issue 1" },
         { reference_id: "def456", decision_text: "Untimely rating issue 2" }
@@ -296,7 +298,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(supplemental_claim.request_issues.count).to eq 2
     expect(supplemental_claim.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
-      rating_issue_profile_date: receipt_date - untimely_days + 4.days,
+      rating_issue_profile_date: profile_date,
       description: "PTSD denied",
       decision_date: nil,
       rating_issue_associated_at: Time.zone.now
