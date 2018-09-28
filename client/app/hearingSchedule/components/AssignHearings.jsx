@@ -15,8 +15,6 @@ const colorAOD = css({
   color: 'red'
 });
 
-
-
 export default class AssignHearings extends React.Component {
 
   onSelectedHearingDayChange = (hearingDay) => () => {
