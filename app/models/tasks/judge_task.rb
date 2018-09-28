@@ -23,15 +23,15 @@ class JudgeTask < Task
   # This function to be manually run in production when we need to fetch all RAMP
   # appeals that are eligible for assignment to judges, and assign them.
   def self.assign_ramp_judge_tasks(dry_run: false, batch_size: 10)
-    # Find all root tasks with no children, that means they are not assigned.
-    tasks = unassigned_ramp_tasks[0..batch_size - 1]
+    # Find all unassigned tasks, sort them by the NOD date, and take the first N.
+    tasks = unassigned_ramp_tasks.sort_by { |task| task.appeal.receipt_date }[0..batch_size - 1]
 
     if dry_run
       Rails.logger.info("Dry run. Found #{unassigned_ramp_tasks.length} tasks to assign.")
       evidence_count = unassigned_ramp_tasks.select { |task| task.appeal.evidence_submission_docket? }.count
       direct_review_count = unassigned_ramp_tasks.select { |task| task.appeal.direct_review_docket? }.count
-      Rails.logger.info("Found #{evidence_count.length} eligible evidence submission tasks.")
-      Rails.logger.info("Found #{direct_review_count.length} direct review tasks.")
+      Rails.logger.info("Found #{evidence_count} eligible evidence submission tasks.")
+      Rails.logger.info("Found #{direct_review_count} direct review tasks.")
       Rails.logger.info("Would assign #{tasks.length}, batch size is #{batch_size}.")
       Rails.logger.info("First assignee would be #{next_assignee.css_id}")
       return
@@ -53,16 +53,16 @@ class JudgeTask < Task
   end
 
   def self.unassigned_ramp_tasks
-    RootTask.order("created_at ASC").select { |t| eligible_for_assigment?(t) }
+    RootTask.includes(:appeal).all.select { |task| eligible_for_assigment?(task) }
   end
 
-  def eligible_for_assigment?(task)
+  def self.eligible_for_assigment?(task)
     # Hearing cases will not be processed until February 2019
-    return false if task.appeal.docket_name == "hearing"
+    return false if task.appeal.hearing_docket?
 
     # If it's an evidence submission case, we need to wait until the
     # evidence submission window is over
-    if task.appeal.docket_name == "evidence_submission"
+    if task.appeal.evidence_submission_docket?
       return false if task.appeal.receipt_date > 90.days.ago
     end
 
