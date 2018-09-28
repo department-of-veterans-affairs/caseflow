@@ -74,7 +74,7 @@ export default class FlaggedForReview extends Component {
             <Button linkStyling>View stats</Button>
           </a>
           <a href="/intake">
-            <Button legacyStyling={false} classNames={['usa-button-secondary']}>Begin intake</Button>
+            <Button classNames={['usa-button-secondary']}>Begin intake</Button>
           </a>
         </div>
       </div>

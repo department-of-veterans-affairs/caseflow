@@ -294,6 +294,14 @@ describe EndProductEstablishment do
           rating_issue_reference_id: "reference-id",
           rating_issue_profile_date: Date.new(2018, 4, 30),
           description: "more decisionz"
+        ),
+        create(
+          :request_issue,
+          end_product_establishment: end_product_establishment,
+          review_request: source,
+          rating_issue_reference_id: "reference-id",
+          rating_issue_profile_date: Date.new(2018, 4, 30),
+          description: "this is a big decision", # intentional duplicate
         )
       ]
     end
@@ -311,6 +319,7 @@ describe EndProductEstablishment do
         special_issues: []
       )
 
+      expect(end_product_establishment.contentions.count).to eq(3)
       expect(end_product_establishment.contentions.map(&:id)).to contain_exactly(
         *request_issues.map(&:reload).map(&:contention_reference_id)
       )
