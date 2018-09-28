@@ -29,7 +29,11 @@ module Asyncable
     end
 
     def unexpired
-      where("#{submitted_at_column} > ?", REQUIRES_PROCESSING_WINDOW_DAYS.days.ago)
+      where(
+        ":submitted_at > :when",
+        submitted_at: submitted_at_column,
+        when: REQUIRES_PROCESSING_WINDOW_DAYS.days.ago
+      )
     end
 
     def processable
@@ -41,7 +45,11 @@ module Asyncable
     end
 
     def previously_attempted_ready_for_retry
-      where("#{attempted_at_column} < ?", REQUIRES_PROCESSING_RETRY_WINDOW_HOURS.hours.ago)
+      where(
+        ":attempted_at < :when",
+        attempted_at: attempted_at_column,
+        when: REQUIRES_PROCESSING_RETRY_WINDOW_HOURS.hours.ago
+      )
     end
 
     def attemptable
@@ -49,7 +57,7 @@ module Asyncable
     end
 
     def order_by_oldest_submitted
-      order("#{submitted_at_column} ASC")
+      order(submitted_at_column => :asc)
     end
 
     def requires_processing
@@ -58,8 +66,11 @@ module Asyncable
 
     def expired_without_processing
       where(processed_at_column => nil)
-        .where("#{submitted_at_column} <= ?", REQUIRES_PROCESSING_WINDOW_DAYS.days.ago)
-        .order_by_oldest_submitted
+        .where(
+          ":submitted_at <= :when",
+          submitted_at: submitted_at_column,
+          when: REQUIRES_PROCESSING_WINDOW_DAYS.days.ago
+        ).order_by_oldest_submitted
     end
   end
 
