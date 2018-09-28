@@ -169,7 +169,7 @@ RSpec.feature "AmaQueue" do
 
         expect(page).to have_content("AOD status updated")
         expect(page).to have_content("AOD")
-        motion = appeals.first.claimants.first.advance_on_docket_motions.first
+        motion = appeals.first.claimants.first.person.advance_on_docket_motions.first
 
         expect(motion.granted).to eq(true)
         expect(motion.reason).to eq("serious_illness")

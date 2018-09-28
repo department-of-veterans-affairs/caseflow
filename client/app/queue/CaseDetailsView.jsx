@@ -18,7 +18,7 @@ import CaseSnapshot from './CaseSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
 import SendToLocationModal from './components/SendToLocationModal';
-import { resetErrorMessages } from './uiReducer/uiActions';
+import { resetErrorMessages, resetSuccessMessages } from './uiReducer/uiActions';
 import CaseTimeline from './CaseTimeline';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
@@ -40,6 +40,11 @@ const horizontalRuleStyling = css({
 class CaseDetailsView extends React.PureComponent {
   componentDidMount = () => {
     window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
+    this.props.resetErrorMessages();
+  }
+
+  componentWillUnmount = () => {
+    this.props.resetSuccessMessages();
     this.props.resetErrorMessages();
   }
 
@@ -108,7 +113,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    resetErrorMessages
+    resetErrorMessages,
+    resetSuccessMessages
   }, dispatch)
 );
 
