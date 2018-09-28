@@ -385,6 +385,16 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
         $set: action.payload.id
       }
     });
+  case ACTIONS.SET_APPEAL_AOD:
+    return update(state, {
+      appeals: {
+        [action.payload.externalAppealId]: {
+          isAdvancedOnDocket: {
+            $set: true
+          }
+        }
+      }
+    });
   case ACTIONS.STARTED_LOADING_APPEAL_VALUE:
     return update(state, {
       loadingAppealDetail: {
