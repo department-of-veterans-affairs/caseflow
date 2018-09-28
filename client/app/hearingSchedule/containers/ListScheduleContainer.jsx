@@ -7,6 +7,7 @@ import { LOGO_COLORS } from '../../constants/AppConstants';
 import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
+import PropTypes from 'prop-types';
 
 const dateFormatString = 'YYYY-MM-DD';
 
@@ -49,6 +50,8 @@ export class ListScheduleContainer extends React.Component {
         endDateValue={this.props.endDate}
         endDateChange={this.props.onViewEndDateChange}
         onApply={this.createHearingPromise}
+        userRoleAssign={this.props.userRoleAssign}
+        userRoleBuild={this.props.userRoleBuild}
       />
     </LoadingDataDisplay>;
 
@@ -67,5 +70,10 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onViewEndDateChange,
   onReceiveHearingSchedule
 }, dispatch);
+
+ListScheduleContainer.propTypes = {
+  userRoleAssign: PropTypes.bool,
+  userRoleBuild: PropTypes.bool
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListScheduleContainer);

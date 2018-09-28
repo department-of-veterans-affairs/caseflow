@@ -114,7 +114,8 @@ class ExternalApi::BGSService
       client.org.find_poas_by_ptcpnt_ids(participant_ids)
     end
 
-    get_hash_of_poa_from_bgs_poas(bgs_poas)
+    # Avoid passing nil
+    get_hash_of_poa_from_bgs_poas(bgs_poas || [])
   end
 
   def find_address_by_participant_id(participant_id)
