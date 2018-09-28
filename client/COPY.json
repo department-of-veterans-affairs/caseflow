@@ -217,6 +217,12 @@
 
   "SPECIAL_ISSUES_PAGE_TITLE": "Select special issue(s)",
 
+  "ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE": "Update Advanced on Docket (AOD) Status",
+  "ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN": "AOD Motion Disposition",
+  "ADVANCE_ON_DOCKET_MOTION_REASON_DROPDOWN": "Reason",
+  "ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN_PLACEHOLDER": "Select grant or deny",
+  "ADVANCE_ON_DOCKET_MOTION_REASON_DROPDOWN_PLACEHOLDER": "Select a type",
+
   "CASE_TIMELINE_HEADER": "Below is the history of this case. Soon, you'll be able to see many more details.",
   "CASE_TIMELINE_DISPATCHED_FROM_BVA": "Dispatched from BVA",
   "CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING": "Dispatch from BVA pending",
