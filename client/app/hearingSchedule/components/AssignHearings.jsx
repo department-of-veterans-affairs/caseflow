@@ -11,7 +11,7 @@ import { formatDateStr } from '../../util/DateUtil';
 import RoSelectorDropdown from './RoSelectorDropdown';
 import { css } from 'glamor';
 
-const bottomMargin = css({
+const colorAOD = css({
   color: 'red'
 });
 
@@ -47,9 +47,9 @@ export default class AssignHearings extends React.Component {
     let veteranType;
 
     if (type === 'CAVC') {
-      veteranType = <span {...bottomMargin}>CAVC</span>;
+      veteranType = <span {...colorAOD}>CAVC</span>;
     } else if (type === 'AOD') {
-      veteranType = <span {...bottomMargin}>AOD</span>;
+      veteranType = <span {...colorAOD}>AOD</span>;
     }
 
     return veteranType;
