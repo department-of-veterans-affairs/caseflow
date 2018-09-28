@@ -2,10 +2,30 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import SearchableDropdown from '../../components/SearchableDropdown';
+import ApiUtil from '../../util/ApiUtil';
+import { onReceiveRegionalOffices } from '../actions';
+import { bindActionCreators } from 'redux';
+import connect from 'react-redux/es/connect/connect';
 
-export default class RoSelectorDropdown extends React.Component {
+class RoSelectorDropdown extends React.Component {
+
+  loadRegionalOffices = () => {
+    return ApiUtil.get('/regional_offices.json').then((response) => {
+      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+
+      this.props.onReceiveRegionalOffices(resp.regionalOffices);
+      this.regionalOfficeOptions();
+    });
+  };
+
+  componentWillMount() {
+    if (!this.props.regionalOffices) {
+      this.loadRegionalOffices();
+    }
+  }
 
   regionalOfficeOptions = () => {
+
     let regionalOfficeDropdowns = [];
 
     _.forEach(this.props.regionalOffices, (value, key) => {
@@ -15,10 +35,9 @@ export default class RoSelectorDropdown extends React.Component {
       });
     });
 
-    regionalOfficeDropdowns.push({
-      label: 'Central Office',
-      value: 'C'
-    });
+    if (this.props.staticOptions) {
+      regionalOfficeDropdowns.push(...this.props.staticOptions);
+    }
 
     return _.orderBy(regionalOfficeDropdowns, (ro) => ro.label, 'asc');
   };
@@ -28,9 +47,10 @@ export default class RoSelectorDropdown extends React.Component {
       name="ro"
       label="Regional Office"
       options={this.regionalOfficeOptions()}
+      staticOptions={this.props.staticOptions}
       onChange={this.props.onChange}
       value={this.props.value}
-      placeholder=""
+      placeholder={this.props.placeholder}
     />;
   }
 }
@@ -38,5 +58,17 @@ export default class RoSelectorDropdown extends React.Component {
 RoSelectorDropdown.propTypes = {
   regionalOffices: PropTypes.object,
   onChange: PropTypes.func,
-  value: PropTypes.object
+  value: PropTypes.object,
+  placeholder: PropTypes.string,
+  staticOptions: PropTypes.array
 };
+
+const mapStateToProps = (state) => ({
+  regionalOffices: state.regionalOffices
+});
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  onReceiveRegionalOffices
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(RoSelectorDropdown);
