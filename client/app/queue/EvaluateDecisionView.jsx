@@ -131,6 +131,7 @@ class EvaluateDecisionView extends React.PureComponent {
     } = this.props;
     let loc = 'bva_dispatch';
     let successMsg = sprintf(COPY.JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
+
     if (decision.type === DECISION_TYPES.OMO_REQUEST) {
       loc = 'omo_office';
       successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);

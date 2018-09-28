@@ -3,8 +3,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
-import { sprintf } from 'sprintf-js';
-import COPY from '../../../COPY.json';
 import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
 import DECASS_WORK_PRODUCT_TYPES from '../../../constants/DECASS_WORK_PRODUCT_TYPES.json';
 
@@ -15,7 +13,6 @@ import {
   tasksForAppealAssignedToUserSelector
 } from '../selectors';
 
-import { buildCaseReviewPayload } from '../utils';
 import { requestSave } from '../uiReducer/uiActions';
 import {
   deleteAppeal,
@@ -79,17 +76,15 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
 
     const {
       appeal,
-      task,
       appealId,
-      history,
-      decision,
-      userRole
+      history
     } = this.props;
     const actionType = option.value;
 
     this.props.setCaseReviewActionType(actionType);
 
     let nextPage = 'special_issues';
+
     if (appeal.isLegacyAppeal) {
       nextPage = 'dispositions';
     }

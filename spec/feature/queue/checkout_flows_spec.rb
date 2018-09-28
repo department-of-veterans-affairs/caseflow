@@ -538,7 +538,9 @@ RSpec.feature "Checkout flows" do
         case_complexity_opts[0].click
         case_quality_opts[2].click
         # areas of improvement
-        areas_of_improvement = page.find_all(:xpath, "//fieldset[@class='checkbox-wrapper-Identify areas for improvement cf-form-checkboxes']//label")
+        areas_of_improvement = page.find_all(
+          :xpath, "//fieldset[@class='checkbox-wrapper-Identify areas for improvement cf-form-checkboxes']//label"
+        )
         areas_of_improvement[0].double_click
         areas_of_improvement[5].double_click
 
@@ -548,8 +550,8 @@ RSpec.feature "Checkout flows" do
         click_on "Continue"
 
         expect(page).to have_content(COPY::JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
-        decass = VACOLS::Decass.find_by(defolder: appeal.vacols_id, deadtim: Date.today)
-        expect(decass.decomp).to eq(Date.today)
+        decass = VACOLS::Decass.find_by(defolder: appeal.vacols_id, deadtim: Time.zone.today)
+        expect(decass.decomp).to eq(Time.zone.today)
         expect(decass.deoq).to eq("3")
       end
     end
