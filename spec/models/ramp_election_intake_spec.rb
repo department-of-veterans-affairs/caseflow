@@ -311,7 +311,7 @@ describe RampElectionIntake do
       it "clears pending status" do
         allow_any_instance_of(RampReview).to receive(:create_or_connect_end_product!).and_raise(unknown_error)
 
-        expect { subject }.to raise_exception
+        expect { subject }.to raise_error(Caseflow::Error::EstablishClaimFailedInVBMS)
         expect(intake.completion_status).to be_nil
       end
     end
