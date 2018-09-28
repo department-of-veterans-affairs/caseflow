@@ -8,14 +8,11 @@ class RequestIssuesUpdateJob < CaseflowJob
     RequestStore.store[:application] = "intake"
     RequestStore.store[:current_user] = User.system_user
 
-    request_issues_update.attempted!
-
-    request_issues_update.review.process_end_product_establishments!
-
-    request_issues_update.removed_issues.each do |request_issue|
-      request_issue.end_product_establishment.remove_contention!(request_issue)
+    begin
+      request_issues_update.process_end_product_establishments!
+    rescue VBMS::ClientError => err
+      request_issues_update.update!(error: err.to_s)
+      raise err
     end
-
-    request_issues_update.processed!
   end
 end

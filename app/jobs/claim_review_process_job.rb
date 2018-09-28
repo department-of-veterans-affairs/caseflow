@@ -7,6 +7,11 @@ class ClaimReviewProcessJob < CaseflowJob
     RequestStore.store[:application] = "intake"
     RequestStore.store[:current_user] = User.system_user
 
-    claim_review.process_end_product_establishments!
+    begin
+      claim_review.process_end_product_establishments!
+    rescue VBMS::ClientError => err
+      claim_review.update!(establishment_error: err.to_s)
+      raise err
+    end
   end
 end

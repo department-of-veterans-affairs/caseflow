@@ -34,12 +34,29 @@ class RequestIssuesUpdate < ApplicationRecord
     true
   end
 
+  def process_end_product_establishments!
+    attempted!
+
+    review.process_end_product_establishments!
+
+    removed_issues.each do |request_issue|
+      request_issue.end_product_establishment.remove_contention!(request_issue)
+    end
+
+    clear_error!
+    processed!
+  end
+
   def created_issues
     after_issues - before_issues
   end
 
   def removed_issues
     before_issues - after_issues
+  end
+
+  def clear_error!
+    update!(error: nil)
   end
 
   private

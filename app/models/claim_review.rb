@@ -52,7 +52,12 @@ class ClaimReview < AmaReview
       end_product_establishment.commit!
     end
 
+    clear_establishment_error!
     processed!
+  end
+
+  def clear_establishment_error!
+    update!(establishment_error: nil)
   end
 
   def invalid_modifiers
