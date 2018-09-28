@@ -72,7 +72,7 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
         displayText: 'Cancel',
         willNeverBeLoading: true
       }, {
-        classNames: ['cf-right-side', 'cf-next-step'],
+        classNames: ['cf-right-side'],
         callback: this.goToNextStep,
         loading: this.props.savePending,
         name: 'next-button',
