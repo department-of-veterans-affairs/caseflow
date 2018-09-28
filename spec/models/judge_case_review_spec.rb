@@ -1,6 +1,29 @@
+def complete_params(judge:, attorney:, location:, vacols_issue1:, vacols_issue2:)
+  {
+    location: location,
+    judge: judge,
+    task_id: "123456-2013-12-06",
+    attorney: attorney,
+    complexity: "hard",
+    quality: "does_not_meet_expectations",
+    comment: "do this",
+    factors_not_considered: %w[theory_contention relevant_records],
+    areas_for_improvement: ["process_violations"],
+    issues: [
+      { disposition: "5", id: vacols_issue1.issseq, readjudication: true },
+      { disposition: "3", id: vacols_issue2.issseq,
+        remand_reasons: [{ code: "AB", post_aoj: true }] }
+    ]
+  }
+end
+
 describe JudgeCaseReview do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+  end
+
+  after do
+    Timecop.return
   end
 
   context ".reached_monthly_limit_in_quality_reviews?" do
@@ -149,25 +172,12 @@ describe JudgeCaseReview do
 
       context "when bva dispatch" do
         let(:params) do
-          {
-            location: "bva_dispatch",
+          complete_params(
             judge: judge,
-            task_id: "123456-2013-12-06",
             attorney: attorney,
-            complexity: "hard",
-            quality: "does_not_meet_expectations",
-            comment: "do this",
-            factors_not_considered: %w[theory_contention relevant_records],
-            areas_for_improvement: ["process_violations"],
-            issues: issues
-          }
-        end
-        let(:issues) do
-          [
-            { disposition: "5", id: vacols_issue1.issseq, readjudication: true },
-            { disposition: "3", id: vacols_issue2.issseq,
-              remand_reasons: [{ code: "AB", post_aoj: true }] }
-          ]
+            location: "bva_dispatch",
+            vacols_issue1: vacols_issue1,
+            vacols_issue2: vacols_issue2)
         end
         let(:work_product) { "DEC" }
 
@@ -223,12 +233,12 @@ describe JudgeCaseReview do
 
       context "when omo office" do
         let(:params) do
-          {
-            location: "omo_office",
+          complete_params(
             judge: judge,
-            task_id: "123456-2013-12-06",
-            attorney: attorney
-          }
+            attorney: attorney,
+            location: "omo_office",
+            vacols_issue1: vacols_issue1,
+            vacols_issue2: vacols_issue2)
         end
         let(:work_product) { "IME" }
 
