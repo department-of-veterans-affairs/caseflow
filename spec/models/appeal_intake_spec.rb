@@ -44,7 +44,7 @@ describe AppealIntake do
     let!(:request_issue) do
       RequestIssue.new(
         review_request: detail,
-        rating_issue_profile_date: Date.new(2017, 4, 5),
+        rating_issue_profile_date: Time.zone.local(2018, 4, 30),
         rating_issue_reference_id: "issue1",
         contention_reference_id: "1234",
         description: "description"
@@ -157,7 +157,7 @@ describe AppealIntake do
       expect(intake.detail.request_issues.count).to eq 2
       expect(intake.detail.request_issues.first).to have_attributes(
         rating_issue_reference_id: "reference-id",
-        rating_issue_profile_date: Date.new(2018, 4, 30),
+        rating_issue_profile_date: Time.zone.local(2018, 4, 30),
         description: "decision text"
       )
       expect(intake.detail.request_issues.second).to have_attributes(
