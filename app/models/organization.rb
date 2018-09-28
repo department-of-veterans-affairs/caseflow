@@ -2,7 +2,7 @@ class Organization < ApplicationRecord
   has_many :tasks, as: :assigned_to
 
   def self.assignable
-    where(type: nil)
+    where(type: [nil, BvaDispatch.name])
   end
 
   def user_has_access?(user)
