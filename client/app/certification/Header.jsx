@@ -13,11 +13,11 @@ export class Header extends React.Component {
 
     return <div>
       { !serverError && <div id="certifications-header" className="cf-app-segment">
-        <div className="cf-txt-uc cf-veteran-name-control cf-push-left">
+        <div className="cf-veteran-name-control cf-push-left">
           {veteranName} &nbsp;
         </div>
 
-        <div className="cf-txt-uc cf-apppeal-id-control cf-push-right">
+        <div className="cf-push-right">
           Veteran ID &nbsp;
           <CopyToClipboard text={vbmsId}>
             <button type="submit"
