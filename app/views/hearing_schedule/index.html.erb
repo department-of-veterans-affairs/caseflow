@@ -2,6 +2,8 @@
   <%= react_component("HearingSchedule", props: {
     feedbackUrl: feedback_url,
     userDisplayName: current_user.display_name,
+    userRoleAssign: current_user.can?('Assign HearSched'),
+    userRoleBuild: current_user.can?('Build HearSched'),
     dropdownUrls: dropdown_urls
   }) %>
 <% end %>

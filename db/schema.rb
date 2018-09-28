@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180924131352) do
+ActiveRecord::Schema.define(version: 20180926182000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -169,7 +169,6 @@ ActiveRecord::Schema.define(version: 20180924131352) do
     t.bigint "review_request_id", null: false
     t.string "participant_id", null: false
     t.string "payee_code"
-    t.date "date_of_birth"
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
@@ -186,6 +185,17 @@ ActiveRecord::Schema.define(version: 20180924131352) do
     t.string "disposition_date"
     t.string "description"
     t.integer "request_issue_id"
+  end
+
+  create_table "decisions", force: :cascade do |t|
+    t.bigint "appeal_id"
+    t.string "citation_number"
+    t.date "decision_date"
+    t.string "redacted_document_location"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["appeal_id"], name: "index_decisions_on_appeal_id"
+    t.index ["citation_number"], name: "index_decisions_on_citation_number", unique: true
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
@@ -397,6 +407,8 @@ ActiveRecord::Schema.define(version: 20180924131352) do
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
     t.string "benefit_type"
+    t.datetime "establishment_attempted_at"
+    t.string "establishment_error"
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
@@ -525,6 +537,8 @@ ActiveRecord::Schema.define(version: 20180924131352) do
     t.datetime "end_product_status_last_synced_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
+    t.datetime "establishment_attempted_at"
+    t.string "establishment_error"
     t.index ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number"
   end
 
@@ -547,6 +561,8 @@ ActiveRecord::Schema.define(version: 20180924131352) do
     t.datetime "established_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
+    t.datetime "establishment_attempted_at"
+    t.string "establishment_error"
     t.index ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number"
   end
 
@@ -570,7 +586,7 @@ ActiveRecord::Schema.define(version: 20180924131352) do
     t.string "review_request_type"
     t.bigint "review_request_id"
     t.string "rating_issue_reference_id"
-    t.date "rating_issue_profile_date"
+    t.datetime "rating_issue_profile_date"
     t.string "contention_reference_id"
     t.string "description"
     t.string "issue_category"
@@ -591,6 +607,9 @@ ActiveRecord::Schema.define(version: 20180924131352) do
     t.integer "before_request_issue_ids", null: false, array: true
     t.integer "after_request_issue_ids", null: false, array: true
     t.datetime "processed_at"
+    t.datetime "attempted_at"
+    t.datetime "submitted_at"
+    t.string "error"
     t.index ["review_type", "review_id"], name: "index_request_issues_updates_on_review_type_and_review_id"
     t.index ["user_id"], name: "index_request_issues_updates_on_user_id"
   end
@@ -645,6 +664,8 @@ ActiveRecord::Schema.define(version: 20180924131352) do
     t.datetime "establishment_processed_at"
     t.string "benefit_type"
     t.boolean "is_dta_error"
+    t.datetime "establishment_attempted_at"
+    t.string "establishment_error"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 
