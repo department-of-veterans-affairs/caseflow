@@ -94,5 +94,23 @@ describe BvaDispatchTask do
         end
       end
     end
+
+    context "when task has already been outcoded" do
+      let(:repeat_params) do
+        p = params.clone
+        p[:citation_number] = "A12131989"
+        p
+      end
+      before do
+        BvaDispatchTask.create_and_assign(root_task)
+        BvaDispatchTask.outcode(root_task.appeal, params, user)
+      end
+
+      it "should raise an error" do
+        expect { BvaDispatchTask.outcode(root_task.appeal, repeat_params, user) }.to(raise_error) do |e|
+          expect(e.class).to eq(ActiveRecord::RecordNotUnique)
+        end
+      end
+    end
   end
 end
