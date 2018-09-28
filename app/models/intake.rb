@@ -1,4 +1,6 @@
 class Intake < ApplicationRecord
+  include Asyncable
+
   class FormTypeNotSupported < StandardError; end
 
   belongs_to :user
@@ -236,10 +238,6 @@ class Intake < ApplicationRecord
 
   def find_or_build_initial_detail
     fail Caseflow::Error::MustImplementInSubclass
-  end
-
-  def build_issues(request_issues_data)
-    request_issues_data.map { |data| detail.request_issues.from_intake_data(data) }
   end
 
   def veteran_invalid_fields

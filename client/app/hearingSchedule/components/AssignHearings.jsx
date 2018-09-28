@@ -15,12 +15,34 @@ const colorAOD = css({
   color: 'red'
 });
 
+const centralOfficeStaticEntry = [{
+  label: 'Central',
+  value: 'C'
+}];
+
 export default class AssignHearings extends React.Component {
+
+  // required to reset the RO Dropdown when moving from Viewing and Assigning.
+  componentWillMount = () => {
+    this.props.onRegionalOfficeChange('');
+  }
 
   onSelectedHearingDayChange = (hearingDay) => () => {
     this.props.onSelectedHearingDayChange(hearingDay);
   };
 
+  roomInfo = (hearingDay) => {
+    let room = hearingDay.roomInfo;
+
+    if (hearingDay.regionalOffice === 'St. Petersburg, FL') {
+      return room;
+    } else if (hearingDay.regionalOffice === 'Winston-Salem, NC') {
+      return room;
+    }
+
+    return room = '';
+
+  }
   formatAvailableHearingDays = () => {
     return <div className="usa-width-one-fourth">
       <h3>Hearings to Schedule</h3>
@@ -36,7 +58,7 @@ export default class AssignHearings extends React.Component {
                 linkStyling
               >
                 {`${moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}
-                ${hearingDay.roomInfo} (${availableSlots} slots)`}
+                ${this.roomInfo(hearingDay)} (${availableSlots} slots)`}
               </Button>
             </li>;
           })}
@@ -103,7 +125,7 @@ export default class AssignHearings extends React.Component {
     return <div className="usa-width-three-fourths">
       <h1>
         {moment(selectedHearingDay.hearingDate).format('ddd M/DD/YYYY')}
-        {selectedHearingDay.roomInfo} ({availableSlots} slots remaining)
+        {this.roomInfo(selectedHearingDay)} ({availableSlots} slots remaining)
       </h1>
       <TabWindow
         name="scheduledHearings-tabwindow"
@@ -138,9 +160,9 @@ export default class AssignHearings extends React.Component {
         {COPY.HEARING_SCHEDULE_ASSIGN_HEARINGS_VIEW_SCHEDULE_LINK}
       </Link>
       <RoSelectorDropdown
-        regionalOffices={this.props.regionalOffices}
         onChange={this.props.onRegionalOfficeChange}
         value={this.props.selectedRegionalOffice}
+        staticOptions={centralOfficeStaticEntry}
       />
       {this.props.upcomingHearingDays && this.formatAvailableHearingDays()}
       {this.props.upcomingHearingDays &&
