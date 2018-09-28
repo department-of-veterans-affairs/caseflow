@@ -515,7 +515,7 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to have_content("Add Issues")
       check_row("Form", "Request for Higher-Level Review (VA Form 20-0988)")
       check_row("Benefit type", "Compensation")
-      check_row("Claimant", "Bob Vance, Spouse (Payee Code 02)")
+      check_row("Claimant", "Bob Vance, Spouse (payee code 02)")
     end
 
     scenario "HLR non-comp" do
