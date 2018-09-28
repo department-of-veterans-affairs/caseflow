@@ -117,9 +117,9 @@ export const toggleAddIssuesModal = () => ({
   meta: {
     analytics: {
       label: (nextState) => {
-        nextState.higherLevelReview.addIssuesModalVisible ? 'show' : 'hide';
-        nextState.supplementalClaim.addIssuesModalVisible ? 'show' : 'hide';
-        nextState.appeal.addIssuesModalVisible ? 'show' : 'hide';
+        nextState.higherLevelReview.addIssuesModalVisible ? 'show' : 'hide'; // eslint-disable-line
+        nextState.supplementalClaim.addIssuesModalVisible ? 'show' : 'hide'; // eslint-disable-line
+        nextState.appeal.addIssuesModalVisible ? 'show' : 'hide'; // eslint-disable-line
       }
     }
   }
