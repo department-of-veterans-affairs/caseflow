@@ -108,7 +108,7 @@ describe BvaDispatchTask do
 
       it "should raise an error" do
         expect { BvaDispatchTask.outcode(root_task.appeal, repeat_params, user) }.to(raise_error) do |e|
-          expect(e.class).to eq(ActiveRecord::RecordNotUnique)
+          expect(e.class).to eq(Caseflow::Error::BvaDispatchDoubleOutcode)
         end
       end
     end
