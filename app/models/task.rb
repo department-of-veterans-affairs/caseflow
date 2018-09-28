@@ -113,6 +113,15 @@ class Task < ApplicationRecord
     nil
   end
 
+  def assignable_organizations
+    Organization.assignable_hash
+  end
+
+  def assignable_users
+    return assigned_to.assignable_members_hash if assigned_to.is_a?(Organization)
+    parent.assigned_to.assignable_members_hash if parent && parent.assigned_to.is_a?(Organization)
+  end
+
   private
 
   def sub_task

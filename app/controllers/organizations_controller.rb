@@ -6,7 +6,7 @@ class OrganizationsController < ApplicationController
   skip_before_action :deny_vso_access
 
   def index
-    render json: { organizations: Organization.where(type: nil).map { |o| { id: o.id, name: o.name } } }
+    render json: { organizations: Organization.assignable_hash }
   end
 
   def show
@@ -14,7 +14,7 @@ class OrganizationsController < ApplicationController
   end
 
   def members
-    render json: { members: organization.members.map { |m| { id: m.id, css_id: m.css_id, full_name: m.full_name } } }
+    render json: { members: organization.assignable_members_hash }
   end
 
   private
