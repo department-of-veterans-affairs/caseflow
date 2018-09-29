@@ -402,6 +402,20 @@ describe ClaimReview do
           tracked_item_request = Fakes::BGSService.generate_tracked_items_requests
           expect(tracked_item_request[epe.reference_id]).to be(true)
         end
+
+        context "when veteran is deceased" do
+          let(:veteran_date_of_death) { 1.year.ago }
+
+          it "sets program_type_cd to CPD" do
+            subject
+            epe = claim_review.end_product_establishments.last
+
+            letter_request = Fakes::BGSService.manage_claimant_letter_v2_requests
+            expect(letter_request[epe.reference_id]).to eq(
+              program_type_cd: "CPD", claimant_participant_id: veteran_participant_id
+            )
+          end
+        end
       end
     end
 
