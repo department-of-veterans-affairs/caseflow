@@ -50,8 +50,12 @@ RSpec.describe OrganizationsController, type: :controller do
       let(:user) { FactoryBot.create(:user) }
       let(:other_members) { FactoryBot.create_list(:user, member_cnt - 1) }
       let(:org) { FactoryBot.create(:organization) }
+      let(:field) { "sdept" }
+      let(:fld_val) { org.name }
+      let!(:sfo) { StaffFieldForOrganization.create!(organization: org, name: field, values: [fld_val]) }
       before do
         [other_members, user].flatten.each do |u|
+          FactoryBot.create(:staff, user: u, "#{field}": fld_val)
           FeatureToggle.enable!(org.feature.to_sym, users: [u.css_id])
         end
         User.authenticate!(user: user)
