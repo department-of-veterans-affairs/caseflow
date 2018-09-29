@@ -17,6 +17,7 @@ import AttorneyActionsDropdown from './components/AttorneyActionsDropdown';
 import JudgeActionsDropdown from './components/JudgeActionsDropdown';
 import ColocatedActionsDropdown from './components/ColocatedActionsDropdown';
 import GenericTaskActionsDropdown from './components/GenericTaskActionsDropdown';
+import OnHoldLabel from './components/OnHoldLabel';
 import CopyTextButton from '../components/CopyTextButton';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
@@ -26,7 +27,10 @@ import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.j
 import { COLORS } from '../constants/AppConstants';
 import StringUtil from '../util/StringUtil';
 
-import { renderLegacyAppealType } from './utils';
+import {
+  renderLegacyAppealType,
+  taskIsOnHold
+} from './utils';
 import { DateString } from '../util/DateUtil';
 import type { Appeal, Task } from './types/models';
 import type { State } from './types/state';
@@ -140,6 +144,12 @@ export class CaseSnapshot extends React.PureComponent<Props> {
         <React.Fragment>
           <dt>{COPY.CASE_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
         </React.Fragment> }
+      { taskIsOnHold(taskAssignedToUser) &&
+        <React.Fragment>
+          <dt>{COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE}</dt>
+          <dd><OnHoldLabel task={taskAssignedToUser} /></dd>
+        </React.Fragment>
+      }
       { taskAssignedToUser.instructions &&
         <React.Fragment>
           <dt>{COPY.CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
@@ -196,6 +206,12 @@ export class CaseSnapshot extends React.PureComponent<Props> {
         return <React.Fragment>
           <dt>{COPY.CASE_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{CO_LOCATED_ADMIN_ACTIONS[taskAssignedToUser.action]}</dd>
           <dt>{COPY.CASE_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
+          { taskIsOnHold(taskAssignedToUser) &&
+            <React.Fragment>
+              <dt>{COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE}</dt>
+              <dd><OnHoldLabel task={taskAssignedToUser} /></dd>
+            </React.Fragment>
+          }
           <dt>{COPY.CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
           <dd>{this.taskInstructionsWithLineBreaks(taskAssignedToUser.instructions)}</dd>
         </React.Fragment>;
