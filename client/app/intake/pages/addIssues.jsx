@@ -1,12 +1,15 @@
 import _ from 'lodash';
-import React from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import React from 'react';
 
+import AddIssuesModal from '../components/AddIssuesModal';
 import Button from '../../components/Button';
 import { FORM_TYPES } from '../../intakeCommon/constants';
 import { formatDate } from '../../util/DateUtil';
 import { getAddIssuesFields } from '../util';
 import Table from '../../components/Table';
+import { toggleAddIssuesModal } from '../actions/common';
 
 class AddIssues extends React.PureComponent {
   render() {
@@ -25,7 +28,9 @@ class AddIssues extends React.PureComponent {
       return <Button
         name="add-issue"
         legacyStyling={false}
-        classNames={['usa-button-secondary']}>
+        classNames={['usa-button-secondary']}
+        onClick={this.props.toggleAddIssuesModal}
+      >
         + Add issue
       </Button>;
     };
@@ -51,6 +56,10 @@ class AddIssues extends React.PureComponent {
     );
 
     return <div className="cf-intake-edit">
+      { intakeData.addIssuesModalVisible && <AddIssuesModal
+        ratings={intakeData.ratings}
+        closeHandler={this.props.toggleAddIssuesModal} />
+      }
       <h1 className="cf-txt-c">Add Issues</h1>
 
       <Table
@@ -70,5 +79,8 @@ export default connect(
     },
     formType: intake.formType,
     veteran: intake.veteran
-  })
+  }),
+  (dispatch) => bindActionCreators({
+    toggleAddIssuesModal
+  }, dispatch)
 )(AddIssues);
