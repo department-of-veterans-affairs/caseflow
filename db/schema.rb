@@ -188,10 +188,10 @@ ActiveRecord::Schema.define(version: 20180928211349) do
   end
 
   create_table "decisions", force: :cascade do |t|
-    t.bigint "appeal_id"
-    t.string "citation_number"
-    t.date "decision_date"
-    t.string "redacted_document_location"
+    t.bigint "appeal_id", null: false
+    t.string "citation_number", null: false
+    t.date "decision_date", null: false
+    t.string "redacted_document_location", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["appeal_id"], name: "index_decisions_on_appeal_id"

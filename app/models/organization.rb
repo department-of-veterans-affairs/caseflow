@@ -2,6 +2,10 @@ class Organization < ApplicationRecord
   has_many :tasks, as: :assigned_to
   has_many :staff_field_for_organization
 
+  def self.assignable
+    where(type: [nil, BvaDispatch.name])
+  end
+
   def user_has_access?(user)
     members.pluck(:id).include?(user.id)
   end
