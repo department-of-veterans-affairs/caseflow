@@ -8,17 +8,19 @@ describe ClaimReview do
     FeatureToggle.disable!(:test_facols)
   end
 
-  let(:veteran_file_number)  { "64205555" }
+  let(:veteran_file_number) { "4205555" }
   let(:veteran_participant_id) { "123456" }
   let(:veteran_date_of_death) { nil }
   let!(:veteran) do
     Generators::Veteran.build(
-    file_number: veteran_file_number,
-    first_name: "James",
-    last_name: "Bond",
-    participant_id: veteran_participant_id,
-    date_of_death: veteran_date_of_death
-  ) end
+      file_number: veteran_file_number,
+      first_name: "James",
+      last_name: "Bond",
+      participant_id: veteran_participant_id,
+      date_of_death: veteran_date_of_death
+    )
+  end
+
   let(:receipt_date) { SupplementalClaim::AMA_BEGIN_DATE + 1 }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
