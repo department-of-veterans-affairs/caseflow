@@ -49,6 +49,14 @@ class Task < ApplicationRecord
     appeal_type == "Appeal"
   end
 
+  def days_waiting
+    (Time.zone.today - assigned_at.to_date).to_i if assigned_at
+  end
+
+  def assigned_by_name
+    assigned_by.try(:full_name)
+  end
+
   def colocated_task?
     type == "ColocatedTask"
   end
@@ -103,6 +111,15 @@ class Task < ApplicationRecord
 
   def previous_task
     nil
+  end
+
+  def assignable_organizations
+    Organization.assignable
+  end
+
+  def assignable_users
+    return assigned_to.members if assigned_to.is_a?(Organization)
+    parent.assigned_to.members if parent && parent.assigned_to.is_a?(Organization)
   end
 
   private

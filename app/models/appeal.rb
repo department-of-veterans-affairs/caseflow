@@ -5,6 +5,7 @@ class Appeal < AmaReview
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
   has_many :decision_issues, through: :request_issues
+  has_many :decisions
   has_one :special_issue_list
 
   validates :receipt_date, :docket_type, presence: { message: "blank" }, on: :intake_review
@@ -44,6 +45,18 @@ class Appeal < AmaReview
     docket_type
   end
 
+  def hearing_docket?
+    docket_type == "hearing"
+  end
+
+  def evidence_submission_docket?
+    docket_type == "evidence_submission"
+  end
+
+  def direct_review_docket?
+    docket_type == "direct_review"
+  end
+
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
@@ -69,7 +82,7 @@ class Appeal < AmaReview
     claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
   end
 
-  delegate :first_name, :last_name, :name_suffix, to: :veteran, prefix: true, allow_nil: true
+  delegate :first_name, :last_name, :name_suffix, :ssn, to: :veteran, prefix: true, allow_nil: true
 
   def number_of_issues
     issues[:request_issues].size

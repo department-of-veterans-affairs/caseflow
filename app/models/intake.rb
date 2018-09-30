@@ -1,4 +1,6 @@
 class Intake < ApplicationRecord
+  include Asyncable
+
   class FormTypeNotSupported < StandardError; end
 
   belongs_to :user
@@ -170,8 +172,7 @@ class Intake < ApplicationRecord
 
     elsif !veteran.valid?(:bgs)
       self.error_code = :veteran_not_valid
-      errors = veteran.errors.messages.map { |(key, _value)| key }
-      @error_data = { veteran_missing_fields: errors }
+      @error_data = veteran_invalid_fields
 
     elsif duplicate_intake_in_progress
       self.error_code = :duplicate_intake_in_progress
@@ -239,7 +240,19 @@ class Intake < ApplicationRecord
     fail Caseflow::Error::MustImplementInSubclass
   end
 
-  def build_issues(request_issues_data)
-    request_issues_data.map { |data| detail.request_issues.from_intake_data(data) }
+  def veteran_invalid_fields
+    missing_fields = veteran.errors.details
+      .select { |_, errors| errors.any? { |e| e[:error] == :blank } }
+      .keys
+
+    address_too_long = veteran.errors.details.any? do |field_name, errors|
+      [:address_line1, :address_line2, :address_line3].include?(field_name) &&
+        errors.any? { |e| e[:error] == :too_long }
+    end
+
+    {
+      veteran_missing_fields: missing_fields,
+      veteran_address_too_long: address_too_long
+    }
   end
 end

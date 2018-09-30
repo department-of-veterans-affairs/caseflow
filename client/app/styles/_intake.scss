@@ -57,11 +57,6 @@
 }
 
 .cf-intake-edit {
-  h1 {
-    font-weight: 700;
-    font-size: 52px;
-  }
-
   th {
     padding: 0;
   }
@@ -71,7 +66,7 @@
   }
 
   td:first-child {
-    font-weight: 700;
+    font-weight: $font-bold;
   }
 
   td:last-child {
