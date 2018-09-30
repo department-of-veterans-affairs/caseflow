@@ -283,7 +283,7 @@ class AppealRepository
     other_cases = VACOLS::Case.joins(:folder).where(bfregoff: regional_office, bfcurloc: "57")
       .order("folder.tinum").limit(30)
 
-    [cavc_cases + aod_cases + other_cases].uniq[0.30].map { |case_record| build_appeal(case_record, true) }
+    (cavc_cases + aod_cases + other_cases).uniq.first(30).map { |case_record| build_appeal(case_record, true) }
   end
 
   def self.appeals_ready_for_co_hearing_schedule
@@ -292,7 +292,7 @@ class AppealRepository
       .joins(:folder).where(bfhr: "1", bfcurloc: "57").order("folder.tinum").limit(30)
     other_cases = VACOLS::Case.joins(:folder).where(bfhr: "1", bfcurloc: "57").order("folder.tinum").limit(30)
 
-    [cavc_cases + aod_cases + other_cases].uniq[0.30].map { |case_record| build_appeal(case_record, true) }
+    (cavc_cases + aod_cases + other_cases).first(30).map { |case_record| build_appeal(case_record, true) }
   end
 
   def self.update_location_after_dispatch!(appeal:)
