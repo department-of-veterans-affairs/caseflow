@@ -56,7 +56,7 @@ describe PrepareEstablishClaimTasksJob do
   end
 
   context ".perform" do
-    let(:filename) { appeal_with_decision_document.decisions.first.file_name }
+    let(:filename) { Document::S3_BUCKET_NAME + "/" + appeal_with_decision_document.decisions.first.file_name }
 
     it "prepares the correct tasks" do
       PrepareEstablishClaimTasksJob.perform_now

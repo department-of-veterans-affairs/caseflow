@@ -211,6 +211,10 @@ export const prepareAppealForStore =
         veteranGender: appeal.attributes.veteran_gender,
         externalId: appeal.attributes.external_id,
         status: appeal.attributes.status,
+        events: {
+          nodReceiptDate: appeal.attributes.events.nod_receipt_date,
+          form9Date: appeal.attributes.events.form9_date
+        },
         decisionDate: appeal.attributes.decision_date,
         certificationDate: appeal.attributes.certification_date,
         powerOfAttorney: appeal.attributes.power_of_attorney,
@@ -401,4 +405,6 @@ export const taskHasNewDocuments = (task: Task, newDocsForAppeal: NewDocsForAppe
   return newDocsForAppeal[task.externalAppealId].docs.length > 0;
 };
 
-export const taskIsOnHold = (task: Task) => moment().diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;
+export const taskIsOnHold = (task: Task) =>
+  moment().startOf('day').
+    diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;

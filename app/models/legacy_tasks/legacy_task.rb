@@ -24,13 +24,27 @@ class LegacyTask
     assigned_to && assigned_to.id
   end
 
+  def assigned_by_name
+    FullName.new(assigned_by_first_name,
+                 "",
+                 assigned_by_last_name)
+      .formatted(:readable_full)
+  end
+
   def appeal
     @appeal ||= LegacyAppeal.find(appeal_id)
   end
 
   def appeal_type
     appeal.class.name
-    # "LegacyAppeal"
+  end
+
+  def attorney_case_reviews
+    QueueRepository.tasks_for_appeal(appeal.vacols_id).reject { |t| t.document_id.nil? }
+  end
+
+  def days_waiting
+    (Time.zone.today - assigned_at.to_date).to_i if assigned_at
   end
 
   def get_allowed_actions(role, user)
@@ -55,6 +69,7 @@ class LegacyTask
       docket_date: record.docket_date.try(:to_date),
       appeal_id: appeal.id,
       assigned_to: user,
+      assigned_at: record.assigned_to_location_date.try(:to_date),
       task_id: record.created_at ? record.vacols_id + "-" + record.created_at.strftime("%Y-%m-%d") : nil,
       document_id: record.document_id,
       assigned_by: record.assigned_by,

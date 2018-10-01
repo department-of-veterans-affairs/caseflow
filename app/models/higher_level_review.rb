@@ -52,12 +52,20 @@ class HigherLevelReview < ClaimReview
     super { create_dta_supplemental_claim }
   end
 
+  def issue_code(rated)
+    rated ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE
+  end
+
   private
 
   def create_dta_supplemental_claim
     return if dta_issues.empty?
     dta_supplemental_claim.create_issues!(build_follow_up_dta_issues)
-    dta_supplemental_claim.process_end_product_establishments!
+    if run_async?
+      ClaimReviewProcessJob.perform_later(dta_supplemental_claim)
+    else
+      ClaimReviewProcessJob.perform_now(dta_supplemental_claim)
+    end
   end
 
   def build_follow_up_dta_issues
@@ -105,9 +113,5 @@ class HigherLevelReview < ClaimReview
       claimant_participant_id: claimant_participant_id,
       station: "397" # AMC
     )
-  end
-
-  def issue_code(rated)
-    rated ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE
   end
 end

@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { BrowserRouter, Switch } from 'react-router-dom';
+import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import StringUtil from '../util/StringUtil';
 
 import {
@@ -29,6 +29,7 @@ import EvaluateDecisionView from './EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import MarkTaskCompleteView from './MarkTaskCompleteView';
+import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import TriggerModal from './TriggerModal';
 
 import CaseListView from './CaseListView';
@@ -115,10 +116,12 @@ class QueueApp extends React.PureComponent<Props> {
       <JudgeReviewTaskListView {...this.props} />}
   </QueueLoadingScreen>;
 
-  routedQueueDetail = (props) => <CaseDetailsLoadingScreen
+  routedQueueDetail = (props) => <CaseDetailsView appealId={props.match.params.appealId} />;
+
+  routedQueueDetailWithLoadingScreen = (props) => <CaseDetailsLoadingScreen
     {...this.propsForQueueLoadingScreen()}
     appealId={props.match.params.appealId}>
-    <CaseDetailsView appealId={props.match.params.appealId} />
+    {this.routedQueueDetail(props)}
   </CaseDetailsLoadingScreen>;
 
   routedSubmitDecision = (props) => <SubmitDecisionView
@@ -151,6 +154,9 @@ class QueueApp extends React.PureComponent<Props> {
   routedAddColocatedTask = (props) => <AddColocatedTaskView nextStep="/queue" {...props.match.params} />;
 
   routedColocatedPlaceHold = (props) => <ColocatedPlaceHoldView nextStep="/queue" {...props.match.params} />;
+
+  routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView
+    nextStep={`/queue/appeals/${props.match.params.appealId}`} {...props.match.params} />;
 
   routedMarkTaskComplete = (props) => <MarkTaskCompleteView
     nextStep={`/queue/appeals/${props.match.params.appealId}`}
@@ -230,9 +236,17 @@ class QueueApp extends React.PureComponent<Props> {
             path="/queue/:userId/assign"
             title="Unassigned Cases | Caseflow"
             render={this.routedJudgeQueueList('assign')} />
+          <Route
+            path="/queue/appeals/:appealId/modal/advanced_on_docket_motion"
+            render={this.routedAdvancedOnDocketMotion} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"
+            title="Case Details | Caseflow"
+            render={this.routedQueueDetailWithLoadingScreen} />
+          <PageRoute
+            exact
+            path="/queue/appeals/:appealId/modal/:modalType"
             title="Case Details | Caseflow"
             render={this.routedQueueDetail} />
           <PageRoute

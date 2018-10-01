@@ -195,31 +195,20 @@ describe('ColocatedTaskListView', () => {
 
       const wrapper = getWrapperColocatedTaskListView(store);
 
-      wrapper.find('[aria-label="Pending action (2) tab window"]').simulate('click');
+      wrapper.find('[aria-label="Pending action (1) tab window"]').simulate('click');
 
       const cells = wrapper.find('td');
 
-      expect(cells).to.have.length(12);
+      expect(cells).to.have.length(6);
       const wrappers = [];
 
       for (let i = 0; i < cells.length; i++) {
         wrappers.push(cells.at(i));
       }
       {
-        const [caseDetails, columnTasks, types, docketNumber, daysOnHold, documents] = wrappers;
+        const [daysOnHold, documents] = wrappers.slice(4);
 
-        expect(caseDetails.text()).to.include(appeal.veteranFullName);
-        expect(caseDetails.text()).to.include(appeal.veteranFileNumber);
-        expect(columnTasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.action]);
-        expect(types.text()).to.include(appeal.caseType);
-        expect(docketNumber.text()).to.include(appeal.docketNumber);
-        expect(daysOnHold.text()).to.equal('30 of 30');
-        expect(documents.html()).to.include(`/reader/appeal/${task.externalAppealId}/documents`);
-      }
-      {
-        const [daysOnHold, documents] = wrappers.slice(10);
-
-        expect(daysOnHold.text()).to.equal('2 of 30');
+        expect(daysOnHold.text()).to.equal('1 of 30');
         expect(documents.html()).to.include(`/reader/appeal/${taskWithNewDocs.externalAppealId}/documents`);
       }
     });
@@ -295,7 +284,7 @@ describe('ColocatedTaskListView', () => {
       expect(columnTasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.action]);
       expect(types.text()).to.include(appeal.caseType);
       expect(docketNumber.text()).to.include(appeal.docketNumber);
-      expect(daysOnHold.text()).to.equal('2 of 30');
+      expect(daysOnHold.text()).to.equal('1 of 30');
       expect(documents.html()).to.include(`/reader/appeal/${task.externalAppealId}/documents`);
     });
   });

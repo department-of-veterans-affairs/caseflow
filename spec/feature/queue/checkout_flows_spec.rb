@@ -482,27 +482,19 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content("Evaluate Decision")
 
         click_on "Continue"
+        sleep 1
+
         expect(page).to have_content("Choose one")
-        sleep 2
 
-        radio_group_cls = "cf-form-showhide-radio cf-form-radio usa-input-error"
-        case_complexity_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][1]//label")
-        case_quality_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][2]//label")
+        find("label", text: "Easy").click
+        find("label", text: "1 - Does not meet expectations").click
 
-        expect(case_quality_opts.first.text).to eq(
-          "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}"
-        )
-        expect(case_quality_opts.last.text).to eq(
-          "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
-        )
-
-        [case_complexity_opts, case_quality_opts].each { |l| l.sample(1).first.click }
         # areas of improvement
-        page.find_all(".question-label").sample(2).each(&:double_click)
+        find("#issues_are_not_addressed", visible: false).sibling("label").click
 
-        dummy_note = generate_words 200
+        dummy_note = generate_words 5
         fill_in "additional-factors", with: dummy_note
-        expect(page).to have_content(dummy_note[0..599])
+        expect(page).to have_content(dummy_note[0..5])
 
         click_on "Continue"
 

@@ -40,7 +40,7 @@ abbr {
 }
 
 label {
-  font-weight: normal;
+  font-weight: $font-normal;
   margin-top: 0; // Override USWDS
 }
 
@@ -48,7 +48,6 @@ p {
   margin-top: rem(20px);
   margin-bottom: rem(24px);
   color: $color-gray-dark;
-  font-weight: 400;
   font-size: 17px;
   line-height: 1.5em;
 }
@@ -67,25 +66,25 @@ p {
 }
 
 .cf-lead-paragraph {
-  font-weight: 400;
   font-size: 19px;
   line-height: 1.5em;
   margin-bottom: 30px;
 }
 
-.cf-display-1 {
-  font-weight: 700;
-  font-size: 52px;
+.cf-display-1,
+.cf-display-2 {
   line-height: 1.3em;
   margin-bottom: 40px;
 }
+// Usage h1 class for accessibility
+.cf-display-1 {
+  font-weight: $font-bold;
+  font-size: 52px;
+}
 
+// Candidate for deprecation/ Unused
 .cf-display-2 {
-  font-weight: 400;
   font-size: 44px;
-  line-height: 1.3em;
-  margin-bottom: 40px;
-
 }
 
 .cf-red-text {
@@ -94,17 +93,6 @@ p {
 
 .cf-font-light {
   font-weight: 300;
-}
-
-.cf-notice {
-  padding: 8px 20px;
-  text-align: center;
-  background-color: $color-primary;
-  color: $color-white;
-
-  a {
-    color: $color-white;
-  }
 }
 
 //----------------------------------*
@@ -121,15 +109,6 @@ p {
 
 .cf-txt-l {
   text-align: left;
-}
-
-.cf-txt-uc {
-  text-transform: uppercase;
-}
-
-// Use cf-push-row to wrap elements that float to the left or right
-.cf-push-row {
-  @include clearfix;
 }
 
 .cf-push-left {
@@ -168,7 +147,7 @@ h4 {
 
 h5 {
   font-size: 13px;
-  font-weight: 400;
+  font-weight: $font-normal;
   text-transform: uppercase;
   margin-bottom: 12px;
 }
@@ -454,16 +433,11 @@ svg title {
   margin: 0 auto;
   width: 490px;
   max-height: 100%;
-  overflow-y: auto;
+  overflow-y: visible;
 
   table {
     margin: 0 0 2em;
   }
-}
-
-.cf-modal-title {
-  font-size: rem(35px);
-  text-align: left;
 }
 
 .cf-modal-close {
@@ -472,7 +446,12 @@ svg title {
   padding: .1rem;
   position: absolute;
   right: rem(10px);
+  top: rem(10px);
   width: 1.5rem;
+
+  &[type="button"] {
+    margin-right: 0;
+  }
 
   &:hover,
   &:focus,
@@ -512,6 +491,7 @@ svg title {
 .cf-modal-controls {
   position: relative;
   bottom: 0;
+  padding-bottom: 3rem;
   margin-top: rem(30px);
 }
 
@@ -550,7 +530,7 @@ div {
 
 .cf-progress-bar-not-activated {
   color: $color-gray-dark;
-  font-weight: 700;
+  font-weight: $font-bold;
   padding-bottom: 6px;
   border-bottom: 7px solid $color-gray-light;
 }
@@ -566,7 +546,7 @@ div {
   position: relative;
   border-bottom: 1px solid $color-gray-lighter;
 
-  .usa-grid-full {
+  .usa-width-one-whole {
     position: relative;
     padding: 0 2rem;
   }
@@ -661,54 +641,6 @@ div {
   }
 }
 
-
-//-----------------------------------*
-// CSS based on Web Design Guidelines.
-// - Uses Neat.bourbon.io as a grid
-// - Uses patterns and components
-//   from refills.bourbon.io/unstyled/
-//-----------------------------------*/
-
-//===========================
-// Tooltip
-// =========================*/
-
-.cf-tooltip {
-  display: inline-block;
-  position: relative;
-}
-
-.cf-tooltip-trigger {
-  &:hover + .cf-tooltip-text {
-    display: block;
-  }
-}
-
-.cf-tooltip-text {
-  @include transform(translateX(-50%));
-  background: $color-white;
-  box-shadow: 0 0 10px -3px $color-gray;
-  display: none;
-  left: 50%;
-  margin-top: rem(10px);
-  padding: rem(10px);
-  position: absolute;
-  width: rem(300px);
-
-  &::before {
-    @include transform(scaleX(1.2));
-    color: $color-white;
-    content: '\25B2';
-    display: block;
-    font-size: rem(15px);
-    text-align: center;
-    text-shadow: 0 -2px 2px rgba($color-gray, .5);
-    margin-top: rem(-25px);
-    position: relative;
-    z-index: -1;
-  }
-}
-
 //===========================
 // Form controls
 // =========================*/
@@ -716,10 +648,6 @@ div {
 // Overrides USWDS */
 textarea {
   max-width: 100%;
-
-  &[id="Explanation"] {
-    width: 430px;
-  }
 }
 
 form {
@@ -784,7 +712,6 @@ form {
 
   &.usa-button-disabled {
     color: $color-gray-light;
-    background-color: $color-gray-light;
   }
 
   &--confirm {
@@ -851,8 +778,6 @@ form {
       content: '* ';
       color: $color-secondary;
       font-family: inherit;
-      font-weight: bold;
-      font-style: normal;
     }
   }
 
@@ -862,18 +787,6 @@ form {
     &::before {
       content: '* ';
     }
-  }
-}
-
-.cf-form {
-  header {
-    border-bottom: 1px solid $color-gray-lighter;
-    margin-bottom: rem(30px);
-  }
-
-  .cf-btn-forward {
-    display: inline-block;
-    margin-right: 0;
   }
 }
 
@@ -889,11 +802,12 @@ input {
 
 .cf-inline-form {
   line-height: 4em;
+  @include clearfix;
 
   label,
   input {
     display: inline;
-    margin-right: 10px;
+    margin: 0 10px;
   }
 
   input {
@@ -924,8 +838,8 @@ input {
 fieldset {
   > *,
   .cf-form-textinput {
-    margin-bottom: 0;
     color: $color-gray-dark;
+    margin-top: 10px;
   }
 }
 
@@ -937,7 +851,7 @@ fieldset {
 }
 
 .cf-form-textarea {
-  clear: both;
+  @include clearfix;
   max-width: rem(455px);
   margin-bottom: 20px;
 
@@ -949,7 +863,6 @@ fieldset {
 // Wrapping element for each option */
 .cf-form-radio-options {
   @include clearfix;
-  margin-top: rem(10px);
 
   input {
     left: -999em;
@@ -962,37 +875,25 @@ fieldset {
 
 .cf-form-radio-option {
   @include clearfix;
-  margin-bottom: rem(20px);
 
   label {
     max-width: 100%;
-    // This important can be removed when the latest USWDS
-    // are merged into the gem we use.
-    // scss-lint:disable ImportantRule
-    margin-bottom: 0 !important;
-    // scss-lint:enable ImportantRule
-  }
+   }
 }
 
 .cf-form-radio-inline {
   .cf-form-radio-option {
     float: left;
     padding-right: rem(30px);
-    margin-bottom: .5em;
-  }
-}
-
-.cf-form-showhide-radio {
-  .cf-required {
-    float: none;
+    margin: .5em 0;
   }
 }
 
 .cf-form-checkboxes {
   margin-top: rem(20px);
-  margin-bottom: rem(40px);
+  margin-bottom: rem(10px);
 
-  .usa-grid-full {
+  .usa-width-one-whole {
     margin-bottom: 0;
   }
 }
@@ -1012,12 +913,6 @@ fieldset {
 
   .cf-required {
     display: none;
-  }
-}
-
-[class*='cf-form-checkbox'] {
-  legend {
-    margin-bottom: .75em;
   }
 }
 
@@ -1257,13 +1152,6 @@ button {
       }
     }
   }
-}
-
-.cf-form-showhide-radio,
- .cf-form-checkboxes {
-  .question-label {
-    margin-bottom: 20px;
- }
 }
 
 .usa-accordion-button {

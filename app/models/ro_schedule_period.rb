@@ -18,9 +18,18 @@ class RoSchedulePeriod < SchedulePeriod
   end
 
   def schedule_confirmed(hearing_schedule)
-    transaction do
-      HearingDay.create_schedule(hearing_schedule)
-      super
+    RoSchedulePeriod.transaction do
+      start_confirming_schedule
+      begin
+        transaction do
+          HearingDay.create_schedule(hearing_schedule)
+        end
+        super
+      rescue StandardError
+        end_confirming_schedule
+        raise ActiveRecord::Rollback
+      end
+      end_confirming_schedule
     end
   end
 

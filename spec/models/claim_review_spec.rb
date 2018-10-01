@@ -63,6 +63,65 @@ describe ClaimReview do
     VBMS::HTTPError.new("500", "More EPs more problems")
   end
 
+  context "async logic scopes" do
+    let!(:claim_review_requiring_processing) do
+      create(:higher_level_review, receipt_date: receipt_date).tap(&:submit_for_processing!)
+    end
+
+    let!(:claim_review_processed) do
+      create(:higher_level_review, receipt_date: receipt_date).tap(&:processed!)
+    end
+
+    let!(:claim_review_recently_attempted) do
+      create(
+        :higher_level_review,
+        receipt_date: receipt_date,
+        establishment_attempted_at: (ClaimReview::REQUIRES_PROCESSING_RETRY_WINDOW_HOURS - 1).hours.ago
+      )
+    end
+
+    let!(:claim_review_attempts_ended) do
+      create(
+        :higher_level_review,
+        receipt_date: receipt_date,
+        establishment_submitted_at: (ClaimReview::REQUIRES_PROCESSING_WINDOW_DAYS + 5).days.ago,
+        establishment_attempted_at: (ClaimReview::REQUIRES_PROCESSING_WINDOW_DAYS + 1).days.ago
+      )
+    end
+
+    context ".unexpired" do
+      it "matches reviews still inside the processing window" do
+        expect(HigherLevelReview.unexpired).to eq([claim_review_requiring_processing])
+      end
+    end
+
+    context ".processable" do
+      it "matches reviews eligible for processing" do
+        expect(HigherLevelReview.processable).to match_array(
+          [claim_review_requiring_processing, claim_review_attempts_ended]
+        )
+      end
+    end
+
+    context ".attemptable" do
+      it "matches reviews that could be attempted" do
+        expect(HigherLevelReview.attemptable).not_to include(claim_review_recently_attempted)
+      end
+    end
+
+    context ".requires_processing" do
+      it "matches reviews that must still be processed" do
+        expect(HigherLevelReview.requires_processing).to eq([claim_review_requiring_processing])
+      end
+    end
+
+    context ".expired_without_processing" do
+      it "matches reviews unfinished but outside the retry window" do
+        expect(HigherLevelReview.expired_without_processing).to eq([claim_review_attempts_ended])
+      end
+    end
+  end
+
   context "#create_issues!" do
     before { claim_review.save! }
     subject { claim_review.create_issues!(issues) }
@@ -179,8 +238,10 @@ describe ClaimReview do
         end
 
         context "when some of the contentions have already been saved" do
+          let(:one_day_ago) { 1.day.ago }
+
           before do
-            rating_request_issue.update!(contention_reference_id: "CONREFID")
+            rating_request_issue.update!(contention_reference_id: "CONREFID", rating_issue_associated_at: one_day_ago)
           end
 
           it "doesn't create them in VBMS" do
@@ -200,15 +261,19 @@ describe ClaimReview do
               }
             )
 
-            expect(rating_request_issue.rating_issue_associated_at).to be_nil
+            expect(rating_request_issue.rating_issue_associated_at).to eq(one_day_ago)
             expect(second_rating_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
           end
         end
 
         context "when all the contentions have already been saved" do
           before do
-            rating_request_issue.update!(contention_reference_id: "CONREFID")
-            second_rating_request_issue.update!(contention_reference_id: "CONREFID")
+            rating_request_issue.update!(
+              contention_reference_id: "CONREFID", rating_issue_associated_at: Time.zone.now
+            )
+            second_rating_request_issue.update!(
+              contention_reference_id: "CONREFID", rating_issue_associated_at: Time.zone.now
+            )
           end
 
           it "doesn't create them in VBMS" do
@@ -218,6 +283,84 @@ describe ClaimReview do
             expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
             expect(Fakes::VBMSService).to_not have_received(:associate_rated_issues!)
           end
+        end
+      end
+
+      context "when called multiple times" do
+        it "remains idempotent despite multiple VBMS failures" do
+          raise_error_on_end_product_establishment_establish_claim
+
+          expect(Fakes::VBMSService).to receive(:establish_claim!).once
+          expect { subject }.to raise_error(vbms_error)
+          expect(claim_review.establishment_processed_at).to be_nil
+
+          allow_end_product_establishment_establish_claim
+          raise_error_on_create_contentions
+
+          expect(Fakes::VBMSService).to receive(:establish_claim!).once
+          expect(Fakes::VBMSService).to receive(:create_contentions!).once
+          expect { subject }.to raise_error(vbms_error)
+          expect(claim_review.establishment_processed_at).to be_nil
+          expect(epe.reference_id).to_not be_nil
+          expect(claim_contentions_for_all_issues_on_epe.count).to eq(0)
+
+          allow_create_contentions
+          raise_error_on_associate_rated_issues
+
+          expect(Fakes::VBMSService).to_not receive(:establish_claim!)
+          expect(Fakes::VBMSService).to receive(:create_contentions!).once
+          expect(Fakes::VBMSService).to receive(:associate_rated_issues!).once
+          expect { subject }.to raise_error(vbms_error)
+          expect(claim_review.establishment_processed_at).to be_nil
+
+          epe_contentions = claim_contentions_for_all_issues_on_epe
+          expect(epe_contentions.count).to eq(2)
+          expect(epe_contentions.where.not(rating_issue_associated_at: nil).count).to eq(0)
+
+          allow_associate_rated_issues
+
+          expect(Fakes::VBMSService).to_not receive(:establish_claim!)
+          expect(Fakes::VBMSService).to_not receive(:create_contentions!)
+          expect(Fakes::VBMSService).to receive(:associate_rated_issues!).once
+          subject
+          expect(claim_review.establishment_processed_at).to eq(Time.zone.now)
+
+          expect(Fakes::VBMSService).to_not receive(:establish_claim!)
+          expect(Fakes::VBMSService).to_not receive(:create_contentions!)
+          expect(Fakes::VBMSService).to_not receive(:associate_rated_issues!)
+          subject
+        end
+
+        def raise_error_on_end_product_establishment_establish_claim
+          allow(Fakes::VBMSService).to receive(:establish_claim!).and_raise(vbms_error)
+        end
+
+        def allow_end_product_establishment_establish_claim
+          allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+        end
+
+        def raise_error_on_create_contentions
+          allow(Fakes::VBMSService).to receive(:create_contentions!).and_raise(vbms_error)
+        end
+
+        def allow_create_contentions
+          allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+        end
+
+        def raise_error_on_associate_rated_issues
+          allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_raise(vbms_error)
+        end
+
+        def allow_associate_rated_issues
+          allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+        end
+
+        def claim_contentions_for_all_issues_on_epe
+          claim_review.request_issues.where(end_product_establishment: epe).where.not(contention_reference_id: nil)
+        end
+
+        def epe
+          claim_review.end_product_establishments.first
         end
       end
     end

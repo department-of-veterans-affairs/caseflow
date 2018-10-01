@@ -137,9 +137,15 @@ RSpec.feature "Intake" do
       end
     end
 
-    context "Veteran has missing information" do
+    context "Veteran has invalid information" do
       let(:veteran) do
-        Generators::Veteran.build(file_number: "12341234", sex: nil, ssn: nil, country: nil)
+        Generators::Veteran.build(
+          file_number: "12341234",
+          sex: nil,
+          ssn: nil,
+          country: nil,
+          address_line1: "this address is more than 20 chars"
+        )
       end
 
       scenario "Search for a veteran with a validation error" do
@@ -158,6 +164,7 @@ RSpec.feature "Intake" do
         expect(page).to have_content(
           "the corporate database, then retry establishing the EP in Caseflow: ssn, sex, country."
         )
+        expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
       end
     end
 
@@ -191,9 +198,9 @@ RSpec.feature "Intake" do
 
       visit "/intake"
       safe_click "#cancel-intake"
-      expect(find(".cf-modal-title")).to have_content("Cancel Intake?")
+      expect(find("#modal_id-title")).to have_content("Cancel Intake?")
       safe_click ".close-modal"
-      expect(page).to_not have_css(".cf-modal-title")
+      expect(page).to_not have_css("#modal_id-title")
       safe_click "#cancel-intake"
 
       safe_click ".confirm-cancel"

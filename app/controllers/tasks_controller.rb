@@ -1,7 +1,7 @@
 class TasksController < ApplicationController
   include Errors
 
-  before_action :verify_task_assignment_access, only: [:create]
+  before_action :verify_task_access, only: [:create, :assignable_organizations, :assignable_users]
   skip_before_action :deny_vso_access, only: [:index, :update, :for_appeal]
 
   TASK_CLASSES = {
@@ -95,7 +95,26 @@ class TasksController < ApplicationController
     json_tasks_by_appeal_id(appeal.id, appeal.class.to_s)
   end
 
+  def assignable_organizations
+    render json: { organizations: task.assignable_organizations.map { |o| { id: o.id, name: o.name } } }
+  end
+
+  def assignable_users
+    render json: { users: task.assignable_users.map { |m| { id: m.id, css_id: m.css_id, full_name: m.full_name } } }
+  end
+
   private
+
+  def can_act_on_task?
+    return true if can_assign_task?
+    true if task.can_user_access?(current_user)
+  rescue ActiveRecord::RecordNotFound
+    return false
+  end
+
+  def verify_task_access
+    redirect_to("/unauthorized") unless can_act_on_task?
+  end
 
   def queue_class
     QUEUES[user_role.try(:to_sym)] || QUEUES[:generic]

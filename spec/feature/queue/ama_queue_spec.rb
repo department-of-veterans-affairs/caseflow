@@ -154,6 +154,27 @@ RSpec.feature "AmaQueue" do
         expect(page).not_to have_selector("text", id: "NEW")
       end
 
+      scenario "setting aod" do
+        visit "/queue/appeals/#{appeals.first.external_id}"
+
+        click_on "Edit"
+
+        find(".Select-control", text: "Select grant or deny").click
+        find("div", class: "Select-option", text: "Grant").click
+
+        find(".Select-control", text: "Select a type").click
+        find("div", class: "Select-option", text: "Serious illness").click
+
+        click_on "Submit"
+
+        expect(page).to have_content("AOD status updated")
+        expect(page).to have_content("AOD")
+        motion = appeals.first.claimants.first.person.advance_on_docket_motions.first
+
+        expect(motion.granted).to eq(true)
+        expect(motion.reason).to eq("serious_illness")
+      end
+
       context "when there is an error loading addresses" do
         before do
           allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id)

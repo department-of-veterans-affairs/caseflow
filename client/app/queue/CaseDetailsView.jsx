@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { bindActionCreators } from 'redux';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -17,6 +18,8 @@ import CaseSnapshot from './CaseSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
 import SendToLocationModal from './components/SendToLocationModal';
+import { resetErrorMessages, resetSuccessMessages } from './uiReducer/uiActions';
+import CaseTimeline from './CaseTimeline';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
@@ -35,7 +38,10 @@ const horizontalRuleStyling = css({
 });
 
 class CaseDetailsView extends React.PureComponent {
-  componentDidMount = () => window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
+  componentDidMount = () => {
+    window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
+    this.props.resetErrorMessages();
+  }
 
   render = () => {
     const {
@@ -75,6 +81,7 @@ class CaseDetailsView extends React.PureComponent {
         <VeteranDetail title="About the Veteran" appeal={appeal} />
         {!_.isNull(appeal.appellantFullName) &&
         <AppellantDetail title="About the Appellant" appeal={appeal} />}
+        <CaseTimeline title="Case Timeline" appeal={appeal} />}
       </StickyNavContentArea>
     </AppSegment>;
   };
@@ -99,4 +106,11 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-export default connect(mapStateToProps)(CaseDetailsView);
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    resetErrorMessages,
+    resetSuccessMessages
+  }, dispatch)
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(CaseDetailsView);

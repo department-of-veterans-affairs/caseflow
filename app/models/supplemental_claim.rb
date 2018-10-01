@@ -42,6 +42,14 @@ class SupplementalClaim < ClaimReview
     END_PRODUCT_MODIFIERS
   end
 
+  def issue_code(rated)
+    issue_code_type = rated ? :rating : :nonrating
+    if is_dta_error
+      issue_code_type = rated ? :dta_rating : :dta_nonrating
+    end
+    END_PRODUCT_CODES[issue_code_type]
+  end
+
   private
 
   def new_end_product_establishment(ep_code)
@@ -53,13 +61,5 @@ class SupplementalClaim < ClaimReview
       claimant_participant_id: claimant_participant_id,
       station: "397" # AMC
     )
-  end
-
-  def issue_code(rated)
-    issue_code_type = rated ? :rating : :nonrating
-    if is_dta_error
-      issue_code_type = rated ? :dta_rating : :dta_nonrating
-    end
-    END_PRODUCT_CODES[issue_code_type]
   end
 end
