@@ -134,7 +134,7 @@ export class EstablishClaimEmail extends BaseForm {
               <Button
                 name="Cancel"
                 onClick={this.props.handleToggleCancelTaskModal}
-                classNames={['cf-btn-link', 'cf-adjacent-buttons']}
+                classNames={['cf-btn-link']}
               />
               <Button
                 app="dispatch"
