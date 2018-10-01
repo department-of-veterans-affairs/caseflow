@@ -1,16 +1,17 @@
 describe QueueRepository do
   before do
     FeatureToggle.enable!(:test_facols)
+    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
   after do
     FeatureToggle.disable!(:test_facols)
+    Timecop.return
   end
 
   context ".assign_case_to_attorney!" do
     before do
       RequestStore.store[:current_user] = judge
-      Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
     end
 
     subject do
@@ -60,7 +61,6 @@ describe QueueRepository do
   context ".reassign_case_to_judge!" do
     before do
       RequestStore.store[:current_user] = attorney
-      Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
     end
 
     subject do
@@ -122,7 +122,6 @@ describe QueueRepository do
   context ".reassign_case_to_attorney!" do
     before do
       RequestStore.store[:current_user] = judge
-      Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
     end
 
     subject do
