@@ -5,6 +5,21 @@ class AttorneyTask < Task
   validate :assigned_by_role_is_valid
   validate :assigned_to_role_is_valid
 
+  def allowed_actions(user)
+    return [] if assigned_to != user
+
+    [
+      {
+        label: "Decision Ready for Review",
+        value: "draft_decision/special_issues"
+      },
+      {
+        label: "Add admin action",
+        value: "colocated_task"
+      }
+    ]
+  end
+
   private
 
   def assigned_to_role_is_valid

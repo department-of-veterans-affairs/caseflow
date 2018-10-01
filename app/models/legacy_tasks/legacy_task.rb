@@ -47,15 +47,8 @@ class LegacyTask
     (Time.zone.today - assigned_at.to_date).to_i if assigned_at
   end
 
-  def get_allowed_actions(role)
-    Constants::TaskActionList::LEGACY_ACCESS_CONTROL
-      .each_with_object(available_actions: []) do |access, accumulator|
-      if access[:vacols_role].include?(role)
-        accumulator[:available_actions].concat(access[:available_actions])
-      end
-
-      accumulator
-    end
+  def allowed_actions(role)
+    return []
   end
 
   ### Serializer Methods End

@@ -22,16 +22,8 @@ class Task < ApplicationRecord
     completed: "completed"
   }
 
-  def get_allowed_actions(user)
-    return { available_actions: [] } if assigned_to != user
-
-    Constants::TaskActionList::ACCESS_CONTROL.reduce(available_actions: []) do |accumulator, access|
-      if access[:task_type].include?(type)
-        accumulator[:available_actions].concat(access[:available_actions])
-      end
-
-      accumulator
-    end
+  def allowed_actions(user)
+    return []
   end
 
   def assigned_by_display_name
