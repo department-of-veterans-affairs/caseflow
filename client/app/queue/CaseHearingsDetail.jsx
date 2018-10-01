@@ -140,7 +140,7 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
         <a href="#" onClick={this.scrollToCaseList}>{COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK}</a>
         {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK}
       </React.Fragment>}
-      <BareList
+      {Boolean(hearings.length) && <BareList
         ListElementComponent="ul"
         items={listElements.map(this.getDetailField)}
         listStyle={css(appealSummaryUlStyling, {
@@ -152,7 +152,7 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
           '> li:last-child': {
             borderBottom: 0
           }
-        })} />
+        })} />}
     </React.Fragment>;
   };
 }
