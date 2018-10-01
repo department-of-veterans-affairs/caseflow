@@ -26,9 +26,9 @@ class RequestIssuesUpdate < ApplicationRecord
     end
 
     if run_async?
-      RequestIssuesUpdateJob.perform_later(self)
+      ClaimReviewProcessJob.perform_later(self)
     else
-      RequestIssuesUpdateJob.perform_now(self)
+      ClaimReviewProcessJob.perform_now(self)
     end
 
     true
