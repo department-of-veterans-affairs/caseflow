@@ -21,10 +21,12 @@ class ClaimReviewIntake < Intake
 
   def complete!(request_params)
     return if complete? || pending?
-    complete_claim_review_async(request_params)
+    complete_claim_review(request_params)
   end
 
-  def complete_claim_review_async(request_params)
+  private
+
+  def complete_claim_review(request_params)
     req_issues = request_params[:request_issues] || []
     transaction do
       start_completion!
@@ -39,8 +41,6 @@ class ClaimReviewIntake < Intake
       complete_with_status!(:success)
     end
   end
-
-  private
 
   def review_params(_request_params)
     fail Caseflow::Error::MustImplementInSubclass

@@ -26,12 +26,25 @@ class RequestIssuesUpdate < ApplicationRecord
     end
 
     if run_async?
-      RequestIssuesUpdateJob.perform_later(self)
+      ClaimReviewProcessJob.perform_later(self)
     else
-      RequestIssuesUpdateJob.perform_now(self)
+      ClaimReviewProcessJob.perform_now(self)
     end
 
     true
+  end
+
+  def process_end_product_establishments!
+    attempted!
+
+    review.process_end_product_establishments!
+
+    removed_issues.each do |request_issue|
+      request_issue.end_product_establishment.remove_contention!(request_issue)
+    end
+
+    clear_error!
+    processed!
   end
 
   def created_issues
