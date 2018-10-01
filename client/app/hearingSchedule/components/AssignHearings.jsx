@@ -67,11 +67,11 @@ export default class AssignHearings extends React.Component {
   };
 
   veteranTypeColor = (docketType) => {
-    let veteranType = docketType.type;
+    let veteranType = docketType;
 
-    if (docketType.type === 'CAVC') {
+    if (docketType === 'CAVC') {
       return veteranType = <span {...colorAOD}>CAVC</span>;
-    } else if (docketType.type === 'AOD') {
+    } else if (docketType === 'AOD') {
       return veteranType = <span {...colorAOD}>AOD</span>;
     }
 
@@ -81,7 +81,7 @@ export default class AssignHearings extends React.Component {
   tableRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
       caseDetails: veteran.name,
-      type: this.veteranTypeColor(veteran),
+      type: this.veteranTypeColor(veteran.type),
       docketNumber: veteran.docketNumber,
       location: veteran.location,
       time: veteran.time
