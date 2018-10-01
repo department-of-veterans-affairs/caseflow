@@ -290,5 +290,9 @@ RSpec.feature "Appeal Intake" do
     safe_click "#button-add-issue"
     expect(page).to have_content("Left knee granted")
     expect(page).to have_content("PTSD denied")
+
+    # test canceling adding an issue by closing the modal
+    safe_click ".close-modal"
+    expect(page).to_not have_content("Left knee granted")
   end
 end
