@@ -323,10 +323,14 @@ RSpec.feature "Higher-Level Review" do
     expect(intake).to be_success
 
     expect(ratings_end_product_establishment.doc_reference_id).to eq("doc_reference_id_result")
-    expect(ratings_end_product_establishment.development_item_reference_id).to eq("development_item_reference_id_result")
+    expect(ratings_end_product_establishment.development_item_reference_id).to eq(
+      "development_item_reference_id_result"
+    )
     expect(ratings_end_product_establishment.benefit_type_code).to eq("1")
     expect(nonratings_end_product_establishment.doc_reference_id).to eq("doc_reference_id_result")
-    expect(nonratings_end_product_establishment.development_item_reference_id).to eq("development_item_reference_id_result")
+    expect(nonratings_end_product_establishment.development_item_reference_id).to eq(
+      "development_item_reference_id_result"
+    )
     expect(nonratings_end_product_establishment.benefit_type_code).to eq("1")
 
     expect(higher_level_review.request_issues.count).to eq 2

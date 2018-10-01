@@ -323,7 +323,6 @@ describe EndProductEstablishment do
         expect(Fakes::BGSService.generate_tracked_items_requests).to be_nil
         expect(end_product_establishment.development_item_reference_id).to eq("tracked_item_exists")
       end
-
     end
 
     context "when there is no tracked item" do
