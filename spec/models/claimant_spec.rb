@@ -115,7 +115,7 @@ describe Claimant do
       it "returns true" do
         claimant = create(:claimant)
         person = create(:person, participant_id: claimant.participant_id, date_of_birth: 20.years.ago)
-        create(:advance_on_docket_grant, person_id: person.id)
+        create(:advance_on_docket_motion, person_id: person.id, granted: true)
 
         expect(claimant.advanced_on_docket(1.year.ago)).to eq(true)
       end

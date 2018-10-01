@@ -102,6 +102,7 @@ Rails.application.routes.draw do
     get :power_of_attorney
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
     resources :special_issues, only: [:create, :index]
+    resources :advance_on_docket_motions, only: [:create]
     get 'tasks', to: "tasks#for_appeal"
   end
 
@@ -181,11 +182,13 @@ Rails.application.routes.draw do
   end
 
   resources :legacy_tasks, only: [:create, :update]
-  resources :tasks, only: [:index, :create, :update]
+  resources :tasks, only: [:index, :create, :update] do
+    get 'assignable_organizations', on: :member
+    get 'assignable_users', on: :member
+  end
 
-  resources :organizations, only: [:index, :show], param: :url do
+  resources :organizations, only: [:show], param: :url do
     resources :tasks, only: [:index], controller: 'organizations/tasks'
-    get 'members', on: :member
   end
 
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'

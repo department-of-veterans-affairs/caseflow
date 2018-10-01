@@ -81,7 +81,9 @@ class EndProductEstablishment < ApplicationRecord
     # Currently not making any assumptions about the order in which VBMS returns
     # the created contentions. Instead find the issue by matching text.
     create_contentions_in_vbms(issues_without_contentions.pluck(:description)).each do |contention|
-      issue = issues_without_contentions.find { |i| i.description == contention.text }
+      issue = issues_without_contentions.find do |i|
+        i.description == contention.text && i.contention_reference_id.nil?
+      end
       issue && issue.update!(contention_reference_id: contention.id)
     end
 
@@ -96,6 +98,8 @@ class EndProductEstablishment < ApplicationRecord
   # Committing an end product establishment is a way to signify that any other actions performed
   # as part of a larger atomic operation containing the end product establishment are also complete.
   # Those actions could be creating contentions or other end product establishments.
+  # NOTE that nothing prevents methods from being called (e.g. remove_contention) once
+  # a EPE is "committed". It is advisory, not transactional.
   def commit!
     update!(committed_at: Time.zone.now) unless committed?
   end
@@ -140,10 +144,9 @@ class EndProductEstablishment < ApplicationRecord
 
       sync_source!
     end
-
-    # TODO: This is sort of janky. Let's rethink the error handling logic here
+  rescue EstablishedEndProductNotFound => e
+    raise e
   rescue StandardError => e
-    raise e if e.is_a?(EstablishedEndProductNotFound)
     raise BGSSyncError.new(e, self)
   end
 

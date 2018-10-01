@@ -423,6 +423,11 @@ RSpec.feature "Supplemental Claim Intake" do
       check_row("Form", "Supplemental Claim (VA Form 21-526b)")
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Ed Merica")
+
+      # clicking the add issues button should bring up the modal
+      safe_click "#button-add-issue"
+      expect(page).to have_content("Left knee granted")
+      expect(page).to have_content("PTSD denied")
     end
 
     scenario "SC non-comp" do
