@@ -670,7 +670,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             end_product_label: "ARC Remand with BVA Grant",
             end_product_code: "070RMBVAGARC",
             gulf_war_registry: true,
-            suppress_acknowledgement_letter: true
+            suppress_acknowledgement_letter: true,
+            claimant_participant_id: nil
           },
           veteran_hash: task.appeal.veteran.to_vbms_hash
         )
@@ -760,7 +761,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             end_product_label: "Remand with BVA Grant (070)",
             end_product_code: "070RMNDBVAG",
             gulf_war_registry: false,
-            suppress_acknowledgement_letter: true
+            suppress_acknowledgement_letter: true,
+            claimant_participant_id: nil
           },
           veteran_hash: task.appeal.veteran.to_vbms_hash
         )
@@ -837,7 +839,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
               end_product_code: "070RMBVAGARC",
               station_of_jurisdiction: "397",
               gulf_war_registry: false,
-              suppress_acknowledgement_letter: true
+              suppress_acknowledgement_letter: true,
+              claimant_participant_id: nil
             },
             veteran_hash: task.appeal.veteran.to_vbms_hash
           )

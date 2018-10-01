@@ -1,4 +1,12 @@
 describe PowerOfAttorneyRepository do
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
   context ".first_last_name?" do
     subject { PowerOfAttorney.repository.first_last_name?(representative_name) }
 
@@ -92,16 +100,15 @@ describe PowerOfAttorneyRepository do
   end
 
   context ".update_vacols_rep_table!" do
-    before do
-      allow(Fakes::PowerOfAttorneyRepository).to receive(:update_vacols_rep_name!).and_call_original
-      allow(Fakes::PowerOfAttorneyRepository).to receive(:update_vacols_rep_address!).and_call_original
-    end
-
     context "when representative is not a person" do
+      let(:vacols_case) { create(:case_with_rep_table_record, bfkey: "123C") }
+      let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+      let(:appellant_representative) { VACOLS::Representative.find_by(repkey: appeal.vacols_id) }
+
       before do
         PowerOfAttorney.repository.update_vacols_rep_table!(
-          appeal: LegacyAppeal.new(vacols_id: "123C"),
-          representative_name: "This is not a name!",
+          appeal: appeal,
+          rep_name: "This is not a name!",
           address: {
             address_line_1: "122 Mullberry St.",
             address_line_2: "PO BOX 123",
@@ -109,37 +116,34 @@ describe PowerOfAttorneyRepository do
             city: "Arlington",
             state: "VA",
             zip: "22202"
-          }
-        )
-      end
-      it "calls update_vacols_rep_address with the correct arguments" do
-        expect(Fakes::PowerOfAttorneyRepository).to have_received(:update_vacols_rep_address!).with(
-          case_record: nil,
-          address: {
-            address_one: "This is not a name!",
-            address_two: "122 Mullberry St. PO BOX 123 Daisies",
-            city: "Arlington",
-            state: "VA",
-            zip: "22202"
-          }
+          },
+          rep_type: :appellant_attorney
         )
       end
 
-      it "calls update_vacols_rep_name with the correct arguments" do
-        expect(Fakes::PowerOfAttorneyRepository).to have_received(:update_vacols_rep_name!).with(
-          case_record: nil,
-          first_name: "",
-          middle_initial: "",
-          last_name: ""
-        )
+      it "sets the values in VACOLS" do
+        expect(appellant_representative.repfirst).to eq(nil)
+        expect(appellant_representative.repmi).to eq(nil)
+        expect(appellant_representative.replast).to eq(nil)
+        expect(appellant_representative.repaddr1).to eq("This is not a name!")
+        expect(appellant_representative.repaddr2).to eq("122 Mullberry St. PO BOX 123 Daisies")
+        expect(appellant_representative.repcity).to eq("Arlington")
+        expect(appellant_representative.repst).to eq("VA")
+        expect(appellant_representative.repzip).to eq("22202")
+        # TODO: set reptype
+        # expect(appellant_representative.reptype).to eq("A")
       end
     end
 
     context "when representative is a person" do
+      let(:vacols_case) { create(:case_with_rep_table_record) }
+      let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+      let(:appellant_representative) { VACOLS::Representative.find_by(repkey: appeal.vacols_id) }
+
       before do
         PowerOfAttorney.repository.update_vacols_rep_table!(
-          appeal: LegacyAppeal.new(vacols_id: "123C"),
-          representative_name: "Jane M Smith",
+          appeal: appeal,
+          rep_name: "Jane M Smith",
           address: {
             address_line_1: "122 Mullberry St.",
             address_line_2: "PO BOX 123",
@@ -147,30 +151,22 @@ describe PowerOfAttorneyRepository do
             city: "Arlington",
             state: "VA",
             zip: "22202"
-          }
+          },
+          rep_type: :appellant_agent
         )
       end
 
-      it "calls update_vacols_rep_name with the correct arguments" do
-        expect(Fakes::PowerOfAttorneyRepository).to have_received(:update_vacols_rep_name!).with(
-          case_record: nil,
-          first_name: "Jane",
-          middle_initial: "M",
-          last_name: "Smith"
-        )
-      end
-
-      it "calls update_vacols_rep_address with the correct arguments" do
-        expect(Fakes::PowerOfAttorneyRepository).to have_received(:update_vacols_rep_address!).with(
-          case_record: nil,
-          address: {
-            address_one: "122 Mullberry St.",
-            address_two: "PO BOX 123 Daisies",
-            city: "Arlington",
-            state: "VA",
-            zip: "22202"
-          }
-        )
+      it "sets the values in VACOLS" do
+        expect(appellant_representative.repfirst).to eq("Jane")
+        expect(appellant_representative.repmi).to eq("M")
+        expect(appellant_representative.replast).to eq("Smith")
+        expect(appellant_representative.repaddr1).to eq("122 Mullberry St.")
+        expect(appellant_representative.repaddr2).to eq("PO BOX 123 Daisies")
+        expect(appellant_representative.repcity).to eq("Arlington")
+        expect(appellant_representative.repst).to eq("VA")
+        expect(appellant_representative.repzip).to eq("22202")
+        # TODO: set reptype
+        # expect(appellant_representative.reptype).to eq("G")
       end
     end
   end

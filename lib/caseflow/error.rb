@@ -1,5 +1,5 @@
 module Caseflow::Error
-  class EfolderError < StandardError
+  class SerializableError < StandardError
     attr_accessor :code, :message
 
     def initialize(args)
@@ -8,13 +8,21 @@ module Caseflow::Error
     end
 
     def serialize_response
-      { json: { "errors": ["status": code, "title": message, "detail": message] }, status: code }
+      { json: { "errors": [{ "status": code, "title": message, "detail": message }] }, status: code }
     end
   end
 
+  class EfolderError < SerializableError; end
   class DocumentRetrievalError < EfolderError; end
   class EfolderAccessForbidden < EfolderError; end
   class ClientRequestError < EfolderError; end
+
+  class ActionForbiddenError < SerializableError
+    def initialize(args)
+      @code = args[:code] || 403
+      @message = args[:message] || "Action forbidden"
+    end
+  end
 
   class MultipleAppealsByVBMSID < StandardError; end
   class CertificationMissingData < StandardError; end
@@ -57,4 +65,7 @@ module Caseflow::Error
   class IssueRepositoryError < VacolsRepositoryError; end
   class QueueRepositoryError < VacolsRepositoryError; end
   class MissingRequiredFieldError < VacolsRepositoryError; end
+
+  class IdtApiError < StandardError; end
+  class InvalidOneTimeKey < IdtApiError; end
 end

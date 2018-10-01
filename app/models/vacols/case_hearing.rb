@@ -42,9 +42,11 @@ class VACOLS::CaseHearing < VACOLS::Record
     add_on: :addon,
     representative_name: :repname,
     staff_id: :mduser,
+    room_info: :room,
     room: :room,
     hearing_date: :hearing_date,
-    hearing_type: :hearing_type
+    hearing_type: :hearing_type,
+    judge_id: :board_member
   }.freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
@@ -57,7 +59,6 @@ class VACOLS::CaseHearing < VACOLS::Record
 
       select_hearings.where("staff.sdomainid = #{id}")
         .where("hearing_date > ?", 1.year.ago.beginning_of_day)
-        .where("bfddec is NULL or bfmpro = 'REM'")
     end
 
     def for_appeal(appeal_vacols_id)
@@ -78,15 +79,29 @@ class VACOLS::CaseHearing < VACOLS::Record
       select_hearings.find_by(hearing_pkseq: pkseq)
     end
 
+    def load_days_for_range(start_date, end_date)
+      select_schedule_days.where("trunc(hearing_date) between ? and ?", start_date, end_date).order(:hearing_date)
+    end
+
+    def load_days_for_regional_office(regional_office, start_date, end_date)
+      select_schedule_days.where("folder_nr = ? and trunc(hearing_date) between ? and ?",
+                                 "VIDEO #{regional_office}", start_date, end_date)
+    end
+
     def create_hearing!(hearing_info)
       attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
       attrs.except!(nil)
+      # Store time value in UTC to VACOLS
+      hear_date = attrs[:hearing_date]
+      converted_date = hear_date.is_a?(Date) ? hear_date : Time.zone.parse(hear_date).to_datetime
+      attrs[:hearing_date] = VacolsHelper.format_datetime_with_utc_timezone(converted_date)
       MetricsService.record("VACOLS: create_hearing!",
                             service: :vacols,
                             name: "create_hearing") do
         create(attrs.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
                            adduser: current_user_slogid,
-                           folder_nr: hearing_info[:representative] ? "VIDEO #{hearing_info[:representative]}" : nil))
+                           folder_nr: hearing_info[:regional_office] ? "VIDEO #{hearing_info[:regional_office]}" : nil,
+                           hearing_type: "C"))
       end
     end
 
@@ -116,6 +131,20 @@ class VACOLS::CaseHearing < VACOLS::Record
         .joins("left outer join vacols.corres on corres.stafkey = bfcorkey")
         .where(hearing_type: HEARING_TYPES.keys)
     end
+
+    def select_schedule_days
+      select(:hearing_pkseq,
+             :hearing_date,
+             "CASE WHEN folder_nr LIKE 'VIDEO%' THEN 'V' ELSE hearing_type END AS hearing_type",
+             "CASE WHEN folder_nr LIKE 'VIDEO%' or folder_nr is null THEN folder_nr ELSE null END AS folder_nr",
+             :room,
+             :board_member,
+             "snamel || ',' || snamemi || ' ' || snamef as judge_name",
+             :mduser,
+             :mdtime)
+        .joins("left outer join vacols.staff on staff.sattyid = board_member")
+        .where("hearing_type = ? and (folder_nr != ? or folder_nr is null)", "C", "1779233")
+    end
   end
 
   def master_record_type
@@ -129,12 +158,6 @@ class VACOLS::CaseHearing < VACOLS::Record
                           name: "update_hearing") do
       update(attrs.merge(mduser: self.class.current_user_slogid, mdtime: VacolsHelper.local_time_with_utc_timezone))
     end
-  end
-
-  private_class_method
-
-  def self.current_user_slogid
-    RequestStore.store[:current_user].vacols_uniq_id.upcase
   end
 
   private

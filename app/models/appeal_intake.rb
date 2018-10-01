@@ -3,15 +3,27 @@ class AppealIntake < Intake
     Appeal.new(veteran_file_number: veteran_file_number)
   end
 
-  def ui_hash
+  def ui_hash(ama_enabled)
     super.merge(
       receipt_date: detail.receipt_date,
+      claimant: detail.claimant_participant_id,
+      claimant_not_veteran: detail.claimant_not_veteran,
+      payee_code: detail.payee_code,
       docket_type: detail.docket_type,
-      ratings: veteran.cached_serialized_timely_ratings
+      ratings: detail.cached_serialized_timely_ratings
     )
   end
 
+  def cancel_detail!
+    detail.remove_claimants!
+    super
+  end
+
   def review!(request_params)
+    detail.create_claimants!(
+      participant_id: request_params[:claimant] || veteran.participant_id,
+      payee_code: request_params[:payee_code] || "00"
+    )
     detail.assign_attributes(request_params.permit(:receipt_date, :docket_type))
     detail.save(context: :intake_review)
   end
@@ -26,6 +38,7 @@ class AppealIntake < Intake
 
     detail.create_issues!(request_issues_data: request_params[:request_issues] || [])
     detail.update!(established_at: Time.zone.now)
+    detail.create_tasks_on_intake_success!
     complete_with_status!(:success)
   end
 end

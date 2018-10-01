@@ -1,0 +1,13 @@
+{
+  "OMO_REQUEST": [
+    "IME", "VHA",
+    "OTI", "OTV"
+  ],
+  "DRAFT_DECISION": [
+    "DEC", "OTD", "OTR", "REM", "VAC",
+    "AFI", "BOT", "COR", "DAF", "DEV",
+    "DIM", "DOR", "DRM", "DVH", "INT",
+    "OTB", "OTH", "REA", "REU", "RRC",
+    "SUP", "VDC", "VDR", "VDS", "VRM"
+  ]
+}

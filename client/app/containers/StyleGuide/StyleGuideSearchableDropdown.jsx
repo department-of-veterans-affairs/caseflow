@@ -62,7 +62,7 @@ export default class StyleGuideSearchableDropdown extends React.PureComponent {
           onChange={this.onChange}
           required
         />
-        <h3 id="multi-dropdrown">Creatable Searchable Multiselect Dropdown</h3>
+        <h3 id="multi-dropdown">Creatable Searchable Multiselect Dropdown</h3>
         <SearchableDropdown
           creatable
           label="Click in the box below to select, type, or add issue(s)"

@@ -65,5 +65,12 @@ class Judge
         repository.find_all_judges
       end
     end
+
+    def list_all_with_name_and_id
+      # idt requires full name and sattyid
+      Rails.cache.fetch("#{Rails.env}_list_of_judges_from_vacols_with_name_and_id") do
+        repository.find_all_judges_with_name_and_id
+      end
+    end
   end
 end

@@ -1,7 +1,7 @@
 <% content_for :full_page_content do %>
   <%= react_component("BaseContainer", props: {
     userDisplayName: current_user.display_name,
-    serverIntake: intake_in_progress ? intake_in_progress.ui_hash : {},
+    serverIntake: intake_in_progress ? intake_in_progress.ui_hash(FeatureToggle.enabled?(:intakeAma, user: current_user)) : {},
     dropdownUrls: dropdown_urls,
     page: "Intake",
     feedbackUrl: feedback_url,

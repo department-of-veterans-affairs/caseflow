@@ -28,7 +28,7 @@ class SideBarIssueTags extends PureComponent {
         const tagValue = _.first(deletedValue).label;
         const result = _.find(doc.tags, { text: tagValue });
 
-        this.props.removeTag(doc, result.id);
+        this.props.removeTag(doc, result);
       } else if (values && values.length) {
         this.props.addNewTag(doc, values);
       }

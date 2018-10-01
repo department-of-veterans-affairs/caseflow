@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { REVIEW_OPTIONS } from '../constants';
+import { formatDateStringForApi } from '../../util/DateUtil';
 
 export const getAppealDocketError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.appeal_docket, 0) === 'blank') && 'Please select an option.'
@@ -7,6 +8,10 @@ export const getAppealDocketError = (responseErrorCodes) => (
 
 export const getOptionSelectedError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.option_selected, 0) === 'blank') && 'Please select an option.'
+);
+
+export const getPageError = (responseErrorCodes) => (
+  (_.get(responseErrorCodes.other, 0) === 'unknown_error') && 'Unknown error.'
 );
 
 export const getReceiptDateError = (responseErrorCodes, state) => (
@@ -27,41 +32,47 @@ export const toggleIneligibleError = (hasInvalidOption, selectedOption) => (
     selectedOption === REVIEW_OPTIONS.HIGHER_LEVEL_REVIEW_WITH_HEARING.key)
 );
 
-export const formatRatings = (ratings) => {
-  return _.keyBy(_.map(ratings, (rating) => {
-    return _.assign(rating,
-      { issues: _.keyBy(rating.issues, 'reference_id') }
-    );
-  }), 'profile_date');
+export const formatRelationships = (relationships) => {
+  return relationships.map((relationship) => {
+    const first = _.capitalize(relationship.first_name);
+    const last = _.capitalize(relationship.last_name);
+    const type = _.capitalize(relationship.relationship_type);
+
+    return {
+      value: relationship.participant_id,
+      displayText: `${first} ${last}, ${type}`
+    };
+  });
 };
 
-export const formatRatingData = (intakeState) => {
-  const ratingData = {
-    request_issues:
-      _(intakeState.ratings).
-        map((rating) => {
-          return _.map(rating.issues, (issue) => {
-            return _.merge(issue, { profile_date: rating.profile_date });
-          });
-        }).
-        flatten().
-        filter('isSelected')
-  };
-
-  const nonRatingData = {
-    request_issues:
-      _(intakeState.nonRatedIssues).map((issue) => {
-        return {
-          decision_text: issue.description,
-          issue_category: issue.category
-        };
-      }).
-        filter('issue_category')
-  };
-
-  const data = {
-    request_issues: _.concat(ratingData.request_issues.value(), nonRatingData.request_issues.value())
-  };
-
-  return data;
+export const prepareReviewData = (intakeData, intakeType) => {
+  switch (intakeType) {
+  case 'appeal':
+    return {
+      docket_type: intakeData.docketType,
+      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      claimant: intakeData.claimant,
+      payee_code: intakeData.payeeCode
+    };
+  case 'supplementalClaim':
+    return {
+      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      claimant: intakeData.claimant,
+      payee_code: intakeData.payeeCode
+    };
+  case 'higherLevelReview':
+    return {
+      informal_conference: intakeData.informalConference,
+      same_office: intakeData.sameOffice,
+      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      claimant: intakeData.claimant,
+      payee_code: intakeData.payeeCode
+    };
+  default:
+    return {
+      receipt_date: formatDateStringForApi(intakeData.receiptDate),
+      claimant: intakeData.claimant,
+      payee_code: intakeData.payeeCode
+    };
+  }
 };

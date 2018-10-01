@@ -90,7 +90,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   componentDidMount = () => {
     const {
       issue: {
-        vacols_sequence_id: issueId,
+        id: issueId,
         remand_reasons: remandReasons
       },
       issues
@@ -103,13 +103,13 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       }
     }));
 
-    if (_.map(issues, 'vacols_sequence_id').indexOf(issueId) > 0) {
+    if (_.map(issues, 'id').indexOf(issueId) > 0) {
       this.scrollTo();
     }
   };
 
-  componentWillUnmount = () => {
-    // on unmount, update issue attrs from state
+  updateStoreIssue = () => {
+    // on going to the next or previous page, update issue attrs from state
     // "remand_reasons": [
     //   {"code": "AB", "after_certification": true},
     //   {"code": "AC", "after_certification": false}
@@ -149,7 +149,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   });
 
   getCheckbox = (option, onChange, values) => {
-    const rowOptId = `${this.props.issue.vacols_sequence_id}-${option.id}`;
+    const rowOptId = `${this.props.issue.id}-${option.id}`;
 
     return <React.Fragment key={option.id}>
       <Checkbox
@@ -188,7 +188,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       issues,
       idx,
       highlight,
-      appeal: { attributes: appeal }
+      appeal
     } = this.props;
     const checkboxGroupProps = {
       onChange: this.toggleRemandReason,
@@ -196,7 +196,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       values: this.state
     };
 
-    return <div key={`remand-reasons-${issue.vacols_sequence_id}`}>
+    return <div key={`remand-reasons-${issue.id}`}>
       <h2 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
         Issue {idx + 1} {issues.length > 1 ? ` of ${issues.length}` : ''}
       </h2>
@@ -206,7 +206,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
         Code: {getIssueDiagnosticCodeLabel(_.last(issue.codes))}
       </div>
       <div {...smallBottomMargin} ref={(node) => this.elTopOfWarning = node}>
-        Certified: {formatDateStr(appeal.certification_date)}
+        Certified: {formatDateStr(appeal.certificationDate)}
       </div>
       <div {...smallBottomMargin}>Note: {issue.note}</div>
       {highlight && !this.getChosenOptions().length &&
@@ -254,12 +254,12 @@ IssueRemandReasonsOptions.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
-  const issues = appeal.attributes.issues;
+  const issues = appeal.issues;
 
   return {
     appeal,
     issues: _.filter(issues, (issue) => issue.disposition === ISSUE_DISPOSITIONS.REMANDED),
-    issue: _.find(issues, (issue) => issue.vacols_sequence_id === ownProps.issueId),
+    issue: _.find(issues, (issue) => issue.id === ownProps.issueId),
     highlight: state.ui.highlightFormItems
   };
 };

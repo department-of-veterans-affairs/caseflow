@@ -1,8 +1,6 @@
 class RampRefiling < RampReview
   class ContentionCreationFailed < StandardError; end
 
-  belongs_to :ramp_election
-
   before_validation :clear_appeal_docket_if_not_appeal
 
   validate :validate_receipt_date, :validate_option_selected
@@ -30,13 +28,15 @@ class RampRefiling < RampReview
     # TODO: consider using create_or_connect_end_product! instead to make this atomic
     # however this has further implications here if there are already contentions on
     # the end product being connected.
-    establish_end_product!
+    establish_end_product!(commit: false)
 
     create_contentions_on_new_end_product!
+
+    end_product_establishment.commit!
   end
 
   def election_receipt_date
-    ramp_election && ramp_election.receipt_date
+    ramp_elections.map(&:receipt_date).min
   end
 
   def needs_end_product?
@@ -44,6 +44,15 @@ class RampRefiling < RampReview
   end
 
   private
+
+  # TODO: add end product status to ramp_refiling
+  def end_product_status
+    nil
+  end
+
+  def ramp_elections
+    RampElection.established.where(veteran_file_number: veteran_file_number).all
+  end
 
   def contention_descriptions_to_create
     @contention_descriptions_to_create ||=
@@ -70,13 +79,13 @@ class RampRefiling < RampReview
   def create_contentions_in_vbms
     VBMSService.create_contentions!(
       veteran_file_number: veteran_file_number,
-      claim_id: end_product_reference_id,
+      claim_id: end_product_establishment.reference_id,
       contention_descriptions: contention_descriptions_to_create
     )
   end
 
   def validate_receipt_date
-    return unless receipt_date && ramp_election
+    return unless receipt_date && election_receipt_date
 
     if election_receipt_date > receipt_date
       errors.add(:receipt_date, "before_ramp_receipt_date")
@@ -86,9 +95,9 @@ class RampRefiling < RampReview
   end
 
   def validate_option_selected
-    return unless option_selected && ramp_election
+    return unless option_selected
 
-    if ramp_election.higher_level_review? && higher_level_review?
+    if ramp_elections.any?(&:higher_level_review?) && higher_level_review?
       errors.add(:option_selected, "higher_level_review_invalid")
     end
   end

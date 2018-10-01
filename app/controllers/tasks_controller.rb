@@ -1,76 +1,110 @@
 class TasksController < ApplicationController
+  include Errors
+
   before_action :verify_queue_access
-  before_action :verify_task_completion_access, only: :complete
-  before_action :verify_task_assignment_access, only: [:create, :update]
-
-  rescue_from Caseflow::Error::VacolsRepositoryError do |e|
-    Rails.logger.error "TasksController failed: #{e.message}"
-    Raven.capture_exception(e)
-    render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
-  end
-
-  ROLES = %w[Judge Attorney].freeze
+  before_action :verify_task_assignment_access, only: [:create]
+  skip_before_action :deny_vso_access, only: [:index, :for_appeal]
 
   TASK_CLASSES = {
-    CoLocatedAdminAction: CoLocatedAdminAction,
-    AttorneyCaseReview: AttorneyCaseReview,
-    AttorneyLegacyTask: AttorneyLegacyTask
+    ColocatedTask: ColocatedTask,
+    AttorneyTask: AttorneyTask,
+    GenericTask: GenericTask
+  }.freeze
+
+  QUEUES = {
+    attorney: AttorneyQueue,
+    colocated: ColocatedQueue,
+    judge: JudgeQueue
   }.freeze
 
   def set_application
     RequestStore.store[:application] = "queue"
   end
 
+  # e.g, GET /tasks?user_id=xxx&role=colocated
+  #      GET /tasks?user_id=xxx&role=attorney
+  #      GET /tasks?user_id=xxx&role=judge
   def index
-    return invalid_role_error unless ROLES.include?(user.vacols_role)
-    respond_to do |format|
-      format.html do
-        render "queue/show"
-      end
-      format.json do
-        MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
-                              name: "TasksController.index") do
-          tasks, appeals = WorkQueue.tasks_with_appeals(user, user.vacols_role)
-          render json: {
-            tasks: json_tasks(tasks),
-            appeals: json_appeals(appeals)
-          }
-        end
-      end
-    end
+    return invalid_role_error unless QUEUES.keys.include?(params[:role].downcase.try(:to_sym))
+    tasks = queue_class.new(user: user).tasks
+    render json: { tasks: json_tasks(tasks) }
   end
 
-  def complete
-    return invalid_type_error unless task_class
-
-    record = task_class.complete(complete_params)
-    return invalid_record_error(record) unless record.valid?
-
-    response = { task: record }
-    response[:issues] = record.appeal.issues if record.draft_decision?
-    render json: response
-  end
-
+  # To create colocated task
+  # e.g, for legacy appeal => POST /tasks,
+  # { type: ColocatedTask,
+  #   external_id: 123423,
+  #   title: "poa_clarification",
+  #   instructions: "poa is missing"
+  # }
+  # for ama appeal = POST /tasks,
+  # { type: ColocatedTask,
+  #   external_id: "2CE3BEB0-FA7D-4ACA-A8D2-1F7D2BDFB1E7",
+  #   title: "something",
+  #   parent_id: 2
+  #  }
+  #
+  # To create attorney task
+  # e.g, for ama appeal => POST /tasks,
+  # { type: AttorneyTask,
+  #   external_id: "2CE3BEB0-FA7D-4ACA-A8D2-1F7D2BDFB1E7",
+  #   title: "something",
+  #   parent_id: 2,
+  #   assigned_to_id: 23
+  #  }
   def create
     return invalid_type_error unless task_class
-    task = task_class.create(task_params)
 
-    return invalid_record_error(task) unless task.valid?
-    render json: { task: task }, status: :created
+    tasks = task_class.create_from_params(create_params, current_user)
+
+    tasks.each { |task| return invalid_record_error(task) unless task.valid? }
+    render json: { tasks: json_tasks(tasks) }, status: :created
   end
 
+  # To update attorney task
+  # e.g, for ama/legacy appeal => PATCH /tasks/:id,
+  # {
+  #   assigned_to_id: 23
+  # }
+  # To update colocated task
+  # e.g, for ama/legacy appeal => PATCH /tasks/:id,
+  # {
+  #   status: :on_hold,
+  #   on_hold_duration: "something"
+  # }
   def update
-    return invalid_type_error unless task_class
-    task = task_class.update(task_params.merge(task_id: params[:id]))
+    if task.assigned_to != current_user && task.assigned_by != current_user
+      redirect_to "/unauthorized"
+      return
+    end
+    task.update_from_params(update_params, current_user)
 
     return invalid_record_error(task) unless task.valid?
-    render json: { task: task }, status: 200
+    render json: { tasks: json_tasks([task]) }
+  end
+
+  def for_appeal
+    no_cache
+
+    # VSO users should only get tasks assigned to them or their organization.
+    if current_user.vso_employee?
+      return json_vso_tasks
+    end
+
+    role = params[:role].downcase
+    return invalid_role_error unless QUEUES.keys.include?(role.try(:to_sym))
+
+    if %w[attorney judge].include?(role) && appeal.class.name == LegacyAppeal.name
+      return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], role)
+    end
+
+    json_tasks_by_appeal_id(appeal.id, appeal.class.to_s)
   end
 
   private
 
-  def task_class
-    TASK_CLASSES[params["tasks"][:type].try(:to_sym)]
+  def queue_class
+    QUEUES[params[:role].downcase.try(:to_sym)]
   end
 
   def user
@@ -78,19 +112,12 @@ class TasksController < ApplicationController
   end
   helper_method :user
 
-  def invalid_record_error(task)
-    render json:  {
-      "errors": ["title": "Record is invalid", "detail": task.errors.full_messages.join(" ,")]
-    }, status: 400
+  def task_class
+    TASK_CLASSES[create_params.first[:type].try(:to_sym)]
   end
 
-  def invalid_role_error
-    render json: {
-      "errors": [
-        "title": "Role is Invalid",
-        "detail": "User is not allowed to perform this action"
-      ]
-    }, status: 400
+  def appeal
+    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
   end
 
   def invalid_type_error
@@ -102,29 +129,54 @@ class TasksController < ApplicationController
     }, status: 400
   end
 
-  def complete_params
-    params.require("tasks").permit(:document_type,
-                                   :reviewing_judge_id,
-                                   :document_id,
-                                   :work_product,
-                                   :overtime,
-                                   :note,
-                                   issues: [:disposition, :vacols_sequence_id, :readjudication,
-                                            remand_reasons: [:code, :after_certification]])
-      .merge(attorney: current_user, task_id: params[:task_id])
+  def task
+    @task ||= Task.find(params[:id])
   end
 
-  def task_params
-    params.require("tasks")
-      .permit(:appeal_id, :type, :instructions, :title)
-      .merge(assigned_by: current_user)
-      .merge(assigned_to: User.find_by(id: params[:tasks][:assigned_to_id]))
+  def create_params
+    [params.require("tasks")].flatten.map do |task|
+      task.permit(:type, :instructions, :action, :assigned_to_id, :parent_id)
+        .merge(assigned_by: current_user)
+        .merge(appeal: Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id]))
+        .merge(assigned_to_type: "User")
+    end
   end
 
-  def json_appeals(appeals)
+  def update_params
+    params.require("task")
+      .permit(:status, :on_hold_duration, :assigned_to_id)
+  end
+
+  def json_vso_tasks
+    # For now we just return tasks that are assigned to the user. In the future,
+    # we will add tasks that are assigned to the user's organization.
+    tasks = GenericQueue.new(user: current_user).tasks
+
+    render json: {
+      tasks: json_tasks(tasks)[:data]
+    }
+  end
+
+  def json_tasks_by_legacy_appeal_id_and_role(appeal_id, role)
+    tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal_id, role)
+
+    render json: {
+      tasks: json_legacy_tasks(tasks)[:data]
+    }
+  end
+
+  def json_tasks_by_appeal_id(appeal_db_id, appeal_type)
+    tasks = queue_class.new.tasks_by_appeal_id(appeal_db_id, appeal_type)
+
+    render json: {
+      tasks: json_tasks(tasks)[:data]
+    }
+  end
+
+  def json_legacy_tasks(tasks)
     ActiveModelSerializers::SerializableResource.new(
-      appeals,
-      each_serializer: ::WorkQueue::LegacyAppealSerializer
+      tasks,
+      each_serializer: ::WorkQueue::LegacyTaskSerializer
     ).as_json
   end
 

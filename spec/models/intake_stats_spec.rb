@@ -2,8 +2,13 @@ require "rails_helper"
 
 describe IntakeStats do
   before do
+    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0))
     Rails.cache.clear
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   context ".throttled_calculate_all!" do
@@ -61,8 +66,7 @@ describe IntakeStats do
         RampElectionIntake.create!(
           veteran_file_number: "1111",
           completed_at: 2.hours.ago,
-          completion_status: :error,
-          error_code: :ramp_election_already_complete,
+          completion_status: :success,
           user: user
         )
       ]

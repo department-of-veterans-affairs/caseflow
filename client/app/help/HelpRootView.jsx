@@ -15,7 +15,9 @@ class HelpRootView extends React.Component {
       { name: 'Hearings Help',
         url: '/hearings/help' },
       { name: 'Intake Help',
-        url: '/intake/help' }
+        url: '/intake/help' },
+      { name: 'Queue Help',
+        url: '/queue/help' }
     ];
 
     return <div className="cf-help-content">

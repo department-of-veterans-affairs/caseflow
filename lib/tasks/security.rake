@@ -11,8 +11,16 @@ task :security_caseflow do
   puts "running bundle-audit to check for insecure dependencies..."
   exit!(1) unless ShellCommand.run("bundle-audit update")
 
-  # TODO(lowell): Remove this ignore after we have upgraded rubocop.
-  audit_result = ShellCommand.run("bundle-audit check --ignore CVE-2017-8418")
+  # Set time zone when running in Circle CI environment.
+  # TODO: Remove this when we stop calling Time.zone... below.
+  Time.zone = "Eastern Time (US & Canada)"
+
+  # Only ignore this vulnerability for a week.
+  audit_cmd = "bundle-audit check --ignore CVE-2018-1000544"
+  if Time.zone.local(2018, 8, 26) < Time.zone.today - 1.week
+    audit_cmd = "bundle-audit check"
+  end
+  audit_result = ShellCommand.run(audit_cmd)
 
   puts "\n"
   if brakeman_result && audit_result

@@ -1,23 +1,29 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { sprintf } from 'sprintf-js';
+import { css } from 'glamor';
 
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-
+import CaseDetailsLink from './CaseDetailsLink';
 import Table from '../components/Table';
+import { COLORS } from '../constants/AppConstants';
+
 import { DateString } from '../util/DateUtil';
 import { renderAppealType } from './utils';
 import COPY from '../../COPY.json';
-import { subHeadTextStyle } from './constants';
 
-import { setActiveAppeal } from './CaseDetail/CaseDetailActions';
-import { setBreadcrumbs } from './uiReducer/uiActions';
+const currentAssigneeStyling = css({
+  color: COLORS.GREEN
+});
 
-const labelForLocation = (locationCode) => {
+const labelForLocation = (locationCode, userId) => {
   if (!locationCode) {
     return '';
+  }
+
+  const regex = new RegExp(`\\b(?:BVA|VACO|VHAISA)${locationCode}\\b`);
+
+  if (userId.match(regex) !== null) {
+    return <span {...currentAssigneeStyling}>{COPY.CASE_LIST_TABLE_ASSIGNEE_IS_CURRENT_USER_LABEL}</span>;
   }
 
   return locationCode;
@@ -26,38 +32,22 @@ const labelForLocation = (locationCode) => {
 class CaseListTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
 
-  setActiveAppealAndBreadcrumbs = (appeal) => {
-    this.props.setActiveAppeal(appeal);
-    this.props.setBreadcrumbs({
-      breadcrumb: sprintf(COPY.BACK_TO_SEARCH_RESULTS_LINK_LABEL, appeal.attributes.veteran_full_name),
-      path: window.location.pathname
-    });
-  }
-
   getColumns = () => [
     {
       header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
-      valueFunction: (appeal) => <span>
-        <Link
-          to={`/queue/appeals/${appeal.attributes.vacols_id}`}
-          onClick={() => this.setActiveAppealAndBreadcrumbs(appeal)}
-          disabled={appeal.attributes.paper_case}
-        >
-          {appeal.attributes.docket_number}
-        </Link>
-        {appeal.attributes.paper_case && <React.Fragment>
-          <br />
-          <span {...subHeadTextStyle}>{COPY.IS_PAPER_CASE}</span>
-        </React.Fragment>}
-      </span>
+      valueFunction: (appeal) => <React.Fragment>
+        <CaseDetailsLink
+          appeal={appeal}
+          getLinkText={() => appeal.docketNumber} />
+      </React.Fragment>
     },
     {
       header: COPY.CASE_LIST_TABLE_APPELLANT_NAME_COLUMN_TITLE,
-      valueFunction: (appeal) => appeal.attributes.appellant_full_name || appeal.attributes.veteran_full_name
+      valueFunction: (appeal) => appeal.appellantFullName || appeal.veteranFullName
     },
     {
       header: COPY.CASE_LIST_TABLE_APPEAL_STATUS_COLUMN_TITLE,
-      valueFunction: (appeal) => appeal.attributes.status
+      valueFunction: (appeal) => appeal.status
     },
     {
       header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
@@ -65,13 +55,13 @@ class CaseListTable extends React.PureComponent {
     },
     {
       header: COPY.CASE_LIST_TABLE_DECISION_DATE_COLUMN_TITLE,
-      valueFunction: (appeal) => appeal.attributes.decision_date ?
-        <DateString date={appeal.attributes.decision_date} /> :
+      valueFunction: (appeal) => appeal.decisionDate ?
+        <DateString date={appeal.decisionDate} /> :
         ''
     },
     {
       header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
-      valueFunction: (appeal) => labelForLocation(appeal.attributes.location_code)
+      valueFunction: (appeal) => labelForLocation(appeal.locationCode, this.props.userCssId)
     }
   ];
 
@@ -79,19 +69,18 @@ class CaseListTable extends React.PureComponent {
     columns={this.getColumns}
     rowObjects={this.props.appeals}
     getKeyForRow={this.getKeyForRow}
+    styling={this.props.styling}
   />;
 }
 
 CaseListTable.propTypes = {
-  appeals: PropTypes.arrayOf(PropTypes.object).isRequired
+  appeals: PropTypes.arrayOf(PropTypes.object).isRequired,
+  styling: PropTypes.object
 };
 
-const mapStateToProps = () => ({});
+const mapStateToProps = (state) => ({
+  userCssId: state.ui.userCssId
+});
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setActiveAppeal,
-  setBreadcrumbs
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(CaseListTable);
+export default connect(mapStateToProps)(CaseListTable);
 

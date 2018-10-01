@@ -19,7 +19,6 @@ class Generators::Appeal
       {
         type: "Original",
         file_type: "VBMS",
-        representative: "Military Order of the Purple Heart",
         veteran_first_name: generate_first_name,
         veteran_middle_initial: "A",
         veteran_last_name: last_name,
@@ -35,8 +34,7 @@ class Generators::Appeal
         form9_date: 11.days.ago,
         appellant_city: "Huntingdon",
         appellant_state: "TN",
-        docket_number: 4198,
-        contested_claim: true
+        docket_number: 4198
       }
     end
     # rubocop:enable Metrics/MethodLength

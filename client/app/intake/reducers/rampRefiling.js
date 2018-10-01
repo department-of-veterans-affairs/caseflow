@@ -1,7 +1,8 @@
-import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
+import { ACTIONS, REQUEST_STATE } from '../constants';
+import { FORM_TYPES } from '../../intakeCommon/constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getOptionSelectedError, getReceiptDateError, getAppealDocketError } from '../util/index';
+import { getOptionSelectedError, getPageError, getReceiptDateError, getAppealDocketError } from '../util/index';
 import _ from 'lodash';
 
 const updateFromServerIntake = (state, serverIntake) => {
@@ -59,6 +60,7 @@ export const mapDataToInitialRampRefiling = (data = { serverIntake: {} }) => (
     outsideCaseflowStepsError: null,
     endProductDescription: null,
     submitInvalidOptionError: false,
+    reviewIntakeError: null,
     completeIntakeErrorCode: null,
     completeIntakeErrorData: null,
 
@@ -169,6 +171,9 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
       requestStatus: {
         submitReview: {
           $set: REQUEST_STATE.FAILED
+        },
+        reviewIntakeError: {
+          $set: getPageError(action.payload.responseErrorCodes)
         }
       }
     });

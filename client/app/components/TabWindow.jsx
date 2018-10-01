@@ -38,6 +38,10 @@ export default class TabWindow extends React.Component {
     </span>;
   }
 
+  getTabHeader = (tab) => {
+    return `${tab.label} tab window`;
+  };
+
   getTabClassName = (index, currentPage, isTabDisabled) => {
     let className = `cf-tab${index === currentPage ? ' cf-active' : ''}`;
 
@@ -70,7 +74,9 @@ export default class TabWindow extends React.Component {
             key={i}
             id={`${this.getTabGroupName(name)}-tab-${i}`}
             onClick={this.onTabClick(i)}
-            disabled={Boolean(tab.disable)}>
+            aria-label={this.getTabHeader(tab)}
+            disabled={Boolean(tab.disable)}
+          >
             <span>
               {this.getTabHeaderWithSVG(tab)}
             </span>

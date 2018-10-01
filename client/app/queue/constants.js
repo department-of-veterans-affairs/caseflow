@@ -3,9 +3,11 @@ import { css } from 'glamor';
 import _ from 'lodash';
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import REMAND_REASONS_BY_ID from '../../constants/ACTIVE_REMAND_REASONS_BY_ID.json';
+import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import StringUtil from '../util/StringUtil';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
+import VACOLS_COLUMN_MAX_LENGTHS from '../../constants/VACOLS_COLUMN_MAX_LENGTHS.json';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -18,6 +20,9 @@ export const COLORS = {
 export const ACTIONS = {
   RECEIVE_QUEUE_DETAILS: 'RECEIVE_QUEUE_DETAILS',
   RECEIVE_JUDGE_DETAILS: 'RECEIVE_JUDGE_DETAILS',
+  RECEIVE_NEW_FILES: 'RECEIVE_NEW_FILES',
+  ERROR_ON_RECEIVE_NEW_FILES: 'ERROR_ON_RECEIVE_NEW_FILES',
+  STARTED_LOADING_DOCUMENTS: 'STARTED_LOADING_DOCUMENTS',
   SET_LOADED_QUEUE_ID: 'SET_LOADED_QUEUE_ID',
   SET_APPEAL_DOC_COUNT: 'SET_APPEAL_DOC_COUNT',
   SET_REVIEW_ACTION_TYPE: 'SET_REVIEW_ACTION_TYPE',
@@ -37,7 +42,15 @@ export const ACTIONS = {
   SET_TASKS_AND_APPEALS_OF_ATTORNEY: 'SET_TASKS_AND_APPEALS_OF_ATTORNEY',
   REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY: 'REQUEST_TASKS_AND_APPEALS_OF_ATTORNEY',
   ERROR_TASKS_AND_APPEALS_OF_ATTORNEY: 'ERROR_TASKS_AND_APPEALS_OF_ATTORNEY',
-  SET_SELECTION_OF_TASK_OF_USER: 'SET_SELECTION_OF_TASK_OF_USER'
+  SET_SELECTION_OF_TASK_OF_USER: 'SET_SELECTION_OF_TASK_OF_USER',
+  SET_SELECTED_ASSIGNEE_OF_USER: 'SET_SELECTED_ASSIGNEE_OF_USER',
+  START_ASSIGN_TASKS_TO_USER: 'START_ASSIGN_TASKS_TO_USER',
+  RECEIVE_ALL_ATTORNEYS: 'RECEIVE_ALL_ATTORNEYS',
+  ERROR_LOADING_ATTORNEYS: 'ERROR_LOADING_ATTORNEYS',
+  RECEIVE_TASKS: 'RECEIVE_TASKS',
+  RECEIVE_APPEAL_DETAILS: 'RECEIVE_APPEAL_DETAILS',
+  SET_TASK_ASSIGNMENT: 'SET_TASK_ASSIGNMENT',
+  SET_TASK_ATTRS: 'SET_TASK_ATTRS'
 };
 
 // 'red' isn't contrasty enough w/white; it raises Sniffybara::PageNotAccessibleError when testing
@@ -49,11 +62,18 @@ export const disabledLinkStyle = css({ color: COMMON_COLORS.GREY_MEDIUM });
 export const subHeadTextStyle = css(disabledLinkStyle, {
   fontSize: 'small'
 });
+export const marginTop = (margin) => css({ marginTop: `${margin}rem` });
+export const marginBottom = (margin) => css({ marginBottom: `${margin}rem` });
+export const marginLeft = (margin) => css({ marginLeft: `${margin}rem` });
+export const marginRight = (margin) => css({ marginRight: `${margin}rem` });
+
+export const paddingLeft = (padding) => css({ paddingLeft: `${padding}rem` });
 
 export const CATEGORIES = {
   CASE_DETAIL: 'Appeal Details',
   QUEUE_TABLE: 'Queue Table',
-  QUEUE_TASK: 'Queue Task'
+  QUEUE_TASK: 'Queue Task',
+  EVALUATE_DECISION: 'Evaluate Decision'
 };
 
 export const TASK_ACTIONS = {
@@ -62,32 +82,36 @@ export const TASK_ACTIONS = {
   QUEUE_TO_READER: 'queue-to-reader'
 };
 
-export const ERROR_FIELD_REQUIRED = 'This field is required';
-
-export const JUDGE_DECISION_TYPES = {
-  DISPATCH: 'Dispatch',
-  OMO_REQUEST: 'OMORequest'
+export const JUDGE_DECISION_OPTIONS = {
+  DRAFT_DECISION: {
+    label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
+    value: DECISION_TYPES.DISPATCH
+  },
+  OMO_REQUEST: {
+    label: COPY.JUDGE_CHECKOUT_OMO_LABEL,
+    value: DECISION_TYPES.OMO_REQUEST
+  }
 };
 
-export const JUDGE_DECISION_OPTIONS = [{
-  label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
-  value: JUDGE_DECISION_TYPES.DISPATCH
-}, {
-  label: COPY.JUDGE_CHECKOUT_OMO_LABEL,
-  value: JUDGE_DECISION_TYPES.OMO_REQUEST
-}];
-
-export const DECISION_TYPES = {
-  OMO_REQUEST: 'omo_request',
-  DRAFT_DECISION: 'draft_decision'
-};
-
-export const DRAFT_DECISION_OPTIONS = [{
+export const DRAFT_DECISION_LEGACY_OPTIONS = [{
   label: COPY.ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
   value: DECISION_TYPES.DRAFT_DECISION
 }, {
   label: COPY.ATTORNEY_CHECKOUT_OMO_LABEL,
   value: DECISION_TYPES.OMO_REQUEST
+}];
+
+export const DRAFT_DECISION_OPTIONS = [{
+  label: COPY.ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
+  value: DECISION_TYPES.DRAFT_DECISION
+}];
+
+export const OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES = [{
+  displayText: COPY.ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_VHA,
+  value: COPY.ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_VHA
+}, {
+  displayText: COPY.ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_IME,
+  value: COPY.ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_IME
 }];
 
 export const SEARCH_ERROR_FOR = {
@@ -114,10 +138,10 @@ export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
   Object.keys(VACOLS_DISPOSITIONS_BY_ID)
 ));
 
-export const USER_ROLES = {
-  ATTORNEY: 'Attorney',
-  JUDGE: 'Judge'
-};
+export const ISSUE_DESCRIPTION_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.ISSUES.ISSDESC;
+export const ATTORNEY_COMMENTS_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.DECASS.DEATCOM;
+export const DOCUMENT_ID_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.DECASS.DEDOCID;
+export const JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.DECASS.DEBMCOM;
 
 export const PAGE_TITLES = {
   DISPOSITIONS: {
@@ -127,5 +151,13 @@ export const PAGE_TITLES = {
   REMANDS: {
     JUDGE: 'Review Remand Reasons',
     ATTORNEY: 'Select Remand Reasons'
-  }
+  },
+  EVALUATE: 'Evaluate Decision'
+};
+
+export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, 'Custom'];
+
+export const SEND_TO_LOCATION_MODAL_TYPES = {
+  attorney: 'sendToAttorney',
+  team: 'sendToTeam'
 };

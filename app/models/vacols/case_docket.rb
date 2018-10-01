@@ -1,4 +1,5 @@
 class VACOLS::CaseDocket < VACOLS::Record
+  # :nocov:
   self.table_name = "vacols.brieff"
 
   def self.regular_non_aod_docket_count
@@ -64,4 +65,5 @@ class VACOLS::CaseDocket < VACOLS::Record
     connection.exec_query(query)
   end
   # rubocop:enable Metrics/MethodLength
+  # :nocov:
 end

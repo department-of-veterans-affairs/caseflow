@@ -5,6 +5,7 @@ describe CachedAttributes do
     include CachedAttributes
 
     attr_accessor :not_cached_rating
+    attr_accessor :date_key, :not_cached_date
 
     # ID is required to create a key to store the hash
     def id
@@ -13,6 +14,10 @@ describe CachedAttributes do
 
     cache_attribute :rating do
       not_cached_rating
+    end
+
+    cache_attribute :date, cache_key: :date_key do
+      not_cached_date
     end
   end
 
@@ -81,6 +86,19 @@ describe CachedAttributes do
       end
 
       it { is_expected.to eq(10) }
+    end
+
+    context "when cache key is set" do
+      subject { model.date }
+      it "caches based on the cache key" do
+        model.not_cached_date = "1/24/2018"
+        model.date_key = 1
+        expect(model.date).to eq("1/24/2018")
+        model.not_cached_date = "2/24/2019"
+        expect(model.date).to eq("1/24/2018")
+        model.date_key = 2
+        expect(model.date).to eq("2/24/2019")
+      end
     end
   end
 end

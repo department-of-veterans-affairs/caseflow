@@ -22,6 +22,13 @@ class Fakes::PowerOfAttorneyRepository < PowerOfAttorneyRepository
     return nil if case_record
   end
 
+  # rubocop:disable Lint/ShadowedArgument
+  def self.set_vacols_values(poa:, case_record:)
+    case_record = FakePoaRecord
+    super
+  end
+  # rubocop:enable Lint/ShadowedArgument
+
   def self.update_vacols_rep_name!(*)
     nil
   end

@@ -1,23 +1,10 @@
 class RampElection < RampReview
   has_many :intakes, as: :detail, class_name: "RampElectionIntake"
-  has_many :ramp_refilings
   has_many :ramp_closed_appeals
 
   RESPOND_BY_TIME = 60.days.freeze
 
   validate :validate_receipt_date
-
-  def self.sync_all!
-    RampElection.active.each do |ramp_election|
-      begin
-        ramp_election.recreate_issues_from_contentions!
-        ramp_election.sync_ep_status!
-      rescue ActiveRecord::RecordInvalid => e
-        Rails.logger.error "RampElection.sync_all! failed: #{e.message}"
-        Raven.capture_exception(e)
-      end
-    end
-  end
 
   # RAMP letters request that Veterans respond within 60 days; elections will
   # be accepted after this point, however, so this "due date" is soft.
@@ -34,27 +21,26 @@ class RampElection < RampReview
   end
 
   def recreate_issues_from_contentions!
-    # If there is a saved refiling for this election, then the issues
-    # are locked and cannot be recreated
-    return false if ramp_refilings.count > 0
+    # If there is any ramp issues attached to saved ramp refilings connected to this election,
+    # then the issues are locked and cannot be recreated
+    return false if any_matching_refiling_ramp_issues?
 
     # Load contentions outside of the Postgres transaction so we don't keep a connection
     # open needlessly for the entirety of what could be a slow VBMS request.
-    end_product_to_establish.contentions
-
+    contentions = end_product_establishment.contentions
     transaction do
       issues.destroy_all
 
-      end_product_to_establish.contentions.each do |contention|
-        issues.create!(contention: contention)
+      if contentions
+        contentions.each do |contention|
+          issues.create!(contention: contention)
+        end
       end
     end
   end
 
   def successful_intake
-    @successful_intake ||= intakes.where(completion_status: "success")
-      .order(:completed_at)
-      .last
+    @successful_intake ||= intakes.where(completion_status: "success").order(:completed_at).last
   end
 
   def rollback!
@@ -68,11 +54,35 @@ class RampElection < RampReview
         end_product_status_last_synced_at: nil
       )
 
+      # End product should already be cancelled, so we don't need to pay attention to the establishment that we already
+      # had created. We will create a new one if the ramp election is recreated.
+      end_product_establishment.destroy!
+      remove_issues!
       ramp_closed_appeals.destroy_all
     end
   end
 
+  def on_sync(end_product_establishment)
+    recreate_issues_from_contentions!
+
+    if FeatureToggle.enabled?(:automatic_ramp_rollback) && end_product_establishment.status_canceled?
+      rollback_ramp_review
+    end
+  end
+
   private
+
+  def any_matching_refiling_ramp_issues?
+    RampIssue.where(source_issue_id: issues.map(&:id)).any?
+  end
+
+  def rollback_ramp_review
+    RampElectionRollback.create!(
+      ramp_election: self,
+      user: User.system_user,
+      reason: "Automatic roll back due to EP #{end_product_establishment.modifier} cancelation"
+    )
+  end
 
   def validate_receipt_date
     return unless receipt_date

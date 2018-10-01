@@ -4,13 +4,16 @@ class VACOLS::Case < VACOLS::Record
   self.primary_key = "bfkey"
 
   has_one    :folder,          foreign_key: :ticknum
-  has_one    :representative,  foreign_key: :repkey
+  has_many   :representatives, foreign_key: :repkey
   belongs_to :correspondent,   foreign_key: :bfcorkey, primary_key: :stafkey
   has_many   :case_issues,     foreign_key: :isskey
   has_many   :notes,           foreign_key: :tsktknm
   has_many   :case_hearings,   foreign_key: :folder_nr
   has_many   :decass,          foreign_key: :defolder
   has_one    :staff,           foreign_key: :slogid, primary_key: :bfcurloc
+  has_many   :priorloc,        foreign_key: :lockey
+  has_many   :decision_quality_reviews, foreign_key: :qrfolder
+  has_many   :mail,            foreign_key: :mlfolder
 
   class InvalidLocationError < StandardError; end
 
@@ -33,10 +36,11 @@ class VACOLS::Case < VACOLS::Record
     "ADV" => "Advance", # NOD Filed. Case currently at RO
     "REM" => "Remand", # Case has been Remanded to RO or AMC
     "HIS" => "Complete", # BVA action is complete
-    "MOT" => "Motion" # appellant has filed a motion for reconsideration
+    "MOT" => "Motion", # appellant has filed a motion for reconsideration
+    "CAV" => "CAVC" # Case has been remanded from CAVC to BVA
   }.freeze
 
-  # corresponds to BRIEFF.bfso
+  # mapping of values in BRIEFF.BFSOs
   REPRESENTATIVES = {
     "A" => { full_name: "The American Legion", short: "American Legion" },
     "B" => { full_name: "AMVETS", short: "AmVets" },
@@ -208,13 +212,20 @@ class VACOLS::Case < VACOLS::Record
 
   # rubocop:disable Metrics/MethodLength
   def update_vacols_location!(location)
-    return unless location
+    unless location
+      Rails.logger.error "THERE IS A BUG IN YOUR CODE! It attempted to assign a case to a falsy location. " \
+                         "Unfortunately, I can't throw an exception here because code may depend on this method " \
+                         "failing silently. Please validate before passing it to this method."
+      return
+    end
 
     conn = self.class.connection
 
     # Note: we use conn.quote here from ActiveRecord to deter SQL injection
     location = conn.quote(location)
-    user_db_id = conn.quote(RequestStore.store[:current_user].regional_office.upcase)
+
+    vacols_user_id = RequestStore.store[:current_user].vacols_uniq_id || ""
+    user_db_id = conn.quote(vacols_user_id.upcase)
     case_id = conn.quote(bfkey)
 
     MetricsService.record("VACOLS: update_vacols_location! #{bfkey}",
@@ -249,7 +260,7 @@ class VACOLS::Case < VACOLS::Record
   end
   # rubocop:enable Metrics/MethodLength
 
-  def previous_location
+  def previous_active_location
     conn = self.class.connection
 
     case_id = conn.quote(bfkey)
@@ -260,14 +271,10 @@ class VACOLS::Case < VACOLS::Record
       conn.select_all(<<-SQL)
         SELECT LOCSTTO
         FROM PRIORLOC
-        JOIN (
-          SELECT LOCKEY, LOCDOUT
-          FROM PRIORLOC
-          WHERE LOCKEY = #{case_id}
-            AND LOCDIN IS NULL
-        ) T
-          ON T.LOCKEY = PRIORLOC.LOCKEY
-          AND T.LOCDOUT = PRIORLOC.LOCDIN
+        WHERE LOCKEY = #{case_id}
+          AND LOCSTTO <> '99'
+          AND LOCDIN IS NOT NULL
+        ORDER BY LOCDOUT DESC
       SQL
     end
 

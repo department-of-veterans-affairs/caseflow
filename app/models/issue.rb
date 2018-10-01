@@ -55,6 +55,10 @@ class Issue
     ]
   }.freeze
 
+  def codes?
+    !codes.empty?
+  end
+
   def program
     PROGRAMS[codes[0]]
   end
@@ -181,8 +185,9 @@ class Issue
     }
   end
 
+  attr_writer :remand_reasons
   def remand_reasons
-    self.class.repository.load_remands_from_vacols(id, vacols_sequence_id)
+    @remand_reasons ||= self.class.remand_repository.load_remands_from_vacols(id, vacols_sequence_id)
   end
 
   private
@@ -222,6 +227,11 @@ class Issue
       @repository ||= IssueRepository
     end
 
+    def remand_repository
+      return RemandReasonRepository if FeatureToggle.enabled?(:test_facols)
+      @remand_repository ||= RemandReasonRepository
+    end
+
     def load_from_vacols(hash)
       disposition = nil
       if hash["issdc"]
@@ -244,6 +254,17 @@ class Issue
 
     def create_in_vacols!(issue_attrs:)
       repository.create_vacols_issue!(issue_attrs: issue_attrs)
+    end
+
+    def close_in_vacols!(vacols_id:, vacols_sequence_id:, disposition_code:)
+      update_in_vacols!(
+        vacols_id: vacols_id,
+        vacols_sequence_id: vacols_sequence_id,
+        issue_attrs: {
+          disposition: disposition_code,
+          disposition_date: Time.zone.today
+        }
+      )
     end
 
     def update_in_vacols!(vacols_id:, vacols_sequence_id:, issue_attrs:)

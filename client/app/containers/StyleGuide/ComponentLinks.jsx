@@ -79,13 +79,18 @@ export const componentLinks = [
       name: 'Dropdown'
     },
     {
+      anchor: '#dropdown-button',
+      name: 'Dropdown Button'
+    },
+    {
       anchor: '#single-dropdown',
       name: 'Search Single Selection'
     },
     {
-      anchor: '#multi-dropdrown',
+      anchor: '#multi-dropdown',
       name: 'Search Multiple Selection'
-    }]
+    }
+    ]
   },
   {
     anchor: '#checkboxes',

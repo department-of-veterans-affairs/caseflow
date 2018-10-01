@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 require "bgs"
 
 class Fakes::BGSService
@@ -14,25 +15,79 @@ class Fakes::BGSService
   cattr_accessor :rating_issue_records
   attr_accessor :client
 
-  ID_TO_RAISE_ERROR = "ERROR-ID".freeze
-
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/CyclomaticComplexity
   def self.create_veteran_records
+    return if @veteran_records_created
+
+    @veteran_records_created = true
+
     file_path = Rails.root.join("local", "vacols", "bgs_setup.csv")
 
     CSV.foreach(file_path, headers: true) do |row|
       row_hash = row.to_h
-      Generators::Veteran.build(file_number: row_hash["vbms_id"].chop)
+      veteran = Generators::Veteran.build(file_number: row_hash["vbms_id"].chop)
+
+      case row_hash["bgs_key"]
+      when "has_rating"
+        Generators::Rating.build(
+          participant_id: veteran.participant_id
+        )
+      when "has_many_ratings"
+        Generators::Rating.build(
+          participant_id: veteran.participant_id
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          promulgation_date: Time.zone.today - 60,
+          issues: [
+            { decision_text: "Left knee" },
+            { decision_text: "PTSD" }
+          ]
+        )
+      when "has_supplemental_claim_with_vbms_claim_id"
+        claim_id = "600118926"
+        sc = SupplementalClaim.find_or_create_by!(
+          veteran_file_number: veteran.file_number
+        )
+        EndProductEstablishment.find_or_create_by!(
+          reference_id: claim_id,
+          veteran_file_number: veteran.file_number,
+          source: sc
+        )
+        sc
+      when "has_higher_level_review_with_vbms_claim_id"
+        claim_id = "600118951"
+        hlr = HigherLevelReview.find_or_create_by!(
+          veteran_file_number: veteran.file_number
+        )
+        EndProductEstablishment.find_or_create_by!(
+          reference_id: claim_id,
+          veteran_file_number: veteran.file_number,
+          source: hlr
+        )
+        hlr
+      when "has_ramp_election_with_contentions"
+        claim_id = "123456"
+        ramp_election = RampElection.find_or_create_by!(
+          veteran_file_number: veteran.file_number
+        )
+        EndProductEstablishment.find_or_create_by!(
+          reference_id: claim_id,
+          veteran_file_number: veteran.file_number,
+          source: ramp_election,
+          synced_status: "CLR",
+          last_synced_at: 10.minutes.ago
+        )
+        Generators::Contention.build(text: "A contention!", claim_id: claim_id)
+        ramp_election
+      end
     end
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/CyclomaticComplexity
 
-  def self.stub_intake_data
-    veteran = Veteran.find_or_create_by_file_number("375273128")
-    Generators::Rating.build(
-      participant_id: veteran.participant_id
-    )
-  end
-
-  # rubocop:disable Metrics/MethodLength
   def self.all_grants
     default_date = 10.days.ago.to_formatted_s(:short_date)
     [
@@ -248,19 +303,55 @@ class Fakes::BGSService
   # TODO: add more test cases
   def fetch_poa_by_file_number(file_number)
     record = (self.class.power_of_attorney_records || {})[file_number]
+    record ||= default_vso_power_of_attorney_record if file_number == 216_979_849
     record ||= default_power_of_attorney_record
 
-    get_poa_from_bgs_poa(record)
+    get_poa_from_bgs_poa(record[:power_of_attorney])
+  end
+
+  def fetch_poas_by_participant_id(participant_id)
+    if participant_id == VSO_PARTICIPANT_ID
+      return default_vsos_by_participant_id.map { |poa| get_poa_from_bgs_poa(poa) }
+    end
+    []
+  end
+
+  def fetch_poas_by_participant_ids(participant_ids)
+    get_hash_of_poa_from_bgs_poas(
+      participant_ids.map do |participant_id|
+        vso = if participant_id == "CLAIMANT_WITH_PVA_AS_VSO"
+                {
+                  legacy_poa_cd: "071",
+                  nm: "PARALYZED VETERANS OF AMERICA, INC.",
+                  org_type_nm: "POA National Organization",
+                  ptcpnt_id: "2452383"
+                }
+              else
+                {}
+              end
+
+        {
+          ptcpnt_id: participant_id,
+          power_of_attorney: vso
+        }
+      end
+    )
+  end
+
+  def fetch_person_info(_participant_id)
+    { first_name: "Tom", last_name: "Brady", middle_name: "Edward" }
   end
 
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
-    fail Savon::Error if participant_id == ID_TO_RAISE_ERROR
-
     address = (self.class.address_records || {})[participant_id]
     address ||= default_address
 
     get_address_from_bgs_address(address)
+  end
+
+  def fetch_claimant_info_by_participant_id(_participant_id)
+    default_claimant_info
   end
 
   def fetch_file_number_by_ssn(ssn)
@@ -303,8 +394,13 @@ class Fakes::BGSService
     { rating_issues: rating_issues }
   end
 
+  def get_participant_id_for_user(user)
+    return VSO_PARTICIPANT_ID if user.css_id == "VSO"
+    DEFAULT_PARTICIPANT_ID
+  end
+
   # rubocop:disable Metrics/MethodLength
-  def find_all_relationships(_participant_id:)
+  def find_all_relationships(*)
     [
       {
         authzn_change_clmant_addrs_ind: nil,
@@ -326,7 +422,7 @@ class Fakes::BGSService
         middle_name: "D",
         poa: "DISABLED AMERICAN VETERANS",
         proof_of_dependecy_ind: nil,
-        ptcpnt_id: "5382910292",
+        ptcpnt_id: "CLAIMANT_WITH_PVA_AS_VSO",
         relationship_begin_date: nil,
         relationship_end_date: nil,
         relationship_type: "Spouse",
@@ -368,6 +464,15 @@ class Fakes::BGSService
 
   private
 
+  VSO_PARTICIPANT_ID = "4623321".freeze
+  DEFAULT_PARTICIPANT_ID = "781162".freeze
+
+  def default_claimant_info
+    {
+      relationship: "Spouse"
+    }
+  end
+
   def default_power_of_attorney_record
     {
       file_number: "633792224",
@@ -380,6 +485,37 @@ class Fakes::BGSService
         },
       ptcpnt_id: "600085544"
     }
+  end
+
+  def default_vso_power_of_attorney_record
+    {
+      file_number: "216979849",
+      power_of_attorney:
+        {
+          legacy_poa_cd: "070",
+          nm: "VIETNAM VETERANS OF AMERICA",
+          org_type_nm: "POA National Organization",
+          ptcpnt_id: "2452415"
+        },
+      ptcpnt_id: "600085544"
+    }
+  end
+
+  def default_vsos_by_participant_id
+    [
+      {
+        legacy_poa_cd: "070",
+        nm: "VIETNAM VETERANS OF AMERICA",
+        org_type_nm: "POA National Organization",
+        ptcpnt_id: "2452415"
+      },
+      {
+        legacy_poa_cd: "071",
+        nm: "PARALYZED VETERANS OF AMERICA, INC.",
+        org_type_nm: "POA National Organization",
+        ptcpnt_id: "2452383"
+      }
+    ]
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -411,3 +547,4 @@ class Fakes::BGSService
   end
   # rubocop:enable Metrics/MethodLength
 end
+# rubocop:enable Metrics/ClassLength

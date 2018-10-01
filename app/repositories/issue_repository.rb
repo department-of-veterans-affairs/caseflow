@@ -36,9 +36,10 @@ class IssueRepository
     MetricsService.record("VACOLS: delete_vacols_issue for vacols ID #{vacols_id} and sequence: #{vacols_sequence_id}",
                           service: :vacols,
                           name: "delete_vacols_issue") do
-      validate_issue_presence!(vacols_id, vacols_sequence_id)
+      record = validate_issue_presence!(vacols_id, vacols_sequence_id)
 
       VACOLS::CaseIssue.delete_issue!(vacols_id, vacols_sequence_id)
+      RemandReasonRepository.delete_remand_reasons!(vacols_id, vacols_sequence_id) if record.issdc.eql?("3")
     end
   end
 
@@ -58,34 +59,14 @@ class IssueRepository
       .where("? is null or LEV2_CODE = '##' or LEV2_CODE = ?", level_2, level_2)
       .where("? is null or LEV3_CODE = '##' or LEV3_CODE = ?", level_3, level_3)
   end
-
-  def self.create_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons)
-    VACOLS::RemandReason.create_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons)
-  end
-
-  def self.load_remands_from_vacols(vacols_id, vacols_sequence_id)
-    VACOLS::RemandReason.where(rmdkey: vacols_id, rmdissseq: vacols_sequence_id).map do |reason|
-      {
-        code: reason.rmdval,
-        after_certification: reason.rmddev.eql?("R2")
-      }
-    end
-  end
   # :nocov:
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   def self.perform_actions_if_disposition_changes(record, issue_attrs)
     case Constants::VACOLS_DISPOSITIONS_BY_ID[issue_attrs[:disposition]]
-    when "Remanded"
-      if record.issdc != "3"
-        remand_reasons = RemandReasonMapper.convert_to_vacols_format(
-          issue_attrs[:vacols_user_id],
-          issue_attrs[:remand_reasons]
-        )
-        create_remand_reasons!(issue_attrs[:vacols_id], issue_attrs[:vacols_sequence_id], remand_reasons)
-      end
     when "Vacated"
       if record.issdc != "5" && issue_attrs[:readjudication]
+        BusinessMetrics.record(service: :queue, name: "vacated_disposition_issue_edit")
+
         create_vacols_issue!(issue_attrs: record.attributes_for_readjudication.merge(
           vacols_user_id: issue_attrs[:vacols_user_id]
         ))
@@ -94,6 +75,7 @@ class IssueRepository
       # We only want to track non-disposition edits
       BusinessMetrics.record(service: :queue, name: "non_disposition_issue_edit")
     end
+
+    RemandReasonRepository.update_remand_reasons(record, issue_attrs)
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 end

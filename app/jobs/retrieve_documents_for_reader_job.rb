@@ -2,6 +2,7 @@
 # and all documents for these cases in VBMS and store them
 class RetrieveDocumentsForReaderJob < ApplicationJob
   queue_as :low_priority
+  application_attr :reader
 
   DEFAULT_USERS_LIMIT = 3
   def perform(args = {})

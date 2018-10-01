@@ -1,18 +1,27 @@
 class UserRepository
   class << self
-    def staff_records
-      @staff_records ||= {}
+    def user_info_from_vacols(css_id)
+      staff_record = VACOLS::Staff.find_by(sdomainid: css_id)
+      {
+        uniq_id: vacols_uniq_id(staff_record),
+        roles: vacols_roles(staff_record),
+        attorney_id: vacols_attorney_id(staff_record),
+        group_id: vacols_group_id(staff_record),
+        full_name: vacols_full_name(staff_record)
+      }
     end
 
-    def vacols_uniq_id(css_id)
-      staff_record_by_css_id(css_id).try(:slogid)
-    end
-
-    # STAFF.SVLJ = 'J' indicates a user is a Judge, the field may also have an 'A' which indicates an Acting judge.
-    # If the STAFF.SVLJ is nil and STAFF.SATTYID is not nil then it is an attorney.
-    def vacols_role(css_id)
-      staff_record = staff_record_by_css_id(css_id)
-      role_based_on_staff_fields(staff_record) if staff_record
+    def user_info_for_idt(css_id)
+      staff_record = VACOLS::Staff.find_by(sdomainid: css_id)
+      return {} unless staff_record
+      {
+        first_name: staff_record.snamef,
+        middle_name: staff_record.snamemi,
+        last_name: staff_record.snamel,
+        attorney_id: vacols_attorney_id(staff_record),
+        judge_status: judge_status(staff_record),
+        css_id: css_id
+      }
     end
 
     def can_access_task?(css_id, vacols_id)
@@ -23,20 +32,25 @@ class UserRepository
       true
     end
 
-    # :nocov:
-    def vacols_attorney_id(css_id)
-      staff_record_by_css_id(css_id).try(:sattyid)
-    end
+    def css_ids_by_vlj_ids(vlj_ids)
+      users = VACOLS::Staff.where(sattyid: vlj_ids)
 
-    def vacols_group_id(css_id)
-      staff_record_by_css_id(css_id).try(:stitle)
-    end
-
-    def vacols_full_name(css_id)
-      record = staff_record_by_css_id(css_id)
-      if record
-        FullName.new(record.snamef, record.snamemi, record.snamel).formatted(:readable_full)
+      results = {}
+      users.each do |user|
+        results.merge!(user.sattyid => { css_id: user.sdomainid,
+                                         first_name: user.snamef,
+                                         last_name: user.snamel })
       end
+      results
+    end
+
+    # This method is only used in dev/demo mode to test the judge spreadsheet functionality in hearing scheduling
+    # :nocov:
+    def create_judge_in_vacols(first_name, last_name, vlj_id)
+      return unless Rails.env.development? || Rails.env.demo?
+
+      css_id = ["BVA", first_name.first, last_name].join
+      VACOLS::Staff.create(snamef: first_name, snamel: last_name, sdomainid: css_id, sattyid: vlj_id)
     end
 
     def css_id_by_full_name(full_name)
@@ -49,23 +63,65 @@ class UserRepository
       end
       staff.first.try(:sdomainid)
     end
+    # :nocov:
 
     private
 
-    def role_based_on_staff_fields(staff_record)
+    def roles_based_on_staff_fields(staff_record)
       case staff_record.svlj
       when "J"
-        "Judge"
+        ["judge"]
       when "A"
-        staff_record.sattyid ? "Attorney" : "Judge"
+        staff_record.sattyid ? %w[attorney judge] : ["judge"]
       when nil
-        "Attorney" if staff_record.sattyid
+        check_other_staff_fields(staff_record)
+      else
+        []
       end
     end
 
-    def staff_record_by_css_id(css_id)
-      staff_records[css_id] ||= VACOLS::Staff.find_by(sdomainid: css_id)
-      staff_records[css_id]
+    def judge_status(staff_record)
+      case staff_record.svlj
+      when "J"
+        "judge"
+      when "A"
+        "acting judge"
+      else
+        "none"
+      end
+    end
+
+    def check_other_staff_fields(staff_record)
+      return ["attorney"] if staff_record.sattyid
+      return ["colocated"] if staff_record.stitle == "A1" || staff_record.stitle == "A2"
+      return ["dispatch"] if staff_record.sdept == "DSP"
+      []
+    end
+
+    def vacols_uniq_id(staff_record)
+      staff_record.try(:slogid)
+    end
+
+    # STAFF.SVLJ = 'J' indicates a user is a Judge, the field may also have an 'A' which indicates an Acting judge.
+    # If the STAFF.SVLJ is nil and STAFF.SATTYID is not nil then it is an attorney.
+    def vacols_roles(staff_record)
+      return roles_based_on_staff_fields(staff_record) if staff_record
+      []
+    end
+
+    # :nocov:
+    def vacols_attorney_id(staff_record)
+      staff_record.try(:sattyid)
+    end
+
+    def vacols_group_id(staff_record)
+      staff_record.try(:stitle) || ""
+    end
+
+    def vacols_full_name(staff_record)
+      if staff_record
+        FullName.new(staff_record.snamef, staff_record.snamemi, staff_record.snamel).formatted(:readable_full)
+      end
     end
     # :nocov:
   end

@@ -1,15 +1,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import CancelButton from '../../components/CancelButton';
-import RatedIssueCounter from '../../components/RatedIssueCounter';
-import NonRatedIssues from './nonRatedIssues';
-import RatedIssues from './ratedIssues';
-import { Redirect } from 'react-router-dom';
-import { completeIntake } from '../../actions/appeal';
-import { bindActionCreators } from 'redux';
+import NonRatedIssuesUnconnected from '../../../intakeCommon/components/NonRatedIssues';
+import RatedIssuesUnconnected from '../../../intakeCommon/components/RatedIssues';
+import IssueCounter from '../../../intakeCommon/components/IssueCounter';
+import {
+  completeIntake,
+  setIssueSelected,
+  addNonRatedIssue,
+  setIssueCategory,
+  setIssueDescription,
+  setIssueDecisionDate
+} from '../../actions/ama';
 import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
-import { getIntakeStatus } from '../../selectors';
+import { getIntakeStatus, issueCountSelector } from '../../selectors';
 import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
 class Finish extends React.PureComponent {
@@ -35,6 +42,12 @@ class Finish extends React.PureComponent {
     return <div>
       <h1>Identify issues on { veteranName }'s Notice of Disagreement (VA Form 10182)</h1>
 
+      { requestState === REQUEST_STATE.FAILED &&
+        <CompleteIntakeErrorAlert
+          completeIntakeErrorCode={completeIntakeErrorCode}
+          completeIntakeErrorData={completeIntakeErrorData} />
+      }
+
       <p>
         Please select all the issues that best match the Veteran's request on the form.
         The list below includes issues claimed by the Veteran in the last year.
@@ -43,16 +56,38 @@ class Finish extends React.PureComponent {
 
       <RatedIssues />
       <NonRatedIssues />
-
-      { requestState === REQUEST_STATE.FAILED &&
-        <CompleteIntakeErrorAlert
-          completeIntakeErrorCode={completeIntakeErrorCode}
-          completeIntakeErrorData={completeIntakeErrorData} />
-      }
-
     </div>;
   }
 }
+
+const NonRatedIssues = connect(
+  ({ appeal }) => ({
+    nonRatedIssues: appeal.nonRatedIssues
+  }),
+  (dispatch) => bindActionCreators({
+    addNonRatedIssue,
+    setIssueCategory,
+    setIssueDescription,
+    setIssueDecisionDate
+  }, dispatch)
+)(NonRatedIssuesUnconnected);
+
+const RatedIssues = connect(
+  ({ appeal }) => ({
+    ratings: appeal.ratings
+  }),
+  (dispatch) => bindActionCreators({
+    setIssueSelected
+  }, dispatch)
+)(RatedIssuesUnconnected);
+
+const mapStateToProps = (state) => {
+  return {
+    issueCount: issueCountSelector(state.appeal)
+  };
+};
+
+const IssueCounterConnected = connect(mapStateToProps)(IssueCounter);
 
 class FinishNextButton extends React.PureComponent {
   handleClick = () => {
@@ -71,7 +106,7 @@ class FinishNextButton extends React.PureComponent {
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       legacyStyling={false}
-      disabled={!this.props.appeal.selectedRatingCount}
+      disabled={!this.props.issueCount}
     >
       Establish appeal
     </Button>;
@@ -81,25 +116,20 @@ const FinishNextButtonConnected = connect(
   ({ appeal, intake }) => ({
     requestState: appeal.requestStatus.completeIntake,
     intakeId: intake.id,
-    appeal
+    appeal,
+    issueCount: issueCountSelector(appeal)
   }),
   (dispatch) => bindActionCreators({
     completeIntake
   }, dispatch)
 )(FinishNextButton);
 
-const RatedIssueCounterConnected = connect(
-  ({ appeal }) => ({
-    selectedRatingCount: appeal.selectedRatingCount
-  })
-)(RatedIssueCounter);
-
 export class FinishButtons extends React.PureComponent {
   render = () =>
     <div>
       <CancelButton />
       <FinishNextButtonConnected history={this.props.history} />
-      <RatedIssueCounterConnected />
+      <IssueCounterConnected />
     </div>
 }
 

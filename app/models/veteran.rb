@@ -4,12 +4,12 @@
 #       VACOLS vet values (coming from Appeal#veteran_full_name, etc)
 class Veteran < ApplicationRecord
   include AssociatedBgsRecord
-  include CachedAttributes
 
   bgs_attr_accessor :ptcpnt_id, :sex, :first_name, :last_name, :ssn,
                     :address_line1, :address_line2, :address_line3, :city,
                     :state, :country, :zip_code, :military_postal_type_code,
-                    :military_post_office_type_code, :service, :date_of_birth
+                    :military_post_office_type_code, :service, :date_of_birth,
+                    :date_of_death
 
   CHARACTER_OF_SERVICE_CODES = {
     "HON" => "Honorable",
@@ -22,6 +22,7 @@ class Veteran < ApplicationRecord
     "DIS" => "Discharge"
   }.freeze
 
+  # Germany and Australia should be temporary additions until VBMS bug is fixed
   COUNTRIES_REQUIRING_ZIP = %w[USA CANADA].freeze
 
   validates :ssn, :sex, :first_name, :last_name, :city,
@@ -29,21 +30,17 @@ class Veteran < ApplicationRecord
   validates :zip_code, presence: true, if: :country_requires_zip?, on: :bgs
   validates :state, presence: true, if: :country_requires_state?, on: :bgs
 
-  cache_attribute :cached_serialized_timely_ratings, expires_in: 1.day do
-    timely_ratings.map(&:ui_hash)
-  end
-
   # TODO: get middle initial from BGS
   def name
     FullName.new(first_name, "", last_name)
   end
 
   def country_requires_zip?
-    COUNTRIES_REQUIRING_ZIP.include?(country)
+    COUNTRIES_REQUIRING_ZIP.include?(country && country.upcase)
   end
 
   def country_requires_state?
-    country == "USA"
+    country && country.casecmp("USA") == 0
   end
 
   # Convert to hash used in AppealRepository.establish_claim!
@@ -71,12 +68,12 @@ class Veteran < ApplicationRecord
     now.year - dob.year - ((now.month > dob.month || (now.month == dob.month && now.day >= dob.day)) ? 0 : 1)
   end
 
-  def self.bgs
+  def bgs
     BGSService.new
   end
 
   def fetch_bgs_record
-    result = self.class.bgs.fetch_veteran_info(file_number)
+    result = bgs.fetch_veteran_info(file_number)
 
     # If the result is nil, the veteran wasn't found.
     # If the file number is nil, that's another way of saying the veteran wasn't found.
@@ -93,7 +90,11 @@ class Veteran < ApplicationRecord
   end
 
   def accessible?
-    self.class.bgs.can_access?(file_number)
+    bgs.can_access?(file_number)
+  end
+
+  def relationships
+    @relationships ||= fetch_relationships
   end
 
   # Postal code might be stored in address line 3 for international addresses
@@ -101,8 +102,22 @@ class Veteran < ApplicationRecord
     @zip_code || (@address_line3 if @address_line3 =~ /(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/)
   end
 
-  def timely_ratings
-    @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id)
+  def timely_ratings(from_date:)
+    @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id, from_date: from_date)
+  end
+
+  def accessible_appeals_for_poa(poa_participant_ids)
+    appeals = Appeal.where(veteran_file_number: file_number).includes(:claimants)
+
+    claimants_participant_ids = appeals.map { |appeal| appeal.claimants.pluck(:participant_id) }.flatten
+
+    poas = bgs.fetch_poas_by_participant_ids(claimants_participant_ids)
+
+    appeals.select do |appeal|
+      appeal.claimants.any? do |claimant|
+        poa_participant_ids.include?(poas[claimant[:participant_id]][:participant_id])
+      end
+    end
   end
 
   def participant_id
@@ -135,7 +150,21 @@ class Veteran < ApplicationRecord
   private
 
   def fetch_end_products
-    self.class.bgs.get_end_products(file_number).map { |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
+    bgs_end_products = bgs.get_end_products(file_number)
+
+    # Check that we are not getting this back from BGS:
+    # [{:number_of_records=>"0", :return_code=>"SHAR 9999", :return_message=>"Records found"}]
+    return [] if bgs_end_products.first && bgs_end_products.first[:number_of_records] == "0"
+
+    bgs_end_products.map { |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
+  end
+
+  def fetch_relationships
+    relationships = bgs.find_all_relationships(
+      participant_id: participant_id
+    )
+    relationships_array = Array.wrap(relationships)
+    relationships_array.map { |relationship_hash| Relationship.from_bgs_hash(relationship_hash) }
   end
 
   def period_of_service(s)

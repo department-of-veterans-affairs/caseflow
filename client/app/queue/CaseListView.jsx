@@ -13,6 +13,7 @@ import CaseListTable from './CaseListTable';
 import { fullWidth } from './constants';
 
 import { clearCaseListSearch, onReceiveAppealsUsingVeteranId } from './CaseList/CaseListActions';
+import { appealsByCaseflowVeteranId } from './selectors';
 
 import COPY from '../../COPY.json';
 
@@ -43,9 +44,9 @@ class CaseListView extends React.PureComponent {
 
     // Using the first appeal in the list to get the Veteran's name and ID. We expect that data to be
     // the same for all appeals in the list.
-    const firstAppeal = this.props.appeals[0].attributes;
+    const firstAppeal = this.props.appeals[0];
     const heading = `${appealsCount} ${pluralize('case', appealsCount)} found for
-        “${firstAppeal.veteran_full_name} (${firstAppeal.vbms_id})”`;
+        “${firstAppeal.veteranFullName} (${firstAppeal.veteranFileNumber})”`;
 
     return <div>
       <h1 className="cf-push-left" {...fullWidth}>{heading}</h1>
@@ -82,8 +83,8 @@ CaseListView.defaultProps = {
   caseflowVeteranId: ''
 };
 
-const mapStateToProps = (state) => ({
-  appeals: state.caseList.receivedAppeals
+const mapStateToProps = (state, ownProps) => ({
+  appeals: appealsByCaseflowVeteranId(state, { caseflowVeteranId: ownProps.caseflowVeteranId })
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

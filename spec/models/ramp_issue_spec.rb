@@ -1,14 +1,18 @@
 describe RampIssue do
   before do
+    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
 
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
   let(:review) do
-    RampElection.create!(
-      veteran_file_number: "64205555",
-      notice_date: 3.days.ago,
-      receipt_date: 2.days.ago
-    )
+    create(:ramp_election,
+           veteran_file_number: "64205555",
+           notice_date: 3.days.ago,
+           receipt_date: 2.days.ago)
   end
 
   let(:description) { nil }

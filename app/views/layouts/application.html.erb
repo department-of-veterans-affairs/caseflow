@@ -61,7 +61,9 @@
   <% if ENV["PUBLIC_SENTRY_DSN"] %>
     <script src="https://cdn.ravenjs.com/3.6.0/raven.min.js"></script>
     <script>
-      Raven.config("<%= ENV["PUBLIC_SENTRY_DSN"] %>").install();
+      Raven.config("<%= ENV["PUBLIC_SENTRY_DSN"] %>", {
+        release: "<%= Rails.application.config.build_version[:commit][0..6] %>"
+      }).install();
       <% if current_user && current_user.authenticated? %>
         Raven.setUserContext({
           email: "<%= current_user.email %>",
@@ -73,9 +75,8 @@
 
   <%= stylesheet_link_tag    'application', media: 'all' %>
 
-    <%= env_javascript_include_tag(static: 'application',
-                                   hot: ['application',
-                                         'http://localhost:3500/webpack-bundle.js']) %>
+    <%= env_javascript_include_tag(static: ['webpack-bundle'],
+                                   hot: ['http://localhost:3500/webpack-bundle.js']) %>
 
   <%= csrf_meta_tags %>
 

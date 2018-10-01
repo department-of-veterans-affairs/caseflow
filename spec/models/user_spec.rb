@@ -1,13 +1,18 @@
 require "rails_helper"
 
-User.authentication_service = Fakes::AuthenticationService
-
 describe User do
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
   let(:session) { { "user" => { "id" => "123", "station_id" => "310" } } }
   let(:user) { User.from_session(session) }
 
   before(:all) do
-    User.appeal_repository = Fakes::AppealRepository
     Functions.client.del("System Admin")
   end
 
@@ -188,31 +193,71 @@ describe User do
   context "#current_case_assignments" do
     subject { user.current_case_assignments }
 
-    let(:appeal) { Generators::LegacyAppeal.create }
-
-    before do
-      User.appeal_repository = Fakes::AppealRepository
-    end
-
     it "returns empty array when no cases are assigned" do
-      Fakes::AppealRepository.appeal_records = []
       is_expected.to be_empty
     end
 
-    it "returns appeal assigned to user" do
-      Fakes::AppealRepository.appeal_records = [appeal]
-      is_expected.to match_array([appeal])
+    context "when case is assigned to a user" do
+      let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user)) }
+
+      it "returns appeal assigned to user" do
+        is_expected.to match_array([appeal])
+      end
+    end
+  end
+
+  context "#when BGS data is setup" do
+    let(:participant_id) { "123456" }
+    let(:vso_participant_id) { "123456" }
+
+    let(:vso_participant_ids) do
+      [
+        {
+          legacy_poa_cd: "070",
+          nm: "VIETNAM VETERANS OF AMERICA",
+          org_type_nm: "POA National Organization",
+          ptcpnt_id: vso_participant_id
+        },
+        {
+          legacy_poa_cd: "071",
+          nm: "PARALYZED VETERANS OF AMERICA, INC.",
+          org_type_nm: "POA National Organization",
+          ptcpnt_id: "2452383"
+        }
+      ]
+    end
+
+    before do
+      BGSService = ExternalApi::BGSService
+      RequestStore[:current_user] = user
+
+      allow_any_instance_of(BGS::SecurityWebService).to receive(:find_participant_id)
+        .with(css_id: user.css_id, station_id: user.station_id).and_return(participant_id)
+      allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_id)
+        .with(participant_id).and_return(vso_participant_ids)
+    end
+
+    after do
+      BGSService = Fakes::BGSService
+    end
+
+    context "#participant_id" do
+      it "returns the users participant id" do
+        expect(user.participant_id).to eq(participant_id)
+      end
+    end
+
+    context "#vsos_user_represents" do
+      it "returns a list of VSOs" do
+        expect(user.vsos_user_represents.first[:participant_id]).to eq(vso_participant_id)
+      end
     end
   end
 
   context "#current_case_assignments_with_views" do
     subject { user.current_case_assignments_with_views[0] }
 
-    let(:appeal) { Generators::LegacyAppeal.create }
-
-    before do
-      Fakes::AppealRepository.appeal_records = [appeal]
-    end
+    let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user)) }
 
     it "returns nil when no cases have been viewed" do
       is_expected.to include(
@@ -225,7 +270,7 @@ describe User do
 
     context "has hash with view" do
       before do
-        AppealView.create(user_id: user.id, appeal_id: appeal.id)
+        AppealView.create(user_id: user.id, appeal: appeal)
       end
 
       it do
@@ -279,7 +324,7 @@ describe User do
         FakeTask.create!(
           user: another_user,
           aasm_state: :unassigned,
-          appeal: Generators::LegacyAppeal.create
+          appeal: create(:legacy_appeal, vacols_case: create(:case))
         )
       end
 
@@ -287,7 +332,7 @@ describe User do
         AnotherFakeTask.create!(
           user: user,
           aasm_state: :unassigned,
-          appeal: Generators::LegacyAppeal.create
+          appeal: create(:legacy_appeal, vacols_case: create(:case))
         )
       end
 
@@ -295,7 +340,7 @@ describe User do
         FakeTask.create!(
           user: user,
           aasm_state: :completed,
-          appeal: Generators::LegacyAppeal.create
+          appeal: create(:legacy_appeal, vacols_case: create(:case))
         )
       end
 
@@ -307,7 +352,7 @@ describe User do
         FakeTask.create!(
           user: user,
           aasm_state: :started,
-          appeal: Generators::LegacyAppeal.create,
+          appeal: create(:legacy_appeal, vacols_case: create(:case)),
           prepared_at: Date.yesterday
         )
       end

@@ -94,7 +94,6 @@ describe Document do
       context "application is reader" do
         before do
           RequestStore.store[:application] = "reader"
-          FeatureToggle.enable!(:efolder_docs_api)
           expect(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url).once
         end
 
@@ -102,7 +101,7 @@ describe Document do
 
         it "returns the URL for the document in efolder" do
           document.efolder_id = Generators::Document.generate_external_id
-          expect(document.content_url).to eq(base_url + "/api/v1/documents/#{document.efolder_id}")
+          expect(document.content_url).to eq(base_url + "/api/v2/records/#{document.vbms_document_id}")
         end
       end
 
@@ -119,10 +118,6 @@ describe Document do
     end
 
     context "EFolderService is Fakes::VBMSService" do
-      before do
-        FeatureToggle.disable!(:efolder_docs_api)
-      end
-
       context "application is not reader" do
         before do
           RequestStore.store[:application] = Faker::Cat.name

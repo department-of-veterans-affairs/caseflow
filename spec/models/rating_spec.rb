@@ -70,19 +70,21 @@ describe Rating do
   end
 
   context ".fetch_timely" do
-    subject { Rating.fetch_timely(participant_id: "DRAYMOND") }
+    let(:receipt_date) { Time.zone.today }
+
+    subject { Rating.fetch_timely(participant_id: "DRAYMOND", from_date: receipt_date) }
 
     let!(:rating) do
       Generators::Rating.build(
         participant_id: "DRAYMOND",
-        promulgation_date: Time.zone.today - 371.days
+        promulgation_date: receipt_date - 371.days
       )
     end
 
     let!(:untimely_rating) do
       Generators::Rating.build(
         participant_id: "DRAYMOND",
-        promulgation_date: Time.zone.today - 373.days
+        promulgation_date: receipt_date - 373.days
       )
     end
 
@@ -94,7 +96,7 @@ describe Rating do
       let!(:another_rating) do
         Generators::Rating.build(
           participant_id: "DRAYMOND",
-          promulgation_date: Time.zone.today - 370.days
+          promulgation_date: receipt_date - 370.days
         )
       end
 
@@ -103,12 +105,12 @@ describe Rating do
 
         expect(subject.first).to have_attributes(
           participant_id: "DRAYMOND",
-          promulgation_date: Time.zone.today - 370.days
+          promulgation_date: receipt_date - 370.days
         )
 
         expect(subject.last).to have_attributes(
           participant_id: "DRAYMOND",
-          promulgation_date: Time.zone.today - 371.days
+          promulgation_date: receipt_date - 371.days
         )
       end
     end

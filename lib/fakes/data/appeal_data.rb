@@ -246,7 +246,6 @@ module Fakes::Data::AppealData
         added_by: OpenStruct.new(name: "Joe Snuffy", css_id: "MAPAPPAS"),
         docket_date: "2014-03-25 00:00:00 UTC".to_datetime,
         regional_office_key: "RO30",
-        representative: "Virginia Department of Veterans Affairs",
         issues: [
           {
             vacols_sequence_id: 1,
@@ -285,7 +284,6 @@ module Fakes::Data::AppealData
         added_by: OpenStruct.new(name: nil, css_id: nil),
         docket_date: "2014-03-26 00:00:00 UTC".to_datetime,
         regional_office_key: "RO63",
-        representative: "No Representative",
         issues: [
           { disposition: nil,
             vacols_sequence_id: 1,
@@ -346,7 +344,6 @@ module Fakes::Data::AppealData
         added_by: OpenStruct.new(name: "Ricky Tikitembo", css_id: "HROBERT"),
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO73",
-        representative: "One Time Representative",
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,
@@ -389,7 +386,6 @@ module Fakes::Data::AppealData
         added_by: OpenStruct.new(name: "Dana Frey", css_id: "DFREY"),
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         regional_office_key: "RO29",
-        representative: "Agent",
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,
@@ -423,7 +419,6 @@ module Fakes::Data::AppealData
         docket_date: "2014-03-30 00:00:00 UTC".to_datetime,
         added_by: OpenStruct.new(name: "Dana Frey", css_id: "DFREY"),
         regional_office_key: "RO13",
-        representative: "Disabled American Veterans",
         issues: [
           { disposition: :remanded,
             vacols_sequence_id: 1,
@@ -573,7 +568,6 @@ module Fakes::Data::AppealData
         added_by: OpenStruct.new(name: "Enid Rempel", css_id: "EREMPEL"),
         docket_date: "2014-03-25 00:00:00 UTC".to_datetime,
         regional_office_key: "RO30",
-        representative: "Virginia Department of Veterans Affairs",
         issues: [
           {
             vacols_sequence_id: 1,

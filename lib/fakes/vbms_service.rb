@@ -28,6 +28,7 @@ class Fakes::VBMSService
     attr_accessor :manifest_vbms_fetched_at, :manifest_vva_fetched_at
     attr_accessor :contention_records
     attr_accessor :end_product_claim_ids_by_file_number
+    attr_accessor :disposition_records
   end
 
   def self.load_vbms_ids_mappings
@@ -133,15 +134,20 @@ class Fakes::VBMSService
     OpenStruct.new(claim_id: claim_id)
   end
 
+  def self.get_dispositions!(claim_id:)
+    (disposition_records && disposition_records[claim_id]) || []
+  end
+
   def self.fetch_contentions(claim_id:)
     (contention_records || {})[claim_id] || []
   end
 
-  def self.create_contentions!(veteran_file_number:, claim_id:, contention_descriptions:)
+  def self.create_contentions!(veteran_file_number:, claim_id:, contention_descriptions:, special_issues: [])
     Rails.logger.info("Submitting contentions to VBMS...")
     Rails.logger.info("File number: #{veteran_file_number}")
     Rails.logger.info("Claim id:\n #{claim_id}")
     Rails.logger.info("Contention descriptions: #{contention_descriptions.inspect}")
+    Rails.logger.info("Special issues: #{special_issues.inspect}")
 
     # Used to simulate a contention that fails to be created in VBMS
     contention_descriptions.delete("FAIL ME")
@@ -150,5 +156,20 @@ class Fakes::VBMSService
     contention_descriptions.map do |description|
       Generators::Contention.build(text: description, claim_id: claim_id)
     end
+  end
+
+  def self.associate_rated_issues!(claim_id:, rated_issue_contention_map:)
+    Rails.logger.info("Submitting rated issues to VBMS...")
+    Rails.logger.info("Claim id:\n #{claim_id}")
+    Rails.logger.info("Rated issue contention map: #{rated_issue_contention_map.inspect}")
+
+    true
+  end
+
+  def self.remove_contention!(contention)
+    Rails.logger.info("Submitting remove contention request to VBMS...")
+    Rails.logger.info("Contention: #{contention.inspect}")
+
+    true
   end
 end

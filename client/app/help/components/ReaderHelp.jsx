@@ -53,7 +53,7 @@ class CertificationHelp extends React.Component {
       </p>
 
       <p className="cf-help-image-wrapper">
-        <img className="cf-help-image" alt="Reader Access" src="/assets/help/reader-access-055bfda41b5116db283e2868412c588e5b1323443ea84bec39b747fdd8c90da3.png" />
+        <img className="cf-help-image" alt="Reader Access" src="/assets/help/reader-access.jpg" />
       </p>
 
       <p>Once the email is drafted, attach a copy of your latest “VA Privacy and Information Security Awareness and Rules of Behavior” training certificate and forward the email to your supervisor for approval. If approved, your supervisor should forward the request to your station’s IRM team and/or ISO for entry into CSEM. You will receive an email notice once access is granted.
@@ -84,7 +84,7 @@ class CertificationHelp extends React.Component {
       </p>
 
       <p className="cf-help-image-wrapper">
-        <img className="cf-help-image" alt="Reader Separate tab" src="/assets/help/reader-separate-tab-432dd3f48961a4eaaa1c10dfa4a8cc2f4c8567adc8799bae0bbc790dc6915650.png" />
+        <img className="cf-help-image" alt="Reader Separate tab" src="/assets/help/reader-separate-tab.jpg" />
       </p>
 
       <h2 id="add-a-comment">10. How do I add a comment to a document in Reader?</h2>
@@ -120,7 +120,7 @@ class CertificationHelp extends React.Component {
       </p>
 
       <p className="cf-help-image-wrapper">
-        <img className="cf-help-image" alt="Reader Feedback" src="/assets/help/reader-feedback-75045f5ee4ecb0633a0e797d5503adc72258e6b2e7a784758c9b3b5082a7a1ea.png" />
+        <img className="cf-help-image" alt="Reader Feedback" src="/assets/help/reader-feedback.jpg" />
       </p>
 
       <h2 id="need-help">18. What if I still need help?</h2>

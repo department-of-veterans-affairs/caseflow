@@ -7,6 +7,10 @@ module.exports = {
     '@department-of-veterans-affairs/eslint-config-appeals'
   ],
   rules: {
-    'prefer-const': 'off'
+    'prefer-const': 'off',
+    'max-statements': 'off'
+  },
+  globals: {
+    $ReadOnly: true
   }
 };

@@ -3,6 +3,7 @@
 # it is responsible for aggregating and caching statistics.
 #
 class CertificationStats < Caseflow::Stats
+  # :nocov:
   CALCULATIONS = {
     certifications_started: lambda do |range|
       Certification.where(created_at: range).count
@@ -60,4 +61,5 @@ class CertificationStats < Caseflow::Stats
       Certification.was_missing_form9.where(created_at: range).count
     end
   }.freeze
+  # :nocov:
 end

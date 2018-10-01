@@ -23,4 +23,9 @@ class VACOLS::Record < ApplicationRecord
       current_time.day
     )
   end
+
+  def self.current_user_slogid
+    slogid = RequestStore.store[:current_user].vacols_uniq_id
+    slogid.nil? ? "" : slogid.upcase
+  end
 end

@@ -1,7 +1,7 @@
 # rubocop:disable Metrics/LineLength
 source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "be1ad2d0cc70a55e7040ea193ad9f3f84c7b35cb"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "8dde00d67b7c629e4b871f8dcb3617bfe989b3db"
 
 gem "moment_timezone-rails"
 
@@ -33,22 +33,21 @@ gem "paranoia", "~> 2.2"
 
 gem "dogstatsd-ruby"
 
+gem "acts_as_tree"
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
 # Application server: Puma
 # Puma was chosen because it handles load of 40+ concurrent users better than Unicorn and Passenger
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
-gem "puma", "~> 2.16.0"
+gem "puma", "~> 3.12.0"
 
 # use to_b method to convert string to boolean
 gem "wannabe_bool"
 
-# Style
-gem "uswds-rails", git: "https://github.com/18F/uswds-rails-gem.git"
-
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "bc9c89591ac5830939476bd6eb96c1a2b415fdcb"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "48d3e0deeaf2151e1e43c026848c195691d05bac"
 
 # PDF Tools
 gem "pdf-forms"
@@ -71,7 +70,7 @@ gem "therubyracer", platforms: :ruby
 
 gem "pg", platforms: :ruby
 
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "fd9771bafc48d98b56909c4466721da312a22739"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "1bbc41ca8a521fb4655cc27f6294c86d48c081ca"
 
 gem "redis-rails", "~> 5.0.2"
 
@@ -82,12 +81,14 @@ gem "request_store"
 # State machine
 gem "aasm", "4.11.0"
 
-gem "font-awesome-sass"
-
 gem "redis-namespace"
 
 # catch problematic migrations at development/test time
 gem "zero_downtime_migrations"
+
+# nokogiri versions before 1.8.3 are affected by CVE-2018-8048. Explicitly define nokogiri version here to avoid that.
+# https://github.com/sparklemotion/nokogiri/pull/1746
+gem "nokogiri", ">= 1.8.3"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
@@ -100,7 +101,7 @@ group :production, :staging do
   gem "rails_stdout_logging"
 end
 
-group :stubbed, :test, :development do
+group :stubbed, :test, :development, :demo do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug", platforms: :ruby
   gem "pry"
@@ -160,6 +161,11 @@ end
 gem "shoryuken", "3.1.11"
 
 gem "paper_trail", "8.1.2"
-# rubocop:enable Metrics/LineLength
 
 gem "holidays", "~> 6.4"
+
+gem "roo", "~> 2.7"
+gem "rubyzip", "~> 1.2.2"
+
+gem "business_time", "~> 0.9.3"
+# rubocop:enable Metrics/LineLength

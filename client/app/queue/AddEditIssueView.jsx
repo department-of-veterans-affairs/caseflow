@@ -11,8 +11,7 @@ import {
   startEditingAppealIssue,
   cancelEditingAppealIssue,
   saveEditedAppealIssue,
-  deleteEditingAppealIssue,
-  editAppeal
+  deleteEditingAppealIssue
 } from './QueueActions';
 import {
   highlightInvalidFormItems,
@@ -22,7 +21,10 @@ import {
   hideModal,
   requestSave
 } from './uiReducer/uiActions';
-import { getIssueDiagnosticCodeLabel } from './utils';
+import {
+  getIssueDiagnosticCodeLabel,
+  prepareAppealIssuesForStore
+} from './utils';
 
 import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -33,8 +35,9 @@ import Alert from '../components/Alert';
 
 import {
   fullWidth,
-  ERROR_FIELD_REQUIRED
+  ISSUE_DESCRIPTION_MAX_LENGTH
 } from './constants';
+import COPY from '../../COPY.json';
 import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 
@@ -46,11 +49,11 @@ const noLeftPadding = css({ paddingLeft: 0 });
 
 class AddEditIssueView extends React.Component {
   componentDidMount = () => {
-    const { issueId, vacolsId } = this.props;
+    const { issueId, appealId } = this.props;
 
     this.props.cancelEditingAppealIssue();
     if (this.props.action === 'edit') {
-      this.props.startEditingAppealIssue(vacolsId, issueId);
+      this.props.startEditingAppealIssue(appealId, issueId);
     }
   };
 
@@ -96,7 +99,7 @@ class AddEditIssueView extends React.Component {
     const {
       issue,
       appeal,
-      appeal: { attributes: { issues } }
+      appeal: { issues }
     } = this.props;
     const params = {
       data: {
@@ -109,16 +112,16 @@ class AddEditIssueView extends React.Component {
         }
       }
     };
-    const issueIndex = _.map(issues, 'vacols_sequence_id').indexOf(issue.vacols_sequence_id);
-    const url = `/appeals/${appeal.id}/issues`;
+    const issueIndex = _.map(issues, 'id').indexOf(issue.id);
+    const url = `/appeals/${appeal.externalId}/issues`;
     let requestPromise;
 
     if (this.props.action === 'add') {
-      requestPromise = this.props.requestSave(url, params, 'You created a new issue.');
+      requestPromise = this.props.requestSave(url, params, { title: 'You created a new issue.' });
     } else {
       requestPromise = this.props.requestUpdate(
-        `${url}/${issue.vacols_sequence_id}`, params,
-        `You updated issue ${issueIndex + 1}.`
+        `${url}/${issue.id}`, params,
+        { title: `You updated issue ${issueIndex + 1}.` }
       );
     }
 
@@ -126,13 +129,13 @@ class AddEditIssueView extends React.Component {
   };
 
   updateIssuesFromServer = (response) => {
-    const { appeal: { attributes: appeal } } = this.props;
+    const { appeal } = this.props;
     const serverIssues = response.issues;
 
     const issues = _.map(serverIssues, (issue) => {
       // preserve locally-updated dispositions
       const disposition = _.get(
-        _.find(appeal.issues, (iss) => iss.vacols_sequence_id === issue.vacols_sequence_id),
+        _.find(appeal.issues, (iss) => iss.id === issue.id),
         'disposition'
       );
 
@@ -142,25 +145,31 @@ class AddEditIssueView extends React.Component {
       };
     });
 
-    this.props.saveEditedAppealIssue(this.props.vacolsId, { issues });
+    this.props.saveEditedAppealIssue(this.props.appealId, {
+      issues: prepareAppealIssuesForStore({
+        attributes: {
+          issues,
+          docket_name: appeal.docketName
+        }
+      })
+    });
   }
 
   deleteIssue = () => {
     const {
       issue,
-      appeal,
-      appeal: { attributes: { issues } },
-      vacolsId,
+      appeal: { issues },
+      appealId,
       issueId
     } = this.props;
-    const issueIndex = _.map(issues, 'vacols_sequence_id').indexOf(issue.vacols_sequence_id);
+    const issueIndex = _.map(issues, 'id').indexOf(issue.id);
 
     this.props.hideModal('deleteIssue');
 
     this.props.requestDelete(
-      `/appeals/${appeal.id}/issues/${issue.vacols_sequence_id}`, {},
-      `You deleted issue ${issueIndex + 1}.`
-    ).then((resp) => this.props.deleteEditingAppealIssue(vacolsId, issueId, JSON.parse(resp.text)));
+      `/appeals/${appealId}/issues/${issue.id}`, {},
+      { title: `You deleted issue ${issueIndex + 1}.` }
+    ).then((resp) => this.props.deleteEditingAppealIssue(appealId, issueId, JSON.parse(resp.text)));
   };
 
   renderDiagnosticCodes = () => _.keys(DIAGNOSTIC_CODE_DESCRIPTIONS).map((value) => ({
@@ -200,7 +209,7 @@ class AddEditIssueView extends React.Component {
       action,
       highlight,
       error,
-      modal
+      deleteIssueModal
     } = this.props;
 
     const programs = ISSUE_INFO;
@@ -217,7 +226,7 @@ class AddEditIssueView extends React.Component {
     };
 
     return <React.Fragment>
-      {modal && <div className="cf-modal-scroll">
+      {deleteIssueModal && <div className="cf-modal-scroll">
         <Modal
           title="Delete Issue?"
           buttons={[{
@@ -244,7 +253,7 @@ class AddEditIssueView extends React.Component {
       <Button
         willNeverBeLoading
         linkStyling
-        disabled={!issue.vacols_sequence_id}
+        disabled={!issue.id}
         styling={noLeftPadding}
         onClick={() => this.props.showModal('deleteIssue')}>
         Delete Issue
@@ -260,7 +269,7 @@ class AddEditIssueView extends React.Component {
             type: null,
             codes: []
           })}
-          errorMessage={errorHighlightConditions.program ? ERROR_FIELD_REQUIRED : ''}
+          errorMessage={errorHighlightConditions.program ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
           value={issue.program} />
       </div>
       <div {...dropdownMarginTop}>
@@ -275,7 +284,7 @@ class AddEditIssueView extends React.Component {
             // unset issue levels for validation
             codes: []
           })}
-          errorMessage={errorHighlightConditions.type ? ERROR_FIELD_REQUIRED : ''}
+          errorMessage={errorHighlightConditions.type ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
           value={issue.type} />
       </div>
       <h3 {...marginTop}>Subsidiary Questions or Other Tracking Identifier(s)</h3>
@@ -286,7 +295,7 @@ class AddEditIssueView extends React.Component {
           options={this.renderIssueAttrs(issueLevels[0])}
           onChange={({ value }) => this.updateIssueCode(0, value)}
           readOnly={_.isEmpty(issueLevels[0])}
-          errorMessage={errorHighlightConditions.level1 ? ERROR_FIELD_REQUIRED : ''}
+          errorMessage={errorHighlightConditions.level1 ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
           value={_.get(issue, 'codes[0]', '')} />
       </div>
       {!_.isEmpty(issueLevels[1]) && <div {...dropdownMarginTop}>
@@ -295,7 +304,7 @@ class AddEditIssueView extends React.Component {
           placeholder="Select level 2"
           options={this.renderIssueAttrs(issueLevels[1])}
           onChange={({ value }) => this.updateIssueCode(1, value)}
-          errorMessage={errorHighlightConditions.level2 ? ERROR_FIELD_REQUIRED : ''}
+          errorMessage={errorHighlightConditions.level2 ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
           value={_.get(issue, 'codes[1]', '')} />
       </div>}
       {this.issueLevelsConfigHasDiagCode() && <div {...dropdownMarginTop}>
@@ -315,11 +324,12 @@ class AddEditIssueView extends React.Component {
             this.updateIssue({ codes });
           }}
           value={_.last(issue.codes)}
-          errorMessage={errorHighlightConditions.diagCode ? ERROR_FIELD_REQUIRED : ''} />
+          errorMessage={errorHighlightConditions.diagCode ? COPY.FORM_ERROR_FIELD_REQUIRED : ''} />
       </div>}
       <TextField
         name="Notes:"
         value={_.get(this.props.issue, 'note', '')}
+        maxLength={ISSUE_DESCRIPTION_MAX_LENGTH}
         onChange={(value) => this.updateIssue({ note: value })} />
     </React.Fragment>;
   };
@@ -327,7 +337,7 @@ class AddEditIssueView extends React.Component {
 
 AddEditIssueView.propTypes = {
   action: PropTypes.oneOf(['add', 'edit']).isRequired,
-  vacolsId: PropTypes.string.isRequired,
+  appealId: PropTypes.string.isRequired,
   nextStep: PropTypes.string.isRequired,
   prevStep: PropTypes.string.isRequired,
   issueId: PropTypes.string,
@@ -337,11 +347,11 @@ AddEditIssueView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => ({
   highlight: state.ui.highlightFormItems,
-  appeal: state.queue.stagedChanges.appeals[ownProps.vacolsId],
-  task: state.queue.loadedQueue.tasks[ownProps.vacolsId],
+  appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
+  task: state.queue.tasks[ownProps.appealId],
   issue: state.queue.editingIssue,
   error: state.ui.messages.error,
-  modal: state.ui.modal.deleteIssue
+  deleteIssueModal: state.ui.modals.deleteIssue
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -355,8 +365,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestDelete,
   showModal,
   hideModal,
-  requestSave,
-  editAppeal
+  requestSave
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(AddEditIssueView));

@@ -1,5 +1,6 @@
 class CreateEstablishClaimTasksJob < ApplicationJob
   queue_as :low_priority
+  application_attr :dispatch
 
   def perform
     # fetch all full grants

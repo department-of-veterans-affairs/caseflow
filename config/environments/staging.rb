@@ -62,4 +62,7 @@ Rails.application.configure do
     rescue LoadError => e
     end
   end
+
+  # Allow health check to pushgateway
+  ENV["ENABLE_PUSHGATEWAY_HEALTHCHECK"] = "true"
 end

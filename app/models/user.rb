@@ -4,6 +4,7 @@ class User < ApplicationRecord
   has_many :appeal_views
   has_many :hearing_views
   has_many :annotations
+  has_many :tasks, as: :assigned_to
 
   BOARD_STATION_ID = "101".freeze
 
@@ -37,26 +38,50 @@ class User < ApplicationRecord
     ro_is_ambiguous_from_station_office? ? upcase.call(@regional_office) : station_offices
   end
 
-  def vacols_uniq_id
-    @vacols_uniq_id ||= self.class.user_repository.vacols_uniq_id(css_id)
+  def attorney_in_vacols?
+    vacols_roles.include?("attorney")
   end
 
-  def vacols_role
-    @vacols_role ||= self.class.user_repository.vacols_role(css_id)
+  def judge_in_vacols?
+    vacols_roles.include?("judge")
+  end
+
+  def colocated_in_vacols?
+    vacols_roles.include?("colocated")
+  end
+
+  def dispatch_user_in_vacols?
+    vacols_roles.include?("dispatch")
+  end
+
+  def vacols_uniq_id
+    @vacols_uniq_id ||= user_info[:uniq_id]
+  end
+
+  def vacols_roles
+    @vacols_roles ||= user_info[:roles] || []
   end
 
   def vacols_attorney_id
-    @vacols_attorney_id ||= self.class.user_repository.vacols_attorney_id(css_id)
+    @vacols_attorney_id ||= user_info[:attorney_id]
   end
 
   def vacols_group_id
-    @vacols_group_id ||= self.class.user_repository.vacols_group_id(css_id)
+    @vacols_group_id ||= user_info[:group_id]
   end
 
   def vacols_full_name
-    @vacols_full_name ||= self.class.user_repository.vacols_full_name(css_id)
+    @vacols_full_name ||= user_info[:full_name]
   rescue Caseflow::Error::UserRepositoryError
     nil
+  end
+
+  def participant_id
+    @participant_id ||= bgs.get_participant_id_for_user(self)
+  end
+
+  def vsos_user_represents
+    @vsos_user_represents ||= bgs.fetch_poas_by_participant_id(participant_id)
   end
 
   def access_to_task?(vacols_id)
@@ -112,6 +137,10 @@ class User < ApplicationRecord
     Functions.granted?("Global Admin", css_id)
   end
 
+  def vso_employee?
+    roles.include?("VSO")
+  end
+
   def granted?(thing)
     Functions.granted?(thing, css_id)
   end
@@ -164,7 +193,30 @@ class User < ApplicationRecord
     self.class.appeal_repository.load_user_case_assignments_from_vacols(css_id)
   end
 
+  def judge_css_id
+    Constants::AttorneyJudgeTeams::JUDGES[Rails.current_env].each_pair do |id, value|
+      return id if value[:attorneys].include?(css_id)
+    end
+    nil
+  end
+
+  def as_json(options)
+    super(options).merge("judge_css_id" => judge_css_id)
+  end
+
+  def user_info_for_idt
+    self.class.user_repository.user_info_for_idt(css_id)
+  end
+
   private
+
+  def bgs
+    @bgs ||= BGSService.new
+  end
+
+  def user_info
+    @user_info ||= self.class.user_repository.user_info_from_vacols(css_id)
+  end
 
   def get_appeal_stream_hearings(appeal_streams)
     appeal_streams.reduce({}) do |acc, (appeal_id, appeals)|
@@ -192,8 +244,21 @@ class User < ApplicationRecord
     # Empty method used for testing purposes (required)
     def clear_current_user; end
 
+    def css_ids_by_vlj_ids(vlj_ids)
+      UserRepository.css_ids_by_vlj_ids(vlj_ids)
+    end
+
+    # This method is only used in dev/demo mode to test the judge spreadsheet functionality in hearing scheduling
+    # :nocov:
+    def create_judge_in_vacols(first_name, last_name, vlj_id)
+      return unless Rails.env.development? || Rails.env.demo?
+
+      UserRepository.create_judge_in_vacols(first_name, last_name, vlj_id)
+    end
+    # :nocov:
+
     def system_user
-      new(
+      find_or_initialize_by(
         station_id: "283",
         css_id: Rails.deploy_env?(:prod) ? "CSFLOW" : "CASEFLOW1"
       )
@@ -211,6 +276,10 @@ class User < ApplicationRecord
         u.regional_office = session[:regional_office]
         u.save
       end
+    end
+
+    def find_by_css_id_or_create_with_default_station_id(css_id)
+      User.find_by(css_id: css_id) || User.create(css_id: css_id, station_id: BOARD_STATION_ID)
     end
 
     def authentication_service

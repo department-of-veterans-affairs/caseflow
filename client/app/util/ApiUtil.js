@@ -121,6 +121,24 @@ const ApiUtil = {
     return result;
   },
 
+  convertToCamelCase(data) {
+    if (!_.isObject(data)) {
+      return data;
+    }
+    let result = {};
+
+    for (let key in data) {
+      if ({}.hasOwnProperty.call(data, key)) {
+        let camelCase = StringUtil.snakeCaseToCamelCase(key);
+
+        // assign value to new object
+        result[camelCase] = this.convertToCamelCase(data[key]);
+      }
+    }
+
+    return result;
+  },
+
   ..._.mapValues(httpMethods, timeApiRequest)
 };
 

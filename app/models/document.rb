@@ -55,7 +55,7 @@ class Document < ApplicationRecord
   DECISION_TYPES = ["BVA Decision", "Remand BVA or CAVC"].freeze
   FUZZY_MATCH_DAYS = 4.days.freeze
 
-  attr_accessor :efolder_id, :alt_types, :filename, :vacols_date
+  attr_accessor :efolder_id, :alt_types, :filename, :vacols_date, :created_at, :updated_at, :upload_date
 
   def type?(type)
     (self.type == type) || (alt_types || []).include?(type)
@@ -91,6 +91,7 @@ class Document < ApplicationRecord
         received_at: hash["received_at"],
         vbms_document_id: hash["external_document_id"] || hash["version_id"],
         series_id: hash["series_id"],
+        upload_date: hash["upload_date"],
         file_number: file_number)
   end
 
@@ -150,6 +151,7 @@ class Document < ApplicationRecord
         :content_url,
         :type,
         :received_at,
+        :upload_date,
         :filename,
         :category_procedural,
         :category_medical,
@@ -194,11 +196,7 @@ class Document < ApplicationRecord
 
   def content_url
     if reader_with_efolder_api?
-      if FeatureToggle.enabled?(:efolder_api_v2, user: RequestStore.store[:current_user])
-        ExternalApi::EfolderService.efolder_content_url(vbms_document_id.tr("{}", ""))
-      else
-        ExternalApi::EfolderService.efolder_content_url(efolder_id)
-      end
+      ExternalApi::EfolderService.efolder_content_url(vbms_document_id.tr("{}", ""))
     else
       "/document/#{id}/pdf"
     end
@@ -231,8 +229,7 @@ class Document < ApplicationRecord
 
   def reader_with_efolder_api?
     EFolderService == ExternalApi::EfolderService &&
-      RequestStore.store[:application] == "reader" &&
-      FeatureToggle.enabled?(:efolder_docs_api, user: RequestStore.store[:current_user])
+      RequestStore.store[:application] == "reader"
   end
 
   def match_vbms_document_using(vbms_documents, &date_match_test)

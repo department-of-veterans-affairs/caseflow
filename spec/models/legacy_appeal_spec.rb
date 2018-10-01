@@ -1,6 +1,11 @@
 describe LegacyAppeal do
   before do
+    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
@@ -178,9 +183,17 @@ describe LegacyAppeal do
       it { is_expected.to eq(nil) }
     end
 
+    context "when the case has a non-Board disposition" do
+      let(:vacols_case) do
+        create(:case, :disposition_ramp)
+      end
+
+      it { is_expected.to eq(nil) }
+    end
+
     context "when there is a decision date" do
       let(:vacols_case) do
-        create(:case_with_decision, bfddec: 30.days.ago)
+        create(:case, :status_complete, :disposition_allowed, bfddec: 30.days.ago)
       end
 
       it { is_expected.to eq(90.days.from_now.to_date) }
@@ -1005,27 +1018,97 @@ describe LegacyAppeal do
   context "#eligible_for_ramp?" do
     subject { appeal.eligible_for_ramp? }
 
-    let(:location_code) { nil }
+    let(:issues) { [create(:case_issue, :compensation)] }
 
-    context "is false if status is not advance or remand" do
-      let!(:vacols_case) { create(:case, :status_active) }
+    context "when reason for ineligibility" do
+      let!(:vacols_case) { create(:case, :status_advance, bfcurloc: "96", case_issues: issues) }
       it { is_expected.to be_falsey }
     end
 
-    context "status is remand" do
-      let!(:vacols_case) { create(:case, :status_remand) }
+    context "when no reason for ineligibility" do
+      let!(:vacols_case) { create(:case, :status_advance, bfcurloc: "90", case_issues: issues) }
       it { is_expected.to be_truthy }
+    end
+  end
+
+  context "#ramp_ineligibility_reason" do
+    subject { appeal.ramp_ineligibility_reason }
+
+    let(:location_code) { nil }
+    let(:issues) { [create(:case_issue, :compensation)] }
+
+    context "if status is not advance or remand" do
+      let(:docket_date) { "2016-01-01" }
+      let(:hearing_code) { "4" }
+      let(:type_code) { "6" }
+      let(:aod) { nil }
+
+      let!(:vacols_case) do
+        create(:case, :status_active, (aod ? :aod : :type_original),
+               bfd19: docket_date,
+               bfha: hearing_code,
+               bfac: type_code,
+               case_issues: issues)
+      end
+
+      context "when other qualifying criteria are met" do
+        it { is_expected.to be_nil }
+      end
+
+      context "when no compensation issues" do
+        let(:issues) { [create(:case_issue, :education)] }
+        it { is_expected.to eq(:no_compensation_issues) }
+      end
+
+      context "when docket date is before 2016" do
+        let(:docket_date) { "2015-12-31" }
+        it { is_expected.to eq(:activated_to_bva) }
+      end
+
+      context "when a hearing was held" do
+        let(:hearing_code) { "2" }
+        it { is_expected.to eq(:activated_to_bva) }
+      end
+
+      context "when advance on docket" do
+        let(:aod) { true }
+        it { is_expected.to eq(:activated_to_bva) }
+      end
+
+      context "when CAVC" do
+        let(:type_code) { "7" }
+        it { is_expected.to eq(:activated_to_bva) }
+      end
+    end
+
+    context "status is remand" do
+      let(:correspondent) { create(:correspondent) }
+      let!(:vacols_case) { create(:case, :status_remand, correspondent: correspondent, case_issues: issues) }
+      it { is_expected.to be_nil }
+
+      context "when appellant is not the veteran" do
+        let(:correspondent) do
+          create(
+            :correspondent,
+            appellant_first_name: "David",
+            appellant_middle_initial: "D",
+            appellant_last_name: "Schwimmer"
+          )
+        end
+
+        it { is_expected.to eq(:claimant_not_veteran) }
+      end
     end
 
     context "status is advance" do
       context "location is remand_returned_to_bva" do
-        let!(:vacols_case) { create(:case, :status_advance, bfcurloc: "96") }
-        it { is_expected.to be_falsey }
+        let!(:vacols_case) { create(:case, :status_advance, bfcurloc: "96", case_issues: issues) }
+        it { is_expected.to eq(:activated_to_bva) }
       end
 
       context "location is not remand_returned_to_bva" do
-        let!(:vacols_case) { create(:case, :status_advance, bfcurloc: "90") }
-        it { is_expected.to be_truthy }
+        let!(:vacols_case) { create(:case, :status_advance, bfcurloc: "90", case_issues: issues) }
+        it { is_expected.to be_nil }
       end
     end
   end
@@ -1269,7 +1352,6 @@ describe LegacyAppeal do
     end
 
     it "returns correct eps" do
-      puts BGSService.end_product_records
       expect(result.length).to eq(2)
 
       expect(result.first.claim_type_code).to eq("172GRANT")
@@ -1411,14 +1493,6 @@ describe LegacyAppeal do
       is_expected.to have_attributes(bgs_representative_type: "Attorney", bgs_representative_name: "Clarence Darrow")
     end
 
-    context "#power_of_attorney(load_bgs_record: false)" do
-      subject { appeal.power_of_attorney(load_bgs_record: false) }
-
-      it "returns poa without fetching BGS values if desired" do
-        is_expected.to have_attributes(bgs_representative_type: nil, bgs_representative_name: nil)
-      end
-    end
-
     context "#power_of_attorney.bgs_representative_address" do
       subject { appeal.power_of_attorney.bgs_representative_address }
 
@@ -1465,6 +1539,25 @@ describe LegacyAppeal do
         create(:case, case_issues: [create(:case_issue), create(:case_issue)])
       end
       it { is_expected.to eq 2 }
+    end
+  end
+
+  context "#contested_claim" do
+    subject { appeal.contested_claim }
+    let(:vacols_case) { create(:case) }
+
+    context "when there is no contesting claimant" do
+      it { is_expected.to eq false }
+    end
+
+    context "when there is a contesting claimant" do
+      let(:vacols_case) do
+        vacols_c = create(:case)
+        create(:representative, reptype: "C", repkey: vacols_c.bfkey)
+        vacols_c
+      end
+
+      it { is_expected.to eq true }
     end
   end
 
@@ -1700,6 +1793,24 @@ describe LegacyAppeal do
     it "Updates a legacy_appeal when an appeal is updated" do
       appeal.update!(rice_compliance: TRUE)
       expect(legacy_appeal.attributes).to eq(appeal.attributes)
+    end
+  end
+
+  context "#has_outstanding_vacols_mail?" do
+    let(:vacols_case) { create(:case) }
+    subject { appeal.outstanding_vacols_mail? }
+
+    context "when no mail is outstanding" do
+      it "returns false" do
+        expect(subject).to eq false
+      end
+    end
+
+    context "when mail is outstanding" do
+      let(:vacols_case) { create(:case, :outstanding_mail) }
+      it "returns true" do
+        expect(subject).to eq true
+      end
     end
   end
 

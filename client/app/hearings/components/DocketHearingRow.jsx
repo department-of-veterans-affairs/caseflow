@@ -152,7 +152,7 @@ export class DocketHearingRow extends React.PureComponent {
             {hearing.representative_name}
           </span>
         </td>
-        <td className="cf-hearings-docket-actions" rowSpan="3">
+        <td className="cf-hearings-docket-actions" colSpan="3">
           <SearchableDropdown
             label="Disposition"
             name={`${hearing.id}-disposition`}
@@ -177,14 +177,6 @@ export class DocketHearingRow extends React.PureComponent {
             value={hearing.aod}
             searchable={false}
           />
-          <div className="transcriptRequested">
-            <Checkbox
-              label="Transcript Requested"
-              name={`${hearing.id}.transcript_requested`}
-              value={hearing.transcript_requested}
-              onChange={this.setTranscriptRequested}
-            />
-          </div>
         </td>
       </tr>
       <tr>
@@ -205,6 +197,15 @@ export class DocketHearingRow extends React.PureComponent {
             </div>
           </div>
         </td>
+        <td className="transcriptCell">
+          <div className="transcriptRequested">
+            <Checkbox
+              label="Transcript Requested"
+              name={`${hearing.id}.transcript_requested`}
+              value={hearing.transcript_requested}
+              onChange={this.setTranscriptRequested}
+            />
+          </div></td>
       </tr>
     </tbody>;
   }

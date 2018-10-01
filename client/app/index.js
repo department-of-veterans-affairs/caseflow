@@ -3,6 +3,8 @@ import ReactOnRails from 'react-on-rails';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import _ from 'lodash';
+import './styles/app.scss';
+import '../node_modules/pdfjs-dist/web/pdf_viewer.css';
 
 // List of container components we render directly in  Rails .erb files
 import BaseContainer from './containers/BaseContainer';
@@ -14,6 +16,7 @@ import ManageEstablishClaim from './manageEstablishClaim/index';
 import CaseWorker from './containers/CaseWorker/CaseWorkerIndex';
 
 import Hearings from './hearings/index';
+import HearingSchedule from './hearingSchedule/index';
 import Help from './help/index';
 import Error500 from './errors/Error500';
 import Error404 from './errors/Error404';
@@ -26,6 +29,7 @@ import PerformanceDegradationBanner from './components/PerformanceDegradationBan
 import EstablishClaimAdmin from './establishClaimAdmin';
 import Queue from './queue/index';
 import IntakeManager from './intakeManager';
+import IntakeEdit from './intakeEdit';
 
 const COMPONENTS = {
   BaseContainer,
@@ -45,10 +49,12 @@ const COMPONENTS = {
   Unauthorized,
   StatsContainer,
   Hearings,
+  HearingSchedule,
   PerformanceDegradationBanner,
   Help,
   Queue,
-  IntakeManager
+  IntakeManager,
+  IntakeEdit
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
@@ -76,7 +82,8 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
       './hearings/index',
       './establishClaimAdmin/index',
       './queue/index',
-      './intakeManager/index'
+      './intakeManager/index',
+      './intakeEdit/index'
     ], () => renderApp(component));
   }
 };

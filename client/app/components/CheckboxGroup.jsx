@@ -31,7 +31,9 @@ export default class CheckboxGroup extends React.Component {
       hideLabel,
       values,
       errorMessage,
-      getCheckbox
+      errorState,
+      getCheckbox,
+      styling
     } = this.props;
 
     let fieldClasses = `checkbox-wrapper-${name} cf-form-checkboxes`;
@@ -40,13 +42,13 @@ export default class CheckboxGroup extends React.Component {
       fieldClasses += '-inline';
     }
 
-    if (errorMessage) {
+    if (errorState || errorMessage) {
       fieldClasses += ' usa-input-error';
     }
 
     let legendClasses = (hideLabel) ? 'hidden-field' : '';
 
-    return <fieldset className={fieldClasses}>
+    return <fieldset className={fieldClasses} {...styling}>
       <legend className={legendClasses}>
         {required && <span className="cf-required">Required</span>}
         {label || name}
@@ -59,7 +61,8 @@ export default class CheckboxGroup extends React.Component {
 
 CheckboxGroup.defaultProps = {
   required: false,
-  getCheckbox: renderCheckbox
+  getCheckbox: renderCheckbox,
+  hideErrorMessage: false
 };
 
 CheckboxGroup.propTypes = {
@@ -77,5 +80,7 @@ CheckboxGroup.propTypes = {
   vertical: PropTypes.bool,
   values: PropTypes.object,
   errorMessage: PropTypes.string,
-  getCheckbox: PropTypes.func
+  errorState: PropTypes.bool,
+  getCheckbox: PropTypes.func,
+  styling: PropTypes.object
 };

@@ -8,6 +8,7 @@ require File.expand_path("../../config/environment", __FILE__)
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 
 require "spec_helper"
+require "fake_date_helper"
 require "rspec/rails"
 require "react_on_rails"
 require_relative "support/fake_pdf_service"
@@ -116,17 +117,22 @@ module StubbableUser
       @stub = user
     end
 
-    def authenticate!(css_id: nil, roles: nil)
+    def authenticate!(css_id: nil, roles: nil, user: nil)
       Functions.grant!("System Admin", users: ["DSUSER"]) if roles && roles.include?("System Admin")
 
-      self.stub = User.from_session(
-        "user" =>
-          { "id" => css_id || "DSUSER",
-            "name" => "Lauren Roth",
-            "station_id" => "283",
-            "email" => "test@example.com",
-            "roles" => roles || ["Certify Appeal"] }
-      )
+      if user.nil?
+        user = User.from_session(
+          "user" =>
+            { "id" => css_id || "DSUSER",
+              "name" => "Lauren Roth",
+              "station_id" => "283",
+              "email" => "test@example.com",
+              "roles" => roles || ["Certify Appeal"] }
+        )
+      end
+
+      RequestStore.store[:current_user] = user
+      self.stub = user
     end
 
     def tester!(roles: nil)
@@ -225,7 +231,7 @@ RSpec.configure do |config|
   # If it does, it will not execute ReactOnRails, since that slows down tests
   # Thus this will only run once (to initially compile assets) and not on
   # subsequent test runs
-  if Dir["#{::Rails.root}/app/assets/webpack/*"].empty?
+  if !File.exist?("#{::Rails.root}/app/assets/javascripts/webpack-bundle.js")
     ReactOnRails::TestHelper.ensure_assets_compiled
   end
   config.before(:all) do
@@ -370,4 +376,5 @@ end
 
 RSpec.configure do |config|
   config.include ActionView::Helpers::NumberHelper
+  config.include FakeDateHelper
 end

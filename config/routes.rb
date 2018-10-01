@@ -31,6 +31,20 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :idt do
+    get 'auth', to: 'authentications#index'
+    namespace :api do
+      namespace :v1 do
+        get 'token', to: 'tokens#generate_token'
+        get 'appeals', to: 'appeals#list'
+        get 'appeals/:appeal_id', to: 'appeals#details'
+        get 'judges', to: 'judges#index'
+        get 'user', to: 'users#index'
+      end
+    end
+  end
+
+
   namespace :metrics do
     namespace :v1 do
       resources :histogram, only: :create
@@ -83,7 +97,9 @@ Rails.application.routes.draw do
 
   resources :appeals, only: [:index, :show] do
     get :document_count
+    get :new_documents
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
+    get 'tasks', to: "tasks#for_appeal"
   end
 
   resources :beaam_appeals, only: [:index]
@@ -92,10 +108,20 @@ Rails.application.routes.draw do
     resources :dockets, only: [:index, :show], param: :docket_date
     resources :worksheets, only: [:update, :show], param: :hearing_id
     resources :appeals, only: [:update], param: :appeal_id
-    resources :schedule, only: [:index, :show]
+    resources :hearing_day, only: [:index]
+    resources :schedule_periods, only: [:index, :create]
+    resources :schedule_periods, only: [:show, :update, :download], param: :schedule_period_id
+    resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
+  get 'hearings/schedule', to: "hearings/hearing_day#index"
+  get 'hearings/schedule/build', to: "hearing_schedule#index"
+  get 'hearings/schedule/build/upload', to: "hearing_schedule#index"
+  get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearing_schedule#index"
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show_print"
+  post 'hearings/hearing_day', to: "hearings/hearing_day#create"
+  put 'hearings/:hearing_key/hearing_day', to: "hearings/hearing_day#update"
+  get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"
 
   resources :hearings, only: [:update]
 
@@ -107,6 +133,8 @@ Rails.application.routes.draw do
   get 'reader/help' => 'help#reader'
   get 'hearings/help' => 'help#hearings'
   get 'intake/help' => 'help#intake'
+  get 'queue/help' => 'help#queue'
+
 
   root 'home#index'
 
@@ -122,6 +150,12 @@ Rails.application.routes.draw do
     patch 'error', on: :member
   end
 
+  resources :higher_level_reviews, param: :claim_id, only: [:edit]
+  match '/higher_level_reviews/:claim_id/edit/:any' => 'higher_level_reviews#edit', via: [:get]
+
+  resources :supplemental_claims, param: :claim_id, only: [:edit]
+  match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
+
   resources :users, only: [:index]
 
   get 'cases/:caseflow_veteran_id', to: 'appeals#show_case_list'
@@ -131,15 +165,18 @@ Rails.application.routes.draw do
     get '/beaam', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
-    get '/:user_id(*rest)', to: 'tasks#index'
-
-    post '/appeals/:id/complete', to: 'tasks#complete'
+    get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
 
-  resources :tasks, only: [:create, :update] do
-    post :complete
+  resources :legacy_tasks, only: [:create, :update]
+  resources :tasks, only: [:index, :create, :update]
+
+  resources :organizations, only: [:index, :show], param: :url do
+    resources :tasks, only: [:index], controller: 'organizations/tasks'
+    get 'members', on: :member
   end
 
+  post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
 
   get "health-check", to: "health_checks#show"
   get "dependencies-check", to: "dependencies_checks#show"
@@ -172,8 +209,10 @@ Rails.application.routes.draw do
     if ApplicationController.dependencies_faked?
       post "/set_user/:id", to: "users#set_user", as: "set_user"
       post "/set_end_products", to: "users#set_end_products", as: 'set_end_products'
+      post "/reseed", to: "users#reseed", as: "reseed"
     end
     post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
+    post "/toggle_feature", to: "users#toggle_feature", as: "toggle_feature"
   end
 
   # :nocov:

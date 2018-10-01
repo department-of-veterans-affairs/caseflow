@@ -7,6 +7,7 @@ import { collectAllTags, setLoadedVacolsId } from '../PdfViewer/PdfViewerActions
 import { handleSetLastRead } from '../DocumentList/DocumentListActions';
 import { setViewedAssignment } from '../CaseSelect/CaseSelectActions';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
+import uuid from 'uuid';
 
 /** Tags **/
 
@@ -62,21 +63,23 @@ export const removeTagRequestSuccess = (docId, tagId) =>
     dispatch(collectAllTags(documents));
   };
 
-export const removeTag = (doc, tagId) =>
+export const removeTag = (doc, tag) =>
   (dispatch) => {
     dispatch({
       type: Constants.REQUEST_REMOVE_TAG,
       payload: {
         docId: doc.id,
-        tagId
+        tagId: tag.id
       }
     });
-    ApiUtil.delete(`/document/${doc.id}/tag/${tagId}`, {}, ENDPOINT_NAMES.TAG).
-      then(() => {
-        dispatch(removeTagRequestSuccess(doc.id, tagId));
-      }, () => {
-        dispatch(removeTagRequestFailure(doc.id, tagId));
-      });
+    if (!tag.temporaryId) {
+      ApiUtil.delete(`/document/${doc.id}/tag/${tag.id}`, {}, ENDPOINT_NAMES.TAG).
+        then(() => {
+          dispatch(removeTagRequestSuccess(doc.id, tag.id));
+        }, () => {
+          dispatch(removeTagRequestFailure(doc.id, tag.id));
+        });
+    }
   };
 
 export const addNewTag = (doc, tags) =>
@@ -85,7 +88,11 @@ export const addNewTag = (doc, tags) =>
 
     const newTags = _(tags).
       differenceWith(currentTags, (tag, currentTag) => tag.value === currentTag.text).
-      map((tag) => ({ text: tag.label })).
+      map((tag) => ({
+        text: tag.label,
+        id: uuid.v4(),
+        temporaryId: true
+      })).
       value();
 
     if (_.size(newTags)) {

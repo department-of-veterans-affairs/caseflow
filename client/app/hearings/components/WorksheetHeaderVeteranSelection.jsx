@@ -21,7 +21,8 @@ const headerSelectionStyling = css({
   display: 'block',
   padding: '8px 30px 10px 30px',
   height: '90px',
-  backgroundColor: '#E4E2E0'
+  backgroundColor: '#f1f1f1',
+  color: '#212121'
 });
 
 const hearingPreppedStyling = css({
@@ -86,13 +87,15 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
     currentDocket = orderTheDocket(currentDocket);
 
+    const docketNotLoaded = _.isEmpty(currentDocket);
+
     return <span className="worksheet-header" {...headerSelectionStyling}>
       <div className="cf-push-left" {...containerStyling}>
         <div {...selectVeteranStyling}>
           <SearchableDropdown
             label="Select Veteran"
             name="worksheet-veteran-selection"
-            placeholder={_.isEmpty(currentDocket) ? <SmallLoader spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
+            placeholder={docketNotLoaded ? <SmallLoader spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
               message="Loading..." /> : ''}
             options={this.getDocketVeteranOptions(currentDocket, worksheetIssues)}
             onChange={this.onDropdownChange}
@@ -107,6 +110,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
           name={`prep-${currentHearing.id}`}
           label="Hearing Prepped"
           styling={hearingPreppedStyling}
+          disabled={docketNotLoaded}
         />
       </div>
       <div className="cf-push-right">

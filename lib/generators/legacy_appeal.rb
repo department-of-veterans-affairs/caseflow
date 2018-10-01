@@ -19,7 +19,6 @@ class Generators::LegacyAppeal
       {
         type: "Original",
         file_type: "VBMS",
-        representative: "Military Order of the Purple Heart",
         veteran_first_name: generate_first_name,
         veteran_middle_initial: "A",
         veteran_last_name: last_name,
@@ -36,7 +35,7 @@ class Generators::LegacyAppeal
         appellant_city: "Huntingdon",
         appellant_state: "TN",
         docket_number: 4198,
-        contested_claim: true
+        case_record: OpenStruct.new(representatives: [OpenStruct.new(reptype: "C")])
       }
     end
     # rubocop:enable Metrics/MethodLength

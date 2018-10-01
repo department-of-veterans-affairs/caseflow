@@ -1,40 +1,27 @@
-import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import COPY from '../../COPY.json';
 import { subHeadTextStyle } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-import { setActiveAppeal, setActiveTask } from './CaseDetail/CaseDetailActions';
+const getLinkText = (appeal) => <React.Fragment>{appeal.veteranFullName} ({appeal.veteranFileNumber})</React.Fragment>;
 
-class CaseDetailsLink extends React.PureComponent {
-  setActiveAppealAndTask = () => {
-    this.props.setActiveAppeal(this.props.appeal);
-    this.props.setActiveTask(this.props.task);
-  }
-
+export default class CaseDetailsLink extends React.PureComponent {
   render() {
     const {
-      appeal: { attributes: appeal },
+      appeal,
       disabled
     } = this.props;
 
     return <React.Fragment>
       <Link
-        to={`/queue/appeals/${this.props.task.vacolsId}`}
-        disabled={disabled || appeal.paper_case}
-        onClick={this.setActiveAppealAndTask}
-      >
-        {appeal.veteran_full_name} ({appeal.vbms_id})
+        to={`/queue/appeals/${appeal.externalId}`}
+        disabled={disabled}
+        onClick={this.props.onClick}>
+        {this.props.getLinkText(appeal)}
       </Link>
-      {!_.isNull(_.get(appeal, 'appellant_full_name')) && <React.Fragment>
-        <br />
-        <span {...subHeadTextStyle}>{COPY.CASE_DIFF_VETERAN_AND_APPELLANT}</span>
-      </React.Fragment>}
-      {appeal.paper_case && <React.Fragment>
+      {appeal.isPaperCase && <React.Fragment>
         <br />
         <span {...subHeadTextStyle}>{COPY.IS_PAPER_CASE}</span>
       </React.Fragment>}
@@ -43,14 +30,13 @@ class CaseDetailsLink extends React.PureComponent {
 }
 
 CaseDetailsLink.propTypes = {
-  task: PropTypes.object.isRequired,
+  task: PropTypes.object,
   appeal: PropTypes.object.isRequired,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
+  getLinkText: PropTypes.func.isRequired,
+  onClick: PropTypes.func
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setActiveAppeal,
-  setActiveTask
-}, dispatch);
-
-export default connect(null, mapDispatchToProps)(CaseDetailsLink);
+CaseDetailsLink.defaultProps = {
+  getLinkText
+};

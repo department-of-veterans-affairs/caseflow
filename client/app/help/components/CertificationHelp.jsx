@@ -70,7 +70,7 @@ class CertificationHelp extends React.Component {
       </p>
 
       <p className="cf-help-image-wrapper">
-        <img className="cf-help-image" alt="VACOLS Processes dialog" src="/assets/help/vacols-processes-e563d6a14dbc8adda7c0d328b4d411609c1199b79bdd849bf1bc742794e79775.png" />
+        <img className="cf-help-image" alt="VACOLS Processes dialog" src="/assets/help/vacols-processes.jpg" />
       </p>
 
       <h2 id="how-to-login">4. How do I log in to Caseflow Certification?</h2>
@@ -83,7 +83,7 @@ class CertificationHelp extends React.Component {
 
       </p>
       <p className="cf-help-image-wrapper">
-        <img className="cf-help-image" alt="VACOLS Login dialog" src="/assets/help/caseflow-login-62847f0a77bcc688bd3f386f6508d560ae9e84ac377013b2e53da2d80828f693.png" />
+        <img className="cf-help-image" alt="VACOLS Login dialog" src="/assets/help/caseflow-login.jpg" />
       </p>
       <h2 id="cannot-find-documents">5. Why does Caseflow say it cannot find documents in the appellant’s
       eFolder?</h2>
@@ -94,7 +94,7 @@ class CertificationHelp extends React.Component {
       </p>
 
       <p className="cf-help-image-wrapper">
-        <img className="cf-help-image" alt="Caseflow mismatched documents dialog" src="/assets/help/caseflow-mismatched_v2-8697b9c2ce93a4ae9c69cec4ac9043f39c37597c35e4658e5701a1aae6a973ed.png" />
+        <img className="cf-help-image" alt="Caseflow mismatched documents dialog" src="/assets/help/caseflow-mismatched_v2.jpg" />
       </p>
 
       <p>
@@ -151,7 +151,7 @@ are mailed, causing VBMS dates to be earlier than VACOLS dates.
       </p>
 
       <p className="cf-help-image-wrapper">
-        <img className="cf-help-image" alt="VBMS document properties dialog" src="/assets/help/vbms-documentproperties-f7921282a52829a122b43ffc722897564e866349f126c4041f8a096ff38eac7b.png" />
+        <img className="cf-help-image" alt="VBMS document properties dialog" src="/assets/help/vbms-documentproperties.jpg" />
       </p>
 
       <h2 id="multiple-document-types">7. What should I do if an eFolder document contains multiple
@@ -166,7 +166,7 @@ are mailed, causing VBMS dates to be earlier than VACOLS dates.
       </p>
 
       <p className="cf-help-image-wrapper">
-        <img className="cf-help-image" alt="Add correct doc label in VBMS" src="/assets/help/vbms-addlabel-e4eee79fd05fe86a575c1cc8bca6265b18bcdb4016951950e60449fc8bff118f.png" />
+        <img className="cf-help-image" alt="Add correct doc label in VBMS" src="/assets/help/vbms-addlabel.jpg" />
       </p>
 
       <h2 id="electronic-form8">8. How do I fill out an electronic Form 8?</h2>
@@ -213,7 +213,7 @@ are mailed, causing VBMS dates to be earlier than VACOLS dates.
     the "Ready" box in the Travel Board section. You can see both of these fields in the screenshot
     below.
 
-      </p><p className="cf-help-image-wrapper">&nbsp;&nbsp;&nbsp; <img className="cf-help-image" alt="vacols travel board" src="/assets/help/vacols-travelboard-0179a981222b66bf87f73e797c9b64f22596f35fff6295cdff0ffff389d2092a.png" />&nbsp;
+      </p><p className="cf-help-image-wrapper">&nbsp;&nbsp;&nbsp; <img className="cf-help-image" alt="vacols travel board" src="/assets/help/vacols-travelboard.jpg" />&nbsp;
       </p>
       <h2 id="encounter-problem">11. What if I encounter a problem that prevents me from
       certifying the appeal?</h2>
@@ -225,7 +225,7 @@ are mailed, causing VBMS dates to be earlier than VACOLS dates.
 
       <p>
       </p><p className="cf-help-image-wrapper">
-        <img className="cf-help-image" alt="Caseflow Cancel Modal" src="/assets/help/caseflow-cancelmodal-c6ba9e505480bff98ff4701910e73449dfd125ab8f4ff046fc775c429a536869.png" />
+        <img className="cf-help-image" alt="Caseflow Cancel Modal" src="/assets/help/caseflow-cancelmodal.jpg" />
       </p>
 
       <p>
@@ -236,7 +236,7 @@ cancel the certification.
 
       <p>
       </p><p className="cf-help-image-wrapper">
-        <img className="cf-help-image" alt="Clear Certification date in VACOLS" src="/assets/help/vacols-cleardate-7e81efcb9658de7b6c0ba939257c9ccf13065c86531fcbd41b9632b24c60e3ba.png" />
+        <img className="cf-help-image" alt="Clear Certification date in VACOLS" src="/assets/help/vacols-cleardate.jpg" />
       </p>
 
       <h2 id="need-help">12. What do I do if I need help?</h2>
@@ -259,7 +259,7 @@ a Form 8 for the appeal and type in the Certification Date this window.
 
       <p>
       </p><p className="cf-help-image-wrapper">
-        <img className="cf-help-image" alt="Caseflow Cancel Modal" src="/assets/help/vacols-certify-7159915858e017b4374185aab4390e54e21dd12a2c3989926943d261d5886a01.png" />
+        <img className="cf-help-image" alt="Caseflow Cancel Modal" src="/assets/help/vacols-certify.jpg" />
       </p>
 
       <h2 id="virtual-va">14. What if my appeal has the Form 9, NOD, SOC, and/or SSOC in Virtual VA?</h2>

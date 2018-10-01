@@ -74,7 +74,10 @@ export default class DateSelector extends React.Component {
 DateSelector.propTypes = {
   errorMessage: PropTypes.string,
   invisible: PropTypes.bool,
-  label: PropTypes.string,
+  label: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool
+  ]),
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func,
   readOnly: PropTypes.bool,

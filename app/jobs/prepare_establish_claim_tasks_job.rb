@@ -1,5 +1,6 @@
 class PrepareEstablishClaimTasksJob < ApplicationJob
   queue_as :low_priority
+  application_attr :dispatch
 
   def perform
     count = { success: 0, fail: 0 }

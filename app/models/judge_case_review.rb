@@ -1,15 +1,38 @@
 class JudgeCaseReview < ApplicationRecord
+  include CaseReviewConcern
+
   belongs_to :judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
+  belongs_to :task
 
-  # task ID is vacols_id concatenated with the date assigned
-  validates :task_id, format: { with: /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }
-  validates :location, :complexity, :quality, presence: true
+  validates :task_id, :location, :judge, :attorney, presence: true
+  validates :complexity, :quality, presence: true, if: :bva_dispatch?
+  validates :comment, length: { maximum: Constants::VACOLS_COLUMN_MAX_LENGTHS["DECASS"]["DEBMCOM"] }
+
+  after_create :select_case_for_quality_review
+
+  scope :this_month, -> { where(created_at: Time.zone.now.beginning_of_month..Time.zone.now.end_of_month) }
 
   enum location: {
     omo_office: "omo_office",
-    bva_dispatch: "bva_dispatch"
+    bva_dispatch: "bva_dispatch",
+    quality_review: "quality_review"
   }
+
+  # This numbers need to be adjusted after a full rollout to judges
+  MONTHLY_LIMIT_OF_QUAILITY_REVIEWS = 24
+  QUALITY_REVIEW_SELECTION_PROBABILITY = 0.04
+
+  def update_in_vacols!
+    MetricsService.record("VACOLS: judge_case_review #{task_id}",
+                          service: :vacols,
+                          name: "judge_case_review_" + location) do
+      sign_decision_or_create_omo!
+      update_issue_dispositions_in_vacols! if bva_dispatch? || quality_review?
+    end
+  end
+
+  private
 
   def sign_decision_or_create_omo!
     judge.access_to_task?(vacols_id)
@@ -23,36 +46,39 @@ class JudgeCaseReview < ApplicationRecord
         quality: quality,
         deficiencies: factors_not_considered + areas_for_improvement,
         comment: comment,
-        modifying_user: judge.vacols_uniq_id
+        modifying_user: modifying_user,
+        board_member_id: judge.vacols_attorney_id,
+        completion_date: VacolsHelper.local_date_with_utc_timezone
       }
     )
   end
 
-  private
-
-  def vacols_id
-    task_id.split("-", 2).first
+  def modifying_user
+    judge.vacols_uniq_id
   end
 
-  def created_in_vacols_date
-    task_id.split("-", 2).second.to_date
+  def select_case_for_quality_review
+    return if self.class.reached_monthly_limit_in_quality_reviews?
+    # We are using 25 sided die to randomly select a case for quality review
+    # https://github.com/department-of-veterans-affairs/caseflow/issues/6407
+    update(location: :quality_review) if bva_dispatch? && rand < QUALITY_REVIEW_SELECTION_PROBABILITY
   end
 
   class << self
     attr_writer :repository
 
-    def create(params)
+    def complete(params)
       ActiveRecord::Base.multi_transaction do
-        record = super
+        record = create(params)
         if record.valid?
-          MetricsService.record("VACOLS: judge_case_review #{record.task_id}",
-                                service: :vacols,
-                                name: "judge_case_review_" + record.location) do
-            record.sign_decision_or_create_omo!
-          end
+          record.legacy? ? record.update_in_vacols! : record.update_task_and_issue_dispositions
         end
         record
       end
+    end
+
+    def reached_monthly_limit_in_quality_reviews?
+      where(location: :quality_review).this_month.size >= MONTHLY_LIMIT_OF_QUAILITY_REVIEWS
     end
 
     def repository
