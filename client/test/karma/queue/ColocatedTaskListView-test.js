@@ -208,7 +208,7 @@ describe('ColocatedTaskListView', () => {
       {
         const [daysOnHold, documents] = wrappers.slice(4);
 
-        expect(daysOnHold.text()).to.equal('2 of 30');
+        expect(daysOnHold.text()).to.equal('1 of 30');
         expect(documents.html()).to.include(`/reader/appeal/${taskWithNewDocs.externalAppealId}/documents`);
       }
     });
@@ -284,7 +284,7 @@ describe('ColocatedTaskListView', () => {
       expect(columnTasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.action]);
       expect(types.text()).to.include(appeal.caseType);
       expect(docketNumber.text()).to.include(appeal.docketNumber);
-      expect(daysOnHold.text()).to.equal('2 of 30');
+      expect(daysOnHold.text()).to.equal('1 of 30');
       expect(documents.html()).to.include(`/reader/appeal/${task.externalAppealId}/documents`);
     });
   });

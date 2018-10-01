@@ -62,7 +62,7 @@ class Landing extends Component {
     rowObjects = rowObjects.concat(issuesRow);
 
     return <div className="cf-intake-edit">
-      <h1 className="cf-txt-c">Edit Claim Issues</h1>
+      <h1 className="cf-txt-c cf-display-1">Edit Claim Issues</h1>
       <p className="cf-txt-c">Use Caseflow to add or remove issues (contentions) for this EP.</p>
       <p className="cf-txt-c">You can edit additional details about the claim directly in VBMS.</p>
 

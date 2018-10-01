@@ -1,9 +1,10 @@
 import { ACTIONS } from '../constants';
+import { applyCommonReducers } from './common';
 import { FORM_TYPES, REQUEST_STATE } from '../../intakeCommon/constants';
-import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, getBenefitTypeError, getPageError, formatRelationships } from '../util';
 import { formatRatings } from '../../intakeCommon/util';
+import { getReceiptDateError, getBenefitTypeError, getPageError, formatRelationships } from '../util';
+import { update } from '../../util/ReducerUtil';
 
 const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.SUPPLEMENTAL_CLAIM.key) {
@@ -49,6 +50,7 @@ const updateFromServerIntake = (state, serverIntake) => {
 
 export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
+    addIssuesModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
     benefitType: null,
@@ -256,6 +258,6 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       }
     });
   default:
-    return state;
+    return applyCommonReducers(state, action);
   }
 };
