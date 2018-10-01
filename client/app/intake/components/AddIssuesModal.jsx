@@ -5,8 +5,13 @@ import React from 'react';
 import Modal from '../../components/Modal';
 import { formatDateStr } from '../../util/DateUtil';
 import RadioField from '../../components/RadioField';
+import TextField from '../../components/TextField';
 
 class AddIssuesModal extends React.Component {
+  handleNotesChange(event) {
+    this.props.setNotes(this.props.id, event);
+  }
+
   render() {
     let {
       ratings,
@@ -58,6 +63,14 @@ class AddIssuesModal extends React.Component {
           </p>
           <br />
           { ratedIssuesSections }
+          <br />
+
+          <TextField
+            name="Notes"
+            value="Hello"
+            optional
+            onChange={(event) => this.handleNotesChange(event)} />
+
         </div>
       </Modal>
     </div>;

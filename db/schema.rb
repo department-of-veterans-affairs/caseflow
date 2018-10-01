@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181001133041) do
+ActiveRecord::Schema.define(version: 20181001214125) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -275,6 +275,9 @@ ActiveRecord::Schema.define(version: 20181001133041) do
     t.string "claimant_participant_id"
     t.string "payee_code"
     t.datetime "committed_at"
+    t.string "doc_reference_id"
+    t.string "development_item_reference_id"
+    t.string "benefit_type_code"
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
   end
@@ -597,6 +600,7 @@ ActiveRecord::Schema.define(version: 20181001133041) do
     t.datetime "removed_at"
     t.datetime "rating_issue_associated_at"
     t.integer "parent_request_issue_id"
+    t.text "notes"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
   end
