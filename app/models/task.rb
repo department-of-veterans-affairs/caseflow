@@ -25,7 +25,7 @@ class Task < ApplicationRecord
   def get_allowed_actions(user)
     return { available_actions: [] } if assigned_to != user
 
-    Constants::TaskActionList::ACCESS_CONTROL.reduce({ available_actions: [] }) do |accumulator, access|
+    Constants::TaskActionList::ACCESS_CONTROL.reduce(available_actions: []) do |accumulator, access|
       if access[:task_type].include?(type)
         accumulator[:available_actions].concat(access[:available_actions])
       end

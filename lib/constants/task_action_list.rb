@@ -14,7 +14,7 @@ module Constants::TaskActionList
           }
         ]
     }
-  ]
+  ].freeze
 
   LEGACY_ACCESS_CONTROL = [
     {
@@ -35,5 +35,5 @@ module Constants::TaskActionList
           }
         ]
     }
-  ]
+  ].freeze
 end

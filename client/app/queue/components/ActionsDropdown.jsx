@@ -12,11 +12,8 @@ import {
   resetDecisionOptions,
   stageAppeal
 } from '../QueueActions';
-import COPY from '../../../COPY.json';
 import {
-  dropdownStyling,
-  DRAFT_DECISION_OPTIONS,
-  DRAFT_DECISION_LEGACY_OPTIONS
+  dropdownStyling
 } from '../constants';
 
 import type {
@@ -44,8 +41,7 @@ class ActionsDropdown extends React.PureComponent<Props> {
   changeRoute = (option) => {
     const {
       appealId,
-      history,
-      appeal
+      history
     } = this.props;
 
     this.props.stageAppeal(appealId);

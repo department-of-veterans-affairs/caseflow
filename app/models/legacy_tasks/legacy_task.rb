@@ -48,9 +48,8 @@ class LegacyTask
   end
 
   def get_allowed_actions(role)
-    puts "TEST", role, Constants::TaskActionList::LEGACY_ACCESS_CONTROL.first[:vacols_role].include?(role)
-    Constants::TaskActionList::LEGACY_ACCESS_CONTROL.
-      each_with_object({ available_actions: [] }) do |access, accumulator|
+    Constants::TaskActionList::LEGACY_ACCESS_CONTROL
+      .each_with_object(available_actions: []) do |access, accumulator|
       if access[:vacols_role].include?(role)
         accumulator[:available_actions].concat(access[:available_actions])
       end

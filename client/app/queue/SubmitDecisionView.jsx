@@ -138,7 +138,6 @@ class SubmitDecisionView extends React.PureComponent<Props> {
     const {
       highlightFormItems,
       error,
-      decision,
       checkoutFlow,
       decision: {
         opts: decisionOpts

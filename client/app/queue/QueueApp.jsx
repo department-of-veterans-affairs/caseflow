@@ -273,7 +273,8 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedSubmitDecision} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/:checkoutFlow(draft_decision|dispatch_decision)/dispositions/:action(add|edit)/:issueId?"
+            path={'/queue/appeals/:appealId/:checkoutFlow(draft_decision|dispatch_decision)/' +
+              'dispositions/:action(add|edit)/:issueId?'}
             title={(props) => `Draft Decision | ${StringUtil.titleCase(props.match.params.action)} Issue`}
             render={this.routedAddEditIssue} />
           <PageRoute
