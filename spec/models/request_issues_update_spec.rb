@@ -74,8 +74,6 @@ describe RequestIssuesUpdate do
     existing_request_issues.map do |issue|
       {
         reference_id: issue.rating_issue_reference_id,
-        # TODO: validate the string format this comes in
-        profile_date: issue.rating_issue_profile_date,
         decision_text: issue.description
       }
     end

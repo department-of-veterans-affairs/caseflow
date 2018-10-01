@@ -53,6 +53,10 @@ class ClaimReview < AmaReview
       end_product_establishment.perform!
       end_product_establishment.create_contentions!
       end_product_establishment.create_associated_rated_issues!
+      if informal_conference?
+        end_product_establishment.generate_claimant_letter!
+        end_product_establishment.generate_tracked_item!
+      end
       end_product_establishment.commit!
     end
 
@@ -73,6 +77,10 @@ class ClaimReview < AmaReview
   end
 
   private
+
+  def informal_conference?
+    false
+  end
 
   def end_product_establishment_for_issue(issue)
     ep_code = issue_code(issue.rated?)
