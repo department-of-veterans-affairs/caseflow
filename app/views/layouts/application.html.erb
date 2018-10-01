@@ -36,6 +36,7 @@
       siteSpeedSampleRate: 100,
       userId: '<%= current_user ? current_user.id : "" %>'
     });
+    ga('set', 'anonymizeIp', true);
 
     window.analyticsPageView = function(page) {
       ga('send', 'pageview', page);
