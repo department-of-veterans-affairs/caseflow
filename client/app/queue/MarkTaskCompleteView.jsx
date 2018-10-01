@@ -55,7 +55,7 @@ class MarkTaskCompleteView extends React.Component<Props> {
       detail: sprintf(COPY.TASK_MARKED_COMPLETE_NOTICE_DETAIL, appeal.veteranFullName)
     };
 
-    const payload = { data: { task: { status: '' } } };
+    const payload = { data: { task: { status: 'completed' } } };
 
     this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
