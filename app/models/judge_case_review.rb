@@ -21,7 +21,7 @@ class JudgeCaseReview < ApplicationRecord
 
   # This comment in the GH issue will explain the numbers
   # https://github.com/department-of-veterans-affairs/caseflow/issues/6407#issuecomment-409271892
-  MONTHLY_LIMIT_OF_QUAILITY_REVIEWS = 136
+  MONTHLY_LIMIT_OF_QUAILITY_REVIEWS = 137
   QUALITY_REVIEW_SELECTION_PROBABILITY = 0.032
 
   def update_in_vacols!

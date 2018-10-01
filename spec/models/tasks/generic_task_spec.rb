@@ -68,7 +68,9 @@ describe GenericTask do
 
       context "and current user does not belong to that organization" do
         it "should raise an error when trying to call Task.mark_as_complete!" do
-          expect { task.update_from_params({}, user) }.to raise_error(Caseflow::Error::ActionForbiddenError)
+          expect do
+            task.update_from_params({ status: "completed" }, user)
+          end.to raise_error(Caseflow::Error::ActionForbiddenError)
         end
       end
 
@@ -80,7 +82,7 @@ describe GenericTask do
 
         it "should call Task.mark_as_complete!" do
           expect_any_instance_of(GenericTask).to receive(:mark_as_complete!)
-          task.update_from_params({}, user)
+          task.update_from_params({ status: "completed" }, user)
         end
       end
     end
@@ -98,7 +100,7 @@ describe GenericTask do
       context "who is the current user" do
         it "should call Task.mark_as_complete!" do
           expect_any_instance_of(GenericTask).to receive(:mark_as_complete!)
-          task.update_from_params({}, user)
+          task.update_from_params({ status: "completed" }, user)
         end
       end
     end
