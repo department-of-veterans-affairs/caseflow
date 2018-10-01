@@ -44,7 +44,11 @@ class AppealRepository
     vacols_ids = VACOLS::Case.where(bfcorlid: vbms_id).pluck(:bfkey)
     hearings = HearingRepository.hearings_for_appeals(vacols_ids)
 
-    hearings.select(&:held?).keys
+    hearings.map do |vacols_id, case_hearings|
+      if case_hearings.flatten.all?(&:held?)
+        vacols_id
+      end
+    end
   end
 
   # rubocop:disable Metrics/MethodLength

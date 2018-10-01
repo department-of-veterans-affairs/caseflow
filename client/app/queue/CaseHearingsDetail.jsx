@@ -135,8 +135,9 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
 
     return <React.Fragment>
       {Boolean(appealIdsWithHearings.length) && <React.Fragment>
-        {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL}
-        Click <a href="#" onClick={this.scrollToCaseList}>View All Cases</a> at top.
+        {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL}&nbsp;
+        <a href="#" onClick={this.scrollToCaseList}>{COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK}</a>
+        {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK}
       </React.Fragment>}
       <BareList
         ListElementComponent="ul"

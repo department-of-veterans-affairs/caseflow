@@ -47,7 +47,9 @@
 
   "CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY": "View Hearing Worksheet",
   "CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP": "This link opens a PDF copy of the Hearing Worksheet",
-  "CASE_DETAILS_HEARING_ON_OTHER_APPEAL": "This vet has other appeals with hearings.",
+  "CASE_DETAILS_HEARING_ON_OTHER_APPEAL": "This Post Remand data has hearing data associated with a previous original appeal.",
+  "CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK": "View all cases",
+  "CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK": " to see other cases associated with this Veteran.",
   "CASE_DETAILS_INCORRECT_POA": "If the POA is incorrect, please send an email to an administrator with access to SHARE.",
   "CASE_DETAILS_UNABLE_TO_LOAD": "We're unable to load this information. If the problem persists, please submit feedback through Caseflow",
   "CASE_DETAILS_LOADING": "Loading...",
