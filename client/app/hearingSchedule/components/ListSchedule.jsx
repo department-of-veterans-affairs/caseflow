@@ -25,6 +25,10 @@ const downloadButtonStyling = css({
   marginTop: '60px'
 });
 
+const actionButtonsStyling = css({
+  marginRight: '20px'
+});
+
 const inlineFormStyling = css({
   '> div': {
     ' & .cf-inline-form': {
@@ -35,7 +39,8 @@ const inlineFormStyling = css({
       paddingLeft: 0
     },
     '& .cf-form-textinput': {
-      marginTop: 0
+      marginTop: 0,
+      marginRight: 30
     },
     '& input': {
       marginRight: 0
@@ -203,10 +208,10 @@ class ListSchedule extends React.Component {
     return <AppSegment filledBackground>
       <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
       {this.props.userRoleBuild &&
-        <span className="cf-push-right"><Link button="primary" to="/schedule/build">Build schedule</Link></span>
+        <span className="cf-push-right" ><Link button="primary" to="/schedule/build">Build schedule</Link></span>
       }
       {this.props.userRoleAssign &&
-        <span className="cf-push-right"><Link button="primary" to="/schedule/assign">Assign hearings</Link></span>
+        <span className="cf-push-right"{...actionButtonsStyling} ><Link button="primary" to="/schedule/assign">Assign hearings</Link></span>
       }
       <div className="cf-help-divider" {...hearingSchedStyling} ></div>
       <div className="cf-push-left" {...inlineFormStyling} >
@@ -221,13 +226,12 @@ class ListSchedule extends React.Component {
             onStartDateChange={this.props.startDateChange}
             onEndDateChange={this.props.endDateChange}
           />
-          &nbsp;&nbsp;&nbsp;&nbsp;
           <div {...hearingSchedStyling}>
             <Link
               name="apply"
               to="/schedule"
               onClick={this.props.onApply}>
-              &nbsp;&nbsp;&nbsp;{COPY.HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK}
+              {COPY.HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK}
             </Link>
           </div>
         </InlineForm>
