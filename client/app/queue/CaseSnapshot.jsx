@@ -255,19 +255,19 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       taskAssignedToOrganization,
       userRole
     } = this.props;
-    let ActionDropdown = <ActionsDropdown task={taskAssignedToUser} appealId={appeal.externalId} />;
+    let ActionDropdown;
     const dropdownArgs = { appealId: appeal.externalId };
 
 
-    // if (userRole === USER_ROLE_TYPES.attorney) {
-    //   ActionDropdown = <AttorneyActionsDropdown {...dropdownArgs} />;
-    // } else if (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout) {
-    //   ActionDropdown = <JudgeActionsDropdown {...dropdownArgs} />;
-    // } else if (userRole === USER_ROLE_TYPES.colocated) {
-    //   ActionDropdown = <ColocatedActionsDropdown {...dropdownArgs} />;
-    // } else {
-    //   ActionDropdown = <GenericTaskActionsDropdown {...dropdownArgs} />;
-    // }
+    if (userRole === USER_ROLE_TYPES.attorney) {
+      ActionDropdown  = <ActionsDropdown task={taskAssignedToUser} appealId={appeal.externalId} />;
+    } else if (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout) {
+      ActionDropdown = <JudgeActionsDropdown {...dropdownArgs} />;
+    } else if (userRole === USER_ROLE_TYPES.colocated) {
+      ActionDropdown = <ColocatedActionsDropdown {...dropdownArgs} />;
+    } else {
+      ActionDropdown = <GenericTaskActionsDropdown {...dropdownArgs} />;
+    }
 
     const taskAssignedToVso = taskAssignedToOrganization && taskAssignedToOrganization.assignedTo.type === 'Vso';
 

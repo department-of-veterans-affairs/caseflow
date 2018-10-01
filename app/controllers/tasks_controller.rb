@@ -194,8 +194,7 @@ class TasksController < ApplicationController
     ActiveModelSerializers::SerializableResource.new(
       tasks,
       each_serializer: ::WorkQueue::LegacyTaskSerializer,
-      role: role,
-      user: current_user
+      role: role
     ).as_json
   end
 
