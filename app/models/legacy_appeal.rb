@@ -107,6 +107,7 @@ class LegacyAppeal < ApplicationRecord
 
   # TODO: the type code should be the base value, and should be
   #       converted to be human readable, not vis-versa
+  # TODO: integrate with Constants::LEGACY_APPEAL_TYPES_BY_ID
   TYPE_CODES = {
     "Original" => "original",
     "Post Remand" => "post_remand",

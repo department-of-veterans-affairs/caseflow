@@ -6,7 +6,8 @@ import StringUtil from '../util/StringUtil';
 import {
   redText,
   ISSUE_DISPOSITIONS,
-  VACOLS_DISPOSITIONS
+  VACOLS_DISPOSITIONS,
+  LEGACY_APPEAL_TYPES
 } from './constants';
 
 import type {
@@ -246,7 +247,7 @@ export const renderAppealType = (appeal: BasicAppeal) => {
     isAdvancedOnDocket,
     caseType
   } = appeal;
-  const cavc = caseType === 'Court Remand';
+  const cavc = caseType === LEGACY_APPEAL_TYPES.CAVC_REMAND;
 
   return <React.Fragment>
     {isAdvancedOnDocket && <span><span {...redText}>AOD</span>, </span>}

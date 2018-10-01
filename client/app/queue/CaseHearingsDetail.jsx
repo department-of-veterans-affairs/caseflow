@@ -6,7 +6,10 @@ import { css } from 'glamor';
 import _ from 'lodash';
 
 import BareList from '../components/BareList';
-import { boldText } from './constants';
+import {
+  boldText,
+  LEGACY_APPEAL_TYPES
+} from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Tooltip from '../components/Tooltip';
 
@@ -130,12 +133,12 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
     } = this.props;
 
     const listElements = [{
-      label: hearings.length > 1 ? 'Hearings (Oldest to Newest)' : '',
+      label: hearings.length > 1 ? COPY.CASE_DETAILS_HEARING_LIST_LABEL : '',
       valueFunction: this.getHearingInfo
     }];
 
     return <React.Fragment>
-      {caseType === 'Post Remand' && Boolean(appealIdsWithHearings.length) && <React.Fragment>
+      {caseType === LEGACY_APPEAL_TYPES.POST_REMAND && Boolean(appealIdsWithHearings.length) && <React.Fragment>
         {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL}&nbsp;
         <a href="#" onClick={this.scrollToCaseList}>{COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK}</a>
         {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK}
