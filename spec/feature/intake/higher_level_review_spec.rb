@@ -535,6 +535,11 @@ RSpec.feature "Higher-Level Review" do
       check_row("Form", "Request for Higher-Level Review (VA Form 20-0988)")
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Bob Vance, Spouse (payee code 02)")
+
+      # clicking the add issues button should bring up the modal
+      safe_click "#button-add-issue"
+      expect(page).to have_content("Left knee granted")
+      expect(page).to have_content("PTSD denied")
     end
 
     scenario "HLR non-comp" do

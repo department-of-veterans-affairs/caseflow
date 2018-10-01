@@ -182,11 +182,13 @@ Rails.application.routes.draw do
   end
 
   resources :legacy_tasks, only: [:create, :update]
-  resources :tasks, only: [:index, :create, :update]
+  resources :tasks, only: [:index, :create, :update] do
+    get 'assignable_organizations', on: :member
+    get 'assignable_users', on: :member
+  end
 
-  resources :organizations, only: [:index, :show], param: :url do
+  resources :organizations, only: [:show], param: :url do
     resources :tasks, only: [:index], controller: 'organizations/tasks'
-    get 'members', on: :member
   end
 
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180927004213) do
+ActiveRecord::Schema.define(version: 20181001133041) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -61,6 +61,7 @@ ActiveRecord::Schema.define(version: 20180927004213) do
     t.datetime "created_at"
     t.string "vbms_id"
     t.integer "api_key_id"
+    t.string "source"
   end
 
   create_table "appeal_series", id: :serial, force: :cascade do |t|
@@ -188,10 +189,10 @@ ActiveRecord::Schema.define(version: 20180927004213) do
   end
 
   create_table "decisions", force: :cascade do |t|
-    t.bigint "appeal_id"
-    t.string "citation_number"
-    t.date "decision_date"
-    t.string "redacted_document_location"
+    t.bigint "appeal_id", null: false
+    t.string "citation_number", null: false
+    t.date "decision_date", null: false
+    t.string "redacted_document_location", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["appeal_id"], name: "index_decisions_on_appeal_id"
@@ -658,6 +659,14 @@ ActiveRecord::Schema.define(version: 20180927004213) do
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
     t.index ["appeal_type", "appeal_id"], name: "index_special_issue_lists_on_appeal_type_and_appeal_id"
+  end
+
+  create_table "staff_field_for_organizations", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "name", null: false
+    t.string "values", default: [], null: false, array: true
+    t.boolean "exclude", default: false
+    t.index ["organization_id"], name: "index_staff_field_for_organizations_on_organization_id"
   end
 
   create_table "supplemental_claims", force: :cascade do |t|
