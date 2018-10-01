@@ -65,16 +65,9 @@ describe SyncReviewsJob do
         expect(ClaimReviewProcessJob).to_not receive(:perform_later).with(higher_level_review_attempts_ended)
         expect(ClaimReviewProcessJob).to_not receive(:perform_later).with(higher_level_review_processed)
         expect(ClaimReviewProcessJob).to receive(:perform_later).with(higher_level_review_requiring_processing)
-
-        SyncReviewsJob.perform_now("limit" => 2)
-      end
-    end
-
-    context "when there are request issues updates awaiting processing" do
-      it "ignore completed and older updates" do
-        expect(RequestIssuesUpdateJob).to_not receive(:perform_later).with(riu_attempts_ended)
-        expect(RequestIssuesUpdateJob).to_not receive(:perform_later).with(riu_processed)
-        expect(RequestIssuesUpdateJob).to receive(:perform_later).with(riu_requiring_processing)
+        expect(ClaimReviewProcessJob).to_not receive(:perform_later).with(riu_attempts_ended)
+        expect(ClaimReviewProcessJob).to_not receive(:perform_later).with(riu_processed)
+        expect(ClaimReviewProcessJob).to receive(:perform_later).with(riu_requiring_processing)
 
         SyncReviewsJob.perform_now("limit" => 2)
       end
