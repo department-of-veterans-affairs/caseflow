@@ -60,6 +60,10 @@ class ClaimReview < AmaReview
     update!(establishment_error: nil)
   end
 
+  def update_error!(err)
+    update!(establishment_error: err)
+  end
+
   def invalid_modifiers
     end_product_establishments.map(&:modifier).reject(&:nil?)
   end
