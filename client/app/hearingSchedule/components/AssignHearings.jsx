@@ -23,8 +23,9 @@ const centralOfficeStaticEntry = [{
 
 const hoverColor = css({
   '&:hover': {
-    backgroundColor: COLORS.BASE,
-    color: 'white'
+    backgroundColor: COLORS.GREY_DARK,
+    color: COLORS.WHITE,
+    border: 0
   }
 });
 
