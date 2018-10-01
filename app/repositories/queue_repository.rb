@@ -75,14 +75,24 @@ class QueueRepository
 
     def sign_decision_or_create_omo!(vacols_id:, created_in_vacols_date:, location:, decass_attrs:)
       decass_record = find_decass_record(vacols_id, created_in_vacols_date)
-      case location
-      when :bva_dispatch, :quality_review
-        update_vacols_for_bva_dispatch(decass_record, location, decass_attrs)
-      when :omo_office
-        fail Caseflow::Error::QueueRepositoryError, "The work product is not OMO" unless decass_record.omo_request?
-      else
+      if ![:bva_dispatch, :quality_review, :omo_office].include? location
         fail Caseflow::Error::QueueRepositoryError, "Invalid location"
       end
+
+      if decass_record.dereceive && decass_record.dedeadline
+        timeliness = (decass_record.dereceive > decass_record.dedeadline) ? "N" : "Y"
+      end
+
+      update_decass_record(decass_record, decass_attrs.merge(timeliness: timeliness))
+      # When the DAS final review is done by the VLJ and the case is charged to 4E the VLJ,
+      # Attorney and Team get updated in the BRIEFF table
+      decass_record.reload.case.update(
+        bfmemid: decass_record.dememid,
+        bfattid: decass_record.deatty,
+        bfboard: decass_record.deteam
+      )
+      assign_case_for_quality_review(decass_record.case) if location == :quality_review
+
       decass_record.update_vacols_location!(LegacyAppeal::LOCATION_CODES[location])
     end
 
@@ -167,26 +177,6 @@ class QueueRepository
         attorney.vacols_uniq_id
       vacols_case.update_vacols_location!(attorney.vacols_uniq_id)
       vacols_case.update(bfattid: attorney.vacols_attorney_id)
-    end
-
-    def update_vacols_for_bva_dispatch(decass_record, location, decass_attrs)
-      unless decass_record.draft_decision?
-        msg = "The work product is not decision"
-        fail Caseflow::Error::QueueRepositoryError, msg
-      end
-      if decass_record.dereceive && decass_record.dedeadline
-        timeliness = (decass_record.dereceive > decass_record.dedeadline) ? "N" : "Y"
-      end
-
-      update_decass_record(decass_record, decass_attrs.merge(timeliness: timeliness))
-      # When the DAS final review is done by the VLJ and the case is charged to 4E the VLJ,
-      # Attorney and Team get updated in the BRIEFF table
-      decass_record.reload.case.update(
-        bfmemid: decass_record.dememid,
-        bfattid: decass_record.deatty,
-        bfboard: decass_record.deteam
-      )
-      assign_case_for_quality_review(decass_record.case) if location == :quality_review
     end
 
     def assign_case_for_quality_review(vacols_case)
