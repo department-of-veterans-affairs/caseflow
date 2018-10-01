@@ -79,10 +79,10 @@ export default class AssignHearings extends React.Component {
 
   tableRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
-      caseDetails: veteran.name,
+      caseDetails: `${veteran.name} | ${veteran.id}`,
       type: this.veteranTypeColor(veteran.type),
       docketNumber: veteran.docketNumber,
-      location: veteran.location,
+      location: this.props.selectedRegionalOffice.value === 'C' ? 'Washington DC' : veteran.location,
       time: veteran.time
     }));
   };
