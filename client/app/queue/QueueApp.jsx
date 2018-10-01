@@ -294,7 +294,7 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedSelectSpecialIssues} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/:checkoutFlow(dispatch_decision)/evaluate"
+            path="/queue/appeals/:appealId/:checkoutFlow(dispatch_decision|omo_request)/evaluate"
             title="Evaluate Decision | Caseflow"
             render={this.routedEvaluateDecision} />
           <PageRoute

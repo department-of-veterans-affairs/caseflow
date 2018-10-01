@@ -3,8 +3,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
-import { sprintf } from 'sprintf-js';
-import COPY from '../../../COPY.json';
 import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
 import DECASS_WORK_PRODUCT_TYPES from '../../../constants/DECASS_WORK_PRODUCT_TYPES.json';
 
@@ -15,10 +13,7 @@ import {
   tasksForAppealAssignedToUserSelector
 } from '../selectors';
 
-import { buildCaseReviewPayload } from '../utils';
-import { requestSave } from '../uiReducer/uiActions';
 import {
-  deleteAppeal,
   stageAppeal,
   initialAssignTasksToUser,
   reassignTasksToUser
@@ -45,8 +40,6 @@ type Props = Params & {|
   decision: Object,
   userRole: string,
   // Action creators
-  requestSave: typeof requestSave,
-  deleteAppeal: typeof deleteAppeal,
   stageAppeal: typeof stageAppeal,
   initialAssignTasksToUser: typeof initialAssignTasksToUser,
   reassignTasksToUser: typeof reassignTasksToUser,
@@ -77,36 +70,25 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
 
     const {
       appeal,
-      task,
       appealId,
-      history,
-      decision,
-      userRole
+      history
     } = this.props;
     const actionType = option.value;
 
+    let nextPage;
+
     if (actionType === DECISION_TYPES.OMO_REQUEST) {
-      const payload = buildCaseReviewPayload(actionType, decision, userRole, appeal.issues, {
-        location: 'omo_office',
-        attorney_id: task.assignedBy.pgId,
-        isLegacyAppeal: appeal.isLegacyAppeal
-      });
-      const successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
-
-      this.props.requestSave(`/case_reviews/${task.taskId}/complete`, payload, { title: successMsg }).
-        then(() => {
-          history.push('');
-          history.replace('/queue');
-          this.props.deleteAppeal(appealId);
-        });
+      nextPage = 'omo_request/evaluate';
+    } else if (appeal.isLegacyAppeal) {
+      nextPage = 'dispatch_decision/dispositions';
     } else {
-      const nextPage = appeal.isLegacyAppeal ? 'dispatch_decision/dispositions' : 'dispatch_decision/special_issues';
-
-      this.props.stageAppeal(appealId);
-
-      history.push('');
-      history.replace(`/queue/appeals/${appealId}/${nextPage}`);
+      nextPage = 'dispatch_decision/special_issues';
     }
+
+    this.props.stageAppeal(appealId);
+
+    history.push('');
+    history.replace(`/queue/appeals/${appealId}/${nextPage}`);
   }
 
   handleAssignment = (
@@ -179,8 +161,6 @@ const mapStateToProps = (state: State, ownProps: Params) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestSave,
-  deleteAppeal,
   stageAppeal,
   initialAssignTasksToUser,
   reassignTasksToUser

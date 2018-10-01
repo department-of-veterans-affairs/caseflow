@@ -5,7 +5,8 @@ import moment from 'moment';
 import StringUtil from '../util/StringUtil';
 import {
   redText,
-  ISSUE_DISPOSITIONS
+  ISSUE_DISPOSITIONS,
+  VACOLS_DISPOSITIONS
 } from './constants';
 
 import type {
@@ -342,7 +343,7 @@ export const buildCaseReviewPayload = (
     payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => {
       const issueAttrs = ['type', 'readjudication', 'id'];
 
-      if (issue.disposition === VACOLS_DISPOSITIONS_BY_ID.REMANDED) {
+      if (issue.disposition === VACOLS_DISPOSITIONS.REMANDED) {
         issueAttrs.push('remand_reasons');
       }
 
