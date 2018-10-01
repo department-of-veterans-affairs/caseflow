@@ -13,7 +13,7 @@ import Tooltip from '../components/Tooltip';
 import COPY from '../../COPY.json';
 import StringUtil from '../util/StringUtil';
 import { DateString } from '../util/DateUtil';
-import { toggleVeteranCaseList } from './uiReducer/uiActions';
+import { showVeteranCaseList } from './uiReducer/uiActions';
 
 const appealSummaryUlStyling = css({
   paddingLeft: 0,
@@ -36,7 +36,7 @@ type Props = {|
 |};
 
 type Params = Props & {|
-  toggleVeteranCaseList: typeof toggleVeteranCaseList
+  showVeteranCaseList: typeof showVeteranCaseList
 |}
 
 class CaseHearingsDetail extends React.PureComponent<Params> {
@@ -112,9 +112,12 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
   </React.Fragment>;
 
   scrollToCaseList = () => {
-    window.scrollTo(0, 0);
-    // todo: make showVeteranCaseList
-    this.props.toggleVeteranCaseList();
+    window.scroll({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
+    this.props.showVeteranCaseList();
   }
 
   render = () => {
@@ -133,7 +136,7 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
     return <React.Fragment>
       {Boolean(appealIdsWithHearings.length) && <React.Fragment>
         {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL}
-        Click <Link onClick={this.scrollToCaseList}>View All Cases</Link> at top.
+        Click <a href="#" onClick={this.scrollToCaseList}>View All Cases</a> at top.
       </React.Fragment>}
       <BareList
         ListElementComponent="ul"
@@ -153,7 +156,7 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  toggleVeteranCaseList
+  showVeteranCaseList
 }, dispatch);
 
 export default (connect(null, mapDispatchToProps)(CaseHearingsDetail): React.ComponentType<Props>);

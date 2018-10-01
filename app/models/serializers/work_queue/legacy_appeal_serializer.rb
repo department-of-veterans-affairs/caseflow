@@ -29,7 +29,6 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :appeal_ids_with_hearings do
     AppealRepository.appeals_with_hearings_by_vbms_id(object.veteran_file_number)
       .reject { |vacols_id| vacols_id.eql? object.vacols_id }
-    # TODO: reject! ?
   end
 
   attribute :appellant_full_name do

@@ -67,7 +67,7 @@ RSpec.feature "Case details" do
           :assigned,
           user: attorney_user,
           bfcorlid: veteran.file_number,
-          # Need a non-cancelled dispositon to show the full set of hearing attributes.
+          # Need a non-cancelled disposition to show the full set of hearing attributes.
           case_hearings: case_hearings
         )
       )
