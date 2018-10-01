@@ -78,13 +78,7 @@ class Veteran < ApplicationRecord
   end
 
   def benefit_type_code
-    @benefit_type_code ||= begin
-      if date_of_death.nil?
-        BENEFIT_TYPE_CODE_LIVE
-      else
-        BENEFIT_TYPE_CODE_DEATH
-      end
-    end
+    @benefit_type_code ||= deceased? ? BENEFIT_TYPE_CODE_DEATH : BENEFIT_TYPE_CODE_LIVE
   end
 
   def bgs
@@ -196,6 +190,10 @@ class Veteran < ApplicationRecord
   end
 
   private
+
+  def deceased?
+    !date_of_death.nil?
+  end
 
   def fetch_end_products
     bgs_end_products = bgs.get_end_products(file_number)

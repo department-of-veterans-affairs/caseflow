@@ -499,7 +499,7 @@ class Fakes::BGSService
   end
   # rubocop:enable Metrics/MethodLength
 
-  # We're currently only using the document_id and development_item_id to track
+  # We're currently only using the doc_reference_id and development_item_reference_id to track
   # that the call succeeded, so I am just having the fakes return these dummy values
   def manage_claimant_letter_v2!(claim_id:, program_type_cd:, claimant_participant_id:)
     self.class.manage_claimant_letter_v2_requests ||= {}
@@ -509,14 +509,14 @@ class Fakes::BGSService
       claimant_participant_id: claimant_participant_id
     }
 
-    "doc_id_result"
+    "doc_reference_id_result"
   end
 
   def generate_tracked_items!(claim_id)
     self.class.generate_tracked_items_requests ||= {}
     self.class.generate_tracked_items_requests[claim_id] = true
 
-    "development_item_id_result"
+    "development_item_reference_id_result"
   end
 
   private

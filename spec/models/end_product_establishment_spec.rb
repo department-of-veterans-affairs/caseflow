@@ -27,6 +27,8 @@ describe EndProductEstablishment do
   let(:committed_at) { nil }
   let(:fake_claim_id) { "FAKECLAIMID" }
   let(:benefit_type_code) { "2" }
+  let(:doc_reference_id) { nil }
+  let(:development_item_reference_id) { nil }
 
   let(:end_product_establishment) do
     EndProductEstablishment.new(
@@ -40,7 +42,9 @@ describe EndProductEstablishment do
       claimant_participant_id: veteran_participant_id,
       synced_status: synced_status,
       committed_at: committed_at,
-      benefit_type_code: benefit_type_code
+      benefit_type_code: benefit_type_code,
+      doc_reference_id: doc_reference_id,
+      development_item_reference_id: development_item_reference_id
     )
   end
 
@@ -279,7 +283,61 @@ describe EndProductEstablishment do
     end
   end
 
-  context "commit!" do
+  context "#generate_claimant_letter!" do
+    subject { end_product_establishment.generate_claimant_letter! }
+
+    context "when claimant letter has already been generated" do
+      let(:doc_reference_id) { "doc_exists" }
+
+      it "does not create a new claimant letter" do
+        subject
+        expect(Fakes::BGSService.manage_claimant_letter_v2_requests).to be_nil
+        expect(end_product_establishment.doc_reference_id).to eq("doc_exists")
+      end
+    end
+
+    context "when there is no claimant letter" do
+      let(:doc_reference_id) { nil }
+      let(:benefit_type_code) { "1" }
+
+      it "generates a new claimant letter" do
+        subject
+
+        letter_request = Fakes::BGSService.manage_claimant_letter_v2_requests
+        expect(letter_request[end_product_establishment.reference_id]).to eq(
+          program_type_cd: "CPL", claimant_participant_id: veteran_participant_id
+        )
+        expect(end_product_establishment.doc_reference_id).to eq("doc_reference_id_result")
+      end
+    end
+  end
+
+  context "#generate_tracked_item!" do
+    subject { end_product_establishment.generate_tracked_item! }
+
+    context "when tracked item has already been generated" do
+      let(:development_item_reference_id) { "tracked_item_exists" }
+
+      it "does not create a new tracked item" do
+        subject
+        expect(Fakes::BGSService.generate_tracked_items_requests).to be_nil
+        expect(end_product_establishment.development_item_reference_id).to eq("tracked_item_exists")
+      end
+
+    end
+
+    context "when there is no tracked item" do
+      let(:development_item_reference_id) { nil }
+
+      it "creates a new tracked item" do
+        subject
+        tracked_item_request = Fakes::BGSService.generate_tracked_items_requests
+        expect(tracked_item_request[end_product_establishment.reference_id]).to be(true)
+      end
+    end
+  end
+
+  context "#commit!" do
     subject { end_product_establishment.commit! }
 
     it "commits the end product establishment" do

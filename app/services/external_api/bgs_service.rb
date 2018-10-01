@@ -212,9 +212,10 @@ class ExternalApi::BGSService
     end
   end
 
+  # This method is available to retrieve and validate a letter created with manage_claimant_letter_v2
   def find_claimant_letters(document_id)
     DBService.release_db_connections
-    MetricsService.record("BGS: find claimat letter for document #{document_id}",
+    MetricsService.record("BGS: find claimant letter for document #{document_id}",
                           service: :bgs,
                           name: "documents.find_claimant_letters") do
       client.documents.find_claimant_letters(document_id)

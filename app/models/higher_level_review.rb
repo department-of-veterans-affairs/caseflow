@@ -59,7 +59,7 @@ class HigherLevelReview < ClaimReview
   private
 
   def informal_conference?
-    !!informal_conference
+    informal_conference
   end
 
   def create_dta_supplemental_claim

@@ -187,20 +187,16 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def generate_claimant_letter!
-    return if doc_id
+    return if doc_reference_id
     generate_claimant_letter_in_bgs.tap do |result|
-      update!(
-        doc_id: result
-      )
+      update!(doc_reference_id: result)
     end
   end
 
   def generate_tracked_item!
-    return if development_item_id
+    return if development_item_reference_id
     generate_tracked_item_in_bgs.tap do |result|
-      update!(
-        development_item_id: result
-      )
+      update!(development_item_reference_id: result)
     end
   end
 

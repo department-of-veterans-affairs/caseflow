@@ -182,7 +182,7 @@ describe ClaimReview do
     context "when there is just one end_product_establishment" do
       let(:issues) { [rating_request_issue, second_rating_request_issue] }
 
-      it "establishes the claim and creates the contetions in VBMS" do
+      it "establishes the claim and creates the contentions in VBMS" do
         subject
 
         expect(Fakes::VBMSService).to have_received(:establish_claim!).once.with(
@@ -303,6 +303,22 @@ describe ClaimReview do
             expect(Fakes::VBMSService).to_not have_received(:associate_rated_issues!)
           end
         end
+
+        context "when informal conference already has a tracked item" do
+          before do
+            claim_review.end_product_establishments.first.update!(doc_reference_id: "DOC_REF_ID")
+            claim_review.end_product_establishments.first.update!(
+              development_item_reference_id: "dev_item_ref_id"
+            )
+          end
+
+          it "doesn't create it in BGS" do
+            subject
+
+            expect(Fakes::BGSService.generate_tracked_items_requests).to be_nil
+            expect(Fakes::BGSService.manage_claimant_letter_v2_requests).to be_nil
+          end
+        end
       end
 
       context "when called multiple times" do
@@ -389,9 +405,9 @@ describe ClaimReview do
         it "generates claimant letter and tracked item" do
           subject
           epe = claim_review.end_product_establishments.last
-          expect(epe.reload).to have_attributes(
-            doc_id: "doc_id_result",
-            development_item_id: "development_item_id_result"
+          expect(epe).to have_attributes(
+            doc_reference_id: "doc_reference_id_result",
+            development_item_reference_id: "development_item_reference_id_result"
           )
 
           letter_request = Fakes::BGSService.manage_claimant_letter_v2_requests
