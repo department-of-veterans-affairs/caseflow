@@ -81,7 +81,7 @@ export default class AssignHearings extends React.Component {
   tableRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
       caseDetails: veteran.name,
-      type: this.veteranTypeColor(veteran.type),
+      type: this.veteranTypeColor(veteran),
       docketNumber: veteran.docketNumber,
       location: veteran.location,
       time: veteran.time
