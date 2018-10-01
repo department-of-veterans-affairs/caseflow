@@ -129,15 +129,18 @@ class ApplicationController < ApplicationBaseController
     redirect_to "/unauthorized" if current_user && current_user.vso_employee?
   end
 
-  def verify_task_assignment_access
-    # :nocov:
+  # :nocov:
+  def can_assign_task?
     # This feature toggle control access of attorneys to create admin actions for co-located users
     return true if current_user.attorney_in_vacols? && feature_enabled?(:attorney_assignment_to_colocated)
     # This feature toggle control access of judges to assign cases to attorneys
-    return true if current_user.judge_in_vacols? && feature_enabled?(:judge_assignment_to_attorney)
-    redirect_to "/unauthorized"
-    # :nocov:
+    true if current_user.judge_in_vacols? && feature_enabled?(:judge_assignment_to_attorney)
   end
+
+  def verify_task_assignment_access
+    redirect_to("/unauthorized") unless can_assign_task?
+  end
+  # :nocov:
 
   def invalid_record_error(record)
     render json:  {

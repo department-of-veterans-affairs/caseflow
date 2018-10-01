@@ -51,7 +51,6 @@ class SaveButtonUnconnected extends React.PureComponent {
       name="submit-update"
       onClick={this.handleClick}
       loading={this.props.requestStatus.requestIssuesUpdate === REQUEST_STATE.IN_PROGRESS}
-      legacyStyling={false}
       disabled={!this.props.ratingsChanged}
     >
       Save

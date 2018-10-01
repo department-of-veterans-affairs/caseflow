@@ -9,6 +9,7 @@ import { bindActionCreators } from 'redux';
 import Table from '../../components/Table';
 import Checkbox from '../../components/Checkbox';
 import DocketTypeBadge from './DocketTypeBadge';
+import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
 
@@ -190,7 +191,7 @@ class TaskTable extends React.PureComponent<Props> {
           return null;
         }
 
-        const daysWaiting = moment().
+        const daysWaiting = moment().startOf('day').
           diff(moment(task.assignedOn), 'days');
 
         return <React.Fragment>
@@ -198,7 +199,8 @@ class TaskTable extends React.PureComponent<Props> {
         </React.Fragment>;
       },
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (task) => moment().diff(moment(task.assignedOn), 'days')
+      getSortValue: (task) => moment().startOf('day').
+        diff(moment(task.assignedOn), 'days')
     } : null;
   }
 
@@ -214,14 +216,10 @@ class TaskTable extends React.PureComponent<Props> {
     } : null;
   }
 
-  numDaysOnHold = (task: TaskWithAppeal) => moment().diff(task.placedOnHoldAt, 'days')
-
   caseDaysOnHoldColumn = () => (this.props.includeDaysOnHold ? {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE,
-    valueFunction: (task: TaskWithAppeal) => {
-      return `${this.numDaysOnHold(task)} of ${task.onHoldDuration || '?'}`;
-    },
-    getSortValue: (task: TaskWithAppeal) => this.numDaysOnHold(task)
+    valueFunction: (task: TaskWithAppeal) => <OnHoldLabel task={task} />,
+    getSortValue: (task: TaskWithAppeal) => numDaysOnHold(task)
   } : null)
 
   caseReaderLinkColumn = () => {

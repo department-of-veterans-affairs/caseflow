@@ -418,4 +418,6 @@ export const taskHasNewDocuments = (task: Task, newDocsForAppeal: NewDocsForAppe
   return newDocsForAppeal[task.externalAppealId].docs.length > 0;
 };
 
-export const taskIsOnHold = (task: Task) => moment().diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;
+export const taskIsOnHold = (task: Task) =>
+  moment().startOf('day').
+    diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;

@@ -10,18 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180926182000) do
+ActiveRecord::Schema.define(version: 20180928211349) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
-  create_table "advance_on_docket_grants", force: :cascade do |t|
+  create_table "advance_on_docket_motions", force: :cascade do |t|
     t.bigint "person_id"
     t.bigint "user_id"
     t.string "reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "granted"
     t.index ["person_id"], name: "index_advance_on_docket_grants_on_person_id"
     t.index ["user_id"], name: "index_advance_on_docket_grants_on_user_id"
   end
@@ -187,10 +188,10 @@ ActiveRecord::Schema.define(version: 20180926182000) do
   end
 
   create_table "decisions", force: :cascade do |t|
-    t.bigint "appeal_id"
-    t.string "citation_number"
-    t.date "decision_date"
-    t.string "redacted_document_location"
+    t.bigint "appeal_id", null: false
+    t.string "citation_number", null: false
+    t.date "decision_date", null: false
+    t.string "redacted_document_location", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["appeal_id"], name: "index_decisions_on_appeal_id"
@@ -654,6 +655,14 @@ ActiveRecord::Schema.define(version: 20180926182000) do
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
     t.index ["appeal_type", "appeal_id"], name: "index_special_issue_lists_on_appeal_type_and_appeal_id"
+  end
+
+  create_table "staff_field_for_organizations", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "name", null: false
+    t.string "values", default: [], null: false, array: true
+    t.boolean "exclude", default: false
+    t.index ["organization_id"], name: "index_staff_field_for_organizations_on_organization_id"
   end
 
   create_table "supplemental_claims", force: :cascade do |t|
