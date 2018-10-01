@@ -84,11 +84,11 @@ module Asyncable
   end
 
   def clear_error!
-    update!(error_column => nil)
+    update!(self.class.error_column => nil)
   end
 
   def update_error!(err)
-    update!(error_column => err)
+    update!(self.class.error_column => err)
   end
 
   private
