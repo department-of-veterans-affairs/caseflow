@@ -4,10 +4,10 @@ Dir.glob(File.join(Rails.root, "client", "constants", "*")).each do |filepath|
   constant_name = filepath.split("/").last.split(".").first
   file_contents = JSON.parse(File.read(filepath))
 
-  # Access Constants through hash: Constants::BENEFIT_TYPES["compensation"]
+  # Access via hash (Constants::BENEFIT_TYPES["compensation"]) to access keys.
   Constants.const_set(constant_name.to_s, file_contents)
 
-  # Access Constants through object: Constants.BENEFIT_TYPES.compensation
+  # Access via methods (Constants.BENEFIT_TYPES.compensation) to throw errors when incorrectly addressing constants.
   Constants.define_singleton_method(constant_name) { Subconstant.new(file_contents) }
 end
 
