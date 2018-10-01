@@ -544,6 +544,10 @@ RSpec.feature "Higher-Level Review" do
       safe_click "#button-add-issue"
       expect(page).to have_content("Left knee granted")
       expect(page).to have_content("PTSD denied")
+
+      expect(page).to have_content("Cancel adding this issue")
+      safe_click ".close-modal"
+      expect(page).to have_content("Add Issues")
     end
 
     scenario "HLR non-comp" do
