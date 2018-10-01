@@ -55,14 +55,6 @@ class RequestIssuesUpdate < ApplicationRecord
     before_issues - after_issues
   end
 
-  def clear_error!
-    update!(error: nil)
-  end
-
-  def update_error!(err)
-    update!(error: err)
-  end
-
   private
 
   def changes?
