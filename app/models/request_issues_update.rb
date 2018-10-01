@@ -26,12 +26,25 @@ class RequestIssuesUpdate < ApplicationRecord
     end
 
     if run_async?
-      RequestIssuesUpdateJob.perform_later(self)
+      ClaimReviewProcessJob.perform_later(self)
     else
-      RequestIssuesUpdateJob.perform_now(self)
+      ClaimReviewProcessJob.perform_now(self)
     end
 
     true
+  end
+
+  def process_end_product_establishments!
+    attempted!
+
+    review.process_end_product_establishments!
+
+    removed_issues.each do |request_issue|
+      request_issue.end_product_establishment.remove_contention!(request_issue)
+    end
+
+    clear_error!
+    processed!
   end
 
   def created_issues
@@ -66,10 +79,11 @@ class RequestIssuesUpdate < ApplicationRecord
 
     @request_issues_data.map do |issue_data|
       review.request_issues.find_or_initialize_by(
-        rating_issue_profile_date: issue_data[:profile_date],
         rating_issue_reference_id: issue_data[:reference_id],
         description: issue_data[:decision_text]
-      )
+      ).tap do |request_issue|
+        request_issue.rating_issue_profile_date ||= issue_data[:profile_date]
+      end
     end
   end
 

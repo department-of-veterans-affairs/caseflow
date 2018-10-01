@@ -25,6 +25,10 @@ class ClaimReview < AmaReview
     def processed_at_column
       :establishment_processed_at
     end
+
+    def error_column
+      :establishment_error
+    end
   end
 
   def issue_code(_rated)
@@ -56,6 +60,7 @@ class ClaimReview < AmaReview
       end_product_establishment.commit!
     end
 
+    clear_error!
     processed!
   end
 
