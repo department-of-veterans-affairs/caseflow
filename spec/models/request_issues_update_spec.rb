@@ -182,6 +182,8 @@ describe RequestIssuesUpdate do
   end
 
   context "#perform!" do
+    let(:vbms_error) { VBMS::HTTPError.new("500", "More EPs more problems") }
+
     subject { request_issues_update.perform! }
 
     context "when request issues are empty" do
@@ -206,7 +208,7 @@ describe RequestIssuesUpdate do
       let(:request_issues_data) { request_issues_data_with_new_issue }
 
       it "saves update, adds issues, and calls create contentions" do
-        allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+        allow_create_contentions
 
         expect(subject).to be_truthy
 
@@ -243,7 +245,7 @@ describe RequestIssuesUpdate do
       let(:request_issues_data) { existing_request_issues_data[0...1] }
 
       it "saves update, removes issues, and calls remove contentions" do
-        allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
+        allow_remove_contention
 
         expect(subject).to be_truthy
 
@@ -265,6 +267,44 @@ describe RequestIssuesUpdate do
 
         expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
       end
+    end
+
+    context "when create_contentions raises VBMS service error" do
+      let(:request_issues_data) { request_issues_data_with_new_issue }
+
+      it "saves error message and re-throws error" do
+        raise_error_on_create_contentions
+
+        expect { subject }.to raise_error(vbms_error)
+        expect(request_issues_update.error).to eq(vbms_error.to_s)
+      end
+    end
+
+    context "when remove_contention raises VBMS service error" do
+      let(:request_issues_data) { existing_request_issues_data[0...1] }
+
+      it "saves error message and re-throws error" do
+        raise_error_on_remove_contention
+
+        expect { subject }.to raise_error(vbms_error)
+        expect(request_issues_update.error).to eq(vbms_error.to_s)
+      end
+    end
+
+    def raise_error_on_create_contentions
+      allow(Fakes::VBMSService).to receive(:create_contentions!).and_raise(vbms_error)
+    end
+
+    def allow_create_contentions
+      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    end
+
+    def raise_error_on_remove_contention
+      allow(Fakes::VBMSService).to receive(:remove_contention!).and_raise(vbms_error)
+    end
+
+    def allow_remove_contention
+      allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
     end
   end
 end
