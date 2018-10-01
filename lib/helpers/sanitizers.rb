@@ -48,7 +48,9 @@ class Helpers::Sanitizers
        VACOLS::Decass-defolder
        VACOLS::CaseHearing-folder_nr
        VACOLS::Staff-stitle VACOLS::Staff-sorg
-       VACOLS::Staff-snamel]
+       VACOLS::Staff-snamel
+       VACOLS::Actcode-actcdesc
+       VACOLS::Decass-dedocid]
   end
 
   def look_for_pii(record)
