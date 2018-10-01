@@ -272,23 +272,33 @@ describe RequestIssuesUpdate do
     context "when create_contentions raises VBMS service error" do
       let(:request_issues_data) { request_issues_data_with_new_issue }
 
-      it "saves error message and re-throws error" do
+      it "saves error message and logs error" do
+        capture_raven_log
         raise_error_on_create_contentions
 
-        expect { subject }.to raise_error(vbms_error)
+        subject
+
         expect(request_issues_update.error).to eq(vbms_error.to_s)
+        expect(@raven_called).to eq(true)
       end
     end
 
     context "when remove_contention raises VBMS service error" do
       let(:request_issues_data) { existing_request_issues_data[0...1] }
 
-      it "saves error message and re-throws error" do
+      it "saves error message and logs error" do
+        capture_raven_log
         raise_error_on_remove_contention
 
-        expect { subject }.to raise_error(vbms_error)
+        subject
+
         expect(request_issues_update.error).to eq(vbms_error.to_s)
+        expect(@raven_called).to eq(true)
       end
+    end
+
+    def capture_raven_log
+      allow(Raven).to receive(:capture_exception) { @raven_called = true }
     end
 
     def raise_error_on_create_contentions

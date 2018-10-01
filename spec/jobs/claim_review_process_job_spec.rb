@@ -21,11 +21,14 @@ describe ClaimReviewProcessJob do
 
   subject { ClaimReviewProcessJob.perform_now(claim_review) }
 
-  it "saves Exception messages and re-throws error" do
+  it "saves Exception messages and logs error" do
+    capture_raven_log
     allow(claim_review).to receive(:process_end_product_establishments!).and_raise(vbms_error)
 
-    expect { subject }.to raise_error(vbms_error)
+    subject
+
     expect(claim_review.error).to eq(vbms_error.to_s)
+    expect(@raven_called).to eq(true)
   end
 
   it "ignores error on success" do
@@ -33,5 +36,9 @@ describe ClaimReviewProcessJob do
 
     expect(subject).to eq(true)
     expect(claim_review.error).to be_nil
+  end
+
+  def capture_raven_log
+    allow(Raven).to receive(:capture_exception) { @raven_called = true }
   end
 end
