@@ -66,10 +66,11 @@ class RequestIssuesUpdate < ApplicationRecord
 
     @request_issues_data.map do |issue_data|
       review.request_issues.find_or_initialize_by(
-        rating_issue_profile_date: issue_data[:profile_date],
         rating_issue_reference_id: issue_data[:reference_id],
         description: issue_data[:decision_text]
-      )
+      ).tap do |request_issue|
+        request_issue.rating_issue_profile_date ||= issue_data[:profile_date]
+      end
     end
   end
 
