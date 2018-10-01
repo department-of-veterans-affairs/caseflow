@@ -14,6 +14,41 @@ export const onReceiveSchedulePeriod = (schedulePeriod) => ({
   }
 });
 
+export const onReceiveRegionalOffices = (regionalOffices) => ({
+  type: ACTIONS.RECEIVE_REGIONAL_OFFICES,
+  payload: {
+    regionalOffices
+  }
+});
+
+export const onRegionalOfficeChange = (regionalOffice) => ({
+  type: ACTIONS.REGIONAL_OFFICE_CHANGE,
+  payload: {
+    regionalOffice
+  }
+});
+
+export const onReceiveUpcomingHearingDays = (upcomingHearingDays) => ({
+  type: ACTIONS.RECEIVE_UPCOMING_HEARING_DAYS,
+  payload: {
+    upcomingHearingDays
+  }
+});
+
+export const onReceiveVeteransReadyForHearing = (veterans) => ({
+  type: ACTIONS.RECEIVE_VETERANS_READY_FOR_HEARING,
+  payload: {
+    veterans
+  }
+});
+
+export const onSelectedHearingDayChange = (selectedHearingDay) => ({
+  type: ACTIONS.SELECTED_HEARING_DAY_CHANGE,
+  payload: {
+    selectedHearingDay
+  }
+});
+
 export const onSchedulePeriodError = (error) => ({
   type: ACTIONS.SCHEDULE_PERIOD_ERROR,
   payload: {
@@ -142,4 +177,16 @@ export const onConfirmAssignmentsUpload = () => ({
 
 export const unsetSuccessMessage = () => ({
   type: ACTIONS.UNSET_SUCCESS_MESSAGE
+});
+
+export const toggleTypeFilterVisibility = () => ({
+  type: ACTIONS.TOGGLE_TYPE_FILTER_DROPDOWN
+});
+
+export const toggleLocationFilterVisibility = () => ({
+  type: ACTIONS.TOGGLE_LOCATION_FILTER_DROPDOWN
+});
+
+export const toggleVljFilterVisibility = () => ({
+  type: ACTIONS.TOGGLE_VLJ_FILTER_DROPDOWN
 });

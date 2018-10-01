@@ -27,7 +27,6 @@ type Params = {|
   userRole: string,
   appealId?: string,
   children: React.Node,
-  userCanAccessQueue: boolean,
   urlToLoad?: string
 |};
 
@@ -118,12 +117,6 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
   reload = () => window.location.reload();
 
   render = () => {
-    // If the current user cannot access queue return early to avoid making the request for queues that would happen
-    // as a result of createLoadPromise().
-    if (!this.props.userCanAccessQueue) {
-      return this.props.children;
-    }
-
     const failStatusMessageChildren = <div>
       It looks like Caseflow was unable to load your cases.<br />
       Please <a onClick={this.reload}>refresh the page</a> and try again.

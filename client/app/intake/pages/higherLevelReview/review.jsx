@@ -6,11 +6,13 @@ import RadioField from '../../../components/RadioField';
 import DateSelector from '../../../components/DateSelector';
 import CancelButton from '../../components/CancelButton';
 import Button from '../../../components/Button';
+import BenefitType from '../../components/BenefitType';
 import SelectClaimant from '../../components/SelectClaimant';
 import { setInformalConference, setSameOffice } from '../../actions/higherLevelReview';
-import { submitReview, setClaimantNotVeteran, setClaimant, setPayeeCode } from '../../actions/ama';
+import { submitReview, setBenefitType, setClaimantNotVeteran, setClaimant, setPayeeCode } from '../../actions/ama';
 import { setReceiptDate } from '../../actions/common';
-import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
+import { REQUEST_STATE } from '../../../intakeCommon/constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 
@@ -21,6 +23,8 @@ class Review extends React.PureComponent {
       veteranName,
       receiptDate,
       receiptDateError,
+      benefitType,
+      benefitTypeError,
       informalConference,
       informalConferenceError,
       sameOffice,
@@ -40,6 +44,12 @@ class Review extends React.PureComponent {
       <h1>Review { veteranName }'s Request for Higher-Level Review (VA Form 20-0988)</h1>
 
       { reviewIntakeError && <ErrorAlert /> }
+
+      <BenefitType
+        value={benefitType}
+        onChange={this.props.setBenefitType}
+        errorMessage={benefitTypeError}
+      />
 
       <DateSelector
         name="receipt-date"
@@ -103,7 +113,6 @@ class ReviewNextButton extends React.PureComponent {
       name="submit-review"
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-      legacyStyling={false}
     >
       Continue to next step
     </Button>;
@@ -134,6 +143,8 @@ export default connect(
     higherLevelReviewStatus: getIntakeStatus(state),
     receiptDate: state.higherLevelReview.receiptDate,
     receiptDateError: state.higherLevelReview.receiptDateError,
+    benefitType: state.higherLevelReview.benefitType,
+    benefitTypeError: state.higherLevelReview.benefitTypeError,
     informalConference: state.higherLevelReview.informalConference,
     informalConferenceError: state.higherLevelReview.informalConferenceError,
     sameOffice: state.higherLevelReview.sameOffice,
@@ -143,6 +154,7 @@ export default connect(
   (dispatch) => bindActionCreators({
     setInformalConference,
     setSameOffice,
-    setReceiptDate
+    setReceiptDate,
+    setBenefitType
   }, dispatch)
 )(Review);

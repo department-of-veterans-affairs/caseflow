@@ -1,16 +1,19 @@
 class GenericTask < Task
-  # Only request to PATCH /tasks/:id we expect for GenericTasks is to mark the task complete.
-  def update_from_params(_params, current_user)
+  def update_from_params(params, current_user)
     verify_user_access(current_user)
-    mark_as_complete!
+
+    new_status = params[:status]
+    if new_status == "completed"
+      mark_as_complete!
+    else
+      update!(status: new_status)
+    end
   end
 
-  def verify_user_access(user)
-    return if assigned_to && assigned_to == user
-
-    unless user && assigned_to.class.method_defined?(:user_has_access?) && assigned_to.user_has_access?(user)
-      fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot act on this task"
-    end
+  def can_user_access?(user)
+    return true if assigned_to && assigned_to == user
+    return true if user && assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
+    false
   end
 
   class << self

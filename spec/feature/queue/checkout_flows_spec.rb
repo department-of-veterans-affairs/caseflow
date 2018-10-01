@@ -47,7 +47,8 @@ RSpec.feature "Checkout flows" do
     end
 
     before do
-      parent_task = FactoryBot.create(:ama_judge_task, assigned_to: judge_user, appeal: appeal)
+      root_task = FactoryBot.create(:root_task)
+      parent_task = FactoryBot.create(:ama_judge_task, assigned_to: judge_user, appeal: appeal, parent: root_task)
 
       FactoryBot.create(
         :ama_attorney_task,
@@ -65,6 +66,24 @@ RSpec.feature "Checkout flows" do
       visit "/queue"
       click_on "(#{appeal.veteran_file_number})"
       click_dropdown 0
+      click_label "radiation"
+
+      click_on "Continue"
+
+      # Ensure we can reload the flow and the special issue is saved
+      click_on "Cancel"
+      click_on "Yes, cancel"
+
+      click_dropdown 0
+
+      # Radiation should still be checked
+      expect(page).to have_field("radiation", checked: true, visible: false)
+
+      # Radiation should also be marked in the database
+      expect(appeal.special_issue_list.radiation).to eq(true)
+      click_on "Continue"
+
+      expect(page).to have_content "Select Dispositions"
 
       issue_rows = page.find_all("tr[id^='table-row-']")
       expect(issue_rows.length).to eq(appeal.request_issues.length)
@@ -254,8 +273,7 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content(judge_user.full_name)
 
         click_on "Continue"
-        sleep 1
-        expect(page.current_path).to eq("/queue")
+        expect(page).to have_content("Cases not found")
 
         case_review = AttorneyCaseReview.all.first
         expect(case_review.note.length).to eq 350
@@ -384,22 +402,27 @@ RSpec.feature "Checkout flows" do
         delete_btn = find("button", text: "Delete Issue")
         expect(delete_btn.disabled?).to eq true
 
-        fields = page.find_all ".Select--single"
+        program = "BVA Original Jurisdiction"
+        issue = "Motions"
+        level = "Rule 608 motion to withdraw"
 
-        field_values = fields.map do |row|
-          next if row.matches_css? ".is-disabled"
+        find(".Select-control", text: "Select program").click
+        find("div", class: "Select-option", text: program).click
 
-          click_dropdown 0, row
-          row.find(".Select-value-label").text
-        end
+        find(".Select-control", text: "Select issue").click
+        find("div", class: "Select-option", text: issue).click
+
+        find(".Select-control", text: "Select level 1").click
+        find("div", class: "Select-option", text: level).click
+
         fill_in "Notes:", with: "added issue"
 
         click_on "Continue"
 
         expect(page).to have_content "You created a new issue."
-        expect(page).to have_content "Program: #{field_values.first}"
-        expect(page).to have_content "Issue: #{field_values.second}"
-        expect(page).to have_content field_values.last
+        expect(page).to have_content "Program: #{program}"
+        expect(page).to have_content "Issue: #{issue}"
+        expect(page).to have_content level
         expect(page).to have_content "Note: added issue"
 
         visit "/queue"
@@ -459,27 +482,19 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content("Evaluate Decision")
 
         click_on "Continue"
+        sleep 1
+
         expect(page).to have_content("Choose one")
-        sleep 2
 
-        radio_group_cls = "cf-form-showhide-radio cf-form-radio usa-input-error"
-        case_complexity_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][1]//label")
-        case_quality_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][2]//label")
+        find("label", text: "Easy").click
+        find("label", text: "1 - Does not meet expectations").click
 
-        expect(case_quality_opts.first.text).to eq(
-          "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}"
-        )
-        expect(case_quality_opts.last.text).to eq(
-          "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
-        )
-
-        [case_complexity_opts, case_quality_opts].each { |l| l.sample(1).first.click }
         # areas of improvement
-        page.find_all(".question-label").sample(2).each(&:double_click)
+        find("#issues_are_not_addressed", visible: false).sibling("label").click
 
-        dummy_note = generate_words 200
+        dummy_note = generate_words 5
         fill_in "additional-factors", with: dummy_note
-        expect(page).to have_content(dummy_note[0..599])
+        expect(page).to have_content(dummy_note[0..5])
 
         click_on "Continue"
 
@@ -588,6 +603,8 @@ RSpec.feature "Checkout flows" do
       vet_name = appeal.veteran_full_name
       click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
 
+      expect(page).to have_content("Actions")
+
       click_dropdown 1
 
       expect(page).to have_content(
@@ -597,9 +614,11 @@ RSpec.feature "Checkout flows" do
       click_dropdown 6
       expect(page).to have_content(COPY::COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY)
 
-      hold_duration = rand(100)
+      hold_duration = [rand(100), 1].max
       fill_in COPY::COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY, with: hold_duration
 
+      instructions = generate_words 5
+      fill_in "instructions", with: instructions
       click_on "Place case on hold"
 
       expect(page).to have_content(
@@ -607,6 +626,7 @@ RSpec.feature "Checkout flows" do
       )
       expect(colocated_action.reload.on_hold_duration).to eq hold_duration
       expect(colocated_action.status).to eq "on_hold"
+      expect(colocated_action.instructions[1]).to eq instructions
     end
 
     scenario "sends task to team" do

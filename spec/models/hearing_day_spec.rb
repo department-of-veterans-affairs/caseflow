@@ -6,33 +6,78 @@ describe HearingDay do
       HearingDay.create_hearing_day(hearing_hash)
     end
 
-    context "add a hearing with only required attributes" do
+    let(:test_hearing_date_vacols) do
+      current_date = Time.zone.today
+      Time.use_zone("Eastern Time (US & Canada)") do
+        Time.zone.local(current_date.year, current_date.month, current_date.day, 8, 30, 0).to_datetime
+      end
+    end
+
+    let(:test_hearing_date_caseflow) do
+      Time.zone.local(2019, 5, 15, 12, 30, 0).to_datetime # UTC
+    end
+
+    context "add a hearing with only required attributes - VACOLS" do
       let(:hearing_hash) do
         { hearing_type: "C",
-          hearing_date: VacolsHelper.local_date_with_utc_timezone.to_date,
+          hearing_date: test_hearing_date_vacols,
           room_info: "1" }
       end
 
       it "creates hearing with required attributes" do
-        expect(hearing.hearing_type).to eq "C"
-        expect(hearing.hearing_date).to eq VacolsHelper.local_date_with_utc_timezone.to_date
-        expect(hearing.room).to eq "1"
+        expect(hearing[:hearing_type]).to eq "C"
+        expect(hearing[:hearing_date].strftime("%Y-%m-%d %H:%M:%S"))
+          .to eq test_hearing_date_vacols.strftime("%Y-%m-%d %H:%M:%S")
+        expect(hearing[:room_info]).to eq "1"
       end
     end
 
-    context "add a video hearing" do
+    context "add a hearing with only required attributes - Caseflow" do
       let(:hearing_hash) do
         { hearing_type: "C",
-          hearing_date: VacolsHelper.local_date_with_utc_timezone.to_date,
+          hearing_date: test_hearing_date_caseflow,
+          room_info: "1" }
+      end
+
+      it "creates hearing with required attributes" do
+        expect(hearing[:hearing_type]).to eq "C"
+        expect(hearing[:hearing_date].strftime("%Y-%m-%d %H:%M:%S"))
+          .to eq test_hearing_date_caseflow.strftime("%Y-%m-%d %H:%M:%S")
+        expect(hearing[:room_info]).to eq "1"
+      end
+    end
+
+    context "add a video hearing - VACOLS" do
+      let(:hearing_hash) do
+        { hearing_type: "C",
+          hearing_date: test_hearing_date_vacols,
           regional_office: "RO89",
           room_info: "5" }
       end
 
       it "creates a video hearing" do
-        expect(hearing.hearing_type).to eq "C"
-        expect(hearing.hearing_date).to eq VacolsHelper.local_date_with_utc_timezone.to_date
-        expect(hearing.folder_nr).to eq "VIDEO RO89"
-        expect(hearing.room).to eq "5"
+        expect(hearing[:hearing_type]).to eq "C"
+        expect(hearing[:hearing_date].strftime("%Y-%m-%d %H:%M:%S"))
+          .to eq test_hearing_date_vacols.strftime("%Y-%m-%d %H:%M:%S")
+        expect(hearing[:regional_office]).to eq "RO89"
+        expect(hearing[:room_info]).to eq "5"
+      end
+    end
+
+    context "add a video hearing - Caseflow" do
+      let(:hearing_hash) do
+        { hearing_type: "C",
+          hearing_date: test_hearing_date_caseflow,
+          regional_office: "RO89",
+          room_info: "5" }
+      end
+
+      it "creates a video hearing" do
+        expect(hearing[:hearing_type]).to eq "C"
+        expect(hearing[:hearing_date].strftime("%Y-%m-%d %H:%M:%S"))
+          .to eq test_hearing_date_caseflow.strftime("%Y-%m-%d %H:%M:%S")
+        expect(hearing[:regional_office]).to eq "RO89"
+        expect(hearing[:room_info]).to eq "5"
       end
     end
   end

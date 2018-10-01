@@ -32,7 +32,7 @@ class SideBarComments extends PureComponent {
           <span>{ plusIcon() } &nbsp; Add a comment</span>
         </Button>
       </span>
-      <div id="cf-comment-wrapper" className="cf-comment-wrapper">
+      <div className="cf-comment-wrapper">
         {this.props.error.annotation.visible && <CannotSaveAlert message={this.props.error.annotation.message} />}
         <div className="cf-pdf-comment-list">
           {this.props.placedButUnsavedAnnotation &&

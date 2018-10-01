@@ -17,13 +17,22 @@ class JudgeSchedulePeriod < SchedulePeriod
 
   def schedule_confirmed(hearing_schedule)
     hearing_days = hearing_schedule.map do |hearing_day|
-      hearing_day.slice(:hearing_pkseq, :judge_id)
+      hearing_day.slice(:id, :judge_id)
     end
 
-    transaction do
-      HearingDay.update_schedule(hearing_days)
-      super
+    JudgeSchedulePeriod.transaction do
+      start_confirming_schedule
+      begin
+        transaction do
+          HearingDay.update_schedule(hearing_days)
+        end
+        super
+      rescue StandardError
+        end_confirming_schedule
+        raise ActiveRecord::Rollback
+      end
     end
+    end_confirming_schedule
   end
 
   private

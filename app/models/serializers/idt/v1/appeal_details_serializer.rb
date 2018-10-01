@@ -3,24 +3,70 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
     object.is_a?(LegacyAppeal) ? object.vacols_id : object.uuid
   end
 
+  attribute :case_details_url do
+    "#{@instance_options[:base_url]}/queue/appeals/#{object.external_id}"
+  end
+
   attribute :veteran_first_name
   attribute :veteran_middle_name do
     object.veteran_middle_initial
   end
   attribute :veteran_last_name
+  attribute :veteran_name_suffix
   attribute :veteran_gender
+  attribute :veteran_ssn
+
   attribute :veteran_is_deceased
+  attribute :veteran_death_date
 
   attribute :appellant_is_not_veteran do
     object.is_a?(LegacyAppeal) ? object.appellant_is_not_veteran : object.claimant_not_veteran
   end
-  attribute :appellant_first_name
-  attribute :appellant_middle_name do
-    object.is_a?(LegacyAppeal) ? object.appellant_middle_initial : object.appellant_middle_name
+
+  attribute :appellants do
+    if object.is_a?(LegacyAppeal)
+      [object.claimant]
+    else
+      object.claimants.map do |claimant|
+        address = if @instance_options[:include_addresses]
+                    {
+                      address_line_1: claimant.address_line_1,
+                      address_line_2: claimant.address_line_2,
+                      city: claimant.city,
+                      state: claimant.state,
+                      zip: claimant.zip,
+                      country: claimant.country
+                    }
+                  end
+        representative = {
+          name: claimant.representative_name,
+          type: claimant.representative_type,
+          participant_id: claimant.representative_participant_id,
+          address: @instance_options[:include_addresses] ? claimant.representative_address : nil
+        }
+
+        {
+          first_name: claimant.first_name,
+          middle_name: claimant.middle_name,
+          last_name: claimant.last_name,
+          name_suffix: "",
+          address: address,
+          representative: claimant.representative_name ? representative : nil
+        }
+      end
+    end
   end
-  attribute :appellant_last_name
-  attribute :appellant_name_suffix do
-    object.is_a?(LegacyAppeal) ? object.appellant_name_suffix : ""
+
+  attribute :contested_claimants do
+    object.is_a?(LegacyAppeal) ? object.contested_claimants : nil
+  end
+
+  attribute :contested_claimant_agents do
+    object.is_a?(LegacyAppeal) ? object.contested_claimant_agents : nil
+  end
+
+  attribute :congressional_interest_addresses do
+    object.is_a?(LegacyAppeal) ? object.congressional_interest_addresses : "Not implemented for AMA"
   end
 
   attribute :file_number do
@@ -28,6 +74,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   end
   attribute :citation_number
   attribute :docket_number
+  attribute :docket_name
   attribute :number_of_issues
 
   attribute :issues do
@@ -35,7 +82,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
       object.issues.map do |issue|
         ActiveModelSerializers::SerializableResource.new(
           issue,
-          serializer: ::WorkQueue::IssueSerializer
+          serializer: ::WorkQueue::LegacyIssueSerializer
         ).as_json[:data][:attributes]
       end
     else
@@ -47,14 +94,6 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
     end
   end
 
-  # TODO: - expand rep name into separate fields
-  attribute :representative_name do
-    object.is_a?(LegacyAppeal) ? object.power_of_attorney.vacols_representative_name : object.representative_name
-  end
-  attribute :representative_type do
-    object.is_a?(LegacyAppeal) ? object.power_of_attorney.vacols_representative_type : object.representative_type
-  end
-
   attribute :aod do
     object.advanced_on_docket
   end
@@ -63,6 +102,6 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :previously_selected_for_quality_review
 
   attribute :outstanding_mail do
-    object.is_a?(LegacyAppeal) ? object.outstanding_vacols_mail? : false
+    object.is_a?(LegacyAppeal) ? object.outstanding_vacols_mail : "not implemented for AMA"
   end
 end

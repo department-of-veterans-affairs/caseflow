@@ -34,12 +34,27 @@ RSpec.describe LegacyTasksController, type: :controller do
       end
     end
 
-    context "user is neither judge nor attorney" do
-      let(:role) { :colocated_role }
+    context "user is a dispatch user" do
+      let(:role) { :dispatch_role }
 
-      it "should redirect request to /unauthorized" do
+      it "should not process the request succesfully" do
         get :index, params: { user_id: user.id }
-        expect(response.status).to eq 302
+        expect(response.status).to eq 400
+      end
+    end
+
+    context "user does not have a role" do
+      let(:role) { nil }
+      let(:caseflow_only_user) { FactoryBot.create(:user) }
+
+      it "should return an invalid role error" do
+        get :index, params: { user_id: caseflow_only_user.id }
+        expect(response.status).to eq(400)
+      end
+
+      it "should return a valid response when we explicitly pass the role as a parameter" do
+        get :index, params: { user_id: caseflow_only_user.id, role: "attorney" }
+        expect(response.status).to eq(200)
       end
     end
   end

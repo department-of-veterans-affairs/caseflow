@@ -12,5 +12,22 @@ class Idt::V1::AppealSerializer < ActiveModel::Serializer
     object.is_a?(LegacyAppeal) ? object.sanitized_vbms_id : object.veteran_file_number
   end
   attribute :docket_number
+  attribute :docket_name
   attribute :number_of_issues
+
+  attribute :days_waiting do
+    @instance_options[:task] ? @instance_options[:task].days_waiting : nil
+  end
+
+  attribute :assigned_by do
+    @instance_options[:task] ? @instance_options[:task].assigned_by_name : nil
+  end
+
+  attribute :documents do
+    if @instance_options[:task]
+      @instance_options[:task].attorney_case_reviews.map do |document|
+        { written_by: document.written_by_name, document_id: document.document_id }
+      end
+    end
+  end
 end

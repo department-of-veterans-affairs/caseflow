@@ -2,32 +2,55 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
   before_action :verify_access
 
-  def list
-    appeals = file_number ? appeals_by_file_number : appeals_assigned_to_user
+  rescue_from StandardError do |e|
+    Raven.capture_exception(e)
+    if e.class.method_defined?(:serialize_response)
+      render(e.serialize_response)
+    else
+      render json: { message: "Unexpected error: #{e.message}" }, status: 500
+    end
+  end
 
-    render json: json_appeals(appeals)
+  rescue_from ActionController::ParameterMissing do |e|
+    render(json: { message: e.message }, status: 400)
+  end
+
+  def list
+    if file_number.present?
+      render json: json_appeals(appeals_by_file_number)
+    else
+      render json: { data: json_appeals_with_tasks(tasks_assigned_to_user) }
+    end
   end
 
   def details
-    # TODO: add AMA appeals
-    # We query the case assignment table here so we can get information for
-    # who wrote the case decision docs/OMO request and what their doc ids are.
-    # For AMA appeals, we should get that information from our attorney and judge case review tables.
-    tasks = if appeal.is_a?(LegacyAppeal)
-              QueueRepository.tasks_for_appeal(appeal.vacols_id)
-            else
-              []
-            end
     return render json: { message: "Appeal not found" }, status: 404 unless appeal
-    render json: json_appeal_details(tasks, appeal)
+    render json: json_appeal_details
   end
 
-  def appeals_assigned_to_user
-    appeals = LegacyWorkQueue.tasks_with_appeals(user, "attorney")[1].select(&:active?)
+  def outcode
+    BvaDispatchTask.outcode(appeal, outcode_params, user)
+    render json: json_appeal_details
+  end
+
+  private
+
+  def tasks_assigned_to_user
+    tasks = LegacyWorkQueue.tasks_with_appeals(user, role)[0].select { |task| task.appeal.active? }
+
     if feature_enabled?(:idt_ama_appeals)
-      appeals += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold]).map(&:appeal)
+      tasks += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold])
+        .reject { |task| task.action == "assign" }
     end
-    appeals
+    tasks
+  end
+
+  def role
+    user.vacols_roles.first || "attorney"
+  end
+
+  def appeal
+    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
   end
 
   def appeals_by_file_number
@@ -38,26 +61,31 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     appeals
   end
 
-  def json_appeal_details(tasks, appeal)
-    appeal_details = ActiveModelSerializers::SerializableResource.new(
+  def outcode_params
+    keys = %w[citation_number decision_date redacted_document_location]
+    params.require(keys)
+
+    # Have to do this because params.require() returns an array of the parameter values.
+    keys.map { |k| [k, params[k]] }.to_h
+  end
+
+  def json_appeal_details
+    ActiveModelSerializers::SerializableResource.new(
       appeal,
-      serializer: ::Idt::V1::AppealDetailsSerializer
+      serializer: ::Idt::V1::AppealDetailsSerializer,
+      include_addresses: Constants::BvaDispatchTeams::USERS[Rails.current_env].include?(user.css_id),
+      base_url: request.base_url
     ).as_json
-
-    return appeal_details if tasks.empty?
-
-    appeal_details[:data][:attributes][:assigned_by] = assigned_by_user(tasks.last)
-    appeal_details[:data][:attributes][:documents] = json_documents(tasks)
-
-    appeal_details
   end
 
-  def appeal
-    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
-  end
-
-  def assigned_by_user(task)
-    [task.assigned_by_first_name, task.assigned_by_last_name].join(" ")
+  def json_appeals_with_tasks(tasks)
+    tasks.map do |task|
+      ActiveModelSerializers::SerializableResource.new(
+        task.appeal,
+        serializer: ::Idt::V1::AppealSerializer,
+        task: task
+      ).as_json[:data]
+    end
   end
 
   def json_appeals(appeals)
@@ -65,14 +93,5 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
       appeals,
       each_serializer: ::Idt::V1::AppealSerializer
     ).as_json
-  end
-
-  def json_documents(tasks)
-    tasks_with_documents = tasks.reject { |t| t.document_id.nil? }
-
-    ActiveModelSerializers::SerializableResource.new(
-      tasks_with_documents,
-      each_serializer: ::Idt::V1::DocumentSerializer
-    ).as_json[:data].map { |doc| doc[:attributes] }
   end
 end

@@ -10,17 +10,44 @@ class SchedulePeriod < ApplicationRecord
   has_many :non_availabilities
 
   delegate :full_name, to: :user, prefix: true
+  attr_accessor :confirming_to_vacols
+
+  cache_attribute :submitting_to_vacols, expires_in: 1.day do
+    confirming_to_vacols
+  end
+
+  def clear_submitted_to_vacols
+    clear_cached_attr!(:submitting_to_vacols)
+  end
+
+  def start_confirming_schedule
+    clear_submitted_to_vacols
+    @confirming_to_vacols = true
+    submitting_to_vacols
+  end
+
+  def end_confirming_schedule
+    clear_submitted_to_vacols
+    @confirming_to_vacols = false
+    submitting_to_vacols
+  end
+
+  S3_SUB_BUCKET = "hearing_schedule".freeze
 
   def validate_schedule_period
-    errors[:base] << OverlappingSchedulePeriods if dates_already_finalized?
+    errors[:base] << OverlappingSchedulePeriods if dates_finalized_or_being_finalized?
   end
 
   def spreadsheet_location
     File.join(Rails.root, "tmp", "hearing_schedule", "spreadsheets", file_name)
   end
 
+  def s3_file_location
+    S3_SUB_BUCKET + "/" + file_name
+  end
+
   def spreadsheet
-    S3Service.fetch_file(file_name, spreadsheet_location)
+    S3Service.fetch_file(s3_file_location, spreadsheet_location)
     Roo::Spreadsheet.open(spreadsheet_location, extension: :xlsx)
   end
 
@@ -34,14 +61,15 @@ class SchedulePeriod < ApplicationRecord
     update(finalized: true)
   end
 
-  def dates_already_finalized?
-    SchedulePeriod.where(type: type, finalized: true).any? do |schedule_period|
-      schedule_period.start_date <= start_date && start_date <= schedule_period.end_date
+  def dates_finalized_or_being_finalized?
+    SchedulePeriod.where(type: type).any? do |schedule_period|
+      (schedule_period.start_date <= start_date && start_date <= schedule_period.end_date) &&
+        (schedule_period.submitting_to_vacols || schedule_period.finalized)
     end
   end
 
   def can_be_finalized?
     nbr_of_days = updated_at.beginning_of_day - Time.zone.today.beginning_of_day
-    ((nbr_of_days < 5) && !dates_already_finalized?) && !finalized
+    ((nbr_of_days < 5) && !dates_finalized_or_being_finalized?) && !finalized
   end
 end

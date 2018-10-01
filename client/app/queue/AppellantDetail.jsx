@@ -6,37 +6,21 @@ import _ from 'lodash';
 import BareList from '../components/BareList';
 import { boldText } from './constants';
 import { DateString } from '../util/DateUtil';
+import Address from './components/Address';
+import COPY from '../../COPY.json';
 
 const detailListStyling = css({
   paddingLeft: 0,
   listStyle: 'none',
   marginBottom: '3rem'
 });
-const addressIndentStyling = (secondLine) => css({
-  marginLeft: secondLine ? '7.5em' : 0
-});
 
 export default class AppellantDetail extends React.PureComponent {
   getAppealAttr = (attr) => _.get(this.props.appeal, attr);
 
-  formatAddress = (addressFieldName) => {
-    const {
-      address_line_1: addressLine1,
-      address_line_2: addressLine2,
-      city,
-      state,
-      zip,
-      country
-    } = this.getAppealAttr(addressFieldName);
-    const streetAddress = addressLine2 ? `${addressLine1} ${addressLine2}` : addressLine1;
-
-    return <React.Fragment>
-      {streetAddress && <React.Fragment><span>{streetAddress},</span><br /></React.Fragment>}
-      <span {...addressIndentStyling(streetAddress)}>{city}, {state} {zip} {country === 'USA' ? '' : country}</span>
-    </React.Fragment>;
-  };
-
-  getGenderPronoun = (genderFieldName) => this.getAppealAttr(genderFieldName) === 'F' ? 'She/Her' : 'He/His';
+  getGenderValue = (genderFieldName) => this.getAppealAttr(genderFieldName) === 'F' ?
+    COPY.CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE :
+    COPY.CASE_DETAILS_GENDER_FIELD_VALUE_MALE;
 
   getDetails = ({ nameField, genderField, dobField, addressField, relationField, regionalOfficeField }) => {
     const details = [{
@@ -46,8 +30,8 @@ export default class AppellantDetail extends React.PureComponent {
 
     if (genderField && this.getAppealAttr(genderField)) {
       details.push({
-        label: 'Gender pronoun',
-        value: this.getGenderPronoun(genderField)
+        label: COPY.CASE_DETAILS_GENDER_FIELD_LABEL,
+        value: this.getGenderValue(genderField)
       });
     }
     if (dobField && this.getAppealAttr(dobField)) {
@@ -65,7 +49,7 @@ export default class AppellantDetail extends React.PureComponent {
     if (addressField && this.getAppealAttr(addressField)) {
       details.push({
         label: 'Mailing Address',
-        value: this.formatAddress(addressField)
+        value: <Address address={this.getAppealAttr(addressField)} />
       });
     }
     if (regionalOfficeField && this.getAppealAttr(regionalOfficeField)) {

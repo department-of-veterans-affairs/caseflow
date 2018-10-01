@@ -13,12 +13,17 @@ describe RequestIssuesUpdate do
 
   # TODO: make it simpler to set up a completed claim review, with end product data
   # and contention data stubbed out properly
-  let(:review) { create(:higher_level_review) }
+  let(:review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
 
-  let!(:veteran) { Generators::Veteran.build(file_number: review.veteran_file_number) }
+  let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
 
   let(:rated_end_product_establishment) do
-    create(:end_product_establishment, source: review, code: "030HLRR")
+    create(
+      :end_product_establishment,
+      veteran_file_number: veteran.file_number,
+      source: review,
+      code: "030HLRR"
+    )
   end
 
   let(:request_issue_contentions) do
@@ -38,14 +43,14 @@ describe RequestIssuesUpdate do
     [
       RequestIssue.new(
         review_request: review,
-        rating_issue_profile_date: Date.new(2017, 4, 5),
+        rating_issue_profile_date: Time.zone.local(2017, 4, 5),
         rating_issue_reference_id: "issue1",
         contention_reference_id: request_issue_contentions[0].id,
         description: request_issue_contentions[0].text
       ),
       RequestIssue.new(
         review_request: review,
-        rating_issue_profile_date: Date.new(2017, 4, 6),
+        rating_issue_profile_date: Time.zone.local(2017, 4, 6),
         rating_issue_reference_id: "issue2",
         contention_reference_id: request_issue_contentions[1].id,
         description: request_issue_contentions[1].text
@@ -71,7 +76,7 @@ describe RequestIssuesUpdate do
         reference_id: issue.rating_issue_reference_id,
         # TODO: validate the string format this comes in
         profile_date: issue.rating_issue_profile_date,
-        description: issue.description
+        decision_text: issue.description
       }
     end
   end
@@ -79,9 +84,66 @@ describe RequestIssuesUpdate do
   let(:request_issues_data_with_new_issue) do
     existing_request_issues_data + [{
       reference_id: "issue3",
-      profile_date: Date.new(2017, 4, 7),
-      description: "Service connection for cancer was denied"
+      profile_date: Time.zone.local(2017, 4, 7),
+      decision_text: "Service connection for cancer was denied"
     }]
+  end
+
+  context "async logic scopes" do
+    let!(:riu_requiring_processing) do
+      create(:request_issues_update).tap(&:submit_for_processing!)
+    end
+
+    let!(:riu_processed) do
+      create(:request_issues_update).tap(&:processed!)
+    end
+
+    let!(:riu_recently_attempted) do
+      create(
+        :request_issues_update,
+        attempted_at: (RequestIssuesUpdate::REQUIRES_PROCESSING_RETRY_WINDOW_HOURS - 1).hours.ago
+      )
+    end
+
+    let!(:riu_attempts_ended) do
+      create(
+        :request_issues_update,
+        submitted_at: (RequestIssuesUpdate::REQUIRES_PROCESSING_WINDOW_DAYS + 5).days.ago,
+        attempted_at: (RequestIssuesUpdate::REQUIRES_PROCESSING_WINDOW_DAYS + 1).days.ago
+      )
+    end
+
+    context ".unexpired" do
+      it "matches inside the processing window" do
+        expect(described_class.unexpired).to eq([riu_requiring_processing])
+      end
+    end
+
+    context ".processable" do
+      it "matches eligible for processing" do
+        expect(described_class.processable).to match_array(
+          [riu_requiring_processing, riu_attempts_ended]
+        )
+      end
+    end
+
+    context ".attemptable" do
+      it "matches could be attempted" do
+        expect(described_class.attemptable).not_to include(riu_recently_attempted)
+      end
+    end
+
+    context ".requires_processing" do
+      it "matches must still be processed" do
+        expect(described_class.requires_processing).to eq([riu_requiring_processing])
+      end
+    end
+
+    context ".expired_without_processing" do
+      it "matches unfinished but outside the retry window" do
+        expect(described_class.expired_without_processing).to eq([riu_attempts_ended])
+      end
+    end
   end
 
   context "#created_issues" do
@@ -170,7 +232,7 @@ describe RequestIssuesUpdate do
 
         created_issue = review.request_issues.find_by(rating_issue_reference_id: "issue3")
         expect(created_issue).to have_attributes(
-          rating_issue_profile_date: Date.new(2017, 4, 7),
+          rating_issue_profile_date: Time.zone.local(2017, 4, 7),
           description: "Service connection for cancer was denied"
         )
         expect(created_issue.contention_reference_id).to_not be_nil
@@ -199,6 +261,7 @@ describe RequestIssuesUpdate do
         expect(removed_issue).to have_attributes(
           review_request: nil
         )
+        expect(removed_issue.removed_at).to_not be_nil
 
         expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
       end

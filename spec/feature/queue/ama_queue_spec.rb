@@ -18,6 +18,9 @@ RSpec.feature "AmaQueue" do
   let!(:attorney_user) do
     FactoryBot.create(:user, roles: ["Reader"], full_name: "#{attorney_first_name} #{attorney_last_name}")
   end
+
+  let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
+
   let!(:vacols_atty) do
     FactoryBot.create(
       :staff,
@@ -35,13 +38,18 @@ RSpec.feature "AmaQueue" do
   context "loads appellant detail view" do
     before do
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
-        veteran_participant_id => {
+        appeals.first.claimants.first.participant_id => {
           representative_name: poa_name,
           representative_type: "POA Attorney",
-          participant_id: "600153863"
+          participant_id: participant_id
         }
       )
     end
+
+    let(:poa_address) { "123 Poplar St." }
+    let(:participant_id) { "600153863" }
+    let!(:root_task) { create(:root_task) }
+    let!(:parent_task) { create(:ama_judge_task, assigned_to: judge_user, appeal: appeals.first, parent: root_task) }
 
     let(:poa_name) { "Test POA" }
     let(:veteran_participant_id) { "600085544" }
@@ -49,8 +57,13 @@ RSpec.feature "AmaQueue" do
       [
         create(
           :appeal,
-          advanced_on_docket: true,
-          veteran: create(:veteran, participant_id: veteran_participant_id, bgs_veteran_record: { first_name: "Pal" }),
+          :advanced_on_docket,
+          veteran: create(
+            :veteran,
+            participant_id: veteran_participant_id,
+            first_name: "Pal",
+            bgs_veteran_record: { first_name: "Pal" }
+          ),
           documents: create_list(:document, 5),
           request_issues: build_list(:request_issue, 3, description: "Knee pain")
         ),
@@ -70,29 +83,110 @@ RSpec.feature "AmaQueue" do
       ]
     end
 
-    scenario "veteran is the appellant" do
-      visit "/queue/beaam"
-      click_on appeals.first.veteran.first_name
+    context "when appeals have tasks" do
+      let!(:attorney_tasks) do
+        [
+          create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user,
+            assigned_by: judge_user,
+            parent: parent_task,
+            appeal: appeals.first
+          ),
+          create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user,
+            assigned_by: judge_user,
+            appeal: appeals.second
+          ),
+          create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user,
+            assigned_by: judge_user,
+            appeal: appeals.third
+          )
+        ]
+      end
 
-      expect(page).to have_content("About the Veteran")
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id).and_return(
+          address_line_1: "Veteran Address",
+          city: "Washington",
+          state: "DC",
+          zip: "20001"
+        )
+        allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id)
+          .with(participant_id).and_return(
+            address_line_1: poa_address,
+            city: "Washington",
+            state: "DC",
+            zip: "20001"
+          )
+      end
 
-      expect(page).to have_content("AOD")
+      scenario "veteran is the appellant" do
+        visit "/queue"
 
-      expect(page).to have_content(appeals.first.request_issues.first.description)
-      expect(page).to have_content(appeals.first.docket_number)
-      expect(page).to have_content(poa_name)
+        click_on appeals.first.veteran.first_name
+        expect(page).to have_content("A. Judge")
 
-      expect(page).to have_content("View Veteran's documents")
-      expect(page).to have_selector("text", id: "NEW")
-      expect(page).to have_content("5 docs")
+        expect(page).to have_content("About the Veteran")
 
-      click_on "View Veteran's documents"
-      expect(page).to have_content("Claims Folder")
+        expect(page).to have_content("AOD")
+        expect(page).to have_content(appeals.first.request_issues.first.description)
+        expect(page).to have_content(appeals.first.docket_number)
+        expect(page).to have_content(poa_name)
+        expect(page).to have_content(poa_address)
 
-      visit "/queue/beaam"
-      click_on appeals.first.veteran.first_name
+        expect(page).to have_content("View Veteran's documents")
+        expect(page).to have_selector("text", id: "NEW")
+        expect(page).to have_content("5 docs")
 
-      expect(page).not_to have_selector("text", id: "NEW")
+        click_on "View Veteran's documents"
+        expect(page).to have_content("Claims Folder")
+
+        visit "/queue"
+        click_on appeals.first.veteran.first_name
+
+        expect(page).not_to have_selector("text", id: "NEW")
+      end
+
+      scenario "setting aod" do
+        visit "/queue/appeals/#{appeals.first.external_id}"
+
+        click_on "Edit"
+
+        find(".Select-control", text: "Select grant or deny").click
+        find("div", class: "Select-option", text: "Grant").click
+
+        find(".Select-control", text: "Select a type").click
+        find("div", class: "Select-option", text: "Serious illness").click
+
+        click_on "Submit"
+
+        expect(page).to have_content("AOD status updated")
+        expect(page).to have_content("AOD")
+        motion = appeals.first.claimants.first.person.advance_on_docket_motions.first
+
+        expect(motion.granted).to eq(true)
+        expect(motion.reason).to eq("serious_illness")
+      end
+
+      context "when there is an error loading addresses" do
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id)
+            .with(participant_id).and_raise(StandardError.new)
+        end
+
+        scenario "loading data error message appears" do
+          visit "/queue/appeals/#{appeals.first.external_id}"
+
+          expect(page).to have_content(COPY::CASE_DETAILS_UNABLE_TO_LOAD)
+        end
+      end
     end
 
     context "when user is a vso" do

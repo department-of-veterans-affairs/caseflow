@@ -14,6 +14,7 @@ class ExternalApi::BGSService
     # respective requests
     @end_products = {}
     @veteran_info = {}
+    @person_info = {}
     @poas = {}
     @poa_by_participant_ids = {}
     @poa_addresses = {}
@@ -53,7 +54,12 @@ class ExternalApi::BGSService
       client.people.find_person_by_ptcpnt_id(participant_id)
     end
 
-    { first_name: bgs_info[:first_nm], last_name: bgs_info[:last_nm], middle_name: bgs_info[:middle_nm] }
+    @person_info[participant_id] ||= {
+      first_name: bgs_info[:first_nm],
+      last_name: bgs_info[:last_nm],
+      middle_name: bgs_info[:middle_nm],
+      birth_date: bgs_info[:brthdy_dt]
+    }
   end
 
   def fetch_file_number_by_ssn(ssn)
@@ -93,7 +99,7 @@ class ExternalApi::BGSService
                                        name: "org.find_poas_by_participant_id") do
         client.org.find_poas_by_ptcpnt_id(participant_id)
       end
-      @poa_by_participant_ids[participant_id] = bgs_poas.map { |poa| get_poa_from_bgs_poa(poa) }
+      @poa_by_participant_ids[participant_id] = [bgs_poas].flatten.compact.map { |poa| get_poa_from_bgs_poa(poa) }
     end
 
     @poa_by_participant_ids[participant_id]
@@ -108,7 +114,8 @@ class ExternalApi::BGSService
       client.org.find_poas_by_ptcpnt_ids(participant_ids)
     end
 
-    get_hash_of_poa_from_bgs_poas(bgs_poas)
+    # Avoid passing nil
+    get_hash_of_poa_from_bgs_poas(bgs_poas || [])
   end
 
   def find_address_by_participant_id(participant_id)

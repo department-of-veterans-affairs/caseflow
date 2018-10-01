@@ -34,17 +34,21 @@ RSpec.feature "Higher-Level Review" do
 
   let(:receipt_date) { Date.new(2018, 4, 20) }
 
+  let(:benefit_type) { "compensation" }
+
   let(:untimely_days) { 372.days }
 
   let!(:current_user) do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
+  let(:profile_date) { (receipt_date - untimely_days + 4.days).to_time(:local) }
+
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - untimely_days + 1.day,
-      profile_date: receipt_date - untimely_days + 4.days,
+      profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
         { reference_id: "def456", decision_text: "PTSD denied" }
@@ -56,13 +60,16 @@ RSpec.feature "Higher-Level Review" do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - untimely_days,
-      profile_date: receipt_date - untimely_days + 3.days,
+      profile_date: profile_date - 1.day,
       issues: [
         { reference_id: "abc123", decision_text: "Untimely rating issue 1" },
         { reference_id: "def456", decision_text: "Untimely rating issue 2" }
       ]
     )
   end
+
+  let(:search_bar_title) { "Enter the Veteran's ID" }
+  let(:search_page_title) { "Search for Veteran ID" }
 
   it "Creates an end product and contentions for it" do
     # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
@@ -91,9 +98,9 @@ RSpec.feature "Higher-Level Review" do
 
     safe_click ".cf-submit.usa-button"
 
-    expect(page).to have_content("Higher-Level Review (VA Form 20-0988)")
+    expect(page).to have_content(search_page_title)
 
-    fill_in "Search small", with: "12341234"
+    fill_in search_bar_title, with: "12341234"
 
     click_on "Search"
 
@@ -107,6 +114,14 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_content(
       "Please select an option."
     )
+
+    expect(page).to have_content(
+      "Please select a Benefit Type option."
+    )
+
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Compensation", match: :prefer_exact).click
+    end
 
     fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
 
@@ -165,6 +180,7 @@ RSpec.feature "Higher-Level Review" do
     higher_level_review = HigherLevelReview.find_by(veteran_file_number: "12341234")
     expect(higher_level_review).to_not be_nil
     expect(higher_level_review.receipt_date).to eq(receipt_date)
+    expect(higher_level_review.benefit_type).to eq(benefit_type)
     expect(higher_level_review.informal_conference).to eq(true)
     expect(higher_level_review.same_office).to eq(false)
     expect(higher_level_review.claimants.first).to have_attributes(
@@ -297,9 +313,10 @@ RSpec.feature "Higher-Level Review" do
     expect(higher_level_review.request_issues.count).to eq 2
     expect(higher_level_review.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
-      rating_issue_profile_date: receipt_date - untimely_days + 4.days,
+      rating_issue_profile_date: profile_date,
       description: "PTSD denied",
-      decision_date: nil
+      decision_date: nil,
+      rating_issue_associated_at: Time.zone.now
     )
 
     expect(higher_level_review.request_issues.last).to have_attributes(
@@ -339,9 +356,13 @@ RSpec.feature "Higher-Level Review" do
 
     safe_click ".cf-submit.usa-button"
 
-    fill_in "Search small", with: "12341234"
+    fill_in search_bar_title, with: "12341234"
 
     click_on "Search"
+
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Compensation", match: :prefer_exact).click
+    end
 
     fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
 
@@ -385,8 +406,9 @@ RSpec.feature "Higher-Level Review" do
 
     visit "/intake"
 
-    fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
-    safe_click "#button-submit-review"
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Compensation", match: :prefer_exact).click
+    end
 
     fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
 
@@ -411,16 +433,17 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  it "Allows a Veteran without ratings to create an intake" do
+  def start_higher_level_review(test_veteran, is_comp: true, claim_participant_id: nil)
     higher_level_review = HigherLevelReview.create!(
-      veteran_file_number: veteran_no_ratings.file_number,
+      veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
       informal_conference: false,
-      same_office: false
+      same_office: false,
+      benefit_type: is_comp ? "compensation" : "education"
     )
 
     HigherLevelReviewIntake.create!(
-      veteran_file_number: veteran_no_ratings.file_number,
+      veteran_file_number: test_veteran.file_number,
       user: current_user,
       started_at: 5.minutes.ago,
       detail: higher_level_review
@@ -428,11 +451,15 @@ RSpec.feature "Higher-Level Review" do
 
     Claimant.create!(
       review_request: higher_level_review,
-      participant_id: veteran_no_ratings.participant_id,
-      payee_code: "00"
+      participant_id: claim_participant_id ? claim_participant_id : test_veteran.participant_id,
+      payee_code: claim_participant_id ? "02" : "00"
     )
 
     higher_level_review.start_review!
+  end
+
+  it "Allows a Veteran without ratings to create an intake" do
+    start_higher_level_review(veteran_no_ratings)
 
     visit "/intake"
 
@@ -454,5 +481,56 @@ RSpec.feature "Higher-Level Review" do
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988) has been processed.")
+  end
+
+  context "For new Add Issues page" do
+    def check_row(label, text)
+      row = find("tr", text: label)
+      expect(row).to have_text(text)
+    end
+
+    let!(:timely_ratings) do
+      Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: receipt_date - 40.days,
+        profile_date: receipt_date - 50.days,
+        issues: [
+          { reference_id: "abc123", decision_text: "Left knee granted" },
+          { reference_id: "def456", decision_text: "PTSD denied" }
+        ]
+      )
+    end
+
+    scenario "HLR comp" do
+      allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
+        first_name: "BOB",
+        last_name: "VANCE",
+        ptcpnt_id: "5382910292",
+        relationship_type: "Spouse"
+      )
+
+      start_higher_level_review(veteran, claim_participant_id: "5382910292")
+      visit "/intake/add_issues"
+
+      expect(page).to have_content("Add Issues")
+      check_row("Form", "Request for Higher-Level Review (VA Form 20-0988)")
+      check_row("Benefit type", "Compensation")
+      check_row("Claimant", "Bob Vance, Spouse (payee code 02)")
+
+      # clicking the add issues button should bring up the modal
+      safe_click "#button-add-issue"
+      expect(page).to have_content("Left knee granted")
+      expect(page).to have_content("PTSD denied")
+    end
+
+    scenario "HLR non-comp" do
+      start_higher_level_review(veteran, is_comp: false)
+      visit "/intake/add_issues"
+
+      expect(page).to have_content("Add Issues")
+      check_row("Form", "Request for Higher-Level Review (VA Form 20-0988)")
+      check_row("Benefit type", "Education")
+      expect(page).to_not have_content("Claimant")
+    end
   end
 end

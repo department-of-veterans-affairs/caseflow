@@ -83,6 +83,11 @@ class VACOLS::CaseHearing < VACOLS::Record
       select_schedule_days.where("trunc(hearing_date) between ? and ?", start_date, end_date).order(:hearing_date)
     end
 
+    def load_days_for_central_office(start_date, end_date)
+      select_schedule_days.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) between ? and ?",
+                                 "C", "%VIDEO%", start_date, end_date).order(:hearing_date)
+    end
+
     def load_days_for_regional_office(regional_office, start_date, end_date)
       select_schedule_days.where("folder_nr = ? and trunc(hearing_date) between ? and ?",
                                  "VIDEO #{regional_office}", start_date, end_date)
@@ -139,7 +144,10 @@ class VACOLS::CaseHearing < VACOLS::Record
              "CASE WHEN folder_nr LIKE 'VIDEO%' or folder_nr is null THEN folder_nr ELSE null END AS folder_nr",
              :room,
              :board_member,
-             "snamel || ',' || snamemi || ' ' || snamef as judge_name",
+             "snamel as judge_last_name",
+             "snamemi as judge_middle_name",
+             "snamef as judge_first_name",
+             "snamel || CASE WHEN snamel IS NULL THEN '' ELSE ', ' END || snamef AS judge_name",
              :mduser,
              :mdtime)
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
@@ -171,7 +179,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   end
 
   def create_or_update_diaries
-    create_or_update_abeyance_diary if holddays_changed?
+    create_or_update_extension_diary if holddays_changed?
     create_or_update_aod_diary if aod_changed?
   end
 
@@ -179,16 +187,17 @@ class VACOLS::CaseHearing < VACOLS::Record
     @case_id ||= brieff.bfkey
   end
 
-  def create_or_update_abeyance_diary
+  def create_or_update_extension_diary
     # If hold open is set to nil or 0, delete the diary
-    return delete_diary([:A]) if !holddays || holddays == 0
+    # We have to hardcode the assignee to 25 because not all ext diaries should default to 25
+    return delete_diary([:EXT]) if !holddays || holddays == 0
 
     VACOLS::Note.update_or_create!(case_id: case_id,
                                    text: "Record held open by VLJ at hearing for additional evidence.",
-                                   code: :A,
+                                   code: :EXT,
                                    days_to_complete: holddays + 5,
                                    days_til_due: holddays + 5,
-                                   assigned_to: VACOLS::Note.assignee(:A),
+                                   assigned_to: "25",
                                    user_id: current_user_css_id)
   end
 

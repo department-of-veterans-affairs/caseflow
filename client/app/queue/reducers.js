@@ -24,6 +24,7 @@ export const initialState = {
   editingIssue: {},
   docCountForAppeal: {},
   newDocsForAppeal: {},
+  specialIssues: {},
 
   /**
    * `stagedChanges` is an object of appeals that have been modified since
@@ -40,7 +41,9 @@ export const initialState = {
   attorneysOfJudge: [],
   attorneyAppealsLoadingState: {},
   isTaskAssignedToUserSelected: {},
-  attorneys: {}
+  attorneys: {},
+  organizationId: null,
+  loadingAppealDetail: {}
 };
 
 // eslint-disable-next-line max-statements
@@ -369,6 +372,73 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
       }
     });
   }
+  case ACTIONS.SET_SPECIAL_ISSUE: {
+    return update(state, {
+      specialIssues: {
+        $merge: action.payload.specialIssues
+      }
+    });
+  }
+  case ACTIONS.SET_ORGANIZATION_ID:
+    return update(state, {
+      organizationId: {
+        $set: action.payload.id
+      }
+    });
+  case ACTIONS.SET_APPEAL_AOD:
+    return update(state, {
+      appeals: {
+        [action.payload.externalAppealId]: {
+          isAdvancedOnDocket: {
+            $set: true
+          }
+        }
+      }
+    });
+  case ACTIONS.STARTED_LOADING_APPEAL_VALUE:
+    return update(state, {
+      loadingAppealDetail: {
+        $merge: {
+          [action.payload.appealId]: {
+            [action.payload.name]: {
+              loading: true
+            }
+          }
+        }
+      }
+    });
+  case ACTIONS.RECEIVE_APPEAL_VALUE:
+    return update(state, {
+      loadingAppealDetail: {
+        $merge: {
+          [action.payload.appealId]: {
+            [action.payload.name]: {
+              loading: false
+            }
+          }
+        }
+      },
+      appealDetails: {
+        [action.payload.appealId]: {
+          $merge: {
+            [action.payload.name]: action.payload.response
+          }
+        }
+      }
+    });
+  case ACTIONS.ERROR_ON_RECEIVE_APPEAL_VALUE:
+    return update(state, {
+      loadingAppealDetail: {
+        $merge: {
+          [action.payload.appealId]: {
+            [action.payload.name]: {
+              loading: false,
+              error: action.payload.error
+            }
+          }
+        }
+      }
+    });
   default:
     return state;
   }

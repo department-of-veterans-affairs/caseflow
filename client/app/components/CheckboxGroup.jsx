@@ -10,7 +10,7 @@ const renderCheckbox = (option, onChange, values = {}) => <div className="checkb
     checked={values[option.id]}
     disabled={option.disabled ? 'disabled' : ''}
   />
-  <label className="question-label" htmlFor={option.id}>
+  <label htmlFor={option.id}>
     {option.label}
   </label>
 </div>;

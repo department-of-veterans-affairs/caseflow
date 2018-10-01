@@ -37,6 +37,7 @@ describe('ColocatedTaskListView', () => {
   });
 
   const amaTaskTemplate: Task = {
+    appealType: 'Appeal',
     addedByCssId: null,
     appealId: 5,
     externalAppealId: '3bd1567a-4f07-473c-aefc-3738a6cf58fe',
@@ -45,6 +46,7 @@ describe('ColocatedTaskListView', () => {
     dueOn: null,
     assignedTo: {
       cssId: 'BVALSPORER',
+      type: 'User',
       id: 7
     },
     assignedBy: {
@@ -59,18 +61,22 @@ describe('ColocatedTaskListView', () => {
     workProduct: null,
     previousTaskAssignedOn: null,
     placedOnHoldAt: null,
-    onHoldDuration: null
+    onHoldDuration: null,
+    decisionPreparedBy: null
   };
 
   const appealTemplate: BasicAppeal = {
     id: 5,
     type: 'Appeal',
+    isLegacyAppeal: false,
     externalId: '3bd1567a-4f07-473c-aefc-3738a6cf58fe',
     docketName: null,
     caseType: 'Original',
     isAdvancedOnDocket: false,
     issueCount: 2,
     docketNumber: 'Missing Docket Number',
+    assignedJudge: null,
+    assignedAttorney: null,
     veteranFullName: 'Andrew Van Buren',
     veteranFileNumber: '152003980',
     isPaperCase: null
@@ -189,31 +195,20 @@ describe('ColocatedTaskListView', () => {
 
       const wrapper = getWrapperColocatedTaskListView(store);
 
-      wrapper.find('[aria-label="Pending (2) tab window"]').simulate('click');
+      wrapper.find('[aria-label="Pending action (1) tab window"]').simulate('click');
 
       const cells = wrapper.find('td');
 
-      expect(cells).to.have.length(12);
+      expect(cells).to.have.length(6);
       const wrappers = [];
 
       for (let i = 0; i < cells.length; i++) {
         wrappers.push(cells.at(i));
       }
       {
-        const [caseDetails, columnTasks, types, docketNumber, daysOnHold, documents] = wrappers;
+        const [daysOnHold, documents] = wrappers.slice(4);
 
-        expect(caseDetails.text()).to.include(appeal.veteranFullName);
-        expect(caseDetails.text()).to.include(appeal.veteranFileNumber);
-        expect(columnTasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.action]);
-        expect(types.text()).to.include(appeal.caseType);
-        expect(docketNumber.text()).to.include(appeal.docketNumber);
-        expect(daysOnHold.text()).to.equal('30 of 30');
-        expect(documents.html()).to.include(`/reader/appeal/${task.externalAppealId}/documents`);
-      }
-      {
-        const [daysOnHold, documents] = wrappers.slice(10);
-
-        expect(daysOnHold.text()).to.equal('2 of 30');
+        expect(daysOnHold.text()).to.equal('1 of 30');
         expect(documents.html()).to.include(`/reader/appeal/${taskWithNewDocs.externalAppealId}/documents`);
       }
     });
@@ -289,7 +284,7 @@ describe('ColocatedTaskListView', () => {
       expect(columnTasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.action]);
       expect(types.text()).to.include(appeal.caseType);
       expect(docketNumber.text()).to.include(appeal.docketNumber);
-      expect(daysOnHold.text()).to.equal('2 of 30');
+      expect(daysOnHold.text()).to.equal('1 of 30');
       expect(documents.html()).to.include(`/reader/appeal/${task.externalAppealId}/documents`);
     });
   });

@@ -10,7 +10,8 @@ import SelectClaimant from '../../components/SelectClaimant';
 import { setDocketType } from '../../actions/appeal';
 import { submitReview, setClaimantNotVeteran, setClaimant, setPayeeCode } from '../../actions/ama';
 import { setReceiptDate } from '../../actions/common';
-import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES } from '../../constants';
+import { REQUEST_STATE } from '../../../intakeCommon/constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 
@@ -99,7 +100,6 @@ class ReviewNextButton extends React.PureComponent {
       name="submit-review"
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-      legacyStyling={false}
     >
       Continue to next step
     </Button>;

@@ -18,7 +18,9 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import {
-  fetchTasksAndAppealsOfAttorney, setSelectionOfTaskOfUser
+  fetchTasksAndAppealsOfAttorney,
+  setSelectionOfTaskOfUser,
+  fetchAmaTasksOfUser
 } from './QueueActions';
 import { judgeAssignTasksSelector, getTasksByUserId } from './selectors';
 import PageRoute from '../components/PageRoute';
@@ -40,7 +42,8 @@ class JudgeAssignTaskListView extends React.PureComponent {
 
   createLoadPromise = () => {
     for (const attorney of this.props.attorneysOfJudge) {
-      this.props.fetchTasksAndAppealsOfAttorney(attorney.id);
+      this.props.fetchTasksAndAppealsOfAttorney(attorney.id, { role: 'attorney' });
+      this.props.fetchAmaTasksOfUser(attorney.id, 'attorney');
     }
 
     return Promise.resolve();
@@ -145,6 +148,7 @@ const mapDispatchToProps = (dispatch) => (
     resetSuccessMessages,
     resetSaveState,
     fetchTasksAndAppealsOfAttorney,
+    fetchAmaTasksOfUser,
     setSelectionOfTaskOfUser
   }, dispatch)
 );

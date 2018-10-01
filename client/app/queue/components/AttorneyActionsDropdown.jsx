@@ -12,6 +12,7 @@ import {
   resetDecisionOptions,
   stageAppeal
 } from '../QueueActions';
+import COPY from '../../../COPY.json';
 import {
   dropdownStyling,
   DRAFT_DECISION_OPTIONS,
@@ -40,15 +41,20 @@ type Props = Params & {|
 |};
 
 class AttorneyActionsDropdown extends React.PureComponent<Props> {
-  changeRoute = (props) => {
+  changeRoute = (option) => {
     const {
       appealId,
-      history
+      history,
+      appeal
     } = this.props;
-    const decisionType = props.value;
+
+    if (!option) {
+      return;
+    }
+    const decisionType = option.value;
     const routes = {
       omo_request: 'submit',
-      draft_decision: 'dispositions',
+      draft_decision: appeal.isLegacyAppeal ? 'dispositions' : 'special_issues',
       colocated_task: 'colocated_task'
     };
     const route = routes[decisionType];
@@ -65,11 +71,11 @@ class AttorneyActionsDropdown extends React.PureComponent<Props> {
   getOptions = () => {
     const { featureToggles, appeal } = this.props;
 
-    const options = appeal.docketName === 'legacy' ? DRAFT_DECISION_LEGACY_OPTIONS : DRAFT_DECISION_OPTIONS;
+    const options = appeal.isLegacyAppeal ? DRAFT_DECISION_LEGACY_OPTIONS : DRAFT_DECISION_OPTIONS;
 
     if (featureToggles.attorney_assignment_to_colocated) {
       return [...options, {
-        label: 'Add Colocated Task',
+        label: COPY.ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL,
         value: 'colocated_task'
       }];
     }

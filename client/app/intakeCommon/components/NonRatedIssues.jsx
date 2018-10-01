@@ -48,7 +48,6 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
       <Button
         name="add-issue"
         onClick={addNonRatedIssue}
-        legacyStyling={false}
         classNames={['usa-button-secondary']}
         disabled={disableAddNonRatedIssue}
       >

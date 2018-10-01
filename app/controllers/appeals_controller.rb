@@ -31,6 +31,14 @@ class AppealsController < ApplicationController
     return handle_non_critical_error("new_documents", e)
   end
 
+  def power_of_attorney
+    render json: {
+      representative_type: appeal.representative_type,
+      representative_name: appeal.representative_name,
+      representative_address: appeal.representative_address
+    }
+  end
+
   def show
     no_cache
 
@@ -86,7 +94,13 @@ class AppealsController < ApplicationController
                           name: "AppealsController.get_vso_appeals_for_file_number") do
       vso_participant_ids = current_user.vsos_user_represents.map { |poa| poa[:participant_id] }
 
-      appeals = Veteran.find_by(file_number: file_number).accessible_appeals_for_poa(vso_participant_ids)
+      veteran = Veteran.find_by(file_number: file_number)
+
+      appeals = if veteran
+                  veteran.accessible_appeals_for_poa(vso_participant_ids)
+                else
+                  []
+                end
       render json: {
         appeals: json_appeals(appeals)[:data]
       }

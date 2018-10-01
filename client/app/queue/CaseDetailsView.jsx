@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { bindActionCreators } from 'redux';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -11,11 +12,14 @@ import AppellantDetail from './AppellantDetail';
 import VeteranDetail from './VeteranDetail';
 import VeteranCasesView from './VeteranCasesView';
 import CaseHearingsDetail from './CaseHearingsDetail';
+import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
 import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
 import SendToLocationModal from './components/SendToLocationModal';
+import { resetErrorMessages, resetSuccessMessages } from './uiReducer/uiActions';
+import CaseTimeline from './CaseTimeline';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
@@ -33,10 +37,11 @@ const horizontalRuleStyling = css({
   marginBottom: '3rem'
 });
 
-const PowerOfAttorneyDetail = ({ poa }) => <p>{poa.representative_type} - {poa.representative_name}</p>;
-
 class CaseDetailsView extends React.PureComponent {
-  componentDidMount = () => window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
+  componentDidMount = () => {
+    window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
+    this.props.resetErrorMessages();
+  }
 
   render = () => {
     const {
@@ -67,15 +72,16 @@ class CaseDetailsView extends React.PureComponent {
       <StickyNavContentArea>
         <CaseDetailsIssueList
           title="Issues"
-          isLegacyAppeal={appeal.docketName === 'legacy'}
+          isLegacyAppeal={appeal.isLegacyAppeal}
           issues={appeal.issues}
         />
-        <PowerOfAttorneyDetail title="Power of Attorney" poa={appeal.powerOfAttorney} />
+        <PowerOfAttorneyDetail title="Power of Attorney" appealId={appealId} />
         {appeal.hearings.length &&
         <CaseHearingsDetail title="Hearings" appeal={appeal} />}
         <VeteranDetail title="About the Veteran" appeal={appeal} />
         {!_.isNull(appeal.appellantFullName) &&
         <AppellantDetail title="About the Appellant" appeal={appeal} />}
+        <CaseTimeline title="Case Timeline" appeal={appeal} />}
       </StickyNavContentArea>
     </AppSegment>;
   };
@@ -100,4 +106,11 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-export default connect(mapStateToProps)(CaseDetailsView);
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    resetErrorMessages,
+    resetSuccessMessages
+  }, dispatch)
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(CaseDetailsView);

@@ -5,7 +5,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:latest
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:ruby-2.5.1
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
@@ -44,29 +44,39 @@ jobs:
 
       - restore_cache:
           keys:
-            - vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+            - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
 
       - run:
           name: Bundle install
           command: bundle install --path vendor/bundle
 
       - save_cache:
-          key: vendor-bundle-v1-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+          key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
           paths:
-            - vendor/bundle
+            - ~/project/vendor/bundle
 
       - restore_cache:
           name: Restore yarn cache
-          key: dot-cache-yarn-v1-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
 
       - run:
           name: yarn install
           command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
       - save_cache:
-          key: dot-cache-yarn-v1-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
           paths:
             - ~/.cache/yarn
+
+      - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.6.1
+
+      - run:
+          name: Wait for database
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
       - run:
           name: Database setup
@@ -126,6 +136,10 @@ jobs:
       - store_artifacts:
           name: Store capybara screenshots
           path: ~/project/tmp/capybara
+
+      - store_artifacts:
+          name: Store rails test log
+          path: ~/project/log/test.log
 
       - store_artifacts:
           name: Store testfile ordering

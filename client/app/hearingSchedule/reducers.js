@@ -23,6 +23,36 @@ const reducers = (state = initialState, action = {}) => {
         $set: action.payload.schedulePeriod
       }
     });
+  case ACTIONS.RECEIVE_REGIONAL_OFFICES:
+    return update(state, {
+      regionalOffices: {
+        $set: action.payload.regionalOffices
+      }
+    });
+  case ACTIONS.REGIONAL_OFFICE_CHANGE:
+    return update(state, {
+      selectedRegionalOffice: {
+        $set: action.payload.regionalOffice
+      }
+    });
+  case ACTIONS.RECEIVE_UPCOMING_HEARING_DAYS:
+    return update(state, {
+      upcomingHearingDays: {
+        $set: action.payload.upcomingHearingDays
+      }
+    });
+  case ACTIONS.RECEIVE_VETERANS_READY_FOR_HEARING:
+    return update(state, {
+      veteransReadyForHearing: {
+        $set: action.payload.veterans
+      }
+    });
+  case ACTIONS.SELECTED_HEARING_DAY_CHANGE:
+    return update(state, {
+      selectedHearingDay: {
+        $set: action.payload.selectedHearingDay
+      }
+    });
   case ACTIONS.SCHEDULE_PERIOD_ERROR:
     return update(state, {
       spErrorDetails: {
@@ -161,6 +191,18 @@ const reducers = (state = initialState, action = {}) => {
         'schedulePeriod',
         'vacolsUpload'
       ]
+    });
+  case ACTIONS.TOGGLE_TYPE_FILTER_DROPDOWN:
+    return update(state, {
+      $toggle: ['filterTypeIsOpen']
+    });
+  case ACTIONS.TOGGLE_LOCATION_FILTER_DROPDOWN:
+    return update(state, {
+      $toggle: ['filterLocationIsOpen']
+    });
+  case ACTIONS.TOGGLE_VLJ_FILTER_DROPDOWN:
+    return update(state, {
+      $toggle: ['filterVljIsOpen']
     });
   default:
     return state;

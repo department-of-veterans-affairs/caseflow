@@ -8,6 +8,7 @@
 
 class EndProductEstablishment < ApplicationRecord
   class EstablishedEndProductNotFound < StandardError; end
+  class ContentionCreationFailed < StandardError; end
 
   attr_accessor :valid_modifiers, :special_issues
   # In AMA reviews, we may create 2 end products at the same time. To avoid using
@@ -16,6 +17,7 @@ class EndProductEstablishment < ApplicationRecord
   belongs_to :source, polymorphic: true
 
   class InvalidEndProductError < StandardError; end
+  class NoAvailableModifiers < StandardError; end
 
   class BGSSyncError < RuntimeError
     def initialize(error, end_product_establishment)
@@ -70,26 +72,34 @@ class EndProductEstablishment < ApplicationRecord
 
   # VBMS will return ALL contentions on a end product when you create contentions,
   # not just the ones that were just created.
-  def create_contentions!(for_objects)
+  def create_contentions!
+    issues_without_contentions = request_issues_without_contentions
+    return if issues_without_contentions.empty?
+
     set_establishment_values_from_source
 
     # Currently not making any assumptions about the order in which VBMS returns
     # the created contentions. Instead find the issue by matching text.
-    create_contentions_in_vbms(for_objects.pluck(:description)).each do |contention|
-      matching_object = for_objects.find { |object| object.description == contention.text }
-      matching_object && matching_object.update!(contention_reference_id: contention.id)
+    create_contentions_in_vbms(issues_without_contentions.pluck(:description)).each do |contention|
+      issue = issues_without_contentions.find do |i|
+        i.description == contention.text && i.contention_reference_id.nil?
+      end
+      issue && issue.update!(contention_reference_id: contention.id)
     end
 
-    fail ContentionCreationFailed if for_objects.any? { |object| !object.contention_reference_id }
+    fail ContentionCreationFailed if issues_without_contentions.any? { |issue| issue.contention_reference_id.nil? }
   end
 
   def remove_contention!(for_object)
     VBMSService.remove_contention!(contention_for_object(for_object))
+    for_object.update!(removed_at: Time.zone.now)
   end
 
   # Committing an end product establishment is a way to signify that any other actions performed
   # as part of a larger atomic operation containing the end product establishment are also complete.
   # Those actions could be creating contentions or other end product establishments.
+  # NOTE that nothing prevents methods from being called (e.g. remove_contention) once
+  # a EPE is "committed". It is advisory, not transactional.
   def commit!
     update!(committed_at: Time.zone.now) unless committed?
   end
@@ -134,10 +144,9 @@ class EndProductEstablishment < ApplicationRecord
 
       sync_source!
     end
-
-    # TODO: This is sort of janky. Let's rethink the error handling logic here
+  rescue EstablishedEndProductNotFound => e
+    raise e
   rescue StandardError => e
-    raise e if e.is_a?(EstablishedEndProductNotFound)
     raise BGSSyncError.new(e, self)
   end
 
@@ -154,7 +163,47 @@ class EndProductEstablishment < ApplicationRecord
     !EndProduct::INACTIVE_STATUSES.include?(synced_status)
   end
 
+  def create_associated_rated_issues!
+    request_issues_to_associate = unassociated_rated_request_issues
+
+    is_rated = true
+    return if code != source.issue_code(is_rated)
+    return if request_issues_to_associate.empty?
+
+    VBMSService.associate_rated_issues!(
+      claim_id: reference_id,
+      rated_issue_contention_map: rated_issue_contention_map(request_issues_to_associate)
+    )
+
+    RequestIssue.where(id: request_issues_to_associate.map(&:id)).update_all(
+      rating_issue_associated_at: Time.zone.now
+    )
+  end
+
   private
+
+  def request_issues
+    source.request_issues.select { |ri| ri.end_product_establishment == self }
+  end
+
+  def rated_request_issues
+    request_issues.select(&:rated?)
+  end
+
+  def unassociated_rated_request_issues
+    rated_request_issues.select { |ri| ri.rating_issue_associated_at.nil? }
+  end
+
+  def request_issues_without_contentions
+    request_issues.select { |ri| ri.contention_reference_id.nil? }
+  end
+
+  def rated_issue_contention_map(request_issues_to_associate)
+    request_issues_to_associate.inject({}) do |contention_map, issue|
+      contention_map[issue.rating_issue_reference_id] = issue.contention_reference_id
+      contention_map
+    end
+  end
 
   def invalid_modifiers
     @invalid_modifiers || []
@@ -162,6 +211,16 @@ class EndProductEstablishment < ApplicationRecord
 
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
+  end
+
+  def benefit_type_code
+    @benefit_type_code ||= begin
+      if veteran.date_of_death.nil?
+        EndProduct::BENEFIT_TYPE_CODE_LIVE
+      else
+        EndProduct::BENEFIT_TYPE_CODE_DEATH
+      end
+    end
   end
 
   def establish_claim_in_vbms(end_product)
@@ -172,17 +231,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def end_product_to_establish
-    @end_product_to_establish ||= EndProduct.new(
-      claim_id: reference_id,
-      claim_date: claim_date,
-      claim_type_code: code,
-      payee_code: payee_code,
-      claimant_participant_id: claimant_participant_id,
-      modifier: find_open_modifier,
-      suppress_acknowledgement_letter: false,
-      gulf_war_registry: false,
-      station_of_jurisdiction: station
-    )
+    @end_product_to_establish ||= end_product_with_modifier(find_open_modifier)
   end
 
   def fetched_result
@@ -190,13 +239,19 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def cached_result
-    @cached_result ||= EndProduct.new(
+    @cached_result ||= end_product_with_modifier
+  end
+
+  def end_product_with_modifier(the_modifier = nil)
+    the_modifier ||= modifier
+    EndProduct.new(
       claim_id: reference_id,
       claim_date: claim_date,
       claim_type_code: code,
       payee_code: payee_code,
+      benefit_type_code: benefit_type_code,
       claimant_participant_id: claimant_participant_id,
-      modifier: modifier,
+      modifier: the_modifier,
       suppress_acknowledgement_letter: false,
       gulf_war_registry: false,
       station_of_jurisdiction: station
@@ -226,6 +281,8 @@ class EndProductEstablishment < ApplicationRecord
         return modifier
       end
     end
+
+    fail NoAvailableModifiers
   end
 
   def sync_source!

@@ -15,7 +15,8 @@ import {
   setIssueDescription,
   setIssueDecisionDate
 } from '../../actions/ama';
-import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES } from '../../constants';
+import { REQUEST_STATE } from '../../../intakeCommon/constants';
 import { getIntakeStatus, issueCountSelector } from '../../selectors';
 import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
@@ -88,7 +89,6 @@ class FinishNextButton extends React.PureComponent {
       name="finish-intake"
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-      legacyStyling={false}
       disabled={!this.props.issueCount}
     >
       Establish EP

@@ -42,13 +42,13 @@ class IssuesController < ApplicationController
     appeal.issues.map do |issue|
       ActiveModelSerializers::SerializableResource.new(
         issue,
-        serializer: ::WorkQueue::IssueSerializer
+        serializer: ::WorkQueue::LegacyIssueSerializer
       ).as_json[:data][:attributes]
     end
   end
 
   def validate_access_to_task
-    current_user.access_to_task?(appeal.vacols_id)
+    current_user.access_to_legacy_task?(appeal.vacols_id)
   end
 
   def appeal

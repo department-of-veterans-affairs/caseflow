@@ -48,12 +48,12 @@ export default class ReviewAssignments extends React.Component {
 
   getAlertButtons = () => {
     return <React.Fragment>
-      <Button
+      <Link
         name="go-back"
-        button="primary"
+        button="secondary"
         to="/schedule/build/upload">
         Go back
-      </Button>
+      </Link>
       <Button
         name="confirmAssignments"
         button="primary"
@@ -122,11 +122,16 @@ export default class ReviewAssignments extends React.Component {
       />;
     }
 
-    if (this.props.schedulePeriod.finalized ||
-        this.props.schedulePeriod.cannotFinalize) {
+    if (this.props.schedulePeriod.finalized) {
       return <StatusMessage
         type="status"
         title="This page has expired."
+        messageText={<Link to="/schedule">Go back to home</Link>}
+      />;
+    } else if (this.props.schedulePeriod.canFinalize === false) {
+      return <StatusMessage
+        type="status"
+        title="Schedule is being submitted to VACOLS."
         messageText={<Link to="/schedule">Go back to home</Link>}
       />;
     }

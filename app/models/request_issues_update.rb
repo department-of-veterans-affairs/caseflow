@@ -2,6 +2,8 @@
 # a review, typically to make a correction.
 
 class RequestIssuesUpdate < ApplicationRecord
+  include Asyncable
+
   belongs_to :user
   belongs_to :review, polymorphic: true
 
@@ -10,6 +12,7 @@ class RequestIssuesUpdate < ApplicationRecord
 
   def perform!
     return false unless validate_before_perform
+    return false if processed?
 
     transaction do
       review.create_issues!(new_issues)
@@ -19,9 +22,14 @@ class RequestIssuesUpdate < ApplicationRecord
         before_request_issue_ids: before_issues.map(&:id),
         after_request_issue_ids: after_issues.map(&:id)
       )
+      submit_for_processing!
     end
 
-    review.on_request_issues_update!(self)
+    if run_async?
+      RequestIssuesUpdateJob.perform_later(self)
+    else
+      RequestIssuesUpdateJob.perform_now(self)
+    end
 
     true
   end
@@ -60,7 +68,7 @@ class RequestIssuesUpdate < ApplicationRecord
       review.request_issues.find_or_initialize_by(
         rating_issue_profile_date: issue_data[:profile_date],
         rating_issue_reference_id: issue_data[:reference_id],
-        description: issue_data[:description]
+        description: issue_data[:decision_text]
       )
     end
   end

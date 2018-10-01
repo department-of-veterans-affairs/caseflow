@@ -4,6 +4,7 @@ class Task < ApplicationRecord
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
+  has_many :attorney_case_reviews
 
   validates :assigned_to, :appeal, :type, :status, presence: true
 
@@ -30,11 +31,13 @@ class Task < ApplicationRecord
   end
 
   def self.create_from_params(params, current_user)
-    new.verify_user_access(current_user)
+    verify_user_can_assign(current_user)
+    params = params.each { |p| p["instructions"] = [p["instructions"]] if p.key?("instructions") }
     create(params)
   end
 
   def update_from_params(params, _current_user)
+    params["instructions"] = [instructions, params["instructions"]].flatten if params.key?("instructions")
     update(params)
   end
 
@@ -46,8 +49,30 @@ class Task < ApplicationRecord
     appeal_type == "Appeal"
   end
 
+  def days_waiting
+    (Time.zone.today - assigned_at.to_date).to_i if assigned_at
+  end
+
+  def assigned_by_name
+    assigned_by.try(:full_name)
+  end
+
   def colocated_task?
     type == "ColocatedTask"
+  end
+
+  def latest_attorney_case_review
+    sub_task ? sub_task.attorney_case_reviews.order(:created_at).last : nil
+  end
+
+  def prepared_by_display_name
+    return nil unless latest_attorney_case_review
+
+    if latest_attorney_case_review.attorney.try(:full_name)
+      return latest_attorney_case_review.attorney.full_name.split(" ")
+    end
+
+    ["", ""]
   end
 
   def mark_as_complete!
@@ -59,14 +84,49 @@ class Task < ApplicationRecord
     update_status_if_children_tasks_are_complete
   end
 
+  def can_user_access?(user)
+    return true if assigned_to == user || assigned_by == user
+    false
+  end
+
   def verify_user_access(user)
+    unless can_user_access?(user)
+      fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot access this task"
+    end
+  end
+
+  def self.verify_user_can_assign(user)
     unless (user.attorney_in_vacols? && FeatureToggle.enabled?(:attorney_assignment_to_colocated, user: user)) ||
            (user.judge_in_vacols? && FeatureToggle.enabled?(:judge_assignment_to_attorney, user: user))
       fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot assign this task"
     end
   end
 
+  def root_task(task_id = nil)
+    task_id = id if task_id.nil?
+    return parent.root_task(task_id) if parent
+    return self if type == RootTask.name
+    fail Caseflow::Error::NoRootTask, task_id: task_id
+  end
+
+  def previous_task
+    nil
+  end
+
+  def assignable_organizations
+    Organization.assignable
+  end
+
+  def assignable_users
+    return assigned_to.members if assigned_to.is_a?(Organization)
+    parent.assigned_to.members if parent && parent.assigned_to.is_a?(Organization)
+  end
+
   private
+
+  def sub_task
+    children.first
+  end
 
   def update_status_if_children_tasks_are_complete
     if children.any? && children.reject { |t| t.status == "completed" }.empty?
@@ -82,7 +142,7 @@ class Task < ApplicationRecord
   end
 
   def update_parent_status
-    parent.when_child_task_completed if saved_change_to_status? && parent
+    parent.when_child_task_completed if saved_change_to_status? && completed? && parent
   end
 
   def set_assigned_at_and_update_parent_status

@@ -1,10 +1,12 @@
-import { ACTIONS, REQUEST_STATE } from '../constants';
-import { FORM_TYPES } from '../../intakeCommon/constants';
-import { update } from '../../util/ReducerUtil';
-import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, getPageError, formatRelationships } from '../util';
-import { formatRatings } from '../../intakeCommon/util';
 import _ from 'lodash';
+
+import { ACTIONS } from '../constants';
+import { applyCommonReducers } from './common';
+import { FORM_TYPES, REQUEST_STATE } from '../../intakeCommon/constants';
+import { formatDateStr } from '../../util/DateUtil';
+import { formatRatings } from '../../intakeCommon/util';
+import { getReceiptDateError, getBenefitTypeError, getPageError, formatRelationships } from '../util';
+import { update } from '../../util/ReducerUtil';
 
 const getInformalConferenceError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.informal_conference, 0) === 'blank') && 'Please select an option.'
@@ -31,6 +33,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     receiptDate: {
       $set: serverIntake.receipt_date && formatDateStr(serverIntake.receipt_date)
+    },
+    benefitType: {
+      $set: serverIntake.benefit_type
     },
     claimantNotVeteran: {
       $set: serverIntake.claimant_not_veteran
@@ -61,8 +66,11 @@ const updateFromServerIntake = (state, serverIntake) => {
 
 export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
+    addIssuesModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
+    benefitType: null,
+    benefitTypeError: null,
     informalConference: null,
     informalConferenceError: null,
     sameOffice: null,
@@ -120,6 +128,12 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         $set: action.payload.receiptDate
       }
     });
+  case ACTIONS.SET_BENEFIT_TYPE:
+    return update(state, {
+      benefitType: {
+        $set: action.payload.benefitType
+      }
+    });
   case ACTIONS.SET_CLAIMANT_NOT_VETERAN:
     return update(state, {
       claimantNotVeteran: {
@@ -160,6 +174,9 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       receiptDateError: {
         $set: null
       },
+      benefitTypeError: {
+        $set: null
+      },
       isReviewed: {
         $set: true
       },
@@ -176,6 +193,9 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       },
       sameOfficeError: {
         $set: getSameOfficeError(action.payload.responseErrorCodes)
+      },
+      benefitTypeError: {
+        $set: getBenefitTypeError(action.payload.responseErrorCodes)
       },
       receiptDateError: {
         $set: getReceiptDateError(action.payload.responseErrorCodes, state)
@@ -282,6 +302,6 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       }
     });
   default:
-    return state;
+    return applyCommonReducers(state, action);
   }
 };

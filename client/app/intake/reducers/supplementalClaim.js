@@ -1,9 +1,10 @@
-import { ACTIONS, REQUEST_STATE } from '../constants';
-import { FORM_TYPES } from '../../intakeCommon/constants';
-import { update } from '../../util/ReducerUtil';
+import { ACTIONS } from '../constants';
+import { applyCommonReducers } from './common';
+import { FORM_TYPES, REQUEST_STATE } from '../../intakeCommon/constants';
 import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, getPageError, formatRelationships } from '../util';
 import { formatRatings } from '../../intakeCommon/util';
+import { getReceiptDateError, getBenefitTypeError, getPageError, formatRelationships } from '../util';
+import { update } from '../../util/ReducerUtil';
 
 const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.SUPPLEMENTAL_CLAIM.key) {
@@ -16,6 +17,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     receiptDate: {
       $set: serverIntake.receipt_date && formatDateStr(serverIntake.receipt_date)
+    },
+    benefitType: {
+      $set: serverIntake.benefit_type
     },
     claimantNotVeteran: {
       $set: serverIntake.claimant_not_veteran
@@ -46,8 +50,11 @@ const updateFromServerIntake = (state, serverIntake) => {
 
 export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
+    addIssuesModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
+    benefitType: null,
+    benefitTypeError: null,
     claimantNotVeteran: null,
     claimant: null,
     payeeCode: null,
@@ -89,6 +96,12 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: action.payload.receiptDate
       }
     });
+  case ACTIONS.SET_BENEFIT_TYPE:
+    return update(state, {
+      benefitType: {
+        $set: action.payload.benefitType
+      }
+    });
   case ACTIONS.SET_CLAIMANT_NOT_VETERAN:
     return update(state, {
       claimantNotVeteran: {
@@ -123,6 +136,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       receiptDateError: {
         $set: null
       },
+      benefitTypeError: {
+        $set: null
+      },
       isReviewed: {
         $set: true
       },
@@ -136,6 +152,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
     return update(state, {
       receiptDateError: {
         $set: getReceiptDateError(action.payload.responseErrorCodes, state)
+      },
+      benefitTypeError: {
+        $set: getBenefitTypeError(action.payload.responseErrorCodes)
       },
       requestStatus: {
         submitReview: {
@@ -239,6 +258,6 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       }
     });
   default:
-    return state;
+    return applyCommonReducers(state, action);
   }
 };

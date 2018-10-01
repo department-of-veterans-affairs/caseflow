@@ -1,7 +1,6 @@
 class LegacyTasksController < ApplicationController
   include Errors
 
-  before_action :verify_queue_access
   before_action :verify_task_assignment_access, only: [:create, :update]
 
   ROLES = Constants::USER_ROLE_TYPES.keys.freeze
@@ -11,7 +10,7 @@ class LegacyTasksController < ApplicationController
   end
 
   def index
-    current_role = (params[:role] || user.vacols_roles.first).downcase
+    current_role = (params[:role] || user.vacols_roles.first).try(:downcase)
     return invalid_role_error unless ROLES.include?(current_role)
     respond_to do |format|
       format.html do

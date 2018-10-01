@@ -8,7 +8,7 @@ import COPY from '../../../COPY.json';
 import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
 import DECASS_WORK_PRODUCT_TYPES from '../../../constants/DECASS_WORK_PRODUCT_TYPES.json';
 
-import SearchableDropdown from '../../components/SearchableDropdown';
+import SearchableDropdown, { type OptionType } from '../../components/SearchableDropdown';
 import {
   appealWithDetailSelector,
   tasksForAppealAssignedToAttorneySelector,
@@ -57,10 +57,7 @@ type Props = Params & {|
 |};
 
 type ComponentState = {
-  selectedOption: ?{
-    label: string,
-    value: string
-  }
+  selectedOption: ?OptionType
 };
 
 class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
@@ -73,6 +70,9 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
   handleChange = (option) => {
     this.setState({ selectedOption: option });
 
+    if (!option) {
+      return;
+    }
     if (option.value === ASSIGN) {
       return;
     }
@@ -92,7 +92,8 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
     if (actionType === DECISION_TYPES.OMO_REQUEST) {
       const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, {
         location: 'omo_office',
-        attorney_id: task.assignedBy.pgId
+        attorney_id: task.assignedBy.pgId,
+        isLegacyAppeal: appeal.isLegacyAppeal
       });
       const successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
 
@@ -103,10 +104,12 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
           this.props.deleteAppeal(appealId);
         });
     } else {
+      const nextPage = appeal.isLegacyAppeal ? 'dispositions' : 'special_issues';
+
       this.props.stageAppeal(appealId);
 
       history.push('');
-      history.replace(`/queue/appeals/${appealId}/dispositions`);
+      history.replace(`/queue/appeals/${appealId}/${nextPage}`);
     }
   }
 

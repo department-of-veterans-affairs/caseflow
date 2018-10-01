@@ -27,7 +27,7 @@ RSpec.describe TasksController, type: :controller do
     end
     let!(:task5) { create(:colocated_task, assigned_to: user, status: "in_progress") }
     let!(:task_ama_colocated_aod) do
-      create(:ama_colocated_task, assigned_to: user, appeal: create(:appeal, advanced_on_docket: true))
+      create(:ama_colocated_task, assigned_to: user, appeal: create(:appeal, :advanced_on_docket))
     end
     let!(:task6) { create(:colocated_task, assigned_to: user, status: "completed") }
     let!(:task7) { create(:colocated_task) }
@@ -63,9 +63,9 @@ RSpec.describe TasksController, type: :controller do
 
         ama_tasks = response_body.select { |task| task["type"] == "attorney_tasks" }
         expect(ama_tasks.size).to eq 3
-        expect(ama_tasks.first["attributes"]["status"]).to eq "assigned"
-        expect(ama_tasks.second["attributes"]["status"]).to eq "in_progress"
-        expect(ama_tasks.third["attributes"]["status"]).to eq "on_hold"
+        expect(ama_tasks.count { |task| task["attributes"]["status"] == "assigned" }).to eq 1
+        expect(ama_tasks.count { |task| task["attributes"]["status"] == "in_progress" }).to eq 1
+        expect(ama_tasks.count { |task| task["attributes"]["status"] == "on_hold" }).to eq 1
       end
     end
 
@@ -126,9 +126,9 @@ RSpec.describe TasksController, type: :controller do
     context "when user has no role" do
       let(:role) { nil }
 
-      it "should return a 400 invalid role error" do
+      it "should return 200" do
         get :index, params: { user_id: user.id, role: "unknown" }
-        expect(response.status).to eq 400
+        expect(response.status).to eq 200
       end
     end
   end
@@ -223,7 +223,7 @@ RSpec.describe TasksController, type: :controller do
              {
                "external_id": appeal.vacols_id,
                "type": "ColocatedTask",
-               "action": "substitution_determination",
+               "action": "missing_records",
                "instructions": "another one"
              }]
           end
@@ -236,13 +236,13 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.size).to eq 2
             expect(response_body.first["attributes"]["status"]).to eq "assigned"
             expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.first["attributes"]["instructions"]).to eq "do this"
+            expect(response_body.first["attributes"]["instructions"][0]).to eq "do this"
             expect(response_body.first["attributes"]["action"]).to eq "address_verification"
 
             expect(response_body.second["attributes"]["status"]).to eq "assigned"
             expect(response_body.second["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.second["attributes"]["instructions"]).to eq "another one"
-            expect(response_body.second["attributes"]["action"]).to eq "substitution_determination"
+            expect(response_body.second["attributes"]["instructions"][0]).to eq "another one"
+            expect(response_body.second["attributes"]["action"]).to eq "missing_records"
             # assignee should be the same person
             id = response_body.second["attributes"]["assigned_to"]["id"]
             expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq id
@@ -266,7 +266,7 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.size).to eq 1
             expect(response_body.first["attributes"]["status"]).to eq "assigned"
             expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.first["attributes"]["instructions"]).to eq "do this"
+            expect(response_body.first["attributes"]["instructions"][0]).to eq "do this"
             expect(response_body.first["attributes"]["action"]).to eq "address_verification"
           end
         end
@@ -289,7 +289,7 @@ RSpec.describe TasksController, type: :controller do
     end
   end
 
-  describe "PATCH /task/:id" do
+  describe "PATCH /tasks/:id" do
     let(:colocated) { create(:user) }
     let(:attorney) { create(:user) }
     let(:judge) { create(:user) }
@@ -429,6 +429,138 @@ RSpec.describe TasksController, type: :controller do
         expect(task["attributes"]["appeal_id"]).to eq appeal.id
 
         expect(appeal.tasks.count).to eq 2
+      end
+    end
+  end
+
+  describe "GET tasks/:id/assignable_organizations" do
+    context "when the task belongs to the user" do
+      let(:user) { FactoryBot.create(:user) }
+      let(:task) { FactoryBot.create(:generic_task, assigned_to: user) }
+      before { User.authenticate!(user: user) }
+
+      context "when there are Organizations in the table" do
+        let(:org_count) { 8 }
+        before { FactoryBot.create_list(:organization, org_count) }
+
+        it "should return a list of all Organizations" do
+          get :assignable_organizations, params: { id: task.id }
+          expect(response.status).to eq(200)
+          expect(JSON.parse(response.body)["organizations"].length).to eq(org_count)
+        end
+      end
+
+      context "when there are Organizations and Organization subclasses in the table" do
+        let(:org_count) { 5 }
+        before do
+          FactoryBot.create_list(:organization, org_count)
+          FactoryBot.create_list(:vso, 2)
+          FactoryBot.create_list(:bva, 1)
+        end
+
+        it "should return only a list of the Organizations" do
+          get :assignable_organizations, params: { id: task.id }
+          expect(response.status).to eq(200)
+          expect(JSON.parse(response.body)["organizations"].length).to eq(org_count)
+        end
+      end
+    end
+
+    context "when the task does not belong to the user" do
+      let(:user) { FactoryBot.create(:user) }
+      let(:task) { FactoryBot.create(:generic_task) }
+      before { User.authenticate!(user: user) }
+
+      it "should redirect to unauthorized" do
+        get :assignable_organizations, params: { id: task.id }
+        expect(response.status).to eq(302)
+        expect(response.location).to match(/\/unauthorized$/)
+      end
+    end
+  end
+
+  describe "GET tasks/:id/assignable_users" do
+    context "when the task belongs to the user" do
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:field) { "sdept" }
+
+      let(:org_1) { FactoryBot.create(:organization) }
+      let(:org_1_member_cnt) { 6 }
+      let(:org_1_members) { FactoryBot.create_list(:user, org_1_member_cnt) }
+      let(:org_1_assignee) { org_1_members[0] }
+      let(:org_1_non_assignee) { org_1_members[1] }
+      let(:org_1_team_task) { FactoryBot.create(:generic_task, assigned_to: org_1, parent: root_task) }
+      let(:org_1_member_task) { FactoryBot.create(:generic_task, assigned_to: org_1_assignee, parent: org_1_team_task) }
+
+      let(:org_2) { FactoryBot.create(:organization) }
+      let(:org_2_member_cnt) { 17 }
+      let(:org_2_members) { FactoryBot.create_list(:user, org_2_member_cnt) }
+      let(:org_2_assignee) { org_2_members[0] }
+      let(:org_2_non_assignee) { org_2_members[1] }
+      let(:org_2_team_task) { FactoryBot.create(:generic_task, assigned_to: org_2, parent: org_1_member_task) }
+      let!(:org_2_member_task) do
+        FactoryBot.create(:generic_task, assigned_to: org_2_assignee, parent: org_2_team_task)
+      end
+
+      before do
+        StaffFieldForOrganization.create!(organization: org_1, name: field, values: [org_1.name])
+        org_1_members.each do |u|
+          FeatureToggle.enable!(org_1.feature.to_sym, users: [u.css_id])
+          FactoryBot.create(:staff, user: u, "#{field}": org_1.name)
+        end
+
+        StaffFieldForOrganization.create!(organization: org_2, name: field, values: [org_2.name])
+        org_2_members.each do |u|
+          FeatureToggle.enable!(org_2.feature.to_sym, users: [u.css_id])
+          FactoryBot.create(:staff, user: u, "#{field}": org_2.name)
+        end
+      end
+
+      after do
+        FeatureToggle.disable!(org_1.feature.to_sym)
+        FeatureToggle.disable!(org_2.feature.to_sym)
+      end
+
+      context "when user is assigned an individual task" do
+        before { User.authenticate!(user: org_1_assignee) }
+
+        it "should return a list of all members for individual task" do
+          get :assignable_users, params: { id: org_1_member_task.id }
+          expect(response.status).to eq(200)
+          response_body = JSON.parse(response.body)
+          expect(response_body["users"].length).to eq(org_1_member_cnt)
+        end
+
+        it "should return a list of all members for organization task" do
+          get :assignable_users, params: { id: org_1_team_task.id }
+          expect(response.status).to eq(200)
+          response_body = JSON.parse(response.body)
+          expect(response_body["users"].length).to eq(org_1_member_cnt)
+        end
+
+        it "should redirect to unauthorized for other organization child team task" do
+          get :assignable_users, params: { id: org_2_team_task.id }
+          expect(response.status).to eq(302)
+          expect(response.location).to match(/\/unauthorized$/)
+        end
+
+        it "should redirect to unauthorized for other organization child member task" do
+          get :assignable_users, params: { id: org_2_member_task.id }
+          expect(response.status).to eq(302)
+          expect(response.location).to match(/\/unauthorized$/)
+        end
+      end
+    end
+
+    context "when the task does not belong to the user" do
+      let(:user) { FactoryBot.create(:user) }
+      let(:task) { FactoryBot.create(:generic_task) }
+      before { User.authenticate!(user: user) }
+
+      it "should redirect to unauthorized" do
+        get :assignable_users, params: { id: task.id }
+        expect(response.status).to eq(302)
+        expect(response.location).to match(/\/unauthorized$/)
       end
     end
   end

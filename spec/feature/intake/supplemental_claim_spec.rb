@@ -40,17 +40,21 @@ RSpec.feature "Supplemental Claim Intake" do
 
   let(:receipt_date) { Date.new(2018, 4, 20) }
 
+  let(:benefit_type) { "compensation" }
+
   let(:untimely_days) { 372.days }
 
   let!(:current_user) do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
+  let(:profile_date) { (receipt_date - untimely_days + 4.days).to_time(:local) }
+
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - untimely_days + 1.day,
-      profile_date: receipt_date - untimely_days + 4.days,
+      profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
         { reference_id: "def456", decision_text: "PTSD denied" }
@@ -62,13 +66,16 @@ RSpec.feature "Supplemental Claim Intake" do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - untimely_days,
-      profile_date: receipt_date - untimely_days + 3.days,
+      profile_date: profile_date - 1.day,
       issues: [
         { reference_id: "abc123", decision_text: "Untimely rating issue 1" },
         { reference_id: "def456", decision_text: "Untimely rating issue 2" }
       ]
     )
   end
+
+  let(:search_bar_title) { "Enter the Veteran's ID" }
+  let(:search_page_title) { "Search for Veteran ID" }
 
   it "Creates an end product" do
     # Testing two relationships, tests 1 relationship in HRL and nil in Appeal
@@ -108,13 +115,17 @@ RSpec.feature "Supplemental Claim Intake" do
 
     safe_click ".cf-submit.usa-button"
 
-    expect(page).to have_content("process this Supplemental Claim (VA Form 21-526b).")
+    expect(page).to have_content(search_page_title)
 
-    fill_in "Search small", with: "12341234"
+    fill_in search_bar_title, with: "12341234"
 
     click_on "Search"
 
     expect(page).to have_current_path("/intake/review_request")
+
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Compensation", match: :prefer_exact).click
+    end
 
     fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
     safe_click "#button-submit-review"
@@ -162,6 +173,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(supplemental_claim).to_not be_nil
     expect(supplemental_claim.receipt_date).to eq(receipt_date)
+    expect(supplemental_claim.benefit_type).to eq(benefit_type)
     expect(supplemental_claim.claimants.first).to have_attributes(
       participant_id: "5382910293",
       payee_code: "11"
@@ -210,7 +222,7 @@ RSpec.feature "Supplemental Claim Intake" do
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "042",
         end_product_label: "Supplemental Claim Rating",
-        end_product_code: SupplementalClaim::END_PRODUCT_RATING_CODE,
+        end_product_code: SupplementalClaim::END_PRODUCT_CODES[:rating],
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293"
@@ -220,7 +232,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     ratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
-      code: SupplementalClaim::END_PRODUCT_RATING_CODE
+      code: SupplementalClaim::END_PRODUCT_CODES[:rating]
     )
 
     expect(ratings_end_product_establishment).to have_attributes(
@@ -239,7 +251,7 @@ RSpec.feature "Supplemental Claim Intake" do
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "041",
         end_product_label: "Supplemental Claim Nonrating",
-        end_product_code: SupplementalClaim::END_PRODUCT_NONRATING_CODE,
+        end_product_code: SupplementalClaim::END_PRODUCT_CODES[:nonrating],
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293"
@@ -248,7 +260,7 @@ RSpec.feature "Supplemental Claim Intake" do
     )
     nonratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
-      code: SupplementalClaim::END_PRODUCT_NONRATING_CODE
+      code: SupplementalClaim::END_PRODUCT_CODES[:nonrating]
     )
 
     expect(nonratings_end_product_establishment).to have_attributes(
@@ -286,9 +298,10 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(supplemental_claim.request_issues.count).to eq 2
     expect(supplemental_claim.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
-      rating_issue_profile_date: receipt_date - untimely_days + 4.days,
+      rating_issue_profile_date: profile_date,
       description: "PTSD denied",
-      decision_date: nil
+      decision_date: nil,
+      rating_issue_associated_at: Time.zone.now
     )
     expect(supplemental_claim.request_issues.last).to have_attributes(
       rating_issue_reference_id: nil,
@@ -337,14 +350,15 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  it "Allows a Veteran without ratings to create an intake" do
+  def start_supplemental_claim(test_veteran, is_comp: true)
     supplemental_claim = SupplementalClaim.create!(
-      veteran_file_number: veteran_no_ratings.file_number,
-      receipt_date: 2.days.ago
+      veteran_file_number: test_veteran.file_number,
+      receipt_date: 2.days.ago,
+      benefit_type: is_comp ? "compensation" : "education"
     )
 
     SupplementalClaimIntake.create!(
-      veteran_file_number: veteran_no_ratings.file_number,
+      veteran_file_number: test_veteran.file_number,
       user: current_user,
       started_at: 5.minutes.ago,
       detail: supplemental_claim
@@ -352,10 +366,14 @@ RSpec.feature "Supplemental Claim Intake" do
 
     Claimant.create!(
       review_request: supplemental_claim,
-      participant_id: veteran_no_ratings.participant_id
+      participant_id: test_veteran.participant_id
     )
 
     supplemental_claim.start_review!
+  end
+
+  it "Allows a Veteran without ratings to create an intake" do
+    start_supplemental_claim(veteran_no_ratings)
 
     visit "/intake"
 
@@ -377,5 +395,49 @@ RSpec.feature "Supplemental Claim Intake" do
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("Request for Supplemental Claim (VA Form 21-526b) has been processed.")
+  end
+
+  context "For new Add Issues page" do
+    def check_row(label, text)
+      row = find("tr", text: label)
+      expect(row).to have_text(text)
+    end
+
+    let!(:timely_ratings) do
+      Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: receipt_date - 40.days,
+        profile_date: receipt_date - 50.days,
+        issues: [
+          { reference_id: "abc123", decision_text: "Left knee granted" },
+          { reference_id: "def456", decision_text: "PTSD denied" }
+        ]
+      )
+    end
+
+    scenario "SC comp" do
+      start_supplemental_claim(veteran)
+      visit "/intake/add_issues"
+
+      expect(page).to have_content("Add Issues")
+      check_row("Form", "Supplemental Claim (VA Form 21-526b)")
+      check_row("Benefit type", "Compensation")
+      check_row("Claimant", "Ed Merica")
+
+      # clicking the add issues button should bring up the modal
+      safe_click "#button-add-issue"
+      expect(page).to have_content("Left knee granted")
+      expect(page).to have_content("PTSD denied")
+    end
+
+    scenario "SC non-comp" do
+      start_supplemental_claim(veteran, is_comp: false)
+      visit "/intake/add_issues"
+
+      expect(page).to have_content("Add Issues")
+      check_row("Form", "Supplemental Claim (VA Form 21-526b)")
+      check_row("Benefit type", "Education")
+      expect(page).to_not have_content("Claimant")
+    end
   end
 end

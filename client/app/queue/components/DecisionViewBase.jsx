@@ -47,7 +47,7 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
 
     blockTransitions = () => this.unblockTransitions = this.props.history.block((location) => {
       const { pathname } = location;
-      const newPathInCheckoutFlow = /^\/queue\/appeals\/[a-zA-Z0-9-]+(?:\/\S+)/;
+      const newPathInCheckoutFlow = /^\/queue\/appeals\/[a-zA-Z0-9-]+(?:\/\S+)?/;
 
       if (!newPathInCheckoutFlow.exec(pathname) && pathname !== '/queue') {
         return `${COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT} ${COPY.MODAL_CANCEL_ATTORNEY_CHECKOUT}`;
@@ -72,7 +72,7 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
         displayText: 'Cancel',
         willNeverBeLoading: true
       }, {
-        classNames: ['cf-right-side', 'cf-next-step'],
+        classNames: ['cf-right-side'],
         callback: this.goToNextStep,
         loading: this.props.savePending,
         name: 'next-button',
@@ -142,7 +142,7 @@ export default function decisionViewBase(ComponentToWrap, topLevelProps = defaul
         goToNextStep: nextStepHook = null
       } = this.state.wrapped;
 
-      if (!validation || !validation()) {
+      if (validation && !validation()) {
         return this.props.highlightInvalidFormItems(true);
       }
       this.props.highlightInvalidFormItems(false);

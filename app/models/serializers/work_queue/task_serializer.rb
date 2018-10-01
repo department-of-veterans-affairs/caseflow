@@ -3,7 +3,6 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :action
   attribute :appeal_id
   attribute :status
-  attribute :assigned_to
   attribute :assigned_at
   attribute :started_at
   attribute :completed_at
@@ -16,8 +15,16 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
     {
       first_name: object.assigned_by_display_name.first,
       last_name: object.assigned_by_display_name.last,
-      css_id: object.assigned_by.css_id,
-      pg_id: object.assigned_by.id
+      css_id: object.assigned_by.try(:css_id),
+      pg_id: object.assigned_by.try(:id)
+    }
+  end
+
+  attribute :assigned_to do
+    {
+      css_id: object.assigned_to.try(:css_id),
+      type: object.assigned_to.class.name,
+      id: object.assigned_to.id
     }
   end
 
@@ -50,6 +57,23 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   end
 
   attribute :issue_count do
-    object.appeal.issues.count
+    object.appeal.issue_count
+  end
+
+  attribute :previous_task do
+    {
+      assigned_at: object.previous_task.try(:assigned_at)
+    }
+  end
+
+  attribute :document_id do
+    object.latest_attorney_case_review ? object.latest_attorney_case_review.document_id : nil
+  end
+
+  attribute :decision_prepared_by do
+    {
+      first_name: object.prepared_by_display_name ? object.prepared_by_display_name.first : nil,
+      last_name: object.prepared_by_display_name ? object.prepared_by_display_name.last : nil
+    }
   end
 end
