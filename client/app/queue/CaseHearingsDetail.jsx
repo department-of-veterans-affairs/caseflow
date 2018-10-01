@@ -123,6 +123,7 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
   render = () => {
     const {
       appeal: {
+        caseType,
         hearings,
         appealIdsWithHearings
       }
@@ -134,7 +135,7 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
     }];
 
     return <React.Fragment>
-      {Boolean(appealIdsWithHearings.length) && <React.Fragment>
+      {caseType === 'Post Remand' && Boolean(appealIdsWithHearings.length) && <React.Fragment>
         {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL}&nbsp;
         <a href="#" onClick={this.scrollToCaseList}>{COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK}</a>
         {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK}
