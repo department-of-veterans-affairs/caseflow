@@ -310,13 +310,17 @@ describe ClaimReview do
             claim_review.end_product_establishments.first.update!(
               development_item_reference_id: "dev_item_ref_id"
             )
+
+            # Cleaning Fakes:BGSService because it seems to persist between tests
+            Fakes::BGSService.manage_claimant_letter_v2_requests = nil
+            Fakes::BGSService.generate_tracked_items_requests = nil
           end
 
           it "doesn't create it in BGS" do
             subject
 
-            expect(Fakes::BGSService.generate_tracked_items_requests).to be_nil
             expect(Fakes::BGSService.manage_claimant_letter_v2_requests).to be_nil
+            expect(Fakes::BGSService.generate_tracked_items_requests).to be_nil
           end
         end
       end
