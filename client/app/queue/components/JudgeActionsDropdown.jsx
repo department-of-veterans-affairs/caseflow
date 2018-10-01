@@ -20,7 +20,6 @@ import { requestSave } from '../uiReducer/uiActions';
 import {
   deleteAppeal,
   stageAppeal,
-  setCaseReviewActionType,
   initialAssignTasksToUser,
   reassignTasksToUser
 } from '../QueueActions';
@@ -49,7 +48,6 @@ type Props = Params & {|
   requestSave: typeof requestSave,
   deleteAppeal: typeof deleteAppeal,
   stageAppeal: typeof stageAppeal,
-  setCaseReviewActionType: typeof setCaseReviewActionType,
   initialAssignTasksToUser: typeof initialAssignTasksToUser,
   reassignTasksToUser: typeof reassignTasksToUser,
   // From withRouter
@@ -87,10 +85,8 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
     } = this.props;
     const actionType = option.value;
 
-    this.props.setCaseReviewActionType(actionType);
-
     if (actionType === DECISION_TYPES.OMO_REQUEST) {
-      const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, {
+      const payload = buildCaseReviewPayload(actionType, decision, userRole, appeal.issues, {
         location: 'omo_office',
         attorney_id: task.assignedBy.pgId,
         isLegacyAppeal: appeal.isLegacyAppeal
@@ -186,7 +182,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
   deleteAppeal,
   stageAppeal,
-  setCaseReviewActionType,
   initialAssignTasksToUser,
   reassignTasksToUser
 }, dispatch);

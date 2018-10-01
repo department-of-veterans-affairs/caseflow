@@ -253,7 +253,7 @@ export const renderLegacyAppealType = ({ aod, type }: {aod: boolean, type: strin
   </React.Fragment>;
 };
 
-export const getDecisionTypeDisplay = (checkoutFlow) => {
+export const getDecisionTypeDisplay = (checkoutFlow: string) => {
   switch (checkoutFlow) {
   case DECISION_TYPES.OMO_REQUEST:
     return 'OMO';
