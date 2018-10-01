@@ -17,7 +17,9 @@ import AttorneyActionsDropdown from './components/AttorneyActionsDropdown';
 import JudgeActionsDropdown from './components/JudgeActionsDropdown';
 import ColocatedActionsDropdown from './components/ColocatedActionsDropdown';
 import GenericTaskActionsDropdown from './components/GenericTaskActionsDropdown';
+import OnHoldLabel from './components/OnHoldLabel';
 import CopyTextButton from '../components/CopyTextButton';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import COPY from '../../COPY.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
@@ -25,7 +27,10 @@ import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.j
 import { COLORS } from '../constants/AppConstants';
 import StringUtil from '../util/StringUtil';
 
-import { renderLegacyAppealType } from './utils';
+import {
+  renderLegacyAppealType,
+  taskIsOnHold
+} from './utils';
 import { DateString } from '../util/DateUtil';
 import type { Appeal, Task } from './types/models';
 import type { State } from './types/state';
@@ -46,6 +51,10 @@ const snapshotParentContainerStyling = css({
 
 const headingStyling = css({
   marginBottom: '0.5rem'
+});
+
+const editButton = css({
+  float: 'right'
 });
 
 const snapshotChildResponsiveWrapFixStyling = css({
@@ -135,6 +144,12 @@ export class CaseSnapshot extends React.PureComponent<Props> {
         <React.Fragment>
           <dt>{COPY.CASE_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
         </React.Fragment> }
+      { taskIsOnHold(taskAssignedToUser) &&
+        <React.Fragment>
+          <dt>{COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE}</dt>
+          <dd><OnHoldLabel task={taskAssignedToUser} /></dd>
+        </React.Fragment>
+      }
       { taskAssignedToUser.instructions &&
         <React.Fragment>
           <dt>{COPY.CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
@@ -191,6 +206,12 @@ export class CaseSnapshot extends React.PureComponent<Props> {
         return <React.Fragment>
           <dt>{COPY.CASE_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{CO_LOCATED_ADMIN_ACTIONS[taskAssignedToUser.action]}</dd>
           <dt>{COPY.CASE_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
+          { taskIsOnHold(taskAssignedToUser) &&
+            <React.Fragment>
+              <dt>{COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE}</dt>
+              <dd><OnHoldLabel task={taskAssignedToUser} /></dd>
+            </React.Fragment>
+          }
           <dt>{COPY.CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
           <dd>{this.taskInstructionsWithLineBreaks(taskAssignedToUser.instructions)}</dd>
         </React.Fragment>;
@@ -253,10 +274,18 @@ export class CaseSnapshot extends React.PureComponent<Props> {
         <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TITLE}</h3>
         <CaseDetailsDescriptionList>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</dt>
-          <dd>{renderLegacyAppealType({
-            aod: appeal.isAdvancedOnDocket,
-            type: appeal.caseType
-          })}</dd>
+          <dd>
+            {renderLegacyAppealType({
+              aod: appeal.isAdvancedOnDocket,
+              type: appeal.caseType
+            })}
+            {!appeal.isLegacyAppeal && <span {...editButton}>
+              <Link
+                to={`/queue/appeals/${appeal.externalId}/modal/advanced_on_docket_motion`}>
+                Edit
+              </Link>
+            </span>}
+          </dd>
           <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
           <dd><DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}</dd>
           { !taskAssignedToVso && appeal.assignedJudge &&

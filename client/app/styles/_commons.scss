@@ -432,7 +432,7 @@ svg title {
   margin: 0 auto;
   width: 490px;
   max-height: 100%;
-  overflow-y: auto;
+  overflow-y: visible;
 
   table {
     margin: 0 0 2em;
@@ -445,7 +445,12 @@ svg title {
   padding: .1rem;
   position: absolute;
   right: rem(10px);
+  top: rem(10px);
   width: 1.5rem;
+
+  &[type="button"] {
+    margin-right: 0;
+  }
 
   &:hover,
   &:focus,
@@ -484,6 +489,7 @@ svg title {
 
 .cf-modal-controls {
   bottom: 0;
+  padding-bottom: 3rem;
   margin-top: rem(30px);
 
 
