@@ -17,6 +17,7 @@ def complete_params(judge:, attorney:, location:, vacols_issue1:, vacols_issue2:
   }
 end
 
+# rubocop:disable Metrics/AbcSize
 def expect_decass_to_be_up_to_date(decass)
   decass.reload
   expect(decass.demdusr).to eq "CFS456"
@@ -31,6 +32,7 @@ def expect_decass_to_be_up_to_date(decass)
   expect(decass.decomp).to eq VacolsHelper.local_date_with_utc_timezone
   expect(decass.detrem).to eq "N"
 end
+# rubocop:enable Metrics/AbcSize
 
 def expect_case_to_be_update_to_date(vacols_case, decass)
   expect(vacols_case.bfmemid).to eq(decass.dememid)
@@ -198,7 +200,8 @@ describe JudgeCaseReview do
             attorney: attorney,
             location: "bva_dispatch",
             vacols_issue1: vacols_issue1,
-            vacols_issue2: vacols_issue2)
+            vacols_issue2: vacols_issue2
+          )
         end
         let(:work_product) { "DEC" }
 
@@ -252,7 +255,8 @@ describe JudgeCaseReview do
             attorney: attorney,
             location: "omo_office",
             vacols_issue1: vacols_issue1,
-            vacols_issue2: vacols_issue2)
+            vacols_issue2: vacols_issue2
+          )
         end
         let(:work_product) { "IME" }
 

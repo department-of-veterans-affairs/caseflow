@@ -75,7 +75,7 @@ class QueueRepository
 
     def sign_decision_or_create_omo!(vacols_id:, created_in_vacols_date:, location:, decass_attrs:)
       decass_record = find_decass_record(vacols_id, created_in_vacols_date)
-      if not [:bva_dispatch, :quality_review, :omo_office].include? location
+      if ![:bva_dispatch, :quality_review, :omo_office].include? location
         fail Caseflow::Error::QueueRepositoryError, "Invalid location"
       end
 
