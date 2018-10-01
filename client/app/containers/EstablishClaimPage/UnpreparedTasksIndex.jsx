@@ -6,7 +6,7 @@ import { COLORS } from '../../constants/AppConstants';
 import { css } from 'glamor';
 
 const colorStyling = css({
-  color: COLORS.GREY_DARK,
+  color: COLORS.GREY_DARK
 });
 
 export default class UnpreparedTasksIndex extends React.Component {

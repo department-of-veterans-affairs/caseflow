@@ -6,7 +6,7 @@ import { css } from 'glamor';
 import moment from 'moment';
 
 const colorStyling = css({
-  color: COLORS.GREY_DARK,
+  color: COLORS.GREY_DARK
 });
 
 const UNASSIGNED_TASKS_COLUMNS = [
