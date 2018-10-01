@@ -22,12 +22,12 @@ module Constants::TaskActionList
       available_actions:
         [
           {
-            label: "Medical Request Ready for Review",
-            value: "omo_request/submit"
-          },
-          {
             label: "Decision Ready for Review",
             value: "draft_decision/dispositions"
+          },
+          {
+            label: "Medical Request Ready for Review",
+            value: "omo_request/submit"
           },
           {
             label: "Add admin action",
