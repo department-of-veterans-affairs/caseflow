@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { REVIEW_OPTIONS } from '../constants';
-import { formatDateStringForApi } from '../../util/DateUtil';
+import { formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
 
 export const getAppealDocketError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.appeal_docket, 0) === 'blank') && 'Please select an option.'
@@ -144,4 +144,22 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
   let claimantField = getClaimantField(formType, veteran, intakeData);
 
   return fields.concat(claimantField);
+};
+
+export const getListOfAddedIssues = (intakeData) => {
+  let issues = intakeData.addedIssues;
+
+  return issues ? issues.map((issue) => {
+    // currently does not handle unrated issues
+    if (issue.isRated) {
+      let foundIssue = intakeData.ratings[issue.profileDate].issues[issue.id];
+
+      return {
+        referenceId: issue.id,
+        text: `${foundIssue.decision_text} Decision date ${formatDateStr(issue.profileDate)}.`
+      };
+    }
+
+    return {};
+  }) : [];
 };

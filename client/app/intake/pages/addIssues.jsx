@@ -7,7 +7,8 @@ import AddIssuesModal from '../components/AddIssuesModal';
 import Button from '../../components/Button';
 import { FORM_TYPES } from '../../intakeCommon/constants';
 import { formatDate } from '../../util/DateUtil';
-import { getAddIssuesFields } from '../util';
+import { getListOfAddedIssues, getAddIssuesFields } from '../util';
+
 import Table from '../../components/Table';
 import { toggleAddIssuesModal } from '../actions/common';
 
@@ -23,16 +24,22 @@ class AddIssues extends React.PureComponent {
     const intakeData = intakeForms[selectedForm.key];
     const veteranInfo = `${veteran.name} (${veteran.fileNumber})`;
 
-    // this is a dummy button to be implemented in a later ticket
-    const issueButton = () => {
-      return <Button
-        name="add-issue"
-        legacyStyling={false}
-        classNames={['usa-button-secondary']}
-        onClick={this.props.toggleAddIssuesModal}
-      >
-        + Add issue
-      </Button>;
+    const issuesComponent = () => {
+      let issues = getListOfAddedIssues(intakeData);
+
+      return <div>
+        { issues.map((issue, index) => {
+          return <div id={issue.id}>{index + 1}. {issue.text} </div>;
+        })}
+        <Button
+          name="add-issue"
+          legacyStyling={false}
+          classNames={['usa-button-secondary']}
+          onClick={this.props.toggleAddIssuesModal}
+        >
+          + Add issue
+        </Button>
+      </div>;
     };
 
     const columns = [
@@ -52,7 +59,7 @@ class AddIssues extends React.PureComponent {
     let additionalFields = getAddIssuesFields(selectedForm.key, veteran, intakeData);
     let rowObjects = sharedFields.concat(additionalFields).concat(
       { field: 'Requested issues',
-        content: issueButton() }
+        content: issuesComponent() }
     );
 
     return <div className="cf-intake-edit">

@@ -143,6 +143,16 @@ export const setIssueSelected = (profileDate, issueId, isSelected) => ({
   }
 });
 
+export const addIssue = (issueId, profileDate, isRated) => ({
+  type: ACTIONS.ADD_ISSUE,
+  payload: {
+    issueId,
+    profileDate,
+    isRated
+  }
+  // should there be analytics here?
+});
+
 export const addNonRatedIssue = (nonRatedIssues) => ({
   type: ACTIONS.ADD_NON_RATED_ISSUE,
   payload: {
