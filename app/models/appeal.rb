@@ -37,12 +37,13 @@ class Appeal < AmaReview
     tasks.map(&:attorney_case_reviews).flatten
   end
 
-  def issues
-    { decision_issues: decision_issues, request_issues: request_issues }
+  def reviewing_judge_name
+    task = tasks.where(type: "JudgeTask").order(:created_at).last
+    task ? task.assigned_to.try(:full_name) : ""
   end
 
-  def issue_count
-    request_issues.count
+  def issues
+    { decision_issues: decision_issues, request_issues: request_issues }
   end
 
   def docket_name

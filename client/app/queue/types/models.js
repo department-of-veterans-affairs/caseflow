@@ -73,7 +73,8 @@ export type Task = {
   decisionPreparedBy: ?{
     firstName: string,
     lastName: string,
-  }
+  },
+  availableActions: Array<{ label?: string, value: string }>
 };
 
 export type Tasks = { [string]: Task };
