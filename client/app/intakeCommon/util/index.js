@@ -56,14 +56,16 @@ export const validNonRatedIssue = (issue) => {
   return true;
 };
 
-const getRatedIssues = (state) => {
+const formatRatedIssues = (state) => {
   if (state.addedIssues && state.addedIssues.length > 0) {
     // we're using the new add issues page
-    return state.addedIssues.map((issue) => {
-      let originalIssue = state.ratings[issue.profileDate].issues[issue.id];
+    return state.addedIssues.
+      filter((issue) => issue.isRated).
+      map((issue) => {
+        let originalIssue = state.ratings[issue.profileDate].issues[issue.id];
 
-      return _.merge(originalIssue, { profile_date: issue.profileDate });
-    });
+        return _.merge(originalIssue, { profile_date: issue.profileDate });
+      });
   }
 
   // default to original ratings format
@@ -79,7 +81,7 @@ const getRatedIssues = (state) => {
 };
 
 export const formatIssues = (state) => {
-  const ratingData = getRatedIssues(state);
+  const ratingData = formatRatedIssues(state);
 
   const nonRatingData = {
     request_issues:
