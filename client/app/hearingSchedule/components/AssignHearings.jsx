@@ -167,7 +167,6 @@ export default class AssignHearings extends React.Component {
             {Object.values(this.props.upcomingHearingDays).slice(0, 9).
               map((hearingDay) => {
                 const availableSlots = hearingDay.totalSlots - Object.keys(hearingDay.hearings).length;
-                console.log('I lOVE YOU Sandra');
 
                 return <li key={hearingDay.id} >
                   <Button
