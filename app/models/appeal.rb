@@ -94,9 +94,8 @@ class Appeal < AmaReview
 
   delegate :first_name, :last_name, :middle_name, :name_suffix, to: :appellant, prefix: true, allow_nil: true
 
-  # TODO: implement for AMA
   def citation_number
-    "not implemented for AMA"
+    decisions.present? && decisions.sort_by(&:created_at).last.citation_number
   end
 
   def veteran_is_deceased
