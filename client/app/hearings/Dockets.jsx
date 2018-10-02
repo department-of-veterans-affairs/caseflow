@@ -43,7 +43,7 @@ export const DOCKETS_TAB_INDEX_MAPPING = {
 const tableBorder = css({
   border: '1px solid #dadbdc',
   marginTop: '0px',
-  borderTop: '0px',
+  borderTop: '0px'
 });
 
 const tableBodyStyling = css({
