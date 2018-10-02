@@ -8,22 +8,23 @@ import { withRouter } from 'react-router-dom';
 import SearchableDropdown from '../../components/SearchableDropdown';
 
 import {
-  setCaseReviewActionType,
   resetDecisionOptions,
   stageAppeal
 } from '../QueueActions';
-import COPY from '../../../COPY.json';
 import {
-  dropdownStyling,
-  DRAFT_DECISION_OPTIONS,
-  DRAFT_DECISION_LEGACY_OPTIONS
+  dropdownStyling
 } from '../constants';
 
 import type {
   State
 } from '../types/state';
 
+import type {
+  Task
+} from '../types/models';
+
 type Params = {|
+  task: Task,
   appealId: string
 |};
 
@@ -35,58 +36,32 @@ type Props = Params & {|
   // dispatch
   stageAppeal: typeof stageAppeal,
   resetDecisionOptions: typeof resetDecisionOptions,
-  setCaseReviewActionType: typeof setCaseReviewActionType,
   // withrouter
   history: Object
 |};
 
-class AttorneyActionsDropdown extends React.PureComponent<Props> {
+class ActionsDropdown extends React.PureComponent<Props> {
   changeRoute = (option) => {
     const {
       appealId,
-      history,
-      appeal
+      history
     } = this.props;
 
     if (!option) {
       return;
     }
-    const decisionType = option.value;
-    const routes = {
-      omo_request: 'submit',
-      draft_decision: appeal.isLegacyAppeal ? 'dispositions' : 'special_issues',
-      colocated_task: 'colocated_task'
-    };
-    const route = routes[decisionType];
 
     this.props.stageAppeal(appealId);
-
     this.props.resetDecisionOptions();
-    this.props.setCaseReviewActionType(decisionType);
 
     history.push('');
-    history.replace(`/queue/appeals/${appealId}/${route}`);
+    history.replace(`/queue/appeals/${appealId}/${option.value}`);
   };
-
-  getOptions = () => {
-    const { featureToggles, appeal } = this.props;
-
-    const options = appeal.isLegacyAppeal ? DRAFT_DECISION_LEGACY_OPTIONS : DRAFT_DECISION_OPTIONS;
-
-    if (featureToggles.attorney_assignment_to_colocated) {
-      return [...options, {
-        label: COPY.ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL,
-        value: 'colocated_task'
-      }];
-    }
-
-    return options;
-  }
 
   render = () => <SearchableDropdown
     name={`start-checkout-flow-${this.props.appealId}`}
     placeholder="Select an action&hellip;"
-    options={this.getOptions()}
+    options={this.props.task.availableActions}
     onChange={this.changeRoute}
     hideLabel
     dropdownStyling={dropdownStyling} />;
@@ -99,11 +74,10 @@ const mapStateToProps = (state: State, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setCaseReviewActionType,
   resetDecisionOptions,
   stageAppeal
 }, dispatch);
 
 export default (withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(AttorneyActionsDropdown)
+  connect(mapStateToProps, mapDispatchToProps)(ActionsDropdown)
 ): React.ComponentType<Params>);

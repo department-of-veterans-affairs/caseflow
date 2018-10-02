@@ -66,4 +66,8 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
   attribute :paper_case do
     object.appeal.file_type.eql? "Paper"
   end
+
+  attribute :available_actions do
+    object.allowed_actions(@instance_options[:role])
+  end
 end
