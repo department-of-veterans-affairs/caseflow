@@ -166,10 +166,10 @@ class AddEditIssueView extends React.Component<Params> {
     const { appeal } = this.props;
     const serverIssues = response.issues;
 
-    const issues = _.map(serverIssues, (issue) => {
+    const issues = _.map(serverIssues, (issue: { vacols_sequence_id: string }) => {
       // preserve locally-updated dispositions
       const disposition = _.get(
-        _.find(appeal.issues, (iss) => iss.id === issue.id),
+        _.find(appeal.issues, (iss) => iss.id === issue.vacols_sequence_id),
         'disposition'
       );
 
