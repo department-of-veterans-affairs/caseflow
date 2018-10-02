@@ -66,6 +66,7 @@ describe('QueueLoadingScreen', () => {
           id: 130,
           type: 'User'
         },
+        // eslint-disable-next-line no-undefined
         availableActions: undefined,
         addedByName: 'Nash X Kuvalis',
         addedByCssId: 'BVANKUVALIS',
