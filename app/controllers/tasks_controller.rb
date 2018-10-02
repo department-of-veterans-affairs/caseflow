@@ -89,12 +89,10 @@ class TasksController < ApplicationController
     end
 
     if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
-      return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], user_role)
+      return json_tasks_by_legacy_appeal_id_and_role
     end
 
-    render json: {
-      tasks: json_tasks(Task.where())[:data]
-    }
+    return json_tasks_by_appeal_id
   end
 
   def assignable_organizations
