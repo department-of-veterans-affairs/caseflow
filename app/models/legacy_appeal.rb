@@ -520,6 +520,18 @@ class LegacyAppeal < ApplicationRecord
     @documents_by_type = {}
   end
 
+  def attorney_case_reviews
+    (das_assignments || []).reject { |t| t.document_id.nil? }
+  end
+
+  def das_assignments
+    @das_assignments ||= QueueRepository.tasks_for_appeal(vacols_id)
+  end
+
+  def reviewing_judge_name
+    das_assignments.last.try(:assigned_by_name)
+  end
+
   attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
