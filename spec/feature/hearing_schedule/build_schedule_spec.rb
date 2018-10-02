@@ -59,10 +59,11 @@ RSpec.feature "Build Hearing Schedule" do
         click_on "Confirm upload"
         expect(page).not_to have_content("We are uploading to VACOLS.", wait: 10)
         expect(page).to have_content("You have successfully assigned judges to hearings")
-        vlj_ids = HearingDay.load_days(Date.new(2018, 4, 1), Date.new(2018, 4, 30)).flatten.map do |hearing_day|
-          hearing_day[:board_member]
-        end
-        expect(vlj_ids.count).to eq(4)
+        vlj_ids_count = HearingDay.load_days(Date.new(2018, 4, 1), Date.new(2018, 4, 30)).flatten.select do |hearing_day|
+          hearing_day.key?(:judge_id) && !hearing_day[:judge_id].nil?
+        end.count
+        binding.pry
+        expect(vlj_ids_count).to eq(4)
       end
     end
   end
