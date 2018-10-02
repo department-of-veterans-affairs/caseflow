@@ -33,12 +33,12 @@ class Appeal < AmaReview
     "Original"
   end
 
-  def issues
-    { decision_issues: decision_issues, request_issues: request_issues }
+  def attorney_case_reviews
+    tasks.map(&:attorney_case_reviews).flatten
   end
 
-  def issue_count
-    request_issues.count
+  def issues
+    { decision_issues: decision_issues, request_issues: request_issues }
   end
 
   def docket_name
