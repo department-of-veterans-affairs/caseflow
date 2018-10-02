@@ -92,6 +92,7 @@ namespace :local do
 
       setup_dispatch
       create_issrefs
+      create_previously_held_hearing_data
     end
 
     # Do not check in the result of running this without talking with Chris. We need to certify that there
@@ -225,6 +226,27 @@ namespace :local do
       )
     end
     # rubocop:enable Metrics/MethodLength
+
+    def create_previously_held_hearing_data
+      user = User.find_by_css_id("BVAAABSHIRE")
+      veteran_file_number = "994806951S"
+      appeals = LegacyAppeal.where(vbms_id: veteran_file_number)
+
+      return if (appeals.map(&:type) - ["Post Remand", "Original"]).empty? &&
+                appeals.flat_map(&:hearings).map(&:disposition).include?(:held)
+
+      FactoryBot.create(
+        :legacy_appeal,
+        vacols_case: FactoryBot.create(
+          :case,
+          :assigned,
+          :type_original,
+          user: user,
+          bfcorlid: veteran_file_number,
+          case_hearings: [FactoryBot.create(:case_hearing, :disposition_held, user: user)]
+        )
+      )
+    end
 
     def bgs_record_from_case(cases, case_descriptors)
       CSV.open(Rails.root.join("local/vacols", "bgs_setup.csv"), "wb") do |csv|
