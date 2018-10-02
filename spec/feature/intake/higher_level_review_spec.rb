@@ -305,10 +305,33 @@ RSpec.feature "Higher-Level Review" do
       }
     )
 
+    letter_request = Fakes::BGSService.manage_claimant_letter_v2_requests
+    expect(letter_request[ratings_end_product_establishment.reference_id]).to eq(
+      program_type_cd: "CPL", claimant_participant_id: "5382910292"
+    )
+    expect(letter_request[nonratings_end_product_establishment.reference_id]).to eq(
+      program_type_cd: "CPL", claimant_participant_id: "5382910292"
+    )
+
+    tracked_item_request = Fakes::BGSService.generate_tracked_items_requests
+    expect(tracked_item_request[ratings_end_product_establishment.reference_id]).to be(true)
+    expect(tracked_item_request[nonratings_end_product_establishment.reference_id]).to be(true)
+
     intake.reload
     expect(intake.completed_at).to eq(Time.zone.now)
 
     expect(intake).to be_success
+
+    expect(ratings_end_product_establishment.doc_reference_id).to eq("doc_reference_id_result")
+    expect(ratings_end_product_establishment.development_item_reference_id).to eq(
+      "development_item_reference_id_result"
+    )
+    expect(ratings_end_product_establishment.benefit_type_code).to eq("1")
+    expect(nonratings_end_product_establishment.doc_reference_id).to eq("doc_reference_id_result")
+    expect(nonratings_end_product_establishment.development_item_reference_id).to eq(
+      "development_item_reference_id_result"
+    )
+    expect(nonratings_end_product_establishment.benefit_type_code).to eq("1")
 
     expect(higher_level_review.request_issues.count).to eq 2
     expect(higher_level_review.request_issues.first).to have_attributes(
@@ -519,11 +542,23 @@ RSpec.feature "Higher-Level Review" do
 
       # clicking the add issues button should bring up the modal
       safe_click "#button-add-issue"
+
       expect(page).to have_content("Left knee granted")
       expect(page).to have_content("PTSD denied")
+
+      # test canceling adding an issue by closing the modal
+      safe_click ".close-modal"
+      expect(page).to_not have_content("Left knee granted")
+
+      # adding an issue should show the issue
+      safe_click "#button-add-issue"
+      find("label", text: "Left knee granted").click
+      safe_click ".add-issue"
+
+      expect(page).to have_content("1. Left knee granted")
     end
 
-    scenario "HLR non-comp" do
+    scenario "Non-compensation" do
       start_higher_level_review(veteran, is_comp: false)
       visit "/intake/add_issues"
 

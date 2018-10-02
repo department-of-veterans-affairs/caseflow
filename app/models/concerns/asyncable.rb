@@ -28,6 +28,10 @@ module Asyncable
       :processed_at
     end
 
+    def error_column
+      :error
+    end
+
     def unexpired
       where(arel_table[submitted_at_column].gt(REQUIRES_PROCESSING_WINDOW_DAYS.days.ago))
     end
@@ -77,6 +81,14 @@ module Asyncable
 
   def processed?
     !!self[self.class.processed_at_column]
+  end
+
+  def clear_error!
+    update!(self.class.error_column => nil)
+  end
+
+  def update_error!(err)
+    update!(self.class.error_column => err)
   end
 
   private

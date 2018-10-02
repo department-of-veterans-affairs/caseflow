@@ -23,6 +23,7 @@ import { tasksForAppealAssignedToUserSelector } from './selectors';
 
 import COPY from '../../COPY.json';
 import JUDGE_CASE_REVIEW_OPTIONS from '../../constants/JUDGE_CASE_REVIEW_OPTIONS.json';
+import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import {
   marginBottom, marginTop,
   paddingLeft, fullWidth,
@@ -109,9 +110,10 @@ class EvaluateDecisionView extends React.PureComponent {
   getPrevStepUrl = () => {
     const {
       appealId,
+      checkoutFlow,
       appeal
     } = this.props;
-    const prevUrl = `/queue/appeals/${appealId}`;
+    const prevUrl = `/queue/appeals/${appealId}/${checkoutFlow}`;
     const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
     const remandedIssues = _.some(dispositions, (disposition) => [
       VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
@@ -124,17 +126,25 @@ class EvaluateDecisionView extends React.PureComponent {
     const {
       task,
       appeal,
+      checkoutFlow,
       decision,
       userRole,
       appealId
     } = this.props;
-    const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, {
-      location: 'bva_dispatch',
+
+    let loc = 'bva_dispatch';
+    let successMsg = sprintf(COPY.JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
+
+    if (checkoutFlow === DECISION_TYPES.OMO_REQUEST) {
+      loc = 'omo_office';
+      successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
+    }
+    const payload = buildCaseReviewPayload(checkoutFlow, decision, userRole, appeal.issues, {
+      location: loc,
       attorney_id: task.assignedBy.pgId,
       isLegacyAppeal: appeal.isLegacyAppeal,
       ...this.state
     });
-    const successMsg = sprintf(COPY.JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
 
     this.props.requestSave(
       `/case_reviews/${task.taskId}/complete`,
@@ -289,6 +299,7 @@ class EvaluateDecisionView extends React.PureComponent {
 }
 
 EvaluateDecisionView.propTypes = {
+  checkoutFlow: PropTypes.string.isRequired,
   appealId: PropTypes.string.isRequired
 };
 
