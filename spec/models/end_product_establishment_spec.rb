@@ -287,11 +287,12 @@ describe EndProductEstablishment do
     subject { end_product_establishment.generate_claimant_letter! }
 
     context "when claimant letter has already been generated" do
-      let(:doc_reference_id) { "doc_exists" }
-      # Cleaning Fakes:BGSService because it seems to persist between tests
       before do
+        # Cleaning Fakes:BGSService because it seems to persist between tests
         Fakes::BGSService.manage_claimant_letter_v2_requests = nil
       end
+
+      let(:doc_reference_id) { "doc_exists" }
 
       it "does not create a new claimant letter" do
         subject
@@ -320,11 +321,12 @@ describe EndProductEstablishment do
     subject { end_product_establishment.generate_tracked_item! }
 
     context "when tracked item has already been generated" do
-      let(:development_item_reference_id) { "tracked_item_exists" }
-      # Cleaning Fakes:BGSService because it seems to persist between tests
       before do
+        # Cleaning Fakes:BGSService because it seems to persist between tests
         Fakes::BGSService.generate_tracked_items_requests = nil
       end
+
+      let(:development_item_reference_id) { "tracked_item_exists" }
 
       it "does not create a new tracked item" do
         subject
