@@ -3,6 +3,7 @@ import Modal from '../../components/Modal';
 import { connect } from 'react-redux';
 import Alert from '../../components/Alert';
 import { css } from 'glamor';
+import { withRouter } from 'react-router-dom';
 
 const bottomMargin = css({
   marginBottom: '1.5rem'
@@ -65,5 +66,5 @@ export default function editModalBase(ComponentToWrap, title) {
     };
   };
 
-  return connect(mapStateToProps)(WrappedComponent);
+  return withRouter(connect(mapStateToProps)(WrappedComponent));
 }

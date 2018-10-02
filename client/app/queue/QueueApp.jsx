@@ -30,6 +30,7 @@ import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import MarkTaskCompleteView from './MarkTaskCompleteView';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
+import { AssignWidgetModal } from './components/AssignWidget'
 import TriggerModal from './TriggerModal';
 
 import CaseListView from './CaseListView';
@@ -153,8 +154,9 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedColocatedPlaceHold = (props) => <ColocatedPlaceHoldView nextStep="/queue" {...props.match.params} />;
 
-  routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView
-    nextStep={`/queue/appeals/${props.match.params.appealId}`} {...props.match.params} />;
+  routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView {...props.match.params} />;
+
+  routedAssignToUser = (props) => <AssignWidgetModal {...props.match.params} />;
 
   routedMarkTaskComplete = (props) => <MarkTaskCompleteView
     nextStep={`/queue/appeals/${props.match.params.appealId}`}
@@ -237,6 +239,9 @@ class QueueApp extends React.PureComponent<Props> {
           <Route
             path="/queue/appeals/:appealId/modal/advanced_on_docket_motion"
             render={this.routedAdvancedOnDocketMotion} />
+          <Route
+            path="/queue/appeals/:appealId/modal/assign_to_user"
+            render={this.routedAssignToUser} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"

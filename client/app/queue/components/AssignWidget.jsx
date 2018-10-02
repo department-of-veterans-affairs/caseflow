@@ -18,6 +18,17 @@ import pluralize from 'pluralize';
 import COPY from '../../../COPY.json';
 import { sprintf } from 'sprintf-js';
 import { fullWidth } from '../constants';
+import editModalBase from './EditModalBase';
+import {
+  tasksForAppealAssignedToAttorneySelector,
+  tasksForAppealAssignedToUserSelector
+} from '../selectors';
+
+import {
+  initialAssignTasksToUser,
+  reassignTasksToUser
+} from '../QueueActions';
+
 
 import type {
   AttorneysOfJudge, State
@@ -29,9 +40,7 @@ import type {
 const OTHER = 'OTHER';
 
 type Params = {|
-  previousAssigneeId: string,
-  onTaskAssignment: Function,
-  selectedTasks: Array<Task>
+  selectedTasks?: Array<Task>
 |};
 
 type Props = Params & {|
@@ -50,7 +59,7 @@ type Props = Params & {|
 |};
 
 class AssignWidget extends React.PureComponent<Props> {
-  handleButtonClick = () => {
+  submit = () => {
     const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
 
     this.props.resetSuccessMessages();
@@ -73,7 +82,7 @@ class AssignWidget extends React.PureComponent<Props> {
     }
 
     if (selectedAssignee !== OTHER) {
-      this.assignTasks(selectedTasks, selectedAssignee);
+      return this.assignTasks(selectedTasks, selectedAssignee);
 
       return;
     }
@@ -86,13 +95,33 @@ class AssignWidget extends React.PureComponent<Props> {
       return;
     }
 
-    this.assignTasks(selectedTasks, selectedAssigneeSecondary);
+    return this.assignTasks(selectedTasks, selectedAssigneeSecondary);
+  }
+
+  handleAssignment = (
+    { tasks, assigneeId }: { tasks: Array<Task>, assigneeId: string }
+  ) => {
+    const previousAssigneeId = tasks[0].assignedTo.id.toString();
+
+    if (tasks[0].action === 'assign') {
+      return this.props.initialAssignTasksToUser({
+        tasks,
+        assigneeId,
+        previousAssigneeId
+      });
+    }
+
+    return this.props.reassignTasksToUser({
+      tasks,
+      assigneeId,
+      previousAssigneeId
+    });
   }
 
   assignTasks = (selectedTasks: Array<Task>, assigneeId: string) => {
     const { previousAssigneeId } = this.props;
 
-    this.props.onTaskAssignment(
+    return this.handleAssignment(
       { tasks: selectedTasks,
         assigneeId,
         previousAssigneeId }).
@@ -166,39 +195,52 @@ class AssignWidget extends React.PureComponent<Props> {
               value={selectedOptionOther}
               styling={css({ width: '30rem' })} />
           </React.Fragment>}
-        <Button
-          onClick={this.handleButtonClick}
+        {this.props.isModal && <Button
+          onClick={this.submit}
           name={sprintf(
             COPY.ASSIGN_WIDGET_BUTTON_TEXT,
             { numCases: selectedTasks.length,
               casePlural: pluralize('case', selectedTasks.length) })}
           loading={false}
-          loadingText={COPY.ASSIGN_WIDGET_LOADING} />
+          loadingText={COPY.ASSIGN_WIDGET_LOADING} />}
       </div>
     </React.Fragment>;
   }
 }
 
-const mapStateToProps = (state: State) => {
+const mapStateToProps = (state: State, ownProps: Object) => {
   const { attorneysOfJudge, attorneys } = state.queue;
   const { selectedAssignee, selectedAssigneeSecondary } = state.ui;
+  const defaultTask = tasksForAppealAssignedToAttorneySelector(state, ownProps)[0] ||
+    tasksForAppealAssignedToUserSelector(state, ownProps)[0];
 
   return {
     attorneysOfJudge,
     selectedAssignee,
     selectedAssigneeSecondary,
-    attorneys
+    attorneys,
+    selectedTasks: ownProps.selectedTasks || [defaultTask]
   };
 };
 
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setSelectedAssignee,
+  setSelectedAssigneeSecondary,
+  showErrorMessage,
+  resetErrorMessages,
+  showSuccessMessage,
+  resetSuccessMessages,
+  initialAssignTasksToUser,
+  reassignTasksToUser
+}, dispatch);
+
 export default (connect(
   mapStateToProps,
-  (dispatch) => bindActionCreators({
-    setSelectedAssignee,
-    setSelectedAssigneeSecondary,
-    showErrorMessage,
-    resetErrorMessages,
-    showSuccessMessage,
-    resetSuccessMessages
-  }, dispatch)
+  mapDispatchToProps
 )(AssignWidget): React.ComponentType<Params>);
+
+export const AssignWidgetModal = (connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(editModalBase(AssignWidget, "TEST NAME")): React.ComponentType<Params>);
+

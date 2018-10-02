@@ -66,9 +66,6 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
     if (!option) {
       return;
     }
-    if (option.value === ASSIGN) {
-      return;
-    }
 
     const {
       appeal,
@@ -83,6 +80,8 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
 
     if (actionType === DECISION_TYPES.OMO_REQUEST) {
       nextPage = 'evaluate';
+    } else if(option.value === ASSIGN) {
+      nextPage = 'modal/assign_to_user';
     } else if (appeal.isLegacyAppeal) {
       nextPage = 'dispositions';
     } else {
@@ -93,24 +92,6 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
 
     history.push('');
     history.replace(`/queue/appeals/${appealId}/${nextPage}`);
-  }
-
-  handleAssignment = (
-    { tasks, assigneeId, previousAssigneeId }: { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}
-  ) => {
-    if (tasks[0].action === 'assign') {
-      return this.props.initialAssignTasksToUser({
-        tasks,
-        assigneeId,
-        previousAssigneeId
-      });
-    }
-
-    return this.props.reassignTasksToUser({
-      tasks,
-      assigneeId,
-      previousAssigneeId
-    });
   }
 
   assignWidgetVisible = () => {
