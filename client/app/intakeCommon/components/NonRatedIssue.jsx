@@ -6,58 +6,7 @@ import DateSelector from '../../components/DateSelector';
 import { ISSUE_CATEGORIES } from '../constants';
 import _ from 'lodash';
 
-export default class NonRatedIssueUnconnected extends React.PureComponent {
-  render() {
-    const {
-      nonRatedIssues,
-      addNonRatedIssue,
-      setIssueCategory,
-      setIssueDescription,
-      setIssueDecisionDate
-    } = this.props;
-
-    const disableAddNonRatedIssue = _.some(nonRatedIssues, (issue) => {
-      return !issue.description;
-    });
-
-    const nonRatedIssuesSection = _.map(nonRatedIssues, (issue, issueId) => {
-      return (
-        <NonRatedIssue
-          key={issueId}
-          id={issueId}
-          category={issue.category}
-          description={issue.description}
-          decisionDate={issue.decisionDate}
-          setCategory={setIssueCategory}
-          setDescription={setIssueDescription}
-          setIssueDecisionDate={setIssueDecisionDate}
-        />
-      );
-    });
-
-    return <div className="cf-non-rated-issues">
-      <h2>Enter other issue(s) for review</h2>
-      <p>
-      If the Veteran included any additional issues you cannot find in the list above,
-      please note them below. Otherwise, leave the section blank.
-      </p>
-      <div>
-        { nonRatedIssuesSection }
-      </div>
-
-      <Button
-        name="add-issue"
-        onClick={addNonRatedIssue}
-        classNames={['usa-button-secondary']}
-        disabled={disableAddNonRatedIssue}
-      >
-      + Add issue
-      </Button>
-    </div>;
-  }
-}
-
-class NonRatedIssue extends React.PureComponent {
+export default class NonRatedIssue extends React.PureComponent {
   handleCategoryChange(event) {
     this.props.setCategory(this.props.id, event ? event.value : null);
   }
@@ -71,11 +20,20 @@ class NonRatedIssue extends React.PureComponent {
   }
 
   render () {
-    const { category, description, decisionDate } = this.props;
+    const {
+      issueId, // issue?
+      category,
+      description,
+      decisionDate,
+      nonRatedIssues,
+      addNonRatedIssue,
+      setIssueCategory,
+      setIssueDescription,
+      setIssueDecisionDate
+    } = this.props;
 
     return (
       <div>
-
         <h2>
           Does this issue match any of these issue categories?
         </h2>
@@ -102,6 +60,15 @@ class NonRatedIssue extends React.PureComponent {
           required={category ? (category !== 'Unknown issue category') : false}
           onChange={(event) => this.handleDecisionDateChange(event)} />
       </div>
+
+      <Button
+        name="add-issue"
+        onClick={addNonRatedIssue}
+        classNames={['usa-button-secondary']}
+        disabled={disableAddNonRatedIssue}
+      >
+        + Add issue
+      </Button>
     );
   }
 }
