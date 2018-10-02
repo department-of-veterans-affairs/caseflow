@@ -72,7 +72,8 @@ const SPECIAL_ISSUES = [
     specialIssue: 'hearingIncludingTravelBoardVideoConference',
     stationOfJurisdiction: 'regional',
     snakeCase: 'hearing_including_travel_board_video_conference',
-    unhandled: null
+    unhandled: null,
+    nonCompensation: true
   },
   {
     display: 'Home Loan Guaranty',
@@ -109,7 +110,8 @@ const SPECIAL_ISSUES = [
     specialIssue: 'manlinconCompliance',
     stationOfJurisdiction: 'regional',
     snakeCase: 'manlincon_compliance',
-    unhandled: null
+    unhandled: null,
+    nonCompensation: true
   },
   {
     display: 'Mustard Gas',
