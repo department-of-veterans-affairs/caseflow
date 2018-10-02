@@ -57,21 +57,19 @@ export const tasksWithAppealSelector = createSelector(
   (tasks: Tasks, amaTasks: Tasks, appeals: BasicAppeals, appealDetails: AppealDetails) : Array<TaskWithAppeal> => {
     return [
       ..._.map(tasks, (task) => ({
-          ...task,
-          appeal: {
-            ..._.find(appeals, (appeal) => task.externalAppealId === appeal.externalId),
-            ..._.find(appealDetails, (appealDetail) => task.externalAppealId === appealDetail.externalId)
-          }
-        })
-      ),
+        ...task,
+        appeal: {
+          ..._.find(appeals, (appeal) => task.externalAppealId === appeal.externalId),
+          ..._.find(appealDetails, (appealDetail) => task.externalAppealId === appealDetail.externalId)
+        }
+      })),
       ..._.map(amaTasks, (amaTask) => ({
-          ...amaTask,
-          appeal: {
-            ..._.find(appeals, (appeal) => amaTask.externalAppealId === appeal.externalId),
-            ..._.find(appealDetails, (appealDetail) => amaTask.externalAppealId === appealDetail.externalId)
-          }
-        })
-      )
+        ...amaTask,
+        appeal: {
+          ..._.find(appeals, (appeal) => amaTask.externalAppealId === appeal.externalId),
+          ..._.find(appealDetails, (appealDetail) => amaTask.externalAppealId === appealDetail.externalId)
+        }
+      }))
     ];
   }
 );
