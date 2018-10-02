@@ -53,10 +53,11 @@ class AssignToUserView extends React.PureComponent<Props> {
 
   render = () => {
     const { task } = this.props;
+    const previousAssigneeId = task ? task.assignedTo.id.toString() : null;
 
     return <AssignWidgetModal
       onTaskAssignment={this.handleAssignment}
-      previousAssigneeId={task.assignedTo.id.toString()}
+      previousAssigneeId={previousAssigneeId}
       selectedTasks={[task]} />;
   }
 }

@@ -89,7 +89,7 @@ class TasksController < ApplicationController
     end
 
     if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
-      return json_tasks_by_legacy_appeal_id_and_role
+      return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], user_role)
     end
 
     return json_tasks_by_appeal_id
@@ -174,9 +174,11 @@ class TasksController < ApplicationController
     }
   end
 
-  def json_tasks_by_legacy_appeal_id_and_role
+  def json_tasks_by_legacy_appeal_id_and_role(appeal_id, role)
+    tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal_id, role)
+
     render json: {
-      tasks: json_legacy_tasks(appeal.tasks)[:data]
+      tasks: json_legacy_tasks(tasks)[:data]
     }
   end
 
