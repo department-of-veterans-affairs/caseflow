@@ -529,6 +529,16 @@ class LegacyAppeal < ApplicationRecord
     issues.count
   end
 
+  # a list of issues with undecided dispositions (see queue/utils.getUndecidedIssues)
+  def undecided_issues
+    issues.select do |issue|
+      return true if issue.disposition_id.nil?
+
+      issue.disposition_id.to_i.between?(1, 9) &&
+        Constants::VACOLS_DISPOSITIONS_BY_ID.keys.include?(issue.disposition_id)
+    end
+  end
+
   # A uniqued list of issue categories on appeal, that is the combination of ISSPROG and ISSCODE
   def issue_categories
     issues.map(&:category).uniq
