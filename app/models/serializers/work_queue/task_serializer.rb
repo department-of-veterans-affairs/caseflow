@@ -76,4 +76,8 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
       last_name: object.prepared_by_display_name ? object.prepared_by_display_name.last : nil
     }
   end
+
+  attribute :available_actions do
+    object.allowed_actions(@instance_options[:user])
+  end
 end
