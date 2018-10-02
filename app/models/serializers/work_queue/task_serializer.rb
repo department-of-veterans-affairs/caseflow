@@ -57,7 +57,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   end
 
   attribute :issue_count do
-    object.appeal.issue_count
+    object.appeal.number_of_issues
   end
 
   attribute :previous_task do
