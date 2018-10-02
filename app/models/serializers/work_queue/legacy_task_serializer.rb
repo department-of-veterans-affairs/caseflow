@@ -60,7 +60,8 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
   end
 
   attribute :issue_count do
-    object.appeal.issues.count
+    # this is used in TaskTable before appeal issues are loaded, replicates queue/utils.getUndecidedIssues logic
+    object.appeal.issues.select { |issue| issue.disposition.nil? || issue.disposition.to_i.between?(1, 9) }.count
   end
 
   attribute :paper_case do
