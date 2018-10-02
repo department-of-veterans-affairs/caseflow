@@ -24,23 +24,12 @@ class LegacyTask
     assigned_to && assigned_to.id
   end
 
-  def assigned_by_name
-    FullName.new(assigned_by_first_name,
-                 "",
-                 assigned_by_last_name)
-      .formatted(:readable_full)
-  end
-
   def appeal
     @appeal ||= LegacyAppeal.find(appeal_id)
   end
 
   def appeal_type
     appeal.class.name
-  end
-
-  def attorney_case_reviews
-    QueueRepository.tasks_for_appeal(appeal.vacols_id).reject { |t| t.document_id.nil? }
   end
 
   def days_waiting
