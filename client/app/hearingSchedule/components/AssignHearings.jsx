@@ -22,11 +22,9 @@ const centralOfficeStaticEntry = [{
 }];
 
 const hoverColor = css({
-  '&:hover': {
     backgroundColor: COLORS.GREY_DARK,
     color: COLORS.WHITE,
-    border: 0
-  }
+    borderRadius: '0px'
 });
 
 export default class AssignHearings extends React.Component {
@@ -63,8 +61,7 @@ export default class AssignHearings extends React.Component {
 
             return <li key={hearingDay.id} >
               <Button
-                styling={hoverColor}
-                onClick={this.onSelectedHearingDayChange(hearingDay)}
+                // onClick={this.onSelectedHearingDayChange(hearingDay)}
                 linkStyling
               >
                 {`${moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}
@@ -75,6 +72,34 @@ export default class AssignHearings extends React.Component {
       </ul>
     </div>;
   };
+
+
+  newFormat = () => {
+    if (this.props.upcomingHearingDays === this.props.selectedHearingDay) {
+      return <div className="usa-width-one-fourth">
+        <h3>Hearings to Schedule</h3>
+        <h4>Available Hearing Days</h4>
+        <ul className="usa-sidenav-list">
+          {Object.values(this.props.upcomingHearingDays).slice(0, 9).
+            map((hearingDay) => {
+              const availableSlots = hearingDay.totalSlots - Object.keys(hearingDay.hearings).length;
+              console.log('I lOVE YOU Sandra');
+
+              return <li key={hearingDay.id} >
+                <Button
+                  styling={hoverColor}
+                  onClick={this.onSelectedHearingDayChange(hearingDay)}
+                  linkStyling
+                >
+                  {`${moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}
+                  ${this.roomInfo(hearingDay)} (${availableSlots} slots)`}
+                </Button>
+              </li>;
+            })}
+        </ul>
+      </div>;
+   }
+}
 
   veteranTypeColor = (type) => {
     let veteranType;
@@ -175,6 +200,7 @@ export default class AssignHearings extends React.Component {
         staticOptions={centralOfficeStaticEntry}
       />
       {this.props.upcomingHearingDays && this.formatAvailableHearingDays()}
+      {this.props.upcomingHearingDays && this.newFormat()}
       {this.props.upcomingHearingDays &&
         this.props.veteransReadyForHearing &&
         this.props.selectedHearingDay &&
