@@ -66,6 +66,7 @@ describe('QueueLoadingScreen', () => {
           id: 130,
           type: 'User'
         },
+        availableActions: undefined,
         addedByName: 'Nash X Kuvalis',
         addedByCssId: 'BVANKUVALIS',
         taskId: '3625593-2018-07-11',
