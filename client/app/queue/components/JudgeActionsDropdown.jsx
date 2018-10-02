@@ -94,12 +94,6 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
     history.replace(`/queue/appeals/${appealId}/${nextPage}`);
   }
 
-  assignWidgetVisible = () => {
-    const { selectedOption } = this.state;
-
-    return selectedOption && selectedOption.value === ASSIGN;
-  }
-
   render = () => {
     const {
       task
@@ -127,11 +121,6 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
         hideLabel
         dropdownStyling={dropdownStyling}
         value={this.state.selectedOption} />
-      {this.assignWidgetVisible() &&
-        <AssignWidget
-          onTaskAssignment={this.handleAssignment}
-          previousAssigneeId={task.assignedTo.id.toString()}
-          selectedTasks={[task]} />}
     </React.Fragment>;
   }
 }

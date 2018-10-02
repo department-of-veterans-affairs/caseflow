@@ -19,16 +19,6 @@ import COPY from '../../../COPY.json';
 import { sprintf } from 'sprintf-js';
 import { fullWidth } from '../constants';
 import editModalBase from './EditModalBase';
-import {
-  tasksForAppealAssignedToAttorneySelector,
-  tasksForAppealAssignedToUserSelector
-} from '../selectors';
-
-import {
-  initialAssignTasksToUser,
-  reassignTasksToUser
-} from '../QueueActions';
-
 
 import type {
   AttorneysOfJudge, State
@@ -40,7 +30,9 @@ import type {
 const OTHER = 'OTHER';
 
 type Params = {|
-  selectedTasks?: Array<Task>
+  previousAssigneeId: string,
+  onTaskAssignment: Function,
+  selectedTasks: Array<Task>
 |};
 
 type Props = Params & {|
@@ -98,30 +90,10 @@ class AssignWidget extends React.PureComponent<Props> {
     return this.assignTasks(selectedTasks, selectedAssigneeSecondary);
   }
 
-  handleAssignment = (
-    { tasks, assigneeId }: { tasks: Array<Task>, assigneeId: string }
-  ) => {
-    const previousAssigneeId = tasks[0].assignedTo.id.toString();
-
-    if (tasks[0].action === 'assign') {
-      return this.props.initialAssignTasksToUser({
-        tasks,
-        assigneeId,
-        previousAssigneeId
-      });
-    }
-
-    return this.props.reassignTasksToUser({
-      tasks,
-      assigneeId,
-      previousAssigneeId
-    });
-  }
-
   assignTasks = (selectedTasks: Array<Task>, assigneeId: string) => {
     const { previousAssigneeId } = this.props;
 
-    return this.handleAssignment(
+    return this.props.onTaskAssignment(
       { tasks: selectedTasks,
         assigneeId,
         previousAssigneeId }).
@@ -211,15 +183,12 @@ class AssignWidget extends React.PureComponent<Props> {
 const mapStateToProps = (state: State, ownProps: Object) => {
   const { attorneysOfJudge, attorneys } = state.queue;
   const { selectedAssignee, selectedAssigneeSecondary } = state.ui;
-  const defaultTask = tasksForAppealAssignedToAttorneySelector(state, ownProps)[0] ||
-    tasksForAppealAssignedToUserSelector(state, ownProps)[0];
 
   return {
     attorneysOfJudge,
     selectedAssignee,
     selectedAssigneeSecondary,
-    attorneys,
-    selectedTasks: ownProps.selectedTasks || [defaultTask]
+    attorneys
   };
 };
 
@@ -229,9 +198,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   showErrorMessage,
   resetErrorMessages,
   showSuccessMessage,
-  resetSuccessMessages,
-  initialAssignTasksToUser,
-  reassignTasksToUser
+  resetSuccessMessages
 }, dispatch);
 
 export default (connect(
