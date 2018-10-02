@@ -550,6 +550,13 @@ RSpec.feature "Higher-Level Review" do
       safe_click ".add-issue"
 
       expect(page).to have_content("1. Left knee granted")
+
+      safe_click "#button-finish-intake"
+
+      expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988) has been processed.")
+      expect(page).to have_content(
+        "Established EP: 030HLRR - Higher-Level Review Rating for Station 397 - ARC"
+      )
     end
 
     scenario "HLR non-comp" do

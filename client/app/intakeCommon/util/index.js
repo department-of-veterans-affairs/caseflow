@@ -56,18 +56,30 @@ export const validNonRatedIssue = (issue) => {
   return true;
 };
 
+const getRatedIssues = (state) => {
+  if (state.addedIssues && state.addedIssues.length > 0) {
+    // we're using the new add issues page
+    return state.addedIssues.map((issue) => {
+      let originalIssue = state.ratings[issue.profileDate].issues[issue.id];
+
+      return _.merge(originalIssue, { profile_date: issue.profileDate });
+    });
+  }
+
+  // default to original ratings format
+  return _(state.ratings).
+    map((rating) => {
+      return _.map(rating.issues, (issue) => {
+        return _.merge(issue, { profile_date: rating.profile_date });
+      });
+    }).
+    flatten().
+    filter('isSelected').
+    value();
+};
+
 export const formatIssues = (state) => {
-  const ratingData = {
-    request_issues:
-      _(state.ratings).
-        map((rating) => {
-          return _.map(rating.issues, (issue) => {
-            return _.merge(issue, { profile_date: rating.profile_date });
-          });
-        }).
-        flatten().
-        filter('isSelected')
-  };
+  const ratingData = getRatedIssues(state);
 
   const nonRatingData = {
     request_issues:
@@ -85,7 +97,7 @@ export const formatIssues = (state) => {
   };
 
   const data = {
-    request_issues: _.concat(ratingData.request_issues.value(), nonRatingData.request_issues.value())
+    request_issues: _.concat(ratingData, nonRatingData.request_issues.value())
   };
 
   return data;

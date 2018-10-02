@@ -296,5 +296,9 @@ RSpec.feature "Appeal Intake" do
     safe_click ".add-issue"
 
     expect(page).to have_content("1. Left knee granted")
+
+    safe_click "#button-finish-intake"
+
+    expect(page).to have_content("Notice of Disagreement (VA Form 10182) has been processed.")
   end
 end

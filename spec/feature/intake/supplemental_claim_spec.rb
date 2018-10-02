@@ -434,6 +434,11 @@ RSpec.feature "Supplemental Claim Intake" do
       safe_click ".add-issue"
 
       expect(page).to have_content("1. Left knee granted")
+      safe_click "#button-finish-intake"
+      expect(page).to have_content("Request for Supplemental Claim (VA Form 21-526b) has been processed.")
+      expect(page).to have_content(
+        "Established EP: 040SCR - Supplemental Claim Rating for Station 397 - ARC"
+      )
     end
 
     scenario "SC non-comp" do
