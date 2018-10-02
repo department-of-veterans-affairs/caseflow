@@ -36,6 +36,10 @@ class LegacyTask
     (Time.zone.today - assigned_at.to_date).to_i if assigned_at
   end
 
+  def allowed_actions(_role)
+    []
+  end
+
   ### Serializer Methods End
 
   def self.from_vacols(record, appeal, user)

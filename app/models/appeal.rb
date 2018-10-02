@@ -46,10 +46,6 @@ class Appeal < AmaReview
     { decision_issues: decision_issues, request_issues: request_issues }
   end
 
-  def issue_count
-    request_issues.count
-  end
-
   def docket_name
     docket_type
   end

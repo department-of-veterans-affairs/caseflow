@@ -542,11 +542,23 @@ RSpec.feature "Higher-Level Review" do
 
       # clicking the add issues button should bring up the modal
       safe_click "#button-add-issue"
+
       expect(page).to have_content("Left knee granted")
       expect(page).to have_content("PTSD denied")
+
+      # test canceling adding an issue by closing the modal
+      safe_click ".close-modal"
+      expect(page).to_not have_content("Left knee granted")
+
+      # adding an issue should show the issue
+      safe_click "#button-add-issue"
+      find("label", text: "Left knee granted").click
+      safe_click ".add-issue"
+
+      expect(page).to have_content("1. Left knee granted")
     end
 
-    scenario "HLR non-comp" do
+    scenario "Non-compensation" do
       start_higher_level_review(veteran, is_comp: false)
       visit "/intake/add_issues"
 

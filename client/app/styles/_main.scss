@@ -271,6 +271,8 @@ body {
 }
 
 select {
+  -webkit-appearance: none;
+
   &[id="decisionType"] {
     margin-bottom: 30px;
   }
