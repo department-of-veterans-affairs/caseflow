@@ -23,7 +23,6 @@ import {
   dropdownStyling,
   JUDGE_DECISION_OPTIONS
 } from '../constants';
-import AssignWidget from './AssignWidget';
 import type { Task, Appeal } from '../types/models';
 import type { State } from '../types/state';
 
@@ -80,7 +79,7 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
 
     if (actionType === DECISION_TYPES.OMO_REQUEST) {
       nextPage = 'evaluate';
-    } else if(option.value === ASSIGN) {
+    } else if (option.value === ASSIGN) {
       nextPage = 'modal/assign_to_user';
     } else if (appeal.isLegacyAppeal) {
       nextPage = 'dispositions';

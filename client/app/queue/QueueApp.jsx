@@ -30,7 +30,7 @@ import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import MarkTaskCompleteView from './MarkTaskCompleteView';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
-import AssignToUserView from './AssignToUserView'
+import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import TriggerModal from './TriggerModal';
 
 import CaseListView from './CaseListView';
@@ -156,7 +156,7 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView {...props.match.params} />;
 
-  routedAssignToUser = (props) => <AssignToUserView {...props.match.params} />;
+  routedAssignToUser = (props) => <AssignToAttorneyModalView {...props.match.params} />;
 
   routedMarkTaskComplete = (props) => <MarkTaskCompleteView
     nextStep={`/queue/appeals/${props.match.params.appealId}`}

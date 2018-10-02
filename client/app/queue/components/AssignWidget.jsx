@@ -32,7 +32,8 @@ const OTHER = 'OTHER';
 type Params = {|
   previousAssigneeId: string,
   onTaskAssignment: Function,
-  selectedTasks: Array<Task>
+  selectedTasks: Array<Task>,
+  isModal?: Boolean
 |};
 
 type Props = Params & {|
@@ -76,7 +77,6 @@ class AssignWidget extends React.PureComponent<Props> {
     if (selectedAssignee !== OTHER) {
       return this.assignTasks(selectedTasks, selectedAssignee);
 
-      return;
     }
 
     if (!selectedAssigneeSecondary) {
@@ -180,7 +180,7 @@ class AssignWidget extends React.PureComponent<Props> {
   }
 }
 
-const mapStateToProps = (state: State, ownProps: Object) => {
+const mapStateToProps = (state: State) => {
   const { attorneysOfJudge, attorneys } = state.queue;
   const { selectedAssignee, selectedAssigneeSecondary } = state.ui;
 
@@ -209,5 +209,5 @@ export default (connect(
 export const AssignWidgetModal = (connect(
   mapStateToProps,
   mapDispatchToProps
-)(editModalBase(AssignWidget, "TEST NAME")): React.ComponentType<Params>);
+)(editModalBase(AssignWidget, COPY.ASSIGN_WIDGET_MODAL_TITLE)): React.ComponentType<Params>);
 
