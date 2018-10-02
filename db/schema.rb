@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180928211349) do
+ActiveRecord::Schema.define(version: 20181001133041) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -61,6 +61,7 @@ ActiveRecord::Schema.define(version: 20180928211349) do
     t.datetime "created_at"
     t.string "vbms_id"
     t.integer "api_key_id"
+    t.string "source"
   end
 
   create_table "appeal_series", id: :serial, force: :cascade do |t|
@@ -274,6 +275,9 @@ ActiveRecord::Schema.define(version: 20180928211349) do
     t.string "claimant_participant_id"
     t.string "payee_code"
     t.datetime "committed_at"
+    t.string "doc_reference_id"
+    t.string "development_item_reference_id"
+    t.string "benefit_type_code"
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
   end
