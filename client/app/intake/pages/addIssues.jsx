@@ -7,7 +7,7 @@ import AddIssuesModal from '../components/AddIssuesModal';
 import Button from '../../components/Button';
 import { FORM_TYPES } from '../../intakeCommon/constants';
 import { formatDate } from '../../util/DateUtil';
-import { getListOfAddedIssues, getAddIssuesFields } from '../util';
+import { formatAddedIssues, getAddIssuesFields } from '../util';
 
 import Table from '../../components/Table';
 import { toggleAddIssuesModal } from '../actions/common';
@@ -25,11 +25,11 @@ class AddIssues extends React.PureComponent {
     const veteranInfo = `${veteran.name} (${veteran.fileNumber})`;
 
     const issuesComponent = () => {
-      let issues = getListOfAddedIssues(intakeData);
+      let issues = formatAddedIssues(intakeData);
 
       return <div>
         { issues.map((issue, index) => {
-          return <div id={issue.id}>{index + 1}. {issue.text} </div>;
+          return <div key={issue.referenceId}>{index + 1}. {issue.text} </div>;
         })}
         <Button
           name="add-issue"

@@ -146,7 +146,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
   return fields.concat(claimantField);
 };
 
-export const getListOfAddedIssues = (intakeData) => {
+export const formatAddedIssues = (intakeData) => {
   let issues = intakeData.addedIssues;
 
   return issues ? issues.map((issue) => {

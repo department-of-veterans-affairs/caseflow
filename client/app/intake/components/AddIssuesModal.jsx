@@ -24,19 +24,8 @@ class AddIssuesModal extends React.Component {
     });
   }
 
-  getProfileDateForIssue = (referenceId) => {
-    let foundDate = _.filter(this.props.ratings, (ratingDate) => {
-      let foundIssue = _.filter(ratingDate.issues, (issue) => referenceId === issue.reference_id);
-
-      return foundIssue.length === 1;
-    });
-
-    return foundDate[0].profile_date;
-  }
-
   onAddIssue = () => {
-    this.props.addIssue(this.state.referenceId,
-      this.getProfileDateForIssue(this.state.referenceId), true);
+    this.props.addIssue(this.state.referenceId, this.props.ratings, true);
     this.props.closeHandler();
   }
 
