@@ -12,6 +12,7 @@ import BuildScheduleUploadContainer from './containers/BuildScheduleUploadContai
 import ReviewAssignmentsContainer from './containers/ReviewAssignmentsContainer';
 import ListScheduleContainer from './containers/ListScheduleContainer';
 import AssignHearingsContainer from './containers/AssignHearingsContainer';
+import DailyDocketContainer from './containers/DailyDocketContainer';
 import ScrollToTop from '../components/ScrollToTop';
 
 class HearingScheduleApp extends React.PureComponent {
@@ -49,6 +50,12 @@ class HearingScheduleApp extends React.PureComponent {
             path="/schedule"
             title="Scheduled Hearings"
             render={this.routeForListScheduleContainer}
+          />
+          <PageRoute
+            exact
+            path="/schedule/docket/:ro_name/:date"
+            title="Daily Docket"
+            component={DailyDocketContainer}
           />
           <PageRoute
             exact
