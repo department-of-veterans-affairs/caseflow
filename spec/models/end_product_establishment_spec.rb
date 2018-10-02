@@ -323,7 +323,7 @@ describe EndProductEstablishment do
     context "when tracked item has already been generated" do
       before do
         # Cleaning Fakes:BGSService because it seems to persist between tests
-        Fakes::BGSService.manage_claimant_letter_v2_requests = nil
+        Fakes::BGSService.generate_tracked_items_requests = nil
       end
 
       let(:development_item_reference_id) { "tracked_item_exists" }
