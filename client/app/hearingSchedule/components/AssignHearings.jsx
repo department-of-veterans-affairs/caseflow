@@ -21,12 +21,6 @@ const centralOfficeStaticEntry = [{
   value: 'C'
 }];
 
-const hoverColor = css({
-    backgroundColor: COLORS.GREY_DARK,
-    color: COLORS.WHITE,
-    borderRadius: '0px'
-});
-
 export default class AssignHearings extends React.Component {
 
   // required to reset the RO Dropdown when moving from Viewing and Assigning.
@@ -57,11 +51,20 @@ export default class AssignHearings extends React.Component {
       <ul className="usa-sidenav-list">
         {Object.values(this.props.upcomingHearingDays).slice(0, 9).
           map((hearingDay) => {
+            const { selectedHearingDay } = this.props;
             const availableSlots = hearingDay.totalSlots - Object.keys(hearingDay.hearings).length;
+            const dateSelected = selectedHearingDay && selectedHearingDay.hearingDate === hearingDay.hearingDate;
+            const buttonColorSelected = css ({
+              backgroundColor: COLORS.GREY_DARK,
+              color: COLORS.WHITE,
+              borderRadius: '0px'
+            })
+            const styling = dateSelected ? buttonColorSelected : '';
 
             return <li key={hearingDay.id} >
               <Button
-                // onClick={this.onSelectedHearingDayChange(hearingDay)}
+                styling={styling}
+                onClick={this.onSelectedHearingDayChange(hearingDay)}
                 linkStyling
               >
                 {`${moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}
@@ -158,33 +161,6 @@ export default class AssignHearings extends React.Component {
     </div>;
   };
 
-    newFormat = () => {
-      if (this.props.upcomingHearingDays === this.props.selectedHearingDay) {
-        return <div className="usa-width-one-fourth">
-          <h3>Hearings to Schedule</h3>
-          <h4>Available Hearing Days</h4>
-          <ul className="usa-sidenav-list">
-            {Object.values(this.props.upcomingHearingDays).slice(0, 9).
-              map((hearingDay) => {
-                const availableSlots = hearingDay.totalSlots - Object.keys(hearingDay.hearings).length;
-
-                return <li key={hearingDay.id} >
-                  <Button
-                    styling={hoverColor}
-                    onClick={this.onSelectedHearingDayChange(hearingDay)}
-                    linkStyling
-                  >
-                    {`${moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}
-                    ${this.roomInfo(hearingDay)} (${availableSlots} slots)`}
-                  </Button>
-                </li>;
-              })}
-          </ul>
-        </div>;
-     }
-  }
-
-
   render() {
     return <AppSegment filledBackground>
       <h1>{COPY.HEARING_SCHEDULE_ASSIGN_HEARINGS_HEADER}</h1>
@@ -199,7 +175,6 @@ export default class AssignHearings extends React.Component {
         staticOptions={centralOfficeStaticEntry}
       />
       {this.props.upcomingHearingDays && this.formatAvailableHearingDays()}
-      {this.props.upcomingHearingDays && this.newFormat()}
       {this.props.upcomingHearingDays &&
         this.props.veteransReadyForHearing &&
         this.props.selectedHearingDay &&
