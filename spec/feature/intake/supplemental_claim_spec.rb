@@ -428,6 +428,12 @@ RSpec.feature "Supplemental Claim Intake" do
       safe_click "#button-add-issue"
       expect(page).to have_content("Left knee granted")
       expect(page).to have_content("PTSD denied")
+
+      # adding an issue should show the issue
+      find("label", text: "Left knee granted").click
+      safe_click ".add-issue"
+
+      expect(page).to have_content("1. Left knee granted")
     end
 
     scenario "SC non-comp" do
