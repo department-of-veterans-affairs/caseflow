@@ -211,7 +211,8 @@ class ListSchedule extends React.Component {
         <span className="cf-push-right" ><Link button="primary" to="/schedule/build">Build schedule</Link></span>
       }
       {this.props.userRoleAssign &&
-        <span className="cf-push-right"{...actionButtonsStyling} ><Link button="primary" to="/schedule/assign">Assign hearings</Link></span>
+        <span className="cf-push-right"{...actionButtonsStyling} >
+          <Link button="primary" to="/schedule/assign">Assign hearings</Link></span>
       }
       <div className="cf-help-divider" {...hearingSchedStyling} ></div>
       <div className="cf-push-left" {...inlineFormStyling} >
