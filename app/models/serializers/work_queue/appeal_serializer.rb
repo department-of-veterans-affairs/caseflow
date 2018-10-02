@@ -20,8 +20,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     []
   end
 
-  attribute :appeal_ids_with_hearings do
-    []
+  attribute :completed_hearing_on_previous_appeal? do
+    false
   end
 
   attribute :appellant_full_name do
