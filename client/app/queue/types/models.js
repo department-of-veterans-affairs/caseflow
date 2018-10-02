@@ -96,7 +96,7 @@ export type Hearing = {
 export type AppealDetail = {
   issues: Array<Object>,
   hearings: Array<Hearing>,
-  appealIdsWithHearings: Array<string>,
+  completedHearingOnPreviousAppeal: boolean,
   appellantFullName: string,
   appellantAddress: Address,
   appellantRelationship: string,

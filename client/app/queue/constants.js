@@ -160,8 +160,8 @@ export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
 ));
 
 export const LEGACY_APPEAL_TYPES = _.fromPairs(_.zip(
-  _.invokeMap(_.values(LEGACY_APPEAL_TYPES_BY_ID), 'toUpperCase'),
-  _.keys(LEGACY_APPEAL_TYPES_BY_ID)
+  _.invokeMap(_.keys(LEGACY_APPEAL_TYPES_BY_ID), 'toUpperCase'),
+  _.values(LEGACY_APPEAL_TYPES_BY_ID)
 ));
 
 export const ISSUE_DESCRIPTION_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.ISSUES.ISSDESC;

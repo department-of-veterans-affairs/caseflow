@@ -128,7 +128,7 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
       appeal: {
         caseType,
         hearings,
-        appealIdsWithHearings
+        completedHearingOnPreviousAppeal
       }
     } = this.props;
 
@@ -138,7 +138,7 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
     }];
 
     return <React.Fragment>
-      {caseType === LEGACY_APPEAL_TYPES.POST_REMAND && Boolean(appealIdsWithHearings.length) && <React.Fragment>
+      {caseType === LEGACY_APPEAL_TYPES.POST_REMAND && completedHearingOnPreviousAppeal && <React.Fragment>
         {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL}&nbsp;
         <a href="#" onClick={this.scrollToCaseList}>{COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK}</a>
         {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK}
