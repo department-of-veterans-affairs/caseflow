@@ -64,7 +64,7 @@ class AddIssues extends React.PureComponent {
 
     return <div className="cf-intake-edit">
       { intakeData.addIssuesModalVisible && <AddIssuesModal
-        ratings={intakeData.ratings}
+        intakeData={intakeData}
         closeHandler={this.props.toggleAddIssuesModal} />
       }
       <h1 className="cf-txt-c">Add Issues</h1>
