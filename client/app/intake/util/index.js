@@ -147,9 +147,9 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
 };
 
 export const formatAddedIssues = (intakeData) => {
-  let issues = intakeData.addedIssues;
+  let issues = intakeData.addedIssues || [];
 
-  return issues ? issues.map((issue) => {
+  return issues.map((issue) => {
     // currently does not handle unrated issues
     if (issue.isRated) {
       let foundIssue = intakeData.ratings[issue.profileDate].issues[issue.id];
@@ -161,5 +161,5 @@ export const formatAddedIssues = (intakeData) => {
     }
 
     return {};
-  }) : [];
+  });
 };
