@@ -10,15 +10,13 @@ import RadioField from '../../components/RadioField';
 import TextField from '../../components/TextField';
 
 class AddIssuesModal extends React.Component {
-  handleNotesChange(event) {
-    this.props.setNotes(this.props.id, event);
-
   constructor(props) {
     super(props);
 
     this.state = {
       profileDate: '',
-      referenceId: ''
+      referenceId: '',
+      notes: ''
     };
   }
 
@@ -28,8 +26,14 @@ class AddIssuesModal extends React.Component {
     });
   }
 
+  notesOnChange = (value) => {
+    this.setState({
+      notes: value
+    });
+  }
+
   onAddIssue = () => {
-    this.props.addIssue(this.state.referenceId, this.props.ratings, true);
+    this.props.addIssue(this.state.referenceId, this.props.ratings, this.props.notes, true);
     this.props.closeHandler();
   }
 
@@ -88,9 +92,9 @@ class AddIssuesModal extends React.Component {
 
           <TextField
             name="Notes"
-            value="Hello"
+            value={this.state.notes}
             optional
-            onChange={(event) => this.handleNotesChange(event)} />
+            onChange={this.notesOnChange} />
 
         </div>
       </Modal>

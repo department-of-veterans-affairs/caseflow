@@ -553,6 +553,7 @@ RSpec.feature "Higher-Level Review" do
       # adding an issue should show the issue
       safe_click "#button-add-issue"
       find("label", text: "Left knee granted").click
+      fill_in "Notes", with: "I am an issue note"
       safe_click ".add-issue"
 
       expect(page).to have_content("1. Left knee granted")
