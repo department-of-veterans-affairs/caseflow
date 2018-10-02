@@ -72,7 +72,6 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :file_number do
     object.is_a?(LegacyAppeal) ? object.sanitized_vbms_id : object.veteran_file_number
   end
-  attribute :citation_number
   attribute :docket_number
   attribute :docket_name
   attribute :number_of_issues
