@@ -17,14 +17,14 @@ import { selectDocketsPageTabIndex } from './actions/Dockets';
 const UPCOMING_TAB_INDEX = 0;
 const PAST_TAB_INDEX = 1;
 
-/* 
+/*
   Day Time for Travel Board
   Monday 12:30pm
   Tuesday 8:30am
   Wednesday 8:30am
   Thursday 8:30am
   Friday 8:30am
-*/ 
+*/
 const TRAVEL_BOARD_DEFAULT_MONDAY_START_TIME = {
   hour: 12,
   minutes: 30
@@ -43,7 +43,7 @@ export const DOCKETS_TAB_INDEX_MAPPING = {
 const tableBorder = css({
   border: '1px solid #dadbdc',
   marginTop: '0px',
-  borderTop: '0px'
+  borderTop: '0px',
 });
 
 const tableBodyStyling = css({

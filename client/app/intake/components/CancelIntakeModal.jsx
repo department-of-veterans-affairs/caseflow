@@ -115,8 +115,7 @@ class CancelIntakeModal extends BaseForm {
       return <Redirect to="/intake_cancellations/" />;
     }
 
-    return <div>
-      <Modal
+    return <Modal
         buttons={[
           { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
             name: 'Close',
@@ -149,8 +148,7 @@ class CancelIntakeModal extends BaseForm {
                 value={this.state.cancelOtherValue}
               />
         }
-      </Modal>
-    </div>;
+      </Modal>;
   }
 }
 

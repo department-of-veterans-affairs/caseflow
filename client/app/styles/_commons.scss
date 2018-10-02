@@ -582,8 +582,12 @@ div {
   background-size: 32px;
 }
 
+// TODO move this to FE toolkit
+.cf-logo-name,
 .cf-application-title {
-  color: $color-gray;
+// scss-lint:disable ImportantRule
+  color: $color-gray-dark !important;
+// scss-lint:enable ImportantRule
   font-size: 1.7rem;
   font-weight: normal;
   display: inline;
@@ -761,6 +765,10 @@ form {
   }
 }
 
+th,
+td {
+  border: 1px solid $color-gray-lighter;
+}
 
 // ===========================*
 // Form-related states
