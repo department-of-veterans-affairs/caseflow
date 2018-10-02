@@ -22,8 +22,8 @@ class Task < ApplicationRecord
     completed: "completed"
   }
 
-  def allowed_actions(user)
-    return []
+  def allowed_actions(_user)
+    []
   end
 
   def assigned_by_display_name
