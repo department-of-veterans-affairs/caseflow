@@ -40,9 +40,8 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
     if feature_enabled?(:idt_ama_appeals)
       tasks += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold])
-        .reject { |task| task.action == "assign" }
     end
-    tasks
+    tasks.reject { |task| task.action == "assign" }
   end
 
   def role

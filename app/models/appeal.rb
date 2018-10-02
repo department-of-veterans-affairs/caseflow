@@ -38,7 +38,7 @@ class Appeal < AmaReview
   end
 
   def reviewing_judge_name
-    task = tasks.where(type: "JudgeTask").last
+    task = tasks.where(type: "JudgeTask").order(:created_at).last
     task ? task.assigned_to.try(:full_name) : ""
   end
 

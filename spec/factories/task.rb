@@ -64,12 +64,7 @@ FactoryBot.define do
       type "AttorneyTask"
       appeal_type "Appeal"
       appeal { create(:appeal) }
-
-      after(:create) do |task, _evaluator|
-        parent = create(:ama_judge_task, appeal: task.appeal)
-        task.parent = parent
-        task.save
-      end
+      parent { create(:ama_judge_task) }
     end
 
     factory :ama_vso_task do
