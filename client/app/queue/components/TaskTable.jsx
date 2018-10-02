@@ -14,7 +14,10 @@ import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
-import { renderAppealType } from '../utils';
+import {
+  renderAppealType,
+  getUndecidedIssues
+} from '../utils';
 import { DateString } from '../../util/DateUtil';
 import { CATEGORIES, redText } from '../constants';
 import COPY from '../../../COPY.json';
@@ -176,9 +179,9 @@ class TaskTable extends React.PureComponent<Props> {
   caseIssueCountColumn = () => {
     return this.props.includeIssueCount ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE,
-      valueFunction: (task) => this.taskHasDASRecord(task) ? task.appeal.issueCount : null,
+      valueFunction: (task) => this.taskHasDASRecord(task) ? getUndecidedIssues(task.appeal.issues).length : null,
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (task) => this.taskHasDASRecord(task) ? task.appeal.issueCount : null
+      getSortValue: (task) => this.taskHasDASRecord(task) ? getUndecidedIssues(task.appeal.issues).length : null
     } : null;
   }
 
