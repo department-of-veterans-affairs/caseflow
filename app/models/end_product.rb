@@ -63,10 +63,6 @@ class EndProduct
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 
-  # C&P Live = '1', C&P Death = '2'
-  BENEFIT_TYPE_CODE_LIVE = "1".freeze
-  BENEFIT_TYPE_CODE_DEATH = "2".freeze
-
   attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code,
                 :station_of_jurisdiction, :gulf_war_registry, :suppress_acknowledgement_letter
 
@@ -78,7 +74,7 @@ class EndProduct
   validates :gulf_war_registry, :suppress_acknowledgement_letter, inclusion: { in: [true, false] }
 
   def benefit_type_code
-    @benefit_type_code ||= BENEFIT_TYPE_CODE_LIVE
+    @benefit_type_code ||= Veteran::BENEFIT_TYPE_CODE_LIVE
   end
 
   def payee_code

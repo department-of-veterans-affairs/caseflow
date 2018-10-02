@@ -14,17 +14,7 @@ describe EndProductEstablishment do
   let!(:veteran) do
     Generators::Veteran.create(
       file_number: veteran_file_number,
-      participant_id: veteran_participant_id,
-      date_of_death: "05/01/2016"
-    )
-  end
-  let(:living_veteran_file_number) { "12345678" }
-  let(:living_veteran_participant_id) { "55667788" }
-  let!(:living_veteran) do
-    Generators::Veteran.create(
-      file_number: living_veteran_file_number,
-      participant_id: living_veteran_participant_id,
-      date_of_death: nil, # default but explicit here for clarity
+      participant_id: veteran_participant_id
     )
   end
   let(:code) { "030HLRR" }
@@ -36,6 +26,9 @@ describe EndProductEstablishment do
   let(:special_issues) { nil }
   let(:committed_at) { nil }
   let(:fake_claim_id) { "FAKECLAIMID" }
+  let(:benefit_type_code) { "2" }
+  let(:doc_reference_id) { nil }
+  let(:development_item_reference_id) { nil }
 
   let(:end_product_establishment) do
     EndProductEstablishment.new(
@@ -48,67 +41,15 @@ describe EndProductEstablishment do
       reference_id: reference_id,
       claimant_participant_id: veteran_participant_id,
       synced_status: synced_status,
-      committed_at: committed_at
-    )
-  end
-
-  let(:living_end_product_establishment) do
-    EndProductEstablishment.new(
-      source: source,
-      veteran_file_number: living_veteran_file_number,
-      code: code,
-      payee_code: payee_code,
-      claim_date: 2.days.ago,
-      station: "397",
-      reference_id: reference_id,
-      claimant_participant_id: living_veteran_participant_id,
-      synced_status: synced_status,
-      committed_at: committed_at
+      committed_at: committed_at,
+      benefit_type_code: benefit_type_code,
+      doc_reference_id: doc_reference_id,
+      development_item_reference_id: development_item_reference_id
     )
   end
 
   let(:vbms_error) do
     VBMS::HTTPError.new("500", "More EPs more problems")
-  end
-
-  context "when veteran has nil date_of_death (is alive)" do
-    subject { living_end_product_establishment.perform! }
-
-    before do
-      Fakes::VBMSService.end_product_claim_ids_by_file_number ||= {}
-      Fakes::VBMSService.end_product_claim_ids_by_file_number[living_veteran.file_number] = fake_claim_id
-      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
-    end
-
-    it "sends correct benefit_type_code" do
-      subject
-
-      expect(living_end_product_establishment.reload).to have_attributes(
-        reference_id: fake_claim_id,
-        veteran_file_number: living_veteran_file_number,
-        established_at: Time.zone.now,
-        committed_at: nil,
-        modifier: "030"
-      )
-
-      expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
-        claim_hash: {
-          benefit_type_code: EndProduct::BENEFIT_TYPE_CODE_LIVE,
-          payee_code: "00",
-          claimant_participant_id: living_veteran_participant_id,
-          predischarge: false,
-          claim_type: "Claim",
-          station_of_jurisdiction: "397",
-          date: 2.days.ago.to_date,
-          end_product_modifier: "030",
-          end_product_label: "Higher-Level Review Rating",
-          end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
-          gulf_war_registry: false,
-          suppress_acknowledgement_letter: false
-        },
-        veteran_hash: living_veteran.reload.to_vbms_hash
-      )
-    end
   end
 
   context "#perform!" do
@@ -161,7 +102,7 @@ describe EndProductEstablishment do
         subject
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
-            benefit_type_code: EndProduct::BENEFIT_TYPE_CODE_DEATH,
+            benefit_type_code: Veteran::BENEFIT_TYPE_CODE_DEATH,
             payee_code: "00",
             predischarge: false,
             claim_type: "Claim",
@@ -188,7 +129,7 @@ describe EndProductEstablishment do
           subject
           expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
             claim_hash: {
-              benefit_type_code: EndProduct::BENEFIT_TYPE_CODE_DEATH,
+              benefit_type_code: Veteran::BENEFIT_TYPE_CODE_DEATH,
               payee_code: "00",
               predischarge: false,
               claim_type: "Claim",
@@ -239,7 +180,7 @@ describe EndProductEstablishment do
 
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
-            benefit_type_code: EndProduct::BENEFIT_TYPE_CODE_DEATH,
+            benefit_type_code: Veteran::BENEFIT_TYPE_CODE_DEATH,
             payee_code: "00",
             claimant_participant_id: veteran_participant_id,
             predischarge: false,
@@ -342,7 +283,64 @@ describe EndProductEstablishment do
     end
   end
 
-  context "commit!" do
+  context "#generate_claimant_letter!" do
+    subject { end_product_establishment.generate_claimant_letter! }
+
+    context "when claimant letter has already been generated" do
+      let(:doc_reference_id) { "doc_exists" }
+      # Cleaning Fakes:BGSService because it seems to persist between tests
+      Fakes::BGSService.manage_claimant_letter_v2_requests = nil
+
+      it "does not create a new claimant letter" do
+        subject
+        expect(Fakes::BGSService.manage_claimant_letter_v2_requests).to be_nil
+        expect(end_product_establishment.doc_reference_id).to eq("doc_exists")
+      end
+    end
+
+    context "when there is no claimant letter" do
+      let(:doc_reference_id) { nil }
+      let(:benefit_type_code) { "1" }
+
+      it "generates a new claimant letter" do
+        subject
+
+        letter_request = Fakes::BGSService.manage_claimant_letter_v2_requests
+        expect(letter_request[end_product_establishment.reference_id]).to eq(
+          program_type_cd: "CPL", claimant_participant_id: veteran_participant_id
+        )
+        expect(end_product_establishment.doc_reference_id).to eq("doc_reference_id_result")
+      end
+    end
+  end
+
+  context "#generate_tracked_item!" do
+    subject { end_product_establishment.generate_tracked_item! }
+
+    context "when tracked item has already been generated" do
+      let(:development_item_reference_id) { "tracked_item_exists" }
+      # Cleaning Fakes:BGSService because it seems to persist between tests
+      Fakes::BGSService.generate_tracked_items_requests = nil
+
+      it "does not create a new tracked item" do
+        subject
+        expect(Fakes::BGSService.generate_tracked_items_requests).to be_nil
+        expect(end_product_establishment.development_item_reference_id).to eq("tracked_item_exists")
+      end
+    end
+
+    context "when there is no tracked item" do
+      let(:development_item_reference_id) { nil }
+
+      it "creates a new tracked item" do
+        subject
+        tracked_item_request = Fakes::BGSService.generate_tracked_items_requests
+        expect(tracked_item_request[end_product_establishment.reference_id]).to be(true)
+      end
+    end
+  end
+
+  context "#commit!" do
     subject { end_product_establishment.commit! }
 
     it "commits the end product establishment" do

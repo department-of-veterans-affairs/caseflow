@@ -33,6 +33,10 @@ class Appeal < AmaReview
     "Original"
   end
 
+  def attorney_case_reviews
+    tasks.map(&:attorney_case_reviews).flatten
+  end
+
   def issues
     { decision_issues: decision_issues, request_issues: request_issues }
   end
