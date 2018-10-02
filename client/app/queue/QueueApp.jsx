@@ -126,25 +126,27 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedSubmitDecision = (props) => <SubmitDecisionView
     appealId={props.match.params.appealId}
+    checkoutFlow={props.match.params.checkoutFlow}
     nextStep="/queue" />;
 
   routedSelectDispositions = (props) => <SelectDispositionsView
-    appealId={props.match.params.appealId} />;
+    appealId={props.match.params.appealId}
+    checkoutFlow={props.match.params.checkoutFlow} />;
 
   routedSelectSpecialIssues = (props) => <SpecialIssueLoadingScreen appealExternalId={props.match.params.appealId}>
     <SelectSpecialIssuesView
       appealId={props.match.params.appealId}
       prevStep={`/queue/appeals/${props.match.params.appealId}`}
-      nextStep={`/queue/appeals/${props.match.params.appealId}/dispositions`} />
+      nextStep={`/queue/appeals/${props.match.params.appealId}/${props.match.params.checkoutFlow}/dispositions`} />
   </SpecialIssueLoadingScreen>;
 
   routedAddEditIssue = (props) => <AddEditIssueView
-    nextStep={`/queue/appeals/${props.match.params.appealId}/dispositions`}
-    prevStep={`/queue/appeals/${props.match.params.appealId}/dispositions`}
+    nextStep={`/queue/appeals/${props.match.params.appealId}/${props.match.params.checkoutFlow}/dispositions`}
+    prevStep={`/queue/appeals/${props.match.params.appealId}/${props.match.params.checkoutFlow}/dispositions`}
     {...props.match.params} />;
 
   routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView
-    prevStep={`/queue/appeals/${props.match.params.appealId}/dispositions`}
+    prevStep={`/queue/appeals/${props.match.params.appealId}/${props.match.params.checkoutFlow}/dispositions`}
     {...props.match.params} />;
 
   routedEvaluateDecision = (props) => <EvaluateDecisionView nextStep="/queue" {...props.match.params} />;
@@ -249,9 +251,9 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedQueueDetail} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/submit"
-            title={() => {
-              let reviewActionType = '';
+            path="/queue/appeals/:appealId/:checkoutFlow(draft_decision|dispatch_decision|omo_request)/submit"
+            title={(props) => {
+              let reviewActionType = props.match.params.checkoutFlow;
 
               // eslint-disable-next-line default-case
               switch (this.props.reviewActionType) {
@@ -271,27 +273,28 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedSubmitDecision} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/dispositions/:action(add|edit)/:issueId?"
+            path={'/queue/appeals/:appealId/:checkoutFlow(draft_decision|dispatch_decision)/' +
+              'dispositions/:action(add|edit)/:issueId?'}
             title={(props) => `Draft Decision | ${StringUtil.titleCase(props.match.params.action)} Issue`}
             render={this.routedAddEditIssue} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/remands"
+            path="/queue/appeals/:appealId/:checkoutFlow(draft_decision|dispatch_decision)/remands"
             title={`Draft Decision | ${PAGE_TITLES.REMANDS[this.props.userRole.toUpperCase()]}`}
             render={this.routedSetIssueRemandReasons} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/dispositions"
+            path="/queue/appeals/:appealId/:checkoutFlow(draft_decision|dispatch_decision)/dispositions"
             title={`Draft Decision | ${PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()]}`}
             render={this.routedSelectDispositions} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/special_issues"
+            path="/queue/appeals/:appealId/:checkoutFlow(draft_decision|dispatch_decision)/special_issues"
             title={`Draft Decision | ${COPY.SPECIAL_ISSUES_PAGE_TITLE}`}
             render={this.routedSelectSpecialIssues} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/evaluate"
+            path="/queue/appeals/:appealId/:checkoutFlow(dispatch_decision|omo_request)/evaluate"
             title="Evaluate Decision | Caseflow"
             render={this.routedEvaluateDecision} />
           <PageRoute
