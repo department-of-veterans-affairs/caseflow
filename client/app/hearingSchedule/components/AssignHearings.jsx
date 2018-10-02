@@ -74,51 +74,23 @@ export default class AssignHearings extends React.Component {
   };
 
 
-  newFormat = () => {
-    if (this.props.upcomingHearingDays === this.props.selectedHearingDay) {
-      return <div className="usa-width-one-fourth">
-        <h3>Hearings to Schedule</h3>
-        <h4>Available Hearing Days</h4>
-        <ul className="usa-sidenav-list">
-          {Object.values(this.props.upcomingHearingDays).slice(0, 9).
-            map((hearingDay) => {
-              const availableSlots = hearingDay.totalSlots - Object.keys(hearingDay.hearings).length;
-              console.log('I lOVE YOU Sandra');
+  veteranTypeColor = (docketType) => {
 
-              return <li key={hearingDay.id} >
-                <Button
-                  styling={hoverColor}
-                  onClick={this.onSelectedHearingDayChange(hearingDay)}
-                  linkStyling
-                >
-                  {`${moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}
-                  ${this.roomInfo(hearingDay)} (${availableSlots} slots)`}
-                </Button>
-              </li>;
-            })}
-        </ul>
-      </div>;
-   }
-}
-
-  veteranTypeColor = (type) => {
-    let veteranType;
-
-    if (type === 'CAVC') {
-      veteranType = <span {...colorAOD}>CAVC</span>;
-    } else if (type === 'AOD') {
-      veteranType = <span {...colorAOD}>AOD</span>;
+    if (docketType === 'CAVC') {
+      return <span {...colorAOD}>CAVC</span>;
+    } else if (docketType === 'AOD') {
+      return <span {...colorAOD}>AOD</span>;
     }
 
-    return veteranType;
+    return docketType;
   }
 
   tableRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
-      caseDetails: veteran.name,
+      caseDetails: `${veteran.name} | ${veteran.id}`,
       type: this.veteranTypeColor(veteran.type),
       docketNumber: veteran.docketNumber,
-      location: veteran.location,
+      location: this.props.selectedRegionalOffice.value === 'C' ? 'Washington DC' : veteran.location,
       time: veteran.time
     }));
   };
@@ -185,6 +157,34 @@ export default class AssignHearings extends React.Component {
       />
     </div>;
   };
+
+    newFormat = () => {
+      if (this.props.upcomingHearingDays === this.props.selectedHearingDay) {
+        return <div className="usa-width-one-fourth">
+          <h3>Hearings to Schedule</h3>
+          <h4>Available Hearing Days</h4>
+          <ul className="usa-sidenav-list">
+            {Object.values(this.props.upcomingHearingDays).slice(0, 9).
+              map((hearingDay) => {
+                const availableSlots = hearingDay.totalSlots - Object.keys(hearingDay.hearings).length;
+                console.log('I lOVE YOU Sandra');
+
+                return <li key={hearingDay.id} >
+                  <Button
+                    styling={hoverColor}
+                    onClick={this.onSelectedHearingDayChange(hearingDay)}
+                    linkStyling
+                  >
+                    {`${moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}
+                    ${this.roomInfo(hearingDay)} (${availableSlots} slots)`}
+                  </Button>
+                </li>;
+              })}
+          </ul>
+        </div>;
+     }
+  }
+
 
   render() {
     return <AppSegment filledBackground>

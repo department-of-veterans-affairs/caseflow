@@ -59,7 +59,8 @@ class SupplementalClaim < ClaimReview
       payee_code: payee_code,
       code: ep_code,
       claimant_participant_id: claimant_participant_id,
-      station: "397" # AMC
+      station: "397", # AMC
+      benefit_type_code: veteran.benefit_type_code
     )
   end
 end

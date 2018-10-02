@@ -15,7 +15,6 @@ class SyncReviewsJob < CaseflowJob
     perform_end_product_syncs(limit)
     perform_ramp_refiling_reprocessing
     perform_claim_review_processing(limit)
-    perform_request_issues_update_processing(limit)
   end
 
   private
@@ -38,16 +37,10 @@ class SyncReviewsJob < CaseflowJob
   end
 
   def perform_claim_review_processing(limit)
-    [HigherLevelReview, SupplementalClaim].each do |klass|
+    [HigherLevelReview, SupplementalClaim, RequestIssuesUpdate].each do |klass|
       klass.requires_processing.limit(limit).each do |claim_review|
         ClaimReviewProcessJob.perform_later(claim_review)
       end
-    end
-  end
-
-  def perform_request_issues_update_processing(limit)
-    RequestIssuesUpdate.requires_processing.limit(limit).each do |riu|
-      RequestIssuesUpdateJob.perform_later(riu)
     end
   end
 end
