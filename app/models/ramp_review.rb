@@ -111,7 +111,8 @@ class RampReview < ApplicationRecord
       claimant_participant_id: claimant_participant_id,
       valid_modifiers: valid_modifiers,
       source: self,
-      station: "397" # AMC
+      station: "397", # AMC
+      benefit_type_code: veteran.benefit_type_code
     )
   end
 

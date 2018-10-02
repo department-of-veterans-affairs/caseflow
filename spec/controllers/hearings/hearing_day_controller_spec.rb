@@ -11,6 +11,14 @@ RSpec.describe Hearings::HearingDayController, type: :controller do
            hearing_date: Date.new(2018, 4, 2),
            folder_nr: "VIDEO RO04")
   end
+  let!(:vacols_case) do
+    create(
+      :case,
+      folder: create(:folder, tinum: "docket-number"),
+      bfregoff: "RO04",
+      bfcurloc: "57"
+    )
+  end
 
   context "index_with_hearings" do
     it "returns all hearing days with hearings and slots" do
@@ -19,6 +27,15 @@ RSpec.describe Hearings::HearingDayController, type: :controller do
       response_body = JSON.parse(response.body)
       expect(response_body["hearing_days"].size).to eq 1
       expect(response_body["hearing_days"][0]["total_slots"]).to eq 4
+    end
+  end
+
+  context "veterans_ready_for_hearing" do
+    it "returns all veterans ready for hearing" do
+      get :veterans_ready_for_hearing, params: { regional_office: "RO04" }, as: :json
+      expect(response.status).to eq 200
+      response_body = JSON.parse(response.body)
+      expect(response_body["veterans"].size).to eq 1
     end
   end
 end
