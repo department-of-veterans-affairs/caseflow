@@ -54,11 +54,11 @@ export default class AssignHearings extends React.Component {
             const { selectedHearingDay } = this.props;
             const availableSlots = hearingDay.totalSlots - Object.keys(hearingDay.hearings).length;
             const dateSelected = selectedHearingDay && selectedHearingDay.hearingDate === hearingDay.hearingDate;
-            const buttonColorSelected = css ({
+            const buttonColorSelected = css({
               backgroundColor: COLORS.GREY_DARK,
               color: COLORS.WHITE,
               borderRadius: '0px'
-            })
+            });
             const styling = dateSelected ? buttonColorSelected : '';
 
             return <li key={hearingDay.id} >
@@ -75,7 +75,6 @@ export default class AssignHearings extends React.Component {
       </ul>
     </div>;
   };
-
 
   veteranTypeColor = (docketType) => {
 
