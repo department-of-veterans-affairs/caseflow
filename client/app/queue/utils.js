@@ -33,7 +33,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       lastName: task.attributes.decision_prepared_by.last_name
     } : null;
 
-    acc[task.attributes.external_appeal_id] = {
+    acc[task.id] = {
       appealType: task.attributes.appeal_type,
       addedByCssId: null,
       appealId: task.attributes.appeal_id,

@@ -92,7 +92,9 @@ class TasksController < ApplicationController
       return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], user_role)
     end
 
-    json_tasks_by_appeal_id(appeal.id, appeal.class.to_s)
+    render json: {
+      tasks: json_tasks(Task.where())[:data]
+    }
   end
 
   def assignable_organizations
@@ -174,19 +176,15 @@ class TasksController < ApplicationController
     }
   end
 
-  def json_tasks_by_legacy_appeal_id_and_role(appeal_id, role)
-    tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal_id, role)
-
+  def json_tasks_by_legacy_appeal_id_and_role
     render json: {
-      tasks: json_legacy_tasks(tasks)[:data]
+      tasks: json_legacy_tasks(appeal.tasks)[:data]
     }
   end
 
-  def json_tasks_by_appeal_id(appeal_db_id, appeal_type)
-    tasks = queue_class.new(user: current_user).tasks_by_appeal_id(appeal_db_id, appeal_type)
-
+  def json_tasks_by_appeal_id
     render json: {
-      tasks: json_tasks(tasks)[:data]
+      tasks: json_tasks(appeal.tasks)[:data]
     }
   end
 
