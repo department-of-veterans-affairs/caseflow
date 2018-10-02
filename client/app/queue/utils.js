@@ -185,7 +185,9 @@ export const prepareAppealForStore =
         isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
         caseType: appeal.attributes.type,
         isAdvancedOnDocket: appeal.attributes.aod,
-        issueCount: appeal.attributes.issues.length,
+        issueCount: (appeal.attributes.docket_name === 'legacy' ?
+          getUndecidedIssues(appeal.attributes.issues) : appeal.attributes.issues
+        ).length,
         docketNumber: appeal.attributes.docket_number,
         assignedAttorney: appeal.attributes.assigned_attorney,
         assignedJudge: appeal.attributes.assigned_judge,
