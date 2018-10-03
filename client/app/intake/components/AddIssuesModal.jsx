@@ -88,14 +88,12 @@ class AddIssuesModal extends React.Component {
           </p>
           <br />
           { ratedIssuesSections }
-          <br />
-
           <TextField
             name="Notes"
             value={this.state.notes}
             optional
+            strongLabel
             onChange={this.notesOnChange} />
-
         </div>
       </Modal>
     </div>;

@@ -44,7 +44,9 @@ export default class TextField extends React.Component {
 
     const labelContents =
       <span>
-        {label || name} {required && <span className="cf-required">Required</span>} {optional && <span className="cf-optional">Optional</span>}
+        {label || name}
+        {required && <span className="cf-required">Required</span>}
+        {optional && <span className="cf-optional">Optional</span>}
       </span>;
 
     return <div className={textInputClass.join(' ')}>
