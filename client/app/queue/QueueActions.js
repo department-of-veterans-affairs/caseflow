@@ -425,44 +425,6 @@ export const fetchAmaTasksOfUser = (userId: number, userRole: string) => (dispat
   ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
     then((resp) => dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data))));
 
-const receiveAllOrganizations = (organizations) => ({
-  type: ACTIONS.RECEIVE_ALL_ORGANIZATIONS,
-  payload: {
-    organizations
-  }
-});
-
-const errorAllOrganizations = (error) => ({
-  type: ACTIONS.ERROR_LOADING_ORGANIZATIONS,
-  payload: {
-    error
-  }
-});
-
-export const fetchAllOrganizations = (taskId: number) => (dispatch: Dispatch) =>
-  ApiUtil.get(`/tasks/${taskId}/assignable_organizations`).
-    then((resp) => dispatch(receiveAllOrganizations(resp.body.attorneys))).
-    catch((error) => Promise.reject(dispatch(errorAllOrganizations(error))));
-
-const receiveAllOrganizationUsers = (organizationUsers) => ({
-  type: ACTIONS.RECEIVE_ALL_ORGANIZATIONUSERS,
-  payload: {
-    organizationUsers
-  }
-});
-
-const errorAllOrganizationUsers = (error) => ({
-  type: ACTIONS.ERROR_LOADING_ORGANIZATIONUSERS,
-  payload: {
-    error
-  }
-});
-
-export const fetchAllOrganizationUsers = () => (dispatch: Dispatch) =>
-  ApiUtil.get(`/tasks/${taskId}/assignable_users`).
-    then((resp) => dispatch(receiveAllOrganizationUsers(resp.body.attorneys))).
-    catch((error) => Promise.reject(dispatch(errorAllOrganizationUsers(error))));
-
 export const setTaskAssignment = (externalAppealId: string, cssId: string, pgId: number) => ({
   type: ACTIONS.SET_TASK_ASSIGNMENT,
   payload: {

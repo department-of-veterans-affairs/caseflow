@@ -433,22 +433,6 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
         }
       }
     });
-  case ACTIONS.RECEIVE_ALL_ORGANIZATIONS:
-    return update(state, {
-
-    });
-  case ACTIONS.ERROR_LOADING_ORGANIZATIONS:
-    return update(state, {
-
-    });
-  case ACTIONS.RECEIVE_ALL_ORGANIZATION_USERS:
-    return update(state, {
-
-    });
-  case ACTIONS.ERROR_LOADING_ORGANIZATION_USERS:
-    return update(state, {
-
-    });
   default:
     return state;
   }
