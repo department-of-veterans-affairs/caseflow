@@ -3,56 +3,52 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
 
-import { addIssue } from '../actions/ama';
-import { formatDateStr } from '../../util/DateUtil';
+import { addNonRatedIssue } from '../actions/ama';
 import Modal from '../../components/Modal';
-import RadioField from '../../components/RadioField';
+import SearchableDropdown from '../../components/SearchableDropdown';
+import TextField from '../../components/TextField';
+import Button from '../../components/Button';
+import DateSelector from '../../components/DateSelector';
+import { ISSUE_CATEGORIES } from '../constants';
 
-class AddIssuesModal extends React.Component {
+class NonRatedIssuesModal extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      profileDate: '',
-      referenceId: ''
+      category: '',
+      description: '',
+      decisionDate
     };
   }
 
-  radioOnChange = (value) => {
+  categoryOnChange = (value) => {
     this.setState({
-      referenceId: value
+      category: value
+    });
+  }
+
+  descriptionOnChange = (value) => {
+    this.setState({
+      description: value
+    });
+  }
+
+  decisionDateOnChange = (value) => {
+    this.setState({
+      decisionDate: value
     });
   }
 
   onAddIssue = () => {
-    this.props.addIssue(this.state.referenceId, this.props.ratings, true);
+    this.props.addNonRatedIssue(this.state.category, this.props.description, this.props.decisionDate);
     this.props.closeHandler();
   }
 
   render() {
     let {
-      ratings,
       closeHandler
     } = this.props;
-
-    const ratedIssuesSections = _.map(ratings, (rating) => {
-      const radioOptions = _.map(rating.issues, (issue) => {
-        return {
-          displayText: issue.decision_text,
-          value: issue.reference_id
-        };
-      });
-
-      return <RadioField
-        vertical
-        label={<h3>Past decisions from { formatDateStr(rating.profile_date) }</h3>}
-        name={`rating-radio-${rating.profile_date}`}
-        options={radioOptions}
-        key={rating.profile_date}
-        value={this.state.referenceId}
-        onChange={this.radioOnChange}
-      />;
-    });
 
     return <div>
       <Modal
@@ -72,14 +68,27 @@ class AddIssuesModal extends React.Component {
       >
         <div>
           <h2>
-            Does this issue match any of these issues from past descriptions?
+            Does this issue match any of these issue categories?
           </h2>
-          <p>
-            Tip: sometimes applicants list desired outcome, not what the past decision was
-             -- so select the best matching decision.
-          </p>
-          <br />
-          { ratedIssuesSections }
+
+          <SearchableDropdown
+            name="issue-category"
+            label="Issue category"
+            placeholder="Select or enter..."
+            options={ISSUE_CATEGORIES}
+            value={category}
+            onChange={this.categoryOnChange} />
+
+          <TextField
+            name="Issue description"
+            value={description}
+            onChange={this.descriptionOnChange} />
+
+          <DateSelector
+            name="Issue date"
+            label="Decision date"
+            value={decisionDate}
+            onChange={this.decisionDateOnChange} />
         </div>
       </Modal>
     </div>;
@@ -89,6 +98,6 @@ class AddIssuesModal extends React.Component {
 export default connect(
   null,
   (dispatch) => bindActionCreators({
-    addIssue
+    addNonRatedIssue
   }, dispatch)
-)(AddIssuesModal);
+)(AddNonRatedIssuesModal);

@@ -156,21 +156,19 @@ export const addRatedIssue = (issueId, ratings, isRated) => (dispatch) => {
   });
 };
 
-export const newNonRatedIssue = (issueId, ratings, isRated) => (dispatch) => {
-  let foundDate = _.filter(ratings, (ratingDate) => _.some(ratingDate.issues, { reference_id: issueId }));
-
+export const addNonRatedIssue = (category, description, decisionDate) => (dispatch) => {
   dispatch({
-    type: ACTIONS.ADD_RATED_ISSUE,
+    type: ACTIONS.ADD_NON_RATED_ISSUE,
     payload: {
-      issueId,
-      isRated,
-      profileDate: foundDate[0].profile_date
+      category,
+      description,
+      decisionDate
     }
   });
 };
 
 export const newNonRatedIssue = (nonRatedIssues) => ({
-  type: ACTIONS.ADD_NON_RATED_ISSUE,
+  type: ACTIONS.NEW_NON_RATED_ISSUE,
   payload: {
     nonRatedIssues
   },
