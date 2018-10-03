@@ -64,55 +64,39 @@
   td {
     vertical-align: top;
 
-    table {
-      margin: 0;
+    .issues {
+      display: table;
+      width: 100%;
 
-      tr {
-        &:first-child {
-          td {
-            padding-top: 0;
+      .issue {
+        display: table-row;
+        border-bottom: 1px solid $color-gray-lighter;
+
+        div {
+          display: table-column;
+          float: left;
+          padding: 0.5em 0;
+        }
+
+        .issue-desc {
+          max-width: 70%;
+
+          .issue-num {
+            padding-right: 0.25em;
           }
         }
 
-        td {
-          border: none;
-        }
+        .issue-action {
+          padding: 0;
+          float: right;
 
-        td:first-child {
-          font-weight: normal;
-        }
-
-        &.issue {
-          td {
-            border-bottom: 1px solid $color-gray-lighter;
-          }
-
-          td:last-child {
-            text-align: right;
-            vertical-align: middle;
-
+          button {
             i {
               padding-right: 0.25em;
-              display: inline;
             }
           }
         }
-
-        &:last-of-type {
-          td {
-            border: none;
-          }
-        }
       }
-
-      tfoot {
-        tr:first-child {
-          td {
-            padding-top: 0.5em;
-          }
-        }
-      }
-
     }
   }
 

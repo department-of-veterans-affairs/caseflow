@@ -14,11 +14,6 @@ import { toggleAddIssuesModal } from '../actions/common';
 import { removeIssue } from '../actions/ama';
 
 class AddIssues extends React.PureComponent {
-
-  onRemoveIssue = (issue) => {
-    this.props.removeIssue(issue);
-  }
-
   render() {
     const {
       intakeForms,
@@ -33,37 +28,37 @@ class AddIssues extends React.PureComponent {
     const issuesComponent = () => {
       let issues = formatAddedIssues(intakeData);
 
-      return <table className="usa-table-borderless issues">
-        <tbody>
+      return <div className="issues">
+        <div>
           { issues.map((issue, index) => {
-            return <tr className="issue" key={issue.referenceId}>
-              <td>{index + 1}. {issue.text} {issue.notes}</td>
-              <td className="cf-text-r">
+            return <div className="issue" key={issue.referenceId}>
+              <div className="issue-desc">
+                <span className="issue-num">{index + 1}.</span>
+                {issue.text}
+                <span className="issue-notes">{issue.notes}</span>
+              </div>
+              <div className="issue-action">
                 <Button
-                  onClick={() => this.onRemoveIssue(issue)}
+                  onClick={() => this.props.removeIssue(issue)}
                   classNames={['cf-btn-link', 'remove-issue']}
                 >
                   <i className="fa fa-trash-o" aria-hidden="true"></i>Remove
                 </Button>
-              </td>
-            </tr>;
+              </div>
+            </div>;
           })}
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colSpan="2">
-              <Button
-                name="add-issue"
-                legacyStyling={false}
-                classNames={['usa-button-secondary']}
-                onClick={this.props.toggleAddIssuesModal}
-              >
-                + Add issue
-              </Button>
-            </td>
-          </tr>
-        </tfoot>
-      </table>;
+        </div>
+        <div className="cf-actions">
+          <Button
+            name="add-issue"
+            legacyStyling={false}
+            classNames={['usa-button-secondary']}
+            onClick={this.props.toggleAddIssuesModal}
+          >
+            + Add issue
+          </Button>
+        </div>
+      </div>;
     };
 
     const columns = [

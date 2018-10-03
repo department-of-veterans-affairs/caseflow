@@ -157,12 +157,10 @@ export const addIssue = (issueId, ratings, isRated, notes) => (dispatch) => {
   });
 };
 
-export const removeIssue = (issue) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.REMOVE_ISSUE,
-    payload: { issue }
-  });
-};
+export const removeIssue = (issue) => ({
+  type: ACTIONS.REMOVE_ISSUE,
+  payload: { issue }
+});
 
 export const addNonRatedIssue = (nonRatedIssues) => ({
   type: ACTIONS.ADD_NON_RATED_ISSUE,
