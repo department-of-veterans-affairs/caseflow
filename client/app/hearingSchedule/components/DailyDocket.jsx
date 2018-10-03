@@ -8,6 +8,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import Table from '../../components/Table';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
+import TextareaField from '../../components/TextareaField';
 
 const tableRowStyling = css({
   '& > tr > td': {
@@ -15,11 +16,11 @@ const tableRowStyling = css({
   },
   '& > tr': {
     '& > td:nth-child(1)': { width: '2%' },
-    '& > td:nth-child(2)': { width: '12%' },
-    '& > td:nth-child(3)': { width: '12%' },
-    '& > td:nth-child(4)': { width: '12%' },
+    '& > td:nth-child(2)': { width: '10%' },
+    '& > td:nth-child(3)': { width: '10%' },
+    '& > td:nth-child(4)': { width: '10%' },
     '& > td:nth-child(5)': { backgroundColor: '#f1f1f1',
-      width: '14%' },
+      width: '20%' },
     '& > td:nth-child(6)': { backgroundColor: '#f1f1f1',
       width: '26%' },
     '& > td:nth-child(7)': { backgroundColor: '#f1f1f1',
@@ -37,6 +38,13 @@ export default class DailyDocket extends React.Component {
     </div>;
   };
 
+  getHearingTime = (hearing) => {
+    return <div>{hearing.hearingTime} <br />
+      {hearing.hearingLocation}
+      <p><TextareaField name="Notes" onChange=""/></p>
+    </div>
+  };
+
   getDispositionDropdown = (hearing) => {
     return <SearchableDropdown
       name="Disposition"
@@ -50,6 +58,20 @@ export default class DailyDocket extends React.Component {
       value={hearing.disposition}
       onChange={() => {}}
     />;
+  };
+
+  getHearingLocationDropdown = (hearing) => {
+    return <SearchableDropdown
+      name="Hearing Location"
+      options={[
+        {
+          label: 'Houston, TX',
+          value: 'Houston, TX'
+        }
+      ]}
+      value={hearing.hearingLocation}
+      onChange={() => {}}
+    />
   };
 
   getHearingDayDropdown = (hearing) => {
@@ -124,9 +146,9 @@ export default class DailyDocket extends React.Component {
     const dailyDocketRows = _.map(this.props.hearings, (hearing) => ({
       number: '1.',
       appellantInformation: this.getAppellantInformation(hearing),
-      hearingTime: <div>{hearing.hearingTime} <br /> {hearing.hearingLocation}</div>,
+      hearingTime: this.getHearingTime(hearing),
       representative: <div>{hearing.representative} <br /> {hearing.representativeName}</div>,
-      hearingLocation: 'Houston, TX',
+      hearingLocation: this.getHearingLocationDropdown(hearing),
       hearingDay: this.getHearingDayDropdown(hearing),
       disposition: this.getDispositionDropdown(hearing)
     }));
