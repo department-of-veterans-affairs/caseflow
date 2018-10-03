@@ -16,24 +16,22 @@ namespace :local do
     # Add a new line so that this scipt's output is more readable.
     puts ""
 
-    puts "Setting up local caseflow database"
-    system("RAILS_ENV=development bundle exec rake db:setup") || abort
-
-    puts "Seeding local caseflow database"
-    system("RAILS_ENV=development bundle exec rake db:seed") || abort
-
-    # FYI the FACOLS container takes up to 30s longer after the health checks
-    # pass, so setup & seed the caseflow db first to give FACOLS more time.
     puts "Setting up development FACOLS"
     system("RAILS_ENV=development bundle exec rake local:vacols:setup") || abort
-
-    puts "Enabling feature flags"
-    system("bundle exec rails runner scripts/enable_features_dev.rb") || abort
 
     puts "Seeding FACOLS"
     system("RAILS_ENV=development bundle exec rake local:vacols:seed") || abort
 
     puts "Setting up test FACOLS"
     system("RAILS_ENV=test bundle exec rake local:vacols:setup") || abort
+
+    puts "Enabling feature flags"
+    system("bundle exec rails runner scripts/enable_features_dev.rb") || abort
+
+    puts "Setting up local caseflow database"
+    system("RAILS_ENV=development bundle exec rake db:setup") || abort
+
+    puts "Seeding local caseflow database"
+    system("RAILS_ENV=development bundle exec rake db:seed") || abort
   end
 end

@@ -17,7 +17,12 @@ class RootTask < Task
 
     def create_vso_subtask!(appeal, parent)
       appeal.vsos.each do |vso_organization|
-        GenericTask.create(appeal: appeal, parent: parent, status: "in_progress", assigned_to: vso_organization)
+        GenericTask.create(
+          appeal: appeal,
+          parent: parent,
+          status: Constants.TASK_STATUSES.in_progress,
+          assigned_to: vso_organization
+        )
       end
     end
   end

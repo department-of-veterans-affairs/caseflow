@@ -58,7 +58,7 @@ class AddIssuesModal extends React.Component {
       <Modal
         buttons={[
           { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
-            name: 'Close',
+            name: 'Cancel adding this issue',
             onClick: closeHandler
           },
           { classNames: ['usa-button', 'usa-button-secondary', 'add-issue'],

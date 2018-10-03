@@ -98,11 +98,13 @@ class Test::UsersController < ApplicationController
   def reseed
     # Adding this check a second time out of paranoia
     if Rails.deploy_env?(:demo)
-      Rake::Task["db:seed"].reenable
-      Rake::Task["db:seed"].invoke
-
       Rake::Task["local:vacols:seed"].reenable
       Rake::Task["local:vacols:seed"].invoke
+
+      # The db:seed task creates rows in FACOLS so it must run after the FACOLS seed job above since it clears out
+      # all database tables before it seeds those tables.
+      Rake::Task["db:seed"].reenable
+      Rake::Task["db:seed"].invoke
     end
   end
 

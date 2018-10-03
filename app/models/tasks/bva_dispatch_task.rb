@@ -25,6 +25,9 @@ class BvaDispatchTask < GenericTask
       Decision.create!(params)
 
       task.mark_as_complete!
+    rescue ActiveRecord::RecordInvalid => e
+      raise(Caseflow::Error::OutcodeValidationFailure, message: e.message) if e.message =~ /^Validation failed:/
+      raise e
     end
 
     private

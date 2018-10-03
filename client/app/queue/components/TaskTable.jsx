@@ -16,7 +16,11 @@ import CaseDetailsLink from '../CaseDetailsLink';
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { renderAppealType } from '../utils';
 import { DateString } from '../../util/DateUtil';
-import { CATEGORIES, redText } from '../constants';
+import {
+  CATEGORIES,
+  redText,
+  LEGACY_APPEAL_TYPES
+} from '../constants';
 import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
@@ -140,7 +144,7 @@ class TaskTable extends React.PureComponent<Props> {
       getSortValue: (task) => {
         // We append a * before the docket number if it's a priority case since * comes before
         // numbers in sort order, this forces these cases to the top of the sort.
-        if (task.appeal.isAdvancedOnDocket || task.appeal.caseType === 'Court Remand') {
+        if (task.appeal.isAdvancedOnDocket || task.appeal.caseType === LEGACY_APPEAL_TYPES.CAVC_REMAND) {
           return `*${task.appeal.docketNumber}`;
         }
 
