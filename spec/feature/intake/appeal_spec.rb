@@ -305,6 +305,11 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content("1. Left knee granted")
     expect(page).to have_content("I am an issue note")
 
+    # removing the issue should hide the issue
+    safe_click ".remove-issue"
+
+    expect(page).to_not have_content("1. Left knee granted")
+
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("Notice of Disagreement (VA Form 10182) has been processed.")

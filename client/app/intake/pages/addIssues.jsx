@@ -11,8 +11,14 @@ import { formatAddedIssues, getAddIssuesFields } from '../util';
 
 import Table from '../../components/Table';
 import { toggleAddIssuesModal } from '../actions/common';
+import { removeIssue } from '../actions/ama';
 
 class AddIssues extends React.PureComponent {
+
+  onRemoveIssue = (issue) => {
+    this.props.removeIssue(issue);
+  }
+
   render() {
     const {
       intakeForms,
@@ -27,23 +33,37 @@ class AddIssues extends React.PureComponent {
     const issuesComponent = () => {
       let issues = formatAddedIssues(intakeData);
 
-      return <div>
-        { issues.map((issue, index) => {
-          return <div key={issue.referenceId}>
-            {index + 1}. {issue.text}
-            <br />
-            {issue.notes}
-          </div>;
-        })}
-        <Button
-          name="add-issue"
-          legacyStyling={false}
-          classNames={['usa-button-secondary']}
-          onClick={this.props.toggleAddIssuesModal}
-        >
-          + Add issue
-        </Button>
-      </div>;
+      return <table className="usa-table-borderless issues">
+        <tbody>
+          { issues.map((issue, index) => {
+            return <tr className="issue" key={issue.referenceId}>
+              <td>{index + 1}. {issue.text} {issue.notes}</td>
+              <td className="cf-text-r">
+                <Button
+                  onClick={() => this.onRemoveIssue(issue)}
+                  classNames={['cf-btn-link', 'remove-issue']}
+                >
+                  <i className="fa fa-trash-o" aria-hidden="true"></i>Remove
+                </Button>
+              </td>
+            </tr>;
+          })}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colSpan="2">
+              <Button
+                name="add-issue"
+                legacyStyling={false}
+                classNames={['usa-button-secondary']}
+                onClick={this.props.toggleAddIssuesModal}
+              >
+                + Add issue
+              </Button>
+            </td>
+          </tr>
+        </tfoot>
+      </table>;
     };
 
     const columns = [
@@ -92,6 +112,7 @@ export default connect(
     veteran: intake.veteran
   }),
   (dispatch) => bindActionCreators({
-    toggleAddIssuesModal
+    toggleAddIssuesModal,
+    removeIssue
   }, dispatch)
 )(AddIssues);

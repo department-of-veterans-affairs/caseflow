@@ -64,8 +64,55 @@
   td {
     vertical-align: top;
 
-    div {
-      padding-bottom: 0.5em;
+    table {
+      margin: 0;
+
+      tr {
+        &:first-child {
+          td {
+            padding-top: 0;
+          }
+        }
+
+        td {
+          border: none;
+        }
+
+        td:first-child {
+          font-weight: normal;
+        }
+
+        &.issue {
+          td {
+            border-bottom: 1px solid $color-gray-lighter;
+          }
+
+          td:last-child {
+            text-align: right;
+            vertical-align: middle;
+
+            i {
+              padding-right: 0.25em;
+              display: inline;
+            }
+          }
+        }
+
+        &:last-of-type {
+          td {
+            border: none;
+          }
+        }
+      }
+
+      tfoot {
+        tr:first-child {
+          td {
+            padding-top: 0.5em;
+          }
+        }
+      }
+
     }
   }
 
