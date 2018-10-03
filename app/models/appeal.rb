@@ -100,7 +100,7 @@ class Appeal < AmaReview
   delegate :first_name, :last_name, :middle_name, :name_suffix, to: :appellant, prefix: true, allow_nil: true
 
   def citation_number
-    decisions.present? && decisions.sort_by(&:created_at).last.citation_number
+    decisions.present? && decisions.sort_by(&:created_at).last.citation_number : nil
   end
 
   def veteran_is_deceased
