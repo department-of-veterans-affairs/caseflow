@@ -26,6 +26,8 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
     end
   end
 
+  attribute :completed_hearing_on_previous_appeal?
+
   attribute :appellant_full_name do
     object.appellant_name
   end

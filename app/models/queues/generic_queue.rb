@@ -14,6 +14,6 @@ class GenericQueue
   private
 
   def incomplete_tasks
-    Task.where.not(status: "completed")
+    Task.where.not(status: Constants.TASK_STATUSES.completed)
   end
 end

@@ -2,7 +2,7 @@ class Task < ApplicationRecord
   acts_as_tree
 
   belongs_to :assigned_to, polymorphic: true
-  belongs_to :assigned_by, class_name: "User"
+  belongs_to :assigned_by, class_name: User.name
   belongs_to :appeal, polymorphic: true
   has_many :attorney_case_reviews
 
@@ -16,10 +16,10 @@ class Task < ApplicationRecord
   validate :on_hold_duration_is_set, on: :update
 
   enum status: {
-    assigned: "assigned",
-    in_progress: "in_progress",
-    on_hold: "on_hold",
-    completed: "completed"
+    Constants.TASK_STATUSES.assigned.to_sym    => Constants.TASK_STATUSES.assigned,
+    Constants.TASK_STATUSES.in_progress.to_sym => Constants.TASK_STATUSES.in_progress,
+    Constants.TASK_STATUSES.on_hold.to_sym     => Constants.TASK_STATUSES.on_hold,
+    Constants.TASK_STATUSES.completed.to_sym   => Constants.TASK_STATUSES.completed
   }
 
   def allowed_actions(_user)
@@ -46,23 +46,19 @@ class Task < ApplicationRecord
   end
 
   def legacy?
-    appeal_type == "LegacyAppeal"
+    appeal_type == LegacyAppeal.name
   end
 
   def ama?
-    appeal_type == "Appeal"
+    appeal_type == Appeal.name
   end
 
   def days_waiting
     (Time.zone.today - assigned_at.to_date).to_i if assigned_at
   end
 
-  def assigned_by_name
-    assigned_by.try(:full_name)
-  end
-
   def colocated_task?
-    type == "ColocatedTask"
+    type == ColocatedTask.name
   end
 
   def latest_attorney_case_review
@@ -100,7 +96,7 @@ class Task < ApplicationRecord
   end
 
   def self.verify_user_can_assign(user)
-    unless (user.attorney_in_vacols? && FeatureToggle.enabled?(:attorney_assignment_to_colocated, user: user)) ||
+    unless user.attorney_in_vacols? ||
            (user.judge_in_vacols? && FeatureToggle.enabled?(:judge_assignment_to_attorney, user: user))
       fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot assign this task"
     end
@@ -133,7 +129,7 @@ class Task < ApplicationRecord
   end
 
   def update_status_if_children_tasks_are_complete
-    if children.any? && children.reject { |t| t.status == "completed" }.empty?
+    if children.any? && children.reject { |t| t.status == Constants.TASK_STATUSES.completed }.empty?
       return mark_as_complete! if assigned_to.is_a?(Organization)
       return update!(status: :assigned) if on_hold?
     end
