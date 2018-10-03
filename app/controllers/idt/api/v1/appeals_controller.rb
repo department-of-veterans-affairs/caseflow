@@ -13,7 +13,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     end
   end
 
-  rescue_from ActionController::ParameterMissing do |e|
+  rescue_from ActiveRecord::RecordInvalid, ActionController::ParameterMissing do |e|
     render(json: { message: e.message }, status: 400)
   end
 
@@ -32,7 +32,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def outcode
     BvaDispatchTask.outcode(appeal, outcode_params, user)
-    render json: json_appeal_details
+    render json: { message: "Success!"}
   end
 
   private
