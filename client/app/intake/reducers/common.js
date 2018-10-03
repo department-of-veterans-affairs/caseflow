@@ -19,7 +19,10 @@ export const commonReducers = (state, action) => {
       addedIssues: [...listOfIssues, {
         isRated: action.payload.isRated,
         id: action.payload.issueId,
-        profileDate: action.payload.profileDate
+        profileDate: action.payload.profileDate,
+        category: action.payload.decisionDate,
+        description: action.payload.decisionDate,
+        decisionDate: action.payload.decisionDate
       }]
     };
   };

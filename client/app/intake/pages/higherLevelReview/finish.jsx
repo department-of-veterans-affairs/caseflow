@@ -10,7 +10,7 @@ import IssueCounter from '../../../intakeCommon/components/IssueCounter';
 import {
   completeIntake,
   setIssueSelected,
-  addNonRatedIssue,
+  newNonRatedIssue,
   setIssueCategory,
   setIssueDescription,
   setIssueDecisionDate
@@ -66,7 +66,7 @@ const NonRatedIssues = connect(
     nonRatedIssues: higherLevelReview.nonRatedIssues
   }),
   (dispatch) => bindActionCreators({
-    addNonRatedIssue,
+    newNonRatedIssue,
     setIssueCategory,
     setIssueDescription,
     setIssueDecisionDate

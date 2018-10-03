@@ -26,7 +26,7 @@ export default class NonRatedIssue extends React.PureComponent {
       description,
       decisionDate,
       nonRatedIssues,
-      addNonRatedIssue,
+      newNonRatedIssue,
       setIssueCategory,
       setIssueDescription,
       setIssueDecisionDate
@@ -63,7 +63,7 @@ export default class NonRatedIssue extends React.PureComponent {
 
       <Button
         name="add-issue"
-        onClick={addNonRatedIssue}
+        onClick={newNonRatedIssue}
         classNames={['usa-button-secondary']}
         disabled={disableAddNonRatedIssue}
       >
