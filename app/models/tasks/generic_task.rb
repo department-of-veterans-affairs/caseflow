@@ -3,7 +3,7 @@ class GenericTask < Task
     verify_user_access(current_user)
 
     new_status = params[:status]
-    if new_status == "completed"
+    if new_status == Constants.TASK_STATUSES.completed
       mark_as_complete!
     else
       update!(status: new_status)
@@ -49,7 +49,7 @@ class GenericTask < Task
       return unless status
 
       case status
-      when "completed"
+      when Constants.TASK_STATUSES.completed
         parent.mark_as_complete!
       else
         parent.update!(status: status)
