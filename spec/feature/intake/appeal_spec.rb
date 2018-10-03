@@ -302,13 +302,21 @@ RSpec.feature "Appeal Intake" do
     fill_in "Notes", with: "I am an issue note"
     safe_click ".add-issue"
 
-    expect(page).to have_content("1. Left knee granted")
-    expect(page).to have_content("I am an issue note")
+    expect(page).to have_content("Left knee granted")
 
     # removing the issue should hide the issue
     safe_click ".remove-issue"
 
-    expect(page).to_not have_content("1. Left knee granted")
+    expect(page).to_not have_content("Left knee granted")
+
+    # re-add to proceed
+    safe_click "#button-add-issue"
+    find("label", text: "Left knee granted").click
+    fill_in "Notes", with: "I am an issue note"
+    safe_click ".add-issue"
+
+    expect(page).to have_content("Left knee granted")
+    expect(page).to have_content("I am an issue note")
 
     safe_click "#button-finish-intake"
 
