@@ -11,7 +11,7 @@ class Organization < ApplicationRecord
   end
 
   def members
-    @members ||= member_css_ids.map { |css_id| User.find_by(css_id: css_id) }.compact
+    @members ||= member_css_ids.uniq.map { |css_id| User.find_by(css_id: css_id) }.compact
   end
 
   private
