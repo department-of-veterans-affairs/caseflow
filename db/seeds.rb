@@ -463,6 +463,27 @@ class SeedDB
     Rails.logger.info("Taks prepare job skipped - tasks were already prepared...")
   end
 
+  def create_previously_held_hearing_data
+    user = User.find_by_css_id("BVAAABSHIRE")
+    veteran_file_number = "994806951S"
+    appeals = LegacyAppeal.where(vbms_id: veteran_file_number)
+
+    return if (appeals.map(&:type) - ["Post Remand", "Original"]).empty? &&
+              appeals.flat_map(&:hearings).map(&:disposition).include?(:held)
+
+    FactoryBot.create(
+      :legacy_appeal,
+      vacols_case: FactoryBot.create(
+        :case,
+        :assigned,
+        :type_original,
+        user: user,
+        bfcorlid: veteran_file_number,
+        case_hearings: [FactoryBot.create(:case_hearing, :disposition_held, user: user)]
+      )
+    )
+  end
+
   def seed
     clean_db
     # Annotations and tags don't come from VACOLS, so our seeding should
@@ -475,6 +496,7 @@ class SeedDB
     create_tasks
 
     setup_dispatch
+    create_previously_held_hearing_data
 
     return if Rails.env.development?
 
