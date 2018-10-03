@@ -25,6 +25,7 @@ class BvaDispatchTask < GenericTask
       Decision.create!(params)
 
       task.mark_as_complete!
+      task.root_task.mark_as_complete!
     end
 
     private
