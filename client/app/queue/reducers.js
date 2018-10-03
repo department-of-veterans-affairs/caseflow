@@ -140,14 +140,6 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
         }
       }
     });
-  case ACTIONS.SET_REVIEW_ACTION_TYPE:
-    return update(state, {
-      stagedChanges: {
-        taskDecision: {
-          type: { $set: action.payload.type }
-        }
-      }
-    });
   case ACTIONS.SET_DECISION_OPTIONS:
     return update(state, {
       stagedChanges: {
@@ -383,6 +375,16 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
     return update(state, {
       organizationId: {
         $set: action.payload.id
+      }
+    });
+  case ACTIONS.SET_APPEAL_AOD:
+    return update(state, {
+      appeals: {
+        [action.payload.externalAppealId]: {
+          isAdvancedOnDocket: {
+            $set: true
+          }
+        }
       }
     });
   case ACTIONS.STARTED_LOADING_APPEAL_VALUE:

@@ -187,8 +187,11 @@ class LegacyAppeal < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
-  delegate :age, to: :veteran, prefix: true
-  delegate :sex, to: :veteran, prefix: true
+  def veteran_ssn
+    vbms_id.ends_with?("C") ? (veteran && veteran.ssn) : sanitized_vbms_id
+  end
+
+  delegate :age, :sex, to: :veteran, prefix: true
 
   # NOTE: we cannot currently match end products to a specific appeal.
   delegate :end_products, to: :veteran
@@ -517,6 +520,18 @@ class LegacyAppeal < ApplicationRecord
     @documents_by_type = {}
   end
 
+  def attorney_case_reviews
+    (das_assignments || []).reject { |t| t.document_id.nil? }
+  end
+
+  def das_assignments
+    @das_assignments ||= QueueRepository.tasks_for_appeal(vacols_id)
+  end
+
+  def reviewing_judge_name
+    das_assignments.last.try(:assigned_by_name)
+  end
+
   attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
@@ -524,6 +539,16 @@ class LegacyAppeal < ApplicationRecord
 
   def issue_count
     issues.count
+  end
+
+  # a list of issues with undecided dispositions (see queue/utils.getUndecidedIssues)
+  def undecided_issues
+    issues.select do |issue|
+      issue.disposition_id.nil? || (
+        issue.disposition_id.to_i.between?(1, 9) &&
+        Constants::VACOLS_DISPOSITIONS_BY_ID.keys.include?(issue.disposition_id)
+      )
+    end
   end
 
   # A uniqued list of issue categories on appeal, that is the combination of ISSPROG and ISSCODE

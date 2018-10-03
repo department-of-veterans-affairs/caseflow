@@ -7,6 +7,7 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
 require "database_cleaner"
+# rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/AbcSize
 class SeedDB
@@ -39,16 +40,21 @@ class SeedDB
     User.create(css_id: "BVARERDMAN", station_id: 101, full_name: "Judge has attorneys with cases")
     User.create(css_id: "BVAOFRANECKI", station_id: 101, full_name: "Judge has case to sign")
     User.create(css_id: "BVAJWEHNER", station_id: 101, full_name: "Judge has case to assign no team")
-    User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located with cases")
     User.create(css_id: "BVATWARNER", station_id: 101, full_name: "Build Hearing Schedule")
     User.create(css_id: "BVAGWHITE", station_id: 101, full_name: "BVA Dispatch user with cases")
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
+    create_colocated_user
     create_vso_user
     create_org_queue_user
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
+  end
+
+  def create_colocated_user
+    user = User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located with cases")
+    FactoryBot.create(:staff, :colocated_role, user: user, sdept: "DSP")
   end
 
   def create_vso_user
@@ -56,20 +62,20 @@ class SeedDB
       css_id: "VSO",
       station_id: 101,
       full_name: "VSO user associated with PVA",
-      roles: ["VSO"]
+      roles: %w[VSO]
     )
-    FeatureToggle.enable!(:vso_queue_pva, users: [u.css_id])
+    FactoryBot.create(:staff, user: u, sdept: "PVA")
+    FeatureToggle.enable!(:vso_queue, users: [u.css_id])
   end
 
   def create_org_queue_user
     q = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER", full_name: "Org Q User")
-    FeatureToggle.enable!(:org_queue_translation, users: [q.css_id])
-    FeatureToggle.enable!(:organization_queue, users: [q.css_id])
+    FactoryBot.create(:staff, user: q, sdept: "TRANS")
   end
 
   def create_bva_dispatch_user_with_tasks
     u = User.find_by(css_id: "BVAGWHITE")
-    FeatureToggle.enable!(:organization_queue, users: [u.css_id])
+    FactoryBot.create(:staff, user: u, sdept: "DSP")
 
     3.times do
       root = FactoryBot.create(:root_task)
@@ -409,33 +415,52 @@ class SeedDB
   def create_organizations
     Vso.create(
       name: "American Legion",
-      feature: "vso_queue_aml",
       role: "VSO",
       url: "american-legion",
       participant_id: "2452415"
     )
     Vso.create(
       name: "Vietnam Veterans Of America",
-      feature: "vso_queue_vva",
       role: "VSO",
       url: "vietnam-veterans-of-america",
       participant_id: "2452415"
     )
     Vso.create(
       name: "Paralyzed Veterans Of America",
-      feature: "vso_queue_pva",
       role: "VSO",
       url: "paralyzed-veterans-of-america",
       participant_id: "2452383"
     )
 
-    Organization.create!(name: "Translation", feature: "org_queue_translation", url: "translation")
+    translation = Organization.create!(name: "Translation", url: "translation")
+    StaffFieldForOrganization.create!(organization: translation, name: "sdept", values: %w[TRANS])
+
+    dispatch = BvaDispatch.singleton
+    StaffFieldForOrganization.create!(organization: dispatch, name: "sdept", values: %w[DSP])
+    StaffFieldForOrganization.create!(organization: dispatch, name: "stitle", values: %w[A1 A2], exclude: true)
 
     Bva.create(name: "Board of Veterans' Appeals")
   end
 
   def clean_db
     DatabaseCleaner.clean_with(:truncation)
+  end
+
+  def setup_dispatch
+    CreateEstablishClaimTasksJob.perform_now
+    Timecop.freeze(Date.yesterday) do
+      # Tasks prepared on today's date will not be picked up
+      Dispatch::Task.all.each(&:prepare!)
+      # Appeal decisions (decision dates) for partial grants have to be within 3 days
+      CSV.foreach(Rails.root.join("local/vacols", "cases.csv"), headers: true) do |row|
+        row_hash = row.to_h
+        if %w[amc_full_grants remands_ready_for_claims_establishment].include?(row_hash["vbms_key"])
+          VACOLS::Case.where(bfkey: row_hash["vacols_id"]).first.update(bfddec: Time.zone.today)
+        end
+      end
+    end
+  rescue AASM::InvalidTransition
+    Rails.logger.info("Taks prepare job skipped - tasks were already prepared...")
   end
 
   def seed
@@ -448,6 +473,8 @@ class SeedDB
     create_ama_appeals
     create_users
     create_tasks
+
+    setup_dispatch
 
     return if Rails.env.development?
 
@@ -463,5 +490,6 @@ class SeedDB
 end
 # rubocop:enable Metrics/MethodLength
 # rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/ClassLength
 
 SeedDB.new.seed

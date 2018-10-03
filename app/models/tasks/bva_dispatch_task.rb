@@ -11,12 +11,20 @@ class BvaDispatchTask < GenericTask
       )
     end
 
-    def outcode(appeal, user)
+    def outcode(appeal, params, user)
       tasks = where(appeal: appeal, assigned_to: user)
       if tasks.count != 1
         fail Caseflow::Error::BvaDispatchTaskCountMismatch, appeal_id: appeal.id, user_id: user.id, tasks: tasks
       end
-      tasks[0].mark_as_complete!
+
+      task = tasks[0]
+
+      fail(Caseflow::Error::BvaDispatchDoubleOutcode, appeal_id: appeal.id, task_id: task.id) if task.completed?
+
+      params[:appeal_id] = appeal.id
+      Decision.create!(params)
+
+      task.mark_as_complete!
     end
 
     private

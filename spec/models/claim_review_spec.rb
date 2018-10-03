@@ -8,8 +8,19 @@ describe ClaimReview do
     FeatureToggle.disable!(:test_facols)
   end
 
-  let(:veteran_file_number) { "64205555" }
-  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number, first_name: "James", last_name: "Bond") }
+  let(:veteran_file_number) { "4205555" }
+  let(:veteran_participant_id) { "123456" }
+  let(:veteran_date_of_death) { nil }
+  let!(:veteran) do
+    Generators::Veteran.build(
+      file_number: veteran_file_number,
+      first_name: "James",
+      last_name: "Bond",
+      participant_id: veteran_participant_id,
+      date_of_death: veteran_date_of_death
+    )
+  end
+
   let(:receipt_date) { SupplementalClaim::AMA_BEGIN_DATE + 1 }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
@@ -59,8 +70,75 @@ describe ClaimReview do
     )
   end
 
+  let!(:claimant) do
+    Claimant.create!(
+      review_request: claim_review,
+      participant_id: veteran_participant_id,
+      payee_code: "00"
+    )
+  end
+
   let(:vbms_error) do
     VBMS::HTTPError.new("500", "More EPs more problems")
+  end
+
+  context "async logic scopes" do
+    let!(:claim_review_requiring_processing) do
+      create(:higher_level_review, receipt_date: receipt_date).tap(&:submit_for_processing!)
+    end
+
+    let!(:claim_review_processed) do
+      create(:higher_level_review, receipt_date: receipt_date).tap(&:processed!)
+    end
+
+    let!(:claim_review_recently_attempted) do
+      create(
+        :higher_level_review,
+        receipt_date: receipt_date,
+        establishment_attempted_at: (ClaimReview::REQUIRES_PROCESSING_RETRY_WINDOW_HOURS - 1).hours.ago
+      )
+    end
+
+    let!(:claim_review_attempts_ended) do
+      create(
+        :higher_level_review,
+        receipt_date: receipt_date,
+        establishment_submitted_at: (ClaimReview::REQUIRES_PROCESSING_WINDOW_DAYS + 5).days.ago,
+        establishment_attempted_at: (ClaimReview::REQUIRES_PROCESSING_WINDOW_DAYS + 1).days.ago
+      )
+    end
+
+    context ".unexpired" do
+      it "matches reviews still inside the processing window" do
+        expect(HigherLevelReview.unexpired).to eq([claim_review_requiring_processing])
+      end
+    end
+
+    context ".processable" do
+      it "matches reviews eligible for processing" do
+        expect(HigherLevelReview.processable).to match_array(
+          [claim_review_requiring_processing, claim_review_attempts_ended]
+        )
+      end
+    end
+
+    context ".attemptable" do
+      it "matches reviews that could be attempted" do
+        expect(HigherLevelReview.attemptable).not_to include(claim_review_recently_attempted)
+      end
+    end
+
+    context ".requires_processing" do
+      it "matches reviews that must still be processed" do
+        expect(HigherLevelReview.requires_processing).to eq([claim_review_requiring_processing])
+      end
+    end
+
+    context ".expired_without_processing" do
+      it "matches reviews unfinished but outside the retry window" do
+        expect(HigherLevelReview.expired_without_processing).to eq([claim_review_attempts_ended])
+      end
+    end
   end
 
   context "#create_issues!" do
@@ -104,7 +182,7 @@ describe ClaimReview do
     context "when there is just one end_product_establishment" do
       let(:issues) { [rating_request_issue, second_rating_request_issue] }
 
-      it "establishes the claim and creates the contetions in VBMS" do
+      it "establishes the claim and creates the contentions in VBMS" do
         subject
 
         expect(Fakes::VBMSService).to have_received(:establish_claim!).once.with(
@@ -120,7 +198,7 @@ describe ClaimReview do
             end_product_code: "030HLRR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
-            claimant_participant_id: nil
+            claimant_participant_id: veteran_participant_id
           },
           veteran_hash: veteran.to_vbms_hash
         )
@@ -225,6 +303,26 @@ describe ClaimReview do
             expect(Fakes::VBMSService).to_not have_received(:associate_rated_issues!)
           end
         end
+
+        context "when informal conference already has a tracked item" do
+          before do
+            claim_review.end_product_establishments.first.update!(doc_reference_id: "DOC_REF_ID")
+            claim_review.end_product_establishments.first.update!(
+              development_item_reference_id: "dev_item_ref_id"
+            )
+
+            # Cleaning Fakes:BGSService because it seems to persist between tests
+            Fakes::BGSService.manage_claimant_letter_v2_requests = nil
+            Fakes::BGSService.generate_tracked_items_requests = nil
+          end
+
+          it "doesn't create it in BGS" do
+            subject
+
+            expect(Fakes::BGSService.manage_claimant_letter_v2_requests).to be_nil
+            expect(Fakes::BGSService.generate_tracked_items_requests).to be_nil
+          end
+        end
       end
 
       context "when called multiple times" do
@@ -304,6 +402,41 @@ describe ClaimReview do
           claim_review.end_product_establishments.first
         end
       end
+
+      context "when informal conference is true" do
+        let(:informal_conference) { true }
+
+        it "generates claimant letter and tracked item" do
+          subject
+          epe = claim_review.end_product_establishments.last
+          expect(epe).to have_attributes(
+            doc_reference_id: "doc_reference_id_result",
+            development_item_reference_id: "development_item_reference_id_result"
+          )
+
+          letter_request = Fakes::BGSService.manage_claimant_letter_v2_requests
+          expect(letter_request[epe.reference_id]).to eq(
+            program_type_cd: "CPL", claimant_participant_id: veteran_participant_id
+          )
+
+          tracked_item_request = Fakes::BGSService.generate_tracked_items_requests
+          expect(tracked_item_request[epe.reference_id]).to be(true)
+        end
+
+        context "when veteran is deceased" do
+          let(:veteran_date_of_death) { 1.year.ago }
+
+          it "sets program_type_cd to CPD" do
+            subject
+            epe = claim_review.end_product_establishments.last
+
+            letter_request = Fakes::BGSService.manage_claimant_letter_v2_requests
+            expect(letter_request[epe.reference_id]).to eq(
+              program_type_cd: "CPD", claimant_participant_id: veteran_participant_id
+            )
+          end
+        end
+      end
     end
 
     context "when there are more than one end product establishments" do
@@ -325,7 +458,7 @@ describe ClaimReview do
             end_product_code: "030HLRR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
-            claimant_participant_id: nil
+            claimant_participant_id: veteran_participant_id
           },
           veteran_hash: veteran.to_vbms_hash
         )
@@ -357,7 +490,7 @@ describe ClaimReview do
             end_product_code: "030HLRNR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
-            claimant_participant_id: nil
+            claimant_participant_id: veteran_participant_id
           },
           veteran_hash: veteran.to_vbms_hash
         )
@@ -511,7 +644,7 @@ describe ClaimReview do
               end_product_code: end_product[:code],
               gulf_war_registry: false,
               suppress_acknowledgement_letter: false,
-              claimant_participant_id: nil
+              claimant_participant_id: veteran_participant_id
             },
             veteran_hash: veteran.to_vbms_hash
           )

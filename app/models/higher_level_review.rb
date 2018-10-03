@@ -58,10 +58,18 @@ class HigherLevelReview < ClaimReview
 
   private
 
+  def informal_conference?
+    informal_conference
+  end
+
   def create_dta_supplemental_claim
     return if dta_issues.empty?
     dta_supplemental_claim.create_issues!(build_follow_up_dta_issues)
-    dta_supplemental_claim.process_end_product_establishments!
+    if run_async?
+      ClaimReviewProcessJob.perform_later(dta_supplemental_claim)
+    else
+      ClaimReviewProcessJob.perform_now(dta_supplemental_claim)
+    end
   end
 
   def build_follow_up_dta_issues
@@ -96,8 +104,14 @@ class HigherLevelReview < ClaimReview
     @dta_supplemental_claim ||= SupplementalClaim.create!(
       veteran_file_number: veteran_file_number,
       receipt_date: Time.zone.now.to_date,
-      is_dta_error: true
-    )
+      is_dta_error: true,
+      benefit_type: benefit_type
+    ).tap do |sc|
+      sc.create_claimants!(
+        participant_id: claimant_participant_id,
+        payee_code: payee_code
+      )
+    end
   end
 
   def new_end_product_establishment(ep_code)
@@ -107,7 +121,8 @@ class HigherLevelReview < ClaimReview
       payee_code: payee_code,
       code: ep_code,
       claimant_participant_id: claimant_participant_id,
-      station: "397" # AMC
+      station: "397", # AMC
+      benefit_type_code: veteran.benefit_type_code
     )
   end
 end

@@ -74,8 +74,7 @@ class Review extends React.PureComponent {
           <Button
             name="begin-next-intake"
             onClick={this.beginNextIntake}
-            loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-            legacyStyling={false}>
+            loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}>
             Begin next intake
           </Button>
         </Alert>
@@ -158,7 +157,6 @@ class ReviewNextButton extends React.PureComponent {
       name="submit-review"
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-      legacyStyling={false}
       disabled={toggleIneligibleError(this.props.hasInvalidOption, this.props.optionSelected)}
     >
       Continue to next step

@@ -14,6 +14,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :veteran_last_name
   attribute :veteran_name_suffix
   attribute :veteran_gender
+  attribute :veteran_ssn
 
   attribute :veteran_is_deceased
   attribute :veteran_death_date
@@ -99,6 +100,16 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :cavc
   attribute :status
   attribute :previously_selected_for_quality_review
+
+  attribute :assigned_by do
+    object.reviewing_judge_name
+  end
+
+  attribute :documents do
+    object.attorney_case_reviews.map do |document|
+      { written_by: document.written_by_name, document_id: document.document_id }
+    end
+  end
 
   attribute :outstanding_mail do
     object.is_a?(LegacyAppeal) ? object.outstanding_vacols_mail : "not implemented for AMA"

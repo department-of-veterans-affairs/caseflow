@@ -24,11 +24,16 @@ class Veteran < ApplicationRecord
   # Germany and Australia should be temporary additions until VBMS bug is fixed
   COUNTRIES_REQUIRING_ZIP = %w[USA CANADA].freeze
 
+  # C&P Live = '1', C&P Death = '2'
+  BENEFIT_TYPE_CODE_LIVE = "1".freeze
+  BENEFIT_TYPE_CODE_DEATH = "2".freeze
+
   validates :ssn, :sex, :first_name, :last_name,
             :address_line1, :country, presence: true, on: :bgs
   validates :zip_code, presence: true, if: :country_requires_zip?, on: :bgs
   validates :state, presence: true, if: :state_is_required?, on: :bgs
   validates :city, presence: true, unless: :military_address?, on: :bgs
+  validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
 
   # TODO: get middle initial from BGS
   def name
@@ -70,6 +75,10 @@ class Veteran < ApplicationRecord
     # Age calc copied from https://stackoverflow.com/a/2357790
     now = Time.now.utc.to_date
     now.year - dob.year - ((now.month > dob.month || (now.month == dob.month && now.day >= dob.day)) ? 0 : 1)
+  end
+
+  def benefit_type_code
+    @benefit_type_code ||= deceased? ? BENEFIT_TYPE_CODE_DEATH : BENEFIT_TYPE_CODE_LIVE
   end
 
   def bgs
@@ -181,6 +190,10 @@ class Veteran < ApplicationRecord
   end
 
   private
+
+  def deceased?
+    !date_of_death.nil?
+  end
 
   def fetch_end_products
     bgs_end_products = bgs.get_end_products(file_number)

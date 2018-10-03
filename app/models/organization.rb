@@ -1,5 +1,10 @@
 class Organization < ApplicationRecord
   has_many :tasks, as: :assigned_to
+  has_many :staff_field_for_organization
+
+  def self.assignable
+    where(type: [nil, BvaDispatch.name])
+  end
 
   def user_has_access?(user)
     members.pluck(:id).include?(user.id)
@@ -12,7 +17,13 @@ class Organization < ApplicationRecord
   private
 
   def member_css_ids
-    details = FeatureToggle.details_for(feature.to_sym)
-    details && details[:users] || []
+    return [] unless staff_field_for_organization
+
+    staff_records = VACOLS::Staff.where(sactive: "A")
+    staff_field_for_organization.each do |sfo|
+      staff_records = sfo.filter_staff_records(staff_records)
+    end
+
+    staff_records.pluck(:sdomainid)
   end
 end

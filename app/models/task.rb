@@ -22,6 +22,10 @@ class Task < ApplicationRecord
     completed: "completed"
   }
 
+  def allowed_actions(_user)
+    []
+  end
+
   def assigned_by_display_name
     if assigned_by.try(:full_name)
       return assigned_by.full_name.split(" ")
@@ -47,6 +51,10 @@ class Task < ApplicationRecord
 
   def ama?
     appeal_type == "Appeal"
+  end
+
+  def days_waiting
+    (Time.zone.today - assigned_at.to_date).to_i if assigned_at
   end
 
   def colocated_task?
@@ -88,7 +96,7 @@ class Task < ApplicationRecord
   end
 
   def self.verify_user_can_assign(user)
-    unless (user.attorney_in_vacols? && FeatureToggle.enabled?(:attorney_assignment_to_colocated, user: user)) ||
+    unless user.attorney_in_vacols? ||
            (user.judge_in_vacols? && FeatureToggle.enabled?(:judge_assignment_to_attorney, user: user))
       fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot assign this task"
     end
@@ -103,6 +111,15 @@ class Task < ApplicationRecord
 
   def previous_task
     nil
+  end
+
+  def assignable_organizations
+    Organization.assignable
+  end
+
+  def assignable_users
+    return assigned_to.members if assigned_to.is_a?(Organization)
+    parent.assigned_to.members if parent && parent.assigned_to.is_a?(Organization)
   end
 
   private

@@ -73,7 +73,8 @@ export type Task = {
   decisionPreparedBy: ?{
     firstName: string,
     lastName: string,
-  }
+  },
+  availableActions: Array<{ label?: string, value: string }>
 };
 
 export type Tasks = { [string]: Task };
@@ -96,6 +97,10 @@ export type AppealDetail = {
   externalId: string,
   status: string,
   decisionDate: string,
+  events: {
+    nodReceiptDate: ?string,
+    form9Date: ?string,
+  },
   certificationDate: ?string,
   powerOfAttorney: ?PowerOfAttorney,
   regionalOffice: Object,
@@ -119,7 +124,8 @@ export type BasicAppeal = {
   veteranFullName: string,
   veteranFileNumber: string,
   isPaperCase: ?boolean,
-  tasks?: Array<Task>
+  tasks?: Array<Task>,
+  issueCount: number
 };
 
 export type BasicAppeals = { [string]: BasicAppeal };

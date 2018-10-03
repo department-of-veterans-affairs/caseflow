@@ -132,12 +132,6 @@ body {
   @include app-width('');
 }
 
-.cf-app-queue {
-  .cf-app-width {
-    @include app-width('queue');
-  }
-}
-
 .cf-logo-image-default {
   background-image: url(#{$image-url}/caseflow-default-logo.svg);
   width: 32px;
@@ -191,10 +185,6 @@ body {
   opacity: 1 !important;
    // scss-lint:enable ImportantRule
   color: $color-gray-dark;
-}
-
-.cf-button-associated-text {
-  color: $color-gray;
 }
 
 .cf-button-associated-text-right {
@@ -270,6 +260,7 @@ body {
   width: auto;
 }
 
+// TODO remove Multiple column override
 @mixin column-count($column, $column-gap) {
   @include prefixer(column-count, $column, webkit moz spec);
   @include prefixer(column-gap, $column-gap, webkit moz spec)
@@ -280,6 +271,8 @@ body {
 }
 
 select {
+  -webkit-appearance: none;
+
   &[id="decisionType"] {
     margin-bottom: 30px;
   }
@@ -396,4 +389,5 @@ select {
   line-height: 2.2;
   font-size: 22px;
   color: $color-gray-dark;
+  text-transform: uppercase;
 }

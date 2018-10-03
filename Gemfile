@@ -47,7 +47,7 @@ gem "puma", "~> 3.12.0"
 gem "wannabe_bool"
 
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "48d3e0deeaf2151e1e43c026848c195691d05bac"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "2d0e08ea4157b725242777a6f876fc199f503b61"
 
 # PDF Tools
 gem "pdf-forms"
@@ -119,12 +119,12 @@ group :stubbed, :test, :development, :demo do
   gem "bundler-audit"
 
   # Testing tools
-  gem "faker"
-  gem "rspec"
-  gem "rspec-rails"
-  # gem 'guard-rspec', '4.7.1' # removed because downstream dep requires ruby 2.5
   gem "capybara"
   gem "capybara-screenshot"
+  gem "faker"
+  gem "guard-rspec"
+  gem "rspec"
+  gem "rspec-rails"
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git", branch: "master"
   gem "timecop"

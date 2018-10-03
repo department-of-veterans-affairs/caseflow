@@ -1,10 +1,12 @@
-import { ACTIONS } from '../constants';
-import { FORM_TYPES, REQUEST_STATE } from '../../intakeCommon/constants';
-import { update } from '../../util/ReducerUtil';
-import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, getPageError, formatRelationships } from '../util';
-import { formatRatings } from '../../intakeCommon/util';
 import _ from 'lodash';
+
+import { ACTIONS } from '../constants';
+import { applyCommonReducers } from './common';
+import { FORM_TYPES, REQUEST_STATE } from '../../intakeCommon/constants';
+import { formatDateStr } from '../../util/DateUtil';
+import { formatRatings } from '../../intakeCommon/util';
+import { getReceiptDateError, getPageError, formatRelationships } from '../util';
+import { update } from '../../util/ReducerUtil';
 
 const getDocketTypeError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.docket_type, 0) === 'blank') && 'Please select an option.'
@@ -51,6 +53,7 @@ const updateFromServerIntake = (state, serverIntake) => {
 
 export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
+    addIssuesModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
     docketType: null,
@@ -254,6 +257,6 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       }
     });
   default:
-    return state;
+    return applyCommonReducers(state, action);
   }
 };
