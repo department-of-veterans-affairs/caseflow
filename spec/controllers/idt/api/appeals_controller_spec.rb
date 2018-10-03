@@ -505,8 +505,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
       it "should throw an error" do
         post :outcode, params: params
-        expect(response.status).to eq(500)
-        err_msg = JSON.parse(response.body)["message"]
+        expect(response.status).to eq(400)
+        err_msg = JSON.parse(response.body)["errors"].first["detail"]
         expect(err_msg).to match(/Validation failed/)
       end
     end
