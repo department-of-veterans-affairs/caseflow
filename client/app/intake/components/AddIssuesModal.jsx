@@ -1,12 +1,34 @@
 import _ from 'lodash';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
 
-import Modal from '../../components/Modal';
+import { addIssue } from '../actions/ama';
 import { formatDateStr } from '../../util/DateUtil';
+import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
 
 class AddIssuesModal extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      profileDate: '',
+      referenceId: ''
+    };
+  }
+
+  radioOnChange = (value) => {
+    this.setState({
+      referenceId: value
+    });
+  }
+
+  onAddIssue = () => {
+    this.props.addIssue(this.state.referenceId, this.props.ratings, true);
+    this.props.closeHandler();
+  }
+
   render() {
     let {
       ratings,
@@ -27,7 +49,8 @@ class AddIssuesModal extends React.Component {
         name={`rating-radio-${rating.profile_date}`}
         options={radioOptions}
         key={rating.profile_date}
-        // todo, implement onChange
+        value={this.state.referenceId}
+        onChange={this.radioOnChange}
       />;
     });
 
@@ -35,13 +58,12 @@ class AddIssuesModal extends React.Component {
       <Modal
         buttons={[
           { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
-            name: 'Close',
+            name: 'Cancel adding this issue',
             onClick: closeHandler
           },
           { classNames: ['usa-button', 'usa-button-secondary', 'add-issue'],
-            name: 'Add Issue'
-            // todo, implement onClick
-            // onClick: () => {}
+            name: 'Add Issue',
+            onClick: this.onAddIssue
           }
         ]}
         visible
@@ -66,5 +88,7 @@ class AddIssuesModal extends React.Component {
 
 export default connect(
   null,
-  null
+  (dispatch) => bindActionCreators({
+    addIssue
+  }, dispatch)
 )(AddIssuesModal);
