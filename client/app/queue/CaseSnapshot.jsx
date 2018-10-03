@@ -257,8 +257,14 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     let ActionDropdown;
     const dropdownArgs = { appealId: appeal.externalId };
 
+    let task = taskAssignedToUser;
+
+    if (!task) {
+      task = taskAssignedToOrganization;
+    }
+
     if (userRole === USER_ROLE_TYPES.attorney) {
-      ActionDropdown = <ActionsDropdown task={taskAssignedToUser} appealId={appeal.externalId} />;
+      ActionDropdown = <ActionsDropdown task={task} appealId={appeal.externalId} />;
     } else if (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout) {
       ActionDropdown = <JudgeActionsDropdown {...dropdownArgs} />;
     } else if (userRole === USER_ROLE_TYPES.colocated) {
