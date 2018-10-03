@@ -43,8 +43,6 @@ export const initialState = {
   isTaskAssignedToUserSelected: {},
   attorneys: {},
   organizationId: null,
-  organizationList: [],
-  organizationUserList: [],
   loadingAppealDetail: {}
 };
 

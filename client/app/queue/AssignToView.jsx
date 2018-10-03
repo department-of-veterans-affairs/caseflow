@@ -19,10 +19,12 @@ import editModalBase from './components/EditModalBase';
 import { requestSave } from './uiReducer/uiActions';
 
 import type { State } from './types/state';
-import type { Appeal } from './types/models';
+import type { Appeal, Task } from './types/models';
 
 type Params = {|
-  appealId: string
+  appealId: string,
+  task: Task,
+  isTeamAssign: boolean
 |};
 
 type Props = Params & {|
@@ -33,8 +35,7 @@ type Props = Params & {|
 |};
 
 type ViewState = {|
-  granted: ?string,
-  reason: ?string
+  selectedValue: ?string
 |};
 
 class AssignToView extends React.Component<Props, ViewState> {
@@ -60,7 +61,6 @@ class AssignToView extends React.Component<Props, ViewState> {
       data: {
         tasks: [{
           type: 'GenericTask',
-          title: task.title,
           external_id: appeal.externalId,
           parent_id: task.taskId,
           assigned_to_id: this.state.selectedValue,
@@ -74,13 +74,13 @@ class AssignToView extends React.Component<Props, ViewState> {
 
     return this.props.requestSave('/tasks', payload, successMsg).
       then(() => {
-        this.props.setTaskAttrs(appeal.externalId, { status: 'on_hold' })
+        this.props.setTaskAttrs(appeal.externalId, { status: 'on_hold' });
       });
   }
 
   options = () => {
     if (this.props.isTeamAssign) {
-      return this.props.task.assignableOrganizations.map((organization) => {
+      return (this.props.task.assignableOrganizations || []).map((organization) => {
         return {
           label: organization.name,
           value: organization.id
@@ -88,7 +88,7 @@ class AssignToView extends React.Component<Props, ViewState> {
       });
     }
 
-    return this.props.task.assignableUsers.map((user) => {
+    return (this.props.task.assignableUsers || []).map((user) => {
       return {
         label: user.full_name,
         value: user.id
@@ -109,7 +109,7 @@ class AssignToView extends React.Component<Props, ViewState> {
         errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
         placeholder={this.props.isTeamAssign ? COPY.ASSIGN_TO_TEAM_DROPDOWN : COPY.ASSIGN_TO_USER_DROPDOWN}
         value={this.state.selectedValue}
-        onChange={(option) => this.setState({ selectedValue: option.value })}
+        onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
         options={this.options()} />
     </React.Fragment>;
   }
