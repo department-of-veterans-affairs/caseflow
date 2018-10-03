@@ -96,6 +96,7 @@ describe('ColocatedTaskListView', () => {
 
   const amaTaskWith = ({ cssIdAssignee, ...rest }) => {
     const amaTaskTemplate = getAmaTaskTemplate();
+
     return ({
       ...amaTaskTemplate,
       ...rest,
