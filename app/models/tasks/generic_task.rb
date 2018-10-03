@@ -36,13 +36,18 @@ class GenericTask < Task
   end
 
   class << self
-    def create_from_params(params, current_user)
-      parent = Task.find(params[:parent_id])
-      parent.verify_user_access(current_user)
+    def create_from_params(params_array, current_user)
+      params_array.map do |params|
+        parent = Task.find(params[:parent_id])
+        fail Caseflow::Error::ChildTaskAssignedToSameUser if parent.assigned_to_id == params[:assigned_to_id] &&
+                                                             parent.assigned_to_type == params[:assigned_to_type]
 
-      child = create_child_task(parent, current_user, params)
-      update_status(parent, params[:status])
-      child
+        parent.verify_user_access(current_user)
+
+        child = create_child_task(parent, current_user, params)
+        update_status(parent, params[:status])
+        child
+      end
     end
 
     private

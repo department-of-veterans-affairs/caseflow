@@ -114,7 +114,7 @@ class Task < ApplicationRecord
   end
 
   def assignable_organizations
-    Organization.assignable
+    Organization.assignable(self)
   end
 
   def assignable_users
