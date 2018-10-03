@@ -58,13 +58,19 @@ class ActionsDropdown extends React.PureComponent<Props> {
     history.replace(`/queue/appeals/${appealId}/${option.value}`);
   };
 
-  render = () => <SearchableDropdown
-    name={`start-checkout-flow-${this.props.appealId}`}
-    placeholder="Select an action&hellip;"
-    options={this.props.task.availableActions}
-    onChange={this.changeRoute}
-    hideLabel
-    dropdownStyling={dropdownStyling} />;
+  render = () => {
+    if (!this.props.task) {
+      return;
+    }
+
+    return <SearchableDropdown
+      name={`start-checkout-flow-${this.props.appealId}`}
+      placeholder="Select an action&hellip;"
+      options={this.props.task.availableActions}
+      onChange={this.changeRoute}
+      hideLabel
+      dropdownStyling={dropdownStyling} />;
+  }
 }
 
 const mapStateToProps = (state: State, ownProps) => ({
