@@ -36,7 +36,7 @@ type ViewState = {|
   reason: ?string
 |};
 
-class AssignToTeamView extends React.Component<Props, ViewState> {
+class AssignToView extends React.Component<Props, ViewState> {
   constructor(props) {
     super(props);
 
@@ -48,7 +48,8 @@ class AssignToTeamView extends React.Component<Props, ViewState> {
   submit = () => {
     const {
       appeal,
-      task
+      task,
+      isTeamAssign
     } = this.props;
     const payload = {
       data: {
@@ -58,7 +59,7 @@ class AssignToTeamView extends React.Component<Props, ViewState> {
           external_id: appeal.externalId,
           parent_id: task.taskId,
           assigned_to_id: this.state.selectedValue,
-          assigned_to_type: "Organization"
+          assigned_to_type: isTeamAssign ? "Organization" : "User"
         }]
       }
     };
@@ -72,11 +73,20 @@ class AssignToTeamView extends React.Component<Props, ViewState> {
       });
   }
 
-  organizationOption = () => {
-    return this.props.task.assignableOrganizations.map((organization) => {
+  options = () => {
+    if (this.props.isTeamAssign) {
+      return this.props.task.assignableOrganizations.map((organization) => {
+        return {
+          label: organization.name,
+          value: organization.id
+        }
+      });
+    }
+
+    return this.props.task.assignableUsers.map((user) => {
       return {
-        label: organization.name,
-        value: organization.id
+        label: user.full_name,
+        value: user.id
       }
     });
   }
@@ -96,7 +106,7 @@ class AssignToTeamView extends React.Component<Props, ViewState> {
         placeholder={COPY.ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN_PLACEHOLDER}
         value={this.state.selectedValue}
         onChange={(option) => this.setState({ selectedValue: option.value })}
-        options={this.organizationOption()} />
+        options={this.options()} />
     </React.Fragment>;
   }
 }
@@ -120,5 +130,5 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  editModalBase(AssignToTeamView, COPY.ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE)
+  editModalBase(AssignToView, COPY.ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE)
 )): React.ComponentType<Params>);

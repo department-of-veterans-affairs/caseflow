@@ -134,7 +134,8 @@ class ApplicationController < ApplicationBaseController
     # This feature toggle control access of attorneys to create admin actions for co-located users
     return true if current_user.attorney_in_vacols? && feature_enabled?(:attorney_assignment_to_colocated)
     # This feature toggle control access of judges to assign cases to attorneys
-    true if current_user.judge_in_vacols? && feature_enabled?(:judge_assignment_to_attorney)
+    return true if current_user.judge_in_vacols? && feature_enabled?(:judge_assignment_to_attorney)
+    true if !current_user.attorney_in_vacols? && !current_user.judge_in_vacols?
   end
 
   def verify_task_assignment_access

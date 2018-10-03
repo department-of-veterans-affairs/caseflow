@@ -70,7 +70,7 @@ class SeedDB
 
   def create_org_queue_user
     q = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER", full_name: "Org Q User")
-    FactoryBot.create(:staff, user: q, sdept: "TRANS")
+    FactoryBot.create(:staff, user: q, sdept: "TRANS", sattyid: nil)
   end
 
   def create_bva_dispatch_user_with_tasks

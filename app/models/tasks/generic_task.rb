@@ -9,7 +9,7 @@ class GenericTask < Task
       },
       {
         label: "Assign to person",
-        value: "assign_to_person"
+        value: "modal/assign_to_person"
       },
       {
         label: "Mark task complete",

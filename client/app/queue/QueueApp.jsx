@@ -30,7 +30,8 @@ import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import MarkTaskCompleteView from './MarkTaskCompleteView';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
-import AssignToTeamView from './AssignToTeamView';
+import AssignToView from './AssignToView';
+
 import TriggerModal from './TriggerModal';
 
 import CaseListView from './CaseListView';
@@ -95,7 +96,7 @@ class QueueApp extends React.PureComponent<Props> {
       return <AttorneyTaskListView />;
     } else if (userRole === USER_ROLE_TYPES.judge) {
       return <JudgeReviewTaskListView {...this.props} />;
-    } else if (userRole === USER_ROLE_TYPES.colocated) {
+    } else {
       return <ColocatedTaskListView />;
     }
   }
@@ -159,7 +160,9 @@ class QueueApp extends React.PureComponent<Props> {
   routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView
     nextStep={`/queue/appeals/${props.match.params.appealId}`} {...props.match.params} />;
 
-  routedAssignToTeam = (props) => <AssignToTeamView {...props.match.params} />;
+  routedAssignToTeam = (props) => <AssignToView isTeamAssign {...props.match.params} />;
+
+  routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
   routedMarkTaskComplete = (props) => <MarkTaskCompleteView
     nextStep={`/queue/appeals/${props.match.params.appealId}`}
@@ -246,8 +249,8 @@ class QueueApp extends React.PureComponent<Props> {
             path="/queue/appeals/:appealId/modal/assign_to_team"
             render={this.routedAssignToTeam} />
           <Route
-            path="/queue/appeals/:appealId/modal/assign_to_user"
-            render={this.routedAssignToTeam} />
+            path="/queue/appeals/:appealId/modal/assign_to_person"
+            render={this.routedAssignToUser} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"
