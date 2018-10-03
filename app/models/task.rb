@@ -118,8 +118,11 @@ class Task < ApplicationRecord
   end
 
   def assignable_users
-    return assigned_to.members.delete(assigned_to) if assigned_to.is_a?(Organization)
-    parent.assigned_to.members.delete(assigned_to) if parent && parent.assigned_to.is_a?(Organization)
+    if assigned_to.is_a?(Organization)
+      assigned_to.members.reject { |member| member == assigned_to }
+    elsif parent && parent.assigned_to.is_a?(Organization)
+      parent.assigned_to.members.reject { |member| member == assigned_to }
+    end
   end
 
   private

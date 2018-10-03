@@ -96,9 +96,10 @@ class QueueApp extends React.PureComponent<Props> {
       return <AttorneyTaskListView />;
     } else if (userRole === USER_ROLE_TYPES.judge) {
       return <JudgeReviewTaskListView {...this.props} />;
-    } else {
-      return <ColocatedTaskListView />;
     }
+
+    return <ColocatedTaskListView />;
+
   }
 
   routedQueueList = () => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>

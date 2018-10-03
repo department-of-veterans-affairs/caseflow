@@ -6,12 +6,13 @@ import { withRouter } from 'react-router-dom';
 
 import COPY from '../../COPY.json';
 
-
 import {
   appealWithDetailSelector,
   tasksForAppealAssignedToUserSelector,
   incompleteOrganizationTasksByAssigneeIdSelector
-} from './selectors';import { setAppealAod } from './QueueActions';
+} from './selectors';
+
+import { setTaskAttrs } from './QueueActions';
 
 import SearchableDropdown from '../components/SearchableDropdown';
 import editModalBase from './components/EditModalBase';
@@ -28,7 +29,7 @@ type Props = Params & {|
   appeal: Appeal,
   highlightFormItems: boolean,
   requestSave: typeof requestSave,
-  setAppealAod: typeof setAppealAod
+  setTaskAttrs: typeof setTaskAttrs
 |};
 
 type ViewState = {|
@@ -45,6 +46,10 @@ class AssignToView extends React.Component<Props, ViewState> {
     };
   }
 
+  validateForm = () => {
+    return this.state.selectedValue !== null;
+  }
+
   submit = () => {
     const {
       appeal,
@@ -54,12 +59,12 @@ class AssignToView extends React.Component<Props, ViewState> {
     const payload = {
       data: {
         tasks: [{
-          type: "GenericTask",
+          type: 'GenericTask',
           title: task.title,
           external_id: appeal.externalId,
           parent_id: task.taskId,
           assigned_to_id: this.state.selectedValue,
-          assigned_to_type: isTeamAssign ? "Organization" : "User"
+          assigned_to_type: isTeamAssign ? 'Organization' : 'User'
         }]
       }
     };
@@ -67,9 +72,9 @@ class AssignToView extends React.Component<Props, ViewState> {
       title: 'Task assigned to team'
     };
 
-    return this.props.requestSave(`/tasks`, payload, successMsg).
+    return this.props.requestSave('/tasks', payload, successMsg).
       then(() => {
-        console.log("success");
+        this.props.setTaskAttrs(appeal.externalId, { status: 'on_hold' })
       });
   }
 
@@ -79,7 +84,7 @@ class AssignToView extends React.Component<Props, ViewState> {
         return {
           label: organization.name,
           value: organization.id
-        }
+        };
       });
     }
 
@@ -87,7 +92,7 @@ class AssignToView extends React.Component<Props, ViewState> {
       return {
         label: user.full_name,
         value: user.id
-      }
+      };
     });
   }
 
@@ -97,13 +102,12 @@ class AssignToView extends React.Component<Props, ViewState> {
     } = this.props;
 
     return <React.Fragment>
-      <h3>Choose a team</h3>
       <SearchableDropdown
-        name="Teams"
-        searchable={false}
+        name="Assign to selector"
+        searchable
         hideLabel
-        errorMessage={highlightFormItems && !this.state.granted ? 'Choose one' : null}
-        placeholder={COPY.ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN_PLACEHOLDER}
+        errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
+        placeholder={this.props.isTeamAssign ? COPY.ASSIGN_TO_TEAM_DROPDOWN : COPY.ASSIGN_TO_USER_DROPDOWN}
         value={this.state.selectedValue}
         onChange={(option) => this.setState({ selectedValue: option.value })}
         options={this.options()} />
@@ -126,9 +130,9 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
-  setAppealAod
+  setTaskAttrs
 }, dispatch);
 
 export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  editModalBase(AssignToView, COPY.ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE)
+  editModalBase(AssignToView, COPY.ASSIGN_TO_PAGE_TITLE)
 )): React.ComponentType<Params>);

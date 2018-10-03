@@ -261,7 +261,8 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     } else if (userRole === USER_ROLE_TYPES.colocated) {
       ActionDropdown = <ColocatedActionsDropdown {...dropdownArgs} />;
     } else {
-      ActionDropdown = <ActionsDropdown task={taskAssignedToUser || taskAssignedToOrganization} appealId={appeal.externalId} />;
+      ActionDropdown = <ActionsDropdown
+        task={taskAssignedToUser || taskAssignedToOrganization} appealId={appeal.externalId} />;
     }
 
     const taskAssignedToVso = taskAssignedToOrganization && taskAssignedToOrganization.assignedTo.type === 'Vso';
