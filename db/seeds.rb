@@ -232,58 +232,68 @@ class SeedDB
         FactoryBot.build(:claimant, participant_id: "OTHER_CLAIMANT")
       ],
       veteran_file_number: "701305078",
+      docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 3, description: "Head trauma")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       veteran_file_number: "783740847",
+      docket_type: "evidence_submission",
       request_issues: FactoryBot.create_list(:request_issue, 3, description: "Knee pain")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       veteran_file_number: "963360019",
+      docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 2, description: "PTSD")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "604969679",
+      docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 1, description: "Tinnitus")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "228081153",
+      docket_type: "evidence_submission",
       request_issues: FactoryBot.create_list(:request_issue, 1, description: "Tinnitus")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "152003980",
+      docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 3, description: "PTSD")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "375273128",
+      docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 1, description: "Knee pain")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "682007349",
+      docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 5, description: "Veteran reports hearing loss in left ear")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "231439628S",
+      docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 1, description: "Back pain")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "975191063",
+      docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 8, description: "Kidney problems")
     )
 
@@ -463,6 +473,27 @@ class SeedDB
     Rails.logger.info("Taks prepare job skipped - tasks were already prepared...")
   end
 
+  def create_previously_held_hearing_data
+    user = User.find_by_css_id("BVAAABSHIRE")
+    veteran_file_number = "994806951S"
+    appeals = LegacyAppeal.where(vbms_id: veteran_file_number)
+
+    return if (appeals.map(&:type) - ["Post Remand", "Original"]).empty? &&
+              appeals.flat_map(&:hearings).map(&:disposition).include?(:held)
+
+    FactoryBot.create(
+      :legacy_appeal,
+      vacols_case: FactoryBot.create(
+        :case,
+        :assigned,
+        :type_original,
+        user: user,
+        bfcorlid: veteran_file_number,
+        case_hearings: [FactoryBot.create(:case_hearing, :disposition_held, user: user)]
+      )
+    )
+  end
+
   def seed
     clean_db
     # Annotations and tags don't come from VACOLS, so our seeding should
@@ -475,6 +506,7 @@ class SeedDB
     create_tasks
 
     setup_dispatch
+    create_previously_held_hearing_data
 
     return if Rails.env.development?
 

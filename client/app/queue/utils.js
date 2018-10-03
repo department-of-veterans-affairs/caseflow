@@ -6,7 +6,8 @@ import StringUtil from '../util/StringUtil';
 import {
   redText,
   ISSUE_DISPOSITIONS,
-  VACOLS_DISPOSITIONS
+  VACOLS_DISPOSITIONS,
+  LEGACY_APPEAL_TYPES
 } from './constants';
 
 import type {
@@ -25,6 +26,27 @@ import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRI
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
+
+/**
+ * For legacy attorney checkout flow, filter out already-decided issues. Undecided
+ * VACOLS disposition IDs are all numerical (1-9), decided IDs are alphabetical (A-X).
+ * Filter out disposition 9 because it is no longer used.
+ *
+ * @param {Array} issues
+ * @returns {Array}
+ */
+
+export const getUndecidedIssues = (issues: Issues) => _.filter(issues, (issue) => {
+  if (!issue.disposition) {
+    return true;
+  }
+
+  const disposition = Number(issue.disposition);
+
+  if (disposition && disposition < 9 && issue.disposition in VACOLS_DISPOSITIONS_BY_ID) {
+    return true;
+  }
+});
 
 export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
   tasks.reduce((acc, task: Object): Tasks => {
@@ -177,11 +199,25 @@ export const prepareAppealIssuesForStore = (appeal: { attributes: Object }) => {
   return issues;
 };
 
+export const prepareAppealHearingsForStore = (appeal: { attributes: Object }) => appeal.attributes.hearings.
+  map((hearing) => ({
+    heldBy: hearing.held_by,
+    viewedByJudge: hearing.viewed_by_judge,
+    date: hearing.date,
+    type: hearing.type,
+    id: hearing.id,
+    disposition: hearing.disposition
+  }));
+
 export const prepareAppealForStore =
   (appeals: Array<Object>):
     { appeals: BasicAppeals, appealDetails: AppealDetails } => {
 
     const appealHash = appeals.reduce((accumulator, appeal) => {
+      const {
+        attributes: { issues }
+      } = appeal;
+
       accumulator[appeal.attributes.external_id] = {
         id: appeal.id,
         externalId: appeal.attributes.external_id,
@@ -189,7 +225,7 @@ export const prepareAppealForStore =
         isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
         caseType: appeal.attributes.type,
         isAdvancedOnDocket: appeal.attributes.aod,
-        issueCount: appeal.attributes.issues.length,
+        issueCount: (appeal.attributes.docket_name === 'legacy' ? getUndecidedIssues(issues) : issues).length,
         docketNumber: appeal.attributes.docket_number,
         assignedAttorney: appeal.attributes.assigned_attorney,
         assignedJudge: appeal.attributes.assigned_judge,
@@ -203,7 +239,8 @@ export const prepareAppealForStore =
 
     const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
       accumulator[appeal.attributes.external_id] = {
-        hearings: appeal.attributes.hearings,
+        hearings: prepareAppealHearingsForStore(appeal),
+        completedHearingOnPreviousAppeal: appeal.attributes['completed_hearing_on_previous_appeal?'],
         issues: prepareAppealIssuesForStore(appeal),
         appellantFullName: appeal.attributes.appellant_full_name,
         appellantAddress: appeal.attributes.appellant_address,
@@ -239,7 +276,7 @@ export const renderAppealType = (appeal: BasicAppeal) => {
     isAdvancedOnDocket,
     caseType
   } = appeal;
-  const cavc = caseType === 'Court Remand';
+  const cavc = caseType === LEGACY_APPEAL_TYPES.CAVC_REMAND;
 
   return <React.Fragment>
     {isAdvancedOnDocket && <span><span {...redText}>AOD</span>, </span>}
@@ -292,27 +329,6 @@ export const getIssueDiagnosticCodeLabel = (code: string): string => {
 
   return `${code} - ${readableLabel.staff_description}`;
 };
-
-/**
- * For legacy attorney checkout flow, filter out already-decided issues. Undecided
- * VACOLS disposition IDs are all numerical (1-9), decided IDs are alphabetical (A-X).
- * Filter out disposition 9 because it is no longer used.
- *
- * @param {Array} issues
- * @returns {Array}
- */
-
-export const getUndecidedIssues = (issues: Issues) => _.filter(issues, (issue) => {
-  if (!issue.disposition) {
-    return true;
-  }
-
-  const disposition = Number(issue.disposition);
-
-  if (disposition && disposition < 9 && issue.disposition in VACOLS_DISPOSITIONS_BY_ID) {
-    return true;
-  }
-});
 
 export const buildCaseReviewPayload = (
   checkoutFlow: string, decision: Object, userRole: string, issues: Issues, args: Object = {}

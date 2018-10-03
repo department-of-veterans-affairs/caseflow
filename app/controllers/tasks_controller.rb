@@ -148,7 +148,7 @@ class TasksController < ApplicationController
         .merge(assigned_by: current_user)
         .merge(appeal: Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id]))
 
-      task.merge(assigned_to_type: "User") if !task[:assigned_to_type]
+      task.merge(assigned_to_type: User.name) if !task[:assigned_to_type]
 
       task
     end
