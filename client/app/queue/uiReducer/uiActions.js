@@ -162,6 +162,10 @@ export const toggleVeteranCaseList = () => ({
   type: ACTIONS.TOGGLE_VETERAN_CASE_LIST
 });
 
+export const showVeteranCaseList = () => ({
+  type: ACTIONS.SHOW_VETERAN_CASE_LIST
+});
+
 export const hideVeteranCaseList = () => ({
   type: ACTIONS.HIDE_VETERAN_CASE_LIST
 });

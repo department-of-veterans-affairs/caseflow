@@ -20,6 +20,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     []
   end
 
+  attribute :completed_hearing_on_previous_appeal? do
+    false
+  end
+
   attribute :appellant_full_name do
     object.claimants[0].name if object.claimants && object.claimants.any?
   end

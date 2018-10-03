@@ -7,6 +7,7 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
 require "database_cleaner"
+# rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/AbcSize
 class SeedDB
@@ -445,6 +446,44 @@ class SeedDB
     DatabaseCleaner.clean_with(:truncation)
   end
 
+  def setup_dispatch
+    CreateEstablishClaimTasksJob.perform_now
+    Timecop.freeze(Date.yesterday) do
+      # Tasks prepared on today's date will not be picked up
+      Dispatch::Task.all.each(&:prepare!)
+      # Appeal decisions (decision dates) for partial grants have to be within 3 days
+      CSV.foreach(Rails.root.join("local/vacols", "cases.csv"), headers: true) do |row|
+        row_hash = row.to_h
+        if %w[amc_full_grants remands_ready_for_claims_establishment].include?(row_hash["vbms_key"])
+          VACOLS::Case.where(bfkey: row_hash["vacols_id"]).first.update(bfddec: Time.zone.today)
+        end
+      end
+    end
+  rescue AASM::InvalidTransition
+    Rails.logger.info("Taks prepare job skipped - tasks were already prepared...")
+  end
+
+  def create_previously_held_hearing_data
+    user = User.find_by_css_id("BVAAABSHIRE")
+    veteran_file_number = "994806951S"
+    appeals = LegacyAppeal.where(vbms_id: veteran_file_number)
+
+    return if (appeals.map(&:type) - ["Post Remand", "Original"]).empty? &&
+              appeals.flat_map(&:hearings).map(&:disposition).include?(:held)
+
+    FactoryBot.create(
+      :legacy_appeal,
+      vacols_case: FactoryBot.create(
+        :case,
+        :assigned,
+        :type_original,
+        user: user,
+        bfcorlid: veteran_file_number,
+        case_hearings: [FactoryBot.create(:case_hearing, :disposition_held, user: user)]
+      )
+    )
+  end
+
   def seed
     clean_db
     # Annotations and tags don't come from VACOLS, so our seeding should
@@ -455,6 +494,9 @@ class SeedDB
     create_ama_appeals
     create_users
     create_tasks
+
+    setup_dispatch
+    create_previously_held_hearing_data
 
     return if Rails.env.development?
 
@@ -470,5 +512,6 @@ class SeedDB
 end
 # rubocop:enable Metrics/MethodLength
 # rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/ClassLength
 
 SeedDB.new.seed
