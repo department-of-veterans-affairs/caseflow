@@ -61,7 +61,9 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       onHoldDuration: task.attributes.on_hold_duration,
       instructions: task.attributes.instructions,
       decisionPreparedBy,
-      availableActions: task.attributes.available_actions
+      availableActions: task.attributes.available_actions,
+      assignableOrganizations: task.attributes.assignable_organizations,
+      assignableUsers: task.attributes.assignable_users
     };
 
     return acc;

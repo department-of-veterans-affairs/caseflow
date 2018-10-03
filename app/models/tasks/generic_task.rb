@@ -1,4 +1,23 @@
 class GenericTask < Task
+  def allowed_actions(user)
+    return [] if assigned_to != user && assigned_to_type != "Organization"
+
+    [
+      {
+        label: "Assign to team",
+        value: "modal/assign_to_team"
+      },
+      {
+        label: "Assign to person",
+        value: "assign_to_person"
+      },
+      {
+        label: "Mark task complete",
+        value: "mark_task_complete"
+      }
+    ]
+  end
+
   def update_from_params(params, current_user)
     verify_user_access(current_user)
 

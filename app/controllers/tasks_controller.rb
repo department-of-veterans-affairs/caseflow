@@ -95,14 +95,6 @@ class TasksController < ApplicationController
     json_tasks_by_appeal_id(appeal.id, appeal.class.to_s)
   end
 
-  def assignable_organizations
-    render json: { organizations: task.assignable_organizations.map { |o| { id: o.id, name: o.name } } }
-  end
-
-  def assignable_users
-    render json: { users: task.assignable_users.map { |m| { id: m.id, css_id: m.css_id, full_name: m.full_name } } }
-  end
-
   private
 
   def can_act_on_task?
