@@ -562,11 +562,12 @@ RSpec.feature "Higher-Level Review" do
 
       # make sure that database is populated
       expect(HigherLevelReview.find_by(
-        id: higher_level_review.id,
-        veteran_file_number: veteran.file_number,
-        establishment_submitted_at: Time.zone.now,
-        establishment_processed_at: Time.zone.now,
-        establishment_error: nil)).to_not be_nil
+               id: higher_level_review.id,
+               veteran_file_number: veteran.file_number,
+               establishment_submitted_at: Time.zone.now,
+               establishment_processed_at: Time.zone.now,
+               establishment_error: nil
+      )).to_not be_nil
 
       end_product_establishment = EndProductEstablishment.find_by(
         source_type: "HigherLevelReview",
@@ -574,16 +575,18 @@ RSpec.feature "Higher-Level Review" do
         veteran_file_number: veteran.file_number,
         code: "030HLRR",
         claimant_participant_id: "5382910292",
-        payee_code: "02")
+        payee_code: "02"
+      )
 
       expect(end_product_establishment).to_not be_nil
 
       expect(RequestIssue.find_by(
-        review_request_type: "HigherLevelReview",
-        review_request_id: higher_level_review.id,
-        rating_issue_reference_id: "abc123",
-        description: "Left knee granted",
-        end_product_establishment_id: end_product_establishment.id)).to_not be_nil
+               review_request_type: "HigherLevelReview",
+               review_request_id: higher_level_review.id,
+               rating_issue_reference_id: "abc123",
+               description: "Left knee granted",
+               end_product_establishment_id: end_product_establishment.id
+      )).to_not be_nil
     end
 
     scenario "HLR non-comp" do

@@ -442,27 +442,29 @@ RSpec.feature "Supplemental Claim Intake" do
       )
 
       expect(SupplementalClaim.find_by(
-        id: supplemental_claim.id,
-        veteran_file_number: veteran.file_number,
-        establishment_submitted_at: Time.zone.now,
-        establishment_processed_at: Time.zone.now,
-        establishment_error: nil)).to_not be_nil
+               id: supplemental_claim.id,
+               veteran_file_number: veteran.file_number,
+               establishment_submitted_at: Time.zone.now,
+               establishment_processed_at: Time.zone.now,
+               establishment_error: nil
+      )).to_not be_nil
 
       end_product_establishment = EndProductEstablishment.find_by(
         source_type: "SupplementalClaim",
         source_id: supplemental_claim.id,
         veteran_file_number: veteran.file_number,
         code: "040SCR",
-        claimant_participant_id: "901987")
+        claimant_participant_id: "901987"
+      )
       expect(end_product_establishment).to_not be_nil
 
       expect(RequestIssue.find_by(
-        review_request_type: "SupplementalClaim",
-        review_request_id: supplemental_claim.id,
-        rating_issue_reference_id: "abc123",
-        description: "Left knee granted",
-        end_product_establishment_id: end_product_establishment.id)).to_not be_nil
-
+               review_request_type: "SupplementalClaim",
+               review_request_id: supplemental_claim.id,
+               rating_issue_reference_id: "abc123",
+               description: "Left knee granted",
+               end_product_establishment_id: end_product_establishment.id
+      )).to_not be_nil
     end
 
     scenario "SC non-comp" do
