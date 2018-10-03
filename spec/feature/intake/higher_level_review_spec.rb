@@ -554,8 +554,13 @@ RSpec.feature "Higher-Level Review" do
       safe_click "#button-add-issue"
       find("label", text: "Left knee granted").click
       safe_click ".add-issue"
-
       expect(page).to have_content("1. Left knee granted")
+
+      # clicking add issue again should show a disabled radio button for that same rating
+      safe_click "#button-add-issue"
+      expect(page).to have_content("Left knee granted (already selected for issue 1)")
+      expect(page).to have_css("input[disabled][id='rating-radio_abc123']", :visible => false)
+      safe_click ".close-modal"
     end
 
     scenario "Non-compensation" do

@@ -50,7 +50,7 @@ class AddIssuesModal extends React.Component {
       return <RadioField
         vertical
         label={<h3>Past decisions from { formatDateStr(rating.profile_date) }</h3>}
-        name={`rating-radio-${rating.profile_date}`}
+        name="rating-radio"
         options={radioOptions}
         key={rating.profile_date}
         value={this.state.referenceId}
