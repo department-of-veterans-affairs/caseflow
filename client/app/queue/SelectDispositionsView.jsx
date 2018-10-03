@@ -55,6 +55,7 @@ class SelectDispositionsView extends React.PureComponent {
   getNextStepUrl = () => {
     const {
       appealId,
+      checkoutFlow,
       userRole,
       appeal: { issues }
     } = this.props;
@@ -72,12 +73,13 @@ class SelectDispositionsView extends React.PureComponent {
       nextStep = 'submit';
     }
 
-    return `/queue/appeals/${appealId}/${nextStep}`;
+    return `/queue/appeals/${appealId}/${checkoutFlow}/${nextStep}`;
   }
 
   getPrevStepUrl = () => {
     const {
       appealId,
+      checkoutFlow,
       appeal
     } = this.props;
 
@@ -85,7 +87,7 @@ class SelectDispositionsView extends React.PureComponent {
       return `/queue/appeals/${appealId}`;
     }
 
-    return `/queue/appeals/${appealId}/special_issues`;
+    return `/queue/appeals/${appealId}/${checkoutFlow}/special_issues`;
   }
 
   componentWillUnmount = () => this.props.hideSuccessMessage();
@@ -113,6 +115,7 @@ class SelectDispositionsView extends React.PureComponent {
   getColumns = () => {
     const {
       appeal,
+      checkoutFlow,
       appealId
     } = this.props;
 
@@ -137,7 +140,7 @@ class SelectDispositionsView extends React.PureComponent {
     if (appeal.isLegacyAppeal) {
       columns.splice(1, 0, {
         header: 'Actions',
-        valueFunction: (issue) => <Link to={`/queue/appeals/${appealId}/dispositions/edit/${issue.id}`}>
+        valueFunction: (issue) => <Link to={`/queue/appeals/${appealId}/${checkoutFlow}/dispositions/edit/${issue.id}`}>
           Edit Issue
         </Link>
       });
@@ -150,6 +153,7 @@ class SelectDispositionsView extends React.PureComponent {
     const {
       success,
       appealId,
+      checkoutFlow,
       appeal,
       appeal: { issues }
     } = this.props;
@@ -171,7 +175,7 @@ class SelectDispositionsView extends React.PureComponent {
         bodyStyling={tbodyStyling}
       />
       {appeal.isLegacyAppeal && <div {...marginLeft(1.5)}>
-        <Link to={`/queue/appeals/${appealId}/dispositions/add`}>Add Issue</Link>
+        <Link to={`/queue/appeals/${appealId}/${checkoutFlow}/dispositions/add`}>Add Issue</Link>
       </div>}
     </React.Fragment>;
   };
@@ -179,6 +183,7 @@ class SelectDispositionsView extends React.PureComponent {
 
 SelectDispositionsView.propTypes = {
   appealId: PropTypes.string.isRequired,
+  checkoutFlow: PropTypes.string.isRequired,
   userRole: PropTypes.string.isRequired
 };
 
