@@ -23,6 +23,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 
 import COPY from '../../COPY.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
+import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import { COLORS } from '../constants/AppConstants';
 import StringUtil from '../util/StringUtil';
@@ -244,7 +245,9 @@ export class CaseSnapshot extends React.PureComponent<Props> {
 
     // users can end up at case details for appeals with no DAS
     // record (!task.taskId). prevent starting checkout flows
-    return Boolean(tasks.length && _.every(tasks, (task) => task.taskId));
+    return Boolean(tasks.length && _.every(tasks, (task) => {
+      return task.taskId && (!task.status || task.status !== TASK_STATUSES.completed);
+    }));
   }
 
   render = () => {
