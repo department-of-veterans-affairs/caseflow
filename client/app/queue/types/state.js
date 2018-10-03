@@ -5,6 +5,7 @@ import type {
   Tasks,
   Appeals,
   BasicAppeals,
+  AppealDetails,
   User,
   Attorneys
 } from './models';
@@ -24,6 +25,13 @@ export type CaseDetailState = {|
   activeTask: ?Task
 |};
 
+export type UiStateModals = {|
+  deleteIssue?: boolean,
+  cancelCheckout?: boolean,
+  sendToAttorney?: boolean,
+  sendToTeam?: boolean
+|};
+
 export type UiStateMessage = { title: string, detail?: React.Node };
 
 export type UiState = {
@@ -37,12 +45,7 @@ export type UiState = {
     savePending: boolean,
     saveSuccessful: ?boolean
   },
-  modals: {|
-    deleteIssue?: boolean,
-    cancelCheckout?: boolean,
-    sendToAttorney?: boolean,
-    sendToTeam?: boolean
-  |},
+  modals: UiStateModals,
   featureToggles: Object,
   selectedAssignee: ?string,
   selectedAssigneeSecondary: ?string,
@@ -64,7 +67,7 @@ export type QueueState = {|
   judges: UsersById,
   tasks: Tasks,
   appeals: BasicAppeals,
-  appealDetails: Appeals,
+  appealDetails: AppealDetails,
   amaTasks: Tasks,
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},
