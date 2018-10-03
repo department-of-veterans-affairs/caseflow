@@ -442,7 +442,7 @@ RSpec.feature "Supplemental Claim Intake" do
       # clicking add issue again should show a disabled radio button for that same rating
       safe_click "#button-add-issue"
       expect(page).to have_content("Left knee granted (already selected for issue 1)")
-      expect(page).to have_css("input[disabled][id='rating-radio_abc123']", :visible => false)
+      expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
       safe_click ".close-modal"
     end
 

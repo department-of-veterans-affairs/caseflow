@@ -39,7 +39,10 @@ class AddIssuesModal extends React.Component {
     const ratedIssuesSections = _.map(intakeData.ratings, (rating) => {
       const radioOptions = _.map(rating.issues, (issue) => {
         const foundIndex = addedIssues.map((addedIssue) => addedIssue.id).indexOf(issue.reference_id);
-        const text = foundIndex === -1 ? issue.decision_text : `${issue.decision_text} (already selected for issue ${foundIndex + 1})`;
+        const text = foundIndex === -1 ?
+          issue.decision_text :
+          `${issue.decision_text} (already selected for issue ${foundIndex + 1})`;
+
         return {
           displayText: text,
           value: issue.reference_id,
