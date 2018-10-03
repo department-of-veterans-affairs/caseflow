@@ -21,6 +21,14 @@ const centralOfficeStaticEntry = [{
   value: 'C'
 }];
 
+const sectionNavigationListStyling = css({
+  '& > li': {
+    backgroundColor: COLORS.GREY_BACKGROUND,
+    color: COLORS.PRIMARY,
+    borderWidth: 0
+  }
+});
+
 export default class AssignHearings extends React.Component {
 
   // required to reset the RO Dropdown when moving from Viewing and Assigning.
@@ -48,7 +56,7 @@ export default class AssignHearings extends React.Component {
     return <div className="usa-width-one-fourth">
       <h3>Hearings to Schedule</h3>
       <h4>Available Hearing Days</h4>
-      <ul className="usa-sidenav-list">
+      <ul className="usa-sidenav-list" {...sectionNavigationListStyling}>
         {Object.values(this.props.upcomingHearingDays).slice(0, 9).
           map((hearingDay) => {
             const { selectedHearingDay } = this.props;
@@ -57,7 +65,12 @@ export default class AssignHearings extends React.Component {
             const buttonColorSelected = css({
               backgroundColor: COLORS.GREY_DARK,
               color: COLORS.WHITE,
-              borderRadius: '0px'
+              borderRadius: '0.1rem 0.1rem 0 0',
+              paddingRight: '9.2rem',
+              '&:hover': {
+                backgroundColor: COLORS.GREY_DARK,
+                color: COLORS.WHITE
+              }
             });
             const styling = dateSelected ? buttonColorSelected : '';
 
