@@ -54,6 +54,13 @@ export const ISSUE_CATEGORIES = issueCategoriesArray.map((category) => {
   };
 });
 
+export const NON_RATED_ISSUE_CATEGORIES = issueCategoriesArray.slice(1).map((category) => {
+  return {
+    value: category,
+    label: category
+  };
+});
+
 export const REQUEST_STATE = {
   NOT_STARTED: 'NOT_STARTED',
   IN_PROGRESS: 'IN_PROGRESS',

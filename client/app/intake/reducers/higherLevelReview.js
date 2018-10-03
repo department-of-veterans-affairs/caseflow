@@ -67,6 +67,7 @@ const updateFromServerIntake = (state, serverIntake) => {
 export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
     addIssuesModalVisible: false,
+    nonRatedIssueModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
     benefitType: null,

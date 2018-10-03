@@ -3,10 +3,12 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
 
-import { addIssue } from '../actions/ama';
+import { addRatedIssue } from '../actions/ama';
 import { formatDateStr } from '../../util/DateUtil';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
+import Button from '../../components/Button';
+import { toggleNonRatedIssueModal } from '../actions/common';
 
 class AddIssuesModal extends React.Component {
   constructor(props) {
@@ -25,7 +27,7 @@ class AddIssuesModal extends React.Component {
   }
 
   onAddIssue = () => {
-    this.props.addIssue(this.state.referenceId, this.props.ratings, true);
+    this.props.addRatedIssue(this.state.referenceId, this.props.ratings, true);
     this.props.closeHandler();
   }
 
@@ -81,6 +83,15 @@ class AddIssuesModal extends React.Component {
           <br />
           { ratedIssuesSections }
         </div>
+
+        <Button
+          name="add-issue"
+          legacyStyling={false}
+          classNames={['usa-button-secondary']}
+          onClick={this.props.toggleNonRatedIssueModal}
+        >
+          + Add issue
+        </Button>
       </Modal>
     </div>;
   }
@@ -89,6 +100,7 @@ class AddIssuesModal extends React.Component {
 export default connect(
   null,
   (dispatch) => bindActionCreators({
-    addIssue
+    addRatedIssue,
+    toggleNonRatedIssueModal
   }, dispatch)
 )(AddIssuesModal);

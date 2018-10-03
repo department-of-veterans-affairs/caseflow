@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import React from 'react';
 
 import AddIssuesModal from '../components/AddIssuesModal';
+import NonRatedIssueModal from '../components/NonRatedIssueModal';
 import Button from '../../components/Button';
 import { FORM_TYPES } from '../../intakeCommon/constants';
 import { formatDate } from '../../util/DateUtil';
@@ -11,6 +12,8 @@ import { formatAddedIssues, getAddIssuesFields } from '../util';
 
 import Table from '../../components/Table';
 import { toggleAddIssuesModal } from '../actions/common';
+import { toggleNonRatedIssueModal } from '../actions/common';
+
 
 class AddIssues extends React.PureComponent {
   render() {
@@ -67,6 +70,9 @@ class AddIssues extends React.PureComponent {
         ratings={intakeData.ratings}
         closeHandler={this.props.toggleAddIssuesModal} />
       }
+      { intakeData.nonRatedIssueModalVisible && <NonRatedIssueModal
+        closeHandler={this.props.toggleNonRatedIssueModal} />
+      }
       <h1 className="cf-txt-c">Add Issues</h1>
 
       <Table
@@ -88,6 +94,7 @@ export default connect(
     veteran: intake.veteran
   }),
   (dispatch) => bindActionCreators({
-    toggleAddIssuesModal
+    toggleAddIssuesModal,
+    toggleNonRatedIssueModal
   }, dispatch)
 )(AddIssues);

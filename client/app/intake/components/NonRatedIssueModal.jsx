@@ -9,16 +9,16 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import Button from '../../components/Button';
 import DateSelector from '../../components/DateSelector';
-import { ISSUE_CATEGORIES } from '../constants';
+import { NON_RATED_ISSUE_CATEGORIES } from '../../intakeCommon/constants';
 
-class NonRatedIssuesModal extends React.Component {
+class NonRatedIssueModal extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       category: '',
-      description: '',
-      decisionDate
+      description: 'hello',
+      decisionDate: ''
     };
   }
 
@@ -50,6 +50,9 @@ class NonRatedIssuesModal extends React.Component {
       closeHandler
     } = this.props;
 
+    const { category, description, decisionDate } = this.state;
+    const requiredFieldsMissing = !description || !category || !decisionDate
+
     return <div>
       <Modal
         buttons={[
@@ -59,7 +62,8 @@ class NonRatedIssuesModal extends React.Component {
           },
           { classNames: ['usa-button', 'usa-button-secondary', 'add-issue'],
             name: 'Add Issue',
-            onClick: this.onAddIssue
+            onClick: this.onAddIssue,
+            disabled: requiredFieldsMissing
           }
         ]}
         visible
@@ -75,7 +79,7 @@ class NonRatedIssuesModal extends React.Component {
             name="issue-category"
             label="Issue category"
             placeholder="Select or enter..."
-            options={ISSUE_CATEGORIES}
+            options={NON_RATED_ISSUE_CATEGORIES}
             value={category}
             onChange={this.categoryOnChange} />
 
@@ -100,4 +104,4 @@ export default connect(
   (dispatch) => bindActionCreators({
     addNonRatedIssue
   }, dispatch)
-)(AddNonRatedIssuesModal);
+)(NonRatedIssueModal);

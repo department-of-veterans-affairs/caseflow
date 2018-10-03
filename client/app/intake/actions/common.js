@@ -125,6 +125,19 @@ export const toggleAddIssuesModal = () => ({
   }
 });
 
+export const toggleNonRatedIssueModal = () => ({
+  type: ACTIONS.TOGGLE_NON_RATED_ISSUE_MODAL,
+  meta: {
+    analytics: {
+      label: (nextState) => {
+        nextState.higherLevelReview.addNonRatedIssueModalVisible ? 'show' : 'hide'; // eslint-disable-line
+        nextState.supplementalClaim.addNonRatedIssueModalVisible ? 'show' : 'hide'; // eslint-disable-line
+        nextState.appeal.addNonRatedIssueModalVisible ? 'show' : 'hide'; // eslint-disable-line
+      }
+    }
+  }
+});
+
 export const submitCancel = (data) => (dispatch) => {
   dispatch({
     type: ACTIONS.CANCEL_INTAKE_START,
