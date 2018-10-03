@@ -4,17 +4,17 @@ class AttorneyLegacyTask < LegacyTask
 
     actions = [
       {
-        label: "Decision Ready for Review",
+        label: COPY::ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
         value: "draft_decision/dispositions"
       },
       {
-        label: "Medical Request Ready for Review",
+        label: COPY::ATTORNEY_CHECKOUT_OMO_LABEL,
         value: "omo_request/submit"
       }
     ]
 
     if FeatureToggle.enabled?(:attorney_assignment_to_colocated, user: assigned_to)
-      actions.push(label: "Add admin action", value: "colocated_task")
+      actions.push(label: COPY::ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL, value: "colocated_task")
     end
 
     actions

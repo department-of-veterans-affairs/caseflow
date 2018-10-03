@@ -15,7 +15,6 @@ import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList'
 import DocketTypeBadge from './components/DocketTypeBadge';
 import ActionsDropdown from './components/ActionsDropdown';
 import JudgeActionsDropdown from './components/JudgeActionsDropdown';
-import ColocatedActionsDropdown from './components/ColocatedActionsDropdown';
 import GenericTaskActionsDropdown from './components/GenericTaskActionsDropdown';
 import OnHoldLabel from './components/OnHoldLabel';
 import CopyTextButton from '../components/CopyTextButton';
@@ -256,19 +255,12 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     } = this.props;
     let ActionDropdown;
     const dropdownArgs = { appealId: appeal.externalId };
+    const task = taskAssignedToUser || taskAssignedToOrganization;
 
-    let task = taskAssignedToUser;
-
-    if (!task) {
-      task = taskAssignedToOrganization;
-    }
-
-    if (userRole === USER_ROLE_TYPES.attorney) {
+    if ([USER_ROLE_TYPES.attorney, USER_ROLE_TYPES.colocated].includes(userRole)) {
       ActionDropdown = <ActionsDropdown task={task} appealId={appeal.externalId} />;
     } else if (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout) {
       ActionDropdown = <JudgeActionsDropdown {...dropdownArgs} />;
-    } else if (userRole === USER_ROLE_TYPES.colocated) {
-      ActionDropdown = <ColocatedActionsDropdown {...dropdownArgs} />;
     } else {
       ActionDropdown = <GenericTaskActionsDropdown {...dropdownArgs} />;
     }
