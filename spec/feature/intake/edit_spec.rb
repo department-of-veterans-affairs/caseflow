@@ -90,6 +90,24 @@ RSpec.feature "Edit issues" do
       expect(page).to have_content("No issues were selected")
     end
 
+    scenario "shows error message if an update is in progress" do
+      RequestIssuesUpdate.create!(
+        review: higher_level_review,
+        user: current_user,
+        before_request_issue_ids: [request_issue.id],
+        after_request_issue_ids: [request_issue.id],
+        attempted_at: Time.now,
+        submitted_at: Time.now,
+        processed_at: nil
+      )
+
+      visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit/select_issues"
+      find("label", text: "PTSD denied").click
+      safe_click("#button-submit-update")
+
+      expect(page).to have_content("Previous update not yet done processing")
+    end
+
     it "updates selected issues" do
       allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
       allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
