@@ -102,7 +102,7 @@ describe HearingDay do
     end
   end
 
-  context "select parent and child rows for a date range", focus: true do
+  context "select parent and child rows for a date range" do
     let(:vacols_case) do
       create(:case)
     end
@@ -112,13 +112,18 @@ describe HearingDay do
     let(:hearing) do
       create(:case_hearing, folder_nr: appeal.vacols_id)
     end
+    let(:parent_hearing) do
+      VACOLS::CaseHearing.find(hearing.vdkey)
+    end
 
-    subject { HearingDay.load_days_with_hearings(hearing.hearing_date, hearing.hearing_date)}
+    subject { HearingDay.load_days_with_hearings(hearing.hearing_date, hearing.hearing_date) }
 
     context "get parent and children structure" do
       it "returns nested hash structure" do
         expect(subject.size).to eq(1)
         expect(subject[0][:hearings].size).to eq(1)
+        expect(subject[0][:hearings][0][:hearing_location])
+            .to eq parent_hearing.folder_nr.slice(6, parent_hearing.folder_nr.length)
         expect(subject[0][:hearings][0][:appeal_info][:veteran_name]).to eq appeal.veteran_full_name
       end
     end
