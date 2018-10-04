@@ -299,9 +299,11 @@ RSpec.feature "Appeal Intake" do
     # adding an issue should show the issue
     safe_click "#button-add-issue"
     find("label", text: "Left knee granted").click
+    fill_in "Notes", with: "I am an issue note"
     safe_click ".add-issue"
 
     expect(page).to have_content("1. Left knee granted")
+    expect(page).to have_content("I am an issue note")
 
     safe_click "#button-finish-intake"
 
@@ -317,7 +319,8 @@ RSpec.feature "Appeal Intake" do
              review_request_type: "Appeal",
              review_request_id: appeal.id,
              rating_issue_reference_id: "abc123",
-             description: "Left knee granted"
+             description: "Left knee granted",
+             notes: "I am an issue note"
     )).to_not be_nil
   end
 end

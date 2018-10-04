@@ -64,7 +64,8 @@ const formatRatedIssues = (state) => {
       map((issue) => {
         let originalIssue = state.ratings[issue.profileDate].issues[issue.id];
 
-        return _.merge(originalIssue, { profile_date: issue.profileDate });
+        return _.merge(originalIssue, { profile_date: issue.profileDate,
+          notes: issue.notes });
       });
   }
 

@@ -7,6 +7,7 @@ import { addIssue } from '../actions/ama';
 import { formatDateStr } from '../../util/DateUtil';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
+import TextField from '../../components/TextField';
 
 class AddIssuesModal extends React.Component {
   constructor(props) {
@@ -14,7 +15,8 @@ class AddIssuesModal extends React.Component {
 
     this.state = {
       profileDate: '',
-      referenceId: ''
+      referenceId: '',
+      notes: ''
     };
   }
 
@@ -24,8 +26,14 @@ class AddIssuesModal extends React.Component {
     });
   }
 
+  notesOnChange = (value) => {
+    this.setState({
+      notes: value
+    });
+  }
+
   onAddIssue = () => {
-    this.props.addIssue(this.state.referenceId, this.props.ratings, true);
+    this.props.addIssue(this.state.referenceId, this.props.ratings, true, this.state.notes);
     this.props.closeHandler();
   }
 
@@ -63,7 +71,8 @@ class AddIssuesModal extends React.Component {
           },
           { classNames: ['usa-button', 'usa-button-secondary', 'add-issue'],
             name: 'Add Issue',
-            onClick: this.onAddIssue
+            onClick: this.onAddIssue,
+            disabled: !this.state.referenceId
           }
         ]}
         visible
@@ -80,6 +89,12 @@ class AddIssuesModal extends React.Component {
           </p>
           <br />
           { ratedIssuesSections }
+          <TextField
+            name="Notes"
+            value={this.state.notes}
+            optional
+            strongLabel
+            onChange={this.notesOnChange} />
         </div>
       </Modal>
     </div>;
