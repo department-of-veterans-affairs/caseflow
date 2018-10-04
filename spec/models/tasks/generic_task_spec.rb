@@ -147,8 +147,8 @@ describe GenericTask do
         }]
       end
       it "should raise error before not creating child task nor update status" do
-        expect { GenericTask.create_from_params(params, parent_assignee).first }.to
-          raise_error(ActiveRecord::RecordNotFound)
+        expect { GenericTask.create_from_params(params, parent_assignee).first }
+          .to raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
