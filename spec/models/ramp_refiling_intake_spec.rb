@@ -116,7 +116,7 @@ describe RampRefilingIntake do
       RampRefiling.create!(
         veteran_file_number: veteran_file_number,
         receipt_date: 10.seconds.ago,
-        option_selected: "supplemental_claim",
+        option_selected: "supplemental_claim"
       )
     end
 
