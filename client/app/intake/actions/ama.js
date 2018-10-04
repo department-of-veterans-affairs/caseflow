@@ -147,7 +147,7 @@ export const addRatedIssue = (issueId, ratings, isRated) => (dispatch) => {
   let foundDate = _.filter(ratings, (ratingDate) => _.some(ratingDate.issues, { reference_id: issueId }));
 
   dispatch({
-    type: ACTIONS.ADD_RATED_ISSUE,
+    type: ACTIONS.ADD_ISSUE,
     payload: {
       issueId,
       isRated,
@@ -156,13 +156,14 @@ export const addRatedIssue = (issueId, ratings, isRated) => (dispatch) => {
   });
 };
 
-export const addNonRatedIssue = (category, description, decisionDate) => (dispatch) => {
+export const addNonRatedIssue = (category, description, decisionDate, isRated = false) => (dispatch) => {
   dispatch({
-    type: ACTIONS.ADD_NON_RATED_ISSUE,
+    type: ACTIONS.ADD_ISSUE,
     payload: {
       category,
       description,
-      decisionDate
+      decisionDate,
+      isRated
     }
   });
 };

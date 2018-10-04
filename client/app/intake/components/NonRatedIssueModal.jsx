@@ -17,7 +17,7 @@ class NonRatedIssueModal extends React.Component {
 
     this.state = {
       category: '',
-      description: 'hello',
+      description: '',
       decisionDate: ''
     };
   }
@@ -41,7 +41,11 @@ class NonRatedIssueModal extends React.Component {
   }
 
   onAddIssue = () => {
-    this.props.addNonRatedIssue(this.state.category, this.props.description, this.props.decisionDate);
+    this.props.addNonRatedIssue(
+      this.state.category.value,
+      this.state.description,
+      this.state.decisionDate
+    );
     this.props.closeHandler();
   }
 

@@ -90,7 +90,7 @@ class AddIssuesModal extends React.Component {
           classNames={['usa-button-secondary']}
           onClick={this.props.toggleNonRatedIssueModal}
         >
-          + Add issue
+          + None of these match, see more options
         </Button>
       </Modal>
     </div>;

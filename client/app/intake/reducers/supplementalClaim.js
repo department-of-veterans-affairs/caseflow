@@ -51,6 +51,7 @@ const updateFromServerIntake = (state, serverIntake) => {
 export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
     addIssuesModalVisible: false,
+    nonRatedIssueModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
     benefitType: null,

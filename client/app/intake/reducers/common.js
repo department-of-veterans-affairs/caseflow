@@ -13,7 +13,10 @@ export const commonReducers = (state, action) => {
 
   actionsMap[ACTIONS.TOGGLE_NON_RATED_ISSUE_MODAL] = () => {
     return update(state, {
-      $toggle: ['addIssuesModalVisible', 'nonRatedIssueModalVisible']
+      $toggle: ['nonRatedIssueModalVisible'],
+      addIssuesModalVisible: {
+        $set: false
+      }
     });
   };
 
@@ -26,8 +29,8 @@ export const commonReducers = (state, action) => {
         isRated: action.payload.isRated,
         id: action.payload.issueId,
         profileDate: action.payload.profileDate,
-        category: action.payload.decisionDate,
-        description: action.payload.decisionDate,
+        category: action.payload.category,
+        description: action.payload.description,
         decisionDate: action.payload.decisionDate
       }]
     };
