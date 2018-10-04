@@ -69,7 +69,7 @@ class AssignToView extends React.Component<Props, ViewState> {
       }
     };
     const successMsg = {
-      title: 'Task assigned to team'
+      title: `Task assigned to ${this.props.isTeamAssign ? 'team' : 'person'}`
     };
 
     return this.props.requestSave('/tasks', payload, successMsg).

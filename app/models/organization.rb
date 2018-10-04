@@ -3,7 +3,15 @@ class Organization < ApplicationRecord
   has_many :staff_field_for_organization
 
   def self.assignable(task)
-    where(type: [nil, BvaDispatch.name]).where.not(type: task.type)
+    organizations = where(type: [nil, BvaDispatch.name])
+
+    if task.assigned_to_type == name
+      organizations.where.not(id: task.assigned_to_id)
+    elsif task.assigned_to_type == User.name && task.parent.assigned_to_type == name
+      organizations.where.not(id: task.parent.assigned_to_id)
+    else
+      organizations
+    end
   end
 
   def user_has_access?(user)
