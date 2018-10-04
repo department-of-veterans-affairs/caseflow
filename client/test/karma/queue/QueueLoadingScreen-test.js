@@ -56,7 +56,7 @@ describe('QueueLoadingScreen', () => {
 
     expect(tasks).to.deep.equal({
       3625593: {
-        uniqueId: "3625593",
+        uniqueId: '3625593',
         appealId: 3,
         appealType: 'LegacyAppeal',
         externalAppealId: '3625593',
