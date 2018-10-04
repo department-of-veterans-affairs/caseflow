@@ -319,7 +319,6 @@ dd {
     &:hover {
       color: $color-white;
     }
-
   }
 
   &:hover {
@@ -333,7 +332,6 @@ dd {
   }
 }
 
-// Quick fix to property count lint
 %overlay {
   background: $color-white;
   z-index: 1;
@@ -386,8 +384,6 @@ dd {
 }
 
 //------ Modals --------*/
-
-
 // don't trip the accessibility warning for white on white, even if title isn't visible
 svg title {
   color: $color-gray-dark;
@@ -403,6 +399,7 @@ svg title {
 
   &.active {
     display: block;
+    z-index: 15;
   }
 
   &::before {
@@ -464,9 +461,9 @@ svg title {
   }
 }
 
-
 .cf-modal-text,
 .cf-modal-controls {
+  position: relative;
   margin: auto;
   width: 100%;
 }
@@ -477,11 +474,6 @@ svg title {
   text-align: center;
 }
 
-.cf-modal-normal-text {
-  margin: 0;
-  width: 100%;
-}
-
 .cf-modal-divider {
   border-bottom: 1px solid $color-gray-lighter;
   width: 100%;
@@ -489,7 +481,6 @@ svg title {
 }
 
 .cf-modal-controls {
-  position: relative;
   bottom: 0;
   padding-bottom: 3rem;
   margin-top: rem(30px);
@@ -497,13 +488,6 @@ svg title {
 
 .cf-modal-link {
   padding: 0;
-}
-
-div {
-  &[id="questionemail"] {
-    margin-top: 0;
-    margin-bottom: 0;
-  }
 }
 
 // ===========================*
@@ -565,12 +549,6 @@ div {
   &:hover {
     color: $color-gray;
   }
-
-}
-
-.cf-logo-name {
-  color: $color-gray;
-  font-weight: normal;
 }
 
 .cf-logo-image {
@@ -584,10 +562,20 @@ div {
 }
 
 .cf-application-title {
-  color: $color-gray;
   font-size: 1.7rem;
   font-weight: normal;
   display: inline;
+}
+
+
+.cf-logo-name,
+.cf-application-title {
+  // This important can be removed
+  // if its color is updated in FE toolkit
+  // scss-lint:disable ImportantRule
+  color: $color-gray-dark !important;
+  // scss-lint:enable ImportantRule
+  font-weight: normal;
 }
 
 .cf-app-screen {
@@ -595,22 +583,11 @@ div {
   width: 90%;
 }
 
-.cf-name-header {
-  font-size: 3rem;
-  margin-bottom: 0;
-}
-
 //.cf-app-segment represents a chunk of an application's
 // page Should be an immediate child of .cf-app. Avoid
 // making .cf-app-segment a grandchild element of .cf-app.
 .cf-app-segment {
-  // Clearfix
-  &::before,
-  &::after {
-    content: ' ';
-    display: block;
-    clear: both;
-  }
+  @include clearfix;
 
   &--alt {
     background: $color-white;
@@ -932,11 +909,6 @@ fieldset {
 //========================
 // Status Message
 //==========================*/
-
-// TODO Remove selector also
-.cf-app-msg-screen {
-  color: $color-gray;
-}
 
 .cf-msg-screen-heading {
   font-size: rem(52px);
