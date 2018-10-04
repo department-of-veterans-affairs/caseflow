@@ -479,6 +479,8 @@ RSpec.feature "Higher-Level Review" do
     )
 
     higher_level_review.start_review!
+
+    higher_level_review
   end
 
   it "Allows a Veteran without ratings to create an intake" do
@@ -532,7 +534,7 @@ RSpec.feature "Higher-Level Review" do
         relationship_type: "Spouse"
       )
 
-      start_higher_level_review(veteran, claim_participant_id: "5382910292")
+      higher_level_review = start_higher_level_review(veteran, claim_participant_id: "5382910292")
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add Issues")
@@ -557,6 +559,41 @@ RSpec.feature "Higher-Level Review" do
       safe_click ".add-issue"
 
       expect(page).to have_content("1. Left knee granted")
+
+      safe_click "#button-finish-intake"
+
+      expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988) has been processed.")
+      expect(page).to have_content(
+        "Established EP: 030HLRR - Higher-Level Review Rating for Station 397 - ARC"
+      )
+
+      # make sure that database is populated
+      expect(HigherLevelReview.find_by(
+               id: higher_level_review.id,
+               veteran_file_number: veteran.file_number,
+               establishment_submitted_at: Time.zone.now,
+               establishment_processed_at: Time.zone.now,
+               establishment_error: nil
+      )).to_not be_nil
+
+      end_product_establishment = EndProductEstablishment.find_by(
+        source_type: "HigherLevelReview",
+        source_id: higher_level_review.id,
+        veteran_file_number: veteran.file_number,
+        code: "030HLRR",
+        claimant_participant_id: "5382910292",
+        payee_code: "02"
+      )
+
+      expect(end_product_establishment).to_not be_nil
+
+      expect(RequestIssue.find_by(
+               review_request_type: "HigherLevelReview",
+               review_request_id: higher_level_review.id,
+               rating_issue_reference_id: "abc123",
+               description: "Left knee granted",
+               end_product_establishment_id: end_product_establishment.id
+      )).to_not be_nil
     end
 
     scenario "Non-compensation" do

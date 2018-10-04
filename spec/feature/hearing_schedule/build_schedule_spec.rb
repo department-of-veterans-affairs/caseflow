@@ -1,4 +1,4 @@
-RSpec.feature "Build Hearing Schedule" do
+RSpec.feature "Build Hearing Schedule", skip: "Skipping due to flaky test" do
   context "Build RO Hearing Schedule" do
     let!(:current_user) do
       User.authenticate!(roles: ["Build HearSched"])
