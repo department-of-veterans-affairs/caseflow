@@ -318,7 +318,8 @@ RSpec.feature "Appeal Intake" do
              review_request_type: "Appeal",
              review_request_id: appeal.id,
              rating_issue_reference_id: "abc123",
-             description: "Left knee granted"
+             description: "Left knee granted",
+             notes: "I am an issue note"
     )).to_not be_nil
   end
 end

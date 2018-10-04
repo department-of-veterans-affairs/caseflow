@@ -592,7 +592,8 @@ RSpec.feature "Higher-Level Review" do
                review_request_id: higher_level_review.id,
                rating_issue_reference_id: "abc123",
                description: "Left knee granted",
-               end_product_establishment_id: end_product_establishment.id
+               end_product_establishment_id: end_product_establishment.id,
+               notes: "I am an issue note"
       )).to_not be_nil
     end
 

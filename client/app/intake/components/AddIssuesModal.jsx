@@ -33,7 +33,7 @@ class AddIssuesModal extends React.Component {
   }
 
   onAddIssue = () => {
-    this.props.addIssue(this.state.referenceId, this.props.ratings, this.props.notes, true);
+    this.props.addIssue(this.state.referenceId, this.props.ratings, true, this.state.notes);
     this.props.closeHandler();
   }
 
@@ -71,7 +71,8 @@ class AddIssuesModal extends React.Component {
           },
           { classNames: ['usa-button', 'usa-button-secondary', 'add-issue'],
             name: 'Add Issue',
-            onClick: this.onAddIssue
+            onClick: this.onAddIssue,
+            disabled: !this.state.referenceId
           }
         ]}
         visible
