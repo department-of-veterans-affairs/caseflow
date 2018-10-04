@@ -98,6 +98,10 @@ export const requestUpdate = (url: string, params: Object, successMessage: UiSta
 export const requestDelete = (url: string, params: Object, successMessage: UiStateMessage) =>
   requestSave(url, params, successMessage, 'delete');
 
+export const setSavePending = () => ({
+  type: ACTIONS.REQUEST_SAVE
+});
+
 export const resetSaveState = () => ({
   type: ACTIONS.RESET_SAVE_STATE
 });
