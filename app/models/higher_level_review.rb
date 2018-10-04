@@ -90,7 +90,7 @@ class HigherLevelReview < ClaimReview
 
   def sync_dispositions(reference_id)
     super do |disposition, request_issue|
-      if DTA_ERRORS.include?(disposition[:disposition])
+      if DTA_ERRORS.include?(disposition.disposition)
         dta_issues << request_issue
       end
     end

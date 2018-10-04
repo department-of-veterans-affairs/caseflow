@@ -10,6 +10,7 @@ import StringUtil from '../util/StringUtil';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
 import VACOLS_COLUMN_MAX_LENGTHS from '../../constants/VACOLS_COLUMN_MAX_LENGTHS.json';
+import LEGACY_APPEAL_TYPES_BY_ID from '../../constants/LEGACY_APPEAL_TYPES_BY_ID.json';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -143,6 +144,11 @@ export const VACOLS_DISPOSITIONS = _.fromPairs(_.zip(
 export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
   _.invokeMap(_.keys(ISSUE_DISPOSITIONS_BY_ID), 'toUpperCase'),
   _.keys(ISSUE_DISPOSITIONS_BY_ID)
+));
+
+export const LEGACY_APPEAL_TYPES = _.fromPairs(_.zip(
+  _.invokeMap(_.keys(LEGACY_APPEAL_TYPES_BY_ID), 'toUpperCase'),
+  _.values(LEGACY_APPEAL_TYPES_BY_ID)
 ));
 
 export const ISSUE_DESCRIPTION_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.ISSUES.ISSDESC;
