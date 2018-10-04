@@ -42,13 +42,16 @@ type Props = Params & {|
   selectedAssignee: string,
   selectedAssigneeSecondary: string,
   attorneys: Attorneys,
+  savePending: boolean,
   // Action creators
   setSelectedAssignee: typeof setSelectedAssignee,
   setSelectedAssigneeSecondary: typeof setSelectedAssigneeSecondary,
   showErrorMessage: typeof showErrorMessage,
   resetErrorMessages: typeof resetErrorMessages,
   showSuccessMessage: typeof showSuccessMessage,
-  resetSuccessMessages: typeof resetSuccessMessages
+  resetSuccessMessages: typeof resetSuccessMessages,
+  setSavePending: typeof setSavePending,
+  resetSaveState: typeof resetSaveState
 |};
 
 class AssignWidget extends React.PureComponent<Props> {
