@@ -437,9 +437,11 @@ RSpec.feature "Supplemental Claim Intake" do
       # adding an issue should show the issue
       safe_click "#button-add-issue"
       find("label", text: "Left knee granted").click
+      fill_in "Notes", with: "I am an issue note"
       safe_click ".add-issue"
 
       expect(page).to have_content("1. Left knee granted")
+      expect(page).to have_content("I am an issue note")
       safe_click "#button-finish-intake"
       expect(page).to have_content("Request for Supplemental Claim (VA Form 21-526b) has been processed.")
       expect(page).to have_content(
@@ -468,7 +470,8 @@ RSpec.feature "Supplemental Claim Intake" do
                review_request_id: supplemental_claim.id,
                rating_issue_reference_id: "abc123",
                description: "Left knee granted",
-               end_product_establishment_id: end_product_establishment.id
+               end_product_establishment_id: end_product_establishment.id,
+               notes: "I am an issue note"
       )).to_not be_nil
     end
 
