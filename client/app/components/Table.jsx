@@ -125,7 +125,7 @@ const getCellSpan = (rowObject, column) => {
     return column.span(rowObject);
   }
 
-  if (column.valueName && rowObject[column.valueName] && !(_.isNil(rowObject[column.valueName].span))) {
+  if (column.valueName && rowObject && rowObject[column.valueName] && !(_.isNil(rowObject[column.valueName].span))) {
     return rowObject[column.valueName].span;
   }
 
