@@ -22,17 +22,19 @@ export const commonReducers = (state, action) => {
 
   actionsMap[ACTIONS.ADD_ISSUE] = () => {
     let listOfIssues = state.addedIssues ? state.addedIssues : [];
+    let addedIssues = [...listOfIssues, {
+      isRated: action.payload.isRated,
+      id: action.payload.issueId,
+      profileDate: action.payload.profileDate,
+      category: action.payload.category,
+      description: action.payload.description,
+      decisionDate: action.payload.decisionDate
+    }];
 
     return {
       ...state,
-      addedIssues: [...listOfIssues, {
-        isRated: action.payload.isRated,
-        id: action.payload.issueId,
-        profileDate: action.payload.profileDate,
-        category: action.payload.category,
-        description: action.payload.description,
-        decisionDate: action.payload.decisionDate
-      }]
+      addedIssues,
+      issueCount: addedIssues.length
     };
   };
 
