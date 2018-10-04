@@ -24,7 +24,7 @@ export class Header extends React.Component {
               title="Copy Veteran ID"
               className="cf-apppeal-id">
               {vbmsId}
-              <ClipboardIcon className="cf-icon-appeal-id" />
+              <ClipboardIcon />
             </button>
           </CopyToClipboard>
         </div>

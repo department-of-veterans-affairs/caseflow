@@ -6,7 +6,8 @@ import StringUtil from '../util/StringUtil';
 import {
   redText,
   ISSUE_DISPOSITIONS,
-  VACOLS_DISPOSITIONS
+  VACOLS_DISPOSITIONS,
+  LEGACY_APPEAL_TYPES
 } from './constants';
 
 import type {
@@ -196,6 +197,16 @@ export const prepareAppealIssuesForStore = (appeal: { attributes: Object }) => {
   return issues;
 };
 
+export const prepareAppealHearingsForStore = (appeal: { attributes: Object }) => appeal.attributes.hearings.
+  map((hearing) => ({
+    heldBy: hearing.held_by,
+    viewedByJudge: hearing.viewed_by_judge,
+    date: hearing.date,
+    type: hearing.type,
+    id: hearing.id,
+    disposition: hearing.disposition
+  }));
+
 export const prepareAppealForStore =
   (appeals: Array<Object>):
     { appeals: BasicAppeals, appealDetails: AppealDetails } => {
@@ -226,7 +237,8 @@ export const prepareAppealForStore =
 
     const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
       accumulator[appeal.attributes.external_id] = {
-        hearings: appeal.attributes.hearings,
+        hearings: prepareAppealHearingsForStore(appeal),
+        completedHearingOnPreviousAppeal: appeal.attributes['completed_hearing_on_previous_appeal?'],
         issues: prepareAppealIssuesForStore(appeal),
         appellantFullName: appeal.attributes.appellant_full_name,
         appellantAddress: appeal.attributes.appellant_address,
@@ -262,7 +274,7 @@ export const renderAppealType = (appeal: BasicAppeal) => {
     isAdvancedOnDocket,
     caseType
   } = appeal;
-  const cavc = caseType === 'Court Remand';
+  const cavc = caseType === LEGACY_APPEAL_TYPES.CAVC_REMAND;
 
   return <React.Fragment>
     {isAdvancedOnDocket && <span><span {...redText}>AOD</span>, </span>}
