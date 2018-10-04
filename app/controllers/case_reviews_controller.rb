@@ -25,7 +25,7 @@ class CaseReviewsController < ApplicationController
 
   def create_bva_dispatch_task(record)
     return if record.appeal.class == LegacyAppeal
-    BvaDispatchTask.create_and_assign(record.task.root_task)
+    QualityReviewTask.create_from_root_task(record.task.root_task)
   end
 
   def case_review_class
