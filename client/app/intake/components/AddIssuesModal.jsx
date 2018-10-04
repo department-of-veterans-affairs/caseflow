@@ -35,7 +35,7 @@ class AddIssuesModal extends React.Component {
   }
 
   onAddIssue = () => {
-    this.props.addRatedIssue(this.state.referenceId, this.props.ratings, true);
+    this.props.addRatedIssue(this.state.referenceId, this.props.intakeData.ratings, true, this.state.notes);
     this.props.closeHandler();
   }
 

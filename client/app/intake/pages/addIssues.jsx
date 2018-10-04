@@ -113,7 +113,7 @@ export default connect(
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
-    toggleNonRatedIssueModal
+    toggleNonRatedIssueModal,
     removeIssue
   }, dispatch)
 )(AddIssues);

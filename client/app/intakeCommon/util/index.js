@@ -81,26 +81,46 @@ const formatRatedIssues = (state) => {
     value();
 };
 
-export const formatIssues = (state) => {
-  const ratingData = formatRatedIssues(state);
-
-  const nonRatingData = {
-    request_issues:
-      _(state.nonRatedIssues).
-        filter((issue) => {
-          return validNonRatedIssue(issue);
-        }).
-        map((issue) => {
-          return {
-            decision_text: issue.description,
-            issue_category: issue.category,
-            decision_date: formatDateStringForApi(issue.decisionDate)
-          };
-        })
+const formatNonRatedIssues = (state) => {
+  if (state.addedIssues && state.addedIssues.length > 0) {
+    // we're using the new add issues page
+    console.log(state.addedIssues)
+    // return state.addedIssues.
+    //   filter((issue)) => !issue.isRated).
+    //   map((issue) => {
+    //     console.log(issue)
+    //   })
+    // return state.addedIssues.
+    //   filter((issue) => !issue.isRated).
+    //   map((issue) => {
+    //     return {
+    //       category: issue.category,
+    //       description: issue.description,
+    //       decisionDate: issue.decisionDate
+    //      });
+    //    }
   };
 
+  // default to original format
+  // return _(state.nonRatedIssues).
+  //   filter((issue) => {
+  //     return validNonRatedIssue(issue);
+  //   }).
+  //   map((issue) => {
+  //     return {
+  //       decision_text: issue.description,
+  //       issue_category: issue.category,
+  //       decision_date: formatDateStringForApi(issue.decisionDate)
+  //     };
+  //   }).value()
+};
+
+export const formatIssues = (state) => {
+  const ratingData = formatRatedIssues(state);
+  const nonRatingData = formatNonRatedIssues(state);
+
   const data = {
-    request_issues: _.concat(ratingData, nonRatingData.request_issues.value())
+    request_issues: _.concat(ratingData, nonRatingData)
   };
 
   return data;
