@@ -13,7 +13,7 @@ import { formatAddedIssues, getAddIssuesFields } from '../util';
 import Table from '../../components/Table';
 import { toggleAddIssuesModal } from '../actions/common';
 import { toggleNonRatedIssueModal } from '../actions/common';
-
+import { removeIssue } from '../actions/ama';
 
 class AddIssues extends React.PureComponent {
   render() {
@@ -30,18 +30,36 @@ class AddIssues extends React.PureComponent {
     const issuesComponent = () => {
       let issues = formatAddedIssues(intakeData);
 
-      return <div>
-        { issues.map((issue, index) => {
-          return <div key={issue.referenceId}>{index + 1}. {issue.text} </div>;
-        })}
-        <Button
-          name="add-issue"
-          legacyStyling={false}
-          classNames={['usa-button-secondary']}
-          onClick={this.props.toggleAddIssuesModal}
-        >
-          + Add issue
-        </Button>
+      return <div className="issues">
+        <div>
+          { issues.map((issue, index) => {
+            return <div className="issue" key={issue.referenceId}>
+              <div className="issue-desc">
+                <span className="issue-num">{index + 1}.</span>
+                {issue.text}
+                <span className="issue-notes">{issue.notes}</span>
+              </div>
+              <div className="issue-action">
+                <Button
+                  onClick={() => this.props.removeIssue(issue)}
+                  classNames={['cf-btn-link', 'remove-issue']}
+                >
+                  <i className="fa fa-trash-o" aria-hidden="true"></i>Remove
+                </Button>
+              </div>
+            </div>;
+          })}
+        </div>
+        <div className="cf-actions">
+          <Button
+            name="add-issue"
+            legacyStyling={false}
+            classNames={['usa-button-secondary']}
+            onClick={this.props.toggleAddIssuesModal}
+          >
+            + Add issue
+          </Button>
+        </div>
       </div>;
     };
 
@@ -67,7 +85,7 @@ class AddIssues extends React.PureComponent {
 
     return <div className="cf-intake-edit">
       { intakeData.addIssuesModalVisible && <AddIssuesModal
-        ratings={intakeData.ratings}
+        intakeData={intakeData}
         closeHandler={this.props.toggleAddIssuesModal} />
       }
       { intakeData.nonRatedIssueModalVisible && <NonRatedIssueModal
@@ -96,5 +114,6 @@ export default connect(
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
     toggleNonRatedIssueModal
+    removeIssue
   }, dispatch)
 )(AddIssues);

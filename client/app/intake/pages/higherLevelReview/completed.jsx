@@ -3,6 +3,7 @@ import StatusMessage from '../../../components/StatusMessage';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS, INTAKE_STATES } from '../../constants';
+import { FORM_TYPES } from '../../../intakeCommon/constants';
 import { getIntakeStatus } from '../../selectors';
 
 class Completed extends React.PureComponent {
@@ -24,7 +25,8 @@ class Completed extends React.PureComponent {
     }
 
     const message = `${veteran.name}'s (ID #${veteran.fileNumber}) ` +
-      'Request for Higher-Level Review (VA Form 20-0988) has been processed.';
+      `${FORM_TYPES.HIGHER_LEVEL_REVIEW.name}` +
+      ' has been processed.';
 
     return <div>
       <StatusMessage

@@ -16,7 +16,7 @@ import {
   setIssueDecisionDate
 } from '../../actions/ama';
 import { PAGE_PATHS, INTAKE_STATES } from '../../constants';
-import { REQUEST_STATE } from '../../../intakeCommon/constants';
+import { FORM_TYPES, REQUEST_STATE } from '../../../intakeCommon/constants';
 import { getIntakeStatus, issueCountSelector } from '../../selectors';
 import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
@@ -41,7 +41,7 @@ class Finish extends React.PureComponent {
     }
 
     return <div>
-      <h1>Identify issues on { veteranName }'s Supplemental Claim (VA Form 21-526b)</h1>
+      <h1>Identify issues on { veteranName }'s { FORM_TYPES.SUPPLEMENTAL_CLAIM.name }</h1>
 
       { requestState === REQUEST_STATE.FAILED &&
         <CompleteIntakeErrorAlert

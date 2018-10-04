@@ -1,6 +1,7 @@
 // shared functions between reducers
 import { ACTIONS } from '../constants';
 import { update } from '../../util/ReducerUtil';
+import _ from 'lodash';
 
 export const commonReducers = (state, action) => {
   let actionsMap = {};
@@ -28,13 +29,24 @@ export const commonReducers = (state, action) => {
       profileDate: action.payload.profileDate,
       category: action.payload.category,
       description: action.payload.description,
-      decisionDate: action.payload.decisionDate
+      decisionDate: action.payload.decisionDate,
+      notes: action.payload.notes
     }];
 
     return {
       ...state,
       addedIssues,
       issueCount: addedIssues.length
+    };
+  };
+
+  actionsMap[ACTIONS.REMOVE_ISSUE] = () => {
+    let listOfIssues = state.addedIssues ? state.addedIssues : [];
+    let issueToRemove = action.payload.issue;
+
+    return {
+      ...state,
+      addedIssues: _.filter(listOfIssues, (issue) => issueToRemove.referenceId !== issue.id)
     };
   };
 
