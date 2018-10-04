@@ -68,6 +68,6 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
   end
 
   attribute :available_actions do
-    object.allowed_actions(@instance_options[:role])
+    object.available_actions(@instance_options[:role])
   end
 end

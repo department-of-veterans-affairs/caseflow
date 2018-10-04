@@ -5,7 +5,7 @@ class AttorneyTask < Task
   validate :assigned_by_role_is_valid
   validate :assigned_to_role_is_valid
 
-  def allowed_actions(user)
+  def available_actions(user)
     return [] if assigned_to != user
 
     [

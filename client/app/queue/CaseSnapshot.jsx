@@ -14,7 +14,7 @@ import {
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import DocketTypeBadge from './components/DocketTypeBadge';
 import ActionsDropdown from './components/ActionsDropdown';
-import JudgeActionsDropdown from './components/JudgeActionsDropdown';
+// import JudgeActionsDropdown from './components/JudgeActionsDropdown';
 import GenericTaskActionsDropdown from './components/GenericTaskActionsDropdown';
 import OnHoldLabel from './components/OnHoldLabel';
 import CopyTextButton from '../components/CopyTextButton';
@@ -245,6 +245,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     if (!tasks.length) {
       return false;
     }
+
     // users can end up at case details for appeals with no DAS
     // record (!task.taskId). prevent starting attorney checkout flows
     return userRole === USER_ROLE_TYPES.judge ?
@@ -265,7 +266,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
 
     if (
       [USER_ROLE_TYPES.attorney, USER_ROLE_TYPES.colocated].includes(userRole) ||
-      userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout
+      (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout)
     ) {
       ActionDropdown = <ActionsDropdown task={task} appealId={appeal.externalId} />;
     // } else if (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout) {

@@ -3,7 +3,7 @@ class JudgeTask < Task
 
   include RoundRobinAssigner
 
-  def allowed_actions(user)
+  def available_actions(user)
     return [] if assigned_to != user
 
     if action.eql? "assign"

@@ -30,7 +30,7 @@ class ColocatedTask < Task
     end
   end
 
-  def allowed_actions(user)
+  def available_actions(user)
     return [] unless user.colocated_in_vacols?
 
     actions = [

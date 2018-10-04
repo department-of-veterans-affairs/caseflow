@@ -13,7 +13,7 @@ class JudgeLegacyTask < LegacyTask
     end
   end
 
-  def allowed_actions(role)
+  def available_actions(role)
     return [] if role != "judge"
 
     if action.eql? "review"

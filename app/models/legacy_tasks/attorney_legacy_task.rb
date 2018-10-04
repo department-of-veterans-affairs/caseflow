@@ -1,5 +1,5 @@
 class AttorneyLegacyTask < LegacyTask
-  def allowed_actions(role)
+  def available_actions(role)
     return [] if role != "attorney"
 
     actions = [

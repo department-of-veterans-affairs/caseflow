@@ -78,6 +78,6 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   end
 
   attribute :available_actions do
-    object.allowed_actions(@instance_options[:user])
+    object.available_actions(@instance_options[:user])
   end
 end
