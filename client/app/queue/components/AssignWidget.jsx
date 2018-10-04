@@ -122,7 +122,6 @@ class AssignWidget extends React.PureComponent<Props> {
   }
 
   render = () => {
-
     const {
       attorneysOfJudge,
       selectedAssignee,
