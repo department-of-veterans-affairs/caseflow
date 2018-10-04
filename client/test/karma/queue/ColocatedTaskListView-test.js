@@ -29,6 +29,17 @@ describe('ColocatedTaskListView', () => {
     return wrapper;
   };
 
+  let momentNow = null;
+
+  before(() => {
+    momentNow = moment.now;
+    moment.now = () => 100000;
+  });
+
+  after(() => {
+    moment.now = momentNow;
+  });
+
   afterEach(() => {
     if (wrapperColocatedTaskListView) {
       wrapperColocatedTaskListView.unmount();
@@ -36,7 +47,7 @@ describe('ColocatedTaskListView', () => {
     }
   });
 
-  const amaTaskTemplate: Task = {
+  const getAmaTaskTemplate = (): Task => ({
     appealType: 'Appeal',
     addedByCssId: null,
     appealId: 5,
@@ -66,7 +77,7 @@ describe('ColocatedTaskListView', () => {
     availableActions: [],
     assignableUsers: [],
     assignableOrganizations: []
-  };
+  });
 
   const appealTemplate: BasicAppeal = {
     id: 5,
@@ -85,14 +96,18 @@ describe('ColocatedTaskListView', () => {
     isPaperCase: null
   };
 
-  const amaTaskWith = ({ cssIdAssignee, ...rest }) => ({
-    ...amaTaskTemplate,
-    ...rest,
-    assignedTo: {
-      ...amaTaskTemplate.assignedTo,
-      cssId: cssIdAssignee
-    }
-  });
+  const amaTaskWith = ({ cssIdAssignee, ...rest }) => {
+    const amaTaskTemplate = getAmaTaskTemplate();
+
+    return ({
+      ...amaTaskTemplate,
+      ...rest,
+      assignedTo: {
+        ...amaTaskTemplate.assignedTo,
+        cssId: cssIdAssignee
+      }
+    });
+  };
 
   const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
 

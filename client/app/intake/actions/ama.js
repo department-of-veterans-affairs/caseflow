@@ -143,7 +143,7 @@ export const setIssueSelected = (profileDate, issueId, isSelected) => ({
   }
 });
 
-export const addIssue = (issueId, ratings, isRated) => (dispatch) => {
+export const addIssue = (issueId, ratings, isRated, notes) => (dispatch) => {
   let foundDate = _.filter(ratings, (ratingDate) => _.some(ratingDate.issues, { reference_id: issueId }));
 
   dispatch({
@@ -151,7 +151,8 @@ export const addIssue = (issueId, ratings, isRated) => (dispatch) => {
     payload: {
       issueId,
       isRated,
-      profileDate: foundDate[0].profile_date
+      profileDate: foundDate[0].profile_date,
+      notes
     }
   });
 };

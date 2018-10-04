@@ -16,7 +16,8 @@ export const commonReducers = (state, action) => {
     let addedIssues = [...listOfIssues, {
       isRated: action.payload.isRated,
       id: action.payload.issueId,
-      profileDate: action.payload.profileDate
+      profileDate: action.payload.profileDate,
+      notes: action.payload.notes
     }];
 
     return {
