@@ -130,6 +130,68 @@ RSpec.describe TasksController, type: :controller do
         get :index, params: { user_id: user.id, role: "unknown" }
         expect(response.status).to eq 200
       end
+
+      context "when a task is assignable" do
+        let(:root_task) { FactoryBot.create(:root_task) }
+        let(:field) { "sdept" }
+
+        let(:org_1) { FactoryBot.create(:organization) }
+        let(:org_1_member_cnt) { 6 }
+        let(:org_1_members) { FactoryBot.create_list(:user, org_1_member_cnt) }
+        let(:org_1_assignee) { org_1_members[0] }
+        let(:org_1_non_assignee) { org_1_members[1] }
+        let!(:org_1_team_task) { FactoryBot.create(:generic_task, assigned_to: org_1, parent: root_task) }
+        let!(:org_1_member_task) do
+          FactoryBot.create(:generic_task, assigned_to: org_1_assignee, parent: org_1_team_task)
+        end
+
+        before do
+          StaffFieldForOrganization.create!(organization: org_1, name: field, values: [org_1.name])
+          org_1_members.each do |u|
+            FeatureToggle.enable!(org_1.feature.to_sym, users: [u.css_id])
+            FactoryBot.create(:staff, user: u, "#{field}": org_1.name)
+          end
+        end
+
+        after do
+          FeatureToggle.disable!(org_1.feature.to_sym)
+        end
+
+        context "when user is assigned an individual task" do
+          let!(:user) { User.authenticate!(user: org_1_assignee) }
+
+          it "should return a list of all members for individual task" do
+            get :index, params: { user_id: user.id }
+            expect(response.status).to eq(200)
+            response_body = JSON.parse(response.body)
+
+            task_attributes = response_body["tasks"]["data"].find { |task| task["id"] == org_1_member_task.id.to_s }
+
+            # org count minus one since we can't assign to ourselves.
+            expect(task_attributes["attributes"]["assignable_users"].length).to eq(org_1_member_cnt - 1)
+          end
+        end
+      end
+
+      context "when the task belongs to the user" do
+        let(:user) { FactoryBot.create(:user) }
+        let!(:task) { FactoryBot.create(:generic_task, assigned_to: user) }
+        before { User.authenticate!(user: user) }
+
+        context "when there are Organizations in the table" do
+          let(:org_count) { 8 }
+          before { FactoryBot.create_list(:organization, org_count) }
+
+          it "should return a list of all Organizations" do
+            get :index, params: { user_id: user.id }
+            expect(response.status).to eq(200)
+            response_body = JSON.parse(response.body)
+            task_attributes = response_body["tasks"]["data"].find { |t| t["id"] == task.id.to_s }
+
+            expect(task_attributes["attributes"]["assignable_organizations"].length).to eq(org_count)
+          end
+        end
+      end
     end
   end
 
@@ -432,138 +494,6 @@ RSpec.describe TasksController, type: :controller do
         expect(task["attributes"]["appeal_id"]).to eq appeal.id
 
         expect(appeal.tasks.count).to eq 2
-      end
-    end
-  end
-
-  describe "GET tasks/:id/assignable_organizations" do
-    context "when the task belongs to the user" do
-      let(:user) { FactoryBot.create(:user) }
-      let(:task) { FactoryBot.create(:generic_task, assigned_to: user) }
-      before { User.authenticate!(user: user) }
-
-      context "when there are Organizations in the table" do
-        let(:org_count) { 8 }
-        before { FactoryBot.create_list(:organization, org_count) }
-
-        it "should return a list of all Organizations" do
-          get :assignable_organizations, params: { id: task.id }
-          expect(response.status).to eq(200)
-          expect(JSON.parse(response.body)["organizations"].length).to eq(org_count)
-        end
-      end
-
-      context "when there are Organizations and Organization subclasses in the table" do
-        let(:org_count) { 5 }
-        before do
-          FactoryBot.create_list(:organization, org_count)
-          FactoryBot.create_list(:vso, 2)
-          FactoryBot.create_list(:bva, 1)
-        end
-
-        it "should return only a list of the Organizations" do
-          get :assignable_organizations, params: { id: task.id }
-          expect(response.status).to eq(200)
-          expect(JSON.parse(response.body)["organizations"].length).to eq(org_count)
-        end
-      end
-    end
-
-    context "when the task does not belong to the user" do
-      let(:user) { FactoryBot.create(:user) }
-      let(:task) { FactoryBot.create(:generic_task) }
-      before { User.authenticate!(user: user) }
-
-      it "should redirect to unauthorized" do
-        get :assignable_organizations, params: { id: task.id }
-        expect(response.status).to eq(302)
-        expect(response.location).to match(/\/unauthorized$/)
-      end
-    end
-  end
-
-  describe "GET tasks/:id/assignable_users" do
-    context "when the task belongs to the user" do
-      let(:root_task) { FactoryBot.create(:root_task) }
-      let(:field) { "sdept" }
-
-      let(:org_1) { FactoryBot.create(:organization) }
-      let(:org_1_member_cnt) { 6 }
-      let(:org_1_members) { FactoryBot.create_list(:user, org_1_member_cnt) }
-      let(:org_1_assignee) { org_1_members[0] }
-      let(:org_1_non_assignee) { org_1_members[1] }
-      let(:org_1_team_task) { FactoryBot.create(:generic_task, assigned_to: org_1, parent: root_task) }
-      let(:org_1_member_task) { FactoryBot.create(:generic_task, assigned_to: org_1_assignee, parent: org_1_team_task) }
-
-      let(:org_2) { FactoryBot.create(:organization) }
-      let(:org_2_member_cnt) { 17 }
-      let(:org_2_members) { FactoryBot.create_list(:user, org_2_member_cnt) }
-      let(:org_2_assignee) { org_2_members[0] }
-      let(:org_2_non_assignee) { org_2_members[1] }
-      let(:org_2_team_task) { FactoryBot.create(:generic_task, assigned_to: org_2, parent: org_1_member_task) }
-      let!(:org_2_member_task) do
-        FactoryBot.create(:generic_task, assigned_to: org_2_assignee, parent: org_2_team_task)
-      end
-
-      before do
-        StaffFieldForOrganization.create!(organization: org_1, name: field, values: [org_1.name])
-        org_1_members.each do |u|
-          FeatureToggle.enable!(org_1.feature.to_sym, users: [u.css_id])
-          FactoryBot.create(:staff, user: u, "#{field}": org_1.name)
-        end
-
-        StaffFieldForOrganization.create!(organization: org_2, name: field, values: [org_2.name])
-        org_2_members.each do |u|
-          FeatureToggle.enable!(org_2.feature.to_sym, users: [u.css_id])
-          FactoryBot.create(:staff, user: u, "#{field}": org_2.name)
-        end
-      end
-
-      after do
-        FeatureToggle.disable!(org_1.feature.to_sym)
-        FeatureToggle.disable!(org_2.feature.to_sym)
-      end
-
-      context "when user is assigned an individual task" do
-        before { User.authenticate!(user: org_1_assignee) }
-
-        it "should return a list of all members for individual task" do
-          get :assignable_users, params: { id: org_1_member_task.id }
-          expect(response.status).to eq(200)
-          response_body = JSON.parse(response.body)
-          expect(response_body["users"].length).to eq(org_1_member_cnt)
-        end
-
-        it "should return a list of all members for organization task" do
-          get :assignable_users, params: { id: org_1_team_task.id }
-          expect(response.status).to eq(200)
-          response_body = JSON.parse(response.body)
-          expect(response_body["users"].length).to eq(org_1_member_cnt)
-        end
-
-        it "should redirect to unauthorized for other organization child team task" do
-          get :assignable_users, params: { id: org_2_team_task.id }
-          expect(response.status).to eq(302)
-          expect(response.location).to match(/\/unauthorized$/)
-        end
-
-        it "should redirect to unauthorized for other organization child member task" do
-          get :assignable_users, params: { id: org_2_member_task.id }
-          expect(response.status).to eq(302)
-          expect(response.location).to match(/\/unauthorized$/)
-        end
-      end
-    end
-
-    context "when the task does not belong to the user" do
-      let(:user) { FactoryBot.create(:user) }
-      let(:task) { FactoryBot.create(:generic_task) }
-      before { User.authenticate!(user: user) }
-
-      it "should redirect to unauthorized" do
-        get :assignable_users, params: { id: task.id }
-        expect(response.status).to eq(302)
-        expect(response.location).to match(/\/unauthorized$/)
       end
     end
   end
