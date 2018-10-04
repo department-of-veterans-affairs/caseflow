@@ -80,4 +80,12 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :available_actions do
     object.allowed_actions(@instance_options[:user])
   end
+
+  attribute :assignable_organizations do
+    object.assignable_organizations.map { |o| { id: o.id, name: o.name } }
+  end
+
+  attribute :assignable_users do
+    object.assignable_users.map { |m| { id: m.id, css_id: m.css_id, full_name: m.full_name } }
+  end
 end
