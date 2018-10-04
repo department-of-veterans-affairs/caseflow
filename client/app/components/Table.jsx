@@ -104,8 +104,14 @@ const HeaderRow = (props) => {
 };
 
 const getCellValue = (rowObject, rowId, column) => {
+  if (column.valueName && rowObject[column.valueName] && rowObject[column.valueName].span == 0) {
+    return '';
+  }
   if (column.valueFunction) {
     return column.valueFunction(rowObject, rowId);
+  }
+  if (column.valueName && rowObject[column.valueName] && rowObject[column.valueName].value) {
+    return rowObject[column.valueName].value;
   }
   if (column.valueName) {
     return rowObject[column.valueName];
@@ -118,12 +124,10 @@ const getCellSpan = (rowObject, column) => {
   if (column.span) {
     return column.span(rowObject);
   }
-
-  if (rowObject[column.valueName] == "This is a text area field!") {
-    return 2;
+  if (column.valueName && rowObject[column.valueName] && rowObject[column.valueName].span) {
+    return rowObject[column.valueName].span;
   }
-
-  if (rowObject[column.valueName] == null) {
+  if (column.valueName && rowObject[column.valueName] && rowObject[column.valueName].span == 0) {
     return 0;
   }
 

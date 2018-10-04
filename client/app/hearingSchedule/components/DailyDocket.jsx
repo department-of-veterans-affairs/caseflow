@@ -16,32 +16,33 @@ const tableRowStyling = css({
   '& > tr > td': {
     verticalAlign: 'top',
   },
-  '& > tr': {
-    borderBottom: 'none',
+  '& > tr:nth-child(odd)': {
     '& > td:nth-child(1)': { width: '2%' },
     '& > td:nth-child(2)': { width: '10%' },
-    '& > td:nth-child(3)': { width: '10%' },
-    '& > td:nth-child(4)': { width: '10%' },
+    '& > td:nth-child(3)': { width: '8%' },
+    '& > td:nth-child(4)': { width: '8%' },
     '& > td:nth-child(5)': { backgroundColor: '#f1f1f1',
-      width: '20%' },
+      width: '18%' },
     '& > td:nth-child(6)': { backgroundColor: '#f1f1f1',
-      width: '23%' },
+      width: '24%' },
     '& > td:nth-child(7)': { backgroundColor: '#f1f1f1',
-      width: '23%' } }
+      width: '24%' }
+  },
+  '& > tr:nth-child(even)': {
+      '& > td:nth-child(1)': { width: '2%' },
+      '& > td:nth-child(2)': { width: '18%' },
+      '& > td:nth-child(3)': { width: '8%' },
+      '& > td:nth-child(4)': { backgroundColor: '#f1f1f1',
+          width: '18%' },
+      '& > td:nth-child(5)': { backgroundColor: '#f1f1f1',
+          width: '24%' },
+      '& > td:nth-child(6)': { backgroundColor: '#f1f1f1',
+          width: '24%' }
+  }
+});
 
-  // },
-  // '& > tr:nth-child(even)': {
-  //     borderBottom: 'none',
-  //     '& > td:nth-child(1)': { width: '2%' },
-  //     '& > td:nth-child(2)': { width: '20%' },
-  //     '& > td:nth-child(3)': { width: '10%' },
-  //     '& > td:nth-child(4)': { backgroundColor: '#f1f1f1',
-  //         width: '20%' },
-  //     '& > td:nth-child(5)': { backgroundColor: '#f1f1f1',
-  //         width: '23%' },
-  //     '& > td:nth-child(6)': { backgroundColor: '#f1f1f1',
-  //         width: '23%' }
-  // }
+const notesFieldStyling = css({
+  height: '50px'
 });
 
 const noMarginStyling = css({
@@ -123,6 +124,14 @@ export default class DailyDocket extends React.Component {
     </div>;
   };
 
+  getNotesField = () => {
+    return <TextareaField
+      name="Notes"
+      onChange={() => {}}
+      textAreaStyling={notesFieldStyling}
+    />;
+  };
+
   render() {
     const dailyDocketColumns = [
       {
@@ -185,8 +194,13 @@ export default class DailyDocket extends React.Component {
         disposition: this.getDispositionDropdown(hearing)
       },
       {
+        number: null,
         appellantInformation: <div>{hearing.issueCount} issues</div>,
-        hearingTime: "This is a text area field!"
+        hearingTime: {value: this.getNotesField(hearing), span: 2},
+        representative: {value: null, span: 0},
+        hearingLocation: null,
+        hearingDay: null,
+        disposition: null
       }
     ];
 
