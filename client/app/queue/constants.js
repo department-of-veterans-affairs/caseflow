@@ -105,19 +105,6 @@ export const JUDGE_DECISION_OPTIONS = {
   }
 };
 
-export const DRAFT_DECISION_LEGACY_OPTIONS = [{
-  label: COPY.ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
-  value: DECISION_TYPES.DRAFT_DECISION
-}, {
-  label: COPY.ATTORNEY_CHECKOUT_OMO_LABEL,
-  value: DECISION_TYPES.OMO_REQUEST
-}];
-
-export const DRAFT_DECISION_OPTIONS = [{
-  label: COPY.ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
-  value: DECISION_TYPES.DRAFT_DECISION
-}];
-
 export const OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES = [{
   displayText: COPY.ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_VHA,
   value: COPY.ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_VHA
@@ -177,6 +164,7 @@ export const PAGE_TITLES = {
 
 export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, 'Custom'];
 
+// todo: make shared constant? consolidate w/ColocatedTask.allowed_actions
 export const SEND_TO_LOCATION_MODAL_TYPES = {
   attorney: 'sendToAttorney',
   team: 'sendToTeam'

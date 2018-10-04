@@ -235,15 +235,21 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     }
 
     const {
+      userRole,
       taskAssignedToUser,
       taskAssignedToAttorney,
       taskAssignedToOrganization
     } = this.props;
     const tasks = _.compact([taskAssignedToUser, taskAssignedToAttorney, taskAssignedToOrganization]);
 
+    if (!tasks.length) {
+      return false;
+    }
     // users can end up at case details for appeals with no DAS
-    // record (!task.taskId). prevent starting checkout flows
-    return Boolean(tasks.length && _.every(tasks, (task) => task.taskId));
+    // record (!task.taskId). prevent starting attorney checkout flows
+    return userRole === USER_ROLE_TYPES.judge ?
+      Boolean(taskAssignedToAttorney || taskAssignedToUser) :
+      _.every(tasks, (task) => task.taskId);
   }
 
   render = () => {
@@ -257,10 +263,13 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     const dropdownArgs = { appealId: appeal.externalId };
     const task = taskAssignedToUser || taskAssignedToOrganization;
 
-    if ([USER_ROLE_TYPES.attorney, USER_ROLE_TYPES.colocated].includes(userRole)) {
+    if (
+      [USER_ROLE_TYPES.attorney, USER_ROLE_TYPES.colocated].includes(userRole) ||
+      userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout
+    ) {
       ActionDropdown = <ActionsDropdown task={task} appealId={appeal.externalId} />;
-    } else if (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout) {
-      ActionDropdown = <JudgeActionsDropdown {...dropdownArgs} />;
+    // } else if (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout) {
+    //   ActionDropdown = <JudgeActionsDropdown {...dropdownArgs} />;
     } else {
       ActionDropdown = <GenericTaskActionsDropdown {...dropdownArgs} />;
     }

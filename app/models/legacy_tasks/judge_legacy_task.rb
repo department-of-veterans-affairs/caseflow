@@ -1,4 +1,28 @@
 class JudgeLegacyTask < LegacyTask
+  def review_action
+    if Constants::DECASS_WORK_PRODUCT_TYPES["OMO_REQUEST"].include?(work_product)
+      {
+        label: COPY::JUDGE_CHECKOUT_OMO_LABEL,
+        value: "omo_request/evaluate"
+      }
+    else
+      {
+        label: COPY::JUDGE_CHECKOUT_DISPATCH_LABEL,
+        value: "dispatch_decision/dispositions"
+      }
+    end
+  end
+
+  def allowed_actions(role)
+    return [] if role != "judge"
+
+    if action.eql? "review"
+      [review_action]
+    else
+      [{ label: COPY::JUDGE_CHECKOUT_ASSIGN_TO_ATTORNEY_LABEL, value: "assign" }]
+    end
+  end
+
   def self.from_vacols(record, appeal, user_id)
     task = super
     task.action = record.reassigned_to_judge_date.present? ? "review" : "assign"
