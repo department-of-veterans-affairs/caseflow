@@ -45,7 +45,7 @@ export class Comment extends React.Component {
   render() {
     const className = classNames('comment-container', {
       'comment-container-selected': this.props.selected,
-      'comment-horizontal-container comment-content': this.props.horizontalLayout
+      'comment-horizontal-container': this.props.horizontalLayout
     });
     let jumpToSectionButton = null;
 

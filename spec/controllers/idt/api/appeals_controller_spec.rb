@@ -516,6 +516,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
       it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
         post :outcode, params: params
+        expect(response.status).to eq(200)
         tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)
         expect(tasks.length).to eq(1)
         task = tasks[0]

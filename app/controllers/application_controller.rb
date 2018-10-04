@@ -131,10 +131,15 @@ class ApplicationController < ApplicationBaseController
 
   # :nocov:
   def can_assign_task?
-    # This feature toggle control access of attorneys to create admin actions for co-located users
-    return true if current_user.attorney_in_vacols? && feature_enabled?(:attorney_assignment_to_colocated)
-    # This feature toggle control access of judges to assign cases to attorneys
-    true if current_user.judge_in_vacols? && feature_enabled?(:judge_assignment_to_attorney)
+    if current_user.attorney_in_vacols?
+      # This feature toggle control access of attorneys to create admin actions for co-located users
+      feature_enabled?(:attorney_assignment_to_colocated)
+    elsif current_user.judge_in_vacols?
+      # This feature toggle control access of judges to assign cases to attorneys
+      feature_enabled?(:judge_assignment_to_attorney)
+    else
+      true
+    end
   end
 
   def verify_task_assignment_access
