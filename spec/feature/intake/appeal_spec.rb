@@ -236,6 +236,7 @@ RSpec.feature "Appeal Intake" do
     )
 
     appeal.start_review!
+    appeal
   end
 
   it "Allows a Veteran without ratings to create an intake" do
@@ -278,7 +279,7 @@ RSpec.feature "Appeal Intake" do
         { reference_id: "def456", decision_text: "PTSD denied" }
       ]
     )
-    start_appeal(veteran)
+    appeal = start_appeal(veteran)
     visit "/intake/add_issues"
 
     expect(page).to have_content("Add Issues")
@@ -291,10 +292,32 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content("Left knee granted")
     expect(page).to have_content("PTSD denied")
 
+    # test canceling adding an issue by closing the modal
+    safe_click ".close-modal"
+    expect(page).to_not have_content("Left knee granted")
+
     # adding an issue should show the issue
+    safe_click "#button-add-issue"
     find("label", text: "Left knee granted").click
     safe_click ".add-issue"
 
     expect(page).to have_content("1. Left knee granted")
+
+    safe_click "#button-finish-intake"
+
+    expect(page).to have_content("Notice of Disagreement (VA Form 10182) has been processed.")
+
+    expect(Appeal.find_by(
+             id: appeal.id,
+             veteran_file_number: veteran.file_number,
+             established_at: Time.zone.now
+    )).to_not be_nil
+
+    expect(RequestIssue.find_by(
+             review_request_type: "Appeal",
+             review_request_id: appeal.id,
+             rating_issue_reference_id: "abc123",
+             description: "Left knee granted"
+    )).to_not be_nil
   end
 end

@@ -19,7 +19,7 @@ class Organization < ApplicationRecord
   def member_css_ids
     return [] unless staff_field_for_organization
 
-    staff_records = VACOLS::Staff
+    staff_records = VACOLS::Staff.where(sactive: "A")
     staff_field_for_organization.each do |sfo|
       staff_records = sfo.filter_staff_records(staff_records)
     end
