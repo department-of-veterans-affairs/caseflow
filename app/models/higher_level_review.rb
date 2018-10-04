@@ -7,7 +7,7 @@ class HigherLevelReview < ClaimReview
   END_PRODUCT_RATING_CODE = "030HLRR".freeze
   END_PRODUCT_NONRATING_CODE = "030HLRNR".freeze
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 033 035 036 037 038 039].freeze
-  DTA_ERRORS = ["DTA Error – PMRs", "DTA Error – Fed Recs", "DTA Error – Other Recs", "DTA Error – Exam/MO"].freeze
+  DTA_ERRORS = ["DTA Error - PMRs", "DTA Error - Fed Recs", "DTA Error - Other Recs", "DTA Error - Exam/MO"].freeze
 
   def ui_hash
     {
@@ -64,7 +64,9 @@ class HigherLevelReview < ClaimReview
 
   def create_dta_supplemental_claim
     return if dta_issues.empty?
+
     dta_supplemental_claim.create_issues!(build_follow_up_dta_issues)
+
     if run_async?
       ClaimReviewProcessJob.perform_later(dta_supplemental_claim)
     else
@@ -88,16 +90,8 @@ class HigherLevelReview < ClaimReview
     end
   end
 
-  def sync_dispositions(reference_id)
-    super do |disposition, request_issue|
-      if DTA_ERRORS.include?(disposition.disposition)
-        dta_issues << request_issue
-      end
-    end
-  end
-
   def dta_issues
-    @dta_issues ||= []
+    @dta_issues ||= request_issues.no_follow_up_issues.where(disposition: DTA_ERRORS)
   end
 
   def dta_supplemental_claim
