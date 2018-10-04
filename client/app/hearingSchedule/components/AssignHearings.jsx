@@ -66,7 +66,6 @@ export default class AssignHearings extends React.Component {
               backgroundColor: COLORS.GREY_DARK,
               color: COLORS.WHITE,
               borderRadius: '0.1rem 0.1rem 0 0',
-              paddingRight: '9.2rem',
               '&:hover': {
                 backgroundColor: COLORS.GREY_DARK,
                 color: COLORS.WHITE
