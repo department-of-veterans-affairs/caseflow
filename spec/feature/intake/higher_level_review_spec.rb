@@ -559,6 +559,7 @@ RSpec.feature "Higher-Level Review" do
       safe_click ".add-issue"
 
       expect(page).to have_content("1. Left knee granted")
+      expect(page).to have_content("I am an issue note")
 
       safe_click "#button-finish-intake"
 
