@@ -34,12 +34,12 @@ export default class AutoSave extends React.Component {
   }
 
   debouncedResetSaveStatus = _.debounce(
-    () => this.props.resetSaveStatus,
+    this.props.resetSaveStatus,
     this.props.saveSuccessTimeout
   );
 
   componentDidUpdate(prevProps) {
-    if (this.props.saveFailed ==false && prevProps.saveFailed == true) {
+    if (this.props.saveFailed === false && prevProps.saveFailed === true) {
       this.debouncedResetSaveStatus();
     }
   }
