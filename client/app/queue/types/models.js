@@ -42,7 +42,7 @@ export type Issue = {
 export type Issues = Array<Issue>;
 
 export type Task = {
-  indexId: string,
+  uniqueId: string,
   action: string,
   appealId: number,
   appealType: string,
