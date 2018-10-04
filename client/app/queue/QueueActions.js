@@ -441,10 +441,10 @@ export const setTaskAssignment = (externalAppealId: string, cssId: string, pgId:
   }
 });
 
-export const setTaskAttrs = (externalAppealId: string, attributes: Object) => ({
+export const setTaskAttrs = (uniqueId: string, attributes: Object) => ({
   type: ACTIONS.SET_TASK_ATTRS,
   payload: {
-    externalAppealId,
+    uniqueId,
     attributes
   }
 });

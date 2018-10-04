@@ -98,7 +98,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
         const response = JSON.parse(resp.text);
         const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        this.props.setTaskAttrs(tasks[0].externalAppealId, preparedTasks[tasks[0].externalAppealId]);
+        this.props.setTaskAttrs(tasks[0].uniqueId, preparedTasks[tasks[0].externalAppealId]);
       });
   }
 

@@ -62,7 +62,7 @@ class MarkTaskCompleteView extends React.Component<Props> {
         const response = JSON.parse(resp.text);
         const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        this.props.setTaskAttrs(task.externalAppealId, preparedTasks[task.externalAppealId]);
+        this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.externalAppealId]);
       });
   }
 
