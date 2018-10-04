@@ -10,11 +10,11 @@ class AttorneyTask < Task
 
     [
       {
-        label: "Decision Ready for Review",
+        label: COPY::ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
         value: "draft_decision/special_issues"
       },
       {
-        label: "Add admin action",
+        label: COPY::ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL,
         value: "colocated_task"
       }
     ]

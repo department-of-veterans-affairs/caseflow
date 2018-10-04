@@ -3,6 +3,16 @@ class JudgeTask < Task
 
   include RoundRobinAssigner
 
+  def allowed_actions(user)
+    return [] if assigned_to != user
+
+    if action.eql? "assign"
+      [{ label: COPY::JUDGE_CHECKOUT_ASSIGN_TO_ATTORNEY_LABEL, value: "assign" }]
+    else
+      [{ label: COPY::JUDGE_CHECKOUT_DISPATCH_LABEL, value: "dispatch_decision/special_issues" }]
+    end
+  end
+
   def self.create(params)
     super(params.merge(action: "assign"))
   end
