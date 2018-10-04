@@ -165,7 +165,7 @@ describe Task do
       let(:task) { create(:generic_task, assigned_to: users.first, parent: parent) }
 
       it "should return all members except user" do
-        expect(task.assignable_users).to match_array(users[1..users.length-1])
+        expect(task.assignable_users).to match_array(users[1..users.length - 1])
       end
     end
 

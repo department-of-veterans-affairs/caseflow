@@ -208,7 +208,7 @@ RSpec.feature "AmaQueue" do
 
       scenario "assign case to self" do
         visit "/organizations/#{translation_organization.url}"
-        
+
         click_on "Pal Smith"
 
         find(".Select-control", text: "Select an action").click
