@@ -101,4 +101,26 @@ describe HearingDay do
       end
     end
   end
+
+  context "select parent and child rows for a date range", focus: true do
+    let(:vacols_case) do
+      create(:case)
+    end
+    let(:appeal) do
+      create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
+    end
+    let(:hearing) do
+      create(:case_hearing, folder_nr: appeal.vacols_id)
+    end
+
+    subject { HearingDay.load_days_with_hearings(hearing.hearing_date, hearing.hearing_date)}
+
+    context "get parent and children structure" do
+      it "returns nested hash structure" do
+        expect(subject.size).to eq(1)
+        expect(subject[0][:hearings].size).to eq(1)
+        expect(subject[0][:hearings][0][:appeal_info][:veteran_name]).to eq appeal.veteran_full_name
+      end
+    end
+  end
 end

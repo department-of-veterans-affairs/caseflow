@@ -64,6 +64,47 @@ class HearingDay < ApplicationRecord
       [total_video_and_co, travel_board]
     end
 
+    def load_days_with_hearings(start_date, end_date, regional_office = nil)
+      total_video_and_co, travel_board = load_days(start_date, end_date, regional_office)
+      enriched_hearing_days = []
+      # Loop through total_video_and_co and get child rows (where p.hearing_pkseq = c.vdkey)
+      total_video_and_co.each do |hearing_day|
+        enriched_hearing_days << hearing_day.slice(:id, :hearing_date, :hearing_type)
+        hearing_day_cnt = enriched_hearing_days.length
+        enriched_hearing_days[hearing_day_cnt - 1][:hearings] = []
+        hearings = HearingRepository.fetch_hearings_for_parent(hearing_day[:id]) || []
+        # Inner loop for each child returned get appeal associated to hearing (using folder_nr)
+        hearings.each do |hearing|
+          enriched_hearing_days[hearing_day_cnt - 1][:hearings].push(
+            id: hearing.hearing_pkseq,
+            hearing_location: "Is this the RO Location?",
+            hearing_time: hearing.hearing_date,
+            hearing_disposition: hearing.hearing_disp
+          )
+          hearing_cnt = enriched_hearing_days[hearing_day_cnt - 1][:hearings].length
+          appeal = LegacyAppeal.find_by_vacols_id(hearing.folder_nr)
+          enriched_hearing_days[hearing_day_cnt - 1][:hearings][hearing_cnt - 1][:appeal_info] = {
+              veteran_name: appeal.veteran_full_name,
+              appelant_name: "#{appeal.appellant_first_name} #{appeal.appellant_last_name}",
+              appeal_type: appeal.type,
+              docket_number: appeal.docket_number,
+              appeal_issue_count: appeal.issue_count,
+              veteran_street: appeal.appellant_address_line_1,
+              veteran_city: appeal.appellant_city,
+              veteran_state: appeal.appellant_state,
+              veteran_zipcode: appeal.appellant_zip,
+              vbms_id: appeal.vbms_id
+          }
+        end
+      end
+      enriched_hearing_days
+      # Alternate solution if the above has a performance problem due to too many trips to the db.
+      # Collect all hearing_pkseq and send them all at once.
+      # Collect all folder_nr values and get all appeals from db.
+      #
+      # What to do about travel board?
+    end
+
     def enrich_with_judge_names(hearing_days)
       vlj_ids = []
       hearing_days_hash = []
