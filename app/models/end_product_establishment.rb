@@ -31,6 +31,12 @@ class EndProductEstablishment < ApplicationRecord
   CANCELED_STATUS = "CAN".freeze
   CLEARED_STATUS = "CLR".freeze
 
+  # benefit_type_code => program_type_code
+  PROGRAM_TYPE_CODES = {
+    "1" => "CPL",
+    "2" => "CPD"
+  }.freeze
+
   class << self
     def order_by_sync_priority
       active.order("last_synced_at IS NOT NULL, last_synced_at ASC")
@@ -81,7 +87,9 @@ class EndProductEstablishment < ApplicationRecord
     # Currently not making any assumptions about the order in which VBMS returns
     # the created contentions. Instead find the issue by matching text.
     create_contentions_in_vbms(issues_without_contentions.pluck(:description)).each do |contention|
-      issue = issues_without_contentions.find { |i| i.description == contention.text }
+      issue = issues_without_contentions.find do |i|
+        i.description == contention.text && i.contention_reference_id.nil?
+      end
       issue && issue.update!(contention_reference_id: contention.id)
     end
 
@@ -96,6 +104,8 @@ class EndProductEstablishment < ApplicationRecord
   # Committing an end product establishment is a way to signify that any other actions performed
   # as part of a larger atomic operation containing the end product establishment are also complete.
   # Those actions could be creating contentions or other end product establishments.
+  # NOTE that nothing prevents methods from being called (e.g. remove_contention) once
+  # a EPE is "committed". It is advisory, not transactional.
   def commit!
     update!(committed_at: Time.zone.now) unless committed?
   end
@@ -140,10 +150,9 @@ class EndProductEstablishment < ApplicationRecord
 
       sync_source!
     end
-
-    # TODO: This is sort of janky. Let's rethink the error handling logic here
+  rescue EstablishedEndProductNotFound => e
+    raise e
   rescue StandardError => e
-    raise e if e.is_a?(EstablishedEndProductNotFound)
     raise BGSSyncError.new(e, self)
   end
 
@@ -177,6 +186,20 @@ class EndProductEstablishment < ApplicationRecord
     )
   end
 
+  def generate_claimant_letter!
+    return if doc_reference_id
+    generate_claimant_letter_in_bgs.tap do |result|
+      update!(doc_reference_id: result)
+    end
+  end
+
+  def generate_tracked_item!
+    return if development_item_reference_id
+    generate_tracked_item_in_bgs.tap do |result|
+      update!(development_item_reference_id: result)
+    end
+  end
+
   private
 
   def request_issues
@@ -208,16 +231,6 @@ class EndProductEstablishment < ApplicationRecord
 
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
-  end
-
-  def benefit_type_code
-    @benefit_type_code ||= begin
-      if veteran.date_of_death.nil?
-        EndProduct::BENEFIT_TYPE_CODE_LIVE
-      else
-        EndProduct::BENEFIT_TYPE_CODE_DEATH
-      end
-    end
   end
 
   def establish_claim_in_vbms(end_product)
@@ -308,5 +321,17 @@ class EndProductEstablishment < ApplicationRecord
       valid_modifiers: source.valid_modifiers,
       special_issues: source.respond_to?(:special_issues) && source.special_issues
     }
+  end
+
+  def generate_claimant_letter_in_bgs
+    BGSService.new.manage_claimant_letter_v2!(
+      claim_id: reference_id,
+      program_type_cd: PROGRAM_TYPE_CODES[benefit_type_code],
+      claimant_participant_id: claimant_participant_id
+    )
+  end
+
+  def generate_tracked_item_in_bgs
+    BGSService.new.generate_tracked_items!(reference_id)
   end
 end

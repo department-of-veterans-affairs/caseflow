@@ -46,6 +46,7 @@ import type { UiStateMessage } from './types/state';
 
 type Params = {|
   appealId: string,
+  checkoutFlow: string,
   nextStep: string
 |};
 
@@ -67,12 +68,12 @@ type Props = Params & {|
 class SubmitDecisionView extends React.PureComponent<Props> {
   validateForm = () => {
     const {
-      type: decisionType,
+      checkoutFlow,
       opts: decisionOpts
     } = this.props.decision;
     const requiredParams = ['document_id', 'reviewing_judge_id'];
 
-    if (decisionType === DECISION_TYPES.OMO_REQUEST) {
+    if (checkoutFlow === DECISION_TYPES.OMO_REQUEST) {
       requiredParams.push('work_product');
 
       if (!validateWorkProductTypeAndId(this.props.decision)) {
@@ -87,14 +88,14 @@ class SubmitDecisionView extends React.PureComponent<Props> {
 
   getPrevStepUrl = () => {
     const {
-      decision: { type: decisionType },
+      checkoutFlow,
       appeal,
       appealId
     } = this.props;
     const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
     const prevUrl = `/queue/appeals/${appealId}`;
 
-    if (decisionType === DECISION_TYPES.DRAFT_DECISION) {
+    if (checkoutFlow === DECISION_TYPES.DRAFT_DECISION) {
       return dispositions.includes(VACOLS_DISPOSITIONS.REMANDED) ?
         `${prevUrl}/remands` :
         `${prevUrl}/dispositions`;
@@ -112,15 +113,16 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         externalId: appealId,
         isLegacyAppeal
       },
+      checkoutFlow,
       decision,
       userRole,
       judges
     } = this.props;
 
-    const payload = buildCaseReviewPayload(decision, userRole, issues, { isLegacyAppeal });
+    const payload = buildCaseReviewPayload(checkoutFlow, decision, userRole, issues, { isLegacyAppeal });
 
     const fields = {
-      type: decision.type === DECISION_TYPES.DRAFT_DECISION ?
+      type: checkoutFlow === DECISION_TYPES.DRAFT_DECISION ?
         'decision' : 'outside medical opinion (OMO) request',
       veteran: veteranFullName,
       judge: judges[decision.opts.reviewing_judge_id].full_name
@@ -136,18 +138,17 @@ class SubmitDecisionView extends React.PureComponent<Props> {
     const {
       highlightFormItems,
       error,
-      decision,
+      checkoutFlow,
       decision: {
-        type: decisionType,
         opts: decisionOpts
       }
     } = this.props;
-    const decisionTypeDisplay = getDecisionTypeDisplay(decision);
+    const decisionTypeDisplay = getDecisionTypeDisplay(checkoutFlow);
     let documentIdErrorMessage = '';
 
     if (!decisionOpts.document_id) {
       documentIdErrorMessage = COPY.FORM_ERROR_FIELD_REQUIRED;
-    } else if (decisionType === DECISION_TYPES.OMO_REQUEST && !validateWorkProductTypeAndId(this.props.decision)) {
+    } else if (checkoutFlow === DECISION_TYPES.OMO_REQUEST && !validateWorkProductTypeAndId(this.props.decision)) {
       documentIdErrorMessage = COPY.FORM_ERROR_FIELD_INVALID;
     }
 
@@ -162,7 +163,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         {error.detail}
       </Alert>}
       <hr />
-      {decisionType === DECISION_TYPES.OMO_REQUEST && <RadioField
+      {checkoutFlow === DECISION_TYPES.OMO_REQUEST && <RadioField
         name="omo_type"
         label="OMO type:"
         onChange={(value) => this.props.setDecisionOptions({ work_product: value })}

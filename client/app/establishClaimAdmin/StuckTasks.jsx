@@ -1,14 +1,20 @@
 import React, { Component } from 'react';
 import Table from '../components/Table';
 import { formatDate } from '../util/DateUtil';
+import { COLORS } from '../constants/AppConstants';
+import { css } from 'glamor';
 import moment from 'moment';
+
+const colorStyling = css({
+  color: COLORS.GREY_DARK
+});
 
 const UNASSIGNED_TASKS_COLUMNS = [
   {
     header: 'Veteran',
     valueFunction: (task) =>
       <span>{task.cached_veteran_name}
-        <span className="vbms-id"> ({task.vbms_id})</span>
+        <span {...colorStyling}> ({task.vbms_id})</span>
       </span>
   },
   {

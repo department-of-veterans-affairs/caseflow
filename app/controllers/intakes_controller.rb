@@ -41,10 +41,7 @@ class IntakesController < ApplicationController
   def complete
     intake.complete!(params)
     render json: intake.ui_hash(ama_enabled?)
-
-    # TODO: This should probably be pushed into the model, since it is very
-    # end product specific
-  rescue Caseflow::Error::DuplicateEp, Caseflow::Error::LongAddress => error
+  rescue Caseflow::Error::DuplicateEp => error
     render json: {
       error_code: error.error_code,
       error_data: intake.detail.end_product_base_modifier

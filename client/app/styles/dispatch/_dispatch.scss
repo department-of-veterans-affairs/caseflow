@@ -24,12 +24,6 @@
   vertical-align: top;
 }
 
-.cf-btn-link {
-  &.cf-adjacent-buttons {
-    margin-right: 30px;
-  }
-}
-
 .inline-value {
   display: inline-block;
   width: 55%;
@@ -47,11 +41,6 @@
       margin-top: 40px;
     }
   }
-}
-
-.establish-claim-feedback {
-  text-align: center;
-  width: 100%;
 }
 
 .cf-bottom-border {
@@ -74,10 +63,6 @@
   }
 }
 
-.vbms-id {
-  color: $color-gray;
-}
-
 .cf-work-assignments {
   td {
     &:first-child {
@@ -93,7 +78,7 @@
     }
   }
 
-  .cf-no-padding {
+  .cf-align {
     padding: 0 3px;
     vertical-align: middle;
   }

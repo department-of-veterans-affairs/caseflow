@@ -1,8 +1,13 @@
 class GenericTask < Task
-  # Only request to PATCH /tasks/:id we expect for GenericTasks is to mark the task complete.
-  def update_from_params(_params, current_user)
+  def update_from_params(params, current_user)
     verify_user_access(current_user)
-    mark_as_complete!
+
+    new_status = params[:status]
+    if new_status == Constants.TASK_STATUSES.completed
+      mark_as_complete!
+    else
+      update!(status: new_status)
+    end
   end
 
   def can_user_access?(user)
@@ -44,7 +49,7 @@ class GenericTask < Task
       return unless status
 
       case status
-      when "completed"
+      when Constants.TASK_STATUSES.completed
         parent.mark_as_complete!
       else
         parent.update!(status: status)

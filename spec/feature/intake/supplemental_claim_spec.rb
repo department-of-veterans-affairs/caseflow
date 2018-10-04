@@ -48,11 +48,13 @@ RSpec.feature "Supplemental Claim Intake" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
+  let(:profile_date) { (receipt_date - untimely_days + 4.days).to_time(:local) }
+
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - untimely_days + 1.day,
-      profile_date: receipt_date - untimely_days + 4.days,
+      profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
         { reference_id: "def456", decision_text: "PTSD denied" }
@@ -64,7 +66,7 @@ RSpec.feature "Supplemental Claim Intake" do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - untimely_days,
-      profile_date: receipt_date - untimely_days + 3.days,
+      profile_date: profile_date - 1.day,
       issues: [
         { reference_id: "abc123", decision_text: "Untimely rating issue 1" },
         { reference_id: "def456", decision_text: "Untimely rating issue 2" }
@@ -296,7 +298,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(supplemental_claim.request_issues.count).to eq 2
     expect(supplemental_claim.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
-      rating_issue_profile_date: receipt_date - untimely_days + 4.days,
+      rating_issue_profile_date: profile_date,
       description: "PTSD denied",
       decision_date: nil,
       rating_issue_associated_at: Time.zone.now
@@ -348,15 +350,15 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  it "Allows a Veteran without ratings to create an intake" do
+  def start_supplemental_claim(test_veteran, is_comp: true)
     supplemental_claim = SupplementalClaim.create!(
-      veteran_file_number: veteran_no_ratings.file_number,
+      veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
-      benefit_type: "compensation"
+      benefit_type: is_comp ? "compensation" : "education"
     )
 
     SupplementalClaimIntake.create!(
-      veteran_file_number: veteran_no_ratings.file_number,
+      veteran_file_number: test_veteran.file_number,
       user: current_user,
       started_at: 5.minutes.ago,
       detail: supplemental_claim
@@ -364,10 +366,15 @@ RSpec.feature "Supplemental Claim Intake" do
 
     Claimant.create!(
       review_request: supplemental_claim,
-      participant_id: veteran_no_ratings.participant_id
+      participant_id: test_veteran.participant_id
     )
 
     supplemental_claim.start_review!
+    supplemental_claim
+  end
+
+  it "Allows a Veteran without ratings to create an intake" do
+    start_supplemental_claim(veteran_no_ratings)
 
     visit "/intake"
 
@@ -389,5 +396,105 @@ RSpec.feature "Supplemental Claim Intake" do
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("Request for Supplemental Claim (VA Form 21-526b) has been processed.")
+  end
+
+  context "For new Add Issues page" do
+    def check_row(label, text)
+      row = find("tr", text: label)
+      expect(row).to have_text(text)
+    end
+
+    let!(:timely_ratings) do
+      Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: receipt_date - 40.days,
+        profile_date: receipt_date - 50.days,
+        issues: [
+          { reference_id: "abc123", decision_text: "Left knee granted" },
+          { reference_id: "def456", decision_text: "PTSD denied" }
+        ]
+      )
+    end
+
+    scenario "SC comp" do
+      supplemental_claim = start_supplemental_claim(veteran)
+      visit "/intake/add_issues"
+
+      expect(page).to have_content("Add Issues")
+      check_row("Form", "Supplemental Claim (VA Form 21-526b)")
+      check_row("Benefit type", "Compensation")
+      check_row("Claimant", "Ed Merica")
+
+      # clicking the add issues button should bring up the modal
+      safe_click "#button-add-issue"
+      expect(page).to have_content("Left knee granted")
+      expect(page).to have_content("PTSD denied")
+
+      # test canceling adding an issue by closing the modal
+      safe_click ".close-modal"
+      expect(page).to_not have_content("Left knee granted")
+
+      # adding an issue should show the issue
+      safe_click "#button-add-issue"
+      find("label", text: "Left knee granted").click
+      safe_click ".add-issue"
+
+      expect(page).to have_content("Left knee granted")
+
+      safe_click ".remove-issue"
+
+      expect(page).not_to have_content("Left knee granted")
+
+      # re-add to proceed
+      safe_click "#button-add-issue"
+      find("label", text: "Left knee granted").click
+      fill_in "Notes", with: "I am an issue note"
+      safe_click ".add-issue"
+
+      expect(page).to have_content("Left knee granted")
+      expect(page).to have_content("I am an issue note")
+
+      safe_click "#button-finish-intake"
+      expect(page).to have_content("Request for Supplemental Claim (VA Form 21-526b) has been processed.")
+      expect(page).to have_content(
+        "Established EP: 040SCR - Supplemental Claim Rating for Station 397 - ARC"
+      )
+
+      expect(SupplementalClaim.find_by(
+               id: supplemental_claim.id,
+               veteran_file_number: veteran.file_number,
+               establishment_submitted_at: Time.zone.now,
+               establishment_processed_at: Time.zone.now,
+               establishment_error: nil
+      )).to_not be_nil
+
+      end_product_establishment = EndProductEstablishment.find_by(
+        source_type: "SupplementalClaim",
+        source_id: supplemental_claim.id,
+        veteran_file_number: veteran.file_number,
+        code: "040SCR",
+        claimant_participant_id: "901987"
+      )
+      expect(end_product_establishment).to_not be_nil
+
+      expect(RequestIssue.find_by(
+               review_request_type: "SupplementalClaim",
+               review_request_id: supplemental_claim.id,
+               rating_issue_reference_id: "abc123",
+               description: "Left knee granted",
+               end_product_establishment_id: end_product_establishment.id,
+               notes: "I am an issue note"
+      )).to_not be_nil
+    end
+
+    scenario "Non-compensation" do
+      start_supplemental_claim(veteran, is_comp: false)
+      visit "/intake/add_issues"
+
+      expect(page).to have_content("Add Issues")
+      check_row("Form", "Supplemental Claim (VA Form 21-526b)")
+      check_row("Benefit type", "Education")
+      expect(page).to_not have_content("Claimant")
+    end
   end
 end

@@ -4,7 +4,7 @@ import { mount } from 'enzyme';
 import { MemoryRouter } from 'react-router-dom';
 import AssignHearings from '../../../../app/hearingSchedule/components/AssignHearings';
 
-describe('AssignHearings', () => {
+describe.skip('AssignHearings', () => {
   it('renders table with upload history', () => {
     const wrapper = mount(<MemoryRouter><AssignHearings
       regionalOffices={{

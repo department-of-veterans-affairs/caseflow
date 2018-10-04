@@ -8,7 +8,7 @@ const summary = 'Claims for manager review';
 const formatExplanation = (intake) => {
   const explanationCopy = {
     veteran_not_accessible: 'sensitivity',
-    veteran_not_valid: 'missing profile information',
+    veteran_not_valid: 'missing or invalid profile information',
     duplicate_ep: 'duplicate EP created outside Caseflow',
     system_error: 'system error',
     missing_signature: 'missing signature',
@@ -74,7 +74,7 @@ export default class FlaggedForReview extends Component {
             <Button linkStyling>View stats</Button>
           </a>
           <a href="/intake">
-            <Button legacyStyling={false} classNames={['usa-button-secondary']}>Begin intake</Button>
+            <Button classNames={['usa-button-secondary']}>Begin intake</Button>
           </a>
         </div>
       </div>

@@ -5,7 +5,9 @@ import moment from 'moment';
 import StringUtil from '../util/StringUtil';
 import {
   redText,
-  ISSUE_DISPOSITIONS
+  ISSUE_DISPOSITIONS,
+  VACOLS_DISPOSITIONS,
+  LEGACY_APPEAL_TYPES
 } from './constants';
 
 import type {
@@ -24,6 +26,27 @@ import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRI
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
+
+/**
+ * For legacy attorney checkout flow, filter out already-decided issues. Undecided
+ * VACOLS disposition IDs are all numerical (1-9), decided IDs are alphabetical (A-X).
+ * Filter out disposition 9 because it is no longer used.
+ *
+ * @param {Array} issues
+ * @returns {Array}
+ */
+
+export const getUndecidedIssues = (issues: Issues) => _.filter(issues, (issue) => {
+  if (!issue.disposition) {
+    return true;
+  }
+
+  const disposition = Number(issue.disposition);
+
+  if (disposition && disposition < 9 && issue.disposition in VACOLS_DISPOSITIONS_BY_ID) {
+    return true;
+  }
+});
 
 export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
   tasks.reduce((acc, task: Object): Tasks => {
@@ -59,7 +82,8 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       status: task.attributes.status,
       onHoldDuration: task.attributes.on_hold_duration,
       instructions: task.attributes.instructions,
-      decisionPreparedBy
+      decisionPreparedBy,
+      availableActions: task.attributes.available_actions
     };
 
     return acc;
@@ -123,7 +147,8 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       workProduct: task.attributes.work_product,
       previousTaskAssignedOn: task.attributes.previous_task.assigned_on,
       status: task.attributes.status,
-      decisionPreparedBy: null
+      decisionPreparedBy: null,
+      availableActions: task.attributes.available_actions
     };
   });
 
@@ -172,11 +197,25 @@ export const prepareAppealIssuesForStore = (appeal: { attributes: Object }) => {
   return issues;
 };
 
+export const prepareAppealHearingsForStore = (appeal: { attributes: Object }) => appeal.attributes.hearings.
+  map((hearing) => ({
+    heldBy: hearing.held_by,
+    viewedByJudge: hearing.viewed_by_judge,
+    date: hearing.date,
+    type: hearing.type,
+    id: hearing.id,
+    disposition: hearing.disposition
+  }));
+
 export const prepareAppealForStore =
   (appeals: Array<Object>):
     { appeals: BasicAppeals, appealDetails: AppealDetails } => {
 
     const appealHash = appeals.reduce((accumulator, appeal) => {
+      const {
+        attributes: { issues }
+      } = appeal;
+
       accumulator[appeal.attributes.external_id] = {
         id: appeal.id,
         externalId: appeal.attributes.external_id,
@@ -184,7 +223,7 @@ export const prepareAppealForStore =
         isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
         caseType: appeal.attributes.type,
         isAdvancedOnDocket: appeal.attributes.aod,
-        issueCount: appeal.attributes.issues.length,
+        issueCount: (appeal.attributes.docket_name === 'legacy' ? getUndecidedIssues(issues) : issues).length,
         docketNumber: appeal.attributes.docket_number,
         assignedAttorney: appeal.attributes.assigned_attorney,
         assignedJudge: appeal.attributes.assigned_judge,
@@ -198,7 +237,8 @@ export const prepareAppealForStore =
 
     const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
       accumulator[appeal.attributes.external_id] = {
-        hearings: appeal.attributes.hearings,
+        hearings: prepareAppealHearingsForStore(appeal),
+        completedHearingOnPreviousAppeal: appeal.attributes['completed_hearing_on_previous_appeal?'],
         issues: prepareAppealIssuesForStore(appeal),
         appellantFullName: appeal.attributes.appellant_full_name,
         appellantAddress: appeal.attributes.appellant_address,
@@ -234,7 +274,7 @@ export const renderAppealType = (appeal: BasicAppeal) => {
     isAdvancedOnDocket,
     caseType
   } = appeal;
-  const cavc = caseType === 'Court Remand';
+  const cavc = caseType === LEGACY_APPEAL_TYPES.CAVC_REMAND;
 
   return <React.Fragment>
     {isAdvancedOnDocket && <span><span {...redText}>AOD</span>, </span>}
@@ -251,18 +291,14 @@ export const renderLegacyAppealType = ({ aod, type }: {aod: boolean, type: strin
   </React.Fragment>;
 };
 
-export const getDecisionTypeDisplay = (decision: {type?: string} = {}) => {
-  const {
-    type: decisionType
-  } = decision;
-
-  switch (decisionType) {
+export const getDecisionTypeDisplay = (checkoutFlow: string) => {
+  switch (checkoutFlow) {
   case DECISION_TYPES.OMO_REQUEST:
     return 'OMO';
   case DECISION_TYPES.DRAFT_DECISION:
     return 'Draft Decision';
   default:
-    return StringUtil.titleCase(decisionType);
+    return StringUtil.titleCase(checkoutFlow);
   }
 };
 
@@ -292,29 +328,8 @@ export const getIssueDiagnosticCodeLabel = (code: string): string => {
   return `${code} - ${readableLabel.staff_description}`;
 };
 
-/**
- * For legacy attorney checkout flow, filter out already-decided issues. Undecided
- * VACOLS disposition IDs are all numerical (1-9), decided IDs are alphabetical (A-X).
- * Filter out disposition 9 because it is no longer used.
- *
- * @param {Array} issues
- * @returns {Array}
- */
-
-export const getUndecidedIssues = (issues: Issues) => _.filter(issues, (issue) => {
-  if (!issue.disposition) {
-    return true;
-  }
-
-  const disposition = Number(issue.disposition);
-
-  if (disposition && disposition < 9 && issue.disposition in VACOLS_DISPOSITIONS_BY_ID) {
-    return true;
-  }
-});
-
 export const buildCaseReviewPayload = (
-  decision: Object, userRole: string, issues: Issues, args: Object = {}
+  checkoutFlow: string, decision: Object, userRole: string, issues: Issues, args: Object = {}
 ): Object => {
   const payload = {
     data: {
@@ -332,7 +347,7 @@ export const buildCaseReviewPayload = (
   }
 
   if (userRole === USER_ROLE_TYPES.attorney) {
-    _.extend(payload.data.tasks, { document_type: decision.type });
+    _.extend(payload.data.tasks, { document_type: checkoutFlow });
   } else {
     args.factors_not_considered = _.keys(args.factors_not_considered);
     args.areas_for_improvement = _.keys(args.areas_for_improvement);
@@ -344,7 +359,7 @@ export const buildCaseReviewPayload = (
     payload.data.tasks.issues = getUndecidedIssues(issues).map((issue) => {
       const issueAttrs = ['type', 'readjudication', 'id'];
 
-      if (issue.disposition === VACOLS_DISPOSITIONS_BY_ID.REMANDED) {
+      if (issue.disposition === VACOLS_DISPOSITIONS.REMANDED) {
         issueAttrs.push('remand_reasons');
       }
 
@@ -407,4 +422,6 @@ export const taskHasNewDocuments = (task: Task, newDocsForAppeal: NewDocsForAppe
   return newDocsForAppeal[task.externalAppealId].docs.length > 0;
 };
 
-export const taskIsOnHold = (task: Task) => moment().diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;
+export const taskIsOnHold = (task: Task) =>
+  moment().startOf('day').
+    diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;

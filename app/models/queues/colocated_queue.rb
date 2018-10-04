@@ -18,6 +18,6 @@ class ColocatedQueue
   private
 
   def incomplete_tasks
-    ColocatedTask.where.not(status: "completed")
+    ColocatedTask.where.not(status: Constants.TASK_STATUSES.completed)
   end
 end

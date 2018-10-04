@@ -41,14 +41,16 @@ class DropdownFilter extends React.PureComponent {
       <div className="cf-dropdown-filter" style={style} ref={(rootElem) => {
         this.rootElem = rootElem;
       }}>
-        <div className="cf-clear-filter-row">
-          <button className="cf-text-button" onClick={this.props.clearFilters}
-            disabled={!this.props.isClearEnabled}>
-            <div className="cf-clear-filter-button-wrapper">
+        {this.props.addClearFiltersRow &&
+          <div className="cf-clear-filter-row">
+            <button className="cf-text-button" onClick={this.props.clearFilters}
+              disabled={!this.props.isClearEnabled}>
+              <div className="cf-clear-filter-button-wrapper">
                 Clear {name} filter
-            </div>
-          </button>
-        </div>
+              </div>
+            </button>
+          </div>
+        }
         {React.cloneElement(React.Children.only(children), {
           dropdownFilterViewListStyle,
           dropdownFilterViewListItemStyle
@@ -82,7 +84,8 @@ DropdownFilter.propTypes = {
   children: PropTypes.node,
   isClearEnabled: PropTypes.bool,
   clearFilters: PropTypes.func,
-  handleClose: PropTypes.func
+  handleClose: PropTypes.func,
+  addClearFiltersRow: PropTypes.bool
 };
 
 export default DropdownFilter;

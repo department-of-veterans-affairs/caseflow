@@ -89,7 +89,6 @@ class FinishNextButton extends React.PureComponent {
       name="finish-intake"
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-      legacyStyling={false}
       disabled={!this.props.issueCount}
     >
       Establish EP
