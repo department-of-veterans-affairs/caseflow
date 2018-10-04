@@ -301,8 +301,7 @@ RSpec.feature "Appeal Intake" do
     find("label", text: "Left knee granted").click
     fill_in "Notes", with: "I am an issue note"
     safe_click ".add-issue"
-
-    expect(page).to have_content("Left knee granted")
+    expect(page).to have_content("1.Left knee granted")
 
     # removing the issue should hide the issue
     safe_click ".remove-issue"
@@ -315,8 +314,14 @@ RSpec.feature "Appeal Intake" do
     fill_in "Notes", with: "I am an issue note"
     safe_click ".add-issue"
 
-    expect(page).to have_content("Left knee granted")
+    expect(page).to have_content("1.Left knee granted")
     expect(page).to have_content("I am an issue note")
+
+    # clicking add issue again should show a disabled radio button for that same rating
+    safe_click "#button-add-issue"
+    expect(page).to have_content("Left knee granted (already selected for issue 1)")
+    expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
+    safe_click ".close-modal"
 
     safe_click "#button-finish-intake"
 
