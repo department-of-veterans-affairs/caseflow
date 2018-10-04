@@ -7,7 +7,7 @@ class Organization < ApplicationRecord
 
     if task.assigned_to_type == name
       organizations.where.not(id: task.assigned_to_id)
-    elsif task.assigned_to_type == User.name && task.parent.assigned_to_type == name
+    elsif task.assigned_to_type == User.name && task.parent && task.parent.assigned_to_type == name
       organizations.where.not(id: task.parent.assigned_to_id)
     else
       organizations
