@@ -228,6 +228,10 @@
   "ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN_PLACEHOLDER": "Select grant or deny",
   "ADVANCE_ON_DOCKET_MOTION_REASON_DROPDOWN_PLACEHOLDER": "Select a type",
 
+  "ASSIGN_TO_USER_DROPDOWN": "Select a user",
+  "ASSIGN_TO_TEAM_DROPDOWN": "Select a team",
+  "ASSIGN_TO_PAGE_TITLE": "Assign task",
+
   "CASE_TIMELINE_HEADER": "Below is the history of this case. Soon, you'll be able to see many more details.",
   "CASE_TIMELINE_DISPATCHED_FROM_BVA": "Dispatched from BVA",
   "CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING": "Dispatch from BVA pending",

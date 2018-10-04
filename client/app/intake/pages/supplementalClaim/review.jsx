@@ -10,7 +10,7 @@ import SelectClaimant from '../../components/SelectClaimant';
 import { submitReview, setBenefitType, setClaimantNotVeteran, setClaimant, setPayeeCode } from '../../actions/ama';
 import { setReceiptDate } from '../../actions/common';
 import { PAGE_PATHS, INTAKE_STATES } from '../../constants';
-import { REQUEST_STATE } from '../../../intakeCommon/constants';
+import { FORM_TYPES, REQUEST_STATE } from '../../../intakeCommon/constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 
@@ -35,7 +35,7 @@ class Review extends React.PureComponent {
     }
 
     return <div>
-      <h1>Review { veteranName }'s Supplemental Claim (VA Form 21-526b)</h1>
+      <h1>Review { veteranName }'s { FORM_TYPES.SUPPLEMENTAL_CLAIM.name }</h1>
 
       { reviewIntakeError && <ErrorAlert /> }
 

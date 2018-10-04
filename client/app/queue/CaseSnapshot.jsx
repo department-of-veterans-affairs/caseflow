@@ -14,8 +14,6 @@ import {
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import DocketTypeBadge from './components/DocketTypeBadge';
 import ActionsDropdown from './components/ActionsDropdown';
-// import JudgeActionsDropdown from './components/JudgeActionsDropdown';
-import GenericTaskActionsDropdown from './components/GenericTaskActionsDropdown';
 import OnHoldLabel from './components/OnHoldLabel';
 import CopyTextButton from '../components/CopyTextButton';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -272,7 +270,8 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     // } else if (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout) {
     //   ActionDropdown = <JudgeActionsDropdown {...dropdownArgs} />;
     } else {
-      ActionDropdown = <GenericTaskActionsDropdown {...dropdownArgs} />;
+      ActionDropdown = <ActionsDropdown
+        task={taskAssignedToUser || taskAssignedToOrganization} appealId={appeal.externalId} />;
     }
 
     const taskAssignedToVso = taskAssignedToOrganization && taskAssignedToOrganization.assignedTo.type === 'Vso';
