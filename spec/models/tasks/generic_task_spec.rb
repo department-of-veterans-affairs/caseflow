@@ -123,45 +123,47 @@ describe GenericTask do
         assigned_to_id: assignee.id
       }
     end
+    let(:good_params_array) { [good_params] }
 
     context "when missing assignee parameter" do
       let(:params) do
-        {
+        [{
           status: good_params[:status],
           parent_id: good_params[:parent_id],
           assigned_to_id: good_params[:assigned_to_id]
-        }
+        }]
       end
       it "should raise error before not creating child task nor update status" do
-        expect { GenericTask.create_from_params(params, parent_assignee) }.to raise_error(TypeError)
+        expect { GenericTask.create_from_params(params, parent_assignee).first }.to raise_error(TypeError)
       end
     end
 
     context "when missing parent_id parameter" do
       let(:params) do
-        {
+        [{
           status: good_params[:status],
           assigned_to_type: good_params[:assigned_to_type],
           assigned_to_id: good_params[:assigned_to_id]
-        }
+        }]
       end
       it "should raise error before not creating child task nor update status" do
-        expect { GenericTask.create_from_params(params, parent_assignee) }.to raise_error(ActiveRecord::RecordNotFound)
+        expect { GenericTask.create_from_params(params, parent_assignee).first }.to
+          raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
     context "when missing status parameter" do
       let(:params) do
-        {
+        [{
           parent_id: good_params[:parent_id],
           assigned_to_type: good_params[:assigned_to_type],
           assigned_to_id: good_params[:assigned_to_id]
-        }
+        }]
       end
       it "should create child task and not update parent task's status" do
         status_before = parent.status
         GenericTask.create_from_params(params, parent_assignee)
-        expect(GenericTask.where(params).count).to eq(1)
+        expect(GenericTask.where(params.first).count).to eq(1)
         expect(parent.status).to eq(status_before)
       end
     end
@@ -169,7 +171,7 @@ describe GenericTask do
     context "when all parameters present" do
       it "should create child task and update parent task's status" do
         status_before = parent.status
-        GenericTask.create_from_params(good_params, parent_assignee)
+        GenericTask.create_from_params(good_params_array, parent_assignee)
         expect(GenericTask.where(good_params.except(:status)).count).to eq(1)
         expect(parent.reload.status).to_not eq(status_before)
         expect(parent.status).to eq(good_params[:status])
@@ -179,7 +181,7 @@ describe GenericTask do
     context "when parent task is assigned to a user" do
       context "when there is no current user" do
         it "should raise error and not create the child task nor update status" do
-          expect { GenericTask.create_from_params(good_params, nil) }.to(
+          expect { GenericTask.create_from_params(good_params_array, nil).first }.to(
             raise_error(Caseflow::Error::ActionForbiddenError)
           )
         end
@@ -188,7 +190,7 @@ describe GenericTask do
       context "when the currently logged-in user owns the parent task" do
         let(:parent_assignee) { current_user }
         it "should create child task assigned by currently logged-in user" do
-          child = GenericTask.create_from_params(good_params, current_user)
+          child = GenericTask.create_from_params(good_params_array, current_user).first
           expect(child.assigned_by_id).to eq(current_user.id)
         end
       end
@@ -206,7 +208,7 @@ describe GenericTask do
 
       context "when there is no current user" do
         it "should raise error and not create the child task nor update status" do
-          expect { GenericTask.create_from_params(good_params, nil) }.to(
+          expect { GenericTask.create_from_params(good_params_array, nil).first }.to(
             raise_error(Caseflow::Error::ActionForbiddenError)
           )
         end
@@ -218,7 +220,7 @@ describe GenericTask do
           FeatureToggle.enable!(org.feature.to_sym, users: [current_user.css_id])
         end
         it "should create child task assigned by currently logged-in user" do
-          child = GenericTask.create_from_params(good_params, current_user)
+          child = GenericTask.create_from_params(good_params_array, current_user).first
           expect(child.assigned_by_id).to eq(current_user.id)
         end
       end

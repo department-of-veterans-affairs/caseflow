@@ -143,12 +143,13 @@ class TasksController < ApplicationController
   end
 
   def create_params
-    [params.require("tasks")].flatten.map do |task|
+    @create_params ||= [params.require("tasks")].flatten.map do |task|
       task = task.permit(:type, :instructions, :action, :assigned_to_id, :assigned_to_type, :external_id, :parent_id)
         .merge(assigned_by: current_user)
         .merge(appeal: Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id]))
 
-      task.merge(assigned_to_type: User.name) if !task[:assigned_to_type]
+      task.delete(:external_id)
+      task = task.merge(assigned_to_type: User.name) if !task[:assigned_to_type]
 
       task
     end
