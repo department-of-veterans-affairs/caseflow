@@ -58,6 +58,13 @@ module Caseflow::Error
     end
   end
 
+  class OutcodeValidationFailure < SerializableError
+    def initialize(args)
+      @code = args[:code] || 400
+      @message = args[:message]
+    end
+  end
+
   class TooManyChildTasks < SerializableError
     def initialize(args)
       @task_id = args[:task_id]

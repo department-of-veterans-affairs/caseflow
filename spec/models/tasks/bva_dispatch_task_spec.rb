@@ -75,7 +75,7 @@ describe BvaDispatchTask do
 
       it "should throw an error" do
         expect { BvaDispatchTask.outcode(root_task.appeal, params, user) }.to(raise_error) do |e|
-          expect(e.class).to eq(ActiveRecord::RecordInvalid)
+          expect(e.class).to eq(Caseflow::Error::OutcodeValidationFailure)
         end
       end
     end
