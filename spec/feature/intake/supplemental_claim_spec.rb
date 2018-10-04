@@ -437,11 +437,23 @@ RSpec.feature "Supplemental Claim Intake" do
       # adding an issue should show the issue
       safe_click "#button-add-issue"
       find("label", text: "Left knee granted").click
+      safe_click ".add-issue"
+
+      expect(page).to have_content("Left knee granted")
+
+      safe_click ".remove-issue"
+
+      expect(page).not_to have_content("Left knee granted")
+
+      # re-add to proceed
+      safe_click "#button-add-issue"
+      find("label", text: "Left knee granted").click
       fill_in "Notes", with: "I am an issue note"
       safe_click ".add-issue"
 
-      expect(page).to have_content("1. Left knee granted")
+      expect(page).to have_content("Left knee granted")
       expect(page).to have_content("I am an issue note")
+
       safe_click "#button-finish-intake"
       expect(page).to have_content("Request for Supplemental Claim (VA Form 21-526b) has been processed.")
       expect(page).to have_content(
