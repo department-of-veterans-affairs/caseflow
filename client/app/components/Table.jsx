@@ -119,6 +119,14 @@ const getCellSpan = (rowObject, column) => {
     return column.span(rowObject);
   }
 
+  if (rowObject[column.valueName] == "This is a text area field!") {
+    return 2;
+  }
+
+  if (rowObject[column.valueName] == null) {
+    return 0;
+  }
+
   return 1;
 };
 

@@ -11,10 +11,13 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
 
 const tableRowStyling = css({
+  '& > tr:nth-child(even) > td': { borderTop: 'none' },
+  '& > tr:nth-child(odd) > td': { borderBottom: 'none' },
   '& > tr > td': {
-    verticalAlign: 'top'
+    verticalAlign: 'top',
   },
   '& > tr': {
+    borderBottom: 'none',
     '& > td:nth-child(1)': { width: '2%' },
     '& > td:nth-child(2)': { width: '10%' },
     '& > td:nth-child(3)': { width: '10%' },
@@ -22,10 +25,28 @@ const tableRowStyling = css({
     '& > td:nth-child(5)': { backgroundColor: '#f1f1f1',
       width: '20%' },
     '& > td:nth-child(6)': { backgroundColor: '#f1f1f1',
-      width: '26%' },
+      width: '23%' },
     '& > td:nth-child(7)': { backgroundColor: '#f1f1f1',
-      width: '20%' }
-  }
+      width: '23%' } }
+
+  // },
+  // '& > tr:nth-child(even)': {
+  //     borderBottom: 'none',
+  //     '& > td:nth-child(1)': { width: '2%' },
+  //     '& > td:nth-child(2)': { width: '20%' },
+  //     '& > td:nth-child(3)': { width: '10%' },
+  //     '& > td:nth-child(4)': { backgroundColor: '#f1f1f1',
+  //         width: '20%' },
+  //     '& > td:nth-child(5)': { backgroundColor: '#f1f1f1',
+  //         width: '23%' },
+  //     '& > td:nth-child(6)': { backgroundColor: '#f1f1f1',
+  //         width: '23%' }
+  // }
+});
+
+const noMarginStyling = css({
+  marginRight: '-40px',
+  marginLeft: '-40px'
 });
 
 export default class DailyDocket extends React.Component {
@@ -34,14 +55,12 @@ export default class DailyDocket extends React.Component {
     return <div><b>{hearing.appellantName} ({hearing.vbmsId})</b> <br />
       {hearing.appellantAddress} <br />
       {hearing.appellantCity}, {hearing.appellantState} {hearing.appellantZipCode}
-      <p>{hearing.issueCount} issues</p>
     </div>;
   };
 
   getHearingTime = (hearing) => {
     return <div>{hearing.hearingTime} <br />
       {hearing.hearingLocation}
-      <p><TextareaField name="Notes" onChange=""/></p>
     </div>
   };
 
@@ -143,15 +162,33 @@ export default class DailyDocket extends React.Component {
       }
     ];
 
-    const dailyDocketRows = _.map(this.props.hearings, (hearing) => ({
-      number: '1.',
-      appellantInformation: this.getAppellantInformation(hearing),
-      hearingTime: this.getHearingTime(hearing),
-      representative: <div>{hearing.representative} <br /> {hearing.representativeName}</div>,
-      hearingLocation: this.getHearingLocationDropdown(hearing),
-      hearingDay: this.getHearingDayDropdown(hearing),
-      disposition: this.getDispositionDropdown(hearing)
-    }));
+    // const dailyDocketRows = _.map(this.props.hearings, (hearing) => ({
+    //   number: '1.',
+    //   appellantInformation: this.getAppellantInformation(hearing),
+    //   hearingTime: this.getHearingTime(hearing),
+    //   representative: <div>{hearing.representative} <br /> {hearing.representativeName}</div>,
+    //   hearingLocation: this.getHearingLocationDropdown(hearing),
+    //   hearingDay: this.getHearingDayDropdown(hearing),
+    //   disposition: this.getDispositionDropdown(hearing)
+    // }));
+
+    const hearing = this.props.hearings[123];
+
+    const dailyDocketRows = [
+      {
+        number: '1.',
+        appellantInformation: this.getAppellantInformation(hearing),
+        hearingTime: this.getHearingTime(hearing),
+        representative: <div>{hearing.representative} <br /> {hearing.representativeName}</div>,
+        hearingLocation: this.getHearingLocationDropdown(hearing),
+        hearingDay: this.getHearingDayDropdown(hearing),
+        disposition: this.getDispositionDropdown(hearing)
+      },
+      {
+        appellantInformation: <div>{hearing.issueCount} issues</div>,
+        hearingTime: "This is a text area field!"
+      }
+    ];
 
     return <AppSegment filledBackground>
       <div className="cf-push-left">
@@ -163,12 +200,14 @@ export default class DailyDocket extends React.Component {
         Coordinator: {this.props.coordinator} <br />
         Hearing type: {this.props.hearingType}
       </span>
-      <Table
-        columns={dailyDocketColumns}
-        rowObjects={dailyDocketRows}
-        summary="dailyDocket"
-        bodyStyling={tableRowStyling}
-      />
+      <div {...noMarginStyling}>
+        <Table
+          columns={dailyDocketColumns}
+          rowObjects={dailyDocketRows}
+          summary="dailyDocket"
+          bodyStyling={tableRowStyling}
+        />
+      </div>
     </AppSegment>;
   }
 }
