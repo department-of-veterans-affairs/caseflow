@@ -56,6 +56,8 @@ class GenericTask < Task
       # Create an assignee from the input arguments so we throw an error if the assignee does not exist.
       assignee = Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
 
+      parent.update!(status: :on_hold)
+
       GenericTask.create!(
         appeal: parent.appeal,
         assigned_by_id: child_assigned_by_id(parent, current_user),

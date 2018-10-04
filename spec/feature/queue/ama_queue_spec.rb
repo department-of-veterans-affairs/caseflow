@@ -219,6 +219,7 @@ RSpec.feature "AmaQueue" do
         click_on "Submit"
 
         expect(page).to have_content("Task assigned to person")
+        expect(translation_task.reload.status).to eq("on_hold")
 
         # On hold tasks should not be visible on the case details screen
         # expect(page).to_not have_content("Actions")
