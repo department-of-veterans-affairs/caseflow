@@ -60,8 +60,44 @@
   td {
     vertical-align: top;
 
-    div {
-      padding-bottom: 0.5em;
+    .issues {
+      display: table;
+      width: 100%;
+
+      .issue {
+        display: table-row;
+        border-bottom: 1px solid $color-gray-lighter;
+
+        div {
+          display: table-column;
+          float: left;
+          padding: 0.5em 0;
+        }
+
+        .issue-desc {
+          max-width: 70%;
+
+          .issue-num {
+            padding-right: 0.25em;
+          }
+
+          .issue-notes {
+            display: block;
+            font-style: italic;
+          }
+        }
+
+        .issue-action {
+          padding: 0;
+          float: right;
+
+          button {
+            i {
+              padding-right: 0.25em;
+            }
+          }
+        }
+      }
     }
   }
 

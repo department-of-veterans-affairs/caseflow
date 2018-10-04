@@ -812,6 +812,12 @@ input {
   margin-left: .25em;
 }
 
+.cf-optional {
+  color: $color-gray;
+  font-style: italic;
+  margin-left: 1em;
+}
+
 fieldset {
   > *,
   .cf-form-textinput {
@@ -888,7 +894,8 @@ fieldset {
     margin-left: 0;
   }
 
-  .cf-required {
+  .cf-required,
+  .cf-optional {
     display: none;
   }
 }

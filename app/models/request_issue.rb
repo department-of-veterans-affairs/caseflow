@@ -24,7 +24,8 @@ class RequestIssue < ApplicationRecord
       rating_issue_profile_date: data[:profile_date],
       description: data[:decision_text],
       decision_date: data[:decision_date],
-      issue_category: data[:issue_category]
+      issue_category: data[:issue_category],
+      notes: data[:notes]
     )
   end
 

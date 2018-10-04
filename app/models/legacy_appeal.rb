@@ -107,6 +107,7 @@ class LegacyAppeal < ApplicationRecord
 
   # TODO: the type code should be the base value, and should be
   #       converted to be human readable, not vis-versa
+  # TODO: integrate with Constants::LEGACY_APPEAL_TYPES_BY_ID
   TYPE_CODES = {
     "Original" => "original",
     "Post Remand" => "post_remand",
@@ -222,6 +223,18 @@ class LegacyAppeal < ApplicationRecord
   attr_writer :hearings
   def hearings
     @hearings ||= Hearing.repository.hearings_for_appeal(vacols_id)
+  end
+
+  def completed_hearing_on_previous_appeal?
+    vacols_ids = VACOLS::Case.where(bfcorlid: vbms_id).pluck(:bfkey)
+    hearings = HearingRepository.hearings_for_appeals(vacols_ids)
+    hearings_on_other_appeals = hearings.reject { |hearing_appeal_id, _| hearing_appeal_id.eql?(vacols_id) }
+
+    hearings_on_other_appeals.map do |hearing_appeal_id, case_hearings|
+      if case_hearings.any?(&:held?)
+        hearing_appeal_id
+      end
+    end.present?
   end
 
   def scheduled_hearings
