@@ -14,7 +14,7 @@ const tableRowStyling = css({
   '& > tr:nth-child(even) > td': { borderTop: 'none' },
   '& > tr:nth-child(odd) > td': { borderBottom: 'none' },
   '& > tr > td': {
-    verticalAlign: 'top',
+    verticalAlign: 'top'
   },
   '& > tr:nth-child(odd)': {
     '& > td:nth-child(1)': { width: '2%' },
@@ -29,15 +29,15 @@ const tableRowStyling = css({
       width: '24%' }
   },
   '& > tr:nth-child(even)': {
-      '& > td:nth-child(1)': { width: '2%' },
-      '& > td:nth-child(2)': { width: '18%' },
-      '& > td:nth-child(3)': { width: '8%' },
-      '& > td:nth-child(4)': { backgroundColor: '#f1f1f1',
-          width: '18%' },
-      '& > td:nth-child(5)': { backgroundColor: '#f1f1f1',
-          width: '24%' },
-      '& > td:nth-child(6)': { backgroundColor: '#f1f1f1',
-          width: '24%' }
+    '& > td:nth-child(1)': { width: '2%' },
+    '& > td:nth-child(2)': { width: '18%' },
+    '& > td:nth-child(3)': { width: '8%' },
+    '& > td:nth-child(4)': { backgroundColor: '#f1f1f1',
+      width: '18%' },
+    '& > td:nth-child(5)': { backgroundColor: '#f1f1f1',
+      width: '24%' },
+    '& > td:nth-child(6)': { backgroundColor: '#f1f1f1',
+      width: '24%' }
   }
 });
 
@@ -52,6 +52,10 @@ const noMarginStyling = css({
 
 export default class DailyDocket extends React.Component {
 
+  emptyFunction = () => {
+    // This is a placeholder for when we add onChange functions to the page.
+  };
+
   getAppellantInformation = (hearing) => {
     return <div><b>{hearing.appellantName} ({hearing.vbmsId})</b> <br />
       {hearing.appellantAddress} <br />
@@ -62,7 +66,7 @@ export default class DailyDocket extends React.Component {
   getHearingTime = (hearing) => {
     return <div>{hearing.hearingTime} <br />
       {hearing.hearingLocation}
-    </div>
+    </div>;
   };
 
   getDispositionDropdown = (hearing) => {
@@ -76,7 +80,7 @@ export default class DailyDocket extends React.Component {
         }
       ]}
       value={hearing.disposition}
-      onChange={() => {}}
+      onChange={this.emptyFunction}
     />;
   };
 
@@ -90,8 +94,8 @@ export default class DailyDocket extends React.Component {
         }
       ]}
       value={hearing.hearingLocation}
-      onChange={() => {}}
-    />
+      onChange={this.emptyFunction}
+    />;
   };
 
   getHearingDayDropdown = (hearing) => {
@@ -104,7 +108,7 @@ export default class DailyDocket extends React.Component {
         }
       ]}
       value={hearing.hearingDate}
-      onChange={() => {}}
+      onChange={this.emptyFunction}
     />
     <RadioField
       name="Hearing Time"
@@ -118,7 +122,7 @@ export default class DailyDocket extends React.Component {
           value: '1:30'
         }
       ]}
-      onChange={() => {}}
+      onChange={this.emptyFunction}
       hideLabel
     />
     </div>;
@@ -127,9 +131,38 @@ export default class DailyDocket extends React.Component {
   getNotesField = () => {
     return <TextareaField
       name="Notes"
-      onChange={() => {}}
+      onChange={this.emptyFunction}
       textAreaStyling={notesFieldStyling}
     />;
+  };
+
+  getDailyDocketRows = (hearings) => {
+    let dailyDocketRows = [];
+
+    _.forEach(hearings, (hearing) => {
+      dailyDocketRows.push({
+        number: '1.',
+        appellantInformation: this.getAppellantInformation(hearing),
+        hearingTime: this.getHearingTime(hearing),
+        representative: <div>{hearing.representative} <br /> {hearing.representativeName}</div>,
+        hearingLocation: this.getHearingLocationDropdown(hearing),
+        hearingDay: this.getHearingDayDropdown(hearing),
+        disposition: this.getDispositionDropdown(hearing)
+      },
+      {
+        number: null,
+        appellantInformation: <div>{hearing.issueCount} issues</div>,
+        hearingTime: { value: this.getNotesField(hearing),
+          span: 2 },
+        representative: { value: null,
+          span: 0 },
+        hearingLocation: null,
+        hearingDay: null,
+        disposition: null
+      });
+    });
+
+    return dailyDocketRows;
   };
 
   render() {
@@ -171,39 +204,6 @@ export default class DailyDocket extends React.Component {
       }
     ];
 
-    // const dailyDocketRows = _.map(this.props.hearings, (hearing) => ({
-    //   number: '1.',
-    //   appellantInformation: this.getAppellantInformation(hearing),
-    //   hearingTime: this.getHearingTime(hearing),
-    //   representative: <div>{hearing.representative} <br /> {hearing.representativeName}</div>,
-    //   hearingLocation: this.getHearingLocationDropdown(hearing),
-    //   hearingDay: this.getHearingDayDropdown(hearing),
-    //   disposition: this.getDispositionDropdown(hearing)
-    // }));
-
-    const hearing = this.props.hearings[123];
-
-    const dailyDocketRows = [
-      {
-        number: '1.',
-        appellantInformation: this.getAppellantInformation(hearing),
-        hearingTime: this.getHearingTime(hearing),
-        representative: <div>{hearing.representative} <br /> {hearing.representativeName}</div>,
-        hearingLocation: this.getHearingLocationDropdown(hearing),
-        hearingDay: this.getHearingDayDropdown(hearing),
-        disposition: this.getDispositionDropdown(hearing)
-      },
-      {
-        number: null,
-        appellantInformation: <div>{hearing.issueCount} issues</div>,
-        hearingTime: {value: this.getNotesField(hearing), span: 2},
-        representative: {value: null, span: 0},
-        hearingLocation: null,
-        hearingDay: null,
-        disposition: null
-      }
-    ];
-
     return <AppSegment filledBackground>
       <div className="cf-push-left">
         <h1>Daily Docket ({moment(this.props.hearingDate).format('ddd M/DD/YYYY')})</h1> <br />
@@ -217,7 +217,7 @@ export default class DailyDocket extends React.Component {
       <div {...noMarginStyling}>
         <Table
           columns={dailyDocketColumns}
-          rowObjects={dailyDocketRows}
+          rowObjects={this.getDailyDocketRows(this.props.hearings)}
           summary="dailyDocket"
           bodyStyling={tableRowStyling}
         />
