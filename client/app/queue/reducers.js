@@ -343,23 +343,6 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
         }
       }
     });
-  case ACTIONS.SET_TASK_ASSIGNMENT: {
-    const { externalAppealId } = action.payload;
-    const taskType = externalAppealId in state.amaTasks ? 'amaTasks' : 'tasks';
-
-    return update(state, {
-      [taskType]: {
-        [externalAppealId]: {
-          assignedTo: {
-            $set: {
-              cssId: action.payload.cssId,
-              id: action.payload.pgId
-            }
-          }
-        }
-      }
-    });
-  }
   case ACTIONS.SET_TASK_ATTRS: {
     const { uniqueId } = action.payload;
     const taskType = uniqueId in state.amaTasks ? 'amaTasks' : 'tasks';
