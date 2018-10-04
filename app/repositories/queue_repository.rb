@@ -118,6 +118,9 @@ class QueueRepository
 
     def assign_case_to_attorney!(judge:, attorney:, vacols_id:)
       transaction do
+        if VACOLS::Decass.find_by(defolder: vacols_id, deadtim: VacolsHelper.local_date_with_utc_timezone)
+          fail Caseflow::Error::QueueRepositoryError, "Cannot create a duplicate decass record"
+        end
         update_location_to_attorney(vacols_id, attorney)
 
         VACOLS::Decass.create!(
