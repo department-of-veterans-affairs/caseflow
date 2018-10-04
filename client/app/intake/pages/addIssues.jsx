@@ -29,7 +29,11 @@ class AddIssues extends React.PureComponent {
 
       return <div>
         { issues.map((issue, index) => {
-          return <div key={issue.referenceId}>{index + 1}. {issue.text} </div>;
+          return <div key={issue.referenceId}>
+            {index + 1}. {issue.text}
+            <br />
+            {issue.notes}
+          </div>;
         })}
         <Button
           name="add-issue"
