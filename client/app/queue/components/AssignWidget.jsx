@@ -97,10 +97,7 @@ class AssignWidget extends React.PureComponent<Props> {
   assignTasks = (selectedTasks: Array<Task>, assigneeId: string) => {
     const { previousAssigneeId } = this.props;
 
-    if (!this.props.savePending) {
-      this.props.setSavePending();
-    }
-
+    this.props.setSavePending();
     this.props.onTaskAssignment(
       { tasks: selectedTasks,
         assigneeId,
