@@ -85,6 +85,17 @@ describe JudgeCaseAssignmentToAttorney do
       end
     end
 
+    context "when user does not have access" do
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+      let(:task_id) { "#{appeal.vacols_id}-2018-04-18" }
+      let(:assigned_by) { judge }
+      let(:assigned_to) { attorney }
+
+      it "should raise Caseflow::Error::UserRepositoryError" do
+        expect { subject }.to raise_error(Caseflow::Error::UserRepositoryError)
+      end
+    end
+
     context "when task id is not valid" do
       let(:task_id) { 1234 }
       let(:assigned_by) { judge }
