@@ -56,7 +56,7 @@ class RampRefilingIntake < Intake
       receipt_date: detail.receipt_date,
       election_receipt_date: detail.election_receipt_date,
       appeal_docket: detail.appeal_docket,
-      issues: ramp_elections.map(&:issues).flatten.map(&:ui_hash),
+      issues: ramp_elections_with_decisions.map(&:issues).flatten.map(&:ui_hash),
       end_product_description: detail.end_product_description
     )
   end
@@ -74,7 +74,7 @@ class RampRefilingIntake < Intake
   def validate_detail_on_start
     if ramp_elections.empty?
       self.error_code = :no_complete_ramp_election
-    elsif ramp_elections.any?(&:end_product_active?)
+    elsif ramp_elections.all?(&:end_product_active?)
       self.error_code = :ramp_election_is_active
     elsif ramp_elections.all? { |election| election.issues.empty? }
       self.error_code = :ramp_election_no_issues
@@ -101,5 +101,9 @@ class RampRefilingIntake < Intake
 
   def ramp_elections
     RampElection.established.where(veteran_file_number: veteran_file_number).all
+  end
+
+  def ramp_elections_with_decisions
+    ramp_elections.reject(&:end_product_active?)
   end
 end
