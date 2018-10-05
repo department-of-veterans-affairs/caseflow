@@ -9,6 +9,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
+import CaseListSearch from './CaseListSearch';
 import CaseListTable from './CaseListTable';
 import { fullWidth } from './constants';
 
@@ -49,7 +50,11 @@ class CaseListView extends React.PureComponent {
         “${firstAppeal.veteranFullName} (${firstAppeal.veteranFileNumber})”`;
 
     return <div>
-      <h1 className="cf-push-left" {...fullWidth}>{heading}</h1>
+      <h1 className="cf-push-left" {...fullWidth}>{COPY.CASE_SEARCH_HOME_PAGE_HEADING}</h1>
+      <p>{COPY.CASE_SEARCH_INPUT_INSTRUCTION}</p>
+      <CaseListSearch elementId="searchBarEmptyList" />
+      <br /><br />
+      <h2 className="cf-push-left" {...fullWidth}>{heading}</h2>
       <CaseListTable appeals={this.props.appeals} />
     </div>;
   }

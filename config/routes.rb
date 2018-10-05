@@ -181,6 +181,8 @@ Rails.application.routes.draw do
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
 
+  get '/search', to: 'queue#index'
+
   resources :legacy_tasks, only: [:create, :update]
   resources :tasks, only: [:index, :create, :update]
 
