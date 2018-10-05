@@ -72,7 +72,7 @@ class HearingDay < ApplicationRecord
         hearing_location = hearing_day[:regional_office].nil? ? "Central" : hearing_day[:regional_office]
         enriched_hearing_days[enriched_hearing_days.length - 1][:hearings] = []
         hearings = []
-        if (hearing_location == "Central")
+        if hearing_location == "Central"
           hearings.push(VACOLS::CaseHearing.find(hearing_day[:id]))
         else
           hearings = HearingRepository.fetch_hearings_for_parent(hearing_day[:id])
