@@ -25,11 +25,11 @@ class Generators::Contention
         if disposition
           Fakes::VBMSService.disposition_records ||= {}
           Fakes::VBMSService.disposition_records[claim_id] ||= []
-          Fakes::VBMSService.disposition_records[claim_id] << {
+          Fakes::VBMSService.disposition_records[claim_id] << OpenStruct.new(
             claim_id: contention.claim_id,
             contention_id: contention.id,
             disposition: disposition
-          }
+          )
         end
       end
     end

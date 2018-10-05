@@ -4,6 +4,9 @@ import ScrollLock from 'react-scrolllock';
 import { closeSymbolHtml } from './RenderFunctions';
 import Button from './Button';
 import _ from 'lodash';
+import { css } from 'glamor';
+
+const modalTextStyling = css({ width: '100%' });
 
 export default class Modal extends React.Component {
   constructor(props) {
@@ -122,7 +125,7 @@ export default class Modal extends React.Component {
           {closeSymbolHtml()}
         </button>
         <h1 id="modal_id-title">{title}</h1>
-        <div className="cf-modal-normal-text">
+        <div {...modalTextStyling}>
           {children}
         </div>
         {noDivider ? '' : <div className="cf-modal-divider"></div>}
