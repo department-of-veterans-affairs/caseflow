@@ -5,7 +5,7 @@ class JudgeCaseAssignmentToAttorney
 
   validates :assigned_by, :assigned_to, presence: true
   validates :task_id, format: { with: /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }, allow_blank: true
-  validate :assigned_by_role_is_valid, :assigned_by_can_access_appeal!
+  validate :assigned_by_role_is_valid
 
   def assign_to_attorney!
     MetricsService.record("VACOLS: assign_case_to_attorney #{vacols_id}",
@@ -54,22 +54,24 @@ class JudgeCaseAssignmentToAttorney
     errors.add(:assigned_by, "has to be a judge") if assigned_by && !assigned_by.judge_in_vacols?
   end
 
-  def assigned_by_can_access_appeal!
-    assigned_by.fail_if_no_access_to_legacy_task!(vacols_id)
-  end
-
   class << self
     attr_writer :repository
 
     def create(task_attrs)
       task = new(task_attrs)
-      task.assign_to_attorney! if task.valid?
+      if task.valid?
+        task.assigned_by.fail_if_no_access_to_legacy_task!(task.vacols_id)
+        task.assign_to_attorney!
+      end
       task
     end
 
     def update(task_attrs)
       task = new(task_attrs)
-      task.reassign_to_attorney! if task.valid?
+      if task.valid?
+        task.assigned_by.fail_if_no_access_to_legacy_task!(task.vacols_id)
+        task.reassign_to_attorney!
+      end
       task
     end
 
