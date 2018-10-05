@@ -14,6 +14,10 @@ class RequestIssue < ApplicationRecord
       .where.not(issue_category: [nil, "Unknown issue category"])
   end
 
+  def self.no_follow_up_issues
+    where.not(id: select(:parent_request_issue_id).uniq)
+  end
+
   def rated?
     rating_issue_reference_id && rating_issue_profile_date
   end
