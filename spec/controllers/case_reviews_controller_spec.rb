@@ -117,9 +117,8 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(task.reload.status).to eq "completed"
             expect(task.completed_at).to_not eq nil
 
-            bva_dispatch_task = BvaDispatchTask.find_by(parent_id: root_task.id)
-            expect(bva_dispatch_task.assigned_to).to eq(BvaDispatch.singleton)
-            expect(bva_dispatch_task.children.length).to eq(1)
+            quality_review_task = QualityReviewTask.find_by(parent_id: root_task.id)
+            expect(quality_review_task.assigned_to).to eq(QualityReview.singleton)
           end
         end
       end
