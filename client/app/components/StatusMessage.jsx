@@ -35,7 +35,7 @@ export default class StatusMessage extends React.Component {
       return h1classNames.join(' ');
     };
 
-    const wrapperClassName = classNamesFn('cf-app-msg-screen', {
+    const wrapperClassName = classNamesFn({
       'cf-app-segment cf-app-segment--alt': wrapInAppSegment
     });
 

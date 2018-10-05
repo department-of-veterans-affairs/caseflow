@@ -33,28 +33,35 @@ class AddIssuesModal extends React.Component {
   }
 
   onAddIssue = () => {
-    this.props.addIssue(this.state.referenceId, this.props.ratings, true, this.state.notes);
+    this.props.addIssue(this.state.referenceId, this.props.intakeData.ratings, true, this.state.notes);
     this.props.closeHandler();
   }
 
   render() {
     let {
-      ratings,
+      intakeData,
       closeHandler
     } = this.props;
 
-    const ratedIssuesSections = _.map(ratings, (rating) => {
+    const addedIssues = intakeData.addedIssues ? intakeData.addedIssues : [];
+    const ratedIssuesSections = _.map(intakeData.ratings, (rating) => {
       const radioOptions = _.map(rating.issues, (issue) => {
+        const foundIndex = addedIssues.map((addedIssue) => addedIssue.id).indexOf(issue.reference_id);
+        const text = foundIndex === -1 ?
+          issue.decision_text :
+          `${issue.decision_text} (already selected for issue ${foundIndex + 1})`;
+
         return {
-          displayText: issue.decision_text,
-          value: issue.reference_id
+          displayText: text,
+          value: issue.reference_id,
+          disabled: foundIndex !== -1
         };
       });
 
       return <RadioField
         vertical
         label={<h3>Past decisions from { formatDateStr(rating.profile_date) }</h3>}
-        name={`rating-radio-${rating.profile_date}`}
+        name="rating-radio"
         options={radioOptions}
         key={rating.profile_date}
         value={this.state.referenceId}
