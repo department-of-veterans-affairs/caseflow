@@ -131,7 +131,7 @@ RSpec.describe LegacyTasksController, type: :controller do
           post :create, params: { tasks: params }
           expect(response.status).to eq 400
           body = JSON.parse(response.body)
-          expect(body["errors"].first["detail"]).to match /cannot modify appeal/
+          expect(body["errors"].first["detail"]).to match(/cannot modify appeal/)
         end
       end
 
