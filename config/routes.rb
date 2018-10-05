@@ -183,10 +183,7 @@ Rails.application.routes.draw do
   end
 
   resources :legacy_tasks, only: [:create, :update]
-  resources :tasks, only: [:index, :create, :update] do
-    get 'assignable_organizations', on: :member
-    get 'assignable_users', on: :member
-  end
+  resources :tasks, only: [:index, :create, :update]
 
   resources :organizations, only: [:show], param: :url do
     resources :tasks, only: [:index], controller: 'organizations/tasks'

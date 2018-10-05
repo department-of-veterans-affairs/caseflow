@@ -854,6 +854,11 @@ fieldset {
   i {
     margin-left: 0;
   }
+
+  .disabled {
+    color: $color-gray-light;
+    font-style: italic;
+  }
 }
 
 .cf-form-radio-option {
