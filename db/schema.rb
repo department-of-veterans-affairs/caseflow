@@ -23,8 +23,8 @@ ActiveRecord::Schema.define(version: 20181004221403) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "granted"
-    t.index ["person_id"], name: "index_advance_on_docket_motions_on_person_id"
-    t.index ["user_id"], name: "index_advance_on_docket_motions_on_user_id"
+    t.index ["person_id"], name: "index_advance_on_docket_grants_on_person_id"
+    t.index ["user_id"], name: "index_advance_on_docket_grants_on_user_id"
   end
 
   create_table "allocations", force: :cascade do |t|

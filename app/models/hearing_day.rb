@@ -71,7 +71,12 @@ class HearingDay < ApplicationRecord
         enriched_hearing_days << hearing_day.slice(:id, :hearing_date, :hearing_type)
         hearing_location = hearing_day[:regional_office].nil? ? "Central" : hearing_day[:regional_office]
         enriched_hearing_days[enriched_hearing_days.length - 1][:hearings] = []
-        hearings = HearingRepository.fetch_hearings_for_parent(hearing_day[:id]) || []
+        hearings = []
+        if (hearing_location == "Central")
+          hearings.push(VACOLS::CaseHearing.find(hearing_day[:id]))
+        else
+          hearings = HearingRepository.fetch_hearings_for_parent(hearing_day[:id])
+        end
         format_hearings(enriched_hearing_days, hearing_location, hearings)
       end
       enriched_hearing_days
