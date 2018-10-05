@@ -49,18 +49,6 @@ describe QueueRepository do
       end
     end
 
-    context "when trying to create duplicate" do
-      let(:vacols_id) { vacols_case.bfkey }
-
-      before do
-        QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
-      end
-
-      it "should raise Caseflow::Error::QueueRepositoryError" do
-        expect { subject }.to raise_error(Caseflow::Error::QueueRepositoryError)
-      end
-    end
-
     context "when vacols ID is not valid" do
       let(:vacols_id) { "09647474" }
 
