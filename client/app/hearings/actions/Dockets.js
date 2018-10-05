@@ -224,13 +224,6 @@ export const setWorksheetSaveFailedStatus = (saveFailed) => ({
   }
 });
 
-// export const setWorksheetSaveSuccessStatus = () => ({
-//   type: Constants.SET_WORKSHEET_SAVE_SUCCESS_STATUS,
-//   payload: {
-//     saveSuccess: false
-//   }
-// });
-
 export const saveWorksheet = (worksheet) => (dispatch) => {
   if (!worksheet.edited) {
     dispatch(setWorksheetTimeSaved(now()));
