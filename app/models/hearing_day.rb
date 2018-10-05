@@ -69,8 +69,10 @@ class HearingDay < ApplicationRecord
       enriched_hearing_days = []
       total_video_and_co.each do |hearing_day|
         enriched_hearing_days << hearing_day.slice(:id, :hearing_date, :hearing_type)
-        hearing_location = hearing_day[:regional_office].nil? ? "Central" : hearing_day[:regional_office]
+        enriched_hearing_days[enriched_hearing_days.length - 1][:total_slots] =
+          HearingDayRepository.fetch_hearing_day_slots(hearing_day)
         enriched_hearing_days[enriched_hearing_days.length - 1][:hearings] = []
+        hearing_location = hearing_day[:regional_office].nil? ? "Central" : hearing_day[:regional_office]
         hearings = []
         if hearing_location == "Central"
           hearings.push(VACOLS::CaseHearing.find(hearing_day[:id]))
@@ -83,21 +85,24 @@ class HearingDay < ApplicationRecord
     end
 
     def format_hearings(enriched_hearing_days, hearing_location, hearings)
+      hearing_count = 0
       hearings.each do |hearing|
+        hearing_count = hearing_count + 1
         enriched_hearing_days[enriched_hearing_days.length - 1][:hearings].push(
           id: hearing.hearing_pkseq,
           hearing_location: hearing_location,
           hearing_time: hearing.hearing_date,
           hearing_disposition: hearing.hearing_disp
         )
-        hearing_cnt = enriched_hearing_days[enriched_hearing_days.length - 1][:hearings].length
-        format_appeal_info_for_hearing(enriched_hearing_days, hearing_cnt, hearing)
+        hearing_idx = enriched_hearing_days[enriched_hearing_days.length - 1][:hearings].length
+        format_appeal_info_for_hearing(enriched_hearing_days, hearing_idx, hearing)
       end
+      enriched_hearing_days[enriched_hearing_days.length - 1][:filled_slots] = hearing_count
     end
 
-    def format_appeal_info_for_hearing(enriched_hearing_days, hearing_cnt, hearing)
+    def format_appeal_info_for_hearing(enriched_hearing_days, hearing_idx, hearing)
       appeal = LegacyAppeal.find_by_vacols_id(hearing.folder_nr)
-      enriched_hearing_days[enriched_hearing_days.length - 1][:hearings][hearing_cnt - 1][:appeal_info] = {
+      enriched_hearing_days[enriched_hearing_days.length - 1][:hearings][hearing_idx - 1][:appeal_info] = {
         veteran_name: appeal.veteran_full_name,
         appelant_name: "#{appeal.appellant_first_name} #{appeal.appellant_last_name}",
         appeal_type: appeal.type,

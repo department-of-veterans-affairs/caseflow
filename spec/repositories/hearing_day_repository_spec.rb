@@ -28,19 +28,16 @@ describe HearingDayRepository do
     end
   end
 
-  context ".fetch_hearing_days_slots" do
-    subject { HearingDayRepository.fetch_hearing_days_slots(hearing_days) }
+  context ".fetch_hearing_day_slots" do
+    subject { HearingDayRepository.fetch_hearing_day_slots(hearing_day) }
     let!(:staff) { create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
-    let(:hearing_days) do
-      [{ regional_office: "RO04",
+    let(:hearing_day) do
+      { regional_office: "RO04",
          hearing_date: Date.new(2018, 9, 20),
-         hearing_type: HearingDay::HEARING_TYPES[:video] }]
+         hearing_type: HearingDay::HEARING_TYPES[:video] }
     end
     it {
-      is_expected.to eq [{ regional_office: "RO04",
-                           hearing_date: Date.new(2018, 9, 20),
-                           hearing_type: HearingDay::HEARING_TYPES[:video],
-                           total_slots: 4 }]
+      is_expected.to eq(4)
     }
   end
 end

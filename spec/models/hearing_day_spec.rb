@@ -97,7 +97,7 @@ describe HearingDay do
       subject { VACOLS::CaseHearing.load_days_for_range(schedule_period.start_date, schedule_period.end_date) }
 
       it do
-        expect(subject.size).to eq(358)
+        expect(subject.size).to eql(358)
       end
     end
   end
@@ -109,6 +109,7 @@ describe HearingDay do
     let(:appeal) do
       create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
     end
+    let!(:staff) { create(:staff, stafkey: "RO13", stc2: 2, stc3: 3, stc4: 4) }
     let(:hearing) do
       create(:case_hearing, folder_nr: appeal.vacols_id)
     end
@@ -121,7 +122,7 @@ describe HearingDay do
     context "get parent and children structure" do
       it "returns nested hash structure" do
         expect(subject.size).to eq(1)
-        expect(subject[0][:hearings].size).to eq(1)
+        expect(subject[0][:hearings].size).to eql(1)
         expect(subject[0][:hearings][0][:hearing_location])
           .to eq parent_hearing.folder_nr.slice(6, parent_hearing.folder_nr.length)
         expect(subject[0][:hearings][0][:appeal_info][:veteran_name]).to eq appeal.veteran_full_name
@@ -136,6 +137,7 @@ describe HearingDay do
     let(:appeal) do
       create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
     end
+    let!(:staff) { create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
     let(:hearing) do
       create(:case_hearing, hearing_type: "C", folder_nr: appeal.vacols_id)
     end
@@ -145,7 +147,7 @@ describe HearingDay do
     context "get parent and children structure" do
       it "returns nested hash structure" do
         expect(subject.size).to eq(1)
-        expect(subject[0][:hearings].size).to eq(1)
+        expect(subject[0][:hearings].size).to eql(1)
         expect(subject[0][:hearings][0][:hearing_location]).to eq "Central"
         expect(subject[0][:hearings][0][:appeal_info][:veteran_name]).to eq appeal.veteran_full_name
       end
