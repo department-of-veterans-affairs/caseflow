@@ -123,7 +123,7 @@ describe HearingDay do
         expect(subject.size).to eq(1)
         expect(subject[0][:hearings].size).to eq(1)
         expect(subject[0][:hearings][0][:hearing_location])
-            .to eq parent_hearing.folder_nr.slice(6, parent_hearing.folder_nr.length)
+          .to eq parent_hearing.folder_nr.slice(6, parent_hearing.folder_nr.length)
         expect(subject[0][:hearings][0][:appeal_info][:veteran_name]).to eq appeal.veteran_full_name
       end
     end
