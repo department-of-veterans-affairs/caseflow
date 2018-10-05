@@ -104,13 +104,13 @@ RSpec.feature "Supplemental Claim Intake" do
     visit "/intake"
     safe_click ".Select"
     expect(page).to have_css(".cf-form-dropdown")
-    expect(page).to have_content(ConstantsHelper::INTAKE_FORM_RAMP_REFILING)
-    expect(page).to have_content(ConstantsHelper::INTAKE_FORM_HIGHER_LEVEL_REVIEW)
-    expect(page).to have_content(ConstantsHelper::INTAKE_FORM_SUPPLEMENTAL_CLAIM)
-    expect(page).to have_content(ConstantsHelper::INTAKE_FORM_APPEAL)
+    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.ramp_refiling)
+    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
+    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
+    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.appeal)
 
     safe_click ".Select"
-    fill_in "Which form are you processing?", with: ConstantsHelper::INTAKE_FORM_SUPPLEMENTAL_CLAIM
+    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.supplemental_claim
     find("#form-select").send_keys :enter
 
     safe_click ".cf-submit.usa-button"
@@ -206,7 +206,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Request for #{ConstantsHelper::INTAKE_FORM_SUPPLEMENTAL_CLAIM} has been processed.")
+    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
     expect(page).to have_content(
       "Established EP: 040SCR - Supplemental Claim Rating for Station 397 - ARC"
     )
@@ -312,7 +312,7 @@ RSpec.feature "Supplemental Claim Intake" do
     )
 
     visit "/supplemental_claims/#{ratings_end_product_establishment.reference_id}/edit"
-    expect(page).to have_content(ConstantsHelper::INTAKE_FORM_SUPPLEMENTAL_CLAIM)
+    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
     expect(page).to have_content("Ed Merica (12341234)")
     expect(page).to have_content("04/20/2018")
     expect(page).to_not have_content("Informal conference request")
@@ -395,7 +395,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Request for #{ConstantsHelper::INTAKE_FORM_SUPPLEMENTAL_CLAIM} has been processed.")
+    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
   end
 
   context "For new Add Issues page" do
@@ -421,7 +421,7 @@ RSpec.feature "Supplemental Claim Intake" do
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add Issues")
-      check_row("Form", ConstantsHelper::INTAKE_FORM_SUPPLEMENTAL_CLAIM)
+      check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Ed Merica")
 
@@ -462,7 +462,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
       safe_click "#button-finish-intake"
 
-      expect(page).to have_content("Request for #{ConstantsHelper::INTAKE_FORM_SUPPLEMENTAL_CLAIM} has been processed.")
+      expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
 
       expect(page).to have_content(
         "Established EP: 040SCR - Supplemental Claim Rating for Station 397 - ARC"
@@ -500,7 +500,7 @@ RSpec.feature "Supplemental Claim Intake" do
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add Issues")
-      check_row("Form", ConstantsHelper::INTAKE_FORM_SUPPLEMENTAL_CLAIM)
+      check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
       check_row("Benefit type", "Education")
       expect(page).to_not have_content("Claimant")
     end
