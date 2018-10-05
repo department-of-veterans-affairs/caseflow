@@ -7,7 +7,14 @@ class HigherLevelReview < ClaimReview
   END_PRODUCT_RATING_CODE = "030HLRR".freeze
   END_PRODUCT_NONRATING_CODE = "030HLRNR".freeze
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 033 035 036 037 038 039].freeze
-  DTA_ERRORS = ["DTA Error - PMRs", "DTA Error - Fed Recs", "DTA Error - Other Recs", "DTA Error - Exam/MO"].freeze
+
+  # NOTE: These are the string identifiers for the DTA error dispositions returned from VBMS.
+  # The characters an encoding is precise so don't change these unless you know they match VBMS values.
+  DTA_ERROR_PMR = "DTA Error - PMRs".freeze
+  DTA_ERROR_FED_RECS = "DTA Error - Fed Recs".freeze
+  DTA_ERROR_OTHER_RECS = "DTA Error - Other Recs".freeze
+  DTA_ERROR_EXAM_MO = "DTA Error - Exam/MO".freeze
+  DTA_ERRORS = [DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO].freeze
 
   def ui_hash
     {

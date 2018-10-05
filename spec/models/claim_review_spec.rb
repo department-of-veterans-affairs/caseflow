@@ -568,7 +568,7 @@ describe ClaimReview do
         Generators::Contention.build(
           claim_id: end_product_establishment.reference_id,
           text: "decision text",
-          disposition: "DTA Error - PMRs"
+          disposition: HigherLevelReview::DTA_ERROR_PMR
         )
       end
 
@@ -576,7 +576,7 @@ describe ClaimReview do
         Generators::Contention.build(
           claim_id: end_product_establishment.reference_id,
           text: "another decision text",
-          disposition: "DTA Error - Fed Recs"
+          disposition: HigherLevelReview::DTA_ERROR_FED_RECS
         )
       end
 
@@ -584,7 +584,7 @@ describe ClaimReview do
         Generators::Contention.build(
           claim_id: end_product_establishment.reference_id,
           text: "Issue text",
-          disposition: "DTA Error - Exam/MO"
+          disposition: HigherLevelReview::DTA_ERROR_EXAM_MO
         )
       end
 
