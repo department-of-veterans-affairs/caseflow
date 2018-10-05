@@ -258,8 +258,8 @@ describe User do
     context "when legacy appeal" do
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
 
-      it "when access_to_legacy_task? returns true, should return true" do
-        expect(user).to receive(:access_to_legacy_task?).with(appeal.vacols_id).once.and_return(true)
+      it "when fail_if_no_access_to_legacy_task! returns true, should return true" do
+        expect(user).to receive(:fail_if_no_access_to_legacy_task!).with(appeal.vacols_id).once.and_return(true)
         expect(user.appeal_has_task_assigned_to_user?(appeal)).to eq(true)
       end
     end
