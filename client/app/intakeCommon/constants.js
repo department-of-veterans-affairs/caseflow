@@ -11,17 +11,17 @@ export const FORM_TYPES = {
   },
   HIGHER_LEVEL_REVIEW: {
     key: 'higher_level_review',
-    name: 'Request for Higher-Level Review (VA Form 20-0988)',
+    name: 'Decision Review Request: Higher-Level Review — VA Form 20-0996',
     category: 'ama'
   },
   SUPPLEMENTAL_CLAIM: {
     key: 'supplemental_claim',
-    name: 'Supplemental Claim (VA Form 21-526b)',
+    name: 'Decision Review Request: Supplemental Claim — VA Form 20-0995',
     category: 'ama'
   },
   APPEAL: {
     key: 'appeal',
-    name: 'Notice of Disagreement (VA Form 10182)',
+    name: 'Decision Review Request: Board Appeal (Notice of Disagreement) — VA Form 10182',
     category: 'ama'
   }
 };
