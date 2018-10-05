@@ -63,7 +63,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def create_dta_supplemental_claim
-    return if dta_issues.empty?
+    return if dta_issues_needing_follow_up.empty?
 
     dta_supplemental_claim.create_issues!(build_follow_up_dta_issues)
 
@@ -75,7 +75,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def build_follow_up_dta_issues
-    dta_issues.map do |dta_issue|
+    dta_issues_needing_follow_up.map do |dta_issue|
       # do not copy over end product establishment id,
       # review request, removed_at, disposition, and contentions
       RequestIssue.new(
@@ -90,8 +90,8 @@ class HigherLevelReview < ClaimReview
     end
   end
 
-  def dta_issues
-    @dta_issues ||= request_issues.no_follow_up_issues.where(disposition: DTA_ERRORS)
+  def dta_issues_needing_follow_up
+    @dta_issues_needing_follow_up ||= request_issues.no_follow_up_issues.where(disposition: DTA_ERRORS)
   end
 
   def dta_supplemental_claim
