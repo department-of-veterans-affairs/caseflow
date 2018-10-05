@@ -125,7 +125,7 @@ describe RampRefilingIntake do
       pending_ramp_election.recreate_issues_from_contentions!
     end
 
-    it "only returns issues for RAMP elections with compelted decisions" do
+    it "only returns issues for RAMP elections with completed decisions" do
       expect(subject[:issues].count).to eq(1)
       expect(subject[:issues].first[:description]).to eq("Left knee")
     end
@@ -324,15 +324,6 @@ describe RampRefilingIntake do
 
       let(:claim_id1) { EndProductEstablishment.find_by(source: ramp_election1).reference_id }
       let(:claim_id2) { EndProductEstablishment.find_by(source: ramp_election2).reference_id }
-
-      context "the EP associated with original RampElection is still pending" do
-        let(:end_product_status) { "PEND" }
-
-        it "adds ramp_election_is_active and returns false" do
-          expect(subject).to eq(false)
-          expect(intake.error_code).to eq("ramp_election_is_active")
-        end
-      end
 
       context "the EP associated with original RampElection is closed" do
         context "there are no contentions on the EP" do
