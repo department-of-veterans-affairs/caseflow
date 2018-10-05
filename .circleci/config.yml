@@ -169,6 +169,11 @@ jobs:
           name: yarn install
           command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
+      - save_cache:
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+
       - run:
           name: Danger
           command: |
@@ -183,6 +188,16 @@ jobs:
           name: Security
           command: |
             ~/project/ci-bin/capture-log "bundle exec rake security_caseflow"
+
+      - deploy:
+          name: Concatenate all logs
+          command: |
+            ~/project/ci-bin/concatenate-log.rb >> ~/all_logs.log
+          when: always
+
+      - store_artifacts:
+          name: Store concatenated logs
+          path: ~/all_logs.log
 
   js_tests:
     docker:
@@ -204,27 +219,29 @@ jobs:
       - restore_cache:
           name: Restore yarn cache
           key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+
       - run:
           name: yarn install
           command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
+
+      - save_cache:
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+
       - run:
           name: Mocha
           command: |
             mkdir -p ~/test-results/mocha
             pushd client
             ~/project/ci-bin/capture-log "node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --compilers jsx:babel-core/register test/node/setup.js test/node"
+
       - run:
           name: Karma
           command: |
-            mkdir -p ~/karma-test-results/karma
+            mkdir -p ~/test-results/karma
             pushd client
             ~/project/ci-bin/capture-log "node_modules/.bin/karma start --reporters junit"
-
-      # Karma gets its own test results directory because otherwise
-      # we would upload the test results directory twice, doubling
-      # the perceived test count.
-      - store_test_results:
-          path: ~/karma-test-results
 
       - store_test_results:
           name: Store test results as summary
@@ -233,6 +250,16 @@ jobs:
       - store_artifacts:
           name: Store test results as artifact
           path: ~/test-results
+
+      - deploy:
+          name: Concatenate all logs
+          command: |
+            ~/project/ci-bin/concatenate-log.rb >> ~/all_logs.log
+          when: always
+
+      - store_artifacts:
+          name: Store concatenated logs
+          path: ~/all_logs.log
 
 workflows:
   version: 2
