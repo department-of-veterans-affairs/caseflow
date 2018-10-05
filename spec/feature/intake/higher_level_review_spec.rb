@@ -545,6 +545,8 @@ RSpec.feature "Higher-Level Review" do
       # clicking the add issues button should bring up the modal
       safe_click "#button-add-issue"
 
+      expect(page).to have_content("Add issue 1")
+      expect(page).to have_content("Does issue 1 match any of these issues")
       expect(page).to have_content("Left knee granted")
       expect(page).to have_content("PTSD denied")
 
@@ -573,6 +575,8 @@ RSpec.feature "Higher-Level Review" do
 
       # clicking add issue again should show a disabled radio button for that same rating
       safe_click "#button-add-issue"
+      expect(page).to have_content("Add issue 2")
+      expect(page).to have_content("Does issue 2 match any of these issues")
       expect(page).to have_content("Left knee granted (already selected for issue 1)")
       expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
       safe_click ".close-modal"
