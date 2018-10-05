@@ -256,24 +256,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       appeal,
       taskAssignedToUser,
       taskAssignedToOrganization,
-      userRole
     } = this.props;
-    let ActionDropdown;
-    const dropdownArgs = { appealId: appeal.externalId };
-    const task = taskAssignedToUser || taskAssignedToOrganization;
-
-    if (
-      [USER_ROLE_TYPES.attorney, USER_ROLE_TYPES.colocated].includes(userRole) ||
-      (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout)
-    ) {
-      ActionDropdown = <ActionsDropdown task={task} appealId={appeal.externalId} />;
-    // } else if (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout) {
-    //   ActionDropdown = <JudgeActionsDropdown {...dropdownArgs} />;
-    } else {
-      ActionDropdown = <ActionsDropdown
-        task={taskAssignedToUser || taskAssignedToOrganization} appealId={appeal.externalId} />;
-    }
-
     const taskAssignedToVso = taskAssignedToOrganization && taskAssignedToOrganization.assignedTo.type === 'Vso';
 
     return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
@@ -322,7 +305,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       {this.showActionsSection() &&
         <div className="usa-width-one-half">
           <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-          {ActionDropdown}
+          <ActionsDropdown task={taskAssignedToUser || taskAssignedToOrganization} appealId={appeal.externalId} />
         </div>
       }
     </div>;
