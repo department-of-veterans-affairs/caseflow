@@ -27,7 +27,7 @@ class Hearings::HearingDayController < HearingScheduleController
   def index_with_hearings
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    enriched_hearings = HearingDay.load_days_with_hearings(Time.zone.today.beginning_of_day - 365.days,
+    enriched_hearings = HearingDay.load_days_with_hearings(Time.zone.today.beginning_of_day,
                                                            Time.zone.today.beginning_of_day + 365.days,
                                                            regional_office)
 
