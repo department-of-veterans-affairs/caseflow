@@ -87,7 +87,7 @@ class HearingDay < ApplicationRecord
     def format_hearings(enriched_hearing_days, hearing_location, hearings)
       hearing_count = 0
       hearings.each do |hearing|
-        hearing_count = hearing_count + 1
+        hearing_count += 1
         enriched_hearing_days[enriched_hearing_days.length - 1][:hearings].push(
           id: hearing.hearing_pkseq,
           hearing_location: hearing_location,
