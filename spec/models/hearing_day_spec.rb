@@ -117,9 +117,9 @@ describe HearingDay do
       VACOLS::CaseHearing.find(hearing.vdkey)
     end
 
-    subject { HearingDay.load_days_with_hearings(hearing.hearing_date, hearing.hearing_date) }
-
     context "get parent and children structure" do
+      subject { HearingDay.load_days_with_hearings(hearing.hearing_date, hearing.hearing_date) }
+
       it "returns nested hash structure" do
         expect(subject.size).to eql(1)
         expect(subject[0][:hearings].size).to eql(1)
@@ -142,9 +142,9 @@ describe HearingDay do
       create(:case_hearing, hearing_type: "C", folder_nr: appeal.vacols_id)
     end
 
-    subject { HearingDay.load_days_with_hearings(hearing.hearing_date, hearing.hearing_date) }
-
     context "get parent and children structure" do
+      subject { HearingDay.load_days_with_hearings(hearing.hearing_date, hearing.hearing_date) }
+
       it "returns nested hash structure" do
         expect(subject.size).to eql(1)
         expect(subject[0][:hearings].size).to eql(1)
