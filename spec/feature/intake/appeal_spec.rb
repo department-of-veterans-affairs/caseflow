@@ -76,7 +76,8 @@ RSpec.feature "Appeal Intake" do
     visit "/intake"
     safe_click ".Select"
 
-    fill_in "Which form are you processing?", with: "Notice of Disagreement (VA Form 10182)"
+    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.appeal
+
     find("#form-select").send_keys :enter
 
     safe_click ".cf-submit.usa-button"
@@ -166,7 +167,7 @@ RSpec.feature "Appeal Intake" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Notice of Disagreement (VA Form 10182) has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
 
     intake.reload
     expect(intake.completed_at).to eq(Time.zone.now)
@@ -261,7 +262,7 @@ RSpec.feature "Appeal Intake" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Notice of Disagreement (VA Form 10182) has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
   end
 
   def check_row(label, text)
@@ -283,12 +284,15 @@ RSpec.feature "Appeal Intake" do
     visit "/intake/add_issues"
 
     expect(page).to have_content("Add Issues")
-    check_row("Form", "Notice of Disagreement (VA Form 10182)")
+
+    check_row("Form", Constants.INTAKE_FORM_NAMES.appeal)
     check_row("Review option", "Evidence Submission")
     check_row("Claimant", "Ed Merica")
 
     # clicking the add issues button should bring up the modal
     safe_click "#button-add-issue"
+    expect(page).to have_content("Add issue 1")
+    expect(page).to have_content("Does issue 1 match any of these issues")
     expect(page).to have_content("Left knee granted")
     expect(page).to have_content("PTSD denied")
 
@@ -301,11 +305,31 @@ RSpec.feature "Appeal Intake" do
     find("label", text: "Left knee granted").click
     safe_click ".add-issue"
 
-    expect(page).to have_content("1. Left knee granted")
+    # removing the issue should hide the issue
+    safe_click ".remove-issue"
+
+    expect(page).to_not have_content("Left knee granted")
+
+    # re-add to proceed
+    safe_click "#button-add-issue"
+    find("label", text: "Left knee granted").click
+    fill_in "Notes", with: "I am an issue note"
+    safe_click ".add-issue"
+
+    expect(page).to have_content("1.Left knee granted")
+    expect(page).to have_content("I am an issue note")
+
+    # clicking add issue again should show a disabled radio button for that same rating
+    safe_click "#button-add-issue"
+    expect(page).to have_content("Add issue 2")
+    expect(page).to have_content("Does issue 2 match any of these issues")
+    expect(page).to have_content("Left knee granted (already selected for issue 1)")
+    expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
+    safe_click ".close-modal"
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Notice of Disagreement (VA Form 10182) has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
 
     expect(Appeal.find_by(
              id: appeal.id,

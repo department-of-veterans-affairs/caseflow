@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181001214125) do
+ActiveRecord::Schema.define(version: 20181004232948) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -602,6 +602,7 @@ ActiveRecord::Schema.define(version: 20181001214125) do
     t.integer "parent_request_issue_id"
     t.text "notes"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
+    t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
   end
 
