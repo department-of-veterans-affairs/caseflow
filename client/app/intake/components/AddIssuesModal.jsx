@@ -71,6 +71,8 @@ class AddIssuesModal extends React.Component {
       />;
     });
 
+    const issueNumber = (intakeData.addedIssues || []).length + 1;
+
     return <div>
       <Modal
         buttons={[
@@ -86,11 +88,11 @@ class AddIssuesModal extends React.Component {
         ]}
         visible
         closeHandler={closeHandler}
-        title="Add Issue"
+        title={`Add issue ${issueNumber}`}
       >
         <div>
           <h2>
-            Does this issue match any of these issues from past descriptions?
+            Does issue {issueNumber} match any of these issues from past descriptions?
           </h2>
           <p>
             Tip: sometimes applicants list desired outcome, not what the past decision was
