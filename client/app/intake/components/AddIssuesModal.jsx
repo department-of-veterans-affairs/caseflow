@@ -71,7 +71,7 @@ class AddIssuesModal extends React.Component {
       />;
     });
 
-    return <div>
+    return <div className='intake-add-issues'>
       <Modal
         buttons={[
           { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
@@ -79,9 +79,13 @@ class AddIssuesModal extends React.Component {
             onClick: closeHandler
           },
           { classNames: ['usa-button', 'usa-button-secondary', 'add-issue'],
-            name: 'Add Issue',
+            name: 'Add this issue',
             onClick: this.onAddIssue,
             disabled: !this.state.referenceId
+          },
+          { classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
+            name: 'None of these match, see more options',
+            onClick: this.props.toggleNonRatedIssueModal
           }
         ]}
         visible
@@ -105,15 +109,6 @@ class AddIssuesModal extends React.Component {
             strongLabel
             onChange={this.notesOnChange} />
         </div>
-
-        <Button
-          name="add-issue"
-          legacyStyling={false}
-          classNames={['usa-button-secondary']}
-          onClick={this.props.toggleNonRatedIssueModal}
-        >
-          + None of these match, see more options
-        </Button>
       </Modal>
     </div>;
   }
