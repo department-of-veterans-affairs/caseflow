@@ -121,7 +121,7 @@ describe HearingDay do
 
     context "get parent and children structure" do
       it "returns nested hash structure" do
-        expect(subject.size).to eq(1)
+        expect(subject.size).to eql(1)
         expect(subject[0][:hearings].size).to eql(1)
         expect(subject[0][:hearings][0][:hearing_location])
           .to eq parent_hearing.folder_nr.slice(6, parent_hearing.folder_nr.length)
@@ -146,7 +146,7 @@ describe HearingDay do
 
     context "get parent and children structure" do
       it "returns nested hash structure" do
-        expect(subject.size).to eq(1)
+        expect(subject.size).to eql(1)
         expect(subject[0][:hearings].size).to eql(1)
         expect(subject[0][:hearings][0][:hearing_location]).to eq "Central"
         expect(subject[0][:hearings][0][:appeal_info][:veteran_name]).to eq appeal.veteran_full_name
