@@ -49,17 +49,23 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     let!(:current_user) do
       User.authenticate!(roles: ["Establish Claim", "Manage Claim Establishment"])
     end
+    let!(:task_one) { create(:establish_claim, aasm_state: :unassigned, prepared_at: Date.yesterday) }
+    let!(:task_two) { create(:establish_claim, aasm_state: :unassigned, prepared_at: Date.yesterday) }
+    let!(:task_three) { create(:establish_claim, aasm_state: :unassigned, prepared_at: Date.yesterday) }
+    let!(:task_four) { create(:establish_claim, aasm_state: :unassigned, prepared_at: Date.yesterday) }
 
-    scenario "View quotas and update employee count" do
+    scenario "View quotas and update employee count", focus: true do
       # Create 4 incomplete tasks and one completed today
-      4.times { Generators::EstablishClaim.create(aasm_state: :unassigned, prepared_at: Date.yesterday) }
 
-      Generators::EstablishClaim.create(appeal_id: appeal.id, user: case_worker, aasm_state: :assigned).tap do |task|
+      EstablishClaim.create(appeal_id: appeal.id, user: case_worker, aasm_state: :assigned).tap do |task|
         task.start!
         task.complete!(status: :routed_to_arc)
       end
 
       visit "/dispatch/work-assignments"
+
+      binding.pry
+
       expect(page).to have_content("ARC Work Assignments")
 
       # Validate help link
