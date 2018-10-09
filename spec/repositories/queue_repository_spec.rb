@@ -74,11 +74,20 @@ describe QueueRepository do
 
         QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
 
-        # Check for new Decass record
+        expect(VACOLS::Decass.where(defolder: vacols_id).length).to eq(2)
       end
     end
 
-    # Add test for multiple existing Decass records
+    context "when there's more than one existing Decass record" do
+      it "should throw an exception" do
+        create(:decass, :omo_request, defolder: vacols_id)
+        create(:decass, :omo_request, defolder: vacols_id)
+
+        expect do
+          QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
+        end.to raise_error(QueueRepository::ExistingDecassError)
+      end
+    end
   end
 
   context ".reassign_case_to_judge!" do
