@@ -12,7 +12,7 @@ const containerStyling = css({
 const iconStyling = css({
   display: 'table-cell',
   padding: '0.75rem 0.25rem 0 0',
-  verticalAlign: 'middle',
+  verticalAlign: 'middle'
 });
 const textStyling = css({
   color: COLORS.PRIMARY,
