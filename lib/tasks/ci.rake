@@ -87,6 +87,8 @@ namespace :ci do
     require "simplecov"
 
     api_url = "https://circleci.com/api/v1.1/project/github/#{ENV['CIRCLE_PROJECT_USERNAME']}/#{ENV['CIRCLE_PROJECT_REPONAME']}/#{ENV['CIRCLE_BUILD_NUM']}/artifacts" # rubocop:disable Metrics/LineLength
+
+    https://circleci.com/api/v1.1/project/github/
     coverage_dir = "/tmp/coverage"
     SimpleCov.coverage_dir(coverage_dir)
     # Set the merge_timeout very large so that we don't exclude results
@@ -110,6 +112,7 @@ namespace :ci do
     SimpleCov::ResultMerger.store_result(result)
     if result.covered_percentages.empty?
       puts Rainbow("No valid coverage results were found").red
+      $stdout.flush
       exit!(1)
     end
     # This prints code coverage statistics as a side effect, which we want
@@ -118,9 +121,11 @@ namespace :ci do
     if result.covered_percentages.any? { |c| c < CODE_COVERAGE_THRESHOLD }
       puts Rainbow("File #{result.least_covered_file} is only #{result.covered_percentages.min.to_i}% covered.\
                   This is below the expected minimum coverage per file of #{CODE_COVERAGE_THRESHOLD}%\n").red
+      $stdout.flush
       exit!(1)
     else
       puts Rainbow("Code coverage threshold met\n").green
+      $stdout.flush
       exit!(0)
     end
   end
