@@ -111,7 +111,7 @@ describe HearingDay do
       it "updates judge" do
         hearing_id = hearing[:id] + 1
         hearing_to_update = HearingDay.find_hearing_day(nil, hearing_id)
-        HearingDay.update_hearing_day(hearing_to_update, {judge_id: "987"})
+        HearingDay.update_hearing_day(hearing_to_update, hearing_hash: { judge_id: "987" })
         expect(hearing_to_update[:board_member]).to eq "987"
       end
     end
