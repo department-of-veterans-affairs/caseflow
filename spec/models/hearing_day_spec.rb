@@ -82,7 +82,7 @@ describe HearingDay do
     end
   end
 
-  context "update hearing", focus: true do
+  context "update hearing" do
     let(:hearing) do
       RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
       Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
@@ -113,6 +113,21 @@ describe HearingDay do
         hearing_to_update = HearingDay.find_hearing_day(nil, hearing_id)
         HearingDay.update_hearing_day(hearing_to_update, judge_id: "987")
         expect(hearing_to_update[:board_member]).to eq "987"
+      end
+    end
+
+    context "update judge attribute in Caseflow hearing day" do
+      let(:hearing_hash) do
+        { hearing_type: "C",
+          hearing_date: test_hearing_date_caseflow,
+          regional_office: "RO89",
+          room_info: "5" }
+      end
+
+      it "updates judge" do
+        hearing_to_update = HearingDay.find_hearing_day(nil, hearing[:id])
+        HearingDay.update_hearing_day(hearing_to_update, judge_id: "987")
+        expect(hearing_to_update[:judge_id]).to eq "987"
       end
     end
   end
