@@ -22,21 +22,32 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     User.create(station_id: "123", css_id: "JANESMITH", full_name: "Jane Smith")
   end
 
-  let(:vacols_case_with_decision_document) do
+  let(:case_full_grant) do
     create(:case_with_decision, :status_complete, case_issues:
       [create(:case_issue, :education, :disposition_allowed)])
   end
 
-  let(:appeal) do
-    create(:legacy_appeal, vacols_case: vacols_case_with_decision_document)
+  let(:appeal_full_grant) do
+    create(:legacy_appeal, vacols_case: case_full_grant)
   end
 
-  let(:appeal_full_grant) do
-    Generators::LegacyAppeal.create(vacols_record: :full_grant_decided, documents: documents)
+  let(:folder) { build(:folder, tioctime: 23.days.ago.midnight) }
+
+  let(:case_remand) do
+    create(:case_with_decision, :status_remand, folder: folder)
+  end
+
+  let(:appeal_remand) do
+    create(:legacy_appeal, vacols_case: case_remand)
+  end
+
+  let(:case_partial_grant) do
+    create(:case_with_decision, :status_complete, case_issues:
+        [create(:case_issue, :education, :disposition_allowed)])
   end
 
   let(:appeal_partial_grant) do
-    Generators::LegacyAppeal.create(vacols_record: :partial_grant_decided, documents: documents)
+    create(:legacy_appeal, vacols_case: case_partial_grant)
   end
 
   let(:documents) do
@@ -49,23 +60,24 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     let!(:current_user) do
       User.authenticate!(roles: ["Establish Claim", "Manage Claim Establishment"])
     end
-    let!(:task_one) { create(:establish_claim, aasm_state: :unassigned, prepared_at: Date.yesterday) }
-    let!(:task_two) { create(:establish_claim, aasm_state: :unassigned, prepared_at: Date.yesterday) }
-    let!(:task_three) { create(:establish_claim, aasm_state: :unassigned, prepared_at: Date.yesterday) }
-    let!(:task_four) { create(:establish_claim, aasm_state: :unassigned, prepared_at: Date.yesterday) }
 
     scenario "View quotas and update employee count", focus: true do
       # Create 4 incomplete tasks and one completed today
+      4.times { create(:establish_claim, aasm_state: :unassigned, prepared_at: Date.yesterday) }
 
-      EstablishClaim.create(appeal_id: appeal.id, user: case_worker, aasm_state: :assigned).tap do |task|
+      create(:establish_claim, appeal: appeal_remand, user: case_worker, aasm_state: :assigned, prepared_at: Date.yesterday)
+
+      EstablishClaim.create(appeal_id: appeal_remand.id, user: case_worker, aasm_state: :assigned).tap do |task|
         task.start!
         task.complete!(status: :routed_to_arc)
       end
 
+      # create(:establish_claim,
+      #        appeal: appeal_remand,
+      #        user: case_worker,
+      #        aasm_state: :completed)
+
       visit "/dispatch/work-assignments"
-
-      binding.pry
-
       expect(page).to have_content("ARC Work Assignments")
 
       # Validate help link
