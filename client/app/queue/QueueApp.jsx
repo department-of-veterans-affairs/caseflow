@@ -35,7 +35,6 @@ import AssignToView from './AssignToView';
 import TriggerModal from './TriggerModal';
 
 import CaseListView from './CaseListView';
-import CaseSearchSheet from './CaseSearchSheet';
 import CaseDetailsView from './CaseDetailsView';
 import SubmitDecisionView from './SubmitDecisionView';
 import SelectDispositionsView from './SelectDispositionsView';
@@ -203,7 +202,7 @@ class QueueApp extends React.PureComponent<Props> {
             exact
             path="/search"
             title="Caseflow"
-            component={CaseSearchSheet} />
+            render={this.routedSearchResults} />
           <PageRoute
             exact
             path="/cases/:caseflowVeteranId"
