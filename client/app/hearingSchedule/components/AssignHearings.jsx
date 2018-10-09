@@ -60,8 +60,9 @@ export default class AssignHearings extends React.Component {
         {Object.values(this.props.upcomingHearingDays).slice(0, 9).
           map((hearingDay) => {
             const { selectedHearingDay } = this.props;
-            const availableSlots = hearingDay.totalSlots - Object.keys(hearingDay.hearings).length;
-            const dateSelected = selectedHearingDay && selectedHearingDay.hearingDate === hearingDay.hearingDate;
+            const dateSelected = selectedHearingDay &&
+            (selectedHearingDay.hearingDate === hearingDay.hearingDate &&
+               selectedHearingDay.roomInfo === hearingDay.roomInfo);
             const buttonColorSelected = css({
               backgroundColor: COLORS.GREY_DARK,
               color: COLORS.WHITE,
@@ -80,7 +81,7 @@ export default class AssignHearings extends React.Component {
                 linkStyling
               >
                 {`${moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}
-                ${this.roomInfo(hearingDay)} (${availableSlots} slots)`}
+                ${this.roomInfo(hearingDay)}`}
               </Button>
             </li>;
           })}
@@ -145,8 +146,8 @@ export default class AssignHearings extends React.Component {
 
     return <div className="usa-width-three-fourths">
       <h1>
-        {moment(selectedHearingDay.hearingDate).format('ddd M/DD/YYYY')}
-        {this.roomInfo(selectedHearingDay)} ({availableSlots} slots remaining)
+        {`${moment(selectedHearingDay.hearingDate).format('ddd M/DD/YYYY')}
+       ${this.roomInfo(selectedHearingDay)} (${availableSlots} slots remaining)`}
       </h1>
       <TabWindow
         name="scheduledHearings-tabwindow"
