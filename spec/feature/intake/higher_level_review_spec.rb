@@ -616,6 +616,7 @@ RSpec.feature "Higher-Level Review" do
         claimant_participant_id: "5382910292",
         payee_code: "02"
       )
+      
       expect(end_product_establishment).to_not be_nil
 
       non_rating_end_product_establishment = EndProductEstablishment.find_by(
