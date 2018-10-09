@@ -1,6 +1,11 @@
 import React from 'react';
 import Modal from '../../components/Modal';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+
+import { highlightInvalidFormItems } from '../uiReducer/uiActions';
+
 import Alert from '../../components/Alert';
 import { css } from 'glamor';
 
@@ -23,6 +28,15 @@ export default function editModalBase(ComponentToWrap, title) {
     }
 
     submit = () => {
+      const {
+        validateForm: validation = null
+      } = this.wrappedComponent;
+
+      if (validation && !validation()) {
+        return this.props.highlightInvalidFormItems(true);
+      }
+      this.props.highlightInvalidFormItems(false);
+
       this.setState({ loading: true });
 
       this.wrappedComponent.submit().then(() => {
@@ -65,5 +79,9 @@ export default function editModalBase(ComponentToWrap, title) {
     };
   };
 
-  return connect(mapStateToProps)(WrappedComponent);
+  const mapDispatchToProps = (dispatch) => bindActionCreators({
+    highlightInvalidFormItems
+  }, dispatch);
+
+  return withRouter(connect(mapStateToProps, mapDispatchToProps)(WrappedComponent));
 }
