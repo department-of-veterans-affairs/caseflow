@@ -152,9 +152,42 @@ describe HearingDay do
     end
   end
 
+  context "load Video days for a range date" do
+    let(:hearings) do
+      [create(:case_hearing),
+       create(:case_hearing)]
+    end
+
+    subject { HearingDay.load_days(Time.zone.today, Time.zone.today, "RO13") }
+
+    it "gets hearings for a date range" do
+      expect(subject.size).to eq 2
+    end
+  end
+
+  context "load Central Office days for a range date" do
+    let!(:hearings) do
+      [create(:case_hearing, hearing_type: "C", folder_nr: nil),
+       create(:case_hearing, hearing_type: "C", folder_nr: nil),
+       create(:case_hearing, hearing_type: "C", folder_nr: nil)]
+    end
+
+    subject { HearingDay.load_days(Time.zone.today, Time.zone.today, "C") }
+
+    it "gets hearings for a date range" do
+      hearings
+      expect(subject.size).to eq 2
+    end
+  end
+
   context "Video Hearing parent and child rows for a date range" do
     let(:vacols_case) do
-      create(:case)
+      create(
+        :case,
+        folder: create(:folder, tinum: "docket-number"),
+        bfregoff: "RO13",
+        bfcurloc: "57"
+      )
     end
     let(:appeal) do
       create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
@@ -168,21 +201,26 @@ describe HearingDay do
     end
 
     context "get parent and children structure" do
-      subject { HearingDay.load_days_with_hearings(hearing.hearing_date, hearing.hearing_date) }
+      subject { HearingDay.load_days_with_hearings(hearing.hearing_date, hearing.hearing_date, staff.stafkey) }
 
       it "returns nested hash structure" do
-        expect(subject.size).to eq subject.size
-        # expect(subject[0][:hearings].size).to eql(1)
-        # expect(subject[0][:hearings][0][:hearing_location])
-        #   .to eq parent_hearing.folder_nr.slice(6, parent_hearing.folder_nr.length)
-        # expect(subject[0][:hearings][0][:appeal_info][:veteran_name]).to eq appeal.veteran_full_name
+        expect(subject.size).to eq 1
+        expect(subject[0][:hearings].size).to eql(1)
+        expect(subject[0][:hearings][0][:hearing_location])
+          .to eq parent_hearing.folder_nr.slice(6, parent_hearing.folder_nr.length)
+        expect(subject[0][:hearings][0][:appeal_info][:veteran_name]).to eq appeal.veteran_full_name
       end
     end
   end
 
   context "Central Office parent and child rows for a date range" do
     let(:vacols_case) do
-      create(:case)
+      create(
+        :case,
+        folder: create(:folder, tinum: "docket-number"),
+        bfregoff: "RO04",
+        bfcurloc: "57"
+      )
     end
     let(:appeal) do
       create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
@@ -193,13 +231,13 @@ describe HearingDay do
     end
 
     context "get parent and children structure" do
-      subject { HearingDay.load_days_with_hearings(hearing.hearing_date, hearing.hearing_date) }
+      subject { HearingDay.load_days_with_hearings(hearing.hearing_date, hearing.hearing_date, "C") }
 
       it "returns nested hash structure" do
-        expect(subject.size).to eq subject.size
-        # expect(subject[0][:hearings].size).to eql(1)
-        # expect(subject[0][:hearings][0][:hearing_location]).to eq "Central"
-        # expect(subject[0][:hearings][0][:appeal_info][:veteran_name]).to eq appeal.veteran_full_name
+        expect(subject.size).to eq 1
+        expect(subject[0][:hearings].size).to eql(1)
+        expect(subject[0][:hearings][0][:hearing_location]).to eq "Central"
+        expect(subject[0][:hearings][0][:appeal_info][:veteran_name]).to eq appeal.veteran_full_name
       end
     end
   end
