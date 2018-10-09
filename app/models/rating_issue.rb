@@ -1,7 +1,5 @@
-class RatingIssue
-  include ActiveModel::Model
-
-  attr_accessor :reference_id, :decision_text
+class RatingIssue < ApplicationRecord
+  belongs_to :request_issue
 
   # If you change this method, you will need
   # to clear cache in prod for your changes to

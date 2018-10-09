@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181004232948) do
+ActiveRecord::Schema.define(version: 20181009214213) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,8 +23,8 @@ ActiveRecord::Schema.define(version: 20181004232948) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "granted"
-    t.index ["person_id"], name: "index_advance_on_docket_grants_on_person_id"
-    t.index ["user_id"], name: "index_advance_on_docket_grants_on_user_id"
+    t.index ["person_id"], name: "index_advance_on_docket_motions_on_person_id"
+    t.index ["user_id"], name: "index_advance_on_docket_motions_on_user_id"
   end
 
   create_table "allocations", force: :cascade do |t|
@@ -568,6 +568,14 @@ ActiveRecord::Schema.define(version: 20181004232948) do
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
     t.index ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number"
+  end
+
+  create_table "rating_issues", force: :cascade do |t|
+    t.bigint "request_issue_id", null: false
+    t.string "reference_id", null: false
+    t.datetime "profile_date", null: false
+    t.string "decision_text"
+    t.index ["request_issue_id"], name: "index_rating_issues_on_request_issue_id"
   end
 
   create_table "reader_users", id: :serial, force: :cascade do |t|
