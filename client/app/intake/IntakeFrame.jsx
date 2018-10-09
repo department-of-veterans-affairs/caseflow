@@ -14,7 +14,7 @@ import SelectFormPage, { SelectFormButton } from './pages/selectForm';
 import SearchPage from './pages/search';
 import ReviewPage, { ReviewButtons } from './pages/review';
 import FinishPage, { FinishButtons } from './pages/finish';
-import AddIssues from './pages/addIssues';
+import AddIssues from '../intakeCommon/pages/addIssues';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
 import { PAGE_PATHS } from './constants';
 import { REQUEST_STATE } from '../intakeCommon/constants';

@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from '../../components/Button';
 
-class CancelEdit extends React.PureComponent {
+class CancelEditButton extends React.PureComponent {
   render = () => {
     return <Button
       id="cancel-edit"
@@ -18,4 +18,4 @@ class CancelEdit extends React.PureComponent {
   }
 }
 
-export default CancelEdit;
+export default CancelEditButton;

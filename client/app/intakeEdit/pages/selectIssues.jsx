@@ -7,7 +7,7 @@ import RatedIssuesUnconnected from '../../intakeCommon/components/RatedIssues';
 import { setIssueSelected } from '../../intake/actions/ama';
 import { requestIssuesUpdate } from '../actions/selectIssues';
 import { FORM_TYPES, REQUEST_STATE } from '../../intakeCommon/constants';
-import CancelEdit from '../components/CancelEdit';
+import CancelEditButton from '../components/CancelEditButton';
 import RequestIssuesUpdateErrorAlert from '../components/RequestIssuesUpdateErrorAlert';
 
 // This page shouldn't matter that much which type of Review it is.
@@ -82,7 +82,7 @@ const RatedIssues = connect(
 export class SelectIssuesButtons extends React.PureComponent {
   render = () =>
     <div>
-      <CancelEdit history={this.props.history} />
+      <CancelEditButton history={this.props.history} />
       <SaveButton history={this.props.history} />
     </div>
 }

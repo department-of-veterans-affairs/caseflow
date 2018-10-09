@@ -11,7 +11,7 @@ import LandingPage from './pages/landing';
 import CancelPage from './pages/cancelled';
 import SelectIssuesPage, { SelectIssuesButtons } from './pages/selectIssues';
 import { css } from 'glamor';
-import CancelEdit from './components/CancelEdit';
+import CancelEditButton from './components/CancelEditButton';
 
 const textAlignRightStyling = css({
   textAlign: 'right'
@@ -69,7 +69,7 @@ export default class IntakeEditFrame extends React.PureComponent {
               <Route
                 exact
                 path={PAGE_PATHS.BEGIN}
-                component={CancelEdit}
+                component={CancelEditButton}
               />
               <Route
                 exact
