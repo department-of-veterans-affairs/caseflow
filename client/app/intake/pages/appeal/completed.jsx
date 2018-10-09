@@ -3,6 +3,7 @@ import StatusMessage from '../../../components/StatusMessage';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS, INTAKE_STATES } from '../../constants';
+import { FORM_TYPES } from '../../../intakeCommon/constants';
 import { getIntakeStatus } from '../../selectors';
 
 class Completed extends React.PureComponent {
@@ -23,7 +24,8 @@ class Completed extends React.PureComponent {
     }
 
     const message = `${veteran.name}'s (ID #${veteran.fileNumber}) ` +
-      'Notice of Disagreement (VA Form 10182) has been processed.';
+      `${FORM_TYPES.APPEAL.name}` +
+      ' has been processed.';
 
     return <div>
       <StatusMessage

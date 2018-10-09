@@ -70,7 +70,7 @@ gem "therubyracer", platforms: :ruby
 
 gem "pg", platforms: :ruby
 
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "44a3aee470f3ddd0e42eb2d07b87ed776b0f9fab"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "446b1ad643607e49dd3cacff24f7039bb17f78b8"
 
 gem "redis-rails", "~> 5.0.2"
 
@@ -88,7 +88,7 @@ gem "zero_downtime_migrations"
 
 # nokogiri versions before 1.8.3 are affected by CVE-2018-8048. Explicitly define nokogiri version here to avoid that.
 # https://github.com/sparklemotion/nokogiri/pull/1746
-gem "nokogiri", ">= 1.8.3"
+gem "nokogiri", "1.8.5"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB

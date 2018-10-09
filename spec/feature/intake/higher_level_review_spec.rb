@@ -93,7 +93,7 @@ RSpec.feature "Higher-Level Review" do
     visit "/intake"
     safe_click ".Select"
 
-    fill_in "Which form are you processing?", with: "Request for Higher-Level Review (VA Form 20-0988)"
+    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.higher_level_review
     find("#form-select").send_keys :enter
 
     safe_click ".cf-submit.usa-button"
@@ -216,7 +216,7 @@ RSpec.feature "Higher-Level Review" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988) has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
     expect(page).to have_content(
       "Established EP: 030HLRR - Higher-Level Review Rating for Station 397 - ARC"
     )
@@ -351,7 +351,7 @@ RSpec.feature "Higher-Level Review" do
     )
 
     visit "/higher_level_reviews/#{ratings_end_product_establishment.reference_id}/edit"
-    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988)")
+    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
     expect(page).to have_content("Ed Merica (12341234)")
     expect(page).to have_content("04/20/2018")
     expect(find("#table-row-3")).to have_content("Yes")
@@ -374,7 +374,7 @@ RSpec.feature "Higher-Level Review" do
     visit "/intake"
     safe_click ".Select"
 
-    fill_in "Which form are you processing?", with: "Request for Higher-Level Review (VA Form 20-0988)"
+    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.higher_level_review
     find("#form-select").send_keys :enter
 
     safe_click ".cf-submit.usa-button"
@@ -413,7 +413,7 @@ RSpec.feature "Higher-Level Review" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988) has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: "12341234",
@@ -505,7 +505,7 @@ RSpec.feature "Higher-Level Review" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988) has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
   end
 
   context "For new Add Issues page" do
@@ -538,13 +538,15 @@ RSpec.feature "Higher-Level Review" do
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add Issues")
-      check_row("Form", "Request for Higher-Level Review (VA Form 20-0988)")
+      check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Bob Vance, Spouse (payee code 02)")
 
       # clicking the add issues button should bring up the modal
       safe_click "#button-add-issue"
 
+      expect(page).to have_content("Add issue 1")
+      expect(page).to have_content("Does issue 1 match any of these issues")
       expect(page).to have_content("Left knee granted")
       expect(page).to have_content("PTSD denied")
 
@@ -557,11 +559,31 @@ RSpec.feature "Higher-Level Review" do
       find("label", text: "Left knee granted").click
       safe_click ".add-issue"
 
-      expect(page).to have_content("1. Left knee granted")
+      expect(page).to have_content("1.Left knee granted")
+      expect(page).to_not have_content("Notes:")
+      safe_click ".remove-issue"
+
+      expect(page).not_to have_content("Left knee granted")
+
+      # re-add to proceed
+      safe_click "#button-add-issue"
+      find("label", text: "Left knee granted").click
+      fill_in "Notes", with: "I am an issue note"
+      safe_click ".add-issue"
+      expect(page).to have_content("1.Left knee granted")
+      expect(page).to have_content("I am an issue note")
+
+      # clicking add issue again should show a disabled radio button for that same rating
+      safe_click "#button-add-issue"
+      expect(page).to have_content("Add issue 2")
+      expect(page).to have_content("Does issue 2 match any of these issues")
+      expect(page).to have_content("Left knee granted (already selected for issue 1)")
+      expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
+      safe_click ".close-modal"
 
       safe_click "#button-finish-intake"
 
-      expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988) has been processed.")
+      expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
       expect(page).to have_content(
         "Established EP: 030HLRR - Higher-Level Review Rating for Station 397 - ARC"
       )
@@ -591,7 +613,8 @@ RSpec.feature "Higher-Level Review" do
                review_request_id: higher_level_review.id,
                rating_issue_reference_id: "abc123",
                description: "Left knee granted",
-               end_product_establishment_id: end_product_establishment.id
+               end_product_establishment_id: end_product_establishment.id,
+               notes: "I am an issue note"
       )).to_not be_nil
     end
 
@@ -600,7 +623,7 @@ RSpec.feature "Higher-Level Review" do
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add Issues")
-      check_row("Form", "Request for Higher-Level Review (VA Form 20-0988)")
+      check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
       check_row("Benefit type", "Education")
       expect(page).to_not have_content("Claimant")
     end
