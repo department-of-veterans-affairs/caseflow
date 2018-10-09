@@ -96,7 +96,7 @@ class RequestIssuesUpdate < ApplicationRecord
       @error_code = :request_issues_data_empty
     elsif !changes?
       @error_code = :no_changes
-    elsif !RequestIssuesUpdate.where(review: review).processable.empty?
+    elsif RequestIssuesUpdate.where(review: review).processable.exists?
       @error_code = :previous_update_not_done_processing
     end
 
