@@ -1,5 +1,5 @@
 class QueueRepository
-  class ExistingDecassError < StandardError; end
+  class CaseAlreadyAssignedError < StandardError; end
 
   class << self
     # :nocov:
@@ -120,11 +120,7 @@ class QueueRepository
 
     def assign_case_to_attorney!(judge:, attorney:, vacols_id:)
       transaction do
-        case_decass_records = VACOLS::Decass.where(defolder: vacols_id)
-        fail ExistingDecassError if case_decass_records.length > 1
-        if case_decass_records.length == 1
-          fail ExistingDecassError unless case_decass_records[0].omo_request?
-        end
+        fail CaseAlreadyAssignedError unless VACOLS::Case.find(vacols_id).bfcurloc == judge.vacols_uniq_id
 
         update_location_to_attorney(vacols_id, attorney)
 

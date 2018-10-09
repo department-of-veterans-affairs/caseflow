@@ -58,34 +58,13 @@ describe QueueRepository do
       end
     end
 
-    context "when there's an existing Decass record for the case" do
+    context "when the case has already been assigned to an attorney" do
       it "should throw an exception" do
-        create(:decass, :draft_decision, defolder: vacols_id)
+        vacols_case.update(bfcurloc: attorney.vacols_uniq_id)
 
         expect do
           QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
-        end.to raise_error(QueueRepository::ExistingDecassError)
-      end
-    end
-
-    context "when the existing Decass record is an OMO request" do
-      it "should create a new Decass record" do
-        create(:decass, :omo_request, defolder: vacols_id)
-
-        QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
-
-        expect(VACOLS::Decass.where(defolder: vacols_id).length).to eq(2)
-      end
-    end
-
-    context "when there's more than one existing Decass record" do
-      it "should throw an exception" do
-        create(:decass, :omo_request, defolder: vacols_id)
-        create(:decass, :omo_request, defolder: vacols_id)
-
-        expect do
-          QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
-        end.to raise_error(QueueRepository::ExistingDecassError)
+        end.to raise_error(QueueRepository::CaseAlreadyAssignedError)
       end
     end
   end
