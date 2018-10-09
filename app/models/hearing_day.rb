@@ -84,6 +84,14 @@ class HearingDay < ApplicationRecord
       enriched_hearing_days
     end
 
+    def find_hearing_day(hearing_type, hearing_key)
+      find(hearing_key)
+    rescue ActiveRecord::RecordNotFound
+      HearingDayRepository.find_hearing_day(hearing_type, hearing_key)
+    end
+
+    private
+
     def format_hearings(enriched_hearing_days, hearing_location, hearings)
       hearing_count = 0
       hearings.each do |hearing|
@@ -135,14 +143,6 @@ class HearingDay < ApplicationRecord
         result << hearing_day
       end
     end
-
-    def find_hearing_day(hearing_type, hearing_key)
-      find(hearing_key)
-    rescue ActiveRecord::RecordNotFound
-      HearingDayRepository.find_hearing_day(hearing_type, hearing_key)
-    end
-
-    private
 
     def current_user_css_id
       RequestStore.store[:current_user].css_id.upcase
