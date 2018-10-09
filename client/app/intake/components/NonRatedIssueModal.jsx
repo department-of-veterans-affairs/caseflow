@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
@@ -7,7 +6,6 @@ import { addNonRatedIssue } from '../actions/ama';
 import Modal from '../../components/Modal';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
-import Button from '../../components/Button';
 import DateSelector from '../../components/DateSelector';
 import { NON_RATED_ISSUE_CATEGORIES } from '../../intakeCommon/constants';
 
@@ -51,13 +49,15 @@ class NonRatedIssueModal extends React.Component {
 
   render() {
     let {
+      intakeData,
       closeHandler
     } = this.props;
 
     const { category, description, decisionDate } = this.state;
-    const requiredFieldsMissing = !description || !category || !decisionDate
+    const issueNumber = (intakeData.addedIssues || []).length + 1;
+    const requiredFieldsMissing = !description || !category || !decisionDate;
 
-    return <div className='intake-add-issues'>
+    return <div className="intake-add-issues">
       <Modal
         buttons={[
           { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
@@ -76,11 +76,11 @@ class NonRatedIssueModal extends React.Component {
         ]}
         visible
         closeHandler={closeHandler}
-        title="Add Issue"
+        title={`Add issue ${issueNumber}`}
       >
         <div>
           <h2>
-            Does this issue match any of these issue categories?
+            Does issue {issueNumber} match any of these issue categories?
           </h2>
           <div className="add-non-rated-issue">
             <SearchableDropdown
@@ -92,12 +92,14 @@ class NonRatedIssueModal extends React.Component {
               value={category}
               onChange={this.categoryOnChange} />
 
-            <DateSelector
-              name="decision-date"
-              label="Decision date"
-              strongLabel
-              value={decisionDate}
-              onChange={this.decisionDateOnChange} />
+            <div className="decision-date">
+              <DateSelector
+                name="decision-date"
+                label="Decision date"
+                strongLabel
+                value={decisionDate}
+                onChange={this.decisionDateOnChange} />
+            </div>
 
             <TextField
               name="Issue description"

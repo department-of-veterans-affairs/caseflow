@@ -164,7 +164,7 @@ export const formatAddedIssues = (intakeData) => {
       return {
         referenceId: issue.id,
         text: `${issue.description} Decision date ${formatDate(issue.decisionDate)}`
-      }
+      };
     }
 
     return {};

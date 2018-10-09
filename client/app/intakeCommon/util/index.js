@@ -89,9 +89,9 @@ const formatNonRatedIssues = (state) => {
         issue_category: issue.category,
         decision_text: issue.description,
         decision_date: formatDateStringForApi(issue.decisionDate)
-      }
-    })
-  };
+      };
+    });
+  }
 
   // default to original format
   return _(state.nonRatedIssues).
@@ -104,7 +104,8 @@ const formatNonRatedIssues = (state) => {
         issue_category: issue.category,
         decision_date: formatDateStringForApi(issue.decisionDate)
       };
-    }).value()
+    }).
+    value();
 };
 
 export const formatIssues = (state) => {

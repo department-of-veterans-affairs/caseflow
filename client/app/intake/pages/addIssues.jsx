@@ -11,8 +11,7 @@ import { formatDate } from '../../util/DateUtil';
 import { formatAddedIssues, getAddIssuesFields } from '../util';
 
 import Table from '../../components/Table';
-import { toggleAddIssuesModal } from '../actions/common';
-import { toggleNonRatedIssueModal } from '../actions/common';
+import { toggleAddIssuesModal, toggleNonRatedIssueModal } from '../actions/common';
 import { removeIssue } from '../actions/ama';
 
 class AddIssues extends React.PureComponent {
@@ -89,6 +88,7 @@ class AddIssues extends React.PureComponent {
         closeHandler={this.props.toggleAddIssuesModal} />
       }
       { intakeData.nonRatedIssueModalVisible && <NonRatedIssueModal
+        intakeData={intakeData}
         closeHandler={this.props.toggleNonRatedIssueModal} />
       }
       <h1 className="cf-txt-c">Add Issues</h1>
