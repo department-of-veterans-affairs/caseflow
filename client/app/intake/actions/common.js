@@ -114,15 +114,12 @@ export const toggleCancelModal = () => ({
 
 export const toggleAddIssuesModal = () => ({
   type: ACTIONS.TOGGLE_ADD_ISSUES_MODAL,
-  meta: {
-    analytics: {
-      label: (nextState) => {
-        nextState.higherLevelReview.addIssuesModalVisible ? 'show' : 'hide'; // eslint-disable-line
-        nextState.supplementalClaim.addIssuesModalVisible ? 'show' : 'hide'; // eslint-disable-line
-        nextState.appeal.addIssuesModalVisible ? 'show' : 'hide'; // eslint-disable-line
-      }
-    }
-  }
+  meta: { analytics }
+});
+
+export const toggleNonRatedIssueModal = () => ({
+  type: ACTIONS.TOGGLE_NON_RATED_ISSUE_MODAL,
+  meta: { analytics }
 });
 
 export const submitCancel = (data) => (dispatch) => {
