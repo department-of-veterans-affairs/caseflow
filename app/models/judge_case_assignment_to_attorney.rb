@@ -68,10 +68,7 @@ class JudgeCaseAssignmentToAttorney
 
     def update(task_attrs)
       task = new(task_attrs)
-      if task.valid?
-        task.assigned_by.fail_if_no_access_to_legacy_task!(task.vacols_id)
-        task.reassign_to_attorney!
-      end
+      task.reassign_to_attorney! if task.valid?
       task
     end
 
