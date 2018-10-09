@@ -54,11 +54,7 @@ class ActionsDropdown extends React.PureComponent<Props> {
     this.props.stageAppeal(appealId);
     this.props.resetDecisionOptions();
 
-    const path = option.value.startsWith('/') ?
-      option.value :
-      `/appeals/${appealId}/${option.value}`;
-
-    history.push(`/queue${path}`);
+    history.push(`/queue${option.value}`);
   };
 
   render = () => {

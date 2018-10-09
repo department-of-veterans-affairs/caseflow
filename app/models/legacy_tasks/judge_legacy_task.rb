@@ -3,12 +3,12 @@ class JudgeLegacyTask < LegacyTask
     if Constants::DECASS_WORK_PRODUCT_TYPES["OMO_REQUEST"].include?(work_product)
       {
         label: COPY::JUDGE_CHECKOUT_OMO_LABEL,
-        value: "omo_request/evaluate"
+        value: "/appeals/#{appeal.external_id}/omo_request/evaluate"
       }
     else
       {
         label: COPY::JUDGE_CHECKOUT_DISPATCH_LABEL,
-        value: "dispatch_decision/dispositions"
+        value: "/appeals/#{appeal.external_id}/dispatch_decision/dispositions"
       }
     end
   end
@@ -19,7 +19,12 @@ class JudgeLegacyTask < LegacyTask
     if action.eql? "review"
       [review_action]
     else
-      [{ label: COPY::JUDGE_CHECKOUT_ASSIGN_TO_ATTORNEY_LABEL, value: "assign" }]
+      [
+        {
+          label: COPY::JUDGE_CHECKOUT_ASSIGN_TO_ATTORNEY_LABEL,
+          value: "assign"
+        }
+      ]
     end
   end
 

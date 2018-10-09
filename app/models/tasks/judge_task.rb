@@ -7,9 +7,19 @@ class JudgeTask < Task
     return [] if assigned_to != user
 
     if action.eql? "assign"
-      [{ label: COPY::JUDGE_CHECKOUT_ASSIGN_TO_ATTORNEY_LABEL, value: "assign" }]
+      [
+        {
+          label: COPY::JUDGE_CHECKOUT_ASSIGN_TO_ATTORNEY_LABEL,
+          value: "assign"
+        }
+      ]
     else
-      [{ label: COPY::JUDGE_CHECKOUT_DISPATCH_LABEL, value: "dispatch_decision/special_issues" }]
+      [
+        {
+          label: COPY::JUDGE_CHECKOUT_DISPATCH_LABEL,
+          value: "/appeals/#{appeal.external_id}/dispatch_decision/special_issues"
+        }
+      ]
     end
   end
 
