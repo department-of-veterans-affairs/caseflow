@@ -96,8 +96,8 @@ RSpec.feature "Edit issues" do
         user: current_user,
         before_request_issue_ids: [request_issue.id],
         after_request_issue_ids: [request_issue.id],
-        attempted_at: Time.now,
-        submitted_at: Time.now,
+        attempted_at: Time.zone.now,
+        submitted_at: Time.zone.now,
         processed_at: nil
       )
 
