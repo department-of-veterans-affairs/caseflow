@@ -19,7 +19,8 @@ export default class TextareaField extends React.Component {
       required,
       type,
       value,
-      styling
+      styling,
+      textAreaStyling
     } = this.props;
 
     const className = 'cf-form-textarea' +
@@ -36,7 +37,7 @@ export default class TextareaField extends React.Component {
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
-      <textarea
+      <textarea {...textAreaStyling}
         name={name}
         id={id || name}
         onChange={this.onChange}
