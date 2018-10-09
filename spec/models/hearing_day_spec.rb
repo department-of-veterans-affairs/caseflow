@@ -82,7 +82,7 @@ describe HearingDay do
     end
   end
 
-  context "update hearing" do
+  context "update hearing", focus: true do
     let(:hearing) do
       RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
       Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
@@ -111,7 +111,7 @@ describe HearingDay do
       it "updates judge" do
         hearing_id = hearing[:id] + 1
         hearing_to_update = HearingDay.find_hearing_day(nil, hearing_id)
-        HearingDay.update_hearing_day(hearing_to_update, hearing_hash: { judge_id: "987" })
+        HearingDay.update_hearing_day(hearing_to_update, judge_id: "987")
         expect(hearing_to_update[:board_member]).to eq "987"
       end
     end
