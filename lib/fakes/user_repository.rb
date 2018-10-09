@@ -1,5 +1,5 @@
 class Fakes::UserRepository
-  def self.fail_if_no_access_to_legacy_task!(_css_id, _vacols_id)
+  def self.fail_if_no_access_to_task!(_css_id, _vacols_id)
     true
   end
 
