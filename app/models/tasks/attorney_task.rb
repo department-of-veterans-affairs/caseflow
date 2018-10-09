@@ -4,7 +4,7 @@ class AttorneyTask < Task
 
   validate :assigned_by_role_is_valid
   validate :assigned_to_role_is_valid
-  validate :parent_attorney_child_count
+  validate :parent_attorney_child_count, on: :create
 
   def allowed_actions(user)
     return [] if assigned_to != user
