@@ -151,19 +151,21 @@ export default class TestUsers extends React.PureComponent {
                 <p>
                   Here you can test out different user stories by selecting
                   a Test User and accessing different parts of the application.</p>
-                <h3>User Selector:</h3>
-                <SearchableDropdown
-                  name="Test user dropdown"
-                  hideLabel
-                  options={userOptions} searchable
-                  onChange={this.handleUserSelect}
-                  value={this.state.userSelect} />
-                <Button
-                  onClick={this.handleUserSwitch}
-                  name="Switch user"
-                  loading={this.state.isSwitching}
-                  loadingText="Switching users" />
-                <br /> <br />
+                <section className="usa-form-large">
+                  <h3>User Selector:</h3>
+                  <SearchableDropdown
+                    name="Test user dropdown"
+                    hideLabel
+                    options={userOptions} searchable
+                    onChange={this.handleUserSelect}
+                    value={this.state.userSelect} />
+                  <Button
+                    onClick={this.handleUserSwitch}
+                    name="Switch user"
+                    loading={this.state.isSwitching}
+                    loadingText="Switching users" />
+                </section>
+                <br />
                 <h3>App Selector:</h3>
                 <TabWindow
                   tabs={tabs} />
