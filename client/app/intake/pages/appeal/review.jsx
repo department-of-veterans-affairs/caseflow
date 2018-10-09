@@ -11,7 +11,7 @@ import { setDocketType } from '../../actions/appeal';
 import { submitReview, setClaimantNotVeteran, setClaimant, setPayeeCode } from '../../actions/ama';
 import { setReceiptDate } from '../../actions/common';
 import { PAGE_PATHS, INTAKE_STATES } from '../../constants';
-import { REQUEST_STATE } from '../../../intakeCommon/constants';
+import { FORM_TYPES, REQUEST_STATE } from '../../../intakeCommon/constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 
@@ -45,7 +45,7 @@ class Review extends React.PureComponent {
     ];
 
     return <div>
-      <h1>Review { veteranName }'s Notice of Disagreement (VA Form 10182)</h1>
+      <h1>Review { veteranName }'s { FORM_TYPES.APPEAL.name }</h1>
 
       { reviewIntakeError && <ErrorAlert /> }
 
