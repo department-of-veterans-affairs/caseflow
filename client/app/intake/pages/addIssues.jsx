@@ -36,7 +36,7 @@ class AddIssues extends React.PureComponent {
               <div className="issue-desc">
                 <span className="issue-num">{index + 1}.</span>
                 {issue.text}
-                <span className="issue-notes">{issue.notes}</span>
+                { issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span> }
               </div>
               <div className="issue-action">
                 <Button

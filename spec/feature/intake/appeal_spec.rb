@@ -303,6 +303,9 @@ RSpec.feature "Appeal Intake" do
     find("label", text: "Left knee granted").click
     safe_click ".add-issue"
 
+    expect(page).to have_content("1.Left knee granted")
+    expect(page).to_not have_content("Notes:")
+
     # removing the issue should hide the issue
     safe_click ".remove-issue"
 
