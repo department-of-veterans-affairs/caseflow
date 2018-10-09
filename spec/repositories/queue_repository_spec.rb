@@ -60,13 +60,25 @@ describe QueueRepository do
 
     context "when there's an existing Decass record for the case" do
       it "should throw an exception" do
-        create(:decass, defolder: vacols_id)
+        create(:decass, :draft_decision, defolder: vacols_id)
 
         expect do
           QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
         end.to raise_error(QueueRepository::ExistingDecassError)
       end
     end
+
+    context "when the existing Decass record is an OMO request" do
+      it "should create a new Decass record" do
+        create(:decass, :omo_request, defolder: vacols_id)
+
+        QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
+
+        # Check for new Decass record
+      end
+    end
+
+    # Add test for multiple existing Decass records
   end
 
   context ".reassign_case_to_judge!" do
