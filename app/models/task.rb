@@ -88,8 +88,6 @@ class Task < ApplicationRecord
     update_status_if_children_tasks_are_complete
   end
 
-  # TODO: parent/grand parents/etc should be able to modify children/grandchildren/etc
-  # check if assigned to is part of the judge team
   def can_user_access?(user)
     return true if assigned_to == user || (parent && parent.assigned_to == user)
     false
