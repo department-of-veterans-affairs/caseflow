@@ -82,6 +82,41 @@ describe HearingDay do
     end
   end
 
+  context "update hearing" do
+    let(:hearing) do
+      RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
+      Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
+      HearingDay.create_hearing_day(hearing_hash)
+    end
+
+    let(:test_hearing_date_vacols) do
+      current_date = Time.zone.today
+      Time.use_zone("Eastern Time (US & Canada)") do
+        Time.zone.local(current_date.year, current_date.month, current_date.day, 8, 30, 0).to_datetime
+      end
+    end
+
+    let(:test_hearing_date_caseflow) do
+      Time.zone.local(2019, 5, 15, 12, 30, 0).to_datetime # UTC
+    end
+
+    context "update judge attribute in VACOLS hearing day" do
+      let(:hearing_hash) do
+        { hearing_type: "C",
+          hearing_date: test_hearing_date_vacols,
+          regional_office: "RO89",
+          room_info: "5" }
+      end
+
+      it "updates judge" do
+        hearing_id = hearing[:id] + 1
+        hearing_to_update = HearingDay.find_hearing_day(nil, hearing_id)
+        HearingDay.update_hearing_day(hearing_to_update, {judge_id: "987"})
+        expect(hearing_to_update[:board_member]).to eq "987"
+      end
+    end
+  end
+
   context "bulk persist" do
     let(:schedule_period) do
       RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
