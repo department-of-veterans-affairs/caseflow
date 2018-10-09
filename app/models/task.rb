@@ -91,7 +91,7 @@ class Task < ApplicationRecord
   # TODO: parent/grand parents/etc should be able to modify children/grandchildren/etc
   # check if assigned to is part of the judge team
   def can_user_access?(user)
-    return true if assigned_to == user || (parent && parent.assigned_to == user) 
+    return true if assigned_to == user || (parent && parent.assigned_to == user)
     false
   end
 
