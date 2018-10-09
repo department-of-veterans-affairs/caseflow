@@ -1,4 +1,7 @@
 class QueueRepository
+
+  class ExistingDecassError < StandardError; end
+
   class << self
     # :nocov:
     def transaction
@@ -118,6 +121,8 @@ class QueueRepository
 
     def assign_case_to_attorney!(judge:, attorney:, vacols_id:)
       transaction do
+        raise ExistingDecassError if VACOLS::Decass.exists?(vacols_id)
+
         update_location_to_attorney(vacols_id, attorney)
 
         VACOLS::Decass.create!(
