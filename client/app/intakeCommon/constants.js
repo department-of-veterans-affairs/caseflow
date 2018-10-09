@@ -56,12 +56,15 @@ export const ISSUE_CATEGORIES = issueCategoriesArray.map((category) => {
   };
 });
 
-export const NON_RATED_ISSUE_CATEGORIES = issueCategoriesArray.slice(1).map((category) => {
-  return {
-    value: category,
-    label: category
-  };
-});
+// Removes the "Unknown issue category"
+// which is temporary until we activate the new "Add issues" flow
+export const NON_RATED_ISSUE_CATEGORIES = issueCategoriesArray.
+  filter((category) => category !== 'Unknown issue category').map((category) => {
+    return {
+      value: category,
+      label: category
+    };
+  });
 
 export const REQUEST_STATE = {
   NOT_STARTED: 'NOT_STARTED',
