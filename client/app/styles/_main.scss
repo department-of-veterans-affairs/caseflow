@@ -1,4 +1,3 @@
-
 html,
 body {
   margin: 0;
@@ -44,13 +43,6 @@ body {
       background-position: center left;
     }
   }
-}
-
-.cf-logo-name,
-.cf-application-title {
-  // scss-lint:disable ImportantRule
-  color: $color-gray-dark !important;
-  // scss-lint:enable ImportantRule
 }
 
 .cf-content-inside {
@@ -132,12 +124,6 @@ body {
   @include app-width('');
 }
 
-.cf-app-queue {
-  .cf-app-width {
-    @include app-width('queue');
-  }
-}
-
 .cf-logo-image-default {
   background-image: url(#{$image-url}/caseflow-default-logo.svg);
   width: 32px;
@@ -191,10 +177,6 @@ body {
   opacity: 1 !important;
    // scss-lint:enable ImportantRule
   color: $color-gray-dark;
-}
-
-.cf-button-associated-text {
-  color: $color-gray;
 }
 
 .cf-button-associated-text-right {
@@ -281,12 +263,14 @@ body {
 }
 
 select {
+  -webkit-appearance: none;
+
   &[id="decisionType"] {
     margin-bottom: 30px;
   }
 }
 
-// TODO: unify this with the styling in caseflow commons once all buttons are using React
+
 .cf-react-icon-loading-front {
   @include animation(backwardspin 6s linear infinite);
 }
@@ -397,4 +381,5 @@ select {
   line-height: 2.2;
   font-size: 22px;
   color: $color-gray-dark;
+  text-transform: uppercase;
 }

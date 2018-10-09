@@ -134,13 +134,6 @@ export const setAppealDocCount = (appealId: string, docCount: number) => ({
   }
 });
 
-export const setCaseReviewActionType = (type: string) => ({
-  type: ACTIONS.SET_REVIEW_ACTION_TYPE,
-  payload: {
-    type
-  }
-});
-
 export const setDecisionOptions = (opts: Object) => (dispatch: Dispatch) => {
   dispatch(hideErrorMessage());
   dispatch({
@@ -459,4 +452,11 @@ export const setSpecialIssues = (specialIssues: Object) => ({
 export const setOrganizationId = (id: number) => ({
   type: ACTIONS.SET_ORGANIZATION_ID,
   payload: { id }
+});
+
+export const setAppealAod = (externalAppealId: string) => ({
+  type: ACTIONS.SET_APPEAL_AOD,
+  payload: {
+    externalAppealId
+  }
 });

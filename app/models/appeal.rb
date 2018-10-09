@@ -33,16 +33,33 @@ class Appeal < AmaReview
     "Original"
   end
 
+  def attorney_case_reviews
+    tasks.map(&:attorney_case_reviews).flatten
+  end
+
+  def reviewing_judge_name
+    task = tasks.where(type: "JudgeTask").order(:created_at).last
+    task ? task.assigned_to.try(:full_name) : ""
+  end
+
   def issues
     { decision_issues: decision_issues, request_issues: request_issues }
   end
 
-  def issue_count
-    request_issues.count
-  end
-
   def docket_name
     docket_type
+  end
+
+  def hearing_docket?
+    docket_type == "hearing"
+  end
+
+  def evidence_submission_docket?
+    docket_type == "evidence_submission"
+  end
+
+  def direct_review_docket?
+    docket_type == "direct_review"
   end
 
   def veteran
@@ -81,11 +98,6 @@ class Appeal < AmaReview
   end
 
   delegate :first_name, :last_name, :middle_name, :name_suffix, to: :appellant, prefix: true, allow_nil: true
-
-  # TODO: implement for AMA
-  def citation_number
-    "not implemented for AMA"
-  end
 
   def veteran_is_deceased
     veteran_death_date.present?

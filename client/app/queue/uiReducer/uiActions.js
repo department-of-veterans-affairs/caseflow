@@ -63,7 +63,8 @@ const saveFailure = (resp: Object) => (dispatch: Dispatch) => {
   let responseObject = {
     errors: [{
       title: 'Error',
-      detail: 'There was an error processing your request.'
+      detail: 'There was an error processing your request. ' +
+        'Please retry your action and contact support if errors persist.'
     }]
   };
 
@@ -96,6 +97,10 @@ export const requestUpdate = (url: string, params: Object, successMessage: UiSta
   requestSave(url, params, successMessage, 'put');
 export const requestDelete = (url: string, params: Object, successMessage: UiStateMessage) =>
   requestSave(url, params, successMessage, 'delete');
+
+export const setSavePending = () => ({
+  type: ACTIONS.REQUEST_SAVE
+});
 
 export const resetSaveState = () => ({
   type: ACTIONS.RESET_SAVE_STATE
@@ -159,6 +164,10 @@ export const setSelectedAssigneeSecondary = ({ assigneeId }: targetAssignee) => 
 
 export const toggleVeteranCaseList = () => ({
   type: ACTIONS.TOGGLE_VETERAN_CASE_LIST
+});
+
+export const showVeteranCaseList = () => ({
+  type: ACTIONS.SHOW_VETERAN_CASE_LIST
 });
 
 export const hideVeteranCaseList = () => ({

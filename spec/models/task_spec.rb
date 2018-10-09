@@ -144,6 +144,40 @@ describe Task do
     end
   end
 
+  describe "#assignable_users" do
+    let(:organization) { create(:organization, name: "Organization") }
+    let(:users) { create_list(:user, 3) }
+
+    before do
+      allow(organization).to receive(:members).and_return(users)
+    end
+
+    context "when assigned_to is an organization" do
+      let(:task) { create(:generic_task, assigned_to: organization) }
+
+      it "should return all members" do
+        expect(task.assignable_users).to match_array(users)
+      end
+    end
+
+    context "when assigned_to's parent is an organization" do
+      let(:parent) { create(:generic_task, assigned_to: organization) }
+      let(:task) { create(:generic_task, assigned_to: users.first, parent: parent) }
+
+      it "should return all members except user" do
+        expect(task.assignable_users).to match_array(users[1..users.length - 1])
+      end
+    end
+
+    context "when assigned_to is a user" do
+      let(:task) { create(:generic_task, assigned_to: users.first) }
+
+      it "should return all members except user" do
+        expect(task.assignable_users).to match_array([])
+      end
+    end
+  end
+
   describe ".root_task" do
     context "when sub-sub-sub...task has a root task" do
       let(:root_task) { FactoryBot.create(:root_task) }

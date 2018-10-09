@@ -25,6 +25,10 @@ class ClaimReview < AmaReview
     def processed_at_column
       :establishment_processed_at
     end
+
+    def error_column
+      :establishment_error
+    end
   end
 
   def issue_code(_rated)
@@ -49,9 +53,14 @@ class ClaimReview < AmaReview
       end_product_establishment.perform!
       end_product_establishment.create_contentions!
       end_product_establishment.create_associated_rated_issues!
+      if informal_conference?
+        end_product_establishment.generate_claimant_letter!
+        end_product_establishment.generate_tracked_item!
+      end
       end_product_establishment.commit!
     end
 
+    clear_error!
     processed!
   end
 
@@ -69,6 +78,10 @@ class ClaimReview < AmaReview
 
   private
 
+  def informal_conference?
+    false
+  end
+
   def end_product_establishment_for_issue(issue)
     ep_code = issue_code(issue.rated?)
     end_product_establishments.find_by(code: ep_code) || new_end_product_establishment(ep_code)
@@ -76,10 +89,9 @@ class ClaimReview < AmaReview
 
   def sync_dispositions(reference_id)
     fetch_dispositions_from_vbms(reference_id).each do |disposition|
-      request_issue = matching_request_issue(disposition[:contention_id])
-      request_issue.update!(disposition: disposition[:disposition])
-      # allow higher level reviews to do additional logic on dta errors
-      yield(disposition, request_issue) if block_given?
+      matching_request_issue(disposition.contention_id).update!(
+        disposition: disposition.disposition
+      )
     end
   end
 

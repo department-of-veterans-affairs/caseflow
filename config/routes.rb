@@ -102,6 +102,7 @@ Rails.application.routes.draw do
     get :power_of_attorney
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
     resources :special_issues, only: [:create, :index]
+    resources :advance_on_docket_motions, only: [:create]
     get 'tasks', to: "tasks#for_appeal"
   end
 
@@ -119,6 +120,7 @@ Rails.application.routes.draw do
     resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
   get 'hearings/schedule', to: "hearings/hearing_day#index"
+  get 'hearings/schedule/docket/:ro_name/:date', to: "hearings/hearing_day#index"
   get 'hearings/schedule/build', to: "hearing_schedule#build_schedule_index"
   get 'hearings/schedule/build/upload', to: "hearing_schedule#build_schedule_index"
   get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearing_schedule#build_schedule_index"
@@ -183,9 +185,8 @@ Rails.application.routes.draw do
   resources :legacy_tasks, only: [:create, :update]
   resources :tasks, only: [:index, :create, :update]
 
-  resources :organizations, only: [:index, :show], param: :url do
+  resources :organizations, only: [:show], param: :url do
     resources :tasks, only: [:index], controller: 'organizations/tasks'
-    get 'members', on: :member
   end
 
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'

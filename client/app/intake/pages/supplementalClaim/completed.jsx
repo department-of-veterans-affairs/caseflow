@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
+import { FORM_TYPES } from '../../../intakeCommon/constants';
 
 class Completed extends React.PureComponent {
   render() {
@@ -24,7 +25,9 @@ class Completed extends React.PureComponent {
     }
 
     const message = `${veteran.name}'s (ID #${veteran.fileNumber}) ` +
-      'Request for Supplemental Claim (VA Form 21-526b) has been processed.';
+      'Request for ' +
+      `${FORM_TYPES.SUPPLEMENTAL_CLAIM.name}` +
+      ' has been processed.';
 
     return <div>
       <StatusMessage

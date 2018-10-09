@@ -1,10 +1,12 @@
-import { ACTIONS } from '../constants';
-import { FORM_TYPES, REQUEST_STATE } from '../../intakeCommon/constants';
-import { update } from '../../util/ReducerUtil';
-import { formatDateStr } from '../../util/DateUtil';
-import { getReceiptDateError, getBenefitTypeError, getPageError, formatRelationships } from '../util';
-import { formatRatings } from '../../intakeCommon/util';
 import _ from 'lodash';
+
+import { ACTIONS } from '../constants';
+import { applyCommonReducers } from './common';
+import { FORM_TYPES, REQUEST_STATE } from '../../intakeCommon/constants';
+import { formatDateStr } from '../../util/DateUtil';
+import { formatRatings } from '../../intakeCommon/util';
+import { getReceiptDateError, getBenefitTypeError, getPageError, formatRelationships } from '../util';
+import { update } from '../../util/ReducerUtil';
 
 const getInformalConferenceError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.informal_conference, 0) === 'blank') && 'Please select an option.'
@@ -64,6 +66,7 @@ const updateFromServerIntake = (state, serverIntake) => {
 
 export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
+    addIssuesModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
     benefitType: null,
@@ -299,6 +302,6 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       }
     });
   default:
-    return state;
+    return applyCommonReducers(state, action);
   }
 };

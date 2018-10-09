@@ -40,7 +40,7 @@ abbr {
 }
 
 label {
-  font-weight: normal;
+  font-weight: $font-normal;
   margin-top: 0; // Override USWDS
 }
 
@@ -48,7 +48,6 @@ p {
   margin-top: rem(20px);
   margin-bottom: rem(24px);
   color: $color-gray-dark;
-  font-weight: 400;
   font-size: 17px;
   line-height: 1.5em;
 }
@@ -67,25 +66,25 @@ p {
 }
 
 .cf-lead-paragraph {
-  font-weight: 400;
   font-size: 19px;
   line-height: 1.5em;
   margin-bottom: 30px;
 }
 
-.cf-display-1 {
-  font-weight: 700;
-  font-size: 52px;
+.cf-display-1,
+.cf-display-2 {
   line-height: 1.3em;
   margin-bottom: 40px;
 }
+// Usage h1 class for accessibility
+.cf-display-1 {
+  font-weight: $font-bold;
+  font-size: 52px;
+}
 
+// Candidate for deprecation/ Unused
 .cf-display-2 {
-  font-weight: 400;
   font-size: 44px;
-  line-height: 1.3em;
-  margin-bottom: 40px;
-
 }
 
 .cf-red-text {
@@ -94,17 +93,6 @@ p {
 
 .cf-font-light {
   font-weight: 300;
-}
-
-.cf-notice {
-  padding: 8px 20px;
-  text-align: center;
-  background-color: $color-primary;
-  color: $color-white;
-
-  a {
-    color: $color-white;
-  }
 }
 
 //----------------------------------*
@@ -121,10 +109,6 @@ p {
 
 .cf-txt-l {
   text-align: left;
-}
-
-.cf-txt-uc {
-  text-transform: uppercase;
 }
 
 .cf-push-left {
@@ -163,7 +147,7 @@ h4 {
 
 h5 {
   font-size: 13px;
-  font-weight: 400;
+  font-weight: $font-normal;
   text-transform: uppercase;
   margin-bottom: 12px;
 }
@@ -335,7 +319,6 @@ dd {
     &:hover {
       color: $color-white;
     }
-
   }
 
   &:hover {
@@ -349,7 +332,6 @@ dd {
   }
 }
 
-// Quick fix to property count lint
 %overlay {
   background: $color-white;
   z-index: 1;
@@ -402,8 +384,6 @@ dd {
 }
 
 //------ Modals --------*/
-
-
 // don't trip the accessibility warning for white on white, even if title isn't visible
 svg title {
   color: $color-gray-dark;
@@ -419,6 +399,7 @@ svg title {
 
   &.active {
     display: block;
+    z-index: 15;
   }
 
   &::before {
@@ -449,7 +430,7 @@ svg title {
   margin: 0 auto;
   width: 490px;
   max-height: 100%;
-  overflow-y: auto;
+  overflow-y: visible;
 
   table {
     margin: 0 0 2em;
@@ -462,7 +443,12 @@ svg title {
   padding: .1rem;
   position: absolute;
   right: rem(10px);
+  top: rem(10px);
   width: 1.5rem;
+
+  &[type="button"] {
+    margin-right: 0;
+  }
 
   &:hover,
   &:focus,
@@ -475,9 +461,9 @@ svg title {
   }
 }
 
-
 .cf-modal-text,
 .cf-modal-controls {
+  position: relative;
   margin: auto;
   width: 100%;
 }
@@ -488,11 +474,6 @@ svg title {
   text-align: center;
 }
 
-.cf-modal-normal-text {
-  margin: 0;
-  width: 100%;
-}
-
 .cf-modal-divider {
   border-bottom: 1px solid $color-gray-lighter;
   width: 100%;
@@ -500,20 +481,13 @@ svg title {
 }
 
 .cf-modal-controls {
-  position: relative;
   bottom: 0;
+  padding-bottom: 3rem;
   margin-top: rem(30px);
 }
 
 .cf-modal-link {
   padding: 0;
-}
-
-div {
-  &[id="questionemail"] {
-    margin-top: 0;
-    margin-bottom: 0;
-  }
 }
 
 // ===========================*
@@ -540,7 +514,7 @@ div {
 
 .cf-progress-bar-not-activated {
   color: $color-gray-dark;
-  font-weight: 700;
+  font-weight: $font-bold;
   padding-bottom: 6px;
   border-bottom: 7px solid $color-gray-light;
 }
@@ -575,12 +549,6 @@ div {
   &:hover {
     color: $color-gray;
   }
-
-}
-
-.cf-logo-name {
-  color: $color-gray;
-  font-weight: normal;
 }
 
 .cf-logo-image {
@@ -594,10 +562,20 @@ div {
 }
 
 .cf-application-title {
-  color: $color-gray;
   font-size: 1.7rem;
   font-weight: normal;
   display: inline;
+}
+
+
+.cf-logo-name,
+.cf-application-title {
+  // This important can be removed
+  // if its color is updated in FE toolkit
+  // scss-lint:disable ImportantRule
+  color: $color-gray-dark !important;
+  // scss-lint:enable ImportantRule
+  font-weight: normal;
 }
 
 .cf-app-screen {
@@ -605,22 +583,11 @@ div {
   width: 90%;
 }
 
-.cf-name-header {
-  font-size: 3rem;
-  margin-bottom: 0;
-}
-
 //.cf-app-segment represents a chunk of an application's
 // page Should be an immediate child of .cf-app. Avoid
 // making .cf-app-segment a grandchild element of .cf-app.
 .cf-app-segment {
-  // Clearfix
-  &::before,
-  &::after {
-    content: ' ';
-    display: block;
-    clear: both;
-  }
+  @include clearfix;
 
   &--alt {
     background: $color-white;
@@ -648,54 +615,6 @@ div {
     padding: 50px 0;
     border-top: 1px solid $color-gray-lighter;
     overflow: hidden;
-  }
-}
-
-
-//-----------------------------------*
-// CSS based on Web Design Guidelines.
-// - Uses Neat.bourbon.io as a grid
-// - Uses patterns and components
-//   from refills.bourbon.io/unstyled/
-//-----------------------------------*/
-
-//===========================
-// Tooltip
-// =========================*/
-
-.cf-tooltip {
-  display: inline-block;
-  position: relative;
-}
-
-.cf-tooltip-trigger {
-  &:hover + .cf-tooltip-text {
-    display: block;
-  }
-}
-
-.cf-tooltip-text {
-  @include transform(translateX(-50%));
-  background: $color-white;
-  box-shadow: 0 0 10px -3px $color-gray;
-  display: none;
-  left: 50%;
-  margin-top: rem(10px);
-  padding: rem(10px);
-  position: absolute;
-  width: rem(300px);
-
-  &::before {
-    @include transform(scaleX(1.2));
-    color: $color-white;
-    content: '\25B2';
-    display: block;
-    font-size: rem(15px);
-    text-align: center;
-    text-shadow: 0 -2px 2px rgba($color-gray, .5);
-    margin-top: rem(-25px);
-    position: relative;
-    z-index: -1;
   }
 }
 
@@ -836,8 +755,6 @@ form {
       content: '* ';
       color: $color-secondary;
       font-family: inherit;
-      font-weight: bold;
-      font-style: normal;
     }
   }
 
@@ -895,6 +812,12 @@ input {
   margin-left: .25em;
 }
 
+.cf-optional {
+  color: $color-gray;
+  font-style: italic;
+  margin-left: 1em;
+}
+
 fieldset {
   > *,
   .cf-form-textinput {
@@ -930,6 +853,11 @@ fieldset {
 
   i {
     margin-left: 0;
+  }
+
+  .disabled {
+    color: $color-gray-light;
+    font-style: italic;
   }
 }
 
@@ -971,7 +899,8 @@ fieldset {
     margin-left: 0;
   }
 
-  .cf-required {
+  .cf-required,
+  .cf-optional {
     display: none;
   }
 }
@@ -985,11 +914,6 @@ fieldset {
 //========================
 // Status Message
 //==========================*/
-
-// TODO Remove selector also
-.cf-app-msg-screen {
-  color: $color-gray;
-}
 
 .cf-msg-screen-heading {
   font-size: rem(52px);

@@ -5,7 +5,6 @@ class CancelEdit extends React.PureComponent {
   render = () => {
     return <Button
       id="cancel-edit"
-      legacyStyling={false}
       linkStyling
       willNeverBeLoading
       onClick={

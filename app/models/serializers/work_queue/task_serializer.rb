@@ -57,7 +57,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   end
 
   attribute :issue_count do
-    object.appeal.issue_count
+    object.appeal.number_of_issues
   end
 
   attribute :previous_task do
@@ -75,5 +75,17 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
       first_name: object.prepared_by_display_name ? object.prepared_by_display_name.first : nil,
       last_name: object.prepared_by_display_name ? object.prepared_by_display_name.last : nil
     }
+  end
+
+  attribute :available_actions do
+    object.allowed_actions(@instance_options[:user])
+  end
+
+  attribute :assignable_organizations do
+    object.assignable_organizations.map { |o| { id: o.id, name: o.name } }
+  end
+
+  attribute :assignable_users do
+    object.assignable_users.map { |m| { id: m.id, css_id: m.css_id, full_name: m.full_name } }
   end
 end

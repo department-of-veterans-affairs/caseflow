@@ -21,23 +21,28 @@ describe RampRefilingIntake do
     )
   end
 
+  let(:completed_ramp_election_ep) do
+    Generators::EndProduct.build(
+      veteran_file_number: veteran_file_number,
+      bgs_attrs: { status_type_code: "CLR" }
+    )
+  end
+
   let(:completed_ramp_election) do
     re = create(:ramp_election,
                 veteran_file_number: veteran_file_number,
                 notice_date: 4.days.ago,
                 receipt_date: 3.days.ago,
                 established_at: Time.zone.now)
-    ep = Generators::EndProduct.build(
-      veteran_file_number: veteran_file_number,
-      bgs_attrs: { status_type_code: "CLR" }
-    )
+
     EndProductEstablishment.create(
       source: re,
       established_at: Time.zone.now,
       veteran_file_number: veteran_file_number,
-      reference_id: ep.claim_id,
+      reference_id: completed_ramp_election_ep.claim_id,
       synced_status: "CLR"
     )
+
     re
   end
 
@@ -65,6 +70,65 @@ describe RampRefilingIntake do
 
   let(:ramp_election_contentions) do
     [Generators::Contention.build(claim_id: claim_id, text: "Left knee")]
+  end
+
+  context "#ui_hash" do
+    subject { intake.ui_hash(true) }
+
+    let!(:ramp_election) do
+      completed_ramp_election
+    end
+
+    let!(:ramp_election_contentions) do
+      [Generators::Contention.build(claim_id: completed_ramp_election_ep.claim_id, text: "Left knee")]
+    end
+
+    let!(:pending_ramp_election) do
+      create(:ramp_election,
+             veteran_file_number: veteran_file_number,
+             notice_date: 4.days.ago,
+             established_at: Time.zone.now)
+    end
+
+    let!(:pending_ramp_election_contentions) do
+      [Generators::Contention.build(claim_id: pending_end_product.claim_id, text: "Not me!")]
+    end
+
+    let!(:pending_end_product) do
+      Generators::EndProduct.build(
+        veteran_file_number: veteran_file_number,
+        bgs_attrs: { status_type_code: "PEND" }
+      )
+    end
+
+    let!(:pending_end_product_establishment) do
+      create(
+        :end_product_establishment,
+        veteran_file_number: veteran_file_number,
+        source: pending_ramp_election,
+        reference_id: pending_end_product.claim_id,
+        established_at: Time.zone.now,
+        synced_status: "PEND"
+      )
+    end
+
+    let(:detail) do
+      RampRefiling.create!(
+        veteran_file_number: veteran_file_number,
+        receipt_date: 10.seconds.ago,
+        option_selected: "supplemental_claim"
+      )
+    end
+
+    before do
+      ramp_election.recreate_issues_from_contentions!
+      pending_ramp_election.recreate_issues_from_contentions!
+    end
+
+    it "only returns issues for RAMP elections with completed decisions" do
+      expect(subject[:issues].count).to eq(1)
+      expect(subject[:issues].first[:description]).to eq("Left knee")
+    end
   end
 
   context "#start!" do
@@ -153,15 +217,13 @@ describe RampRefilingIntake do
       end
 
       context "the EP associated with original RampElection is still pending" do
-        let(:end_product_status) { "PEND" }
-
         let!(:end_product_establishment) do
           create(
             :end_product_establishment,
             veteran_file_number: veteran_file_number,
             source: ramp_election,
             established_at: Time.zone.now,
-            synced_status: end_product_status
+            synced_status: "PEND"
           )
         end
 
@@ -200,6 +262,23 @@ describe RampRefilingIntake do
               reference_id: end_product.claim_id,
               veteran_file_number: veteran_file_number,
               synced_status: end_product_status
+            )
+          end
+
+          let!(:pending_ramp_election) do
+            create(:ramp_election,
+                   veteran_file_number: veteran_file_number,
+                   notice_date: 4.days.ago,
+                   established_at: Time.zone.now)
+          end
+
+          let!(:pending_end_product_establishment) do
+            create(
+              :end_product_establishment,
+              veteran_file_number: veteran_file_number,
+              source: pending_ramp_election,
+              established_at: Time.zone.now,
+              synced_status: "PEND"
             )
           end
 
@@ -245,15 +324,6 @@ describe RampRefilingIntake do
 
       let(:claim_id1) { EndProductEstablishment.find_by(source: ramp_election1).reference_id }
       let(:claim_id2) { EndProductEstablishment.find_by(source: ramp_election2).reference_id }
-
-      context "the EP associated with original RampElection is still pending" do
-        let(:end_product_status) { "PEND" }
-
-        it "adds ramp_election_is_active and returns false" do
-          expect(subject).to eq(false)
-          expect(intake.error_code).to eq("ramp_election_is_active")
-        end
-      end
 
       context "the EP associated with original RampElection is closed" do
         context "there are no contentions on the EP" do

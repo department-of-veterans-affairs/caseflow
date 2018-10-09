@@ -10,18 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180926182000) do
+ActiveRecord::Schema.define(version: 20181004232948) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
-  create_table "advance_on_docket_grants", force: :cascade do |t|
+  create_table "advance_on_docket_motions", force: :cascade do |t|
     t.bigint "person_id"
     t.bigint "user_id"
     t.string "reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "granted"
     t.index ["person_id"], name: "index_advance_on_docket_grants_on_person_id"
     t.index ["user_id"], name: "index_advance_on_docket_grants_on_user_id"
   end
@@ -60,6 +61,7 @@ ActiveRecord::Schema.define(version: 20180926182000) do
     t.datetime "created_at"
     t.string "vbms_id"
     t.integer "api_key_id"
+    t.string "source"
   end
 
   create_table "appeal_series", id: :serial, force: :cascade do |t|
@@ -187,10 +189,10 @@ ActiveRecord::Schema.define(version: 20180926182000) do
   end
 
   create_table "decisions", force: :cascade do |t|
-    t.bigint "appeal_id"
-    t.string "citation_number"
-    t.date "decision_date"
-    t.string "redacted_document_location"
+    t.bigint "appeal_id", null: false
+    t.string "citation_number", null: false
+    t.date "decision_date", null: false
+    t.string "redacted_document_location", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["appeal_id"], name: "index_decisions_on_appeal_id"
@@ -273,6 +275,9 @@ ActiveRecord::Schema.define(version: 20180926182000) do
     t.string "claimant_participant_id"
     t.string "payee_code"
     t.datetime "committed_at"
+    t.string "doc_reference_id"
+    t.string "development_item_reference_id"
+    t.string "benefit_type_code"
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
   end
@@ -595,7 +600,9 @@ ActiveRecord::Schema.define(version: 20180926182000) do
     t.datetime "removed_at"
     t.datetime "rating_issue_associated_at"
     t.integer "parent_request_issue_id"
+    t.text "notes"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
+    t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
   end
 
@@ -654,6 +661,14 @@ ActiveRecord::Schema.define(version: 20180926182000) do
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
     t.index ["appeal_type", "appeal_id"], name: "index_special_issue_lists_on_appeal_type_and_appeal_id"
+  end
+
+  create_table "staff_field_for_organizations", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "name", null: false
+    t.string "values", default: [], null: false, array: true
+    t.boolean "exclude", default: false
+    t.index ["organization_id"], name: "index_staff_field_for_organizations_on_organization_id"
   end
 
   create_table "supplemental_claims", force: :cascade do |t|

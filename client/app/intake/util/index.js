@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { REVIEW_OPTIONS } from '../constants';
-import { formatDateStringForApi } from '../../util/DateUtil';
+import { formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
 
 export const getAppealDocketError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.appeal_docket, 0) === 'blank') && 'Please select an option.'
@@ -90,9 +90,17 @@ export const prepareReviewData = (intakeData, intakeType) => {
   }
 };
 
+const getNonVeteranClaimant = (intakeData) => {
+  const claimant = intakeData.relationships.filter((relationship) => {
+    return relationship.value === intakeData.claimant;
+  });
+
+  return `${claimant[0].displayText} (payee code ${intakeData.payeeCode})`;
+};
+
 const getClaimantField = (formType, veteran, intakeData) => {
   if (formType === 'appeal' || intakeData.benefitType === 'compensation') {
-    let claimant = intakeData.claimantNotVeteran ? `${intakeData.claimant} (Payee Code ${intakeData})` : veteran.name;
+    const claimant = intakeData.claimantNotVeteran ? getNonVeteranClaimant(intakeData) : veteran.name;
 
     return [{
       field: 'Claimant',
@@ -136,4 +144,23 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
   let claimantField = getClaimantField(formType, veteran, intakeData);
 
   return fields.concat(claimantField);
+};
+
+export const formatAddedIssues = (intakeData) => {
+  let issues = intakeData.addedIssues || [];
+
+  return issues.map((issue) => {
+    // currently does not handle unrated issues
+    if (issue.isRated) {
+      let foundIssue = intakeData.ratings[issue.profileDate].issues[issue.id];
+
+      return {
+        referenceId: issue.id,
+        text: `${foundIssue.decision_text} Decision date ${formatDateStr(issue.profileDate)}.`,
+        notes: issue.notes
+      };
+    }
+
+    return {};
+  });
 };

@@ -2,13 +2,19 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
   before_action :verify_access
 
+  skip_before_action :verify_authenticity_token, only: [:outcode]
+
   rescue_from StandardError do |e|
     Raven.capture_exception(e)
     if e.class.method_defined?(:serialize_response)
       render(e.serialize_response)
     else
-      render json: { message: "Unexpected error" }, status: 500
+      render json: { message: "Unexpected error: #{e.message}" }, status: 500
     end
+  end
+
+  rescue_from ActionController::ParameterMissing do |e|
+    render(json: { message: e.message }, status: 400)
   end
 
   def list
@@ -25,20 +31,23 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   end
 
   def outcode
-    BvaDispatchTask.outcode(appeal, user)
-    render json: json_appeal_details
+    BvaDispatchTask.outcode(appeal, outcode_params, user)
+    render json: { message: "Success!" }
   end
 
   private
 
   def tasks_assigned_to_user
-    tasks = LegacyWorkQueue.tasks_with_appeals(user, role)[0].select { |task| task.appeal.active? }
+    tasks = if user.attorney_in_vacols? || user.judge_in_vacols?
+              LegacyWorkQueue.tasks_with_appeals(user, role)[0].select { |task| task.appeal.active? }
+            else
+              []
+            end
 
     if feature_enabled?(:idt_ama_appeals)
       tasks += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold])
-        .reject { |task| task.action == "assign" }
     end
-    tasks
+    tasks.reject { |task| task.action == "assign" }
   end
 
   def role
@@ -55,6 +64,14 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
       appeals += Appeal.where(veteran_file_number: file_number)
     end
     appeals
+  end
+
+  def outcode_params
+    keys = %w[citation_number decision_date redacted_document_location]
+    params.require(keys)
+
+    # Have to do this because params.require() returns an array of the parameter values.
+    keys.map { |k| [k, params[k]] }.to_h
   end
 
   def json_appeal_details

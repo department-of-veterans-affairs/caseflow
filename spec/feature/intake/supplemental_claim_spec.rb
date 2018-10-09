@@ -104,13 +104,13 @@ RSpec.feature "Supplemental Claim Intake" do
     visit "/intake"
     safe_click ".Select"
     expect(page).to have_css(".cf-form-dropdown")
-    expect(page).to have_content("RAMP Selection (VA Form 21-4138)")
-    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988)")
-    expect(page).to have_content("Supplemental Claim (VA Form 21-526b)")
-    expect(page).to have_content("Notice of Disagreement (VA Form 10182)")
+    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.ramp_refiling)
+    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
+    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
+    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.appeal)
 
     safe_click ".Select"
-    fill_in "Which form are you processing?", with: "Supplemental Claim (VA Form 21-526b)"
+    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.supplemental_claim
     find("#form-select").send_keys :enter
 
     safe_click ".cf-submit.usa-button"
@@ -206,7 +206,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Request for Supplemental Claim (VA Form 21-526b) has been processed.")
+    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
     expect(page).to have_content(
       "Established EP: 040SCR - Supplemental Claim Rating for Station 397 - ARC"
     )
@@ -312,7 +312,7 @@ RSpec.feature "Supplemental Claim Intake" do
     )
 
     visit "/supplemental_claims/#{ratings_end_product_establishment.reference_id}/edit"
-    expect(page).to have_content("Supplemental Claim (VA Form 21-526b)")
+    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
     expect(page).to have_content("Ed Merica (12341234)")
     expect(page).to have_content("04/20/2018")
     expect(page).to_not have_content("Informal conference request")
@@ -370,6 +370,7 @@ RSpec.feature "Supplemental Claim Intake" do
     )
 
     supplemental_claim.start_review!
+    supplemental_claim
   end
 
   it "Allows a Veteran without ratings to create an intake" do
@@ -394,7 +395,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Request for Supplemental Claim (VA Form 21-526b) has been processed.")
+    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
   end
 
   context "For new Add Issues page" do
@@ -416,21 +417,94 @@ RSpec.feature "Supplemental Claim Intake" do
     end
 
     scenario "SC comp" do
-      start_supplemental_claim(veteran)
+      supplemental_claim = start_supplemental_claim(veteran)
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add Issues")
-      check_row("Form", "Supplemental Claim (VA Form 21-526b)")
+      check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Ed Merica")
+
+      # clicking the add issues button should bring up the modal
+      safe_click "#button-add-issue"
+      expect(page).to have_content("Add issue 1")
+      expect(page).to have_content("Does issue 1 match any of these issues")
+      expect(page).to have_content("Left knee granted")
+      expect(page).to have_content("PTSD denied")
+
+      # test canceling adding an issue by closing the modal
+      safe_click ".close-modal"
+      expect(page).to_not have_content("Left knee granted")
+
+      # adding an issue should show the issue
+      safe_click "#button-add-issue"
+      find("label", text: "Left knee granted").click
+      safe_click ".add-issue"
+
+      expect(page).to have_content("1.Left knee granted")
+      expect(page).to_not have_content("Notes:")
+      safe_click ".remove-issue"
+
+      expect(page).not_to have_content("Left knee granted")
+
+      # re-add to proceed
+      safe_click "#button-add-issue"
+      find("label", text: "Left knee granted").click
+      fill_in "Notes", with: "I am an issue note"
+      safe_click ".add-issue"
+
+      expect(page).to have_content("1.Left knee granted")
+      expect(page).to have_content("I am an issue note")
+
+      # clicking add issue again should show a disabled radio button for that same rating
+      safe_click "#button-add-issue"
+      expect(page).to have_content("Add issue 2")
+      expect(page).to have_content("Does issue 2 match any of these issues")
+      expect(page).to have_content("Left knee granted (already selected for issue 1)")
+      expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
+      safe_click ".close-modal"
+
+      safe_click "#button-finish-intake"
+
+      expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
+
+      expect(page).to have_content(
+        "Established EP: 040SCR - Supplemental Claim Rating for Station 397 - ARC"
+      )
+
+      expect(SupplementalClaim.find_by(
+               id: supplemental_claim.id,
+               veteran_file_number: veteran.file_number,
+               establishment_submitted_at: Time.zone.now,
+               establishment_processed_at: Time.zone.now,
+               establishment_error: nil
+      )).to_not be_nil
+
+      end_product_establishment = EndProductEstablishment.find_by(
+        source_type: "SupplementalClaim",
+        source_id: supplemental_claim.id,
+        veteran_file_number: veteran.file_number,
+        code: "040SCR",
+        claimant_participant_id: "901987"
+      )
+      expect(end_product_establishment).to_not be_nil
+
+      expect(RequestIssue.find_by(
+               review_request_type: "SupplementalClaim",
+               review_request_id: supplemental_claim.id,
+               rating_issue_reference_id: "abc123",
+               description: "Left knee granted",
+               end_product_establishment_id: end_product_establishment.id,
+               notes: "I am an issue note"
+      )).to_not be_nil
     end
 
-    scenario "SC non-comp" do
+    scenario "Non-compensation" do
       start_supplemental_claim(veteran, is_comp: false)
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add Issues")
-      check_row("Form", "Supplemental Claim (VA Form 21-526b)")
+      check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
       check_row("Benefit type", "Education")
       expect(page).to_not have_content("Claimant")
     end
