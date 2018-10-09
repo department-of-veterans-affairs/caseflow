@@ -104,14 +104,8 @@ const HeaderRow = (props) => {
 };
 
 const getCellValue = (rowObject, rowId, column) => {
-  if (column.valueName && rowObject[column.valueName] && rowObject[column.valueName].span === 0) {
-    return '';
-  }
   if (column.valueFunction) {
     return column.valueFunction(rowObject, rowId);
-  }
-  if (column.valueName && rowObject[column.valueName] && rowObject[column.valueName].value) {
-    return rowObject[column.valueName].value;
   }
   if (column.valueName) {
     return rowObject[column.valueName];
@@ -123,10 +117,6 @@ const getCellValue = (rowObject, rowId, column) => {
 const getCellSpan = (rowObject, column) => {
   if (column.span) {
     return column.span(rowObject);
-  }
-
-  if (column.valueName && rowObject && rowObject[column.valueName] && !(_.isNil(rowObject[column.valueName].span))) {
-    return rowObject[column.valueName].span;
   }
 
   return 1;

@@ -152,10 +152,8 @@ export default class DailyDocket extends React.Component {
       {
         number: null,
         appellantInformation: <div>{hearing.issueCount} issues</div>,
-        hearingTime: { value: this.getNotesField(hearing),
-          span: 2 },
-        representative: { value: null,
-          span: 0 },
+        hearingTime: this.getNotesField(hearing),
+        representative: null,
         hearingLocation: null,
         hearingDay: null,
         disposition: null
@@ -180,12 +178,14 @@ export default class DailyDocket extends React.Component {
       {
         header: 'Time/RO(s)',
         align: 'left',
-        valueName: 'hearingTime'
+        valueName: 'hearingTime',
+        span: (row) => row.representative ? 1 : 2
       },
       {
         header: 'Representative',
         align: 'left',
-        valueName: 'representative'
+        valueName: 'representative',
+        span: (row) => row.representative ? 1 : 0
       },
       {
         header: 'Actions',
