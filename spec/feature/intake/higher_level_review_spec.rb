@@ -579,7 +579,23 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to have_content("Does issue 2 match any of these issues")
       expect(page).to have_content("Left knee granted (already selected for issue 1)")
       expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
-      safe_click ".close-modal"
+
+      # Add non-rated issue
+      safe_click ".no-matching-issues"
+
+      expect(page).to have_content("Does issue 2 match any of these issue categories?")
+      expect(page).to have_button("Add this issue", disabled: true)
+
+      fill_in "Issue category", with: "Active Duty Adjustments"
+      find("#issue-category").send_keys :enter
+      fill_in "Issue description", with: "Description for Active Duty Adjustments"
+      fill_in "Decision date", with: "04/25/2018"
+
+      expect(page).to have_button("Add this issue", disabled: false)
+
+      safe_click ".add-issue"
+
+      expect(page).to have_content("2 issues")
 
       safe_click "#button-finish-intake"
 
@@ -598,8 +614,7 @@ RSpec.feature "Higher-Level Review" do
       )).to_not be_nil
 
       end_product_establishment = EndProductEstablishment.find_by(
-        source_type: "HigherLevelReview",
-        source_id: higher_level_review.id,
+        source: higher_level_review,
         veteran_file_number: veteran.file_number,
         code: "030HLRR",
         claimant_participant_id: "5382910292",
@@ -608,13 +623,29 @@ RSpec.feature "Higher-Level Review" do
 
       expect(end_product_establishment).to_not be_nil
 
+      non_rating_end_product_establishment = EndProductEstablishment.find_by(
+        source: higher_level_review,
+        veteran_file_number: veteran.file_number,
+        code: "030HLRNR",
+        claimant_participant_id: "5382910292",
+        payee_code: "02"
+      )
+      expect(non_rating_end_product_establishment).to_not be_nil
+
       expect(RequestIssue.find_by(
-               review_request_type: "HigherLevelReview",
-               review_request_id: higher_level_review.id,
+               review_request: higher_level_review,
                rating_issue_reference_id: "abc123",
                description: "Left knee granted",
                end_product_establishment_id: end_product_establishment.id,
                notes: "I am an issue note"
+      )).to_not be_nil
+
+      expect(RequestIssue.find_by(
+               review_request: higher_level_review,
+               issue_category: "Active Duty Adjustments",
+               description: "Description for Active Duty Adjustments",
+               decision_date: 1.month.ago.to_date,
+               end_product_establishment_id: non_rating_end_product_establishment.id
       )).to_not be_nil
     end
 

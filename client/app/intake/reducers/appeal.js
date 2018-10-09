@@ -54,6 +54,7 @@ const updateFromServerIntake = (state, serverIntake) => {
 export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
     addIssuesModalVisible: false,
+    nonRatedIssueModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
     docketType: null,
@@ -214,7 +215,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         }
       }
     });
-  case ACTIONS.ADD_NON_RATED_ISSUE:
+  case ACTIONS.NEW_NON_RATED_ISSUE:
     return update(state, {
       nonRatedIssues: {
         [Object.keys(state.nonRatedIssues).length]: {
