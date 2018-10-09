@@ -4,13 +4,14 @@ import { connect } from 'react-redux';
 import React from 'react';
 
 import AddIssuesModal from '../components/AddIssuesModal';
+import NonRatedIssueModal from '../components/NonRatedIssueModal';
 import Button from '../../components/Button';
 import { FORM_TYPES } from '../../intakeCommon/constants';
 import { formatDate } from '../../util/DateUtil';
 import { formatAddedIssues, getAddIssuesFields } from '../util';
 
 import Table from '../../components/Table';
-import { toggleAddIssuesModal } from '../actions/common';
+import { toggleAddIssuesModal, toggleNonRatedIssueModal } from '../actions/common';
 import { removeIssue } from '../actions/ama';
 
 class AddIssues extends React.PureComponent {
@@ -86,6 +87,10 @@ class AddIssues extends React.PureComponent {
         intakeData={intakeData}
         closeHandler={this.props.toggleAddIssuesModal} />
       }
+      { intakeData.nonRatedIssueModalVisible && <NonRatedIssueModal
+        intakeData={intakeData}
+        closeHandler={this.props.toggleNonRatedIssueModal} />
+      }
       <h1 className="cf-txt-c">Add Issues</h1>
 
       <Table
@@ -108,6 +113,7 @@ export default connect(
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
+    toggleNonRatedIssueModal,
     removeIssue
   }, dispatch)
 )(AddIssues);
