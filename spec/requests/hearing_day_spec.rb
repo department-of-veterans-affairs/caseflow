@@ -249,17 +249,17 @@ RSpec.describe "Hearing Schedule", type: :request do
   describe "Get veterans for hearings" do
     let!(:vacols_case) do
       create(
-          :case,
-          folder: create(:folder, tinum: "docket-number"),
-          bfregoff: "RO04",
-          bfcurloc: "57"
+        :case,
+        folder: create(:folder, tinum: "docket-number"),
+        bfregoff: "RO04",
+        bfcurloc: "57"
       )
     end
 
     it "Get hearings with veterans" do
       vacols_case
       headers = {
-          "ACCEPT" => "application/json"
+        "ACCEPT" => "application/json"
       }
       get "/hearings/schedule/assign/veterans", params: { regional_office: "RO04" }, headers: headers
       expect(response).to have_http_status(:success)
