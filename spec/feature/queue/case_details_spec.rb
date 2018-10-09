@@ -41,15 +41,33 @@ RSpec.feature "Case details" do
   end
 
   context "hearings pane on attorney task detail view" do
+    let!(:veteran) do
+      FactoryBot.create(
+        :veteran,
+        file_number: 123_456_789
+      )
+    end
+    let!(:post_remanded_appeal) do
+      FactoryBot.create(
+        :legacy_appeal,
+        vacols_case: FactoryBot.create(
+          :case,
+          :assigned,
+          :type_post_remand,
+          bfcorlid: veteran.file_number,
+          user: attorney_user
+        )
+      )
+    end
     let!(:appeal) do
       FactoryBot.create(
         :legacy_appeal,
-        :with_veteran,
         vacols_case: FactoryBot.create(
           :case,
           :assigned,
           user: attorney_user,
-          # Need a non-cancelled dispositon to show the full set of hearing attributes.
+          bfcorlid: veteran.file_number,
+          # Need a non-cancelled disposition to show the full set of hearing attributes.
           case_hearings: case_hearings
         )
       )
@@ -61,7 +79,7 @@ RSpec.feature "Case details" do
 
       scenario "Entire set of attributes for hearing are displayed" do
         visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
 
         expect(page).to have_content("Select an action")
 
@@ -70,6 +88,15 @@ RSpec.feature "Case details" do
         expect(page).to have_content("Date: #{hearing.date.strftime('%-m/%-e/%y')}")
         expect(page).to have_content("Judge: #{hearing.user.full_name}")
       end
+
+      scenario "Post remanded appeal shows indication of earlier appeal hearing" do
+        visit "/queue"
+
+        page.find(:xpath, "//tr[@id='table-row-#{post_remanded_appeal.vacols_id}']/td[1]/a").click
+
+        expect(page).to have_content("Select an action")
+        expect(page).to have_content(COPY::CASE_DETAILS_HEARING_ON_OTHER_APPEAL)
+      end
     end
 
     context "when appeal has a single hearing that was cancelled" do
@@ -77,7 +104,7 @@ RSpec.feature "Case details" do
 
       scenario "Fewer attributes of hearing are displayed" do
         visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
 
         hearing = appeal.hearings.first
         hearing_preference = hearing.type.to_s.split("_").map(&:capitalize).join(" ")
@@ -96,7 +123,7 @@ RSpec.feature "Case details" do
 
       scenario "Fewer attributes of hearing are displayed" do
         visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
 
         worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet/print?keep_open=true']")
         expect(worksheet_link.text).to eq("View Hearing Worksheet")
@@ -108,7 +135,7 @@ RSpec.feature "Case details" do
 
       scenario "Hearings info box is not displayed" do
         visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
         expect(page).not_to have_content("Hearing preference")
       end
     end
@@ -134,7 +161,7 @@ RSpec.feature "Case details" do
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         expect(page).to have_content("About the Veteran")
-        expect(page).to have_content("She/Her")
+        expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to have_content(appeal.veteran_date_of_birth.strftime("%-m/%e/%Y"))
       end
     end
@@ -248,6 +275,29 @@ RSpec.feature "Case details" do
     end
   end
 
+  context "when events are present" do
+    let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let!(:vacols_case) do
+      FactoryBot.create(
+        :case,
+        bfdnod: 2.days.ago,
+        bfd19: 1.day.ago
+      )
+    end
+
+    before do
+      User.authenticate!(user: judge_user)
+    end
+
+    scenario "displays case timeline" do
+      visit "/queue/appeals/#{appeal.external_id}"
+
+      # Ensure we see a timeline where completed things are checked and incomplete are gray
+      expect(find("tr", text: COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING)).to have_selector(".gray-dot")
+      expect(find("tr", text: COPY::CASE_TIMELINE_FORM_9_RECEIVED)).to have_selector(".green-checkmark")
+    end
+  end
+
   context "loads colocated task detail views" do
     let!(:appeal) do
       FactoryBot.create(
@@ -261,10 +311,10 @@ RSpec.feature "Case details" do
         )
       )
     end
-    let!(:colocated_action) do
+    let!(:on_hold_task) do
       FactoryBot.create(
         :colocated_task,
-        appeal: appeal,
+        :on_hold,
         assigned_to: colocated_user,
         assigned_by: attorney_user
       )
@@ -282,14 +332,17 @@ RSpec.feature "Case details" do
     scenario "displays task information" do
       visit "/queue"
 
-      vet_name = colocated_action.appeal.veteran_full_name
-      assigner_name = colocated_action.assigned_by_display_name
+      vet_name = on_hold_task.appeal.veteran_full_name
+      assigner_name = on_hold_task.assigned_by_display_name
 
+      click_on "On hold (1)"
       click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
 
-      expect(page).to have_content("TASK #{Constants::CO_LOCATED_ADMIN_ACTIONS[colocated_action.action]}")
-      expect(page).to have_content("TASK INSTRUCTIONS #{colocated_action.instructions}")
+      expect(page).to have_content("TASK #{Constants::CO_LOCATED_ADMIN_ACTIONS[on_hold_task.action]}")
+      expect(page).to have_content("TASK INSTRUCTIONS #{on_hold_task.instructions[0]}")
       expect(page).to have_content("#{assigner_name.first[0]}. #{assigner_name.last}")
+
+      expect(Task.find(on_hold_task.id).status).to eq("on_hold")
     end
   end
 end

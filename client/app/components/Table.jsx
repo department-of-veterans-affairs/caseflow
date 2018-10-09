@@ -7,6 +7,9 @@ import Tooltip from './Tooltip';
 import { DoubleArrow } from './RenderFunctions';
 import { COLORS } from '../constants/AppConstants';
 import { css, hover } from 'glamor';
+import FilterIcon from './FilterIcon';
+import DropdownFilter from './DropdownFilter';
+import ListItemPicker from './ListItemPicker';
 
 /**
  * This component can be used to easily build tables.
@@ -63,6 +66,29 @@ const HeaderRow = (props) => {
           columnContent = <span {...sortableHeaderStyle} onClick={() => props.setSortOrder(columnNumber)}>
             <span>{column.header || ''}</span>
             <span {...sortArrowsStyle}><DoubleArrow topColor={topColor} bottomColor={botColor} /></span>
+          </span>;
+        }
+
+        if (column.getFilterValues) {
+          columnContent = <span><span>{column.header || ''}</span>
+            <span><FilterIcon
+              label={column.label}
+              idPrefix={column.valueName}
+              getRef={column.getFilterIconRef}
+              selected={column.isDropdownFilterOpen || column.anyFiltersAreSet}
+              handleActivate={column.toggleDropdownFilterVisiblity} />
+
+            {column.isDropdownFilterOpen &&
+              <DropdownFilter
+                name={column.valueName}
+                isClearEnabled={column.anyFiltersAreSet}
+                handleClose={column.toggleDropdownFilterVisiblity}>
+                <ListItemPicker
+                  options={column.getFilterValues}
+                  setSelectedValue={column.setSelectedValue} />
+              </DropdownFilter>
+            }
+            </span>
           </span>;
         }
 
@@ -219,7 +245,7 @@ export default class Table extends React.PureComponent {
 
     return <table
       id={id}
-      className={`usa-table-borderless cf-table-borderless cf-table-wrap ${this.props.className}`}
+      className={`usa-table-borderless ${this.props.className}`}
       summary={summary}
       {...styling} >
 

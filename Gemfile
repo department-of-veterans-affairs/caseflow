@@ -47,7 +47,7 @@ gem "puma", "~> 3.12.0"
 gem "wannabe_bool"
 
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "48d3e0deeaf2151e1e43c026848c195691d05bac"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "2d0e08ea4157b725242777a6f876fc199f503b61"
 
 # PDF Tools
 gem "pdf-forms"
@@ -70,7 +70,7 @@ gem "therubyracer", platforms: :ruby
 
 gem "pg", platforms: :ruby
 
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "44a3aee470f3ddd0e42eb2d07b87ed776b0f9fab"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "446b1ad643607e49dd3cacff24f7039bb17f78b8"
 
 gem "redis-rails", "~> 5.0.2"
 
@@ -88,12 +88,13 @@ gem "zero_downtime_migrations"
 
 # nokogiri versions before 1.8.3 are affected by CVE-2018-8048. Explicitly define nokogiri version here to avoid that.
 # https://github.com/sparklemotion/nokogiri/pull/1746
-gem "nokogiri", ">= 1.8.3"
+gem "nokogiri", "1.8.5"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter"
-  gem "ruby-oci8"
+  # set require: 'oci8' here because bootsnap creates a warning: https://github.com/rails/rails/issues/32811#issuecomment-386541855
+  gem "ruby-oci8", require: "oci8"
 end
 
 # Development was ommited due to double logging issue (https://github.com/heroku/rails_stdout_logging/issues/1)
@@ -118,12 +119,12 @@ group :stubbed, :test, :development, :demo do
   gem "bundler-audit"
 
   # Testing tools
-  gem "faker"
-  gem "rspec"
-  gem "rspec-rails"
-  # gem 'guard-rspec', '4.7.1' # removed because downstream dep requires ruby 2.5
   gem "capybara"
   gem "capybara-screenshot"
+  gem "faker"
+  gem "guard-rspec"
+  gem "rspec"
+  gem "rspec-rails"
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git", branch: "master"
   gem "timecop"
@@ -167,4 +168,8 @@ gem "roo", "~> 2.7"
 gem "rubyzip", "~> 1.2.2"
 
 gem "business_time", "~> 0.9.3"
+
+# Bootsnap speeds up app boot (and started to be a default gem in 5.2).
+gem "bootsnap", require: false
+
 # rubocop:enable Metrics/LineLength

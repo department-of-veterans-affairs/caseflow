@@ -2,9 +2,38 @@
 # higher level review as defined in the Appeals Modernization Act of 2017
 
 class ClaimReview < AmaReview
+  include Asyncable
+
   has_many :end_product_establishments, as: :source
 
   self.abstract_class = true
+
+  # The Asyncable module requires we define these.
+  # establishment_submitted_at - when our db is ready to push to exernal services
+  # establishment_attempted_at - when our db attempted to push to external services
+  # establishment_processed_at - when our db successfully pushed to external services
+
+  class << self
+    def submitted_at_column
+      :establishment_submitted_at
+    end
+
+    def attempted_at_column
+      :establishment_attempted_at
+    end
+
+    def processed_at_column
+      :establishment_processed_at
+    end
+
+    def error_column
+      :establishment_error
+    end
+  end
+
+  def issue_code(_rated)
+    fail Caseflow::Error::MustImplementInSubclass
+  end
 
   # Save issues and assign it the appropriate end product establishment.
   # Create that end product establishment if it doesn't exist.
@@ -14,26 +43,25 @@ class ClaimReview < AmaReview
     end
   end
 
-  # Send the appropriate calls to VBMS to create the end products and contentions for any
-  # outstanding end product establishment. If all end products have been created then this
-  # method does nothing
+  # Idempotent method to create all the artifacts for this claim.
+  # If any external calls fail, it is safe to call this multiple times until
+  # establishment_processed_at is successfully set.
   def process_end_product_establishments!
+    attempted!
+
     end_product_establishments.each do |end_product_establishment|
       end_product_establishment.perform!
-      create_contentions_for_end_product_establishment(end_product_establishment)
+      end_product_establishment.create_contentions!
+      end_product_establishment.create_associated_rated_issues!
+      if informal_conference?
+        end_product_establishment.generate_claimant_letter!
+        end_product_establishment.generate_tracked_item!
+      end
+      end_product_establishment.commit!
     end
 
-    end_product_establishments.each(&:commit!)
-  end
-
-  # NOTE: Choosing not to test this method because it is fully tested in RequestIssuesUpdate.perform!
-  # Hoping to figure out how to refactor this into a private method.
-  def on_request_issues_update!(request_issues_update)
-    process_end_product_establishments!
-
-    request_issues_update.removed_issues.each do |request_issue|
-      request_issue.end_product_establishment.remove_contention!(request_issue)
-    end
+    clear_error!
+    processed!
   end
 
   def invalid_modifiers
@@ -43,58 +71,27 @@ class ClaimReview < AmaReview
   def on_sync(end_product_establishment)
     if end_product_establishment.status_cleared?
       sync_dispositions(end_product_establishment.reference_id)
+      # allow higher level reviews to do additional logic on dta errors
+      yield if block_given?
     end
   end
 
   private
+
+  def informal_conference?
+    false
+  end
 
   def end_product_establishment_for_issue(issue)
     ep_code = issue_code(issue.rated?)
     end_product_establishments.find_by(code: ep_code) || new_end_product_establishment(ep_code)
   end
 
-  def issue_code(_rated)
-    fail Caseflow::Error::MustImplementInSubclass
-  end
-
-  def create_contentions_for_end_product_establishment(end_product_establishment)
-    request_issues_without_contentions = request_issues.where(
-      end_product_establishment: end_product_establishment,
-      contention_reference_id: nil
-    )
-
-    return if request_issues_without_contentions.empty?
-
-    end_product_establishment.create_contentions!(request_issues_without_contentions)
-    create_associated_rated_issues!(end_product_establishment, request_issues_without_contentions)
-  end
-
-  def create_associated_rated_issues!(end_product_establishment, issues)
-    request_issues_to_associate = issues.select(&:rated?)
-
-    return if end_product_establishment.code != issue_code(true)
-    return if request_issues_to_associate.empty?
-
-    VBMSService.associate_rated_issues!(
-      claim_id: end_product_establishment.reference_id,
-      rated_issue_contention_map: rated_issue_contention_map(request_issues_to_associate)
-    )
-
-    RequestIssue.where(id: request_issues_to_associate.map(&:id)).update_all(
-      rating_issue_associated_at: Time.zone.now
-    )
-  end
-
-  def rated_issue_contention_map(request_issues_to_associate)
-    request_issues_to_associate.inject({}) do |contention_map, issue|
-      contention_map[issue.rating_issue_reference_id] = issue.contention_reference_id
-      contention_map
-    end
-  end
-
   def sync_dispositions(reference_id)
     fetch_dispositions_from_vbms(reference_id).each do |disposition|
-      matching_request_issue(disposition[:contention_id]).update!(disposition: disposition[:disposition])
+      matching_request_issue(disposition.contention_id).update!(
+        disposition: disposition.disposition
+      )
     end
   end
 

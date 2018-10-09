@@ -7,19 +7,19 @@ FactoryBot.define do
     action { nil }
 
     trait :in_progress do
-      status "in_progress"
+      status Constants.TASK_STATUSES.in_progress
       started_at { rand(1..10).days.ago }
     end
 
     trait :on_hold do
-      status "on_hold"
+      status Constants.TASK_STATUSES.on_hold
       started_at { rand(20..30).days.ago }
       placed_on_hold_at { rand(1..10).days.ago }
       on_hold_duration [30, 60, 90].sample
     end
 
     trait :completed do
-      status "completed"
+      status Constants.TASK_STATUSES.completed
       started_at { rand(20..30).days.ago }
       placed_on_hold_at { rand(1..10).days.ago }
       on_hold_duration [30, 60, 90].sample
@@ -27,55 +27,58 @@ FactoryBot.define do
     end
 
     factory :root_task do
-      type "RootTask"
-      appeal_type "Appeal"
+      type RootTask.name
+      appeal_type Appeal.name
       appeal { create(:appeal) }
       assigned_by { nil }
     end
 
     factory :generic_task do
-      type "GenericTask"
-      appeal_type "Appeal"
+      type GenericTask.name
+      appeal_type Appeal.name
       appeal { create(:appeal) }
     end
 
     factory :colocated_task do
-      type "ColocatedTask"
+      type ColocatedTask.name
       action { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample }
-      instructions "poa is missing"
+      instructions ["poa is missing"]
     end
 
     factory :ama_colocated_task do
-      type "ColocatedTask"
+      type ColocatedTask.name
       action { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample }
-      instructions "poa is missing"
-      appeal_type "Appeal"
+      instructions ["poa is missing"]
+      appeal_type Appeal.name
       appeal { create(:appeal) }
     end
 
     factory :ama_judge_task, class: JudgeTask do
-      type "JudgeTask"
-      appeal_type "Appeal"
+      type JudgeTask.name
+      appeal_type Appeal.name
       action :assign
       appeal { create(:appeal) }
     end
 
     factory :ama_attorney_task do
-      type "AttorneyTask"
-      appeal_type "Appeal"
+      type AttorneyTask.name
+      appeal_type Appeal.name
       appeal { create(:appeal) }
       parent { create(:ama_judge_task) }
     end
 
     factory :ama_vso_task do
-      type "GenericTask"
-      appeal_type "Appeal"
+      type GenericTask.name
+      appeal_type Appeal.name
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
     end
 
     factory :bva_dispatch_task do
-      type "BvaDispatchTask"
-      appeal_type "Appeal"
+      type BvaDispatchTask.name
+      appeal_type Appeal.name
       appeal { create(:appeal) }
+      assigned_by nil
     end
   end
 end

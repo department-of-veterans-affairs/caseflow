@@ -14,8 +14,10 @@ import SelectFormPage, { SelectFormButton } from './pages/selectForm';
 import SearchPage from './pages/search';
 import ReviewPage, { ReviewButtons } from './pages/review';
 import FinishPage, { FinishButtons } from './pages/finish';
+import AddIssues from './pages/addIssues';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
-import { PAGE_PATHS, REQUEST_STATE } from './constants';
+import { PAGE_PATHS } from './constants';
+import { REQUEST_STATE } from '../intakeCommon/constants';
 import { toggleCancelModal, submitCancel } from './actions/common';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { css } from 'glamor';
@@ -61,7 +63,6 @@ class IntakeFrame extends React.PureComponent {
                     'There was an error while canceling the current intake.' +
                     ' Please try again later.'
                   }
-                  lowerMargin
                 />
               }
               <div>
@@ -87,6 +88,11 @@ class IntakeFrame extends React.PureComponent {
                   component={FinishPage} />
                 <PageRoute
                   exact
+                  path={PAGE_PATHS.ADD_ISSUES}
+                  title="Add Issues | Caseflow Intake"
+                  component={AddIssues} />
+                <PageRoute
+                  exact
                   path={PAGE_PATHS.COMPLETED}
                   title="Confirmation | Caseflow Intake"
                   component={CompletedPage} />
@@ -101,10 +107,12 @@ class IntakeFrame extends React.PureComponent {
                 exact
                 path={PAGE_PATHS.REVIEW}
                 component={ReviewButtons} />
-              <Route
-                exact
-                path={PAGE_PATHS.FINISH}
-                component={FinishButtons} />
+              {[PAGE_PATHS.FINISH, PAGE_PATHS.ADD_ISSUES].map((path) =>
+                <Route
+                  exact
+                  path={path}
+                  component={FinishButtons} />
+              )}
               <Route
                 exact
                 path={PAGE_PATHS.COMPLETED}

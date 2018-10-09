@@ -42,7 +42,8 @@ export const initialState = {
   attorneyAppealsLoadingState: {},
   isTaskAssignedToUserSelected: {},
   attorneys: {},
-  organizationId: null
+  organizationId: null,
+  loadingAppealDetail: {}
 };
 
 // eslint-disable-next-line max-statements
@@ -136,14 +137,6 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
       docCountForAppeal: {
         [action.payload.appealId]: {
           $set: action.payload.docCount
-        }
-      }
-    });
-  case ACTIONS.SET_REVIEW_ACTION_TYPE:
-    return update(state, {
-      stagedChanges: {
-        taskDecision: {
-          type: { $set: action.payload.type }
         }
       }
     });
@@ -382,6 +375,60 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
     return update(state, {
       organizationId: {
         $set: action.payload.id
+      }
+    });
+  case ACTIONS.SET_APPEAL_AOD:
+    return update(state, {
+      appeals: {
+        [action.payload.externalAppealId]: {
+          isAdvancedOnDocket: {
+            $set: true
+          }
+        }
+      }
+    });
+  case ACTIONS.STARTED_LOADING_APPEAL_VALUE:
+    return update(state, {
+      loadingAppealDetail: {
+        $merge: {
+          [action.payload.appealId]: {
+            [action.payload.name]: {
+              loading: true
+            }
+          }
+        }
+      }
+    });
+  case ACTIONS.RECEIVE_APPEAL_VALUE:
+    return update(state, {
+      loadingAppealDetail: {
+        $merge: {
+          [action.payload.appealId]: {
+            [action.payload.name]: {
+              loading: false
+            }
+          }
+        }
+      },
+      appealDetails: {
+        [action.payload.appealId]: {
+          $merge: {
+            [action.payload.name]: action.payload.response
+          }
+        }
+      }
+    });
+  case ACTIONS.ERROR_ON_RECEIVE_APPEAL_VALUE:
+    return update(state, {
+      loadingAppealDetail: {
+        $merge: {
+          [action.payload.appealId]: {
+            [action.payload.name]: {
+              loading: false,
+              error: action.payload.error
+            }
+          }
+        }
       }
     });
   default:

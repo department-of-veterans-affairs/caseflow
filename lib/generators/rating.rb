@@ -2,10 +2,12 @@ class Generators::Rating
   extend Generators::Base
 
   class << self
+    DATE_LIST = (0..100).map { |offset_days| Time.zone.now - offset_days.days }
+
     def default_attrs
       {
         participant_id: generate_external_id,
-        # we'll do a little more logic to find an open profile date, see: generate_profile_date
+        # we'll do a little more logic to find an open profile date, see: generate_profile_datetime
         profile_date: nil,
         promulgation_date: Time.zone.today - 30,
         issues: [
@@ -26,7 +28,7 @@ class Generators::Rating
 
       init_fakes(attrs[:participant_id])
 
-      attrs[:profile_date] ||= generate_profile_date(attrs[:participant_id])
+      attrs[:profile_date] ||= generate_profile_datetime(attrs[:participant_id])
 
       attrs[:issues] = populate_issue_ids(attrs)
 
@@ -54,6 +56,8 @@ class Generators::Rating
     end
 
     def bgs_rating_profile_data(attrs)
+      return :no_issues if attrs[:issues] == :no_issues
+
       attrs[:issues].map do |issue_data|
         {
           rba_issue_id: issue_data[:reference_id] || generate_external_id,
@@ -69,10 +73,8 @@ class Generators::Rating
       Fakes::BGSService.rating_records[participant_id] ||= []
     end
 
-    def generate_profile_date(participant_id)
-      dates = (0..10_000).lazy.map { |offset_days| Time.zone.today - offset_days }
-
-      dates.find do |date|
+    def generate_profile_datetime(participant_id)
+      DATE_LIST.find do |date|
         !Fakes::BGSService.rating_issue_records[participant_id][date]
       end
     end
@@ -82,6 +84,8 @@ class Generators::Rating
     end
 
     def populate_issue_ids(attrs)
+      return :no_issues if attrs[:issues] == :no_issues
+
       # gives a unique id to each issue that is tied to a specific participant_id
       prev_count = get_prev_issues_count(attrs[:participant_id])
       attrs[:issues].each_with_index.map do |issue, i|

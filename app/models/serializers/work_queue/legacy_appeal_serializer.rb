@@ -1,9 +1,12 @@
 class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
+  attribute :assigned_attorney
+  attribute :assigned_judge
+
   attribute :issues do
     object.issues.map do |issue|
       ActiveModelSerializers::SerializableResource.new(
         issue,
-        serializer: ::WorkQueue::IssueSerializer
+        serializer: ::WorkQueue::LegacyIssueSerializer
       ).as_json[:data][:attributes]
     end
   end
@@ -22,6 +25,8 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
       }
     end
   end
+
+  attribute :completed_hearing_on_previous_appeal?
 
   attribute :appellant_full_name do
     object.appellant_name
@@ -85,5 +90,12 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
 
   attribute :docket_name do
     "legacy"
+  end
+
+  attribute :events do
+    {
+      nod_receipt_date: object.nod_date,
+      form9_date: object.form9_date
+    }
   end
 end

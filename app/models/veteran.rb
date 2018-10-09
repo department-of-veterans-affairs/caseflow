@@ -24,10 +24,16 @@ class Veteran < ApplicationRecord
   # Germany and Australia should be temporary additions until VBMS bug is fixed
   COUNTRIES_REQUIRING_ZIP = %w[USA CANADA].freeze
 
-  validates :ssn, :sex, :first_name, :last_name, :city,
+  # C&P Live = '1', C&P Death = '2'
+  BENEFIT_TYPE_CODE_LIVE = "1".freeze
+  BENEFIT_TYPE_CODE_DEATH = "2".freeze
+
+  validates :ssn, :sex, :first_name, :last_name,
             :address_line1, :country, presence: true, on: :bgs
   validates :zip_code, presence: true, if: :country_requires_zip?, on: :bgs
-  validates :state, presence: true, if: :country_requires_state?, on: :bgs
+  validates :state, presence: true, if: :state_is_required?, on: :bgs
+  validates :city, presence: true, unless: :military_address?, on: :bgs
+  validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
 
   # TODO: get middle initial from BGS
   def name
@@ -36,6 +42,10 @@ class Veteran < ApplicationRecord
 
   def country_requires_zip?
     COUNTRIES_REQUIRING_ZIP.include?(country && country.upcase)
+  end
+
+  def state_is_required?
+    !military_address? && country_requires_state?
   end
 
   def country_requires_state?
@@ -65,6 +75,10 @@ class Veteran < ApplicationRecord
     # Age calc copied from https://stackoverflow.com/a/2357790
     now = Time.now.utc.to_date
     now.year - dob.year - ((now.month > dob.month || (now.month == dob.month && now.day >= dob.day)) ? 0 : 1)
+  end
+
+  def benefit_type_code
+    @benefit_type_code ||= deceased? ? BENEFIT_TYPE_CODE_DEATH : BENEFIT_TYPE_CODE_LIVE
   end
 
   def bgs
@@ -133,7 +147,10 @@ class Veteran < ApplicationRecord
     def find_and_maybe_backfill_name(file_number)
       veteran = find_by(file_number: file_number)
       return nil unless veteran
-      if veteran.first_name.nil? && veteran.found?
+      # Check to see if veteran is accessible to make sure bgs_record is
+      # a hash and not :not_found. Also if it's not found, bgs_record returns
+      # a symbol that will blow up, so check if bgs_record is a hash first.
+      if veteran.first_name.nil? && veteran.accessible? && veteran.bgs_record.is_a?(Hash)
         veteran.update!(
           first_name: veteran.bgs_record[:first_name],
           last_name: veteran.bgs_record[:last_name],
@@ -173,6 +190,10 @@ class Veteran < ApplicationRecord
   end
 
   private
+
+  def deceased?
+    !date_of_death.nil?
+  end
 
   def fetch_end_products
     bgs_end_products = bgs.get_end_products(file_number)

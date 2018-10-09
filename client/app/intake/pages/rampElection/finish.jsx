@@ -6,7 +6,8 @@ import Checkbox from '../../../components/Checkbox';
 import Alert from '../../../components/Alert';
 import Table from '../../../components/Table';
 import { Redirect } from 'react-router-dom';
-import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES } from '../../constants';
+import { REQUEST_STATE } from '../../../intakeCommon/constants';
 import { connect } from 'react-redux';
 import { completeIntake, confirmFinishIntake } from '../../actions/rampElection';
 import { bindActionCreators } from 'redux';
@@ -137,7 +138,6 @@ class FinishNextButton extends React.PureComponent {
       name="submit-review"
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-      legacyStyling={false}
     >
       { submitText }
     </Button>;

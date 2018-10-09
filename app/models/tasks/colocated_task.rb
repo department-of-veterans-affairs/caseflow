@@ -30,12 +30,21 @@ class ColocatedTask < Task
     end
   end
 
+  def update_if_hold_expired!
+    update!(status: Constants.TASK_STATUSES.in_progress) if on_hold_expired?
+  end
+
+  def on_hold_expired?
+    return true if placed_on_hold_at && on_hold_duration && placed_on_hold_at + on_hold_duration.days < Time.zone.now
+    false
+  end
+
   private
 
   def update_location_in_vacols
     if saved_change_to_status? &&
        completed? &&
-       appeal_type == "LegacyAppeal" &&
+       appeal_type == LegacyAppeal.name &&
        all_tasks_completed_for_appeal?
       AppealRepository.update_location!(appeal, location_based_on_action)
     end
@@ -51,7 +60,7 @@ class ColocatedTask < Task
   end
 
   def all_tasks_completed_for_appeal?
-    appeal.tasks.where(type: "ColocatedTask").map(&:status).uniq == ["completed"]
+    appeal.tasks.where(type: ColocatedTask.name).map(&:status).uniq == [Constants.TASK_STATUSES.completed]
   end
 
   def assigned_by_role_is_valid

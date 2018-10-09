@@ -10,20 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 201809112051441) do
+ActiveRecord::Schema.define(version: 20181004232948) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
-  create_table "advance_on_docket_grants", force: :cascade do |t|
-    t.bigint "claimant_id"
+  create_table "advance_on_docket_motions", force: :cascade do |t|
+    t.bigint "person_id"
     t.bigint "user_id"
     t.string "reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["claimant_id"], name: "index_advance_on_docket_grants_on_claimant_id"
-    t.index ["user_id"], name: "index_advance_on_docket_grants_on_user_id"
+    t.boolean "granted"
+    t.index ["person_id"], name: "index_advance_on_docket_motions_on_person_id"
+    t.index ["user_id"], name: "index_advance_on_docket_motions_on_user_id"
   end
 
   create_table "allocations", force: :cascade do |t|
@@ -60,6 +61,7 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.datetime "created_at"
     t.string "vbms_id"
     t.integer "api_key_id"
+    t.string "source"
   end
 
   create_table "appeal_series", id: :serial, force: :cascade do |t|
@@ -168,8 +170,6 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.bigint "review_request_id", null: false
     t.string "participant_id", null: false
     t.string "payee_code"
-    t.date "date_of_birth"
-    t.index ["date_of_birth"], name: "index_claimants_on_date_of_birth"
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
@@ -186,6 +186,17 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.string "disposition_date"
     t.string "description"
     t.integer "request_issue_id"
+  end
+
+  create_table "decisions", force: :cascade do |t|
+    t.bigint "appeal_id", null: false
+    t.string "citation_number", null: false
+    t.date "decision_date", null: false
+    t.string "redacted_document_location", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["appeal_id"], name: "index_decisions_on_appeal_id"
+    t.index ["citation_number"], name: "index_decisions_on_citation_number", unique: true
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
@@ -264,6 +275,9 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.string "claimant_participant_id"
     t.string "payee_code"
     t.datetime "committed_at"
+    t.string "doc_reference_id"
+    t.string "development_item_reference_id"
+    t.string "benefit_type_code"
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
   end
@@ -359,6 +373,18 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.index ["hearing_id", "appeal_id"], name: "index_hearing_appeal_stream_snapshots_hearing_and_appeal_ids", unique: true
   end
 
+  create_table "hearing_days", force: :cascade do |t|
+    t.datetime "hearing_date", null: false
+    t.string "hearing_type", null: false
+    t.string "regional_office"
+    t.string "judge_id"
+    t.string "room_info", null: false
+    t.datetime "created_at", null: false
+    t.string "created_by", null: false
+    t.datetime "updated_at", null: false
+    t.string "updated_by", null: false
+  end
+
   create_table "hearing_views", id: :serial, force: :cascade do |t|
     t.integer "hearing_id", null: false
     t.integer "user_id", null: false
@@ -382,10 +408,11 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.date "receipt_date"
     t.boolean "informal_conference"
     t.boolean "same_office"
-    t.datetime "established_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
     t.string "benefit_type"
+    t.datetime "establishment_attempted_at"
+    t.string "establishment_error"
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
@@ -477,6 +504,13 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.string "participant_id"
   end
 
+  create_table "people", force: :cascade do |t|
+    t.string "participant_id", null: false
+    t.date "date_of_birth"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "ramp_closed_appeals", id: :serial, force: :cascade do |t|
     t.string "vacols_id", null: false
     t.integer "ramp_election_id"
@@ -507,6 +541,8 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.datetime "end_product_status_last_synced_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
+    t.datetime "establishment_attempted_at"
+    t.string "establishment_error"
     t.index ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number"
   end
 
@@ -529,6 +565,8 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.datetime "established_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
+    t.datetime "establishment_attempted_at"
+    t.string "establishment_error"
     t.index ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number"
   end
 
@@ -539,11 +577,20 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.index ["user_id"], name: "index_reader_users_on_user_id", unique: true
   end
 
+  create_table "remand_reasons", force: :cascade do |t|
+    t.bigint "request_issue_id"
+    t.boolean "post_aoj"
+    t.string "code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["request_issue_id"], name: "index_remand_reasons_on_request_issue_id"
+  end
+
   create_table "request_issues", force: :cascade do |t|
     t.string "review_request_type"
     t.bigint "review_request_id"
     t.string "rating_issue_reference_id"
-    t.date "rating_issue_profile_date"
+    t.datetime "rating_issue_profile_date"
     t.string "contention_reference_id"
     t.string "description"
     t.string "issue_category"
@@ -552,7 +599,10 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.integer "end_product_establishment_id"
     t.datetime "removed_at"
     t.datetime "rating_issue_associated_at"
+    t.integer "parent_request_issue_id"
+    t.text "notes"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
+    t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
   end
 
@@ -563,6 +613,9 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.integer "before_request_issue_ids", null: false, array: true
     t.integer "after_request_issue_ids", null: false, array: true
     t.datetime "processed_at"
+    t.datetime "attempted_at"
+    t.datetime "submitted_at"
+    t.string "error"
     t.index ["review_type", "review_id"], name: "index_request_issues_updates_on_review_type_and_review_id"
     t.index ["user_id"], name: "index_request_issues_updates_on_user_id"
   end
@@ -610,13 +663,23 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.index ["appeal_type", "appeal_id"], name: "index_special_issue_lists_on_appeal_type_and_appeal_id"
   end
 
+  create_table "staff_field_for_organizations", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "name", null: false
+    t.string "values", default: [], null: false, array: true
+    t.boolean "exclude", default: false
+    t.index ["organization_id"], name: "index_staff_field_for_organizations_on_organization_id"
+  end
+
   create_table "supplemental_claims", force: :cascade do |t|
     t.string "veteran_file_number", null: false
     t.date "receipt_date"
-    t.datetime "established_at"
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
     t.string "benefit_type"
+    t.boolean "is_dta_error"
+    t.datetime "establishment_attempted_at"
+    t.string "establishment_error"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 
@@ -632,7 +695,7 @@ ActiveRecord::Schema.define(version: 201809112051441) do
     t.string "status", default: "assigned"
     t.string "type"
     t.text "action"
-    t.text "instructions"
+    t.text "instructions", default: [], array: true
     t.integer "assigned_to_id"
     t.integer "assigned_by_id"
     t.datetime "assigned_at"

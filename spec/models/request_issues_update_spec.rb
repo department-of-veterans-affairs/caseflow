@@ -43,14 +43,14 @@ describe RequestIssuesUpdate do
     [
       RequestIssue.new(
         review_request: review,
-        rating_issue_profile_date: Date.new(2017, 4, 5),
+        rating_issue_profile_date: Time.zone.local(2017, 4, 5),
         rating_issue_reference_id: "issue1",
         contention_reference_id: request_issue_contentions[0].id,
         description: request_issue_contentions[0].text
       ),
       RequestIssue.new(
         review_request: review,
-        rating_issue_profile_date: Date.new(2017, 4, 6),
+        rating_issue_profile_date: Time.zone.local(2017, 4, 6),
         rating_issue_reference_id: "issue2",
         contention_reference_id: request_issue_contentions[1].id,
         description: request_issue_contentions[1].text
@@ -74,9 +74,7 @@ describe RequestIssuesUpdate do
     existing_request_issues.map do |issue|
       {
         reference_id: issue.rating_issue_reference_id,
-        # TODO: validate the string format this comes in
-        profile_date: issue.rating_issue_profile_date,
-        description: issue.description
+        decision_text: issue.description
       }
     end
   end
@@ -84,9 +82,66 @@ describe RequestIssuesUpdate do
   let(:request_issues_data_with_new_issue) do
     existing_request_issues_data + [{
       reference_id: "issue3",
-      profile_date: Date.new(2017, 4, 7),
-      description: "Service connection for cancer was denied"
+      profile_date: Time.zone.local(2017, 4, 7),
+      decision_text: "Service connection for cancer was denied"
     }]
+  end
+
+  context "async logic scopes" do
+    let!(:riu_requiring_processing) do
+      create(:request_issues_update).tap(&:submit_for_processing!)
+    end
+
+    let!(:riu_processed) do
+      create(:request_issues_update).tap(&:processed!)
+    end
+
+    let!(:riu_recently_attempted) do
+      create(
+        :request_issues_update,
+        attempted_at: (RequestIssuesUpdate::REQUIRES_PROCESSING_RETRY_WINDOW_HOURS - 1).hours.ago
+      )
+    end
+
+    let!(:riu_attempts_ended) do
+      create(
+        :request_issues_update,
+        submitted_at: (RequestIssuesUpdate::REQUIRES_PROCESSING_WINDOW_DAYS + 5).days.ago,
+        attempted_at: (RequestIssuesUpdate::REQUIRES_PROCESSING_WINDOW_DAYS + 1).days.ago
+      )
+    end
+
+    context ".unexpired" do
+      it "matches inside the processing window" do
+        expect(described_class.unexpired).to eq([riu_requiring_processing])
+      end
+    end
+
+    context ".processable" do
+      it "matches eligible for processing" do
+        expect(described_class.processable).to match_array(
+          [riu_requiring_processing, riu_attempts_ended]
+        )
+      end
+    end
+
+    context ".attemptable" do
+      it "matches could be attempted" do
+        expect(described_class.attemptable).not_to include(riu_recently_attempted)
+      end
+    end
+
+    context ".requires_processing" do
+      it "matches must still be processed" do
+        expect(described_class.requires_processing).to eq([riu_requiring_processing])
+      end
+    end
+
+    context ".expired_without_processing" do
+      it "matches unfinished but outside the retry window" do
+        expect(described_class.expired_without_processing).to eq([riu_attempts_ended])
+      end
+    end
   end
 
   context "#created_issues" do
@@ -125,6 +180,8 @@ describe RequestIssuesUpdate do
   end
 
   context "#perform!" do
+    let(:vbms_error) { VBMS::HTTPError.new("500", "More EPs more problems") }
+
     subject { request_issues_update.perform! }
 
     context "when request issues are empty" do
@@ -149,7 +206,7 @@ describe RequestIssuesUpdate do
       let(:request_issues_data) { request_issues_data_with_new_issue }
 
       it "saves update, adds issues, and calls create contentions" do
-        allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+        allow_create_contentions
 
         expect(subject).to be_truthy
 
@@ -175,7 +232,7 @@ describe RequestIssuesUpdate do
 
         created_issue = review.request_issues.find_by(rating_issue_reference_id: "issue3")
         expect(created_issue).to have_attributes(
-          rating_issue_profile_date: Date.new(2017, 4, 7),
+          rating_issue_profile_date: Time.zone.local(2017, 4, 7),
           description: "Service connection for cancer was denied"
         )
         expect(created_issue.contention_reference_id).to_not be_nil
@@ -186,7 +243,7 @@ describe RequestIssuesUpdate do
       let(:request_issues_data) { existing_request_issues_data[0...1] }
 
       it "saves update, removes issues, and calls remove contentions" do
-        allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
+        allow_remove_contention
 
         expect(subject).to be_truthy
 
@@ -208,6 +265,54 @@ describe RequestIssuesUpdate do
 
         expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
       end
+    end
+
+    context "when create_contentions raises VBMS service error" do
+      let(:request_issues_data) { request_issues_data_with_new_issue }
+
+      it "saves error message and logs error" do
+        capture_raven_log
+        raise_error_on_create_contentions
+
+        subject
+
+        expect(request_issues_update.error).to eq(vbms_error.to_s)
+        expect(@raven_called).to eq(true)
+      end
+    end
+
+    context "when remove_contention raises VBMS service error" do
+      let(:request_issues_data) { existing_request_issues_data[0...1] }
+
+      it "saves error message and logs error" do
+        capture_raven_log
+        raise_error_on_remove_contention
+
+        subject
+
+        expect(request_issues_update.error).to eq(vbms_error.to_s)
+        expect(@raven_called).to eq(true)
+      end
+    end
+
+    def capture_raven_log
+      allow(Raven).to receive(:capture_exception) { @raven_called = true }
+    end
+
+    def raise_error_on_create_contentions
+      allow(Fakes::VBMSService).to receive(:create_contentions!).and_raise(vbms_error)
+    end
+
+    def allow_create_contentions
+      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    end
+
+    def raise_error_on_remove_contention
+      allow(Fakes::VBMSService).to receive(:remove_contention!).and_raise(vbms_error)
+    end
+
+    def allow_remove_contention
+      allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
     end
   end
 end

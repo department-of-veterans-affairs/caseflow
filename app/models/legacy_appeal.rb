@@ -3,6 +3,8 @@ class LegacyAppeal < ApplicationRecord
   include AppealConcern
   include AssociatedVacolsModel
   include CachedAttributes
+  include AddressMapper
+  include Taskable
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
@@ -105,6 +107,7 @@ class LegacyAppeal < ApplicationRecord
 
   # TODO: the type code should be the base value, and should be
   #       converted to be human readable, not vis-versa
+  # TODO: integrate with Constants::LEGACY_APPEAL_TYPES_BY_ID
   TYPE_CODES = {
     "Original" => "original",
     "Post Remand" => "post_remand",
@@ -185,11 +188,18 @@ class LegacyAppeal < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
-  delegate :age, to: :veteran, prefix: true
-  delegate :sex, to: :veteran, prefix: true
+  def veteran_ssn
+    vbms_id.ends_with?("C") ? (veteran && veteran.ssn) : sanitized_vbms_id
+  end
+
+  delegate :age, :sex, to: :veteran, prefix: true
 
   # NOTE: we cannot currently match end products to a specific appeal.
   delegate :end_products, to: :veteran
+
+  def congressional_interest_addresses
+    case_record.mail.map(&:congressional_address)
+  end
 
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
   # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
@@ -213,6 +223,18 @@ class LegacyAppeal < ApplicationRecord
   attr_writer :hearings
   def hearings
     @hearings ||= Hearing.repository.hearings_for_appeal(vacols_id)
+  end
+
+  def completed_hearing_on_previous_appeal?
+    vacols_ids = VACOLS::Case.where(bfcorlid: vbms_id).pluck(:bfkey)
+    hearings = HearingRepository.hearings_for_appeals(vacols_ids)
+    hearings_on_other_appeals = hearings.reject { |hearing_appeal_id, _| hearing_appeal_id.eql?(vacols_id) }
+
+    hearings_on_other_appeals.map do |hearing_appeal_id, case_hearings|
+      if case_hearings.any?(&:held?)
+        hearing_appeal_id
+      end
+    end.present?
   end
 
   def scheduled_hearings
@@ -258,10 +280,50 @@ class LegacyAppeal < ApplicationRecord
     power_of_attorney.vacols_representative_type
   end
 
+  def representative_address
+    power_of_attorney.vacols_representative_address
+  end
+
+  def representative_code
+    power_of_attorney.vacols_representative_code
+  end
+
   delegate :representatives, to: :case_record
 
   def contested_claim
     representatives.any? { |r| r.reptype == "C" }
+  end
+
+  def claimant
+    if appellant_is_not_veteran
+      {
+        first_name: appellant_first_name,
+        middle_name: appellant_middle_initial,
+        last_name: appellant_last_name,
+        name_suffix: appellant_name_suffix,
+        address: get_address_from_corres_entry(case_record.correspondent),
+        representative: representative_to_hash
+      }
+    else
+      {
+        first_name: veteran_first_name,
+        middle_name: veteran_middle_initial,
+        last_name: veteran_last_name,
+        name_suffix: veteran_name_suffix,
+        address: get_address_from_corres_entry(case_record.correspondent),
+        representative: representative_to_hash
+      }
+    end
+  end
+
+  # reptype C is a contested claimant
+  def contested_claimants
+    representatives.where(reptype: "C").map(&:as_claimant)
+  end
+
+  # reptype D is contested claimant attorney, reptype E is contested claimant agent
+  def contested_claimant_agents
+    representatives.where(reptype: %w[D E]).map(&:as_claimant)
   end
 
   def docket_name
@@ -471,9 +533,35 @@ class LegacyAppeal < ApplicationRecord
     @documents_by_type = {}
   end
 
+  def attorney_case_reviews
+    (das_assignments || []).reject { |t| t.document_id.nil? }
+  end
+
+  def das_assignments
+    @das_assignments ||= QueueRepository.tasks_for_appeal(vacols_id)
+  end
+
+  def reviewing_judge_name
+    das_assignments.last.try(:assigned_by_name)
+  end
+
   attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
+  end
+
+  def issue_count
+    issues.count
+  end
+
+  # a list of issues with undecided dispositions (see queue/utils.getUndecidedIssues)
+  def undecided_issues
+    issues.select do |issue|
+      issue.disposition_id.nil? || (
+        issue.disposition_id.to_i.between?(1, 9) &&
+        Constants::VACOLS_DISPOSITIONS_BY_ID.keys.include?(issue.disposition_id)
+      )
+    end
   end
 
   # A uniqued list of issue categories on appeal, that is the combination of ISSPROG and ISSCODE
@@ -585,6 +673,15 @@ class LegacyAppeal < ApplicationRecord
   end
 
   private
+
+  def representative_to_hash
+    {
+      name: representative_name,
+      type: representative_type,
+      code: representative_code,
+      address: representative_address
+    }
+  end
 
   def matched_document(type, vacols_datetime)
     return nil unless vacols_datetime

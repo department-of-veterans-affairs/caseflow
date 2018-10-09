@@ -10,8 +10,12 @@ export const formatRatings = (ratings, requestIssues = []) => {
 
   _.forEach(requestIssues, (requestIssue) => {
     // filter out nil dates (request issues that are not yet rated)
-    if (requestIssue.profile_date && requestIssue.reference_id) {
-      result[requestIssue.profile_date].issues[requestIssue.reference_id].isSelected = true;
+    if (requestIssue.reference_id) {
+      _.forEach(result, (rating) => {
+        if (rating.issues[requestIssue.reference_id]) {
+          rating.issues[requestIssue.reference_id].isSelected = true;
+        }
+      });
     }
   });
 
@@ -52,18 +56,33 @@ export const validNonRatedIssue = (issue) => {
   return true;
 };
 
+const formatRatedIssues = (state) => {
+  if (state.addedIssues && state.addedIssues.length > 0) {
+    // we're using the new add issues page
+    return state.addedIssues.
+      filter((issue) => issue.isRated).
+      map((issue) => {
+        let originalIssue = state.ratings[issue.profileDate].issues[issue.id];
+
+        return _.merge(originalIssue, { profile_date: issue.profileDate,
+          notes: issue.notes });
+      });
+  }
+
+  // default to original ratings format
+  return _(state.ratings).
+    map((rating) => {
+      return _.map(rating.issues, (issue) => {
+        return _.merge(issue, { profile_date: rating.profile_date });
+      });
+    }).
+    flatten().
+    filter('isSelected').
+    value();
+};
+
 export const formatIssues = (state) => {
-  const ratingData = {
-    request_issues:
-      _(state.ratings).
-        map((rating) => {
-          return _.map(rating.issues, (issue) => {
-            return _.merge(issue, { profile_date: rating.profile_date });
-          });
-        }).
-        flatten().
-        filter('isSelected')
-  };
+  const ratingData = formatRatedIssues(state);
 
   const nonRatingData = {
     request_issues:
@@ -81,8 +100,26 @@ export const formatIssues = (state) => {
   };
 
   const data = {
-    request_issues: _.concat(ratingData.request_issues.value(), nonRatingData.request_issues.value())
+    request_issues: _.concat(ratingData, nonRatingData.request_issues.value())
   };
 
   return data;
+};
+
+// Returns a list of selected issues in the form of date:issueId
+// Useful for dirty checking, rather than deeply comparing two state objects
+export const getSelection = (ratings) => {
+  const dates = Object.keys(ratings);
+
+  return dates.reduce((selectedIssues, date) => {
+    const issueIds = Object.keys(ratings[date].issues);
+
+    issueIds.forEach((issueId) => {
+      if (ratings[date].issues[issueId].isSelected) {
+        selectedIssues.push(`${date}:${issueId}`);
+      }
+    });
+
+    return selectedIssues;
+  }, []);
 };

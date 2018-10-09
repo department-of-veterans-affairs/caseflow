@@ -3,14 +3,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { BrowserRouter, Switch } from 'react-router-dom';
+import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import StringUtil from '../util/StringUtil';
 
 import {
   setFeatureToggles,
   setUserRole,
   setUserCssId,
-  setUserIsVsoEmployee
+  setUserIsVsoEmployee,
+  setFeedbackUrl
 } from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
@@ -28,6 +29,9 @@ import EvaluateDecisionView from './EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import MarkTaskCompleteView from './MarkTaskCompleteView';
+import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
+import AssignToView from './AssignToView';
+
 import TriggerModal from './TriggerModal';
 
 import CaseListView from './CaseListView';
@@ -60,14 +64,15 @@ type Props = {|
   dropdownUrls: Array<string>,
   buildDate?: string,
   reviewActionType: string,
-  userCanAccessQueue?: boolean,
   userIsVsoEmployee?: boolean,
+  caseSearchHomePage?: boolean,
   featureToggles: Object,
   // Action creators
   setFeatureToggles: typeof setFeatureToggles,
   setUserRole: typeof setUserRole,
   setUserCssId: typeof setUserCssId,
-  setUserIsVsoEmployee: typeof setUserIsVsoEmployee
+  setUserIsVsoEmployee: typeof setUserIsVsoEmployee,
+  setFeedbackUrl: typeof setFeedbackUrl
 |};
 
 class QueueApp extends React.PureComponent<Props> {
@@ -76,6 +81,7 @@ class QueueApp extends React.PureComponent<Props> {
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
+    this.props.setFeedbackUrl(this.props.feedbackUrl);
   }
 
   routedSearchResults = (props) => <React.Fragment>
@@ -90,9 +96,10 @@ class QueueApp extends React.PureComponent<Props> {
       return <AttorneyTaskListView />;
     } else if (userRole === USER_ROLE_TYPES.judge) {
       return <JudgeReviewTaskListView {...this.props} />;
-    } else if (userRole === USER_ROLE_TYPES.colocated) {
-      return <ColocatedTaskListView />;
     }
+
+    return <ColocatedTaskListView />;
+
   }
 
   routedQueueList = () => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
@@ -112,33 +119,37 @@ class QueueApp extends React.PureComponent<Props> {
       <JudgeReviewTaskListView {...this.props} />}
   </QueueLoadingScreen>;
 
-  routedQueueDetail = (props) => <CaseDetailsLoadingScreen
+  routedQueueDetail = (props) => <CaseDetailsView appealId={props.match.params.appealId} />;
+
+  routedQueueDetailWithLoadingScreen = (props) => <CaseDetailsLoadingScreen
     {...this.propsForQueueLoadingScreen()}
     appealId={props.match.params.appealId}>
-    <CaseDetailsView appealId={props.match.params.appealId} />
+    {this.routedQueueDetail(props)}
   </CaseDetailsLoadingScreen>;
 
   routedSubmitDecision = (props) => <SubmitDecisionView
     appealId={props.match.params.appealId}
+    checkoutFlow={props.match.params.checkoutFlow}
     nextStep="/queue" />;
 
   routedSelectDispositions = (props) => <SelectDispositionsView
-    appealId={props.match.params.appealId} />;
+    appealId={props.match.params.appealId}
+    checkoutFlow={props.match.params.checkoutFlow} />;
 
   routedSelectSpecialIssues = (props) => <SpecialIssueLoadingScreen appealExternalId={props.match.params.appealId}>
     <SelectSpecialIssuesView
       appealId={props.match.params.appealId}
       prevStep={`/queue/appeals/${props.match.params.appealId}`}
-      nextStep={`/queue/appeals/${props.match.params.appealId}/dispositions`} />
+      nextStep={`/queue/appeals/${props.match.params.appealId}/${props.match.params.checkoutFlow}/dispositions`} />
   </SpecialIssueLoadingScreen>;
 
   routedAddEditIssue = (props) => <AddEditIssueView
-    nextStep={`/queue/appeals/${props.match.params.appealId}/dispositions`}
-    prevStep={`/queue/appeals/${props.match.params.appealId}/dispositions`}
+    nextStep={`/queue/appeals/${props.match.params.appealId}/${props.match.params.checkoutFlow}/dispositions`}
+    prevStep={`/queue/appeals/${props.match.params.appealId}/${props.match.params.checkoutFlow}/dispositions`}
     {...props.match.params} />;
 
   routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView
-    prevStep={`/queue/appeals/${props.match.params.appealId}/dispositions`}
+    prevStep={`/queue/appeals/${props.match.params.appealId}/${props.match.params.checkoutFlow}/dispositions`}
     {...props.match.params} />;
 
   routedEvaluateDecision = (props) => <EvaluateDecisionView nextStep="/queue" {...props.match.params} />;
@@ -146,6 +157,13 @@ class QueueApp extends React.PureComponent<Props> {
   routedAddColocatedTask = (props) => <AddColocatedTaskView nextStep="/queue" {...props.match.params} />;
 
   routedColocatedPlaceHold = (props) => <ColocatedPlaceHoldView nextStep="/queue" {...props.match.params} />;
+
+  routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView
+    nextStep={`/queue/appeals/${props.match.params.appealId}`} {...props.match.params} />;
+
+  routedAssignToTeam = (props) => <AssignToView isTeamAssign {...props.match.params} />;
+
+  routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
   routedMarkTaskComplete = (props) => <MarkTaskCompleteView
     nextStep={`/queue/appeals/${props.match.params.appealId}`}
@@ -165,22 +183,20 @@ class QueueApp extends React.PureComponent<Props> {
     const {
       userId,
       userCssId,
-      userRole,
-      userCanAccessQueue
+      userRole
     } = this.props;
 
     return {
       userId,
       userCssId,
-      userRole,
-      userCanAccessQueue
+      userRole
     };
   }
 
   render = () => <BrowserRouter>
     <NavigationBar
       wideApp
-      defaultUrl={this.props.userCanAccessQueue ? '/queue' : '/'}
+      defaultUrl={this.props.caseSearchHomePage ? '/' : '/queue'}
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
       logoProps={{
@@ -227,16 +243,30 @@ class QueueApp extends React.PureComponent<Props> {
             path="/queue/:userId/assign"
             title="Unassigned Cases | Caseflow"
             render={this.routedJudgeQueueList('assign')} />
+          <Route
+            path="/queue/appeals/:appealId/modal/advanced_on_docket_motion"
+            render={this.routedAdvancedOnDocketMotion} />
+          <Route
+            path="/queue/appeals/:appealId/modal/assign_to_team"
+            render={this.routedAssignToTeam} />
+          <Route
+            path="/queue/appeals/:appealId/modal/assign_to_person"
+            render={this.routedAssignToUser} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"
             title="Case Details | Caseflow"
+            render={this.routedQueueDetailWithLoadingScreen} />
+          <PageRoute
+            exact
+            path="/queue/appeals/:appealId/modal/:modalType"
+            title="Case Details | Caseflow"
             render={this.routedQueueDetail} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/submit"
-            title={() => {
-              let reviewActionType = '';
+            path="/queue/appeals/:appealId/:checkoutFlow(draft_decision|dispatch_decision|omo_request)/submit"
+            title={(props) => {
+              let reviewActionType = props.match.params.checkoutFlow;
 
               // eslint-disable-next-line default-case
               switch (this.props.reviewActionType) {
@@ -256,27 +286,28 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedSubmitDecision} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/dispositions/:action(add|edit)/:issueId?"
+            path={'/queue/appeals/:appealId/:checkoutFlow(draft_decision|dispatch_decision)/' +
+              'dispositions/:action(add|edit)/:issueId?'}
             title={(props) => `Draft Decision | ${StringUtil.titleCase(props.match.params.action)} Issue`}
             render={this.routedAddEditIssue} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/remands"
+            path="/queue/appeals/:appealId/:checkoutFlow(draft_decision|dispatch_decision)/remands"
             title={`Draft Decision | ${PAGE_TITLES.REMANDS[this.props.userRole.toUpperCase()]}`}
             render={this.routedSetIssueRemandReasons} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/dispositions"
+            path="/queue/appeals/:appealId/:checkoutFlow(draft_decision|dispatch_decision)/dispositions"
             title={`Draft Decision | ${PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()]}`}
             render={this.routedSelectDispositions} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/special_issues"
+            path="/queue/appeals/:appealId/:checkoutFlow(draft_decision|dispatch_decision)/special_issues"
             title={`Draft Decision | ${COPY.SPECIAL_ISSUES_PAGE_TITLE}`}
             render={this.routedSelectSpecialIssues} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/evaluate"
+            path="/queue/appeals/:appealId/:checkoutFlow(dispatch_decision|omo_request)/evaluate"
             title="Evaluate Decision | Caseflow"
             render={this.routedEvaluateDecision} />
           <PageRoute
@@ -333,7 +364,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setFeatureToggles,
   setUserRole,
   setUserCssId,
-  setUserIsVsoEmployee
+  setUserIsVsoEmployee,
+  setFeedbackUrl
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueApp);

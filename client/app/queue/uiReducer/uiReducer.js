@@ -21,6 +21,7 @@ export const initialState = {
   userRole: '',
   userCssId: '',
   userIsVsoEmployee: false,
+  feedbackUrl: '#',
   loadedUserId: null,
   selectedAssignee: null,
   selectedAssigneeSecondary: null,
@@ -125,6 +126,10 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
     return update(state, {
       veteranCaseListIsVisible: { $set: !state.veteranCaseListIsVisible }
     });
+  case ACTIONS.SHOW_VETERAN_CASE_LIST:
+    return update(state, {
+      veteranCaseListIsVisible: { $set: true }
+    });
   case ACTIONS.HIDE_VETERAN_CASE_LIST:
     return update(state, {
       veteranCaseListIsVisible: { $set: false }
@@ -144,6 +149,10 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
   case ACTIONS.SET_USER_IS_VSO_EMPLOYEE:
     return update(state, {
       userIsVsoEmployee: { $set: action.payload.userIsVsoEmployee }
+    });
+  case ACTIONS.SET_FEEDBACK_URL:
+    return update(state, {
+      feedbackUrl: { $set: action.payload.feedbackUrl }
     });
   case ACTIONS.SET_SELECTED_ASSIGNEE:
     return update(state, {

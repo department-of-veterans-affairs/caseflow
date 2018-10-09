@@ -199,7 +199,7 @@ RSpec.feature "Checkout flows" do
 
         click_on "Continue"
 
-        expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}/submit")
+        expect(page).to have_content("Submit Draft Decision for Review")
       end
 
       scenario "submits draft decision" do
@@ -273,8 +273,7 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content(judge_user.full_name)
 
         click_on "Continue"
-        sleep 1
-        expect(page.current_path).to eq("/queue")
+        expect(page).to have_content("Cases not found")
 
         case_review = AttorneyCaseReview.all.first
         expect(case_review.note.length).to eq 350
@@ -291,7 +290,7 @@ RSpec.feature "Checkout flows" do
         issue_rows = page.find_all("tr[id^='table-row-']")
         expect(issue_rows.length).to eq(appeal.issues.length)
 
-        safe_click("a[href='/queue/appeals/#{appeal.vacols_id}/dispositions/edit/1']")
+        safe_click("a[href='/queue/appeals/#{appeal.vacols_id}/draft_decision/dispositions/edit/1']")
         expect(page).to have_content("Edit Issue")
 
         issue_idx = appeal.issues.index { |i| i.vacols_sequence_id.eql? 1 }
@@ -346,7 +345,7 @@ RSpec.feature "Checkout flows" do
 
         expect(page).to have_content("Select Dispositions")
 
-        safe_click("a[href='/queue/appeals/#{appeal.vacols_id}/dispositions/edit/1']")
+        safe_click("a[href='/queue/appeals/#{appeal.vacols_id}/draft_decision/dispositions/edit/1']")
         expect(page).to have_content("Edit Issue")
 
         enabled_fields = page.find_all(".Select--single:not(.is-disabled)")
@@ -382,7 +381,7 @@ RSpec.feature "Checkout flows" do
         no_diag_code_w_l2 = %w[4 8 0 2]
 
         [diag_code_no_l2, no_diag_code_no_l2, diag_code_w_l2, no_diag_code_w_l2].each do |opt_set|
-          safe_click "a[href='/queue/appeals/#{appeal.vacols_id}/dispositions/edit/1']"
+          safe_click "a[href='/queue/appeals/#{appeal.vacols_id}/draft_decision/dispositions/edit/1']"
           expect(page).to have_content "Edit Issue"
           selected_vals = select_issue_level_options(opt_set)
           click_on "Continue"
@@ -483,27 +482,19 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content("Evaluate Decision")
 
         click_on "Continue"
+        sleep 1
+
         expect(page).to have_content("Choose one")
-        sleep 2
 
-        radio_group_cls = "cf-form-showhide-radio cf-form-radio usa-input-error"
-        case_complexity_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][1]//label")
-        case_quality_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][2]//label")
+        find("label", text: "Easy").click
+        find("label", text: "1 - Does not meet expectations").click
 
-        expect(case_quality_opts.first.text).to eq(
-          "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}"
-        )
-        expect(case_quality_opts.last.text).to eq(
-          "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
-        )
-
-        [case_complexity_opts, case_quality_opts].each { |l| l.sample(1).first.click }
         # areas of improvement
-        page.find_all(".question-label").sample(2).each(&:double_click)
+        find("#issues_are_not_addressed", visible: false).sibling("label").click
 
-        dummy_note = generate_words 200
+        dummy_note = generate_words 5
         fill_in "additional-factors", with: dummy_note
-        expect(page).to have_content(dummy_note[0..599])
+        expect(page).to have_content(dummy_note[0..5])
 
         click_on "Continue"
 
@@ -515,8 +506,7 @@ RSpec.feature "Checkout flows" do
       let(:work_product) { :omo_request }
 
       scenario "completes assign to omo checkout flow" do
-        visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
+        visit "/queue/appeals/#{appeal.vacols_id}"
 
         click_dropdown 0 do
           visible_options = page.find_all(".Select-option")
@@ -524,7 +514,37 @@ RSpec.feature "Checkout flows" do
           expect(visible_options.first.text).to eq COPY::JUDGE_CHECKOUT_OMO_LABEL
         end
 
+        expect(page).to have_content("Evaluate Decision")
+
+        radio_group_cls = "usa-fieldset-inputs cf-form-radio "
+        case_complexity_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][1]//label")
+        case_quality_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][2]//label")
+
+        expect(case_quality_opts.first.text).to eq(
+          "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}"
+        )
+        expect(case_quality_opts.last.text).to eq(
+          "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
+        )
+
+        case_complexity_opts[0].click
+        case_quality_opts[2].click
+        # areas of improvement
+        areas_of_improvement = page.find_all(
+          :xpath, "//fieldset[@class='checkbox-wrapper-Identify areas for improvement cf-form-checkboxes']//label"
+        )
+        areas_of_improvement[0].double_click
+        areas_of_improvement[5].double_click
+
+        dummy_note = "lorem ipsum dolor sit amet"
+        fill_in "additional-factors", with: dummy_note
+
+        click_on "Continue"
+
         expect(page).to have_content(COPY::JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
+        decass = VACOLS::Decass.find_by(defolder: appeal.vacols_id, deadtim: Time.zone.today)
+        expect(decass.decomp).to eq(Time.zone.today)
+        expect(decass.deoq).to eq("3")
       end
     end
   end
@@ -635,7 +655,7 @@ RSpec.feature "Checkout flows" do
       )
       expect(colocated_action.reload.on_hold_duration).to eq hold_duration
       expect(colocated_action.status).to eq "on_hold"
-      expect(colocated_action.instructions).to eq instructions
+      expect(colocated_action.instructions[1]).to eq instructions
     end
 
     scenario "sends task to team" do

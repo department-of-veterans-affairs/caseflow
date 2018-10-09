@@ -331,6 +331,11 @@ what roles they have and therefore what pages they can access. To add new users 
 roles, you should seed them in the database via the seeds.rb file. The css_id of the user
 should be a comma separated list of roles you want that user to have.
 
+In order to impersonate other user, the user will need to have Global Admin role.
+(To grant a role refer to https://github.com/department-of-veterans-affairs/caseflow-commons#functions)
+On test/users page, switch to a user that has Global Admin role. `Log in as user` interface
+will show up where you will have to specify User ID and Station ID.
+
 To use intake features as the users, you'll need to toggle two features in a
 rails console `rails c`:
 
@@ -349,6 +354,25 @@ add more links and users as needed.
 To run the test suite:
 
     bundle exec rake
+
+### focus
+
+During development, it can be helpful to narrow the scope of tests being run. You can do this by
+adding [`focus: true`](https://relishapp.com/rspec/rspec-core/v/2-6/docs/filtering/inclusion-filters) to a `context` or `it` like so:
+
+```diff
+-context "test my new feature" do
++context "test my new feature", focus: true do
+```
+
+Make sure to remove the `focus: true` before marking your pr ready to merge! Otherwise CI may only run the tests you've focused.
+
+### Guard
+
+In addition, if you are iterating on a subset of tests, [`guard`](https://github.com/guard/guard-rspec) is a useful tool that will
+automatically rerun some command when a watched set of files change - you can do this by
+running `bundle exec guard`, then editing a file (see Guardfile for details). In conjunction with
+the `focus` flag, you can get a short development loop.
 
 ## Feature Toggle and Functions
 

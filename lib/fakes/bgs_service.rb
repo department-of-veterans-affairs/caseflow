@@ -13,6 +13,8 @@ class Fakes::BGSService
   cattr_accessor :ssn_not_found
   cattr_accessor :rating_records
   cattr_accessor :rating_issue_records
+  cattr_accessor :manage_claimant_letter_v2_requests
+  cattr_accessor :generate_tracked_items_requests
   attr_accessor :client
 
   # rubocop:disable Metrics/MethodLength
@@ -345,6 +347,7 @@ class Fakes::BGSService
     []
   end
 
+  # rubocop:disable Metrics/MethodLength
   def fetch_poas_by_participant_ids(participant_ids)
     get_hash_of_poa_from_bgs_poas(
       participant_ids.map do |participant_id|
@@ -356,7 +359,12 @@ class Fakes::BGSService
                   ptcpnt_id: "2452383"
                 }
               else
-                {}
+                {
+                  legacy_poa_cd: "100",
+                  nm: "Attorney McAttorneyFace",
+                  org_type_nm: "POA Attorney",
+                  ptcpnt_id: "1234567"
+                }
               end
 
         {
@@ -366,6 +374,7 @@ class Fakes::BGSService
       end
     )
   end
+  # rubocop:enable Metrics/MethodLength
 
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
@@ -412,6 +421,9 @@ class Fakes::BGSService
       fail Savon::Error, "a record does not exist for PTCPNT_VET_ID = '#{participant_id}'"\
         " and PRFL_DT = '#{profile_date}'"
     end
+
+    # Simulate BGS issue where no rating issues are returned in the response
+    return { rating_issues: [] } if rating_issues == :no_issues
 
     # BGS returns the data not as an array if there is only one issue
     rating_issues = rating_issues.first if rating_issues.count == 1
@@ -486,6 +498,26 @@ class Fakes::BGSService
     ]
   end
   # rubocop:enable Metrics/MethodLength
+
+  # We're currently only using the doc_reference_id and development_item_reference_id to track
+  # that the call succeeded, so I am just having the fakes return these dummy values
+  def manage_claimant_letter_v2!(claim_id:, program_type_cd:, claimant_participant_id:)
+    self.class.manage_claimant_letter_v2_requests ||= {}
+
+    self.class.manage_claimant_letter_v2_requests[claim_id] = {
+      program_type_cd: program_type_cd,
+      claimant_participant_id: claimant_participant_id
+    }
+
+    "doc_reference_id_result"
+  end
+
+  def generate_tracked_items!(claim_id)
+    self.class.generate_tracked_items_requests ||= {}
+    self.class.generate_tracked_items_requests[claim_id] = true
+
+    "development_item_reference_id_result"
+  end
 
   private
 

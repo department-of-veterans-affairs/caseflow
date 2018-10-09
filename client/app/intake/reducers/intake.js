@@ -1,6 +1,8 @@
-import { ACTIONS, REQUEST_STATE } from '../constants';
+import { ACTIONS } from '../constants';
+import { REQUEST_STATE } from '../../intakeCommon/constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
+import _ from 'lodash';
 
 const updateFromServerIntake = (state, serverIntake) => {
   return update(state, {
@@ -33,7 +35,8 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
     searchErrorData: {
       duplicateReceiptDate: null,
       duplicateProcessedBy: null,
-      veteranMissingFields: null
+      veteranMissingFields: null,
+      veteranAddressTooLong: null
     },
     cancelModalVisible: false,
     veteran: {
@@ -95,8 +98,11 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
           $set: action.payload.errorData.processed_by
         },
         veteranMissingFields: {
-          $set: action.payload.errorData.veteran_missing_fields &&
+          $set: _.get(action.payload.errorData.veteran_missing_fields, 'length', 0) > 0 &&
             action.payload.errorData.veteran_missing_fields.join(', ')
+        },
+        veteranAddressTooLong: {
+          $set: action.payload.errorData.veteran_address_too_long
         }
       },
       requestStatus: {
@@ -118,6 +124,9 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
           $set: null
         },
         veteranMissingFields: {
+          $set: null
+        },
+        veteranAddressTooLong: {
           $set: null
         }
       }

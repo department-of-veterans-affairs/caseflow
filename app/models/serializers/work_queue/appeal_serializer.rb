@@ -1,10 +1,27 @@
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
+  attribute :assigned_attorney
+  attribute :assigned_judge
+
   attribute :issues do
-    object.request_issues
+    object.request_issues.map do |issue|
+      # Hard code program for October 1st Pilot, we don't have all the info for how we'll
+      # break down request issues yet but all RAMP appeals will be 'compensation'
+      {
+        id: issue.id,
+        disposition: issue.disposition,
+        program: "Compensation",
+        description: issue.description,
+        remand_reasons: issue.remand_reasons
+      }
+    end
   end
 
   attribute :hearings do
     []
+  end
+
+  attribute :completed_hearing_on_previous_appeal? do
+    false
   end
 
   attribute :appellant_full_name do
@@ -13,15 +30,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
 
   attribute :appellant_address do
     if object.claimants && object.claimants.any?
-      primary_appellant = object.claimants[0]
-      {
-        address_line_1: primary_appellant.address_line_1,
-        address_line_2: primary_appellant.address_line_2,
-        city: primary_appellant.city,
-        state: primary_appellant.state,
-        zip: primary_appellant.zip,
-        country: primary_appellant.country
-      }
+      object.claimants[0].address
     end
   end
 
@@ -37,6 +46,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.veteran ? object.veteran.date_of_birth : "Cannot locate"
   end
 
+  attribute :veteran_date_of_death do
+    object.veteran ? object.veteran.date_of_death : "Cannot locate"
+  end
+
   attribute :veteran_gender do
     object.veteran ? object.veteran.sex : "Cannot locate"
   end
@@ -50,11 +63,15 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :type do
-    "BEAAM"
+    "Original"
   end
 
   attribute :aod do
     object.advanced_on_docket
+  end
+
+  attribute :docket_name do
+    object.docket_name
   end
 
   attribute :docket_number do
@@ -62,7 +79,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :decision_date do
-    nil
+    task = object.tasks.where(type: "BvaDispatchTask", action: "review", status: "completed").last
+    task ? task.completed_at : nil
   end
 
   attribute :certification_date do
@@ -73,17 +91,16 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     false
   end
 
-  attribute :power_of_attorney do
-    {
-      representative_type: object.representative_type,
-      representative_name: object.representative_name
-    }
-  end
-
   attribute :regional_office do
   end
 
   attribute :caseflow_veteran_id do
     object.veteran ? object.veteran.id : nil
+  end
+
+  attribute :events do
+    {
+      nod_receipt_date: object.receipt_date
+    }
   end
 end

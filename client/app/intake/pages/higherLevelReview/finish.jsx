@@ -15,7 +15,8 @@ import {
   setIssueDescription,
   setIssueDecisionDate
 } from '../../actions/ama';
-import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES } from '../../constants';
+import { FORM_TYPES, REQUEST_STATE } from '../../../intakeCommon/constants';
 import { getIntakeStatus, issueCountSelector } from '../../selectors';
 import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
@@ -40,7 +41,7 @@ class Finish extends React.PureComponent {
     }
 
     return <div>
-      <h1>Identify issues on { veteranName }'s Higher-Level Review (VA Form 20-0988)</h1>
+      <h1>Identify issues on { veteranName }'s { FORM_TYPES.HIGHER_LEVEL_REVIEW.name }</h1>
 
       { requestState === REQUEST_STATE.FAILED &&
         <CompleteIntakeErrorAlert
@@ -88,7 +89,6 @@ class FinishNextButton extends React.PureComponent {
       name="finish-intake"
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-      legacyStyling={false}
       disabled={!this.props.issueCount}
     >
       Establish EP

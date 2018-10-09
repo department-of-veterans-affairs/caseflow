@@ -8,13 +8,19 @@ import { bindActionCreators } from 'redux';
 
 import Table from '../../components/Table';
 import Checkbox from '../../components/Checkbox';
+import DocketTypeBadge from './DocketTypeBadge';
+import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { renderAppealType } from '../utils';
 import { DateString } from '../../util/DateUtil';
-import { CATEGORIES, redText } from '../constants';
+import {
+  CATEGORIES,
+  redText,
+  LEGACY_APPEAL_TYPES
+} from '../constants';
 import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
@@ -58,7 +64,7 @@ class TaskTable extends React.PureComponent<Props> {
   }
 
   taskHasDASRecord = (task: TaskWithAppeal) => {
-    if (task.appeal.docketName === 'legacy' && this.props.requireDasRecord) {
+    if (task.appeal.isLegacyAppeal && this.props.requireDasRecord) {
       return task.taskId;
     }
 
@@ -138,7 +144,7 @@ class TaskTable extends React.PureComponent<Props> {
       getSortValue: (task) => {
         // We append a * before the docket number if it's a priority case since * comes before
         // numbers in sort order, this forces these cases to the top of the sort.
-        if (task.appeal.isAdvancedOnDocket || task.appeal.caseType === 'Court Remand') {
+        if (task.appeal.isAdvancedOnDocket || task.appeal.caseType === LEGACY_APPEAL_TYPES.CAVC_REMAND) {
           return `*${task.appeal.docketNumber}`;
         }
 
@@ -150,9 +156,24 @@ class TaskTable extends React.PureComponent<Props> {
   caseDocketNumberColumn = () => {
     return this.props.includeDocketNumber ? {
       header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
-      valueFunction: (task) => this.taskHasDASRecord(task) ? task.appeal.docketNumber : null,
+      valueFunction: (task) => {
+        if (!this.taskHasDASRecord(task)) {
+          return null;
+        }
+
+        return <React.Fragment>
+          <DocketTypeBadge name={task.appeal.docketName} number={task.appeal.docketNumber} />
+          <span>{task.appeal.docketNumber}</span>
+        </React.Fragment>;
+      },
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (task) => this.taskHasDASRecord(task) ? task.appeal.docketNumber : null
+      getSortValue: (task) => {
+        if (!this.taskHasDASRecord(task)) {
+          return null;
+        }
+
+        return `${task.appeal.docketName} ${task.appeal.docketNumber}`;
+      }
     } : null;
   }
 
@@ -174,15 +195,16 @@ class TaskTable extends React.PureComponent<Props> {
           return null;
         }
 
-        const daysWaiting = moment().
+        const daysWaiting = moment().startOf('day').
           diff(moment(task.assignedOn), 'days');
 
         return <React.Fragment>
-          {daysWaiting} {pluralize('day', daysWaiting)} - <DateString date={task.dueOn} />
+          {daysWaiting} {pluralize('day', daysWaiting)} | <DateString date={task.dueOn} />
         </React.Fragment>;
       },
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (task) => moment().diff(moment(task.assignedOn), 'days')
+      getSortValue: (task) => moment().startOf('day').
+        diff(moment(task.assignedOn), 'days')
     } : null;
   }
 
@@ -198,14 +220,10 @@ class TaskTable extends React.PureComponent<Props> {
     } : null;
   }
 
-  numDaysOnHold = (task: TaskWithAppeal) => moment().diff(task.placedOnHoldAt, 'days')
-
   caseDaysOnHoldColumn = () => (this.props.includeDaysOnHold ? {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE,
-    valueFunction: (task: TaskWithAppeal) => {
-      return `${this.numDaysOnHold(task)} of ${task.onHoldDuration || '?'}`;
-    },
-    getSortValue: (task: TaskWithAppeal) => this.numDaysOnHold(task)
+    valueFunction: (task: TaskWithAppeal) => <OnHoldLabel task={task} />,
+    getSortValue: (task: TaskWithAppeal) => numDaysOnHold(task)
   } : null)
 
   caseReaderLinkColumn = () => {

@@ -3,24 +3,18 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
-import { sprintf } from 'sprintf-js';
-import COPY from '../../../COPY.json';
 import DECISION_TYPES from '../../../constants/APPEAL_DECISION_TYPES.json';
 import DECASS_WORK_PRODUCT_TYPES from '../../../constants/DECASS_WORK_PRODUCT_TYPES.json';
 
-import SearchableDropdown from '../../components/SearchableDropdown';
+import SearchableDropdown, { type OptionType } from '../../components/SearchableDropdown';
 import {
   appealWithDetailSelector,
   tasksForAppealAssignedToAttorneySelector,
   tasksForAppealAssignedToUserSelector
 } from '../selectors';
 
-import { buildCaseReviewPayload } from '../utils';
-import { requestSave } from '../uiReducer/uiActions';
 import {
-  deleteAppeal,
   stageAppeal,
-  setCaseReviewActionType,
   initialAssignTasksToUser,
   reassignTasksToUser
 } from '../QueueActions';
@@ -46,10 +40,7 @@ type Props = Params & {|
   decision: Object,
   userRole: string,
   // Action creators
-  requestSave: typeof requestSave,
-  deleteAppeal: typeof deleteAppeal,
   stageAppeal: typeof stageAppeal,
-  setCaseReviewActionType: typeof setCaseReviewActionType,
   initialAssignTasksToUser: typeof initialAssignTasksToUser,
   reassignTasksToUser: typeof reassignTasksToUser,
   // From withRouter
@@ -57,10 +48,7 @@ type Props = Params & {|
 |};
 
 type ComponentState = {
-  selectedOption: ?{
-    label: string,
-    value: string
-  }
+  selectedOption: ?OptionType
 };
 
 class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
@@ -73,43 +61,34 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
   handleChange = (option) => {
     this.setState({ selectedOption: option });
 
+    if (!option) {
+      return;
+    }
     if (option.value === ASSIGN) {
       return;
     }
 
     const {
       appeal,
-      task,
       appealId,
-      history,
-      decision,
-      userRole
+      history
     } = this.props;
     const actionType = option.value;
 
-    this.props.setCaseReviewActionType(actionType);
+    let nextPage;
 
     if (actionType === DECISION_TYPES.OMO_REQUEST) {
-      const payload = buildCaseReviewPayload(decision, userRole, appeal.issues, {
-        location: 'omo_office',
-        attorney_id: task.assignedBy.pgId
-      });
-      const successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
-
-      this.props.requestSave(`/case_reviews/${task.taskId}/complete`, payload, { title: successMsg }).
-        then(() => {
-          history.push('');
-          history.replace('/queue');
-          this.props.deleteAppeal(appealId);
-        });
+      nextPage = 'omo_request/evaluate';
+    } else if (appeal.isLegacyAppeal) {
+      nextPage = 'dispatch_decision/dispositions';
     } else {
-      const nextPage = appeal.docketName === 'legacy' ? 'dispositions' : 'special_issues';
-
-      this.props.stageAppeal(appealId);
-
-      history.push('');
-      history.replace(`/queue/appeals/${appealId}/${nextPage}`);
+      nextPage = 'dispatch_decision/special_issues';
     }
+
+    this.props.stageAppeal(appealId);
+
+    history.push('');
+    history.replace(`/queue/appeals/${appealId}/${nextPage}`);
   }
 
   handleAssignment = (
@@ -182,10 +161,7 @@ const mapStateToProps = (state: State, ownProps: Params) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestSave,
-  deleteAppeal,
   stageAppeal,
-  setCaseReviewActionType,
   initialAssignTasksToUser,
   reassignTasksToUser
 }, dispatch);

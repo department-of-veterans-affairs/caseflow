@@ -42,11 +42,13 @@ RSpec.feature "Higher-Level Review" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
+  let(:profile_date) { (receipt_date - untimely_days + 4.days).to_time(:local) }
+
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - untimely_days + 1.day,
-      profile_date: receipt_date - untimely_days + 4.days,
+      profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
         { reference_id: "def456", decision_text: "PTSD denied" }
@@ -58,13 +60,16 @@ RSpec.feature "Higher-Level Review" do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - untimely_days,
-      profile_date: receipt_date - untimely_days + 3.days,
+      profile_date: profile_date - 1.day,
       issues: [
         { reference_id: "abc123", decision_text: "Untimely rating issue 1" },
         { reference_id: "def456", decision_text: "Untimely rating issue 2" }
       ]
     )
   end
+
+  let(:search_bar_title) { "Enter the Veteran's ID" }
+  let(:search_page_title) { "Search for Veteran ID" }
 
   it "Creates an end product and contentions for it" do
     # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
@@ -88,14 +93,14 @@ RSpec.feature "Higher-Level Review" do
     visit "/intake"
     safe_click ".Select"
 
-    fill_in "Which form are you processing?", with: "Request for Higher-Level Review (VA Form 20-0988)"
+    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.higher_level_review
     find("#form-select").send_keys :enter
 
     safe_click ".cf-submit.usa-button"
 
-    expect(page).to have_content("Higher-Level Review (VA Form 20-0988)")
+    expect(page).to have_content(search_page_title)
 
-    fill_in "Search small", with: "12341234"
+    fill_in search_bar_title, with: "12341234"
 
     click_on "Search"
 
@@ -211,7 +216,7 @@ RSpec.feature "Higher-Level Review" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988) has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
     expect(page).to have_content(
       "Established EP: 030HLRR - Higher-Level Review Rating for Station 397 - ARC"
     )
@@ -300,15 +305,38 @@ RSpec.feature "Higher-Level Review" do
       }
     )
 
+    letter_request = Fakes::BGSService.manage_claimant_letter_v2_requests
+    expect(letter_request[ratings_end_product_establishment.reference_id]).to eq(
+      program_type_cd: "CPL", claimant_participant_id: "5382910292"
+    )
+    expect(letter_request[nonratings_end_product_establishment.reference_id]).to eq(
+      program_type_cd: "CPL", claimant_participant_id: "5382910292"
+    )
+
+    tracked_item_request = Fakes::BGSService.generate_tracked_items_requests
+    expect(tracked_item_request[ratings_end_product_establishment.reference_id]).to be(true)
+    expect(tracked_item_request[nonratings_end_product_establishment.reference_id]).to be(true)
+
     intake.reload
     expect(intake.completed_at).to eq(Time.zone.now)
 
     expect(intake).to be_success
 
+    expect(ratings_end_product_establishment.doc_reference_id).to eq("doc_reference_id_result")
+    expect(ratings_end_product_establishment.development_item_reference_id).to eq(
+      "development_item_reference_id_result"
+    )
+    expect(ratings_end_product_establishment.benefit_type_code).to eq("1")
+    expect(nonratings_end_product_establishment.doc_reference_id).to eq("doc_reference_id_result")
+    expect(nonratings_end_product_establishment.development_item_reference_id).to eq(
+      "development_item_reference_id_result"
+    )
+    expect(nonratings_end_product_establishment.benefit_type_code).to eq("1")
+
     expect(higher_level_review.request_issues.count).to eq 2
     expect(higher_level_review.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
-      rating_issue_profile_date: receipt_date - untimely_days + 4.days,
+      rating_issue_profile_date: profile_date,
       description: "PTSD denied",
       decision_date: nil,
       rating_issue_associated_at: Time.zone.now
@@ -323,7 +351,7 @@ RSpec.feature "Higher-Level Review" do
     )
 
     visit "/higher_level_reviews/#{ratings_end_product_establishment.reference_id}/edit"
-    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988)")
+    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
     expect(page).to have_content("Ed Merica (12341234)")
     expect(page).to have_content("04/20/2018")
     expect(find("#table-row-3")).to have_content("Yes")
@@ -346,12 +374,12 @@ RSpec.feature "Higher-Level Review" do
     visit "/intake"
     safe_click ".Select"
 
-    fill_in "Which form are you processing?", with: "Request for Higher-Level Review (VA Form 20-0988)"
+    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.higher_level_review
     find("#form-select").send_keys :enter
 
     safe_click ".cf-submit.usa-button"
 
-    fill_in "Search small", with: "12341234"
+    fill_in search_bar_title, with: "12341234"
 
     click_on "Search"
 
@@ -385,7 +413,7 @@ RSpec.feature "Higher-Level Review" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988) has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: "12341234",
@@ -428,17 +456,17 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  it "Allows a Veteran without ratings to create an intake" do
+  def start_higher_level_review(test_veteran, is_comp: true, claim_participant_id: nil)
     higher_level_review = HigherLevelReview.create!(
-      veteran_file_number: veteran_no_ratings.file_number,
+      veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
       informal_conference: false,
       same_office: false,
-      benefit_type: "compensation"
+      benefit_type: is_comp ? "compensation" : "education"
     )
 
     HigherLevelReviewIntake.create!(
-      veteran_file_number: veteran_no_ratings.file_number,
+      veteran_file_number: test_veteran.file_number,
       user: current_user,
       started_at: 5.minutes.ago,
       detail: higher_level_review
@@ -446,11 +474,17 @@ RSpec.feature "Higher-Level Review" do
 
     Claimant.create!(
       review_request: higher_level_review,
-      participant_id: veteran_no_ratings.participant_id,
-      payee_code: "00"
+      participant_id: claim_participant_id ? claim_participant_id : test_veteran.participant_id,
+      payee_code: claim_participant_id ? "02" : "00"
     )
 
     higher_level_review.start_review!
+
+    higher_level_review
+  end
+
+  it "Allows a Veteran without ratings to create an intake" do
+    start_higher_level_review(veteran_no_ratings)
 
     visit "/intake"
 
@@ -471,6 +505,127 @@ RSpec.feature "Higher-Level Review" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Request for Higher-Level Review (VA Form 20-0988) has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+  end
+
+  context "For new Add Issues page" do
+    def check_row(label, text)
+      row = find("tr", text: label)
+      expect(row).to have_text(text)
+    end
+
+    let!(:timely_ratings) do
+      Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: receipt_date - 40.days,
+        profile_date: receipt_date - 50.days,
+        issues: [
+          { reference_id: "abc123", decision_text: "Left knee granted" },
+          { reference_id: "def456", decision_text: "PTSD denied" }
+        ]
+      )
+    end
+
+    scenario "HLR comp" do
+      allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
+        first_name: "BOB",
+        last_name: "VANCE",
+        ptcpnt_id: "5382910292",
+        relationship_type: "Spouse"
+      )
+
+      higher_level_review = start_higher_level_review(veteran, claim_participant_id: "5382910292")
+      visit "/intake/add_issues"
+
+      expect(page).to have_content("Add Issues")
+      check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
+      check_row("Benefit type", "Compensation")
+      check_row("Claimant", "Bob Vance, Spouse (payee code 02)")
+
+      # clicking the add issues button should bring up the modal
+      safe_click "#button-add-issue"
+
+      expect(page).to have_content("Add issue 1")
+      expect(page).to have_content("Does issue 1 match any of these issues")
+      expect(page).to have_content("Left knee granted")
+      expect(page).to have_content("PTSD denied")
+
+      # test canceling adding an issue by closing the modal
+      safe_click ".close-modal"
+      expect(page).to_not have_content("Left knee granted")
+
+      # adding an issue should show the issue
+      safe_click "#button-add-issue"
+      find("label", text: "Left knee granted").click
+      safe_click ".add-issue"
+
+      expect(page).to have_content("1.Left knee granted")
+
+      safe_click ".remove-issue"
+
+      expect(page).not_to have_content("Left knee granted")
+
+      # re-add to proceed
+      safe_click "#button-add-issue"
+      find("label", text: "Left knee granted").click
+      fill_in "Notes", with: "I am an issue note"
+      safe_click ".add-issue"
+      expect(page).to have_content("1.Left knee granted")
+      expect(page).to have_content("I am an issue note")
+
+      # clicking add issue again should show a disabled radio button for that same rating
+      safe_click "#button-add-issue"
+      expect(page).to have_content("Add issue 2")
+      expect(page).to have_content("Does issue 2 match any of these issues")
+      expect(page).to have_content("Left knee granted (already selected for issue 1)")
+      expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
+      safe_click ".close-modal"
+
+      safe_click "#button-finish-intake"
+
+      expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+      expect(page).to have_content(
+        "Established EP: 030HLRR - Higher-Level Review Rating for Station 397 - ARC"
+      )
+
+      # make sure that database is populated
+      expect(HigherLevelReview.find_by(
+               id: higher_level_review.id,
+               veteran_file_number: veteran.file_number,
+               establishment_submitted_at: Time.zone.now,
+               establishment_processed_at: Time.zone.now,
+               establishment_error: nil
+      )).to_not be_nil
+
+      end_product_establishment = EndProductEstablishment.find_by(
+        source_type: "HigherLevelReview",
+        source_id: higher_level_review.id,
+        veteran_file_number: veteran.file_number,
+        code: "030HLRR",
+        claimant_participant_id: "5382910292",
+        payee_code: "02"
+      )
+
+      expect(end_product_establishment).to_not be_nil
+
+      expect(RequestIssue.find_by(
+               review_request_type: "HigherLevelReview",
+               review_request_id: higher_level_review.id,
+               rating_issue_reference_id: "abc123",
+               description: "Left knee granted",
+               end_product_establishment_id: end_product_establishment.id,
+               notes: "I am an issue note"
+      )).to_not be_nil
+    end
+
+    scenario "Non-compensation" do
+      start_higher_level_review(veteran, is_comp: false)
+      visit "/intake/add_issues"
+
+      expect(page).to have_content("Add Issues")
+      check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
+      check_row("Benefit type", "Education")
+      expect(page).to_not have_content("Claimant")
+    end
   end
 end

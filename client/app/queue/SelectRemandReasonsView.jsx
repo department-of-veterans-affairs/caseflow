@@ -11,6 +11,7 @@ import IssueRemandReasonsOptions from './components/IssueRemandReasonsOptions';
 
 import {
   fullWidth,
+  VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS,
   PAGE_TITLES
 } from './constants';
@@ -31,8 +32,8 @@ class SelectRemandReasonsView extends React.Component {
   getPageName = () => PAGE_TITLES.REMANDS[this.props.userRole.toUpperCase()];
 
   getNextStepUrl = () => {
-    const { appealId, userRole } = this.props;
-    const baseUrl = `/queue/appeals/${appealId}`;
+    const { appealId, userRole, checkoutFlow } = this.props;
+    const baseUrl = `/queue/appeals/${appealId}/${checkoutFlow}`;
 
     return `${baseUrl}/${userRole === USER_ROLE_TYPES.judge ? 'evaluate' : 'submit'}`;
   }
@@ -101,6 +102,7 @@ class SelectRemandReasonsView extends React.Component {
 
 SelectRemandReasonsView.propTypes = {
   appealId: PropTypes.string.isRequired,
+  checkoutFlow: PropTypes.string.isRequired,
   userRole: PropTypes.string.isRequired
 };
 
@@ -110,7 +112,9 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal,
-    issues: _.filter(issues, (issue) => issue.disposition === ISSUE_DISPOSITIONS.REMANDED),
+    issues: _.filter(issues, (issue) => [
+      VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
+    ].includes(issue.disposition)),
     ..._.pick(state.ui, 'userRole')
   };
 };

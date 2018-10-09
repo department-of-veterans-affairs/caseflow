@@ -3,7 +3,7 @@ class AmaReview < ApplicationRecord
 
   validate :validate_receipt_date
 
-  AMA_BEGIN_DATE = Date.new(2018, 4, 1).freeze
+  AMA_BEGIN_DATE = Date.new(2017, 11, 1).freeze
 
   self.abstract_class = true
 
@@ -15,7 +15,7 @@ class AmaReview < ApplicationRecord
   before_destroy :remove_issues!
 
   cache_attribute :cached_serialized_timely_ratings, cache_key: :timely_ratings_cache_key, expires_in: 1.day do
-    receipt_date && veteran.timely_ratings(from_date: receipt_date).map(&:ui_hash)
+    receipt_date && timely_ratings_with_issues.map(&:ui_hash)
   end
 
   def start_review!
@@ -54,6 +54,12 @@ class AmaReview < ApplicationRecord
   end
 
   private
+
+  def timely_ratings_with_issues
+    return nil unless receipt_date
+
+    veteran.timely_ratings(from_date: receipt_date).reject { |rating| rating.issues.empty? }
+  end
 
   def timely_ratings_cache_key
     "#{veteran_file_number}-#{formatted_receipt_date}"

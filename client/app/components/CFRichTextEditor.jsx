@@ -4,13 +4,15 @@ import { convertToRaw, EditorState, ContentState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
 import { Editor } from 'react-draft-wysiwyg';
-import classNamesFn from 'classnames';
+import classnames from 'classnames';
 import { css } from 'glamor';
 
-const styles = css({
-  border: '1px solid #323a45',
-  resize: 'vertical'
-});
+const editorStyling = css({
+  border: '1px solid #aeb0b5',
+  resize: 'vertical',
+  '& .rdw-editor-main': {
+    paddingLeft: '10px'
+  } });
 
 export default class CFRichTextEditor extends React.PureComponent {
 
@@ -56,19 +58,18 @@ export default class CFRichTextEditor extends React.PureComponent {
     } = this.props;
 
     return <div>
-      <label className={classNamesFn({ 'sr-only': hideLabel }, 'question-label')} htmlFor={id || name}>
+      <label className={classnames({ 'usa-sr-only': hideLabel })} htmlFor={id || name}>
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
-      <div {...styles}>
+      <section {...editorStyling}>
         <Editor
           onEditorStateChange={this.onChange}
           editorState={this.state.editorState}
-          editorClassName="demo-editor"
           toolbar={toolbar}
           wrapperId={id}
         />
-      </div>
+      </section>
     </div>;
   }
 }

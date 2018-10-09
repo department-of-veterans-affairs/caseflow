@@ -32,14 +32,10 @@ import {
   ATTORNEY_COMMENTS_MAX_LENGTH,
   DOCUMENT_ID_MAX_LENGTH,
   OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES,
-  ISSUE_DISPOSITIONS
+  VACOLS_DISPOSITIONS
 } from './constants';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import COPY from '../../COPY.json';
-
-const radioFieldStyling = css(marginBottom(0), marginTop(2), {
-  '& .question-label': marginBottom(0)
-});
 
 import type {
   Task,
@@ -50,6 +46,7 @@ import type { UiStateMessage } from './types/state';
 
 type Params = {|
   appealId: string,
+  checkoutFlow: string,
   nextStep: string
 |};
 
@@ -71,12 +68,12 @@ type Props = Params & {|
 class SubmitDecisionView extends React.PureComponent<Props> {
   validateForm = () => {
     const {
-      type: decisionType,
+      checkoutFlow,
       opts: decisionOpts
     } = this.props.decision;
     const requiredParams = ['document_id', 'reviewing_judge_id'];
 
-    if (decisionType === DECISION_TYPES.OMO_REQUEST) {
+    if (checkoutFlow === DECISION_TYPES.OMO_REQUEST) {
       requiredParams.push('work_product');
 
       if (!validateWorkProductTypeAndId(this.props.decision)) {
@@ -91,15 +88,15 @@ class SubmitDecisionView extends React.PureComponent<Props> {
 
   getPrevStepUrl = () => {
     const {
-      decision: { type: decisionType },
+      checkoutFlow,
       appeal,
       appealId
     } = this.props;
     const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
     const prevUrl = `/queue/appeals/${appealId}`;
 
-    if (decisionType === DECISION_TYPES.DRAFT_DECISION) {
-      return dispositions.includes(ISSUE_DISPOSITIONS.REMANDED) ?
+    if (checkoutFlow === DECISION_TYPES.DRAFT_DECISION) {
+      return dispositions.includes(VACOLS_DISPOSITIONS.REMANDED) ?
         `${prevUrl}/remands` :
         `${prevUrl}/dispositions`;
     }
@@ -113,17 +110,19 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       appeal: {
         issues,
         veteranFullName,
-        externalId: appealId
+        externalId: appealId,
+        isLegacyAppeal
       },
+      checkoutFlow,
       decision,
       userRole,
       judges
     } = this.props;
 
-    const payload = buildCaseReviewPayload(decision, userRole, issues);
+    const payload = buildCaseReviewPayload(checkoutFlow, decision, userRole, issues, { isLegacyAppeal });
 
     const fields = {
-      type: decision.type === DECISION_TYPES.DRAFT_DECISION ?
+      type: checkoutFlow === DECISION_TYPES.DRAFT_DECISION ?
         'decision' : 'outside medical opinion (OMO) request',
       veteran: veteranFullName,
       judge: judges[decision.opts.reviewing_judge_id].full_name
@@ -139,18 +138,17 @@ class SubmitDecisionView extends React.PureComponent<Props> {
     const {
       highlightFormItems,
       error,
-      decision,
+      checkoutFlow,
       decision: {
-        type: decisionType,
         opts: decisionOpts
       }
     } = this.props;
-    const decisionTypeDisplay = getDecisionTypeDisplay(decision);
+    const decisionTypeDisplay = getDecisionTypeDisplay(checkoutFlow);
     let documentIdErrorMessage = '';
 
     if (!decisionOpts.document_id) {
       documentIdErrorMessage = COPY.FORM_ERROR_FIELD_REQUIRED;
-    } else if (decisionType === DECISION_TYPES.OMO_REQUEST && !validateWorkProductTypeAndId(this.props.decision)) {
+    } else if (checkoutFlow === DECISION_TYPES.OMO_REQUEST && !validateWorkProductTypeAndId(this.props.decision)) {
       documentIdErrorMessage = COPY.FORM_ERROR_FIELD_INVALID;
     }
 
@@ -165,14 +163,13 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         {error.detail}
       </Alert>}
       <hr />
-      {decisionType === DECISION_TYPES.OMO_REQUEST && <RadioField
+      {checkoutFlow === DECISION_TYPES.OMO_REQUEST && <RadioField
         name="omo_type"
         label="OMO type:"
         onChange={(value) => this.props.setDecisionOptions({ work_product: value })}
         value={decisionOpts.work_product}
         vertical
         options={OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES}
-        styling={radioFieldStyling}
         errorMessage={(highlightFormItems && !decisionOpts.work_product) ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
       />}
       <Checkbox

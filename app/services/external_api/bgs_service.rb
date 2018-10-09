@@ -29,7 +29,7 @@ class ExternalApi::BGSService
     @end_products[vbms_id] ||=
       MetricsService.record("BGS: get end products for vbms id: #{vbms_id}",
                             service: :bgs,
-                            name: "claim.find_by_vbms_file_number") do
+                            name: "claims.find_by_vbms_file_number") do
         client.claims.find_by_vbms_file_number(vbms_id.strip)
       end
   end
@@ -99,7 +99,7 @@ class ExternalApi::BGSService
                                        name: "org.find_poas_by_participant_id") do
         client.org.find_poas_by_ptcpnt_id(participant_id)
       end
-      @poa_by_participant_ids[participant_id] = bgs_poas.map { |poa| get_poa_from_bgs_poa(poa) }
+      @poa_by_participant_ids[participant_id] = [bgs_poas].flatten.compact.map { |poa| get_poa_from_bgs_poa(poa) }
     end
 
     @poa_by_participant_ids[participant_id]
@@ -114,7 +114,8 @@ class ExternalApi::BGSService
       client.org.find_poas_by_ptcpnt_ids(participant_ids)
     end
 
-    get_hash_of_poa_from_bgs_poas(bgs_poas)
+    # Avoid passing nil
+    get_hash_of_poa_from_bgs_poas(bgs_poas || [])
   end
 
   def find_address_by_participant_id(participant_id)
@@ -208,6 +209,40 @@ class ExternalApi::BGSService
                           service: :bgs,
                           name: "security.find_participant_id") do
       client.security.find_participant_id(css_id: user.css_id, station_id: user.station_id)
+    end
+  end
+
+  # This method is available to retrieve and validate a letter created with manage_claimant_letter_v2
+  def find_claimant_letters(document_id)
+    DBService.release_db_connections
+    MetricsService.record("BGS: find claimant letter for document #{document_id}",
+                          service: :bgs,
+                          name: "documents.find_claimant_letters") do
+      client.documents.find_claimant_letters(document_id)
+    end
+  end
+
+  def manage_claimant_letter_v2!(claim_id:, program_type_cd:, claimant_participant_id:)
+    DBService.release_db_connections
+    MetricsService.record("BGS: creates the claimant letter for \
+                           claim_id: #{claim_id}, program_type_cd: #{program_type_cd}, \
+                           claimant_participant_id: #{claimant_participant_id}",
+                          service: :bgs,
+                          name: "documents.manage_claimant_letter_v2") do
+      client.documents.manage_claimant_letter_v2(
+        claim_id: claim_id,
+        program_type_cd: program_type_cd,
+        claimant_participant_id: claimant_participant_id
+      )
+    end
+  end
+
+  def generate_tracked_items!(claim_id)
+    DBService.release_db_connections
+    MetricsService.record("BGS: generate tracked items for claim #{claim_id}",
+                          service: :bgs,
+                          name: "documents.generate_tracked_items") do
+      client.documents.generate_tracked_items(claim_id)
     end
   end
 

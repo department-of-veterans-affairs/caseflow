@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 // @flow
 import { associateTasksWithAppeals,
   prepareAllTasksForStore,
@@ -94,18 +95,42 @@ export const getNewDocuments = (appealId: string) => (dispatch: Dispatch) => {
   });
 };
 
+export const getAppealValue = (appealId: string, endpoint: string, name: string) => (dispatch: Dispatch) => {
+  dispatch({
+    type: ACTIONS.STARTED_LOADING_APPEAL_VALUE,
+    payload: {
+      appealId,
+      name
+    }
+  });
+  ApiUtil.get(`/appeals/${appealId}/${endpoint}`).then((resp) => {
+    const response = JSON.parse(resp.text);
+
+    dispatch({
+      type: ACTIONS.RECEIVE_APPEAL_VALUE,
+      payload: {
+        appealId,
+        name,
+        response
+      }
+    });
+  }, (error) => {
+    dispatch({
+      type: ACTIONS.ERROR_ON_RECEIVE_APPEAL_VALUE,
+      payload: {
+        appealId,
+        name,
+        error
+      }
+    });
+  });
+};
+
 export const setAppealDocCount = (appealId: string, docCount: number) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,
   payload: {
     appealId,
     docCount
-  }
-});
-
-export const setCaseReviewActionType = (type: string) => ({
-  type: ACTIONS.SET_REVIEW_ACTION_TYPE,
-  payload: {
-    type
   }
 });
 
@@ -247,14 +272,17 @@ const errorTasksAndAppealsOfAttorney = ({ attorneyId, error }) => ({
   }
 });
 
-export const fetchTasksAndAppealsOfAttorney = (attorneyId: string) => (dispatch: Dispatch) => {
+export const fetchTasksAndAppealsOfAttorney = (attorneyId: string, params: Object) => (dispatch: Dispatch) => {
   const requestOptions = {
     timeout: true
   };
 
   dispatch(requestTasksAndAppealsOfAttorney(attorneyId));
 
-  return ApiUtil.get(`/queue/${attorneyId}`, requestOptions).then(
+  const pairs = Object.keys(params).map((key) => [key, params[key]].join('='));
+  const queryString = `?${pairs.join('&')}`;
+
+  return ApiUtil.get(`/queue/${attorneyId}${queryString}`, requestOptions).then(
     (resp) => dispatch(
       receiveTasksAndAppealsOfAttorney(
         { attorneyId,
@@ -424,4 +452,11 @@ export const setSpecialIssues = (specialIssues: Object) => ({
 export const setOrganizationId = (id: number) => ({
   type: ACTIONS.SET_ORGANIZATION_ID,
   payload: { id }
+});
+
+export const setAppealAod = (externalAppealId: string) => ({
+  type: ACTIONS.SET_APPEAL_AOD,
+  payload: {
+    externalAppealId
+  }
 });

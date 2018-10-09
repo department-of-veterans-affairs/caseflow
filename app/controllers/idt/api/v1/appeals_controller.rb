@@ -2,16 +2,27 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
   before_action :verify_access
 
+  skip_before_action :verify_authenticity_token, only: [:outcode]
+
   rescue_from StandardError do |e|
-    fail e unless e.class.method_defined?(:serialize_response)
     Raven.capture_exception(e)
-    render(e.serialize_response)
+    if e.class.method_defined?(:serialize_response)
+      render(e.serialize_response)
+    else
+      render json: { message: "Unexpected error: #{e.message}" }, status: 500
+    end
+  end
+
+  rescue_from ActionController::ParameterMissing do |e|
+    render(json: { message: e.message }, status: 400)
   end
 
   def list
-    appeals = file_number ? appeals_by_file_number : appeals_assigned_to_user
-
-    render json: json_appeals(appeals)
+    if file_number.present?
+      render json: json_appeals(appeals_by_file_number)
+    else
+      render json: { data: json_appeals_with_tasks(tasks_assigned_to_user) }
+    end
   end
 
   def details
@@ -20,30 +31,27 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   end
 
   def outcode
-    BvaDispatchTask.outcode(appeal, user)
-    render json: json_appeal_details
+    BvaDispatchTask.outcode(appeal, outcode_params, user)
+    render json: { message: "Success!" }
   end
 
   private
 
-  def appeals_assigned_to_user
-    appeals = LegacyWorkQueue.tasks_with_appeals(user, "attorney")[1].select(&:active?)
+  def tasks_assigned_to_user
+    tasks = if user.attorney_in_vacols? || user.judge_in_vacols?
+              LegacyWorkQueue.tasks_with_appeals(user, role)[0].select { |task| task.appeal.active? }
+            else
+              []
+            end
 
     if feature_enabled?(:idt_ama_appeals)
-      appeals += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold]).map(&:appeal)
+      tasks += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold])
     end
-    appeals
+    tasks.reject { |task| task.action == "assign" }
   end
 
-  def legacy_appeal_details
-    legacy_tasks = QueueRepository.tasks_for_appeal(appeal.vacols_id)
-    [legacy_tasks.last ? legacy_tasks.last.assigned_by_name : "", legacy_tasks]
-  end
-
-  def ama_appeal_details
-    task = Task.where(assigned_to: user, appeal: appeal).where.not(status: [:completed, :on_hold]).last
-    documents = Task.where(appeal: appeal).map(&:attorney_case_reviews).flatten
-    [task ? task.assigned_by.full_name : "", documents]
+  def role
+    user.vacols_roles.first || "attorney"
   end
 
   def appeal
@@ -58,20 +66,31 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     appeals
   end
 
+  def outcode_params
+    keys = %w[citation_number decision_date redacted_document_location]
+    params.require(keys)
+
+    # Have to do this because params.require() returns an array of the parameter values.
+    keys.map { |k| [k, params[k]] }.to_h
+  end
+
   def json_appeal_details
-    appeal_details = ActiveModelSerializers::SerializableResource.new(
+    ActiveModelSerializers::SerializableResource.new(
       appeal,
       serializer: ::Idt::V1::AppealDetailsSerializer,
-      include_addresses: Constants::BvaDispatchTeams::USERS[Rails.current_env].include?(current_user.css_id)
+      include_addresses: Constants::BvaDispatchTeams::USERS[Rails.current_env].include?(user.css_id),
+      base_url: request.base_url
     ).as_json
+  end
 
-    assigned_by_name, documents = appeal.is_a?(LegacyAppeal) ? legacy_appeal_details : ama_appeal_details
-
-    appeal_details[:data][:attributes][:assigned_by] = assigned_by_name
-    appeal_details[:data][:attributes][:documents] = documents.reject { |t| t.document_id.nil? }.map do |document|
-      { written_by: document.written_by_name, document_id: document.document_id }
+  def json_appeals_with_tasks(tasks)
+    tasks.map do |task|
+      ActiveModelSerializers::SerializableResource.new(
+        task.appeal,
+        serializer: ::Idt::V1::AppealSerializer,
+        task: task
+      ).as_json[:data]
     end
-    appeal_details
   end
 
   def json_appeals(appeals)

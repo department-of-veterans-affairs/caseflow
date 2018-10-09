@@ -46,11 +46,37 @@ module Caseflow::Error
     end
   end
 
+  class BvaDispatchDoubleOutcode < SerializableError
+    attr_accessor :task_id, :appeal_id
+
+    def initialize(args)
+      @appeal_id = args[:appeal_id]
+      @task_id = args[:task_id]
+      @code = args[:code] || 400
+      @message = args[:message] || "Appeal #{@appeal_id}, task ID #{@task_id} has already been outcoded. "\
+                                   "Cannot outcode the same appeal and task combination more than once"
+    end
+  end
+
+  class OutcodeValidationFailure < SerializableError
+    def initialize(args)
+      @code = args[:code] || 400
+      @message = args[:message]
+    end
+  end
+
   class TooManyChildTasks < SerializableError
     def initialize(args)
       @task_id = args[:task_id]
       @code = args[:code] || 500
       @message = args[:message] || "JudgeTask #{@task_id} has too many children"
+    end
+  end
+
+  class ChildTaskAssignedToSameUser < SerializableError
+    def initialize
+      @code = 500
+      @message = "A task cannot be assigned to the same user as the parent."
     end
   end
 

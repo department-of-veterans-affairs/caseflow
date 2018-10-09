@@ -1,8 +1,13 @@
 class SupplementalClaim < ClaimReview
   validates :receipt_date, :benefit_type, presence: { message: "blank" }, if: :saving_review
 
-  END_PRODUCT_RATING_CODE = "040SCR".freeze
-  END_PRODUCT_NONRATING_CODE = "040SCNR".freeze
+  END_PRODUCT_CODES = {
+    rating: "040SCR",
+    nonrating: "040SCNR",
+    dta_rating: "040HDER",
+    dta_nonrating: "040HDENR"
+  }.freeze
+
   END_PRODUCT_MODIFIERS = %w[040 041 042 043 044 045 046 047 048 049].freeze
 
   def ui_hash
@@ -18,7 +23,7 @@ class SupplementalClaim < ClaimReview
   end
 
   def rating_end_product_establishment
-    @rating_end_product_establishment ||= end_product_establishments.find_by(code: END_PRODUCT_RATING_CODE)
+    @rating_end_product_establishment ||= end_product_establishments.find_by(code: END_PRODUCT_CODES[:rating])
   end
 
   def end_product_description
@@ -37,6 +42,14 @@ class SupplementalClaim < ClaimReview
     END_PRODUCT_MODIFIERS
   end
 
+  def issue_code(rated)
+    issue_code_type = rated ? :rating : :nonrating
+    if is_dta_error
+      issue_code_type = rated ? :dta_rating : :dta_nonrating
+    end
+    END_PRODUCT_CODES[issue_code_type]
+  end
+
   private
 
   def new_end_product_establishment(ep_code)
@@ -46,11 +59,8 @@ class SupplementalClaim < ClaimReview
       payee_code: payee_code,
       code: ep_code,
       claimant_participant_id: claimant_participant_id,
-      station: "397" # AMC
+      station: "397", # AMC
+      benefit_type_code: veteran.benefit_type_code
     )
-  end
-
-  def issue_code(rated)
-    rated ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE
   end
 end

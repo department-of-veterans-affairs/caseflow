@@ -3,6 +3,10 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
     object.is_a?(LegacyAppeal) ? object.vacols_id : object.uuid
   end
 
+  attribute :case_details_url do
+    "#{@instance_options[:base_url]}/queue/appeals/#{object.external_id}"
+  end
+
   attribute :veteran_first_name
   attribute :veteran_middle_name do
     object.veteran_middle_initial
@@ -10,6 +14,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   attribute :veteran_last_name
   attribute :veteran_name_suffix
   attribute :veteran_gender
+  attribute :veteran_ssn
 
   attribute :veteran_is_deceased
   attribute :veteran_death_date
@@ -20,15 +25,10 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
 
   attribute :appellants do
     if object.is_a?(LegacyAppeal)
-      {
-        first_name: object.appellant_first_name,
-        middle_name: object.appellant_middle_initial,
-        last_name: object.appellant_last_name,
-        name_suffix: object.appellant_name_suffix
-      }
+      [object.claimant]
     else
       object.claimants.map do |claimant|
-        address = if @instance_options[:include_addresses] && !object.is_a?(LegacyAppeal)
+        address = if @instance_options[:include_addresses]
                     {
                       address_line_1: claimant.address_line_1,
                       address_line_2: claimant.address_line_2,
@@ -38,23 +38,42 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
                       country: claimant.country
                     }
                   end
+        representative = {
+          name: claimant.representative_name,
+          type: claimant.representative_type,
+          participant_id: claimant.representative_participant_id,
+          address: @instance_options[:include_addresses] ? claimant.representative_address : nil
+        }
 
         {
           first_name: claimant.first_name,
           middle_name: claimant.middle_name,
           last_name: claimant.last_name,
           name_suffix: "",
-          address: address
+          address: address,
+          representative: claimant.representative_name ? representative : nil
         }
       end
     end
   end
 
+  attribute :contested_claimants do
+    object.is_a?(LegacyAppeal) ? object.contested_claimants : nil
+  end
+
+  attribute :contested_claimant_agents do
+    object.is_a?(LegacyAppeal) ? object.contested_claimant_agents : nil
+  end
+
+  attribute :congressional_interest_addresses do
+    object.is_a?(LegacyAppeal) ? object.congressional_interest_addresses : "Not implemented for AMA"
+  end
+
   attribute :file_number do
     object.is_a?(LegacyAppeal) ? object.sanitized_vbms_id : object.veteran_file_number
   end
-  attribute :citation_number
   attribute :docket_number
+  attribute :docket_name
   attribute :number_of_issues
 
   attribute :issues do
@@ -62,7 +81,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
       object.issues.map do |issue|
         ActiveModelSerializers::SerializableResource.new(
           issue,
-          serializer: ::WorkQueue::IssueSerializer
+          serializer: ::WorkQueue::LegacyIssueSerializer
         ).as_json[:data][:attributes]
       end
     else
@@ -74,25 +93,22 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
     end
   end
 
-  # TODO: - expand rep name into separate fields
-  attribute :representative_name do
-    object.is_a?(LegacyAppeal) ? object.power_of_attorney.vacols_representative_name : object.representative_name
-  end
-  attribute :representative_type do
-    object.is_a?(LegacyAppeal) ? object.power_of_attorney.vacols_representative_type : object.representative_type
-  end
-  attribute :representative_address do
-    if @instance_options[:include_addresses] && !object.is_a?(LegacyAppeal)
-      object.representative_address
-    end
-  end
-
   attribute :aod do
     object.advanced_on_docket
   end
   attribute :cavc
   attribute :status
   attribute :previously_selected_for_quality_review
+
+  attribute :assigned_by do
+    object.reviewing_judge_name
+  end
+
+  attribute :documents do
+    object.attorney_case_reviews.map do |document|
+      { written_by: document.written_by_name, document_id: document.document_id }
+    end
+  end
 
   attribute :outstanding_mail do
     object.is_a?(LegacyAppeal) ? object.outstanding_vacols_mail : "not implemented for AMA"

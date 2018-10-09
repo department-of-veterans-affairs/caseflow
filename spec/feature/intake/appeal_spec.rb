@@ -40,11 +40,13 @@ RSpec.feature "Appeal Intake" do
 
   let(:untimely_days) { 372.days }
 
+  let(:profile_date) { (receipt_date - untimely_days + 4.days).to_time(:local) }
+
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - untimely_days + 1.day,
-      profile_date: receipt_date - untimely_days + 4.days,
+      profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
         { reference_id: "def456", decision_text: "PTSD denied" }
@@ -64,6 +66,9 @@ RSpec.feature "Appeal Intake" do
     )
   end
 
+  let(:search_bar_title) { "Enter the Veteran's ID" }
+  let(:search_page_title) { "Search for Veteran ID" }
+
   it "Creates an appeal" do
     # Testing no relationships in Appeal and Veteran is claimant, tests two relationships in HRL and one in SC
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(nil)
@@ -71,14 +76,14 @@ RSpec.feature "Appeal Intake" do
     visit "/intake"
     safe_click ".Select"
 
-    fill_in "Which form are you processing?", with: "Notice of Disagreement (VA Form 10182)"
+    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.appeal
     find("#form-select").send_keys :enter
 
     safe_click ".cf-submit.usa-button"
 
-    expect(page).to have_content("Notice of Disagreement (VA Form 10182)")
+    expect(page).to have_content(search_page_title)
 
-    fill_in "Search small", with: "22334455"
+    fill_in search_bar_title, with: "22334455"
 
     click_on "Search"
 
@@ -161,7 +166,7 @@ RSpec.feature "Appeal Intake" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Notice of Disagreement (VA Form 10182) has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
 
     intake.reload
     expect(intake.completed_at).to eq(Time.zone.now)
@@ -172,7 +177,7 @@ RSpec.feature "Appeal Intake" do
     expect(appeal.request_issues.count).to eq 2
     expect(appeal.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
-      rating_issue_profile_date: receipt_date - untimely_days + 4.days,
+      rating_issue_profile_date: profile_date,
       description: "PTSD denied",
       decision_date: nil
     )
@@ -211,15 +216,15 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  it "Allows a Veteran without ratings to create an intake" do
+  def start_appeal(test_veteran)
     appeal = Appeal.create!(
-      veteran_file_number: veteran_no_ratings.file_number,
+      veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
       docket_type: "evidence_submission"
     )
 
     AppealIntake.create!(
-      veteran_file_number: veteran_no_ratings.file_number,
+      veteran_file_number: test_veteran.file_number,
       user: current_user,
       started_at: 5.minutes.ago,
       detail: appeal
@@ -227,10 +232,15 @@ RSpec.feature "Appeal Intake" do
 
     Claimant.create!(
       review_request: appeal,
-      participant_id: veteran_no_ratings.participant_id
+      participant_id: test_veteran.participant_id
     )
 
     appeal.start_review!
+    appeal
+  end
+
+  it "Allows a Veteran without ratings to create an intake" do
+    start_appeal(veteran_no_ratings)
 
     visit "/intake"
 
@@ -251,6 +261,88 @@ RSpec.feature "Appeal Intake" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("Notice of Disagreement (VA Form 10182) has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+  end
+
+  def check_row(label, text)
+    row = find("tr", text: label)
+    expect(row).to have_text(text)
+  end
+
+  scenario "For new Add Issues page" do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date - 40.days,
+      profile_date: receipt_date - 50.days,
+      issues: [
+        { reference_id: "abc123", decision_text: "Left knee granted" },
+        { reference_id: "def456", decision_text: "PTSD denied" }
+      ]
+    )
+    appeal = start_appeal(veteran)
+    visit "/intake/add_issues"
+
+    expect(page).to have_content("Add Issues")
+    check_row("Form", Constants.INTAKE_FORM_NAMES.appeal)
+    check_row("Review option", "Evidence Submission")
+    check_row("Claimant", "Ed Merica")
+
+    # clicking the add issues button should bring up the modal
+    safe_click "#button-add-issue"
+    expect(page).to have_content("Add issue 1")
+    expect(page).to have_content("Does issue 1 match any of these issues")
+    expect(page).to have_content("Left knee granted")
+    expect(page).to have_content("PTSD denied")
+
+    # test canceling adding an issue by closing the modal
+    safe_click ".close-modal"
+    expect(page).to_not have_content("Left knee granted")
+
+    # adding an issue should show the issue
+    safe_click "#button-add-issue"
+    find("label", text: "Left knee granted").click
+    fill_in "Notes", with: "I am an issue note"
+    safe_click ".add-issue"
+    expect(page).to have_content("1.Left knee granted")
+
+    # removing the issue should hide the issue
+    safe_click ".remove-issue"
+
+    expect(page).to_not have_content("Left knee granted")
+
+    # re-add to proceed
+    safe_click "#button-add-issue"
+    find("label", text: "Left knee granted").click
+    fill_in "Notes", with: "I am an issue note"
+    safe_click ".add-issue"
+
+    expect(page).to have_content("1.Left knee granted")
+    expect(page).to have_content("I am an issue note")
+
+    # clicking add issue again should show a disabled radio button for that same rating
+    safe_click "#button-add-issue"
+    expect(page).to have_content("Add issue 2")
+    expect(page).to have_content("Does issue 2 match any of these issues")
+    expect(page).to have_content("Left knee granted (already selected for issue 1)")
+    expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
+    safe_click ".close-modal"
+
+    safe_click "#button-finish-intake"
+
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+
+    expect(Appeal.find_by(
+             id: appeal.id,
+             veteran_file_number: veteran.file_number,
+             established_at: Time.zone.now
+    )).to_not be_nil
+
+    expect(RequestIssue.find_by(
+             review_request_type: "Appeal",
+             review_request_id: appeal.id,
+             rating_issue_reference_id: "abc123",
+             description: "Left knee granted",
+             notes: "I am an issue note"
+    )).to_not be_nil
   end
 end

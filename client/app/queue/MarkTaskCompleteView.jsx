@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import { css } from 'glamor';
+import { sprintf } from 'sprintf-js';
 
 import {
   getTasksForAppeal,
@@ -22,6 +23,7 @@ import {
   fullWidth,
   marginBottom
 } from './constants';
+import COPY from '../../COPY.json';
 
 import type { State, UiStateMessage } from './types/state';
 import type { Task, Appeal } from './types/models';
@@ -49,11 +51,11 @@ class MarkTaskCompleteView extends React.Component<Props> {
     } = this.props;
 
     const successMsg = {
-      title: 'Task marked as complete',
-      detail: `Task for ${appeal.veteranFullName} completed`
+      title: COPY.TASK_MARKED_COMPLETE_NOTICE_TITLE,
+      detail: sprintf(COPY.TASK_MARKED_COMPLETE_NOTICE_DETAIL, appeal.veteranFullName)
     };
 
-    const payload = { data: { task: { status: '' } } };
+    const payload = { data: { task: { status: 'completed' } } };
 
     this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {

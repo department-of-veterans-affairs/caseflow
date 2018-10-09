@@ -20,16 +20,16 @@ RSpec.describe TasksController, type: :controller do
 
     let!(:task1) { create(:colocated_task, assigned_by: user) }
     let!(:task2) { create(:colocated_task, assigned_by: user) }
-    let!(:task3) { create(:colocated_task, assigned_by: user, status: "completed") }
+    let!(:task3) { create(:colocated_task, assigned_by: user, status: Constants.TASK_STATUSES.completed) }
 
     let!(:task4) do
       create(:colocated_task, assigned_to: user, appeal: create(:legacy_appeal, vacols_case: create(:case, :aod)))
     end
-    let!(:task5) { create(:colocated_task, assigned_to: user, status: "in_progress") }
+    let!(:task5) { create(:colocated_task, assigned_to: user, status: Constants.TASK_STATUSES.in_progress) }
     let!(:task_ama_colocated_aod) do
       create(:ama_colocated_task, assigned_to: user, appeal: create(:appeal, :advanced_on_docket))
     end
-    let!(:task6) { create(:colocated_task, assigned_to: user, status: "completed") }
+    let!(:task6) { create(:colocated_task, assigned_to: user, status: Constants.TASK_STATUSES.completed) }
     let!(:task7) { create(:colocated_task) }
 
     let!(:task8) { create(:ama_judge_task, assigned_to: user, assigned_by: user) }
@@ -49,13 +49,13 @@ RSpec.describe TasksController, type: :controller do
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
         expect(response_body.size).to eq 5
-        expect(response_body.first["attributes"]["status"]).to eq "on_hold"
+        expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
         expect(response_body.first["attributes"]["assigned_by"]["pg_id"]).to eq user.id
         expect(response_body.first["attributes"]["placed_on_hold_at"]).to_not be nil
         expect(response_body.first["attributes"]["veteran_full_name"]).to eq task1.appeal.veteran_full_name
         expect(response_body.first["attributes"]["veteran_file_number"]).to eq task1.appeal.veteran_file_number
 
-        expect(response_body.second["attributes"]["status"]).to eq "on_hold"
+        expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
         expect(response_body.second["attributes"]["assigned_by"]["pg_id"]).to eq user.id
         expect(response_body.second["attributes"]["placed_on_hold_at"]).to_not be nil
         expect(response_body.second["attributes"]["veteran_full_name"]).to eq task2.appeal.veteran_full_name
@@ -63,9 +63,9 @@ RSpec.describe TasksController, type: :controller do
 
         ama_tasks = response_body.select { |task| task["type"] == "attorney_tasks" }
         expect(ama_tasks.size).to eq 3
-        expect(ama_tasks.first["attributes"]["status"]).to eq "assigned"
-        expect(ama_tasks.second["attributes"]["status"]).to eq "in_progress"
-        expect(ama_tasks.third["attributes"]["status"]).to eq "on_hold"
+        expect(ama_tasks.count { |task| task["attributes"]["status"] == Constants.TASK_STATUSES.assigned }).to eq 1
+        expect(ama_tasks.count { |task| task["attributes"]["status"] == Constants.TASK_STATUSES.in_progress }).to eq 1
+        expect(ama_tasks.count { |task| task["attributes"]["status"] == Constants.TASK_STATUSES.on_hold }).to eq 1
       end
     end
 
@@ -89,14 +89,14 @@ RSpec.describe TasksController, type: :controller do
         expect(response_body.size).to eq 3
         assigned = response_body[0]
         expect(assigned["id"]).to eq task4.id.to_s
-        expect(assigned["attributes"]["status"]).to eq "assigned"
+        expect(assigned["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
         expect(assigned["attributes"]["assigned_to"]["id"]).to eq user.id
         expect(assigned["attributes"]["placed_on_hold_at"]).to be nil
         expect(assigned["attributes"]["aod"]).to be true
 
         in_progress = response_body[1]
         expect(in_progress["id"]).to eq task5.id.to_s
-        expect(in_progress["attributes"]["status"]).to eq "in_progress"
+        expect(in_progress["attributes"]["status"]).to eq Constants.TASK_STATUSES.in_progress
         expect(in_progress["attributes"]["assigned_to"]["id"]).to eq user.id
         expect(in_progress["attributes"]["placed_on_hold_at"]).to be nil
 
@@ -113,11 +113,11 @@ RSpec.describe TasksController, type: :controller do
         get :index, params: { user_id: user.id, role: "judge" }
         response_body = JSON.parse(response.body)["tasks"]["data"]
         expect(response_body.size).to eq 2
-        expect(response_body.first["attributes"]["status"]).to eq "assigned"
+        expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
         expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq user.id
         expect(response_body.first["attributes"]["placed_on_hold_at"]).to be nil
 
-        expect(response_body.second["attributes"]["status"]).to eq "in_progress"
+        expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.in_progress
         expect(response_body.second["attributes"]["assigned_to"]["id"]).to eq user.id
         expect(response_body.second["attributes"]["placed_on_hold_at"]).to be nil
       end
@@ -126,9 +126,71 @@ RSpec.describe TasksController, type: :controller do
     context "when user has no role" do
       let(:role) { nil }
 
-      it "should return a 400 invalid role error" do
+      it "should return 200" do
         get :index, params: { user_id: user.id, role: "unknown" }
-        expect(response.status).to eq 400
+        expect(response.status).to eq 200
+      end
+
+      context "when a task is assignable" do
+        let(:root_task) { FactoryBot.create(:root_task) }
+        let(:field) { "sdept" }
+
+        let(:org_1) { FactoryBot.create(:organization) }
+        let(:org_1_member_cnt) { 6 }
+        let(:org_1_members) { FactoryBot.create_list(:user, org_1_member_cnt) }
+        let(:org_1_assignee) { org_1_members[0] }
+        let(:org_1_non_assignee) { org_1_members[1] }
+        let!(:org_1_team_task) { FactoryBot.create(:generic_task, assigned_to: org_1, parent: root_task) }
+        let!(:org_1_member_task) do
+          FactoryBot.create(:generic_task, assigned_to: org_1_assignee, parent: org_1_team_task)
+        end
+
+        before do
+          StaffFieldForOrganization.create!(organization: org_1, name: field, values: [org_1.name])
+          org_1_members.each do |u|
+            FeatureToggle.enable!(org_1.feature.to_sym, users: [u.css_id])
+            FactoryBot.create(:staff, user: u, "#{field}": org_1.name)
+          end
+        end
+
+        after do
+          FeatureToggle.disable!(org_1.feature.to_sym)
+        end
+
+        context "when user is assigned an individual task" do
+          let!(:user) { User.authenticate!(user: org_1_assignee) }
+
+          it "should return a list of all members for individual task" do
+            get :index, params: { user_id: user.id }
+            expect(response.status).to eq(200)
+            response_body = JSON.parse(response.body)
+
+            task_attributes = response_body["tasks"]["data"].find { |task| task["id"] == org_1_member_task.id.to_s }
+
+            # org count minus one since we can't assign to ourselves.
+            expect(task_attributes["attributes"]["assignable_users"].length).to eq(org_1_member_cnt - 1)
+          end
+        end
+      end
+
+      context "when the task belongs to the user" do
+        let(:user) { FactoryBot.create(:user) }
+        let!(:task) { FactoryBot.create(:generic_task, assigned_to: user) }
+        before { User.authenticate!(user: user) }
+
+        context "when there are Organizations in the table" do
+          let(:org_count) { 8 }
+          before { FactoryBot.create_list(:organization, org_count) }
+
+          it "should return a list of all Organizations" do
+            get :index, params: { user_id: user.id }
+            expect(response.status).to eq(200)
+            response_body = JSON.parse(response.body)
+            task_attributes = response_body["tasks"]["data"].find { |t| t["id"] == task.id.to_s }
+
+            expect(task_attributes["attributes"]["assignable_organizations"].length).to eq(org_count)
+          end
+        end
       end
     end
   end
@@ -161,7 +223,7 @@ RSpec.describe TasksController, type: :controller do
         let(:params) do
           [{
             "external_id": ama_appeal.uuid,
-            "type": "AttorneyTask",
+            "type": AttorneyTask.name,
             "assigned_to_id": attorney.id,
             "parent_id": ama_judge_task.id
           }]
@@ -171,16 +233,16 @@ RSpec.describe TasksController, type: :controller do
           post :create, params: { tasks: params }
           expect(response.status).to eq 201
           response_body = JSON.parse(response.body)["tasks"]["data"]
-          expect(response_body.first["attributes"]["type"]).to eq "AttorneyTask"
+          expect(response_body.first["attributes"]["type"]).to eq AttorneyTask.name
           expect(response_body.first["attributes"]["appeal_id"]).to eq ama_appeal.id
           expect(response_body.first["attributes"]["docket_number"]).to eq ama_appeal.docket_number
-          expect(response_body.first["attributes"]["appeal_type"]).to eq "Appeal"
+          expect(response_body.first["attributes"]["appeal_type"]).to eq Appeal.name
 
           attorney_task = AttorneyTask.find_by(appeal: ama_appeal)
-          expect(attorney_task.status).to eq "assigned"
+          expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
           expect(attorney_task.assigned_to).to eq attorney
           expect(attorney_task.parent_id).to eq ama_judge_task.id
-          expect(ama_judge_task.reload.status).to eq "on_hold"
+          expect(ama_judge_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
         end
       end
     end
@@ -199,7 +261,7 @@ RSpec.describe TasksController, type: :controller do
         let(:params) do
           [{
             "external_id": appeal.vacols_id,
-            "type": "ColocatedTask"
+            "type": ColocatedTask.name
           }]
         end
 
@@ -216,13 +278,13 @@ RSpec.describe TasksController, type: :controller do
           let(:params) do
             [{
               "external_id": appeal.vacols_id,
-              "type": "ColocatedTask",
+              "type": ColocatedTask.name,
               "action": "address_verification",
               "instructions": "do this"
             },
              {
                "external_id": appeal.vacols_id,
-               "type": "ColocatedTask",
+               "type": ColocatedTask.name,
                "action": "missing_records",
                "instructions": "another one"
              }]
@@ -234,14 +296,14 @@ RSpec.describe TasksController, type: :controller do
             expect(response.status).to eq 201
             response_body = JSON.parse(response.body)["tasks"]["data"]
             expect(response_body.size).to eq 2
-            expect(response_body.first["attributes"]["status"]).to eq "assigned"
+            expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.first["attributes"]["instructions"]).to eq "do this"
+            expect(response_body.first["attributes"]["instructions"][0]).to eq "do this"
             expect(response_body.first["attributes"]["action"]).to eq "address_verification"
 
-            expect(response_body.second["attributes"]["status"]).to eq "assigned"
+            expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.second["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.second["attributes"]["instructions"]).to eq "another one"
+            expect(response_body.second["attributes"]["instructions"][0]).to eq "another one"
             expect(response_body.second["attributes"]["action"]).to eq "missing_records"
             # assignee should be the same person
             id = response_body.second["attributes"]["assigned_to"]["id"]
@@ -253,7 +315,7 @@ RSpec.describe TasksController, type: :controller do
           let(:params) do
             {
               "external_id": appeal.vacols_id,
-              "type": "ColocatedTask",
+              "type": ColocatedTask.name,
               "action": "address_verification",
               "instructions": "do this"
             }
@@ -264,9 +326,9 @@ RSpec.describe TasksController, type: :controller do
             expect(response.status).to eq 201
             response_body = JSON.parse(response.body)["tasks"]["data"]
             expect(response_body.size).to eq 1
-            expect(response_body.first["attributes"]["status"]).to eq "assigned"
+            expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.first["attributes"]["instructions"]).to eq "do this"
+            expect(response_body.first["attributes"]["instructions"][0]).to eq "do this"
             expect(response_body.first["attributes"]["action"]).to eq "address_verification"
           end
         end
@@ -275,7 +337,7 @@ RSpec.describe TasksController, type: :controller do
           let(:params) do
             [{
               "external_id": 4_646_464,
-              "type": "ColocatedTask",
+              "type": ColocatedTask.name,
               "action": "address_verification"
             }]
           end
@@ -289,7 +351,7 @@ RSpec.describe TasksController, type: :controller do
     end
   end
 
-  describe "PATCH /task/:id" do
+  describe "PATCH /tasks/:id" do
     let(:colocated) { create(:user) }
     let(:attorney) { create(:user) }
     let(:judge) { create(:user) }
@@ -305,16 +367,19 @@ RSpec.describe TasksController, type: :controller do
 
       it "should update successfully" do
         User.stub = colocated
-        patch :update, params: { task: { status: "in_progress" }, id: admin_action.id }
+        patch :update, params: { task: { status: Constants.TASK_STATUSES.in_progress }, id: admin_action.id }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
-        expect(response_body.first["attributes"]["status"]).to eq "in_progress"
+        expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.in_progress
         expect(response_body.first["attributes"]["started_at"]).to_not be nil
 
-        patch :update, params: { task: { status: "on_hold", on_hold_duration: 60 }, id: admin_action.id }
+        patch :update, params: {
+          task: { status: Constants.TASK_STATUSES.on_hold, on_hold_duration: 60 },
+          id: admin_action.id
+        }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
-        expect(response_body.first["attributes"]["status"]).to eq "on_hold"
+        expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
         expect(response_body.first["attributes"]["placed_on_hold_at"]).to_not be nil
       end
     end
@@ -324,10 +389,10 @@ RSpec.describe TasksController, type: :controller do
 
       it "should update successfully" do
         User.stub = colocated
-        patch :update, params: { task: { status: "completed" }, id: admin_action.id }
+        patch :update, params: { task: { status: Constants.TASK_STATUSES.completed }, id: admin_action.id }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
-        expect(response_body.first["attributes"]["status"]).to eq "completed"
+        expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.completed
         expect(response_body.first["attributes"]["completed_at"]).to_not be nil
       end
     end
@@ -351,7 +416,7 @@ RSpec.describe TasksController, type: :controller do
 
       it "should return not be successful" do
         User.stub = colocated
-        patch :update, params: { task: { status: "in_progress" }, id: admin_action.id }
+        patch :update, params: { task: { status: Constants.TASK_STATUSES.in_progress }, id: admin_action.id }
         expect(response.status).to eq 302
       end
     end

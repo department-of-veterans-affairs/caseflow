@@ -29,7 +29,10 @@ const containerStyling = css({
 });
 
 const caseListStyling = css({
-  marginBottom: '0 !important'
+  marginBottom: '0 !important',
+  '& td:first-child, th:first-child': {
+    paddingLeft: '1rem'
+  }
 });
 
 class VeteranCasesView extends React.PureComponent {

@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from '../../components/Button';
 import { toggleCancelModal } from '../actions/common';
-import { REQUEST_STATE } from '../constants';
+import { REQUEST_STATE } from '../../intakeCommon/constants';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -9,7 +9,6 @@ class CancelButton extends React.PureComponent {
   render = () =>
     <Button
       id="cancel-intake"
-      legacyStyling={false}
       linkStyling
       willNeverBeLoading
       disabled={this.props.electionLoading || this.props.refilingLoading}

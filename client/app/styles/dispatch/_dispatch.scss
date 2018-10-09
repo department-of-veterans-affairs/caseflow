@@ -1,41 +1,11 @@
 .route-claim-confirmNote-wrapper {
-  .question-label {
+  label {
     max-width: 100%;
   }
 
   .cf-required {
     float: none;
   }
-}
-
-.cf-multiple-columns {
-  .cf-form-checkbox {
-
-    .question-label {
-      margin-bottom: 0;
-    }
-  }
-}
-
-.cf-vbms-note {
-  position: relative;
-
-  .cf-form-textarea {
-    width: 80%;
-    margin-left: 100px;
-}
-
-  .question-label {
-    font-weight: bold;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-  .copy-note-button {
-    width: 80%;
-    margin-left: 100px;
- }
 }
 
 .cf-email-header {
@@ -52,12 +22,6 @@
   display: inline-block;
   width: 18%;
   vertical-align: top;
-}
-
-.cf-btn-link {
-  &.cf-adjacent-buttons {
-    margin-right: 30px;
-  }
 }
 
 .inline-value {
@@ -77,11 +41,6 @@
       margin-top: 40px;
     }
   }
-}
-
-.establish-claim-feedback {
-  text-align: center;
-  width: 100%;
 }
 
 .cf-bottom-border {
@@ -104,10 +63,6 @@
   }
 }
 
-.vbms-id {
-  color: $color-gray;
-}
-
 .cf-work-assignments {
   td {
     &:first-child {
@@ -123,7 +78,7 @@
     }
   }
 
-  .cf-no-padding {
+  .cf-align {
     padding: 0 3px;
     vertical-align: middle;
   }

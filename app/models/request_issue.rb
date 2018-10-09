@@ -2,6 +2,7 @@ class RequestIssue < ApplicationRecord
   belongs_to :review_request, polymorphic: true
   belongs_to :end_product_establishment
   has_many :decision_issues
+  has_many :remand_reasons
 
   def self.rated
     where.not(rating_issue_reference_id: nil, rating_issue_profile_date: nil)
@@ -11,6 +12,10 @@ class RequestIssue < ApplicationRecord
   def self.nonrated
     where(rating_issue_reference_id: nil, rating_issue_profile_date: nil)
       .where.not(issue_category: [nil, "Unknown issue category"])
+  end
+
+  def self.no_follow_up_issues
+    where.not(id: select(:parent_request_issue_id).uniq)
   end
 
   def rated?
@@ -23,7 +28,8 @@ class RequestIssue < ApplicationRecord
       rating_issue_profile_date: data[:profile_date],
       description: data[:decision_text],
       decision_date: data[:decision_date],
-      issue_category: data[:issue_category]
+      issue_category: data[:issue_category],
+      notes: data[:notes]
     )
   end
 

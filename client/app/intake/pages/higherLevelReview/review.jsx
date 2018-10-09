@@ -11,7 +11,8 @@ import SelectClaimant from '../../components/SelectClaimant';
 import { setInformalConference, setSameOffice } from '../../actions/higherLevelReview';
 import { submitReview, setBenefitType, setClaimantNotVeteran, setClaimant, setPayeeCode } from '../../actions/ama';
 import { setReceiptDate } from '../../actions/common';
-import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
+import { FORM_TYPES, REQUEST_STATE } from '../../../intakeCommon/constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 
@@ -40,7 +41,7 @@ class Review extends React.PureComponent {
     }
 
     return <div>
-      <h1>Review { veteranName }'s Request for Higher-Level Review (VA Form 20-0988)</h1>
+      <h1>Review { veteranName }'s { FORM_TYPES.HIGHER_LEVEL_REVIEW.name }</h1>
 
       { reviewIntakeError && <ErrorAlert /> }
 
@@ -112,7 +113,6 @@ class ReviewNextButton extends React.PureComponent {
       name="submit-review"
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-      legacyStyling={false}
     >
       Continue to next step
     </Button>;

@@ -48,19 +48,10 @@
 
 .cf-sg-content {
   padding-left: 12.5em;
-}
 
-.usa-accordion {
-  width: 100%;
-}
-
-.usa-accordion-button {
-  text-align: left;
-}
-
-.cf-modal.active {
-  z-index: 15;
-  text-align: left;
+  .cf-sg-alert-slim {
+    max-width: 320px;
+  }
 }
 
 //Inline Code Text
@@ -255,8 +246,4 @@ pre {
 .cf-image-loader {
   width: 400px;
   height: 400px;
-}
-
-.cf-sg-alert-lite {
-  max-width: 320px;
 }
