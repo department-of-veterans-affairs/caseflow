@@ -35,7 +35,7 @@ class Task < ApplicationRecord
   end
 
   def children_attorney_tasks
-    children.where(type:  AttorneyTask.name)
+    children.where(type: AttorneyTask.name)
   end
 
   def self.create_from_params(params, current_user)
