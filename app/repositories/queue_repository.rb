@@ -1,5 +1,4 @@
 class QueueRepository
-
   class ExistingDecassError < StandardError; end
 
   class << self
@@ -122,9 +121,9 @@ class QueueRepository
     def assign_case_to_attorney!(judge:, attorney:, vacols_id:)
       transaction do
         case_decass_records = VACOLS::Decass.where(defolder: vacols_id)
-        raise ExistingDecassError if case_decass_records.length > 1
+        fail ExistingDecassError if case_decass_records.length > 1
         if case_decass_records.length == 1
-          raise ExistingDecassError unless case_decass_records[0].omo_request?
+          fail ExistingDecassError unless case_decass_records[0].omo_request?
         end
 
         update_location_to_attorney(vacols_id, attorney)
