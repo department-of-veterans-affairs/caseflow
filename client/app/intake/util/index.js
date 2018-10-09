@@ -163,7 +163,7 @@ export const formatAddedIssues = (intakeData) => {
     if (!issue.isRated) {
       return {
         referenceId: issue.id,
-        text: `${issue.description} Decision date ${formatDate(issue.decisionDate)}`
+        text: `${issue.category} - ${issue.description} Decision date ${formatDate(issue.decisionDate)}`
       };
     }
 
