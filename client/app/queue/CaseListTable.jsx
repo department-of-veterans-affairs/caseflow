@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { css } from 'glamor';
 
 import CaseDetailsLink from './CaseDetailsLink';
+import DocketTypeBadge from './components/DocketTypeBadge';
 import Table from '../components/Table';
 import { COLORS } from '../constants/AppConstants';
 
@@ -36,6 +37,7 @@ class CaseListTable extends React.PureComponent {
     {
       header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
       valueFunction: (appeal) => <React.Fragment>
+        <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />
         <CaseDetailsLink
           appeal={appeal}
           getLinkText={() => appeal.docketNumber} />
