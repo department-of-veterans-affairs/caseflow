@@ -220,7 +220,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def rated_issue_contention_map(request_issues_to_associate)
     request_issues_to_associate.inject({}) do |contention_map, issue|
-      contention_map[issue.rating_issue_reference_id] = issue.contention_reference_id
+      contention_map[issue.rating_issue_reference_id] = issue.contention_reference_id.to_s
       contention_map
     end
   end
@@ -310,7 +310,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def contention_for_object(for_object)
-    contentions.find { |contention| contention.id == for_object.contention_reference_id }
+    contentions.find { |contention| contention.id == for_object.contention_reference_id.to_s }
   end
 
   # These are values that need to be determined based on the source right before the end
