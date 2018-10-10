@@ -92,7 +92,8 @@
     "url-loader": "^1.0.1",
     "uswds": "^1.6.4",
     "uuid": "^3.0.1",
-    "webpack": "^3.10.0"
+    "webpack": "^4.17.0",
+    "webpack-cli": "^3.1.2"
   },
   "devDependencies": {
     "@department-of-veterans-affairs/eslint-config-appeals": "https://github.com/department-of-veterans-affairs/eslint-config-appeals#f50522e",
