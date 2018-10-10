@@ -35,7 +35,7 @@ type Params = {|
   previousAssigneeId: string,
   onTaskAssignment: Function,
   selectedTasks: Array<Task>,
-  isModal?: Boolean
+  isModal?: boolean
 |};
 
 type Props = Params & {|
