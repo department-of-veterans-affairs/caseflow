@@ -299,9 +299,9 @@ RSpec.feature "AmaQueue" do
       end
 
       scenario "when searching for cases" do
-        visit "/organizations/#{url}"
+        visit "/search"
 
-        fill_in "searchBar", with: veteran.file_number
+        fill_in "searchBarEmptyList", with: veteran.file_number
         click_on "Search"
 
         expect(page).to have_content(appeals.first.docket_number)
