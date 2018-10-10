@@ -23,7 +23,7 @@ const markStyle = css({
   '& mark': {
     background: COLORS.GOLD_LIGHTER,
     '.highlighted': {
-      background: COLORS.GOLD
+      background: COLORS.GREEN_LIGHTER
     }
   }
 });
