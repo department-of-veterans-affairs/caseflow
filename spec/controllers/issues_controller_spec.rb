@@ -46,6 +46,26 @@ RSpec.describe IssuesController, type: :controller do
       end
     end
 
+    context "when current user does not have access" do
+      let(:params) do
+        {
+          program: "02",
+          issue: "15",
+          level_1: "03",
+          level_2: "5252",
+          level_3: nil,
+          note: "test"
+        }
+      end
+
+      it "should not be successful" do
+        post :create, params: { appeal_id:
+          create(:legacy_appeal, vacols_case: create(:case)).vacols_id,
+                                issues: params }
+        expect(response.status).to eq 400
+      end
+    end
+
     context "when appeal is not found" do
       it "should return not found" do
         post :create, params: { appeal_id: "3456789", issues: {} }
