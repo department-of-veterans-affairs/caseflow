@@ -75,8 +75,8 @@ describe UserRepository do
     end
   end
 
-  context "can_access_task?" do
-    subject { UserRepository.can_access_task?(css_id, "4321") }
+  context "fail_if_no_access_to_task!" do
+    subject { UserRepository.fail_if_no_access_to_task!(css_id, "4321") }
 
     context "when a task is assigned to a user" do
       let(:user) { User.create(css_id: css_id, station_id: "101") }

@@ -84,13 +84,13 @@ class User < ApplicationRecord
     @vsos_user_represents ||= bgs.fetch_poas_by_participant_id(participant_id)
   end
 
-  def access_to_legacy_task?(vacols_id)
-    self.class.user_repository.can_access_task?(css_id, vacols_id)
+  def fail_if_no_access_to_legacy_task!(vacols_id)
+    self.class.user_repository.fail_if_no_access_to_task!(css_id, vacols_id)
   end
 
   def appeal_has_task_assigned_to_user?(appeal)
     if appeal.class.name == "LegacyAppeal"
-      access_to_legacy_task?(appeal.vacols_id)
+      fail_if_no_access_to_legacy_task!(appeal.vacols_id)
     else
       appeal.tasks.any? do |task|
         task.assigned_to == self

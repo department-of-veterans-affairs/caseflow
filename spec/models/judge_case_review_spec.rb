@@ -104,7 +104,7 @@ describe JudgeCaseReview do
       before do
         RequestStore.store[:current_user] = judge
         FeatureToggle.enable!(:test_facols)
-        allow(UserRepository).to receive(:can_access_task?).and_return(true)
+        allow(UserRepository).to receive(:fail_if_no_access_to_task!).and_return(true)
       end
 
       after do
