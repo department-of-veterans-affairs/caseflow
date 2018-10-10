@@ -61,17 +61,14 @@ class CaseDetailsLink extends React.PureComponent {
   render() {
     const {
       appeal,
-      disabled,
-      freshLoadOnNavigate
+      disabled
     } = this.props;
-    const linkProps = {
-      disabled,
-      onClick: this.onClick,
-      [freshLoadOnNavigate ? 'href' : 'to']: `/queue/appeals/${appeal.externalId}`
-    };
 
     return <React.Fragment>
-      <Link {...linkProps}>
+      <Link
+        disabled={disabled}
+        to={`/queue/appeals/${appeal.externalId}`}
+        onClick={this.onClick}>
         {this.getLinkText()}
       </Link>
       {appeal.isPaperCase && <React.Fragment>
@@ -87,8 +84,7 @@ CaseDetailsLink.propTypes = {
   appeal: PropTypes.object.isRequired,
   disabled: PropTypes.bool,
   getLinkText: PropTypes.func,
-  onClick: PropTypes.func,
-  freshLoadOnNavigate: PropTypes.bool
+  onClick: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({

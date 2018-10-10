@@ -1,9 +1,6 @@
 import React from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { BrowserRouter } from 'react-router-dom';
-import { setUserCssId } from './uiReducer/uiActions';
 
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
@@ -18,14 +15,7 @@ import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import DailyDocketContainer from './containers/DailyDocketContainer';
 import ScrollToTop from '../components/ScrollToTop';
 
-import QueueCaseSearchBar from '../queue/SearchBar';
-import CaseListView from '../queue/CaseListView';
-
-class HearingScheduleApp extends React.PureComponent {
-  componentDidMount = () => {
-    this.props.setUserCssId(this.props.userCssId);
-  }
-
+export default class HearingScheduleApp extends React.PureComponent {
   propsForListScheduleContainer = () => {
     const {
       userRoleAssign,
@@ -39,11 +29,6 @@ class HearingScheduleApp extends React.PureComponent {
   };
 
   routeForListScheduleContainer = () => <ListScheduleContainer {...this.propsForListScheduleContainer()} />;
-
-  routedCaseSearchResults = (props) => <React.Fragment>
-    <QueueCaseSearchBar />
-    <CaseListView freshLoadOnNavigate caseflowVeteranId={props.match.params.caseflowVeteranId} />
-  </React.Fragment>;
 
   render = () => <BrowserRouter>
     <NavigationBar
@@ -65,11 +50,6 @@ class HearingScheduleApp extends React.PureComponent {
             title="Scheduled Hearings"
             render={this.routeForListScheduleContainer}
           />
-          <PageRoute
-            exact
-            path="/cases/:caseflowVeteranId"
-            title="Case Search | Caseflow"
-            render={this.routedCaseSearchResults} />
           <PageRoute
             exact
             path="/hearings/schedule/docket/:ro_name/:date"
@@ -125,9 +105,3 @@ HearingScheduleApp.propTypes = {
   buildDate: PropTypes.string,
   dropdownUrls: PropTypes.array
 };
-
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setUserCssId
-}, dispatch);
-
-export default connect(null, mapDispatchToProps)(HearingScheduleApp);
