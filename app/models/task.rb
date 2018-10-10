@@ -90,6 +90,7 @@ class Task < ApplicationRecord
 
   def can_be_accessed_by_user?(user)
     if assigned_to == user ||
+       assigned_by == user ||
        (parent && parent.assigned_to == user) ||
        Constants::AttorneyJudgeTeams::JUDGES[Rails.current_env].keys.include?(user.css_id)
       return true
