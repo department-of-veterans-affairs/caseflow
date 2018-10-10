@@ -92,7 +92,7 @@ class TasksController < ApplicationController
       return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], user_role)
     end
 
-    json_tasks_by_appeal_id
+    json_tasks
   end
 
   def assignable_organizations
@@ -182,7 +182,7 @@ class TasksController < ApplicationController
     }
   end
 
-  def json_tasks_by_appeal_id
+  def json_tasks
     render json: {
       tasks: json_tasks(appeal.tasks)[:data]
     }
