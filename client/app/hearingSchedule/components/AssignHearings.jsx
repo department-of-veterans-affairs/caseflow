@@ -102,7 +102,7 @@ export default class AssignHearings extends React.Component {
 
   tableRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
-      caseDetails: `${veteran.name} | ${veteran.id}`,
+      caseDetails: veteran.name,
       type: this.veteranTypeColor(veteran.type),
       docketNumber: veteran.docketNumber,
       location: this.props.selectedRegionalOffice.value === 'C' ? 'Washington DC' : veteran.location,

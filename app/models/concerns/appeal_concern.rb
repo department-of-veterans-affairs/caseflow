@@ -37,6 +37,14 @@ module AppealConcern
     end
   end
 
+  def appellant_last_first
+    if appellant_first_name && appellant_last_name
+      "#{appellant_first_name}, #{appellant_last_name} | #{vbms_id}"
+    else
+      vbms_id.to_s
+    end
+  end
+
   def appellant_mi_formatted
     if appellant_middle_initial
       appellant_name_object.formatted(:readable_mi_formatted)
