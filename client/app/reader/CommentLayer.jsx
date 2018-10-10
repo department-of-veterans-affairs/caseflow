@@ -156,7 +156,8 @@ class CommentLayer extends PureComponent {
       width: `${this.props.dimensions.width}px`,
       height: `${this.props.dimensions.height}px`,
       transform: `scale(${this.props.scale})`,
-      transformOrigin: 'left top'
+      transformOrigin: 'left top',
+      opacity: 1
     };
 
     return <div
