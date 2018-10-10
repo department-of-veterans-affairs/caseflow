@@ -92,7 +92,7 @@ class TasksController < ApplicationController
       return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], user_role)
     end
 
-    json_tasks
+    all_json_tasks
   end
 
   private
@@ -178,7 +178,7 @@ class TasksController < ApplicationController
     }
   end
 
-  def json_tasks
+  def all_json_tasks
     render json: {
       tasks: json_tasks(appeal.tasks)[:data]
     }

@@ -76,7 +76,7 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
     if (actionType === DECISION_TYPES.OMO_REQUEST) {
       nextPage = 'omo_request/evaluate';
     } else if (option.value === ASSIGN) {
-      nextPage = 'modal/assign_to_user';
+      nextPage = 'modal/assign_to_attorney';
     } else if (appeal.isLegacyAppeal) {
       nextPage = 'dispatch_decision/dispositions';
     } else {

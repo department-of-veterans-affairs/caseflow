@@ -153,7 +153,7 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView {...props.match.params} />;
 
-  routedAssignToUser = (props) => <AssignToAttorneyModalView {...props.match.params} />;
+  routedAssignToAttorney = (props) => <AssignToAttorneyModalView {...props.match.params} />;
 
   routedAssignToTeam = (props) => <AssignToView isTeamAssign {...props.match.params} />;
 
@@ -245,6 +245,9 @@ class QueueApp extends React.PureComponent<Props> {
           <Route
             path="/queue/appeals/:appealId/modal/assign_to_person"
             render={this.routedAssignToUser} />
+          <Route
+            path="/queue/appeals/:appealId/modal/assign_to_attorney"
+            render={this.routedAssignToAttorney} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"
