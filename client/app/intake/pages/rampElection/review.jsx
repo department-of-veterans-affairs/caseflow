@@ -8,7 +8,7 @@ import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import _ from 'lodash';
 import { submitReview } from '../../actions/rampElection';
-import { setReceiptDate, setOptionSelected } from '../../actions/common';
+import { setReceiptDate, setOptionSelected } from '../../actions/intake';
 import { PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
 import { REQUEST_STATE } from '../../../intakeCommon/constants';
 import { getIntakeStatus } from '../../selectors';

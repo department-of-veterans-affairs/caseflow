@@ -1,20 +1,20 @@
 import _ from 'lodash';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import AddIssuesModal from '../components/AddIssuesModal';
 import NonRatedIssueModal from '../components/NonRatedIssueModal';
 import Button from '../../components/Button';
 import { FORM_TYPES } from '../../intakeCommon/constants';
 import { formatDate } from '../../util/DateUtil';
-import { formatAddedIssues, getAddIssuesFields } from '../util';
+import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 
 import Table from '../../components/Table';
-import { toggleAddIssuesModal, toggleNonRatedIssueModal } from '../actions/common';
-import { removeIssue } from '../actions/ama';
+import { toggleAddIssuesModal, toggleNonRatedIssueModal } from '../actions/addIssues';
+import { removeIssue } from '../actions/addIssues';
 
-class AddIssues extends React.PureComponent {
+class AddIssuesPage extends React.PureComponent {
   render() {
     const {
       intakeForms,
@@ -23,8 +23,8 @@ class AddIssues extends React.PureComponent {
     } = this.props;
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
-    const intakeData = intakeForms[selectedForm.key];
     const veteranInfo = `${veteran.name} (${veteran.fileNumber})`;
+    const intakeData = intakeForms[selectedForm.key];
 
     const issuesComponent = () => {
       let issues = formatAddedIssues(intakeData);
@@ -99,9 +99,9 @@ class AddIssues extends React.PureComponent {
         slowReRendersAreOk />
     </div>;
   }
-}
+};
 
-export default connect(
+export const IntakeAddIssuesPage = connect(
   ({ intake, higherLevelReview, supplementalClaim, appeal }) => ({
     intakeForms: {
       higher_level_review: higherLevelReview,
@@ -113,7 +113,23 @@ export default connect(
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
+    removeIssue
+  }, dispatch)
+)(AddIssuesPage);
+
+export const EditAddIssuesPage = connect(
+  ({ review, formType }) => ({
+    intakeForms: {
+      higher_level_review: review,
+      supplemental_claim: review,
+      appeal: review
+    },
+    formType,
+    veteran: review.veteran
+  }),
+  (dispatch) => bindActionCreators({
+    toggleAddIssuesModal,
     toggleNonRatedIssueModal,
     removeIssue
   }, dispatch)
-)(AddIssues);
+)(AddIssuesPage);

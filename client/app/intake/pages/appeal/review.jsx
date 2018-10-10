@@ -9,7 +9,7 @@ import Button from '../../../components/Button';
 import SelectClaimant from '../../components/SelectClaimant';
 import { setDocketType } from '../../actions/appeal';
 import { submitReview, setClaimantNotVeteran, setClaimant, setPayeeCode } from '../../actions/ama';
-import { setReceiptDate } from '../../actions/common';
+import { setReceiptDate } from '../../actions/intake';
 import { PAGE_PATHS, INTAKE_STATES } from '../../constants';
 import { FORM_TYPES, REQUEST_STATE } from '../../../intakeCommon/constants';
 import { getIntakeStatus } from '../../selectors';

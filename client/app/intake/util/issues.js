@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { formatDateStringForApi } from '../../util/DateUtil';
+import { formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
 
 export const formatRatings = (ratings, requestIssues = []) => {
   const result = _.keyBy(_.map(ratings, (rating) => {
@@ -195,4 +195,25 @@ export const formatAddedIssues = (intakeData) => {
 
     return {};
   });
+};
+
+const getClaimantField = (formType, veteran, intakeData) => {
+  if (formType === 'appeal' || intakeData.benefitType === 'compensation') {
+    const claimant = intakeData.claimantNotVeteran ? getNonVeteranClaimant(intakeData) : veteran.name;
+
+    return [{
+      field: 'Claimant',
+      content: claimant
+    }];
+  }
+
+  return [];
+};
+
+const getNonVeteranClaimant = (intakeData) => {
+  const claimant = intakeData.relationships.filter((relationship) => {
+    return relationship.value === intakeData.claimant;
+  });
+
+  return `${claimant[0].displayText} (payee code ${intakeData.payeeCode})`;
 };

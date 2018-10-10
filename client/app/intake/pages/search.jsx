@@ -5,7 +5,7 @@ import BareList from '../../components/BareList';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { doFileNumberSearch, setFileNumberSearch } from '../actions/common';
+import { doFileNumberSearch, setFileNumberSearch } from '../actions/intake';
 import { PAGE_PATHS, INTAKE_STATES } from '../constants';
 import { REQUEST_STATE } from '../../intakeCommon/constants';
 import { getIntakeStatus } from '../selectors';

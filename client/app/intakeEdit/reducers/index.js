@@ -5,14 +5,18 @@ import { formatRatings, getSelection } from '../../intakeCommon/util';
 import _ from 'lodash';
 
 export const mapDataToInitialState = function(props = {}) {
-  const ratings = formatRatings(props.ratings, props.ratedRequestIssues);
-
+  const { serverIntake } = props;
   return {
-    formType: props.formType,
-    review: props.review,
-    ratings,
-    originalSelection: getSelection(ratings),
-    ratingsChanged: false,
+    formType: serverIntake.formType,
+    review: serverIntake,
+    veteran: {
+      name: serverIntake.veteran_name,
+      formName: serverIntake.veteran_form_name,
+      fileNumber: serverIntake.veteran_file_number
+    },
+    // ratings: formatRatings(props.review.ratings, props.review.rated_request_issues),
+    // originalSelection: getSelection(ratings),
+    // ratingsChanged: false,
     requestStatus: {
       requestIssuesUpdate: REQUEST_STATE.NOT_STARTED
     },

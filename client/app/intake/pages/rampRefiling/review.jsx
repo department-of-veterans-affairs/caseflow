@@ -11,7 +11,7 @@ import _ from 'lodash';
 import { PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
 import { REQUEST_STATE } from '../../../intakeCommon/constants';
 import { setAppealDocket, submitReview, confirmIneligibleForm } from '../../actions/rampRefiling';
-import { setReceiptDate, setOptionSelected } from '../../actions/common';
+import { setReceiptDate, setOptionSelected } from '../../actions/intake';
 import { toggleIneligibleError } from '../../util';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
