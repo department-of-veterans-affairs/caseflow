@@ -303,7 +303,7 @@ RSpec.feature "Appeal Intake" do
     find("label", text: "Left knee granted").click
     safe_click ".add-issue"
 
-    expect(page).to have_content("1.Left knee granted")
+    expect(page).to have_content("1. Left knee granted")
     expect(page).to_not have_content("Notes:")
 
     # removing the issue should hide the issue
@@ -317,7 +317,7 @@ RSpec.feature "Appeal Intake" do
     fill_in "Notes", with: "I am an issue note"
     safe_click ".add-issue"
 
-    expect(page).to have_content("1.Left knee granted")
+    expect(page).to have_content("1. Left knee granted")
     expect(page).to have_content("I am an issue note")
 
     # clicking add issue again should show a disabled radio button for that same rating
@@ -330,20 +330,25 @@ RSpec.feature "Appeal Intake" do
 
     # Add non-rated issue
     safe_click ".no-matching-issues"
-
     expect(page).to have_content("Does issue 2 match any of these issue categories?")
     expect(page).to have_button("Add this issue", disabled: true)
-
     fill_in "Issue category", with: "Active Duty Adjustments"
     find("#issue-category").send_keys :enter
     fill_in "Issue description", with: "Description for Active Duty Adjustments"
     fill_in "Decision date", with: "04/19/2018"
-
     expect(page).to have_button("Add this issue", disabled: false)
-
     safe_click ".add-issue"
-
     expect(page).to have_content("2 issues")
+
+    # add unidentified issue
+    safe_click "#button-add-issue"
+    safe_click ".no-matching-issues"
+    safe_click ".no-matching-issues"
+    expect(page).to have_content("Describe the issue to mark it as needing further review.")
+    fill_in "Transcribe the issue as it's written on the form", with: "This is an unidentified issue"
+    safe_click ".add-issue"
+    expect(page).to have_content("3 issues")
+    expect(page).to have_content("This is an unidentified issue")
 
     safe_click "#button-finish-intake"
 

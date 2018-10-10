@@ -4,7 +4,9 @@ import NavigationBar from '@department-of-veterans-affairs/caseflow-frontend-too
 import { withRouter } from 'react-router';
 
 class CaseflowNavigationBar extends React.PureComponent {
-  render = () => <NavigationBar extraBanner={<PerformanceDegradationBanner />} {...this.props} />
+  render = () => <NavigationBar
+    extraBanner={<PerformanceDegradationBanner />}
+    {...this.props} />
 }
 
 // When a PureComponent has <Route> children, they will not re-render under certain conditions

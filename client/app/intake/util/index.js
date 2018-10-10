@@ -150,7 +150,14 @@ export const formatAddedIssues = (intakeData) => {
   let issues = intakeData.addedIssues || [];
 
   return issues.map((issue) => {
-    if (issue.isRated) {
+    if (issue.isUnidentified) {
+      return {
+        referenceId: issue.id,
+        text: `Unidentified issue: no issue matched for "${issue.description}"`,
+        notes: issue.notes,
+        isUnidentified: true
+      };
+    } else if (issue.isRated) {
       let foundIssue = intakeData.ratings[issue.profileDate].issues[issue.id];
 
       return {
@@ -160,13 +167,10 @@ export const formatAddedIssues = (intakeData) => {
       };
     }
 
-    if (!issue.isRated) {
-      return {
-        referenceId: issue.id,
-        text: `${issue.category} - ${issue.description} Decision date ${formatDate(issue.decisionDate)}`
-      };
-    }
-
-    return {};
+    // returns unrated issue format
+    return {
+      referenceId: issue.id,
+      text: `${issue.category} - ${issue.description} Decision date ${formatDate(issue.decisionDate)}`
+    };
   });
 };
