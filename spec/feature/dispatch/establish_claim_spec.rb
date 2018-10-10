@@ -14,12 +14,15 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 1, 1))
 
+    Fakes::BGSService.inaccessible_appeal_vbms_ids ||= []
+    Fakes::BGSService.inaccessible_appeal_vbms_ids << inaccessible_appeal.veteran_file_number
+
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::AppealRepository).to receive(:update_vacols_after_dispatch!).and_call_original
   end
 
   let(:case_worker) do
-    User.create(station_id: "123", css_id: "JANESMITH", full_name: "Jane Smith")
+    create(:user, station_id: "123", css_id: "JANESMITH", full_name: "Jane Smith")
   end
 
   let(:case_full_grant) do
@@ -38,16 +41,34 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
   end
 
   let(:appeal_remand) do
-    create(:legacy_appeal, vacols_case: case_remand)
+    create(:legacy_appeal, :with_veteran, vacols_case: case_remand)
   end
 
   let(:case_partial_grant) do
-    create(:case_with_decision, :status_complete, case_issues:
-        [create(:case_issue, :education, :disposition_allowed)])
+    create(:case_with_decision, :status_remand, case_issues:
+        [create(:case_issue, :education, :disposition_allowed), create(:case_issue, :education, :disposition_remanded)])
   end
 
   let(:appeal_partial_grant) do
     create(:legacy_appeal, vacols_case: case_partial_grant)
+  end
+
+  let(:invalid_case) do
+    create(:case_with_decision, :status_complete, bfddec: nil, case_issues:
+        [create(:case_issue, :education, :disposition_allowed)])
+  end
+
+  let(:invalid_appeal) do
+    create(:legacy_appeal, vacols_case: invalid_case)
+  end
+
+  let(:inaccessible_case) do
+    create(:case_with_decision, :status_complete, case_issues:
+        [create(:case_issue, :education, :disposition_allowed)])
+  end
+
+  let(:inaccessible_appeal) do
+    create(:legacy_appeal, vacols_case: inaccessible_case)
   end
 
   let(:documents) do
@@ -61,21 +82,14 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       User.authenticate!(roles: ["Establish Claim", "Manage Claim Establishment"])
     end
 
-    scenario "View quotas and update employee count", focus: true do
+    scenario "View quotas and update employee count" do
       # Create 4 incomplete tasks and one completed today
       4.times { create(:establish_claim, aasm_state: :unassigned, prepared_at: Date.yesterday) }
 
-      create(:establish_claim, appeal: appeal_remand, user: case_worker, aasm_state: :assigned, prepared_at: Date.yesterday)
-
-      EstablishClaim.create(appeal_id: appeal_remand.id, user: case_worker, aasm_state: :assigned).tap do |task|
+      create(:establish_claim, appeal: appeal_remand, user: case_worker, aasm_state: :assigned).tap do |task|
         task.start!
         task.complete!(status: :routed_to_arc)
       end
-
-      # create(:establish_claim,
-      #        appeal: appeal_remand,
-      #        user: case_worker,
-      #        aasm_state: :completed)
 
       visit "/dispatch/work-assignments"
       expect(page).to have_content("ARC Work Assignments")
@@ -97,11 +111,10 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       # Two more users starting tasks should force the number of people to bump up to 3
       %w[June Jeffers].each do |name|
-        Generators::EstablishClaim.create(
-          user: Generators::User.create(full_name: "#{name} Smith"),
-          aasm_state: :assigned,
-          appeal_id: ((name == "June") ? appeal_full_grant.id : appeal_partial_grant.id)
-        ).tap do |task|
+        create(:establish_claim,
+               appeal: ((name == "June") ? appeal_full_grant : appeal_partial_grant),
+               user: create(:user, full_name: "#{name} Smith"),
+               aasm_state: :assigned).tap do |task|
           task.start!
           task.complete!(status: :routed_to_arc)
         end
@@ -119,20 +132,19 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     scenario "Edit individual user quotas" do
-      4.times { Generators::EstablishClaim.create(aasm_state: :unassigned, prepared_at: Date.yesterday) }
+      4.times { create(:establish_claim, aasm_state: :unassigned, prepared_at: Date.yesterday) }
 
-      appeal_id = {
-        "Janet" => appeal.id,
-        "June" => appeal_full_grant.id,
-        "Jeffers" => appeal_partial_grant.id
+      appeals_by_name = {
+        "Janet" => appeal_remand,
+        "June" => appeal_full_grant,
+        "Jeffers" => appeal_partial_grant
       }
 
       %w[Janet June Jeffers].each do |name|
-        Generators::EstablishClaim.create(
-          user: Generators::User.create(full_name: "#{name} Smith"),
-          aasm_state: :assigned,
-          appeal_id: appeal_id[name]
-        ).tap do |task|
+        create(:establish_claim,
+               appeal: appeals_by_name[name],
+               user: create(:user, full_name: "#{name} Smith"),
+               aasm_state: :assigned).tap do |task|
           task.start!
           task.complete!(status: :routed_to_arc)
         end
@@ -166,18 +178,17 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     scenario "Editing won't work if there's only one user" do
-      4.times { Generators::EstablishClaim.create(aasm_state: :unassigned, prepared_at: Date.yesterday) }
+      4.times { create(:establish_claim, aasm_state: :unassigned, prepared_at: Date.yesterday) }
 
-      appeal_id = {
-        "Janet" => appeal.id
+      appeals_by_name = {
+        "Janet" => appeal_remand
       }
 
       %w[Janet].each do |name|
-        Generators::EstablishClaim.create(
-          user: Generators::User.create(full_name: "#{name} Smith"),
-          aasm_state: :assigned,
-          appeal_id: appeal_id[name]
-        ).tap do |task|
+        create(:establish_claim,
+               appeal: appeals_by_name[name],
+               user: create(:user, full_name: "#{name} Smith"),
+               aasm_state: :assigned).tap do |task|
           task.start!
           task.complete!(status: :routed_to_arc)
         end
@@ -207,7 +218,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     scenario "View unprepared tasks page" do
-      unprepared_task = Generators::EstablishClaim.create(aasm_state: :unprepared)
+      unprepared_task = create(:establish_claim, aasm_state: :unprepared)
 
       visit "/dispatch/work-assignments"
       click_on "View claims missing decisions"
@@ -236,10 +247,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     scenario "View canceled EPs page" do
       reason = "Cuz it's canceled"
 
-      Generators::EstablishClaim.create(
-        user: Generators::User.create(full_name: "Cance L. Smith"),
-        aasm_state: :assigned
-      ).tap do |task|
+      create(:establish_claim,
+             user: create(:user, full_name: "Cance L. Smith"),
+             aasm_state: :assigned).tap do |task|
         task.start!
         task.cancel!(reason)
       end
@@ -257,9 +267,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     scenario "View oldest unassigned tasks page" do
-      2.times do
-        Generators::EstablishClaim.create(aasm_state: :unassigned, prepared_at: 1.day.ago)
-      end
+      2.times { create(:establish_claim, aasm_state: :unassigned, prepared_at: Date.yesterday) }
 
       visit "/dispatch/admin"
       expect(page).to have_content("Oldest Unassigned Tasks")
@@ -272,23 +280,12 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     let!(:current_user) { User.authenticate!(roles: ["Establish Claim"]) }
 
     let!(:task) do
-      Generators::EstablishClaim.create(
+      create(:establish_claim,
         created_at: 3.days.ago,
         prepared_at: Date.yesterday,
-        appeal_id: appeal.id,
+        appeal: appeal_remand,
         aasm_state: "unassigned"
       )
-    end
-
-    let(:invalid_appeal) do
-      Generators::LegacyAppeal.create(
-        vacols_record: { template: :remand_decided, decision_date: nil },
-        documents: documents
-      )
-    end
-
-    let(:inaccessible_appeal) do
-      Generators::LegacyAppeal.create(vacols_record: vacols_record, inaccessible: true)
     end
 
     let(:ep_already_exists_error) do
@@ -360,7 +357,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(task).to be_started
 
       # Validate that a Claim Establishment object was created
-      expect(task.claim_establishment.outcoding_date).to eq(appeal.outcoding_date)
+      expect(task.claim_establishment.outcoding_date).to eq(appeal_remand.outcoding_date)
       expect(task.claim_establishment).to be_remand
 
       # Validate the invalid task was invalidated
