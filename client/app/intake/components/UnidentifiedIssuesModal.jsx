@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
@@ -18,7 +17,7 @@ class UnidentifiedIssuesModal extends React.Component {
   }
 
   onAddIssue = () => {
-    this.props.addUnidentifiedIssue(this.state.description, this.state.notes)
+    this.props.addUnidentifiedIssue(this.state.description, this.state.notes);
     this.props.closeHandler();
   }
 
@@ -59,21 +58,21 @@ class UnidentifiedIssuesModal extends React.Component {
         closeHandler={closeHandler}
         title={`Add issue ${issueNumber}`}
       >
-      <h2>
+        <h2>
         Describe the issue to mark it as needing further review.
-      </h2>
-      <TextField
-        name="Transcribe the issue as it's written on the form"
-        strongLabel
-        value={this.state.description}
-        onChange={this.onDescriptionChange}
+        </h2>
+        <TextField
+          name="Transcribe the issue as it's written on the form"
+          strongLabel
+          value={this.state.description}
+          onChange={this.onDescriptionChange}
         />
-      <TextField
-        name="Notes"
-        optional
-        strongLabel
-        value={this.state.notes}
-        onChange={this.onNotesChange}
+        <TextField
+          name="Notes"
+          optional
+          strongLabel
+          value={this.state.notes}
+          onChange={this.onNotesChange}
         />
       </Modal>
     </div>;

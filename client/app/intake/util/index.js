@@ -156,7 +156,7 @@ export const formatAddedIssues = (intakeData) => {
         text: `Unidentified issue: no issue matched for "${issue.description}"`,
         notes: issue.notes,
         isUnidentified: true
-      }
+      };
     } else if (issue.isRated) {
       let foundIssue = intakeData.ratings[issue.profileDate].issues[issue.id];
 
@@ -165,13 +165,11 @@ export const formatAddedIssues = (intakeData) => {
         text: `${foundIssue.decision_text} Decision date ${formatDateStr(issue.profileDate)}.`,
         notes: issue.notes
       };
-    } else {
-      return {
-        referenceId: issue.id,
-        text: `${issue.category} - ${issue.description} Decision date ${formatDate(issue.decisionDate)}`
-      };
     }
 
-    return {};
+    return {
+      referenceId: issue.id,
+      text: `${issue.category} - ${issue.description} Decision date ${formatDate(issue.decisionDate)}`
+    };
   });
 };
