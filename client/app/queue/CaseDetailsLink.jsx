@@ -66,8 +66,8 @@ class CaseDetailsLink extends React.PureComponent {
 
     return <React.Fragment>
       <Link
-        disabled={disabled}
         to={`/queue/appeals/${appeal.externalId}`}
+        disabled={disabled}
         onClick={this.onClick}>
         {this.getLinkText()}
       </Link>

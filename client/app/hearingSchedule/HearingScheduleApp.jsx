@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { BrowserRouter } from 'react-router-dom';
-
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import AppFrame from '../components/AppFrame';
@@ -100,7 +99,6 @@ HearingScheduleApp.propTypes = {
   userDisplayName: PropTypes.string,
   userRoleAssign: PropTypes.bool,
   userRoleBuild: PropTypes.bool,
-  userCssId: PropTypes.string,
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
   dropdownUrls: PropTypes.array
