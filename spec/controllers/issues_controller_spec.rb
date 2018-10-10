@@ -63,6 +63,8 @@ RSpec.describe IssuesController, type: :controller do
           create(:legacy_appeal, vacols_case: create(:case)).vacols_id,
                                 issues: params }
         expect(response.status).to eq 400
+        response_body = JSON.parse(response.body)["errors"].first["detail"]
+        expect(response_body).to match(/cannot modify appeal/)
       end
     end
 
