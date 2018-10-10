@@ -122,6 +122,10 @@ export const toggleNonRatedIssueModal = () => ({
   meta: { analytics }
 });
 
+export const toggleUnidentifiedIssuesModal = () => ({
+  type: ACTIONS.TOGGLE_UNIDENTIFIED_ISSUES_MODAL
+});
+
 export const submitCancel = (data) => (dispatch) => {
   dispatch({
     type: ACTIONS.CANCEL_INTAKE_START,
