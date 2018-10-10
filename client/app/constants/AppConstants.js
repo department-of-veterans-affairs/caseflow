@@ -11,7 +11,9 @@ export const COLORS = {
   GREEN: '#2e8540',
   GREY: '#5b616b',
   GOLD_LIGHTEST: '#FFF1D2',
+  GOLD_LIGHTER: '#FAD980',
   GOLD_LIGHT: '#F9C642',
+  GOLD: '#FDB81E',
   GREY_BACKGROUND: '#f9f9f9',
   PRIMARY: '#0071bc',
   BASE: '#212121'
