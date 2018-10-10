@@ -167,6 +167,7 @@ export const formatAddedIssues = (intakeData) => {
       };
     }
 
+    // returns unrated issue format
     return {
       referenceId: issue.id,
       text: `${issue.category} - ${issue.description} Decision date ${formatDate(issue.decisionDate)}`
