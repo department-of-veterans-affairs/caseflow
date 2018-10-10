@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181009214213) do
+ActiveRecord::Schema.define(version: 20181010185251) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -599,7 +599,7 @@ ActiveRecord::Schema.define(version: 20181009214213) do
     t.bigint "review_request_id"
     t.string "rating_issue_reference_id"
     t.datetime "rating_issue_profile_date"
-    t.string "contention_reference_id"
+    t.integer "contention_reference_id"
     t.string "description"
     t.string "issue_category"
     t.date "decision_date"
@@ -609,6 +609,7 @@ ActiveRecord::Schema.define(version: 20181009214213) do
     t.datetime "rating_issue_associated_at"
     t.integer "parent_request_issue_id"
     t.text "notes"
+    t.index ["contention_reference_id"], name: "index_request_issues_on_contention_reference_id", unique: true
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
