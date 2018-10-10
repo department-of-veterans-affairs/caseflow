@@ -61,6 +61,7 @@ class AssignToAttorneyModalView extends React.PureComponent<Props> {
     }
 
     return <AssignWidgetModal
+      isModal
       onTaskAssignment={this.handleAssignment}
       previousAssigneeId={previousAssigneeId}
       selectedTasks={[task]} />;

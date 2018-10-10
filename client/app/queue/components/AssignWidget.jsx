@@ -182,7 +182,7 @@ class AssignWidget extends React.PureComponent<Props> {
               value={selectedOptionOther}
               styling={css({ width: '30rem' })} />
           </React.Fragment>}
-        {this.props.isModal && <Button
+        {!this.props.isModal && <Button
           onClick={this.submit}
           name={sprintf(
             COPY.ASSIGN_WIDGET_BUTTON_TEXT,
