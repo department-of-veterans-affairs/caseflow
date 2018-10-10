@@ -81,7 +81,6 @@ class AssignWidget extends React.PureComponent<Props> {
 
     if (selectedAssignee !== OTHER) {
       return this.assignTasks(selectedTasks, selectedAssignee);
-
     }
 
     if (!selectedAssigneeSecondary) {
@@ -99,6 +98,7 @@ class AssignWidget extends React.PureComponent<Props> {
     const { previousAssigneeId } = this.props;
 
     this.props.setSavePending();
+
     return this.props.onTaskAssignment(
       { tasks: selectedTasks,
         assigneeId,
