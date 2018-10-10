@@ -100,7 +100,6 @@ describe Task do
   end
 
   context "#can_be_accessed_by_user?" do
-    
     subject { task.can_be_accessed_by_user?(user) }
 
     context "when user is an assignee" do
