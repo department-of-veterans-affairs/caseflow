@@ -25,9 +25,9 @@ class UserRepository
       }
     end
 
-    def can_access_task?(css_id, vacols_id)
+    def fail_if_no_access_to_task!(css_id, vacols_id)
       unless QueueRepository.tasks_for_user(css_id).map(&:vacols_id).include?(vacols_id)
-        msg = "User with css ID #{css_id} cannot access task with vacols ID: #{vacols_id}"
+        msg = "User with css ID #{css_id} cannot modify appeal data with vacols ID: #{vacols_id}"
         fail Caseflow::Error::UserRepositoryError, msg
       end
       true

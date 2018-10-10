@@ -5,10 +5,18 @@ describe AttorneyTask do
   let!(:staff2) { create(:staff, :judge_role, sdomainid: judge.css_id) }
   let(:parent) { create(:ama_judge_task, assigned_by: judge) }
 
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
   context ".create" do
     subject { AttorneyTask.create(assigned_to: attorney, assigned_by: judge, appeal: create(:appeal), parent: parent) }
 
-    it "should validate number of children", skip: "Flaking on Circle" do
+    it "should validate number of children" do
       expect(subject.valid?).to eq true
       record = AttorneyTask.create(
         assigned_to: attorney,
