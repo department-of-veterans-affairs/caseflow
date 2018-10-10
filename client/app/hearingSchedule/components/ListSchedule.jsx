@@ -282,9 +282,9 @@ ListSchedule.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  filterTypeIsOpen: state.filterTypeIsOpen,
-  filterLocationIsOpen: state.filterLocationIsOpen,
-  filterVljIsOpen: state.filterVljIsOpen
+  filterTypeIsOpen: state.hearingSchedule.filterTypeIsOpen,
+  filterLocationIsOpen: state.hearingSchedule.filterLocationIsOpen,
+  filterVljIsOpen: state.hearingSchedule.filterVljIsOpen
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

@@ -85,7 +85,7 @@ class QueueApp extends React.PureComponent<Props> {
   }
 
   routedSearchResults = (props) => <React.Fragment>
-    <SearchBar feedbackUrl={this.props.feedbackUrl} />
+    <SearchBar />
     <CaseListView caseflowVeteranId={props.match.params.caseflowVeteranId} />
   </React.Fragment>;
 
@@ -103,17 +103,17 @@ class QueueApp extends React.PureComponent<Props> {
   }
 
   routedQueueList = () => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
-    <SearchBar feedbackUrl={this.props.feedbackUrl} />
+    <SearchBar />
     {this.viewForUserRole()}
   </QueueLoadingScreen>;
 
   routedBeaamList = () => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()} urlToLoad="/beaam_appeals">
-    <SearchBar feedbackUrl={this.props.feedbackUrl} />
+    <SearchBar />
     <BeaamAppealListView {...this.props} />
   </QueueLoadingScreen>;
 
   routedJudgeQueueList = (action) => ({ match }) => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
-    <SearchBar feedbackUrl={this.props.feedbackUrl} />
+    <SearchBar />
     {action === 'assign' ?
       <JudgeAssignTaskListView {...this.props} match={match} /> :
       <JudgeReviewTaskListView {...this.props} />}
@@ -173,7 +173,7 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedOrganization = (props) => <OrganizationQueueLoadingScreen
     urlToLoad={`${props.location.pathname}/tasks`}>
-    <SearchBar feedbackUrl={this.props.feedbackUrl} />
+    <SearchBar />
     <OrganizationQueue {...this.props} />
   </OrganizationQueueLoadingScreen>
 
