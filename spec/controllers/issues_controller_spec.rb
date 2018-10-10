@@ -75,7 +75,7 @@ RSpec.describe IssuesController, type: :controller do
       end
     end
 
-    context "when there is an error" do
+    context "when Caseflow::Error::IssueRepositoryError" do
       let(:params) do
         {
           program: "01",
@@ -87,18 +87,33 @@ RSpec.describe IssuesController, type: :controller do
         }
       end
 
-      let(:result_params) do
-        {
-          issue_attrs: params.merge(vacols_id: appeal.vacols_id, vacols_user_id: "DSUSER").stringify_keys
-        }
-      end
-
       it "should return bad request" do
         post :create, params: { appeal_id: appeal.vacols_id, issues: params }
         expect(response.status).to eq 400
         error = JSON.parse(response.body)["errors"].first
         expect(error["title"]).to eq "Caseflow::Error::IssueRepositoryError"
         expect(error["detail"]).to include "Combination of VACOLS Issue codes is invalid"
+      end
+    end
+
+    context "when ActiveRecord::RecordInvalid" do
+      let(:params) do
+        {
+          program: "02",
+          issue: "15",
+          level_1: "03",
+          level_2: "5252",
+          level_3: nil,
+          note: "test"
+        }
+      end
+
+      it "should return bad request" do
+        allow(VACOLS::CaseIssue).to receive(:create_issue!).and_raise(ActiveRecord::RecordInvalid)
+        post :create, params: { appeal_id: appeal.vacols_id, issues: params }
+        expect(response.status).to eq 400
+        error = JSON.parse(response.body)["errors"].first
+        expect(error["title"]).to eq "ActiveRecord::RecordInvalid"
       end
     end
   end
