@@ -148,6 +148,17 @@ export const removeIssue = (issue) => ({
   payload: { issue }
 });
 
+export const addUnidentifiedIssue = (description, notes) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.ADD_ISSUE,
+    payload: {
+      isUnidentified: true,
+      description,
+      notes
+    }
+  });
+};
+
 export const addRatedIssue = (issueId, ratings, isRated, notes) => (dispatch) => {
   let foundDate = _.filter(ratings, (ratingDate) => _.some(ratingDate.issues, { reference_id: issueId }));
 

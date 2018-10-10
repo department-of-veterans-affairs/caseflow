@@ -102,6 +102,10 @@
             display: block;
             font-style: italic;
           }
+
+          .unidentified-issue {
+            color: $color-red
+          }
         }
 
         .issue-action {

@@ -21,6 +21,15 @@ export const commonReducers = (state, action) => {
     });
   };
 
+  actionsMap[ACTIONS.TOGGLE_UNIDENTIFIED_ISSUES_MODAL] = () => {
+    return update(state, {
+      $toggle: ['unidentifiedIssuesModalVisible'],
+      nonRatedIssueModalVisible: {
+        $set: false
+      }
+    });
+  };
+
   actionsMap[ACTIONS.ADD_ISSUE] = () => {
     let listOfIssues = state.addedIssues ? state.addedIssues : [];
     let addedIssues = [...listOfIssues, {
@@ -30,7 +39,8 @@ export const commonReducers = (state, action) => {
       category: action.payload.category,
       description: action.payload.description,
       decisionDate: action.payload.decisionDate,
-      notes: action.payload.notes
+      notes: action.payload.notes,
+      isUnidentified: action.payload.isUnidentified
     }];
 
     return {

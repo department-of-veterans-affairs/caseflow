@@ -5,13 +5,14 @@ import React from 'react';
 
 import AddIssuesModal from '../components/AddIssuesModal';
 import NonRatedIssueModal from '../components/NonRatedIssueModal';
+import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
 import Button from '../../components/Button';
 import { FORM_TYPES } from '../../intakeCommon/constants';
 import { formatDate } from '../../util/DateUtil';
 import { formatAddedIssues, getAddIssuesFields } from '../util';
 
 import Table from '../../components/Table';
-import { toggleAddIssuesModal, toggleNonRatedIssueModal } from '../actions/common';
+import { toggleAddIssuesModal, toggleNonRatedIssueModal, toggleUnidentifiedIssuesModal } from '../actions/common';
 import { removeIssue } from '../actions/ama';
 
 class AddIssues extends React.PureComponent {
@@ -34,8 +35,8 @@ class AddIssues extends React.PureComponent {
           { issues.map((issue, index) => {
             return <div className="issue" key={issue.referenceId}>
               <div className="issue-desc">
-                <span className="issue-num">{index + 1}.</span>
-                {issue.text}
+                <span className={issue.isUnidentified ? "unidentified-issue issue-num" : "issue-num"}>{index + 1}.</span>
+                <span className={issue.isUnidentified && "unidentified-issue"}>{issue.text}</span>
                 { issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span> }
               </div>
               <div className="issue-action">
@@ -91,6 +92,10 @@ class AddIssues extends React.PureComponent {
         intakeData={intakeData}
         closeHandler={this.props.toggleNonRatedIssueModal} />
       }
+      { intakeData.unidentifiedIssuesModalVisible && <UnidentifiedIssuesModal
+        intakeData={intakeData}
+        closeHandler={this.props.toggleUnidentifiedIssuesModal} />
+      }
       <h1 className="cf-txt-c">Add Issues</h1>
 
       <Table
@@ -114,6 +119,7 @@ export default connect(
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
     toggleNonRatedIssueModal,
+    toggleUnidentifiedIssuesModal,
     removeIssue
   }, dispatch)
 )(AddIssues);
