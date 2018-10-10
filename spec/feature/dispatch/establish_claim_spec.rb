@@ -26,12 +26,12 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
   end
 
   let(:case_full_grant) do
-    create(:case_with_decision, :status_complete, case_issues:
+    create(:case_with_decision, :status_complete, bfregoff: "RO21", case_issues:
       [create(:case_issue, :education, :disposition_allowed)])
   end
 
   let(:appeal_full_grant) do
-    create(:legacy_appeal, vacols_case: case_full_grant)
+    create(:legacy_appeal, :with_veteran, vacols_case: case_full_grant)
   end
 
   let(:folder) { build(:folder, tioctime: 23.days.ago.midnight) }
@@ -45,12 +45,12 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
   end
 
   let(:case_partial_grant) do
-    create(:case_with_decision, :status_remand, case_issues:
+    create(:case_with_decision, :status_remand, bfregoff: "RO21", case_issues:
         [create(:case_issue, :education, :disposition_allowed), create(:case_issue, :education, :disposition_remanded)])
   end
 
   let(:appeal_partial_grant) do
-    create(:legacy_appeal, vacols_case: case_partial_grant)
+    create(:legacy_appeal, :with_veteran, vacols_case: case_partial_grant)
   end
 
   let(:invalid_case) do
@@ -532,9 +532,13 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     context "For a full grant" do
-      let(:vacols_record) do
-        # Specify RO to test ROJ routing
-        { template: :full_grant_decided, regional_office_key: "RO21" }
+      let!(:task) do
+        create(:establish_claim,
+               created_at: 3.days.ago,
+               prepared_at: Date.yesterday,
+               appeal: appeal_full_grant,
+               aasm_state: "unassigned"
+        )
       end
 
       scenario "Establish a new claim with special issue routed to national office" do
@@ -651,7 +655,14 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     context "For a partial grant" do
-      let(:vacols_record) { :partial_grant_decided }
+      let!(:task) do
+        create(:establish_claim,
+               created_at: 3.days.ago,
+               prepared_at: Date.yesterday,
+               appeal: appeal_partial_grant,
+               aasm_state: "unassigned"
+        )
+      end
 
       scenario "Establish a new claim routed to ARC",
                skip: "This test is failing because of a stale element reference" do
