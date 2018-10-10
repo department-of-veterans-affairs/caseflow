@@ -34,7 +34,7 @@ class AddIssues extends React.PureComponent {
         <div>
           { issues.map((issue, index) => {
             return <div className="issue" key={`issue-${index}`}>
-              <div className={"issue-desc " + (issue.isUnidentified ? "unidentified-issue" : "")}>
+              <div className={`issue-desc ${issue.isUnidentified ? 'unidentified-issue' : ''}`}>
                 <span className="issue-num">{index + 1}.&nbsp;</span>
                 {issue.text}
                 { issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span> }
