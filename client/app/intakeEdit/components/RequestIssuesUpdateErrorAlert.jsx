@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import Alert from '../../components/Alert';
 
 export default class RequestIssuesUpdateErrorAlert extends React.PureComponent {
@@ -11,6 +11,16 @@ export default class RequestIssuesUpdateErrorAlert extends React.PureComponent {
       no_changes: {
         title: 'No changes were selected',
         body: 'Please select at least one change and try again.'
+      },
+      previous_update_not_done_processing: {
+        title: 'Previous update not yet done processing',
+        body: (
+          <Fragment>
+            A previously submitted update has not yet finished processing. Please wait a few minutes and try again.
+            <br /><br />
+            If it's still not working after that, please contact customer support.
+          </Fragment>
+        )
       },
       default: {
         title: 'Something went wrong',
