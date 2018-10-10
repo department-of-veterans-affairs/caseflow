@@ -66,7 +66,7 @@ const populateFilterDropDowns = (resultSet, filterName) => {
       });
     } else {
       uniqueOptions.push({
-        value: '<<blank>>',
+        value: 'null',
         displayText: `<<blank>> (${countByFilterName[key]})`
       });
     }
@@ -79,7 +79,7 @@ const filterSchedule = (scheduleToFilter, filterName, value) => {
   let filteredSchedule = {};
 
   for (let key in scheduleToFilter) {
-    if (scheduleToFilter[key][filterName] === value) {
+    if (String(scheduleToFilter[key][filterName]) === String(value)) {
       filteredSchedule[key] = scheduleToFilter[key];
     }
   }

@@ -10,7 +10,7 @@ import IssueCounter from '../../../intakeCommon/components/IssueCounter';
 import {
   completeIntake,
   setIssueSelected,
-  addNonRatedIssue,
+  newNonRatedIssue,
   setIssueCategory,
   setIssueDescription,
   setIssueDecisionDate
@@ -67,7 +67,7 @@ const NonRatedIssues = connect(
     nonRatedIssues: supplementalClaim.nonRatedIssues
   }),
   (dispatch) => bindActionCreators({
-    addNonRatedIssue,
+    newNonRatedIssue,
     setIssueCategory,
     setIssueDescription,
     setIssueDecisionDate
@@ -99,7 +99,7 @@ class FinishNextButton extends React.PureComponent {
       name="finish-intake"
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-      disabled={!this.props.issueCount}
+      disabled={!this.props.issueCount && !this.props.addedIssues}
     >
       Establish EP
     </Button>;
