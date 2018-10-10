@@ -33,15 +33,15 @@ class AddIssues extends React.PureComponent {
       return <div className="issues">
         <div>
           { issues.map((issue, index) => {
-            return <div className="issue" key={issue.referenceId}>
-              <div className="issue-desc">
-                <span className={issue.isUnidentified ? "unidentified-issue issue-num" : "issue-num"}>{index + 1}.</span>
-                <span className={issue.isUnidentified && "unidentified-issue"}>{issue.text}</span>
-                { issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span> }
+            return <div className="issue" key={`issue-${index}`}>
+              <div className="issue-desc" className={issue.isUnidentified && "unidentified-issue"}>
+                <span className="issue-num">{index + 1}.&nbsp;</span>
+                {issue.text}
+                { issue.notes && <span className="issue-notes"><br/>Notes:&nbsp;{issue.notes}</span> }
               </div>
               <div className="issue-action">
                 <Button
-                  onClick={() => this.props.removeIssue(issue)}
+                  onClick={() => this.props.removeIssue(index)}
                   classNames={['cf-btn-link', 'remove-issue']}
                 >
                   <i className="fa fa-trash-o" aria-hidden="true"></i>Remove

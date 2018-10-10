@@ -51,12 +51,13 @@ export const commonReducers = (state, action) => {
   };
 
   actionsMap[ACTIONS.REMOVE_ISSUE] = () => {
+    // issues are removed by position, because not all issues have referenceIds
     let listOfIssues = state.addedIssues ? state.addedIssues : [];
-    let issueToRemove = action.payload.issue;
+    listOfIssues.splice(action.payload.index, 1);
 
     return {
       ...state,
-      addedIssues: _.filter(listOfIssues, (issue) => issueToRemove.referenceId !== issue.id)
+      addedIssues: listOfIssues
     };
   };
 
