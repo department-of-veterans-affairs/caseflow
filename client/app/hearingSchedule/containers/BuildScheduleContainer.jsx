@@ -20,14 +20,14 @@ const vacolsLoadingErrorMsg = <div>
   We encountered an error uploading to VACOLS. Please use the 'Go Back' link to try again.
   if the problem persists you can check the status of our applications or submit a help
   request using the links in the footer.<br></br><br></br>
-  <span><Link to="/schedule/build/upload"> Go Back</Link></span>
+  <span><Link to="/hearings/schedule/build/upload"> Go Back</Link></span>
 </div>;
 
 const pastScheduleLoadingErrorMsg = <div>
   We encountered an error uploading past schedule uploads. Please use the 'Go Back' link to try again.
   if the problem persists you can check the status of our applications or submit a help
   request using the links in the footer.<br></br><br></br>
-  <span><Link to="/schedule"> Go Back</Link></span>
+  <span><Link to="/hearings/schedule"> Go Back</Link></span>
 </div>;
 
 class BuildScheduleContainer extends React.PureComponent {

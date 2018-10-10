@@ -208,11 +208,11 @@ class ListSchedule extends React.Component {
     return <AppSegment filledBackground>
       <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
       {this.props.userRoleBuild &&
-        <span className="cf-push-right" ><Link button="primary" to="/schedule/build">Build schedule</Link></span>
+        <span className="cf-push-right" ><Link button="primary" to="/hearings/schedule/build">Build schedule</Link></span>
       }
       {this.props.userRoleAssign &&
         <span className="cf-push-right"{...actionButtonsStyling} >
-          <Link button="primary" to="/schedule/assign">Assign hearings</Link></span>
+          <Link button="primary" to="/hearings/schedule/assign">Assign hearings</Link></span>
       }
       <div className="cf-help-divider" {...hearingSchedStyling} ></div>
       <div className="cf-push-left" {...inlineFormStyling} >
@@ -230,7 +230,7 @@ class ListSchedule extends React.Component {
           <div {...hearingSchedStyling}>
             <Link
               name="apply"
-              to="/schedule"
+              to="/hearings/schedule"
               onClick={this.props.onApply}>
               {COPY.HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK}
             </Link>

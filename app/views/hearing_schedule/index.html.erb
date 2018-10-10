@@ -4,6 +4,7 @@
     userDisplayName: current_user.display_name,
     userRoleAssign: current_user.can?('Assign HearSched'),
     userRoleBuild: current_user.can?('Build HearSched'),
-    dropdownUrls: dropdown_urls
+    dropdownUrls: dropdown_urls,
+    userCssId: current_user.css_id
   }) %>
 <% end %>

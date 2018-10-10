@@ -1,7 +1,10 @@
 import React from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { BrowserRouter } from 'react-router-dom';
+import { setUserCssId } from './uiReducer/uiActions';
+
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import AppFrame from '../components/AppFrame';
@@ -15,7 +18,13 @@ import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import DailyDocketContainer from './containers/DailyDocketContainer';
 import ScrollToTop from '../components/ScrollToTop';
 
+import QueueCaseSearchBar from '../queue/SearchBar';
+import CaseListView from '../queue/CaseListView';
+
 class HearingScheduleApp extends React.PureComponent {
+  componentDidMount = () => {
+    this.props.setUserCssId(this.props.userCssId);
+  }
 
   propsForListScheduleContainer = () => {
     const {
@@ -31,7 +40,12 @@ class HearingScheduleApp extends React.PureComponent {
 
   routeForListScheduleContainer = () => <ListScheduleContainer {...this.propsForListScheduleContainer()} />;
 
-  render = () => <BrowserRouter basename="/hearings">
+  routedCaseSearchResults = (props) => <React.Fragment>
+    <QueueCaseSearchBar />
+    <CaseListView freshLoadOnNavigate caseflowVeteranId={props.match.params.caseflowVeteranId} />
+  </React.Fragment>;
+
+  render = () => <BrowserRouter>
     <NavigationBar
       wideApp
       defaultUrl="/schedule"
@@ -47,40 +61,45 @@ class HearingScheduleApp extends React.PureComponent {
         <div className="cf-wide-app">
           <PageRoute
             exact
-            path="/schedule"
+            path="/hearings/schedule"
             title="Scheduled Hearings"
             render={this.routeForListScheduleContainer}
           />
           <PageRoute
             exact
-            path="/schedule/docket/:ro_name/:date"
+            path="/cases/:caseflowVeteranId"
+            title="Case Search | Caseflow"
+            render={this.routedCaseSearchResults} />
+          <PageRoute
+            exact
+            path="/hearings/schedule/docket/:ro_name/:date"
             title="Daily Docket"
             component={DailyDocketContainer}
           />
           <PageRoute
             exact
-            path="/schedule/build"
+            path="/hearings/schedule/build"
             title="Caseflow Hearing Schedule"
             breadcrumb="Build"
             component={BuildScheduleContainer}
           />
           <PageRoute
             exact
-            path="/schedule/build/upload"
+            path="/hearings/schedule/build/upload"
             title="Upload Files"
             breadcrumb="Upload"
             component={BuildScheduleUploadContainer}
           />
           <PageRoute
             exact
-            path="/schedule/build/upload/:schedulePeriodId"
+            path="/hearings/schedule/build/upload/:schedulePeriodId"
             title="Review Assignments"
             breadcrumb="Review"
             component={ReviewAssignmentsContainer}
           />
           <PageRoute
             exact
-            path="/schedule/assign"
+            path="/hearings/schedule/assign"
             title="Assign Hearings"
             breadcrumb="Assign"
             component={AssignHearingsContainer}
@@ -101,9 +120,14 @@ HearingScheduleApp.propTypes = {
   userDisplayName: PropTypes.string,
   userRoleAssign: PropTypes.bool,
   userRoleBuild: PropTypes.bool,
+  userCssId: PropTypes.string,
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
   dropdownUrls: PropTypes.array
 };
 
-export default connect()(HearingScheduleApp);
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setUserCssId
+}, dispatch);
+
+export default connect(null, mapDispatchToProps)(HearingScheduleApp);

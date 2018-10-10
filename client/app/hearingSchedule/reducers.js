@@ -2,7 +2,10 @@ import { timeFunction } from '../util/PerfDebug';
 import { ACTIONS } from './constants';
 import { update } from '../util/ReducerUtil';
 import { combineReducers } from 'redux';
+
 import caseListReducer from '../queue/CaseList/CaseListReducer';
+import { workQueueReducer } from '../queue/reducers';
+import uiReducer from './uiReducer/uiReducer';
 
 export const initialState = {};
 
@@ -214,7 +217,9 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
 
 const combinedReducer = combineReducers({
   hearingSchedule: hearingScheduleReducer,
-  caseList: caseListReducer
+  queue: workQueueReducer,
+  caseList: caseListReducer,
+  ui: uiReducer
 });
 
 export default timeFunction(

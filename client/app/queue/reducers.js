@@ -47,7 +47,7 @@ export const initialState = {
 };
 
 // eslint-disable-next-line max-statements
-const workQueueReducer = (state = initialState, action = {}): QueueState => {
+export const workQueueReducer = (state: QueueState = initialState, action: Object = {}): QueueState => {
   switch (action.type) {
   case ACTIONS.RECEIVE_QUEUE_DETAILS:
     return update(state, {

@@ -37,6 +37,7 @@ class CaseListTable extends React.PureComponent {
       header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
       valueFunction: (appeal) => <React.Fragment>
         <CaseDetailsLink
+          freshLoadOnNavigate={this.props.freshLoadOnNavigate}
           appeal={appeal}
           getLinkText={() => appeal.docketNumber} />
       </React.Fragment>
@@ -75,7 +76,8 @@ class CaseListTable extends React.PureComponent {
 
 CaseListTable.propTypes = {
   appeals: PropTypes.arrayOf(PropTypes.object).isRequired,
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  freshLoadOnNavigate: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
