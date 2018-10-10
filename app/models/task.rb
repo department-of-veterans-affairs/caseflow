@@ -34,6 +34,10 @@ class Task < ApplicationRecord
     ["", ""]
   end
 
+  def children_attorney_tasks
+    children.where(type: AttorneyTask.name)
+  end
+
   def self.create_from_params(params, current_user)
     verify_user_can_assign(current_user)
     params = params.each { |p| p["instructions"] = [p["instructions"]] if p.key?("instructions") }
@@ -114,12 +118,17 @@ class Task < ApplicationRecord
   end
 
   def assignable_organizations
-    Organization.assignable
+    Organization.assignable(self)
   end
 
   def assignable_users
-    return assigned_to.members if assigned_to.is_a?(Organization)
-    parent.assigned_to.members if parent && parent.assigned_to.is_a?(Organization)
+    if assigned_to.is_a?(Organization)
+      assigned_to.members
+    elsif parent && parent.assigned_to.is_a?(Organization)
+      parent.assigned_to.members.reject { |member| member == assigned_to }
+    else
+      []
+    end
   end
 
   private
