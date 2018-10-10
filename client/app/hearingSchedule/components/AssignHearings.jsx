@@ -178,7 +178,7 @@ export default class AssignHearings extends React.Component {
       <h1>{COPY.HEARING_SCHEDULE_ASSIGN_HEARINGS_HEADER}</h1>
       <Link
         name="view-schedule"
-        to="/hearings/schedule">
+        to="/schedule">
         {COPY.HEARING_SCHEDULE_ASSIGN_HEARINGS_VIEW_SCHEDULE_LINK}
       </Link>
       <RoSelectorDropdown

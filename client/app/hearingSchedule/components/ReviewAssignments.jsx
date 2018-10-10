@@ -51,7 +51,7 @@ export default class ReviewAssignments extends React.Component {
       <Link
         name="go-back"
         button="secondary"
-        to="/hearings/schedule/build/upload">
+        to="/schedule/build/upload">
         Go back
       </Link>
       <Button
@@ -92,7 +92,7 @@ export default class ReviewAssignments extends React.Component {
 
     if (this.props.schedulePeriodError) {
       let message = <span>Please confirm the information in the spreadsheet is valid and
-        <Link to="/hearings/schedule/build/upload"> try again</Link>. If the issue persists, please
+        <Link to="/schedule/build/upload"> try again</Link>. If the issue persists, please
         contact the Help Desk.
       </span>;
 
@@ -101,7 +101,7 @@ export default class ReviewAssignments extends React.Component {
           message = <span>You have allocated too many hearing days to the {spErrorDetails.details.ro_key},
           the maximum number of allocations is {spErrorDetails.details.max_allocation}.<br></br>
           Please check your spreadsheet and upload the file again using the "Go back" link below.<br></br>
-            <Link to="/hearings/schedule/build/upload"> Go back</Link>
+            <Link to="/schedule/build/upload"> Go back</Link>
           </span>;
         } else if (this.props.spErrorDetails.type === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
           title = 'We were unable to assign judges to the schedule.';
@@ -110,7 +110,7 @@ export default class ReviewAssignments extends React.Component {
           your file and try again using the "Go back" link below:<br></br>
             {spErrorDetails.details.dates &&
             spErrorDetails.details.dates.map((date, i) => <span key={i}>{date}<br></br></span>)}
-            <span className="cf-push-left" ><Link to="/hearings/schedule/build/upload">{'<'} Go back</Link></span>
+            <span className="cf-push-left" ><Link to="/schedule/build/upload">{'<'} Go back</Link></span>
           </span>;
         }
       }
@@ -126,13 +126,13 @@ export default class ReviewAssignments extends React.Component {
       return <StatusMessage
         type="status"
         title="This page has expired."
-        messageText={<Link to="/hearings/schedule">Go back to home</Link>}
+        messageText={<Link to="/schedule">Go back to home</Link>}
       />;
     } else if (this.props.schedulePeriod.canFinalize === false) {
       return <StatusMessage
         type="status"
         title="Schedule is being submitted to VACOLS."
-        messageText={<Link to="/hearings/schedule">Go back to home</Link>}
+        messageText={<Link to="/schedule">Go back to home</Link>}
       />;
     }
 

@@ -207,7 +207,7 @@ export default class DailyDocket extends React.Component {
     return <AppSegment filledBackground>
       <div className="cf-push-left">
         <h1>Daily Docket ({moment(this.props.hearingDate).format('ddd M/DD/YYYY')})</h1> <br />
-        <Link to="/hearings/schedule">&lt; Back to schedule</Link>
+        <Link to="/schedule">&lt; Back to schedule</Link>
       </div>
       <span className="cf-push-right">
         VLJ: {this.props.vlj} <br />

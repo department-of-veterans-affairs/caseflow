@@ -24,8 +24,8 @@ class CaseListSearch extends React.PureComponent {
     this.props.fetchAppealsUsingVeteranId(searchQuery).then((id) => {
       const caseListPath = `/cases/${id}`;
 
-      if (this.props.location.pathname.includes('hearings')) {
-        return window.location.replace(caseListPath);
+      if (this.props.location.pathname === '/schedule') {
+        return window.location = caseListPath;
       }
 
       return this.props.history.push(caseListPath);

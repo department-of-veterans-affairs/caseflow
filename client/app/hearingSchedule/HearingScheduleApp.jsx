@@ -30,7 +30,7 @@ export default class HearingScheduleApp extends React.PureComponent {
 
   routeForListScheduleContainer = () => <ListScheduleContainer {...this.propsForListScheduleContainer()} />;
 
-  render = () => <BrowserRouter>
+  render = () => <BrowserRouter basename="/hearings">
     <NavigationBar
       wideApp
       defaultUrl="/schedule"
@@ -46,40 +46,40 @@ export default class HearingScheduleApp extends React.PureComponent {
         <div className="cf-wide-app">
           <PageRoute
             exact
-            path="/hearings/schedule"
+            path="/schedule"
             title="Scheduled Hearings"
             render={this.routeForListScheduleContainer}
           />
           <PageRoute
             exact
-            path="/hearings/schedule/docket/:ro_name/:date"
+            path="/schedule/docket/:ro_name/:date"
             title="Daily Docket"
             component={DailyDocketContainer}
           />
           <PageRoute
             exact
-            path="/hearings/schedule/build"
+            path="/schedule/build"
             title="Caseflow Hearing Schedule"
             breadcrumb="Build"
             component={BuildScheduleContainer}
           />
           <PageRoute
             exact
-            path="/hearings/schedule/build/upload"
+            path="/schedule/build/upload"
             title="Upload Files"
             breadcrumb="Upload"
             component={BuildScheduleUploadContainer}
           />
           <PageRoute
             exact
-            path="/hearings/schedule/build/upload/:schedulePeriodId"
+            path="/schedule/build/upload/:schedulePeriodId"
             title="Review Assignments"
             breadcrumb="Review"
             component={ReviewAssignmentsContainer}
           />
           <PageRoute
             exact
-            path="/hearings/schedule/assign"
+            path="/schedule/assign"
             title="Assign Hearings"
             breadcrumb="Assign"
             component={AssignHearingsContainer}
