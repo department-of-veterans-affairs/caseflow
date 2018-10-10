@@ -7,12 +7,12 @@ const initialState = {
 
 const hearingScheduleUiReducer = (state = initialState, action = {}) => {
   switch (action.type) {
-    case ACTIONS.SET_USER_CSS_ID:
-      return update(state, {
-        userCssId: { $set: action.payload.cssId }
-      });
-    default:
-      return state;
+  case ACTIONS.SET_USER_CSS_ID:
+    return update(state, {
+      userCssId: { $set: action.payload.cssId }
+    });
+  default:
+    return state;
   }
 };
 

@@ -207,9 +207,9 @@ class ListSchedule extends React.Component {
 
     return <AppSegment filledBackground>
       <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
-      {this.props.userRoleBuild &&
-        <span className="cf-push-right" ><Link button="primary" to="/hearings/schedule/build">Build schedule</Link></span>
-      }
+      {this.props.userRoleBuild && <span className="cf-push-right">
+        <Link button="primary" to="/hearings/schedule/build">Build schedule</Link>
+      </span>}
       {this.props.userRoleAssign &&
         <span className="cf-push-right"{...actionButtonsStyling} >
           <Link button="primary" to="/hearings/schedule/assign">Assign hearings</Link></span>
