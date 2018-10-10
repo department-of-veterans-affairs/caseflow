@@ -64,7 +64,7 @@ describe QueueRepository do
 
         expect do
           QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
-        end.to raise_error(QueueRepository::CaseAlreadyAssignedError)
+        end.to raise_error(Caseflow::Error::QueueRepositoryError)
       end
     end
   end
