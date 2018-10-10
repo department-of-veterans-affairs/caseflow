@@ -66,10 +66,9 @@ class CaseDetailsLink extends React.PureComponent {
     } = this.props;
     const linkProps = {
       disabled,
-      onClick: this.onClick
+      onClick: this.onClick,
+      [freshLoadOnNavigate ? 'href' : 'to']: `/queue/appeals/${appeal.externalId}`
     };
-
-    linkProps[freshLoadOnNavigate ? 'href' : 'to'] = `/queue/appeals/${appeal.externalId}`;
 
     return <React.Fragment>
       <Link {...linkProps}>

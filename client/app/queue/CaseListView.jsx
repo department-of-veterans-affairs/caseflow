@@ -37,6 +37,10 @@ class CaseListView extends React.PureComponent {
 
   caseListTable = () => {
     const appealsCount = this.props.appeals.length;
+    const {
+      appeals,
+      freshLoadOnNavigate
+    } = this.props;
 
     if (!appealsCount) {
       return null;
@@ -50,7 +54,7 @@ class CaseListView extends React.PureComponent {
 
     return <div>
       <h1 className="cf-push-left" {...fullWidth}>{heading}</h1>
-      <CaseListTable appeals={this.props.appeals} />
+      <CaseListTable freshLoadOnNavigate={freshLoadOnNavigate} appeals={appeals} />
     </div>;
   }
 
@@ -76,11 +80,13 @@ class CaseListView extends React.PureComponent {
 }
 
 CaseListView.propTypes = {
-  caseflowVeteranId: PropTypes.string
+  caseflowVeteranId: PropTypes.string,
+  freshLoadOnNavigate: PropTypes.bool
 };
 
 CaseListView.defaultProps = {
-  caseflowVeteranId: ''
+  caseflowVeteranId: '',
+  freshLoadOnNavigate: false
 };
 
 const mapStateToProps = (state, ownProps) => ({
