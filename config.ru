@@ -22,19 +22,28 @@ use Rack::Deflater,
 # Collects custom Caseflow metrics
 use MetricsCollector
 
+# Replace ids and id-like values to keep cardinality low.
+# Otherwise Prometheus crashes on 400k+ data series.
+# '/users/1234/comments' -> '/users/:id/comments'
+# '/certifications/new/123C' -> '/certifications/new/:id'
+# '/certifications/new/2562815LL' -> '/certifications/new/:id'
+# '/certifications/new/2562815D2' -> '/certifications/new/:id'
+certification_id_pattern = '\d+[A-Z]{0,2}\d?'
+# '/hearings/dockets/2017-10-15' -> '/hearings/dockets/:id'
+date_pattern = '\d+-\d+-\d+'
+# '/idt/api/v1/appeals/39e82104-e590-4b2e-8d23-6182db0809f8' -> '/idt/api/v1/appeals/:id'
+uuid_pattern = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
+
+# rubocop:disable Style/PercentLiteralDelimiters
+id_matching_regex = %r'/(?:#{certification_id_pattern}|#{date_pattern}|#{uuid_pattern})(/|$)'
+# rubocop:enable Style/PercentLiteralDelimiters
+
 label_builder = lambda do |env, code|
   {
     code: code,
     method: env["REQUEST_METHOD"].downcase,
     host: env["HTTP_HOST"].to_s,
-    # Replace ids and id-like values to keep cardinality low.
-    # Otherwise Prometheus crashes on 400k+ data series.
-    # '/users/1234/comments' -> '/users/:id/comments'
-    # '/hearings/dockets/2017-10-15' -> '/hearings/dockets/:id'
-    # '/certifications/new/123C' -> '/certifications/new/:id'
-    # '/certifications/new/2562815LL' -> '/certifications/new/:id'
-    # '/certifications/new/2562815D2' -> '/certifications/new/:id'
-    path: env["PATH_INFO"].to_s.gsub(%r{\/\d+-?\d*-?\d*[A-Z]?[A-Z]?\d?(\/|$)}, '/:id\\1')
+    path: env["PATH_INFO"].to_s.gsub(id_matching_regex, '/:id\\1')
   }
 end
 
