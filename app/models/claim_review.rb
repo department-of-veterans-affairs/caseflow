@@ -71,6 +71,7 @@ class ClaimReview < AmaReview
   def on_sync(end_product_establishment)
     if end_product_establishment.status_cleared?
       sync_dispositions(end_product_establishment.reference_id)
+      sync_rating_issues(end_product_establishment.veteran_file_number)
       # allow higher level reviews to do additional logic on dta errors
       yield if block_given?
     end
@@ -93,6 +94,10 @@ class ClaimReview < AmaReview
         disposition: disposition.disposition
       )
     end
+  end
+
+  def sync_rating_issues(veteran_file_number)
+    Veteran.find_by!(file_number: veteran_file_number).sync_rating_issues!
   end
 
   def fetch_dispositions_from_vbms(reference_id)

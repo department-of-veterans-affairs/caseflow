@@ -137,6 +137,19 @@ class Veteran < ApplicationRecord
     super || ptcpnt_id
   end
 
+  def sync_rating_issues!
+    timely_ratings(from_date: Time.zone.today).each do |rating|
+      rating.issues.each do |rating_issue|
+        next unless rating_issue.contention_reference_id
+        request_issue = RequestIssue.find_by(contention_reference_id: rating_issue.contention_reference_id)
+        if request_issue
+          rating_issue.request_issue = request_issue
+          rating_issue.save!
+        end
+      end
+    end
+  end
+
   class << self
     def find_or_create_by_file_number(file_number)
       find_and_maybe_backfill_name(file_number) || create_by_file_number(file_number)
