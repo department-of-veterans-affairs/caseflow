@@ -3,10 +3,11 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
 
-import { addIssue } from '../actions/ama';
+import { addRatedIssue } from '../actions/ama';
 import { formatDateStr } from '../../util/DateUtil';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
+import { toggleNonRatedIssueModal } from '../actions/common';
 import TextField from '../../components/TextField';
 
 class AddIssuesModal extends React.Component {
@@ -33,7 +34,7 @@ class AddIssuesModal extends React.Component {
   }
 
   onAddIssue = () => {
-    this.props.addIssue(this.state.referenceId, this.props.intakeData.ratings, true, this.state.notes);
+    this.props.addRatedIssue(this.state.referenceId, this.props.intakeData.ratings, true, this.state.notes);
     this.props.closeHandler();
   }
 
@@ -71,7 +72,7 @@ class AddIssuesModal extends React.Component {
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
-    return <div>
+    return <div className="intake-add-issues">
       <Modal
         buttons={[
           { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
@@ -79,9 +80,13 @@ class AddIssuesModal extends React.Component {
             onClick: closeHandler
           },
           { classNames: ['usa-button', 'usa-button-secondary', 'add-issue'],
-            name: 'Add Issue',
+            name: 'Add this issue',
             onClick: this.onAddIssue,
             disabled: !this.state.referenceId
+          },
+          { classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
+            name: 'None of these match, see more options',
+            onClick: this.props.toggleNonRatedIssueModal
           }
         ]}
         visible
@@ -113,6 +118,7 @@ class AddIssuesModal extends React.Component {
 export default connect(
   null,
   (dispatch) => bindActionCreators({
-    addIssue
+    addRatedIssue,
+    toggleNonRatedIssueModal
   }, dispatch)
 )(AddIssuesModal);

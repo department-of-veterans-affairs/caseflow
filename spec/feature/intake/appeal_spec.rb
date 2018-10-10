@@ -301,9 +301,10 @@ RSpec.feature "Appeal Intake" do
     # adding an issue should show the issue
     safe_click "#button-add-issue"
     find("label", text: "Left knee granted").click
-    fill_in "Notes", with: "I am an issue note"
     safe_click ".add-issue"
+
     expect(page).to have_content("1.Left knee granted")
+    expect(page).to_not have_content("Notes:")
 
     # removing the issue should hide the issue
     safe_click ".remove-issue"
@@ -321,11 +322,28 @@ RSpec.feature "Appeal Intake" do
 
     # clicking add issue again should show a disabled radio button for that same rating
     safe_click "#button-add-issue"
+
     expect(page).to have_content("Add issue 2")
     expect(page).to have_content("Does issue 2 match any of these issues")
     expect(page).to have_content("Left knee granted (already selected for issue 1)")
     expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
-    safe_click ".close-modal"
+
+    # Add non-rated issue
+    safe_click ".no-matching-issues"
+
+    expect(page).to have_content("Does issue 2 match any of these issue categories?")
+    expect(page).to have_button("Add this issue", disabled: true)
+
+    fill_in "Issue category", with: "Active Duty Adjustments"
+    find("#issue-category").send_keys :enter
+    fill_in "Issue description", with: "Description for Active Duty Adjustments"
+    fill_in "Decision date", with: "04/19/2018"
+
+    expect(page).to have_button("Add this issue", disabled: false)
+
+    safe_click ".add-issue"
+
+    expect(page).to have_content("2 issues")
 
     safe_click "#button-finish-intake"
 
@@ -338,11 +356,18 @@ RSpec.feature "Appeal Intake" do
     )).to_not be_nil
 
     expect(RequestIssue.find_by(
-             review_request_type: "Appeal",
-             review_request_id: appeal.id,
+             review_request: appeal,
              rating_issue_reference_id: "abc123",
              description: "Left knee granted",
              notes: "I am an issue note"
+    )).to_not be_nil
+
+    expect(RequestIssue.find_by(
+             review_request_type: "Appeal",
+             review_request_id: appeal.id,
+             issue_category: "Active Duty Adjustments",
+             description: "Description for Active Duty Adjustments",
+             decision_date: 1.month.ago
     )).to_not be_nil
   end
 end
