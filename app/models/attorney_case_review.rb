@@ -31,7 +31,7 @@ class AttorneyCaseReview < ApplicationRecord
   private
 
   def reassign_case_to_judge_in_vacols!
-    attorney.access_to_legacy_task?(vacols_id)
+    attorney.fail_if_no_access_to_legacy_task!(vacols_id)
 
     AttorneyCaseReview.repository.reassign_case_to_judge!(
       vacols_id: vacols_id,
