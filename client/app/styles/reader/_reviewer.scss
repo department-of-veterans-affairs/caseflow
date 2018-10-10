@@ -524,24 +524,6 @@ input[type="search"].cf-search-input-with-close {
   display: block;
 }
 
-// This is override some bad styling in PDFJS. Note selection is not
-// supported in current CSS standards. But with PDFJS using it, we have
-// to override it. When opacity isn't 1, then the highlighting for find
-// is way too light.
-.textLayer {
-  opacity: 1;
-
-  ::selection {
-    background: $caseflow-text-select;
-  }
-
-  // scss-lint:disable VendorPrefix
-  ::-moz-selection {
-    background: $caseflow-text-select;
-  }
-  // scss-lint:enable VendorPrefix
-}
-
 .canvasWrapper {
   background: $color-black;
 }
