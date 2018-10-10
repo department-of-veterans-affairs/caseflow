@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import {
+  setSavePending,
+  resetSaveState,
   resetErrorMessages,
   showErrorMessage,
   showSuccessMessage,
@@ -42,13 +44,16 @@ type Props = Params & {|
   selectedAssignee: string,
   selectedAssigneeSecondary: string,
   attorneys: Attorneys,
+  savePending: boolean,
   // Action creators
   setSelectedAssignee: typeof setSelectedAssignee,
   setSelectedAssigneeSecondary: typeof setSelectedAssigneeSecondary,
   showErrorMessage: typeof showErrorMessage,
   resetErrorMessages: typeof resetErrorMessages,
   showSuccessMessage: typeof showSuccessMessage,
-  resetSuccessMessages: typeof resetSuccessMessages
+  resetSuccessMessages: typeof resetSuccessMessages,
+  setSavePending: typeof setSavePending,
+  resetSaveState: typeof resetSaveState
 |};
 
 class AssignWidget extends React.PureComponent<Props> {
@@ -93,19 +98,28 @@ class AssignWidget extends React.PureComponent<Props> {
   assignTasks = (selectedTasks: Array<Task>, assigneeId: string) => {
     const { previousAssigneeId } = this.props;
 
+    this.props.setSavePending();
     return this.props.onTaskAssignment(
       { tasks: selectedTasks,
         assigneeId,
         previousAssigneeId }).
-      then(() => this.props.showSuccessMessage({
-        title: sprintf(COPY.ASSIGN_WIDGET_SUCCESS, {
-          numCases: selectedTasks.length,
-          casePlural: pluralize('case', selectedTasks.length)
-        })
-      })).
-      catch(() => this.props.showErrorMessage(
-        { title: COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE,
-          detail: COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL }));
+      then(() => {
+        this.props.resetSaveState();
+
+        return this.props.showSuccessMessage({
+          title: sprintf(COPY.ASSIGN_WIDGET_SUCCESS, {
+            numCases: selectedTasks.length,
+            casePlural: pluralize('case', selectedTasks.length)
+          })
+        });
+      }).
+      catch(() => {
+        this.props.resetSaveState();
+
+        return this.props.showErrorMessage({
+          title: COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE,
+          detail: COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL });
+      });
   }
 
   render = () => {
@@ -114,7 +128,8 @@ class AssignWidget extends React.PureComponent<Props> {
       selectedAssignee,
       selectedAssigneeSecondary,
       attorneys,
-      selectedTasks
+      selectedTasks,
+      savePending
     } = this.props;
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
@@ -173,8 +188,8 @@ class AssignWidget extends React.PureComponent<Props> {
             COPY.ASSIGN_WIDGET_BUTTON_TEXT,
             { numCases: selectedTasks.length,
               casePlural: pluralize('case', selectedTasks.length) })}
-          loading={false}
-          loadingText={COPY.ASSIGN_WIDGET_LOADING} />}
+          loading={savePending}
+          loadingText={COPY.ASSIGN_WIDGET_LOADING} /> }
       </div>
     </React.Fragment>;
   }
@@ -183,16 +198,20 @@ class AssignWidget extends React.PureComponent<Props> {
 const mapStateToProps = (state: State) => {
   const { attorneysOfJudge, attorneys } = state.queue;
   const { selectedAssignee, selectedAssigneeSecondary } = state.ui;
+  const { savePending } = state.ui.saveState;
 
   return {
     attorneysOfJudge,
     selectedAssignee,
     selectedAssigneeSecondary,
-    attorneys
+    attorneys,
+    savePending
   };
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setSavePending,
+  resetSaveState,
   setSelectedAssignee,
   setSelectedAssigneeSecondary,
   showErrorMessage,

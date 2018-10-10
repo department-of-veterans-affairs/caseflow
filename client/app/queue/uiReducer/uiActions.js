@@ -98,6 +98,10 @@ export const requestUpdate = (url: string, params: Object, successMessage: UiSta
 export const requestDelete = (url: string, params: Object, successMessage: UiStateMessage) =>
   requestSave(url, params, successMessage, 'delete');
 
+export const setSavePending = () => ({
+  type: ACTIONS.REQUEST_SAVE
+});
+
 export const resetSaveState = () => ({
   type: ACTIONS.RESET_SAVE_STATE
 });
@@ -160,6 +164,10 @@ export const setSelectedAssigneeSecondary = ({ assigneeId }: targetAssignee) => 
 
 export const toggleVeteranCaseList = () => ({
   type: ACTIONS.TOGGLE_VETERAN_CASE_LIST
+});
+
+export const showVeteranCaseList = () => ({
+  type: ACTIONS.SHOW_VETERAN_CASE_LIST
 });
 
 export const hideVeteranCaseList = () => ({

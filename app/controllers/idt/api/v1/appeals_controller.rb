@@ -2,6 +2,8 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
   before_action :verify_access
 
+  skip_before_action :verify_authenticity_token, only: [:outcode]
+
   rescue_from StandardError do |e|
     Raven.capture_exception(e)
     if e.class.method_defined?(:serialize_response)
@@ -30,19 +32,22 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def outcode
     BvaDispatchTask.outcode(appeal, outcode_params, user)
-    render json: json_appeal_details
+    render json: { message: "Success!" }
   end
 
   private
 
   def tasks_assigned_to_user
-    tasks = LegacyWorkQueue.tasks_with_appeals(user, role)[0].select { |task| task.appeal.active? }
+    tasks = if user.attorney_in_vacols? || user.judge_in_vacols?
+              LegacyWorkQueue.tasks_with_appeals(user, role)[0].select { |task| task.appeal.active? }
+            else
+              []
+            end
 
     if feature_enabled?(:idt_ama_appeals)
       tasks += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold])
-        .reject { |task| task.action == "assign" }
     end
-    tasks
+    tasks.reject { |task| task.action == "assign" }
   end
 
   def role

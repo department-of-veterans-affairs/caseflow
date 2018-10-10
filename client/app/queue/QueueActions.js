@@ -134,13 +134,6 @@ export const setAppealDocCount = (appealId: string, docCount: number) => ({
   }
 });
 
-export const setCaseReviewActionType = (type: string) => ({
-  type: ACTIONS.SET_REVIEW_ACTION_TYPE,
-  payload: {
-    type
-  }
-});
-
 export const setDecisionOptions = (opts: Object) => (dispatch: Dispatch) => {
   dispatch(hideErrorMessage());
   dispatch({

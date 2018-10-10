@@ -6,7 +6,11 @@ import {
   taskIsOnHold
 } from './utils';
 
-import type { State, NewDocsForAppeal } from './types/state';
+import type {
+  State,
+  NewDocsForAppeal,
+  AttorneysOfJudge, UiStateModals
+} from './types/state';
 import type {
   Task,
   Tasks,
@@ -14,6 +18,7 @@ import type {
   Appeal,
   Appeals,
   BasicAppeals,
+  AppealDetails,
   User
 } from './types/models';
 
@@ -30,17 +35,17 @@ export const selectedTasksSelector = (state: State, userId: string) => {
   ).filter(Boolean);
 };
 
-const getTasks = (state: State) => state.queue.tasks;
-const getAmaTasks = (state: State) => state.queue.amaTasks;
-const getAppeals = (state: State) => state.queue.appeals;
-const getAppealDetails = (state: State) => state.queue.appealDetails;
-const getUserCssId = (state: State) => state.ui.userCssId;
-const getOrganizationId = (state: State) => state.queue.organizationId;
-const getAppealId = (state: State, props: Object) => props.appealId;
-const getAttorneys = (state: State) => state.queue.attorneysOfJudge;
-const getCaseflowVeteranId = (state: State, props: Object) => props.caseflowVeteranId;
-const getModals = (state: State) => state.ui.modals;
-const getNewDocsForAppeal = (state: State) => state.queue.newDocsForAppeal;
+const getTasks = (state: State): Tasks => state.queue.tasks;
+const getAmaTasks = (state: State): Tasks => state.queue.amaTasks;
+const getAppeals = (state: State): BasicAppeals => state.queue.appeals;
+const getAppealDetails = (state: State): AppealDetails => state.queue.appealDetails;
+const getUserCssId = (state: State): string => state.ui.userCssId;
+const getOrganizationId = (state: State): ?number => state.queue.organizationId;
+const getAppealId = (state: State, props: Object): string => props.appealId;
+const getAttorneys = (state: State): AttorneysOfJudge => state.queue.attorneysOfJudge;
+const getCaseflowVeteranId = (state: State, props: Object): ?string => props.caseflowVeteranId;
+const getModals = (state: State): UiStateModals => state.ui.modals;
+const getNewDocsForAppeal = (state: State): NewDocsForAppeal => state.queue.newDocsForAppeal;
 
 export const getActiveModalType = createSelector(
   [getModals],
@@ -48,19 +53,23 @@ export const getActiveModalType = createSelector(
 );
 
 export const tasksWithAppealSelector = createSelector(
-  [getTasks, getAmaTasks, getAppeals],
-  (tasks: Tasks, amaTasks: Tasks, appeals: Appeals) : Array<TaskWithAppeal> => {
+  [getTasks, getAmaTasks, getAppeals, getAppealDetails],
+  (tasks: Tasks, amaTasks: Tasks, appeals: BasicAppeals, appealDetails: AppealDetails) : Array<TaskWithAppeal> => {
     return [
-      ..._.map(tasks, (task) => {
-        return { ...task,
-          appeal: _.find(appeals, (appeal) => task.externalAppealId === appeal.externalId)
-        };
-      }),
-      ..._.map(amaTasks, (amaTask) => {
-        return { ...amaTask,
-          appeal: _.find(appeals, (appeal) => amaTask.externalAppealId === appeal.externalId)
-        };
-      })
+      ..._.map(tasks, (task) => ({
+        ...task,
+        appeal: {
+          ..._.find(appeals, (appeal) => task.externalAppealId === appeal.externalId),
+          ..._.find(appealDetails, (appealDetail) => task.externalAppealId === appealDetail.externalId)
+        }
+      })),
+      ..._.map(amaTasks, (amaTask) => ({
+        ...amaTask,
+        appeal: {
+          ..._.find(appeals, (appeal) => amaTask.externalAppealId === appeal.externalId),
+          ..._.find(appealDetails, (appealDetail) => amaTask.externalAppealId === appealDetail.externalId)
+        }
+      }))
     ];
   }
 );
@@ -101,8 +110,8 @@ export const tasksForAppealAssignedToAttorneySelector = createSelector(
 
 export const appealsByCaseflowVeteranId = createSelector(
   [appealsWithDetailsSelector, getCaseflowVeteranId],
-  (appeals: Appeals, caseflowVeteranId: string) =>
-    _.filter(appeals, (appeal: Appeal) => appeal.caseflowVeteranId &&
+  (appeals: Appeals, caseflowVeteranId: ?string) =>
+    _.filter(appeals, (appeal: Appeal) => appeal.caseflowVeteranId && caseflowVeteranId &&
       appeal.caseflowVeteranId.toString() === caseflowVeteranId.toString())
 );
 

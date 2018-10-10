@@ -43,11 +43,6 @@
   }
 }
 
-.establish-claim-feedback {
-  text-align: center;
-  width: 100%;
-}
-
 .cf-bottom-border {
   border-bottom: 1px solid $color-gray-light;
   margin: 40px auto;
@@ -68,10 +63,6 @@
   }
 }
 
-.vbms-id {
-  color: $color-gray;
-}
-
 .cf-work-assignments {
   td {
     &:first-child {
@@ -87,7 +78,7 @@
     }
   }
 
-  .cf-no-padding {
+  .cf-align {
     padding: 0 3px;
     vertical-align: middle;
   }

@@ -37,10 +37,6 @@
   margin-top: 10px;
 }
 
-.cf-non-rated-issues {
-  padding-top: 1em;
-}
-
 .cf-non-rated-issue {
   display: grid;
   grid-column-gap: 10px;
@@ -56,6 +52,23 @@
   }
 }
 
+.intake-add-issues .cf-modal-body {
+  width: 770px;
+}
+
+.add-issue {
+  margin-left: 1em;
+}
+
+.add-non-rated-issue {
+  max-width: 350px;
+
+  .decision-date {
+    margin-top: 20px;
+    width: 8em;
+  }
+}
+
 .cf-intake-edit {
   th {
     padding: 0;
@@ -64,8 +77,44 @@
   td {
     vertical-align: top;
 
-    div {
-      padding-bottom: 0.5em;
+    .issues {
+      display: table;
+      width: 100%;
+
+      .issue {
+        display: table-row;
+        border-bottom: 1px solid $color-gray-lighter;
+
+        div {
+          display: table-column;
+          float: left;
+          padding: 0.5em 0;
+        }
+
+        .issue-desc {
+          max-width: 70%;
+
+          .issue-num {
+            padding-right: 0.25em;
+          }
+
+          .issue-notes {
+            display: block;
+            font-style: italic;
+          }
+        }
+
+        .issue-action {
+          padding: 0;
+          float: right;
+
+          button {
+            i {
+              padding-right: 0.25em;
+            }
+          }
+        }
+      }
     }
   }
 

@@ -13,10 +13,9 @@ import {
 } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import DocketTypeBadge from './components/DocketTypeBadge';
-import AttorneyActionsDropdown from './components/AttorneyActionsDropdown';
+import ActionsDropdown from './components/ActionsDropdown';
 import JudgeActionsDropdown from './components/JudgeActionsDropdown';
 import ColocatedActionsDropdown from './components/ColocatedActionsDropdown';
-import GenericTaskActionsDropdown from './components/GenericTaskActionsDropdown';
 import OnHoldLabel from './components/OnHoldLabel';
 import CopyTextButton from '../components/CopyTextButton';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -254,17 +253,16 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       taskAssignedToOrganization,
       userRole
     } = this.props;
-    let CheckoutDropdown = <React.Fragment />;
+    let ActionDropdown;
     const dropdownArgs = { appealId: appeal.externalId };
 
-    if (userRole === USER_ROLE_TYPES.attorney) {
-      CheckoutDropdown = <AttorneyActionsDropdown {...dropdownArgs} />;
-    } else if (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout) {
-      CheckoutDropdown = <JudgeActionsDropdown {...dropdownArgs} />;
+    if (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout) {
+      ActionDropdown = <JudgeActionsDropdown {...dropdownArgs} />;
     } else if (userRole === USER_ROLE_TYPES.colocated) {
-      CheckoutDropdown = <ColocatedActionsDropdown {...dropdownArgs} />;
+      ActionDropdown = <ColocatedActionsDropdown {...dropdownArgs} />;
     } else {
-      CheckoutDropdown = <GenericTaskActionsDropdown {...dropdownArgs} />;
+      ActionDropdown = <ActionsDropdown
+        task={taskAssignedToUser || taskAssignedToOrganization} appealId={appeal.externalId} />;
     }
 
     const taskAssignedToVso = taskAssignedToOrganization && taskAssignedToOrganization.assignedTo.type === 'Vso';
@@ -315,7 +313,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       {this.showActionsSection() &&
         <div className="usa-width-one-half">
           <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-          {CheckoutDropdown}
+          {ActionDropdown}
         </div>
       }
     </div>;

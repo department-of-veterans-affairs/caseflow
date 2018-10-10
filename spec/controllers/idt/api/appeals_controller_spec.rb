@@ -150,10 +150,17 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           ]
         end
 
+        let!(:parents) do
+          [
+            create(:ama_judge_task, appeal: ama_appeals.first),
+            create(:ama_judge_task, appeal: ama_appeals.second)
+          ]
+        end
+
         let!(:tasks) do
           [
-            create(:ama_attorney_task, assigned_to: user, appeal: ama_appeals.first),
-            create(:ama_attorney_task, assigned_to: user, appeal: ama_appeals.second)
+            create(:ama_attorney_task, assigned_to: user, appeal: ama_appeals.first, parent: parents.first),
+            create(:ama_attorney_task, assigned_to: user, appeal: ama_appeals.second, parent: parents.second)
           ]
         end
 
@@ -191,7 +198,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             expect(ama_appeals.second["attributes"]["veteran_first_name"]).to eq veteran2.reload.name.first_name
             expect(ama_appeals.second["attributes"]["days_waiting"]).to eq 15
 
-            expect(ama_appeals.first["attributes"]["assigned_by"]).to eq tasks.first.assigned_by.full_name
+            expect(ama_appeals.first["attributes"]["assigned_by"]).to eq tasks.first.parent.assigned_to.full_name
             expect(ama_appeals.first["attributes"]["documents"].size).to eq 2
             expect(ama_appeals.first["attributes"]["documents"].first["written_by"])
               .to eq case_review1.attorney.full_name
@@ -213,8 +220,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             expect(ama_appeals.size).to eq 1
             expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.first.appeal.docket_number
             expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.reload.name.first_name
-            expect(ama_appeals.first["attributes"]["assigned_by"]).to eq nil
-            expect(ama_appeals.first["attributes"]["documents"]).to eq nil
+            expect(ama_appeals.first["attributes"]["assigned_by"]).to eq tasks.first.parent.assigned_to.full_name
+            expect(ama_appeals.first["attributes"]["documents"].size).to eq 2
           end
         end
 
@@ -330,6 +337,9 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
                 .to eq ama_appeals.first.claimants.second.address_line_1
               expect(response_body["attributes"]["appellants"][1]["address"]["city"])
                 .to eq ama_appeals.first.claimants.second.city
+              expect(response_body["attributes"]["assigned_by"]).to_not eq nil
+              expect(response_body["attributes"]["assigned_by"]).to eq tasks.first.parent.assigned_to.full_name
+              expect(response_body["attributes"]["documents"].size).to eq 2
             end
           end
         end
@@ -495,8 +505,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
       it "should throw an error" do
         post :outcode, params: params
-        expect(response.status).to eq(500)
-        err_msg = JSON.parse(response.body)["message"]
+        expect(response.status).to eq(400)
+        err_msg = JSON.parse(response.body)["errors"].first["detail"]
         expect(err_msg).to match(/Validation failed/)
       end
     end
@@ -506,6 +516,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
       it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
         post :outcode, params: params
+        expect(response.status).to eq(200)
         tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)
         expect(tasks.length).to eq(1)
         task = tasks[0]

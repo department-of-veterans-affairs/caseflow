@@ -74,7 +74,10 @@ export type Task = {
   decisionPreparedBy: ?{
     firstName: string,
     lastName: string,
-  }
+  },
+  availableActions: Array<{ label?: string, value: string }>,
+  assignableOrganizations?: Array<{ id: string, name: string}>,
+  assignableUsers?: Array<{ id: string, full_name: string}>,
 };
 
 export type Tasks = { [string]: Task };
@@ -85,9 +88,19 @@ export type PowerOfAttorney = {
   representative_address: ?Address
 }
 
+export type Hearing = {
+  heldBy: string,
+  viewedByJudge: boolean,
+  date: string,
+  type: string,
+  id: string,
+  disposition: string
+};
+
 export type AppealDetail = {
   issues: Array<Object>,
-  hearings: Array<Object>,
+  hearings: Array<Hearing>,
+  completedHearingOnPreviousAppeal: boolean,
   appellantFullName: string,
   appellantAddress: Address,
   appellantRelationship: string,
@@ -124,7 +137,8 @@ export type BasicAppeal = {
   veteranFullName: string,
   veteranFileNumber: string,
   isPaperCase: ?boolean,
-  tasks?: Array<Task>
+  tasks?: Array<Task>,
+  issueCount: number
 };
 
 export type BasicAppeals = { [string]: BasicAppeal };

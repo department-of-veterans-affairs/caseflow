@@ -26,7 +26,7 @@
 
     th {
       max-width: 165px;
-      min-width: 155px;
+      min-width: 150px;
     }
   }
 
@@ -46,6 +46,7 @@
     td {
       max-width: 165px;
       min-width: 150px;
+      border-bottom: none;
     }
   }
 }
@@ -515,10 +516,6 @@
 .cf-hearings-worksheet-desc-label {
   position: absolute;
   left: -99999px;
-}
-
-.cf-hearings-print-worksheet-header {
-  font-size: 11px;
 }
 
 .cf-form-textinput {

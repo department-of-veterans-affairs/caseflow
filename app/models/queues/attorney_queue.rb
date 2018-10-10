@@ -11,14 +11,14 @@ class AttorneyQueue
     on_hold_legacy_tasks = colocated_tasks_grouped.each_with_object([]) do |(_k, value), result|
       # Attorneys can assign multiple admin actions per appeal, we assume a case is still on hold
       # if not all admin actions are completed
-      next if value.map(&:status).uniq == ["completed"]
+      next if value.map(&:status).uniq == [Constants.TASK_STATUSES.completed]
       result << value.each do |record|
         record.placed_on_hold_at = record.assigned_at
-        record.status = "on_hold"
+        record.status = Constants.TASK_STATUSES.on_hold
       end
       result
     end
-    ama_tasks = AttorneyTask.where.not(status: "completed").where(assigned_to: user)
+    ama_tasks = AttorneyTask.where.not(status: Constants.TASK_STATUSES.completed).where(assigned_to: user)
     (on_hold_legacy_tasks + ama_tasks).flatten
   end
 

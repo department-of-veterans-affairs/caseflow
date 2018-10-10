@@ -15,7 +15,6 @@ import {
 
 import {
   stageAppeal,
-  setCaseReviewActionType,
   initialAssignTasksToUser,
   reassignTasksToUser
 } from '../QueueActions';
@@ -41,7 +40,6 @@ type Props = Params & {|
   userRole: string,
   // Action creators
   stageAppeal: typeof stageAppeal,
-  setCaseReviewActionType: typeof setCaseReviewActionType,
   initialAssignTasksToUser: typeof initialAssignTasksToUser,
   reassignTasksToUser: typeof reassignTasksToUser,
   // From withRouter
@@ -73,18 +71,16 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
     } = this.props;
     const actionType = option.value;
 
-    this.props.setCaseReviewActionType(actionType);
-
     let nextPage;
 
     if (actionType === DECISION_TYPES.OMO_REQUEST) {
-      nextPage = 'evaluate';
+      nextPage = 'omo_request/evaluate';
     } else if (option.value === ASSIGN) {
       nextPage = 'modal/assign_to_user';
     } else if (appeal.isLegacyAppeal) {
-      nextPage = 'dispositions';
+      nextPage = 'dispatch_decision/dispositions';
     } else {
-      nextPage = 'special_issues';
+      nextPage = 'dispatch_decision/special_issues';
     }
 
     this.props.stageAppeal(appealId);
@@ -135,7 +131,6 @@ const mapStateToProps = (state: State, ownProps: Params) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   stageAppeal,
-  setCaseReviewActionType,
   initialAssignTasksToUser,
   reassignTasksToUser
 }, dispatch);

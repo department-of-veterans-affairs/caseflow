@@ -22,8 +22,8 @@ RSpec.feature "Search" do
   context "queue case search for appeals using veteran id" do
     context "when invalid Veteran ID input" do
       before do
-        visit "/queue"
-        fill_in "searchBar", with: invalid_veteran_id
+        visit "/search"
+        fill_in "searchBarEmptyList", with: invalid_veteran_id
         click_on "Search"
       end
 
@@ -32,7 +32,7 @@ RSpec.feature "Search" do
       end
 
       it "searching in search bar works" do
-        fill_in "searchBar", with: appeal.sanitized_vbms_id
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
@@ -47,8 +47,8 @@ RSpec.feature "Search" do
 
     context "when no appeals found" do
       before do
-        visit "/queue"
-        fill_in "searchBar", with: veteran_with_no_appeals.file_number
+        visit "/search"
+        fill_in "searchBarEmptyList", with: veteran_with_no_appeals.file_number
         click_on "Search"
       end
 
@@ -59,7 +59,7 @@ RSpec.feature "Search" do
       end
 
       it "searching in search bar works" do
-        fill_in "searchBar", with: appeal.sanitized_vbms_id
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
@@ -75,8 +75,8 @@ RSpec.feature "Search" do
     context "when backend encounters an error" do
       before do
         allow(LegacyAppeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
-        visit "/queue"
-        fill_in "searchBar", with: appeal.sanitized_vbms_id
+        visit "/search"
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
       end
 
@@ -85,7 +85,7 @@ RSpec.feature "Search" do
       end
 
       it "searching in search bar produces another error" do
-        fill_in "searchBar", with: veteran_with_no_appeals.file_number
+        fill_in "searchBarEmptyList", with: veteran_with_no_appeals.file_number
         click_on "Search"
 
         expect(page).to have_content(
@@ -107,8 +107,8 @@ RSpec.feature "Search" do
       end
 
       before do
-        visit "/queue"
-        fill_in "searchBar", with: appeal.sanitized_vbms_id
+        visit "/search"
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
       end
 
@@ -118,12 +118,12 @@ RSpec.feature "Search" do
       end
 
       it "search bar stays in top right" do
-        expect(page).to have_selector("#searchBar")
+        expect(page).to have_selector("#searchBarEmptyList")
       end
 
       it "clicking on the x in the search bar clears the search bar" do
         click_on "button-clear-search"
-        expect(find("#searchBar")).to have_content("")
+        expect(find("#searchBarEmptyList")).to have_content("")
       end
 
       it "clicking on docket number sends us to the case details page" do
@@ -133,8 +133,8 @@ RSpec.feature "Search" do
       end
 
       scenario "found appeal is paper case" do
-        visit "/queue"
-        fill_in "searchBar", with: paper_appeal.sanitized_vbms_id
+        visit "/search"
+        fill_in "searchBarEmptyList", with: paper_appeal.sanitized_vbms_id
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
@@ -165,18 +165,13 @@ RSpec.feature "Search" do
 
     context "when invalid Veteran ID input" do
       before do
-        visit "/"
+        visit "/search"
         fill_in "searchBarEmptyList", with: invalid_veteran_id
         click_on "Search"
       end
 
       it "page displays invalid Veteran ID message" do
         expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_veteran_id))
-      end
-
-      it "search bar does not appear in top right of page" do
-        expect(page).to_not have_selector("#searchBar")
-        expect(page).to have_selector("#searchBarEmptyList")
       end
 
       it "searching in search bar works" do
@@ -196,7 +191,7 @@ RSpec.feature "Search" do
 
     context "when no appeals found" do
       before do
-        visit "/"
+        visit "/search"
         fill_in "searchBarEmptyList", with: veteran_with_no_appeals.file_number
         click_on "Search"
       end
@@ -207,8 +202,7 @@ RSpec.feature "Search" do
         )
       end
 
-      it "search bar does not appear in top right of page" do
-        expect(page).to_not have_selector("#searchBar")
+      it "search bar appears at top of page" do
         expect(page).to have_selector("#searchBarEmptyList")
       end
 
@@ -230,18 +224,13 @@ RSpec.feature "Search" do
     context "when backend encounters an error" do
       before do
         allow(LegacyAppeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
-        visit "/"
+        visit "/search"
         fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
       end
 
       it "displays error message" do
         expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
-      end
-
-      it "search bar does not appear in top right of page" do
-        expect(page).to_not have_selector("#searchBar")
-        expect(page).to have_selector("#searchBarEmptyList")
       end
 
       it "searching in search bar works" do
@@ -261,7 +250,7 @@ RSpec.feature "Search" do
 
     context "when one appeal found" do
       before do
-        visit "/"
+        visit "/search"
         fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
       end
@@ -271,13 +260,11 @@ RSpec.feature "Search" do
         expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
       end
 
-      it "search bar displayed in top right of page" do
-        expect(page).to have_selector("#searchBar")
-        expect(page).to_not have_selector("#searchBarEmptyList")
+      it "search bar displayed at top of page" do
+        expect(page).to have_selector("#searchBarEmptyList")
       end
 
-      it "clicking on docket number sends us to the case details page",
-         skip: "case_search_home_page FeatureToggle deprecation in progress" do
+      it "clicking on docket number sends us to the case details page" do
         click_on appeal.docket_number
         expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
       end
