@@ -1,11 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 
 import CaseDetailsLink from './CaseDetailsLink';
+import DocketTypeBadge from './components/DocketTypeBadge';
 import Table from '../components/Table';
 import { COLORS } from '../constants/AppConstants';
+import { clearCaseListSearch } from './CaseList/CaseListActions';
 
 import { DateString } from '../util/DateUtil';
 import { renderAppealType } from './utils';
@@ -30,12 +33,15 @@ const labelForLocation = (locationCode, userId) => {
 };
 
 class CaseListTable extends React.PureComponent {
+  componentWillUnmount = () => this.props.clearCaseListSearch();
+
   getKeyForRow = (rowNumber, object) => object.id;
 
   getColumns = () => [
     {
       header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
       valueFunction: (appeal) => <React.Fragment>
+        <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />
         <CaseDetailsLink
           appeal={appeal}
           getLinkText={() => appeal.docketNumber} />
@@ -82,5 +88,8 @@ const mapStateToProps = (state) => ({
   userCssId: state.ui.userCssId
 });
 
-export default connect(mapStateToProps)(CaseListTable);
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  clearCaseListSearch
+}, dispatch);
 
+export default connect(mapStateToProps, mapDispatchToProps)(CaseListTable);
