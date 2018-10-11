@@ -351,6 +351,15 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           end
         end
 
+        context "and appeal id URL parameter is not valid" do
+          let(:params) { { appeal_id: "invalid" } }
+
+          it "responds with not found" do
+            get :details, params: params
+            expect(response.status).to eq 404
+          end
+        end
+
         context "and legacy appeal id URL parameter is passed" do
           let(:params) { { appeal_id: appeal.vacols_id } }
           let!(:vacols_case) do

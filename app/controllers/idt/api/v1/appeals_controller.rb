@@ -17,6 +17,10 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     render(json: { message: e.message }, status: 400)
   end
 
+  rescue_from ActiveRecord::RecordNotFound do |_e|
+    render(json: { message: "Record not found" }, status: 404)
+  end
+
   def list
     if file_number.present?
       render json: json_appeals(appeals_by_file_number)
@@ -26,7 +30,6 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   end
 
   def details
-    return render json: { message: "Appeal not found" }, status: 404 unless appeal
     render json: json_appeal_details
   end
 
