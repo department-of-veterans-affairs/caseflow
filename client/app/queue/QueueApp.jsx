@@ -17,6 +17,7 @@ import {
 import ScrollToTop from '../components/ScrollToTop';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
+import CaseSearchLink from '../components/CaseSearchLink';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import AppFrame from '../components/AppFrame';
 import QueueLoadingScreen from './QueueLoadingScreen';
@@ -30,7 +31,6 @@ import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import MarkTaskCompleteView from './MarkTaskCompleteView';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
-import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
 
 import TriggerModal from './TriggerModal';
@@ -151,9 +151,8 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedColocatedPlaceHold = (props) => <ColocatedPlaceHoldView nextStep="/queue" {...props.match.params} />;
 
-  routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView {...props.match.params} />;
-
-  routedAssignToAttorney = (props) => <AssignToAttorneyModalView {...props.match.params} />;
+  routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView
+    nextStep={`/queue/appeals/${props.match.params.appealId}`} {...props.match.params} />;
 
   routedAssignToTeam = (props) => <AssignToView isTeamAssign {...props.match.params} />;
 
@@ -196,6 +195,7 @@ class QueueApp extends React.PureComponent<Props> {
         overlapColor: LOGO_COLORS.QUEUE.OVERLAP,
         accentColor: LOGO_COLORS.QUEUE.ACCENT
       }}
+      rightNavElement={<CaseSearchLink />}
       appName="">
       <AppFrame wideApp>
         <ScrollToTop />
@@ -245,9 +245,6 @@ class QueueApp extends React.PureComponent<Props> {
           <Route
             path="/queue/appeals/:appealId/modal/assign_to_person"
             render={this.routedAssignToUser} />
-          <Route
-            path="/queue/appeals/:appealId/modal/assign_to_attorney"
-            render={this.routedAssignToAttorney} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"

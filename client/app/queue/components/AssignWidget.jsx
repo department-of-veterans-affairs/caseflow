@@ -20,7 +20,6 @@ import pluralize from 'pluralize';
 import COPY from '../../../COPY.json';
 import { sprintf } from 'sprintf-js';
 import { fullWidth } from '../constants';
-import editModalBase from './EditModalBase';
 
 import type {
   AttorneysOfJudge, State
@@ -34,8 +33,7 @@ const OTHER = 'OTHER';
 type Params = {|
   previousAssigneeId: string,
   onTaskAssignment: Function,
-  selectedTasks: Array<Task>,
-  isModal?: boolean
+  selectedTasks: Array<Task>
 |};
 
 type Props = Params & {|
@@ -57,7 +55,7 @@ type Props = Params & {|
 |};
 
 class AssignWidget extends React.PureComponent<Props> {
-  submit = () => {
+  handleButtonClick = () => {
     const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
 
     this.props.resetSuccessMessages();
@@ -80,7 +78,9 @@ class AssignWidget extends React.PureComponent<Props> {
     }
 
     if (selectedAssignee !== OTHER) {
-      return this.assignTasks(selectedTasks, selectedAssignee);
+      this.assignTasks(selectedTasks, selectedAssignee);
+
+      return;
     }
 
     if (!selectedAssigneeSecondary) {
@@ -91,15 +91,14 @@ class AssignWidget extends React.PureComponent<Props> {
       return;
     }
 
-    return this.assignTasks(selectedTasks, selectedAssigneeSecondary);
+    this.assignTasks(selectedTasks, selectedAssigneeSecondary);
   }
 
   assignTasks = (selectedTasks: Array<Task>, assigneeId: string) => {
     const { previousAssigneeId } = this.props;
 
     this.props.setSavePending();
-
-    return this.props.onTaskAssignment(
+    this.props.onTaskAssignment(
       { tasks: selectedTasks,
         assigneeId,
         previousAssigneeId }).
@@ -182,14 +181,14 @@ class AssignWidget extends React.PureComponent<Props> {
               value={selectedOptionOther}
               styling={css({ width: '30rem' })} />
           </React.Fragment>}
-        {!this.props.isModal && <Button
-          onClick={this.submit}
+        <Button
+          onClick={this.handleButtonClick}
           name={sprintf(
             COPY.ASSIGN_WIDGET_BUTTON_TEXT,
             { numCases: selectedTasks.length,
               casePlural: pluralize('case', selectedTasks.length) })}
           loading={savePending}
-          loadingText={COPY.ASSIGN_WIDGET_LOADING} /> }
+          loadingText={COPY.ASSIGN_WIDGET_LOADING} />
       </div>
     </React.Fragment>;
   }
@@ -209,24 +208,16 @@ const mapStateToProps = (state: State) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setSavePending,
-  resetSaveState,
-  setSelectedAssignee,
-  setSelectedAssigneeSecondary,
-  showErrorMessage,
-  resetErrorMessages,
-  showSuccessMessage,
-  resetSuccessMessages
-}, dispatch);
-
 export default (connect(
   mapStateToProps,
-  mapDispatchToProps
+  (dispatch) => bindActionCreators({
+    setSavePending,
+    resetSaveState,
+    setSelectedAssignee,
+    setSelectedAssigneeSecondary,
+    showErrorMessage,
+    resetErrorMessages,
+    showSuccessMessage,
+    resetSuccessMessages
+  }, dispatch)
 )(AssignWidget): React.ComponentType<Params>);
-
-export const AssignWidgetModal = (connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(editModalBase(AssignWidget, COPY.ASSIGN_WIDGET_MODAL_TITLE)): React.ComponentType<Params>);
-
