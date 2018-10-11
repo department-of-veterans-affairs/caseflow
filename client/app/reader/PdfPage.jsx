@@ -21,9 +21,9 @@ import { COLORS } from '../constants/AppConstants';
 
 const markStyle = css({
   '& mark': {
-    background: COLORS.GOLD_LIGHTEST,
+    background: COLORS.GOLD_LIGHTER,
     '.highlighted': {
-      background: COLORS.GOLD_LIGHT
+      background: COLORS.GREEN_LIGHTER
     }
   }
 });

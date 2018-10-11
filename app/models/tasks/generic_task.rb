@@ -19,7 +19,7 @@ class GenericTask < Task
   end
 
   def update_from_params(params, current_user)
-    verify_user_access(current_user)
+    verify_user_access!(current_user)
 
     new_status = params[:status]
     if new_status == Constants.TASK_STATUSES.completed
@@ -29,7 +29,7 @@ class GenericTask < Task
     end
   end
 
-  def can_user_access?(user)
+  def can_be_accessed_by_user?(user)
     return true if assigned_to && assigned_to == user
     return true if user && assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
     false
@@ -42,7 +42,7 @@ class GenericTask < Task
         fail Caseflow::Error::ChildTaskAssignedToSameUser if parent.assigned_to_id == params[:assigned_to_id] &&
                                                              parent.assigned_to_type == params[:assigned_to_type]
 
-        parent.verify_user_access(current_user)
+        parent.verify_user_access!(current_user)
 
         child = create_child_task(parent, current_user, params)
         update_status(parent, params[:status])
