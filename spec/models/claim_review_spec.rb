@@ -568,7 +568,7 @@ describe ClaimReview do
         Generators::Contention.build(
           claim_id: end_product_establishment.reference_id,
           text: "decision text",
-          disposition: "DTA Error – PMRs"
+          disposition: HigherLevelReview::DTA_ERROR_PMR
         )
       end
 
@@ -576,7 +576,7 @@ describe ClaimReview do
         Generators::Contention.build(
           claim_id: end_product_establishment.reference_id,
           text: "another decision text",
-          disposition: "DTA Error – Fed Recs"
+          disposition: HigherLevelReview::DTA_ERROR_FED_RECS
         )
       end
 
@@ -584,7 +584,7 @@ describe ClaimReview do
         Generators::Contention.build(
           claim_id: end_product_establishment.reference_id,
           text: "Issue text",
-          disposition: "DTA Error – Exam/MO"
+          disposition: HigherLevelReview::DTA_ERROR_EXAM_MO
         )
       end
 
@@ -650,7 +650,7 @@ describe ClaimReview do
           )
         end
 
-        def verify_create_contents(reference_id, issues)
+        def verify_create_contentions(reference_id, issues)
           expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
             veteran_file_number: veteran.file_number,
             claim_id: reference_id,
@@ -703,9 +703,9 @@ describe ClaimReview do
               reference_id: supplemental_claim_end_product_establishment.reference_id
             )
 
-            verify_create_contents(
+            verify_create_contentions(
               supplemental_claim_end_product_establishment.reference_id,
-              [second_rating_request_issue, rating_request_issue]
+              [rating_request_issue, second_rating_request_issue]
             )
 
             # for rated issues, verify that this is called
@@ -762,7 +762,7 @@ describe ClaimReview do
               reference_id: supplemental_claim_end_product_establishment.reference_id
             )
 
-            verify_create_contents(
+            verify_create_contentions(
               supplemental_claim_end_product_establishment.reference_id,
               [non_rating_request_issue]
             )

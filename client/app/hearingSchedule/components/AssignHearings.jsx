@@ -10,6 +10,7 @@ import Table from '../../components/Table';
 import RoSelectorDropdown from './RoSelectorDropdown';
 import moment from 'moment';
 import { css } from 'glamor';
+import { COLORS } from '../../constants/AppConstants';
 
 const colorAOD = css({
   color: 'red'
@@ -19,6 +20,14 @@ const centralOfficeStaticEntry = [{
   label: 'Central',
   value: 'C'
 }];
+
+const sectionNavigationListStyling = css({
+  '& > li': {
+    backgroundColor: COLORS.GREY_BACKGROUND,
+    color: COLORS.PRIMARY,
+    borderWidth: 0
+  }
+});
 
 export default class AssignHearings extends React.Component {
 
@@ -47,18 +56,32 @@ export default class AssignHearings extends React.Component {
     return <div className="usa-width-one-fourth">
       <h3>Hearings to Schedule</h3>
       <h4>Available Hearing Days</h4>
-      <ul className="usa-sidenav-list">
+      <ul className="usa-sidenav-list" {...sectionNavigationListStyling}>
         {Object.values(this.props.upcomingHearingDays).slice(0, 9).
           map((hearingDay) => {
-            const availableSlots = hearingDay.totalSlots - Object.keys(hearingDay.hearings).length;
+            const { selectedHearingDay } = this.props;
+            const dateSelected = selectedHearingDay &&
+            (selectedHearingDay.hearingDate === hearingDay.hearingDate &&
+               selectedHearingDay.roomInfo === hearingDay.roomInfo);
+            const buttonColorSelected = css({
+              backgroundColor: COLORS.GREY_DARK,
+              color: COLORS.WHITE,
+              borderRadius: '0.1rem 0.1rem 0 0',
+              '&:hover': {
+                backgroundColor: COLORS.GREY_DARK,
+                color: COLORS.WHITE
+              }
+            });
+            const styling = dateSelected ? buttonColorSelected : '';
 
             return <li key={hearingDay.id} >
               <Button
+                styling={styling}
                 onClick={this.onSelectedHearingDayChange(hearingDay)}
                 linkStyling
               >
                 {`${moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}
-                ${this.roomInfo(hearingDay)} (${availableSlots} slots)`}
+                ${this.roomInfo(hearingDay)}`}
               </Button>
             </li>;
           })}
@@ -123,8 +146,8 @@ export default class AssignHearings extends React.Component {
 
     return <div className="usa-width-three-fourths">
       <h1>
-        {moment(selectedHearingDay.hearingDate).format('ddd M/DD/YYYY')}
-        {this.roomInfo(selectedHearingDay)} ({availableSlots} slots remaining)
+        {`${moment(selectedHearingDay.hearingDate).format('ddd M/DD/YYYY')}
+       ${this.roomInfo(selectedHearingDay)} (${availableSlots} slots remaining)`}
       </h1>
       <TabWindow
         name="scheduledHearings-tabwindow"

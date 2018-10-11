@@ -121,6 +121,20 @@ RSpec.describe LegacyTasksController, type: :controller do
         expect(body["task"]["data"]["attributes"]["appeal_id"]).to eq @appeal.id
       end
 
+      context "when judge does not have access to the appeal" do
+        it "should not be successful" do
+          params = {
+            "appeal_id": create(:legacy_appeal, vacols_case: FactoryBot.create(:case)).id,
+            "assigned_to_id": attorney.id
+          }
+
+          post :create, params: { tasks: params }
+          expect(response.status).to eq 400
+          body = JSON.parse(response.body)
+          expect(body["errors"].first["detail"]).to match(/Case already assigned/)
+        end
+      end
+
       context "when appeal is not found" do
         let(:params) do
           {
@@ -138,7 +152,7 @@ RSpec.describe LegacyTasksController, type: :controller do
       context "when attorney is not found" do
         let(:params) do
           {
-            "appeal_id": appeal.id,
+            "appeal_id": @appeal.id,
             "assigned_to_id": 7_777_777_777
           }
         end
@@ -214,7 +228,7 @@ RSpec.describe LegacyTasksController, type: :controller do
         end
 
         it "should not be successful" do
-          patch :update, params: { tasks: params, id: "3615398-2018-04-18" }
+          patch :update, params: { tasks: params, id: "#{@appeal.vacols_id}-2018-04-18" }
           expect(response.status).to eq 400
           response_body = JSON.parse(response.body)
           expect(response_body["errors"].first["detail"]).to eq "Assigned to can't be blank"

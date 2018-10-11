@@ -1,10 +1,23 @@
 describe JudgeCaseAssignmentToAttorney do
   let(:judge) { User.create(css_id: "CFS123", station_id: User::BOARD_STATION_ID) }
   let(:attorney) { User.create(css_id: "CFS456", station_id: User::BOARD_STATION_ID) }
-  let(:appeal) { LegacyAppeal.create(vacols_id: "123456") }
+  let(:vacols_case) { create(:case, bfcurloc: judge_staff.slogid) }
+  let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+
+  let!(:judge_staff) do
+    create(:staff, :judge_role, slogid: "BVABAWS", sdomainid: judge.css_id)
+  end
 
   before do
     allow_any_instance_of(User).to receive(:vacols_roles).and_return(["judge"])
+  end
+
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   context ".create" do
@@ -24,6 +37,16 @@ describe JudgeCaseAssignmentToAttorney do
       it "it is successful" do
         expect(QueueRepository).to receive(:assign_case_to_attorney!).once
         expect(subject.valid?).to eq true
+      end
+    end
+
+    context "when user does not have access" do
+      let(:appeal_id) { create(:legacy_appeal, vacols_case: create(:case)).id }
+      let(:assigned_by) { judge }
+      let(:assigned_to) { attorney }
+
+      it "should raise Caseflow::Error::UserRepositoryError" do
+        expect { subject }.to raise_error(Caseflow::Error::QueueRepositoryError)
       end
     end
 
@@ -60,7 +83,7 @@ describe JudgeCaseAssignmentToAttorney do
       )
     end
     context "when all required values are present" do
-      let(:task_id) { "361539D8-2018-04-18" }
+      let(:task_id) { "#{appeal.vacols_id}-2018-04-18" }
       let(:assigned_by) { judge }
       let(:assigned_to) { attorney }
 

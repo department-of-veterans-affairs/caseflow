@@ -10,13 +10,13 @@ import IssueCounter from '../../../intakeCommon/components/IssueCounter';
 import {
   completeIntake,
   setIssueSelected,
-  addNonRatedIssue,
+  newNonRatedIssue,
   setIssueCategory,
   setIssueDescription,
   setIssueDecisionDate
 } from '../../actions/ama';
 import { PAGE_PATHS, INTAKE_STATES } from '../../constants';
-import { REQUEST_STATE } from '../../../intakeCommon/constants';
+import { FORM_TYPES, REQUEST_STATE } from '../../../intakeCommon/constants';
 import { getIntakeStatus, issueCountSelector } from '../../selectors';
 import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
 
@@ -41,7 +41,7 @@ class Finish extends React.PureComponent {
     }
 
     return <div>
-      <h1>Identify issues on { veteranName }'s Notice of Disagreement (VA Form 10182)</h1>
+      <h1>Identify issues on { veteranName }'s { FORM_TYPES.APPEAL.name }</h1>
 
       { requestState === REQUEST_STATE.FAILED &&
         <CompleteIntakeErrorAlert
@@ -66,7 +66,7 @@ const NonRatedIssues = connect(
     nonRatedIssues: appeal.nonRatedIssues
   }),
   (dispatch) => bindActionCreators({
-    addNonRatedIssue,
+    newNonRatedIssue,
     setIssueCategory,
     setIssueDescription,
     setIssueDecisionDate
@@ -106,7 +106,7 @@ class FinishNextButton extends React.PureComponent {
       name="finish-intake"
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-      disabled={!this.props.issueCount}
+      disabled={!this.props.issueCount && !this.props.addedIssues}
     >
       Establish appeal
     </Button>;

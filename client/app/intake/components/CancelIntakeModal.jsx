@@ -115,30 +115,29 @@ class CancelIntakeModal extends BaseForm {
       return <Redirect to="/intake_cancellations/" />;
     }
 
-    return <div>
-      <Modal
-        buttons={[
-          { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
-            name: 'Close',
-            onClick: closeHandler
-          },
-          { classNames: ['usa-button', 'usa-button-secondary', 'confirm-cancel'],
-            name: 'Cancel intake',
-            onClick: this.handleSubmitCancel
-          }
-        ]}
-        visible
-        closeHandler={closeHandler}
-        title="Cancel Intake?">
-        <RadioField
-          name="Please select the reason you are canceling this intake."
-          options={cancelReasonOptions}
-          value={this.state.cancelReasonValue}
-          required
-          onChange={this.onCancellationReasonChange}
-          errorMessage={this.state.
-            intakeCancellationForm.cancelReason.errorMessage} />
-        {this.state.shouldShowOtherReason &&
+    return <Modal
+      buttons={[
+        { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
+          name: 'Close',
+          onClick: closeHandler
+        },
+        { classNames: ['usa-button', 'usa-button-secondary', 'confirm-cancel'],
+          name: 'Cancel intake',
+          onClick: this.handleSubmitCancel
+        }
+      ]}
+      visible
+      closeHandler={closeHandler}
+      title="Cancel Intake?">
+      <RadioField
+        name="Please select the reason you are canceling this intake."
+        options={cancelReasonOptions}
+        value={this.state.cancelReasonValue}
+        required
+        onChange={this.onCancellationReasonChange}
+        errorMessage={this.state.
+          intakeCancellationForm.cancelReason.errorMessage} />
+      {this.state.shouldShowOtherReason &&
               <TextareaField
                 name="Tell us more about your situation."
                 required
@@ -148,9 +147,8 @@ class CancelIntakeModal extends BaseForm {
                   intakeCancellationForm.cancelOther.errorMessage}
                 value={this.state.cancelOtherValue}
               />
-        }
-      </Modal>
-    </div>;
+      }
+    </Modal>;
   }
 }
 
