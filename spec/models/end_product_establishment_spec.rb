@@ -370,7 +370,7 @@ describe EndProductEstablishment do
     end
 
     let(:reference_id) { "stevenasmith" }
-    let(:contention_ref_id) { SecureRandom.random_number(1_000_000) }
+    let(:contention_ref_id) { 1234 }
 
     let(:for_object) do
       RequestIssue.new(
