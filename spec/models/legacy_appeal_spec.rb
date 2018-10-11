@@ -57,6 +57,20 @@ describe LegacyAppeal do
     end
   end
 
+  context "#attorney_case_reviews" do
+    subject { appeal.attorney_case_reviews }
+
+    let(:vacols_case) do
+      create(:case, :assigned, decass_count: 1, user: create(:user), document_id: "02255-00000002")
+    end
+    let!(:decass1) { create(:decass, defolder: vacols_case.bfkey, dedocid: nil) }
+    let!(:decass2) { create(:decass, defolder: vacols_case.bfkey, dedocid: "02255-00000002") }
+
+    it "returns all documents associated with the case" do
+      expect(subject.size).to eq 2
+    end
+  end
+
   context "#nod" do
     let(:vacols_case) do
       create(:case_with_nod)

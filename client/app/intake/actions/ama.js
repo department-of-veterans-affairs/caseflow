@@ -143,10 +143,22 @@ export const setIssueSelected = (profileDate, issueId, isSelected) => ({
   }
 });
 
-export const removeIssue = (issue) => ({
+export const removeIssue = (index) => ({
   type: ACTIONS.REMOVE_ISSUE,
-  payload: { issue }
+  payload: { index }
 });
+
+export const addUnidentifiedIssue = (description, notes) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.ADD_ISSUE,
+    payload: {
+      category: 'Unknown issue category',
+      isUnidentified: true,
+      description,
+      notes
+    }
+  });
+};
 
 export const addRatedIssue = (issueId, ratings, isRated, notes) => (dispatch) => {
   let foundDate = _.filter(ratings, (ratingDate) => _.some(ratingDate.issues, { reference_id: issueId }));
