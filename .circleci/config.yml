@@ -5,7 +5,8 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:ruby-2.5.1
+      # - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:ruby-2.5.1
+      - image: circleci/ruby:2.5.1-node-browsers
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
@@ -30,6 +31,11 @@ jobs:
     resource_class: large
     steps:
       - checkout
+
+      - setup_remote_docker:
+         docker_layer_caching: true
+
+      - run: docker build .
 
       - run:
           name: Setup testfiles directory
@@ -142,7 +148,8 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:ruby-2.5.1
+      # - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:ruby-2.5.1
+      - image: circleci/ruby:2.5.1-node-browsers
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
     steps:
@@ -204,7 +211,8 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:ruby-2.5.1
+      # - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:ruby-2.5.1
+      - image: circleci/ruby:2.5.1-node-browsers
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - NODE_ENV: test
