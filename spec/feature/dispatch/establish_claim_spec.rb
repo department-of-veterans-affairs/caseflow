@@ -281,11 +281,10 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
     let!(:task) do
       create(:establish_claim,
-        created_at: 3.days.ago,
-        prepared_at: Date.yesterday,
-        appeal: appeal_remand,
-        aasm_state: "unassigned"
-      )
+             created_at: 3.days.ago,
+             prepared_at: Date.yesterday,
+             appeal: appeal_remand,
+             aasm_state: "unassigned")
     end
 
     let(:ep_already_exists_error) do
@@ -537,8 +536,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
                created_at: 3.days.ago,
                prepared_at: Date.yesterday,
                appeal: appeal_full_grant,
-               aasm_state: "unassigned"
-        )
+               aasm_state: "unassigned")
       end
 
       scenario "Establish a new claim with special issue routed to national office" do
@@ -660,8 +658,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
                created_at: 3.days.ago,
                prepared_at: Date.yesterday,
                appeal: appeal_partial_grant,
-               aasm_state: "unassigned"
-        )
+               aasm_state: "unassigned")
       end
 
       scenario "Establish a new claim routed to ARC",
@@ -739,7 +736,6 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         # Select special issues
         click_label("riceCompliance")
-        click_label("privateAttorneyOrAgent")
 
         # Move on to note page
         safe_click "#button-Route-claim"
@@ -758,10 +754,10 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_content("Cannot edit end product")
 
         # Make sure note page contains the special issues
-        expect(find_field("VBMS Note").value).to have_content("Private Attorney or Agent, and Rice Compliance")
+        expect(find_field("VBMS Note").value).to have_content("Rice Compliance")
 
         # Validate special issue text within vacols note
-        expect(page).to have_content("Private Attorney or Agent, Rice Compliance")
+        expect(page).to have_content("Rice Compliance")
 
         # Validate note page shows correct decision type for claim in vbms note
         expect(find_field("VBMS Note").value).to have_content("The BVA Partial Grant decision")
@@ -782,8 +778,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         expect(page).to have_content("Success!")
         expect(page).to have_content("VACOLS Updated: Changed Location to 50")
-        expect(page).to have_content("Added VBMS Note on Private Attorney or Agent; Rice Compliance")
-        expect(page).to have_content("VACOLS Updated: Added Diary Note on Private Attorney or Agent; Rice Compliance")
+        expect(page).to have_content("Added VBMS Note on Rice Compliance")
+        expect(page).to have_content("VACOLS Updated: Added Diary Note on Rice Compliance")
 
         expect(task.appeal.reload.rice_compliance).to be_truthy
         expect(task.reload.completion_status).to eq("routed_to_ro")
@@ -794,7 +790,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             payee_code: "00",
             predischarge: false,
             claim_type: "Claim",
-            station_of_jurisdiction: "313",
+            station_of_jurisdiction: "321",
             date: task.appeal.decision_date.to_date,
             end_product_modifier: "070",
             end_product_label: "Remand with BVA Grant (070)",
