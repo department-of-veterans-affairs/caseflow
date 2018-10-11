@@ -48,10 +48,11 @@ class AssignToView extends React.Component<Props, ViewState> {
     // Autofill the instruction field if assigning to a person on the team. Since they will
     // probably want the instructions from the assigner.
     const instructions = this.props.task.instructions;
+    const instructionLength = instructions ? instructions.length : 0;
     let existingInstructions = '';
 
-    if (instructions.length > 0 && !this.props.isTeamAssign) {
-      existingInstructions = instructions[instructions.length - 1];
+    if (instructions && instructionLength > 0 && !this.props.isTeamAssign) {
+      existingInstructions = instructions[instructionLength - 1];
     }
 
     this.state = {
