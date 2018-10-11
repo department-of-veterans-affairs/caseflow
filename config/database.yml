@@ -53,12 +53,14 @@ stubbed_vacols:
 
 # Docker setup
 development_vacols:
- adapter: oracle_enhanced
- host: VACOLS_DB-development
- port: 1522
- username: VACOLS
- password: VACOLS
- database: BVAP.localdomain
+  adapter: oracle_enhanced
+  username: VACOLS
+  password: VACOLS
+  database: "(DESCRIPTION=
+    (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=VACOLS_DB-development)(PORT=1521)))
+    (RECV_TIMEOUT=120)(SEND_TIMEOUT=5)
+    (CONNECT_DATA=(SERVICE_NAME=BVAP.localdomain))
+  )"
 
 demo_vacols:
   adapter: sqlite3

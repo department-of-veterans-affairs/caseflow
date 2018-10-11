@@ -1,7 +1,5 @@
 #!/bin/bash
-
 echo "Building Caseflow Docker App.."
-
 
 # Create temp folders
 if [ ! -d oracle_libs ]; then
@@ -36,13 +34,10 @@ fi
 
 echo "\t Creating Caseflow App Docker Image"
 # Build Docker
-cd ..
-docker build -t caseflow ../
+cd ../../
+#docker build -t caseflow .
 
 echo "\t Cleaning Up..."
-# Clean Up
-rm -rf instantclient_12_2/
-#rm instant-client-12-1.tar.gz
-#rm -rf ./oracle_libs
+rm -rf docker-bin/oracle_libs/
 
 echo "\t Building Caseflow Docker App: Completed"

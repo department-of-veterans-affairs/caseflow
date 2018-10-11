@@ -7,7 +7,7 @@ services:
     image: vacols_db
     tty: true
     stdin_open: true
-    command: bash -c "/home/oracle/setup/dockerInit.sh"
+    command: bash -c "/home/oracle/setup/dockerInitWithSchema.sh"
     volumes:
       - "u01_test:/u01/app/oracle/oradata"
       - "ORCL_test:/ORCL"
@@ -30,6 +30,7 @@ services:
       - "1522:1521"
 
   appeals-redis:
+    container_name: appeals-redis
     image: redis:2.8.23
     ports:
       - "6379:6379"
