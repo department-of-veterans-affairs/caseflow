@@ -12,7 +12,12 @@ import { FORM_TYPES } from '../constants';
 import { formatDate } from '../../util/DateUtil';
 import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 import Table from '../../components/Table';
-import { toggleAddIssuesModal, toggleNonRatedIssueModal, removeIssue, toggleUnidentifiedIssuesModal } from '../actions/addIssues';
+import {
+  toggleAddIssuesModal,
+  toggleNonRatedIssueModal,
+  removeIssue,
+  toggleUnidentifiedIssuesModal
+} from '../actions/addIssues';
 
 class AddIssuesPage extends React.PureComponent {
   render() {
@@ -124,6 +129,7 @@ export const IntakeAddIssuesPage = connect(
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
     toggleNonRatedIssueModal,
+    toggleUnidentifiedIssuesModal,
     removeIssue
   }, dispatch)
 )(AddIssuesPage);
@@ -133,7 +139,6 @@ export const EditAddIssuesPage = connect(
     intakeForms: {
       higher_level_review: state,
       supplemental_claim: state,
-      appeal: state
     },
     formType: state.formType,
     veteran: state.veteran,

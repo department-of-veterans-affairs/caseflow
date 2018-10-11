@@ -13,6 +13,7 @@ export const mapDataToInitialState = function(props = {}) {
     ...serverIntake,
     addIssuesModalVisible: false,
     nonRatedIssueModalVisible: false,
+    unidentifiedIssuesModalVisible: false,
     addedIssues: formatRequestIssues(serverIntake.requestIssues),
     originalIssues: formatRequestIssues(serverIntake.requestIssues),
     requestStatus: {

@@ -17,9 +17,9 @@ export const toggleUnidentifiedIssuesModal = () => ({
   type: ACTIONS.TOGGLE_UNIDENTIFIED_ISSUES_MODAL
 });
 
-export const removeIssue = (issue) => ({
+export const removeIssue = (index) => ({
   type: ACTIONS.REMOVE_ISSUE,
-  payload: { issue }
+  payload: { index }
 });
 
 export const addUnidentifiedIssue = (description, notes) => (dispatch) => {
