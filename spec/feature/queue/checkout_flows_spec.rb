@@ -543,7 +543,7 @@ RSpec.feature "Checkout flows" do
 
         expect(page).to have_content(COPY::JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
         decass = VACOLS::Decass.find_by(defolder: appeal.vacols_id, deadtim: Time.zone.today)
-        expect(decass.decomp).to eq(Time.zone.today)
+        expect(decass.decomp).to eq(VacolsHelper.local_date_with_utc_timezone)
         expect(decass.deoq).to eq("3")
       end
     end

@@ -1,7 +1,7 @@
 class IssuesController < ApplicationController
   before_action :validate_access_to_task
 
-  rescue_from ActiveRecord::RecordInvalid, Caseflow::Error::VacolsRepositoryError do |e|
+  rescue_from ActiveRecord::RecordInvalid do |e|
     Rails.logger.error "IssuesController failed: #{e.message}"
     Raven.capture_exception(e)
     render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
@@ -48,7 +48,7 @@ class IssuesController < ApplicationController
   end
 
   def validate_access_to_task
-    current_user.access_to_legacy_task?(appeal.vacols_id)
+    current_user.fail_if_no_access_to_legacy_task!(appeal.vacols_id)
   end
 
   def appeal

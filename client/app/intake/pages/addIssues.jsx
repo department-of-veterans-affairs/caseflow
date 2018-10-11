@@ -4,13 +4,15 @@ import { connect } from 'react-redux';
 import React from 'react';
 
 import AddIssuesModal from '../components/AddIssuesModal';
+import NonRatedIssueModal from '../components/NonRatedIssueModal';
+import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
 import Button from '../../components/Button';
 import { FORM_TYPES } from '../../intakeCommon/constants';
 import { formatDate } from '../../util/DateUtil';
 import { formatAddedIssues, getAddIssuesFields } from '../util';
 
 import Table from '../../components/Table';
-import { toggleAddIssuesModal } from '../actions/common';
+import { toggleAddIssuesModal, toggleNonRatedIssueModal, toggleUnidentifiedIssuesModal } from '../actions/common';
 import { removeIssue } from '../actions/ama';
 
 class AddIssues extends React.PureComponent {
@@ -31,15 +33,15 @@ class AddIssues extends React.PureComponent {
       return <div className="issues">
         <div>
           { issues.map((issue, index) => {
-            return <div className="issue" key={issue.referenceId}>
-              <div className="issue-desc">
-                <span className="issue-num">{index + 1}.</span>
+            return <div className="issue" key={`issue-${index}`}>
+              <div className={`issue-desc ${issue.isUnidentified ? 'unidentified-issue' : ''}`}>
+                <span className="issue-num">{index + 1}.&nbsp;</span>
                 {issue.text}
-                <span className="issue-notes">{issue.notes}</span>
+                { issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span> }
               </div>
               <div className="issue-action">
                 <Button
-                  onClick={() => this.props.removeIssue(issue)}
+                  onClick={() => this.props.removeIssue(index)}
                   classNames={['cf-btn-link', 'remove-issue']}
                 >
                   <i className="fa fa-trash-o" aria-hidden="true"></i>Remove
@@ -86,6 +88,14 @@ class AddIssues extends React.PureComponent {
         intakeData={intakeData}
         closeHandler={this.props.toggleAddIssuesModal} />
       }
+      { intakeData.nonRatedIssueModalVisible && <NonRatedIssueModal
+        intakeData={intakeData}
+        closeHandler={this.props.toggleNonRatedIssueModal} />
+      }
+      { intakeData.unidentifiedIssuesModalVisible && <UnidentifiedIssuesModal
+        intakeData={intakeData}
+        closeHandler={this.props.toggleUnidentifiedIssuesModal} />
+      }
       <h1 className="cf-txt-c">Add Issues</h1>
 
       <Table
@@ -108,6 +118,8 @@ export default connect(
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
+    toggleNonRatedIssueModal,
+    toggleUnidentifiedIssuesModal,
     removeIssue
   }, dispatch)
 )(AddIssues);

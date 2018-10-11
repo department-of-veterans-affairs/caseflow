@@ -441,8 +441,8 @@ RSpec.feature "Supplemental Claim Intake" do
       find("label", text: "Left knee granted").click
       safe_click ".add-issue"
 
-      expect(page).to have_content("1.Left knee granted")
-
+      expect(page).to have_content("1. Left knee granted")
+      expect(page).to_not have_content("Notes:")
       safe_click ".remove-issue"
 
       expect(page).not_to have_content("Left knee granted")
@@ -453,7 +453,7 @@ RSpec.feature "Supplemental Claim Intake" do
       fill_in "Notes", with: "I am an issue note"
       safe_click ".add-issue"
 
-      expect(page).to have_content("1.Left knee granted")
+      expect(page).to have_content("1. Left knee granted")
       expect(page).to have_content("I am an issue note")
 
       # clicking add issue again should show a disabled radio button for that same rating
@@ -462,7 +462,28 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to have_content("Does issue 2 match any of these issues")
       expect(page).to have_content("Left knee granted (already selected for issue 1)")
       expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
-      safe_click ".close-modal"
+
+      # Add non-rated issue
+      safe_click ".no-matching-issues"
+      expect(page).to have_content("Does issue 2 match any of these issue categories?")
+      expect(page).to have_button("Add this issue", disabled: true)
+      fill_in "Issue category", with: "Active Duty Adjustments"
+      find("#issue-category").send_keys :enter
+      fill_in "Issue description", with: "Description for Active Duty Adjustments"
+      fill_in "Decision date", with: "04/25/2018"
+      expect(page).to have_button("Add this issue", disabled: false)
+      safe_click ".add-issue"
+      expect(page).to have_content("2 issues")
+
+      # add unidentified issue
+      safe_click "#button-add-issue"
+      safe_click ".no-matching-issues"
+      safe_click ".no-matching-issues"
+      expect(page).to have_content("Describe the issue to mark it as needing further review.")
+      fill_in "Transcribe the issue as it's written on the form", with: "This is an unidentified issue"
+      safe_click ".add-issue"
+      expect(page).to have_content("3 issues")
+      expect(page).to have_content("This is an unidentified issue")
 
       safe_click "#button-finish-intake"
 
@@ -481,21 +502,35 @@ RSpec.feature "Supplemental Claim Intake" do
       )).to_not be_nil
 
       end_product_establishment = EndProductEstablishment.find_by(
-        source_type: "SupplementalClaim",
-        source_id: supplemental_claim.id,
+        source: supplemental_claim,
         veteran_file_number: veteran.file_number,
         code: "040SCR",
         claimant_participant_id: "901987"
       )
       expect(end_product_establishment).to_not be_nil
 
+      non_rating_end_product_establishment = EndProductEstablishment.find_by(
+        source: supplemental_claim,
+        veteran_file_number: veteran.file_number,
+        code: "040SCNR",
+        claimant_participant_id: "901987"
+      )
+      expect(non_rating_end_product_establishment).to_not be_nil
+
       expect(RequestIssue.find_by(
-               review_request_type: "SupplementalClaim",
-               review_request_id: supplemental_claim.id,
+               review_request: supplemental_claim,
                rating_issue_reference_id: "abc123",
                description: "Left knee granted",
                end_product_establishment_id: end_product_establishment.id,
                notes: "I am an issue note"
+      )).to_not be_nil
+
+      expect(RequestIssue.find_by(
+               review_request: supplemental_claim,
+               issue_category: "Active Duty Adjustments",
+               description: "Description for Active Duty Adjustments",
+               decision_date: 1.month.ago.to_date,
+               end_product_establishment_id: non_rating_end_product_establishment.id
       )).to_not be_nil
     end
 
