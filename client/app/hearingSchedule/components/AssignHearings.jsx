@@ -41,7 +41,7 @@ export default class AssignHearings extends React.Component {
   };
 
   roomInfo = (hearingDay) => {
-    let room = hearingDay.roomInfo;
+    let room = hearingDay.room_info;
 
     if (hearingDay.regionalOffice === 'St. Petersburg, FL') {
       return room;
@@ -52,6 +52,7 @@ export default class AssignHearings extends React.Component {
     return room = '';
 
   }
+
   formatAvailableHearingDays = () => {
     return <div className="usa-width-one-fourth">
       <h3>Hearings to Schedule</h3>
@@ -100,9 +101,18 @@ export default class AssignHearings extends React.Component {
     return docketType;
   }
 
+  appellantName = (hearingDay) => {
+    if (hearingDay.firstName && hearingDay.lastName) {
+      return `${hearingDay.firstName}, ${hearingDay.lastName} | ${hearingDay.id}`;
+    }
+
+    return `${hearingDay.id}`;
+
+  }
+
   tableRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
-      caseDetails: veteran.name,
+      caseDetails: this.appellantName(veteran),
       type: this.veteranTypeColor(veteran.type),
       docketNumber: veteran.docketNumber,
       location: this.props.selectedRegionalOffice.value === 'C' ? 'Washington DC' : veteran.location,

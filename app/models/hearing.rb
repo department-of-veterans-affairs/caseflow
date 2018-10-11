@@ -142,7 +142,6 @@ class Hearing < ApplicationRecord
         :veteran_name,
         :veteran_mi_formatted,
         :appellant_last_first_mi,
-        :appellant_last_first,
         :appellant_mi_formatted,
         :veteran_fi_last_formatted,
         :vbms_id,
