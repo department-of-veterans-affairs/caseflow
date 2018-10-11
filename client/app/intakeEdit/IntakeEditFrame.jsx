@@ -10,7 +10,6 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_PATHS } from './constants';
 import { EditAddIssuesPage } from '../intake/pages/addIssues';
 import CancelPage from './pages/cancelled';
-import SelectIssuesPage, { SelectIssuesButtons } from './pages/selectIssues';
 import { css } from 'glamor';
 import CancelEditButton from './components/CancelEditButton';
 
@@ -22,8 +21,7 @@ export default class IntakeEditFrame extends React.PureComponent {
   render() {
     const {
       claimId,
-      veteranFileNumber,
-      veteranFormName,
+      veteran,
       formType
     } = this.props.serverIntake;
 
@@ -31,8 +29,8 @@ export default class IntakeEditFrame extends React.PureComponent {
 
     const Router = this.props.router || BrowserRouter;
 
-    const topMessage = veteranFileNumber ?
-      `${veteranFormName} (${veteranFileNumber})` : null;
+    const topMessage = veteran.fileNumber ?
+      `${veteran.formName} (${veteran.fileNumber})` : null;
 
     const basename = `/${formType}s/${claimId}/edit/`;
 
@@ -68,11 +66,6 @@ export default class IntakeEditFrame extends React.PureComponent {
                 exact
                 path={PAGE_PATHS.BEGIN}
                 component={CancelEditButton}
-              />
-              <Route
-                exact
-                path={PAGE_PATHS.SELECT_ISSUES}
-                component={SelectIssuesButtons}
               />
             </AppSegment>
           </AppFrame>

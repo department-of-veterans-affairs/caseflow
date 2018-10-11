@@ -7,7 +7,7 @@ import Modal from '../../components/Modal';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
-import { NON_RATED_ISSUE_CATEGORIES } from '../../intakeCommon/constants';
+import { NON_RATED_ISSUE_CATEGORIES } from '../constants';
 
 class NonRatedIssueModal extends React.Component {
   constructor(props) {

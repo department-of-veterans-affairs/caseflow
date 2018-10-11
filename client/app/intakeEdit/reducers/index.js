@@ -1,14 +1,12 @@
-import { ACTIONS } from '../../intake/constants';
-import { applyCommonReducers } from '../../intake/reducers/common';
-import { REQUEST_STATE } from '../../intakeCommon/constants';
-import { update } from '../../util/ReducerUtil';
-import { formatRatings, getSelection } from '../../intakeCommon/util';
-import { formatRequestIssues } from '../../intake/util/issues';
 import _ from 'lodash';
+import { ACTIONS } from '../constants';
+import { applyCommonReducers } from '../../intake/reducers/common';
+import { REQUEST_STATE } from '../../intake/constants';
+import { update } from '../../util/ReducerUtil';
+import { formatRequestIssues, formatRatings, getSelection } from '../../intake/util/issues';
 
 export const mapDataToInitialState = function(props = {}) {
   const { serverIntake } = props;
-
   serverIntake.ratings = formatRatings(serverIntake.ratings)
 
   return {
@@ -16,10 +14,7 @@ export const mapDataToInitialState = function(props = {}) {
     addIssuesModalVisible: false,
     nonRatedIssueModalVisible: false,
     addedIssues: formatRequestIssues(serverIntake.requestIssues),
-
-    // ratings: formatRatings(props.review.ratings, props.review.rated_request_issues),
-    // originalSelection: getSelection(ratings),
-    // ratingsChanged: false,
+    originalIssues: formatRequestIssues(serverIntake.requestIssues),
     requestStatus: {
       requestIssuesUpdate: REQUEST_STATE.NOT_STARTED
     },
@@ -28,31 +23,9 @@ export const mapDataToInitialState = function(props = {}) {
 };
 
 export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
-  let newRatings;
   let serverRatings;
-  let ratingsChanged;
-
-  console.log(state)
 
   switch (action.type) {
-  case ACTIONS.SET_ISSUE_SELECTED:
-    newRatings = update(state.ratings, {
-      [action.payload.profileDate]: {
-        issues: {
-          [action.payload.issueId]: {
-            isSelected: {
-              $set: action.payload.isSelected
-            }
-          }
-        }
-      }
-    });
-    ratingsChanged = !_.isEqual(getSelection(newRatings), state.originalSelection);
-
-    return update(state, {
-      ratings: { $set: newRatings },
-      ratingsChanged: { $set: ratingsChanged }
-    });
   case ACTIONS.REQUEST_ISSUES_UPDATE_START:
     return update(state, {
       requestStatus: {

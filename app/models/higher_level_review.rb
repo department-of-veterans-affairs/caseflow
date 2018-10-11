@@ -33,10 +33,8 @@ class HigherLevelReview < ClaimReview
       claimant: claimant_participant_id,
       claimantNotVeteran: claimant_not_veteran,
       payeeCode: payee_code,
-      issues: request_issues,
       ratings: cached_serialized_timely_ratings,
-      requestIssues: request_issues.map(&:ui_hash),
-      ratedRequestIssues: request_issues.rated.map(&:ui_hash)
+      requestIssues: request_issues.map(&:ui_hash)
     }
   end
 

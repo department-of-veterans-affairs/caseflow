@@ -6,8 +6,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { doFileNumberSearch, setFileNumberSearch } from '../actions/intake';
-import { PAGE_PATHS, INTAKE_STATES } from '../constants';
-import { REQUEST_STATE } from '../../intakeCommon/constants';
+import { PAGE_PATHS, INTAKE_STATES, REQUEST_STATE } from '../constants';
 import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
 

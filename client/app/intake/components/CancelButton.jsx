@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from '../../components/Button';
 import { toggleCancelModal } from '../actions/intake';
-import { REQUEST_STATE } from '../../intakeCommon/constants';
+import { REQUEST_STATE } from '../constants';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 

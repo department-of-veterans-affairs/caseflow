@@ -17,7 +17,7 @@ import FinishPage, { FinishButtons } from './pages/finish';
 import { IntakeAddIssuesPage } from './pages/addIssues';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
 import { PAGE_PATHS } from './constants';
-import { REQUEST_STATE } from '../intakeCommon/constants';
+import { REQUEST_STATE } from './constants';
 import { toggleCancelModal, submitCancel } from './actions/intake';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { css } from 'glamor';
