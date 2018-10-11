@@ -99,6 +99,39 @@ describe Task do
     end
   end
 
+  context "#can_be_accessed_by_user?" do
+    subject { task.can_be_accessed_by_user?(user) }
+
+    context "when user is an assignee" do
+      let(:user) { create(:user) }
+      let(:task) { create(:task, type: "Task", assigned_to: user) }
+
+      it { is_expected.to be_truthy }
+    end
+
+    context "when user is a task parent assignee" do
+      let(:user) { create(:user) }
+      let(:parent) { create(:task, type: "Task", assigned_to: user) }
+      let(:task) { create(:task, type: "Task", parent: parent) }
+
+      it { is_expected.to be_truthy }
+    end
+
+    context "when user is any judge" do
+      let(:user) { create(:user, css_id: "BVABDANIEL") }
+      let(:task) { create(:task, type: "Task", assigned_to: user) }
+
+      it { is_expected.to be_truthy }
+    end
+
+    context "when user does not have access" do
+      let(:user) { create(:user) }
+      let(:task) { create(:task, type: "Task", assigned_to: create(:user)) }
+
+      it { is_expected.to be(false) }
+    end
+  end
+
   context "#prepared_by_display_name" do
     let(:task) { create(:task, type: "Task") }
 
@@ -140,6 +173,40 @@ describe Task do
 
       it "should return the most recent attorney case review" do
         expect(task.latest_attorney_case_review).to eq(attorney_case_reviews.first)
+      end
+    end
+  end
+
+  describe "#assignable_users" do
+    let(:organization) { create(:organization, name: "Organization") }
+    let(:users) { create_list(:user, 3) }
+
+    before do
+      allow(organization).to receive(:members).and_return(users)
+    end
+
+    context "when assigned_to is an organization" do
+      let(:task) { create(:generic_task, assigned_to: organization) }
+
+      it "should return all members" do
+        expect(task.assignable_users).to match_array(users)
+      end
+    end
+
+    context "when assigned_to's parent is an organization" do
+      let(:parent) { create(:generic_task, assigned_to: organization) }
+      let(:task) { create(:generic_task, assigned_to: users.first, parent: parent) }
+
+      it "should return all members except user" do
+        expect(task.assignable_users).to match_array(users[1..users.length - 1])
+      end
+    end
+
+    context "when assigned_to is a user" do
+      let(:task) { create(:generic_task, assigned_to: users.first) }
+
+      it "should return all members except user" do
+        expect(task.assignable_users).to match_array([])
       end
     end
   end

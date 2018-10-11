@@ -72,4 +72,36 @@ describe Organization do
       end
     end
   end
+
+  describe ".assignable" do
+    let!(:organization) { create(:organization, name: "Test") }
+    let!(:other_organization) { create(:organization, name: "Org") }
+
+    context "when current task is assigned to a user" do
+      let(:user) { create(:user) }
+      let(:task) { create(:generic_task, assigned_to: user) }
+
+      it "returns a list without that organization" do
+        expect(Organization.assignable(task)).to match_array([organization, other_organization])
+      end
+    end
+
+    context "when current task is assigned to an organization" do
+      let(:task) { create(:generic_task, assigned_to: organization) }
+
+      it "returns a list without that organization" do
+        expect(Organization.assignable(task)).to eq([other_organization])
+      end
+    end
+
+    context "when current task is assigned to a user and its parent is assigned to a user to an organization" do
+      let(:user) { create(:user) }
+      let(:parent) { create(:generic_task, assigned_to: organization) }
+      let(:task) { create(:generic_task, assigned_to: user, parent: parent) }
+
+      it "returns a list without that organization" do
+        expect(Organization.assignable(task)).to eq([other_organization])
+      end
+    end
+  end
 end

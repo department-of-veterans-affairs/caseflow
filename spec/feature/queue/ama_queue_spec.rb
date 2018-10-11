@@ -189,6 +189,56 @@ RSpec.feature "AmaQueue" do
       end
     end
 
+    context "when user is part of translation" do
+      let!(:user) { User.authenticate!(user: create(:user, roles: ["Reader"], full_name: "Translation User")) }
+      let!(:staff) { FactoryBot.create(:staff, user: user, sdept: "TRANS", sattyid: nil) }
+      let!(:translation_organization) { Organization.create!(name: "Translation", url: "translation") }
+      let!(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
+
+      let!(:translation_task) do
+        create(
+          :generic_task,
+          :in_progress,
+          assigned_to: translation_organization,
+          assigned_by: judge_user,
+          parent: parent_task,
+          appeal: appeals.first
+        )
+      end
+
+      scenario "assign case to self" do
+        visit "/organizations/#{translation_organization.url}"
+
+        click_on "Pal Smith"
+
+        find(".Select-control", text: "Select an action").click
+        find("div", class: "Select-option", text: "Assign to person").click
+
+        find(".Select-control", text: "Select a user").click
+        find("div", class: "Select-option", text: user.full_name).click
+        click_on "Submit"
+
+        expect(page).to have_content("Task assigned to person")
+        expect(translation_task.reload.status).to eq("on_hold")
+
+        # On hold tasks should not be visible on the case details screen
+        # expect(page).to_not have_content("Actions")
+
+        click_on "Caseflow"
+
+        click_on "Pal Smith"
+
+        find(".Select-control", text: "Select an action").click
+        find("div", class: "Select-option", text: "Assign to team").click
+
+        find(".Select-control", text: "Select a team").click
+        find("div", class: "Select-option", text: other_organization.name).click
+        click_on "Submit"
+
+        expect(page).to have_content("Task assigned to team")
+      end
+    end
+
     context "when user is a vso" do
       let!(:user) do
         User.authenticate!(user: create(:user, roles: ["VSO"]))
@@ -249,9 +299,9 @@ RSpec.feature "AmaQueue" do
       end
 
       scenario "when searching for cases" do
-        visit "/organizations/#{url}"
+        visit "/search"
 
-        fill_in "searchBar", with: veteran.file_number
+        fill_in "searchBarEmptyList", with: veteran.file_number
         click_on "Search"
 
         expect(page).to have_content(appeals.first.docket_number)

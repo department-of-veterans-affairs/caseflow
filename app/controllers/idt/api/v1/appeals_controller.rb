@@ -17,6 +17,10 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     render(json: { message: e.message }, status: 400)
   end
 
+  rescue_from ActiveRecord::RecordNotFound do |_e|
+    render(json: { message: "Record not found" }, status: 404)
+  end
+
   def list
     if file_number.present?
       render json: json_appeals(appeals_by_file_number)
@@ -26,19 +30,22 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   end
 
   def details
-    return render json: { message: "Appeal not found" }, status: 404 unless appeal
     render json: json_appeal_details
   end
 
   def outcode
     BvaDispatchTask.outcode(appeal, outcode_params, user)
-    render json: json_appeal_details
+    render json: { message: "Success!" }
   end
 
   private
 
   def tasks_assigned_to_user
-    tasks = LegacyWorkQueue.tasks_with_appeals(user, role)[0].select { |task| task.appeal.active? }
+    tasks = if user.attorney_in_vacols? || user.judge_in_vacols?
+              LegacyWorkQueue.tasks_with_appeals(user, role)[0].select { |task| task.appeal.active? }
+            else
+              []
+            end
 
     if feature_enabled?(:idt_ama_appeals)
       tasks += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold])

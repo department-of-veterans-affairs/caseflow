@@ -70,7 +70,7 @@ class SeedDB
 
   def create_org_queue_user
     q = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER", full_name: "Org Q User")
-    FactoryBot.create(:staff, user: q, sdept: "TRANS")
+    FactoryBot.create(:staff, user: q, sdept: "TRANS", sattyid: nil)
   end
 
   def create_bva_dispatch_user_with_tasks
@@ -232,58 +232,68 @@ class SeedDB
         FactoryBot.build(:claimant, participant_id: "OTHER_CLAIMANT")
       ],
       veteran_file_number: "701305078",
+      docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 3, description: "Head trauma")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       veteran_file_number: "783740847",
+      docket_type: "evidence_submission",
       request_issues: FactoryBot.create_list(:request_issue, 3, description: "Knee pain")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       veteran_file_number: "963360019",
+      docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 2, description: "PTSD")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "604969679",
+      docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 1, description: "Tinnitus")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "228081153",
+      docket_type: "evidence_submission",
       request_issues: FactoryBot.create_list(:request_issue, 1, description: "Tinnitus")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "152003980",
+      docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 3, description: "PTSD")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "375273128",
+      docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 1, description: "Knee pain")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "682007349",
+      docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 5, description: "Veteran reports hearing loss in left ear")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "231439628S",
+      docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 1, description: "Back pain")
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "975191063",
+      docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 8, description: "Kidney problems")
     )
 

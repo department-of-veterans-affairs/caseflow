@@ -67,6 +67,8 @@ const updateFromServerIntake = (state, serverIntake) => {
 export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
     addIssuesModalVisible: false,
+    nonRatedIssueModalVisible: false,
+    unidentifiedIssuesModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
     benefitType: null,
@@ -259,7 +261,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         $set: action.payload.isSelected ? state.issueCount + 1 : state.issueCount - 1
       }
     });
-  case ACTIONS.ADD_NON_RATED_ISSUE:
+  case ACTIONS.NEW_NON_RATED_ISSUE:
     return update(state, {
       nonRatedIssues: {
         [Object.keys(state.nonRatedIssues).length]: {

@@ -56,36 +56,64 @@ export const validNonRatedIssue = (issue) => {
   return true;
 };
 
-export const formatIssues = (state) => {
-  const ratingData = {
-    request_issues:
-      _(state.ratings).
-        map((rating) => {
-          return _.map(rating.issues, (issue) => {
-            return _.merge(issue, { profile_date: rating.profile_date });
-          });
-        }).
-        flatten().
-        filter('isSelected')
-  };
+const formatRatedIssues = (state) => {
+  if (state.addedIssues && state.addedIssues.length > 0) {
+    // we're using the new add issues page
+    return state.addedIssues.
+      filter((issue) => issue.isRated).
+      map((issue) => {
+        let originalIssue = state.ratings[issue.profileDate].issues[issue.id];
 
-  const nonRatingData = {
-    request_issues:
-      _(state.nonRatedIssues).
-        filter((issue) => {
-          return validNonRatedIssue(issue);
-        }).
-        map((issue) => {
-          return {
-            decision_text: issue.description,
-            issue_category: issue.category,
-            decision_date: formatDateStringForApi(issue.decisionDate)
-          };
-        })
-  };
+        return _.merge(originalIssue, { profile_date: issue.profileDate,
+          notes: issue.notes });
+      });
+  }
+
+  // default to original ratings format
+  return _(state.ratings).
+    map((rating) => {
+      return _.map(rating.issues, (issue) => {
+        return _.merge(issue, { profile_date: rating.profile_date });
+      });
+    }).
+    flatten().
+    filter('isSelected').
+    value();
+};
+
+const formatNonRatedIssues = (state) => {
+  if (state.addedIssues && state.addedIssues.length > 0) {
+    // we're using the new add issues page
+    return state.addedIssues.filter((issue) => !issue.isRated).map((issue) => {
+      return {
+        issue_category: issue.category,
+        decision_text: issue.description,
+        decision_date: formatDateStringForApi(issue.decisionDate)
+      };
+    });
+  }
+
+  // default to original format
+  return _(state.nonRatedIssues).
+    filter((issue) => {
+      return validNonRatedIssue(issue);
+    }).
+    map((issue) => {
+      return {
+        decision_text: issue.description,
+        issue_category: issue.category,
+        decision_date: formatDateStringForApi(issue.decisionDate)
+      };
+    }).
+    value();
+};
+
+export const formatIssues = (state) => {
+  const ratingData = formatRatedIssues(state);
+  const nonRatingData = formatNonRatedIssues(state);
 
   const data = {
-    request_issues: _.concat(ratingData.request_issues.value(), nonRatingData.request_issues.value())
+    request_issues: _.concat(ratingData, nonRatingData)
   };
 
   return data;
