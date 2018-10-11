@@ -48,11 +48,15 @@ class AssignToView extends React.Component<Props, ViewState> {
     // Autofill the instruction field if assigning to a person on the team. Since they will
     // probably want the instructions from the assigner.
     const instructions = this.props.task.instructions;
-    const existingInstructions = instructions.length > 0 ? instructions[instructions.length - 1] : '';
+    let existingInstructions = '';
+
+    if (instructions.length > 0 && !this.props.isTeamAssign) {
+      existingInstructions = instructions[instructions.length - 1];
+    }
 
     this.state = {
       selectedValue: null,
-      instructions: !this.props.isTeamAssign ? existingInstructions : ''
+      instructions: existingInstructions
     };
   }
 
@@ -121,13 +125,13 @@ class AssignToView extends React.Component<Props, ViewState> {
         value={this.state.selectedValue}
         onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
         options={this.options()} />
-        <br />
-        <TextareaField
-          name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
-          errorMessage={highlightFormItems && !this.state.instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-          id="taskInstructions"
-          onChange={(value) => this.setState({ instructions: value })}
-          value={this.state.instructions} />
+      <br />
+      <TextareaField
+        name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+        errorMessage={highlightFormItems && !this.state.instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+        id="taskInstructions"
+        onChange={(value) => this.setState({ instructions: value })}
+        value={this.state.instructions} />
     </React.Fragment>;
   }
 }
