@@ -538,11 +538,11 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def das_assignments
-    @das_assignments ||= QueueRepository.tasks_for_appeal(vacols_id)
+    @das_assignments ||= VACOLS::CaseAssignment.tasks_for_appeal(vacols_id)
   end
 
   def reviewing_judge_name
-    das_assignments.last.try(:assigned_by_name)
+    das_assignments.sort_by(&:created_at).last.try(:assigned_by_name)
   end
 
   attr_writer :issues

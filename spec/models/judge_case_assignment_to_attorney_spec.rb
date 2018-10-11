@@ -46,7 +46,7 @@ describe JudgeCaseAssignmentToAttorney do
       let(:assigned_to) { attorney }
 
       it "should raise Caseflow::Error::UserRepositoryError" do
-        expect { subject }.to raise_error(Caseflow::Error::UserRepositoryError)
+        expect { subject }.to raise_error(Caseflow::Error::QueueRepositoryError)
       end
     end
 
