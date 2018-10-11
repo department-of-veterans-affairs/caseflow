@@ -68,7 +68,7 @@ class HearingDay < ApplicationRecord
       total_video_and_co, _travel_board = load_days(start_date, end_date, regional_office)
       enriched_hearing_days = []
       total_video_and_co.each do |hearing_day|
-        enriched_hearing_days << hearing_day.slice(:id, :hearing_date, :hearing_type, :room_info)
+        enriched_hearing_days << hearing_day.slice(:id, :hearing_date, :hearing_type)
         enriched_hearing_days[enriched_hearing_days.length - 1][:total_slots] =
           HearingDayRepository.fetch_hearing_day_slots(hearing_day)
         enriched_hearing_days[enriched_hearing_days.length - 1][:hearings] = []
