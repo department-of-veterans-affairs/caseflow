@@ -62,7 +62,8 @@ class GenericTask < Task
         appeal: parent.appeal,
         assigned_by_id: child_assigned_by_id(parent, current_user),
         parent_id: parent.id,
-        assigned_to: assignee
+        assigned_to: assignee,
+        instructions: [params[:instructions]]
       )
     end
 

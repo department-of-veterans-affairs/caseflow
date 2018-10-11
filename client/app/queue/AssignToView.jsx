@@ -15,6 +15,8 @@ import {
 import { setTaskAttrs } from './QueueActions';
 
 import SearchableDropdown from '../components/SearchableDropdown';
+import TextareaField from '../components/TextareaField';
+
 import editModalBase from './components/EditModalBase';
 import { requestSave } from './uiReducer/uiActions';
 
@@ -35,20 +37,27 @@ type Props = Params & {|
 |};
 
 type ViewState = {|
-  selectedValue: ?string
+  selectedValue: ?string,
+  instructions: ?string
 |};
 
 class AssignToView extends React.Component<Props, ViewState> {
   constructor(props) {
     super(props);
 
+    // Autofill the instruction field if assigning to a person on the team. Since they will
+    // probably want the instructions from the assigner.
+    const instructions = this.props.task.instructions;
+    const existingInstructions = instructions.length > 0 ? instructions[instructions.length - 1] : '';
+
     this.state = {
-      selectedValue: null
+      selectedValue: null,
+      instructions: !this.props.isTeamAssign ? existingInstructions : ''
     };
   }
 
   validateForm = () => {
-    return this.state.selectedValue !== null;
+    return this.state.selectedValue !== null && this.state.instructions !== '';
   }
 
   submit = () => {
@@ -64,7 +73,8 @@ class AssignToView extends React.Component<Props, ViewState> {
           external_id: appeal.externalId,
           parent_id: task.taskId,
           assigned_to_id: this.state.selectedValue,
-          assigned_to_type: isTeamAssign ? 'Organization' : 'User'
+          assigned_to_type: isTeamAssign ? 'Organization' : 'User',
+          instructions: this.state.instructions
         }]
       }
     };
@@ -111,6 +121,13 @@ class AssignToView extends React.Component<Props, ViewState> {
         value={this.state.selectedValue}
         onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
         options={this.options()} />
+        <br />
+        <TextareaField
+          name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+          errorMessage={highlightFormItems && !this.state.instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+          id="taskInstructions"
+          onChange={(value) => this.setState({ instructions: value })}
+          value={this.state.instructions} />
     </React.Fragment>;
   }
 }
