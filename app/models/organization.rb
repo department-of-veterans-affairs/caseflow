@@ -22,13 +22,13 @@ class Organization < ApplicationRecord
   end
 
   def members
-    @members ||= member_css_ids.uniq.map { |css_id| User.find_by(css_id: css_id) }.compact
+    @members ||= User.where(css_id: member_css_ids.uniq)
   end
 
   private
 
   def member_css_ids
-    return [] unless staff_field_for_organization
+    return [] unless staff_field_for_organization.length > 0
 
     staff_records = VACOLS::Staff.where(sactive: "A")
     staff_field_for_organization.each do |sfo|
