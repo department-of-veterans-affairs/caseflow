@@ -156,7 +156,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
     };
   });
 
-  return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.externalAppealId), (task) => task);
+  return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.uniqueId), (task) => task);
 };
 
 export const prepareAllTasksForStore = (tasks: Array<Object>): { amaTasks: Tasks, tasks: Tasks } => {

@@ -107,7 +107,7 @@ class SendToLocationModal extends React.Component<Props> {
 
         this.closeModal();
         this.props.history.push('/queue');
-        this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.externalAppealId]);
+        this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.uniqueId]);
       });
   }
 

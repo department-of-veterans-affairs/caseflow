@@ -104,7 +104,7 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
         const response = JSON.parse(resp.text);
         const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.externalAppealId]);
+        this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.uniqueId]);
       });
   }
 
