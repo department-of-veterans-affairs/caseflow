@@ -73,7 +73,7 @@ class Rating
 
     def ratings_from_bgs_response(response)
       if response.dig(:rating_profile_list, :rating_profile).nil?
-        fail NilRatingProfileListError
+        fail NilRatingProfileListError, message: response
       end
       # If only one rating is returned, we need to convert it to an array
       [response[:rating_profile_list][:rating_profile]].flatten.map do |rating_data|
