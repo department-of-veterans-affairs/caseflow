@@ -57,11 +57,22 @@ export const validNonRatedIssue = (issue) => {
 };
 
 const formatRatedIssues = (state) => {
+  // unidentified issues are counted as rated issues
   if (state.addedIssues && state.addedIssues.length > 0) {
     // we're using the new add issues page
     return state.addedIssues.
-      filter((issue) => issue.isRated).
+      filter((issue) => issue.isRated || issue.isUnidentified).
       map((issue) => {
+        // for unidentified issues
+        if (issue.isUnidentified) {
+          return {
+            decision_text: issue.description,
+            notes: issue.notes,
+            is_unidentified: true
+          };
+        }
+
+        // otherwise return for rated issue
         let originalIssue = state.ratings[issue.profileDate].issues[issue.id];
 
         return _.merge(originalIssue, { profile_date: issue.profileDate,
@@ -84,7 +95,7 @@ const formatRatedIssues = (state) => {
 const formatNonRatedIssues = (state) => {
   if (state.addedIssues && state.addedIssues.length > 0) {
     // we're using the new add issues page
-    return state.addedIssues.filter((issue) => !issue.isRated).map((issue) => {
+    return state.addedIssues.filter((issue) => !issue.isRated && !issue.isUnidentified).map((issue) => {
       return {
         issue_category: issue.category,
         decision_text: issue.description,
