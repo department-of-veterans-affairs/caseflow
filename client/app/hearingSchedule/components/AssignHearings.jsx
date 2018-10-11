@@ -100,13 +100,23 @@ export default class AssignHearings extends React.Component {
     return docketType;
   }
 
-  tableRows = (veterans) => {
+  tableAssignHearingsRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
       caseDetails: `${veteran.name} | ${veteran.id}`,
       type: this.veteranTypeColor(veteran.type),
       docketNumber: veteran.docketNumber,
       location: this.props.selectedRegionalOffice.value === 'C' ? 'Washington DC' : veteran.location,
-      time: veteran.time
+      time: null
+    }));
+  };
+
+  tableScheduledHearingsRows = (hearings) => {
+    return _.map(hearings, (hearing) => ({
+      caseDetails: `${hearing.appealInfo.appelantName} | ${hearing.appealInfo.vbmsId}`,
+      type: this.veteranTypeColor(hearing.appealInfo.appealType),
+      docketNumber: hearing.appealInfo.docketNumber,
+      location: hearing.location,
+      time: hearing.time
     }));
   };
 
@@ -156,7 +166,7 @@ export default class AssignHearings extends React.Component {
             label: 'Scheduled',
             page: <Table
               columns={tabWindowColumns}
-              rowObjects={this.tableRows(this.props.selectedHearingDay.hearings)}
+              rowObjects={this.tableScheduledHearingsRows(this.props.selectedHearingDay.hearings)}
               summary="scheduled-hearings-table"
             />
           },
@@ -164,7 +174,7 @@ export default class AssignHearings extends React.Component {
             label: 'Assign Hearings',
             page: <Table
               columns={tabWindowColumns}
-              rowObjects={this.tableRows(this.props.veteransReadyForHearing)}
+              rowObjects={this.tableAssignHearingsRows(this.props.veteransReadyForHearing)}
               summary="assign-hearings-table"
             />
           }

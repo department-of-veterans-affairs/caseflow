@@ -68,11 +68,11 @@ class HearingDay < ApplicationRecord
       total_video_and_co, _travel_board = load_days(start_date, end_date, regional_office)
       enriched_hearing_days = []
       total_video_and_co.each do |hearing_day|
-        enriched_hearing_days << hearing_day.slice(:id, :hearing_date, :hearing_type)
+        enriched_hearing_days << hearing_day.slice(:id, :hearing_date, :hearing_type, :room_info)
         enriched_hearing_days[enriched_hearing_days.length - 1][:total_slots] =
           HearingDayRepository.fetch_hearing_day_slots(hearing_day)
         enriched_hearing_days[enriched_hearing_days.length - 1][:hearings] = []
-        hearing_location = hearing_day[:regional_office].nil? ? "Central" : hearing_day[:regional_office]
+        hearing_location = hearing_day[:regional_office].nil? ? "Washington DC" : HearingDayMapper.city_for_regional_office(hearing_day[:regional_office])
         hearings = []
         if hearing_location == "Central"
           hearings.push(VACOLS::CaseHearing.find(hearing_day[:id]))
@@ -98,9 +98,9 @@ class HearingDay < ApplicationRecord
         hearing_count += 1
         enriched_hearing_days[enriched_hearing_days.length - 1][:hearings].push(
           id: hearing.hearing_pkseq,
-          hearing_location: hearing_location,
-          hearing_time: hearing.hearing_date,
-          hearing_disposition: hearing.hearing_disp
+          location: hearing_location,
+          time: hearing.hearing_date,
+          disposition: hearing.hearing_disp
         )
         hearing_idx = enriched_hearing_days[enriched_hearing_days.length - 1][:hearings].length
         format_appeal_info_for_hearing(enriched_hearing_days, hearing_idx, hearing)
