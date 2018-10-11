@@ -127,5 +127,14 @@ describe Rating do
         )
       end
     end
+
+    context "when a rating is locked" do
+      it "throws NilRatingProfileListError" do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_ratings_in_range).and_return({})
+        expect do
+          Rating.fetch_timely(participant_id: "DRAYMOND", from_date: receipt_date)
+        end.to raise_error(Rating::NilRatingProfileListError)
+      end
+    end
   end
 end
