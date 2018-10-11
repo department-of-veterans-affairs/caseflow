@@ -1,6 +1,6 @@
 {
   "CASE_SEARCH_HOME_PAGE_HEADING": "Veteran Case Search",
-  "CASE_SEARCH_INPUT_INSTRUCTION": "Please enter a valid 9-digit Veteran ID to search for all available cases.",
+  "CASE_SEARCH_INPUT_INSTRUCTION": "Please enter a valid claims file number to search for all available cases.",
   "CASE_SEARCH_ERROR_EMPTY_SEARCH_TERM": "Cannot search for no text",
   "CASE_SEARCH_ERROR_INVALID_ID_HEADING": "Invalid Veteran ID “%s”",
   "CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING": "No cases found for “%s”",
@@ -38,7 +38,7 @@
   "CASE_SNAPSHOT_TASK_DUE_DATE_LABEL": "Due",
   "CASE_SNAPSHOT_DECISION_PREPARER_LABEL": "Prepared by",
   "CASE_SNAPSHOT_ASSIGNED_JUDGE_LABEL": "VLJ",
-  "CASE_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL": "Senior counsel",
+  "CASE_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL": "Attorney",
   "CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL": "Document ID",
   "CASE_SNAPSHOT_TASK_TYPE_LABEL": "Task",
   "CASE_SNAPSHOT_TASK_FROM_LABEL": "From",
@@ -228,6 +228,10 @@
   "ADVANCE_ON_DOCKET_MOTION_REASON_DROPDOWN": "Reason",
   "ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN_PLACEHOLDER": "Select grant or deny",
   "ADVANCE_ON_DOCKET_MOTION_REASON_DROPDOWN_PLACEHOLDER": "Select a type",
+
+  "ASSIGN_TO_USER_DROPDOWN": "Select a user",
+  "ASSIGN_TO_TEAM_DROPDOWN": "Select a team",
+  "ASSIGN_TO_PAGE_TITLE": "Assign task",
 
   "CASE_TIMELINE_HEADER": "Below is the history of this case. Soon, you'll be able to see many more details.",
   "CASE_TIMELINE_DISPATCHED_FROM_BVA": "Dispatched from BVA",

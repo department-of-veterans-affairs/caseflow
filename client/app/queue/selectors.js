@@ -44,7 +44,7 @@ const getUserCssId = (state: State): string => state.ui.userCssId;
 const getOrganizationId = (state: State): ?number => state.queue.organizationId;
 const getAppealId = (state: State, props: Object): string => props.appealId;
 const getAttorneys = (state: State): AttorneysOfJudge => state.queue.attorneysOfJudge;
-const getCaseflowVeteranId = (state: State, props: Object): string => props.caseflowVeteranId;
+const getCaseflowVeteranId = (state: State, props: Object): ?string => props.caseflowVeteranId;
 const getModals = (state: State): UiStateModals => state.ui.modals;
 const getNewDocsForAppeal = (state: State): NewDocsForAppeal => state.queue.newDocsForAppeal;
 
@@ -111,8 +111,8 @@ export const tasksForAppealAssignedToAttorneySelector = createSelector(
 
 export const appealsByCaseflowVeteranId = createSelector(
   [appealsWithDetailsSelector, getCaseflowVeteranId],
-  (appeals: Appeals, caseflowVeteranId: string) =>
-    _.filter(appeals, (appeal: Appeal) => appeal.caseflowVeteranId &&
+  (appeals: Appeals, caseflowVeteranId: ?string) =>
+    _.filter(appeals, (appeal: Appeal) => appeal.caseflowVeteranId && caseflowVeteranId &&
       appeal.caseflowVeteranId.toString() === caseflowVeteranId.toString())
 );
 

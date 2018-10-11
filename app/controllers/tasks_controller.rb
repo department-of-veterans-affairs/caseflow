@@ -72,7 +72,7 @@ class TasksController < ApplicationController
   #   on_hold_duration: "something"
   # }
   def update
-    redirect_to("/unauthorized") && return unless task.can_user_access?(current_user)
+    redirect_to("/unauthorized") && return unless task.can_be_accessed_by_user?(current_user)
 
     task.update_from_params(update_params, current_user)
 
@@ -95,19 +95,11 @@ class TasksController < ApplicationController
     json_tasks_by_appeal_id(appeal.id, appeal.class.to_s)
   end
 
-  def assignable_organizations
-    render json: { organizations: task.assignable_organizations.map { |o| { id: o.id, name: o.name } } }
-  end
-
-  def assignable_users
-    render json: { users: task.assignable_users.map { |m| { id: m.id, css_id: m.css_id, full_name: m.full_name } } }
-  end
-
   private
 
   def can_act_on_task?
     return true if can_assign_task?
-    true if task.can_user_access?(current_user)
+    true if task.can_be_accessed_by_user?(current_user)
   rescue ActiveRecord::RecordNotFound
     return false
   end
@@ -151,11 +143,15 @@ class TasksController < ApplicationController
   end
 
   def create_params
-    [params.require("tasks")].flatten.map do |task|
-      task.permit(:type, :instructions, :action, :assigned_to_id, :parent_id)
+    @create_params ||= [params.require("tasks")].flatten.map do |task|
+      task = task.permit(:type, :instructions, :action, :assigned_to_id, :assigned_to_type, :external_id, :parent_id)
         .merge(assigned_by: current_user)
         .merge(appeal: Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id]))
-        .merge(assigned_to_type: User.name)
+
+      task.delete(:external_id)
+      task = task.merge(assigned_to_type: User.name) if !task[:assigned_to_type]
+
+      task
     end
   end
 

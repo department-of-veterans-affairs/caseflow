@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { REVIEW_OPTIONS } from '../constants';
-import { formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
+import { formatDate, formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
 
 export const getAppealDocketError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.appeal_docket, 0) === 'blank') && 'Please select an option.'
@@ -150,16 +150,27 @@ export const formatAddedIssues = (intakeData) => {
   let issues = intakeData.addedIssues || [];
 
   return issues.map((issue) => {
-    // currently does not handle unrated issues
-    if (issue.isRated) {
+    if (issue.isUnidentified) {
+      return {
+        referenceId: issue.id,
+        text: `Unidentified issue: no issue matched for "${issue.description}"`,
+        notes: issue.notes,
+        isUnidentified: true
+      };
+    } else if (issue.isRated) {
       let foundIssue = intakeData.ratings[issue.profileDate].issues[issue.id];
 
       return {
         referenceId: issue.id,
-        text: `${foundIssue.decision_text} Decision date ${formatDateStr(issue.profileDate)}.`
+        text: `${foundIssue.decision_text} Decision date ${formatDateStr(issue.profileDate)}.`,
+        notes: issue.notes
       };
     }
 
-    return {};
+    // returns unrated issue format
+    return {
+      referenceId: issue.id,
+      text: `${issue.category} - ${issue.description} Decision date ${formatDate(issue.decisionDate)}`
+    };
   });
 };

@@ -10,7 +10,7 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
   render() {
     const {
       nonRatedIssues,
-      addNonRatedIssue,
+      newNonRatedIssue,
       setIssueCategory,
       setIssueDescription,
       setIssueDecisionDate
@@ -35,7 +35,7 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
       );
     });
 
-    return <div className="cf-non-rated-issues">
+    return <div>
       <h2>Enter other issue(s) for review</h2>
       <p>
       If the Veteran included any additional issues you cannot find in the list above,
@@ -47,7 +47,7 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
 
       <Button
         name="add-issue"
-        onClick={addNonRatedIssue}
+        onClick={newNonRatedIssue}
         classNames={['usa-button-secondary']}
         disabled={disableAddNonRatedIssue}
       >
