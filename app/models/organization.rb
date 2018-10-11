@@ -28,7 +28,7 @@ class Organization < ApplicationRecord
   private
 
   def member_css_ids
-    return [] unless staff_field_for_organization.length > 0
+    return [] if staff_field_for_organization.empty?
 
     staff_records = VACOLS::Staff.where(sactive: "A")
     staff_field_for_organization.each do |sfo|
