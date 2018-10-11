@@ -7,7 +7,7 @@ import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
 
 import {
-  getTasksForAppeal,
+  tasksForAppealAssignedToUserSelector,
   appealWithDetailSelector
 } from './selectors';
 import { setTaskAttrs } from './QueueActions';
@@ -76,7 +76,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 
   return {
     error,
-    task: getTasksForAppeal(state, ownProps)[0],
+    task: tasksForAppealAssignedToUserSelector(state, ownProps)[0],
     appeal: appealWithDetailSelector(state, ownProps)
   };
 };

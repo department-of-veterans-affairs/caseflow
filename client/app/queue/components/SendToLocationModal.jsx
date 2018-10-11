@@ -11,7 +11,7 @@ import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTION
 import Modal from '../../components/Modal';
 
 import {
-  getTasksForAppeal,
+  tasksForAppealAssignedToUserSelector,
   getActiveModalType,
   appealWithDetailSelector
 } from '../selectors';
@@ -133,7 +133,7 @@ class SendToLocationModal extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => ({
-  task: getTasksForAppeal(state, ownProps)[0],
+  task: tasksForAppealAssignedToUserSelector(state, ownProps)[0],
   appeal: appealWithDetailSelector(state, ownProps),
   modalType: getActiveModalType(state),
   saveState: state.ui.saveState.savePending

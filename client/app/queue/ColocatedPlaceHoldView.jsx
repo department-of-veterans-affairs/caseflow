@@ -11,7 +11,7 @@ import COPY from '../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 import {
-  getTasksForAppeal,
+  tasksForAppealAssignedToUserSelector,
   appealWithDetailSelector
 } from './selectors';
 import { setTaskAttrs } from './QueueActions';
@@ -185,7 +185,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   return {
     error,
     highlightFormItems,
-    task: getTasksForAppeal(state, ownProps)[0],
+    task: tasksForAppealAssignedToUserSelector(state, ownProps)[0],
     appeal: appealWithDetailSelector(state, ownProps)
   };
 };
