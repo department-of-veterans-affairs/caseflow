@@ -57,6 +57,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
 
     acc[task.id] = {
       uniqueId: task.id,
+      isLegacyTask: false,
       appealType: task.attributes.appeal_type,
       addedByCssId: null,
       appealId: task.attributes.appeal_id,
@@ -127,6 +128,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
   const mappedLegacyTasks = tasks.map((task): Task => {
     return {
       uniqueId: task.attributes.external_appeal_id,
+      isLegacyTask: true,
       appealId: task.attributes.appeal_id,
       appealType: task.attributes.appeal_type,
       externalAppealId: task.attributes.external_appeal_id,
