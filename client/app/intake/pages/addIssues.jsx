@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Redirect } from 'react-router-dom';
 import React from 'react';
 
 import AddIssuesModal from '../components/AddIssuesModal';
@@ -9,6 +10,7 @@ import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
 import Button from '../../components/Button';
 import RequestIssuesUpdateErrorAlert from '../../intakeEdit/components/RequestIssuesUpdateErrorAlert';
 import { FORM_TYPES } from '../constants';
+import { PAGE_PATHS } from '../constants';
 import { formatDate } from '../../util/DateUtil';
 import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 import Table from '../../components/Table';
@@ -19,7 +21,7 @@ import {
   toggleUnidentifiedIssuesModal
 } from '../actions/addIssues';
 
-class AddIssuesPage extends React.PureComponent {
+export class AddIssues extends React.PureComponent {
   render() {
     const {
       intakeForms,
@@ -27,6 +29,10 @@ class AddIssuesPage extends React.PureComponent {
       veteran,
       responseErrorCode
     } = this.props;
+
+    if (!formType) {
+      return <Redirect to={PAGE_PATHS.BEGIN} />;
+    }
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const intakeData = intakeForms[selectedForm.key];
