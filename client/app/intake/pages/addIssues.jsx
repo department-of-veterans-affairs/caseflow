@@ -118,14 +118,14 @@ export const IntakeAddIssuesPage = connect(
 )(AddIssuesPage);
 
 export const EditAddIssuesPage = connect(
-  ({ review, formType, veteran }) => ({
+  (state) => ({
     intakeForms: {
-      higher_level_review: review,
-      supplemental_claim: review,
-      appeal: review
+      higher_level_review: state,
+      supplemental_claim: state,
+      appeal: state
     },
-    formType,
-    veteran
+    formType: state.formType,
+    veteran: state.veteran
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,

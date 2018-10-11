@@ -57,7 +57,6 @@ export const validNonRatedIssue = (issue) => {
 };
 
 export const formatRequestIssues = (requestIssues) => {
-  console.log("requestIssues::", requestIssues)
   return requestIssues.map((issue) => {
     if (issue.category) {
       return {
@@ -68,10 +67,12 @@ export const formatRequestIssues = (requestIssues) => {
       }
     }
 
+    // Rated issues
+    const issueDate = new Date(issue.profile_date)
     return {
       isRated: true,
       id: issue.reference_id,
-      profileDate: issue.profile_date,
+      profileDate: issueDate.toISOString(),
       notes: issue.notes
     }
   })
@@ -199,7 +200,7 @@ export const formatAddedIssues = (intakeData) => {
   return issues.map((issue) => {
     if (issue.isRated) {
       let foundIssue = intakeData.ratings[issue.profileDate].issues[issue.id];
-console.log("foundIssue::", foundIssue)
+
       return {
         referenceId: issue.id,
         text: `${foundIssue.decision_text} Decision date ${formatDateStr(issue.profileDate)}.`,
@@ -208,7 +209,6 @@ console.log("foundIssue::", foundIssue)
     }
 
     if (!issue.isRated) {
-      console.log("issue::", issue)
       return {
         referenceId: issue.id,
         text: `${issue.category} - ${issue.description} Decision date ${formatDate(issue.decisionDate)}`

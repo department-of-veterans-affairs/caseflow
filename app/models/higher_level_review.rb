@@ -19,9 +19,11 @@ class HigherLevelReview < ClaimReview
   def ui_hash(ama_enabled)
     {
       formType: "higher_level_review",
-      veteranFileNumber: veteran_file_number,
-      veteranName: veteran && veteran.name.formatted(:readable_short),
-      veteranFormName: veteran && veteran.name.formatted(:form),
+      veteran: {
+        name: veteran && veteran.name.formatted(:readable_short),
+        fileNumber: veteran_file_number,
+        formName: veteran && veteran.name.formatted(:form)
+      },
       relationships: ama_enabled && veteran && veteran.relationships,
       claimId: end_product_claim_id,
       receiptDate: receipt_date.to_formatted_s(:json_date),

@@ -8,21 +8,15 @@ import _ from 'lodash';
 
 export const mapDataToInitialState = function(props = {}) {
   const { serverIntake } = props;
-  const additionalState = {
+
+  serverIntake.ratings = formatRatings(serverIntake.ratings)
+
+  return {
+    ...serverIntake,
     addIssuesModalVisible: false,
     nonRatedIssueModalVisible: false,
     addedIssues: formatRequestIssues(serverIntake.requestIssues),
-    ratings: formatRatings(serverIntake.ratings)
-  };
 
-  return {
-    formType: serverIntake.formType,
-    review: {...serverIntake, ...additionalState},
-    veteran: {
-      name: serverIntake.veteranName,
-      formName: serverIntake.veteranFormName,
-      fileNumber: serverIntake.veteranFileNumber
-    },
     // ratings: formatRatings(props.review.ratings, props.review.rated_request_issues),
     // originalSelection: getSelection(ratings),
     // ratingsChanged: false,
@@ -37,6 +31,8 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
   let newRatings;
   let serverRatings;
   let ratingsChanged;
+
+  console.log(state)
 
   switch (action.type) {
   case ACTIONS.SET_ISSUE_SELECTED:
