@@ -118,6 +118,9 @@ class QueueRepository
 
     def assign_case_to_attorney!(judge:, attorney:, vacols_id:)
       transaction do
+        fail Caseflow::Error::QueueRepositoryError, "Case already assigned" unless
+          VACOLS::Case.find(vacols_id).bfcurloc == judge.vacols_uniq_id
+
         update_location_to_attorney(vacols_id, attorney)
 
         VACOLS::Decass.create!(
