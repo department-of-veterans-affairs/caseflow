@@ -55,7 +55,7 @@ export const ISSUE_CATEGORIES = issueCategoriesArray.map((category) => {
   };
 });
 
-export const NON_RATED_ISSUE_CATEGORIES = issueCategoriesArray.
+export const NON_RATED_ISSUE_CATEGORIES = issueCategoriesArray
   .map((category) => {
     return {
       value: category,
