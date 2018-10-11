@@ -1,7 +1,6 @@
 // shared functions between reducers
 import { ACTIONS } from '../constants';
 import { update } from '../../util/ReducerUtil';
-import _ from 'lodash';
 
 export const commonReducers = (state, action) => {
   let actionsMap = {};
@@ -21,6 +20,15 @@ export const commonReducers = (state, action) => {
     });
   };
 
+  actionsMap[ACTIONS.TOGGLE_UNIDENTIFIED_ISSUES_MODAL] = () => {
+    return update(state, {
+      $toggle: ['unidentifiedIssuesModalVisible'],
+      nonRatedIssueModalVisible: {
+        $set: false
+      }
+    });
+  };
+
   actionsMap[ACTIONS.ADD_ISSUE] = () => {
     let listOfIssues = state.addedIssues ? state.addedIssues : [];
     let addedIssues = [...listOfIssues, {
@@ -30,7 +38,8 @@ export const commonReducers = (state, action) => {
       category: action.payload.category,
       description: action.payload.description,
       decisionDate: action.payload.decisionDate,
-      notes: action.payload.notes
+      notes: action.payload.notes,
+      isUnidentified: action.payload.isUnidentified
     }];
 
     return {
@@ -41,12 +50,14 @@ export const commonReducers = (state, action) => {
   };
 
   actionsMap[ACTIONS.REMOVE_ISSUE] = () => {
+    // issues are removed by position, because not all issues have referenceIds
     let listOfIssues = state.addedIssues ? state.addedIssues : [];
-    let issueToRemove = action.payload.issue;
+
+    listOfIssues.splice(action.payload.index, 1);
 
     return {
       ...state,
-      addedIssues: _.filter(listOfIssues, (issue) => issueToRemove.referenceId !== issue.id)
+      addedIssues: listOfIssues
     };
   };
 

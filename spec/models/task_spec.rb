@@ -99,6 +99,39 @@ describe Task do
     end
   end
 
+  context "#can_be_accessed_by_user?" do
+    subject { task.can_be_accessed_by_user?(user) }
+
+    context "when user is an assignee" do
+      let(:user) { create(:user) }
+      let(:task) { create(:task, type: "Task", assigned_to: user) }
+
+      it { is_expected.to be_truthy }
+    end
+
+    context "when user is a task parent assignee" do
+      let(:user) { create(:user) }
+      let(:parent) { create(:task, type: "Task", assigned_to: user) }
+      let(:task) { create(:task, type: "Task", parent: parent) }
+
+      it { is_expected.to be_truthy }
+    end
+
+    context "when user is any judge" do
+      let(:user) { create(:user, css_id: "BVABDANIEL") }
+      let(:task) { create(:task, type: "Task", assigned_to: user) }
+
+      it { is_expected.to be_truthy }
+    end
+
+    context "when user does not have access" do
+      let(:user) { create(:user) }
+      let(:task) { create(:task, type: "Task", assigned_to: create(:user)) }
+
+      it { is_expected.to be(false) }
+    end
+  end
+
   context "#prepared_by_display_name" do
     let(:task) { create(:task, type: "Task") }
 

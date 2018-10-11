@@ -127,7 +127,13 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         let(:assigner2) { create(:user, css_id: "ANOTHER_TEST_ID2", full_name: "Grey White") }
 
         let(:vacols_case1) do
-          create(:case, :assigned, user: user, assigner: assigner1, document_id: "1234", bfdloout: 2.days.ago.to_date)
+          create(:case,
+                 :assigned,
+                 user: user,
+                 assigner: assigner1,
+                 decass_count: 2,
+                 document_id: "1234",
+                 bfdloout: 2.days.ago.to_date)
         end
         let(:vacols_case2) do
           create(:case, :assigned, user: user, assigner: assigner2, document_id: "5678", bfdloout: 4.days.ago.to_date)
@@ -240,8 +246,9 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
             expect(response_body.first["attributes"]["days_waiting"]).to eq 2
             expect(response_body.first["attributes"]["assigned_by"]).to eq "Lyor Cohen"
-            expect(response_body.first["attributes"]["documents"].size).to eq 1
+            expect(response_body.first["attributes"]["documents"].size).to eq 2
             expect(response_body.first["attributes"]["documents"].first["document_id"]).to eq "1234"
+            expect(response_body.first["attributes"]["documents"].second["document_id"]).to eq "1234"
 
             expect(response_body.second["attributes"]["days_waiting"]).to eq 4
             expect(response_body.second["attributes"]["assigned_by"]).to eq "Grey White"
@@ -341,6 +348,15 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               expect(response_body["attributes"]["assigned_by"]).to eq tasks.first.parent.assigned_to.full_name
               expect(response_body["attributes"]["documents"].size).to eq 2
             end
+          end
+        end
+
+        context "and appeal id URL parameter is not valid" do
+          let(:params) { { appeal_id: "invalid" } }
+
+          it "responds with not found" do
+            get :details, params: params
+            expect(response.status).to eq 404
           end
         end
 
