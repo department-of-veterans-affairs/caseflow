@@ -43,3 +43,6 @@ node_modules
 
 # Oracle instant client
 ci-bin/circle_docker_container/instant*
+
+docker-bin/oracle_libs/*.zip
+oracle_libs/*

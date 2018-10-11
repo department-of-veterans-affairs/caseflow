@@ -1,5 +1,6 @@
 version: '3'
 services:
+
   vacols-db-test:
     build: ./local/vacols/.
     container_name: VACOLS_DB-test
@@ -13,13 +14,14 @@ services:
       - "u02_test:/u02"
     ports:
       - "1521:1521"
+  
   vacols-db-development:
     build: ./local/vacols/.
     container_name: VACOLS_DB-development
     image: vacols_db
     tty: true
     stdin_open: true
-    command: bash -c "/home/oracle/setup/dockerInit.sh"
+    command: bash -c "/home/oracle/setup/dockerInitWithSchema.sh"
     volumes:
       - "u01_development:/u01/app/oracle/oradata"
       - "ORCL_development:/ORCL"
@@ -34,6 +36,7 @@ services:
 
   appeals-postgres:
     image: postgres:9.3.14
+    container_name: appeals-db
     ports:
       - "5432:5432"
     volumes:
@@ -42,6 +45,7 @@ services:
      - POSTGRES_PASSWORD=postgres
 
   appeals-localstack-aws:
+    container_name: localstack
     image: localstack/localstack
     ports:
       - "4567-4583:4567-4583"
@@ -50,6 +54,17 @@ services:
       - SERVICES=sqs
     volumes:
       - ./local/sqs/conf:/conf
+
+  appeals-app:
+    image: caseflow:latest
+    container_name: appeals-app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - vacols-db-test
+      - appeals-redis
+      - appeals-postgres
+      - vacols-db-development
 
 volumes:
   postgresdata:
