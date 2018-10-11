@@ -11,8 +11,7 @@ import { formatDate } from '../../util/DateUtil';
 import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 
 import Table from '../../components/Table';
-import { toggleAddIssuesModal, toggleNonRatedIssueModal } from '../actions/addIssues';
-import { removeIssue } from '../actions/addIssues';
+import { toggleAddIssuesModal, toggleNonRatedIssueModal, removeIssue } from '../actions/addIssues';
 
 class AddIssuesPage extends React.PureComponent {
   render() {
@@ -113,19 +112,20 @@ export const IntakeAddIssuesPage = connect(
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
+    toggleNonRatedIssueModal,
     removeIssue
   }, dispatch)
 )(AddIssuesPage);
 
 export const EditAddIssuesPage = connect(
-  ({ review, formType }) => ({
+  ({ review, formType, veteran }) => ({
     intakeForms: {
       higher_level_review: review,
       supplemental_claim: review,
       appeal: review
     },
     formType,
-    veteran: review.veteran
+    veteran
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,

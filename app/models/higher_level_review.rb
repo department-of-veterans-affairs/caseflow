@@ -18,23 +18,23 @@ class HigherLevelReview < ClaimReview
 
   def ui_hash(ama_enabled)
     {
-      form_type: "higher_level_review",
-      veteran_file_number: veteran_file_number,
-      veteran_name: veteran && veteran.name.formatted(:readable_short),
-      veteran_form_name: veteran && veteran.name.formatted(:form),
+      formType: "higher_level_review",
+      veteranFileNumber: veteran_file_number,
+      veteranName: veteran && veteran.name.formatted(:readable_short),
+      veteranFormName: veteran && veteran.name.formatted(:form),
       relationships: ama_enabled && veteran && veteran.relationships,
-      claim_id: end_product_claim_id,
-      receipt_date: receipt_date.to_formatted_s(:json_date),
-      benefit_type: benefit_type,
-      same_office: same_office,
-      informal_conference: informal_conference,
+      claimId: end_product_claim_id,
+      receiptDate: receipt_date.to_formatted_s(:json_date),
+      benefitType: benefit_type,
+      sameOffice: same_office,
+      informalConference: informal_conference,
       claimant: claimant_participant_id,
-      claimant_not_veteran: detail.claimant_not_veteran,
-      payee_code: payee_code,
+      claimantNotVeteran: claimant_not_veteran,
+      payeeCode: payee_code,
       issues: request_issues,
       ratings: cached_serialized_timely_ratings,
-      request_issues: request_issues.map(&:ui_hash),
-      rated_request_issues: request_issues.rated.map(&:ui_hash)
+      requestIssues: request_issues.map(&:ui_hash),
+      ratedRequestIssues: request_issues.rated.map(&:ui_hash)
     }
   end
 

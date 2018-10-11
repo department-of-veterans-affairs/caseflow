@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
+import { formatDate, formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
 
 export const formatRatings = (ratings, requestIssues = []) => {
   const result = _.keyBy(_.map(ratings, (rating) => {
@@ -55,6 +55,27 @@ export const validNonRatedIssue = (issue) => {
   // If we've gotten to here, that means we've got all necessary parts for a nonRatedIssue to count
   return true;
 };
+
+export const formatRequestIssues = (requestIssues) => {
+  console.log("requestIssues::", requestIssues)
+  return requestIssues.map((issue) => {
+    if (issue.category) {
+      return {
+        isRated: false,
+        category: issue.category,
+        description: issue.description,
+        decisionDate: issue.decision_date
+      }
+    }
+
+    return {
+      isRated: true,
+      id: issue.reference_id,
+      profileDate: issue.profile_date,
+      notes: issue.notes
+    }
+  })
+}
 
 const formatRatedIssues = (state) => {
   if (state.addedIssues && state.addedIssues.length > 0) {
@@ -178,7 +199,7 @@ export const formatAddedIssues = (intakeData) => {
   return issues.map((issue) => {
     if (issue.isRated) {
       let foundIssue = intakeData.ratings[issue.profileDate].issues[issue.id];
-
+console.log("foundIssue::", foundIssue)
       return {
         referenceId: issue.id,
         text: `${foundIssue.decision_text} Decision date ${formatDateStr(issue.profileDate)}.`,
@@ -187,6 +208,7 @@ export const formatAddedIssues = (intakeData) => {
     }
 
     if (!issue.isRated) {
+      console.log("issue::", issue)
       return {
         referenceId: issue.id,
         text: `${issue.category} - ${issue.description} Decision date ${formatDate(issue.decisionDate)}`

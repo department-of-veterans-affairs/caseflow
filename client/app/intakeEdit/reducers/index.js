@@ -1,18 +1,27 @@
-import { ACTIONS } from '../constants';
+import { ACTIONS } from '../../intake/constants';
+import { applyCommonReducers } from '../../intake/reducers/common';
 import { REQUEST_STATE } from '../../intakeCommon/constants';
 import { update } from '../../util/ReducerUtil';
 import { formatRatings, getSelection } from '../../intakeCommon/util';
+import { formatRequestIssues } from '../../intake/util/issues';
 import _ from 'lodash';
 
 export const mapDataToInitialState = function(props = {}) {
   const { serverIntake } = props;
+  const additionalState = {
+    addIssuesModalVisible: false,
+    nonRatedIssueModalVisible: false,
+    addedIssues: formatRequestIssues(serverIntake.requestIssues),
+    ratings: formatRatings(serverIntake.ratings)
+  };
+
   return {
     formType: serverIntake.formType,
-    review: serverIntake,
+    review: {...serverIntake, ...additionalState},
     veteran: {
-      name: serverIntake.veteran_name,
-      formName: serverIntake.veteran_form_name,
-      fileNumber: serverIntake.veteran_file_number
+      name: serverIntake.veteranName,
+      formName: serverIntake.veteranFormName,
+      fileNumber: serverIntake.veteranFileNumber
     },
     // ratings: formatRatings(props.review.ratings, props.review.rated_request_issues),
     // originalSelection: getSelection(ratings),
@@ -80,6 +89,6 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
       responseErrorCode: { $set: action.payload.responseErrorCode }
     });
   default:
-    return state;
+    return applyCommonReducers(state, action);
   }
 };
