@@ -67,6 +67,7 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
   updateFromServerIntake({
     addIssuesModalVisible: false,
     nonRatedIssueModalVisible: false,
+    unidentifiedIssuesModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
     benefitType: null,

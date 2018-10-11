@@ -14,13 +14,12 @@ describe QueueRepository do
       RequestStore.store[:current_user] = judge
     end
 
-    subject do
-      QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
-    end
-
     let(:judge) { User.create(css_id: "BAWS123", station_id: User::BOARD_STATION_ID) }
     let(:attorney) { User.create(css_id: "SAMD456", station_id: User::BOARD_STATION_ID) }
     let(:vacols_case) { create(:case, bfcurloc: judge_staff.slogid) }
+    def vacols_id
+      vacols_case.bfkey
+    end
 
     let!(:judge_staff) do
       create(:staff, :judge_role, slogid: "BVABAWS", sdomainid: judge.css_id)
@@ -30,12 +29,12 @@ describe QueueRepository do
     end
 
     context "when vacols ID is valid" do
-      let(:vacols_id) { vacols_case.bfkey }
-
       it "should assign a case to attorney" do
         expect(vacols_case.bfcurloc).to eq judge_staff.slogid
         expect(VACOLS::Decass.where(defolder: vacols_case.bfkey).count).to eq 0
-        subject
+
+        QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
+
         expect(vacols_case.reload.bfcurloc).to eq attorney_staff.slogid
         expect(vacols_case.bfattid).to eq attorney_staff.sattyid
         decass = VACOLS::Decass.where(defolder: vacols_case.bfkey).first
@@ -53,7 +52,19 @@ describe QueueRepository do
       let(:vacols_id) { "09647474" }
 
       it "should raise ActiveRecord::RecordNotFound" do
-        expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+        expect do
+          QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "when the case has already been assigned to an attorney" do
+      it "should throw an exception" do
+        vacols_case.update(bfcurloc: attorney.vacols_uniq_id)
+
+        expect do
+          QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
+        end.to raise_error(Caseflow::Error::QueueRepositoryError)
       end
     end
   end

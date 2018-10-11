@@ -41,6 +41,7 @@ describe BvaDispatchTask do
         task = tasks[0]
         expect(task.status).to eq("completed")
         expect(task.parent.status).to eq("completed")
+        expect(task.root_task.status).to eq("completed")
       end
     end
 

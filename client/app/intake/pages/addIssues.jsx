@@ -5,14 +5,14 @@ import React from 'react';
 
 import AddIssuesModal from '../components/AddIssuesModal';
 import NonRatedIssueModal from '../components/NonRatedIssueModal';
+import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
 import Button from '../../components/Button';
 import RequestIssuesUpdateErrorAlert from '../../intakeEdit/components/RequestIssuesUpdateErrorAlert';
 import { FORM_TYPES } from '../constants';
 import { formatDate } from '../../util/DateUtil';
 import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
-
 import Table from '../../components/Table';
-import { toggleAddIssuesModal, toggleNonRatedIssueModal, removeIssue } from '../actions/addIssues';
+import { toggleAddIssuesModal, toggleNonRatedIssueModal, removeIssue, toggleUnidentifiedIssuesModal } from '../actions/addIssues';
 
 class AddIssuesPage extends React.PureComponent {
   render() {
@@ -33,15 +33,15 @@ class AddIssuesPage extends React.PureComponent {
       return <div className="issues">
         <div>
           { issues.map((issue, index) => {
-            return <div className="issue" key={issue.referenceId}>
-              <div className="issue-desc">
-                <span className="issue-num">{index + 1}.</span>
+            return <div className="issue" key={`issue-${index}`}>
+              <div className={`issue-desc ${issue.isUnidentified ? 'unidentified-issue' : ''}`}>
+                <span className="issue-num">{index + 1}.&nbsp;</span>
                 {issue.text}
                 { issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span> }
               </div>
               <div className="issue-action">
                 <Button
-                  onClick={() => this.props.removeIssue(issue)}
+                  onClick={() => this.props.removeIssue(index)}
                   classNames={['cf-btn-link', 'remove-issue']}
                 >
                   <i className="fa fa-trash-o" aria-hidden="true"></i>Remove
@@ -92,6 +92,10 @@ class AddIssuesPage extends React.PureComponent {
         intakeData={intakeData}
         closeHandler={this.props.toggleNonRatedIssueModal} />
       }
+      { intakeData.unidentifiedIssuesModalVisible && <UnidentifiedIssuesModal
+        intakeData={intakeData}
+        closeHandler={this.props.toggleUnidentifiedIssuesModal} />
+      }
       <h1 className="cf-txt-c">Add Issues</h1>
 
       { responseErrorCode &&
@@ -139,6 +143,7 @@ export const EditAddIssuesPage = connect(
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
     toggleNonRatedIssueModal,
+    toggleUnidentifiedIssuesModal,
     removeIssue
   }, dispatch)
 )(AddIssuesPage);
