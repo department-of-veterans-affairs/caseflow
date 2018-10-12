@@ -10,8 +10,8 @@ class RequestIssue < ApplicationRecord
   end
 
   def self.nonrated
-    where(rating_issue_reference_id: nil, rating_issue_profile_date: nil)
-      .where.not(issue_category: nil, is_unidentified: true)
+    where(rating_issue_reference_id: nil, rating_issue_profile_date: nil, is_unidentified: [nil, false])
+      .where.not(issue_category: nil)
   end
 
   def self.unidentified
@@ -24,10 +24,6 @@ class RequestIssue < ApplicationRecord
 
   def rated?
     rating_issue_reference_id && rating_issue_profile_date
-  end
-
-  def unidentified?
-    is_unidentified
   end
 
   def self.from_intake_data(data)

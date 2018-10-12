@@ -29,6 +29,8 @@ export const FORM_TYPES = {
 };
 
 const issueCategoriesArray = [
+  // Unknown issue category should be removed in the new add issues flow
+  'Unknown issue category',
   'Apportionment',
   'Incarceration Adjustments',
   'Audit Error Worksheet (DFAS)',
@@ -55,8 +57,10 @@ export const ISSUE_CATEGORIES = issueCategoriesArray.map((category) => {
   };
 });
 
+// Removes the "Unknown issue category"
+// which is temporary until we activate the new "Add issues" flow
 export const NON_RATED_ISSUE_CATEGORIES = issueCategoriesArray.
-  map((category) => {
+  filter((category) => category !== 'Unknown issue category').map((category) => {
     return {
       value: category,
       label: category

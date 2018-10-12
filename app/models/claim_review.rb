@@ -83,7 +83,7 @@ class ClaimReview < AmaReview
   end
 
   def end_product_establishment_for_issue(issue)
-    ep_code = issue_code(issue.rated? || issue.unidentified?)
+    ep_code = issue_code(issue.rated? || issue.is_unidentified?)
     end_product_establishments.find_by(code: ep_code) || new_end_product_establishment(ep_code)
   end
 
