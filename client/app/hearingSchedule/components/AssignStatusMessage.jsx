@@ -1,27 +1,51 @@
 import React, { Fragment } from 'react';
 import Alert from '../../components/Alert';
 import { css } from 'glamor';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { COLORS } from '../../constants/AppConstants';
+import classnames from 'classnames';
+import PropTypes from 'prop-types';
 
-const alertStyling = css({
-  width: '57%'
+const headerStyling = css({
+  marginBottom: '34px',
+  fontSize: '42px',
+  paddingLeft:'5rem'
 });
+
+const bodyStyling = css({
+  backgroundColor: COLORS.GREY_BACKGROUND,
+  display: 'block'
+});
+
+const messageStyling = css({
+  paddingLeft: '9.8rem',
+  fontSize: '3rem',
+  paddingRight: '9rem',
+})
 
 
 export default class AssignStatusMessage extends React.PureComponent {
 
-
   render() {
-      const alertTittle = <span>This Ro has not been assigned any hearings</span>;
-      const alertMessage=<div>
-        Please make sure that Ro has been assigned hearings in the current schedule</div>
+      let {
+        children,
+        message,
+        title,
+        styling
+      } = this.props;
 
-      return <Alert
-        title={alertMessage}
-        message={alertMessage}
-        type="error"
-        fixed
-        styling={alertStyling}
-      />;
+      return <div>
+        <div className="usa-alert-body" {...bodyStyling}{...styling}>
+          <h2 className="usa-alert-heading cf-red-text" {...headerStyling}>{title}</h2>
+          { children ? <div className="usa-alert-text">{children}</div> :
+            <div className="usa-alert-text" {...messageStyling}>{message}</div>}
+        </div>
+      </div>;
     }
   }
+
+  AssignStatusMessage.propTypes = {
+    children: PropTypes.node,
+    message: PropTypes.node,
+    title: PropTypes.string,
+    styling: PropTypes.string
+  };

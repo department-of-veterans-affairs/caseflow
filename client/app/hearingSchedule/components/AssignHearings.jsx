@@ -11,7 +11,7 @@ import RoSelectorDropdown from './RoSelectorDropdown';
 import moment from 'moment';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
-// import AssignStatusMessage from './AssignStatusMessage'
+import AssignStatusMessage from './AssignStatusMessage'
 
 const colorAOD = css({
   color: 'red'
@@ -141,6 +141,14 @@ export default class AssignHearings extends React.Component {
       }
     ];
 
+    // const regionalOfficeFound = (hearing) => {
+    //   if (this.props.selectedRegionalOffice.label === hearing.regionalOffice) {
+    //     return <span>The `${hearing.regionalOffice}` Regional Office has not been assigned any hearing days</span>;
+    //       console.log('pepe');
+    //   }
+    // }
+
+    const pepe = 'pepe';
     const selectedHearingDay = this.props.selectedHearingDay;
 
     const availableSlots = selectedHearingDay.totalSlots - Object.keys(selectedHearingDay.hearings).length;
@@ -171,7 +179,10 @@ export default class AssignHearings extends React.Component {
           }
         ]}
       />
-    // <AssignStatusMessage />;
+    <AssignStatusMessage
+      message={'Please verify that this RO has been assigned hearings'}
+      title={'Kiss'}
+       />
     </div>;
   };
 
