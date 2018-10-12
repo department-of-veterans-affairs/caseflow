@@ -319,12 +319,6 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to_not have_content("Same office request")
     expect(page).to have_content("PTSD denied")
 
-    safe_click ".cf-edit-issues-link"
-
-    expect(page).to have_current_path(
-      "/supplemental_claims/#{ratings_end_product_establishment.reference_id}/edit/select_issues"
-    )
-
     visit "/supplemental_claims/4321/edit"
     expect(page).to have_content("Page not found")
   end
