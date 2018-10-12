@@ -56,9 +56,7 @@ class AmaReview < ApplicationRecord
   private
 
   def timely_ratings_with_issues
-    return nil unless receipt_date
-
-    veteran.timely_ratings(from_date: receipt_date).reject { |rating| rating.issues.empty? }
+    veteran.timely_ratings.reject { |rating| rating.issues.empty? }
   end
 
   def timely_ratings_cache_key

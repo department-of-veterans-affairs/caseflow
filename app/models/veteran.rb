@@ -116,7 +116,7 @@ class Veteran < ApplicationRecord
   end
 
   def timely_ratings
-    @timely_ratings ||= Rating.fetch_all(participant_id: participant_id)
+    @timely_ratings ||= Rating.fetch_all(participant_id)
   end
 
   def accessible_appeals_for_poa(poa_participant_ids)
