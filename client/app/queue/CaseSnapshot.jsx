@@ -236,7 +236,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     return Boolean(legacyTasks.length && _.every(legacyTasks, (task) => task.taskId));
   }
 
-  showActionsForTaskAssignedToUser = (tasks: Array<Task>): boolean => {
+  showActionsForTasksAssignedToUser = (tasks: Array<Task>): boolean => {
     return _.every(tasks, (task) => task.status !== TASK_STATUSES.on_hold);
   }
 
@@ -254,7 +254,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     const legacyTasks = tasks.filter((task) => task.isLegacy);
     const nonLegacyTasks = [taskAssignedToUser].filter((task) => !task.isLegacy);
 
-    return this.showActionsForLegacyTasks(legacyTasks) || this.showActionsForTaskAssignedToUser(nonLegacyTasks);
+    return this.showActionsForLegacyTasks(legacyTasks) || this.showActionsForTasksAssignedToUser(nonLegacyTasks);
   }
 
   render = () => {

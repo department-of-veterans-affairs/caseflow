@@ -408,12 +408,6 @@ export const reassignTasksToUser = ({
         tasks: allTasks.tasks,
         amaTasks: allTasks.amaTasks
       }));
-      if (!oldTask.isLegacy) {
-        dispatch(setTaskAttrs(
-          oldTask.uniqueId,
-          { status: 'on_hold' }
-        ));
-      }
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
         taskId: oldTask.uniqueId,
