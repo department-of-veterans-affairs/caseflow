@@ -5,5 +5,9 @@
     feedbackUrl: feedback_url,
     buildDate: build_date,
     serverIntake: higher_level_review.ui_hash(FeatureToggle.enabled?(:intakeAma, user: current_user))
+    formType: "higher_level_review",
+    review: higher_level_review.ui_hash,
+    ratings: higher_level_review.cached_serialized_ratings,
+    ratedRequestIssues: higher_level_review.request_issues.rated.map(&:ui_hash)
   }) %>
 <% end %>
