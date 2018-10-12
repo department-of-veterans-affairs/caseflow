@@ -41,7 +41,7 @@ const IssueCounterConnected = connect(mapStateToProps)(IssueCounter);
 export default class EditButtons extends React.PureComponent {
   render = () =>
     <div>
-      <CancelEditButton />
+      <CancelEditButton history={this.props.history} />
       <SaveButtonUnconnected history={this.props.history} />
       <IssueCounterConnected />
     </div>

@@ -8,7 +8,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_PATHS } from './constants';
 import { EditAddIssuesPage } from '../intake/pages/addIssues';
-import CancelPage from './pages/cancelled';
+import CancelPage from './pages/canceled';
 import { css } from 'glamor';
 import EditButtons from './components/EditButtons';
 
