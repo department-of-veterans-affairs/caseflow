@@ -3,6 +3,7 @@ class RequestIssue < ApplicationRecord
   belongs_to :end_product_establishment
   has_many :decision_issues
   has_many :remand_reasons
+  has_many :rating_issues
 
   def self.rated
     where.not(rating_issue_reference_id: nil, rating_issue_profile_date: nil)
