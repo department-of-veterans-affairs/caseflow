@@ -7,12 +7,16 @@ class RequestIssue < ApplicationRecord
 
   def self.rated
     where.not(rating_issue_reference_id: nil, rating_issue_profile_date: nil)
-      .or(where(issue_category: "Unknown issue category"))
+      .or(where(is_unidentified: true))
   end
 
   def self.nonrated
-    where(rating_issue_reference_id: nil, rating_issue_profile_date: nil)
-      .where.not(issue_category: [nil, "Unknown issue category"])
+    where(rating_issue_reference_id: nil, rating_issue_profile_date: nil, is_unidentified: [nil, false])
+      .where.not(issue_category: nil)
+  end
+
+  def self.unidentified
+    where(rating_issue_reference_id: nil, rating_issue_profile_date: nil, is_unidentified: true)
   end
 
   def self.no_follow_up_issues
@@ -30,7 +34,8 @@ class RequestIssue < ApplicationRecord
       description: data[:decision_text],
       decision_date: data[:decision_date],
       issue_category: data[:issue_category],
-      notes: data[:notes]
+      notes: data[:notes],
+      is_unidentified: data[:is_unidentified]
     )
   end
 

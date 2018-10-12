@@ -609,6 +609,7 @@ ActiveRecord::Schema.define(version: 20181012204811) do
     t.datetime "rating_issue_associated_at"
     t.integer "parent_request_issue_id"
     t.text "notes"
+    t.boolean "is_unidentified"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"

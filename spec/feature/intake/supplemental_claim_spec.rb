@@ -526,6 +526,13 @@ RSpec.feature "Supplemental Claim Intake" do
                decision_date: 1.month.ago.to_date,
                end_product_establishment_id: non_rating_end_product_establishment.id
       )).to_not be_nil
+
+      expect(RequestIssue.find_by(
+               review_request: supplemental_claim,
+               description: "This is an unidentified issue",
+               is_unidentified: true,
+               end_product_establishment_id: end_product_establishment.id
+      )).to_not be_nil
     end
 
     scenario "Non-compensation" do
