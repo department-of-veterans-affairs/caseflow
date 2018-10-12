@@ -269,16 +269,7 @@ RSpec.feature "Appeal Intake" do
     expect(row).to have_text(text)
   end
 
-  scenario "For new Add Issues page" do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 40.days,
-      profile_date: receipt_date - 50.days,
-      issues: [
-        { reference_id: "xyz123", decision_text: "Left knee granted" },
-        { reference_id: "xyz456", decision_text: "PTSD denied" }
-      ]
-    )
+  scenario "adding issues and completing an appeal intake", focus: true do
     appeal = start_appeal(veteran)
     visit "/intake/add_issues"
 
@@ -380,5 +371,50 @@ RSpec.feature "Appeal Intake" do
              description: "This is an unidentified issue",
              is_unidentified: true
     )).to_not be_nil
+  end
+
+  scenario "canceling an appeal intake", focus: true do
+    appeal = Appeal.create!(
+      veteran_file_number: veteran.file_number,
+      receipt_date: 2.days.ago,
+      docket_type: "evidence_submission"
+    )
+
+    intake = AppealIntake.create!(
+      veteran_file_number: veteran.file_number,
+      user: current_user,
+      started_at: 5.minutes.ago,
+      detail: appeal
+    )
+
+    Claimant.create!(
+      review_request: appeal,
+      participant_id: veteran.participant_id
+    )
+
+    appeal.start_review!
+
+    visit "/intake/add_issues"
+
+    expect(page).to have_content("Add Issues")
+    safe_click "#cancel-intake"
+    expect(find("#modal_id-title")).to have_content("Cancel Intake?")
+    safe_click ".close-modal"
+    expect(page).to_not have_css("#modal_id-title")
+    safe_click "#cancel-intake"
+
+    safe_click ".confirm-cancel"
+    expect(page).to have_content("Make sure you’ve selected an option below.")
+    within_fieldset("Please select the reason you are canceling this intake.") do
+      find("label", text: "Other").click
+    end
+    safe_click ".confirm-cancel"
+    expect(page).to have_content("Welcome to Caseflow Intake!")
+    expect(page).to_not have_css(".cf-modal-title")
+
+    intake.reload
+    expect(intake.completed_at).to eq(Time.zone.now)
+    expect(intake.cancel_reason).to eq("other")
+    expect(intake).to be_canceled
   end
 end
