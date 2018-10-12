@@ -132,7 +132,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
 
     this.props.requestSave(`/case_reviews/${taskId}/complete`, payload, { title: successMsg }).
       then(() => {
-        this.props.deleteAppeal(appealId)
+        this.props.deleteAppeal(appealId);
       });
   };
 

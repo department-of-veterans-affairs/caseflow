@@ -14,7 +14,6 @@ import Alert from '../components/Alert';
 import { requestSave } from './uiReducer/uiActions';
 import { setTaskAttrs, setAppealAttrs } from './QueueActions';
 
-import { prepareTasksForStore } from './utils';
 import {
   appealWithDetailSelector,
   tasksForAppealAssignedToUserSelector
@@ -95,8 +94,8 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
     };
 
     this.props.requestSave('/tasks', payload, successMsg).
-      then((resp) => {
-        if (tasks[0].isLegacyTask) {
+      then(() => {
+        if (tasks[0].isLegacy) {
           this.props.setAppealAttrs(tasks[0].externalAppealId, { location: 'CASEFLOW' });
         } else {
           this.props.setTaskAttrs(tasks[0].uniqueId, { status: 'on_hold' });

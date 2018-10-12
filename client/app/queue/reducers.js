@@ -85,7 +85,7 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
         $set: action.payload.judges
       }
     });
-  case ACTIONS.DELETE_APPEAL:
+  case ACTIONS.DELETE_APPEAL: {
     const amaTasksIds = _.map(
       _.filter(
         state.amaTasks, (task) => task.externalAppealId === action.payload.appealId
@@ -98,6 +98,7 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
       appeals: { $unset: action.payload.appealId },
       appealDetails: { $unset: action.payload.appealId }
     });
+  }
   case ACTIONS.EDIT_APPEAL:
     return update(state, {
       appealDetails: {
@@ -360,7 +361,7 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
           $merge: action.payload.attributes
         }
       }
-    })
+    });
   }
   case ACTIONS.SET_SPECIAL_ISSUE: {
     return update(state, {

@@ -230,14 +230,14 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     </React.Fragment>;
   };
 
-  showActionsForLegacyTasks = (legacyTasks: Tasks): boolean => {
+  showActionsForLegacyTasks = (legacyTasks: Array<Task>): boolean => {
     // users can end up at case details for appeals with no DAS
     // record (!task.taskId). prevent starting checkout flows
-    return Boolean(legacyTasks.length && _.every(legacyTasks, (task) => task.taskId))
+    return Boolean(legacyTasks.length && _.every(legacyTasks, (task) => task.taskId));
   }
 
-  showActionsForTaskAssignedToUser = (tasks: Tasks): boolean => {
-    return _.every(tasks, (task) => task.status !== TASK_STATUSES.on_hold)
+  showActionsForTaskAssignedToUser = (tasks: Array<Task>): boolean => {
+    return _.every(tasks, (task) => task.status !== TASK_STATUSES.on_hold);
   }
 
   showActionsSection = (): boolean => {
@@ -251,8 +251,8 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       taskAssignedToOrganization
     } = this.props;
     const tasks = _.compact([taskAssignedToUser, taskAssignedToAttorney, taskAssignedToOrganization]);
-    const legacyTasks = tasks.filter((task) => task.isLegacyTask);
-    const nonLegacyTasks = [taskAssignedToUser].filter((task) => !task.isLegacyTask)
+    const legacyTasks = tasks.filter((task) => task.isLegacy);
+    const nonLegacyTasks = [taskAssignedToUser].filter((task) => !task.isLegacy);
 
     return this.showActionsForLegacyTasks(legacyTasks) || this.showActionsForTaskAssignedToUser(nonLegacyTasks);
   }

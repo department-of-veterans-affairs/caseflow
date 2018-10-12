@@ -48,6 +48,14 @@ export const onReceiveTasks = (
   }
 });
 
+export const setTaskAttrs = (uniqueId: string, attributes: Object) => ({
+  type: ACTIONS.SET_TASK_ATTRS,
+  payload: {
+    uniqueId,
+    attributes
+  }
+});
+
 export const fetchJudges = () => (dispatch: Dispatch) => {
   ApiUtil.get('/users?role=Judge').then((response) => {
     const resp = JSON.parse(response.text);
@@ -345,10 +353,12 @@ export const initialAssignTasksToUser = ({
         tasks: allTasks.tasks,
         amaTasks: allTasks.amaTasks
       }));
-      dispatch(setTaskAttrs(
-        oldTask.uniqueId,
-        { status: 'on_hold' }
-      ));
+      if (!oldTask.isLegacy) {
+        dispatch(setTaskAttrs(
+          oldTask.uniqueId,
+          { status: 'on_hold' }
+        ));
+      }
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
         taskId: oldTask.uniqueId,
@@ -398,10 +408,12 @@ export const reassignTasksToUser = ({
         tasks: allTasks.tasks,
         amaTasks: allTasks.amaTasks
       }));
-      dispatch(setTaskAttrs(
-        oldTask.uniqueId,
-        { status: 'on_hold' }
-      ));
+      if (!oldTask.isLegacy) {
+        dispatch(setTaskAttrs(
+          oldTask.uniqueId,
+          { status: 'on_hold' }
+        ));
+      }
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
         taskId: oldTask.uniqueId,
@@ -432,14 +444,6 @@ export const fetchAllAttorneys = () => (dispatch: Dispatch) =>
 export const fetchAmaTasksOfUser = (userId: number, userRole: string) => (dispatch: Dispatch) =>
   ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
     then((resp) => dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data))));
-
-export const setTaskAttrs = (uniqueId: string, attributes: Object) => ({
-  type: ACTIONS.SET_TASK_ATTRS,
-  payload: {
-    uniqueId,
-    attributes
-  }
-});
 
 export const setAppealAttrs = (appealId: string, attributes: Object) => ({
   type: ACTIONS.SET_APPEAL_ATTRS,
