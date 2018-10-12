@@ -237,7 +237,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
   }
 
   showActionsForTaskAssignedToUser = (tasks: Tasks): boolean => {
-    return _.every(tasks, (task) => task.status === TASK_STATUSES.on_hold)
+    return _.every(tasks, (task) => task.status !== TASK_STATUSES.on_hold)
   }
 
   showActionsSection = (): boolean => {
@@ -252,9 +252,9 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     } = this.props;
     const tasks = _.compact([taskAssignedToUser, taskAssignedToAttorney, taskAssignedToOrganization]);
     const legacyTasks = tasks.filter((task) => task.isLegacyTask);
-    const nonLegacyTasks = taskAssignedToUser.filter((task) => !task.isLegacyTask)
+    const nonLegacyTasks = [taskAssignedToUser].filter((task) => !task.isLegacyTask)
 
-    return this.showActionsForLegacyTasks(legacyTasks) && this.showActionsForTaskAssignedToUser(nonLegacyTasks);
+    return this.showActionsForLegacyTasks(legacyTasks) || this.showActionsForTaskAssignedToUser(nonLegacyTasks);
   }
 
   render = () => {

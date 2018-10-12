@@ -433,6 +433,14 @@ export const setTaskAttrs = (uniqueId: string, attributes: Object) => ({
   }
 });
 
+export const setAppealAttrs = (appealId: string, attributes: Object) => ({
+  type: ACTIONS.SET_APPEAL_ATTRS,
+  payload: {
+    appealId,
+    attributes
+  }
+});
+
 export const setSpecialIssues = (specialIssues: Object) => ({
   type: ACTIONS.SET_SPECIAL_ISSUE,
   payload: {

@@ -12,7 +12,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import Alert from '../components/Alert';
 
 import { requestSave } from './uiReducer/uiActions';
-import { setTaskAttrs } from './QueueActions';
+import { setTaskAttrs, setAppealAttrs } from './QueueActions';
 
 import { prepareTasksForStore } from './utils';
 import {
@@ -48,7 +48,8 @@ type Props = Params & {|
   tasks: Array<Task>,
   // dispatch
   requestSave: typeof requestSave,
-  setTaskAttrs: typeof setTaskAttrs
+  setTaskAttrs: typeof setTaskAttrs,
+  setAppealAttrs: typeof setAppealAttrs
 |};
 
 class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
@@ -95,10 +96,11 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
 
     this.props.requestSave('/tasks', payload, successMsg).
       then((resp) => {
-        const response = JSON.parse(resp.text);
-        const preparedTasks = prepareTasksForStore(response.tasks.data);
-
-        this.props.setTaskAttrs(tasks[0].uniqueId, preparedTasks[tasks[0].uniqueId]);
+        if (tasks[0].isLegacyTask) {
+          this.props.setAppealAttrs(tasks[0].externalAppealId, { location: 'CASEFLOW' });
+        } else {
+          this.props.setTaskAttrs(tasks[0].uniqueId, { status: 'on_hold' });
+        }
       });
   }
 
@@ -146,7 +148,8 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
-  setTaskAttrs
+  setTaskAttrs,
+  setAppealAttrs
 }, dispatch);
 
 const WrappedComponent = decisionViewBase(AddColocatedTaskView, {

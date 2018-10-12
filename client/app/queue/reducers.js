@@ -347,6 +347,15 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
       }
     });
   }
+  case ACTIONS.SET_APPEAL_ATTRS: {
+    return update(state, {
+      appealDetails: {
+        [action.payload.appealId]: {
+          $merge: action.payload.attributes
+        }
+      }
+    })
+  }
   case ACTIONS.SET_SPECIAL_ISSUE: {
     return update(state, {
       specialIssues: {
