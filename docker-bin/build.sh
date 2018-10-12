@@ -35,7 +35,7 @@ fi
 echo "\t Creating Caseflow App Docker Image"
 # Build Docker
 cd ../../
-#docker build -t caseflow .
+docker build -t caseflow .
 
 echo "\t Cleaning Up..."
 rm -rf docker-bin/oracle_libs/
