@@ -2,7 +2,7 @@ import React from 'react';
 import StatusMessage from '../../../components/StatusMessage';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { PAGE_PATHS, INTAKE_STATES, FORM_TYPE } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 
 class Completed extends React.PureComponent {

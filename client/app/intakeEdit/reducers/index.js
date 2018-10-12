@@ -4,10 +4,12 @@ import { applyCommonReducers } from '../../intake/reducers/common';
 import { REQUEST_STATE } from '../../intake/constants';
 import { update } from '../../util/ReducerUtil';
 import { formatRequestIssues, formatRatings, getSelection } from '../../intake/util/issues';
+import { formatRelationships } from '../../intake/util';
 
 export const mapDataToInitialState = function(props = {}) {
   const { serverIntake } = props;
   serverIntake.ratings = formatRatings(serverIntake.ratings)
+  serverIntake.relationships = formatRelationships(serverIntake.relationships)
 
   return {
     ...serverIntake,

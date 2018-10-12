@@ -2,13 +2,12 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
 
-import { addNonRatedIssue } from '../actions/addIssues';
+import { addNonRatedIssue, toggleUnidentifiedIssuesModal } from '../actions/addIssues';
 import Modal from '../../components/Modal';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
 import { NON_RATED_ISSUE_CATEGORIES } from '../constants';
-import { toggleUnidentifiedIssuesModal } from '../actions/common';
 
 class NonRatedIssueModal extends React.Component {
   constructor(props) {
