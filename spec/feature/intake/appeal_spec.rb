@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Appeal Intake" do
+RSpec.feature "Appeal Intake", focus: true do
   before do
     FeatureToggle.enable!(:intake)
     # Test that this works when only enabled on the current user
@@ -269,7 +269,7 @@ RSpec.feature "Appeal Intake" do
     expect(row).to have_text(text)
   end
 
-  scenario "adding issues and completing an appeal intake", focus: true do
+  scenario "adding issues and completing an appeal intake" do
     appeal = start_appeal(veteran)
     visit "/intake/add_issues"
 
@@ -373,7 +373,7 @@ RSpec.feature "Appeal Intake" do
     )).to_not be_nil
   end
 
-  scenario "canceling an appeal intake", focus: true do
+  scenario "canceling an appeal intake" do
     appeal = Appeal.create!(
       veteran_file_number: veteran.file_number,
       receipt_date: 2.days.ago,
