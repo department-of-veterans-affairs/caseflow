@@ -102,8 +102,8 @@ export default class AssignHearings extends React.Component {
   }
 
   appellantName = (hearingDay) => {
-    if (hearingDay.firstName && hearingDay.lastName) {
-      return `${hearingDay.firstName}, ${hearingDay.lastName} | ${hearingDay.id}`;
+    if (hearingDay.appellantFirstName && hearingDay.appellantLastName) {
+      return `${hearingDay.appellantFirstName} ${hearingDay.appellantLastName} | ${hearingDay.id}`;
     }
 
     return `${hearingDay.id}`;
