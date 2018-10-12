@@ -194,6 +194,9 @@ RSpec.feature "AmaQueue" do
       let!(:staff) { FactoryBot.create(:staff, user: user, sdept: "TRANS", sattyid: nil) }
       let!(:translation_organization) { Organization.create!(name: "Translation", url: "translation") }
       let!(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
+      let!(:staff_field) do
+        StaffFieldForOrganization.create!(organization: translation_organization, name: "sdept", values: %w[TRANS])
+      end
 
       let!(:translation_task) do
         create(
