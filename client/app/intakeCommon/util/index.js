@@ -56,6 +56,23 @@ export const validNonRatedIssue = (issue) => {
   return true;
 };
 
+const formatUnidentifiedIssues = (state) => {
+  // only used for the new add intake flow
+  if (state.addedIssues && state.addedIssues.length > 0) {
+    return state.addedIssues.
+      filter((issue) => issue.isUnidentified).
+      map((issue) => {
+        return {
+          decision_text: issue.description,
+          notes: issue.notes,
+          is_unidentified: true
+        };
+      });
+  }
+
+  return [];
+};
+
 const formatRatedIssues = (state) => {
   if (state.addedIssues && state.addedIssues.length > 0) {
     // we're using the new add issues page
@@ -84,7 +101,7 @@ const formatRatedIssues = (state) => {
 const formatNonRatedIssues = (state) => {
   if (state.addedIssues && state.addedIssues.length > 0) {
     // we're using the new add issues page
-    return state.addedIssues.filter((issue) => !issue.isRated).map((issue) => {
+    return state.addedIssues.filter((issue) => !issue.isRated && !issue.isUnidentified).map((issue) => {
       return {
         issue_category: issue.category,
         decision_text: issue.description,
@@ -111,9 +128,10 @@ const formatNonRatedIssues = (state) => {
 export const formatIssues = (state) => {
   const ratingData = formatRatedIssues(state);
   const nonRatingData = formatNonRatedIssues(state);
+  const unidentifiedData = formatUnidentifiedIssues(state);
 
   const data = {
-    request_issues: _.concat(ratingData, nonRatingData)
+    request_issues: _.concat(ratingData, nonRatingData, unidentifiedData)
   };
 
   return data;

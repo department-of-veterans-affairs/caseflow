@@ -374,5 +374,11 @@ RSpec.feature "Appeal Intake" do
              description: "Description for Active Duty Adjustments",
              decision_date: 1.month.ago
     )).to_not be_nil
+
+    expect(RequestIssue.find_by(
+             review_request: appeal,
+             description: "This is an unidentified issue",
+             is_unidentified: true
+    )).to_not be_nil
   end
 end

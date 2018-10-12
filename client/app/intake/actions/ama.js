@@ -152,7 +152,6 @@ export const addUnidentifiedIssue = (description, notes) => (dispatch) => {
   dispatch({
     type: ACTIONS.ADD_ISSUE,
     payload: {
-      category: 'Unknown issue category',
       isUnidentified: true,
       description,
       notes

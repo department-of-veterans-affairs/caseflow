@@ -29,6 +29,7 @@ export const FORM_TYPES = {
 };
 
 const issueCategoriesArray = [
+  // Unknown issue category should be removed in the new add issues flow
   'Unknown issue category',
   'Apportionment',
   'Incarceration Adjustments',
