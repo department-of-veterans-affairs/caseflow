@@ -8,7 +8,8 @@ import PropTypes from 'prop-types';
 const headerStyling = css({
   marginBottom: '34px',
   fontSize: '42px',
-  paddingLeft:'5rem'
+  paddingLeft:'5rem',
+  paddingTop: '9rem'
 });
 
 const bodyStyling = css({
@@ -20,8 +21,8 @@ const messageStyling = css({
   paddingLeft: '9.8rem',
   fontSize: '3rem',
   paddingRight: '9rem',
+  paddingBottom: '9.8rem'
 })
-
 
 export default class AssignStatusMessage extends React.PureComponent {
 

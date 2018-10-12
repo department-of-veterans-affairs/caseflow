@@ -30,6 +30,8 @@ const sectionNavigationListStyling = css({
   }
 });
 
+const roErrorTittle = css({paddingLeft: '100px'})
+
 export default class AssignHearings extends React.Component {
 
   // required to reset the RO Dropdown when moving from Viewing and Assigning.
@@ -111,6 +113,19 @@ export default class AssignHearings extends React.Component {
     }));
   };
 
+  roNotAssignedTittle = () => {
+    if (this.props.selectedRegionalOffice.label) {
+      return <span>The {this.props.selectedRegionalOffice.label} Regional Office has not been<br/>
+        <span {...roErrorTittle}>assigned any hearing days</span></span>;
+    }
+  }
+
+  // {this.props.selectedRegionalOffice.label !== this.veteransReadyForHearing() &&
+  //   <AssignStatusMessage
+  //     message={'Please verify that this RO has been assigned hearings'}
+  //     title={this.roNotAssignedTittle()}
+  // />}
+
   veteransReadyForHearing = () => {
 
     const tabWindowColumns = [
@@ -141,14 +156,6 @@ export default class AssignHearings extends React.Component {
       }
     ];
 
-    // const regionalOfficeFound = (hearing) => {
-    //   if (this.props.selectedRegionalOffice.label === hearing.regionalOffice) {
-    //     return <span>The `${hearing.regionalOffice}` Regional Office has not been assigned any hearing days</span>;
-    //       console.log('pepe');
-    //   }
-    // }
-
-    const pepe = 'pepe';
     const selectedHearingDay = this.props.selectedHearingDay;
 
     const availableSlots = selectedHearingDay.totalSlots - Object.keys(selectedHearingDay.hearings).length;
@@ -181,8 +188,8 @@ export default class AssignHearings extends React.Component {
       />
     <AssignStatusMessage
       message={'Please verify that this RO has been assigned hearings'}
-      title={'Kiss'}
-       />
+      title={this.roNotAssignedTittle()}
+     />
     </div>;
   };
 
