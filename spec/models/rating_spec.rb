@@ -146,7 +146,7 @@ describe Rating do
     let!(:rating) do
       Generators::Rating.build(
         participant_id: "DRAYMOND",
-        promulgation_date: receipt_date - 2.years
+        promulgation_date: receipt_date - 370.days
       )
     end
 
@@ -159,19 +159,6 @@ describe Rating do
 
     it "returns rating objects for all ratings" do
       expect(subject.count).to eq(2)
-    end
-
-    context "when multiple ratings exist" do
-      let!(:another_rating) do
-        Generators::Rating.build(
-          participant_id: "DRAYMOND",
-          promulgation_date: receipt_date - 370.days
-        )
-      end
-
-      it "returns rating objects sorted desc by promulgation_date for all ratings" do
-        expect(subject.count).to eq(3)
-      end
     end
   end
 end
