@@ -1,0 +1,6 @@
+{
+    "ASSIGN_TO_PERSON": { "label": "Assign to person", "value": "modal/assign_to_person" },
+    "ASSIGN_TO_TEAM": { "label": "Assign to team", "value": "modal/assign_to_team" },
+    "MARK_COMPLETE": { "label": "Mark task complete", "value": "mark_task_complete" },
+    "REASSIGN_TO_PERSON": { "label": "Re-assign to person", "value": "modal/reassign_to_person" }
+}

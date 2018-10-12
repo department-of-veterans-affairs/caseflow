@@ -11,12 +11,16 @@ import {
   tasksForAppealAssignedToUserSelector,
   incompleteOrganizationTasksByAssigneeIdSelector
 } from './selectors';
+import { prepareTasksForStore } from './utils';
 
 import { setTaskAttrs } from './QueueActions';
 
 import SearchableDropdown from '../components/SearchableDropdown';
 import editModalBase from './components/EditModalBase';
-import { requestSave } from './uiReducer/uiActions';
+import {
+  requestPatch,
+  requestSave
+} from './uiReducer/uiActions';
 
 import type { State } from './types/state';
 import type { Appeal, Task } from './types/models';
@@ -24,12 +28,14 @@ import type { Appeal, Task } from './types/models';
 type Params = {|
   appealId: string,
   task: Task,
+  isReassignAction: boolean,
   isTeamAssign: boolean
 |};
 
 type Props = Params & {|
   appeal: Appeal,
   highlightFormItems: boolean,
+  requestPatch: typeof requestPatch,
   requestSave: typeof requestSave,
   setTaskAttrs: typeof setTaskAttrs
 |};
@@ -55,6 +61,7 @@ class AssignToView extends React.Component<Props, ViewState> {
     const {
       appeal,
       task,
+      isReassignAction,
       isTeamAssign
     } = this.props;
     const payload = {
@@ -72,9 +79,48 @@ class AssignToView extends React.Component<Props, ViewState> {
       title: `Task assigned to ${this.props.isTeamAssign ? 'team' : 'person'}`
     };
 
+    if (isReassignAction) {
+      return this.reassignTask();
+    }
+
     return this.props.requestSave('/tasks', payload, successMsg).
       then(() => {
         this.props.setTaskAttrs(appeal.externalId, { status: 'on_hold' });
+      });
+  }
+
+  reassignTask = () => {
+    const {
+      task,
+      isTeamAssign
+    } = this.props;
+
+    const payload = {
+      data: {
+        task: {
+          reassign: {
+            assigned_to_id: this.state.selectedValue,
+            assigned_to_type: isTeamAssign ? 'Organization' : 'User'
+          }
+        }
+      }
+    };
+
+    let assignee = 'person';
+
+    this.options().forEach((opt) => {
+      if (opt.value === this.state.selectedValue) {
+        assignee = opt.label;
+      }
+    });
+    const successMsg = { title: `Task reassigned to ${assignee}` };
+
+    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
+      then((resp) => {
+        const response = JSON.parse(resp.text);
+        const preparedTasks = prepareTasksForStore(response.tasks.data);
+
+        this.props.setTaskAttrs(task.externalAppealId, preparedTasks[task.externalAppealId]);
       });
   }
 
@@ -129,6 +175,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  requestPatch,
   requestSave,
   setTaskAttrs
 }, dispatch);

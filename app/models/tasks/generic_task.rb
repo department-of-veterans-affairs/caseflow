@@ -1,27 +1,32 @@
 class GenericTask < Task
   def allowed_actions(user)
-    return [] if assigned_to != user && !assigned_to.is_a?(Organization)
+    if assigned_to.is_a?(Vso)
+      return [Constants.TASK_ACTIONS.MARK_COMPLETE.to_h]
+    end
 
-    return [{ label: "Mark task complete", value: "mark_task_complete" }] if assigned_to.is_a?(Vso)
+    if assigned_to == user
+      return [
+        Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
+        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
+        Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
+      ]
+    end
 
-    [
-      {
-        label: "Assign to team",
-        value: "modal/assign_to_team"
-      },
-      {
-        label: "Assign to person",
-        value: "modal/assign_to_person"
-      },
-      {
-        label: "Mark task complete",
-        value: "mark_task_complete"
-      }
-    ]
+    if assigned_to.is_a?(Organization)
+      return [
+        Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
+        Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
+        Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
+      ]
+    end
+
+    []
   end
 
   def update_from_params(params, current_user)
     verify_user_access!(current_user)
+
+    return reassign(params[:reassign], current_user) if params[:reassign]
 
     new_status = params[:status]
     if new_status == Constants.TASK_STATUSES.completed
@@ -29,6 +34,12 @@ class GenericTask < Task
     else
       update!(status: new_status)
     end
+  end
+
+  def reassign(reassign_params, current_user)
+    child = self.class.create_child_task(parent, current_user, reassign_params)
+    update!(status: Constants.TASK_STATUSES.completed)
+    children.reject { |t| t.status == Constants.TASK_STATUSES.completed }.each { |t| t.parent_id = child.id }
   end
 
   def can_be_accessed_by_user?(user)
@@ -52,8 +63,6 @@ class GenericTask < Task
       end
     end
 
-    private
-
     def create_child_task(parent, current_user, params)
       # Create an assignee from the input arguments so we throw an error if the assignee does not exist.
       assignee = Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
@@ -67,6 +76,8 @@ class GenericTask < Task
         assigned_to: assignee
       )
     end
+
+    private
 
     def child_assigned_by_id(parent, current_user)
       return current_user.id if current_user

@@ -156,8 +156,13 @@ class TasksController < ApplicationController
   end
 
   def update_params
-    params.require("task")
-      .permit(:status, :on_hold_duration, :assigned_to_id, :instructions)
+    params.require("task").permit(
+      :status,
+      :on_hold_duration,
+      :assigned_to_id,
+      :instructions,
+      reassign: [:assigned_to_id, :assigned_to_type]
+    )
   end
 
   def json_vso_tasks

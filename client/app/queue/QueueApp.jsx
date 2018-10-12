@@ -158,6 +158,8 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
+  routedReassignToUser = (props) => <AssignToView isReassignAction {...props.match.params} />;
+
   routedMarkTaskComplete = (props) => <MarkTaskCompleteView
     nextStep={`/queue/appeals/${props.match.params.appealId}`}
     {...props.match.params} />;
@@ -245,6 +247,9 @@ class QueueApp extends React.PureComponent<Props> {
           <Route
             path="/queue/appeals/:appealId/modal/assign_to_person"
             render={this.routedAssignToUser} />
+          <Route
+            path="/queue/appeals/:appealId/modal/reassign_to_person"
+            render={this.routedReassignToUser} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"
