@@ -11,6 +11,7 @@ import RoSelectorDropdown from './RoSelectorDropdown';
 import moment from 'moment';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
+import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 
 const colorAOD = css({
   color: 'red'
@@ -100,6 +101,12 @@ export default class AssignHearings extends React.Component {
     return docketType;
   }
 
+  getHearingTime = (date, regionalOfficeTimezone) => {
+    return <div>
+      {getTime(date)} /<br />{getTimeInDifferentTimeZone(date, regionalOfficeTimezone)}
+    </div>
+  };
+
   tableAssignHearingsRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
       caseDetails: `${veteran.name} | ${veteran.id}`,
@@ -112,11 +119,11 @@ export default class AssignHearings extends React.Component {
 
   tableScheduledHearingsRows = (hearings) => {
     return _.map(hearings, (hearing) => ({
-      caseDetails: `${hearing.appealInfo.appelantName} | ${hearing.appealInfo.vbmsId}`,
-      type: this.veteranTypeColor(hearing.appealInfo.appealType),
-      docketNumber: hearing.appealInfo.docketNumber,
-      location: hearing.location,
-      time: hearing.time
+      caseDetails: `${hearing.appellantMiFormatted} | ${hearing.vbmsId}`,
+      type: this.veteranTypeColor(hearing.type),
+      docketNumber: hearing.docketNumber,
+      location: hearing.requestType == "Video" ? hearing.regionalOfficeName : 'Washington, DC',
+      time: this.getHearingTime(hearing.date, hearing.regionalOfficeTimezone)
     }));
   };
 

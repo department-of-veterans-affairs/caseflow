@@ -79,7 +79,7 @@ class HearingDay < ApplicationRecord
         else
           hearings = HearingRepository.fetch_hearings_for_parent(hearing_day[:id])
         end
-        format_hearings(enriched_hearing_days, hearing_location, hearings)
+        format_hearings(enriched_hearing_days, hearings)
       end
       enriched_hearing_days
     end
@@ -92,36 +92,13 @@ class HearingDay < ApplicationRecord
 
     private
 
-    def format_hearings(enriched_hearing_days, hearing_location, hearings)
+    def format_hearings(enriched_hearing_days, hearings)
       hearing_count = 0
       hearings.each do |hearing|
         hearing_count += 1
-        enriched_hearing_days[enriched_hearing_days.length - 1][:hearings].push(
-          id: hearing.hearing_pkseq,
-          location: hearing_location,
-          time: hearing.hearing_date,
-          disposition: hearing.hearing_disp
-        )
-        hearing_idx = enriched_hearing_days[enriched_hearing_days.length - 1][:hearings].length
-        format_appeal_info_for_hearing(enriched_hearing_days, hearing_idx, hearing)
+        enriched_hearing_days[enriched_hearing_days.length - 1][:hearings].push(hearing.to_hash(1))
       end
       enriched_hearing_days[enriched_hearing_days.length - 1][:filled_slots] = hearing_count
-    end
-
-    def format_appeal_info_for_hearing(enriched_hearing_days, hearing_idx, hearing)
-      appeal = LegacyAppeal.find_by_vacols_id(hearing.folder_nr)
-      enriched_hearing_days[enriched_hearing_days.length - 1][:hearings][hearing_idx - 1][:appeal_info] = {
-        veteran_name: appeal.veteran_full_name,
-        appelant_name: "#{appeal.appellant_first_name} #{appeal.appellant_last_name}",
-        appeal_type: appeal.type,
-        docket_number: appeal.docket_number,
-        appeal_issue_count: appeal.issue_count,
-        veteran_street: appeal.appellant_address_line_1,
-        veteran_city: appeal.appellant_city,
-        veteran_state: appeal.appellant_state,
-        veteran_zipcode: appeal.appellant_zip,
-        vbms_id: appeal.vbms_id
-      }
     end
 
     def enrich_with_judge_names(hearing_days)

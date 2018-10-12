@@ -17,7 +17,7 @@ class HearingRepository
     end
 
     def fetch_hearings_for_parent(parent_hearing_pkseq)
-      VACOLS::CaseHearing.where(vdkey: parent_hearing_pkseq)
+      hearings_for(VACOLS::CaseHearing.hearings_for_master_record(parent_hearing_pkseq))
     end
 
     def load_issues(hearings)

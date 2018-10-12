@@ -120,6 +120,8 @@ class Hearing < ApplicationRecord
     :number_of_documents_after_certification, \
     :veteran,  \
     :sanitized_vbms_id, \
+    :docket_number, \
+    :type, \
     to: :appeal, allow_nil: true
 
   def to_hash(current_user_id)
@@ -146,7 +148,9 @@ class Hearing < ApplicationRecord
         :veteran_fi_last_formatted,
         :vbms_id,
         :current_issue_count,
-        :prepped
+        :prepped,
+        :docket_number,
+        :type
       ],
       except: :military_service
     ).merge(
