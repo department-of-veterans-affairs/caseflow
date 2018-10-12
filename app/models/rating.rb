@@ -1,6 +1,8 @@
 class Rating
   include ActiveModel::Model
 
+  class NilRatingProfileListError < StandardError; end
+
   # WARNING: profile_date is a misnomer adopted from BGS terminology.
   # It is a datetime, not a date.
   attr_accessor :participant_id, :profile_date, :promulgation_date
@@ -70,6 +72,9 @@ class Rating
     private
 
     def ratings_from_bgs_response(response)
+      if response.dig(:rating_profile_list, :rating_profile).nil?
+        fail NilRatingProfileListError, message: response
+      end
       # If only one rating is returned, we need to convert it to an array
       [response[:rating_profile_list][:rating_profile]].flatten.map do |rating_data|
         Rating.from_bgs_hash(rating_data)

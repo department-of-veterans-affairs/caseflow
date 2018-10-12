@@ -262,7 +262,7 @@ describe EndProductEstablishment do
 
       expect(end_product_establishment.contentions.count).to eq(3)
       expect(end_product_establishment.contentions.map(&:id)).to contain_exactly(
-        *request_issues.map(&:reload).map(&:contention_reference_id)
+        *request_issues.map(&:reload).map(&:contention_reference_id).map(&:to_s)
       )
     end
 
@@ -370,6 +370,7 @@ describe EndProductEstablishment do
     end
 
     let(:reference_id) { "stevenasmith" }
+    let(:contention_ref_id) { 1234 }
 
     let(:for_object) do
       RequestIssue.new(
@@ -377,12 +378,12 @@ describe EndProductEstablishment do
         rating_issue_reference_id: "reference-id",
         rating_issue_profile_date: Date.new(2018, 4, 30),
         description: "this is a big decision",
-        contention_reference_id: "skipbayless"
+        contention_reference_id: contention_ref_id
       )
     end
 
     let!(:contention) do
-      Generators::Contention.build(id: "skipbayless", claim_id: reference_id, text: "Left knee")
+      Generators::Contention.build(id: contention_ref_id, claim_id: reference_id, text: "Left knee")
     end
 
     subject { end_product_establishment.remove_contention!(for_object) }
