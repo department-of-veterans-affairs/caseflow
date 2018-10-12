@@ -86,9 +86,15 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
       }
     });
   case ACTIONS.DELETE_APPEAL:
+    const amaTasksIds = _.map(
+      _.filter(
+        state.amaTasks, (task) => task.externalAppealId === action.payload.appealId
+      ), 'uniqueId'
+    );
+
     return update(state, {
       tasks: { $unset: action.payload.appealId },
-      amaTasks: { $unset: action.payload.appealId },
+      amaTasks: { $unset: amaTasksIds },
       appeals: { $unset: action.payload.appealId },
       appealDetails: { $unset: action.payload.appealId }
     });

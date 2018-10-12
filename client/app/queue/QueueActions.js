@@ -345,9 +345,13 @@ export const initialAssignTasksToUser = ({
         tasks: allTasks.tasks,
         amaTasks: allTasks.amaTasks
       }));
+      dispatch(setTaskAttrs(
+        oldTask.uniqueId,
+        { status: 'on_hold' }
+      ));
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
-        taskId: task.attributes.external_appeal_id,
+        taskId: oldTask.uniqueId,
         selected: false
       }));
     });
@@ -394,9 +398,13 @@ export const reassignTasksToUser = ({
         tasks: allTasks.tasks,
         amaTasks: allTasks.amaTasks
       }));
+      dispatch(setTaskAttrs(
+        oldTask.uniqueId,
+        { status: 'on_hold' }
+      ));
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
-        taskId: task.attributes.external_appeal_id,
+        taskId: oldTask.uniqueId,
         selected: false
       }));
     });

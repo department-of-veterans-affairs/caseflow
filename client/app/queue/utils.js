@@ -163,10 +163,10 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
 
 export const prepareAllTasksForStore = (tasks: Array<Object>): { amaTasks: Tasks, tasks: Tasks } => {
   const amaTasks = tasks.filter((task) => {
-    return task.attributes.appeal_type === 'Appeal';
+    return !task.attributes.is_legacy;
   });
   const legacyTasks = tasks.filter((task) => {
-    return task.attributes.appeal_type === 'LegacyAppeal';
+    return task.attributes.is_legacy;
   });
 
   return {
