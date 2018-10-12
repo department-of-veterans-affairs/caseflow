@@ -18,6 +18,10 @@ class AmaReview < ApplicationRecord
     receipt_date && timely_ratings_with_issues.map(&:ui_hash)
   end
 
+  cache_attribute :cached_serialized_ratings, cache_key: :ratings_cache_key, expires_in: 1.day do
+    ratings_with_issues.map(&:ui_hash)
+  end
+
   def start_review!
     @saving_review = true
   end
@@ -55,8 +59,18 @@ class AmaReview < ApplicationRecord
 
   private
 
+  def ratings_with_issues
+    veteran.ratings.reject { |rating| rating.issues.empty? }
+  end
+
   def timely_ratings_with_issues
-    veteran.timely_ratings.reject { |rating| rating.issues.empty? }
+    return unless receipt_date
+
+    veteran.timely_ratings(from_date: receipt_date).reject { |rating| rating.issues.empty? }
+  end
+
+  def ratings_cache_key
+    "#{veteran_file_number}-ratings"
   end
 
   def timely_ratings_cache_key
