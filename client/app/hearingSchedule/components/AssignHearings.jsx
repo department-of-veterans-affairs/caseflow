@@ -130,11 +130,15 @@ export default class AssignHearings extends React.Component {
     }
   }
 
-  // {this.props.selectedRegionalOffice.label !== this.veteransReadyForHearing() &&
-  //   <AssignStatusMessage
-  //     message={'Please verify that this RO has been assigned hearings'}
-  //     title={this.roNotAssignedTittle()}
-  // />}
+  roNotAssignedTittleError = () => {
+    let error;
+    if (this.props.selectedRegionalOffice.label !== this.props.veteransReadyForHearing) {
+      return error = <AssignStatusMessage
+        message={'Please verify that this RO has been assigned hearings'}
+        title={this.roNotAssignedTittle()}
+       />;
+    }
+  }
 
   veteransReadyForHearing = () => {
 
@@ -196,10 +200,7 @@ export default class AssignHearings extends React.Component {
           }
         ]}
       />
-    <AssignStatusMessage
-      message={'Please verify that this RO has been assigned hearings'}
-      title={this.roNotAssignedTittle()}
-     />
+    {this.roNotAssignedTittleError()}
     </div>;
   };
 
