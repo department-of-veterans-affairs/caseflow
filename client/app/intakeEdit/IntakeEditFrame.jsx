@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { BrowserRouter, Route } from 'react-router-dom';
@@ -11,7 +10,7 @@ import { PAGE_PATHS } from './constants';
 import { EditAddIssuesPage } from '../intake/pages/addIssues';
 import CancelPage from './pages/cancelled';
 import { css } from 'glamor';
-import CancelEditButton from './components/CancelEditButton';
+import EditButtons from './components/EditButtons';
 
 const textAlignRightStyling = css({
   textAlign: 'right'
@@ -65,7 +64,7 @@ export default class IntakeEditFrame extends React.PureComponent {
               <Route
                 exact
                 path={PAGE_PATHS.BEGIN}
-                component={CancelEditButton}
+                component={EditButtons}
               />
             </AppSegment>
           </AppFrame>

@@ -1,6 +1,27 @@
 import _ from 'lodash';
 import { formatDate, formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
 
+const getNonVeteranClaimant = (intakeData) => {
+  const claimant = intakeData.relationships.filter((relationship) => {
+    return relationship.value === intakeData.claimant;
+  });
+
+  return `${claimant[0].displayText} (payee code ${intakeData.payeeCode})`;
+};
+
+const getClaimantField = (formType, veteran, intakeData) => {
+  if (formType === 'appeal' || intakeData.benefitType === 'compensation') {
+    const claimant = intakeData.claimantNotVeteran ? getNonVeteranClaimant(intakeData) : veteran.name;
+
+    return [{
+      field: 'Claimant',
+      content: claimant
+    }];
+  }
+
+  return [];
+};
+
 export const formatRatings = (ratings, requestIssues = []) => {
   const result = _.keyBy(_.map(ratings, (rating) => {
     return _.assign(rating,
@@ -64,30 +85,43 @@ export const formatRequestIssues = (requestIssues) => {
         category: issue.category,
         description: issue.description,
         decisionDate: issue.decision_date
-      }
+      };
     }
 
     // Rated issues
-    const issueDate = new Date(issue.profile_date)
+    const issueDate = new Date(issue.profile_date);
+
     return {
       isRated: true,
       id: issue.reference_id,
       profileDate: issueDate.toISOString(),
       notes: issue.notes
-    }
-  })
-}
+    };
+  });
+};
+
+const ratingIssuesById = (ratings) => {
+  return _.reduce(ratings, (result, rating) => {
+    _.forEach(rating.issues, (issue, id) => {
+      result[id] = issue.decision_text;
+    });
+
+    return result;
+  }, {});
+};
 
 const formatRatedIssues = (state) => {
+  const ratingIssues = ratingIssuesById(state.ratings);
+
   if (state.addedIssues && state.addedIssues.length > 0) {
     // we're using the new add issues page
     return state.addedIssues.
       filter((issue) => issue.isRated).
       map((issue) => {
-        let originalIssue = state.ratings[issue.profileDate].issues[issue.id];
-
-        return _.merge(originalIssue, { profile_date: issue.profileDate,
-          notes: issue.notes });
+        return { reference_id: issue.id,
+          decision_text: ratingIssues[issue.id],
+          profile_date: issue.profileDate,
+          notes: issue.notes };
       });
   }
 
@@ -196,6 +230,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
 
 export const formatAddedIssues = (intakeData) => {
   let issues = intakeData.addedIssues || [];
+  let ratingIssues = ratingIssuesById(intakeData.ratings);
 
   return issues.map((issue) => {
     if (issue.isUnidentified) {
@@ -206,11 +241,9 @@ export const formatAddedIssues = (intakeData) => {
         isUnidentified: true
       };
     } else if (issue.isRated) {
-      let foundIssue = intakeData.ratings[issue.profileDate].issues[issue.id];
-
       return {
         referenceId: issue.id,
-        text: `${foundIssue.decision_text} Decision date ${formatDateStr(issue.profileDate)}.`,
+        text: `${ratingIssues[issue.id]} Decision date ${formatDateStr(issue.profileDate)}.`,
         notes: issue.notes
       };
     }
@@ -221,25 +254,4 @@ export const formatAddedIssues = (intakeData) => {
       text: `${issue.category} - ${issue.description} Decision date ${formatDate(issue.decisionDate)}`
     };
   });
-};
-
-const getClaimantField = (formType, veteran, intakeData) => {
-  if (formType === 'appeal' || intakeData.benefitType === 'compensation') {
-    const claimant = intakeData.claimantNotVeteran ? getNonVeteranClaimant(intakeData) : veteran.name;
-
-    return [{
-      field: 'Claimant',
-      content: claimant
-    }];
-  }
-
-  return [];
-};
-
-const getNonVeteranClaimant = (intakeData) => {
-  const claimant = intakeData.relationships.filter((relationship) => {
-    return relationship.value === intakeData.claimant;
-  });
-
-  return `${claimant[0].displayText} (payee code ${intakeData.payeeCode})`;
 };

@@ -96,7 +96,7 @@ RSpec.feature "Edit issues" do
 
       # test canceling adding an issue by closing the modal
       safe_click ".close-modal"
-      expect(page).to_not have_content("Left knee granted")
+      expect(page).to_not have_content("2. Left knee granted")
 
       # adding an issue should show the issue
       safe_click "#button-add-issue"
@@ -107,21 +107,21 @@ RSpec.feature "Edit issues" do
       expect(page).to_not have_content("Notes:")
       safe_click ".remove-issue"
 
-      expect(page).not_to have_content("Left knee granted")
+      expect(page).not_to have_content("PTSD denied")
 
       # re-add to proceed
       safe_click "#button-add-issue"
-      find("label", text: "Left knee granted").click
+      find("label", text: "PTSD denied").click
       fill_in "Notes", with: "I am an issue note"
       safe_click ".add-issue"
-      expect(page).to have_content("2. Left knee granted")
+      expect(page).to have_content("2. PTSD denied")
       expect(page).to have_content("I am an issue note")
 
       # clicking add issue again should show a disabled radio button for that same rating
       safe_click "#button-add-issue"
       expect(page).to have_content("Add issue 3")
       expect(page).to have_content("Does issue 3 match any of these issues")
-      expect(page).to have_content("Left knee granted (already selected for issue 2)")
+      expect(page).to have_content("Left knee granted (already selected for issue 1)")
       expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
 
       # Add non-rated issue
@@ -251,28 +251,103 @@ RSpec.feature "Edit issues" do
     let!(:supplemental_claim) do
       SupplementalClaim.create!(
         veteran_file_number: veteran.file_number,
-        receipt_date: receipt_date
+        receipt_date: receipt_date,
+        benefit_type: "compensation"
       )
     end
 
     let!(:request_issue) do
       RequestIssue.create!(
-        rating_issue_reference_id: "abc123",
+        rating_issue_reference_id: "def456",
         rating_issue_profile_date: rating.profile_date,
         review_request: supplemental_claim,
-        description: "Left knee granted"
+        description: "PTSD denied"
       )
     end
 
     before do
       supplemental_claim.create_issues!([request_issue])
       supplemental_claim.process_end_product_establishments!
+      supplemental_claim.create_claimants!(participant_id: "5382910292", payee_code: "10")
+
+      allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
+        first_name: "BOB",
+        last_name: "VANCE",
+        ptcpnt_id: "5382910292",
+        relationship_type: "Spouse"
+      )
     end
 
-    it "shows selected issues" do
-      visit "supplemental_claims/#{supplemental_claim.end_product_claim_id}/edit/select_issues"
+    it "shows request issues and allows adding/removing issues" do
+      visit "supplemental_claims/#{supplemental_claim.end_product_claim_id}/edit"
+
+      # Check that request issues appear correctly as added issues
+      expect(page).to_not have_content("Left knee granted")
+      expect(page).to have_content("PTSD denied")
+
+      expect(page).to have_content("Add Issues")
+      check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
+      check_row("Benefit type", "Compensation")
+      check_row("Claimant", "Bob Vance, Spouse (payee code 10)")
+
+      safe_click "#button-add-issue"
+
+      expect(page).to have_content("Add issue 2")
+      expect(page).to have_content("Does issue 2 match any of these issues")
       expect(page).to have_content("Left knee granted")
-      expect(page).to_not have_content("PTSD denied")
+      expect(page).to have_content("PTSD denied")
+
+      # test canceling adding an issue by closing the modal
+      safe_click ".close-modal"
+      expect(page).to_not have_content("2. Left knee granted")
+
+      # adding an issue should show the issue
+      safe_click "#button-add-issue"
+      find("label", text: "Left knee granted").click
+      safe_click ".add-issue"
+
+      expect(page).to have_content("2. Left knee granted")
+      expect(page).to_not have_content("Notes:")
+      safe_click ".remove-issue"
+
+      expect(page).not_to have_content("PTSD denied")
+
+      # re-add to proceed
+      safe_click "#button-add-issue"
+      find("label", text: "PTSD denied").click
+      fill_in "Notes", with: "I am an issue note"
+      safe_click ".add-issue"
+      expect(page).to have_content("2. PTSD denied")
+      expect(page).to have_content("I am an issue note")
+
+      # clicking add issue again should show a disabled radio button for that same rating
+      safe_click "#button-add-issue"
+      expect(page).to have_content("Add issue 3")
+      expect(page).to have_content("Does issue 3 match any of these issues")
+      expect(page).to have_content("Left knee granted (already selected for issue 1)")
+      expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
+
+      # Add non-rated issue
+      safe_click ".no-matching-issues"
+      expect(page).to have_content("Does issue 3 match any of these issue categories?")
+      expect(page).to have_button("Add this issue", disabled: true)
+      fill_in "Issue category", with: "Active Duty Adjustments"
+      find("#issue-category").send_keys :enter
+      fill_in "Issue description", with: "Description for Active Duty Adjustments"
+      fill_in "Decision date", with: "04/25/2018"
+      expect(page).to have_button("Add this issue", disabled: false)
+      safe_click ".add-issue"
+      expect(page).to have_content("3 issues")
+
+      # add unidentified issue
+      safe_click "#button-add-issue"
+      safe_click ".no-matching-issues"
+      safe_click ".no-matching-issues"
+      expect(page).to have_content("Describe the issue to mark it as needing further review.")
+      fill_in "Transcribe the issue as it's written on the form", with: "This is an unidentified issue"
+      safe_click ".add-issue"
+      expect(page).to have_content("4 issues")
+      expect(page).to have_content("This is an unidentified issue")
     end
 
     it "enables save button only when dirty", skip: "save button in future PR" do

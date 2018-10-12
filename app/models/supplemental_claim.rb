@@ -10,9 +10,9 @@ class SupplementalClaim < ClaimReview
 
   END_PRODUCT_MODIFIERS = %w[040 041 042 043 044 045 046 047 048 049].freeze
 
-  def ui_hash
+  def ui_hash(ama_enabled)
     {
-      formType: "higher_level_review",
+      formType: "supplemental_claim",
       veteran: {
         name: veteran && veteran.name.formatted(:readable_short),
         fileNumber: veteran_file_number,

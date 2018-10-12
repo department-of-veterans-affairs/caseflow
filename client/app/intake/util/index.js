@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { REVIEW_OPTIONS } from '../constants';
-import { formatDate, formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
+import { formatDateStringForApi } from '../../util/DateUtil';
 
 export const getAppealDocketError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.appeal_docket, 0) === 'blank') && 'Please select an option.'

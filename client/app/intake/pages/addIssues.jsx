@@ -25,7 +25,7 @@ class AddIssuesPage extends React.PureComponent {
       intakeForms,
       formType,
       veteran,
-      responseErrorCode,
+      responseErrorCode
     } = this.props;
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
@@ -113,7 +113,7 @@ class AddIssuesPage extends React.PureComponent {
         slowReRendersAreOk />
     </div>;
   }
-};
+}
 
 export const IntakeAddIssuesPage = connect(
   ({ intake, higherLevelReview, supplementalClaim, appeal }) => ({
@@ -138,7 +138,7 @@ export const EditAddIssuesPage = connect(
   (state) => ({
     intakeForms: {
       higher_level_review: state,
-      supplemental_claim: state,
+      supplemental_claim: state
     },
     formType: state.formType,
     veteran: state.veteran,
