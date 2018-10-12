@@ -45,6 +45,7 @@ export const BOOLEAN_RADIO_OPTIONS = [
 ];
 
 const issueCategoriesArray = [
+  // Unknown issue category should be removed in the new add issues flow
   'Unknown issue category',
   'Apportionment',
   'Incarceration Adjustments',
