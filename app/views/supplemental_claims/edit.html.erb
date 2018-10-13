@@ -5,9 +5,5 @@
     feedbackUrl: feedback_url,
     buildDate: build_date,
     serverIntake: supplemental_claim.ui_hash(FeatureToggle.enabled?(:intakeAma, user: current_user))
-    formType: "supplemental_claim",
-    review: supplemental_claim.ui_hash,
-    ratings: supplemental_claim.cached_serialized_ratings,
-    ratedRequestIssues: supplemental_claim.request_issues.rated.map(&:ui_hash)
   }) %>
 <% end %>
