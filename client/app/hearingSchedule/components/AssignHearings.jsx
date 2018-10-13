@@ -104,13 +104,13 @@ export default class AssignHearings extends React.Component {
   getHearingTime = (date, regionalOfficeTimezone) => {
     return <div>
       {getTime(date)} /<br />{getTimeInDifferentTimeZone(date, regionalOfficeTimezone)}
-    </div>
+    </div>;
   };
 
   tableAssignHearingsRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
       caseDetails: `${veteran.name} | ${veteran.id}`,
-      type: this.veteranTypeColor(veteran.type),
+      type: this.veteranTypeColor(veteran.appealType),
       docketNumber: veteran.docketNumber,
       location: this.props.selectedRegionalOffice.value === 'C' ? 'Washington DC' : veteran.location,
       time: null
@@ -122,7 +122,7 @@ export default class AssignHearings extends React.Component {
       caseDetails: `${hearing.appellantMiFormatted} | ${hearing.vbmsId}`,
       type: this.veteranTypeColor(hearing.type),
       docketNumber: hearing.docketNumber,
-      location: hearing.requestType == "Video" ? hearing.regionalOfficeName : 'Washington, DC',
+      location: hearing.requestType === 'Video' ? hearing.regionalOfficeName : 'Washington, DC',
       time: this.getHearingTime(hearing.date, hearing.regionalOfficeTimezone)
     }));
   };

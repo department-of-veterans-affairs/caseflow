@@ -71,15 +71,13 @@ class HearingDay < ApplicationRecord
         enriched_hearing_days << hearing_day.slice(:id, :hearing_date, :hearing_type, :room_info)
         enriched_hearing_days[enriched_hearing_days.length - 1][:total_slots] =
           HearingDayRepository.fetch_hearing_day_slots(hearing_day)
-        enriched_hearing_days[enriched_hearing_days.length - 1][:hearings] = []
-        hearing_location = hearing_day[:regional_office].nil? ? "Washington DC" : HearingDayMapper.city_for_regional_office(hearing_day[:regional_office])
-        hearings = []
-        if hearing_location == "Central"
-          hearings.push(VACOLS::CaseHearing.find(hearing_day[:id]))
-        else
-          hearings = HearingRepository.fetch_hearings_for_parent(hearing_day[:id])
-        end
-        format_hearings(enriched_hearing_days, hearings)
+        hearings = if hearing_day[:regional_office].nil?
+                     HearingRepository.fetch_co_hearings_for_parent(hearing_day[:hearing_date])
+                   else
+                     HearingRepository.fetch_video_hearings_for_parent(hearing_day[:id])
+                   end
+        enriched_hearing_days[enriched_hearing_days.length - 1][:hearings] =
+          hearings.map { |hearing| hearing.to_hash(1) }
       end
       enriched_hearing_days
     end
@@ -91,15 +89,6 @@ class HearingDay < ApplicationRecord
     end
 
     private
-
-    def format_hearings(enriched_hearing_days, hearings)
-      hearing_count = 0
-      hearings.each do |hearing|
-        hearing_count += 1
-        enriched_hearing_days[enriched_hearing_days.length - 1][:hearings].push(hearing.to_hash(1))
-      end
-      enriched_hearing_days[enriched_hearing_days.length - 1][:filled_slots] = hearing_count
-    end
 
     def enrich_with_judge_names(hearing_days)
       vlj_ids = []

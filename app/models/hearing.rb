@@ -121,8 +121,9 @@ class Hearing < ApplicationRecord
     :veteran,  \
     :sanitized_vbms_id, \
     :docket_number, \
-    :type, \
     to: :appeal, allow_nil: true
+
+  delegate :type, to: :appeal, prefix: true
 
   def to_hash(current_user_id)
     serializable_hash(
@@ -150,7 +151,7 @@ class Hearing < ApplicationRecord
         :current_issue_count,
         :prepped,
         :docket_number,
-        :type
+        :appeal_type
       ],
       except: :military_service
     ).merge(
