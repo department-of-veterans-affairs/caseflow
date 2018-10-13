@@ -10,15 +10,23 @@ class SupplementalClaim < ClaimReview
 
   END_PRODUCT_MODIFIERS = %w[040 041 042 043 044 045 046 047 048 049].freeze
 
-  def ui_hash
+  def ui_hash(ama_enabled)
     {
-      veteranFormName: veteran.name.formatted(:form),
-      veteranName: veteran.name.formatted(:readable_short),
-      veteranFileNumber: veteran_file_number,
+      formType: "supplemental_claim",
+      veteran: {
+        name: veteran && veteran.name.formatted(:readable_short),
+        fileNumber: veteran_file_number,
+        formName: veteran && veteran.name.formatted(:form)
+      },
+      relationships: ama_enabled && veteran && veteran.relationships,
       claimId: end_product_claim_id,
-      receiptDate: receipt_date && receipt_date.to_formatted_s(:json_date),
+      receiptDate: receipt_date.to_formatted_s(:json_date),
       benefitType: benefit_type,
-      issues: request_issues
+      claimant: claimant_participant_id,
+      claimantNotVeteran: claimant_not_veteran,
+      payeeCode: payee_code,
+      ratings: cached_serialized_timely_ratings,
+      requestIssues: request_issues.map(&:ui_hash)
     }
   end
 

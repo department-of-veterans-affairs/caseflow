@@ -16,17 +16,25 @@ class HigherLevelReview < ClaimReview
   DTA_ERROR_EXAM_MO = "DTA Error - Exam/MO".freeze
   DTA_ERRORS = [DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO].freeze
 
-  def ui_hash
+  def ui_hash(ama_enabled)
     {
-      veteranFormName: veteran.name.formatted(:form),
-      veteranName: veteran.name.formatted(:readable_short),
-      veteranFileNumber: veteran_file_number,
+      formType: "higher_level_review",
+      veteran: {
+        name: veteran && veteran.name.formatted(:readable_short),
+        fileNumber: veteran_file_number,
+        formName: veteran && veteran.name.formatted(:form)
+      },
+      relationships: ama_enabled && veteran && veteran.relationships,
       claimId: end_product_claim_id,
       receiptDate: receipt_date.to_formatted_s(:json_date),
       benefitType: benefit_type,
-      issues: request_issues,
       sameOffice: same_office,
-      informalConference: informal_conference
+      informalConference: informal_conference,
+      claimant: claimant_participant_id,
+      claimantNotVeteran: claimant_not_veteran,
+      payeeCode: payee_code,
+      ratings: cached_serialized_timely_ratings,
+      requestIssues: request_issues.map(&:ui_hash)
     }
   end
 

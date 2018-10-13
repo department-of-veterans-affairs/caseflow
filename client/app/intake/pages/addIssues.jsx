@@ -1,26 +1,31 @@
 import _ from 'lodash';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import React from 'react';
 
 import AddIssuesModal from '../components/AddIssuesModal';
 import NonRatedIssueModal from '../components/NonRatedIssueModal';
 import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
 import Button from '../../components/Button';
-import { FORM_TYPES } from '../../intakeCommon/constants';
+import RequestIssuesUpdateErrorAlert from '../../intakeEdit/components/RequestIssuesUpdateErrorAlert';
+import { FORM_TYPES } from '../constants';
 import { formatDate } from '../../util/DateUtil';
-import { formatAddedIssues, getAddIssuesFields } from '../util';
-
+import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 import Table from '../../components/Table';
-import { toggleAddIssuesModal, toggleNonRatedIssueModal, toggleUnidentifiedIssuesModal } from '../actions/common';
-import { removeIssue } from '../actions/ama';
+import {
+  toggleAddIssuesModal,
+  toggleNonRatedIssueModal,
+  removeIssue,
+  toggleUnidentifiedIssuesModal
+} from '../actions/addIssues';
 
-class AddIssues extends React.PureComponent {
+class AddIssuesPage extends React.PureComponent {
   render() {
     const {
       intakeForms,
       formType,
-      veteran
+      veteran,
+      responseErrorCode
     } = this.props;
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
@@ -98,6 +103,10 @@ class AddIssues extends React.PureComponent {
       }
       <h1 className="cf-txt-c">Add Issues</h1>
 
+      { responseErrorCode &&
+        <RequestIssuesUpdateErrorAlert responseErrorCode={responseErrorCode} />
+      }
+
       <Table
         columns={columns}
         rowObjects={rowObjects}
@@ -106,7 +115,7 @@ class AddIssues extends React.PureComponent {
   }
 }
 
-export default connect(
+export const IntakeAddIssuesPage = connect(
   ({ intake, higherLevelReview, supplementalClaim, appeal }) => ({
     intakeForms: {
       higher_level_review: higherLevelReview,
@@ -114,7 +123,8 @@ export default connect(
       appeal
     },
     formType: intake.formType,
-    veteran: intake.veteran
+    veteran: intake.veteran,
+    responseErrorCode: null
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
@@ -122,4 +132,23 @@ export default connect(
     toggleUnidentifiedIssuesModal,
     removeIssue
   }, dispatch)
-)(AddIssues);
+)(AddIssuesPage);
+
+export const EditAddIssuesPage = connect(
+  (state) => ({
+    intakeForms: {
+      higher_level_review: state,
+      supplemental_claim: state
+    },
+    formType: state.formType,
+    veteran: state.veteran,
+    requestStatus: state.requestStatus.requestIssuesUpdate,
+    responseErrorCode: state.responseErrorCode
+  }),
+  (dispatch) => bindActionCreators({
+    toggleAddIssuesModal,
+    toggleNonRatedIssueModal,
+    toggleUnidentifiedIssuesModal,
+    removeIssue
+  }, dispatch)
+)(AddIssuesPage);

@@ -351,18 +351,13 @@ RSpec.feature "Higher-Level Review" do
     )
 
     visit "/higher_level_reviews/#{ratings_end_product_establishment.reference_id}/edit"
+
     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
     expect(page).to have_content("Ed Merica (12341234)")
     expect(page).to have_content("04/20/2018")
-    expect(find("#table-row-3")).to have_content("Yes")
-    expect(find("#table-row-4")).to have_content("No")
+    expect(find("#table-row-4")).to have_content("Yes")
+    expect(find("#table-row-5")).to have_content("No")
     expect(page).to have_content("PTSD denied")
-
-    safe_click ".cf-edit-issues-link"
-
-    expect(page).to have_current_path(
-      "/higher_level_reviews/#{ratings_end_product_establishment.reference_id}/edit/select_issues"
-    )
 
     visit "/higher_level_reviews/4321/edit"
     expect(page).to have_content("Page not found")

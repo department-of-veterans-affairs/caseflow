@@ -40,6 +40,13 @@ class RequestIssue < ApplicationRecord
   end
 
   def ui_hash
-    { reference_id: rating_issue_reference_id, profile_date: rating_issue_profile_date }
+    {
+      reference_id: rating_issue_reference_id,
+      profile_date: rating_issue_profile_date,
+      description: description,
+      decision_date: decision_date,
+      category: issue_category,
+      notes: notes
+    }
   end
 end

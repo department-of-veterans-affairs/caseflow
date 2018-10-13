@@ -1,5 +1,26 @@
 import _ from 'lodash';
-import { formatDateStringForApi } from '../../util/DateUtil';
+import { formatDate, formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
+
+const getNonVeteranClaimant = (intakeData) => {
+  const claimant = intakeData.relationships.filter((relationship) => {
+    return relationship.value === intakeData.claimant;
+  });
+
+  return `${claimant[0].displayText} (payee code ${intakeData.payeeCode})`;
+};
+
+const getClaimantField = (formType, veteran, intakeData) => {
+  if (formType === 'appeal' || intakeData.benefitType === 'compensation') {
+    const claimant = intakeData.claimantNotVeteran ? getNonVeteranClaimant(intakeData) : veteran.name;
+
+    return [{
+      field: 'Claimant',
+      content: claimant
+    }];
+  }
+
+  return [];
+};
 
 export const formatRatings = (ratings, requestIssues = []) => {
   const result = _.keyBy(_.map(ratings, (rating) => {
@@ -56,6 +77,39 @@ export const validNonRatedIssue = (issue) => {
   return true;
 };
 
+export const formatRequestIssues = (requestIssues) => {
+  return requestIssues.map((issue) => {
+    if (issue.category) {
+      return {
+        isRated: false,
+        category: issue.category,
+        description: issue.description,
+        decisionDate: issue.decision_date
+      };
+    }
+
+    // Rated issues
+    const issueDate = new Date(issue.profile_date);
+
+    return {
+      isRated: true,
+      id: issue.reference_id,
+      profileDate: issueDate.toISOString(),
+      notes: issue.notes
+    };
+  });
+};
+
+const ratingIssuesById = (ratings) => {
+  return _.reduce(ratings, (result, rating) => {
+    _.forEach(rating.issues, (issue, id) => {
+      result[id] = issue.decision_text;
+    });
+
+    return result;
+  }, {});
+};
+
 const formatUnidentifiedIssues = (state) => {
   // only used for the new add intake flow
   if (state.addedIssues && state.addedIssues.length > 0) {
@@ -74,15 +128,17 @@ const formatUnidentifiedIssues = (state) => {
 };
 
 const formatRatedIssues = (state) => {
+  const ratingIssues = ratingIssuesById(state.ratings);
+
   if (state.addedIssues && state.addedIssues.length > 0) {
     // we're using the new add issues page
     return state.addedIssues.
       filter((issue) => issue.isRated).
       map((issue) => {
-        let originalIssue = state.ratings[issue.profileDate].issues[issue.id];
-
-        return _.merge(originalIssue, { profile_date: issue.profileDate,
-          notes: issue.notes });
+        return { reference_id: issue.id,
+          decision_text: ratingIssues[issue.id],
+          profile_date: issue.profileDate,
+          notes: issue.notes };
       });
   }
 
@@ -153,4 +209,67 @@ export const getSelection = (ratings) => {
 
     return selectedIssues;
   }, []);
+};
+
+export const getAddIssuesFields = (formType, veteran, intakeData) => {
+  let fields;
+
+  switch (formType) {
+  case 'higher_level_review':
+    fields = [
+      { field: 'Benefit type',
+        content: _.startCase(intakeData.benefitType) },
+      { field: 'Informal conference request',
+        content: intakeData.informalConference ? 'Yes' : 'No' },
+      { field: 'Same office request',
+        content: intakeData.sameOffice ? 'Yes' : 'No' }
+    ];
+    break;
+  case 'supplemental_claim':
+    fields = [
+      { field: 'Benefit type',
+        content: _.startCase(intakeData.benefitType) }
+    ];
+    break;
+  case 'appeal':
+    fields = [
+      { field: 'Review option',
+        content: _.startCase(intakeData.docketType.split('_').join(' ')) }
+    ];
+    break;
+  default:
+    fields = [];
+  }
+
+  let claimantField = getClaimantField(formType, veteran, intakeData);
+
+  return fields.concat(claimantField);
+};
+
+export const formatAddedIssues = (intakeData) => {
+  let issues = intakeData.addedIssues || [];
+  let ratingIssues = ratingIssuesById(intakeData.ratings);
+
+  return issues.map((issue) => {
+    if (issue.isUnidentified) {
+      return {
+        referenceId: issue.id,
+        text: `Unidentified issue: no issue matched for "${issue.description}"`,
+        notes: issue.notes,
+        isUnidentified: true
+      };
+    } else if (issue.isRated) {
+      return {
+        referenceId: issue.id,
+        text: `${ratingIssues[issue.id]} Decision date ${formatDateStr(issue.profileDate)}.`,
+        notes: issue.notes
+      };
+    }
+
+    // returns unrated issue format
+    return {
+      referenceId: issue.id,
+      text: `${issue.category} - ${issue.description} Decision date ${formatDate(issue.decisionDate)}`
+    };
+  });
 };
