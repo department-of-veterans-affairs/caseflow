@@ -2,7 +2,7 @@ class SupplementalClaimsController < ApplicationController
   before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application
   SOURCE_TYPE = "SupplementalClaim".freeze
 
-# Commenting out for code coverage until Save button is implemented
+  # Commenting out for code coverage until Save button is implemented
   # def update
   #   if request_issues_update.perform!
   #     render json: {
