@@ -137,4 +137,28 @@ describe Rating do
       end
     end
   end
+
+  context ".fetch_all" do
+    let(:receipt_date) { Time.zone.today - 50.years }
+
+    subject { Rating.fetch_all("DRAYMOND") }
+
+    let!(:rating) do
+      Generators::Rating.build(
+        participant_id: "DRAYMOND",
+        promulgation_date: receipt_date - 370.days
+      )
+    end
+
+    let!(:untimely_rating) do
+      Generators::Rating.build(
+        participant_id: "DRAYMOND",
+        promulgation_date: receipt_date - 100.years
+      )
+    end
+
+    it "returns rating objects for all ratings" do
+      expect(subject.count).to eq(2)
+    end
+  end
 end
