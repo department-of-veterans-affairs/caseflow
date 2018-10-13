@@ -108,6 +108,7 @@ const ratingIssuesById = (ratings) => {
 
     return result;
   }, {});
+};
 
 const formatUnidentifiedIssues = (state) => {
   // only used for the new add intake flow
