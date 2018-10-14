@@ -11,7 +11,7 @@ import RoSelectorDropdown from './RoSelectorDropdown';
 import moment from 'moment';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
-import AssignStatusMessage from './AssignStatusMessage'
+import AssignStatusMessage from './AssignStatusMessage';
 
 const colorAOD = css({
   color: 'red'
@@ -30,7 +30,7 @@ const sectionNavigationListStyling = css({
   }
 });
 
-const roErrorTittle = css({paddingLeft: '100px'})
+const roErrorTitle = css({ paddingLeft: '100px' });
 
 export default class AssignHearings extends React.Component {
 
@@ -123,20 +123,19 @@ export default class AssignHearings extends React.Component {
     }));
   };
 
-  roNotAssignedTittle = () => {
+  roNotAssignedTitle = () => {
     if (this.props.selectedRegionalOffice.label) {
-      return <span>The {this.props.selectedRegionalOffice.label} Regional Office has not been<br/>
-        <span {...roErrorTittle}>assigned any hearing days</span></span>;
+      return <span>The {this.props.selectedRegionalOffice.label} Regional Office has not been<br />
+        <span {...roErrorTitle}>assigned any hearing days</span></span>;
     }
   }
 
-  roNotAssignedTittleError = () => {
-    let error;
-    if (this.props.selectedRegionalOffice.label !== this.props.veteransReadyForHearing) {
-      return error = <AssignStatusMessage
-        message={'Please verify that this RO has been assigned hearings'}
-        title={this.roNotAssignedTittle()}
-       />;
+  roNotAssignedTitleError = () => {
+    if (_.isEmpty(this.props.veteransReadyForHearing)) {
+      return <AssignStatusMessage
+        message="Please verify that this RO has been assigned hearings"
+        title={this.roNotAssignedTitle()}
+      />;
     }
   }
 
@@ -200,7 +199,7 @@ export default class AssignHearings extends React.Component {
           }
         ]}
       />
-    {this.roNotAssignedTittleError()}
+      {this.roNotAssignedTitleError()}
     </div>;
   };
 
