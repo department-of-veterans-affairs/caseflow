@@ -71,7 +71,7 @@ RSpec.feature "Higher-Level Review" do
   let(:search_bar_title) { "Enter the Veteran's ID" }
   let(:search_page_title) { "Search for Veteran ID" }
 
-  it "Creates an end product and contentions for it" do
+  it "Creates an end product and contentions for it", :focus => true do
     # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
       first_name: "BOB",
@@ -218,7 +218,7 @@ RSpec.feature "Higher-Level Review" do
 
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
     expect(page).to have_content(
-      "Established EP: 030HLRR - Higher-Level Review Rating for Station 397 - ARC"
+      "Established EP: 030HLRR - Higher-Level Review Rating for Station 499"
     )
 
     # ratings end product
@@ -228,7 +228,7 @@ RSpec.feature "Higher-Level Review" do
         payee_code: "10",
         predischarge: false,
         claim_type: "Claim",
-        station_of_jurisdiction: "397",
+        station_of_jurisdiction: "499",
         date: higher_level_review.receipt_date.to_date,
         end_product_modifier: "033",
         end_product_label: "Higher-Level Review Rating",
@@ -257,7 +257,7 @@ RSpec.feature "Higher-Level Review" do
         payee_code: "10",
         predischarge: false,
         claim_type: "Claim",
-        station_of_jurisdiction: "397",
+        station_of_jurisdiction: "499",
         date: higher_level_review.receipt_date.to_date,
         end_product_modifier: "032",
         end_product_label: "Higher-Level Review Nonrating",
@@ -601,7 +601,7 @@ RSpec.feature "Higher-Level Review" do
 
       expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
       expect(page).to have_content(
-        "Established EP: 030HLRR - Higher-Level Review Rating for Station 397 - ARC"
+        "Established EP: 030HLRR - Higher-Level Review Rating for Station 499"
       )
 
       # make sure that database is populated
