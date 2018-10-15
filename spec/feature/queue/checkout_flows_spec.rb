@@ -84,13 +84,14 @@ RSpec.feature "Checkout flows" do
       click_on "Continue"
 
       expect(page).to have_content "Select Dispositions"
+      issue_dispositions = page.find_all(
+        ".Select-control",
+        text: "Select Disposition",
+        count: appeal.request_issues.length)
 
-      issue_rows = page.find_all("tr[id^='table-row-']")
-      expect(issue_rows.length).to eq(appeal.request_issues.length)
-
-      issue_rows.each do |row|
-        row.find(".Select-control").click
-        row.find("div[id$='--option-0']").click
+      issue_dispositions.each_with_index do |row, index|
+        row.click
+        page.find("div", class: "Select-option", text: "Allowed").click
       end
 
       click_on "Continue"
@@ -106,7 +107,8 @@ RSpec.feature "Checkout flows" do
       click_dropdown 0
 
       click_on "Continue"
-      sleep 5
+      expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
+
       expect(page.current_path).to eq("/queue")
     end
   end
@@ -207,25 +209,20 @@ RSpec.feature "Checkout flows" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown 0
 
-        issue_rows = page.find_all("tr[id^='table-row-']")
-        expect(issue_rows.length).to eq(appeal.issues.length)
+        issue_dispositions = page.find_all(".Select-control", text: "Select Disposition", count: appeal.issues.length)
 
-        issue_rows.each do |row|
-          row.find(".Select-control").click
-          row.find("div[id$='--option-#{issue_rows.index(row) % 7}']").click
+        issue_dispositions.each_with_index do |row, index|
+          disposition = index == 0 ? "Remanded" : "Allowed"
+          row.click
+          page.find("div", class: "Select-option", text: disposition).click
         end
 
         click_on "Continue"
         expect(page).to have_content("Select Remand Reasons")
         expect(page).to have_content(appeal.issues.first.note)
 
-        page.execute_script("return document.querySelectorAll('div[class^=\"checkbox-wrapper-\"]')")
-          .sample(4)
-          .each(&:click)
-
-        page.find_all("input[type='radio'] + label").to_a.each_with_index do |label, idx|
-          label.click unless (idx % 2).eql? 0
-        end
+        find_field("Service treatment records", visible: false).sibling("label").click
+        find_field("After certification", visible: false).sibling("label").click
 
         click_on "Continue"
         expect(page).to have_content("Submit Draft Decision for Review")
@@ -243,7 +240,8 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content(judge_user.full_name)
 
         click_on "Continue"
-        sleep 5
+        expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
+
         expect(page.current_path).to eq("/queue")
       end
 
