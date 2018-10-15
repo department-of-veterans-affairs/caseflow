@@ -160,6 +160,8 @@ const CompleteTasksTab = connect(
         includeTask
         includeType
         includeDocketNumber
+        includeCompletedDate
+        includeCompletedToName
         includeReaderLink
         tasks={props.tasks}
       />

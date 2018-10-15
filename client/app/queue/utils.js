@@ -61,6 +61,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       appealId: task.attributes.appeal_id,
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_at,
+      completedOn: task.attributes.completed_at,
       dueOn: null,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
@@ -129,6 +130,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       appealType: task.attributes.appeal_type,
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_on,
+      completedOn: null,
       dueOn: task.attributes.due_on,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,

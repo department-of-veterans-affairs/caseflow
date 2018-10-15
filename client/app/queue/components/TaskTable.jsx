@@ -33,6 +33,8 @@ type Params = {|
   includeDocumentId?: boolean,
   includeType?: boolean,
   includeDocketNumber?: boolean,
+  includeCompletedDate?: boolean,
+  includeCompletedToName?: boolean,
   includeIssueCount?: boolean,
   includeDueDate?: boolean,
   includeDaysWaiting?: boolean,
@@ -226,6 +228,22 @@ class TaskTable extends React.PureComponent<Props> {
     getSortValue: (task: TaskWithAppeal) => numDaysOnHold(task)
   } : null)
 
+  completedDateColumn = () => {
+    return this.props.includeCompletedDate ? {
+      header: COPY.CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE,
+      valueFunction: (task) => task.completedOn ? <DateString date={task.completedOn} /> : null,
+      getSortValue: (task) => task.completedOn ? <DateString date={task.completedOn} /> : null
+    } : null;
+  }
+
+  completedToNameColumn = () => {
+    return this.props.includeCompletedToName ? {
+      header: COPY.CASE_LIST_TABLE_COMPLETED_BACK_TO_NAME_COLUMN_TITLE,
+      valueFunction: (task) => task.assignedBy ? `${task.assignedBy.firstName} ${task.assignedBy.lastName}` : null,
+      getSortValue: (task) => task.assignedBy ? task.assignedBy.lastName : null
+    } : null;
+  }
+
   caseReaderLinkColumn = () => {
     return !this.props.userIsVsoEmployee && this.props.includeReaderLink ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
@@ -255,6 +273,8 @@ class TaskTable extends React.PureComponent<Props> {
       this.caseDueDateColumn(),
       this.caseDaysWaitingColumn(),
       this.caseDaysOnHoldColumn(),
+      this.completedDateColumn(),
+      this.completedToNameColumn(),
       this.caseReaderLinkColumn()
     ]);
 
