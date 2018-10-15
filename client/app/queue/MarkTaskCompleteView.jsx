@@ -77,7 +77,8 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 
   return {
     error,
-    task: tasksForAppealAssignedToUserSelector(state, ownProps)[0] || organizationTasksByAssigneeIdSelector(state, ownProps)[0],
+    task: tasksForAppealAssignedToUserSelector(state, ownProps)[0] ||
+      organizationTasksByAssigneeIdSelector(state, ownProps)[0],
     appeal: appealWithDetailSelector(state, ownProps)
   };
 };
