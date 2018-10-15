@@ -24,7 +24,8 @@ type Params = {|
 
 type Props = Params & {|
   // From state
-  tasks: Tasks,
+  caseflowTasks: Tasks,
+  vacolsTasks: Tasks,
   appealDetails: Appeals,
   loadedUserId: number,
   activeAppeal: Appeal,
@@ -41,7 +42,8 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
     const {
       appealId,
       appealDetails,
-      tasks,
+      caseflowTasks,
+      vacolsTasks,
       userRole
     } = this.props;
 
@@ -55,7 +57,8 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
       );
     }
 
-    if (!tasks || _.filter(tasks, (task) => task.externalAppealId === appealId).length === 0) {
+    if ((!vacolsTasks || _.filter(vacolsTasks, (task) => task.externalAppealId === appealId).length === 0) &&
+      (!caseflowTasks || _.filter(caseflowTasks, (task) => task.externalAppealId === appealId).length === 0)) {
       const taskPromise = ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
         const legacyTasks = _.every(response.body.tasks, (task) => task.attributes.appeal_type === 'LegacyAppeal');
 
@@ -124,10 +127,11 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State) => {
-  const { tasks, appealDetails } = state.queue;
+  const { amaTasks, tasks, appealDetails } = state.queue;
 
   return {
-    tasks,
+    caseflowTasks: amaTasks,
+    vacolsTasks: tasks,
     appealDetails,
     loadedUserId: state.ui.loadedUserId
   };
