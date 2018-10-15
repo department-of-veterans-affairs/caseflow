@@ -43,8 +43,8 @@ class SideBarDocumentInformation extends PureComponent {
           <strong>Docket Number:</strong> {appeal.docket_number}
         </p>
         { appeal.regional_office && <p className="cf-pdf-meta-title">
-            <strong>Regional Office:</strong> {`${appeal.regional_office.key} - ${appeal.regional_office.city}`}
-          </p>
+          <strong>Regional Office:</strong> {`${appeal.regional_office.key} - ${appeal.regional_office.city}`}
+        </p>
         }
         <div className="cf-pdf-meta-title">
           <strong>Issues: </strong>
