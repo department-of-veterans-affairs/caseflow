@@ -53,6 +53,7 @@ export default class AssignHearings extends React.Component {
     return room = '';
 
   }
+
   formatAvailableHearingDays = () => {
     return <div className="usa-width-one-fourth">
       <h3>Hearings to Schedule</h3>
@@ -101,16 +102,25 @@ export default class AssignHearings extends React.Component {
     return docketType;
   }
 
-  getHearingTime = (date, regionalOfficeTimezone) => {
-    return <div>
-      {getTime(date)} /<br />{getTimeInDifferentTimeZone(date, regionalOfficeTimezone)}
-    </div>;
-  };
+    getHearingTime = (date, regionalOfficeTimezone) => {
+      return <div>
+        {getTime(date)} /<br />{getTimeInDifferentTimeZone(date, regionalOfficeTimezone)}
+      </div>;
+    };
+
+  appellantName = (hearingDay) => {
+    if (hearingDay.appellantFirstName && hearingDay.appellantLastName) {
+      return `${hearingDay.appellantFirstName} ${hearingDay.appellantLastName} | ${hearingDay.id}`;
+    }
+
+    return `${hearingDay.id}`;
+
+  }
 
   tableAssignHearingsRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
-      caseDetails: `${veteran.name} | ${veteran.id}`,
-      type: this.veteranTypeColor(veteran.appealType),
+      caseDetails: this.appellantName(veteran),
+      type: this.veteranTypeColor(veteran.type),
       docketNumber: veteran.docketNumber,
       location: this.props.selectedRegionalOffice.value === 'C' ? 'Washington DC' : veteran.location,
       time: null

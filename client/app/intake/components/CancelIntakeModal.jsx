@@ -5,7 +5,7 @@ import TextareaField from '../../components/TextareaField';
 import RadioField from '../../components/RadioField';
 import FormField from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
-import { submitCancel } from '../actions/common';
+import { submitCancel } from '../actions/intake';
 import { CANCELLATION_REASONS } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { Redirect } from 'react-router-dom';
