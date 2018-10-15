@@ -273,7 +273,7 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content(judge_user.full_name)
 
         click_on "Continue"
-        expect(page).to have_content("Cases not found")
+        expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
 
         case_review = AttorneyCaseReview.all.first
         expect(case_review.note.length).to eq 350

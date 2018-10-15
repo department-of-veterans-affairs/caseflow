@@ -65,8 +65,8 @@
 
   "NEW_FILE_ICON_TOOLTIP": "This case has new documents",
 
-  "NO_TASKS_IN_ATTORNEY_QUEUE_TITLE": "Cases not found",
-  "NO_TASKS_IN_ATTORNEY_QUEUE_MESSAGE": "Sorry! We couldn't find any cases for you.",
+  "NO_CASES_IN_QUEUE_MESSAGE": "You have no cases assigned to you. You can ",
+  "NO_CASES_IN_QUEUE_LINK_TEXT": "search for cases",
   "ATTORNEY_QUEUE_TABLE_TITLE": "Your cases",
   "ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you made a mistake, please email your judge to resolve the issue.",
   "ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE": "Please ask your judge to assign this case to you in DAS",
@@ -84,8 +84,6 @@
   "COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION": "When a hold is complete, the case will appear here. Cases with new documents will also appear here.",
   "COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "When a hold is complete, the case will automatically return to the Pending action tab.",
 
-  "NO_CASES_FOR_JUDGE_REVIEW_TITLE": "Cases not found",
-  "NO_CASES_FOR_JUDGE_REVIEW_MESSAGE": "Congratulations! You don't have any decisions to sign.",
   "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
   "SWITCH_TO_ASSIGN_MODE_LINK_LABEL": "Switch to Assign Cases",
 
