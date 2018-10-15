@@ -5,7 +5,7 @@ class SupplementalClaimsController < ApplicationController
   def update
     if request_issues_update.perform!
       render json: {
-        requestIssues: higher_level_review.request_issues.map(&:ui_hash)
+        requestIssues: supplemental_claim.request_issues.map(&:ui_hash)
       }
     else
       render json: { error_code: request_issues_update.error_code }, status: 422
