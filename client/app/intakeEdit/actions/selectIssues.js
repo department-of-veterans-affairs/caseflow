@@ -1,6 +1,6 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
-import { formatIssues } from '../../intakeCommon/util';
+import { formatIssues } from '../../intake/util/issues';
 
 const analytics = true;
 

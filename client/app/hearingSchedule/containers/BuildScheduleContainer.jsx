@@ -90,10 +90,10 @@ class BuildScheduleContainer extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  pastUploads: state.pastUploads,
-  schedulePeriod: state.schedulePeriod,
-  vacolsUpload: state.vacolsUpload,
-  displaySuccessMessage: state.displaySuccessMessage
+  pastUploads: state.hearingSchedule.pastUploads,
+  schedulePeriod: state.hearingSchedule.schedulePeriod,
+  vacolsUpload: state.hearingSchedule.vacolsUpload,
+  displaySuccessMessage: state.hearingSchedule.displaySuccessMessage
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
