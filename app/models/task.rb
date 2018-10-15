@@ -47,6 +47,8 @@ class Task < ApplicationRecord
   def update_from_params(params, _current_user)
     params["instructions"] = [instructions, params["instructions"]].flatten if params.key?("instructions")
     update(params)
+
+    [self]
   end
 
   def legacy?

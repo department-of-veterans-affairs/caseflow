@@ -36,12 +36,18 @@ class GenericTask < Task
     else
       update!(status: new_status)
     end
+
+    [self]
   end
 
   def reassign(reassign_params, current_user)
-    child = self.class.create_child_task(parent, current_user, reassign_params)
-    update!(status: Constants.TASK_STATUSES.completed)
-    children.reject { |t| t.status == Constants.TASK_STATUSES.completed }.each { |t| t.parent_id = child.id }
+    sibling = self.class.create_child_task(parent, current_user, reassign_params)
+    mark_as_complete!
+
+    children_to_update = children.reject { |t| t.status == Constants.TASK_STATUSES.completed }
+    children_to_update.each { |t| t.update!(parent_id: sibling.id) }
+
+    [sibling, self, children_to_update]
   end
 
   def can_be_accessed_by_user?(user)

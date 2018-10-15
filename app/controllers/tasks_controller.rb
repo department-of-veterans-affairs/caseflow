@@ -74,10 +74,10 @@ class TasksController < ApplicationController
   def update
     redirect_to("/unauthorized") && return unless task.can_be_accessed_by_user?(current_user)
 
-    task.update_from_params(update_params, current_user)
+    tasks = task.update_from_params(update_params, current_user)
+    tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
-    return invalid_record_error(task) unless task.valid?
-    render json: { tasks: json_tasks([task]) }
+    render json: { tasks: json_tasks(tasks) }
   end
 
   def for_appeal
