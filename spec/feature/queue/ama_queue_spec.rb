@@ -205,9 +205,13 @@ RSpec.feature "AmaQueue" do
           assigned_to: translation_organization,
           assigned_by: judge_user,
           parent: parent_task,
-          appeal: appeals.first
+          appeal: appeals.first,
+          instructions: [existing_instruction]
         )
       end
+
+      let(:existing_instruction) { "Existing instruction" }
+      let(:instructions) { "Test instructions" }
 
       scenario "assign case to self" do
         visit "/organizations/#{translation_organization.url}"
@@ -219,6 +223,8 @@ RSpec.feature "AmaQueue" do
 
         find(".Select-control", text: "Select a user").click
         find("div", class: "Select-option", text: user.full_name).click
+
+        expect(page).to have_content(existing_instruction)
         click_on "Submit"
 
         expect(page).to have_content("Task assigned to person")
@@ -231,14 +237,19 @@ RSpec.feature "AmaQueue" do
 
         click_on "Pal Smith"
 
+        expect(page).to have_content(existing_instruction)
+
         find(".Select-control", text: "Select an action").click
         find("div", class: "Select-option", text: "Assign to team").click
 
         find(".Select-control", text: "Select a team").click
         find("div", class: "Select-option", text: other_organization.name).click
+        fill_in "taskInstructions", with: instructions
+
         click_on "Submit"
 
         expect(page).to have_content("Task assigned to team")
+        expect(Task.last.instructions.first).to eq(instructions)
       end
     end
 
