@@ -33,13 +33,13 @@ export const addUnidentifiedIssue = (description, notes) => (dispatch) => {
   });
 };
 
-export const addRatedIssue = (issueId, ratings, isRated, notes) => (dispatch) => {
-  let foundDate = _.filter(ratings, (ratingDate) => _.some(ratingDate.issues, { reference_id: issueId }));
+export const addRatedIssue = (id, ratings, isRated, notes) => (dispatch) => {
+  let foundDate = _.filter(ratings, (ratingDate) => _.some(ratingDate.issues, { reference_id: id }));
 
   dispatch({
     type: ACTIONS.ADD_ISSUE,
     payload: {
-      issueId,
+      id,
       isRated,
       profileDate: foundDate[0].profile_date,
       notes

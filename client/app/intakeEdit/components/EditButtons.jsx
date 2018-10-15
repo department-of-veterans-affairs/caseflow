@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -20,7 +21,7 @@ class SaveButtonUnconnected extends React.PureComponent {
       requestStatus
     } = this.props;
 
-    const saveDisabled = addedIssues === originalIssues || issueCount === 0;
+    const saveDisabled = _.isEqual(addedIssues, originalIssues) || issueCount === 0;
 
     return <Button
       name="submit-update"
@@ -40,7 +41,7 @@ const SaveButton = connect(
     addedIssues: state.addedIssues,
     originalIssues: state.originalIssues,
     requestStatus: state.requestStatus,
-    issueCount: state.issueCount,
+    issueCount: issueCountSelector(state),
     state: state
   }),
   (dispatch) => bindActionCreators({

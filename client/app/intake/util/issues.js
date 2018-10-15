@@ -88,6 +88,15 @@ export const formatRequestIssues = (requestIssues) => {
       };
     }
 
+    // Unidentified issues
+    if (issue.is_unidentified) {
+      return {
+        description: issue.description,
+        notes: issue.notes,
+        isUnidentified: issue.is_unidentified
+      }
+    }
+
     // Rated issues
     const issueDate = new Date(issue.profile_date);
 
@@ -95,9 +104,7 @@ export const formatRequestIssues = (requestIssues) => {
       isRated: true,
       id: issue.reference_id,
       profileDate: issueDate.toISOString(),
-      notes: issue.notes,
-      isUnidentified: issue.is_unidentified,
-      description: issue.description
+      notes: issue.notes
     };
   });
 };
@@ -264,7 +271,9 @@ export const formatAddedIssues = (intakeData) => {
       return {
         referenceId: issue.id,
         text: `${ratingIssues[issue.id]} Decision date ${formatDateStr(issue.profileDate)}.`,
-        notes: issue.notes
+        notes: issue.notes,
+        isUnidentified: null,
+        description: issue.description
       };
     }
 
