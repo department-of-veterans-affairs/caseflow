@@ -58,7 +58,7 @@ export class AddIssuesPage extends React.PureComponent {
               <div className={issueKlasses.join(' ')}>
                 <span className="issue-num">{index + 1}.&nbsp;</span>
                 {issue.text} {addendum}
-                <span className="issue-date">Decision date: {issue.date}</span>
+                { issue.date && <span className="issue-date">Decision date: {issue.date}</span> }
                 { issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span> }
               </div>
               <div className="issue-action">

@@ -12,7 +12,8 @@ class UnidentifiedIssuesModal extends React.Component {
 
     this.state = {
       description: '',
-      notes: ''
+      notes: '',
+      disabled: true
     };
   }
 
@@ -21,9 +22,16 @@ class UnidentifiedIssuesModal extends React.Component {
     this.props.closeHandler();
   }
 
+  isDescriptionValid = (description) => {
+    if (description.trim().length === 0) return false;
+    // make sure description has some characters in it
+    return /[a-zA-Z]+/.test(description);
+  }
+
   onDescriptionChange = (value) => {
     this.setState({
-      description: value
+      description: value,
+      disabled: !this.isDescriptionValid(value)
     });
   }
 
@@ -51,7 +59,7 @@ class UnidentifiedIssuesModal extends React.Component {
           { classNames: ['usa-button', 'usa-button-secondary', 'add-issue'],
             name: 'Add this issue',
             onClick: this.onAddIssue,
-            disabled: !this.state.description
+            disabled: this.state.disabled
           }
         ]}
         visible
