@@ -13,8 +13,8 @@ describe Rating do
 
   let(:issues) do
     [
-      { reference_id: "Issue1", decision_text: "Decision1" },
-      { reference_id: "Issue2", decision_text: "Decision2" }
+      { reference_id: "Issue1", decision_text: "Decision1", in_active_review: false },
+      { reference_id: "Issue2", decision_text: "Decision2", in_active_review: false }
     ]
   end
 
