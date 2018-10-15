@@ -75,9 +75,15 @@ class AssignToView extends React.Component<Props, ViewState> {
         }]
       }
     };
-    const successMsg = {
-      title: `Task assigned to ${this.props.isTeamAssign ? 'team' : 'person'}`
-    };
+
+    let assignee = this.props.isTeamAssign ? 'team' : 'person';
+
+    this.options().forEach((opt) => {
+      if (opt.value === this.state.selectedValue) {
+        assignee = opt.label;
+      }
+    });
+    const successMsg = { title: `Task assigned to ${assignee}` };
 
     if (isReassignAction) {
       return this.reassignTask();
@@ -90,17 +96,13 @@ class AssignToView extends React.Component<Props, ViewState> {
   }
 
   reassignTask = () => {
-    const {
-      task,
-      isTeamAssign
-    } = this.props;
-
+    const task = this.props.task;
     const payload = {
       data: {
         task: {
           reassign: {
             assigned_to_id: this.state.selectedValue,
-            assigned_to_type: isTeamAssign ? 'Organization' : 'User'
+            assigned_to_type: 'User'
           }
         }
       }
