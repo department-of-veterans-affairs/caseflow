@@ -2,7 +2,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
 
-import { addUnidentifiedIssue } from '../actions/ama';
+import { addUnidentifiedIssue } from '../actions/addIssues';
 import Modal from '../../components/Modal';
 import TextField from '../../components/TextField';
 
