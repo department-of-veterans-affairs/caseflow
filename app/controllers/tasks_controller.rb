@@ -161,7 +161,7 @@ class TasksController < ApplicationController
       :on_hold_duration,
       :assigned_to_id,
       :instructions,
-      reassign: [:assigned_to_id, :assigned_to_type]
+      reassign: [:assigned_to_id, :assigned_to_type, :instructions]
     )
   end
 

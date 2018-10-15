@@ -57,7 +57,7 @@ class AssignToView extends React.Component<Props, ViewState> {
     const instructionLength = instructions ? instructions.length : 0;
     let existingInstructions = '';
 
-    if (instructions && instructionLength > 0 && !this.props.isTeamAssign) {
+    if (instructions && instructionLength > 0 && !this.props.isTeamAssign && !this.props.isReassignAction) {
       existingInstructions = instructions[instructionLength - 1];
     }
 
@@ -117,7 +117,8 @@ class AssignToView extends React.Component<Props, ViewState> {
         task: {
           reassign: {
             assigned_to_id: this.state.selectedValue,
-            assigned_to_type: 'User'
+            assigned_to_type: 'User',
+            instructions: this.state.instructions
           }
         }
       }

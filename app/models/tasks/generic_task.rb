@@ -41,13 +41,14 @@ class GenericTask < Task
   end
 
   def reassign(reassign_params, current_user)
+    reassign_params[:instructions] = [instructions, reassign_params[:instructions]].flatten
     sibling = self.class.create_child_task(parent, current_user, reassign_params)
     mark_as_complete!
 
     children_to_update = children.reject { |t| t.status == Constants.TASK_STATUSES.completed }
     children_to_update.each { |t| t.update!(parent_id: sibling.id) }
 
-    [sibling, self, children_to_update]
+    [sibling, self, children_to_update].flatten
   end
 
   def can_be_accessed_by_user?(user)
@@ -65,6 +66,7 @@ class GenericTask < Task
 
         parent.verify_user_access!(current_user)
 
+        params[:instructions] = [params[:instructions]] unless params[:instructions].is_a?(Array)
         child = create_child_task(parent, current_user, params)
         update_status(parent, params[:status])
         child
@@ -82,7 +84,7 @@ class GenericTask < Task
         assigned_by_id: child_assigned_by_id(parent, current_user),
         parent_id: parent.id,
         assigned_to: assignee,
-        instructions: [params[:instructions]]
+        instructions: params[:instructions]
       )
     end
 
