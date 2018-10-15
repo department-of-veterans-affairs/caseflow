@@ -151,17 +151,17 @@ export class BuildScheduleUploadContainer extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  fileType: state.fileType,
-  roCoStartDate: state.roCoStartDate,
-  roCoEndDate: state.roCoEndDate,
-  roCoFileUpload: state.roCoFileUpload,
-  judgeStartDate: state.judgeStartDate,
-  judgeEndDate: state.judgeEndDate,
-  judgeFileUpload: state.judgeFileUpload,
-  uploadFormErrors: state.uploadFormErrors,
-  uploadRoCoFormErrors: state.uploadRoCoFormErrors,
-  uploadJudgeFormErrors: state.uploadJudgeFormErrors,
-  uploadContinueLoading: state.uploadContinueLoading
+  fileType: state.hearingSchedule.fileType,
+  roCoStartDate: state.hearingSchedule.roCoStartDate,
+  roCoEndDate: state.hearingSchedule.roCoEndDate,
+  roCoFileUpload: state.hearingSchedule.roCoFileUpload,
+  judgeStartDate: state.hearingSchedule.judgeStartDate,
+  judgeEndDate: state.hearingSchedule.judgeEndDate,
+  judgeFileUpload: state.hearingSchedule.judgeFileUpload,
+  uploadFormErrors: state.hearingSchedule.uploadFormErrors,
+  uploadRoCoFormErrors: state.hearingSchedule.uploadRoCoFormErrors,
+  uploadJudgeFormErrors: state.hearingSchedule.uploadJudgeFormErrors,
+  uploadContinueLoading: state.hearingSchedule.uploadContinueLoading
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

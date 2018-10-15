@@ -7,8 +7,8 @@ class Rating
   # It is a datetime, not a date.
   attr_accessor :participant_id, :profile_date, :promulgation_date
 
-  # One week buffer was added
-  TIMELY_DAYS = 372.days
+  ONE_YEAR_PLUS_DAYS = 372.days
+  TWO_LIFETIMES_DAYS = 250.years
 
   def issues
     @issues ||= fetch_issues
@@ -45,15 +45,20 @@ class Rating
   end
 
   class << self
+    def fetch_all(participant_id)
+      fetch_timely(participant_id: participant_id, from_date: (Time.zone.today - TWO_LIFETIMES_DAYS))
+    end
+
     def fetch_timely(participant_id:, from_date:)
+      start_date = from_date - ONE_YEAR_PLUS_DAYS
       response = BGSService.new.fetch_ratings_in_range(
         participant_id: participant_id,
-        start_date: from_date - TIMELY_DAYS,
+        start_date: start_date,
         end_date: Time.zone.today
       )
 
       unsorted = ratings_from_bgs_response(response).select do |rating|
-        rating.promulgation_date > (from_date - TIMELY_DAYS)
+        rating.promulgation_date > start_date
       end
 
       unsorted.sort_by(&:promulgation_date).reverse

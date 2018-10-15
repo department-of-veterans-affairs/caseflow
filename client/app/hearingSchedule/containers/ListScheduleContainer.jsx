@@ -8,6 +8,7 @@ import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import PropTypes from 'prop-types';
+import QueueCaseSearchBar from '../../queue/SearchBar';
 
 const dateFormatString = 'YYYY-MM-DD';
 
@@ -43,16 +44,19 @@ export class ListScheduleContainer extends React.Component {
       failStatusMessageProps={{
         title: 'Unable to load the hearing schedule.'
       }}>
-      <ListSchedule
-        hearingSchedule={this.props.hearingSchedule}
-        startDateValue={this.props.startDate}
-        startDateChange={this.props.onViewStartDateChange}
-        endDateValue={this.props.endDate}
-        endDateChange={this.props.onViewEndDateChange}
-        onApply={this.createHearingPromise}
-        userRoleAssign={this.props.userRoleAssign}
-        userRoleBuild={this.props.userRoleBuild}
-      />
+      <React.Fragment>
+        <QueueCaseSearchBar />
+        <ListSchedule
+          hearingSchedule={this.props.hearingSchedule}
+          startDateValue={this.props.startDate}
+          startDateChange={this.props.onViewStartDateChange}
+          endDateValue={this.props.endDate}
+          endDateChange={this.props.onViewEndDateChange}
+          onApply={this.createHearingPromise}
+          userRoleAssign={this.props.userRoleAssign}
+          userRoleBuild={this.props.userRoleBuild}
+        />
+      </React.Fragment>
     </LoadingDataDisplay>;
 
     return <div>{loadingDataDisplay}</div>;
@@ -60,9 +64,9 @@ export class ListScheduleContainer extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  hearingSchedule: state.hearingSchedule,
-  startDate: state.viewStartDate,
-  endDate: state.viewEndDate
+  hearingSchedule: state.hearingSchedule.hearingSchedule,
+  startDate: state.hearingSchedule.viewStartDate,
+  endDate: state.hearingSchedule.viewEndDate
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
