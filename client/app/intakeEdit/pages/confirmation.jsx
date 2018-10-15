@@ -13,8 +13,7 @@ class ConfirmationPage extends Component {
     return <div>
       <StatusMessage
         title="Edit Confirmed"
-        leadMessageList={[message]}
-        type="alert" />
+        leadMessageList={[message]} />
     </div>;
   }
 }

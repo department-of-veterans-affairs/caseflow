@@ -95,7 +95,9 @@ export const formatRequestIssues = (requestIssues) => {
       isRated: true,
       id: issue.reference_id,
       profileDate: issueDate.toISOString(),
-      notes: issue.notes
+      notes: issue.notes,
+      isUnidentified: issue.is_unidentified,
+      description: issue.description
     };
   });
 };
@@ -133,7 +135,7 @@ const formatRatedIssues = (state) => {
   if (state.addedIssues && state.addedIssues.length > 0) {
     // we're using the new add issues page
     return state.addedIssues.
-      filter((issue) => issue.isRated).
+      filter((issue) => issue.isRated && !issue.isUnidentified).
       map((issue) => {
         return { reference_id: issue.id,
           decision_text: ratingIssues[issue.id],

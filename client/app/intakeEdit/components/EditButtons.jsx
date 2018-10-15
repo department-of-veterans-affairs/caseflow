@@ -1,17 +1,52 @@
 import React from 'react';
-import Button from '../../components/Button';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import Button from '../../components/Button';
 import IssueCounter from '../../intake/components/IssueCounter';
 import { issueCountSelector } from '../../intake/selectors';
+import { requestIssuesUpdate } from '../actions/edit'
+import { REQUEST_STATE } from '../../intake/constants';
 
 class SaveButtonUnconnected extends React.PureComponent {
-  render = () =>
-    <Button
+  handleClick = () => {
+    this.props.requestIssuesUpdate(this.props.claimId, this.props.formType, this.props.state).then(() => this.props.history.push('/confirmation'));
+  }
+
+  render = () => {
+    const {
+      addedIssues,
+      originalIssues,
+      issueCount,
+      requestStatus
+    } = this.props;
+
+    const saveDisabled = addedIssues === originalIssues || issueCount === 0;
+
+    return <Button
       name="submit-update"
-    >
+      onClick={this.handleClick}
+      loading={this.props.requestStatus.requestIssuesUpdate === REQUEST_STATE.IN_PROGRESS}
+      disabled={saveDisabled}
+      >
       Save
     </Button>;
+  }
 }
+
+const SaveButton = connect(
+  (state) => ({
+    claimId: state.claimId,
+    formType: state.formType,
+    addedIssues: state.addedIssues,
+    originalIssues: state.originalIssues,
+    requestStatus: state.requestStatus,
+    issueCount: state.issueCount,
+    state: state
+  }),
+  (dispatch) => bindActionCreators({
+    requestIssuesUpdate
+  }, dispatch)
+)(SaveButtonUnconnected);
 
 class CancelEditButton extends React.PureComponent {
   render = () => {
@@ -42,7 +77,7 @@ export default class EditButtons extends React.PureComponent {
   render = () =>
     <div>
       <CancelEditButton history={this.props.history} />
-      <SaveButtonUnconnected history={this.props.history} />
+      <SaveButton history={this.props.history} />
       <IssueCounterConnected />
     </div>
 }

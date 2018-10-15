@@ -46,7 +46,8 @@ class RequestIssue < ApplicationRecord
       description: description,
       decision_date: decision_date,
       category: issue_category,
-      notes: notes
+      notes: notes,
+      is_unidentified: is_unidentified
     }
   end
 end

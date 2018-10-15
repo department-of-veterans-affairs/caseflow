@@ -12,7 +12,7 @@ class Canceled extends Component {
 
     return <div>
       <StatusMessage
-        title="Claim Edit Cancelled"
+        title="Claim Edit Canceled"
         leadMessageList={[message]}
         type="alert" />
     </div>;
