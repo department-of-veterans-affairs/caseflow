@@ -11,6 +11,8 @@ import RoSelectorDropdown from './RoSelectorDropdown';
 import moment from 'moment';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
+import type {TaskWithAppeal} from "../../queue/types/models";
+import CaseDetailsLink from "../../queue/CaseDetailsLink";
 
 const colorAOD = css({
   color: 'red'
@@ -102,11 +104,13 @@ export default class AssignHearings extends React.Component {
 
   tableRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
+      id: veteran.id,
       caseDetails: `${veteran.name} | ${veteran.id}`,
       type: this.veteranTypeColor(veteran.type),
       docketNumber: veteran.docketNumber,
       location: this.props.selectedRegionalOffice.value === 'C' ? 'Washington DC' : veteran.location,
-      time: veteran.time
+      time: veteran.time,
+      vacolsId: veteran.vacolsId
     }));
   };
 
@@ -116,7 +120,11 @@ export default class AssignHearings extends React.Component {
       {
         header: 'Case details',
         align: 'left',
-        valueName: 'caseDetails'
+        valueName: 'caseDetails',
+        valueFunction: (veteran) => <CaseDetailsLink
+          appeal={ {externalId: veteran.vacolsId} }
+          userRole={'Hearings Mgmt'}
+          getLinkText={() => `${veteran.caseDetails}`} />,
       },
       {
         header: 'Type(s)',

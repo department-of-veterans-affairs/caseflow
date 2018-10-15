@@ -154,7 +154,8 @@ class Hearings::HearingDayController < HearingScheduleController
       type: veteran.type,
       docket_number: veteran.docket_number,
       location: HearingDayMapper.city_for_regional_office(veteran.regional_office_key),
-      time: nil
+      time: nil,
+      vacols_id: veteran.case_record.bfkey
     }
   end
 

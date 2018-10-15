@@ -14,6 +14,8 @@ import ListScheduleContainer from './containers/ListScheduleContainer';
 import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import DailyDocketContainer from './containers/DailyDocketContainer';
 import ScrollToTop from '../components/ScrollToTop';
+import CaseDetailsLoadingScreen from "../queue/CaseDetailsLoadingScreen";
+import CaseDetailsView from "../queue/CaseDetailsView";
 
 class HearingScheduleApp extends React.PureComponent {
 
@@ -30,6 +32,11 @@ class HearingScheduleApp extends React.PureComponent {
   };
 
   routeForListScheduleContainer = () => <ListScheduleContainer {...this.propsForListScheduleContainer()} />;
+
+  routedQueueDetailWithLoadingScreen = (props) => <CaseDetailsLoadingScreen
+    tasks={{}} appealDetails={{}} appealId={props.match.params.appealId}>
+    <CaseDetailsView appealId={props.match.params.appealId} />
+  </CaseDetailsLoadingScreen>;
 
   render = () => <BrowserRouter basename="/hearings">
     <NavigationBar
@@ -84,6 +91,13 @@ class HearingScheduleApp extends React.PureComponent {
             title="Assign Hearings"
             breadcrumb="Assign"
             component={AssignHearingsContainer}
+          />
+          <PageRoute
+            exact
+            path="/queue/appeals/:appealId"
+            title="Case Details | Caseflow"
+            breadcrumb="Details"
+            render={this.routedQueueDetailWithLoadingScreen}
           />
         </div>
       </AppFrame>

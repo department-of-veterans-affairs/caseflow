@@ -94,6 +94,7 @@ class TaskTable extends React.PureComponent<Props> {
       valueFunction: (task: TaskWithAppeal) => <CaseDetailsLink
         task={task}
         appeal={task.appeal}
+        userRole={this.props.userRole}
         disabled={!this.taskHasDASRecord(task)} />,
       getSortValue: (task) => {
         const vetName = task.appeal.veteranFullName.split(' ');
@@ -284,7 +285,8 @@ class TaskTable extends React.PureComponent<Props> {
 
 const mapStateToProps = (state) => ({
   isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,
-  userIsVsoEmployee: state.ui.userIsVsoEmployee
+  userIsVsoEmployee: state.ui.userIsVsoEmployee,
+  userRole: state.ui.userRole
 });
 
 const mapDispatchToProps = (dispatch) => (
