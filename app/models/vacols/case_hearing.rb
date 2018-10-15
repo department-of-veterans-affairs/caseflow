@@ -67,8 +67,8 @@ class VACOLS::CaseHearing < VACOLS::Record
 
     def co_hearings_for_master_record(parent_hearing_date)
       select_hearings.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) between ? and ?",
-                            "C", "%VIDEO%", parent_hearing_date.to_date.beginning_of_day,
-                            (parent_hearing_date.to_date + 1.day).beginning_of_day)
+                            "C", "%VIDEO%", parent_hearing_date.to_date,
+                            (parent_hearing_date + 1.day).to_date)
     end
 
     def for_appeal(appeal_vacols_id)

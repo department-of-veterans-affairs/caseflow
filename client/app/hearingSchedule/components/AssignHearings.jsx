@@ -130,9 +130,9 @@ export default class AssignHearings extends React.Component {
   tableScheduledHearingsRows = (hearings) => {
     return _.map(hearings, (hearing) => ({
       caseDetails: `${hearing.appellantMiFormatted} | ${hearing.vbmsId}`,
-      type: this.veteranTypeColor(hearing.type),
+      type: this.veteranTypeColor(hearing.appealType),
       docketNumber: hearing.docketNumber,
-      location: hearing.requestType === 'Video' ? hearing.regionalOfficeName : 'Washington, DC',
+      location: hearing.requestType === 'Video' ? hearing.regionalOfficeName : 'Washington DC',
       time: this.getHearingTime(hearing.date, hearing.regionalOfficeTimezone)
     }));
   };

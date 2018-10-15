@@ -71,13 +71,12 @@ class HearingDay < ApplicationRecord
         enriched_hearing_days << hearing_day.slice(:id, :hearing_date, :hearing_type, :room_info)
         enriched_hearing_days[enriched_hearing_days.length - 1][:total_slots] =
           HearingDayRepository.fetch_hearing_day_slots(hearing_day)
-        hearings = if hearing_day[:regional_office].nil?
-                     HearingRepository.fetch_co_hearings_for_parent(hearing_day[:hearing_date])
-                   else
-                     HearingRepository.fetch_video_hearings_for_parent(hearing_day[:id])
-                   end
         enriched_hearing_days[enriched_hearing_days.length - 1][:hearings] =
-          hearings.map { |hearing| hearing.to_hash(1) }
+          if hearing_day[:regional_office].nil?
+            HearingRepository.fetch_co_hearings_for_parent(hearing_day[:hearing_date])
+          else
+            HearingRepository.fetch_video_hearings_for_parent(hearing_day[:id])
+          end
       end
       enriched_hearing_days
     end
