@@ -252,7 +252,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     } = this.props;
     const tasks = _.compact([taskAssignedToUser, taskAssignedToAttorney, taskAssignedToOrganization]);
     const legacyTasks = tasks.filter((task) => task.isLegacy);
-    const nonLegacyTasks = [taskAssignedToUser].filter((task) => !task.isLegacy);
+    const nonLegacyTasks = (taskAssignedToUser ? [taskAssignedToUser] : []).filter((task) => !task.isLegacy);
 
     return this.showActionsForLegacyTasks(legacyTasks) || this.showActionsForTasksAssignedToUser(nonLegacyTasks);
   }
