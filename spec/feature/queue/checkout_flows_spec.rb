@@ -437,13 +437,14 @@ RSpec.feature "Checkout flows" do
       FactoryBot.create(
         :appeal,
         number_of_claimants: 1,
-        request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
+        request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus", disposition: "allowed")
       )
     end
 
-    before do
-      root_task = FactoryBot.create(:root_task)
-      parent_task = FactoryBot.create(
+    
+    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:parent_task) do 
+      FactoryBot.create(
         :ama_judge_task, 
         :in_progress, 
         assigned_to: judge_user, 
@@ -451,16 +452,21 @@ RSpec.feature "Checkout flows" do
         parent: root_task, 
         action: "review"
       )
+    end
 
+    let(:child_task) do 
       FactoryBot.create(
         :ama_attorney_task,
-        :completed,
+        :in_progress,
         assigned_to: attorney_user,
         assigned_by: judge_user,
         parent: parent_task,
         appeal: appeal
       )
-
+    end
+      
+    before do
+      child_task.update(status: :completed)
       User.authenticate!(user: attorney_user)
     end
 
@@ -484,20 +490,14 @@ RSpec.feature "Checkout flows" do
         expect(visible_options.first.text).to eq COPY::JUDGE_CHECKOUT_DISPATCH_LABEL
       end
 
-      # one issue is decided, excluded from checkout flow
-      expect(appeal.issues.length).to eq 1
-      expect(page.find_all(".issue-disposition-dropdown").length).to eq 1
-
+      # Special Issues screen
+      click_on "Continue"
+      # Request Issues screen
       click_on "Continue"
       expect(page).to have_content("Evaluate Decision")
 
-      click_on "Continue"
-      sleep 1
-
-      expect(page).to have_content("Choose one")
-
-      find("label", text: "Easy").click
-      find("label", text: "1 - Does not meet expectations").click
+      find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS['COMPLEXITY']['easy']).click
+      find("label", text: "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}").click
 
       # areas of improvement
       find("#issues_are_not_addressed", visible: false).sibling("label").click
@@ -507,8 +507,12 @@ RSpec.feature "Checkout flows" do
       expect(page).to have_content(dummy_note[0..5])
 
       click_on "Continue"
-
       expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
+      case_review = JudgeCaseReview.find_by(task_id: parent_task.id)
+      expect(case_review.attorney).to eq attorney_user
+      expect(case_review.judge).to eq judge_user
+      expect(case_review.complexity).to eq "easy"
+      expect(case_review.quality).to eq "does_not_meet_expectations"
     end
   end
 
