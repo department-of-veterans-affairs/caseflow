@@ -441,20 +441,19 @@ RSpec.feature "Checkout flows" do
       )
     end
 
-    
     let(:root_task) { FactoryBot.create(:root_task) }
-    let(:parent_task) do 
+    let(:parent_task) do
       FactoryBot.create(
-        :ama_judge_task, 
-        :in_progress, 
-        assigned_to: judge_user, 
-        appeal: appeal, 
-        parent: root_task, 
+        :ama_judge_task,
+        :in_progress,
+        assigned_to: judge_user,
+        appeal: appeal,
+        parent: root_task,
         action: "review"
       )
     end
 
-    let(:child_task) do 
+    let(:child_task) do
       FactoryBot.create(
         :ama_attorney_task,
         :in_progress,
@@ -464,7 +463,7 @@ RSpec.feature "Checkout flows" do
         appeal: appeal
       )
     end
-      
+
     before do
       child_task.update(status: :completed)
       User.authenticate!(user: attorney_user)
@@ -496,7 +495,7 @@ RSpec.feature "Checkout flows" do
       click_on "Continue"
       expect(page).to have_content("Evaluate Decision")
 
-      find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS['COMPLEXITY']['easy']).click
+      find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
       find("label", text: "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}").click
 
       # areas of improvement
