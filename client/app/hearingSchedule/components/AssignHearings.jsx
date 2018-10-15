@@ -77,11 +77,13 @@ export default class AssignHearings extends React.Component {
               }
             });
             const styling = dateSelected ? buttonColorSelected : '';
+            const disabledButton = _.isEmpty(this.props.veteransReadyForHearing);
 
             return <li key={hearingDay.id} >
               <Button
                 styling={styling}
                 onClick={this.onSelectedHearingDayChange(hearingDay)}
+                disabled={disabledButton}
                 linkStyling
               >
                 {`${moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}
@@ -125,17 +127,19 @@ export default class AssignHearings extends React.Component {
 
   roNotAssignedTitle = () => {
     if (this.props.selectedRegionalOffice.label) {
-      return <span>The {this.props.selectedRegionalOffice.label} Regional Office has not been<br />
+      return <span>The {this.props.selectedRegionalOffice.label} Regional Office has not been <br />
         <span {...roErrorTitle}>assigned any hearing days</span></span>;
     }
   }
 
   roNotAssignedTitleError = () => {
     if (_.isEmpty(this.props.veteransReadyForHearing)) {
-      return <AssignStatusMessage
-        message="Please verify that this RO has been assigned hearings"
-        title={this.roNotAssignedTitle()}
-      />;
+      return <div>
+        <AssignStatusMessage
+          message="Please verify that this RO has been assigned hearings"
+          title={this.roNotAssignedTitle()}
+        />
+      </div>;
     }
   }
 
