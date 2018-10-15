@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import { sprintf } from 'sprintf-js';
 
-import StatusMessage from '../components/StatusMessage';
 import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';

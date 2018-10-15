@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux';
 import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
 
-import StatusMessage from '../components/StatusMessage';
 import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -44,7 +43,8 @@ class JudgeReviewTaskListView extends React.PureComponent {
     let tableContent;
 
     if (reviewableCount === 0) {
-      tableContent = <h2 {...css({textAlign: 'center', marginTop: '3rem'})}>
+      tableContent = <h2 {...css({ textAlign: 'center',
+        marginTop: '3rem' })}>
         {COPY.NO_CASES_IN_QUEUE_MESSAGE}<Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link>.
       </h2>;
     } else {
