@@ -9,8 +9,7 @@ import NonRatedIssueModal from '../components/NonRatedIssueModal';
 import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
 import Button from '../../components/Button';
 import RequestIssuesUpdateErrorAlert from '../../intakeEdit/components/RequestIssuesUpdateErrorAlert';
-import { FORM_TYPES } from '../constants';
-import { PAGE_PATHS } from '../constants';
+import { FORM_TYPES, PAGE_PATHS } from '../constants';
 import { formatDate } from '../../util/DateUtil';
 import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 import Table from '../../components/Table';
@@ -21,7 +20,7 @@ import {
   toggleUnidentifiedIssuesModal
 } from '../actions/addIssues';
 
-export class AddIssues extends React.PureComponent {
+export class AddIssuesPage extends React.PureComponent {
   render() {
     const {
       intakeForms,
