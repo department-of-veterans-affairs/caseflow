@@ -29,7 +29,7 @@ describe RatingIssue do
     end
   end
 
-  context "#in_active_review?" do
+  context "#in_active_review" do
     let(:reference_id) { "abc123" }
     let(:review_request_type) { "SupplementalClaim" }
 
@@ -40,7 +40,7 @@ describe RatingIssue do
     it "returns true if a RequestIssue already exists with the same reference_id" do
       rating_issue = RatingIssue.new(reference_id: reference_id)
 
-      expect(rating_issue.in_active_review?).to eq("Supplemental Claim")
+      expect(rating_issue.in_active_review).to eq("Supplemental Claim")
     end
   end
 

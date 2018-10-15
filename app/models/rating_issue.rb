@@ -18,7 +18,7 @@ class RatingIssue < ApplicationRecord
     {
       reference_id: reference_id,
       decision_text: decision_text,
-      in_active_review: in_active_review?
+      in_active_review: in_active_review
     }
   end
 
@@ -31,10 +31,9 @@ class RatingIssue < ApplicationRecord
     )
   end
 
-  def in_active_review?
+  def in_active_review
     ri = RequestIssue.find_by(rating_issue_reference_id: reference_id, removed_at: nil)
     return ri.review_request_type.underscore.titleize if ri
-    false
   end
 
   private
