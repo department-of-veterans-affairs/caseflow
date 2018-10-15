@@ -23,9 +23,8 @@ class UnidentifiedIssuesModal extends React.Component {
   }
 
   isDescriptionValid = (description) => {
-    if (description.trim().length === 0) return false;
     // make sure description has some characters in it
-    return /[a-zA-Z]+/.test(description);
+    return (/[a-zA-Z]+/).test(description);
   }
 
   onDescriptionChange = (value) => {
