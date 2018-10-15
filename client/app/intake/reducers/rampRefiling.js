@@ -1,5 +1,4 @@
-import { ACTIONS } from '../constants';
-import { FORM_TYPES, REQUEST_STATE } from '../../intakeCommon/constants';
+import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
 import { getOptionSelectedError, getPageError, getReceiptDateError, getAppealDocketError } from '../util/index';

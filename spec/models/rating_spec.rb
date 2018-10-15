@@ -127,5 +127,38 @@ describe Rating do
         )
       end
     end
+
+    context "when a rating is locked" do
+      it "throws NilRatingProfileListError" do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_ratings_in_range).and_return(error: "Oops")
+        expect do
+          Rating.fetch_timely(participant_id: "DRAYMOND", from_date: receipt_date)
+        end.to raise_error(Rating::NilRatingProfileListError)
+      end
+    end
+  end
+
+  context ".fetch_all" do
+    let(:receipt_date) { Time.zone.today - 50.years }
+
+    subject { Rating.fetch_all("DRAYMOND") }
+
+    let!(:rating) do
+      Generators::Rating.build(
+        participant_id: "DRAYMOND",
+        promulgation_date: receipt_date - 370.days
+      )
+    end
+
+    let!(:untimely_rating) do
+      Generators::Rating.build(
+        participant_id: "DRAYMOND",
+        promulgation_date: receipt_date - 100.years
+      )
+    end
+
+    it "returns rating objects for all ratings" do
+      expect(subject.count).to eq(2)
+    end
   end
 end

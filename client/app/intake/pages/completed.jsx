@@ -9,7 +9,7 @@ import HigherLevelReviewPage from './higherLevelReview/completed';
 import AppealPage from './appeal/completed';
 import SwitchOnForm from '../components/SwitchOnForm';
 import { bindActionCreators } from 'redux';
-import { startNewIntake } from '../actions/common';
+import { startNewIntake } from '../actions/intake';
 import Button from '../../components/Button';
 
 class Completed extends React.PureComponent {

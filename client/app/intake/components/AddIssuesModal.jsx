@@ -3,11 +3,10 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
 
-import { addRatedIssue } from '../actions/ama';
 import { formatDateStr } from '../../util/DateUtil';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
-import { toggleNonRatedIssueModal } from '../actions/common';
+import { addRatedIssue, toggleNonRatedIssueModal } from '../actions/addIssues';
 import TextField from '../../components/TextField';
 
 class AddIssuesModal extends React.Component {
