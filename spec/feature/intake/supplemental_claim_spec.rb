@@ -68,8 +68,8 @@ RSpec.feature "Supplemental Claim Intake" do
       promulgation_date: receipt_date - untimely_days,
       profile_date: profile_date - 1.day,
       issues: [
-        { reference_id: "abc123", decision_text: "Untimely rating issue 1" },
-        { reference_id: "def456", decision_text: "Untimely rating issue 2" }
+        { reference_id: "old123", decision_text: "Untimely rating issue 1" },
+        { reference_id: "old456", decision_text: "Untimely rating issue 2" }
       ]
     )
   end
@@ -165,7 +165,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_content("Identify issues on")
     expect(page).to have_content("Decision date: 04/17/2017")
     expect(page).to have_content("Left knee granted")
-    expect(page).to_not have_content("Untimely rating issue 1")
+    expect(page).to have_content("Untimely rating issue 1")
     expect(page).to have_button("Establish EP", disabled: true)
     expect(page).to have_content("0 issues")
 
@@ -319,12 +319,6 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to_not have_content("Same office request")
     expect(page).to have_content("PTSD denied")
 
-    safe_click ".cf-edit-issues-link"
-
-    expect(page).to have_current_path(
-      "/supplemental_claims/#{ratings_end_product_establishment.reference_id}/edit/select_issues"
-    )
-
     visit "/supplemental_claims/4321/edit"
     expect(page).to have_content("Page not found")
   end
@@ -410,8 +404,8 @@ RSpec.feature "Supplemental Claim Intake" do
         promulgation_date: receipt_date - 40.days,
         profile_date: receipt_date - 50.days,
         issues: [
-          { reference_id: "abc123", decision_text: "Left knee granted" },
-          { reference_id: "def456", decision_text: "PTSD denied" }
+          { reference_id: "xyz123", decision_text: "Left knee granted" },
+          { reference_id: "xyz456", decision_text: "PTSD denied" }
         ]
       )
     end
@@ -438,7 +432,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
       # adding an issue should show the issue
       safe_click "#button-add-issue"
-      find("label", text: "Left knee granted").click
+      find_all("label", text: "Left knee granted").first.click
       safe_click ".add-issue"
 
       expect(page).to have_content("1. Left knee granted")
@@ -449,7 +443,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
       # re-add to proceed
       safe_click "#button-add-issue"
-      find("label", text: "Left knee granted").click
+      find_all("label", text: "Left knee granted").first.click
       fill_in "Notes", with: "I am an issue note"
       safe_click ".add-issue"
 
@@ -461,7 +455,7 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to have_content("Add issue 2")
       expect(page).to have_content("Does issue 2 match any of these issues")
       expect(page).to have_content("Left knee granted (already selected for issue 1)")
-      expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
+      expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
 
       # Add non-rated issue
       safe_click ".no-matching-issues"
@@ -519,7 +513,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
       expect(RequestIssue.find_by(
                review_request: supplemental_claim,
-               rating_issue_reference_id: "abc123",
+               rating_issue_reference_id: "xyz123",
                description: "Left knee granted",
                end_product_establishment_id: end_product_establishment.id,
                notes: "I am an issue note"
@@ -531,6 +525,13 @@ RSpec.feature "Supplemental Claim Intake" do
                description: "Description for Active Duty Adjustments",
                decision_date: 1.month.ago.to_date,
                end_product_establishment_id: non_rating_end_product_establishment.id
+      )).to_not be_nil
+
+      expect(RequestIssue.find_by(
+               review_request: supplemental_claim,
+               description: "This is an unidentified issue",
+               is_unidentified: true,
+               end_product_establishment_id: end_product_establishment.id
       )).to_not be_nil
     end
 
