@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Appeal Intake", focus: true do
+RSpec.feature "Appeal Intake" do
   before do
     FeatureToggle.enable!(:intake)
     # Test that this works when only enabled on the current user
@@ -383,7 +383,7 @@ RSpec.feature "Appeal Intake", focus: true do
     )).to_not be_nil
   end
 
-  scenario "canceling an appeal intake", focus: true do
+  scenario "canceling an appeal intake" do
     _, intake = start_appeal(veteran)
     visit "/intake/add_issues"
 
@@ -400,6 +400,10 @@ RSpec.feature "Appeal Intake", focus: true do
       find("label", text: "Other").click
     end
     safe_click ".confirm-cancel"
+    expect(page).to have_content("Make sure you’ve filled out the comment box below.")
+    fill_in "Tell us more about your situation.", with: "blue!"
+    safe_click ".confirm-cancel"
+
     expect(page).to have_content("Welcome to Caseflow Intake!")
     expect(page).to_not have_css(".cf-modal-title")
 

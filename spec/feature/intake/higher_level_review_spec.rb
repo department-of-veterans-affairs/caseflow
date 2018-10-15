@@ -666,7 +666,7 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to_not have_content("Claimant")
     end
 
-    scenario "canceling", focus: true do
+    scenario "canceling" do
       _, intake = start_higher_level_review(veteran)
       visit "/intake/add_issues"
 
@@ -683,6 +683,10 @@ RSpec.feature "Higher-Level Review" do
         find("label", text: "Other").click
       end
       safe_click ".confirm-cancel"
+      expect(page).to have_content("Make sure you’ve filled out the comment box below.")
+      fill_in "Tell us more about your situation.", with: "blue!"
+      safe_click ".confirm-cancel"
+
       expect(page).to have_content("Welcome to Caseflow Intake!")
       expect(page).to_not have_css(".cf-modal-title")
 

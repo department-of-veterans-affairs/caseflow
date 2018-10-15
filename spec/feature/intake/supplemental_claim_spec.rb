@@ -545,7 +545,7 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to_not have_content("Claimant")
     end
 
-    scenario "canceling", focus: true do
+    scenario "canceling" do
       _, intake = start_supplemental_claim(veteran)
       visit "/intake/add_issues"
 
@@ -562,6 +562,10 @@ RSpec.feature "Supplemental Claim Intake" do
         find("label", text: "Other").click
       end
       safe_click ".confirm-cancel"
+      expect(page).to have_content("Make sure you’ve filled out the comment box below.")
+      fill_in "Tell us more about your situation.", with: "blue!"
+      safe_click ".confirm-cancel"
+
       expect(page).to have_content("Welcome to Caseflow Intake!")
       expect(page).to_not have_css(".cf-modal-title")
 
