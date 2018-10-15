@@ -223,7 +223,7 @@ RSpec.feature "Appeal Intake", focus: true do
       docket_type: "evidence_submission"
     )
 
-    AppealIntake.create!(
+    intake = AppealIntake.create!(
       veteran_file_number: test_veteran.file_number,
       user: current_user,
       started_at: 5.minutes.ago,
@@ -236,7 +236,8 @@ RSpec.feature "Appeal Intake", focus: true do
     )
 
     appeal.start_review!
-    appeal
+
+    [appeal, intake]
   end
 
   it "Allows a Veteran without ratings to create an intake" do
@@ -269,8 +270,8 @@ RSpec.feature "Appeal Intake", focus: true do
     expect(row).to have_text(text)
   end
 
-  scenario "adding issues and completing an appeal intake" do
-    appeal = start_appeal(veteran)
+  scenario "For new Add Issues page" do
+    appeal, = start_appeal(veteran)
     visit "/intake/add_issues"
 
     expect(page).to have_content("Add Issues")
@@ -373,27 +374,8 @@ RSpec.feature "Appeal Intake", focus: true do
     )).to_not be_nil
   end
 
-  scenario "canceling an appeal intake" do
-    appeal = Appeal.create!(
-      veteran_file_number: veteran.file_number,
-      receipt_date: 2.days.ago,
-      docket_type: "evidence_submission"
-    )
-
-    intake = AppealIntake.create!(
-      veteran_file_number: veteran.file_number,
-      user: current_user,
-      started_at: 5.minutes.ago,
-      detail: appeal
-    )
-
-    Claimant.create!(
-      review_request: appeal,
-      participant_id: veteran.participant_id
-    )
-
-    appeal.start_review!
-
+  scenario "canceling an appeal intake", focus: true do
+    _, intake = start_appeal(veteran)
     visit "/intake/add_issues"
 
     expect(page).to have_content("Add Issues")
