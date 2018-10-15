@@ -432,6 +432,86 @@ RSpec.feature "Checkout flows" do
     end
   end
 
+  context "given a valid ama appeal with single issue assigned to current judge user" do
+    let!(:appeal) do
+      FactoryBot.create(
+        :appeal,
+        number_of_claimants: 1,
+        request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
+      )
+    end
+
+    before do
+      root_task = FactoryBot.create(:root_task)
+      parent_task = FactoryBot.create(
+        :ama_judge_task, 
+        :in_progress, 
+        assigned_to: judge_user, 
+        appeal: appeal, 
+        parent: root_task, 
+        action: "review"
+      )
+
+      FactoryBot.create(
+        :ama_attorney_task,
+        :completed,
+        assigned_to: attorney_user,
+        assigned_by: judge_user,
+        parent: parent_task,
+        appeal: appeal
+      )
+
+      User.authenticate!(user: attorney_user)
+    end
+
+    before do
+      FeatureToggle.enable!(:judge_case_review_checkout)
+
+      User.authenticate!(user: judge_user)
+    end
+
+    after do
+      FeatureToggle.disable!(:judge_case_review_checkout)
+    end
+
+    scenario "starts dispatch checkout flow" do
+      visit "/queue"
+      click_on "(#{appeal.veteran_file_number})"
+
+      click_dropdown 0 do
+        visible_options = page.find_all(".Select-option")
+        expect(visible_options.length).to eq 1
+        expect(visible_options.first.text).to eq COPY::JUDGE_CHECKOUT_DISPATCH_LABEL
+      end
+
+      # one issue is decided, excluded from checkout flow
+      expect(appeal.issues.length).to eq 1
+      expect(page.find_all(".issue-disposition-dropdown").length).to eq 1
+
+      click_on "Continue"
+      expect(page).to have_content("Evaluate Decision")
+
+      click_on "Continue"
+      sleep 1
+
+      expect(page).to have_content("Choose one")
+
+      find("label", text: "Easy").click
+      find("label", text: "1 - Does not meet expectations").click
+
+      # areas of improvement
+      find("#issues_are_not_addressed", visible: false).sibling("label").click
+
+      dummy_note = generate_words 5
+      fill_in "additional-factors", with: dummy_note
+      expect(page).to have_content(dummy_note[0..5])
+
+      click_on "Continue"
+
+      expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
+    end
+  end
+
   context "given a valid legacy appeal with single issue assigned to current judge user" do
     let!(:appeal) do
       FactoryBot.create(
