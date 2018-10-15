@@ -89,7 +89,7 @@ const workQueueReducer = (state: QueueState = initialState, action: Object = {})
     const amaTasksIds = _.map(
       _.filter(
         state.amaTasks, (task) => task.externalAppealId === action.payload.appealId
-      ), 'uniqueId'
+      ), (task) => task.uniqueId
     );
 
     return update(state, {
