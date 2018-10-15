@@ -13,11 +13,12 @@ class RatingIssue < ApplicationRecord
   # If you change this method, you will need
   # to clear cache in prod for your changes to
   # take effect immediately.
-  # See AmaReview#cached_serialized_timely_ratings.
+  # See AmaReview#cached_serialized_timely_ratings and AmaReview#cached_serialized_ratings
   def ui_hash
     {
       reference_id: reference_id,
-      decision_text: decision_text
+      decision_text: decision_text,
+      in_active_review: in_active_review?
     }
   end
 
@@ -28,6 +29,12 @@ class RatingIssue < ApplicationRecord
       contention_reference_id: data.dig(:rba_issue_contentions, :cntntn_id),
       decision_text: data[:decn_txt]
     )
+  end
+
+  def in_active_review?
+    ri = RequestIssue.find_by(rating_issue_reference_id: reference_id, removed_at: nil)
+    return ri.review_request_type.underscore.titleize if ri
+    false
   end
 
   private

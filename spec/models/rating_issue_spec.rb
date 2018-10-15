@@ -15,8 +15,7 @@ describe RatingIssue do
     let(:bgs_record) do
       {
         rba_issue_id: "NBA",
-        decn_txt: "This broadcast may not be reproduced or \
-          retransmitted without the express written consent of the NBA"
+        decn_txt: "This broadcast may not be reproduced"
       }
     end
 
@@ -25,9 +24,23 @@ describe RatingIssue do
     it do
       is_expected.to have_attributes(
         reference_id: "NBA",
-        decision_text: "This broadcast may not be reproduced or \
-          retransmitted without the express written consent of the NBA"
+        decision_text: "This broadcast may not be reproduced"
       )
+    end
+  end
+
+  context "#in_active_review?" do
+    let(:reference_id) { "abc123" }
+    let(:review_request_type) { "SupplementalClaim" }
+
+    let!(:request_issue) do
+      create(:request_issue, rating_issue_reference_id: reference_id, review_request_type: review_request_type)
+    end
+
+    it "returns true if a RequestIssue already exists with the same reference_id" do
+      rating_issue = RatingIssue.new(reference_id: reference_id)
+
+      expect(rating_issue.in_active_review?).to eq("Supplemental Claim")
     end
   end
 
