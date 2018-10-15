@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { BrowserRouter } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar';
@@ -17,8 +16,7 @@ import ScrollToTop from '../components/ScrollToTop';
 import CaseDetailsLoadingScreen from "../queue/CaseDetailsLoadingScreen";
 import CaseDetailsView from "../queue/CaseDetailsView";
 
-class HearingScheduleApp extends React.PureComponent {
-
+export default class HearingScheduleApp extends React.PureComponent {
   propsForListScheduleContainer = () => {
     const {
       userRoleAssign,
@@ -119,5 +117,3 @@ HearingScheduleApp.propTypes = {
   buildDate: PropTypes.string,
   dropdownUrls: PropTypes.array
 };
-
-export default connect()(HearingScheduleApp);

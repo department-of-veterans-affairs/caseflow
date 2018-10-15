@@ -7,11 +7,10 @@ import AppFrame from '../components/AppFrame';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_PATHS } from './constants';
-import LandingPage from './pages/landing';
-import CancelPage from './pages/cancelled';
-import SelectIssuesPage, { SelectIssuesButtons } from './pages/selectIssues';
+import { EditAddIssuesPage } from '../intake/pages/addIssues';
+import CancelPage from './pages/canceled';
 import { css } from 'glamor';
-import CancelEdit from './components/CancelEdit';
+import EditButtons from './components/EditButtons';
 
 const textAlignRightStyling = css({
   textAlign: 'right'
@@ -20,18 +19,19 @@ const textAlignRightStyling = css({
 export default class IntakeEditFrame extends React.PureComponent {
   render() {
     const {
-      review,
+      claimId,
+      veteran,
       formType
-    } = this.props;
+    } = this.props.serverIntake;
 
     const appName = 'Intake';
 
     const Router = this.props.router || BrowserRouter;
 
-    const topMessage = review.veteranFileNumber ?
-      `${review.veteranFormName} (${review.veteranFileNumber})` : null;
+    const topMessage = veteran.fileNumber ?
+      `${veteran.formName} (${veteran.fileNumber})` : null;
 
-    const basename = `/${formType}s/${review.claimId}/edit/`;
+    const basename = `/${formType}s/${claimId}/edit/`;
 
     return <Router basename={basename} {...this.props.routerTestProps}>
       <div>
@@ -52,12 +52,7 @@ export default class IntakeEditFrame extends React.PureComponent {
                   exact
                   path={PAGE_PATHS.BEGIN}
                   title="Edit Claim Issues | Caseflow Intake"
-                  component={LandingPage} />
-                <PageRoute
-                  exact
-                  path={PAGE_PATHS.SELECT_ISSUES}
-                  title="Edit Claim Issues | Caseflow Intake"
-                  component={SelectIssuesPage} />
+                  component={EditAddIssuesPage} />
                 <PageRoute
                   exact
                   path={PAGE_PATHS.CANCEL_ISSUES}
@@ -69,12 +64,7 @@ export default class IntakeEditFrame extends React.PureComponent {
               <Route
                 exact
                 path={PAGE_PATHS.BEGIN}
-                component={CancelEdit}
-              />
-              <Route
-                exact
-                path={PAGE_PATHS.SELECT_ISSUES}
-                component={SelectIssuesButtons}
+                component={EditButtons}
               />
             </AppSegment>
           </AppFrame>
