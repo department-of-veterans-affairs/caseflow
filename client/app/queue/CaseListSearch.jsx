@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
+import COPY from '../../COPY.json';
 
 import {
   clearCaseListSearch,
@@ -20,7 +21,15 @@ class CaseListSearch extends React.PureComponent {
   onSubmitSearch = (searchQuery) => {
     /* eslint-disable no-empty-function */
     // Error cases already handled inside the promise itself.
-    this.props.fetchAppealsUsingVeteranId(searchQuery).then((id) => this.props.history.push(`/cases/${id}`)).
+    this.props.fetchAppealsUsingVeteranId(searchQuery).then((id) => {
+      const caseListPath = `/cases/${id}`;
+
+      if (this.props.location.pathname === '/schedule') {
+        return window.location = caseListPath;
+      }
+
+      return this.props.history.push(caseListPath);
+    }).
       catch(() => {});
     /* eslint-enable no-empty-function */
   }
@@ -37,6 +46,7 @@ class CaseListSearch extends React.PureComponent {
         onSubmit={this.onSubmitSearch}
         loading={this.props.caseList.isRequestingAppealsUsingVeteranId}
         submitUsingEnterKey
+        placeholder={this.props.placeholder}
       />
     </React.Fragment>;
   }
@@ -44,12 +54,14 @@ class CaseListSearch extends React.PureComponent {
 
 CaseListSearch.propTypes = {
   elementId: PropTypes.string,
-  searchSize: PropTypes.string
+  searchSize: PropTypes.string,
+  placeholder: PropTypes.string
 };
 
 CaseListSearch.defaultProps = {
   elementId: 'searchBar',
-  searchSize: 'big'
+  searchSize: 'big',
+  placeholder: COPY.CASE_SEARCH_INPUT_PLACEHOLDER
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
