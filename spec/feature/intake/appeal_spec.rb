@@ -271,6 +271,15 @@ RSpec.feature "Appeal Intake", focus: true do
   end
 
   scenario "For new Add Issues page" do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date - 40.days,
+      profile_date: receipt_date - 50.days,
+      issues: [
+        { reference_id: "xyz123", decision_text: "Left knee granted" },
+        { reference_id: "xyz456", decision_text: "PTSD denied" }
+      ]
+    )
     appeal, = start_appeal(veteran)
     visit "/intake/add_issues"
 
