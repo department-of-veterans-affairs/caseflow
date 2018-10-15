@@ -15,7 +15,7 @@ class HigherLevelReviewIntake < ClaimReviewIntake
       claimant_not_veteran: detail.claimant_not_veteran,
       payee_code: detail.payee_code,
       end_product_description: detail.end_product_description,
-      ratings: detail.cached_serialized_timely_ratings
+      ratings: detail.cached_serialized_ratings
     )
   end
 

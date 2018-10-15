@@ -54,6 +54,7 @@
 
 .intake-add-issues .cf-modal-body {
   width: 770px;
+  overflow-y: auto;
 }
 
 .add-issue {
@@ -102,6 +103,18 @@
             display: block;
             font-style: italic;
           }
+
+          .issue-date {
+            display: block;
+          }
+        }
+
+        .unidentified-issue {
+          color: $color-red;
+        }
+
+        .in-active-review {
+          color: $color-red;
         }
 
         .issue-action {

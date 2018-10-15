@@ -44,8 +44,9 @@ namespace :local do
 
       if setup_complete
         puts "Updating schema"
+        oracle_wait_time = 180
         schema_complete = false
-        120.times do
+        oracle_wait_time.times do
           output = `docker exec --tty -i VACOLS_DB-#{suffix} bash -c \
           "source /home/oracle/.bashrc; sqlplus /nolog @/ORCL/setup_vacols.sql"`
           if !output.include?("SP2-0640: Not connected")
@@ -58,7 +59,7 @@ namespace :local do
         if schema_complete
           puts "Schema loaded"
         else
-          puts "Schema load failed"
+          puts "Schema load failed -- you may need to increase Oracle wait time from #{oracle_wait_time} seconds"
         end
       else
         puts "Failed to setup database"

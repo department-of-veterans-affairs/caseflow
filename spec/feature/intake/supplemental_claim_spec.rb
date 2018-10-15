@@ -68,8 +68,8 @@ RSpec.feature "Supplemental Claim Intake" do
       promulgation_date: receipt_date - untimely_days,
       profile_date: profile_date - 1.day,
       issues: [
-        { reference_id: "abc123", decision_text: "Untimely rating issue 1" },
-        { reference_id: "def456", decision_text: "Untimely rating issue 2" }
+        { reference_id: "old123", decision_text: "Untimely rating issue 1" },
+        { reference_id: "old456", decision_text: "Untimely rating issue 2" }
       ]
     )
   end
@@ -165,7 +165,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_content("Identify issues on")
     expect(page).to have_content("Decision date: 04/17/2017")
     expect(page).to have_content("Left knee granted")
-    expect(page).to_not have_content("Untimely rating issue 1")
+    expect(page).to have_content("Untimely rating issue 1")
     expect(page).to have_button("Establish EP", disabled: true)
     expect(page).to have_content("0 issues")
 
@@ -319,12 +319,6 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to_not have_content("Same office request")
     expect(page).to have_content("PTSD denied")
 
-    safe_click ".cf-edit-issues-link"
-
-    expect(page).to have_current_path(
-      "/supplemental_claims/#{ratings_end_product_establishment.reference_id}/edit/select_issues"
-    )
-
     visit "/supplemental_claims/4321/edit"
     expect(page).to have_content("Page not found")
   end
@@ -357,7 +351,7 @@ RSpec.feature "Supplemental Claim Intake" do
       benefit_type: is_comp ? "compensation" : "education"
     )
 
-    SupplementalClaimIntake.create!(
+    intake = SupplementalClaimIntake.create!(
       veteran_file_number: test_veteran.file_number,
       user: current_user,
       started_at: 5.minutes.ago,
@@ -370,7 +364,7 @@ RSpec.feature "Supplemental Claim Intake" do
     )
 
     supplemental_claim.start_review!
-    supplemental_claim
+    [supplemental_claim, intake]
   end
 
   it "Allows a Veteran without ratings to create an intake" do
@@ -410,14 +404,14 @@ RSpec.feature "Supplemental Claim Intake" do
         promulgation_date: receipt_date - 40.days,
         profile_date: receipt_date - 50.days,
         issues: [
-          { reference_id: "abc123", decision_text: "Left knee granted" },
-          { reference_id: "def456", decision_text: "PTSD denied" }
+          { reference_id: "xyz123", decision_text: "Left knee granted" },
+          { reference_id: "xyz456", decision_text: "PTSD denied" }
         ]
       )
     end
 
     scenario "SC comp" do
-      supplemental_claim = start_supplemental_claim(veteran)
+      supplemental_claim, = start_supplemental_claim(veteran)
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add Issues")
@@ -438,10 +432,10 @@ RSpec.feature "Supplemental Claim Intake" do
 
       # adding an issue should show the issue
       safe_click "#button-add-issue"
-      find("label", text: "Left knee granted").click
+      find_all("label", text: "Left knee granted").first.click
       safe_click ".add-issue"
 
-      expect(page).to have_content("1.Left knee granted")
+      expect(page).to have_content("1. Left knee granted")
       expect(page).to_not have_content("Notes:")
       safe_click ".remove-issue"
 
@@ -449,11 +443,11 @@ RSpec.feature "Supplemental Claim Intake" do
 
       # re-add to proceed
       safe_click "#button-add-issue"
-      find("label", text: "Left knee granted").click
+      find_all("label", text: "Left knee granted").first.click
       fill_in "Notes", with: "I am an issue note"
       safe_click ".add-issue"
 
-      expect(page).to have_content("1.Left knee granted")
+      expect(page).to have_content("1. Left knee granted")
       expect(page).to have_content("I am an issue note")
 
       # clicking add issue again should show a disabled radio button for that same rating
@@ -461,24 +455,29 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to have_content("Add issue 2")
       expect(page).to have_content("Does issue 2 match any of these issues")
       expect(page).to have_content("Left knee granted (already selected for issue 1)")
-      expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
+      expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
 
       # Add non-rated issue
       safe_click ".no-matching-issues"
-
       expect(page).to have_content("Does issue 2 match any of these issue categories?")
       expect(page).to have_button("Add this issue", disabled: true)
-
       fill_in "Issue category", with: "Active Duty Adjustments"
       find("#issue-category").send_keys :enter
       fill_in "Issue description", with: "Description for Active Duty Adjustments"
       fill_in "Decision date", with: "04/25/2018"
-
       expect(page).to have_button("Add this issue", disabled: false)
-
       safe_click ".add-issue"
-
       expect(page).to have_content("2 issues")
+
+      # add unidentified issue
+      safe_click "#button-add-issue"
+      safe_click ".no-matching-issues"
+      safe_click ".no-matching-issues"
+      expect(page).to have_content("Describe the issue to mark it as needing further review.")
+      fill_in "Transcribe the issue as it's written on the form", with: "This is an unidentified issue"
+      safe_click ".add-issue"
+      expect(page).to have_content("3 issues")
+      expect(page).to have_content("This is an unidentified issue")
 
       safe_click "#button-finish-intake"
 
@@ -514,7 +513,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
       expect(RequestIssue.find_by(
                review_request: supplemental_claim,
-               rating_issue_reference_id: "abc123",
+               rating_issue_reference_id: "xyz123",
                description: "Left knee granted",
                end_product_establishment_id: end_product_establishment.id,
                notes: "I am an issue note"
@@ -527,6 +526,13 @@ RSpec.feature "Supplemental Claim Intake" do
                decision_date: 1.month.ago.to_date,
                end_product_establishment_id: non_rating_end_product_establishment.id
       )).to_not be_nil
+
+      expect(RequestIssue.find_by(
+               review_request: supplemental_claim,
+               description: "This is an unidentified issue",
+               is_unidentified: true,
+               end_product_establishment_id: end_product_establishment.id
+      )).to_not be_nil
     end
 
     scenario "Non-compensation" do
@@ -537,6 +543,36 @@ RSpec.feature "Supplemental Claim Intake" do
       check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
       check_row("Benefit type", "Education")
       expect(page).to_not have_content("Claimant")
+    end
+
+    scenario "canceling" do
+      _, intake = start_supplemental_claim(veteran)
+      visit "/intake/add_issues"
+
+      expect(page).to have_content("Add Issues")
+      safe_click "#cancel-intake"
+      expect(find("#modal_id-title")).to have_content("Cancel Intake?")
+      safe_click ".close-modal"
+      expect(page).to_not have_css("#modal_id-title")
+      safe_click "#cancel-intake"
+
+      safe_click ".confirm-cancel"
+      expect(page).to have_content("Make sure you’ve selected an option below.")
+      within_fieldset("Please select the reason you are canceling this intake.") do
+        find("label", text: "Other").click
+      end
+      safe_click ".confirm-cancel"
+      expect(page).to have_content("Make sure you’ve filled out the comment box below.")
+      fill_in "Tell us more about your situation.", with: "blue!"
+      safe_click ".confirm-cancel"
+
+      expect(page).to have_content("Welcome to Caseflow Intake!")
+      expect(page).to_not have_css(".cf-modal-title")
+
+      intake.reload
+      expect(intake.completed_at).to eq(Time.zone.now)
+      expect(intake.cancel_reason).to eq("other")
+      expect(intake).to be_canceled
     end
   end
 end

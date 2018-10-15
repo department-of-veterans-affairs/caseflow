@@ -5,8 +5,7 @@ import Checkbox from '../../../components/Checkbox';
 import Button from '../../../components/Button';
 import Table from '../../../components/Table';
 import { Redirect } from 'react-router-dom';
-import { PAGE_PATHS, INTAKE_STATES } from '../../constants';
-import { REQUEST_STATE } from '../../../intakeCommon/constants';
+import { PAGE_PATHS, INTAKE_STATES, REQUEST_STATE } from '../../constants';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setIssueSelected, setHasIneligibleIssue, setOutsideCaseflowStepsConfirmed, completeIntake,

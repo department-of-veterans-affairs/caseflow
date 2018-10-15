@@ -72,7 +72,7 @@ class TasksController < ApplicationController
   #   on_hold_duration: "something"
   # }
   def update
-    redirect_to("/unauthorized") && return unless task.can_user_access?(current_user)
+    redirect_to("/unauthorized") && return unless task.can_be_accessed_by_user?(current_user)
 
     task.update_from_params(update_params, current_user)
 
@@ -99,7 +99,7 @@ class TasksController < ApplicationController
 
   def can_act_on_task?
     return true if can_assign_task?
-    true if task.can_user_access?(current_user)
+    true if task.can_be_accessed_by_user?(current_user)
   rescue ActiveRecord::RecordNotFound
     return false
   end
