@@ -1,5 +1,6 @@
 {
   "CASE_SEARCH_HOME_PAGE_HEADING": "Veteran Case Search",
+  "CASE_SEARCH_INPUT_PLACEHOLDER": "Enter a 9 digit Veteran ID",
   "CASE_SEARCH_INPUT_INSTRUCTION": "Please enter a valid claims file number to search for all available cases.",
   "CASE_SEARCH_ERROR_EMPTY_SEARCH_TERM": "Cannot search for no text",
   "CASE_SEARCH_ERROR_INVALID_ID_HEADING": "Invalid Veteran ID “%s”",
@@ -15,7 +16,7 @@
   "CASE_LIST_TABLE_APPEAL_STATUS_COLUMN_TITLE": "Status",
   "CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE": "Type(s)",
   "CASE_LIST_TABLE_DECISION_DATE_COLUMN_TITLE": "Decision Date",
-  "CASE_LIST_TABLE_DAYS_WAITING_COLUMN_TITLE": "Days waiting | Due on",
+  "CASE_LIST_TABLE_DAYS_WAITING_COLUMN_TITLE": "Days waiting",
   "CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE": "Assigned To",
   "CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE": "Issues",
   "CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE": "Veteran Documents",
@@ -64,8 +65,8 @@
 
   "NEW_FILE_ICON_TOOLTIP": "This case has new documents",
 
-  "NO_TASKS_IN_ATTORNEY_QUEUE_TITLE": "Cases not found",
-  "NO_TASKS_IN_ATTORNEY_QUEUE_MESSAGE": "Sorry! We couldn't find any cases for you.",
+  "NO_CASES_IN_QUEUE_MESSAGE": "You have no cases assigned to you. You can ",
+  "NO_CASES_IN_QUEUE_LINK_TEXT": "search for cases",
   "ATTORNEY_QUEUE_TABLE_TITLE": "Your cases",
   "ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you made a mistake, please email your judge to resolve the issue.",
   "ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE": "Please ask your judge to assign this case to you in DAS",
@@ -85,8 +86,6 @@
   "COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "When a hold is complete, the case will automatically return to the Pending action tab.",
   "COLOCATED_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases with tasks that were marked complete in the last two weeks will appeal here.",
 
-  "NO_CASES_FOR_JUDGE_REVIEW_TITLE": "Cases not found",
-  "NO_CASES_FOR_JUDGE_REVIEW_MESSAGE": "Congratulations! You don't have any decisions to sign.",
   "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
   "SWITCH_TO_ASSIGN_MODE_LINK_LABEL": "Switch to Assign Cases",
 

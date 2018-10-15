@@ -310,7 +310,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def contention_for_object(for_object)
-    contentions.find { |contention| contention.id == for_object.contention_reference_id }
+    contentions.find { |contention| contention.id.to_i == for_object.contention_reference_id.to_i }
   end
 
   # These are values that need to be determined based on the source right before the end
