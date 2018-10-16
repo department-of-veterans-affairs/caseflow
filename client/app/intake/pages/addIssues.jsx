@@ -59,7 +59,7 @@ export class AddIssuesPage extends React.PureComponent {
               <div className={issueKlasses.join(' ')}>
                 <span className="issue-num">{index + 1}.&nbsp;</span>
                 {issue.text} {addendum}
-                <span className="issue-date">Decision date: {issue.date}</span>
+                { issue.date && <span className="issue-date">Decision date: {issue.date}</span> }
                 { issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span> }
               </div>
               <div className="issue-action">
@@ -119,7 +119,7 @@ export class AddIssuesPage extends React.PureComponent {
         intakeData={intakeData}
         closeHandler={this.props.toggleUnidentifiedIssuesModal} />
       }
-      <h1 className="cf-txt-c">Add Issues</h1>
+      <h1 className="cf-txt-c">Add / Remove Issues</h1>
 
       { requestState === REQUEST_STATE.FAILED &&
         <RequestIssuesUpdateErrorAlert responseErrorCode={responseErrorCode} />
