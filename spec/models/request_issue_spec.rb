@@ -65,30 +65,14 @@ describe RequestIssue do
     end
   end
 
-  context "ineligibility" do
-    it "renders correct message for ineligible due to active review" do
-      request_issue = create(:request_issue, ineligible_request_issue: rated_issue).tap(&:in_active_review!)
+  context "#update_as_ineligible!" do
+    it "updates in a single transaction" do
+      request_issue = create(:request_issue)
 
-      expect(request_issue.ineligible_msg).to eq(
-        Constants.REQUEST_ISSUES.ineligible_in_active_review_msg.dup.sub("{review_title}", "Higher-Level Review")
-      )
-    end
+      request_issue.update_as_ineligible!(other_request_issue: rated_issue, reason: :in_active_review)
 
-    it "renders correct message for ineligible due to untimely" do
-      request_issue = create(:request_issue, ineligible_request_issue: rated_issue).tap(&:untimely!)
-
-      expect(request_issue.ineligible_msg).to eq(Constants.REQUEST_ISSUES.ineligible_untimely_msg)
-    end
-
-    context "#update_as_ineligible!" do
-      it "updates in a single transaction" do
-        request_issue = create(:request_issue)
-
-        request_issue.update_as_ineligible!(other_request_issue: rated_issue, reason: :in_active_review)
-
-        expect(request_issue.in_active_review?).to eq(true)
-        expect(request_issue.ineligible_request_issue).to eq(rated_issue)
-      end
+      expect(request_issue.in_active_review?).to eq(true)
+      expect(request_issue.ineligible_request_issue).to eq(rated_issue)
     end
   end
 end

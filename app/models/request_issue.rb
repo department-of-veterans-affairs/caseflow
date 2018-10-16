@@ -50,12 +50,6 @@ class RequestIssue < ApplicationRecord
     review_request_type.constantize.review_title
   end
 
-  def ineligible_msg
-    msg = Constants::REQUEST_ISSUES["ineligible_#{ineligible_reason}_msg"].dup
-    msg.sub!("{review_title}", ineligible_request_issue.review_title) if ineligible_request_issue
-    msg
-  end
-
   def self.from_intake_data(data)
     new(
       rating_issue_reference_id: data[:reference_id],
