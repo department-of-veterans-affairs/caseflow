@@ -272,20 +272,26 @@ class LegacyAppeal < ApplicationRecord
     [outcoder_last_name, outcoder_first_name, outcoder_middle_initial].select(&:present?).join(", ").titleize
   end
 
-  def representative_name
-    power_of_attorney.vacols_representative_name
+  REPRESENTATIVE_METHOD_NAMES = [
+    :representative_name, 
+    :representative_type, 
+    :representative_address
+  ]
+
+  REPRESENTATIVE_METHOD_NAMES.each do |method_name|
+    define_method(method_name) do 
+      if use_representative_info_from_bgs?
+        power_of_attorney.send("bgs_#{method_name}".to_sym) 
+      else
+        power_of_attorney.send("vacols_#{method_name}".to_sym) 
+      end
+    end
   end
 
-  def representative_type
-    power_of_attorney.vacols_representative_type
-  end
-
-  def representative_address
-    power_of_attorney.vacols_representative_address
-  end
-
-  def representative_code
-    power_of_attorney.vacols_representative_code
+  def use_representative_info_from_bgs?
+    FeatureToggle.enabled?(:use_representative_info_from_bgs) && 
+      (RequestStore.store[:application] = "queue" || 
+       RequestStore.store[:application] = "idt")
   end
 
   delegate :representatives, to: :case_record
@@ -678,7 +684,6 @@ class LegacyAppeal < ApplicationRecord
     {
       name: representative_name,
       type: representative_type,
-      code: representative_code,
       address: representative_address
     }
   end

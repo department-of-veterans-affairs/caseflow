@@ -73,7 +73,8 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :power_of_attorney do
     {
       representative_type: object.representative_type,
-      representative_name: object.representative_name
+      representative_name: object.representative_name,
+      representative_address: object.representative_address
     }
   end
 
