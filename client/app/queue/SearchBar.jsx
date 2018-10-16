@@ -1,5 +1,4 @@
 import { css } from 'glamor';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -25,10 +24,6 @@ class SearchBar extends React.PureComponent {
     <CaseListSearch />
   </div>;
 }
-
-SearchBar.propTypes = {
-  feedbackUrl: PropTypes.string.isRequired
-};
 
 const mapStateToProps = (state) => ({
   isRequestingAppealsUsingVeteranId: state.caseList.isRequestingAppealsUsingVeteranId

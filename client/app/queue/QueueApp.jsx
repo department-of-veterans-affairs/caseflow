@@ -17,6 +17,7 @@ import {
 import ScrollToTop from '../components/ScrollToTop';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
+import CaseSearchLink from '../components/CaseSearchLink';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import AppFrame from '../components/AppFrame';
 import QueueLoadingScreen from './QueueLoadingScreen';
@@ -196,6 +197,7 @@ class QueueApp extends React.PureComponent<Props> {
         overlapColor: LOGO_COLORS.QUEUE.OVERLAP,
         accentColor: LOGO_COLORS.QUEUE.ACCENT
       }}
+      rightNavElement={<CaseSearchLink />}
       appName="">
       <AppFrame wideApp>
         <ScrollToTop />

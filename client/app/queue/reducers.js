@@ -47,7 +47,7 @@ export const initialState = {
 };
 
 // eslint-disable-next-line max-statements
-const workQueueReducer = (state = initialState, action = {}): QueueState => {
+const workQueueReducer = (state: QueueState = initialState, action: Object = {}): QueueState => {
   switch (action.type) {
   case ACTIONS.RECEIVE_QUEUE_DETAILS:
     return update(state, {
@@ -85,13 +85,20 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
         $set: action.payload.judges
       }
     });
-  case ACTIONS.DELETE_APPEAL:
+  case ACTIONS.DELETE_APPEAL: {
+    const amaTasksIds = _.map(
+      _.filter(
+        state.amaTasks, (task) => task.externalAppealId === action.payload.appealId
+      ), (task) => task.uniqueId
+    );
+
     return update(state, {
       tasks: { $unset: action.payload.appealId },
-      amaTasks: { $unset: action.payload.appealId },
+      amaTasks: { $unset: amaTasksIds },
       appeals: { $unset: action.payload.appealId },
       appealDetails: { $unset: action.payload.appealId }
     });
+  }
   case ACTIONS.EDIT_APPEAL:
     return update(state, {
       appealDetails: {
@@ -342,6 +349,15 @@ const workQueueReducer = (state = initialState, action = {}): QueueState => {
     return update(state, {
       [taskType]: {
         [uniqueId]: {
+          $merge: action.payload.attributes
+        }
+      }
+    });
+  }
+  case ACTIONS.SET_APPEAL_ATTRS: {
+    return update(state, {
+      appealDetails: {
+        [action.payload.appealId]: {
           $merge: action.payload.attributes
         }
       }

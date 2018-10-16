@@ -57,11 +57,13 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
 
     acc[task.id] = {
       uniqueId: task.id,
+      isLegacy: false,
       appealType: task.attributes.appeal_type,
       addedByCssId: null,
       appealId: task.attributes.appeal_id,
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_at,
+      completedOn: task.attributes.completed_at,
       dueOn: null,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
@@ -127,10 +129,12 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
   const mappedLegacyTasks = tasks.map((task): Task => {
     return {
       uniqueId: task.attributes.external_appeal_id,
+      isLegacy: true,
       appealId: task.attributes.appeal_id,
       appealType: task.attributes.appeal_type,
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_on,
+      completedOn: null,
       dueOn: task.attributes.due_on,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
@@ -156,15 +160,15 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
     };
   });
 
-  return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.externalAppealId), (task) => task);
+  return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.uniqueId), (task) => task);
 };
 
 export const prepareAllTasksForStore = (tasks: Array<Object>): { amaTasks: Tasks, tasks: Tasks } => {
   const amaTasks = tasks.filter((task) => {
-    return task.attributes.appeal_type === 'Appeal';
+    return !task.attributes.is_legacy;
   });
   const legacyTasks = tasks.filter((task) => {
-    return task.attributes.appeal_type === 'LegacyAppeal';
+    return task.attributes.is_legacy;
   });
 
   return {

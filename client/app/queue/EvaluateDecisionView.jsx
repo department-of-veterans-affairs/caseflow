@@ -141,7 +141,7 @@ class EvaluateDecisionView extends React.PureComponent {
     }
     const payload = buildCaseReviewPayload(checkoutFlow, decision, userRole, appeal.issues, {
       location: loc,
-      attorney_id: task.assignedBy.pgId,
+      attorney_id: appeal.isLegacyAppeal ? task.assignedBy.pgId : appeal.assignedAttorney.id,
       isLegacyAppeal: appeal.isLegacyAppeal,
       ...this.state
     });

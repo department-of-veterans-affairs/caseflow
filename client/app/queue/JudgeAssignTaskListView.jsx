@@ -19,7 +19,6 @@ import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import {
   fetchTasksAndAppealsOfAttorney,
-  setSelectionOfTaskOfUser,
   fetchAmaTasksOfUser
 } from './QueueActions';
 import { judgeAssignTasksSelector, getTasksByUserId } from './selectors';
@@ -148,8 +147,7 @@ const mapDispatchToProps = (dispatch) => (
     resetSuccessMessages,
     resetSaveState,
     fetchTasksAndAppealsOfAttorney,
-    fetchAmaTasksOfUser,
-    setSelectionOfTaskOfUser
+    fetchAmaTasksOfUser
   }, dispatch)
 );
 

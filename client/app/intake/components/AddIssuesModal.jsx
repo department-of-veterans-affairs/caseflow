@@ -3,11 +3,10 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
 
-import { addRatedIssue } from '../actions/ama';
 import { formatDateStr } from '../../util/DateUtil';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
-import { toggleNonRatedIssueModal } from '../actions/common';
+import { addRatedIssue, toggleNonRatedIssueModal } from '../actions/addIssues';
 import TextField from '../../components/TextField';
 
 class AddIssuesModal extends React.Component {
@@ -34,7 +33,12 @@ class AddIssuesModal extends React.Component {
   }
 
   onAddIssue = () => {
-    this.props.addRatedIssue(this.state.referenceId, this.props.intakeData.ratings, true, this.state.notes);
+    this.props.addRatedIssue({
+      issueId: this.state.referenceId,
+      ratings: this.props.intakeData.ratings,
+      isRated: true,
+      notes: this.state.notes
+    });
     this.props.closeHandler();
   }
 
