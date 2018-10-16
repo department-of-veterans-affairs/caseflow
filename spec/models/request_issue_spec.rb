@@ -81,5 +81,16 @@ describe RequestIssue do
         "is ineligible because it has a prior decision date that’s older than 1 year"
       )
     end
+
+    context "#update_as_ineligible!" do
+      it "updates in a single transaction" do
+        request_issue = create(:request_issue)
+
+        request_issue.update_as_ineligible!(other_request_issue: rated_issue, reason: :in_active_review)
+
+        expect(request_issue.in_active_review?).to eq(true)
+        expect(request_issue.ineligible_request_issue).to eq(rated_issue)
+      end
+    end
   end
 end
