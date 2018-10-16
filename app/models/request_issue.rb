@@ -5,6 +5,8 @@ class RequestIssue < ApplicationRecord
   has_many :remand_reasons
   has_many :rating_issues
 
+  UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
+
   def self.rated
     where.not(rating_issue_reference_id: nil, rating_issue_profile_date: nil)
       .or(where(is_unidentified: true))
@@ -27,6 +29,16 @@ class RequestIssue < ApplicationRecord
     rating_issue_reference_id && rating_issue_profile_date
   end
 
+  def nonrated?
+    issue_category && decision_date
+  end
+
+  def contention_text
+    return "#{issue_category} - #{description}" if nonrated?
+    return UNIDENTIFIED_ISSUE_MSG if is_unidentified
+    description
+  end
+
   def self.from_intake_data(data)
     new(
       rating_issue_reference_id: data[:reference_id],
@@ -46,7 +58,8 @@ class RequestIssue < ApplicationRecord
       description: description,
       decision_date: decision_date,
       category: issue_category,
-      notes: notes
+      notes: notes,
+      is_unidentified: is_unidentified
     }
   end
 end

@@ -270,7 +270,7 @@ RSpec.feature "Appeal Intake" do
     expect(row).to have_text(text)
   end
 
-  scenario "For new Add Issues page" do
+  scenario "For new Add / Remove Issues page" do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - 40.days,
@@ -283,7 +283,7 @@ RSpec.feature "Appeal Intake" do
     appeal, = start_appeal(veteran)
     visit "/intake/add_issues"
 
-    expect(page).to have_content("Add Issues")
+    expect(page).to have_content("Add / Remove Issues")
     check_row("Form", Constants.INTAKE_FORM_NAMES.appeal)
     check_row("Review option", "Evidence Submission")
     check_row("Claimant", "Ed Merica")
@@ -387,7 +387,7 @@ RSpec.feature "Appeal Intake" do
     _, intake = start_appeal(veteran)
     visit "/intake/add_issues"
 
-    expect(page).to have_content("Add Issues")
+    expect(page).to have_content("Add / Remove Issues")
     safe_click "#cancel-intake"
     expect(find("#modal_id-title")).to have_content("Cancel Intake?")
     safe_click ".close-modal"

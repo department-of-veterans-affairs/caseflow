@@ -21,6 +21,7 @@ import type {
   AppealDetails,
   User
 } from './types/models';
+import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 
 export const selectedTasksSelector = (state: State, userId: string) => {
   return _.map(
@@ -115,7 +116,8 @@ export const appealsByCaseflowVeteranId = createSelector(
       appeal.caseflowVeteranId.toString() === caseflowVeteranId.toString())
 );
 
-const incompleteTasksSelector = (tasks: Tasks) => _.filter(tasks, (task) => task.status !== 'completed');
+const incompleteTasksSelector = (tasks: Tasks) => _.filter(tasks, (task) => task.status !== TASK_STATUSES.completed);
+const completeTasksSelector = (tasks: Tasks) => _.filter(tasks, (task) => task.status === TASK_STATUSES.completed);
 
 const tasksByAssigneeCssIdSelector = createSelector(
   [tasksWithAppealSelector, getUserCssId],
@@ -126,6 +128,11 @@ const tasksByAssigneeCssIdSelector = createSelector(
 const incompleteTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks: Tasks) => incompleteTasksSelector(tasks)
+);
+
+export const completeTasksByAssigneeCssIdSelector = createSelector(
+  [tasksByAssigneeCssIdSelector],
+  (tasks: Tasks) => completeTasksSelector(tasks)
 );
 
 export const organizationTasksByAssigneeIdSelector = createSelector(
@@ -147,7 +154,7 @@ export const newTasksByAssigneeCssIdSelector = createSelector(
 export const workableTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks: Array<TaskWithAppeal>) => tasks.filter(
-    (task) => task.appeal.isLegacyAppeal || task.status !== 'on_hold'
+    (task) => task.appeal.isLegacyAppeal || task.status !== TASK_STATUSES.on_hold
   )
 );
 
@@ -174,7 +181,8 @@ export const judgeReviewTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks) => _.filter(tasks, (task: TaskWithAppeal) => {
     if (task.appealType === 'Appeal') {
-      return task.action === 'review' && (task.status === 'in_progress' || task.status === 'assigned');
+      return task.action === 'review' &&
+        (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned);
     }
 
     // eslint-disable-next-line no-undefined
@@ -186,7 +194,8 @@ export const judgeAssignTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks) => _.filter(tasks, (task: TaskWithAppeal) => {
     if (task.appealType === 'Appeal') {
-      return task.action === 'assign' && (task.status === 'in_progress' || task.status === 'assigned');
+      return task.action === 'assign' &&
+        (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned);
     }
 
     return task.action === 'assign';
