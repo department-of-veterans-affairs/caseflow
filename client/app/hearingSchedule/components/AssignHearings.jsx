@@ -182,11 +182,11 @@ export default class AssignHearings extends React.Component {
 
     const getHearingsTab = (selectedHearingDay) => {
       if (selectedHearingDay) {
-        return <Table>
+        return <Table
             columns={tabWindowColumns}
             rowObjects={this.tableRows(this.props.selectedHearingDay.hearings)}
             summary="scheduled-hearings-table"
-        </Table>;
+        />;
       }
     };
 
