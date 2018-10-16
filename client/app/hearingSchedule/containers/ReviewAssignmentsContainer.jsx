@@ -68,10 +68,10 @@ export class ReviewAssignmentsContainer extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  schedulePeriod: state.schedulePeriod,
-  schedulePeriodError: state.schedulePeriodError,
-  spErrorDetails: state.spErrorDetails,
-  displayConfirmationModal: state.displayConfirmationModal
+  schedulePeriod: state.hearingSchedule.schedulePeriod,
+  schedulePeriodError: state.hearingSchedule.schedulePeriodError,
+  spErrorDetails: state.hearingSchedule.spErrorDetails,
+  displayConfirmationModal: state.hearingSchedule.displayConfirmationModal
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

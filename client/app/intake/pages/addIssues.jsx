@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Redirect } from 'react-router-dom';
 import React from 'react';
 
 import AddIssuesModal from '../components/AddIssuesModal';
@@ -8,7 +9,7 @@ import NonRatedIssueModal from '../components/NonRatedIssueModal';
 import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
 import Button from '../../components/Button';
 import RequestIssuesUpdateErrorAlert from '../../intakeEdit/components/RequestIssuesUpdateErrorAlert';
-import { FORM_TYPES } from '../constants';
+import { FORM_TYPES, PAGE_PATHS } from '../constants';
 import { formatDate } from '../../util/DateUtil';
 import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 import Table from '../../components/Table';
@@ -19,7 +20,7 @@ import {
   toggleUnidentifiedIssuesModal
 } from '../actions/addIssues';
 
-class AddIssuesPage extends React.PureComponent {
+export class AddIssuesPage extends React.PureComponent {
   render() {
     const {
       intakeForms,
@@ -27,6 +28,10 @@ class AddIssuesPage extends React.PureComponent {
       veteran,
       responseErrorCode
     } = this.props;
+
+    if (!formType) {
+      return <Redirect to={PAGE_PATHS.BEGIN} />;
+    }
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const intakeData = intakeForms[selectedForm.key];
@@ -38,10 +43,22 @@ class AddIssuesPage extends React.PureComponent {
       return <div className="issues">
         <div>
           { issues.map((issue, index) => {
+            let issueKlasses = ['issue-desc'];
+            let addendum = '';
+
+            if (issue.isUnidentified) {
+              issueKlasses.push('unidentified-issue');
+            }
+            if (issue.inActiveReview) {
+              issueKlasses.push('in-active-review');
+              addendum = `is ineligible because it's already under review as a ${issue.inActiveReview}.`;
+            }
+
             return <div className="issue" key={`issue-${index}`}>
-              <div className={`issue-desc ${issue.isUnidentified ? 'unidentified-issue' : ''}`}>
+              <div className={issueKlasses.join(' ')}>
                 <span className="issue-num">{index + 1}.&nbsp;</span>
-                {issue.text}
+                {issue.text} {addendum}
+                <span className="issue-date">Decision date: {issue.date}</span>
                 { issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span> }
               </div>
               <div className="issue-action">
