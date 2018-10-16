@@ -48,6 +48,8 @@ describe('ColocatedTaskListView', () => {
   });
 
   const getAmaTaskTemplate = (): Task => ({
+    uniqueId: '1',
+    isLegacy: false,
     appealType: 'Appeal',
     addedByCssId: null,
     appealId: 5,

@@ -242,11 +242,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     } = this.props;
     const tasks = _.compact([taskAssignedToUser, taskAssignedToAttorney, taskAssignedToOrganization]);
 
-    // users can end up at case details for appeals with no DAS
-    // record (!task.taskId). prevent starting checkout flows
-    return Boolean(tasks.length && _.every(tasks, (task) => {
-      return task.taskId && (!task.status || task.status !== TASK_STATUSES.completed);
-    }));
+    return Boolean(tasks.length && _.every(tasks, (task) => task.taskId));
   }
 
   render = () => {
