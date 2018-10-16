@@ -92,7 +92,7 @@ class TasksController < ApplicationController
       return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], user_role)
     end
 
-    json_tasks_by_appeal_id(appeal.id, appeal.class.to_s)
+    all_json_tasks
   end
 
   private
@@ -178,11 +178,9 @@ class TasksController < ApplicationController
     }
   end
 
-  def json_tasks_by_appeal_id(appeal_db_id, appeal_type)
-    tasks = queue_class.new(user: current_user).tasks_by_appeal_id(appeal_db_id, appeal_type)
-
+  def all_json_tasks
     render json: {
-      tasks: json_tasks(tasks)[:data]
+      tasks: json_tasks(appeal.tasks)[:data]
     }
   end
 

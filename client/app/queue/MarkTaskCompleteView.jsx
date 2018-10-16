@@ -7,8 +7,9 @@ import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
 
 import {
-  getTasksForAppeal,
-  appealWithDetailSelector
+  tasksForAppealAssignedToUserSelector,
+  appealWithDetailSelector,
+  organizationTasksByAssigneeIdSelector
 } from './selectors';
 import { setTaskAttrs } from './QueueActions';
 import {
@@ -62,7 +63,7 @@ class MarkTaskCompleteView extends React.Component<Props> {
         const response = JSON.parse(resp.text);
         const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        this.props.setTaskAttrs(task.externalAppealId, preparedTasks[task.externalAppealId]);
+        this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.uniqueId]);
       });
   }
 
@@ -76,7 +77,8 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 
   return {
     error,
-    task: getTasksForAppeal(state, ownProps)[0],
+    task: tasksForAppealAssignedToUserSelector(state, ownProps)[0] ||
+      organizationTasksByAssigneeIdSelector(state, ownProps)[0],
     appeal: appealWithDetailSelector(state, ownProps)
   };
 };
