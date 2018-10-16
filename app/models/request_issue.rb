@@ -35,7 +35,8 @@ class RequestIssue < ApplicationRecord
 
   def contention_text
     return "#{issue_category} - #{description}" if nonrated?
-    is_unidentified ? UNIDENTIFIED_ISSUE_MSG : description
+    return UNIDENTIFIED_ISSUE_MSG if is_unidentified
+    description
   end
 
   def self.from_intake_data(data)
