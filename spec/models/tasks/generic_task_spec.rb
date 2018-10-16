@@ -292,4 +292,66 @@ describe GenericTask do
       end
     end
   end
+
+  describe ".reassign" do
+    let(:org) { Organization.find(FactoryBot.create(:organization).id) }
+    let(:root_task) { RootTask.find(FactoryBot.create(:root_task).id) }
+    let(:org_task) { GenericTask.find(FactoryBot.create(:generic_task, parent_id: root_task.id, assigned_to: org).id) }
+    let(:task) { GenericTask.find(FactoryBot.create(:generic_task, parent_id: org_task.id).id) }
+    let(:old_assignee) { task.assigned_to }
+    let(:new_assignee) { FactoryBot.create(:user) }
+    let(:params) do
+      {
+        assigned_to_id: new_assignee.id,
+        assigned_to_type: new_assignee.class.name,
+        instructions: "some instructions here"
+      }
+    end
+
+    before { allow_any_instance_of(Organization).to receive(:user_has_access?).and_return(true) }
+
+    subject { task.reassign(params, old_assignee) }
+
+    context "When old assignee reassigns task with no child tasks to a new user" do
+      it "reassign method should return list with old and new tasks" do
+        expect(subject).to eq(task.parent.children)
+        expect(task.parent.children.length).to eq(2)
+      end
+
+      it "should change status of old task to completed but not complete parent task" do
+        expect { subject }.to_not raise_error
+        expect(task.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(task.parent.status).to_not eq(Constants.TASK_STATUSES.completed)
+      end
+    end
+
+    context "When old assignee reassigns task with several child tasks to a new user" do
+      let(:completed_children_cnt) { 4 }
+      let!(:completed_children) do
+        FactoryBot.create_list(
+          :generic_task,
+          completed_children_cnt,
+          parent_id: task.id,
+          status: Constants.TASK_STATUSES.completed
+        )
+      end
+      let(:incomplete_children_cnt) { 5 }
+      let!(:incomplete_children) { FactoryBot.create_list(:generic_task, incomplete_children_cnt, parent_id: task.id) }
+
+      it "reassign method should return list with old and new tasks and incomplete child tasks" do
+        expect(subject.length).to eq(2 + incomplete_children_cnt)
+      end
+
+      it "incomplete children tasks are adopted by new task and completed tasks are not" do
+        expect { subject }.to_not raise_error
+        expect(task.status).to eq(Constants.TASK_STATUSES.completed)
+
+        new_task = task.parent.children.where.not(status: Constants.TASK_STATUSES.completed).first
+        expect(new_task.children.length).to eq(incomplete_children_cnt)
+
+        task.reload
+        expect(task.children.length).to eq(completed_children_cnt)
+      end
+    end
+  end
 end
