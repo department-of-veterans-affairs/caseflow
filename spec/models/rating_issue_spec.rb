@@ -3,6 +3,7 @@ require "rails_helper"
 describe RatingIssue do
   before do
     FeatureToggle.enable!(:test_facols)
+    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
   after do
@@ -24,8 +25,48 @@ describe RatingIssue do
     it do
       is_expected.to have_attributes(
         reference_id: "NBA",
-        decision_text: "This broadcast may not be reproduced"
+        decision_text: "This broadcast may not be reproduced",
+        profile_date: nil,
+        contention_reference_id: nil
       )
+    end
+
+    context "when rba_issue_contentions is single" do
+      let(:bgs_record) do
+        {
+          rba_issue_id: "NBA",
+          decn_txt: "This broadcast may not be reproduced",
+          rba_issue_contentions: { prfil_dt: Time.zone.now, cntntn_id: "foul" }
+        }
+      end
+
+      it do
+        is_expected.to have_attributes(
+          reference_id: "NBA",
+          decision_text: "This broadcast may not be reproduced",
+          profile_date: Time.zone.now,
+          contention_reference_id: "foul"
+        )
+      end
+    end
+
+    context "when rba_issue_contentions is an array" do
+      let(:bgs_record) do
+        {
+          rba_issue_id: "NBA",
+          decn_txt: "This broadcast may not be reproduced",
+          rba_issue_contentions: [{ prfil_dt: Time.zone.now, cntntn_id: "foul" }]
+        }
+      end
+
+      it do
+        is_expected.to have_attributes(
+          reference_id: "NBA",
+          decision_text: "This broadcast may not be reproduced",
+          profile_date: Time.zone.now,
+          contention_reference_id: "foul"
+        )
+      end
     end
   end
 
