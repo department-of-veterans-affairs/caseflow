@@ -86,7 +86,7 @@ RSpec.feature "Edit issues" do
       expect(page).to_not have_content("Left knee granted")
       expect(page).to have_content("PTSD denied")
 
-      expect(page).to have_content("Add Issues")
+      expect(page).to have_content("Add / Remove Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Bob Vance, Spouse (payee code 10)")
@@ -348,7 +348,7 @@ RSpec.feature "Edit issues" do
       expect(page).to_not have_content("Left knee granted")
       expect(page).to have_content("PTSD denied")
 
-      expect(page).to have_content("Add Issues")
+      expect(page).to have_content("Add / Remove Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Bob Vance, Spouse (payee code 10)")
