@@ -52,6 +52,24 @@
   }
 }
 
+.intake-add-issues .cf-modal-body {
+  width: 770px;
+  overflow-y: auto;
+}
+
+.add-issue {
+  margin-left: 1em;
+}
+
+.add-non-rated-issue {
+  max-width: 350px;
+
+  .decision-date {
+    margin-top: 20px;
+    width: 8em;
+  }
+}
+
 .cf-intake-edit {
   th {
     padding: 0;
@@ -85,6 +103,18 @@
             display: block;
             font-style: italic;
           }
+
+          .issue-date {
+            display: block;
+          }
+        }
+
+        .unidentified-issue {
+          color: $color-red;
+        }
+
+        .in-active-review {
+          color: $color-red;
         }
 
         .issue-action {

@@ -1,3 +1,33 @@
+import INTAKE_FORM_NAMES from '../../constants/INTAKE_FORM_NAMES.json';
+
+export const FORM_TYPES = {
+  RAMP_ELECTION: {
+    key: 'ramp_election',
+    name: INTAKE_FORM_NAMES.ramp_election,
+    category: 'ramp'
+  },
+  RAMP_REFILING: {
+    key: 'ramp_refiling',
+    name: INTAKE_FORM_NAMES.ramp_refiling,
+    category: 'ramp'
+  },
+  HIGHER_LEVEL_REVIEW: {
+    key: 'higher_level_review',
+    name: INTAKE_FORM_NAMES.higher_level_review,
+    category: 'ama'
+  },
+  SUPPLEMENTAL_CLAIM: {
+    key: 'supplemental_claim',
+    name: INTAKE_FORM_NAMES.supplemental_claim,
+    category: 'ama'
+  },
+  APPEAL: {
+    key: 'appeal',
+    name: INTAKE_FORM_NAMES.appeal,
+    category: 'ama'
+  }
+};
+
 export const PAGE_PATHS = {
   BEGIN: '/',
   SEARCH: '/search',
@@ -13,6 +43,52 @@ export const BOOLEAN_RADIO_OPTIONS = [
   { value: 'true',
     displayText: 'Yes' }
 ];
+
+const issueCategoriesArray = [
+  // Unknown issue category should be removed in the new add issues flow
+  'Unknown issue category',
+  'Apportionment',
+  'Incarceration Adjustments',
+  'Audit Error Worksheet (DFAS)',
+  'Active Duty Adjustments',
+  'Drill Pay Adjustments',
+  'Character of discharge determinations',
+  'Income/net worth (pension)',
+  'Dependent child - Adopted',
+  'Dependent child - Stepchild',
+  'Dependent child - Biological',
+  'Dependency Spouse - Common law marriage',
+  'Dependency Spouse - Inference of marriage',
+  'Dependency Spouse - Deemed valid marriage',
+  'Military Retired Pay',
+  'Contested Claims (other than apportionment)',
+  'Lack of Qualifying Service',
+  'Other non-rated'
+];
+
+export const ISSUE_CATEGORIES = issueCategoriesArray.map((category) => {
+  return {
+    value: category,
+    label: category
+  };
+});
+
+// Removes the "Unknown issue category"
+// which is temporary until we activate the new "Add issues" flow
+export const NON_RATED_ISSUE_CATEGORIES = issueCategoriesArray.
+  filter((category) => category !== 'Unknown issue category').map((category) => {
+    return {
+      value: category,
+      label: category
+    };
+  });
+
+export const REQUEST_STATE = {
+  NOT_STARTED: 'NOT_STARTED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  SUCCEEDED: 'SUCCEEDED',
+  FAILED: 'FAILED'
+};
 
 export const ACTIONS = {
   SET_FORM_TYPE: 'SET_FORM_TYPE',
@@ -34,6 +110,8 @@ export const ACTIONS = {
   SET_DOCKET_TYPE: 'SET_DOCKET_TYPE',
   TOGGLE_CANCEL_MODAL: 'TOGGLE_CANCEL_MODAL',
   TOGGLE_ADD_ISSUES_MODAL: 'TOGGLE_ADD_ISSUES_MODAL',
+  TOGGLE_NON_RATED_ISSUE_MODAL: 'TOGGLE_NON_RATED_ISSUE_MODAL',
+  TOGGLE_UNIDENTIFIED_ISSUES_MODAL: 'TOGGLE_UNIDENTIFIED_ISSUES_MODAL',
   SUBMIT_REVIEW_START: 'SUBMIT_REVIEW_START',
   SUBMIT_REVIEW_SUCCEED: 'SUBMIT_REVIEW_SUCCEED',
   SUBMIT_REVIEW_FAIL: 'SUBMIT_REVIEW_FAIL',
@@ -50,6 +128,7 @@ export const ACTIONS = {
   ADD_ISSUE: 'ADD_ISSUE',
   REMOVE_ISSUE: 'REMOVE_ISSUE',
   ADD_NON_RATED_ISSUE: 'ADD_NON_RATED_ISSUE',
+  NEW_NON_RATED_ISSUE: 'NEW_NON_RATED_ISSUE',
   SET_ISSUE_CATEGORY: 'SET_ISSUE_CATEGORY',
   SET_ISSUE_DESCRIPTION: 'SET_ISSUE_DESCRIPTION',
   SET_ISSUE_DECISION_DATE: 'SET_ISSUE_DECISION_DATE',

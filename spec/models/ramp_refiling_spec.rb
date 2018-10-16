@@ -120,7 +120,8 @@ describe RampRefiling do
       let!(:issues) do
         [
           ramp_refiling.issues.create!(description: "Leg"),
-          ramp_refiling.issues.create!(description: "Arm")
+          ramp_refiling.issues.create!(description: "Arm"),
+          ramp_refiling.issues.create!(description: "Arm") # intentional duplicate
         ]
       end
       let(:modifier) { RampReview::END_PRODUCT_DATA_BY_OPTION[option_selected][:modifier] }
@@ -163,7 +164,7 @@ describe RampRefiling do
           expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
             veteran_file_number: "64205555",
             claim_id: "testtest",
-            contention_descriptions: %w[Arm Leg]
+            contention_descriptions: %w[Arm Arm Leg]
           )
         end
       end
@@ -177,12 +178,13 @@ describe RampRefiling do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: "64205555",
           claim_id: "1337",
-          contention_descriptions: %w[Arm Leg]
+          contention_descriptions: %w[Arm Arm Leg]
         )
 
         expect(issues.first.reload.contention_reference_id).to_not be_nil
         expect(ramp_refiling.end_product_establishment.committed_at).to eq(Time.zone.now)
         expect(ramp_refiling.establishment_processed_at).to eq(Time.zone.now)
+        expect(ramp_refiling.end_product_establishment.contentions.count).to eq(3)
       end
     end
   end

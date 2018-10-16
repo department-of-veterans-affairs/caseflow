@@ -17,6 +17,7 @@ import {
 import ScrollToTop from '../components/ScrollToTop';
 import PageRoute from '../components/PageRoute';
 import NavigationBar from '../components/NavigationBar';
+import CaseSearchLink from '../components/CaseSearchLink';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import AppFrame from '../components/AppFrame';
 import QueueLoadingScreen from './QueueLoadingScreen';
@@ -30,12 +31,12 @@ import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import MarkTaskCompleteView from './MarkTaskCompleteView';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
+import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
 
 import TriggerModal from './TriggerModal';
 
 import CaseListView from './CaseListView';
-import CaseSearchSheet from './CaseSearchSheet';
 import CaseDetailsView from './CaseDetailsView';
 import SubmitDecisionView from './SubmitDecisionView';
 import SelectDispositionsView from './SelectDispositionsView';
@@ -43,7 +44,6 @@ import SelectSpecialIssuesView from './SelectSpecialIssuesView';
 import SpecialIssueLoadingScreen from './SpecialIssueLoadingScreen';
 import AddEditIssueView from './AddEditIssueView';
 import SelectRemandReasonsView from './SelectRemandReasonsView';
-import SearchBar from './SearchBar';
 import BeaamAppealListView from './BeaamAppealListView';
 import OrganizationQueue from './OrganizationQueue';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
@@ -84,10 +84,7 @@ class QueueApp extends React.PureComponent<Props> {
     this.props.setFeedbackUrl(this.props.feedbackUrl);
   }
 
-  routedSearchResults = (props) => <React.Fragment>
-    <SearchBar feedbackUrl={this.props.feedbackUrl} />
-    <CaseListView caseflowVeteranId={props.match.params.caseflowVeteranId} />
-  </React.Fragment>;
+  routedSearchResults = (props) => <CaseListView caseflowVeteranId={props.match.params.caseflowVeteranId} />;
 
   viewForUserRole = () => {
     const { userRole } = this.props;
@@ -103,17 +100,14 @@ class QueueApp extends React.PureComponent<Props> {
   }
 
   routedQueueList = () => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
-    <SearchBar feedbackUrl={this.props.feedbackUrl} />
     {this.viewForUserRole()}
   </QueueLoadingScreen>;
 
   routedBeaamList = () => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()} urlToLoad="/beaam_appeals">
-    <SearchBar feedbackUrl={this.props.feedbackUrl} />
     <BeaamAppealListView {...this.props} />
   </QueueLoadingScreen>;
 
   routedJudgeQueueList = (action) => ({ match }) => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
-    <SearchBar feedbackUrl={this.props.feedbackUrl} />
     {action === 'assign' ?
       <JudgeAssignTaskListView {...this.props} match={match} /> :
       <JudgeReviewTaskListView {...this.props} />}
@@ -158,8 +152,9 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedColocatedPlaceHold = (props) => <ColocatedPlaceHoldView nextStep="/queue" {...props.match.params} />;
 
-  routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView
-    nextStep={`/queue/appeals/${props.match.params.appealId}`} {...props.match.params} />;
+  routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView {...props.match.params} />;
+
+  routedAssignToAttorney = (props) => <AssignToAttorneyModalView {...props.match.params} />;
 
   routedAssignToTeam = (props) => <AssignToView isTeamAssign {...props.match.params} />;
 
@@ -173,7 +168,6 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedOrganization = (props) => <OrganizationQueueLoadingScreen
     urlToLoad={`${props.location.pathname}/tasks`}>
-    <SearchBar feedbackUrl={this.props.feedbackUrl} />
     <OrganizationQueue {...this.props} />
   </OrganizationQueueLoadingScreen>
 
@@ -196,22 +190,23 @@ class QueueApp extends React.PureComponent<Props> {
   render = () => <BrowserRouter>
     <NavigationBar
       wideApp
-      defaultUrl={this.props.caseSearchHomePage ? '/' : '/queue'}
+      defaultUrl={this.props.caseSearchHomePage ? '/search' : '/queue'}
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
       logoProps={{
         overlapColor: LOGO_COLORS.QUEUE.OVERLAP,
         accentColor: LOGO_COLORS.QUEUE.ACCENT
       }}
+      rightNavElement={<CaseSearchLink />}
       appName="">
       <AppFrame wideApp>
         <ScrollToTop />
         <div className="cf-wide-app">
           <PageRoute
             exact
-            path="/"
+            path="/search"
             title="Caseflow"
-            component={CaseSearchSheet} />
+            render={this.routedSearchResults} />
           <PageRoute
             exact
             path="/cases/:caseflowVeteranId"
@@ -252,6 +247,9 @@ class QueueApp extends React.PureComponent<Props> {
           <Route
             path="/queue/appeals/:appealId/modal/assign_to_person"
             render={this.routedAssignToUser} />
+          <Route
+            path="/queue/appeals/:appealId/modal/assign_to_attorney"
+            render={this.routedAssignToAttorney} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"

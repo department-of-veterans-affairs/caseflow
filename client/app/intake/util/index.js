@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { REVIEW_OPTIONS } from '../constants';
-import { formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
+import { formatDateStringForApi } from '../../util/DateUtil';
 
 export const getAppealDocketError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.appeal_docket, 0) === 'blank') && 'Please select an option.'
@@ -88,79 +88,4 @@ export const prepareReviewData = (intakeData, intakeType) => {
       payee_code: intakeData.payeeCode
     };
   }
-};
-
-const getNonVeteranClaimant = (intakeData) => {
-  const claimant = intakeData.relationships.filter((relationship) => {
-    return relationship.value === intakeData.claimant;
-  });
-
-  return `${claimant[0].displayText} (payee code ${intakeData.payeeCode})`;
-};
-
-const getClaimantField = (formType, veteran, intakeData) => {
-  if (formType === 'appeal' || intakeData.benefitType === 'compensation') {
-    const claimant = intakeData.claimantNotVeteran ? getNonVeteranClaimant(intakeData) : veteran.name;
-
-    return [{
-      field: 'Claimant',
-      content: claimant
-    }];
-  }
-
-  return [];
-};
-
-export const getAddIssuesFields = (formType, veteran, intakeData) => {
-  let fields;
-
-  switch (formType) {
-  case 'higher_level_review':
-    fields = [
-      { field: 'Benefit type',
-        content: _.startCase(intakeData.benefitType) },
-      { field: 'Informal conference request',
-        content: intakeData.informalConference ? 'Yes' : 'No' },
-      { field: 'Same office request',
-        content: intakeData.sameOffice ? 'Yes' : 'No' }
-    ];
-    break;
-  case 'supplemental_claim':
-    fields = [
-      { field: 'Benefit type',
-        content: _.startCase(intakeData.benefitType) }
-    ];
-    break;
-  case 'appeal':
-    fields = [
-      { field: 'Review option',
-        content: _.startCase(intakeData.docketType.split('_').join(' ')) }
-    ];
-    break;
-  default:
-    fields = [];
-  }
-
-  let claimantField = getClaimantField(formType, veteran, intakeData);
-
-  return fields.concat(claimantField);
-};
-
-export const formatAddedIssues = (intakeData) => {
-  let issues = intakeData.addedIssues || [];
-
-  return issues.map((issue) => {
-    // currently does not handle unrated issues
-    if (issue.isRated) {
-      let foundIssue = intakeData.ratings[issue.profileDate].issues[issue.id];
-
-      return {
-        referenceId: issue.id,
-        text: `${foundIssue.decision_text} Decision date ${formatDateStr(issue.profileDate)}.`,
-        notes: `Notes: ${issue.notes}`
-      };
-    }
-
-    return {};
-  });
 };

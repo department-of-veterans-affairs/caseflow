@@ -66,7 +66,7 @@ const populateFilterDropDowns = (resultSet, filterName) => {
       });
     } else {
       uniqueOptions.push({
-        value: '<<blank>>',
+        value: 'null',
         displayText: `<<blank>> (${countByFilterName[key]})`
       });
     }
@@ -79,7 +79,7 @@ const filterSchedule = (scheduleToFilter, filterName, value) => {
   let filteredSchedule = {};
 
   for (let key in scheduleToFilter) {
-    if (scheduleToFilter[key][filterName] === value) {
+    if (String(scheduleToFilter[key][filterName]) === String(value)) {
       filteredSchedule[key] = scheduleToFilter[key];
     }
   }
@@ -207,9 +207,9 @@ class ListSchedule extends React.Component {
 
     return <AppSegment filledBackground>
       <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
-      {this.props.userRoleBuild &&
-        <span className="cf-push-right" ><Link button="primary" to="/schedule/build">Build schedule</Link></span>
-      }
+      {this.props.userRoleBuild && <span className="cf-push-right">
+        <Link button="primary" to="/schedule/build">Build schedule</Link>
+      </span>}
       {this.props.userRoleAssign &&
         <span className="cf-push-right"{...actionButtonsStyling} >
           <Link button="primary" to="/schedule/assign">Assign hearings</Link></span>
@@ -282,9 +282,9 @@ ListSchedule.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  filterTypeIsOpen: state.filterTypeIsOpen,
-  filterLocationIsOpen: state.filterLocationIsOpen,
-  filterVljIsOpen: state.filterVljIsOpen
+  filterTypeIsOpen: state.hearingSchedule.filterTypeIsOpen,
+  filterLocationIsOpen: state.hearingSchedule.filterLocationIsOpen,
+  filterVljIsOpen: state.hearingSchedule.filterVljIsOpen
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

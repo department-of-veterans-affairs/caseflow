@@ -112,19 +112,6 @@ export const toggleCancelModal = () => ({
   }
 });
 
-export const toggleAddIssuesModal = () => ({
-  type: ACTIONS.TOGGLE_ADD_ISSUES_MODAL,
-  meta: {
-    analytics: {
-      label: (nextState) => {
-        nextState.higherLevelReview.addIssuesModalVisible ? 'show' : 'hide'; // eslint-disable-line
-        nextState.supplementalClaim.addIssuesModalVisible ? 'show' : 'hide'; // eslint-disable-line
-        nextState.appeal.addIssuesModalVisible ? 'show' : 'hide'; // eslint-disable-line
-      }
-    }
-  }
-});
-
 export const submitCancel = (data) => (dispatch) => {
   dispatch({
     type: ACTIONS.CANCEL_INTAKE_START,

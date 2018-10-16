@@ -70,7 +70,9 @@ class RampRefiling < RampReview
       # Currently not making any assumptions about the order in which VBMS returns
       # the created contentions. Instead find the issue by matching text.
       create_contentions_in_vbms.each do |contention|
-        matching_issue = issues.find { |issue| issue.description == contention.text }
+        matching_issue = issues.find do |issue|
+          issue.description == contention.text && issue.contention_reference_id.nil?
+        end
         matching_issue && matching_issue.update!(contention_reference_id: contention.id)
       end
 

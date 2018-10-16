@@ -16,6 +16,14 @@ class HearingRepository
       hearings
     end
 
+    def fetch_video_hearings_for_parent(parent_hearing_pkseq)
+      hearings_for(VACOLS::CaseHearing.video_hearings_for_master_record(parent_hearing_pkseq))
+    end
+
+    def fetch_co_hearings_for_parent(parent_hearing_date)
+      hearings_for(VACOLS::CaseHearing.co_hearings_for_master_record(parent_hearing_date))
+    end
+
     def load_issues(hearings)
       children_hearings = hearings.select { |h| h.master_record == false }
       issues = VACOLS::CaseIssue.descriptions(children_hearings.map(&:appeal_vacols_id))

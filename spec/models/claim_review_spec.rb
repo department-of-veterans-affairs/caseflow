@@ -8,6 +8,11 @@ describe ClaimReview do
     FeatureToggle.disable!(:test_facols)
   end
 
+  def random_ref_id
+    SecureRandom.random_number(1_000_000)
+  end
+
+  let(:contention_ref_id) { random_ref_id }
   let(:veteran_file_number) { "4205555" }
   let(:veteran_participant_id) { "123456" }
   let(:veteran_date_of_death) { nil }
@@ -191,7 +196,7 @@ describe ClaimReview do
             payee_code: "00",
             predischarge: false,
             claim_type: "Claim",
-            station_of_jurisdiction: "397",
+            station_of_jurisdiction: "499",
             date: claim_review.receipt_date.to_date,
             end_product_modifier: "030",
             end_product_label: "Higher-Level Review Rating",
@@ -260,7 +265,10 @@ describe ClaimReview do
           let(:one_day_ago) { 1.day.ago }
 
           before do
-            rating_request_issue.update!(contention_reference_id: "CONREFID", rating_issue_associated_at: one_day_ago)
+            rating_request_issue.update!(
+              contention_reference_id: contention_ref_id,
+              rating_issue_associated_at: one_day_ago
+            )
           end
 
           it "doesn't create them in VBMS" do
@@ -288,10 +296,10 @@ describe ClaimReview do
         context "when all the contentions have already been saved" do
           before do
             rating_request_issue.update!(
-              contention_reference_id: "CONREFID", rating_issue_associated_at: Time.zone.now
+              contention_reference_id: contention_ref_id, rating_issue_associated_at: Time.zone.now
             )
             second_rating_request_issue.update!(
-              contention_reference_id: "CONREFID", rating_issue_associated_at: Time.zone.now
+              contention_reference_id: random_ref_id, rating_issue_associated_at: Time.zone.now
             )
           end
 
@@ -451,7 +459,7 @@ describe ClaimReview do
             payee_code: "00",
             predischarge: false,
             claim_type: "Claim",
-            station_of_jurisdiction: "397",
+            station_of_jurisdiction: "499",
             date: claim_review.receipt_date.to_date,
             end_product_modifier: "030",
             end_product_label: "Higher-Level Review Rating",
@@ -483,7 +491,7 @@ describe ClaimReview do
             payee_code: "00",
             predischarge: false,
             claim_type: "Claim",
-            station_of_jurisdiction: "397",
+            station_of_jurisdiction: "499",
             date: claim_review.receipt_date.to_date,
             end_product_modifier: "031", # Important that the modifier increments for the second EP
             end_product_label: "Higher-Level Review Nonrating",
@@ -513,11 +521,19 @@ describe ClaimReview do
   context "#on_sync" do
     subject { claim_review.on_sync(end_product_establishment) }
 
+    let(:veteran) do
+      create(
+        :veteran,
+        file_number: veteran_file_number,
+        bgs_veteran_record: { date_of_death: nil }
+      )
+    end
+
     let!(:end_product_establishment) do
       create(
         :end_product_establishment,
         :cleared,
-        veteran_file_number: veteran_file_number,
+        veteran_file_number: veteran.file_number,
         source: claim_review,
         last_synced_at: Time.zone.now
       )
@@ -637,7 +653,7 @@ describe ClaimReview do
               payee_code: "00",
               predischarge: false,
               claim_type: "Claim",
-              station_of_jurisdiction: "397",
+              station_of_jurisdiction: "499",
               date: Time.zone.now.to_date,
               end_product_modifier: "040",
               end_product_label: end_product[:label],

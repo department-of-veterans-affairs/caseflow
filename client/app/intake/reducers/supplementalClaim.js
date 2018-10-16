@@ -1,8 +1,7 @@
-import { ACTIONS } from '../constants';
+import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers } from './common';
-import { FORM_TYPES, REQUEST_STATE } from '../../intakeCommon/constants';
 import { formatDateStr } from '../../util/DateUtil';
-import { formatRatings } from '../../intakeCommon/util';
+import { formatRatings } from '../util/issues';
 import { getReceiptDateError, getBenefitTypeError, getPageError, formatRelationships } from '../util';
 import { update } from '../../util/ReducerUtil';
 
@@ -51,6 +50,8 @@ const updateFromServerIntake = (state, serverIntake) => {
 export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
     addIssuesModalVisible: false,
+    nonRatedIssueModalVisible: false,
+    unidentifiedIssuesModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
     benefitType: null,
@@ -215,7 +216,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: action.payload.isSelected ? state.issueCount + 1 : state.issueCount - 1
       }
     });
-  case ACTIONS.ADD_NON_RATED_ISSUE:
+  case ACTIONS.NEW_NON_RATED_ISSUE:
     return update(state, {
       nonRatedIssues: {
         [Object.keys(state.nonRatedIssues).length]: {

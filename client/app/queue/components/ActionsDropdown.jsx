@@ -59,7 +59,7 @@ class ActionsDropdown extends React.PureComponent<Props> {
 
   render = () => {
     if (!this.props.task) {
-      return;
+      return null;
     }
 
     return <SearchableDropdown

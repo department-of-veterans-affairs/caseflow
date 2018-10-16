@@ -1,4 +1,7 @@
 class WorkQueue::TaskSerializer < ActiveModel::Serializer
+  attribute :is_legacy do
+    false
+  end
   attribute :type
   attribute :action
   attribute :appeal_id
