@@ -111,6 +111,7 @@ RSpec.feature "Edit issues" do
       expect(page).to_not have_content("Notes:")
 
       page.all(".remove-issue")[0].click
+      safe_click ".remove-issue"
       expect(page).not_to have_content("PTSD denied")
 
       # re-add to proceed

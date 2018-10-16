@@ -24,7 +24,7 @@ export const commonReducers = (state, action) => {
     return update(state, {
       $toggle: ['removeIssueModalVisible']
     });
-  }
+  };
 
   actionsMap[ACTIONS.TOGGLE_UNIDENTIFIED_ISSUES_MODAL] = () => {
     return update(state, {
