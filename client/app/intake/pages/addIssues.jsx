@@ -141,7 +141,7 @@ export class AddIssuesPage extends React.Component {
         intakeData={intakeData}
         closeHandler={this.props.toggleUnidentifiedIssuesModal} />
       }
-      { this.props.toggleIssueRemoveModal && intakeData.removeIssueModalVisible && <RemoveIssueModal
+      { intakeData.removeIssueModalVisible && <RemoveIssueModal
         removeIndex={this.state.issueRemoveIndex}
         intakeData={intakeData}
         closeHandler={this.props.toggleIssueRemoveModal} />
