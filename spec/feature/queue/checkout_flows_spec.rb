@@ -87,9 +87,10 @@ RSpec.feature "Checkout flows" do
       issue_dispositions = page.find_all(
         ".Select-control",
         text: "Select Disposition",
-        count: appeal.request_issues.length)
+        count: appeal.request_issues.length
+      )
 
-      issue_dispositions.each_with_index do |row, index|
+      issue_dispositions.each do |row|
         row.click
         page.find("div", class: "Select-option", text: "Allowed").click
       end
@@ -213,7 +214,7 @@ RSpec.feature "Checkout flows" do
 
         # We want one exactly issue to be a remand to make the remand reason screen show up.
         issue_dispositions.each_with_index do |row, index|
-          disposition = index == 0 ? "Remanded" : "Allowed"
+          disposition = (index == 0) ? "Remanded" : "Allowed"
           row.click
           page.find("div", class: "Select-option", text: disposition).click
         end
