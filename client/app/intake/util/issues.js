@@ -252,15 +252,18 @@ export const formatAddedIssues = (intakeData) => {
     } else if (issue.isRated) {
       return {
         referenceId: issue.id,
-        text: `${ratingIssues[issue.id]} Decision date ${formatDateStr(issue.profileDate)}.`,
-        notes: issue.notes
+        text: ratingIssues[issue.id],
+        date: formatDateStr(issue.profileDate),
+        notes: issue.notes,
+        inActiveReview: issue.inActiveReview
       };
     }
 
     // returns unrated issue format
     return {
       referenceId: issue.id,
-      text: `${issue.category} - ${issue.description} Decision date ${formatDate(issue.decisionDate)}`
+      text: `${issue.category} - ${issue.description}`,
+      date: formatDate(issue.decisionDate)
     };
   });
 };
