@@ -134,5 +134,5 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(
-  editModalBase(AdvancedOnDocketMotionView, COPY.ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE)
+  editModalBase(AdvancedOnDocketMotionView, { title: COPY.ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE })
 ): React.ComponentType<Params>);

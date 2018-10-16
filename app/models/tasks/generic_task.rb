@@ -15,7 +15,7 @@ class GenericTask < Task
       },
       {
         label: "Mark task complete",
-        value: "mark_task_complete"
+        value: "modal/mark_task_complete"
       }
     ]
   end
