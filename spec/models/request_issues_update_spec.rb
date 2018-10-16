@@ -74,6 +74,7 @@ describe RequestIssuesUpdate do
     existing_request_issues.map do |issue|
       {
         reference_id: issue.rating_issue_reference_id,
+        profile_date: issue.rating_issue_profile_date,
         decision_text: issue.description
       }
     end

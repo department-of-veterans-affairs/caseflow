@@ -29,8 +29,14 @@ class RequestIssue < ApplicationRecord
     rating_issue_reference_id && rating_issue_profile_date
   end
 
+  def nonrated?
+    issue_category && decision_date
+  end
+
   def contention_text
-    is_unidentified ? UNIDENTIFIED_ISSUE_MSG : description
+    return "#{issue_category} - #{description}" if nonrated?
+    return UNIDENTIFIED_ISSUE_MSG if is_unidentified
+    description
   end
 
   def self.from_intake_data(data)
@@ -52,7 +58,8 @@ class RequestIssue < ApplicationRecord
       description: description,
       decision_date: decision_date,
       category: issue_category,
-      notes: notes
+      notes: notes,
+      is_unidentified: is_unidentified
     }
   end
 end

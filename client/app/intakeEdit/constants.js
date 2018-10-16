@@ -1,6 +1,7 @@
 export const PAGE_PATHS = {
   BEGIN: '/',
-  CANCEL_ISSUES: '/cancel'
+  CANCEL_ISSUES: '/cancel',
+  CONFIRMATION: '/confirmation'
 };
 
 export const ENDPOINT_NAMES = {

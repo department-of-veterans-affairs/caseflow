@@ -9,6 +9,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_PATHS } from './constants';
 import { EditAddIssuesPage } from '../intake/pages/addIssues';
 import CancelPage from './pages/canceled';
+import ConfirmationPage from './pages/confirmation';
 import { css } from 'glamor';
 import EditButtons from './components/EditButtons';
 
@@ -58,6 +59,11 @@ export default class IntakeEditFrame extends React.PureComponent {
                   path={PAGE_PATHS.CANCEL_ISSUES}
                   title="Edit Claim Issues | Caseflow Intake"
                   component={CancelPage} />
+                <PageRoute
+                  exact
+                  path={PAGE_PATHS.CONFIRMATION}
+                  title="Edit Claim Issues | Caseflow Intake"
+                  component={ConfirmationPage} />
               </div>
             </AppSegment>
             <AppSegment styling={textAlignRightStyling}>
