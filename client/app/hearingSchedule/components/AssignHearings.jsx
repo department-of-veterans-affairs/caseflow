@@ -44,9 +44,9 @@ export default class AssignHearings extends React.Component {
   roomInfo = (hearingDay) => {
     let room = hearingDay.roomInfo;
 
-    if (hearingDay.regionalOffice === 'St. Petersburg, FL') {
+    if (this.props.selectedRegionalOffice.label === 'St. Petersburg, FL') {
       return room;
-    } else if (hearingDay.regionalOffice === 'Winston-Salem, NC') {
+    } else if (this.props.selectedRegionalOffice.label === 'Winston-Salem, NC') {
       return room;
     }
 

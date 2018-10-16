@@ -31,6 +31,7 @@ import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import MarkTaskCompleteView from './MarkTaskCompleteView';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
+import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
 
 import TriggerModal from './TriggerModal';
@@ -152,8 +153,9 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedColocatedPlaceHold = (props) => <ColocatedPlaceHoldView nextStep="/queue" {...props.match.params} />;
 
-  routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView
-    nextStep={`/queue/appeals/${props.match.params.appealId}`} {...props.match.params} />;
+  routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView {...props.match.params} />;
+
+  routedAssignToAttorney = (props) => <AssignToAttorneyModalView {...props.match.params} />;
 
   routedAssignToTeam = (props) => <AssignToView isTeamAssign {...props.match.params} />;
 
@@ -251,6 +253,9 @@ class QueueApp extends React.PureComponent<Props> {
           <Route
             path={`/queue/appeals/:appealId/${TASK_ACTIONS.REASSIGN_TO_PERSON.value}`}
             render={this.routedReassignToUser} />
+          <Route
+            path="/queue/appeals/:appealId/modal/assign_to_attorney"
+            render={this.routedAssignToAttorney} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"
