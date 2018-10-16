@@ -89,7 +89,7 @@ class AssignToView extends React.Component<Props, ViewState> {
 
     return this.props.requestSave('/tasks', payload, successMsg).
       then(() => {
-        this.props.setTaskAttrs(appeal.externalId, { status: 'on_hold' });
+        this.props.setTaskAttrs(task.uniqueId, { status: 'on_hold' });
       });
   }
 

@@ -43,7 +43,7 @@ export const addRatedIssue = (args) => (dispatch) => {
   dispatch({
     type: ACTIONS.ADD_ISSUE,
     payload: {
-      issueId: args.issueId,
+      id: args.issueId,
       isRated: args.isRated,
       inActiveReview: foundDate[0].issues[args.issueId].in_active_review,
       profileDate: foundDate[0].profile_date,
