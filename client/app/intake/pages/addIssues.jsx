@@ -119,7 +119,7 @@ export class AddIssuesPage extends React.PureComponent {
         intakeData={intakeData}
         closeHandler={this.props.toggleUnidentifiedIssuesModal} />
       }
-      <h1 className="cf-txt-c">Add Issues</h1>
+      <h1 className="cf-txt-c">Add / Remove Issues</h1>
 
       { requestState === REQUEST_STATE.FAILED &&
         <RequestIssuesUpdateErrorAlert responseErrorCode={responseErrorCode} />
