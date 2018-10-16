@@ -19,6 +19,7 @@ const serverData = {
             pg_id: 10
           },
           assigned_on: '2018-08-02T17:37:03.000Z',
+          completed_at: null,
           assigned_to: {
             css_id: 'BVANKUVALIS',
             id: 130,
@@ -63,6 +64,7 @@ describe('QueueLoadingScreen', () => {
         appealType: 'LegacyAppeal',
         externalAppealId: '3625593',
         assignedOn: '2018-08-02T17:37:03.000Z',
+        completedOn: null,
         dueOn: '2018-08-11T00:00:00.000Z',
         assignedTo: {
           cssId: 'BVANKUVALIS',

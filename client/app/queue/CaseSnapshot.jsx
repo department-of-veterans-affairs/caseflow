@@ -22,7 +22,6 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 
 import COPY from '../../COPY.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
-import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import { COLORS } from '../constants/AppConstants';
 import StringUtil from '../util/StringUtil';
