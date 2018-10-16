@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { withRouter } from 'react-router-dom';
 
 import COPY from '../../COPY.json';
 
@@ -134,6 +133,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setAppealAod
 }, dispatch);
 
-export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(
+export default (connect(mapStateToProps, mapDispatchToProps)(
   editModalBase(AdvancedOnDocketMotionView, COPY.ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE)
-)): React.ComponentType<Params>);
+): React.ComponentType<Params>);
