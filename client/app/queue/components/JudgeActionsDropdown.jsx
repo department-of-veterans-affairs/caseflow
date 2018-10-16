@@ -22,7 +22,6 @@ import {
   dropdownStyling,
   JUDGE_DECISION_OPTIONS
 } from '../constants';
-import AssignWidget from './AssignWidget';
 import type { Task, Appeal } from '../types/models';
 import type { State } from '../types/state';
 
@@ -64,9 +63,6 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
     if (!option) {
       return;
     }
-    if (option.value === ASSIGN) {
-      return;
-    }
 
     const {
       appeal,
@@ -79,6 +75,8 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
 
     if (actionType === DECISION_TYPES.OMO_REQUEST) {
       nextPage = 'omo_request/evaluate';
+    } else if (option.value === ASSIGN) {
+      nextPage = 'modal/assign_to_attorney';
     } else if (appeal.isLegacyAppeal) {
       nextPage = 'dispatch_decision/dispositions';
     } else {
@@ -89,30 +87,6 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
 
     history.push('');
     history.replace(`/queue/appeals/${appealId}/${nextPage}`);
-  }
-
-  handleAssignment = (
-    { tasks, assigneeId, previousAssigneeId }: { tasks: Array<Task>, assigneeId: string, previousAssigneeId: string}
-  ) => {
-    if (tasks[0].action === 'assign') {
-      return this.props.initialAssignTasksToUser({
-        tasks,
-        assigneeId,
-        previousAssigneeId
-      });
-    }
-
-    return this.props.reassignTasksToUser({
-      tasks,
-      assigneeId,
-      previousAssigneeId
-    });
-  }
-
-  assignWidgetVisible = () => {
-    const { selectedOption } = this.state;
-
-    return selectedOption && selectedOption.value === ASSIGN;
   }
 
   render = () => {
@@ -142,11 +116,6 @@ class JudgeActionsDropdown extends React.PureComponent<Props, ComponentState> {
         hideLabel
         dropdownStyling={dropdownStyling}
         value={this.state.selectedOption} />
-      {this.assignWidgetVisible() &&
-        <AssignWidget
-          onTaskAssignment={this.handleAssignment}
-          previousAssigneeId={task.assignedTo.id.toString()}
-          selectedTasks={[task]} />}
     </React.Fragment>;
   }
 }

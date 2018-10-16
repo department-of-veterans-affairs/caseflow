@@ -11,7 +11,7 @@ import RoSelectorDropdown from './RoSelectorDropdown';
 import moment from 'moment';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
-import AssignStatusMessage from './AssignStatusMessage';
+import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 
 const colorAOD = css({
   color: 'red'
@@ -105,6 +105,12 @@ export default class AssignHearings extends React.Component {
     return docketType;
   }
 
+    getHearingTime = (date, regionalOfficeTimezone) => {
+      return <div>
+        {getTime(date)} /<br />{getTimeInDifferentTimeZone(date, regionalOfficeTimezone)}
+      </div>;
+    };
+
   appellantName = (hearingDay) => {
     if (hearingDay.appellantFirstName && hearingDay.appellantLastName) {
       return `${hearingDay.appellantFirstName} ${hearingDay.appellantLastName} | ${hearingDay.id}`;
@@ -114,13 +120,23 @@ export default class AssignHearings extends React.Component {
 
   }
 
-  tableRows = (veterans) => {
+  tableAssignHearingsRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
       caseDetails: this.appellantName(veteran),
       type: this.veteranTypeColor(veteran.type),
       docketNumber: veteran.docketNumber,
       location: this.props.selectedRegionalOffice.value === 'C' ? 'Washington DC' : veteran.location,
-      time: veteran.time
+      time: null
+    }));
+  };
+
+  tableScheduledHearingsRows = (hearings) => {
+    return _.map(hearings, (hearing) => ({
+      caseDetails: `${hearing.appellantMiFormatted} | ${hearing.vbmsId}`,
+      type: this.veteranTypeColor(hearing.appealType),
+      docketNumber: hearing.docketNumber,
+      location: hearing.requestType === 'Video' ? hearing.regionalOfficeName : 'Washington DC',
+      time: this.getHearingTime(hearing.date, hearing.regionalOfficeTimezone)
     }));
   };
 
@@ -197,13 +213,17 @@ export default class AssignHearings extends React.Component {
         tabs={[
           {
             label: 'Scheduled',
-            page: getHearingsTab() || this.roNotAssignedTitleError()
+            page: <Table
+              columns={tabWindowColumns}
+              rowObjects={this.tableScheduledHearingsRows(this.props.selectedHearingDay.hearings)}
+              summary="scheduled-hearings-table"
+            />
           },
           {
             label: 'Assign Hearings',
             page: <Table
               columns={tabWindowColumns}
-              rowObjects={this.tableRows(this.props.veteransReadyForHearing)}
+              rowObjects={this.tableAssignHearingsRows(this.props.veteransReadyForHearing)}
               summary="assign-hearings-table"
             />
           }

@@ -23,10 +23,11 @@ class RatingIssue < ApplicationRecord
   end
 
   def self.from_bgs_hash(data)
+    rba_contentions = [data.dig(:rba_issue_contentions) || {}].flatten
     new(
       reference_id: data[:rba_issue_id],
-      profile_date: data.dig(:rba_issue_contentions, :prfil_dt),
-      contention_reference_id: data.dig(:rba_issue_contentions, :cntntn_id),
+      profile_date: rba_contentions.first.dig(:prfil_dt),
+      contention_reference_id: rba_contentions.first.dig(:cntntn_id),
       decision_text: data[:decn_txt]
     )
   end
