@@ -9,7 +9,8 @@ import {
   appealWithDetailSelector,
   tasksForAppealAssignedToAttorneySelector,
   tasksForAppealAssignedToUserSelector,
-  incompleteOrganizationTasksByAssigneeIdSelector
+  incompleteOrganizationTasksByAssigneeIdSelector,
+  rootTasksForAppealIfMailTeamMemberSelector
 } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import DocketTypeBadge from './components/DocketTypeBadge';
@@ -237,9 +238,10 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     const {
       taskAssignedToUser,
       taskAssignedToAttorney,
-      taskAssignedToOrganization
+      taskAssignedToOrganization,
+      rootTaskForMailUser
     } = this.props;
-    const tasks = _.compact([taskAssignedToUser, taskAssignedToAttorney, taskAssignedToOrganization]);
+    const tasks = _.compact([taskAssignedToUser, taskAssignedToAttorney, taskAssignedToOrganization, rootTaskForMailUser]);
 
     return Boolean(tasks.length && _.every(tasks, (task) => task.taskId));
   }
@@ -249,6 +251,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       appeal,
       taskAssignedToUser,
       taskAssignedToOrganization,
+      rootTaskForMailUser,
       userRole
     } = this.props;
     let ActionDropdown;
@@ -260,7 +263,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       ActionDropdown = <ColocatedActionsDropdown {...dropdownArgs} />;
     } else {
       ActionDropdown = <ActionsDropdown
-        task={taskAssignedToUser || taskAssignedToOrganization} appealId={appeal.externalId} />;
+        task={taskAssignedToUser || taskAssignedToOrganization || rootTaskForMailUser} appealId={appeal.externalId} />;
     }
 
     const taskAssignedToVso = taskAssignedToOrganization && taskAssignedToOrganization.assignedTo.type === 'Vso';
@@ -319,16 +322,18 @@ export class CaseSnapshot extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => {
-  const { featureToggles, userRole } = state.ui;
+  const { featureToggles, userRole, userIsMailTeamMember } = state.ui;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     featureToggles,
     userRole,
+    userIsMailTeamMember,
     taskAssignedToUser: tasksForAppealAssignedToUserSelector(state, { appealId: ownProps.appealId })[0],
     taskAssignedToAttorney: tasksForAppealAssignedToAttorneySelector(state, { appealId: ownProps.appealId })[0],
     taskAssignedToOrganization: incompleteOrganizationTasksByAssigneeIdSelector(state,
-      { appealId: ownProps.appealId })[0]
+      { appealId: ownProps.appealId })[0],
+    rootTaskForMailUser: rootTasksForAppealIfMailTeamMemberSelector(state, { appealId: ownProps.appealId })[0]
   };
 };
 

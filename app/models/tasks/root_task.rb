@@ -7,6 +7,14 @@ class RootTask < Task
 
   def when_child_task_completed; end
 
+  def allowed_actions(user)
+    if MailTeam.singleton.user_has_access?(user)
+      return [ {label: "Create mail task", value: "modal/create_mail_task"} ]
+    end
+
+    []
+  end
+
   class << self
     def create_root_and_sub_tasks!(appeal)
       root_task = create!(appeal_id: appeal.id, appeal_type: appeal.class.name)

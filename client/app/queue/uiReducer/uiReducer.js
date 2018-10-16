@@ -21,6 +21,7 @@ export const initialState = {
   userRole: '',
   userCssId: '',
   userIsVsoEmployee: false,
+  userIsMailTeamMember: false,
   feedbackUrl: '#',
   loadedUserId: null,
   selectedAssignee: null,
@@ -149,6 +150,10 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
   case ACTIONS.SET_USER_IS_VSO_EMPLOYEE:
     return update(state, {
       userIsVsoEmployee: { $set: action.payload.userIsVsoEmployee }
+    });
+  case ACTIONS.SET_USER_IS_MAIL_TEAM_MEMBER:
+    return update(state, {
+      userIsMailTeamMember: { $set: action.payload.userIsMailTeamMember }
     });
   case ACTIONS.SET_FEEDBACK_URL:
     return update(state, {

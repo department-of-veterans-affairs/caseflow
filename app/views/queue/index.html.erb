@@ -5,6 +5,7 @@
     userRole: (current_user.vacols_roles.first || "").capitalize,
     userCssId: current_user.css_id,
     userIsVsoEmployee: current_user.vso_employee?,
+    userIsMailTeamMember: MailTeam.singleton.user_has_access?(current_user),
     caseSearchHomePage: case_search_home_page,
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
