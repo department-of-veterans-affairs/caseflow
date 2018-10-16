@@ -208,7 +208,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
     expect(page).to have_content(
-      "Established EP: 040SCR - Supplemental Claim Rating for Station 397 - ARC"
+      "Established EP: 040SCR - Supplemental Claim Rating for Station 499"
     )
 
     # ratings end product
@@ -218,7 +218,7 @@ RSpec.feature "Supplemental Claim Intake" do
         payee_code: "11",
         predischarge: false,
         claim_type: "Claim",
-        station_of_jurisdiction: "397",
+        station_of_jurisdiction: "499",
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "042",
         end_product_label: "Supplemental Claim Rating",
@@ -247,7 +247,7 @@ RSpec.feature "Supplemental Claim Intake" do
         payee_code: "11",
         predischarge: false,
         claim_type: "Claim",
-        station_of_jurisdiction: "397",
+        station_of_jurisdiction: "499",
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "041",
         end_product_label: "Supplemental Claim Nonrating",
@@ -484,7 +484,7 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
 
       expect(page).to have_content(
-        "Established EP: 040SCR - Supplemental Claim Rating for Station 397 - ARC"
+        "Established EP: 040SCR - Supplemental Claim Rating for Station 499"
       )
 
       expect(SupplementalClaim.find_by(

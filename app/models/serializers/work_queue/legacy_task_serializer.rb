@@ -1,4 +1,7 @@
 class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
+  attribute :is_legacy do
+    true
+  end
   attribute :assigned_on
   attribute :due_on
   attribute :docket_name
