@@ -39,7 +39,8 @@ export const commonReducers = (state, action) => {
       description: action.payload.description,
       decisionDate: action.payload.decisionDate,
       notes: action.payload.notes,
-      isUnidentified: action.payload.isUnidentified
+      isUnidentified: action.payload.isUnidentified,
+      inActiveReview: action.payload.inActiveReview
     }];
 
     return {

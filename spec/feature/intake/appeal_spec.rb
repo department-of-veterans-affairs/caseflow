@@ -223,7 +223,7 @@ RSpec.feature "Appeal Intake" do
       docket_type: "evidence_submission"
     )
 
-    AppealIntake.create!(
+    intake = AppealIntake.create!(
       veteran_file_number: test_veteran.file_number,
       user: current_user,
       started_at: 5.minutes.ago,
@@ -236,7 +236,8 @@ RSpec.feature "Appeal Intake" do
     )
 
     appeal.start_review!
-    appeal
+
+    [appeal, intake]
   end
 
   it "Allows a Veteran without ratings to create an intake" do
@@ -279,7 +280,7 @@ RSpec.feature "Appeal Intake" do
         { reference_id: "xyz456", decision_text: "PTSD denied" }
       ]
     )
-    appeal = start_appeal(veteran)
+    appeal, = start_appeal(veteran)
     visit "/intake/add_issues"
 
     expect(page).to have_content("Add Issues")
@@ -380,5 +381,35 @@ RSpec.feature "Appeal Intake" do
              description: "This is an unidentified issue",
              is_unidentified: true
     )).to_not be_nil
+  end
+
+  scenario "canceling an appeal intake" do
+    _, intake = start_appeal(veteran)
+    visit "/intake/add_issues"
+
+    expect(page).to have_content("Add Issues")
+    safe_click "#cancel-intake"
+    expect(find("#modal_id-title")).to have_content("Cancel Intake?")
+    safe_click ".close-modal"
+    expect(page).to_not have_css("#modal_id-title")
+    safe_click "#cancel-intake"
+
+    safe_click ".confirm-cancel"
+    expect(page).to have_content("Make sure you’ve selected an option below.")
+    within_fieldset("Please select the reason you are canceling this intake.") do
+      find("label", text: "Other").click
+    end
+    safe_click ".confirm-cancel"
+    expect(page).to have_content("Make sure you’ve filled out the comment box below.")
+    fill_in "Tell us more about your situation.", with: "blue!"
+    safe_click ".confirm-cancel"
+
+    expect(page).to have_content("Welcome to Caseflow Intake!")
+    expect(page).to_not have_css(".cf-modal-title")
+
+    intake.reload
+    expect(intake.completed_at).to eq(Time.zone.now)
+    expect(intake.cancel_reason).to eq("other")
+    expect(intake).to be_canceled
   end
 end
