@@ -52,21 +52,10 @@ describe RequestIssue do
   end
 
   context "#contention_text" do
-    subject { request_issue.contention_text }
-
-    context "rated issue" do
-      let(:request_issue) { rated_issue }
-      it { is_expected.to eq(request_issue.description) }
-    end
-
-    context "non-rated issue" do
-      let(:request_issue) { non_rated_issue }
-      it { is_expected.to eq("a category - a non-rated issue description") }
-    end
-
-    context "unidentified issue" do
-      let(:request_issue) { unidentified_issue }
-      it { is_expected.to eq(RequestIssue::UNIDENTIFIED_ISSUE_MSG) }
+    it "changes based on is_unidentified" do
+      expect(unidentified_issue.contention_text).to eq(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
+      expect(rated_issue.contention_text).to eq("a rated issue")
+      expect(unrated_issue.contention_text).to eq("a category - a non-rated issue description")
     end
   end
 end
