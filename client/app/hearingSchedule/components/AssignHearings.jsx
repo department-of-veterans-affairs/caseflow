@@ -76,8 +76,14 @@ export default class AssignHearings extends React.Component {
                 color: COLORS.WHITE
               }
             });
+
             const styling = dateSelected ? buttonColorSelected : '';
-            const disabledButton = _.isEmpty(this.props.veteransReadyForHearing);
+            let disabledButton = false;
+
+            if (this.props.selectedHearingDay && this.props.selectedHearingDay.hearings &&
+                  _.isEmpty(this.props.selectedHearingDay.hearings)) {
+              disabledButton = true;
+            }
 
             return <li key={hearingDay.id} >
               <Button
@@ -133,7 +139,8 @@ export default class AssignHearings extends React.Component {
   }
 
   roNotAssignedTitleError = () => {
-    if (_.isEmpty(this.props.veteransReadyForHearing)) {
+    if (this.props.selectedHearingDay && this.props.selectedHearingDay.hearings &&
+          _.isEmpty(this.props.selectedHearingDay.hearings)) {
       return <div>
         <AssignStatusMessage
           message="Please verify that this RO has been assigned hearings"
@@ -173,6 +180,16 @@ export default class AssignHearings extends React.Component {
       }
     ];
 
+    const getHearingsTab = (selectedHearingDay) => {
+      if (selectedHearingDay) {
+        return <Table>
+            columns={tabWindowColumns}
+            rowObjects={this.tableRows(this.props.selectedHearingDay.hearings)}
+            summary="scheduled-hearings-table"
+        </Table>;
+      }
+    };
+
     const selectedHearingDay = this.props.selectedHearingDay;
 
     const availableSlots = selectedHearingDay.totalSlots - Object.keys(selectedHearingDay.hearings).length;
@@ -187,11 +204,7 @@ export default class AssignHearings extends React.Component {
         tabs={[
           {
             label: 'Scheduled',
-            page: <Table
-              columns={tabWindowColumns}
-              rowObjects={this.tableRows(this.props.selectedHearingDay.hearings)}
-              summary="scheduled-hearings-table"
-            />
+            page: getHearingsTab() || this.roNotAssignedTitleError()
           },
           {
             label: 'Assign Hearings',
@@ -203,7 +216,6 @@ export default class AssignHearings extends React.Component {
           }
         ]}
       />
-      {this.roNotAssignedTitleError()}
     </div>;
   };
 
