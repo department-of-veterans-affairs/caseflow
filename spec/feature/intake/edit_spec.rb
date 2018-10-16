@@ -111,6 +111,7 @@ RSpec.feature "Edit issues" do
       expect(page).to_not have_content("Notes:")
 
       page.all(".remove-issue")[0].click
+      safe_click ".remove-issue"
       expect(page).not_to have_content("PTSD denied")
 
       # re-add to proceed
@@ -213,13 +214,15 @@ RSpec.feature "Edit issues" do
       expect(page).to have_button("Save", disabled: false)
 
       page.all(".remove-issue")[1].click
-
+      safe_click ".remove-issue"
       expect(page).to_not have_content("Left knee granted")
       expect(page).to have_button("Save", disabled: true)
     end
 
     it "Does not allow save if no issues are selected" do
       visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit"
+      safe_click ".remove-issue"
+      # click again to get rid of pop up
       safe_click ".remove-issue"
 
       expect(page).to have_button("Save", disabled: true)
@@ -252,6 +255,8 @@ RSpec.feature "Edit issues" do
       allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
 
       visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit"
+      safe_click ".remove-issue"
+      # click again to get rid of pop-up
       safe_click ".remove-issue"
       safe_click "#button-add-issue"
       find("label", text: "Left knee granted").click
@@ -373,6 +378,10 @@ RSpec.feature "Edit issues" do
       expect(page).to_not have_content("Notes:")
       safe_click ".remove-issue"
 
+      # expect a pop up
+      expect(page).to have_content("Are you sure you want to remove this issue?")
+      safe_click ".remove-issue"
+
       expect(page).not_to have_content("PTSD denied")
 
       # re-add to proceed
@@ -425,13 +434,16 @@ RSpec.feature "Edit issues" do
       expect(page).to have_button("Save", disabled: false)
 
       page.all(".remove-issue")[1].click
-
+      # click remove issue again to get rid of popup
+      safe_click ".remove-issue"
       expect(page).to_not have_content("Left knee granted")
       expect(page).to have_button("Save", disabled: true)
     end
 
     it "Does not allow save if no issues are selected" do
       visit "supplemental_claims/#{supplemental_claim.end_product_claim_id}/edit"
+      safe_click ".remove-issue"
+      # click remove issue again to get rid of popup
       safe_click ".remove-issue"
 
       expect(page).to have_button("Save", disabled: true)
@@ -464,6 +476,7 @@ RSpec.feature "Edit issues" do
       allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
 
       visit "supplemental_claims/#{supplemental_claim.end_product_claim_id}/edit"
+      safe_click ".remove-issue"
       safe_click ".remove-issue"
       safe_click "#button-add-issue"
       find("label", text: "Left knee granted").click
