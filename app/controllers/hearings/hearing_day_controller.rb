@@ -30,6 +30,9 @@ class Hearings::HearingDayController < HearingScheduleController
     enriched_hearings = HearingDay.load_days_with_hearings(Time.zone.today.beginning_of_day,
                                                            Time.zone.today.beginning_of_day + 365.days,
                                                            regional_office)
+    enriched_hearings.each do |hearing_day|
+      hearing_day[:hearings] = hearing_day[:hearings].map { |hearing| hearing.to_hash(current_user.id) }
+    end
 
     render json: { hearing_days: json_hearings(enriched_hearings) }
   end

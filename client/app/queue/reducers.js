@@ -85,13 +85,20 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
         $set: action.payload.judges
       }
     });
-  case ACTIONS.DELETE_APPEAL:
+  case ACTIONS.DELETE_APPEAL: {
+    const amaTasksIds = _.map(
+      _.filter(
+        state.amaTasks, (task) => task.externalAppealId === action.payload.appealId
+      ), (task) => task.uniqueId
+    );
+
     return update(state, {
       tasks: { $unset: action.payload.appealId },
-      amaTasks: { $unset: action.payload.appealId },
+      amaTasks: { $unset: amaTasksIds },
       appeals: { $unset: action.payload.appealId },
       appealDetails: { $unset: action.payload.appealId }
     });
+  }
   case ACTIONS.EDIT_APPEAL:
     return update(state, {
       appealDetails: {
@@ -335,30 +342,22 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
         }
       }
     });
-  case ACTIONS.SET_TASK_ASSIGNMENT: {
-    const { externalAppealId } = action.payload;
-    const taskType = externalAppealId in state.amaTasks ? 'amaTasks' : 'tasks';
+  case ACTIONS.SET_TASK_ATTRS: {
+    const { uniqueId } = action.payload;
+    const taskType = uniqueId in state.amaTasks ? 'amaTasks' : 'tasks';
 
     return update(state, {
       [taskType]: {
-        [externalAppealId]: {
-          assignedTo: {
-            $set: {
-              cssId: action.payload.cssId,
-              id: action.payload.pgId
-            }
-          }
+        [uniqueId]: {
+          $merge: action.payload.attributes
         }
       }
     });
   }
-  case ACTIONS.SET_TASK_ATTRS: {
-    const { externalAppealId } = action.payload;
-    const taskType = externalAppealId in state.amaTasks ? 'amaTasks' : 'tasks';
-
+  case ACTIONS.SET_APPEAL_ATTRS: {
     return update(state, {
-      [taskType]: {
-        [externalAppealId]: {
+      appealDetails: {
+        [action.payload.appealId]: {
           $merge: action.payload.attributes
         }
       }

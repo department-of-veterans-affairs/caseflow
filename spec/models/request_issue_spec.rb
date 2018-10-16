@@ -49,4 +49,12 @@ describe RequestIssue do
       expect(unidentified_issues.find_by(id: unidentified_issue.id)).to_not be_nil
     end
   end
+
+  context "#contention_text" do
+    it "changes based on is_unidentified" do
+      expect(unidentified_issue.contention_text).to eq(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
+      expect(rated_issue.contention_text).to eq("a rated issue")
+      expect(unrated_issue.contention_text).to eq("an unrated rated issue")
+    end
+  end
 end

@@ -12,6 +12,7 @@ import moment from 'moment';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
 import CaseDetailsLink from "../../queue/CaseDetailsLink";
+import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 
 const colorAOD = css({
   color: 'red'
@@ -102,6 +103,12 @@ export default class AssignHearings extends React.Component {
     return docketType;
   };
 
+    getHearingTime = (date, regionalOfficeTimezone) => {
+      return <div>
+        {getTime(date)} /<br />{getTimeInDifferentTimeZone(date, regionalOfficeTimezone)}
+      </div>;
+    };
+
   appellantName = (hearingDay) => {
     if (hearingDay.appellantFirstName && hearingDay.appellantLastName) {
       return `${hearingDay.appellantFirstName} ${hearingDay.appellantLastName} | ${hearingDay.id}`;
@@ -111,7 +118,7 @@ export default class AssignHearings extends React.Component {
 
   };
 
-  tableRows = (veterans) => {
+  tableAssignHearingsRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
       caseDetails: this.appellantName(veteran),
       type: this.veteranTypeColor(veteran.type),
@@ -119,6 +126,16 @@ export default class AssignHearings extends React.Component {
       location: this.props.selectedRegionalOffice.value === 'C' ? 'Washington DC' : veteran.location,
       time: veteran.time,
       vacolsId: veteran.vacolsId
+    }));
+  };
+
+  tableScheduledHearingsRows = (hearings) => {
+    return _.map(hearings, (hearing) => ({
+      caseDetails: `${hearing.appellantMiFormatted} | ${hearing.vbmsId}`,
+      type: this.veteranTypeColor(hearing.appealType),
+      docketNumber: hearing.docketNumber,
+      location: hearing.requestType === 'Video' ? hearing.regionalOfficeName : 'Washington DC',
+      time: this.getHearingTime(hearing.date, hearing.regionalOfficeTimezone)
     }));
   };
 
@@ -172,7 +189,7 @@ export default class AssignHearings extends React.Component {
             label: 'Scheduled',
             page: <Table
               columns={tabWindowColumns}
-              rowObjects={this.tableRows(this.props.selectedHearingDay.hearings)}
+              rowObjects={this.tableScheduledHearingsRows(this.props.selectedHearingDay.hearings)}
               summary="scheduled-hearings-table"
             />
           },
@@ -180,7 +197,7 @@ export default class AssignHearings extends React.Component {
             label: 'Assign Hearings',
             page: <Table
               columns={tabWindowColumns}
-              rowObjects={this.tableRows(this.props.veteransReadyForHearing)}
+              rowObjects={this.tableAssignHearingsRows(this.props.veteransReadyForHearing)}
               summary="assign-hearings-table"
             />
           }

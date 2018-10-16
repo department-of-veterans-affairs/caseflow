@@ -273,7 +273,7 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content(judge_user.full_name)
 
         click_on "Continue"
-        expect(page).to have_content("Cases not found")
+        expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
 
         case_review = AttorneyCaseReview.all.first
         expect(case_review.note.length).to eq 350
@@ -429,6 +429,89 @@ RSpec.feature "Checkout flows" do
 
         expect(appeal.reload.issues.length).to eq 2
       end
+    end
+  end
+
+  context "given a valid ama appeal with single issue assigned to current judge user" do
+    let!(:appeal) do
+      FactoryBot.create(
+        :appeal,
+        number_of_claimants: 1,
+        request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus", disposition: "allowed")
+      )
+    end
+
+    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:parent_task) do
+      FactoryBot.create(
+        :ama_judge_task,
+        :in_progress,
+        assigned_to: judge_user,
+        appeal: appeal,
+        parent: root_task,
+        action: "review"
+      )
+    end
+
+    let(:child_task) do
+      FactoryBot.create(
+        :ama_attorney_task,
+        :in_progress,
+        assigned_to: attorney_user,
+        assigned_by: judge_user,
+        parent: parent_task,
+        appeal: appeal
+      )
+    end
+
+    before do
+      child_task.update(status: :completed)
+      User.authenticate!(user: attorney_user)
+    end
+
+    before do
+      FeatureToggle.enable!(:judge_case_review_checkout)
+
+      User.authenticate!(user: judge_user)
+    end
+
+    after do
+      FeatureToggle.disable!(:judge_case_review_checkout)
+    end
+
+    scenario "starts dispatch checkout flow" do
+      visit "/queue"
+      click_on "(#{appeal.veteran_file_number})"
+
+      click_dropdown 0 do
+        visible_options = page.find_all(".Select-option")
+        expect(visible_options.length).to eq 1
+        expect(visible_options.first.text).to eq COPY::JUDGE_CHECKOUT_DISPATCH_LABEL
+      end
+
+      # Special Issues screen
+      click_on "Continue"
+      # Request Issues screen
+      click_on "Continue"
+      expect(page).to have_content("Evaluate Decision")
+
+      find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
+      find("label", text: "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}").click
+
+      # areas of improvement
+      find("#issues_are_not_addressed", visible: false).sibling("label").click
+
+      dummy_note = generate_words 5
+      fill_in "additional-factors", with: dummy_note
+      expect(page).to have_content(dummy_note[0..5])
+
+      click_on "Continue"
+      expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
+      case_review = JudgeCaseReview.find_by(task_id: parent_task.id)
+      expect(case_review.attorney).to eq attorney_user
+      expect(case_review.judge).to eq judge_user
+      expect(case_review.complexity).to eq "easy"
+      expect(case_review.quality).to eq "does_not_meet_expectations"
     end
   end
 
