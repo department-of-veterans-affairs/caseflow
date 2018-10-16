@@ -127,7 +127,7 @@ describe GenericTask do
       context "and current user does not belong to that organization" do
         it "should raise an error when trying to call Task.mark_as_complete!" do
           expect do
-            task.update_from_params({ status: "completed" }, user)
+            task.update_from_params({ status: Constants.TASK_STATUSES.completed }, user)
           end.to raise_error(Caseflow::Error::ActionForbiddenError)
         end
       end
@@ -140,7 +140,7 @@ describe GenericTask do
 
         it "should call Task.mark_as_complete!" do
           expect_any_instance_of(GenericTask).to receive(:mark_as_complete!)
-          task.update_from_params({ status: "completed" }, user)
+          task.update_from_params({ status: Constants.TASK_STATUSES.completed }, user)
         end
       end
     end
@@ -158,7 +158,15 @@ describe GenericTask do
       context "who is the current user" do
         it "should call Task.mark_as_complete!" do
           expect_any_instance_of(GenericTask).to receive(:mark_as_complete!)
-          task.update_from_params({ status: "completed" }, user)
+          task.update_from_params({ status: Constants.TASK_STATUSES.completed }, user)
+        end
+      end
+
+      context "and the parameters include a reassign parameter" do
+        it "should call GenericTask.reassign" do
+          allow_any_instance_of(GenericTask).to receive(:reassign).and_return(true)
+          expect_any_instance_of(GenericTask).to receive(:reassign)
+          task.update_from_params({ status: Constants.TASK_STATUSES.completed, reassign: { instructions: nil } }, user)
         end
       end
     end
@@ -175,7 +183,7 @@ describe GenericTask do
 
     let(:good_params) do
       {
-        status: "completed",
+        status: Constants.TASK_STATUSES.completed,
         parent_id: parent.id,
         assigned_to_type: assignee.class.name,
         assigned_to_id: assignee.id
