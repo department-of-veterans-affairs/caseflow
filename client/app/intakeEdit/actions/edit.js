@@ -38,7 +38,7 @@ export const requestIssuesUpdate = (claimId, formType, state) => (dispatch) => {
           responseObject = JSON.parse(error.response.text);
         } catch (ex) { /* pass */ }
 
-        const responseErrorCode = responseObject.error_code;
+        const responseErrorCode = responseObject ? responseObject.error_code : 'other';
 
         dispatch({
           type: ACTIONS.REQUEST_ISSUES_UPDATE_FAIL,

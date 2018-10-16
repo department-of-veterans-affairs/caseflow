@@ -5,12 +5,13 @@ import { bindActionCreators } from 'redux';
 import Button from '../../components/Button';
 import IssueCounter from '../../intake/components/IssueCounter';
 import { issueCountSelector } from '../../intake/selectors';
-import { requestIssuesUpdate } from '../actions/edit'
+import { requestIssuesUpdate } from '../actions/edit';
 import { REQUEST_STATE } from '../../intake/constants';
 
 class SaveButtonUnconnected extends React.PureComponent {
   handleClick = () => {
-    this.props.requestIssuesUpdate(this.props.claimId, this.props.formType, this.props.state).then(() => this.props.history.push('/confirmation'));
+    this.props.requestIssuesUpdate(this.props.claimId, this.props.formType, this.props.state).
+      then(() => this.props.history.push('/confirmation'));
   }
 
   render = () => {
@@ -26,9 +27,9 @@ class SaveButtonUnconnected extends React.PureComponent {
     return <Button
       name="submit-update"
       onClick={this.handleClick}
-      loading={this.props.requestStatus.requestIssuesUpdate === REQUEST_STATE.IN_PROGRESS}
+      loading={requestStatus.requestIssuesUpdate === REQUEST_STATE.IN_PROGRESS}
       disabled={saveDisabled}
-      >
+    >
       Save
     </Button>;
   }
@@ -42,7 +43,7 @@ const SaveButton = connect(
     originalIssues: state.originalIssues,
     requestStatus: state.requestStatus,
     issueCount: issueCountSelector(state),
-    state: state
+    state
   }),
   (dispatch) => bindActionCreators({
     requestIssuesUpdate

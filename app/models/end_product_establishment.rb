@@ -88,13 +88,12 @@ class EndProductEstablishment < ApplicationRecord
     # the created contentions. Instead find the issue by matching text.
 
     issue_descriptions = request_issues_without_contentions.map do |issue|
-      return "#{issue.issue_category} - #{issue.description}" if issue.issue_category
-      issue.description
+      issue.issue_category ? "#{issue.issue_category} - #{issue.description}" : issue.description
     end
 
     create_contentions_in_vbms(issue_descriptions).each do |contention|
       issue = issues_without_contentions.find do |i|
-        i.description == contention.text && i.contention_reference_id.nil?
+        i.description == contention.text[-i.description.length..-1] && i.contention_reference_id.nil?
       end
       issue && issue.update!(contention_reference_id: contention.id)
     end
