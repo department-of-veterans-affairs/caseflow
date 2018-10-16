@@ -272,25 +272,34 @@ class LegacyAppeal < ApplicationRecord
     [outcoder_last_name, outcoder_first_name, outcoder_middle_initial].select(&:present?).join(", ").titleize
   end
 
+  # Delete this method when use_representative_info_from_bgs is enabled for all users
+  def representative_code
+    power_of_attorney.vacols_representative_code
+  end
+
+  def representative_participant_id
+    power_of_attorney.bgs_participant_id
+  end
+
   REPRESENTATIVE_METHOD_NAMES = [
-    :representative_name, 
-    :representative_type, 
+    :representative_name,
+    :representative_type,
     :representative_address
-  ]
+  ].freeze
 
   REPRESENTATIVE_METHOD_NAMES.each do |method_name|
-    define_method(method_name) do 
+    define_method(method_name) do
       if use_representative_info_from_bgs?
-        power_of_attorney.send("bgs_#{method_name}".to_sym) 
+        power_of_attorney.send("bgs_#{method_name}".to_sym)
       else
-        power_of_attorney.send("vacols_#{method_name}".to_sym) 
+        power_of_attorney.send("vacols_#{method_name}".to_sym)
       end
     end
   end
 
   def use_representative_info_from_bgs?
-    FeatureToggle.enabled?(:use_representative_info_from_bgs) && 
-      (RequestStore.store[:application] = "queue" || 
+    FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&
+      (RequestStore.store[:application] = "queue" ||
        RequestStore.store[:application] = "idt")
   end
 
@@ -684,6 +693,8 @@ class LegacyAppeal < ApplicationRecord
     {
       name: representative_name,
       type: representative_type,
+      code: representative_code,
+      participant_id: representative_participant_id,
       address: representative_address
     }
   end
