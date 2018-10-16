@@ -6,6 +6,7 @@ const serverData = {
     data: [
       {
         attributes: {
+          is_legacy: true,
           appeal_type: 'LegacyAppeal',
           added_by_css_id: 'BVANKUVALIS',
           added_by_name: 'Nash X Kuvalis',
@@ -56,6 +57,8 @@ describe('QueueLoadingScreen', () => {
 
     expect(tasks).to.deep.equal({
       3625593: {
+        uniqueId: '3625593',
+        isLegacy: true,
         appealId: 3,
         appealType: 'LegacyAppeal',
         externalAppealId: '3625593',

@@ -5,9 +5,9 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import { sprintf } from 'sprintf-js';
 
-import StatusMessage from '../components/StatusMessage';
 import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import {
   tasksWithAppealSelector
@@ -24,14 +24,13 @@ class OrganizationQueue extends React.PureComponent {
 
   render = () => {
     const noTasks = !_.size(this.props.tasks);
-    let tableContent;
 
     if (noTasks) {
-      tableContent = <StatusMessage title={COPY.NO_TASKS_IN_ATTORNEY_QUEUE_TITLE}>
-        {COPY.NO_TASKS_IN_ATTORNEY_QUEUE_MESSAGE}
-      </StatusMessage>;
-    } else {
-      tableContent = <div>
+      return <h2>{COPY.NO_CASES_IN_QUEUE_MESSAGE}<Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link>.</h2>;
+    }
+
+    return <AppSegment filledBackground>
+      <div>
         <h1 {...fullWidth}>{sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName)}</h1>
         <TaskTable
           includeDetailsLink
@@ -42,11 +41,7 @@ class OrganizationQueue extends React.PureComponent {
           includeReaderLink
           tasks={this.props.tasks}
         />
-      </div>;
-    }
-
-    return <AppSegment filledBackground>
-      {tableContent}
+      </div>
     </AppSegment>;
   };
 }

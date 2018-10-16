@@ -16,6 +16,9 @@ namespace :local do
     # Add a new line so that this scipt's output is more readable.
     puts ""
 
+    puts "Creating local caseflow dbs"
+    system("bundle exec rake db:create db:schema:load") || abort
+
     puts "Setting up development FACOLS"
     system("RAILS_ENV=development bundle exec rake local:vacols:setup") || abort
 

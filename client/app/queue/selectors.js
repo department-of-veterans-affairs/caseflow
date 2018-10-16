@@ -117,13 +117,13 @@ export const appealsByCaseflowVeteranId = createSelector(
 
 const incompleteTasksSelector = (tasks: Tasks) => _.filter(tasks, (task) => task.status !== 'completed');
 
-export const tasksByAssigneeCssIdSelector = createSelector(
+const tasksByAssigneeCssIdSelector = createSelector(
   [tasksWithAppealSelector, getUserCssId],
   (tasks: Array<TaskWithAppeal>, cssId: string) =>
     _.filter(tasks, (task) => task.assignedTo.cssId === cssId)
 );
 
-export const incompleteTasksByAssigneeCssIdSelector = createSelector(
+const incompleteTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks: Tasks) => incompleteTasksSelector(tasks)
 );

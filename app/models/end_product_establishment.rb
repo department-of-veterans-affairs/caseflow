@@ -84,11 +84,15 @@ class EndProductEstablishment < ApplicationRecord
 
     set_establishment_values_from_source
 
+    descriptions = issues_without_contentions.map(&:contention_text)
+
     # Currently not making any assumptions about the order in which VBMS returns
     # the created contentions. Instead find the issue by matching text.
-    create_contentions_in_vbms(issues_without_contentions.pluck(:description)).each do |contention|
+    # We don't care about duplicate text; we just care that every request issue
+    # has a contention.
+    create_contentions_in_vbms(descriptions).each do |contention|
       issue = issues_without_contentions.find do |i|
-        i.description == contention.text && i.contention_reference_id.nil?
+        i.contention_text == contention.text && i.contention_reference_id.nil?
       end
       issue && issue.update!(contention_reference_id: contention.id)
     end
@@ -310,7 +314,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def contention_for_object(for_object)
-    contentions.find { |contention| contention.id == for_object.contention_reference_id }
+    contentions.find { |contention| contention.id.to_i == for_object.contention_reference_id.to_i }
   end
 
   # These are values that need to be determined based on the source right before the end

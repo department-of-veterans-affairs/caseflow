@@ -218,7 +218,7 @@ describe EndProductEstablishment do
 
     let(:reference_id) { "stevenasmith" }
 
-    let(:request_issues) do
+    let!(:request_issues) do
       [
         create(
           :request_issue,
@@ -243,14 +243,22 @@ describe EndProductEstablishment do
           rating_issue_reference_id: "reference-id",
           rating_issue_profile_date: Date.new(2018, 4, 30),
           description: "this is a big decision", # intentional duplicate
+        ),
+        create(
+          :request_issue,
+          end_product_establishment: end_product_establishment,
+          is_unidentified: true,
+          description: "identity unknown",
+          review_request: source,
+          rating_issue_reference_id: "reference-id",
+          rating_issue_profile_date: Date.new(2018, 4, 30)
         )
       ]
     end
 
-    let(:contention_descriptions) { request_issues.map(&:description).reverse }
+    let(:contention_descriptions) { request_issues.map(&:contention_text).reverse }
 
     it "creates contentions and saves them to objects" do
-      request_issues
       subject
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
@@ -260,9 +268,9 @@ describe EndProductEstablishment do
         special_issues: []
       )
 
-      expect(end_product_establishment.contentions.count).to eq(3)
+      expect(end_product_establishment.contentions.count).to eq(4)
       expect(end_product_establishment.contentions.map(&:id)).to contain_exactly(
-        *request_issues.map(&:reload).map(&:contention_reference_id)
+        *request_issues.map(&:reload).map(&:contention_reference_id).map(&:to_s)
       )
     end
 
@@ -270,7 +278,6 @@ describe EndProductEstablishment do
       let(:special_issues) { "SPECIALISSUES!" }
 
       it "sets special issues when creating the contentions" do
-        request_issues
         subject
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
@@ -370,6 +377,7 @@ describe EndProductEstablishment do
     end
 
     let(:reference_id) { "stevenasmith" }
+    let(:contention_ref_id) { 1234 }
 
     let(:for_object) do
       RequestIssue.new(
@@ -377,12 +385,12 @@ describe EndProductEstablishment do
         rating_issue_reference_id: "reference-id",
         rating_issue_profile_date: Date.new(2018, 4, 30),
         description: "this is a big decision",
-        contention_reference_id: "skipbayless"
+        contention_reference_id: contention_ref_id
       )
     end
 
     let!(:contention) do
-      Generators::Contention.build(id: "skipbayless", claim_id: reference_id, text: "Left knee")
+      Generators::Contention.build(id: contention_ref_id, claim_id: reference_id, text: "Left knee")
     end
 
     subject { end_product_establishment.remove_contention!(for_object) }

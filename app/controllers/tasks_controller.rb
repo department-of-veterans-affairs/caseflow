@@ -72,7 +72,7 @@ class TasksController < ApplicationController
   #   on_hold_duration: "something"
   # }
   def update
-    redirect_to("/unauthorized") && return unless task.can_user_access?(current_user)
+    redirect_to("/unauthorized") && return unless task.can_be_accessed_by_user?(current_user)
 
     task.update_from_params(update_params, current_user)
 
@@ -92,14 +92,14 @@ class TasksController < ApplicationController
       return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], user_role)
     end
 
-    json_tasks_by_appeal_id(appeal.id, appeal.class.to_s)
+    all_json_tasks
   end
 
   private
 
   def can_act_on_task?
     return true if can_assign_task?
-    true if task.can_user_access?(current_user)
+    true if task.can_be_accessed_by_user?(current_user)
   rescue ActiveRecord::RecordNotFound
     return false
   end
@@ -178,11 +178,9 @@ class TasksController < ApplicationController
     }
   end
 
-  def json_tasks_by_appeal_id(appeal_db_id, appeal_type)
-    tasks = queue_class.new(user: current_user).tasks_by_appeal_id(appeal_db_id, appeal_type)
-
+  def all_json_tasks
     render json: {
-      tasks: json_tasks(tasks)[:data]
+      tasks: json_tasks(appeal.tasks)[:data]
     }
   end
 

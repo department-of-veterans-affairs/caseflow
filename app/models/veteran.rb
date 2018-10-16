@@ -119,6 +119,10 @@ class Veteran < ApplicationRecord
     @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id, from_date: from_date)
   end
 
+  def ratings
+    @ratings ||= Rating.fetch_all(participant_id)
+  end
+
   def accessible_appeals_for_poa(poa_participant_ids)
     appeals = Appeal.where(veteran_file_number: file_number).includes(:claimants)
 
@@ -135,6 +139,12 @@ class Veteran < ApplicationRecord
 
   def participant_id
     super || ptcpnt_id
+  end
+
+  def sync_rating_issues!
+    timely_ratings(from_date: Time.zone.today).each do |rating|
+      rating.issues.select(&:contention_reference_id).each(&:save_with_request_issue!)
+    end
   end
 
   class << self
