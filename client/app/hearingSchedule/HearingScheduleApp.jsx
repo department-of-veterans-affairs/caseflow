@@ -29,10 +29,25 @@ export default class HearingScheduleApp extends React.PureComponent {
     };
   };
 
+  propsForQueueLoadingScreen = () => {
+    const {
+      userId,
+      userCssId,
+      userRole
+    } = this.props;
+
+    return {
+      userId,
+      userCssId,
+      userRole
+    };
+  }
+
   routeForListScheduleContainer = () => <ListScheduleContainer {...this.propsForListScheduleContainer()} />;
 
   routedQueueDetailWithLoadingScreen = (props) => <CaseDetailsLoadingScreen
-    tasks={{}} appealDetails={{}} appealId={props.match.params.appealId}>
+    {...this.propsForQueueLoadingScreen()}
+    appealId={props.match.params.appealId}>
     <CaseDetailsView appealId={props.match.params.appealId} />
   </CaseDetailsLoadingScreen>;
 
@@ -115,5 +130,8 @@ HearingScheduleApp.propTypes = {
   userRoleBuild: PropTypes.bool,
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
-  dropdownUrls: PropTypes.array
+  dropdownUrls: PropTypes.array,
+  userRole: PropTypes.string,
+  userId: PropTypes.string,
+  userCssId: PropTypes.string
 };

@@ -11,7 +11,6 @@ import RoSelectorDropdown from './RoSelectorDropdown';
 import moment from 'moment';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
-import type {TaskWithAppeal} from "../../queue/types/models";
 import CaseDetailsLink from "../../queue/CaseDetailsLink";
 
 const colorAOD = css({
@@ -36,7 +35,7 @@ export default class AssignHearings extends React.Component {
   // required to reset the RO Dropdown when moving from Viewing and Assigning.
   componentWillMount = () => {
     this.props.onRegionalOfficeChange('');
-  }
+  };
 
   onSelectedHearingDayChange = (hearingDay) => () => {
     this.props.onSelectedHearingDayChange(hearingDay);
@@ -53,7 +52,7 @@ export default class AssignHearings extends React.Component {
 
     return room = '';
 
-  }
+  };
 
   formatAvailableHearingDays = () => {
     return <div className="usa-width-one-fourth">
@@ -101,7 +100,7 @@ export default class AssignHearings extends React.Component {
     }
 
     return docketType;
-  }
+  };
 
   appellantName = (hearingDay) => {
     if (hearingDay.appellantFirstName && hearingDay.appellantLastName) {
@@ -110,7 +109,7 @@ export default class AssignHearings extends React.Component {
 
     return `${hearingDay.id}`;
 
-  }
+  };
 
   tableRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
