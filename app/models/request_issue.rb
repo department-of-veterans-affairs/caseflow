@@ -9,8 +9,6 @@ class RequestIssue < ApplicationRecord
   enum ineligible_reason: { in_active_review: 0, untimely: 1 }
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
-  INELIGIBLE_IN_ACTIVE_REVIEW_MSG = Constants.REQUEST_ISSUES.ineligible_in_active_review_msg.freeze
-  INELIGIBLE_UNTIMELY_MSG = Constants.REQUEST_ISSUES.ineligible_untimely_msg.freeze
 
   def self.rated
     where.not(rating_issue_reference_id: nil, rating_issue_profile_date: nil)
@@ -53,7 +51,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def ineligible_msg
-    msg = "#{self.class}::INELIGIBLE_#{ineligible_reason.to_s.upcase}_MSG".constantize.dup
+    msg = Constants::REQUEST_ISSUES["ineligible_#{ineligible_reason}_msg"].dup
     msg.sub!("{review_title}", ineligible_request_issue.review_title) if ineligible_request_issue
     msg
   end
