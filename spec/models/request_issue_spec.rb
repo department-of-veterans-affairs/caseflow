@@ -58,4 +58,28 @@ describe RequestIssue do
       expect(non_rated_issue.contention_text).to eq("a category - a non-rated issue description")
     end
   end
+
+  context "#review_title" do
+    it "munges the review_request_type appropriately" do
+      expect(rated_issue.review_title).to eq "Higher Level Review"
+    end
+  end
+
+  context "ineligibility" do
+    it "renders correct message for ineligible due to active review" do
+      request_issue = create(:request_issue, ineligible_request_issue: rated_issue).tap(&:in_active_review!)
+
+      expect(request_issue.ineligible_msg).to eq(
+        "is ineligible because it's already under review as a Higher Level Review"
+      )
+    end
+
+    it "renders correct message for ineligible due to untimely" do
+      request_issue = create(:request_issue, ineligible_request_issue: rated_issue).tap(&:untimely!)
+
+      expect(request_issue.ineligible_msg).to eq(
+        "is ineligible because it has a prior decision date that’s older than 1 year"
+      )
+    end
+  end
 end

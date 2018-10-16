@@ -4,8 +4,13 @@ class RequestIssue < ApplicationRecord
   has_many :decision_issues
   has_many :remand_reasons
   has_many :rating_issues
+  belongs_to :ineligible_request_issue, class_name: "RequestIssue"
+
+  enum ineligible_reason: { in_active_review: 0, untimely: 1 }
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
+  INELIGIBLE_IN_ACTIVE_REVIEW_MSG = "is ineligible because it's already under review as a {review_title}".freeze
+  INELIGIBLE_UNTIMELY_MSG = "is ineligible because it has a prior decision date that’s older than 1 year".freeze
 
   def self.rated
     where.not(rating_issue_reference_id: nil, rating_issue_profile_date: nil)
@@ -37,6 +42,20 @@ class RequestIssue < ApplicationRecord
     return "#{issue_category} - #{description}" if nonrated?
     return UNIDENTIFIED_ISSUE_MSG if is_unidentified
     description
+  end
+
+  def update_as_ineligible!(other_request_issue:, reason:)
+    update!(ineligible_request_issue_id: other_request_issue.id, ineligible_reason: reason)
+  end
+
+  def review_title
+    review_request_type.underscore.titleize
+  end
+
+  def ineligible_msg
+    msg = "#{self.class}::INELIGIBLE_#{ineligible_reason.to_s.upcase}_MSG".constantize.dup
+    msg.sub!("{review_title}", ineligible_request_issue.review_title) if ineligible_request_issue
+    msg
   end
 
   def self.from_intake_data(data)
