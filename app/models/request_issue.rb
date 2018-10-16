@@ -47,7 +47,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def review_title
-    review_request_type.underscore.titleize
+    review_request_type.constantize.review_title
   end
 
   def ineligible_msg

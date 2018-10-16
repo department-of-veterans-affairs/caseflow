@@ -61,7 +61,7 @@ describe RequestIssue do
 
   context "#review_title" do
     it "munges the review_request_type appropriately" do
-      expect(rated_issue.review_title).to eq "Higher Level Review"
+      expect(rated_issue.review_title).to eq "Higher-Level Review"
     end
   end
 
@@ -70,7 +70,7 @@ describe RequestIssue do
       request_issue = create(:request_issue, ineligible_request_issue: rated_issue).tap(&:in_active_review!)
 
       expect(request_issue.ineligible_msg).to eq(
-        Constants.REQUEST_ISSUES.ineligible_in_active_review_msg.dup.sub("{review_title}", "Higher Level Review")
+        Constants.REQUEST_ISSUES.ineligible_in_active_review_msg.dup.sub("{review_title}", "Higher-Level Review")
       )
     end
 
