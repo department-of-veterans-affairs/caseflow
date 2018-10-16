@@ -13,11 +13,12 @@ describe RequestIssue do
     )
   end
 
-  let!(:unrated_issue) do
+  let!(:non_rated_issue) do
     RequestIssue.create(
       review_request: review,
-      description: "an unrated rated issue",
-      issue_category: "a thing"
+      description: "a non-rated issue description",
+      issue_category: "a category",
+      decision_date: 1.day.ago
     )
   end
 
@@ -40,13 +41,32 @@ describe RequestIssue do
     it "filters by nonrated issues" do
       nonrated_issues = RequestIssue.nonrated
       expect(nonrated_issues.length).to eq(1)
-      expect(nonrated_issues.find_by(id: unrated_issue.id)).to_not be_nil
+      expect(nonrated_issues.find_by(id: non_rated_issue.id)).to_not be_nil
     end
 
     it "filters by unidentified issues" do
       unidentified_issues = RequestIssue.unidentified
       expect(unidentified_issues.length).to eq(1)
       expect(unidentified_issues.find_by(id: unidentified_issue.id)).to_not be_nil
+    end
+  end
+
+  context "#contention_text" do
+    subject { request_issue.contention_text }
+
+    context "rated issue" do
+      let(:request_issue) { rated_issue }
+      it { is_expected.to eq(request_issue.description) }
+    end
+
+    context "non-rated issue" do
+      let(:request_issue) { non_rated_issue }
+      it { is_expected.to eq("a category - a non-rated issue description") }
+    end
+
+    context "unidentified issue" do
+      let(:request_issue) { unidentified_issue }
+      it { is_expected.to eq(RequestIssue::UNIDENTIFIED_ISSUE_MSG) }
     end
   end
 end
