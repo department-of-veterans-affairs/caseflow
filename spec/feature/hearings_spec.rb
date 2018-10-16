@@ -8,54 +8,28 @@ RSpec.feature "Hearings" do
     Timecop.freeze(Time.utc(2017, 1, 1, 13))
   end
 
-  let(:appeal) do
-    Generators::LegacyAppeal.create
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   context "Hearings Prep" do
-    let!(:current_user) do
-      User.authenticate!(roles: ["Hearing Prep"])
-    end
+
+    let!(:current_user) { User.authenticate!(roles: ["Hearing Prep"]) }
+
+    let!(:vacols_staff) { create(:staff, user: current_user) }
 
     before do
-      2.times do |id|
-        Generators::Hearing.create(
-          id: id,
-          user: current_user,
-          appellant_first_name: "AppellantFirstName",
-          appellant_last_name: "AppellantLastName",
-          veteran_first_name: "VeteranFirstName",
-          veteran_last_name: "VeteranLastName#{id}",
-          date: 5000.days.from_now,
-          type: "video",
-          master_record: false
-        )
-      end
-
-      Generators::Hearing.create(
-        id: 3,
-        user: current_user,
-        type: "central_office",
-        date: 2500.days.from_now,
-        master_record: true
-      )
-      Generators::Hearing.create(
-        id: 4,
-        user: current_user,
-        type: "central_office",
-        date: 3.days.ago,
-        master_record: true
-      )
-      Generators::Hearing.create(
-        id: 5,
-        user: current_user,
-        type: "central_office",
-        date: 6.days.ago,
-        master_record: false
-      )
+      2.times { create(:case_hearing, board_member: vacols_staff.sattyid, hearing_date: 5000.days.from_now) }
+      create(:case_hearing, hearing_type: "C", folder_nr: nil, hearing_date: 2500.days.from_now)
+      create(:case_hearing, hearing_type: "C", folder_nr: nil, hearing_date: 3.days.ago)
+      create(:case_hearing, hearing_type: "C", hearing_date: 6.days.ago)
     end
 
-    scenario "Shows upcoming dockets for upcoming day" do
+    scenario "Shows upcoming dockets for upcoming day", focus: true do
       visit "/hearings/dockets"
 
       expect(page).to have_content("Your Hearing Days")
