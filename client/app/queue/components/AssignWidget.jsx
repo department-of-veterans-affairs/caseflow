@@ -112,8 +112,7 @@ class AssignWidget extends React.PureComponent<Props> {
             casePlural: pluralize('case', selectedTasks.length)
           })
         });
-      }).
-      catch(() => {
+      }, () => {
         this.props.resetSaveState();
 
         return this.props.showErrorMessage({

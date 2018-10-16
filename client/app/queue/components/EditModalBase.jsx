@@ -28,7 +28,9 @@ export default function editModalBase(ComponentToWrap, title) {
 
       this.wrappedComponent.submit().then(() => {
         this.setState({ loading: false });
-        this.closeHandler();
+        if (!this.props.error) {
+          this.closeHandler();
+        }
       }, () => {
         this.setState({ loading: false });
       });
