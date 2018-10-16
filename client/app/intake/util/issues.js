@@ -94,7 +94,7 @@ export const formatRequestIssues = (requestIssues) => {
         description: issue.description,
         notes: issue.notes,
         isUnidentified: issue.is_unidentified
-      };
+      }
     }
 
     // Rated issues
@@ -253,9 +253,7 @@ export const formatAddedIssues = (intakeData) => {
       return {
         referenceId: issue.id,
         text: `${ratingIssues[issue.id]} Decision date ${formatDateStr(issue.profileDate)}.`,
-        notes: issue.notes,
-        isUnidentified: null,
-        description: issue.description
+        notes: issue.notes
       };
     }
 
