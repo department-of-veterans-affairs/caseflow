@@ -17,6 +17,7 @@ class RequestIssuesUpdate < ApplicationRecord
     transaction do
       review.create_issues!(new_issues)
       strip_removed_issues!
+      review.unassociate_rated_request_issues!
 
       update!(
         before_request_issue_ids: before_issues.map(&:id),

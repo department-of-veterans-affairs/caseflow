@@ -43,6 +43,10 @@ class ClaimReview < AmaReview
     end
   end
 
+  def unassociate_rated_request_issues!
+    request_issues.select(&:rated?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
+  end
+
   # Idempotent method to create all the artifacts for this claim.
   # If any external calls fail, it is safe to call this multiple times until
   # establishment_processed_at is successfully set.
