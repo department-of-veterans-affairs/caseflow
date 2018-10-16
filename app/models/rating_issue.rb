@@ -33,8 +33,8 @@ class RatingIssue < ApplicationRecord
   end
 
   def in_active_review
-    ri = request_issue_in_review
-    return ri.review_title if ri
+    return unless reference_id
+    request_issue_in_review.try(:review_title)
   end
 
   private
