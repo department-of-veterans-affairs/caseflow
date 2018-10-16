@@ -8,7 +8,7 @@ import { sprintf } from 'sprintf-js';
 import SearchableDropdown from '../../components/SearchableDropdown';
 
 import {
-  getTasksForAppeal,
+  tasksForAppealAssignedToUserSelector,
   appealWithDetailSelector
 } from '../selectors';
 import { stageAppeal } from '../QueueActions';
@@ -99,7 +99,7 @@ class ColocatedActionsDropdown extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => ({
-  task: getTasksForAppeal(state, ownProps)[0],
+  task: tasksForAppealAssignedToUserSelector(state, ownProps)[0],
   appeal: appealWithDetailSelector(state, ownProps)
 });
 
