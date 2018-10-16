@@ -78,18 +78,11 @@ export default class AssignHearings extends React.Component {
             });
 
             const styling = dateSelected ? buttonColorSelected : '';
-            let disabledButton = false;
-
-            if (this.props.selectedHearingDay && this.props.selectedHearingDay.hearings &&
-                  _.isEmpty(this.props.selectedHearingDay.hearings)) {
-              disabledButton = true;
-            }
 
             return <li key={hearingDay.id} >
               <Button
                 styling={styling}
                 onClick={this.onSelectedHearingDayChange(hearingDay)}
-                disabled={disabledButton}
                 linkStyling
               >
                 {`${moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}
