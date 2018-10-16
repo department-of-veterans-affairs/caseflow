@@ -184,7 +184,7 @@ RSpec.feature "Edit issues" do
         veteran_file_number: veteran.file_number,
         claim_id: rating_epe.reference_id,
         contention_descriptions: [
-          "This is an unidentified issue",
+          RequestIssue::UNIDENTIFIED_ISSUE_MSG,
           "PTSD denied",
           "Left knee granted"
         ],

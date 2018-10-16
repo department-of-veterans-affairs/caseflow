@@ -94,7 +94,7 @@ export const formatRequestIssues = (requestIssues) => {
         description: issue.description,
         notes: issue.notes,
         isUnidentified: issue.is_unidentified
-      }
+      };
     }
 
     // Rated issues

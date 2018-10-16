@@ -84,16 +84,13 @@ class EndProductEstablishment < ApplicationRecord
 
     set_establishment_values_from_source
 
+    descriptions = issues_without_contentions.map(&:contention_text)
+
     # Currently not making any assumptions about the order in which VBMS returns
     # the created contentions. Instead find the issue by matching text.
-
-    issue_descriptions = request_issues_without_contentions.map do |issue|
-      issue.issue_category ? "#{issue.issue_category} - #{issue.description}" : issue.description
-    end
-
-    create_contentions_in_vbms(issue_descriptions).each do |contention|
+    create_contentions_in_vbms(descriptions).each do |contention|
       issue = issues_without_contentions.find do |i|
-        i.description == contention.text[-i.description.length..-1] && i.contention_reference_id.nil?
+        i.contention_text == contention.text && i.contention_reference_id.nil?
       end
       issue && issue.update!(contention_reference_id: contention.id)
     end

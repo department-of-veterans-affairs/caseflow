@@ -247,7 +247,7 @@ describe EndProductEstablishment do
       ]
     end
 
-    let(:contention_descriptions) { request_issues.map(&:description).reverse }
+    let(:contention_descriptions) { request_issues.map(&:contention_text).reverse }
 
     it "creates contentions and saves them to objects" do
       request_issues

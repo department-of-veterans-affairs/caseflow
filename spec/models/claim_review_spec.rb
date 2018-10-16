@@ -506,7 +506,7 @@ describe ClaimReview do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRNR").reference_id,
-          contention_descriptions: ["Issue text"],
+          contention_descriptions: ["surgery - Issue text"],
           special_issues: []
         )
 
@@ -670,7 +670,7 @@ describe ClaimReview do
           expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
             veteran_file_number: veteran.file_number,
             claim_id: reference_id,
-            contention_descriptions: issues.map(&:description),
+            contention_descriptions: issues.map(&:contention_text),
             special_issues: []
           )
         end
