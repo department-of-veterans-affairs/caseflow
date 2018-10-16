@@ -11,6 +11,7 @@ import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
 import Button from '../../components/Button';
 import RequestIssuesUpdateErrorAlert from '../../intakeEdit/components/RequestIssuesUpdateErrorAlert';
 import { REQUEST_STATE, FORM_TYPES, PAGE_PATHS } from '../constants';
+import REQUEST_ISSUES from '../../../constants/REQUEST_ISSUES.json';
 import { formatDate } from '../../util/DateUtil';
 import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 import Table from '../../components/Table';
@@ -74,7 +75,7 @@ export class AddIssuesPage extends React.Component {
             }
             if (issue.inActiveReview) {
               issueKlasses.push('in-active-review');
-              addendum = `is ineligible because it's already under review as a ${issue.inActiveReview}.`;
+              addendum = REQUEST_ISSUES.ineligible_in_active_review_msg.replace('{review_title}', issue.inActiveReview);
             }
 
             return <div className="issue" key={`issue-${index}`}>

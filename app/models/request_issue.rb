@@ -9,8 +9,8 @@ class RequestIssue < ApplicationRecord
   enum ineligible_reason: { in_active_review: 0, untimely: 1 }
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
-  INELIGIBLE_IN_ACTIVE_REVIEW_MSG = "is ineligible because it's already under review as a {review_title}".freeze
-  INELIGIBLE_UNTIMELY_MSG = "is ineligible because it has a prior decision date that’s older than 1 year".freeze
+  INELIGIBLE_IN_ACTIVE_REVIEW_MSG = Constants.REQUEST_ISSUES.ineligible_in_active_review_msg.freeze
+  INELIGIBLE_UNTIMELY_MSG = Constants.REQUEST_ISSUES.ineligible_untimely_msg.freeze
 
   def self.rated
     where.not(rating_issue_reference_id: nil, rating_issue_profile_date: nil)

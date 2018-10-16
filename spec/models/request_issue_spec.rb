@@ -70,16 +70,14 @@ describe RequestIssue do
       request_issue = create(:request_issue, ineligible_request_issue: rated_issue).tap(&:in_active_review!)
 
       expect(request_issue.ineligible_msg).to eq(
-        "is ineligible because it's already under review as a Higher Level Review"
+        Constants.REQUEST_ISSUES.ineligible_in_active_review_msg.dup.sub("{review_title}", "Higher Level Review")
       )
     end
 
     it "renders correct message for ineligible due to untimely" do
       request_issue = create(:request_issue, ineligible_request_issue: rated_issue).tap(&:untimely!)
 
-      expect(request_issue.ineligible_msg).to eq(
-        "is ineligible because it has a prior decision date that’s older than 1 year"
-      )
+      expect(request_issue.ineligible_msg).to eq(Constants.REQUEST_ISSUES.ineligible_untimely_msg)
     end
 
     context "#update_as_ineligible!" do
