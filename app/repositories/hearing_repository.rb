@@ -16,8 +16,12 @@ class HearingRepository
       hearings
     end
 
-    def fetch_hearings_for_parent(parent_hearing_pkseq)
-      VACOLS::CaseHearing.where(vdkey: parent_hearing_pkseq)
+    def fetch_video_hearings_for_parent(parent_hearing_pkseq)
+      hearings_for(VACOLS::CaseHearing.video_hearings_for_master_record(parent_hearing_pkseq))
+    end
+
+    def fetch_co_hearings_for_parent(parent_hearing_date)
+      hearings_for(VACOLS::CaseHearing.co_hearings_for_master_record(parent_hearing_date))
     end
 
     def load_issues(hearings)

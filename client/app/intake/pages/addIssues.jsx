@@ -43,10 +43,22 @@ export class AddIssuesPage extends React.PureComponent {
       return <div className="issues">
         <div>
           { issues.map((issue, index) => {
+            let issueKlasses = ['issue-desc'];
+            let addendum = '';
+
+            if (issue.isUnidentified) {
+              issueKlasses.push('unidentified-issue');
+            }
+            if (issue.inActiveReview) {
+              issueKlasses.push('in-active-review');
+              addendum = `is ineligible because it's already under review as a ${issue.inActiveReview}.`;
+            }
+
             return <div className="issue" key={`issue-${index}`}>
-              <div className={`issue-desc ${issue.isUnidentified ? 'unidentified-issue' : ''}`}>
+              <div className={issueKlasses.join(' ')}>
                 <span className="issue-num">{index + 1}.&nbsp;</span>
-                {issue.text}
+                {issue.text} {addendum}
+                <span className="issue-date">Decision date: {issue.date}</span>
                 { issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span> }
               </div>
               <div className="issue-action">
