@@ -291,7 +291,7 @@ RSpec.feature "Higher-Level Review" do
       hash_including(
         veteran_file_number: "12341234",
         claim_id: nonratings_end_product_establishment.reference_id,
-        contention_descriptions: ["Description for Active Duty Adjustments"],
+        contention_descriptions: ["Active Duty Adjustments - Description for Active Duty Adjustments"],
         special_issues: []
       )
     )
