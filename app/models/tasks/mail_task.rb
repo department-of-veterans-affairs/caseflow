@@ -1,21 +1,30 @@
 class MailTask < GenericTask
-  def self.create_from_params(params_array, current_user)
-    params_array.map do |params|
-      root_task = RootTask.find_by(appeal_id: params[:appeal].id)
-      # TODO: Die unless we find a RootTask.
+  class << self
+    def create_from_params(params_array, current_user)
+      verify_user_can_assign!(current_user)
 
-      # TODO: Do we need to verify current user's access to the root task? Just confirm they are a mail user?
-      # root_task.verify_user_access!(current_user)
+      params_array.map do |params|
+        root_task = RootTask.find_by(appeal_id: params[:appeal].id)
+        unless root_task
+          fail(Caseflow::Error::NoRootTask, message: "Could not find root task for appeal with ID #{params[:appeal]}")
+        end
 
-      mail_task = create!(
-        appeal: root_task.appeal,
-        parent_id: root_task.id,
-        assigned_to: MailTeam.singleton
-      )
+        mail_task = create!(
+          appeal: root_task.appeal,
+          parent_id: root_task.id,
+          assigned_to: MailTeam.singleton
+        )
 
-      params[:parent_id] = mail_task.id
+        params[:parent_id] = mail_task.id
+      end
+
+      GenericTask.create_from_params(params_array, current_user)
     end
 
-    GenericTask.create_from_params(params_array, current_user)
+    def verify_user_can_assign!(user)
+      unless MailTeam.user_has_access?(user)
+        fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot create a mail task"
+      end
+    end
   end
 end
