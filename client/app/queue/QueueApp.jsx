@@ -161,7 +161,10 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedReassignToUser = (props) => <AssignToView isReassignAction {...props.match.params} />;
 
-  routedCompleteTaskModal = (props) => <CompleteTaskModal {...props.match.params} />;
+  routedCompleteTaskModal = (props) => <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />;
+
+  routedSendColocatedTaskModal = (props) =>
+    <CompleteTaskModal modalType="send_colocated_task" {...props.match.params} />;
 
   routedOrganization = (props) => <OrganizationQueueLoadingScreen
     urlToLoad={`${props.location.pathname}/tasks`}>
@@ -325,9 +328,9 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedCompleteTaskModal} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/modal/:modalType(send_colocated_task)"
+            path="/queue/appeals/:appealId/modal/send_colocated_task"
             title="Mark Task Complete | Caseflow"
-            render={this.routedCompleteTaskModal} />
+            render={this.routedSendColocatedTaskModal} />
           <PageRoute
             exact
             path="/organizations/:organization"

@@ -27,7 +27,6 @@ import {
 
 import type { State } from './types/state';
 import type { Appeal, Task } from './types/models';
-import { withRouter } from 'react-router-dom';
 
 type Params = {|
   appealId: string,
