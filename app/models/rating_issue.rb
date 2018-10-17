@@ -34,15 +34,11 @@ class RatingIssue < ApplicationRecord
 
   def in_active_review
     return unless reference_id
-    request_issue = request_issue_in_review
+    request_issue = RequestIssue.in_review_for_rating_issue(self)
     request_issue.review_title if request_issue && request_issue.status_active?
   end
 
   private
-
-  def request_issue_in_review
-    RequestIssue.find_by(rating_issue_reference_id: reference_id, removed_at: nil)
-  end
 
   def related_request_issue
     return if contention_reference_id.nil?

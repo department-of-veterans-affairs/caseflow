@@ -42,6 +42,10 @@ class RequestIssue < ApplicationRecord
         is_unidentified: data[:is_unidentified]
       )
     end
+
+    def in_review_for_rating_issue(rating_issue)
+      find_by(rating_issue_reference_id: rating_issue.reference_id, removed_at: nil, ineligible_reason: nil)
+    end
   end
 
   def rated?
