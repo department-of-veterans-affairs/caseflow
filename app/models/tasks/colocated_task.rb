@@ -43,11 +43,18 @@ class ColocatedTask < Task
 
   def update_location_in_vacols
     if saved_change_to_status? &&
-       completed? &&
        appeal_type == LegacyAppeal.name &&
        all_tasks_completed_for_appeal?
-      AppealRepository.update_location!(appeal, location_based_on_action)
+      if completed?
+        AppealRepository.update_location!(appeal, location_based_on_action)
+      elsif canceled?
+        AppealRepository.update_location!(appeal, previous_location)
+      end
     end
+  end
+
+  def previous_location
+    assigned_by.vacols_uniq_id
   end
 
   def location_based_on_action
@@ -55,7 +62,7 @@ class ColocatedTask < Task
     when :translation, :schedule_hearing
       LegacyAppeal::LOCATION_CODES[action.to_sym]
     else
-      assigned_by.vacols_uniq_id
+      previous_location
     end
   end
 

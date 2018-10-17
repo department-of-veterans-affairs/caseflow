@@ -86,16 +86,11 @@ class Task < ApplicationRecord
 
   def mark_as_complete!
     update!(status: :completed)
-    parent.when_child_task_completed if parent
+    parent.when_child_task_completed_or_canceled if parent
   end
 
-  def mark_as_canceled!
-    update!(status: :completed)
-    parent.when_child_task_completed if parent
-  end
-
-  def when_child_task_completed
-    update_status_if_children_tasks_are_complete
+  def when_child_task_completed_or_canceled
+    update_status_if_children_tasks_are_complete_or_canceled
   end
 
   def can_be_accessed_by_user?(user)
@@ -152,8 +147,12 @@ class Task < ApplicationRecord
     children.first
   end
 
-  def update_status_if_children_tasks_are_complete
-    if children.any? && children.reject { |t| t.status == Constants.TASK_STATUSES.completed }.empty?
+  def update_status_if_children_tasks_are_complete_or_canceled
+    open_child_tasks = children.reject do
+      |t| t.status == Constants.TASK_STATUSES.completed || t.status == Constants.TASK_STATUSES.canceled
+    end
+
+    if children.any? && open_child_tasks.empty?
       return mark_as_complete! if assigned_to.is_a?(Organization)
       return update!(status: :assigned) if on_hold?
     end
@@ -166,7 +165,7 @@ class Task < ApplicationRecord
   end
 
   def update_parent_status
-    parent.when_child_task_completed if saved_change_to_status? && completed? && parent
+    parent.when_child_task_completed_or_canceled if saved_change_to_status? && (completed? || canceled?) && parent
   end
 
   def set_assigned_at_and_update_parent_status
