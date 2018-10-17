@@ -58,6 +58,11 @@ describe RequestIssue do
         expect(request_issue_in_review).to eq(rated_issue)
       end
 
+      it "accepts string or RatingIssue" do
+        request_issue_in_review = RequestIssue.in_review_for_rating_issue("abc123")
+        expect(request_issue_in_review).to eq(rated_issue)
+      end
+
       it "ignores request issues that are already ineligible" do
         request_issue = create(:request_issue, rating_issue_reference_id: rated_issue.rating_issue_reference_id)
         request_issue.update_as_ineligible!(other_request_issue: rated_issue, reason: :in_active_review)

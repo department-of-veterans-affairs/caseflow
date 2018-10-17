@@ -10,8 +10,6 @@ class RequestIssue < ApplicationRecord
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
 
-  delegate :status_active?, to: :end_product_establishment
-
   class << self
     def rated
       where.not(rating_issue_reference_id: nil, rating_issue_profile_date: nil)
@@ -32,7 +30,11 @@ class RequestIssue < ApplicationRecord
     end
 
     def from_intake_data(data)
-      new(
+      # there's a race condition here: if 2 intakes were being entered simultaneously that
+      # both refer to the same rating_issue then we can end up with 2 RequestIssues that
+      # point at the same rating_issue_reference_id. The first one should win. Any
+      # subsequent rating_issue matches should trigger the in_active_review ineligibility rule.
+      request_issue = new(
         rating_issue_reference_id: data[:reference_id],
         rating_issue_profile_date: data[:profile_date],
         description: data[:decision_text],
@@ -41,11 +43,25 @@ class RequestIssue < ApplicationRecord
         notes: data[:notes],
         is_unidentified: data[:is_unidentified]
       )
+      if data[:reference_id]
+        existing_request_issue = in_review_for_rating_issue(data[:reference_id])
+        if existing_request_issue
+          request_issue.ineligible_request_issue = existing_request_issue
+          request_issue.ineligible_reason = :in_active_review
+        end
+      end
+      request_issue
     end
 
     def in_review_for_rating_issue(rating_issue)
-      find_by(rating_issue_reference_id: rating_issue.reference_id, removed_at: nil, ineligible_reason: nil)
+      reference_id = rating_issue.is_a?(RatingIssue) ? rating_issue.reference_id : rating_issue
+      unscoped.find_by(rating_issue_reference_id: reference_id, removed_at: nil, ineligible_reason: nil)
     end
+  end
+
+  def status_active?
+    return false unless end_product_establishment
+    end_product_establishment.status_active?
   end
 
   def rated?
@@ -68,6 +84,10 @@ class RequestIssue < ApplicationRecord
 
   def review_title
     review_request_type.try(:constantize).try(:review_title)
+  end
+
+  def eligible?
+    ineligible_reason.nil?
   end
 
   def ui_hash

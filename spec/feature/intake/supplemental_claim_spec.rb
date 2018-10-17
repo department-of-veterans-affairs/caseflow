@@ -398,6 +398,9 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(row).to have_text(text)
     end
 
+    let(:in_active_review_rating_issue_reference_id) { "xyz789" }
+    let(:active_epe) { create(:end_product_establishment, :active) }
+
     let!(:timely_ratings) do
       Generators::Rating.build(
         participant_id: veteran.participant_id,
@@ -405,8 +408,18 @@ RSpec.feature "Supplemental Claim Intake" do
         profile_date: receipt_date - 50.days,
         issues: [
           { reference_id: "xyz123", decision_text: "Left knee granted" },
-          { reference_id: "xyz456", decision_text: "PTSD denied" }
+          { reference_id: "xyz456", decision_text: "PTSD denied" },
+          { reference_id: in_active_review_rating_issue_reference_id, decision_text: "Old injury" }
         ]
+      )
+    end
+
+    let!(:request_issue_in_progress) do
+      create(
+        :request_issue,
+        end_product_establishment: active_epe,
+        rating_issue_reference_id: in_active_review_rating_issue_reference_id,
+        description: "Old injury"
       )
     end
 
@@ -425,6 +438,7 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to have_content("Does issue 1 match any of these issues")
       expect(page).to have_content("Left knee granted")
       expect(page).to have_content("PTSD denied")
+      expect(page).to have_content("Old injury")
 
       # test canceling adding an issue by closing the modal
       safe_click ".close-modal"
@@ -478,6 +492,13 @@ RSpec.feature "Supplemental Claim Intake" do
       safe_click ".add-issue"
       expect(page).to have_content("3 issues")
       expect(page).to have_content("This is an unidentified issue")
+
+      # add ineligible issue
+      safe_click "#button-add-issue"
+      find_all("label", text: "Old injury").first.click
+      safe_click ".add-issue"
+      expect(page).to have_content("4 issues")
+      expect(page).to have_content("4. Old injury is ineligible")
 
       safe_click "#button-finish-intake"
 
@@ -533,6 +554,26 @@ RSpec.feature "Supplemental Claim Intake" do
                is_unidentified: true,
                end_product_establishment_id: end_product_establishment.id
       )).to_not be_nil
+
+      xyz789_request_issues = RequestIssue.where(rating_issue_reference_id: in_active_review_rating_issue_reference_id)
+      expect(xyz789_request_issues.count).to eq(2)
+
+      ineligible_issue = xyz789_request_issues.select(&:in_active_review?).first
+      expect(ineligible_issue).to be_in_active_review
+      expect(ineligible_issue.ineligible_request_issue).to eq(request_issue_in_progress)
+      expect(ineligible_issue.contention_reference_id).to be_nil
+
+      expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(
+        hash_including(
+          contention_descriptions: array_including("Old injury")
+        )
+      )
+
+      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+        hash_including(
+          contention_descriptions: array_including("Left knee granted")
+        )
+      )
     end
 
     scenario "Non-compensation" do
