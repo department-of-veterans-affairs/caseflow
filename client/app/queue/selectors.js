@@ -139,7 +139,8 @@ export const completeTasksByAssigneeCssIdSelector = createSelector(
 // Expect that the only tasks assigned to the Bva organization are RootTasks.
 export const rootTasksForAppealIfMailTeamMemberSelector = createSelector(
   [getTasksForAppeal, getUserIsMailTeamMember],
-  (tasks: Tasks, userIsMailTeamMember: boolean) => _.filter(tasks, (task) => userIsMailTeamMember && ['Bva'].includes(task.assignedTo.type))
+  (tasks: Tasks, userIsMailTeamMember: boolean) =>
+    _.filter(tasks, (task) => userIsMailTeamMember && ['Bva'].includes(task.assignedTo.type))
 );
 
 export const organizationTasksByAssigneeIdSelector = createSelector(

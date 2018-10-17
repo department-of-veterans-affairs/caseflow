@@ -149,7 +149,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
     highlightFormItems,
     task: tasksForAppealAssignedToUserSelector(state, { appealId: ownProps.appealId })[0] ||
       incompleteOrganizationTasksByAssigneeIdSelector(state, { appealId: ownProps.appealId })[0] ||
-      rootTasksForAppealIfMailTeamMemberSelector(state, {appealId: ownProps.appealId })[0],
+      rootTasksForAppealIfMailTeamMemberSelector(state, { appealId: ownProps.appealId })[0],
     appeal: appealWithDetailSelector(state, ownProps)
   };
 };

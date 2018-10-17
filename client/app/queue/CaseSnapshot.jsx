@@ -81,7 +81,8 @@ type Props = Params & {|
   appeal: Appeal,
   taskAssignedToUser: Task,
   taskAssignedToAttorney: Task,
-  taskAssignedToOrganization: Task
+  taskAssignedToOrganization: Task,
+  rootTaskForMailUser: Task
 |};
 
 export class CaseSnapshot extends React.PureComponent<Props> {
@@ -241,7 +242,12 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       taskAssignedToOrganization,
       rootTaskForMailUser
     } = this.props;
-    const tasks = _.compact([taskAssignedToUser, taskAssignedToAttorney, taskAssignedToOrganization, rootTaskForMailUser]);
+    const tasks = _.compact([
+      taskAssignedToUser,
+      taskAssignedToAttorney,
+      taskAssignedToOrganization,
+      rootTaskForMailUser
+    ]);
 
     return Boolean(tasks.length && _.every(tasks, (task) => task.taskId));
   }
