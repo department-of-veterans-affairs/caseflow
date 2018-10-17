@@ -88,6 +88,15 @@ export const formatRequestIssues = (requestIssues) => {
       };
     }
 
+    // Unidentified issues
+    if (issue.is_unidentified) {
+      return {
+        description: issue.description,
+        notes: issue.notes,
+        isUnidentified: issue.is_unidentified
+      };
+    }
+
     // Rated issues
     const issueDate = new Date(issue.profile_date);
 
@@ -133,7 +142,7 @@ const formatRatedIssues = (state) => {
   if (state.addedIssues && state.addedIssues.length > 0) {
     // we're using the new add issues page
     return state.addedIssues.
-      filter((issue) => issue.isRated).
+      filter((issue) => issue.isRated && !issue.isUnidentified).
       map((issue) => {
         return { reference_id: issue.id,
           decision_text: ratingIssues[issue.id],
@@ -191,24 +200,6 @@ export const formatIssues = (state) => {
   };
 
   return data;
-};
-
-// Returns a list of selected issues in the form of date:issueId
-// Useful for dirty checking, rather than deeply comparing two state objects
-export const getSelection = (ratings) => {
-  const dates = Object.keys(ratings);
-
-  return dates.reduce((selectedIssues, date) => {
-    const issueIds = Object.keys(ratings[date].issues);
-
-    issueIds.forEach((issueId) => {
-      if (ratings[date].issues[issueId].isSelected) {
-        selectedIssues.push(`${date}:${issueId}`);
-      }
-    });
-
-    return selectedIssues;
-  }, []);
 };
 
 export const getAddIssuesFields = (formType, veteran, intakeData) => {
