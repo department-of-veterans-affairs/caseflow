@@ -154,6 +154,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setTaskAttrs
 }, dispatch);
 
-export default (connect(mapStateToProps, mapDispatchToProps)(
-  editModalBase(AssignToView, COPY.ASSIGN_TO_PAGE_TITLE)
-): React.ComponentType<Params>);
+export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(
+  editModalBase(AssignToView, { title: COPY.ASSIGN_TO_PAGE_TITLE })
+)): React.ComponentType<Params>);

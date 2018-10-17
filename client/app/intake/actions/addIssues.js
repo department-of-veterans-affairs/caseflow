@@ -17,6 +17,10 @@ export const toggleUnidentifiedIssuesModal = () => ({
   type: ACTIONS.TOGGLE_UNIDENTIFIED_ISSUES_MODAL
 });
 
+export const toggleIssueRemoveModal = () => ({
+  type: ACTIONS.TOGGLE_ISSUE_REMOVE_MODAL
+});
+
 export const removeIssue = (index) => ({
   type: ACTIONS.REMOVE_ISSUE,
   payload: { index }
@@ -39,7 +43,7 @@ export const addRatedIssue = (args) => (dispatch) => {
   dispatch({
     type: ACTIONS.ADD_ISSUE,
     payload: {
-      issueId: args.issueId,
+      id: args.issueId,
       isRated: args.isRated,
       inActiveReview: foundDate[0].issues[args.issueId].in_active_review,
       profileDate: foundDate[0].profile_date,

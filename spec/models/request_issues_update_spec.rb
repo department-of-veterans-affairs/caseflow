@@ -3,6 +3,8 @@ require "rails_helper"
 describe RequestIssuesUpdate do
   before do
     FeatureToggle.enable!(:test_facols)
+    Time.zone = "America/New_York"
+    Timecop.freeze(Time.utc(2018, 5, 20))
 
     review.create_issues!(existing_request_issues)
   end
@@ -46,14 +48,16 @@ describe RequestIssuesUpdate do
         rating_issue_profile_date: Time.zone.local(2017, 4, 5),
         rating_issue_reference_id: "issue1",
         contention_reference_id: request_issue_contentions[0].id,
-        description: request_issue_contentions[0].text
+        description: request_issue_contentions[0].text,
+        rating_issue_associated_at: 5.days.ago
       ),
       RequestIssue.new(
         review_request: review,
         rating_issue_profile_date: Time.zone.local(2017, 4, 6),
         rating_issue_reference_id: "issue2",
         contention_reference_id: request_issue_contentions[1].id,
-        description: request_issue_contentions[1].text
+        description: request_issue_contentions[1].text,
+        rating_issue_associated_at: 5.days.ago
       )
     ]
   end
@@ -74,6 +78,7 @@ describe RequestIssuesUpdate do
     existing_request_issues.map do |issue|
       {
         reference_id: issue.rating_issue_reference_id,
+        profile_date: issue.rating_issue_profile_date,
         decision_text: issue.description
       }
     end
@@ -207,6 +212,7 @@ describe RequestIssuesUpdate do
 
       it "saves update, adds issues, and calls create contentions" do
         allow_create_contentions
+        allow_associate_rated_issues
 
         expect(subject).to be_truthy
 
@@ -230,6 +236,17 @@ describe RequestIssuesUpdate do
 
         expect(review.request_issues.count).to eq(3)
 
+        new_map = rated_end_product_establishment.send(:rated_issue_contention_map, review.request_issues.reload)
+
+        expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+          claim_id: rated_end_product_establishment.reference_id,
+          rated_issue_contention_map: new_map
+        )
+
+        review.request_issues.map(&:rating_issue_associated_at).each do |value|
+          expect(value).to eq(Time.zone.now)
+        end
+
         created_issue = review.request_issues.find_by(rating_issue_reference_id: "issue3")
         expect(created_issue).to have_attributes(
           rating_issue_profile_date: Time.zone.local(2017, 4, 7),
@@ -244,6 +261,7 @@ describe RequestIssuesUpdate do
 
       it "saves update, removes issues, and calls remove contentions" do
         allow_remove_contention
+        allow_associate_rated_issues
 
         expect(subject).to be_truthy
 
@@ -264,6 +282,15 @@ describe RequestIssuesUpdate do
         expect(removed_issue.removed_at).to_not be_nil
 
         expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
+
+        new_map = rated_end_product_establishment.send(:rated_issue_contention_map, review.request_issues.reload)
+
+        expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+          claim_id: rated_end_product_establishment.reference_id,
+          rated_issue_contention_map: new_map
+        )
+
+        expect(review.request_issues.first.rating_issue_associated_at).to eq(Time.zone.now)
       end
     end
 
@@ -305,6 +332,10 @@ describe RequestIssuesUpdate do
 
     def allow_create_contentions
       allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    end
+
+    def allow_associate_rated_issues
+      allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
     end
 
     def raise_error_on_remove_contention

@@ -54,7 +54,7 @@
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL": "This Post Remand data has hearing data associated with a previous original appeal.",
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK": "View all cases",
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK": " to see other cases associated with this Veteran.",
-  "CASE_DETAILS_INCORRECT_POA": "If the POA is incorrect, please send an email to an administrator with access to SHARE.",
+  "CASE_DETAILS_INCORRECT_POA": "This data is coming from VBMS. If you need to update POA, please contact an administrator with access to SHARE.",
   "CASE_DETAILS_UNABLE_TO_LOAD": "We're unable to load this information. If the problem persists, please submit feedback through Caseflow",
   "CASE_DETAILS_LOADING": "Loading...",
   "CASE_DETAILS_POA_VSO": "Veteran Service Organization",
@@ -188,8 +188,9 @@
 
   "HEARING_SCHEDULE_SUCCESS_MESSAGE": "You can view your uploaded schedule by clicking the link below",
 
-  "TASK_MARKED_COMPLETE_NOTICE_TITLE": "Task marked as complete",
-  "TASK_MARKED_COMPLETE_NOTICE_DETAIL": "Task for %s's case completed",
+  "MARK_TASK_COMPLETE_TITLE": "Mark this task complete",
+  "MARK_TASK_COMPLETE_COPY": "You are completing this task and sending the appeal back to the user who assigned it to you: %s.",
+  "MARK_TASK_COMPLETE_BUTTON": "Mark complete",
 
   "ADD_COLOCATED_TASK_SUBHEAD": "Submit admin action",
   "ADD_COLOCATED_TASK_ACTION_TYPE_LABEL": "Select the type of administrative action you'd like to assign:",
@@ -200,11 +201,8 @@
   "COLOCATED_ACTION_SEND_TO_TEAM": "Send to %s team",
   "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY": "Send back to attorney",
 
-  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY": "You are sending your completed administrative action back to",
-  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY_ATTORNEY_NAME": "%s (assigning attorney)",
   "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION": "%s's case has been sent back to %s (Assigning Attorney)",
   "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION_DETAIL": "If you've made a mistake, please email %s to manage any changes.",
-  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_BUTTON": "Send back to attorney",
 
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD": "Send action to %s",
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_SUBHEAD": "Select the team you'd like to send this administrative action to",
