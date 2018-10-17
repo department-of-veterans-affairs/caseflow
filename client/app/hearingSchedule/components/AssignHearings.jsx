@@ -141,7 +141,7 @@ export default class AssignHearings extends React.Component {
       return <div className="usa-input-error-message usa-input-error" {...smallTopMargin}>
         <span>{this.props.selectedRegionalOffice && this.props.selectedRegionalOffice.label} has
           no up and coming hearing days.</span><br />
-        <p>Please verify that this RO's hearing days in the current schedule</p>
+        <p>Please verify that this RO's hearing days are in the current schedule</p>
       </div>;
     }
   }
