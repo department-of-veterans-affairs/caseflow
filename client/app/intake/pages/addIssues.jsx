@@ -6,10 +6,11 @@ import React from 'react';
 
 import AddIssuesModal from '../components/AddIssuesModal';
 import NonRatedIssueModal from '../components/NonRatedIssueModal';
+import RemoveIssueModal from '../components/RemoveIssueModal';
 import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
 import Button from '../../components/Button';
 import RequestIssuesUpdateErrorAlert from '../../intakeEdit/components/RequestIssuesUpdateErrorAlert';
-import { FORM_TYPES, PAGE_PATHS } from '../constants';
+import { REQUEST_STATE, FORM_TYPES, PAGE_PATHS } from '../constants';
 import { formatDate } from '../../util/DateUtil';
 import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 import Table from '../../components/Table';
@@ -17,16 +18,38 @@ import {
   toggleAddIssuesModal,
   toggleNonRatedIssueModal,
   removeIssue,
-  toggleUnidentifiedIssuesModal
+  toggleUnidentifiedIssuesModal,
+  toggleIssueRemoveModal
 } from '../actions/addIssues';
 
-export class AddIssuesPage extends React.PureComponent {
+export class AddIssuesPage extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      issueRemoveIndex: 0
+    };
+  }
+
+  onRemoveClick = (index) => {
+    if (this.props.toggleIssueRemoveModal) {
+      // on the edit page, so show the remove modal
+      this.setState({
+        issueRemoveIndex: index
+      });
+      this.props.toggleIssueRemoveModal();
+    } else {
+      this.props.removeIssue(index);
+    }
+  }
+
   render() {
     const {
       intakeForms,
       formType,
       veteran,
-      responseErrorCode
+      responseErrorCode,
+      requestState
     } = this.props;
 
     if (!formType) {
@@ -58,12 +81,12 @@ export class AddIssuesPage extends React.PureComponent {
               <div className={issueKlasses.join(' ')}>
                 <span className="issue-num">{index + 1}.&nbsp;</span>
                 {issue.text} {addendum}
-                <span className="issue-date">Decision date: {issue.date}</span>
+                { issue.date && <span className="issue-date">Decision date: {issue.date}</span> }
                 { issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span> }
               </div>
               <div className="issue-action">
                 <Button
-                  onClick={() => this.props.removeIssue(index)}
+                  onClick={() => this.onRemoveClick(index)}
                   classNames={['cf-btn-link', 'remove-issue']}
                 >
                   <i className="fa fa-trash-o" aria-hidden="true"></i>Remove
@@ -118,9 +141,14 @@ export class AddIssuesPage extends React.PureComponent {
         intakeData={intakeData}
         closeHandler={this.props.toggleUnidentifiedIssuesModal} />
       }
-      <h1 className="cf-txt-c">Add Issues</h1>
+      { intakeData.removeIssueModalVisible && <RemoveIssueModal
+        removeIndex={this.state.issueRemoveIndex}
+        intakeData={intakeData}
+        closeHandler={this.props.toggleIssueRemoveModal} />
+      }
+      <h1 className="cf-txt-c">Add / Remove Issues</h1>
 
-      { responseErrorCode &&
+      { requestState === REQUEST_STATE.FAILED &&
         <RequestIssuesUpdateErrorAlert responseErrorCode={responseErrorCode} />
       }
 
@@ -141,6 +169,7 @@ export const IntakeAddIssuesPage = connect(
     },
     formType: intake.formType,
     veteran: intake.veteran,
+    requestState: null,
     responseErrorCode: null
   }),
   (dispatch) => bindActionCreators({
@@ -159,11 +188,12 @@ export const EditAddIssuesPage = connect(
     },
     formType: state.formType,
     veteran: state.veteran,
-    requestStatus: state.requestStatus.requestIssuesUpdate,
+    requestState: state.requestStatus.requestIssuesUpdate,
     responseErrorCode: state.responseErrorCode
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
+    toggleIssueRemoveModal,
     toggleNonRatedIssueModal,
     toggleUnidentifiedIssuesModal,
     removeIssue

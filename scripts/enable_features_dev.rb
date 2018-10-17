@@ -49,6 +49,10 @@ json_config = <<EOS.strip_heredoc
         {
           feature: "idt_ama_appeals",
           enable_all: true
+        },
+        {
+          feature: "use_representative_info_from_bgs",
+          enable_all: true
         }
   ]
 EOS

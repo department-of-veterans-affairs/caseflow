@@ -291,7 +291,7 @@ RSpec.feature "Higher-Level Review" do
       hash_including(
         veteran_file_number: "12341234",
         claim_id: nonratings_end_product_establishment.reference_id,
-        contention_descriptions: ["Description for Active Duty Adjustments"],
+        contention_descriptions: ["Active Duty Adjustments - Description for Active Duty Adjustments"],
         special_issues: []
       )
     )
@@ -503,7 +503,7 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
   end
 
-  context "For new Add Issues page" do
+  context "For new Add / Remove Issues page" do
     def check_row(label, text)
       row = find("tr", text: label)
       expect(row).to have_text(text)
@@ -532,7 +532,7 @@ RSpec.feature "Higher-Level Review" do
       higher_level_review, = start_higher_level_review(veteran, claim_participant_id: "5382910292")
       visit "/intake/add_issues"
 
-      expect(page).to have_content("Add Issues")
+      expect(page).to have_content("Add / Remove Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Bob Vance, Spouse (payee code 02)")
@@ -660,7 +660,7 @@ RSpec.feature "Higher-Level Review" do
       start_higher_level_review(veteran, is_comp: false)
       visit "/intake/add_issues"
 
-      expect(page).to have_content("Add Issues")
+      expect(page).to have_content("Add / Remove Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
       check_row("Benefit type", "Education")
       expect(page).to_not have_content("Claimant")
@@ -670,7 +670,7 @@ RSpec.feature "Higher-Level Review" do
       _, intake = start_higher_level_review(veteran)
       visit "/intake/add_issues"
 
-      expect(page).to have_content("Add Issues")
+      expect(page).to have_content("Add / Remove Issues")
       safe_click "#cancel-intake"
       expect(find("#modal_id-title")).to have_content("Cancel Intake?")
       safe_click ".close-modal"

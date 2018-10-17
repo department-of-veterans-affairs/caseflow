@@ -27,6 +27,7 @@ import {
 
 import type { State } from './types/state';
 import type { Appeal, Task } from './types/models';
+import { withRouter } from 'react-router-dom';
 
 type Params = {|
   appealId: string,
@@ -205,5 +206,5 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  editModalBase(AssignToView, COPY.ASSIGN_TO_PAGE_TITLE)
+  editModalBase(AssignToView, { title: COPY.ASSIGN_TO_PAGE_TITLE })
 )): React.ComponentType<Params>);

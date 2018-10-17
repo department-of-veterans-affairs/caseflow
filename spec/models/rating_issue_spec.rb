@@ -83,6 +83,16 @@ describe RatingIssue do
 
       expect(rating_issue.in_active_review).to eq("Supplemental Claim")
     end
+
+    context "removed issue" do
+      let(:review_request_type) { nil }
+
+      it "is falsey if the issue has been removed" do
+        rating_issue = RatingIssue.new(reference_id: reference_id)
+
+        expect(rating_issue.in_active_review).to be_falsey
+      end
+    end
   end
 
   context "#save_with_request_issue!" do

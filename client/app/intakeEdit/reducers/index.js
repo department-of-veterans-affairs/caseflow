@@ -2,7 +2,7 @@ import { ACTIONS } from '../constants';
 import { applyCommonReducers } from '../../intake/reducers/common';
 import { REQUEST_STATE } from '../../intake/constants';
 import { update } from '../../util/ReducerUtil';
-import { formatRequestIssues, formatRatings, getSelection } from '../../intake/util/issues';
+import { formatRequestIssues, formatRatings } from '../../intake/util/issues';
 import { formatRelationships } from '../../intake/util';
 
 export const mapDataToInitialState = function(props = {}) {
@@ -26,8 +26,6 @@ export const mapDataToInitialState = function(props = {}) {
 };
 
 export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
-  let serverRatings;
-
   switch (action.type) {
   case ACTIONS.REQUEST_ISSUES_UPDATE_START:
     return update(state, {
@@ -38,17 +36,12 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
       }
     });
   case ACTIONS.REQUEST_ISSUES_UPDATE_SUCCEED:
-    serverRatings = formatRatings(action.payload.ratings, action.payload.ratedRequestIssues);
-
     return update(state, {
       requestStatus: {
         requestIssuesUpdate: {
           $set: REQUEST_STATE.SUCCEEDED
         }
       },
-      ratings: { $set: serverRatings },
-      originalSelection: { $set: getSelection(serverRatings) },
-      ratingsChanged: { $set: false },
       responseErrorCode: { $set: null }
     });
   case ACTIONS.REQUEST_ISSUES_UPDATE_FAIL:
