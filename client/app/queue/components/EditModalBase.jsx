@@ -8,7 +8,6 @@ import { highlightInvalidFormItems } from '../uiReducer/uiActions';
 
 import Alert from '../../components/Alert';
 import { css } from 'glamor';
-import { withRouter } from 'react-router-dom';
 
 const bottomMargin = css({
   marginBottom: '1.5rem'
@@ -23,6 +22,10 @@ export default function editModalBase(ComponentToWrap, { title, button, propsToT
     }
 
     getWrappedComponentRef = (ref) => this.wrappedComponent = ref;
+
+    cancelHandler = () => {
+      this.props.history.goBack();
+    }
 
     closeHandler = () => {
       this.props.history.replace('/queue');
@@ -62,14 +65,14 @@ export default function editModalBase(ComponentToWrap, { title, button, propsToT
         buttons={[{
           classNames: ['usa-button', 'cf-btn-link'],
           name: 'Cancel',
-          onClick: this.closeHandler
+          onClick: this.cancelHandler
         }, {
           classNames: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
           name: this.button(),
           loading: this.state.loading,
           onClick: this.submit
         }]}
-        closeHandler={this.closeHandler}>
+        closeHandler={this.cancelHandler}>
         {error &&
           <div {...bottomMargin}>
             <Alert type="error" title={error.title} message={error.detail} />
