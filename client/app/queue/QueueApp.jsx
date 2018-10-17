@@ -29,12 +29,10 @@ import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
-import MarkTaskCompleteView from './MarkTaskCompleteView';
+import CompleteTaskModal from './components/CompleteTaskModal';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
-
-import TriggerModal from './TriggerModal';
 
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
@@ -160,11 +158,7 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
-  routedMarkTaskComplete = (props) => <MarkTaskCompleteView
-    nextStep={`/queue/appeals/${props.match.params.appealId}`}
-    {...props.match.params} />;
-
-  triggerModal = (props) => <TriggerModal modal={props.match.params.modalType} />;
+  routedCompleteTaskModal = (props) => <CompleteTaskModal {...props.match.params} />;
 
   routedOrganization = (props) => <OrganizationQueueLoadingScreen
     urlToLoad={`${props.location.pathname}/tasks`}>
@@ -320,14 +314,9 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedColocatedPlaceHold} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/mark_task_complete"
+            path="/queue/appeals/:appealId/modal/:modalType(mark_task_complete|send_colocated_task)"
             title="Mark Task Complete | Caseflow"
-            render={this.routedMarkTaskComplete} />
-          <PageRoute
-            exact
-            path="/queue/modal/:modalType"
-            title="Caseflow"
-            render={this.triggerModal} />
+            render={this.routedCompleteTaskModal} />
           <PageRoute
             exact
             path="/organizations/:organization"
