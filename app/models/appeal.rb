@@ -157,6 +157,10 @@ class Appeal < AmaReview
     RootTask.create_root_and_sub_tasks!(self)
   end
 
+  def actionable_tasks_for_user(user)
+    tasks.select { |t| t.actionable?(user) }
+  end
+
   private
 
   def bgs

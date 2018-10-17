@@ -92,15 +92,24 @@ class Task < ApplicationRecord
     update_status_if_children_tasks_are_complete
   end
 
+  def actionable?(user)
+    return false if completed? || on_hold?
+    can_be_accessed_by_user?(user)
+  end
+
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
   def can_be_accessed_by_user?(user)
-    if assigned_to == user ||
-       assigned_by == user ||
+    if (assigned_to && assigned_to == user) ||
+       (assigned_by && assigned_by == user) ||
        (parent && parent.assigned_to == user) ||
        Constants::AttorneyJudgeTeams::JUDGES[Rails.current_env].keys.include?(user.css_id)
       return true
     end
     false
   end
+  # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def verify_user_access!(user)
     unless can_be_accessed_by_user?(user)

@@ -30,6 +30,11 @@ class ColocatedTask < Task
     end
   end
 
+  def actionable?(user)
+    return false if completed?
+    can_be_accessed_by_user?(user)
+  end
+
   def update_if_hold_expired!
     update!(status: Constants.TASK_STATUSES.in_progress) if on_hold_expired?
   end
