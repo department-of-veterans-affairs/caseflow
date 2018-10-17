@@ -277,7 +277,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: "12341234",
       claim_id: nonratings_end_product_establishment.reference_id,
-      contention_descriptions: ["Description for Active Duty Adjustments"],
+      contention_descriptions: ["Active Duty Adjustments - Description for Active Duty Adjustments"],
       special_issues: []
     )
 
@@ -392,7 +392,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
   end
 
-  context "For new Add Issues page" do
+  context "For new Add / Remove Issues page" do
     def check_row(label, text)
       row = find("tr", text: label)
       expect(row).to have_text(text)
@@ -414,7 +414,7 @@ RSpec.feature "Supplemental Claim Intake" do
       supplemental_claim, = start_supplemental_claim(veteran)
       visit "/intake/add_issues"
 
-      expect(page).to have_content("Add Issues")
+      expect(page).to have_content("Add / Remove Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Ed Merica")
@@ -539,7 +539,7 @@ RSpec.feature "Supplemental Claim Intake" do
       start_supplemental_claim(veteran, is_comp: false)
       visit "/intake/add_issues"
 
-      expect(page).to have_content("Add Issues")
+      expect(page).to have_content("Add / Remove Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
       check_row("Benefit type", "Education")
       expect(page).to_not have_content("Claimant")
@@ -549,7 +549,7 @@ RSpec.feature "Supplemental Claim Intake" do
       _, intake = start_supplemental_claim(veteran)
       visit "/intake/add_issues"
 
-      expect(page).to have_content("Add Issues")
+      expect(page).to have_content("Add / Remove Issues")
       safe_click "#cancel-intake"
       expect(find("#modal_id-title")).to have_content("Cancel Intake?")
       safe_click ".close-modal"
