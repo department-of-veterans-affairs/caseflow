@@ -96,7 +96,11 @@ EOS
       num_found = 0
       cursor = VACOLS::Decass.connection.execute(query_select)
       num_found += 1 while cursor.fetch
-      fail unless num_found == records_duplicate.length - 1
+      unless num_found == records_duplicate.length - 1
+        puts "Skipping records because query found #{num_found} instead of #{records_duplicate.length - 1} records to "\
+          "delete. The dates probably didn't match."
+        next
+      end
 
       puts "Deleting #{records_duplicate.length - 1} duplicates of #{k}"
       query_delete = <<EOS.strip_heredoc
