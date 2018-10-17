@@ -701,7 +701,7 @@ RSpec.feature "Checkout flows" do
       click_on COPY::MARK_TASK_COMPLETE_BUTTON
 
       expect(page).to have_content(
-        format(COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION, vet_name, attorney_name_display)
+        format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, vet_name)
       )
 
       expect(colocated_action.reload.status).to eq "completed"
