@@ -728,7 +728,7 @@ class LegacyAppeal < ApplicationRecord
 
   def ineligibile_for_ramp_at_bva?
     !(((status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)) ||
-      eligible_for_ramp_despite_being_at_bva?)
+      eligible_for_ramp_despite_being_at_bva?) || activated?
   end
 
   # AMO has decided that appeals with docket dates 2016 and afterwards are eligble for RAMP even
