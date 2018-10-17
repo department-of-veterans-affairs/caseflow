@@ -227,5 +227,5 @@ export default (connect(
 export const AssignWidgetModal = (connect(
   mapStateToProps,
   mapDispatchToProps
-)(editModalBase(AssignWidget, COPY.ASSIGN_WIDGET_MODAL_TITLE)): React.ComponentType<Params>);
+)(editModalBase(AssignWidget, { title: COPY.ASSIGN_WIDGET_MODAL_TITLE })): React.ComponentType<Params>);
 

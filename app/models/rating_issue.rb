@@ -23,17 +23,18 @@ class RatingIssue < ApplicationRecord
   end
 
   def self.from_bgs_hash(data)
+    rba_contentions = [data.dig(:rba_issue_contentions) || {}].flatten
     new(
       reference_id: data[:rba_issue_id],
-      profile_date: data.dig(:rba_issue_contentions, :prfil_dt),
-      contention_reference_id: data.dig(:rba_issue_contentions, :cntntn_id),
+      profile_date: rba_contentions.first.dig(:prfil_dt),
+      contention_reference_id: rba_contentions.first.dig(:cntntn_id),
       decision_text: data[:decn_txt]
     )
   end
 
   def in_active_review
     ri = RequestIssue.find_by(rating_issue_reference_id: reference_id, removed_at: nil)
-    return ri.review_request_type.underscore.titleize if ri
+    return ri.review_request_type.underscore.titleize if ri && ri.review_request_type
   end
 
   private
