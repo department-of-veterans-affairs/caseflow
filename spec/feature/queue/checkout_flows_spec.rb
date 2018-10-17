@@ -691,7 +691,6 @@ RSpec.feature "Checkout flows" do
       appeal = colocated_action.appeal
 
       vet_name = appeal.veteran_full_name
-      attorney_name = colocated_action.assigned_by_display_name
 
       click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
       click_dropdown 0
