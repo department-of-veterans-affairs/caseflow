@@ -188,9 +188,11 @@
 
   "HEARING_SCHEDULE_SUCCESS_MESSAGE": "You can view your uploaded schedule by clicking the link below",
 
-  "MARK_TASK_COMPLETE_TITLE": "Mark this task complete",
-  "MARK_TASK_COMPLETE_COPY": "You are completing this task and sending the appeal back to the user who assigned it to you: %s.",
+  "MARK_TASK_COMPLETE_TITLE": "Mark as complete",
+  "MARK_TASK_COMPLETE_COPY": "Mark this task \"complete\" and send the case back to %s.",
   "MARK_TASK_COMPLETE_BUTTON": "Mark complete",
+  "MARK_TASK_COMPLETE_CONFIRMATION": "%s's case has been marked complete",
+  "MARK_TASK_COMPLETE_CONFIRMATION_DETAIL": "If you've made a mistake, please email %s to manage any changes.",
 
   "ADD_COLOCATED_TASK_SUBHEAD": "Submit admin action",
   "ADD_COLOCATED_TASK_ACTION_TYPE_LABEL": "Select the type of administrative action you'd like to assign:",
@@ -200,9 +202,6 @@
 
   "COLOCATED_ACTION_SEND_TO_TEAM": "Send to %s team",
   "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY": "Send back to attorney",
-
-  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION": "%s's case has been sent back to %s (Assigning Attorney)",
-  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION_DETAIL": "If you've made a mistake, please email %s to manage any changes.",
 
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD": "Send action to %s",
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_SUBHEAD": "Select the team you'd like to send this administrative action to",
