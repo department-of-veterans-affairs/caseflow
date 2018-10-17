@@ -49,7 +49,7 @@ class AssignHearingsContainer extends React.PureComponent {
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
-      this.props.onReceiveVeteransReadyForHearing(_.keyBy(resp.veterans, 'id'));
+      this.props.onReceiveVeteransReadyForHearing(_.keyBy(resp.veterans, 'vbmsId'));
     });
   };
 
@@ -71,6 +71,7 @@ class AssignHearingsContainer extends React.PureComponent {
         onSelectedHearingDayChange={this.props.onSelectedHearingDayChange}
         selectedHearingDay={this.props.selectedHearingDay}
         veteransReadyForHearing={this.props.veteransReadyForHearing}
+        userId={this.props.userId}
       />
     </LoadingDataDisplay>;
 
@@ -82,7 +83,8 @@ const mapStateToProps = (state) => ({
   selectedRegionalOffice: state.hearingSchedule.selectedRegionalOffice,
   upcomingHearingDays: state.hearingSchedule.upcomingHearingDays,
   selectedHearingDay: state.hearingSchedule.selectedHearingDay,
-  veteransReadyForHearing: state.hearingSchedule.veteransReadyForHearing
+  veteransReadyForHearing: state.hearingSchedule.veteransReadyForHearing,
+  userId: state.ui.userId
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

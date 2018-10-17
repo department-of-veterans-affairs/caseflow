@@ -13,6 +13,8 @@ import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
 import CaseDetailsLink from "../../queue/CaseDetailsLink";
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
+import ApiUtil from "../../util/ApiUtil";
+import {prepareTasksForStore} from "../../queue/utils";
 
 const colorAOD = css({
   color: 'red'
@@ -40,6 +42,31 @@ export default class AssignHearings extends React.Component {
 
   onSelectedHearingDayChange = (hearingDay) => () => {
     this.props.onSelectedHearingDayChange(hearingDay);
+  };
+
+  onClick = (args) => {
+    const payload = {
+      data: {
+        tasks: [
+          {
+            type: 'ScheduleHearingTask',
+            action: 'Assign Hearing',
+            external_id: args[0].appeal.externalId,
+            appeal_id: args[0].appeal.appealId,
+            assigned_to_type: 'Organization',
+            assigned_to_id: this.props.userId
+          }
+        ]
+      }
+    };
+
+    ApiUtil.post(`/tasks`, payload).
+    then((resp) => {
+      const response = JSON.parse(resp.text);
+      const preparedTasks = prepareTasksForStore(response.tasks.data);
+
+      this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.uniqueId]);
+    });
   };
 
   roomInfo = (hearingDay) => {
@@ -111,10 +138,10 @@ export default class AssignHearings extends React.Component {
 
   appellantName = (hearingDay) => {
     if (hearingDay.appellantFirstName && hearingDay.appellantLastName) {
-      return `${hearingDay.appellantFirstName} ${hearingDay.appellantLastName} | ${hearingDay.id}`;
+      return `${hearingDay.appellantFirstName} ${hearingDay.appellantLastName} | ${hearingDay.vbmsId}`;
     }
 
-    return `${hearingDay.id}`;
+    return `${hearingDay.vbmsId}`;
 
   };
 
@@ -125,7 +152,8 @@ export default class AssignHearings extends React.Component {
       docketNumber: veteran.docketNumber,
       location: this.props.selectedRegionalOffice.value === 'C' ? 'Washington DC' : veteran.location,
       time: veteran.time,
-      vacolsId: veteran.vacolsId
+      vacolsId: veteran.vacolsId,
+      appealId: veteran.appealId
     }));
   };
 
@@ -147,9 +175,10 @@ export default class AssignHearings extends React.Component {
         align: 'left',
         valueName: 'caseDetails',
         valueFunction: (veteran) => <CaseDetailsLink
-          appeal={ {externalId: veteran.vacolsId} }
+          appeal={ {externalId: veteran.vacolsId, appealId: veteran.appealId} }
           userRole={'Hearings Mgmt'}
-          getLinkText={() => `${veteran.caseDetails}`} />,
+          getLinkText={() => `${veteran.caseDetails}`}
+          onClick={this.onClick} />,
       },
       {
         header: 'Type(s)',
@@ -235,5 +264,6 @@ AssignHearings.propTypes = {
   upcomingHearingDays: PropTypes.object,
   onSelectedHearingDayChange: PropTypes.func,
   selectedHearingDay: PropTypes.object,
-  veteransReadyForHearing: PropTypes.object
+  veteransReadyForHearing: PropTypes.object,
+  userId: PropTypes.number
 };
