@@ -1,5 +1,5 @@
 class GenericTask < Task
-  def allowed_actions(user)
+  def available_actions(user)
     return [] if assigned_to != user && !assigned_to.is_a?(Organization)
 
     return [{ label: "Mark task complete", value: "modal/mark_task_complete" }] if assigned_to.is_a?(Vso)
