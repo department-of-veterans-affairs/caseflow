@@ -3,12 +3,12 @@ class JudgeLegacyTask < LegacyTask
     if Constants::DECASS_WORK_PRODUCT_TYPES["OMO_REQUEST"].include?(work_product)
       {
         label: COPY::JUDGE_CHECKOUT_OMO_LABEL,
-        value: "/appeals/#{appeal.external_id}/omo_request/evaluate"
+        value: "omo_request/evaluate"
       }
     else
       {
         label: COPY::JUDGE_CHECKOUT_DISPATCH_LABEL,
-        value: "/appeals/#{appeal.external_id}/dispatch_decision/dispositions"
+        value: "dispatch_decision/dispositions"
       }
     end
   end

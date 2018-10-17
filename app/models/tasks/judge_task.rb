@@ -17,7 +17,7 @@ class JudgeTask < Task
       [
         {
           label: COPY::JUDGE_CHECKOUT_DISPATCH_LABEL,
-          value: "/appeals/#{appeal.external_id}/dispatch_decision/special_issues"
+          value: "dispatch_decision/special_issues"
         }
       ]
     end

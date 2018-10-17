@@ -40,7 +40,7 @@ class ColocatedTask < Task
       },
       {
         label: COPY::COLOCATED_ACTION_PLACE_HOLD,
-        value: "/appeals/#{appeal.external_id}/#{Constants::CO_LOCATED_ACTIONS["PLACE_HOLD"]}"
+        value: Constants::CO_LOCATED_ACTIONS["PLACE_HOLD"]
       }
     ]
 

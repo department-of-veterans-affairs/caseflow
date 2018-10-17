@@ -12,11 +12,11 @@ class AttorneyTask < Task
     [
       {
         label: COPY::ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
-        value: "/appeals/#{appeal.external_id}/draft_decision/special_issues"
+        value: "draft_decision/special_issues"
       },
       {
         label: COPY::ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL,
-        value: "/appeals/#{appeal.external_id}/colocated_task"
+        value: "colocated_task"
       }
     ]
   end
