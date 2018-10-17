@@ -82,7 +82,7 @@ class HearingDay < ApplicationRecord
     end
 
     def find_hearing_day(hearing_type, hearing_key)
-      enrich_with_judge_name(find(hearing_key))
+      find(hearing_key)
     rescue ActiveRecord::RecordNotFound
       HearingDayRepository.find_hearing_day(hearing_type, hearing_key)
     end
@@ -107,13 +107,6 @@ class HearingDay < ApplicationRecord
         end
         result << hearing_day
       end
-    end
-
-    def enrich_with_judge_name(hearing_day)
-      judge = User.css_ids_by_vlj_ids([hearing_day[:judge_id]])
-
-      hearing_day.to_hash.merge(judge_first_name: judge[hearing_day[:judge_id]][:first_name],
-                                judge_last_name: judge[hearing_day[:judge_id]][:last_name])
     end
 
     def current_user_css_id
