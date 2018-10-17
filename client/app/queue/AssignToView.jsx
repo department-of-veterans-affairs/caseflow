@@ -89,7 +89,7 @@ class AssignToView extends React.Component<Props, ViewState> {
 
     return this.props.requestSave('/tasks', payload, successMsg).
       then(() => {
-        this.props.setTaskAttrs(appeal.externalId, { status: 'on_hold' });
+        this.props.setTaskAttrs(task.uniqueId, { status: 'on_hold' });
       });
   }
 
@@ -156,5 +156,5 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  editModalBase(AssignToView, COPY.ASSIGN_TO_PAGE_TITLE)
+  editModalBase(AssignToView, { title: COPY.ASSIGN_TO_PAGE_TITLE })
 )): React.ComponentType<Params>);
