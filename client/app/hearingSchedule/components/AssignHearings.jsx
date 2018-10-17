@@ -30,6 +30,25 @@ const sectionNavigationListStyling = css({
   }
 });
 
+const smallTopMargin = css({
+  fontStyle: 'italic',
+  '.usa-input-error': {
+    marginTop: '1rem'
+  },
+  '.usa-input-error-message': {
+    paddingBottom: '0',
+    paddingTop: '0',
+    right: '0'
+  },
+  '& > p': {
+    fontWeight: '500',
+    color: COLORS.RED_DARK,
+    marginBottom: '0',
+    fontSize: '1.7rem',
+    marginTop: '1px'
+  }
+});
+
 export default class AssignHearings extends React.Component {
 
   // required to reset the RO Dropdown when moving from Viewing and Assigning.
@@ -117,6 +136,16 @@ export default class AssignHearings extends React.Component {
 
   }
 
+  getNoUpcomingError = () => {
+    if (_.isEmpty(this.props.upcomingHearingDays)) {
+      return <div className="usa-input-error-message usa-input-error" {...smallTopMargin}>
+        <span>{this.props.selectedRegionalOffice && this.props.selectedRegionalOffice.label} has
+          no up and coming hearing days.</span><br />
+        <p>Please verify that this RO's hearing days in the current schedule</p>
+      </div>;
+    }
+  }
+
   tableAssignHearingsRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
       caseDetails: this.appellantName(veteran),
@@ -201,6 +230,7 @@ export default class AssignHearings extends React.Component {
   };
 
   render() {
+
     return <AppSegment filledBackground>
       <h1>{COPY.HEARING_SCHEDULE_ASSIGN_HEARINGS_HEADER}</h1>
       <Link
@@ -208,6 +238,7 @@ export default class AssignHearings extends React.Component {
         to="/schedule">
         {COPY.HEARING_SCHEDULE_ASSIGN_HEARINGS_VIEW_SCHEDULE_LINK}
       </Link>
+      <div>{this.props.upcomingHearingDays && this.getNoUpcomingError()}</div>
       <RoSelectorDropdown
         onChange={this.props.onRegionalOfficeChange}
         value={this.props.selectedRegionalOffice}
