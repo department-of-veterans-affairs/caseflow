@@ -91,14 +91,7 @@ class AssignToView extends React.Component<Props, ViewState> {
       }
     };
 
-    let assignee = this.props.isTeamAssign ? 'team' : 'person';
-
-    this.options().forEach((opt) => {
-      if (opt.value === this.state.selectedValue) {
-        assignee = opt.label;
-      }
-    });
-    const successMsg = { title: `Task assigned to ${assignee}` };
+    const successMsg = { title: `Task assigned to ${this.getAssignee()}` };
 
     if (isReassignAction) {
       return this.reassignTask();
@@ -108,6 +101,18 @@ class AssignToView extends React.Component<Props, ViewState> {
       then(() => {
         this.props.setTaskAttrs(task.uniqueId, { status: 'on_hold' });
       });
+  }
+
+  getAssignee = () => {
+    let assignee = 'person';
+
+    this.options().forEach((opt) => {
+      if (opt.value === this.state.selectedValue) {
+        assignee = opt.label;
+      }
+    });
+
+    return assignee;
   }
 
   reassignTask = () => {
@@ -124,14 +129,7 @@ class AssignToView extends React.Component<Props, ViewState> {
       }
     };
 
-    let assignee = 'person';
-
-    this.options().forEach((opt) => {
-      if (opt.value === this.state.selectedValue) {
-        assignee = opt.label;
-      }
-    });
-    const successMsg = { title: `Task reassigned to ${assignee}` };
+    const successMsg = { title: `Task reassigned to ${this.getAssignee()}` };
 
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
