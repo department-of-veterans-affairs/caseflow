@@ -217,9 +217,9 @@ RSpec.feature "Higher-Level Review" do
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
-    expect(page).to have_content(
-      "Established EP: 030HLRR - Higher-Level Review Rating for Station 499"
-    )
+    expect(page).to have_content("A Higher-Level Review Rating EP is being established:")
+    expect(page).to have_content("Contention: Description for Active Duty Adjustments")
+    expect(page).to have_content("Informal Conference Tracked Item")
 
     # ratings end product
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
