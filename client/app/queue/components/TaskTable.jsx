@@ -33,6 +33,8 @@ type Params = {|
   includeDocumentId?: boolean,
   includeType?: boolean,
   includeDocketNumber?: boolean,
+  includeCompletedDate?: boolean,
+  includeCompletedToName?: boolean,
   includeIssueCount?: boolean,
   includeDueDate?: boolean,
   includeDaysWaiting?: boolean,
@@ -51,16 +53,16 @@ type Props = Params & {|
 |};
 
 class TaskTable extends React.PureComponent<Props> {
-  getKeyForRow = (rowNumber, object: TaskWithAppeal) => object.externalAppealId
+  getKeyForRow = (rowNumber, object: TaskWithAppeal) => object.uniqueId
 
-  isTaskSelected = (externalAppealId) => {
+  isTaskSelected = (uniqueId) => {
     if (!this.props.isTaskAssignedToUserSelected) {
       return false;
     }
 
     const isTaskSelected = this.props.isTaskAssignedToUserSelected[this.props.userId] || {};
 
-    return isTaskSelected[externalAppealId] || false;
+    return isTaskSelected[uniqueId] || false;
   }
 
   taskHasDASRecord = (task: TaskWithAppeal) => {
@@ -77,12 +79,12 @@ class TaskTable extends React.PureComponent<Props> {
     return this.props.includeSelect ? {
       header: COPY.CASE_LIST_TABLE_SELECT_COLUMN_TITLE,
       valueFunction: (task) => <Checkbox
-        name={task.externalAppealId}
+        name={task.uniqueId}
         hideLabel
-        value={this.isTaskSelected(task.externalAppealId)}
+        value={this.isTaskSelected(task.uniqueId)}
         onChange={(selected) => this.props.setSelectionOfTaskOfUser({
           userId: this.props.userId,
-          taskId: task.externalAppealId,
+          taskId: task.uniqueId,
           selected
         })} />
     } : null;
@@ -226,6 +228,22 @@ class TaskTable extends React.PureComponent<Props> {
     getSortValue: (task: TaskWithAppeal) => numDaysOnHold(task)
   } : null)
 
+  completedDateColumn = () => {
+    return this.props.includeCompletedDate ? {
+      header: COPY.CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE,
+      valueFunction: (task) => task.completedOn ? <DateString date={task.completedOn} /> : null,
+      getSortValue: (task) => task.completedOn ? <DateString date={task.completedOn} /> : null
+    } : null;
+  }
+
+  completedToNameColumn = () => {
+    return this.props.includeCompletedToName ? {
+      header: COPY.CASE_LIST_TABLE_COMPLETED_BACK_TO_NAME_COLUMN_TITLE,
+      valueFunction: (task) => task.assignedBy ? `${task.assignedBy.firstName} ${task.assignedBy.lastName}` : null,
+      getSortValue: (task) => task.assignedBy ? task.assignedBy.lastName : null
+    } : null;
+  }
+
   caseReaderLinkColumn = () => {
     return !this.props.userIsVsoEmployee && this.props.includeReaderLink ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
@@ -255,6 +273,8 @@ class TaskTable extends React.PureComponent<Props> {
       this.caseDueDateColumn(),
       this.caseDaysWaitingColumn(),
       this.caseDaysOnHoldColumn(),
+      this.completedDateColumn(),
+      this.completedToNameColumn(),
       this.caseReaderLinkColumn()
     ]);
 

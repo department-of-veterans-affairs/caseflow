@@ -171,7 +171,7 @@ describe SupplementalClaimIntake do
           payee_code: "00",
           predischarge: false,
           claim_type: "Claim",
-          station_of_jurisdiction: "397",
+          station_of_jurisdiction: "499",
           date: detail.receipt_date.to_date,
           end_product_modifier: "040",
           end_product_label: "Supplemental Claim Rating",

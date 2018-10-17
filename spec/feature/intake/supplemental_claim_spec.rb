@@ -208,7 +208,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
     expect(page).to have_content(
-      "Established EP: 040SCR - Supplemental Claim Rating for Station 397 - ARC"
+      "Established EP: 040SCR - Supplemental Claim Rating for Station 499"
     )
 
     # ratings end product
@@ -218,7 +218,7 @@ RSpec.feature "Supplemental Claim Intake" do
         payee_code: "11",
         predischarge: false,
         claim_type: "Claim",
-        station_of_jurisdiction: "397",
+        station_of_jurisdiction: "499",
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "042",
         end_product_label: "Supplemental Claim Rating",
@@ -247,7 +247,7 @@ RSpec.feature "Supplemental Claim Intake" do
         payee_code: "11",
         predischarge: false,
         claim_type: "Claim",
-        station_of_jurisdiction: "397",
+        station_of_jurisdiction: "499",
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "041",
         end_product_label: "Supplemental Claim Nonrating",
@@ -277,7 +277,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: "12341234",
       claim_id: nonratings_end_product_establishment.reference_id,
-      contention_descriptions: ["Description for Active Duty Adjustments"],
+      contention_descriptions: ["Active Duty Adjustments - Description for Active Duty Adjustments"],
       special_issues: []
     )
 
@@ -351,7 +351,7 @@ RSpec.feature "Supplemental Claim Intake" do
       benefit_type: is_comp ? "compensation" : "education"
     )
 
-    SupplementalClaimIntake.create!(
+    intake = SupplementalClaimIntake.create!(
       veteran_file_number: test_veteran.file_number,
       user: current_user,
       started_at: 5.minutes.ago,
@@ -364,7 +364,7 @@ RSpec.feature "Supplemental Claim Intake" do
     )
 
     supplemental_claim.start_review!
-    supplemental_claim
+    [supplemental_claim, intake]
   end
 
   it "Allows a Veteran without ratings to create an intake" do
@@ -392,7 +392,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
   end
 
-  context "For new Add Issues page" do
+  context "For new Add / Remove Issues page" do
     def check_row(label, text)
       row = find("tr", text: label)
       expect(row).to have_text(text)
@@ -411,10 +411,10 @@ RSpec.feature "Supplemental Claim Intake" do
     end
 
     scenario "SC comp" do
-      supplemental_claim = start_supplemental_claim(veteran)
+      supplemental_claim, = start_supplemental_claim(veteran)
       visit "/intake/add_issues"
 
-      expect(page).to have_content("Add Issues")
+      expect(page).to have_content("Add / Remove Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Ed Merica")
@@ -484,7 +484,7 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
 
       expect(page).to have_content(
-        "Established EP: 040SCR - Supplemental Claim Rating for Station 397 - ARC"
+        "Established EP: 040SCR - Supplemental Claim Rating for Station 499"
       )
 
       expect(SupplementalClaim.find_by(
@@ -539,10 +539,40 @@ RSpec.feature "Supplemental Claim Intake" do
       start_supplemental_claim(veteran, is_comp: false)
       visit "/intake/add_issues"
 
-      expect(page).to have_content("Add Issues")
+      expect(page).to have_content("Add / Remove Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
       check_row("Benefit type", "Education")
       expect(page).to_not have_content("Claimant")
+    end
+
+    scenario "canceling" do
+      _, intake = start_supplemental_claim(veteran)
+      visit "/intake/add_issues"
+
+      expect(page).to have_content("Add / Remove Issues")
+      safe_click "#cancel-intake"
+      expect(find("#modal_id-title")).to have_content("Cancel Intake?")
+      safe_click ".close-modal"
+      expect(page).to_not have_css("#modal_id-title")
+      safe_click "#cancel-intake"
+
+      safe_click ".confirm-cancel"
+      expect(page).to have_content("Make sure you’ve selected an option below.")
+      within_fieldset("Please select the reason you are canceling this intake.") do
+        find("label", text: "Other").click
+      end
+      safe_click ".confirm-cancel"
+      expect(page).to have_content("Make sure you’ve filled out the comment box below.")
+      fill_in "Tell us more about your situation.", with: "blue!"
+      safe_click ".confirm-cancel"
+
+      expect(page).to have_content("Welcome to Caseflow Intake!")
+      expect(page).to_not have_css(".cf-modal-title")
+
+      intake.reload
+      expect(intake.completed_at).to eq(Time.zone.now)
+      expect(intake.cancel_reason).to eq("other")
+      expect(intake).to be_canceled
     end
   end
 end

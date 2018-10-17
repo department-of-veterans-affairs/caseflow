@@ -218,7 +218,7 @@ RSpec.feature "Higher-Level Review" do
 
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
     expect(page).to have_content(
-      "Established EP: 030HLRR - Higher-Level Review Rating for Station 397 - ARC"
+      "Established EP: 030HLRR - Higher-Level Review Rating for Station 499"
     )
 
     # ratings end product
@@ -228,7 +228,7 @@ RSpec.feature "Higher-Level Review" do
         payee_code: "10",
         predischarge: false,
         claim_type: "Claim",
-        station_of_jurisdiction: "397",
+        station_of_jurisdiction: "499",
         date: higher_level_review.receipt_date.to_date,
         end_product_modifier: "033",
         end_product_label: "Higher-Level Review Rating",
@@ -257,7 +257,7 @@ RSpec.feature "Higher-Level Review" do
         payee_code: "10",
         predischarge: false,
         claim_type: "Claim",
-        station_of_jurisdiction: "397",
+        station_of_jurisdiction: "499",
         date: higher_level_review.receipt_date.to_date,
         end_product_modifier: "032",
         end_product_label: "Higher-Level Review Nonrating",
@@ -291,7 +291,7 @@ RSpec.feature "Higher-Level Review" do
       hash_including(
         veteran_file_number: "12341234",
         claim_id: nonratings_end_product_establishment.reference_id,
-        contention_descriptions: ["Description for Active Duty Adjustments"],
+        contention_descriptions: ["Active Duty Adjustments - Description for Active Duty Adjustments"],
         special_issues: []
       )
     )
@@ -460,7 +460,7 @@ RSpec.feature "Higher-Level Review" do
       benefit_type: is_comp ? "compensation" : "education"
     )
 
-    HigherLevelReviewIntake.create!(
+    intake = HigherLevelReviewIntake.create!(
       veteran_file_number: test_veteran.file_number,
       user: current_user,
       started_at: 5.minutes.ago,
@@ -475,7 +475,7 @@ RSpec.feature "Higher-Level Review" do
 
     higher_level_review.start_review!
 
-    higher_level_review
+    [higher_level_review, intake]
   end
 
   it "Allows a Veteran without ratings to create an intake" do
@@ -503,7 +503,7 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
   end
 
-  context "For new Add Issues page" do
+  context "For new Add / Remove Issues page" do
     def check_row(label, text)
       row = find("tr", text: label)
       expect(row).to have_text(text)
@@ -529,10 +529,10 @@ RSpec.feature "Higher-Level Review" do
         relationship_type: "Spouse"
       )
 
-      higher_level_review = start_higher_level_review(veteran, claim_participant_id: "5382910292")
+      higher_level_review, = start_higher_level_review(veteran, claim_participant_id: "5382910292")
       visit "/intake/add_issues"
 
-      expect(page).to have_content("Add Issues")
+      expect(page).to have_content("Add / Remove Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Bob Vance, Spouse (payee code 02)")
@@ -601,7 +601,7 @@ RSpec.feature "Higher-Level Review" do
 
       expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
       expect(page).to have_content(
-        "Established EP: 030HLRR - Higher-Level Review Rating for Station 397 - ARC"
+        "Established EP: 030HLRR - Higher-Level Review Rating for Station 499"
       )
 
       # make sure that database is populated
@@ -660,10 +660,40 @@ RSpec.feature "Higher-Level Review" do
       start_higher_level_review(veteran, is_comp: false)
       visit "/intake/add_issues"
 
-      expect(page).to have_content("Add Issues")
+      expect(page).to have_content("Add / Remove Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
       check_row("Benefit type", "Education")
       expect(page).to_not have_content("Claimant")
+    end
+
+    scenario "canceling" do
+      _, intake = start_higher_level_review(veteran)
+      visit "/intake/add_issues"
+
+      expect(page).to have_content("Add / Remove Issues")
+      safe_click "#cancel-intake"
+      expect(find("#modal_id-title")).to have_content("Cancel Intake?")
+      safe_click ".close-modal"
+      expect(page).to_not have_css("#modal_id-title")
+      safe_click "#cancel-intake"
+
+      safe_click ".confirm-cancel"
+      expect(page).to have_content("Make sure you’ve selected an option below.")
+      within_fieldset("Please select the reason you are canceling this intake.") do
+        find("label", text: "Other").click
+      end
+      safe_click ".confirm-cancel"
+      expect(page).to have_content("Make sure you’ve filled out the comment box below.")
+      fill_in "Tell us more about your situation.", with: "blue!"
+      safe_click ".confirm-cancel"
+
+      expect(page).to have_content("Welcome to Caseflow Intake!")
+      expect(page).to_not have_css(".cf-modal-title")
+
+      intake.reload
+      expect(intake.completed_at).to eq(Time.zone.now)
+      expect(intake.cancel_reason).to eq("other")
+      expect(intake).to be_canceled
     end
   end
 end
