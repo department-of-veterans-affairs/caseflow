@@ -1,16 +1,13 @@
 RSpec.describe Hearings::WorksheetsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
-  let(:appeal) { Generators::Appeal.create(vacols_record: :ready_to_certify) }
-  let(:hearing) do
-    Generators::Hearing.create(
-      appellant_first_name: "AppellantFirstName",
-      appellant_last_name: "AppellantLastName",
-      veteran_first_name: "VeteranFirstName",
-      veteran_last_name: "VeteranLastName",
-      type: "video",
-      master_record: false,
-      appeal: appeal
-    )
+  let(:hearing) { create(:hearing) }
+
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
   end
 
   describe "SHOW worksheet" do
