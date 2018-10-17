@@ -3,6 +3,8 @@ require "rails_helper"
 describe RequestIssuesUpdate do
   before do
     FeatureToggle.enable!(:test_facols)
+    Time.zone = "America/New_York"
+    Timecop.freeze(Time.utc(2018, 5, 20))
 
     review.create_issues!(existing_request_issues)
   end
@@ -242,7 +244,7 @@ describe RequestIssuesUpdate do
         )
 
         review.request_issues.map(&:rating_issue_associated_at).each do |value|
-          expect(value).to be_within(1.hour).of(Time.current)
+          expect(value).to eq(Time.zone.now)
         end
 
         created_issue = review.request_issues.find_by(rating_issue_reference_id: "issue3")
@@ -288,7 +290,7 @@ describe RequestIssuesUpdate do
           rated_issue_contention_map: new_map
         )
 
-        expect(review.request_issues.first.rating_issue_associated_at).to be_within(1.hour).of(Time.current)
+        expect(review.request_issues.first.rating_issue_associated_at).to eq(Time.zone.now)
       end
     end
 

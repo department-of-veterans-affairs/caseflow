@@ -175,7 +175,7 @@ class EndProductEstablishment < ApplicationRecord
     !EndProduct::INACTIVE_STATUSES.include?(synced_status)
   end
 
-  def create_associated_rated_issues!
+  def associate_rated_issues!
     is_rated = true
     return if code != source.issue_code(is_rated)
     return if unassociated_rated_request_issues.count == 0
