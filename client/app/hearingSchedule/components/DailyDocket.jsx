@@ -9,6 +9,8 @@ import Table from '../../components/Table';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
+import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
+import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
 
 const tableRowStyling = css({
   '& > tr:nth-child(even) > td': { borderTop: 'none' },
@@ -17,27 +19,24 @@ const tableRowStyling = css({
     verticalAlign: 'top'
   },
   '& > tr:nth-child(odd)': {
-    '& > td:nth-child(1)': { width: '2%' },
-    '& > td:nth-child(2)': { width: '10%' },
-    '& > td:nth-child(3)': { width: '8%' },
-    '& > td:nth-child(4)': { width: '8%' },
+    '& > td:nth-child(1)': { width: '4%' },
+    '& > td:nth-child(2)': { width: '19%' },
+    '& > td:nth-child(3)': { width: '17%' },
+    '& > td:nth-child(4)': { backgroundColor: '#f1f1f1',
+      width: '20%' },
     '& > td:nth-child(5)': { backgroundColor: '#f1f1f1',
-      width: '18%' },
+      width: '20%' },
     '& > td:nth-child(6)': { backgroundColor: '#f1f1f1',
-      width: '24%' },
-    '& > td:nth-child(7)': { backgroundColor: '#f1f1f1',
-      width: '24%' }
+      width: '20%' }
   },
   '& > tr:nth-child(even)': {
-    '& > td:nth-child(1)': { width: '2%' },
-    '& > td:nth-child(2)': { width: '18%' },
-    '& > td:nth-child(3)': { width: '8%' },
+    '& > td:nth-child(1)': { width: '4%' },
+    '& > td:nth-child(2)': { width: '19%' },
+    '& > td:nth-child(3)': { width: '17%' },
     '& > td:nth-child(4)': { backgroundColor: '#f1f1f1',
-      width: '18%' },
+      width: '40%' },
     '& > td:nth-child(5)': { backgroundColor: '#f1f1f1',
-      width: '24%' },
-    '& > td:nth-child(6)': { backgroundColor: '#f1f1f1',
-      width: '24%' }
+      width: '20%' }
   }
 });
 
@@ -57,43 +56,55 @@ export default class DailyDocket extends React.Component {
   };
 
   getAppellantInformation = (hearing) => {
-    return <div><b>{hearing.appellantName} ({hearing.vbmsId})</b> <br />
-      {hearing.appellantAddress} <br />
-      {hearing.appellantCity}, {hearing.appellantState} {hearing.appellantZipCode}
+    return <div><b>{hearing.appellantMiFormatted} ({hearing.vbmsId})</b> <br />
+      {hearing.appellantAddressLine1}<br />
+      {hearing.appellantCity} {hearing.appellantState} {hearing.appellantZip}
     </div>;
   };
 
   getHearingTime = (hearing) => {
-    return <div>{hearing.hearingTime} <br />
-      {hearing.hearingLocation}
+    return <div>{getTime(hearing.date)} /<br />
+      {getTimeInDifferentTimeZone(hearing.date, hearing.regionalOfficeTimezone)} <br />
+      {hearing.regionalOfficeName}
     </div>;
   };
 
   getDispositionDropdown = (hearing) => {
     return <SearchableDropdown
       name="Disposition"
-      placeholder="Select disposition"
-      options={[
-        {
-          label: 'Held',
-          value: 'held'
-        }
-      ]}
+      options={DISPOSITION_OPTIONS}
       value={hearing.disposition}
       onChange={this.emptyFunction}
     />;
   };
 
+  getHearingLocation = (hearing) => {
+    if (hearing.requestType === 'CO') {
+      return 'Washington DC';
+    }
+
+    return hearing.regionalOfficeName;
+  };
+
+  getHearingLocationOptions = (hearing) => {
+    return [{ label: this.getHearingLocation(hearing),
+      value: this.getHearingLocation(hearing) }];
+  };
+
+  getHearingDate = (hearing) => {
+    return moment(hearing.date).format('MM/DD/YYYY');
+  };
+
+  getHearingDateOptions = (hearing) => {
+    return [{ label: this.getHearingDate(hearing),
+      value: this.getHearingDate(hearing) }];
+  };
+
   getHearingLocationDropdown = (hearing) => {
     return <SearchableDropdown
       name="Hearing Location"
-      options={[
-        {
-          label: 'Houston, TX',
-          value: 'Houston, TX'
-        }
-      ]}
-      value={hearing.hearingLocation}
+      options={this.getHearingLocationOptions(hearing)}
+      value={this.getHearingLocation(hearing)}
       onChange={this.emptyFunction}
     />;
   };
@@ -101,13 +112,8 @@ export default class DailyDocket extends React.Component {
   getHearingDayDropdown = (hearing) => {
     return <div><SearchableDropdown
       name="Hearing Day"
-      options={[
-        {
-          label: '2018-10-13',
-          value: '2018-10-13'
-        }
-      ]}
-      value={hearing.hearingDate}
+      options={this.getHearingDateOptions(hearing)}
+      value={this.getHearingDate(hearing)}
       onChange={this.emptyFunction}
     />
     <RadioField
@@ -128,11 +134,12 @@ export default class DailyDocket extends React.Component {
     </div>;
   };
 
-  getNotesField = () => {
+  getNotesField = (hearing) => {
     return <TextareaField
       name="Notes"
       onChange={this.emptyFunction}
       textAreaStyling={notesFieldStyling}
+      value={hearing.notes}
     />;
   };
 
@@ -144,17 +151,15 @@ export default class DailyDocket extends React.Component {
         number: '1.',
         appellantInformation: this.getAppellantInformation(hearing),
         hearingTime: this.getHearingTime(hearing),
-        representative: <div>{hearing.representative} <br /> {hearing.representativeName}</div>,
         hearingLocation: this.getHearingLocationDropdown(hearing),
         hearingDay: this.getHearingDayDropdown(hearing),
         disposition: this.getDispositionDropdown(hearing)
       },
       {
         number: null,
-        appellantInformation: <div>{hearing.issueCount} issues</div>,
-        hearingTime: this.getNotesField(hearing),
-        representative: null,
-        hearingLocation: null,
+        appellantInformation: <div>{hearing.representative} <br /> {hearing.representativeName}</div>,
+        hearingTime: <div>{hearing.currentIssueCount} issues</div>,
+        hearingLocation: this.getNotesField(hearing),
         hearingDay: null,
         disposition: null
       });
@@ -167,35 +172,30 @@ export default class DailyDocket extends React.Component {
     const dailyDocketColumns = [
       {
         header: '',
-        align: 'left',
+        align: 'center',
         valueName: 'number'
       },
       {
-        header: 'Appellant/Veteran ID',
+        header: 'Appellant/Veteran ID/Representative',
         align: 'left',
         valueName: 'appellantInformation'
       },
       {
         header: 'Time/RO(s)',
         align: 'left',
-        valueName: 'hearingTime',
-        span: (row) => row.representative ? 1 : 2
-      },
-      {
-        header: 'Representative',
-        align: 'left',
-        valueName: 'representative',
-        span: (row) => row.representative ? 1 : 0
+        valueName: 'hearingTime'
       },
       {
         header: 'Actions',
         align: 'left',
-        valueName: 'hearingLocation'
+        valueName: 'hearingLocation',
+        span: (row) => row.hearingDay ? 1 : 2
       },
       {
         header: '',
         align: 'left',
-        valueName: 'hearingDay'
+        valueName: 'hearingDay',
+        span: (row) => row.hearingDay ? 1 : 0
       },
       {
         header: '',
@@ -206,18 +206,17 @@ export default class DailyDocket extends React.Component {
 
     return <AppSegment filledBackground>
       <div className="cf-push-left">
-        <h1>Daily Docket ({moment(this.props.hearingDate).format('ddd M/DD/YYYY')})</h1> <br />
+        <h1>Daily Docket ({moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')})</h1> <br />
         <Link to="/schedule">&lt; Back to schedule</Link>
       </div>
       <span className="cf-push-right">
-        VLJ: {this.props.vlj} <br />
-        Coordinator: {this.props.coordinator} <br />
-        Hearing type: {this.props.hearingType}
+        VLJ: {this.props.dailyDocket.judgeFirstName} {this.props.dailyDocket.judgeLastName} <br />
+        Hearing type: {this.props.dailyDocket.hearingType}
       </span>
       <div {...noMarginStyling}>
         <Table
           columns={dailyDocketColumns}
-          rowObjects={this.getDailyDocketRows(this.props.hearings)}
+          rowObjects={this.getDailyDocketRows(this.props.dailyDocket.hearings)}
           summary="dailyDocket"
           bodyStyling={tableRowStyling}
         />
