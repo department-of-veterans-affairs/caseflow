@@ -297,12 +297,6 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
-  def use_representative_info_from_bgs?
-    FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&
-      (RequestStore.store[:application] = "queue" ||
-       RequestStore.store[:application] = "idt")
-  end
-
   delegate :representatives, to: :case_record
 
   def contested_claim
@@ -688,6 +682,12 @@ class LegacyAppeal < ApplicationRecord
   end
 
   private
+
+  def use_representative_info_from_bgs?
+    FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&
+      (RequestStore.store[:application] = "queue" ||
+       RequestStore.store[:application] = "idt")
+  end
 
   def representative_to_hash
     {
