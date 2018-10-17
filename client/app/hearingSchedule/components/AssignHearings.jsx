@@ -12,6 +12,9 @@ import moment from 'moment';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
+import StatusMessage from '../../components/StatusMessage';
+
+
 
 const colorAOD = css({
   color: 'red'
@@ -29,8 +32,6 @@ const sectionNavigationListStyling = css({
     borderWidth: 0
   }
 });
-
-const roErrorTitle = css({ paddingLeft: '100px' });
 
 export default class AssignHearings extends React.Component {
 
@@ -140,25 +141,6 @@ export default class AssignHearings extends React.Component {
     }));
   };
 
-  roNotAssignedTitle = () => {
-    if (this.props.selectedRegionalOffice.label) {
-      return <span>The {this.props.selectedRegionalOffice.label} Regional Office has not been <br />
-        <span {...roErrorTitle}>assigned any hearing days</span></span>;
-    }
-  }
-
-  roNotAssignedTitleError = () => {
-    if (this.props.selectedHearingDay && this.props.selectedHearingDay.hearings &&
-          _.isEmpty(this.props.selectedHearingDay.hearings)) {
-      return <div>
-        <AssignStatusMessage
-          message="Please verify that this RO has been assigned hearings"
-          title={this.roNotAssignedTitle()}
-        />
-      </div>;
-    }
-  }
-
   veteransReadyForHearing = () => {
 
     const tabWindowColumns = [
@@ -189,19 +171,37 @@ export default class AssignHearings extends React.Component {
       }
     ];
 
-    const getHearingsTab = (selectedHearingDay) => {
-      if (selectedHearingDay) {
-        return <Table
-            columns={tabWindowColumns}
-            rowObjects={this.tableRows(this.props.selectedHearingDay.hearings)}
-            summary="scheduled-hearings-table"
-        />;
-      }
-    };
+    const veteranNotAssignedStyle = css ({fontSize: '3rem'});
+    const veteranNotAssignedMessage = <span {...veteranNotAssignedStyle}>Please verify that this RO has veterans to assign a hearing</span>;
+    const veteranNotAssignedTitleStyle = css ({fontSize: '4rem'});
+    const veteranNotAssignedTitle = <span {...veteranNotAssignedTitleStyle}>There are no scheduleable veterans</span>;
+
+
+    const roNotAssignedVeteranError = () => {
+      if ( _.isEmpty(this.props.veteransReadyForHearing)) {
+        return <div>
+          <StatusMessage
+            title= {veteranNotAssignedTitle}
+            type="alert"
+            messageText={veteranNotAssignedMessage}
+            wrapInAppSegment={false}
+          />
+      </div>
+       }
+       else {
+         return <Table
+             columns={tabWindowColumns}
+             rowObjects={this.tableAssignHearingsRows(this.props.veteransReadyForHearing)}
+             summary="scheduled-hearings-table"
+          />;
+       }
+    }
 
     const selectedHearingDay = this.props.selectedHearingDay;
 
+
     const availableSlots = selectedHearingDay.totalSlots - Object.keys(selectedHearingDay.hearings).length;
+    const veterans = this.props.veteransReadyForHearing;
 
     return <div className="usa-width-three-fourths">
       <h1>
@@ -221,11 +221,7 @@ export default class AssignHearings extends React.Component {
           },
           {
             label: 'Assign Hearings',
-            page: <Table
-              columns={tabWindowColumns}
-              rowObjects={this.tableAssignHearingsRows(this.props.veteransReadyForHearing)}
-              summary="assign-hearings-table"
-            />
+            page: roNotAssignedVeteranError()
           }
         ]}
       />
