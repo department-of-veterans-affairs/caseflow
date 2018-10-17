@@ -255,7 +255,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     const {
       appeal,
       taskAssignedToUser,
-      taskAssignedToOrganization,
+      taskAssignedToOrganization
     } = this.props;
     const taskAssignedToVso = taskAssignedToOrganization && taskAssignedToOrganization.assignedTo.type === 'Vso';
 

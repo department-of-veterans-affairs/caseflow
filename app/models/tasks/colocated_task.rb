@@ -45,7 +45,7 @@ class ColocatedTask < Task
     ]
 
     if %w[translation schedule_hearing].include?(action) && appeal.class.name.eql?("LegacyAppeal")
-      actions.push(
+      actions.unshift(
         label: format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action]),
         value: "modal/send_colocated_task"
       )
