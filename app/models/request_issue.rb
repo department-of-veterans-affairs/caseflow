@@ -10,6 +10,8 @@ class RequestIssue < ApplicationRecord
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
 
+  delegate :status_active?, to: :end_product_establishment
+
   def self.rated
     where.not(rating_issue_reference_id: nil, rating_issue_profile_date: nil)
       .or(where(is_unidentified: true))
