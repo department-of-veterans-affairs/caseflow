@@ -12,22 +12,36 @@ class RequestIssue < ApplicationRecord
 
   delegate :status_active?, to: :end_product_establishment
 
-  def self.rated
-    where.not(rating_issue_reference_id: nil, rating_issue_profile_date: nil)
-      .or(where(is_unidentified: true))
-  end
+  class << self
+    def rated
+      where.not(rating_issue_reference_id: nil, rating_issue_profile_date: nil)
+        .or(where(is_unidentified: true))
+    end
 
-  def self.nonrated
-    where(rating_issue_reference_id: nil, rating_issue_profile_date: nil, is_unidentified: [nil, false])
-      .where.not(issue_category: nil)
-  end
+    def nonrated
+      where(rating_issue_reference_id: nil, rating_issue_profile_date: nil, is_unidentified: [nil, false])
+        .where.not(issue_category: nil)
+    end
 
-  def self.unidentified
-    where(rating_issue_reference_id: nil, rating_issue_profile_date: nil, is_unidentified: true)
-  end
+    def unidentified
+      where(rating_issue_reference_id: nil, rating_issue_profile_date: nil, is_unidentified: true)
+    end
 
-  def self.no_follow_up_issues
-    where.not(id: select(:parent_request_issue_id).uniq)
+    def no_follow_up_issues
+      where.not(id: select(:parent_request_issue_id).uniq)
+    end
+
+    def from_intake_data(data)
+      new(
+        rating_issue_reference_id: data[:reference_id],
+        rating_issue_profile_date: data[:profile_date],
+        description: data[:decision_text],
+        decision_date: data[:decision_date],
+        issue_category: data[:issue_category],
+        notes: data[:notes],
+        is_unidentified: data[:is_unidentified]
+      )
+    end
   end
 
   def rated?
@@ -50,18 +64,6 @@ class RequestIssue < ApplicationRecord
 
   def review_title
     review_request_type.try(:constantize).try(:review_title)
-  end
-
-  def self.from_intake_data(data)
-    new(
-      rating_issue_reference_id: data[:reference_id],
-      rating_issue_profile_date: data[:profile_date],
-      description: data[:decision_text],
-      decision_date: data[:decision_date],
-      issue_category: data[:issue_category],
-      notes: data[:notes],
-      is_unidentified: data[:is_unidentified]
-    )
   end
 
   def ui_hash
