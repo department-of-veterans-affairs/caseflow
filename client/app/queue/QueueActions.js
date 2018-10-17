@@ -48,6 +48,14 @@ export const onReceiveTasks = (
   }
 });
 
+export const setTaskAttrs = (uniqueId: string, attributes: Object) => ({
+  type: ACTIONS.SET_TASK_ATTRS,
+  payload: {
+    uniqueId,
+    attributes
+  }
+});
+
 export const fetchJudges = () => (dispatch: Dispatch) => {
   ApiUtil.get('/users?role=Judge').then((response) => {
     const resp = JSON.parse(response.text);
@@ -345,9 +353,15 @@ export const initialAssignTasksToUser = ({
         tasks: allTasks.tasks,
         amaTasks: allTasks.amaTasks
       }));
+      if (!oldTask.isLegacy) {
+        dispatch(setTaskAttrs(
+          oldTask.uniqueId,
+          { status: 'on_hold' }
+        ));
+      }
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
-        taskId: task.attributes.external_appeal_id,
+        taskId: oldTask.uniqueId,
         selected: false
       }));
     });
@@ -396,7 +410,7 @@ export const reassignTasksToUser = ({
       }));
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
-        taskId: task.attributes.external_appeal_id,
+        taskId: oldTask.uniqueId,
         selected: false
       }));
     });
@@ -425,19 +439,10 @@ export const fetchAmaTasksOfUser = (userId: number, userRole: string) => (dispat
   ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
     then((resp) => dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data))));
 
-export const setTaskAssignment = (externalAppealId: string, cssId: string, pgId: number) => ({
-  type: ACTIONS.SET_TASK_ASSIGNMENT,
+export const setAppealAttrs = (appealId: string, attributes: Object) => ({
+  type: ACTIONS.SET_APPEAL_ATTRS,
   payload: {
-    externalAppealId,
-    cssId,
-    pgId
-  }
-});
-
-export const setTaskAttrs = (externalAppealId: string, attributes: Object) => ({
-  type: ACTIONS.SET_TASK_ATTRS,
-  payload: {
-    externalAppealId,
+    appealId,
     attributes
   }
 });

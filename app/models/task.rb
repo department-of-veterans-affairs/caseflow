@@ -38,6 +38,10 @@ class Task < ApplicationRecord
     children.where(type: AttorneyTask.name)
   end
 
+  def self.recently_completed
+    where(status: Constants.TASK_STATUSES.completed, completed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
+  end
+
   def self.create_from_params(params, current_user)
     verify_user_can_assign!(current_user)
     params = params.each { |p| p["instructions"] = [p["instructions"]] if p.key?("instructions") }

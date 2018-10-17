@@ -54,6 +54,7 @@
 
 .intake-add-issues .cf-modal-body {
   width: 770px;
+  overflow-y: auto;
 }
 
 .add-issue {
@@ -86,13 +87,12 @@
         border-bottom: 1px solid $color-gray-lighter;
 
         div {
-          display: table-column;
-          float: left;
+          display: table-cell;
           padding: 0.5em 0;
         }
 
         .issue-desc {
-          max-width: 70%;
+          width: 100%;
 
           .issue-num {
             padding-right: 0.25em;
@@ -102,15 +102,22 @@
             display: block;
             font-style: italic;
           }
+
+          .issue-date {
+            display: block;
+          }
         }
 
         .unidentified-issue {
           color: $color-red;
         }
 
+        .in-active-review {
+          color: $color-red;
+        }
+
         .issue-action {
           padding: 0;
-          float: right;
 
           button {
             i {
@@ -128,6 +135,7 @@
 
   td:last-child {
     min-width: 130px;
+    max-width: 500px;
   }
 
   ol {

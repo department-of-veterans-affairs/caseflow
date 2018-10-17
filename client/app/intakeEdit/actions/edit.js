@@ -1,6 +1,6 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
-import { formatIssues } from '../../intakeCommon/util';
+import { formatIssues } from '../../intake/util/issues';
 
 const analytics = true;
 
@@ -24,8 +24,7 @@ export const requestIssuesUpdate = (claimId, formType, state) => (dispatch) => {
         dispatch({
           type: ACTIONS.REQUEST_ISSUES_UPDATE_SUCCEED,
           payload: {
-            ratings: responseObject.ratings,
-            ratedRequestIssues: responseObject.ratedRequestIssues
+            requestIssues: responseObject.requestIssues
           },
           meta: { analytics }
         });

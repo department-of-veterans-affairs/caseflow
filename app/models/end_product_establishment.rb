@@ -84,11 +84,17 @@ class EndProductEstablishment < ApplicationRecord
 
     set_establishment_values_from_source
 
+    descriptions = issues_without_contentions.map(&:contention_text)
+
     # Currently not making any assumptions about the order in which VBMS returns
     # the created contentions. Instead find the issue by matching text.
-    create_contentions_in_vbms(issues_without_contentions.pluck(:description)).each do |contention|
+
+    # We don't care about duplicate text; we just care that every request issue
+    # has a contention.
+
+    create_contentions_in_vbms(descriptions).each do |contention|
       issue = issues_without_contentions.find do |i|
-        i.description == contention.text && i.contention_reference_id.nil?
+        i.contention_text == contention.text && i.contention_reference_id.nil?
       end
       issue && issue.update!(contention_reference_id: contention.id)
     end
@@ -169,19 +175,17 @@ class EndProductEstablishment < ApplicationRecord
     !EndProduct::INACTIVE_STATUSES.include?(synced_status)
   end
 
-  def create_associated_rated_issues!
-    request_issues_to_associate = unassociated_rated_request_issues
-
+  def associate_rated_issues!
     is_rated = true
     return if code != source.issue_code(is_rated)
-    return if request_issues_to_associate.empty?
+    return if unassociated_rated_request_issues.count == 0
 
     VBMSService.associate_rated_issues!(
       claim_id: reference_id,
-      rated_issue_contention_map: rated_issue_contention_map(request_issues_to_associate)
+      rated_issue_contention_map: rated_issue_contention_map(rated_request_issues)
     )
 
-    RequestIssue.where(id: request_issues_to_associate.map(&:id)).update_all(
+    RequestIssue.where(id: rated_request_issues.map(&:id)).update_all(
       rating_issue_associated_at: Time.zone.now
     )
   end

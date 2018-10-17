@@ -64,7 +64,7 @@ RoSelectorDropdown.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  regionalOffices: state.regionalOffices
+  regionalOffices: state.hearingSchedule.regionalOffices
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
