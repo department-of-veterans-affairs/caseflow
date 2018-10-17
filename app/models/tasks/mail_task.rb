@@ -22,7 +22,7 @@ class MailTask < GenericTask
     end
 
     def verify_user_can_assign!(user)
-      unless MailTeam.user_has_access?(user)
+      unless MailTeam.singleton.user_has_access?(user)
         fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot create a mail task"
       end
     end
