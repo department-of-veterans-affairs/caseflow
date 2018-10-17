@@ -47,7 +47,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def review_title
-    review_request_type.constantize.review_title
+    review_request_type.try(:constantize).try(:review_title)
   end
 
   def self.from_intake_data(data)
