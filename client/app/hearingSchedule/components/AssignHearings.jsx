@@ -14,8 +14,6 @@ import { COLORS } from '../../constants/AppConstants';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import StatusMessage from '../../components/StatusMessage';
 
-
-
 const colorAOD = css({
   color: 'red'
 });
@@ -171,14 +169,14 @@ export default class AssignHearings extends React.Component {
       }
     ];
 
-    const veteranNotAssignedStyle = css ({fontSize: '3rem'});
-    const veteranNotAssignedMessage = <span {...veteranNotAssignedStyle}>Please verify that this RO has veterans to assign a hearing</span>;
-    const veteranNotAssignedTitleStyle = css ({fontSize: '4rem'});
+    const veteranNotAssignedStyle = css({ fontSize: '3rem' });
+    const veteranNotAssignedMessage = <span {...veteranNotAssignedStyle}>
+      Please verify that this RO has veterans to assign a hearing</span>;
+    const veteranNotAssignedTitleStyle = css({ fontSize: '4rem' });
     const veteranNotAssignedTitle = <span {...veteranNotAssignedTitleStyle}>There are no scheduleable veterans</span>;
 
-
     const roNotAssignedVeteranError = () => {
-      if ( _.isEmpty(this.props.veteransReadyForHearing)) {
+      if (_.isEmpty(this.props.veteransReadyForHearing)) {
         return <div>
           <StatusMessage
             title= {veteranNotAssignedTitle}
@@ -186,22 +184,20 @@ export default class AssignHearings extends React.Component {
             messageText={veteranNotAssignedMessage}
             wrapInAppSegment={false}
           />
-      </div>
-       }
-       else {
-         return <Table
-             columns={tabWindowColumns}
-             rowObjects={this.tableAssignHearingsRows(this.props.veteransReadyForHearing)}
-             summary="scheduled-hearings-table"
-          />;
-       }
-    }
+        </div>;
+      }
+
+      return <Table
+        columns={tabWindowColumns}
+        rowObjects={this.tableAssignHearingsRows(this.props.veteransReadyForHearing)}
+        summary="scheduled-hearings-table"
+      />;
+
+    };
 
     const selectedHearingDay = this.props.selectedHearingDay;
 
-
     const availableSlots = selectedHearingDay.totalSlots - Object.keys(selectedHearingDay.hearings).length;
-    const veterans = this.props.veteransReadyForHearing;
 
     return <div className="usa-width-three-fourths">
       <h1>
