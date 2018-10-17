@@ -160,8 +160,6 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedCompleteTaskModal = (props) => <CompleteTaskModal {...props.match.params} />;
 
-  triggerModal = (props) => <TriggerModal modal={props.match.params.modalType} />;
-
   routedOrganization = (props) => <OrganizationQueueLoadingScreen
     urlToLoad={`${props.location.pathname}/tasks`}>
     <OrganizationQueue {...this.props} />
