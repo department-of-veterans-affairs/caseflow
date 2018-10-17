@@ -138,7 +138,9 @@ class AssignToView extends React.Component<Props, ViewState> {
         const response = JSON.parse(resp.text);
         const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        this.props.setTaskAttrs(task.externalAppealId, preparedTasks[task.externalAppealId]);
+span class="pl-smi"> preparedTasks.map((preparedTask) => {
+  this.props.setTaskAttrs(preparedTask.uniqueId, preparedTask);
+}
       });
   }
 
