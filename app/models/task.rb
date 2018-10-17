@@ -89,6 +89,11 @@ class Task < ApplicationRecord
     parent.when_child_task_completed if parent
   end
 
+  def mark_as_canceled!
+    update!(status: :completed)
+    parent.when_child_task_completed if parent
+  end
+
   def when_child_task_completed
     update_status_if_children_tasks_are_complete
   end

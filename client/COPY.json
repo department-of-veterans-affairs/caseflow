@@ -187,9 +187,15 @@
 
   "HEARING_SCHEDULE_SUCCESS_MESSAGE": "You can view your uploaded schedule by clicking the link below",
 
-  "MARK_TASK_COMPLETE_TITLE": "Mark this task complete",
-  "MARK_TASK_COMPLETE_COPY": "You are completing this task and sending the appeal back to the user who assigned it to you: %s.",
+  "MARK_TASK_COMPLETE_TITLE": "Mark as complete",
+  "MARK_TASK_COMPLETE_COPY": "Mark this task \"complete\" and send the case back to %s.",
   "MARK_TASK_COMPLETE_BUTTON": "Mark complete",
+
+  "CANCEL_TASK_TITLE": "Cancel task",
+  "CANCEL_TASK_COPY": "Mark this task as \"canceled\" and send the case back to %s.",
+  "CANCEL_TASK_BUTTON": "Cancel task",
+  "CANCEL_TASK_CONFIRMATION": "The task has been canceled and %s's case has been sent back to %s",
+  "CANCEL_TASK_CONFIRMATION_DETAIL": "If you've made a mistake, please email %s to manage any changes.",
 
   "ADD_COLOCATED_TASK_SUBHEAD": "Submit admin action",
   "ADD_COLOCATED_TASK_ACTION_TYPE_LABEL": "Select the type of administrative action you'd like to assign:",

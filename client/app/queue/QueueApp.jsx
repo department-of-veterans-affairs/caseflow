@@ -160,6 +160,8 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedCompleteTaskModal = (props) => <CompleteTaskModal {...props.match.params} />;
 
+  routedCancelTaskModal = (props) => <CancelTaskModal {...props.match.params} />;
+
   routedOrganization = (props) => <OrganizationQueueLoadingScreen
     urlToLoad={`${props.location.pathname}/tasks`}>
     <OrganizationQueue {...this.props} />
@@ -317,6 +319,11 @@ class QueueApp extends React.PureComponent<Props> {
             path="/queue/appeals/:appealId/modal/:modalType(mark_task_complete|send_colocated_task)"
             title="Mark Task Complete | Caseflow"
             render={this.routedCompleteTaskModal} />
+          <PageRoute
+            exact
+            path="/queue/appeals/:appealId/modal/cancel_task"
+            title="Mark Task Complete | Caseflow"
+            render={this.routedCancelTaskModal} />
           <PageRoute
             exact
             path="/organizations/:organization"
