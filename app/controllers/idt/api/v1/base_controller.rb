@@ -20,6 +20,10 @@ class Idt::Api::V1::BaseController < ActionController::Base
     end
   end
 
+  def set_application
+    RequestStore.store[:application] = "idt"
+  end
+
   def file_number
     request.headers["FILENUMBER"]
   end

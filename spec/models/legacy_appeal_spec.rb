@@ -1997,12 +1997,56 @@ describe LegacyAppeal do
             name: "Attorney B Lawyer",
             type: "Attorney",
             code: "T",
+            participant_id: "600153863",
             address: {
               address_line_1: "111 Magnolia St.",
               address_line_2: "Suite 222",
               city: "New York",
               state: "NY",
               zip: "10000"
+            }
+          }
+        )
+      end
+    end
+
+    context "when representative is returned from BGS" do
+      before do
+        FeatureToggle.enable!(:use_representative_info_from_bgs)
+        RequestStore.store[:application] = "queue"
+      end
+
+      after do
+        FeatureToggle.disable!(:use_representative_info_from_bgs)
+      end
+
+      it "the appellant is returned" do
+        expect(appeal.claimant).to eq(
+          first_name: "Bobby",
+          middle_name: "F",
+          last_name: "Veteran",
+          name_suffix: nil,
+          address: {
+            address_line_1: "123 K St. NW",
+            address_line_2: "Suite 456",
+            city: "Washington",
+            state: "DC",
+            country: nil,
+            zip: "20001"
+          },
+          representative: {
+            name: "Clarence Darrow",
+            type: "Attorney",
+            code: "T",
+            participant_id: "600153863",
+            address: {
+              address_line_1: "9999 MISSION ST",
+              address_line_2: "UBER",
+              address_line_3: "APT 2",
+              city: "SAN FRANCISCO",
+              state: "CA",
+              country: "USA",
+              zip: "94103"
             }
           }
         )
@@ -2044,6 +2088,7 @@ describe LegacyAppeal do
             name: "Attorney B Lawyer",
             type: "Attorney",
             code: "T",
+            participant_id: "600153863",
             address: {
               address_line_1: "111 Magnolia St.",
               address_line_2: "Suite 222",
