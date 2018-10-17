@@ -279,8 +279,8 @@ RSpec.feature "Edit issues" do
       new_request_issue = higher_level_review.reload.request_issues.first
       expect(new_request_issue.description).to eq("Left knee granted")
       expect(request_issue.reload.review_request_id).to be_nil
-      expect(request_issue.removed_at).to be_within(1.hour).of(Time.current)
-      expect(new_request_issue.rating_issue_associated_at).to be_within(1.hour).of(Time.current)
+      expect(request_issue.removed_at).to eq(Time.zone.now)
+      expect(new_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
 
       # expect contentions to reflect issue update
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
@@ -499,8 +499,8 @@ RSpec.feature "Edit issues" do
       new_request_issue = supplemental_claim.reload.request_issues.first
       expect(new_request_issue.description).to eq("Left knee granted")
       expect(request_issue.reload.review_request_id).to be_nil
-      expect(request_issue.removed_at).to be_within(1.hour).of(Time.current)
-      expect(new_request_issue.rating_issue_associated_at).to be_within(1.hour).of(Time.current)
+      expect(request_issue.removed_at).to eq(Time.zone.now)
+      expect(new_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
 
       # expect contentions to reflect issue update
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
