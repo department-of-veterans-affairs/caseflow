@@ -9,7 +9,7 @@ class RootTask < Task
 
   def allowed_actions(user)
     if MailTeam.singleton.user_has_access?(user)
-      return [ {label: "Create mail task", value: "modal/create_mail_task"} ]
+      return [{ label: "Create mail task", value: "modal/create_mail_task" }]
     end
 
     []
