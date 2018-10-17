@@ -175,7 +175,7 @@ export default class AssignHearings extends React.Component {
     const veteranNotAssignedTitleStyle = css({ fontSize: '4rem' });
     const veteranNotAssignedTitle = <span {...veteranNotAssignedTitleStyle}>There are no scheduleable veterans</span>;
 
-    const roNotAssignedVeteranError = () => {
+    const scheduleableVeterans = () => {
       if (_.isEmpty(this.props.veteransReadyForHearing)) {
         return <div>
           <StatusMessage
@@ -217,7 +217,7 @@ export default class AssignHearings extends React.Component {
           },
           {
             label: 'Assign Hearings',
-            page: roNotAssignedVeteranError()
+            page: scheduleableVeterans()
           }
         ]}
       />
