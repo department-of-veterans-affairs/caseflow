@@ -71,6 +71,7 @@ defolders = VACOLS::Decass.select("defolder")
   .where("deadtim >= ?", Date.new(2018, 8, 16))
   .group("defolder").having("count(*) > 1").map(&:defolder)
 puts "Found #{defolders.length} cases with too many Decass records"
+num_deleted = 0
 defolders.each do |defolder|
   puts "Processing case #{defolder}"
   VACOLS::Decass.transaction do
@@ -106,7 +107,9 @@ EOS
       if !DRY_RUN
         VACOLS::Decass.connection.execute(query_delete)
       end
+      num_deleted += records_duplicate.length - 1
     end
     puts
   end
 end
+puts "Deleted #{num_deleted} duplicate records"
