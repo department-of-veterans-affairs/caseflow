@@ -9,7 +9,7 @@ const bottomMargin = css({
   marginBottom: '1.5rem'
 });
 
-export default function editModalBase(ComponentToWrap, title) {
+export default function editModalBase(ComponentToWrap, { title, button, propsToText }) {
   class WrappedComponent extends React.Component {
     constructor(props) {
       super(props);
@@ -20,8 +20,12 @@ export default function editModalBase(ComponentToWrap, title) {
     getWrappedComponentRef = (ref) => this.wrappedComponent = ref;
 
     closeHandler = () => {
-      this.props.history.goBack();
+      this.props.history.replace('/queue');
     }
+
+    title = () => title || (propsToText && propsToText(this.props).title);
+
+    button = () => button || (propsToText && propsToText(this.props).button) || 'Submit';
 
     submit = () => {
       this.setState({ loading: true });
@@ -40,14 +44,14 @@ export default function editModalBase(ComponentToWrap, title) {
       const { error } = this.props;
 
       return <Modal
-        title={title}
+        title={this.title()}
         buttons={[{
           classNames: ['usa-button', 'cf-btn-link'],
           name: 'Cancel',
           onClick: this.closeHandler
         }, {
           classNames: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
-          name: 'Submit',
+          name: this.button(),
           loading: this.state.loading,
           onClick: this.submit
         }]}
