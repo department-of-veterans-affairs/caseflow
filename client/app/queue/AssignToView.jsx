@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
+import _ from 'lodash';
 
 import COPY from '../../COPY.json';
 
@@ -136,7 +137,7 @@ class AssignToView extends React.Component<Props, ViewState> {
         const response = JSON.parse(resp.text);
         const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        preparedTasks.map((preparedTask) => this.props.setTaskAttrs(preparedTask.uniqueId, preparedTask));
+        _.map(preparedTasks, (preparedTask) => this.props.setTaskAttrs(preparedTask.uniqueId, preparedTask));
       });
   }
 
