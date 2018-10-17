@@ -8,12 +8,9 @@ import { sprintf } from 'sprintf-js';
 import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
-import Modal from '../../components/Modal';
-
 import {
   tasksForAppealAssignedToUserSelector,
   incompleteOrganizationTasksByAssigneeIdSelector,
-  getActiveModalType,
   appealWithDetailSelector
 } from '../selectors';
 import { setTaskAttrs } from '../QueueActions';
@@ -93,7 +90,8 @@ class CompleteTaskModal extends React.Component<Props> {
         }
       }
     };
-    const successMsg = SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].buildSuccessMsg(appeal, this.getContentArgs());
+    const successMsg = SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].
+      buildSuccessMsg(appeal, this.getContentArgs());
 
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
@@ -105,7 +103,8 @@ class CompleteTaskModal extends React.Component<Props> {
   }
 
   render = () => {
-    return this.props.task ? SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].getContent(this.getContentArgs()) : null;
+    return this.props.task ? SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].
+      getContent(this.getContentArgs()) : null;
   };
 }
 
@@ -127,8 +126,8 @@ const propsToText = (props) => {
       teamName: (props.task && props.task.action) ? CO_LOCATED_ADMIN_ACTIONS[props.task.action] : ''
     }),
     button: SEND_TO_LOCATION_MODAL_TYPE_ATTRS[props.modalType].buttonText
-  }
-}
+  };
+};
 
 export default (withRouter(
   connect(mapStateToProps, mapDispatchToProps)(editModalBase(

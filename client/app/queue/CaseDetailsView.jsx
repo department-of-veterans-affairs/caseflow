@@ -24,8 +24,7 @@ import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
 
 import {
-  appealWithDetailSelector,
-  getActiveModalType
+  appealWithDetailSelector
 } from './selectors';
 
 // TODO: Pull this horizontal rule styling out somewhere.
@@ -90,7 +89,7 @@ CaseDetailsView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const { success, error } = state.ui.messages;
-  const { veteranCaseListIsVisible, modals } = state.ui;
+  const { veteranCaseListIsVisible } = state.ui;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
