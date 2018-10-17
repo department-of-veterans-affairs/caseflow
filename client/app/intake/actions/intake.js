@@ -112,20 +112,6 @@ export const toggleCancelModal = () => ({
   }
 });
 
-export const toggleAddIssuesModal = () => ({
-  type: ACTIONS.TOGGLE_ADD_ISSUES_MODAL,
-  meta: { analytics }
-});
-
-export const toggleNonRatedIssueModal = () => ({
-  type: ACTIONS.TOGGLE_NON_RATED_ISSUE_MODAL,
-  meta: { analytics }
-});
-
-export const toggleUnidentifiedIssuesModal = () => ({
-  type: ACTIONS.TOGGLE_UNIDENTIFIED_ISSUES_MODAL
-});
-
 export const submitCancel = (data) => (dispatch) => {
   dispatch({
     type: ACTIONS.CANCEL_INTAKE_START,

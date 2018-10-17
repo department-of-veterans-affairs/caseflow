@@ -79,10 +79,10 @@ class AssignHearingsContainer extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  selectedRegionalOffice: state.selectedRegionalOffice,
-  upcomingHearingDays: state.upcomingHearingDays,
-  selectedHearingDay: state.selectedHearingDay,
-  veteransReadyForHearing: state.veteransReadyForHearing
+  selectedRegionalOffice: state.hearingSchedule.selectedRegionalOffice,
+  upcomingHearingDays: state.hearingSchedule.upcomingHearingDays,
+  selectedHearingDay: state.hearingSchedule.selectedHearingDay,
+  veteransReadyForHearing: state.hearingSchedule.veteransReadyForHearing
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

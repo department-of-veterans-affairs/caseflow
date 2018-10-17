@@ -5,8 +5,7 @@ class HigherLevelReviewsController < ApplicationController
   def update
     if request_issues_update.perform!
       render json: {
-        ratings: higher_level_review.cached_serialized_timely_ratings,
-        ratedRequestIssues: higher_level_review.request_issues.rated.map(&:ui_hash)
+        requestIssues: higher_level_review.request_issues.map(&:ui_hash)
       }
     else
       render json: { error_code: request_issues_update.error_code }, status: 422

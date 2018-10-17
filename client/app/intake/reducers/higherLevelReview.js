@@ -1,10 +1,9 @@
 import _ from 'lodash';
 
-import { ACTIONS } from '../constants';
+import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers } from './common';
-import { FORM_TYPES, REQUEST_STATE } from '../../intakeCommon/constants';
 import { formatDateStr } from '../../util/DateUtil';
-import { formatRatings } from '../../intakeCommon/util';
+import { formatRatings } from '../util/issues';
 import { getReceiptDateError, getBenefitTypeError, getPageError, formatRelationships } from '../util';
 import { update } from '../../util/ReducerUtil';
 
@@ -69,6 +68,7 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     addIssuesModalVisible: false,
     nonRatedIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
+    removeIssueModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
     benefitType: null,

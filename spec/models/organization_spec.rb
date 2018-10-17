@@ -22,6 +22,13 @@ describe Organization do
   end
 
   describe ".members" do
+    let(:field) { "sdept" }
+    let(:fld_val) { "ORG" }
+    let(:member_cnt) { 5 }
+
+    let(:users) { create_list(:user, member_cnt) }
+    before { users.each { |u| FactoryBot.create(:staff, user: u, "#{field}": fld_val) } }
+
     context "when organization has no members" do
       let(:org) { create(:organization) }
       it "should return an empty list" do
@@ -30,15 +37,8 @@ describe Organization do
     end
 
     context "when organization has members" do
-      let(:field) { "sdept" }
-      let(:fld_val) { "ORG" }
-
       let(:org) { create(:organization) }
       let!(:sfo) { StaffFieldForOrganization.create!(organization: org, name: field, values: [fld_val]) }
-      let(:member_cnt) { 5 }
-      let(:users) { create_list(:user, member_cnt) }
-
-      before { users.each { |u| FactoryBot.create(:staff, user: u, "#{field}": fld_val) } }
 
       it "should return a non-empty list of members" do
         expect(org.members.length).to eq(member_cnt)

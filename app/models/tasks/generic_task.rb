@@ -1,6 +1,8 @@
 class GenericTask < Task
   def allowed_actions(user)
-    return [] if assigned_to != user && assigned_to_type != "Organization"
+    return [] if assigned_to != user && !assigned_to.is_a?(Organization)
+
+    return [{ label: "Mark task complete", value: "modal/mark_task_complete" }] if assigned_to.is_a?(Vso)
 
     [
       {
@@ -13,7 +15,7 @@ class GenericTask < Task
       },
       {
         label: "Mark task complete",
-        value: "mark_task_complete"
+        value: "modal/mark_task_complete"
       }
     ]
   end
@@ -62,7 +64,8 @@ class GenericTask < Task
         appeal: parent.appeal,
         assigned_by_id: child_assigned_by_id(parent, current_user),
         parent_id: parent.id,
-        assigned_to: assignee
+        assigned_to: assignee,
+        instructions: [params[:instructions]]
       )
     end
 

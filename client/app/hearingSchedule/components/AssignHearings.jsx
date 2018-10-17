@@ -11,6 +11,7 @@ import RoSelectorDropdown from './RoSelectorDropdown';
 import moment from 'moment';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
+import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 
 const colorAOD = css({
   color: 'red'
@@ -43,15 +44,16 @@ export default class AssignHearings extends React.Component {
   roomInfo = (hearingDay) => {
     let room = hearingDay.roomInfo;
 
-    if (hearingDay.regionalOffice === 'St. Petersburg, FL') {
+    if (this.props.selectedRegionalOffice.label === 'St. Petersburg, FL') {
       return room;
-    } else if (hearingDay.regionalOffice === 'Winston-Salem, NC') {
+    } else if (this.props.selectedRegionalOffice.label === 'Winston-Salem, NC') {
       return room;
     }
 
     return room = '';
 
   }
+
   formatAvailableHearingDays = () => {
     return <div className="usa-width-one-fourth">
       <h3>Hearings to Schedule</h3>
@@ -100,13 +102,38 @@ export default class AssignHearings extends React.Component {
     return docketType;
   }
 
-  tableRows = (veterans) => {
+    getHearingTime = (date, regionalOfficeTimezone) => {
+      return <div>
+        {getTime(date)} /<br />{getTimeInDifferentTimeZone(date, regionalOfficeTimezone)}
+      </div>;
+    };
+
+  appellantName = (hearingDay) => {
+    if (hearingDay.appellantFirstName && hearingDay.appellantLastName) {
+      return `${hearingDay.appellantFirstName} ${hearingDay.appellantLastName} | ${hearingDay.id}`;
+    }
+
+    return `${hearingDay.id}`;
+
+  }
+
+  tableAssignHearingsRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
-      caseDetails: `${veteran.name} | ${veteran.id}`,
+      caseDetails: this.appellantName(veteran),
       type: this.veteranTypeColor(veteran.type),
       docketNumber: veteran.docketNumber,
       location: this.props.selectedRegionalOffice.value === 'C' ? 'Washington DC' : veteran.location,
-      time: veteran.time
+      time: null
+    }));
+  };
+
+  tableScheduledHearingsRows = (hearings) => {
+    return _.map(hearings, (hearing) => ({
+      caseDetails: `${hearing.appellantMiFormatted} | ${hearing.vbmsId}`,
+      type: this.veteranTypeColor(hearing.appealType),
+      docketNumber: hearing.docketNumber,
+      location: hearing.requestType === 'Video' ? hearing.regionalOfficeName : 'Washington DC',
+      time: this.getHearingTime(hearing.date, hearing.regionalOfficeTimezone)
     }));
   };
 
@@ -156,7 +183,7 @@ export default class AssignHearings extends React.Component {
             label: 'Scheduled',
             page: <Table
               columns={tabWindowColumns}
-              rowObjects={this.tableRows(this.props.selectedHearingDay.hearings)}
+              rowObjects={this.tableScheduledHearingsRows(this.props.selectedHearingDay.hearings)}
               summary="scheduled-hearings-table"
             />
           },
@@ -164,7 +191,7 @@ export default class AssignHearings extends React.Component {
             label: 'Assign Hearings',
             page: <Table
               columns={tabWindowColumns}
-              rowObjects={this.tableRows(this.props.veteransReadyForHearing)}
+              rowObjects={this.tableAssignHearingsRows(this.props.veteransReadyForHearing)}
               summary="assign-hearings-table"
             />
           }
