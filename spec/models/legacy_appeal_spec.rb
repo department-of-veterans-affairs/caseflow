@@ -1114,6 +1114,11 @@ describe LegacyAppeal do
         let(:type_code) { "7" }
         it { is_expected.to eq(:activated_to_bva) }
       end
+
+      context "when activated with status of ACT" do
+        let(:status) { "Active" }
+        it { is_expected.to eq(:activated_to_bva) }
+      end
     end
 
     context "status is remand" do
