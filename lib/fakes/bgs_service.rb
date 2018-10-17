@@ -20,6 +20,7 @@ class Fakes::BGSService
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/LineLength
   def self.create_veteran_records
     return if @veteran_records_created
 
@@ -124,6 +125,7 @@ class Fakes::BGSService
   end
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/LineLength
 
   def self.all_grants
     default_date = 10.days.ago.to_formatted_s(:short_date)

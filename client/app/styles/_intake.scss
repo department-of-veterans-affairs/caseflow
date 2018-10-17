@@ -53,7 +53,17 @@
 }
 
 .intake-add-issues .cf-modal-body {
-  width: 675px;
+  width: 750px;
+  max-height: 95%;
+
+  @media only screen and (max-width: 760px) {
+    width: 650px;
+
+    .usa-button {
+      font-size: 1.5rem;
+      padding: .8rem 1.2rem;
+    }
+  }
 }
 
 .add-issue {
