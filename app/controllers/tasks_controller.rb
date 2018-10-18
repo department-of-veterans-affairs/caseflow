@@ -86,7 +86,9 @@ class TasksController < ApplicationController
     actionable_tasks = {}
     tasks.each do |t|
       return invalid_record_error(t) unless t.valid?
-      actionable_tasks[t.appeal.external_id] = json_tasks(t.appeal.actionable_tasks_for_user(current_user))[:data] unless actionable_tasks[t.appeal.external_id]
+      unless actionable_tasks[t.appeal.external_id]
+        actionable_tasks[t.appeal.external_id] = json_tasks(t.appeal.actionable_tasks_for_user(current_user))[:data]
+      end
     end
 
     render json: {
