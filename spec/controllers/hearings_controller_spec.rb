@@ -1,6 +1,15 @@
 RSpec.describe HearingsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
-  let(:hearing) { Generators::Hearing.create }
+  let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
+  let(:hearing) { create(:hearing) }
+
+  before do
+    FeatureToggle.enable!(:test_facols)
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
 
   describe "PATCH update" do
     it "should be successful" do
@@ -11,15 +20,15 @@ RSpec.describe HearingsController, type: :controller do
                  add_on: true,
                  disposition: :held,
                  prepped: true }
-      patch :update, params: { id: hearing.id, hearing: params }
+      patch :update, as: :json, params: { id: hearing.id, hearing: params }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
       expect(response_body["notes"]).to eq "Test"
-      expect(response_body["hold_open"]).to eq "30"
-      expect(response_body["transcript_requested"]).to eq "false"
+      expect(response_body["hold_open"]).to eq 30
+      expect(response_body["transcript_requested"]).to eq false
       expect(response_body["aod"]).to eq "granted"
       expect(response_body["disposition"]).to eq "held"
-      expect(response_body["add_on"]).to eq "true"
+      expect(response_body["add_on"]).to eq true
       expect(response_body["prepped"]).to eq true
     end
 
