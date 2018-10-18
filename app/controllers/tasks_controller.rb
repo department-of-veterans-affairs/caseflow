@@ -1,7 +1,7 @@
 class TasksController < ApplicationController
   include Errors
 
-  before_action :verify_task_access, only: [:create, :assignable_organizations, :assignable_users]
+  before_action :verify_task_access, only: [:assignable_organizations, :assignable_users]
   skip_before_action :deny_vso_access, only: [:index, :update, :for_appeal]
 
   TASK_CLASSES = {
