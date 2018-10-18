@@ -498,7 +498,7 @@ RSpec.feature "Supplemental Claim Intake" do
       find_all("label", text: "Old injury").first.click
       safe_click ".add-issue"
       expect(page).to have_content("4 issues")
-      expect(page).to have_content("4. Old injury is ineligible")
+      expect(page).to have_content("4. Old injury is ineligible because it's already under review as a Appeal")
 
       safe_click "#button-finish-intake"
 

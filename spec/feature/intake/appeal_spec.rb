@@ -367,7 +367,7 @@ RSpec.feature "Appeal Intake" do
     safe_click ".add-issue"
 
     expect(page).to have_content("4 issues")
-    expect(page).to have_content("4. Old injury in review is ineligible")
+    expect(page).to have_content("4. Old injury in review is ineligible because it's already under review as a Appeal")
 
     safe_click "#button-finish-intake"
 
