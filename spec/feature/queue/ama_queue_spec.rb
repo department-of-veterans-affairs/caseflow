@@ -190,7 +190,8 @@ RSpec.feature "AmaQueue" do
     end
 
     context "when user is part of translation" do
-      let!(:user) { User.authenticate!(user: create(:user, roles: ["Reader"], full_name: "Translation User")) }
+      let(:user_name) { "Translation User" }
+      let!(:user) { User.authenticate!(user: create(:user, roles: ["Reader"], full_name: user_name)) }
       let!(:staff) { FactoryBot.create(:staff, user: user, sdept: "TRANS", sattyid: nil) }
       let!(:translation_organization) { Organization.create!(name: "Translation", url: "translation") }
       let!(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
@@ -227,7 +228,7 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content(existing_instruction)
         click_on "Submit"
 
-        expect(page).to have_content("Task assigned to person")
+        expect(page).to have_content("Task assigned to #{user_name}")
         expect(translation_task.reload.status).to eq("on_hold")
 
         # On hold tasks should not be visible on the case details screen
@@ -248,7 +249,7 @@ RSpec.feature "AmaQueue" do
 
         click_on "Submit"
 
-        expect(page).to have_content("Task assigned to team")
+        expect(page).to have_content("Task assigned to #{other_organization.name}")
         expect(Task.last.instructions.first).to eq(instructions)
       end
     end
