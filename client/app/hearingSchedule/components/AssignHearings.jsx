@@ -12,6 +12,7 @@ import moment from 'moment';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
+import StatusMessage from '../../components/StatusMessage';
 
 const colorAOD = css({
   color: 'red'
@@ -74,6 +75,7 @@ export default class AssignHearings extends React.Component {
                 color: COLORS.WHITE
               }
             });
+
             const styling = dateSelected ? buttonColorSelected : '';
 
             return <li key={hearingDay.id} >
@@ -167,6 +169,32 @@ export default class AssignHearings extends React.Component {
       }
     ];
 
+    const veteranNotAssignedStyle = css({ fontSize: '3rem' });
+    const veteranNotAssignedMessage = <span {...veteranNotAssignedStyle}>
+      Please verify that this RO has veterans to assign a hearing</span>;
+    const veteranNotAssignedTitleStyle = css({ fontSize: '4rem' });
+    const veteranNotAssignedTitle = <span {...veteranNotAssignedTitleStyle}>There are no scheduleable veterans</span>;
+
+    const scheduleableVeterans = () => {
+      if (_.isEmpty(this.props.veteransReadyForHearing)) {
+        return <div>
+          <StatusMessage
+            title= {veteranNotAssignedTitle}
+            type="alert"
+            messageText={veteranNotAssignedMessage}
+            wrapInAppSegment={false}
+          />
+        </div>;
+      }
+
+      return <Table
+        columns={tabWindowColumns}
+        rowObjects={this.tableAssignHearingsRows(this.props.veteransReadyForHearing)}
+        summary="scheduled-hearings-table"
+      />;
+
+    };
+
     const selectedHearingDay = this.props.selectedHearingDay;
 
     const availableSlots = selectedHearingDay.totalSlots - Object.keys(selectedHearingDay.hearings).length;
@@ -189,11 +217,7 @@ export default class AssignHearings extends React.Component {
           },
           {
             label: 'Assign Hearings',
-            page: <Table
-              columns={tabWindowColumns}
-              rowObjects={this.tableAssignHearingsRows(this.props.veteransReadyForHearing)}
-              summary="assign-hearings-table"
-            />
+            page: scheduleableVeterans()
           }
         ]}
       />

@@ -53,6 +53,7 @@
 }
 
 .intake-add-issues .cf-modal-body {
+  color: $color-gray-dark;
   width: 750px;
   max-height: 95%;
 
@@ -77,6 +78,10 @@
       margin-top: 1em;
     }
   }
+}
+
+.intake-cancel .cf-modal-body {
+  color: $color-gray-dark;
 }
 
 .add-issue {
