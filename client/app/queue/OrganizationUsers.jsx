@@ -113,7 +113,8 @@ export default class OrganizationUsers extends React.PureComponent {
     const listOfUsers = this.state.organizationUsers.map((user) => {
       return <li key={user.id}>{this.formatName(user)} &nbsp;
         <Button
-          name={`Remove user ${user.id}`}
+          name="Remove user"
+          id={`Remove-user-${user.id}`}
           classNames={['usa-button-secondary']}
           loading={this.state.removingUser[user.id]}
           onClick={this.removeUser(user)} />
