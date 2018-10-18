@@ -153,6 +153,12 @@ RSpec.feature "Edit issues" do
 
       safe_click("#button-submit-update")
 
+      expect(page).to have_content("You still have an \"Unidentified\" issue that needs to be removed and replaced with a rated or non-rated issue.")
+      safe_click "#Unidentified-issue-button-id-1"
+
+      expect(page).to have_content("The review originally had 1 issues but now has 4.")
+      safe_click "#Number-of-issues-has-changed-button-id-1"
+
       expect(page).to have_content("Edit Confirmed")
 
       # assert server has updated data for non-rated and unidentified issues
@@ -244,6 +250,8 @@ RSpec.feature "Edit issues" do
       find("label", text: "Left knee granted").click
       safe_click ".add-issue"
       safe_click("#button-submit-update")
+      expect(page).to have_content("The review originally had 1 issues but now has 2.")
+      safe_click ".confirm"
 
       expect(page).to have_content("Previous update not yet done processing")
     end
@@ -465,6 +473,9 @@ RSpec.feature "Edit issues" do
       find("label", text: "Left knee granted").click
       safe_click ".add-issue"
       safe_click("#button-submit-update")
+
+      expect(page).to have_content("The review originally had 1 issues but now has 2.")
+      safe_click ".confirm"
 
       expect(page).to have_content("Previous update not yet done processing")
     end
