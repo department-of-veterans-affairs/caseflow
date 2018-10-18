@@ -1,8 +1,8 @@
 describe GenericTask do
-  describe ".allowed_actions" do
+  describe ".available_actions" do
     let(:task) { nil }
     let(:user) { nil }
-    subject { task.allowed_actions(user) }
+    subject { task.available_actions(user) }
 
     context "when task is assigned to user" do
       let(:task) { GenericTask.find(FactoryBot.create(:generic_task).id) }
