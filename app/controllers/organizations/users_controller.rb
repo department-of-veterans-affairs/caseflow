@@ -4,13 +4,18 @@ class Organizations::UsersController < OrganizationsController
   # before_action :verify_feature_access, only: [:index]
 
   def index
-    organization_users = organization.users
-    remaining_users = User.where.not(id: organization_users.pluck(:id))
+    respond_to do |format|
+      format.html { render template: "queue/index" }
+      format.json do
+        organization_users = organization.users
+        remaining_users = User.where.not(id: organization_users.pluck(:id))
 
-    render json: {
-      organization_users: json_users(organization_users),
-      remaining_users: json_users(remaining_users)
-    }
+        render json: {
+          organization_users: json_users(organization_users),
+          remaining_users: json_users(remaining_users)
+        }
+      end
+    end
   end
 
   def create
@@ -19,7 +24,7 @@ class Organizations::UsersController < OrganizationsController
     render json: { users: json_users([user_to_modify]) }, status: 200
   end
 
-  def delete
+  def destroy
     OrganizationsUser.remove_user_from_organization(user_to_modify, organization)
 
     render json: { users: json_users([user_to_modify]) }, status: 200

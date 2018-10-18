@@ -7,6 +7,6 @@ class OrganizationsUser < ApplicationRecord
   end
 
   def self.remove_user_from_organization(user, organization)
-    find(organization_id: organization.id, user_id: user.id).destroy
+    find_by(organization_id: organization.id, user_id: user.id).destroy
   end
 end
