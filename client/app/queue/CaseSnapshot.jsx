@@ -3,14 +3,10 @@ import { css } from 'glamor';
 import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 
 import {
   appealWithDetailSelector,
-  getActionableTasksForAppeal,
-  tasksForAppealAssignedToAttorneySelector,
-  tasksForAppealAssignedToUserSelector,
-  incompleteOrganizationTasksByAssigneeIdSelector
+  getActionableTasksForAppeal
 } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import DocketTypeBadge from './components/DocketTypeBadge';
@@ -74,7 +70,7 @@ type Params = {|
 |};
 
 type Props = Params & {|
-  actionableTasks: Tasks,
+  actionableTasks: Array<Task>,
   firstActionableTask: Task,
   featureToggles: Object,
   userRole: string,
@@ -231,8 +227,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     const {
       actionableTasks,
       firstActionableTask,
-      appeal,
-      userRole
+      appeal
     } = this.props;
     const taskAssignedToVso = firstActionableTask && firstActionableTask.assignedTo.type === 'Vso';
 
@@ -292,8 +287,8 @@ export class CaseSnapshot extends React.PureComponent<Props> {
 const mapStateToProps = (state: State, ownProps: Params) => {
   const { featureToggles, userRole } = state.ui;
 
-  let actionableTasks = getActionableTasksForAppeal(state, { appealId: ownProps.appealId });
-  let firstActionableTask = actionableTasks ? actionableTasks[0] : null;
+  const actionableTasks = getActionableTasksForAppeal(state, { appealId: ownProps.appealId });
+  const firstActionableTask = actionableTasks ? actionableTasks[0] : null;
 
   return {
     actionableTasks,

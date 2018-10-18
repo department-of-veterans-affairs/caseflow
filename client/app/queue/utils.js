@@ -48,12 +48,6 @@ export const getUndecidedIssues = (issues: Issues) => _.filter(issues, (issue) =
   }
 });
 
-export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
-  tasks.reduce((acc, task: Object): Tasks => {
-    acc[task.id] = taskFromObject(task);
-    return acc;
-  }, {});
-
 const taskFromObject = (task: Object): Task => {
   const decisionPreparedBy = task.attributes.decision_prepared_by.first_name ? {
     firstName: task.attributes.decision_prepared_by.first_name,
@@ -97,6 +91,13 @@ const taskFromObject = (task: Object): Task => {
   };
 };
 
+export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
+  tasks.reduce((acc, task: Object): Tasks => {
+    acc[task.id] = taskFromObject(task);
+
+    return acc;
+  }, {});
+
 const extractAppealsFromTasks =
   (tasks: Array<Object>):
     BasicAppeals => {
@@ -127,11 +128,6 @@ export const extractAppealsAndAmaTasks =
   tasks: {},
   appeals: extractAppealsFromTasks(tasks),
   amaTasks: prepareTasksForStore(tasks) });
-
-export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
-  const mappedLegacyTasks = tasks.map((task): Task => legacyTaskFromObject(task));
-  return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.uniqueId), (task) => task);
-};
 
 const legacyTaskFromObject = (task: Object): Task => ({
   uniqueId: task.attributes.external_appeal_id,
@@ -165,6 +161,12 @@ const legacyTaskFromObject = (task: Object): Task => ({
   availableActions: task.attributes.available_actions
 });
 
+export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
+  const mappedLegacyTasks = tasks.map((task): Task => legacyTaskFromObject(task));
+
+  return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.uniqueId), (task) => task);
+};
+
 export const prepareAllTasksForStore = (tasks: Array<Object>): { amaTasks: Tasks, tasks: Tasks } => {
   const amaTasks = tasks.filter((task) => {
     return !task.attributes.is_legacy;
@@ -179,8 +181,8 @@ export const prepareAllTasksForStore = (tasks: Array<Object>): { amaTasks: Tasks
   };
 };
 
-export const tasksFromObjectArray = (tasks: Array<Object>): Tasks =>
-  _.map(tasks, (t) => t.attributes.is_legacy ? legacyTaskFromObject(t) : taskFromObject(t) );
+export const tasksFromObjectArray = (tasks: Array<Object>): Array<Task> =>
+  _.map(tasks, (task) => task.attributes.is_legacy ? legacyTaskFromObject(task) : taskFromObject(task));
 
 export const associateTasksWithAppeals =
   (serverData: { tasks: { data: Array<Object> } }):

@@ -69,6 +69,7 @@ export type QueueState = {|
   appeals: BasicAppeals,
   appealDetails: AppealDetails,
   amaTasks: Tasks,
+  actionableTasks: {[string]: Array<Task>},
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},
   stagedChanges: {

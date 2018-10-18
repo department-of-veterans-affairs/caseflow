@@ -22,7 +22,7 @@ import {
   setAttorneysOfJudge
 } from './QueueActions';
 import { getActionableTasksForAppeal } from './selectors';
-import type { Appeal, Appeals, Tasks } from './types/models';
+import type { Appeal, Appeals, Task, Tasks } from './types/models';
 import type { State, UsersById } from './types/state';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
@@ -36,6 +36,7 @@ type Params = {|
 
 type Props = Params & {|
   // From state
+  actionableTasks: {[string]: Array<Task>},
   caseflowTasks: Tasks,
   vacolsTasks: Tasks,
   appealDetails: Appeals,
@@ -46,7 +47,8 @@ type Props = Params & {|
   setAttorneysOfJudge: typeof setAttorneysOfJudge,
   fetchAllAttorneys: typeof fetchAllAttorneys,
   onReceiveTasks: typeof onReceiveTasks,
-  onReceiveAppealDetails: typeof onReceiveAppealDetails
+  onReceiveAppealDetails: typeof onReceiveAppealDetails,
+  setActionableTasksForAppeal: typeof setActionableTasksForAppeal
 |};
 
 class CaseDetailLoadingScreen extends React.PureComponent<Props> {
@@ -70,15 +72,15 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
       );
     }
 
-    if ( !actionableTasks ||
-      ( (!vacolsTasks || _.filter(vacolsTasks, (task) => task.externalAppealId === appealId).length === 0) &&
-      (!caseflowTasks || _.filter(caseflowTasks, (task) => task.externalAppealId === appealId).length === 0) )
+    if (!actionableTasks ||
+      ((!vacolsTasks || _.filter(vacolsTasks, (task) => task.externalAppealId === appealId).length === 0) &&
+      (!caseflowTasks || _.filter(caseflowTasks, (task) => task.externalAppealId === appealId).length === 0))
     ) {
       const taskPromise = ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
         const legacyTasks = _.every(response.body.tasks, (task) => task.attributes.appeal_type === 'LegacyAppeal');
 
         _.forEach(response.body.actionable_tasks, (val, key) => {
-          this.props.setActionableTasksForAppeal(key, tasksFromObjectArray(val))
+          this.props.setActionableTasksForAppeal(key, tasksFromObjectArray(val));
         });
 
         if (legacyTasks && [USER_ROLE_TYPES.attorney, USER_ROLE_TYPES.judge].includes(userRole)) {
