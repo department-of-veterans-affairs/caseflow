@@ -77,6 +77,13 @@ RSpec.feature "Intake" do
       expect(page).to have_content("Welcome to the Intake Help page!")
     end
 
+    scenario "User clicks on Search Cases" do
+      visit "/intake"
+      expect(page).to have_content("Search cases")
+      click_link("Search cases")
+      expect(page).to have_current_path("/search")
+    end
+
     scenario "Search for a veteran that does not exist in BGS" do
       visit "/intake"
 
