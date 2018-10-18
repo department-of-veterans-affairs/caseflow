@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
 
-import SearchableDropdown from '../../components/SearchableDropdown';
+import SearchableDropdown, { type OptionType } from '../../components/SearchableDropdown';
 
 import {
   resetDecisionOptions,
@@ -41,7 +41,7 @@ type Props = Params & {|
 |};
 
 class ActionsDropdown extends React.PureComponent<Props> {
-  changeRoute = (option) => {
+  changeRoute = (option: ?OptionType) => {
     const {
       appealId,
       history
@@ -54,8 +54,7 @@ class ActionsDropdown extends React.PureComponent<Props> {
     this.props.stageAppeal(appealId);
     this.props.resetDecisionOptions();
 
-    history.push('');
-    history.replace(`/queue/appeals/${appealId}/${option.value}`);
+    history.push(`/queue/appeals/${appealId}/${option.value}`);
   };
 
   render = () => {

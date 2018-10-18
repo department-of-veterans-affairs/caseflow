@@ -82,12 +82,16 @@ class TasksController < ApplicationController
   def update
     redirect_to("/unauthorized") && return unless task.can_be_accessed_by_user?(current_user)
 
-    task.update_from_params(update_params, current_user)
+    tasks = task.update_from_params(update_params, current_user)
+    actionable_tasks = {}
+    tasks.each do |t|
+      return invalid_record_error(t) unless t.valid?
+      actionable_tasks[t.appeal.external_id] = json_tasks(t.appeal.actionable_tasks_for_user(current_user))[:data] unless actionable_tasks[t.appeal.external_id]
+    end
 
-    return invalid_record_error(task) unless task.valid?
     render json: {
-      tasks: json_tasks([task]),
-      actionable_tasks: { task.appeal.external_id => json_tasks(task.appeal.actionable_tasks_for_user(current_user))[:data] }
+      tasks: json_tasks(tasks),
+      actionable_tasks: actionable_tasks
     }
   end
 
@@ -167,8 +171,13 @@ class TasksController < ApplicationController
   end
 
   def update_params
-    params.require("task")
-      .permit(:status, :on_hold_duration, :assigned_to_id, :instructions)
+    params.require("task").permit(
+      :status,
+      :on_hold_duration,
+      :assigned_to_id,
+      :instructions,
+      reassign: [:assigned_to_id, :assigned_to_type, :instructions]
+    )
   end
 
   def json_vso_tasks
