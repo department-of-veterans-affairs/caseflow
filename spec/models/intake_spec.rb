@@ -133,7 +133,7 @@ describe Intake do
       )
     end
 
-    it "returns in progress intakes" do
+    it "returns expired intakes" do
       expect(subject).to_not include(started_intake)
       expect(subject).to include(expired_intake)
       expect(subject).to_not include(completed_intake)
@@ -457,11 +457,34 @@ describe Intake do
     end
 
     context "valid to start" do
-      let!(:expired_intake) do
-        Intake.create!(
+      let(:ramp_election_detail) do
+        build(
+          :ramp_election,
           veteran_file_number: veteran_file_number,
-          detail: detail,
+          notice_date: Time.zone.now,
+          receipt_date: 5.days.ago,
+          option_selected: :supplemental_claim
+        )
+      end
+
+      let(:hlr_detail) do
+        build(:higher_level_review, veteran_file_number: veteran_file_number, receipt_date: 5.days.ago)
+      end
+
+      let!(:expired_intake) do
+        RampElectionIntake.create!(
+          veteran_file_number: veteran_file_number,
+          detail: ramp_election_detail,
           user: user,
+          started_at: 25.hours.ago
+        )
+      end
+
+      let!(:expired_other_intake) do
+        HigherLevelReviewIntake.create!(
+          veteran_file_number: veteran_file_number,
+          detail: hlr_detail,
+          user: another_user,
           started_at: 25.hours.ago
         )
       end
@@ -476,7 +499,16 @@ describe Intake do
           user: user
         )
 
+        # Ramp Election intake details are not destroyed
         expect(expired_intake.reload).to have_attributes(completion_status: "expired")
+        expect(expired_intake.detail).to have_attributes(
+          receipt_date: nil,
+          option_selected: nil
+        )
+
+        # Non-Ramp Election intake details are destroyed
+        expect(expired_other_intake.reload).to have_attributes(completion_status: "expired")
+        expect(expired_other_intake.detail).to be_nil
       end
     end
   end
