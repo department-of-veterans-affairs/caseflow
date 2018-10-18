@@ -18,6 +18,7 @@ class RequestIssuesUpdate < ApplicationRecord
       review.create_issues!(new_issues)
       strip_removed_issues!
       review.mark_rated_request_issues_to_reassociate!
+      review.cancel_unused_end_products!(removed_issues)
 
       update!(
         before_request_issue_ids: before_issues.map(&:id),

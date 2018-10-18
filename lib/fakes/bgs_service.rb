@@ -328,6 +328,12 @@ class Fakes::BGSService
     records[veteran_id] || records[:default] || []
   end
 
+  def cancel_end_products(veteran_id, end_product_code, end_product_modifier)
+    self.class.end_product_records[veteran_id].delete_if do |r|
+      r[:claim_type_code] == end_product_code  && r[:end_product_type_code] == end_product_modifier
+    end
+  end
+
   def fetch_veteran_info(vbms_id)
     # BGS throws a ShareError if the veteran has too high sensitivity
     fail BGS::ShareError, "Sensitive File - Access Violation !" unless can_access?(vbms_id)

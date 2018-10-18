@@ -43,6 +43,17 @@ class ClaimReview < AmaReview
     end
   end
 
+  def cancel_unused_end_products!(removed_issues)
+    # get all potential removed issue eps
+    potential_end_products_to_remove = removed_issues.map(:end_product_establishment_id).uniq
+
+    potential_end_products_to_remove.each do |end_product_establishment|
+      if end_product_establishment.request_issues.where.not(review_request: nil).length == 0
+        end_product_establishment.cancel!
+      end
+    end
+  end
+
   def mark_rated_request_issues_to_reassociate!
     request_issues.select(&:rated?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
   end

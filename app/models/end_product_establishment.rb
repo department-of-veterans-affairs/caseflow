@@ -141,6 +141,16 @@ class EndProductEstablishment < ApplicationRecord
     @preexisting_end_product ||= veteran.end_products.find { |ep| end_product_to_establish.matches?(ep) }
   end
 
+  def cancel!
+    transaction do
+      # delete end product in bgs & set sync status to canceled
+      BGSService.cancel_end_product(:veteran_file_number, :code, :modifier)
+      update!(synced_status: CANCELED_STATUS)
+    end
+  rescue StandardError => e
+    raise BGSSyncError.new(e, self)
+  end
+
   def sync!
     # There is no need to sync end_product_status if the status
     # is already inactive since an EP can never leave that state
