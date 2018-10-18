@@ -1115,7 +1115,7 @@ describe LegacyAppeal do
         it { is_expected.to eq(:activated_to_bva) }
       end
 
-      context "when activated with status of ACT" do
+      context "when status is Active (ACT)" do
         let(:status) { "Active" }
         it { is_expected.to eq(:activated_to_bva) }
       end
