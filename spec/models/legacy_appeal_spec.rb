@@ -1086,14 +1086,8 @@ describe LegacyAppeal do
                case_issues: issues)
       end
 
-      context "when other qualifying criteria are met" do
-        it { is_expected.to be_nil }
-      end
-
-      context "when no compensation issues" do
-        let(:issues) { [create(:case_issue, :education)] }
-        it { is_expected.to eq(:no_compensation_issues) }
-      end
+      # As of October 2018, appeals are only eligible for RAMP if their status is advance or remand
+      it { is_expected.to eq(:activated_to_bva) }
 
       context "when docket date is before 2016" do
         let(:docket_date) { "2015-12-31" }
@@ -1137,6 +1131,11 @@ describe LegacyAppeal do
         end
 
         it { is_expected.to eq(:claimant_not_veteran) }
+      end
+
+      context "when no compensation issues" do
+        let(:issues) { [create(:case_issue, :education)] }
+        it { is_expected.to eq(:no_compensation_issues) }
       end
     end
 
