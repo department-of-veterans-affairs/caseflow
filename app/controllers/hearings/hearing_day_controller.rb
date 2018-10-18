@@ -24,6 +24,22 @@ class Hearings::HearingDayController < HearingScheduleController
     end
   end
 
+  def show
+    hearing_day = json_hearing(HearingDay.find_hearing_day(nil, params[:id]))
+
+    hearings = []
+
+    if hearing_day["hearing_type"] == "Video"
+      hearings = HearingRepository.fetch_video_hearings_for_parent(params[:id])
+    end
+    if hearing_day["hearing_type"] == "Central"
+      hearings = HearingRepository.fetch_co_hearings_for_parent(hearing_day["hearing_date"])
+    end
+
+    render json: { hearing_day: hearing_day.merge(hearings:
+      hearings.map { |hearing| hearing.to_hash(current_user.id) }) }
+  end
+
   def index_with_hearings
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
