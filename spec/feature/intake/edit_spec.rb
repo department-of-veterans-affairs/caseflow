@@ -153,7 +153,7 @@ RSpec.feature "Edit issues" do
 
       safe_click("#button-submit-update")
 
-      expect(page).to have_content("You still have an \"Unidentified\" issue that needs to be removed and replaced with a rated or non-rated issue.")
+      expect(page).to have_content("You still have an \"Unidentified\" issue")
       safe_click "#Unidentified-issue-button-id-1"
 
       expect(page).to have_content("The review originally had 1 issues but now has 4.")
