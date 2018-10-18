@@ -33,6 +33,12 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: action.payload.regionalOffices
       }
     });
+  case ACTIONS.RECEIVE_DAILY_DOCKET:
+    return update(state, {
+      dailyDocket: {
+        $set: action.payload.dailyDocket
+      }
+    });
   case ACTIONS.REGIONAL_OFFICE_CHANGE:
     return update(state, {
       selectedRegionalOffice: {
