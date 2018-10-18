@@ -33,8 +33,9 @@ class RatingIssue < ApplicationRecord
   end
 
   def in_active_review
-    ri = RequestIssue.find_by(rating_issue_reference_id: reference_id, removed_at: nil)
-    return ri.review_request_type.underscore.titleize if ri
+    return unless reference_id
+    request_issue = RequestIssue.in_review_for_rating_issue(self)
+    request_issue.review_title if request_issue && request_issue.status_active?
   end
 
   private
