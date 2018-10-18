@@ -12,9 +12,9 @@ describe AppealRepository do
       snamef: "Phil",
       snamemi: "J",
       snamel: "Johnston",
-      sspare1: "Chris",
-      sspare2: "M",
-      sspare3: "Johnston",
+      sspare1: "Johnston",
+      sspare2: "Chris",
+      sspare3: "M",
       susrtyp: "Brother",
       sfnod: 100.days.ago
     )

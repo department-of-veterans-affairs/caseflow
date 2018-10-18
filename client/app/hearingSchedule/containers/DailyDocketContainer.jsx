@@ -1,11 +1,25 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import DailyDocket from '../components/DailyDocket';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
+import ApiUtil from '../../util/ApiUtil';
+import { onReceiveDailyDocket } from '../actions';
 
-export default class DailyDocketContainer extends React.Component {
+export class DailyDocketContainer extends React.Component {
 
-  createHearingPromise = () => Promise.all([true]);
+  loadHearingDay = () => {
+    const requestUrl = `/hearings/hearing_day/${this.props.match.params.hearingDayId}`;
+
+    return ApiUtil.get(requestUrl).then((response) => {
+      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+
+      this.props.onReceiveDailyDocket(resp.hearingDay);
+    });
+  };
+
+  createHearingPromise = () => Promise.all([this.loadHearingDay()]);
 
   render() {
     const loadingDataDisplay = <LoadingDataDisplay
@@ -18,29 +32,20 @@ export default class DailyDocketContainer extends React.Component {
         title: 'Unable to load the daily docket.'
       }}>
       <DailyDocket
-        vlj="Kim Anderson"
-        coordinator="James Jean"
-        hearingType="Central Office"
-        hearingDate="2018-10-13"
-        hearings={{
-          123: {
-            issueCount: 4,
-            appellantName: 'Alexander Richard',
-            vbmsId: 123456789,
-            appellantAddress: '3127 Dellar Rd',
-            appellantCity: 'Houston',
-            appellantState: 'TX',
-            appellantZipCode: '77030',
-            hearingLocation: 'Houston, TX',
-            hearingTime: '9:30AM EST, 8:30AM CST',
-            representative: 'Military Order of the Purple Heart',
-            representativeName: "Patrick O'Sullivan",
-            disposition: null,
-            hearingDate: '2018-10-13'
-          } }}
+        dailyDocket={this.props.dailyDocket}
       />
     </LoadingDataDisplay>;
 
     return <div>{loadingDataDisplay}</div>;
   }
 }
+
+const mapStateToProps = (state) => ({
+  dailyDocket: state.hearingSchedule.dailyDocket
+});
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  onReceiveDailyDocket
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer);

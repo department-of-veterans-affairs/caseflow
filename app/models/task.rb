@@ -22,7 +22,7 @@ class Task < ApplicationRecord
     Constants.TASK_STATUSES.completed.to_sym   => Constants.TASK_STATUSES.completed
   }
 
-  def allowed_actions(_user)
+  def available_actions(_user)
     []
   end
 
@@ -51,6 +51,8 @@ class Task < ApplicationRecord
   def update_from_params(params, _current_user)
     params["instructions"] = [instructions, params["instructions"]].flatten if params.key?("instructions")
     update(params)
+
+    [self]
   end
 
   def legacy?
