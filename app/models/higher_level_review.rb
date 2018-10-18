@@ -16,6 +16,10 @@ class HigherLevelReview < ClaimReview
   DTA_ERROR_EXAM_MO = "DTA Error - Exam/MO".freeze
   DTA_ERRORS = [DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO].freeze
 
+  def self.review_title
+    "Higher-Level Review"
+  end
+
   def ui_hash(ama_enabled)
     {
       formType: "higher_level_review",
@@ -130,7 +134,7 @@ class HigherLevelReview < ClaimReview
       payee_code: payee_code,
       code: ep_code,
       claimant_participant_id: claimant_participant_id,
-      station: "397", # AMC
+      station: end_product_station,
       benefit_type_code: veteran.benefit_type_code
     )
   end

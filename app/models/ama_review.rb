@@ -22,6 +22,10 @@ class AmaReview < ApplicationRecord
     ratings_with_issues.map(&:ui_hash)
   end
 
+  def self.review_title
+    to_s.underscore.titleize
+  end
+
   def start_review!
     @saving_review = true
   end
@@ -83,7 +87,7 @@ class AmaReview < ApplicationRecord
   # end
 
   def end_product_station
-    "397" # TODO: Change to 499 National Work Queue
+    "499" # National Work Queue
   end
 
   def validate_receipt_date_not_before_ama

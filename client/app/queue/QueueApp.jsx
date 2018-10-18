@@ -29,11 +29,10 @@ import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
-import MarkTaskCompleteView from './MarkTaskCompleteView';
+import CompleteTaskModal from './components/CompleteTaskModal';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
+import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
-
-import TriggerModal from './TriggerModal';
 
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
@@ -50,6 +49,7 @@ import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
 import COPY from '../../COPY.json';
+import TASK_ACTIONS from '../../constants/TASK_ACTIONS.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import type { State } from './types/state';
@@ -151,18 +151,20 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedColocatedPlaceHold = (props) => <ColocatedPlaceHoldView nextStep="/queue" {...props.match.params} />;
 
-  routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView
-    nextStep={`/queue/appeals/${props.match.params.appealId}`} {...props.match.params} />;
+  routedAdvancedOnDocketMotion = (props) => <AdvancedOnDocketMotionView {...props.match.params} />;
+
+  routedAssignToAttorney = (props) => <AssignToAttorneyModalView {...props.match.params} />;
 
   routedAssignToTeam = (props) => <AssignToView isTeamAssign {...props.match.params} />;
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
-  routedMarkTaskComplete = (props) => <MarkTaskCompleteView
-    nextStep={`/queue/appeals/${props.match.params.appealId}`}
-    {...props.match.params} />;
+  routedReassignToUser = (props) => <AssignToView isReassignAction {...props.match.params} />;
 
-  triggerModal = (props) => <TriggerModal modal={props.match.params.modalType} />;
+  routedCompleteTaskModal = (props) => <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />;
+
+  routedSendColocatedTaskModal = (props) =>
+    <CompleteTaskModal modalType="send_colocated_task" {...props.match.params} />;
 
   routedOrganization = (props) => <OrganizationQueueLoadingScreen
     urlToLoad={`${props.location.pathname}/tasks`}>
@@ -240,11 +242,17 @@ class QueueApp extends React.PureComponent<Props> {
             path="/queue/appeals/:appealId/modal/advanced_on_docket_motion"
             render={this.routedAdvancedOnDocketMotion} />
           <Route
-            path="/queue/appeals/:appealId/modal/assign_to_team"
+            path={`/queue/appeals/:appealId/${TASK_ACTIONS.ASSIGN_TO_TEAM.value}`}
             render={this.routedAssignToTeam} />
           <Route
-            path="/queue/appeals/:appealId/modal/assign_to_person"
+            path={`/queue/appeals/:appealId/${TASK_ACTIONS.ASSIGN_TO_PERSON.value}`}
             render={this.routedAssignToUser} />
+          <Route
+            path={`/queue/appeals/:appealId/${TASK_ACTIONS.REASSIGN_TO_PERSON.value}`}
+            render={this.routedReassignToUser} />
+          <Route
+            path="/queue/appeals/:appealId/modal/assign_to_attorney"
+            render={this.routedAssignToAttorney} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"
@@ -315,14 +323,14 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedColocatedPlaceHold} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/mark_task_complete"
+            path={`/queue/appeals/:appealId/${TASK_ACTIONS.MARK_COMPLETE.value}`}
             title="Mark Task Complete | Caseflow"
-            render={this.routedMarkTaskComplete} />
+            render={this.routedCompleteTaskModal} />
           <PageRoute
             exact
-            path="/queue/modal/:modalType"
-            title="Caseflow"
-            render={this.triggerModal} />
+            path="/queue/appeals/:appealId/modal/send_colocated_task"
+            title="Mark Task Complete | Caseflow"
+            render={this.routedSendColocatedTaskModal} />
           <PageRoute
             exact
             path="/organizations/:organization"

@@ -74,10 +74,10 @@ class TasksController < ApplicationController
   def update
     redirect_to("/unauthorized") && return unless task.can_be_accessed_by_user?(current_user)
 
-    task.update_from_params(update_params, current_user)
+    tasks = task.update_from_params(update_params, current_user)
+    tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
-    return invalid_record_error(task) unless task.valid?
-    render json: { tasks: json_tasks([task]) }
+    render json: { tasks: json_tasks(tasks) }
   end
 
   def for_appeal
@@ -92,7 +92,7 @@ class TasksController < ApplicationController
       return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], user_role)
     end
 
-    json_tasks_by_appeal_id(appeal.id, appeal.class.to_s)
+    all_json_tasks
   end
 
   private
@@ -156,8 +156,13 @@ class TasksController < ApplicationController
   end
 
   def update_params
-    params.require("task")
-      .permit(:status, :on_hold_duration, :assigned_to_id, :instructions)
+    params.require("task").permit(
+      :status,
+      :on_hold_duration,
+      :assigned_to_id,
+      :instructions,
+      reassign: [:assigned_to_id, :assigned_to_type, :instructions]
+    )
   end
 
   def json_vso_tasks
@@ -178,11 +183,9 @@ class TasksController < ApplicationController
     }
   end
 
-  def json_tasks_by_appeal_id(appeal_db_id, appeal_type)
-    tasks = queue_class.new(user: current_user).tasks_by_appeal_id(appeal_db_id, appeal_type)
-
+  def all_json_tasks
     render json: {
-      tasks: json_tasks(tasks)[:data]
+      tasks: json_tasks(appeal.tasks)[:data]
     }
   end
 

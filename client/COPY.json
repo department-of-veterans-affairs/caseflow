@@ -25,6 +25,8 @@
   "CASE_LIST_TABLE_SELECT_COLUMN_TITLE": "Select",
   "CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE": "Days Waiting",
   "CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE": "Days on Hold",
+  "CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE": "Date Sent",
+  "CASE_LIST_TABLE_COMPLETED_BACK_TO_NAME_COLUMN_TITLE": "Sent to",
   "CASE_LIST_TABLE_TASKS_COLUMN_TITLE": "Task(s)",
   "CASE_LIST_TABLE_ASSIGNEE_IS_CURRENT_USER_LABEL": "Assigned to you",
 
@@ -52,7 +54,7 @@
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL": "This Post Remand data has hearing data associated with a previous original appeal.",
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK": "View all cases",
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK": " to see other cases associated with this Veteran.",
-  "CASE_DETAILS_INCORRECT_POA": "If the POA is incorrect, please send an email to an administrator with access to SHARE.",
+  "CASE_DETAILS_INCORRECT_POA": "This data is coming from VBMS. If you need to update POA, please contact an administrator with access to SHARE.",
   "CASE_DETAILS_UNABLE_TO_LOAD": "We're unable to load this information. If the problem persists, please submit feedback through Caseflow",
   "CASE_DETAILS_LOADING": "Loading...",
   "CASE_DETAILS_POA_VSO": "Veteran Service Organization",
@@ -80,9 +82,11 @@
   "COLOCATED_QUEUE_PAGE_NEW_TAB_TITLE": "New (%d)",
   "COLOCATED_QUEUE_PAGE_PENDING_TAB_TITLE": "Pending action (%d)",
   "COLOCATED_QUEUE_PAGE_ON_HOLD_TAB_TITLE": "On hold (%d)",
+  "COLOCATED_QUEUE_PAGE_COMPLETE_TAB_TITLE": "Completed",
   "COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION": "These are new administrative actions that have been assigned to you.",
   "COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION": "When a hold is complete, the case will appear here. Cases with new documents will also appear here.",
   "COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "When a hold is complete, the case will automatically return to the Pending action tab.",
+  "COLOCATED_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases with tasks that were marked complete in the last two weeks will appeal here.",
 
   "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
   "SWITCH_TO_ASSIGN_MODE_LINK_LABEL": "Switch to Assign Cases",
@@ -121,6 +125,7 @@
 
   "JUDGE_CHECKOUT_OMO_LABEL": "Assign OMO",
   "JUDGE_CHECKOUT_DISPATCH_LABEL": "Ready for Dispatch",
+  "JUDGE_CHECKOUT_ASSIGN_TO_ATTORNEY_LABEL": "Assign to attorney",
 
   "JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE": "You have successfully submitted an OMO for %s.",
   "JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you need to make any changes, please manage this case in DAS.",
@@ -160,6 +165,7 @@
   "ASSIGN_WIDGET_DROPDOWN_PRIMARY_LABEL": "Assign to:",
   "ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL": "Enter the name of an attorney or judge:",
   "ASSIGN_WIDGET_ERROR_LOADING_ATTORNEYS": "Error loading attorneys",
+  "ASSIGN_WIDGET_MODAL_TITLE": "Select a user",
 
   "HEARING_SCHEDULE_VIEW_PAGE_HEADER": "Welcome to Hearing Schedule!",
   "HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK": "Apply",
@@ -182,8 +188,11 @@
 
   "HEARING_SCHEDULE_SUCCESS_MESSAGE": "You can view your uploaded schedule by clicking the link below",
 
-  "TASK_MARKED_COMPLETE_NOTICE_TITLE": "Task marked as complete",
-  "TASK_MARKED_COMPLETE_NOTICE_DETAIL": "Task for %s's case completed",
+  "MARK_TASK_COMPLETE_TITLE": "Mark as complete",
+  "MARK_TASK_COMPLETE_COPY": "Mark this task \"complete\" and send the case back to %s.",
+  "MARK_TASK_COMPLETE_BUTTON": "Mark complete",
+  "MARK_TASK_COMPLETE_CONFIRMATION": "%s's case has been marked complete",
+  "MARK_TASK_COMPLETE_CONFIRMATION_DETAIL": "If you've made a mistake, please email %s to manage any changes.",
 
   "ADD_COLOCATED_TASK_SUBHEAD": "Submit admin action",
   "ADD_COLOCATED_TASK_ACTION_TYPE_LABEL": "Select the type of administrative action you'd like to assign:",
@@ -193,12 +202,6 @@
 
   "COLOCATED_ACTION_SEND_TO_TEAM": "Send to %s team",
   "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY": "Send back to attorney",
-
-  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY": "You are sending your completed administrative action back to",
-  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_COPY_ATTORNEY_NAME": "%s (assigning attorney)",
-  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION": "%s's case has been sent back to %s (Assigning Attorney)",
-  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION_DETAIL": "If you've made a mistake, please email %s to manage any changes.",
-  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_BUTTON": "Send back to attorney",
 
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD": "Send action to %s",
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_SUBHEAD": "Select the team you'd like to send this administrative action to",

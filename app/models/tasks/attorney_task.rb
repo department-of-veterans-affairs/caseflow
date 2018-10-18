@@ -6,16 +6,16 @@ class AttorneyTask < Task
   validate :assigned_to_role_is_valid
   validate :parent_attorney_child_count, on: :create
 
-  def allowed_actions(user)
+  def available_actions(user)
     return [] if assigned_to != user
 
     [
       {
-        label: "Decision Ready for Review",
+        label: COPY::ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
         value: "draft_decision/special_issues"
       },
       {
-        label: "Add admin action",
+        label: COPY::ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL,
         value: "colocated_task"
       }
     ]
