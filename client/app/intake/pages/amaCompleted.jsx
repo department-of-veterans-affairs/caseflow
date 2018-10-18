@@ -6,18 +6,20 @@ import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../constants';
 import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
 
+// appeals
 const getAppealChecklistItems = requestIssues => [<Fragment>
   <strong>Appeal created:</strong>
   {requestIssues.map((ri, i) => <p key={i}>Issue: {ri.description}</p>)}
 </Fragment>];
 
+// higher level reviews & supplemental claims
 const getClaimReviewChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
   const checklist = [];
   // rated issues have a reference_id
   const [ratedIssues, nonRatedIssues] = _.partition(requestIssues, 'reference_id');
   const claimReviewName = formType === FORM_TYPES.HIGHER_LEVEL_REVIEW.key
     ? 'Higher-Level Review'
-    : 'Supplemental Claim';
+    : 'Supplemental Claim Review';
 
   if (ratedIssues.length > 0) {
     checklist.push(<Fragment>
@@ -47,13 +49,12 @@ class AmaCompleted extends React.PureComponent {
       formType,
       intakeStatus
     } = this.props;
-    debugger;
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const completedReview = this.props.amaReviews[selectedForm.key];
     const {
       endProductDescription,
       requestIssues,
-      informalConference // not set for appeals
+      informalConference // only used for higher level reviews
     } = completedReview;
 
     switch (intakeStatus) {
