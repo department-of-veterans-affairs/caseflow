@@ -216,8 +216,10 @@ RSpec.feature "Higher-Level Review" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
     expect(page).to have_content("A Higher-Level Review Rating EP is being established:")
+    expect(page).to have_content("Contention: PTSD denied")
+    expect(page).to have_content("A Higher-Level Review Nonrating EP is being established:")
     expect(page).to have_content("Contention: Description for Active Duty Adjustments")
     expect(page).to have_content("Informal Conference Tracked Item")
 
