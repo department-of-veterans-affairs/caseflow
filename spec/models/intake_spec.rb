@@ -467,7 +467,7 @@ describe Intake do
         )
       end
 
-      let(:hlr_detail) do
+      let(:higher_level_review) do
         build(:higher_level_review, veteran_file_number: veteran_file_number, receipt_date: 5.days.ago)
       end
 
@@ -483,10 +483,14 @@ describe Intake do
       let!(:expired_other_intake) do
         HigherLevelReviewIntake.create!(
           veteran_file_number: veteran_file_number,
-          detail: hlr_detail,
+          detail: higher_level_review,
           user: another_user,
           started_at: 25.hours.ago
         )
+      end
+
+      before do
+        higher_level_review.create_claimants!(participant_id: "5382910292", payee_code: "10")
       end
 
       it "clears expired intakes and creates new intake" do
@@ -509,6 +513,7 @@ describe Intake do
         # Non-Ramp Election intake details are destroyed
         expect(expired_other_intake.reload).to have_attributes(completion_status: "expired")
         expect(expired_other_intake.detail).to be_nil
+        expect(Claimant.find_by(participant_id: "5382910292")).to be_nil
       end
     end
   end
