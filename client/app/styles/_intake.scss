@@ -53,8 +53,35 @@
 }
 
 .intake-add-issues .cf-modal-body {
-  width: 770px;
-  overflow-y: auto;
+  color: $color-gray-dark;
+  width: 750px;
+  max-height: 95%;
+
+  @media only screen and (max-width: 760px) {
+    width: 650px;
+
+    .usa-button {
+      font-size: 1.5rem;
+      padding: .8rem 1.2rem;
+    }
+  }
+
+  @media only screen and (max-width: 650px) {
+    width: 95%;
+
+    .usa-button {
+      font-size: 1.5rem;
+      padding: .8rem 1.2rem;
+    }
+
+    .no-matching-issues {
+      margin-top: 1em;
+    }
+  }
+}
+
+.intake-cancel .cf-modal-body {
+  color: $color-gray-dark;
 }
 
 .add-issue {

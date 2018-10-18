@@ -14,8 +14,6 @@ import {
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import DocketTypeBadge from './components/DocketTypeBadge';
 import ActionsDropdown from './components/ActionsDropdown';
-import JudgeActionsDropdown from './components/JudgeActionsDropdown';
-import ColocatedActionsDropdown from './components/ColocatedActionsDropdown';
 import OnHoldLabel from './components/OnHoldLabel';
 import CopyTextButton from '../components/CopyTextButton';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -235,34 +233,30 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     }
 
     const {
+      userRole,
       taskAssignedToUser,
       taskAssignedToAttorney,
       taskAssignedToOrganization
     } = this.props;
     const tasks = _.compact([taskAssignedToUser, taskAssignedToAttorney, taskAssignedToOrganization]);
 
-    return Boolean(tasks.length && _.every(tasks, (task) => task.taskId));
+    if (!tasks.length) {
+      return false;
+    }
+
+    // users can end up at case details for appeals with no DAS
+    // record (!task.taskId). prevent starting attorney checkout flows
+    return userRole === USER_ROLE_TYPES.judge ?
+      Boolean(taskAssignedToAttorney || taskAssignedToUser) :
+      _.every(tasks, (task) => task.taskId);
   }
 
   render = () => {
     const {
       appeal,
       taskAssignedToUser,
-      taskAssignedToOrganization,
-      userRole
+      taskAssignedToOrganization
     } = this.props;
-    let ActionDropdown;
-    const dropdownArgs = { appealId: appeal.externalId };
-
-    if (userRole === USER_ROLE_TYPES.judge && this.props.featureToggles.judge_case_review_checkout) {
-      ActionDropdown = <JudgeActionsDropdown {...dropdownArgs} />;
-    } else if (userRole === USER_ROLE_TYPES.colocated) {
-      ActionDropdown = <ColocatedActionsDropdown {...dropdownArgs} />;
-    } else {
-      ActionDropdown = <ActionsDropdown
-        task={taskAssignedToUser || taskAssignedToOrganization} appealId={appeal.externalId} />;
-    }
-
     const taskAssignedToVso = taskAssignedToOrganization && taskAssignedToOrganization.assignedTo.type === 'Vso';
 
     return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
@@ -311,7 +305,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       {this.showActionsSection() &&
         <div className="usa-width-one-half">
           <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-          {ActionDropdown}
+          <ActionsDropdown task={taskAssignedToUser || taskAssignedToOrganization} appealId={appeal.externalId} />
         </div>
       }
     </div>;
