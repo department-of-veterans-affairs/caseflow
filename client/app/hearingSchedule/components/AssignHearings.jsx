@@ -139,7 +139,7 @@ export default class AssignHearings extends React.Component {
   }
 
   getNoUpcomingError = () => {
-    if (_.isEmpty(this.props.upcomingHearingDays)) {
+    if (this.props.selectedRegionalOffice) {
       return <div className="usa-input-error-message usa-input-error" {...smallTopMargin}>
         <span>{this.props.selectedRegionalOffice && this.props.selectedRegionalOffice.label} has
           no upcoming hearing days.</span><br />
@@ -262,7 +262,7 @@ export default class AssignHearings extends React.Component {
         to="/schedule">
         {COPY.HEARING_SCHEDULE_ASSIGN_HEARINGS_VIEW_SCHEDULE_LINK}
       </Link>
-      <div>{this.props.upcomingHearingDays && this.getNoUpcomingError()}</div>
+      <div>{_.isEmpty(this.props.upcomingHearingDays) && this.getNoUpcomingError()}</div>
       <RoSelectorDropdown
         onChange={this.props.onRegionalOfficeChange}
         value={this.props.selectedRegionalOffice}
