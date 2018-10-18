@@ -166,11 +166,5 @@ export default class OrganizationUsers extends React.PureComponent {
         </div>
       </AppSegment>
     </LoadingDataDisplay>;
-
-    if (this.state.loading) {
-      return <h2>{COPY.LOADING}</h2>;
-    }
-
-    return ;
   };
 }

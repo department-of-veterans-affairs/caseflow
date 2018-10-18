@@ -44,7 +44,7 @@ export class PowerOfAttorneyDetail extends React.PureComponent<Props> {
 
     if (!powerOfAttorney) {
       if (loading) {
-        return <React.Fragment>{COPY.LOADING}</React.Fragment>;
+        return <React.Fragment>{COPY.CASE_DETAILS_LOADING}</React.Fragment>;
       }
       if (error) {
         return <React.Fragment>

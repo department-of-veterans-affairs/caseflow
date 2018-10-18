@@ -56,6 +56,7 @@
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK": " to see other cases associated with this Veteran.",
   "CASE_DETAILS_INCORRECT_POA": "This data is coming from VBMS. If you need to update POA, please contact an administrator with access to SHARE.",
   "CASE_DETAILS_UNABLE_TO_LOAD": "We're unable to load this information. If the problem persists, please submit feedback through Caseflow",
+  "CASE_DETAILS_LOADING": "Loading...",
   "CASE_DETAILS_POA_VSO": "Veteran Service Organization",
   "CASE_DETAILS_POA_AGENT": "Private Agent",
   "CASE_DETAILS_POA_ATTORNEY": "Private Attorney",
@@ -238,9 +239,5 @@
   "CASE_TIMELINE_FORM_9_RECEIVED": "Form 9 received",
   "CASE_TIMELINE_FORM_9_PENDING": "Form 9 pending",
   "CASE_TIMELINE_NOD_RECEIVED": "Notice of disagreement received",
-  "CASE_TIMELINE_NOD_PENDING": "Notice of disagreement pending",
-
-  "LOADING": "Loading...",
-
-  "ORGANIZATION_USER_ERROR": "Error loading tasks"
+  "CASE_TIMELINE_NOD_PENDING": "Notice of disagreement pending"
 }
