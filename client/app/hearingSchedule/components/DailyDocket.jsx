@@ -9,6 +9,7 @@ import Table from '../../components/Table';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
+import Button from '../../components/Button';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
 
@@ -49,11 +50,24 @@ const noMarginStyling = css({
   marginLeft: '-40px'
 });
 
+const buttonStyling = css({
+  marginTop: '35px',
+  marginLeft: '50px'
+});
+
 export default class DailyDocket extends React.Component {
 
   emptyFunction = () => {
     // This is a placeholder for when we add onChange functions to the page.
   };
+
+  onHearingNotesUpdate = (hearingId) => (notes) => {
+    this.props.onHearingNotesUpdate(hearingId, notes);
+  };
+
+  onHearingDispositionUpdate = (hearingId) => (disposition) => {
+    this.props.onHearingDispositionUpdate(hearingId, disposition);
+  }
 
   getAppellantInformation = (hearing) => {
     return <div><b>{hearing.appellantMiFormatted} ({hearing.vbmsId})</b> <br />
@@ -74,7 +88,7 @@ export default class DailyDocket extends React.Component {
       name="Disposition"
       options={DISPOSITION_OPTIONS}
       value={hearing.disposition}
-      onChange={this.emptyFunction}
+      onChange={this.onHearingDispositionUpdate(hearing.id)}
     />;
   };
 
@@ -137,10 +151,18 @@ export default class DailyDocket extends React.Component {
   getNotesField = (hearing) => {
     return <TextareaField
       name="Notes"
-      onChange={this.emptyFunction}
+      onChange={this.onHearingNotesUpdate(hearing.id)}
       textAreaStyling={notesFieldStyling}
       value={hearing.notes}
     />;
+  };
+
+  getSaveButton = (hearing) => {
+    return hearing.edited ? <Button
+      styling={buttonStyling}
+    >
+      Save
+    </Button> : null;
   };
 
   getDailyDocketRows = (hearings) => {
@@ -161,7 +183,7 @@ export default class DailyDocket extends React.Component {
         hearingTime: <div>{hearing.currentIssueCount} issues</div>,
         hearingLocation: this.getNotesField(hearing),
         hearingDay: null,
-        disposition: null
+        disposition: this.getSaveButton(hearing)
       });
     });
 
@@ -216,7 +238,7 @@ export default class DailyDocket extends React.Component {
       <div {...noMarginStyling}>
         <Table
           columns={dailyDocketColumns}
-          rowObjects={this.getDailyDocketRows(this.props.dailyDocket.hearings)}
+          rowObjects={this.getDailyDocketRows(this.props.hearings)}
           summary="dailyDocket"
           bodyStyling={tableRowStyling}
         />
@@ -226,9 +248,8 @@ export default class DailyDocket extends React.Component {
 }
 
 DailyDocket.propTypes = {
-  vlj: PropTypes.string,
-  coordinator: PropTypes.string,
-  hearingType: PropTypes.string,
-  hearingDate: PropTypes.string,
-  hearings: PropTypes.object
+  dailyDocket: PropTypes.object,
+  hearings: PropTypes.object,
+  onHearingNotesUpdate: PropTypes.func,
+  onHearingDispositionUpdate: PropTypes.func
 };
