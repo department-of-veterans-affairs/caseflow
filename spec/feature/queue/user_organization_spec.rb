@@ -1,7 +1,6 @@
 require "rails_helper"
 
 RSpec.feature "User organization" do
-
   let(:role) { "org_role" }
   let!(:staff) { create(:staff, :attorney_role, sdomainid: user.css_id, sdept: "TRANS") }
   let!(:user) { User.authenticate!(user: create(:user, roles: [role])) }
