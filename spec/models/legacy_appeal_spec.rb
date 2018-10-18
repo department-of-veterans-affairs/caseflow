@@ -2021,9 +2021,9 @@ describe LegacyAppeal do
                saddrstt: "DC",
                saddrcnty: nil,
                saddrzip: "20001",
-               sspare1: "Tommy",
-               sspare2: "G",
-               sspare3: "Claimant")
+               sspare1: "Claimant",
+               sspare2: "Tommy",
+               sspare3: "G")
       end
 
       it "the appellant is returned" do
@@ -2070,9 +2070,9 @@ describe LegacyAppeal do
                saddrstt: "DC",
                saddrcnty: nil,
                saddrzip: "20001",
-               sspare1: "Tommy",
-               sspare2: "G",
-               sspare3: "Claimant")
+               sspare1: "Claimant",
+               sspare2: "Tommy",
+               sspare3: "G")
       end
 
       let!(:representative) do
@@ -2124,9 +2124,9 @@ describe LegacyAppeal do
                saddrstt: "DC",
                saddrcnty: nil,
                saddrzip: "20001",
-               sspare1: "Tommy",
-               sspare2: "G",
-               sspare3: "Claimant")
+               sspare1: "Claimant",
+               sspare2: "Tommy",
+               sspare3: "G")
       end
 
       let!(:representative) do
