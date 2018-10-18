@@ -50,49 +50,52 @@ export const getUndecidedIssues = (issues: Issues) => _.filter(issues, (issue) =
 
 export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
   tasks.reduce((acc, task: Object): Tasks => {
-    const decisionPreparedBy = task.attributes.decision_prepared_by.first_name ? {
-      firstName: task.attributes.decision_prepared_by.first_name,
-      lastName: task.attributes.decision_prepared_by.last_name
-    } : null;
-
-    acc[task.id] = {
-      uniqueId: task.id,
-      isLegacy: false,
-      appealType: task.attributes.appeal_type,
-      addedByCssId: null,
-      appealId: task.attributes.appeal_id,
-      externalAppealId: task.attributes.external_appeal_id,
-      assignedOn: task.attributes.assigned_at,
-      completedOn: task.attributes.completed_at,
-      dueOn: null,
-      assignedTo: {
-        cssId: task.attributes.assigned_to.css_id,
-        id: task.attributes.assigned_to.id,
-        type: task.attributes.assigned_to.type
-      },
-      assignedBy: {
-        firstName: task.attributes.assigned_by.first_name,
-        lastName: task.attributes.assigned_by.last_name,
-        cssId: task.attributes.assigned_by.css_id,
-        pgId: task.attributes.assigned_by.pg_id
-      },
-      taskId: task.id,
-      action: task.attributes.action,
-      documentId: task.attributes.document_id,
-      workProduct: null,
-      previousTaskAssignedOn: task.attributes.previous_task.assigned_at,
-      placedOnHoldAt: task.attributes.placed_on_hold_at,
-      status: task.attributes.status,
-      onHoldDuration: task.attributes.on_hold_duration,
-      instructions: task.attributes.instructions,
-      decisionPreparedBy,
-      availableActions: task.attributes.available_actions,
-      assignableOrganizations: task.attributes.assignable_organizations,
-      assignableUsers: task.attributes.assignable_users
-    };
-
+    acc[task.id] = taskFromObject(task);
     return acc;
   }, {});
+
+const taskFromObject = (task: Object): Task => {
+  const decisionPreparedBy = task.attributes.decision_prepared_by.first_name ? {
+    firstName: task.attributes.decision_prepared_by.first_name,
+    lastName: task.attributes.decision_prepared_by.last_name
+  } : null;
+
+  return {
+    uniqueId: task.id,
+    isLegacy: false,
+    appealType: task.attributes.appeal_type,
+    addedByCssId: null,
+    appealId: task.attributes.appeal_id,
+    externalAppealId: task.attributes.external_appeal_id,
+    assignedOn: task.attributes.assigned_at,
+    completedOn: task.attributes.completed_at,
+    dueOn: null,
+    assignedTo: {
+      cssId: task.attributes.assigned_to.css_id,
+      id: task.attributes.assigned_to.id,
+      type: task.attributes.assigned_to.type
+    },
+    assignedBy: {
+      firstName: task.attributes.assigned_by.first_name,
+      lastName: task.attributes.assigned_by.last_name,
+      cssId: task.attributes.assigned_by.css_id,
+      pgId: task.attributes.assigned_by.pg_id
+    },
+    taskId: task.id,
+    action: task.attributes.action,
+    documentId: task.attributes.document_id,
+    workProduct: null,
+    previousTaskAssignedOn: task.attributes.previous_task.assigned_at,
+    placedOnHoldAt: task.attributes.placed_on_hold_at,
+    status: task.attributes.status,
+    onHoldDuration: task.attributes.on_hold_duration,
+    instructions: task.attributes.instructions,
+    decisionPreparedBy,
+    availableActions: task.attributes.available_actions,
+    assignableOrganizations: task.attributes.assignable_organizations,
+    assignableUsers: task.attributes.assignable_users
+  };
+};
 
 const extractAppealsFromTasks =
   (tasks: Array<Object>):
@@ -126,42 +129,41 @@ export const extractAppealsAndAmaTasks =
   amaTasks: prepareTasksForStore(tasks) });
 
 export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
-  const mappedLegacyTasks = tasks.map((task): Task => {
-    return {
-      uniqueId: task.attributes.external_appeal_id,
-      isLegacy: true,
-      appealId: task.attributes.appeal_id,
-      appealType: task.attributes.appeal_type,
-      externalAppealId: task.attributes.external_appeal_id,
-      assignedOn: task.attributes.assigned_on,
-      completedOn: null,
-      dueOn: task.attributes.due_on,
-      assignedTo: {
-        cssId: task.attributes.assigned_to.css_id,
-        type: task.attributes.assigned_to.type,
-        id: task.attributes.assigned_to.id
-      },
-      assignedBy: {
-        firstName: task.attributes.assigned_by.first_name,
-        lastName: task.attributes.assigned_by.last_name,
-        cssId: task.attributes.assigned_by.css_id,
-        pgId: task.attributes.assigned_by.pg_id
-      },
-      addedByName: task.attributes.added_by_name,
-      addedByCssId: task.attributes.added_by_css_id,
-      taskId: task.attributes.task_id,
-      action: task.attributes.action,
-      documentId: task.attributes.document_id,
-      workProduct: task.attributes.work_product,
-      previousTaskAssignedOn: task.attributes.previous_task.assigned_on,
-      status: task.attributes.status,
-      decisionPreparedBy: null,
-      availableActions: task.attributes.available_actions
-    };
-  });
-
+  const mappedLegacyTasks = tasks.map((task): Task => legacyTaskFromObject(task));
   return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.uniqueId), (task) => task);
 };
+
+const legacyTaskFromObject = (task: Object): Task => ({
+  uniqueId: task.attributes.external_appeal_id,
+  isLegacy: true,
+  appealId: task.attributes.appeal_id,
+  appealType: task.attributes.appeal_type,
+  externalAppealId: task.attributes.external_appeal_id,
+  assignedOn: task.attributes.assigned_on,
+  completedOn: null,
+  dueOn: task.attributes.due_on,
+  assignedTo: {
+    cssId: task.attributes.assigned_to.css_id,
+    type: task.attributes.assigned_to.type,
+    id: task.attributes.assigned_to.id
+  },
+  assignedBy: {
+    firstName: task.attributes.assigned_by.first_name,
+    lastName: task.attributes.assigned_by.last_name,
+    cssId: task.attributes.assigned_by.css_id,
+    pgId: task.attributes.assigned_by.pg_id
+  },
+  addedByName: task.attributes.added_by_name,
+  addedByCssId: task.attributes.added_by_css_id,
+  taskId: task.attributes.task_id,
+  action: task.attributes.action,
+  documentId: task.attributes.document_id,
+  workProduct: task.attributes.work_product,
+  previousTaskAssignedOn: task.attributes.previous_task.assigned_on,
+  status: task.attributes.status,
+  decisionPreparedBy: null,
+  availableActions: task.attributes.available_actions
+});
 
 export const prepareAllTasksForStore = (tasks: Array<Object>): { amaTasks: Tasks, tasks: Tasks } => {
   const amaTasks = tasks.filter((task) => {
@@ -176,6 +178,9 @@ export const prepareAllTasksForStore = (tasks: Array<Object>): { amaTasks: Tasks
     tasks: prepareLegacyTasksForStore(legacyTasks)
   };
 };
+
+export const tasksFromObjectArray = (tasks: Array<Object>): Tasks =>
+  _.map(tasks, (t) => t.attributes.is_legacy ? legacyTaskFromObject(t) : taskFromObject(t) );
 
 export const associateTasksWithAppeals =
   (serverData: { tasks: { data: Array<Object> } }):

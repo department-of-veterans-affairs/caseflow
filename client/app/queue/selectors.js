@@ -37,7 +37,7 @@ export const selectedTasksSelector = (state: State, userId: string) => {
 };
 
 const getTasks = (state: State): Tasks => state.queue.tasks;
-const getActionableTasks = (state: State): Tasks => state.queue.actionableTasks;
+const getActionableTasks = (state: State): Object => state.queue.actionableTasks;
 const getAmaTasks = (state: State): Tasks => state.queue.amaTasks;
 const getAppeals = (state: State): BasicAppeals => state.queue.appeals;
 const getAppealDetails = (state: State): AppealDetails => state.queue.appealDetails;
@@ -94,6 +94,10 @@ export const getTasksForAppeal = createSelector(
     return _.filter(tasks, (task) => task.externalAppealId === appealId).
       concat(_.filter(amaTasks, (task) => task.externalAppealId === appealId));
   }
+);
+
+export const getActionableTasksForAppeal = createSelector(
+  [getActionableTasks, getAppealId], (tasksObj: Object, appealId: string) => tasksObj[appealId]
 );
 
 export const tasksForAppealAssignedToUserSelector = createSelector(
