@@ -1,6 +1,7 @@
 class TasksController < ApplicationController
   include Errors
 
+  before_action :verify_task_access, only: [:create]
   skip_before_action :deny_vso_access, only: [:index, :update, :for_appeal]
 
   TASK_CLASSES = {
@@ -95,6 +96,15 @@ class TasksController < ApplicationController
   end
 
   private
+
+  def can_assign_task?
+    return true if create_params.first[:appeal].is_a?(Appeal)
+    super
+  end
+
+  def verify_task_access
+    redirect_to("/unauthorized") unless can_assign_task?
+  end
 
   def queue_class
     QUEUES[user_role.try(:to_sym)] || QUEUES[:generic]
