@@ -94,6 +94,7 @@ class SaveButtonUnconnected extends React.Component {
         </p>
         <p>Please check that this is the correct number.</p>
       </SaveAlertConfirmModal>}
+
       { this.state.showModals.unidentifiedIssueModal && <SaveAlertConfirmModal
         title="Unidentified issue"
         onClose={() => this.closeModal('unidentifiedIssueModal')}
@@ -104,6 +105,7 @@ class SaveButtonUnconnected extends React.Component {
         </p>
         <p>Are you sure you want to save this issue without fixing the unidentified issue?</p>
       </SaveAlertConfirmModal>}
+
       <Button
         name="submit-update"
         onClick={this.validate}
