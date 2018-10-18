@@ -101,7 +101,7 @@ RSpec.feature "Task queue" do
 
       find("button", text: "Mark complete").click
 
-      expect(page).to have_content(COPY::MARK_TASK_COMPLETE_TITLE)
+      expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, vso_task.appeal.veteran_full_name))
       expect(Task.find(vso_task.id).status).to eq("completed")
     end
   end

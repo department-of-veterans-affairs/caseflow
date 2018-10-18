@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { withRouter } from 'react-router-dom';
 
 import COPY from '../../COPY.json';
 
@@ -22,6 +21,7 @@ import { requestSave } from './uiReducer/uiActions';
 
 import type { State } from './types/state';
 import type { Appeal, Task } from './types/models';
+import { withRouter } from 'react-router-dom';
 
 type Params = {|
   appealId: string,
