@@ -5,8 +5,11 @@ describe Rating do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
+  let(:receipt_date) { Time.zone.today }
+
   let(:rating) do
     Generators::Rating.build(
+      promulgation_date: receipt_date,
       issues: issues
     )
   end
