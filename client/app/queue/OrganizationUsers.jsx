@@ -21,11 +21,16 @@ import Alert from '../components/Alert';
 import Button from '../components/Button';
 import SearchableDropdown from '../components/SearchableDropdown';
 
+import { LOGO_COLORS } from '../constants/AppConstants';
+
+import LoadingDataDisplay from '../components/LoadingDataDisplay';
+
 export default class OrganizationUsers extends React.PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
+      organizationName: null,
       organizationUsers: [],
       remainingUsers: [],
       loading: true,
@@ -35,11 +40,12 @@ export default class OrganizationUsers extends React.PureComponent {
     };
   };
 
-  componentDidMount = () => {
-    ApiUtil.get(`/organizations/${this.props.organization}/users`).then((response) => {
+  loadingPromise = () => {
+    return ApiUtil.get(`/organizations/${this.props.organization}/users`).then((response) => {
       const resp = JSON.parse(response.text);
 
       this.setState({
+        organizationName: resp.organization_name,
         organizationUsers: resp.organization_users.data,
         remainingUsers: resp.remaining_users.data,
         loading: false
@@ -114,14 +120,10 @@ export default class OrganizationUsers extends React.PureComponent {
   }
 
   mainContent = () => {
-    if (this.state.loading) {
-      return <h2>{COPY.LOADING}</h2>;
-    }
-
     const listOfUsers = this.state.organizationUsers.map((user) => {
-      return <li>{this.formatName(user)} &nbsp;
+      return <li key={user.id}>{this.formatName(user)} &nbsp;
         <Button
-          name="Remove user"
+          name={`Remove user ${user.id}`}
           classNames={['usa-button-secondary']}
           loading={this.state.removingUser[user.id]}
           onClick={this.removeUser(user)} />
@@ -135,7 +137,7 @@ export default class OrganizationUsers extends React.PureComponent {
         name="Add user"
         hideLabel
         searchable
-        readOnly={this.state.addingUser}
+        readOnly={Boolean(this.state.addingUser)}
         placeholder={this.state.addingUser ? `Adding user ${this.formatName(this.state.addingUser)}` : "Select user to add"}
         value={null}
         onChange={this.addUser}
@@ -144,14 +146,31 @@ export default class OrganizationUsers extends React.PureComponent {
   }
 
   render = () => {
-    return <AppSegment filledBackground>
-      { this.state.error && <Alert title={this.state.error.title} type="error">
-        {this.state.error.body}
-      </Alert>}
-      <div>
-        <h1>{this.props.organization.charAt(0).toUpperCase() + this.props.organization.substring(1)} team</h1>
-        {this.mainContent()}
-      </div>
-    </AppSegment>;
+
+    return <LoadingDataDisplay
+      createLoadPromise={this.loadingPromise}
+      loadingComponentProps={{
+        spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
+        message: 'Loading user...'
+      }}
+      failStatusMessageProps={{
+        title: 'Unable to load users'
+      }}>
+      <AppSegment filledBackground>
+        { this.state.error && <Alert title={this.state.error.title} type="error">
+          {this.state.error.body}
+        </Alert>}
+        <div>
+          <h1>{this.state.organizationName} team</h1>
+          {this.mainContent()}
+        </div>
+      </AppSegment>
+    </LoadingDataDisplay>;
+
+    if (this.state.loading) {
+      return <h2>{COPY.LOADING}</h2>;
+    }
+
+    return ;
   };
 }

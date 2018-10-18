@@ -1,7 +1,7 @@
 class Organizations::UsersController < OrganizationsController
-  # before_action :verify_organization_access, only: [:index]
-  # before_action :verify_role_access, only: [:index]
-  # before_action :verify_feature_access, only: [:index]
+  before_action :verify_organization_access
+  before_action :verify_role_access
+  before_action :verify_feature_access
 
   def index
     respond_to do |format|
@@ -10,7 +10,10 @@ class Organizations::UsersController < OrganizationsController
         organization_users = organization.users
         remaining_users = User.where.not(id: organization_users.pluck(:id))
 
+        remaining_users = remaining_users.select { |user| user.roles.include?(organization.role) } if organization.role
+
         render json: {
+          organization_name: organization.name,
           organization_users: json_users(organization_users),
           remaining_users: json_users(remaining_users)
         }
