@@ -19,6 +19,7 @@ export const initialState = {
   judges: {},
   tasks: {},
   amaTasks: {},
+  actionableTasks: {},
   appeals: {},
   appealDetails: {},
   editingIssue: {},
@@ -77,6 +78,14 @@ const workQueueReducer = (state: QueueState = initialState, action: Object = {})
       },
       amaTasks: {
         $merge: action.payload.amaTasks ? action.payload.amaTasks : {}
+      }
+    });
+  case ACTIONS.SET_ACTIONABLE_TASKS:
+    return update(state, {
+      actionableTasks: {
+        [action.payload.appealId]: {
+          $set: action.payload.actionableTasks
+        }
       }
     });
   case ACTIONS.RECEIVE_JUDGE_DETAILS:

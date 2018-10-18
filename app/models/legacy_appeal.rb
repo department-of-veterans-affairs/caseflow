@@ -681,6 +681,10 @@ class LegacyAppeal < ApplicationRecord
     vacols_id
   end
 
+  def actionable_tasks_for_user(user)
+    tasks.select { |t| t.actionable?(user) }
+  end
+
   private
 
   def use_representative_info_from_bgs?

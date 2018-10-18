@@ -37,6 +37,7 @@ export const selectedTasksSelector = (state: State, userId: string) => {
 };
 
 const getTasks = (state: State): Tasks => state.queue.tasks;
+const getActionableTasks = (state: State): Tasks => state.queue.actionableTasks;
 const getAmaTasks = (state: State): Tasks => state.queue.amaTasks;
 const getAppeals = (state: State): BasicAppeals => state.queue.appeals;
 const getAppealDetails = (state: State): AppealDetails => state.queue.appealDetails;

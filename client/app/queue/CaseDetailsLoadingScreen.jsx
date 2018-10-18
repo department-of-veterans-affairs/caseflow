@@ -9,7 +9,13 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import { prepareAppealForStore, prepareLegacyTasksForStore, prepareTasksForStore } from './utils';
 
-import { onReceiveAppealDetails, onReceiveTasks, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
+import {
+  fetchAllAttorneys,
+  onReceiveAppealDetails,
+  onReceiveTasks,
+  setActionableTasksForAppeal,
+  setAttorneysOfJudge
+} from './QueueActions';
 import type { Appeal, Appeals, Tasks } from './types/models';
 import type { State, UsersById } from './types/state';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
@@ -61,6 +67,8 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
       (!caseflowTasks || _.filter(caseflowTasks, (task) => task.externalAppealId === appealId).length === 0)) {
       const taskPromise = ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
         const legacyTasks = _.every(response.body.tasks, (task) => task.attributes.appeal_type === 'LegacyAppeal');
+
+        _.forEach(response.body.actionable_tasks, (val, key) => {this.props.setActionableTasksForAppeal(key, val)});
 
         if (legacyTasks && [USER_ROLE_TYPES.attorney, USER_ROLE_TYPES.judge].includes(userRole)) {
           this.props.onReceiveTasks({ amaTasks: {},
@@ -140,6 +148,7 @@ const mapStateToProps = (state: State) => {
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveTasks,
   onReceiveAppealDetails,
+  setActionableTasksForAppeal,
   setAttorneysOfJudge,
   fetchAllAttorneys
 }, dispatch);

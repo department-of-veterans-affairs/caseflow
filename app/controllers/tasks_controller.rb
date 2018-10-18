@@ -55,9 +55,17 @@ class TasksController < ApplicationController
     return invalid_type_error unless task_class
 
     tasks = task_class.create_from_params(create_params, current_user)
+    actionable_tasks = {}
 
-    tasks.each { |task| return invalid_record_error(task) unless task.valid? }
-    render json: { tasks: json_tasks(tasks) }, status: :created
+    tasks.each do |task|
+      return invalid_record_error(task) unless task.valid?
+      actionable_tasks[task.appeal.external_id] = json_tasks(task.appeal.actionable_tasks_for_user(current_user))[:data]
+    end
+
+    render json: {
+      tasks: json_tasks(tasks),
+      actionable_tasks: actionable_tasks
+    }, status: :created
   end
 
   # To update attorney task
@@ -77,7 +85,10 @@ class TasksController < ApplicationController
     task.update_from_params(update_params, current_user)
 
     return invalid_record_error(task) unless task.valid?
-    render json: { tasks: json_tasks([task]) }
+    render json: {
+      tasks: json_tasks([task]),
+      actionable_tasks: { task.appeal.external_id => json_tasks(task.appeal.actionable_tasks_for_user(current_user))[:data] }
+    }
   end
 
   def for_appeal
@@ -166,21 +177,25 @@ class TasksController < ApplicationController
     tasks = GenericQueue.new(user: current_user).tasks
 
     render json: {
-      tasks: json_tasks(tasks)[:data]
+      tasks: json_tasks(tasks)[:data],
+      actionable_tasks: { appeal.external_id => json_tasks(appeal.actionable_tasks_for_user(current_user))[:data] }
     }
   end
 
   def json_tasks_by_legacy_appeal_id_and_role(appeal_id, role)
     tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal_id, role)
+    actionable_tasks = [tasks, appeal.actionable_tasks_for_user(current_user)].flatten
 
     render json: {
-      tasks: json_legacy_tasks(tasks, role)[:data]
+      tasks: json_legacy_tasks(tasks, role)[:data],
+      actionable_tasks: { appeal.external_id => json_legacy_tasks(actionable_tasks, role)[:data] }
     }
   end
 
   def all_json_tasks
     render json: {
-      tasks: json_tasks(appeal.tasks)[:data]
+      tasks: json_tasks(appeal.tasks)[:data],
+      actionable_tasks: { appeal.external_id => json_tasks(appeal.actionable_tasks_for_user(current_user))[:data] }
     }
   end
 

@@ -48,6 +48,11 @@ export const onReceiveTasks = (
   }
 });
 
+export const setActionableTasksForAppeal = (appealId: string, actionableTasks: Tasks) => ({
+  type: ACTIONS.SET_ACTIONABLE_TASKS,
+  payload: { appealId, actionableTasks }
+});
+
 export const setTaskAttrs = (uniqueId: string, attributes: Object) => ({
   type: ACTIONS.SET_TASK_ATTRS,
   payload: {
