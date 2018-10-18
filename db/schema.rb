@@ -508,7 +508,7 @@ ActiveRecord::Schema.define(version: 20181018143032) do
     t.integer "organization_id"
     t.integer "user_id"
     t.index ["organization_id"], name: "index_organizations_users_on_organization_id"
-    t.index ["user_id"], name: "index_organizations_users_on_user_id"
+    t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
   end
 
   create_table "people", force: :cascade do |t|
