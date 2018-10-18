@@ -34,8 +34,8 @@ class RatingIssue < ApplicationRecord
 
   def in_active_review
     return unless reference_id
-    request_issue = RequestIssue.in_review_for_rating_issue(self)
-    request_issue.review_title if request_issue && request_issue.status_active?
+    request_issue = RequestIssue.find_active_by_reference_id(reference_id)
+    request_issue.review_title if request_issue
   end
 
   private

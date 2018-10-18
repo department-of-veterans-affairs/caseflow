@@ -50,26 +50,37 @@ describe RequestIssue do
       expect(unidentified_issues.find_by(id: unidentified_issue.id)).to_not be_nil
     end
 
-    context ".in_review_for_rating_issue" do
-      let(:rating_issue) { RatingIssue.new(reference_id: rated_issue.rating_issue_reference_id) }
-
-      it "filters by reference_id" do
-        request_issue_in_review = RequestIssue.in_review_for_rating_issue(rating_issue)
-        expect(request_issue_in_review).to eq(rated_issue)
+    context ".find_active_by_reference_id" do
+      let(:active_rated_issue) do
+        rated_issue.tap { |ri| ri.update!(end_product_establishment: create(:end_product_establishment, :active)) }
       end
 
-      it "accepts string or RatingIssue" do
-        request_issue_in_review = RequestIssue.in_review_for_rating_issue("abc123")
-        expect(request_issue_in_review).to eq(rated_issue)
+      context "EPE is active" do
+        let(:rating_issue) { RatingIssue.new(reference_id: active_rated_issue.rating_issue_reference_id) }
+
+        it "filters by reference_id" do
+          request_issue_in_review = RequestIssue.find_active_by_reference_id(rating_issue.reference_id)
+          expect(request_issue_in_review).to eq(rated_issue)
+        end
+
+        it "ignores request issues that are already ineligible" do
+          create(
+            :request_issue,
+            rating_issue_reference_id: rated_issue.rating_issue_reference_id,
+            ineligible_reason: :duplicate_of_issue_in_active_review
+          )
+
+          request_issue_in_review = RequestIssue.find_active_by_reference_id(rating_issue.reference_id)
+          expect(request_issue_in_review).to eq(rated_issue)
+        end
       end
 
-      it "ignores request issues that are already ineligible" do
-        request_issue = create(:request_issue, rating_issue_reference_id: rated_issue.rating_issue_reference_id)
-        request_issue.update_as_ineligible!(other_request_issue: rated_issue, reason: :in_active_review)
+      context "EPE is not active" do
+        let(:rating_issue) { RatingIssue.new(reference_id: rated_issue.rating_issue_reference_id) }
 
-        request_issue_in_review = RequestIssue.in_review_for_rating_issue(rating_issue)
-
-        expect(request_issue_in_review).to eq(rated_issue)
+        it "ignores request issues" do
+          expect(RequestIssue.find_active_by_reference_id(rating_issue.reference_id)).to be_nil
+        end
       end
     end
   end
@@ -85,17 +96,6 @@ describe RequestIssue do
   context "#review_title" do
     it "munges the review_request_type appropriately" do
       expect(rated_issue.review_title).to eq "Higher-Level Review"
-    end
-  end
-
-  context "#update_as_ineligible!" do
-    it "updates in a single transaction" do
-      request_issue = create(:request_issue)
-
-      request_issue.update_as_ineligible!(other_request_issue: rated_issue, reason: :in_active_review)
-
-      expect(request_issue.in_active_review?).to eq(true)
-      expect(request_issue.ineligible_request_issue).to eq(rated_issue)
     end
   end
 end
