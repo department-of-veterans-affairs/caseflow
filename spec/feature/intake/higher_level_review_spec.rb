@@ -509,7 +509,7 @@ RSpec.feature "Higher-Level Review" do
       expect(row).to have_text(text)
     end
 
-    let(:in_active_review_rating_issue_reference_id) { "xyz789" }
+    let(:duplicate_reference_id) { "xyz789" }
     let(:active_epe) { create(:end_product_establishment, :active) }
 
     let!(:timely_ratings) do
@@ -520,7 +520,7 @@ RSpec.feature "Higher-Level Review" do
         issues: [
           { reference_id: "xyz123", decision_text: "Left knee granted" },
           { reference_id: "xyz456", decision_text: "PTSD denied" },
-          { reference_id: in_active_review_rating_issue_reference_id, decision_text: "Old injury" }
+          { reference_id: duplicate_reference_id, decision_text: "Old injury" }
         ]
       )
     end
@@ -529,7 +529,7 @@ RSpec.feature "Higher-Level Review" do
       create(
         :request_issue,
         end_product_establishment: active_epe,
-        rating_issue_reference_id: in_active_review_rating_issue_reference_id,
+        rating_issue_reference_id: duplicate_reference_id,
         description: "Old injury"
       )
     end
@@ -676,10 +676,11 @@ RSpec.feature "Higher-Level Review" do
                end_product_establishment_id: end_product_establishment.id
       )).to_not be_nil
 
-      xyz789_request_issues = RequestIssue.where(rating_issue_reference_id: in_active_review_rating_issue_reference_id)
-      expect(xyz789_request_issues.count).to eq(2)
+      duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
+      expect(duplicate_request_issues.count).to eq(2)
 
-      ineligible_issue = xyz789_request_issues.select(&:duplicate_of_issue_in_active_review?).first
+      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_issue_in_active_review?).first
+      expect(duplicate_request_issues).to include(request_issue_in_progress)
       expect(ineligible_issue).to_not eq(request_issue_in_progress)
       expect(ineligible_issue.contention_reference_id).to be_nil
 

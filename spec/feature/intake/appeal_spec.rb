@@ -271,7 +271,7 @@ RSpec.feature "Appeal Intake" do
   end
 
   scenario "For new Add / Remove Issues page" do
-    in_active_review_rating_issue_reference_id = "xyz789"
+    duplicate_reference_id = "xyz789"
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - 40.days,
@@ -279,14 +279,14 @@ RSpec.feature "Appeal Intake" do
       issues: [
         { reference_id: "xyz123", decision_text: "Left knee granted" },
         { reference_id: "xyz456", decision_text: "PTSD denied" },
-        { reference_id: in_active_review_rating_issue_reference_id, decision_text: "Old injury in review" }
+        { reference_id: duplicate_reference_id, decision_text: "Old injury in review" }
       ]
     )
     epe = create(:end_product_establishment, :active)
     request_issue_in_progress = create(
       :request_issue,
       end_product_establishment: epe,
-      rating_issue_reference_id: in_active_review_rating_issue_reference_id,
+      rating_issue_reference_id: duplicate_reference_id,
       description: "Old injury"
     )
 
@@ -400,11 +400,11 @@ RSpec.feature "Appeal Intake" do
              is_unidentified: true
     )).to_not be_nil
 
-    xyz789_request_issues = RequestIssue.where(rating_issue_reference_id: in_active_review_rating_issue_reference_id)
-    ineligible_issue = xyz789_request_issues.select(&:duplicate_of_issue_in_active_review?).first
+    duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
+    ineligible_issue = duplicate_request_issues.select(&:duplicate_of_issue_in_active_review?).first
 
-    expect(xyz789_request_issues.count).to eq(2)
-    expect(xyz789_request_issues).to include(request_issue_in_progress)
+    expect(duplicate_request_issues.count).to eq(2)
+    expect(duplicate_request_issues).to include(request_issue_in_progress)
     expect(ineligible_issue).to_not eq(request_issue_in_progress)
   end
 
