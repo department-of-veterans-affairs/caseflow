@@ -175,7 +175,7 @@ RSpec.feature "Intake" do
       end
     end
 
-    scenario "Search for a veteran who's form is already being processed" do
+    scenario "Search for a veteran whose form is already being processed" do
       create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
 
       RampElectionIntake.new(
