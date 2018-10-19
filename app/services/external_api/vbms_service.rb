@@ -93,7 +93,7 @@ class ExternalApi::VBMSService
     File.delete(location)
   end
 
-  def self.establish_claim!(veteran_hash:, claim_hash:)
+  def self.establish_claim!(veteran_hash:, claim_hash:, is_claim_review:)
     @vbms_client ||= init_vbms_client
 
     request = VBMS::Requests::EstablishClaim.new(
@@ -103,7 +103,7 @@ class ExternalApi::VBMSService
       send_userid: FeatureToggle.enabled?(:vbms_include_user)
     )
 
-    send_and_log_request(veteran_hash[:file_number], request, vbms_client_with_user)
+    send_and_log_request(veteran_hash[:file_number], request, is_claim_review ? vbms_client_with_user : vbms_client_with_system_user)
   end
 
   def self.fetch_contentions(claim_id:)
