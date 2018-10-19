@@ -23,7 +23,7 @@ const textStyling = css({
 });
 
 const CaseSearchLink = () => <div {...containerStyling}>
-  <Link to="/search">
+  <Link href="/search">
     <span {...iconStyling}><MagnifyingGlass color={COLORS.PRIMARY} /></span>
     <h3 {...textStyling}>Search cases</h3>
   </Link>
