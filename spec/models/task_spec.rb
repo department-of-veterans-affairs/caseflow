@@ -142,7 +142,7 @@ describe Task do
     end
 
     context "when there is an attorney_case_review" do
-      let!(:child) { create(:task, type: "Task", parent_id: task.id) }
+      let!(:child) { create(:task, type: "Task", appeal: task.appeal, parent_id: task.id) }
       let!(:attorney_case_reviews) do
         create(:attorney_case_review, task_id: child.id, attorney: create(:user, full_name: "Bob Smith"))
       end
@@ -163,7 +163,7 @@ describe Task do
     end
 
     context "when there is a sub task" do
-      let!(:child) { create(:task, type: "Task", parent_id: task.id) }
+      let!(:child) { create(:task, type: "Task", appeal: task.appeal, parent_id: task.id) }
       let!(:attorney_case_reviews) do
         [
           create(:attorney_case_review, task_id: child.id, created_at: 1.day.ago),
