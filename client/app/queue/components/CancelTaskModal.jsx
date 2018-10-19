@@ -72,6 +72,8 @@ class CancelTaskModal extends React.Component<Props> {
   }
 
   render = () => {
+    const assignerName = this.getTaskAssignerName();
+
     return <React.Fragment>
       {sprintf(COPY.CANCEL_TASK_COPY, assignerName)}
     </React.Fragment>

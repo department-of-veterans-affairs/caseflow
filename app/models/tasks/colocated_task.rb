@@ -33,25 +33,33 @@ class ColocatedTask < Task
   def available_actions(user)
     return [] unless user.colocated_in_vacols?
 
-    actions = [
-      {
-        label: COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
-        value: "modal/mark_task_complete"
-      },
-      {
-        label: COPY::COLOCATED_ACTION_PLACE_HOLD,
-        value: Constants::CO_LOCATED_ACTIONS["PLACE_HOLD"]
-      }
-    ]
-
     if %w[translation schedule_hearing].include?(action) && appeal.class.name.eql?("LegacyAppeal")
-      actions.unshift(
-        label: format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action]),
-        value: "modal/send_colocated_task"
-      )
+      [
+        {
+          label: format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action]),
+          value: "modal/send_colocated_task"
+        },
+        {
+          label: COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
+          value: "modal/cancel_task"
+        },
+        {
+          label: COPY::COLOCATED_ACTION_PLACE_HOLD,
+          value: Constants::CO_LOCATED_ACTIONS["PLACE_HOLD"]
+        }
+      ]
+    else
+      [
+        {
+          label: COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
+          value: "modal/mark_task_complete"
+        },
+        {
+          label: COPY::COLOCATED_ACTION_PLACE_HOLD,
+          value: Constants::CO_LOCATED_ACTIONS["PLACE_HOLD"]
+        }
+      ]
     end
-
-    actions
   end
 
   def update_if_hold_expired!

@@ -24,6 +24,6 @@ class ColocatedQueue
   end
 
   def incomplete_tasks
-    ColocatedTask.where.not(status: Constants.TASK_STATUSES.completed)
+    ColocatedTask.where.not(status: [Constants.TASK_STATUSES.completed, Constants.TASK_STATUSES.canceled])
   end
 end

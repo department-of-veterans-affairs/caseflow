@@ -30,6 +30,7 @@ import EvaluateDecisionView from './EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import CompleteTaskModal from './components/CompleteTaskModal';
+import CancelTaskModal from './components/CancelTaskModal'
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';

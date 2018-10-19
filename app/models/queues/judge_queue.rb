@@ -14,6 +14,6 @@ class JudgeQueue
   private
 
   def incomplete_tasks
-    JudgeTask.where.not(status: Constants.TASK_STATUSES.completed)
+    JudgeTask.where.not(status: [Constants.TASK_STATUSES.completed, Constants.TASK_STATUSES.canceled])
   end
 end
