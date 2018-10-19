@@ -7,7 +7,7 @@ describe Rating do
 
   let(:receipt_date) { Time.zone.today }
 
-  let(:promulgation_date) { receipt_date - 30 }
+  let(:promulgation_date) { receipt_date - 30.days }
 
   let(:rating) do
     Generators::Rating.build(
@@ -22,7 +22,7 @@ describe Rating do
       decision_text: "Decision#{num}",
       in_active_review: nil,
       promulgation_date: promulgation_date,
-      timely: false
+      timely: true
     }
   end
 
