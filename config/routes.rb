@@ -99,6 +99,7 @@ Rails.application.routes.draw do
   resources :appeals, only: [:index, :show] do
     get :document_count
     get :new_documents
+    get :veteran
     get :power_of_attorney
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
     resources :special_issues, only: [:create, :index]
