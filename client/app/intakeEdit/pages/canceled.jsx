@@ -2,17 +2,17 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import StatusMessage from '../../components/StatusMessage';
 
-class Cancelled extends Component {
+class Canceled extends Component {
   render = () => {
     const {
-      review
+      veteran
     } = this.props;
 
-    const message = `${review.veteranName}'s form has been cancelled. You can close this window.`;
+    const message = `${veteran.name}'s form has been cancelled. You can close this window.`;
 
     return <div>
       <StatusMessage
-        title="Claim Edit Cancelled"
+        title="Claim Edit Canceled"
         leadMessageList={[message]}
         type="alert" />
     </div>;
@@ -20,7 +20,7 @@ class Cancelled extends Component {
 }
 
 export default connect(
-  ({ review }) => ({
-    review
+  (state) => ({
+    veteran: state.veteran
   })
-)(Cancelled);
+)(Canceled);

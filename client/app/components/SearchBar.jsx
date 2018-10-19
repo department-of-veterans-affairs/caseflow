@@ -175,5 +175,6 @@ SearchBar.propTypes = {
   onSubmit: PropTypes.func,
   submitUsingEnterKey: PropTypes.bool,
   internalText: PropTypes.string,
-  spinnerColor: PropTypes.string
+  spinnerColor: PropTypes.string,
+  placeholder: PropTypes.string
 };

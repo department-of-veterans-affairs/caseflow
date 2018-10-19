@@ -1,9 +1,13 @@
+import { timeFunction } from '../util/PerfDebug';
 import { ACTIONS } from './constants';
 import { update } from '../util/ReducerUtil';
+import { combineReducers } from 'redux';
+
+import caseListReducer from '../queue/CaseList/CaseListReducer';
 
 export const initialState = {};
 
-const reducers = (state = initialState, action = {}) => {
+const hearingScheduleReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case ACTIONS.RECEIVE_HEARING_SCHEDULE:
     return update(state, {
@@ -27,6 +31,12 @@ const reducers = (state = initialState, action = {}) => {
     return update(state, {
       regionalOffices: {
         $set: action.payload.regionalOffices
+      }
+    });
+  case ACTIONS.RECEIVE_DAILY_DOCKET:
+    return update(state, {
+      dailyDocket: {
+        $set: action.payload.dailyDocket
       }
     });
   case ACTIONS.REGIONAL_OFFICE_CHANGE:
@@ -209,4 +219,12 @@ const reducers = (state = initialState, action = {}) => {
   }
 };
 
-export default reducers;
+const combinedReducer = combineReducers({
+  hearingSchedule: hearingScheduleReducer,
+  caseList: caseListReducer
+});
+
+export default timeFunction(
+  combinedReducer,
+  (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
+);

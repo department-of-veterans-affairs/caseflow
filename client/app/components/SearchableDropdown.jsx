@@ -17,6 +17,7 @@ type Props = {|
   creatable?: boolean,
   errorMessage?: ?string,
   label?: string,
+  strongLabel?: boolean,
   hideLabel?: boolean,
   name: string,
   onChange: (value: ?OptionType, deletedValue?: ?Array<any>) => mixed,
@@ -91,6 +92,7 @@ class SearchableDropdown extends React.Component<Props, ComponentState> {
       placeholder,
       errorMessage,
       label,
+      strongLabel,
       hideLabel,
       multi,
       name,
@@ -150,9 +152,19 @@ class SearchableDropdown extends React.Component<Props, ComponentState> {
       addCreatableOptions.noResultsText = '';
     }
 
+    const labelContents =
+      <span>
+        {label || name}
+        {required && <span className="cf-required">Required</span>}
+      </span>;
+
     return <div className={dropdownClasses} {...dropdownStyling}>
       <label className={labelClasses} htmlFor={name}>
-        {label || name} {required && <span className="cf-required">Required</span>}
+        {
+          strongLabel ?
+            <strong>{labelContents}</strong> :
+            labelContents
+        }
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       <SelectComponent
@@ -177,6 +189,7 @@ SearchableDropdown.propTypes = {
   creatable: PropTypes.bool,
   errorMessage: PropTypes.string,
   label: PropTypes.string,
+  strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func,

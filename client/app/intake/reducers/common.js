@@ -1,7 +1,6 @@
 // shared functions between reducers
 import { ACTIONS } from '../constants';
 import { update } from '../../util/ReducerUtil';
-import _ from 'lodash';
 
 export const commonReducers = (state, action) => {
   let actionsMap = {};
@@ -12,14 +11,33 @@ export const commonReducers = (state, action) => {
     });
   };
 
+  actionsMap[ACTIONS.TOGGLE_NON_RATED_ISSUE_MODAL] = () => {
+    return update(state, {
+      $toggle: ['nonRatedIssueModalVisible'],
+      addIssuesModalVisible: {
+        $set: false
+      }
+    });
+  };
+
+  actionsMap[ACTIONS.TOGGLE_ISSUE_REMOVE_MODAL] = () => {
+    return update(state, {
+      $toggle: ['removeIssueModalVisible']
+    });
+  };
+
+  actionsMap[ACTIONS.TOGGLE_UNIDENTIFIED_ISSUES_MODAL] = () => {
+    return update(state, {
+      $toggle: ['unidentifiedIssuesModalVisible'],
+      nonRatedIssueModalVisible: {
+        $set: false
+      }
+    });
+  };
+
   actionsMap[ACTIONS.ADD_ISSUE] = () => {
     let listOfIssues = state.addedIssues ? state.addedIssues : [];
-    let addedIssues = [...listOfIssues, {
-      isRated: action.payload.isRated,
-      id: action.payload.issueId,
-      profileDate: action.payload.profileDate,
-      notes: action.payload.notes
-    }];
+    let addedIssues = [...listOfIssues, action.payload];
 
     return {
       ...state,
@@ -29,12 +47,14 @@ export const commonReducers = (state, action) => {
   };
 
   actionsMap[ACTIONS.REMOVE_ISSUE] = () => {
+    // issues are removed by position, because not all issues have referenceIds
     let listOfIssues = state.addedIssues ? state.addedIssues : [];
-    let issueToRemove = action.payload.issue;
+
+    listOfIssues.splice(action.payload.index, 1);
 
     return {
       ...state,
-      addedIssues: _.filter(listOfIssues, (issue) => issueToRemove.referenceId !== issue.id)
+      addedIssues: listOfIssues
     };
   };
 

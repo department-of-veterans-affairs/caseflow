@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181004221403) do
+ActiveRecord::Schema.define(version: 20181016155752) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -570,6 +570,14 @@ ActiveRecord::Schema.define(version: 20181004221403) do
     t.index ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number"
   end
 
+  create_table "rating_issues", force: :cascade do |t|
+    t.bigint "request_issue_id", null: false
+    t.string "reference_id", null: false
+    t.datetime "profile_date", null: false
+    t.string "decision_text"
+    t.index ["request_issue_id"], name: "index_rating_issues_on_request_issue_id"
+  end
+
   create_table "reader_users", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "documents_fetched_at"
@@ -591,7 +599,7 @@ ActiveRecord::Schema.define(version: 20181004221403) do
     t.bigint "review_request_id"
     t.string "rating_issue_reference_id"
     t.datetime "rating_issue_profile_date"
-    t.string "contention_reference_id"
+    t.integer "contention_reference_id"
     t.string "description"
     t.string "issue_category"
     t.date "decision_date"
@@ -601,7 +609,14 @@ ActiveRecord::Schema.define(version: 20181004221403) do
     t.datetime "rating_issue_associated_at"
     t.integer "parent_request_issue_id"
     t.text "notes"
+    t.boolean "is_unidentified"
+    t.integer "ineligible_reason"
+    t.bigint "ineligible_request_issue_id"
+    t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
+    t.index ["ineligible_reason"], name: "index_request_issues_on_ineligible_reason"
+    t.index ["ineligible_request_issue_id"], name: "index_request_issues_on_ineligible_request_issue_id"
+    t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
   end
 

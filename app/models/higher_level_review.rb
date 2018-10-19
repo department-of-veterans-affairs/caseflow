@@ -7,19 +7,38 @@ class HigherLevelReview < ClaimReview
   END_PRODUCT_RATING_CODE = "030HLRR".freeze
   END_PRODUCT_NONRATING_CODE = "030HLRNR".freeze
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 033 035 036 037 038 039].freeze
-  DTA_ERRORS = ["DTA Error – PMRs", "DTA Error – Fed Recs", "DTA Error – Other Recs", "DTA Error – Exam/MO"].freeze
 
-  def ui_hash
+  # NOTE: These are the string identifiers for the DTA error dispositions returned from VBMS.
+  # The characters an encoding is precise so don't change these unless you know they match VBMS values.
+  DTA_ERROR_PMR = "DTA Error - PMRs".freeze
+  DTA_ERROR_FED_RECS = "DTA Error - Fed Recs".freeze
+  DTA_ERROR_OTHER_RECS = "DTA Error - Other Recs".freeze
+  DTA_ERROR_EXAM_MO = "DTA Error - Exam/MO".freeze
+  DTA_ERRORS = [DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO].freeze
+
+  def self.review_title
+    "Higher-Level Review"
+  end
+
+  def ui_hash(ama_enabled)
     {
-      veteranFormName: veteran.name.formatted(:form),
-      veteranName: veteran.name.formatted(:readable_short),
-      veteranFileNumber: veteran_file_number,
+      formType: "higher_level_review",
+      veteran: {
+        name: veteran && veteran.name.formatted(:readable_short),
+        fileNumber: veteran_file_number,
+        formName: veteran && veteran.name.formatted(:form)
+      },
+      relationships: ama_enabled && veteran && veteran.relationships,
       claimId: end_product_claim_id,
       receiptDate: receipt_date.to_formatted_s(:json_date),
       benefitType: benefit_type,
-      issues: request_issues,
       sameOffice: same_office,
-      informalConference: informal_conference
+      informalConference: informal_conference,
+      claimant: claimant_participant_id,
+      claimantNotVeteran: claimant_not_veteran,
+      payeeCode: payee_code,
+      ratings: cached_serialized_ratings,
+      requestIssues: request_issues.map(&:ui_hash)
     }
   end
 
@@ -63,8 +82,10 @@ class HigherLevelReview < ClaimReview
   end
 
   def create_dta_supplemental_claim
-    return if dta_issues.empty?
+    return if dta_issues_needing_follow_up.empty?
+
     dta_supplemental_claim.create_issues!(build_follow_up_dta_issues)
+
     if run_async?
       ClaimReviewProcessJob.perform_later(dta_supplemental_claim)
     else
@@ -73,7 +94,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def build_follow_up_dta_issues
-    dta_issues.map do |dta_issue|
+    dta_issues_needing_follow_up.map do |dta_issue|
       # do not copy over end product establishment id,
       # review request, removed_at, disposition, and contentions
       RequestIssue.new(
@@ -88,16 +109,8 @@ class HigherLevelReview < ClaimReview
     end
   end
 
-  def sync_dispositions(reference_id)
-    super do |disposition, request_issue|
-      if DTA_ERRORS.include?(disposition.disposition)
-        dta_issues << request_issue
-      end
-    end
-  end
-
-  def dta_issues
-    @dta_issues ||= []
+  def dta_issues_needing_follow_up
+    @dta_issues_needing_follow_up ||= request_issues.no_follow_up_issues.where(disposition: DTA_ERRORS)
   end
 
   def dta_supplemental_claim
@@ -121,7 +134,7 @@ class HigherLevelReview < ClaimReview
       payee_code: payee_code,
       code: ep_code,
       claimant_participant_id: claimant_participant_id,
-      station: "397", # AMC
+      station: end_product_station,
       benefit_type_code: veteran.benefit_type_code
     )
   end

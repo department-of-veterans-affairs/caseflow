@@ -10,7 +10,7 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
   render() {
     const {
       nonRatedIssues,
-      addNonRatedIssue,
+      newNonRatedIssue,
       setIssueCategory,
       setIssueDescription,
       setIssueDecisionDate
@@ -35,7 +35,7 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
       );
     });
 
-    return <div className="usa-grid">
+    return <div>
       <h2>Enter other issue(s) for review</h2>
       <p>
       If the Veteran included any additional issues you cannot find in the list above,
@@ -47,7 +47,7 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
 
       <Button
         name="add-issue"
-        onClick={addNonRatedIssue}
+        onClick={newNonRatedIssue}
         classNames={['usa-button-secondary']}
         disabled={disableAddNonRatedIssue}
       >
@@ -78,21 +78,22 @@ class NonRatedIssue extends React.PureComponent {
         <SearchableDropdown
           name="issue-category"
           label="Issue category"
+          strongLabel
           placeholder="Select or enter..."
           options={ISSUE_CATEGORIES}
           value={category}
-          required
           onChange={(event) => this.handleCategoryChange(event)} />
 
         <TextField
           name="Issue description"
+          strongLabel
           value={description}
-          required
           onChange={(event) => this.handleDescriptionChange(event)} />
 
         <DateSelector
           name="Issue date"
           label="Decision date"
+          strongLabel
           value={decisionDate}
           required={category ? (category !== 'Unknown issue category') : false}
           onChange={(event) => this.handleDecisionDateChange(event)} />

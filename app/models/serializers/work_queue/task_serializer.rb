@@ -1,4 +1,7 @@
 class WorkQueue::TaskSerializer < ActiveModel::Serializer
+  attribute :is_legacy do
+    false
+  end
   attribute :type
   attribute :action
   attribute :appeal_id
@@ -78,7 +81,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   end
 
   attribute :available_actions do
-    object.allowed_actions(@instance_options[:user])
+    object.available_actions(@instance_options[:user])
   end
 
   attribute :assignable_organizations do

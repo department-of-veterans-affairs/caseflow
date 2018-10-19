@@ -1,10 +1,9 @@
 import _ from 'lodash';
 
-import { ACTIONS } from '../constants';
+import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers } from './common';
-import { FORM_TYPES, REQUEST_STATE } from '../../intakeCommon/constants';
 import { formatDateStr } from '../../util/DateUtil';
-import { formatRatings } from '../../intakeCommon/util';
+import { formatRatings } from '../util/issues';
 import { getReceiptDateError, getPageError, formatRelationships } from '../util';
 import { update } from '../../util/ReducerUtil';
 
@@ -54,6 +53,8 @@ const updateFromServerIntake = (state, serverIntake) => {
 export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
     addIssuesModalVisible: false,
+    nonRatedIssueModalVisible: false,
+    unidentifiedIssuesModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
     docketType: null,
@@ -214,7 +215,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         }
       }
     });
-  case ACTIONS.ADD_NON_RATED_ISSUE:
+  case ACTIONS.NEW_NON_RATED_ISSUE:
     return update(state, {
       nonRatedIssues: {
         [Object.keys(state.nonRatedIssues).length]: {

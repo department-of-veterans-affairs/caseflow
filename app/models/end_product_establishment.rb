@@ -79,16 +79,22 @@ class EndProductEstablishment < ApplicationRecord
   # VBMS will return ALL contentions on a end product when you create contentions,
   # not just the ones that were just created.
   def create_contentions!
-    issues_without_contentions = request_issues_without_contentions
+    issues_without_contentions = request_issues_ready_for_contentions
     return if issues_without_contentions.empty?
 
     set_establishment_values_from_source
 
+    descriptions = issues_without_contentions.map(&:contention_text)
+
     # Currently not making any assumptions about the order in which VBMS returns
     # the created contentions. Instead find the issue by matching text.
-    create_contentions_in_vbms(issues_without_contentions.pluck(:description)).each do |contention|
+
+    # We don't care about duplicate text; we just care that every request issue
+    # has a contention.
+
+    create_contentions_in_vbms(descriptions).each do |contention|
       issue = issues_without_contentions.find do |i|
-        i.description == contention.text && i.contention_reference_id.nil?
+        i.contention_text == contention.text && i.contention_reference_id.nil?
       end
       issue && issue.update!(contention_reference_id: contention.id)
     end
@@ -169,19 +175,17 @@ class EndProductEstablishment < ApplicationRecord
     !EndProduct::INACTIVE_STATUSES.include?(synced_status)
   end
 
-  def create_associated_rated_issues!
-    request_issues_to_associate = unassociated_rated_request_issues
-
+  def associate_rated_issues!
     is_rated = true
     return if code != source.issue_code(is_rated)
-    return if request_issues_to_associate.empty?
+    return if unassociated_rated_request_issues.count == 0
 
     VBMSService.associate_rated_issues!(
       claim_id: reference_id,
-      rated_issue_contention_map: rated_issue_contention_map(request_issues_to_associate)
+      rated_issue_contention_map: rated_issue_contention_map(rated_request_issues)
     )
 
-    RequestIssue.where(id: request_issues_to_associate.map(&:id)).update_all(
+    RequestIssue.where(id: rated_request_issues.map(&:id)).update_all(
       rating_issue_associated_at: Time.zone.now
     )
   end
@@ -214,8 +218,8 @@ class EndProductEstablishment < ApplicationRecord
     rated_request_issues.select { |ri| ri.rating_issue_associated_at.nil? }
   end
 
-  def request_issues_without_contentions
-    request_issues.select { |ri| ri.contention_reference_id.nil? }
+  def request_issues_ready_for_contentions
+    request_issues.select { |ri| ri.contention_reference_id.nil? && ri.eligible? }
   end
 
   def rated_issue_contention_map(request_issues_to_associate)
@@ -310,7 +314,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def contention_for_object(for_object)
-    contentions.find { |contention| contention.id == for_object.contention_reference_id }
+    contentions.find { |contention| contention.id.to_i == for_object.contention_reference_id.to_i }
   end
 
   # These are values that need to be determined based on the source right before the end

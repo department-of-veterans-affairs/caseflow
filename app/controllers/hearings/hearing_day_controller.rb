@@ -24,27 +24,33 @@ class Hearings::HearingDayController < HearingScheduleController
     end
   end
 
+  def show
+    hearing_day = json_hearing(HearingDay.find_hearing_day(nil, params[:id]))
+
+    hearings = []
+
+    if hearing_day["hearing_type"] == "Video"
+      hearings = HearingRepository.fetch_video_hearings_for_parent(params[:id])
+    end
+    if hearing_day["hearing_type"] == "Central"
+      hearings = HearingRepository.fetch_co_hearings_for_parent(hearing_day["hearing_date"])
+    end
+
+    render json: { hearing_day: hearing_day.merge(hearings:
+      hearings.map { |hearing| hearing.to_hash(current_user.id) }) }
+  end
+
   def index_with_hearings
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    video_and_co, _travel_board = HearingDay.load_days(Time.zone.today.beginning_of_day - 365.days,
-                                                       Time.zone.today.beginning_of_day + 365.days,
-                                                       regional_office)
-
-    formatted_slots = HearingDayRepository.fetch_hearing_days_slots(video_and_co)
-
-    formatted_slots.each do |hearing_day|
-      hearing_day[:hearings] = [{
-        id: 1,
-        name: "Joe Snuffy",
-        type: "CAVC",
-        docket_number: "180203",
-        location: "Houston",
-        time: "8:30am"
-      }]
+    enriched_hearings = HearingDay.load_days_with_hearings(Time.zone.today.beginning_of_day,
+                                                           Time.zone.today.beginning_of_day + 365.days,
+                                                           regional_office)
+    enriched_hearings.each do |hearing_day|
+      hearing_day[:hearings] = hearing_day[:hearings].map { |hearing| hearing.to_hash(current_user.id) }
     end
 
-    render json: { hearing_days: json_hearings(formatted_slots) }
+    render json: { hearing_days: json_hearings(enriched_hearings) }
   end
 
   def veterans_ready_for_hearing
@@ -163,7 +169,8 @@ class Hearings::HearingDayController < HearingScheduleController
   def json_veteran(veteran)
     {
       id: veteran.vbms_id,
-      name: veteran.veteran_full_name,
+      appellantFirstName: veteran.appellant_first_name.to_s,
+      appellantLastName: veteran.appellant_last_name.to_s,
       type: veteran.type,
       docket_number: veteran.docket_number,
       location: HearingDayMapper.city_for_regional_office(veteran.regional_office_key),

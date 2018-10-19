@@ -11,6 +11,8 @@ import RoSelectorDropdown from './RoSelectorDropdown';
 import moment from 'moment';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
+import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
+import StatusMessage from '../../components/StatusMessage';
 
 const colorAOD = css({
   color: 'red'
@@ -29,6 +31,25 @@ const sectionNavigationListStyling = css({
   }
 });
 
+const smallTopMargin = css({
+  fontStyle: 'italic',
+  '.usa-input-error': {
+    marginTop: '1rem'
+  },
+  '.usa-input-error-message': {
+    paddingBottom: '0',
+    paddingTop: '0',
+    right: '0'
+  },
+  '& > p': {
+    fontWeight: '500',
+    color: COLORS.RED_DARK,
+    marginBottom: '0',
+    fontSize: '1.7rem',
+    marginTop: '1px'
+  }
+});
+
 export default class AssignHearings extends React.Component {
 
   // required to reset the RO Dropdown when moving from Viewing and Assigning.
@@ -43,15 +64,16 @@ export default class AssignHearings extends React.Component {
   roomInfo = (hearingDay) => {
     let room = hearingDay.roomInfo;
 
-    if (hearingDay.regionalOffice === 'St. Petersburg, FL') {
+    if (this.props.selectedRegionalOffice.label === 'St. Petersburg, FL') {
       return room;
-    } else if (hearingDay.regionalOffice === 'Winston-Salem, NC') {
+    } else if (this.props.selectedRegionalOffice.label === 'Winston-Salem, NC') {
       return room;
     }
 
     return room = '';
 
   }
+
   formatAvailableHearingDays = () => {
     return <div className="usa-width-one-fourth">
       <h3>Hearings to Schedule</h3>
@@ -60,8 +82,9 @@ export default class AssignHearings extends React.Component {
         {Object.values(this.props.upcomingHearingDays).slice(0, 9).
           map((hearingDay) => {
             const { selectedHearingDay } = this.props;
-            const availableSlots = hearingDay.totalSlots - Object.keys(hearingDay.hearings).length;
-            const dateSelected = selectedHearingDay && selectedHearingDay.hearingDate === hearingDay.hearingDate;
+            const dateSelected = selectedHearingDay &&
+            (selectedHearingDay.hearingDate === hearingDay.hearingDate &&
+               selectedHearingDay.roomInfo === hearingDay.roomInfo);
             const buttonColorSelected = css({
               backgroundColor: COLORS.GREY_DARK,
               color: COLORS.WHITE,
@@ -71,6 +94,7 @@ export default class AssignHearings extends React.Component {
                 color: COLORS.WHITE
               }
             });
+
             const styling = dateSelected ? buttonColorSelected : '';
 
             return <li key={hearingDay.id} >
@@ -80,7 +104,7 @@ export default class AssignHearings extends React.Component {
                 linkStyling
               >
                 {`${moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}
-                ${this.roomInfo(hearingDay)} (${availableSlots} slots)`}
+                ${this.roomInfo(hearingDay)}`}
               </Button>
             </li>;
           })}
@@ -99,13 +123,48 @@ export default class AssignHearings extends React.Component {
     return docketType;
   }
 
-  tableRows = (veterans) => {
+    getHearingTime = (date, regionalOfficeTimezone) => {
+      return <div>
+        {getTime(date)} /<br />{getTimeInDifferentTimeZone(date, regionalOfficeTimezone)}
+      </div>;
+    };
+
+  appellantName = (hearingDay) => {
+    if (hearingDay.appellantFirstName && hearingDay.appellantLastName) {
+      return `${hearingDay.appellantFirstName} ${hearingDay.appellantLastName} | ${hearingDay.id}`;
+    }
+
+    return `${hearingDay.id}`;
+
+  }
+
+  getNoUpcomingError = () => {
+    if (this.props.selectedRegionalOffice) {
+      return <div className="usa-input-error-message usa-input-error" {...smallTopMargin}>
+        <span>{this.props.selectedRegionalOffice && this.props.selectedRegionalOffice.label} has
+          no upcoming hearing days.</span><br />
+        <p>Please verify that this RO's hearing days are in the current schedule.</p>
+      </div>;
+    }
+  }
+
+  tableAssignHearingsRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
-      caseDetails: `${veteran.name} | ${veteran.id}`,
+      caseDetails: this.appellantName(veteran),
       type: this.veteranTypeColor(veteran.type),
       docketNumber: veteran.docketNumber,
       location: this.props.selectedRegionalOffice.value === 'C' ? 'Washington DC' : veteran.location,
-      time: veteran.time
+      time: null
+    }));
+  };
+
+  tableScheduledHearingsRows = (hearings) => {
+    return _.map(hearings, (hearing) => ({
+      caseDetails: `${hearing.appellantMiFormatted} | ${hearing.vbmsId}`,
+      type: this.veteranTypeColor(hearing.appealType),
+      docketNumber: hearing.docketNumber,
+      location: hearing.requestType === 'Video' ? hearing.regionalOfficeName : 'Washington DC',
+      time: this.getHearingTime(hearing.date, hearing.regionalOfficeTimezone)
     }));
   };
 
@@ -139,14 +198,40 @@ export default class AssignHearings extends React.Component {
       }
     ];
 
+    const veteranNotAssignedStyle = css({ fontSize: '3rem' });
+    const veteranNotAssignedMessage = <span {...veteranNotAssignedStyle}>
+      Please verify that this RO has veterans to assign a hearing</span>;
+    const veteranNotAssignedTitleStyle = css({ fontSize: '4rem' });
+    const veteranNotAssignedTitle = <span {...veteranNotAssignedTitleStyle}>There are no scheduleable veterans</span>;
+
+    const scheduleableVeterans = () => {
+      if (_.isEmpty(this.props.veteransReadyForHearing)) {
+        return <div>
+          <StatusMessage
+            title= {veteranNotAssignedTitle}
+            type="alert"
+            messageText={veteranNotAssignedMessage}
+            wrapInAppSegment={false}
+          />
+        </div>;
+      }
+
+      return <Table
+        columns={tabWindowColumns}
+        rowObjects={this.tableAssignHearingsRows(this.props.veteransReadyForHearing)}
+        summary="scheduled-hearings-table"
+      />;
+
+    };
+
     const selectedHearingDay = this.props.selectedHearingDay;
 
     const availableSlots = selectedHearingDay.totalSlots - Object.keys(selectedHearingDay.hearings).length;
 
     return <div className="usa-width-three-fourths">
       <h1>
-        {moment(selectedHearingDay.hearingDate).format('ddd M/DD/YYYY')}
-        {this.roomInfo(selectedHearingDay)} ({availableSlots} slots remaining)
+        {`${moment(selectedHearingDay.hearingDate).format('ddd M/DD/YYYY')}
+       ${this.roomInfo(selectedHearingDay)} (${availableSlots} slots remaining)`}
       </h1>
       <TabWindow
         name="scheduledHearings-tabwindow"
@@ -155,17 +240,13 @@ export default class AssignHearings extends React.Component {
             label: 'Scheduled',
             page: <Table
               columns={tabWindowColumns}
-              rowObjects={this.tableRows(this.props.selectedHearingDay.hearings)}
+              rowObjects={this.tableScheduledHearingsRows(this.props.selectedHearingDay.hearings)}
               summary="scheduled-hearings-table"
             />
           },
           {
             label: 'Assign Hearings',
-            page: <Table
-              columns={tabWindowColumns}
-              rowObjects={this.tableRows(this.props.veteransReadyForHearing)}
-              summary="assign-hearings-table"
-            />
+            page: scheduleableVeterans()
           }
         ]}
       />
@@ -173,6 +254,7 @@ export default class AssignHearings extends React.Component {
   };
 
   render() {
+
     return <AppSegment filledBackground>
       <h1>{COPY.HEARING_SCHEDULE_ASSIGN_HEARINGS_HEADER}</h1>
       <Link
@@ -180,6 +262,7 @@ export default class AssignHearings extends React.Component {
         to="/schedule">
         {COPY.HEARING_SCHEDULE_ASSIGN_HEARINGS_VIEW_SCHEDULE_LINK}
       </Link>
+      <div>{_.isEmpty(this.props.upcomingHearingDays) && this.getNoUpcomingError()}</div>
       <RoSelectorDropdown
         onChange={this.props.onRegionalOfficeChange}
         value={this.props.selectedRegionalOffice}

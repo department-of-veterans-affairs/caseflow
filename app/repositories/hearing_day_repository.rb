@@ -15,7 +15,7 @@ class HearingDayRepository
     # Query Operations
     def find_hearing_day(hearing_type, hearing_key)
       if hearing_type.nil?
-        VACOLS::CaseHearing.find(hearing_key)
+        VACOLS::CaseHearing.find_hearing_day(hearing_key)
       else
         tbyear, tbtrip, tbleg = hearing_key.split("-")
         VACOLS::TravelBoardSchedule.find_by(tbyear: tbyear, tbtrip: tbtrip, tbleg: tbleg)
@@ -63,25 +63,13 @@ class HearingDayRepository
       end
     end
 
-    def fetch_hearing_days_slots(hearing_days)
-      # fetching all the RO keys of the dockets
-      regional_office_keys = hearing_days.map { |hearing_day| hearing_day[:regional_office] }
-
-      # fetching data of all dockets staff based on the regional office keys
-      ro_staff = VACOLS::Staff.where(stafkey: regional_office_keys)
-      ro_staff_hash = ro_staff.reduce({}) { |acc, record| acc.merge(record.stafkey => record) }
-
-      # returns a hash of docket date (string) as key and number of slots for the docket
-      # as they key
-      hearing_days.each do |hearing_day|
-        record = ro_staff_hash[hearing_day[:regional_office]]
-        slots_from_vacols = slots_based_on_type(staff: record,
-                                                type: hearing_day[:hearing_type],
-                                                date: hearing_day[:hearing_date])
-        slots = slots_from_vacols || HearingDocket::SLOTS_BY_TIMEZONE[
-            HearingMapper.timezone(hearing_day[:regional_office])]
-        hearing_day[:total_slots] = slots
-      end
+    def fetch_hearing_day_slots(hearing_day)
+      # returns the total slots for the hearing day's regional office.
+      ro_staff = VACOLS::Staff.where(stafkey: hearing_day[:regional_office])
+      slots_from_vacols = slots_based_on_type(staff: ro_staff[0],
+                                              type: hearing_day[:hearing_type],
+                                              date: hearing_day[:hearing_date])
+      slots_from_vacols || HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper.timezone(hearing_day[:regional_office])]
     end
 
     def to_canonical_hash(hearing)

@@ -3,6 +3,26 @@ class JudgeTask < Task
 
   include RoundRobinAssigner
 
+  def available_actions(user)
+    return [] if assigned_to != user
+
+    if action.eql? "assign"
+      [
+        {
+          label: COPY::JUDGE_CHECKOUT_ASSIGN_TO_ATTORNEY_LABEL,
+          value: "modal/assign_to_attorney"
+        }
+      ]
+    else
+      [
+        {
+          label: COPY::JUDGE_CHECKOUT_DISPATCH_LABEL,
+          value: "dispatch_decision/special_issues"
+        }
+      ]
+    end
+  end
+
   def self.create(params)
     super(params.merge(action: "assign"))
   end
@@ -13,7 +33,6 @@ class JudgeTask < Task
   end
 
   def previous_task
-    children_attorney_tasks = children.where(type: AttorneyTask.name)
     fail Caseflow::Error::TooManyChildTasks, task_id: id if children_attorney_tasks.length > 1
     children_attorney_tasks[0]
   end

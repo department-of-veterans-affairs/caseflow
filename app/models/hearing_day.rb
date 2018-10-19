@@ -64,6 +64,31 @@ class HearingDay < ApplicationRecord
       [total_video_and_co, travel_board]
     end
 
+    def load_days_with_hearings(start_date, end_date, regional_office = nil)
+      total_video_and_co, _travel_board = load_days(start_date, end_date, regional_office)
+      enriched_hearing_days = []
+      total_video_and_co.each do |hearing_day|
+        enriched_hearing_days << hearing_day.slice(:id, :hearing_date, :hearing_type, :room_info)
+        enriched_hearing_days[enriched_hearing_days.length - 1][:total_slots] =
+          HearingDayRepository.fetch_hearing_day_slots(hearing_day)
+        enriched_hearing_days[enriched_hearing_days.length - 1][:hearings] =
+          if hearing_day[:regional_office].nil?
+            HearingRepository.fetch_co_hearings_for_parent(hearing_day[:hearing_date])
+          else
+            HearingRepository.fetch_video_hearings_for_parent(hearing_day[:id])
+          end
+      end
+      enriched_hearing_days
+    end
+
+    def find_hearing_day(hearing_type, hearing_key)
+      find(hearing_key)
+    rescue ActiveRecord::RecordNotFound
+      HearingDayRepository.find_hearing_day(hearing_type, hearing_key)
+    end
+
+    private
+
     def enrich_with_judge_names(hearing_days)
       vlj_ids = []
       hearing_days_hash = []
@@ -83,14 +108,6 @@ class HearingDay < ApplicationRecord
         result << hearing_day
       end
     end
-
-    def find_hearing_day(hearing_type, hearing_key)
-      find(hearing_key)
-    rescue ActiveRecord::RecordNotFound
-      HearingDayRepository.find_hearing_day(hearing_type, hearing_key)
-    end
-
-    private
 
     def current_user_css_id
       RequestStore.store[:current_user].css_id.upcase

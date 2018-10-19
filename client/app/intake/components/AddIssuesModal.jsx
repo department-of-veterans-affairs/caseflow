@@ -3,10 +3,10 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
 
-import { addIssue } from '../actions/ama';
 import { formatDateStr } from '../../util/DateUtil';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
+import { addRatedIssue, toggleNonRatedIssueModal } from '../actions/addIssues';
 import TextField from '../../components/TextField';
 
 class AddIssuesModal extends React.Component {
@@ -33,7 +33,12 @@ class AddIssuesModal extends React.Component {
   }
 
   onAddIssue = () => {
-    this.props.addIssue(this.state.referenceId, this.props.intakeData.ratings, true, this.state.notes);
+    this.props.addRatedIssue({
+      issueId: this.state.referenceId,
+      ratings: this.props.intakeData.ratings,
+      isRated: true,
+      notes: this.state.notes
+    });
     this.props.closeHandler();
   }
 
@@ -69,7 +74,9 @@ class AddIssuesModal extends React.Component {
       />;
     });
 
-    return <div>
+    const issueNumber = (intakeData.addedIssues || []).length + 1;
+
+    return <div className="intake-add-issues">
       <Modal
         buttons={[
           { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
@@ -77,18 +84,22 @@ class AddIssuesModal extends React.Component {
             onClick: closeHandler
           },
           { classNames: ['usa-button', 'usa-button-secondary', 'add-issue'],
-            name: 'Add Issue',
+            name: 'Add this issue',
             onClick: this.onAddIssue,
             disabled: !this.state.referenceId
+          },
+          { classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
+            name: 'None of these match, see more options',
+            onClick: this.props.toggleNonRatedIssueModal
           }
         ]}
         visible
         closeHandler={closeHandler}
-        title="Add Issue"
+        title={`Add issue ${issueNumber}`}
       >
         <div>
           <h2>
-            Does this issue match any of these issues from past descriptions?
+            Does issue {issueNumber} match any of these issues from past descriptions?
           </h2>
           <p>
             Tip: sometimes applicants list desired outcome, not what the past decision was
@@ -111,6 +122,7 @@ class AddIssuesModal extends React.Component {
 export default connect(
   null,
   (dispatch) => bindActionCreators({
-    addIssue
+    addRatedIssue,
+    toggleNonRatedIssueModal
   }, dispatch)
 )(AddIssuesModal);

@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { BrowserRouter } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar';
@@ -12,10 +11,10 @@ import BuildScheduleUploadContainer from './containers/BuildScheduleUploadContai
 import ReviewAssignmentsContainer from './containers/ReviewAssignmentsContainer';
 import ListScheduleContainer from './containers/ListScheduleContainer';
 import AssignHearingsContainer from './containers/AssignHearingsContainer';
+import DailyDocketContainer from './containers/DailyDocketContainer';
 import ScrollToTop from '../components/ScrollToTop';
 
-class HearingScheduleApp extends React.PureComponent {
-
+export default class HearingScheduleApp extends React.PureComponent {
   propsForListScheduleContainer = () => {
     const {
       userRoleAssign,
@@ -49,6 +48,12 @@ class HearingScheduleApp extends React.PureComponent {
             path="/schedule"
             title="Scheduled Hearings"
             render={this.routeForListScheduleContainer}
+          />
+          <PageRoute
+            exact
+            path="/schedule/docket/:hearingDayId"
+            title="Daily Docket"
+            component={DailyDocketContainer}
           />
           <PageRoute
             exact
@@ -98,5 +103,3 @@ HearingScheduleApp.propTypes = {
   buildDate: PropTypes.string,
   dropdownUrls: PropTypes.array
 };
-
-export default connect()(HearingScheduleApp);

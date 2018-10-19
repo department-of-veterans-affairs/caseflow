@@ -85,6 +85,7 @@ namespace :ci do
   desc "Verify code coverage on CircleCI "
   task :circleci_verify_code_coverage do
     require "simplecov"
+    $stdout.sync = true
 
     api_url = "https://circleci.com/api/v1.1/project/github/#{ENV['CIRCLE_PROJECT_USERNAME']}/#{ENV['CIRCLE_PROJECT_REPONAME']}/#{ENV['CIRCLE_BUILD_NUM']}/artifacts" # rubocop:disable Metrics/LineLength
     coverage_dir = "/tmp/coverage"

@@ -1,7 +1,7 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { prepareReviewData } from '../util';
-import { formatIssues } from '../../intakeCommon/util';
+import { formatIssues } from '../util/issues';
 import _ from 'lodash';
 
 const analytics = true;
@@ -143,27 +143,8 @@ export const setIssueSelected = (profileDate, issueId, isSelected) => ({
   }
 });
 
-export const addIssue = (issueId, ratings, isRated, notes) => (dispatch) => {
-  let foundDate = _.filter(ratings, (ratingDate) => _.some(ratingDate.issues, { reference_id: issueId }));
-
-  dispatch({
-    type: ACTIONS.ADD_ISSUE,
-    payload: {
-      issueId,
-      isRated,
-      profileDate: foundDate[0].profile_date,
-      notes
-    }
-  });
-};
-
-export const removeIssue = (issue) => ({
-  type: ACTIONS.REMOVE_ISSUE,
-  payload: { issue }
-});
-
-export const addNonRatedIssue = (nonRatedIssues) => ({
-  type: ACTIONS.ADD_NON_RATED_ISSUE,
+export const newNonRatedIssue = (nonRatedIssues) => ({
+  type: ACTIONS.NEW_NON_RATED_ISSUE,
   payload: {
     nonRatedIssues
   },

@@ -57,6 +57,20 @@ describe LegacyAppeal do
     end
   end
 
+  context "#attorney_case_reviews" do
+    subject { appeal.attorney_case_reviews }
+
+    let(:vacols_case) do
+      create(:case, :assigned, decass_count: 1, user: create(:user), document_id: "02255-00000002")
+    end
+    let!(:decass1) { create(:decass, defolder: vacols_case.bfkey, dedocid: nil) }
+    let!(:decass2) { create(:decass, defolder: vacols_case.bfkey, dedocid: "02255-00000002") }
+
+    it "returns all documents associated with the case" do
+      expect(subject.size).to eq 2
+    end
+  end
+
   context "#nod" do
     let(:vacols_case) do
       create(:case_with_nod)
@@ -1983,12 +1997,56 @@ describe LegacyAppeal do
             name: "Attorney B Lawyer",
             type: "Attorney",
             code: "T",
+            participant_id: "600153863",
             address: {
               address_line_1: "111 Magnolia St.",
               address_line_2: "Suite 222",
               city: "New York",
               state: "NY",
               zip: "10000"
+            }
+          }
+        )
+      end
+    end
+
+    context "when representative is returned from BGS" do
+      before do
+        FeatureToggle.enable!(:use_representative_info_from_bgs)
+        RequestStore.store[:application] = "queue"
+      end
+
+      after do
+        FeatureToggle.disable!(:use_representative_info_from_bgs)
+      end
+
+      it "the appellant is returned" do
+        expect(appeal.claimant).to eq(
+          first_name: "Bobby",
+          middle_name: "F",
+          last_name: "Veteran",
+          name_suffix: nil,
+          address: {
+            address_line_1: "123 K St. NW",
+            address_line_2: "Suite 456",
+            city: "Washington",
+            state: "DC",
+            country: nil,
+            zip: "20001"
+          },
+          representative: {
+            name: "Clarence Darrow",
+            type: "Attorney",
+            code: "T",
+            participant_id: "600153863",
+            address: {
+              address_line_1: "9999 MISSION ST",
+              address_line_2: "UBER",
+              address_line_3: "APT 2",
+              city: "SAN FRANCISCO",
+              state: "CA",
+              country: "USA",
+              zip: "94103"
             }
           }
         )
@@ -2007,9 +2065,9 @@ describe LegacyAppeal do
                saddrstt: "DC",
                saddrcnty: nil,
                saddrzip: "20001",
-               sspare1: "Tommy",
-               sspare2: "G",
-               sspare3: "Claimant")
+               sspare1: "Claimant",
+               sspare2: "Tommy",
+               sspare3: "G")
       end
 
       it "the appellant is returned" do
@@ -2030,6 +2088,7 @@ describe LegacyAppeal do
             name: "Attorney B Lawyer",
             type: "Attorney",
             code: "T",
+            participant_id: "600153863",
             address: {
               address_line_1: "111 Magnolia St.",
               address_line_2: "Suite 222",
@@ -2056,9 +2115,9 @@ describe LegacyAppeal do
                saddrstt: "DC",
                saddrcnty: nil,
                saddrzip: "20001",
-               sspare1: "Tommy",
-               sspare2: "G",
-               sspare3: "Claimant")
+               sspare1: "Claimant",
+               sspare2: "Tommy",
+               sspare3: "G")
       end
 
       let!(:representative) do
@@ -2110,9 +2169,9 @@ describe LegacyAppeal do
                saddrstt: "DC",
                saddrcnty: nil,
                saddrzip: "20001",
-               sspare1: "Tommy",
-               sspare2: "G",
-               sspare3: "Claimant")
+               sspare1: "Claimant",
+               sspare2: "Tommy",
+               sspare3: "G")
       end
 
       let!(:representative) do

@@ -8,9 +8,8 @@ import Button from '../../../components/Button';
 import BenefitType from '../../components/BenefitType';
 import SelectClaimant from '../../components/SelectClaimant';
 import { submitReview, setBenefitType, setClaimantNotVeteran, setClaimant, setPayeeCode } from '../../actions/ama';
-import { setReceiptDate } from '../../actions/common';
-import { PAGE_PATHS, INTAKE_STATES } from '../../constants';
-import { FORM_TYPES, REQUEST_STATE } from '../../../intakeCommon/constants';
+import { setReceiptDate } from '../../actions/intake';
+import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, REQUEST_STATE } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 

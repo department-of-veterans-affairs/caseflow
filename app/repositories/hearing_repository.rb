@@ -16,6 +16,14 @@ class HearingRepository
       hearings
     end
 
+    def fetch_video_hearings_for_parent(parent_hearing_pkseq)
+      hearings_for(VACOLS::CaseHearing.video_hearings_for_master_record(parent_hearing_pkseq))
+    end
+
+    def fetch_co_hearings_for_parent(parent_hearing_date)
+      hearings_for(VACOLS::CaseHearing.co_hearings_for_master_record(parent_hearing_date))
+    end
+
     def load_issues(hearings)
       children_hearings = hearings.select { |h| h.master_record == false }
       issues = VACOLS::CaseIssue.descriptions(children_hearings.map(&:appeal_vacols_id))
@@ -173,9 +181,9 @@ class HearingRepository
         veteran_first_name: vacols_record.snamef,
         veteran_middle_initial: vacols_record.snamemi,
         veteran_last_name: vacols_record.snamel,
-        appellant_first_name: vacols_record.sspare1,
-        appellant_middle_initial: vacols_record.sspare2,
-        appellant_last_name: vacols_record.sspare3,
+        appellant_first_name: vacols_record.sspare2,
+        appellant_middle_initial: vacols_record.sspare3,
+        appellant_last_name: vacols_record.sspare1,
         regional_office_key: ro,
         type: type,
         date: date,
