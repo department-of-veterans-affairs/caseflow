@@ -154,13 +154,24 @@ class QueueRepository
     end
 
     def filter_duplicate_tasks(records)
-      # Keep the latest assignment if there are duplicate records
+      # Then keep the latest updated assignment if there are duplicate records
       records.group_by(&:vacols_id).each_with_object([]) do |(_k, v), result|
-        result << v.sort_by(&:created_at).last
+        sorted = v.sort_by(&:updated_at)
+
+        # If the user is an attorney, find all associated with the user's attorney_id
+        if attorney_id_match_found?(sorted)
+          sorted.select! { |task| task.attorney_id == RequestStore[:current_user].vacols_attorney_id }
+        end
+        result << sorted.last
       end
     end
 
     private
+
+    def attorney_id_match_found?(records)
+      RequestStore[:current_user].attorney_in_vacols? &&
+        records.map(&:attorney_id).include?(RequestStore[:current_user].vacols_attorney_id)
+    end
 
     def find_decass_record(vacols_id, created_in_vacols_date)
       decass_record = VACOLS::Decass.find_by(defolder: vacols_id, deadtim: created_in_vacols_date)
