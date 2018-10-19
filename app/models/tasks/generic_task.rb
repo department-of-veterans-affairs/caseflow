@@ -53,7 +53,7 @@ class GenericTask < Task
 
   def can_be_accessed_by_user?(user)
     return true if assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
-    return true if parent.assigned_to.is_a?(Organization) && parent.assigned_to.user_has_access?(user)
+    return true if parent && parent.assigned_to.is_a?(Organization) && parent.assigned_to.user_has_access?(user)
 
     super(user)
   end
