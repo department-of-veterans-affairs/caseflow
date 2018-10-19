@@ -25,7 +25,7 @@ RSpec.feature "User organization" do
     expect(page).to have_content(user_with_role.full_name)
     expect(user_with_role.organizations.first).to eq(organization)
 
-    click_on "button-Remove-user-2"
+    click_on "Remove-user-2"
 
     visit "/organizations/#{organization.url}/users"
     expect(page).to_not have_content(user_with_role.full_name)
