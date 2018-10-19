@@ -102,6 +102,7 @@ class Task < ApplicationRecord
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/PerceivedComplexity
   def can_be_accessed_by_user?(user)
+    return false unless user
     if (assigned_to && assigned_to == user) ||
        (assigned_by && assigned_by == user) ||
        (parent && parent.assigned_to == user) ||

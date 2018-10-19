@@ -18,7 +18,7 @@ class Organization < ApplicationRecord
   end
 
   def user_has_access?(user)
-    members.pluck(:id).include?(user.id)
+    user && members.pluck(:id).include?(user.id)
   end
 
   def members
