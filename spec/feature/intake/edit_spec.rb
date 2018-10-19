@@ -43,7 +43,7 @@ RSpec.feature "Edit issues" do
     expect(row).to have_text(text)
   end
 
-  context "Higher Level Reviews" do
+  context "Higher-Level Reviews" do
     let!(:higher_level_review) do
       HigherLevelReview.create!(
         veteran_file_number: veteran.file_number,
@@ -80,16 +80,59 @@ RSpec.feature "Edit issues" do
       )
     end
 
+    context "when there is a non-rating end product" do
+      let!(:non_rated_request_issue) do
+        RequestIssue.create!(
+          review_request: higher_level_review,
+          issue_category: "Military Retired Pay",
+          description: "non-rated description",
+          contention_reference_id: "1234"
+        )
+      end
+
+      before do
+        higher_level_review.create_issues!([non_rated_request_issue])
+        higher_level_review.process_end_product_establishments!
+      end
+
+      it "shows the Higher-Level Review Edit page with a non-rated claim id" do
+        non_rated_ep_claim_id = EndProductEstablishment.find_by(
+          source: higher_level_review,
+          code: "030HLRNR"
+        ).reference_id
+        visit "higher_level_reviews/#{non_rated_ep_claim_id}/edit"
+
+        expect(page).to have_content("Add / Remove Issues")
+        expect(page).to have_content("PTSD denied")
+        expect(page).to have_content("Military Retired Pay")
+
+        row = find("tr", text: "Military Retired Pay")
+        row.all(".remove-issue")[0].click
+        safe_click ".remove-issue"
+
+        safe_click("#button-submit-update")
+
+        expect(page).to have_content("The review originally had 2 issues but now has 1.")
+        safe_click ".confirm"
+
+        expect(page).to have_current_path(
+          "/higher_level_reviews/#{non_rated_ep_claim_id}/edit/confirmation"
+        )
+        expect(page).to have_content("Edit Confirmed")
+      end
+    end
+
     it "shows request issues and allows adding/removing issues" do
       visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit"
-      # Check that request issues appear correctly as added issues
-      expect(page).to_not have_content("Left knee granted")
-      expect(page).to have_content("PTSD denied")
 
       expect(page).to have_content("Add / Remove Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Bob Vance, Spouse (payee code 10)")
+
+      # Check that request issues appear correctly as added issues
+      expect(page).to_not have_content("Left knee granted")
+      expect(page).to have_content("PTSD denied")
 
       safe_click "#button-add-issue"
 
@@ -156,7 +199,7 @@ RSpec.feature "Edit issues" do
       expect(page).to have_content("You still have an \"Unidentified\" issue")
       safe_click "#Unidentified-issue-button-id-1"
 
-      expect(page).to have_content("The review originally had 1 issues but now has 4.")
+      expect(page).to have_content("The review originally had 1 issue but now has 4.")
       safe_click "#Number-of-issues-has-changed-button-id-1"
 
       expect(page).to have_content("Edit Confirmed")
@@ -250,7 +293,7 @@ RSpec.feature "Edit issues" do
       find("label", text: "Left knee granted").click
       safe_click ".add-issue"
       safe_click("#button-submit-update")
-      expect(page).to have_content("The review originally had 1 issues but now has 2.")
+      expect(page).to have_content("The review originally had 1 issue but now has 2.")
       safe_click ".confirm"
 
       expect(page).to have_content("Previous update not yet done processing")
@@ -352,6 +395,48 @@ RSpec.feature "Edit issues" do
         ptcpnt_id: "5382910292",
         relationship_type: "Spouse"
       )
+    end
+
+    context "when there is a non-rating end product" do
+      let!(:non_rated_request_issue) do
+        RequestIssue.create!(
+          review_request: supplemental_claim,
+          issue_category: "Military Retired Pay",
+          description: "non-rated description",
+          contention_reference_id: "1234"
+        )
+      end
+
+      before do
+        supplemental_claim.create_issues!([non_rated_request_issue])
+        supplemental_claim.process_end_product_establishments!
+      end
+
+      it "shows the Supplemental Claim Edit page with a non-rated claim id" do
+        non_rated_ep_claim_id = EndProductEstablishment.find_by(
+          source: supplemental_claim,
+          code: "040SCNR"
+        ).reference_id
+        visit "supplemental_claims/#{non_rated_ep_claim_id}/edit"
+
+        expect(page).to have_content("Add / Remove Issues")
+        expect(page).to have_content("PTSD denied")
+        expect(page).to have_content("Military Retired Pay")
+
+        row = find("tr", text: "Military Retired Pay")
+        row.all(".remove-issue")[0].click
+        safe_click ".remove-issue"
+
+        safe_click("#button-submit-update")
+
+        expect(page).to have_content("The review originally had 2 issues but now has 1.")
+        safe_click ".confirm"
+
+        expect(page).to have_current_path(
+          "/supplemental_claims/#{non_rated_ep_claim_id}/edit/confirmation"
+        )
+        expect(page).to have_content("Edit Confirmed")
+      end
     end
 
     it "shows request issues and allows adding/removing issues" do
@@ -474,7 +559,7 @@ RSpec.feature "Edit issues" do
       safe_click ".add-issue"
       safe_click("#button-submit-update")
 
-      expect(page).to have_content("The review originally had 1 issues but now has 2.")
+      expect(page).to have_content("The review originally had 1 issue but now has 2.")
       safe_click ".confirm"
 
       expect(page).to have_content("Previous update not yet done processing")

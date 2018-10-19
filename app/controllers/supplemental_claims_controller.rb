@@ -22,12 +22,17 @@ class SupplementalClaimsController < ApplicationController
     )
   end
 
-  def supplemental_claim
-    @supplemental_claim ||=
-      EndProductEstablishment.find_by!(reference_id: params[:claim_id], source_type: SOURCE_TYPE).source
+  def end_product_establishment
+    @end_product_establishment ||=
+      EndProductEstablishment.find_by!(reference_id: params[:claim_id], source_type: SOURCE_TYPE)
   end
 
-  helper_method :supplemental_claim
+  def supplemental_claim
+    @supplemental_claim ||=
+      end_product_establishment.source
+  end
+
+  helper_method :supplemental_claim, :end_product_establishment
 
   def set_application
     RequestStore.store[:application] = "intake"

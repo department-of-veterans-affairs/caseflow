@@ -4,6 +4,7 @@
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
     buildDate: build_date,
-    serverIntake: supplemental_claim.ui_hash(FeatureToggle.enabled?(:intakeAma, user: current_user))
+    serverIntake: supplemental_claim.ui_hash(FeatureToggle.enabled?(:intakeAma, user: current_user)),
+    claimId: end_product_establishment.reference_id
   }) %>
 <% end %>
