@@ -164,6 +164,8 @@ RSpec.feature "Case details" do
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to have_content("1/10/1935")
         expect(page).to have_content("5/25/2016")
+        expect(page).to have_content(appeal.regional_office.key)
+        expect(page).to have_content(appeal.veteran_address_line_1)
       end
     end
 
@@ -192,6 +194,7 @@ RSpec.feature "Case details" do
 
         expect(page).to have_content("About the Appellant")
         expect(page).to have_content("About the Veteran")
+        expect(page).to have_content(appeal.veteran_address_line_1)
         expect(page).to have_content(appeal.appellant_name)
         expect(page).to have_content(appeal.appellant_relationship)
         expect(page).to have_content(appeal.appellant_address_line_1)
