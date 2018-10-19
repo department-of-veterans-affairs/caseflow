@@ -9,6 +9,17 @@ class ColocatedTask < Task
   after_update :update_location_in_vacols
 
   class << self
+    # Override so that each ColocatedTask for an appeal gets assigned to the same colocated staffer.
+    def create_many_from_params(params_array, user)
+      verify_user_can_assign!(user)
+      params_array.each do |params|
+        if params.key?("instructions") && !params[:instructions].is_a?(Array)
+          params["instructions"] = [params["instructions"]]
+        end
+      end
+      create(params_array)
+    end
+
     def create(tasks)
       ActiveRecord::Base.multi_transaction do
         assignee = next_assignee

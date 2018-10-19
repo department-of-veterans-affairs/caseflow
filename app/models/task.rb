@@ -43,7 +43,7 @@ class Task < ApplicationRecord
   end
 
   def self.create_many_from_params(params_array, current_user)
-    params_array.map { |params| create_from_params(params, current_user) }
+    params_array.map { |params| create_from_params(params, current_user) }.flatten
   end
 
   def self.create_from_params(params, user)

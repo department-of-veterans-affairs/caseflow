@@ -56,6 +56,7 @@ class TasksController < ApplicationController
     return invalid_type_error unless task_class
 
     tasks = task_class.create_many_from_params(create_params, current_user)
+    # byebug
 
     tasks.each { |task| return invalid_record_error(task) unless task.valid? }
     render json: { tasks: json_tasks(tasks) }, status: :created
