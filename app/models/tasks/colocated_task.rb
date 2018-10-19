@@ -10,8 +10,7 @@ class ColocatedTask < Task
 
   class << self
     # Override so that each ColocatedTask for an appeal gets assigned to the same colocated staffer.
-    def create_many_from_params(params_array, user)
-      verify_user_can_assign!(user)
+    def create_many_from_params(params_array, _)
       params_array.each do |params|
         if params.key?("instructions") && !params[:instructions].is_a?(Array)
           params["instructions"] = [params["instructions"]]
