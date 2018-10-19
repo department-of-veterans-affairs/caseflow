@@ -38,24 +38,12 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.claimants[0].relationship if object.claimants && object.claimants.any?
   end
 
-  attribute :veteran_full_name do
-    object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
-  end
-
-  attribute :veteran_date_of_birth do
-    object.veteran ? object.veteran.date_of_birth : "Cannot locate"
-  end
-
-  attribute :veteran_date_of_death do
-    object.veteran ? object.veteran.date_of_death : "Cannot locate"
-  end
-
-  attribute :veteran_gender do
-    object.veteran ? object.veteran.sex : "Cannot locate"
-  end
-
   attribute :veteran_file_number do
     object.veteran_file_number
+  end
+
+  attribute :veteran_full_name do
+    object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
   end
 
   attribute :external_id do

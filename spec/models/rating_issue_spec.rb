@@ -78,7 +78,7 @@ describe RatingIssue do
     let(:reference_id) { "abc123" }
     let(:review_request_type) { "SupplementalClaim" }
     let(:inactive_end_product_establishment) { create(:end_product_establishment, :cleared) }
-    let(:active_end_product_establishment) { create(:end_product_establishment, synced_status: "PEND") }
+    let(:active_end_product_establishment) { create(:end_product_establishment, :active) }
 
     let(:request_issue) do
       create(

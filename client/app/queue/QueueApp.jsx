@@ -44,6 +44,7 @@ import AddEditIssueView from './AddEditIssueView';
 import SelectRemandReasonsView from './SelectRemandReasonsView';
 import BeaamAppealListView from './BeaamAppealListView';
 import OrganizationQueue from './OrganizationQueue';
+import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
@@ -170,6 +171,8 @@ class QueueApp extends React.PureComponent<Props> {
     urlToLoad={`${props.location.pathname}/tasks`}>
     <OrganizationQueue {...this.props} />
   </OrganizationQueueLoadingScreen>
+
+  routedOrganizationUsers = (props) => <OrganizationUsers {...props.match.params} />;
 
   queueName = () => this.props.userRole === USER_ROLE_TYPES.attorney ? 'Your Queue' : 'Review Cases';
 
@@ -336,6 +339,11 @@ class QueueApp extends React.PureComponent<Props> {
             path="/organizations/:organization"
             title="Organization Queue | Caseflow"
             render={this.routedOrganization} />
+          <PageRoute
+            exact
+            path="/organizations/:organization/users"
+            title="Organization Users | Caseflow"
+            render={this.routedOrganizationUsers} />
         </div>
       </AppFrame>
       <Footer
