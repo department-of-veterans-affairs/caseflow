@@ -39,15 +39,14 @@ class AppealsController < ApplicationController
     }
   end
 
-  # For legacy appeals, veteran address and birth/death dates are 
+  # For legacy appeals, veteran address and birth/death dates are
   # the only data that is being pulled from BGS, the rest are from VACOLS for now
   def veteran
-    render json: { veteran: 
+    render json: { veteran:
       ActiveModelSerializers::SerializableResource.new(
         appeal,
         serializer: ::WorkQueue::VeteranSerializer
-      ).as_json[:data][:attributes]
-    }
+      ).as_json[:data][:attributes] }
   end
 
   def show

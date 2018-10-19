@@ -42,6 +42,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.veteran_file_number
   end
 
+  attribute :veteran_full_name do
+    object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
+  end
+
   attribute :external_id do
     object.uuid
   end
