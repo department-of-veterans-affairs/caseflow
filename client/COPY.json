@@ -125,6 +125,7 @@
 
   "JUDGE_CHECKOUT_OMO_LABEL": "Assign OMO",
   "JUDGE_CHECKOUT_DISPATCH_LABEL": "Ready for Dispatch",
+  "JUDGE_CHECKOUT_ASSIGN_TO_ATTORNEY_LABEL": "Assign to attorney",
 
   "JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE": "You have successfully submitted an OMO for %s.",
   "JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you need to make any changes, please manage this case in DAS.",
@@ -190,6 +191,8 @@
   "MARK_TASK_COMPLETE_TITLE": "Mark as complete",
   "MARK_TASK_COMPLETE_COPY": "Mark this task \"complete\" and send the case back to %s.",
   "MARK_TASK_COMPLETE_BUTTON": "Mark complete",
+  "MARK_TASK_COMPLETE_CONFIRMATION": "%s's case has been marked complete",
+  "MARK_TASK_COMPLETE_CONFIRMATION_DETAIL": "If you've made a mistake, please email %s to manage any changes.",
 
   "CANCEL_TASK_TITLE": "Cancel task",
   "CANCEL_TASK_COPY": "Mark this task as \"canceled\" and send the case back to %s.",
@@ -205,9 +208,6 @@
 
   "COLOCATED_ACTION_SEND_TO_TEAM": "Send to %s team",
   "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY": "Send back to attorney",
-
-  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION": "%s's case has been sent back to %s (Assigning Attorney)",
-  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION_DETAIL": "If you've made a mistake, please email %s to manage any changes.",
 
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD": "Send action to %s",
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_SUBHEAD": "Select the team you'd like to send this administrative action to",

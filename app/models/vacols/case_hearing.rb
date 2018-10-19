@@ -61,6 +61,10 @@ class VACOLS::CaseHearing < VACOLS::Record
         .where("hearing_date > ?", 1.year.ago.beginning_of_day)
     end
 
+    def find_hearing_day(hearing_pkseq)
+      select_schedule_days.find_by(hearing_pkseq: hearing_pkseq)
+    end
+
     def video_hearings_for_master_record(parent_hearing_pkseq)
       select_hearings.where(vdkey: parent_hearing_pkseq)
     end

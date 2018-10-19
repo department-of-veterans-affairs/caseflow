@@ -49,6 +49,40 @@ describe RequestIssue do
       expect(unidentified_issues.length).to eq(1)
       expect(unidentified_issues.find_by(id: unidentified_issue.id)).to_not be_nil
     end
+
+    context ".find_active_by_reference_id" do
+      let(:active_rated_issue) do
+        rated_issue.tap { |ri| ri.update!(end_product_establishment: create(:end_product_establishment, :active)) }
+      end
+
+      context "EPE is active" do
+        let(:rating_issue) { RatingIssue.new(reference_id: active_rated_issue.rating_issue_reference_id) }
+
+        it "filters by reference_id" do
+          request_issue_in_review = RequestIssue.find_active_by_reference_id(rating_issue.reference_id)
+          expect(request_issue_in_review).to eq(rated_issue)
+        end
+
+        it "ignores request issues that are already ineligible" do
+          create(
+            :request_issue,
+            rating_issue_reference_id: rated_issue.rating_issue_reference_id,
+            ineligible_reason: :duplicate_of_issue_in_active_review
+          )
+
+          request_issue_in_review = RequestIssue.find_active_by_reference_id(rating_issue.reference_id)
+          expect(request_issue_in_review).to eq(rated_issue)
+        end
+      end
+
+      context "EPE is not active" do
+        let(:rating_issue) { RatingIssue.new(reference_id: rated_issue.rating_issue_reference_id) }
+
+        it "ignores request issues" do
+          expect(RequestIssue.find_active_by_reference_id(rating_issue.reference_id)).to be_nil
+        end
+      end
+    end
   end
 
   context "#contention_text" do
@@ -56,6 +90,12 @@ describe RequestIssue do
       expect(unidentified_issue.contention_text).to eq(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
       expect(rated_issue.contention_text).to eq("a rated issue")
       expect(non_rated_issue.contention_text).to eq("a category - a non-rated issue description")
+    end
+  end
+
+  context "#review_title" do
+    it "munges the review_request_type appropriately" do
+      expect(rated_issue.review_title).to eq "Higher-Level Review"
     end
   end
 end

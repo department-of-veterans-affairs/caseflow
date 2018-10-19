@@ -40,8 +40,8 @@ type Props = Params & {|
 const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
   mark_task_complete: {
     buildSuccessMsg: (appeal: Appeal, { assignerName }: { assignerName: string}) => ({
-      title: sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION, appeal.veteranFullName, assignerName),
-      detail: sprintf(COPY.COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY_CONFIRMATION_DETAIL, assignerName)
+      title: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteranFullName, assignerName),
+      detail: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assignerName)
     }),
     title: () => COPY.MARK_TASK_COMPLETE_TITLE,
     getContent: ({ assignerName }: { assignerName: string }) => <React.Fragment>

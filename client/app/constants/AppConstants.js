@@ -16,7 +16,8 @@ export const COLORS = {
   GREEN_LIGHTER: '#94BFA2',
   GREY_BACKGROUND: '#f9f9f9',
   PRIMARY: '#0071bc',
-  BASE: '#212121'
+  BASE: '#212121',
+  RED_DARK: '#cd2026'
 };
 
 export const LOGO_COLORS = {

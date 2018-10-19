@@ -78,21 +78,22 @@ class NonRatedIssue extends React.PureComponent {
         <SearchableDropdown
           name="issue-category"
           label="Issue category"
+          strongLabel
           placeholder="Select or enter..."
           options={ISSUE_CATEGORIES}
           value={category}
-          required
           onChange={(event) => this.handleCategoryChange(event)} />
 
         <TextField
           name="Issue description"
+          strongLabel
           value={description}
-          required
           onChange={(event) => this.handleDescriptionChange(event)} />
 
         <DateSelector
           name="Issue date"
           label="Decision date"
+          strongLabel
           value={decisionDate}
           required={category ? (category !== 'Unknown issue category') : false}
           onChange={(event) => this.handleDecisionDateChange(event)} />
