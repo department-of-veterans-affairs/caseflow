@@ -74,6 +74,14 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
     "legacy"
   end
 
+  attribute :regional_office do
+    {
+      key: object.regional_office.key,
+      city: object.regional_office.city,
+      state: object.regional_office.state
+    }
+  end
+
   attribute :events do
     {
       nod_receipt_date: object.nod_date,

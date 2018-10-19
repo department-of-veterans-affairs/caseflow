@@ -79,6 +79,9 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     false
   end
 
+  attribute :regional_office do
+  end
+
   attribute :caseflow_veteran_id do
     object.veteran ? object.veteran.id : nil
   end
