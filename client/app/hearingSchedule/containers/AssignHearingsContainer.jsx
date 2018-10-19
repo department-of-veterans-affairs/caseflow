@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
@@ -11,9 +12,15 @@ import {
   onSelectedHearingDayChange,
   onReceiveVeteransReadyForHearing
 } from '../actions';
+import { onReceiveTasks } from '../../queue/QueueActions';
+import { setUserCssId } from '../../queue/uiReducer/uiActions';
 import AssignHearings from '../components/AssignHearings';
 
 class AssignHearingsContainer extends React.PureComponent {
+
+  componentDidMount = () => {
+    this.props.setUserCssId(this.props.userCssId);
+  }
 
   componentDidUpdate = (prevProps) => {
     if (this.props.selectedRegionalOffice !== prevProps.selectedRegionalOffice) {
@@ -72,6 +79,7 @@ class AssignHearingsContainer extends React.PureComponent {
         selectedHearingDay={this.props.selectedHearingDay}
         veteransReadyForHearing={this.props.veteransReadyForHearing}
         userId={this.props.userId}
+        onReceiveTasks={this.props.onReceiveTasks}
       />
     </LoadingDataDisplay>;
 
@@ -79,19 +87,25 @@ class AssignHearingsContainer extends React.PureComponent {
   }
 }
 
+AssignHearings.propTypes = {
+  userId: PropTypes.number,
+  userCssId: PropTypes.string
+};
+
 const mapStateToProps = (state) => ({
   selectedRegionalOffice: state.hearingSchedule.selectedRegionalOffice,
   upcomingHearingDays: state.hearingSchedule.upcomingHearingDays,
   selectedHearingDay: state.hearingSchedule.selectedHearingDay,
-  veteransReadyForHearing: state.hearingSchedule.veteransReadyForHearing,
-  userId: state.ui.userId
+  veteransReadyForHearing: state.hearingSchedule.veteransReadyForHearing
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onRegionalOfficeChange,
   onSelectedHearingDayChange,
   onReceiveUpcomingHearingDays,
-  onReceiveVeteransReadyForHearing
+  onReceiveVeteransReadyForHearing,
+  onReceiveTasks,
+  setUserCssId
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssignHearingsContainer);

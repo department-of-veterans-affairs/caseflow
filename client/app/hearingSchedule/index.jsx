@@ -3,7 +3,7 @@ import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit
 import reducers, { initialState } from './reducers';
 import HearingScheduleApp from './HearingScheduleApp';
 
-const HearingSchedule = (props) => <ReduxBase store={initialState} reducer={reducers}>
+const HearingSchedule = (props) => <ReduxBase reducer={reducers}>
   <HearingScheduleApp {...props} />
 </ReduxBase>;
 

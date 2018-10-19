@@ -217,9 +217,9 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
 
 const combinedReducer = combineReducers({
   hearingSchedule: hearingScheduleReducer,
+  ui: uiReducer,
   caseList: caseListReducer,
-  queue: workQueueReducer,
-  ui: uiReducer
+  queue: workQueueReducer
 });
 
 export default timeFunction(

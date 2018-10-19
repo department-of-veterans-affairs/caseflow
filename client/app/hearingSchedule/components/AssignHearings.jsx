@@ -52,9 +52,8 @@ export default class AssignHearings extends React.Component {
             type: 'ScheduleHearingTask',
             action: 'Assign Hearing',
             external_id: args[0].appeal.externalId,
-            appeal_id: args[0].appeal.appealId,
-            assigned_to_type: 'Organization',
-            assigned_to_id: this.props.userId
+            assigned_to_type: 'User',
+            assigned_to_id: this.props.userId  // Need to trace this.props.userId and why it is undefined.
           }
         ]
       }
@@ -64,8 +63,9 @@ export default class AssignHearings extends React.Component {
     then((resp) => {
       const response = JSON.parse(resp.text);
       const preparedTasks = prepareTasksForStore(response.tasks.data);
+      const taskUniqueId = response.tasks.data[0].id;
 
-      this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.uniqueId]);
+      this.props.onReceiveTasks(preparedTasks[taskUniqueId])
     });
   };
 
@@ -265,5 +265,6 @@ AssignHearings.propTypes = {
   onSelectedHearingDayChange: PropTypes.func,
   selectedHearingDay: PropTypes.object,
   veteransReadyForHearing: PropTypes.object,
-  userId: PropTypes.number
+  userId: PropTypes.number,
+  onReceiveTasks: PropTypes.func
 };
