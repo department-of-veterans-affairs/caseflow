@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181016155752) do
+ActiveRecord::Schema.define(version: 20181018143032) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -502,6 +502,13 @@ ActiveRecord::Schema.define(version: 20181016155752) do
     t.string "feature"
     t.string "url"
     t.string "participant_id"
+  end
+
+  create_table "organizations_users", force: :cascade do |t|
+    t.integer "organization_id"
+    t.integer "user_id"
+    t.index ["organization_id"], name: "index_organizations_users_on_organization_id"
+    t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
   end
 
   create_table "people", force: :cascade do |t|
