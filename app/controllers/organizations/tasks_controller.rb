@@ -20,7 +20,8 @@ class Organizations::TasksController < OrganizationsController
   def json_tasks(tasks)
     ActiveModelSerializers::SerializableResource.new(
       tasks,
-      each_serializer: ::WorkQueue::TaskSerializer
+      each_serializer: ::WorkQueue::TaskSerializer,
+      user: current_user
     ).as_json
   end
 end

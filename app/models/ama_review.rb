@@ -22,6 +22,10 @@ class AmaReview < ApplicationRecord
     ratings_with_issues.map(&:ui_hash)
   end
 
+  def self.review_title
+    to_s.underscore.titleize
+  end
+
   def start_review!
     @saving_review = true
   end

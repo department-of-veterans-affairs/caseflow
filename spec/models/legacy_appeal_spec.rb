@@ -1086,14 +1086,8 @@ describe LegacyAppeal do
                case_issues: issues)
       end
 
-      context "when other qualifying criteria are met" do
-        it { is_expected.to be_nil }
-      end
-
-      context "when no compensation issues" do
-        let(:issues) { [create(:case_issue, :education)] }
-        it { is_expected.to eq(:no_compensation_issues) }
-      end
+      # As of October 2018, appeals are only eligible for RAMP if their status is advance or remand
+      it { is_expected.to eq(:activated_to_bva) }
 
       context "when docket date is before 2016" do
         let(:docket_date) { "2015-12-31" }
@@ -1114,6 +1108,11 @@ describe LegacyAppeal do
         let(:type_code) { "7" }
         it { is_expected.to eq(:activated_to_bva) }
       end
+
+      context "when status is Active (ACT)" do
+        let(:status) { "Active" }
+        it { is_expected.to eq(:activated_to_bva) }
+      end
     end
 
     context "status is remand" do
@@ -1132,6 +1131,11 @@ describe LegacyAppeal do
         end
 
         it { is_expected.to eq(:claimant_not_veteran) }
+      end
+
+      context "when no compensation issues" do
+        let(:issues) { [create(:case_issue, :education)] }
+        it { is_expected.to eq(:no_compensation_issues) }
       end
     end
 
@@ -2065,9 +2069,9 @@ describe LegacyAppeal do
                saddrstt: "DC",
                saddrcnty: nil,
                saddrzip: "20001",
-               sspare1: "Tommy",
-               sspare2: "G",
-               sspare3: "Claimant")
+               sspare1: "Claimant",
+               sspare2: "Tommy",
+               sspare3: "G")
       end
 
       it "the appellant is returned" do
@@ -2115,9 +2119,9 @@ describe LegacyAppeal do
                saddrstt: "DC",
                saddrcnty: nil,
                saddrzip: "20001",
-               sspare1: "Tommy",
-               sspare2: "G",
-               sspare3: "Claimant")
+               sspare1: "Claimant",
+               sspare2: "Tommy",
+               sspare3: "G")
       end
 
       let!(:representative) do
@@ -2169,9 +2173,9 @@ describe LegacyAppeal do
                saddrstt: "DC",
                saddrcnty: nil,
                saddrzip: "20001",
-               sspare1: "Tommy",
-               sspare2: "G",
-               sspare3: "Claimant")
+               sspare1: "Claimant",
+               sspare2: "Tommy",
+               sspare3: "G")
       end
 
       let!(:representative) do
