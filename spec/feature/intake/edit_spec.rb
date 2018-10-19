@@ -111,6 +111,7 @@ RSpec.feature "Edit issues" do
       expect(page).to_not have_content("Notes:")
 
       page.all(".remove-issue")[0].click
+      safe_click ".remove-issue"
       expect(page).not_to have_content("PTSD denied")
 
       # re-add to proceed
@@ -151,6 +152,12 @@ RSpec.feature "Edit issues" do
       expect(page).to have_content("This is an unidentified issue")
 
       safe_click("#button-submit-update")
+
+      expect(page).to have_content("You still have an \"Unidentified\" issue")
+      safe_click "#Unidentified-issue-button-id-1"
+
+      expect(page).to have_content("The review originally had 1 issues but now has 4.")
+      safe_click "#Number-of-issues-has-changed-button-id-1"
 
       expect(page).to have_content("Edit Confirmed")
 
@@ -213,13 +220,15 @@ RSpec.feature "Edit issues" do
       expect(page).to have_button("Save", disabled: false)
 
       page.all(".remove-issue")[1].click
-
+      safe_click ".remove-issue"
       expect(page).to_not have_content("Left knee granted")
       expect(page).to have_button("Save", disabled: true)
     end
 
     it "Does not allow save if no issues are selected" do
       visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit"
+      safe_click ".remove-issue"
+      # click again to get rid of pop up
       safe_click ".remove-issue"
 
       expect(page).to have_button("Save", disabled: true)
@@ -241,6 +250,8 @@ RSpec.feature "Edit issues" do
       find("label", text: "Left knee granted").click
       safe_click ".add-issue"
       safe_click("#button-submit-update")
+      expect(page).to have_content("The review originally had 1 issues but now has 2.")
+      safe_click ".confirm"
 
       expect(page).to have_content("Previous update not yet done processing")
     end
@@ -252,6 +263,8 @@ RSpec.feature "Edit issues" do
       allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
 
       visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit"
+      safe_click ".remove-issue"
+      # click again to get rid of pop-up
       safe_click ".remove-issue"
       safe_click "#button-add-issue"
       find("label", text: "Left knee granted").click
@@ -274,8 +287,8 @@ RSpec.feature "Edit issues" do
       new_request_issue = higher_level_review.reload.request_issues.first
       expect(new_request_issue.description).to eq("Left knee granted")
       expect(request_issue.reload.review_request_id).to be_nil
-      expect(request_issue.removed_at).to be_within(1.hour).of(Time.current)
-      expect(new_request_issue.rating_issue_associated_at).to be_within(1.hour).of(Time.current)
+      expect(request_issue.removed_at).to eq(Time.zone.now)
+      expect(new_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
 
       # expect contentions to reflect issue update
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
@@ -373,6 +386,10 @@ RSpec.feature "Edit issues" do
       expect(page).to_not have_content("Notes:")
       safe_click ".remove-issue"
 
+      # expect a pop up
+      expect(page).to have_content("Are you sure you want to remove this issue?")
+      safe_click ".remove-issue"
+
       expect(page).not_to have_content("PTSD denied")
 
       # re-add to proceed
@@ -425,13 +442,16 @@ RSpec.feature "Edit issues" do
       expect(page).to have_button("Save", disabled: false)
 
       page.all(".remove-issue")[1].click
-
+      # click remove issue again to get rid of popup
+      safe_click ".remove-issue"
       expect(page).to_not have_content("Left knee granted")
       expect(page).to have_button("Save", disabled: true)
     end
 
     it "Does not allow save if no issues are selected" do
       visit "supplemental_claims/#{supplemental_claim.end_product_claim_id}/edit"
+      safe_click ".remove-issue"
+      # click remove issue again to get rid of popup
       safe_click ".remove-issue"
 
       expect(page).to have_button("Save", disabled: true)
@@ -454,6 +474,9 @@ RSpec.feature "Edit issues" do
       safe_click ".add-issue"
       safe_click("#button-submit-update")
 
+      expect(page).to have_content("The review originally had 1 issues but now has 2.")
+      safe_click ".confirm"
+
       expect(page).to have_content("Previous update not yet done processing")
     end
 
@@ -464,6 +487,7 @@ RSpec.feature "Edit issues" do
       allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
 
       visit "supplemental_claims/#{supplemental_claim.end_product_claim_id}/edit"
+      safe_click ".remove-issue"
       safe_click ".remove-issue"
       safe_click "#button-add-issue"
       find("label", text: "Left knee granted").click
@@ -486,8 +510,8 @@ RSpec.feature "Edit issues" do
       new_request_issue = supplemental_claim.reload.request_issues.first
       expect(new_request_issue.description).to eq("Left knee granted")
       expect(request_issue.reload.review_request_id).to be_nil
-      expect(request_issue.removed_at).to be_within(1.hour).of(Time.current)
-      expect(new_request_issue.rating_issue_associated_at).to be_within(1.hour).of(Time.current)
+      expect(request_issue.removed_at).to eq(Time.zone.now)
+      expect(new_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
 
       # expect contentions to reflect issue update
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(

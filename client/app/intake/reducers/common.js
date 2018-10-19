@@ -20,6 +20,12 @@ export const commonReducers = (state, action) => {
     });
   };
 
+  actionsMap[ACTIONS.TOGGLE_ISSUE_REMOVE_MODAL] = () => {
+    return update(state, {
+      $toggle: ['removeIssueModalVisible']
+    });
+  };
+
   actionsMap[ACTIONS.TOGGLE_UNIDENTIFIED_ISSUES_MODAL] = () => {
     return update(state, {
       $toggle: ['unidentifiedIssuesModalVisible'],

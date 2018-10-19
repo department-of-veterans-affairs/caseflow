@@ -53,8 +53,35 @@
 }
 
 .intake-add-issues .cf-modal-body {
-  width: 770px;
-  overflow-y: auto;
+  color: $color-gray-dark;
+  width: 750px;
+  max-height: 95%;
+
+  @media only screen and (max-width: 760px) {
+    width: 650px;
+
+    .usa-button {
+      font-size: 1.5rem;
+      padding: .8rem 1.2rem;
+    }
+  }
+
+  @media only screen and (max-width: 650px) {
+    width: 95%;
+
+    .usa-button {
+      font-size: 1.5rem;
+      padding: .8rem 1.2rem;
+    }
+
+    .no-matching-issues {
+      margin-top: 1em;
+    }
+  }
+}
+
+.intake-cancel .cf-modal-body {
+  color: $color-gray-dark;
 }
 
 .add-issue {
@@ -68,6 +95,10 @@
     margin-top: 20px;
     width: 8em;
   }
+}
+
+.intake-modal {
+  text-align: left;
 }
 
 .cf-intake-edit {
@@ -87,13 +118,12 @@
         border-bottom: 1px solid $color-gray-lighter;
 
         div {
-          display: table-column;
-          float: left;
+          display: table-cell;
           padding: 0.5em 0;
         }
 
         .issue-desc {
-          max-width: 70%;
+          width: 100%;
 
           .issue-num {
             padding-right: 0.25em;
@@ -119,7 +149,6 @@
 
         .issue-action {
           padding: 0;
-          float: right;
 
           button {
             i {
@@ -137,6 +166,7 @@
 
   td:last-child {
     min-width: 130px;
+    max-width: 500px;
   }
 
   ol {

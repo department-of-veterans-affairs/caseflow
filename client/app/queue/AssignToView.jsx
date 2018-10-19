@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
+import _ from 'lodash';
 
 import COPY from '../../COPY.json';
 
@@ -12,6 +13,7 @@ import {
   incompleteOrganizationTasksByAssigneeIdSelector,
   rootTasksForAppealIfMailTeamMemberSelector
 } from './selectors';
+import { prepareTasksForStore } from './utils';
 
 import { setTaskAttrs } from './QueueActions';
 
@@ -19,7 +21,10 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
 
 import editModalBase from './components/EditModalBase';
-import { requestSave } from './uiReducer/uiActions';
+import {
+  requestPatch,
+  requestSave
+} from './uiReducer/uiActions';
 
 import type { State } from './types/state';
 import type { Appeal, Task } from './types/models';
@@ -28,12 +33,14 @@ type Params = {|
   appealId: string,
   task: Task,
   createsMailTask: boolean,
+  isReassignAction: boolean,
   isTeamAssign: boolean
 |};
 
 type Props = Params & {|
   appeal: Appeal,
   highlightFormItems: boolean,
+  requestPatch: typeof requestPatch,
   requestSave: typeof requestSave,
   setTaskAttrs: typeof setTaskAttrs
 |};
@@ -53,7 +60,7 @@ class AssignToView extends React.Component<Props, ViewState> {
     const instructionLength = instructions ? instructions.length : 0;
     let existingInstructions = '';
 
-    if (instructions && instructionLength > 0 && !this.props.isTeamAssign) {
+    if (instructions && instructionLength > 0 && !this.props.isTeamAssign && !this.props.isReassignAction) {
       existingInstructions = instructions[instructionLength - 1];
     }
 
@@ -71,8 +78,9 @@ class AssignToView extends React.Component<Props, ViewState> {
     const {
       appeal,
       task,
-      isTeamAssign,
-      createsMailTask
+      createsMailTask,
+      isReassignAction,
+      isTeamAssign
     } = this.props;
     const payload = {
       data: {
@@ -86,13 +94,53 @@ class AssignToView extends React.Component<Props, ViewState> {
         }]
       }
     };
-    const successMsg = {
-      title: `Task assigned to ${this.props.isTeamAssign ? 'team' : 'person'}`
-    };
+
+    const successMsg = { title: `Task assigned to ${this.getAssignee()}` };
+
+    if (isReassignAction) {
+      return this.reassignTask();
+    }
 
     return this.props.requestSave('/tasks', payload, successMsg).
       then(() => {
         this.props.setTaskAttrs(task.uniqueId, { status: 'on_hold' });
+      });
+  }
+
+  getAssignee = () => {
+    let assignee = 'person';
+
+    this.options().forEach((opt) => {
+      if (opt.value === this.state.selectedValue) {
+        assignee = opt.label;
+      }
+    });
+
+    return assignee;
+  }
+
+  reassignTask = () => {
+    const task = this.props.task;
+    const payload = {
+      data: {
+        task: {
+          reassign: {
+            assigned_to_id: this.state.selectedValue,
+            assigned_to_type: 'User',
+            instructions: this.state.instructions
+          }
+        }
+      }
+    };
+
+    const successMsg = { title: `Task reassigned to ${this.getAssignee()}` };
+
+    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
+      then((resp) => {
+        const response = JSON.parse(resp.text);
+        const preparedTasks = prepareTasksForStore(response.tasks.data);
+
+        _.map(preparedTasks, (preparedTask) => this.props.setTaskAttrs(preparedTask.uniqueId, preparedTask));
       });
   }
 
@@ -155,10 +203,11 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  requestPatch,
   requestSave,
   setTaskAttrs
 }, dispatch);
 
 export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  editModalBase(AssignToView, COPY.ASSIGN_TO_PAGE_TITLE)
+  editModalBase(AssignToView, { title: COPY.ASSIGN_TO_PAGE_TITLE })
 )): React.ComponentType<Params>);

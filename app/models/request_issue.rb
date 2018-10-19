@@ -5,24 +5,51 @@ class RequestIssue < ApplicationRecord
   has_many :remand_reasons
   has_many :rating_issues
 
+  enum ineligible_reason: { duplicate_of_issue_in_active_review: 0, untimely: 1 }
+
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
 
-  def self.rated
-    where.not(rating_issue_reference_id: nil, rating_issue_profile_date: nil)
-      .or(where(is_unidentified: true))
+  class << self
+    def rated
+      where.not(rating_issue_reference_id: nil, rating_issue_profile_date: nil)
+        .or(where(is_unidentified: true))
+    end
+
+    def nonrated
+      where(rating_issue_reference_id: nil, rating_issue_profile_date: nil, is_unidentified: [nil, false])
+        .where.not(issue_category: nil)
+    end
+
+    def unidentified
+      where(rating_issue_reference_id: nil, rating_issue_profile_date: nil, is_unidentified: true)
+    end
+
+    def no_follow_up_issues
+      where.not(id: select(:parent_request_issue_id).uniq)
+    end
+
+    def from_intake_data(data)
+      new(
+        rating_issue_reference_id: data[:reference_id],
+        rating_issue_profile_date: data[:profile_date],
+        description: data[:decision_text],
+        decision_date: data[:decision_date],
+        issue_category: data[:issue_category],
+        notes: data[:notes],
+        is_unidentified: data[:is_unidentified]
+      ).check_for_active_request_issue!
+    end
+
+    def find_active_by_reference_id(reference_id)
+      request_issue = unscoped.find_by(rating_issue_reference_id: reference_id, removed_at: nil, ineligible_reason: nil)
+      return unless request_issue && request_issue.status_active?
+      request_issue
+    end
   end
 
-  def self.nonrated
-    where(rating_issue_reference_id: nil, rating_issue_profile_date: nil, is_unidentified: [nil, false])
-      .where.not(issue_category: nil)
-  end
-
-  def self.unidentified
-    where(rating_issue_reference_id: nil, rating_issue_profile_date: nil, is_unidentified: true)
-  end
-
-  def self.no_follow_up_issues
-    where.not(id: select(:parent_request_issue_id).uniq)
+  def status_active?
+    return false unless end_product_establishment
+    end_product_establishment.status_active?
   end
 
   def rated?
@@ -39,16 +66,12 @@ class RequestIssue < ApplicationRecord
     description
   end
 
-  def self.from_intake_data(data)
-    new(
-      rating_issue_reference_id: data[:reference_id],
-      rating_issue_profile_date: data[:profile_date],
-      description: data[:decision_text],
-      decision_date: data[:decision_date],
-      issue_category: data[:issue_category],
-      notes: data[:notes],
-      is_unidentified: data[:is_unidentified]
-    )
+  def review_title
+    review_request_type.try(:constantize).try(:review_title)
+  end
+
+  def eligible?
+    ineligible_reason.nil?
   end
 
   def ui_hash
@@ -61,5 +84,14 @@ class RequestIssue < ApplicationRecord
       notes: notes,
       is_unidentified: is_unidentified
     }
+  end
+
+  def check_for_active_request_issue!
+    return self unless rating_issue_reference_id
+    existing_request_issue = self.class.find_active_by_reference_id(rating_issue_reference_id)
+    if existing_request_issue
+      self.ineligible_reason = :duplicate_of_issue_in_active_review
+    end
+    self
   end
 end

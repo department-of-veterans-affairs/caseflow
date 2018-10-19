@@ -193,6 +193,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   delegate :age, :sex, to: :veteran, prefix: true
+  delegate :address_line_1, :address_line_2, :address_line_3, :city, :state, :zip, :country, to: :veteran, prefix: true
 
   # NOTE: we cannot currently match end products to a specific appeal.
   delegate :end_products, to: :veteran
@@ -272,20 +273,29 @@ class LegacyAppeal < ApplicationRecord
     [outcoder_last_name, outcoder_first_name, outcoder_middle_initial].select(&:present?).join(", ").titleize
   end
 
-  def representative_name
-    power_of_attorney.vacols_representative_name
-  end
-
-  def representative_type
-    power_of_attorney.vacols_representative_type
-  end
-
-  def representative_address
-    power_of_attorney.vacols_representative_address
-  end
-
+  # Delete this method when use_representative_info_from_bgs is enabled for all users
   def representative_code
     power_of_attorney.vacols_representative_code
+  end
+
+  def representative_participant_id
+    power_of_attorney.bgs_participant_id
+  end
+
+  REPRESENTATIVE_METHOD_NAMES = [
+    :representative_name,
+    :representative_type,
+    :representative_address
+  ].freeze
+
+  REPRESENTATIVE_METHOD_NAMES.each do |method_name|
+    define_method(method_name) do
+      if use_representative_info_from_bgs?
+        power_of_attorney.send("bgs_#{method_name}".to_sym)
+      else
+        power_of_attorney.send("vacols_#{method_name}".to_sym)
+      end
+    end
   end
 
   delegate :representatives, to: :case_record
@@ -355,7 +365,7 @@ class LegacyAppeal < ApplicationRecord
     return @ramp_ineligibility_reason if defined? @ramp_ineligibility_reason
 
     @ramp_ineligibility_reason = begin
-      if ineligibile_for_ramp_at_bva?
+      if !status_eligible_for_ramp?
         :activated_to_bva
       elsif appellant_first_name
         :claimant_not_veteran
@@ -674,11 +684,18 @@ class LegacyAppeal < ApplicationRecord
 
   private
 
+  def use_representative_info_from_bgs?
+    FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&
+      (RequestStore.store[:application] = "queue" ||
+       RequestStore.store[:application] = "idt")
+  end
+
   def representative_to_hash
     {
       name: representative_name,
       type: representative_type,
       code: representative_code,
+      participant_id: representative_participant_id,
       address: representative_address
     }
   end
@@ -710,15 +727,8 @@ class LegacyAppeal < ApplicationRecord
     regional_office.to_h
   end
 
-  def ineligibile_for_ramp_at_bva?
-    !(((status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)) ||
-      eligible_for_ramp_despite_being_at_bva?)
-  end
-
-  # AMO has decided that appeals with docket dates 2016 and afterwards are eligble for RAMP even
-  # though they are at the board. Exceptions are appeals with hearings held, advance on docket or cavc.
-  def eligible_for_ramp_despite_being_at_bva?
-    (docket_date && docket_date.to_date > Date.new(2015, 12, 31)) && !hearing_held && !aod && !cavc
+  def status_eligible_for_ramp?
+    (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
   end
 
   class << self
