@@ -51,7 +51,7 @@ export default class HearingScheduleApp extends React.PureComponent {
           />
           <PageRoute
             exact
-            path="/schedule/docket/:ro_name/:date"
+            path="/schedule/docket/:hearingDayId"
             title="Daily Docket"
             component={DailyDocketContainer}
           />
