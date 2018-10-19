@@ -29,11 +29,7 @@ class RequestIssue < ApplicationRecord
     end
 
     def from_intake_data(data)
-      # there's a race condition here: if 2 intakes were being entered simultaneously that
-      # both refer to the same rating_issue then we can end up with 2 RequestIssues that
-      # point at the same rating_issue_reference_id. The first one should win. Any
-      # subsequent rating_issue matches should trigger the in_active_review ineligibility rule.
-      request_issue = new(
+      new(
         rating_issue_reference_id: data[:reference_id],
         rating_issue_profile_date: data[:profile_date],
         description: data[:decision_text],
@@ -41,9 +37,7 @@ class RequestIssue < ApplicationRecord
         issue_category: data[:issue_category],
         notes: data[:notes],
         is_unidentified: data[:is_unidentified]
-      )
-      request_issue.check_for_existing_request_issue!
-      request_issue
+      ).check_for_active_request_issue!
     end
 
     def find_active_by_reference_id(reference_id)
@@ -92,11 +86,12 @@ class RequestIssue < ApplicationRecord
     }
   end
 
-  def check_for_existing_request_issue!
-    return unless rating_issue_reference_id
+  def check_for_active_request_issue!
+    return self unless rating_issue_reference_id
     existing_request_issue = self.class.find_active_by_reference_id(rating_issue_reference_id)
     if existing_request_issue
       self.ineligible_reason = :duplicate_of_issue_in_active_review
     end
+    self
   end
 end
