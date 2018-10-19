@@ -39,33 +39,15 @@ class AppealsController < ApplicationController
     }
   end
 
-  # Veteran address and death date are the only data that is being pulled from BGS,
-  # The rest are from VACOLS for now
+  # For legacy appeals, veteran address and birth/death dates are 
+  # the only data that is being pulled from BGS, the rest are from VACOLS for now
   def veteran
-    data = {
-      full_name: appeal.veteran_full_name,
-      gender: appeal.veteran_gender,
-      date_of_birth: formatted_date_of_birth,
-      date_of_death: appeal.veteran_death_date,
-      address: {
-        address_line_1: appeal.veteran_address_line_1,
-        address_line_2: appeal.veteran_address_line_2,
-        city: appeal.veteran_city,
-        state: appeal.veteran_state,
-        zip: appeal.veteran_zip,
-        country: appeal.veteran_country
-      },
-      regional_office: nil
+    render json: { veteran: 
+      ActiveModelSerializers::SerializableResource.new(
+        appeal,
+        serializer: ::WorkQueue::VeteranSerializer
+      ).as_json[:data][:attributes]
     }
-
-    if appeal.regional_office
-      data[:regional_office] = {
-        key: appeal.regional_office.key,
-        city: appeal.regional_office.city,
-        state: appeal.regional_office.state
-      }
-    end
-    render json: data
   end
 
   def show
@@ -138,14 +120,6 @@ class AppealsController < ApplicationController
 
   def appeal
     @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
-  end
-
-  def formatted_date_of_birth
-    if appeal.is_a?(LegacyAppeal)
-      appeal.veteran_date_of_birth.strftime("%m/%d/%Y") if appeal.veteran_date_of_birth
-    else
-      appeal.veteran_date_of_birth
-    end
   end
 
   def file_access_prohibited_error

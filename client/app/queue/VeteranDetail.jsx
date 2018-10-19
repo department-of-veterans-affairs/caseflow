@@ -47,13 +47,21 @@ export class VeteranDetail extends React.PureComponent<Props> {
   }
 
   getDetails = () => {
+    const {
+      address, 
+      full_name,
+      gender,
+      date_of_birth: dob,
+      date_of_death: dod,
+      regional_office: regionalOffice
+    } = this.props.veteranInfo.veteran;
+
     const details = [{
       label: 'Name',
-      value: this.props.veteranInfo.full_name
+      value: full_name
     }];
 
-    const genderValue = this.props.veteranInfo.gender === 'F' ?
-      COPY.CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE :
+    const genderValue = gender === 'F' ? COPY.CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE :
       COPY.CASE_DETAILS_GENDER_FIELD_VALUE_MALE;
 
     if (genderValue) {
@@ -62,15 +70,20 @@ export class VeteranDetail extends React.PureComponent<Props> {
         value: genderValue
       });
     }
-    const dod = this.props.veteranInfo.date_of_birth;
+
+    if (dob) {
+      details.push({
+        label: 'Date of birth',
+        value: <DateString date={dob} inputFormat="MM/DD/YYYY" dateFormat="M/D/YYYY" />
+      });
+    }
 
     if (dod) {
       details.push({
-        label: 'Date of birth',
+        label: 'Date of death',
         value: <DateString date={dod} inputFormat="MM/DD/YYYY" dateFormat="M/D/YYYY" />
       });
     }
-    const address = this.props.veteranInfo.address;
 
     if (address) {
       details.push({
@@ -78,11 +91,9 @@ export class VeteranDetail extends React.PureComponent<Props> {
         value: <Address address={address} />
       });
     }
-    const regionalOffice = this.props.veteranInfo.regional_office;
 
     if (regionalOffice) {
       const { city, key } = regionalOffice;
-
       details.push({
         label: 'Regional Office',
         value: `${city} (${key.replace('RO', '')})`
