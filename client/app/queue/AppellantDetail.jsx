@@ -5,7 +5,6 @@ import _ from 'lodash';
 
 import BareList from '../components/BareList';
 import { boldText } from './constants';
-import { DateString } from '../util/DateUtil';
 import Address from './components/Address';
 import COPY from '../../COPY.json';
 

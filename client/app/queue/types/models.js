@@ -14,14 +14,6 @@ export type User = {
 
 export type Judges = { [string]: User };
 
-export type VeteranInfo = {
-  full_name: ?string,
-  gender: ?string,
-  date_of_birth: Date,
-  regional_office: Object,
-  address: ?Address
-};
-
 export type Address = {
   address_line_1: string,
   address_line_2: string,
@@ -29,6 +21,14 @@ export type Address = {
   state: string,
   zip: string,
   country: string
+};
+
+export type VeteranInfo = {
+  full_name: ?string,
+  gender: ?string,
+  date_of_birth: Date,
+  regional_office: Object,
+  address: ?Address
 };
 
 export type Issue = {
