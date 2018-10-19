@@ -66,8 +66,12 @@ export default class DailyDocket extends React.Component {
   };
 
   onHearingDispositionUpdate = (hearingId) => (disposition) => {
-    this.props.onHearingDispositionUpdate(hearingId, disposition);
-  }
+    this.props.onHearingDispositionUpdate(hearingId, disposition.value);
+  };
+
+  onHearingDateUpdate = (hearingId) => (date) => {
+    this.props.onHearingDateUpdate(hearingId, date.value);
+  };
 
   getAppellantInformation = (hearing) => {
     return <div><b>{hearing.appellantMiFormatted} ({hearing.vbmsId})</b> <br />
@@ -105,13 +109,15 @@ export default class DailyDocket extends React.Component {
       value: this.getHearingLocation(hearing) }];
   };
 
-  getHearingDate = (hearing) => {
-    return moment(hearing.date).format('MM/DD/YYYY');
+  getHearingDate = (date) => {
+    return moment(date).format('MM/DD/YYYY');
   };
 
-  getHearingDateOptions = (hearing) => {
-    return [{ label: this.getHearingDate(hearing),
-      value: this.getHearingDate(hearing) }];
+  getHearingDateOptions = () => {
+    return _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
+      label: this.getHearingDate(hearingDayOption.hearingDate),
+      value: this.getHearingDate(hearingDayOption.hearingDate)
+    }));
   };
 
   getHearingLocationDropdown = (hearing) => {
@@ -126,9 +132,9 @@ export default class DailyDocket extends React.Component {
   getHearingDayDropdown = (hearing) => {
     return <div><SearchableDropdown
       name="Hearing Day"
-      options={this.getHearingDateOptions(hearing)}
-      value={this.getHearingDate(hearing)}
-      onChange={this.emptyFunction}
+      options={this.getHearingDateOptions()}
+      value={this.getHearingDate(hearing.date)}
+      onChange={this.onHearingDateUpdate(hearing.id)}
     />
     <RadioField
       name="Hearing Time"
@@ -160,6 +166,7 @@ export default class DailyDocket extends React.Component {
   getSaveButton = (hearing) => {
     return hearing.edited ? <Button
       styling={buttonStyling}
+      disabled={hearing.dateEdited && !hearing.dispositionEdited}
     >
       Save
     </Button> : null;

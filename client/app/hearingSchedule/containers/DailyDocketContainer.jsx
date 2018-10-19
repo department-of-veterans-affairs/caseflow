@@ -9,7 +9,8 @@ import ApiUtil from '../../util/ApiUtil';
 import {
   onReceiveDailyDocket,
   onHearingNotesUpdate,
-  onHearingDispositionUpdate
+  onHearingDispositionUpdate,
+  onHearingDateUpdate
 } from '../actions';
 
 export class DailyDocketContainer extends React.Component {
@@ -21,9 +22,10 @@ export class DailyDocketContainer extends React.Component {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
       const hearings = _.keyBy(resp.hearingDay.hearings, 'id');
-      const dailyDocket = _.omit(resp.hearingDay, ['hearings']);
+      const hearingDayOptions = _.keyBy(resp.hearingDay.hearingDayOptions, 'id');
+      const dailyDocket = _.omit(resp.hearingDay, ['hearings', 'hearingDayOptions']);
 
-      this.props.onReceiveDailyDocket(dailyDocket, hearings);
+      this.props.onReceiveDailyDocket(dailyDocket, hearings, hearingDayOptions);
     });
   };
 
@@ -42,8 +44,10 @@ export class DailyDocketContainer extends React.Component {
       <DailyDocket
         dailyDocket={this.props.dailyDocket}
         hearings={this.props.hearings}
+        hearingDayOptions={this.props.hearingDayOptions}
         onHearingNotesUpdate={this.props.onHearingNotesUpdate}
         onHearingDispositionUpdate={this.props.onHearingDispositionUpdate}
+        onHearingDateUpdate={this.props.onHearingDateUpdate}
       />
     </LoadingDataDisplay>;
 
@@ -53,13 +57,15 @@ export class DailyDocketContainer extends React.Component {
 
 const mapStateToProps = (state) => ({
   dailyDocket: state.hearingSchedule.dailyDocket,
-  hearings: state.hearingSchedule.hearings
+  hearings: state.hearingSchedule.hearings,
+  hearingDayOptions: state.hearingSchedule.hearingDayOptions
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveDailyDocket,
   onHearingNotesUpdate,
-  onHearingDispositionUpdate
+  onHearingDispositionUpdate,
+  onHearingDateUpdate
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer);
