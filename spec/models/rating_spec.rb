@@ -7,18 +7,27 @@ describe Rating do
 
   let(:receipt_date) { Time.zone.today }
 
+  let(:promulgation_date) { receipt_date - 30 }
+
   let(:rating) do
     Generators::Rating.build(
-      promulgation_date: receipt_date,
-      issues: issues
+      issues: issues,
+      promulgation_date: promulgation_date
     )
   end
 
+  def build_issue(num)
+    {
+      reference_id: "Issue#{num}",
+      decision_text: "Decision#{num}",
+      in_active_review: nil,
+      promulgation_date: promulgation_date,
+      timely: false
+    }
+  end
+
   let(:issues) do
-    [
-      { reference_id: "Issue1", decision_text: "Decision1", in_active_review: nil },
-      { reference_id: "Issue2", decision_text: "Decision2", in_active_review: nil }
-    ]
+    [build_issue(1), build_issue(2)]
   end
 
   context "#issues" do
