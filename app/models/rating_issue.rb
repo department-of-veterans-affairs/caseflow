@@ -48,7 +48,7 @@ class RatingIssue < ApplicationRecord
   private
 
   def less_than_one_year_old?
-    promulgation_date < (Time.zone.today - Rating::ONE_YEAR_PLUS_DAYS)
+    promulgation_date >= (Time.zone.today - Rating::ONE_YEAR_PLUS_DAYS)
   end
 
   def related_request_issue

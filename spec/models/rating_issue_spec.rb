@@ -10,13 +10,16 @@ describe RatingIssue do
     FeatureToggle.disable!(:test_facols)
   end
 
+  let(:promulgation_date) { Time.zone.today - 30 }
+
   context ".from_bgs_hash" do
     subject { RatingIssue.from_bgs_hash(bgs_record) }
 
     let(:bgs_record) do
       {
         rba_issue_id: "NBA",
-        decn_txt: "This broadcast may not be reproduced"
+        decn_txt: "This broadcast may not be reproduced",
+        promulgation_date: promulgation_date
       }
     end
 
@@ -140,7 +143,8 @@ describe RatingIssue do
       rating_issue = RatingIssue.new(
         reference_id: "ref-id",
         profile_date: Time.zone.today,
-        contention_reference_id: contention_ref_id
+        contention_reference_id: contention_ref_id,
+        promulgation_date: promulgation_date
       )
 
       expect(rating_issue.id).to be_nil
@@ -149,6 +153,18 @@ describe RatingIssue do
 
       expect(rating_issue.request_issue).to eq(request_issue)
       expect(rating_issue.id).to_not be_nil
+    end
+  end
+
+  context "#timely?" do
+    it "considers within the last year timely" do
+      rating_issue = RatingIssue.new(promulgation_date: promulgation_date)
+      expect(rating_issue.timely?).to eq(true)
+    end
+
+    it "considers older than a year-ish untimely" do
+      rating_issue = RatingIssue.new(promulgation_date: promulgation_date - 373.days)
+      expect(rating_issue.timely?).to eq(false)
     end
   end
 end
