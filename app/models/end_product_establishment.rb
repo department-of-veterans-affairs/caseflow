@@ -240,8 +240,7 @@ class EndProductEstablishment < ApplicationRecord
   def establish_claim_in_vbms(end_product)
     VBMSService.establish_claim!(
       claim_hash: end_product.to_vbms_hash,
-      veteran_hash: veteran.to_vbms_hash,
-      is_claim_review: true
+      veteran_hash: veteran.to_vbms_hash
     )
   end
 

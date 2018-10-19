@@ -93,7 +93,7 @@ class ExternalApi::VBMSService
     File.delete(location)
   end
 
-  def self.establish_claim!(veteran_hash:, claim_hash:, is_claim_review:)
+  def self.establish_claim!(veteran_hash:, claim_hash:)
     @vbms_client ||= init_vbms_client
 
     request = VBMS::Requests::EstablishClaim.new(
@@ -103,7 +103,7 @@ class ExternalApi::VBMSService
       send_userid: FeatureToggle.enabled?(:vbms_include_user)
     )
 
-    send_and_log_request(veteran_hash[:file_number], request, is_claim_review ? vbms_client_with_user : vbms_client_with_system_user)
+    send_and_log_request(veteran_hash[:file_number], request, vbms_client_with_user)
   end
 
   def self.fetch_contentions(claim_id:)
@@ -176,8 +176,6 @@ class ExternalApi::VBMSService
       station_id: current_user.station_id,
       use_forward_proxy: FeatureToggle.enabled?(:vbms_forward_proxy)
     )
-
-    FeatureToggle.enabled?(:vbms_include_user) ? @vbms_client_with_user : @vbms_client
   end
 
   def self.vbms_client_with_system_user
@@ -188,8 +186,6 @@ class ExternalApi::VBMSService
       station_id: "283",
       use_forward_proxy: FeatureToggle.enabled?(:vbms_forward_proxy)
     )
-
-    FeatureToggle.enabled?(:vbms_include_user) ? @vbms_client_with_system_user : @vbms_client
   end
 
   def self.init_vbms_client
@@ -205,7 +201,7 @@ class ExternalApi::VBMSService
     MetricsService.record("sent VBMS request #{request.class} for #{vbms_id}",
                           service: :vbms,
                           name: name) do
-      (override_vbms_client ? override_vbms_client : @vbms_client).send_request(request)
+      (override_vbms_client && FeatureToggle.enabled?(:vbms_include_user) ? override_vbms_client : @vbms_client).send_request(request)
     end
   rescue VBMS::ClientError => e
     Rails.logger.error "#{e.message}\n#{e.backtrace.join("\n")}"

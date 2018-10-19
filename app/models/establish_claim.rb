@@ -185,8 +185,7 @@ class EstablishClaim < Dispatch::Task
   def establish_claim_in_vbms(end_product)
     VBMSService.establish_claim!(
       claim_hash: end_product.to_vbms_hash,
-      veteran_hash: appeal.veteran.to_vbms_hash,
-      is_claim_review: false
+      veteran_hash: appeal.veteran.to_vbms_hash
     )
   end
 
