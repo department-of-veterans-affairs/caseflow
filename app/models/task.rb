@@ -42,9 +42,15 @@ class Task < ApplicationRecord
     where(status: Constants.TASK_STATUSES.completed, completed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
   end
 
-  def self.create_from_params(params, current_user)
-    verify_user_can_assign!(current_user)
-    params = params.each { |p| p["instructions"] = [p["instructions"]] if p.key?("instructions") }
+  def self.create_many_from_params(params_array, current_user)
+    params_array.map { |params| create_from_params(params, current_user) }
+  end
+
+  def self.create_from_params(params, user)
+    verify_user_can_assign!(user)
+    if params.key?("instructions") && !params[:instructions].is_a?(Array)
+      params["instructions"] = [params["instructions"]]
+    end
     create(params)
   end
 
