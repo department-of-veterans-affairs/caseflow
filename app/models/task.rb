@@ -72,7 +72,7 @@ class Task < ApplicationRecord
   end
 
   def latest_attorney_case_review
-    AttorneyCaseReview.where(task_id: AttorneyTask.where(appeal: appeal).pluck(:id)).order(:created_at).last
+    AttorneyCaseReview.where(task_id: Task.where(appeal: appeal).pluck(:id)).order(:created_at).last
   end
 
   def prepared_by_display_name
