@@ -11,6 +11,7 @@ RSpec.feature "User organization" do
   let!(:user_with_role) { create(:user, full_name: "with role", roles: [role]) }
   let!(:user_without_role) { create(:user, full_name: "without role") }
 
+
   scenario "Adds and removes users from the organization" do
     visit "/organizations/#{organization.url}/users"
 
@@ -25,7 +26,7 @@ RSpec.feature "User organization" do
     expect(page).to have_content(user_with_role.full_name)
     expect(user_with_role.organizations.first).to eq(organization)
 
-    click_on "Remove-user-2"
+    click_on "Remove-user-#{user_with_role.id}"
     expect(page).to_not have_content(user_with_role.full_name)
 
     expect(user_with_role.organizations.count).to eq(0)
