@@ -23,8 +23,10 @@ class JudgeTask < Task
     end
   end
 
-  def self.create(params)
-    super(params.merge(action: "assign"))
+  def self.create(params_array)
+    [params_array].flatten.map do |params|
+      super(params.merge(action: "assign"))
+    end
   end
 
   def when_child_task_completed

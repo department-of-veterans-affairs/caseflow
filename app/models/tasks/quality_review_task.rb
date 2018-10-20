@@ -7,13 +7,12 @@ class QualityReviewTask < GenericTask
         label: COPY::ACTION_READY_FOR_DISPATCH,
         value: "modal/mark_task_complete"
       },
-      {
-        label: COPY::ACTION_RETURN_TO_JUDGE,
-        value: "modal/return_to_judge",
+      Constants.TASK_ACTIONS.RETURN_TO_JUDGE.to_h.merge(
         data: {
-          judge: completing_judge
+          user: completing_judge,
+          type: "JudgeTask"
         }
-      }
+      )
     ]
   end
 

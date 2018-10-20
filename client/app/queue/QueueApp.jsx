@@ -34,6 +34,7 @@ import CompleteTaskModal from './components/CompleteTaskModal';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
+import AssignToCustomUser from './AssignToCustomUser';
 
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
@@ -165,6 +166,8 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedReassignToUser = (props) => <AssignToView isReassignAction {...props.match.params} />;
 
+  routedAssignToCustomUser = (props) => <AssignToCustomUser {...props.match.params} />;
+
   routedCompleteTaskModal = (props) => <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />;
 
   routedSendColocatedTaskModal = (props) =>
@@ -256,6 +259,9 @@ class QueueApp extends React.PureComponent<Props> {
           <Route
             path={`/queue/appeals/:appealId/${TASK_ACTIONS.REASSIGN_TO_PERSON.value}`}
             render={this.routedReassignToUser} />
+          <Route
+            path={`/queue/appeals/:appealId/${TASK_ACTIONS.RETURN_TO_JUDGE.value}`}
+            render={this.routedAssignToCustomUser} />
           <Route
             path="/queue/appeals/:appealId/modal/assign_to_attorney"
             render={this.routedAssignToAttorney} />

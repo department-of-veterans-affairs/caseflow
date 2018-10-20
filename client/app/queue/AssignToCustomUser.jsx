@@ -50,7 +50,7 @@ type ViewState = {|
   instructions: ?string
 |};
 
-class AssignToView extends React.Component<Props, ViewState> {
+class AssignToCustomView extends React.Component<Props, ViewState> {
   constructor(props) {
     super(props);
 
@@ -65,40 +65,33 @@ class AssignToView extends React.Component<Props, ViewState> {
     }
 
     this.state = {
-      selectedValue: null,
       instructions: existingInstructions
     };
   }
 
   validateForm = () => {
-    return this.state.selectedValue !== null && this.state.instructions !== '';
+    return this.state.instructions !== '';
   }
 
   submit = () => {
     const {
       appeal,
-      task,
-      isReassignAction,
-      isTeamAssign
+      task
     } = this.props;
     const payload = {
       data: {
         tasks: [{
-          type: this.props.isTeamAssign ? 'GenericTask' : task.type,
+          type: this.taskActionData().type,
           external_id: appeal.externalId,
           parent_id: task.taskId,
-          assigned_to_id: this.state.selectedValue,
-          assigned_to_type: isTeamAssign ? 'Organization' : 'User',
+          assigned_to_id: this.taskActionData().user.id,
+          assigned_to_type: 'User',
           instructions: this.state.instructions
         }]
       }
     };
 
-    const successMsg = { title: `Task assigned to ${this.getAssignee()}` };
-
-    if (isReassignAction) {
-      return this.reassignTask();
-    }
+    const successMsg = { title: `Task assigned to ${this.taskActionData().user.full_name}` };
 
     return this.props.requestSave('/tasks', payload, successMsg).
       then(() => {
@@ -106,59 +99,9 @@ class AssignToView extends React.Component<Props, ViewState> {
       });
   }
 
-  getAssignee = () => {
-    let assignee = 'person';
-
-    this.options().forEach((opt) => {
-      if (opt.value === this.state.selectedValue) {
-        assignee = opt.label;
-      }
-    });
-
-    return assignee;
-  }
-
-  reassignTask = () => {
-    const task = this.props.task;
-    const payload = {
-      data: {
-        task: {
-          reassign: {
-            assigned_to_id: this.state.selectedValue,
-            assigned_to_type: 'User',
-            instructions: this.state.instructions
-          }
-        }
-      }
-    };
-
-    const successMsg = { title: `Task reassigned to ${this.getAssignee()}` };
-
-    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
-      then((resp) => {
-        const response = JSON.parse(resp.text);
-        const preparedTasks = prepareTasksForStore(response.tasks.data);
-
-        _.map(preparedTasks, (preparedTask) => this.props.setTaskAttrs(preparedTask.uniqueId, preparedTask));
-      });
-  }
-
-  options = () => {
-    if (this.props.isTeamAssign) {
-      return (this.props.task.assignableOrganizations || []).map((organization) => {
-        return {
-          label: organization.name,
-          value: organization.id
-        };
-      });
-    }
-
-    return (this.props.task.assignableUsers || []).map((user) => {
-      return {
-        label: user.full_name,
-        value: user.id
-      };
-    });
+  taskActionData = () => {
+    return this.props.task.availableActions.
+        find((action) => action.value === TASK_ACTIONS.RETURN_TO_JUDGE.value).data; 
   }
 
   render = () => {
@@ -167,16 +110,7 @@ class AssignToView extends React.Component<Props, ViewState> {
     } = this.props;
 
     return <React.Fragment>
-      <SearchableDropdown
-        name="Assign to selector"
-        searchable
-        hideLabel
-        errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
-        placeholder={this.props.isTeamAssign ? COPY.ASSIGN_TO_TEAM_DROPDOWN : COPY.ASSIGN_TO_USER_DROPDOWN}
-        value={this.state.selectedValue}
-        onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
-        options={this.options()} />
-      <br />
+      Assign task to {this.taskActionData().user.full_name}
       <TextareaField
         name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
         errorMessage={highlightFormItems && !this.state.instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
@@ -207,5 +141,5 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  editModalBase(AssignToView, { title: COPY.ASSIGN_TO_PAGE_TITLE })
+  editModalBase(AssignToCustomView, { title: COPY.ASSIGN_TO_PAGE_TITLE })
 )): React.ComponentType<Params>);

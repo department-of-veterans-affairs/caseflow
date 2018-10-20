@@ -8,7 +8,8 @@ class TasksController < ApplicationController
     ColocatedTask: ColocatedTask,
     AttorneyTask: AttorneyTask,
     GenericTask: GenericTask,
-    QualityReviewTask: QualityReviewTask
+    QualityReviewTask: QualityReviewTask,
+    JudgeTask: JudgeTask
   }.freeze
 
   QUEUES = {

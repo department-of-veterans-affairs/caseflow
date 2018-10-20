@@ -9,8 +9,7 @@ import ApiUtil from '../util/ApiUtil';
 import { extractAppealsAndAmaTasks } from './utils';
 
 import {
-  onReceiveQueue,
-  setOrganizationId
+  onReceiveQueue
 } from './QueueActions';
 
 type Params = {|
@@ -20,8 +19,7 @@ type Params = {|
 
 type Props = Params & {|
   // Action creators
-  onReceiveQueue: typeof onReceiveQueue,
-  setOrganizationId: typeof setOrganizationId
+  onReceiveQueue: typeof onReceiveQueue
 |};
 
 class OrganizationQueueLoadingScreen extends React.PureComponent<Props> {
@@ -62,8 +60,7 @@ class OrganizationQueueLoadingScreen extends React.PureComponent<Props> {
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceiveQueue,
-  setOrganizationId
+  onReceiveQueue
 }, dispatch);
 
 export default (connect(null, mapDispatchToProps)(OrganizationQueueLoadingScreen): React.ComponentType<Params>);
