@@ -11,7 +11,6 @@ RSpec.feature "User organization" do
   let!(:user_with_role) { create(:user, full_name: "with role", roles: [role]) }
   let!(:user_without_role) { create(:user, full_name: "without role") }
 
-
   scenario "Adds and removes users from the organization" do
     visit "/organizations/#{organization.url}/users"
 
