@@ -82,7 +82,7 @@ class AssignToView extends React.Component<Props, ViewState> {
     const payload = {
       data: {
         tasks: [{
-          type: 'GenericTask',
+          type: this.props.isTeamAssign ? 'GenericTask' : task.type,
           external_id: appeal.externalId,
           parent_id: task.taskId,
           assigned_to_id: this.state.selectedValue,

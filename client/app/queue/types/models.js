@@ -52,6 +52,7 @@ export type Issues = Array<Issue>;
 export type Task = {
   uniqueId: string,
   isLegacy: boolean,
+  type: ?string,
   action: string,
   appealId: number,
   appealType: string,

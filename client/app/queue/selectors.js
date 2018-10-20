@@ -41,7 +41,7 @@ const getAmaTasks = (state: State): Tasks => state.queue.amaTasks;
 const getAppeals = (state: State): BasicAppeals => state.queue.appeals;
 const getAppealDetails = (state: State): AppealDetails => state.queue.appealDetails;
 const getUserCssId = (state: State): string => state.ui.userCssId;
-const getOrganizationId = (state: State): ?number => state.queue.organizationId;
+const getOrganizationId = (state: State): ?number => state.ui.organizationIds[0];
 const getAppealId = (state: State, props: Object): string => props.appealId;
 const getAttorneys = (state: State): AttorneysOfJudge => state.queue.attorneysOfJudge;
 const getCaseflowVeteranId = (state: State, props: Object): ?string => props.caseflowVeteranId;
@@ -138,7 +138,7 @@ export const completeTasksByAssigneeCssIdSelector = createSelector(
 export const organizationTasksByAssigneeIdSelector = createSelector(
   [getTasksForAppeal, getOrganizationId],
   (tasks: Tasks, id: Number) =>
-    _.filter(tasks, (task) => task.assignedTo.id === id && ['Organization', 'Vso'].includes(task.assignedTo.type))
+    _.filter(tasks, (task) => task.assignedTo.id === id && 'User' !== task.assignedTo.type)
 );
 
 export const incompleteOrganizationTasksByAssigneeIdSelector = createSelector(

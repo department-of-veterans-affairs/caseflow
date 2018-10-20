@@ -30,9 +30,6 @@ class OrganizationQueueLoadingScreen extends React.PureComponent<Props> {
     (response) => {
       const { tasks: { data: tasks } } = JSON.parse(response.text);
 
-      if (tasks[0]) {
-        this.props.setOrganizationId(tasks[0].attributes.assigned_to.id);
-      }
       this.props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));
     }
   );

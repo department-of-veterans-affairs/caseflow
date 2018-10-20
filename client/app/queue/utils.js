@@ -58,6 +58,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
     acc[task.id] = {
       uniqueId: task.id,
       isLegacy: false,
+      type: task.attributes.type,
       appealType: task.attributes.appeal_type,
       addedByCssId: null,
       appealId: task.attributes.appeal_id,
