@@ -654,7 +654,7 @@ describe ClaimReview do
         expect(supplemental_claim).to be_nil
       end
 
-      context "when it gets back dispositions with DTAs", :focus => true do
+      context "when it gets back dispositions with DTAs" do
         def verify_followup_request_issue(supplemental_claim_id, orig_request_issue)
           follow_up_issue = RequestIssue.find_by(
             review_request_id: supplemental_claim_id,
@@ -686,8 +686,8 @@ describe ClaimReview do
               suppress_acknowledgement_letter: false,
               claimant_participant_id: veteran_participant_id
             },
-            veteran_hash: veteran.to_vbms_hash
-            # what should be the user associated with a supp claim created on dta?
+            veteran_hash: veteran.to_vbms_hash,
+            user: User.system_user
           )
         end
 
