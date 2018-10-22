@@ -43,7 +43,6 @@ type Props = Params & {|
 |};
 
 type ViewState = {|
-  selectedValue: ?string,
   instructions: ?string
 |};
 
@@ -86,9 +85,15 @@ class AssignToCustomUser extends React.Component<Props, ViewState> {
       });
   }
 
-  taskActionData = () => {
-    return this.props.task.availableActions.
-      find((action) => action.value === TASK_ACTIONS.RETURN_TO_JUDGE.value).data;
+  taskActionData = () : { user: Object, type: string } => {
+    const action = this.props.task.availableActions.
+      find((action) => action.value === TASK_ACTIONS.RETURN_TO_JUDGE.value);
+
+    if (action && action.data) {
+      return (action.data);
+    }
+
+    throw 'Action missing data';
   }
 
   render = () => {

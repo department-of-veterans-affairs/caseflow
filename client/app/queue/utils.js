@@ -130,6 +130,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
   const mappedLegacyTasks = tasks.map((task): Task => {
     return {
       uniqueId: task.attributes.external_appeal_id,
+      type: task.attributes.type,
       isLegacy: true,
       appealId: task.attributes.appeal_id,
       appealType: task.attributes.appeal_type,

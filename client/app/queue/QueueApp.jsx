@@ -69,6 +69,7 @@ type Props = {|
   userIsVsoEmployee?: boolean,
   caseSearchHomePage?: boolean,
   featureToggles: Object,
+  organizationIds: Array<number>,
   // Action creators
   setFeatureToggles: typeof setFeatureToggles,
   setUserRole: typeof setUserRole,

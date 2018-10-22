@@ -86,7 +86,7 @@ export type Task = {
     firstName: string,
     lastName: string,
   },
-  availableActions: Array<{ label?: string, value: string }>,
+  availableActions: Array<{ label?: string, value: string, data: ?Object }>,
   assignableOrganizations?: Array<{ id: string, name: string}>,
   assignableUsers?: Array<{ id: string, full_name: string}>,
 };
