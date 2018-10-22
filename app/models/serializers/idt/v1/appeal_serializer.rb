@@ -14,7 +14,6 @@ class Idt::V1::AppealSerializer < ActiveModel::Serializer
   attribute :docket_number
   attribute :docket_name
   attribute :number_of_issues
-  attribute :status
 
   attribute :days_waiting do
     @instance_options[:task] ? @instance_options[:task].days_waiting : nil
