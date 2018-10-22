@@ -3,7 +3,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
-import _ from 'lodash';
 
 import COPY from '../../COPY.json';
 
@@ -12,11 +11,9 @@ import {
   tasksForAppealAssignedToUserSelector,
   incompleteOrganizationTasksByAssigneeIdSelector
 } from './selectors';
-import { prepareTasksForStore } from './utils';
 
 import { setTaskAttrs } from './QueueActions';
 
-import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
 
 import editModalBase from './components/EditModalBase';
@@ -50,22 +47,12 @@ type ViewState = {|
   instructions: ?string
 |};
 
-class AssignToCustomView extends React.Component<Props, ViewState> {
+class AssignToCustomUser extends React.Component<Props, ViewState> {
   constructor(props) {
     super(props);
 
-    // Autofill the instruction field if assigning to a person on the team. Since they will
-    // probably want the instructions from the assigner.
-    const instructions = this.props.task.instructions;
-    const instructionLength = instructions ? instructions.length : 0;
-    let existingInstructions = '';
-
-    if (instructions && instructionLength > 0 && !this.props.isTeamAssign && !this.props.isReassignAction) {
-      existingInstructions = instructions[instructionLength - 1];
-    }
-
     this.state = {
-      instructions: existingInstructions
+      instructions: ''
     };
   }
 
@@ -101,7 +88,7 @@ class AssignToCustomView extends React.Component<Props, ViewState> {
 
   taskActionData = () => {
     return this.props.task.availableActions.
-        find((action) => action.value === TASK_ACTIONS.RETURN_TO_JUDGE.value).data; 
+      find((action) => action.value === TASK_ACTIONS.RETURN_TO_JUDGE.value).data;
   }
 
   render = () => {
@@ -141,5 +128,5 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  editModalBase(AssignToCustomView, { title: COPY.ASSIGN_TO_PAGE_TITLE })
+  editModalBase(AssignToCustomUser, { title: COPY.ASSIGN_TO_PAGE_TITLE })
 )): React.ComponentType<Params>);

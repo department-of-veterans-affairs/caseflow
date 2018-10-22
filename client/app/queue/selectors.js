@@ -138,7 +138,7 @@ export const completeTasksByAssigneeCssIdSelector = createSelector(
 export const organizationTasksByAssigneeIdSelector = createSelector(
   [getTasksForAppeal, getOrganizationId],
   (tasks: Tasks, id: Number) =>
-    _.filter(tasks, (task) => task.assignedTo.id === id && 'User' !== task.assignedTo.type)
+    _.filter(tasks, (task) => task.assignedTo.id === id && task.assignedTo.type !== 'User')
 );
 
 export const incompleteOrganizationTasksByAssigneeIdSelector = createSelector(

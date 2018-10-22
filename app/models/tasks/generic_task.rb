@@ -80,7 +80,7 @@ class GenericTask < Task
       parent.update!(status: :on_hold)
 
       Task.create!(
-        type: params[:type] || "GenericTask",
+        type: name,
         appeal: parent.appeal,
         assigned_by_id: child_assigned_by_id(parent, current_user),
         parent_id: parent.id,

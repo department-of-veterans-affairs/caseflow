@@ -25,8 +25,6 @@ import {
   requestSave
 } from './uiReducer/uiActions';
 
-import TASK_ACTIONS from '../../constants/TASK_ACTIONS.json';
-
 import type { State } from './types/state';
 import type { Appeal, Task } from './types/models';
 

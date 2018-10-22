@@ -241,6 +241,5 @@
   "CASE_TIMELINE_NOD_RECEIVED": "Notice of disagreement received",
   "CASE_TIMELINE_NOD_PENDING": "Notice of disagreement pending",
 
-  "ACTION_READY_FOR_DISPATCH": "Ready for dispatch",
-  "ACTION_RETURN_TO_JUDGE": "Return appeal to judge"
+  "ACTION_READY_FOR_DISPATCH": "Ready for dispatch"
 }

@@ -172,7 +172,7 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
       organizationIds: {
         $set: action.payload.organizationIds
       }
-    })
+    });
   default:
     return state;
   }
