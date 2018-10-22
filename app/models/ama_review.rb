@@ -15,7 +15,7 @@ class AmaReview < ApplicationRecord
   before_destroy :remove_issues!
 
   cache_attribute :cached_serialized_ratings, cache_key: :timely_ratings_cache_key, expires_in: 1.day do
-    ratings_with_issues.map(&:ui_hash)
+    receipt_date && ratings_with_issues.map(&:ui_hash)
   end
 
   def self.review_title
@@ -60,6 +60,8 @@ class AmaReview < ApplicationRecord
   private
 
   def ratings_with_issues
+    return unless receipt_date
+
     veteran.ratings(receipt_date: receipt_date).reject { |rating| rating.issues.empty? }
   end
 
