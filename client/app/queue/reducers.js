@@ -43,7 +43,6 @@ export const initialState = {
   attorneyAppealsLoadingState: {},
   isTaskAssignedToUserSelected: {},
   attorneys: {},
-  organizationId: null,
   loadingAppealDetail: {}
 };
 
@@ -379,12 +378,6 @@ const workQueueReducer = (state: QueueState = initialState, action: Object = {})
       }
     });
   }
-  case ACTIONS.SET_ORGANIZATION_ID:
-    return update(state, {
-      organizationId: {
-        $set: action.payload.id
-      }
-    });
   case ACTIONS.SET_APPEAL_AOD:
     return update(state, {
       appeals: {

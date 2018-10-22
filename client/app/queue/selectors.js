@@ -42,7 +42,6 @@ const getAmaTasks = (state: State): Tasks => state.queue.amaTasks;
 const getAppeals = (state: State): BasicAppeals => state.queue.appeals;
 const getAppealDetails = (state: State): AppealDetails => state.queue.appealDetails;
 const getUserCssId = (state: State): string => state.ui.userCssId;
-const getOrganizationId = (state: State): ?number => state.queue.organizationId;
 const getAppealId = (state: State, props: Object): string => props.appealId;
 const getAttorneys = (state: State): AttorneysOfJudge => state.queue.attorneysOfJudge;
 const getCaseflowVeteranId = (state: State, props: Object): ?string => props.caseflowVeteranId;
@@ -131,17 +130,6 @@ const incompleteTasksByAssigneeCssIdSelector = createSelector(
 export const completeTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks: Tasks) => completeTasksSelector(tasks)
-);
-
-export const organizationTasksByAssigneeIdSelector = createSelector(
-  [getTasksForAppeal, getOrganizationId],
-  (tasks: Tasks, id: Number) =>
-    _.filter(tasks, (task) => task.assignedTo.id === id && ['Organization', 'Vso'].includes(task.assignedTo.type))
-);
-
-export const incompleteOrganizationTasksByAssigneeIdSelector = createSelector(
-  [organizationTasksByAssigneeIdSelector],
-  (tasks: Tasks) => incompleteTasksSelector(tasks)
 );
 
 export const newTasksByAssigneeCssIdSelector = createSelector(

@@ -84,7 +84,6 @@ export type QueueState = {|
   isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
   attorneys: Attorneys,
   newDocsForAppeal: NewDocsForAppeal,
-  organizationId: ?number,
   specialIssues: Object,
   loadingAppealDetail: Object
 |};
