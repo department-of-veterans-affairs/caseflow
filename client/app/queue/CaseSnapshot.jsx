@@ -320,7 +320,10 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       {this.showActionsSection() &&
         <div className="usa-width-one-half">
           <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-          <ActionsDropdown task={taskAssignedToUser || taskAssignedToOrganization || rootTaskForMailUser} appealId={appeal.externalId} />
+          <ActionsDropdown
+            task={taskAssignedToUser || taskAssignedToOrganization || rootTaskForMailUser}
+            appealId={appeal.externalId}
+          />
         </div>
       }
     </div>;
