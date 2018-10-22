@@ -15,7 +15,7 @@ class HearingDayRepository
     # Query Operations
     def find_hearing_day(hearing_type, hearing_key)
       if hearing_type.nil?
-        VACOLS::CaseHearing.find(hearing_key)
+        VACOLS::CaseHearing.find_hearing_day(hearing_key)
       else
         tbyear, tbtrip, tbleg = hearing_key.split("-")
         VACOLS::TravelBoardSchedule.find_by(tbyear: tbyear, tbtrip: tbtrip, tbleg: tbleg)

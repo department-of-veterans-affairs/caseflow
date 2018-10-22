@@ -72,7 +72,7 @@ class Task < ApplicationRecord
   end
 
   def latest_attorney_case_review
-    sub_task ? sub_task.attorney_case_reviews.order(:created_at).last : nil
+    AttorneyCaseReview.where(task_id: Task.where(appeal: appeal).pluck(:id)).order(:created_at).last
   end
 
   def prepared_by_display_name
@@ -143,10 +143,6 @@ class Task < ApplicationRecord
   end
 
   private
-
-  def sub_task
-    children.first
-  end
 
   def update_status_if_children_tasks_are_complete
     if children.any? && children.reject { |t| t.status == Constants.TASK_STATUSES.completed }.empty?
