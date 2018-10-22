@@ -16,7 +16,7 @@ import { setTaskAttrs, setAppealAttrs } from './QueueActions';
 
 import {
   appealWithDetailSelector,
-  tasksForAppealAssignedToUserSelector
+  getActionableTasksForAppeal
 } from './selectors';
 import {
   fullWidth,
@@ -142,7 +142,7 @@ const mapStateToProps = (state, ownProps) => ({
   highlightFormItems: state.ui.highlightFormItems,
   error: state.ui.messages.error,
   appeal: appealWithDetailSelector(state, ownProps),
-  tasks: tasksForAppealAssignedToUserSelector(state, ownProps)
+  tasks: getActionableTasksForAppeal(state, { appealId: ownProps.appealId })
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
