@@ -9,6 +9,7 @@ import NonRatedIssueModal from '../components/NonRatedIssueModal';
 import RemoveIssueModal from '../components/RemoveIssueModal';
 import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
 import Button from '../../components/Button';
+import CompleteIntakeErrorAlert from '../components/CompleteIntakeErrorAlert';
 import RequestIssuesUpdateErrorAlert from '../../intakeEdit/components/RequestIssuesUpdateErrorAlert';
 import { REQUEST_STATE, FORM_TYPES, PAGE_PATHS } from '../constants';
 import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES.json';
@@ -46,6 +47,7 @@ export class AddIssuesPage extends React.Component {
 
   render() {
     const {
+      intakeOrEdit,
       intakeForms,
       formType,
       veteran,
@@ -109,6 +111,27 @@ export class AddIssuesPage extends React.Component {
       </div>;
     };
 
+    const failedRequestAlert = () => {
+      if (intakeOrEdit === "intake") {
+        const {
+          completeIntake,
+          completeIntakeErrorCode,
+          completeIntakeErrorData
+        } = intakeData.requestStatus;
+
+        return completeIntake === REQUEST_STATE.FAILED &&
+          <CompleteIntakeErrorAlert
+            completeIntakeErrorCode={completeIntakeErrorCode}
+            completeIntakeErrorData={completeIntakeErrorData} />;
+      } else if (intakeOrEdit === "edit") {
+        const requestIssuesUpdate = intakeData.requestStatus.requestIssuesUpdate;
+        const responseErrorCode = intakeData.responseErrorCode;
+
+        return requestIssuesUpdate === REQUEST_STATE.FAILED &&
+          <RequestIssuesUpdateErrorAlert responseErrorCode={responseErrorCode} />
+      }
+    };
+
     const columns = [
       { valueName: 'field' },
       { valueName: 'content' }
@@ -149,9 +172,7 @@ export class AddIssuesPage extends React.Component {
       }
       <h1 className="cf-txt-c">Add / Remove Issues</h1>
 
-      { requestState === REQUEST_STATE.FAILED &&
-        <RequestIssuesUpdateErrorAlert responseErrorCode={responseErrorCode} />
-      }
+      { failedRequestAlert() }
 
       <Table
         columns={columns}
@@ -163,15 +184,14 @@ export class AddIssuesPage extends React.Component {
 
 export const IntakeAddIssuesPage = connect(
   ({ intake, higherLevelReview, supplementalClaim, appeal }) => ({
+    intakeOrEdit: "intake",
     intakeForms: {
       higher_level_review: higherLevelReview,
       supplemental_claim: supplementalClaim,
       appeal
     },
     formType: intake.formType,
-    veteran: intake.veteran,
-    requestState: null,
-    responseErrorCode: null
+    veteran: intake.veteran
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
@@ -183,14 +203,13 @@ export const IntakeAddIssuesPage = connect(
 
 export const EditAddIssuesPage = connect(
   (state) => ({
+    intakeOrEdit: "edit",
     intakeForms: {
       higher_level_review: state,
       supplemental_claim: state
     },
     formType: state.formType,
-    veteran: state.veteran,
-    requestState: state.requestStatus.requestIssuesUpdate,
-    responseErrorCode: state.responseErrorCode
+    veteran: state.veteran
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
