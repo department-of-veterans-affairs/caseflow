@@ -314,7 +314,7 @@ describe GenericTask do
 
     context "When old assignee reassigns task with no child tasks to a new user" do
       it "reassign method should return list with old and new tasks" do
-        expect(subject).to eq(task.parent.children)
+        expect(subject).to match_array(task.parent.children)
         expect(task.parent.children.length).to eq(2)
       end
 
