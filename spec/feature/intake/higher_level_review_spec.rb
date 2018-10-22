@@ -237,7 +237,8 @@ RSpec.feature "Higher-Level Review" do
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910292"
       },
-      veteran_hash: intake.veteran.to_vbms_hash
+      veteran_hash: intake.veteran.to_vbms_hash,
+      user: current_user
     )
 
     ratings_end_product_establishment = EndProductEstablishment.find_by(
@@ -265,7 +266,8 @@ RSpec.feature "Higher-Level Review" do
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false
       ),
-      veteran_hash: intake.veteran.to_vbms_hash
+      veteran_hash: intake.veteran.to_vbms_hash,
+      user: current_user
     )
 
     nonratings_end_product_establishment = EndProductEstablishment.find_by(

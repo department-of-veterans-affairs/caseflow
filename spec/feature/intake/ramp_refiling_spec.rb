@@ -401,7 +401,8 @@ RSpec.feature "RAMP Refiling Intake" do
           suppress_acknowledgement_letter: false,
           claimant_participant_id: veteran.participant_id
         },
-        veteran_hash: intake.veteran.to_vbms_hash
+        veteran_hash: intake.veteran.to_vbms_hash,
+        user: nil
       )
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(

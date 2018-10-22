@@ -227,7 +227,8 @@ RSpec.feature "Supplemental Claim Intake" do
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293"
       },
-      veteran_hash: intake.veteran.to_vbms_hash
+      veteran_hash: intake.veteran.to_vbms_hash,
+      user: current_user
     )
 
     ratings_end_product_establishment = EndProductEstablishment.find_by(
@@ -256,7 +257,8 @@ RSpec.feature "Supplemental Claim Intake" do
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293"
       },
-      veteran_hash: intake.veteran.to_vbms_hash
+      veteran_hash: intake.veteran.to_vbms_hash,
+      user: current_user
     )
     nonratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,

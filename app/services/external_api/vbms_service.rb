@@ -93,7 +93,7 @@ class ExternalApi::VBMSService
     File.delete(location)
   end
 
-  def self.establish_claim!(veteran_hash:, claim_hash:, user: nil, use_current_user: false)
+  def self.establish_claim!(veteran_hash:, claim_hash:, user: nil)
     @vbms_client ||= init_vbms_client
 
     request = VBMS::Requests::EstablishClaim.new(
@@ -105,12 +105,10 @@ class ExternalApi::VBMSService
 
     # get the correct client for the request
     client = @vbms_client
-    if not user.nil?
+    if !user.nil?
       # user is passed in for hlr & sc becuase those are processed async
+      # current user is passed in for dispatch
       client = vbms_client_with_user(user)
-    elsif use_current_user
-      # current user is used for dispatch
-      client = vbms_client_with_current_user
     end
     send_and_log_request(veteran_hash[:file_number], request, client)
   end
@@ -220,7 +218,11 @@ class ExternalApi::VBMSService
     MetricsService.record("sent VBMS request #{request.class} for #{vbms_id}",
                           service: :vbms,
                           name: name) do
-      (override_vbms_client && FeatureToggle.enabled?(:vbms_include_user) ? override_vbms_client : @vbms_client).send_request(request)
+      if override_vbms_client && FeatureToggle.enabled?(:vbms_include_user)
+        override_vbms_client.send_request(request)
+      else
+        @vbms_client.send_request(request)
+      end
     end
   rescue VBMS::ClientError => e
     Rails.logger.error "#{e.message}\n#{e.backtrace.join("\n")}"

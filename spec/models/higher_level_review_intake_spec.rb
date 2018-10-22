@@ -177,7 +177,8 @@ describe HigherLevelReviewIntake do
           suppress_acknowledgement_letter: false,
           claimant_participant_id: nil
         },
-        veteran_hash: intake.veteran.to_vbms_hash
+        veteran_hash: intake.veteran.to_vbms_hash,
+        user: user
       )
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(

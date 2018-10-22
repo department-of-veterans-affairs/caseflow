@@ -186,7 +186,7 @@ class EstablishClaim < Dispatch::Task
     VBMSService.establish_claim!(
       claim_hash: end_product.to_vbms_hash,
       veteran_hash: appeal.veteran.to_vbms_hash,
-      use_current_user: true
+      user: RequestStore[:current_user]
     )
   end
 

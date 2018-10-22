@@ -110,7 +110,8 @@ class Fakes::VBMSService
     # noop
   end
 
-  def self.establish_claim!(claim_hash:, veteran_hash:, user: nil, use_current_user: false)
+  # rubocop:disable UnusedMethodArgument
+  def self.establish_claim!(claim_hash:, veteran_hash:, user: nil)
     (HOLD_REQUEST_TIMEOUT_SECONDS * 100).times do
       break unless @hold_request
       sleep 0.01
@@ -133,6 +134,7 @@ class Fakes::VBMSService
     # return fake end product
     OpenStruct.new(claim_id: claim_id)
   end
+  # rubocop:enable UnusedMethodArgument
 
   def self.get_dispositions!(claim_id:)
     (disposition_records && disposition_records[claim_id]) || []

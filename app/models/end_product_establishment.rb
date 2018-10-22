@@ -238,10 +238,10 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def establish_claim_in_vbms(end_product)
-    user = {}
-    if end_product.is_claim_review?
+    user = nil
+    if end_product.claim_review?
       found_intake = Intake.find_by(detail_id: source_id, detail_type: source_type)
-      # if no intake is found, use the system user
+      # if no intake is found such as for DTAs, use the system user
       user = found_intake ? User.find_by(id: found_intake.user_id) : User.system_user
     end
 

@@ -136,7 +136,8 @@ describe RampElection do
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran.participant_id
           },
-          veteran_hash: veteran.reload.to_vbms_hash
+          veteran_hash: veteran.reload.to_vbms_hash,
+          user: nil
         )
 
         expect(EndProductEstablishment.find_by(source: ramp_election.reload)).to have_attributes(
