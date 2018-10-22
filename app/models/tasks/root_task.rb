@@ -7,7 +7,7 @@ class RootTask < Task
 
   def when_child_task_completed; end
 
-  def allowed_actions(user)
+  def available_actions(user)
     if MailTeam.singleton.user_has_access?(user)
       return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h]
     end

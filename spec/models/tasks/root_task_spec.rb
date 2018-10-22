@@ -83,11 +83,11 @@ describe RootTask do
     end
   end
 
-  describe ".allowed_actions" do
+  describe ".available_actions" do
     let(:user) { FactoryBot.create(:user) }
     let(:root_task) { RootTask.find(FactoryBot.create(:root_task).id) }
 
-    subject { root_task.allowed_actions(user) }
+    subject { root_task.available_actions(user) }
 
     context "when user is a member of the Mail team" do
       before { allow_any_instance_of(MailTeam).to receive(:user_has_access?).and_return(true) }

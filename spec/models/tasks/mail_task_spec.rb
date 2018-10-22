@@ -39,6 +39,7 @@ describe MailTask do
         generic_task = mail_task.children[0]
         expect(generic_task.class).to eq(GenericTask)
         expect(generic_task.assigned_to.class).to eq(org.class)
+        expect(generic_task.assigned_to.id).to eq(org.id)
         expect(generic_task.children.length).to eq(0)
       end
     end
