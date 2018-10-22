@@ -207,9 +207,13 @@ RSpec.feature "Supplemental Claim Intake" do
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
-    expect(page).to have_content("A Supplemental Claim Review Rating EP is being established:")
+    expect(page).to have_content(
+      "A #{Constants.INTAKE_FORM_NAMES_SHORT.supplemental_claim} Rating EP is being established:"
+    )
     expect(page).to have_content("Contention: PTSD denied")
-    expect(page).to have_content("A Supplemental Claim Review Nonrating EP is being established:")
+    expect(page).to have_content(
+      "A #{Constants.INTAKE_FORM_NAMES_SHORT.supplemental_claim} Nonrating EP is being established:"
+    )
     expect(page).to have_content("Contention: Description for Active Duty Adjustments")
 
     # ratings end product
@@ -505,10 +509,6 @@ RSpec.feature "Supplemental Claim Intake" do
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
 
-      expect(page).to have_content(
-        "Established EP: 040SCR - Supplemental Claim Rating for Station 499"
-      )
-
       expect(SupplementalClaim.find_by(
                id: supplemental_claim.id,
                veteran_file_number: veteran.file_number,
@@ -521,7 +521,8 @@ RSpec.feature "Supplemental Claim Intake" do
         source: supplemental_claim,
         veteran_file_number: veteran.file_number,
         code: "040SCR",
-        claimant_participant_id: "901987"
+        claimant_participant_id: "901987",
+        station: "499"
       )
       expect(end_product_establishment).to_not be_nil
 
@@ -529,7 +530,8 @@ RSpec.feature "Supplemental Claim Intake" do
         source: supplemental_claim,
         veteran_file_number: veteran.file_number,
         code: "040SCNR",
-        claimant_participant_id: "901987"
+        claimant_participant_id: "901987",
+        station: "499"
       )
       expect(non_rating_end_product_establishment).to_not be_nil
 

@@ -167,7 +167,7 @@ RSpec.feature "Appeal Intake" do
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
-    expect(page).to have_content("Appeal created:")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES_SHORT.appeal} created:")
     expect(page).to have_content("Issue: Description for Active Duty Adjustments")
 
     intake.reload

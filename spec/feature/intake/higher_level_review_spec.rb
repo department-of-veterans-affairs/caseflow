@@ -217,9 +217,13 @@ RSpec.feature "Higher-Level Review" do
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
-    expect(page).to have_content("A Higher-Level Review Rating EP is being established:")
+    expect(page).to have_content(
+      "A #{Constants.INTAKE_FORM_NAMES_SHORT.higher_level_review} Rating EP is being established:"
+    )
     expect(page).to have_content("Contention: PTSD denied")
-    expect(page).to have_content("A Higher-Level Review Nonrating EP is being established:")
+    expect(page).to have_content(
+      "A #{Constants.INTAKE_FORM_NAMES_SHORT.higher_level_review} Nonrating EP is being established:"
+    )
     expect(page).to have_content("Contention: Description for Active Duty Adjustments")
     expect(page).to have_content("Informal Conference Tracked Item")
 
@@ -623,9 +627,6 @@ RSpec.feature "Higher-Level Review" do
       safe_click "#button-finish-intake"
 
       expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
-      expect(page).to have_content(
-        "Established EP: 030HLRR - Higher-Level Review Rating for Station 499"
-      )
 
       # make sure that database is populated
       expect(HigherLevelReview.find_by(
@@ -641,7 +642,8 @@ RSpec.feature "Higher-Level Review" do
         veteran_file_number: veteran.file_number,
         code: "030HLRR",
         claimant_participant_id: "5382910292",
-        payee_code: "02"
+        payee_code: "02",
+        station: "499"
       )
 
       expect(end_product_establishment).to_not be_nil
@@ -651,7 +653,8 @@ RSpec.feature "Higher-Level Review" do
         veteran_file_number: veteran.file_number,
         code: "030HLRNR",
         claimant_participant_id: "5382910292",
-        payee_code: "02"
+        payee_code: "02",
+        station: "499"
       )
       expect(non_rating_end_product_establishment).to_not be_nil
 
