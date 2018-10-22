@@ -208,6 +208,78 @@ RSpec.feature "Edit issues" do
       )
     end
 
+    scenario "creates new ep for new rating types", :focus => true do
+      # no non-rating eps should currently exist
+      non_rating_epe = EndProductEstablishment.find_by(
+        source: higher_level_review,
+        code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
+      )
+
+      expect(non_rating_epe).to eq(nil)
+
+      visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit"
+
+      # add non-rated issue
+      safe_click "#button-add-issue"
+      safe_click ".no-matching-issues"
+      fill_in "Issue category", with: "Active Duty Adjustments"
+      find("#issue-category").send_keys :enter
+      fill_in "Issue description", with: "Description for Active Duty Adjustments"
+      fill_in "Decision date", with: "04/25/2018"
+      safe_click ".add-issue"
+      expect(page).to have_content("2 issues")
+
+      # save
+      safe_click("#button-submit-update")
+      safe_click "#Number-of-issues-has-changed-button-id-1"
+
+      # we should find two eps
+      non_rating_epe = EndProductEstablishment.find_by(
+        source: higher_level_review,
+        code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
+      )
+      expect(non_rating_epe).to_not be_nil
+
+      rating_epe = EndProductEstablishment.find_by(
+        source: higher_level_review,
+        code: HigherLevelReview::END_PRODUCT_RATING_CODE
+      )
+
+      expect(rating_epe).to_not be_nil
+    end
+
+    scenario "cancels old eps if all ratings are removed", :focus => true do
+      rating_epe = EndProductEstablishment.find_by(
+        source: higher_level_review,
+        code: HigherLevelReview::END_PRODUCT_RATING_CODE
+      )
+
+      expect(rating_epe).to_not be_nil
+      visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit"
+
+      # remove rated rating & add in non-rated
+      safe_click ".remove-issue"
+      safe_click ".remove-issue"
+
+      # add non-rated issue
+      safe_click "#button-add-issue"
+      safe_click ".no-matching-issues"
+      fill_in "Issue category", with: "Active Duty Adjustments"
+      find("#issue-category").send_keys :enter
+      fill_in "Issue description", with: "Description for Active Duty Adjustments"
+      fill_in "Decision date", with: "04/25/2018"
+      safe_click ".add-issue"
+      expect(page).to have_content("2 issues")
+
+      # save
+      safe_click("#button-submit-update")
+
+      # rated ep should be canceled
+      rating_epe = EndProductEstablishment.find_by(id: rating_epe.id)
+      expect(rating_epe).to_not be_nil
+      expect(rating_epe.sync).to eq("CAN")
+    end
+
     it "enables save button only when dirty" do
       visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit"
 
