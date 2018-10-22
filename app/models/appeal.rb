@@ -158,7 +158,7 @@ class Appeal < AmaReview
   end
 
   def actionable_tasks_for_user(user)
-    tasks.select { |t| t.actionable?(user) }
+    tasks.select { |t| t.actionable?(user) }.sort_by { |e| e.assigned_to && e.assigned_to == user }
   end
 
   private

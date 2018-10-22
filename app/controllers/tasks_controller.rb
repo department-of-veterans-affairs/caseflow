@@ -195,11 +195,9 @@ class TasksController < ApplicationController
 
   def json_tasks_by_legacy_appeal_id_and_role(appeal_id, role)
     tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal_id, role)
-    actionable_tasks = [tasks, appeal.actionable_tasks_for_user(current_user)].flatten
-
     render json: {
       tasks: json_legacy_tasks(tasks, role)[:data],
-      actionable_tasks: { appeal.external_id => json_legacy_tasks(actionable_tasks, role)[:data] }
+      actionable_tasks: { appeal.external_id => json_legacy_tasks(tasks, role)[:data] }
     }
   end
 
