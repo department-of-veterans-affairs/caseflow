@@ -173,6 +173,26 @@ describe ClaimReview do
   end
 
   context "#process_end_product_establishments!" do
+    let!(:user) do
+      User.create(
+        station_id: 1,
+        css_id: "test_user",
+        full_name: "Test User"
+      )
+    end
+
+    let!(:intake) do
+      Intake.create(
+        user_id: user.id,
+        detail: claim_review,
+        veteran_file_number: veteran.file_number,
+        started_at: Time.zone.now,
+        completed_at: Time.zone.now,
+        completion_status: "success",
+        type: "HigherLevelReviewIntake"
+      )
+    end
+
     before do
       claim_review.save!
       claim_review.create_issues!(issues)
@@ -205,7 +225,8 @@ describe ClaimReview do
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran_participant_id
           },
-          veteran_hash: veteran.to_vbms_hash
+          veteran_hash: veteran.to_vbms_hash,
+          user: user
         )
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
@@ -469,7 +490,8 @@ describe ClaimReview do
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran_participant_id
           },
-          veteran_hash: veteran.to_vbms_hash
+          veteran_hash: veteran.to_vbms_hash,
+          user: user
         )
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
@@ -501,7 +523,8 @@ describe ClaimReview do
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran_participant_id
           },
-          veteran_hash: veteran.to_vbms_hash
+          veteran_hash: veteran.to_vbms_hash,
+          user: user
         )
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
@@ -631,7 +654,7 @@ describe ClaimReview do
         expect(supplemental_claim).to be_nil
       end
 
-      context "when it gets back dispositions with DTAs" do
+      context "when it gets back dispositions with DTAs", :focus => true do
         def verify_followup_request_issue(supplemental_claim_id, orig_request_issue)
           follow_up_issue = RequestIssue.find_by(
             review_request_id: supplemental_claim_id,
@@ -664,6 +687,7 @@ describe ClaimReview do
               claimant_participant_id: veteran_participant_id
             },
             veteran_hash: veteran.to_vbms_hash
+            # what should be the user associated with a supp claim created on dta?
           )
         end
 

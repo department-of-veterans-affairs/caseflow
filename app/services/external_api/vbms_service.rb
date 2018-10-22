@@ -93,7 +93,7 @@ class ExternalApi::VBMSService
     File.delete(location)
   end
 
-  def self.establish_claim!(veteran_hash:, claim_hash:)
+  def self.establish_claim!(veteran_hash:, claim_hash:, user: nil, use_current_user: false)
     @vbms_client ||= init_vbms_client
 
     request = VBMS::Requests::EstablishClaim.new(
@@ -103,7 +103,16 @@ class ExternalApi::VBMSService
       send_userid: FeatureToggle.enabled?(:vbms_include_user)
     )
 
-    send_and_log_request(veteran_hash[:file_number], request, vbms_client_with_user)
+    # get the correct client for the request
+    client = @vbms_client
+    if not user.nil?
+      # user is passed in for hlr & sc becuase those are processed async
+      client = vbms_client_with_user(user)
+    elsif use_current_user
+      # current user is used for dispatch
+      client = vbms_client_with_current_user
+    end
+    send_and_log_request(veteran_hash[:file_number], request, client)
   end
 
   def self.fetch_contentions(claim_id:)
@@ -129,7 +138,7 @@ class ExternalApi::VBMSService
       send_userid: FeatureToggle.enabled?(:vbms_include_user)
     )
 
-    send_and_log_request(claim_id, request, vbms_client_with_user)
+    send_and_log_request(claim_id, request, vbms_client_with_current_user)
   end
 
   def self.remove_contention!(contention)
@@ -164,12 +173,22 @@ class ExternalApi::VBMSService
     send_and_log_request(claim_id, request)
   end
 
-  def self.current_user
+  def current_user
     RequestStore[:current_user]
   end
 
-  def self.vbms_client_with_user
-    @vbms_client_with_user ||= VBMS::Client.from_env_vars(
+  def self.vbms_client_with_user(user)
+    VBMS::Client.from_env_vars(
+      logger: VBMSCaseflowLogger.new,
+      env_name: ENV["CONNECT_VBMS_ENV"],
+      css_id: user.css_id,
+      station_id: user.station_id,
+      use_forward_proxy: FeatureToggle.enabled?(:vbms_forward_proxy)
+    )
+  end
+
+  def self.vbms_client_with_current_user
+    @vbms_client_with_system_user ||= VBMS::Client.from_env_vars(
       logger: VBMSCaseflowLogger.new,
       env_name: ENV["CONNECT_VBMS_ENV"],
       css_id: current_user.css_id,
@@ -182,8 +201,8 @@ class ExternalApi::VBMSService
     @vbms_client_with_system_user ||= VBMS::Client.from_env_vars(
       logger: VBMSCaseflowLogger.new,
       env_name: ENV["CONNECT_VBMS_ENV"],
-      css_id: Rails.deploy_env?(:prod) ? "CSFLOW" : "CASEFLOW1",
-      station_id: "283",
+      css_id: User.system_user.css_id,
+      station_id: User.system_user.station_id,
       use_forward_proxy: FeatureToggle.enabled?(:vbms_forward_proxy)
     )
   end

@@ -238,9 +238,16 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def establish_claim_in_vbms(end_product)
+    user = {}
+    if end_product.is_claim_review?
+      user_id = Intake.find_by(detail_id: source_id, detail_type: source_type).user_id
+      user = User.find_by(id: user_id)
+    end
+
     VBMSService.establish_claim!(
       claim_hash: end_product.to_vbms_hash,
-      veteran_hash: veteran.to_vbms_hash
+      veteran_hash: veteran.to_vbms_hash,
+      user: user
     )
   end
 

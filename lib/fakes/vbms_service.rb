@@ -110,7 +110,7 @@ class Fakes::VBMSService
     # noop
   end
 
-  def self.establish_claim!(claim_hash:, veteran_hash:)
+  def self.establish_claim!(claim_hash:, veteran_hash:, user: nil, use_current_user: false)
     (HOLD_REQUEST_TIMEOUT_SECONDS * 100).times do
       break unless @hold_request
       sleep 0.01

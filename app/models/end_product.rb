@@ -158,6 +158,10 @@ class EndProduct
     @contentions ||= claim_id ? VBMSService.fetch_contentions(claim_id: claim_id) : nil
   end
 
+  def is_claim_review?
+    (DTA_CODES.keys + AMA_CODES.keys).include?(claim_type_code)
+  end
+
   private
 
   def label
