@@ -237,18 +237,21 @@ class EndProductEstablishment < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
-  def establish_claim_in_vbms(end_product)
+  def get_vbms_user
     user = nil
     if end_product.claim_review?
       found_intake = Intake.find_by(detail_id: source_id, detail_type: source_type)
       # if no intake is found such as for DTAs, use the system user
       user = found_intake ? User.find_by(id: found_intake.user_id) : User.system_user
     end
+    user
+  end
 
+  def establish_claim_in_vbms(end_product)
     VBMSService.establish_claim!(
       claim_hash: end_product.to_vbms_hash,
       veteran_hash: veteran.to_vbms_hash,
-      user: user
+      user: get_vbms_user
     )
   end
 
@@ -317,7 +320,8 @@ class EndProductEstablishment < ApplicationRecord
       veteran_file_number: veteran_file_number,
       claim_id: reference_id,
       contention_descriptions: descriptions,
-      special_issues: special_issues || []
+      special_issues: special_issues || [],
+      user: get_vbms_user
     )
   end
 

@@ -144,7 +144,8 @@ class Fakes::VBMSService
     (contention_records || {})[claim_id] || []
   end
 
-  def self.create_contentions!(veteran_file_number:, claim_id:, contention_descriptions:, special_issues: [])
+  # rubocop:disable UnusedMethodArgument
+  def self.create_contentions!(veteran_file_number:, claim_id:, contention_descriptions:, special_issues: [], user: nil)
     Rails.logger.info("Submitting contentions to VBMS...")
     Rails.logger.info("File number: #{veteran_file_number}")
     Rails.logger.info("Claim id:\n #{claim_id}")
@@ -159,6 +160,7 @@ class Fakes::VBMSService
       Generators::Contention.build(text: description, claim_id: claim_id)
     end
   end
+  # rubocop:enable UnusedMethodArgument
 
   def self.associate_rated_issues!(claim_id:, rated_issue_contention_map:)
     Rails.logger.info("Submitting rated issues to VBMS...")

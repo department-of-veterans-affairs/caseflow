@@ -124,7 +124,7 @@ class ExternalApi::VBMSService
     send_and_log_request(claim_id, request)
   end
 
-  def self.create_contentions!(veteran_file_number:, claim_id:, contention_descriptions:, special_issues: [])
+  def self.create_contentions!(veteran_file_number:, claim_id:, contention_descriptions:, special_issues: [], user: nil)
     @vbms_client ||= init_vbms_client
 
     request = VBMS::Requests::CreateContentions.new(
@@ -136,7 +136,12 @@ class ExternalApi::VBMSService
       send_userid: FeatureToggle.enabled?(:vbms_include_user)
     )
 
-    send_and_log_request(claim_id, request, vbms_client_with_current_user)
+    # get the correct client for the request
+    client = @vbms_client
+    if !user.nil?
+      client = vbms_client_with_user(user)
+    end
+    send_and_log_request(claim_id, request, client)
   end
 
   def self.remove_contention!(contention)
@@ -171,26 +176,12 @@ class ExternalApi::VBMSService
     send_and_log_request(claim_id, request)
   end
 
-  def current_user
-    RequestStore[:current_user]
-  end
-
   def self.vbms_client_with_user(user)
     VBMS::Client.from_env_vars(
       logger: VBMSCaseflowLogger.new,
       env_name: ENV["CONNECT_VBMS_ENV"],
       css_id: user.css_id,
       station_id: user.station_id,
-      use_forward_proxy: FeatureToggle.enabled?(:vbms_forward_proxy)
-    )
-  end
-
-  def self.vbms_client_with_current_user
-    @vbms_client_with_system_user ||= VBMS::Client.from_env_vars(
-      logger: VBMSCaseflowLogger.new,
-      env_name: ENV["CONNECT_VBMS_ENV"],
-      css_id: current_user.css_id,
-      station_id: current_user.station_id,
       use_forward_proxy: FeatureToggle.enabled?(:vbms_forward_proxy)
     )
   end
