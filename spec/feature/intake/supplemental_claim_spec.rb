@@ -575,6 +575,24 @@ RSpec.feature "Supplemental Claim Intake" do
       )
     end
 
+    it "Shows a review error when something goes wrong" do
+      intake = start_supplemental_claim(veteran)
+      visit "/intake/add_issues"
+
+      safe_click "#button-add-issue"
+      find_all("label", text: "Left knee granted").first.click
+      fill_in "Notes", with: "I am an issue note"
+      safe_click ".add-issue"
+
+      ## Validate error message when complete intake fails
+      expect_any_instance_of(SupplementalClaimIntake).to receive(:complete!).and_raise("A random error. Oh no!")
+
+      safe_click "#button-finish-intake"
+
+      expect(page).to have_content("Something went wrong")
+      expect(page).to have_current_path("/intake/add_issues")
+    end
+
     scenario "Non-compensation" do
       start_supplemental_claim(veteran, is_comp: false)
       visit "/intake/add_issues"
