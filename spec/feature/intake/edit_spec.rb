@@ -92,8 +92,6 @@ RSpec.feature "Edit issues" do
 
         expect(page).to have_content("Military Retired Pay")
 
-        row = find("tr", text: "Military Retired Pay")
-
         safe_click "#button-add-issue"
         safe_click ".no-matching-issues"
         fill_in "Issue category", with: "Active Duty Adjustments"
@@ -418,8 +416,6 @@ RSpec.feature "Edit issues" do
         visit "supplemental_claims/#{non_rated_ep_claim_id}/edit"
 
         expect(page).to have_content("Military Retired Pay")
-
-        row = find("tr", text: "Military Retired Pay")
 
         safe_click "#button-add-issue"
         safe_click ".no-matching-issues"

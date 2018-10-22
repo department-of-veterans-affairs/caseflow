@@ -13,7 +13,7 @@ export const mapDataToInitialState = function(props = {}) {
 
   return {
     ...serverIntake,
-    claimId: claimId,
+    claimId,
     addIssuesModalVisible: false,
     nonRatedIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,

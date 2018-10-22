@@ -41,10 +41,6 @@ class SupplementalClaim < ClaimReview
     valid_modifiers.first
   end
 
-  def end_product_claim_id
-    rating_end_product_establishment && rating_end_product_establishment.reference_id
-  end
-
   def valid_modifiers
     END_PRODUCT_MODIFIERS
   end
