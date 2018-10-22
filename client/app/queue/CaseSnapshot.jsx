@@ -294,6 +294,12 @@ export class CaseSnapshot extends React.PureComponent<Props> {
               <dt>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</dt>
               <dd><CopyTextButton text={taskAssignedToUser.documentId} /></dd>
             </React.Fragment> }
+          { !taskAssignedToVso && !taskAssignedToUser &&
+            taskAssignedToOrganization && taskAssignedToOrganization.documentId &&
+            <React.Fragment>
+              <dt>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</dt>
+              <dd><CopyTextButton text={taskAssignedToOrganization.documentId} /></dd>
+            </React.Fragment> }
         </CaseDetailsDescriptionList>
       </div>
       <div className="usa-width-one-fourth">
