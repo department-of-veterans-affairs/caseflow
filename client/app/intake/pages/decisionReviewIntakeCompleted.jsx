@@ -7,7 +7,7 @@ import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
 
 // appeals
-const getAppealChecklistItems = requestIssues => [<Fragment>
+const getAppealChecklistItems = (requestIssues) => [<Fragment>
   <strong>Appeal created:</strong>
   {requestIssues.map((ri, i) => <p key={i}>Issue: {ri.description}</p>)}
 </Fragment>];
@@ -15,9 +15,10 @@ const getAppealChecklistItems = requestIssues => [<Fragment>
 // higher level reviews & supplemental claims
 const getClaimReviewChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
   const checklist = [];
-  const ratedIssues = requestIssues.filter(ri => ri.isRated);
-  const nonRatedIssues = requestIssues.filter(ri => ri.isRated === false); // unidentified issues have undefined isRated
-  const claimReviewName = FORM_TYPES.find(ft => ft.key === formType).shortName;
+  const ratedIssues = requestIssues.filter((ri) => ri.isRated);
+  // unidentified issues have undefined isRated
+  const nonRatedIssues = requestIssues.filter((ri) => ri.isRated === false);
+  const claimReviewName = FORM_TYPES.find((ft) => ft.key === formType).shortName;
 
   if (ratedIssues.length > 0) {
     checklist.push(<Fragment>
@@ -50,9 +51,8 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const completedReview = this.props.decisionReviews[selectedForm.key];
     const {
-      endProductDescription,
       requestIssues,
-      informalConference // only used for higher level reviews
+      informalConference
     } = completedReview;
 
     switch (intakeStatus) {
@@ -67,8 +67,8 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
 
     const leadMessageList = [
       `${veteran.name}'s (ID #${veteran.fileNumber}) ` +
-        `Request for ${selectedForm.name}` +
-        ' has been processed. If you need to edit this, go to VBMS claim details and click the “Edit in Caseflow” button.',
+        `Request for ${selectedForm.name} has been processed. ` +
+        'If you need to edit this, go to VBMS claim details and click the “Edit in Caseflow” button.',
       <strong>Edit the notice letter to reflect the status of requested issues.</strong>
     ];
 
@@ -76,9 +76,9 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       title="Intake completed"
       type="success"
       leadMessageList={leadMessageList}
-      checklist={formType === 'appeal'
-        ? getAppealChecklistItems(requestIssues)
-        : getClaimReviewChecklistItems(formType, requestIssues, informalConference)}
+      checklist={formType === 'appeal' ?
+        getAppealChecklistItems(requestIssues) :
+        getClaimReviewChecklistItems(formType, requestIssues, informalConference)}
       wrapInAppSegment={false}
     />;
   }

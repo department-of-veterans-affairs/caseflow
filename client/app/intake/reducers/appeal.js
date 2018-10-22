@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers } from './common';
 import { formatDateStr } from '../../util/DateUtil';
-import { formatRatings } from '../util/issues';
+import { formatRatings, formatRequestIssues } from '../util/issues';
 import { getReceiptDateError, getPageError, formatRelationships } from '../util';
 import { update } from '../../util/ReducerUtil';
 
@@ -42,7 +42,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: formatRatings(serverIntake.ratings)
     },
     requestIssues: {
-      $set: serverIntake.requestIssues
+      $set: formatRequestIssues(serverIntake.requestIssues)
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
