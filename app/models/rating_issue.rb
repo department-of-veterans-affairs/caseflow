@@ -4,6 +4,9 @@ class RatingIssue < ApplicationRecord
   # this local attribute is used to resolve the related RequestIssue
   attr_accessor :contention_reference_id
 
+  # this local attribute used to calculate timeliness
+  attr_accessor :receipt_date
+
   def save_with_request_issue!
     return unless related_request_issue
     self.request_issue = related_request_issue
@@ -31,7 +34,8 @@ class RatingIssue < ApplicationRecord
       profile_date: rba_contentions.first.dig(:prfil_dt),
       contention_reference_id: rba_contentions.first.dig(:cntntn_id),
       decision_text: data[:decn_txt],
-      promulgation_date: data[:promulgation_date]
+      promulgation_date: data[:promulgation_date],
+      receipt_date: data[:receipt_date]
     )
   end
 
@@ -48,7 +52,7 @@ class RatingIssue < ApplicationRecord
   private
 
   def less_than_one_year_old?
-    promulgation_date >= (Time.zone.today - Rating::ONE_YEAR_PLUS_DAYS)
+    promulgation_date >= (receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
   end
 
   def related_request_issue

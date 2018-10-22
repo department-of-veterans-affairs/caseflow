@@ -5,7 +5,7 @@ class Rating
 
   # WARNING: profile_date is a misnomer adopted from BGS terminology.
   # It is a datetime, not a date.
-  attr_accessor :participant_id, :profile_date, :promulgation_date
+  attr_accessor :participant_id, :profile_date, :promulgation_date, :receipt_date
 
   ONE_YEAR_PLUS_DAYS = 372.days
   TWO_LIFETIMES_DAYS = 250.years
@@ -38,7 +38,7 @@ class Rating
     return [] if response[:rating_issues].nil?
 
     [response[:rating_issues]].flatten.map do |issue_data|
-      RatingIssue.from_bgs_hash(issue_data.merge(promulgation_date: promulgation_date))
+      RatingIssue.from_bgs_hash(issue_data.merge(promulgation_date: promulgation_date, receipt_date: receipt_date))
     end
   rescue Savon::Error
     []

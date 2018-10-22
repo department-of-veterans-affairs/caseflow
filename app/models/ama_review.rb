@@ -64,7 +64,7 @@ class AmaReview < ApplicationRecord
   private
 
   def ratings_with_issues
-    veteran.ratings.reject { |rating| rating.issues.empty? }
+    veteran.ratings(receipt_date: receipt_date).reject { |rating| rating.issues.empty? }
   end
 
   # disabled for simplecov sake

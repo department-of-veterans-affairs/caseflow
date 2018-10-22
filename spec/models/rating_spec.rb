@@ -12,7 +12,8 @@ describe Rating do
   let(:rating) do
     Generators::Rating.build(
       issues: issues,
-      promulgation_date: promulgation_date
+      promulgation_date: promulgation_date,
+      receipt_date: receipt_date
     )
   end
 
