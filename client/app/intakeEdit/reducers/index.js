@@ -6,13 +6,14 @@ import { formatRequestIssues, formatRatings } from '../../intake/util/issues';
 import { formatRelationships } from '../../intake/util';
 
 export const mapDataToInitialState = function(props = {}) {
-  const { serverIntake } = props;
+  const { serverIntake, claimId } = props;
 
   serverIntake.ratings = formatRatings(serverIntake.ratings);
   serverIntake.relationships = formatRelationships(serverIntake.relationships);
 
   return {
     ...serverIntake,
+    claimId: claimId,
     addIssuesModalVisible: false,
     nonRatedIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,

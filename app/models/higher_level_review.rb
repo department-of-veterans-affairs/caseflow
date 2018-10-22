@@ -29,7 +29,6 @@ class HigherLevelReview < ClaimReview
         formName: veteran && veteran.name.formatted(:form)
       },
       relationships: ama_enabled && veteran && veteran.relationships,
-      claimId: end_product_claim_id,
       receiptDate: receipt_date.to_formatted_s(:json_date),
       benefitType: benefit_type,
       sameOffice: same_office,
