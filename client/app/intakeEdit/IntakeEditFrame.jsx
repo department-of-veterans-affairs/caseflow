@@ -20,7 +20,6 @@ const textAlignRightStyling = css({
 export default class IntakeEditFrame extends React.PureComponent {
   render() {
     const {
-      claimId,
       veteran,
       formType
     } = this.props.serverIntake;
