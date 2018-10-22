@@ -1,26 +1,36 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import StatusMessage from '../../components/StatusMessage';
+import { FORM_TYPES } from '../../intake/constants';
 
 class Canceled extends Component {
   render = () => {
     const {
-      veteran
+      veteran,
+      formType
     } = this.props;
-
-    const message = `${veteran.name}'s form has been cancelled. You can close this window.`;
+    const formName = _.find(FORM_TYPES, { key: formType }).name;
+    const message = `No changes were made to ${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName}.
+Go to VBMS claim details and click the “Edit in Caseflow” button to return to edit.`
 
     return <div>
       <StatusMessage
-        title="Claim Edit Canceled"
+        title="Edit Canceled"
         leadMessageList={[message]}
-        type="alert" />
+      />
     </div>;
   }
 }
 
+Canceled.propTypes = {
+  veteran: PropTypes.object.isRequired,
+  formType: PropTypes.oneOf(_.map(FORM_TYPES, 'key')).isRequired
+};
+
 export default connect(
   (state) => ({
-    veteran: state.veteran
+    veteran: state.veteran,
+    formType: state.formType
   })
 )(Canceled);
