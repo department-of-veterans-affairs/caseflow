@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181018143032) do
+ActiveRecord::Schema.define(version: 20181018191048) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -582,6 +582,7 @@ ActiveRecord::Schema.define(version: 20181018143032) do
     t.string "reference_id", null: false
     t.datetime "profile_date", null: false
     t.string "decision_text"
+    t.datetime "promulgation_date", null: false
     t.index ["request_issue_id"], name: "index_rating_issues_on_request_issue_id"
   end
 
