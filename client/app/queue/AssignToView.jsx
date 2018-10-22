@@ -9,8 +9,7 @@ import COPY from '../../COPY.json';
 
 import {
   appealWithDetailSelector,
-  tasksForAppealAssignedToUserSelector,
-  incompleteOrganizationTasksByAssigneeIdSelector
+  getActionableTasksForAppeal
 } from './selectors';
 import { prepareTasksForStore } from './utils';
 
@@ -192,8 +191,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 
   return {
     highlightFormItems,
-    task: tasksForAppealAssignedToUserSelector(state, { appealId: ownProps.appealId })[0] ||
-      incompleteOrganizationTasksByAssigneeIdSelector(state, { appealId: ownProps.appealId })[0],
+    task: getActionableTasksForAppeal(state, { appealId: ownProps.appealId })[0],
     appeal: appealWithDetailSelector(state, ownProps)
   };
 };
