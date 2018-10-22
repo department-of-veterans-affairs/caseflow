@@ -15,11 +15,9 @@ const getAppealChecklistItems = requestIssues => [<Fragment>
 // higher level reviews & supplemental claims
 const getClaimReviewChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
   const checklist = [];
-  // rated issues have a reference_id
-  const [ratedIssues, nonRatedIssues] = _.partition(requestIssues, 'reference_id');
-  const claimReviewName = formType === FORM_TYPES.HIGHER_LEVEL_REVIEW.key
-    ? 'Higher-Level Review'
-    : 'Supplemental Claim Review';
+  const ratedIssues = requestIssues.filter(ri => ri.isRated);
+  const nonRatedIssues = requestIssues.filter(ri => ri.isRated === false); // unidentified issues have undefined isRated
+  const claimReviewName = FORM_TYPES.find(ft => ft.key === formType).shortName;
 
   if (ratedIssues.length > 0) {
     checklist.push(<Fragment>
@@ -42,7 +40,7 @@ const getClaimReviewChecklistItems = (formType, requestIssues, isInformalConfere
   return checklist;
 };
 
-class AmaCompleted extends React.PureComponent {
+class DecisionReviewIntakeCompleted extends React.PureComponent {
   render() {
     const {
       veteran,
@@ -50,7 +48,7 @@ class AmaCompleted extends React.PureComponent {
       intakeStatus
     } = this.props;
     const selectedForm = _.find(FORM_TYPES, { key: formType });
-    const completedReview = this.props.amaReviews[selectedForm.key];
+    const completedReview = this.props.decisionReviews[selectedForm.key];
     const {
       endProductDescription,
       requestIssues,
@@ -90,11 +88,11 @@ export default connect(
   (state) => ({
     veteran: state.intake.veteran,
     formType: state.intake.formType,
-    amaReviews: {
+    decisionReviews: {
       higher_level_review: state.higherLevelReview,
       supplemental_claim: state.supplementalClaim,
       appeal: state.appeal
     },
     intakeStatus: getIntakeStatus(state)
   })
-)(AmaCompleted);
+)(DecisionReviewIntakeCompleted);

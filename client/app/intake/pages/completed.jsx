@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS } from '../constants';
 import RampElectionPage from './rampElection/completed';
 import RampRefilingPage from './rampRefiling/completed';
-import AmaCompletedPage from './amaCompleted';
+import DecisionReviewIntakeCompletedPage from './decisionReviewIntakeCompleted';
 import SwitchOnForm from '../components/SwitchOnForm';
 import { bindActionCreators } from 'redux';
 import { startNewIntake } from '../actions/intake';
@@ -16,9 +16,9 @@ class Completed extends React.PureComponent {
       formComponentMapping={{
         ramp_election: <RampElectionPage />,
         ramp_refiling: <RampRefilingPage />,
-        supplemental_claim: <AmaCompletedPage />,
-        higher_level_review: <AmaCompletedPage />,
-        appeal: <AmaCompletedPage />
+        supplemental_claim: <DecisionReviewIntakeCompletedPage />,
+        higher_level_review: <DecisionReviewIntakeCompletedPage />,
+        appeal: <DecisionReviewIntakeCompletedPage />
       }}
       componentForNoFormSelected={<Redirect to={PAGE_PATHS.BEGIN} />}
     />;
