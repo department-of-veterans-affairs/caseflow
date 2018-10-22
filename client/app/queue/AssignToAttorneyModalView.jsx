@@ -6,8 +6,8 @@ import { bindActionCreators } from 'redux';
 import { AssignWidgetModal } from './components/AssignWidget';
 
 import {
-  tasksForAppealAssignedToAttorneySelector,
-  tasksForAppealAssignedToUserSelector
+  getActionableTasksForAppeal,
+  tasksForAppealAssignedToAttorneySelector
 } from './selectors';
 
 import {
@@ -71,7 +71,7 @@ class AssignToAttorneyModalView extends React.PureComponent<Props> {
 const mapStateToProps = (state: State, ownProps: Object) => {
   return {
     task: tasksForAppealAssignedToAttorneySelector(state, ownProps)[0] ||
-      tasksForAppealAssignedToUserSelector(state, ownProps)[0]
+      getActionableTasksForAppeal(state, { appealId: ownProps.appealId })[0]
   };
 };
 

@@ -100,13 +100,6 @@ export const getActionableTasksForAppeal = createSelector(
   [getActionableTasks, getAppealId], (tasksObj: Object, appealId: string) => tasksObj[appealId]
 );
 
-export const tasksForAppealAssignedToUserSelector = createSelector(
-  [getTasksForAppeal, getUserCssId],
-  (tasks: Tasks, cssId: string) => {
-    return _.filter(tasks, (task) => task.assignedTo.cssId === cssId);
-  }
-);
-
 export const tasksForAppealAssignedToAttorneySelector = createSelector(
   [getTasksForAppeal, getAttorneys],
   (tasks: Tasks, attorneys: Array<User>) => {
