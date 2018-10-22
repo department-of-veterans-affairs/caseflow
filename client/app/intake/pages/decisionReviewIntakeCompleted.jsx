@@ -18,7 +18,7 @@ const getClaimReviewChecklistItems = (formType, requestIssues, isInformalConfere
   const ratedIssues = requestIssues.filter((ri) => ri.isRated);
   // unidentified issues have undefined isRated
   const nonRatedIssues = requestIssues.filter((ri) => ri.isRated === false);
-  const claimReviewName = _.find(FORM_TYPES, { key: formType}).shortName;
+  const claimReviewName = _.find(FORM_TYPES, { key: formType }).shortName;
 
   if (ratedIssues.length > 0) {
     checklist.push(<Fragment>
