@@ -151,7 +151,7 @@ class QueueRepository
     end
 
     def filter_duplicate_tasks(records)
-      # Then keep the latest updated assignment if there are duplicate records
+      # Keep the latest updated assignment if there are duplicate records
       records.group_by(&:vacols_id).each_with_object([]) do |(_k, v), result|
         sorted = v.sort_by(&:updated_at)
 
