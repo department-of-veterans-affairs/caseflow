@@ -330,6 +330,7 @@ RSpec.feature "AmaQueue" do
     let(:user_name) { "QR User" }
     let!(:user) { User.authenticate!(user: create(:user, roles: ["Reader"], full_name: user_name)) }
     let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
+    let!(:judge_staff) { FactoryBot.create(:staff, :judge_role, user: judge_user) }
 
     let!(:staff) { FactoryBot.create(:staff, user: user, sdept: "QR") }
     let!(:organization_user) { OrganizationsUser.add_user_to_organization(user, quality_review_organization) }
@@ -389,6 +390,7 @@ RSpec.feature "AmaQueue" do
 
       visit "/queue"
 
+      click_on "Switch to Assign Cases"
       click_on "Bob Smith"
 
       expect(page).to have_content(quality_review_instructions)
