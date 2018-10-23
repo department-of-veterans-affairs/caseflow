@@ -13,8 +13,6 @@ import ListScheduleContainer from './containers/ListScheduleContainer';
 import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import DailyDocketContainer from './containers/DailyDocketContainer';
 import ScrollToTop from '../components/ScrollToTop';
-import CaseDetailsLoadingScreen from "../queue/CaseDetailsLoadingScreen";
-import CaseDetailsView from "../queue/CaseDetailsView";
 
 export default class HearingScheduleApp extends React.PureComponent {
   propsForListScheduleContainer = () => {
@@ -26,20 +24,6 @@ export default class HearingScheduleApp extends React.PureComponent {
     return {
       userRoleAssign,
       userRoleBuild
-    };
-  };
-
-  propsForQueueLoadingScreen = () => {
-    const {
-      userId,
-      userCssId,
-      userRole
-    } = this.props;
-
-    return {
-      userId,
-      userCssId,
-      userRole
     };
   };
 
@@ -57,12 +41,6 @@ export default class HearingScheduleApp extends React.PureComponent {
 
   routeForListScheduleContainer = () => <ListScheduleContainer {...this.propsForListScheduleContainer()} />;
   routeForAssignHearingsContainer = () => <AssignHearingsContainer {...this.propsForAssignHearingsContainer() }/>
-
-  routedQueueDetailWithLoadingScreen = (props) => <CaseDetailsLoadingScreen
-    {...this.propsForQueueLoadingScreen()}
-    appealId={props.match.params.appealId}>
-    <CaseDetailsView appealId={props.match.params.appealId} />
-  </CaseDetailsLoadingScreen>;
 
   render = () => <BrowserRouter basename="/hearings">
     <NavigationBar
@@ -117,13 +95,6 @@ export default class HearingScheduleApp extends React.PureComponent {
             title="Assign Hearings"
             breadcrumb="Assign"
             component={this.routeForAssignHearingsContainer}
-          />
-          <PageRoute
-            exact
-            path="/queue/appeals/:appealId"
-            title="Case Details | Caseflow"
-            breadcrumb="Details"
-            render={this.routedQueueDetailWithLoadingScreen}
           />
         </div>
       </AppFrame>

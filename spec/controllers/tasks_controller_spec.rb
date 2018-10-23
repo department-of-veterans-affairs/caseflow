@@ -375,6 +375,7 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.size).to eq 1
             expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
+            expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq hearings_user.id
             #expect(response_body.first["attributes"]["action"]).to eq "Assign Hearing"
           end
         end

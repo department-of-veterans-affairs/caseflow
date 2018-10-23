@@ -64,14 +64,13 @@ export default class AssignHearings extends React.Component {
     this.props.onSelectedHearingDayChange(hearingDay);
   };
 
-  onClick = (args) => {
+  onClick = (vacolsId) => {
     const payload = {
       data: {
         tasks: [
           {
             type: 'ScheduleHearingTask',
-            action: 'Assign Hearing',
-            external_id: args[0].appeal.externalId,
+            external_id: vacolsId,
             assigned_to_type: 'User',
             assigned_to_id: this.props.userId  // Need to trace this.props.userId and why it is undefined.
           }
@@ -205,11 +204,12 @@ export default class AssignHearings extends React.Component {
         header: 'Case details',
         align: 'left',
         valueName: 'caseDetails',
-        valueFunction: (veteran) => <CaseDetailsLink
-          appeal={ {externalId: veteran.vacolsId, appealId: veteran.appealId} }
-          userRole={'Hearings Mgmt'}
-          getLinkText={() => `${veteran.caseDetails}`}
-          onClick={this.onClick} />,
+        valueFunction: (veteran) => <Link
+          href={`/queue/appeals/${veteran.vacolsId}`}
+          name={veteran.vacolsId}
+          onClick={this.onClick.bind(this, veteran.vacolsId)} >
+          {veteran.caseDetails}
+        </Link>,
       },
       {
         header: 'Type(s)',
