@@ -1,7 +1,7 @@
 class TasksController < ApplicationController
   include Errors
 
-  before_action :verify_task_access, only: [:create, :assignable_organizations, :assignable_users]
+  before_action :verify_task_access, only: [:create]
   skip_before_action :deny_vso_access, only: [:index, :update, :for_appeal]
 
   TASK_CLASSES = {
@@ -97,15 +97,13 @@ class TasksController < ApplicationController
 
   private
 
-  def can_act_on_task?
-    return true if can_assign_task?
-    true if task.can_be_accessed_by_user?(current_user)
-  rescue ActiveRecord::RecordNotFound
-    return false
+  def can_assign_task?
+    return true if create_params.first[:appeal].is_a?(Appeal)
+    super
   end
 
   def verify_task_access
-    redirect_to("/unauthorized") unless can_act_on_task?
+    redirect_to("/unauthorized") unless can_assign_task?
   end
 
   def queue_class
