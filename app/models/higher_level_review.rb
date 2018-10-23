@@ -1,6 +1,6 @@
 class HigherLevelReview < ClaimReview
   with_options if: :saving_review do
-    validates :receipt_date, :benefit_type, presence: { message: "blank" }
+    validates :receipt_date, :benefit_type, :legacy_opt_in, presence: { message: "blank" }
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
   end
 

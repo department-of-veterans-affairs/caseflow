@@ -1,9 +1,11 @@
-class ClaimReviewIntake < Intake
+class ClaimReviewIntake < AmaIntake
   include Asyncable
 
-  def cancel_detail!
-    detail.remove_claimants!
-    super
+  def ui_hash(ama_enabled)
+    super.merge(
+      benefit_type: detail.benefit_type,
+      end_product_description: detail.end_product_description
+    )
   end
 
   def review!(request_params)
@@ -13,10 +15,6 @@ class ClaimReviewIntake < Intake
       payee_code: request_params[:payee_code] || "00"
     )
     detail.update(review_params(request_params))
-  end
-
-  def review_errors
-    detail.errors.messages
   end
 
   def complete!(request_params)

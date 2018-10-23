@@ -1,5 +1,5 @@
 class SupplementalClaim < ClaimReview
-  validates :receipt_date, :benefit_type, presence: { message: "blank" }, if: :saving_review
+  validates :receipt_date, :benefit_type, :legacy_opt_in, presence: { message: "blank" }, if: :saving_review
 
   END_PRODUCT_CODES = {
     rating: "040SCR",

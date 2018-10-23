@@ -7,8 +7,9 @@ import CancelButton from '../../components/CancelButton';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import SelectClaimant from '../../components/SelectClaimant';
+import LegacyOptIn from '../../components/LegacyOptIn';
 import { setDocketType } from '../../actions/appeal';
-import { submitReview, setClaimantNotVeteran, setClaimant, setPayeeCode } from '../../actions/ama';
+import { submitReview, setClaimantNotVeteran, setClaimant, setPayeeCode, setLegacyOptIn } from '../../actions/ama';
 import { setReceiptDate } from '../../actions/intake';
 import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, REQUEST_STATE } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
@@ -23,6 +24,8 @@ class Review extends React.PureComponent {
       receiptDateError,
       docketType,
       docketTypeError,
+      legacyOptIn,
+      legacyOptInError,
       reviewIntakeError
     } = this.props;
 
@@ -69,6 +72,12 @@ class Review extends React.PureComponent {
       />
 
       <SelectClaimantConnected />
+
+      <LegacyOptIn
+        value={legacyOptIn}
+        onChange={this.props.setLegacyOptIn}
+        errorMessage={legacyOptInError}
+      />
     </div>;
   }
 }
@@ -131,10 +140,13 @@ export default connect(
     receiptDateError: state.appeal.receiptDateError,
     docketType: state.appeal.docketType,
     docketTypeError: state.appeal.docketTypeError,
+    legacyOptIn: state.higherLevelReview.legacyOptIn,
+    legacyOptInError: state.higherLevelReview.legacyOptInError,
     reviewIntakeError: state.appeal.requestStatus.reviewIntakeError
   }),
   (dispatch) => bindActionCreators({
     setDocketType,
-    setReceiptDate
+    setReceiptDate,
+    setLegacyOptIn
   }, dispatch)
 )(Review);

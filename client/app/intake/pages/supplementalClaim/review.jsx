@@ -6,8 +6,16 @@ import CancelButton from '../../components/CancelButton';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import BenefitType from '../../components/BenefitType';
+import LegacyOptIn from '../../components/LegacyOptIn';
 import SelectClaimant from '../../components/SelectClaimant';
-import { submitReview, setBenefitType, setClaimantNotVeteran, setClaimant, setPayeeCode } from '../../actions/ama';
+import {
+  submitReview,
+  setBenefitType,
+  setClaimantNotVeteran,
+  setClaimant,
+  setPayeeCode,
+  setLegacyOptIn
+} from '../../actions/ama';
 import { setReceiptDate } from '../../actions/intake';
 import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, REQUEST_STATE } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
@@ -22,6 +30,8 @@ class Review extends React.PureComponent {
       receiptDateError,
       benefitType,
       benefitTypeError,
+      legacyOptIn,
+      legacyOptInError,
       reviewIntakeError
     } = this.props;
 
@@ -55,6 +65,11 @@ class Review extends React.PureComponent {
 
       <SelectClaimantConnected />
 
+      <LegacyOptIn
+        value={legacyOptIn}
+        onChange={this.props.setLegacyOptIn}
+        errorMessage={legacyOptInError}
+      />
     </div>;
   }
 }
@@ -117,10 +132,13 @@ export default connect(
     receiptDateError: state.supplementalClaim.receiptDateError,
     benefitType: state.supplementalClaim.benefitType,
     benefitTypeError: state.supplementalClaim.benefitTypeError,
+    legacyOptIn: state.higherLevelReview.legacyOptIn,
+    legacyOptInError: state.higherLevelReview.legacyOptInError,
     reviewIntakeError: state.supplementalClaim.requestStatus.reviewIntakeError
   }),
   (dispatch) => bindActionCreators({
     setReceiptDate,
-    setBenefitType
+    setBenefitType,
+    setLegacyOptIn
   }, dispatch)
 )(Review);

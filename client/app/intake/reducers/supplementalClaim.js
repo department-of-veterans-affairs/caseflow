@@ -2,7 +2,7 @@ import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers } from './common';
 import { formatDateStr } from '../../util/DateUtil';
 import { formatRatings, formatRequestIssues } from '../util/issues';
-import { getReceiptDateError, getBenefitTypeError, getPageError, formatRelationships } from '../util';
+import { getReceiptDateError, getBlankOptionError, getPageError, formatRelationships } from '../util';
 import { update } from '../../util/ReducerUtil';
 
 const updateFromServerIntake = (state, serverIntake) => {
@@ -28,6 +28,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     payeeCode: {
       $set: serverIntake.payee_code
+    },
+    legacyOptIn: {
+      $set: serverIntake.legacy_opt_in
     },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
@@ -63,6 +66,8 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     claimantNotVeteran: null,
     claimant: null,
     payeeCode: null,
+    legacyOptIn: null,
+    legacyOptInError: null,
     isStarted: false,
     isReviewed: false,
     isComplete: false,
@@ -128,6 +133,12 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: action.payload.payeeCode
       }
     });
+  case ACTIONS.SET_LEGACY_OPT_IN:
+    return update(state, {
+      legacyOptIn: {
+        $set: action.payload.legacyOptIn
+      }
+    });
   case ACTIONS.SUBMIT_REVIEW_START:
     return update(state, {
       requestStatus: {
@@ -142,6 +153,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: null
       },
       benefitTypeError: {
+        $set: null
+      },
+      legacyOptInError: {
         $set: null
       },
       isReviewed: {
@@ -159,7 +173,10 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: getReceiptDateError(action.payload.responseErrorCodes, state)
       },
       benefitTypeError: {
-        $set: getBenefitTypeError(action.payload.responseErrorCodes)
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'benefit_type')
+      },
+      legacyOptInError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in')
       },
       requestStatus: {
         submitReview: {

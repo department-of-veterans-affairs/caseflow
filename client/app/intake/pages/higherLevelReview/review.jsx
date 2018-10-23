@@ -7,9 +7,17 @@ import DateSelector from '../../../components/DateSelector';
 import CancelButton from '../../components/CancelButton';
 import Button from '../../../components/Button';
 import BenefitType from '../../components/BenefitType';
+import LegacyOptIn from '../../components/LegacyOptIn';
 import SelectClaimant from '../../components/SelectClaimant';
 import { setInformalConference, setSameOffice } from '../../actions/higherLevelReview';
-import { submitReview, setBenefitType, setClaimantNotVeteran, setClaimant, setPayeeCode } from '../../actions/ama';
+import {
+  submitReview,
+  setBenefitType,
+  setClaimantNotVeteran,
+  setClaimant,
+  setPayeeCode,
+  setLegacyOptIn
+} from '../../actions/ama';
 import { setReceiptDate } from '../../actions/intake';
 import { PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS, FORM_TYPES, REQUEST_STATE } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
@@ -28,6 +36,8 @@ class Review extends React.PureComponent {
       informalConferenceError,
       sameOffice,
       sameOfficeError,
+      legacyOptIn,
+      legacyOptInError,
       reviewIntakeError
     } = this.props;
 
@@ -82,6 +92,12 @@ class Review extends React.PureComponent {
       />
 
       <SelectClaimantConnected />
+
+      <LegacyOptIn
+        value={legacyOptIn}
+        onChange={this.props.setLegacyOptIn}
+        errorMessage={legacyOptInError}
+      />
     </div>;
   }
 }
@@ -144,6 +160,8 @@ export default connect(
     receiptDateError: state.higherLevelReview.receiptDateError,
     benefitType: state.higherLevelReview.benefitType,
     benefitTypeError: state.higherLevelReview.benefitTypeError,
+    legacyOptIn: state.higherLevelReview.legacyOptIn,
+    legacyOptInError: state.higherLevelReview.legacyOptInError,
     informalConference: state.higherLevelReview.informalConference,
     informalConferenceError: state.higherLevelReview.informalConferenceError,
     sameOffice: state.higherLevelReview.sameOffice,
@@ -154,6 +172,7 @@ export default connect(
     setInformalConference,
     setSameOffice,
     setReceiptDate,
-    setBenefitType
+    setBenefitType,
+    setLegacyOptIn
   }, dispatch)
 )(Review);

@@ -2,16 +2,8 @@ import _ from 'lodash';
 import { REVIEW_OPTIONS } from '../constants';
 import { formatDateStringForApi } from '../../util/DateUtil';
 
-export const getAppealDocketError = (responseErrorCodes) => (
-  (_.get(responseErrorCodes.appeal_docket, 0) === 'blank') && 'Please select an option.'
-);
-
-export const getOptionSelectedError = (responseErrorCodes) => (
-  (_.get(responseErrorCodes.option_selected, 0) === 'blank') && 'Please select an option.'
-);
-
-export const getBenefitTypeError = (responseErrorCodes) => (
-  (_.get(responseErrorCodes.benefit_type, 0) === 'blank') && 'Please select a Benefit Type option.'
+export const getBlankOptionError = (responseErrorCodes, field) => (
+  (_.get(responseErrorCodes[field], 0) === 'blank') && 'Please select an option.'
 );
 
 export const getPageError = (responseErrorCodes) => (
@@ -63,14 +55,16 @@ export const prepareReviewData = (intakeData, intakeType) => {
       docket_type: intakeData.docketType,
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
-      payee_code: intakeData.payeeCode
+      payee_code: intakeData.payeeCode,
+      legacy_opt_in: intakeData.legacyOptIn
     };
   case 'supplementalClaim':
     return {
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       benefit_type: intakeData.benefitType,
       claimant: intakeData.claimant,
-      payee_code: intakeData.payeeCode
+      payee_code: intakeData.payeeCode,
+      legacy_opt_in: intakeData.legacyOptIn
     };
   case 'higherLevelReview':
     return {
@@ -79,13 +73,15 @@ export const prepareReviewData = (intakeData, intakeType) => {
       benefit_type: intakeData.benefitType,
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
-      payee_code: intakeData.payeeCode
+      payee_code: intakeData.payeeCode,
+      legacy_opt_in: intakeData.legacyOptIn
     };
   default:
     return {
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
-      payee_code: intakeData.payeeCode
+      payee_code: intakeData.payeeCode,
+      legacy_opt_in: intakeData.legacyOptIn
     };
   }
 };
