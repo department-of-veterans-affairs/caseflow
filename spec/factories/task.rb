@@ -81,5 +81,12 @@ FactoryBot.define do
       appeal { create(:appeal) }
       assigned_by nil
     end
+
+    factory :quality_review_task do
+      type QualityReviewTask.name
+      appeal_type Appeal.name
+      appeal { create(:appeal) }
+      assigned_by nil
+    end
   end
 end
