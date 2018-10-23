@@ -30,7 +30,7 @@ export default class HearingScheduleApp extends React.PureComponent {
   propsForAssignHearingsContainer = () => {
     const {
       userId,
-      userCssId,
+      userCssId
     } = this.props;
 
     return {
@@ -40,7 +40,7 @@ export default class HearingScheduleApp extends React.PureComponent {
   };
 
   routeForListScheduleContainer = () => <ListScheduleContainer {...this.propsForListScheduleContainer()} />;
-  routeForAssignHearingsContainer = () => <AssignHearingsContainer {...this.propsForAssignHearingsContainer() }/>
+  routeForAssignHearingsContainer = () => <AssignHearingsContainer {...this.propsForAssignHearingsContainer()} />
 
   render = () => <BrowserRouter basename="/hearings">
     <NavigationBar

@@ -3,7 +3,7 @@ class HearingsManagement < Organization
     HearingsManagement.first || HearingsManagement.create(name: "Hearings Management")
   end
 
-  def user_has_access?(user)
-    return true
+  def user_has_access?(_user)
+    true
   end
 end

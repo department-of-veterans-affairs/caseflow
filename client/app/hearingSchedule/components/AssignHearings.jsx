@@ -11,10 +11,9 @@ import RoSelectorDropdown from './RoSelectorDropdown';
 import moment from 'moment';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
-import CaseDetailsLink from "../../queue/CaseDetailsLink";
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
-import ApiUtil from "../../util/ApiUtil";
-import {prepareTasksForStore} from "../../queue/utils";
+import ApiUtil from '../../util/ApiUtil';
+import { prepareTasksForStore } from '../../queue/utils';
 import StatusMessage from '../../components/StatusMessage';
 
 const colorAOD = css({
@@ -72,20 +71,20 @@ export default class AssignHearings extends React.Component {
             type: 'ScheduleHearingTask',
             external_id: vacolsId,
             assigned_to_type: 'User',
-            assigned_to_id: this.props.userId  // Need to trace this.props.userId and why it is undefined.
+            assigned_to_id: this.props.userId
           }
         ]
       }
     };
 
-    ApiUtil.post(`/tasks`, payload).
-    then((resp) => {
-      const response = JSON.parse(resp.text);
-      const preparedTasks = prepareTasksForStore(response.tasks.data);
-      const taskUniqueId = response.tasks.data[0].id;
+    ApiUtil.post('/tasks', payload).
+      then((resp) => {
+        const response = JSON.parse(resp.text);
+        const preparedTasks = prepareTasksForStore(response.tasks.data);
+        const taskUniqueId = response.tasks.data[0].id;
 
-      this.props.onReceiveTasks(preparedTasks[taskUniqueId])
-    });
+        this.props.onReceiveTasks(preparedTasks[taskUniqueId]);
+      });
   };
 
   roomInfo = (hearingDay) => {
@@ -209,7 +208,7 @@ export default class AssignHearings extends React.Component {
           name={veteran.vacolsId}
           onClick={this.onClick.bind(this, veteran.vacolsId)} >
           {veteran.caseDetails}
-        </Link>,
+        </Link>
       },
       {
         header: 'Type(s)',

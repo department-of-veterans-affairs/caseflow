@@ -96,7 +96,8 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
     }
 
     const hearingElements = _.map(uniqueOrderedHearings, (hearing) => <div key={hearing.id} {...hearingElementsStyle}>
-      <span {...boldText}>Hearing{uniqueOrderedHearings.length > 1 ? ` ${uniqueOrderedHearings.indexOf(hearing) + 1}` : ''}:</span>
+      <span {...boldText}>Hearing{uniqueOrderedHearings.length > 1 ?
+        ` ${uniqueOrderedHearings.indexOf(hearing) + 1}` : ''}:</span>
       <BareList compact
         listStyle={css(marginLeft, noTopBottomMargin)}
         ListElementComponent="ul"
@@ -112,7 +113,7 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
   getDetailField = (
     { label, valueFunction, value }: { label: string, valueFunction: Function, value?: string}
   ) => () => <React.Fragment>
-    {label && <span {...boldText}>{label}:</span>} {typeof value == 'undefined' ? valueFunction() : value}
+    {label && <span {...boldText}>{label}:</span>} {typeof value === 'undefined' ? valueFunction() : value}
   </React.Fragment>;
 
   scrollToCaseList = () => {
