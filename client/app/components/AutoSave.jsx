@@ -17,7 +17,6 @@ export default class AutoSave extends React.Component {
     super(props);
     this.setIntervalId = null;
     this.state = { showSuccess: false };
-    this.timer = null;
   }
 
   componentDidMount() {
@@ -44,7 +43,6 @@ export default class AutoSave extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.saveFailed === false && prevProps.saveFailed === true) {
-      console.warn('saved successfully, showing save banner');
       this.debouncedResetSaveStatus();
     }
   }
@@ -78,7 +76,7 @@ export default class AutoSave extends React.Component {
       />;
     } else if (this.state.showSuccess) {
       return <Alert
-        message="Your Daily Docket has been Saved"
+        message="Connected! Your Daily Docket has been Saved"
         type="success"
         fixed
         styling={alertStyling}
