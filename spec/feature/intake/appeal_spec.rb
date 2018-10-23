@@ -427,6 +427,24 @@ RSpec.feature "Appeal Intake" do
     expect(RequestIssue.find_by(rating_issue_reference_id: old_reference_id).eligible?).to eq(false)
   end
 
+  it "Shows a review error when something goes wrong" do
+    start_appeal(veteran)
+    visit "/intake/add_issues"
+
+    safe_click "#button-add-issue"
+    find_all("label", text: "Left knee granted").first.click
+    fill_in "Notes", with: "I am an issue note"
+    safe_click ".add-issue"
+
+    ## Validate error message when complete intake fails
+    expect_any_instance_of(AppealIntake).to receive(:complete!).and_raise("A random error. Oh no!")
+
+    safe_click "#button-finish-intake"
+
+    expect(page).to have_content("Something went wrong")
+    expect(page).to have_current_path("/intake/add_issues")
+  end
+
   scenario "canceling an appeal intake" do
     _, intake = start_appeal(veteran)
     visit "/intake/add_issues"

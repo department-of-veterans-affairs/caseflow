@@ -9,7 +9,7 @@ import NonRatedIssueModal from '../components/NonRatedIssueModal';
 import RemoveIssueModal from '../components/RemoveIssueModal';
 import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
 import Button from '../../components/Button';
-import RequestIssuesUpdateErrorAlert from '../../intakeEdit/components/RequestIssuesUpdateErrorAlert';
+import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, FORM_TYPES, PAGE_PATHS } from '../constants';
 import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES.json';
 import { formatDate } from '../../util/DateUtil';
@@ -48,9 +48,7 @@ export class AddIssuesPage extends React.Component {
     const {
       intakeForms,
       formType,
-      veteran,
-      responseErrorCode,
-      requestState
+      veteran
     } = this.props;
 
     if (!formType) {
@@ -58,8 +56,10 @@ export class AddIssuesPage extends React.Component {
     }
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
-    const intakeData = intakeForms[selectedForm.key];
     const veteranInfo = `${veteran.name} (${veteran.fileNumber})`;
+    const intakeData = intakeForms[selectedForm.key];
+    const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
+    const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
 
     const issuesComponent = () => {
       let issues = formatAddedIssues(intakeData);
@@ -152,7 +152,7 @@ export class AddIssuesPage extends React.Component {
       <h1 className="cf-txt-c">Add / Remove Issues</h1>
 
       { requestState === REQUEST_STATE.FAILED &&
-        <RequestIssuesUpdateErrorAlert responseErrorCode={responseErrorCode} />
+        <ErrorAlert errorCode={requestErrorCode} />
       }
 
       <Table
@@ -171,9 +171,7 @@ export const IntakeAddIssuesPage = connect(
       appeal
     },
     formType: intake.formType,
-    veteran: intake.veteran,
-    requestState: null,
-    responseErrorCode: null
+    veteran: intake.veteran
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
@@ -190,9 +188,7 @@ export const EditAddIssuesPage = connect(
       supplemental_claim: state
     },
     formType: state.formType,
-    veteran: state.veteran,
-    requestState: state.requestStatus.requestIssuesUpdate,
-    responseErrorCode: state.responseErrorCode
+    veteran: state.veteran
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
