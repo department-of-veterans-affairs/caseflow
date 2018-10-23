@@ -10,7 +10,7 @@ class AppealIntake < Intake
       claimant_not_veteran: detail.claimant_not_veteran,
       payee_code: detail.payee_code,
       docket_type: detail.docket_type,
-      ratings: detail.cached_serialized_ratings,
+      ratings: detail.serialized_ratings,
       requestIssues: detail.request_issues.map(&:ui_hash)
     )
   end
