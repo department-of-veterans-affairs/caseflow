@@ -25,8 +25,8 @@ class Finish extends React.PureComponent {
       supplementalClaimStatus,
       requestState,
       veteranName,
-      errorCode,
-      errorData
+      completeIntakeErrorCode,
+      completeIntakeErrorData
     } = this.props;
 
     switch (supplementalClaimStatus) {
@@ -44,8 +44,8 @@ class Finish extends React.PureComponent {
 
       { requestState === REQUEST_STATE.FAILED &&
         <ErrorAlert
-          errorCode={errorCode}
-          errorData={errorData} />
+          errorCode={completeIntakeErrorCode}
+          errorData={completeIntakeErrorData} />
       }
 
       <p>
@@ -138,7 +138,7 @@ export default connect(
     veteranName: state.intake.veteran.name,
     supplementalClaimStatus: getIntakeStatus(state),
     requestState: state.supplementalClaim.requestStatus.completeIntake,
-    errorCode: state.supplementalClaim.requestStatus.errorCode,
-    errorData: state.supplementalClaim.requestStatus.errorData
+    completeIntakeErrorCode: state.supplementalClaim.requestStatus.completeIntakeErrorCode,
+    completeIntakeErrorData: state.supplementalClaim.requestStatus.completeIntakeErrorData
   })
 )(Finish);

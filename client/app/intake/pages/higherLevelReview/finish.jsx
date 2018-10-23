@@ -25,8 +25,8 @@ class Finish extends React.PureComponent {
       higherLevelReviewStatus,
       requestState,
       veteranName,
-      errorCode,
-      errorData
+      completeIntakeErrorCode,
+      completeIntakeErrorData
     } = this.props;
 
     switch (higherLevelReviewStatus) {
@@ -44,8 +44,8 @@ class Finish extends React.PureComponent {
 
       { requestState === REQUEST_STATE.FAILED &&
         <ErrorAlert
-          errorCode={errorCode}
-          errorData={errorData} />
+          errorCode={completeIntakeErrorCode}
+          errorData={completeIntakeErrorData} />
       }
 
       <p>
@@ -137,7 +137,7 @@ export default connect(
     veteranName: state.intake.veteran.name,
     higherLevelReviewStatus: getIntakeStatus(state),
     requestState: state.higherLevelReview.requestStatus.completeIntake,
-    errorCode: state.higherLevelReview.requestStatus.errorCode,
-    errorData: state.higherLevelReview.requestStatus.errorData
+    completeIntakeErrorCode: state.higherLevelReview.requestStatus.completeIntakeErrorCode,
+    completeIntakeErrorData: state.higherLevelReview.requestStatus.completeIntakeErrorData
   })
 )(Finish);

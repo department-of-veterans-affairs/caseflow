@@ -58,8 +58,7 @@ export class AddIssuesPage extends React.Component {
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const veteranInfo = `${veteran.name} (${veteran.fileNumber})`;
     const intakeData = intakeForms[selectedForm.key];
-    const { requestStatus } = intakeData;
-    const requestState = requestStatus.completeIntake || requestStatus.submitIssues;
+    const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.submitIssues;
     const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.submitIssuesErrorCode;
 
     const issuesComponent = () => {
