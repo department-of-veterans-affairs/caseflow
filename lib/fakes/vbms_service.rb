@@ -110,8 +110,7 @@ class Fakes::VBMSService
     # noop
   end
 
-  # rubocop:disable UnusedMethodArgument
-  def self.establish_claim!(claim_hash:, veteran_hash:, user: nil)
+  def self.establish_claim!(claim_hash:, veteran_hash:, user:)
     (HOLD_REQUEST_TIMEOUT_SECONDS * 100).times do
       break unless @hold_request
       sleep 0.01
@@ -120,6 +119,7 @@ class Fakes::VBMSService
     Rails.logger.info("Submitting claim to VBMS...")
     Rails.logger.info("Veteran data:\n #{veteran_hash}")
     Rails.logger.info("Claim data:\n #{claim_hash}")
+    Rails.logger.info("User:\n #{user}")
 
     self.end_product_claim_ids_by_file_number ||= {}
 
@@ -134,7 +134,6 @@ class Fakes::VBMSService
     # return fake end product
     OpenStruct.new(claim_id: claim_id)
   end
-  # rubocop:enable UnusedMethodArgument
 
   def self.get_dispositions!(claim_id:)
     (disposition_records && disposition_records[claim_id]) || []
@@ -144,13 +143,13 @@ class Fakes::VBMSService
     (contention_records || {})[claim_id] || []
   end
 
-  # rubocop:disable UnusedMethodArgument
-  def self.create_contentions!(veteran_file_number:, claim_id:, contention_descriptions:, special_issues: [], user: nil)
+  def self.create_contentions!(veteran_file_number:, claim_id:, contention_descriptions:, special_issues: [], user:)
     Rails.logger.info("Submitting contentions to VBMS...")
     Rails.logger.info("File number: #{veteran_file_number}")
     Rails.logger.info("Claim id:\n #{claim_id}")
     Rails.logger.info("Contention descriptions: #{contention_descriptions.inspect}")
     Rails.logger.info("Special issues: #{special_issues.inspect}")
+    Rails.logger.info("User:\n #{user}")
 
     # Used to simulate a contention that fails to be created in VBMS
     contention_descriptions.delete("FAIL ME")
@@ -160,7 +159,6 @@ class Fakes::VBMSService
       Generators::Contention.build(text: description, claim_id: claim_id)
     end
   end
-  # rubocop:enable UnusedMethodArgument
 
   def self.associate_rated_issues!(claim_id:, rated_issue_contention_map:)
     Rails.logger.info("Submitting rated issues to VBMS...")

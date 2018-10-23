@@ -143,7 +143,8 @@ class ExternalApi::VBMSService
       send_userid: FeatureToggle.enabled?(:vbms_include_user)
     )
 
-    send_and_log_request(contention.claim_id, request, vbms_client_with_system_user)
+    client = FeatureToggle.enabled?(:vbms_include_user) ? vbms_client_with_system_user : @vbms_client
+    send_and_log_request(contention.claim_id, request, client)
   end
 
   def self.associate_rated_issues!(claim_id:, rated_issue_contention_map:)
