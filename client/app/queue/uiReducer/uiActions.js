@@ -141,11 +141,6 @@ export const setUserIsVsoEmployee = (userIsVsoEmployee: ?boolean) => ({
   payload: { userIsVsoEmployee }
 });
 
-export const setUserIsMailTeamMember = (userIsMailTeamMember: ?boolean) => ({
-  type: ACTIONS.SET_USER_IS_MAIL_TEAM_MEMBER,
-  payload: { userIsMailTeamMember }
-});
-
 export const setFeedbackUrl = (feedbackUrl: string) => ({
   type: ACTIONS.SET_FEEDBACK_URL,
   payload: { feedbackUrl }

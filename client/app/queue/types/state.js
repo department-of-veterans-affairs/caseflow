@@ -53,7 +53,6 @@ export type UiState = {
   userRole: string,
   userCssId: string,
   userIsVsoEmployee: boolean,
-  userIsMailTeamMember: boolean,
   feedbackUrl: string,
   veteranCaseListIsVisible: boolean
 };

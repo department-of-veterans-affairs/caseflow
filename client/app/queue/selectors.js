@@ -41,7 +41,6 @@ const getAmaTasks = (state: State): Tasks => state.queue.amaTasks;
 const getAppeals = (state: State): BasicAppeals => state.queue.appeals;
 const getAppealDetails = (state: State): AppealDetails => state.queue.appealDetails;
 const getUserCssId = (state: State): string => state.ui.userCssId;
-const getUserIsMailTeamMember = (state: State): boolean => state.ui.userIsMailTeamMember;
 const getOrganizationId = (state: State): ?number => state.queue.organizationId;
 const getAppealId = (state: State, props: Object): string => props.appealId;
 const getAttorneys = (state: State): AttorneysOfJudge => state.queue.attorneysOfJudge;
@@ -136,11 +135,8 @@ export const completeTasksByAssigneeCssIdSelector = createSelector(
   (tasks: Tasks) => completeTasksSelector(tasks)
 );
 
-// Expect that the only tasks assigned to the Bva organization are RootTasks.
-export const rootTasksForAppealIfMailTeamMemberSelector = createSelector(
-  [getTasksForAppeal, getUserIsMailTeamMember],
-  (tasks: Tasks, userIsMailTeamMember: boolean) =>
-    _.filter(tasks, (task) => userIsMailTeamMember && ['Bva'].includes(task.assignedTo.type))
+export const actionableTasksForAppeal = createSelector(
+  [getTasksForAppeal], (tasks: Tasks) => _.filter(tasks, (task) => task.availableActions.length)
 );
 
 export const organizationTasksByAssigneeIdSelector = createSelector(

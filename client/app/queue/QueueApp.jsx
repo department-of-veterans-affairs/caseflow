@@ -11,7 +11,6 @@ import {
   setUserRole,
   setUserCssId,
   setUserIsVsoEmployee,
-  setUserIsMailTeamMember,
   setFeedbackUrl
 } from './uiReducer/uiActions';
 
@@ -66,7 +65,6 @@ type Props = {|
   buildDate?: string,
   reviewActionType: string,
   userIsVsoEmployee?: boolean,
-  userIsMailTeamMember?: boolean,
   caseSearchHomePage?: boolean,
   featureToggles: Object,
   // Action creators
@@ -74,7 +72,6 @@ type Props = {|
   setUserRole: typeof setUserRole,
   setUserCssId: typeof setUserCssId,
   setUserIsVsoEmployee: typeof setUserIsVsoEmployee,
-  setUserIsMailTeamMember: typeof setUserIsMailTeamMember,
   setFeedbackUrl: typeof setFeedbackUrl
 |};
 
@@ -84,7 +81,6 @@ class QueueApp extends React.PureComponent<Props> {
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
-    this.props.setUserIsMailTeamMember(this.props.userIsMailTeamMember);
     this.props.setFeedbackUrl(this.props.feedbackUrl);
   }
 
@@ -383,7 +379,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setUserRole,
   setUserCssId,
   setUserIsVsoEmployee,
-  setUserIsMailTeamMember,
   setFeedbackUrl
 }, dispatch);
 

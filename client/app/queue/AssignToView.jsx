@@ -8,10 +8,10 @@ import _ from 'lodash';
 import COPY from '../../COPY.json';
 
 import {
+  actionableTasksForAppeal,
   appealWithDetailSelector,
   tasksForAppealAssignedToUserSelector,
-  incompleteOrganizationTasksByAssigneeIdSelector,
-  rootTasksForAppealIfMailTeamMemberSelector
+  incompleteOrganizationTasksByAssigneeIdSelector
 } from './selectors';
 import { prepareTasksForStore } from './utils';
 
@@ -197,7 +197,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
     highlightFormItems,
     task: tasksForAppealAssignedToUserSelector(state, { appealId: ownProps.appealId })[0] ||
       incompleteOrganizationTasksByAssigneeIdSelector(state, { appealId: ownProps.appealId })[0] ||
-      rootTasksForAppealIfMailTeamMemberSelector(state, { appealId: ownProps.appealId })[0],
+      actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0],
     appeal: appealWithDetailSelector(state, ownProps)
   };
 };
