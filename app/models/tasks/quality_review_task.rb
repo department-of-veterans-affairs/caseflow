@@ -9,7 +9,8 @@ class QualityReviewTask < GenericTask
       },
       Constants.TASK_ACTIONS.RETURN_TO_JUDGE.to_h.merge(
         data: {
-          user: completing_judge,
+          selected: completing_judge,
+          users: Judge.list_all,
           type: "JudgeTask"
         }
       )

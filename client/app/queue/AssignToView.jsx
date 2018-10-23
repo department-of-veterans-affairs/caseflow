@@ -27,7 +27,8 @@ import {
 } from './uiReducer/uiActions';
 
 import type { State } from './types/state';
-import type { Appeal, Task } from './types/models';
+import type { Appeal, Task, User } from './types/models';
+import TASK_ACTIONS from '../../constants/TASK_ACTIONS.json';
 
 type Params = {|
   appealId: string,
@@ -64,8 +65,11 @@ class AssignToView extends React.Component<Props, ViewState> {
       existingInstructions = instructions[instructionLength - 1];
     }
 
+    const selectedOption = this.taskActionData().selected ?
+      this.options().find((option) => option.value === this.taskActionData().selected.id) : null;
+
     this.state = {
-      selectedValue: null,
+      selectedValue: selectedOption ? selectedOption.value : null,
       instructions: existingInstructions
     };
   }
@@ -84,12 +88,14 @@ class AssignToView extends React.Component<Props, ViewState> {
     } = this.props;
     let type = 'GenericTask';
 
-    if (createsMailTask) {
+    if (this.taskActionData().type) {
+      type = this.taskActionData().type;
+    } else if (createsMailTask) {
       type = 'MailTask';
     } else if (!isTeamAssign) {
       type = task.type;
-    }
-
+    }  
+    
     const payload = {
       data: {
         tasks: [{
@@ -113,6 +119,17 @@ class AssignToView extends React.Component<Props, ViewState> {
       then(() => {
         this.props.setTaskAttrs(task.uniqueId, { status: 'on_hold' });
       });
+  }
+
+  taskActionData = () : { selected: ?User, users: ?Array<User>, type: string } => {
+    const action = this.props.task.availableActions.
+      find((action) => action.value === TASK_ACTIONS.RETURN_TO_JUDGE.value);
+
+    if (action && action.data) {
+      return (action.data);
+    }
+
+    return { selected: null, users: null, type: null }
   }
 
   getAssignee = () => {
@@ -162,7 +179,9 @@ class AssignToView extends React.Component<Props, ViewState> {
       });
     }
 
-    return (this.props.task.assignableUsers || []).map((user) => {
+    const options = this.taskActionData().users;
+
+    return (options || this.props.task.assignableUsers || []).map((user) => {
       return {
         label: user.full_name,
         value: user.id

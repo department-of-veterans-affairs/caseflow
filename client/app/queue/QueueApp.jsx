@@ -169,8 +169,6 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedReassignToUser = (props) => <AssignToView isReassignAction {...props.match.params} />;
 
-  routedAssignToCustomUser = (props) => <AssignToCustomUser {...props.match.params} />;
-
   routedCompleteTaskModal = (props) => <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />;
 
   routedSendColocatedTaskModal = (props) =>
@@ -267,7 +265,7 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedReassignToUser} />
           <Route
             path={`/queue/appeals/:appealId/${TASK_ACTIONS.RETURN_TO_JUDGE.value}`}
-            render={this.routedAssignToCustomUser} />
+            render={this.routedAssignToUser} />
           <Route
             path="/queue/appeals/:appealId/modal/assign_to_attorney"
             render={this.routedAssignToAttorney} />
