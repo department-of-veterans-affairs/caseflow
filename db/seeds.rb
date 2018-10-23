@@ -48,6 +48,7 @@ class SeedDB
     create_colocated_user
     create_vso_user
     create_org_queue_user
+    create_mail_team_user
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
   end
@@ -71,6 +72,11 @@ class SeedDB
   def create_org_queue_user
     q = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER", full_name: "Org Q User")
     FactoryBot.create(:staff, user: q, sdept: "TRANS", sattyid: nil)
+  end
+
+  def create_mail_team_user
+    u = User.create!(station_id: 101, css_id: "JOLLY_POSTMAN", full_name: "Jolly D. Postman")
+    FactoryBot.create(:staff, user: u, sdept: "MAIL", sattyid: nil)
   end
 
   def create_bva_dispatch_user_with_tasks
@@ -448,6 +454,9 @@ class SeedDB
     dispatch = BvaDispatch.singleton
     StaffFieldForOrganization.create!(organization: dispatch, name: "sdept", values: %w[DSP])
     StaffFieldForOrganization.create!(organization: dispatch, name: "stitle", values: %w[A1 A2], exclude: true)
+
+    mail_team = MailTeam.singleton
+    StaffFieldForOrganization.create!(organization: mail_team, name: "sdept", values: %w[MAIL])
 
     Bva.create(name: "Board of Veterans' Appeals")
   end

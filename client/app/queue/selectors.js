@@ -135,6 +135,10 @@ export const completeTasksByAssigneeCssIdSelector = createSelector(
   (tasks: Tasks) => completeTasksSelector(tasks)
 );
 
+export const actionableTasksForAppeal = createSelector(
+  [getTasksForAppeal], (tasks: Tasks) => _.filter(tasks, (task) => task.availableActions.length)
+);
+
 export const organizationTasksByAssigneeIdSelector = createSelector(
   [getTasksForAppeal, getOrganizationId],
   (tasks: Tasks, id: Number) =>

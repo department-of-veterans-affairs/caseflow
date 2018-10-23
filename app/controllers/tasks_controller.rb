@@ -1,7 +1,7 @@
 class TasksController < ApplicationController
   include Errors
 
-  before_action :verify_task_access, only: [:create, :assignable_organizations, :assignable_users]
+  before_action :verify_task_access, only: [:create]
   skip_before_action :deny_vso_access, only: [:index, :update, :for_appeal]
 
   TASK_CLASSES = {
@@ -9,7 +9,8 @@ class TasksController < ApplicationController
     AttorneyTask: AttorneyTask,
     GenericTask: GenericTask,
     QualityReviewTask: QualityReviewTask,
-    JudgeTask: JudgeTask
+    JudgeTask: JudgeTask,
+    MailTask: MailTask
   }.freeze
 
   QUEUES = {
@@ -56,7 +57,7 @@ class TasksController < ApplicationController
   def create
     return invalid_type_error unless task_class
 
-    tasks = task_class.create_from_params(create_params, current_user)
+    tasks = task_class.create_many_from_params(create_params, current_user)
 
     tasks.each { |task| return invalid_record_error(task) unless task.valid? }
     render json: { tasks: json_tasks(tasks) }, status: :created
@@ -99,15 +100,13 @@ class TasksController < ApplicationController
 
   private
 
-  def can_act_on_task?
-    return true if can_assign_task?
-    true if task.can_be_accessed_by_user?(current_user)
-  rescue ActiveRecord::RecordNotFound
-    return false
+  def can_assign_task?
+    return true if create_params.first[:appeal].is_a?(Appeal)
+    super
   end
 
   def verify_task_access
-    redirect_to("/unauthorized") unless can_act_on_task?
+    redirect_to("/unauthorized") unless can_assign_task?
   end
 
   def queue_class

@@ -1,4 +1,5 @@
 import INTAKE_FORM_NAMES from '../../constants/INTAKE_FORM_NAMES.json';
+import INTAKE_FORM_NAMES_SHORT from '../../constants/INTAKE_FORM_NAMES_SHORT.json';
 
 export const FORM_TYPES = {
   RAMP_ELECTION: {
@@ -14,16 +15,19 @@ export const FORM_TYPES = {
   HIGHER_LEVEL_REVIEW: {
     key: 'higher_level_review',
     name: INTAKE_FORM_NAMES.higher_level_review,
+    shortName: INTAKE_FORM_NAMES_SHORT.higher_level_review,
     category: 'ama'
   },
   SUPPLEMENTAL_CLAIM: {
     key: 'supplemental_claim',
     name: INTAKE_FORM_NAMES.supplemental_claim,
+    shortName: INTAKE_FORM_NAMES_SHORT.supplemental_claim,
     category: 'ama'
   },
   APPEAL: {
     key: 'appeal',
     name: INTAKE_FORM_NAMES.appeal,
+    shortName: INTAKE_FORM_NAMES_SHORT.appeal,
     category: 'ama'
   }
 };

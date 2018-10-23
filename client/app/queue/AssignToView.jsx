@@ -8,6 +8,7 @@ import _ from 'lodash';
 import COPY from '../../COPY.json';
 
 import {
+  actionableTasksForAppeal,
   appealWithDetailSelector,
   tasksForAppealAssignedToUserSelector,
   incompleteOrganizationTasksByAssigneeIdSelector
@@ -31,6 +32,7 @@ import type { Appeal, Task } from './types/models';
 type Params = {|
   appealId: string,
   task: Task,
+  createsMailTask: boolean,
   isReassignAction: boolean,
   isTeamAssign: boolean
 |};
@@ -76,13 +78,22 @@ class AssignToView extends React.Component<Props, ViewState> {
     const {
       appeal,
       task,
+      createsMailTask,
       isReassignAction,
       isTeamAssign
     } = this.props;
+    let type = 'GenericTask';
+
+    if (createsMailTask) {
+      type = 'MailTask';
+    } else if (!isTeamAssign) {
+      type = task.type;
+    }
+
     const payload = {
       data: {
         tasks: [{
-          type: this.props.isTeamAssign ? 'GenericTask' : task.type,
+          type,
           external_id: appeal.externalId,
           parent_id: task.taskId,
           assigned_to_id: this.state.selectedValue,
@@ -193,7 +204,8 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   return {
     highlightFormItems,
     task: tasksForAppealAssignedToUserSelector(state, { appealId: ownProps.appealId })[0] ||
-      incompleteOrganizationTasksByAssigneeIdSelector(state, { appealId: ownProps.appealId })[0],
+      incompleteOrganizationTasksByAssigneeIdSelector(state, { appealId: ownProps.appealId })[0] ||
+      actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0],
     appeal: appealWithDetailSelector(state, ownProps)
   };
 };
