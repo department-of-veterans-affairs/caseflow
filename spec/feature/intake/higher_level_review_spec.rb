@@ -216,10 +216,16 @@ RSpec.feature "Higher-Level Review" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
     expect(page).to have_content(
-      "Established EP: 030HLRR - Higher-Level Review Rating for Station 499"
+      "A #{Constants.INTAKE_FORM_NAMES_SHORT.higher_level_review} Rating EP is being established:"
     )
+    expect(page).to have_content("Contention: PTSD denied")
+    expect(page).to have_content(
+      "A #{Constants.INTAKE_FORM_NAMES_SHORT.higher_level_review} Nonrating EP is being established:"
+    )
+    expect(page).to have_content("Contention: Description for Active Duty Adjustments")
+    expect(page).to have_content("Informal Conference Tracked Item")
 
     # ratings end product
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
@@ -509,6 +515,9 @@ RSpec.feature "Higher-Level Review" do
       expect(row).to have_text(text)
     end
 
+    let(:duplicate_reference_id) { "xyz789" }
+    let(:active_epe) { create(:end_product_establishment, :active) }
+
     let!(:timely_ratings) do
       Generators::Rating.build(
         participant_id: veteran.participant_id,
@@ -516,8 +525,18 @@ RSpec.feature "Higher-Level Review" do
         profile_date: receipt_date - 50.days,
         issues: [
           { reference_id: "xyz123", decision_text: "Left knee granted" },
-          { reference_id: "xyz456", decision_text: "PTSD denied" }
+          { reference_id: "xyz456", decision_text: "PTSD denied" },
+          { reference_id: duplicate_reference_id, decision_text: "Old injury" }
         ]
+      )
+    end
+
+    let!(:request_issue_in_progress) do
+      create(
+        :request_issue,
+        end_product_establishment: active_epe,
+        rating_issue_reference_id: duplicate_reference_id,
+        description: "Old injury"
       )
     end
 
@@ -544,6 +563,7 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to have_content("Does issue 1 match any of these issues")
       expect(page).to have_content("Left knee granted")
       expect(page).to have_content("PTSD denied")
+      expect(page).to have_content("Old injury")
 
       # test canceling adding an issue by closing the modal
       safe_click ".close-modal"
@@ -597,12 +617,16 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to have_content("3 issues")
       expect(page).to have_content("This is an unidentified issue")
 
+      # add ineligible issue
+      safe_click "#button-add-issue"
+      find_all("label", text: "Old injury").first.click
+      safe_click ".add-issue"
+      expect(page).to have_content("4 issues")
+      expect(page).to have_content("4. Old injury is ineligible because it's already under review as a Appeal")
+
       safe_click "#button-finish-intake"
 
       expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
-      expect(page).to have_content(
-        "Established EP: 030HLRR - Higher-Level Review Rating for Station 499"
-      )
 
       # make sure that database is populated
       expect(HigherLevelReview.find_by(
@@ -618,7 +642,8 @@ RSpec.feature "Higher-Level Review" do
         veteran_file_number: veteran.file_number,
         code: "030HLRR",
         claimant_participant_id: "5382910292",
-        payee_code: "02"
+        payee_code: "02",
+        station: "499"
       )
 
       expect(end_product_establishment).to_not be_nil
@@ -628,7 +653,8 @@ RSpec.feature "Higher-Level Review" do
         veteran_file_number: veteran.file_number,
         code: "030HLRNR",
         claimant_participant_id: "5382910292",
-        payee_code: "02"
+        payee_code: "02",
+        station: "499"
       )
       expect(non_rating_end_product_establishment).to_not be_nil
 
@@ -654,6 +680,26 @@ RSpec.feature "Higher-Level Review" do
                is_unidentified: true,
                end_product_establishment_id: end_product_establishment.id
       )).to_not be_nil
+
+      duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
+      expect(duplicate_request_issues.count).to eq(2)
+
+      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_issue_in_active_review?).first
+      expect(duplicate_request_issues).to include(request_issue_in_progress)
+      expect(ineligible_issue).to_not eq(request_issue_in_progress)
+      expect(ineligible_issue.contention_reference_id).to be_nil
+
+      expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(
+        hash_including(
+          contention_descriptions: array_including("Old injury")
+        )
+      )
+
+      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+        hash_including(
+          contention_descriptions: array_including("Left knee granted")
+        )
+      )
     end
 
     scenario "Non-compensation" do

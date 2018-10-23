@@ -23,6 +23,14 @@ export type Address = {
   country: string
 };
 
+export type VeteranInfo = {
+  full_name: ?string,
+  gender: ?string,
+  date_of_birth: Date,
+  regional_office: Object,
+  address: ?Address
+};
+
 export type Issue = {
   levels: Array<string>,
   program?: string,
@@ -107,8 +115,6 @@ export type AppealDetail = {
   appellantAddress: Address,
   appellantRelationship: string,
   locationCode: ?string,
-  veteranDateOfBirth: string,
-  veteranGender: string,
   externalId: string,
   status: string,
   decisionDate: string,
@@ -118,7 +124,6 @@ export type AppealDetail = {
   },
   certificationDate: ?string,
   powerOfAttorney: ?PowerOfAttorney,
-  regionalOffice: Object,
   caseflowVeteranId: ?string,
   tasks: ?Array<Task>
 };

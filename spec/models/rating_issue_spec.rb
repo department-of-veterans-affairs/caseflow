@@ -10,13 +10,16 @@ describe RatingIssue do
     FeatureToggle.disable!(:test_facols)
   end
 
+  let(:promulgation_date) { Time.zone.today - 30 }
+
   context ".from_bgs_hash" do
     subject { RatingIssue.from_bgs_hash(bgs_record) }
 
     let(:bgs_record) do
       {
         rba_issue_id: "NBA",
-        decn_txt: "This broadcast may not be reproduced"
+        decn_txt: "This broadcast may not be reproduced",
+        promulgation_date: promulgation_date
       }
     end
 
@@ -78,7 +81,7 @@ describe RatingIssue do
     let(:reference_id) { "abc123" }
     let(:review_request_type) { "SupplementalClaim" }
     let(:inactive_end_product_establishment) { create(:end_product_establishment, :cleared) }
-    let(:active_end_product_establishment) { create(:end_product_establishment, synced_status: "PEND") }
+    let(:active_end_product_establishment) { create(:end_product_establishment, :active) }
 
     let(:request_issue) do
       create(
@@ -140,7 +143,8 @@ describe RatingIssue do
       rating_issue = RatingIssue.new(
         reference_id: "ref-id",
         profile_date: Time.zone.today,
-        contention_reference_id: contention_ref_id
+        contention_reference_id: contention_ref_id,
+        promulgation_date: promulgation_date
       )
 
       expect(rating_issue.id).to be_nil
@@ -149,6 +153,26 @@ describe RatingIssue do
 
       expect(rating_issue.request_issue).to eq(request_issue)
       expect(rating_issue.id).to_not be_nil
+    end
+  end
+
+  context "#timely?" do
+    let(:receipt_date) { Time.zone.today - 30.days }
+
+    subject { RatingIssue.new(promulgation_date: promulgation_date, receipt_date: receipt_date) }
+
+    context "received in the last year" do
+      it "considers it timely" do
+        expect(subject.timely?).to eq(true)
+      end
+    end
+
+    context "received more than a year ago" do
+      let(:promulgation_date) { receipt_date - 373.days }
+
+      it "considers it untimely" do
+        expect(subject.timely?).to eq(false)
+      end
     end
   end
 end

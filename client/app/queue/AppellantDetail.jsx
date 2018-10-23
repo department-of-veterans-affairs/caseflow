@@ -5,7 +5,6 @@ import _ from 'lodash';
 
 import BareList from '../components/BareList';
 import { boldText } from './constants';
-import { DateString } from '../util/DateUtil';
 import Address from './components/Address';
 import COPY from '../../COPY.json';
 
@@ -22,24 +21,12 @@ export default class AppellantDetail extends React.PureComponent {
     COPY.CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE :
     COPY.CASE_DETAILS_GENDER_FIELD_VALUE_MALE;
 
-  getDetails = ({ nameField, genderField, dobField, addressField, relationField, regionalOfficeField }) => {
+  getDetails = ({ nameField, addressField, relationField }) => {
     const details = [{
       label: 'Name',
       value: this.getAppealAttr(nameField)
     }];
 
-    if (genderField && this.getAppealAttr(genderField)) {
-      details.push({
-        label: COPY.CASE_DETAILS_GENDER_FIELD_LABEL,
-        value: this.getGenderValue(genderField)
-      });
-    }
-    if (dobField && this.getAppealAttr(dobField)) {
-      details.push({
-        label: 'Date of birth',
-        value: <DateString date={this.getAppealAttr(dobField)} dateFormat="M/D/YYYY" />
-      });
-    }
     if (relationField && this.getAppealAttr(relationField)) {
       details.push({
         label: 'Relation to Veteran',
@@ -50,14 +37,6 @@ export default class AppellantDetail extends React.PureComponent {
       details.push({
         label: 'Mailing Address',
         value: <Address address={this.getAppealAttr(addressField)} />
-      });
-    }
-    if (regionalOfficeField && this.getAppealAttr(regionalOfficeField)) {
-      const { city, key } = this.getAppealAttr(regionalOfficeField);
-
-      details.push({
-        label: 'Regional Office',
-        value: `${city} (${key.replace('RO', '')})`
       });
     }
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181016155752) do
+ActiveRecord::Schema.define(version: 20181018191048) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -504,6 +504,13 @@ ActiveRecord::Schema.define(version: 20181016155752) do
     t.string "participant_id"
   end
 
+  create_table "organizations_users", force: :cascade do |t|
+    t.integer "organization_id"
+    t.integer "user_id"
+    t.index ["organization_id"], name: "index_organizations_users_on_organization_id"
+    t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
+  end
+
   create_table "people", force: :cascade do |t|
     t.string "participant_id", null: false
     t.date "date_of_birth"
@@ -575,6 +582,7 @@ ActiveRecord::Schema.define(version: 20181016155752) do
     t.string "reference_id", null: false
     t.datetime "profile_date", null: false
     t.string "decision_text"
+    t.datetime "promulgation_date", null: false
     t.index ["request_issue_id"], name: "index_rating_issues_on_request_issue_id"
   end
 
