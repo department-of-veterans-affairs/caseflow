@@ -280,6 +280,9 @@ RSpec.feature "Edit issues" do
       expect(rating_epe.sync).to eq("CAN")
     end
 
+    scenario "readding issue to cancelled ep will un-cancel it" do
+    end
+
     it "enables save button only when dirty" do
       visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit"
 

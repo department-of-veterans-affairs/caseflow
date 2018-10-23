@@ -328,10 +328,8 @@ class Fakes::BGSService
     records[veteran_id] || records[:default] || []
   end
 
-  def cancel_end_products(veteran_id, end_product_code, end_product_modifier)
-    self.class.end_product_records[veteran_id].delete_if do |r|
-      r[:claim_type_code] == end_product_code  && r[:end_product_type_code] == end_product_modifier
-    end
+  def cancel_end_product(veteran_id, end_product_code, end_product_modifier)
+    # noop
   end
 
   def fetch_veteran_info(vbms_id)

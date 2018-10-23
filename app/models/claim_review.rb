@@ -45,11 +45,12 @@ class ClaimReview < AmaReview
 
   def cancel_unused_end_products!(removed_issues)
     # get all potential removed issue eps
-    potential_end_products_to_remove = removed_issues.map(:end_product_establishment_id).uniq
-
-    potential_end_products_to_remove.each do |end_product_establishment|
-      if end_product_establishment.request_issues.where.not(review_request: nil).length == 0
-        end_product_establishment.cancel!
+    potential_end_products_to_remove = removed_issues.map(&:end_product_establishment_id).uniq
+    removed_issue_ids = removed_issues.map(&:id)
+    potential_end_products_to_remove.each do |end_product_establishment_id|
+      if RequestIssue.where(end_product_establishment: end_product_establishment_id, removed_at: nil)
+          .where.not(id: removed_issue_ids).empty?
+        EndProductEstablishment.find_by(id: end_product_establishment_id).cancel!
       end
     end
   end

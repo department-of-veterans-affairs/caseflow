@@ -144,7 +144,7 @@ class EndProductEstablishment < ApplicationRecord
   def cancel!
     transaction do
       # delete end product in bgs & set sync status to canceled
-      BGSService.cancel_end_product(:veteran_file_number, :code, :modifier)
+      BGSService.new.cancel_end_product(:veteran_file_number, :code, :modifier)
       update!(synced_status: CANCELED_STATUS)
     end
   rescue StandardError => e
