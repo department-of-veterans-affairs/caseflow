@@ -25,9 +25,4 @@ class MailTask < GenericTask
       end
     end
   end
-
-  def can_be_accessed_by_user?(user)
-    return true if MailTeam.singleton.user_has_access?(user)
-    super
-  end
 end
