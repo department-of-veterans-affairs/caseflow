@@ -21,7 +21,7 @@ export const mapDataToInitialState = function(props = {}) {
     requestStatus: {
       requestIssuesUpdate: REQUEST_STATE.NOT_STARTED
     },
-    responseErrorCode: null
+    requestIssuesUpdateErrorCode: null
   };
 };
 
@@ -42,7 +42,7 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
           $set: REQUEST_STATE.SUCCEEDED
         }
       },
-      responseErrorCode: { $set: null }
+      requestIssuesUpdateErrorCode: { $set: null }
     });
   case ACTIONS.REQUEST_ISSUES_UPDATE_FAIL:
     return update(state, {
@@ -51,7 +51,7 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
           $set: REQUEST_STATE.FAILED
         }
       },
-      responseErrorCode: { $set: action.payload.responseErrorCode }
+      requestIssuesUpdateErrorCode: { $set: action.payload.responseErrorCode }
     });
   default:
     return applyCommonReducers(state, action);
