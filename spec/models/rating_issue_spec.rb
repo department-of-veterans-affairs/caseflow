@@ -155,24 +155,4 @@ describe RatingIssue do
       expect(rating_issue.id).to_not be_nil
     end
   end
-
-  context "#timely?" do
-    let(:receipt_date) { Time.zone.today - 30.days }
-
-    subject { RatingIssue.new(promulgation_date: promulgation_date, receipt_date: receipt_date) }
-
-    context "received in the last year" do
-      it "considers it timely" do
-        expect(subject.timely?).to eq(true)
-      end
-    end
-
-    context "received more than a year ago" do
-      let(:promulgation_date) { receipt_date - 373.days }
-
-      it "considers it untimely" do
-        expect(subject.timely?).to eq(false)
-      end
-    end
-  end
 end

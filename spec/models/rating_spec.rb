@@ -12,8 +12,7 @@ describe Rating do
   let(:rating) do
     Generators::Rating.build(
       issues: issues,
-      promulgation_date: promulgation_date,
-      receipt_date: receipt_date
+      promulgation_date: promulgation_date
     )
   end
 
@@ -22,8 +21,7 @@ describe Rating do
       reference_id: "Issue#{num}",
       decision_text: "Decision#{num}",
       in_active_review: nil,
-      promulgation_date: promulgation_date,
-      timely: true
+      promulgation_date: promulgation_date
     }
   end
 

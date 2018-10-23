@@ -13,7 +13,7 @@ class SupplementalClaimIntake < ClaimReviewIntake
       claimant_not_veteran: detail.claimant_not_veteran,
       payee_code: detail.payee_code,
       end_product_description: detail.end_product_description,
-      ratings: detail.cached_serialized_ratings,
+      ratings: detail.serialized_ratings,
       requestIssues: detail.request_issues.map(&:ui_hash)
     )
   end
