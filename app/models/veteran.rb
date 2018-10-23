@@ -121,11 +121,13 @@ class Veteran < ApplicationRecord
   alias gender sex
 
   def timely_ratings(from_date:)
-    @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id, from_date: from_date)
+    @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id, from_date: from_date).each do |rating|
+      rating.receipt_date = from_date
+    end
   end
 
-  def ratings
-    @ratings ||= Rating.fetch_all(participant_id)
+  def ratings(receipt_date:)
+    @ratings ||= Rating.fetch_all(participant_id).each { |rating| rating.receipt_date = receipt_date }
   end
 
   def accessible_appeals_for_poa(poa_participant_ids)

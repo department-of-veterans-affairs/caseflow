@@ -104,7 +104,8 @@ export const formatRequestIssues = (requestIssues) => {
       isRated: true,
       id: issue.reference_id,
       profileDate: issueDate.toISOString(),
-      notes: issue.notes
+      notes: issue.notes,
+      description: issue.description
     };
   });
 };
