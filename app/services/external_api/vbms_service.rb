@@ -93,7 +93,7 @@ class ExternalApi::VBMSService
     File.delete(location)
   end
 
-  def self.establish_claim!(veteran_hash:, claim_hash:, user: nil)
+  def self.establish_claim!(veteran_hash:, claim_hash:, user:)
     @vbms_client ||= init_vbms_client
 
     request = VBMS::Requests::EstablishClaim.new(
@@ -103,14 +103,7 @@ class ExternalApi::VBMSService
       send_userid: FeatureToggle.enabled?(:vbms_include_user)
     )
 
-    # get the correct client for the request
-    client = @vbms_client
-    if !user.nil?
-      # user is passed in for hlr & sc becuase those are processed async
-      # current user is passed in for dispatch
-      client = vbms_client_with_user(user)
-    end
-    send_and_log_request(veteran_hash[:file_number], request, client)
+    send_and_log_request(veteran_hash[:file_number], request, vbms_client_with_user(user))
   end
 
   def self.fetch_contentions(claim_id:)

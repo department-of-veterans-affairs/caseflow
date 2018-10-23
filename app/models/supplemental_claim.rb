@@ -60,6 +60,10 @@ class SupplementalClaim < ClaimReview
 
   private
 
+  def end_product_created_by
+    is_dta_error ? User.system_user : intake_processed_by
+  end
+
   def new_end_product_establishment(ep_code)
     end_product_establishments.build(
       veteran_file_number: veteran_file_number,
@@ -68,7 +72,8 @@ class SupplementalClaim < ClaimReview
       code: ep_code,
       claimant_participant_id: claimant_participant_id,
       station: end_product_station,
-      benefit_type_code: veteran.benefit_type_code
+      benefit_type_code: veteran.benefit_type_code,
+      user: end_product_created_by
     )
   end
 end

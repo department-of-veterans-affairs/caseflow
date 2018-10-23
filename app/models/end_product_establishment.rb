@@ -15,6 +15,7 @@ class EndProductEstablishment < ApplicationRecord
   # the same modifier, we add used modifiers to the invalid_modifiers array.
   attr_writer :invalid_modifiers
   belongs_to :source, polymorphic: true
+  belongs_to :user
 
   class InvalidEndProductError < StandardError; end
   class NoAvailableModifiers < StandardError; end
@@ -237,21 +238,23 @@ class EndProductEstablishment < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
-  def get_vbms_user
-    user = nil
-    if end_product.claim_review?
-      found_intake = Intake.find_by(detail_id: source_id, detail_type: source_type)
-      # if no intake is found such as for DTAs, use the system user
-      user = found_intake ? User.find_by(id: found_intake.user_id) : User.system_user
-    end
-    user
-  end
+  # def get_user_for_vbms
+  #   user_id ? User.find_by(id: user_id) : User.system_user
+  #   # User.find_by()
+  #   # user = nil
+  #   # if end_product.claim_review?
+  #   #   found_intake = Intake.find_by(detail_id: source_id, detail_type: source_type)
+  #   #   # if no intake is found such as for DTAs, use the system user
+  #   #   user = found_intake ? User.find_by(id: found_intake.user_id) : User.system_user
+  #   # end
+  #   # user
+  # end
 
   def establish_claim_in_vbms(end_product)
     VBMSService.establish_claim!(
       claim_hash: end_product.to_vbms_hash,
       veteran_hash: veteran.to_vbms_hash,
-      user: get_vbms_user
+      user: user
     )
   end
 
@@ -321,7 +324,7 @@ class EndProductEstablishment < ApplicationRecord
       claim_id: reference_id,
       contention_descriptions: descriptions,
       special_issues: special_issues || [],
-      user: get_vbms_user
+      user: user
     )
   end
 

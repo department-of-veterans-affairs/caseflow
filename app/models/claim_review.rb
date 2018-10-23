@@ -87,6 +87,11 @@ class ClaimReview < AmaReview
     false
   end
 
+  def intake_processed_by
+    found_intake = Intake.find_by(detail_id: id, detail_type: self.class.name)
+    found_intake ? found_intake.user : nil
+  end
+
   def end_product_establishment_for_issue(issue)
     ep_code = issue_code(issue.rated? || issue.is_unidentified?)
     end_product_establishments.find_by(code: ep_code) || new_end_product_establishment(ep_code)
