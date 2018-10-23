@@ -1,7 +1,7 @@
 class HigherLevelReview < ClaimReview
   with_options if: :saving_review do
-    validates :receipt_date, :benefit_type, :legacy_opt_in, presence: { message: "blank" }
-    validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
+    validates :receipt_date, :benefit_type, presence: { message: "blank" }
+    validates :informal_conference, :same_office, :legacy_opt_in, inclusion: { in: [true, false], message: "blank" }
   end
 
   END_PRODUCT_RATING_CODE = "030HLRR".freeze
@@ -21,25 +21,11 @@ class HigherLevelReview < ClaimReview
   end
 
   def ui_hash(ama_enabled)
-    {
+    super.merge(
       formType: "higher_level_review",
-      veteran: {
-        name: veteran && veteran.name.formatted(:readable_short),
-        fileNumber: veteran_file_number,
-        formName: veteran && veteran.name.formatted(:form)
-      },
-      relationships: ama_enabled && veteran && veteran.relationships,
-      claimId: end_product_claim_id,
-      receiptDate: receipt_date.to_formatted_s(:json_date),
-      benefitType: benefit_type,
       sameOffice: same_office,
-      informalConference: informal_conference,
-      claimant: claimant_participant_id,
-      claimantNotVeteran: claimant_not_veteran,
-      payeeCode: payee_code,
-      ratings: serialized_ratings,
-      requestIssues: request_issues.map(&:ui_hash)
-    }
+      informalConference: informal_conference
+    )
   end
 
   def rating_end_product_establishment

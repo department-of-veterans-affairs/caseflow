@@ -74,7 +74,7 @@ class Review extends React.PureComponent {
       <SelectClaimantConnected />
 
       <LegacyOptIn
-        value={legacyOptIn}
+        value={legacyOptIn === null ? null : legacyOptIn.toString()}
         onChange={this.props.setLegacyOptIn}
         errorMessage={legacyOptInError}
       />
@@ -140,8 +140,8 @@ export default connect(
     receiptDateError: state.appeal.receiptDateError,
     docketType: state.appeal.docketType,
     docketTypeError: state.appeal.docketTypeError,
-    legacyOptIn: state.higherLevelReview.legacyOptIn,
-    legacyOptInError: state.higherLevelReview.legacyOptInError,
+    legacyOptIn: state.appeal.legacyOptIn,
+    legacyOptInError: state.appeal.legacyOptInError,
     reviewIntakeError: state.appeal.requestStatus.reviewIntakeError
   }),
   (dispatch) => bindActionCreators({

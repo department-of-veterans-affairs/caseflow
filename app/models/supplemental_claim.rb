@@ -1,5 +1,8 @@
 class SupplementalClaim < ClaimReview
-  validates :receipt_date, :benefit_type, :legacy_opt_in, presence: { message: "blank" }, if: :saving_review
+  with_options if: :saving_review do
+    validates :receipt_date, :benefit_type, presence: { message: "blank" }
+    validates :legacy_opt_in, inclusion: { in: [true, false], message: "blank" }
+  end
 
   END_PRODUCT_CODES = {
     rating: "040SCR",
@@ -11,23 +14,9 @@ class SupplementalClaim < ClaimReview
   END_PRODUCT_MODIFIERS = %w[040 041 042 043 044 045 046 047 048 049].freeze
 
   def ui_hash(ama_enabled)
-    {
-      formType: "supplemental_claim",
-      veteran: {
-        name: veteran && veteran.name.formatted(:readable_short),
-        fileNumber: veteran_file_number,
-        formName: veteran && veteran.name.formatted(:form)
-      },
-      relationships: ama_enabled && veteran && veteran.relationships,
-      claimId: end_product_claim_id,
-      receiptDate: receipt_date.to_formatted_s(:json_date),
-      benefitType: benefit_type,
-      claimant: claimant_participant_id,
-      claimantNotVeteran: claimant_not_veteran,
-      payeeCode: payee_code,
-      ratings: serialized_ratings,
-      requestIssues: request_issues.map(&:ui_hash)
-    }
+    super.merge(
+      formType: "supplemental_claim"
+    )
   end
 
   def rating_end_product_establishment

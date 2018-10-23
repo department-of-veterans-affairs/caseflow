@@ -115,10 +115,6 @@ RSpec.feature "Higher-Level Review" do
       "Please select an option."
     )
 
-    expect(page).to have_content(
-      "Please select a Benefit Type option."
-    )
-
     within_fieldset("What is the Benefit Type?") do
       find("label", text: "Compensation", match: :prefer_exact).click
     end
@@ -149,6 +145,10 @@ RSpec.feature "Higher-Level Review" do
     fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
     find("#cf-payee-code").send_keys :enter
 
+    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
@@ -165,6 +165,7 @@ RSpec.feature "Higher-Level Review" do
 
     expect(find("#different-claimant-option_true", visible: false)).to be_checked
     expect(find_field("Bob Vance, Spouse", visible: false)).to be_checked
+    expect(find("#legacy-opt-in_false", visible: false)).to be_checked
 
     safe_click "#button-submit-review"
 
@@ -183,6 +184,7 @@ RSpec.feature "Higher-Level Review" do
     expect(higher_level_review.benefit_type).to eq(benefit_type)
     expect(higher_level_review.informal_conference).to eq(true)
     expect(higher_level_review.same_office).to eq(false)
+    expect(higher_level_review.legacy_opt_in).to eq(false)
     expect(higher_level_review.claimants.first).to have_attributes(
       participant_id: "5382910292",
       payee_code: "10"
@@ -402,6 +404,10 @@ RSpec.feature "Higher-Level Review" do
       find("label", text: "No", match: :prefer_exact).click
     end
 
+    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
@@ -425,28 +431,8 @@ RSpec.feature "Higher-Level Review" do
   end
 
   it "Shows a review error when something goes wrong" do
-    intake = HigherLevelReviewIntake.new(veteran_file_number: "12341234", user: current_user)
-    intake.start!
-
+    start_higher_level_review(veteran_no_ratings)
     visit "/intake"
-
-    within_fieldset("What is the Benefit Type?") do
-      find("label", text: "Compensation", match: :prefer_exact).click
-    end
-
-    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
-
-    within_fieldset("Did the Veteran request an informal conference?") do
-      find("label", text: "Yes", match: :prefer_exact).click
-    end
-
-    within_fieldset("Did the Veteran request review by the same office?") do
-      find("label", text: "No", match: :prefer_exact).click
-    end
-
-    within_fieldset("Is the claimant someone other than the Veteran?") do
-      find("label", text: "No", match: :prefer_exact).click
-    end
 
     ## Validate error message when complete intake fails
     expect_any_instance_of(HigherLevelReviewIntake).to receive(:review!).and_raise("A random error. Oh no!")
@@ -461,9 +447,9 @@ RSpec.feature "Higher-Level Review" do
     higher_level_review = HigherLevelReview.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
-      informal_conference: false,
-      same_office: false,
-      benefit_type: is_comp ? "compensation" : "education"
+      informal_conference: false, same_office: false,
+      benefit_type: is_comp ? "compensation" : "education",
+      legacy_opt_in: false
     )
 
     intake = HigherLevelReviewIntake.create!(

@@ -19,7 +19,7 @@ export default class LegacyOptIn extends React.PureComponent {
         options={BOOLEAN_RADIO_OPTIONS}
         onChange={onChange}
         errorMessage={errorMessage}
-        value={value === null ? null : value.toString()}
+        value={value}
       />
     </div>;
   }
