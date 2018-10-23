@@ -195,11 +195,8 @@ describe QueueRepository do
       create(:staff, :attorney_role, stitle: "DF", slogid: "BVASAMD", sdomainid: attorney.css_id, sattyid: "1234")
     end
 
-    context "when current user an attorney" do
-      before do
-        RequestStore[:current_user] = attorney
-      end
-      subject { QueueRepository.filter_duplicate_tasks(tasks) }
+    context "when user an attorney" do
+      subject { QueueRepository.filter_duplicate_tasks(tasks, attorney.css_id) }
 
       let(:tasks) do
         [
@@ -223,10 +220,32 @@ describe QueueRepository do
       end
     end
 
-    context "when current user a judge" do
-      before do
-        RequestStore[:current_user] = judge
+    context "when user a judge" do
+      subject { QueueRepository.filter_duplicate_tasks(tasks, judge.css_id) }
+
+      let(:tasks) do
+        [
+          OpenStruct.new(vacols_id: "123B", updated_at: 3.days.ago),
+          OpenStruct.new(vacols_id: "123B", updated_at: 1.day.ago),
+          OpenStruct.new(vacols_id: "123C", updated_at: 2.days.ago),
+          OpenStruct.new(vacols_id: "123C", updated_at: 11.days.ago),
+          OpenStruct.new(vacols_id: "123C", updated_at: 9.days.ago, attorney_id: "1234"),
+          OpenStruct.new(vacols_id: "123A", updated_at: 9.days.ago),
+          OpenStruct.new(vacols_id: "123F", updated_at: 2.days.ago),
+          OpenStruct.new(vacols_id: "123F", updated_at: 11.days.ago, attorney_id: "5678")
+        ]
       end
+
+      it "should filter duplicate tasks and keep the latest" do
+        expect(subject.size).to eq 4
+        expect(subject).to include tasks[1]
+        expect(subject).to include tasks[2]
+        expect(subject).to include tasks[5]
+        expect(subject).to include tasks[6]
+      end
+    end
+
+    context "when no user is passed" do
       subject { QueueRepository.filter_duplicate_tasks(tasks) }
 
       let(:tasks) do

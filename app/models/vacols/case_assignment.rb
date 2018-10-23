@@ -57,6 +57,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "decass.decomp as date_completed",
              "decass.dedeadline as date_due",
              "decass.deadtim as created_at",
+             "decass.demdtim as updated_at",
              "brieff.bfddec as signed_date",
              "brieff.bfcorlid as vbms_id",
              "brieff.bfd19 as docket_date",
