@@ -87,8 +87,8 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     issueCount: 0,
     nonRatedIssues: { },
     reviewIntakeError: null,
-    errorCode: null,
-    errorCode: null,
+    completeIntakeErrorCode: null,
+    completeIntakeErrorData: null,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
@@ -236,10 +236,10 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         completeIntake: {
           $set: REQUEST_STATE.FAILED
         },
-        errorCode: {
+        completeIntakeErrorCode: {
           $set: action.payload.responseErrorCode
         },
-        errorCode: {
+        completeIntakeErrorData: {
           $set: action.payload.responseErrorData
         }
       }

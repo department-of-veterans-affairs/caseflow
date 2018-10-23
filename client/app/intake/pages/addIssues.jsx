@@ -58,10 +58,9 @@ export class AddIssuesPage extends React.Component {
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const veteranInfo = `${veteran.name} (${veteran.fileNumber})`;
     const intakeData = intakeForms[selectedForm.key];
-    const {
-      submitIssues,
-      errorCode
-    } = intakeData.requestStatus;
+    const { requestStatus } = intakeData;
+    const requestState = requestStatus.completeIntake || requestStatus.submitIssues;
+    const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.submitIssuesErrorCode;
 
     const issuesComponent = () => {
       let issues = formatAddedIssues(intakeData);
@@ -151,8 +150,8 @@ export class AddIssuesPage extends React.Component {
       }
       <h1 className="cf-txt-c">Add / Remove Issues</h1>
 
-      { requestStatus === REQUEST_STATE.FAILED &&
-        <ErrorAlert errorCode={errorCode} />
+      { requestState === REQUEST_STATE.FAILED &&
+        <ErrorAlert errorCode={requestErrorCode} />
       }
 
       <Table

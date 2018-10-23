@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import Alert from '../../components/Alert';
 
 export default class ErrorAlert extends React.PureComponent {

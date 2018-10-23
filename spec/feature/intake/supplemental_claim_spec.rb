@@ -576,7 +576,7 @@ RSpec.feature "Supplemental Claim Intake" do
     end
 
     it "Shows a review error when something goes wrong" do
-      intake = start_supplemental_claim(veteran)
+      start_supplemental_claim(veteran)
       visit "/intake/add_issues"
 
       safe_click "#button-add-issue"

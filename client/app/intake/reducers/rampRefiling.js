@@ -60,8 +60,8 @@ export const mapDataToInitialRampRefiling = (data = { serverIntake: {} }) => (
     endProductDescription: null,
     submitInvalidOptionError: false,
     reviewIntakeError: null,
-    errorCode: null,
-    errorCode: null,
+    completeIntakeErrorCode: null,
+    completeIntakeErrorData: null,
 
     // This allows us to tap into error events on the finish page and
     // scroll to the right element
@@ -245,10 +245,10 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
         completeIntake: {
           $set: REQUEST_STATE.FAILED
         },
-        errorCode: {
+        completeIntakeErrorCode: {
           $set: action.payload.responseErrorCode
         },
-        errorCode: {
+        completeIntakeErrorData: {
           $set: action.payload.responseErrorData
         }
       }

@@ -19,9 +19,9 @@ export const mapDataToInitialState = function(props = {}) {
     addedIssues: formatRequestIssues(serverIntake.requestIssues),
     originalIssues: formatRequestIssues(serverIntake.requestIssues),
     requestStatus: {
-      submitIssues: REQUEST_STATE.NOT_STARTED,
-      responseErrorCode: null
-    }
+      submitIssues: REQUEST_STATE.NOT_STARTED
+    },
+    submitIssuesErrorCode: null
   };
 };
 
@@ -40,18 +40,18 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
       requestStatus: {
         submitIssues: {
           $set: REQUEST_STATE.SUCCEEDED
-        },
-        responseErrorCode: { $set: null }
-      }
+        }
+      },
+      submitIssuesErrorCode: { $set: null }
     });
   case ACTIONS.REQUEST_ISSUES_UPDATE_FAIL:
     return update(state, {
       requestStatus: {
         submitIssues: {
           $set: REQUEST_STATE.FAILED
-        },
-        responseErrorCode: { $set: action.payload.responseErrorCode }
-      }
+        }
+      },
+      submitIssuesErrorCode: { $set: action.payload.responseErrorCode }
     });
   default:
     return applyCommonReducers(state, action);

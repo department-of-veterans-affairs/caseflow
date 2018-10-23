@@ -109,7 +109,7 @@ class SaveButtonUnconnected extends React.Component {
       <Button
         name="submit-update"
         onClick={this.validate}
-        loading={requestStatus.requestIssuesUpdate === REQUEST_STATE.IN_PROGRESS}
+        loading={requestStatus.submitIssues === REQUEST_STATE.IN_PROGRESS}
         disabled={saveDisabled}
       >
         Save

@@ -698,7 +698,7 @@ RSpec.feature "Higher-Level Review" do
     end
 
     it "Shows a review error when something goes wrong" do
-      intake = start_higher_level_review(veteran)
+      start_higher_level_review(veteran)
       visit "/intake/add_issues"
 
       safe_click "#button-add-issue"
