@@ -312,7 +312,8 @@ RSpec.feature "Edit issues" do
         click_on "Cancel edit"
         correct_path = "/higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit/cancel"
         expect(page).to have_current_path(correct_path)
-        expect(page).to have_content("Claim Edit Canceled")
+        expect(page).to have_content("Edit Canceled")
+        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
       end
 
       scenario "from landing page" do
@@ -535,7 +536,8 @@ RSpec.feature "Edit issues" do
         click_on "Cancel edit"
         correct_path = "/supplemental_claims/#{supplemental_claim.end_product_claim_id}/edit/cancel"
         expect(page).to have_current_path(correct_path)
-        expect(page).to have_content("Claim Edit Canceled")
+        expect(page).to have_content("Edit Canceled")
+        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
       end
 
       scenario "from landing page" do
