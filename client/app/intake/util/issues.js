@@ -104,7 +104,8 @@ export const formatRequestIssues = (requestIssues) => {
       isRated: true,
       id: issue.reference_id,
       profileDate: issueDate.toISOString(),
-      notes: issue.notes
+      notes: issue.notes,
+      description: issue.description
     };
   });
 };
@@ -255,7 +256,9 @@ export const formatAddedIssues = (intakeData) => {
         text: ratingIssues[issue.id],
         date: formatDateStr(issue.profileDate),
         notes: issue.notes,
-        inActiveReview: issue.inActiveReview
+        inActiveReview: issue.inActiveReview,
+        promulgationDate: issue.promulgationDate,
+        timely: issue.timely
       };
     }
 

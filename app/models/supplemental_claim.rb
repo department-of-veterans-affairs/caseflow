@@ -24,7 +24,7 @@ class SupplementalClaim < ClaimReview
       claimant: claimant_participant_id,
       claimantNotVeteran: claimant_not_veteran,
       payeeCode: payee_code,
-      ratings: cached_serialized_ratings,
+      ratings: serialized_ratings,
       requestIssues: request_issues.map(&:ui_hash)
     }
   end
