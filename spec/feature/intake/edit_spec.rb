@@ -64,6 +64,16 @@ RSpec.feature "Edit issues" do
       )
     end
 
+    let(:non_rating_request_issue) do
+      RequestIssue.create!(
+        rating_issue_reference_id: "ghi789",
+        issue_category: "Apportionment",
+        description: "Non rated issue",
+        review_request: higher_level_review,
+        contention_reference_id: "456"
+      )
+    end
+
     before do
       higher_level_review.create_issues!([request_issue])
       higher_level_review.process_end_product_establishments!
@@ -212,9 +222,9 @@ RSpec.feature "Edit issues" do
       # no non-rating eps should currently exist
       non_rating_epe = EndProductEstablishment.find_by(
         source: higher_level_review,
-        code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
+        code: HigherLevelReview::END_PRODUCT_NONRATING_CODE,
+        synced_status: nil
       )
-
       expect(non_rating_epe).to eq(nil)
 
       visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit"
@@ -236,51 +246,57 @@ RSpec.feature "Edit issues" do
       # we should find two eps
       non_rating_epe = EndProductEstablishment.find_by(
         source: higher_level_review,
-        code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
+        code: HigherLevelReview::END_PRODUCT_NONRATING_CODE,
+        synced_status: nil
       )
       expect(non_rating_epe).to_not be_nil
 
       rating_epe = EndProductEstablishment.find_by(
         source: higher_level_review,
-        code: HigherLevelReview::END_PRODUCT_RATING_CODE
+        code: HigherLevelReview::END_PRODUCT_RATING_CODE,
+        synced_status: nil
       )
-
       expect(rating_epe).to_not be_nil
     end
 
     scenario "cancels old eps if all ratings are removed", :focus => true do
+      higher_level_review.create_issues!([non_rating_request_issue])
+      higher_level_review.process_end_product_establishments!
+
       rating_epe = EndProductEstablishment.find_by(
         source: higher_level_review,
-        code: HigherLevelReview::END_PRODUCT_RATING_CODE
+        code: HigherLevelReview::END_PRODUCT_RATING_CODE,
+        synced_status: nil
       )
-
       expect(rating_epe).to_not be_nil
+
+      # non-rated end product should also exist
+      non_rating_epe = EndProductEstablishment.find_by(
+        source: higher_level_review,
+        code: HigherLevelReview::END_PRODUCT_NONRATING_CODE,
+        synced_status: nil
+      )
+      expect(non_rating_epe).to_not be_nil
+
       visit "higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit"
 
-      # remove rated rating & add in non-rated
+      # remove rated issue
       safe_click ".remove-issue"
       safe_click ".remove-issue"
-
-      # add non-rated issue
-      safe_click "#button-add-issue"
-      safe_click ".no-matching-issues"
-      fill_in "Issue category", with: "Active Duty Adjustments"
-      find("#issue-category").send_keys :enter
-      fill_in "Issue description", with: "Description for Active Duty Adjustments"
-      fill_in "Decision date", with: "04/25/2018"
-      safe_click ".add-issue"
-      expect(page).to have_content("2 issues")
 
       # save
       safe_click("#button-submit-update")
 
       # rated ep should be canceled
-      rating_epe = EndProductEstablishment.find_by(id: rating_epe.id)
+      rating_epe = EndProductEstablishment.find_by(id: rating_epe.id, sync: "CAN")
       expect(rating_epe).to_not be_nil
-      expect(rating_epe.sync).to eq("CAN")
+
+      # non-rating ep should still be there
+      non_rating_epe = EndProductEstablishment.find_by(id: non_rating_epe.id, sync: nil)
+      expect(non_rating_epe).to_not be_nil
     end
 
-    scenario "readding issue to cancelled ep will un-cancel it" do
+    scenario "readding issue to canceled ep will un-cancel it" do
     end
 
     it "enables save button only when dirty" do
