@@ -348,7 +348,7 @@ RSpec.describe TasksController, type: :controller do
           end
         end
 
-        context "when creating a Hearings Management task", focus: true do
+        context "when creating a Hearings Management task" do
           let!(:hearings_user) do
             create(:hearings_coordinator)
           end
@@ -376,7 +376,6 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq hearings_user.id
-            #expect(response_body.first["attributes"]["action"]).to eq "Assign Hearing"
           end
         end
       end

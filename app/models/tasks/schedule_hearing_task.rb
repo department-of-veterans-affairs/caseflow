@@ -1,17 +1,15 @@
 class ScheduleHearingTask < GenericTask
   class << self
-    def create_from_params(params_array, current_user)
-      params_array.each do |params|
-        root_task = RootTask.find_by(appeal_id: params[:appeal].id)
-        if !root_task
-          root_task = RootTask.create!(appeal_id: params[:appeal].id,
-                                       appeal_type: "LegacyAppeal",
-                                       assigned_to_id: current_user.id)
-        end
-        params[:parent_id] = root_task.id
+    def create_from_params(params, current_user)
+      root_task = RootTask.find_by(appeal_id: params[:appeal].id)
+      if !root_task
+        root_task = RootTask.create!(appeal_id: params[:appeal].id,
+                                     appeal_type: "LegacyAppeal",
+                                     assigned_to_id: current_user.id)
       end
+      params[:parent_id] = root_task.id
 
-      super(params_array, current_user)
+      super(params, current_user)
     end
 
     def create_child_task(parent, current_user, params)
@@ -22,6 +20,7 @@ class ScheduleHearingTask < GenericTask
 
       create!(
         appeal: parent.appeal,
+        appeal_type: "LegacyAppeal",
         assigned_by_id: child_assigned_by_id(parent, current_user),
         parent_id: parent.id,
         assigned_to: assignee,
@@ -35,10 +34,6 @@ class ScheduleHearingTask < GenericTask
       {
         label: "Assign hearing",
         value: "modal/mark_task_complete"
-      },
-      {
-        label: "On hold",
-        value: "modal/on_hold"
       }
     ]
   end
