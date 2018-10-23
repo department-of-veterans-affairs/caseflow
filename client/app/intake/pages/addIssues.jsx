@@ -75,7 +75,7 @@ export class AddIssuesPage extends React.Component {
             } else if (issue.inActiveReview) {
               issueKlasses.push('in-active-review');
               addendum = INELIGIBLE_REQUEST_ISSUES.in_active_review.replace('{review_title}', issue.inActiveReview);
-            } else if (!issue.timely) {
+            } else if (!issue.timely && formType !== 'supplemental_claim') {
               issueKlasses.push('untimely');
               addendum = INELIGIBLE_REQUEST_ISSUES.untimely;
             }
