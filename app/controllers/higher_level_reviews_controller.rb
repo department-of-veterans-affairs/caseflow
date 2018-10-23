@@ -22,16 +22,15 @@ class HigherLevelReviewsController < ApplicationController
     )
   end
 
-  def end_product_establishment
-    @end_product_establishment ||=
-      EndProductEstablishment.find_by!(reference_id: params[:claim_id], source_type: SOURCE_TYPE)
-  end
-
   def higher_level_review
     @higher_level_review ||= end_product_establishment.source
   end
 
-  helper_method :higher_level_review, :end_product_establishment
+  def url_claim_id
+    params[:claim_id]
+  end
+
+  helper_method :higher_level_review, :url_claim_id
 
   def set_application
     RequestStore.store[:application] = "intake"
