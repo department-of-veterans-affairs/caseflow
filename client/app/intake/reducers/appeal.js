@@ -68,8 +68,8 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     issueCount: 0,
     nonRatedIssues: { },
     reviewIntakeError: null,
-    completeIntakeErrorCode: null,
-    completeIntakeErrorData: null,
+    errorCode: null,
+    errorCode: null,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
@@ -193,10 +193,10 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         completeIntake: {
           $set: REQUEST_STATE.FAILED
         },
-        completeIntakeErrorCode: {
+        errorCode: {
           $set: action.payload.responseErrorCode
         },
-        completeIntakeErrorData: {
+        errorCode: {
           $set: action.payload.responseErrorData
         }
       }

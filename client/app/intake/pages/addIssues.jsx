@@ -9,8 +9,7 @@ import NonRatedIssueModal from '../components/NonRatedIssueModal';
 import RemoveIssueModal from '../components/RemoveIssueModal';
 import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
 import Button from '../../components/Button';
-import CompleteIntakeErrorAlert from '../components/CompleteIntakeErrorAlert';
-import RequestIssuesUpdateErrorAlert from '../../intakeEdit/components/RequestIssuesUpdateErrorAlert';
+import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, FORM_TYPES, PAGE_PATHS } from '../constants';
 import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES.json';
 import { formatDate } from '../../util/DateUtil';
@@ -47,12 +46,9 @@ export class AddIssuesPage extends React.Component {
 
   render() {
     const {
-      intakeOrEdit,
       intakeForms,
       formType,
-      veteran,
-      responseErrorCode,
-      requestState
+      veteran
     } = this.props;
 
     if (!formType) {
@@ -60,8 +56,12 @@ export class AddIssuesPage extends React.Component {
     }
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
-    const intakeData = intakeForms[selectedForm.key];
     const veteranInfo = `${veteran.name} (${veteran.fileNumber})`;
+    const intakeData = intakeForms[selectedForm.key];
+    const {
+      submitIssues,
+      errorCode
+    } = intakeData.requestStatus;
 
     const issuesComponent = () => {
       let issues = formatAddedIssues(intakeData);
@@ -111,27 +111,6 @@ export class AddIssuesPage extends React.Component {
       </div>;
     };
 
-    const failedRequestAlert = () => {
-      if (intakeOrEdit === "intake") {
-        const {
-          completeIntake,
-          completeIntakeErrorCode,
-          completeIntakeErrorData
-        } = intakeData.requestStatus;
-
-        return completeIntake === REQUEST_STATE.FAILED &&
-          <CompleteIntakeErrorAlert
-            completeIntakeErrorCode={completeIntakeErrorCode}
-            completeIntakeErrorData={completeIntakeErrorData} />;
-      } else if (intakeOrEdit === "edit") {
-        const requestIssuesUpdate = intakeData.requestStatus.requestIssuesUpdate;
-        const responseErrorCode = intakeData.responseErrorCode;
-
-        return requestIssuesUpdate === REQUEST_STATE.FAILED &&
-          <RequestIssuesUpdateErrorAlert responseErrorCode={responseErrorCode} />
-      }
-    };
-
     const columns = [
       { valueName: 'field' },
       { valueName: 'content' }
@@ -172,7 +151,9 @@ export class AddIssuesPage extends React.Component {
       }
       <h1 className="cf-txt-c">Add / Remove Issues</h1>
 
-      { failedRequestAlert() }
+      { requestStatus === REQUEST_STATE.FAILED &&
+        <ErrorAlert errorCode={errorCode} />
+      }
 
       <Table
         columns={columns}
@@ -184,7 +165,6 @@ export class AddIssuesPage extends React.Component {
 
 export const IntakeAddIssuesPage = connect(
   ({ intake, higherLevelReview, supplementalClaim, appeal }) => ({
-    intakeOrEdit: "intake",
     intakeForms: {
       higher_level_review: higherLevelReview,
       supplemental_claim: supplementalClaim,
@@ -203,7 +183,6 @@ export const IntakeAddIssuesPage = connect(
 
 export const EditAddIssuesPage = connect(
   (state) => ({
-    intakeOrEdit: "edit",
     intakeForms: {
       higher_level_review: state,
       supplemental_claim: state

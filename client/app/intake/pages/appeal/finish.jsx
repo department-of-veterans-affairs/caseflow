@@ -17,7 +17,7 @@ import {
 } from '../../actions/ama';
 import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, REQUEST_STATE } from '../../constants';
 import { getIntakeStatus, issueCountSelector } from '../../selectors';
-import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
+import ErrorAlert from '../../components/ErrorAlert';
 
 class Finish extends React.PureComponent {
   render() {
@@ -25,8 +25,8 @@ class Finish extends React.PureComponent {
       appeal,
       veteranName,
       requestState,
-      completeIntakeErrorCode,
-      completeIntakeErrorData
+      errorCode,
+      errorData
     } = this.props;
 
     switch (appeal) {
@@ -43,9 +43,9 @@ class Finish extends React.PureComponent {
       <h1>Identify issues on { veteranName }'s { FORM_TYPES.APPEAL.name }</h1>
 
       { requestState === REQUEST_STATE.FAILED &&
-        <CompleteIntakeErrorAlert
-          completeIntakeErrorCode={completeIntakeErrorCode}
-          completeIntakeErrorData={completeIntakeErrorData} />
+        <ErrorAlert
+          errorCode={errorCode}
+          errorData={errorData} />
       }
 
       <p>
@@ -137,7 +137,7 @@ export default connect(
     veteranName: state.intake.veteran.name,
     appealStatus: getIntakeStatus(state),
     requestState: state.appeal.requestStatus.completeIntake,
-    completeIntakeErrorCode: state.appeal.requestStatus.completeIntakeErrorCode,
-    completeIntakeErrorData: state.appeal.requestStatus.completeIntakeErrorData
+    errorCode: state.appeal.requestStatus.errorCode,
+    errorData: state.appeal.requestStatus.errorData
   })
 )(Finish);

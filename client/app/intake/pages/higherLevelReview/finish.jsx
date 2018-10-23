@@ -17,7 +17,7 @@ import {
 } from '../../actions/ama';
 import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, REQUEST_STATE } from '../../constants';
 import { getIntakeStatus, issueCountSelector } from '../../selectors';
-import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
+import ErrorAlert from '../../components/ErrorAlert';
 
 class Finish extends React.PureComponent {
   render() {
@@ -25,8 +25,8 @@ class Finish extends React.PureComponent {
       higherLevelReviewStatus,
       requestState,
       veteranName,
-      completeIntakeErrorCode,
-      completeIntakeErrorData
+      errorCode,
+      errorData
     } = this.props;
 
     switch (higherLevelReviewStatus) {
@@ -43,9 +43,9 @@ class Finish extends React.PureComponent {
       <h1>Identify issues on { veteranName }'s { FORM_TYPES.HIGHER_LEVEL_REVIEW.name }</h1>
 
       { requestState === REQUEST_STATE.FAILED &&
-        <CompleteIntakeErrorAlert
-          completeIntakeErrorCode={completeIntakeErrorCode}
-          completeIntakeErrorData={completeIntakeErrorData} />
+        <ErrorAlert
+          errorCode={errorCode}
+          errorData={errorData} />
       }
 
       <p>
@@ -137,7 +137,7 @@ export default connect(
     veteranName: state.intake.veteran.name,
     higherLevelReviewStatus: getIntakeStatus(state),
     requestState: state.higherLevelReview.requestStatus.completeIntake,
-    completeIntakeErrorCode: state.higherLevelReview.requestStatus.completeIntakeErrorCode,
-    completeIntakeErrorData: state.higherLevelReview.requestStatus.completeIntakeErrorData
+    errorCode: state.higherLevelReview.requestStatus.errorCode,
+    errorData: state.higherLevelReview.requestStatus.errorData
   })
 )(Finish);
