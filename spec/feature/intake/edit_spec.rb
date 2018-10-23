@@ -54,6 +54,19 @@ RSpec.feature "Edit issues" do
       )
     end
 
+    # create associated intake
+    let!(:intake) do
+      Intake.create!(
+        user_id: current_user.id,
+        detail: higher_level_review,
+        veteran_file_number: veteran.file_number,
+        started_at: Time.zone.now,
+        completed_at: Time.zone.now,
+        completion_status: "success",
+        type: "HigherLevelReviewIntake"
+      )
+    end
+
     let!(:request_issue) do
       RequestIssue.create!(
         rating_issue_reference_id: "def456",
@@ -195,7 +208,8 @@ RSpec.feature "Edit issues" do
           "PTSD denied",
           "Left knee granted"
         ],
-        special_issues: []
+        special_issues: [],
+        user: current_user
       )
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
@@ -204,7 +218,8 @@ RSpec.feature "Edit issues" do
         contention_descriptions: [
           "Active Duty Adjustments - Description for Active Duty Adjustments"
         ],
-        special_issues: []
+        special_issues: [],
+        user: current_user
       )
     end
 
@@ -295,7 +310,8 @@ RSpec.feature "Edit issues" do
         veteran_file_number: veteran.file_number,
         claim_id: higher_level_review.end_product_claim_id,
         contention_descriptions: ["Left knee granted"],
-        special_issues: []
+        special_issues: [],
+        user: current_user
       )
       expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
         claim_id: higher_level_review.end_product_claim_id,
@@ -518,7 +534,8 @@ RSpec.feature "Edit issues" do
         veteran_file_number: veteran.file_number,
         claim_id: supplemental_claim.end_product_claim_id,
         contention_descriptions: ["Left knee granted"],
-        special_issues: []
+        special_issues: [],
+        user: current_user
       )
       expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
         claim_id: supplemental_claim.end_product_claim_id,

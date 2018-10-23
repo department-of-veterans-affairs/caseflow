@@ -233,7 +233,8 @@ describe ClaimReview do
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.last.reference_id,
           contention_descriptions: ["another decision text", "decision text"],
-          special_issues: []
+          special_issues: [],
+          user: user
         )
 
         expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).once.with(
@@ -299,7 +300,8 @@ describe ClaimReview do
               veteran_file_number: veteran_file_number,
               claim_id: claim_review.end_product_establishments.last.reference_id,
               contention_descriptions: ["another decision text"],
-              special_issues: []
+              special_issues: [],
+              user: user
             )
 
             expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).once.with(
@@ -498,7 +500,8 @@ describe ClaimReview do
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRR").reference_id,
           contention_descriptions: ["decision text"],
-          special_issues: []
+          special_issues: [],
+          user: user
         )
 
         expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).once.with(
@@ -531,7 +534,8 @@ describe ClaimReview do
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRNR").reference_id,
           contention_descriptions: ["surgery - Issue text"],
-          special_issues: []
+          special_issues: [],
+          user: user
         )
 
         expect(claim_review.end_product_establishments.first).to be_committed
@@ -696,7 +700,8 @@ describe ClaimReview do
             veteran_file_number: veteran.file_number,
             claim_id: reference_id,
             contention_descriptions: issues.map(&:contention_text),
-            special_issues: []
+            special_issues: [],
+            user: User.system_user
           )
         end
 

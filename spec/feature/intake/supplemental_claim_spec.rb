@@ -274,13 +274,15 @@ RSpec.feature "Supplemental Claim Intake" do
       veteran_file_number: "12341234",
       claim_id: ratings_end_product_establishment.reference_id,
       contention_descriptions: ["PTSD denied"],
-      special_issues: []
+      special_issues: [],
+      user: current_user
     )
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: "12341234",
       claim_id: nonratings_end_product_establishment.reference_id,
       contention_descriptions: ["Active Duty Adjustments - Description for Active Duty Adjustments"],
-      special_issues: []
+      special_issues: [],
+      user: current_user
     )
 
     rated_issue = supplemental_claim.request_issues.find_by(description: "PTSD denied")

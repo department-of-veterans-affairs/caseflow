@@ -285,7 +285,8 @@ RSpec.feature "Higher-Level Review" do
         veteran_file_number: "12341234",
         claim_id: ratings_end_product_establishment.reference_id,
         contention_descriptions: ["PTSD denied"],
-        special_issues: []
+        special_issues: [],
+        user: current_user
       )
     )
 
@@ -294,7 +295,8 @@ RSpec.feature "Higher-Level Review" do
         veteran_file_number: "12341234",
         claim_id: nonratings_end_product_establishment.reference_id,
         contention_descriptions: ["Active Duty Adjustments - Description for Active Duty Adjustments"],
-        special_issues: []
+        special_issues: [],
+        user: current_user
       )
     )
 
@@ -416,7 +418,8 @@ RSpec.feature "Higher-Level Review" do
       veteran_file_number: "12341234",
       claim_id: "IAMANEPID",
       contention_descriptions: ["PTSD denied"],
-      special_issues: [{ code: "SSR", narrative: "Same Station Review" }]
+      special_issues: [{ code: "SSR", narrative: "Same Station Review" }],
+      user: current_user
     )
   end
 
