@@ -37,7 +37,7 @@ class RequestIssue < ApplicationRecord
         issue_category: data[:issue_category],
         notes: data[:notes],
         is_unidentified: data[:is_unidentified]
-      ).check_for_active_request_issue!
+      ).validate_eligibility!
     end
 
     def find_active_by_reference_id(reference_id)
@@ -86,12 +86,37 @@ class RequestIssue < ApplicationRecord
     }
   end
 
+  def validate_eligibility!
+    check_for_active_request_issue!
+    check_for_untimely!
+    self
+  end
+
+  private
+
   def check_for_active_request_issue!
-    return self unless rating_issue_reference_id
+    return unless rating_issue_reference_id
     existing_request_issue = self.class.find_active_by_reference_id(rating_issue_reference_id)
     if existing_request_issue
       self.ineligible_reason = :duplicate_of_issue_in_active_review
     end
-    self
+  end
+
+  def check_for_untimely!
+    rating_issue = original_rating_issue
+    if rating_issue && review_request && !review_request.timely_rating?(rating_issue[:promulgation_date])
+      self.ineligible_reason = :untimely
+    end
+  end
+
+  def original_rating_issue
+    return unless review_request
+    rating_issue = nil
+    review_request.serialized_ratings.each do |rating|
+      rating[:issues].each do |issue|
+        rating_issue = issue if issue[:reference_id] == rating_issue_reference_id
+      end
+    end
+    rating_issue
   end
 end
