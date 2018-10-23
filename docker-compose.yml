@@ -66,6 +66,13 @@ services:
       - appeals-redis
       - appeals-postgres
       - vacols-db-development
+  
+  appeals-web:
+    build: ./local/nginx/.
+    container_name: appeals-web
+    image: nginx
+    ports:
+      - "80:80"
 
 volumes:
   postgresdata:

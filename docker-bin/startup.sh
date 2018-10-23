@@ -14,6 +14,8 @@ export PATH=/.yarn/bin:/.config/yarn/global/node_modules/.bin:/usr/local/bundle/
 export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_2
 export ORACLE_HOME=/opt/oracle/instantclient_12_2
 
+caseflow_commands=()
+
 echo "Sleeping 150"
 date
 sleep 150
@@ -23,6 +25,12 @@ rake db:setup
 
 echo "Seeding Facols and Caseflow App"
 rake local:vacols:seed
+
+echo "Enabling Feature Flags"
+bundle exec rails runner scripts/enable_features_dev.rb
+
+echo "Seeding local caseflow database"
+rake db:seed
 
 echo "Migrating the database"
 rails db:migrate
