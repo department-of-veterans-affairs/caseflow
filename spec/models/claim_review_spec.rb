@@ -271,7 +271,7 @@ describe ClaimReview do
             )
           end
 
-          it "doesn't create them in VBMS" do
+          it "doesn't create them in VBMS, and re-sends the new contention map" do
             subject
 
             expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
@@ -284,11 +284,12 @@ describe ClaimReview do
             expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).once.with(
               claim_id: claim_review.end_product_establishments.last.reference_id,
               rated_issue_contention_map: {
+                "reference-id" => rating_request_issue.reload.contention_reference_id,
                 "reference-id2" => second_rating_request_issue.reload.contention_reference_id
               }
             )
 
-            expect(rating_request_issue.rating_issue_associated_at).to eq(one_day_ago)
+            expect(rating_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
             expect(second_rating_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
           end
         end

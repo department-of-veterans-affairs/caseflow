@@ -153,6 +153,12 @@ RSpec.feature "Edit issues" do
 
       safe_click("#button-submit-update")
 
+      expect(page).to have_content("You still have an \"Unidentified\" issue")
+      safe_click "#Unidentified-issue-button-id-1"
+
+      expect(page).to have_content("The review originally had 1 issues but now has 4.")
+      safe_click "#Number-of-issues-has-changed-button-id-1"
+
       expect(page).to have_content("Edit Confirmed")
 
       # assert server has updated data for non-rated and unidentified issues
@@ -244,6 +250,8 @@ RSpec.feature "Edit issues" do
       find("label", text: "Left knee granted").click
       safe_click ".add-issue"
       safe_click("#button-submit-update")
+      expect(page).to have_content("The review originally had 1 issues but now has 2.")
+      safe_click ".confirm"
 
       expect(page).to have_content("Previous update not yet done processing")
     end
@@ -279,8 +287,8 @@ RSpec.feature "Edit issues" do
       new_request_issue = higher_level_review.reload.request_issues.first
       expect(new_request_issue.description).to eq("Left knee granted")
       expect(request_issue.reload.review_request_id).to be_nil
-      expect(request_issue.removed_at).to be_within(1.hour).of(Time.current)
-      expect(new_request_issue.rating_issue_associated_at).to be_within(1.hour).of(Time.current)
+      expect(request_issue.removed_at).to eq(Time.zone.now)
+      expect(new_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
 
       # expect contentions to reflect issue update
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
@@ -304,7 +312,8 @@ RSpec.feature "Edit issues" do
         click_on "Cancel edit"
         correct_path = "/higher_level_reviews/#{higher_level_review.end_product_claim_id}/edit/cancel"
         expect(page).to have_current_path(correct_path)
-        expect(page).to have_content("Claim Edit Canceled")
+        expect(page).to have_content("Edit Canceled")
+        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
       end
 
       scenario "from landing page" do
@@ -466,6 +475,9 @@ RSpec.feature "Edit issues" do
       safe_click ".add-issue"
       safe_click("#button-submit-update")
 
+      expect(page).to have_content("The review originally had 1 issues but now has 2.")
+      safe_click ".confirm"
+
       expect(page).to have_content("Previous update not yet done processing")
     end
 
@@ -499,8 +511,8 @@ RSpec.feature "Edit issues" do
       new_request_issue = supplemental_claim.reload.request_issues.first
       expect(new_request_issue.description).to eq("Left knee granted")
       expect(request_issue.reload.review_request_id).to be_nil
-      expect(request_issue.removed_at).to be_within(1.hour).of(Time.current)
-      expect(new_request_issue.rating_issue_associated_at).to be_within(1.hour).of(Time.current)
+      expect(request_issue.removed_at).to eq(Time.zone.now)
+      expect(new_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
 
       # expect contentions to reflect issue update
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
@@ -524,7 +536,8 @@ RSpec.feature "Edit issues" do
         click_on "Cancel edit"
         correct_path = "/supplemental_claims/#{supplemental_claim.end_product_claim_id}/edit/cancel"
         expect(page).to have_current_path(correct_path)
-        expect(page).to have_content("Claim Edit Canceled")
+        expect(page).to have_content("Edit Canceled")
+        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
       end
 
       scenario "from landing page" do

@@ -79,8 +79,26 @@ class Appeal < AmaReview
     veteran && veteran.name.middle_initial
   end
 
-  def veteran_gender
-    veteran && veteran.sex
+  def veteran_is_deceased
+    veteran_death_date.present?
+  end
+
+  def veteran_death_date
+    veteran && veteran.date_of_death
+  end
+
+  delegate :address_line_1,
+           :address_line_2,
+           :address_line_3,
+           :city,
+           :state,
+           :zip,
+           :gender,
+           :date_of_birth,
+           :country, to: :veteran, prefix: true
+
+  def regional_office
+    nil
   end
 
   def advanced_on_docket
@@ -98,14 +116,6 @@ class Appeal < AmaReview
   end
 
   delegate :first_name, :last_name, :middle_name, :name_suffix, to: :appellant, prefix: true, allow_nil: true
-
-  def veteran_is_deceased
-    veteran_death_date.present?
-  end
-
-  def veteran_death_date
-    veteran && veteran.date_of_death
-  end
 
   def cavc
     "not implemented for AMA"

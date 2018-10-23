@@ -114,13 +114,20 @@ class Veteran < ApplicationRecord
   def zip_code
     @zip_code || (@address_line3 if @address_line3 =~ /(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/)
   end
+  alias zip zip_code
+  alias address_line_1 address_line1
+  alias address_line_2 address_line2
+  alias address_line_3 address_line3
+  alias gender sex
 
   def timely_ratings(from_date:)
-    @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id, from_date: from_date)
+    @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id, from_date: from_date).each do |rating|
+      rating.receipt_date = from_date
+    end
   end
 
-  def ratings
-    @ratings ||= Rating.fetch_all(participant_id)
+  def ratings(receipt_date:)
+    @ratings ||= Rating.fetch_all(participant_id).each { |rating| rating.receipt_date = receipt_date }
   end
 
   def accessible_appeals_for_poa(poa_participant_ids)

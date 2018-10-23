@@ -10,13 +10,16 @@ describe RatingIssue do
     FeatureToggle.disable!(:test_facols)
   end
 
+  let(:promulgation_date) { Time.zone.today - 30 }
+
   context ".from_bgs_hash" do
     subject { RatingIssue.from_bgs_hash(bgs_record) }
 
     let(:bgs_record) do
       {
         rba_issue_id: "NBA",
-        decn_txt: "This broadcast may not be reproduced"
+        decn_txt: "This broadcast may not be reproduced",
+        promulgation_date: promulgation_date
       }
     end
 
@@ -71,17 +74,63 @@ describe RatingIssue do
   end
 
   context "#in_active_review" do
-    let(:reference_id) { "abc123" }
-    let(:review_request_type) { "SupplementalClaim" }
-
-    let!(:request_issue) do
-      create(:request_issue, rating_issue_reference_id: reference_id, review_request_type: review_request_type)
+    before do
+      Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
     end
 
-    it "returns true if a RequestIssue already exists with the same reference_id" do
+    let(:reference_id) { "abc123" }
+    let(:review_request_type) { "SupplementalClaim" }
+    let(:inactive_end_product_establishment) { create(:end_product_establishment, :cleared) }
+    let(:active_end_product_establishment) { create(:end_product_establishment, :active) }
+
+    let(:request_issue) do
+      create(
+        :request_issue,
+        end_product_establishment: active_end_product_establishment,
+        rating_issue_reference_id: reference_id,
+        review_request_type: review_request_type
+      )
+    end
+
+    let(:inactive_request_issue) do
+      create(
+        :request_issue,
+        end_product_establishment: inactive_end_product_establishment,
+        rating_issue_reference_id: reference_id,
+        review_request_type: review_request_type
+      )
+    end
+
+    it "returns review title if an active RequestIssue already exists with the same reference_id" do
+      request_issue
       rating_issue = RatingIssue.new(reference_id: reference_id)
 
       expect(rating_issue.in_active_review).to eq("Supplemental Claim")
+    end
+
+    context "removed issue" do
+      let(:review_request_type) { nil }
+
+      it "returns nil if the issue has been removed" do
+        request_issue
+        rating_issue = RatingIssue.new(reference_id: reference_id)
+
+        expect(rating_issue.in_active_review).to be_nil
+      end
+    end
+
+    it "returns nil if no similar RequestIssue exists" do
+      request_issue
+      rating_issue = RatingIssue.new(reference_id: "something-else")
+
+      expect(rating_issue.in_active_review).to be_nil
+    end
+
+    it "returns nil if similar RequestIssue exists for inactive EPE" do
+      inactive_request_issue
+      rating_issue = RatingIssue.new(reference_id: reference_id)
+
+      expect(rating_issue.in_active_review).to be_nil
     end
   end
 
@@ -94,7 +143,8 @@ describe RatingIssue do
       rating_issue = RatingIssue.new(
         reference_id: "ref-id",
         profile_date: Time.zone.today,
-        contention_reference_id: contention_ref_id
+        contention_reference_id: contention_ref_id,
+        promulgation_date: promulgation_date
       )
 
       expect(rating_issue.id).to be_nil
@@ -103,6 +153,26 @@ describe RatingIssue do
 
       expect(rating_issue.request_issue).to eq(request_issue)
       expect(rating_issue.id).to_not be_nil
+    end
+  end
+
+  context "#timely?" do
+    let(:receipt_date) { Time.zone.today - 30.days }
+
+    subject { RatingIssue.new(promulgation_date: promulgation_date, receipt_date: receipt_date) }
+
+    context "received in the last year" do
+      it "considers it timely" do
+        expect(subject.timely?).to eq(true)
+      end
+    end
+
+    context "received more than a year ago" do
+      let(:promulgation_date) { receipt_date - 373.days }
+
+      it "considers it untimely" do
+        expect(subject.timely?).to eq(false)
+      end
     end
   end
 end

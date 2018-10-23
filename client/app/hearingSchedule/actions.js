@@ -21,6 +21,13 @@ export const onReceiveRegionalOffices = (regionalOffices) => ({
   }
 });
 
+export const onReceiveDailyDocket = (dailyDocket) => ({
+  type: ACTIONS.RECEIVE_DAILY_DOCKET,
+  payload: {
+    dailyDocket
+  }
+});
+
 export const onRegionalOfficeChange = (regionalOffice) => ({
   type: ACTIONS.REGIONAL_OFFICE_CHANGE,
   payload: {

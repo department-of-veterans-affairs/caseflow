@@ -79,7 +79,7 @@ class EndProductEstablishment < ApplicationRecord
   # VBMS will return ALL contentions on a end product when you create contentions,
   # not just the ones that were just created.
   def create_contentions!
-    issues_without_contentions = request_issues_without_contentions
+    issues_without_contentions = request_issues_ready_for_contentions
     return if issues_without_contentions.empty?
 
     set_establishment_values_from_source
@@ -175,19 +175,17 @@ class EndProductEstablishment < ApplicationRecord
     !EndProduct::INACTIVE_STATUSES.include?(synced_status)
   end
 
-  def create_associated_rated_issues!
-    request_issues_to_associate = unassociated_rated_request_issues
-
+  def associate_rated_issues!
     is_rated = true
     return if code != source.issue_code(is_rated)
-    return if request_issues_to_associate.empty?
+    return if unassociated_rated_request_issues.count == 0
 
     VBMSService.associate_rated_issues!(
       claim_id: reference_id,
-      rated_issue_contention_map: rated_issue_contention_map(request_issues_to_associate)
+      rated_issue_contention_map: rated_issue_contention_map(rated_request_issues)
     )
 
-    RequestIssue.where(id: request_issues_to_associate.map(&:id)).update_all(
+    RequestIssue.where(id: rated_request_issues.map(&:id)).update_all(
       rating_issue_associated_at: Time.zone.now
     )
   end
@@ -220,8 +218,8 @@ class EndProductEstablishment < ApplicationRecord
     rated_request_issues.select { |ri| ri.rating_issue_associated_at.nil? }
   end
 
-  def request_issues_without_contentions
-    request_issues.select { |ri| ri.contention_reference_id.nil? }
+  def request_issues_ready_for_contentions
+    request_issues.select { |ri| ri.contention_reference_id.nil? && ri.eligible? }
   end
 
   def rated_issue_contention_map(request_issues_to_associate)

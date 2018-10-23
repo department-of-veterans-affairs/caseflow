@@ -22,7 +22,7 @@ class Task < ApplicationRecord
     Constants.TASK_STATUSES.completed.to_sym   => Constants.TASK_STATUSES.completed
   }
 
-  def allowed_actions(_user)
+  def available_actions(_user)
     []
   end
 
@@ -42,15 +42,23 @@ class Task < ApplicationRecord
     where(status: Constants.TASK_STATUSES.completed, completed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
   end
 
-  def self.create_from_params(params, current_user)
-    verify_user_can_assign!(current_user)
-    params = params.each { |p| p["instructions"] = [p["instructions"]] if p.key?("instructions") }
+  def self.create_many_from_params(params_array, current_user)
+    params_array.map { |params| create_from_params(params, current_user) }
+  end
+
+  def self.create_from_params(params, user)
+    verify_user_can_assign!(user)
+    if params.key?("instructions") && !params[:instructions].is_a?(Array)
+      params["instructions"] = [params["instructions"]]
+    end
     create(params)
   end
 
   def update_from_params(params, _current_user)
     params["instructions"] = [instructions, params["instructions"]].flatten if params.key?("instructions")
     update(params)
+
+    [self]
   end
 
   def legacy?
@@ -70,7 +78,7 @@ class Task < ApplicationRecord
   end
 
   def latest_attorney_case_review
-    sub_task ? sub_task.attorney_case_reviews.order(:created_at).last : nil
+    AttorneyCaseReview.where(task_id: Task.where(appeal: appeal).pluck(:id)).order(:created_at).last
   end
 
   def prepared_by_display_name
@@ -141,10 +149,6 @@ class Task < ApplicationRecord
   end
 
   private
-
-  def sub_task
-    children.first
-  end
 
   def update_status_if_children_tasks_are_complete
     if children.any? && children.reject { |t| t.status == Constants.TASK_STATUSES.completed }.empty?

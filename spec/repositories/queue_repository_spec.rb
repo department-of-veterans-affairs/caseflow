@@ -67,6 +67,16 @@ describe QueueRepository do
         end.to raise_error(Caseflow::Error::QueueRepositoryError)
       end
     end
+
+    context "when the case already has a Decass record" do
+      it "should throw an exception" do
+        create(:decass, defolder: vacols_id)
+
+        expect do
+          QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
+        end.to raise_error(Caseflow::Error::QueueRepositoryError)
+      end
+    end
   end
 
   context ".reassign_case_to_judge!" do

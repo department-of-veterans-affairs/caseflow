@@ -18,4 +18,13 @@ class Subconstant
       define_singleton_method(k) { v.is_a?(Hash) ? Subconstant.new(v) : v }
     end
   end
+
+  def to_h
+    h = {}
+    singleton_methods.each do |m|
+      val = singleton_method(m).call
+      h[m] = val.is_a?(Subconstant) ? val.to_h : val
+    end
+    h
+  end
 end
