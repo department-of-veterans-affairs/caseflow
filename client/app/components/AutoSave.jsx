@@ -5,6 +5,7 @@ import Alert from './Alert';
 import Button from './Button';
 import { loadingSymbolHtml } from '../components/RenderFunctions';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import _ from 'lodash';
 
 const alertStyling = css({
   width: '57%'
@@ -15,6 +16,8 @@ export default class AutoSave extends React.Component {
   constructor(props) {
     super(props);
     this.setIntervalId = null;
+    this.state = { showSuccess: false };
+    this.timer = null;
   }
 
   componentDidMount() {
@@ -30,6 +33,20 @@ export default class AutoSave extends React.Component {
   componentWillUnmount() {
     this.props.save();
     clearInterval(this.setIntervalId);
+  }
+
+  debouncedResetSaveStatus = _.debounce(() => {
+    this.setState({ showSuccess: true });
+    setTimeout(() => this.setState({ showSuccess: false }), this.props.saveSuccessTimeout);
+  },
+  this.props.saveSuccessTimeout
+  );
+
+  componentDidUpdate(prevProps) {
+    if (this.props.saveFailed === false && prevProps.saveFailed === true) {
+      console.warn('saved successfully, showing save banner');
+      this.debouncedResetSaveStatus();
+    }
   }
 
   render() {
@@ -59,6 +76,13 @@ export default class AutoSave extends React.Component {
         fixed
         styling={alertStyling}
       />;
+    } else if (this.state.showSuccess) {
+      return <Alert
+        message="Your Daily Docket has been Saved"
+        type="success"
+        fixed
+        styling={alertStyling}
+      />;
     }
 
     return <span className="saving">Last saved at {this.props.timeSaved}</span>;
@@ -75,5 +99,6 @@ AutoSave.propTypes = {
 };
 
 AutoSave.defaultProps = {
-  intervalInMs: 30000
+  intervalInMs: 30000,
+  saveSuccessTimeout: 5000
 };
