@@ -697,7 +697,6 @@ class LegacyAppeal < ApplicationRecord
       code: representative_code,
       participant_id: representative_participant_id,
       address: representative_address
-    }
   end
 
   def matched_document(type, vacols_datetime)

@@ -81,13 +81,19 @@ class VACOLS::CaseAssignment < VACOLS::Record
     def tasks_for_user(css_id)
       id = connection.quote(css_id.upcase)
 
-      select_tasks.where("s2.sdomainid = #{id}")
+      select_tasks.where("s2.sdomainid = #{id}").joins("JOIN staff s2 ON brieff.bfcurloc = s2.slogid")
+    end
+
+    def tasks_by_sublocation(css_id)
+      id = connection.quote(css_id.upcase)
+
+      select_tasks.where("s2.sdomainid = #{id}").joins("JOIN staff s2 ON brieff.bforgtic = s2.slogid")
     end
 
     def tasks_for_appeal(appeal_id)
       id = connection.quote(appeal_id)
 
-      select_tasks.where("brieff.bfkey = #{id}")
+      select_tasks.where("brieff.bfkey = #{id}").joins("JOIN staff s2 ON brieff.bfcurloc = s2.slogid")
     end
 
     # rubocop:disable Metrics/MethodLength
@@ -119,8 +125,6 @@ class VACOLS::CaseAssignment < VACOLS::Record
             ON brieff.bfkey = decass.defolder
           LEFT JOIN staff s1
             ON decass.deadusr = s1.slogid
-          JOIN staff s2
-            ON brieff.bfcurloc = s2.slogid
           JOIN folder
             ON brieff.bfkey = folder.ticknum
           LEFT JOIN staff s3

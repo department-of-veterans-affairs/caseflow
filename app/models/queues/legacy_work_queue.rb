@@ -6,7 +6,11 @@ class LegacyWorkQueue
     attr_writer :repository
 
     def tasks_with_appeals(user, role)
-      vacols_tasks = repository.tasks_for_user(user.css_id)
+      if role == "Dispatch"
+        vacols_tasks = repository.tasks_by_sublocation(user.css_id)
+      else
+        vacols_tasks = repository.tasks_for_user(user.css_id)
+      end
       tasks_with_appeals_of_vacols_tasks(user, role, vacols_tasks)
     end
 
@@ -31,7 +35,8 @@ class LegacyWorkQueue
 
     MODEL_CLASS_OF_ROLE = {
       "Attorney" => AttorneyLegacyTask,
-      "Judge" => JudgeLegacyTask
+      "Judge" => JudgeLegacyTask,
+      "Dispatch" => DispatchLegacyTask
     }.freeze
 
     def tasks_with_appeals_of_vacols_tasks(user, role, vacols_tasks)

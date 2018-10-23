@@ -15,6 +15,14 @@ class QueueRepository
       end
     end
 
+    def tasks_by_sublocation(css_id)
+      MetricsService.record("VACOLS: fetch tasks by sub-location",
+                            service: :vacols,
+                            name: "tasks_by_sublocation") do
+        tasks_by_sublocation_query(css_id)
+      end
+    end
+
     def tasks_for_appeal(appeal_id)
       MetricsService.record("VACOLS: fetch appeal tasks",
                             service: :vacols,
@@ -98,6 +106,11 @@ class QueueRepository
 
     def tasks_query(css_id)
       records = VACOLS::CaseAssignment.tasks_for_user(css_id)
+      filter_duplicate_tasks(records)
+    end
+
+    def tasks_by_sublocation_query(css_id)
+      records = VACOLS::CaseAssignment.tasks_by_sublocation(css_id)
       filter_duplicate_tasks(records)
     end
 

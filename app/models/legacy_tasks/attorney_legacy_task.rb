@@ -23,7 +23,7 @@ class AttorneyLegacyTask < LegacyTask
     actions
   end
 
-  def self.from_vacols(case_assignment, appeal, user_id)
+  def self.from_vacols(case_assignment, appeal, user)
     super
   end
 end

@@ -91,14 +91,6 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         end
 
         context "with AMA appeals" do
-          before do
-            FeatureToggle.enable!(:idt_ama_appeals)
-          end
-
-          after do
-            FeatureToggle.disable!(:idt_ama_appeals)
-          end
-
           it "returns a list of assigned appeals" do
             get :list
             expect(response.status).to eq 200
@@ -174,14 +166,6 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         let!(:case_review2) { create(:attorney_case_review, task_id: tasks.first.id) }
 
         context "with AMA appeals" do
-          before do
-            FeatureToggle.enable!(:idt_ama_appeals)
-          end
-
-          after do
-            FeatureToggle.disable!(:idt_ama_appeals)
-          end
-
           it "returns a list of assigned appeals" do
             tasks.first.update(assigned_at: 5.days.ago)
             tasks.second.update(assigned_at: 15.days.ago)

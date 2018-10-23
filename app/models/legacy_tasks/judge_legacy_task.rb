@@ -28,7 +28,7 @@ class JudgeLegacyTask < LegacyTask
     end
   end
 
-  def self.from_vacols(record, appeal, user_id)
+  def self.from_vacols(record, appeal, user)
     task = super
     task.action = record.reassigned_to_judge_date.present? ? "review" : "assign"
     if task.action == "review"
