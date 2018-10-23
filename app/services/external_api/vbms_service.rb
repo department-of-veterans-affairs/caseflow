@@ -103,7 +103,8 @@ class ExternalApi::VBMSService
       send_userid: FeatureToggle.enabled?(:vbms_include_user)
     )
 
-    send_and_log_request(veteran_hash[:file_number], request, vbms_client_with_user(user))
+    client = FeatureToggle.enabled?(:vbms_include_user) ? vbms_client_with_user(user) : @vbms_client
+    send_and_log_request(veteran_hash[:file_number], request, client)
   end
 
   def self.fetch_contentions(claim_id:)
@@ -117,7 +118,7 @@ class ExternalApi::VBMSService
     send_and_log_request(claim_id, request)
   end
 
-  def self.create_contentions!(veteran_file_number:, claim_id:, contention_descriptions:, special_issues: [], user: nil)
+  def self.create_contentions!(veteran_file_number:, claim_id:, contention_descriptions:, special_issues: [], user:)
     @vbms_client ||= init_vbms_client
 
     request = VBMS::Requests::CreateContentions.new(
@@ -129,11 +130,7 @@ class ExternalApi::VBMSService
       send_userid: FeatureToggle.enabled?(:vbms_include_user)
     )
 
-    # get the correct client for the request
-    client = @vbms_client
-    if !user.nil?
-      client = vbms_client_with_user(user)
-    end
+    client = FeatureToggle.enabled?(:vbms_include_user) ? vbms_client_with_user(user) : @vbms_client
     send_and_log_request(claim_id, request, client)
   end
 
@@ -202,11 +199,7 @@ class ExternalApi::VBMSService
     MetricsService.record("sent VBMS request #{request.class} for #{vbms_id}",
                           service: :vbms,
                           name: name) do
-      if override_vbms_client && FeatureToggle.enabled?(:vbms_include_user)
-        override_vbms_client.send_request(request)
-      else
-        @vbms_client.send_request(request)
-      end
+      (override_vbms_client ? override_vbms_client : @vbms_client).send_request(request)
     end
   rescue VBMS::ClientError => e
     Rails.logger.error "#{e.message}\n#{e.backtrace.join("\n")}"
