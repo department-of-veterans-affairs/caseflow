@@ -103,6 +103,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def check_for_untimely!
+    return if review_request && review_request.is_a?(SupplementalClaim)
     rating_issue = original_rating_issue
     if rating_issue && review_request && !review_request.timely_rating?(rating_issue[:promulgation_date])
       self.ineligible_reason = :untimely
