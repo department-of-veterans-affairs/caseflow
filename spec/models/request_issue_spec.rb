@@ -100,10 +100,22 @@ describe RequestIssue do
   end
 
   context "#validate_eligibility!" do
+    let(:higher_level_review_reference_id) { "hlr123" }
     let(:duplicate_reference_id) { "xyz789" }
     let(:old_reference_id) { "old123" }
+    let(:contention_reference_id) { 1234 }
     let(:active_epe) { create(:end_product_establishment, :active) }
     let(:receipt_date) { review.receipt_date }
+
+    let(:prior_higher_level_review) { create(:higher_level_review) }
+    let!(:prior_request_issue) do
+      create(
+        :request_issue,
+        review_request: prior_higher_level_review,
+        rating_issue_reference_id: higher_level_review_reference_id,
+        contention_reference_id: contention_reference_id
+      )
+    end
 
     let!(:ratings) do
       Generators::Rating.build(
@@ -113,7 +125,12 @@ describe RequestIssue do
         issues: [
           { reference_id: "xyz123", decision_text: "Left knee granted" },
           { reference_id: "xyz456", decision_text: "PTSD denied" },
-          { reference_id: duplicate_reference_id, decision_text: "Old injury" }
+          { reference_id: duplicate_reference_id, decision_text: "Old injury" },
+          {
+            reference_id: higher_level_review_reference_id,
+            decision_text: "Already reviewed injury",
+            contention_reference_id: contention_reference_id
+          }
         ]
       )
       Generators::Rating.build(
@@ -154,6 +171,14 @@ describe RequestIssue do
       rated_issue.validate_eligibility!
 
       expect(rated_issue.duplicate_of_issue_in_active_review?).to eq(true)
+    end
+
+    it "flags prior HLR" do
+      rated_issue.rating_issue_reference_id = higher_level_review_reference_id
+      rated_issue.validate_eligibility!
+
+      expect(rated_issue.prior_higher_level_review?).to eq(true)
+      expect(rated_issue.ineligible_request_issue_id).to eq(prior_request_issue.id)
     end
   end
 end

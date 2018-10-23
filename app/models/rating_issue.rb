@@ -25,7 +25,8 @@ class RatingIssue < ApplicationRecord
       reference_id: reference_id,
       decision_text: decision_text,
       promulgation_date: promulgation_date,
-      in_active_review: in_active_review
+      in_active_review: in_active_review,
+      prior_higher_level_review: prior_higher_level_review
     }
   end
 
@@ -47,6 +48,12 @@ class RatingIssue < ApplicationRecord
     request_issue.review_title if request_issue
   end
 
+  def prior_higher_level_review
+    return unless reference_id
+    return unless related_request_issue
+    return related_request_issue.id if related_request_issue.review_request.is_a?(HigherLevelReview)
+  end
+
   private
 
   def existing_rating_issue
@@ -54,6 +61,10 @@ class RatingIssue < ApplicationRecord
   end
 
   def related_request_issue
+    request_issue || find_related_request_issue
+  end
+
+  def find_related_request_issue
     return if contention_reference_id.nil?
     @related_request_issue ||= RequestIssue.find_by(contention_reference_id: contention_reference_id)
   end
