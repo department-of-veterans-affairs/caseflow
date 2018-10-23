@@ -5,7 +5,11 @@ class RequestIssue < ApplicationRecord
   has_many :remand_reasons
   has_many :rating_issues
 
-  enum ineligible_reason: { duplicate_of_issue_in_active_review: 0, untimely: 1 }
+  enum ineligible_reason: {
+    duplicate_of_issue_in_active_review: 0,
+    untimely: 1,
+    prior_higher_level_review: 2
+  }
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
 
@@ -89,13 +93,28 @@ class RequestIssue < ApplicationRecord
   def validate_eligibility!
     check_for_active_request_issue!
     check_for_untimely!
+    check_for_prior_higher_level_review!
     self
   end
 
   private
 
+  def check_for_prior_higher_level_review!
+    return unless rated?
+    return unless eligible?
+    check_for_activity!(:prior_higher_level_review)
+  end
+
+  def check_for_activity!(type)
+    if related_rating_issue && related_rating_issue[type].present?
+      self.ineligible_reason = type
+      self.ineligible_request_issue_id = related_rating_issue[type]
+    end
+  end
+
   def check_for_active_request_issue!
-    return unless rating_issue_reference_id
+    return unless rated?
+    return unless eligible?
     existing_request_issue = self.class.find_active_by_reference_id(rating_issue_reference_id)
     if existing_request_issue
       self.ineligible_reason = :duplicate_of_issue_in_active_review
@@ -103,6 +122,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def check_for_untimely!
+    return unless eligible?
     return if review_request && review_request.is_a?(SupplementalClaim)
     check_for_rated_untimely! if rated?
     check_for_nonrated_untimely! if nonrated?
