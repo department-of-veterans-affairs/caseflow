@@ -109,8 +109,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def check_for_rated_untimely!
-    rating_issue = original_rating_issue
-    if rating_issue && review_request && !review_request.timely_rating?(rating_issue[:promulgation_date])
+    if related_rating_issue && !review_request.timely_rating?(related_rating_issue[:promulgation_date])
       self.ineligible_reason = :untimely
     end
   end
@@ -121,14 +120,18 @@ class RequestIssue < ApplicationRecord
     end
   end
 
-  def original_rating_issue
+  # the original RatingIssue that this RequestIssue refers to with rating_issue_reference_id
+  # it does not exist in the db so we pull it from the serialized_ratings and unwrap to match.
+  def related_rating_issue
     return unless review_request
-    rating_issue = nil
-    review_request.serialized_ratings.each do |rating|
-      rating[:issues].each do |issue|
-        rating_issue = issue if issue[:reference_id] == rating_issue_reference_id
+    @related_rating_issue ||= begin
+      rating_issue = nil
+      review_request.serialized_ratings.each do |rating|
+        rating[:issues].each do |issue|
+          rating_issue = issue if issue[:reference_id] == rating_issue_reference_id
+        end
       end
+      rating_issue
     end
-    rating_issue
   end
 end
