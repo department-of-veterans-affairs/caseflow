@@ -5,7 +5,7 @@ class ClaimReview < AmaReview
   include Asyncable
 
   has_many :end_product_establishments, as: :source
-  has_one :intake, ->(review) { where(detail_type: review.class.name) }, foreign_key: "detail_id"
+  has_one :intake, as: :detail
 
   self.abstract_class = true
 

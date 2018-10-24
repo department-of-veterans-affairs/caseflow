@@ -1,6 +1,6 @@
 class RampReview < ApplicationRecord
   belongs_to :user
-  has_one :intake, ->(review) { where(detail_type: review.class.name) }, foreign_key: "detail_id"
+  has_one :intake, as: :detail
 
   RAMP_BEGIN_DATE = Date.new(2017, 11, 1).freeze
 

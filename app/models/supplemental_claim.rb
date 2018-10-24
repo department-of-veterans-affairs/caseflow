@@ -47,7 +47,7 @@ class SupplementalClaim < ClaimReview
 
   def issue_code(rated)
     issue_code_type = rated ? :rating : :nonrating
-    if is_dta_error
+    if is_dta_error?
       issue_code_type = rated ? :dta_rating : :dta_nonrating
     end
     END_PRODUCT_CODES[issue_code_type]
@@ -56,7 +56,7 @@ class SupplementalClaim < ClaimReview
   private
 
   def end_product_created_by
-    is_dta_error ? User.system_user : intake_processed_by
+    is_dta_error? ? User.system_user : intake_processed_by
   end
 
   def new_end_product_establishment(ep_code)
