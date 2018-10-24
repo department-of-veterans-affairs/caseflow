@@ -180,7 +180,7 @@ describe HearingDay do
     end
   end
 
-  context "Video Hearing parent and child rows for a date range", focus: true do
+  context "Video Hearing parent and child rows for a date range" do
     let(:vacols_case) do
       create(
         :case,
@@ -215,7 +215,7 @@ describe HearingDay do
     end
   end
 
-  context "Central Office parent and child rows for a date range", focus: true do
+  context "Central Office parent and child rows for a date range" do
     let(:vacols_case) do
       create(
         :case,
