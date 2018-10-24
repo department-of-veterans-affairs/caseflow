@@ -6,10 +6,10 @@ class WorkQueue::VeteranSerializer < ActiveModel::Serializer
     object.veteran_gender
   end
   attribute :date_of_birth do
-    object.veteran.try(:date_of_birth)
+    object.veteran ? object.veteran.date_of_birth : nil
   end
   attribute :date_of_death do
-    object.veteran.try(:date_of_death)
+    object.veteran ? object.veteran.date_of_death : nil
   end
   attribute :address do
     if object.veteran_address_line_1
