@@ -23,7 +23,8 @@ class HigherLevelReviewsController < ApplicationController
   end
 
   def higher_level_review
-    @higher_level_review ||= end_product_establishment.source
+    @higher_level_review ||=
+      EndProductEstablishment.find_by!(reference_id: params[:claim_id], source_type: SOURCE_TYPE).source
   end
 
   def url_claim_id

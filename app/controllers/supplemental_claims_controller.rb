@@ -24,7 +24,7 @@ class SupplementalClaimsController < ApplicationController
 
   def supplemental_claim
     @supplemental_claim ||=
-      end_product_establishment.source
+      EndProductEstablishment.find_by!(reference_id: params[:claim_id], source_type: SOURCE_TYPE).source
   end
 
   def url_claim_id
