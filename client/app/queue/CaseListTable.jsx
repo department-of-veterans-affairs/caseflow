@@ -44,6 +44,7 @@ class CaseListTable extends React.PureComponent {
         <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />
         <CaseDetailsLink
           appeal={appeal}
+          userRole={this.props.userRole}
           getLinkText={() => appeal.docketNumber} />
       </React.Fragment>
     },
@@ -85,7 +86,8 @@ CaseListTable.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  userCssId: state.ui.userCssId
+  userCssId: state.ui.userCssId,
+  userRole: state.ui.userRole
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

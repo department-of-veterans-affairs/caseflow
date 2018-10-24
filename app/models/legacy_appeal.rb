@@ -192,8 +192,16 @@ class LegacyAppeal < ApplicationRecord
     vbms_id.ends_with?("C") ? (veteran && veteran.ssn) : sanitized_vbms_id
   end
 
-  delegate :age, :sex, to: :veteran, prefix: true
-  delegate :address_line_1, :address_line_2, :address_line_3, :city, :state, :zip, :country, to: :veteran, prefix: true
+  delegate :address_line_1,
+           :address_line_2,
+           :address_line_3,
+           :city,
+           :state,
+           :zip,
+           :country,
+           :age,
+           :sex,
+           to: :veteran, prefix: true, allow_nil: true
 
   # NOTE: we cannot currently match end products to a specific appeal.
   delegate :end_products, to: :veteran

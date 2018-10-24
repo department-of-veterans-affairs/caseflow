@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181018191048) do
+ActiveRecord::Schema.define(version: 20181023172507) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -278,6 +278,7 @@ ActiveRecord::Schema.define(version: 20181018191048) do
     t.string "doc_reference_id"
     t.string "development_item_reference_id"
     t.string "benefit_type_code"
+    t.integer "user_id"
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
   end
@@ -583,6 +584,8 @@ ActiveRecord::Schema.define(version: 20181018191048) do
     t.datetime "profile_date", null: false
     t.string "decision_text"
     t.datetime "promulgation_date", null: false
+    t.integer "participant_id"
+    t.index ["reference_id", "participant_id"], name: "index_rating_issues_on_reference_id_and_participant_id", unique: true
     t.index ["request_issue_id"], name: "index_rating_issues_on_request_issue_id"
   end
 
@@ -625,6 +628,7 @@ ActiveRecord::Schema.define(version: 20181018191048) do
     t.index ["ineligible_reason"], name: "index_request_issues_on_ineligible_reason"
     t.index ["ineligible_request_issue_id"], name: "index_request_issues_on_ineligible_request_issue_id"
     t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"
+    t.index ["rating_issue_reference_id"], name: "index_request_issues_on_rating_issue_reference_id"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
   end
 

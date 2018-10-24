@@ -64,6 +64,14 @@ class Fakes::BGSService
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
+          promulgation_date: Time.zone.today - 395,
+          profile_date: Time.zone.today - 400,
+          issues: [
+            { decision_text: "Old injury" }
+          ]
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
           promulgation_date: Time.zone.today - 60,
           issues: [
             { decision_text: "Lorem ipsum dolor sit amet, paulo scaevola abhorreant mei te, ex est mazim ornatus, at pro causae maiestatis." },
