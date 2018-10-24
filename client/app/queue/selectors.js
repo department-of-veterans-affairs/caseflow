@@ -98,7 +98,7 @@ export const getTasksForAppeal = createSelector(
 export const tasksForAppealAssignedToUserSelector = createSelector(
   [getTasksForAppeal, getUserCssId],
   (tasks: Tasks, cssId: string) => {
-    return _.filter(tasks, (task) => task.assignedTo.cssId === cssId);
+    return incompleteTasksSelector(_.filter(tasks, (task) => task.assignedTo.cssId === cssId));
   }
 );
 

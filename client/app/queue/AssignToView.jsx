@@ -92,9 +92,7 @@ class AssignToView extends React.Component<Props, ViewState> {
       type = this.taskActionData().type;
     } else if (createsMailTask) {
       type = 'MailTask';
-    } else if (!isTeamAssign) {
-      type = task.type;
-    }  
+    }
     
     const payload = {
       data: {
@@ -123,7 +121,7 @@ class AssignToView extends React.Component<Props, ViewState> {
 
   taskActionData = () : { selected: ?User, users: ?Array<User>, type: string } => {
     const action = this.props.task.availableActions.
-      find((action) => action.value === TASK_ACTIONS.RETURN_TO_JUDGE.value);
+      find((action) => this.props.history.location.pathname.endsWith(action.value));
 
     if (action && action.data) {
       return (action.data);
@@ -170,8 +168,10 @@ class AssignToView extends React.Component<Props, ViewState> {
   }
 
   options = () => {
+    const options = this.taskActionData().options;
+
     if (this.props.isTeamAssign) {
-      return (this.props.task.assignableOrganizations || []).map((organization) => {
+      return (options).map((organization) => {
         return {
           label: organization.name,
           value: organization.id
@@ -179,9 +179,7 @@ class AssignToView extends React.Component<Props, ViewState> {
       });
     }
 
-    const options = this.taskActionData().users;
-
-    return (options || this.props.task.assignableUsers || []).map((user) => {
+    return (options).map((user) => {
       return {
         label: user.full_name,
         value: user.id

@@ -34,7 +34,6 @@ import CompleteTaskModal from './components/CompleteTaskModal';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
-import AssignToCustomUser from './AssignToCustomUser';
 
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';

@@ -315,8 +315,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     featureToggles,
-    userRole,
-    primaryTask: incompleteTasksByAssigneeCssIdSelector(state, { appealId: ownProps.appealId })[0] ||
+    primaryTask: tasksForAppealAssignedToAttorneySelector(state, { appealId: ownProps.appealId })[0] ||
       taskAssignedToAttorney ||
       actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0] ||
       incompleteOrganizationTasksByAssigneeIdSelector(state, { appealId: ownProps.appealId })[0],
