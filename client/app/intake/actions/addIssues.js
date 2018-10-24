@@ -38,18 +38,22 @@ export const addUnidentifiedIssue = (description, notes) => (dispatch) => {
 };
 
 export const addRatedIssue = (args) => (dispatch) => {
-  let foundDate = _.filter(args.ratings, (ratingDate) => _.some(ratingDate.issues, { reference_id: args.issueId }));
+  let currentRating = _.filter(
+    args.ratings,
+    (ratingDate) => _.some(ratingDate.issues, { reference_id: args.issueId })
+  )[0];
+  let currentIssue = currentRating.issues[args.issueId];
 
   dispatch({
     type: ACTIONS.ADD_ISSUE,
     payload: {
       id: args.issueId,
       isRated: args.isRated,
-      inActiveReview: foundDate[0].issues[args.issueId].in_active_review,
-      timely: foundDate[0].issues[args.issueId].timely,
-      priorHigherLevelReview: foundDate[0].issues[args.issueId].prior_higher_level_review,
-      promulgationDate: foundDate[0].issues[args.issueId].promulgation_date,
-      profileDate: foundDate[0].profile_date,
+      inActiveReview: currentIssue.in_active_review,
+      timely: currentIssue.timely,
+      priorHigherLevelReview: currentIssue.prior_higher_level_review,
+      promulgationDate: currentIssue.promulgation_date,
+      profileDate: currentRating.profile_date,
       notes: args.notes
     }
   });

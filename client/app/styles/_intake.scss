@@ -139,10 +139,7 @@
           }
         }
 
-        .unidentified-issue,
-        .in-active-review,
-        .not-eligible,
-        .untimely {
+        .not-eligible {
           color: $color-red;
         }
 
