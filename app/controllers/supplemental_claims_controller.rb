@@ -27,7 +27,11 @@ class SupplementalClaimsController < ApplicationController
       EndProductEstablishment.find_by!(reference_id: params[:claim_id], source_type: SOURCE_TYPE).source
   end
 
-  helper_method :supplemental_claim
+  def url_claim_id
+    params[:claim_id]
+  end
+
+  helper_method :supplemental_claim, :url_claim_id
 
   def set_application
     RequestStore.store[:application] = "intake"
