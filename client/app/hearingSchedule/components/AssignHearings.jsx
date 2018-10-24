@@ -138,15 +138,15 @@ export default class AssignHearings extends React.Component {
     </div>;
   };
 
-  veteranTypeColor = (docketType) => {
+  veteranTypeColor = (appealType) => {
 
-    if (docketType === 'CAVC') {
+    if (appealType === 'Court Remand') {
       return <span {...colorAOD}>CAVC</span>;
-    } else if (docketType === 'AOD') {
+    } else if (appealType === 'AOD') {
       return <span {...colorAOD}>AOD</span>;
     }
 
-    return docketType;
+    return appealType;
   };
 
     getHearingTime = (date, regionalOfficeTimezone) => {
