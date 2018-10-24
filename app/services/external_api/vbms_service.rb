@@ -103,8 +103,7 @@ class ExternalApi::VBMSService
       send_userid: FeatureToggle.enabled?(:vbms_include_user)
     )
 
-    client = FeatureToggle.enabled?(:vbms_include_user) ? vbms_client_with_user(user) : @vbms_client
-    send_and_log_request(veteran_hash[:file_number], request, client)
+    send_and_log_request(veteran_hash[:file_number], request, user ? vbms_client_with_user(user) : nil)
   end
 
   def self.fetch_contentions(claim_id:)
@@ -130,7 +129,7 @@ class ExternalApi::VBMSService
       send_userid: FeatureToggle.enabled?(:vbms_include_user)
     )
 
-    send_and_log_request(claim_id, request, vbms_client_with_user(user))
+    send_and_log_request(claim_id, request, user ? vbms_client_with_user(user) : nil)
   end
 
   def self.remove_contention!(contention)
