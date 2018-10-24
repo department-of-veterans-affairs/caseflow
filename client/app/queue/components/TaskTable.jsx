@@ -49,7 +49,8 @@ type Params = {|
 type Props = Params & {|
   setSelectionOfTaskOfUser: Function,
   isTaskAssignedToUserSelected?: Object,
-  userIsVsoEmployee: boolean
+  userIsVsoEmployee: boolean,
+  userRole: string
 |};
 
 class TaskTable extends React.PureComponent<Props> {
