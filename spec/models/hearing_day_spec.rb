@@ -202,13 +202,13 @@ describe HearingDay do
 
     context "get parent and children structure" do
       subject do
-        HearingDay.load_days_with_hearings(hearing.hearing_date.beginning_of_day,
-                                           (hearing.hearing_date + 1).beginning_of_day, staff.stafkey)
+        HearingDay.load_days_with_hearings((hearing.hearing_date - 1).beginning_of_day,
+                                           hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
       end
 
       it "returns nested hash structure" do
-        expect(subject.size).to eq subject.size
-        expect(subject[0][:hearings].size).to eql(1)
+        expect(subject.size).to eq 1
+        expect(subject[0][:hearings].size).to eq 1
         expect(subject[0][:hearing_type]).to eq "V"
         expect(subject[0][:hearings][0][:appeal_id]).to eq appeal.id
       end
@@ -234,13 +234,13 @@ describe HearingDay do
 
     context "get parent and children structure" do
       subject do
-        HearingDay.load_days_with_hearings(hearing.hearing_date.beginning_of_day,
-                                           (hearing.hearing_date + 1).beginning_of_day, "C")
+        HearingDay.load_days_with_hearings((hearing.hearing_date - 1).beginning_of_day,
+                                           hearing.hearing_date.beginning_of_day + 10, "C")
       end
 
       it "returns nested hash structure" do
-        expect(subject.size).to eq subject.size
-        expect(subject[0][:hearings].size).to eql(1)
+        expect(subject.size).to eq 1
+        expect(subject[0][:hearings].size).to eq 1
         expect(subject[0][:hearing_type]).to eq "C"
         expect(subject[0][:hearings][0][:appeal_id]).to eq appeal.id
       end
