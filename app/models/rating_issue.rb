@@ -50,7 +50,7 @@ class RatingIssue < ApplicationRecord
   private
 
   def existing_rating_issue
-    @existing_rating_issue = RatingIssue.find_by(participant_id: participant_id, reference_id: reference_id)
+    @existing_rating_issue ||= RatingIssue.find_by(participant_id: participant_id, reference_id: reference_id)
   end
 
   def related_request_issue
