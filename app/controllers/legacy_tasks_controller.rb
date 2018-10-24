@@ -29,6 +29,13 @@ class LegacyTasksController < ApplicationController
   end
 
   def create
+    # assigned_to = legacy_task_params.assigned_to
+
+    # if assigned_to.vacols_roles.length == 1 && assigned_to.judge_in_vacols?
+    #   QueueRepository.assign_task_to_judge(legacy_task_params)
+    #   render json: {}
+    # end
+
     task = JudgeCaseAssignmentToAttorney.create(legacy_task_params)
 
     return invalid_record_error(task) unless task.valid?

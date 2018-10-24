@@ -185,6 +185,13 @@ class QueueRepository
       vacols_case.update(bfattid: attorney.vacols_attorney_id)
     end
 
+    def update_location_to_judge(vacols_id, judge)
+      vacols_case = VACOLS::Case.find(vacols_id)
+      fail VACOLS::Case::InvalidLocationError, "Invalid location \"#{judge.vacols_uniq_id}\"" unless
+        judge.vacols_uniq_id
+      vacols_case.update_vacols_location!(judge.vacols_uniq_id)
+    end
+
     def assign_case_for_quality_review(vacols_case)
       VACOLS::DecisionQualityReview.create(
         qryymm: Time.zone.now.strftime("%y") + Time.zone.now.strftime("%m"),
