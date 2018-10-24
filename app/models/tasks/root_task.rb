@@ -34,4 +34,10 @@ class RootTask < Task
       end
     end
   end
+
+  def can_be_accessed_by_user?(user)
+    return true if HearingsManagement.singleton.user_has_access?(user)
+
+    super(user)
+  end
 end
