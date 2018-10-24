@@ -90,8 +90,8 @@ export const appealWithDetailSelector = createSelector(
 export const getTasksForAppeal = createSelector(
   [getTasks, getAmaTasks, getAppealId],
   (tasks: Tasks, amaTasks: Tasks, appealId: string) => {
-    return _.filter(tasks, (task) => task.externalAppealId === appealId).
-      concat(_.filter(amaTasks, (task) => task.externalAppealId === appealId));
+    return incompleteTasksSelector(_.filter(tasks, (task) => task.externalAppealId === appealId).
+      concat(_.filter(amaTasks, (task) => task.externalAppealId === appealId)));
   }
 );
 
@@ -125,7 +125,7 @@ const tasksByAssigneeCssIdSelector = createSelector(
     _.filter(tasks, (task) => task.assignedTo.cssId === cssId)
 );
 
-const incompleteTasksByAssigneeCssIdSelector = createSelector(
+export const incompleteTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks: Tasks) => incompleteTasksSelector(tasks)
 );
