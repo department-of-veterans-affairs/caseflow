@@ -114,7 +114,7 @@ export default class AssignHearings extends React.Component {
 
   veteranTypeColor = (docketType) => {
 
-    if (docketType === 'CAVC') {
+    if (docketType === 'Court Remand') {
       return <span {...colorAOD}>CAVC</span>;
     } else if (docketType === 'AOD') {
       return <span {...colorAOD}>AOD</span>;
