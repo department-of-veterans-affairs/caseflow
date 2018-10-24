@@ -1,5 +1,6 @@
 class RampReview < ApplicationRecord
   belongs_to :user
+  has_one :intake, ->(review) { where(detail_type: review.class.name) }, :foreign_key => "detail_id"
 
   RAMP_BEGIN_DATE = Date.new(2017, 11, 1).freeze
 
@@ -112,7 +113,8 @@ class RampReview < ApplicationRecord
       valid_modifiers: valid_modifiers,
       source: self,
       station: "397", # AMC
-      benefit_type_code: veteran.benefit_type_code
+      benefit_type_code: veteran.benefit_type_code,
+      user: intake.user
     )
   end
 

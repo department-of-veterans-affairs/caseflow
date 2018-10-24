@@ -5,6 +5,7 @@ class ClaimReview < AmaReview
   include Asyncable
 
   has_many :end_product_establishments, as: :source
+  has_one :intake, ->(review) { where(detail_type: review.class.name) }, :foreign_key => "detail_id"
 
   self.abstract_class = true
 
@@ -88,8 +89,7 @@ class ClaimReview < AmaReview
   end
 
   def intake_processed_by
-    found_intake = Intake.find_by(detail_id: id, detail_type: self.class.name)
-    found_intake ? found_intake.user : nil
+    intake ? intake.user : nil
   end
 
   def end_product_establishment_for_issue(issue)

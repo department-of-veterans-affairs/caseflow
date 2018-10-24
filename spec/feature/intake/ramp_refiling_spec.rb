@@ -402,13 +402,14 @@ RSpec.feature "RAMP Refiling Intake" do
           claimant_participant_id: veteran.participant_id
         },
         veteran_hash: intake.veteran.to_vbms_hash,
-        user: nil
+        user: current_user
       )
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: "12341234",
         claim_id: "SHANE9123242",
-        contention_descriptions: ["Left knee rating increase"]
+        contention_descriptions: ["Left knee rating increase"],
+        user: current_user
       )
 
       expect(ramp_refiling.issues.count).to eq(1)

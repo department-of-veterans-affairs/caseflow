@@ -346,6 +346,19 @@ RSpec.feature "Edit issues" do
       )
     end
 
+    # create intake
+    let!(:intake) do
+      Intake.create!(
+        user_id: current_user.id,
+        detail: supplemental_claim,
+        veteran_file_number: veteran.file_number,
+        started_at: Time.zone.now,
+        completed_at: Time.zone.now,
+        completion_status: "success",
+        type: "SupplementalClaimIntake"
+      )
+    end
+
     let!(:request_issue) do
       RequestIssue.create!(
         rating_issue_reference_id: "def456",

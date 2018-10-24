@@ -130,8 +130,7 @@ class ExternalApi::VBMSService
       send_userid: FeatureToggle.enabled?(:vbms_include_user)
     )
 
-    client = FeatureToggle.enabled?(:vbms_include_user) ? vbms_client_with_user(user) : @vbms_client
-    send_and_log_request(claim_id, request, client)
+    send_and_log_request(claim_id, request, vbms_client_with_user(user))
   end
 
   def self.remove_contention!(contention)
@@ -143,8 +142,7 @@ class ExternalApi::VBMSService
       send_userid: FeatureToggle.enabled?(:vbms_include_user)
     )
 
-    client = FeatureToggle.enabled?(:vbms_include_user) ? vbms_client_with_system_user : @vbms_client
-    send_and_log_request(contention.claim_id, request, client)
+    send_and_log_request(contention.claim_id, request, vbms_client_with_user(User.system_user))
   end
 
   def self.associate_rated_issues!(claim_id:, rated_issue_contention_map:)
@@ -173,16 +171,6 @@ class ExternalApi::VBMSService
       env_name: ENV["CONNECT_VBMS_ENV"],
       css_id: user.css_id,
       station_id: user.station_id,
-      use_forward_proxy: FeatureToggle.enabled?(:vbms_forward_proxy)
-    )
-  end
-
-  def self.vbms_client_with_system_user
-    @vbms_client_with_system_user ||= VBMS::Client.from_env_vars(
-      logger: VBMSCaseflowLogger.new,
-      env_name: ENV["CONNECT_VBMS_ENV"],
-      css_id: User.system_user.css_id,
-      station_id: User.system_user.station_id,
       use_forward_proxy: FeatureToggle.enabled?(:vbms_forward_proxy)
     )
   end

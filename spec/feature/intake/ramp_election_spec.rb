@@ -291,7 +291,7 @@ RSpec.feature "RAMP Election Intake" do
         claimant_participant_id: veteran.participant_id
       },
       veteran_hash: intake.veteran.to_vbms_hash,
-      user: nil
+      user: current_user
     )
 
     # Validate that you can not go back to previous steps
