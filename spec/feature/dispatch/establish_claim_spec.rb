@@ -799,7 +799,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             suppress_acknowledgement_letter: true,
             claimant_participant_id: nil
           },
-          veteran_hash: task.appeal.veteran.to_vbms_hash
+          veteran_hash: task.appeal.veteran.to_vbms_hash,
+          user: RequestStore[:current_user]
         )
       end
 
@@ -877,7 +878,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
               suppress_acknowledgement_letter: true,
               claimant_participant_id: nil
             },
-            veteran_hash: task.appeal.veteran.to_vbms_hash
+            veteran_hash: task.appeal.veteran.to_vbms_hash,
+            user: RequestStore[:current_user]
           )
         end
       end
