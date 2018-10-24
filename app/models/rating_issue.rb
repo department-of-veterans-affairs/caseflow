@@ -7,7 +7,13 @@ class RatingIssue < ApplicationRecord
   def save_with_request_issue!
     return unless related_request_issue
     self.request_issue = related_request_issue
-    save!
+    # if it already exists, update rather than attempt to insert a duplicate
+    if existing_rating_issue
+      existing_rating_issue.update!(request_issue: request_issue)
+      self.attributes = existing_rating_issue.attributes
+    else
+      save!
+    end
   end
 
   # If you change this method, you will need
@@ -30,7 +36,8 @@ class RatingIssue < ApplicationRecord
       profile_date: rba_contentions.first.dig(:prfil_dt),
       contention_reference_id: rba_contentions.first.dig(:cntntn_id),
       decision_text: data[:decn_txt],
-      promulgation_date: data[:promulgation_date]
+      promulgation_date: data[:promulgation_date],
+      participant_id: data[:participant_id]
     )
   end
 
@@ -41,6 +48,10 @@ class RatingIssue < ApplicationRecord
   end
 
   private
+
+  def existing_rating_issue
+    @existing_rating_issue = RatingIssue.find_by(participant_id: participant_id, reference_id: reference_id)
+  end
 
   def related_request_issue
     return if contention_reference_id.nil?
