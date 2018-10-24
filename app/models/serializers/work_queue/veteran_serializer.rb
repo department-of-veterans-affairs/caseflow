@@ -12,14 +12,16 @@ class WorkQueue::VeteranSerializer < ActiveModel::Serializer
     object.veteran.try(:date_of_death)
   end
   attribute :address do
-    {
-      address_line_1: object.veteran_address_line_1,
-      address_line_2: object.veteran_address_line_2,
-      city: object.veteran_city,
-      state: object.veteran_state,
-      zip: object.veteran_zip,
-      country: object.veteran_country
-    }
+    if object.veteran_address_line_1
+      {
+        address_line_1: object.veteran_address_line_1,
+        address_line_2: object.veteran_address_line_2,
+        city: object.veteran_city,
+        state: object.veteran_state,
+        zip: object.veteran_zip,
+        country: object.veteran_country
+      }
+    end
   end
   attribute :regional_office do
     if object.regional_office
