@@ -180,7 +180,7 @@ describe HearingDay do
     end
   end
 
-  context "Video Hearing parent and child rows for a date range" do
+  context "Video Hearing parent and child rows for a date range", focus: true do
     let(:vacols_case) do
       create(
         :case,
@@ -201,7 +201,10 @@ describe HearingDay do
     end
 
     context "get parent and children structure" do
-      subject { HearingDay.load_days_with_hearings(hearing.hearing_date, hearing.hearing_date, staff.stafkey) }
+      subject do
+        HearingDay.load_days_with_hearings(hearing.hearing_date.beginning_of_day,
+                                           (hearing.hearing_date + 1).beginning_of_day, staff.stafkey)
+      end
 
       it "returns nested hash structure" do
         expect(subject.size).to eq subject.size
@@ -212,7 +215,7 @@ describe HearingDay do
     end
   end
 
-  context "Central Office parent and child rows for a date range" do
+  context "Central Office parent and child rows for a date range", focus: true do
     let(:vacols_case) do
       create(
         :case,
@@ -230,7 +233,10 @@ describe HearingDay do
     end
 
     context "get parent and children structure" do
-      subject { HearingDay.load_days_with_hearings(hearing.hearing_date, hearing.hearing_date, "C") }
+      subject do
+        HearingDay.load_days_with_hearings(hearing.hearing_date.beginning_of_day,
+                                           (hearing.hearing_date + 1).beginning_of_day, "C")
+      end
 
       it "returns nested hash structure" do
         expect(subject.size).to eq subject.size
