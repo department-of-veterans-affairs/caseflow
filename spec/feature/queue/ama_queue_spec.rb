@@ -325,7 +325,6 @@ RSpec.feature "AmaQueue" do
     end
   end
 
-
   context "QR flow" do
     let(:user_name) { "QR User" }
     let!(:user) { User.authenticate!(user: create(:user, roles: ["Reader"], full_name: user_name)) }
@@ -377,7 +376,6 @@ RSpec.feature "AmaQueue" do
 
       click_on "Bob Smith"
 
-      
       find(".Select-control", text: "Select an action").click
       find("div", class: "Select-option", text: "Return to judge").click
 

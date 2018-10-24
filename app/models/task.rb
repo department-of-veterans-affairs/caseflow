@@ -163,7 +163,7 @@ class Task < ApplicationRecord
     {
       selected: nil,
       options: users,
-      type: self.type
+      type: type
     }
   end
 

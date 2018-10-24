@@ -34,7 +34,8 @@ type Params = {|
   task: Task,
   createsMailTask: boolean,
   isReassignAction: boolean,
-  isTeamAssign: boolean
+  isTeamAssign: boolean,
+  history: Object
 |};
 
 type Props = Params & {|
@@ -64,8 +65,9 @@ class AssignToView extends React.Component<Props, ViewState> {
       existingInstructions = instructions[instructionLength - 1];
     }
 
-    const selectedOption = this.taskActionData().selected ?
-      this.options().find((option) => option.value === this.taskActionData().selected.id) : null;
+    const actionData = this.taskActionData();
+    const selectedOption = actionData.selected ?
+      this.options().find((option) => option.value === actionData.selected.id) : null;
 
     this.state = {
       selectedValue: selectedOption ? selectedOption.value : null,
@@ -118,16 +120,16 @@ class AssignToView extends React.Component<Props, ViewState> {
       });
   }
 
-  taskActionData = () : { selected: ?User, users: ?Array<User>, type: string } => {
+  taskActionData = () => {
     const relevantAction = this.props.task.availableActions.
       find((action) => this.props.history.location.pathname.endsWith(action.value));
 
     if (relevantAction && relevantAction.data) {
-      return (relevant_action.data);
+      return (relevantAction.data);
     }
 
     return { selected: null,
-      users: null,
+      options: null,
       type: null };
   }
 
@@ -172,7 +174,7 @@ class AssignToView extends React.Component<Props, ViewState> {
     const options = this.taskActionData().options;
 
     if (this.props.isTeamAssign) {
-      return (options).map((organization) => {
+      return (options || []).map((organization) => {
         return {
           label: organization.name,
           value: organization.id
@@ -180,7 +182,7 @@ class AssignToView extends React.Component<Props, ViewState> {
       });
     }
 
-    return (options).map((user) => {
+    return (options || []).map((user) => {
       return {
         label: user.full_name,
         value: user.id
