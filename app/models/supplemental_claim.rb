@@ -19,13 +19,12 @@ class SupplementalClaim < ClaimReview
         formName: veteran && veteran.name.formatted(:form)
       },
       relationships: ama_enabled && veteran && veteran.relationships,
-      claimId: end_product_claim_id,
       receiptDate: receipt_date.to_formatted_s(:json_date),
       benefitType: benefit_type,
       claimant: claimant_participant_id,
       claimantNotVeteran: claimant_not_veteran,
       payeeCode: payee_code,
-      ratings: cached_serialized_ratings,
+      ratings: serialized_ratings,
       requestIssues: request_issues.map(&:ui_hash)
     }
   end
@@ -40,10 +39,6 @@ class SupplementalClaim < ClaimReview
 
   def end_product_base_modifier
     valid_modifiers.first
-  end
-
-  def end_product_claim_id
-    rating_end_product_establishment && rating_end_product_establishment.reference_id
   end
 
   def valid_modifiers

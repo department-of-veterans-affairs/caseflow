@@ -274,6 +274,7 @@ RSpec.feature "Appeal Intake" do
 
   scenario "For new Add / Remove Issues page" do
     duplicate_reference_id = "xyz789"
+    old_reference_id = "old123"
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - 40.days,
@@ -282,6 +283,14 @@ RSpec.feature "Appeal Intake" do
         { reference_id: "xyz123", decision_text: "Left knee granted" },
         { reference_id: "xyz456", decision_text: "PTSD denied" },
         { reference_id: duplicate_reference_id, decision_text: "Old injury in review" }
+      ]
+    )
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date - 400.days,
+      profile_date: receipt_date - 450.days,
+      issues: [
+        { reference_id: old_reference_id, decision_text: "Really old injury" }
       ]
     )
     epe = create(:end_product_establishment, :active)
@@ -367,9 +376,15 @@ RSpec.feature "Appeal Intake" do
     safe_click "#button-add-issue"
     find_all("label", text: "Old injury in review").first.click
     safe_click ".add-issue"
-
     expect(page).to have_content("4 issues")
     expect(page).to have_content("4. Old injury in review is ineligible because it's already under review as a Appeal")
+
+    # add untimely issue
+    safe_click "#button-add-issue"
+    find_all("label", text: "Really old injury").first.click
+    safe_click ".add-issue"
+    expect(page).to have_content("5 issues")
+    expect(page).to have_content("5. Really old injury is ineligible because it has a prior decision date")
 
     safe_click "#button-finish-intake"
 
@@ -408,6 +423,26 @@ RSpec.feature "Appeal Intake" do
     expect(duplicate_request_issues.count).to eq(2)
     expect(duplicate_request_issues).to include(request_issue_in_progress)
     expect(ineligible_issue).to_not eq(request_issue_in_progress)
+
+    expect(RequestIssue.find_by(rating_issue_reference_id: old_reference_id).eligible?).to eq(false)
+  end
+
+  it "Shows a review error when something goes wrong" do
+    start_appeal(veteran)
+    visit "/intake/add_issues"
+
+    safe_click "#button-add-issue"
+    find_all("label", text: "Left knee granted").first.click
+    fill_in "Notes", with: "I am an issue note"
+    safe_click ".add-issue"
+
+    ## Validate error message when complete intake fails
+    expect_any_instance_of(AppealIntake).to receive(:complete!).and_raise("A random error. Oh no!")
+
+    safe_click "#button-finish-intake"
+
+    expect(page).to have_content("Something went wrong")
+    expect(page).to have_current_path("/intake/add_issues")
   end
 
   scenario "canceling an appeal intake" do

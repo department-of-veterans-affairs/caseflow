@@ -139,11 +139,9 @@
           }
         }
 
-        .unidentified-issue {
-          color: $color-red;
-        }
-
-        .in-active-review {
+        .unidentified-issue,
+        .in-active-review,
+        .untimely {
           color: $color-red;
         }
 
