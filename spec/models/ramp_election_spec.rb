@@ -60,12 +60,11 @@ describe RampElection do
       context "when status is canceled" do
         it "rolls back the ramp election" do
           subject
-
-          expect(RampElectionRollback.last).to have_attributes(
-            ramp_election: ramp_election,
-            user: User.system_user,
-            reason: "Automatic roll back due to EP 683 cancelation"
-          )
+          expect(RampElectionRollback.find_by(
+                   ramp_election: ramp_election,
+                   user: User.system_user,
+                   reason: "Automatic roll back due to EP 683 cancelation"
+          )).to_not be_nil
         end
       end
 
