@@ -8,6 +8,7 @@ class TasksController < ApplicationController
     ColocatedTask: ColocatedTask,
     AttorneyTask: AttorneyTask,
     GenericTask: GenericTask,
+    ScheduleHearingTask: ScheduleHearingTask,
     MailTask: MailTask
   }.freeze
 
