@@ -7,7 +7,7 @@ describe Rating do
 
   let(:receipt_date) { Time.zone.today }
 
-  let(:promulgation_date) { (receipt_date - 30.days).to_datetime }
+  let(:promulgation_date) { receipt_date - 30 }
 
   let(:rating) do
     Generators::Rating.build(
@@ -21,7 +21,8 @@ describe Rating do
       reference_id: "Issue#{num}",
       decision_text: "Decision#{num}",
       in_active_review: nil,
-      promulgation_date: promulgation_date
+      promulgation_date: promulgation_date,
+      prior_higher_level_review: nil
     }
   end
 

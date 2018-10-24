@@ -24,7 +24,7 @@ class RatingIssue < ApplicationRecord
     {
       reference_id: reference_id,
       decision_text: decision_text,
-      promulgation_date: promulgation_date,
+      promulgation_date: promulgation_date.to_date,
       in_active_review: in_active_review,
       prior_higher_level_review: prior_higher_level_review
     }
