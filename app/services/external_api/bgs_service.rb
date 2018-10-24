@@ -44,8 +44,8 @@ class ExternalApi::BGSService
                             modifier = #{end_product_modifier}",
                             service: :bgs,
                             name: "claims.cancel_end_product") do
-      client.claims.cancel_end_product(vbms_id, end_product_code, end_product_modifier)
-    end
+        client.claims.cancel_end_product(vbms_id, end_product_code, end_product_modifier)
+      end
   end
 
   def fetch_veteran_info(vbms_id)

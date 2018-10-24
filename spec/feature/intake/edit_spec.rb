@@ -110,8 +110,6 @@ RSpec.feature "Edit issues" do
         )
         expect(page).to have_content("Edit Confirmed")
       end
-
-
     end
 
     context "when there is a rated end product" do
@@ -137,7 +135,7 @@ RSpec.feature "Edit issues" do
         higher_level_review.process_end_product_establishments!
       end
 
-      scenario "creates new ep for new rating types", :focus => true do
+      scenario "creates new ep for new rating types" do
         # no non-rating eps should currently exist
         non_rating_epe = EndProductEstablishment.find_by(
           source: higher_level_review,
@@ -161,7 +159,8 @@ RSpec.feature "Edit issues" do
         # save
         safe_click("#button-submit-update")
         safe_click "#Number-of-issues-has-changed-button-id-1"
-        binding.pry
+        expect(page).to have_content("Edit Confirmed")
+
         # we should find two eps
         non_rating_epe = EndProductEstablishment.find_by(
           source: higher_level_review,
@@ -178,31 +177,13 @@ RSpec.feature "Edit issues" do
         expect(rating_epe).to_not be_nil
       end
 
-      scenario "cancels old eps if all ratings are removed", :focus => true do
-        # non_rating_request_issue = RequestIssue.create!(
-        #   rating_issue_reference_id: "ghi789",
-        #   issue_category: "Apportionment",
-        #   description: "Non rated issue",
-        #   review_request: higher_level_review,
-        #   contention_reference_id: "456"
-        # )
-        # higher_level_review.create_issues!([non_rating_request_issue])
-        # higher_level_review.process_end_product_establishments!
-
+      scenario "cancels old eps if all ratings are removed" do
         rating_epe = EndProductEstablishment.find_by(
           source: higher_level_review,
           code: HigherLevelReview::END_PRODUCT_RATING_CODE,
           synced_status: nil
         )
         expect(rating_epe).to_not be_nil
-
-        # non-rated end product should also exist
-        non_rating_epe = EndProductEstablishment.find_by(
-          source: higher_level_review,
-          code: HigherLevelReview::END_PRODUCT_NONRATING_CODE,
-          synced_status: nil
-        )
-        expect(non_rating_epe).to_not be_nil
 
         visit "higher_level_reviews/#{rated_ep_claim_id}/edit"
 
@@ -221,16 +202,11 @@ RSpec.feature "Edit issues" do
 
         # save
         safe_click("#button-submit-update")
+        expect(page).to have_content("Edit Confirmed")
 
         # rated ep should be canceled
-        rating_epe = EndProductEstablishment.find_by(id: rating_epe.id, sync: "CAN")
+        rating_epe = EndProductEstablishment.find_by(id: rating_epe.id, synced_status: "CAN")
         expect(rating_epe).to_not be_nil
-
-        # non-rating ep should still be there
-        non_rating_epe = EndProductEstablishment.find_by(id: non_rating_epe.id, sync: nil)
-        expect(non_rating_epe).to_not be_nil
-
-        # readding a rated issue should move ep out of canceled state
       end
 
       it "shows request issues and allows adding/removing issues" do
