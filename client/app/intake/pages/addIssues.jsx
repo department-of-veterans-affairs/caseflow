@@ -78,6 +78,9 @@ export class AddIssuesPage extends React.Component {
             } else if (!issue.timely && formType !== 'supplemental_claim') {
               issueKlasses.push('untimely');
               addendum = INELIGIBLE_REQUEST_ISSUES.untimely;
+            } else if (issue.priorHigherLevelReview && formType === 'higher_level_review') {
+              issueKlasses.push('not-eligible');
+              addendum = INELIGIBLE_REQUEST_ISSUES.prior_higher_level_review;
             }
 
             return <div className="issue" key={`issue-${index}`}>
