@@ -217,6 +217,26 @@ describe ClaimReview do
   end
 
   context "#process_end_product_establishments!" do
+    let!(:user) do
+      User.create(
+        station_id: 1,
+        css_id: "test_user",
+        full_name: "Test User"
+      )
+    end
+
+    let!(:intake) do
+      Intake.create(
+        user_id: user.id,
+        detail: claim_review,
+        veteran_file_number: veteran.file_number,
+        started_at: Time.zone.now,
+        completed_at: Time.zone.now,
+        completion_status: "success",
+        type: "HigherLevelReviewIntake"
+      )
+    end
+
     before do
       claim_review.save!
       claim_review.create_issues!(issues)
@@ -249,14 +269,16 @@ describe ClaimReview do
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran_participant_id
           },
-          veteran_hash: veteran.to_vbms_hash
+          veteran_hash: veteran.to_vbms_hash,
+          user: user
         )
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.last.reference_id,
           contention_descriptions: ["another decision text", "decision text"],
-          special_issues: []
+          special_issues: [],
+          user: user
         )
 
         expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).once.with(
@@ -322,7 +344,8 @@ describe ClaimReview do
               veteran_file_number: veteran_file_number,
               claim_id: claim_review.end_product_establishments.last.reference_id,
               contention_descriptions: ["another decision text"],
-              special_issues: []
+              special_issues: [],
+              user: user
             )
 
             expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).once.with(
@@ -513,14 +536,16 @@ describe ClaimReview do
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran_participant_id
           },
-          veteran_hash: veteran.to_vbms_hash
+          veteran_hash: veteran.to_vbms_hash,
+          user: user
         )
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRR").reference_id,
           contention_descriptions: ["decision text"],
-          special_issues: []
+          special_issues: [],
+          user: user
         )
 
         expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).once.with(
@@ -545,14 +570,16 @@ describe ClaimReview do
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran_participant_id
           },
-          veteran_hash: veteran.to_vbms_hash
+          veteran_hash: veteran.to_vbms_hash,
+          user: user
         )
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRNR").reference_id,
           contention_descriptions: ["surgery - Issue text"],
-          special_issues: []
+          special_issues: [],
+          user: user
         )
 
         expect(claim_review.end_product_establishments.first).to be_committed
@@ -707,7 +734,8 @@ describe ClaimReview do
               suppress_acknowledgement_letter: false,
               claimant_participant_id: veteran_participant_id
             },
-            veteran_hash: veteran.to_vbms_hash
+            veteran_hash: veteran.to_vbms_hash,
+            user: User.system_user
           )
         end
 
@@ -716,7 +744,8 @@ describe ClaimReview do
             veteran_file_number: veteran.file_number,
             claim_id: reference_id,
             contention_descriptions: issues.map(&:contention_text),
-            special_issues: []
+            special_issues: [],
+            user: User.system_user
           )
         end
 

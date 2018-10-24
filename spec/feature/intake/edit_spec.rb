@@ -54,6 +54,19 @@ RSpec.feature "Edit issues" do
       )
     end
 
+    # create associated intake
+    let!(:intake) do
+      Intake.create!(
+        user_id: current_user.id,
+        detail: higher_level_review,
+        veteran_file_number: veteran.file_number,
+        started_at: Time.zone.now,
+        completed_at: Time.zone.now,
+        completion_status: "success",
+        type: "HigherLevelReviewIntake"
+      )
+    end
+
     before do
       higher_level_review.create_claimants!(participant_id: "5382910292", payee_code: "10")
 
@@ -325,7 +338,8 @@ RSpec.feature "Edit issues" do
             "PTSD denied",
             "Left knee granted"
           ],
-          special_issues: []
+          special_issues: [],
+          user: current_user
         )
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
@@ -334,7 +348,8 @@ RSpec.feature "Edit issues" do
           contention_descriptions: [
             "Active Duty Adjustments - Description for Active Duty Adjustments"
           ],
-          special_issues: []
+          special_issues: [],
+          user: current_user
         )
       end
 
@@ -425,7 +440,8 @@ RSpec.feature "Edit issues" do
           veteran_file_number: veteran.file_number,
           claim_id: rated_ep_claim_id,
           contention_descriptions: ["Left knee granted"],
-          special_issues: []
+          special_issues: [],
+          user: current_user
         )
         expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
           claim_id: rated_ep_claim_id,
@@ -459,6 +475,19 @@ RSpec.feature "Edit issues" do
         veteran_file_number: veteran.file_number,
         receipt_date: receipt_date,
         benefit_type: "compensation"
+      )
+    end
+
+    # create intake
+    let!(:intake) do
+      Intake.create!(
+        user_id: current_user.id,
+        detail: supplemental_claim,
+        veteran_file_number: veteran.file_number,
+        started_at: Time.zone.now,
+        completed_at: Time.zone.now,
+        completion_status: "success",
+        type: "SupplementalClaimIntake"
       )
     end
 
@@ -705,7 +734,8 @@ RSpec.feature "Edit issues" do
           veteran_file_number: veteran.file_number,
           claim_id: rated_ep_claim_id,
           contention_descriptions: ["Left knee granted"],
-          special_issues: []
+          special_issues: [],
+          user: current_user
         )
         expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
           claim_id: rated_ep_claim_id,

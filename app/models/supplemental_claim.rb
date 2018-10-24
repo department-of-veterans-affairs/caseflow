@@ -47,13 +47,17 @@ class SupplementalClaim < ClaimReview
 
   def issue_code(rated)
     issue_code_type = rated ? :rating : :nonrating
-    if is_dta_error
+    if is_dta_error?
       issue_code_type = rated ? :dta_rating : :dta_nonrating
     end
     END_PRODUCT_CODES[issue_code_type]
   end
 
   private
+
+  def end_product_created_by
+    is_dta_error? ? User.system_user : intake_processed_by
+  end
 
   def new_end_product_establishment(ep_code)
     end_product_establishments.build(
@@ -63,7 +67,8 @@ class SupplementalClaim < ClaimReview
       code: ep_code,
       claimant_participant_id: claimant_participant_id,
       station: end_product_station,
-      benefit_type_code: veteran.benefit_type_code
+      benefit_type_code: veteran.benefit_type_code,
+      user: end_product_created_by
     )
   end
 end

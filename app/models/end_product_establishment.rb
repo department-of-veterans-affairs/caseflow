@@ -15,6 +15,7 @@ class EndProductEstablishment < ApplicationRecord
   # the same modifier, we add used modifiers to the invalid_modifiers array.
   attr_writer :invalid_modifiers
   belongs_to :source, polymorphic: true
+  belongs_to :user
 
   class InvalidEndProductError < StandardError; end
   class NoAvailableModifiers < StandardError; end
@@ -250,7 +251,8 @@ class EndProductEstablishment < ApplicationRecord
   def establish_claim_in_vbms(end_product)
     VBMSService.establish_claim!(
       claim_hash: end_product.to_vbms_hash,
-      veteran_hash: veteran.to_vbms_hash
+      veteran_hash: veteran.to_vbms_hash,
+      user: user
     )
   end
 
@@ -319,7 +321,8 @@ class EndProductEstablishment < ApplicationRecord
       veteran_file_number: veteran_file_number,
       claim_id: reference_id,
       contention_descriptions: descriptions,
-      special_issues: special_issues || []
+      special_issues: special_issues || [],
+      user: user
     )
   end
 
