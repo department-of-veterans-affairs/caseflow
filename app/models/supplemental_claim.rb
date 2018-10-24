@@ -19,13 +19,12 @@ class SupplementalClaim < ClaimReview
         formName: veteran && veteran.name.formatted(:form)
       },
       relationships: ama_enabled && veteran && veteran.relationships,
-      claimId: end_product_claim_id,
       receiptDate: receipt_date.to_formatted_s(:json_date),
       benefitType: benefit_type,
       claimant: claimant_participant_id,
       claimantNotVeteran: claimant_not_veteran,
       payeeCode: payee_code,
-      ratings: cached_serialized_ratings,
+      ratings: serialized_ratings,
       requestIssues: request_issues.map(&:ui_hash)
     }
   end
@@ -42,23 +41,23 @@ class SupplementalClaim < ClaimReview
     valid_modifiers.first
   end
 
-  def end_product_claim_id
-    rating_end_product_establishment && rating_end_product_establishment.reference_id
-  end
-
   def valid_modifiers
     END_PRODUCT_MODIFIERS
   end
 
   def issue_code(rated)
     issue_code_type = rated ? :rating : :nonrating
-    if is_dta_error
+    if is_dta_error?
       issue_code_type = rated ? :dta_rating : :dta_nonrating
     end
     END_PRODUCT_CODES[issue_code_type]
   end
 
   private
+
+  def end_product_created_by
+    is_dta_error? ? User.system_user : intake_processed_by
+  end
 
   def new_end_product_establishment(ep_code)
     end_product_establishments.build(
@@ -68,7 +67,8 @@ class SupplementalClaim < ClaimReview
       code: ep_code,
       claimant_participant_id: claimant_participant_id,
       station: end_product_station,
-      benefit_type_code: veteran.benefit_type_code
+      benefit_type_code: veteran.benefit_type_code,
+      user: end_product_created_by
     )
   end
 end

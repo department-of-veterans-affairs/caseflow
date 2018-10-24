@@ -177,14 +177,16 @@ describe HigherLevelReviewIntake do
           suppress_acknowledgement_letter: false,
           claimant_participant_id: nil
         },
-        veteran_hash: intake.veteran.to_vbms_hash
+        veteran_hash: intake.veteran.to_vbms_hash,
+        user: user
       )
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: intake.detail.veteran_file_number,
         claim_id: ratings_end_product_establishment.reference_id,
         contention_descriptions: ["decision text"],
-        special_issues: []
+        special_issues: [],
+        user: user
       )
 
       expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(

@@ -11,5 +11,10 @@ FactoryBot.define do
     factory :bva do
       type "Bva"
     end
+
+    factory :hearings_management do
+      type "HearingsManagement"
+      name "Hearings Management"
+    end
   end
 end

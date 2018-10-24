@@ -256,7 +256,9 @@ export const formatAddedIssues = (intakeData) => {
         text: ratingIssues[issue.id],
         date: formatDateStr(issue.profileDate),
         notes: issue.notes,
-        inActiveReview: issue.inActiveReview
+        inActiveReview: issue.inActiveReview,
+        promulgationDate: issue.promulgationDate,
+        timely: issue.timely
       };
     }
 
