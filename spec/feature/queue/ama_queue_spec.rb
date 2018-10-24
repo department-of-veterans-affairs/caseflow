@@ -358,7 +358,6 @@ RSpec.feature "AmaQueue" do
 
     scenario "return case to judge" do
       visit "/organizations/#{quality_review_organization.url}"
-
       click_on "Bob Smith"
 
       find(".Select-control", text: "Select an action").click

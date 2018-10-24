@@ -67,7 +67,7 @@ class AssignToView extends React.Component<Props, ViewState> {
 
     const actionData = this.taskActionData();
     const selectedOption = actionData.selected ?
-      this.options().find((option) => option.value === actionData.selected.id) : null;
+      this.taskActionData().options.find((option) => option.value === actionData.selected.id) : null;
 
     this.state = {
       selectedValue: selectedOption ? selectedOption.value : null,
@@ -128,15 +128,14 @@ class AssignToView extends React.Component<Props, ViewState> {
       return (relevantAction.data);
     }
 
-    return { selected: null,
-      options: null,
-      type: null };
+    // We should never get here since any task action the creates this modal should provide data.
+    throw "Task action requires data";
   }
 
   getAssignee = () => {
     let assignee = 'person';
 
-    this.options().forEach((opt) => {
+    this.taskActionData().options.forEach((opt) => {
       if (opt.value === this.state.selectedValue) {
         assignee = opt.label;
       }
@@ -170,26 +169,6 @@ class AssignToView extends React.Component<Props, ViewState> {
       });
   }
 
-  options = () => {
-    const options = this.taskActionData().options;
-
-    if (this.props.isTeamAssign) {
-      return (options || []).map((organization) => {
-        return {
-          label: organization.name,
-          value: organization.id
-        };
-      });
-    }
-
-    return (options || []).map((user) => {
-      return {
-        label: user.full_name,
-        value: user.id
-      };
-    });
-  }
-
   render = () => {
     const {
       highlightFormItems
@@ -204,7 +183,7 @@ class AssignToView extends React.Component<Props, ViewState> {
         placeholder={this.props.isTeamAssign ? COPY.ASSIGN_TO_TEAM_DROPDOWN : COPY.ASSIGN_TO_USER_DROPDOWN}
         value={this.state.selectedValue}
         onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
-        options={this.options()} />
+        options={this.taskActionData().options} />
       <br />
       <TextareaField
         name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}

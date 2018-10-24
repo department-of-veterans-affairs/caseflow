@@ -263,9 +263,6 @@ class QueueApp extends React.PureComponent<Props> {
             path={`/queue/appeals/:appealId/${TASK_ACTIONS.REASSIGN_TO_PERSON.value}`}
             render={this.routedReassignToUser} />
           <Route
-            path={`/queue/appeals/:appealId/${TASK_ACTIONS.RETURN_TO_JUDGE.value}`}
-            render={this.routedAssignToUser} />
-          <Route
             path="/queue/appeals/:appealId/modal/assign_to_attorney"
             render={this.routedAssignToAttorney} />
           <PageRoute

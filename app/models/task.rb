@@ -144,9 +144,16 @@ class Task < ApplicationRecord
   end
 
   def assign_to_organization_data
+    organizations = Organization.assignable(self).map do |organization|
+      {
+        label: organization.name,
+        value: organization.id
+      }
+    end
+
     {
       selected: nil,
-      options: Organization.assignable(self),
+      options: organizations,
       type: GenericTask.name
     }
   end
@@ -162,7 +169,7 @@ class Task < ApplicationRecord
 
     {
       selected: nil,
-      options: users,
+      options: users_to_options(users),
       type: type
     }
   end
@@ -170,12 +177,21 @@ class Task < ApplicationRecord
   def assign_to_judge_data
     {
       selected: root_task.children.find { |task| task.type == JudgeTask.name }.assigned_to,
-      options: Judge.list_all,
+      options: users_to_options(Judge.list_all),
       type: JudgeTask.name
     }
   end
 
   private
+
+  def users_to_options(users)
+    users.map do |user|
+      {
+        label: user.full_name,
+        value: user.id
+      }
+    end
+  end
 
   def update_status_if_children_tasks_are_complete
     if children.any? && children.reject { |t| t.status == Constants.TASK_STATUSES.completed }.empty?
