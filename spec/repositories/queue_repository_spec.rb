@@ -210,7 +210,7 @@ describe QueueRepository do
 
       let(:tasks) do
         [
-          OpenStruct.new(vacols_id: "123B", updated_at: 3.days.ago),
+          OpenStruct.new(vacols_id: "123B", updated_at: nil),
           OpenStruct.new(vacols_id: "123B", updated_at: 1.day.ago),
           OpenStruct.new(vacols_id: "123C", updated_at: 2.days.ago),
           OpenStruct.new(vacols_id: "123C", updated_at: 11.days.ago),
@@ -267,16 +267,19 @@ describe QueueRepository do
           OpenStruct.new(vacols_id: "123C", updated_at: 9.days.ago, attorney_id: "1234"),
           OpenStruct.new(vacols_id: "123A", updated_at: 9.days.ago),
           OpenStruct.new(vacols_id: "123F", updated_at: 2.days.ago),
-          OpenStruct.new(vacols_id: "123F", updated_at: 11.days.ago, attorney_id: "5678")
+          OpenStruct.new(vacols_id: "123F", updated_at: 11.days.ago, attorney_id: "5678"),
+          OpenStruct.new(vacols_id: "123G", updated_at: nil),
+          OpenStruct.new(vacols_id: "123G", updated_at: nil)
         ]
       end
 
       it "should filter duplicate tasks and keep the latest" do
-        expect(subject.size).to eq 4
+        expect(subject.size).to eq 5
         expect(subject).to include tasks[1]
         expect(subject).to include tasks[2]
         expect(subject).to include tasks[5]
         expect(subject).to include tasks[6]
+        expect(subject).to include tasks[8]
       end
     end
   end
