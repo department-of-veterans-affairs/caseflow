@@ -17,7 +17,7 @@ import {
 } from '../../actions/ama';
 import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, REQUEST_STATE } from '../../constants';
 import { getIntakeStatus, issueCountSelector } from '../../selectors';
-import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
+import ErrorAlert from '../../components/ErrorAlert';
 
 class Finish extends React.PureComponent {
   render() {
@@ -43,9 +43,9 @@ class Finish extends React.PureComponent {
       <h1>Identify issues on { veteranName }'s { FORM_TYPES.SUPPLEMENTAL_CLAIM.name }</h1>
 
       { requestState === REQUEST_STATE.FAILED &&
-        <CompleteIntakeErrorAlert
-          completeIntakeErrorCode={completeIntakeErrorCode}
-          completeIntakeErrorData={completeIntakeErrorData} />
+        <ErrorAlert
+          errorCode={completeIntakeErrorCode}
+          errorData={completeIntakeErrorData} />
       }
 
       <p>

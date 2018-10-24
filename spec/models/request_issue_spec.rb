@@ -98,4 +98,62 @@ describe RequestIssue do
       expect(rated_issue.review_title).to eq "Higher-Level Review"
     end
   end
+
+  context "#validate_eligibility!" do
+    let(:duplicate_reference_id) { "xyz789" }
+    let(:old_reference_id) { "old123" }
+    let(:active_epe) { create(:end_product_establishment, :active) }
+    let(:receipt_date) { review.receipt_date }
+
+    let!(:ratings) do
+      Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: receipt_date - 40.days,
+        profile_date: receipt_date - 50.days,
+        issues: [
+          { reference_id: "xyz123", decision_text: "Left knee granted" },
+          { reference_id: "xyz456", decision_text: "PTSD denied" },
+          { reference_id: duplicate_reference_id, decision_text: "Old injury" }
+        ]
+      )
+      Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: receipt_date - 400.days,
+        profile_date: receipt_date - 450.days,
+        issues: [
+          { reference_id: old_reference_id, decision_text: "Really old injury" }
+        ]
+      )
+    end
+
+    let!(:request_issue_in_progress) do
+      create(
+        :request_issue,
+        end_product_establishment: active_epe,
+        rating_issue_reference_id: duplicate_reference_id,
+        description: "Old injury"
+      )
+    end
+
+    it "flags non-rated issue as untimely when decision date is older than receipt_date" do
+      non_rated_issue.decision_date = receipt_date - 400
+      non_rated_issue.validate_eligibility!
+
+      expect(non_rated_issue.untimely?).to eq(true)
+    end
+
+    it "flags rated issue as untimely when promulgation_date is year+ older than receipt_date" do
+      rated_issue.rating_issue_reference_id = old_reference_id
+      rated_issue.validate_eligibility!
+
+      expect(rated_issue.untimely?).to eq(true)
+    end
+
+    it "flags duplicate rated issue as in progress" do
+      rated_issue.rating_issue_reference_id = duplicate_reference_id
+      rated_issue.validate_eligibility!
+
+      expect(rated_issue.duplicate_of_issue_in_active_review?).to eq(true)
+    end
+  end
 end
