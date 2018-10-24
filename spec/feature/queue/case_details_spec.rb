@@ -162,7 +162,40 @@ RSpec.feature "Case details" do
 
         expect(page).to have_content("About the Veteran")
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
-        expect(page).to have_content(appeal.veteran_date_of_birth.strftime("%-m/%e/%Y"))
+        expect(page).to have_content("1/10/1935")
+        expect(page).to have_content("5/25/2016")
+        expect(page).to have_content(appeal.regional_office.city)
+        expect(page).to have_content(appeal.veteran_address_line_1)
+      end
+    end
+
+    context "when veteran is not in BGS" do
+      let!(:appeal) do
+        FactoryBot.create(
+          :legacy_appeal,
+          :with_veteran,
+          vacols_case: FactoryBot.create(
+            :case,
+            :assigned,
+            user: attorney_user,
+            correspondent: FactoryBot.create(:correspondent, sgender: "F")
+          )
+        )
+      end
+
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_return(nil)
+      end
+
+      scenario "details view informs us that the Veteran is the appellant" do
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+
+        expect(page).to have_content("About the Veteran")
+        expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
+        expect(page).to_not have_content("1/10/1935")
+        expect(page).to_not have_content("5/25/2016")
+        expect(page).to have_content(appeal.regional_office.city)
       end
     end
 
@@ -191,6 +224,7 @@ RSpec.feature "Case details" do
 
         expect(page).to have_content("About the Appellant")
         expect(page).to have_content("About the Veteran")
+        expect(page).to have_content(appeal.veteran_address_line_1)
         expect(page).to have_content(appeal.appellant_name)
         expect(page).to have_content(appeal.appellant_relationship)
         expect(page).to have_content(appeal.appellant_address_line_1)

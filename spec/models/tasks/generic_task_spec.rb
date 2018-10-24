@@ -172,7 +172,7 @@ describe GenericTask do
     end
   end
 
-  describe ".create_from_params" do
+  describe ".create_many_from_params" do
     let(:parent_assignee) { FactoryBot.create(:user) }
     let(:current_user) { FactoryBot.create(:user) }
     let(:assignee) { FactoryBot.create(:user) }
@@ -200,7 +200,7 @@ describe GenericTask do
         }]
       end
       it "should raise error before not creating child task nor update status" do
-        expect { GenericTask.create_from_params(params, parent_assignee).first }.to raise_error(TypeError)
+        expect { GenericTask.create_many_from_params(params, parent_assignee).first }.to raise_error(TypeError)
       end
     end
 
@@ -213,7 +213,7 @@ describe GenericTask do
         }]
       end
       it "should raise error before not creating child task nor update status" do
-        expect { GenericTask.create_from_params(params, parent_assignee).first }
+        expect { GenericTask.create_many_from_params(params, parent_assignee).first }
           .to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -228,7 +228,7 @@ describe GenericTask do
       end
       it "should create child task and not update parent task's status" do
         status_before = parent.status
-        GenericTask.create_from_params(params, parent_assignee)
+        GenericTask.create_many_from_params(params, parent_assignee)
         expect(GenericTask.where(params.first).count).to eq(1)
         expect(parent.status).to eq(status_before)
       end
@@ -237,7 +237,7 @@ describe GenericTask do
     context "when all parameters present" do
       it "should create child task and update parent task's status" do
         status_before = parent.status
-        GenericTask.create_from_params(good_params_array, parent_assignee)
+        GenericTask.create_many_from_params(good_params_array, parent_assignee)
         expect(GenericTask.where(good_params.except(:status)).count).to eq(1)
         expect(parent.reload.status).to_not eq(status_before)
         expect(parent.status).to eq(good_params[:status])
@@ -247,7 +247,7 @@ describe GenericTask do
     context "when parent task is assigned to a user" do
       context "when there is no current user" do
         it "should raise error and not create the child task nor update status" do
-          expect { GenericTask.create_from_params(good_params_array, nil).first }.to(
+          expect { GenericTask.create_many_from_params(good_params_array, nil).first }.to(
             raise_error(Caseflow::Error::ActionForbiddenError)
           )
         end
@@ -256,7 +256,7 @@ describe GenericTask do
       context "when the currently logged-in user owns the parent task" do
         let(:parent_assignee) { current_user }
         it "should create child task assigned by currently logged-in user" do
-          child = GenericTask.create_from_params(good_params_array, current_user).first
+          child = GenericTask.create_many_from_params(good_params_array, current_user).first
           expect(child.assigned_by_id).to eq(current_user.id)
         end
       end
@@ -274,7 +274,7 @@ describe GenericTask do
 
       context "when there is no current user" do
         it "should raise error and not create the child task nor update status" do
-          expect { GenericTask.create_from_params(good_params_array, nil).first }.to(
+          expect { GenericTask.create_many_from_params(good_params_array, nil).first }.to(
             raise_error(Caseflow::Error::ActionForbiddenError)
           )
         end
@@ -286,7 +286,7 @@ describe GenericTask do
           FeatureToggle.enable!(org.feature.to_sym, users: [current_user.css_id])
         end
         it "should create child task assigned by currently logged-in user" do
-          child = GenericTask.create_from_params(good_params_array, current_user).first
+          child = GenericTask.create_many_from_params(good_params_array, current_user).first
           expect(child.assigned_by_id).to eq(current_user.id)
         end
       end
@@ -314,7 +314,7 @@ describe GenericTask do
 
     context "When old assignee reassigns task with no child tasks to a new user" do
       it "reassign method should return list with old and new tasks" do
-        expect(subject).to eq(task.parent.children)
+        expect(subject).to match_array(task.parent.children)
         expect(task.parent.children.length).to eq(2)
       end
 

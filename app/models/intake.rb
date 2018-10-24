@@ -221,7 +221,10 @@ class Intake < ApplicationRecord
   private
 
   def close_expired_intakes!
-    Intake.expired.each { |intake| intake.complete_with_status!(:expired) }
+    Intake.expired.each do |intake|
+      intake.complete_with_status!(:expired)
+      intake.cancel_detail!
+    end
   end
 
   def file_number_valid?

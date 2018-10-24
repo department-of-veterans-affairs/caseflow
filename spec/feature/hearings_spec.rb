@@ -116,7 +116,7 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Your Hearing Days")
     end
 
-    scenario "Daily docket saves to the backend" do
+    scenario "Daily docket saves to the backend", skip: "Test is flakey" do
       visit "/hearings/dockets/2023-11-06"
 
       fill_in "3.notes", with: "This is a note about the hearing!"
