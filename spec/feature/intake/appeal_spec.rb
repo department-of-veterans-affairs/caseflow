@@ -136,7 +136,7 @@ RSpec.feature "Appeal Intake" do
     expect(appeal).to_not be_nil
     expect(appeal.receipt_date).to eq(receipt_date)
     expect(appeal.docket_type).to eq("evidence_submission")
-    expect(appeal.legacy_opt_in).to eq(false)
+    expect(appeal.legacy_opt_in_approved).to eq(false)
 
     expect(page).to have_content("Identify issues on")
 
@@ -232,7 +232,7 @@ RSpec.feature "Appeal Intake" do
       veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
       docket_type: "evidence_submission",
-      legacy_opt_in: false
+      legacy_opt_in_approved: false
     )
 
     intake = AppealIntake.create!(

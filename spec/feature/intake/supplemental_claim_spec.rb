@@ -179,7 +179,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(supplemental_claim).to_not be_nil
     expect(supplemental_claim.receipt_date).to eq(receipt_date)
     expect(supplemental_claim.benefit_type).to eq(benefit_type)
-    expect(supplemental_claim.legacy_opt_in).to eq(false)
+    expect(supplemental_claim.legacy_opt_in_approved).to eq(false)
     expect(supplemental_claim.claimants.first).to have_attributes(
       participant_id: "5382910293",
       payee_code: "11"
@@ -352,7 +352,7 @@ RSpec.feature "Supplemental Claim Intake" do
       veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
       benefit_type: is_comp ? "compensation" : "education",
-      legacy_opt_in: false
+      legacy_opt_in_approved: false
     )
 
     intake = SupplementalClaimIntake.create!(

@@ -29,8 +29,8 @@ const updateFromServerIntake = (state, serverIntake) => {
     payeeCode: {
       $set: serverIntake.payee_code
     },
-    legacyOptIn: {
-      $set: serverIntake.legacy_opt_in
+    legacyOptInApproved: {
+      $set: serverIntake.legacy_opt_in_approved
     },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
@@ -66,8 +66,8 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     claimantNotVeteran: null,
     claimant: null,
     payeeCode: null,
-    legacyOptIn: null,
-    legacyOptInError: null,
+    legacyOptInApproved: null,
+    legacyOptInApprovedError: null,
     isStarted: false,
     isReviewed: false,
     isComplete: false,
@@ -133,10 +133,10 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: action.payload.payeeCode
       }
     });
-  case ACTIONS.SET_LEGACY_OPT_IN:
+  case ACTIONS.SET_LEGACY_OPT_IN_APPROVED:
     return update(state, {
-      legacyOptIn: {
-        $set: action.payload.legacyOptIn
+      legacyOptInApproved: {
+        $set: action.payload.legacyOptInApproved
       }
     });
   case ACTIONS.SUBMIT_REVIEW_START:
@@ -155,7 +155,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       benefitTypeError: {
         $set: null
       },
-      legacyOptInError: {
+      legacyOptInApprovedError: {
         $set: null
       },
       isReviewed: {
@@ -175,8 +175,8 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       benefitTypeError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'benefit_type')
       },
-      legacyOptInError: {
-        $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in')
+      legacyOptInApprovedError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')
       },
       requestStatus: {
         submitReview: {

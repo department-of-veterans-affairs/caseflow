@@ -7,7 +7,7 @@ import DateSelector from '../../../components/DateSelector';
 import CancelButton from '../../components/CancelButton';
 import Button from '../../../components/Button';
 import BenefitType from '../../components/BenefitType';
-import LegacyOptIn from '../../components/LegacyOptIn';
+import LegacyOptInApproved from '../../components/LegacyOptInApproved';
 import SelectClaimant from '../../components/SelectClaimant';
 import { setInformalConference, setSameOffice } from '../../actions/higherLevelReview';
 import {
@@ -16,7 +16,7 @@ import {
   setClaimantNotVeteran,
   setClaimant,
   setPayeeCode,
-  setLegacyOptIn
+  setLegacyOptInApproved
 } from '../../actions/ama';
 import { setReceiptDate } from '../../actions/intake';
 import { PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS, FORM_TYPES, REQUEST_STATE } from '../../constants';
@@ -36,8 +36,8 @@ class Review extends React.PureComponent {
       informalConferenceError,
       sameOffice,
       sameOfficeError,
-      legacyOptIn,
-      legacyOptInError,
+      legacyOptInApproved,
+      legacyOptInApprovedError,
       reviewIntakeError
     } = this.props;
 
@@ -93,10 +93,10 @@ class Review extends React.PureComponent {
 
       <SelectClaimantConnected />
 
-      <LegacyOptIn
-        value={legacyOptIn === null ? null : legacyOptIn.toString()}
-        onChange={this.props.setLegacyOptIn}
-        errorMessage={legacyOptInError}
+      <LegacyOptInApproved
+        value={legacyOptInApproved === null ? null : legacyOptInApproved.toString()}
+        onChange={this.props.setLegacyOptInApproved}
+        errorMessage={legacyOptInApprovedError}
       />
     </div>;
   }
@@ -160,8 +160,8 @@ export default connect(
     receiptDateError: state.higherLevelReview.receiptDateError,
     benefitType: state.higherLevelReview.benefitType,
     benefitTypeError: state.higherLevelReview.benefitTypeError,
-    legacyOptIn: state.higherLevelReview.legacyOptIn,
-    legacyOptInError: state.higherLevelReview.legacyOptInError,
+    legacyOptInApproved: state.higherLevelReview.legacyOptInApproved,
+    legacyOptInApprovedError: state.higherLevelReview.legacyOptInApprovedError,
     informalConference: state.higherLevelReview.informalConference,
     informalConferenceError: state.higherLevelReview.informalConferenceError,
     sameOffice: state.higherLevelReview.sameOffice,
@@ -173,6 +173,6 @@ export default connect(
     setSameOffice,
     setReceiptDate,
     setBenefitType,
-    setLegacyOptIn
+    setLegacyOptInApproved
   }, dispatch)
 )(Review);

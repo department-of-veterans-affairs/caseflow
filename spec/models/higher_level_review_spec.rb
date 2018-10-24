@@ -14,6 +14,7 @@ describe HigherLevelReview do
   let(:benefit_type) { "compensation" }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
+  let(:legacy_opt_in_approved) { nil }
 
   let(:higher_level_review) do
     HigherLevelReview.new(
@@ -21,7 +22,8 @@ describe HigherLevelReview do
       receipt_date: receipt_date,
       informal_conference: informal_conference,
       same_office: same_office,
-      benefit_type: benefit_type
+      benefit_type: benefit_type,
+      legacy_opt_in_approved: legacy_opt_in_approved
     )
   end
 
@@ -73,6 +75,7 @@ describe HigherLevelReview do
         context "when they are set" do
           let(:informal_conference) { true }
           let(:same_office) { false }
+          let(:legacy_opt_in_approved) { false }
 
           it "is valid" do
             is_expected.to be true
@@ -84,6 +87,7 @@ describe HigherLevelReview do
             is_expected.to be false
             expect(higher_level_review.errors[:informal_conference]).to include("blank")
             expect(higher_level_review.errors[:same_office]).to include("blank")
+            expect(higher_level_review.errors[:legacy_opt_in_approved]).to include("blank")
           end
         end
       end

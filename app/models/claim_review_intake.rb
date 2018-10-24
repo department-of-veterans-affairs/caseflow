@@ -1,4 +1,4 @@
-class ClaimReviewIntake < AmaIntake
+class ClaimReviewIntake < DecisionReviewIntake
   include Asyncable
 
   def ui_hash(ama_enabled)

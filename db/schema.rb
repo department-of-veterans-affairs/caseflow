@@ -85,7 +85,7 @@ ActiveRecord::Schema.define(version: 20181023204155) do
     t.string "docket_type"
     t.datetime "established_at"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
-    t.boolean "legacy_opt_in"
+    t.boolean "legacy_opt_in_approved"
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
 
@@ -414,7 +414,7 @@ ActiveRecord::Schema.define(version: 20181023204155) do
     t.string "benefit_type"
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
-    t.boolean "legacy_opt_in"
+    t.boolean "legacy_opt_in_approved"
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
@@ -707,7 +707,7 @@ ActiveRecord::Schema.define(version: 20181023204155) do
     t.boolean "is_dta_error"
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
-    t.boolean "legacy_opt_in"
+    t.boolean "legacy_opt_in_approved"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 

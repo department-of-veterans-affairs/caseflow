@@ -184,7 +184,7 @@ RSpec.feature "Higher-Level Review" do
     expect(higher_level_review.benefit_type).to eq(benefit_type)
     expect(higher_level_review.informal_conference).to eq(true)
     expect(higher_level_review.same_office).to eq(false)
-    expect(higher_level_review.legacy_opt_in).to eq(false)
+    expect(higher_level_review.legacy_opt_in_approved).to eq(false)
     expect(higher_level_review.claimants.first).to have_attributes(
       participant_id: "5382910292",
       payee_code: "10"
@@ -449,7 +449,7 @@ RSpec.feature "Higher-Level Review" do
       receipt_date: 2.days.ago,
       informal_conference: false, same_office: false,
       benefit_type: is_comp ? "compensation" : "education",
-      legacy_opt_in: false
+      legacy_opt_in_approved: false
     )
 
     intake = HigherLevelReviewIntake.create!(

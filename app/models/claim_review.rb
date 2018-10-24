@@ -22,7 +22,7 @@ class ClaimReview < AmaReview
       claimant: claimant_participant_id,
       claimantNotVeteran: claimant_not_veteran,
       payeeCode: payee_code,
-      legacyOptIn: legacy_opt_in,
+      legacyOptInApproved: legacy_opt_in_approved,
       ratings: serialized_ratings,
       requestIssues: request_issues.map(&:ui_hash)
     }

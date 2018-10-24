@@ -9,7 +9,7 @@ class Appeal < AmaReview
   has_one :special_issue_list
 
   validates :receipt_date, :docket_type, presence: { message: "blank" }, on: :intake_review
-  validates :legacy_opt_in, inclusion: { in: [true, false], message: "blank" }, on: :intake_review
+  validates :legacy_opt_in_approved, inclusion: { in: [true, false], message: "blank" }, on: :intake_review
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
 

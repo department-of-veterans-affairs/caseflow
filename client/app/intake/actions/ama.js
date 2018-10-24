@@ -108,10 +108,10 @@ export const setBenefitType = (benefitType) => ({
   }
 });
 
-export const setLegacyOptIn = (legacyOptIn) => ({
-  type: ACTIONS.SET_LEGACY_OPT_IN,
+export const setLegacyOptInApproved = (legacyOptInApproved) => ({
+  type: ACTIONS.SET_LEGACY_OPT_IN_APPROVED,
   payload: {
-    legacyOptIn
+    legacyOptInApproved
   }
 });
 

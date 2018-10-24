@@ -29,8 +29,8 @@ const updateFromServerIntake = (state, serverIntake) => {
     payeeCode: {
       $set: serverIntake.payee_code
     },
-    legacyOptIn: {
-      $set: serverIntake.legacy_opt_in
+    legacyOptInApproved: {
+      $set: serverIntake.legacy_opt_in_approved
     },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
@@ -62,8 +62,8 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     claimantNotVeteran: null,
     claimant: null,
     payeeCode: null,
-    legacyOptIn: null,
-    legacyOptInError: null,
+    legacyOptInApproved: null,
+    legacyOptInApprovedError: null,
     isStarted: false,
     isReviewed: false,
     isComplete: false,
@@ -128,10 +128,10 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         $set: action.payload.payeeCode
       }
     });
-  case ACTIONS.SET_LEGACY_OPT_IN:
+  case ACTIONS.SET_LEGACY_OPT_IN_APPROVED:
     return update(state, {
-      legacyOptIn: {
-        $set: action.payload.legacyOptIn
+      legacyOptInApproved: {
+        $set: action.payload.legacyOptInApproved
       }
     });
   case ACTIONS.SUBMIT_REVIEW_START:
@@ -150,7 +150,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       receiptDateError: {
         $set: null
       },
-      legacyOptInError: {
+      legacyOptInApprovedError: {
         $set: null
       },
       isReviewed: {
@@ -170,8 +170,8 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       receiptDateError: {
         $set: getReceiptDateError(action.payload.responseErrorCodes, state)
       },
-      legacyOptInError: {
-        $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in')
+      legacyOptInApprovedError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')
       },
       requestStatus: {
         submitReview: {

@@ -1,7 +1,8 @@
 class HigherLevelReview < ClaimReview
   with_options if: :saving_review do
     validates :receipt_date, :benefit_type, presence: { message: "blank" }
-    validates :informal_conference, :same_office, :legacy_opt_in, inclusion: { in: [true, false], message: "blank" }
+    validates :informal_conference, :same_office, :legacy_opt_in_approved,
+              inclusion: { in: [true, false], message: "blank" }
   end
 
   END_PRODUCT_RATING_CODE = "030HLRR".freeze

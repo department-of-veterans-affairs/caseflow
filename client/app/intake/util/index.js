@@ -56,7 +56,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
       payee_code: intakeData.payeeCode,
-      legacy_opt_in: intakeData.legacyOptIn
+      legacy_opt_in_approved: intakeData.legacyOptInApproved
     };
   case 'supplementalClaim':
     return {
@@ -64,7 +64,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
       benefit_type: intakeData.benefitType,
       claimant: intakeData.claimant,
       payee_code: intakeData.payeeCode,
-      legacy_opt_in: intakeData.legacyOptIn
+      legacy_opt_in_approved: intakeData.legacyOptInApproved
     };
   case 'higherLevelReview':
     return {
@@ -74,14 +74,14 @@ export const prepareReviewData = (intakeData, intakeType) => {
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
       payee_code: intakeData.payeeCode,
-      legacy_opt_in: intakeData.legacyOptIn
+      legacy_opt_in_approved: intakeData.legacyOptInApproved
     };
   default:
     return {
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
       payee_code: intakeData.payeeCode,
-      legacy_opt_in: intakeData.legacyOptIn
+      legacy_opt_in_approved: intakeData.legacyOptInApproved
     };
   }
 };
