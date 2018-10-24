@@ -499,17 +499,17 @@ class SeedDB
     return if (appeals.map(&:type) - ["Post Remand", "Original"]).empty? &&
               appeals.flat_map(&:hearings).map(&:disposition).include?(:held)
 
-    # FactoryBot.create(
-    #   :legacy_appeal,
-    #   vacols_case: FactoryBot.create(
-    #     :case,
-    #     :assigned,
-    #     :type_original,
-    #     user: user,
-    #     bfcorlid: veteran_file_number,
-    #     case_hearings: [FactoryBot.create(:case_hearing, :disposition_held, user: user)]
-    #   )
-    # )
+    FactoryBot.create(
+      :legacy_appeal,
+      vacols_case: FactoryBot.create(
+        :case,
+        :assigned,
+        :type_original,
+        user: user,
+        bfcorlid: veteran_file_number,
+        case_hearings: [FactoryBot.create(:case_hearing, :disposition_held, user: user)]
+      )
+    )
   end
 
   def seed

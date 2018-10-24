@@ -28,7 +28,6 @@ import {
 
 import type { State } from './types/state';
 import type { Appeal, Task, User } from './types/models';
-import TASK_ACTIONS from '../../constants/TASK_ACTIONS.json';
 
 type Params = {|
   appealId: string,
@@ -93,7 +92,7 @@ class AssignToView extends React.Component<Props, ViewState> {
     } else if (createsMailTask) {
       type = 'MailTask';
     }
-    
+
     const payload = {
       data: {
         tasks: [{
@@ -120,14 +119,16 @@ class AssignToView extends React.Component<Props, ViewState> {
   }
 
   taskActionData = () : { selected: ?User, users: ?Array<User>, type: string } => {
-    const action = this.props.task.availableActions.
+    const relevantAction = this.props.task.availableActions.
       find((action) => this.props.history.location.pathname.endsWith(action.value));
 
-    if (action && action.data) {
-      return (action.data);
+    if (relevantAction && relevantAction.data) {
+      return (relevant_action.data);
     }
 
-    return { selected: null, users: null, type: null }
+    return { selected: null,
+      users: null,
+      type: null };
   }
 
   getAssignee = () => {

@@ -8,7 +8,6 @@ import {
   actionableTasksForAppeal,
   appealWithDetailSelector,
   tasksForAppealAssignedToAttorneySelector,
-  incompleteTasksByAssigneeCssIdSelector,
   incompleteOrganizationTasksByAssigneeIdSelector
 } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
@@ -308,7 +307,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => {
-  const { featureToggles, userRole } = state.ui;
+  const { featureToggles } = state.ui;
 
   const taskAssignedToAttorney = tasksForAppealAssignedToAttorneySelector(state, { appealId: ownProps.appealId })[0];
 

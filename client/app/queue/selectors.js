@@ -48,6 +48,9 @@ const getCaseflowVeteranId = (state: State, props: Object): ?string => props.cas
 const getModals = (state: State): UiStateModals => state.ui.modals;
 const getNewDocsForAppeal = (state: State): NewDocsForAppeal => state.queue.newDocsForAppeal;
 
+const incompleteTasksSelector = (tasks: Tasks) => _.filter(tasks, (task) => task.status !== TASK_STATUSES.completed);
+const completeTasksSelector = (tasks: Tasks) => _.filter(tasks, (task) => task.status === TASK_STATUSES.completed);
+
 export const getActiveModalType = createSelector(
   [getModals],
   (modals: { String: boolean }) => _.find(Object.keys(modals), (modalName) => modals[modalName])
@@ -115,9 +118,6 @@ export const appealsByCaseflowVeteranId = createSelector(
     _.filter(appeals, (appeal: Appeal) => appeal.caseflowVeteranId && caseflowVeteranId &&
       appeal.caseflowVeteranId.toString() === caseflowVeteranId.toString())
 );
-
-const incompleteTasksSelector = (tasks: Tasks) => _.filter(tasks, (task) => task.status !== TASK_STATUSES.completed);
-const completeTasksSelector = (tasks: Tasks) => _.filter(tasks, (task) => task.status === TASK_STATUSES.completed);
 
 const tasksByAssigneeCssIdSelector = createSelector(
   [tasksWithAppealSelector, getUserCssId],
