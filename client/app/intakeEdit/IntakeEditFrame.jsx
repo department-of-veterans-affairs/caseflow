@@ -20,7 +20,6 @@ const textAlignRightStyling = css({
 export default class IntakeEditFrame extends React.PureComponent {
   render() {
     const {
-      claimId,
       veteran,
       formType
     } = this.props.serverIntake;
@@ -32,7 +31,7 @@ export default class IntakeEditFrame extends React.PureComponent {
     const topMessage = veteran.fileNumber ?
       `${veteran.formName} (${veteran.fileNumber})` : null;
 
-    const basename = `/${formType}s/${claimId}/edit/`;
+    const basename = `/${formType}s/${this.props.claimId}/edit/`;
 
     return <Router basename={basename} {...this.props.routerTestProps}>
       <div>
