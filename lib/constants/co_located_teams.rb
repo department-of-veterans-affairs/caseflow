@@ -4,6 +4,6 @@ module Constants::CoLocatedTeams
     uat: %w[CF_SPOCK_317 CF_KHAN_397],
     test: %w[BVATEST1 BVATEST2 BVATEST3],
     development: %w[BVALSPORER],
-    prod: %w[BVARSEAY BVATOWENS]
+    prod: %w[BVARSEAY BVAMJKOROMA]
   }.freeze
 end

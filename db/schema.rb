@@ -583,6 +583,9 @@ ActiveRecord::Schema.define(version: 20181023172507) do
     t.string "reference_id", null: false
     t.datetime "profile_date", null: false
     t.string "decision_text"
+    t.datetime "promulgation_date", null: false
+    t.integer "participant_id"
+    t.index ["reference_id", "participant_id"], name: "index_rating_issues_on_reference_id_and_participant_id", unique: true
     t.index ["request_issue_id"], name: "index_rating_issues_on_request_issue_id"
   end
 
@@ -625,6 +628,7 @@ ActiveRecord::Schema.define(version: 20181023172507) do
     t.index ["ineligible_reason"], name: "index_request_issues_on_ineligible_reason"
     t.index ["ineligible_request_issue_id"], name: "index_request_issues_on_ineligible_request_issue_id"
     t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"
+    t.index ["rating_issue_reference_id"], name: "index_request_issues_on_rating_issue_reference_id"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
   end
 

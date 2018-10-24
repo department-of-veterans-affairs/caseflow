@@ -146,6 +146,50 @@ describe ClaimReview do
     end
   end
 
+  context "#timely_rating?" do
+    before do
+      Timecop.freeze(Time.utc(2019, 4, 24, 12, 0, 0))
+    end
+
+    subject { create(:higher_level_review, receipt_date: Time.zone.today) }
+
+    context "decided in the last year" do
+      it "considers it timely" do
+        expect(subject.timely_rating?(Time.zone.today)).to eq(true)
+      end
+    end
+
+    context "decided more than a year ago" do
+      it "considers it untimely" do
+        expect(subject.timely_rating?(Time.zone.today - 400)).to eq(false)
+      end
+    end
+  end
+
+  context "#serialized_ratings" do
+    let(:ratings) do
+      [
+        Generators::Rating.build(promulgation_date: Time.zone.today - 30),
+        Generators::Rating.build(promulgation_date: Time.zone.today - 400)
+      ]
+    end
+
+    before do
+      allow(subject.veteran).to receive(:ratings).and_return(ratings)
+    end
+
+    subject do
+      create(:higher_level_review, veteran_file_number: veteran_file_number, receipt_date: Time.zone.today)
+    end
+
+    it "calculates timely flag" do
+      serialized_ratings = subject.serialized_ratings
+
+      expect(serialized_ratings.first[:issues]).to include(hash_including(timely: true), hash_including(timely: true))
+      expect(serialized_ratings.last[:issues]).to include(hash_including(timely: false), hash_including(timely: false))
+    end
+  end
+
   context "#create_issues!" do
     before { claim_review.save! }
     subject { claim_review.create_issues!(issues) }

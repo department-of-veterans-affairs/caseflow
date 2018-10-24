@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
 import update from 'immutability-helper';
+import pluralize from 'pluralize';
 
 import Button from '../../components/Button';
 import IssueCounter from '../../intake/components/IssueCounter';
@@ -90,7 +91,7 @@ class SaveButtonUnconnected extends React.Component {
         onConfirm={() => this.confirmModal('issueChangeModal')}>
         <p>
           The review originally had {this.state.originalIssueNumber}&nbsp;
-          issues but now has {this.props.state.addedIssues.length}.
+          { pluralize('issue', this.state.originalIssueNumber) } but now has {this.props.state.addedIssues.length}.
         </p>
         <p>Please check that this is the correct number.</p>
       </SaveAlertConfirmModal>}

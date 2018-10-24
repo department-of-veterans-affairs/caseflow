@@ -14,16 +14,27 @@ class AmaReview < ApplicationRecord
 
   before_destroy :remove_issues!
 
-  # cache_attribute :cached_serialized_timely_ratings, cache_key: :timely_ratings_cache_key, expires_in: 1.day do
-  #   receipt_date && timely_ratings_with_issues.map(&:ui_hash)
-  # end
-
   cache_attribute :cached_serialized_ratings, cache_key: :ratings_cache_key, expires_in: 1.day do
     ratings_with_issues.map(&:ui_hash)
   end
 
   def self.review_title
     to_s.underscore.titleize
+  end
+
+  def serialized_ratings
+    return unless receipt_date
+
+    cached_serialized_ratings.each do |rating|
+      rating[:issues].each do |rating_issue|
+        rating_issue[:timely] = timely_rating?(Date.parse(rating_issue[:promulgation_date].to_s))
+      end
+    end
+  end
+
+  def timely_rating?(promulgation_date)
+    return true unless receipt_date
+    promulgation_date >= (receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
   end
 
   def start_review!
@@ -67,24 +78,13 @@ class AmaReview < ApplicationRecord
     veteran.ratings.reject { |rating| rating.issues.empty? }
   end
 
-  # disabled for simplecov sake
-  # def timely_ratings_with_issues
-  #  return unless receipt_date
-  #
-  #  veteran.timely_ratings(from_date: receipt_date).reject { |rating| rating.issues.empty? }
-  # end
-
   def ratings_cache_key
     "#{veteran_file_number}-ratings"
   end
 
-  # def timely_ratings_cache_key
-  #  "#{veteran_file_number}-#{formatted_receipt_date}"
-  # end
-
-  # def formatted_receipt_date
-  #  receipt_date ? receipt_date.to_formatted_s(:short_date) : ""
-  # end
+  def formatted_receipt_date
+    receipt_date ? receipt_date.to_formatted_s(:short_date) : ""
+  end
 
   def end_product_station
     "499" # National Work Queue
