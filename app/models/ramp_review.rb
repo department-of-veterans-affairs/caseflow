@@ -102,6 +102,10 @@ class RampReview < ApplicationRecord
     @preexisting_end_product_establishment ||= EndProductEstablishment.find_by(source: self)
   end
 
+  def intake_processed_by
+    intake ? intake.user : nil
+  end
+
   def new_end_product_establishment
     @new_end_product_establishment ||= EndProductEstablishment.new(
       veteran_file_number: veteran_file_number,
@@ -114,7 +118,7 @@ class RampReview < ApplicationRecord
       source: self,
       station: "397", # AMC
       benefit_type_code: veteran.benefit_type_code,
-      user: intake.user
+      user: intake_processed_by
     )
   end
 
