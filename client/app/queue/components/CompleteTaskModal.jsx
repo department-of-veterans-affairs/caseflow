@@ -11,7 +11,8 @@ import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTION
 import {
   tasksForAppealAssignedToUserSelector,
   incompleteOrganizationTasksByAssigneeIdSelector,
-  appealWithDetailSelector
+  appealWithDetailSelector,
+  actionableTasksForAppeal
 } from '../selectors';
 import { setTaskAttrs } from '../QueueActions';
 import {
@@ -69,6 +70,13 @@ class CompleteTaskModal extends React.Component<Props> {
   getTaskAssignerName = () => {
     const { task: { assignedBy } } = this.props;
 
+    // Tasks created by the application (tasks for quality review or dispatch) will not have assigners.
+    // TODO: Amend copy to better explain what is going on instead of having a blank field where we expect
+    // to see somebody's name.
+    if (!assignedBy.firstName.codePointAt(0)) {
+      return '';
+    }
+
     return `${String.fromCodePoint(assignedBy.firstName.codePointAt(0))}. ${assignedBy.lastName}`;
   };
 
@@ -110,6 +118,7 @@ class CompleteTaskModal extends React.Component<Props> {
 
 const mapStateToProps = (state: State, ownProps: Params) => ({
   task: tasksForAppealAssignedToUserSelector(state, ownProps)[0] ||
+    actionableTasksForAppeal(state, ownProps)[0] ||
     incompleteOrganizationTasksByAssigneeIdSelector(state, { appealId: ownProps.appealId })[0],
   appeal: appealWithDetailSelector(state, ownProps),
   saveState: state.ui.saveState.savePending
