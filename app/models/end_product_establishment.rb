@@ -153,14 +153,6 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
-  def cancel!
-    transaction do
-      # delete end product in bgs & set sync status to canceled
-      BGSService.new.cancel_end_product(:veteran_file_number, :code, :modifier)
-      update!(synced_status: CANCELED_STATUS)
-    end
-  end
-
   def sync!
     # There is no need to sync end_product_status if the status
     # is already inactive since an EP can never leave that state
@@ -225,6 +217,13 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   private
+  def cancel!
+    transaction do
+      # delete end product in bgs & set sync status to canceled
+      BGSService.new.cancel_end_product(:veteran_file_number, :code, :modifier)
+      update!(synced_status: CANCELED_STATUS)
+    end
+  end
 
   def request_issues
     source.request_issues.select { |ri| ri.end_product_establishment == self }
