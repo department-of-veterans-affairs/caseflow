@@ -29,11 +29,11 @@ class LegacyTasksController < ApplicationController
   end
 
   def create
-    byebug
     assigned_to = legacy_task_params[:assigned_to]
 
     if assigned_to.vacols_roles.length == 1 && assigned_to.judge_in_vacols?
       QueueRepository.update_location_to_judge(legacy_task_params[:appeal_id], assigned_to)
+
 
       tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(legacy_task_params[:appeal_id], "judge")
       task = tasks.first
@@ -81,7 +81,7 @@ class LegacyTasksController < ApplicationController
 
   def legacy_task_params
     params.require("tasks")
-      .permit(:appeal_id)
+      .permit(:appeal_id, :type, :assigned_to_id)
       .merge(assigned_by: current_user)
       .merge(assigned_to: User.find_by(id: params[:tasks][:assigned_to_id]))
   end
