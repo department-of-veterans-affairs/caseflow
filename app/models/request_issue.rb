@@ -129,14 +129,16 @@ class RequestIssue < ApplicationRecord
   end
 
   def check_for_previous_review!(review_type)
-    # the reason is relative to this request_issue
-    # the review_type rationale is relative to the rating_issue
-    reason = review_type.to_s.sub(/^source_/, "previous_").to_sym
+    reason = rating_issue_rationale_to_request_issue_reason(review_type)
     contested_rating_issue_ui_hash = fetch_contested_rating_issue_ui_hash
     if contested_rating_issue_ui_hash && contested_rating_issue_ui_hash[review_type].present?
       self.ineligible_reason = reason
       self.ineligible_request_issue_id = contested_rating_issue_ui_hash[review_type]
     end
+  end
+
+  def rating_issue_rationale_to_request_issue_reason(rationale)
+    rationale.to_s.sub(/^source_/, "previous_").to_sym
   end
 
   def check_for_active_request_issue!
