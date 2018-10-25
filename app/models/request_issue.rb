@@ -104,7 +104,7 @@ class RequestIssue < ApplicationRecord
     @contested_rating_issue ||= begin
       rating_with_issue = review_request.serialized_ratings.find do |rating|
         rating[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
-      end
+      end || { issues: [] }
       rating_with_issue[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
     end
   end
