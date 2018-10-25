@@ -145,7 +145,7 @@ class ReviewNextButton extends React.PureComponent {
   handleClick = () => {
     this.props.submitReview(this.props.intakeId, this.props.rampRefiling).then(
       () => {
-        this.props.history.push('/finish');
+        this.props.featureToggles.newAddIssuesPage ? this.props.history.push('/add_issues') : this.props.history.push('/finish');
       }
     ).
       catch((error) => error);
@@ -163,12 +163,13 @@ class ReviewNextButton extends React.PureComponent {
 }
 
 const ReviewNextButtonConnected = connect(
-  ({ rampRefiling, intake }) => ({
+  ({ rampRefiling, intake, featureToggles }) => ({
     intakeId: intake.id,
     requestState: rampRefiling.requestStatus.submitReview,
     rampRefiling,
     hasInvalidOption: rampRefiling.hasInvalidOption,
-    optionSelected: rampRefiling.optionSelected
+    optionSelected: rampRefiling.optionSelected,
+    featureToggles
   }),
   (dispatch) => bindActionCreators({
     submitReview

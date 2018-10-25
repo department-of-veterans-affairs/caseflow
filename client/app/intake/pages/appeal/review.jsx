@@ -90,7 +90,7 @@ const SelectClaimantConnected = connect(
 class ReviewNextButton extends React.PureComponent {
   handleClick = () => {
     this.props.submitReview(this.props.intakeId, this.props.appeal, 'appeal').then(
-      () => this.props.history.push('/finish')
+      () => this.props.featureToggles.newAddIssuesPage ? this.props.history.push('/add_issues') : this.props.history.push('/finish')
     );
   }
 
@@ -105,10 +105,11 @@ class ReviewNextButton extends React.PureComponent {
 }
 
 const ReviewNextButtonConnected = connect(
-  ({ appeal, intake }) => ({
+  ({ appeal, intake, featureToggles }) => ({
     intakeId: intake.id,
     requestState: appeal.requestStatus.submitReview,
-    appeal
+    appeal,
+    featureToggles
   }),
   (dispatch) => bindActionCreators({
     submitReview
