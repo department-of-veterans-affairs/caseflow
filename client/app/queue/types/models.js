@@ -52,6 +52,7 @@ export type Issues = Array<Issue>;
 export type Task = {
   uniqueId: string,
   isLegacy: boolean,
+  type: ?string,
   action: string,
   appealId: number,
   appealType: string,
@@ -85,9 +86,7 @@ export type Task = {
     firstName: string,
     lastName: string,
   },
-  availableActions: Array<{ label?: string, value: string }>,
-  assignableOrganizations?: Array<{ id: string, name: string}>,
-  assignableUsers?: Array<{ id: string, full_name: string}>,
+  availableActions: Array<{ label?: string, value: string, data: ?Object }>
 };
 
 export type Tasks = { [string]: Task };

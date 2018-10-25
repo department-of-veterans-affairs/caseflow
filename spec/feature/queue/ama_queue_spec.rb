@@ -324,4 +324,73 @@ RSpec.feature "AmaQueue" do
       end
     end
   end
+
+  context "QR flow" do
+    let(:user_name) { "QR User" }
+    let!(:user) { User.authenticate!(user: create(:user, roles: ["Reader"], full_name: user_name)) }
+    let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
+    let!(:judge_staff) { FactoryBot.create(:staff, :judge_role, user: judge_user) }
+
+    let!(:staff) { FactoryBot.create(:staff, user: user, sdept: "QR") }
+    let!(:organization_user) { OrganizationsUser.add_user_to_organization(user, quality_review_organization) }
+    let!(:quality_review_organization) { Organization.create!(name: "Quality Review", url: "quality-review") }
+    let!(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
+    let!(:staff_field) do
+      StaffFieldForOrganization.create!(organization: quality_review_organization, name: "sdept", values: %w[QR])
+    end
+    let!(:appeal) { create(:appeal) }
+
+    let!(:quality_review_task) do
+      create(
+        :quality_review_task,
+        :in_progress,
+        assigned_to: quality_review_organization,
+        assigned_by: judge_user,
+        parent: root_task,
+        appeal: appeal
+      )
+    end
+
+    let!(:quality_review_instructions) { "Fix this case!" }
+    let!(:root_task) { create(:root_task) }
+
+    let!(:judge_task) { create(:ama_judge_task, parent: root_task, assigned_to: judge_user, status: :completed) }
+
+    scenario "return case to judge" do
+      visit "/organizations/#{quality_review_organization.url}"
+      click_on "Bob Smith"
+
+      find(".Select-control", text: "Select an action").click
+      find("div", class: "Select-option", text: "Assign to person").click
+
+      find(".Select-control", text: "Select a user").click
+      find("div", class: "Select-option", text: user.full_name).click
+
+      fill_in "taskInstructions", with: "Review the quality"
+      click_on "Submit"
+
+      expect(page).to have_content("Task assigned to #{user_name}")
+
+      click_on "Caseflow"
+
+      click_on "Bob Smith"
+
+      find(".Select-control", text: "Select an action").click
+      find("div", class: "Select-option", text: "Return to judge").click
+
+      fill_in "taskInstructions", with: quality_review_instructions
+
+      click_on "Submit"
+      expect(page).to have_content("You have no cases assigned")
+
+      User.authenticate!(user: judge_user)
+
+      visit "/queue"
+
+      click_on "Switch to Assign Cases"
+      click_on "Bob Smith"
+
+      expect(page).to have_content(quality_review_instructions)
+    end
+  end
 end
