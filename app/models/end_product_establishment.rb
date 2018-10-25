@@ -16,6 +16,7 @@ class EndProductEstablishment < ApplicationRecord
   attr_writer :invalid_modifiers
   belongs_to :source, polymorphic: true
   belongs_to :user
+  has_many :request_issues
 
   class InvalidEndProductError < StandardError; end
   class NoAvailableModifiers < StandardError; end
@@ -140,6 +141,16 @@ class EndProductEstablishment < ApplicationRecord
   # Find an end product that has the traits of the end product that should be created.
   def preexisting_end_product
     @preexisting_end_product ||= veteran.end_products.find { |ep| end_product_to_establish.matches?(ep) }
+  end
+
+  def cancel_unused_end_product!(removed_issues)
+    removed_issue_ids = removed_issues.map(&:id)
+    active_request_issues_ids = request_issues.select { |request_issue| request_issue.removed_at.nil? }.map(&:id)
+
+    # if all active request issues were removed, cancel
+    if (active_request_issues_ids - removed_issue_ids).empty?
+      cancel!
+    end
   end
 
   def cancel!
