@@ -30,13 +30,15 @@ class LegacyTasksController < ApplicationController
 
   def create
     assigned_to = legacy_task_params[:assigned_to]
-
     if assigned_to.vacols_roles.length == 1 && assigned_to.judge_in_vacols?
-      QueueRepository.update_location_to_judge(legacy_task_params[:appeal_id], assigned_to)
+      byebug
+      QueueRepository.update_location_to_judge(LegacyAppeal.find(legacy_task_params[:appeal_id]).vacols_id, assigned_to)
 
-
+      byebug
       tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(legacy_task_params[:appeal_id], "judge")
       task = tasks.first
+
+      byebug
 
       render json: {
         task: json_task(JudgeLegacyTask.from_vacols(
