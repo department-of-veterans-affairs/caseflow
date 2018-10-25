@@ -29,12 +29,23 @@ class LegacyTasksController < ApplicationController
   end
 
   def create
-    # assigned_to = legacy_task_params.assigned_to
+    byebug
+    assigned_to = legacy_task_params[:assigned_to]
 
-    # if assigned_to.vacols_roles.length == 1 && assigned_to.judge_in_vacols?
-    #   QueueRepository.assign_task_to_judge(legacy_task_params)
-    #   render json: {}
-    # end
+    if assigned_to.vacols_roles.length == 1 && assigned_to.judge_in_vacols?
+      QueueRepository.update_location_to_judge(legacy_task_params[:appeal_id], assigned_to)
+
+      tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(legacy_task_params[:appeal_id], "judge")
+      task = tasks.first
+
+      render json: {
+        task: json_task(JudgeLegacyTask.from_vacols(
+            tasks.last_case_assignment,
+            LegacyAppeal.find_or_create_by_vacols_id(task.vacols_id),
+            task.assigned_to
+        ))
+      }
+    end
 
     task = JudgeCaseAssignmentToAttorney.create(legacy_task_params)
 

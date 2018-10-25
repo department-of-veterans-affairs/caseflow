@@ -120,9 +120,6 @@ class QueueRepository
       transaction do
         fail Caseflow::Error::QueueRepositoryError, "Case already assigned" unless
           VACOLS::Case.find(vacols_id).bfcurloc == judge.vacols_uniq_id
-        # TODO(alex): Remove this check once we add support for OMO cases
-        fail Caseflow::Error::QueueRepositoryError, "Case already has a Decass record" if
-          VACOLS::Decass.where(defolder: vacols_id).exists?
 
         update_location_to_attorney(vacols_id, attorney)
 
@@ -160,6 +157,13 @@ class QueueRepository
       end
     end
 
+    def update_location_to_judge(vacols_id, judge)
+      vacols_case = VACOLS::Case.find(vacols_id)
+      fail VACOLS::Case::InvalidLocationError, "Invalid location \"#{judge.vacols_uniq_id}\"" unless
+        judge.vacols_uniq_id
+      vacols_case.update_vacols_location!(judge.vacols_uniq_id)
+    end
+
     private
 
     def find_decass_record(vacols_id, created_in_vacols_date)
@@ -183,13 +187,6 @@ class QueueRepository
         attorney.vacols_uniq_id
       vacols_case.update_vacols_location!(attorney.vacols_uniq_id)
       vacols_case.update(bfattid: attorney.vacols_attorney_id)
-    end
-
-    def update_location_to_judge(vacols_id, judge)
-      vacols_case = VACOLS::Case.find(vacols_id)
-      fail VACOLS::Case::InvalidLocationError, "Invalid location \"#{judge.vacols_uniq_id}\"" unless
-        judge.vacols_uniq_id
-      vacols_case.update_vacols_location!(judge.vacols_uniq_id)
     end
 
     def assign_case_for_quality_review(vacols_case)
