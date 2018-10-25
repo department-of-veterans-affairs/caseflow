@@ -57,8 +57,8 @@ class HigherLevelReview < ClaimReview
     super { create_dta_supplemental_claim }
   end
 
-  def issue_code(rated)
-    rated ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE
+  def issue_code(rating)
+    rating ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE
   end
 
   private

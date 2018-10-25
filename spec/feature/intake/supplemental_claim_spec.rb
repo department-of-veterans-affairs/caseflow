@@ -11,7 +11,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-    allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+    allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
   end
 
   after do
@@ -296,12 +296,12 @@ RSpec.feature "Supplemental Claim Intake" do
       user: current_user
     )
 
-    rated_issue = supplemental_claim.request_issues.find_by(description: "PTSD denied")
+    rating_request_issue = supplemental_claim.request_issues.find_by(description: "PTSD denied")
 
-    expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+    expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
       claim_id: ratings_end_product_establishment.reference_id,
-      rated_issue_contention_map: {
-        rated_issue.rating_issue_reference_id => rated_issue.contention_reference_id
+      rating_request_issue_contention_map: {
+        rating_request_issue.rating_issue_reference_id => rating_request_issue.contention_reference_id
       }
     )
 
@@ -382,7 +382,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     safe_click "#button-submit-review"
 
-    expect(page).to have_content("This Veteran has no rated, disability issues")
+    expect(page).to have_content("This Veteran has no rating, disability issues")
 
     safe_click "#button-add-issue"
 
@@ -488,7 +488,7 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to have_content("Left knee granted (already selected for issue 1)")
       expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
 
-      # Add non-rated issue
+      # Add nonrating issue
       safe_click ".no-matching-issues"
       expect(page).to have_content("Does issue 2 match any of these issue categories?")
       expect(page).to have_button("Add this issue", disabled: true)

@@ -38,10 +38,10 @@ class SupplementalClaim < ClaimReview
     END_PRODUCT_MODIFIERS
   end
 
-  def issue_code(rated)
-    issue_code_type = rated ? :rating : :nonrating
+  def issue_code(rating)
+    issue_code_type = rating ? :rating : :nonrating
     if is_dta_error?
-      issue_code_type = rated ? :dta_rating : :dta_nonrating
+      issue_code_type = rating ? :dta_rating : :dta_nonrating
     end
     END_PRODUCT_CODES[issue_code_type]
   end

@@ -259,7 +259,7 @@ RSpec.feature "Appeal Intake" do
 
     safe_click "#button-submit-review"
 
-    expect(page).to have_content("This Veteran has no rated, disability issues")
+    expect(page).to have_content("This Veteran has no rating, disability issues")
 
     safe_click "#button-add-issue"
 
@@ -360,7 +360,7 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content("Left knee granted (already selected for issue 1)")
     expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
 
-    # Add non-rated issue
+    # Add nonrating issue
     safe_click ".no-matching-issues"
     expect(page).to have_content("Does issue 2 match any of these issue categories?")
     expect(page).to have_button("Add this issue", disabled: true)
