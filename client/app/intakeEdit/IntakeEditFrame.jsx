@@ -6,7 +6,7 @@ import PageRoute from '../components/PageRoute';
 import AppFrame from '../components/AppFrame';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { PAGE_PATHS } from './constants';
+import { PAGE_PATHS } from '../intake/constants';
 import { EditAddIssuesPage } from '../intake/pages/addIssues';
 import CancelPage from './pages/canceled';
 import ConfirmationPage from './pages/confirmation';
@@ -34,7 +34,7 @@ export default class IntakeEditFrame extends React.PureComponent {
 
     const basename = `/${formType}s/${this.props.claimId}/edit/`;
 
-    const dtaMessage = `Because this claim was created by Caseflow to resolve DTA errors, it's issues may not be edited. You can close this window and return to VBMS.`;
+    const dtaMessage = `Because this claim was created by Caseflow to resolve DTA errors, its issues may not be edited. You can close this window and return to VBMS.`;
 
     return <Router basename={basename} {...this.props.routerTestProps}>
       <div>
@@ -71,8 +71,7 @@ export default class IntakeEditFrame extends React.PureComponent {
                   path={PAGE_PATHS.DTA_CLAIM}
                   title="Edit Claim Issues | Caseflow Intake"
                   component={() => {
-                    return
-                      <StatusMessage title="Issues Not Editable"
+                    return <StatusMessage title="Issues Not Editable"
                       leadMessageList={[dtaMessage]} />
                   }} />
               </div>
