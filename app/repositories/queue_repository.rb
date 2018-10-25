@@ -98,7 +98,7 @@ class QueueRepository
 
     def tasks_query(css_id)
       records = VACOLS::CaseAssignment.tasks_for_user(css_id)
-      filter_duplicate_tasks(records)
+      filter_duplicate_tasks(records, css_id)
     end
 
     def tasks_for_appeal_query(appeal_id)
@@ -150,10 +150,18 @@ class QueueRepository
       end
     end
 
-    def filter_duplicate_tasks(records)
-      # Keep the latest assignment if there are duplicate records
+    def filter_duplicate_tasks(records, css_id = nil)
+      # Keep the latest updated assignment if there are duplicate records
       records.group_by(&:vacols_id).each_with_object([]) do |(_k, v), result|
-        result << v.sort_by(&:created_at).last
+        next result << v.first if v.size == 1
+
+        user = User.find_by(css_id: css_id, station_id: User::BOARD_STATION_ID) if css_id
+        # If user is an attorney, find all associated with the user's attorney_id
+        if user && attorney_id_match_found?(v, user)
+          v.select! { |task| task.attorney_id == user.vacols_attorney_id }
+        end
+        # If DAS record doesn't have updated_at date, put it at the beginning of the list
+        result << (v.reject(&:updated_at) + v.select(&:updated_at).sort_by(&:updated_at)).last
       end
     end
 
@@ -165,6 +173,10 @@ class QueueRepository
     end
 
     private
+
+    def attorney_id_match_found?(records, user)
+      user.attorney_in_vacols? && records.map(&:attorney_id).include?(user.vacols_attorney_id)
+    end
 
     def find_decass_record(vacols_id, created_in_vacols_date)
       decass_record = VACOLS::Decass.find_by(defolder: vacols_id, deadtim: created_in_vacols_date)
