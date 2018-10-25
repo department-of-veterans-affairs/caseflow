@@ -8,7 +8,7 @@ class JudgeLegacyTask < LegacyTask
     else
       {
         label: COPY::JUDGE_CHECKOUT_DISPATCH_LABEL,
-        value: "dispatch_decision/dispositions"
+        value: "draft_decision/special_issues"
       }
     end
   end

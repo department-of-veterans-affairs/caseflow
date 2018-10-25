@@ -12,6 +12,7 @@ class LegacyAppeal < ApplicationRecord
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
+  has_one :special_issue_list, as: :appeal
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class UnknownLocationError < StandardError; end
