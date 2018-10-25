@@ -5,6 +5,7 @@ RSpec.feature "Appeal Intake" do
     FeatureToggle.enable!(:intake)
     # Test that this works when only enabled on the current user
     FeatureToggle.enable!(:intakeAma, users: [current_user.css_id])
+    FeatureToggle.enable!(:intake_legacy_opt_in)
     FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
@@ -13,6 +14,7 @@ RSpec.feature "Appeal Intake" do
 
   after do
     FeatureToggle.disable!(:intakeAma)
+    FeatureToggle.disable!(:intake_legacy_opt_in)
     FeatureToggle.disable!(:test_facols)
   end
 

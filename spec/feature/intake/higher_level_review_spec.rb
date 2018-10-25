@@ -4,6 +4,7 @@ RSpec.feature "Higher-Level Review" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
+    FeatureToggle.enable!(:intake_legacy_opt_in)
     FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
@@ -16,6 +17,7 @@ RSpec.feature "Higher-Level Review" do
 
   after do
     FeatureToggle.disable!(:intakeAma)
+    FeatureToggle.disable!(:intake_legacy_opt_in)
     FeatureToggle.disable!(:test_facols)
   end
 

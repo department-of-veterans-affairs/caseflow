@@ -32,7 +32,8 @@ class Review extends React.PureComponent {
       benefitTypeError,
       legacyOptInApproved,
       legacyOptInApprovedError,
-      reviewIntakeError
+      reviewIntakeError,
+      legacyOptInEnabled
     } = this.props;
 
     switch (supplementalClaimStatus) {
@@ -65,11 +66,11 @@ class Review extends React.PureComponent {
 
       <SelectClaimantConnected />
 
-      <LegacyOptInApproved
+      { legacyOptInEnabled && <LegacyOptInApproved
         value={legacyOptInApproved === null ? null : legacyOptInApproved.toString()}
         onChange={this.props.setLegacyOptInApproved}
         errorMessage={legacyOptInApprovedError}
-      />
+      /> }
     </div>;
   }
 }
@@ -134,6 +135,7 @@ export default connect(
     benefitTypeError: state.supplementalClaim.benefitTypeError,
     legacyOptInApproved: state.supplementalClaim.legacyOptInApproved,
     legacyOptInApprovedError: state.supplementalClaim.legacyOptInApprovedError,
+    legacyOptInEnabled: state.intake.legacyOptInEnabled,
     reviewIntakeError: state.supplementalClaim.requestStatus.reviewIntakeError
   }),
   (dispatch) => bindActionCreators({

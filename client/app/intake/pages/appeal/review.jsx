@@ -32,7 +32,8 @@ class Review extends React.PureComponent {
       docketTypeError,
       legacyOptInApproved,
       legacyOptInApprovedError,
-      reviewIntakeError
+      reviewIntakeError,
+      legacyOptInEnabled
     } = this.props;
 
     switch (appealStatus) {
@@ -79,11 +80,11 @@ class Review extends React.PureComponent {
 
       <SelectClaimantConnected />
 
-      <LegacyOptInApproved
+      { legacyOptInEnabled && <LegacyOptInApproved
         value={legacyOptInApproved === null ? null : legacyOptInApproved.toString()}
         onChange={this.props.setLegacyOptInApproved}
         errorMessage={legacyOptInApprovedError}
-      />
+      /> }
     </div>;
   }
 }
@@ -148,6 +149,7 @@ export default connect(
     docketTypeError: state.appeal.docketTypeError,
     legacyOptInApproved: state.appeal.legacyOptInApproved,
     legacyOptInApprovedError: state.appeal.legacyOptInApprovedError,
+    legacyOptInEnabled: state.intake.legacyOptInEnabled,
     reviewIntakeError: state.appeal.requestStatus.reviewIntakeError
   }),
   (dispatch) => bindActionCreators({

@@ -38,7 +38,8 @@ class Review extends React.PureComponent {
       sameOfficeError,
       legacyOptInApproved,
       legacyOptInApprovedError,
-      reviewIntakeError
+      reviewIntakeError,
+      legacyOptInEnabled
     } = this.props;
 
     switch (higherLevelReviewStatus) {
@@ -93,11 +94,11 @@ class Review extends React.PureComponent {
 
       <SelectClaimantConnected />
 
-      <LegacyOptInApproved
+      { legacyOptInEnabled && <LegacyOptInApproved
         value={legacyOptInApproved === null ? null : legacyOptInApproved.toString()}
         onChange={this.props.setLegacyOptInApproved}
         errorMessage={legacyOptInApprovedError}
-      />
+      /> }
     </div>;
   }
 }
@@ -162,6 +163,7 @@ export default connect(
     benefitTypeError: state.higherLevelReview.benefitTypeError,
     legacyOptInApproved: state.higherLevelReview.legacyOptInApproved,
     legacyOptInApprovedError: state.higherLevelReview.legacyOptInApprovedError,
+    legacyOptInEnabled: state.intake.legacyOptInEnabled,
     informalConference: state.higherLevelReview.informalConference,
     informalConferenceError: state.higherLevelReview.informalConferenceError,
     sameOffice: state.higherLevelReview.sameOffice,

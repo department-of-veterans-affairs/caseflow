@@ -21,6 +21,9 @@ const updateFromServerIntake = (state, serverIntake) => {
       fileNumber: {
         $set: serverIntake.veteran_file_number
       }
+    },
+    legacyOptInEnabled: {
+      $set: serverIntake.legacy_opt_in_enabled
     }
   });
 };
