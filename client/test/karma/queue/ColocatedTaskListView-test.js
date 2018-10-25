@@ -49,6 +49,7 @@ describe('ColocatedTaskListView', () => {
 
   const getAmaTaskTemplate = (): Task => ({
     uniqueId: '1',
+    type: 'GenericTask',
     isLegacy: false,
     appealType: 'Appeal',
     addedByCssId: null,
@@ -77,9 +78,7 @@ describe('ColocatedTaskListView', () => {
     placedOnHoldAt: null,
     onHoldDuration: null,
     decisionPreparedBy: null,
-    availableActions: [],
-    assignableUsers: [],
-    assignableOrganizations: []
+    availableActions: []
   });
 
   const appealTemplate: BasicAppeal = {

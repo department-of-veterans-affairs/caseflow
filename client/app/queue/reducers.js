@@ -370,12 +370,6 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
       }
     });
   }
-  case ACTIONS.SET_ORGANIZATION_ID:
-    return update(state, {
-      organizationId: {
-        $set: action.payload.id
-      }
-    });
   case ACTIONS.SET_APPEAL_AOD:
     return update(state, {
       appeals: {

@@ -48,6 +48,7 @@ class SeedDB
     create_colocated_user
     create_vso_user
     create_org_queue_user
+    create_qr_user
     create_mail_team_user
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
@@ -72,6 +73,11 @@ class SeedDB
   def create_org_queue_user
     q = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER", full_name: "Org Q User")
     FactoryBot.create(:staff, user: q, sdept: "TRANS", sattyid: nil)
+  end
+
+  def create_qr_user
+    q = User.create!(station_id: 101, css_id: "QR_USER", full_name: "QR User")
+    FactoryBot.create(:staff, user: q, sdept: "QR")
   end
 
   def create_mail_team_user
@@ -457,6 +463,9 @@ class SeedDB
 
     mail_team = MailTeam.singleton
     StaffFieldForOrganization.create!(organization: mail_team, name: "sdept", values: %w[MAIL])
+
+    quality_review = QualityReview.singleton
+    StaffFieldForOrganization.create!(organization: quality_review, name: "sdept", values: %w[QR])
 
     Bva.create(name: "Board of Veterans' Appeals")
   end
