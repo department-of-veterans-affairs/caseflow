@@ -120,9 +120,6 @@ class QueueRepository
       transaction do
         fail Caseflow::Error::QueueRepositoryError, "Case already assigned" unless
           VACOLS::Case.find(vacols_id).bfcurloc == judge.vacols_uniq_id
-        # TODO(alex): Remove this check once we add support for OMO cases
-        fail Caseflow::Error::QueueRepositoryError, "Case already has a Decass record" if
-          VACOLS::Decass.where(defolder: vacols_id).exists?
 
         update_location_to_attorney(vacols_id, attorney)
 
