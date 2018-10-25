@@ -21,10 +21,12 @@ export const onReceiveRegionalOffices = (regionalOffices) => ({
   }
 });
 
-export const onReceiveDailyDocket = (dailyDocket) => ({
+export const onReceiveDailyDocket = (dailyDocket, hearings, hearingDayOptions) => ({
   type: ACTIONS.RECEIVE_DAILY_DOCKET,
   payload: {
-    dailyDocket
+    dailyDocket,
+    hearings,
+    hearingDayOptions
   }
 });
 
@@ -46,6 +48,30 @@ export const onReceiveVeteransReadyForHearing = (veterans) => ({
   type: ACTIONS.RECEIVE_VETERANS_READY_FOR_HEARING,
   payload: {
     veterans
+  }
+});
+
+export const onHearingNotesUpdate = (hearingId, notes) => ({
+  type: ACTIONS.HEARING_NOTES_UPDATE,
+  payload: {
+    hearingId,
+    notes
+  }
+});
+
+export const onHearingDispositionUpdate = (hearingId, disposition) => ({
+  type: ACTIONS.HEARING_DISPOSITION_UPDATE,
+  payload: {
+    hearingId,
+    disposition
+  }
+});
+
+export const onHearingDateUpdate = (hearingId, date) => ({
+  type: ACTIONS.HEARING_DATE_UPDATE,
+  payload: {
+    hearingId,
+    date
   }
 });
 
