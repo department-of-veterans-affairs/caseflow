@@ -103,8 +103,7 @@ class ExternalApi::VBMSService
       send_userid: FeatureToggle.enabled?(:vbms_include_user)
     )
 
-    client = FeatureToggle.enabled?(:vbms_include_user) ? vbms_client_with_user(user) : @vbms_client
-    send_and_log_request(veteran_hash[:file_number], request, client)
+    send_and_log_request(veteran_hash[:file_number], request, vbms_client_with_user(user))
   end
 
   def self.fetch_contentions(claim_id:)
@@ -166,6 +165,8 @@ class ExternalApi::VBMSService
   end
 
   def self.vbms_client_with_user(user)
+    return @vbms_client if user.nil?
+
     VBMS::Client.from_env_vars(
       logger: VBMSCaseflowLogger.new,
       env_name: ENV["CONNECT_VBMS_ENV"],

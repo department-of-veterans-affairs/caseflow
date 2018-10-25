@@ -136,23 +136,42 @@ describe RatingIssue do
 
   context "#save_with_request_issue!" do
     let(:contention_ref_id) { 123 }
+    let(:participant_id) { 456 }
 
     let!(:request_issue) { create(:request_issue, contention_reference_id: contention_ref_id) }
 
-    it "matches based on contention_reference_id" do
-      rating_issue = RatingIssue.new(
+    subject do
+      RatingIssue.new(
         reference_id: "ref-id",
         profile_date: Time.zone.today,
         contention_reference_id: contention_ref_id,
-        promulgation_date: promulgation_date
+        promulgation_date: promulgation_date,
+        participant_id: participant_id
+      )
+    end
+
+    it "matches based on contention_reference_id" do
+      expect(subject.id).to be_nil
+
+      subject.save_with_request_issue!
+
+      expect(subject.request_issue).to eq(request_issue)
+      expect(subject.id).to_not be_nil
+    end
+
+    it "does not save duplicates" do
+      rating_issue = RatingIssue.new(
+        reference_id: "ref-id",
+        profile_date: Time.zone.today,
+        promulgation_date: promulgation_date,
+        participant_id: participant_id,
+        request_issue_id: request_issue.id
       )
 
-      expect(rating_issue.id).to be_nil
+      rating_issue.save!
+      subject.save_with_request_issue!
 
-      rating_issue.save_with_request_issue!
-
-      expect(rating_issue.request_issue).to eq(request_issue)
-      expect(rating_issue.id).to_not be_nil
+      expect(subject.id).to eq(rating_issue.id)
     end
   end
 end
