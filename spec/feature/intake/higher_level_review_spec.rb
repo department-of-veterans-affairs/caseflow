@@ -561,11 +561,11 @@ RSpec.feature "Higher-Level Review" do
       )
     end
 
-    let(:prior_higher_level_review) { create(:higher_level_review) }
-    let!(:prior_request_issue) do
+    let(:previous_higher_level_review) { create(:higher_level_review) }
+    let!(:previous_request_issue) do
       create(
         :request_issue,
-        review_request: prior_higher_level_review,
+        review_request: previous_higher_level_review,
         rating_issue_reference_id: higher_level_review_reference_id,
         contention_reference_id: contention_reference_id
       )
@@ -668,7 +668,7 @@ RSpec.feature "Higher-Level Review" do
       safe_click ".add-issue"
       expect(page).to have_content("6 issues")
       expect(page).to have_content(
-        "6. Already reviewed injury #{Constants.INELIGIBLE_REQUEST_ISSUES.prior_higher_level_review}"
+        "6. Already reviewed injury #{Constants.INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review}"
       )
 
       safe_click "#button-finish-intake"
@@ -738,7 +738,7 @@ RSpec.feature "Higher-Level Review" do
 
       expect(RequestIssue.find_by(rating_issue_reference_id: old_reference_id).untimely?).to eq(true)
       expect(
-        RequestIssue.find_by(rating_issue_reference_id: higher_level_review_reference_id).prior_higher_level_review?
+        RequestIssue.find_by(rating_issue_reference_id: higher_level_review_reference_id).previous_higher_level_review?
       ).to eq(true)
 
       expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(

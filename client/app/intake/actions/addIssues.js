@@ -51,7 +51,7 @@ export const addRatedIssue = (args) => (dispatch) => {
       isRated: args.isRated,
       inActiveReview: currentIssue.in_active_review,
       timely: currentIssue.timely,
-      priorHigherLevelReview: currentIssue.prior_higher_level_review,
+      previousHigherLevelReview: currentIssue.previous_higher_level_review,
       promulgationDate: currentIssue.promulgation_date,
       profileDate: currentRating.profile_date,
       notes: args.notes

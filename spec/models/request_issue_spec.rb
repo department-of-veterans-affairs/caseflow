@@ -120,17 +120,17 @@ describe RequestIssue do
 
   context "#contested_rating_issue" do
     it "returns the rating issue hash that prompted the RequestIssue" do
-      expect(rated_issue.contested_rating_issue[:reference_id]).to eq rating_reference_id
-      expect(rated_issue.contested_rating_issue[:decision_text]).to eq "Left knee granted"
+      expect(rated_issue.contested_rating_issue.reference_id).to eq rating_reference_id
+      expect(rated_issue.contested_rating_issue.decision_text).to eq "Left knee granted"
     end
   end
 
   context "#previous_request_issue" do
-    let(:prior_higher_level_review) { create(:higher_level_review) }
-    let!(:prior_request_issue) do
+    let(:previous_higher_level_review) { create(:higher_level_review) }
+    let!(:previous_request_issue) do
       create(
         :request_issue,
-        review_request: prior_higher_level_review,
+        review_request: previous_higher_level_review,
         rating_issue_reference_id: higher_level_review_reference_id,
         contention_reference_id: contention_reference_id
       )
@@ -138,7 +138,7 @@ describe RequestIssue do
 
     it "looks up the chain to the immediately previous request issue" do
       veteran.sync_rating_issues!
-      expect(rated_issue.previous_request_issue).to eq(prior_request_issue)
+      expect(rated_issue.previous_request_issue).to eq(previous_request_issue)
     end
 
     it "returns nil if Veteran.decision_rating_issues have not yet been synced" do
@@ -152,11 +152,11 @@ describe RequestIssue do
     let(:active_epe) { create(:end_product_establishment, :active) }
     let(:receipt_date) { review.receipt_date }
 
-    let(:prior_higher_level_review) { create(:higher_level_review) }
-    let!(:prior_request_issue) do
+    let(:previous_higher_level_review) { create(:higher_level_review) }
+    let!(:previous_request_issue) do
       create(
         :request_issue,
-        review_request: prior_higher_level_review,
+        review_request: previous_higher_level_review,
         rating_issue_reference_id: higher_level_review_reference_id,
         contention_reference_id: contention_reference_id
       )
@@ -218,12 +218,12 @@ describe RequestIssue do
       expect(rated_issue.duplicate_of_issue_in_active_review?).to eq(true)
     end
 
-    it "flags prior HLR" do
+    it "flags previous HLR" do
       rated_issue.rating_issue_reference_id = higher_level_review_reference_id
       rated_issue.validate_eligibility!
 
-      expect(rated_issue.prior_higher_level_review?).to eq(true)
-      expect(rated_issue.ineligible_request_issue_id).to eq(prior_request_issue.id)
+      expect(rated_issue.previous_higher_level_review?).to eq(true)
+      expect(rated_issue.ineligible_request_issue_id).to eq(previous_request_issue.id)
     end
   end
 end

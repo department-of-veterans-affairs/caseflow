@@ -152,7 +152,7 @@ class Veteran < ApplicationRecord
 
   def sync_rating_issues!
     timely_ratings(from_date: Time.zone.today).each do |rating|
-      rating.issues.select(&:contention_reference_id).each(&:save_with_request_issue!)
+      rating.issues.select(&:contention_reference_id).each(&:save_with_source_request_issue!)
     end
   end
 

@@ -134,7 +134,7 @@ describe RatingIssue do
     end
   end
 
-  context "#prior_higher_level_review" do
+  context "#previous_higher_level_review" do
     before do
       Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
     end
@@ -148,14 +148,14 @@ describe RatingIssue do
         review_request: create(:higher_level_review)
       )
     end
-    subject { RatingIssue.new(reference_id: reference_id, request_issue: request_issue) }
+    subject { RatingIssue.new(reference_id: reference_id, source_request_issue: request_issue) }
 
-    it "flags request_issue as having a prior higher level review" do
-      expect(subject.prior_higher_level_review).to eq(request_issue.id)
+    it "flags request_issue as having a previous higher level review" do
+      expect(subject.previous_higher_level_review).to eq(request_issue.id)
     end
   end
 
-  context "#save_with_request_issue!" do
+  context "#save_with_source_request_issue!" do
     let(:contention_ref_id) { 123 }
     let(:participant_id) { 456 }
     let!(:request_issue) { create(:request_issue, contention_reference_id: contention_ref_id) }
@@ -170,12 +170,12 @@ describe RatingIssue do
       )
     end
 
-    it "writes to db with request_issue_id set" do
+    it "correctly associates based on contention_reference_id" do
       expect(subject.id).to be_nil
 
-      subject.save_with_request_issue!
+      subject.save_with_source_request_issue!
 
-      expect(subject.request_issue).to eq(request_issue)
+      expect(subject.source_request_issue).to eq(request_issue)
       expect(subject.id).to_not be_nil
     end
 
@@ -185,31 +185,13 @@ describe RatingIssue do
         profile_date: Time.zone.today,
         promulgation_date: promulgation_date,
         participant_id: participant_id,
-        request_issue_id: request_issue.id
+        source_request_issue: request_issue
       )
 
       rating_issue.save!
-      subject.save_with_request_issue!
+      subject.save_with_source_request_issue!
 
       expect(subject.id).to eq(rating_issue.id)
-    end
-  end
-
-  context "#source_request_issue" do
-    let(:participant_id) { 456 }
-    let(:contention_ref_id) { 123 }
-    let!(:request_issue) { create(:request_issue, contention_reference_id: contention_ref_id) }
-
-    it "matches based on contention_reference_id" do
-      rating_issue = RatingIssue.new(
-        reference_id: "ref-id",
-        profile_date: Time.zone.today,
-        contention_reference_id: contention_ref_id,
-        promulgation_date: promulgation_date,
-        participant_id: participant_id
-      )
-
-      expect(rating_issue.source_request_issue).to eq(request_issue)
     end
   end
 end

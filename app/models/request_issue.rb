@@ -8,7 +8,7 @@ class RequestIssue < ApplicationRecord
   enum ineligible_reason: {
     duplicate_of_issue_in_active_review: 0,
     untimely: 1,
-    prior_higher_level_review: 2
+    previous_higher_level_review: 2
   }
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
@@ -93,41 +93,49 @@ class RequestIssue < ApplicationRecord
   def validate_eligibility!
     check_for_active_request_issue!
     check_for_untimely!
-    check_for_prior_higher_level_review!
+    check_for_previous_higher_level_review!
     self
   end
 
-  # the rating issue that this RequestIssue contested.
-  # It may not yet exist in the db as a RatingIssue so we pull hash from the serialized_ratings.
   def contested_rating_issue
     return unless review_request
     @contested_rating_issue ||= begin
-      rating_with_issue = review_request.serialized_ratings.find do |rating|
-        rating[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
-      end || { issues: [] }
-      rating_with_issue[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
+      ui_hash = fetch_contested_rating_issue_ui_hash
+      ui_hash ? RatingIssue.from_ui_hash(ui_hash) : nil
     end
   end
 
   def previous_request_issue
     return unless contested_rating_issue
     review_request.veteran.decision_rating_issues.find_by(
-      reference_id: contested_rating_issue[:reference_id]
+      reference_id: contested_rating_issue.reference_id
     ).try(:source_request_issue)
   end
 
   private
 
-  def check_for_prior_higher_level_review!
-    return unless rated?
-    return unless eligible?
-    check_for_activity!(:prior_higher_level_review)
+  # It may not yet exist in the db as a RatingIssue so we pull hash from the serialized_ratings.
+  def fetch_contested_rating_issue_ui_hash
+    rating_with_issue = review_request.serialized_ratings.find do |rating|
+      rating[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
+    end || { issues: [] }
+    rating_with_issue[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
   end
 
-  def check_for_activity!(type)
-    if contested_rating_issue && contested_rating_issue[type].present?
-      self.ineligible_reason = type
-      self.ineligible_request_issue_id = contested_rating_issue[type]
+  def check_for_previous_higher_level_review!
+    return unless rated?
+    return unless eligible?
+    check_for_previous_review!(:source_higher_level_review)
+  end
+
+  def check_for_previous_review!(review_type)
+    # the reason is relative to this request_issue
+    # the review_type rationale is relative to the rating_issue
+    reason = review_type.to_s.sub(/^source_/, "previous_").to_sym
+    contested_rating_issue_ui_hash = fetch_contested_rating_issue_ui_hash
+    if contested_rating_issue_ui_hash && contested_rating_issue_ui_hash[review_type].present?
+      self.ineligible_reason = reason
+      self.ineligible_request_issue_id = contested_rating_issue_ui_hash[review_type]
     end
   end
 
@@ -148,7 +156,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def check_for_rated_untimely!
-    if contested_rating_issue && !review_request.timely_rating?(contested_rating_issue[:promulgation_date])
+    if contested_rating_issue && !review_request.timely_rating?(contested_rating_issue.promulgation_date)
       self.ineligible_reason = :untimely
     end
   end
