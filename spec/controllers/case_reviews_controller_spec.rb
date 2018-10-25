@@ -120,6 +120,29 @@ RSpec.describe CaseReviewsController, type: :controller do
             quality_review_task = QualityReviewTask.find_by(parent_id: root_task.id)
             expect(quality_review_task.assigned_to).to eq(QualityReview.singleton)
           end
+
+          context "When case is being QRed" do
+            let(:qr_user) { create(:user) }
+            let!(:quality_review_organization_task) do
+              create(:qr_task, assigned_to: QualityReview.singleton, parent: root_task)
+            end
+            let!(:quality_review_task) do
+              create(:qr_task, assigned_to: qr_user, parent: quality_review_organization_task)
+            end
+            let!(:task) { create(:ama_judge_task, assigned_to: judge, parent: quality_review_task) }
+
+            it "should not create a new QR task" do
+              expect(QualityReviewTask.count).to eq(2)
+              expect(quality_review_task.status).to eq("on_hold")
+
+              post :complete, params: { task_id: task.id, tasks: params }
+              expect(response.status).to eq 200
+
+              expect(QualityReviewTask.count).to eq(2)
+
+              expect(quality_review_task.reload.status).to eq("assigned")
+            end
+          end
         end
       end
     end

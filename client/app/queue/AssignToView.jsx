@@ -34,7 +34,8 @@ type Params = {|
   task: Task,
   createsMailTask: boolean,
   isReassignAction: boolean,
-  isTeamAssign: boolean
+  isTeamAssign: boolean,
+  history: Object
 |};
 
 type Props = Params & {|
@@ -64,8 +65,12 @@ class AssignToView extends React.Component<Props, ViewState> {
       existingInstructions = instructions[instructionLength - 1];
     }
 
+    const actionData = this.taskActionData();
+    const selectedOption = actionData.selected ?
+      this.taskActionData().options.find((option) => option.value === actionData.selected.id) : null;
+
     this.state = {
-      selectedValue: null,
+      selectedValue: selectedOption ? selectedOption.value : null,
       instructions: existingInstructions
     };
   }
@@ -82,10 +87,18 @@ class AssignToView extends React.Component<Props, ViewState> {
       isReassignAction,
       isTeamAssign
     } = this.props;
+    let type = 'GenericTask';
+
+    if (createsMailTask) {
+      type = 'MailTask';
+    } else if (this.taskActionData().type) {
+      type = this.taskActionData().type;
+    }
+
     const payload = {
       data: {
         tasks: [{
-          type: createsMailTask ? 'MailTask' : 'GenericTask',
+          type,
           external_id: appeal.externalId,
           parent_id: task.taskId,
           assigned_to_id: this.state.selectedValue,
@@ -107,10 +120,22 @@ class AssignToView extends React.Component<Props, ViewState> {
       });
   }
 
+  taskActionData = () => {
+    const relevantAction = this.props.task.availableActions.
+      find((action) => this.props.history.location.pathname.endsWith(action.value));
+
+    if (relevantAction && relevantAction.data) {
+      return (relevantAction.data);
+    }
+
+    // We should never get here since any task action the creates this modal should provide data.
+    throw new Error('Task action requires data');
+  }
+
   getAssignee = () => {
     let assignee = 'person';
 
-    this.options().forEach((opt) => {
+    this.taskActionData().options.forEach((opt) => {
       if (opt.value === this.state.selectedValue) {
         assignee = opt.label;
       }
@@ -144,24 +169,6 @@ class AssignToView extends React.Component<Props, ViewState> {
       });
   }
 
-  options = () => {
-    if (this.props.isTeamAssign) {
-      return (this.props.task.assignableOrganizations || []).map((organization) => {
-        return {
-          label: organization.name,
-          value: organization.id
-        };
-      });
-    }
-
-    return (this.props.task.assignableUsers || []).map((user) => {
-      return {
-        label: user.full_name,
-        value: user.id
-      };
-    });
-  }
-
   render = () => {
     const {
       highlightFormItems
@@ -176,7 +183,7 @@ class AssignToView extends React.Component<Props, ViewState> {
         placeholder={this.props.isTeamAssign ? COPY.ASSIGN_TO_TEAM_DROPDOWN : COPY.ASSIGN_TO_USER_DROPDOWN}
         value={this.state.selectedValue}
         onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
-        options={this.options()} />
+        options={this.taskActionData().options} />
       <br />
       <TextareaField
         name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
