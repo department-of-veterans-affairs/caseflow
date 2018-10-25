@@ -254,6 +254,23 @@ describe RequestIssuesUpdate do
         )
         expect(created_issue.contention_reference_id).to_not be_nil
       end
+
+      context "with nonrating request issue" do
+        let(:request_issues_data) do
+          existing_request_issues_data + [{
+            reference_id: "issue3",
+            decision_text: "Nonrated issue",
+            category: "Apportionment"
+          }]
+        end
+
+        it "adds new end product for a new rating type" do
+          expect(EndProductEstablishment.find_by(code: "030HLRNR", source: review)).to eq(nil)
+
+          subject
+          expect(EndProductEstablishment.find_by(code: "030HLRNR", source: review)).to_not be_nil
+        end
+      end
     end
 
     context "when issues contain a subset of existing issues" do
@@ -266,7 +283,6 @@ describe RequestIssuesUpdate do
         expect(subject).to be_truthy
 
         request_issues_update.reload
-
         expect(request_issues_update.before_request_issue_ids).to contain_exactly(
           *existing_request_issues.map(&:id)
         )
@@ -291,6 +307,37 @@ describe RequestIssuesUpdate do
         )
 
         expect(review.request_issues.first.rating_issue_associated_at).to eq(Time.zone.now)
+      end
+
+      it "cancels end products with no request issues" do
+        nonrating_end_product_establishment = create(
+          :end_product_establishment,
+          veteran_file_number: veteran.file_number,
+          source: review,
+          code: "030HLRNR"
+        )
+
+        nonrating_request_issue_contention = Generators::Contention.build(
+          claim_id: nonrating_end_product_establishment.reference_id,
+          text: "Unrated issue"
+        )
+
+        RequestIssue.create!(
+          review_request: review,
+          end_product_establishment: nonrating_end_product_establishment,
+          contention_reference_id: nonrating_request_issue_contention.id,
+          description: nonrating_request_issue_contention.text,
+          issue_category: "Apportionment"
+        )
+
+        allow_remove_contention
+        allow_associate_rated_issues
+
+        expect(subject).to be_truthy
+
+        # expect end product to be canceled
+        found_nonrating_ep = EndProductEstablishment.find_by(id: nonrating_end_product_establishment.id, synced_status: "CAN")
+        expect(found_nonrating_ep).to_not be_nil
       end
     end
 

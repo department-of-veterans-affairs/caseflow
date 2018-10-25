@@ -148,8 +148,6 @@ class EndProductEstablishment < ApplicationRecord
       BGSService.new.cancel_end_product(:veteran_file_number, :code, :modifier)
       update!(synced_status: CANCELED_STATUS)
     end
-  rescue StandardError => e
-    raise BGSSyncError.new(e, self)
   end
 
   def sync!
