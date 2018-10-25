@@ -380,4 +380,29 @@ RSpec.feature "Case details" do
       expect(Task.find(on_hold_task.id).status).to eq("on_hold")
     end
   end
+
+  describe "Marking organization task complete" do
+    context "when there is no assigner" do
+      let(:qr) { QualityReview.singleton }
+      let(:task) { FactoryBot.create(:qr_task) }
+      let(:user) { FactoryBot.create(:user) }
+
+      before do
+        StaffFieldForOrganization.create!(organization: qr, name: "sdept", values: %w[QR])
+        FactoryBot.create(:staff, user: user, sdept: "QR", sattyid: nil)
+        User.authenticate!(user: user)
+      end
+
+      it "marking task as complete works" do
+        visit "/queue/appeals/#{task.appeal.uuid}"
+
+        find(".Select-control", text: "Select an action").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
+
+        find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
+
+        expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, ""))
+      end
+    end
+  end
 end

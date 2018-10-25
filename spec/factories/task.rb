@@ -75,6 +75,14 @@ FactoryBot.define do
       parent { create(:root_task) }
     end
 
+    factory :qr_task do
+      type QualityReviewTask.name
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
+      assigned_by { nil }
+      assigned_to { QualityReview.singleton }
+    end
+
     factory :bva_dispatch_task do
       type BvaDispatchTask.name
       appeal_type Appeal.name

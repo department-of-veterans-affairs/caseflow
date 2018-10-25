@@ -9,10 +9,10 @@ import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 import {
-  tasksForAppealAssignedToUserSelector,
-  incompleteOrganizationTasksByAssigneeIdSelector,
+  actionableTasksForAppeal,
   appealWithDetailSelector,
-  actionableTasksForAppeal
+  incompleteOrganizationTasksByAssigneeIdSelector,
+  tasksForAppealAssignedToUserSelector
 } from '../selectors';
 import { setTaskAttrs } from '../QueueActions';
 import {
@@ -41,7 +41,7 @@ type Props = Params & {|
 const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
   mark_task_complete: {
     buildSuccessMsg: (appeal: Appeal, { assignerName }: { assignerName: string}) => ({
-      title: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteranFullName, assignerName),
+      title: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteranFullName),
       detail: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assignerName)
     }),
     title: () => COPY.MARK_TASK_COMPLETE_TITLE,
@@ -118,7 +118,7 @@ class CompleteTaskModal extends React.Component<Props> {
 
 const mapStateToProps = (state: State, ownProps: Params) => ({
   task: tasksForAppealAssignedToUserSelector(state, ownProps)[0] ||
-    actionableTasksForAppeal(state, ownProps)[0] ||
+    actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0] ||
     incompleteOrganizationTasksByAssigneeIdSelector(state, { appealId: ownProps.appealId })[0],
   appeal: appealWithDetailSelector(state, ownProps),
   saveState: state.ui.saveState.savePending
