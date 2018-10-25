@@ -16,7 +16,6 @@ class EndProductEstablishment < ApplicationRecord
   attr_writer :invalid_modifiers
   belongs_to :source, polymorphic: true
   belongs_to :user
-  has_many :request_issues
 
   class InvalidEndProductError < StandardError; end
   class NoAvailableModifiers < StandardError; end
@@ -217,6 +216,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   private
+
   def cancel!
     transaction do
       # delete end product in bgs & set sync status to canceled
