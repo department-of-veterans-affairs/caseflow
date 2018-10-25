@@ -27,7 +27,7 @@ import {
 } from './uiReducer/uiActions';
 
 import type { State } from './types/state';
-import type { Appeal, Task, User } from './types/models';
+import type { Appeal, Task } from './types/models';
 
 type Params = {|
   appealId: string,
@@ -89,10 +89,10 @@ class AssignToView extends React.Component<Props, ViewState> {
     } = this.props;
     let type = 'GenericTask';
 
-    if (this.taskActionData().type) {
-      type = this.taskActionData().type;
-    } else if (createsMailTask) {
+    if (createsMailTask) {
       type = 'MailTask';
+    } else if (this.taskActionData().type) {
+      type = this.taskActionData().type;
     }
 
     const payload = {
@@ -129,7 +129,7 @@ class AssignToView extends React.Component<Props, ViewState> {
     }
 
     // We should never get here since any task action the creates this modal should provide data.
-    throw "Task action requires data";
+    throw new Error('Task action requires data');
   }
 
   getAssignee = () => {
