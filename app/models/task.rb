@@ -158,6 +158,10 @@ class Task < ApplicationRecord
     }
   end
 
+  def mail_assign_to_organization_data
+    assign_to_organization_data.merge(type: MailTask.name)
+  end
+
   def assign_to_user_data
     users = if assigned_to.is_a?(Organization)
               assigned_to.members
