@@ -29,6 +29,10 @@ export class DailyDocketContainer extends React.Component {
     });
   };
 
+  saveHearing = () => {
+
+  };
+
   createHearingPromise = () => Promise.all([this.loadHearingDay()]);
 
   render() {

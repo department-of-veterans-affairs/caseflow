@@ -91,7 +91,7 @@ export default class DailyDocket extends React.Component {
     return <SearchableDropdown
       name="Disposition"
       options={DISPOSITION_OPTIONS}
-      value={hearing.disposition}
+      value={hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition}
       onChange={this.onHearingDispositionUpdate(hearing.id)}
     />;
   };
@@ -126,6 +126,7 @@ export default class DailyDocket extends React.Component {
       options={this.getHearingLocationOptions(hearing)}
       value={this.getHearingLocation(hearing)}
       onChange={this.emptyFunction}
+      readOnly
     />;
   };
 
@@ -133,8 +134,9 @@ export default class DailyDocket extends React.Component {
     return <div><SearchableDropdown
       name="Hearing Day"
       options={this.getHearingDateOptions()}
-      value={this.getHearingDate(hearing.date)}
+      value={hearing.editedDate ? this.getHearingDate(hearing.editedDate) : this.getHearingDate(hearing.date)}
       onChange={this.onHearingDateUpdate(hearing.id)}
+      readOnly={hearing.editedDisposition !== 'postponed'}
     />
     <RadioField
       name="Hearing Time"
@@ -159,7 +161,7 @@ export default class DailyDocket extends React.Component {
       name="Notes"
       onChange={this.onHearingNotesUpdate(hearing.id)}
       textAreaStyling={notesFieldStyling}
-      value={hearing.notes}
+      value={hearing.editedNotes ? hearing.editedNotes : hearing.notes}
     />;
   };
 
@@ -180,17 +182,17 @@ export default class DailyDocket extends React.Component {
         number: '1.',
         appellantInformation: this.getAppellantInformation(hearing),
         hearingTime: this.getHearingTime(hearing),
+        disposition: this.getDispositionDropdown(hearing),
         hearingLocation: this.getHearingLocationDropdown(hearing),
-        hearingDay: this.getHearingDayDropdown(hearing),
-        disposition: this.getDispositionDropdown(hearing)
+        hearingDay: this.getHearingDayDropdown(hearing)
       },
       {
         number: null,
         appellantInformation: <div>{hearing.representative} <br /> {hearing.representativeName}</div>,
         hearingTime: <div>{hearing.currentIssueCount} issues</div>,
-        hearingLocation: this.getNotesField(hearing),
-        hearingDay: null,
-        disposition: this.getSaveButton(hearing)
+        disposition: this.getNotesField(hearing),
+        hearingLocation: null,
+        hearingDay: this.getSaveButton(hearing)
       });
     });
 
@@ -217,19 +219,19 @@ export default class DailyDocket extends React.Component {
       {
         header: 'Actions',
         align: 'left',
+        valueName: 'disposition',
+        span: (row) => row.hearingLocation ? 1 : 2
+      },
+      {
+        header: '',
+        align: 'left',
         valueName: 'hearingLocation',
-        span: (row) => row.hearingDay ? 1 : 2
+        span: (row) => row.hearingLocation ? 1 : 0
       },
       {
         header: '',
         align: 'left',
-        valueName: 'hearingDay',
-        span: (row) => row.hearingDay ? 1 : 0
-      },
-      {
-        header: '',
-        align: 'left',
-        valueName: 'disposition'
+        valueName: 'hearingDay'
       }
     ];
 

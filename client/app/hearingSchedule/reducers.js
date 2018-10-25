@@ -63,7 +63,7 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return update(state, {
       hearings: {
         [action.payload.hearingId]: {
-          notes: { $set: action.payload.notes },
+          editedNotes: { $set: action.payload.notes },
           edited: { $set: true }
         }
       }
@@ -72,9 +72,8 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return update(state, {
       hearings: {
         [action.payload.hearingId]: {
-          disposition: { $set: action.payload.disposition },
-          edited: { $set: true },
-          dispositionEdited: { $set: true }
+          editedDisposition: { $set: action.payload.disposition },
+          edited: { $set: true }
         }
       }
     });
@@ -82,9 +81,8 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return update(state, {
       hearings: {
         [action.payload.hearingId]: {
-          date: { $set: action.payload.date },
-          edited: { $set: true },
-          dateEdited: { $set: true }
+          editedDate: { $set: action.payload.date },
+          edited: { $set: true }
         }
       }
     });
