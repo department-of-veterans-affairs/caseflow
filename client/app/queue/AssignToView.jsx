@@ -32,7 +32,6 @@ import type { Appeal, Task } from './types/models';
 type Params = {|
   appealId: string,
   task: Task,
-  createsMailTask: boolean,
   isReassignAction: boolean,
   isTeamAssign: boolean,
   history: Object
@@ -83,22 +82,14 @@ class AssignToView extends React.Component<Props, ViewState> {
     const {
       appeal,
       task,
-      createsMailTask,
       isReassignAction,
       isTeamAssign
     } = this.props;
-    let type = 'GenericTask';
-
-    if (createsMailTask) {
-      type = 'MailTask';
-    } else if (this.taskActionData().type) {
-      type = this.taskActionData().type;
-    }
 
     const payload = {
       data: {
         tasks: [{
-          type,
+          type: this.taskActionData().type ? this.taskActionData().type : 'GenericTask',
           external_id: appeal.externalId,
           parent_id: task.taskId,
           assigned_to_id: this.state.selectedValue,
