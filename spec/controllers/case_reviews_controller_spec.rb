@@ -140,7 +140,7 @@ RSpec.describe CaseReviewsController, type: :controller do
 
               expect(QualityReviewTask.count).to eq(2)
 
-              expect(quality_review_task.status).to eq("assigned")
+              expect(quality_review_task.reload.status).to eq("assigned")
             end
           end
         end
