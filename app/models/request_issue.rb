@@ -111,9 +111,9 @@ class RequestIssue < ApplicationRecord
 
   def previous_request_issue
     return unless contested_rating_issue
-    review_request.veteran.decision_rating_issues.where(
+    review_request.veteran.decision_rating_issues.find_by(
       reference_id: contested_rating_issue[:reference_id]
-    ).first.contesting_request_issue
+    ).try(:contesting_request_issue)
   end
 
   private

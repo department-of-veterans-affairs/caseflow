@@ -44,7 +44,7 @@ describe RequestIssue do
           decision_text: "Left knee granted",
           contention_reference_id: contention_reference_id
         },
-        { reference_id: "xyz456", decision_text: "PTSD denied" },
+        { reference_id: "xyz456", decision_text: "PTSD denied" }
       ]
     )
   end
@@ -137,9 +137,12 @@ describe RequestIssue do
     end
 
     it "looks up the chain to the immediately previous request issue" do
-      ratings.issues.select(&:contention_reference_id).each(&:save_with_request_issue!)
-      binding.pry
+      veteran.sync_rating_issues!
       expect(rated_issue.previous_request_issue).to eq(prior_request_issue)
+    end
+
+    it "returns nil if Veteran.decision_rating_issues have not yet been synced" do
+      expect(rated_issue.previous_request_issue).to be_nil
     end
   end
 
