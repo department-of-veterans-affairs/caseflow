@@ -158,7 +158,6 @@ describe RatingIssue do
   context "#save_with_request_issue!" do
     let(:contention_ref_id) { 123 }
     let(:participant_id) { 456 }
-
     let!(:request_issue) { create(:request_issue, contention_reference_id: contention_ref_id) }
 
     subject do
@@ -171,7 +170,7 @@ describe RatingIssue do
       )
     end
 
-    it "matches based on contention_reference_id" do
+    it "writes to db with request_issue_id set" do
       expect(subject.id).to be_nil
 
       subject.save_with_request_issue!
@@ -193,6 +192,24 @@ describe RatingIssue do
       subject.save_with_request_issue!
 
       expect(subject.id).to eq(rating_issue.id)
+    end
+  end
+
+  context "#contesting_request_issue" do
+    let(:participant_id) { 456 }
+    let(:contention_ref_id) { 123 }
+    let!(:request_issue) { create(:request_issue, contention_reference_id: contention_ref_id) }
+
+    it "matches based on contention_reference_id" do
+      rating_issue = RatingIssue.new(
+        reference_id: "ref-id",
+        profile_date: Time.zone.today,
+        contention_reference_id: contention_ref_id,
+        promulgation_date: promulgation_date,
+        participant_id: participant_id
+      )
+
+      expect(rating_issue.contesting_request_issue).to eq(request_issue)
     end
   end
 end

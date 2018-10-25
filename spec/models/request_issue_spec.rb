@@ -1,13 +1,16 @@
 require "rails_helper"
 
 describe RequestIssue do
+  let(:rating_reference_id) { "abc123" }
+  let(:contention_reference_id) { 1234 }
+  let(:higher_level_review_reference_id) { "hlr123" }
   let(:review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
   let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
 
   let!(:rated_issue) do
     RequestIssue.create(
       review_request: review,
-      rating_issue_reference_id: "abc123",
+      rating_issue_reference_id: rating_reference_id,
       rating_issue_profile_date: Time.zone.now,
       description: "a rated issue"
     )
@@ -27,6 +30,22 @@ describe RequestIssue do
       review_request: review,
       description: "an unidentified issue",
       is_unidentified: true
+    )
+  end
+
+  let!(:ratings) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: review.receipt_date - 40.days,
+      profile_date: review.receipt_date - 50.days,
+      issues: [
+        {
+          reference_id: rating_reference_id,
+          decision_text: "Left knee granted",
+          contention_reference_id: contention_reference_id
+        },
+        { reference_id: "xyz456", decision_text: "PTSD denied" },
+      ]
     )
   end
 
@@ -99,11 +118,34 @@ describe RequestIssue do
     end
   end
 
+  context "#contested_rating_issue" do
+    it "returns the rating issue hash that prompted the RequestIssue" do
+      expect(rated_issue.contested_rating_issue[:reference_id]).to eq rating_reference_id
+      expect(rated_issue.contested_rating_issue[:decision_text]).to eq "Left knee granted"
+    end
+  end
+
+  context "#previous_request_issue" do
+    let(:prior_higher_level_review) { create(:higher_level_review) }
+    let!(:prior_request_issue) do
+      create(
+        :request_issue,
+        review_request: prior_higher_level_review,
+        rating_issue_reference_id: higher_level_review_reference_id,
+        contention_reference_id: contention_reference_id
+      )
+    end
+
+    it "looks up the chain to the immediately previous request issue" do
+      ratings.issues.select(&:contention_reference_id).each(&:save_with_request_issue!)
+      binding.pry
+      expect(rated_issue.previous_request_issue).to eq(prior_request_issue)
+    end
+  end
+
   context "#validate_eligibility!" do
-    let(:higher_level_review_reference_id) { "hlr123" }
     let(:duplicate_reference_id) { "xyz789" }
     let(:old_reference_id) { "old123" }
-    let(:contention_reference_id) { 1234 }
     let(:active_epe) { create(:end_product_establishment, :active) }
     let(:receipt_date) { review.receipt_date }
 
