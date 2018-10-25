@@ -3,7 +3,7 @@ class RequestIssue < ApplicationRecord
   belongs_to :end_product_establishment
   has_many :decision_issues
   has_many :remand_reasons
-  has_many :rating_issues
+  has_many :decision_rating_issues, foreign_key: "request_issue_id", class_name: "RatingIssue"
 
   enum ineligible_reason: {
     duplicate_of_issue_in_active_review: 0,
@@ -97,6 +97,25 @@ class RequestIssue < ApplicationRecord
     self
   end
 
+  # the rating issue that this RequestIssue contested.
+  # It may not yet exist in the db as a RatingIssue so we pull hash from the serialized_ratings.
+  def contested_rating_issue
+    return unless review_request
+    @contested_rating_issue ||= begin
+      rating_with_issue = review_request.serialized_ratings.find do |rating|
+        rating[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
+      end
+      rating_with_issue[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
+    end
+  end
+
+  def previous_request_issue
+    return unless contested_rating_issue
+    review_request.veteran.decision_rating_issues.where(
+      reference_id: contested_rating_issue[:reference_id]
+    ).first.contesting_request_issue
+  end
+
   private
 
   def check_for_prior_higher_level_review!
@@ -106,9 +125,9 @@ class RequestIssue < ApplicationRecord
   end
 
   def check_for_activity!(type)
-    if related_rating_issue && related_rating_issue[type].present?
+    if contested_rating_issue && contested_rating_issue[type].present?
       self.ineligible_reason = type
-      self.ineligible_request_issue_id = related_rating_issue[type]
+      self.ineligible_request_issue_id = contested_rating_issue[type]
     end
   end
 
@@ -129,7 +148,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def check_for_rated_untimely!
-    if related_rating_issue && !review_request.timely_rating?(related_rating_issue[:promulgation_date])
+    if contested_rating_issue && !review_request.timely_rating?(contested_rating_issue[:promulgation_date])
       self.ineligible_reason = :untimely
     end
   end
@@ -137,21 +156,6 @@ class RequestIssue < ApplicationRecord
   def check_for_nonrated_untimely!
     if decision_date < (review_request.receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
       self.ineligible_reason = :untimely
-    end
-  end
-
-  # the original RatingIssue that this RequestIssue refers to with rating_issue_reference_id
-  # it does not exist in the db so we pull it from the serialized_ratings and unwrap to match.
-  def related_rating_issue
-    return unless review_request
-    @related_rating_issue ||= begin
-      rating_issue = nil
-      review_request.serialized_ratings.each do |rating|
-        rating[:issues].each do |issue|
-          rating_issue = issue if issue[:reference_id] == rating_issue_reference_id
-        end
-      end
-      rating_issue
     end
   end
 end
