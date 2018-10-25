@@ -60,9 +60,9 @@ class RatingIssue < ApplicationRecord
 
   def source_higher_level_review
     return unless reference_id
-    request_issue = source_request_issue || fetch_source_request_issue
-    return unless request_issue
-    request_issue.review_request.is_a?(HigherLevelReview) ? request_issue.id : nil
+    fetch_source_request_issue unless source_request_issue
+    return unless source_request_issue
+    source_request_issue.review_request.is_a?(HigherLevelReview) ? source_request_issue.id : nil
   end
 
   private
