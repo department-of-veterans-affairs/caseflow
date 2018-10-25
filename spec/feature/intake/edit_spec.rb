@@ -396,11 +396,14 @@ RSpec.feature "Edit issues" do
   end
 
   context "Supplemental claims" do
+    let(:is_dta_error) { false }
+
     let!(:supplemental_claim) do
       SupplementalClaim.create!(
         veteran_file_number: veteran.file_number,
         receipt_date: receipt_date,
-        benefit_type: "compensation"
+        benefit_type: "compensation",
+        is_dta_error: is_dta_error
       )
     end
 
@@ -452,6 +455,20 @@ RSpec.feature "Edit issues" do
         supplemental_claim.process_end_product_establishments!
       end
 
+      context "when it is created due to a DTA error" do
+        let(:is_dta_error) { true }
+
+        it "cannot be edited" do
+          non_rating_dta_claim_id = EndProductEstablishment.find_by(
+            source: supplemental_claim,
+            code: "040HDENR"
+          ).reference_id
+
+          visit "supplemental_claims/#{non_rating_dta_claim_id}/edit"
+          expect(page).to have_content("Issues Not Editable")
+        end
+      end
+
       it "shows the Supplemental Claim Edit page with a non-rated claim id" do
         non_rated_ep_claim_id = EndProductEstablishment.find_by(
           source: supplemental_claim,
@@ -481,7 +498,7 @@ RSpec.feature "Edit issues" do
       end
     end
 
-    context "whe there is a rated end product" do
+    context "when there is a rated end product" do
       let!(:request_issue) do
         RequestIssue.create!(
           rating_issue_reference_id: "def456",
@@ -494,6 +511,20 @@ RSpec.feature "Edit issues" do
       before do
         supplemental_claim.create_issues!([request_issue])
         supplemental_claim.process_end_product_establishments!
+      end
+
+      context "when it is created due to a DTA error" do
+        let(:is_dta_error) { true }
+
+        it "cannot be edited" do
+          rating_dta_claim_id = EndProductEstablishment.find_by(
+            source: supplemental_claim,
+            code: "040HDER"
+          ).reference_id
+
+          visit "supplemental_claims/#{rating_dta_claim_id}/edit"
+          expect(page).to have_content("Issues Not Editable")
+        end
       end
 
       it "shows request issues and allows adding/removing issues" do

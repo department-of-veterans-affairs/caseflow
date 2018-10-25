@@ -34,7 +34,8 @@ export default class IntakeEditFrame extends React.PureComponent {
 
     const basename = `/${formType}s/${this.props.claimId}/edit/`;
 
-    const dtaMessage = `Because this claim was created by Caseflow to resolve DTA errors, its issues may not be edited. You can close this window and return to VBMS.`;
+    const dtaMessage = `Because this claim was created by Caseflow to resolve DTA errors,
+    its issues may not be edited. You can close this window and return to VBMS.`;
 
     return <Router basename={basename} {...this.props.routerTestProps}>
       <div>
@@ -72,7 +73,7 @@ export default class IntakeEditFrame extends React.PureComponent {
                   title="Edit Claim Issues | Caseflow Intake"
                   component={() => {
                     return <StatusMessage title="Issues Not Editable"
-                      leadMessageList={[dtaMessage]} />
+                      leadMessageList={[dtaMessage]} />;
                   }} />
               </div>
             </AppSegment>
