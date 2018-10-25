@@ -360,6 +360,37 @@ RSpec.describe TasksController, type: :controller do
             expect(response.status).to eq 404
           end
         end
+
+        context "when creating a Hearings Management task" do
+          let!(:hearings_user) do
+            create(:hearings_coordinator)
+          end
+          let!(:hearings_org) do
+            create(:hearings_management)
+          end
+          let!(:staff_mapping) do
+            create(:hearings_staff, organization_id: hearings_org.id)
+          end
+          let(:params) do
+            [{
+              "type": ScheduleHearingTask.name,
+              "action": "Assign Hearing",
+              "external_id": appeal.vacols_id,
+              "assigned_to_type": "User",
+              "assigned_to_id": hearings_user.id
+            }]
+          end
+
+          it "should be successful" do
+            post :create, params: { tasks: params }
+            expect(response.status).to eq 201
+            response_body = JSON.parse(response.body)["tasks"]["data"]
+            expect(response_body.size).to eq 1
+            expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
+            expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
+            expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq hearings_user.id
+          end
+        end
       end
     end
   end

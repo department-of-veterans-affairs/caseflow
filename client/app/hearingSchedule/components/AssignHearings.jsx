@@ -12,6 +12,8 @@ import moment from 'moment';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
+import ApiUtil from '../../util/ApiUtil';
+import { prepareTasksForStore } from '../../queue/utils';
 import StatusMessage from '../../components/StatusMessage';
 
 const colorAOD = css({
@@ -55,10 +57,34 @@ export default class AssignHearings extends React.Component {
   // required to reset the RO Dropdown when moving from Viewing and Assigning.
   componentWillMount = () => {
     this.props.onRegionalOfficeChange('');
-  }
+  };
 
   onSelectedHearingDayChange = (hearingDay) => () => {
     this.props.onSelectedHearingDayChange(hearingDay);
+  };
+
+  onClick = (vacolsId) => {
+    const payload = {
+      data: {
+        tasks: [
+          {
+            type: 'ScheduleHearingTask',
+            external_id: vacolsId,
+            assigned_to_type: 'User',
+            assigned_to_id: this.props.userId
+          }
+        ]
+      }
+    };
+
+    ApiUtil.post('/tasks', payload).
+      then((resp) => {
+        const response = JSON.parse(resp.text);
+        const preparedTasks = prepareTasksForStore(response.tasks.data);
+        const taskUniqueId = response.tasks.data[0].id;
+
+        this.props.onReceiveTasks(preparedTasks[taskUniqueId]);
+      });
   };
 
   roomInfo = (hearingDay) => {
@@ -72,7 +98,7 @@ export default class AssignHearings extends React.Component {
 
     return room = '';
 
-  }
+  };
 
   formatAvailableHearingDays = () => {
     return <div className="usa-width-one-fourth">
@@ -112,16 +138,16 @@ export default class AssignHearings extends React.Component {
     </div>;
   };
 
-  veteranTypeColor = (docketType) => {
+  veteranTypeColor = (appealType) => {
 
-    if (docketType === 'CAVC') {
+    if (appealType === 'Court Remand') {
       return <span {...colorAOD}>CAVC</span>;
-    } else if (docketType === 'AOD') {
+    } else if (appealType === 'AOD') {
       return <span {...colorAOD}>AOD</span>;
     }
 
-    return docketType;
-  }
+    return appealType;
+  };
 
     getHearingTime = (date, regionalOfficeTimezone) => {
       return <div>
@@ -131,12 +157,12 @@ export default class AssignHearings extends React.Component {
 
   appellantName = (hearingDay) => {
     if (hearingDay.appellantFirstName && hearingDay.appellantLastName) {
-      return `${hearingDay.appellantFirstName} ${hearingDay.appellantLastName} | ${hearingDay.id}`;
+      return `${hearingDay.appellantFirstName} ${hearingDay.appellantLastName} | ${hearingDay.vbmsId}`;
     }
 
-    return `${hearingDay.id}`;
+    return `${hearingDay.vbmsId}`;
 
-  }
+  };
 
   getNoUpcomingError = () => {
     if (this.props.selectedRegionalOffice) {
@@ -154,7 +180,9 @@ export default class AssignHearings extends React.Component {
       type: this.veteranTypeColor(veteran.type),
       docketNumber: veteran.docketNumber,
       location: this.props.selectedRegionalOffice.value === 'C' ? 'Washington DC' : veteran.location,
-      time: null
+      time: veteran.time,
+      vacolsId: veteran.vacolsId,
+      appealId: veteran.appealId
     }));
   };
 
@@ -174,7 +202,13 @@ export default class AssignHearings extends React.Component {
       {
         header: 'Case details',
         align: 'left',
-        valueName: 'caseDetails'
+        valueName: 'caseDetails',
+        valueFunction: (veteran) => <Link
+          href={`/queue/appeals/${veteran.vacolsId}`}
+          name={veteran.vacolsId}
+          onClick={this.onClick.bind(this, veteran.vacolsId)} >
+          {veteran.caseDetails}
+        </Link>
       },
       {
         header: 'Type(s)',
@@ -284,5 +318,7 @@ AssignHearings.propTypes = {
   upcomingHearingDays: PropTypes.object,
   onSelectedHearingDayChange: PropTypes.func,
   selectedHearingDay: PropTypes.object,
-  veteransReadyForHearing: PropTypes.object
+  veteransReadyForHearing: PropTypes.object,
+  userId: PropTypes.number,
+  onReceiveTasks: PropTypes.func
 };

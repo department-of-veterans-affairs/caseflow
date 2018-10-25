@@ -10,6 +10,7 @@ class TasksController < ApplicationController
     GenericTask: GenericTask,
     QualityReviewTask: QualityReviewTask,
     JudgeTask: JudgeTask,
+    ScheduleHearingTask: ScheduleHearingTask,
     MailTask: MailTask
   }.freeze
 

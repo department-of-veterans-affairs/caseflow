@@ -290,7 +290,8 @@ RSpec.feature "RAMP Election Intake" do
         suppress_acknowledgement_letter: false,
         claimant_participant_id: veteran.participant_id
       },
-      veteran_hash: intake.veteran.to_vbms_hash
+      veteran_hash: intake.veteran.to_vbms_hash,
+      user: current_user
     )
 
     # Validate that you can not go back to previous steps

@@ -93,16 +93,17 @@ class ExternalApi::VBMSService
     File.delete(location)
   end
 
-  def self.establish_claim!(veteran_hash:, claim_hash:)
+  def self.establish_claim!(veteran_hash:, claim_hash:, user:)
     @vbms_client ||= init_vbms_client
 
     request = VBMS::Requests::EstablishClaim.new(
       veteran_hash,
       claim_hash,
-      v5: FeatureToggle.enabled?(:claims_service_v5)
+      v5: FeatureToggle.enabled?(:claims_service_v5),
+      send_userid: FeatureToggle.enabled?(:vbms_include_user)
     )
 
-    send_and_log_request(veteran_hash[:file_number], request, FeatureToggle.enabled?(:vbms_include_user))
+    send_and_log_request(veteran_hash[:file_number], request, vbms_client_with_user(user))
   end
 
   def self.fetch_contentions(claim_id:)
@@ -116,7 +117,7 @@ class ExternalApi::VBMSService
     send_and_log_request(claim_id, request)
   end
 
-  def self.create_contentions!(veteran_file_number:, claim_id:, contention_descriptions:, special_issues: [])
+  def self.create_contentions!(veteran_file_number:, claim_id:, contention_descriptions:, special_issues: [], user:)
     @vbms_client ||= init_vbms_client
 
     request = VBMS::Requests::CreateContentions.new(
@@ -124,10 +125,11 @@ class ExternalApi::VBMSService
       claim_id: claim_id,
       contentions: contention_descriptions,
       special_issues: special_issues,
-      v5: FeatureToggle.enabled?(:claims_service_v5)
+      v5: FeatureToggle.enabled?(:claims_service_v5),
+      send_userid: FeatureToggle.enabled?(:vbms_include_user)
     )
 
-    send_and_log_request(claim_id, request)
+    send_and_log_request(claim_id, request, vbms_client_with_user(user))
   end
 
   def self.remove_contention!(contention)
@@ -135,10 +137,11 @@ class ExternalApi::VBMSService
 
     request = VBMS::Requests::RemoveContention.new(
       contention: contention,
-      v5: FeatureToggle.enabled?(:claims_service_v5)
+      v5: FeatureToggle.enabled?(:claims_service_v5),
+      send_userid: FeatureToggle.enabled?(:vbms_include_user)
     )
 
-    send_and_log_request(contention.claim_id, request)
+    send_and_log_request(contention.claim_id, request, vbms_client_with_user(User.system_user))
   end
 
   def self.associate_rated_issues!(claim_id:, rated_issue_contention_map:)
@@ -161,16 +164,14 @@ class ExternalApi::VBMSService
     send_and_log_request(claim_id, request)
   end
 
-  def self.current_user
-    RequestStore[:current_user]
-  end
+  def self.vbms_client_with_user(user)
+    return @vbms_client if user.nil?
 
-  def self.vbms_client_with_user
-    @vbms_client_with_user ||= VBMS::Client.from_env_vars(
+    VBMS::Client.from_env_vars(
       logger: VBMSCaseflowLogger.new,
       env_name: ENV["CONNECT_VBMS_ENV"],
-      css_id: current_user.css_id,
-      station_id: current_user.station_id,
+      css_id: user.css_id,
+      station_id: user.station_id,
       use_forward_proxy: FeatureToggle.enabled?(:vbms_forward_proxy)
     )
   end
@@ -183,12 +184,12 @@ class ExternalApi::VBMSService
     )
   end
 
-  def self.send_and_log_request(vbms_id, request, include_user = false)
+  def self.send_and_log_request(vbms_id, request, override_vbms_client = nil)
     name = request.class.name.split("::").last
     MetricsService.record("sent VBMS request #{request.class} for #{vbms_id}",
                           service: :vbms,
                           name: name) do
-      (include_user ? vbms_client_with_user : @vbms_client).send_request(request)
+      (override_vbms_client ? override_vbms_client : @vbms_client).send_request(request)
     end
   rescue VBMS::ClientError => e
     Rails.logger.error "#{e.message}\n#{e.backtrace.join("\n")}"
