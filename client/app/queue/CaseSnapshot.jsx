@@ -8,8 +8,8 @@ import {
   actionableTasksForAppeal,
   appealWithDetailSelector,
   tasksForAppealAssignedToAttorneySelector,
-  incompleteOrganizationTasksByAssigneeIdSelector,
-  tasksForAppealAssignedToUserSelector
+  tasksForAppealAssignedToUserSelector,
+  incompleteOrganizationTasksByAssigneeIdSelector
 } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import DocketTypeBadge from './components/DocketTypeBadge';
@@ -314,8 +314,8 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
-    userRole,
     featureToggles,
+    userRole,
     primaryTask: tasksForAppealAssignedToUserSelector(state, { appealId: ownProps.appealId })[0] ||
       taskAssignedToAttorney ||
       actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0] ||
