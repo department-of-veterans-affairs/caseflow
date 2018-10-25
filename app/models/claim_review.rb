@@ -5,6 +5,7 @@ class ClaimReview < AmaReview
   include Asyncable
 
   has_many :end_product_establishments, as: :source
+  has_one :intake, as: :detail
 
   self.abstract_class = true
 
@@ -104,6 +105,10 @@ class ClaimReview < AmaReview
 
   def informal_conference?
     false
+  end
+
+  def intake_processed_by
+    intake ? intake.user : nil
   end
 
   def end_product_establishment_for_issue(issue)

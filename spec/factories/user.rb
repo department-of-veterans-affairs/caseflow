@@ -12,6 +12,13 @@ FactoryBot.define do
       roles ["Certify Appeal"]
     end
 
+    factory :hearings_coordinator do
+      css_id "BVATWARNER"
+      full_name "Thomas Warner"
+      email "thomas.warner@example.com"
+      roles ["Assign Hearings"]
+    end
+
     trait :vso_role do
       roles ["VSO"]
     end

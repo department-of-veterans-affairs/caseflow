@@ -122,7 +122,8 @@ class HigherLevelReview < ClaimReview
       code: ep_code,
       claimant_participant_id: claimant_participant_id,
       station: end_product_station,
-      benefit_type_code: veteran.benefit_type_code
+      benefit_type_code: veteran.benefit_type_code,
+      user: intake_processed_by
     )
   end
 end

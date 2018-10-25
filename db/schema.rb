@@ -11,7 +11,6 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 20181023204155) do
-
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -279,6 +278,7 @@ ActiveRecord::Schema.define(version: 20181023204155) do
     t.string "doc_reference_id"
     t.string "development_item_reference_id"
     t.string "benefit_type_code"
+    t.integer "user_id"
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
   end
