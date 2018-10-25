@@ -162,7 +162,40 @@ RSpec.feature "Case details" do
 
         expect(page).to have_content("About the Veteran")
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
-        expect(page).to have_content(appeal.veteran_date_of_birth.strftime("%-m/%e/%Y"))
+        expect(page).to have_content("1/10/1935")
+        expect(page).to have_content("5/25/2016")
+        expect(page).to have_content(appeal.regional_office.city)
+        expect(page).to have_content(appeal.veteran_address_line_1)
+      end
+    end
+
+    context "when veteran is not in BGS" do
+      let!(:appeal) do
+        FactoryBot.create(
+          :legacy_appeal,
+          :with_veteran,
+          vacols_case: FactoryBot.create(
+            :case,
+            :assigned,
+            user: attorney_user,
+            correspondent: FactoryBot.create(:correspondent, sgender: "F")
+          )
+        )
+      end
+
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_return(nil)
+      end
+
+      scenario "details view informs us that the Veteran is the appellant" do
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+
+        expect(page).to have_content("About the Veteran")
+        expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
+        expect(page).to_not have_content("1/10/1935")
+        expect(page).to_not have_content("5/25/2016")
+        expect(page).to have_content(appeal.regional_office.city)
       end
     end
 
@@ -191,6 +224,7 @@ RSpec.feature "Case details" do
 
         expect(page).to have_content("About the Appellant")
         expect(page).to have_content("About the Veteran")
+        expect(page).to have_content(appeal.veteran_address_line_1)
         expect(page).to have_content(appeal.appellant_name)
         expect(page).to have_content(appeal.appellant_relationship)
         expect(page).to have_content(appeal.appellant_address_line_1)
@@ -343,6 +377,31 @@ RSpec.feature "Case details" do
       expect(page).to have_content("#{assigner_name.first[0]}. #{assigner_name.last}")
 
       expect(Task.find(on_hold_task.id).status).to eq("on_hold")
+    end
+  end
+
+  describe "Marking organization task complete" do
+    context "when there is no assigner" do
+      let(:qr) { QualityReview.singleton }
+      let(:task) { FactoryBot.create(:qr_task) }
+      let(:user) { FactoryBot.create(:user) }
+
+      before do
+        StaffFieldForOrganization.create!(organization: qr, name: "sdept", values: %w[QR])
+        FactoryBot.create(:staff, user: user, sdept: "QR", sattyid: nil)
+        User.authenticate!(user: user)
+      end
+
+      it "marking task as complete works" do
+        visit "/queue/appeals/#{task.appeal.uuid}"
+
+        find(".Select-control", text: "Select an action").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
+
+        find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
+
+        expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, ""))
+      end
     end
   end
 end

@@ -46,6 +46,8 @@ export const addRatedIssue = (args) => (dispatch) => {
       id: args.issueId,
       isRated: args.isRated,
       inActiveReview: foundDate[0].issues[args.issueId].in_active_review,
+      timely: foundDate[0].issues[args.issueId].timely,
+      promulgationDate: foundDate[0].issues[args.issueId].promulgation_date,
       profileDate: foundDate[0].profile_date,
       notes: args.notes
     }

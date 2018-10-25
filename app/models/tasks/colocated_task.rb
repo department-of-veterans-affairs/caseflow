@@ -9,6 +9,16 @@ class ColocatedTask < Task
   after_update :update_location_in_vacols
 
   class << self
+    # Override so that each ColocatedTask for an appeal gets assigned to the same colocated staffer.
+    def create_many_from_params(params_array, _)
+      params_array.each do |params|
+        if params.key?("instructions") && !params[:instructions].is_a?(Array)
+          params["instructions"] = [params["instructions"]]
+        end
+      end
+      create(params_array)
+    end
+
     def create(tasks)
       ActiveRecord::Base.multi_transaction do
         assignee = next_assignee
@@ -35,10 +45,6 @@ class ColocatedTask < Task
 
     actions = [
       {
-        label: COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
-        value: "modal/mark_task_complete"
-      },
-      {
         label: COPY::COLOCATED_ACTION_PLACE_HOLD,
         value: Constants::CO_LOCATED_ACTIONS["PLACE_HOLD"]
       }
@@ -48,6 +54,11 @@ class ColocatedTask < Task
       actions.unshift(
         label: format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action]),
         value: "modal/send_colocated_task"
+      )
+    else
+      actions.unshift(
+        label: COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
+        value: "modal/mark_task_complete"
       )
     end
 

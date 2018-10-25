@@ -99,6 +99,7 @@ Rails.application.routes.draw do
   resources :appeals, only: [:index, :show] do
     get :document_count
     get :new_documents
+    get :veteran
     get :power_of_attorney
     resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
     resources :special_issues, only: [:create, :index]
@@ -132,6 +133,7 @@ Rails.application.routes.draw do
   get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
   get 'hearings/schedule/assign/veterans', to: "hearings/hearing_day#veterans_ready_for_hearing"
+  get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
 
   resources :hearings, only: [:update]
 
@@ -189,6 +191,7 @@ Rails.application.routes.draw do
 
   resources :organizations, only: [:show], param: :url do
     resources :tasks, only: [:index], controller: 'organizations/tasks'
+    resources :users, only: [:index, :create, :destroy], controller: 'organizations/users'
   end
 
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'

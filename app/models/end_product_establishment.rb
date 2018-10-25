@@ -15,6 +15,7 @@ class EndProductEstablishment < ApplicationRecord
   # the same modifier, we add used modifiers to the invalid_modifiers array.
   attr_writer :invalid_modifiers
   belongs_to :source, polymorphic: true
+  belongs_to :user
 
   class InvalidEndProductError < StandardError; end
   class NoAvailableModifiers < StandardError; end
@@ -79,7 +80,7 @@ class EndProductEstablishment < ApplicationRecord
   # VBMS will return ALL contentions on a end product when you create contentions,
   # not just the ones that were just created.
   def create_contentions!
-    issues_without_contentions = request_issues_without_contentions
+    issues_without_contentions = request_issues_ready_for_contentions
     return if issues_without_contentions.empty?
 
     set_establishment_values_from_source
@@ -218,8 +219,8 @@ class EndProductEstablishment < ApplicationRecord
     rated_request_issues.select { |ri| ri.rating_issue_associated_at.nil? }
   end
 
-  def request_issues_without_contentions
-    request_issues.select { |ri| ri.contention_reference_id.nil? }
+  def request_issues_ready_for_contentions
+    request_issues.select { |ri| ri.contention_reference_id.nil? && ri.eligible? }
   end
 
   def rated_issue_contention_map(request_issues_to_associate)
@@ -240,7 +241,8 @@ class EndProductEstablishment < ApplicationRecord
   def establish_claim_in_vbms(end_product)
     VBMSService.establish_claim!(
       claim_hash: end_product.to_vbms_hash,
-      veteran_hash: veteran.to_vbms_hash
+      veteran_hash: veteran.to_vbms_hash,
+      user: user
     )
   end
 
@@ -309,7 +311,8 @@ class EndProductEstablishment < ApplicationRecord
       veteran_file_number: veteran_file_number,
       claim_id: reference_id,
       contention_descriptions: descriptions,
-      special_issues: special_issues || []
+      special_issues: special_issues || [],
+      user: user
     )
   end
 

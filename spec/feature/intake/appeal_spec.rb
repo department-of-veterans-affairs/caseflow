@@ -166,7 +166,9 @@ RSpec.feature "Appeal Intake" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES_SHORT.appeal} created:")
+    expect(page).to have_content("Issue: Description for Active Duty Adjustments")
 
     intake.reload
     expect(intake.completed_at).to eq(Time.zone.now)
@@ -271,15 +273,34 @@ RSpec.feature "Appeal Intake" do
   end
 
   scenario "For new Add / Remove Issues page" do
+    duplicate_reference_id = "xyz789"
+    old_reference_id = "old123"
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - 40.days,
       profile_date: receipt_date - 50.days,
       issues: [
         { reference_id: "xyz123", decision_text: "Left knee granted" },
-        { reference_id: "xyz456", decision_text: "PTSD denied" }
+        { reference_id: "xyz456", decision_text: "PTSD denied" },
+        { reference_id: duplicate_reference_id, decision_text: "Old injury in review" }
       ]
     )
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date - 400.days,
+      profile_date: receipt_date - 450.days,
+      issues: [
+        { reference_id: old_reference_id, decision_text: "Really old injury" }
+      ]
+    )
+    epe = create(:end_product_establishment, :active)
+    request_issue_in_progress = create(
+      :request_issue,
+      end_product_establishment: epe,
+      rating_issue_reference_id: duplicate_reference_id,
+      description: "Old injury"
+    )
+
     appeal, = start_appeal(veteran)
     visit "/intake/add_issues"
 
@@ -351,6 +372,20 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content("3 issues")
     expect(page).to have_content("This is an unidentified issue")
 
+    # add ineligible issue
+    safe_click "#button-add-issue"
+    find_all("label", text: "Old injury in review").first.click
+    safe_click ".add-issue"
+    expect(page).to have_content("4 issues")
+    expect(page).to have_content("4. Old injury in review is ineligible because it's already under review as a Appeal")
+
+    # add untimely issue
+    safe_click "#button-add-issue"
+    find_all("label", text: "Really old injury").first.click
+    safe_click ".add-issue"
+    expect(page).to have_content("5 issues")
+    expect(page).to have_content("5. Really old injury is ineligible because it has a prior decision date")
+
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
@@ -381,6 +416,33 @@ RSpec.feature "Appeal Intake" do
              description: "This is an unidentified issue",
              is_unidentified: true
     )).to_not be_nil
+
+    duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
+    ineligible_issue = duplicate_request_issues.select(&:duplicate_of_issue_in_active_review?).first
+
+    expect(duplicate_request_issues.count).to eq(2)
+    expect(duplicate_request_issues).to include(request_issue_in_progress)
+    expect(ineligible_issue).to_not eq(request_issue_in_progress)
+
+    expect(RequestIssue.find_by(rating_issue_reference_id: old_reference_id).eligible?).to eq(false)
+  end
+
+  it "Shows a review error when something goes wrong" do
+    start_appeal(veteran)
+    visit "/intake/add_issues"
+
+    safe_click "#button-add-issue"
+    find_all("label", text: "Left knee granted").first.click
+    fill_in "Notes", with: "I am an issue note"
+    safe_click ".add-issue"
+
+    ## Validate error message when complete intake fails
+    expect_any_instance_of(AppealIntake).to receive(:complete!).and_raise("A random error. Oh no!")
+
+    safe_click "#button-finish-intake"
+
+    expect(page).to have_content("Something went wrong")
+    expect(page).to have_current_path("/intake/add_issues")
   end
 
   scenario "canceling an appeal intake" do
