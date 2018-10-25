@@ -10,6 +10,7 @@ import { PAGE_PATHS } from './constants';
 import { EditAddIssuesPage } from '../intake/pages/addIssues';
 import CancelPage from './pages/canceled';
 import ConfirmationPage from './pages/confirmation';
+import StatusMessage from '../components/StatusMessage';
 import { css } from 'glamor';
 import EditButtons from './components/EditButtons';
 
@@ -32,6 +33,8 @@ export default class IntakeEditFrame extends React.PureComponent {
       `${veteran.formName} (${veteran.fileNumber})` : null;
 
     const basename = `/${formType}s/${this.props.claimId}/edit/`;
+
+    const dtaMessage = `Because this claim was created by Caseflow to resolve DTA errors, it's issues may not be edited. You can close this window and return to VBMS.`;
 
     return <Router basename={basename} {...this.props.routerTestProps}>
       <div>
@@ -63,6 +66,15 @@ export default class IntakeEditFrame extends React.PureComponent {
                   path={PAGE_PATHS.CONFIRMATION}
                   title="Edit Claim Issues | Caseflow Intake"
                   component={ConfirmationPage} />
+                <PageRoute
+                  exact
+                  path={PAGE_PATHS.DTA_CLAIM}
+                  title="Edit Claim Issues | Caseflow Intake"
+                  component={() => {
+                    return
+                      <StatusMessage title="Issues Not Editable"
+                      leadMessageList={[dtaMessage]} />
+                  }} />
               </div>
             </AppSegment>
             <AppSegment styling={textAlignRightStyling}>
