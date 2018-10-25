@@ -195,7 +195,7 @@ describe RatingIssue do
     end
   end
 
-  context "#contesting_request_issue" do
+  context "#source_request_issue" do
     let(:participant_id) { 456 }
     let(:contention_ref_id) { 123 }
     let!(:request_issue) { create(:request_issue, contention_reference_id: contention_ref_id) }
@@ -209,7 +209,7 @@ describe RatingIssue do
         participant_id: participant_id
       )
 
-      expect(rating_issue.contesting_request_issue).to eq(request_issue)
+      expect(rating_issue.source_request_issue).to eq(request_issue)
     end
   end
 end

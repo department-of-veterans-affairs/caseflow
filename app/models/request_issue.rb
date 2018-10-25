@@ -113,7 +113,7 @@ class RequestIssue < ApplicationRecord
     return unless contested_rating_issue
     review_request.veteran.decision_rating_issues.find_by(
       reference_id: contested_rating_issue[:reference_id]
-    ).try(:contesting_request_issue)
+    ).try(:source_request_issue)
   end
 
   private
