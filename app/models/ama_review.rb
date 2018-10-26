@@ -26,8 +26,12 @@ class AmaReview < ApplicationRecord
     return unless receipt_date
 
     cached_serialized_ratings.each do |rating|
-      rating[:issues].each do |rating_issue|
-        rating_issue[:timely] = timely_rating?(Date.parse(rating_issue[:promulgation_date].to_s))
+      rating[:issues].each do |rating_issue_hash|
+        rating_issue_hash[:timely] = timely_rating?(Date.parse(rating_issue_hash[:promulgation_date].to_s))
+        # always re-compute flags that depend on data in our db
+        rating_issue = RatingIssue.from_ui_hash(rating_issue_hash)
+        rating_issue_hash[:in_active_review] = rating_issue.in_active_review
+        rating_issue_hash[:source_higher_level_review] = rating_issue.source_higher_level_review
       end
     end
   end

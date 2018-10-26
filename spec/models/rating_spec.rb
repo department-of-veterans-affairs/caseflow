@@ -24,9 +24,7 @@ describe Rating do
       participant_id: participant_id,
       reference_id: "Issue#{num}",
       decision_text: "Decision#{num}",
-      in_active_review: nil,
       promulgation_date: promulgation_date,
-      source_higher_level_review: nil
     }
   end
 

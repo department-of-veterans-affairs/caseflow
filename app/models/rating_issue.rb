@@ -19,6 +19,7 @@ class RatingIssue < ApplicationRecord
 
     def from_ui_hash(ui_hash)
       new(
+        participant_id: ui_hash[:participant_id],
         reference_id: ui_hash[:reference_id],
         decision_text: ui_hash[:decision_text],
         promulgation_date: ui_hash[:promulgation_date]
@@ -47,8 +48,6 @@ class RatingIssue < ApplicationRecord
       reference_id: reference_id,
       decision_text: decision_text,
       promulgation_date: promulgation_date.to_date,
-      in_active_review: in_active_review,
-      source_higher_level_review: source_higher_level_review
     }
   end
 
