@@ -31,8 +31,6 @@ class LegacyTasksController < ApplicationController
   def create
     assigned_to = legacy_task_params[:assigned_to]
     if assigned_to.vacols_roles.length == 1 && assigned_to.judge_in_vacols?
-      # If the user being assigned to is a judge, do not create a DECASS record, just
-      # update the location to the assigned judge.
       return assign_to_judge
     end
 
@@ -49,6 +47,8 @@ class LegacyTasksController < ApplicationController
   end
 
   def assign_to_judge
+    # If the user being assigned to is a judge, do not create a DECASS record, just
+    # update the location to the assigned judge. 
     appeal = LegacyAppeal.find(legacy_task_params[:appeal_id])
     QueueRepository.update_location_to_judge(appeal.vacols_id, legacy_task_params[:assigned_to])
 
