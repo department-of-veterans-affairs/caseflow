@@ -33,16 +33,7 @@ class LegacyTasksController < ApplicationController
     if assigned_to.vacols_roles.length == 1 && assigned_to.judge_in_vacols?
       # If the user being assigned to is a judge, do not create a DECASS record, just
       # update the location to the assigned judge.
-      appeal = LegacyAppeal.find(legacy_task_params[:appeal_id])
-      QueueRepository.update_location_to_judge(appeal.vacols_id, assigned_to)
-
-      return render json: {
-        task: json_task(AttorneyLegacyTask.from_vacols(
-                          VACOLS::CaseAssignment.latest_task_for_appeal(appeal.vacols_id),
-                          appeal,
-                          assigned_to
-        ))
-      }
+      return assign_to_judge
     end
 
     task = JudgeCaseAssignmentToAttorney.create(legacy_task_params)
@@ -53,6 +44,19 @@ class LegacyTasksController < ApplicationController
                         task.last_case_assignment,
                         LegacyAppeal.find_or_create_by_vacols_id(task.vacols_id),
                         task.assigned_to
+      ))
+    }
+  end
+
+  def assign_to_judge
+    appeal = LegacyAppeal.find(legacy_task_params[:appeal_id])
+    QueueRepository.update_location_to_judge(appeal.vacols_id, legacy_task_params[:assigned_to])
+
+    render json: {
+      task: json_task(AttorneyLegacyTask.from_vacols(
+                        VACOLS::CaseAssignment.latest_task_for_appeal(appeal.vacols_id),
+                        appeal,
+                        legacy_task_params[:assigned_to]
       ))
     }
   end
