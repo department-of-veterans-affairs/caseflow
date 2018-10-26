@@ -134,7 +134,7 @@ describe RatingIssue do
     end
   end
 
-  context "#previous_higher_level_review" do
+  context "#source_higher_level_review" do
     before do
       Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
     end
@@ -151,7 +151,7 @@ describe RatingIssue do
     subject { RatingIssue.new(reference_id: reference_id, source_request_issue: request_issue) }
 
     it "flags request_issue as having a previous higher level review" do
-      expect(subject.previous_higher_level_review).to eq(request_issue.id)
+      expect(subject.source_higher_level_review).to eq(request_issue.id)
     end
   end
 
