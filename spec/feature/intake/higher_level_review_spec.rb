@@ -520,6 +520,8 @@ RSpec.feature "Higher-Level Review" do
       expect(row).to have_text(text)
     end
 
+    let(:higher_level_review_reference_id) { "hlr123" }
+    let(:contention_reference_id) { 1234 }
     let(:duplicate_reference_id) { "xyz789" }
     let(:old_reference_id) { "old123" }
     let(:active_epe) { create(:end_product_establishment, :active) }
@@ -532,7 +534,12 @@ RSpec.feature "Higher-Level Review" do
         issues: [
           { reference_id: "xyz123", decision_text: "Left knee granted" },
           { reference_id: "xyz456", decision_text: "PTSD denied" },
-          { reference_id: duplicate_reference_id, decision_text: "Old injury" }
+          { reference_id: duplicate_reference_id, decision_text: "Old injury" },
+          {
+            reference_id: higher_level_review_reference_id,
+            decision_text: "Already reviewed injury",
+            contention_reference_id: contention_reference_id
+          }
         ]
       )
       Generators::Rating.build(
@@ -551,6 +558,16 @@ RSpec.feature "Higher-Level Review" do
         end_product_establishment: active_epe,
         rating_issue_reference_id: duplicate_reference_id,
         description: "Old injury"
+      )
+    end
+
+    let(:previous_higher_level_review) { create(:higher_level_review) }
+    let!(:previous_request_issue) do
+      create(
+        :request_issue,
+        review_request: previous_higher_level_review,
+        rating_issue_reference_id: higher_level_review_reference_id,
+        contention_reference_id: contention_reference_id
       )
     end
 
@@ -643,7 +660,16 @@ RSpec.feature "Higher-Level Review" do
       find_all("label", text: "Really old injury").first.click
       safe_click ".add-issue"
       expect(page).to have_content("5 issues")
-      expect(page).to have_content("5. Really old injury is ineligible because it has a prior decision date")
+      expect(page).to have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
+
+      # add prior reviewed issue
+      safe_click "#button-add-issue"
+      find_all("label", text: "Already reviewed injury").first.click
+      safe_click ".add-issue"
+      expect(page).to have_content("6 issues")
+      expect(page).to have_content(
+        "6. Already reviewed injury #{Constants.INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review}"
+      )
 
       safe_click "#button-finish-intake"
 
@@ -710,11 +736,14 @@ RSpec.feature "Higher-Level Review" do
       expect(ineligible_issue).to_not eq(request_issue_in_progress)
       expect(ineligible_issue.contention_reference_id).to be_nil
 
-      expect(RequestIssue.find_by(rating_issue_reference_id: old_reference_id).eligible?).to eq(false)
+      expect(RequestIssue.find_by(rating_issue_reference_id: old_reference_id).untimely?).to eq(true)
+      expect(
+        RequestIssue.find_by(rating_issue_reference_id: higher_level_review_reference_id).previous_higher_level_review?
+      ).to eq(true)
 
       expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(
         hash_including(
-          contention_descriptions: array_including("Old injury", "Really old injury")
+          contention_descriptions: array_including("Old injury", "Really old injury", "Already reviewed injury")
         )
       )
 
