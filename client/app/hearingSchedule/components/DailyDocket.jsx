@@ -198,7 +198,7 @@ export default class DailyDocket extends React.Component {
       name="Notes"
       onChange={this.onHearingNotesUpdate(hearing.id)}
       textAreaStyling={notesFieldStyling}
-      value={hearing.editedNotes ? hearing.editedNotes : hearing.notes || ''}
+      value={hearing.editedNotes || hearing.notes || ''}
     />;
   };
 
