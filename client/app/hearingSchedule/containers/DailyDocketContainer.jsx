@@ -8,6 +8,9 @@ import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ApiUtil from '../../util/ApiUtil';
 import {
   onReceiveDailyDocket,
+  onReceiveSavedHearing,
+  onResetSaveSuccessful,
+  onCancelHearingUpdate,
   onHearingNotesUpdate,
   onHearingDispositionUpdate,
   onHearingDateUpdate
@@ -29,6 +32,25 @@ export class DailyDocketContainer extends React.Component {
     });
   };
 
+  formatHearing = (hearing) => {
+    return {
+      disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
+      notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
+      date: hearing.editedDate ? hearing.editedDate : hearing.date
+    }
+  };
+
+  saveHearing = (hearing) => {
+    const formattedHearing = this.formatHearing(hearing);
+
+    ApiUtil.patch(`/hearings/${hearing.id}`, { data: { hearing: formattedHearing } }).
+      then((response) => {
+        const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+
+        this.props.onReceiveSavedHearing(resp)
+      });
+  };
+
   createHearingPromise = () => Promise.all([this.loadHearingDay()]);
 
   render() {
@@ -48,6 +70,10 @@ export class DailyDocketContainer extends React.Component {
         onHearingNotesUpdate={this.props.onHearingNotesUpdate}
         onHearingDispositionUpdate={this.props.onHearingDispositionUpdate}
         onHearingDateUpdate={this.props.onHearingDateUpdate}
+        saveHearing={this.saveHearing}
+        saveSuccessful={this.props.saveSuccessful}
+        onResetSaveSuccessful={this.props.onResetSaveSuccessful}
+        onCancelHearingUpdate={this.props.onCancelHearingUpdate}
       />
     </LoadingDataDisplay>;
 
@@ -58,11 +84,15 @@ export class DailyDocketContainer extends React.Component {
 const mapStateToProps = (state) => ({
   dailyDocket: state.hearingSchedule.dailyDocket,
   hearings: state.hearingSchedule.hearings,
-  hearingDayOptions: state.hearingSchedule.hearingDayOptions
+  hearingDayOptions: state.hearingSchedule.hearingDayOptions,
+  saveSuccessful: state.hearingSchedule.saveSuccessful
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveDailyDocket,
+  onReceiveSavedHearing,
+  onResetSaveSuccessful,
+  onCancelHearingUpdate,
   onHearingNotesUpdate,
   onHearingDispositionUpdate,
   onHearingDateUpdate

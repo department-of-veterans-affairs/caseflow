@@ -41,6 +41,31 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
       hearings: { $set: action.payload.hearings },
       hearingDayOptions: { $set: action.payload.hearingDayOptions }
     });
+  case ACTIONS.RECEIVE_SAVED_HEARING:
+    return update(state, {
+      hearings: {
+        [action.payload.hearing.id]: {
+          $set: action.payload.hearing
+        }
+      },
+      saveSuccessful: { $set: action.payload.hearing }
+    });
+  case ACTIONS.RESET_SAVE_SUCCESSFUL:
+    return update(state, {
+      $unset: ['saveSuccessful']
+    });
+  case ACTIONS.CANCEL_HEARING_UPDATE:
+    return update(state, {
+      hearings: {
+        [action.payload.hearing.id]: {
+          $unset: [
+            'editedNotes',
+            'editedDisposition',
+            'editedDate',
+            'edited'
+        ]}
+      }
+    });
   case ACTIONS.REGIONAL_OFFICE_CHANGE:
     return update(state, {
       selectedRegionalOffice: {
