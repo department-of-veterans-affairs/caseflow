@@ -257,7 +257,7 @@ export const formatAddedIssues = (intakeData) => {
         date: formatDateStr(issue.profileDate),
         notes: issue.notes,
         inActiveReview: issue.inActiveReview,
-        priorHigherLevelReview: issue.priorHigherLevelReview,
+        sourceHigherLevelReview: issue.sourceHigherLevelReview,
         promulgationDate: issue.promulgationDate,
         timely: issue.timely
       };

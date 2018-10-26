@@ -51,7 +51,7 @@ export class AddIssuesPage extends React.Component {
       return INELIGIBLE_REQUEST_ISSUES.in_active_review.replace('{review_title}', issue.inActiveReview);
     } else if (!issue.timely && formType !== 'supplemental_claim') {
       return INELIGIBLE_REQUEST_ISSUES.untimely;
-    } else if (issue.previousHigherLevelReview && formType === 'higher_level_review') {
+    } else if (issue.sourceHigherLevelReview && formType === 'higher_level_review') {
       return INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review;
     }
 
