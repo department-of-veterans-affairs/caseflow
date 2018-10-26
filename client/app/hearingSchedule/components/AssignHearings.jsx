@@ -191,7 +191,7 @@ export default class AssignHearings extends React.Component {
       caseDetails: `${hearing.appellantMiFormatted} | ${hearing.vbmsId}`,
       type: this.veteranTypeColor(hearing.appealType),
       docketNumber: hearing.docketNumber,
-      location: hearing.locations,
+      location: hearing.readableLocation,
       time: this.getHearingTime(hearing.date, hearing.regionalOfficeTimezone)
     }));
   };
