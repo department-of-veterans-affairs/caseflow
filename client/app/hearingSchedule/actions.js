@@ -30,6 +30,24 @@ export const onReceiveDailyDocket = (dailyDocket, hearings, hearingDayOptions) =
   }
 });
 
+export const onReceiveSavedHearing = (hearing) => ({
+  type: ACTIONS.RECEIVE_SAVED_HEARING,
+  payload: {
+    hearing
+  }
+});
+
+export const onResetSaveSuccessful = () => ({
+  type: ACTIONS.RESET_SAVE_SUCCESSFUL
+});
+
+export const onCancelHearingUpdate = (hearing) => ({
+  type: ACTIONS.CANCEL_HEARING_UPDATE,
+  payload: {
+    hearing
+  }
+});
+
 export const onRegionalOfficeChange = (regionalOffice) => ({
   type: ACTIONS.REGIONAL_OFFICE_CHANGE,
   payload: {
