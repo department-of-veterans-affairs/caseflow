@@ -500,6 +500,8 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to have_button("Add this issue", disabled: false)
       safe_click ".add-issue"
       expect(page).to have_content("2 issues")
+      # SC is always timely
+      expect(page).to_not have_content("Description for Active Duty Adjustments is ineligible because it has a prior")
 
       # add unidentified issue
       safe_click "#button-add-issue"
@@ -524,7 +526,7 @@ RSpec.feature "Supplemental Claim Intake" do
       safe_click ".add-issue"
       expect(page).to have_content("5 issues")
       expect(page).to have_content("5. Really old injury")
-      expect(page).to_not have_content("5. Really old injury is ineligible because it has a prior decision date")
+      expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
 
       safe_click "#button-finish-intake"
 
