@@ -52,6 +52,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def status_active?
+    return appeal_active? if review_request.is_a?(Appeal)
     return false unless end_product_establishment
     end_product_establishment.status_active?
   end
@@ -167,5 +168,9 @@ class RequestIssue < ApplicationRecord
     if decision_date < (review_request.receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
       self.ineligible_reason = :untimely
     end
+  end
+
+  def appeal_active?
+    false # TODO how to determine this??
   end
 end
