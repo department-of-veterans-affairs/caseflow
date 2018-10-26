@@ -637,6 +637,10 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to have_button("Add this issue", disabled: false)
       safe_click ".add-issue"
       expect(page).to have_content("2 issues")
+      # this nonrated issue is timely
+      expect(page).to_not have_content(
+        "Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
+      )
 
       # add unidentified issue
       safe_click "#button-add-issue"
@@ -655,20 +659,35 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to have_content("4 issues")
       expect(page).to have_content("4. Old injury is ineligible because it's already under review as a Appeal")
 
-      # add untimely issue
+      # add untimely rated issue
       safe_click "#button-add-issue"
       find_all("label", text: "Really old injury").first.click
       safe_click ".add-issue"
       expect(page).to have_content("5 issues")
       expect(page).to have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
 
+      # add untimely nonrated issue
+      safe_click "#button-add-issue"
+      safe_click ".no-matching-issues"
+      expect(page).to have_button("Add this issue", disabled: true)
+      fill_in "Issue category", with: "Active Duty Adjustments"
+      find("#issue-category").send_keys :enter
+      fill_in "Issue description", with: "Another Description for Active Duty Adjustments"
+      fill_in "Decision date", with: "04/19/2016"
+      expect(page).to have_button("Add this issue", disabled: false)
+      safe_click ".add-issue"
+      expect(page).to have_content("6 issues")
+      expect(page).to have_content(
+        "Another Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
+      )
+
       # add prior reviewed issue
       safe_click "#button-add-issue"
       find_all("label", text: "Already reviewed injury").first.click
       safe_click ".add-issue"
-      expect(page).to have_content("6 issues")
+      expect(page).to have_content("7 issues")
       expect(page).to have_content(
-        "6. Already reviewed injury #{Constants.INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review}"
+        "7. Already reviewed injury #{Constants.INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review}"
       )
 
       safe_click "#button-finish-intake"
