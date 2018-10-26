@@ -183,7 +183,8 @@ class Hearings::HearingDayController < HearingScheduleController
       location: HearingDayMapper.city_for_regional_office(veteran.regional_office_key),
       time: nil,
       vacols_id: veteran.case_record.bfkey,
-      vbms_id: veteran.vbms_id
+      vbms_id: veteran.vbms_id,
+      aod: veteran.aod
     }
   end
 
