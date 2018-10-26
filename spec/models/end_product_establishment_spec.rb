@@ -269,7 +269,7 @@ describe EndProductEstablishment do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
         veteran_file_number: veteran_file_number,
         claim_id: end_product_establishment.reference_id,
-        contention_descriptions: contention_descriptions,
+        contention_descriptions: array_including(contention_descriptions),
         special_issues: [],
         user: current_user
       )
@@ -289,7 +289,7 @@ describe EndProductEstablishment do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: end_product_establishment.reference_id,
-          contention_descriptions: contention_descriptions,
+          contention_descriptions: array_including(contention_descriptions),
           special_issues: "SPECIALISSUES!",
           user: current_user
         )
