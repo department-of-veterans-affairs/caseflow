@@ -446,12 +446,12 @@ describe Veteran do
     it "connects rating issues with request issues based on contention_reference_id" do
       allow(veteran).to receive(:timely_ratings).and_return([rating])
 
-      expect(request_issues.first.rating_issues.count).to eq(0)
+      expect(request_issues.first.decision_rating_issues.count).to eq(0)
 
       subject
 
-      expect(request_issues.first.rating_issues.count).to eq(1)
-      expect(request_issues.first.rating_issues.first.reference_id).to eq("Issue1")
+      expect(request_issues.first.decision_rating_issues.count).to eq(1)
+      expect(request_issues.first.decision_rating_issues.first.reference_id).to eq("Issue1")
     end
   end
 end
