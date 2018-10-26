@@ -4,13 +4,7 @@ class HearingsController < ApplicationController
   before_action :verify_access_to_reader_or_hearings, only: [:show_print, :show]
 
   def update
-
-    if update_params["date"]
-      hearing.update(update_params)
-    else
-      hearing.update(update_params)
-    end
-
+    hearing.update(update_params)
     render json: hearing.to_hash(current_user.id)
   end
 
@@ -55,8 +49,6 @@ class HearingsController < ApplicationController
                                      :aod,
                                      :transcript_requested,
                                      :add_on,
-                                     :prepped,
-                                     :date
-  )
+                                     :prepped)
   end
 end

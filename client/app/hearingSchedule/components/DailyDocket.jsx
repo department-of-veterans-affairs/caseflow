@@ -92,19 +92,19 @@ export default class DailyDocket extends React.Component {
   };
 
   saveHearing = (hearing) => () => {
-    this.props.saveHearing(hearing)
+    this.props.saveHearing(hearing);
   };
 
   cancelHearingUpdate = (hearing) => () => {
-    this.props.onCancelHearingUpdate(hearing)
+    this.props.onCancelHearingUpdate(hearing);
   };
 
   previouslyScheduledHearings = () => {
-    return _.filter(this.props.hearings, (hearing) => hearing.disposition === 'postponed' )
+    return _.filter(this.props.hearings, (hearing) => hearing.disposition === 'postponed');
   };
 
   dailyDocketHearings = () => {
-    return _.filter(this.props.hearings, (hearing) => hearing.disposition !== 'postponed')
+    return _.filter(this.props.hearings, (hearing) => hearing.disposition !== 'postponed');
   };
 
   getAppellantInformation = (hearing) => {
@@ -171,7 +171,7 @@ export default class DailyDocket extends React.Component {
       options={this.getHearingDateOptions()}
       value={hearing.editedDate ? this.getHearingDate(hearing.editedDate) : this.getHearingDate(hearing.date)}
       onChange={this.onHearingDateUpdate(hearing.id)}
-      readOnly={readOnly, hearing.editedDisposition !== 'postponed'}
+      readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
     />
     <RadioField
       name="Hearing Time"
@@ -198,7 +198,7 @@ export default class DailyDocket extends React.Component {
       name="Notes"
       onChange={this.onHearingNotesUpdate(hearing.id)}
       textAreaStyling={notesFieldStyling}
-      value={hearing.editedNotes ? hearing.editedNotes : hearing.notes || '' }
+      value={hearing.editedNotes ? hearing.editedNotes : hearing.notes || ''}
     />;
   };
 
@@ -222,6 +222,7 @@ export default class DailyDocket extends React.Component {
 
   getDailyDocketRows = (hearings, readOnly) => {
     let dailyDocketRows = [];
+
     _.forEach(hearings, (hearing) => {
       dailyDocketRows.push({
         number: '1.',

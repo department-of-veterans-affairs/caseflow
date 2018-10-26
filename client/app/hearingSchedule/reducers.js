@@ -63,7 +63,7 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
             'editedDisposition',
             'editedDate',
             'edited'
-        ]}
+          ] }
       }
     });
   case ACTIONS.REGIONAL_OFFICE_CHANGE:

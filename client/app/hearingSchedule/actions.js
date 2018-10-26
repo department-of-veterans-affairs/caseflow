@@ -46,7 +46,7 @@ export const onCancelHearingUpdate = (hearing) => ({
   payload: {
     hearing
   }
-})
+});
 
 export const onRegionalOfficeChange = (regionalOffice) => ({
   type: ACTIONS.REGIONAL_OFFICE_CHANGE,

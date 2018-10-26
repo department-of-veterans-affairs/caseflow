@@ -70,11 +70,6 @@ class Hearing < ApplicationRecord
     end
   end
 
-  def cancel_and_create(hearing_hash)
-    self.class.repository.update_vacols_hearing!(vacols_record, hearing_hash)
-    self.class.repository.create_vacols_hearing!(vacols_record, hearing_hash)
-  end
-
   def regional_office_timezone
     HearingMapper.timezone(regional_office_key)
   end

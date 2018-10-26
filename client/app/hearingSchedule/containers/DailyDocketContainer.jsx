@@ -37,7 +37,7 @@ export class DailyDocketContainer extends React.Component {
       disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
       notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
       date: hearing.editedDate ? hearing.editedDate : hearing.date
-    }
+    };
   };
 
   saveHearing = (hearing) => {
@@ -47,7 +47,7 @@ export class DailyDocketContainer extends React.Component {
       then((response) => {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
-        this.props.onReceiveSavedHearing(resp)
+        this.props.onReceiveSavedHearing(resp);
       });
   };
 
