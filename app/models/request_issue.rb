@@ -3,9 +3,13 @@ class RequestIssue < ApplicationRecord
   belongs_to :end_product_establishment
   has_many :decision_issues
   has_many :remand_reasons
-  has_many :rating_issues
+  has_many :decision_rating_issues, foreign_key: "source_request_issue_id", class_name: "RatingIssue"
 
-  enum ineligible_reason: { duplicate_of_issue_in_active_review: 0, untimely: 1 }
+  enum ineligible_reason: {
+    duplicate_of_issue_in_active_review: 0,
+    untimely: 1,
+    previous_higher_level_review: 2
+  }
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
 
@@ -89,13 +93,57 @@ class RequestIssue < ApplicationRecord
   def validate_eligibility!
     check_for_active_request_issue!
     check_for_untimely!
+    check_for_previous_higher_level_review!
     self
+  end
+
+  def contested_rating_issue
+    return unless review_request
+    @contested_rating_issue ||= begin
+      ui_hash = fetch_contested_rating_issue_ui_hash
+      ui_hash ? RatingIssue.from_ui_hash(ui_hash) : nil
+    end
+  end
+
+  def previous_request_issue
+    return unless contested_rating_issue
+    review_request.veteran.decision_rating_issues.find_by(
+      reference_id: contested_rating_issue.reference_id
+    ).try(:source_request_issue)
   end
 
   private
 
+  # It may not yet exist in the db as a RatingIssue so we pull hash from the serialized_ratings.
+  def fetch_contested_rating_issue_ui_hash
+    rating_with_issue = review_request.serialized_ratings.find do |rating|
+      rating[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
+    end || { issues: [] }
+    rating_with_issue[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
+  end
+
+  def check_for_previous_higher_level_review!
+    return unless rated?
+    return unless eligible?
+    check_for_previous_review!(:source_higher_level_review)
+  end
+
+  def check_for_previous_review!(review_type)
+    reason = rating_issue_rationale_to_request_issue_reason(review_type)
+    contested_rating_issue_ui_hash = fetch_contested_rating_issue_ui_hash
+    if contested_rating_issue_ui_hash && contested_rating_issue_ui_hash[review_type].present?
+      self.ineligible_reason = reason
+      self.ineligible_request_issue_id = contested_rating_issue_ui_hash[review_type]
+    end
+  end
+
+  def rating_issue_rationale_to_request_issue_reason(rationale)
+    rationale.to_s.sub(/^source_/, "previous_").to_sym
+  end
+
   def check_for_active_request_issue!
-    return unless rating_issue_reference_id
+    return unless rated?
+    return unless eligible?
     existing_request_issue = self.class.find_active_by_reference_id(rating_issue_reference_id)
     if existing_request_issue
       self.ineligible_reason = :duplicate_of_issue_in_active_review
@@ -103,13 +151,14 @@ class RequestIssue < ApplicationRecord
   end
 
   def check_for_untimely!
+    return unless eligible?
     return if review_request && review_request.is_a?(SupplementalClaim)
     check_for_rated_untimely! if rated?
     check_for_nonrated_untimely! if nonrated?
   end
 
   def check_for_rated_untimely!
-    if related_rating_issue && !review_request.timely_rating?(related_rating_issue[:promulgation_date])
+    if contested_rating_issue && !review_request.timely_rating?(contested_rating_issue.promulgation_date)
       self.ineligible_reason = :untimely
     end
   end
@@ -117,21 +166,6 @@ class RequestIssue < ApplicationRecord
   def check_for_nonrated_untimely!
     if decision_date < (review_request.receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
       self.ineligible_reason = :untimely
-    end
-  end
-
-  # the original RatingIssue that this RequestIssue refers to with rating_issue_reference_id
-  # it does not exist in the db so we pull it from the serialized_ratings and unwrap to match.
-  def related_rating_issue
-    return unless review_request
-    @related_rating_issue ||= begin
-      rating_issue = nil
-      review_request.serialized_ratings.each do |rating|
-        rating[:issues].each do |issue|
-          rating_issue = issue if issue[:reference_id] == rating_issue_reference_id
-        end
-      end
-      rating_issue
     end
   end
 end
