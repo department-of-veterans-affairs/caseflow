@@ -79,8 +79,8 @@ export default class DailyDocket extends React.Component {
   };
 
   getHearingLocationOptions = (hearing) => {
-    return [{ label: hearing.hearingLocation,
-      value: hearing.hearingLocation }];
+    return [{ label: hearing.locations,
+      value: hearing.locations }];
   };
 
   getHearingDate = (hearing) => {
@@ -96,7 +96,7 @@ export default class DailyDocket extends React.Component {
     return <SearchableDropdown
       name="Hearing Location"
       options={this.getHearingLocationOptions(hearing)}
-      value={hearing.hearingLocation}
+      value={hearing.locations}
       onChange={this.emptyFunction}
     />;
   };

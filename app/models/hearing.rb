@@ -74,7 +74,7 @@ class Hearing < ApplicationRecord
     HearingMapper.timezone(regional_office_key)
   end
 
-  def hearing_location
+  def locations
     if request_type == "CO" || request_type != "Video"
       return "Washington DC"
     end
@@ -168,7 +168,7 @@ class Hearing < ApplicationRecord
         :appellant_city,
         :appellant_state,
         :appellant_zip,
-        :hearing_location
+        :locations
       ],
       except: :military_service
     ).merge(
