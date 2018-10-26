@@ -25,7 +25,8 @@ class SupplementalClaim < ClaimReview
       claimantNotVeteran: claimant_not_veteran,
       payeeCode: payee_code,
       ratings: serialized_ratings,
-      requestIssues: request_issues.map(&:ui_hash)
+      requestIssues: request_issues.map(&:ui_hash),
+      isDtaError: is_dta_error
     }
   end
 

@@ -304,6 +304,7 @@ RSpec.feature "Case details" do
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
       preparer_name = "#{task.assigned_by.first_name[0]}. #{task.assigned_by.last_name}"
+
       expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_PREPARER_LABEL} #{preparer_name}/i)
       expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} #{task.document_id}/i)
     end
@@ -377,6 +378,31 @@ RSpec.feature "Case details" do
       expect(page).to have_content("#{assigner_name.first[0]}. #{assigner_name.last}")
 
       expect(Task.find(on_hold_task.id).status).to eq("on_hold")
+    end
+  end
+
+  describe "Marking organization task complete" do
+    context "when there is no assigner" do
+      let(:qr) { QualityReview.singleton }
+      let(:task) { FactoryBot.create(:qr_task) }
+      let(:user) { FactoryBot.create(:user) }
+
+      before do
+        StaffFieldForOrganization.create!(organization: qr, name: "sdept", values: %w[QR])
+        FactoryBot.create(:staff, user: user, sdept: "QR", sattyid: nil)
+        User.authenticate!(user: user)
+      end
+
+      it "marking task as complete works" do
+        visit "/queue/appeals/#{task.appeal.uuid}"
+
+        find(".Select-control", text: "Select an action").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
+
+        find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
+
+        expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, ""))
+      end
     end
   end
 end

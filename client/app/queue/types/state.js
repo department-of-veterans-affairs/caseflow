@@ -54,7 +54,8 @@ export type UiState = {
   userCssId: string,
   userIsVsoEmployee: boolean,
   feedbackUrl: string,
-  veteranCaseListIsVisible: boolean
+  veteranCaseListIsVisible: boolean,
+  organizationIds: Array<number>
 };
 
 export type UsersById = { [number]: ?User };
