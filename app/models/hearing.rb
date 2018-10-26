@@ -74,6 +74,14 @@ class Hearing < ApplicationRecord
     HearingMapper.timezone(regional_office_key)
   end
 
+  def readable_location
+    if request_type == "CO"
+      return "Washington DC"
+    end
+
+    regional_office_name
+  end
+
   # rubocop:disable Metrics/MethodLength
   def vacols_attributes
     {
@@ -159,7 +167,8 @@ class Hearing < ApplicationRecord
         :appellant_address_line_1,
         :appellant_city,
         :appellant_state,
-        :appellant_zip
+        :appellant_zip,
+        :readable_location
       ],
       except: :military_service
     ).merge(
