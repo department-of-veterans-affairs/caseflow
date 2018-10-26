@@ -3,7 +3,7 @@ class RequestIssue < ApplicationRecord
   belongs_to :end_product_establishment
   has_many :decision_issues
   has_many :remand_reasons
-  has_many :decision_rating_issues, foreign_key: "request_issue_id", class_name: "RatingIssue"
+  has_many :decision_rating_issues, foreign_key: "source_request_issue_id", class_name: "RatingIssue"
 
   enum ineligible_reason: {
     duplicate_of_issue_in_active_review: 0,
