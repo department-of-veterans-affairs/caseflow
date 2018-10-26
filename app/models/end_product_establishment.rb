@@ -142,12 +142,11 @@ class EndProductEstablishment < ApplicationRecord
     @preexisting_end_product ||= veteran.end_products.find { |ep| end_product_to_establish.matches?(ep) }
   end
 
-  def cancel_unused_end_product!(removed_issues)
-    removed_issue_ids = removed_issues.map(&:id)
-    active_request_issues_ids = request_issues.select { |request_issue| request_issue.removed_at.nil? }.map(&:id)
+  def cancel_unused_end_product!
+    active_request_issues = request_issues.select { |request_issue| request_issue.removed_at.nil? }
 
     # if all active request issues were removed, cancel
-    if (active_request_issues_ids - removed_issue_ids).empty?
+    if active_request_issues.empty?
       cancel!
     end
   end
