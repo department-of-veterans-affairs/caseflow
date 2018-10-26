@@ -21,7 +21,8 @@ type Props = {|
   hideLabel?: boolean,
   name: string,
   onChange: (value: ?OptionType, deletedValue?: ?Array<any>) => mixed,
-  options: Array<OptionType>,
+  // eslint-disable-next-line no-undef
+  options: $ReadOnlyArray<OptionType>,
   readOnly?: boolean,
   required?: boolean,
   placeholder: string | Object,
