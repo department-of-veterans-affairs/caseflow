@@ -61,6 +61,10 @@ export class AddIssuesPage extends React.Component {
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
     const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
 
+    if (intakeData.isDtaError) {
+      return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
+    }
+
     const issuesComponent = () => {
       let issues = formatAddedIssues(intakeData);
 
