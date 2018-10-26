@@ -50,7 +50,7 @@ class Fakes::BGSService
           ]
         )
       when "has_many_ratings"
-        in_active_review_reference_id = 1234
+        in_active_review_reference_id = "in-active-review-ref-id"
         Generators::Rating.build(
           participant_id: veteran.participant_id
         )
