@@ -97,17 +97,9 @@ export default class DailyDocket extends React.Component {
     />;
   };
 
-  getHearingLocation = (hearing) => {
-    if (hearing.requestType === 'CO') {
-      return 'Washington DC';
-    }
-
-    return hearing.regionalOfficeName;
-  };
-
   getHearingLocationOptions = (hearing) => {
-    return [{ label: this.getHearingLocation(hearing),
-      value: this.getHearingLocation(hearing) }];
+    return [{ label: hearing.readableLocation,
+      value: hearing.readableLocation }];
   };
 
   getHearingDate = (date) => {
@@ -125,7 +117,7 @@ export default class DailyDocket extends React.Component {
     return <SearchableDropdown
       name="Hearing Location"
       options={this.getHearingLocationOptions(hearing)}
-      value={this.getHearingLocation(hearing)}
+      value={hearing.readableLocation}
       onChange={this.emptyFunction}
       readOnly
     />;
