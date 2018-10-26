@@ -31,20 +31,16 @@ class LegacyTasksController < ApplicationController
   def create
     assigned_to = legacy_task_params[:assigned_to]
     if assigned_to.vacols_roles.length == 1 && assigned_to.judge_in_vacols?
-      byebug
-      QueueRepository.update_location_to_judge(LegacyAppeal.find(legacy_task_params[:appeal_id]).vacols_id, assigned_to)
+      # If the user being assigned to is a judge, do not create a DECASS record, just
+      # update the location to the assigned judge.
+      appeal = LegacyAppeal.find(legacy_task_params[:appeal_id])
+      QueueRepository.update_location_to_judge(appeal.vacols_id, assigned_to)
 
-      byebug
-      tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(legacy_task_params[:appeal_id], "judge")
-      task = tasks.first
-
-      byebug
-
-      render json: {
-        task: json_task(JudgeLegacyTask.from_vacols(
-            tasks.last_case_assignment,
-            LegacyAppeal.find_or_create_by_vacols_id(task.vacols_id),
-            task.assigned_to
+      return render json: {
+        task: json_task(AttorneyLegacyTask.from_vacols(
+                          VACOLS::CaseAssignment.latest_task_for_appeal(appeal.vacols_id),
+                          appeal,
+                          assigned_to
         ))
       }
     end
@@ -83,7 +79,7 @@ class LegacyTasksController < ApplicationController
 
   def legacy_task_params
     params.require("tasks")
-      .permit(:appeal_id, :type, :assigned_to_id)
+      .permit(:appeal_id)
       .merge(assigned_by: current_user)
       .merge(assigned_to: User.find_by(id: params[:tasks][:assigned_to_id]))
   end
