@@ -26,7 +26,7 @@ const downloadButtonStyling = css({
 });
 
 const actionButtonsStyling = css({
-  marginRight: '20px'
+  marginRight: '25px'
 });
 
 const inlineFormStyling = css({
