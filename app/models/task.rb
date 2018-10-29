@@ -164,9 +164,9 @@ class Task < ApplicationRecord
 
   def assign_to_user_data
     users = if assigned_to.is_a?(Organization)
-              assigned_to.members
+              assigned_to.users
             elsif parent && parent.assigned_to.is_a?(Organization)
-              parent.assigned_to.members.reject { |member| member == assigned_to }
+              parent.assigned_to.users.reject { |u| u == assigned_to }
             else
               []
             end
