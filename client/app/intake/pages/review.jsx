@@ -16,9 +16,9 @@ class Review extends React.PureComponent {
       formComponentMapping={{
         ramp_election: <RampElectionPage />,
         ramp_refiling: <RampRefilingPage />,
-        supplemental_claim: <SupplementalClaimPage />,
-        higher_level_review: <HigherLevelReviewPage />,
-        appeal: <AppealReviewPage />
+        supplemental_claim: <SupplementalClaimPage featureToggles={this.props.featureToggles} />,
+        higher_level_review: <HigherLevelReviewPage featureToggles={this.props.featureToggles} />,
+        appeal: <AppealReviewPage featureToggles={this.props.featureToggles} />
       }}
       componentForNoFormSelected={<Redirect to={PAGE_PATHS.BEGIN} />}
     />;
