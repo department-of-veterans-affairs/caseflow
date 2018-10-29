@@ -182,7 +182,7 @@ export default class AssignHearings extends React.Component {
         isAdvancedOnDocket: hearing.aod
       }),
       docketNumber: hearing.docketNumber,
-      location: hearing.requestType === 'Video' ? hearing.regionalOfficeName : 'Washington DC',
+      location: hearing.readableLocation,
       time: this.getHearingTime(hearing.date, hearing.regionalOfficeTimezone)
     }));
   };

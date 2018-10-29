@@ -80,8 +80,10 @@ RSpec.feature "Intake" do
     scenario "User clicks on Search Cases" do
       visit "/intake"
       expect(page).to have_content("Search cases")
-      click_link("Search cases")
-      expect(page).to have_current_path("/search")
+      new_window = window_opened_by { click_link("Search cases") }
+      within_window new_window do
+        expect(page).to have_current_path("/search")
+      end
     end
 
     scenario "Search for a veteran that does not exist in BGS" do

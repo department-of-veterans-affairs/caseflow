@@ -92,6 +92,10 @@ class VACOLS::CaseAssignment < VACOLS::Record
       select_tasks.where("brieff.bfkey = #{id}")
     end
 
+    def latest_task_for_appeal(appeal_id)
+      tasks_for_appeal(appeal_id).sort_by(&:created_at).last
+    end
+
     # rubocop:disable Metrics/MethodLength
     def select_tasks
       select("brieff.bfkey as vacols_id",
