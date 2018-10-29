@@ -48,6 +48,7 @@ class SeedDB
     create_colocated_user
     create_vso_user
     create_org_queue_user
+    create_qr_user
     create_mail_team_user
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
@@ -72,6 +73,11 @@ class SeedDB
   def create_org_queue_user
     q = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER", full_name: "Org Q User")
     FactoryBot.create(:staff, user: q, sdept: "TRANS", sattyid: nil)
+  end
+
+  def create_qr_user
+    q = User.create!(station_id: 101, css_id: "QR_USER", full_name: "QR User")
+    FactoryBot.create(:staff, user: q, sdept: "QR")
   end
 
   def create_mail_team_user
@@ -458,6 +464,9 @@ class SeedDB
     mail_team = MailTeam.singleton
     StaffFieldForOrganization.create!(organization: mail_team, name: "sdept", values: %w[MAIL])
 
+    quality_review = QualityReview.singleton
+    StaffFieldForOrganization.create!(organization: quality_review, name: "sdept", values: %w[QR])
+
     Bva.create(name: "Board of Veterans' Appeals")
   end
 
@@ -484,23 +493,12 @@ class SeedDB
 
   def create_previously_held_hearing_data
     user = User.find_by_css_id("BVAAABSHIRE")
-    veteran_file_number = "994806951S"
-    appeals = LegacyAppeal.where(vbms_id: veteran_file_number)
+    appeal = LegacyAppeal.find_or_create_by(vacols_id: "3617215", vbms_id: "994806951S")
 
-    return if (appeals.map(&:type) - ["Post Remand", "Original"]).empty? &&
-              appeals.flat_map(&:hearings).map(&:disposition).include?(:held)
+    return if ([appeal.type] - ["Post Remand", "Original"]).empty? &&
+              appeal.hearings.map(&:disposition).include?(:held)
 
-    FactoryBot.create(
-      :legacy_appeal,
-      vacols_case: FactoryBot.create(
-        :case,
-        :assigned,
-        :type_original,
-        user: user,
-        bfcorlid: veteran_file_number,
-        case_hearings: [FactoryBot.create(:case_hearing, :disposition_held, user: user)]
-      )
-    )
+    FactoryBot.create(:case_hearing, :disposition_held, user: user, folder_nr: appeal.vacols_id)
   end
 
   def seed
