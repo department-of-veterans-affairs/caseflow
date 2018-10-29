@@ -27,6 +27,10 @@ class JudgeTask < Task
     super(params.merge(action: "assign"))
   end
 
+  def self.verify_user_can_assign!(user)
+    QualityReview.singleton.user_has_access?(user) || super(user)
+  end
+
   def when_child_task_completed
     update!(action: :review)
     super

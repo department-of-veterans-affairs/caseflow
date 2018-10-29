@@ -71,23 +71,24 @@ class SeedDB
   end
 
   def create_org_queue_user
-    q = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER", full_name: "Org Q User")
-    FactoryBot.create(:staff, user: q, sdept: "TRANS", sattyid: nil)
+    u = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER", full_name: "Translation team member")
+    translation = Organization.create!(name: "Translation", url: "translation")
+    OrganizationsUser.add_user_to_organization(u, translation)
   end
 
   def create_qr_user
-    q = User.create!(station_id: 101, css_id: "QR_USER", full_name: "QR User")
-    FactoryBot.create(:staff, user: q, sdept: "QR")
+    u = User.create!(station_id: 101, css_id: "QR_USER", full_name: "QR User")
+    OrganizationsUser.add_user_to_organization(u, QualityReview.singleton)
   end
 
   def create_mail_team_user
     u = User.create!(station_id: 101, css_id: "JOLLY_POSTMAN", full_name: "Jolly D. Postman")
-    FactoryBot.create(:staff, user: u, sdept: "MAIL", sattyid: nil)
+    OrganizationsUser.add_user_to_organization(u, MailTeam.singleton)
   end
 
   def create_bva_dispatch_user_with_tasks
     u = User.find_by(css_id: "BVAGWHITE")
-    FactoryBot.create(:staff, user: u, sdept: "DSP")
+    OrganizationsUser.add_user_to_organization(u, BvaDispatch.singleton)
 
     3.times do
       root = FactoryBot.create(:root_task)
@@ -454,19 +455,10 @@ class SeedDB
       participant_id: "2452383"
     )
 
-    translation = Organization.create!(name: "Translation", url: "translation")
-    StaffFieldForOrganization.create!(organization: translation, name: "sdept", values: %w[TRANS])
-
-    dispatch = BvaDispatch.singleton
-    StaffFieldForOrganization.create!(organization: dispatch, name: "sdept", values: %w[DSP])
-    StaffFieldForOrganization.create!(organization: dispatch, name: "stitle", values: %w[A1 A2], exclude: true)
-
-    mail_team = MailTeam.singleton
-    StaffFieldForOrganization.create!(organization: mail_team, name: "sdept", values: %w[MAIL])
-
-    quality_review = QualityReview.singleton
-    StaffFieldForOrganization.create!(organization: quality_review, name: "sdept", values: %w[QR])
-
+    Organization.create!(name: "Translation", url: "translation")
+    BvaDispatch.singleton
+    MailTeam.singleton
+    QualityReview.singleton
     Bva.create(name: "Board of Veterans' Appeals")
   end
 
