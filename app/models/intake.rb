@@ -203,8 +203,7 @@ class Intake < ApplicationRecord
       veteran_name: veteran && veteran.name.formatted(:readable_short),
       veteran_form_name: veteran && veteran.name.formatted(:form),
       completed_at: completed_at,
-      relationships: ama_enabled && veteran && veteran.relationships,
-      legacy_opt_in_enabled: FeatureToggle.enabled?(:intake_legacy_opt_in)
+      relationships: ama_enabled && veteran && veteran.relationships
     }
   end
 

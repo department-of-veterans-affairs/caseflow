@@ -81,7 +81,7 @@ class IntakeFrame extends React.PureComponent {
                   exact
                   path={PAGE_PATHS.REVIEW}
                   title="Review Request | Caseflow Intake"
-                  component={ReviewPage} />
+                  render={() => <ReviewPage featureToggles={this.props.featureToggles} />} />
                 <PageRoute
                   exact
                   path={PAGE_PATHS.FINISH}

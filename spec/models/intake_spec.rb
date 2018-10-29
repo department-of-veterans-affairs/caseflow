@@ -1,10 +1,12 @@
 describe Intake do
   before do
+    FeatureToggle.enable!(:intake_legacy_opt_in)
     FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end
 
   after do
+    FeatureToggle.disable!(:intake_legacy_opt_in)
     FeatureToggle.disable!(:test_facols)
   end
 
@@ -468,7 +470,7 @@ describe Intake do
       end
 
       let(:higher_level_review) do
-        build(:higher_level_review, veteran_file_number: veteran_file_number, receipt_date: 5.days.ago)
+        create(:higher_level_review, veteran_file_number: veteran_file_number, receipt_date: 5.days.ago, legacy_opt_in_approved: false)
       end
 
       let!(:expired_intake) do
