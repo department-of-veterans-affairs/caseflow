@@ -470,7 +470,10 @@ describe Intake do
       end
 
       let(:higher_level_review) do
-        create(:higher_level_review, veteran_file_number: veteran_file_number, receipt_date: 5.days.ago, legacy_opt_in_approved: false)
+        build(:higher_level_review,
+              veteran_file_number: veteran_file_number,
+              receipt_date: 5.days.ago,
+              legacy_opt_in_approved: false)
       end
 
       let!(:expired_intake) do

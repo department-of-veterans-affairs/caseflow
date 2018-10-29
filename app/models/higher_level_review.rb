@@ -4,7 +4,9 @@ class HigherLevelReview < ClaimReview
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
   end
 
-  validates :legacy_opt_in_approved, inclusion: { in: [true, false], message: "blank" }, if: [:legacy_opt_in_enabled?, :saving_review]
+  validates :legacy_opt_in_approved, inclusion: {
+    in: [true, false], message: "blank"
+  }, if: [:legacy_opt_in_enabled?, :saving_review]
 
   END_PRODUCT_RATING_CODE = "030HLRR".freeze
   END_PRODUCT_NONRATING_CODE = "030HLRNR".freeze
