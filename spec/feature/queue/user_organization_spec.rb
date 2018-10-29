@@ -11,7 +11,9 @@ RSpec.feature "User organization" do
 
   context "When user is in the organization" do
     let!(:organization_user) { OrganizationsUser.add_user_to_organization(user, organization) }
-    let!(:staff_field) { StaffFieldForOrganization.create!(organization: organization, name: "sdept", values: %w[TRANS]) }
+    let!(:staff_field) do
+      StaffFieldForOrganization.create!(organization: organization, name: "sdept", values: %w[TRANS])
+    end
 
     scenario "Adds and removes users from the organization" do
       visit "/organizations/#{organization.url}/users"
