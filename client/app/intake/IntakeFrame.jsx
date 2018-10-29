@@ -48,7 +48,7 @@ class IntakeFrame extends React.PureComponent {
             accentColor: LOGO_COLORS.INTAKE.ACCENT,
             overlapColor: LOGO_COLORS.INTAKE.OVERLAP
           }}
-          rightNavElement={<CaseSearchLink />}
+          rightNavElement={<CaseSearchLink newWindow />}
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
           topMessage={topMessage}
@@ -81,7 +81,7 @@ class IntakeFrame extends React.PureComponent {
                   exact
                   path={PAGE_PATHS.REVIEW}
                   title="Review Request | Caseflow Intake"
-                  component={ReviewPage} />
+                  render={() => <ReviewPage featureToggles={this.props.featureToggles} />} />
                 <PageRoute
                   exact
                   path={PAGE_PATHS.FINISH}

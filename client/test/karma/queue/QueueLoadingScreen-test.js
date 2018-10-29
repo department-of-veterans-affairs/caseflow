@@ -7,6 +7,7 @@ const serverData = {
       {
         attributes: {
           is_legacy: true,
+          type: 'LegacyJudgeTask',
           appeal_type: 'LegacyAppeal',
           added_by_css_id: 'BVANKUVALIS',
           added_by_name: 'Nash X Kuvalis',
@@ -87,7 +88,8 @@ describe('QueueLoadingScreen', () => {
         workProduct: 'OTD',
         previousTaskAssignedOn: '2018-08-02T17:37:03.000Z',
         status: 'Assigned',
-        decisionPreparedBy: null
+        decisionPreparedBy: null,
+        type: 'LegacyJudgeTask'
       }
     });
   });

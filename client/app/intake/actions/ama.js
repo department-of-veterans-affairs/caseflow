@@ -108,6 +108,13 @@ export const setBenefitType = (benefitType) => ({
   }
 });
 
+export const setLegacyOptInApproved = (legacyOptInApproved) => ({
+  type: ACTIONS.SET_LEGACY_OPT_IN_APPROVED,
+  payload: {
+    legacyOptInApproved
+  }
+});
+
 export const setClaimantNotVeteran = (claimantNotVeteran) => ({
   type: ACTIONS.SET_CLAIMANT_NOT_VETERAN,
   payload: {

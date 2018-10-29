@@ -7,8 +7,15 @@ import CancelButton from '../../components/CancelButton';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import SelectClaimant from '../../components/SelectClaimant';
+import LegacyOptInApproved from '../../components/LegacyOptInApproved';
 import { setDocketType } from '../../actions/appeal';
-import { submitReview, setClaimantNotVeteran, setClaimant, setPayeeCode } from '../../actions/ama';
+import {
+  submitReview,
+  setClaimantNotVeteran,
+  setClaimant,
+  setPayeeCode,
+  setLegacyOptInApproved
+} from '../../actions/ama';
 import { setReceiptDate } from '../../actions/intake';
 import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, REQUEST_STATE } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
@@ -23,7 +30,10 @@ class Review extends React.PureComponent {
       receiptDateError,
       docketType,
       docketTypeError,
-      reviewIntakeError
+      legacyOptInApproved,
+      legacyOptInApprovedError,
+      reviewIntakeError,
+      featureToggles
     } = this.props;
 
     switch (appealStatus) {
@@ -33,6 +43,8 @@ class Review extends React.PureComponent {
       return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }
+
+    const legacyOptInEnabled = featureToggles.legacyOptInEnabled;
 
     const docketTypeRadioOptions = [
       { value: 'direct_review',
@@ -69,6 +81,12 @@ class Review extends React.PureComponent {
       />
 
       <SelectClaimantConnected />
+
+      { legacyOptInEnabled && <LegacyOptInApproved
+        value={legacyOptInApproved === null ? null : legacyOptInApproved.toString()}
+        onChange={this.props.setLegacyOptInApproved}
+        errorMessage={legacyOptInApprovedError}
+      /> }
     </div>;
   }
 }
@@ -131,10 +149,13 @@ export default connect(
     receiptDateError: state.appeal.receiptDateError,
     docketType: state.appeal.docketType,
     docketTypeError: state.appeal.docketTypeError,
+    legacyOptInApproved: state.appeal.legacyOptInApproved,
+    legacyOptInApprovedError: state.appeal.legacyOptInApprovedError,
     reviewIntakeError: state.appeal.requestStatus.reviewIntakeError
   }),
   (dispatch) => bindActionCreators({
     setDocketType,
-    setReceiptDate
+    setReceiptDate,
+    setLegacyOptInApproved
   }, dispatch)
 )(Review);

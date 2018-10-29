@@ -241,6 +241,8 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
 export const formatAddedIssues = (intakeData) => {
   let issues = intakeData.addedIssues || [];
   let ratingIssues = ratingIssuesById(intakeData.ratings);
+  // match date definition in Rails Rating model
+  const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
 
   return issues.map((issue) => {
     if (issue.isUnidentified) {
@@ -257,16 +259,24 @@ export const formatAddedIssues = (intakeData) => {
         date: formatDateStr(issue.profileDate),
         notes: issue.notes,
         inActiveReview: issue.inActiveReview,
+        sourceHigherLevelReview: issue.sourceHigherLevelReview,
         promulgationDate: issue.promulgationDate,
         timely: issue.timely
       };
     }
 
-    // returns unrated issue format
+    // we must do our own date math for nonrated issues.
+    // we assume the timezone of the browser for all these.
+    let decisionDate = new Date(issue.decisionDate);
+    let receiptDate = new Date(intakeData.receiptDate);
+    let isTimely = (receiptDate - decisionDate) <= ONE_YEAR_PLUS_MS;
+
+    // returns nonrated issue format
     return {
       referenceId: issue.id,
       text: `${issue.category} - ${issue.description}`,
-      date: formatDate(issue.decisionDate)
+      date: formatDate(issue.decisionDate),
+      timely: isTimely
     };
   });
 };
