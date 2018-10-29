@@ -16,10 +16,6 @@ import ApiUtil from '../../util/ApiUtil';
 import { prepareTasksForStore, renderAppealType } from '../../queue/utils';
 import StatusMessage from '../../components/StatusMessage';
 
-const colorAOD = css({
-  color: 'red'
-});
-
 const centralOfficeStaticEntry = [{
   label: 'Central',
   value: 'C'
