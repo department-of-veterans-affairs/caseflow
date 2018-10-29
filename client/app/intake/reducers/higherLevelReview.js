@@ -1,19 +1,9 @@
-import _ from 'lodash';
-
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers } from './common';
 import { formatDateStr } from '../../util/DateUtil';
 import { formatRatings, formatRequestIssues } from '../util/issues';
-import { getReceiptDateError, getBenefitTypeError, getPageError, formatRelationships } from '../util';
+import { getReceiptDateError, getBlankOptionError, getPageError, formatRelationships } from '../util';
 import { update } from '../../util/ReducerUtil';
-
-const getInformalConferenceError = (responseErrorCodes) => (
-  (_.get(responseErrorCodes.informal_conference, 0) === 'blank') && 'Please select an option.'
-);
-
-const getSameOfficeError = (responseErrorCodes) => (
-  (_.get(responseErrorCodes.same_office, 0) === 'blank') && 'Please select an option.'
-);
 
 const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.HIGHER_LEVEL_REVIEW.key) {
@@ -44,6 +34,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     payeeCode: {
       $set: serverIntake.payee_code
+    },
+    legacyOptInApproved: {
+      $set: serverIntake.legacy_opt_in_approved
     },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
@@ -83,6 +76,8 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     claimantNotVeteran: null,
     claimant: null,
     payeeCode: null,
+    legacyOptInApproved: null,
+    legacyOptInApprovedError: null,
     isStarted: false,
     isReviewed: false,
     isComplete: false,
@@ -160,6 +155,12 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         $set: action.payload.payeeCode
       }
     });
+  case ACTIONS.SET_LEGACY_OPT_IN_APPROVED:
+    return update(state, {
+      legacyOptInApproved: {
+        $set: action.payload.legacyOptInApproved
+      }
+    });
   case ACTIONS.SUBMIT_REVIEW_START:
     return update(state, {
       requestStatus: {
@@ -182,6 +183,9 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       benefitTypeError: {
         $set: null
       },
+      legacyOptInApprovedError: {
+        $set: null
+      },
       isReviewed: {
         $set: true
       },
@@ -194,13 +198,16 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
   case ACTIONS.SUBMIT_REVIEW_FAIL:
     return update(state, {
       informalConferenceError: {
-        $set: getInformalConferenceError(action.payload.responseErrorCodes)
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'informal_conference')
       },
       sameOfficeError: {
-        $set: getSameOfficeError(action.payload.responseErrorCodes)
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'same_office')
       },
       benefitTypeError: {
-        $set: getBenefitTypeError(action.payload.responseErrorCodes)
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'benefit_type')
+      },
+      legacyOptInApprovedError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')
       },
       receiptDateError: {
         $set: getReceiptDateError(action.payload.responseErrorCodes, state)
