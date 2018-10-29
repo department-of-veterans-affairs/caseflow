@@ -1,8 +1,4 @@
 class Organizations::UsersController < OrganizationsController
-  before_action :verify_organization_access
-  before_action :verify_role_access
-  before_action :verify_feature_access
-
   def index
     respond_to do |format|
       format.html { render template: "queue/index" }

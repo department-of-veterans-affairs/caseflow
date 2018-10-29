@@ -1,7 +1,6 @@
 class OrganizationsController < ApplicationController
   before_action :verify_organization_access
   before_action :verify_role_access
-  before_action :verify_feature_access
   before_action :set_application
   skip_before_action :deny_vso_access
 
@@ -12,17 +11,15 @@ class OrganizationsController < ApplicationController
   private
 
   def verify_organization_access
+    return if current_user.admin?
+
     redirect_to "/unauthorized" unless organization && organization.user_has_access?(current_user)
   end
 
   def verify_role_access
+    return if current_user.admin?
+
     verify_authorized_roles(organization.role) if organization.role
-  end
-
-  def verify_feature_access
-    return unless organization.feature
-
-    redirect_to "/unauthorized" unless FeatureToggle.enabled?(organization.feature.to_sym, user: current_user)
   end
 
   def set_application
