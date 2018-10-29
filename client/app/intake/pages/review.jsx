@@ -16,6 +16,7 @@ import CancelButton from '../components/CancelButton';
 import { submitReview as submitRampElection } from '../actions/rampElection';
 import { submitReview as submitAmaReview } from '../actions/ama';
 import { submitReview as submitRampRefiling } from '../actions/rampRefiling';
+import { toggleIneligibleError } from '../util';
 
 import SwitchOnForm from '../components/SwitchOnForm';
 
@@ -77,6 +78,8 @@ class ReviewNextButton extends React.PureComponent {
         this.handleClick(selectedForm, intakeData);
       }}
       loading={intakeData ? intakeData.requestStatus.submitReview === REQUEST_STATE.IN_PROGRESS : true}
+      disabled={formType === 'ramp_refiling' ?
+        toggleIneligibleError(intakeData.hasInvalidOption, intakeData.optionSelected) : false}
     >
       Continue to next step
     </Button>;
