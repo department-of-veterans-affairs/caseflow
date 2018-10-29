@@ -145,7 +145,6 @@ class EndProductEstablishment < ApplicationRecord
   def cancel_unused_end_product!
     active_request_issues = request_issues.select { |request_issue| request_issue.removed_at.nil? }
 
-    # if all active request issues were removed, cancel
     if active_request_issues.empty?
       cancel!
     end

@@ -276,6 +276,22 @@ describe RequestIssuesUpdate do
     context "when issues contain a subset of existing issues" do
       let(:request_issues_data) { existing_request_issues_data[0...1] }
 
+      let(:nonrating_end_product_establishment) do
+        create(
+          :end_product_establishment,
+          veteran_file_number: veteran.file_number,
+          source: review,
+          code: "030HLRNR"
+        )
+      end
+
+      let(:nonrating_request_issue_contention) do
+        Generators::Contention.build(
+          claim_id: nonrating_end_product_establishment.reference_id,
+          text: "Unrated issue"
+        )
+      end
+
       it "saves update, removes issues, and calls remove contentions" do
         allow_remove_contention
         allow_associate_rated_issues
@@ -314,19 +330,8 @@ describe RequestIssuesUpdate do
       end
 
       it "cancels end products with no request issues" do
-        nonrating_end_product_establishment = create(
-          :end_product_establishment,
-          veteran_file_number: veteran.file_number,
-          source: review,
-          code: "030HLRNR"
-        )
-
-        nonrating_request_issue_contention = Generators::Contention.build(
-          claim_id: nonrating_end_product_establishment.reference_id,
-          text: "Unrated issue"
-        )
-
-        RequestIssue.create!(
+        create(
+          :request_issue,
           review_request: review,
           end_product_establishment: nonrating_end_product_establishment,
           contention_reference_id: nonrating_request_issue_contention.id,
