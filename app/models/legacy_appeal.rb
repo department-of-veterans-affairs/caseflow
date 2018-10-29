@@ -123,7 +123,8 @@ class LegacyAppeal < ApplicationRecord
     caseflow: "CASEFLOW",
     quality_review: "48",
     translation: "14",
-    schedule_hearing: "57"
+    schedule_hearing: "57",
+    awaiting_hearing: "38"
   }.freeze
 
   def document_fetcher

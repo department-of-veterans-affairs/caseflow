@@ -7,11 +7,11 @@ import { LOGO_COLORS } from '../../constants/AppConstants';
 import ApiUtil from '../../util/ApiUtil';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import {
-  onRegionalOfficeChange,
   onReceiveUpcomingHearingDays,
   onSelectedHearingDayChange,
   onReceiveVeteransReadyForHearing
 } from '../actions';
+import { onRegionalOfficeChange } from '../../components/common/actions'
 import { onReceiveTasks } from '../../queue/QueueActions';
 import { setUserCssId } from '../../queue/uiReducer/uiActions';
 import AssignHearings from '../components/AssignHearings';
@@ -93,7 +93,7 @@ AssignHearings.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  selectedRegionalOffice: state.hearingSchedule.selectedRegionalOffice,
+  selectedRegionalOffice: state.components.selectedRegionalOffice,
   upcomingHearingDays: state.hearingSchedule.upcomingHearingDays,
   selectedHearingDay: state.hearingSchedule.selectedHearingDay,
   veteransReadyForHearing: state.hearingSchedule.veteransReadyForHearing

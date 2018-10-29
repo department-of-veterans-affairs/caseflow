@@ -7,7 +7,7 @@ import COPY from '../../../COPY.json';
 import Button from '../../components/Button';
 import TabWindow from '../../components/TabWindow';
 import Table from '../../components/Table';
-import RoSelectorDropdown from './RoSelectorDropdown';
+import RoSelectorDropdown from '../../components/RoSelectorDropdown';
 import moment from 'moment';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
@@ -54,11 +54,6 @@ const smallTopMargin = css({
 
 export default class AssignHearings extends React.Component {
 
-  // required to reset the RO Dropdown when moving from Viewing and Assigning.
-  componentWillMount = () => {
-    this.props.onRegionalOfficeChange('');
-  };
-
   onSelectedHearingDayChange = (hearingDay) => () => {
     this.props.onSelectedHearingDayChange(hearingDay);
   };
@@ -71,7 +66,17 @@ export default class AssignHearings extends React.Component {
             type: 'ScheduleHearingTask',
             external_id: vacolsId,
             assigned_to_type: 'User',
-            assigned_to_id: this.props.userId
+            assigned_to_id: this.props.userId,
+            business_payloads: {
+              description: "test",
+              values: [
+                this.props.selectedRegionalOffice.value,
+                this.props.selectedRegionalOffice.label,
+                this.props.selectedHearingDay.id,
+                this.props.selectedHearingDay.hearingType,
+                this.props.selectedHearingDay.hearingDate
+              ]
+            }
           }
         ]
       }
@@ -82,8 +87,6 @@ export default class AssignHearings extends React.Component {
         const response = JSON.parse(resp.text);
         const preparedTasks = prepareTasksForStore(response.tasks.data);
         const taskUniqueId = response.tasks.data[0].id;
-
-        this.props.onReceiveTasks(preparedTasks[taskUniqueId]);
       });
   };
 

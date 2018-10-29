@@ -88,7 +88,8 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       decisionPreparedBy,
       availableActions: task.attributes.available_actions,
       assignableOrganizations: task.attributes.assignable_organizations,
-      assignableUsers: task.attributes.assignable_users
+      assignableUsers: task.attributes.assignable_users,
+      business_payloads: task.attributes.task_business_payloads
     };
 
     return acc;

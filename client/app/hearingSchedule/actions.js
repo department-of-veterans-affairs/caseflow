@@ -14,24 +14,10 @@ export const onReceiveSchedulePeriod = (schedulePeriod) => ({
   }
 });
 
-export const onReceiveRegionalOffices = (regionalOffices) => ({
-  type: ACTIONS.RECEIVE_REGIONAL_OFFICES,
-  payload: {
-    regionalOffices
-  }
-});
-
 export const onReceiveDailyDocket = (dailyDocket) => ({
   type: ACTIONS.RECEIVE_DAILY_DOCKET,
   payload: {
     dailyDocket
-  }
-});
-
-export const onRegionalOfficeChange = (regionalOffice) => ({
-  type: ACTIONS.REGIONAL_OFFICE_CHANGE,
-  payload: {
-    regionalOffice
   }
 });
 
