@@ -41,7 +41,7 @@ class JudgeCaseAssignmentToAttorney
   end
 
   def last_case_assignment
-    VACOLS::CaseAssignment.select_tasks.where("brieff.bfkey = ?", vacols_id).sort_by(&:created_at).last
+    VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
   end
 
   private
