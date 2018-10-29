@@ -67,7 +67,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :decision_date do
-    task = object.tasks.where(type: "BvaDispatchTask", action: "review", status: "completed").last
+    task = object.tasks.where(type: BvaDispatchTask.name, status: Constants.TASK_STATUSES.completed).last
     task ? task.completed_at : nil
   end
 
