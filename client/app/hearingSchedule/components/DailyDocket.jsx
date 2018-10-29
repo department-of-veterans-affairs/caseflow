@@ -185,6 +185,13 @@ export default class DailyDocket extends React.Component {
     </div>;
   };
 
+  //We Save the edits in editedNotes
+  //The Value of notes field is edited if it's set
+  //notes if it is not set
+  // User is no-longer able to delete notes field coz editedNotes isn't displayed when it's empty.
+  // Display editedNotes when it is set to ''.
+  // Bottom line it doesn't delete when we edit the notes field.
+
   getNotesField = (hearing) => {
     return <TextareaField
       name="Notes"
