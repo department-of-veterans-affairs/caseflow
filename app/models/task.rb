@@ -27,6 +27,15 @@ class Task < ApplicationRecord
     []
   end
 
+  # available_actions() returns an array of options from selected by the subclass
+  # from TASK_ACTIONS that looks something like:
+  # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
+  def available_actions_unwrapper(user)
+    available_actions(user).map do |a|
+      { label: a[:label], value: a[:value], data: a[:func] ? send(a[:func]) : nil }
+    end
+  end
+
   def assigned_by_display_name
     if assigned_by.try(:full_name)
       return assigned_by.full_name.split(" ")
@@ -135,21 +144,59 @@ class Task < ApplicationRecord
     nil
   end
 
-  def assignable_organizations
-    Organization.assignable(self)
+  def assign_to_organization_data
+    organizations = Organization.assignable(self).map do |organization|
+      {
+        label: organization.name,
+        value: organization.id
+      }
+    end
+
+    {
+      selected: nil,
+      options: organizations,
+      type: GenericTask.name
+    }
   end
 
-  def assignable_users
-    if assigned_to.is_a?(Organization)
-      assigned_to.members
-    elsif parent && parent.assigned_to.is_a?(Organization)
-      parent.assigned_to.members.reject { |member| member == assigned_to }
-    else
-      []
-    end
+  def mail_assign_to_organization_data
+    assign_to_organization_data.merge(type: MailTask.name)
+  end
+
+  def assign_to_user_data
+    users = if assigned_to.is_a?(Organization)
+              assigned_to.members
+            elsif parent && parent.assigned_to.is_a?(Organization)
+              parent.assigned_to.members.reject { |member| member == assigned_to }
+            else
+              []
+            end
+
+    {
+      selected: nil,
+      options: users_to_options(users),
+      type: type
+    }
+  end
+
+  def assign_to_judge_data
+    {
+      selected: root_task.children.find { |task| task.type == JudgeTask.name }.assigned_to,
+      options: users_to_options(Judge.list_all),
+      type: JudgeTask.name
+    }
   end
 
   private
+
+  def users_to_options(users)
+    users.map do |user|
+      {
+        label: user.full_name,
+        value: user.id
+      }
+    end
+  end
 
   def update_status_if_children_tasks_are_complete
     if children.any? && children.reject { |t| t.status == Constants.TASK_STATUSES.completed }.empty?

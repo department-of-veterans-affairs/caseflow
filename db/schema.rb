@@ -579,14 +579,14 @@ ActiveRecord::Schema.define(version: 20181026123030) do
   end
 
   create_table "rating_issues", force: :cascade do |t|
-    t.bigint "request_issue_id", null: false
+    t.bigint "source_request_issue_id", null: false
     t.string "reference_id", null: false
     t.datetime "profile_date", null: false
     t.string "decision_text"
     t.datetime "promulgation_date", null: false
-    t.integer "participant_id"
+    t.integer "participant_id", null: false
     t.index ["reference_id", "participant_id"], name: "index_rating_issues_on_reference_id_and_participant_id", unique: true
-    t.index ["request_issue_id"], name: "index_rating_issues_on_request_issue_id"
+    t.index ["source_request_issue_id"], name: "index_rating_issues_on_source_request_issue_id"
   end
 
   create_table "reader_users", id: :serial, force: :cascade do |t|

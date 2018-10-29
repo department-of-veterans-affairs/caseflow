@@ -13,12 +13,8 @@ import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-import { prepareTasksForStore } from '../../queue/utils';
+import { prepareTasksForStore, renderAppealType } from '../../queue/utils';
 import StatusMessage from '../../components/StatusMessage';
-
-const colorAOD = css({
-  color: 'red'
-});
 
 const centralOfficeStaticEntry = [{
   label: 'Central',
@@ -141,22 +137,11 @@ export default class AssignHearings extends React.Component {
     </div>;
   };
 
-  veteranTypeColor = (docketType) => {
-
-    if (docketType === 'CAVC') {
-      return <span {...colorAOD}>CAVC</span>;
-    } else if (docketType === 'AOD') {
-      return <span {...colorAOD}>AOD</span>;
-    }
-
-    return docketType;
+  getHearingTime = (date, regionalOfficeTimezone) => {
+    return <div>
+      {getTime(date)} /<br />{getTimeInDifferentTimeZone(date, regionalOfficeTimezone)}
+    </div>;
   };
-
-    getHearingTime = (date, regionalOfficeTimezone) => {
-      return <div>
-        {getTime(date)} /<br />{getTimeInDifferentTimeZone(date, regionalOfficeTimezone)}
-      </div>;
-    };
 
   appellantName = (hearingDay) => {
     if (hearingDay.appellantFirstName && hearingDay.appellantLastName) {
@@ -180,7 +165,10 @@ export default class AssignHearings extends React.Component {
   tableAssignHearingsRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
       caseDetails: this.appellantName(veteran),
-      type: this.veteranTypeColor(veteran.type),
+      type: renderAppealType({
+        caseType: veteran.type,
+        isAdvancedOnDocket: veteran.aod
+      }),
       docketNumber: veteran.docketNumber,
       location: this.props.selectedRegionalOffice.value === 'C' ? 'Washington DC' : veteran.location,
       time: veteran.time,
@@ -192,9 +180,12 @@ export default class AssignHearings extends React.Component {
   tableScheduledHearingsRows = (hearings) => {
     return _.map(hearings, (hearing) => ({
       caseDetails: `${hearing.appellantMiFormatted} | ${hearing.vbmsId}`,
-      type: this.veteranTypeColor(hearing.appealType),
+      type: renderAppealType({
+        caseType: hearing.appealType,
+        isAdvancedOnDocket: hearing.aod
+      }),
       docketNumber: hearing.docketNumber,
-      location: hearing.requestType === 'Video' ? hearing.regionalOfficeName : 'Washington DC',
+      location: hearing.readableLocation,
       time: this.getHearingTime(hearing.date, hearing.regionalOfficeTimezone)
     }));
   };

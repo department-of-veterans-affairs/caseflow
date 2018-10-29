@@ -134,25 +134,64 @@ describe RatingIssue do
     end
   end
 
-  context "#save_with_request_issue!" do
-    let(:contention_ref_id) { 123 }
+  context "#source_higher_level_review" do
+    before do
+      Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
+    end
 
+    let(:reference_id) { "abc123" }
+    let(:request_issue) do
+      create(
+        :request_issue,
+        rating_issue_reference_id: reference_id,
+        rating_issue_profile_date: Time.zone.today,
+        review_request: create(:higher_level_review)
+      )
+    end
+    subject { RatingIssue.new(reference_id: reference_id, source_request_issue: request_issue) }
+
+    it "flags request_issue as having a previous higher level review" do
+      expect(subject.source_higher_level_review).to eq(request_issue.id)
+    end
+  end
+
+  context "#save_with_source_request_issue!" do
+    let(:contention_ref_id) { 123 }
+    let(:participant_id) { 456 }
     let!(:request_issue) { create(:request_issue, contention_reference_id: contention_ref_id) }
 
-    it "matches based on contention_reference_id" do
-      rating_issue = RatingIssue.new(
+    subject do
+      RatingIssue.new(
         reference_id: "ref-id",
         profile_date: Time.zone.today,
         contention_reference_id: contention_ref_id,
-        promulgation_date: promulgation_date
+        promulgation_date: promulgation_date,
+        participant_id: participant_id
+      )
+    end
+
+    it "correctly associates based on contention_reference_id" do
+      expect(subject.id).to be_nil
+
+      subject.save_with_source_request_issue!
+
+      expect(subject.source_request_issue).to eq(request_issue)
+      expect(subject.id).to_not be_nil
+    end
+
+    it "does not save duplicates" do
+      rating_issue = RatingIssue.new(
+        reference_id: "ref-id",
+        profile_date: Time.zone.today,
+        promulgation_date: promulgation_date,
+        participant_id: participant_id,
+        source_request_issue: request_issue
       )
 
-      expect(rating_issue.id).to be_nil
+      rating_issue.save!
+      subject.save_with_source_request_issue!
 
-      rating_issue.save_with_request_issue!
-
-      expect(rating_issue.request_issue).to eq(request_issue)
-      expect(rating_issue.id).to_not be_nil
+      expect(subject.id).to eq(rating_issue.id)
     end
   end
 end

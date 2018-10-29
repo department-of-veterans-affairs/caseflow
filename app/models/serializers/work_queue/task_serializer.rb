@@ -81,15 +81,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   end
 
   attribute :available_actions do
-    object.available_actions(@instance_options[:user])
-  end
-
-  attribute :assignable_organizations do
-    object.assignable_organizations.map { |o| { id: o.id, name: o.name } }
-  end
-
-  attribute :assignable_users do
-    object.assignable_users.map { |m| { id: m.id, css_id: m.css_id, full_name: m.full_name } }
+    object.available_actions_unwrapper(@instance_options[:user])
   end
 
   attribute :task_business_payloads do

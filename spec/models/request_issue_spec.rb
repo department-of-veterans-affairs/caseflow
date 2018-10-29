@@ -1,13 +1,16 @@
 require "rails_helper"
 
 describe RequestIssue do
+  let(:rating_reference_id) { "abc123" }
+  let(:contention_reference_id) { 1234 }
+  let(:higher_level_review_reference_id) { "hlr123" }
   let(:review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
   let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
 
   let!(:rated_issue) do
     RequestIssue.create(
       review_request: review,
-      rating_issue_reference_id: "abc123",
+      rating_issue_reference_id: rating_reference_id,
       rating_issue_profile_date: Time.zone.now,
       description: "a rated issue"
     )
@@ -27,6 +30,22 @@ describe RequestIssue do
       review_request: review,
       description: "an unidentified issue",
       is_unidentified: true
+    )
+  end
+
+  let!(:ratings) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: review.receipt_date - 40.days,
+      profile_date: review.receipt_date - 50.days,
+      issues: [
+        {
+          reference_id: rating_reference_id,
+          decision_text: "Left knee granted",
+          contention_reference_id: contention_reference_id
+        },
+        { reference_id: "xyz456", decision_text: "PTSD denied" }
+      ]
     )
   end
 
@@ -99,11 +118,49 @@ describe RequestIssue do
     end
   end
 
+  context "#contested_rating_issue" do
+    it "returns the rating issue hash that prompted the RequestIssue" do
+      expect(rated_issue.contested_rating_issue.reference_id).to eq rating_reference_id
+      expect(rated_issue.contested_rating_issue.decision_text).to eq "Left knee granted"
+    end
+  end
+
+  context "#previous_request_issue" do
+    let(:previous_higher_level_review) { create(:higher_level_review) }
+    let!(:previous_request_issue) do
+      create(
+        :request_issue,
+        review_request: previous_higher_level_review,
+        rating_issue_reference_id: higher_level_review_reference_id,
+        contention_reference_id: contention_reference_id
+      )
+    end
+
+    it "looks up the chain to the immediately previous request issue" do
+      veteran.sync_rating_issues!
+      expect(rated_issue.previous_request_issue).to eq(previous_request_issue)
+    end
+
+    it "returns nil if Veteran.decision_rating_issues have not yet been synced" do
+      expect(rated_issue.previous_request_issue).to be_nil
+    end
+  end
+
   context "#validate_eligibility!" do
     let(:duplicate_reference_id) { "xyz789" }
     let(:old_reference_id) { "old123" }
     let(:active_epe) { create(:end_product_establishment, :active) }
     let(:receipt_date) { review.receipt_date }
+
+    let(:previous_higher_level_review) { create(:higher_level_review) }
+    let!(:previous_request_issue) do
+      create(
+        :request_issue,
+        review_request: previous_higher_level_review,
+        rating_issue_reference_id: higher_level_review_reference_id,
+        contention_reference_id: contention_reference_id
+      )
+    end
 
     let!(:ratings) do
       Generators::Rating.build(
@@ -113,7 +170,12 @@ describe RequestIssue do
         issues: [
           { reference_id: "xyz123", decision_text: "Left knee granted" },
           { reference_id: "xyz456", decision_text: "PTSD denied" },
-          { reference_id: duplicate_reference_id, decision_text: "Old injury" }
+          { reference_id: duplicate_reference_id, decision_text: "Old injury" },
+          {
+            reference_id: higher_level_review_reference_id,
+            decision_text: "Already reviewed injury",
+            contention_reference_id: contention_reference_id
+          }
         ]
       )
       Generators::Rating.build(
@@ -154,6 +216,14 @@ describe RequestIssue do
       rated_issue.validate_eligibility!
 
       expect(rated_issue.duplicate_of_issue_in_active_review?).to eq(true)
+    end
+
+    it "flags previous HLR" do
+      rated_issue.rating_issue_reference_id = higher_level_review_reference_id
+      rated_issue.validate_eligibility!
+
+      expect(rated_issue.previous_higher_level_review?).to eq(true)
+      expect(rated_issue.ineligible_request_issue_id).to eq(previous_request_issue.id)
     end
   end
 end
