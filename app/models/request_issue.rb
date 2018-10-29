@@ -148,6 +148,7 @@ class RequestIssue < ApplicationRecord
     existing_request_issue = self.class.find_active_by_reference_id(rating_issue_reference_id)
     if existing_request_issue
       self.ineligible_reason = :duplicate_of_issue_in_active_review
+      self.ineligible_request_issue_id = existing_request_issue.id
     end
   end
 
@@ -171,6 +172,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def appeal_active?
-    false # TODO how to determine this??
+    review_request.tasks.where.not(status: Constants.TASK_STATUSES.completed).count > 0
   end
 end
