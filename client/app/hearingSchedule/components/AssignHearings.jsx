@@ -270,7 +270,7 @@ export default class AssignHearings extends React.Component {
             />
           },
           {
-            label: 'Assign Hearings',
+            label: 'Schedule a Veteran',
             page: scheduleableVeterans()
           }
         ]}
