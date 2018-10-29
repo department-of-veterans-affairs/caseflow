@@ -29,6 +29,18 @@ class Organizations::UsersController < OrganizationsController
     render json: { users: json_users([user_to_modify]) }, status: 200
   end
 
+  def verify_organization_access
+    return if current_user.admin?
+
+    super
+  end
+
+  def verify_role_access
+    return if current_user.admin?
+
+    super
+  end
+
   private
 
   def user_to_modify
