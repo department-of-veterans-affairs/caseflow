@@ -279,11 +279,17 @@ class AppealRepository
     cavc_cases = VACOLS::Case.joins(:folder).where(bfregoff: regional_office, bfcurloc: "57", bfac: "7")
       .order("folder.tinum").limit(30)
     aod_cases = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD).joins(:folder)
-      .where(bfregoff: regional_office, bfcurloc: "57").order("folder.tinum").limit(30)
+      .where("aod = 1").where(bfregoff: regional_office, bfcurloc: "57").order("folder.tinum").limit(30)
     other_cases = VACOLS::Case.joins(:folder).where(bfregoff: regional_office, bfcurloc: "57")
       .order("folder.tinum").limit(30)
 
-    (cavc_cases + aod_cases + other_cases).uniq.first(30).map { |case_record| build_appeal(case_record, true) }
+    aod_vacols_ids = aod_cases.pluck(:bfkey)
+
+    (cavc_cases + aod_cases + other_cases).uniq.first(30).map do |case_record|
+      build_appeal(case_record, true).tap do |appeal|
+        appeal.aod = aod_vacols_ids.include?(appeal.vacols_id)
+      end
+    end
   end
 
   def self.appeals_ready_for_co_hearing_schedule

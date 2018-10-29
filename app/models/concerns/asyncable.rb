@@ -7,10 +7,11 @@ module Asyncable
   extend ActiveSupport::Concern
 
   # class methods to scope queries based on class-defined columns
-  # we expect 3 column types:
+  # we expect 4 column types:
   #  * submitted_at : make the job eligible to run
   #  * attempted_at : flag the job as having run
   #  * processed_at : flag the job as concluded
+  #  * error        : any error message captured from a failed attempt.
   # These column names can be overridden in consuming classes as needed.
   class_methods do
     REQUIRES_PROCESSING_WINDOW_DAYS = 4
