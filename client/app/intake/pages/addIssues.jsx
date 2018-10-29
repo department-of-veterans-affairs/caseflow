@@ -44,6 +44,20 @@ export class AddIssuesPage extends React.Component {
     }
   }
 
+  checkIfEligible = (issue, formType) => {
+    if (issue.isUnidentified) {
+      return false;
+    } else if (issue.inActiveReview) {
+      return INELIGIBLE_REQUEST_ISSUES.in_active_review.replace('{review_title}', issue.inActiveReview);
+    } else if (!issue.timely && formType !== 'supplemental_claim') {
+      return INELIGIBLE_REQUEST_ISSUES.untimely;
+    } else if (issue.sourceHigherLevelReview && formType === 'higher_level_review') {
+      return INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review;
+    }
+
+    return true;
+  }
+
   render() {
     const {
       intakeForms,
@@ -61,6 +75,10 @@ export class AddIssuesPage extends React.Component {
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
     const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
 
+    if (intakeData.isDtaError) {
+      return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
+    }
+
     const issuesComponent = () => {
       let issues = formatAddedIssues(intakeData);
 
@@ -68,16 +86,14 @@ export class AddIssuesPage extends React.Component {
         <div>
           { issues.map((issue, index) => {
             let issueKlasses = ['issue-desc'];
+            let isEligible = this.checkIfEligible(issue, formType);
             let addendum = '';
 
-            if (issue.isUnidentified) {
-              issueKlasses.push('unidentified-issue');
-            } else if (issue.inActiveReview) {
-              issueKlasses.push('in-active-review');
-              addendum = INELIGIBLE_REQUEST_ISSUES.in_active_review.replace('{review_title}', issue.inActiveReview);
-            } else if (!issue.timely && formType !== 'supplemental_claim') {
-              issueKlasses.push('untimely');
-              addendum = INELIGIBLE_REQUEST_ISSUES.untimely;
+            if (isEligible !== true) {
+              if (isEligible !== false) {
+                addendum = isEligible;
+              }
+              issueKlasses.push('not-eligible');
             }
 
             return <div className="issue" key={`issue-${index}`}>

@@ -38,7 +38,13 @@ class Rating
     return [] if response[:rating_issues].nil?
 
     [response[:rating_issues]].flatten.map do |issue_data|
-      RatingIssue.from_bgs_hash(issue_data.merge(promulgation_date: promulgation_date, participant_id: participant_id))
+      RatingIssue.from_bgs_hash(
+        issue_data.merge(
+          promulgation_date: promulgation_date,
+          participant_id: participant_id,
+          profile_date: profile_date
+        )
+      )
     end
   rescue Savon::Error
     []
