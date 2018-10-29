@@ -54,7 +54,7 @@ class ReviewNextButton extends React.PureComponent {
 
   handleClick = (selectedForm, intakeData) => {
     this.submitReview(selectedForm, intakeData).then(
-      () => this.props.featureToggles.newAddIssuesPage ?
+      () => this.props.featureToggles.newAddIssuesPage && selectedForm.category === 'ama' ?
         this.props.history.push('/add_issues') :
         this.props.history.push('/finish')
     );
@@ -66,15 +66,17 @@ class ReviewNextButton extends React.PureComponent {
       formType
     } = this.props;
 
+    // selected form might be null or empty if the review has been canceled
+    // in that case, just use null as data types since page will be redirected
     const selectedForm = _.find(FORM_TYPES, { key: formType });
-    const intakeData = intakeForms[selectedForm.key];
+    const intakeData = selectedForm ? intakeForms[selectedForm.key] : null;
 
     return <Button
       name="submit-review"
       onClick={() => {
         this.handleClick(selectedForm, intakeData);
       }}
-      loading={intakeData.requestState === REQUEST_STATE.IN_PROGRESS}
+      loading={intakeData ? intakeData.requestStatus.submitReview === REQUEST_STATE.IN_PROGRESS : true}
     >
       Continue to next step
     </Button>;
