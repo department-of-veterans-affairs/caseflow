@@ -11,7 +11,6 @@ const updateFromServerFeatures = (state, featureToggles) => {
   });
 };
 
-
 export const mapDataToFeatureToggle = (data = { featureToggles: {} }) => (
   updateFromServerFeatures({
     intakeAma: false,
@@ -19,6 +18,6 @@ export const mapDataToFeatureToggle = (data = { featureToggles: {} }) => (
   }, data.featureToggles)
 );
 
-export const featureToggleReducer = (state = mapDataToFeatureToggle(), action) => {
+export const featureToggleReducer = (state = mapDataToFeatureToggle()) => {
   return state;
-}
+};
