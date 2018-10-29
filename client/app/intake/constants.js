@@ -38,7 +38,10 @@ export const PAGE_PATHS = {
   REVIEW: '/review_request',
   FINISH: '/finish',
   ADD_ISSUES: '/add_issues',
-  COMPLETED: '/completed'
+  COMPLETED: '/completed',
+  CANCEL_ISSUES: '/cancel',
+  CONFIRMATION: '/confirmation',
+  DTA_CLAIM: '/dta'
 };
 
 export const BOOLEAN_RADIO_OPTIONS = [

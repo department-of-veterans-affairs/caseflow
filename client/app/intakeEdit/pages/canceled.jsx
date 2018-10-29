@@ -13,7 +13,7 @@ class Canceled extends Component {
       formType
     } = this.props;
     const formName = _.find(FORM_TYPES, { key: formType }).name;
-    const message = `No changes were made to ${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName}.
+    const message = `No changes were made to ${veteran.name}'s (ID #${veteran.fileNumber}) ${formName}.
 Go to VBMS claim details and click the “Edit in Caseflow” button to return to edit.`;
 
     return <div>

@@ -21,7 +21,7 @@ class HigherLevelReview < ClaimReview
   DTA_ERRORS = [DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO].freeze
 
   def self.review_title
-    "Higher-Level Review"
+    Constants.INTAKE_FORM_NAMES_SHORT.higher_level_review
   end
 
   def ui_hash(ama_enabled)

@@ -53,6 +53,10 @@ class Appeal < AmaReview
     docket_type
   end
 
+  def decision_date
+    decisions.last.try(:decision_date)
+  end
+
   def hearing_docket?
     docket_type == "hearing"
   end
