@@ -18,19 +18,6 @@ class SupplementalClaim < ClaimReview
   def ui_hash(ama_enabled)
     {
       formType: "supplemental_claim",
-      veteran: {
-        name: veteran && veteran.name.formatted(:readable_short),
-        fileNumber: veteran_file_number,
-        formName: veteran && veteran.name.formatted(:form)
-      },
-      relationships: ama_enabled && veteran && veteran.relationships,
-      receiptDate: receipt_date.to_formatted_s(:json_date),
-      benefitType: benefit_type,
-      claimant: claimant_participant_id,
-      claimantNotVeteran: claimant_not_veteran,
-      payeeCode: payee_code,
-      ratings: serialized_ratings,
-      requestIssues: request_issues.map(&:ui_hash),
       isDtaError: is_dta_error
     }
   end

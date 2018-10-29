@@ -11,10 +11,6 @@ class DecisionReviewIntake < Intake
     )
   end
 
-  def find_or_build_initial_detail
-    fail Caseflow::Error::MustImplementInSubclass
-  end
-
   def cancel_detail!
     detail.remove_claimants!
     super
