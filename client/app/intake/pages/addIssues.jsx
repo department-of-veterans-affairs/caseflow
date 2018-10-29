@@ -8,6 +8,7 @@ import AddIssuesModal from '../components/AddIssuesModal';
 import NonRatedIssueModal from '../components/NonRatedIssueModal';
 import RemoveIssueModal from '../components/RemoveIssueModal';
 import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
+import UntimelyExemptionModal from '../components/UntimelyExemptionModal';
 import Button from '../../components/Button';
 import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, FORM_TYPES, PAGE_PATHS } from '../constants';
@@ -17,6 +18,7 @@ import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 import Table from '../../components/Table';
 import {
   toggleAddIssuesModal,
+  toggleUntimelyExemptionModal,
   toggleNonRatedIssueModal,
   removeIssue,
   toggleUnidentifiedIssuesModal,
@@ -72,6 +74,7 @@ export class AddIssuesPage extends React.Component {
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const veteranInfo = `${veteran.name} (${veteran.fileNumber})`;
     const intakeData = intakeForms[selectedForm.key];
+    intakeData.formType = formType;
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
     const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
 
@@ -152,6 +155,14 @@ export class AddIssuesPage extends React.Component {
         intakeData={intakeData}
         closeHandler={this.props.toggleAddIssuesModal} />
       }
+      { intakeData.untimelyExemptionModalVisible && <UntimelyExemptionModal
+        intakeData={intakeData}
+        issueId: this.props.referenceId,
+        ratings: this.props.intakeData.ratings,
+        isRated: true,
+        notes: this.props.notes,
+        closeHandler={this.props.toggleUntimelyExemptionModal} />
+      }
       { intakeData.nonRatedIssueModalVisible && <NonRatedIssueModal
         intakeData={intakeData}
         closeHandler={this.props.toggleNonRatedIssueModal} />
@@ -191,6 +202,7 @@ export const IntakeAddIssuesPage = connect(
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
+    toggleUntimelyExemptionModal,
     toggleNonRatedIssueModal,
     toggleUnidentifiedIssuesModal,
     removeIssue
@@ -208,6 +220,7 @@ export const EditAddIssuesPage = connect(
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
+    toggleUntimelyExemptionModal,
     toggleIssueRemoveModal,
     toggleNonRatedIssueModal,
     toggleUnidentifiedIssuesModal,

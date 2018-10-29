@@ -8,6 +8,7 @@ import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
 import { addRatedIssue, toggleNonRatedIssueModal } from '../actions/addIssues';
 import TextField from '../../components/TextField';
+import { issueById } from '../util/issues'
 
 class AddIssuesModal extends React.Component {
   constructor(props) {
@@ -32,13 +33,28 @@ class AddIssuesModal extends React.Component {
     });
   }
 
+  requiresUntimelyExemption = () => {
+    if (this.props.intakeData.formType === 'supplemental_claim') {
+      return false
+    }
+    const currentIssue = issueById(this.props.intakeData.ratings, this.state.reference_id)
+    return !currentIssue.timely
+  }
+
   onAddIssue = () => {
-    this.props.addRatedIssue({
+    const issueToAdd = {
       issueId: this.state.referenceId,
       ratings: this.props.intakeData.ratings,
       isRated: true,
       notes: this.state.notes
-    });
+    };
+
+    if (requiresUntimelyExemption()) {
+      this.props.toggleUntimelyExemptionModal(issueToAdd)
+    } else {
+      this.props.addRatedIssue(issueToAdd);
+    };
+    
     this.props.closeHandler();
   }
 

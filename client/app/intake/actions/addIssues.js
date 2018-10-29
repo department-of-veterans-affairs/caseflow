@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { ACTIONS } from '../constants';
+import { issueById } from '../util/issues';
 
 const analytics = true;
 
@@ -38,11 +39,7 @@ export const addUnidentifiedIssue = (description, notes) => (dispatch) => {
 };
 
 export const addRatedIssue = (args) => (dispatch) => {
-  let currentRating = _.filter(
-    args.ratings,
-    (ratingDate) => _.some(ratingDate.issues, { reference_id: args.issueId })
-  )[0];
-  let currentIssue = currentRating.issues[args.issueId];
+  const currentIssue = issueById(args.ratings, args.issueId)
 
   dispatch({
     type: ACTIONS.ADD_ISSUE,

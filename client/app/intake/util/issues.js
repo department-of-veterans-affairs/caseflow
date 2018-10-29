@@ -120,6 +120,14 @@ const ratingIssuesById = (ratings) => {
   }, {});
 };
 
+export const issueById = (ratings, issueId) => {
+  const currentRating = _.filter(
+    ratings,
+    (ratingDate) => _.some(ratingDate.issues, { reference_id: issueId })
+  )[0];
+  return currentRating.issues[issueId];
+};
+
 const formatUnidentifiedIssues = (state) => {
   // only used for the new add intake flow
   if (state.addedIssues && state.addedIssues.length > 0) {
