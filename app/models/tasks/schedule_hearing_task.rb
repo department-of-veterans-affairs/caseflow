@@ -32,7 +32,7 @@ class ScheduleHearingTask < GenericTask
   def available_actions(_user)
     [
       {
-        label: "Assign hearing",
+        label: "Schedule Veteran",
         value: "modal/mark_task_complete"
       }
     ]
