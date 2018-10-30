@@ -160,7 +160,9 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   };
 
   render = () => {
-    if (!this.props.task) return null;
+    if (!this.props.task) {
+      return null;
+    }
 
     const hearingDateStr = formatDate(this.props.task.taskBusinessPayloads[0].values[4]);
     const timeStr = getTime(this.props.task.taskBusinessPayloads[0].values[4]);

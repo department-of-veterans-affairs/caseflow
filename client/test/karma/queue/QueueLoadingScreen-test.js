@@ -74,6 +74,7 @@ describe('QueueLoadingScreen', () => {
         },
         // eslint-disable-next-line no-undefined
         availableActions: undefined,
+        // eslint-disable-next-line no-undefined
         taskBusinessPayloads: undefined,
         addedByName: 'Nash X Kuvalis',
         addedByCssId: 'BVANKUVALIS',
