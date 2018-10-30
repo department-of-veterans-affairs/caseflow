@@ -24,9 +24,7 @@ class JudgeTask < Task
   end
 
   def self.create_from_params(params, user)
-    verify_user_can_assign!(user)
-    params = modify_params(params)
-    new_task = create!(params)
+    new_task = super(params, user)
 
     parent = Task.find(params[:parent_id])
     if parent && parent.type == QualityReviewTask.name
