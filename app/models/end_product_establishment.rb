@@ -143,6 +143,9 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def cancel_unused_end_product!
+    # do not cancel ramp reviews for now
+    return if source.is_a?(RampReview)
+
     active_request_issues = request_issues.select { |request_issue| request_issue.removed_at.nil? }
 
     if active_request_issues.empty?
