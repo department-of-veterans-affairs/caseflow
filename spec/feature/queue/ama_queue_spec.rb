@@ -354,6 +354,9 @@ RSpec.feature "AmaQueue" do
 
     before do
       OrganizationsUser.add_user_to_organization(user, quality_review_organization)
+      # We expect all QR users to be attorneys. This matters because we serve different queue views on the frontend
+      # to attorneys.
+      FactoryBot.create(:staff, user: user)
       User.authenticate!(user: user)
     end
 
@@ -382,7 +385,7 @@ RSpec.feature "AmaQueue" do
       fill_in "taskInstructions", with: quality_review_instructions
 
       click_on "Submit"
-      expect(page).to have_content("Task assigned to #{judge_user.full_name}")
+      expect(page).to have_content("You have no cases assigned")
 
       User.authenticate!(user: judge_user)
 

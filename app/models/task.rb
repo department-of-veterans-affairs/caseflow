@@ -57,10 +57,15 @@ class Task < ApplicationRecord
 
   def self.create_from_params(params, user)
     verify_user_can_assign!(user)
+    params = modify_params(params)
+    create(params)
+  end
+
+  def self.modify_params(params)
     if params.key?("instructions") && !params[:instructions].is_a?(Array)
       params["instructions"] = [params["instructions"]]
     end
-    create(params)
+    params
   end
 
   def update_from_params(params, _current_user)
