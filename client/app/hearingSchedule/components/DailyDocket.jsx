@@ -186,20 +186,11 @@ export default class DailyDocket extends React.Component {
   };
 
   getNotesField = (hearing) => {
-    let noteToDisplay;
-    const notes = !_.isUndefined(hearing.editedNotes);
-
-    if (notes) {
-      noteToDisplay = hearing.editedNotes;
-    } else {
-      noteToDisplay = hearing.notes || '';
-    }
-
     return <TextareaField
       name="Notes"
       onChange={this.onHearingNotesUpdate(hearing.id)}
       textAreaStyling={notesFieldStyling}
-      value={noteToDisplay}
+      value={_.isUndefined(hearing.editedNotes) ? hearing.notes : hearing.editedNotes || ''}
     />;
   };
 
