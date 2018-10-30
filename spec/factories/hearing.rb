@@ -1,12 +1,13 @@
 FactoryBot.define do
   factory :hearing do
+    date { Time.zone.today }
+
     transient do
-      sequence(:bfkey)
-      case_hearing { create(:case_hearing, user: user, folder_nr: bfkey, hearing_date: date) }
+      case_hearing { create(:case_hearing, user: user, hearing_date: date) }
     end
 
     appeal do
-      create(:legacy_appeal, vacols_case: create(:case_with_form_9, bfkey: bfkey, case_issues:
+      create(:legacy_appeal, vacols_case: create(:case_with_form_9, case_issues:
         [create(:case_issue), create(:case_issue)], case_hearings: [case_hearing]))
     end
 
