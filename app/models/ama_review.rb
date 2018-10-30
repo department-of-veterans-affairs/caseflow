@@ -4,6 +4,7 @@ class AmaReview < ApplicationRecord
   validate :validate_receipt_date
 
   AMA_BEGIN_DATE = Date.new(2017, 11, 1).freeze
+  AMA_ACTIVATION_DATE = Date.new(2019, 2, 14).freeze
 
   self.abstract_class = true
 

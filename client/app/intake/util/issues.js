@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { formatDate, formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
+import DATES from '../../../constants/DATES.json';
 
 const getNonVeteranClaimant = (intakeData) => {
   const claimant = intakeData.relationships.filter((relationship) => {
@@ -238,11 +239,13 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
   return fields.concat(claimantField);
 };
 
-export const formatAddedIssues = (intakeData) => {
+export const formatAddedIssues = (intakeData, amaActivated = false) => {
   let issues = intakeData.addedIssues || [];
   let ratingIssues = ratingIssuesById(intakeData.ratings);
   // match date definition in Rails Rating model
   const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
+
+  const AMA_ACTIVATION_DATE = amaActivated ? 
 
   return issues.map((issue) => {
     if (issue.isUnidentified) {
@@ -261,7 +264,8 @@ export const formatAddedIssues = (intakeData) => {
         inActiveReview: issue.inActiveReview,
         sourceHigherLevelReview: issue.sourceHigherLevelReview,
         promulgationDate: issue.promulgationDate,
-        timely: issue.timely
+        timely: issue.timely,
+        beforeAma: issue.profileDate < DATES.AMA_ACTIVATION
       };
     }
 
@@ -276,7 +280,8 @@ export const formatAddedIssues = (intakeData) => {
       referenceId: issue.id,
       text: `${issue.category} - ${issue.description}`,
       date: formatDate(issue.decisionDate),
-      timely: isTimely
+      timely: isTimely,
+      beforeAma: issue.decisionDate < DATES.AMA_ACTIVATION
     };
   });
 };

@@ -8,7 +8,8 @@ class RequestIssue < ApplicationRecord
   enum ineligible_reason: {
     duplicate_of_issue_in_active_review: 0,
     untimely: 1,
-    previous_higher_level_review: 2
+    previous_higher_level_review: 2,
+    before_ama: 3
   }
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze

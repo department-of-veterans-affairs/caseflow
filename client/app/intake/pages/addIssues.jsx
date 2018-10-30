@@ -53,6 +53,8 @@ export class AddIssuesPage extends React.Component {
       return INELIGIBLE_REQUEST_ISSUES.untimely;
     } else if (issue.sourceHigherLevelReview && formType === 'higher_level_review') {
       return INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review;
+    } else if (issue.beforeAma) {
+      return INELIGIBLE_REQUEST_ISSUES.before_ama;
     }
 
     return true;

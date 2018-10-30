@@ -7,6 +7,7 @@ class RatingIssue < ApplicationRecord
   class << self
     def from_bgs_hash(data)
       rba_contentions = [data.dig(:rba_issue_contentions) || {}].flatten
+      associated_claims = [data.dig(:associated_claims) || {}].flatten
       new(
         reference_id: data[:rba_issue_id],
         profile_date: rba_contentions.first.dig(:prfil_dt) || data[:profile_date],
@@ -48,7 +49,8 @@ class RatingIssue < ApplicationRecord
       decision_text: decision_text,
       promulgation_date: promulgation_date.to_date,
       in_active_review: in_active_review,
-      source_higher_level_review: source_higher_level_review
+      source_higher_level_review: source_higher_level_review,
+      before_ama: before_ama
     }
   end
 
@@ -63,6 +65,11 @@ class RatingIssue < ApplicationRecord
     fetch_source_request_issue unless source_request_issue
     return unless source_request_issue
     source_request_issue.review_request.is_a?(HigherLevelReview) ? source_request_issue.id : nil
+  end
+
+  def before_ama
+    return unless reference_id
+
   end
 
   private
