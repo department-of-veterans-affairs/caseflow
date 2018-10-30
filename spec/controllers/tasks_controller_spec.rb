@@ -378,7 +378,14 @@ RSpec.describe TasksController, type: :controller do
               "external_id": appeal.vacols_id,
               "assigned_to_type": "User",
               "assigned_to_id": hearings_user.id,
-              "business_payloads": { description: "test", values: ["RO17", "2018-10-25", "8:00"] }
+              "business_payloads": {
+                description: "test",
+                values: {
+                  "regional_office_value": "RO17",
+                  "hearing_date": "2018-10-25",
+                  "hearing_time": "8:00"
+                }
+              }
             }]
           end
 
@@ -395,9 +402,9 @@ RSpec.describe TasksController, type: :controller do
             expect(payloads.size).to eq 1
             expect(payloads[0]["description"]).to eq("test")
             expect(payloads[0]["values"].size).to eq 3
-            expect(payloads[0]["values"][0]).to eq("RO17")
-            expect(payloads[0]["values"][1]).to eq("2018-10-25")
-            expect(payloads[0]["values"][2]).to eq("8:00")
+            expect(payloads[0]["values"]["regional_office_value"]).to eq("RO17")
+            expect(payloads[0]["values"]["hearing_date"]).to eq("2018-10-25")
+            expect(payloads[0]["values"]["hearing_time"]).to eq("8:00")
           end
         end
       end
