@@ -12,10 +12,9 @@ import moment from 'moment';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
-
-const colorAOD = css({
-  color: 'red'
-});
+import ApiUtil from '../../util/ApiUtil';
+import { prepareTasksForStore, renderAppealType } from '../../queue/utils';
+import StatusMessage from '../../components/StatusMessage';
 
 const centralOfficeStaticEntry = [{
   label: 'Central',
@@ -30,15 +29,58 @@ const sectionNavigationListStyling = css({
   }
 });
 
+const smallTopMargin = css({
+  fontStyle: 'italic',
+  '.usa-input-error': {
+    marginTop: '1rem'
+  },
+  '.usa-input-error-message': {
+    paddingBottom: '0',
+    paddingTop: '0',
+    right: '0'
+  },
+  '& > p': {
+    fontWeight: '500',
+    color: COLORS.RED_DARK,
+    marginBottom: '0',
+    fontSize: '1.7rem',
+    marginTop: '1px'
+  }
+});
+
 export default class AssignHearings extends React.Component {
 
   // required to reset the RO Dropdown when moving from Viewing and Assigning.
   componentWillMount = () => {
     this.props.onRegionalOfficeChange('');
-  }
+  };
 
   onSelectedHearingDayChange = (hearingDay) => () => {
     this.props.onSelectedHearingDayChange(hearingDay);
+  };
+
+  onClick = (vacolsId) => {
+    const payload = {
+      data: {
+        tasks: [
+          {
+            type: 'ScheduleHearingTask',
+            external_id: vacolsId,
+            assigned_to_type: 'User',
+            assigned_to_id: this.props.userId
+          }
+        ]
+      }
+    };
+
+    ApiUtil.post('/tasks', payload).
+      then((resp) => {
+        const response = JSON.parse(resp.text);
+        const preparedTasks = prepareTasksForStore(response.tasks.data);
+        const taskUniqueId = response.tasks.data[0].id;
+
+        this.props.onReceiveTasks(preparedTasks[taskUniqueId]);
+      });
   };
 
   roomInfo = (hearingDay) => {
@@ -52,7 +94,7 @@ export default class AssignHearings extends React.Component {
 
     return room = '';
 
-  }
+  };
 
   formatAvailableHearingDays = () => {
     return <div className="usa-width-one-fourth">
@@ -74,6 +116,7 @@ export default class AssignHearings extends React.Component {
                 color: COLORS.WHITE
               }
             });
+
             const styling = dateSelected ? buttonColorSelected : '';
 
             return <li key={hearingDay.id} >
@@ -91,48 +134,55 @@ export default class AssignHearings extends React.Component {
     </div>;
   };
 
-  veteranTypeColor = (docketType) => {
-
-    if (docketType === 'CAVC') {
-      return <span {...colorAOD}>CAVC</span>;
-    } else if (docketType === 'AOD') {
-      return <span {...colorAOD}>AOD</span>;
-    }
-
-    return docketType;
-  }
-
-    getHearingTime = (date, regionalOfficeTimezone) => {
-      return <div>
-        {getTime(date)} /<br />{getTimeInDifferentTimeZone(date, regionalOfficeTimezone)}
-      </div>;
-    };
+  getHearingTime = (date, regionalOfficeTimezone) => {
+    return <div>
+      {getTime(date)} /<br />{getTimeInDifferentTimeZone(date, regionalOfficeTimezone)}
+    </div>;
+  };
 
   appellantName = (hearingDay) => {
     if (hearingDay.appellantFirstName && hearingDay.appellantLastName) {
-      return `${hearingDay.appellantFirstName} ${hearingDay.appellantLastName} | ${hearingDay.id}`;
+      return `${hearingDay.appellantFirstName} ${hearingDay.appellantLastName} | ${hearingDay.vbmsId}`;
     }
 
-    return `${hearingDay.id}`;
+    return `${hearingDay.vbmsId}`;
 
+  };
+
+  getNoUpcomingError = () => {
+    if (this.props.selectedRegionalOffice) {
+      return <div className="usa-input-error-message usa-input-error" {...smallTopMargin}>
+        <span>{this.props.selectedRegionalOffice && this.props.selectedRegionalOffice.label} has
+          no upcoming hearing days.</span><br />
+        <p>Please verify that this RO's hearing days are in the current schedule.</p>
+      </div>;
+    }
   }
 
   tableAssignHearingsRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
       caseDetails: this.appellantName(veteran),
-      type: this.veteranTypeColor(veteran.type),
+      type: renderAppealType({
+        caseType: veteran.type,
+        isAdvancedOnDocket: veteran.aod
+      }),
       docketNumber: veteran.docketNumber,
       location: this.props.selectedRegionalOffice.value === 'C' ? 'Washington DC' : veteran.location,
-      time: null
+      time: veteran.time,
+      vacolsId: veteran.vacolsId,
+      appealId: veteran.appealId
     }));
   };
 
   tableScheduledHearingsRows = (hearings) => {
     return _.map(hearings, (hearing) => ({
       caseDetails: `${hearing.appellantMiFormatted} | ${hearing.vbmsId}`,
-      type: this.veteranTypeColor(hearing.appealType),
+      type: renderAppealType({
+        caseType: hearing.appealType,
+        isAdvancedOnDocket: hearing.aod
+      }),
       docketNumber: hearing.docketNumber,
-      location: hearing.requestType === 'Video' ? hearing.regionalOfficeName : 'Washington DC',
+      location: hearing.readableLocation,
       time: this.getHearingTime(hearing.date, hearing.regionalOfficeTimezone)
     }));
   };
@@ -143,7 +193,13 @@ export default class AssignHearings extends React.Component {
       {
         header: 'Case details',
         align: 'left',
-        valueName: 'caseDetails'
+        valueName: 'caseDetails',
+        valueFunction: (veteran) => <Link
+          href={`/queue/appeals/${veteran.vacolsId}`}
+          name={veteran.vacolsId}
+          onClick={this.onClick.bind(this, veteran.vacolsId)} >
+          {veteran.caseDetails}
+        </Link>
       },
       {
         header: 'Type(s)',
@@ -167,6 +223,32 @@ export default class AssignHearings extends React.Component {
       }
     ];
 
+    const veteranNotAssignedStyle = css({ fontSize: '3rem' });
+    const veteranNotAssignedMessage = <span {...veteranNotAssignedStyle}>
+      Please verify that this RO has veterans to assign a hearing</span>;
+    const veteranNotAssignedTitleStyle = css({ fontSize: '4rem' });
+    const veteranNotAssignedTitle = <span {...veteranNotAssignedTitleStyle}>There are no schedulable veterans</span>;
+
+    const scheduleableVeterans = () => {
+      if (_.isEmpty(this.props.veteransReadyForHearing)) {
+        return <div>
+          <StatusMessage
+            title= {veteranNotAssignedTitle}
+            type="alert"
+            messageText={veteranNotAssignedMessage}
+            wrapInAppSegment={false}
+          />
+        </div>;
+      }
+
+      return <Table
+        columns={tabWindowColumns}
+        rowObjects={this.tableAssignHearingsRows(this.props.veteransReadyForHearing)}
+        summary="scheduled-hearings-table"
+      />;
+
+    };
+
     const selectedHearingDay = this.props.selectedHearingDay;
 
     const availableSlots = selectedHearingDay.totalSlots - Object.keys(selectedHearingDay.hearings).length;
@@ -188,12 +270,8 @@ export default class AssignHearings extends React.Component {
             />
           },
           {
-            label: 'Assign Hearings',
-            page: <Table
-              columns={tabWindowColumns}
-              rowObjects={this.tableAssignHearingsRows(this.props.veteransReadyForHearing)}
-              summary="assign-hearings-table"
-            />
+            label: 'Schedule a Veteran',
+            page: scheduleableVeterans()
           }
         ]}
       />
@@ -201,6 +279,7 @@ export default class AssignHearings extends React.Component {
   };
 
   render() {
+
     return <AppSegment filledBackground>
       <h1>{COPY.HEARING_SCHEDULE_ASSIGN_HEARINGS_HEADER}</h1>
       <Link
@@ -208,6 +287,7 @@ export default class AssignHearings extends React.Component {
         to="/schedule">
         {COPY.HEARING_SCHEDULE_ASSIGN_HEARINGS_VIEW_SCHEDULE_LINK}
       </Link>
+      <div>{_.isEmpty(this.props.upcomingHearingDays) && this.getNoUpcomingError()}</div>
       <RoSelectorDropdown
         onChange={this.props.onRegionalOfficeChange}
         value={this.props.selectedRegionalOffice}
@@ -229,5 +309,7 @@ AssignHearings.propTypes = {
   upcomingHearingDays: PropTypes.object,
   onSelectedHearingDayChange: PropTypes.func,
   selectedHearingDay: PropTypes.object,
-  veteransReadyForHearing: PropTypes.object
+  veteransReadyForHearing: PropTypes.object,
+  userId: PropTypes.number,
+  onReceiveTasks: PropTypes.func
 };

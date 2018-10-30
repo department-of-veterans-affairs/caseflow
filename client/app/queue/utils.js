@@ -58,6 +58,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
     acc[task.id] = {
       uniqueId: task.id,
       isLegacy: false,
+      type: task.attributes.type,
       appealType: task.attributes.appeal_type,
       addedByCssId: null,
       appealId: task.attributes.appeal_id,
@@ -86,9 +87,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       onHoldDuration: task.attributes.on_hold_duration,
       instructions: task.attributes.instructions,
       decisionPreparedBy,
-      availableActions: task.attributes.available_actions,
-      assignableOrganizations: task.attributes.assignable_organizations,
-      assignableUsers: task.attributes.assignable_users
+      availableActions: task.attributes.available_actions
     };
 
     return acc;
@@ -129,6 +128,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
   const mappedLegacyTasks = tasks.map((task): Task => {
     return {
       uniqueId: task.attributes.external_appeal_id,
+      type: task.attributes.type,
       isLegacy: true,
       appealId: task.attributes.appeal_id,
       appealType: task.attributes.appeal_type,
@@ -255,6 +255,7 @@ export const prepareAppealForStore =
         veteranDateOfBirth: appeal.attributes.veteran_date_of_birth,
         veteranDateOfDeath: appeal.attributes.veteran_date_of_death,
         veteranGender: appeal.attributes.veteran_gender,
+        veteranAddress: appeal.attributes.veteran_address,
         externalId: appeal.attributes.external_id,
         status: appeal.attributes.status,
         events: {

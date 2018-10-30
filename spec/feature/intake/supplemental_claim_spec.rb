@@ -4,6 +4,7 @@ RSpec.feature "Supplemental Claim Intake" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
+    FeatureToggle.enable!(:intake_legacy_opt_in)
     FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
@@ -16,6 +17,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
   after do
     FeatureToggle.disable!(:intakeAma)
+    FeatureToggle.disable!(:intake_legacy_opt_in)
     FeatureToggle.disable!(:test_facols)
   end
 
@@ -149,6 +151,10 @@ RSpec.feature "Supplemental Claim Intake" do
     fill_in "What is the payee code for this claimant?", with: "11 - C&P First Child"
     find("#cf-payee-code").send_keys :enter
 
+    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
@@ -157,6 +163,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(find("#different-claimant-option_true", visible: false)).to be_checked
     expect(find_field("Baz Qux, Child", visible: false)).to be_checked
+    expect(find("#legacy-opt-in_false", visible: false)).to be_checked
 
     safe_click "#button-submit-review"
 
@@ -174,6 +181,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(supplemental_claim).to_not be_nil
     expect(supplemental_claim.receipt_date).to eq(receipt_date)
     expect(supplemental_claim.benefit_type).to eq(benefit_type)
+    expect(supplemental_claim.legacy_opt_in_approved).to eq(false)
     expect(supplemental_claim.claimants.first).to have_attributes(
       participant_id: "5382910293",
       payee_code: "11"
@@ -208,8 +216,13 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
     expect(page).to have_content(
-      "Established EP: 040SCR - Supplemental Claim Rating for Station 499"
+      "A #{Constants.INTAKE_FORM_NAMES_SHORT.supplemental_claim} Rating EP is being established:"
     )
+    expect(page).to have_content("Contention: PTSD denied")
+    expect(page).to have_content(
+      "A #{Constants.INTAKE_FORM_NAMES_SHORT.supplemental_claim} Nonrating EP is being established:"
+    )
+    expect(page).to have_content("Contention: Description for Active Duty Adjustments")
 
     # ratings end product
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
@@ -227,7 +240,8 @@ RSpec.feature "Supplemental Claim Intake" do
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293"
       },
-      veteran_hash: intake.veteran.to_vbms_hash
+      veteran_hash: intake.veteran.to_vbms_hash,
+      user: current_user
     )
 
     ratings_end_product_establishment = EndProductEstablishment.find_by(
@@ -256,7 +270,8 @@ RSpec.feature "Supplemental Claim Intake" do
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293"
       },
-      veteran_hash: intake.veteran.to_vbms_hash
+      veteran_hash: intake.veteran.to_vbms_hash,
+      user: current_user
     )
     nonratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
@@ -272,13 +287,15 @@ RSpec.feature "Supplemental Claim Intake" do
       veteran_file_number: "12341234",
       claim_id: ratings_end_product_establishment.reference_id,
       contention_descriptions: ["PTSD denied"],
-      special_issues: []
+      special_issues: [],
+      user: current_user
     )
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: "12341234",
       claim_id: nonratings_end_product_establishment.reference_id,
       contention_descriptions: ["Active Duty Adjustments - Description for Active Duty Adjustments"],
-      special_issues: []
+      special_issues: [],
+      user: current_user
     )
 
     rated_issue = supplemental_claim.request_issues.find_by(description: "PTSD denied")
@@ -324,16 +341,8 @@ RSpec.feature "Supplemental Claim Intake" do
   end
 
   it "Shows a review error when something goes wrong" do
-    intake = SupplementalClaimIntake.new(veteran_file_number: "12341234", user: current_user)
-    intake.start!
-
+    start_supplemental_claim(veteran_no_ratings)
     visit "/intake"
-
-    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
-
-    within_fieldset("Is the claimant someone other than the Veteran?") do
-      find("label", text: "No", match: :prefer_exact).click
-    end
 
     ## Validate error message when complete intake fails
     expect_any_instance_of(SupplementalClaimIntake).to receive(:review!).and_raise("A random error. Oh no!")
@@ -348,7 +357,8 @@ RSpec.feature "Supplemental Claim Intake" do
     supplemental_claim = SupplementalClaim.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
-      benefit_type: is_comp ? "compensation" : "education"
+      benefit_type: is_comp ? "compensation" : "education",
+      legacy_opt_in_approved: false
     )
 
     intake = SupplementalClaimIntake.create!(
@@ -398,6 +408,10 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(row).to have_text(text)
     end
 
+    let(:duplicate_reference_id) { "xyz789" }
+    let(:old_reference_id) { "old123" }
+    let(:active_epe) { create(:end_product_establishment, :active) }
+
     let!(:timely_ratings) do
       Generators::Rating.build(
         participant_id: veteran.participant_id,
@@ -405,8 +419,26 @@ RSpec.feature "Supplemental Claim Intake" do
         profile_date: receipt_date - 50.days,
         issues: [
           { reference_id: "xyz123", decision_text: "Left knee granted" },
-          { reference_id: "xyz456", decision_text: "PTSD denied" }
+          { reference_id: "xyz456", decision_text: "PTSD denied" },
+          { reference_id: duplicate_reference_id, decision_text: "Old injury" }
         ]
+      )
+      Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: receipt_date - 400.days,
+        profile_date: receipt_date - 450.days,
+        issues: [
+          { reference_id: old_reference_id, decision_text: "Really old injury" }
+        ]
+      )
+    end
+
+    let!(:request_issue_in_progress) do
+      create(
+        :request_issue,
+        end_product_establishment: active_epe,
+        rating_issue_reference_id: duplicate_reference_id,
+        description: "Old injury"
       )
     end
 
@@ -425,6 +457,7 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to have_content("Does issue 1 match any of these issues")
       expect(page).to have_content("Left knee granted")
       expect(page).to have_content("PTSD denied")
+      expect(page).to have_content("Old injury")
 
       # test canceling adding an issue by closing the modal
       safe_click ".close-modal"
@@ -468,6 +501,8 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to have_button("Add this issue", disabled: false)
       safe_click ".add-issue"
       expect(page).to have_content("2 issues")
+      # SC is always timely
+      expect(page).to_not have_content("Description for Active Duty Adjustments is ineligible because it has a prior")
 
       # add unidentified issue
       safe_click "#button-add-issue"
@@ -479,13 +514,24 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to have_content("3 issues")
       expect(page).to have_content("This is an unidentified issue")
 
+      # add ineligible issue
+      safe_click "#button-add-issue"
+      find_all("label", text: "Old injury").first.click
+      safe_click ".add-issue"
+      expect(page).to have_content("4 issues")
+      expect(page).to have_content("4. Old injury is ineligible because it's already under review as a Appeal")
+
+      # add untimely issue (OK on Supplemental Claim)
+      safe_click "#button-add-issue"
+      find_all("label", text: "Really old injury").first.click
+      safe_click ".add-issue"
+      expect(page).to have_content("5 issues")
+      expect(page).to have_content("5. Really old injury")
+      expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
+
       safe_click "#button-finish-intake"
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
-
-      expect(page).to have_content(
-        "Established EP: 040SCR - Supplemental Claim Rating for Station 499"
-      )
 
       expect(SupplementalClaim.find_by(
                id: supplemental_claim.id,
@@ -499,7 +545,8 @@ RSpec.feature "Supplemental Claim Intake" do
         source: supplemental_claim,
         veteran_file_number: veteran.file_number,
         code: "040SCR",
-        claimant_participant_id: "901987"
+        claimant_participant_id: "901987",
+        station: "499"
       )
       expect(end_product_establishment).to_not be_nil
 
@@ -507,7 +554,8 @@ RSpec.feature "Supplemental Claim Intake" do
         source: supplemental_claim,
         veteran_file_number: veteran.file_number,
         code: "040SCNR",
-        claimant_participant_id: "901987"
+        claimant_participant_id: "901987",
+        station: "499"
       )
       expect(non_rating_end_product_establishment).to_not be_nil
 
@@ -533,6 +581,45 @@ RSpec.feature "Supplemental Claim Intake" do
                is_unidentified: true,
                end_product_establishment_id: end_product_establishment.id
       )).to_not be_nil
+
+      duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
+      expect(duplicate_request_issues.count).to eq(2)
+
+      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_issue_in_active_review?).first
+      expect(ineligible_issue).to_not eq(request_issue_in_progress)
+      expect(ineligible_issue.contention_reference_id).to be_nil
+
+      expect(RequestIssue.find_by(rating_issue_reference_id: old_reference_id).eligible?).to eq(true)
+
+      expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(
+        hash_including(
+          contention_descriptions: array_including("Old injury")
+        )
+      )
+
+      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+        hash_including(
+          contention_descriptions: array_including("Left knee granted", "Really old injury")
+        )
+      )
+    end
+
+    it "Shows a review error when something goes wrong" do
+      start_supplemental_claim(veteran)
+      visit "/intake/add_issues"
+
+      safe_click "#button-add-issue"
+      find_all("label", text: "Left knee granted").first.click
+      fill_in "Notes", with: "I am an issue note"
+      safe_click ".add-issue"
+
+      ## Validate error message when complete intake fails
+      expect_any_instance_of(SupplementalClaimIntake).to receive(:complete!).and_raise("A random error. Oh no!")
+
+      safe_click "#button-finish-intake"
+
+      expect(page).to have_content("Something went wrong")
+      expect(page).to have_current_path("/intake/add_issues")
     end
 
     scenario "Non-compensation" do

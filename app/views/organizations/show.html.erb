@@ -4,6 +4,7 @@
     userId: current_user.id,
     userRole: (current_user.vacols_roles.first || "").capitalize,
     userCssId: current_user.css_id,
+    organizationIds: current_user.organizations.pluck(:id),
     userIsVsoEmployee: current_user.vso_employee?,
     caseSearchHomePage: case_search_home_page,
     organizationName: organization.name,

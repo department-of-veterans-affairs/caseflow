@@ -160,15 +160,21 @@ RSpec.describe TasksController, type: :controller do
         context "when user is assigned an individual task" do
           let!(:user) { User.authenticate!(user: org_1_assignee) }
 
-          it "should return a list of all members for individual task" do
+          it "should return a list of all available actions for individual task" do
             get :index, params: { user_id: user.id }
             expect(response.status).to eq(200)
             response_body = JSON.parse(response.body)
 
             task_attributes = response_body["tasks"]["data"].find { |task| task["id"] == org_1_member_task.id.to_s }
 
+            expect(task_attributes["attributes"]["available_actions"].length).to eq(3)
+
             # org count minus one since we can't assign to ourselves.
-            expect(task_attributes["attributes"]["assignable_users"].length).to eq(org_1_member_cnt - 1)
+            assign_to_organization_action = task_attributes["attributes"]["available_actions"].find do |action|
+              action["label"] == Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h[:label]
+            end
+
+            expect(assign_to_organization_action["data"]["options"].length).to eq(org_1_member_cnt - 1)
           end
         end
       end
@@ -188,7 +194,14 @@ RSpec.describe TasksController, type: :controller do
             response_body = JSON.parse(response.body)
             task_attributes = response_body["tasks"]["data"].find { |t| t["id"] == task.id.to_s }
 
-            expect(task_attributes["attributes"]["assignable_organizations"].length).to eq(org_count)
+            expect(task_attributes["attributes"]["available_actions"].length).to eq(3)
+
+            # org count minus one since we can't assign to ourselves.
+            assign_to_organization_action = task_attributes["attributes"]["available_actions"].find do |action|
+              action["label"] == Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]
+            end
+
+            expect(assign_to_organization_action["data"]["options"].length).to eq(org_count)
           end
         end
       end
@@ -345,6 +358,37 @@ RSpec.describe TasksController, type: :controller do
           it "should not be successful" do
             post :create, params: { tasks: params }
             expect(response.status).to eq 404
+          end
+        end
+
+        context "when creating a Hearings Management task" do
+          let!(:hearings_user) do
+            create(:hearings_coordinator)
+          end
+          let!(:hearings_org) do
+            create(:hearings_management)
+          end
+          let!(:staff_mapping) do
+            create(:hearings_staff, organization_id: hearings_org.id)
+          end
+          let(:params) do
+            [{
+              "type": ScheduleHearingTask.name,
+              "action": "Assign Hearing",
+              "external_id": appeal.vacols_id,
+              "assigned_to_type": "User",
+              "assigned_to_id": hearings_user.id
+            }]
+          end
+
+          it "should be successful" do
+            post :create, params: { tasks: params }
+            expect(response.status).to eq 201
+            response_body = JSON.parse(response.body)["tasks"]["data"]
+            expect(response_body.size).to eq 1
+            expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
+            expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
+            expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq hearings_user.id
           end
         end
       end

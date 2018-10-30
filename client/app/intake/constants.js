@@ -1,30 +1,39 @@
 import INTAKE_FORM_NAMES from '../../constants/INTAKE_FORM_NAMES.json';
+import INTAKE_FORM_NAMES_SHORT from '../../constants/INTAKE_FORM_NAMES_SHORT.json';
 
 export const FORM_TYPES = {
   RAMP_ELECTION: {
     key: 'ramp_election',
     name: INTAKE_FORM_NAMES.ramp_election,
-    category: 'ramp'
+    category: 'ramp',
+    formName: 'rampElection'
   },
   RAMP_REFILING: {
     key: 'ramp_refiling',
     name: INTAKE_FORM_NAMES.ramp_refiling,
-    category: 'ramp'
+    category: 'ramp',
+    formName: 'rampRefiling'
   },
   HIGHER_LEVEL_REVIEW: {
     key: 'higher_level_review',
     name: INTAKE_FORM_NAMES.higher_level_review,
-    category: 'ama'
+    shortName: INTAKE_FORM_NAMES_SHORT.higher_level_review,
+    category: 'ama',
+    formName: 'higherLevelReview'
   },
   SUPPLEMENTAL_CLAIM: {
     key: 'supplemental_claim',
     name: INTAKE_FORM_NAMES.supplemental_claim,
-    category: 'ama'
+    shortName: INTAKE_FORM_NAMES_SHORT.supplemental_claim,
+    category: 'ama',
+    formName: 'supplementalClaim'
   },
   APPEAL: {
     key: 'appeal',
     name: INTAKE_FORM_NAMES.appeal,
-    category: 'ama'
+    shortName: INTAKE_FORM_NAMES_SHORT.appeal,
+    category: 'ama',
+    formName: 'appeal'
   }
 };
 
@@ -34,7 +43,10 @@ export const PAGE_PATHS = {
   REVIEW: '/review_request',
   FINISH: '/finish',
   ADD_ISSUES: '/add_issues',
-  COMPLETED: '/completed'
+  COMPLETED: '/completed',
+  CANCEL_ISSUES: '/cancel',
+  CONFIRMATION: '/confirmation',
+  DTA_CLAIM: '/dta'
 };
 
 export const BOOLEAN_RADIO_OPTIONS = [
@@ -106,6 +118,7 @@ export const ACTIONS = {
   SET_CLAIMANT_NOT_VETERAN: 'SET_CLAIMANT_NOT_VETERAN',
   SET_CLAIMANT: 'SET_CLAIMANT',
   SET_PAYEE_CODE: 'SET_PAYEE_CODE',
+  SET_LEGACY_OPT_IN_APPROVED: 'SET_LEGACY_OPT_IN_APPROVED',
   SET_APPEAL_DOCKET: 'SET_APPEAL_DOCKET',
   SET_DOCKET_TYPE: 'SET_DOCKET_TYPE',
   TOGGLE_CANCEL_MODAL: 'TOGGLE_CANCEL_MODAL',

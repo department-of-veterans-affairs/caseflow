@@ -64,6 +64,14 @@ class Fakes::BGSService
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
+          promulgation_date: Time.zone.today - 395,
+          profile_date: Time.zone.today - 400,
+          issues: [
+            { decision_text: "Old injury" }
+          ]
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
           promulgation_date: Time.zone.today - 60,
           issues: [
             { decision_text: "Lorem ipsum dolor sit amet, paulo scaevola abhorreant mei te, ex est mazim ornatus, at pro causae maiestatis." },
@@ -97,13 +105,30 @@ class Fakes::BGSService
         sc
       when "has_higher_level_review_with_vbms_claim_id"
         claim_id = "600118951"
+        contention_reference_id = 1234
         hlr = HigherLevelReview.find_or_create_by!(
           veteran_file_number: veteran.file_number
         )
-        EndProductEstablishment.find_or_create_by!(
+        epe = EndProductEstablishment.find_or_create_by!(
           reference_id: claim_id,
           veteran_file_number: veteran.file_number,
           source: hlr
+        )
+        RequestIssue.find_or_create_by!(
+          review_request: hlr,
+          end_product_establishment: epe,
+          contention_reference_id: contention_reference_id
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          promulgation_date: Time.zone.today - 40,
+          profile_date: Time.zone.today - 30,
+          issues: [
+            {
+              decision_text: "Higher Level Review was denied",
+              contention_reference_id: contention_reference_id
+            }
+          ]
         )
         hlr
       when "has_ramp_election_with_contentions"

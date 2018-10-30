@@ -5,17 +5,33 @@ describe Rating do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
+  let(:participant_id) { 1234 }
+
+  let(:receipt_date) { Time.zone.today }
+
+  let(:promulgation_date) { receipt_date - 30 }
+
   let(:rating) do
     Generators::Rating.build(
-      issues: issues
+      issues: issues,
+      promulgation_date: promulgation_date,
+      participant_id: participant_id
     )
   end
 
+  def build_issue(num)
+    {
+      participant_id: participant_id,
+      reference_id: "Issue#{num}",
+      decision_text: "Decision#{num}",
+      in_active_review: nil,
+      promulgation_date: promulgation_date,
+      source_higher_level_review: nil
+    }
+  end
+
   let(:issues) do
-    [
-      { reference_id: "Issue1", decision_text: "Decision1", in_active_review: nil },
-      { reference_id: "Issue2", decision_text: "Decision2", in_active_review: nil }
-    ]
+    [build_issue(1), build_issue(2)]
   end
 
   context "#issues" do

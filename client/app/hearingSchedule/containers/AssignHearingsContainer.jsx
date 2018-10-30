@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
@@ -11,9 +12,15 @@ import {
   onSelectedHearingDayChange,
   onReceiveVeteransReadyForHearing
 } from '../actions';
+import { onReceiveTasks } from '../../queue/QueueActions';
+import { setUserCssId } from '../../queue/uiReducer/uiActions';
 import AssignHearings from '../components/AssignHearings';
 
 class AssignHearingsContainer extends React.PureComponent {
+
+  componentDidMount = () => {
+    this.props.setUserCssId(this.props.userCssId);
+  }
 
   componentDidUpdate = (prevProps) => {
     if (this.props.selectedRegionalOffice !== prevProps.selectedRegionalOffice) {
@@ -49,7 +56,7 @@ class AssignHearingsContainer extends React.PureComponent {
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
-      this.props.onReceiveVeteransReadyForHearing(_.keyBy(resp.veterans, 'id'));
+      this.props.onReceiveVeteransReadyForHearing(_.keyBy(resp.veterans, 'vbmsId'));
     });
   };
 
@@ -71,12 +78,19 @@ class AssignHearingsContainer extends React.PureComponent {
         onSelectedHearingDayChange={this.props.onSelectedHearingDayChange}
         selectedHearingDay={this.props.selectedHearingDay}
         veteransReadyForHearing={this.props.veteransReadyForHearing}
+        userId={this.props.userId}
+        onReceiveTasks={this.props.onReceiveTasks}
       />
     </LoadingDataDisplay>;
 
     return <div>{loadingDataDisplay}</div>;
   }
 }
+
+AssignHearings.propTypes = {
+  userId: PropTypes.number,
+  userCssId: PropTypes.string
+};
 
 const mapStateToProps = (state) => ({
   selectedRegionalOffice: state.hearingSchedule.selectedRegionalOffice,
@@ -89,7 +103,9 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onRegionalOfficeChange,
   onSelectedHearingDayChange,
   onReceiveUpcomingHearingDays,
-  onReceiveVeteransReadyForHearing
+  onReceiveVeteransReadyForHearing,
+  onReceiveTasks,
+  setUserCssId
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssignHearingsContainer);

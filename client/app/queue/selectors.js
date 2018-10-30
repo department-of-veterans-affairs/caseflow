@@ -41,12 +41,16 @@ const getAmaTasks = (state: State): Tasks => state.queue.amaTasks;
 const getAppeals = (state: State): BasicAppeals => state.queue.appeals;
 const getAppealDetails = (state: State): AppealDetails => state.queue.appealDetails;
 const getUserCssId = (state: State): string => state.ui.userCssId;
-const getOrganizationId = (state: State): ?number => state.queue.organizationId;
+const getOrganizationId = (state: State): ?number => state.ui.organizationIds[0];
 const getAppealId = (state: State, props: Object): string => props.appealId;
 const getAttorneys = (state: State): AttorneysOfJudge => state.queue.attorneysOfJudge;
 const getCaseflowVeteranId = (state: State, props: Object): ?string => props.caseflowVeteranId;
 const getModals = (state: State): UiStateModals => state.ui.modals;
 const getNewDocsForAppeal = (state: State): NewDocsForAppeal => state.queue.newDocsForAppeal;
+
+const incompleteTasksSelector = (tasks: Tasks | Array<Task>) =>
+  _.filter(tasks, (task) => task.status !== TASK_STATUSES.completed);
+const completeTasksSelector = (tasks: Tasks) => _.filter(tasks, (task) => task.status === TASK_STATUSES.completed);
 
 export const getActiveModalType = createSelector(
   [getModals],
@@ -90,8 +94,8 @@ export const appealWithDetailSelector = createSelector(
 export const getTasksForAppeal = createSelector(
   [getTasks, getAmaTasks, getAppealId],
   (tasks: Tasks, amaTasks: Tasks, appealId: string) => {
-    return _.filter(tasks, (task) => task.externalAppealId === appealId).
-      concat(_.filter(amaTasks, (task) => task.externalAppealId === appealId));
+    return incompleteTasksSelector(_.filter(tasks, (task) => task.externalAppealId === appealId).
+      concat(_.filter(amaTasks, (task) => task.externalAppealId === appealId)));
   }
 );
 
@@ -116,16 +120,13 @@ export const appealsByCaseflowVeteranId = createSelector(
       appeal.caseflowVeteranId.toString() === caseflowVeteranId.toString())
 );
 
-const incompleteTasksSelector = (tasks: Tasks) => _.filter(tasks, (task) => task.status !== TASK_STATUSES.completed);
-const completeTasksSelector = (tasks: Tasks) => _.filter(tasks, (task) => task.status === TASK_STATUSES.completed);
-
 const tasksByAssigneeCssIdSelector = createSelector(
   [tasksWithAppealSelector, getUserCssId],
   (tasks: Array<TaskWithAppeal>, cssId: string) =>
     _.filter(tasks, (task) => task.assignedTo.cssId === cssId)
 );
 
-const incompleteTasksByAssigneeCssIdSelector = createSelector(
+export const incompleteTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks: Tasks) => incompleteTasksSelector(tasks)
 );
@@ -135,10 +136,14 @@ export const completeTasksByAssigneeCssIdSelector = createSelector(
   (tasks: Tasks) => completeTasksSelector(tasks)
 );
 
+export const actionableTasksForAppeal = createSelector(
+  [getTasksForAppeal], (tasks: Tasks) => _.filter(tasks, (task) => task.availableActions.length)
+);
+
 export const organizationTasksByAssigneeIdSelector = createSelector(
   [getTasksForAppeal, getOrganizationId],
   (tasks: Tasks, id: Number) =>
-    _.filter(tasks, (task) => task.assignedTo.id === id && ['Organization', 'Vso'].includes(task.assignedTo.type))
+    _.filter(tasks, (task) => task.assignedTo.id === id && task.assignedTo.type !== 'User')
 );
 
 export const incompleteOrganizationTasksByAssigneeIdSelector = createSelector(

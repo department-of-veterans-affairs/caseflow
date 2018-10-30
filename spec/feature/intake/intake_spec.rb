@@ -77,6 +77,15 @@ RSpec.feature "Intake" do
       expect(page).to have_content("Welcome to the Intake Help page!")
     end
 
+    scenario "User clicks on Search Cases" do
+      visit "/intake"
+      expect(page).to have_content("Search cases")
+      new_window = window_opened_by { click_link("Search cases") }
+      within_window new_window do
+        expect(page).to have_current_path("/search")
+      end
+    end
+
     scenario "Search for a veteran that does not exist in BGS" do
       visit "/intake"
 
@@ -168,7 +177,7 @@ RSpec.feature "Intake" do
       end
     end
 
-    scenario "Search for a veteran who's form is already being processed" do
+    scenario "Search for a veteran whose form is already being processed" do
       create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
 
       RampElectionIntake.new(

@@ -9,7 +9,7 @@ import NonRatedIssueModal from '../components/NonRatedIssueModal';
 import RemoveIssueModal from '../components/RemoveIssueModal';
 import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
 import Button from '../../components/Button';
-import RequestIssuesUpdateErrorAlert from '../../intakeEdit/components/RequestIssuesUpdateErrorAlert';
+import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, FORM_TYPES, PAGE_PATHS } from '../constants';
 import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES.json';
 import { formatDate } from '../../util/DateUtil';
@@ -44,13 +44,25 @@ export class AddIssuesPage extends React.Component {
     }
   }
 
+  checkIfEligible = (issue, formType) => {
+    if (issue.isUnidentified) {
+      return false;
+    } else if (issue.inActiveReview) {
+      return INELIGIBLE_REQUEST_ISSUES.in_active_review.replace('{review_title}', issue.inActiveReview);
+    } else if (!issue.timely && formType !== 'supplemental_claim') {
+      return INELIGIBLE_REQUEST_ISSUES.untimely;
+    } else if (issue.sourceHigherLevelReview && formType === 'higher_level_review') {
+      return INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review;
+    }
+
+    return true;
+  }
+
   render() {
     const {
       intakeForms,
       formType,
-      veteran,
-      responseErrorCode,
-      requestState
+      veteran
     } = this.props;
 
     if (!formType) {
@@ -58,8 +70,14 @@ export class AddIssuesPage extends React.Component {
     }
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
-    const intakeData = intakeForms[selectedForm.key];
     const veteranInfo = `${veteran.name} (${veteran.fileNumber})`;
+    const intakeData = intakeForms[selectedForm.key];
+    const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
+    const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
+
+    if (intakeData.isDtaError) {
+      return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
+    }
 
     const issuesComponent = () => {
       let issues = formatAddedIssues(intakeData);
@@ -68,14 +86,14 @@ export class AddIssuesPage extends React.Component {
         <div>
           { issues.map((issue, index) => {
             let issueKlasses = ['issue-desc'];
+            let isEligible = this.checkIfEligible(issue, formType);
             let addendum = '';
 
-            if (issue.isUnidentified) {
-              issueKlasses.push('unidentified-issue');
-            }
-            if (issue.inActiveReview) {
-              issueKlasses.push('in-active-review');
-              addendum = INELIGIBLE_REQUEST_ISSUES.in_active_review.replace('{review_title}', issue.inActiveReview);
+            if (isEligible !== true) {
+              if (isEligible !== false) {
+                addendum = isEligible;
+              }
+              issueKlasses.push('not-eligible');
             }
 
             return <div className="issue" key={`issue-${index}`}>
@@ -150,7 +168,7 @@ export class AddIssuesPage extends React.Component {
       <h1 className="cf-txt-c">Add / Remove Issues</h1>
 
       { requestState === REQUEST_STATE.FAILED &&
-        <RequestIssuesUpdateErrorAlert responseErrorCode={responseErrorCode} />
+        <ErrorAlert errorCode={requestErrorCode} />
       }
 
       <Table
@@ -169,9 +187,7 @@ export const IntakeAddIssuesPage = connect(
       appeal
     },
     formType: intake.formType,
-    veteran: intake.veteran,
-    requestState: null,
-    responseErrorCode: null
+    veteran: intake.veteran
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
@@ -188,9 +204,7 @@ export const EditAddIssuesPage = connect(
       supplemental_claim: state
     },
     formType: state.formType,
-    veteran: state.veteran,
-    requestState: state.requestStatus.requestIssuesUpdate,
-    responseErrorCode: state.responseErrorCode
+    veteran: state.veteran
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,

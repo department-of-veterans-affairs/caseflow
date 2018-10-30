@@ -97,6 +97,10 @@
   }
 }
 
+.intake-modal {
+  text-align: left;
+}
+
 .cf-intake-edit {
   th {
     padding: 0;
@@ -135,11 +139,7 @@
           }
         }
 
-        .unidentified-issue {
-          color: $color-red;
-        }
-
-        .in-active-review {
+        .not-eligible {
           color: $color-red;
         }
 

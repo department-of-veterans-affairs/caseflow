@@ -8,7 +8,10 @@ class Appeal < AmaReview
   has_many :decisions
   has_one :special_issue_list
 
-  validates :receipt_date, :docket_type, presence: { message: "blank" }, on: :intake_review
+  with_options on: :intake_review do
+    validates :receipt_date, :docket_type, presence: { message: "blank" }
+    validates :legacy_opt_in_approved, inclusion: { in: [true, false], message: "blank" }, if: :legacy_opt_in_enabled?
+  end
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
 
@@ -50,6 +53,10 @@ class Appeal < AmaReview
     docket_type
   end
 
+  def decision_date
+    decisions.last.try(:decision_date)
+  end
+
   def hearing_docket?
     docket_type == "hearing"
   end
@@ -79,8 +86,26 @@ class Appeal < AmaReview
     veteran && veteran.name.middle_initial
   end
 
-  def veteran_gender
-    veteran && veteran.sex
+  def veteran_is_deceased
+    veteran_death_date.present?
+  end
+
+  def veteran_death_date
+    veteran && veteran.date_of_death
+  end
+
+  delegate :address_line_1,
+           :address_line_2,
+           :address_line_3,
+           :city,
+           :state,
+           :zip,
+           :gender,
+           :date_of_birth,
+           :country, to: :veteran, prefix: true
+
+  def regional_office
+    nil
   end
 
   def advanced_on_docket
@@ -98,14 +123,6 @@ class Appeal < AmaReview
   end
 
   delegate :first_name, :last_name, :middle_name, :name_suffix, to: :appellant, prefix: true, allow_nil: true
-
-  def veteran_is_deceased
-    veteran_death_date.present?
-  end
-
-  def veteran_death_date
-    veteran && veteran.date_of_death
-  end
 
   def cavc
     "not implemented for AMA"

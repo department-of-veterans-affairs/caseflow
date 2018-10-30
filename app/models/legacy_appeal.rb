@@ -54,7 +54,7 @@ class LegacyAppeal < ApplicationRecord
   # These attributes are needed for the Fakes::QueueRepository.tasks_for_user to work
   # because it is using an Appeal object
   attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :assigned_to_location_date, :added_by,
-                :created_at, :document_id, :assigned_by
+                :created_at, :document_id, :assigned_by, :updated_at, :attorney_id
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
@@ -192,7 +192,16 @@ class LegacyAppeal < ApplicationRecord
     vbms_id.ends_with?("C") ? (veteran && veteran.ssn) : sanitized_vbms_id
   end
 
-  delegate :age, :sex, to: :veteran, prefix: true
+  delegate :address_line_1,
+           :address_line_2,
+           :address_line_3,
+           :city,
+           :state,
+           :zip,
+           :country,
+           :age,
+           :sex,
+           to: :veteran, prefix: true, allow_nil: true
 
   # NOTE: we cannot currently match end products to a specific appeal.
   delegate :end_products, to: :veteran
@@ -364,7 +373,7 @@ class LegacyAppeal < ApplicationRecord
     return @ramp_ineligibility_reason if defined? @ramp_ineligibility_reason
 
     @ramp_ineligibility_reason = begin
-      if ineligibile_for_ramp_at_bva?
+      if !status_eligible_for_ramp?
         :activated_to_bva
       elsif appellant_first_name
         :claimant_not_veteran
@@ -726,15 +735,8 @@ class LegacyAppeal < ApplicationRecord
     regional_office.to_h
   end
 
-  def ineligibile_for_ramp_at_bva?
-    !(((status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)) ||
-      eligible_for_ramp_despite_being_at_bva?)
-  end
-
-  # AMO has decided that appeals with docket dates 2016 and afterwards are eligble for RAMP even
-  # though they are at the board. Exceptions are appeals with hearings held, advance on docket or cavc.
-  def eligible_for_ramp_despite_being_at_bva?
-    (docket_date && docket_date.to_date > Date.new(2015, 12, 31)) && !hearing_held && !aod && !cavc
+  def status_eligible_for_ramp?
+    (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
   end
 
   class << self

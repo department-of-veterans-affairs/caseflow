@@ -47,7 +47,7 @@ export const initialState = {
 };
 
 // eslint-disable-next-line max-statements
-const workQueueReducer = (state: QueueState = initialState, action: Object = {}): QueueState => {
+export const workQueueReducer = (state: QueueState = initialState, action: Object = {}): QueueState => {
   switch (action.type) {
   case ACTIONS.RECEIVE_QUEUE_DETAILS:
     return update(state, {
@@ -370,12 +370,6 @@ const workQueueReducer = (state: QueueState = initialState, action: Object = {})
       }
     });
   }
-  case ACTIONS.SET_ORGANIZATION_ID:
-    return update(state, {
-      organizationId: {
-        $set: action.payload.id
-      }
-    });
   case ACTIONS.SET_APPEAL_AOD:
     return update(state, {
       appeals: {
@@ -398,11 +392,14 @@ const workQueueReducer = (state: QueueState = initialState, action: Object = {})
         }
       }
     });
-  case ACTIONS.RECEIVE_APPEAL_VALUE:
+  case ACTIONS.RECEIVE_APPEAL_VALUE: {
+    const existingState = state.loadingAppealDetail[action.payload.appealId] || {};
+
     return update(state, {
       loadingAppealDetail: {
         $merge: {
           [action.payload.appealId]: {
+            ...existingState,
             [action.payload.name]: {
               loading: false
             }
@@ -417,11 +414,15 @@ const workQueueReducer = (state: QueueState = initialState, action: Object = {})
         }
       }
     });
-  case ACTIONS.ERROR_ON_RECEIVE_APPEAL_VALUE:
+  }
+  case ACTIONS.ERROR_ON_RECEIVE_APPEAL_VALUE: {
+    const existingState = state.loadingAppealDetail[action.payload.appealId] || {};
+
     return update(state, {
       loadingAppealDetail: {
         $merge: {
           [action.payload.appealId]: {
+            ...existingState,
             [action.payload.name]: {
               loading: false,
               error: action.payload.error
@@ -430,6 +431,7 @@ const workQueueReducer = (state: QueueState = initialState, action: Object = {})
         }
       }
     });
+  }
   default:
     return state;
   }

@@ -5,8 +5,28 @@ class ClaimReview < AmaReview
   include Asyncable
 
   has_many :end_product_establishments, as: :source
+  has_one :intake, as: :detail
 
   self.abstract_class = true
+
+  def ui_hash(ama_enabled)
+    {
+      veteran: {
+        name: veteran && veteran.name.formatted(:readable_short),
+        fileNumber: veteran_file_number,
+        formName: veteran && veteran.name.formatted(:form)
+      },
+      relationships: ama_enabled && veteran && veteran.relationships,
+      receiptDate: receipt_date.to_formatted_s(:json_date),
+      benefitType: benefit_type,
+      claimant: claimant_participant_id,
+      claimantNotVeteran: claimant_not_veteran,
+      payeeCode: payee_code,
+      legacyOptInApproved: legacy_opt_in_approved,
+      ratings: serialized_ratings,
+      requestIssues: request_issues.map(&:ui_hash)
+    }
+  end
 
   # The Asyncable module requires we define these.
   # establishment_submitted_at - when our db is ready to push to exernal services
@@ -85,6 +105,10 @@ class ClaimReview < AmaReview
 
   def informal_conference?
     false
+  end
+
+  def intake_processed_by
+    intake ? intake.user : nil
   end
 
   def end_product_establishment_for_issue(issue)

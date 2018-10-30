@@ -24,6 +24,29 @@ class Hearings::HearingDayController < HearingScheduleController
     end
   end
 
+  def show
+    hearing_day = HearingDay.find_hearing_day(nil, params[:id])
+
+    hearings = []
+
+    if hearing_day[:hearing_type] == "V"
+      hearings = HearingRepository.fetch_video_hearings_for_parent(params[:id])
+      regional_office = hearing_day[:regional_office]
+    end
+    if hearing_day[:hearing_type] == "C"
+      hearings = HearingRepository.fetch_co_hearings_for_parent(hearing_day[:hearing_date])
+      regional_office = "C"
+    end
+
+    render json: { hearing_day: json_hearing(hearing_day).merge(
+      hearings: hearings.map { |hearing| hearing.to_hash(current_user.id) },
+      hearing_day_options:
+        HearingDay.load_days_with_hearings(Time.zone.today.beginning_of_day,
+                                           Time.zone.today.beginning_of_day + 365.days,
+                                           regional_office)
+    ) }
+  end
+
   def index_with_hearings
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
@@ -152,13 +175,16 @@ class Hearings::HearingDayController < HearingScheduleController
 
   def json_veteran(veteran)
     {
-      id: veteran.vbms_id,
+      appeal_id: veteran.id,
       appellantFirstName: veteran.appellant_first_name.to_s,
       appellantLastName: veteran.appellant_last_name.to_s,
       type: veteran.type,
       docket_number: veteran.docket_number,
       location: HearingDayMapper.city_for_regional_office(veteran.regional_office_key),
-      time: nil
+      time: nil,
+      vacols_id: veteran.case_record.bfkey,
+      vbms_id: veteran.vbms_id,
+      aod: veteran.aod
     }
   end
 

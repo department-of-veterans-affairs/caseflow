@@ -4,6 +4,10 @@ class HigherLevelReview < ClaimReview
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
   end
 
+  validates :legacy_opt_in_approved, inclusion: {
+    in: [true, false], message: "blank"
+  }, if: [:legacy_opt_in_enabled?, :saving_review]
+
   END_PRODUCT_RATING_CODE = "030HLRR".freeze
   END_PRODUCT_NONRATING_CODE = "030HLRNR".freeze
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 033 035 036 037 038 039].freeze
@@ -17,29 +21,15 @@ class HigherLevelReview < ClaimReview
   DTA_ERRORS = [DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO].freeze
 
   def self.review_title
-    "Higher-Level Review"
+    Constants.INTAKE_FORM_NAMES_SHORT.higher_level_review
   end
 
   def ui_hash(ama_enabled)
-    {
+    super.merge(
       formType: "higher_level_review",
-      veteran: {
-        name: veteran && veteran.name.formatted(:readable_short),
-        fileNumber: veteran_file_number,
-        formName: veteran && veteran.name.formatted(:form)
-      },
-      relationships: ama_enabled && veteran && veteran.relationships,
-      claimId: end_product_claim_id,
-      receiptDate: receipt_date.to_formatted_s(:json_date),
-      benefitType: benefit_type,
       sameOffice: same_office,
-      informalConference: informal_conference,
-      claimant: claimant_participant_id,
-      claimantNotVeteran: claimant_not_veteran,
-      payeeCode: payee_code,
-      ratings: cached_serialized_ratings,
-      requestIssues: request_issues.map(&:ui_hash)
-    }
+      informalConference: informal_conference
+    )
   end
 
   def rating_end_product_establishment
@@ -52,10 +42,6 @@ class HigherLevelReview < ClaimReview
 
   def end_product_base_modifier
     valid_modifiers.first
-  end
-
-  def end_product_claim_id
-    rating_end_product_establishment && rating_end_product_establishment.reference_id
   end
 
   def special_issues
@@ -135,7 +121,8 @@ class HigherLevelReview < ClaimReview
       code: ep_code,
       claimant_participant_id: claimant_participant_id,
       station: end_product_station,
-      benefit_type_code: veteran.benefit_type_code
+      benefit_type_code: veteran.benefit_type_code,
+      user: intake_processed_by
     )
   end
 end
