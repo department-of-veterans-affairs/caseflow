@@ -86,15 +86,7 @@ describe AppealRepository do
     end
 
     context "when datetime is in a non-UTC timezone" do
-      before do
-        @previous_time_zone = Time.zone
-        Time.zone = "America/Chicago"
-      end
-
-      after do
-        Time.zone = @previous_time_zone
-      end
-
+      before { Time.zone = "America/Chicago" }
       let(:datetime) { Time.new(2013, 9, 5, 16, 0, 0, "-08:00") }
       it { is_expected.to eq(Time.zone.local(2013, 9, 6)) }
     end

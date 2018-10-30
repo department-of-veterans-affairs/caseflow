@@ -4,13 +4,8 @@ RSpec.feature "Hearings" do
   before do
     User.user_repository = Fakes::UserRepository
     # Set the time zone to the current user's time zone for proper date conversion
-    @previous_time_zone = Time.zone
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 1, 1, 13))
-  end
-
-  after do
-    Time.zone = @previous_time_zone
   end
 
   before do

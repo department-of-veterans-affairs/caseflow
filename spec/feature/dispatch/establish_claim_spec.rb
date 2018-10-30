@@ -11,7 +11,6 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
   before do
     # Set the time zone to the current user's time zone for proper date conversion
-    @previous_time_zone = Time.zone
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 1, 1))
 
@@ -20,10 +19,6 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::AppealRepository).to receive(:update_vacols_after_dispatch!).and_call_original
-  end
-
-  after do
-    Time.zone = @previous_time_zone
   end
 
   let(:case_worker) do

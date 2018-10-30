@@ -5,7 +5,6 @@ RSpec.feature "Intake" do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:test_facols)
 
-    @previous_time_zone = Time.zone
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 12, 8))
 
@@ -17,7 +16,6 @@ RSpec.feature "Intake" do
 
   after do
     FeatureToggle.disable!(:test_facols)
-    Time.zone = @previous_time_zone
   end
 
   let!(:veteran) do

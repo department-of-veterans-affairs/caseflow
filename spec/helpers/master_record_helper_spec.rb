@@ -1,12 +1,7 @@
 RSpec.describe MasterRecordHelper, type: :helper do
   before do
     Timecop.freeze(Time.utc(2017, 2, 2))
-    @previous_time_zone = Time.zone
     Time.zone = "America/Chicago"
-  end
-
-  after do
-    Time.zone = @previous_time_zone
   end
 
   context ".remove_master_records_with_children" do
