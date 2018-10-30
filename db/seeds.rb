@@ -451,7 +451,7 @@ class SeedDB
     Vso.create(
       name: "Paralyzed Veterans Of America",
       role: "VSO",
-      url: "paralyzed-veterans-of-america",
+      url: "pva",
       participant_id: "2452383"
     )
   end
