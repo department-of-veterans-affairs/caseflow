@@ -215,7 +215,6 @@ describe RequestIssuesUpdate do
         allow_associate_rated_issues
 
         expect(subject).to be_truthy
-
         request_issues_update.reload
 
         expect(request_issues_update.before_request_issue_ids).to contain_exactly(
@@ -264,11 +263,20 @@ describe RequestIssuesUpdate do
           }]
         end
 
+        let(:review) do
+          create(:higher_level_review,
+                 veteran_file_number: veteran.file_number,
+                 informal_conference: true)
+        end
+
         it "adds new end product for a new rating type" do
           expect(EndProductEstablishment.find_by(code: "030HLRNR", source: review)).to eq(nil)
 
           subject
-          expect(EndProductEstablishment.find_by(code: "030HLRNR", source: review)).to_not be_nil
+          ep = EndProductEstablishment.find_by(code: "030HLRNR", source: review)
+          expect(ep).to_not be_nil
+          # informal conference should also have been created
+          expect(ep.development_item_reference_id).to_not be_nil
         end
       end
     end
