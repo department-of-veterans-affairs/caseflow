@@ -1,7 +1,12 @@
 describe VacolsHelper do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    @previous_time_zone = Time.zone
     Time.zone = "Eastern Time (US & Canada)"
+  end
+
+  after do
+    Time.zone = @previous_time_zone
   end
 
   context ".local_time_with_utc_timezone" do

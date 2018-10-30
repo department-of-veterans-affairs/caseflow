@@ -8,6 +8,7 @@ RSpec.feature "Appeal Intake" do
     FeatureToggle.enable!(:intake_legacy_opt_in)
     FeatureToggle.enable!(:test_facols)
 
+    @previous_time_zone = Time.zone
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 20))
   end
@@ -16,6 +17,7 @@ RSpec.feature "Appeal Intake" do
     FeatureToggle.disable!(:intakeAma)
     FeatureToggle.disable!(:intake_legacy_opt_in)
     FeatureToggle.disable!(:test_facols)
+    Time.zone = @previous_time_zone
   end
 
   let!(:current_user) do

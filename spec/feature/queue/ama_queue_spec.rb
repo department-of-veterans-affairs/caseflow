@@ -2,15 +2,18 @@ require "rails_helper"
 
 RSpec.feature "AmaQueue" do
   before do
+    @previous_time_zone = Time.zone
     Time.zone = "America/New_York"
 
     Fakes::Initializer.load!
     FeatureToggle.enable!(:queue_beaam_appeals)
     FeatureToggle.enable!(:test_facols)
   end
+
   after do
     FeatureToggle.disable!(:test_facols)
     FeatureToggle.disable!(:queue_beaam_appeals)
+    Time.zone = @previous_time_zone
   end
 
   let(:attorney_first_name) { "Robby" }

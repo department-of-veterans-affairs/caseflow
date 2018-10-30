@@ -3,6 +3,7 @@ require "rails_helper"
 describe MonitorBusinessCriticalJobsJob do
   before do
     Timecop.freeze(Time.utc(2017, 2, 2, 20))
+    @previous_time_zone = Time.zone
     Time.zone = "UTC"
 
     # Loop through and set successful values for all jobs
@@ -17,6 +18,7 @@ describe MonitorBusinessCriticalJobsJob do
       Rails.cache.write("#{job_class}_last_started_at", nil)
       Rails.cache.write("#{job_class}_last_completed_at", nil)
     end
+    Time.zone = @previous_time_zone
   end
 
   let(:job) { MonitorBusinessCriticalJobsJob.new }

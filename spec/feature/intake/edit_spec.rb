@@ -7,6 +7,7 @@ RSpec.feature "Edit issues" do
     FeatureToggle.enable!(:intake_legacy_opt_in)
     FeatureToggle.enable!(:test_facols)
 
+    @previous_time_zone = Time.zone
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 26))
   end
@@ -15,6 +16,7 @@ RSpec.feature "Edit issues" do
     FeatureToggle.disable!(:intakeAma)
     FeatureToggle.disable!(:intake_legacy_opt_in)
     FeatureToggle.disable!(:test_facols)
+    Time.zone = @previous_time_zone
   end
 
   let(:veteran) do

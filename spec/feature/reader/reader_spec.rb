@@ -108,6 +108,7 @@ RSpec.feature "Reader" do
   before do
     Fakes::Initializer.load!
     FeatureToggle.enable!(:test_facols)
+    @previous_time_zone = Time.zone
     Time.zone = "America/New_York"
 
     RequestStore[:current_user] = User.find_or_create_by(css_id: "BVASCASPER1", station_id: 101)
@@ -116,6 +117,7 @@ RSpec.feature "Reader" do
 
   after do
     FeatureToggle.disable!(:test_facols)
+    Time.zone = @previous_time_zone
   end
 
   let(:documents) { [] }
