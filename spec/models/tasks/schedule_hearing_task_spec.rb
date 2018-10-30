@@ -65,7 +65,14 @@ describe ScheduleHearingTask do
         assigned_to_type: "User",
         assigned_to_id: hearings_user.id,
         parent_id: root_task.id,
-        business_payloads: { description: "test", values: ["RO17", "2018-10-25", "8:00"] }
+        business_payloads: {
+          description: "test",
+          values: {
+            "regional_office": "RO17",
+            "hearing_date": "2018-10-25",
+            "hearing_time": "8:00"
+          }
+        }
       }
     end
 
@@ -77,7 +84,9 @@ describe ScheduleHearingTask do
       expect(hearing_task.status).to eq("assigned")
       expect(hearing_task.task_business_payloads.size).to eq 1
       expect(hearing_task.task_business_payloads[0].description).to eq("test")
-      expect(hearing_task.task_business_payloads[0].values[0]).to eq("RO17")
+      expect(hearing_task.task_business_payloads[0].values["regional_office"]).to eq("RO17")
+      expect(hearing_task.task_business_payloads[0].values["hearing_date"]).to eq("2018-10-25")
+      expect(hearing_task.task_business_payloads[0].values["hearing_time"]).to eq("8:00")
     end
   end
 end

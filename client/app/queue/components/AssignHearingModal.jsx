@@ -36,6 +36,7 @@ import { prepareTasksForStore } from '../utils';
 import DateSelector from '../../components/DateSelector';
 import _ from 'lodash';
 import type { Appeal, Task } from '../types/models';
+import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../../hearings/constants/constants';
 
 type Params = {|
   task: Task,
@@ -94,7 +95,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   }
 
   componentWillMount = () => {
-    this.props.onRegionalOfficeChange(this.props.task.taskBusinessPayloads[0].values[0]);
+    this.props.onRegionalOfficeChange(this.props.task.taskBusinessPayloads[0].values.regional_office_value);
   };
 
   onROClick = () => {
@@ -103,7 +104,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   onDateClick = () => {
     this.setState({ dateEdit: true });
-    const formattedDate = formatDate(this.props.task.taskBusinessPayloads[0].values[4]);
+    const formattedDate = formatDate(this.props.task.taskBusinessPayloads[0].values.hearing_date);
 
     this.setState({ selectedDate: formatDateStringForApi(formattedDate) });
   };
@@ -121,21 +122,22 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
         task: {
           status: 'completed',
           business_payloads: {
-            description: 'Update',
-            values: [
-              this.props.selectedRegionalOffice.value,
-              this.props.selectedRegionalOffice.label,
-              this.props.task.taskBusinessPayloads[0].values[2],
-              this.props.task.taskBusinessPayloads[0].values[3],
-              newDateTime
-            ]
+            description: 'Update Task',
+            values: {
+              regional_office_value: this.props.selectedRegionalOffice.value,
+              regional_office_label: this.props.selectedRegionalOffice.label,
+              hearing_pkseq: this.props.task.taskBusinessPayloads[0].values.hearing_pkseq,
+              hearing_type: this.props.task.taskBusinessPayloads[0].values.hearing_type,
+              hearing_date: newDateTime
+            }
           }
         }
       }
     };
 
-    const hearingType = this.props.task.taskBusinessPayloads[0].values[3] === 'Central' ? 'CO' : 'Video';
-    const hearingDateStr = formatDate(this.props.task.taskBusinessPayloads[0].values[4]);
+    const hearingType = this.props.task.taskBusinessPayloads[0].values.hearing_type ===
+                          CENTRAL_OFFICE_HEARING ? 'CO' : VIDEO_HEARING;
+    const hearingDateStr = formatDate(this.props.task.taskBusinessPayloads[0].values.hearing_date);
     const title = `You have successfully assigned ${appeal.veteranFullName} to a ${hearingType} hearing ` +
                   `on ${hearingDateStr}.`;
 
@@ -164,10 +166,10 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       return null;
     }
 
-    const hearingDateStr = formatDate(this.props.task.taskBusinessPayloads[0].values[4]);
-    const timeStr = getTime(this.props.task.taskBusinessPayloads[0].values[4]);
+    const hearingDateStr = formatDate(this.props.task.taskBusinessPayloads[0].values.hearing_date);
+    const timeStr = getTime(this.props.task.taskBusinessPayloads[0].values.hearing_date);
 
-    const timeOptions = this.props.task.taskBusinessPayloads[0].values[3] === 'Video' ?
+    const timeOptions = this.props.task.taskBusinessPayloads[0].values.hearing_type === VIDEO_HEARING ?
       [{ displayText: '8:30 am',
         value: '8:30 am ET' }, { displayText: '12:30 pm',
         value: '12:30 pm ET' }] :
@@ -191,7 +193,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
         }
         {!this.state.roEdit &&
               <InlineForm>
-                <p {...buttonLinksStyling}> {this.props.task.taskBusinessPayloads[0].values[1]} </p>
+                <p {...buttonLinksStyling}> {this.props.task.taskBusinessPayloads[0].values.regional_office_label} </p>
                 <Button
                   name="Change"
                   linkStyling

@@ -113,7 +113,6 @@ class VACOLS::CaseHearing < VACOLS::Record
     def create_hearing!(hearing_info)
       attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
       attrs.except!(nil)
-      Rails.logger.info("OARVT attrs #{attrs} .")
       # Store time value in UTC to VACOLS
       hear_date = attrs[:hearing_date]
       converted_date = hear_date.is_a?(Date) ? hear_date : Time.zone.parse(hear_date).to_datetime
@@ -131,7 +130,6 @@ class VACOLS::CaseHearing < VACOLS::Record
     def create_child_hearing!(hearing_info)
       attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
       attrs.except!(nil)
-      Rails.logger.info("OARVT attrs #{attrs} .")
       MetricsService.record("VACOLS: create_hearing!",
                             service: :vacols,
                             name: "create_hearing") do

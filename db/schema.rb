@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181026123030) do
+ActiveRecord::Schema.define(version: 20181030123030) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -722,7 +722,7 @@ ActiveRecord::Schema.define(version: 20181026123030) do
   create_table "task_business_payloads", force: :cascade do |t|
     t.bigint "task_id", null: false
     t.string "description", null: false
-    t.string "values", default: [], null: false, array: true
+    t.json "values", default: {}, null: false
     t.index ["task_id"], name: "index_task_business_payloads_on_task_id"
   end
 

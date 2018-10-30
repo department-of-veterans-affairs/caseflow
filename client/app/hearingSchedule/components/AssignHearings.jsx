@@ -64,14 +64,14 @@ export default class AssignHearings extends React.Component {
             assigned_to_type: 'User',
             assigned_to_id: this.props.userId,
             business_payloads: {
-              description: 'test',
-              values: [
-                this.props.selectedRegionalOffice.value,
-                this.props.selectedRegionalOffice.label,
-                this.props.selectedHearingDay.id,
-                this.props.selectedHearingDay.hearingType,
-                this.props.selectedHearingDay.hearingDate
-              ]
+              description: 'Create Task',
+              values: {
+                regional_office_value: this.props.selectedRegionalOffice.value,
+                regional_office_label: this.props.selectedRegionalOffice.label,
+                hearing_pkseq: this.props.selectedHearingDay.id,
+                hearing_type: this.props.selectedHearingDay.hearingType,
+                hearing_date: this.props.selectedHearingDay.hearingDate
+              }
             }
           }
         ]

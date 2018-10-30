@@ -4,7 +4,7 @@ class ScheduleHearingTask < GenericTask
       root_task = RootTask.find_by(appeal_id: params[:appeal].id)
       if !root_task
         root_task = RootTask.create!(appeal_id: params[:appeal].id,
-                                     appeal_type: "LegacyAppeal",
+                                     appeal_type: LegacyAppeal.name,
                                      assigned_to_id: current_user.id)
       end
       params[:parent_id] = root_task.id
@@ -24,7 +24,7 @@ class ScheduleHearingTask < GenericTask
 
       create!(
         appeal: parent.appeal,
-        appeal_type: "LegacyAppeal",
+        appeal_type: LegacyAppeal.name,
         assigned_by_id: child_assigned_by_id(parent, current_user),
         parent_id: parent.id,
         assigned_to: assignee,
@@ -34,19 +34,16 @@ class ScheduleHearingTask < GenericTask
   end
 
   def mark_as_complete!
-    hearing_pkseq = task_business_payloads[0].values[2]
-    Rails.logger.info("OARVT hearing_pkseq #{hearing_pkseq} .")
-    hearing_type = task_business_payloads[0].values[3]
+    hearing_pkseq = task_business_payloads[0].values["hearing_pkseq"]
+    hearing_type = task_business_payloads[0].values["hearing_type"]
     hearing = VACOLS::CaseHearing.find(hearing_pkseq)
 
-    if hearing_type == "Central"
+    if hearing_type == Hearing::CO_HEARING
       HearingRepository.update_vacols_hearing!(hearing, folder_nr: appeal.vacols_id)
     else
       hearing_hash = to_hash(hearing)
       hearing_hash[:folder_nr] = appeal.vacols_id
-      # hearing date should be from payload.
-      hearing_hash[:hearing_date] = task_business_payloads[0].values[4].to_s
-      Rails.logger.info("OARVT hearing_hash #{hearing_hash} .")
+      hearing_hash[:hearing_date] = task_business_payloads[0].values["hearing_date"].to_s
       HearingRepository.create_vacols_child_hearing(hearing_hash)
     end
 
@@ -56,7 +53,7 @@ class ScheduleHearingTask < GenericTask
   end
 
   def location_based_on_hearing_type(hearing_type)
-    if hearing_type == "Central"
+    if hearing_type == Hearing::CO_HEARING
       LegacyAppeal::LOCATION_CODES[:awaiting_co_hearing]
     else
       LegacyAppeal::LOCATION_CODES[:awaiting_video_hearing]
