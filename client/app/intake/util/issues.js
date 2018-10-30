@@ -79,12 +79,14 @@ export const validNonRatedIssue = (issue) => {
 
 export const formatRequestIssues = (requestIssues) => {
   return requestIssues.map((issue) => {
+    console.log("issue::", issue)
     if (issue.category) {
       return {
         isRated: false,
         category: issue.category,
         description: issue.description,
-        decisionDate: issue.decision_date
+        decisionDate: issue.decision_date,
+        ineligibleReason: issue.ineligible_reason
       };
     }
 
@@ -105,7 +107,9 @@ export const formatRequestIssues = (requestIssues) => {
       id: issue.reference_id,
       profileDate: issueDate.toISOString(),
       notes: issue.notes,
-      description: issue.description
+      description: issue.description,
+      ineligibleReason: issue.ineligible_reason,
+      inActiveReview: issue.in_active_review
     };
   });
 };
@@ -261,7 +265,8 @@ export const formatAddedIssues = (intakeData) => {
         inActiveReview: issue.inActiveReview,
         sourceHigherLevelReview: issue.sourceHigherLevelReview,
         promulgationDate: issue.promulgationDate,
-        timely: issue.timely
+        timely: issue.timely,
+        ineligibleReason: issue.ineligibleReason
       };
     }
 
@@ -276,7 +281,8 @@ export const formatAddedIssues = (intakeData) => {
       referenceId: issue.id,
       text: `${issue.category} - ${issue.description}`,
       date: formatDate(issue.decisionDate),
-      timely: isTimely
+      timely: isTimely,
+      ineligibleReason: issue.ineligibleReason
     };
   });
 };

@@ -74,6 +74,12 @@ class RequestIssue < ApplicationRecord
     review_request_type.try(:constantize).try(:review_title)
   end
 
+  def in_active_review
+    return unless rating_issue_reference_id
+    request_issue = self.class.find_active_by_reference_id(rating_issue_reference_id)
+    request_issue.review_title if request_issue
+  end
+
   def eligible?
     ineligible_reason.nil?
   end
@@ -86,7 +92,9 @@ class RequestIssue < ApplicationRecord
       decision_date: decision_date,
       category: issue_category,
       notes: notes,
-      is_unidentified: is_unidentified
+      is_unidentified: is_unidentified,
+      ineligible_reason: ineligible_reason,
+      in_active_review: in_active_review
     }
   end
 
