@@ -141,11 +141,15 @@ export default class AssignHearings extends React.Component {
   };
 
   appellantName = (hearingDay) => {
-    if (hearingDay.appellantFirstName && hearingDay.appellantLastName) {
-      return `${hearingDay.appellantFirstName} ${hearingDay.appellantLastName} | ${hearingDay.vbmsId}`;
+    let { appellantFirstName, appellantLastName, veteranFirstName, veteranLastName, vbmsId } = hearingDay;
+
+    if (appellantFirstName && appellantLastName) {
+      return `${appellantFirstName} ${appellantLastName} | ${vbmsId}`;
+    } else if (veteranFirstName && veteranLastName) {
+      return `${veteranFirstName} ${veteranLastName} | ${vbmsId}`
     }
 
-    return `${hearingDay.vbmsId}`;
+    return `${vbmsId}`;
 
   };
 
@@ -176,7 +180,7 @@ export default class AssignHearings extends React.Component {
 
   tableScheduledHearingsRows = (hearings) => {
     return _.map(hearings, (hearing) => ({
-      caseDetails: `${hearing.appellantMiFormatted} | ${hearing.vbmsId}`,
+    caseDetails: `${hearing.appellantMiFormatted || hearing.veteranMiFormatted} | ${hearing.vbmsId}`,
       type: renderAppealType({
         caseType: hearing.appealType,
         isAdvancedOnDocket: hearing.aod
