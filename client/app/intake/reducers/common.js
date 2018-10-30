@@ -35,6 +35,18 @@ export const commonReducers = (state, action) => {
     });
   };
 
+  actionsMap[ACTIONS.TOGGLE_UNTIMELY_EXEMPTION_MODAL] = () => {
+    return update(state, {
+      $toggle: ['untimelyExemptionModalVisible'],
+      addIssuesModalVisible: {
+        $set: false
+      },
+      currentIssueAndNotes: {
+        $set: action.payload.currentIssueAndNotes
+      }
+    });
+  };
+
   actionsMap[ACTIONS.ADD_ISSUE] = () => {
     let listOfIssues = state.addedIssues ? state.addedIssues : [];
     let addedIssues = [...listOfIssues, action.payload];

@@ -18,6 +18,11 @@ export const toggleUnidentifiedIssuesModal = () => ({
   type: ACTIONS.TOGGLE_UNIDENTIFIED_ISSUES_MODAL
 });
 
+export const toggleUntimelyExemptionModal = (currentIssueAndNotes={}) => ({
+  type: ACTIONS.TOGGLE_UNTIMELY_EXEMPTION_MODAL,
+  payload: { currentIssueAndNotes }
+});
+
 export const toggleIssueRemoveModal = () => ({
   type: ACTIONS.TOGGLE_ISSUE_REMOVE_MODAL
 });
@@ -50,7 +55,7 @@ export const addRatedIssue = (args) => (dispatch) => {
       timely: currentIssue.timely,
       sourceHigherLevelReview: currentIssue.source_higher_level_review,
       promulgationDate: currentIssue.promulgation_date,
-      profileDate: currentRating.profile_date,
+      profileDate: currentIssue.profile_date,
       notes: args.notes
     }
   });

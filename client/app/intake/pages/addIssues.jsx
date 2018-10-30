@@ -157,10 +157,6 @@ export class AddIssuesPage extends React.Component {
       }
       { intakeData.untimelyExemptionModalVisible && <UntimelyExemptionModal
         intakeData={intakeData}
-        issueId: this.props.referenceId,
-        ratings: this.props.intakeData.ratings,
-        isRated: true,
-        notes: this.props.notes,
         closeHandler={this.props.toggleUntimelyExemptionModal} />
       }
       { intakeData.nonRatedIssueModalVisible && <NonRatedIssueModal

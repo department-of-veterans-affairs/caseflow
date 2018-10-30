@@ -19,11 +19,13 @@ class UntimelyExemptionModal extends React.Component {
   }
 
   onAddIssue = () => {
+    const currentIssue = this.props.intakeData.currentIssueAndNotes.currentIssue;
+    const notes = this.props.intakeData.currentIssueAndNotes.notes;
     this.props.addRatedIssue({
-      issueId: this.props.referenceId,
+      issueId: currentIssue.reference_id,
       ratings: this.props.intakeData.ratings,
       isRated: true,
-      notes: this.props.notes,
+      notes: notes,
       untimelyExemption: this.state.untimelyExemption,
       untimelyExemptionNotes: this.state.untimelyExemptionNotes
     });
@@ -38,7 +40,7 @@ class UntimelyExemptionModal extends React.Component {
 
   untimelyExemptionNotesOnChange = (value) => {
     this.setState({
-      notes: value
+      untimelyExemptionNotes: value
     });
   }
 
@@ -48,7 +50,10 @@ class UntimelyExemptionModal extends React.Component {
       closeHandler
     } = this.props;
 
+    console.log(intakeData);
+
     const issueNumber = (intakeData.addedIssues || []).length + 1;
+    const issue = intakeData.currentIssueAndNotes.currentIssue;
 
     return <div className="intake-add-issues">
       <Modal
@@ -76,7 +81,7 @@ class UntimelyExemptionModal extends React.Component {
           vertical
           options={BOOLEAN_RADIO_OPTIONS}
           onChange={this.radioOnChange}
-          value={untimelyExemption === null ? null : untimelyExemption.toString()}
+          value={this.state.untimelyExemption === null ? null : this.state.untimelyExemption.toString()}
         />
         <TextField
           name="Notes"
