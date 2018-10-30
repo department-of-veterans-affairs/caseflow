@@ -55,7 +55,7 @@ describe ScheduleHearingTask do
     end
   end
 
-  describe "Add a schedule hearing task with a business payload", focus: true do
+  describe "Add a schedule hearing task with a business payload" do
     let(:root_task) { FactoryBot.create(:root_task, appeal_type: "LegacyAppeal", appeal: appeal) }
     let(:params) do
       {
