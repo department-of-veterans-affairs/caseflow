@@ -2,13 +2,8 @@ require "rails_helper"
 
 describe Rating do
   before do
-    @previous_time_zone = Time.zone
     Time.zone = "UTC"
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
-  end
-
-  after do
-    Time.zone = @previous_time_zone
   end
 
   let(:participant_id) { 1234 }
