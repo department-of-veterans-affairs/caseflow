@@ -74,6 +74,6 @@ class RatingIssue < ApplicationRecord
 
   def fetch_source_request_issue
     return if contention_reference_id.nil?
-    self.source_request_issue ||= RequestIssue.find_by(contention_reference_id: contention_reference_id)
+    self.source_request_issue ||= RequestIssue.unscoped.find_by(contention_reference_id: contention_reference_id)
   end
 end
