@@ -87,7 +87,7 @@ export type Task = {
     lastName: string,
   },
   availableActions: Array<{ label?: string, value: string, data: ?Object }>,
-  taskBusinessPayloads: Array<{description: string, values: Array<string>}>,
+  taskBusinessPayloads: Array<{description: string, values: Array<Object>}>,
 };
 
 export type Tasks = { [string]: Task };

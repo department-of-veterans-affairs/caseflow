@@ -90,8 +90,8 @@ export type QueueState = {|
 |};
 
 export type CommonComponentState = {|
-  regionalOffices: Object,
-  selectedRegionalOffice: string,
+  regionalOffices: Array<Object>,
+  selectedRegionalOffice: { label: string, value: string },
 |};
 
 export type State = {

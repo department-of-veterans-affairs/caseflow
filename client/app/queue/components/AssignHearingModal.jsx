@@ -46,7 +46,7 @@ type Params = {|
 type Props = Params & {|
   // From state
   savePending: boolean,
-  selectedRegionalOffice: string,
+  selectedRegionalOffice: Object,
   history: Object,
   // Action creators
   showErrorMessage: typeof showErrorMessage,
@@ -141,7 +141,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
     const getDetail = () => {
       return <p>To assign another veteran please use the "Assign Hearings" link below.
-      You can also use the hearings section below to view the hearing in new tab.<br/><br/>
+      You can also use the hearings section below to view the hearing in new tab.<br /><br />
         <Link href="/hearings/schedule/assign">Back to Assign Hearings</Link></p>;
     };
 
@@ -154,12 +154,14 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
         const preparedTasks = prepareTasksForStore(response.tasks.data);
 
         // Review with team to see why this is failing.
-        //this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.uniqueId]);
+        this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.uniqueId]);
         this.props.history.goBack();
       });
   };
 
   render = () => {
+    if (!this.props.task) return null;
+
     const hearingDateStr = formatDate(this.props.task.taskBusinessPayloads[0].values[4]);
     const timeStr = getTime(this.props.task.taskBusinessPayloads[0].values[4]);
 
