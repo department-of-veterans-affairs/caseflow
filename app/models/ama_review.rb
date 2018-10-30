@@ -103,4 +103,8 @@ class AmaReview < ApplicationRecord
     validate_receipt_date_not_before_ama
     validate_receipt_date_not_in_future
   end
+
+  def legacy_opt_in_enabled?
+    FeatureToggle.enabled?(:intake_legacy_opt_in)
+  end
 end

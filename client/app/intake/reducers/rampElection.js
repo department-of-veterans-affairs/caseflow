@@ -1,7 +1,7 @@
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getOptionSelectedError, getPageError, getReceiptDateError } from '../util';
+import { getBlankOptionError, getPageError, getReceiptDateError } from '../util';
 import _ from 'lodash';
 
 const formatAppeals = (appeals) => {
@@ -139,7 +139,7 @@ export const rampElectionReducer = (state = mapDataToInitialRampElection(), acti
   case ACTIONS.SUBMIT_REVIEW_FAIL:
     return update(state, {
       optionSelectedError: {
-        $set: getOptionSelectedError(action.payload.responseErrorCodes)
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'option_selected')
       },
       receiptDateError: {
         $set: getReceiptDateError(action.payload.responseErrorCodes, state)
