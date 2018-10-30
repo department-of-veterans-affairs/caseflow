@@ -243,6 +243,7 @@ RSpec.configure do |config|
 
     read_csv(VACOLS::Vftypes, date_shift)
     read_csv(VACOLS::Issref, date_shift)
+    read_csv(VACOLS::Actcode, date_shift)
 
     Rails.cache.clear
   end

@@ -45,12 +45,14 @@ describe HearingRepository do
   context ".hearings_for" do
     subject { HearingRepository.hearings_for(records) }
 
+    let!(:case_hearing) { create(:case_hearing) }
+
     let(:record1) do
       OpenStruct.new(
         hearing_type: "T",
         master_record_type: nil,
         bfregoff: "RO36",
-        hearing_pkseq: "1234",
+        hearing_pkseq: case_hearing.hearing_pkseq,
         folder_nr: "5678",
         hearing_date: Time.zone.now
       )
@@ -77,7 +79,7 @@ describe HearingRepository do
 
     it "should create hearing records" do
       expect(subject.size).to eq 3
-      expect(subject.first.vacols_id).to eq "1234"
+      expect(subject.first.vacols_id).to eq case_hearing.hearing_pkseq.to_s
       expect(subject.first.master_record).to eq false
       expect(subject.second.master_record).to eq true
       expect(subject.third.master_record).to eq true
