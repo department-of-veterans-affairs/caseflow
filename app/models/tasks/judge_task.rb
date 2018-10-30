@@ -26,7 +26,7 @@ class JudgeTask < Task
   def self.create_from_params(params, user)
     new_task = super(params, user)
 
-    parent = Task.find(params[:parent_id])
+    parent = Task.find(params[:parent_id]) if params[:parent_id]
     if parent && parent.type == QualityReviewTask.name
       parent.update!(status: :on_hold)
     end

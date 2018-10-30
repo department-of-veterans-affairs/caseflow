@@ -10,12 +10,9 @@ class ColocatedTask < Task
 
   class << self
     # Override so that each ColocatedTask for an appeal gets assigned to the same colocated staffer.
-    # rubocop:disable Lint/UselessAssignment
     def create_many_from_params(params_array, _)
-      params_array.each { |params| params = modify_params(params) }
-      create(params_array)
+      create(params_array.map { |p| modify_params(p) })
     end
-    # rubocop:enable Lint/UselessAssignment
 
     def create(tasks)
       ActiveRecord::Base.multi_transaction do
