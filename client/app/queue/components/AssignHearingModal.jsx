@@ -56,7 +56,7 @@ type Props = Params & {|
   resetSuccessMessages: typeof resetSuccessMessages,
   resetSaveState: typeof resetSaveState,
   onRegionalOfficeChange: typeof onRegionalOfficeChange,
-  requestPatch: typeof requestPatch
+  requestPatch: typeof requestPatch,
   setTaskAttrs: typeof setTaskAttrs
 |};
 
