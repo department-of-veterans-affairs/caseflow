@@ -12,7 +12,6 @@ import {
   requestPatch
 } from '../uiReducer/uiActions';
 import { onRegionalOfficeChange } from '../../components/common/actions';
-import COPY from '../../../COPY.json';
 import { fullWidth } from '../constants';
 import editModalBase from './EditModalBase';
 import { getTime, formatDate, formatDateStringForApi } from '../../util/DateUtil';
