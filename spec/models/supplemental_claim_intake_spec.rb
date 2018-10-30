@@ -1,12 +1,14 @@
 describe SupplementalClaimIntake do
   before do
     FeatureToggle.enable!(:test_facols)
+    @previous_time_zone = Time.zone
     Time.zone = "Eastern Time (US & Canada)"
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
 
   after do
     FeatureToggle.disable!(:test_facols)
+    Time.zone = @previous_time_zone
   end
 
   let(:veteran_file_number) { "64205555" }
