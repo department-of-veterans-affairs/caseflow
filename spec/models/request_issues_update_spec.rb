@@ -3,7 +3,6 @@ require "rails_helper"
 describe RequestIssuesUpdate do
   before do
     FeatureToggle.enable!(:test_facols)
-    @previous_time_zone = Time.zone
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 20))
 
@@ -12,7 +11,6 @@ describe RequestIssuesUpdate do
 
   after do
     FeatureToggle.disable!(:test_facols)
-    Time.zone = @previous_time_zone
   end
 
   # TODO: make it simpler to set up a completed claim review, with end product data
