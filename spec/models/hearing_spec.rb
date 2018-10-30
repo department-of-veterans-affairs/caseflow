@@ -93,8 +93,7 @@ describe Hearing do
     end
     let!(:appeal2) do
       create(:legacy_appeal, vacols_case:
-        create(:case_with_decision, :status_remand, :disposition_remanded, bfcorlid: "123C")
-      )
+        create(:case_with_decision, :status_remand, :disposition_remanded, bfcorlid: "123C"))
     end
     let!(:appeal3) do
       create(:legacy_appeal, vacols_case:
@@ -105,8 +104,7 @@ describe Hearing do
           :disposition_allowed,
           folder: build(:folder, tioctime: 1.day.ago),
           bfcorlid: "123C"
-        )
-      )
+        ))
     end
     let!(:appeal4) do
       create(:legacy_appeal, vacols_case: create(:case_with_notification_date, bfcorlid: "123C"))
@@ -136,13 +134,11 @@ describe Hearing do
           :case_with_form_9,
           bfcorlid: "12345678",
           case_issues: [create(:case_issue)]
-        )
-      )
+        ))
     end
     let!(:additional_appeal) do
       create(:legacy_appeal, vacols_case:
-        create(:case_with_form_9, bfkey: "other id", bfcorlid: "12345678", case_issues: [create(:case_issue)])
-      )
+        create(:case_with_form_9, bfkey: "other id", bfcorlid: "12345678", case_issues: [create(:case_issue)]))
     end
     let!(:hearing) do
       create(:hearing, appeal: appeal, case_hearing: create(:case_hearing, folder_nr: appeal.vacols_id))
@@ -207,8 +203,7 @@ describe Hearing do
     subject { hearing.current_issue_count }
     let(:appeal1) do
       create(:legacy_appeal, vacols_case:
-        create(:case_with_form_9, bfcorlid: "123C", case_issues: create_list(:case_issue, 2))
-      )
+        create(:case_with_form_9, bfcorlid: "123C", case_issues: create_list(:case_issue, 2)))
     end
     let(:appeal2) { create(:legacy_appeal, vacols_case: create(:case_with_form_9, bfcorlid: "123C")) }
     let(:hearing) { create(:hearing, appeal: appeal1) }
@@ -268,7 +263,7 @@ describe Hearing do
   context "#update" do
     subject { hearing.update(hearing_hash) }
     let(:hearing) { create(:hearing) }
-    
+
     context "when Vacols does not need an update" do
       let(:hearing_hash) do
         {
