@@ -1,5 +1,4 @@
 class ScheduleHearingTask < GenericTask
-
   class << self
     def create_from_params(params, current_user)
       root_task = RootTask.find_by(appeal_id: params[:appeal].id)
@@ -40,24 +39,28 @@ class ScheduleHearingTask < GenericTask
     hearing_type = task_business_payloads[0].values[3]
     hearing = VACOLS::CaseHearing.find(hearing_pkseq)
 
-    if (hearing_type === 'Central') then
-      HearingRepository.update_vacols_hearing!(hearing, {folder_nr: appeal.vacols_id})
+    if hearing_type == "Central"
+      HearingRepository.update_vacols_hearing!(hearing, folder_nr: appeal.vacols_id)
     else
       hearing_hash = to_hash(hearing)
-      hearing_hash.delete(:hearing_pkseq)
-      hearing_hash[:vdkey] = hearing_pkseq.to_s
-      hearing_hash[:hearing_type] = "V"
       hearing_hash[:folder_nr] = appeal.vacols_id
-      #hearing date should be from payload.
-      hearing_hash[:hearing_date] = hearing_hash[:hearing_date].to_s
+      # hearing date should be from payload.
+      hearing_hash[:hearing_date] = task_business_payloads[0].values[4].to_s
       Rails.logger.info("OARVT hearing_hash #{hearing_hash} .")
-      VACOLS::CaseHearing.create_child_hearing!(hearing_hash)
+      HearingRepository.create_vacols_child_hearing(hearing_hash)
     end
 
-    # Location 36 for Video.
-    AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:awaiting_hearing])
+    AppealRepository.update_location!(appeal, location_based_on_hearing_type(hearing_type))
 
     super
+  end
+
+  def location_based_on_hearing_type(hearing_type)
+    if hearing_type == "Central"
+      LegacyAppeal::LOCATION_CODES[:awaiting_co_hearing]
+    else
+      LegacyAppeal::LOCATION_CODES[:awaiting_video_hearing]
+    end
   end
 
   def available_actions(_user)

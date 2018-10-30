@@ -11,7 +11,7 @@ import {
   onSelectedHearingDayChange,
   onReceiveVeteransReadyForHearing
 } from '../actions';
-import { onRegionalOfficeChange } from '../../components/common/actions'
+import { onRegionalOfficeChange } from '../../components/common/actions';
 import { onReceiveTasks } from '../../queue/QueueActions';
 import { setUserCssId } from '../../queue/uiReducer/uiActions';
 import AssignHearings from '../components/AssignHearings';

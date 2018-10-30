@@ -8,9 +8,10 @@ import {
   resetErrorMessages,
   showErrorMessage,
   showSuccessMessage,
-  resetSuccessMessages
+  resetSuccessMessages,
+  requestPatch
 } from '../uiReducer/uiActions';
-import { onRegionalOfficeChange } from "../../components/common/actions";
+import { onRegionalOfficeChange } from '../../components/common/actions';
 import COPY from '../../../COPY.json';
 import { fullWidth } from '../constants';
 import editModalBase from './EditModalBase';
@@ -20,10 +21,10 @@ import type {
   State
 } from '../types/state';
 
-import {withRouter} from "react-router-dom";
-import RadioField from "../../components/RadioField";
-import Button from "../../components/Button";
-import InlineForm from "../../components/InlineForm";
+import { withRouter } from 'react-router-dom';
+import RadioField from '../../components/RadioField';
+import Button from '../../components/Button';
+import InlineForm from '../../components/InlineForm';
 import RoSelectorDropdown from '../../components/RoSelectorDropdown';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import {
@@ -32,28 +33,39 @@ import {
   appealWithDetailSelector
 } from '../selectors';
 import { setTaskAttrs } from '../QueueActions';
-import {
-  requestPatch
-} from '../uiReducer/uiActions';
-import {prepareTasksForStore} from "../utils";
-import DateSelector from "../../components/DateSelector";
-import _ from 'lodash'
+import { prepareTasksForStore } from '../utils';
+import DateSelector from '../../components/DateSelector';
+import _ from 'lodash';
+import type { Appeal, Task } from '../types/models';
 
 type Params = {|
-  isModal?: boolean
+  task: Task,
+  appeal: Appeal,
+  appealId: string,
 |};
 
 type Props = Params & {|
   // From state
   savePending: boolean,
+  selectedRegionalOffice: string,
+  history: Object,
   // Action creators
   showErrorMessage: typeof showErrorMessage,
   resetErrorMessages: typeof resetErrorMessages,
   showSuccessMessage: typeof showSuccessMessage,
   resetSuccessMessages: typeof resetSuccessMessages,
-  setSavePending: typeof setSavePending,
-  resetSaveState: typeof resetSaveState
+  resetSaveState: typeof resetSaveState,
+  onRegionalOfficeChange: typeof onRegionalOfficeChange,
+  requestPatch: typeof requestPatch
+  setTaskAttrs: typeof setTaskAttrs
 |};
+
+type LocalState = {|
+  selectedDate: '',
+  selectedTime: string,
+  roEdit: boolean,
+  dateEdit: boolean
+|}
 
 const buttonLinksStyling = css({
   marginRight: '30px',
@@ -70,7 +82,7 @@ const centralOfficeStaticEntry = [{
   value: 'C'
 }];
 
-class AssignHearingModal extends React.PureComponent<Props> {
+class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   constructor(props) {
     super(props);
 
@@ -79,7 +91,7 @@ class AssignHearingModal extends React.PureComponent<Props> {
       selectedTime: '',
       roEdit: false,
       dateEdit: false
-    }
+    };
   }
 
   componentWillMount = () => {
@@ -87,13 +99,14 @@ class AssignHearingModal extends React.PureComponent<Props> {
   };
 
   onROClick = () => {
-    this.setState({roEdit: true});
+    this.setState({ roEdit: true });
   };
 
   onDateClick = () => {
-    this.setState({dateEdit: true});
+    this.setState({ dateEdit: true });
     const formattedDate = formatDate(this.props.task.business_payloads[0].values[4]);
-    this.setState({selectedDate: formatDateStringForApi(formattedDate)})
+
+    this.setState({ selectedDate: formatDateStringForApi(formattedDate) });
   };
 
   submit = () => {
@@ -111,22 +124,26 @@ class AssignHearingModal extends React.PureComponent<Props> {
 
     const hearingType = this.props.task.business_payloads[0].values[3] === 'Central' ? 'CO' : 'Video';
     const hearingDateStr = formatDate(this.props.task.business_payloads[0].values[4]);
-    const title = `You have successfully assigned ${appeal.veteranFullName} to a ${hearingType} hearing on ${hearingDateStr}.`;
+    const title = `You have successfully assigned ${appeal.veteranFullName} to a ${hearingType} hearing ` +
+                  `on ${hearingDateStr}.`;
 
-    const getDetail = () => {return <p>To assign another veteran please use the "Assign Hearings" link below.
-      You can also use the hearings section below to view the hearing in new tab.<br/>
-        <Link href={'/hearings/schedule/assign'}>Back to Assign Hearings</Link></p>};
+    const getDetail = () => {
+      return <p>To assign another veteran please use the "Assign Hearings" link below.
+      You can also use the hearings section below to view the hearing in new tab.<br />
+        <Link href="/hearings/schedule/assign">Back to Assign Hearings</Link></p>;
+    };
 
-    const successMsg = {title: title, detail: getDetail()};
+    const successMsg = { title,
+      detail: getDetail() };
 
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
-    then((resp) => {
-      const response = JSON.parse(resp.text);
-      const preparedTasks = prepareTasksForStore(response.tasks.data);
+      then((resp) => {
+        const response = JSON.parse(resp.text);
+        const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-      this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.uniqueId]);
-      this.props.history.goBack();
-    });
+        this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.uniqueId]);
+        this.props.history.goBack();
+      });
   };
 
   render = () => {
@@ -134,57 +151,62 @@ class AssignHearingModal extends React.PureComponent<Props> {
     const timeStr = getTime(this.props.task.business_payloads[0].values[4]);
 
     const timeOptions = this.props.task.business_payloads[0].values[3] === 'Video' ?
-      [{displayText: '8:30 am', value: '8:30 am ET'}, {displayText: '12:30 pm', value: '12:30 pm ET'}]
-      : [{displayText: '9:00 am', value: '9:00 am ET'}, {displayText: '1:00 pm', value: '1:00 pm ET'}];
+      [{ displayText: '8:30 am',
+        value: '8:30 am ET' }, { displayText: '12:30 pm',
+        value: '12:30 pm ET' }] :
+      [{ displayText: '9:00 am',
+        value: '9:00 am ET' }, { displayText: '1:00 pm',
+        value: '1:00 pm ET' }];
     const selectedTime = _.find(timeOptions, (option) => option.value === timeStr);
-    if (this.state.selectedTime === '') {
-      this.setState({selectedTime: selectedTime.value});
+
+    if (selectedTime && this.state.selectedTime === '') {
+      this.setState({ selectedTime: selectedTime.value });
     }
 
     return <React.Fragment>
-        <div {...fullWidth} {...css({ marginBottom: '0' })} >
-        <b {...titleStyling} >{'Regional Office'}</b>
-          {this.state.roEdit &&
+      <div {...fullWidth} {...css({ marginBottom: '0' })} >
+        <b {...titleStyling} >Regional Office</b>
+        {this.state.roEdit &&
           <RoSelectorDropdown
             onChange={this.props.onRegionalOfficeChange}
             value={this.props.selectedRegionalOffice}
             staticOptions={centralOfficeStaticEntry} />
-          }
-          {!this.state.roEdit &&
+        }
+        {!this.state.roEdit &&
               <InlineForm>
-              <p {...buttonLinksStyling}> {this.props.task.business_payloads[0].values[1]} </p>
-              <Button
-                name={'Change'}
-                linkStyling={true}
-                onClick={this.onROClick} />
+                <p {...buttonLinksStyling}> {this.props.task.business_payloads[0].values[1]} </p>
+                <Button
+                  name="Change"
+                  linkStyling
+                  onClick={this.onROClick} />
               </InlineForm>
-          }
-          <b {...titleStyling} >{'Date of hearing'}</b>
-          {this.state.dateEdit &&
+        }
+        <b {...titleStyling} >Date of hearing</b>
+        {this.state.dateEdit &&
           <DateSelector
-            name={'hearingDate'}
+            name="hearingDate"
             label={false}
             value={this.state.selectedDate}
-            onChange={(selectedDate) => option && this.setState({selectedDate: selectedDate})}
+            onChange={(option) => option && this.setState({ selectedDate: option })}
             type="date"
           />
-          }
-          {!this.state.dateEdit &&
+        }
+        {!this.state.dateEdit &&
           <InlineForm>
             <p {...buttonLinksStyling}>{hearingDateStr}</p>
             <Button
-              name={'Change'}
-              linkStyling={true}
+              name="Change"
+              linkStyling
               onClick={this.onDateClick} />
           </InlineForm>
-          }
+        }
         <RadioField
-          name={'time'}
-          label={'Time'}
-          strongLabel={true}
+          name="time"
+          label="Time"
+          strongLabel
           options={timeOptions}
-          onChange={(option) => option && this.setState({selectedTime: option})}
-          value={this.state.selectedTime}/>
+          onChange={(option) => option && this.setState({ selectedTime: option })}
+          value={this.state.selectedTime} />
       </div>
     </React.Fragment>;
   }
@@ -209,16 +231,10 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onRegionalOfficeChange
 }, dispatch);
 
-const propsToText = (props) => {
-  return {
-    title: 'Assign Hearing',
-    button: 'Assign'
-  };
-};
-
 export default (withRouter(
   connect(mapStateToProps, mapDispatchToProps)(editModalBase(
-    AssignHearingModal, { propsToText }
-    ))
+    AssignHearingModal, { title: 'Assign Hearing',
+      button: 'Assign' }
+  ))
 ): React.ComponentType<Params>);
 

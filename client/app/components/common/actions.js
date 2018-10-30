@@ -1,4 +1,4 @@
-import {ACTIONS} from "./actionTypes";
+import { ACTIONS } from './actionTypes';
 
 export const onReceiveRegionalOffices = (regionalOffices) => ({
   type: ACTIONS.RECEIVE_REGIONAL_OFFICES,

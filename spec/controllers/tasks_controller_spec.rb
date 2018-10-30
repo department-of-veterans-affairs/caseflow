@@ -393,11 +393,11 @@ RSpec.describe TasksController, type: :controller do
 
             payloads = response_body.first["attributes"]["task_business_payloads"]
             expect(payloads.size).to eq 1
-            expect(payloads[0]["description"]).to eq('test')
+            expect(payloads[0]["description"]).to eq("test")
             expect(payloads[0]["values"].size).to eq 3
-            expect(payloads[0]["values"][0]).to eq('RO17')
-            expect(payloads[0]["values"][1]).to eq('2018-10-25')
-            expect(payloads[0]["values"][2]).to eq('8:00')
+            expect(payloads[0]["values"][0]).to eq("RO17")
+            expect(payloads[0]["values"][1]).to eq("2018-10-25")
+            expect(payloads[0]["values"][2]).to eq("8:00")
           end
         end
       end

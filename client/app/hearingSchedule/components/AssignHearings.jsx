@@ -13,7 +13,7 @@ import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-import { prepareTasksForStore, renderAppealType } from '../../queue/utils';
+import { renderAppealType } from '../../queue/utils';
 import StatusMessage from '../../components/StatusMessage';
 
 const centralOfficeStaticEntry = [{
@@ -64,7 +64,7 @@ export default class AssignHearings extends React.Component {
             assigned_to_type: 'User',
             assigned_to_id: this.props.userId,
             business_payloads: {
-              description: "test",
+              description: 'test',
               values: [
                 this.props.selectedRegionalOffice.value,
                 this.props.selectedRegionalOffice.label,
@@ -78,12 +78,7 @@ export default class AssignHearings extends React.Component {
       }
     };
 
-    ApiUtil.post('/tasks', payload).
-      then((resp) => {
-        const response = JSON.parse(resp.text);
-        const preparedTasks = prepareTasksForStore(response.tasks.data);
-        const taskUniqueId = response.tasks.data[0].id;
-      });
+    ApiUtil.post('/tasks', payload);
   };
 
   roomInfo = (hearingDay) => {

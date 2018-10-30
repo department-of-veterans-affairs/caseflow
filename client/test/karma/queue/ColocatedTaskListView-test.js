@@ -78,7 +78,9 @@ describe('ColocatedTaskListView', () => {
     placedOnHoldAt: null,
     onHoldDuration: null,
     decisionPreparedBy: null,
-    availableActions: []
+    availableActions: [],
+    business_payloads: [{ description: 'Test',
+      values: ['businessDataValue1', 'businessDataValue2'] }]
   });
 
   const appealTemplate: BasicAppeal = {

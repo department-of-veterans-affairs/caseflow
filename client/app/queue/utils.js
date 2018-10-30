@@ -157,7 +157,8 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       previousTaskAssignedOn: task.attributes.previous_task.assigned_on,
       status: task.attributes.status,
       decisionPreparedBy: null,
-      availableActions: task.attributes.available_actions
+      availableActions: task.attributes.available_actions,
+      business_payloads: task.attributes.task_business_payloads
     };
   });
 
