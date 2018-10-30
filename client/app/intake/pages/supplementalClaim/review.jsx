@@ -4,8 +4,15 @@ import { bindActionCreators } from 'redux';
 import DateSelector from '../../../components/DateSelector';
 import { Redirect } from 'react-router-dom';
 import BenefitType from '../../components/BenefitType';
+import LegacyOptInApproved from '../../components/LegacyOptInApproved';
 import SelectClaimant from '../../components/SelectClaimant';
-import { setBenefitType, setClaimantNotVeteran, setClaimant, setPayeeCode } from '../../actions/ama';
+import {
+  setBenefitType,
+  setClaimantNotVeteran,
+  setClaimant,
+  setPayeeCode,
+  setLegacyOptInApproved
+} from '../../actions/ama';
 import { setReceiptDate } from '../../actions/intake';
 import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
@@ -20,7 +27,10 @@ class Review extends React.PureComponent {
       receiptDateError,
       benefitType,
       benefitTypeError,
-      reviewIntakeError
+      legacyOptInApproved,
+      legacyOptInApprovedError,
+      reviewIntakeError,
+      featureToggles
     } = this.props;
 
     switch (supplementalClaimStatus) {
@@ -30,6 +40,8 @@ class Review extends React.PureComponent {
       return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }
+
+    const legacyOptInEnabled = featureToggles.legacyOptInEnabled;
 
     return <div>
       <h1>Review { veteranName }'s { FORM_TYPES.SUPPLEMENTAL_CLAIM.name }</h1>
@@ -53,6 +65,11 @@ class Review extends React.PureComponent {
 
       <SelectClaimantConnected />
 
+      { legacyOptInEnabled && <LegacyOptInApproved
+        value={legacyOptInApproved === null ? null : legacyOptInApproved.toString()}
+        onChange={this.props.setLegacyOptInApproved}
+        errorMessage={legacyOptInApprovedError}
+      /> }
     </div>;
   }
 }
@@ -79,10 +96,13 @@ export default connect(
     receiptDateError: state.supplementalClaim.receiptDateError,
     benefitType: state.supplementalClaim.benefitType,
     benefitTypeError: state.supplementalClaim.benefitTypeError,
+    legacyOptInApproved: state.supplementalClaim.legacyOptInApproved,
+    legacyOptInApprovedError: state.supplementalClaim.legacyOptInApprovedError,
     reviewIntakeError: state.supplementalClaim.requestStatus.reviewIntakeError
   }),
   (dispatch) => bindActionCreators({
     setReceiptDate,
-    setBenefitType
+    setBenefitType,
+    setLegacyOptInApproved
   }, dispatch)
 )(Review);
