@@ -94,7 +94,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   }
 
   componentWillMount = () => {
-    this.props.onRegionalOfficeChange(this.props.task.business_payloads[0].values[0]);
+    this.props.onRegionalOfficeChange(this.props.task.taskBusinessPayloads[0].values[0]);
   };
 
   onROClick = () => {
@@ -103,12 +103,15 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   onDateClick = () => {
     this.setState({ dateEdit: true });
-    const formattedDate = formatDate(this.props.task.business_payloads[0].values[4]);
+    const formattedDate = formatDate(this.props.task.taskBusinessPayloads[0].values[4]);
 
     this.setState({ selectedDate: formatDateStringForApi(formattedDate) });
   };
 
   submit = () => {
+
+    const newDateTime = new Date(`${this.state.selectedDate} ${this.state.selectedTime}`);
+
     const {
       task,
       appeal
@@ -116,19 +119,29 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     const payload = {
       data: {
         task: {
-          status: 'completed'
+          status: 'completed',
+          business_payloads: {
+            description: 'Update',
+            values: [
+              this.props.selectedRegionalOffice.value,
+              this.props.selectedRegionalOffice.label,
+              this.props.task.taskBusinessPayloads[0].values[2],
+              this.props.task.taskBusinessPayloads[0].values[3],
+              newDateTime
+            ]
+          }
         }
       }
     };
 
-    const hearingType = this.props.task.business_payloads[0].values[3] === 'Central' ? 'CO' : 'Video';
-    const hearingDateStr = formatDate(this.props.task.business_payloads[0].values[4]);
+    const hearingType = this.props.task.taskBusinessPayloads[0].values[3] === 'Central' ? 'CO' : 'Video';
+    const hearingDateStr = formatDate(this.props.task.taskBusinessPayloads[0].values[4]);
     const title = `You have successfully assigned ${appeal.veteranFullName} to a ${hearingType} hearing ` +
                   `on ${hearingDateStr}.`;
 
     const getDetail = () => {
       return <p>To assign another veteran please use the "Assign Hearings" link below.
-      You can also use the hearings section below to view the hearing in new tab.<br />
+      You can also use the hearings section below to view the hearing in new tab.<br/><br/>
         <Link href="/hearings/schedule/assign">Back to Assign Hearings</Link></p>;
     };
 
@@ -140,16 +153,17 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
         const response = JSON.parse(resp.text);
         const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.uniqueId]);
+        // Review with team to see why this is failing.
+        //this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.uniqueId]);
         this.props.history.goBack();
       });
   };
 
   render = () => {
-    const hearingDateStr = formatDate(this.props.task.business_payloads[0].values[4]);
-    const timeStr = getTime(this.props.task.business_payloads[0].values[4]);
+    const hearingDateStr = formatDate(this.props.task.taskBusinessPayloads[0].values[4]);
+    const timeStr = getTime(this.props.task.taskBusinessPayloads[0].values[4]);
 
-    const timeOptions = this.props.task.business_payloads[0].values[3] === 'Video' ?
+    const timeOptions = this.props.task.taskBusinessPayloads[0].values[3] === 'Video' ?
       [{ displayText: '8:30 am',
         value: '8:30 am ET' }, { displayText: '12:30 pm',
         value: '12:30 pm ET' }] :
@@ -173,7 +187,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
         }
         {!this.state.roEdit &&
               <InlineForm>
-                <p {...buttonLinksStyling}> {this.props.task.business_payloads[0].values[1]} </p>
+                <p {...buttonLinksStyling}> {this.props.task.taskBusinessPayloads[0].values[1]} </p>
                 <Button
                   name="Change"
                   linkStyling
@@ -232,8 +246,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 
 export default (withRouter(
   connect(mapStateToProps, mapDispatchToProps)(editModalBase(
-    AssignHearingModal, { title: 'Assign Hearing',
-      button: 'Assign' }
+    AssignHearingModal, { title: 'Schedule Veteran',
+      button: 'Schedule' }
   ))
 ): React.ComponentType<Params>);
 

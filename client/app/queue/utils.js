@@ -88,7 +88,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       instructions: task.attributes.instructions,
       decisionPreparedBy,
       availableActions: task.attributes.available_actions,
-      business_payloads: task.attributes.task_business_payloads
+      taskBusinessPayloads: task.attributes.task_business_payloads
     };
 
     return acc;
@@ -158,7 +158,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       status: task.attributes.status,
       decisionPreparedBy: null,
       availableActions: task.attributes.available_actions,
-      business_payloads: task.attributes.task_business_payloads
+      taskBusinessPayloads: task.attributes.task_business_payloads
     };
   });
 

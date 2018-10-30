@@ -341,7 +341,7 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedCompleteTaskModal} />
           <PageRoute
             exact
-            path={`/queue/appeals/:appealId/${TASK_ACTIONS.ASSIGN_HEARING.value}`}
+            path={`/queue/appeals/:appealId/${TASK_ACTIONS.SCHEDULE_VETERAN.value}`}
             title="Assign Hearing | Caseflow"
             render={this.routedAssignHearingModal} />
           <PageRoute

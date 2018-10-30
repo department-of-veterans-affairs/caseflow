@@ -65,7 +65,7 @@ class ScheduleHearingTask < GenericTask
 
   def available_actions(_user)
     [
-      Constants.TASK_ACTIONS.ASSIGN_HEARING.to_h
+      Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h
     ]
   end
 
