@@ -8,6 +8,7 @@ class SyncIntakeJob < CaseflowJob
     # Set user to system_user to avoid sensitivity errors
     RequestStore.store[:current_user] = User.system_user
 
+    Intake.close_expired_intakes!
     reclosed_appeals = RampClosedAppeal.reclose_all!
     slack_service.send_notification("Intake: Reclosed RAMP VACOLS appeals (count: #{reclosed_appeals.count})")
   end

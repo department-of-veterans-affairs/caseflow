@@ -5,6 +5,7 @@ RSpec.feature "Appeal Intake" do
     FeatureToggle.enable!(:intake)
     # Test that this works when only enabled on the current user
     FeatureToggle.enable!(:intakeAma, users: [current_user.css_id])
+    FeatureToggle.enable!(:intake_legacy_opt_in)
     FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
@@ -13,6 +14,7 @@ RSpec.feature "Appeal Intake" do
 
   after do
     FeatureToggle.disable!(:intakeAma)
+    FeatureToggle.disable!(:intake_legacy_opt_in)
     FeatureToggle.disable!(:test_facols)
   end
 
@@ -114,6 +116,10 @@ RSpec.feature "Appeal Intake" do
       find("label", text: "No", match: :prefer_exact).click
     end
 
+    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
@@ -121,8 +127,8 @@ RSpec.feature "Appeal Intake" do
     visit "/intake/review_request"
 
     expect(find_field("Evidence Submission", visible: false)).to be_checked
-
     expect(find("#different-claimant-option_false", visible: false)).to be_checked
+    expect(find("#legacy-opt-in_false", visible: false)).to be_checked
 
     safe_click "#button-submit-review"
 
@@ -132,6 +138,7 @@ RSpec.feature "Appeal Intake" do
     expect(appeal).to_not be_nil
     expect(appeal.receipt_date).to eq(receipt_date)
     expect(appeal.docket_type).to eq("evidence_submission")
+    expect(appeal.legacy_opt_in_approved).to eq(false)
 
     expect(page).to have_content("Identify issues on")
 
@@ -209,6 +216,10 @@ RSpec.feature "Appeal Intake" do
       find("label", text: "No", match: :prefer_exact).click
     end
 
+    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
     ## Validate error message when complete intake fails
     expect_any_instance_of(AppealIntake).to receive(:review!).and_raise("A random error. Oh no!")
 
@@ -222,7 +233,8 @@ RSpec.feature "Appeal Intake" do
     appeal = Appeal.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
-      docket_type: "evidence_submission"
+      docket_type: "evidence_submission",
+      legacy_opt_in_approved: false
     )
 
     intake = AppealIntake.create!(

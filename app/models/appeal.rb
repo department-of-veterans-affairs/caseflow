@@ -8,7 +8,10 @@ class Appeal < AmaReview
   has_many :decisions
   has_one :special_issue_list
 
-  validates :receipt_date, :docket_type, presence: { message: "blank" }, on: :intake_review
+  with_options on: :intake_review do
+    validates :receipt_date, :docket_type, presence: { message: "blank" }
+    validates :legacy_opt_in_approved, inclusion: { in: [true, false], message: "blank" }, if: :legacy_opt_in_enabled?
+  end
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
 
@@ -48,6 +51,10 @@ class Appeal < AmaReview
 
   def docket_name
     docket_type
+  end
+
+  def decision_date
+    decisions.last.try(:decision_date)
   end
 
   def hearing_docket?
