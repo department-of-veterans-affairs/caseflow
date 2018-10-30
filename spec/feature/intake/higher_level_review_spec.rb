@@ -502,6 +502,17 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
   end
 
+  scenario "redirects to add_issues with feature flag enabled" do
+    FeatureToggle.enable!(:intake_enable_add_issues_page)
+    start_higher_level_review(veteran_no_ratings)
+    visit "/intake"
+
+    safe_click "#button-submit-review"
+    expect(page).to have_current_path("/intake/add_issues")
+
+    FeatureToggle.disable!(:intake_enable_add_issues_page)
+  end
+
   context "For new Add / Remove Issues page" do
     def check_row(label, text)
       row = find("tr", text: label)

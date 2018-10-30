@@ -5,30 +5,35 @@ export const FORM_TYPES = {
   RAMP_ELECTION: {
     key: 'ramp_election',
     name: INTAKE_FORM_NAMES.ramp_election,
-    category: 'ramp'
+    category: 'ramp',
+    formName: 'rampElection'
   },
   RAMP_REFILING: {
     key: 'ramp_refiling',
     name: INTAKE_FORM_NAMES.ramp_refiling,
-    category: 'ramp'
+    category: 'ramp',
+    formName: 'rampRefiling'
   },
   HIGHER_LEVEL_REVIEW: {
     key: 'higher_level_review',
     name: INTAKE_FORM_NAMES.higher_level_review,
     shortName: INTAKE_FORM_NAMES_SHORT.higher_level_review,
-    category: 'ama'
+    category: 'ama',
+    formName: 'higherLevelReview'
   },
   SUPPLEMENTAL_CLAIM: {
     key: 'supplemental_claim',
     name: INTAKE_FORM_NAMES.supplemental_claim,
     shortName: INTAKE_FORM_NAMES_SHORT.supplemental_claim,
-    category: 'ama'
+    category: 'ama',
+    formName: 'supplementalClaim'
   },
   APPEAL: {
     key: 'appeal',
     name: INTAKE_FORM_NAMES.appeal,
     shortName: INTAKE_FORM_NAMES_SHORT.appeal,
-    category: 'ama'
+    category: 'ama',
+    formName: 'appeal'
   }
 };
 
