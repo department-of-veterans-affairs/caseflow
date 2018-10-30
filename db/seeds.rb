@@ -435,7 +435,7 @@ class SeedDB
     FactoryBot.create(:generic_task, assigned_by: judge, assigned_to: translation_org)
   end
 
-  def create_organizations
+  def create_vsos
     Vso.create(
       name: "American Legion",
       role: "VSO",
@@ -454,12 +454,6 @@ class SeedDB
       url: "paralyzed-veterans-of-america",
       participant_id: "2452383"
     )
-
-    Organization.create!(name: "Translation", url: "translation")
-    BvaDispatch.singleton
-    MailTeam.singleton
-    QualityReview.singleton
-    Bva.create(name: "Board of Veterans' Appeals")
   end
 
   def clean_db
@@ -497,7 +491,7 @@ class SeedDB
     clean_db
     # Annotations and tags don't come from VACOLS, so our seeding should
     # create them in all envs
-    create_organizations
+    create_vsos
     create_annotations
     create_tags
     create_ama_appeals
