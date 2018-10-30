@@ -53,6 +53,13 @@ class Intake < ApplicationRecord
     )
   end
 
+  def self.close_expired_intakes!
+    Intake.expired.each do |intake|
+      intake.complete_with_status!(:expired)
+      intake.cancel_detail!
+    end
+  end
+
   def self.flagged_for_manager_review
     Intake.select("intakes.*, intakes.type as form_type, users.full_name")
       .joins(:user,
@@ -89,7 +96,7 @@ class Intake < ApplicationRecord
     preload_intake_data!
 
     if validate_start
-      close_expired_intakes!
+      self.class.close_expired_intakes!
 
       update_attributes(
         started_at: Time.zone.now,
@@ -219,13 +226,6 @@ class Intake < ApplicationRecord
   end
 
   private
-
-  def close_expired_intakes!
-    Intake.expired.each do |intake|
-      intake.complete_with_status!(:expired)
-      intake.cancel_detail!
-    end
-  end
 
   def file_number_valid?
     return false unless veteran_file_number

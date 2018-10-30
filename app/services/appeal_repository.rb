@@ -37,7 +37,7 @@ class AppealRepository
       VACOLS::Case.where(bfcorlid: vbms_id).includes(:folder, :correspondent, :representatives)
     end
 
-    cases.map { |case_record| build_appeal(case_record) }
+    cases.map { |case_record| build_appeal(case_record, true) }
   end
 
   # rubocop:disable Metrics/MethodLength
