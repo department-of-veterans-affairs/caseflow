@@ -99,7 +99,7 @@ describe RatingIssue do
     end
   end
 
-  context "#in_active_review" do
+  context "#active_review_of_duplicate_issue" do
     before do
       Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
     end
@@ -131,7 +131,7 @@ describe RatingIssue do
       request_issue
       rating_issue = RatingIssue.new(reference_id: reference_id)
 
-      expect(rating_issue.in_active_review).to eq("Supplemental Claim")
+      expect(rating_issue.active_review_of_duplicate_issue).to eq("Supplemental Claim")
     end
 
     context "removed issue" do
@@ -141,7 +141,7 @@ describe RatingIssue do
         request_issue
         rating_issue = RatingIssue.new(reference_id: reference_id)
 
-        expect(rating_issue.in_active_review).to be_nil
+        expect(rating_issue.active_review_of_duplicate_issue).to be_nil
       end
     end
 
@@ -149,14 +149,14 @@ describe RatingIssue do
       request_issue
       rating_issue = RatingIssue.new(reference_id: "something-else")
 
-      expect(rating_issue.in_active_review).to be_nil
+      expect(rating_issue.active_review_of_duplicate_issue).to be_nil
     end
 
     it "returns nil if similar RequestIssue exists for inactive EPE" do
       inactive_request_issue
       rating_issue = RatingIssue.new(reference_id: reference_id)
 
-      expect(rating_issue.in_active_review).to be_nil
+      expect(rating_issue.active_review_of_duplicate_issue).to be_nil
     end
   end
 

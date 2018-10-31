@@ -27,7 +27,7 @@ describe Rating do
       decision_text: "Decision#{num}",
       promulgation_date: promulgation_date,
       contention_reference_id: nil,
-      in_active_review: nil,
+      active_review_of_duplicate_issue: nil,
       source_higher_level_review: nil
     }
   end

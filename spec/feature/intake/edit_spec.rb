@@ -115,7 +115,7 @@ RSpec.feature "Edit issues" do
         )
       end
 
-      let!(:request_issue_in_active_review) do
+      let!(:ri_in_review) do
         RequestIssue.create!(
           rating_issue_reference_id: "def456",
           rating_issue_profile_date: rating.profile_date,
@@ -127,14 +127,15 @@ RSpec.feature "Edit issues" do
         )
       end
 
-      let!(:previous_ri_in_review) do
+      let!(:ri_with_active_previous_review) do
         RequestIssue.create!(
           rating_issue_reference_id: "def456",
           rating_issue_profile_date: rating.profile_date,
           review_request: higher_level_review,
           description: "PTSD denied",
           contention_reference_id: "123",
-          ineligible_reason: :duplicate_of_issue_in_active_review
+          ineligible_reason: :duplicate_of_issue_in_active_review,
+          ineligible_due_to: ri_in_review
         )
       end
 
@@ -150,12 +151,12 @@ RSpec.feature "Edit issues" do
       end
 
       before do
-        another_higher_level_review.create_issues!([request_issue_in_active_review])
+        another_higher_level_review.create_issues!([ri_in_review])
         higher_level_review.create_issues!([
                                              eligible_request_issue,
                                              untimely_request_issue,
-                                             previous_ri_in_review,
-                                             request_issue_with_previous_hlr
+                                             ri_with_active_previous_review,
+                                             ri_with_previous_hlr
                                            ])
         higher_level_review.process_end_product_establishments!
       end
