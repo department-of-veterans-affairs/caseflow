@@ -59,11 +59,18 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
     const { messages } = this.props;
     const noTasks = !_.size(this.props.tasks);
 
-    if (noTasks) {
-      return <StatusMessage>
-        <p>{COPY.NO_CASES_IN_QUEUE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.</p>
-      </StatusMessage>;
-    }
+    const content = noTasks ?
+      <p>{COPY.NO_CASES_IN_QUEUE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.</p> :
+      <TaskTable
+        includeDetailsLink
+        includeType
+        includeDocketNumber
+        includeIssueCount
+        includeDueDate
+        includeReaderLink
+        requireDasRecord
+        tasks={this.props.tasks}
+      />
 
     return <AppSegment filledBackground>
       <div>
@@ -74,16 +81,7 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
         {messages.success && <Alert type="success" title={messages.success.title}>
           {messages.success.detail || COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
         </Alert>}
-        <TaskTable
-          includeDetailsLink
-          includeType
-          includeDocketNumber
-          includeIssueCount
-          includeDueDate
-          includeReaderLink
-          requireDasRecord
-          tasks={this.props.tasks}
-        />
+        {content}
       </div>
     </AppSegment>;
   }
