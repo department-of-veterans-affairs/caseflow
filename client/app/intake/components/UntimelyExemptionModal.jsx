@@ -21,11 +21,12 @@ class UntimelyExemptionModal extends React.Component {
   onAddIssue = () => {
     const currentIssue = this.props.intakeData.currentIssueAndNotes.currentIssue;
     const notes = this.props.intakeData.currentIssueAndNotes.notes;
+
     this.props.addRatedIssue({
       issueId: currentIssue.reference_id,
       ratings: this.props.intakeData.ratings,
       isRated: true,
-      notes: notes,
+      notes,
       untimelyExemption: this.state.untimelyExemption,
       untimelyExemptionNotes: this.state.untimelyExemptionNotes
     });

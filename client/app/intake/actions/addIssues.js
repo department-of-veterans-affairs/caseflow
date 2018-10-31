@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { ACTIONS } from '../constants';
 import { issueById } from '../util/issues';
 
@@ -18,7 +17,7 @@ export const toggleUnidentifiedIssuesModal = () => ({
   type: ACTIONS.TOGGLE_UNIDENTIFIED_ISSUES_MODAL
 });
 
-export const toggleUntimelyExemptionModal = (currentIssueAndNotes={}) => ({
+export const toggleUntimelyExemptionModal = (currentIssueAndNotes = {}) => ({
   type: ACTIONS.TOGGLE_UNTIMELY_EXEMPTION_MODAL,
   payload: { currentIssueAndNotes }
 });
@@ -44,7 +43,7 @@ export const addUnidentifiedIssue = (description, notes) => (dispatch) => {
 };
 
 export const addRatedIssue = (args) => (dispatch) => {
-  const currentIssue = issueById(args.ratings, args.issueId)
+  const currentIssue = issueById(args.ratings, args.issueId);
 
   dispatch({
     type: ACTIONS.ADD_ISSUE,

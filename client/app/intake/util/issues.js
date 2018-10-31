@@ -125,6 +125,7 @@ export const issueById = (ratings, issueId) => {
     ratings,
     (ratingDate) => _.some(ratingDate.issues, { reference_id: issueId })
   )[0];
+
   return currentRating.issues[issueId];
 };
 
