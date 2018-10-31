@@ -77,17 +77,6 @@ class RequestIssue < ApplicationRecord
     review_request_type.try(:constantize).try(:review_title)
   end
 
-  def in_active_review
-    return unless rating_issue_reference_id
-    request_issue = RequestIssue.where(
-      rating_issue_reference_id: rating_issue_reference_id,
-      removed_at: nil,
-      ineligible_reason: nil
-    ).where.not(review_request_id: review_request_id).first
-    return unless request_issue && request_issue.status_active?
-    request_issue.review_title
-  end
-
   def eligible?
     ineligible_reason.nil?
   end
@@ -102,7 +91,7 @@ class RequestIssue < ApplicationRecord
       notes: notes,
       is_unidentified: is_unidentified,
       ineligible_reason: ineligible_reason,
-      in_active_review: in_active_review
+      active_review_of_duplicate_issue: duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
     }
   end
 

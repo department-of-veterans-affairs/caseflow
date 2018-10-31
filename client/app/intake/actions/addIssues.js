@@ -49,7 +49,7 @@ export const addRatedIssue = (args) => (dispatch) => {
     payload: {
       id: args.issueId,
       isRated: args.isRated,
-      inActiveReview: currentIssue.in_active_review,
+      activeReviewOfDuplicateIssue: currentIssue.active_review_of_duplicate_issue,
       timely: currentIssue.timely,
       sourceHigherLevelReview: currentIssue.source_higher_level_review,
       promulgationDate: currentIssue.promulgation_date,

@@ -111,7 +111,7 @@ RSpec.feature "Edit issues" do
           issue_category: "Active Duty Adjustments",
           description: "non-rated description",
           contention_reference_id: "12345",
-          ineligible_reason: 1
+          ineligible_reason: :untimely
         )
       end
 
@@ -134,7 +134,7 @@ RSpec.feature "Edit issues" do
           review_request: higher_level_review,
           description: "PTSD denied",
           contention_reference_id: "123",
-          ineligible_reason: 0
+          ineligible_reason: :duplicate_of_issue_in_active_review
         )
       end
 
@@ -145,7 +145,7 @@ RSpec.feature "Edit issues" do
           review_request: higher_level_review,
           description: "Left knee granted",
           contention_reference_id: "123",
-          ineligible_reason: 2
+          ineligible_reason: :previous_higher_level_review
         )
       end
 
