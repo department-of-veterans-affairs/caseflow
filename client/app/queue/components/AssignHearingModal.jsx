@@ -14,7 +14,7 @@ import {
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import { fullWidth } from '../constants';
 import editModalBase from './EditModalBase';
-import {getTime, formatDate, formatDateStringForApi, formatDateStr} from '../../util/DateUtil';
+import { getTime, formatDate, formatDateStringForApi, formatDateStr } from '../../util/DateUtil';
 
 import type {
   State
@@ -104,23 +104,25 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   onDateClick = () => {
     this.setState({ dateEdit: true });
-    this.setState({ selectedDate: formatDateString (this.props.task.taskBusinessPayloads[0].values.hearing_date) });
+    this.setState({ selectedDate: this.formatDateString(this.props.task.taskBusinessPayloads[0].values.hearing_date) });
   };
 
   formatDateString = (dateToFormat) => {
     const formattedDate = formatDate(dateToFormat);
+
     return formatDateStringForApi(formattedDate);
   };
 
   formatHearingDate = () => {
     const dateParts = this.state.selectedDate.split('-');
-    const year = parseInt(dateParts[0]);
-    const month = parseInt(dateParts[1]) - 1;
-    const day = parseInt(dateParts[2]);
+    const year = parseInt(dateParts[0], 10);
+    const month = parseInt(dateParts[1], 10) - 1;
+    const day = parseInt(dateParts[2], 10);
     const timeParts = this.state.selectedTime.split(':');
-    const hour = parseInt(timeParts[0]);
-    const minute = parseInt(timeParts[1].split(' ')[0]);
+    const hour = parseInt(timeParts[0], 10);
+    const minute = parseInt(timeParts[1].split(' ')[0], 10);
     const hearingDate = new Date(year, month, day, hour, minute);
+
     return hearingDate;
   };
 
@@ -141,10 +143,10 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           business_payloads: {
             description: 'Update Task',
             values: {
-              "regional_office_value": this.getRegionalOffice(this.props.selectedRegionalOffice),
-              "hearing_pkseq": this.props.task.taskBusinessPayloads[0].values.hearing_pkseq,
-              "hearing_type": this.props.task.taskBusinessPayloads[0].values.hearing_type,
-              "hearing_date": this.formatHearingDate()
+              regional_office_value: this.getRegionalOffice(this.props.selectedRegionalOffice),
+              hearing_pkseq: this.props.task.taskBusinessPayloads[0].values.hearing_pkseq,
+              hearing_type: this.props.task.taskBusinessPayloads[0].values.hearing_type,
+              hearing_date: this.formatHearingDate()
             }
           }
         }
@@ -158,9 +160,9 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
                   `on ${hearingDateStr}.`;
 
     const getDetail = () => {
-      return <p>To assign another veteran please use the "Assign Hearings" link below.
+      return <p>To assign another veteran please use the "Schedule Veterans" link below.
       You can also use the hearings section below to view the hearing in new tab.<br /><br />
-        <Link href="/hearings/schedule/assign">Back to Assign Hearings</Link></p>;
+        <Link href="/hearings/schedule/assign">Back to Schedule Veterans</Link></p>;
     };
 
     const successMsg = { title,
@@ -184,10 +186,11 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
     const hearingDateStr = formatDate(this.props.task.taskBusinessPayloads[0].values.hearing_date);
     // In state date is formatted YYY-MM-DD
+
     if (this.state.selectedDate === '') {
       this.setState({
         selectedDate: this.formatDateString(this.props.task.taskBusinessPayloads[0].values.hearing_date)
-      })
+      });
     }
     const timeStr = getTime(this.props.task.taskBusinessPayloads[0].values.hearing_date);
 
