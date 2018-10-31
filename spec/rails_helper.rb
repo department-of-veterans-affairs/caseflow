@@ -243,13 +243,19 @@ RSpec.configure do |config|
 
     read_csv(VACOLS::Vftypes, date_shift)
     read_csv(VACOLS::Issref, date_shift)
+    read_csv(VACOLS::Actcode, date_shift)
 
     Rails.cache.clear
+  end
+
+  config.before(:each) do
+    FeatureToggle.enable!(:test_facols)
   end
 
   config.after(:each) do
     Timecop.return
     Rails.cache.clear
+    FeatureToggle.disable!(:test_facols)
   end
 
   # Allows us to use shorthand FactoryBot methods.
