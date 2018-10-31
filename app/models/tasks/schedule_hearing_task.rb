@@ -33,17 +33,26 @@ class ScheduleHearingTask < GenericTask
     end
   end
 
+  def update_from_params(params, current_user)
+    verify_user_access!(current_user)
+
+    task_payloads = params.delete(:business_payloads)
+    task_business_payloads.update(task_payloads)
+
+    super(params, current_user)
+  end
+
   def mark_as_complete!
     hearing_pkseq = task_business_payloads[0].values["hearing_pkseq"]
     hearing_type = task_business_payloads[0].values["hearing_type"]
     hearing = VACOLS::CaseHearing.find(hearing_pkseq)
-
+    Rails.logger.info("OARVT hearing_hash #{task_business_payloads[0]} .")
     if hearing_type == Hearing::CO_HEARING
       HearingRepository.update_vacols_hearing!(hearing, folder_nr: appeal.vacols_id)
     else
       hearing_hash = to_hash(hearing)
       hearing_hash[:folder_nr] = appeal.vacols_id
-      hearing_hash[:hearing_date] = task_business_payloads[0].values["hearing_date"].to_s
+      hearing_hash[:hearing_date] = task_business_payloads[0].values["hearing_date"]
       HearingRepository.create_vacols_child_hearing(hearing_hash)
     end
 

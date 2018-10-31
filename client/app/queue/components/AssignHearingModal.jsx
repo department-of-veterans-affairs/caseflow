@@ -14,7 +14,7 @@ import {
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import { fullWidth } from '../constants';
 import editModalBase from './EditModalBase';
-import { getTime, formatDate, formatDateStringForApi } from '../../util/DateUtil';
+import {getTime, formatDate, formatDateStringForApi, formatDateStr} from '../../util/DateUtil';
 
 import type {
   State
@@ -69,7 +69,7 @@ type LocalState = {|
 
 const buttonLinksStyling = css({
   marginRight: '30px',
-  width: '100px'
+  width: '150px'
 });
 
 const titleStyling = css({
@@ -104,19 +104,36 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   onDateClick = () => {
     this.setState({ dateEdit: true });
-    const formattedDate = formatDate(this.props.task.taskBusinessPayloads[0].values.hearing_date);
+    this.setState({ selectedDate: formatDateString (this.props.task.taskBusinessPayloads[0].values.hearing_date) });
+  };
 
-    this.setState({ selectedDate: formatDateStringForApi(formattedDate) });
+  formatDateString = (dateToFormat) => {
+    const formattedDate = formatDate(dateToFormat);
+    return formatDateStringForApi(formattedDate);
+  };
+
+  formatHearingDate = () => {
+    const dateParts = this.state.selectedDate.split('-');
+    const year = parseInt(dateParts[0]);
+    const month = parseInt(dateParts[1]) - 1;
+    const day = parseInt(dateParts[2]);
+    const timeParts = this.state.selectedTime.split(':');
+    const hour = parseInt(timeParts[0]);
+    const minute = parseInt(timeParts[1].split(' ')[0]);
+    const hearingDate = new Date(year, month, day, hour, minute);
+    return hearingDate;
+  };
+
+  getRegionalOffice = (regionalOffice) => {
+    return regionalOffice.value ? regionalOffice.value : regionalOffice;
   };
 
   submit = () => {
-
-    const newDateTime = new Date(`${this.state.selectedDate} ${this.state.selectedTime}`);
-
     const {
       task,
       appeal
     } = this.props;
+
     const payload = {
       data: {
         task: {
@@ -124,11 +141,10 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           business_payloads: {
             description: 'Update Task',
             values: {
-              regional_office_value: this.props.selectedRegionalOffice.value,
-              regional_office_label: this.props.selectedRegionalOffice.label,
-              hearing_pkseq: this.props.task.taskBusinessPayloads[0].values.hearing_pkseq,
-              hearing_type: this.props.task.taskBusinessPayloads[0].values.hearing_type,
-              hearing_date: newDateTime
+              "regional_office_value": this.getRegionalOffice(this.props.selectedRegionalOffice),
+              "hearing_pkseq": this.props.task.taskBusinessPayloads[0].values.hearing_pkseq,
+              "hearing_type": this.props.task.taskBusinessPayloads[0].values.hearing_type,
+              "hearing_date": this.formatHearingDate()
             }
           }
         }
@@ -137,7 +153,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
     const hearingType = this.props.task.taskBusinessPayloads[0].values.hearing_type ===
                           CENTRAL_OFFICE_HEARING ? 'CO' : VIDEO_HEARING;
-    const hearingDateStr = formatDate(this.props.task.taskBusinessPayloads[0].values.hearing_date);
+    const hearingDateStr = formatDateStr(this.state.selectedDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
     const title = `You have successfully assigned ${appeal.veteranFullName} to a ${hearingType} hearing ` +
                   `on ${hearingDateStr}.`;
 
@@ -167,6 +183,12 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     }
 
     const hearingDateStr = formatDate(this.props.task.taskBusinessPayloads[0].values.hearing_date);
+    // In state date is formatted YYY-MM-DD
+    if (this.state.selectedDate === '') {
+      this.setState({
+        selectedDate: this.formatDateString(this.props.task.taskBusinessPayloads[0].values.hearing_date)
+      })
+    }
     const timeStr = getTime(this.props.task.taskBusinessPayloads[0].values.hearing_date);
 
     const timeOptions = this.props.task.taskBusinessPayloads[0].values.hearing_type === VIDEO_HEARING ?

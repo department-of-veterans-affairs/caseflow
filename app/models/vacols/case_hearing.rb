@@ -128,8 +128,9 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def create_child_hearing!(hearing_info)
-      attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
-      attrs.except!(nil)
+      # Store time value in UTC to VACOLS
+      hear_date = hearing_info[:hearing_date]
+      hearing_info[:hearing_date] = VacolsHelper.format_datetime_with_utc_timezone(hear_date)
       MetricsService.record("VACOLS: create_hearing!",
                             service: :vacols,
                             name: "create_hearing") do
