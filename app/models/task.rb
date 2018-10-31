@@ -31,9 +31,15 @@ class Task < ApplicationRecord
   # from TASK_ACTIONS that looks something like:
   # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
   def available_actions_unwrapper(user)
+    return [] if no_actions_available(user)
+
     available_actions(user).map do |a|
       { label: a[:label], value: a[:value], data: a[:func] ? send(a[:func]) : nil }
     end
+  end
+
+  def no_actions_available(_user)
+    [Constants.TASK_STATUSES.on_hold, Constants.TASK_STATUSES.completed].include?(status)
   end
 
   def assigned_by_display_name
