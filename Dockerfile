@@ -18,7 +18,6 @@ COPY docker-bin/oracle_libs/* ./
 RUN ln -s libclntsh.so.12.1 libclntsh.so
 
 WORKDIR /caseflow
-COPY Gemfil* /
 
 # Build dependencies
 RUN apt -y update && \
@@ -38,12 +37,9 @@ COPY . .
 RUN bundle install && \
     cd client && \
     yarn install && \
-    yarn run build:production
-
-RUN cd docker-bin && \
-    cp startup.sh ../ && \
-    cd .. && \
-    chmod +x startup.sh
+    yarn run build:production && \
+    chmod +x /caseflow/docker-bin/startup.sh && \
+    rm -rf docker-bin
 
 # Run the app
-CMD ["/bin/bash", "startup.sh"]
+CMD ["/bin/bash", "/caseflow/docker-bin/startup.sh"]

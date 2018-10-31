@@ -37,6 +37,6 @@ cd ../../
 docker build -t caseflow .
 
 echo "  Cleaning Up..."
-rm -rf docker-bin/oracle_libs/
+#rm -rf docker-bin/oracle_libs/
 
 echo "  Building Caseflow Docker App: Completed"

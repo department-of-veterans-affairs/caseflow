@@ -51,16 +51,13 @@ stubbed_vacols:
   timeout: 5000
   database: db/development-vacols.sqlite3
 
-# Docker setup
 development_vacols:
   adapter: oracle_enhanced
   username: VACOLS
   password: VACOLS
-  database: "(DESCRIPTION=
-    (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=VACOLS_DB-development)(PORT=1521)))
-    (RECV_TIMEOUT=120)(SEND_TIMEOUT=5)
-    (CONNECT_DATA=(SERVICE_NAME=BVAP.localdomain))
-  )"
+  host: <%= ENV['DEMO_HOST'] || localhost %>
+  port: <%= ENV['DEMO_PORT'] || 1522 %>
+  database: BVAP.localdomain
 
 demo_vacols:
   adapter: sqlite3
@@ -115,7 +112,7 @@ test_vacols:
   username: VACOLS
   password: VACOLS
   database: "(DESCRIPTION=
-    (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=VACOLS_DB-test)(PORT=1521)))
+    (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=localhost)(PORT=1521)))
     (RECV_TIMEOUT=120)(SEND_TIMEOUT=5)
     (CONNECT_DATA=(SERVICE_NAME=BVAP.localdomain))
   )"
