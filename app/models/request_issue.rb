@@ -5,7 +5,8 @@ class RequestIssue < ApplicationRecord
   has_many :remand_reasons
   has_many :decision_rating_issues, foreign_key: "source_request_issue_id", class_name: "RatingIssue"
 
-  validates :ineligible_reason, exclusion: { in: [:untimely] }, if: :untimely_exemption, inclusion: { in: [true] }
+  # enum is symbol, but validates requires a string
+  validates :ineligible_reason, exclusion: { in: ["untimely"] }, if: proc { |reqi| reqi.untimely_exemption }
 
   enum ineligible_reason: {
     duplicate_of_issue_in_active_review: 0,
