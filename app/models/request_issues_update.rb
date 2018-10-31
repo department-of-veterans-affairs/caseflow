@@ -44,6 +44,8 @@ class RequestIssuesUpdate < ApplicationRecord
       request_issue.end_product_establishment.remove_contention!(request_issue)
     end
 
+    potential_end_products_to_remove = removed_issues.map(&:end_product_establishment).uniq
+    potential_end_products_to_remove.each(&:cancel_unused_end_product!)
     clear_error!
     processed!
   end
