@@ -20,23 +20,6 @@ class Organization < ApplicationRecord
   end
 
   def user_has_access?(user)
-    members.pluck(:id).include?(user.id)
-  end
-
-  def members
-    @members ||= User.where(css_id: member_css_ids.uniq)
-  end
-
-  private
-
-  def member_css_ids
-    return [] if staff_field_for_organization.empty?
-
-    staff_records = VACOLS::Staff.where(sactive: "A")
-    staff_field_for_organization.each do |sfo|
-      staff_records = sfo.filter_staff_records(staff_records)
-    end
-
-    staff_records.pluck(:sdomainid)
+    users.pluck(:id).include?(user.id)
   end
 end

@@ -9,16 +9,16 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import ApiUtil from '../../util/ApiUtil';
 import {
-  onRegionalOfficeChange,
   onReceiveUpcomingHearingDays,
   onSelectedHearingDayChange,
   onReceiveVeteransReadyForHearing
 } from '../actions';
+import { onRegionalOfficeChange } from '../../components/common/actions';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import { COLORS, LOGO_COLORS } from '../../constants/AppConstants';
 import { onReceiveTasks } from '../../queue/QueueActions';
 import { setUserCssId } from '../../queue/uiReducer/uiActions';
-import RoSelectorDropdown from '../components/RoSelectorDropdown';
+import RoSelectorDropdown from '../../components/RoSelectorDropdown';
 import AssignHearings from '../components/AssignHearings';
 
 const centralOfficeStaticEntry = [{
@@ -143,7 +143,7 @@ AssignHearings.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  selectedRegionalOffice: state.hearingSchedule.selectedRegionalOffice,
+  selectedRegionalOffice: state.components.selectedRegionalOffice,
   upcomingHearingDays: state.hearingSchedule.upcomingHearingDays,
   selectedHearingDay: state.hearingSchedule.selectedHearingDay,
   veteransReadyForHearing: state.hearingSchedule.veteransReadyForHearing
