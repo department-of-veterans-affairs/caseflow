@@ -15,8 +15,7 @@ const getAppealChecklistItems = (requestIssues) => [<Fragment>
 // higher level reviews & supplemental claims
 const getClaimReviewChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
   const checklist = [];
-  const ratedIssues = requestIssues.filter((ri) => ri.isRated);
-  // unidentified issues have undefined isRated
+  const ratedIssues = requestIssues.filter((ri) => ri.isRated || ri.isUnidentified);
   const nonRatedIssues = requestIssues.filter((ri) => ri.isRated === false);
   const claimReviewName = _.find(FORM_TYPES, { key: formType }).shortName;
 
@@ -30,7 +29,7 @@ const getClaimReviewChecklistItems = (formType, requestIssues, isInformalConfere
   if (nonRatedIssues.length > 0) {
     checklist.push(<Fragment>
       <strong>A {claimReviewName} Nonrating EP is being established:</strong>
-      {nonRatedIssues.map((nri, i) => <p key={i}>Contention: {nri.description}</p>)}
+      {nonRatedIssues.map((nri, i) => <p key={i}>Contention: {nri.contentionText}</p>)}
     </Fragment>);
   }
 
