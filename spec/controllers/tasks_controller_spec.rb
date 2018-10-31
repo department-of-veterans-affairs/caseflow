@@ -133,7 +133,6 @@ RSpec.describe TasksController, type: :controller do
 
       context "when a task is assignable" do
         let(:root_task) { FactoryBot.create(:root_task) }
-        let(:field) { "sdept" }
 
         let(:org_1) { FactoryBot.create(:organization) }
         let(:org_1_member_cnt) { 6 }
@@ -146,15 +145,7 @@ RSpec.describe TasksController, type: :controller do
         end
 
         before do
-          StaffFieldForOrganization.create!(organization: org_1, name: field, values: [org_1.name])
-          org_1_members.each do |u|
-            FeatureToggle.enable!(org_1.feature.to_sym, users: [u.css_id])
-            FactoryBot.create(:staff, user: u, "#{field}": org_1.name)
-          end
-        end
-
-        after do
-          FeatureToggle.disable!(org_1.feature.to_sym)
+          org_1_members.each { |u| OrganizationsUser.add_user_to_organization(u, org_1) }
         end
 
         context "when user is assigned an individual task" do

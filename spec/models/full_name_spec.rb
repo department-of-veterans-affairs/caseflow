@@ -30,6 +30,12 @@ describe FullName do
       it { is_expected.to eq("Charles Cheese") }
     end
 
+    context "readable_mi_formatted" do
+      let(:format) { :readable_mi_formatted }
+
+      it { is_expected.to eq("Charles E. Cheese") }
+    end
+
     context "form" do
       let(:format) { :form }
 

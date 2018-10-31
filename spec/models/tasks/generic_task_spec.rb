@@ -60,25 +60,12 @@ describe GenericTask do
   describe ".verify_user_access!" do
     let(:user) { FactoryBot.create(:user) }
     let(:other_user) { FactoryBot.create(:user) }
-
     let(:org) { FactoryBot.create(:organization) }
-    let(:field) { "sdept" }
-    let(:fld_val) { org.name }
-    let!(:sfo) { StaffFieldForOrganization.create!(organization: org, name: field, values: [fld_val]) }
-
     let(:other_org) { FactoryBot.create(:organization) }
-    let!(:other_sfo) do
-      StaffFieldForOrganization.create!(organization: other_org, name: field, values: [other_org.name])
-    end
-
-    let(:task) do
-      t = FactoryBot.create(:generic_task, :in_progress, assigned_to: assignee)
-      GenericTask.find(t.id)
-    end
+    let(:task) { GenericTask.find(FactoryBot.create(:generic_task, :in_progress, assigned_to: assignee).id) }
 
     before do
-      FactoryBot.create(:staff, user: user, "#{field}": fld_val)
-      FeatureToggle.enable!(org.feature.to_sym, users: [user.css_id])
+      OrganizationsUser.add_user_to_organization(user, org)
     end
 
     context "task assignee is current user" do
@@ -113,13 +100,7 @@ describe GenericTask do
   describe ".update_from_params" do
     let(:user) { FactoryBot.create(:user) }
     let(:org) { FactoryBot.create(:organization) }
-    let(:field) { "sdept" }
-    let(:fld_val) { org.name }
-    let!(:sfo) { StaffFieldForOrganization.create!(organization: org, name: field, values: [fld_val]) }
-    let(:task) do
-      t = FactoryBot.create(:generic_task, :in_progress, assigned_to: assignee)
-      GenericTask.find(t.id)
-    end
+    let(:task) { GenericTask.find(FactoryBot.create(:generic_task, :in_progress, assigned_to: assignee).id) }
 
     context "task is assigned to an organization" do
       let(:assignee) { org }
@@ -134,8 +115,7 @@ describe GenericTask do
 
       context "and current user belongs to that organization" do
         before do
-          FactoryBot.create(:staff, user: user, "#{field}": fld_val)
-          FeatureToggle.enable!(org.feature.to_sym, users: [user.css_id])
+          OrganizationsUser.add_user_to_organization(user, org)
         end
 
         it "should call Task.mark_as_complete!" do
@@ -264,13 +244,7 @@ describe GenericTask do
 
     context "when parent task is assigned to an organization" do
       let(:org) { FactoryBot.create(:organization) }
-      let(:field) { "sdept" }
-      let(:fld_val) { org.name }
-      let!(:sfo) { StaffFieldForOrganization.create!(organization: org, name: field, values: [fld_val]) }
-      let(:parent) do
-        t = FactoryBot.create(:generic_task, :in_progress, assigned_to: org)
-        GenericTask.find(t.id)
-      end
+      let(:parent) { GenericTask.find(FactoryBot.create(:generic_task, :in_progress, assigned_to: org).id) }
 
       context "when there is no current user" do
         it "should raise error and not create the child task nor update status" do
@@ -282,8 +256,7 @@ describe GenericTask do
 
       context "when there is a currently logged-in user" do
         before do
-          FactoryBot.create(:staff, user: current_user, "#{field}": fld_val)
-          FeatureToggle.enable!(org.feature.to_sym, users: [current_user.css_id])
+          OrganizationsUser.add_user_to_organization(current_user, org)
         end
         it "should create child task assigned by currently logged-in user" do
           child = GenericTask.create_many_from_params(good_params_array, current_user).first
