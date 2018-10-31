@@ -20,6 +20,10 @@ task :security_caseflow do
   if Time.zone.local(2018, 9, 10) < Time.zone.today - 1.week
     audit_cmd = "bundle-audit check"
   end
+
+  # ignore CVE-2018-1000201 (awaiting on https://github.com/rails/rails-html-sanitizer/pull/73)
+  audit_cmd += " --ignore CVE-2018-16468"
+
   audit_result = ShellCommand.run(audit_cmd)
 
   puts "\n"
