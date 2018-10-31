@@ -725,7 +725,7 @@ describe ClaimReview do
               payee_code: "00",
               predischarge: false,
               claim_type: "Claim",
-              station_of_jurisdiction: "499",
+              station_of_jurisdiction: "397",
               date: Time.zone.now.to_date,
               end_product_modifier: "040",
               end_product_label: end_product[:label],
