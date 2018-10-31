@@ -1,18 +1,17 @@
 describe Judge do
   before do
     Timecop.freeze(Time.utc(2017, 2, 2))
-    Time.zone = "America/Chicago"
-    Judge.repository = Fakes::JudgeRepository
+    Time.zone = "UTC"
   end
 
   context ".upcoming_dockets" do
     subject { Judge.new(user).upcoming_dockets }
 
     let(:user) { Generators::User.create }
-    let!(:hearing)            { Generators::Hearing.create(user: user, date: 1.day.from_now) }
-    let!(:hearing_same_date)  { Generators::Hearing.create(user: user, date: 1.day.from_now + 2.hours) }
-    let!(:hearing_later_date) { Generators::Hearing.create(user: user, date: 3.days.from_now) }
-    let!(:hearing_another_judge) { Generators::Hearing.create(user: Generators::User.create, date: 2.days.from_now) }
+    let!(:hearing)            { create(:hearing, user: user, date: 1.day.from_now) }
+    let!(:hearing_same_date)  { create(:hearing, user: user, date: 1.day.from_now + 2.hours) }
+    let!(:hearing_later_date) { create(:hearing, user: user, date: 3.days.from_now) }
+    let!(:hearing_another_judge) { create(:hearing, user: Generators::User.create, date: 2.days.from_now) }
 
     it "returns a hash of hearing dockets indexed by date" do
       keys = subject.keys.sort
@@ -50,7 +49,7 @@ describe Judge do
 
   context ".list_all" do
     it "should cache the values" do
-      expect(Fakes::JudgeRepository).to receive(:find_all_judges).once
+      expect(JudgeRepository).to receive(:find_all_judges).once
       Judge.list_all
       # call a second time, should get from the cache
       Judge.list_all
@@ -59,7 +58,7 @@ describe Judge do
 
   context ".list_all_with_name_and_id" do
     it "should cache the values" do
-      expect(Fakes::JudgeRepository).to receive(:find_all_judges_with_name_and_id).once
+      expect(JudgeRepository).to receive(:find_all_judges_with_name_and_id).once
       Judge.list_all_with_name_and_id
       # call a second time, should get from the cache
       Judge.list_all_with_name_and_id
@@ -73,7 +72,7 @@ describe Judge do
     let(:out_of_range_date) { date - 300.years }
     let!(:hearings) do
       [
-        Generators::Hearing.create(user: user, date: 1.hour.from_now)
+        create(:hearing, user: user, date: 1.hour.from_now)
       ]
     end
 

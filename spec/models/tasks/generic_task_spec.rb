@@ -78,7 +78,6 @@ describe GenericTask do
 
     before do
       FactoryBot.create(:staff, user: user, "#{field}": fld_val)
-      FeatureToggle.enable!(org.feature.to_sym, users: [user.css_id])
     end
 
     context "task assignee is current user" do
@@ -135,7 +134,6 @@ describe GenericTask do
       context "and current user belongs to that organization" do
         before do
           FactoryBot.create(:staff, user: user, "#{field}": fld_val)
-          FeatureToggle.enable!(org.feature.to_sym, users: [user.css_id])
         end
 
         it "should call Task.mark_as_complete!" do
@@ -283,7 +281,6 @@ describe GenericTask do
       context "when there is a currently logged-in user" do
         before do
           FactoryBot.create(:staff, user: current_user, "#{field}": fld_val)
-          FeatureToggle.enable!(org.feature.to_sym, users: [current_user.css_id])
         end
         it "should create child task assigned by currently logged-in user" do
           child = GenericTask.create_many_from_params(good_params_array, current_user).first
