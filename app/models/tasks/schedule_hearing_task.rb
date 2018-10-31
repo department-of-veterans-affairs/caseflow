@@ -46,7 +46,6 @@ class ScheduleHearingTask < GenericTask
     hearing_pkseq = task_business_payloads[0].values["hearing_pkseq"]
     hearing_type = task_business_payloads[0].values["hearing_type"]
     hearing = VACOLS::CaseHearing.find(hearing_pkseq)
-    Rails.logger.info("OARVT hearing_hash #{task_business_payloads[0]} .")
     if hearing_type == Hearing::CO_HEARING
       HearingRepository.update_vacols_hearing!(hearing, folder_nr: appeal.vacols_id)
     else
