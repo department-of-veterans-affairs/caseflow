@@ -65,7 +65,7 @@ class GenericTask < Task
 
       parent.verify_user_access!(user)
 
-      params[:instructions] = [params[:instructions]] unless params[:instructions].is_a?(Array)
+      params = modify_params(params)
       child = create_child_task(parent, user, params)
       update_status(parent, params[:status])
       child

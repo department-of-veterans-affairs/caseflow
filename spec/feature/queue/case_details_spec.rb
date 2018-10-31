@@ -388,8 +388,7 @@ RSpec.feature "Case details" do
       let(:user) { FactoryBot.create(:user) }
 
       before do
-        StaffFieldForOrganization.create!(organization: qr, name: "sdept", values: %w[QR])
-        FactoryBot.create(:staff, user: user, sdept: "QR", sattyid: nil)
+        OrganizationsUser.add_user_to_organization(user, qr)
         User.authenticate!(user: user)
       end
 

@@ -153,7 +153,7 @@ export const incompleteOrganizationTasksByAssigneeIdSelector = createSelector(
 
 export const newTasksByAssigneeCssIdSelector = createSelector(
   [incompleteTasksByAssigneeCssIdSelector],
-  (tasks: Array<Task>) => tasks.filter((task) => !task.placedOnHoldAt)
+  (tasks: Array<Task>) => tasks.filter((task) => !taskIsOnHold(task))
 );
 
 export const workableTasksByAssigneeCssIdSelector = createSelector(
