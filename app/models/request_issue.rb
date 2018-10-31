@@ -4,6 +4,8 @@ class RequestIssue < ApplicationRecord
   has_many :decision_issues
   has_many :remand_reasons
   has_many :decision_rating_issues, foreign_key: "source_request_issue_id", class_name: "RatingIssue"
+  has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_request_issue_id"
+  belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_request_issue_id"
 
   enum ineligible_reason: {
     duplicate_of_issue_in_active_review: 0,

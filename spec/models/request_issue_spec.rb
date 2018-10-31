@@ -229,6 +229,10 @@ describe RequestIssue do
       rated_issue.validate_eligibility!
 
       expect(rated_issue.duplicate_of_issue_in_active_review?).to eq(true)
+      expect(rated_issue.ineligible_due_to).to eq(request_issue_in_progress)
+
+      rated_issue.save!
+      expect(request_issue_in_progress.duplicate_but_ineligible).to eq([rated_issue])
     end
 
     it "flags duplicate appeal as in progress" do
@@ -243,7 +247,10 @@ describe RequestIssue do
       rated_issue.validate_eligibility!
 
       expect(rated_issue.previous_higher_level_review?).to eq(true)
-      expect(rated_issue.ineligible_request_issue_id).to eq(previous_request_issue.id)
+      expect(rated_issue.ineligible_due_to).to eq(previous_request_issue)
+
+      rated_issue.save!
+      expect(previous_request_issue.duplicate_but_ineligible).to eq([rated_issue])
     end
   end
 end
