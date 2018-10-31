@@ -166,7 +166,7 @@ class Generators::LegacyAppeal
     #
     def build(attrs = {})
       attrs = default_attrs.merge(attrs)
-      vacols_record = extract_vacols_record(attrs)
+      extract_vacols_record(attrs)
       appeal = LegacyAppeal.find_or_initialize_by(vacols_id: attrs[:vacols_id])
       inaccessible = attrs.delete(:inaccessible)
       veteran = attrs.delete(:veteran)
@@ -174,9 +174,6 @@ class Generators::LegacyAppeal
       cast_datetime_fields(attrs)
       setup_vbms_documents(attrs)
       set_vacols_issues(appeal: appeal, vacols_record: vacols_record, attrs: attrs)
-
-      vacols_record[:vbms_id] = attrs[:vbms_id]
-      vacols_record = vacols_record.merge(attrs.select { |attr| LegacyAppeal.vacols_field?(attr) })
 
       non_vacols_attrs = attrs.reject { |attr| LegacyAppeal.vacols_field?(attr) }
       appeal.attributes = non_vacols_attrs

@@ -225,8 +225,7 @@ class Issue
     end
 
     def remand_repository
-      return RemandReasonRepository if FeatureToggle.enabled?(:test_facols)
-      @remand_repository ||= RemandReasonRepository
+      RemandReasonRepository
     end
 
     def load_from_vacols(hash)

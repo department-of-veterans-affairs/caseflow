@@ -241,14 +241,9 @@ RSpec.configure do |config|
     Rails.cache.clear
   end
 
-  config.before(:each) do
-    FeatureToggle.enable!(:test_facols)
-  end
-
   config.after(:each) do
     Timecop.return
     Rails.cache.clear
-    FeatureToggle.disable!(:test_facols)
   end
 
   # Allows us to use shorthand FactoryBot methods.

@@ -1,12 +1,4 @@
 describe AppealRepository do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let(:correspondent_record) do
     OpenStruct.new(
       snamef: "Phil",

@@ -2,15 +2,10 @@ require "rails_helper"
 
 describe RequestIssuesUpdate do
   before do
-    FeatureToggle.enable!(:test_facols)
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 20))
 
     review.create_issues!(existing_request_issues)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   # TODO: make it simpler to set up a completed claim review, with end product data

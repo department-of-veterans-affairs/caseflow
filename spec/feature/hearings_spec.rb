@@ -7,14 +7,6 @@ RSpec.feature "Hearings" do
     Timecop.freeze(Time.utc(2017, 1, 1, 13))
   end
 
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   context "Hearings Prep" do
     let!(:current_user) { User.authenticate!(roles: ["Hearing Prep"]) }
 
