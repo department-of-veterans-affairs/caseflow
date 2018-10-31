@@ -40,7 +40,6 @@ describe RootTask do
     let!(:pva) do
       Vso.create(
         name: "Paralyzed Veterans Of America",
-        feature: "vso_queue_pva",
         role: "VSO",
         url: "paralyzed-veterans-of-america",
         participant_id: "2452383"
@@ -51,7 +50,6 @@ describe RootTask do
       let!(:vva) do
         Vso.create(
           name: "Vietnam Veterans Of America",
-          feature: "vso_queue_vva",
           role: "VSO",
           url: "vietnam-veterans-of-america",
           participant_id: "2452415"
