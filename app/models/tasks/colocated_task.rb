@@ -60,7 +60,7 @@ class ColocatedTask < Task
     actions
   end
 
-  def no_actions_available(_user)
+  def no_actions_available?(_user)
     completed?
   end
 
