@@ -617,6 +617,22 @@ class AppealRepository
     VACOLS::CaseAssignment.exists_for_appeals([vacols_id])[vacols_id]
   end
 
+  def self.counts_by_priority_and_readiness
+    MetricsService.record("VACOLS: counts_by_priority_and_readiness",
+                          name: "counts_by_priority_and_readiness",
+                          service: :vacols) do
+      VACOLS::CaseDocket.counts_by_priority_and_readiness.to_hash
+    end
+  end
+
+  def self.nod_count
+    MetricsService.record("VACOLS: nod_count",
+                          name: "nod_count",
+                          service: :vacols) do
+      VACOLS::CaseDocket.nod_count
+    end
+  end
+
   def self.regular_non_aod_docket_count
     MetricsService.record("VACOLS: regular_non_aod_docket_count",
                           name: "regular_non_aod_docket_count",
@@ -640,6 +656,14 @@ class AppealRepository
                           name: "docket_counts_by_month",
                           service: :vacols) do
       VACOLS::CaseDocket.docket_counts_by_month
+    end
+  end
+
+  def self.oldest_priority_appeal_ready_date
+    MetricsService.record("VACOLS: oldest_priority_appeal_ready_date",
+                          name: "oldest_priority_appeal_ready_date",
+                          service: :vacols) do
+      VACOLS::CaseDocket.oldest_priority_appeal_ready_date
     end
   end
 
