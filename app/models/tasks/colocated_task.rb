@@ -37,6 +37,7 @@ class ColocatedTask < Task
 
   def available_actions(user)
     return [] unless user.colocated_in_vacols?
+    return [] if completed?
 
     actions = [
       {
