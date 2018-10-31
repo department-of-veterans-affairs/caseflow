@@ -21,9 +21,6 @@ task :security_caseflow do
     audit_cmd = "bundle-audit check"
   end
 
-  # ignore CVE-2018-1000201 (awaiting on https://github.com/rails/rails-html-sanitizer/pull/73)
-  audit_cmd += " --ignore CVE-2018-16468"
-
   audit_result = ShellCommand.run(audit_cmd)
 
   puts "\n"

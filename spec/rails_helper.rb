@@ -250,12 +250,14 @@ RSpec.configure do |config|
 
   config.before(:each) do
     FeatureToggle.enable!(:test_facols)
+    @spec_time_zone = Time.zone
   end
 
   config.after(:each) do
     Timecop.return
     Rails.cache.clear
     FeatureToggle.disable!(:test_facols)
+    Time.zone = @spec_time_zone
   end
 
   # Allows us to use shorthand FactoryBot methods.
