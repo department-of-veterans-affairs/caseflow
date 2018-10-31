@@ -2,19 +2,14 @@ require "rails_helper"
 
 RSpec.feature "User organization" do
   let(:role) { "org_role" }
-  let!(:staff) { create(:staff, :attorney_role, sdomainid: user.css_id, sdept: "TRANS") }
   let!(:user) { User.authenticate!(user: create(:user, roles: [role])) }
   let!(:organization) { create(:organization, name: "Test organization", url: "test", role: role) }
-  let!(:organization_user) { OrganizationsUser.add_user_to_organization(user, organization) }
 
   let!(:user_with_role) { create(:user, full_name: "with role", roles: [role]) }
   let!(:user_without_role) { create(:user, full_name: "without role") }
 
   context "When user is in the organization" do
     let!(:organization_user) { OrganizationsUser.add_user_to_organization(user, organization) }
-    let!(:staff_field) do
-      StaffFieldForOrganization.create!(organization: organization, name: "sdept", values: %w[TRANS])
-    end
 
     scenario "Adds and removes users from the organization" do
       visit "/organizations/#{organization.url}/users"
