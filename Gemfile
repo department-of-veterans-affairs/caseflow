@@ -27,6 +27,8 @@ gem "jbuilder", "~> 2.0"
 gem "sdoc", "~> 0.4.0", group: :doc
 
 gem "active_model_serializers", "~> 0.10.0"
+# active_model_serializers has a default dependency on loofah 2.2.2 which has a security vuln (CVE-2018-16468)
+gem "loofah", ">= 2.2.3"
 
 # soft delete gem
 gem "paranoia", "~> 2.2"
