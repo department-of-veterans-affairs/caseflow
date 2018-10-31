@@ -115,11 +115,18 @@ export default class DailyDocket extends React.Component {
   };
 
   getHearingTime = (hearing) => {
+    if (hearing.requestType === 'CO') {
+      return <div>{getTime(hearing.date)} <br />
+        {hearing.regionalOfficeName}
+      </div>;
+    }
+
     return <div>{getTime(hearing.date)} /<br />
       {getTimeInDifferentTimeZone(hearing.date, hearing.regionalOfficeTimezone)} <br />
       {hearing.regionalOfficeName}
     </div>;
-  };
+
+  }
 
   getDispositionDropdown = (hearing, readOnly) => {
     return <SearchableDropdown
@@ -190,7 +197,7 @@ export default class DailyDocket extends React.Component {
       name="Notes"
       onChange={this.onHearingNotesUpdate(hearing.id)}
       textAreaStyling={notesFieldStyling}
-      value={hearing.editedNotes || hearing.notes || ''}
+      value={_.isUndefined(hearing.editedNotes) ? hearing.notes : hearing.editedNotes || ''}
     />;
   };
 
