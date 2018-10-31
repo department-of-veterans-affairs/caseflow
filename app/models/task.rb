@@ -5,6 +5,7 @@ class Task < ApplicationRecord
   belongs_to :assigned_by, class_name: User.name
   belongs_to :appeal, polymorphic: true
   has_many :attorney_case_reviews
+  has_many :task_business_payloads
 
   validates :assigned_to, :appeal, :type, :status, presence: true
 
@@ -57,10 +58,15 @@ class Task < ApplicationRecord
 
   def self.create_from_params(params, user)
     verify_user_can_assign!(user)
+    params = modify_params(params)
+    create(params)
+  end
+
+  def self.modify_params(params)
     if params.key?("instructions") && !params[:instructions].is_a?(Array)
       params["instructions"] = [params["instructions"]]
     end
-    create(params)
+    params
   end
 
   def update_from_params(params, _current_user)
@@ -164,9 +170,9 @@ class Task < ApplicationRecord
 
   def assign_to_user_data
     users = if assigned_to.is_a?(Organization)
-              assigned_to.members
+              assigned_to.users
             elsif parent && parent.assigned_to.is_a?(Organization)
-              parent.assigned_to.members.reject { |member| member == assigned_to }
+              parent.assigned_to.users.reject { |u| u == assigned_to }
             else
               []
             end

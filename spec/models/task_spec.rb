@@ -182,7 +182,7 @@ describe Task do
     let(:users) { create_list(:user, 3) }
 
     before do
-      allow(organization).to receive(:members).and_return(users)
+      allow(organization).to receive(:users).and_return(users)
     end
 
     context "when assigned_to is an organization" do

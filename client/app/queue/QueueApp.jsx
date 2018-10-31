@@ -31,6 +31,7 @@ import EvaluateDecisionView from './EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import CompleteTaskModal from './components/CompleteTaskModal';
+import AssignHearingModal from './components/AssignHearingModal';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
@@ -167,6 +168,8 @@ class QueueApp extends React.PureComponent<Props> {
   routedReassignToUser = (props) => <AssignToView isReassignAction {...props.match.params} />;
 
   routedCompleteTaskModal = (props) => <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />;
+
+  routedAssignHearingModal = (props) => <AssignHearingModal {...props.match.params} />;
 
   routedSendColocatedTaskModal = (props) =>
     <CompleteTaskModal modalType="send_colocated_task" {...props.match.params} />;
@@ -336,6 +339,11 @@ class QueueApp extends React.PureComponent<Props> {
             path={`/queue/appeals/:appealId/${TASK_ACTIONS.MARK_COMPLETE.value}`}
             title="Mark Task Complete | Caseflow"
             render={this.routedCompleteTaskModal} />
+          <PageRoute
+            exact
+            path={`/queue/appeals/:appealId/${TASK_ACTIONS.SCHEDULE_VETERAN.value}`}
+            title="Assign Hearing | Caseflow"
+            render={this.routedAssignHearingModal} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId/modal/send_colocated_task"

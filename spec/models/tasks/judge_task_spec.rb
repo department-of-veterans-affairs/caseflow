@@ -1,10 +1,14 @@
 describe JudgeTask do
   let(:judge) { create(:user) }
   let(:attorney) { create(:user) }
-  let!(:staff) { create(:staff, :judge_role, sdomainid: judge.css_id) }
 
-  context ".create" do
-    subject { JudgeTask.create(assigned_to: judge, appeal: create(:appeal)) }
+  before do
+    create(:staff, :judge_role, sdomainid: judge.css_id)
+    create(:staff, :attorney_role, sdomainid: attorney.css_id)
+  end
+
+  context ".create_from_params" do
+    subject { JudgeTask.create_from_params({ assigned_to: judge, appeal: create(:appeal) }, attorney) }
 
     it "should set the action" do
       expect(subject.action).to eq "assign"

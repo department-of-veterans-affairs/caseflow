@@ -21,6 +21,9 @@ class Hearing < ApplicationRecord
   # when fetched intially.
   has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots
 
+  CO_HEARING = "Central".freeze
+  VIDEO_HEARING = "Video".freeze
+
   def venue
     self.class.venues[venue_key]
   end
