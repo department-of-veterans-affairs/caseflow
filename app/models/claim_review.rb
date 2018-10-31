@@ -10,22 +10,10 @@ class ClaimReview < AmaReview
   self.abstract_class = true
 
   def ui_hash(ama_enabled)
-    {
-      veteran: {
-        name: veteran && veteran.name.formatted(:readable_short),
-        fileNumber: veteran_file_number,
-        formName: veteran && veteran.name.formatted(:form)
-      },
-      relationships: ama_enabled && veteran && veteran.relationships,
-      receiptDate: receipt_date.to_formatted_s(:json_date),
+    super.merge(
       benefitType: benefit_type,
-      claimant: claimant_participant_id,
-      claimantNotVeteran: claimant_not_veteran,
       payeeCode: payee_code,
-      legacyOptInApproved: legacy_opt_in_approved,
-      ratings: serialized_ratings,
-      requestIssues: request_issues.map(&:ui_hash)
-    }
+    )
   end
 
   # The Asyncable module requires we define these.

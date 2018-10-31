@@ -67,7 +67,35 @@ class AppealsController < ApplicationController
     end
   end
 
+  helper_method :appeal, :url_appeal_uuid
+
+  def appeal
+    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
+  end
+
+  def url_appeal_uuid
+    params[:appeal_id]
+  end
+
+  def update
+    if request_issues_update.perform!
+      render json: {
+        requestIssues: appeal.request_issues.map(&:ui_hash)
+      }
+    else
+      render json: { error_code: request_issues_update.error_code }, status: 422
+    end
+  end
+
   private
+
+  def request_issues_update
+    @request_issues_update ||= RequestIssuesUpdate.new(
+      user: current_user,
+      review: appeal,
+      request_issues_data: params[:request_issues]
+    )
+  end
 
   def set_application
     RequestStore.store[:application] = "queue"
@@ -115,10 +143,6 @@ class AppealsController < ApplicationController
         appeals: json_appeals(appeals)[:data]
       }
     end
-  end
-
-  def appeal
-    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
   end
 
   def file_access_prohibited_error

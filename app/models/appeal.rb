@@ -32,6 +32,13 @@ class Appeal < AmaReview
     end
   end
 
+  def ui_hash(ama_enabled)
+    super.merge(
+      docketType: docket_type,
+      formType: "appeal",
+    )
+  end
+
   def type
     "Original"
   end
@@ -140,6 +147,16 @@ class Appeal < AmaReview
     request_issues.destroy_all unless request_issues.empty?
 
     request_issues_data.map { |data| request_issues.from_intake_data(data).save! }
+  end
+
+  def create_issues!(new_issues)
+    new_issues.each do |new_issue|
+      new_issue.save
+    end
+  end
+
+  def mark_rated_request_issues_to_reassociate!
+    request_issues.select(&:rated?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
   end
 
   def serializer_class
