@@ -76,8 +76,13 @@ class RequestIssue < ApplicationRecord
 
   def in_active_review
     return unless rating_issue_reference_id
-    request_issue = self.class.find_active_by_reference_id(rating_issue_reference_id)
-    request_issue.review_title if request_issue
+    request_issue = RequestIssue.where(
+      rating_issue_reference_id: rating_issue_reference_id,
+      removed_at: nil,
+      ineligible_reason: nil
+    ).where.not(review_request_id: review_request_id).first
+    return unless request_issue && request_issue.status_active?
+    request_issue.review_title
   end
 
   def eligible?

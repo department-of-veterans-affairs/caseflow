@@ -47,10 +47,12 @@ export class AddIssuesPage extends React.Component {
   checkIfEligible = (issue, formType) => {
     if (issue.isUnidentified) {
       return false;
-    } else if (issue.inActiveReview || issue.ineligibleReason === 'duplicate_of_issue_in_active_review') {
-      return INELIGIBLE_REQUEST_ISSUES.duplicate_of_issue_in_active_review.replace('{review_title}', issue.inActiveReview);
+    } else if (issue.inActiveReview) {
+      return INELIGIBLE_REQUEST_ISSUES.duplicate_of_issue_in_active_review.replace(
+        '{review_title}', issue.inActiveReview
+      );
     } else if (issue.ineligibleReason) {
-      return INELIGIBLE_REQUEST_ISSUES[ineligibleReason];
+      return INELIGIBLE_REQUEST_ISSUES[issue.ineligibleReason];
     } else if (issue.timely === false && formType !== 'supplemental_claim') {
       return INELIGIBLE_REQUEST_ISSUES.untimely;
     } else if (issue.sourceHigherLevelReview && formType === 'higher_level_review') {

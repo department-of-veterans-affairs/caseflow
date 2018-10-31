@@ -79,7 +79,6 @@ export const validNonRatedIssue = (issue) => {
 
 export const formatRequestIssues = (requestIssues) => {
   return requestIssues.map((issue) => {
-    console.log("issue::", issue)
     if (issue.category) {
       return {
         isRated: false,

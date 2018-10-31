@@ -146,6 +146,37 @@ describe RequestIssue do
     end
   end
 
+  context "#in_active_review" do
+    let(:previous_higher_level_review) { create(:higher_level_review, id: 10) }
+    let(:new_higher_level_review) { create(:higher_level_review, id: 11) }
+    let(:active_epe) { create(:end_product_establishment, :active) }
+    let!(:request_issue_in_active_review) do
+      create(
+        :request_issue,
+        review_request: previous_higher_level_review,
+        rating_issue_reference_id: higher_level_review_reference_id,
+        contention_reference_id: contention_reference_id,
+        end_product_establishment: active_epe,
+        removed_at: nil,
+        ineligible_reason: nil
+      )
+    end
+
+    let!(:ineligible_request_issue) do
+      create(
+        :request_issue,
+        review_request: new_higher_level_review,
+        rating_issue_reference_id: higher_level_review_reference_id,
+        contention_reference_id: contention_reference_id,
+        ineligible_reason: 0
+      )
+    end
+
+    it "returns the review title of the request issue in active review" do
+      expect(ineligible_request_issue.in_active_review).to eq(request_issue_in_active_review.review_title)
+    end
+  end
+
   context "#validate_eligibility!" do
     let(:duplicate_reference_id) { "xyz789" }
     let(:old_reference_id) { "old123" }
