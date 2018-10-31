@@ -16,7 +16,7 @@ class Fakes::Initializer
         Fakes::VBMSService.document_records = { "DEMO123" => Fakes::Data::AppealData.static_reader_documents }
       end
 
-      if rails_env.stubbed? || rails_env.demo? || rails_env.development?
+      if rails_env.demo? || rails_env.development?
         # If we are running a rake command like `rake db:seed` or
         # `rake db:schema:load`, we do not want to try and seed the fakes
         # because our schema may not be loaded yet and it will fail!
@@ -34,7 +34,7 @@ class Fakes::Initializer
     # to properly reload class attributes like the fake repositories and
     # their seed data (which is currently cached as class attributes)
     def setup!(rails_env)
-      load_fakes_and_seed!(rails_env: rails_env) if rails_env.stubbed? || rails_env.development?
+      load_fakes_and_seed!(rails_env: rails_env) if rails_env.development?
     end
 
     private
