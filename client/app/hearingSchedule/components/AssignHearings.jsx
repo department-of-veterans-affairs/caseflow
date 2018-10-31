@@ -7,13 +7,13 @@ import COPY from '../../../COPY.json';
 import Button from '../../components/Button';
 import TabWindow from '../../components/TabWindow';
 import Table from '../../components/Table';
-import RoSelectorDropdown from './RoSelectorDropdown';
+import RoSelectorDropdown from '../../components/RoSelectorDropdown';
 import moment from 'moment';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-import { prepareTasksForStore, renderAppealType } from '../../queue/utils';
+import { renderAppealType } from '../../queue/utils';
 import StatusMessage from '../../components/StatusMessage';
 
 const centralOfficeStaticEntry = [{
@@ -50,11 +50,6 @@ const smallTopMargin = css({
 
 export default class AssignHearings extends React.Component {
 
-  // required to reset the RO Dropdown when moving from Viewing and Assigning.
-  componentWillMount = () => {
-    this.props.onRegionalOfficeChange('');
-  };
-
   onSelectedHearingDayChange = (hearingDay) => () => {
     this.props.onSelectedHearingDayChange(hearingDay);
   };
@@ -67,20 +62,23 @@ export default class AssignHearings extends React.Component {
             type: 'ScheduleHearingTask',
             external_id: vacolsId,
             assigned_to_type: 'User',
-            assigned_to_id: this.props.userId
+            assigned_to_id: this.props.userId,
+            business_payloads: {
+              description: 'Create Task',
+              values: {
+                regional_office_value: this.props.selectedRegionalOffice.value,
+                regional_office_label: this.props.selectedRegionalOffice.label,
+                hearing_pkseq: this.props.selectedHearingDay.id,
+                hearing_type: this.props.selectedHearingDay.hearingType,
+                hearing_date: this.props.selectedHearingDay.hearingDate
+              }
+            }
           }
         ]
       }
     };
 
-    ApiUtil.post('/tasks', payload).
-      then((resp) => {
-        const response = JSON.parse(resp.text);
-        const preparedTasks = prepareTasksForStore(response.tasks.data);
-        const taskUniqueId = response.tasks.data[0].id;
-
-        this.props.onReceiveTasks(preparedTasks[taskUniqueId]);
-      });
+    ApiUtil.post('/tasks', payload);
   };
 
   roomInfo = (hearingDay) => {

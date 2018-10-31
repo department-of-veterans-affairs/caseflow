@@ -20,6 +20,7 @@ task :security_caseflow do
   if Time.zone.local(2018, 9, 10) < Time.zone.today - 1.week
     audit_cmd = "bundle-audit check"
   end
+
   audit_result = ShellCommand.run(audit_cmd)
 
   puts "\n"
