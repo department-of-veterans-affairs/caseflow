@@ -235,15 +235,12 @@ class Hearing < ApplicationRecord
   end
 
   class << self
-    attr_writer :repository
-
     def venues
       RegionalOffice::CITIES.merge(RegionalOffice::SATELLITE_OFFICES)
     end
 
     def repository
-      return HearingRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= HearingRepository
+      HearingRepository
     end
 
     def user_nil_or_assigned_to_another_judge?(user, vacols_css_id)

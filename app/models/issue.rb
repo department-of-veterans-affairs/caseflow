@@ -220,11 +220,8 @@ class Issue
   # rubocop:enable Metrics/CyclomaticComplexity
 
   class << self
-    attr_writer :repository
-
     def repository
-      return IssueRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= IssueRepository
+      IssueRepository
     end
 
     def remand_repository

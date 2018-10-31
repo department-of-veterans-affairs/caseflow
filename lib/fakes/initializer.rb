@@ -3,18 +3,6 @@ class Fakes::Initializer
     def load!(rails_env: nil)
       User.authentication_service = Fakes::AuthenticationService
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
-      if !rails_env || !rails_env.development?
-        LegacyAppeal.repository = Fakes::AppealRepository
-        AttorneyCaseReview.repository = Fakes::QueueRepository
-        Hearing.repository = Fakes::HearingRepository
-        HearingDocket.repository = Fakes::HearingRepository
-        Issue.repository = Fakes::IssueRepository
-        Judge.repository = Fakes::JudgeRepository
-        PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
-        User.appeal_repository = Fakes::AppealRepository
-        User.user_repository = Fakes::UserRepository
-        LegacyWorkQueue.repository = Fakes::QueueRepository
-      end
     end
 
     # This method is called only 1 time during application bootup
@@ -70,11 +58,6 @@ class Fakes::Initializer
         Fakes::BGSService.create_veteran_records
         return
       end
-
-      Functions.grant!("Global Admin", users: ["System Admin"])
-
-      Fakes::AppealRepository.seed!(app_name: app_name)
-      Fakes::HearingRepository.seed! if app_name.nil? || app_name == "hearings" || app_name == "reader"
     end
 
     def running_rake_command?
