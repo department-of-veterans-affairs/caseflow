@@ -5,6 +5,7 @@ class Task < ApplicationRecord
   belongs_to :assigned_by, class_name: User.name
   belongs_to :appeal, polymorphic: true
   has_many :attorney_case_reviews
+  has_many :task_business_payloads
 
   validates :assigned_to, :appeal, :type, :status, presence: true
 

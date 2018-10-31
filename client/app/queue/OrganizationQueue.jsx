@@ -25,22 +25,22 @@ class OrganizationQueue extends React.PureComponent {
   render = () => {
     const noTasks = !_.size(this.props.tasks);
 
-    if (noTasks) {
-      return <h2>{COPY.NO_CASES_IN_QUEUE_MESSAGE}<Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link>.</h2>;
-    }
+    const content = noTasks ?
+      <h2>{COPY.NO_CASES_IN_QUEUE_MESSAGE}<Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link>.</h2> :
+      <TaskTable
+        includeDetailsLink
+        includeType
+        includeDocketNumber
+        includeIssueCount
+        includeDaysWaiting
+        includeReaderLink
+        tasks={this.props.tasks}
+      />;
 
     return <AppSegment filledBackground>
       <div>
         <h1 {...fullWidth}>{sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName)}</h1>
-        <TaskTable
-          includeDetailsLink
-          includeType
-          includeDocketNumber
-          includeIssueCount
-          includeDaysWaiting
-          includeReaderLink
-          tasks={this.props.tasks}
-        />
+        {content}
       </div>
     </AppSegment>;
   };
