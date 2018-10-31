@@ -6,8 +6,6 @@ class Fakes::Initializer
     end
 
     # This method is called only 1 time during application bootup
-    # rubocop:disable Metrics/CyclomaticComplexity
-    # rubocop:disable Metrics/PerceivedComplexity
     def app_init!(rails_env)
       if rails_env.ssh_forwarding? && !running_rake_command?
         User.authentication_service = Fakes::AuthenticationService
