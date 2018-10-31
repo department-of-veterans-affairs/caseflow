@@ -71,6 +71,8 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       <strong>Edit the notice letter to reflect the status of requested issues.</strong>
     ];
 
+    const checklistClassNames = ['cf-intake-statusmessage-checklist', 'cf-success-checklist', 'cf-left-padding'];
+
     return <StatusMessage
       title="Intake completed"
       type="success"
@@ -78,6 +80,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       checklist={formType === 'appeal' ?
         getAppealChecklistItems(requestIssues) :
         getClaimReviewChecklistItems(formType, requestIssues, informalConference)}
+      checklistClassNames={checklistClassNames}
       wrapInAppSegment={false}
     />;
   }
