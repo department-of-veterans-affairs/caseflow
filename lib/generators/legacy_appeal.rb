@@ -178,8 +178,6 @@ class Generators::LegacyAppeal
       vacols_record[:vbms_id] = attrs[:vbms_id]
       vacols_record = vacols_record.merge(attrs.select { |attr| LegacyAppeal.vacols_field?(attr) })
 
-      set_vacols_record(appeal: appeal, vacols_record: vacols_record)
-
       non_vacols_attrs = attrs.reject { |attr| LegacyAppeal.vacols_field?(attr) }
       appeal.attributes = non_vacols_attrs
 
@@ -190,11 +188,6 @@ class Generators::LegacyAppeal
     end
 
     private
-
-    def set_vacols_record(appeal:, vacols_record:)
-      Fakes::AppealRepository.records ||= {}
-      Fakes::AppealRepository.records[appeal.vacols_id] = vacols_record
-    end
 
     def setup_vbms_documents(attrs)
       documents = attrs.delete(:documents)
@@ -213,9 +206,6 @@ class Generators::LegacyAppeal
       appeal.issues = (issues || []).map do |issue|
         issue.is_a?(Hash) ? Generators::Issue.build(issue) : issue
       end
-
-      Fakes::AppealRepository.issue_records ||= {}
-      Fakes::AppealRepository.issue_records[appeal.vacols_id] = appeal.issues
     end
 
     def add_inaccessible_appeal(appeal)

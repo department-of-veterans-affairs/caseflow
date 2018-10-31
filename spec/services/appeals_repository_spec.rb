@@ -216,8 +216,6 @@ describe AppealRepository do
   end
 
   context "#location_after_dispatch" do
-    before { LegacyAppeal.repository = Fakes::AppealRepository }
-
     let(:appeal) do
       create(:legacy_appeal, vacols_case: create(:case))
     end

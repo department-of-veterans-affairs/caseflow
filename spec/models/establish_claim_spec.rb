@@ -437,7 +437,7 @@ describe EstablishClaim do
       it "raises InvalidTransition" do
         expect { subject }.to raise_error(AASM::InvalidTransition)
 
-        expect(Fakes::AppealRepository.location_updated_for).to_not eq(appeal)
+        expect(AppealRepository.location_updated_for).to_not eq(appeal)
       end
     end
 

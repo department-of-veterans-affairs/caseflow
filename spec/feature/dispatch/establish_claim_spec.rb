@@ -18,7 +18,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     Fakes::BGSService.inaccessible_appeal_vbms_ids << inaccessible_appeal.veteran_file_number
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
-    allow(Fakes::AppealRepository).to receive(:update_vacols_after_dispatch!).and_call_original
+    allow(AppealRepository).to receive(:update_vacols_after_dispatch!).and_call_original
   end
 
   let(:case_worker) do
@@ -712,7 +712,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
           veteran_hash: task.appeal.veteran.to_vbms_hash
         )
 
-        expect(Fakes::AppealRepository).to have_received(:update_vacols_after_dispatch!)
+        expect(AppealRepository).to have_received(:update_vacols_after_dispatch!)
 
         expect(task.reload.completed?).to be_truthy
         expect(task.completion_status).to eq("routed_to_arc")
