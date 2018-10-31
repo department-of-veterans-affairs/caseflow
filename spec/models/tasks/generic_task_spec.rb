@@ -1,4 +1,4 @@
-describe GenericTask, focus: true do
+describe GenericTask do
   describe ".available_actions" do
     let(:task) { nil }
     let(:user) { nil }
