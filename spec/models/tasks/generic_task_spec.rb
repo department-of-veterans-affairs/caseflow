@@ -55,6 +55,42 @@ describe GenericTask do
         expect(subject).to eq(expected_actions)
       end
     end
+
+    context "when task assigned to the user is has been completed" do
+      let(:user) { FactoryBot.create(:user) }
+      let(:task) do
+        GenericTask.find(
+          FactoryBot.create(
+            :generic_task,
+            assigned_to: user,
+            status: Constants.TASK_STATUSES.completed
+          ).id
+        )
+      end
+      let(:expected_actions) { [] }
+      it "should return an empty list" do
+        expect(subject).to eq(expected_actions)
+      end
+    end
+
+    context "when task assigned to an organization the user is a member of is on hold" do
+      let(:org) { Organization.find(FactoryBot.create(:organization).id) }
+      let(:task) do
+        GenericTask.find(
+          FactoryBot.create(
+            :generic_task,
+            assigned_to: org,
+            status: Constants.TASK_STATUSES.on_hold
+          ).id
+        )
+      end
+      let(:user) { FactoryBot.create(:user) }
+      let(:expected_actions) { [] }
+      before { allow_any_instance_of(Organization).to receive(:user_has_access?).and_return(true) }
+      it "should return an empty list" do
+        expect(subject).to eq(expected_actions)
+      end
+    end
   end
 
   describe ".verify_user_access!" do
