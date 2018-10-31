@@ -52,6 +52,10 @@ class SupplementalClaim < ClaimReview
     is_dta_error? ? User.system_user : intake_processed_by
   end
 
+  def end_product_station
+    is_dta_error? ? "397" : super
+  end
+
   def new_end_product_establishment(ep_code)
     end_product_establishments.build(
       veteran_file_number: veteran_file_number,
