@@ -3,6 +3,8 @@
   padding-left: 0.5em;
 }
 
+// the .cf-app-segment is needed in this rule so .cf-intake-statusmessage-checklist has a higher
+// specificity than the existing .cf-success-checklist class.
 .cf-app-segment .cf-intake-statusmessage-checklist {
   max-width: 800px;
   margin: 50px auto 65px;
