@@ -1,6 +1,9 @@
 class GenericTask < Task
   # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/CyclomaticComplexity
   def available_actions(user)
+    return [] if [Constants.TASK_STATUSES.on_hold, Constants.TASK_STATUSES.completed].include?(status)
+
     if assigned_to.is_a?(Vso) && assigned_to.user_has_access?(user)
       return [Constants.TASK_ACTIONS.MARK_COMPLETE.to_h]
     end
@@ -23,6 +26,7 @@ class GenericTask < Task
 
     []
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/AbcSize
 
   def update_from_params(params, current_user)
