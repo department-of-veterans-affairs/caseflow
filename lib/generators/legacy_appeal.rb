@@ -166,7 +166,7 @@ class Generators::LegacyAppeal
     #
     def build(attrs = {})
       attrs = default_attrs.merge(attrs)
-      extract_vacols_record(attrs)
+      vacols_record = extract_vacols_record(attrs)
       appeal = LegacyAppeal.find_or_initialize_by(vacols_id: attrs[:vacols_id])
       inaccessible = attrs.delete(:inaccessible)
       veteran = attrs.delete(:veteran)
