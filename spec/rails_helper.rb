@@ -216,11 +216,6 @@ def read_csv(klass, date_shift)
   klass.import(items)
 end
 
-# Setup fakes
-LegacyAppeal.repository = Fakes::AppealRepository
-PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
-Hearing.repository = Fakes::HearingRepository
-HearingDocket.repository = Fakes::HearingRepository
 User.authentication_service = Fakes::AuthenticationService
 CAVCDecision.repository = Fakes::CAVCDecisionRepository
 
