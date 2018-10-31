@@ -143,7 +143,6 @@ AssignHearings.propTypes = {
 
 const mapStateToProps = (state) => ({
   selectedRegionalOffice: state.hearingSchedule.selectedRegionalOffice,
-  fetchingHearingDays: state.hearingSchedule.fetchingHearingDays,
   upcomingHearingDays: state.hearingSchedule.upcomingHearingDays,
   selectedHearingDay: state.hearingSchedule.selectedHearingDay,
   veteransReadyForHearing: state.hearingSchedule.veteransReadyForHearing
