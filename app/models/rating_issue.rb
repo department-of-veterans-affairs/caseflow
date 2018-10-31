@@ -49,7 +49,9 @@ class RatingIssue < ApplicationRecord
       reference_id: reference_id,
       decision_text: decision_text,
       promulgation_date: promulgation_date,
-      contention_reference_id: contention_reference_id
+      contention_reference_id: contention_reference_id,
+      in_active_review: in_active_review,
+      source_higher_level_review: source_higher_level_review
     }
   end
 
