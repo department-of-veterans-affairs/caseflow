@@ -59,7 +59,6 @@ class HearingRepository
       parent_hearing_hash[:vdkey] = parent_hearing_hash[:hearing_pkseq]
       parent_hearing_hash.delete(:hearing_pkseq)
       parent_hearing_hash[:hearing_type] = "V"
-      Rails.logger.info("OARVT hearing_hash #{parent_hearing_hash} .")
       VACOLS::CaseHearing.create_child_hearing!(parent_hearing_hash)
     end
 
