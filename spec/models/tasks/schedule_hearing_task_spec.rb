@@ -2,6 +2,11 @@ describe ScheduleHearingTask do
   before do
     FeatureToggle.enable!(:test_facols)
   end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
   let(:appeal) do
     RequestStore[:current_user] = hearings_user
     create(:legacy_appeal, vacols_case: FactoryBot.create(:case))
@@ -99,7 +104,7 @@ describe ScheduleHearingTask do
     end
   end
 
-  describe "Add and update a schedule hearing task with a new business payload", focus: true do
+  describe "Add and update a schedule hearing task with a new business payload" do
     let(:hearing) { FactoryBot.create(:case_hearing) }
     let(:root_task) { FactoryBot.create(:root_task, appeal_type: "LegacyAppeal", appeal: appeal) }
     let(:params) do
@@ -139,14 +144,14 @@ describe ScheduleHearingTask do
       hearing_task = ScheduleHearingTask.create_from_params(params, hearings_user)
       updated_task = hearing_task.update_from_params(update_params, hearings_user)
 
-      expect(updated_task.type).to eq(ScheduleHearingTask.name)
-      expect(updated_task.appeal_type).to eq(LegacyAppeal.name)
-      expect(updated_task.status).to eq("assigned")
-      expect(updated_task.task_business_payloads.size).to eq 1
-      expect(updated_task.task_business_payloads[0].description).to eq("Update")
-      expect(updated_task.task_business_payloads[0].values["regional_office_value"]).to eq("RO13")
-      expect(updated_task.task_business_payloads[0].values["hearing_date"]).to eq("2018-10-30")
-      expect(updated_task.task_business_payloads[0].values["hearing_time"]).to eq("13:00")
+      expect(updated_task[0].type).to eq(ScheduleHearingTask.name)
+      expect(updated_task[0].appeal_type).to eq(LegacyAppeal.name)
+      expect(updated_task[0].status).to eq("completed")
+      expect(updated_task[0].task_business_payloads.size).to eq 1
+      expect(updated_task[0].task_business_payloads[0].description).to eq("Update")
+      expect(updated_task[0].task_business_payloads[0].values["regional_office_value"]).to eq("RO13")
+      expect(updated_task[0].task_business_payloads[0].values["hearing_date"]).to eq("2018-10-30")
+      expect(updated_task[0].task_business_payloads[0].values["hearing_time"]).to eq("13:00")
     end
   end
 end
