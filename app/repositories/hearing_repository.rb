@@ -55,6 +55,14 @@ class HearingRepository
       vacols_record.update_hearing!(hearing_hash.merge(staff_id: vacols_record.slogid)) if hearing_hash.present?
     end
 
+    def create_vacols_child_hearing(parent_hearing_hash)
+      parent_hearing_hash[:vdkey] = parent_hearing_hash[:hearing_pkseq]
+      parent_hearing_hash.delete(:hearing_pkseq)
+      parent_hearing_hash[:hearing_type] = "V"
+      Rails.logger.info("OARVT hearing_hash #{parent_hearing_hash} .")
+      VACOLS::CaseHearing.create_child_hearing!(parent_hearing_hash)
+    end
+
     def load_vacols_data(hearing)
       vacols_record = MetricsService.record("VACOLS: HearingRepository.load_vacols_data: #{hearing.vacols_id}",
                                             service: :vacols,
