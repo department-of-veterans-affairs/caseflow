@@ -763,7 +763,7 @@ RSpec.feature "Higher-Level Review" do
       expect(hlr_request_issues).to include(previous_request_issue)
       expect(ineligible_due_to_previous_hlr).to_not eq(previous_request_issue)
       expect(ineligible_due_to_previous_hlr.contention_reference_id).to be_nil
-      expect(ineligible_due_to_previous_hlr.ineligible_request_issue_id).to eq(previous_request_issue.id)
+      expect(ineligible_due_to_previous_hlr.ineligible_due_to).to eq(previous_request_issue)
 
       expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(
         hash_including(
