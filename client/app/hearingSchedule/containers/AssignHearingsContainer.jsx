@@ -49,6 +49,7 @@ class AssignHearingsContainer extends React.PureComponent {
 
   componentDidMount = () => {
     this.props.setUserCssId(this.props.userCssId);
+    this.props.onRegionalOfficeChange('');
   }
 
   loadUpcomingHearingDays = () => {
