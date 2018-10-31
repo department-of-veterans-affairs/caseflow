@@ -113,13 +113,6 @@ export const tasksForAppealAssignedToUserSelector = createSelector(
   }
 );
 
-export const tasksForAppealAssignedToAttorneySelector = createSelector(
-  [getTasksForAppeal, getAttorneys],
-  (tasks: Tasks, attorneys: Array<User>) => {
-    return _.filter(tasks, (task) => _.some(attorneys, (attorney) => task.assignedTo.cssId === attorney.css_id));
-  }
-);
-
 export const appealsByCaseflowVeteranId = createSelector(
   [appealsWithDetailsSelector, getCaseflowVeteranId],
   (appeals: Appeals, caseflowVeteranId: ?string) =>
@@ -145,17 +138,6 @@ export const completeTasksByAssigneeCssIdSelector = createSelector(
 
 export const actionableTasksForAppeal = createSelector(
   [getTasksForAppeal], (tasks: Tasks) => _.filter(tasks, (task) => task.availableActions.length)
-);
-
-export const organizationTasksByAssigneeIdSelector = createSelector(
-  [getTasksForAppeal, getOrganizationId],
-  (tasks: Tasks, id: Number) =>
-    _.filter(tasks, (task) => task.assignedTo.id === id && task.assignedTo.type !== 'User')
-);
-
-export const incompleteOrganizationTasksByAssigneeIdSelector = createSelector(
-  [organizationTasksByAssigneeIdSelector],
-  (tasks: Tasks) => incompleteTasksSelector(tasks)
 );
 
 export const newTasksByAssigneeCssIdSelector = createSelector(
