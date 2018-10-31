@@ -43,6 +43,7 @@ const getAppealDetails = (state: State): AppealDetails => state.queue.appealDeta
 const getUserCssId = (state: State): string => state.ui.userCssId;
 const getOrganizationId = (state: State): ?number => state.ui.organizationIds[0];
 const getAppealId = (state: State, props: Object): string => props.appealId;
+const getTaskUniqueId = (state: State, props: Object): string => props.taskId;
 const getAttorneys = (state: State): AttorneysOfJudge => state.queue.attorneysOfJudge;
 const getCaseflowVeteranId = (state: State, props: Object): ?string => props.caseflowVeteranId;
 const getModals = (state: State): UiStateModals => state.ui.modals;
@@ -77,6 +78,12 @@ export const tasksWithAppealSelector = createSelector(
       }))
     ];
   }
+);
+
+export const taskById = createSelector(
+  [tasksWithAppealSelector, getTaskUniqueId],
+  (tasks: Array<TaskWithAppeal>, taskId: string) =>
+    _.find(tasks, (task) => task.uniqueId === taskId)
 );
 
 export const appealsWithDetailsSelector = createSelector(

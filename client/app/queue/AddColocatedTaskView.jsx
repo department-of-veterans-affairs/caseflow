@@ -16,7 +16,7 @@ import { setTaskAttrs, setAppealAttrs } from './QueueActions';
 
 import {
   appealWithDetailSelector,
-  tasksForAppealAssignedToUserSelector
+  taskById
 } from './selectors';
 import {
   fullWidth,
@@ -64,9 +64,9 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
   validateForm = () => Object.values(this.state).every(Boolean);
 
   buildPayload = () => {
-    const { tasks, appeal } = this.props;
+    const { task, appeal } = this.props;
 
-    return _.map([tasks[0]], (task: Task) => {
+    return _.map([task], (task: Task) => {
       const mapped: Object = {
         ...this.state,
         type: 'ColocatedTask',
@@ -82,7 +82,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
   }
 
   goToNextStep = () => {
-    const { tasks } = this.props;
+    const { task } = this.props;
     const payload = {
       data: {
         tasks: this.buildPayload()
@@ -90,15 +90,15 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
     };
     const successMsg = {
       title: sprintf(COPY.ADD_COLOCATED_TASK_CONFIRMATION_TITLE, CO_LOCATED_ADMIN_ACTIONS[this.state.action]),
-      detail: <DispatchSuccessDetail task={tasks[0]} />
+      detail: <DispatchSuccessDetail task={task} />
     };
 
     this.props.requestSave('/tasks', payload, successMsg).
       then(() => {
-        if (tasks[0].isLegacy) {
-          this.props.setAppealAttrs(tasks[0].externalAppealId, { location: 'CASEFLOW' });
+        if (task.isLegacy) {
+          this.props.setAppealAttrs(task.externalAppealId, { location: 'CASEFLOW' });
         } else {
-          this.props.setTaskAttrs(tasks[0].uniqueId, { status: 'on_hold' });
+          this.props.setTaskAttrs(task.uniqueId, { status: 'on_hold' });
         }
       });
   }
@@ -142,7 +142,7 @@ const mapStateToProps = (state, ownProps) => ({
   highlightFormItems: state.ui.highlightFormItems,
   error: state.ui.messages.error,
   appeal: appealWithDetailSelector(state, ownProps),
-  tasks: tasksForAppealAssignedToUserSelector(state, ownProps)
+  task: taskById(state, { taskId: ownProps.taskId })
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

@@ -246,22 +246,22 @@ class QueueApp extends React.PureComponent<Props> {
             title="Unassigned Cases | Caseflow"
             render={this.routedJudgeQueueList('assign')} />
           <Route
-            path="/queue/appeals/:appealId/modal/advanced_on_docket_motion"
+            path="/queue/appeals/:appealId/tasks/:taskId/modal/advanced_on_docket_motion"
             render={this.routedAdvancedOnDocketMotion} />
           <Route
-            path={`/queue/appeals/:appealId/${TASK_ACTIONS.ASSIGN_TO_TEAM.value}`}
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_TEAM.value}`}
             render={this.routedAssignToTeam} />
           <Route
-            path={`/queue/appeals/:appealId/${TASK_ACTIONS.CREATE_MAIL_TASK.value}`}
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CREATE_MAIL_TASK.value}`}
             render={this.routedAssignToTeam} />
           <Route
-            path={`/queue/appeals/:appealId/${TASK_ACTIONS.ASSIGN_TO_PERSON.value}`}
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_PERSON.value}`}
             render={this.routedAssignToUser} />
           <Route
-            path={`/queue/appeals/:appealId/${TASK_ACTIONS.REASSIGN_TO_PERSON.value}`}
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.REASSIGN_TO_PERSON.value}`}
             render={this.routedReassignToUser} />
           <Route
-            path="/queue/appeals/:appealId/modal/assign_to_attorney"
+            path="/queue/appeals/:appealId/tasks/:taskId/modal/assign_to_attorney"
             render={this.routedAssignToAttorney} />
           <PageRoute
             exact
@@ -270,12 +270,12 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedQueueDetailWithLoadingScreen} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/modal/:modalType"
+            path="/queue/appeals/:appealId/tasks/:taskId/modal/:modalType"
             title="Case Details | Caseflow"
             render={this.routedQueueDetail} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/:checkoutFlow(draft_decision|dispatch_decision|omo_request)/submit"
+            path="/queue/appeals/:appealId/tasks/:taskId/:checkoutFlow(draft_decision|dispatch_decision|omo_request)/submit"
             title={(props) => {
               let reviewActionType = props.match.params.checkoutFlow;
 
@@ -297,48 +297,48 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedSubmitDecision} />
           <PageRoute
             exact
-            path={'/queue/appeals/:appealId/:checkoutFlow(draft_decision|dispatch_decision)/' +
+            path={'/queue/appeals/:appealId/tasks/:taskId/:checkoutFlow(draft_decision|dispatch_decision)/' +
               'dispositions/:action(add|edit)/:issueId?'}
             title={(props) => `Draft Decision | ${StringUtil.titleCase(props.match.params.action)} Issue`}
             render={this.routedAddEditIssue} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/:checkoutFlow(draft_decision|dispatch_decision)/remands"
+            path="/queue/appeals/:appealId/tasks/:taskId/:checkoutFlow(draft_decision|dispatch_decision)/remands"
             title={`Draft Decision | ${PAGE_TITLES.REMANDS[this.props.userRole.toUpperCase()]}`}
             render={this.routedSetIssueRemandReasons} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/:checkoutFlow(draft_decision|dispatch_decision)/dispositions"
+            path="/queue/appeals/:appealId/tasks/:taskId/:checkoutFlow(draft_decision|dispatch_decision)/dispositions"
             title={`Draft Decision | ${PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()]}`}
             render={this.routedSelectDispositions} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/:checkoutFlow(draft_decision|dispatch_decision)/special_issues"
+            path="/queue/appeals/:appealId/tasks/:taskId/:checkoutFlow(draft_decision|dispatch_decision)/special_issues"
             title={`Draft Decision | ${COPY.SPECIAL_ISSUES_PAGE_TITLE}`}
             render={this.routedSelectSpecialIssues} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/:checkoutFlow(dispatch_decision|omo_request)/evaluate"
+            path="/queue/appeals/:appealId/tasks/:taskId/:checkoutFlow(dispatch_decision|omo_request)/evaluate"
             title="Evaluate Decision | Caseflow"
             render={this.routedEvaluateDecision} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/colocated_task"
+            path="/queue/appeals/:appealId/tasks/:taskId/colocated_task"
             title="Add Colocated Task | Caseflow"
             render={this.routedAddColocatedTask} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/place_hold"
+            path="/queue/appeals/:appealId/tasks/:taskId/place_hold"
             title="Place Hold | Caseflow"
             render={this.routedColocatedPlaceHold} />
           <PageRoute
             exact
-            path={`/queue/appeals/:appealId/${TASK_ACTIONS.MARK_COMPLETE.value}`}
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.MARK_COMPLETE.value}`}
             title="Mark Task Complete | Caseflow"
             render={this.routedCompleteTaskModal} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/modal/send_colocated_task"
+            path="/queue/appeals/:appealId/tasks/:taskId/modal/send_colocated_task"
             title="Mark Task Complete | Caseflow"
             render={this.routedSendColocatedTaskModal} />
           <PageRoute

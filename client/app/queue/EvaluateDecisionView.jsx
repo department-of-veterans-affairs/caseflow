@@ -19,7 +19,7 @@ import Alert from '../components/Alert';
 import { deleteAppeal } from './QueueActions';
 import { requestSave } from './uiReducer/uiActions';
 import { buildCaseReviewPayload } from './utils';
-import { tasksForAppealAssignedToUserSelector } from './selectors';
+import { taskById } from './selectors';
 
 import COPY from '../../COPY.json';
 import JUDGE_CASE_REVIEW_OPTIONS from '../../constants/JUDGE_CASE_REVIEW_OPTIONS.json';
@@ -307,7 +307,7 @@ const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
   highlight: state.ui.highlightFormItems,
   taskOptions: state.queue.stagedChanges.taskDecision.opts,
-  task: tasksForAppealAssignedToUserSelector(state, ownProps)[0],
+  task: taskById(state, { taskId: ownProps.taskId }),
   decision: state.queue.stagedChanges.taskDecision,
   userRole: state.ui.userRole,
   error: state.ui.messages.error

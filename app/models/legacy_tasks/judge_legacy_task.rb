@@ -22,7 +22,7 @@ class JudgeLegacyTask < LegacyTask
       [
         {
           label: COPY::JUDGE_CHECKOUT_ASSIGN_TO_ATTORNEY_LABEL,
-          value: "assign"
+          value: "modal/assign_to_attorney"
         }
       ]
     end

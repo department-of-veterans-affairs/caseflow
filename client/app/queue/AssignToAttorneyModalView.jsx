@@ -6,8 +6,7 @@ import { bindActionCreators } from 'redux';
 import { AssignWidgetModal } from './components/AssignWidget';
 
 import {
-  tasksForAppealAssignedToAttorneySelector,
-  tasksForAppealAssignedToUserSelector
+  taskById
 } from './selectors';
 
 import {
@@ -19,7 +18,8 @@ import type { State } from './types/state';
 import type { Task } from './types/models';
 
 type Params = {|
-  appealId: number
+  appealId: number,
+  taskId: number
 |};
 
 type Props = Params & {|
@@ -70,8 +70,7 @@ class AssignToAttorneyModalView extends React.PureComponent<Props> {
 
 const mapStateToProps = (state: State, ownProps: Object) => {
   return {
-    task: tasksForAppealAssignedToAttorneySelector(state, ownProps)[0] ||
-      tasksForAppealAssignedToUserSelector(state, ownProps)[0]
+    task: taskById(state, { taskId: ownProps.taskId })
   };
 };
 
