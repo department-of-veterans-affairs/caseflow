@@ -1,6 +1,6 @@
 class Fakes::Initializer
   class << self
-    def load!(rails_env: nil)
+    def load!
       User.authentication_service = Fakes::AuthenticationService
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
     end
@@ -21,7 +21,7 @@ class Fakes::Initializer
         # `rake db:schema:load`, we do not want to try and seed the fakes
         # because our schema may not be loaded yet and it will fail!
         if running_rake_command?
-          load!(rails_env: rails_env)
+          load!
         else
           load_fakes_and_seed!(rails_env: rails_env)
         end
@@ -33,14 +33,14 @@ class Fakes::Initializer
     # This setup method is called on every request during development
     # to properly reload class attributes like the fake repositories and
     # their seed data (which is currently cached as class attributes)
-    def setup!(rails_env, app_name: nil)
-      load_fakes_and_seed!(rails_env: rails_env, app_name: app_name) if rails_env.stubbed? || rails_env.development?
+    def setup!(rails_env)
+      load_fakes_and_seed!(rails_env: rails_env) if rails_env.stubbed? || rails_env.development?
     end
 
     private
 
-    def load_fakes_and_seed!(rails_env:, app_name: nil)
-      load!(rails_env: rails_env)
+    def load_fakes_and_seed!(rails_env:)
+      load!
 
       User.authentication_service.vacols_regional_offices = { "DSUSER" => "DSUSER", "RO13" => "RO13" }
 
