@@ -127,27 +127,34 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedSubmitDecision = (props) => <SubmitDecisionView
     appealId={props.match.params.appealId}
+    taskId={props.match.params.taskId}
     checkoutFlow={props.match.params.checkoutFlow}
     nextStep="/queue" />;
 
   routedSelectDispositions = (props) => <SelectDispositionsView
     appealId={props.match.params.appealId}
+    taskId={props.match.params.taskId}
     checkoutFlow={props.match.params.checkoutFlow} />;
 
   routedSelectSpecialIssues = (props) => <SpecialIssueLoadingScreen appealExternalId={props.match.params.appealId}>
     <SelectSpecialIssuesView
       appealId={props.match.params.appealId}
+      taskId={props.match.params.taskId}
       prevStep={`/queue/appeals/${props.match.params.appealId}`}
-      nextStep={`/queue/appeals/${props.match.params.appealId}/${props.match.params.checkoutFlow}/dispositions`} />
+      nextStep={`/queue/appeals/${props.match.params.appealId}/tasks/${props.match.params.taskId}` +
+        `/${props.match.params.checkoutFlow}/dispositions`} />
   </SpecialIssueLoadingScreen>;
 
   routedAddEditIssue = (props) => <AddEditIssueView
-    nextStep={`/queue/appeals/${props.match.params.appealId}/${props.match.params.checkoutFlow}/dispositions`}
-    prevStep={`/queue/appeals/${props.match.params.appealId}/${props.match.params.checkoutFlow}/dispositions`}
+    nextStep={`/queue/appeals/${props.match.params.appealId}/tasks/${props.match.params.taskId}` +
+      `/${props.match.params.checkoutFlow}/dispositions`}
+    prevStep={`/queue/appeals/${props.match.params.appealId}/tasks/${props.match.params.taskId}` +
+      `/${props.match.params.checkoutFlow}/dispositions`}
     {...props.match.params} />;
 
   routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView
-    prevStep={`/queue/appeals/${props.match.params.appealId}/${props.match.params.checkoutFlow}/dispositions`}
+    prevStep={`/queue/appeals/${props.match.params.appealId}/tasks/${props.match.params.taskId}` +
+      `/${props.match.params.checkoutFlow}/dispositions`}
     {...props.match.params} />;
 
   routedEvaluateDecision = (props) => <EvaluateDecisionView nextStep="/queue" {...props.match.params} />;
@@ -275,7 +282,8 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedQueueDetail} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/tasks/:taskId/:checkoutFlow(draft_decision|dispatch_decision|omo_request)/submit"
+            path={'/queue/appeals/:appealId/tasks/:taskId/' +
+              ':checkoutFlow(draft_decision|dispatch_decision|omo_request)/submit'}
             title={(props) => {
               let reviewActionType = props.match.params.checkoutFlow;
 

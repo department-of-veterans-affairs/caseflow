@@ -91,10 +91,11 @@ class SubmitDecisionView extends React.PureComponent<Props> {
     const {
       checkoutFlow,
       appeal,
+      taskId,
       appealId
     } = this.props;
     const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
-    const prevUrl = `/queue/appeals/${appealId}`;
+    const prevUrl = `/queue/appeals/${appealId}/tasks/${taskId}`;
 
     if (checkoutFlow === DECISION_TYPES.DRAFT_DECISION) {
       return dispositions.includes(VACOLS_DISPOSITIONS.REMANDED) ?

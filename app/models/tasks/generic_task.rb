@@ -1,5 +1,6 @@
 class GenericTask < Task
   # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/CyclomaticComplexity
   def available_actions(user)
     if assigned_to.is_a?(Vso) && assigned_to.user_has_access?(user)
       return [Constants.TASK_ACTIONS.MARK_COMPLETE.to_h]
@@ -13,7 +14,9 @@ class GenericTask < Task
       ]
     end
 
-    if assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
+    has_child_assigned_to_self = children.any? { |child| child.assigned_to == user }
+
+    if assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user) && !has_child_assigned_to_self
       return [
         Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
@@ -23,6 +26,7 @@ class GenericTask < Task
 
     []
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/AbcSize
 
   def update_from_params(params, current_user)

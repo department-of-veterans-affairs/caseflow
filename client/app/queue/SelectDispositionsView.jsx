@@ -55,6 +55,7 @@ class SelectDispositionsView extends React.PureComponent {
   getNextStepUrl = () => {
     const {
       appealId,
+      taskId,
       checkoutFlow,
       userRole,
       appeal: { issues }
@@ -73,12 +74,13 @@ class SelectDispositionsView extends React.PureComponent {
       nextStep = 'submit';
     }
 
-    return `/queue/appeals/${appealId}/${checkoutFlow}/${nextStep}`;
+    return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/${nextStep}`;
   }
 
   getPrevStepUrl = () => {
     const {
       appealId,
+      taskId,
       checkoutFlow,
       appeal
     } = this.props;
@@ -87,7 +89,7 @@ class SelectDispositionsView extends React.PureComponent {
       return `/queue/appeals/${appealId}`;
     }
 
-    return `/queue/appeals/${appealId}/${checkoutFlow}/special_issues`;
+    return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
   }
 
   componentWillUnmount = () => this.props.hideSuccessMessage();

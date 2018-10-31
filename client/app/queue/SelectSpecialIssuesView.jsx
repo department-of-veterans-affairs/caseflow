@@ -25,12 +25,13 @@ class SelectSpecialIssuesView extends React.PureComponent {
   goToNextStep = () => {
     const {
       appeal,
+      taskId,
       specialIssues
     } = this.props;
 
     const data = ApiUtil.convertToSnakeCase({ specialIssues });
 
-    this.props.requestSave(`/appeals/${appeal.externalId}/special_issues`, { data }, null);
+    this.props.requestSave(`/appeals/${appeal.externalId}/tasks/${taskId}/special_issues`, { data }, null);
   };
 
   render = () => {

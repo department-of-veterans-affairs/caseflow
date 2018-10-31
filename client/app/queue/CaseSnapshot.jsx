@@ -6,10 +6,7 @@ import { connect } from 'react-redux';
 
 import {
   actionableTasksForAppeal,
-  appealWithDetailSelector,
-  tasksForAppealAssignedToAttorneySelector,
-  tasksForAppealAssignedToUserSelector,
-  incompleteOrganizationTasksByAssigneeIdSelector
+  appealWithDetailSelector
 } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import DocketTypeBadge from './components/DocketTypeBadge';
@@ -266,7 +263,8 @@ export class CaseSnapshot extends React.PureComponent<Props> {
             })}
             {!appeal.isLegacyAppeal && <span {...editButton}>
               <Link
-                to={`/queue/appeals/${appeal.externalId}/modal/advanced_on_docket_motion`}>
+                to={`/queue/appeals/${appeal.externalId}/tasks/` +
+                  `${primaryTask.uniqueId}/modal/advanced_on_docket_motion`}>
                 Edit
               </Link>
             </span>}
