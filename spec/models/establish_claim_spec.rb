@@ -437,7 +437,7 @@ describe EstablishClaim do
       it "raises InvalidTransition" do
         expect { subject }.to raise_error(AASM::InvalidTransition)
 
-        expect(AppealRepository.location_updated_for).to_not eq(appeal)
+        expect(vacols_case.bfcurloc).to_not eq("98")
       end
     end
 
