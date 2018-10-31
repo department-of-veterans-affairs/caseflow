@@ -127,7 +127,7 @@ RSpec.feature "Edit issues" do
         )
       end
 
-      let!(:ri_in_review) do
+      let!(:previous_ri_in_review) do
         RequestIssue.create!(
           rating_issue_reference_id: "def456",
           rating_issue_profile_date: rating.profile_date,
@@ -154,7 +154,7 @@ RSpec.feature "Edit issues" do
         higher_level_review.create_issues!([
                                              eligible_request_issue,
                                              untimely_request_issue,
-                                             request_on_request_issue_in_active_review,
+                                             previous_ri_in_review,
                                              request_issue_with_previous_hlr
                                            ])
         higher_level_review.process_end_product_establishments!
