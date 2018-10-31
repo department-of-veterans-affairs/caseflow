@@ -146,6 +146,19 @@ describe RequestIssue do
     end
   end
 
+  context "#valid?" do
+    subject{ request_issue.valid? }
+    let(:request_issue) { build(:request_issue, untimely_exemption: untimely_exemption, ineligible_reason: ineligible_reason) }
+
+    context "untimely exemption is true" do
+      let(:untimely_exemption) { true }
+      let(:ineligible_reason) { 1 }
+      it "validates that the ineligible_reason can't be untimely" do
+        expect(subject).to be_falsey
+      end
+    end
+  end
+
   context "#validate_eligibility!" do
     let(:duplicate_reference_id) { "xyz789" }
     let(:old_reference_id) { "old123" }

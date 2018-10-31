@@ -5,6 +5,8 @@ class RequestIssue < ApplicationRecord
   has_many :remand_reasons
   has_many :decision_rating_issues, foreign_key: "source_request_issue_id", class_name: "RatingIssue"
 
+  validates :ineligible_reason, exclusion: { in: [:untimely] }, if: :untimely_exemption, inclusion: { in: [true] }
+
   enum ineligible_reason: {
     duplicate_of_issue_in_active_review: 0,
     untimely: 1,
@@ -40,7 +42,9 @@ class RequestIssue < ApplicationRecord
         decision_date: data[:decision_date],
         issue_category: data[:issue_category],
         notes: data[:notes],
-        is_unidentified: data[:is_unidentified]
+        is_unidentified: data[:is_unidentified],
+        untimely_exemption: data[:untimely_exemption],
+        untimely_exemption_notes: data[:untimely_exemption_notes]
       ).validate_eligibility!
     end
 
@@ -152,6 +156,7 @@ class RequestIssue < ApplicationRecord
 
   def check_for_untimely!
     return unless eligible?
+    return if untimely_exemption
     return if review_request && review_request.is_a?(SupplementalClaim)
     check_for_rated_untimely! if rated?
     check_for_nonrated_untimely! if nonrated?

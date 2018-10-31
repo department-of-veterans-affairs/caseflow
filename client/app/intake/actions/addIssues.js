@@ -55,7 +55,9 @@ export const addRatedIssue = (args) => (dispatch) => {
       sourceHigherLevelReview: currentIssue.source_higher_level_review,
       promulgationDate: currentIssue.promulgation_date,
       profileDate: currentIssue.profile_date,
-      notes: args.notes
+      notes: args.notes,
+      untimelyExemption: args.untimelyExemption,
+      untimelyExemptionNotes: args.untimelyExemptionNotes
     }
   });
 };

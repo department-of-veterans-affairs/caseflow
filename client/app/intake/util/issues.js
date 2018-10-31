@@ -154,10 +154,14 @@ const formatRatedIssues = (state) => {
     return state.addedIssues.
       filter((issue) => issue.isRated && !issue.isUnidentified).
       map((issue) => {
-        return { reference_id: issue.id,
+        return {
+          reference_id: issue.id,
           decision_text: ratingIssues[issue.id],
           profile_date: issue.profileDate,
-          notes: issue.notes };
+          notes: issue.notes,
+          untimely_exemption: issue.untimelyExemption,
+          untimely_exemption_notes: issue.untimelyExemptionNotes
+        };
       });
   }
 
@@ -270,7 +274,9 @@ export const formatAddedIssues = (intakeData) => {
         inActiveReview: issue.inActiveReview,
         sourceHigherLevelReview: issue.sourceHigherLevelReview,
         promulgationDate: issue.promulgationDate,
-        timely: issue.timely
+        timely: issue.timely,
+        untimelyExemption: issue.untimelyExemption,
+        untimelyExemptionNotes: issue.untimelyExemptionNotes
       };
     }
 
