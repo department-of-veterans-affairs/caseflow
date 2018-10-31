@@ -61,7 +61,7 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
 
     if (noTasks) {
       return <StatusMessage>
-        <h2>{COPY.NO_CASES_IN_QUEUE_MESSAGE}<Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link>.</h2>
+        <p>{COPY.NO_CASES_IN_QUEUE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.</p>
       </StatusMessage>;
     }
 
