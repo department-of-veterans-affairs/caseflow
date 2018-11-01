@@ -55,6 +55,7 @@ class SelectDispositionsView extends React.PureComponent {
   getNextStepUrl = () => {
     const {
       appealId,
+      taskId,
       checkoutFlow,
       userRole,
       appeal: { issues }
@@ -73,12 +74,13 @@ class SelectDispositionsView extends React.PureComponent {
       nextStep = 'submit';
     }
 
-    return `/queue/appeals/${appealId}/${checkoutFlow}/${nextStep}`;
+    return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/${nextStep}`;
   }
 
   getPrevStepUrl = () => {
     const {
       appealId,
+      taskId,
       checkoutFlow,
       appeal
     } = this.props;
@@ -87,7 +89,7 @@ class SelectDispositionsView extends React.PureComponent {
       return `/queue/appeals/${appealId}`;
     }
 
-    return `/queue/appeals/${appealId}/${checkoutFlow}/special_issues`;
+    return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
   }
 
   componentWillUnmount = () => this.props.hideSuccessMessage();
@@ -115,6 +117,7 @@ class SelectDispositionsView extends React.PureComponent {
   getColumns = () => {
     const {
       appeal,
+      taskId,
       checkoutFlow,
       appealId
     } = this.props;
@@ -140,9 +143,11 @@ class SelectDispositionsView extends React.PureComponent {
     if (appeal.isLegacyAppeal) {
       columns.splice(1, 0, {
         header: 'Actions',
-        valueFunction: (issue) => <Link to={`/queue/appeals/${appealId}/${checkoutFlow}/dispositions/edit/${issue.id}`}>
-          Edit Issue
-        </Link>
+        valueFunction: (issue) => {
+          return <Link to={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions/edit/${issue.id}`}>
+            Edit Issue
+          </Link>;
+        }
       });
     }
 
@@ -153,6 +158,7 @@ class SelectDispositionsView extends React.PureComponent {
     const {
       success,
       appealId,
+      taskId,
       checkoutFlow,
       appeal,
       appeal: { issues }
@@ -175,7 +181,7 @@ class SelectDispositionsView extends React.PureComponent {
         bodyStyling={tbodyStyling}
       />
       {appeal.isLegacyAppeal && <div {...marginLeft(1.5)}>
-        <Link to={`/queue/appeals/${appealId}/${checkoutFlow}/dispositions/add`}>Add Issue</Link>
+        <Link to={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions/add`}>Add Issue</Link>
       </div>}
     </React.Fragment>;
   };
