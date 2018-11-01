@@ -40,7 +40,7 @@ describe UserRepository do
       let!(:staff) { create(:staff, sdept: "DSP", stitle: "A2", sattyid: nil, sdomainid: css_id) }
 
       it "should return a co-located role" do
-        expect(subject).to eq ["colocated", "dispatch"]
+        expect(subject).to eq %w[colocated dispatch]
       end
     end
 
