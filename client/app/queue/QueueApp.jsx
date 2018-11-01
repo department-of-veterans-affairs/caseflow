@@ -137,26 +137,47 @@ class QueueApp extends React.PureComponent<Props> {
     taskId={props.match.params.taskId}
     checkoutFlow={props.match.params.checkoutFlow} />;
 
-  routedSelectSpecialIssues = (props) => <SpecialIssueLoadingScreen appealExternalId={props.match.params.appealId}>
-    <SelectSpecialIssuesView
-      appealId={props.match.params.appealId}
-      taskId={props.match.params.taskId}
-      prevStep={`/queue/appeals/${props.match.params.appealId}`}
-      nextStep={`/queue/appeals/${props.match.params.appealId}/tasks/${props.match.params.taskId}` +
-        `/${props.match.params.checkoutFlow}/dispositions`} />
-  </SpecialIssueLoadingScreen>;
+  routedSelectSpecialIssues = (props) => {
+    const {
+      appealId,
+      checkoutFlow,
+      taskId
+    } = props.match.params;
 
-  routedAddEditIssue = (props) => <AddEditIssueView
-    nextStep={`/queue/appeals/${props.match.params.appealId}/tasks/${props.match.params.taskId}` +
-      `/${props.match.params.checkoutFlow}/dispositions`}
-    prevStep={`/queue/appeals/${props.match.params.appealId}/tasks/${props.match.params.taskId}` +
-      `/${props.match.params.checkoutFlow}/dispositions`}
-    {...props.match.params} />;
+    return <SpecialIssueLoadingScreen appealExternalId={appealId}>
+      <SelectSpecialIssuesView
+        appealId={appealId}
+        taskId={taskId}
+        prevStep={`/queue/appeals/${appealId}`}
+        nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`} />
+    </SpecialIssueLoadingScreen>;
+  }
 
-  routedSetIssueRemandReasons = (props) => <SelectRemandReasonsView
-    prevStep={`/queue/appeals/${props.match.params.appealId}/tasks/${props.match.params.taskId}` +
-      `/${props.match.params.checkoutFlow}/dispositions`}
-    {...props.match.params} />;
+  routedAddEditIssue = (props) => {
+    const {
+      appealId,
+      checkoutFlow,
+      taskId
+    } = props.match.params;
+
+    return <AddEditIssueView
+      nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
+      prevStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
+      {...props.match.params} />;
+  }
+
+  routedSetIssueRemandReasons = (props) => {
+    const {
+      appealId,
+      checkoutFlow,
+      taskId
+    } = props.match.params;
+
+    return <SelectRemandReasonsView
+      prevStep={`/queue/appeals/${appealId}/tasks/${taskId}` +
+        `/${checkoutFlow}/dispositions`}
+      {...props.match.params} />;
+  }
 
   routedEvaluateDecision = (props) => <EvaluateDecisionView nextStep="/queue" {...props.match.params} />;
 

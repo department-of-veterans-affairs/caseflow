@@ -229,7 +229,6 @@ const mapStateToProps = (state, ownProps) => {
   return {
     appeal,
     judges,
-    // Attorneys should only have one task assigned to them from this appeal.
     task: taskById(state, { taskId: ownProps.taskId }),
     decision,
     error,
