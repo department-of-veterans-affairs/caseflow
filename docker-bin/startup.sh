@@ -33,11 +33,11 @@ rake local:vacols:seed
 echo "Enabling Feature Flags"
 bundle exec rails runner scripts/enable_features_dev.rb
 
-echo "Seeding local caseflow database"
-rake db:seed
-
 echo "Migrating the database"
 rails db:migrate
+
+echo "Seeding local caseflow database"
+rake db:seed
 
 echo "Starting Caseflow App RoR"
 rails server --binding 0.0.0.0 -p 3000

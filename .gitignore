@@ -28,6 +28,7 @@ client/yarn-error.log
 
 # Ignore hidden files
 .*
+!.dockerignore
 
 # React on Rails
 npm-debug.log*
