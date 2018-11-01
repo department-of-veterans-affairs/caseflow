@@ -90,7 +90,9 @@ class RequestIssue < ApplicationRecord
       decision_date: decision_date,
       category: issue_category,
       notes: notes,
-      is_unidentified: is_unidentified
+      is_unidentified: is_unidentified,
+      ineligible_reason: ineligible_reason,
+      title_of_active_review: duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
     }
   end
 

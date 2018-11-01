@@ -104,6 +104,43 @@ describe RequestIssue do
     end
   end
 
+  context "#ui_hash" do
+    context "when there is a previous request issue in active review" do
+      let(:previous_higher_level_review) { create(:higher_level_review, id: 10) }
+      let(:new_higher_level_review) { create(:higher_level_review, id: 11) }
+      let(:active_epe) { create(:end_product_establishment, :active) }
+
+      let!(:request_issue_in_active_review) do
+        create(
+          :request_issue,
+          review_request: previous_higher_level_review,
+          rating_issue_reference_id: higher_level_review_reference_id,
+          contention_reference_id: contention_reference_id,
+          end_product_establishment: active_epe,
+          removed_at: nil,
+          ineligible_reason: nil
+        )
+      end
+
+      let!(:ineligible_request_issue) do
+        create(
+          :request_issue,
+          review_request: new_higher_level_review,
+          rating_issue_reference_id: higher_level_review_reference_id,
+          contention_reference_id: contention_reference_id,
+          ineligible_reason: :duplicate_of_issue_in_active_review,
+          ineligible_due_to: request_issue_in_active_review
+        )
+      end
+
+      it "returns the review title of the request issue in active review" do
+        expect(ineligible_request_issue.ui_hash).to include(
+          title_of_active_review: request_issue_in_active_review.review_title
+        )
+      end
+    end
+  end
+
   context "#contention_text" do
     it "changes based on is_unidentified" do
       expect(unidentified_issue.contention_text).to eq(RequestIssue::UNIDENTIFIED_ISSUE_MSG)

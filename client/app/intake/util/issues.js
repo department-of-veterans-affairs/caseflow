@@ -86,8 +86,9 @@ export const formatRequestIssues = (requestIssues) => {
         isRated: false,
         category: issue.category,
         description: issue.description,
-        contentionText: issue.contention_text,
-        decisionDate: issue.decision_date
+        decisionDate: issue.decision_date,
+        ineligibleReason: issue.ineligible_reason,
+        contentionText: issue.contention_text
       };
     }
 
@@ -110,6 +111,8 @@ export const formatRequestIssues = (requestIssues) => {
       profileDate: issueDate.toISOString(),
       notes: issue.notes,
       description: issue.description,
+      ineligibleReason: issue.ineligible_reason,
+      titleOfActiveReview: issue.title_of_active_review,
       contentionText: issue.contention_text
     };
   });
@@ -263,10 +266,11 @@ export const formatAddedIssues = (intakeData) => {
         text: ratingIssues[issue.id],
         date: formatDateStr(issue.profileDate),
         notes: issue.notes,
-        inActiveReview: issue.inActiveReview,
+        titleOfActiveReview: issue.titleOfActiveReview,
         sourceHigherLevelReview: issue.sourceHigherLevelReview,
         promulgationDate: issue.promulgationDate,
-        timely: issue.timely
+        timely: issue.timely,
+        ineligibleReason: issue.ineligibleReason
       };
     }
 
@@ -281,7 +285,8 @@ export const formatAddedIssues = (intakeData) => {
       referenceId: issue.id,
       text: `${issue.category} - ${issue.description}`,
       date: formatDate(issue.decisionDate),
-      timely: isTimely
+      timely: isTimely,
+      ineligibleReason: issue.ineligibleReason
     };
   });
 };
