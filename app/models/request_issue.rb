@@ -91,7 +91,7 @@ class RequestIssue < ApplicationRecord
       notes: notes,
       is_unidentified: is_unidentified,
       ineligible_reason: ineligible_reason,
-      active_review_of_duplicate_issue: duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
+      title_of_active_review: duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
     }
   end
 

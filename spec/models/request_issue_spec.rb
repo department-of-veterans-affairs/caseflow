@@ -135,7 +135,7 @@ describe RequestIssue do
 
       it "returns the review title of the request issue in active review" do
         expect(ineligible_request_issue.ui_hash).to include(
-          active_review_of_duplicate_issue: request_issue_in_active_review.review_title
+          title_of_active_review: request_issue_in_active_review.review_title
         )
       end
     end

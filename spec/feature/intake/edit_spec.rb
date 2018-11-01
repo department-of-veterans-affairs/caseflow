@@ -101,7 +101,7 @@ RSpec.feature "Edit issues" do
           description: "non-rated description",
           contention_reference_id: "1234",
           ineligible_reason: nil,
-          decision_date: Date(2018,05,01)
+          decision_date: Date.new(2018, 5, 1)
         )
       end
 

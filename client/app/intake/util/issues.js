@@ -108,7 +108,7 @@ export const formatRequestIssues = (requestIssues) => {
       notes: issue.notes,
       description: issue.description,
       ineligibleReason: issue.ineligible_reason,
-      activeReviewOfDuplicateIssue: issue.active_review_of_duplicate_issue
+      titleOfActiveReview: issue.title_of_active_review
     };
   });
 };
@@ -261,7 +261,7 @@ export const formatAddedIssues = (intakeData) => {
         text: ratingIssues[issue.id],
         date: formatDateStr(issue.profileDate),
         notes: issue.notes,
-        activeReviewOfDuplicateIssue: issue.activeReviewOfDuplicateIssue,
+        titleOfActiveReview: issue.titleOfActiveReview,
         sourceHigherLevelReview: issue.sourceHigherLevelReview,
         promulgationDate: issue.promulgationDate,
         timely: issue.timely,
