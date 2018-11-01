@@ -7,6 +7,9 @@ const updateFromServerFeatures = (state, featureToggles) => {
     },
     newAddIssuesPage: {
       $set: Boolean(featureToggles.newAddIssuesPage)
+    },
+    useAmaActivationDate: {
+      $set: Boolean(featureToggles.useAmaActivationDate)
     }
   });
 };
@@ -14,7 +17,8 @@ const updateFromServerFeatures = (state, featureToggles) => {
 export const mapDataToFeatureToggle = (data = { featureToggles: {} }) => (
   updateFromServerFeatures({
     intakeAma: false,
-    newAddIssuesPage: false
+    newAddIssuesPage: false,
+    useAmaActivationDate: false
   }, data.featureToggles)
 );
 

@@ -2,19 +2,22 @@ class RatingIssue < ApplicationRecord
   belongs_to :source_request_issue, class_name: "RequestIssue"
 
   # this local attribute is used to resolve the source RequestIssue
-  attr_accessor :contention_reference_id
+  attr_accessor :contention_reference_id, :is_ramp_decision
 
   class << self
     def from_bgs_hash(data)
       rba_contentions = [data.dig(:rba_issue_contentions) || {}].flatten
       associated_claims = [data.dig(:associated_claims) || {}].flatten
+      is_ramp_decision = EndProduct::RAMP_CODES.key?(associated_claims.first.dig(:bnft_clm_tc))
+
       new(
         reference_id: data[:rba_issue_id],
         profile_date: rba_contentions.first.dig(:prfil_dt) || data[:profile_date],
         contention_reference_id: rba_contentions.first.dig(:cntntn_id),
         decision_text: data[:decn_txt],
         promulgation_date: data[:promulgation_date],
-        participant_id: data[:participant_id]
+        participant_id: data[:participant_id],
+        is_ramp_decision: is_ramp_decision
       )
     end
 
@@ -51,7 +54,7 @@ class RatingIssue < ApplicationRecord
       decision_text: decision_text,
       promulgation_date: promulgation_date,
       contention_reference_id: contention_reference_id,
-      before_ama: before_ama,
+      is_ramp_decision: is_ramp_decision,
       title_of_active_review: title_of_active_review,
       source_higher_level_review: source_higher_level_review
     }
@@ -68,11 +71,6 @@ class RatingIssue < ApplicationRecord
     fetch_source_request_issue unless source_request_issue
     return unless source_request_issue
     source_request_issue.review_request.is_a?(HigherLevelReview) ? source_request_issue.id : nil
-  end
-
-  def before_ama
-    return unless reference_id
-
   end
 
   private

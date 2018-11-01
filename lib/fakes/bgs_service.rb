@@ -61,7 +61,8 @@ class Fakes::BGSService
             { decision_text: "Left knee" },
             { decision_text: "Right knee" },
             { decision_text: "PTSD" },
-            { decision_text: "This rating is in active review", reference_id: in_active_review_reference_id }
+            { decision_text: "This rating is in active review", reference_id: in_active_review_reference_id },
+            { decision_text: "This is an old issue is from a RAMP Review", associated_claims: { bnft_clm_tc: "683SCRRRAMP" } }
           ]
         )
         Generators::Rating.build(

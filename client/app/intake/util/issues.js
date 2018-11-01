@@ -247,14 +247,14 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
   return fields.concat(claimantField);
 };
 
-export const formatAddedIssues = (intakeData, amaActivated = false) => {
+export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
   let issues = intakeData.addedIssues || [];
   let ratingIssues = ratingIssuesById(intakeData.ratings);
   // match date definition in Rails Rating model
   const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
 
-  const AMA_ACTIVATION_DATE = amaActivated ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST
-
+  const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST)
+console.log("amaActivationDate::", typeof amaActivationDate)
   return issues.map((issue) => {
     if (issue.isUnidentified) {
       return {
@@ -264,6 +264,7 @@ export const formatAddedIssues = (intakeData, amaActivated = false) => {
         isUnidentified: true
       };
     } else if (issue.isRated) {
+      const profileDate = new Date(issue.profileDate)
       return {
         referenceId: issue.id,
         text: ratingIssues[issue.id],
@@ -273,7 +274,7 @@ export const formatAddedIssues = (intakeData, amaActivated = false) => {
         sourceHigherLevelReview: issue.sourceHigherLevelReview,
         promulgationDate: issue.promulgationDate,
         timely: issue.timely,
-        beforeAma: issue.profileDate < DATES.AMA_ACTIVATION,
+        beforeAma: profileDate < amaActivationDate && !issue.isRampDecision,
         ineligibleReason: issue.ineligibleReason
       };
     }
@@ -290,7 +291,7 @@ export const formatAddedIssues = (intakeData, amaActivated = false) => {
       text: `${issue.category} - ${issue.description}`,
       date: formatDate(issue.decisionDate),
       timely: isTimely,
-      beforeAma: issue.decisionDate < DATES.AMA_ACTIVATION,
+      beforeAma: issue.decisionDate < amaActivationDate && !issue.isRampDecision,
       ineligibleReason: issue.ineligibleReason
     };
   });

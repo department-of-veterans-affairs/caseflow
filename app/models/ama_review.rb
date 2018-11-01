@@ -3,7 +3,7 @@ class AmaReview < ApplicationRecord
 
   validate :validate_receipt_date
 
-  AMA_ACTIVATION_DATE = FeatureToggle.enabled?(:use_ama_activation_date) ? Constants::DATES[AMA_ACTIVATION].to_date : Constants::DATES[AMA_ACTIVATION_TEST].to_date
+  AMA_ACTIVATION_DATE = FeatureToggle.enabled?(:use_ama_activation_date) ? Constants::DATES["AMA_ACTIVATION"].to_date : Constants::DATES["AMA_ACTIVATION_TEST"].to_date
 
   self.abstract_class = true
 

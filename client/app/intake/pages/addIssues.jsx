@@ -68,7 +68,8 @@ export class AddIssuesPage extends React.Component {
     const {
       intakeForms,
       formType,
-      veteran
+      veteran,
+      featureToggles
     } = this.props;
 
     if (!formType) {
@@ -77,6 +78,7 @@ export class AddIssuesPage extends React.Component {
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const veteranInfo = `${veteran.name} (${veteran.fileNumber})`;
+    const { useAmaActivationDate } = featureToggles;
     const intakeData = intakeForms[selectedForm.key];
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
     const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
@@ -86,7 +88,7 @@ export class AddIssuesPage extends React.Component {
     }
 
     const issuesComponent = () => {
-      let issues = formatAddedIssues(intakeData);
+      let issues = formatAddedIssues(intakeData, useAmaActivationDate);
 
       return <div className="issues">
         <div>
@@ -186,14 +188,15 @@ export class AddIssuesPage extends React.Component {
 }
 
 export const IntakeAddIssuesPage = connect(
-  ({ intake, higherLevelReview, supplementalClaim, appeal }) => ({
+  ({ intake, higherLevelReview, supplementalClaim, appeal, featureToggles }) => ({
     intakeForms: {
       higher_level_review: higherLevelReview,
       supplemental_claim: supplementalClaim,
       appeal
     },
     formType: intake.formType,
-    veteran: intake.veteran
+    veteran: intake.veteran,
+    featureToggles
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
@@ -210,7 +213,8 @@ export const EditAddIssuesPage = connect(
       supplemental_claim: state
     },
     formType: state.formType,
-    veteran: state.veteran
+    veteran: state.veteran,
+    featureToggles: state.featureToggles
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
