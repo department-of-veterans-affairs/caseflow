@@ -23,6 +23,14 @@ if [ ! -f instantclient-basic-linux.x64-12.2.0.1.0.zip ]; then
 
 fi
 
+echo "  Checking if Instant Client has been downloaded"
+if [ ! -f instantclient-basic-linux.x64-12.2.0.1.0.zip ] || [ ! -f instantclient-sqlplus-linux.x64-12.2.0.1.0.zip ] || [ ! -f instantclient-sdk-linux.x64-12.2.0.1.0.zip ]; then
+
+  echo "    Error: Couldn't download the files. Exiting"
+  exit 1
+
+fi
+
 echo "  Checking if Instant Client Folder has been unarchived"
 if [ ! -d instantclient_12_2 ]; then
   echo "    Unzipping Instant Client and SQLPlus"
