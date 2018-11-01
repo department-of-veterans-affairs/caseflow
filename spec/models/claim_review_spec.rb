@@ -238,7 +238,7 @@ describe ClaimReview do
 
       allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
       allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-      allow(Fakes::VBMSService).to receive(:associated_rating_request_issues!).and_call_original
+      allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
     end
 
     subject { claim_review.process_end_product_establishments! }
@@ -276,7 +276,7 @@ describe ClaimReview do
           user: user
         )
 
-        expect(Fakes::VBMSService).to have_received(:associated_rating_request_issues!).once.with(
+        expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
           claim_id: claim_review.end_product_establishments.last.reference_id,
           rating_request_issue_contention_map: {
             "reference-id" => rating_request_issue.reload.contention_reference_id,
@@ -291,7 +291,7 @@ describe ClaimReview do
 
       context "when associate rating request issues fails" do
         before do
-          allow(VBMSService).to receive(:associated_rating_request_issues!).and_raise(vbms_error)
+          allow(VBMSService).to receive(:associate_rating_request_issues!).and_raise(vbms_error)
         end
 
         it "does not commit the end product establishment" do
@@ -305,9 +305,9 @@ describe ClaimReview do
       context "when there are no rating issues" do
         let(:issues) { [non_rating_request_issue] }
 
-        it "does not associated_rating_request_issues" do
+        it "does not associate_rating_request_issues" do
           subject
-          expect(Fakes::VBMSService).to_not have_received(:associated_rating_request_issues!)
+          expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
           expect(non_rating_request_issue.rating_issue_associated_at).to be_nil
         end
       end
@@ -343,7 +343,7 @@ describe ClaimReview do
               user: user
             )
 
-            expect(Fakes::VBMSService).to have_received(:associated_rating_request_issues!).once.with(
+            expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
               claim_id: claim_review.end_product_establishments.last.reference_id,
               rating_request_issue_contention_map: {
                 "reference-id" => rating_request_issue.reload.contention_reference_id,
@@ -371,7 +371,7 @@ describe ClaimReview do
 
             expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
             expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
-            expect(Fakes::VBMSService).to_not have_received(:associated_rating_request_issues!)
+            expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
           end
         end
 
@@ -415,11 +415,11 @@ describe ClaimReview do
           expect(claim_contentions_for_all_issues_on_epe.count).to eq(0)
 
           allow_create_contentions
-          raise_error_on_associated_rating_request_issues
+          raise_error_on_associate_rating_request_issues
 
           expect(Fakes::VBMSService).to_not receive(:establish_claim!)
           expect(Fakes::VBMSService).to receive(:create_contentions!).once
-          expect(Fakes::VBMSService).to receive(:associated_rating_request_issues!).once
+          expect(Fakes::VBMSService).to receive(:associate_rating_request_issues!).once
           expect { subject }.to raise_error(vbms_error)
           expect(claim_review.establishment_processed_at).to be_nil
 
@@ -427,17 +427,17 @@ describe ClaimReview do
           expect(epe_contentions.count).to eq(2)
           expect(epe_contentions.where.not(rating_issue_associated_at: nil).count).to eq(0)
 
-          allow_associated_rating_request_issues
+          allow_associate_rating_request_issues
 
           expect(Fakes::VBMSService).to_not receive(:establish_claim!)
           expect(Fakes::VBMSService).to_not receive(:create_contentions!)
-          expect(Fakes::VBMSService).to receive(:associated_rating_request_issues!).once
+          expect(Fakes::VBMSService).to receive(:associate_rating_request_issues!).once
           subject
           expect(claim_review.establishment_processed_at).to eq(Time.zone.now)
 
           expect(Fakes::VBMSService).to_not receive(:establish_claim!)
           expect(Fakes::VBMSService).to_not receive(:create_contentions!)
-          expect(Fakes::VBMSService).to_not receive(:associated_rating_request_issues!)
+          expect(Fakes::VBMSService).to_not receive(:associate_rating_request_issues!)
           subject
         end
 
@@ -457,12 +457,12 @@ describe ClaimReview do
           allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
         end
 
-        def raise_error_on_associated_rating_request_issues
-          allow(Fakes::VBMSService).to receive(:associated_rating_request_issues!).and_raise(vbms_error)
+        def raise_error_on_associate_rating_request_issues
+          allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_raise(vbms_error)
         end
 
-        def allow_associated_rating_request_issues
-          allow(Fakes::VBMSService).to receive(:associated_rating_request_issues!).and_call_original
+        def allow_associate_rating_request_issues
+          allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
         end
 
         def claim_contentions_for_all_issues_on_epe
@@ -543,7 +543,7 @@ describe ClaimReview do
           user: user
         )
 
-        expect(Fakes::VBMSService).to have_received(:associated_rating_request_issues!).once.with(
+        expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRR").reference_id,
           rating_request_issue_contention_map: {
             "reference-id" => rating_request_issue.reload.contention_reference_id
@@ -685,7 +685,7 @@ describe ClaimReview do
 
         allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
         allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-        allow(Fakes::VBMSService).to receive(:associated_rating_request_issues!).and_call_original
+        allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
       end
 
       it "does not create a supplemental claim if there are no DTAs" do
@@ -794,7 +794,7 @@ describe ClaimReview do
             )
 
             # for rating request issues, verify that this is called
-            expect(Fakes::VBMSService).to have_received(:associated_rating_request_issues!).once.with(
+            expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
               claim_id: supplemental_claim_end_product_establishment.reference_id,
               rating_request_issue_contention_map:
               {
