@@ -290,7 +290,6 @@ describe RequestIssue do
 
       rating_request_issue.save!
       expect(previous_request_issue.duplicate_but_ineligible).to eq([rating_request_issue])
-      expect(rating_request_issue.duplicate_of_issue_in_active_review?).to eq(true)
     end
   end
 end
