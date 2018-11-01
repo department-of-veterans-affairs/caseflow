@@ -3,6 +3,8 @@ class Fakes::Initializer
     def load!
       User.authentication_service = Fakes::AuthenticationService
       CAVCDecision.repository = Fakes::CAVCDecisionRepository
+      ExternalApi::Vets360Service = Fakes::Vets360Service
+      ExternalApi::FacilitiesLocatorService = Fakes::FacilitiesLocatorService
     end
 
     # This method is called only 1 time during application bootup
