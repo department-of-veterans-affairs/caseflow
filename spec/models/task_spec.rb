@@ -1,6 +1,6 @@
 describe Task do
   describe ".when_child_task_completed" do
-    context "when on_hold task is assigned to a person", focus: true do
+    context "when on_hold task is assigned to a person" do
       let(:task) { FactoryBot.create(:task, :on_hold, type: "Task") }
       context "when task has no child tasks" do
         it "should not change the task's status" do
