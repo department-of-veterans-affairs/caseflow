@@ -1,23 +1,9 @@
 class JudgeTask < Task
-  validates :action, inclusion: { in: %w[assign review] }
-
   include RoundRobinAssigner
 
-  def available_actions(user)
-    return [] if assigned_to != user
-
-    if action.eql? "assign"
-      [
-        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
-      ]
-    else
-      [
-        {
-          label: COPY::JUDGE_CHECKOUT_DISPATCH_LABEL,
-          value: "dispatch_decision/special_issues"
-        }
-      ]
-    end
+  def no_actions_available?(user)
+    return true if assigned_to != user
+    super(user)
   end
 
   def self.create_from_params(params, user)
@@ -31,16 +17,18 @@ class JudgeTask < Task
     new_task
   end
 
+  # TODO: Should we explicitly create the AssignJudgeTask instead of the JudgeTask we are creating right now?
   def self.modify_params(params)
-    super(params.merge(action: "assign"))
+    super(params.merge(type: AssignJudgeTask.name))
   end
 
   def self.verify_user_can_assign!(user)
     QualityReview.singleton.user_has_access?(user) || super(user)
   end
 
+  # TODO: Should we close the AssignJudgeTask and create a new ReviewJudgeTask here instead?
   def when_child_task_completed
-    update!(action: :review)
+    update!(type: ReviewJudgeTask.name)
     super
   end
 
@@ -109,4 +97,31 @@ class JudgeTask < Task
   end
   #:nocov:
   # rubocop:enable Metrics/AbcSize
+end
+
+# TODO: I actually don't think actions serve any purpose other than describing which task type we should use.
+# We may be able to get rid of the action method on these Judge subtasks entirely.
+class AssignJudgeTask < JudgeTask
+  def action
+    "assign"
+  end
+
+  def available_actions(_user)
+    [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
+  end
+end
+
+class ReviewJudgeTask < JudgeTask
+  def action
+    "review"
+  end
+
+  def available_actions(_user)
+    [
+      {
+        label: COPY::JUDGE_CHECKOUT_DISPATCH_LABEL,
+        value: "dispatch_decision/special_issues"
+      }
+    ]
+  end
 end

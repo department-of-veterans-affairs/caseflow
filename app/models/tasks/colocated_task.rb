@@ -1,7 +1,6 @@
 class ColocatedTask < Task
   include RoundRobinAssigner
 
-  validates :action, inclusion: { in: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s) }
   validate :assigned_by_role_is_valid
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
@@ -35,33 +34,21 @@ class ColocatedTask < Task
     end
   end
 
-  def available_actions(user)
-    return [] unless user.colocated_in_vacols?
-
-    actions = [
+  def available_actions(_user)
+    [
       {
         label: COPY::COLOCATED_ACTION_PLACE_HOLD,
         value: Constants::CO_LOCATED_ACTIONS["PLACE_HOLD"]
-      }
-    ]
-
-    if %w[translation schedule_hearing].include?(action) && appeal.class.name.eql?("LegacyAppeal")
-      actions.unshift(
-        label: format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action]),
-        value: "modal/send_colocated_task"
-      )
-    else
-      actions.unshift(
+      },
+      {
         label: COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
         value: "modal/mark_task_complete"
-      )
-    end
-
-    actions
+      }
+    ]
   end
 
-  def no_actions_available?(_user)
-    completed?
+  def no_actions_available?(user)
+    !user.colocated_in_vacols? || completed?
   end
 
   def update_if_hold_expired!
@@ -85,12 +72,7 @@ class ColocatedTask < Task
   end
 
   def location_based_on_action
-    case action.to_sym
-    when :translation, :schedule_hearing
-      LegacyAppeal::LOCATION_CODES[action.to_sym]
-    else
-      assigned_by.vacols_uniq_id
-    end
+    assigned_by.vacols_uniq_id
   end
 
   def all_tasks_completed_for_appeal?
@@ -99,5 +81,134 @@ class ColocatedTask < Task
 
   def assigned_by_role_is_valid
     errors.add(:assigned_by, "has to be an attorney") if assigned_by && !assigned_by.attorney_in_vacols?
+  end
+end
+
+class MovableColocatedTask < ColocatedTask
+  def available_actions(user)
+    actions = super(user)
+
+    # Expect the first action to be the mark task complete action which we want to replace with the task-specific
+    # relocation logic.
+    if appeal.class.eql?(LegacyAppeal)
+      actions[0] = {
+        label: format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, action),
+        value: "modal/send_colocated_task"
+      }
+    end
+
+    actions
+  end
+end
+
+# TODO: I think we only use the "action" field for populating the "type" column in the case table view. Perhaps we can
+# just map from task type directly to what text we want to display in that column on the frontend itself?
+class ScheduleHearingColocatedTask < MovableColocatedTask
+  def action
+    "Schedule hearing"
+  end
+
+  def location_based_on_action
+    "57"
+  end
+end
+
+class TranslationColocatedTask < MovableColocatedTask
+  def action
+    "Translation"
+  end
+
+  def location_based_on_action
+    "14"
+  end
+end
+
+class IhpColocatedTask < ColocatedTask
+  def action
+    "IHP"
+  end
+end
+
+class PoaClarificationColocatedTask < ColocatedTask
+  def action
+    "POA clarification"
+  end
+end
+
+class HearingClarificationColocatedTask < ColocatedTask
+  def action
+    "Hearing clarification"
+  end
+end
+
+class AojColocatedTask < ColocatedTask
+  def action
+    "AOJ"
+  end
+end
+
+class ExtensionColocatedTask < ColocatedTask
+  def action
+    "Extension"
+  end
+end
+
+class MissingHearingTranscriptsColocatedTask < ColocatedTask
+  def action
+    "Missing hearing transcripts"
+  end
+end
+
+class UnaccreditedRepColocatedTask < ColocatedTask
+  def action
+    "Unaccredited rep"
+  end
+end
+
+class FoiaColocatedTask < ColocatedTask
+  def action
+    "FOIA"
+  end
+end
+
+class RetiredVljColocatedTask < ColocatedTask
+  def action
+    "Retired VLJ"
+  end
+end
+
+class ArnesonColocatedTask < ColocatedTask
+  def action
+    "Arneson"
+  end
+end
+
+class NewRepArgumentsColocatedTask < ColocatedTask
+  def action
+    "New rep arguments"
+  end
+end
+
+class PendingScanningVbmsColocatedTask < ColocatedTask
+  def action
+    "Pending scanning (VBMS)"
+  end
+end
+
+class AddressVerificationColocatedTask < ColocatedTask
+  def action
+    "Address verification"
+  end
+end
+
+class MissingRecordsColocatedTask < ColocatedTask
+  def action
+    "Missing records"
+  end
+end
+
+class OtherColocatedTask < ColocatedTask
+  def action
+    "Other"
   end
 end

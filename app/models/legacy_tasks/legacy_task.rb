@@ -13,6 +13,10 @@ class LegacyTask
     assigned_at
   end
 
+  def action
+    "legacy task"
+  end
+
   delegate :css_id, :name, to: :added_by, prefix: true
   delegate :first_name, :last_name, :pg_id, :css_id, to: :assigned_by, prefix: true
 
