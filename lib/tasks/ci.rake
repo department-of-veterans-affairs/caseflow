@@ -35,7 +35,13 @@ namespace :ci do
     # Rebuild HTML file with correct merged results
     result.format!
 
-    
+    if result.covered_percentages.any? { |c| c < CODE_COVERAGE_THRESHOLD }
+      puts Rainbow("File #{result.least_covered_file} is only #{result.covered_percentages.min.to_i}% covered.\
+                   This is below the expected minimum coverage per file of #{CODE_COVERAGE_THRESHOLD}%\n").red
+      exit!(1)
+    else
+      puts Rainbow("Code coverage threshold met\n").green
+    end
   end
 
   desc "Verify code coverage (via simplecov) on travis, skips if testing is incomplete"

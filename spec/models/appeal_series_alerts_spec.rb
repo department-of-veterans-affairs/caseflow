@@ -17,8 +17,6 @@ describe AppealSeriesAlerts do
 
   let(:docket_month) { 1.year.ago.to_date.beginning_of_month }
 
-  let(:docket_month) { 1.year.ago.to_date.beginning_of_month }
-
   let(:appeal) do
     create(:legacy_appeal, vacols_case:
       create(
