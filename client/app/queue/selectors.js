@@ -99,7 +99,6 @@ export const getTasksForAppeal = createSelector(
   }
 );
 
-// UNASSIGNED (to a person, but assigned to a TEAM)
 export const getUnassignedOrganizationalTasks = createSelector(
   [tasksWithAppealSelector],
   (tasks: Tasks) => _.filter(tasks, (task) => {
@@ -107,7 +106,6 @@ export const getUnassignedOrganizationalTasks = createSelector(
   })
 );
 
-// ASSIGNED = status === 'on_hold'
 export const getAssignedOrganizationalTasks = createSelector(
   [tasksWithAppealSelector],
   (tasks: Tasks) => _.filter(tasks, (task) => (task.status === TASK_STATUSES.on_hold))
