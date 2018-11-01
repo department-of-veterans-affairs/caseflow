@@ -25,7 +25,7 @@ const headingStyling = css({
 
 export default function CaseDetailsIssueList(props) {
   return <React.Fragment>
-    {props.issues.map((issue, i) =>
+    {props.issues.filter((iss) => iss.is_eligible).map((issue, i) =>
       <div key={i} {...singleIssueContainerStyling}>
         <h3 {...headingStyling}>Issue {1 + i}</h3>
         { props.isLegacyAppeal ?

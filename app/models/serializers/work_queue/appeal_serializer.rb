@@ -11,7 +11,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
         disposition: issue.disposition,
         program: "Compensation",
         description: issue.description,
-        remand_reasons: issue.remand_reasons
+        remand_reasons: issue.remand_reasons,
+        is_eligible: issue.eligible?
       }
     end
   end
