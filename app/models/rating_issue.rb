@@ -50,12 +50,12 @@ class RatingIssue < ApplicationRecord
       decision_text: decision_text,
       promulgation_date: promulgation_date,
       contention_reference_id: contention_reference_id,
-      in_active_review: in_active_review,
+      title_of_active_review: title_of_active_review,
       source_higher_level_review: source_higher_level_review
     }
   end
 
-  def in_active_review
+  def title_of_active_review
     return unless reference_id
     request_issue = RequestIssue.find_active_by_reference_id(reference_id)
     request_issue.review_title if request_issue
