@@ -12,7 +12,7 @@ task :security_caseflow do
   puts "running bundle-audit to check for insecure dependencies..."
   exit!(1) unless ShellCommand.run("bundle-audit update")
 
-  audit_result = ShellCommand.run(audit_cmd)
+  audit_result = ShellCommand.run("bundle-audit check")
 
   puts "\n"
   if brakeman_result && audit_result
