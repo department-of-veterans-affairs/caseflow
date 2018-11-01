@@ -2,10 +2,6 @@ require "rails_helper"
 require "faker"
 
 describe RetrieveDocumentsForReaderJob do
-  before(:all) do
-    User.appeal_repository = Fakes::AppealRepository
-  end
-
   context ".perform" do
     context "A user exists with reader privileges" do
       let!(:user_with_reader_role) do

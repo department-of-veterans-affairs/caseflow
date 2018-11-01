@@ -1,12 +1,7 @@
 describe RampClosedAppeal do
   before do
-    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
     RequestStore[:current_user] = user
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   let(:vacols_case) { create(:case, :status_advance) }

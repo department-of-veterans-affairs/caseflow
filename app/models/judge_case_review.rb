@@ -66,8 +66,6 @@ class JudgeCaseReview < ApplicationRecord
   end
 
   class << self
-    attr_writer :repository
-
     def complete(params)
       ActiveRecord::Base.multi_transaction do
         record = create(params)
@@ -83,8 +81,7 @@ class JudgeCaseReview < ApplicationRecord
     end
 
     def repository
-      return QueueRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= QueueRepository
+      QueueRepository
     end
   end
 end

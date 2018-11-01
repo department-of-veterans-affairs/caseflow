@@ -1,14 +1,6 @@
 require "rails_helper"
 
 describe StartCertificationJob do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let(:appeal) do
     create(:legacy_appeal, vacols_case: vacols_case)
   end

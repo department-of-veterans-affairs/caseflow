@@ -8,10 +8,7 @@ class JudgeTask < Task
 
     if action.eql? "assign"
       [
-        {
-          label: COPY::JUDGE_CHECKOUT_ASSIGN_TO_ATTORNEY_LABEL,
-          value: "modal/assign_to_attorney"
-        }
+        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
       ]
     else
       [
@@ -92,6 +89,7 @@ class JudgeTask < Task
 
   def self.eligible_for_assigment?(task)
     # Hearing cases will not be processed until February 2019
+    return false if task.appeal.class == LegacyAppeal
     return false if task.appeal.hearing_docket?
 
     # If it's an evidence submission case, we need to wait until the

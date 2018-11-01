@@ -1,12 +1,4 @@
 describe RemandReasonRepository do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   context ".load_remand_reasons_for_appeals" do
     subject { RemandReasonRepository.load_remand_reasons_for_appeals(vacols_ids) }
 
