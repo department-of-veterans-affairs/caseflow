@@ -136,6 +136,7 @@ namespace :ci do
       exit!(1)
     else
       puts Rainbow("Code coverage threshold met\n").green
+      exit!(0)
     end
   end
 end
