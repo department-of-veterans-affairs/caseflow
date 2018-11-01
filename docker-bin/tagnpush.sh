@@ -1,3 +1,4 @@
+#!/bin/bash
 echo "Tagging with Date"
 docker tag caseflow:latest 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/caseflow:$(date +%F)
 
