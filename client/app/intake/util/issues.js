@@ -145,7 +145,7 @@ const formatUnidentifiedIssues = (state) => {
   return [];
 };
 
-const formatRatedIssues = (state) => {
+const formatRatingRequestIssues = (state) => {
   const ratingIssues = ratingIssuesById(state.ratings);
 
   if (state.addedIssues && state.addedIssues.length > 0) {
@@ -200,7 +200,7 @@ const formatNonRatingRequestIssues = (state) => {
 };
 
 export const formatIssues = (state) => {
-  const ratingData = formatRatedIssues(state);
+  const ratingData = formatRatingRequestIssues(state);
   const nonRatingData = formatNonRatingRequestIssues(state);
   const unidentifiedData = formatUnidentifiedIssues(state);
 

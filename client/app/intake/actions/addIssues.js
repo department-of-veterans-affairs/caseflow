@@ -37,7 +37,7 @@ export const addUnidentifiedIssue = (description, notes) => (dispatch) => {
   });
 };
 
-export const addRatedIssue = (args) => (dispatch) => {
+export const addRatingRequestIssue = (args) => (dispatch) => {
   let currentRating = _.filter(
     args.ratings,
     (ratingDate) => _.some(ratingDate.issues, { reference_id: args.issueId })

@@ -5,7 +5,7 @@ import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import CancelButton from '../../components/CancelButton';
 import NonRatingRequestIssuesUnconnected from '../../components/NonRatingRequestIssues';
-import RatedIssuesUnconnected from '../../components/RatedIssues';
+import RatingRequestIssuesUnconnected from '../../components/RatingRequestIssues';
 import IssueCounter from '../../components/IssueCounter';
 import {
   completeIntake,
@@ -54,7 +54,7 @@ class Finish extends React.PureComponent {
         If you are unable to find one or more issues, enter these in the "other issues" section.
       </p>
 
-      <RatedIssues />
+      <RatingRequestIssues />
       <NonRatingRequestIssues />
     </div>;
   }
@@ -114,14 +114,14 @@ const mapStateToProps = (state) => {
 
 const IssueCounterConnected = connect(mapStateToProps)(IssueCounter);
 
-const RatedIssues = connect(
+const RatingRequestIssues = connect(
   ({ higherLevelReview }) => ({
     ratings: higherLevelReview.ratings
   }),
   (dispatch) => bindActionCreators({
     setIssueSelected
   }, dispatch)
-)(RatedIssuesUnconnected);
+)(RatingRequestIssuesUnconnected);
 
 export class FinishButtons extends React.PureComponent {
   render = () =>
