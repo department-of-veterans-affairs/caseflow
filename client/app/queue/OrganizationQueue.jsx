@@ -26,7 +26,7 @@ class OrganizationQueue extends React.PureComponent {
     const noTasks = !_.size(this.props.tasks);
 
     const content = noTasks ?
-      <h2>{COPY.NO_CASES_IN_QUEUE_MESSAGE}<Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link>.</h2> :
+      <p>{COPY.NO_CASES_IN_QUEUE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.</p> :
       <TaskTable
         includeDetailsLink
         includeType
