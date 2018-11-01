@@ -58,7 +58,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def issue_code(rating)
-    rating ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE
+    (rating == :rating) ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE
   end
 
   private

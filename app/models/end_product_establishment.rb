@@ -188,8 +188,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def associate_rating_request_issues!
-    is_rating = true
-    return if code != source.issue_code(is_rating)
+    return if code != source.issue_code(:rating)
     return if unassociated_rating_request_issues.count == 0
 
     VBMSService.associate_rating_request_issues!(
