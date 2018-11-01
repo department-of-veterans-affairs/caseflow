@@ -279,7 +279,7 @@ RSpec.feature "Case details" do
     let(:issues) do
       [
         build_list(:request_issue, eligble_issue_cnt, description: "Knee pain"),
-        build_list(:request_issue, ineligble_issue_cnt, description: "Sunburn", ineligible_reason: "untimely")
+        build_list(:request_issue, ineligble_issue_cnt, description: "Sunburn", ineligible_reason: :untimely)
       ].flatten
     end
     let!(:appeal) { FactoryBot.create(:appeal, request_issues: issues) }
