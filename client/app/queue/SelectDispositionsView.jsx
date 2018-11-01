@@ -146,7 +146,7 @@ class SelectDispositionsView extends React.PureComponent {
         valueFunction: (issue) => {
           return <Link to={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions/edit/${issue.id}`}>
             Edit Issue
-          </Link>
+          </Link>;
         }
       });
     }
