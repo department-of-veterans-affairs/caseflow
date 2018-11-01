@@ -74,7 +74,7 @@ class NonRatingRequestIssue extends React.PureComponent {
     const { category, description, decisionDate } = this.props;
 
     return (
-      <div className="cf-non-rated-issue">
+      <div className="cf-nonrating-request-issue">
         <SearchableDropdown
           name="issue-category"
           label="Issue category"

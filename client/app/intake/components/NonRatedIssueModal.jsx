@@ -82,7 +82,7 @@ class NonRatingRequestIssueModal extends React.Component {
           <h2>
             Does issue {issueNumber} match any of these issue categories?
           </h2>
-          <div className="add-non-rated-issue">
+          <div className="add-nonrating-request-issue">
             <SearchableDropdown
               name="issue-category"
               label="Issue category"
