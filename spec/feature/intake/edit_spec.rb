@@ -84,13 +84,17 @@ RSpec.feature "Edit issues" do
       expect(page).to have_content("Left knee granted")
       safe_click("#button-submit-update")
 
-      # should show confirmation
-      expect(page).to have_content("Edit Confirmed")
+      # should redirect to queue
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
       # going back to edit page should show those issues
       visit "appeals/#{appeal.uuid}/edit/"
       expect(page).to have_content("Left knee granted")
       expect(page).not_to have_content("nonrating description")
+
+      # canceling should redirect to queue
+      click_on "Cancel edit"
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
     end
   end
 

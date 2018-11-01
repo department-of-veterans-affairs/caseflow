@@ -71,7 +71,11 @@ class SaveButtonUnconnected extends React.Component {
 
   save = () => {
     this.props.requestIssuesUpdate(this.props.claimId, this.props.formType, this.props.state).
-      then(() => this.props.history.push('/confirmation'));
+      then(() => {
+        this.props.formType === 'appeal' ?
+          window.location.href = `/queue/appeals/${this.props.claimId}` :
+          this.props.history.push('/confirmation');
+      });
   }
 
   render = () => {
@@ -134,7 +138,7 @@ const SaveButton = connect(
   }, dispatch)
 )(SaveButtonUnconnected);
 
-class CancelEditButton extends React.PureComponent {
+class CancelEditButtonUnconnected extends React.PureComponent {
   render = () => {
     return <Button
       id="cancel-edit"
@@ -142,7 +146,9 @@ class CancelEditButton extends React.PureComponent {
       willNeverBeLoading
       onClick={
         () => {
-          this.props.history.push('/cancel');
+          this.props.formType === 'appeal' ?
+            window.location.href = `/queue/appeals/${this.props.claimId}` :
+            this.props.history.push('/cancel');
         }
       }
     >
@@ -150,6 +156,13 @@ class CancelEditButton extends React.PureComponent {
     </Button>;
   }
 }
+
+const CancelEditButton= connect(
+  (state) => ({
+    formType: state.formType,
+    claimId: state.claimId
+  })
+)(CancelEditButtonUnconnected);
 
 const mapStateToProps = (state) => {
   return {
