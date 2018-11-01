@@ -117,6 +117,7 @@ class SelectDispositionsView extends React.PureComponent {
   getColumns = () => {
     const {
       appeal,
+      taskId,
       checkoutFlow,
       appealId
     } = this.props;
@@ -142,9 +143,11 @@ class SelectDispositionsView extends React.PureComponent {
     if (appeal.isLegacyAppeal) {
       columns.splice(1, 0, {
         header: 'Actions',
-        valueFunction: (issue) => <Link to={`/queue/appeals/${appealId}/${checkoutFlow}/dispositions/edit/${issue.id}`}>
-          Edit Issue
-        </Link>
+        valueFunction: (issue) => {
+          return <Link to={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions/edit/${issue.id}`}>
+            Edit Issue
+          </Link>
+        }
       });
     }
 
@@ -155,6 +158,7 @@ class SelectDispositionsView extends React.PureComponent {
     const {
       success,
       appealId,
+      taskId,
       checkoutFlow,
       appeal,
       appeal: { issues }
@@ -177,7 +181,7 @@ class SelectDispositionsView extends React.PureComponent {
         bodyStyling={tbodyStyling}
       />
       {appeal.isLegacyAppeal && <div {...marginLeft(1.5)}>
-        <Link to={`/queue/appeals/${appealId}/${checkoutFlow}/dispositions/add`}>Add Issue</Link>
+        <Link to={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions/add`}>Add Issue</Link>
       </div>}
     </React.Fragment>;
   };
