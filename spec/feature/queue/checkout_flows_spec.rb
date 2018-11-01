@@ -29,14 +29,6 @@ RSpec.feature "Checkout flows" do
   let(:colocated_user) { FactoryBot.create(:user) }
   let!(:vacols_colocated) { FactoryBot.create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
 
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   context "given a valid appeal and an attorney user" do
     let!(:appeal) do
       FactoryBot.create(
