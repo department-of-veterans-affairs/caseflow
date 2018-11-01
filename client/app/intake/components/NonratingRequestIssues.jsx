@@ -6,23 +6,23 @@ import DateSelector from '../../components/DateSelector';
 import { ISSUE_CATEGORIES } from '../constants';
 import _ from 'lodash';
 
-export default class NonRatingRequestIssuesUnconnected extends React.PureComponent {
+export default class NonratingRequestIssuesUnconnected extends React.PureComponent {
   render() {
     const {
       nonRatingRequestIssues,
-      newNonRatingRequestIssue,
+      newNonratingRequestIssue,
       setIssueCategory,
       setIssueDescription,
       setIssueDecisionDate
     } = this.props;
 
-    const disableAddNonRatingRequestIssue = _.some(nonRatingRequestIssues, (issue) => {
+    const disableAddNonratingRequestIssue = _.some(nonRatingRequestIssues, (issue) => {
       return !issue.description;
     });
 
     const nonRatingRequestIssuesSection = _.map(nonRatingRequestIssues, (issue, issueId) => {
       return (
-        <NonRatingRequestIssue
+        <NonratingRequestIssue
           key={issueId}
           id={issueId}
           category={issue.category}
@@ -47,9 +47,9 @@ export default class NonRatingRequestIssuesUnconnected extends React.PureCompone
 
       <Button
         name="add-issue"
-        onClick={newNonRatingRequestIssue}
+        onClick={newNonratingRequestIssue}
         classNames={['usa-button-secondary']}
-        disabled={disableAddNonRatingRequestIssue}
+        disabled={disableAddNonratingRequestIssue}
       >
       + Add issue
       </Button>
@@ -57,7 +57,7 @@ export default class NonRatingRequestIssuesUnconnected extends React.PureCompone
   }
 }
 
-class NonRatingRequestIssue extends React.PureComponent {
+class NonratingRequestIssue extends React.PureComponent {
   handleCategoryChange(event) {
     this.props.setCategory(this.props.id, event ? event.value : null);
   }

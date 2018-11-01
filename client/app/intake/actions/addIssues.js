@@ -8,7 +8,7 @@ export const toggleAddIssuesModal = () => ({
   meta: { analytics }
 });
 
-export const toggleNonRatingRequestIssueModal = () => ({
+export const toggleNonratingRequestIssueModal = () => ({
   type: ACTIONS.TOGGLE_NONRATING_REQUEST_ISSUE_MODAL,
   meta: { analytics }
 });
@@ -59,7 +59,7 @@ export const addRatingRequestIssue = (args) => (dispatch) => {
   });
 };
 
-export const addNonRatingRequestIssue = (category, description, decisionDate, isRating = false) => (dispatch) => {
+export const addNonratingRequestIssue = (category, description, decisionDate, isRating = false) => (dispatch) => {
   dispatch({
     type: ACTIONS.ADD_ISSUE,
     payload: {

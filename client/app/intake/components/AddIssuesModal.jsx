@@ -6,7 +6,7 @@ import React from 'react';
 import { formatDateStr } from '../../util/DateUtil';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
-import { addRatingRequestIssue, toggleNonRatingRequestIssueModal } from '../actions/addIssues';
+import { addRatingRequestIssue, toggleNonratingRequestIssueModal } from '../actions/addIssues';
 import TextField from '../../components/TextField';
 
 class AddIssuesModal extends React.Component {
@@ -90,7 +90,7 @@ class AddIssuesModal extends React.Component {
           },
           { classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
             name: 'None of these match, see more options',
-            onClick: this.props.toggleNonRatingRequestIssueModal
+            onClick: this.props.toggleNonratingRequestIssueModal
           }
         ]}
         visible
@@ -123,6 +123,6 @@ export default connect(
   null,
   (dispatch) => bindActionCreators({
     addRatingRequestIssue,
-    toggleNonRatingRequestIssueModal
+    toggleNonratingRequestIssueModal
   }, dispatch)
 )(AddIssuesModal);

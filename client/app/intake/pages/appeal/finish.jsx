@@ -4,13 +4,13 @@ import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import CancelButton from '../../components/CancelButton';
-import NonRatingRequestIssuesUnconnected from '../../components/NonRatingRequestIssues';
+import NonratingRequestIssuesUnconnected from '../../components/NonratingRequestIssues';
 import RatingRequestIssuesUnconnected from '../../components/RatingRequestIssues';
 import IssueCounter from '../../components/IssueCounter';
 import {
   completeIntake,
   setIssueSelected,
-  newNonRatingRequestIssue,
+  newNonratingRequestIssue,
   setIssueCategory,
   setIssueDescription,
   setIssueDecisionDate
@@ -55,22 +55,22 @@ class Finish extends React.PureComponent {
       </p>
 
       <RatingRequestIssues />
-      <NonRatingRequestIssues />
+      <NonratingRequestIssues />
     </div>;
   }
 }
 
-const NonRatingRequestIssues = connect(
+const NonratingRequestIssues = connect(
   ({ appeal }) => ({
     nonRatingRequestIssues: appeal.nonRatingRequestIssues
   }),
   (dispatch) => bindActionCreators({
-    newNonRatingRequestIssue,
+    newNonratingRequestIssue,
     setIssueCategory,
     setIssueDescription,
     setIssueDecisionDate
   }, dispatch)
-)(NonRatingRequestIssuesUnconnected);
+)(NonratingRequestIssuesUnconnected);
 
 const RatingRequestIssues = connect(
   ({ appeal }) => ({

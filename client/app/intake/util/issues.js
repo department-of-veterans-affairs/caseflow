@@ -53,7 +53,7 @@ export const validateDate = (date) => {
   return null;
 };
 
-export const validNonRatingRequestIssue = (issue) => {
+export const validNonratingRequestIssue = (issue) => {
   const unvalidatedDate = issue.decisionDate;
   const decisionDate = validateDate(unvalidatedDate);
 
@@ -172,7 +172,7 @@ const formatRatingRequestIssues = (state) => {
     value();
 };
 
-const formatNonRatingRequestIssues = (state) => {
+const formatNonratingRequestIssues = (state) => {
   if (state.addedIssues && state.addedIssues.length > 0) {
     // we're using the new add issues page
     return state.addedIssues.filter((issue) => !issue.isRating && !issue.isUnidentified).map((issue) => {
@@ -187,7 +187,7 @@ const formatNonRatingRequestIssues = (state) => {
   // default to original format
   return _(state.nonRatingRequestIssues).
     filter((issue) => {
-      return validNonRatingRequestIssue(issue);
+      return validNonratingRequestIssue(issue);
     }).
     map((issue) => {
       return {
@@ -201,7 +201,7 @@ const formatNonRatingRequestIssues = (state) => {
 
 export const formatIssues = (state) => {
   const ratingData = formatRatingRequestIssues(state);
-  const nonRatingData = formatNonRatingRequestIssues(state);
+  const nonRatingData = formatNonratingRequestIssues(state);
   const unidentifiedData = formatUnidentifiedIssues(state);
 
   const data = {

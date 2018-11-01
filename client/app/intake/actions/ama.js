@@ -150,7 +150,7 @@ export const setIssueSelected = (profileDate, issueId, isSelected) => ({
   }
 });
 
-export const newNonRatingRequestIssue = (nonRatingRequestIssues) => ({
+export const newNonratingRequestIssue = (nonRatingRequestIssues) => ({
   type: ACTIONS.NEW_NONRATING_REQUEST_ISSUE,
   payload: {
     nonRatingRequestIssues
