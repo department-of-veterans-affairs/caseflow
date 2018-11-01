@@ -1,5 +1,18 @@
 version: '3'
 services:
+  vacols-db-test:
+    build: ./local/vacols/.
+    container_name: VACOLS_DB-test
+    image: vacols_db
+    tty: true
+    stdin_open: true
+    command: bash -c "/home/oracle/setup/dockerInitWithSchema.sh"
+    volumes:
+      - "u01_test:/u01/app/oracle/oradata"
+      - "ORCL_test:/ORCL"
+      - "u02_test:/u02"
+    ports:
+      - "1521:1521"
   
   vacols-db-development:
     build: ./local/vacols/.
@@ -57,3 +70,6 @@ volumes:
   u01_development:
   ORCL_development:
   u02_development:
+  u01_test:
+  ORCL_test:
+  u02_test:

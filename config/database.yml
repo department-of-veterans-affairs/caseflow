@@ -55,7 +55,7 @@ development_vacols:
   adapter: oracle_enhanced
   username: VACOLS
   password: VACOLS
-  host: <%= ENV['DEMO_HOST'] || localhost %>
+  host: <%= ENV['DEMO_HOST'] || "localhost" %>
   port: <%= ENV['DEMO_PORT'] || 1522 %>
   database: BVAP.localdomain
 
