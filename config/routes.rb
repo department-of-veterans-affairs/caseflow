@@ -96,7 +96,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :appeals, only: [:index, :show, :edit], param: :appeal_id do
+  resources :appeals, only: [:index, :show, :edit] do
     get :document_count
     get :new_documents
     get :veteran
@@ -107,8 +107,7 @@ Rails.application.routes.draw do
     get 'tasks', to: "tasks#for_appeal"
     patch 'update', on: :member
   end
-  match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
-
+  match '/appeals/:id/edit/:any' => 'appeals#edit', via: [:get]
 
   resources :beaam_appeals, only: [:index]
 

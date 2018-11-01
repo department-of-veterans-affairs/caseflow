@@ -12,7 +12,7 @@ class ClaimReview < AmaReview
   def ui_hash(ama_enabled)
     super.merge(
       benefitType: benefit_type,
-      payeeCode: payee_code,
+      payeeCode: payee_code
     )
   end
 

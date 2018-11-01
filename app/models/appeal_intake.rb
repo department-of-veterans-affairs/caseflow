@@ -17,12 +17,9 @@ class AppealIntake < DecisionReviewIntake
   end
 
   def complete!(request_params)
-    return if complete? || pending?
-    start_completion!
-
-    detail.create_issues!(request_issues_data: request_params[:request_issues] || [])
-    detail.update!(established_at: Time.zone.now)
-    detail.create_tasks_on_intake_success!
-    complete_with_status!(:success)
+    super do
+      detail.update!(established_at: Time.zone.now)
+      detail.create_tasks_on_intake_success!
+    end
   end
 end

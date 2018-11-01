@@ -70,11 +70,11 @@ class AppealsController < ApplicationController
   helper_method :appeal, :url_appeal_uuid
 
   def appeal
-    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
+    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:id])
   end
 
   def url_appeal_uuid
-    params[:appeal_id]
+    params[:id]
   end
 
   def update

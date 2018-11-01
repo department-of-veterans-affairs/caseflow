@@ -35,7 +35,7 @@ class Appeal < AmaReview
   def ui_hash(ama_enabled)
     super.merge(
       docketType: docket_type,
-      formType: "appeal",
+      formType: "appeal"
     )
   end
 
@@ -143,16 +143,8 @@ class Appeal < AmaReview
     "not implemented for AMA"
   end
 
-  def create_issues!(request_issues_data:)
-    request_issues.destroy_all unless request_issues.empty?
-
-    request_issues_data.map { |data| request_issues.from_intake_data(data).save! }
-  end
-
   def create_issues!(new_issues)
-    new_issues.each do |new_issue|
-      new_issue.save
-    end
+    new_issues.each(&:save!)
   end
 
   def mark_rated_request_issues_to_reassociate!
