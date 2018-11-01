@@ -3,8 +3,7 @@ class AmaReview < ApplicationRecord
 
   validate :validate_receipt_date
 
-  AMA_BEGIN_DATE = Date.new(2017, 11, 1).freeze
-  AMA_ACTIVATION_DATE = Date.new(2019, 2, 14).freeze
+  AMA_ACTIVATION_DATE = FeatureToggle.enabled?(:use_ama_activation_date) ? Constants::DATES[AMA_ACTIVATION].to_date : Constants::DATES[AMA_ACTIVATION_TEST].to_date
 
   self.abstract_class = true
 
@@ -94,7 +93,7 @@ class AmaReview < ApplicationRecord
   end
 
   def validate_receipt_date_not_before_ama
-    errors.add(:receipt_date, "before_ama") if receipt_date < AMA_BEGIN_DATE
+    errors.add(:receipt_date, "before_ama") if receipt_date < AMA_ACTIVATION_DATE
   end
 
   def validate_receipt_date_not_in_future

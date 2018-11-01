@@ -245,7 +245,7 @@ export const formatAddedIssues = (intakeData, amaActivated = false) => {
   // match date definition in Rails Rating model
   const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
 
-  const AMA_ACTIVATION_DATE = amaActivated ? 
+  const AMA_ACTIVATION_DATE = amaActivated ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST
 
   return issues.map((issue) => {
     if (issue.isUnidentified) {

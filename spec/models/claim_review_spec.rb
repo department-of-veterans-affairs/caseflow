@@ -26,7 +26,7 @@ describe ClaimReview do
     )
   end
 
-  let(:receipt_date) { SupplementalClaim::AMA_BEGIN_DATE + 1 }
+  let(:receipt_date) { SupplementalClaim::AMA_ACTIVATION_DATE + 1 }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
 
