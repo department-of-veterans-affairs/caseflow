@@ -10,17 +10,40 @@ import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
+import type { State } from './types/state';
+import type { TaskWithAppeal } from './types/models';
+
 import {
   getUnassignedOrganizationalTasks,
   getAssignedOrganizationalTasks,
   getCompletedOrganizationalTasks,
   tasksWithAppealSelector
 } from './selectors';
+
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
+
+const countCasesByType = (tasks) => {
+  const numberOfCases = {
+    [TASK_STATUSES.assigned]: 0,
+    [TASK_STATUSES.in_progress]: 0,
+    [TASK_STATUSES.on_hold]: 0,
+    [TASK_STATUSES.completed]: 0
+  };
+
+  return _.reduce(tasks, (cases, task) => {
+    if (cases[task.status]) {
+      cases[task.status] += 1;
+    } else {
+      cases[task.status] = 1;
+    }
+
+    return cases;
+  }, numberOfCases);
+};
 
 class OrganizationQueue extends React.PureComponent {
   componentDidMount = () => {
@@ -28,15 +51,18 @@ class OrganizationQueue extends React.PureComponent {
   }
 
   render = () => {
-
     const numberOfCases = countCasesByType(this.props.tasks);
     const tabs = [
       {
-        label: sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, numberOfCases['assigned'] + numberOfCases['in_progress']),
+        label: sprintf(
+          COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE,
+          numberOfCases.assigned + numberOfCases.in_progress),
         page: <UnassignedTasksTab />
       },
       {
-        label: sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE, numberOfCases['on_hold']),
+        label: sprintf(
+          COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE,
+          numberOfCases.on_hold),
         page: <AssignedTasksTab />
       },
       {
@@ -48,9 +74,9 @@ class OrganizationQueue extends React.PureComponent {
     return <AppSegment filledBackground>
       <div>
         <h1 {...fullWidth}>{sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName)}</h1>
-        <TabWindow 
+        <TabWindow
           name="tasks-organization-queue"
-          tabs={tabs} 
+          tabs={tabs}
         />
       </div>
     </AppSegment>;
@@ -81,7 +107,9 @@ const UnassignedTasksTab = connect(
     const noTasks = !_.size(props.tasks);
 
     const content = noTasks ?
-      <p>{COPY.ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.</p> :
+      <p>{COPY.ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE}
+        <b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.
+      </p> :
       <TaskTable
         includeDetailsLink
         includeTask
@@ -103,7 +131,9 @@ const AssignedTasksTab = connect(
     const noTasks = !_.size(props.tasks);
 
     const content = noTasks ?
-      <p>{COPY.ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.</p> :
+      <p>{COPY.ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE}
+        <b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.
+      </p> :
       <TaskTable
         includeDetailsLink
         includeTask
@@ -125,7 +155,9 @@ const CompletedTasksTab = connect(
     const noTasks = !_.size(props.tasks);
 
     const content = noTasks ?
-      <p>{COPY.ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.</p> :
+      <p>{COPY.ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE}
+        <b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.
+      </p> :
       <TaskTable
         includeDetailsLink
         includeTask
@@ -140,21 +172,3 @@ const CompletedTasksTab = connect(
       {content}
     </React.Fragment>;
   });
-
-const countCasesByType = (tasks) => {
-  let numberOfCases = {
-    [TASK_STATUSES.assigned]: 0,
-    [TASK_STATUSES.in_progress]: 0,
-    [TASK_STATUSES.on_hold]: 0,
-    [TASK_STATUSES.completed]: 0,
-  };
-
-  return _.reduce(tasks, (cases, task) => {
-    if (cases[task.status]) {
-      cases[task.status] += 1;
-    } else {
-      cases[task.status] = 1;
-    }
-    return cases;
-  }, numberOfCases);
-};
