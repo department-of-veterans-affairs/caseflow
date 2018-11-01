@@ -85,16 +85,15 @@ const UnassignedTasksTab = connect(
       <p>{COPY.ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.</p> :
       <TaskTable
         includeDetailsLink
+        includeTask
         includeType
         includeDocketNumber
-        includeIssueCount
         includeDaysWaiting
         includeReaderLink
         tasks={props.tasks}
       />;
 
     return <React.Fragment>
-      <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
       {content}
     </React.Fragment>;
   });
@@ -108,16 +107,15 @@ const AssignedTasksTab = connect(
       <p>{COPY.ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.</p> :
       <TaskTable
         includeDetailsLink
+        includeTask
         includeType
         includeDocketNumber
-        includeIssueCount
         includeDaysWaiting
         includeReaderLink
         tasks={props.tasks}
       />;
 
     return <React.Fragment>
-      <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
       {content}
     </React.Fragment>;
   });
@@ -131,16 +129,15 @@ const CompletedTasksTab = connect(
       <p>{COPY.ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.</p> :
       <TaskTable
         includeDetailsLink
+        includeTask
         includeType
         includeDocketNumber
-        includeIssueCount
         includeDaysWaiting
         includeReaderLink
         tasks={props.tasks}
       />;
 
     return <React.Fragment>
-      <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
       {content}
     </React.Fragment>;
   });
