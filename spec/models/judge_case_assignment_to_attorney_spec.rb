@@ -12,14 +12,6 @@ describe JudgeCaseAssignmentToAttorney do
     allow_any_instance_of(User).to receive(:vacols_roles).and_return(["judge"])
   end
 
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   context ".create" do
     subject do
       JudgeCaseAssignmentToAttorney.create(

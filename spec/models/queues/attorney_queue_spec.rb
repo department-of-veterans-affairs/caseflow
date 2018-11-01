@@ -1,12 +1,4 @@
 describe AttorneyQueue do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   context "#tasks" do
     let(:user) { create(:user) }
     let!(:staff) { create(:staff, :attorney_role, sdomainid: user.css_id) }

@@ -1,7 +1,4 @@
 describe BvaDispatchTask do
-  before { FeatureToggle.enable!(:test_facols) }
-  after { FeatureToggle.disable!(:test_facols) }
-
   describe ".create_and_assign" do
     context "when no root_task passed as argument" do
       it "throws an error" do
