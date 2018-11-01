@@ -128,7 +128,6 @@ class Hearing < ApplicationRecord
     :appellant_state, \
     :vbms_id, \
     :number_of_documents, \
-  #  :closest_alternate_hearing_location, \
     :number_of_documents_after_certification, \
     :veteran,  \
     :sanitized_vbms_id, \

@@ -119,7 +119,7 @@ class Appeal < AmaReview
            :country, to: :veteran, prefix: true
 
   def veteran_full_address
-    "#{veteran.address_line_1} #{veteran.appellant_address_line_2} #{veteran.city}, #{veteran.state} #{veteran.zip}"
+    "#{veteran.address_line_1} #{veteran.address_line_2} #{veteran.city}, #{veteran.state} #{veteran.zip}"
   end
 
   def regional_office
