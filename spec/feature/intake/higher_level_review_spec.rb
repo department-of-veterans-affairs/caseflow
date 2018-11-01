@@ -663,7 +663,25 @@ RSpec.feature "Higher-Level Review" do
       safe_click "#button-add-issue"
       find_all("label", text: "Really old injury").first.click
       safe_click ".add-issue"
+      expect(page).to have_content("The issue requested isn't usually eligible because its decision date is older")
+      find_all("label", text: "Yes").first.click
+      fill_in "Notes", with: "I am an exemption note"
+      safe_click ".add-issue"
       expect(page).to have_content("5 issues")
+      expect(page).to have_content("I am an exemption note")
+      expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
+
+      # remove and re-add with different answer to exemption
+      page.all(".remove-issue").last.click
+      safe_click "#button-add-issue"
+      find_all("label", text: "Really old injury").first.click
+      safe_click ".add-issue"
+      expect(page).to have_content("The issue requested isn't usually eligible because its decision date is older")
+      find_all("label", text: "No").first.click
+      fill_in "Notes", with: "I am an exemption note"
+      safe_click ".add-issue"
+      expect(page).to have_content("5 issues")
+      expect(page).to have_content("I am an exemption note")
       expect(page).to have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
 
       # add untimely nonrated issue
