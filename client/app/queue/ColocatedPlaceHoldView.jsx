@@ -11,7 +11,7 @@ import COPY from '../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 import {
-  tasksForAppealAssignedToUserSelector,
+  taskById,
   appealWithDetailSelector
 } from './selectors';
 import { setTaskAttrs } from './QueueActions';
@@ -41,6 +41,7 @@ type ViewState = {|
 |};
 
 type Params = {|
+  taskId: string,
   appealId: string
 |};
 
@@ -185,7 +186,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   return {
     error,
     highlightFormItems,
-    task: tasksForAppealAssignedToUserSelector(state, ownProps)[0],
+    task: taskById(state, { taskId: ownProps.taskId }),
     appeal: appealWithDetailSelector(state, ownProps)
   };
 };
