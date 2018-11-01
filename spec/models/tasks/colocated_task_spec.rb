@@ -263,16 +263,16 @@ describe ColocatedTask do
     end
   end
 
-  describe ".available_actions" do
+  describe ".available_actions_unwrapper" do
     let(:colocated_task) { ColocatedTask.find(FactoryBot.create(:colocated_task, assigned_by: attorney).id) }
     let(:colocated_user) { FactoryBot.create(:user) }
     before { FactoryBot.create(:staff, :colocated_role, user: colocated_user) }
 
     it "should vary depending on status of task" do
-      expect(colocated_task.available_actions(colocated_user).count).to_not eq(0)
+      expect(colocated_task.available_actions_unwrapper(colocated_user).count).to_not eq(0)
 
       colocated_task.update!(status: Constants.TASK_STATUSES.completed)
-      expect(colocated_task.available_actions(colocated_user).count).to eq(0)
+      expect(colocated_task.available_actions_unwrapper(colocated_user).count).to eq(0)
     end
   end
 end
