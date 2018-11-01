@@ -20,11 +20,11 @@ vacols_id,vbms_key,bgs_key,used_in_app,comments
 877483,redacted_documents,,hearings,Hearing for PSORISIO
 3019694,redacted_documents,,hearings,Hearing for PSORISIO
 2558720,redacted_documents,has_rating,hearings intake,Hearing for PSORISIO
-2575333,redacted_documents,has_many_ratings,hearings intake,Hearing for PSORISIO with one rating
+2575333,redacted_documents,has_two_ratings,hearings intake,Hearing for PSORISIO with one rating
 2556987,redacted_documents,has_supplemental_claim_with_vbms_claim_id,hearings intake,Hearing for PSORISIO
 2581243,redacted_documents,has_higher_level_review_with_vbms_claim_id,hearings intake,Hearing for PSORISIO
-2903521,redacted_documents,has_many_ratings,hearings intake,Hearing for PSORISIO
-2760964,redacted_documents,,hearings,Hearing for PSORISIO
+2903521,redacted_documents,has_two_ratings,hearings intake,Hearing for PSORISIO
+2760964,redacted_documents,has_many_ratings,hearings intake,Hearing for PSORISIO
 2941741,redacted_documents,,hearings,Hearing for PSORISIO
 3041989,redacted_documents,,hearings,Hearing for PSORISIO
 3063903,redacted_documents,,hearings,Hearing for PSORISIO

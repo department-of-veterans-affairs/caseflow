@@ -110,6 +110,41 @@ RSpec.describe "Hearing Schedule", type: :request do
     end
   end
 
+  describe "Show a hearing day with its children hearings" do
+    let!(:child_hearing) do
+      create(:case_hearing,
+             hearing_type: "V",
+             hearing_date: Date.new(2018, 4, 2),
+             folder_nr: create(:case).bfkey)
+    end
+    let!(:co_hearing) do
+      create(:case_hearing,
+             hearing_type: "C",
+             hearing_date: Date.new(2018, 4, 2),
+             folder_nr: create(:case).bfkey)
+    end
+
+    it "returns video children hearings", skip: "This test is flaky" do
+      headers = {
+        "ACCEPT" => "application/json"
+      }
+      get "/hearings/hearing_day/" + child_hearing.vdkey.to_s, headers: headers
+      expect(response).to have_http_status(:success)
+      expect(JSON.parse(response.body)["hearing_day"]["hearing_type"]).to eq("Video")
+      expect(JSON.parse(response.body)["hearing_day"]["hearings"].count).to eq(1)
+    end
+
+    it "returns co children hearings" do
+      headers = {
+        "ACCEPT" => "application/json"
+      }
+      get "/hearings/hearing_day/" + co_hearing.hearing_pkseq.to_s, headers: headers
+      expect(response).to have_http_status(:success)
+      expect(JSON.parse(response.body)["hearing_day"]["hearing_type"]).to eq("Central")
+      expect(JSON.parse(response.body)["hearing_day"]["hearings"].count).to eq(1)
+    end
+  end
+
   describe "Get hearing schedule for a date range - Caseflow" do
     let!(:hearings) do
       RequestStore[:current_user] = user

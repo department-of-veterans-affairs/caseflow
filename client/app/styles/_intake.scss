@@ -3,6 +3,13 @@
   padding-left: 0.5em;
 }
 
+// the .cf-app-segment is needed in this rule so .cf-intake-statusmessage-checklist has a higher
+// specificity than the existing .cf-success-checklist class.
+.cf-app-segment .cf-intake-statusmessage-checklist {
+  max-width: 800px;
+  margin: 50px auto 65px;
+}
+
 .cf-intake-substeps {
   padding-left: 1em;
 }
@@ -53,7 +60,35 @@
 }
 
 .intake-add-issues .cf-modal-body {
-  width: 770px;
+  color: $color-gray-dark;
+  width: 750px;
+  max-height: 95%;
+
+  @media only screen and (max-width: 760px) {
+    width: 650px;
+
+    .usa-button {
+      font-size: 1.5rem;
+      padding: .8rem 1.2rem;
+    }
+  }
+
+  @media only screen and (max-width: 650px) {
+    width: 95%;
+
+    .usa-button {
+      font-size: 1.5rem;
+      padding: .8rem 1.2rem;
+    }
+
+    .no-matching-issues {
+      margin-top: 1em;
+    }
+  }
+}
+
+.intake-cancel .cf-modal-body {
+  color: $color-gray-dark;
 }
 
 .add-issue {
@@ -67,6 +102,10 @@
     margin-top: 20px;
     width: 8em;
   }
+}
+
+.intake-modal {
+  text-align: left;
 }
 
 .cf-intake-edit {
@@ -86,13 +125,12 @@
         border-bottom: 1px solid $color-gray-lighter;
 
         div {
-          display: table-column;
-          float: left;
+          display: table-cell;
           padding: 0.5em 0;
         }
 
         .issue-desc {
-          max-width: 70%;
+          width: 100%;
 
           .issue-num {
             padding-right: 0.25em;
@@ -102,15 +140,18 @@
             display: block;
             font-style: italic;
           }
+
+          .issue-date {
+            display: block;
+          }
         }
 
-        .unidentified-issue {
+        .not-eligible {
           color: $color-red;
         }
 
         .issue-action {
           padding: 0;
-          float: right;
 
           button {
             i {
@@ -128,6 +169,7 @@
 
   td:last-child {
     min-width: 130px;
+    max-width: 500px;
   }
 
   ol {

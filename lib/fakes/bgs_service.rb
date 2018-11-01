@@ -20,6 +20,7 @@ class Fakes::BGSService
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/LineLength
   def self.create_veteran_records
     return if @veteran_records_created
 
@@ -36,7 +37,7 @@ class Fakes::BGSService
         Generators::Rating.build(
           participant_id: veteran.participant_id
         )
-      when "has_many_ratings"
+      when "has_two_ratings"
         Generators::Rating.build(
           participant_id: veteran.participant_id
         )
@@ -46,6 +47,64 @@ class Fakes::BGSService
           issues: [
             { decision_text: "Left knee" },
             { decision_text: "PTSD" }
+          ]
+        )
+      when "has_many_ratings"
+        in_active_review_reference_id = "in-active-review-ref-id"
+        Generators::Rating.build(
+          participant_id: veteran.participant_id
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          promulgation_date: Time.zone.today - 90,
+          issues: [
+            { decision_text: "Left knee" },
+            { decision_text: "Right knee" },
+            { decision_text: "PTSD" },
+            { decision_text: "This rating is in active review", reference_id: in_active_review_reference_id }
+          ]
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          promulgation_date: Time.zone.today - 395,
+          profile_date: Time.zone.today - 400,
+          issues: [
+            { decision_text: "Old injury" }
+          ]
+        )
+        hlr = HigherLevelReview.find_or_create_by!(
+          veteran_file_number: veteran.file_number
+        )
+        epe = EndProductEstablishment.find_or_create_by!(
+          reference_id: in_active_review_reference_id,
+          veteran_file_number: veteran.file_number,
+          source: hlr
+        )
+        RequestIssue.find_or_create_by!(
+          review_request: hlr,
+          end_product_establishment: epe,
+          rating_issue_reference_id: in_active_review_reference_id
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          promulgation_date: Time.zone.today - 60,
+          issues: [
+            { decision_text: "Lorem ipsum dolor sit amet, paulo scaevola abhorreant mei te, ex est mazim ornatus, at pro causae maiestatis." },
+            { decision_text: "Inani movet maiestatis nec no, verear periculis signiferumque in sit." },
+            { decision_text: "Et nibh euismod recusabo duo. Ne zril labitur eum, ei sit augue impedit detraxit." },
+            { decision_text: "Usu et praesent suscipiantur, mea mazim timeam liberavisse et." },
+            { decision_text: "At dicit omnes per, vim tale tota no." }
+          ]
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          promulgation_date: Time.zone.today - 60,
+          issues: [
+            { decision_text: "In mei labore oportere mediocritatem, vel ex dicta quidam corpora, fierent explicari liberavisse ei quo." },
+            { decision_text: "Vel malis impetus ne, vim cibo appareat scripserit ne, qui lucilius consectetuer ex." },
+            { decision_text: "Cu unum partiendo sadipscing has, eius explicari ius no." },
+            { decision_text: "Cu unum partiendo sadipscing has, eius explicari ius no." },
+            { decision_text: "Cibo pertinax hendrerit vis et, legendos euripidis no ius, ad sea unum harum." }
           ]
         )
       when "has_supplemental_claim_with_vbms_claim_id"
@@ -61,13 +120,30 @@ class Fakes::BGSService
         sc
       when "has_higher_level_review_with_vbms_claim_id"
         claim_id = "600118951"
+        contention_reference_id = 1234
         hlr = HigherLevelReview.find_or_create_by!(
           veteran_file_number: veteran.file_number
         )
-        EndProductEstablishment.find_or_create_by!(
+        epe = EndProductEstablishment.find_or_create_by!(
           reference_id: claim_id,
           veteran_file_number: veteran.file_number,
           source: hlr
+        )
+        RequestIssue.find_or_create_by!(
+          review_request: hlr,
+          end_product_establishment: epe,
+          contention_reference_id: contention_reference_id
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          promulgation_date: Time.zone.today - 40,
+          profile_date: Time.zone.today - 30,
+          issues: [
+            {
+              decision_text: "Higher Level Review was denied",
+              contention_reference_id: contention_reference_id
+            }
+          ]
         )
         hlr
       when "has_ramp_election_with_contentions"
@@ -89,6 +165,7 @@ class Fakes::BGSService
   end
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/LineLength
 
   def self.all_grants
     default_date = 10.days.ago.to_formatted_s(:short_date)
@@ -289,6 +366,10 @@ class Fakes::BGSService
     records = self.class.end_product_records || {}
 
     records[veteran_id] || records[:default] || []
+  end
+
+  def cancel_end_product(veteran_id, end_product_code, end_product_modifier)
+    # noop
   end
 
   def fetch_veteran_info(vbms_id)

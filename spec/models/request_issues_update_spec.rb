@@ -2,13 +2,10 @@ require "rails_helper"
 
 describe RequestIssuesUpdate do
   before do
-    FeatureToggle.enable!(:test_facols)
+    Time.zone = "America/New_York"
+    Timecop.freeze(Time.utc(2018, 5, 20))
 
     review.create_issues!(existing_request_issues)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   # TODO: make it simpler to set up a completed claim review, with end product data
@@ -46,14 +43,16 @@ describe RequestIssuesUpdate do
         rating_issue_profile_date: Time.zone.local(2017, 4, 5),
         rating_issue_reference_id: "issue1",
         contention_reference_id: request_issue_contentions[0].id,
-        description: request_issue_contentions[0].text
+        description: request_issue_contentions[0].text,
+        rating_issue_associated_at: 5.days.ago
       ),
       RequestIssue.new(
         review_request: review,
         rating_issue_profile_date: Time.zone.local(2017, 4, 6),
         rating_issue_reference_id: "issue2",
         contention_reference_id: request_issue_contentions[1].id,
-        description: request_issue_contentions[1].text
+        description: request_issue_contentions[1].text,
+        rating_issue_associated_at: 5.days.ago
       )
     ]
   end
@@ -74,6 +73,7 @@ describe RequestIssuesUpdate do
     existing_request_issues.map do |issue|
       {
         reference_id: issue.rating_issue_reference_id,
+        profile_date: issue.rating_issue_profile_date,
         decision_text: issue.description
       }
     end
@@ -207,9 +207,9 @@ describe RequestIssuesUpdate do
 
       it "saves update, adds issues, and calls create contentions" do
         allow_create_contentions
+        allow_associate_rated_issues
 
         expect(subject).to be_truthy
-
         request_issues_update.reload
 
         expect(request_issues_update.before_request_issue_ids).to contain_exactly(
@@ -230,6 +230,17 @@ describe RequestIssuesUpdate do
 
         expect(review.request_issues.count).to eq(3)
 
+        new_map = rated_end_product_establishment.send(:rated_issue_contention_map, review.request_issues.reload)
+
+        expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+          claim_id: rated_end_product_establishment.reference_id,
+          rated_issue_contention_map: new_map
+        )
+
+        review.request_issues.map(&:rating_issue_associated_at).each do |value|
+          expect(value).to eq(Time.zone.now)
+        end
+
         created_issue = review.request_issues.find_by(rating_issue_reference_id: "issue3")
         expect(created_issue).to have_attributes(
           rating_issue_profile_date: Time.zone.local(2017, 4, 7),
@@ -237,18 +248,60 @@ describe RequestIssuesUpdate do
         )
         expect(created_issue.contention_reference_id).to_not be_nil
       end
+
+      context "with nonrating request issue" do
+        let(:request_issues_data) do
+          existing_request_issues_data + [{
+            reference_id: "issue3",
+            decision_text: "Nonrated issue",
+            category: "Apportionment"
+          }]
+        end
+
+        let(:review) do
+          create(:higher_level_review,
+                 veteran_file_number: veteran.file_number,
+                 informal_conference: true)
+        end
+
+        it "adds new end product for a new rating type" do
+          expect(EndProductEstablishment.find_by(code: "030HLRNR", source: review)).to eq(nil)
+
+          subject
+          ep = EndProductEstablishment.find_by(code: "030HLRNR", source: review)
+          expect(ep).to_not be_nil
+          # informal conference should also have been created
+          expect(ep.development_item_reference_id).to_not be_nil
+        end
+      end
     end
 
     context "when issues contain a subset of existing issues" do
       let(:request_issues_data) { existing_request_issues_data[0...1] }
 
+      let(:nonrating_end_product_establishment) do
+        create(
+          :end_product_establishment,
+          veteran_file_number: veteran.file_number,
+          source: review,
+          code: "030HLRNR"
+        )
+      end
+
+      let(:nonrating_request_issue_contention) do
+        Generators::Contention.build(
+          claim_id: nonrating_end_product_establishment.reference_id,
+          text: "Unrated issue"
+        )
+      end
+
       it "saves update, removes issues, and calls remove contentions" do
         allow_remove_contention
+        allow_associate_rated_issues
 
         expect(subject).to be_truthy
 
         request_issues_update.reload
-
         expect(request_issues_update.before_request_issue_ids).to contain_exactly(
           *existing_request_issues.map(&:id)
         )
@@ -264,6 +317,43 @@ describe RequestIssuesUpdate do
         expect(removed_issue.removed_at).to_not be_nil
 
         expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
+
+        new_map = rated_end_product_establishment.send(:rated_issue_contention_map, review.request_issues.reload)
+
+        expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+          claim_id: rated_end_product_establishment.reference_id,
+          rated_issue_contention_map: new_map
+        )
+
+        expect(review.request_issues.first.rating_issue_associated_at).to eq(Time.zone.now)
+
+        # ep should not be canceled because 1 rating request issue still exists
+        rated_end_product_establishment.reload
+        expect(rated_end_product_establishment.synced_status).to eq(nil)
+      end
+
+      it "cancels end products with no request issues" do
+        create(
+          :request_issue,
+          review_request: review,
+          end_product_establishment: nonrating_end_product_establishment,
+          contention_reference_id: nonrating_request_issue_contention.id,
+          description: nonrating_request_issue_contention.text,
+          issue_category: "Apportionment"
+        )
+
+        allow_remove_contention
+        allow_associate_rated_issues
+
+        expect(subject).to be_truthy
+
+        # expect end product to be canceled
+        found_nonrating_ep = EndProductEstablishment.find_by(
+          id: nonrating_end_product_establishment.id,
+          synced_status: "CAN"
+        )
+
+        expect(found_nonrating_ep).to_not be_nil
       end
     end
 
@@ -305,6 +395,10 @@ describe RequestIssuesUpdate do
 
     def allow_create_contentions
       allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    end
+
+    def allow_associate_rated_issues
+      allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
     end
 
     def raise_error_on_remove_contention

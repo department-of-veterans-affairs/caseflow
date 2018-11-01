@@ -16,8 +16,12 @@ class HearingRepository
       hearings
     end
 
-    def fetch_hearings_for_parent(parent_hearing_pkseq)
-      VACOLS::CaseHearing.where(vdkey: parent_hearing_pkseq)
+    def fetch_video_hearings_for_parent(parent_hearing_pkseq)
+      hearings_for(VACOLS::CaseHearing.video_hearings_for_master_record(parent_hearing_pkseq))
+    end
+
+    def fetch_co_hearings_for_parent(parent_hearing_date)
+      hearings_for(VACOLS::CaseHearing.co_hearings_for_master_record(parent_hearing_date))
     end
 
     def load_issues(hearings)
@@ -49,6 +53,13 @@ class HearingRepository
     def update_vacols_hearing!(vacols_record, hearing_hash)
       hearing_hash = HearingMapper.hearing_fields_to_vacols_codes(hearing_hash)
       vacols_record.update_hearing!(hearing_hash.merge(staff_id: vacols_record.slogid)) if hearing_hash.present?
+    end
+
+    def create_vacols_child_hearing(parent_hearing_hash)
+      parent_hearing_hash[:vdkey] = parent_hearing_hash[:hearing_pkseq]
+      parent_hearing_hash.delete(:hearing_pkseq)
+      parent_hearing_hash[:hearing_type] = "V"
+      VACOLS::CaseHearing.create_child_hearing!(parent_hearing_hash)
     end
 
     def load_vacols_data(hearing)
@@ -177,9 +188,9 @@ class HearingRepository
         veteran_first_name: vacols_record.snamef,
         veteran_middle_initial: vacols_record.snamemi,
         veteran_last_name: vacols_record.snamel,
-        appellant_first_name: vacols_record.sspare1,
-        appellant_middle_initial: vacols_record.sspare2,
-        appellant_last_name: vacols_record.sspare3,
+        appellant_first_name: vacols_record.sspare2,
+        appellant_middle_initial: vacols_record.sspare3,
+        appellant_last_name: vacols_record.sspare1,
         regional_office_key: ro,
         type: type,
         date: date,

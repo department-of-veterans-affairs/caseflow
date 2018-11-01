@@ -6,6 +6,8 @@ const serverData = {
     data: [
       {
         attributes: {
+          is_legacy: true,
+          type: 'LegacyJudgeTask',
           appeal_type: 'LegacyAppeal',
           added_by_css_id: 'BVANKUVALIS',
           added_by_name: 'Nash X Kuvalis',
@@ -18,6 +20,7 @@ const serverData = {
             pg_id: 10
           },
           assigned_on: '2018-08-02T17:37:03.000Z',
+          completed_at: null,
           assigned_to: {
             css_id: 'BVANKUVALIS',
             id: 130,
@@ -56,10 +59,13 @@ describe('QueueLoadingScreen', () => {
 
     expect(tasks).to.deep.equal({
       3625593: {
+        uniqueId: '3625593',
+        isLegacy: true,
         appealId: 3,
         appealType: 'LegacyAppeal',
         externalAppealId: '3625593',
         assignedOn: '2018-08-02T17:37:03.000Z',
+        completedOn: null,
         dueOn: '2018-08-11T00:00:00.000Z',
         assignedTo: {
           cssId: 'BVANKUVALIS',
@@ -68,6 +74,8 @@ describe('QueueLoadingScreen', () => {
         },
         // eslint-disable-next-line no-undefined
         availableActions: undefined,
+        // eslint-disable-next-line no-undefined
+        taskBusinessPayloads: undefined,
         addedByName: 'Nash X Kuvalis',
         addedByCssId: 'BVANKUVALIS',
         taskId: '3625593-2018-07-11',
@@ -82,7 +90,8 @@ describe('QueueLoadingScreen', () => {
         workProduct: 'OTD',
         previousTaskAssignedOn: '2018-08-02T17:37:03.000Z',
         status: 'Assigned',
-        decisionPreparedBy: null
+        decisionPreparedBy: null,
+        type: 'LegacyJudgeTask'
       }
     });
   });

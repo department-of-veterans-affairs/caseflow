@@ -23,8 +23,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
-  revision: 446b1ad643607e49dd3cacff24f7039bb17f78b8
-  ref: 446b1ad643607e49dd3cacff24f7039bb17f78b8
+  revision: c9568319e5982f239b918bb4c3b07527d2c35cec
+  ref: c9568319e5982f239b918bb4c3b07527d2c35cec
   specs:
     connect_vbms (1.2.0)
       httpclient (~> 2.8.0)
@@ -171,7 +171,7 @@ GEM
     connection_pool (2.2.1)
     cork (0.3.0)
       colored2 (~> 3.1)
-    crass (1.0.3)
+    crass (1.0.4)
     d3-rails (4.13.0)
       railties (>= 3.1)
     danger (5.5.5)
@@ -259,7 +259,7 @@ GEM
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
       ruby_dep (~> 1.2)
-    loofah (2.2.2)
+    loofah (2.2.3)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     lumberjack (1.0.13)
@@ -534,6 +534,7 @@ DEPENDENCIES
   jquery-rails
   jshint
   launchy
+  loofah (>= 2.2.3)
   moment_timezone-rails
   newrelic_rpm
   nokogiri (= 1.8.5)

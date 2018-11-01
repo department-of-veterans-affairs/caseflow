@@ -1,4 +1,10 @@
 class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
+  attribute :is_legacy do
+    true
+  end
+  attribute :type do
+    object.class.name
+  end
   attribute :assigned_on
   attribute :due_on
   attribute :docket_name
@@ -68,6 +74,6 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
   end
 
   attribute :available_actions do
-    object.allowed_actions(@instance_options[:role])
+    object.available_actions(@instance_options[:role])
   end
 end

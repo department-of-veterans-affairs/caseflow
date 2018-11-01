@@ -45,14 +45,10 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
 
   attribute :appellant_relationship
   attribute :location_code
-  attribute :veteran_full_name
-  attribute :veteran_date_of_birth do
-    object.veteran_date_of_birth ? object.veteran_date_of_birth.strftime("%m/%d/%Y") : nil
-  end
-  attribute :veteran_gender
   attribute :vbms_id do
     object.sanitized_vbms_id
   end
+  attribute :veteran_full_name
   # Aliasing the vbms_id to make it clear what we're returning.
   attribute :veteran_file_number do
     object.sanitized_vbms_id
@@ -70,11 +66,12 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
     object.file_type.eql? "Paper"
   end
 
-  attribute :power_of_attorney do
-    {
-      representative_type: object.representative_type,
-      representative_name: object.representative_name
-    }
+  attribute :caseflow_veteran_id do
+    object.veteran ? object.veteran.id : nil
+  end
+
+  attribute :docket_name do
+    "legacy"
   end
 
   attribute :regional_office do
@@ -83,13 +80,6 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
       city: object.regional_office.city,
       state: object.regional_office.state
     }
-  end
-  attribute :caseflow_veteran_id do
-    object.veteran ? object.veteran.id : nil
-  end
-
-  attribute :docket_name do
-    "legacy"
   end
 
   attribute :events do

@@ -5,7 +5,7 @@ RSpec.feature "Appeal Intake" do
     FeatureToggle.enable!(:intake)
     # Test that this works when only enabled on the current user
     FeatureToggle.enable!(:intakeAma, users: [current_user.css_id])
-    FeatureToggle.enable!(:test_facols)
+    FeatureToggle.enable!(:intake_legacy_opt_in)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 20))
@@ -13,7 +13,7 @@ RSpec.feature "Appeal Intake" do
 
   after do
     FeatureToggle.disable!(:intakeAma)
-    FeatureToggle.disable!(:test_facols)
+    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
   let!(:current_user) do
@@ -60,8 +60,8 @@ RSpec.feature "Appeal Intake" do
       promulgation_date: receipt_date - untimely_days,
       profile_date: receipt_date - untimely_days + 3.days,
       issues: [
-        { reference_id: "abc123", decision_text: "Untimely rating issue 1" },
-        { reference_id: "def456", decision_text: "Untimely rating issue 2" }
+        { reference_id: "old123", decision_text: "Untimely rating issue 1" },
+        { reference_id: "old456", decision_text: "Untimely rating issue 2" }
       ]
     )
   end
@@ -114,6 +114,10 @@ RSpec.feature "Appeal Intake" do
       find("label", text: "No", match: :prefer_exact).click
     end
 
+    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
@@ -121,8 +125,8 @@ RSpec.feature "Appeal Intake" do
     visit "/intake/review_request"
 
     expect(find_field("Evidence Submission", visible: false)).to be_checked
-
     expect(find("#different-claimant-option_false", visible: false)).to be_checked
+    expect(find("#legacy-opt-in_false", visible: false)).to be_checked
 
     safe_click "#button-submit-review"
 
@@ -132,6 +136,7 @@ RSpec.feature "Appeal Intake" do
     expect(appeal).to_not be_nil
     expect(appeal.receipt_date).to eq(receipt_date)
     expect(appeal.docket_type).to eq("evidence_submission")
+    expect(appeal.legacy_opt_in_approved).to eq(false)
 
     expect(page).to have_content("Identify issues on")
 
@@ -142,7 +147,7 @@ RSpec.feature "Appeal Intake" do
     expect(appeal.payee_code).to eq("00")
     expect(page).to have_content("Decision date: 04/17/2017")
     expect(page).to have_content("Left knee granted")
-    expect(page).to_not have_content("Untimely rating issue 1")
+    expect(page).to have_content("Untimely rating issue 1")
 
     find("label", text: "PTSD denied").click
 
@@ -166,7 +171,9 @@ RSpec.feature "Appeal Intake" do
 
     safe_click "#button-finish-intake"
 
-    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+    expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES_SHORT.appeal} created:")
+    expect(page).to have_content("Issue: Description for Active Duty Adjustments")
 
     intake.reload
     expect(intake.completed_at).to eq(Time.zone.now)
@@ -207,6 +214,10 @@ RSpec.feature "Appeal Intake" do
       find("label", text: "No", match: :prefer_exact).click
     end
 
+    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
     ## Validate error message when complete intake fails
     expect_any_instance_of(AppealIntake).to receive(:review!).and_raise("A random error. Oh no!")
 
@@ -220,10 +231,11 @@ RSpec.feature "Appeal Intake" do
     appeal = Appeal.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
-      docket_type: "evidence_submission"
+      docket_type: "evidence_submission",
+      legacy_opt_in_approved: false
     )
 
-    AppealIntake.create!(
+    intake = AppealIntake.create!(
       veteran_file_number: test_veteran.file_number,
       user: current_user,
       started_at: 5.minutes.ago,
@@ -236,7 +248,8 @@ RSpec.feature "Appeal Intake" do
     )
 
     appeal.start_review!
-    appeal
+
+    [appeal, intake]
   end
 
   it "Allows a Veteran without ratings to create an intake" do
@@ -269,20 +282,39 @@ RSpec.feature "Appeal Intake" do
     expect(row).to have_text(text)
   end
 
-  scenario "For new Add Issues page" do
+  scenario "For new Add / Remove Issues page" do
+    duplicate_reference_id = "xyz789"
+    old_reference_id = "old123"
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - 40.days,
       profile_date: receipt_date - 50.days,
       issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted" },
-        { reference_id: "def456", decision_text: "PTSD denied" }
+        { reference_id: "xyz123", decision_text: "Left knee granted" },
+        { reference_id: "xyz456", decision_text: "PTSD denied" },
+        { reference_id: duplicate_reference_id, decision_text: "Old injury in review" }
       ]
     )
-    appeal = start_appeal(veteran)
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date - 400.days,
+      profile_date: receipt_date - 450.days,
+      issues: [
+        { reference_id: old_reference_id, decision_text: "Really old injury" }
+      ]
+    )
+    epe = create(:end_product_establishment, :active)
+    request_issue_in_progress = create(
+      :request_issue,
+      end_product_establishment: epe,
+      rating_issue_reference_id: duplicate_reference_id,
+      description: "Old injury"
+    )
+
+    appeal, = start_appeal(veteran)
     visit "/intake/add_issues"
 
-    expect(page).to have_content("Add Issues")
+    expect(page).to have_content("Add / Remove Issues")
     check_row("Form", Constants.INTAKE_FORM_NAMES.appeal)
     check_row("Review option", "Evidence Submission")
     check_row("Claimant", "Ed Merica")
@@ -300,7 +332,7 @@ RSpec.feature "Appeal Intake" do
 
     # adding an issue should show the issue
     safe_click "#button-add-issue"
-    find("label", text: "Left knee granted").click
+    find_all("label", text: "Left knee granted").first.click
     safe_click ".add-issue"
 
     expect(page).to have_content("1. Left knee granted")
@@ -313,7 +345,7 @@ RSpec.feature "Appeal Intake" do
 
     # re-add to proceed
     safe_click "#button-add-issue"
-    find("label", text: "Left knee granted").click
+    find_all("label", text: "Left knee granted").first.click
     fill_in "Notes", with: "I am an issue note"
     safe_click ".add-issue"
 
@@ -326,7 +358,7 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content("Add issue 2")
     expect(page).to have_content("Does issue 2 match any of these issues")
     expect(page).to have_content("Left knee granted (already selected for issue 1)")
-    expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
+    expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
 
     # Add non-rated issue
     safe_click ".no-matching-issues"
@@ -339,6 +371,10 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_button("Add this issue", disabled: false)
     safe_click ".add-issue"
     expect(page).to have_content("2 issues")
+    # this nonrated issue is timely
+    expect(page).to_not have_content(
+      "Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
+    )
 
     # add unidentified issue
     safe_click "#button-add-issue"
@@ -350,9 +386,39 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content("3 issues")
     expect(page).to have_content("This is an unidentified issue")
 
+    # add ineligible issue
+    safe_click "#button-add-issue"
+    find_all("label", text: "Old injury in review").first.click
+    safe_click ".add-issue"
+    expect(page).to have_content("4 issues")
+    expect(page).to have_content("4. Old injury in review is ineligible because it's already under review as a Appeal")
+
+    # add untimely rated issue
+    safe_click "#button-add-issue"
+    find_all("label", text: "Really old injury").first.click
+    safe_click ".add-issue"
+    expect(page).to have_content("5 issues")
+    expect(page).to have_content("5. Really old injury is ineligible because it has a prior decision date")
+
+    # add untimely nonrated issue
+    safe_click "#button-add-issue"
+    safe_click ".no-matching-issues"
+    expect(page).to have_button("Add this issue", disabled: true)
+    fill_in "Issue category", with: "Active Duty Adjustments"
+    find("#issue-category").send_keys :enter
+    fill_in "Issue description", with: "Another Description for Active Duty Adjustments"
+    fill_in "Decision date", with: "04/19/2016"
+    expect(page).to have_button("Add this issue", disabled: false)
+    safe_click ".add-issue"
+    expect(page).to have_content("6 issues")
+    expect(page).to have_content(
+      "Another Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
+    )
+
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+    expect(page).to have_content("This is an unidentified issue")
 
     expect(Appeal.find_by(
              id: appeal.id,
@@ -362,7 +428,7 @@ RSpec.feature "Appeal Intake" do
 
     expect(RequestIssue.find_by(
              review_request: appeal,
-             rating_issue_reference_id: "abc123",
+             rating_issue_reference_id: "xyz123",
              description: "Left knee granted",
              notes: "I am an issue note"
     )).to_not be_nil
@@ -374,5 +440,68 @@ RSpec.feature "Appeal Intake" do
              description: "Description for Active Duty Adjustments",
              decision_date: 1.month.ago
     )).to_not be_nil
+
+    expect(RequestIssue.find_by(
+             review_request: appeal,
+             description: "This is an unidentified issue",
+             is_unidentified: true
+    )).to_not be_nil
+
+    duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
+    ineligible_issue = duplicate_request_issues.select(&:duplicate_of_issue_in_active_review?).first
+
+    expect(duplicate_request_issues.count).to eq(2)
+    expect(duplicate_request_issues).to include(request_issue_in_progress)
+    expect(ineligible_issue).to_not eq(request_issue_in_progress)
+
+    expect(RequestIssue.find_by(rating_issue_reference_id: old_reference_id).eligible?).to eq(false)
+  end
+
+  it "Shows a review error when something goes wrong" do
+    start_appeal(veteran)
+    visit "/intake/add_issues"
+
+    safe_click "#button-add-issue"
+    find_all("label", text: "Left knee granted").first.click
+    fill_in "Notes", with: "I am an issue note"
+    safe_click ".add-issue"
+
+    ## Validate error message when complete intake fails
+    expect_any_instance_of(AppealIntake).to receive(:complete!).and_raise("A random error. Oh no!")
+
+    safe_click "#button-finish-intake"
+
+    expect(page).to have_content("Something went wrong")
+    expect(page).to have_current_path("/intake/add_issues")
+  end
+
+  scenario "canceling an appeal intake" do
+    _, intake = start_appeal(veteran)
+    visit "/intake/add_issues"
+
+    expect(page).to have_content("Add / Remove Issues")
+    safe_click "#cancel-intake"
+    expect(find("#modal_id-title")).to have_content("Cancel Intake?")
+    safe_click ".close-modal"
+    expect(page).to_not have_css("#modal_id-title")
+    safe_click "#cancel-intake"
+
+    safe_click ".confirm-cancel"
+    expect(page).to have_content("Make sure you’ve selected an option below.")
+    within_fieldset("Please select the reason you are canceling this intake.") do
+      find("label", text: "Other").click
+    end
+    safe_click ".confirm-cancel"
+    expect(page).to have_content("Make sure you’ve filled out the comment box below.")
+    fill_in "Tell us more about your situation.", with: "blue!"
+    safe_click ".confirm-cancel"
+
+    expect(page).to have_content("Welcome to Caseflow Intake!")
+    expect(page).to_not have_css(".cf-modal-title")
+
+    intake.reload
+    expect(intake.completed_at).to eq(Time.zone.now)
+    expect(intake.cancel_reason).to eq("other")
+    expect(intake).to be_canceled
   end
 end

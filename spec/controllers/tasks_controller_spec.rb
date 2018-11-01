@@ -1,13 +1,11 @@
 RSpec.describe TasksController, type: :controller do
   before do
     Fakes::Initializer.load!
-    FeatureToggle.enable!(:test_facols)
     FeatureToggle.enable!(:colocated_queue)
     User.authenticate!(roles: ["System Admin"])
   end
 
   after do
-    FeatureToggle.disable!(:test_facols)
     FeatureToggle.disable!(:colocated_queue)
   end
 
@@ -133,7 +131,6 @@ RSpec.describe TasksController, type: :controller do
 
       context "when a task is assignable" do
         let(:root_task) { FactoryBot.create(:root_task) }
-        let(:field) { "sdept" }
 
         let(:org_1) { FactoryBot.create(:organization) }
         let(:org_1_member_cnt) { 6 }
@@ -146,29 +143,27 @@ RSpec.describe TasksController, type: :controller do
         end
 
         before do
-          StaffFieldForOrganization.create!(organization: org_1, name: field, values: [org_1.name])
-          org_1_members.each do |u|
-            FeatureToggle.enable!(org_1.feature.to_sym, users: [u.css_id])
-            FactoryBot.create(:staff, user: u, "#{field}": org_1.name)
-          end
-        end
-
-        after do
-          FeatureToggle.disable!(org_1.feature.to_sym)
+          org_1_members.each { |u| OrganizationsUser.add_user_to_organization(u, org_1) }
         end
 
         context "when user is assigned an individual task" do
           let!(:user) { User.authenticate!(user: org_1_assignee) }
 
-          it "should return a list of all members for individual task" do
+          it "should return a list of all available actions for individual task" do
             get :index, params: { user_id: user.id }
             expect(response.status).to eq(200)
             response_body = JSON.parse(response.body)
 
             task_attributes = response_body["tasks"]["data"].find { |task| task["id"] == org_1_member_task.id.to_s }
 
+            expect(task_attributes["attributes"]["available_actions"].length).to eq(3)
+
             # org count minus one since we can't assign to ourselves.
-            expect(task_attributes["attributes"]["assignable_users"].length).to eq(org_1_member_cnt - 1)
+            assign_to_organization_action = task_attributes["attributes"]["available_actions"].find do |action|
+              action["label"] == Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h[:label]
+            end
+
+            expect(assign_to_organization_action["data"]["options"].length).to eq(org_1_member_cnt - 1)
           end
         end
       end
@@ -188,7 +183,14 @@ RSpec.describe TasksController, type: :controller do
             response_body = JSON.parse(response.body)
             task_attributes = response_body["tasks"]["data"].find { |t| t["id"] == task.id.to_s }
 
-            expect(task_attributes["attributes"]["assignable_organizations"].length).to eq(org_count)
+            expect(task_attributes["attributes"]["available_actions"].length).to eq(3)
+
+            # org count minus one since we can't assign to ourselves.
+            assign_to_organization_action = task_attributes["attributes"]["available_actions"].find do |action|
+              action["label"] == Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]
+            end
+
+            expect(assign_to_organization_action["data"]["options"].length).to eq(org_count)
           end
         end
       end
@@ -345,6 +347,53 @@ RSpec.describe TasksController, type: :controller do
           it "should not be successful" do
             post :create, params: { tasks: params }
             expect(response.status).to eq 404
+          end
+        end
+
+        context "when creating a Hearings Management task" do
+          let!(:hearings_user) do
+            create(:hearings_coordinator)
+          end
+          let!(:hearings_org) do
+            create(:hearings_management)
+          end
+          let!(:staff_mapping) do
+            create(:hearings_staff, organization_id: hearings_org.id)
+          end
+          let(:params) do
+            [{
+              "type": ScheduleHearingTask.name,
+              "action": "Assign Hearing",
+              "external_id": appeal.vacols_id,
+              "assigned_to_type": "User",
+              "assigned_to_id": hearings_user.id,
+              "business_payloads": {
+                description: "test",
+                values: {
+                  "regional_office_value": "RO17",
+                  "hearing_date": "2018-10-25",
+                  "hearing_time": "8:00"
+                }
+              }
+            }]
+          end
+
+          it "should be successful" do
+            post :create, params: { tasks: params }
+            expect(response.status).to eq 201
+            response_body = JSON.parse(response.body)["tasks"]["data"]
+            expect(response_body.size).to eq 1
+            expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
+            expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
+            expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq hearings_user.id
+
+            payloads = response_body.first["attributes"]["task_business_payloads"]
+            expect(payloads.size).to eq 1
+            expect(payloads[0]["description"]).to eq("test")
+            expect(payloads[0]["values"].size).to eq 3
+            expect(payloads[0]["values"]["regional_office_value"]).to eq("RO17")
+            expect(payloads[0]["values"]["hearing_date"]).to eq("2018-10-25")
+            expect(payloads[0]["values"]["hearing_time"]).to eq("8:00")
           end
         end
       end

@@ -19,6 +19,10 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
+          feature: "intake_enable_add_issues_page",
+          enable_all: true
+        },
+        {
           feature: "reader",
           enable_all: true
         },
@@ -48,6 +52,10 @@ json_config = <<EOS.strip_heredoc
         },
         {
           feature: "idt_ama_appeals",
+          enable_all: true
+        },
+        {
+          feature: "use_representative_info_from_bgs",
           enable_all: true
         }
   ]

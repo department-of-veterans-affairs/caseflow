@@ -6,11 +6,6 @@ describe ColocatedTask do
 
   before do
     RequestStore.store[:current_user] = attorney
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   context ".create" do
@@ -260,6 +255,19 @@ describe ColocatedTask do
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
         expect(colocated_admin_action.completed_at).to eq time6
       end
+    end
+  end
+
+  describe ".available_actions_unwrapper" do
+    let(:colocated_task) { ColocatedTask.find(FactoryBot.create(:colocated_task, assigned_by: attorney).id) }
+    let(:colocated_user) { FactoryBot.create(:user) }
+    before { FactoryBot.create(:staff, :colocated_role, user: colocated_user) }
+
+    it "should vary depending on status of task" do
+      expect(colocated_task.available_actions_unwrapper(colocated_user).count).to_not eq(0)
+
+      colocated_task.update!(status: Constants.TASK_STATUSES.completed)
+      expect(colocated_task.available_actions_unwrapper(colocated_user).count).to eq(0)
     end
   end
 end

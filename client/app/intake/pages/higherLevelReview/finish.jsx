@@ -4,9 +4,9 @@ import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import CancelButton from '../../components/CancelButton';
-import NonRatedIssuesUnconnected from '../../../intakeCommon/components/NonRatedIssues';
-import RatedIssuesUnconnected from '../../../intakeCommon/components/RatedIssues';
-import IssueCounter from '../../../intakeCommon/components/IssueCounter';
+import NonRatedIssuesUnconnected from '../../components/NonRatedIssues';
+import RatedIssuesUnconnected from '../../components/RatedIssues';
+import IssueCounter from '../../components/IssueCounter';
 import {
   completeIntake,
   setIssueSelected,
@@ -15,10 +15,9 @@ import {
   setIssueDescription,
   setIssueDecisionDate
 } from '../../actions/ama';
-import { PAGE_PATHS, INTAKE_STATES } from '../../constants';
-import { FORM_TYPES, REQUEST_STATE } from '../../../intakeCommon/constants';
+import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, REQUEST_STATE } from '../../constants';
 import { getIntakeStatus, issueCountSelector } from '../../selectors';
-import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
+import ErrorAlert from '../../components/ErrorAlert';
 
 class Finish extends React.PureComponent {
   render() {
@@ -44,9 +43,9 @@ class Finish extends React.PureComponent {
       <h1>Identify issues on { veteranName }'s { FORM_TYPES.HIGHER_LEVEL_REVIEW.name }</h1>
 
       { requestState === REQUEST_STATE.FAILED &&
-        <CompleteIntakeErrorAlert
-          completeIntakeErrorCode={completeIntakeErrorCode}
-          completeIntakeErrorData={completeIntakeErrorData} />
+        <ErrorAlert
+          errorCode={completeIntakeErrorCode}
+          errorData={completeIntakeErrorData} />
       }
 
       <p>

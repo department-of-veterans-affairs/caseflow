@@ -133,7 +133,8 @@ class ApplicationController < ApplicationBaseController
   def can_assign_task?
     if current_user.attorney_in_vacols?
       # This feature toggle control access of attorneys to create admin actions for co-located users
-      feature_enabled?(:attorney_assignment_to_colocated)
+      feature_enabled?(:attorney_assignment_to_colocated) ||
+        current_user.organizations.pluck(:name).include?(QualityReview.singleton.name)
     elsif current_user.judge_in_vacols?
       # This feature toggle control access of judges to assign cases to attorneys
       feature_enabled?(:judge_assignment_to_attorney)
@@ -181,7 +182,7 @@ class ApplicationController < ApplicationBaseController
   # - Ensure the fakes are loaded (reset in dev mode on file save & class reload)
   # - Setup the default authenticated user
   def setup_fakes
-    Fakes::Initializer.setup!(Rails.env, app_name: application)
+    Fakes::Initializer.setup!(Rails.env)
   end
 
   def set_application
@@ -281,8 +282,7 @@ class ApplicationController < ApplicationBaseController
 
   class << self
     def dependencies_faked?
-      Rails.env.stubbed? ||
-        Rails.env.test? ||
+      Rails.env.test? ||
         Rails.env.demo? ||
         Rails.env.ssh_forwarding? ||
         Rails.env.development?

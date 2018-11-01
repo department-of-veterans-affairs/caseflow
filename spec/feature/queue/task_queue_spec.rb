@@ -1,9 +1,6 @@
 require "rails_helper"
 
 RSpec.feature "Task queue" do
-  before { FeatureToggle.enable!(:test_facols) }
-  after { FeatureToggle.disable!(:test_facols) }
-
   let(:attorney_user) { FactoryBot.create(:user) }
   let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 
@@ -82,7 +79,6 @@ RSpec.feature "Task queue" do
     let(:vso_employee) { FactoryBot.create(:user, :vso_role) }
     let!(:vso_task) { FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso) }
     before do
-      FeatureToggle.enable!(vso.feature.to_sym, users: [vso_employee.css_id])
       User.authenticate!(user: vso_employee)
       allow_any_instance_of(Vso).to receive(:user_has_access?).and_return(true)
       visit(vso.path)
@@ -99,10 +95,50 @@ RSpec.feature "Task queue" do
       find(".Select-control", text: "Select an action…").click
       find("div", class: "Select-option", text: "Mark task complete").click
 
-      find("button", id: "button-next-button", text: "Mark complete").click
+      find("button", text: "Mark complete").click
 
-      expect(page).to have_content(COPY::TASK_MARKED_COMPLETE_NOTICE_TITLE)
+      expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, vso_task.appeal.veteran_full_name))
       expect(Task.find(vso_task.id).status).to eq("completed")
+    end
+  end
+
+  describe "Creating a mail task" do
+    context "when we are a member of the mail team" do
+      let!(:org) { FactoryBot.create(:organization) }
+      let(:appeal) { FactoryBot.create(:appeal) }
+      let!(:root_task) { RootTask.find(FactoryBot.create(:root_task, appeal: appeal).id) }
+      let(:mail_user) { FactoryBot.create(:user) }
+
+      before do
+        User.authenticate!(user: mail_user)
+        allow_any_instance_of(MailTeam).to receive(:user_has_access?).with(mail_user).and_return(true)
+      end
+
+      it "should allow us to assign a mail task to a user" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        find(".Select-control", text: "Select an action…").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CREATE_MAIL_TASK.label).click
+
+        find(".Select-control", text: "Select a team").click
+        find("div", class: "Select-option", text: org.name).click
+        fill_in("taskInstructions", with: "note")
+
+        find("button", text: "Submit").click
+
+        expect(page).to have_content("Task assigned to #{org.name}")
+
+        mail_task = root_task.children[0]
+        expect(mail_task.class).to eq(MailTask)
+        expect(mail_task.assigned_to).to eq(MailTeam.singleton)
+        expect(mail_task.children.length).to eq(1)
+
+        generic_task = mail_task.children[0]
+        expect(generic_task.class).to eq(GenericTask)
+        expect(generic_task.assigned_to.class).to eq(org.class)
+        expect(generic_task.assigned_to.id).to eq(org.id)
+        expect(generic_task.children.length).to eq(0)
+      end
     end
   end
 end

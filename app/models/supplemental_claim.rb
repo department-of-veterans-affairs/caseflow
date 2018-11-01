@@ -1,5 +1,10 @@
 class SupplementalClaim < ClaimReview
-  validates :receipt_date, :benefit_type, presence: { message: "blank" }, if: :saving_review
+  with_options if: :saving_review do
+    validates :receipt_date, :benefit_type, presence: { message: "blank" }
+  end
+  validates :legacy_opt_in_approved, inclusion: {
+    in: [true, false], message: "blank"
+  }, if: [:legacy_opt_in_enabled?, :saving_review]
 
   END_PRODUCT_CODES = {
     rating: "040SCR",
@@ -10,16 +15,11 @@ class SupplementalClaim < ClaimReview
 
   END_PRODUCT_MODIFIERS = %w[040 041 042 043 044 045 046 047 048 049].freeze
 
-  def ui_hash
-    {
-      veteranFormName: veteran.name.formatted(:form),
-      veteranName: veteran.name.formatted(:readable_short),
-      veteranFileNumber: veteran_file_number,
-      claimId: end_product_claim_id,
-      receiptDate: receipt_date && receipt_date.to_formatted_s(:json_date),
-      benefitType: benefit_type,
-      issues: request_issues
-    }
+  def ui_hash(ama_enabled)
+    super.merge(
+      formType: "supplemental_claim",
+      isDtaError: is_dta_error
+    )
   end
 
   def rating_end_product_establishment
@@ -34,23 +34,27 @@ class SupplementalClaim < ClaimReview
     valid_modifiers.first
   end
 
-  def end_product_claim_id
-    rating_end_product_establishment && rating_end_product_establishment.reference_id
-  end
-
   def valid_modifiers
     END_PRODUCT_MODIFIERS
   end
 
   def issue_code(rated)
     issue_code_type = rated ? :rating : :nonrating
-    if is_dta_error
+    if is_dta_error?
       issue_code_type = rated ? :dta_rating : :dta_nonrating
     end
     END_PRODUCT_CODES[issue_code_type]
   end
 
   private
+
+  def end_product_created_by
+    is_dta_error? ? User.system_user : intake_processed_by
+  end
+
+  def end_product_station
+    is_dta_error? ? "397" : super
+  end
 
   def new_end_product_establishment(ep_code)
     end_product_establishments.build(
@@ -59,8 +63,9 @@ class SupplementalClaim < ClaimReview
       payee_code: payee_code,
       code: ep_code,
       claimant_participant_id: claimant_participant_id,
-      station: "397", # AMC
-      benefit_type_code: veteran.benefit_type_code
+      station: end_product_station,
+      benefit_type_code: veteran.benefit_type_code,
+      user: end_product_created_by
     )
   end
 end

@@ -10,6 +10,11 @@ import { LOGO_COLORS } from '../../constants/AppConstants';
 import AutoSave from '../../components/AutoSave';
 import DailyDocket from '../DailyDocket';
 import { getDate, now } from '../util/DateUtil';
+import { css } from 'glamor';
+
+const alertStyling = css({
+  marginTop: '2rem'
+});
 
 export class DailyDocketContainer extends React.Component {
 
@@ -55,7 +60,7 @@ export class DailyDocketContainer extends React.Component {
         timeSaved={this.props.docketTimeSaved || now()}
         saveFailed={this.props.saveDocketFailed}
       />
-      <div className="cf-hearings-daily-docket-container">
+      <div className="cf-hearings-daily-docket-container" {...alertStyling}>
         <DailyDocket
           veteran_law_judge={this.props.veteran_law_judge}
           date={this.props.date}

@@ -1,20 +1,12 @@
 describe AppealRepository do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let(:correspondent_record) do
     OpenStruct.new(
       snamef: "Phil",
       snamemi: "J",
       snamel: "Johnston",
-      sspare1: "Chris",
-      sspare2: "M",
-      sspare3: "Johnston",
+      sspare1: "Johnston",
+      sspare2: "Chris",
+      sspare3: "M",
       susrtyp: "Brother",
       sfnod: 100.days.ago
     )
@@ -216,8 +208,6 @@ describe AppealRepository do
   end
 
   context "#location_after_dispatch" do
-    before { LegacyAppeal.repository = Fakes::AppealRepository }
-
     let(:appeal) do
       create(:legacy_appeal, vacols_case: create(:case))
     end

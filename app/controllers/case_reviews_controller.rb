@@ -25,7 +25,7 @@ class CaseReviewsController < ApplicationController
 
   def create_quality_review_task(record)
     return if record.appeal.class == LegacyAppeal
-    QualityReviewTask.create_from_root_task(record.task.root_task)
+    QualityReviewTask.create_from_root_task(record.task.root_task) if record.task.parent.type != QualityReviewTask.name
   end
 
   def case_review_class

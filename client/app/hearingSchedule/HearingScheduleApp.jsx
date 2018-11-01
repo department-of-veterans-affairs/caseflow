@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { BrowserRouter } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar';
@@ -15,8 +14,7 @@ import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import DailyDocketContainer from './containers/DailyDocketContainer';
 import ScrollToTop from '../components/ScrollToTop';
 
-class HearingScheduleApp extends React.PureComponent {
-
+export default class HearingScheduleApp extends React.PureComponent {
   propsForListScheduleContainer = () => {
     const {
       userRoleAssign,
@@ -29,7 +27,20 @@ class HearingScheduleApp extends React.PureComponent {
     };
   };
 
+  propsForAssignHearingsContainer = () => {
+    const {
+      userId,
+      userCssId
+    } = this.props;
+
+    return {
+      userId,
+      userCssId
+    };
+  };
+
   routeForListScheduleContainer = () => <ListScheduleContainer {...this.propsForListScheduleContainer()} />;
+  routeForAssignHearingsContainer = () => <AssignHearingsContainer {...this.propsForAssignHearingsContainer()} />
 
   render = () => <BrowserRouter basename="/hearings">
     <NavigationBar
@@ -53,7 +64,7 @@ class HearingScheduleApp extends React.PureComponent {
           />
           <PageRoute
             exact
-            path="/schedule/docket/:ro_name/:date"
+            path="/schedule/docket/:hearingDayId"
             title="Daily Docket"
             component={DailyDocketContainer}
           />
@@ -83,7 +94,7 @@ class HearingScheduleApp extends React.PureComponent {
             path="/schedule/assign"
             title="Assign Hearings"
             breadcrumb="Assign"
-            component={AssignHearingsContainer}
+            component={this.routeForAssignHearingsContainer}
           />
         </div>
       </AppFrame>
@@ -103,7 +114,8 @@ HearingScheduleApp.propTypes = {
   userRoleBuild: PropTypes.bool,
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
-  dropdownUrls: PropTypes.array
+  dropdownUrls: PropTypes.array,
+  userRole: PropTypes.string,
+  userId: PropTypes.number,
+  userCssId: PropTypes.string
 };
-
-export default connect()(HearingScheduleApp);

@@ -31,7 +31,7 @@ class CaseDetailsLink extends React.PureComponent {
           const response = JSON.parse(resp.text);
           const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-          this.props.setTaskAttrs(task.externalAppealId, preparedTasks[task.externalAppealId]);
+          this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.uniqueId]);
         });
     }
 
@@ -83,16 +83,13 @@ CaseDetailsLink.propTypes = {
   task: PropTypes.object,
   appeal: PropTypes.object.isRequired,
   disabled: PropTypes.bool,
+  userRole: PropTypes.string.isRequired,
   getLinkText: PropTypes.func,
   onClick: PropTypes.func
 };
-
-const mapStateToProps = (state) => ({
-  userRole: state.ui.userRole
-});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setTaskAttrs
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(CaseDetailsLink);
+export default connect(null, mapDispatchToProps)(CaseDetailsLink);

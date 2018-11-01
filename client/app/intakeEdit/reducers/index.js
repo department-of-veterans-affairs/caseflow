@@ -1,49 +1,33 @@
 import { ACTIONS } from '../constants';
-import { REQUEST_STATE } from '../../intakeCommon/constants';
+import { applyCommonReducers } from '../../intake/reducers/common';
+import { REQUEST_STATE } from '../../intake/constants';
 import { update } from '../../util/ReducerUtil';
-import { formatRatings, getSelection } from '../../intakeCommon/util';
-import _ from 'lodash';
+import { formatRequestIssues, formatRatings } from '../../intake/util/issues';
+import { formatRelationships } from '../../intake/util';
 
 export const mapDataToInitialState = function(props = {}) {
-  const ratings = formatRatings(props.ratings, props.ratedRequestIssues);
+  const { serverIntake, claimId } = props;
+
+  serverIntake.ratings = formatRatings(serverIntake.ratings);
+  serverIntake.relationships = formatRelationships(serverIntake.relationships);
 
   return {
-    formType: props.formType,
-    review: props.review,
-    ratings,
-    originalSelection: getSelection(ratings),
-    ratingsChanged: false,
+    ...serverIntake,
+    claimId,
+    addIssuesModalVisible: false,
+    nonRatedIssueModalVisible: false,
+    unidentifiedIssuesModalVisible: false,
+    addedIssues: formatRequestIssues(serverIntake.requestIssues),
+    originalIssues: formatRequestIssues(serverIntake.requestIssues),
     requestStatus: {
       requestIssuesUpdate: REQUEST_STATE.NOT_STARTED
     },
-    responseErrorCode: null
+    requestIssuesUpdateErrorCode: null
   };
 };
 
 export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
-  let newRatings;
-  let serverRatings;
-  let ratingsChanged;
-
   switch (action.type) {
-  case ACTIONS.SET_ISSUE_SELECTED:
-    newRatings = update(state.ratings, {
-      [action.payload.profileDate]: {
-        issues: {
-          [action.payload.issueId]: {
-            isSelected: {
-              $set: action.payload.isSelected
-            }
-          }
-        }
-      }
-    });
-    ratingsChanged = !_.isEqual(getSelection(newRatings), state.originalSelection);
-
-    return update(state, {
-      ratings: { $set: newRatings },
-      ratingsChanged: { $set: ratingsChanged }
-    });
   case ACTIONS.REQUEST_ISSUES_UPDATE_START:
     return update(state, {
       requestStatus: {
@@ -53,18 +37,13 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
       }
     });
   case ACTIONS.REQUEST_ISSUES_UPDATE_SUCCEED:
-    serverRatings = formatRatings(action.payload.ratings, action.payload.ratedRequestIssues);
-
     return update(state, {
       requestStatus: {
         requestIssuesUpdate: {
           $set: REQUEST_STATE.SUCCEEDED
         }
       },
-      ratings: { $set: serverRatings },
-      originalSelection: { $set: getSelection(serverRatings) },
-      ratingsChanged: { $set: false },
-      responseErrorCode: { $set: null }
+      requestIssuesUpdateErrorCode: { $set: null }
     });
   case ACTIONS.REQUEST_ISSUES_UPDATE_FAIL:
     return update(state, {
@@ -73,9 +52,9 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
           $set: REQUEST_STATE.FAILED
         }
       },
-      responseErrorCode: { $set: action.payload.responseErrorCode }
+      requestIssuesUpdateErrorCode: { $set: action.payload.responseErrorCode }
     });
   default:
-    return state;
+    return applyCommonReducers(state, action);
   }
 };

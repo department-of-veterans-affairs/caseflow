@@ -1,11 +1,11 @@
 describe Intake do
   before do
-    FeatureToggle.enable!(:test_facols)
+    FeatureToggle.enable!(:intake_legacy_opt_in)
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end
 
   after do
-    FeatureToggle.disable!(:test_facols)
+    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
   class TestIntake < Intake
@@ -133,7 +133,7 @@ describe Intake do
       )
     end
 
-    it "returns in progress intakes" do
+    it "returns expired intakes" do
       expect(subject).to_not include(started_intake)
       expect(subject).to include(expired_intake)
       expect(subject).to_not include(completed_intake)
@@ -457,13 +457,43 @@ describe Intake do
     end
 
     context "valid to start" do
-      let!(:expired_intake) do
-        Intake.create!(
+      let(:ramp_election_detail) do
+        build(
+          :ramp_election,
           veteran_file_number: veteran_file_number,
-          detail: detail,
+          notice_date: Time.zone.now,
+          receipt_date: 5.days.ago,
+          option_selected: :supplemental_claim
+        )
+      end
+
+      let(:higher_level_review) do
+        build(:higher_level_review,
+              veteran_file_number: veteran_file_number,
+              receipt_date: 5.days.ago,
+              legacy_opt_in_approved: false)
+      end
+
+      let!(:expired_intake) do
+        RampElectionIntake.create!(
+          veteran_file_number: veteran_file_number,
+          detail: ramp_election_detail,
           user: user,
           started_at: 25.hours.ago
         )
+      end
+
+      let!(:expired_other_intake) do
+        HigherLevelReviewIntake.create!(
+          veteran_file_number: veteran_file_number,
+          detail: higher_level_review,
+          user: another_user,
+          started_at: 25.hours.ago
+        )
+      end
+
+      before do
+        higher_level_review.create_claimants!(participant_id: "5382910292", payee_code: "10")
       end
 
       it "clears expired intakes and creates new intake" do
@@ -476,7 +506,17 @@ describe Intake do
           user: user
         )
 
+        # Ramp Election intake details are not destroyed
         expect(expired_intake.reload).to have_attributes(completion_status: "expired")
+        expect(expired_intake.detail).to have_attributes(
+          receipt_date: nil,
+          option_selected: nil
+        )
+
+        # Non-Ramp Election intake details are destroyed
+        expect(expired_other_intake.reload).to have_attributes(completion_status: "expired")
+        expect(expired_other_intake.detail).to be_nil
+        expect(Claimant.find_by(participant_id: "5382910292")).to be_nil
       end
     end
   end

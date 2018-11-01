@@ -1,11 +1,6 @@
 describe RampElection do
   before do
-    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran_file_number) { "64205555" }
@@ -60,12 +55,11 @@ describe RampElection do
       context "when status is canceled" do
         it "rolls back the ramp election" do
           subject
-
-          expect(RampElectionRollback.last).to have_attributes(
-            ramp_election: ramp_election,
-            user: User.system_user,
-            reason: "Automatic roll back due to EP 683 cancelation"
-          )
+          expect(RampElectionRollback.find_by(
+                   ramp_election: ramp_election,
+                   user: User.system_user,
+                   reason: "Automatic roll back due to EP 683 cancelation"
+          )).to_not be_nil
         end
       end
 
@@ -136,7 +130,8 @@ describe RampElection do
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran.participant_id
           },
-          veteran_hash: veteran.reload.to_vbms_hash
+          veteran_hash: veteran.reload.to_vbms_hash,
+          user: nil
         )
 
         expect(EndProductEstablishment.find_by(source: ramp_election.reload)).to have_attributes(

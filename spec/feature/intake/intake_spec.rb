@@ -3,7 +3,6 @@ require "rails_helper"
 RSpec.feature "Intake" do
   before do
     FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 12, 8))
@@ -12,10 +11,6 @@ RSpec.feature "Intake" do
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   let!(:veteran) do
@@ -75,6 +70,15 @@ RSpec.feature "Intake" do
     scenario "User visits help page" do
       visit "/intake/help"
       expect(page).to have_content("Welcome to the Intake Help page!")
+    end
+
+    scenario "User clicks on Search Cases" do
+      visit "/intake"
+      expect(page).to have_content("Search cases")
+      new_window = window_opened_by { click_link("Search cases") }
+      within_window new_window do
+        expect(page).to have_current_path("/search")
+      end
     end
 
     scenario "Search for a veteran that does not exist in BGS" do
@@ -168,7 +172,7 @@ RSpec.feature "Intake" do
       end
     end
 
-    scenario "Search for a veteran who's form is already being processed" do
+    scenario "Search for a veteran whose form is already being processed" do
       create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
 
       RampElectionIntake.new(

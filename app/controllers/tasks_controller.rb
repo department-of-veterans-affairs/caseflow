@@ -1,13 +1,17 @@
 class TasksController < ApplicationController
   include Errors
 
-  before_action :verify_task_access, only: [:create, :assignable_organizations, :assignable_users]
+  before_action :verify_task_access, only: [:create]
   skip_before_action :deny_vso_access, only: [:index, :update, :for_appeal]
 
   TASK_CLASSES = {
     ColocatedTask: ColocatedTask,
     AttorneyTask: AttorneyTask,
-    GenericTask: GenericTask
+    GenericTask: GenericTask,
+    QualityReviewTask: QualityReviewTask,
+    JudgeTask: JudgeTask,
+    ScheduleHearingTask: ScheduleHearingTask,
+    MailTask: MailTask
   }.freeze
 
   QUEUES = {
@@ -54,7 +58,7 @@ class TasksController < ApplicationController
   def create
     return invalid_type_error unless task_class
 
-    tasks = task_class.create_from_params(create_params, current_user)
+    tasks = task_class.create_many_from_params(create_params, current_user)
 
     tasks.each { |task| return invalid_record_error(task) unless task.valid? }
     render json: { tasks: json_tasks(tasks) }, status: :created
@@ -74,10 +78,10 @@ class TasksController < ApplicationController
   def update
     redirect_to("/unauthorized") && return unless task.can_be_accessed_by_user?(current_user)
 
-    task.update_from_params(update_params, current_user)
+    tasks = task.update_from_params(update_params, current_user)
+    tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
-    return invalid_record_error(task) unless task.valid?
-    render json: { tasks: json_tasks([task]) }
+    render json: { tasks: json_tasks(tasks) }
   end
 
   def for_appeal
@@ -92,20 +96,18 @@ class TasksController < ApplicationController
       return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], user_role)
     end
 
-    json_tasks_by_appeal_id(appeal.id, appeal.class.to_s)
+    all_json_tasks
   end
 
   private
 
-  def can_act_on_task?
-    return true if can_assign_task?
-    true if task.can_be_accessed_by_user?(current_user)
-  rescue ActiveRecord::RecordNotFound
-    return false
+  def can_assign_task?
+    return true if create_params.first[:appeal].is_a?(Appeal)
+    super
   end
 
   def verify_task_access
-    redirect_to("/unauthorized") unless can_act_on_task?
+    redirect_to("/unauthorized") unless can_assign_task?
   end
 
   def queue_class
@@ -144,7 +146,8 @@ class TasksController < ApplicationController
 
   def create_params
     @create_params ||= [params.require("tasks")].flatten.map do |task|
-      task = task.permit(:type, :instructions, :action, :assigned_to_id, :assigned_to_type, :external_id, :parent_id)
+      task = task.permit(:type, :instructions, :action, :assigned_to_id,
+                         :assigned_to_type, :external_id, :parent_id, business_payloads: [:description, values: {}])
         .merge(assigned_by: current_user)
         .merge(appeal: Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id]))
 
@@ -156,8 +159,14 @@ class TasksController < ApplicationController
   end
 
   def update_params
-    params.require("task")
-      .permit(:status, :on_hold_duration, :assigned_to_id, :instructions)
+    params.require("task").permit(
+      :status,
+      :on_hold_duration,
+      :assigned_to_id,
+      :instructions,
+      reassign: [:assigned_to_id, :assigned_to_type, :instructions],
+      business_payloads: [:description, values: {}]
+    )
   end
 
   def json_vso_tasks
@@ -178,11 +187,9 @@ class TasksController < ApplicationController
     }
   end
 
-  def json_tasks_by_appeal_id(appeal_db_id, appeal_type)
-    tasks = queue_class.new(user: current_user).tasks_by_appeal_id(appeal_db_id, appeal_type)
-
+  def all_json_tasks
     render json: {
-      tasks: json_tasks(tasks)[:data]
+      tasks: json_tasks(appeal.tasks)[:data]
     }
   end
 
