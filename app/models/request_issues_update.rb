@@ -39,7 +39,7 @@ class RequestIssuesUpdate < ApplicationRecord
     attempted!
 
     # appeals do not have process_end_product_establishments
-    if review.respond_to?(:process_end_product_establishments)
+    if review.respond_to?(:process_end_product_establishments!)
       review.process_end_product_establishments!
 
       removed_issues.each do |request_issue|
