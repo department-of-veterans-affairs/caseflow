@@ -55,6 +55,7 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     addIssuesModalVisible: false,
     nonRatedIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
+    untimelyExemptionModalVisible: false,
     removeIssueModalVisible: false,
     receiptDate: null,
     receiptDateError: null,

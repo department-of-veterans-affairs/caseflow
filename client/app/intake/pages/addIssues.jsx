@@ -47,12 +47,11 @@ export class AddIssuesPage extends React.Component {
   }
 
   checkIfEligible = (issue, formType) => {
-    console.log("issue::", issue, formType)
     if (issue.isUnidentified) {
       return false;
     } else if (issue.inActiveReview) {
       return INELIGIBLE_REQUEST_ISSUES.in_active_review.replace('{review_title}', issue.inActiveReview);
-    } else if (!issue.timely && formType !== 'supplemental_claim' && issue.untimelyExemption === 'false') {
+    } else if (!issue.timely && formType !== 'supplemental_claim' && issue.untimelyExemption !== 'true') {
       return INELIGIBLE_REQUEST_ISSUES.untimely;
     } else if (issue.sourceHigherLevelReview && formType === 'higher_level_review') {
       return INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review;
@@ -104,10 +103,12 @@ export class AddIssuesPage extends React.Component {
             return <div className="issue" key={`issue-${index}`}>
               <div className={issueKlasses.join(' ')}>
                 <span className="issue-num">{index + 1}.&nbsp;</span>
-                {issue.text} {addendum}
-                { issue.date && <span className="issue-date">Decision date: {issue.date}</span> }
-                { issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span> }
-                { issue.untimelyExemptionNotes && <span className="issue-notes">Untimely Exemption Notes:&nbsp;{issue.untimelyExemptionNotes}</span> }
+                { issue.text } {addendum}
+                { issue.date && <span className="issue-date">Decision date: { issue.date }</span> }
+                { issue.notes && <span className="issue-notes">Notes:&nbsp;{ issue.notes }</span> }
+                { issue.untimelyExemptionNotes &&
+                  <span className="issue-notes">Untimely Exemption Notes:&nbsp;{issue.untimelyExemptionNotes}</span>
+                }
               </div>
               <div className="issue-action">
                 <Button

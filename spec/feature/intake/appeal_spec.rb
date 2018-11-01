@@ -387,8 +387,26 @@ RSpec.feature "Appeal Intake" do
     safe_click "#button-add-issue"
     find_all("label", text: "Really old injury").first.click
     safe_click ".add-issue"
+    expect(page).to have_content("The issue requested isn't usually eligible because its decision date is older")
+    find_all("label", text: "Yes").first.click
+    fill_in "Notes", with: "I am an exemption note"
+    safe_click ".add-issue"
     expect(page).to have_content("5 issues")
-    expect(page).to have_content("5. Really old injury is ineligible because it has a prior decision date")
+    expect(page).to have_content("I am an exemption note")
+    expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
+
+    # remove and re-add with different answer to exemption
+    page.all(".remove-issue").last.click
+    safe_click "#button-add-issue"
+    find_all("label", text: "Really old injury").first.click
+    safe_click ".add-issue"
+    expect(page).to have_content("The issue requested isn't usually eligible because its decision date is older")
+    find_all("label", text: "No").first.click
+    fill_in "Notes", with: "I am an exemption note"
+    safe_click ".add-issue"
+    expect(page).to have_content("5 issues")
+    expect(page).to have_content("I am an exemption note")
+    expect(page).to have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
 
     # add untimely nonrated issue
     safe_click "#button-add-issue"
@@ -420,6 +438,13 @@ RSpec.feature "Appeal Intake" do
              rating_issue_reference_id: "xyz123",
              description: "Left knee granted",
              notes: "I am an issue note"
+    )).to_not be_nil
+
+    expect(RequestIssue.find_by(
+             review_request: appeal,
+             description: "Really old injury",
+             untimely_exemption: false,
+             untimely_exemption_notes: "I am an exemption note"
     )).to_not be_nil
 
     expect(RequestIssue.find_by(

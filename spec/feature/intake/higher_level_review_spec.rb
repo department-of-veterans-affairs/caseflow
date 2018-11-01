@@ -752,6 +752,14 @@ RSpec.feature "Higher-Level Review" do
 
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
+               description: "Really old injury",
+               end_product_establishment_id: end_product_establishment.id,
+               untimely_exemption: false,
+               untimely_exemption_notes: "I am an exemption note"
+      )).to_not be_nil
+
+      expect(RequestIssue.find_by(
+               review_request: higher_level_review,
                issue_category: "Active Duty Adjustments",
                description: "Description for Active Duty Adjustments",
                decision_date: 1.month.ago.to_date,

@@ -39,8 +39,6 @@ class AddIssuesModal extends React.Component {
     }
     const currentIssue = issueById(this.props.intakeData.ratings, this.state.referenceId);
 
-    console.log('checking timely on', currentIssue);
-
     return !currentIssue.timely;
   }
 
@@ -57,9 +55,8 @@ class AddIssuesModal extends React.Component {
         isRated: true,
         notes: this.state.notes
       });
+      this.props.closeHandler();
     }
-
-    this.props.closeHandler();
   }
 
   render() {

@@ -157,13 +157,13 @@ class RequestIssue < ApplicationRecord
 
   def check_for_untimely!
     return unless eligible?
-    return if untimely_exemption
     return if review_request && review_request.is_a?(SupplementalClaim)
     check_for_rated_untimely! if rated?
     check_for_nonrated_untimely! if nonrated?
   end
 
   def check_for_rated_untimely!
+    return if untimely_exemption
     if contested_rating_issue && !review_request.timely_rating?(contested_rating_issue.promulgation_date)
       self.ineligible_reason = :untimely
     end

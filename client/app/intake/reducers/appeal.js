@@ -58,6 +58,7 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     addIssuesModalVisible: false,
     nonRatedIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
+    untimelyExemptionModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
     docketType: null,
