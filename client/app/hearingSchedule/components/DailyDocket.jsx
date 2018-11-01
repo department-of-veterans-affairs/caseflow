@@ -221,10 +221,12 @@ export default class DailyDocket extends React.Component {
 
   getDailyDocketRows = (hearings, readOnly) => {
     let dailyDocketRows = [];
+    let count = 0;
 
     _.forEach(hearings, (hearing) => {
+      count += 1;
       dailyDocketRows.push({
-        number: '1.',
+        number: <b>{count}.</b>,
         appellantInformation: this.getAppellantInformation(hearing),
         hearingTime: this.getHearingTime(hearing),
         disposition: this.getDispositionDropdown(hearing, readOnly),

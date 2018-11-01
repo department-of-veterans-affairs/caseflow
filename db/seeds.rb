@@ -499,7 +499,7 @@ class SeedDB
     create_tasks
 
     setup_dispatch
-    create_previously_held_hearing_data
+    # create_previously_held_hearing_data
 
     return if Rails.env.development?
 
