@@ -139,7 +139,7 @@ jobs:
 
       - store_artifacts:
           name: Store final coverage
-          path: ~/coverage/merged_results.json
+          path: ~/coverage
 
   lint:
     docker:
