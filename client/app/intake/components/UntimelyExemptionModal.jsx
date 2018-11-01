@@ -69,7 +69,7 @@ class UntimelyExemptionModal extends React.Component {
         ]}
         visible
         closeHandler={closeHandler}
-        title={`${issueNumber} is an Untimely Issue`}
+        title={`Issue ${issueNumber} is an Untimely Issue`}
       >
         <p><strong>Requested issue:</strong> {issue.description}</p>
         <p>The issue requested isn't usually eligible because its decision date is older than what's allowed.</p>
