@@ -189,7 +189,7 @@ describe SupplementalClaimIntake do
 
       expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
         claim_id: ratings_end_product_establishment.reference_id,
-        rating_request_issue_contention_map: {
+        rating_issue_contention_map: {
           "reference-id" => intake.detail.request_issues.first.contention_reference_id
         }
       )

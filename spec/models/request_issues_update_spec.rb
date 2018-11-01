@@ -231,13 +231,13 @@ describe RequestIssuesUpdate do
         expect(review.request_issues.count).to eq(3)
 
         new_map = rating_end_product_establishment.send(
-          :rating_request_issue_contention_map,
+          :rating_issue_contention_map,
           review.request_issues.reload
         )
 
         expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
           claim_id: rating_end_product_establishment.reference_id,
-          rating_request_issue_contention_map: new_map
+          rating_issue_contention_map: new_map
         )
 
         review.request_issues.map(&:rating_issue_associated_at).each do |value|
@@ -322,13 +322,13 @@ describe RequestIssuesUpdate do
         expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
 
         new_map = rating_end_product_establishment.send(
-          :rating_request_issue_contention_map,
+          :rating_issue_contention_map,
           review.request_issues.reload
         )
 
         expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
           claim_id: rating_end_product_establishment.reference_id,
-          rating_request_issue_contention_map: new_map
+          rating_issue_contention_map: new_map
         )
 
         expect(review.request_issues.first.rating_issue_associated_at).to eq(Time.zone.now)

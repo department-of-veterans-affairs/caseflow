@@ -194,7 +194,7 @@ class EndProductEstablishment < ApplicationRecord
 
     VBMSService.associate_rating_request_issues!(
       claim_id: reference_id,
-      rating_request_issue_contention_map: rating_request_issue_contention_map(rating_request_issues)
+      rating_issue_contention_map: rating_issue_contention_map(rating_request_issues)
     )
 
     RequestIssue.where(id: rating_request_issues.map(&:id)).update_all(
@@ -242,7 +242,7 @@ class EndProductEstablishment < ApplicationRecord
     request_issues.select { |ri| ri.contention_reference_id.nil? && ri.eligible? }
   end
 
-  def rating_request_issue_contention_map(request_issues_to_associate)
+  def rating_issue_contention_map(request_issues_to_associate)
     request_issues_to_associate.inject({}) do |contention_map, issue|
       contention_map[issue.rating_issue_reference_id] = issue.contention_reference_id
       contention_map

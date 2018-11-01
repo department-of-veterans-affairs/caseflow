@@ -278,7 +278,7 @@ describe ClaimReview do
 
         expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
           claim_id: claim_review.end_product_establishments.last.reference_id,
-          rating_request_issue_contention_map: {
+          rating_issue_contention_map: {
             "reference-id" => rating_request_issue.reload.contention_reference_id,
             "reference-id2" => second_rating_request_issue.reload.contention_reference_id
           }
@@ -345,7 +345,7 @@ describe ClaimReview do
 
             expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
               claim_id: claim_review.end_product_establishments.last.reference_id,
-              rating_request_issue_contention_map: {
+              rating_issue_contention_map: {
                 "reference-id" => rating_request_issue.reload.contention_reference_id,
                 "reference-id2" => second_rating_request_issue.reload.contention_reference_id
               }
@@ -545,7 +545,7 @@ describe ClaimReview do
 
         expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRR").reference_id,
-          rating_request_issue_contention_map: {
+          rating_issue_contention_map: {
             "reference-id" => rating_request_issue.reload.contention_reference_id
           }
         )
@@ -796,7 +796,7 @@ describe ClaimReview do
             # for rating request issues, verify that this is called
             expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
               claim_id: supplemental_claim_end_product_establishment.reference_id,
-              rating_request_issue_contention_map:
+              rating_issue_contention_map:
               {
                 "reference-id" => follow_up_issues.first.reload.contention_reference_id,
                 "reference-id2" => follow_up_issues.second.reload.contention_reference_id
