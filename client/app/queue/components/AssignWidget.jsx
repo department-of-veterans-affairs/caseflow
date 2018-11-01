@@ -33,6 +33,7 @@ import type {
 const OTHER = 'OTHER';
 
 type Params = {|
+  userId?: string,
   previousAssigneeId: string,
   onTaskAssignment: Function,
   selectedTasks: Array<Task>,
@@ -119,7 +120,7 @@ class AssignWidget extends React.PureComponent<Props> {
       }, () => {
         this.props.resetSaveState();
 
-        const errorDetail = this.props.isModal ?
+        const errorDetail = this.props.isModal && userId ?
           <React.Fragment>
             <Link to={`/queue/${userId}/assign`}>{COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL}</Link>
           </React.Fragment> : COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL;

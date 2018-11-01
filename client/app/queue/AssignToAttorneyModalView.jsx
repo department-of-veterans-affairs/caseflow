@@ -84,4 +84,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 export default (connect(
   mapStateToProps,
   mapDispatchToProps
-)(AssignToAttorneyModalView): React.ComponentType<Params>);
+)(AssignToAttorneyModalView): React.ComponentType<Props>);

@@ -1,6 +1,5 @@
 class GenericTask < Task
   # rubocop:disable Metrics/AbcSize
-  # rubocop:disable Metrics/CyclomaticComplexity
   def available_actions(user)
     if assigned_to.is_a?(Vso) && assigned_to.user_has_access?(user)
       return [Constants.TASK_ACTIONS.MARK_COMPLETE.to_h]

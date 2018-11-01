@@ -42,7 +42,7 @@ class Task < ApplicationRecord
     return true if [Constants.TASK_STATUSES.on_hold, Constants.TASK_STATUSES.completed].include?(status)
 
     # Users who are assigned a subtask of an organization don't have actions on the organizational task.
-    return assigned_to.is_a?(Organization) && children.any? { |child| child.assigned_to == user }
+    assigned_to.is_a?(Organization) && children.any? { |child| child.assigned_to == user }
   end
 
   def assigned_by_display_name

@@ -9,7 +9,7 @@ import {
 import type {
   State,
   NewDocsForAppeal,
-  AttorneysOfJudge, UiStateModals
+  UiStateModals
 } from './types/state';
 import type {
   Task,
