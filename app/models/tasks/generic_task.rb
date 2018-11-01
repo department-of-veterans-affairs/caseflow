@@ -14,9 +14,7 @@ class GenericTask < Task
       ]
     end
 
-    has_child_assigned_to_self = children.any? { |child| child.assigned_to == user }
-
-    if assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user) && !has_child_assigned_to_self
+    if assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
       return [
         Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
