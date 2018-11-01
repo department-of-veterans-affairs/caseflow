@@ -4,6 +4,10 @@ class HigherLevelReview < ClaimReview
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
   end
 
+  validates :legacy_opt_in_approved, inclusion: {
+    in: [true, false], message: "blank"
+  }, if: [:legacy_opt_in_enabled?, :saving_review]
+
   END_PRODUCT_RATING_CODE = "030HLRR".freeze
   END_PRODUCT_NONRATING_CODE = "030HLRNR".freeze
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 033 035 036 037 038 039].freeze
@@ -16,18 +20,16 @@ class HigherLevelReview < ClaimReview
   DTA_ERROR_EXAM_MO = "DTA Error - Exam/MO".freeze
   DTA_ERRORS = [DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO].freeze
 
-  def ui_hash
-    {
-      veteranFormName: veteran.name.formatted(:form),
-      veteranName: veteran.name.formatted(:readable_short),
-      veteranFileNumber: veteran_file_number,
-      claimId: end_product_claim_id,
-      receiptDate: receipt_date.to_formatted_s(:json_date),
-      benefitType: benefit_type,
-      issues: request_issues,
+  def self.review_title
+    Constants.INTAKE_FORM_NAMES_SHORT.higher_level_review
+  end
+
+  def ui_hash(ama_enabled)
+    super.merge(
+      formType: "higher_level_review",
       sameOffice: same_office,
       informalConference: informal_conference
-    }
+    )
   end
 
   def rating_end_product_establishment
@@ -40,10 +42,6 @@ class HigherLevelReview < ClaimReview
 
   def end_product_base_modifier
     valid_modifiers.first
-  end
-
-  def end_product_claim_id
-    rating_end_product_establishment && rating_end_product_establishment.reference_id
   end
 
   def special_issues
@@ -122,8 +120,9 @@ class HigherLevelReview < ClaimReview
       payee_code: payee_code,
       code: ep_code,
       claimant_participant_id: claimant_participant_id,
-      station: "397", # AMC
-      benefit_type_code: veteran.benefit_type_code
+      station: end_product_station,
+      benefit_type_code: veteran.benefit_type_code,
+      user: intake_processed_by
     )
   end
 end

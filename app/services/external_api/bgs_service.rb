@@ -34,6 +34,20 @@ class ExternalApi::BGSService
       end
   end
 
+  def cancel_end_product(veteran_file_number, end_product_code, end_product_modifier)
+    DBService.release_db_connections
+
+    @end_products[veteran_file_number] ||=
+      MetricsService.record("BGS: cancel end product by: \
+                            file_number = #{veteran_file_number}, \
+                            end_product_code = #{end_product_code}, \
+                            modifier = #{end_product_modifier}",
+                            service: :bgs,
+                            name: "claims.cancel_end_product") do
+        client.claims.cancel_end_product(veteran_file_number, end_product_code, end_product_modifier)
+      end
+  end
+
   def fetch_veteran_info(vbms_id)
     DBService.release_db_connections
 
@@ -257,13 +271,14 @@ class ExternalApi::BGSService
     BGS::Services.new(
       env: Rails.application.config.bgs_environment,
       application: "CASEFLOW",
-      client_ip: Rails.application.secrets.user_ip_address,
+      client_ip: ENV.fetch("USER_IP_ADDRESS", Rails.application.secrets.user_ip_address),
       client_station_id: current_user.station_id,
       client_username: current_user.css_id,
       ssl_cert_key_file: ENV["BGS_KEY_LOCATION"],
       ssl_cert_file: ENV["BGS_CERT_LOCATION"],
       ssl_ca_cert: ENV["BGS_CA_CERT_LOCATION"],
       forward_proxy_url: forward_proxy_url,
+      jumpbox_url: ENV["RUBY_BGS_JUMPBOX_URL"],
       log: true
     )
   end

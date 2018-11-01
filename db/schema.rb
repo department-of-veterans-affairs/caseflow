@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181004232948) do
+ActiveRecord::Schema.define(version: 20181031194415) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,8 +23,8 @@ ActiveRecord::Schema.define(version: 20181004232948) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "granted"
-    t.index ["person_id"], name: "index_advance_on_docket_grants_on_person_id"
-    t.index ["user_id"], name: "index_advance_on_docket_grants_on_user_id"
+    t.index ["person_id"], name: "index_advance_on_docket_motions_on_person_id"
+    t.index ["user_id"], name: "index_advance_on_docket_motions_on_user_id"
   end
 
   create_table "allocations", force: :cascade do |t|
@@ -85,6 +85,7 @@ ActiveRecord::Schema.define(version: 20181004232948) do
     t.string "docket_type"
     t.datetime "established_at"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
+    t.boolean "legacy_opt_in_approved"
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
 
@@ -278,6 +279,7 @@ ActiveRecord::Schema.define(version: 20181004232948) do
     t.string "doc_reference_id"
     t.string "development_item_reference_id"
     t.string "benefit_type_code"
+    t.integer "user_id"
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
   end
@@ -413,6 +415,7 @@ ActiveRecord::Schema.define(version: 20181004232948) do
     t.string "benefit_type"
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
+    t.boolean "legacy_opt_in_approved"
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
@@ -499,9 +502,15 @@ ActiveRecord::Schema.define(version: 20181004232948) do
     t.string "type"
     t.string "name"
     t.string "role"
-    t.string "feature"
     t.string "url"
     t.string "participant_id"
+  end
+
+  create_table "organizations_users", force: :cascade do |t|
+    t.integer "organization_id"
+    t.integer "user_id"
+    t.index ["organization_id"], name: "index_organizations_users_on_organization_id"
+    t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
   end
 
   create_table "people", force: :cascade do |t|
@@ -570,6 +579,17 @@ ActiveRecord::Schema.define(version: 20181004232948) do
     t.index ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number"
   end
 
+  create_table "rating_issues", force: :cascade do |t|
+    t.bigint "source_request_issue_id", null: false
+    t.string "reference_id", null: false
+    t.datetime "profile_date", null: false
+    t.string "decision_text"
+    t.datetime "promulgation_date", null: false
+    t.integer "participant_id", null: false
+    t.index ["reference_id", "participant_id"], name: "index_rating_issues_on_reference_id_and_participant_id", unique: true
+    t.index ["source_request_issue_id"], name: "index_rating_issues_on_source_request_issue_id"
+  end
+
   create_table "reader_users", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "documents_fetched_at"
@@ -591,7 +611,7 @@ ActiveRecord::Schema.define(version: 20181004232948) do
     t.bigint "review_request_id"
     t.string "rating_issue_reference_id"
     t.datetime "rating_issue_profile_date"
-    t.string "contention_reference_id"
+    t.integer "contention_reference_id"
     t.string "description"
     t.string "issue_category"
     t.date "decision_date"
@@ -601,8 +621,15 @@ ActiveRecord::Schema.define(version: 20181004232948) do
     t.datetime "rating_issue_associated_at"
     t.integer "parent_request_issue_id"
     t.text "notes"
+    t.boolean "is_unidentified"
+    t.integer "ineligible_reason"
+    t.bigint "ineligible_due_to_id"
+    t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
+    t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
+    t.index ["ineligible_reason"], name: "index_request_issues_on_ineligible_reason"
     t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"
+    t.index ["rating_issue_reference_id"], name: "index_request_issues_on_rating_issue_reference_id"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
   end
 
@@ -680,6 +707,7 @@ ActiveRecord::Schema.define(version: 20181004232948) do
     t.boolean "is_dta_error"
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
+    t.boolean "legacy_opt_in_approved"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 
@@ -688,6 +716,13 @@ ActiveRecord::Schema.define(version: 20181004232948) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["text"], name: "index_tags_on_text", unique: true
+  end
+
+  create_table "task_business_payloads", force: :cascade do |t|
+    t.bigint "task_id", null: false
+    t.string "description", null: false
+    t.json "values", default: {}, null: false
+    t.index ["task_id"], name: "index_task_business_payloads_on_task_id"
   end
 
   create_table "tasks", force: :cascade do |t|

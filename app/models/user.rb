@@ -5,6 +5,8 @@ class User < ApplicationRecord
   has_many :hearing_views
   has_many :annotations
   has_many :tasks, as: :assigned_to
+  has_many :organizations_users, dependent: :destroy
+  has_many :organizations, through: :organizations_users
 
   BOARD_STATION_ID = "101".freeze
 
@@ -272,8 +274,8 @@ class User < ApplicationRecord
     # :nocov:
 
     def system_user
-      find_or_initialize_by(
-        station_id: "283",
+      @system_user ||= find_or_initialize_by(
+        station_id: Rails.deploy_env?(:prod) ? "283" : "317",
         css_id: Rails.deploy_env?(:prod) ? "CSFLOW" : "CASEFLOW1"
       )
     end

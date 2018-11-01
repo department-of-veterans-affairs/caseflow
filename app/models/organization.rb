@@ -1,6 +1,8 @@
 class Organization < ApplicationRecord
   has_many :tasks, as: :assigned_to
   has_many :staff_field_for_organization
+  has_many :organizations_users, dependent: :destroy
+  has_many :users, through: :organizations_users
 
   def self.assignable(task)
     organizations = where(type: [nil, BvaDispatch.name])
@@ -18,23 +20,6 @@ class Organization < ApplicationRecord
   end
 
   def user_has_access?(user)
-    members.pluck(:id).include?(user.id)
-  end
-
-  def members
-    @members ||= member_css_ids.uniq.map { |css_id| User.find_by(css_id: css_id) }.compact
-  end
-
-  private
-
-  def member_css_ids
-    return [] unless staff_field_for_organization
-
-    staff_records = VACOLS::Staff.where(sactive: "A")
-    staff_field_for_organization.each do |sfo|
-      staff_records = sfo.filter_staff_records(staff_records)
-    end
-
-    staff_records.pluck(:sdomainid)
+    users.pluck(:id).include?(user.id)
   end
 end

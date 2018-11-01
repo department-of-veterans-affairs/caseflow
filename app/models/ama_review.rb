@@ -14,8 +14,29 @@ class AmaReview < ApplicationRecord
 
   before_destroy :remove_issues!
 
-  cache_attribute :cached_serialized_timely_ratings, cache_key: :timely_ratings_cache_key, expires_in: 1.day do
-    receipt_date && timely_ratings_with_issues.map(&:ui_hash)
+  cache_attribute :cached_serialized_ratings, cache_key: :ratings_cache_key, expires_in: 1.day do
+    ratings_with_issues.map(&:ui_hash)
+  end
+
+  def self.review_title
+    to_s.underscore.titleize
+  end
+
+  def serialized_ratings
+    return unless receipt_date
+
+    cached_serialized_ratings.each do |rating|
+      rating[:issues].each do |rating_issue_hash|
+        rating_issue_hash[:timely] = timely_rating?(Date.parse(rating_issue_hash[:promulgation_date].to_s))
+        # always re-compute flags that depend on data in our db
+        rating_issue_hash.merge!(RatingIssue.from_ui_hash(rating_issue_hash).ui_hash)
+      end
+    end
+  end
+
+  def timely_rating?(promulgation_date)
+    return true unless receipt_date
+    promulgation_date >= (receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
   end
 
   def start_review!
@@ -55,14 +76,12 @@ class AmaReview < ApplicationRecord
 
   private
 
-  def timely_ratings_with_issues
-    return nil unless receipt_date
-
-    veteran.timely_ratings(from_date: receipt_date).reject { |rating| rating.issues.empty? }
+  def ratings_with_issues
+    veteran.ratings.reject { |rating| rating.issues.empty? }
   end
 
-  def timely_ratings_cache_key
-    "#{veteran_file_number}-#{formatted_receipt_date}"
+  def ratings_cache_key
+    "#{veteran_file_number}-ratings"
   end
 
   def formatted_receipt_date
@@ -70,7 +89,7 @@ class AmaReview < ApplicationRecord
   end
 
   def end_product_station
-    "397" # TODO: Change to 499 National Work Queue
+    "499" # National Work Queue
   end
 
   def validate_receipt_date_not_before_ama
@@ -85,5 +104,9 @@ class AmaReview < ApplicationRecord
     return unless receipt_date
     validate_receipt_date_not_before_ama
     validate_receipt_date_not_in_future
+  end
+
+  def legacy_opt_in_enabled?
+    FeatureToggle.enabled?(:intake_legacy_opt_in)
   end
 end

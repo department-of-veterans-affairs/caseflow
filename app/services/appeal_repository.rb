@@ -37,7 +37,7 @@ class AppealRepository
       VACOLS::Case.where(bfcorlid: vbms_id).includes(:folder, :correspondent, :representatives)
     end
 
-    cases.map { |case_record| build_appeal(case_record) }
+    cases.map { |case_record| build_appeal(case_record, true) }
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -146,9 +146,9 @@ class AppealRepository
       outcoder_first_name: outcoder_record.try(:snamef),
       outcoder_last_name: outcoder_record.try(:snamel),
       outcoder_middle_initial: outcoder_record.try(:snamemi),
-      appellant_first_name: correspondent_record.sspare1,
-      appellant_middle_initial: correspondent_record.sspare2,
-      appellant_last_name: correspondent_record.sspare3,
+      appellant_first_name: correspondent_record.sspare2,
+      appellant_middle_initial: correspondent_record.sspare3,
+      appellant_last_name: correspondent_record.sspare1,
       appellant_name_suffix: correspondent_record.sspare4,
       appellant_relationship: correspondent_record.sspare1 ? correspondent_record.susrtyp : "",
       appellant_ssn: correspondent_record.ssn,
@@ -182,7 +182,7 @@ class AppealRepository
       last_location_change_date: normalize_vacols_date(case_record.bfdloout),
       outcoding_date: normalize_vacols_date(folder_record.tioctime),
       private_attorney_or_agent: case_record.bfso == "T",
-      docket_number: folder_record.tinum,
+      docket_number: folder_record.tinum || "Missing Docket Number",
       docket_date: case_record.bfd19
     )
 
@@ -279,11 +279,17 @@ class AppealRepository
     cavc_cases = VACOLS::Case.joins(:folder).where(bfregoff: regional_office, bfcurloc: "57", bfac: "7")
       .order("folder.tinum").limit(30)
     aod_cases = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD).joins(:folder)
-      .where(bfregoff: regional_office, bfcurloc: "57").order("folder.tinum").limit(30)
+      .where("aod = 1").where(bfregoff: regional_office, bfcurloc: "57").order("folder.tinum").limit(30)
     other_cases = VACOLS::Case.joins(:folder).where(bfregoff: regional_office, bfcurloc: "57")
       .order("folder.tinum").limit(30)
 
-    (cavc_cases + aod_cases + other_cases).uniq.first(30).map { |case_record| build_appeal(case_record, true) }
+    aod_vacols_ids = aod_cases.pluck(:bfkey)
+
+    (cavc_cases + aod_cases + other_cases).uniq.first(30).map do |case_record|
+      build_appeal(case_record, true).tap do |appeal|
+        appeal.aod = aod_vacols_ids.include?(appeal.vacols_id)
+      end
+    end
   end
 
   def self.appeals_ready_for_co_hearing_schedule
@@ -584,7 +590,7 @@ class AppealRepository
                           name: "active_cases_for_user") do
 
       active_cases_for_user = VACOLS::CaseAssignment.active_cases_for_user(css_id)
-      active_cases_for_user = QueueRepository.filter_duplicate_tasks(active_cases_for_user)
+      active_cases_for_user = QueueRepository.filter_duplicate_tasks(active_cases_for_user, css_id)
       active_cases_vacols_ids = active_cases_for_user.map(&:vacols_id)
       active_cases_aod_results = VACOLS::Case.aod(active_cases_vacols_ids)
       active_cases_issues = VACOLS::CaseIssue.descriptions(active_cases_vacols_ids)

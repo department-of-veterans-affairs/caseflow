@@ -26,6 +26,7 @@ import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRI
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
+import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 
 /**
  * For legacy attorney checkout flow, filter out already-decided issues. Undecided
@@ -55,12 +56,16 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       lastName: task.attributes.decision_prepared_by.last_name
     } : null;
 
-    acc[task.attributes.external_appeal_id] = {
+    acc[task.id] = {
+      uniqueId: task.id,
+      isLegacy: false,
+      type: task.attributes.type,
       appealType: task.attributes.appeal_type,
       addedByCssId: null,
       appealId: task.attributes.appeal_id,
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_at,
+      completedOn: task.attributes.completed_at,
       dueOn: null,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
@@ -84,8 +89,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       instructions: task.attributes.instructions,
       decisionPreparedBy,
       availableActions: task.attributes.available_actions,
-      assignableOrganizations: task.attributes.assignable_organizations,
-      assignableUsers: task.attributes.assignable_users
+      taskBusinessPayloads: task.attributes.task_business_payloads
     };
 
     return acc;
@@ -125,10 +129,14 @@ export const extractAppealsAndAmaTasks =
 export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
   const mappedLegacyTasks = tasks.map((task): Task => {
     return {
+      uniqueId: task.attributes.external_appeal_id,
+      type: task.attributes.type,
+      isLegacy: true,
       appealId: task.attributes.appeal_id,
       appealType: task.attributes.appeal_type,
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_on,
+      completedOn: null,
       dueOn: task.attributes.due_on,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
@@ -150,19 +158,20 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       previousTaskAssignedOn: task.attributes.previous_task.assigned_on,
       status: task.attributes.status,
       decisionPreparedBy: null,
-      availableActions: task.attributes.available_actions
+      availableActions: task.attributes.available_actions,
+      taskBusinessPayloads: task.attributes.task_business_payloads
     };
   });
 
-  return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.externalAppealId), (task) => task);
+  return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.uniqueId), (task) => task);
 };
 
 export const prepareAllTasksForStore = (tasks: Array<Object>): { amaTasks: Tasks, tasks: Tasks } => {
   const amaTasks = tasks.filter((task) => {
-    return task.attributes.appeal_type === 'Appeal';
+    return !task.attributes.is_legacy;
   });
   const legacyTasks = tasks.filter((task) => {
-    return task.attributes.appeal_type === 'LegacyAppeal';
+    return task.attributes.is_legacy;
   });
 
   return {
@@ -249,6 +258,7 @@ export const prepareAppealForStore =
         veteranDateOfBirth: appeal.attributes.veteran_date_of_birth,
         veteranDateOfDeath: appeal.attributes.veteran_date_of_death,
         veteranGender: appeal.attributes.veteran_gender,
+        veteranAddress: appeal.attributes.veteran_address,
         externalId: appeal.attributes.external_id,
         status: appeal.attributes.status,
         events: {
@@ -424,6 +434,11 @@ export const taskHasNewDocuments = (task: Task, newDocsForAppeal: NewDocsForAppe
   return newDocsForAppeal[task.externalAppealId].docs.length > 0;
 };
 
-export const taskIsOnHold = (task: Task) =>
-  moment().startOf('day').
-    diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;
+export const taskIsOnHold = (task: Task) => {
+  if (task.onHoldDuration && task.placedOnHoldAt) {
+    return moment().startOf('day').
+      diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;
+  }
+
+  return task.status === TASK_STATUSES.on_hold;
+};

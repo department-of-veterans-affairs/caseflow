@@ -171,7 +171,7 @@ describe SupplementalClaimIntake do
           payee_code: "00",
           predischarge: false,
           claim_type: "Claim",
-          station_of_jurisdiction: "397",
+          station_of_jurisdiction: "499",
           date: detail.receipt_date.to_date,
           end_product_modifier: "040",
           end_product_label: "Supplemental Claim Rating",
@@ -180,14 +180,16 @@ describe SupplementalClaimIntake do
           suppress_acknowledgement_letter: false,
           claimant_participant_id: claimant.participant_id
         },
-        veteran_hash: intake.veteran.to_vbms_hash
+        veteran_hash: intake.veteran.to_vbms_hash,
+        user: user
       )
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: intake.detail.veteran_file_number,
         claim_id: ratings_end_product_establishment.reference_id,
         contention_descriptions: ["decision text"],
-        special_issues: []
+        special_issues: [],
+        user: user
       )
 
       expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(

@@ -10,7 +10,8 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import {
   newTasksByAssigneeCssIdSelector,
   pendingTasksByAssigneeCssIdSelector,
-  onHoldTasksByAssigneeCssIdSelector
+  onHoldTasksByAssigneeCssIdSelector,
+  completeTasksByAssigneeCssIdSelector
 } from './selectors';
 import { hideSuccessMessage } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
@@ -65,6 +66,10 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
       {
         label: sprintf(COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TAB_TITLE, numOnHoldTasks),
         page: <OnHoldTasksTab />
+      },
+      {
+        label: COPY.COLOCATED_QUEUE_PAGE_COMPLETE_TAB_TITLE,
+        page: <CompleteTasksTab />
       }
     ];
 
@@ -139,6 +144,24 @@ const OnHoldTasksTab = connect(
         includeType
         includeDocketNumber
         includeDaysOnHold
+        includeReaderLink
+        tasks={props.tasks}
+      />
+    </React.Fragment>;
+  });
+
+const CompleteTasksTab = connect(
+  (state: State) => ({ tasks: completeTasksByAssigneeCssIdSelector(state) }))(
+  (props: { tasks: Array<TaskWithAppeal> }) => {
+    return <React.Fragment>
+      <p>{COPY.COLOCATED_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}</p>
+      <TaskTable
+        includeDetailsLink
+        includeTask
+        includeType
+        includeDocketNumber
+        includeCompletedDate
+        includeCompletedToName
         includeReaderLink
         tasks={props.tasks}
       />

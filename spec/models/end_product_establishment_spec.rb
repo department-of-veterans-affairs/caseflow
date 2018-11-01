@@ -17,6 +17,7 @@ describe EndProductEstablishment do
       participant_id: veteran_participant_id
     )
   end
+  let(:current_user) { Generators::User.build }
   let(:code) { "030HLRR" }
   let(:payee_code) { "00" }
   let(:reference_id) { nil }
@@ -44,7 +45,8 @@ describe EndProductEstablishment do
       committed_at: committed_at,
       benefit_type_code: benefit_type_code,
       doc_reference_id: doc_reference_id,
-      development_item_reference_id: development_item_reference_id
+      development_item_reference_id: development_item_reference_id,
+      user: current_user
     )
   end
 
@@ -115,7 +117,8 @@ describe EndProductEstablishment do
             gulf_war_registry: false,
             claimant_participant_id: "11223344"
           },
-          veteran_hash: veteran.reload.to_vbms_hash
+          veteran_hash: veteran.reload.to_vbms_hash,
+          user: current_user
         )
         expect(end_product_establishment.reload).to have_attributes(
           modifier: "031"
@@ -142,7 +145,8 @@ describe EndProductEstablishment do
               gulf_war_registry: false,
               claimant_participant_id: "11223344"
             },
-            veteran_hash: veteran.reload.to_vbms_hash
+            veteran_hash: veteran.reload.to_vbms_hash,
+            user: current_user
           )
           expect(end_product_establishment.reload).to have_attributes(
             modifier: "032"
@@ -193,7 +197,8 @@ describe EndProductEstablishment do
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false
           },
-          veteran_hash: veteran.reload.to_vbms_hash
+          veteran_hash: veteran.reload.to_vbms_hash,
+          user: current_user
         )
       end
 
@@ -218,7 +223,7 @@ describe EndProductEstablishment do
 
     let(:reference_id) { "stevenasmith" }
 
-    let(:request_issues) do
+    let!(:request_issues) do
       [
         create(
           :request_issue,
@@ -243,26 +248,35 @@ describe EndProductEstablishment do
           rating_issue_reference_id: "reference-id",
           rating_issue_profile_date: Date.new(2018, 4, 30),
           description: "this is a big decision", # intentional duplicate
+        ),
+        create(
+          :request_issue,
+          end_product_establishment: end_product_establishment,
+          is_unidentified: true,
+          description: "identity unknown",
+          review_request: source,
+          rating_issue_reference_id: "reference-id",
+          rating_issue_profile_date: Date.new(2018, 4, 30)
         )
       ]
     end
 
-    let(:contention_descriptions) { request_issues.map(&:description).reverse }
+    let(:contention_descriptions) { request_issues.map(&:contention_text).reverse }
 
     it "creates contentions and saves them to objects" do
-      request_issues
       subject
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
         veteran_file_number: veteran_file_number,
         claim_id: end_product_establishment.reference_id,
-        contention_descriptions: contention_descriptions,
-        special_issues: []
+        contention_descriptions: array_including(contention_descriptions),
+        special_issues: [],
+        user: current_user
       )
 
-      expect(end_product_establishment.contentions.count).to eq(3)
+      expect(end_product_establishment.contentions.count).to eq(4)
       expect(end_product_establishment.contentions.map(&:id)).to contain_exactly(
-        *request_issues.map(&:reload).map(&:contention_reference_id)
+        *request_issues.map(&:reload).map(&:contention_reference_id).map(&:to_s)
       )
     end
 
@@ -270,14 +284,14 @@ describe EndProductEstablishment do
       let(:special_issues) { "SPECIALISSUES!" }
 
       it "sets special issues when creating the contentions" do
-        request_issues
         subject
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: end_product_establishment.reference_id,
-          contention_descriptions: contention_descriptions,
-          special_issues: "SPECIALISSUES!"
+          contention_descriptions: array_including(contention_descriptions),
+          special_issues: "SPECIALISSUES!",
+          user: current_user
         )
       end
     end
@@ -370,6 +384,7 @@ describe EndProductEstablishment do
     end
 
     let(:reference_id) { "stevenasmith" }
+    let(:contention_ref_id) { 1234 }
 
     let(:for_object) do
       RequestIssue.new(
@@ -377,12 +392,12 @@ describe EndProductEstablishment do
         rating_issue_reference_id: "reference-id",
         rating_issue_profile_date: Date.new(2018, 4, 30),
         description: "this is a big decision",
-        contention_reference_id: "skipbayless"
+        contention_reference_id: contention_ref_id
       )
     end
 
     let!(:contention) do
-      Generators::Contention.build(id: "skipbayless", claim_id: reference_id, text: "Left knee")
+      Generators::Contention.build(id: contention_ref_id, claim_id: reference_id, text: "Left knee")
     end
 
     subject { end_product_establishment.remove_contention!(for_object) }

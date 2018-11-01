@@ -1,17 +1,9 @@
 import _ from 'lodash';
 import { REVIEW_OPTIONS } from '../constants';
-import { formatDate, formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
+import { formatDateStringForApi } from '../../util/DateUtil';
 
-export const getAppealDocketError = (responseErrorCodes) => (
-  (_.get(responseErrorCodes.appeal_docket, 0) === 'blank') && 'Please select an option.'
-);
-
-export const getOptionSelectedError = (responseErrorCodes) => (
-  (_.get(responseErrorCodes.option_selected, 0) === 'blank') && 'Please select an option.'
-);
-
-export const getBenefitTypeError = (responseErrorCodes) => (
-  (_.get(responseErrorCodes.benefit_type, 0) === 'blank') && 'Please select a Benefit Type option.'
+export const getBlankOptionError = (responseErrorCodes, field) => (
+  (_.get(responseErrorCodes[field], 0) === 'blank') && 'Please select an option.'
 );
 
 export const getPageError = (responseErrorCodes) => (
@@ -63,14 +55,16 @@ export const prepareReviewData = (intakeData, intakeType) => {
       docket_type: intakeData.docketType,
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
-      payee_code: intakeData.payeeCode
+      payee_code: intakeData.payeeCode,
+      legacy_opt_in_approved: intakeData.legacyOptInApproved
     };
   case 'supplementalClaim':
     return {
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       benefit_type: intakeData.benefitType,
       claimant: intakeData.claimant,
-      payee_code: intakeData.payeeCode
+      payee_code: intakeData.payeeCode,
+      legacy_opt_in_approved: intakeData.legacyOptInApproved
     };
   case 'higherLevelReview':
     return {
@@ -79,98 +73,15 @@ export const prepareReviewData = (intakeData, intakeType) => {
       benefit_type: intakeData.benefitType,
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
-      payee_code: intakeData.payeeCode
+      payee_code: intakeData.payeeCode,
+      legacy_opt_in_approved: intakeData.legacyOptInApproved
     };
   default:
     return {
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
-      payee_code: intakeData.payeeCode
+      payee_code: intakeData.payeeCode,
+      legacy_opt_in_approved: intakeData.legacyOptInApproved
     };
   }
-};
-
-const getNonVeteranClaimant = (intakeData) => {
-  const claimant = intakeData.relationships.filter((relationship) => {
-    return relationship.value === intakeData.claimant;
-  });
-
-  return `${claimant[0].displayText} (payee code ${intakeData.payeeCode})`;
-};
-
-const getClaimantField = (formType, veteran, intakeData) => {
-  if (formType === 'appeal' || intakeData.benefitType === 'compensation') {
-    const claimant = intakeData.claimantNotVeteran ? getNonVeteranClaimant(intakeData) : veteran.name;
-
-    return [{
-      field: 'Claimant',
-      content: claimant
-    }];
-  }
-
-  return [];
-};
-
-export const getAddIssuesFields = (formType, veteran, intakeData) => {
-  let fields;
-
-  switch (formType) {
-  case 'higher_level_review':
-    fields = [
-      { field: 'Benefit type',
-        content: _.startCase(intakeData.benefitType) },
-      { field: 'Informal conference request',
-        content: intakeData.informalConference ? 'Yes' : 'No' },
-      { field: 'Same office request',
-        content: intakeData.sameOffice ? 'Yes' : 'No' }
-    ];
-    break;
-  case 'supplemental_claim':
-    fields = [
-      { field: 'Benefit type',
-        content: _.startCase(intakeData.benefitType) }
-    ];
-    break;
-  case 'appeal':
-    fields = [
-      { field: 'Review option',
-        content: _.startCase(intakeData.docketType.split('_').join(' ')) }
-    ];
-    break;
-  default:
-    fields = [];
-  }
-
-  let claimantField = getClaimantField(formType, veteran, intakeData);
-
-  return fields.concat(claimantField);
-};
-
-export const formatAddedIssues = (intakeData) => {
-  let issues = intakeData.addedIssues || [];
-
-  return issues.map((issue) => {
-    if (issue.isUnidentified) {
-      return {
-        referenceId: issue.id,
-        text: `Unidentified issue: no issue matched for "${issue.description}"`,
-        notes: issue.notes,
-        isUnidentified: true
-      };
-    } else if (issue.isRated) {
-      let foundIssue = intakeData.ratings[issue.profileDate].issues[issue.id];
-
-      return {
-        referenceId: issue.id,
-        text: `${foundIssue.decision_text} Decision date ${formatDateStr(issue.profileDate)}.`,
-        notes: issue.notes
-      };
-    }
-
-    // returns unrated issue format
-    return {
-      referenceId: issue.id,
-      text: `${issue.category} - ${issue.description} Decision date ${formatDate(issue.decisionDate)}`
-    };
-  });
 };

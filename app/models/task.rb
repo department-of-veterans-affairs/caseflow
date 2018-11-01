@@ -5,6 +5,7 @@ class Task < ApplicationRecord
   belongs_to :assigned_by, class_name: User.name
   belongs_to :appeal, polymorphic: true
   has_many :attorney_case_reviews
+  has_many :task_business_payloads
 
   validates :assigned_to, :appeal, :type, :status, presence: true
 
@@ -22,8 +23,23 @@ class Task < ApplicationRecord
     Constants.TASK_STATUSES.completed.to_sym   => Constants.TASK_STATUSES.completed
   }
 
-  def allowed_actions(_user)
+  def available_actions(_user)
     []
+  end
+
+  # available_actions() returns an array of options from selected by the subclass
+  # from TASK_ACTIONS that looks something like:
+  # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
+  def available_actions_unwrapper(user)
+    return [] if no_actions_available?(user)
+
+    available_actions(user).map do |a|
+      { label: a[:label], value: a[:value], data: a[:func] ? send(a[:func]) : nil }
+    end
+  end
+
+  def no_actions_available?(_user)
+    [Constants.TASK_STATUSES.on_hold, Constants.TASK_STATUSES.completed].include?(status)
   end
 
   def assigned_by_display_name
@@ -38,15 +54,32 @@ class Task < ApplicationRecord
     children.where(type: AttorneyTask.name)
   end
 
-  def self.create_from_params(params, current_user)
-    verify_user_can_assign!(current_user)
-    params = params.each { |p| p["instructions"] = [p["instructions"]] if p.key?("instructions") }
+  def self.recently_completed
+    where(status: Constants.TASK_STATUSES.completed, completed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
+  end
+
+  def self.create_many_from_params(params_array, current_user)
+    params_array.map { |params| create_from_params(params, current_user) }
+  end
+
+  def self.create_from_params(params, user)
+    verify_user_can_assign!(user)
+    params = modify_params(params)
     create(params)
+  end
+
+  def self.modify_params(params)
+    if params.key?("instructions") && !params[:instructions].is_a?(Array)
+      params["instructions"] = [params["instructions"]]
+    end
+    params
   end
 
   def update_from_params(params, _current_user)
     params["instructions"] = [instructions, params["instructions"]].flatten if params.key?("instructions")
     update(params)
+
+    [self]
   end
 
   def legacy?
@@ -66,7 +99,7 @@ class Task < ApplicationRecord
   end
 
   def latest_attorney_case_review
-    sub_task ? sub_task.attorney_case_reviews.order(:created_at).last : nil
+    AttorneyCaseReview.where(task_id: Task.where(appeal: appeal).pluck(:id)).order(:created_at).last
   end
 
   def prepared_by_display_name
@@ -122,24 +155,58 @@ class Task < ApplicationRecord
     nil
   end
 
-  def assignable_organizations
-    Organization.assignable(self)
+  def assign_to_organization_data
+    organizations = Organization.assignable(self).map do |organization|
+      {
+        label: organization.name,
+        value: organization.id
+      }
+    end
+
+    {
+      selected: nil,
+      options: organizations,
+      type: GenericTask.name
+    }
   end
 
-  def assignable_users
-    if assigned_to.is_a?(Organization)
-      assigned_to.members
-    elsif parent && parent.assigned_to.is_a?(Organization)
-      parent.assigned_to.members.reject { |member| member == assigned_to }
-    else
-      []
-    end
+  def mail_assign_to_organization_data
+    assign_to_organization_data.merge(type: MailTask.name)
+  end
+
+  def assign_to_user_data
+    users = if assigned_to.is_a?(Organization)
+              assigned_to.users
+            elsif parent && parent.assigned_to.is_a?(Organization)
+              parent.assigned_to.users.reject { |u| u == assigned_to }
+            else
+              []
+            end
+
+    {
+      selected: nil,
+      options: users_to_options(users),
+      type: type
+    }
+  end
+
+  def assign_to_judge_data
+    {
+      selected: root_task.children.find { |task| task.type == JudgeTask.name }.assigned_to,
+      options: users_to_options(Judge.list_all),
+      type: JudgeTask.name
+    }
   end
 
   private
 
-  def sub_task
-    children.first
+  def users_to_options(users)
+    users.map do |user|
+      {
+        label: user.full_name,
+        value: user.id
+      }
+    end
   end
 
   def update_status_if_children_tasks_are_complete

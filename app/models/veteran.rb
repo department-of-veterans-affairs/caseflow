@@ -114,9 +114,22 @@ class Veteran < ApplicationRecord
   def zip_code
     @zip_code || (@address_line3 if @address_line3 =~ /(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/)
   end
+  alias zip zip_code
+  alias address_line_1 address_line1
+  alias address_line_2 address_line2
+  alias address_line_3 address_line3
+  alias gender sex
 
   def timely_ratings(from_date:)
     @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id, from_date: from_date)
+  end
+
+  def ratings
+    @ratings ||= Rating.fetch_all(participant_id)
+  end
+
+  def decision_rating_issues
+    RatingIssue.where(participant_id: participant_id)
   end
 
   def accessible_appeals_for_poa(poa_participant_ids)
@@ -135,6 +148,12 @@ class Veteran < ApplicationRecord
 
   def participant_id
     super || ptcpnt_id
+  end
+
+  def sync_rating_issues!
+    timely_ratings(from_date: Time.zone.today).each do |rating|
+      rating.issues.select(&:contention_reference_id).each(&:save_with_source_request_issue!)
+    end
   end
 
   class << self

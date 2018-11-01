@@ -1,15 +1,12 @@
 class Organizations::TasksController < OrganizationsController
   before_action :verify_organization_access, only: [:index]
   before_action :verify_role_access, only: [:index]
-  before_action :verify_feature_access, only: [:index]
 
   def index
     tasks = GenericQueue.new(user: organization).tasks
-    appeals = tasks.map(&:appeal).uniq
 
     render json: {
-      tasks: json_tasks(tasks),
-      appeals: json_appeals(appeals)
+      tasks: json_tasks(tasks)
     }
   end
 
@@ -22,14 +19,8 @@ class Organizations::TasksController < OrganizationsController
   def json_tasks(tasks)
     ActiveModelSerializers::SerializableResource.new(
       tasks,
-      each_serializer: ::WorkQueue::TaskSerializer
-    ).as_json
-  end
-
-  def json_appeals(appeals)
-    ActiveModelSerializers::SerializableResource.new(
-      appeals,
-      each_serializer: ::WorkQueue::AppealSerializer
+      each_serializer: ::WorkQueue::TaskSerializer,
+      user: current_user
     ).as_json
   end
 end

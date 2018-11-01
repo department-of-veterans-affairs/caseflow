@@ -1,9 +1,8 @@
-import { ACTIONS } from '../constants';
+import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers } from './common';
-import { FORM_TYPES, REQUEST_STATE } from '../../intakeCommon/constants';
 import { formatDateStr } from '../../util/DateUtil';
-import { formatRatings } from '../../intakeCommon/util';
-import { getReceiptDateError, getBenefitTypeError, getPageError, formatRelationships } from '../util';
+import { formatRatings, formatRequestIssues } from '../util/issues';
+import { getReceiptDateError, getBlankOptionError, getPageError, formatRelationships } from '../util';
 import { update } from '../../util/ReducerUtil';
 
 const updateFromServerIntake = (state, serverIntake) => {
@@ -30,11 +29,17 @@ const updateFromServerIntake = (state, serverIntake) => {
     payeeCode: {
       $set: serverIntake.payee_code
     },
+    legacyOptInApproved: {
+      $set: serverIntake.legacy_opt_in_approved
+    },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
     },
     ratings: {
       $set: formatRatings(serverIntake.ratings)
+    },
+    requestIssues: {
+      $set: formatRequestIssues(serverIntake.requestIssues)
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
@@ -53,6 +58,7 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     addIssuesModalVisible: false,
     nonRatedIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
+    removeIssueModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
     benefitType: null,
@@ -60,6 +66,8 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     claimantNotVeteran: null,
     claimant: null,
     payeeCode: null,
+    legacyOptInApproved: null,
+    legacyOptInApprovedError: null,
     isStarted: false,
     isReviewed: false,
     isComplete: false,
@@ -125,6 +133,12 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: action.payload.payeeCode
       }
     });
+  case ACTIONS.SET_LEGACY_OPT_IN_APPROVED:
+    return update(state, {
+      legacyOptInApproved: {
+        $set: action.payload.legacyOptInApproved
+      }
+    });
   case ACTIONS.SUBMIT_REVIEW_START:
     return update(state, {
       requestStatus: {
@@ -139,6 +153,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: null
       },
       benefitTypeError: {
+        $set: null
+      },
+      legacyOptInApprovedError: {
         $set: null
       },
       isReviewed: {
@@ -156,7 +173,10 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: getReceiptDateError(action.payload.responseErrorCodes, state)
       },
       benefitTypeError: {
-        $set: getBenefitTypeError(action.payload.responseErrorCodes)
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'benefit_type')
+      },
+      legacyOptInApprovedError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')
       },
       requestStatus: {
         submitReview: {

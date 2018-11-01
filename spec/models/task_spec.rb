@@ -142,7 +142,7 @@ describe Task do
     end
 
     context "when there is an attorney_case_review" do
-      let!(:child) { create(:task, type: "Task", parent_id: task.id) }
+      let!(:child) { create(:task, type: "Task", appeal: task.appeal, parent_id: task.id) }
       let!(:attorney_case_reviews) do
         create(:attorney_case_review, task_id: child.id, attorney: create(:user, full_name: "Bob Smith"))
       end
@@ -163,7 +163,7 @@ describe Task do
     end
 
     context "when there is a sub task" do
-      let!(:child) { create(:task, type: "Task", parent_id: task.id) }
+      let!(:child) { create(:task, type: "Task", appeal: task.appeal, parent_id: task.id) }
       let!(:attorney_case_reviews) do
         [
           create(:attorney_case_review, task_id: child.id, created_at: 1.day.ago),
@@ -177,19 +177,23 @@ describe Task do
     end
   end
 
-  describe "#assignable_users" do
+  describe "#assign_to_user_data" do
     let(:organization) { create(:organization, name: "Organization") }
     let(:users) { create_list(:user, 3) }
 
     before do
-      allow(organization).to receive(:members).and_return(users)
+      allow(organization).to receive(:users).and_return(users)
     end
 
     context "when assigned_to is an organization" do
       let(:task) { create(:generic_task, assigned_to: organization) }
 
       it "should return all members" do
-        expect(task.assignable_users).to match_array(users)
+        expect(task.assign_to_user_data[:options]).to match_array(users.map { |u| { label: u.full_name, value: u.id } })
+      end
+
+      it "should return the task type of task" do
+        expect(task.assign_to_user_data[:type]).to eq(task.type)
       end
     end
 
@@ -198,7 +202,8 @@ describe Task do
       let(:task) { create(:generic_task, assigned_to: users.first, parent: parent) }
 
       it "should return all members except user" do
-        expect(task.assignable_users).to match_array(users[1..users.length - 1])
+        user_output = users[1..users.length - 1].map { |u| { label: u.full_name, value: u.id } }
+        expect(task.assign_to_user_data[:options]).to match_array(user_output)
       end
     end
 
@@ -206,7 +211,7 @@ describe Task do
       let(:task) { create(:generic_task, assigned_to: users.first) }
 
       it "should return all members except user" do
-        expect(task.assignable_users).to match_array([])
+        expect(task.assign_to_user_data[:options]).to match_array([])
       end
     end
   end

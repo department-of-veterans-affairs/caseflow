@@ -2,20 +2,38 @@ require "rails_helper"
 
 describe Rating do
   before do
+    Time.zone = "UTC"
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
+  let(:participant_id) { 1234 }
+
+  let(:receipt_date) { Time.zone.today }
+
+  let(:promulgation_date) { receipt_date - 30 }
+
   let(:rating) do
     Generators::Rating.build(
-      issues: issues
+      issues: issues,
+      promulgation_date: promulgation_date,
+      participant_id: participant_id
     )
   end
 
+  def build_issue(num)
+    {
+      participant_id: participant_id,
+      reference_id: "Issue#{num}",
+      decision_text: "Decision#{num}",
+      promulgation_date: promulgation_date,
+      contention_reference_id: nil,
+      in_active_review: nil,
+      source_higher_level_review: nil
+    }
+  end
+
   let(:issues) do
-    [
-      { reference_id: "Issue1", decision_text: "Decision1" },
-      { reference_id: "Issue2", decision_text: "Decision2" }
-    ]
+    [build_issue(1), build_issue(2)]
   end
 
   context "#issues" do
@@ -126,6 +144,39 @@ describe Rating do
           promulgation_date: receipt_date - 371.days
         )
       end
+    end
+
+    context "when a rating is locked" do
+      it "throws NilRatingProfileListError" do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_ratings_in_range).and_return(error: "Oops")
+        expect do
+          Rating.fetch_timely(participant_id: "DRAYMOND", from_date: receipt_date)
+        end.to raise_error(Rating::NilRatingProfileListError)
+      end
+    end
+  end
+
+  context ".fetch_all" do
+    let(:receipt_date) { Time.zone.today - 50.years }
+
+    subject { Rating.fetch_all("DRAYMOND") }
+
+    let!(:rating) do
+      Generators::Rating.build(
+        participant_id: "DRAYMOND",
+        promulgation_date: receipt_date - 370.days
+      )
+    end
+
+    let!(:untimely_rating) do
+      Generators::Rating.build(
+        participant_id: "DRAYMOND",
+        promulgation_date: receipt_date - 100.years
+      )
+    end
+
+    it "returns rating objects for all ratings" do
+      expect(subject.count).to eq(2)
     end
   end
 end

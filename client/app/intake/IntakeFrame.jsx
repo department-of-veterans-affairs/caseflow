@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import NavigationBar from '../components/NavigationBar';
+import CaseSearchLink from '../components/CaseSearchLink';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { BrowserRouter, Route } from 'react-router-dom';
 import PageRoute from '../components/PageRoute';
@@ -14,11 +15,10 @@ import SelectFormPage, { SelectFormButton } from './pages/selectForm';
 import SearchPage from './pages/search';
 import ReviewPage, { ReviewButtons } from './pages/review';
 import FinishPage, { FinishButtons } from './pages/finish';
-import AddIssues from './pages/addIssues';
+import { IntakeAddIssuesPage } from './pages/addIssues';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
-import { PAGE_PATHS } from './constants';
-import { REQUEST_STATE } from '../intakeCommon/constants';
-import { toggleCancelModal, submitCancel } from './actions/common';
+import { PAGE_PATHS, REQUEST_STATE } from './constants';
+import { toggleCancelModal, submitCancel } from './actions/intake';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { css } from 'glamor';
 
@@ -48,6 +48,7 @@ class IntakeFrame extends React.PureComponent {
             accentColor: LOGO_COLORS.INTAKE.ACCENT,
             overlapColor: LOGO_COLORS.INTAKE.OVERLAP
           }}
+          rightNavElement={<CaseSearchLink newWindow />}
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
           topMessage={topMessage}
@@ -80,7 +81,7 @@ class IntakeFrame extends React.PureComponent {
                   exact
                   path={PAGE_PATHS.REVIEW}
                   title="Review Request | Caseflow Intake"
-                  component={ReviewPage} />
+                  render={() => <ReviewPage featureToggles={this.props.featureToggles} />} />
                 <PageRoute
                   exact
                   path={PAGE_PATHS.FINISH}
@@ -90,7 +91,7 @@ class IntakeFrame extends React.PureComponent {
                   exact
                   path={PAGE_PATHS.ADD_ISSUES}
                   title="Add Issues | Caseflow Intake"
-                  component={AddIssues} />
+                  component={IntakeAddIssuesPage} />
                 <PageRoute
                   exact
                   path={PAGE_PATHS.COMPLETED}

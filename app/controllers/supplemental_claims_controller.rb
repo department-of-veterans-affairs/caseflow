@@ -5,8 +5,7 @@ class SupplementalClaimsController < ApplicationController
   def update
     if request_issues_update.perform!
       render json: {
-        ratings: supplemental_claim.cached_serialized_timely_ratings,
-        ratedRequestIssues: supplemental_claim.request_issues.rated.map(&:ui_hash)
+        requestIssues: supplemental_claim.request_issues.map(&:ui_hash)
       }
     else
       render json: { error_code: request_issues_update.error_code }, status: 422
@@ -28,7 +27,11 @@ class SupplementalClaimsController < ApplicationController
       EndProductEstablishment.find_by!(reference_id: params[:claim_id], source_type: SOURCE_TYPE).source
   end
 
-  helper_method :supplemental_claim
+  def url_claim_id
+    params[:claim_id]
+  end
+
+  helper_method :supplemental_claim, :url_claim_id
 
   def set_application
     RequestStore.store[:application] = "intake"

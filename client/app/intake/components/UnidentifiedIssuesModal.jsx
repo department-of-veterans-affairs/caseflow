@@ -2,7 +2,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
 
-import { addUnidentifiedIssue } from '../actions/ama';
+import { addUnidentifiedIssue } from '../actions/addIssues';
 import Modal from '../../components/Modal';
 import TextField from '../../components/TextField';
 
@@ -12,7 +12,8 @@ class UnidentifiedIssuesModal extends React.Component {
 
     this.state = {
       description: '',
-      notes: ''
+      notes: '',
+      disabled: true
     };
   }
 
@@ -21,9 +22,15 @@ class UnidentifiedIssuesModal extends React.Component {
     this.props.closeHandler();
   }
 
+  isDescriptionValid = (description) => {
+    // make sure description has some characters in it
+    return (/[a-zA-Z]+/).test(description);
+  }
+
   onDescriptionChange = (value) => {
     this.setState({
-      description: value
+      description: value,
+      disabled: !this.isDescriptionValid(value)
     });
   }
 
@@ -51,7 +58,7 @@ class UnidentifiedIssuesModal extends React.Component {
           { classNames: ['usa-button', 'usa-button-secondary', 'add-issue'],
             name: 'Add this issue',
             onClick: this.onAddIssue,
-            disabled: !this.state.description
+            disabled: this.state.disabled
           }
         ]}
         visible

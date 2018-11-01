@@ -54,7 +54,8 @@ export type UiState = {
   userCssId: string,
   userIsVsoEmployee: boolean,
   feedbackUrl: string,
-  veteranCaseListIsVisible: boolean
+  veteranCaseListIsVisible: boolean,
+  organizationIds: Array<number>
 };
 
 export type UsersById = { [number]: ?User };
@@ -88,12 +89,18 @@ export type QueueState = {|
   loadingAppealDetail: Object
 |};
 
+export type CommonComponentState = {|
+  regionalOffices: Array<Object>,
+  selectedRegionalOffice: { label: string, value: string },
+|};
+
 export type State = {
   caseDetail: CaseDetailState,
   caseList: Object,
   caseSelect: Object,
   queue: QueueState,
-  ui: UiState
+  ui: UiState,
+  components: CommonComponentState
 };
 
 type Action = { type: string, payload?: Object };

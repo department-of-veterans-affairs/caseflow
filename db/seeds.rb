@@ -48,6 +48,8 @@ class SeedDB
     create_colocated_user
     create_vso_user
     create_org_queue_user
+    create_qr_user
+    create_mail_team_user
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
   end
@@ -69,13 +71,24 @@ class SeedDB
   end
 
   def create_org_queue_user
-    q = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER", full_name: "Org Q User")
-    FactoryBot.create(:staff, user: q, sdept: "TRANS", sattyid: nil)
+    u = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER", full_name: "Translation team member")
+    translation = Organization.create!(name: "Translation", url: "translation")
+    OrganizationsUser.add_user_to_organization(u, translation)
+  end
+
+  def create_qr_user
+    u = User.create!(station_id: 101, css_id: "QR_USER", full_name: "QR User")
+    OrganizationsUser.add_user_to_organization(u, QualityReview.singleton)
+  end
+
+  def create_mail_team_user
+    u = User.create!(station_id: 101, css_id: "JOLLY_POSTMAN", full_name: "Jolly D. Postman")
+    OrganizationsUser.add_user_to_organization(u, MailTeam.singleton)
   end
 
   def create_bva_dispatch_user_with_tasks
     u = User.find_by(css_id: "BVAGWHITE")
-    FactoryBot.create(:staff, user: u, sdept: "DSP")
+    OrganizationsUser.add_user_to_organization(u, BvaDispatch.singleton)
 
     3.times do
       root = FactoryBot.create(:root_task)
@@ -422,7 +435,7 @@ class SeedDB
     FactoryBot.create(:generic_task, assigned_by: judge, assigned_to: translation_org)
   end
 
-  def create_organizations
+  def create_vsos
     Vso.create(
       name: "American Legion",
       role: "VSO",
@@ -438,18 +451,9 @@ class SeedDB
     Vso.create(
       name: "Paralyzed Veterans Of America",
       role: "VSO",
-      url: "paralyzed-veterans-of-america",
+      url: "pva",
       participant_id: "2452383"
     )
-
-    translation = Organization.create!(name: "Translation", url: "translation")
-    StaffFieldForOrganization.create!(organization: translation, name: "sdept", values: %w[TRANS])
-
-    dispatch = BvaDispatch.singleton
-    StaffFieldForOrganization.create!(organization: dispatch, name: "sdept", values: %w[DSP])
-    StaffFieldForOrganization.create!(organization: dispatch, name: "stitle", values: %w[A1 A2], exclude: true)
-
-    Bva.create(name: "Board of Veterans' Appeals")
   end
 
   def clean_db
@@ -475,30 +479,19 @@ class SeedDB
 
   def create_previously_held_hearing_data
     user = User.find_by_css_id("BVAAABSHIRE")
-    veteran_file_number = "994806951S"
-    appeals = LegacyAppeal.where(vbms_id: veteran_file_number)
+    appeal = LegacyAppeal.find_or_create_by(vacols_id: "3617215", vbms_id: "994806951S")
 
-    return if (appeals.map(&:type) - ["Post Remand", "Original"]).empty? &&
-              appeals.flat_map(&:hearings).map(&:disposition).include?(:held)
+    return if ([appeal.type] - ["Post Remand", "Original"]).empty? &&
+              appeal.hearings.map(&:disposition).include?(:held)
 
-    FactoryBot.create(
-      :legacy_appeal,
-      vacols_case: FactoryBot.create(
-        :case,
-        :assigned,
-        :type_original,
-        user: user,
-        bfcorlid: veteran_file_number,
-        case_hearings: [FactoryBot.create(:case_hearing, :disposition_held, user: user)]
-      )
-    )
+    FactoryBot.create(:case_hearing, :disposition_held, user: user, folder_nr: appeal.vacols_id)
   end
 
   def seed
     clean_db
     # Annotations and tags don't come from VACOLS, so our seeding should
     # create them in all envs
-    create_organizations
+    create_vsos
     create_annotations
     create_tags
     create_ama_appeals

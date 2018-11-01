@@ -4,9 +4,7 @@
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
     buildDate: build_date,
-    formType: "supplemental_claim",
-    review: supplemental_claim.ui_hash,
-    ratings: supplemental_claim.cached_serialized_timely_ratings,
-    ratedRequestIssues: supplemental_claim.request_issues.rated.map(&:ui_hash)
+    serverIntake: supplemental_claim.ui_hash(FeatureToggle.enabled?(:intakeAma, user: current_user)),
+    claimId: url_claim_id
   }) %>
 <% end %>

@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
-import StatusMessage from '../components/StatusMessage';
 import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../components/Alert';
 
 import { workableTasksByAssigneeCssIdSelector } from './selectors';
@@ -57,14 +57,22 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
   render = () => {
     const { messages } = this.props;
     const noTasks = !_.size(this.props.tasks);
-    let tableContent;
 
-    if (noTasks) {
-      tableContent = <StatusMessage title={COPY.NO_TASKS_IN_ATTORNEY_QUEUE_TITLE}>
-        {COPY.NO_TASKS_IN_ATTORNEY_QUEUE_MESSAGE}
-      </StatusMessage>;
-    } else {
-      tableContent = <div>
+    const content = noTasks ?
+      <p>{COPY.NO_CASES_IN_QUEUE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.</p> :
+      <TaskTable
+        includeDetailsLink
+        includeType
+        includeDocketNumber
+        includeIssueCount
+        includeDueDate
+        includeReaderLink
+        requireDasRecord
+        tasks={this.props.tasks}
+      />;
+
+    return <AppSegment filledBackground>
+      <div>
         <h1 {...fullWidth}>{COPY.ATTORNEY_QUEUE_TABLE_TITLE}</h1>
         {messages.error && <Alert type="error" title={messages.error.title}>
           {messages.error.detail}
@@ -72,23 +80,10 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
         {messages.success && <Alert type="success" title={messages.success.title}>
           {messages.success.detail || COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
         </Alert>}
-        <TaskTable
-          includeDetailsLink
-          includeType
-          includeDocketNumber
-          includeIssueCount
-          includeDueDate
-          includeReaderLink
-          requireDasRecord
-          tasks={this.props.tasks}
-        />
-      </div>;
-    }
-
-    return <AppSegment filledBackground>
-      {tableContent}
+        {content}
+      </div>
     </AppSegment>;
-  };
+  }
 }
 
 const mapStateToProps = (state) => {

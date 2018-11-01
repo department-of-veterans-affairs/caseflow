@@ -1,17 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import CancelButton from '../../components/CancelButton';
 import RadioField from '../../../components/RadioField';
 import DateSelector from '../../../components/DateSelector';
 import Button from '../../../components/Button';
 import Alert from '../../../components/Alert';
 import { Redirect } from 'react-router-dom';
 import _ from 'lodash';
-import { PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
-import { REQUEST_STATE } from '../../../intakeCommon/constants';
-import { setAppealDocket, submitReview, confirmIneligibleForm } from '../../actions/rampRefiling';
-import { setReceiptDate, setOptionSelected } from '../../actions/common';
+import { PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS, REQUEST_STATE } from '../../constants';
+import { setAppealDocket, confirmIneligibleForm } from '../../actions/rampRefiling';
+import { setReceiptDate, setOptionSelected } from '../../actions/intake';
 import { toggleIneligibleError } from '../../util';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
@@ -141,45 +139,3 @@ export default connect(
     confirmIneligibleForm
   }, dispatch)
 )(Review);
-
-class ReviewNextButton extends React.PureComponent {
-  handleClick = () => {
-    this.props.submitReview(this.props.intakeId, this.props.rampRefiling).then(
-      () => {
-        this.props.history.push('/finish');
-      }
-    ).
-      catch((error) => error);
-  }
-
-  render = () =>
-    <Button
-      name="submit-review"
-      onClick={this.handleClick}
-      loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-      disabled={toggleIneligibleError(this.props.hasInvalidOption, this.props.optionSelected)}
-    >
-      Continue to next step
-    </Button>;
-}
-
-const ReviewNextButtonConnected = connect(
-  ({ rampRefiling, intake }) => ({
-    intakeId: intake.id,
-    requestState: rampRefiling.requestStatus.submitReview,
-    rampRefiling,
-    hasInvalidOption: rampRefiling.hasInvalidOption,
-    optionSelected: rampRefiling.optionSelected
-  }),
-  (dispatch) => bindActionCreators({
-    submitReview
-  }, dispatch)
-)(ReviewNextButton);
-
-export class ReviewButtons extends React.PureComponent {
-  render = () =>
-    <div>
-      <CancelButton />
-      <ReviewNextButtonConnected history={this.props.history} />
-    </div>
-}

@@ -9,6 +9,11 @@ class ColocatedTask < Task
   after_update :update_location_in_vacols
 
   class << self
+    # Override so that each ColocatedTask for an appeal gets assigned to the same colocated staffer.
+    def create_many_from_params(params_array, _)
+      create(params_array.map { |p| modify_params(p) })
+    end
+
     def create(tasks)
       ActiveRecord::Base.multi_transaction do
         assignee = next_assignee
@@ -28,6 +33,35 @@ class ColocatedTask < Task
     def list_of_assignees
       Constants::CoLocatedTeams::USERS[Rails.current_env]
     end
+  end
+
+  def available_actions(user)
+    return [] unless user.colocated_in_vacols?
+
+    actions = [
+      {
+        label: COPY::COLOCATED_ACTION_PLACE_HOLD,
+        value: Constants::CO_LOCATED_ACTIONS["PLACE_HOLD"]
+      }
+    ]
+
+    if %w[translation schedule_hearing].include?(action) && appeal.class.name.eql?("LegacyAppeal")
+      actions.unshift(
+        label: format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action]),
+        value: "modal/send_colocated_task"
+      )
+    else
+      actions.unshift(
+        label: COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
+        value: "modal/mark_task_complete"
+      )
+    end
+
+    actions
+  end
+
+  def no_actions_available?(_user)
+    completed?
   end
 
   def update_if_hold_expired!

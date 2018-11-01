@@ -1,7 +1,7 @@
 import { ACTIONS, ENDPOINT_NAMES } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { prepareReviewData } from '../util';
-import { formatIssues } from '../../intakeCommon/util';
+import { formatIssues } from '../util/issues';
 import _ from 'lodash';
 
 const analytics = true;
@@ -108,6 +108,13 @@ export const setBenefitType = (benefitType) => ({
   }
 });
 
+export const setLegacyOptInApproved = (legacyOptInApproved) => ({
+  type: ACTIONS.SET_LEGACY_OPT_IN_APPROVED,
+  payload: {
+    legacyOptInApproved
+  }
+});
+
 export const setClaimantNotVeteran = (claimantNotVeteran) => ({
   type: ACTIONS.SET_CLAIMANT_NOT_VETERAN,
   payload: {
@@ -142,49 +149,6 @@ export const setIssueSelected = (profileDate, issueId, isSelected) => ({
     }
   }
 });
-
-export const removeIssue = (index) => ({
-  type: ACTIONS.REMOVE_ISSUE,
-  payload: { index }
-});
-
-export const addUnidentifiedIssue = (description, notes) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.ADD_ISSUE,
-    payload: {
-      category: 'Unknown issue category',
-      isUnidentified: true,
-      description,
-      notes
-    }
-  });
-};
-
-export const addRatedIssue = (issueId, ratings, isRated, notes) => (dispatch) => {
-  let foundDate = _.filter(ratings, (ratingDate) => _.some(ratingDate.issues, { reference_id: issueId }));
-
-  dispatch({
-    type: ACTIONS.ADD_ISSUE,
-    payload: {
-      issueId,
-      isRated,
-      profileDate: foundDate[0].profile_date,
-      notes
-    }
-  });
-};
-
-export const addNonRatedIssue = (category, description, decisionDate, isRated = false) => (dispatch) => {
-  dispatch({
-    type: ACTIONS.ADD_ISSUE,
-    payload: {
-      category,
-      description,
-      decisionDate,
-      isRated
-    }
-  });
-};
 
 export const newNonRatedIssue = (nonRatedIssues) => ({
   type: ACTIONS.NEW_NON_RATED_ISSUE,

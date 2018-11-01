@@ -3,15 +3,18 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import RadioField from '../../../components/RadioField';
 import DateSelector from '../../../components/DateSelector';
-import CancelButton from '../../components/CancelButton';
 import { Redirect } from 'react-router-dom';
-import Button from '../../../components/Button';
 import SelectClaimant from '../../components/SelectClaimant';
+import LegacyOptInApproved from '../../components/LegacyOptInApproved';
 import { setDocketType } from '../../actions/appeal';
-import { submitReview, setClaimantNotVeteran, setClaimant, setPayeeCode } from '../../actions/ama';
-import { setReceiptDate } from '../../actions/common';
-import { PAGE_PATHS, INTAKE_STATES } from '../../constants';
-import { FORM_TYPES, REQUEST_STATE } from '../../../intakeCommon/constants';
+import {
+  setClaimantNotVeteran,
+  setClaimant,
+  setPayeeCode,
+  setLegacyOptInApproved
+} from '../../actions/ama';
+import { setReceiptDate } from '../../actions/intake';
+import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 
@@ -24,7 +27,10 @@ class Review extends React.PureComponent {
       receiptDateError,
       docketType,
       docketTypeError,
-      reviewIntakeError
+      legacyOptInApproved,
+      legacyOptInApprovedError,
+      reviewIntakeError,
+      featureToggles
     } = this.props;
 
     switch (appealStatus) {
@@ -34,6 +40,8 @@ class Review extends React.PureComponent {
       return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }
+
+    const legacyOptInEnabled = featureToggles.legacyOptInEnabled;
 
     const docketTypeRadioOptions = [
       { value: 'direct_review',
@@ -70,6 +78,12 @@ class Review extends React.PureComponent {
       />
 
       <SelectClaimantConnected />
+
+      { legacyOptInEnabled && <LegacyOptInApproved
+        value={legacyOptInApproved === null ? null : legacyOptInApproved.toString()}
+        onChange={this.props.setLegacyOptInApproved}
+        errorMessage={legacyOptInApprovedError}
+      /> }
     </div>;
   }
 }
@@ -88,42 +102,6 @@ const SelectClaimantConnected = connect(
   }, dispatch)
 )(SelectClaimant);
 
-class ReviewNextButton extends React.PureComponent {
-  handleClick = () => {
-    this.props.submitReview(this.props.intakeId, this.props.appeal, 'appeal').then(
-      () => this.props.history.push('/finish')
-    );
-  }
-
-  render = () =>
-    <Button
-      name="submit-review"
-      onClick={this.handleClick}
-      loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-    >
-      Continue to next step
-    </Button>;
-}
-
-const ReviewNextButtonConnected = connect(
-  ({ appeal, intake }) => ({
-    intakeId: intake.id,
-    requestState: appeal.requestStatus.submitReview,
-    appeal
-  }),
-  (dispatch) => bindActionCreators({
-    submitReview
-  }, dispatch)
-)(ReviewNextButton);
-
-export class ReviewButtons extends React.PureComponent {
-  render = () =>
-    <div>
-      <CancelButton />
-      <ReviewNextButtonConnected history={this.props.history} />
-    </div>
-}
-
 export default connect(
   (state) => ({
     veteranName: state.intake.veteran.name,
@@ -132,10 +110,13 @@ export default connect(
     receiptDateError: state.appeal.receiptDateError,
     docketType: state.appeal.docketType,
     docketTypeError: state.appeal.docketTypeError,
+    legacyOptInApproved: state.appeal.legacyOptInApproved,
+    legacyOptInApprovedError: state.appeal.legacyOptInApprovedError,
     reviewIntakeError: state.appeal.requestStatus.reviewIntakeError
   }),
   (dispatch) => bindActionCreators({
     setDocketType,
-    setReceiptDate
+    setReceiptDate,
+    setLegacyOptInApproved
   }, dispatch)
 )(Review);

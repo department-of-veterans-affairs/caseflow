@@ -1,0 +1,136 @@
+import { ACTIONS, ENDPOINT_NAMES } from '../constants';
+import ApiUtil from '../../util/ApiUtil';
+
+const analytics = true;
+
+export const startNewIntake = () => ({
+  type: ACTIONS.START_NEW_INTAKE,
+  meta: { analytics }
+});
+
+export const setFileNumberSearch = (fileNumber) => ({
+  type: ACTIONS.SET_FILE_NUMBER_SEARCH,
+  payload: {
+    fileNumber
+  }
+});
+
+export const doFileNumberSearch = (formType, fileNumberSearch) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.FILE_NUMBER_SEARCH_START,
+    meta: { analytics }
+  });
+
+  const data = {
+    file_number: fileNumberSearch,
+    form_type: formType
+  };
+
+  return ApiUtil.post('/intake', { data }, ENDPOINT_NAMES.START_INTAKE).
+    then(
+      (response) => {
+        const responseObject = JSON.parse(response.text);
+
+        dispatch({
+          type: ACTIONS.FILE_NUMBER_SEARCH_SUCCEED,
+          payload: {
+            intake: responseObject
+          },
+          meta: { analytics }
+        });
+      },
+      (error) => {
+        let responseObject = {};
+        let errorCode = 'default';
+
+        try {
+          responseObject = JSON.parse(error.response.text);
+          errorCode = responseObject.error_code;
+        } catch (ex) { /* pass */ }
+
+        dispatch({
+          type: ACTIONS.FILE_NUMBER_SEARCH_FAIL,
+          payload: {
+            errorCode,
+            errorData: responseObject.error_data || {}
+          },
+          meta: {
+            analytics: {
+              label: errorCode
+            }
+          }
+        });
+
+        throw error;
+      }
+    ).
+    catch((error) => error);
+};
+
+export const setFormType = (formType) => ({
+  type: ACTIONS.SET_FORM_TYPE,
+  payload: {
+    formType
+  },
+  meta: {
+    analytics: {
+      label: formType
+    }
+  }
+});
+
+export const clearSearchErrors = () => ({
+  type: ACTIONS.CLEAR_SEARCH_ERRORS,
+  meta: { analytics }
+});
+
+export const setReceiptDate = (receiptDate) => ({
+  type: ACTIONS.SET_RECEIPT_DATE,
+  payload: {
+    receiptDate
+  }
+});
+
+export const setOptionSelected = (optionSelected) => ({
+  type: ACTIONS.SET_OPTION_SELECTED,
+  payload: {
+    optionSelected
+  },
+  meta: {
+    analytics: {
+      label: optionSelected
+    }
+  }
+});
+
+export const toggleCancelModal = () => ({
+  type: ACTIONS.TOGGLE_CANCEL_MODAL,
+  meta: {
+    analytics: {
+      label: (nextState) => nextState.intake.cancelModalVisible ? 'show' : 'hide'
+    }
+  }
+});
+
+export const submitCancel = (data) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.CANCEL_INTAKE_START,
+    meta: { analytics }
+  });
+
+  return ApiUtil.delete(`/intake/${data.id}`, { data }, ENDPOINT_NAMES.CANCEL_INTAKE).
+    then(
+      () => dispatch({
+        type: ACTIONS.CANCEL_INTAKE_SUCCEED,
+        meta: { analytics }
+      }),
+      (error) => {
+        dispatch({
+          type: ACTIONS.CANCEL_INTAKE_FAIL,
+          meta: { analytics }
+        });
+        throw error;
+      }
+    ).
+    catch((error) => error);
+};

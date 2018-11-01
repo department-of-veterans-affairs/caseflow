@@ -26,7 +26,7 @@ const downloadButtonStyling = css({
 });
 
 const actionButtonsStyling = css({
-  marginRight: '20px'
+  marginRight: '25px'
 });
 
 const inlineFormStyling = css({
@@ -207,12 +207,12 @@ class ListSchedule extends React.Component {
 
     return <AppSegment filledBackground>
       <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
-      {this.props.userRoleBuild &&
-        <span className="cf-push-right" ><Link button="primary" to="/schedule/build">Build schedule</Link></span>
-      }
+      {this.props.userRoleBuild && <span className="cf-push-right">
+        <Link button="secondary" to="/schedule/build">Build schedule</Link>
+      </span>}
       {this.props.userRoleAssign &&
         <span className="cf-push-right"{...actionButtonsStyling} >
-          <Link button="primary" to="/schedule/assign">Assign hearings</Link></span>
+          <Link button="primary" to="/schedule/assign">Schedule Veterans</Link></span>
       }
       <div className="cf-help-divider" {...hearingSchedStyling} ></div>
       <div className="cf-push-left" {...inlineFormStyling} >
@@ -282,9 +282,9 @@ ListSchedule.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  filterTypeIsOpen: state.filterTypeIsOpen,
-  filterLocationIsOpen: state.filterLocationIsOpen,
-  filterVljIsOpen: state.filterVljIsOpen
+  filterTypeIsOpen: state.hearingSchedule.filterTypeIsOpen,
+  filterLocationIsOpen: state.hearingSchedule.filterLocationIsOpen,
+  filterVljIsOpen: state.hearingSchedule.filterVljIsOpen
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

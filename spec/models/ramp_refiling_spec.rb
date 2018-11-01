@@ -120,11 +120,19 @@ describe RampRefiling do
       let!(:issues) do
         [
           ramp_refiling.issues.create!(description: "Leg"),
-          ramp_refiling.issues.create!(description: "Arm")
+          ramp_refiling.issues.create!(description: "Arm"),
+          ramp_refiling.issues.create!(description: "Arm") # intentional duplicate
         ]
       end
       let(:modifier) { RampReview::END_PRODUCT_DATA_BY_OPTION[option_selected][:modifier] }
 
+      let!(:ramp_refiling_intake) do
+        RampRefilingIntake.create!(
+          veteran_file_number: veteran_file_number,
+          detail: ramp_refiling,
+          user: user
+        )
+      end
       context "when an issue is not created in VBMS" do
         # Issues with the description "FAIL ME" are configured to fail in Fakes::VBMSService
         let!(:issue_to_fail) do
@@ -151,7 +159,8 @@ describe RampRefiling do
           EndProductEstablishment.create!(
             veteran_file_number: veteran_file_number,
             reference_id: "testtest",
-            source: ramp_refiling
+            source: ramp_refiling,
+            user: user
           )
         end
 
@@ -163,7 +172,8 @@ describe RampRefiling do
           expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
             veteran_file_number: "64205555",
             claim_id: "testtest",
-            contention_descriptions: %w[Arm Leg]
+            contention_descriptions: %w[Arm Arm Leg],
+            user: user
           )
         end
       end
@@ -177,12 +187,14 @@ describe RampRefiling do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: "64205555",
           claim_id: "1337",
-          contention_descriptions: %w[Arm Leg]
+          contention_descriptions: %w[Arm Arm Leg],
+          user: user
         )
 
         expect(issues.first.reload.contention_reference_id).to_not be_nil
         expect(ramp_refiling.end_product_establishment.committed_at).to eq(Time.zone.now)
         expect(ramp_refiling.establishment_processed_at).to eq(Time.zone.now)
+        expect(ramp_refiling.end_product_establishment.contentions.count).to eq(3)
       end
     end
   end
