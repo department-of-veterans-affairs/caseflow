@@ -88,6 +88,10 @@
   "COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "When a hold is complete, the case will automatically return to the Pending action tab.",
   "COLOCATED_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases with tasks that were marked complete in the last two weeks will appeal here.",
 
+  "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
+  "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE": "Assigned (%d)",
+  "ORGANIZATIONAL_QUEUE_PAGE_COMPLETE_TAB_TITLE": "Completed",
+
   "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
   "SWITCH_TO_ASSIGN_MODE_LINK_LABEL": "Switch to Assign Cases",
 
