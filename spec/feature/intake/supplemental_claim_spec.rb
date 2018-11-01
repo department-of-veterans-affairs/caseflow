@@ -220,7 +220,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_content(
       "A #{Constants.INTAKE_FORM_NAMES_SHORT.supplemental_claim} Nonrating EP is being established:"
     )
-    expect(page).to have_content("Contention: Description for Active Duty Adjustments")
+    expect(page).to have_content("Contention: Active Duty Adjustments - Description for Active Duty Adjustments")
 
     # ratings end product
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
@@ -530,6 +530,7 @@ RSpec.feature "Supplemental Claim Intake" do
       safe_click "#button-finish-intake"
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
+      expect(page).to have_content("This is an unidentified issue")
 
       expect(SupplementalClaim.find_by(
                id: supplemental_claim.id,
