@@ -7,7 +7,7 @@ import Modal from '../../components/Modal';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
-import { NON_RATED_ISSUE_CATEGORIES } from '../constants';
+import { NONRATING_REQUEST_ISSUE_CATEGORIES } from '../constants';
 
 class NonRatingRequestIssueModal extends React.Component {
   constructor(props) {
@@ -88,7 +88,7 @@ class NonRatingRequestIssueModal extends React.Component {
               label="Issue category"
               strongLabel
               placeholder="Select or enter..."
-              options={NON_RATED_ISSUE_CATEGORIES}
+              options={NONRATING_REQUEST_ISSUE_CATEGORIES}
               value={category}
               onChange={this.categoryOnChange} />
 

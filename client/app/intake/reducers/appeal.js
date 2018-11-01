@@ -229,7 +229,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         }
       }
     });
-  case ACTIONS.NEW_NON_RATED_ISSUE:
+  case ACTIONS.NEW_NONRATING_REQUEST_ISSUE:
     return update(state, {
       nonRatingRequestIssues: {
         [Object.keys(state.nonRatingRequestIssues).length]: {

@@ -11,7 +11,7 @@ export const commonReducers = (state, action) => {
     });
   };
 
-  actionsMap[ACTIONS.TOGGLE_NON_RATED_ISSUE_MODAL] = () => {
+  actionsMap[ACTIONS.TOGGLE_NONRATING_REQUEST_ISSUE_MODAL] = () => {
     return update(state, {
       $toggle: ['nonRatingRequestIssueModalVisible'],
       addIssuesModalVisible: {

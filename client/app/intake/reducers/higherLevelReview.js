@@ -271,7 +271,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         $set: action.payload.isSelected ? state.issueCount + 1 : state.issueCount - 1
       }
     });
-  case ACTIONS.NEW_NON_RATED_ISSUE:
+  case ACTIONS.NEW_NONRATING_REQUEST_ISSUE:
     return update(state, {
       nonRatingRequestIssues: {
         [Object.keys(state.nonRatingRequestIssues).length]: {

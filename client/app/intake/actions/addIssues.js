@@ -9,7 +9,7 @@ export const toggleAddIssuesModal = () => ({
 });
 
 export const toggleNonRatingRequestIssueModal = () => ({
-  type: ACTIONS.TOGGLE_NON_RATED_ISSUE_MODAL,
+  type: ACTIONS.TOGGLE_NONRATING_REQUEST_ISSUE_MODAL,
   meta: { analytics }
 });
 
