@@ -1,25 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import COPY from '../../../COPY.json';
+
 import Button from '../../components/Button';
 import TabWindow from '../../components/TabWindow';
 import Table from '../../components/Table';
-import RoSelectorDropdown from './RoSelectorDropdown';
-import moment from 'moment';
 import { css } from 'glamor';
+import moment from 'moment';
 import { COLORS } from '../../constants/AppConstants';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-import { prepareTasksForStore, renderAppealType } from '../../queue/utils';
+import { renderAppealType } from '../../queue/utils';
 import StatusMessage from '../../components/StatusMessage';
-
-const centralOfficeStaticEntry = [{
-  label: 'Central',
-  value: 'C'
-}];
 
 const sectionNavigationListStyling = css({
   '& > li': {
@@ -29,31 +22,7 @@ const sectionNavigationListStyling = css({
   }
 });
 
-const smallTopMargin = css({
-  fontStyle: 'italic',
-  '.usa-input-error': {
-    marginTop: '1rem'
-  },
-  '.usa-input-error-message': {
-    paddingBottom: '0',
-    paddingTop: '0',
-    right: '0'
-  },
-  '& > p': {
-    fontWeight: '500',
-    color: COLORS.RED_DARK,
-    marginBottom: '0',
-    fontSize: '1.7rem',
-    marginTop: '1px'
-  }
-});
-
 export default class AssignHearings extends React.Component {
-
-  // required to reset the RO Dropdown when moving from Viewing and Assigning.
-  componentWillMount = () => {
-    this.props.onRegionalOfficeChange('');
-  };
 
   onSelectedHearingDayChange = (hearingDay) => () => {
     this.props.onSelectedHearingDayChange(hearingDay);
@@ -67,20 +36,23 @@ export default class AssignHearings extends React.Component {
             type: 'ScheduleHearingTask',
             external_id: vacolsId,
             assigned_to_type: 'User',
-            assigned_to_id: this.props.userId
+            assigned_to_id: this.props.userId,
+            business_payloads: {
+              description: 'Create Task',
+              values: {
+                regional_office_value: this.props.selectedRegionalOffice.value,
+                regional_office_label: this.props.selectedRegionalOffice.label,
+                hearing_pkseq: this.props.selectedHearingDay.id,
+                hearing_type: this.props.selectedHearingDay.hearingType,
+                hearing_date: this.props.selectedHearingDay.hearingDate
+              }
+            }
           }
         ]
       }
     };
 
-    ApiUtil.post('/tasks', payload).
-      then((resp) => {
-        const response = JSON.parse(resp.text);
-        const preparedTasks = prepareTasksForStore(response.tasks.data);
-        const taskUniqueId = response.tasks.data[0].id;
-
-        this.props.onReceiveTasks(preparedTasks[taskUniqueId]);
-      });
+    ApiUtil.post('/tasks', payload);
   };
 
   roomInfo = (hearingDay) => {
@@ -117,7 +89,7 @@ export default class AssignHearings extends React.Component {
               }
             });
 
-            const styling = dateSelected ? buttonColorSelected : '';
+            const styling = dateSelected ? buttonColorSelected : {};
 
             return <li key={hearingDay.id} >
               <Button
@@ -141,23 +113,17 @@ export default class AssignHearings extends React.Component {
   };
 
   appellantName = (hearingDay) => {
-    if (hearingDay.appellantFirstName && hearingDay.appellantLastName) {
-      return `${hearingDay.appellantFirstName} ${hearingDay.appellantLastName} | ${hearingDay.vbmsId}`;
+    let { appellantFirstName, appellantLastName, veteranFirstName, veteranLastName, vbmsId } = hearingDay;
+
+    if (appellantFirstName && appellantLastName) {
+      return `${appellantFirstName} ${appellantLastName} | ${vbmsId}`;
+    } else if (veteranFirstName && veteranLastName) {
+      return `${veteranFirstName} ${veteranLastName} | ${vbmsId}`;
     }
 
-    return `${hearingDay.vbmsId}`;
+    return `${vbmsId}`;
 
   };
-
-  getNoUpcomingError = () => {
-    if (this.props.selectedRegionalOffice) {
-      return <div className="usa-input-error-message usa-input-error" {...smallTopMargin}>
-        <span>{this.props.selectedRegionalOffice && this.props.selectedRegionalOffice.label} has
-          no upcoming hearing days.</span><br />
-        <p>Please verify that this RO's hearing days are in the current schedule.</p>
-      </div>;
-    }
-  }
 
   tableAssignHearingsRows = (veterans) => {
     return _.map(veterans, (veteran) => ({
@@ -176,7 +142,7 @@ export default class AssignHearings extends React.Component {
 
   tableScheduledHearingsRows = (hearings) => {
     return _.map(hearings, (hearing) => ({
-      caseDetails: `${hearing.appellantMiFormatted} | ${hearing.vbmsId}`,
+      caseDetails: `${hearing.appellantMiFormatted || hearing.veteranMiFormatted} | ${hearing.vbmsId}`,
       type: renderAppealType({
         caseType: hearing.appealType,
         isAdvancedOnDocket: hearing.aod
@@ -279,32 +245,22 @@ export default class AssignHearings extends React.Component {
   };
 
   render() {
+    const hasUpcomingHearingDays = !_.isEmpty(this.props.upcomingHearingDays);
 
-    return <AppSegment filledBackground>
-      <h1>{COPY.HEARING_SCHEDULE_ASSIGN_HEARINGS_HEADER}</h1>
-      <Link
-        name="view-schedule"
-        to="/schedule">
-        {COPY.HEARING_SCHEDULE_ASSIGN_HEARINGS_VIEW_SCHEDULE_LINK}
-      </Link>
-      <div>{_.isEmpty(this.props.upcomingHearingDays) && this.getNoUpcomingError()}</div>
-      <RoSelectorDropdown
-        onChange={this.props.onRegionalOfficeChange}
-        value={this.props.selectedRegionalOffice}
-        staticOptions={centralOfficeStaticEntry}
-      />
-      {this.props.upcomingHearingDays && this.formatAvailableHearingDays()}
-      {this.props.upcomingHearingDays &&
-        this.props.veteransReadyForHearing &&
-        this.props.selectedHearingDay &&
-        this.veteransReadyForHearing()}
-    </AppSegment>;
+    return (
+      <React.Fragment>
+        {hasUpcomingHearingDays && this.formatAvailableHearingDays()}
+        {hasUpcomingHearingDays &&
+          this.props.veteransReadyForHearing &&
+          this.props.selectedHearingDay &&
+          this.veteransReadyForHearing()}
+      </React.Fragment>
+    );
   }
 }
 
 AssignHearings.propTypes = {
   regionalOffices: PropTypes.object,
-  onRegionalOfficeChange: PropTypes.func,
   selectedRegionalOffice: PropTypes.object,
   upcomingHearingDays: PropTypes.object,
   onSelectedHearingDayChange: PropTypes.func,

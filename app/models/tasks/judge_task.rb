@@ -23,8 +23,23 @@ class JudgeTask < Task
     end
   end
 
-  def self.create(params)
+  def self.create_from_params(params, user)
+    new_task = super(params, user)
+
+    parent = Task.find(params[:parent_id]) if params[:parent_id]
+    if parent && parent.type == QualityReviewTask.name
+      parent.update!(status: :on_hold)
+    end
+
+    new_task
+  end
+
+  def self.modify_params(params)
     super(params.merge(action: "assign"))
+  end
+
+  def self.verify_user_can_assign!(user)
+    QualityReview.singleton.user_has_access?(user) || super(user)
   end
 
   def when_child_task_completed

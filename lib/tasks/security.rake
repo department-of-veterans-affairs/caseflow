@@ -3,6 +3,7 @@ require "rainbow"
 
 desc "shortcut to run all linting tools, at the same time."
 task :security_caseflow do
+  $stdout.sync = true
   puts "running Brakeman security scan..."
   brakeman_result = ShellCommand.run(
     "brakeman --exit-on-warn --run-all-checks --confidence-level=2"
@@ -20,6 +21,7 @@ task :security_caseflow do
   if Time.zone.local(2018, 9, 10) < Time.zone.today - 1.week
     audit_cmd = "bundle-audit check"
   end
+
   audit_result = ShellCommand.run(audit_cmd)
 
   puts "\n"

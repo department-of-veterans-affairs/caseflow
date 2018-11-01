@@ -26,6 +26,7 @@ import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRI
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
+import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 
 /**
  * For legacy attorney checkout flow, filter out already-decided issues. Undecided
@@ -87,7 +88,8 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       onHoldDuration: task.attributes.on_hold_duration,
       instructions: task.attributes.instructions,
       decisionPreparedBy,
-      availableActions: task.attributes.available_actions
+      availableActions: task.attributes.available_actions,
+      taskBusinessPayloads: task.attributes.task_business_payloads
     };
 
     return acc;
@@ -156,7 +158,8 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       previousTaskAssignedOn: task.attributes.previous_task.assigned_on,
       status: task.attributes.status,
       decisionPreparedBy: null,
-      availableActions: task.attributes.available_actions
+      availableActions: task.attributes.available_actions,
+      taskBusinessPayloads: task.attributes.task_business_payloads
     };
   });
 
@@ -431,6 +434,11 @@ export const taskHasNewDocuments = (task: Task, newDocsForAppeal: NewDocsForAppe
   return newDocsForAppeal[task.externalAppealId].docs.length > 0;
 };
 
-export const taskIsOnHold = (task: Task) =>
-  moment().startOf('day').
-    diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;
+export const taskIsOnHold = (task: Task) => {
+  if (task.onHoldDuration && task.placedOnHoldAt) {
+    return moment().startOf('day').
+      diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;
+  }
+
+  return task.status === TASK_STATUSES.on_hold;
+};

@@ -21,7 +21,7 @@ RSpec.feature "Hearings" do
 
     let!(:vacols_staff) { create(:staff, user: current_user) }
 
-    let!(:hearing) { create(:hearing) }
+    let!(:hearing) { create(:hearing, user: current_user) }
 
     before do
       2.times do
@@ -174,7 +174,7 @@ RSpec.feature "Hearings" do
 
     context "worksheet header" do
       before do
-        create(:hearing)
+        create(:hearing, user: current_user)
       end
 
       scenario "Hearing worksheet switch veterans" do
