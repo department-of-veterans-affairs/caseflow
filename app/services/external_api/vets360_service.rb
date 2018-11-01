@@ -1,6 +1,6 @@
 class ExternalApi::Vets360Service
 
-  def geocode(address)
+  def self.geocode(address)
     [0.0,0.0]
   end
 

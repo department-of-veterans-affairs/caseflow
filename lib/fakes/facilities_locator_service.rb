@@ -1,6 +1,6 @@
 class Fakes::FacilitiesLocatorService
 
-  def get_closest(point)
+  def self.get_closest(point)
 
     {
       data: [
