@@ -31,12 +31,14 @@ if [ ! -d instantclient_12_2 ]; then
   unzip instantclient-sdk-linux.x64-12.2.0.1.0.zip
 fi
 
-echo "  Creating Caseflow App Docker Image"
-# Build Docker
+# Get Git Version to Health Check
 cd ../../
+printf "commit: `git rev-parse HEAD`\ndate: `git log -1 --format=%cd`" > config/build_version.yml
+
+# Build Docker
+echo "  Creating Caseflow App Docker Image"
 docker build -t caseflow .
 
 echo "  Cleaning Up..."
-#rm -rf docker-bin/oracle_libs/
-
+rm -rf docker-bin/oracle_libs/
 echo "  Building Caseflow Docker App: Completed"
