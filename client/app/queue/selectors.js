@@ -99,6 +99,41 @@ export const getTasksForAppeal = createSelector(
   }
 );
 
+export const getNewOrganizationalTasks = createSelector(
+  [getAmaTasks],
+  (tasks: Tasks) => {
+    debugger;
+    return _.filter(tasks, (task) => task.status === 'new');
+  }
+);
+
+export const getAssignedOrganizationalTasks = createSelector(
+  [getAmaTasks],
+  (tasks: Tasks) => {
+    debugger;
+    return _.filter(tasks, (task) => task.status === 'assigned');
+  }
+  // (tasks: Tasks) => _.filter(tasks, (task) => {task.status === 'assigned'})
+);
+
+export const getInProgressOrganizationalTasks = createSelector(
+  [getAmaTasks],
+  (tasks: Tasks) => {
+    debugger;
+    return _.filter(tasks, (task) => task.status === 'in_progress');
+  }
+  // (tasks: Tasks) => _.filter(tasks, (task) => {task.status === 'in_progress'})
+);
+
+export const getCompletedOrganizationalTasks = createSelector(
+  [getAmaTasks],
+  (tasks: Tasks) => {
+    debugger;
+    return _.filter(tasks, (task) => task.status === 'completed');
+  }
+  // (tasks: Tasks) => _.filter(tasks, (task) => {task.status === 'completed'})
+);
+
 export const tasksForAppealAssignedToUserSelector = createSelector(
   [getTasksForAppeal, getUserCssId],
   (tasks: Tasks, cssId: string) => {

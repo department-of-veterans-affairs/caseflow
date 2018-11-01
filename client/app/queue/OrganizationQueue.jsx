@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import { sprintf } from 'sprintf-js';
@@ -11,10 +12,10 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import {
-  newTasksByAssigneeCssIdSelector,
-  pendingTasksByAssigneeCssIdSelector,
-  onHoldTasksByAssigneeCssIdSelector,
-  completeTasksByAssigneeCssIdSelector,
+  getNewOrganizationalTasks,
+  getAssignedOrganizationalTasks,
+  getInProgressOrganizationalTasks,
+  getCompletedOrganizationalTasks,
   tasksWithAppealSelector
 } from './selectors';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
@@ -51,22 +52,18 @@ class OrganizationQueue extends React.PureComponent {
         tasks={this.props.tasks}
       />;
 
-    const assignedTasks = _.filter(this.props.tasks, (task) => {
-      return task.status === 'assigned';
-    });
-
-    const newTasks = _.filter(this.props.tasks, (task) => {
-      return task.status === 'new';
-    });
-
     const tabs = [
       {
-        label: sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, newTasks.length),
+        label: sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, /* TODO(joey) */ 0),
         page: <UnassignedTasksTab />
       },
       {
-        label: sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE, assignedTasks.length),
+        label: sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE, /* TODO(joey) */ 0),
         page: <AssignedTasksTab />
+      },
+      {
+        label: sprintf("In progress (%d)", /* TODO(joey) */ 0),
+        page: <InProgressTasksTab />
       },
       {
         label: COPY.ORGANIZATIONAL_QUEUE_PAGE_COMPLETE_TAB_TITLE,
@@ -77,7 +74,8 @@ class OrganizationQueue extends React.PureComponent {
     return <AppSegment filledBackground>
       <div>
         <h1 {...fullWidth}>{sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName)}</h1>
-        <TabWindow name="tasks-"
+        <TabWindow 
+          name="tasks-organization-queue"
           tabs={tabs} 
           onChange={this.changeTab}
         />
@@ -103,17 +101,24 @@ const mapDispatchToProps = (dispatch) => ({
   }, dispatch)
 });
 
+// take state
+// getTasks from state
+// create selector for tasks that are {assigned, new, completed}
+// select tasks that are {assigned, new, completed}
+
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
+
 const UnassignedTasksTab = connect(
-  (state: State) => ({ tasks: newTasksByAssigneeCssIdSelector(state) }))(
+  (state: State) => ({ tasks: getNewOrganizationalTasks(state) }))(
   (props: { tasks: Array<TaskWithAppeal> }) => {
     return <React.Fragment>
+      <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
       <TaskTable
         includeDetailsLink
-        includeTask
         includeType
         includeDocketNumber
+        includeIssueCount
         includeDaysWaiting
         includeReaderLink
         tasks={props.tasks}
@@ -122,14 +127,20 @@ const UnassignedTasksTab = connect(
   });
 
 const AssignedTasksTab = connect(
-  (state: State) => ({ tasks: pendingTasksByAssigneeCssIdSelector(state) }))(
+  (state: State) => { 
+    debugger;
+    return {
+      tasks: getAssignedOrganizationalTasks(state)
+    } 
+  })(
   (props: { tasks: Array<TaskWithAppeal> }) => {
     return <React.Fragment>
+      <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
       <TaskTable
         includeDetailsLink
-        includeTask
         includeType
         includeDocketNumber
+        includeIssueCount
         includeDaysOnHold
         includeReaderLink
         tasks={props.tasks}
@@ -137,15 +148,34 @@ const AssignedTasksTab = connect(
     </React.Fragment>;
   });
 
-const CompletedTasksTab = connect(
-  (state: State) => ({ tasks: pendingTasksByAssigneeCssIdSelector(state) }))(
+const InProgressTasksTab = connect(
+  (state: State) => ({ tasks: getInProgressOrganizationalTasks(state) }))(
   (props: { tasks: Array<TaskWithAppeal> }) => {
+    debugger;
     return <React.Fragment>
+      <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
       <TaskTable
         includeDetailsLink
-        includeTask
         includeType
         includeDocketNumber
+        includeIssueCount
+        includeDaysWaiting
+        includeReaderLink
+        tasks={props.tasks}
+      />
+    </React.Fragment>;
+  });
+
+const CompletedTasksTab = connect(
+  (state: State) => ({ tasks: getCompletedOrganizationalTasks(state) }))(
+  (props: { tasks: Array<TaskWithAppeal> }) => {
+    return <React.Fragment>
+      <p>{COPY.COLOCATED_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}</p>
+      <TaskTable
+        includeDetailsLink
+        includeType
+        includeDocketNumber
+        includeIssueCount
         includeDaysOnHold
         includeReaderLink
         tasks={props.tasks}
