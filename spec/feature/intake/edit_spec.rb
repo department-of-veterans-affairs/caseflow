@@ -18,7 +18,10 @@ RSpec.feature "Edit issues" do
   end
 
   let(:veteran) do
-    Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
+    create(:veteran,
+      first_name: "Ed",
+      last_name: "Merica"
+    )
   end
 
   let!(:current_user) do
@@ -31,7 +34,7 @@ RSpec.feature "Edit issues" do
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date + 1.day,
+      promulgation_date: receipt_date,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
@@ -43,6 +46,52 @@ RSpec.feature "Edit issues" do
   def check_row(label, text)
     row = find("tr", text: label)
     expect(row).to have_text(text)
+  end
+
+  context "appeals" do
+    let!(:appeal) do
+      create(:appeal,
+        veteran_file_number: veteran.file_number,
+        receipt_date: receipt_date,
+        docket_type: "evidence_submission",
+        legacy_opt_in_approved: false
+      )
+    end
+
+    let!(:nonrating_request_issue) do
+      create(:request_issue,
+        review_request: appeal,
+        issue_category: "Military Retired Pay",
+        description: "nonrating description",
+        contention_reference_id: "1234"
+      )
+    end
+
+    scenario "allows adding/removing issues" do
+      visit "appeals/#{appeal.uuid}/edit/"
+      expect(page).to have_content("nonrating description")
+      # remove an issue
+      page.all(".remove-issue")[0].click
+      safe_click ".remove-issue"
+      expect(page).not_to have_content("nonrating description")
+
+      # add an issue
+      safe_click "#button-add-issue"
+      find("label", text: "Left knee granted").click
+      safe_click ".add-issue"
+
+      # save
+      expect(page).to have_content("Left knee granted")
+      safe_click("#button-submit-update")
+
+      # should show confirmation
+      expect(page).to have_content("Edit Confirmed")
+
+      # going back to edit page should show those issues
+      visit "appeals/#{appeal.uuid}/edit/"
+      expect(page).to have_content("Left knee granted")
+      expect(page).not_to have_content("nonrating description")
+    end
   end
 
   context "Higher-Level Reviews" do
