@@ -19,10 +19,6 @@ default: &default
   password: <%= ENV['POSTGRES_PASSWORD'] %>
   <% end %>
 
-stubbed:
-  <<: *default
-  database: caseflow_certification_stubbed
-
 demo:
   <<: *default
   database: caseflow_certification_demo
@@ -43,13 +39,6 @@ staging:
 production:
   <<: *default
   url: <%= ENV["POSTGRES_URL"] %>
-
-# For connecting to the VACOLS Databases
-stubbed_vacols:
-  adapter: sqlite3
-  pool: 5
-  timeout: 5000
-  database: db/development-vacols.sqlite3
 
 # Docker setup
 development_vacols:

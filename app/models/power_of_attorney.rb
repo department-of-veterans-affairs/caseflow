@@ -59,11 +59,8 @@ class PowerOfAttorney
   end
 
   class << self
-    attr_writer :repository
-
     def repository
-      return PowerOfAttorneyRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= PowerOfAttorneyRepository
+      PowerOfAttorneyRepository
     end
   end
 end

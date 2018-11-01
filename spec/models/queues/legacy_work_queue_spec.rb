@@ -1,12 +1,4 @@
 describe LegacyWorkQueue do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   context ".tasks_with_appeals" do
     let(:user) { User.find_or_create_by(css_id: "DNYGLVR", station_id: "LANCASTER") }
 

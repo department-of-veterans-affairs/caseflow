@@ -824,6 +824,11 @@ fieldset {
     color: $color-gray-dark;
     margin-top: 10px;
   }
+
+  .cf-form-radio-options {
+    margin-top: 0;
+    margin-bottom: 14px;
+  }
 }
 
 * + .cf-form-textinput {
