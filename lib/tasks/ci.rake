@@ -117,11 +117,14 @@ namespace :ci do
     # in the build log.
     result.format!
 
-    File.open("#{ENV['COVERAGE_DIR']}/merged_results.json","w") do |f|
-      f.write(JSON.pretty_generate(result.to_hash()))
+    File.open("#{ENV['COVERAGE_DIR']}/merged_results.json", "w") do |f|
+      f.write(JSON.pretty_generate(result.to_hash))
     end
 
-    undercovered_files = result.covered_percentages.zip(result.filenames).select { |c| c.first < CODE_COVERAGE_THRESHOLD }
+    undercovered_files = result.covered_percentages.zip(result.filenames).select do |c|
+      c.first < CODE_COVERAGE_THRESHOLD
+    end
+
     if !undercovered_files.empty?
       puts Rainbow("The expected minimum coverage per file is: #{CODE_COVERAGE_THRESHOLD}%").red
       puts Rainbow("File Name - Percentage").red
@@ -129,7 +132,7 @@ namespace :ci do
       undercovered_files.map do |undercovered_file|
         puts Rainbow("#{undercovered_file.second} - #{undercovered_file.first.to_i}%").red
       end
-      
+
       exit!(1)
     else
       puts Rainbow("Code coverage threshold met\n").green
