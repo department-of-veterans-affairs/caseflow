@@ -51,7 +51,7 @@ class ClaimReview < DecisionReview
     end
   end
 
-  def issue_code(_rating)
+  def issue_code(*)
     fail Caseflow::Error::MustImplementInSubclass
   end
 
@@ -112,7 +112,7 @@ class ClaimReview < DecisionReview
   end
 
   def end_product_establishment_for_issue(issue)
-    ep_code = issue_code(issue.rating? || issue.is_unidentified?)
+    ep_code = issue_code(rating: (issue.rating? || issue.is_unidentified?))
     end_product_establishments.find_by(code: ep_code) || new_end_product_establishment(ep_code)
   end
 
