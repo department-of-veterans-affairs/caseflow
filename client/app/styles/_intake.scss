@@ -3,6 +3,13 @@
   padding-left: 0.5em;
 }
 
+// the .cf-app-segment is needed in this rule so .cf-intake-statusmessage-checklist has a higher
+// specificity than the existing .cf-success-checklist class.
+.cf-app-segment .cf-intake-statusmessage-checklist {
+  max-width: 800px;
+  margin: 50px auto 65px;
+}
+
 .cf-intake-substeps {
   padding-left: 1em;
 }
@@ -56,6 +63,15 @@
   color: $color-gray-dark;
   width: 750px;
   max-height: 95%;
+
+  h1 {
+    text-align: center;
+    border-bottom: 1px solid $color-gray-lighter;
+  }
+
+  h2 {
+    margin-bottom: 10px;
+  }
 
   @media only screen and (max-width: 760px) {
     width: 650px;
@@ -171,6 +187,6 @@
   }
 
   p {
-    margin: .5rem;
+    margin: .5rem 0;
   }
 }

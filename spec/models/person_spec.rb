@@ -1,12 +1,4 @@
 describe Person do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   context "#date_of_birth" do
     subject { create(:person, date_of_birth: date_of_birth) }
 
