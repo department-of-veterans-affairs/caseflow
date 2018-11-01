@@ -53,14 +53,14 @@ export const validateDate = (date) => {
   return null;
 };
 
-export const validNonRatedIssue = (issue) => {
+export const validNonRatingRequestIssue = (issue) => {
   const unvalidatedDate = issue.decisionDate;
   const decisionDate = validateDate(unvalidatedDate);
 
   if (!issue.description) {
     return false;
   }
-  // If there isn't any nonRated category, return 0
+  // If there isn't any nonRatingRequest category, return 0
   if (!issue.category) {
     return false;
   }
@@ -73,7 +73,7 @@ export const validNonRatedIssue = (issue) => {
     return false;
   }
 
-  // If we've gotten to here, that means we've got all necessary parts for a nonRatedIssue to count
+  // If we've gotten to here, that means we've got all necessary parts for a nonRatingRequestIssue to count
   return true;
 };
 
@@ -172,7 +172,7 @@ const formatRatedIssues = (state) => {
     value();
 };
 
-const formatNonRatedIssues = (state) => {
+const formatNonRatingRequestIssues = (state) => {
   if (state.addedIssues && state.addedIssues.length > 0) {
     // we're using the new add issues page
     return state.addedIssues.filter((issue) => !issue.isRated && !issue.isUnidentified).map((issue) => {
@@ -185,9 +185,9 @@ const formatNonRatedIssues = (state) => {
   }
 
   // default to original format
-  return _(state.nonRatedIssues).
+  return _(state.nonRatingRequestIssues).
     filter((issue) => {
-      return validNonRatedIssue(issue);
+      return validNonRatingRequestIssue(issue);
     }).
     map((issue) => {
       return {
@@ -201,7 +201,7 @@ const formatNonRatedIssues = (state) => {
 
 export const formatIssues = (state) => {
   const ratingData = formatRatedIssues(state);
-  const nonRatingData = formatNonRatedIssues(state);
+  const nonRatingData = formatNonRatingRequestIssues(state);
   const unidentifiedData = formatUnidentifiedIssues(state);
 
   const data = {
@@ -274,13 +274,13 @@ export const formatAddedIssues = (intakeData) => {
       };
     }
 
-    // we must do our own date math for nonrated issues.
+    // we must do our own date math for nonrating request issues.
     // we assume the timezone of the browser for all these.
     let decisionDate = new Date(issue.decisionDate);
     let receiptDate = new Date(intakeData.receiptDate);
     let isTimely = (receiptDate - decisionDate) <= ONE_YEAR_PLUS_MS;
 
-    // returns nonrated issue format
+    // returns nonrating request issue format
     return {
       referenceId: issue.id,
       text: `${issue.category} - ${issue.description}`,

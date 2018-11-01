@@ -4,13 +4,13 @@ import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import CancelButton from '../../components/CancelButton';
-import NonRatedIssuesUnconnected from '../../components/NonRatedIssues';
+import NonRatingRequestIssuesUnconnected from '../../components/NonRatingRequestIssues';
 import RatedIssuesUnconnected from '../../components/RatedIssues';
 import IssueCounter from '../../components/IssueCounter';
 import {
   completeIntake,
   setIssueSelected,
-  newNonRatedIssue,
+  newNonRatingRequestIssue,
   setIssueCategory,
   setIssueDescription,
   setIssueDecisionDate
@@ -55,22 +55,22 @@ class Finish extends React.PureComponent {
       </p>
 
       <RatedIssues />
-      <NonRatedIssues />
+      <NonRatingRequestIssues />
     </div>;
   }
 }
 
-const NonRatedIssues = connect(
+const NonRatingRequestIssues = connect(
   ({ higherLevelReview }) => ({
-    nonRatedIssues: higherLevelReview.nonRatedIssues
+    nonRatingRequestIssues: higherLevelReview.nonRatingRequestIssues
   }),
   (dispatch) => bindActionCreators({
-    newNonRatedIssue,
+    newNonRatingRequestIssue,
     setIssueCategory,
     setIssueDescription,
     setIssueDecisionDate
   }, dispatch)
-)(NonRatedIssuesUnconnected);
+)(NonRatingRequestIssuesUnconnected);
 
 class FinishNextButton extends React.PureComponent {
   handleClick = () => {

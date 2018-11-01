@@ -5,7 +5,7 @@ import { Redirect } from 'react-router-dom';
 import React from 'react';
 
 import AddIssuesModal from '../components/AddIssuesModal';
-import NonRatedIssueModal from '../components/NonRatedIssueModal';
+import NonRatingRequestIssueModal from '../components/NonRatingRequestIssueModal';
 import RemoveIssueModal from '../components/RemoveIssueModal';
 import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
 import Button from '../../components/Button';
@@ -17,7 +17,7 @@ import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 import Table from '../../components/Table';
 import {
   toggleAddIssuesModal,
-  toggleNonRatedIssueModal,
+  toggleNonRatingRequestIssueModal,
   removeIssue,
   toggleUnidentifiedIssuesModal,
   toggleIssueRemoveModal
@@ -156,9 +156,9 @@ export class AddIssuesPage extends React.Component {
         intakeData={intakeData}
         closeHandler={this.props.toggleAddIssuesModal} />
       }
-      { intakeData.nonRatedIssueModalVisible && <NonRatedIssueModal
+      { intakeData.nonRatingRequestIssueModalVisible && <NonRatingRequestIssueModal
         intakeData={intakeData}
-        closeHandler={this.props.toggleNonRatedIssueModal} />
+        closeHandler={this.props.toggleNonRatingRequestIssueModal} />
       }
       { intakeData.unidentifiedIssuesModalVisible && <UnidentifiedIssuesModal
         intakeData={intakeData}
@@ -195,7 +195,7 @@ export const IntakeAddIssuesPage = connect(
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
-    toggleNonRatedIssueModal,
+    toggleNonRatingRequestIssueModal,
     toggleUnidentifiedIssuesModal,
     removeIssue
   }, dispatch)
@@ -213,7 +213,7 @@ export const EditAddIssuesPage = connect(
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
     toggleIssueRemoveModal,
-    toggleNonRatedIssueModal,
+    toggleNonRatingRequestIssueModal,
     toggleUnidentifiedIssuesModal,
     removeIssue
   }, dispatch)
