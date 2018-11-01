@@ -88,7 +88,7 @@ export default class AssignHearings extends React.Component {
             }
           });
 
-            const styling = dateSelected ? buttonColorSelected : {};
+          const styling = dateSelected ? buttonColorSelected : {};
 
           return <li key={hearingDay.id} >
             <Button
