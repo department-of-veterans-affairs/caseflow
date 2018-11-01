@@ -1,14 +1,6 @@
 require "rails_helper"
 
 RSpec.feature "Out of Service" do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   context "Across all apps" do
     before do
       User.authenticate!(css_id: "BVAAABSHIRE", roles: ["Admin Intake"])

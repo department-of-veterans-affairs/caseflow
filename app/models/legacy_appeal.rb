@@ -742,8 +742,6 @@ class LegacyAppeal < ApplicationRecord
   end
 
   class << self
-    attr_writer :repository
-
     def find_or_create_by_vacols_id(vacols_id)
       appeal = find_or_initialize_by(vacols_id: vacols_id)
 
@@ -779,8 +777,7 @@ class LegacyAppeal < ApplicationRecord
     end
 
     def repository
-      return AppealRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= AppealRepository
+      AppealRepository
     end
 
     # rubocop:disable Metrics/ParameterLists

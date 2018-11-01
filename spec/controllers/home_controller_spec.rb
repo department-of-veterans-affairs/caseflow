@@ -1,14 +1,6 @@
 require "rails_helper"
 
 RSpec.describe HomeController, type: :controller do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   describe "GET /" do
     context "when visitor is not logged in" do
       let!(:current_user) { nil }

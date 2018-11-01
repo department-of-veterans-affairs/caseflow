@@ -6,11 +6,6 @@ describe ColocatedTask do
 
   before do
     RequestStore.store[:current_user] = attorney
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   context ".create" do

@@ -1,12 +1,7 @@
 RSpec.describe LegacyTasksController, type: :controller do
   before do
     Fakes::Initializer.load!
-    FeatureToggle.enable!(:test_facols)
     User.authenticate!(roles: ["System Admin"])
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   describe "GET legacy_tasks/xxx" do
@@ -158,7 +153,7 @@ RSpec.describe LegacyTasksController, type: :controller do
         end
 
         it "should not be successful" do
-          allow(Fakes::UserRepository).to receive(:user_info_from_vacols).and_return(roles: ["judge"])
+          allow(UserRepository).to receive(:user_info_from_vacols).and_return(roles: ["judge"])
           post :create, params: { tasks: params }
           expect(response.status).to eq 400
           response_body = JSON.parse(response.body)
