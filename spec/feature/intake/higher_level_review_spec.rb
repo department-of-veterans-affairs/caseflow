@@ -313,7 +313,7 @@ RSpec.feature "Higher-Level Review" do
     expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
       claim_id: ratings_end_product_establishment.reference_id,
       rating_request_issue_contention_map: {
-        rating_request_issue.rating_issue_reference_id => ratign_request_issue.contention_reference_id
+        rating_request_issue.rating_issue_reference_id => rating_request_issue.contention_reference_id
       }
     )
 
@@ -482,7 +482,7 @@ RSpec.feature "Higher-Level Review" do
 
     safe_click "#button-submit-review"
 
-    expect(page).to have_content("This Veteran has no rating, disability issues")
+    expect(page).to have_content("This Veteran has no rated, disability issues")
 
     safe_click "#button-add-issue"
 
