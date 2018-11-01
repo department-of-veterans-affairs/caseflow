@@ -19,6 +19,7 @@ import type { Task } from './types/models';
 
 type Params = {|
   appealId: number,
+  userId: string,
   taskId: number
 |};
 
@@ -53,7 +54,7 @@ class AssignToAttorneyModalView extends React.PureComponent<Props> {
   }
 
   render = () => {
-    const { task } = this.props;
+    const { task, userId } = this.props;
     const previousAssigneeId = task ? task.assignedTo.id.toString() : null;
 
     if (!previousAssigneeId) {
@@ -62,6 +63,7 @@ class AssignToAttorneyModalView extends React.PureComponent<Props> {
 
     return <AssignWidgetModal
       isModal
+      userId={userId}
       onTaskAssignment={this.handleAssignment}
       previousAssigneeId={previousAssigneeId}
       selectedTasks={[task]} />;

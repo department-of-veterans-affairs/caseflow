@@ -7,6 +7,15 @@ class AttorneyTask < Task
   validate :parent_attorney_child_count, on: :create
 
   def available_actions(user)
+    if parent.type == JudgeTask.name && parent.assigned_to == user
+      return [
+        {
+          label: COPY::JUDGE_CHECKOUT_ASSIGN_TO_ATTORNEY_LABEL,
+          value: "modal/assign_to_attorney"
+        }
+      ]
+    end
+
     return [] if assigned_to != user
 
     [

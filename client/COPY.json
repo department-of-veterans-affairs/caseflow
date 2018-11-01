@@ -157,6 +157,7 @@
   "ASSIGN_WIDGET_SUCCESS": "Assigned %(numCases)s %(casePlural)s",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE": "Error assigning tasks",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL": "One or more tasks couldn't be assigned.",
+  "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL": "Please reassign tasks from your assign page",
   "ASSIGN_WIDGET_LOADING": "Loading...",
   "ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER": "Select a user",
   "ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY": "Assignee",

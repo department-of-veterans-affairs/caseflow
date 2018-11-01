@@ -15,6 +15,7 @@ import {
 } from '../uiReducer/uiActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import _ from 'lodash';
 import pluralize from 'pluralize';
 import COPY from '../../../COPY.json';
@@ -95,7 +96,10 @@ class AssignWidget extends React.PureComponent<Props> {
   }
 
   assignTasks = (selectedTasks: Array<Task>, assigneeId: string) => {
-    const { previousAssigneeId } = this.props;
+    const {
+      previousAssigneeId,
+      userId
+    } = this.props;
 
     this.props.setSavePending();
 
@@ -115,9 +119,14 @@ class AssignWidget extends React.PureComponent<Props> {
       }, () => {
         this.props.resetSaveState();
 
+        const errorDetail = this.props.isModal ?
+          <React.Fragment>
+            <Link to={`/queue/${userId}/assign`}>{COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL}</Link>
+          </React.Fragment> : COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL;
+
         return this.props.showErrorMessage({
           title: COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE,
-          detail: COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL });
+          detail: errorDetail });
       });
   }
 
