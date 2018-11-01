@@ -5,7 +5,6 @@ RSpec.feature "Edit issues" do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
-    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 26))
@@ -14,7 +13,6 @@ RSpec.feature "Edit issues" do
   after do
     FeatureToggle.disable!(:intakeAma)
     FeatureToggle.disable!(:intake_legacy_opt_in)
-    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran) do
@@ -56,6 +54,16 @@ RSpec.feature "Edit issues" do
       )
     end
 
+    let!(:another_higher_level_review) do
+      HigherLevelReview.create!(
+        veteran_file_number: veteran.file_number,
+        receipt_date: receipt_date,
+        informal_conference: false,
+        same_office: false,
+        benefit_type: "compensation"
+      )
+    end
+
     # create associated intake
     let!(:intake) do
       Intake.create!(
@@ -81,6 +89,94 @@ RSpec.feature "Edit issues" do
         ptcpnt_id: "5382910292",
         relationship_type: "Spouse"
       )
+    end
+
+    context "when there are ineligible issues" do
+      let!(:eligible_request_issue) do
+        RequestIssue.create!(
+          review_request: higher_level_review,
+          issue_category: "Military Retired Pay",
+          description: "non-rated description",
+          contention_reference_id: "1234",
+          ineligible_reason: nil,
+          decision_date: Date.new(2018, 5, 1)
+        )
+      end
+
+      let!(:untimely_request_issue) do
+        RequestIssue.create!(
+          review_request: higher_level_review,
+          issue_category: "Active Duty Adjustments",
+          description: "non-rated description",
+          contention_reference_id: "12345",
+          ineligible_reason: :untimely
+        )
+      end
+
+      let!(:ri_in_review) do
+        RequestIssue.create!(
+          rating_issue_reference_id: "def456",
+          rating_issue_profile_date: rating.profile_date,
+          review_request: another_higher_level_review,
+          description: "PTSD denied",
+          contention_reference_id: "123",
+          ineligible_reason: nil,
+          removed_at: nil
+        )
+      end
+
+      let!(:ri_with_active_previous_review) do
+        RequestIssue.create!(
+          rating_issue_reference_id: "def456",
+          rating_issue_profile_date: rating.profile_date,
+          review_request: higher_level_review,
+          description: "PTSD denied",
+          contention_reference_id: "123",
+          ineligible_reason: :duplicate_of_issue_in_active_review,
+          ineligible_due_to: ri_in_review
+        )
+      end
+
+      let!(:ri_with_previous_hlr) do
+        RequestIssue.create!(
+          rating_issue_reference_id: "abc123",
+          rating_issue_profile_date: rating.profile_date,
+          review_request: higher_level_review,
+          description: "Left knee granted",
+          contention_reference_id: "123",
+          ineligible_reason: :previous_higher_level_review
+        )
+      end
+
+      before do
+        another_higher_level_review.create_issues!([ri_in_review])
+        higher_level_review.create_issues!([
+                                             eligible_request_issue,
+                                             untimely_request_issue,
+                                             ri_with_active_previous_review,
+                                             ri_with_previous_hlr
+                                           ])
+        higher_level_review.process_end_product_establishments!
+      end
+
+      it "shows the Higher-Level Review Edit page with ineligibility messages" do
+        ep_claim_id = EndProductEstablishment.find_by(
+          source: higher_level_review,
+          code: "030HLRNR"
+        ).reference_id
+        visit "higher_level_reviews/#{ep_claim_id}/edit"
+
+        expect(page).to have_content(
+          "#{ri_with_previous_hlr.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review}"
+        )
+        expect(page).to have_content(
+          "#{ri_in_review.contention_text} is ineligible because it's already under review as a Higher-Level Review"
+        )
+        expect(page).to have_content(
+          "#{untimely_request_issue.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
+        )
+        expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date: 05/01/2018")
+      end
     end
 
     context "when there is a non-rating end product" do

@@ -46,7 +46,10 @@ class VACOLS::CaseHearing < VACOLS::Record
     room: :room,
     hearing_date: :hearing_date,
     hearing_type: :hearing_type,
-    judge_id: :board_member
+    judge_id: :board_member,
+    folder_nr: :folder_nr,
+    board_member: :board_member,
+    team: :team
   }.freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
@@ -121,6 +124,18 @@ class VACOLS::CaseHearing < VACOLS::Record
                            adduser: current_user_slogid,
                            folder_nr: hearing_info[:regional_office] ? "VIDEO #{hearing_info[:regional_office]}" : nil,
                            hearing_type: "C"))
+      end
+    end
+
+    def create_child_hearing!(hearing_info)
+      # Store time value in UTC to VACOLS
+      hear_date = hearing_info[:hearing_date]
+      hearing_info[:hearing_date] = VacolsHelper.format_datetime_with_utc_timezone(hear_date)
+      MetricsService.record("VACOLS: create_hearing!",
+                            service: :vacols,
+                            name: "create_hearing") do
+        create(hearing_info.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
+                                  adduser: current_user_slogid))
       end
     end
 

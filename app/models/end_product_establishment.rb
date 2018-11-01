@@ -142,6 +142,17 @@ class EndProductEstablishment < ApplicationRecord
     @preexisting_end_product ||= veteran.end_products.find { |ep| end_product_to_establish.matches?(ep) }
   end
 
+  def cancel_unused_end_product!
+    # do not cancel ramp reviews for now
+    return if source.is_a?(RampReview)
+
+    active_request_issues = request_issues.select { |request_issue| request_issue.removed_at.nil? }
+
+    if active_request_issues.empty?
+      cancel!
+    end
+  end
+
   def sync!
     # There is no need to sync end_product_status if the status
     # is already inactive since an EP can never leave that state
@@ -206,6 +217,14 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   private
+
+  def cancel!
+    transaction do
+      # delete end product in bgs & set sync status to canceled
+      BGSService.new.cancel_end_product(:veteran_file_number, :code, :modifier)
+      update!(synced_status: CANCELED_STATUS)
+    end
+  end
 
   def request_issues
     source.request_issues.select { |ri| ri.end_product_establishment == self }
