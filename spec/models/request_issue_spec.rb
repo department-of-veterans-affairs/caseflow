@@ -148,6 +148,7 @@ describe RequestIssue do
 
   context "#validate_eligibility!" do
     let(:duplicate_reference_id) { "xyz789" }
+    let(:duplicate_appeal_reference_id) { "xyz555" }
     let(:old_reference_id) { "old123" }
     let(:active_epe) { create(:end_product_establishment, :active) }
     let(:receipt_date) { review.receipt_date }
@@ -161,6 +162,17 @@ describe RequestIssue do
         contention_reference_id: contention_reference_id
       )
     end
+    let(:appeal_in_progress) do
+      create(:appeal, veteran_file_number: veteran.file_number).tap(&:create_tasks_on_intake_success!)
+    end
+    let(:appeal_request_issue_in_progress) do
+      create(
+        :request_issue,
+        review_request: appeal_in_progress,
+        rating_issue_reference_id: duplicate_appeal_reference_id,
+        description: "Appealed injury"
+      )
+    end
 
     let!(:ratings) do
       Generators::Rating.build(
@@ -171,6 +183,7 @@ describe RequestIssue do
           { reference_id: "xyz123", decision_text: "Left knee granted" },
           { reference_id: "xyz456", decision_text: "PTSD denied" },
           { reference_id: duplicate_reference_id, decision_text: "Old injury" },
+          { reference_id: duplicate_appeal_reference_id, decision_text: "Appealed injury" },
           {
             reference_id: higher_level_review_reference_id,
             decision_text: "Already reviewed injury",
@@ -216,6 +229,17 @@ describe RequestIssue do
       rated_issue.validate_eligibility!
 
       expect(rated_issue.duplicate_of_issue_in_active_review?).to eq(true)
+      expect(rated_issue.ineligible_due_to).to eq(request_issue_in_progress)
+
+      rated_issue.save!
+      expect(request_issue_in_progress.duplicate_but_ineligible).to eq([rated_issue])
+    end
+
+    it "flags duplicate appeal as in progress" do
+      rated_issue.rating_issue_reference_id = appeal_request_issue_in_progress.rating_issue_reference_id
+      rated_issue.validate_eligibility!
+
+      expect(rated_issue.duplicate_of_issue_in_active_review?).to eq(true)
     end
 
     it "flags previous HLR" do
@@ -223,7 +247,10 @@ describe RequestIssue do
       rated_issue.validate_eligibility!
 
       expect(rated_issue.previous_higher_level_review?).to eq(true)
-      expect(rated_issue.ineligible_request_issue_id).to eq(previous_request_issue.id)
+      expect(rated_issue.ineligible_due_to).to eq(previous_request_issue)
+
+      rated_issue.save!
+      expect(previous_request_issue.duplicate_but_ineligible).to eq([rated_issue])
     end
   end
 end
