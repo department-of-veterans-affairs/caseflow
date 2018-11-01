@@ -176,8 +176,10 @@ class Hearings::HearingDayController < HearingScheduleController
   def json_veteran(veteran)
     {
       appeal_id: veteran.id,
-      appellantFirstName: veteran.appellant_first_name.to_s,
-      appellantLastName: veteran.appellant_last_name.to_s,
+      appellantFirstName: veteran.appellant_first_name,
+      appellantLastName: veteran.appellant_last_name,
+      veteranFirstName: veteran.veteran_first_name,
+      veteranLastName: veteran.veteran_last_name,
       type: veteran.type,
       docket_number: veteran.docket_number,
       location: HearingDayMapper.city_for_regional_office(veteran.regional_office_key),

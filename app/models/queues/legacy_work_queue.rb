@@ -3,8 +3,6 @@
 class LegacyWorkQueue
   include ActiveModel::Model
   class << self
-    attr_writer :repository
-
     def tasks_with_appeals(user, role)
       vacols_tasks = repository.tasks_for_user(user.css_id)
       tasks_with_appeals_of_vacols_tasks(user, role, vacols_tasks)
@@ -23,8 +21,7 @@ class LegacyWorkQueue
     end
 
     def repository
-      return QueueRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= QueueRepository
+      QueueRepository
     end
 
     private

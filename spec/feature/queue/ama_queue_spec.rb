@@ -6,10 +6,8 @@ RSpec.feature "AmaQueue" do
 
     Fakes::Initializer.load!
     FeatureToggle.enable!(:queue_beaam_appeals)
-    FeatureToggle.enable!(:test_facols)
   end
   after do
-    FeatureToggle.disable!(:test_facols)
     FeatureToggle.disable!(:queue_beaam_appeals)
   end
 

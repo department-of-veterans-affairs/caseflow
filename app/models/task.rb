@@ -31,9 +31,18 @@ class Task < ApplicationRecord
   # from TASK_ACTIONS that looks something like:
   # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
   def available_actions_unwrapper(user)
+    return [] if no_actions_available?(user)
+
     available_actions(user).map do |a|
       { label: a[:label], value: a[:value], data: a[:func] ? send(a[:func]) : nil }
     end
+  end
+
+  def no_actions_available?(_user)
+    return true if [Constants.TASK_STATUSES.on_hold, Constants.TASK_STATUSES.completed].include?(status)
+
+    # Users who are assigned a subtask of an organization don't have actions on the organizational task.
+    assigned_to.is_a?(Organization) && children.any? { |child| child.assigned_to == user }
   end
 
   def assigned_by_display_name
