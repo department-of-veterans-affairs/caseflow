@@ -28,18 +28,11 @@ class OrganizationQueue extends React.PureComponent {
     this.props.clearCaseSelectSearch();
   }
 
-  changeTab = (tabNumber) => {
-    this.setState({
-      // DO SOMETHING
-    });
-  }
-
   render = () => {
     const noTasks = !_.size(this.props.tasks);
 
     debugger;
-    // this.props.tasks[0].status === 'assigned'
-
+    
     const content = noTasks ?
       <h2>{COPY.NO_CASES_IN_QUEUE_MESSAGE}<Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link>.</h2> :
       <TaskTable
@@ -77,7 +70,6 @@ class OrganizationQueue extends React.PureComponent {
         <TabWindow 
           name="tasks-organization-queue"
           tabs={tabs} 
-          onChange={this.changeTab}
         />
         {content}
       </div>
@@ -102,7 +94,6 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
-
 
 const UnassignedTasksTab = connect(
   (state: State) => ({ tasks: getNewOrganizationalTasks(state) }))(
