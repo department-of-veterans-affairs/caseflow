@@ -1,13 +1,11 @@
 RSpec.describe TasksController, type: :controller do
   before do
     Fakes::Initializer.load!
-    FeatureToggle.enable!(:test_facols)
     FeatureToggle.enable!(:colocated_queue)
     User.authenticate!(roles: ["System Admin"])
   end
 
   after do
-    FeatureToggle.disable!(:test_facols)
     FeatureToggle.disable!(:colocated_queue)
   end
 

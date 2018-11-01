@@ -1,7 +1,4 @@
 describe QualityReviewTask do
-  before { FeatureToggle.enable!(:test_facols) }
-  after { FeatureToggle.disable!(:test_facols) }
-
   describe ".mark_as_complete!" do
     let(:root_task) { FactoryBot.create(:root_task) }
 

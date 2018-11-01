@@ -1,12 +1,4 @@
 describe ClaimEstablishment do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let(:vacols_remand_case) do
     create(:case_with_decision, :status_remand)
   end

@@ -77,6 +77,8 @@ export const validNonRatedIssue = (issue) => {
   return true;
 };
 
+// formatRequestIssues takes an array of requestIssues in the server ui_hash format
+// and returns objects useful for displaying in UI
 export const formatRequestIssues = (requestIssues) => {
   return requestIssues.map((issue) => {
     if (issue.category) {
@@ -85,7 +87,8 @@ export const formatRequestIssues = (requestIssues) => {
         category: issue.category,
         description: issue.description,
         decisionDate: issue.decision_date,
-        ineligibleReason: issue.ineligible_reason
+        ineligibleReason: issue.ineligible_reason,
+        contentionText: issue.contention_text
       };
     }
 
@@ -93,6 +96,7 @@ export const formatRequestIssues = (requestIssues) => {
     if (issue.is_unidentified) {
       return {
         description: issue.description,
+        contentionText: issue.contention_text,
         notes: issue.notes,
         isUnidentified: issue.is_unidentified
       };
@@ -108,7 +112,8 @@ export const formatRequestIssues = (requestIssues) => {
       notes: issue.notes,
       description: issue.description,
       ineligibleReason: issue.ineligible_reason,
-      titleOfActiveReview: issue.title_of_active_review
+      titleOfActiveReview: issue.title_of_active_review,
+      contentionText: issue.contention_text
     };
   });
 };
