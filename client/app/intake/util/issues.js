@@ -83,7 +83,7 @@ export const formatRequestIssues = (requestIssues) => {
   return requestIssues.map((issue) => {
     if (issue.category) {
       return {
-        isRated: false,
+        isRating: false,
         category: issue.category,
         description: issue.description,
         decisionDate: issue.decision_date,
@@ -106,7 +106,7 @@ export const formatRequestIssues = (requestIssues) => {
     const issueDate = new Date(issue.profile_date);
 
     return {
-      isRated: true,
+      isRating: true,
       id: issue.reference_id,
       profileDate: issueDate.toISOString(),
       notes: issue.notes,
@@ -151,7 +151,7 @@ const formatRatedIssues = (state) => {
   if (state.addedIssues && state.addedIssues.length > 0) {
     // we're using the new add issues page
     return state.addedIssues.
-      filter((issue) => issue.isRated && !issue.isUnidentified).
+      filter((issue) => issue.isRating && !issue.isUnidentified).
       map((issue) => {
         return { reference_id: issue.id,
           decision_text: ratingIssues[issue.id],
@@ -175,7 +175,7 @@ const formatRatedIssues = (state) => {
 const formatNonRatingRequestIssues = (state) => {
   if (state.addedIssues && state.addedIssues.length > 0) {
     // we're using the new add issues page
-    return state.addedIssues.filter((issue) => !issue.isRated && !issue.isUnidentified).map((issue) => {
+    return state.addedIssues.filter((issue) => !issue.isRating && !issue.isUnidentified).map((issue) => {
       return {
         issue_category: issue.category,
         decision_text: issue.description,
@@ -260,7 +260,7 @@ export const formatAddedIssues = (intakeData) => {
         notes: issue.notes,
         isUnidentified: true
       };
-    } else if (issue.isRated) {
+    } else if (issue.isRating) {
       return {
         referenceId: issue.id,
         text: ratingIssues[issue.id],

@@ -48,7 +48,7 @@ export const addRatedIssue = (args) => (dispatch) => {
     type: ACTIONS.ADD_ISSUE,
     payload: {
       id: args.issueId,
-      isRated: args.isRated,
+      isRating: args.isRating,
       titleOfActiveReview: currentIssue.title_of_active_review,
       timely: currentIssue.timely,
       sourceHigherLevelReview: currentIssue.source_higher_level_review,
@@ -59,14 +59,14 @@ export const addRatedIssue = (args) => (dispatch) => {
   });
 };
 
-export const addNonRatingRequestIssue = (category, description, decisionDate, isRated = false) => (dispatch) => {
+export const addNonRatingRequestIssue = (category, description, decisionDate, isRating = false) => (dispatch) => {
   dispatch({
     type: ACTIONS.ADD_ISSUE,
     payload: {
       category,
       description,
       decisionDate,
-      isRated
+      isRating
     }
   });
 };
