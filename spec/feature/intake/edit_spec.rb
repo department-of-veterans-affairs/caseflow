@@ -19,9 +19,8 @@ RSpec.feature "Edit issues" do
 
   let(:veteran) do
     create(:veteran,
-      first_name: "Ed",
-      last_name: "Merica"
-    )
+           first_name: "Ed",
+           last_name: "Merica")
   end
 
   let!(:current_user) do
@@ -51,20 +50,18 @@ RSpec.feature "Edit issues" do
   context "appeals" do
     let!(:appeal) do
       create(:appeal,
-        veteran_file_number: veteran.file_number,
-        receipt_date: receipt_date,
-        docket_type: "evidence_submission",
-        legacy_opt_in_approved: false
-      )
+             veteran_file_number: veteran.file_number,
+             receipt_date: receipt_date,
+             docket_type: "evidence_submission",
+             legacy_opt_in_approved: false)
     end
 
     let!(:nonrating_request_issue) do
       create(:request_issue,
-        review_request: appeal,
-        issue_category: "Military Retired Pay",
-        description: "nonrating description",
-        contention_reference_id: "1234"
-      )
+             review_request: appeal,
+             issue_category: "Military Retired Pay",
+             description: "nonrating description",
+             contention_reference_id: "1234")
     end
 
     scenario "allows adding/removing issues" do
