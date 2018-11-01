@@ -617,9 +617,9 @@ class AppealRepository
     VACOLS::CaseAssignment.exists_for_appeals([vacols_id])[vacols_id]
   end
 
-  def self.counts_by_priority_and_readiness
-    MetricsService.record("VACOLS: counts_by_priority_and_readiness",
-                          name: "counts_by_priority_and_readiness",
+  def self.docket_counts_by_priority_and_readiness
+    MetricsService.record("VACOLS: docket_counts_by_priority_and_readiness",
+                          name: "docket_counts_by_priority_and_readiness",
                           service: :vacols) do
       VACOLS::CaseDocket.counts_by_priority_and_readiness.to_hash
     end

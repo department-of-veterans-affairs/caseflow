@@ -13,18 +13,16 @@ describe LegacyDocket do
   end
 
   context ".count" do
-    subject { docket }
-
     before do
-      allow(LegacyAppeal.repository).to receive(:counts_by_priority_and_readiness)
+      allow(LegacyAppeal.repository).to receive(:docket_counts_by_priority_and_readiness)
         .and_return(counts_by_priority_and_readiness)
     end
 
     it "correctly aggregates the docket counts" do
-      expect(subject.count).to eq(15)
-      expect(subject.count(ready: true)).to eq(5)
-      expect(subject.count(priority: false)).to eq(12)
-      expect(subject.count(ready: false, priority: true)).to eq(2)
+      expect(docket.count).to eq(15)
+      expect(docket.count(ready: true)).to eq(5)
+      expect(docket.count(priority: false)).to eq(12)
+      expect(docket.count(ready: false, priority: true)).to eq(2)
     end
   end
 
@@ -32,7 +30,7 @@ describe LegacyDocket do
     subject { docket.weight }
 
     before do
-      allow(LegacyAppeal.repository).to receive(:counts_by_priority_and_readiness)
+      allow(LegacyAppeal.repository).to receive(:docket_counts_by_priority_and_readiness)
         .and_return(counts_by_priority_and_readiness)
       allow(LegacyAppeal.repository).to receive(:nod_count).and_return(1)
     end

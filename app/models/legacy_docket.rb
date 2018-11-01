@@ -25,12 +25,12 @@ class LegacyDocket
 
   def distribute_priority_appeals(judge, genpop = nil, limit = 1); end
 
-  def distribute_non_priority_appeals(judge, genpop = nil, range = nil, limit = 1); end
+  def distribute_nonpriority_appeals(judge, genpop = nil, range = nil, limit = 1); end
 
   private
 
   def counts_by_priority_and_readiness
-    @counts_by_priority_and_readiness ||= LegacyAppeal.repository.counts_by_priority_and_readiness
+    @counts_by_priority_and_readiness ||= LegacyAppeal.repository.docket_counts_by_priority_and_readiness
   end
 
   def nod_count
