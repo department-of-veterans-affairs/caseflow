@@ -2,14 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import DateSelector from '../../../components/DateSelector';
-import CancelButton from '../../components/CancelButton';
 import { Redirect } from 'react-router-dom';
-import Button from '../../../components/Button';
 import BenefitType from '../../components/BenefitType';
 import LegacyOptInApproved from '../../components/LegacyOptInApproved';
 import SelectClaimant from '../../components/SelectClaimant';
 import {
-  submitReview,
   setBenefitType,
   setClaimantNotVeteran,
   setClaimant,
@@ -17,7 +14,7 @@ import {
   setLegacyOptInApproved
 } from '../../actions/ama';
 import { setReceiptDate } from '../../actions/intake';
-import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, REQUEST_STATE } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 
@@ -90,42 +87,6 @@ const SelectClaimantConnected = connect(
     setPayeeCode
   }, dispatch)
 )(SelectClaimant);
-
-class ReviewNextButton extends React.PureComponent {
-  handleClick = () => {
-    this.props.submitReview(this.props.intakeId, this.props.supplementalClaim, 'supplementalClaim').then(
-      () => this.props.history.push('/finish')
-    );
-  };
-
-  render = () =>
-    <Button
-      name="submit-review"
-      onClick={this.handleClick}
-      loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-    >
-      Continue to next step
-    </Button>;
-}
-
-const ReviewNextButtonConnected = connect(
-  ({ supplementalClaim, intake }) => ({
-    intakeId: intake.id,
-    requestState: supplementalClaim.requestStatus.submitReview,
-    supplementalClaim
-  }),
-  (dispatch) => bindActionCreators({
-    submitReview
-  }, dispatch)
-)(ReviewNextButton);
-
-export class ReviewButtons extends React.PureComponent {
-  render = () =>
-    <div>
-      <CancelButton />
-      <ReviewNextButtonConnected history={this.props.history} />
-    </div>
-}
 
 export default connect(
   (state) => ({

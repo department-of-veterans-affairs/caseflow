@@ -3,6 +3,7 @@ require "rails_helper"
 describe RatingIssue do
   before do
     FeatureToggle.enable!(:test_facols)
+    Time.zone = "UTC"
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
@@ -11,6 +12,31 @@ describe RatingIssue do
   end
 
   let(:promulgation_date) { Time.zone.today - 30 }
+
+  context ".from_ui_hash" do
+    subject { RatingIssue.from_ui_hash(ui_hash) }
+
+    let(:ui_hash) do
+      {
+        reference_id: "NBA",
+        participant_id: "123",
+        promulgation_date: promulgation_date,
+        decision_text: "This broadcast may not be reproduced",
+        extra_attribute: "foobar"
+      }
+    end
+
+    it { is_expected.to be_a(RatingIssue) }
+
+    it do
+      is_expected.to have_attributes(
+        reference_id: "NBA",
+        participant_id: 123,
+        promulgation_date: promulgation_date,
+        decision_text: "This broadcast may not be reproduced"
+      )
+    end
+  end
 
   context ".from_bgs_hash" do
     subject { RatingIssue.from_bgs_hash(bgs_record) }

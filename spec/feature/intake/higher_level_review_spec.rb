@@ -502,6 +502,17 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
   end
 
+  scenario "redirects to add_issues with feature flag enabled" do
+    FeatureToggle.enable!(:intake_enable_add_issues_page)
+    start_higher_level_review(veteran_no_ratings)
+    visit "/intake"
+
+    safe_click "#button-submit-review"
+    expect(page).to have_current_path("/intake/add_issues")
+
+    FeatureToggle.disable!(:intake_enable_add_issues_page)
+  end
+
   context "For new Add / Remove Issues page" do
     def check_row(label, text)
       row = find("tr", text: label)
@@ -549,7 +560,7 @@ RSpec.feature "Higher-Level Review" do
       )
     end
 
-    let(:previous_higher_level_review) { create(:higher_level_review) }
+    let(:previous_higher_level_review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
     let!(:previous_request_issue) do
       create(
         :request_issue,
@@ -744,9 +755,15 @@ RSpec.feature "Higher-Level Review" do
       expect(ineligible_issue.contention_reference_id).to be_nil
 
       expect(RequestIssue.find_by(rating_issue_reference_id: old_reference_id).untimely?).to eq(true)
-      expect(
-        RequestIssue.find_by(rating_issue_reference_id: higher_level_review_reference_id).previous_higher_level_review?
-      ).to eq(true)
+
+      hlr_request_issues = RequestIssue.where(rating_issue_reference_id: higher_level_review_reference_id)
+      expect(hlr_request_issues.count).to eq(2)
+
+      ineligible_due_to_previous_hlr = hlr_request_issues.select(&:previous_higher_level_review?).first
+      expect(hlr_request_issues).to include(previous_request_issue)
+      expect(ineligible_due_to_previous_hlr).to_not eq(previous_request_issue)
+      expect(ineligible_due_to_previous_hlr.contention_reference_id).to be_nil
+      expect(ineligible_due_to_previous_hlr.ineligible_due_to).to eq(previous_request_issue)
 
       expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(
         hash_including(

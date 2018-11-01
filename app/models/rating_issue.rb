@@ -20,9 +20,11 @@ class RatingIssue < ApplicationRecord
 
     def from_ui_hash(ui_hash)
       new(
+        participant_id: ui_hash[:participant_id],
         reference_id: ui_hash[:reference_id],
         decision_text: ui_hash[:decision_text],
-        promulgation_date: ui_hash[:promulgation_date]
+        promulgation_date: ui_hash[:promulgation_date],
+        contention_reference_id: ui_hash[:contention_reference_id]
       )
     end
   end
@@ -47,7 +49,8 @@ class RatingIssue < ApplicationRecord
       participant_id: participant_id,
       reference_id: reference_id,
       decision_text: decision_text,
-      promulgation_date: promulgation_date.to_date,
+      promulgation_date: promulgation_date,
+      contention_reference_id: contention_reference_id,
       in_active_review: in_active_review,
       source_higher_level_review: source_higher_level_review,
       before_ama: before_ama
@@ -80,6 +83,6 @@ class RatingIssue < ApplicationRecord
 
   def fetch_source_request_issue
     return if contention_reference_id.nil?
-    self.source_request_issue ||= RequestIssue.find_by(contention_reference_id: contention_reference_id)
+    self.source_request_issue ||= RequestIssue.unscoped.find_by(contention_reference_id: contention_reference_id)
   end
 end
