@@ -6,10 +6,8 @@ RSpec.feature "AmaQueue" do
 
     Fakes::Initializer.load!
     FeatureToggle.enable!(:queue_beaam_appeals)
-    FeatureToggle.enable!(:test_facols)
   end
   after do
-    FeatureToggle.disable!(:test_facols)
     FeatureToggle.disable!(:queue_beaam_appeals)
   end
 
@@ -192,12 +190,8 @@ RSpec.feature "AmaQueue" do
     context "when user is part of translation" do
       let(:user_name) { "Translation User" }
       let!(:user) { User.authenticate!(user: create(:user, roles: ["Reader"], full_name: user_name)) }
-      let!(:staff) { FactoryBot.create(:staff, user: user, sdept: "TRANS", sattyid: nil) }
       let!(:translation_organization) { Organization.create!(name: "Translation", url: "translation") }
       let!(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
-      let!(:staff_field) do
-        StaffFieldForOrganization.create!(organization: translation_organization, name: "sdept", values: %w[TRANS])
-      end
 
       let!(:translation_task) do
         create(
@@ -213,6 +207,10 @@ RSpec.feature "AmaQueue" do
 
       let(:existing_instruction) { "Existing instruction" }
       let(:instructions) { "Test instructions" }
+
+      before do
+        OrganizationsUser.add_user_to_organization(user, translation_organization)
+      end
 
       scenario "assign case to self" do
         visit "/organizations/#{translation_organization.url}"
@@ -327,17 +325,13 @@ RSpec.feature "AmaQueue" do
 
   context "QR flow" do
     let(:user_name) { "QR User" }
-    let!(:user) { User.authenticate!(user: create(:user, roles: ["Reader"], full_name: user_name)) }
+    let!(:user) { FactoryBot.create(:user, roles: ["Reader"], full_name: user_name) }
+
     let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
     let!(:judge_staff) { FactoryBot.create(:staff, :judge_role, user: judge_user) }
 
-    let!(:staff) { FactoryBot.create(:staff, user: user, sdept: "QR") }
-    let!(:organization_user) { OrganizationsUser.add_user_to_organization(user, quality_review_organization) }
-    let!(:quality_review_organization) { Organization.create!(name: "Quality Review", url: "quality-review") }
+    let!(:quality_review_organization) { QualityReview.singleton }
     let!(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
-    let!(:staff_field) do
-      StaffFieldForOrganization.create!(organization: quality_review_organization, name: "sdept", values: %w[QR])
-    end
     let!(:appeal) { create(:appeal) }
 
     let!(:quality_review_task) do
@@ -355,6 +349,14 @@ RSpec.feature "AmaQueue" do
     let!(:root_task) { create(:root_task) }
 
     let!(:judge_task) { create(:ama_judge_task, parent: root_task, assigned_to: judge_user, status: :completed) }
+
+    before do
+      OrganizationsUser.add_user_to_organization(user, quality_review_organization)
+      # We expect all QR users to be attorneys. This matters because we serve different queue views on the frontend
+      # to attorneys.
+      FactoryBot.create(:staff, user: user)
+      User.authenticate!(user: user)
+    end
 
     scenario "return case to judge" do
       visit "/organizations/#{quality_review_organization.url}"

@@ -1,12 +1,4 @@
 describe AppealHistory do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let(:original) do
     create(:legacy_appeal, vacols_case:
       create(

@@ -174,8 +174,6 @@ User.prepend(StubbableUser)
 
 def reset_application!
   User.clear_stub!
-  Fakes::AppealRepository.clean!
-  Fakes::HearingRepository.clean!
   Fakes::CAVCDecisionRepository.clean!
   Fakes::BGSService.clean!
 end
@@ -218,11 +216,6 @@ def read_csv(klass, date_shift)
   klass.import(items)
 end
 
-# Setup fakes
-LegacyAppeal.repository = Fakes::AppealRepository
-PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
-Hearing.repository = Fakes::HearingRepository
-HearingDocket.repository = Fakes::HearingRepository
 User.authentication_service = Fakes::AuthenticationService
 CAVCDecision.repository = Fakes::CAVCDecisionRepository
 
@@ -243,13 +236,19 @@ RSpec.configure do |config|
 
     read_csv(VACOLS::Vftypes, date_shift)
     read_csv(VACOLS::Issref, date_shift)
+    read_csv(VACOLS::Actcode, date_shift)
 
     Rails.cache.clear
+  end
+
+  config.before(:each) do
+    @spec_time_zone = Time.zone
   end
 
   config.after(:each) do
     Timecop.return
     Rails.cache.clear
+    Time.zone = @spec_time_zone
   end
 
   # Allows us to use shorthand FactoryBot methods.

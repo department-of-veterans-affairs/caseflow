@@ -252,8 +252,6 @@ class User < ApplicationRecord
   end
 
   class << self
-    attr_writer :appeal_repository
-    attr_writer :user_repository
     attr_writer :authentication_service
     delegate :authenticate_vacols, to: :authentication_service
 
@@ -275,7 +273,7 @@ class User < ApplicationRecord
 
     def system_user
       @system_user ||= find_or_initialize_by(
-        station_id: "283",
+        station_id: Rails.deploy_env?(:prod) ? "283" : "317",
         css_id: Rails.deploy_env?(:prod) ? "CSFLOW" : "CASEFLOW1"
       )
     end
@@ -303,13 +301,11 @@ class User < ApplicationRecord
     end
 
     def appeal_repository
-      return AppealRepository if FeatureToggle.enabled?(:test_facols)
-      @appeal_repository ||= AppealRepository
+      AppealRepository
     end
 
     def user_repository
-      return UserRepository if FeatureToggle.enabled?(:test_facols)
-      @user_repository ||= UserRepository
+      UserRepository
     end
   end
 end

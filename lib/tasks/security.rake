@@ -3,6 +3,7 @@ require "rainbow"
 
 desc "shortcut to run all linting tools, at the same time."
 task :security_caseflow do
+  $stdout.sync = true
   puts "running Brakeman security scan..."
   brakeman_result = ShellCommand.run(
     "brakeman --exit-on-warn --run-all-checks --confidence-level=2"
@@ -11,16 +12,7 @@ task :security_caseflow do
   puts "running bundle-audit to check for insecure dependencies..."
   exit!(1) unless ShellCommand.run("bundle-audit update")
 
-  # Set time zone when running in Circle CI environment.
-  # TODO: Remove this when we stop calling Time.zone... below.
-  Time.zone = "Eastern Time (US & Canada)"
-
-  # Only ignore this vulnerability for a week.
-  audit_cmd = "bundle-audit check --ignore CVE-2018-1000201"
-  if Time.zone.local(2018, 9, 10) < Time.zone.today - 1.week
-    audit_cmd = "bundle-audit check"
-  end
-  audit_result = ShellCommand.run(audit_cmd)
+  audit_result = ShellCommand.run("bundle-audit check")
 
   puts "\n"
   if brakeman_result && audit_result

@@ -50,6 +50,7 @@ class Fakes::BGSService
           ]
         )
       when "has_many_ratings"
+        in_active_review_reference_id = "in-active-review-ref-id"
         Generators::Rating.build(
           participant_id: veteran.participant_id
         )
@@ -59,7 +60,8 @@ class Fakes::BGSService
           issues: [
             { decision_text: "Left knee" },
             { decision_text: "Right knee" },
-            { decision_text: "PTSD" }
+            { decision_text: "PTSD" },
+            { decision_text: "This rating is in active review", reference_id: in_active_review_reference_id }
           ]
         )
         Generators::Rating.build(
@@ -69,6 +71,19 @@ class Fakes::BGSService
           issues: [
             { decision_text: "Old injury" }
           ]
+        )
+        hlr = HigherLevelReview.find_or_create_by!(
+          veteran_file_number: veteran.file_number
+        )
+        epe = EndProductEstablishment.find_or_create_by!(
+          reference_id: in_active_review_reference_id,
+          veteran_file_number: veteran.file_number,
+          source: hlr
+        )
+        RequestIssue.find_or_create_by!(
+          review_request: hlr,
+          end_product_establishment: epe,
+          rating_issue_reference_id: in_active_review_reference_id
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
@@ -351,6 +366,10 @@ class Fakes::BGSService
     records = self.class.end_product_records || {}
 
     records[veteran_id] || records[:default] || []
+  end
+
+  def cancel_end_product(veteran_id, end_product_code, end_product_modifier)
+    # noop
   end
 
   def fetch_veteran_info(vbms_id)
