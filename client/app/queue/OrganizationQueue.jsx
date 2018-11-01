@@ -101,11 +101,6 @@ const mapDispatchToProps = (dispatch) => ({
   }, dispatch)
 });
 
-// take state
-// getTasks from state
-// create selector for tasks that are {assigned, new, completed}
-// select tasks that are {assigned, new, completed}
-
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
 
@@ -127,12 +122,7 @@ const UnassignedTasksTab = connect(
   });
 
 const AssignedTasksTab = connect(
-  (state: State) => { 
-    debugger;
-    return {
-      tasks: getAssignedOrganizationalTasks(state)
-    } 
-  })(
+  (state: State) => ({ tasks: getAssignedOrganizationalTasks(state) }))(
   (props: { tasks: Array<TaskWithAppeal> }) => {
     return <React.Fragment>
       <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
