@@ -92,6 +92,7 @@ class JudgeTask < Task
 
   def self.eligible_for_assigment?(task)
     # Hearing cases will not be processed until February 2019
+    return false if task.appeal.class == LegacyAppeal
     return false if task.appeal.hearing_docket?
 
     # If it's an evidence submission case, we need to wait until the

@@ -43,10 +43,10 @@ class JudgeReviewTaskListView extends React.PureComponent {
     let tableContent;
 
     if (reviewableCount === 0) {
-      tableContent = <h2 {...css({ textAlign: 'center',
+      tableContent = <p {...css({ textAlign: 'center',
         marginTop: '3rem' })}>
-        {COPY.NO_CASES_IN_QUEUE_MESSAGE}<Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link>.
-      </h2>;
+        {COPY.NO_CASES_IN_QUEUE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.
+      </p>;
     } else {
       tableContent = <TaskTable
         includeDetailsLink
