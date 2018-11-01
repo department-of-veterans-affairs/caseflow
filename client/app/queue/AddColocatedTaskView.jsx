@@ -36,7 +36,8 @@ type ComponentState = {|
 |};
 
 type Params = {|
-  appealId: string
+  appealId: string,
+  taskId: string
 |};
 
 type Props = Params & {|
@@ -44,7 +45,7 @@ type Props = Params & {|
   highlightFormItems: boolean,
   error: ?UiStateMessage,
   appeal: Appeal,
-  tasks: Array<Task>,
+  task: Task,
   // dispatch
   requestSave: typeof requestSave,
   setTaskAttrs: typeof setTaskAttrs,

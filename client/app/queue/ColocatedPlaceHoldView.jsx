@@ -41,6 +41,7 @@ type ViewState = {|
 |};
 
 type Params = {|
+  taskId: string,
   appealId: string
 |};
 

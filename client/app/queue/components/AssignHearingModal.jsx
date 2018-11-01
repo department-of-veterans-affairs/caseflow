@@ -39,6 +39,7 @@ import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../../hearings/constants/
 
 type Params = {|
   task: Task,
+  taskId: string,
   appeal: Appeal,
   appealId: string,
 |};

@@ -263,8 +263,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
             })}
             {!appeal.isLegacyAppeal && <span {...editButton}>
               <Link
-                to={`/queue/appeals/${appeal.externalId}/tasks/` +
-                  `${primaryTask.uniqueId}/modal/advanced_on_docket_motion`}>
+                to={`/queue/appeals/${appeal.externalId}/modal/advanced_on_docket_motion`}>
                 Edit
               </Link>
             </span>}

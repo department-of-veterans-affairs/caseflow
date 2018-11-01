@@ -256,7 +256,7 @@ class QueueApp extends React.PureComponent<Props> {
             title="Unassigned Cases | Caseflow"
             render={this.routedJudgeQueueList('assign')} />
           <Route
-            path="/queue/appeals/:appealId/tasks/:taskId/modal/advanced_on_docket_motion"
+            path="/queue/appeals/:appealId/modal/advanced_on_docket_motion"
             render={this.routedAdvancedOnDocketMotion} />
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_TEAM.value}`}
