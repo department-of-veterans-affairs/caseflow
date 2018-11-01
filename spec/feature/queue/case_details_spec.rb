@@ -287,7 +287,6 @@ RSpec.feature "Case details" do
     scenario "only eligble issues should appear in case details page" do
       visit "/queue/appeals/#{appeal.uuid}"
 
-      # byebug
       expect(page).to have_content("Issue #{eligble_issue_cnt}")
       expect(page).to_not have_content("Issue #{eligble_issue_cnt + 1}")
     end
