@@ -3,14 +3,6 @@ RSpec.describe HearingsController, type: :controller do
   let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
   let(:hearing) { create(:hearing) }
 
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   describe "PATCH update" do
     it "should be successful" do
       params = { notes: "Test",

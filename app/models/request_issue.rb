@@ -4,6 +4,8 @@ class RequestIssue < ApplicationRecord
   has_many :decision_issues
   has_many :remand_reasons
   has_many :decision_rating_issues, foreign_key: "source_request_issue_id", class_name: "RatingIssue"
+  has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
+  belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
 
   # enum is symbol, but validates requires a string
   validates :ineligible_reason, exclusion: { in: ["untimely"] }, if: proc { |reqi| reqi.untimely_exemption }
@@ -57,6 +59,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def status_active?
+    return appeal_active? if review_request.is_a?(Appeal)
     return false unless end_product_establishment
     end_product_establishment.status_active?
   end
@@ -88,10 +91,13 @@ class RequestIssue < ApplicationRecord
       reference_id: rating_issue_reference_id,
       profile_date: rating_issue_profile_date,
       description: description,
+      contention_text: contention_text,
       decision_date: decision_date,
       category: issue_category,
       notes: notes,
-      is_unidentified: is_unidentified
+      is_unidentified: is_unidentified,
+      ineligible_reason: ineligible_reason,
+      title_of_active_review: duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
     }
   end
 
@@ -138,7 +144,7 @@ class RequestIssue < ApplicationRecord
     contested_rating_issue_ui_hash = fetch_contested_rating_issue_ui_hash
     if contested_rating_issue_ui_hash && contested_rating_issue_ui_hash[review_type].present?
       self.ineligible_reason = reason
-      self.ineligible_request_issue_id = contested_rating_issue_ui_hash[review_type]
+      self.ineligible_due_to_id = contested_rating_issue_ui_hash[review_type]
     end
   end
 
@@ -152,6 +158,7 @@ class RequestIssue < ApplicationRecord
     existing_request_issue = self.class.find_active_by_reference_id(rating_issue_reference_id)
     if existing_request_issue
       self.ineligible_reason = :duplicate_of_issue_in_active_review
+      self.ineligible_due_to = existing_request_issue
     end
   end
 
@@ -173,5 +180,9 @@ class RequestIssue < ApplicationRecord
     if decision_date < (review_request.receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
       self.ineligible_reason = :untimely
     end
+  end
+
+  def appeal_active?
+    review_request.tasks.where.not(status: Constants.TASK_STATUSES.completed).count > 0
   end
 end

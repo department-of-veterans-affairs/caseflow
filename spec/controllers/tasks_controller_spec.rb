@@ -1,13 +1,11 @@
 RSpec.describe TasksController, type: :controller do
   before do
     Fakes::Initializer.load!
-    FeatureToggle.enable!(:test_facols)
     FeatureToggle.enable!(:colocated_queue)
     User.authenticate!(roles: ["System Admin"])
   end
 
   after do
-    FeatureToggle.disable!(:test_facols)
     FeatureToggle.disable!(:colocated_queue)
   end
 
@@ -133,7 +131,6 @@ RSpec.describe TasksController, type: :controller do
 
       context "when a task is assignable" do
         let(:root_task) { FactoryBot.create(:root_task) }
-        let(:field) { "sdept" }
 
         let(:org_1) { FactoryBot.create(:organization) }
         let(:org_1_member_cnt) { 6 }
@@ -146,15 +143,7 @@ RSpec.describe TasksController, type: :controller do
         end
 
         before do
-          StaffFieldForOrganization.create!(organization: org_1, name: field, values: [org_1.name])
-          org_1_members.each do |u|
-            FeatureToggle.enable!(org_1.feature.to_sym, users: [u.css_id])
-            FactoryBot.create(:staff, user: u, "#{field}": org_1.name)
-          end
-        end
-
-        after do
-          FeatureToggle.disable!(org_1.feature.to_sym)
+          org_1_members.each { |u| OrganizationsUser.add_user_to_organization(u, org_1) }
         end
 
         context "when user is assigned an individual task" do
@@ -377,7 +366,15 @@ RSpec.describe TasksController, type: :controller do
               "action": "Assign Hearing",
               "external_id": appeal.vacols_id,
               "assigned_to_type": "User",
-              "assigned_to_id": hearings_user.id
+              "assigned_to_id": hearings_user.id,
+              "business_payloads": {
+                description: "test",
+                values: {
+                  "regional_office_value": "RO17",
+                  "hearing_date": "2018-10-25",
+                  "hearing_time": "8:00"
+                }
+              }
             }]
           end
 
@@ -389,6 +386,14 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq hearings_user.id
+
+            payloads = response_body.first["attributes"]["task_business_payloads"]
+            expect(payloads.size).to eq 1
+            expect(payloads[0]["description"]).to eq("test")
+            expect(payloads[0]["values"].size).to eq 3
+            expect(payloads[0]["values"]["regional_office_value"]).to eq("RO17")
+            expect(payloads[0]["values"]["hearing_date"]).to eq("2018-10-25")
+            expect(payloads[0]["values"]["hearing_time"]).to eq("8:00")
           end
         end
       end

@@ -1,12 +1,4 @@
 describe RootTask do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   context ".create_root_and_sub_tasks!" do
     let(:participant_id_with_pva) { "1234" }
     let(:participant_id_with_aml) { "5678" }
@@ -40,7 +32,6 @@ describe RootTask do
     let!(:pva) do
       Vso.create(
         name: "Paralyzed Veterans Of America",
-        feature: "vso_queue_pva",
         role: "VSO",
         url: "paralyzed-veterans-of-america",
         participant_id: "2452383"
@@ -51,7 +42,6 @@ describe RootTask do
       let!(:vva) do
         Vso.create(
           name: "Vietnam Veterans Of America",
-          feature: "vso_queue_vva",
           role: "VSO",
           url: "vietnam-veterans-of-america",
           participant_id: "2452415"

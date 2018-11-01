@@ -27,7 +27,7 @@ class Judge
 
   def upcoming_hearings_on(date, is_fetching_issues = false)
     upcoming_hearings(is_fetching_issues).select do |hearing|
-      hearing.date.between?(date, date.end_of_day)
+      hearing.date.between?(date.beginning_of_day, date.end_of_day)
     end
   end
 
@@ -53,11 +53,8 @@ class Judge
   end
 
   class << self
-    attr_writer :repository
-
     def repository
-      return JudgeRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= JudgeRepository
+      JudgeRepository
     end
 
     def list_all

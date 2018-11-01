@@ -31,13 +31,7 @@ RSpec.feature "Case details" do
   let!(:vacols_colocated) { FactoryBot.create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
 
   before do
-    FeatureToggle.enable!(:test_facols)
-
     User.authenticate!(user: attorney_user)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   context "hearings pane on attorney task detail view" do
@@ -388,8 +382,7 @@ RSpec.feature "Case details" do
       let(:user) { FactoryBot.create(:user) }
 
       before do
-        StaffFieldForOrganization.create!(organization: qr, name: "sdept", values: %w[QR])
-        FactoryBot.create(:staff, user: user, sdept: "QR", sattyid: nil)
+        OrganizationsUser.add_user_to_organization(user, qr)
         User.authenticate!(user: user)
       end
 

@@ -145,6 +145,11 @@ cd /opt/oracle/instantclient_11_2
 sudo ln -s libclntsh.so.12.1 libclntsh.so
 ```
 
+### Clone this repo
+Navigate to the directory you'd like to clone this repo into and run:
+
+    git clone https://github.com/department-of-veterans-affairs/caseflow.git
+
 ### Install Ruby dependencies
 
     cd caseflow

@@ -42,8 +42,6 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
     const {
       appealId,
       appealDetails,
-      caseflowTasks,
-      vacolsTasks,
       userRole
     } = this.props;
 
@@ -57,22 +55,19 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
       );
     }
 
-    if ((!vacolsTasks || _.filter(vacolsTasks, (task) => task.externalAppealId === appealId).length === 0) &&
-      (!caseflowTasks || _.filter(caseflowTasks, (task) => task.externalAppealId === appealId).length === 0)) {
-      const taskPromise = ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
-        const legacyTasks = _.every(response.body.tasks, (task) => task.attributes.appeal_type === 'LegacyAppeal');
+    const taskPromise = ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
+      const legacyTasks = _.every(response.body.tasks, (task) => task.attributes.appeal_type === 'LegacyAppeal');
 
-        if (legacyTasks && [USER_ROLE_TYPES.attorney, USER_ROLE_TYPES.judge].includes(userRole)) {
-          this.props.onReceiveTasks({ amaTasks: {},
-            tasks: prepareLegacyTasksForStore(response.body.tasks) });
-        } else {
-          this.props.onReceiveTasks({ tasks: {},
-            amaTasks: prepareTasksForStore(response.body.tasks) });
-        }
-      });
+      if (legacyTasks && [USER_ROLE_TYPES.attorney, USER_ROLE_TYPES.judge].includes(userRole)) {
+        this.props.onReceiveTasks({ amaTasks: {},
+          tasks: prepareLegacyTasksForStore(response.body.tasks) });
+      } else {
+        this.props.onReceiveTasks({ tasks: {},
+          amaTasks: prepareTasksForStore(response.body.tasks) });
+      }
+    });
 
-      promises.push(taskPromise);
-    }
+    promises.push(taskPromise);
 
     return Promise.all(promises);
   };

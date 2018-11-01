@@ -1,14 +1,6 @@
 require "rails_helper"
 
 RSpec.feature "Send feedback" do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let!(:current_user) { User.authenticate! }
   let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
 

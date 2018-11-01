@@ -1,9 +1,6 @@
 require "rails_helper"
 
 RSpec.feature "Task queue" do
-  before { FeatureToggle.enable!(:test_facols) }
-  after { FeatureToggle.disable!(:test_facols) }
-
   let(:attorney_user) { FactoryBot.create(:user) }
   let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 
@@ -82,7 +79,6 @@ RSpec.feature "Task queue" do
     let(:vso_employee) { FactoryBot.create(:user, :vso_role) }
     let!(:vso_task) { FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso) }
     before do
-      FeatureToggle.enable!(vso.feature.to_sym, users: [vso_employee.css_id])
       User.authenticate!(user: vso_employee)
       allow_any_instance_of(Vso).to receive(:user_has_access?).and_return(true)
       visit(vso.path)

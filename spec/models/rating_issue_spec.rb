@@ -2,15 +2,36 @@ require "rails_helper"
 
 describe RatingIssue do
   before do
-    FeatureToggle.enable!(:test_facols)
+    Time.zone = "UTC"
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let(:promulgation_date) { Time.zone.today - 30 }
+
+  context ".from_ui_hash" do
+    subject { RatingIssue.from_ui_hash(ui_hash) }
+
+    let(:ui_hash) do
+      {
+        reference_id: "NBA",
+        participant_id: "123",
+        promulgation_date: promulgation_date,
+        decision_text: "This broadcast may not be reproduced",
+        extra_attribute: "foobar"
+      }
+    end
+
+    it { is_expected.to be_a(RatingIssue) }
+
+    it do
+      is_expected.to have_attributes(
+        reference_id: "NBA",
+        participant_id: 123,
+        promulgation_date: promulgation_date,
+        decision_text: "This broadcast may not be reproduced"
+      )
+    end
+  end
 
   context ".from_bgs_hash" do
     subject { RatingIssue.from_bgs_hash(bgs_record) }
@@ -73,7 +94,7 @@ describe RatingIssue do
     end
   end
 
-  context "#in_active_review" do
+  context "#title_of_active_review" do
     before do
       Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
     end
@@ -105,7 +126,7 @@ describe RatingIssue do
       request_issue
       rating_issue = RatingIssue.new(reference_id: reference_id)
 
-      expect(rating_issue.in_active_review).to eq("Supplemental Claim")
+      expect(rating_issue.title_of_active_review).to eq("Supplemental Claim")
     end
 
     context "removed issue" do
@@ -115,7 +136,7 @@ describe RatingIssue do
         request_issue
         rating_issue = RatingIssue.new(reference_id: reference_id)
 
-        expect(rating_issue.in_active_review).to be_nil
+        expect(rating_issue.title_of_active_review).to be_nil
       end
     end
 
@@ -123,14 +144,14 @@ describe RatingIssue do
       request_issue
       rating_issue = RatingIssue.new(reference_id: "something-else")
 
-      expect(rating_issue.in_active_review).to be_nil
+      expect(rating_issue.title_of_active_review).to be_nil
     end
 
     it "returns nil if similar RequestIssue exists for inactive EPE" do
       inactive_request_issue
       rating_issue = RatingIssue.new(reference_id: reference_id)
 
-      expect(rating_issue.in_active_review).to be_nil
+      expect(rating_issue.title_of_active_review).to be_nil
     end
   end
 
