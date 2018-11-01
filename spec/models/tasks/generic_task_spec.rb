@@ -57,6 +57,31 @@ describe GenericTask do
     end
   end
 
+  describe ".available_actions_unwrapper" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:task) { GenericTask.find(FactoryBot.create(:generic_task, assigned_to: assignee, status: status).id) }
+    subject { task.available_actions_unwrapper(user) }
+
+    context "when task assigned to the user is has been completed" do
+      let(:assignee) { user }
+      let(:status) { Constants.TASK_STATUSES.completed }
+      let(:expected_actions) { [] }
+      it "should return an empty list" do
+        expect(subject).to eq(expected_actions)
+      end
+    end
+
+    context "when task assigned to an organization the user is a member of is on hold" do
+      let(:assignee) { Organization.find(FactoryBot.create(:organization).id) }
+      let(:status) { Constants.TASK_STATUSES.on_hold }
+      let(:expected_actions) { [] }
+      before { allow_any_instance_of(Organization).to receive(:user_has_access?).and_return(true) }
+      it "should return an empty list" do
+        expect(subject).to eq(expected_actions)
+      end
+    end
+  end
+
   describe ".verify_user_access!" do
     let(:user) { FactoryBot.create(:user) }
     let(:other_user) { FactoryBot.create(:user) }

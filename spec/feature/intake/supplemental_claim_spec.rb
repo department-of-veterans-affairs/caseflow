@@ -5,7 +5,6 @@ RSpec.feature "Supplemental Claim Intake" do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
-    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 26))
@@ -18,7 +17,6 @@ RSpec.feature "Supplemental Claim Intake" do
   after do
     FeatureToggle.disable!(:intakeAma)
     FeatureToggle.disable!(:intake_legacy_opt_in)
-    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran) do
@@ -222,7 +220,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_content(
       "A #{Constants.INTAKE_FORM_NAMES_SHORT.supplemental_claim} Nonrating EP is being established:"
     )
-    expect(page).to have_content("Contention: Description for Active Duty Adjustments")
+    expect(page).to have_content("Contention: Active Duty Adjustments - Description for Active Duty Adjustments")
 
     # ratings end product
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
@@ -532,6 +530,7 @@ RSpec.feature "Supplemental Claim Intake" do
       safe_click "#button-finish-intake"
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
+      expect(page).to have_content("This is an unidentified issue")
 
       expect(SupplementalClaim.find_by(
                id: supplemental_claim.id,

@@ -1,12 +1,4 @@
 describe UserRepository do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let(:css_id) { "TEST1" }
 
   context ".vacols_role" do

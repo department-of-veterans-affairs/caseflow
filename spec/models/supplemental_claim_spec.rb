@@ -1,13 +1,11 @@
 describe SupplementalClaim do
   before do
     FeatureToggle.enable!(:intake_legacy_opt_in)
-    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
   end
 
   after do
     FeatureToggle.disable!(:intake_legacy_opt_in)
-    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran_file_number) { "64205555" }
