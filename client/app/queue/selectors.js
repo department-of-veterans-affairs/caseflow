@@ -102,18 +102,20 @@ export const getTasksForAppeal = createSelector(
 // UNASSIGNED (to a person, but assigned to a TEAM)
 export const getUnassignedOrganizationalTasks = createSelector(
   [tasksWithAppealSelector],
-  (tasks: Tasks) => _.filter(tasks, (task) => (task.status === 'assigned' || task.status === 'in_progress'))
+  (tasks: Tasks) => _.filter(tasks, (task) => {
+    return (task.status === TASK_STATUSES.assigned || task.status === TASK_STATUSES.in_progress);
+  })
 );
 
 // ASSIGNED = status === 'on_hold'
 export const getAssignedOrganizationalTasks = createSelector(
   [tasksWithAppealSelector],
-  (tasks: Tasks) => _.filter(tasks, (task) => (task.status === 'on_hold'))
+  (tasks: Tasks) => _.filter(tasks, (task) => (task.status === TASK_STATUSES.on_hold))
 );
 
 export const getCompletedOrganizationalTasks = createSelector(
   [tasksWithAppealSelector],
-  (tasks: Tasks) => _.filter(tasks, (task) => task.status === 'completed')
+  (tasks: Tasks) => _.filter(tasks, (task) => task.status === TASK_STATUSES.completed)
 );
 
 export const tasksForAppealAssignedToUserSelector = createSelector(

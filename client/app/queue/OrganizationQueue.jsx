@@ -18,6 +18,7 @@ import {
   tasksWithAppealSelector
 } from './selectors';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
+import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
@@ -28,13 +29,15 @@ class OrganizationQueue extends React.PureComponent {
   }
 
   render = () => {
+
+    const numberOfCases = countCasesByType(this.props.tasks);
     const tabs = [
       {
-        label: sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, /* TODO(joey) */ 0),
+        label: sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, numberOfCases['assigned'] + numberOfCases['in_progress']),
         page: <UnassignedTasksTab />
       },
       {
-        label: sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE, /* TODO(joey) */ 0),
+        label: sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE, numberOfCases['on_hold']),
         page: <AssignedTasksTab />
       },
       {
@@ -141,3 +144,21 @@ const CompletedTasksTab = connect(
       {content}
     </React.Fragment>;
   });
+
+const countCasesByType = (tasks) => {
+  let numberOfCases = {
+    [TASK_STATUSES.assigned]: 0,
+    [TASK_STATUSES.in_progress]: 0,
+    [TASK_STATUSES.on_hold]: 0,
+    [TASK_STATUSES.completed]: 0,
+  };
+
+  return _.reduce(tasks, (cases, task) => {
+    if (cases[task.status]) {
+      cases[task.status] += 1;
+    } else {
+      cases[task.status] = 1;
+    }
+    return cases;
+  }, numberOfCases);
+};
