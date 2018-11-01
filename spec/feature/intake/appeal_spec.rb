@@ -259,7 +259,7 @@ RSpec.feature "Appeal Intake" do
 
     safe_click "#button-submit-review"
 
-    expect(page).to have_content("This Veteran has no rating, disability issues")
+    expect(page).to have_content("This Veteran has no rated, disability issues")
 
     safe_click "#button-add-issue"
 
