@@ -36,6 +36,14 @@ describe UserRepository do
       end
     end
 
+    context "when a user is both a co-located admin and a dispatcher" do
+      let!(:staff) { create(:staff, sdept: "DSP", stitle: "A2", sattyid: nil, sdomainid: css_id) }
+
+      it "should return a co-located role" do
+        expect(subject).to eq ["colocated", "dispatch"]
+      end
+    end
+
     context "when a user is an acting judge and has an attorney number" do
       let!(:staff) { create(:staff, svlj: "A", sattyid: "1234", sdomainid: css_id, sactive: "A") }
 
