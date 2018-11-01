@@ -1,7 +1,7 @@
 # A claim review is a short hand term to refer to either a supplemental claim or
 # higher level review as defined in the Appeals Modernization Act of 2017
 
-class ClaimReview < AmaReview
+class ClaimReview < DecisionReview
   include Asyncable
 
   has_many :end_product_establishments, as: :source
