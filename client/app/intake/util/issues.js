@@ -78,6 +78,8 @@ export const validNonRatedIssue = (issue) => {
   return true;
 };
 
+// formatRequestIssues takes an array of requestIssues in the server ui_hash format
+// and returns objects useful for displaying in UI
 export const formatRequestIssues = (requestIssues) => {
   return requestIssues.map((issue) => {
     if (issue.category) {
@@ -85,7 +87,9 @@ export const formatRequestIssues = (requestIssues) => {
         isRated: false,
         category: issue.category,
         description: issue.description,
-        decisionDate: issue.decision_date
+        decisionDate: issue.decision_date,
+        ineligibleReason: issue.ineligible_reason,
+        contentionText: issue.contention_text
       };
     }
 
@@ -93,6 +97,7 @@ export const formatRequestIssues = (requestIssues) => {
     if (issue.is_unidentified) {
       return {
         description: issue.description,
+        contentionText: issue.contention_text,
         notes: issue.notes,
         isUnidentified: issue.is_unidentified
       };
@@ -106,7 +111,10 @@ export const formatRequestIssues = (requestIssues) => {
       id: issue.reference_id,
       profileDate: issueDate.toISOString(),
       notes: issue.notes,
-      description: issue.description
+      description: issue.description,
+      ineligibleReason: issue.ineligible_reason,
+      titleOfActiveReview: issue.title_of_active_review,
+      contentionText: issue.contention_text
     };
   });
 };
@@ -261,11 +269,12 @@ export const formatAddedIssues = (intakeData, amaActivated = false) => {
         text: ratingIssues[issue.id],
         date: formatDateStr(issue.profileDate),
         notes: issue.notes,
-        inActiveReview: issue.inActiveReview,
+        titleOfActiveReview: issue.titleOfActiveReview,
         sourceHigherLevelReview: issue.sourceHigherLevelReview,
         promulgationDate: issue.promulgationDate,
         timely: issue.timely,
-        beforeAma: issue.profileDate < DATES.AMA_ACTIVATION
+        beforeAma: issue.profileDate < DATES.AMA_ACTIVATION,
+        ineligibleReason: issue.ineligibleReason
       };
     }
 
@@ -281,7 +290,8 @@ export const formatAddedIssues = (intakeData, amaActivated = false) => {
       text: `${issue.category} - ${issue.description}`,
       date: formatDate(issue.decisionDate),
       timely: isTimely,
-      beforeAma: issue.decisionDate < DATES.AMA_ACTIVATION
+      beforeAma: issue.decisionDate < DATES.AMA_ACTIVATION,
+      ineligibleReason: issue.ineligibleReason
     };
   });
 };

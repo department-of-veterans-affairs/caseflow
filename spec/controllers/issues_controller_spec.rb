@@ -1,12 +1,4 @@
 RSpec.describe IssuesController, type: :controller do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let!(:user) { User.authenticate!(roles: ["System Admin"]) }
   let(:case_issue) { nil }
   let(:appeal) do

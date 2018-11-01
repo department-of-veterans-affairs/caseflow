@@ -87,10 +87,13 @@ class RequestIssue < ApplicationRecord
       reference_id: rating_issue_reference_id,
       profile_date: rating_issue_profile_date,
       description: description,
+      contention_text: contention_text,
       decision_date: decision_date,
       category: issue_category,
       notes: notes,
-      is_unidentified: is_unidentified
+      is_unidentified: is_unidentified,
+      ineligible_reason: ineligible_reason,
+      title_of_active_review: duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
     }
   end
 
