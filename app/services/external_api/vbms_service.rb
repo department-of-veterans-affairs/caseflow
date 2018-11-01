@@ -59,10 +59,10 @@ class ExternalApi::VBMSService
     send_and_log_request(veteran_file_number, request)
   end
 
-  def self.upload_document_to_vbms(appeal, form8)
+  def self.upload_document_to_vbms(appeal, uploadable_document)
     @vbms_client ||= init_vbms_client
-    response = initialize_upload(appeal, form8)
-    upload_document(appeal.vbms_id, response.upload_token, form8.pdf_location)
+    response = initialize_upload(appeal, uploadable_document)
+    upload_document(appeal.vbms_id, response.upload_token, uploadable_document.pdf_location)
   end
 
   def self.initialize_upload(appeal, uploadable_document)
@@ -74,7 +74,7 @@ class ExternalApi::VBMSService
       file_number: appeal.sanitized_vbms_id,
       va_receive_date: uploadable_document.upload_date,
       doc_type: uploadable_document.document_type_id,
-      source: "VACOLS",
+      source: uploadable_document.source,
       subject: uploadable_document.document_type,
       new_mail: true
     )

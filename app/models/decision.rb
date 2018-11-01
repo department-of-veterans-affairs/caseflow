@@ -10,4 +10,8 @@ class Decision < ApplicationRecord
   def pdf_location
     "/Users/vhaisaroltsa/Desktop/sample.pdf"
   end
+
+  def source
+    "VACOLS"
+  end
 end
