@@ -147,10 +147,6 @@ class Appeal < AmaReview
     new_issues.each(&:save!)
   end
 
-  def mark_rated_request_issues_to_reassociate!
-    request_issues.select(&:rated?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
-  end
-
   def serializer_class
     ::WorkQueue::AppealSerializer
   end

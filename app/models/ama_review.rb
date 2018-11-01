@@ -89,6 +89,10 @@ class AmaReview < ApplicationRecord
     request_issues.destroy_all unless request_issues.empty?
   end
 
+  def mark_rated_request_issues_to_reassociate!
+    request_issues.select(&:rated?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
+  end
+
   private
 
   def ratings_with_issues
