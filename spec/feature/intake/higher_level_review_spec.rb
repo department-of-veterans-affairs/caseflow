@@ -228,7 +228,7 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_content(
       "A #{Constants.INTAKE_FORM_NAMES_SHORT.higher_level_review} Nonrating EP is being established:"
     )
-    expect(page).to have_content("Contention: Description for Active Duty Adjustments")
+    expect(page).to have_content("Contention: Active Duty Adjustments - Description for Active Duty Adjustments")
     expect(page).to have_content("Informal Conference Tracked Item")
 
     # ratings end product
@@ -692,6 +692,7 @@ RSpec.feature "Higher-Level Review" do
       safe_click "#button-finish-intake"
 
       expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+      expect(page).to have_content("This is an unidentified issue")
 
       # make sure that database is populated
       expect(HigherLevelReview.find_by(
