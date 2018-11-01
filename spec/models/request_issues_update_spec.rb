@@ -256,7 +256,7 @@ describe RequestIssuesUpdate do
         let(:request_issues_data) do
           existing_request_issues_data + [{
             reference_id: "issue3",
-            decision_text: "Nonrated issue",
+            decision_text: "Nonrating issue",
             category: "Apportionment"
           }]
         end
@@ -294,7 +294,7 @@ describe RequestIssuesUpdate do
       let(:nonrating_request_issue_contention) do
         Generators::Contention.build(
           claim_id: nonrating_end_product_establishment.reference_id,
-          text: "Unrated issue"
+          text: "Nonrating issue"
         )
       end
 
@@ -334,8 +334,8 @@ describe RequestIssuesUpdate do
         expect(review.request_issues.first.rating_issue_associated_at).to eq(Time.zone.now)
 
         # ep should not be canceled because 1 rating request issue still exists
-        rated_end_product_establishment.reload
-        expect(rated_end_product_establishment.synced_status).to eq(nil)
+        rating_end_product_establishment.reload
+        expect(rating_end_product_establishment.synced_status).to eq(nil)
       end
 
       it "cancels end products with no request issues" do
@@ -349,7 +349,7 @@ describe RequestIssuesUpdate do
         )
 
         allow_remove_contention
-        allow_associate_rated_issues
+        allow_associate_rating_request_issues
 
         expect(subject).to be_truthy
 

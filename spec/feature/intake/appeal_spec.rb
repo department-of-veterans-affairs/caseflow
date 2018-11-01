@@ -371,7 +371,7 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_button("Add this issue", disabled: false)
     safe_click ".add-issue"
     expect(page).to have_content("2 issues")
-    # this nonrated issue is timely
+    # this nonrating request issue is timely
     expect(page).to_not have_content(
       "Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
     )
@@ -393,14 +393,14 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content("4 issues")
     expect(page).to have_content("4. Old injury in review is ineligible because it's already under review as a Appeal")
 
-    # add untimely rated issue
+    # add untimely rating request issue
     safe_click "#button-add-issue"
     find_all("label", text: "Really old injury").first.click
     safe_click ".add-issue"
     expect(page).to have_content("5 issues")
     expect(page).to have_content("5. Really old injury is ineligible because it has a prior decision date")
 
-    # add untimely nonrated issue
+    # add untimely nonrating request issue
     safe_click "#button-add-issue"
     safe_click ".no-matching-issues"
     expect(page).to have_button("Add this issue", disabled: true)
