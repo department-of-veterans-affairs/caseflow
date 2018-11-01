@@ -4,7 +4,7 @@ RSpec.feature "Supplemental Claim Intake" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
-    FeatureToggle.enable!(:test_facols)
+    FeatureToggle.enable!(:intake_legacy_opt_in)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 26))
@@ -16,7 +16,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
   after do
     FeatureToggle.disable!(:intakeAma)
-    FeatureToggle.disable!(:test_facols)
+    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
   let(:veteran) do
@@ -149,6 +149,10 @@ RSpec.feature "Supplemental Claim Intake" do
     fill_in "What is the payee code for this claimant?", with: "11 - C&P First Child"
     find("#cf-payee-code").send_keys :enter
 
+    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
     safe_click "#button-submit-review"
 
     expect(page).to have_current_path("/intake/finish")
@@ -157,6 +161,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(find("#different-claimant-option_true", visible: false)).to be_checked
     expect(find_field("Baz Qux, Child", visible: false)).to be_checked
+    expect(find("#legacy-opt-in_false", visible: false)).to be_checked
 
     safe_click "#button-submit-review"
 
@@ -174,6 +179,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(supplemental_claim).to_not be_nil
     expect(supplemental_claim.receipt_date).to eq(receipt_date)
     expect(supplemental_claim.benefit_type).to eq(benefit_type)
+    expect(supplemental_claim.legacy_opt_in_approved).to eq(false)
     expect(supplemental_claim.claimants.first).to have_attributes(
       participant_id: "5382910293",
       payee_code: "11"
@@ -214,7 +220,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_content(
       "A #{Constants.INTAKE_FORM_NAMES_SHORT.supplemental_claim} Nonrating EP is being established:"
     )
-    expect(page).to have_content("Contention: Description for Active Duty Adjustments")
+    expect(page).to have_content("Contention: Active Duty Adjustments - Description for Active Duty Adjustments")
 
     # ratings end product
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
@@ -333,16 +339,8 @@ RSpec.feature "Supplemental Claim Intake" do
   end
 
   it "Shows a review error when something goes wrong" do
-    intake = SupplementalClaimIntake.new(veteran_file_number: "12341234", user: current_user)
-    intake.start!
-
+    start_supplemental_claim(veteran_no_ratings)
     visit "/intake"
-
-    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
-
-    within_fieldset("Is the claimant someone other than the Veteran?") do
-      find("label", text: "No", match: :prefer_exact).click
-    end
 
     ## Validate error message when complete intake fails
     expect_any_instance_of(SupplementalClaimIntake).to receive(:review!).and_raise("A random error. Oh no!")
@@ -357,7 +355,8 @@ RSpec.feature "Supplemental Claim Intake" do
     supplemental_claim = SupplementalClaim.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
-      benefit_type: is_comp ? "compensation" : "education"
+      benefit_type: is_comp ? "compensation" : "education",
+      legacy_opt_in_approved: false
     )
 
     intake = SupplementalClaimIntake.create!(
@@ -531,6 +530,7 @@ RSpec.feature "Supplemental Claim Intake" do
       safe_click "#button-finish-intake"
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
+      expect(page).to have_content("This is an unidentified issue")
 
       expect(SupplementalClaim.find_by(
                id: supplemental_claim.id,

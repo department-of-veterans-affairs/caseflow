@@ -1,16 +1,21 @@
 describe AppealSeriesAlerts do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    allow(AppealRepository).to receive(:latest_docket_month) { docket_month }
+    allow(AppealRepository).to receive(:docket_counts_by_month) do
+      (1.year.ago.to_date..Time.zone.today).map { |d| Date.new(d.year, d.month, 1) }.uniq.each_with_index.map do |d, i|
+        {
+          "year" => d.year,
+          "month" => d.month,
+          "cumsum_n" => i * 10_000 + 3456,
+          "cumsum_ready_n" => i * 5000 + 3456
+        }
+      end
+    end
     DocketSnapshot.create
   end
 
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
+  let(:docket_month) { 1.year.ago.to_date.beginning_of_month }
 
   let(:appeal) do
     create(:legacy_appeal, vacols_case:
@@ -127,7 +132,7 @@ describe AppealSeriesAlerts do
       before do
         series.appeals.each do |appeal|
           appeal.aod = false
-          appeal.case_assignment_exists = false
+          appeal.case_assignment_exists = true
         end
       end
 
@@ -137,7 +142,7 @@ describe AppealSeriesAlerts do
     end
 
     context "blocked_by_vso alert" do
-      let(:form9_date) { 1.year.ago }
+      let(:form9_date) { docket_month }
       let(:status) { "ACT" }
       let(:location_code) { "55" }
 

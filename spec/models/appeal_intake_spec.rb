@@ -1,11 +1,6 @@
 describe AppealIntake do
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran_file_number) { "64205555" }
@@ -72,6 +67,7 @@ describe AppealIntake do
     let(:docket_type) { "hearing" }
     let(:claimant) { nil }
     let(:payee_code) { nil }
+    let(:legacy_opt_in_approved) { true }
     let(:detail) { Appeal.create!(veteran_file_number: veteran_file_number) }
 
     let(:request_params) do
@@ -79,7 +75,8 @@ describe AppealIntake do
         receipt_date: receipt_date,
         docket_type: docket_type,
         claimant: claimant,
-        payee_code: payee_code
+        payee_code: payee_code,
+        legacy_opt_in_approved: legacy_opt_in_approved
       )
     end
 
@@ -88,7 +85,8 @@ describe AppealIntake do
 
       expect(intake.detail).to have_attributes(
         receipt_date: Date.new(2018, 5, 25),
-        docket_type: "hearing"
+        docket_type: "hearing",
+        legacy_opt_in_approved: true
       )
     end
 

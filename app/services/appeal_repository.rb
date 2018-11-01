@@ -37,7 +37,7 @@ class AppealRepository
       VACOLS::Case.where(bfcorlid: vbms_id).includes(:folder, :correspondent, :representatives)
     end
 
-    cases.map { |case_record| build_appeal(case_record) }
+    cases.map { |case_record| build_appeal(case_record, true) }
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -182,7 +182,7 @@ class AppealRepository
       last_location_change_date: normalize_vacols_date(case_record.bfdloout),
       outcoding_date: normalize_vacols_date(folder_record.tioctime),
       private_attorney_or_agent: case_record.bfso == "T",
-      docket_number: folder_record.tinum,
+      docket_number: folder_record.tinum || "Missing Docket Number",
       docket_date: case_record.bfd19
     )
 

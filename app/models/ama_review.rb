@@ -26,8 +26,10 @@ class AmaReview < ApplicationRecord
     return unless receipt_date
 
     cached_serialized_ratings.each do |rating|
-      rating[:issues].each do |rating_issue|
-        rating_issue[:timely] = timely_rating?(Date.parse(rating_issue[:promulgation_date].to_s))
+      rating[:issues].each do |rating_issue_hash|
+        rating_issue_hash[:timely] = timely_rating?(Date.parse(rating_issue_hash[:promulgation_date].to_s))
+        # always re-compute flags that depend on data in our db
+        rating_issue_hash.merge!(RatingIssue.from_ui_hash(rating_issue_hash).ui_hash)
       end
     end
   end
@@ -102,5 +104,9 @@ class AmaReview < ApplicationRecord
     return unless receipt_date
     validate_receipt_date_not_before_ama
     validate_receipt_date_not_in_future
+  end
+
+  def legacy_opt_in_enabled?
+    FeatureToggle.enabled?(:intake_legacy_opt_in)
   end
 end
