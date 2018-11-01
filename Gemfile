@@ -104,7 +104,7 @@ group :production, :staging do
   gem "rails_stdout_logging"
 end
 
-group :stubbed, :test, :development, :demo do
+group :test, :development, :demo do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug", platforms: :ruby
   gem "pry"
@@ -147,7 +147,7 @@ group :stubbed, :test, :development, :demo do
   gem "factory_bot_rails", "~> 4.8"
 end
 
-group :stubbed, :development do
+group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem "dotenv-rails"
   gem "foreman"

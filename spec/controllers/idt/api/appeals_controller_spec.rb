@@ -1,12 +1,4 @@
 RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   describe "GET /idt/api/v1/appeals" do
     let(:user) { create(:user, css_id: "TEST_ID", full_name: "George Michael") }
 
