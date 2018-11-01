@@ -1,12 +1,4 @@
 describe ScheduleHearingTask do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let(:appeal) do
     RequestStore[:current_user] = hearings_user
     create(:legacy_appeal, vacols_case: FactoryBot.create(:case))

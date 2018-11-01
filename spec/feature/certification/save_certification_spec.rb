@@ -4,7 +4,6 @@ RSpec.feature "Save Certification" do
   before do
     Form8.pdf_service = FakePdfService
     Timecop.freeze(Time.utc(2017, 2, 2, 20, 59, 0))
-    FeatureToggle.enable!(:test_facols)
   end
 
   after do
@@ -12,7 +11,6 @@ RSpec.feature "Save Certification" do
     expected_form8 = Form8.new(vacols_id: appeal.vacols_id)
     form8_location = Form8.pdf_service.output_location_for(expected_form8)
     File.delete(form8_location) if File.exist?(form8_location)
-    FeatureToggle.disable!(:test_facols)
   end
 
   let(:appeal) do
