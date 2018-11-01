@@ -12,9 +12,8 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import {
-  getNewOrganizationalTasks,
+  getUnassignedOrganizationalTasks,
   getAssignedOrganizationalTasks,
-  getInProgressOrganizationalTasks,
   getCompletedOrganizationalTasks,
   tasksWithAppealSelector
 } from './selectors';
@@ -29,22 +28,6 @@ class OrganizationQueue extends React.PureComponent {
   }
 
   render = () => {
-    const noTasks = !_.size(this.props.tasks);
-
-    debugger;
-    
-    const content = noTasks ?
-      <h2>{COPY.NO_CASES_IN_QUEUE_MESSAGE}<Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link>.</h2> :
-      <TaskTable
-        includeDetailsLink
-        includeType
-        includeDocketNumber
-        includeIssueCount
-        includeDaysWaiting
-        includeReaderLink
-        tasks={this.props.tasks}
-      />;
-
     const tabs = [
       {
         label: sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, /* TODO(joey) */ 0),
@@ -53,10 +36,6 @@ class OrganizationQueue extends React.PureComponent {
       {
         label: sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE, /* TODO(joey) */ 0),
         page: <AssignedTasksTab />
-      },
-      {
-        label: sprintf("In progress (%d)", /* TODO(joey) */ 0),
-        page: <InProgressTasksTab />
       },
       {
         label: COPY.ORGANIZATIONAL_QUEUE_PAGE_COMPLETE_TAB_TITLE,
@@ -71,7 +50,6 @@ class OrganizationQueue extends React.PureComponent {
           name="tasks-organization-queue"
           tabs={tabs} 
         />
-        {content}
       </div>
     </AppSegment>;
   };
@@ -96,10 +74,12 @@ const mapDispatchToProps = (dispatch) => ({
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
 const UnassignedTasksTab = connect(
-  (state: State) => ({ tasks: getNewOrganizationalTasks(state) }))(
+  (state: State) => ({ tasks: getUnassignedOrganizationalTasks(state) }))(
   (props: { tasks: Array<TaskWithAppeal> }) => {
-    return <React.Fragment>
-      <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
+    const noTasks = !_.size(props.tasks);
+
+    const content = noTasks ?
+      <p>{COPY.ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.</p> :
       <TaskTable
         includeDetailsLink
         includeType
@@ -108,33 +88,21 @@ const UnassignedTasksTab = connect(
         includeDaysWaiting
         includeReaderLink
         tasks={props.tasks}
-      />
+      />;
+
+    return <React.Fragment>
+      <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
+      {content}
     </React.Fragment>;
   });
 
 const AssignedTasksTab = connect(
   (state: State) => ({ tasks: getAssignedOrganizationalTasks(state) }))(
   (props: { tasks: Array<TaskWithAppeal> }) => {
-    return <React.Fragment>
-      <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
-      <TaskTable
-        includeDetailsLink
-        includeType
-        includeDocketNumber
-        includeIssueCount
-        includeDaysOnHold
-        includeReaderLink
-        tasks={props.tasks}
-      />
-    </React.Fragment>;
-  });
+    const noTasks = !_.size(props.tasks);
 
-const InProgressTasksTab = connect(
-  (state: State) => ({ tasks: getInProgressOrganizationalTasks(state) }))(
-  (props: { tasks: Array<TaskWithAppeal> }) => {
-    debugger;
-    return <React.Fragment>
-      <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
+    const content = noTasks ?
+      <p>{COPY.ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.</p> :
       <TaskTable
         includeDetailsLink
         includeType
@@ -143,23 +111,33 @@ const InProgressTasksTab = connect(
         includeDaysWaiting
         includeReaderLink
         tasks={props.tasks}
-      />
+      />;
+
+    return <React.Fragment>
+      <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
+      {content}
     </React.Fragment>;
   });
 
 const CompletedTasksTab = connect(
   (state: State) => ({ tasks: getCompletedOrganizationalTasks(state) }))(
   (props: { tasks: Array<TaskWithAppeal> }) => {
-    return <React.Fragment>
-      <p>{COPY.COLOCATED_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}</p>
+    const noTasks = !_.size(props.tasks);
+
+    const content = noTasks ?
+      <p>{COPY.ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.</p> :
       <TaskTable
         includeDetailsLink
         includeType
         includeDocketNumber
         includeIssueCount
-        includeDaysOnHold
+        includeDaysWaiting
         includeReaderLink
         tasks={props.tasks}
-      />
+      />;
+
+    return <React.Fragment>
+      <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
+      {content}
     </React.Fragment>;
   });
