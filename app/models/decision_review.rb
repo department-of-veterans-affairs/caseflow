@@ -1,4 +1,4 @@
-class AmaReview < ApplicationRecord
+class DecisionReview < ApplicationRecord
   include CachedAttributes
 
   validate :validate_receipt_date
@@ -91,8 +91,8 @@ class AmaReview < ApplicationRecord
     request_issues.destroy_all unless request_issues.empty?
   end
 
-  def mark_rated_request_issues_to_reassociate!
-    request_issues.select(&:rated?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
+  def mark_rating_request_issues_to_reassociate!
+    request_issues.select(&:rating?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
   end
 
   private
