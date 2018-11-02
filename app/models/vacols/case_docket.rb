@@ -110,7 +110,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         select BFKEY, BFD19, rownum DOCKET_INDEX,
           case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
         from (
-          select BFKEY, BFD19, BFMPRO, BFCURLOC, BFHINES
+          select BFKEY, BFD19, BFMPRO, BFCURLOC, BFHINES, TINUM, TITRNUM
           from (
             select BFKEY, BFD19, BFMPRO, BFCURLOC, BFAC, BFHINES,
               case when nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0) > 0 then 1 else 0 end AOD
@@ -129,11 +129,12 @@ class VACOLS::CaseDocket < VACOLS::Record
               group by FOLDER_NR
             ) AOD_HEARINGS on AOD_HEARINGS.FOLDER_NR = BRIEFF.BFKEY
           ) BRIEFF
+          inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
           where BRIEFF.BFMPRO <> 'HIS' and BRIEFF.BFCURLOC in ('81', '83')
             and BFAC <> '7' and AOD = '0'
-          order by BFD19
+          order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
+          -- NOTE THAT THIS WILL CEASE TO WORK ON JANUARY 1, 2030
         ) BRIEFF
-        inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
         left join (
           select distinct TITRNUM, TINUM,
             first_value(BOARD_MEMBER) over (partition by TITRNUM, TINUM order by HEARING_DATE desc) VLJ
@@ -142,8 +143,8 @@ class VACOLS::CaseDocket < VACOLS::Record
           where HEARING_TYPE in ('C', 'T', 'V') and HEARING_DISP = 'H'
         ) VLJ_HEARINGS
           on VLJ_HEARINGS.VLJ not in ('000', '888', '999')
-            and VLJ_HEARINGS.TITRNUM = FOLDER.TITRNUM
-            and (VLJ_HEARINGS.TINUM is null or VLJ_HEARINGS.TINUM = FOLDER.TINUM)
+            and VLJ_HEARINGS.TITRNUM = BRIEFF.TITRNUM
+            and (VLJ_HEARINGS.TINUM is null or VLJ_HEARINGS.TINUM = BRIEFF.TINUM)
       )
       where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
         and (DOCKET_INDEX <= ? or 1 = ?)
@@ -158,6 +159,7 @@ class VACOLS::CaseDocket < VACOLS::Record
                                                      (genpop.nil? || !genpop) ? 1 : 0,
                                                      (genpop.nil? || genpop) ? 1 : 0,
                                                      range,
+                                                     range.nil? ? 1 : 0,
                                                      limit
                                                    ])).to_hash
       vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
