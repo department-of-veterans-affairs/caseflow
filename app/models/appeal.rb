@@ -13,20 +13,6 @@ class Appeal < AmaReview
     validates :legacy_opt_in_approved, inclusion: { in: [true, false], message: "blank" }, if: :legacy_opt_in_enabled?
   end
 
-  class << self
-    attr_writer :facilities_locator_service
-    attr_writer :vets360_service
-
-    def facilities_locator_service
-      @facilities_locator_service ||= ExternalApi::FacilitiesLocatorService
-    end
-
-    def vets360_service
-      @vets360_service ||= ExternalApi::Vets360Service
-    end
-  end
-
-
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
 
   def document_fetcher

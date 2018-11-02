@@ -150,6 +150,19 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
+  class << self
+    attr_writer :facilities_locator_service
+    attr_writer :vets360_service
+
+    def facilities_locator_service
+      @facilities_locator_service ||= ExternalApi::FacilitiesLocatorService
+    end
+
+    def vets360_service
+      @vets360_service ||= ExternalApi::Vets360Service
+    end
+  end
+
   # If we do not yet have the vbms_id saved in Caseflow's DB, then
   # we want to fetch it from VACOLS, save it to the DB, then return it
   def vbms_id
@@ -205,8 +218,8 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def closest_alternate_hearing_location
-    lat_lng = Appeal.vets360_service.geocode(veteran_full_address)
-    Appeal.facilities_locator_service.get_closest(lat_lng, alternate_location_ids)[:data][0]
+    lat_lng = LegacyAppeal.vets360_service.geocode(veteran_full_address)
+    LegacyAppeal.facilities_locator_service.get_closest(lat_lng, alternate_location_ids)[:data][0]
   end
 
 
