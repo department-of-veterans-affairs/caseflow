@@ -33,7 +33,8 @@ RSpec.feature "Edit issues" do
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
-        { reference_id: "def456", decision_text: "PTSD denied" }
+        { reference_id: "def456", decision_text: "PTSD denied" },
+        { reference_id: "def4567", decision_text: "Lower back" }
       ]
     )
   end
@@ -92,7 +93,7 @@ RSpec.feature "Edit issues" do
     end
 
     context "when there are ineligible issues" do
-      let!(:eligible_request_issue) do
+      let(:eligible_request_issue) do
         RequestIssue.create!(
           review_request: higher_level_review,
           issue_category: "Military Retired Pay",
@@ -103,7 +104,7 @@ RSpec.feature "Edit issues" do
         )
       end
 
-      let!(:untimely_request_issue) do
+      let(:untimely_request_issue) do
         RequestIssue.create!(
           review_request: higher_level_review,
           issue_category: "Active Duty Adjustments",
@@ -113,19 +114,19 @@ RSpec.feature "Edit issues" do
         )
       end
 
-      let!(:ri_in_review) do
+      let(:ri_in_review) do
         RequestIssue.create!(
           rating_issue_reference_id: "def456",
           rating_issue_profile_date: rating.profile_date,
           review_request: another_higher_level_review,
           description: "PTSD denied",
-          contention_reference_id: "123",
+          contention_reference_id: "1234",
           ineligible_reason: nil,
           removed_at: nil
         )
       end
 
-      let!(:ri_with_active_previous_review) do
+      let(:ri_with_active_previous_review) do
         RequestIssue.create!(
           rating_issue_reference_id: "def456",
           rating_issue_profile_date: rating.profile_date,
@@ -137,7 +138,7 @@ RSpec.feature "Edit issues" do
         )
       end
 
-      let!(:ri_with_previous_hlr) do
+      let(:ri_with_previous_hlr) do
         RequestIssue.create!(
           rating_issue_reference_id: "abc123",
           rating_issue_profile_date: rating.profile_date,
@@ -226,11 +227,11 @@ RSpec.feature "Edit issues" do
     context "when there is a rated end product" do
       let!(:request_issue) do
         RequestIssue.create!(
-          rating_issue_reference_id: "def456",
+          rating_issue_reference_id: "def4567",
           rating_issue_profile_date: rating.profile_date,
           review_request: higher_level_review,
-          description: "PTSD denied",
-          contention_reference_id: "123"
+          description: "Lower back",
+          contention_reference_id: "1234"
         )
       end
 
@@ -256,14 +257,14 @@ RSpec.feature "Edit issues" do
 
         # Check that request issues appear correctly as added issues
         expect(page).to_not have_content("Left knee granted")
-        expect(page).to have_content("PTSD denied")
+        expect(page).to have_content("Lower back")
 
         safe_click "#button-add-issue"
 
         expect(page).to have_content("Add issue 2")
         expect(page).to have_content("Does issue 2 match any of these issues")
         expect(page).to have_content("Left knee granted")
-        expect(page).to have_content("PTSD denied")
+        expect(page).to have_content("Lower back")
 
         # test canceling adding an issue by closing the modal
         safe_click ".close-modal"
@@ -279,14 +280,14 @@ RSpec.feature "Edit issues" do
 
         page.all(".remove-issue")[0].click
         safe_click ".remove-issue"
-        expect(page).not_to have_content("PTSD denied")
+        expect(page).not_to have_content("Lower back")
 
         # re-add to proceed
         safe_click "#button-add-issue"
-        find("label", text: "PTSD denied").click
+        find("label", text: "Lower back").click
         fill_in "Notes", with: "I am an issue note"
         safe_click ".add-issue"
-        expect(page).to have_content("2. PTSD denied")
+        expect(page).to have_content("2. Lower back")
         expect(page).to have_content("I am an issue note")
 
         # clicking add issue again should show a disabled radio button for that same rating
@@ -359,7 +360,7 @@ RSpec.feature "Edit issues" do
           claim_id: rating_epe.reference_id,
           contention_descriptions: [
             RequestIssue::UNIDENTIFIED_ISSUE_MSG,
-            "PTSD denied",
+            "Lower back",
             "Left knee granted"
           ],
           special_issues: [],

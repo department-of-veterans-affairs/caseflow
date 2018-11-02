@@ -55,7 +55,7 @@ export class AddIssuesPage extends React.Component {
       );
     } else if (issue.ineligibleReason) {
       return INELIGIBLE_REQUEST_ISSUES[issue.ineligibleReason];
-    } else if (issue.timely === false && formType !== 'supplemental_claim') {
+    } else if (issue.timely === false && formType !== 'supplemental_claim' && issue.untimelyExemption !== 'true') {
       return INELIGIBLE_REQUEST_ISSUES.untimely;
     } else if (issue.sourceHigherLevelReview && formType === 'higher_level_review') {
       return INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review;

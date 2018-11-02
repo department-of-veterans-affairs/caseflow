@@ -52,7 +52,9 @@ class RequestIssue < ApplicationRecord
     end
 
     def find_active_by_reference_id(reference_id)
-      request_issue = unscoped.find_by(rating_issue_reference_id: reference_id, removed_at: nil, ineligible_reason: nil)
+      request_issue = RequestIssue.where(
+        rating_issue_reference_id: reference_id, removed_at: nil, ineligible_reason: nil
+      ).where.not(review_request_id: review_request_id).first
       return unless request_issue && request_issue.status_active?
       request_issue
     end
