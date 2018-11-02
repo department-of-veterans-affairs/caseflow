@@ -53,7 +53,7 @@ const updateFromServerIntake = (state, serverIntake) => {
 export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
     addIssuesModalVisible: false,
-    nonRatedIssueModalVisible: false,
+    nonRatingRequestIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
     untimelyExemptionModalVisible: false,
     receiptDate: null,
@@ -69,7 +69,7 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     isReviewed: false,
     isComplete: false,
     issueCount: 0,
-    nonRatedIssues: { },
+    nonRatingRequestIssues: { },
     reviewIntakeError: null,
     completeIntakeErrorCode: null,
     completeIntakeErrorData: null,
@@ -230,10 +230,10 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         }
       }
     });
-  case ACTIONS.NEW_NON_RATED_ISSUE:
+  case ACTIONS.NEW_NONRATING_REQUEST_ISSUE:
     return update(state, {
-      nonRatedIssues: {
-        [Object.keys(state.nonRatedIssues).length]: {
+      nonRatingRequestIssues: {
+        [Object.keys(state.nonRatingRequestIssues).length]: {
           $set: {
             category: null,
             description: null,
@@ -244,7 +244,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
     });
   case ACTIONS.SET_ISSUE_CATEGORY:
     return update(state, {
-      nonRatedIssues: {
+      nonRatingRequestIssues: {
         [action.payload.issueId]: {
           category: {
             $set: action.payload.category
@@ -254,7 +254,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
     });
   case ACTIONS.SET_ISSUE_DESCRIPTION:
     return update(state, {
-      nonRatedIssues: {
+      nonRatingRequestIssues: {
         [action.payload.issueId]: {
           description: {
             $set: action.payload.description
@@ -264,7 +264,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
     });
   case ACTIONS.SET_ISSUE_DECISION_DATE:
     return update(state, {
-      nonRatedIssues: {
+      nonRatingRequestIssues: {
         [action.payload.issueId]: {
           decisionDate: {
             $set: action.payload.decisionDate

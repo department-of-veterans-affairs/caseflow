@@ -11,9 +11,9 @@ export const commonReducers = (state, action) => {
     });
   };
 
-  actionsMap[ACTIONS.TOGGLE_NON_RATED_ISSUE_MODAL] = () => {
+  actionsMap[ACTIONS.TOGGLE_NONRATING_REQUEST_ISSUE_MODAL] = () => {
     return update(state, {
-      $toggle: ['nonRatedIssueModalVisible'],
+      $toggle: ['nonRatingRequestIssueModalVisible'],
       addIssuesModalVisible: {
         $set: false
       }
@@ -29,7 +29,7 @@ export const commonReducers = (state, action) => {
   actionsMap[ACTIONS.TOGGLE_UNIDENTIFIED_ISSUES_MODAL] = () => {
     return update(state, {
       $toggle: ['unidentifiedIssuesModalVisible'],
-      nonRatedIssueModalVisible: {
+      nonRatingRequestIssueModalVisible: {
         $set: false
       }
     });

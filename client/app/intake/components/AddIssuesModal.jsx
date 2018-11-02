@@ -6,7 +6,7 @@ import React from 'react';
 import { formatDateStr } from '../../util/DateUtil';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
-import { addRatedIssue, toggleNonRatedIssueModal, toggleUntimelyExemptionModal } from '../actions/addIssues';
+import { addRatingRequestIssue, toggleNonratingRequestIssueModal, toggleUntimelyExemptionModal } from '../actions/addIssues';
 import TextField from '../../components/TextField';
 import { issueById } from '../util/issues';
 
@@ -49,7 +49,7 @@ class AddIssuesModal extends React.Component {
       this.props.toggleUntimelyExemptionModal({ currentIssue,
         notes: this.state.notes });
     } else {
-      this.props.addRatedIssue({
+      this.props.addRatingRequestIssue({
         issueId: this.state.referenceId,
         ratings: this.props.intakeData.ratings,
         isRated: true,
@@ -66,7 +66,7 @@ class AddIssuesModal extends React.Component {
     } = this.props;
 
     const addedIssues = intakeData.addedIssues ? intakeData.addedIssues : [];
-    const ratedIssuesSections = _.map(intakeData.ratings, (rating) => {
+    const ratingRequestIssuesSections = _.map(intakeData.ratings, (rating) => {
       const radioOptions = _.map(rating.issues, (issue) => {
         const foundIndex = addedIssues.map((addedIssue) => addedIssue.id).indexOf(issue.reference_id);
         const text = foundIndex === -1 ?
@@ -107,7 +107,7 @@ class AddIssuesModal extends React.Component {
           },
           { classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
             name: 'None of these match, see more options',
-            onClick: this.props.toggleNonRatedIssueModal
+            onClick: this.props.toggleNonratingRequestIssueModal
           }
         ]}
         visible
@@ -123,7 +123,7 @@ class AddIssuesModal extends React.Component {
              -- so select the best matching decision.
           </p>
           <br />
-          { ratedIssuesSections }
+          { ratingRequestIssuesSections }
           <TextField
             name="Notes"
             value={this.state.notes}
@@ -139,8 +139,8 @@ class AddIssuesModal extends React.Component {
 export default connect(
   null,
   (dispatch) => bindActionCreators({
-    addRatedIssue,
-    toggleNonRatedIssueModal,
+    addRatingRequestIssue,
+    toggleNonratingRequestIssueModal,
     toggleUntimelyExemptionModal
   }, dispatch)
 )(AddIssuesModal);

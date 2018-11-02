@@ -2,14 +2,14 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
 
-import { addNonRatedIssue, toggleUnidentifiedIssuesModal } from '../actions/addIssues';
+import { addNonratingRequestIssue, toggleUnidentifiedIssuesModal } from '../actions/addIssues';
 import Modal from '../../components/Modal';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
-import { NON_RATED_ISSUE_CATEGORIES } from '../constants';
+import { NONRATING_REQUEST_ISSUE_CATEGORIES } from '../constants';
 
-class NonRatedIssueModal extends React.Component {
+class NonratingRequestIssueModal extends React.Component {
   constructor(props) {
     super(props);
 
@@ -39,7 +39,7 @@ class NonRatedIssueModal extends React.Component {
   }
 
   onAddIssue = () => {
-    this.props.addNonRatedIssue(
+    this.props.addNonratingRequestIssue(
       this.state.category.value,
       this.state.description,
       this.state.decisionDate
@@ -82,13 +82,13 @@ class NonRatedIssueModal extends React.Component {
           <h2>
             Does issue {issueNumber} match any of these issue categories?
           </h2>
-          <div className="add-non-rated-issue">
+          <div className="add-nonrating-request-issue">
             <SearchableDropdown
               name="issue-category"
               label="Issue category"
               strongLabel
               placeholder="Select or enter..."
-              options={NON_RATED_ISSUE_CATEGORIES}
+              options={NONRATING_REQUEST_ISSUE_CATEGORIES}
               value={category}
               onChange={this.categoryOnChange} />
 
@@ -116,7 +116,7 @@ class NonRatedIssueModal extends React.Component {
 export default connect(
   null,
   (dispatch) => bindActionCreators({
-    addNonRatedIssue,
+    addNonratingRequestIssue,
     toggleUnidentifiedIssuesModal
   }, dispatch)
-)(NonRatedIssueModal);
+)(NonratingRequestIssueModal);
