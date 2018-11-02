@@ -36,10 +36,11 @@ class RatingIssue
     return unless source_request_issue
 
     # if a DecisionIssue already exists, update rather than attempt to insert a duplicate
-    if existing_decision_issue
-      existing_decision_issue.update!(source_request_issue: source_request_issue)
+    if decision_issue
+      decision_issue.update!(source_request_issue: source_request_issue)
     else
-      DecisionIssue.create(
+      # TODO: should this ever happen?
+      DecisionIssue.create!(
         source_request_issue: source_request_issue,
         rating_issue_reference_id: reference_id,
         participant_id: participant_id,
@@ -76,10 +77,8 @@ class RatingIssue
     source_request_issue.review_request.is_a?(HigherLevelReview) ? source_request_issue.id : nil
   end
 
-  private
-
-  def existing_decision_issue
-    @existing_decision_issue ||= DecisionIssue.find_by(participant_id: participant_id, reference_id: reference_id)
+  def decision_issue
+    @decision_issue ||= DecisionIssue.find_by(participant_id: participant_id, rating_issue_reference_id: reference_id)
   end
 
   def source_request_issue
