@@ -45,13 +45,18 @@ class ScheduleHearingTask < GenericTask
   def mark_as_complete!
     hearing_pkseq = task_business_payloads[0].values["hearing_pkseq"]
     hearing_type = task_business_payloads[0].values["hearing_type"]
-    hearing = VACOLS::CaseHearing.find(hearing_pkseq)
+    hearing_date = task_business_payloads[0].values["hearing_date"].to_datetime
+
     if hearing_type == Hearing::CO_HEARING
-      HearingRepository.update_vacols_hearing!(hearing, folder_nr: appeal.vacols_id)
+      # Get the next open slot for that hearing date and time.
+      hearing = VACOLS::CaseHearing.find_by(hearing_date: hearing_date, folder_nr: nil)
+      loaded_hearing = VACOLS::CaseHearing.load_hearing(hearing.hearing_pkseq)
+      HearingRepository.update_vacols_hearing!(loaded_hearing, folder_nr: appeal.vacols_id)
     else
+      hearing = VACOLS::CaseHearing.find(hearing_pkseq)
       hearing_hash = to_hash(hearing)
       hearing_hash[:folder_nr] = appeal.vacols_id
-      hearing_hash[:hearing_date] = task_business_payloads[0].values["hearing_date"]
+      hearing_hash[:hearing_date] = hearing_date
       HearingRepository.create_vacols_child_hearing(hearing_hash)
     end
 
