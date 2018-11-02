@@ -16,12 +16,12 @@ class RequestIssue < ApplicationRecord
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
 
   class << self
-    def rated
+    def rating
       where.not(rating_issue_reference_id: nil, rating_issue_profile_date: nil)
         .or(where(is_unidentified: true))
     end
 
-    def nonrated
+    def nonrating
       where(rating_issue_reference_id: nil, rating_issue_profile_date: nil, is_unidentified: [nil, false])
         .where.not(issue_category: nil)
     end
@@ -59,16 +59,16 @@ class RequestIssue < ApplicationRecord
     end_product_establishment.status_active?
   end
 
-  def rated?
+  def rating?
     rating_issue_reference_id && rating_issue_profile_date
   end
 
-  def nonrated?
+  def nonrating?
     issue_category && decision_date
   end
 
   def contention_text
-    return "#{issue_category} - #{description}" if nonrated?
+    return "#{issue_category} - #{description}" if nonrating?
     return UNIDENTIFIED_ISSUE_MSG if is_unidentified
     description
   end
@@ -129,7 +129,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def check_for_previous_higher_level_review!
-    return unless rated?
+    return unless rating?
     return unless eligible?
     check_for_previous_review!(:source_higher_level_review)
   end
@@ -148,7 +148,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def check_for_active_request_issue!
-    return unless rated?
+    return unless rating?
     return unless eligible?
     existing_request_issue = self.class.find_active_by_reference_id(rating_issue_reference_id)
     if existing_request_issue
@@ -160,17 +160,17 @@ class RequestIssue < ApplicationRecord
   def check_for_untimely!
     return unless eligible?
     return if review_request && review_request.is_a?(SupplementalClaim)
-    check_for_rated_untimely! if rated?
-    check_for_nonrated_untimely! if nonrated?
+    check_for_rating_untimely! if rating?
+    check_for_nonrating_untimely! if nonrating?
   end
 
-  def check_for_rated_untimely!
+  def check_for_rating_untimely!
     if contested_rating_issue && !review_request.timely_rating?(contested_rating_issue.promulgation_date)
       self.ineligible_reason = :untimely
     end
   end
 
-  def check_for_nonrated_untimely!
+  def check_for_nonrating_untimely!
     if decision_date < (review_request.receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
       self.ineligible_reason = :untimely
     end

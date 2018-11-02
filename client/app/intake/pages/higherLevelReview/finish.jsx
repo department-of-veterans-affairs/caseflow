@@ -4,13 +4,13 @@ import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import CancelButton from '../../components/CancelButton';
-import NonRatedIssuesUnconnected from '../../components/NonRatedIssues';
-import RatedIssuesUnconnected from '../../components/RatedIssues';
+import NonratingRequestIssuesUnconnected from '../../components/NonratingRequestIssues';
+import RatingRequestIssuesUnconnected from '../../components/RatingRequestIssues';
 import IssueCounter from '../../components/IssueCounter';
 import {
   completeIntake,
   setIssueSelected,
-  newNonRatedIssue,
+  newNonratingRequestIssue,
   setIssueCategory,
   setIssueDescription,
   setIssueDecisionDate
@@ -54,23 +54,23 @@ class Finish extends React.PureComponent {
         If you are unable to find one or more issues, enter these in the "other issues" section.
       </p>
 
-      <RatedIssues />
-      <NonRatedIssues />
+      <RatingRequestIssues />
+      <NonratingRequestIssues />
     </div>;
   }
 }
 
-const NonRatedIssues = connect(
+const NonratingRequestIssues = connect(
   ({ higherLevelReview }) => ({
-    nonRatedIssues: higherLevelReview.nonRatedIssues
+    nonRatingRequestIssues: higherLevelReview.nonRatingRequestIssues
   }),
   (dispatch) => bindActionCreators({
-    newNonRatedIssue,
+    newNonratingRequestIssue,
     setIssueCategory,
     setIssueDescription,
     setIssueDecisionDate
   }, dispatch)
-)(NonRatedIssuesUnconnected);
+)(NonratingRequestIssuesUnconnected);
 
 class FinishNextButton extends React.PureComponent {
   handleClick = () => {
@@ -114,14 +114,14 @@ const mapStateToProps = (state) => {
 
 const IssueCounterConnected = connect(mapStateToProps)(IssueCounter);
 
-const RatedIssues = connect(
+const RatingRequestIssues = connect(
   ({ higherLevelReview }) => ({
     ratings: higherLevelReview.ratings
   }),
   (dispatch) => bindActionCreators({
     setIssueSelected
   }, dispatch)
-)(RatedIssuesUnconnected);
+)(RatingRequestIssuesUnconnected);
 
 export class FinishButtons extends React.PureComponent {
   render = () =>
