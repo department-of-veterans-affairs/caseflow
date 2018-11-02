@@ -6,7 +6,6 @@ RSpec.feature "Appeal Intake" do
     # Test that this works when only enabled on the current user
     FeatureToggle.enable!(:intakeAma, users: [current_user.css_id])
     FeatureToggle.enable!(:intake_legacy_opt_in)
-    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 20))
@@ -15,7 +14,6 @@ RSpec.feature "Appeal Intake" do
   after do
     FeatureToggle.disable!(:intakeAma)
     FeatureToggle.disable!(:intake_legacy_opt_in)
-    FeatureToggle.disable!(:test_facols)
   end
 
   let!(:current_user) do
@@ -362,7 +360,7 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content("Left knee granted (already selected for issue 1)")
     expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
 
-    # Add non-rated issue
+    # Add nonrating issue
     safe_click ".no-matching-issues"
     expect(page).to have_content("Does issue 2 match any of these issue categories?")
     expect(page).to have_button("Add this issue", disabled: true)
@@ -373,7 +371,7 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_button("Add this issue", disabled: false)
     safe_click ".add-issue"
     expect(page).to have_content("2 issues")
-    # this nonrated issue is timely
+    # this nonrating request issue is timely
     expect(page).to_not have_content(
       "Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
     )
@@ -395,14 +393,14 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content("4 issues")
     expect(page).to have_content("4. Old injury in review is ineligible because it's already under review as a Appeal")
 
-    # add untimely rated issue
+    # add untimely rating request issue
     safe_click "#button-add-issue"
     find_all("label", text: "Really old injury").first.click
     safe_click ".add-issue"
     expect(page).to have_content("5 issues")
     expect(page).to have_content("5. Really old injury is ineligible because it has a prior decision date")
 
-    # add untimely nonrated issue
+    # add untimely nonrating request issue
     safe_click "#button-add-issue"
     safe_click ".no-matching-issues"
     expect(page).to have_button("Add this issue", disabled: true)
@@ -420,6 +418,7 @@ RSpec.feature "Appeal Intake" do
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+    expect(page).to have_content("This is an unidentified issue")
 
     expect(Appeal.find_by(
              id: appeal.id,

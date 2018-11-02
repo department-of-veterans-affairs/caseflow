@@ -51,7 +51,7 @@ class Hearings::HearingDayController < HearingScheduleController
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
     enriched_hearings = HearingDay.load_days_with_hearings(Time.zone.today.beginning_of_day,
-                                                           Time.zone.today.beginning_of_day + 365.days,
+                                                           Time.zone.today.beginning_of_day + 182.days,
                                                            regional_office)
     enriched_hearings.each do |hearing_day|
       hearing_day[:hearings] = hearing_day[:hearings].map { |hearing| hearing.to_hash(current_user.id) }
@@ -176,8 +176,10 @@ class Hearings::HearingDayController < HearingScheduleController
   def json_veteran(veteran)
     {
       appeal_id: veteran.id,
-      appellantFirstName: veteran.appellant_first_name.to_s,
-      appellantLastName: veteran.appellant_last_name.to_s,
+      appellantFirstName: veteran.appellant_first_name,
+      appellantLastName: veteran.appellant_last_name,
+      veteranFirstName: veteran.veteran_first_name,
+      veteranLastName: veteran.veteran_last_name,
       type: veteran.type,
       docket_number: veteran.docket_number,
       location: HearingDayMapper.city_for_regional_office(veteran.regional_office_key),

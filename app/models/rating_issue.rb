@@ -42,7 +42,7 @@ class RatingIssue < ApplicationRecord
   end
 
   # If you change this method, you will need to clear cache in prod for your changes to
-  # take effect immediately. See AmaReview#cached_serialized_ratings
+  # take effect immediately. See DecisionReview#cached_serialized_ratings
   def ui_hash
     {
       participant_id: participant_id,
@@ -50,12 +50,12 @@ class RatingIssue < ApplicationRecord
       decision_text: decision_text,
       promulgation_date: promulgation_date,
       contention_reference_id: contention_reference_id,
-      in_active_review: in_active_review,
+      title_of_active_review: title_of_active_review,
       source_higher_level_review: source_higher_level_review
     }
   end
 
-  def in_active_review
+  def title_of_active_review
     return unless reference_id
     request_issue = RequestIssue.find_active_by_reference_id(reference_id)
     request_issue.review_title if request_issue

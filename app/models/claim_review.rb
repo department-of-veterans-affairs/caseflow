@@ -1,7 +1,7 @@
 # A claim review is a short hand term to refer to either a supplemental claim or
 # higher level review as defined in the Appeals Modernization Act of 2017
 
-class ClaimReview < AmaReview
+class ClaimReview < DecisionReview
   include Asyncable
 
   has_many :end_product_establishments, as: :source
@@ -51,7 +51,7 @@ class ClaimReview < AmaReview
     end
   end
 
-  def issue_code(_rated)
+  def issue_code(*)
     fail Caseflow::Error::MustImplementInSubclass
   end
 
@@ -63,8 +63,8 @@ class ClaimReview < AmaReview
     end
   end
 
-  def mark_rated_request_issues_to_reassociate!
-    request_issues.select(&:rated?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
+  def mark_rating_request_issues_to_reassociate!
+    request_issues.select(&:rating?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
   end
 
   # Idempotent method to create all the artifacts for this claim.
@@ -76,7 +76,7 @@ class ClaimReview < AmaReview
     end_product_establishments.each do |end_product_establishment|
       end_product_establishment.perform!
       end_product_establishment.create_contentions!
-      end_product_establishment.associate_rated_issues!
+      end_product_establishment.associate_rating_request_issues!
       if informal_conference?
         end_product_establishment.generate_claimant_letter!
         end_product_establishment.generate_tracked_item!
@@ -112,7 +112,7 @@ class ClaimReview < AmaReview
   end
 
   def end_product_establishment_for_issue(issue)
-    ep_code = issue_code(issue.rated? || issue.is_unidentified?)
+    ep_code = issue_code(rating: (issue.rating? || issue.is_unidentified?))
     end_product_establishments.find_by(code: ep_code) || new_end_product_establishment(ep_code)
   end
 

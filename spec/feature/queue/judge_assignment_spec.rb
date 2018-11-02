@@ -15,13 +15,11 @@ RSpec.feature "Judge assignment to attorney" do
     create(:staff, :attorney_role, slogid: "TEST2", sdomainid: attorney_two.css_id)
     create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: appeal_one)
     create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: appeal_two)
-    FeatureToggle.enable!(:test_facols)
     FeatureToggle.enable!(:judge_assignment_to_attorney)
     User.authenticate!(user: judge)
   end
 
   after do
-    FeatureToggle.disable!(:test_facols)
     FeatureToggle.disable!(:judge_assignment_to_attorney)
   end
 

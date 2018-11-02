@@ -5,7 +5,7 @@ import { Redirect } from 'react-router-dom';
 import React from 'react';
 
 import AddIssuesModal from '../components/AddIssuesModal';
-import NonRatedIssueModal from '../components/NonRatedIssueModal';
+import NonratingRequestIssueModal from '../components/NonratingRequestIssueModal';
 import RemoveIssueModal from '../components/RemoveIssueModal';
 import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
 import Button from '../../components/Button';
@@ -17,7 +17,7 @@ import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 import Table from '../../components/Table';
 import {
   toggleAddIssuesModal,
-  toggleNonRatedIssueModal,
+  toggleNonratingRequestIssueModal,
   removeIssue,
   toggleUnidentifiedIssuesModal,
   toggleIssueRemoveModal
@@ -47,9 +47,13 @@ export class AddIssuesPage extends React.Component {
   checkIfEligible = (issue, formType) => {
     if (issue.isUnidentified) {
       return false;
-    } else if (issue.inActiveReview) {
-      return INELIGIBLE_REQUEST_ISSUES.in_active_review.replace('{review_title}', issue.inActiveReview);
-    } else if (!issue.timely && formType !== 'supplemental_claim') {
+    } else if (issue.titleOfActiveReview) {
+      return INELIGIBLE_REQUEST_ISSUES.duplicate_of_issue_in_active_review.replace(
+        '{review_title}', issue.titleOfActiveReview
+      );
+    } else if (issue.ineligibleReason) {
+      return INELIGIBLE_REQUEST_ISSUES[issue.ineligibleReason];
+    } else if (issue.timely === false && formType !== 'supplemental_claim') {
       return INELIGIBLE_REQUEST_ISSUES.untimely;
     } else if (issue.sourceHigherLevelReview && formType === 'higher_level_review') {
       return INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review;
@@ -152,9 +156,9 @@ export class AddIssuesPage extends React.Component {
         intakeData={intakeData}
         closeHandler={this.props.toggleAddIssuesModal} />
       }
-      { intakeData.nonRatedIssueModalVisible && <NonRatedIssueModal
+      { intakeData.nonRatingRequestIssueModalVisible && <NonratingRequestIssueModal
         intakeData={intakeData}
-        closeHandler={this.props.toggleNonRatedIssueModal} />
+        closeHandler={this.props.toggleNonratingRequestIssueModal} />
       }
       { intakeData.unidentifiedIssuesModalVisible && <UnidentifiedIssuesModal
         intakeData={intakeData}
@@ -191,7 +195,7 @@ export const IntakeAddIssuesPage = connect(
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
-    toggleNonRatedIssueModal,
+    toggleNonratingRequestIssueModal,
     toggleUnidentifiedIssuesModal,
     removeIssue
   }, dispatch)
@@ -209,7 +213,7 @@ export const EditAddIssuesPage = connect(
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
     toggleIssueRemoveModal,
-    toggleNonRatedIssueModal,
+    toggleNonratingRequestIssueModal,
     toggleUnidentifiedIssuesModal,
     removeIssue
   }, dispatch)
