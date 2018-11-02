@@ -25,7 +25,7 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def show
-    hearing_day = HearingDay.find_hearing_day(nil, params[:id])
+    hearing_day = HearingDayRepository.to_canonical_hash(HearingDay.find_hearing_day(nil, params[:id]))
 
     hearings = []
 
