@@ -22,7 +22,7 @@ const getClaimReviewChecklistItems = (formType, requestIssues, isInformalConfere
   if (ratingIssues.length > 0) {
     checklist.push(<Fragment>
       <strong>A {claimReviewName} Rating EP is being established:</strong>
-      {ratingIssues.map((ri, i) => <p key={`rating-issue-${i}`}>Contention: {ri.description}</p>)}
+      {ratingIssues.map((ri, i) => <p key={`rating-issue-${i}`}>Contention: {ri.contentionText}</p>)}
     </Fragment>);
   }
 

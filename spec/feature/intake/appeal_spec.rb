@@ -418,7 +418,7 @@ RSpec.feature "Appeal Intake" do
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
-    expect(page).to have_content("This is an unidentified issue")
+    expect(page).to have_content("UNIDENTIFIED ISSUE")
 
     expect(Appeal.find_by(
              id: appeal.id,
