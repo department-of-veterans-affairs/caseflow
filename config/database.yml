@@ -44,9 +44,11 @@ development_vacols:
   adapter: oracle_enhanced
   username: VACOLS
   password: VACOLS
-  host: <%= ENV['DEMO_HOST'] || "localhost" %>
-  port: <%= ENV['DEMO_PORT'] || 1522 %>
-  database: BVAP.localdomain
+  <% if ! ENV['DOCKERIZED'] %>
+  host: localhost
+  port: 1522
+  <% end %>
+  database: <%= ENV['DEMO_DB'] || "BVAP.localdomain" %> 
 
 demo_vacols:
   adapter: sqlite3

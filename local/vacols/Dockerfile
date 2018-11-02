@@ -10,6 +10,9 @@ USER oracle
 COPY dockerInitWithSchema.sh /home/oracle/setup/dockerInitWithSchema.sh
 COPY loadSchema.sh /home/oracle/setup/loadSchema.sh
 
-RUN mkdir -p /u01/app/oracle/oradata/BVAP
+RUN rm -rf /u01/app/oracle/oradata/* && \
+    rm -rf /u02/* && \
+    rm -rf /ORCL/* && \
+    mkdir -p /u01/app/oracle/oradata/BVAP  
 
 CMD ["bash", "-c", "/home/oracle/setup/dockerInitWithSchema.sh"]
