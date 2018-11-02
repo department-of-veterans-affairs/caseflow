@@ -15,7 +15,7 @@ class FetchDocumentsForReaderUserJob < ApplicationJob
 
     setup_debug_context(reader_user)
     update_fetched_at(reader_user)
-    appeals = reader_user.user.current_case_assignments
+    appeals = [LegacyAppeal.first] #reader_user.user.current_case_assignments
     fetch_documents_for_appeals(appeals)
     log_info
   rescue StandardError => e
@@ -47,6 +47,7 @@ class FetchDocumentsForReaderUserJob < ApplicationJob
     appeals.each do |appeal|
       begin
         Raven.extra_context(appeal_id: appeal.id)
+        puts "CONTEXT EARLY #{Raven.context.extra}"
         Rails.logger.debug("Fetching docs for appeal #{appeal.id}")
 
         # signal to efolder X to fetch and save all documents
