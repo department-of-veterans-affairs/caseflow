@@ -15,8 +15,8 @@ const getAppealChecklistItems = (requestIssues) => [<Fragment>
 // higher level reviews & supplemental claims
 const getClaimReviewChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
   const checklist = [];
-  const ratingIssues = requestIssues.filter((ri) => ri.isRated || ri.isUnidentified);
-  const nonratingIssues = requestIssues.filter((ri) => ri.isRated === false);
+  const ratingIssues = requestIssues.filter((ri) => ri.isRating || ri.isUnidentified);
+  const nonratingIssues = requestIssues.filter((ri) => ri.isRating === false);
   const claimReviewName = _.find(FORM_TYPES, { key: formType }).shortName;
 
   if (ratingIssues.length > 0) {

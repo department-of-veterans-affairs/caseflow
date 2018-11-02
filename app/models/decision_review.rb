@@ -1,4 +1,4 @@
-class AmaReview < ApplicationRecord
+class DecisionReview < ApplicationRecord
   include CachedAttributes
 
   validate :validate_receipt_date
