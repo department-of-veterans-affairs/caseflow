@@ -88,7 +88,8 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       onHoldDuration: task.attributes.on_hold_duration,
       instructions: task.attributes.instructions,
       decisionPreparedBy,
-      availableActions: task.attributes.available_actions
+      availableActions: task.attributes.available_actions,
+      taskBusinessPayloads: task.attributes.task_business_payloads
     };
 
     return acc;
@@ -157,7 +158,8 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       previousTaskAssignedOn: task.attributes.previous_task.assigned_on,
       status: task.attributes.status,
       decisionPreparedBy: null,
-      availableActions: task.attributes.available_actions
+      availableActions: task.attributes.available_actions,
+      taskBusinessPayloads: task.attributes.task_business_payloads
     };
   });
 

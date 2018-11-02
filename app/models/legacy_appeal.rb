@@ -123,7 +123,9 @@ class LegacyAppeal < ApplicationRecord
     caseflow: "CASEFLOW",
     quality_review: "48",
     translation: "14",
-    schedule_hearing: "57"
+    schedule_hearing: "57",
+    awaiting_video_hearing: "38",
+    awaiting_co_hearing: "36"
   }.freeze
 
   def document_fetcher
@@ -740,8 +742,6 @@ class LegacyAppeal < ApplicationRecord
   end
 
   class << self
-    attr_writer :repository
-
     def find_or_create_by_vacols_id(vacols_id)
       appeal = find_or_initialize_by(vacols_id: vacols_id)
 
@@ -777,8 +777,7 @@ class LegacyAppeal < ApplicationRecord
     end
 
     def repository
-      return AppealRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= AppealRepository
+      AppealRepository
     end
 
     # rubocop:disable Metrics/ParameterLists

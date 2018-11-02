@@ -15,22 +15,21 @@ const getAppealChecklistItems = (requestIssues) => [<Fragment>
 // higher level reviews & supplemental claims
 const getClaimReviewChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
   const checklist = [];
-  const ratedIssues = requestIssues.filter((ri) => ri.isRated);
-  // unidentified issues have undefined isRated
-  const nonRatedIssues = requestIssues.filter((ri) => ri.isRated === false);
+  const ratingIssues = requestIssues.filter((ri) => ri.isRated || ri.isUnidentified);
+  const nonratingIssues = requestIssues.filter((ri) => ri.isRated === false);
   const claimReviewName = _.find(FORM_TYPES, { key: formType }).shortName;
 
-  if (ratedIssues.length > 0) {
+  if (ratingIssues.length > 0) {
     checklist.push(<Fragment>
       <strong>A {claimReviewName} Rating EP is being established:</strong>
-      {ratedIssues.map((ri, i) => <p key={i}>Contention: {ri.description}</p>)}
+      {ratingIssues.map((ri, i) => <p key={`rating-issue-${i}`}>Contention: {ri.description}</p>)}
     </Fragment>);
   }
 
-  if (nonRatedIssues.length > 0) {
+  if (nonratingIssues.length > 0) {
     checklist.push(<Fragment>
       <strong>A {claimReviewName} Nonrating EP is being established:</strong>
-      {nonRatedIssues.map((nri, i) => <p key={i}>Contention: {nri.description}</p>)}
+      {nonratingIssues.map((nri, i) => <p key={`nonrating-issue-${i}`}>Contention: {nri.contentionText}</p>)}
     </Fragment>);
   }
 
@@ -72,6 +71,8 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       <strong>Edit the notice letter to reflect the status of requested issues.</strong>
     ];
 
+    const checklistClassNames = ['cf-intake-statusmessage-checklist', 'cf-success-checklist', 'cf-left-padding'];
+
     return <StatusMessage
       title="Intake completed"
       type="success"
@@ -79,6 +80,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       checklist={formType === 'appeal' ?
         getAppealChecklistItems(requestIssues) :
         getClaimReviewChecklistItems(formType, requestIssues, informalConference)}
+      checklistClassNames={checklistClassNames}
       wrapInAppSegment={false}
     />;
   }
