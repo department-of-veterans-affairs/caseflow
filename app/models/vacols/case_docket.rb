@@ -155,8 +155,8 @@ class VACOLS::CaseDocket < VACOLS::Record
       appeals = conn.exec_query(sanitize_sql_array([
                                                      query,
                                                      judge.vacols_attorney_id,
-                                                     genpop.nil? || !genpop,
-                                                     genpop.nil? || genpop,
+                                                     (genpop.nil? || !genpop) ? 1 : 0,
+                                                     (genpop.nil? || genpop) ? 1 : 0,
                                                      range,
                                                      limit
                                                    ])).to_hash
@@ -232,8 +232,8 @@ class VACOLS::CaseDocket < VACOLS::Record
       appeals = conn.exec_query(sanitize_sql_array([
                                                      query,
                                                      judge.vacols_attorney_id,
-                                                     genpop.nil? || !genpop,
-                                                     genpop.nil? || genpop,
+                                                     (genpop.nil? || !genpop) ? 1 : 0,
+                                                     (genpop.nil? || genpop) ? 1 : 0,
                                                      limit
                                                    ])).to_hash
       vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
