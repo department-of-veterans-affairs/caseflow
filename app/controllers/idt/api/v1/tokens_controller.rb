@@ -1,6 +1,5 @@
 class Idt::Api::V1::TokensController < ActionController::Base
   protect_from_forgery with: :exception
-  application_attr :queue
 
   def generate_token
     key, token = Idt::Token.generate_one_time_key_and_proposed_token
