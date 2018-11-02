@@ -105,14 +105,14 @@ class VACOLS::CaseDocket < VACOLS::Record
     conn = connection
 
     query = <<-SQL
-      select BFKEY, BFD19, VLJ, DOCKET_INDEX
+      select BFKEY, BFDLOOUT, VLJ, DOCKET_INDEX
       from (
-        select BFKEY, BFD19, rownum DOCKET_INDEX,
+        select BFKEY, BFDLOOUT, rownum DOCKET_INDEX,
           case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
         from (
-          select BFKEY, BFD19, BFMPRO, BFCURLOC, BFHINES, TINUM, TITRNUM
+          select BFKEY, BFDLOOUT, BFMPRO, BFCURLOC, BFHINES, TINUM, TITRNUM
           from (
-            select BFKEY, BFD19, BFMPRO, BFCURLOC, BFAC, BFHINES,
+            select BFKEY, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES,
               case when nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0) > 0 then 1 else 0 end AOD
             from BRIEFF
             left join (

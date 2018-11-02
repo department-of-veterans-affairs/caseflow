@@ -25,7 +25,7 @@ class LegacyDocket
                              case_id: record["bfkey"],
                              docket: "legacy",
                              priority: true,
-                             ready_date: record["bfdloout"],
+                             ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
                              genpop: !record["vlj"].nil?,
                              genpop_query: maybe_boolean_to_string(genpop))
     end
@@ -38,7 +38,7 @@ class LegacyDocket
                              case_id: record["bfkey"],
                              docket: "legacy",
                              priority: false,
-                             docket_date: record["bfd19"],
+                             ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
                              docket_index: record["docket_index"],
                              genpop: !record["vlj"].nil?,
                              genpop_query: maybe_boolean_to_string(genpop))

@@ -1,10 +1,8 @@
 class DistributedCase < ApplicationRecord
   belongs_to :distribution
 
-  validates :distribution, :case_id, :docket, :priority, :genpop, :genpop_query, presence: true
-  validates :docket_date, presence: true, unless: :priority
+  validates :distribution, :case_id, :docket, :priority, :genpop, :genpop_query, :ready_at, presence: true
   validates :docket_index, presence: true, if: :legacy_nonpriority
-  validates :ready_date, presence: true, if: :priority
 
   private
 
