@@ -78,15 +78,13 @@ RSpec.feature "Search" do
         expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
       end
 
-      ensure_stable do
-        it "searching in search bar produces another error", focus: true do
-          fill_in "searchBarEmptyList", with: veteran_with_no_appeals.file_number
-          click_on "Search"
+      it "searching in search bar produces another error" do
+        fill_in "searchBarEmptyList", with: veteran_with_no_appeals.file_number
+        click_on "Search"
 
-          expect(page).to have_content(
-            sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_with_no_appeals.file_number)
-          )
-        end
+        expect(page).to have_content(
+          sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_with_no_appeals.file_number)
+        )
       end
     end
 

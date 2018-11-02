@@ -46,7 +46,6 @@ class DocumentFetcher
   end
 
   def save!
-    throw "Test error"
     AddSeriesIdToDocumentsJob.perform_now(appeal)
 
     ids = documents.map(&:vbms_document_id)
