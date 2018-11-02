@@ -375,8 +375,10 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_content("Page not found")
   end
 
+  let(:special_issue_reference_id) { "IAMANEPID" }
+
   it "Creates contentions with same office special issue" do
-    Fakes::VBMSService.end_product_claim_id = "IAMANEPID"
+    Fakes::VBMSService.end_product_claim_id = special_issue_reference_id
 
     visit "/intake"
     safe_click ".Select"
@@ -428,7 +430,7 @@ RSpec.feature "Higher-Level Review" do
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: "12341234",
-      claim_id: "IAMANEPID",
+      claim_id: special_issue_reference_id,
       contention_descriptions: ["PTSD denied"],
       special_issues: [{ code: "SSR", narrative: "Same Station Review" }],
       user: current_user
