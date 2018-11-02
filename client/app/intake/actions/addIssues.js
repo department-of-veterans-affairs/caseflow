@@ -8,8 +8,8 @@ export const toggleAddIssuesModal = () => ({
   meta: { analytics }
 });
 
-export const toggleNonRatedIssueModal = () => ({
-  type: ACTIONS.TOGGLE_NON_RATED_ISSUE_MODAL,
+export const toggleNonratingRequestIssueModal = () => ({
+  type: ACTIONS.TOGGLE_NONRATING_REQUEST_ISSUE_MODAL,
   meta: { analytics }
 });
 
@@ -37,7 +37,7 @@ export const addUnidentifiedIssue = (description, notes) => (dispatch) => {
   });
 };
 
-export const addRatedIssue = (args) => (dispatch) => {
+export const addRatingRequestIssue = (args) => (dispatch) => {
   let currentRating = _.filter(
     args.ratings,
     (ratingDate) => _.some(ratingDate.issues, { reference_id: args.issueId })
@@ -48,7 +48,7 @@ export const addRatedIssue = (args) => (dispatch) => {
     type: ACTIONS.ADD_ISSUE,
     payload: {
       id: args.issueId,
-      isRated: args.isRated,
+      isRating: args.isRating,
       titleOfActiveReview: currentIssue.title_of_active_review,
       timely: currentIssue.timely,
       sourceHigherLevelReview: currentIssue.source_higher_level_review,
@@ -59,14 +59,14 @@ export const addRatedIssue = (args) => (dispatch) => {
   });
 };
 
-export const addNonRatedIssue = (category, description, decisionDate, isRated = false) => (dispatch) => {
+export const addNonratingRequestIssue = (category, description, decisionDate, isRating = false) => (dispatch) => {
   dispatch({
     type: ACTIONS.ADD_ISSUE,
     payload: {
       category,
       description,
       decisionDate,
-      isRated
+      isRating
     }
   });
 };
