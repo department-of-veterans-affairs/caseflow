@@ -129,7 +129,7 @@ class VACOLS::CaseDocket < VACOLS::Record
               group by FOLDER_NR
             ) AOD_HEARINGS on AOD_HEARINGS.FOLDER_NR = BRIEFF.BFKEY
           ) BRIEFF
-          where BRIEFF.BFMPRO <> 'HIS' and BRIEFF.BFCURLOC in ('81', '83') and BFAC <> '9'
+          where BRIEFF.BFMPRO <> 'HIS' and BRIEFF.BFCURLOC in ('81', '83')
             and BFAC <> '7' and AOD = '0'
           order by BFD19
         ) BRIEFF
@@ -196,7 +196,7 @@ class VACOLS::CaseDocket < VACOLS::Record
               group by FOLDER_NR
             ) AOD_HEARINGS on AOD_HEARINGS.FOLDER_NR = BRIEFF.BFKEY
           ) BRIEFF
-          where BRIEFF.BFMPRO <> 'HIS' and BRIEFF.BFCURLOC in ('81', '83') and BFAC <> '9'
+          where BRIEFF.BFMPRO <> 'HIS' and BRIEFF.BFCURLOC in ('81', '83')
             and (BFAC = '7' or AOD = '1')
           order by BFDLOOUT
         ) BRIEFF
