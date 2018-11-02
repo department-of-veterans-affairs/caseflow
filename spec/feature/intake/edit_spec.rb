@@ -100,7 +100,7 @@ RSpec.feature "Edit issues" do
           description: "non-rated description",
           contention_reference_id: "1234",
           ineligible_reason: nil,
-          decision_date: Date.new(2018, 5, 1)
+          decision_date: Time.zone.today - 20
         )
       end
 
@@ -176,7 +176,7 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content(
           "#{untimely_request_issue.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
         )
-        expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date: 05/01/2018")
+        expect(page).to have_content("#{eligible_request_issue.contention_text}")
       end
     end
 
