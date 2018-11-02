@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: 2.2
+  TargetRubyVersion: 2.5.1
   TargetRailsVersion: 4.2
   Include:
     - '**/config.ru'
