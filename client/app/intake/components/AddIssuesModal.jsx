@@ -6,7 +6,11 @@ import React from 'react';
 import { formatDateStr } from '../../util/DateUtil';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
-import { addRatingRequestIssue, toggleNonratingRequestIssueModal, toggleUntimelyExemptionModal } from '../actions/addIssues';
+import {
+  addRatingRequestIssue,
+  toggleNonratingRequestIssueModal,
+  toggleUntimelyExemptionModal
+} from '../actions/addIssues';
 import TextField from '../../components/TextField';
 import { issueById } from '../util/issues';
 

@@ -6,7 +6,7 @@ import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
 import TextField from '../../components/TextField';
 import { BOOLEAN_RADIO_OPTIONS } from '../constants';
-import { addRatedIssue } from '../actions/addIssues';
+import { addRatingRequestIssue } from '../actions/addIssues';
 
 class UntimelyExemptionModal extends React.Component {
   constructor(props) {
@@ -22,7 +22,7 @@ class UntimelyExemptionModal extends React.Component {
     const currentIssue = this.props.intakeData.currentIssueAndNotes.currentIssue;
     const notes = this.props.intakeData.currentIssueAndNotes.notes;
 
-    this.props.addRatedIssue({
+    this.props.addRatingRequestIssue({
       issueId: currentIssue.reference_id,
       ratings: this.props.intakeData.ratings,
       isRated: true,
@@ -97,6 +97,6 @@ class UntimelyExemptionModal extends React.Component {
 export default connect(
   null,
   (dispatch) => bindActionCreators({
-    addRatedIssue
+    addRatingRequestIssue
   }, dispatch)
 )(UntimelyExemptionModal);
