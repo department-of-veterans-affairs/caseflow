@@ -659,11 +659,19 @@ class AppealRepository
     end
   end
 
-  def self.oldest_priority_appeal_ready_date
-    MetricsService.record("VACOLS: oldest_priority_appeal_ready_date",
-                          name: "oldest_priority_appeal_ready_date",
+  def self.distribute_priority_appeals(judge, genpop, limit)
+    MetricsService.record("VACOLS: distribute_priority_appeals",
+                          name: "distribute_priority_appeals",
                           service: :vacols) do
-      VACOLS::CaseDocket.oldest_priority_appeal_ready_date
+      VACOLS::CaseDocket.distribute_priority_appeals(judge, genpop, limit)
+    end
+  end
+
+  def self.distribute_nonpriority_appeals(judge, genpop, range, limit)
+    MetricsService.record("VACOLS: distribute_nonpriority_appeals",
+                          name: "distribute_nonpriority_appeals",
+                          service: :vacols) do
+      VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, genpop, range, limit)
     end
   end
 

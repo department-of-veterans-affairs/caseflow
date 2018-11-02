@@ -1,23 +1,24 @@
 class Distribution < ApplicationRecord
   include LegacyCaseDistribution
 
-  has_many :appeals
-  has_many :legacy_appeals
+  has_many :distributed_cases
   belongs_to :judge, class_name: "User"
 
   validates :judge, presence: true
-  validate :user_is_judge
-  validate :judge_has_no_unassigned_cases
+  validate :user_is_judge, on: :create
+  validate :judge_has_no_unassigned_cases, on: :create
+
+  after_create :distribute
 
   CASES_PER_ATTORNEY = 5
   ALTERNATIVE_BATCH_SIZE = 10
 
-  def request!
-    save!
-    legacy_case_distribution
-  end
-
   private
+
+  def distribute
+    legacy_distribution
+    update(statistics: legacy_statistics, completed_at: Time.zone.now)
+  end
 
   def user_is_judge
     judge.judge_in_vacols?

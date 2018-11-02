@@ -6,29 +6,37 @@ module LegacyCaseDistribution
   def legacy_distribution
     rem = batch_size
 
-    priority_hearing_appeals = docket.distribute_priority_appeals(judge,
+    priority_hearing_appeals = docket.distribute_priority_appeals(self,
                                                                   genpop: false,
                                                                   limit: rem)
     rem -= priority_hearing_appeals.count
 
-    nonpriority_hearing_appeals = docket.distribute_nonpriority_appeals(judge,
+    nonpriority_hearing_appeals = docket.distribute_nonpriority_appeals(self,
                                                                         genpop: false,
                                                                         range: net_docket_range,
                                                                         limit: rem)
     rem -= nonpriority_hearing_appeals.count
     priority_rem = (priority_target - priority_hearing_appeals.count).clamp(0, rem)
 
-    priority_nonhearing_appeals = docket.distribute_priority_appeals(judge,
+    priority_nonhearing_appeals = docket.distribute_priority_appeals(self,
                                                                      genpop: true,
                                                                      limit: priority_rem)
     rem -= priority_nonhearing_appeals.count
 
-    nonpriority_appeals = docket.distribute_nonpriority_appeals(judge, limit: rem)
+    nonpriority_appeals = docket.distribute_nonpriority_appeals(self, limit: rem)
 
     [
       *priority_hearing_appeals, *nonpriority_hearing_appeals,
       *priority_nonhearing_appeals, *nonpriority_appeals
     ]
+  end
+
+  def legacy_statistics
+    {
+      batch_size: batch_size,
+      total_batch_size: total_batch_size,
+      priority_count: priority_count
+    }
   end
 
   def docket

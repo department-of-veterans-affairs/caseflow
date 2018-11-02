@@ -19,13 +19,31 @@ class LegacyDocket
     count(priority: false) + nod_count * NOD_ADJUSTMENT
   end
 
-  def oldest_priority_appeal_ready_date
-    LegacyAppeal.repository.oldest_priority_appeal_ready_date
+  def distribute_priority_appeals(distribution, genpop = nil, limit = 1)
+    cases = LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
+      DistributedCase.create(distribution: distribution,
+                             case_id: record["bfkey"],
+                             docket: "legacy",
+                             priority: true,
+                             ready_date: record["bfdloout"],
+                             genpop: !record["vlj"].nil?,
+                             genpop_query: maybe_boolean_to_string(genpop))
+    end
+    DistributedCase.create(cases)
   end
 
-  def distribute_priority_appeals(judge, genpop = nil, limit = 1); end
-
-  def distribute_nonpriority_appeals(judge, genpop = nil, range = nil, limit = 1); end
+  def distribute_nonpriority_appeals(distribution, genpop = nil, range = nil, limit = 1)
+    LegacyAppeal.repository.distribute_nonpriority_appeals(distribution.judge, genpop, range, limit).map do |record|
+      DistributedCase.create(distribution: distribution,
+                             case_id: record["bfkey"],
+                             docket: "legacy",
+                             priority: false,
+                             docket_date: record["bfd19"],
+                             docket_index: record["docket_index"],
+                             genpop: !record["vlj"].nil?,
+                             genpop_query: maybe_boolean_to_string(genpop))
+    end
+  end
 
   private
 
@@ -35,5 +53,16 @@ class LegacyDocket
 
   def nod_count
     @nod_count ||= LegacyAppeal.repository.nod_count
+  end
+
+  def maybe_boolean_to_string(bool)
+    case bool
+    when nil?
+      "any"
+    when true
+      "yes"
+    when false
+      "no"
+    end
   end
 end
