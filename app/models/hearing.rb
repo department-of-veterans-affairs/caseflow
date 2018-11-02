@@ -130,12 +130,14 @@ class Hearing < ApplicationRecord
     :number_of_documents, \
     :number_of_documents_after_certification, \
     :veteran,  \
+    :veteran_full_address, \
     :sanitized_vbms_id, \
     :docket_number, \
     :appellant_address_line_1, \
     :appellant_city, \
     :appellant_state, \
     :appellant_zip, \
+    :closest_alternate_hearing_location, \
     to: :appeal, allow_nil: true
 
   delegate :type, to: :appeal, prefix: true
@@ -163,6 +165,7 @@ class Hearing < ApplicationRecord
         :appellant_last_first_mi,
         :appellant_mi_formatted,
         :veteran_fi_last_formatted,
+        :veteran_full_address,
         :vbms_id,
         :current_issue_count,
         :prepped,

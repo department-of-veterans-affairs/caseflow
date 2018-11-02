@@ -19,10 +19,6 @@ module AppealConcern
     veteran_name_object.formatted(:readable_full)
   end
 
-  def veteran_full_address
-    "#{veteran.address_line_1} #{veteran.address_line_2} #{veteran.city}, #{veteran.state} #{veteran.zip}"
-  end
-
   def veteran_mi_formatted
     if veteran_middle_initial
       veteran_name_object.formatted(:readable_mi_formatted)
@@ -55,11 +51,6 @@ module AppealConcern
       name = "#{appellant_last_name}, #{appellant_first_name}"
       name.concat " #{appellant_middle_initial}." if appellant_middle_initial
     end
-  end
-
-  def closest_alternate_hearing_location
-    lat_lng = Appeal.vets360_service.geocode(veteran_full_address)
-    Appeal.facilities_locator_service.get_closest(lat_lng)[:data][0]
   end
 
   private
