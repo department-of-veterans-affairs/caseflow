@@ -23,7 +23,7 @@ class VACOLS::CaseDocket < VACOLS::Record
             AND AOD IN ('G', 'Y')
           group by FOLDER_NR
         ) AOD_HEARINGS on AOD_HEARINGS.FOLDER_NR = BFKEY
-        where BFMPRO <> 'HIS' and BFAC <> '9' and BFD19 is not null
+        where BFMPRO <> 'HIS' and BFD19 is not null
       )
       group by PRIORITY, READY
     SQL
@@ -33,7 +33,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:enable Metrics/MethodLength
 
   def self.nod_count
-    where("BFMPRO <> 'HIS' and BFAC <> '9' and BFD19 is null").count
+    where("BFMPRO = 'ADV' and BFD19 is null").count
   end
 
   def self.regular_non_aod_docket_count
