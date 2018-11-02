@@ -120,8 +120,9 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     const day = parseInt(dateParts[2], 10);
     const timeParts = this.state.selectedTime.split(':');
     let hour = parseInt(timeParts[0], 10);
-    if (hour === 1){
-      hour = hour + 12;
+
+    if (hour === 1) {
+      hour += 12;
     }
     const minute = parseInt(timeParts[1].split(' ')[0], 10);
     const hearingDate = new Date(year, month, day, hour, minute);
