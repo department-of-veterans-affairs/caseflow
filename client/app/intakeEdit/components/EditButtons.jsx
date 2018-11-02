@@ -73,7 +73,7 @@ class SaveButtonUnconnected extends React.Component {
     this.props.requestIssuesUpdate(this.props.claimId, this.props.formType, this.props.state).
       then(() => {
         if (this.props.formType === 'appeal') {
-          window.location.href = `/queue/appeals/${this.props.claimId}`
+          window.location.href = `/queue/appeals/${this.props.claimId}`;
         } else {
           this.props.history.push('/confirmation');
         }
@@ -149,7 +149,7 @@ class CancelEditButtonUnconnected extends React.PureComponent {
       onClick={
         () => {
           if (this.props.formType === 'appeal') {
-            window.location.href = `/queue/appeals/${this.props.claimId}`
+            window.location.href = `/queue/appeals/${this.props.claimId}`;
           } else {
             this.props.history.push('/cancel');
           }

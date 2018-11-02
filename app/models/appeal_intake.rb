@@ -17,7 +17,7 @@ class AppealIntake < DecisionReviewIntake
   end
 
   def complete!(request_params)
-    super do
+    super(request_params) do
       detail.update!(established_at: Time.zone.now)
       detail.create_tasks_on_intake_success!
     end

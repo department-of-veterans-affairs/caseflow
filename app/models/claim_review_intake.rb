@@ -18,12 +18,13 @@ class ClaimReviewIntake < DecisionReviewIntake
   end
 
   def complete!(request_params)
-    super { detail.submit_for_processing! }
-
-    if run_async?
-      ClaimReviewProcessJob.perform_later(detail)
-    else
-      ClaimReviewProcessJob.perform_now(detail)
+    super(request_params) do
+      detail.submit_for_processing!
+      if run_async?
+        ClaimReviewProcessJob.perform_later(detail)
+      else
+        ClaimReviewProcessJob.perform_now(detail)
+      end
     end
   end
 

@@ -20,7 +20,7 @@ class DecisionReviewIntake < Intake
     detail.errors.messages
   end
 
-  def complete!(request_params)
+  def complete!(request_params, &additional_transactions)
     return if complete? || pending?
 
     req_issues = request_params[:request_issues] || []
@@ -28,7 +28,7 @@ class DecisionReviewIntake < Intake
       start_completion!
       detail.request_issues.destroy_all unless detail.request_issues.empty?
       detail.create_issues!(build_issues(req_issues))
-      yield
+      additional_transactions.call
       complete_with_status!(:success)
     end
   end

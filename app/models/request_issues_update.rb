@@ -26,30 +26,36 @@ class RequestIssuesUpdate < ApplicationRecord
       submit_for_processing!
     end
 
-    if run_async?
-      ClaimReviewProcessJob.perform_later(self)
-    else
-      ClaimReviewProcessJob.perform_now(self)
-    end
+    process_job
 
     true
+  end
+
+  def process_job
+    if review.respond_to?(:process_end_product_establishments!)
+      if run_async?
+        ClaimReviewProcessJob.perform_later(self)
+      else
+        ClaimReviewProcessJob.perform_now(self)
+      end
+    else
+      # appeals should just be set to processed
+      attempted!
+      processed!
+    end
   end
 
   def process_end_product_establishments!
     attempted!
 
-    # appeals do not have process_end_product_establishments
-    if review.respond_to?(:process_end_product_establishments!)
-      review.process_end_product_establishments!
+    review.process_end_product_establishments!
 
-      removed_issues.each do |request_issue|
-        request_issue.end_product_establishment.remove_contention!(request_issue)
-      end
-
-      potential_end_products_to_remove = removed_issues.map(&:end_product_establishment).uniq
-      potential_end_products_to_remove.each(&:cancel_unused_end_product!)
+    removed_issues.each do |request_issue|
+      request_issue.end_product_establishment.remove_contention!(request_issue)
     end
 
+    potential_end_products_to_remove = removed_issues.map(&:end_product_establishment).uniq
+    potential_end_products_to_remove.each(&:cancel_unused_end_product!)
     clear_error!
     processed!
   end
