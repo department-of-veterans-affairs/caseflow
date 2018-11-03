@@ -173,7 +173,7 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES_SHORT.appeal} created:")
-    expect(page).to have_content("Issue: Description for Active Duty Adjustments")
+    expect(page).to have_content("Issue: Active Duty Adjustments - Description for Active Duty Adjustments")
 
     intake.reload
     expect(intake.completed_at).to eq(Time.zone.now)
