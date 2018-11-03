@@ -9,7 +9,7 @@ import _ from 'lodash';
 // appeals
 const getAppealChecklistItems = (requestIssues) => [<Fragment>
   <strong>Appeal created:</strong>
-  {requestIssues.map((ri, i) => <p key={i}>Issue: {ri.description}</p>)}
+  {requestIssues.map((ri, i) => <p key={i}>Issue: {ri.contentionText}</p>)}
 </Fragment>];
 
 // higher level reviews & supplemental claims
