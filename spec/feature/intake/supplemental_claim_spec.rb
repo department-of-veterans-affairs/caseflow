@@ -530,7 +530,7 @@ RSpec.feature "Supplemental Claim Intake" do
       safe_click "#button-finish-intake"
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
-      expect(page).to have_content("UNIDENTIFIED ISSUE")
+      expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
 
       expect(SupplementalClaim.find_by(
                id: supplemental_claim.id,

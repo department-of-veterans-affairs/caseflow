@@ -692,7 +692,7 @@ RSpec.feature "Higher-Level Review" do
       safe_click "#button-finish-intake"
 
       expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
-      expect(page).to have_content("UNIDENTIFIED ISSUE")
+      expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
 
       # make sure that database is populated
       expect(HigherLevelReview.find_by(
