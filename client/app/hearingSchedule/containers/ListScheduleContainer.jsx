@@ -11,7 +11,7 @@ import COPY from '../../../COPY.json';
 import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 import PropTypes from 'prop-types';
-// import QueueCaseSearchBar from '../../queue/SearchBar';
+import QueueCaseSearchBar from '../../queue/SearchBar';
 
 const dateFormatString = 'YYYY-MM-DD';
 
@@ -50,26 +50,27 @@ export class ListScheduleContainer extends React.Component {
 
   render() {
     return (
-      <AppSegment filledBackground>
-        <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
-        {this.props.userRoleBuild &&
-          <span className="cf-push-right">
-            <Link button="secondary" to="/schedule/build">Build schedule</Link>
-          </span>
-        }{this.props.userRoleAssign &&
-          <span className="cf-push-right"{...actionButtonsStyling} >
-            <Link button="primary" to="/schedule/assign">Schedule Veterans</Link>
-          </span>
-        }
-        <div className="cf-help-divider" {...hearingSchedStyling} ></div>
-        {/* <QueueCaseSearchBar />*/}
-        <ListSchedule
-          hearingSchedule={this.props.hearingSchedule}
-          userRoleAssign={this.props.userRoleAssign}
-          userRoleBuild={this.props.userRoleBuild}
-          onApply={this.createHearingPromise} />
-
-      </AppSegment>
+      <React.Fragment>
+        <QueueCaseSearchBar />
+        <AppSegment filledBackground>
+          <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
+          {this.props.userRoleBuild &&
+            <span className="cf-push-right">
+              <Link button="secondary" to="/schedule/build">Build schedule</Link>
+            </span>
+          }{this.props.userRoleAssign &&
+            <span className="cf-push-right"{...actionButtonsStyling} >
+              <Link button="primary" to="/schedule/assign">Schedule Veterans</Link>
+            </span>
+          }
+          <div className="cf-help-divider" {...hearingSchedStyling} ></div>
+          <ListSchedule
+            hearingSchedule={this.props.hearingSchedule}
+            userRoleAssign={this.props.userRoleAssign}
+            userRoleBuild={this.props.userRoleBuild}
+            onApply={this.createHearingPromise} />
+        </AppSegment>
+      </React.Fragment>
     );
   }
 }
