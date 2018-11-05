@@ -96,16 +96,20 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :appeals, only: [:index, :show] do
-    get :document_count
-    get :new_documents
-    get :veteran
-    get :power_of_attorney
-    resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
-    resources :special_issues, only: [:create, :index]
-    resources :advance_on_docket_motions, only: [:create]
-    get 'tasks', to: "tasks#for_appeal"
+  resources :appeals, param: :appeal_id, only: [:index, :show, :edit] do
+    member do
+      get :document_count
+      get :new_documents
+      get :veteran
+      get :power_of_attorney
+      resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
+      resources :special_issues, only: [:create, :index]
+      resources :advance_on_docket_motions, only: [:create]
+      get 'tasks', to: "tasks#for_appeal"
+      patch 'update'
+    end
   end
+  match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
 
   resources :beaam_appeals, only: [:index]
 

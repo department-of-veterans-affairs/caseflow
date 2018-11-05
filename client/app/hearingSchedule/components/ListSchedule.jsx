@@ -139,17 +139,16 @@ class ListSchedule extends React.Component {
     };
 
     const hearingScheduleRows = _.map(hearingSchedule, (hearingDay) => ({
-      hearingDate: formatDate(hearingDay.hearingDate),
+      hearingDate: <Link to={`/schedule/docket/${hearingDay.id}`}>{formatDate(hearingDay.hearingDate)}</Link>,
       hearingType: hearingDay.hearingType,
       regionalOffice: hearingDay.regionalOffice,
       room: hearingDay.roomInfo,
       vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName)
     }));
 
-    const removeCoDuplicates = _.uniqWith(hearingScheduleRows, _.isEqual);
-    const uniqueHearingTypes = populateFilterDropDowns(removeCoDuplicates, 'hearingType');
-    const uniqueVljs = populateFilterDropDowns(removeCoDuplicates, 'vlj');
-    const uniqueLocations = populateFilterDropDowns(removeCoDuplicates, 'regionalOffice');
+    const uniqueHearingTypes = populateFilterDropDowns(hearingScheduleRows, 'hearingType');
+    const uniqueVljs = populateFilterDropDowns(hearingScheduleRows, 'vlj');
+    const uniqueLocations = populateFilterDropDowns(hearingScheduleRows, 'regionalOffice');
     const fileName = `HearingSchedule ${this.props.startDateValue}-${this.props.endDateValue}.csv`;
 
     const hearingScheduleColumns = [
@@ -244,7 +243,7 @@ class ListSchedule extends React.Component {
         <Button
           classNames={['usa-button-secondary']}>
           <CSVLink
-            data={removeCoDuplicates}
+            data={hearingScheduleRows}
             target="_blank"
             filename={fileName}>
             Download current view
@@ -254,7 +253,7 @@ class ListSchedule extends React.Component {
       <div {...hearingSchedStyling} className="section-hearings-list">
         <Table
           columns={hearingScheduleColumns}
-          rowObjects={removeCoDuplicates}
+          rowObjects={hearingScheduleRows}
           summary="hearing-schedule"
         />
       </div>

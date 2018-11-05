@@ -134,7 +134,7 @@ describe AppealIntake do
     let(:params) do
       { request_issues: [
         { profile_date: "2018-04-30", reference_id: "reference-id", decision_text: "decision text" },
-        { decision_text: "non-rated issue decision text",
+        { decision_text: "nonrating request issue decision text",
           issue_category: "test issue category",
           decision_date: "2018-12-25" }
       ] }
@@ -161,7 +161,7 @@ describe AppealIntake do
       expect(intake.detail.request_issues.second).to have_attributes(
         issue_category: "test issue category",
         decision_date: Date.new(2018, 12, 25),
-        description: "non-rated issue decision text"
+        description: "nonrating request issue decision text"
       )
       expect(intake.detail.tasks.count).to eq 1
     end

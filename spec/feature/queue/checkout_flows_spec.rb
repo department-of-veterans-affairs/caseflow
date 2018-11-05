@@ -282,10 +282,8 @@ RSpec.feature "Checkout flows" do
         issue_rows = page.find_all("tr[id^='table-row-']")
         expect(issue_rows.length).to eq(appeal.issues.length)
 
-        safe_click("a[href='/queue/appeals/#{appeal.vacols_id}/draft_decision/dispositions/edit/1']")
+        first("a", text: "Edit Issue").click
         expect(page).to have_content("Edit Issue")
-
-        issue_idx = appeal.issues.index { |i| i.vacols_sequence_id.eql? 1 }
 
         # Before we delete the issue lets copy the count of issues before this action to new variable.
         old_issues_count = appeal.issues.length
@@ -294,7 +292,7 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content "Delete Issue?"
         click_on "Delete issue"
 
-        expect(page).to have_content("You deleted issue #{issue_idx + 1}.")
+        expect(page).to have_content("You deleted issue 1.")
 
         visit "/queue"
 
@@ -337,7 +335,7 @@ RSpec.feature "Checkout flows" do
 
         expect(page).to have_content("Select Dispositions")
 
-        safe_click("a[href='/queue/appeals/#{appeal.vacols_id}/draft_decision/dispositions/edit/1']")
+        first("a", text: "Edit Issue").click
         expect(page).to have_content("Edit Issue")
 
         enabled_fields = page.find_all(".Select--single:not(.is-disabled)")
@@ -373,7 +371,7 @@ RSpec.feature "Checkout flows" do
         no_diag_code_w_l2 = %w[4 8 0 2]
 
         [diag_code_no_l2, no_diag_code_no_l2, diag_code_w_l2, no_diag_code_w_l2].each do |opt_set|
-          safe_click "a[href='/queue/appeals/#{appeal.vacols_id}/draft_decision/dispositions/edit/1']"
+          first("a", text: "Edit Issue").click
           expect(page).to have_content "Edit Issue"
           selected_vals = select_issue_level_options(opt_set)
           click_on "Continue"
