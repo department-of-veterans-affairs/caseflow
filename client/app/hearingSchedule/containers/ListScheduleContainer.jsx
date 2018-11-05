@@ -66,8 +66,6 @@ export class ListScheduleContainer extends React.Component {
           <div className="cf-help-divider" {...hearingSchedStyling} ></div>
           <ListSchedule
             hearingSchedule={this.props.hearingSchedule}
-            userRoleAssign={this.props.userRoleAssign}
-            userRoleBuild={this.props.userRoleBuild}
             onApply={this.createHearingPromise} />
         </AppSegment>
       </React.Fragment>
