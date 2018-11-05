@@ -106,6 +106,11 @@ export default class AssignHearings extends React.Component {
   };
 
   getHearingTime = (date, regionalOfficeTimezone) => {
+
+    if (this.props.selectedRegionalOffice.label === 'Central') {
+      return <div>{getTime(date)} </div>;
+    }
+
     return <div>
       {getTime(date)} /<br />{getTimeInDifferentTimeZone(date, regionalOfficeTimezone)}
     </div>;
