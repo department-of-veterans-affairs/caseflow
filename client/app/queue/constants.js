@@ -5,7 +5,6 @@ import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID
 import ISSUE_DISPOSITIONS_BY_ID from '../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
 import LEGACY_REMAND_REASONS_BY_ID from '../../constants/LEGACY_ACTIVE_REMAND_REASONS_BY_ID.json';
 import REMAND_REASONS_BY_ID from '../../constants/AMA_REMAND_REASONS_BY_ID.json';
-import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import StringUtil from '../util/StringUtil';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
