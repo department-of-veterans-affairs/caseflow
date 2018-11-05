@@ -1,12 +1,4 @@
 describe RootTask do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   context ".create_root_and_sub_tasks!" do
     let(:participant_id_with_pva) { "1234" }
     let(:participant_id_with_aml) { "5678" }

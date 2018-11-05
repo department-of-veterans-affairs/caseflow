@@ -31,13 +31,7 @@ RSpec.feature "Case details" do
   let!(:vacols_colocated) { FactoryBot.create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
 
   before do
-    FeatureToggle.enable!(:test_facols)
-
     User.authenticate!(user: attorney_user)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   context "hearings pane on attorney task detail view" do
@@ -276,6 +270,25 @@ RSpec.feature "Case details" do
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
       expect(page.document.text).to match(/Disposition 1 - Allowed/i)
+    end
+  end
+
+  context "when an appeal has an issue that is ineligible" do
+    let(:eligible_issue_cnt) { 5 }
+    let(:ineligible_issue_cnt) { 3 }
+    let(:issues) do
+      [
+        build_list(:request_issue, eligible_issue_cnt, description: "Knee pain"),
+        build_list(:request_issue, ineligible_issue_cnt, description: "Sunburn", ineligible_reason: :untimely)
+      ].flatten
+    end
+    let!(:appeal) { FactoryBot.create(:appeal, request_issues: issues) }
+
+    scenario "only eligible issues should appear in case details page" do
+      visit "/queue/appeals/#{appeal.uuid}"
+
+      expect(page).to have_content("Issue #{eligible_issue_cnt}")
+      expect(page).to_not have_content("Issue #{eligible_issue_cnt + 1}")
     end
   end
 

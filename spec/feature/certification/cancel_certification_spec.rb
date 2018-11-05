@@ -27,13 +27,11 @@ RSpec.feature "Cancel certification" do
     let!(:current_user) { User.authenticate!(user: default_user) }
 
     before(:all) do
-      FeatureToggle.enable!(:test_facols)
       FeatureToggle.enable!(:certification_v2)
     end
 
     after(:all) do
       FeatureToggle.disable!(:certification_v2)
-      FeatureToggle.disable!(:test_facols)
     end
 
     scenario "Validate Input Fields", skip: true do

@@ -375,7 +375,6 @@ class AddEditIssueView extends React.Component<Params> {
 const mapStateToProps = (state, ownProps) => ({
   highlight: state.ui.highlightFormItems,
   appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
-  task: state.queue.tasks[ownProps.appealId],
   issue: state.queue.editingIssue,
   error: state.ui.messages.error,
   deleteIssueModal: state.ui.modals.deleteIssue

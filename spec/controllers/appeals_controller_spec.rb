@@ -1,12 +1,4 @@
 RSpec.describe AppealsController, type: :controller do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   before { User.authenticate!(roles: ["System Admin"]) }
 
   describe "GET appeals" do

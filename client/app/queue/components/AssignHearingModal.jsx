@@ -27,8 +27,7 @@ import InlineForm from '../../components/InlineForm';
 import RoSelectorDropdown from '../../components/RoSelectorDropdown';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import {
-  tasksForAppealAssignedToUserSelector,
-  incompleteOrganizationTasksByAssigneeIdSelector,
+  taskById,
   appealWithDetailSelector
 } from '../selectors';
 import { setTaskAttrs } from '../QueueActions';
@@ -40,6 +39,7 @@ import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../../hearings/constants/
 
 type Params = {|
   task: Task,
+  taskId: string,
   appeal: Appeal,
   appealId: string,
 |};
@@ -119,7 +119,11 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     const month = parseInt(dateParts[1], 10) - 1;
     const day = parseInt(dateParts[2], 10);
     const timeParts = this.state.selectedTime.split(':');
-    const hour = parseInt(timeParts[0], 10);
+    let hour = parseInt(timeParts[0], 10);
+
+    if (hour === 1) {
+      hour += 12;
+    }
     const minute = parseInt(timeParts[1].split(' ')[0], 10);
     const hearingDate = new Date(year, month, day, hour, minute);
 
@@ -257,8 +261,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => ({
-  task: tasksForAppealAssignedToUserSelector(state, ownProps)[0] ||
-    incompleteOrganizationTasksByAssigneeIdSelector(state, { appealId: ownProps.appealId })[0],
+  task: taskById(state, { taskId: ownProps.taskId }),
   appeal: appealWithDetailSelector(state, ownProps),
   saveState: state.ui.saveState.savePending,
   selectedRegionalOffice: state.components.selectedRegionalOffice,

@@ -7,6 +7,12 @@ class AttorneyTask < Task
   validate :parent_attorney_child_count, on: :create
 
   def available_actions(user)
+    if parent.type == JudgeTask.name && parent.assigned_to == user
+      return [
+        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
+      ]
+    end
+
     return [] if assigned_to != user
 
     [

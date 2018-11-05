@@ -9,7 +9,7 @@ import {
 import type {
   State,
   NewDocsForAppeal,
-  AttorneysOfJudge, UiStateModals
+  UiStateModals
 } from './types/state';
 import type {
   Task,
@@ -41,9 +41,8 @@ const getAmaTasks = (state: State): Tasks => state.queue.amaTasks;
 const getAppeals = (state: State): BasicAppeals => state.queue.appeals;
 const getAppealDetails = (state: State): AppealDetails => state.queue.appealDetails;
 const getUserCssId = (state: State): string => state.ui.userCssId;
-const getOrganizationId = (state: State): ?number => state.ui.organizationIds[0];
 const getAppealId = (state: State, props: Object): string => props.appealId;
-const getAttorneys = (state: State): AttorneysOfJudge => state.queue.attorneysOfJudge;
+const getTaskUniqueId = (state: State, props: Object): string => props.taskId;
 const getCaseflowVeteranId = (state: State, props: Object): ?string => props.caseflowVeteranId;
 const getModals = (state: State): UiStateModals => state.ui.modals;
 const getNewDocsForAppeal = (state: State): NewDocsForAppeal => state.queue.newDocsForAppeal;
@@ -77,6 +76,12 @@ export const tasksWithAppealSelector = createSelector(
       }))
     ];
   }
+);
+
+export const taskById = createSelector(
+  [tasksWithAppealSelector, getTaskUniqueId],
+  (tasks: Array<TaskWithAppeal>, taskId: string) =>
+    _.find(tasks, (task) => task.uniqueId === taskId)
 );
 
 export const appealsWithDetailsSelector = createSelector(
@@ -123,13 +128,6 @@ export const tasksForAppealAssignedToUserSelector = createSelector(
   }
 );
 
-export const tasksForAppealAssignedToAttorneySelector = createSelector(
-  [getTasksForAppeal, getAttorneys],
-  (tasks: Tasks, attorneys: Array<User>) => {
-    return _.filter(tasks, (task) => _.some(attorneys, (attorney) => task.assignedTo.cssId === attorney.css_id));
-  }
-);
-
 export const appealsByCaseflowVeteranId = createSelector(
   [appealsWithDetailsSelector, getCaseflowVeteranId],
   (appeals: Appeals, caseflowVeteranId: ?string) =>
@@ -155,17 +153,6 @@ export const completeTasksByAssigneeCssIdSelector = createSelector(
 
 export const actionableTasksForAppeal = createSelector(
   [getTasksForAppeal], (tasks: Tasks) => _.filter(tasks, (task) => task.availableActions.length)
-);
-
-export const organizationTasksByAssigneeIdSelector = createSelector(
-  [getTasksForAppeal, getOrganizationId],
-  (tasks: Tasks, id: Number) =>
-    _.filter(tasks, (task) => task.assignedTo.id === id && task.assignedTo.type !== 'User')
-);
-
-export const incompleteOrganizationTasksByAssigneeIdSelector = createSelector(
-  [organizationTasksByAssigneeIdSelector],
-  (tasks: Tasks) => incompleteTasksSelector(tasks)
 );
 
 export const newTasksByAssigneeCssIdSelector = createSelector(
