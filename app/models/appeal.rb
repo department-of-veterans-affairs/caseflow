@@ -52,6 +52,10 @@ class Appeal < DecisionReview
     task ? task.assigned_to.try(:full_name) : ""
   end
 
+  def eligible_request_issues
+    request_issues.select(&:eligible?)
+  end
+
   def issues
     { decision_issues: decision_issues, request_issues: request_issues }
   end
