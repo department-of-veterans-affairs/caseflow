@@ -12,6 +12,10 @@ import {
   onReceiveQueue
 } from './QueueActions';
 
+import {
+  setActiveOrganizationId
+} from './uiReducer/uiActions';
+
 type Params = {|
   children: React.Node,
   urlToLoad: string
@@ -26,7 +30,12 @@ class OrganizationQueueLoadingScreen extends React.PureComponent<Props> {
   // TODO: Short-circuit this request if we already have the tasks for this organization's queue.
   createLoadPromise = () => ApiUtil.get(this.props.urlToLoad, { timeout: { response: 5 * 60 * 1000 } }).then(
     (response) => {
-      const { tasks: { data: tasks } } = JSON.parse(response.text);
+      const {
+        tasks: { data: tasks },
+        id
+      } = JSON.parse(response.text);
+
+      this.props.setActiveOrganizationId(id);
 
       this.props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));
     }
@@ -60,7 +69,8 @@ class OrganizationQueueLoadingScreen extends React.PureComponent<Props> {
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceiveQueue
+  onReceiveQueue,
+  setActiveOrganizationId
 }, dispatch);
 
 export default (connect(null, mapDispatchToProps)(OrganizationQueueLoadingScreen): React.ComponentType<Params>);
