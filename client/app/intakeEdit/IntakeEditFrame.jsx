@@ -10,6 +10,7 @@ import { PAGE_PATHS } from '../intake/constants';
 import { EditAddIssuesPage } from '../intake/pages/addIssues';
 import CancelPage from './pages/canceled';
 import ConfirmationPage from './pages/confirmation';
+import ClearedEndProductsPage from  './pages/clearedEndProducts';
 import StatusMessage from '../components/StatusMessage';
 import { css } from 'glamor';
 import EditButtons from './components/EditButtons';
@@ -19,6 +20,11 @@ const textAlignRightStyling = css({
 });
 
 export default class IntakeEditFrame extends React.PureComponent {
+  displayClearedEpMessage(details) = {
+    return `Other end products associated with this ${details.formName} have already been decided, 
+        so issues are no longer editable. If this is a problem, please contact Caseflow support.`
+  }
+
   render() {
     const {
       veteran,
@@ -74,6 +80,13 @@ export default class IntakeEditFrame extends React.PureComponent {
                   component={() => {
                     return <StatusMessage title="Issues Not Editable"
                       leadMessageList={[dtaMessage]} />;
+                  }} />
+                <PageRoute
+                  exact
+                  path={PAGE_PATHS.CLEARED_EPS}
+                  title="Edit Claim Issues | Caseflow Intake"
+                  component={() => {
+                    return <Message title="Issues Not Editable" displayMessage={this.displayClearedEpMessage}
                   }} />
               </div>
             </AppSegment>

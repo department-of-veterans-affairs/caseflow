@@ -24,7 +24,8 @@ class ClaimReview < DecisionReview
       payeeCode: payee_code,
       legacyOptInApproved: legacy_opt_in_approved,
       ratings: serialized_ratings,
-      requestIssues: request_issues.map(&:ui_hash)
+      requestIssues: request_issues.map(&:ui_hash),
+      hasClearedEP: has_cleared_ep?
     }
   end
 
@@ -99,6 +100,10 @@ class ClaimReview < DecisionReview
       # allow higher level reviews to do additional logic on dta errors
       yield if block_given?
     end
+  end
+
+  def has_cleared_ep?
+    not end_product_establishments.select(&:status_cleared?).empty?
   end
 
   private
