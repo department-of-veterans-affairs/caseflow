@@ -9,6 +9,7 @@ class TasksController < ApplicationController
     AttorneyTask: AttorneyTask,
     GenericTask: GenericTask,
     QualityReviewTask: QualityReviewTask,
+    AssignJudgeTask: AssignJudgeTask,
     JudgeTask: JudgeTask,
     ScheduleHearingTask: ScheduleHearingTask,
     MailTask: MailTask

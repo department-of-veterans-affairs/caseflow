@@ -28,7 +28,7 @@ class Task < ApplicationRecord
   end
 
   def label
-    "task"
+    action || "task"
   end
 
   # available_actions() returns an array of options from selected by the subclass
@@ -199,9 +199,9 @@ class Task < ApplicationRecord
 
   def assign_to_judge_data
     {
-      selected: root_task.children.find { |task| task.type == JudgeTask.name }.assigned_to,
+      selected: root_task.children.find { |task| [AssignJudgeTask.name, JudgeTask.name].includes?(task.type)  }.try(:assigned_to),
       options: users_to_options(Judge.list_all),
-      type: JudgeTask.name
+      type: AssignJudgeTask.name
     }
   end
 

@@ -17,16 +17,10 @@ class JudgeTask < Task
     new_task
   end
 
-  # TODO: Should we explicitly create the AssignJudgeTask instead of the JudgeTask we are creating right now?
-  def self.modify_params(params)
-    super(params.merge(type: AssignJudgeTask.name))
-  end
-
   def self.verify_user_can_assign!(user)
     QualityReview.singleton.user_has_access?(user) || super(user)
   end
 
-  # TODO: Should we close the AssignJudgeTask and create a new ReviewJudgeTask here instead?
   def when_child_task_completed
     update!(type: ReviewJudgeTask.name)
     super
@@ -99,8 +93,6 @@ class JudgeTask < Task
   # rubocop:enable Metrics/AbcSize
 end
 
-# TODO: I actually don't think actions serve any purpose other than describing which task type we should use.
-# We may be able to get rid of the action method on these Judge subtasks entirely.
 class AssignJudgeTask < JudgeTask
   def label
     "assign"
