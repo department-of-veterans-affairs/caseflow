@@ -36,6 +36,18 @@ class Appeal < DecisionReview
     "Original"
   end
 
+  def location_code
+    # If there is an active attorney task, return that
+    atty_tasks = tasks.where(type: AttorneyTask.name).where.not(status: Constants.TASK_STATUSES.completed)
+    return atty_tasks[0].first.assigned_to.css_id if atty_tasks
+    # If there is an active organization task, return that
+
+    # If there is a judge task, return that
+    return tasks.where(type: JudgeTask.name).where.not(status: Constants.TASK_STATUSES.completed).first.assigned_to.css_id
+
+    "SOME ASSIGNEE"
+  end
+
   def attorney_case_reviews
     tasks.map(&:attorney_case_reviews).flatten
   end

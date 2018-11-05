@@ -18,7 +18,12 @@ const currentAssigneeStyling = css({
   color: COLORS.GREEN
 });
 
+const getLocationCode = (appeal) => {
+  debugger;
+}
+
 const labelForLocation = (locationCode, userId) => {
+  debugger;
   if (!locationCode) {
     return '';
   }
@@ -66,9 +71,11 @@ class CaseListTable extends React.PureComponent {
         <DateString date={appeal.decisionDate} /> :
         ''
     },
+    // TODO: use some other field for AMA appeals — legacy appeals use location_code
     {
       header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
       valueFunction: (appeal) => labelForLocation(appeal.locationCode, this.props.userCssId)
+      // valueFunction: (appeal) => getLocationCode(appeal)
     }
   ];
 
