@@ -49,6 +49,13 @@ export const formatRadioOptions = (options) => {
 };
 
 export const prepareReviewData = (intakeData, intakeType) => {
+  let { payeeCode } = intakeData;
+
+  // If the Veteran is the claimant then the payee code is '00'
+  if (!intakeData.claimantNotVeteran) {
+    payeeCode = '00';
+  }
+
   switch (intakeType) {
   case 'appeal':
     return {
