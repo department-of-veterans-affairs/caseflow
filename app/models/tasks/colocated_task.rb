@@ -86,18 +86,20 @@ end
 
 class MovableColocatedTask < ColocatedTask
   def available_actions(user)
-    actions = super(user)
-
-    # Expect the first action to be the mark task complete action which we want to replace with the task-specific
-    # relocation logic.
     if appeal.class.eql?(LegacyAppeal)
-      actions[0] = {
-        label: format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, action),
-        value: "modal/send_colocated_task"
-      }
+      return [
+        {
+          label: COPY::COLOCATED_ACTION_PLACE_HOLD,
+          value: Constants::CO_LOCATED_ACTIONS["PLACE_HOLD"]
+        },
+        {
+          label: format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, action),
+          value: "modal/send_colocated_task"
+        }
+      ]
     end
 
-    actions
+    super
   end
 end
 
