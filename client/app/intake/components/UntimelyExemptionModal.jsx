@@ -25,7 +25,7 @@ class UntimelyExemptionModal extends React.Component {
     this.props.addRatingRequestIssue({
       issueId: currentIssue.reference_id,
       ratings: this.props.intakeData.ratings,
-      isRated: true,
+      isRating: true,
       notes,
       untimelyExemption: this.state.untimelyExemption,
       untimelyExemptionNotes: this.state.untimelyExemptionNotes
