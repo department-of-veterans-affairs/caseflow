@@ -103,11 +103,13 @@ class Review extends React.PureComponent {
 }
 
 const SelectClaimantConnected = connect(
-  ({ higherLevelReview }) => ({
+  ({ intake, higherLevelReview }) => ({
     claimantNotVeteran: higherLevelReview.claimantNotVeteran,
     claimant: higherLevelReview.claimant,
     payeeCode: higherLevelReview.payeeCode,
-    relationships: higherLevelReview.relationships
+    relationships: higherLevelReview.relationships,
+    benefitType: higherLevelReview.benefitType,
+    formType: intake.formType
   }),
   (dispatch) => bindActionCreators({
     setClaimantNotVeteran,

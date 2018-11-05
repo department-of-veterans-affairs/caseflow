@@ -2,10 +2,18 @@ import React from 'react';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import { BOOLEAN_RADIO_OPTIONS, PAYEE_CODES } from '../constants';
+import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES.json';
 
 export default class SelectClaimant extends React.PureComponent {
   handlePayeeCodeChange(event) {
     this.props.setPayeeCode(event ? event.value : null);
+  }
+
+  shouldShowPayeeCode = () => {
+    const { formType, benefitType } = this.props;
+
+    return formType !== 'appeal' &&
+      (benefitType === 'compensation' || benefitType === 'pension');
   }
 
   render = () => {
@@ -36,14 +44,16 @@ export default class SelectClaimant extends React.PureComponent {
           value={claimant}
         />
 
-        <SearchableDropdown
-          name="cf-payee-code"
-          strongLabel
-          label="What is the payee code for this claimant?"
-          placeholder="Select"
-          options={PAYEE_CODES}
-          value={payeeCode}
-          onChange={(event) => this.handlePayeeCodeChange(event)} />
+        {
+          this.shouldShowPayeeCode() && <SearchableDropdown
+            name="cf-payee-code"
+            strongLabel
+            label="What is the payee code for this claimant?"
+            placeholder="Select"
+            options={PAYEE_CODES}
+            value={payeeCode}
+            onChange={(event) => this.handlePayeeCodeChange(event)} />
+        }
 
       </div>;
     };

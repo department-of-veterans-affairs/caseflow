@@ -10,9 +10,19 @@ class ClaimReviewIntake < DecisionReviewIntake
 
   def review!(request_params)
     detail.start_review!
+
+    # If a claimant is specified we either use the payee_code or set it to nil
+    # since in non-pension/compensation cases we don't need it. Otherwise if the
+    # claimant is the Veteran we set the code to "00"
+    if request_params[:claimant]
+      payee_code = request_params[:payee_code] || nil
+    else
+      payee_code = "00"
+    end
+
     detail.create_claimants!(
       participant_id: request_params[:claimant] || veteran.participant_id,
-      payee_code: request_params[:payee_code] || "00"
+      payee_code: payee_code
     )
     detail.update(review_params(request_params))
   end
