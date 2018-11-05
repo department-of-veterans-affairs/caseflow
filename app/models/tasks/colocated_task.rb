@@ -93,7 +93,7 @@ class MovableColocatedTask < ColocatedTask
           value: Constants::CO_LOCATED_ACTIONS["PLACE_HOLD"]
         },
         {
-          label: format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, action),
+          label: format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, label),
           value: "modal/send_colocated_task"
         }
       ]
