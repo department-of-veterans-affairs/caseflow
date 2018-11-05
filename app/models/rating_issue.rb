@@ -39,7 +39,6 @@ class RatingIssue
     if decision_issue
       decision_issue.update!(source_request_issue: source_request_issue)
     else
-      # TODO: should this ever happen?
       DecisionIssue.create!(
         source_request_issue: source_request_issue,
         rating_issue_reference_id: reference_id,
