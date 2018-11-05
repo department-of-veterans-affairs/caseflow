@@ -33,12 +33,18 @@ const sectionNavStyling = css({
 const sectionNavigationListStyling = css({
   '@media (max-width : 920px)': {
     display: 'flex',
-    flexFlow: 'row wrap',
+    flexFlow: 'row',
     marginBottom: '10px',
     borderBottom: 'none',
     borderTop: 'none',
     borderRadius: '5px',
     width: '100%',
+    '& > li:first-child': {
+      borderRadius: '5px 0 0 5px'
+    },
+    '& > li:last-child': {
+      borderRadius: '0 5px 5px 0'
+    },
     '& > li > a:after': {
       content: 'none'
     }
