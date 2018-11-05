@@ -55,6 +55,10 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
+          feature: "decision_document_upload",
+          enable_all: true
+        },
+        {
           feature: "use_representative_info_from_bgs",
           enable_all: true
         }

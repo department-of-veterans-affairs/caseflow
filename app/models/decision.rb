@@ -23,7 +23,6 @@ class Decision < ApplicationRecord
     appeal.external_id
   end
 
-  # raise error on error
   def upload!
     return unless file
     S3Service.store_file(Decision::S3_SUB_BUCKET + "/" + s3_filename, pdf_location, :filepath)

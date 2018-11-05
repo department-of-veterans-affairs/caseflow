@@ -32,7 +32,7 @@ class BvaDispatchTask < GenericTask
       raise(Caseflow::Error::OutcodeValidationFailure, message: e.message) if e.message =~ /^Validation failed:/
       raise e
     rescue VBMS::HTTPError => e
-      raise(Caseflow::Error::DocumentUploadFailedInVBMS, messaage: "Document upload failed due to VBMS experiencing issues")
+      raise(Caseflow::Error::DocumentUploadFailedInVBMS, message: "Document upload failed due to VBMS experiencing issues")
       raise e
     end
 
