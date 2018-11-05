@@ -6,7 +6,7 @@ import _ from 'lodash';
 import StatusMessage from '../../components/StatusMessage';
 import { FORM_TYPES } from '../../intake/constants';
 
-class ClearedEndProducts extends Component {
+class Message extends Component {
   render = () => {
     const {
       veteran,
@@ -28,7 +28,7 @@ class ClearedEndProducts extends Component {
   }
 }
 
-ClearedEndProducts.propTypes = {
+Message.propTypes = {
   veteran: PropTypes.object.isRequired,
   formType: PropTypes.oneOf(_.map(FORM_TYPES, 'key')).isRequired,
   title: PropTypes.string.isRequired,
@@ -40,4 +40,4 @@ export default connect(
     veteran: state.veteran,
     formType: state.formType
   })
-)(ClearedEndProducts);
+)(Message);
