@@ -254,7 +254,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
   const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
 
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST)
-console.log("amaActivationDate::", typeof amaActivationDate)
+
   return issues.map((issue) => {
     if (issue.isUnidentified) {
       return {

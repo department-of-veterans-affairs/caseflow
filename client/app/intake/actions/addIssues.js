@@ -52,6 +52,7 @@ export const addRatedIssue = (args) => (dispatch) => {
       titleOfActiveReview: currentIssue.title_of_active_review,
       timely: currentIssue.timely,
       sourceHigherLevelReview: currentIssue.source_higher_level_review,
+      isRampDecision: currentIssue.is_ramp_decision,
       promulgationDate: currentIssue.promulgation_date,
       profileDate: currentRating.profile_date,
       notes: args.notes

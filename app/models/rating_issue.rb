@@ -27,7 +27,8 @@ class RatingIssue < ApplicationRecord
         reference_id: ui_hash[:reference_id],
         decision_text: ui_hash[:decision_text],
         promulgation_date: ui_hash[:promulgation_date],
-        contention_reference_id: ui_hash[:contention_reference_id]
+        contention_reference_id: ui_hash[:contention_reference_id],
+        is_ramp_decision: ui_hash[:is_ramp_decision]
       )
     end
   end
