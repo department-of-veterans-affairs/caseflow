@@ -36,6 +36,7 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
     {
       address_line_1: object.appellant_address_line_1,
       address_line_2: object.appellant_address_line_2,
+      address_line_3: object.appellant_address_line_3,
       city: object.appellant_city,
       state: object.appellant_state,
       zip: object.appellant_zip,
