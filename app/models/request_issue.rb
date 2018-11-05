@@ -1,9 +1,8 @@
 class RequestIssue < ApplicationRecord
   belongs_to :review_request, polymorphic: true
   belongs_to :end_product_establishment
-  has_many :decision_issues
+  has_many :decision_issues, foreign_key: "source_request_issue_id"
   has_many :remand_reasons
-  has_many :decision_rating_issues, foreign_key: "source_request_issue_id", class_name: "RatingIssue"
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
 
@@ -118,14 +117,14 @@ class RequestIssue < ApplicationRecord
 
   def previous_request_issue
     return unless contested_rating_issue
-    review_request.veteran.decision_rating_issues.find_by(
-      reference_id: contested_rating_issue.reference_id
+    review_request.veteran.decision_issues.find_by(
+      rating_issue_reference_id: contested_rating_issue.reference_id
     ).try(:source_request_issue)
   end
 
   private
 
-  # It may not yet exist in the db as a RatingIssue so we pull hash from the serialized_ratings.
+  # RatingIssue is not in db so we pull hash from the serialized_ratings.
   def fetch_contested_rating_issue_ui_hash
     rating_with_issue = review_request.serialized_ratings.find do |rating|
       rating[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
