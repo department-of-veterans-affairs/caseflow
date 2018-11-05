@@ -38,7 +38,7 @@ class AddIssuesModal extends React.Component {
   }
 
   requiresUntimelyExemption = () => {
-    if (this.props.intakeData.formType === 'supplemental_claim') {
+    if (this.props.formType === 'supplemental_claim') {
       return false;
     }
     const currentIssue = issueById(this.props.intakeData.ratings, this.state.referenceId);

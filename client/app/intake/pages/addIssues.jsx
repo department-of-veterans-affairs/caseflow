@@ -159,6 +159,7 @@ export class AddIssuesPage extends React.Component {
     return <div className="cf-intake-edit">
       { intakeData.addIssuesModalVisible && <AddIssuesModal
         intakeData={intakeData}
+        formType={formType}
         closeHandler={this.props.toggleAddIssuesModal} />
       }
       { intakeData.untimelyExemptionModalVisible && <UntimelyExemptionModal
