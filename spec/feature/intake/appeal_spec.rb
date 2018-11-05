@@ -1,6 +1,9 @@
 require "rails_helper"
+require "support/intake_helpers"
 
 RSpec.feature "Appeal Intake" do
+  include IntakeHelpers
+
   before do
     FeatureToggle.enable!(:intake)
     # Test that this works when only enabled on the current user
@@ -397,10 +400,7 @@ RSpec.feature "Appeal Intake" do
     safe_click "#button-add-issue"
     find_all("label", text: "Really old injury").first.click
     safe_click ".add-issue"
-    expect(page).to have_content("The issue requested isn't usually eligible because its decision date is older")
-    find_all("label", text: "Yes").first.click
-    fill_in "Notes", with: "I am an exemption note"
-    safe_click ".add-issue"
+    add_untimely_exemption_response("Yes")
     expect(page).to have_content("5 issues")
     expect(page).to have_content("I am an exemption note")
     expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
@@ -410,10 +410,7 @@ RSpec.feature "Appeal Intake" do
     safe_click "#button-add-issue"
     find_all("label", text: "Really old injury").first.click
     safe_click ".add-issue"
-    expect(page).to have_content("The issue requested isn't usually eligible because its decision date is older")
-    find_all("label", text: "No").first.click
-    fill_in "Notes", with: "I am an exemption note"
-    safe_click ".add-issue"
+    add_untimely_exemption_response("No")
     expect(page).to have_content("5 issues")
     expect(page).to have_content("I am an exemption note")
     expect(page).to have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
@@ -490,6 +487,7 @@ RSpec.feature "Appeal Intake" do
     find_all("label", text: "Left knee granted").first.click
     fill_in "Notes", with: "I am an issue note"
     safe_click ".add-issue"
+    add_untimely_exemption_response("Yes")
 
     ## Validate error message when complete intake fails
     expect_any_instance_of(AppealIntake).to receive(:complete!).and_raise("A random error. Oh no!")
