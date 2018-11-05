@@ -6,6 +6,9 @@ class RequestIssue < ApplicationRecord
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
 
+  # enum is symbol, but validates requires a string
+  validates :ineligible_reason, exclusion: { in: ["untimely"] }, if: proc { |reqi| reqi.untimely_exemption }
+
   enum ineligible_reason: {
     duplicate_of_issue_in_active_review: 0,
     untimely: 1,
@@ -41,7 +44,9 @@ class RequestIssue < ApplicationRecord
         decision_date: data[:decision_date],
         issue_category: data[:issue_category],
         notes: data[:notes],
-        is_unidentified: data[:is_unidentified]
+        is_unidentified: data[:is_unidentified],
+        untimely_exemption: data[:untimely_exemption],
+        untimely_exemption_notes: data[:untimely_exemption_notes]
       ).validate_eligibility!
     end
 
@@ -164,6 +169,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def check_for_rating_untimely!
+    return if untimely_exemption
     if contested_rating_issue && !review_request.timely_rating?(contested_rating_issue.promulgation_date)
       self.ineligible_reason = :untimely
     end

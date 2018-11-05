@@ -630,6 +630,8 @@ ActiveRecord::Schema.define(version: 20181101193212) do
     t.text "notes"
     t.boolean "is_unidentified"
     t.integer "ineligible_reason"
+    t.boolean "untimely_exemption"
+    t.text "untimely_exemption_notes"
     t.bigint "ineligible_due_to_id"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"

@@ -1,6 +1,9 @@
 require "rails_helper"
+require "support/intake_helpers"
 
 RSpec.feature "Appeal Intake" do
+  include IntakeHelpers
+
   before do
     FeatureToggle.enable!(:intake)
     # Test that this works when only enabled on the current user
@@ -397,8 +400,20 @@ RSpec.feature "Appeal Intake" do
     safe_click "#button-add-issue"
     find_all("label", text: "Really old injury").first.click
     safe_click ".add-issue"
+    add_untimely_exemption_response("Yes")
     expect(page).to have_content("5 issues")
-    expect(page).to have_content("5. Really old injury is ineligible because it has a prior decision date")
+    expect(page).to have_content("I am an exemption note")
+    expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
+
+    # remove and re-add with different answer to exemption
+    page.all(".remove-issue").last.click
+    safe_click "#button-add-issue"
+    find_all("label", text: "Really old injury").first.click
+    safe_click ".add-issue"
+    add_untimely_exemption_response("No")
+    expect(page).to have_content("5 issues")
+    expect(page).to have_content("I am an exemption note")
+    expect(page).to have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
 
     # add untimely nonrating request issue
     safe_click "#button-add-issue"
@@ -434,6 +449,13 @@ RSpec.feature "Appeal Intake" do
     )).to_not be_nil
 
     expect(RequestIssue.find_by(
+             review_request: appeal,
+             description: "Really old injury",
+             untimely_exemption: false,
+             untimely_exemption_notes: "I am an exemption note"
+    )).to_not be_nil
+
+    expect(RequestIssue.find_by(
              review_request_type: "Appeal",
              review_request_id: appeal.id,
              issue_category: "Active Duty Adjustments",
@@ -465,6 +487,7 @@ RSpec.feature "Appeal Intake" do
     find_all("label", text: "Left knee granted").first.click
     fill_in "Notes", with: "I am an issue note"
     safe_click ".add-issue"
+    add_untimely_exemption_response("Yes")
 
     ## Validate error message when complete intake fails
     expect_any_instance_of(AppealIntake).to receive(:complete!).and_raise("A random error. Oh no!")

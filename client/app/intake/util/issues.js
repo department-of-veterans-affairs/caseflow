@@ -128,6 +128,15 @@ const ratingIssuesById = (ratings) => {
   }, {});
 };
 
+export const issueById = (ratings, issueId) => {
+  const currentRating = _.filter(
+    ratings,
+    (ratingDate) => _.some(ratingDate.issues, { reference_id: issueId })
+  )[0];
+
+  return currentRating.issues[issueId];
+};
+
 const formatUnidentifiedIssues = (state) => {
   // only used for the new add intake flow
   if (state.addedIssues && state.addedIssues.length > 0) {
@@ -153,10 +162,14 @@ const formatRatingRequestIssues = (state) => {
     return state.addedIssues.
       filter((issue) => issue.isRating && !issue.isUnidentified).
       map((issue) => {
-        return { reference_id: issue.id,
+        return {
+          reference_id: issue.id,
           decision_text: ratingIssues[issue.id],
           profile_date: issue.profileDate,
-          notes: issue.notes };
+          notes: issue.notes,
+          untimely_exemption: issue.untimelyExemption,
+          untimely_exemption_notes: issue.untimelyExemptionNotes
+        };
       });
   }
 
@@ -270,6 +283,8 @@ export const formatAddedIssues = (intakeData) => {
         sourceHigherLevelReview: issue.sourceHigherLevelReview,
         promulgationDate: issue.promulgationDate,
         timely: issue.timely,
+        untimelyExemption: issue.untimelyExemption,
+        untimelyExemptionNotes: issue.untimelyExemptionNotes,
         ineligibleReason: issue.ineligibleReason
       };
     }
