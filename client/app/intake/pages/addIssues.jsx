@@ -84,7 +84,7 @@ export class AddIssuesPage extends React.Component {
     }
 
     if (intakeData.hasClearedEP) {
-      return <Redirect to {PAGE_PATHS.CLEARED_EPS} />;
+      return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
     }
 
     const issuesComponent = () => {
