@@ -1,4 +1,4 @@
-class Appeal < AmaReview
+class Appeal < DecisionReview
   include Taskable
 
   has_many :appeal_views, as: :appeal

@@ -6,23 +6,23 @@ import DateSelector from '../../components/DateSelector';
 import { ISSUE_CATEGORIES } from '../constants';
 import _ from 'lodash';
 
-export default class NonRatedIssuesUnconnected extends React.PureComponent {
+export default class NonratingRequestIssuesUnconnected extends React.PureComponent {
   render() {
     const {
-      nonRatedIssues,
-      newNonRatedIssue,
+      nonRatingRequestIssues,
+      newNonratingRequestIssue,
       setIssueCategory,
       setIssueDescription,
       setIssueDecisionDate
     } = this.props;
 
-    const disableAddNonRatedIssue = _.some(nonRatedIssues, (issue) => {
+    const disableAddNonratingRequestIssue = _.some(nonRatingRequestIssues, (issue) => {
       return !issue.description;
     });
 
-    const nonRatedIssuesSection = _.map(nonRatedIssues, (issue, issueId) => {
+    const nonRatingRequestIssuesSection = _.map(nonRatingRequestIssues, (issue, issueId) => {
       return (
-        <NonRatedIssue
+        <NonratingRequestIssue
           key={issueId}
           id={issueId}
           category={issue.category}
@@ -42,14 +42,14 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
       please note them below. Otherwise, leave the section blank.
       </p>
       <div>
-        { nonRatedIssuesSection }
+        { nonRatingRequestIssuesSection }
       </div>
 
       <Button
         name="add-issue"
-        onClick={newNonRatedIssue}
+        onClick={newNonratingRequestIssue}
         classNames={['usa-button-secondary']}
-        disabled={disableAddNonRatedIssue}
+        disabled={disableAddNonratingRequestIssue}
       >
       + Add issue
       </Button>
@@ -57,7 +57,7 @@ export default class NonRatedIssuesUnconnected extends React.PureComponent {
   }
 }
 
-class NonRatedIssue extends React.PureComponent {
+class NonratingRequestIssue extends React.PureComponent {
   handleCategoryChange(event) {
     this.props.setCategory(this.props.id, event ? event.value : null);
   }
@@ -74,7 +74,7 @@ class NonRatedIssue extends React.PureComponent {
     const { category, description, decisionDate } = this.props;
 
     return (
-      <div className="cf-non-rated-issue">
+      <div className="cf-nonrating-request-issue">
         <SearchableDropdown
           name="issue-category"
           label="Issue category"
