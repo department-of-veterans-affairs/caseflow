@@ -2,20 +2,16 @@ import React from 'react';
 import { connect } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import ListSchedule from '../components/ListSchedule';
-import ListScheduleDateSearch, { hearingSchedStyling } from '../components/ListScheduleDateSearch';
+import { hearingSchedStyling } from '../components/ListScheduleDateSearch';
 import { onViewStartDateChange, onViewEndDateChange, onReceiveHearingSchedule } from '../actions';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import { CSVLink } from 'react-csv';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import Button from '../../components/Button';
-import { LOGO_COLORS } from '../../constants/AppConstants';
 import COPY from '../../../COPY.json';
 import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import PropTypes from 'prop-types';
-import QueueCaseSearchBar from '../../queue/SearchBar';
+// import QueueCaseSearchBar from '../../queue/SearchBar';
 
 const dateFormatString = 'YYYY-MM-DD';
 
@@ -25,11 +21,11 @@ const actionButtonsStyling = css({
 
 export class ListScheduleContainer extends React.Component {
 
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       dateRangeKey: `${props.startDate}->${props.endDate}`
-    }
+    };
   }
 
   loadHearingSchedule = () => {
@@ -66,14 +62,14 @@ export class ListScheduleContainer extends React.Component {
           </span>
         }
         <div className="cf-help-divider" {...hearingSchedStyling} ></div>
-        {/*<QueueCaseSearchBar />*/}
+        {/* <QueueCaseSearchBar />*/}
         <ListSchedule
           hearingSchedule={this.props.hearingSchedule}
           userRoleAssign={this.props.userRoleAssign}
           userRoleBuild={this.props.userRoleBuild}
           onApply={this.createHearingPromise} />
 
-    </AppSegment>
+      </AppSegment>
     );
   }
 }

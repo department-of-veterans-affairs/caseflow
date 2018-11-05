@@ -1,7 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
 import { LOGO_COLORS } from '../../constants/AppConstants';
-import COPY from '../../../COPY.json';
 import { css } from 'glamor';
 import Table from '../../components/Table';
 import { formatDate } from '../../util/DateUtil';
@@ -92,7 +91,7 @@ const clearfix = css({
     clear: 'both',
     display: 'block'
   }
-})
+});
 
 class ListSchedule extends React.Component {
   constructor(props) {
@@ -100,7 +99,7 @@ class ListSchedule extends React.Component {
 
     this.state = {
       filteredByList: [],
-      dateRangeKey: `${props.startDate}->${props.endDate}`,
+      dateRangeKey: `${props.startDate}->${props.endDate}`
     };
   }
 
@@ -112,7 +111,7 @@ class ListSchedule extends React.Component {
   getHearingScheduleRows = () => {
     const { hearingSchedule } = this.props;
 
-    const hearingScheduleRows =  _.map(hearingSchedule, (hearingDay) => ({
+    const hearingScheduleRows = _.map(hearingSchedule, (hearingDay) => ({
       hearingDate: <Link to={`/schedule/docket/${hearingDay.id}`}>{formatDate(hearingDay.hearingDate)}</Link>,
       hearingType: hearingDay.hearingType,
       regionalOffice: hearingDay.regionalOffice,
@@ -124,7 +123,6 @@ class ListSchedule extends React.Component {
   }
 
   getHearingScheduleColumns = (hearingScheduleRows) => {
-    const { hearingSchedule } = this.props;
 
     const uniqueHearingTypes = populateFilterDropDowns(hearingScheduleRows, 'hearingType');
     const uniqueVljs = populateFilterDropDowns(hearingScheduleRows, 'vlj');
@@ -254,15 +252,15 @@ class ListSchedule extends React.Component {
               title: 'Unable to load the hearing schedule.'
             }}>
 
-              <div className="cf-push-left">
-                <FilterRibbon
+            <div className="cf-push-left">
+              <FilterRibbon
                 filteredByList={this.state.filteredByList}
                 clearAllFilters={this.clearFilteredByList} />
-              </div>
-              <Table
-                columns={hearingScheduleColumns}
-                rowObjects={hearingScheduleRows}
-                summary="hearing-schedule"/>
+            </div>
+            <Table
+              columns={hearingScheduleColumns}
+              rowObjects={hearingScheduleRows}
+              summary="hearing-schedule" />
 
           </LoadingDataDisplay>
         </div>
@@ -283,8 +281,7 @@ ListSchedule.propTypes = {
     updatedOn: PropTypes.string,
     updatedBy: PropTypes.string
   }),
-  onApply: PropTypes.func,
-  userRole: PropTypes.string
+  onApply: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
