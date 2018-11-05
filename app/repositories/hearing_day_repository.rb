@@ -28,7 +28,7 @@ class HearingDayRepository
         result << to_canonical_hash(hearing)
       end
       travel_board = VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
-      [video_and_co, travel_board]
+      [video_and_co.uniq { |hearing_day| [hearing_day[:hearing_date].to_date, hearing_day[:room_info]] }, travel_board]
     end
 
     def load_days_for_central_office(start_date, end_date)
@@ -37,7 +37,7 @@ class HearingDayRepository
         result << to_canonical_hash(hearing)
       end
       travel_board = []
-      [video_and_co.uniq { |hearing_day| hearing_day[:hearing_date] && hearing_day[:room_info] }, travel_board]
+      [video_and_co.uniq { |hearing_day| [hearing_day[:hearing_date].to_date, hearing_day[:room_info]] }, travel_board]
     end
 
     def load_days_for_regional_office(regional_office, start_date, end_date)

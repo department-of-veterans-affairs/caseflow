@@ -13,7 +13,8 @@ import {
   onCancelHearingUpdate,
   onHearingNotesUpdate,
   onHearingDispositionUpdate,
-  onHearingDateUpdate
+  onHearingDateUpdate,
+  onHearingTimeUpdate
 } from '../actions';
 
 export class DailyDocketContainer extends React.Component {
@@ -36,7 +37,8 @@ export class DailyDocketContainer extends React.Component {
     return {
       disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
       notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
-      date: hearing.editedDate ? hearing.editedDate : hearing.date
+      date: hearing.editedDate ? hearing.editedDate : null,
+      time: hearing.editedTime ? hearing.editedTime : null
     };
   };
 
@@ -70,6 +72,7 @@ export class DailyDocketContainer extends React.Component {
         onHearingNotesUpdate={this.props.onHearingNotesUpdate}
         onHearingDispositionUpdate={this.props.onHearingDispositionUpdate}
         onHearingDateUpdate={this.props.onHearingDateUpdate}
+        onHearingTimeUpdate={this.props.onHearingTimeUpdate}
         saveHearing={this.saveHearing}
         saveSuccessful={this.props.saveSuccessful}
         onResetSaveSuccessful={this.props.onResetSaveSuccessful}
@@ -95,7 +98,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onCancelHearingUpdate,
   onHearingNotesUpdate,
   onHearingDispositionUpdate,
-  onHearingDateUpdate
+  onHearingDateUpdate,
+  onHearingTimeUpdate
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer);

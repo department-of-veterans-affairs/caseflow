@@ -51,7 +51,7 @@ class Hearings::HearingDayController < HearingScheduleController
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
     enriched_hearings = HearingDay.load_days_with_hearings(Time.zone.today.beginning_of_day,
-                                                           Time.zone.today.beginning_of_day + 365.days,
+                                                           Time.zone.today.beginning_of_day + 182.days,
                                                            regional_office)
     enriched_hearings.each do |hearing_day|
       hearing_day[:hearings] = hearing_day[:hearings].map { |hearing| hearing.to_hash(current_user.id) }

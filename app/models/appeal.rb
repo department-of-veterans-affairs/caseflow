@@ -1,4 +1,4 @@
-class Appeal < AmaReview
+class Appeal < DecisionReview
   include Taskable
 
   has_many :appeal_views, as: :appeal
@@ -43,6 +43,10 @@ class Appeal < AmaReview
   def reviewing_judge_name
     task = tasks.where(type: "JudgeTask").order(:created_at).last
     task ? task.assigned_to.try(:full_name) : ""
+  end
+
+  def eligible_request_issues
+    request_issues.select(&:eligible?)
   end
 
   def issues
