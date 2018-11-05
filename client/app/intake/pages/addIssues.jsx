@@ -209,7 +209,8 @@ export const EditAddIssuesPage = connect(
   (state) => ({
     intakeForms: {
       higher_level_review: state,
-      supplemental_claim: state
+      supplemental_claim: state,
+      appeal: state
     },
     formType: state.formType,
     veteran: state.veteran

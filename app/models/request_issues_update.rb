@@ -26,13 +26,23 @@ class RequestIssuesUpdate < ApplicationRecord
       submit_for_processing!
     end
 
-    if run_async?
-      ClaimReviewProcessJob.perform_later(self)
-    else
-      ClaimReviewProcessJob.perform_now(self)
-    end
+    process_job
 
     true
+  end
+
+  def process_job
+    if review.respond_to?(:process_end_product_establishments!)
+      if run_async?
+        ClaimReviewProcessJob.perform_later(self)
+      else
+        ClaimReviewProcessJob.perform_now(self)
+      end
+    else
+      # appeals should just be set to processed
+      attempted!
+      processed!
+    end
   end
 
   def process_end_product_establishments!
