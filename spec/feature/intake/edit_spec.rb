@@ -296,7 +296,7 @@ RSpec.feature "Edit issues" do
         higher_level_review.process_end_product_establishments!
       end
 
-      it "shows request issues and allows adding/removing issues", skip: "Bug with adding and removing same issue" do
+      it "shows request issues and allows adding/removing issues" do
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
 
         expect(page).to have_content("Add / Remove Issues")
