@@ -4,7 +4,7 @@ class DecisionReviewIntake < Intake
       receipt_date: detail.receipt_date,
       claimant: detail.claimant_participant_id,
       claimant_not_veteran: detail.claimant_not_veteran,
-      payee_code: detail.payee_code,
+      payeeCode: detail.payee_code,
       legacy_opt_in_approved: detail.legacy_opt_in_approved,
       ratings: detail.serialized_ratings,
       requestIssues: detail.request_issues.map(&:ui_hash)
