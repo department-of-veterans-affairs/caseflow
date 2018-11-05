@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181031194415) do
+ActiveRecord::Schema.define(version: 20181101193212) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -186,7 +186,14 @@ ActiveRecord::Schema.define(version: 20181031194415) do
     t.string "disposition"
     t.string "disposition_date"
     t.string "description"
-    t.integer "request_issue_id"
+    t.bigint "source_request_issue_id", null: false
+    t.datetime "promulgation_date"
+    t.datetime "profile_date"
+    t.integer "participant_id", null: false
+    t.string "rating_issue_reference_id", null: false
+    t.string "decision_text"
+    t.index ["rating_issue_reference_id", "participant_id"], name: "decision_issues_uniq_idx", unique: true
+    t.index ["source_request_issue_id"], name: "index_decision_issues_on_source_request_issue_id"
   end
 
   create_table "decisions", force: :cascade do |t|
