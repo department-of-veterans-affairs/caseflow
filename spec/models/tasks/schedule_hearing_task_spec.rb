@@ -28,6 +28,12 @@ describe ScheduleHearingTask do
     create(:hearings_staff, organization_id: hearings_org.id)
   end
 
+  let(:test_hearing_date_vacols) do
+    Time.use_zone("Eastern Time (US & Canada)") do
+      Time.zone.local(2018, 11, 2, 5, 0, 0)
+    end
+  end
+
   describe "Add a schedule hearing task" do
     let(:root_task) { FactoryBot.create(:root_task, appeal_type: LegacyAppeal.name, appeal: appeal) }
     let(:params) do
@@ -154,14 +160,14 @@ describe ScheduleHearingTask do
       expect(updated_task[0].task_business_payloads.size).to eq 1
       expect(updated_task[0].task_business_payloads[0].description).to eq("Update")
       expect(updated_task[0].task_business_payloads[0].values["regional_office_value"]).to eq("RO13")
-      expect(updated_task[0].task_business_payloads[0].values["hearing_date"]).to eq("2018-10-30")
+      expect(updated_task[0].task_business_payloads[0].values["hearing_date"]).to eq("2018-10-30T00:00:00.000-04:00")
     end
   end
 
-  describe "A Central Office hearing should be created and appeal placed in location 36" do
-    let(:hearing) { FactoryBot.create(:case_hearing, hearing_type: "C") }
-    let(:root_task) { FactoryBot.create(:root_task, appeal_type: "LegacyAppeal", appeal: appeal) }
-    let(:params) do
+  describe "A Central Office hearing should be updated with vacols_id and appeal placed in location 36" do
+    let!(:hearing) { FactoryBot.create(:case_hearing, hearing_type: "C", hearing_date: test_hearing_date_vacols) }
+    let!(:root_task) { FactoryBot.create(:root_task, appeal_type: "LegacyAppeal", appeal: appeal) }
+    let!(:params) do
       {
         type: ScheduleHearingTask.name,
         action: "Assign Hearing",
@@ -173,20 +179,20 @@ describe ScheduleHearingTask do
           description: "test",
           values: {
             "regional_office_value": "RO13",
-            "hearing_date": hearing.hearing_date,
+            "hearing_date": "2018-11-02T09:00:00.000-04:00",
             "hearing_type": "Central"
           }
         }
       }
     end
-    let(:update_params) do
+    let!(:update_params) do
       {
         status: "completed",
         business_payloads: {
           description: "Update",
           values: {
             "regional_office_value": "RO13",
-            "hearing_date": hearing.hearing_date,
+            "hearing_date": "2018-11-02T09:00:00.000-04:00",
             "hearing_type": "Central"
           }
         }
@@ -199,12 +205,13 @@ describe ScheduleHearingTask do
       updated_hearing = VACOLS::CaseHearing.find(hearing.hearing_pkseq)
 
       expect(updated_hearing.folder_nr).to eq(appeal.vacols_id)
+      expect(updated_hearing.hearing_date).to eq(hearing.hearing_date)
       expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:awaiting_co_hearing]
     end
   end
 
   describe "A Video hearing should be created and appeal placed in location 38" do
-    let(:hearing) { FactoryBot.create(:case_hearing) }
+    let(:hearing) { FactoryBot.create(:case_hearing, hearing_date: test_hearing_date_vacols) }
     let(:root_task) { FactoryBot.create(:root_task, appeal_type: "LegacyAppeal", appeal: appeal) }
     let(:params) do
       {
@@ -218,7 +225,7 @@ describe ScheduleHearingTask do
           description: "test",
           values: {
             "regional_office_value": "RO13",
-            "hearing_date": hearing.hearing_date,
+            "hearing_date": "2018-11-02T09:00:00.000-04:00",
             "hearing_type": "Video"
           }
         }
@@ -232,7 +239,7 @@ describe ScheduleHearingTask do
           values: {
             "regional_office_value": "RO13",
             "hearing_pkseq": hearing.vdkey,
-            "hearing_date": hearing.hearing_date,
+            "hearing_date": "2018-11-02T09:00:00.000-04:00",
             "hearing_type": "Video"
           }
         }
