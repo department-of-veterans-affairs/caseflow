@@ -13,7 +13,7 @@ class LegacyTask
     assigned_at
   end
 
-  def action
+  def label
     "legacy task"
   end
 

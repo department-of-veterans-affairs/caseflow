@@ -17,7 +17,7 @@ class JudgeLegacyTaskFactory
 end
 
 class AssignJudgeLegacyTask < JudgeLegacyTask
-  def action
+  def label
     "assign"
   end
 
@@ -28,7 +28,7 @@ class AssignJudgeLegacyTask < JudgeLegacyTask
 end
 
 class ReviewJudgeLegacyTask < JudgeLegacyTask
-  def action
+  def label
     "review"
   end
 

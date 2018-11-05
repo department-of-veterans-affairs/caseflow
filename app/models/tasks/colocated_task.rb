@@ -67,11 +67,11 @@ class ColocatedTask < Task
        completed? &&
        appeal_type == LegacyAppeal.name &&
        all_tasks_completed_for_appeal?
-      AppealRepository.update_location!(appeal, location_based_on_action)
+      AppealRepository.update_location!(appeal, location)
     end
   end
 
-  def location_based_on_action
+  def location
     assigned_by.vacols_uniq_id
   end
 
@@ -104,111 +104,111 @@ end
 # TODO: I think we only use the "action" field for populating the "type" column in the case table view. Perhaps we can
 # just map from task type directly to what text we want to display in that column on the frontend itself?
 class ScheduleHearingColocatedTask < MovableColocatedTask
-  def action
+  def label
     "Schedule hearing"
   end
 
-  def location_based_on_action
+  def location
     "57"
   end
 end
 
 class TranslationColocatedTask < MovableColocatedTask
-  def action
+  def label
     "Translation"
   end
 
-  def location_based_on_action
+  def location
     "14"
   end
 end
 
 class IhpColocatedTask < ColocatedTask
-  def action
+  def label
     "IHP"
   end
 end
 
 class PoaClarificationColocatedTask < ColocatedTask
-  def action
+  def label
     "POA clarification"
   end
 end
 
 class HearingClarificationColocatedTask < ColocatedTask
-  def action
+  def label
     "Hearing clarification"
   end
 end
 
 class AojColocatedTask < ColocatedTask
-  def action
+  def label
     "AOJ"
   end
 end
 
 class ExtensionColocatedTask < ColocatedTask
-  def action
+  def label
     "Extension"
   end
 end
 
 class MissingHearingTranscriptsColocatedTask < ColocatedTask
-  def action
+  def label
     "Missing hearing transcripts"
   end
 end
 
 class UnaccreditedRepColocatedTask < ColocatedTask
-  def action
+  def label
     "Unaccredited rep"
   end
 end
 
 class FoiaColocatedTask < ColocatedTask
-  def action
+  def label
     "FOIA"
   end
 end
 
 class RetiredVljColocatedTask < ColocatedTask
-  def action
+  def label
     "Retired VLJ"
   end
 end
 
 class ArnesonColocatedTask < ColocatedTask
-  def action
+  def label
     "Arneson"
   end
 end
 
 class NewRepArgumentsColocatedTask < ColocatedTask
-  def action
+  def label
     "New rep arguments"
   end
 end
 
 class PendingScanningVbmsColocatedTask < ColocatedTask
-  def action
+  def label
     "Pending scanning (VBMS)"
   end
 end
 
 class AddressVerificationColocatedTask < ColocatedTask
-  def action
+  def label
     "Address verification"
   end
 end
 
 class MissingRecordsColocatedTask < ColocatedTask
-  def action
+  def label
     "Missing records"
   end
 end
 
 class OtherColocatedTask < ColocatedTask
-  def action
+  def label
     "Other"
   end
 end

@@ -27,7 +27,7 @@ class Task < ApplicationRecord
     []
   end
 
-  def action
+  def label
     "task"
   end
 

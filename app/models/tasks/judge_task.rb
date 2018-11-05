@@ -102,7 +102,7 @@ end
 # TODO: I actually don't think actions serve any purpose other than describing which task type we should use.
 # We may be able to get rid of the action method on these Judge subtasks entirely.
 class AssignJudgeTask < JudgeTask
-  def action
+  def label
     "assign"
   end
 
@@ -112,7 +112,7 @@ class AssignJudgeTask < JudgeTask
 end
 
 class ReviewJudgeTask < JudgeTask
-  def action
+  def label
     "review"
   end
 
