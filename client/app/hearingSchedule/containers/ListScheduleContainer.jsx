@@ -32,12 +32,6 @@ export class ListScheduleContainer extends React.Component {
     }
   }
 
-  // forces remount of LoadingDataDisplay
-  setDateRangeKey = () => {
-    this.setState({ dateRangeKey: `${this.props.startDate}->${this.props.endDate}` });
-    console.log(this.props.endDate);
-  }
-
   loadHearingSchedule = () => {
     let requestUrl = '/hearings/hearing_day.json';
 
@@ -72,29 +66,13 @@ export class ListScheduleContainer extends React.Component {
           </span>
         }
         <div className="cf-help-divider" {...hearingSchedStyling} ></div>
-        <ListScheduleDateSearch
-          startDateValue={this.props.startDate}
-          startDateChange={this.props.onViewStartDateChange}
-          endDateValue={this.props.endDate}
-          endDateChange={this.props.onViewEndDateChange}
-          onApply={this.setDateRangeKey} />
-        <LoadingDataDisplay
-          createLoadPromise={this.createHearingPromise}
-          key={this.state.dateRangeKey}
-          loadingComponentProps={{
-            spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
-            message: 'Loading the hearing schedule...'
-          }}
-          failStatusMessageProps={{
-            title: 'Unable to load the hearing schedule.'
-          }}>
-            {/*<QueueCaseSearchBar />*/}
-            <ListSchedule
-              hearingSchedule={this.props.hearingSchedule}
-              userRoleAssign={this.props.userRoleAssign}
-              userRoleBuild={this.props.userRoleBuild}
-              onApply={this.createHearingPromise} />
-        </LoadingDataDisplay>
+        {/*<QueueCaseSearchBar />*/}
+        <ListSchedule
+          hearingSchedule={this.props.hearingSchedule}
+          userRoleAssign={this.props.userRoleAssign}
+          userRoleBuild={this.props.userRoleBuild}
+          onApply={this.createHearingPromise} />
+
     </AppSegment>
     );
   }

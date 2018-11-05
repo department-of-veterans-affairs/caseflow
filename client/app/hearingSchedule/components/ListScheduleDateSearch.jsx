@@ -10,33 +10,7 @@ export const hearingSchedStyling = css({
 });
 
 
-const downloadButtonStyling = css({
-  marginTop: '60px'
-});
-
-
-const inlineFormStyling = css({
-  '> div': {
-    ' & .cf-inline-form': {
-      lineHeight: '2em',
-      marginTop: '20px'
-    },
-    '& .question-label': {
-      paddingLeft: 0
-    },
-    '& .cf-form-textinput': {
-      marginTop: 0,
-      marginRight: 30
-    },
-    '& input': {
-      marginRight: 0
-    }
-  }
-});
-
-
 const ListScheduleDateSearch = ({ onApply, filteredByList, clearFilteredByList, startDateChange, endDateChange, startDateValue, endDateValue}) => (
-  <div className="cf-push-left" {...inlineFormStyling} >
     <InlineForm>
       <BasicDateRangeSelector
         startDateName="fromDate"
@@ -57,7 +31,6 @@ const ListScheduleDateSearch = ({ onApply, filteredByList, clearFilteredByList, 
         </Link>
       </div>
     </InlineForm>
-  </div>
 );
 
 export default ListScheduleDateSearch;
