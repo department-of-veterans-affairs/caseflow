@@ -12,7 +12,7 @@ describe LegacyDocket do
     ]
   end
 
-  context ".count" do
+  context "#count" do
     before do
       allow(LegacyAppeal.repository).to receive(:docket_counts_by_priority_and_readiness)
         .and_return(counts_by_priority_and_readiness)
@@ -26,7 +26,7 @@ describe LegacyDocket do
     end
   end
 
-  context ".weight" do
+  context "#weight" do
     subject { docket.weight }
 
     before do

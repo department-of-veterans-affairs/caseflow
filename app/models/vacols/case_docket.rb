@@ -148,11 +148,11 @@ class VACOLS::CaseDocket < VACOLS::Record
       )
       where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
         and (DOCKET_INDEX <= ? or 1 = ?)
-        and rownum <= ?;
+        and rownum <= ?
     SQL
 
     conn.transaction do
-      conn.execute("lock BRIEFF in row exclusive mode")
+      conn.execute("lock table BRIEFF in row exclusive mode")
       appeals = conn.exec_query(sanitize_sql_array([
                                                      query,
                                                      judge.vacols_attorney_id,
@@ -226,11 +226,11 @@ class VACOLS::CaseDocket < VACOLS::Record
             and (VLJ_PRIORDEC.TINUM is null or VLJ_PRIORDEC.TINUM = FOLDER.TINUM)
       )
       where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
-        and rownum <= ?;
+        and rownum <= ?
     SQL
 
     conn.transaction do
-      conn.execute("lock BRIEFF in row exclusive mode")
+      conn.execute("lock table BRIEFF in row exclusive mode")
       appeals = conn.exec_query(sanitize_sql_array([
                                                      query,
                                                      judge.vacols_attorney_id,
@@ -238,6 +238,7 @@ class VACOLS::CaseDocket < VACOLS::Record
                                                      (genpop.nil? || genpop) ? 1 : 0,
                                                      limit
                                                    ])).to_hash
+      return appeals if appeals.empty?
       vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
       batch_update_vacols_location(conn, judge.vacols_uniq_id, vacols_ids)
       appeals
@@ -245,11 +246,11 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
   # rubocop:enable Metrics/MethodLength
 
-  private
-
   # rubocop:disable Metrics/MethodLength
-  def batch_update_vacols_location(conn, location, vacols_ids)
-    user_id = (RequestStore.store[:current_user].vacols_uniq_id || "DSUSER").upcase
+  def self.batch_update_vacols_location(conn, location, vacols_ids)
+    return if vacols_ids.empty?
+
+    user_id = (RequestStore.store[:current_user].try(:vacols_uniq_id) || "DSUSER").upcase
 
     conn.execute(sanitize_sql_array([<<-SQL, location, vacols_ids]))
       update BRIEFF
