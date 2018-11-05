@@ -15,11 +15,9 @@ class ClearedEndProducts extends Component {
       title
     } = this.props;
 
-
     const formName = _.find(FORM_TYPES, { key: formType }).name;
-    // const message = `Other end products associated with this ${formName} have already been decided, 
-    //     so issues are no longer editable. If this is a problem, please contact Caseflow support.`;
-    const message = displayMessage({formName: formName, veteran: veteran});
+    const message = displayMessage({ formName,
+      veteran });
 
     return <div>
       <StatusMessage
