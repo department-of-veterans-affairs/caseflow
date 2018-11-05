@@ -44,7 +44,6 @@ export type Issue = {
   labels: Array<string>,
   readjudication: Boolean,
   remand_reasons: Array<Object>,
-  is_eligible: Boolean,
   description?: string
 };
 
