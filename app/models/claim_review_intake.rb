@@ -30,7 +30,9 @@ class ClaimReviewIntake < DecisionReviewIntake
 
   private
 
+  # :nocov:
   def review_params(_request_params)
     fail Caseflow::Error::MustImplementInSubclass
   end
+  # :nocov:
 end
