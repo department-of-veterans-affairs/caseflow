@@ -9,7 +9,7 @@ class ClaimReview < DecisionReview
 
   self.abstract_class = true
 
-  def ui_hash(ama_enabled)
+  def ui_hash
     super.merge(
       benefitType: benefit_type,
       payeeCode: payee_code
