@@ -12,7 +12,7 @@ class ClaimReview < DecisionReview
   def ui_hash(ama_enabled)
     super.merge(
       benefitType: benefit_type,
-      hasClearedEP: has_cleared_ep?
+      hasClearedEP: cleared_ep?
     )
   end
 
@@ -85,8 +85,8 @@ class ClaimReview < DecisionReview
     end
   end
 
-  def has_cleared_ep?
-    not end_product_establishments.select(&:status_cleared?).empty?
+  def cleared_ep?
+    !end_product_establishments.select(&:status_cleared?).empty?
   end
 
   private

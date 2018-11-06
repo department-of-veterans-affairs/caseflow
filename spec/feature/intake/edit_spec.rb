@@ -544,9 +544,8 @@ RSpec.feature "Edit issues" do
       feature "with cleared end product" do
         let!(:cleared_end_product) do
           create(:end_product_establishment,
-            source: higher_level_review,
-            synced_status: "CLR"
-          )
+                 source: higher_level_review,
+                 synced_status: "CLR")
         end
 
         scenario "prevents edits on eps that have cleared" do
@@ -885,9 +884,8 @@ RSpec.feature "Edit issues" do
       feature "with cleared end product" do
         let!(:cleared_end_product) do
           create(:end_product_establishment,
-            source: supplemental_claim,
-            synced_status: "CLR"
-          )
+                 source: supplemental_claim,
+                 synced_status: "CLR")
         end
 
         scenario "prevents edits on eps that have cleared" do
