@@ -44,7 +44,11 @@ class ExternalApi::BGSService
                             modifier = #{end_product_modifier}",
                             service: :bgs,
                             name: "claims.cancel_end_product") do
-        client.claims.cancel_end_product(veteran_file_number, end_product_code, end_product_modifier)
+        client.claims.cancel_end_product(
+          file_number: veteran_file_number,
+          end_product_code: end_product_code,
+          modifier: end_product_modifier
+        )
       end
   end
 

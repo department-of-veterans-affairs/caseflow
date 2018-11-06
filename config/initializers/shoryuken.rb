@@ -1,6 +1,5 @@
 require "#{Rails.root}/app/jobs/middleware/job_monitoring_middleware.rb"
 require "#{Rails.root}/app/jobs/middleware/job_prometheus_metric_middleware"
-require "#{Rails.root}/app/jobs/middleware/job_raven_reporter_middleware"
 require "#{Rails.root}/app/jobs/middleware/job_request_store_middleware"
 
 # set up default exponential backoff parameters
@@ -12,6 +11,11 @@ if Rails.application.config.sqs_endpoint
   Shoryuken::Client.sqs.config[:endpoint] = URI(Rails.application.config.sqs_endpoint)
 end
 
+if Rails.application.config.sqs_create_queues
+  # create the development queues
+  Shoryuken::Client.sqs.create_queue({ queue_name: ActiveJob::Base.queue_name_prefix + '_low_priority' })
+  Shoryuken::Client.sqs.create_queue({ queue_name: ActiveJob::Base.queue_name_prefix + '_high_priority' })
+end
 
 Shoryuken.configure_server do |config|
 
@@ -19,7 +23,6 @@ Shoryuken.configure_server do |config|
   config.server_middleware do |chain|
     chain.add JobMonitoringMiddleware
     chain.add JobPrometheusMetricMiddleware
-    chain.add JobRavenReporterMiddleware
     chain.add JobRequestStoreMiddleware
   end
 end
