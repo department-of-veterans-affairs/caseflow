@@ -169,12 +169,12 @@ RSpec.feature "Task queue" do
 
     it "shows the right number of cases in each tab" do
       # Unassigned tab
-      expect(page).to have_content(sprintf(COPY::COLOCATED_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name))
+      expect(page).to have_content(sprintf(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name))
       expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
 
       # Assigned tab
       find("button", text: sprintf(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count)).click
-      expect(page).to have_content(sprintf(COPY::COLOCATED_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, organization.name))
+      expect(page).to have_content(sprintf(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, organization.name))
       expect(find("tbody").find_all("tr").length).to eq(assigned_count)
     end
   end

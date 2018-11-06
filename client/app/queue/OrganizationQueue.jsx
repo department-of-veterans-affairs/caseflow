@@ -32,7 +32,7 @@ class OrganizationQueue extends React.PureComponent {
           COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, this.props.unassignedTasks.length),
         page: <TaskTableTab
           description={
-            sprintf(COPY.COLOCATED_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION,
+            sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION,
               this.props.organizationName)}
           tasks={this.props.unassignedTasks}
         />
@@ -42,7 +42,7 @@ class OrganizationQueue extends React.PureComponent {
           COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE, this.props.assignedTasks.length),
         page: <TaskTableTab
           description={
-            sprintf(COPY.COLOCATED_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION,
+            sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION,
               this.props.organizationName)}
           tasks={this.props.assignedTasks}
         />
