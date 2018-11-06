@@ -14,11 +14,11 @@ task :security_caseflow do
 
   snoozed_cves = [
     # Example:
-    # { cve_name: 'CVE-2018-1000201', until: Time.zone.local(2018, 9, 10) }
+    # { cve_name: "CVE-2018-1000201", until: Time.zone.local(2018, 9, 10) }
   ]
 
   alerting_cves = snoozed_cves
-    .filter { |cve| cve[:until] <= Time.zone.today }
+    .select { |cve| cve[:until] <= Time.zone.today }
     .map { |cve| cve[:cve_name] }
 
   audit_result = ShellCommand.run("bundle-audit check --ignore=#{alerting_cves.join(' ')}")
