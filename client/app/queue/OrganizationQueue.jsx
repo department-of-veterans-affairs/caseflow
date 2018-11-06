@@ -10,7 +10,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 
 import {
   getUnassignedOrganizationalTasks,
-  getOnHoldOrganizationalTasks,
+  getAssignedOrganizationalTasks,
   getCompletedOrganizationalTasks,
   tasksByOrganization
 } from './selectors';
@@ -39,12 +39,12 @@ class OrganizationQueue extends React.PureComponent {
       },
       {
         label: sprintf(
-          COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE, this.props.onHoldTasks.length),
+          COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE, this.props.assignedTasks.length),
         page: <TaskTableTab
           description={
-            sprintf(COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION,
+            sprintf(COPY.COLOCATED_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION,
               this.props.organizationName)}
-          tasks={this.props.onHoldTasks}
+          tasks={this.props.assignedTasks}
         />
       },
       {
@@ -76,7 +76,7 @@ OrganizationQueue.propTypes = {
 
 const mapStateToProps = (state) => ({
   unassignedTasks: getUnassignedOrganizationalTasks(state),
-  onHoldTasks: getOnHoldOrganizationalTasks(state),
+  assignedTasks: getAssignedOrganizationalTasks(state),
   completedTasks: getCompletedOrganizationalTasks(state),
   tasks: tasksByOrganization(state)
 });

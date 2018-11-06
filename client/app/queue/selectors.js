@@ -118,7 +118,7 @@ export const getUnassignedOrganizationalTasks = createSelector(
   })
 );
 
-export const getOnHoldOrganizationalTasks = createSelector(
+export const getAssignedOrganizationalTasks = createSelector(
   [tasksWithAppealSelector],
   (tasks: Tasks) => _.filter(tasks, (task) => (task.status === TASK_STATUSES.on_hold))
 );
