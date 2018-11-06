@@ -6,7 +6,8 @@ class Organizations::TasksController < OrganizationsController
     tasks = GenericQueue.new(user: organization).tasks
 
     render json: {
-      tasks: json_tasks(tasks)
+      tasks: json_tasks(tasks),
+      id: organization.id
     }
   end
 

@@ -28,7 +28,7 @@ class Hearings::HearingDayController < HearingScheduleController
     hearing_day = HearingDayRepository.to_canonical_hash(HearingDay.find_hearing_day(nil, params[:id]))
     hearings, regional_office = fetch_hearings(hearing_day, params[:id]).values_at(:hearings, :regional_office)
 
-    hearing_day_options = HearingDay.load_days_with_hearings(
+    hearing_day_options = HearingDay.load_days_with_open_hearing_slots(
       Time.zone.today.beginning_of_day,
       Time.zone.today.beginning_of_day + 365.days,
       regional_office
@@ -45,9 +45,9 @@ class Hearings::HearingDayController < HearingScheduleController
   def index_with_hearings
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    enriched_hearings = HearingDay.load_days_with_hearings(Time.zone.today.beginning_of_day,
-                                                           Time.zone.today.beginning_of_day + 182.days,
-                                                           regional_office)
+    enriched_hearings = HearingDay.load_days_with_open_hearing_slots(Time.zone.today.beginning_of_day,
+                                                                     Time.zone.today.beginning_of_day + 182.days,
+                                                                     regional_office)
     enriched_hearings.each do |hearing_day|
       hearing_day[:hearings] = hearing_day[:hearings].map { |hearing| hearing.to_hash(current_user.id) }
     end
