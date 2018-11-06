@@ -26,7 +26,7 @@ describe RatingIssue do
     it do
       is_expected.to have_attributes(
         reference_id: "NBA",
-        participant_id: 123,
+        participant_id: "123",
         promulgation_date: promulgation_date,
         decision_text: "This broadcast may not be reproduced"
       )
@@ -161,29 +161,32 @@ describe RatingIssue do
     end
 
     let(:reference_id) { "abc123" }
-    let(:request_issue) do
+    let(:contention_ref_id) { 123 }
+    let!(:request_issue) do
       create(
         :request_issue,
         rating_issue_reference_id: reference_id,
         rating_issue_profile_date: Time.zone.today,
+        contention_reference_id: contention_ref_id,
         review_request: create(:higher_level_review)
       )
     end
-    subject { RatingIssue.new(reference_id: reference_id, source_request_issue: request_issue) }
+    subject { RatingIssue.new(reference_id: reference_id, contention_reference_id: contention_ref_id) }
 
     it "flags request_issue as having a previous higher level review" do
       expect(subject.source_higher_level_review).to eq(request_issue.id)
     end
   end
 
-  context "#save_with_source_request_issue!" do
+  context "#save_decision_issue" do
     let(:contention_ref_id) { 123 }
     let(:participant_id) { 456 }
+    let(:reference_id) { "ref-id" }
     let!(:request_issue) { create(:request_issue, contention_reference_id: contention_ref_id) }
 
     subject do
       RatingIssue.new(
-        reference_id: "ref-id",
+        reference_id: reference_id,
         profile_date: Time.zone.today,
         contention_reference_id: contention_ref_id,
         promulgation_date: promulgation_date,
@@ -191,28 +194,22 @@ describe RatingIssue do
       )
     end
 
-    it "correctly associates based on contention_reference_id" do
-      expect(subject.id).to be_nil
-
-      subject.save_with_source_request_issue!
+    it "correctly associates DecisionIssue with RequestIssue based on contention_reference_id" do
+      subject.save_decision_issue
 
       expect(subject.source_request_issue).to eq(request_issue)
-      expect(subject.id).to_not be_nil
+      expect(subject.decision_issue).to be_a(DecisionIssue)
+      expect(subject.decision_issue.rating_issue_reference_id).to eq(reference_id)
+      expect(subject.decision_issue.source_request_issue).to eq(request_issue)
     end
 
     it "does not save duplicates" do
-      rating_issue = RatingIssue.new(
-        reference_id: "ref-id",
-        profile_date: Time.zone.today,
-        promulgation_date: promulgation_date,
-        participant_id: participant_id,
-        source_request_issue: request_issue
-      )
+      decision_issue = create(:decision_issue, rating_issue_reference_id: reference_id, participant_id: participant_id)
+      subject.save_decision_issue
 
-      rating_issue.save!
-      subject.save_with_source_request_issue!
-
-      expect(subject.id).to eq(rating_issue.id)
+      expect(subject.source_request_issue).to eq(request_issue)
+      expect(subject.decision_issue).to eq(decision_issue)
+      expect(subject.decision_issue.source_request_issue).to eq(request_issue)
     end
   end
 end

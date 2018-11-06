@@ -225,7 +225,7 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content(
           "#{untimely_request_issue.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
         )
-        expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date: 05/01/2018")
+        expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date:")
       end
     end
 
