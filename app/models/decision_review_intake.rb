@@ -1,11 +1,11 @@
 class DecisionReviewIntake < Intake
   def ui_hash(ama_enabled)
     super.merge(
-      receiptDate: detail.receipt_date,
+      receipt_date: detail.receipt_date,
       claimant: detail.claimant_participant_id,
-      claimantNotVeteran: detail.claimant_not_veteran,
+      claimant_not_veteran: detail.claimant_not_veteran,
       payeeCode: detail.payee_code,
-      legacyOptInApproved: detail.legacy_opt_in_approved,
+      legacy_opt_in_approved: detail.legacy_opt_in_approved,
       ratings: detail.serialized_ratings,
       requestIssues: detail.request_issues.map(&:ui_hash)
     )
