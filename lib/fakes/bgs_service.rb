@@ -51,7 +51,7 @@ class Fakes::BGSService
         )
       when "has_many_ratings"
         in_active_review_reference_id = "in-active-review-ref-id"
-        in_active_review_date = Time.zone.parse("2018-04-01")
+        in_active_review_receipt_date = Time.zone.parse("2018-04-01")
         Generators::Rating.build(
           participant_id: veteran.participant_id
         )
@@ -75,7 +75,7 @@ class Fakes::BGSService
         )
         hlr = HigherLevelReview.find_or_create_by!(
           veteran_file_number: veteran.file_number,
-          receipt_date: in_active_review_date
+          receipt_date: in_active_review_receipt_date
         )
         epe = EndProductEstablishment.find_or_create_by!(
           reference_id: in_active_review_reference_id,
@@ -86,7 +86,7 @@ class Fakes::BGSService
           review_request: hlr,
           end_product_establishment: epe,
           rating_issue_reference_id: in_active_review_reference_id,
-          rating_issue_profile_date: in_active_review_date - 1
+          rating_issue_profile_date: in_active_review_receipt_date - 1
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
