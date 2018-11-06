@@ -33,7 +33,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.claimant_not_veteran ? serverIntake.claimant : null
     },
     payeeCode: {
-      $set: serverIntake.payee_code
+      $set: serverIntake.payeeCode
     },
     legacyOptInApproved: {
       $set: serverIntake.legacy_opt_in_approved
