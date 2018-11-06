@@ -13,6 +13,10 @@
 
   .cf-msg-screen-deck {
     text-align: left;
+
+    strong {
+      color: $color-black;
+    }
   }
 }
 
