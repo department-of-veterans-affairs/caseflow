@@ -64,7 +64,7 @@ class HearingDay < ApplicationRecord
       [total_video_and_co, travel_board]
     end
 
-    def load_days_with_hearings(start_date, end_date, regional_office = nil)
+    def load_days_with_open_hearing_slots(start_date, end_date, regional_office = nil)
       total_video_and_co, _travel_board = load_days(start_date, end_date, regional_office)
 
       enriched_hearing_days = []
