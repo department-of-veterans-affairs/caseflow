@@ -1,5 +1,5 @@
-import _ from 'lodash';
 import { ACTIONS } from '../constants';
+import { issueById } from '../util/issues';
 
 const analytics = true;
 
@@ -15,6 +15,11 @@ export const toggleNonratingRequestIssueModal = () => ({
 
 export const toggleUnidentifiedIssuesModal = () => ({
   type: ACTIONS.TOGGLE_UNIDENTIFIED_ISSUES_MODAL
+});
+
+export const toggleUntimelyExemptionModal = (currentIssueAndNotes = {}) => ({
+  type: ACTIONS.TOGGLE_UNTIMELY_EXEMPTION_MODAL,
+  payload: { currentIssueAndNotes }
 });
 
 export const toggleIssueRemoveModal = () => ({
@@ -38,11 +43,7 @@ export const addUnidentifiedIssue = (description, notes) => (dispatch) => {
 };
 
 export const addRatingRequestIssue = (args) => (dispatch) => {
-  let currentRating = _.filter(
-    args.ratings,
-    (ratingDate) => _.some(ratingDate.issues, { reference_id: args.issueId })
-  )[0];
-  let currentIssue = currentRating.issues[args.issueId];
+  const currentIssue = issueById(args.ratings, args.issueId);
 
   dispatch({
     type: ACTIONS.ADD_ISSUE,
@@ -53,8 +54,10 @@ export const addRatingRequestIssue = (args) => (dispatch) => {
       timely: currentIssue.timely,
       sourceHigherLevelReview: currentIssue.source_higher_level_review,
       promulgationDate: currentIssue.promulgation_date,
-      profileDate: currentRating.profile_date,
-      notes: args.notes
+      profileDate: currentIssue.profile_date,
+      notes: args.notes,
+      untimelyExemption: args.untimelyExemption,
+      untimelyExemptionNotes: args.untimelyExemptionNotes
     }
   });
 };

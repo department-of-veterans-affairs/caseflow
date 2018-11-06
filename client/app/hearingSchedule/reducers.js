@@ -57,6 +57,7 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
             'editedNotes',
             'editedDisposition',
             'editedDate',
+            'editedTime',
             'edited'
           ] }
       }
@@ -96,6 +97,15 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
       hearings: {
         [action.payload.hearingId]: {
           editedDate: { $set: action.payload.date },
+          edited: { $set: true }
+        }
+      }
+    });
+  case ACTIONS.HEARING_TIME_UPDATE:
+    return update(state, {
+      hearings: {
+        [action.payload.hearingId]: {
+          editedTime: { $set: action.payload.time },
           edited: { $set: true }
         }
       }
