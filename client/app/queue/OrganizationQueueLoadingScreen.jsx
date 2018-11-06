@@ -23,7 +23,8 @@ type Params = {|
 
 type Props = Params & {|
   // Action creators
-  onReceiveQueue: typeof onReceiveQueue
+  onReceiveQueue: typeof onReceiveQueue,
+  setActiveOrganizationId: typeof setActiveOrganizationId
 |};
 
 class OrganizationQueueLoadingScreen extends React.PureComponent<Props> {
@@ -36,7 +37,6 @@ class OrganizationQueueLoadingScreen extends React.PureComponent<Props> {
       } = JSON.parse(response.text);
 
       this.props.setActiveOrganizationId(id);
-
       this.props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));
     }
   );

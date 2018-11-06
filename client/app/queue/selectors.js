@@ -42,7 +42,7 @@ const getAppeals = (state: State): BasicAppeals => state.queue.appeals;
 const getAppealDetails = (state: State): AppealDetails => state.queue.appealDetails;
 const getUserCssId = (state: State): string => state.ui.userCssId;
 const getAppealId = (state: State, props: Object): string => props.appealId;
-const getActiveOrganizationId = (state: State): number => state.ui.activeOrganizationId;
+const getActiveOrganizationId = (state: State): ?number => state.ui.activeOrganizationId;
 const getTaskUniqueId = (state: State, props: Object): string => props.taskId;
 const getCaseflowVeteranId = (state: State, props: Object): ?string => props.caseflowVeteranId;
 const getModals = (state: State): UiStateModals => state.ui.modals;
