@@ -8,9 +8,6 @@ import TabWindow from '../components/TabWindow';
 import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
-import type { State } from './types/state';
-import type { TaskWithAppeal } from './types/models';
-
 import {
   getUnassignedOrganizationalTasks,
   getOnHoldOrganizationalTasks,
@@ -32,19 +29,32 @@ class OrganizationQueue extends React.PureComponent {
     const tabs = [
       {
         label: sprintf(
-          COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE,
-          this.props.numberOfTasks.unassigned),
-        page: <UnassignedTasksTab organizationName={this.props.organizationName} />
+          COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, this.props.unassignedTasks.length),
+        page: <TaskTableTab
+          description={
+            sprintf(COPY.COLOCATED_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION,
+              this.props.organizationName)}
+          tasks={this.props.unassignedTasks}
+        />
       },
       {
         label: sprintf(
-          COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE,
-          this.props.numberOfTasks.onHold),
-        page: <AssignedTasksTab organizationName={this.props.organizationName} />
+          COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE, this.props.onHoldTasks.length),
+        page: <TaskTableTab
+          description={
+            sprintf(COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION,
+              this.props.organizationName)}
+          tasks={this.props.onHoldTasks}
+        />
       },
       {
         label: COPY.ORGANIZATIONAL_QUEUE_PAGE_COMPLETE_TAB_TITLE,
-        page: <CompletedTasksTab organizationName={this.props.organizationName} />
+        page: <TaskTableTab
+          description={
+            sprintf(COPY.COLOCATED_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION,
+              this.props.organizationName)}
+          tasks={this.props.completedTasks}
+        />
       }
     ];
 
@@ -64,16 +74,12 @@ OrganizationQueue.propTypes = {
   tasks: PropTypes.array.isRequired
 };
 
-const mapStateToProps = (state) => {
-  return ({
-    numberOfTasks: {
-      unassigned: getUnassignedOrganizationalTasks(state).length,
-      onHold: getOnHoldOrganizationalTasks(state).length,
-      completed: getCompletedOrganizationalTasks(state).length
-    },
-    tasks: tasksByOrganization(state)
-  });
-};
+const mapStateToProps = (state) => ({
+  unassignedTasks: getUnassignedOrganizationalTasks(state),
+  onHoldTasks: getOnHoldOrganizationalTasks(state),
+  completedTasks: getCompletedOrganizationalTasks(state),
+  tasks: tasksByOrganization(state)
+});
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
@@ -83,53 +89,15 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
-const UnassignedTasksTab = connect(
-  (state: State) => ({ tasks: getUnassignedOrganizationalTasks(state) }))(
-  (props: { tasks: Array<TaskWithAppeal> }) => {
-    return <React.Fragment>
-      <p>{sprintf(COPY.COLOCATED_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, props.organizationName)}</p>
-      <TaskTable
-        includeDetailsLink
-        includeTask
-        includeType
-        includeDocketNumber
-        includeDaysWaiting
-        includeReaderLink
-        tasks={props.tasks}
-      />
-    </React.Fragment>;
-  });
-
-const AssignedTasksTab = connect(
-  (state: State) => ({ tasks: getOnHoldOrganizationalTasks(state) }))(
-  (props: { tasks: Array<TaskWithAppeal> }) => {
-    return <React.Fragment>
-      <p>{sprintf(COPY.COLOCATED_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, props.organizationName)}</p>
-      <TaskTable
-        includeDetailsLink
-        includeTask
-        includeType
-        includeDocketNumber
-        includeDaysWaiting
-        includeReaderLink
-        tasks={props.tasks}
-      />
-    </React.Fragment>;
-  });
-
-const CompletedTasksTab = connect(
-  (state: State) => ({ tasks: getCompletedOrganizationalTasks(state) }))(
-  (props: { tasks: Array<TaskWithAppeal> }) => {
-    return <React.Fragment>
-      <p>{sprintf(COPY.COLOCATED_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION, props.organizationName)}</p>
-      <TaskTable
-        includeDetailsLink
-        includeTask
-        includeType
-        includeDocketNumber
-        includeDaysWaiting
-        includeReaderLink
-        tasks={props.tasks}
-      />
-    </React.Fragment>;
-  });
+const TaskTableTab = ({ description, tasks }) => <React.Fragment>
+  <p>{description}</p>
+  <TaskTable
+    includeDetailsLink
+    includeTask
+    includeType
+    includeDocketNumber
+    includeDaysWaiting
+    includeReaderLink
+    tasks={tasks}
+  />
+</React.Fragment>;
