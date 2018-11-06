@@ -1,5 +1,4 @@
 class JudgeLegacyTask < LegacyTask
-
   def no_actions_available?(role)
     role != "judge"
   end

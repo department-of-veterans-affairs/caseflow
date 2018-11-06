@@ -199,7 +199,9 @@ class Task < ApplicationRecord
 
   def assign_to_judge_data
     {
-      selected: root_task.children.find { |task| [AssignJudgeTask.name, JudgeTask.name].includes?(task.type)  }.try(:assigned_to),
+      selected: root_task.children.find do |task|
+        [AssignJudgeTask.name, JudgeTask.name].includes?(task.type)
+      end.try(:assigned_to),
       options: users_to_options(Judge.list_all),
       type: AssignJudgeTask.name
     }

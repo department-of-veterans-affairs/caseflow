@@ -9,8 +9,8 @@ class TasksController < ApplicationController
     AttorneyTask: AttorneyTask,
     GenericTask: GenericTask,
     QualityReviewTask: QualityReviewTask,
-    AssignJudgeTask: AssignJudgeTask,
     JudgeTask: JudgeTask,
+    AssignJudgeTask: AssignJudgeTask,
     ScheduleHearingTask: ScheduleHearingTask,
     MailTask: MailTask
   }.freeze
