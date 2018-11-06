@@ -193,6 +193,52 @@ export default class AssignHearings extends React.Component {
       }
     ];
 
+    const getSheduleLink = () => {
+      let scheduleLink = '';
+
+      _.map(this.props.selectedHearingDay.hearings, (hearing) => {
+        if (hearing.vacolsId) {
+          scheduleLink = `/queue/appeals/${hearing.vacolsId}`;
+        }
+      });
+
+      return scheduleLink;
+    };
+
+    const scheduleTabWindow = [
+      {
+        header: 'Case details',
+        align: 'left',
+        valueName: 'caseDetails',
+        valueFunction: (veteran) => <Link
+          href={getSheduleLink()}
+          name={getSheduleLink()}
+          onClick={this.onClick.bind(this, getSheduleLink())} >
+          {veteran.caseDetails}
+        </Link>
+      },
+      {
+        header: 'Type(s)',
+        align: 'left',
+        valueName: 'type'
+      },
+      {
+        header: 'Docket number',
+        align: 'left',
+        valueName: 'docketNumber'
+      },
+      {
+        header: 'Location',
+        align: 'left',
+        valueName: 'location'
+      },
+      {
+        header: 'Time',
+        align: 'left',
+        valueName: 'time'
+      }
+    ];
+
     const veteranNotAssignedStyle = css({ fontSize: '3rem' });
     const veteranNotAssignedMessage = <span {...veteranNotAssignedStyle}>
       Please verify that this RO has veterans to assign a hearing</span>;
@@ -234,7 +280,7 @@ export default class AssignHearings extends React.Component {
           {
             label: 'Scheduled',
             page: <Table
-              columns={tabWindowColumns}
+              columns={scheduleTabWindow}
               rowObjects={this.tableScheduledHearingsRows(this.props.selectedHearingDay.hearings)}
               summary="scheduled-hearings-table"
             />
