@@ -24,7 +24,7 @@ import {
   marginTop
 } from './constants';
 import COPY from '../../COPY.json';
-import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
+import CO_LOCATED_CLASS_FOR_ACTION from '../../constants/CO_LOCATED_CLASS_FOR_ACTION.json';
 import DispatchSuccessDetail from './components/DispatchSuccessDetail';
 
 import type { Appeal, Task } from './types/models';
@@ -114,10 +114,8 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
           errorMessage={highlightFormItems && !label ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
           name={COPY.ADD_COLOCATED_TASK_ACTION_TYPE_LABEL}
           placeholder="Select an action type"
-          options={_.map(CO_LOCATED_ADMIN_ACTIONS, (key: string, value: string) => ({
-            key,
-            value
-          }))}
+          options={_.map(CO_LOCATED_CLASS_FOR_ACTION, (key: string, value: string) => ({ key,
+            key }))}
           onChange={(option) => option && this.setState({ label: option.value })}
           value={this.state.label} />
       </div>

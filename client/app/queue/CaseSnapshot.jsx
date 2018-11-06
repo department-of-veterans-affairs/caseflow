@@ -17,7 +17,6 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 
 import COPY from '../../COPY.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
-import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import { COLORS } from '../constants/AppConstants';
 import StringUtil from '../util/StringUtil';
 
@@ -96,18 +95,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     return `${firstName.substring(0, 1)}. ${lastName}`;
   }
 
-  getActionName = () => {
-    const {
-      action
-    } = this.props.primaryTask;
-
-    // First see if there is a constant to convert the action, otherwise sentence-ify it
-    if (CO_LOCATED_ADMIN_ACTIONS[action]) {
-      return CO_LOCATED_ADMIN_ACTIONS[action];
-    }
-
-    return StringUtil.snakeCaseToSentence(action);
-  }
+  getTaskLabel = () => StringUtil.snakeCaseToSentence(this.props.primaryTask.label);
 
   taskInstructionsWithLineBreaks = (instructions?: Array<string>) => <React.Fragment>
     {instructions && instructions.map((text, i) => <React.Fragment><span key={i}>{text}</span><br /></React.Fragment>)}
@@ -129,9 +117,9 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       this.getAbbrevName(primaryTask.decisionPreparedBy) : null;
 
     return <React.Fragment>
-      { primaryTask.action &&
+      { primaryTask.label &&
         <React.Fragment>
-          <dt>{COPY.CASE_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{this.getActionName()}</dd>
+          <dt>{COPY.CASE_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{this.getTaskLabel()}</dd>
         </React.Fragment> }
       { assignedByAbbrev &&
         <React.Fragment>
@@ -199,7 +187,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
         </React.Fragment>;
       } else if (userRole === USER_ROLE_TYPES.colocated) {
         return <React.Fragment>
-          <dt>{COPY.CASE_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{CO_LOCATED_ADMIN_ACTIONS[primaryTask.action]}</dd>
+          <dt>{COPY.CASE_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{primaryTask.label}</dd>
           <dt>{COPY.CASE_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
           { taskIsOnHold(primaryTask) &&
             <React.Fragment>

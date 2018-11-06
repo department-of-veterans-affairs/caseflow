@@ -22,7 +22,6 @@ import {
   LEGACY_APPEAL_TYPES
 } from '../constants';
 import COPY from '../../../COPY.json';
-import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 import type { TaskWithAppeal } from '../types/models';
 
@@ -108,13 +107,11 @@ class TaskTable extends React.PureComponent<Props> {
     } : null;
   }
 
-  actionNameOfTask = (task: TaskWithAppeal) => CO_LOCATED_ADMIN_ACTIONS[task.action]
-
   caseTaskColumn = () => {
     return this.props.includeTask ? {
       header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
-      valueFunction: (task) => this.actionNameOfTask(task),
-      getSortValue: (task) => this.actionNameOfTask(task)
+      valueFunction: (task) => task.label,
+      getSortValue: (task) => task.label
     } : null;
   }
 

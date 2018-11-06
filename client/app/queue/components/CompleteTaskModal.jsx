@@ -6,7 +6,6 @@ import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 
 import COPY from '../../../COPY.json';
-import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 import {
   taskById,
