@@ -283,5 +283,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     conn.execute("insert all #{insert_strs.join(' ')} select 1 from dual")
   end
   # rubocop:enable Metrics/MethodLength
+
+  private_class_method :batch_update_vacols_location
   # :nocov:
 end

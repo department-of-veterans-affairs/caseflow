@@ -197,7 +197,7 @@ describe VACOLS::CaseDocket do
   context ".batch_update_vacols_location" do
     let(:conn) { VACOLS::CaseDocket.connection }
     let(:bfkeys) { (1..5).map(&:to_s) }
-    let(:cases) do
+    let!(:cases) do
       bfkeys.map do |bfkey|
         create(:case,
                bfkey: bfkey,
@@ -206,7 +206,7 @@ describe VACOLS::CaseDocket do
                bfdloout: 1.hour.ago)
       end
     end
-    let(:initial_locations) do
+    let!(:initial_locations) do
       bfkeys.map do |bfkey|
         create(:priorloc,
                lockey: bfkey,
@@ -218,9 +218,7 @@ describe VACOLS::CaseDocket do
     end
 
     before do
-      cases
-      initial_locations
-      VACOLS::CaseDocket.batch_update_vacols_location(conn, "99", bfkeys)
+      VACOLS::CaseDocket.send(:batch_update_vacols_location, conn, "99", bfkeys)
     end
 
     context "brieff table" do
