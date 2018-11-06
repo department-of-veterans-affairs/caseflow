@@ -114,8 +114,8 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
           errorMessage={highlightFormItems && !label ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
           name={COPY.ADD_COLOCATED_TASK_ACTION_TYPE_LABEL}
           placeholder="Select an action type"
-          options={_.map(CO_LOCATED_ADMIN_ACTIONS, (label: string, value: string) => ({
-            label,
+          options={_.map(CO_LOCATED_ADMIN_ACTIONS, (key: string, value: string) => ({
+            key,
             value
           }))}
           onChange={(option) => option && this.setState({ label: option.value })}

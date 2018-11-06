@@ -1,0 +1,19 @@
+{
+    "Schedule hearing": "ScheduleHearingColocatedTask",
+    "Translation": "TranslationColocatedTask",
+    "IHP": "IhpColocatedTask",
+    "POA clarification": "PoaClarificationColocatedTask",
+    "Hearing clarification": "HearingClarificationColocatedTask",
+    "AOJ": "AojColocatedTask",
+    "Extension": "ExtensionColocatedTask",
+    "Missing hearing transcripts": "MissingHearingTranscriptsColocatedTask",
+    "Unaccredited rep": "UnaccreditedRepColocatedTask",
+    "FOIA": "FoiaColocatedTask",
+    "Retired VLJ": "RetiredVljColocatedTask",
+    "Arneson": "ArnesonColocatedTask",
+    "New rep arguments": "NewRepArgumentsColocatedTask",
+    "Ping scanning (VBMS)": "PingScanningVbmsColocatedTask",
+    "Address verification": "AddressVerificationColocatedTask",
+    "Missing records": "MissingRecordsColocatedTask",
+    "Other": "OtherColocatedTask"
+}

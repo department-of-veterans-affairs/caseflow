@@ -27,11 +27,20 @@ class ColocatedTask < Task
       end
     end
 
+    def modify_params(params)
+      params["type"] = Constants.CO_LOCATED_CLASS_FOR_ACTION[params.delete("label")]
+      super
+    end
+
     private
 
     def list_of_assignees
       Constants::CoLocatedTeams::USERS[Rails.current_env]
     end
+  end
+
+  def label
+    Constants.CO_LOCATED_CLASS_FOR_ACTION.to_h.to_a.reverse.to_h[type]
   end
 
   def available_actions(_user)
@@ -84,6 +93,36 @@ class ColocatedTask < Task
   end
 end
 
+class IhpColocatedTask < ColocatedTask; end
+
+class PoaClarificationColocatedTask < ColocatedTask; end
+
+class HearingClarificationColocatedTask < ColocatedTask; end
+
+class AojColocatedTask < ColocatedTask; end
+
+class ExtensionColocatedTask < ColocatedTask; end
+
+class MissingHearingTranscriptsColocatedTask < ColocatedTask; end
+
+class UnaccreditedRepColocatedTask < ColocatedTask; end
+
+class FoiaColocatedTask < ColocatedTask; end
+
+class RetiredVljColocatedTask < ColocatedTask; end
+
+class ArnesonColocatedTask < ColocatedTask; end
+
+class NewRepArgumentsColocatedTask < ColocatedTask; end
+
+class PendingScanningVbmsColocatedTask < ColocatedTask; end
+
+class AddressVerificationColocatedTask < ColocatedTask; end
+
+class MissingRecordsColocatedTask < ColocatedTask; end
+
+class OtherColocatedTask < ColocatedTask; end
+
 class MovableColocatedTask < ColocatedTask
   def available_actions(user)
     if appeal.class.eql?(LegacyAppeal)
@@ -103,114 +142,14 @@ class MovableColocatedTask < ColocatedTask
   end
 end
 
-# TODO: I think we only use the "action" field for populating the "type" column in the case table view. Perhaps we can
-# just map from task type directly to what text we want to display in that column on the frontend itself?
 class ScheduleHearingColocatedTask < MovableColocatedTask
-  def label
-    "Schedule hearing"
-  end
-
   def location
     "57"
   end
 end
 
 class TranslationColocatedTask < MovableColocatedTask
-  def label
-    "Translation"
-  end
-
   def location
     "14"
-  end
-end
-
-class IhpColocatedTask < ColocatedTask
-  def label
-    "IHP"
-  end
-end
-
-class PoaClarificationColocatedTask < ColocatedTask
-  def label
-    "POA clarification"
-  end
-end
-
-class HearingClarificationColocatedTask < ColocatedTask
-  def label
-    "Hearing clarification"
-  end
-end
-
-class AojColocatedTask < ColocatedTask
-  def label
-    "AOJ"
-  end
-end
-
-class ExtensionColocatedTask < ColocatedTask
-  def label
-    "Extension"
-  end
-end
-
-class MissingHearingTranscriptsColocatedTask < ColocatedTask
-  def label
-    "Missing hearing transcripts"
-  end
-end
-
-class UnaccreditedRepColocatedTask < ColocatedTask
-  def label
-    "Unaccredited rep"
-  end
-end
-
-class FoiaColocatedTask < ColocatedTask
-  def label
-    "FOIA"
-  end
-end
-
-class RetiredVljColocatedTask < ColocatedTask
-  def label
-    "Retired VLJ"
-  end
-end
-
-class ArnesonColocatedTask < ColocatedTask
-  def label
-    "Arneson"
-  end
-end
-
-class NewRepArgumentsColocatedTask < ColocatedTask
-  def label
-    "New rep arguments"
-  end
-end
-
-class PendingScanningVbmsColocatedTask < ColocatedTask
-  def label
-    "Pending scanning (VBMS)"
-  end
-end
-
-class AddressVerificationColocatedTask < ColocatedTask
-  def label
-    "Address verification"
-  end
-end
-
-class MissingRecordsColocatedTask < ColocatedTask
-  def label
-    "Missing records"
-  end
-end
-
-class OtherColocatedTask < ColocatedTask
-  def label
-    "Other"
   end
 end
