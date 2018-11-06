@@ -58,7 +58,7 @@ describe Rating do
         participant_id: rating.participant_id,
         profile_date: rating.profile_date,
         promulgation_date: rating.promulgation_date,
-        issues: issues
+        issues: issues.each { |issue| issue[:profile_date] = rating.profile_date }
       )
     end
 
