@@ -438,21 +438,39 @@ describe Veteran do
       ]
     end
 
-    let!(:request_issues) do
+    let(:request_issues) do
       [create(:request_issue, contention_reference_id: contention_ref_id)]
     end
 
-    subject { veteran.sync_rating_issues! }
+    subject { veteran.sync_rating_issues!(request_issues) }
+
+    before do
+      allow(veteran).to receive(:timely_ratings).and_return([rating])
+    end
 
     it "connects rating issues with request issues based on contention_reference_id" do
-      allow(veteran).to receive(:timely_ratings).and_return([rating])
-
       expect(request_issues.first.decision_issues.count).to eq(0)
 
       subject
 
       expect(request_issues.first.decision_issues.count).to eq(1)
       expect(request_issues.first.decision_issues.first.rating_issue_reference_id).to eq(reference_id)
+    end
+
+    context "EPE has cleared but rating has not yet been posted" do
+      let(:request_issues) do
+        [create(:request_issue, contention_reference_id: "unknown-id")]
+      end
+
+      it "marks the RequestIssue for later sync via DecisionRatingIssueSyncJob" do
+        subject
+
+        request_issue = request_issues.first
+        expect(DecisionRatingIssueSyncJob).to have_received(:perform_now).with(request_issue)
+        expect(request_issue.submitted?).to eq(true)
+        expect(request_issue.attempted?).to eq(true)
+        expect(request_issue.processed?).to eq(false)
+      end
     end
   end
 end

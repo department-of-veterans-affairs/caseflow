@@ -224,5 +224,11 @@ describe RatingIssue do
       expect(subject.decision_issue).to eq(decision_issue)
       expect(subject.decision_issue.source_request_issue).to eq(request_issue)
     end
+
+    it "returns nil if no source_request_issue is found" do
+      subject.reference_id = "no-such-id"
+
+      expect(subject.save_decision_issue).to eq(nil)
+    end
   end
 end

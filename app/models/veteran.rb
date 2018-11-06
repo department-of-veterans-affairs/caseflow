@@ -150,9 +150,21 @@ class Veteran < ApplicationRecord
     super || ptcpnt_id
   end
 
-  def sync_rating_issues!
+  def sync_rating_issues!(request_issues)
+    synced_rating_issues = []
     timely_ratings(from_date: Time.zone.today).each do |rating|
-      rating.issues.select(&:contention_reference_id).each(&:save_decision_issue)
+      rating.issues.select(&:contention_reference_id).each do |rating_issue|
+        if rating_issue.save_decision_issue
+          synced_rating_issues << rating_issue
+        end
+      end
+    end
+    request_issues.each do |request_issue|
+      if synced_rating_issues.any? { |rating_issue| rating_issue.source_request_issue == request_issue }
+        request_issue.processed!
+      else
+        request_issue.check_later_for_decision_rating_issue!
+      end
     end
   end
 

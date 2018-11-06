@@ -146,8 +146,6 @@ class EndProductEstablishment < ApplicationRecord
     # do not cancel ramp reviews for now
     return if source.is_a?(RampReview)
 
-    active_request_issues = request_issues.select { |request_issue| request_issue.removed_at.nil? }
-
     if active_request_issues.empty?
       cancel!
     end
@@ -215,6 +213,14 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
+  def request_issues
+    source.request_issues.select { |ri| ri.end_product_establishment == self }
+  end
+
+  def active_request_issues
+    request_issues.select { |request_issue| request_issue.removed_at.nil? }
+  end
+
   private
 
   def cancel!
@@ -223,10 +229,6 @@ class EndProductEstablishment < ApplicationRecord
       BGSService.new.cancel_end_product(veteran_file_number, code, modifier)
       update!(synced_status: CANCELED_STATUS)
     end
-  end
-
-  def request_issues
-    source.request_issues.select { |ri| ri.end_product_establishment == self }
   end
 
   def rating_request_issues

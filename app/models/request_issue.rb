@@ -1,4 +1,6 @@
 class RequestIssue < ApplicationRecord
+  include Asyncable
+
   belongs_to :review_request, polymorphic: true
   belongs_to :end_product_establishment
   has_many :decision_issues, foreign_key: "source_request_issue_id"
@@ -64,6 +66,17 @@ class RequestIssue < ApplicationRecord
     return appeal_active? if review_request.is_a?(Appeal)
     return false unless end_product_establishment
     end_product_establishment.status_active?
+  end
+
+  def check_later_for_decision_rating_issue!
+    # We may be calling ourselves recursively, indefinitely. That's ok.
+    # Every time we submit for processing, we extend our lifetime.
+    submit_for_processing!
+    if run_async?
+      DecisionRatingIssueSyncJob.perform_later(self)
+    else
+      DecisionRatingIssueSyncJob.perform_now(self)
+    end
   end
 
   def rating?
