@@ -30,7 +30,10 @@ task :security_caseflow do
     puts Rainbow(
       "Failed. Security vulnerabilities were found. Find the dependency in Gemfile.lock, "\
       "then specify a safe version of the dependency in the Gemfile (preferred) or "\
-      "snooze the CVE in security.rake for a week"
+      "snooze the CVE in security.rake for a week."
+    ).red
+    puts Rainbow(
+      "See https://github.com/department-of-veterans-affairs/caseflow/pull/7639 for an example."
     ).red
     exit!(1)
   end
