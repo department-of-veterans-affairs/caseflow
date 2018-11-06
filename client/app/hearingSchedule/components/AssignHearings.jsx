@@ -210,11 +210,11 @@ export default class AssignHearings extends React.Component {
         header: 'Case details',
         align: 'left',
         valueName: 'caseDetails',
-        valueFunction: (veteran) => <Link
+        valueFunction: (hearing) => <Link
           href={getSheduleLink()}
           name={getSheduleLink()}
           onClick={this.onClick.bind(this, getSheduleLink())} >
-          {veteran.caseDetails}
+          {hearing.caseDetails}
         </Link>
       },
       {
