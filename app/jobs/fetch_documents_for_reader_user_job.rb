@@ -12,14 +12,14 @@ class FetchDocumentsForReaderUserJob < ApplicationJob
       appeals_total: 0,
       appeals_successful: 0
     }
-    AddSeriesIdToDocumentsService.add_series_ids(LegacyAppeal.first)
+
     setup_debug_context(reader_user)
     update_fetched_at(reader_user)
     appeals = reader_user.user.current_case_assignments
     fetch_documents_for_appeals(appeals)
     log_info
   rescue StandardError => e
-    # log_error
+    log_error
     # raising an exception here triggers a retry through shoryuken
     raise e
   end
