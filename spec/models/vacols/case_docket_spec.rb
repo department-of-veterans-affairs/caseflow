@@ -8,6 +8,8 @@ describe VACOLS::CaseDocket do
     FeatureToggle.disable!(:test_facols)
   end
 
+  let!(:nod_stage_appeal) { create(:case, bfmpro: "ADV") }
+
   let(:judge) { create(:user) }
   let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge.css_id) }
 
@@ -17,6 +19,7 @@ describe VACOLS::CaseDocket do
   let(:nonpriority_ready_case_docket_number) { "1801001" }
   let!(:nonpriority_ready_case) do
     create(:case,
+           bfd19: 1.year.ago,
            bfac: "3",
            bfmpro: "ACT",
            bfcurloc: "81",
@@ -27,6 +30,7 @@ describe VACOLS::CaseDocket do
   let(:original_judge) { judge.vacols_attorney_id }
   let!(:original) do
     create(:case,
+           bfd19: 1.year.ago,
            bfac: "1",
            bfmpro: "HIS",
            bfcurloc: "99",
@@ -38,6 +42,7 @@ describe VACOLS::CaseDocket do
   let(:another_nonpriority_ready_case_docket_number) { "1801002" }
   let!(:another_nonpriority_ready_case) do
     create(:case,
+           bfd19: 1.year.ago,
            bfac: "1",
            bfmpro: "ACT",
            bfcurloc: "83",
@@ -46,6 +51,7 @@ describe VACOLS::CaseDocket do
 
   let!(:nonpriority_unready_case) do
     create(:case,
+           bfd19: 1.year.ago,
            bfac: "1",
            bfmpro: "ACT",
            bfcurloc: "57")
@@ -56,6 +62,7 @@ describe VACOLS::CaseDocket do
   let!(:aod_ready_case) do
     create(:case,
            :aod,
+           bfd19: 1.year.ago,
            bfac: "3",
            bfmpro: "ACT",
            bfcurloc: "81",
@@ -67,6 +74,7 @@ describe VACOLS::CaseDocket do
   let!(:postcavc_ready_case) do
     create(:case,
            :aod,
+           bfd19: 1.year.ago,
            bfac: "7",
            bfmpro: "ACT",
            bfcurloc: "83",
@@ -77,6 +85,7 @@ describe VACOLS::CaseDocket do
   let!(:aod_unready_case) do
     create(:case,
            :aod,
+           bfd19: 1.year.ago,
            bfac: "1",
            bfmpro: "ACT",
            bfcurloc: "55")
@@ -91,6 +100,13 @@ describe VACOLS::CaseDocket do
                               { "n" => 1, "priority" => 0, "ready" => 0 },
                               { "n" => 2, "priority" => 0, "ready" => 1 }
                             ])
+    end
+  end
+
+  context ".nod_count" do
+    subject { VACOLS::CaseDocket.nod_count }
+    it "counts nod stage appeals" do
+      expect(subject).to eq(1)
     end
   end
 
