@@ -67,24 +67,6 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
   buildPayload = () => {
     const { task, appeal } = this.props;
 
-    return _.map([task], (singleTask: Task) => {
-      const mapped: Object = {
-        ...this.state,
-        type: 'ColocatedTask',
-        external_id: appeal.externalId
-      };
-
-      if (!appeal.isLegacyAppeal) {
-        mapped.parent_id = singleTask.taskId;
-      }
-
-      return mapped;
-    });
-  }
-
-  buildPayload = () => {
-    const { task, appeal } = this.props;
-
     return {
       ...this.state,
       type: 'ColocatedTask',
