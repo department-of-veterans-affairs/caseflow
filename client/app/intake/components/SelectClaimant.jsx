@@ -2,7 +2,6 @@ import React from 'react';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import { BOOLEAN_RADIO_OPTIONS, PAYEE_CODES } from '../constants';
-import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES.json';
 
 export default class SelectClaimant extends React.PureComponent {
   handlePayeeCodeChange(event) {
