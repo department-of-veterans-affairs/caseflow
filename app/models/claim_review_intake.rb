@@ -10,10 +10,19 @@ class ClaimReviewIntake < DecisionReviewIntake
 
   def review!(request_params)
     detail.start_review!
-    detail.create_claimants!(
-      participant_id: request_params[:claimant] || veteran.participant_id,
-      payee_code: request_params[:payee_code]
-    )
+
+    # If there's a claimant use it, otherwise the claimant is the Veteran
+    if request_params[:claimant]
+      detail.create_claimants!(
+        participant_id: request_params[:claimant],
+        payee_code: request_params[:payee_code]
+      )
+    else
+      detail.create_claimants!(
+        participant_id: veteran.participant_id,
+        payee_code: "00"
+      )
+    end
     detail.update(review_params(request_params))
   end
 
