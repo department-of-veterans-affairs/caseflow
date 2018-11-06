@@ -20,18 +20,19 @@ describe VACOLS::CaseDocket do
            bfac: "3",
            bfmpro: "ACT",
            bfcurloc: "81",
-           bfdlocin: 1.hour.ago,
-           bfdloout: 1.hour.ago,
-           folder: build(:folder, tinum: nonpriority_ready_case_docket_number, titrnum: "1"))
+           folder: build(:folder, tinum: nonpriority_ready_case_docket_number, titrnum: "123456789S"))
   end
 
   let(:original_docket_number) { nonpriority_ready_case_docket_number }
+  let(:original_judge) { judge.vacols_attorney_id }
   let!(:original) do
     create(:case,
            bfac: "1",
            bfmpro: "HIS",
            bfcurloc: "99",
-           folder: build(:folder, tinum: original_docket_number, titrnum: "1"))
+           bfattid: "111",
+           bfmemid: original_judge,
+           folder: build(:folder, tinum: original_docket_number, titrnum: "123456789S"))
   end
 
   let(:another_nonpriority_ready_case_docket_number) { "1801002" }
@@ -40,30 +41,26 @@ describe VACOLS::CaseDocket do
            bfac: "1",
            bfmpro: "ACT",
            bfcurloc: "83",
-           bfdlocin: 1.hour.ago,
-           bfdloout: 1.hour.ago,
-           folder: build(:folder, tinum: another_nonpriority_ready_case_docket_number, titrnum: "1"))
+           folder: build(:folder, tinum: another_nonpriority_ready_case_docket_number, titrnum: "123456789S"))
   end
 
   let!(:nonpriority_unready_case) do
     create(:case,
            bfac: "1",
            bfmpro: "ACT",
-           bfcurloc: "57",
-           bfdlocin: 1.hour.ago,
-           bfdloout: 1.hour.ago)
+           bfcurloc: "57")
   end
 
   let(:aod_ready_case_docket_number) { "1801003" }
+  let(:aod_ready_case_ready_time) { 3.days.ago }
   let!(:aod_ready_case) do
     create(:case,
            :aod,
            bfac: "3",
            bfmpro: "ACT",
            bfcurloc: "81",
-           bfdlocin: 1.hour.ago,
-           bfdloout: 1.hour.ago,
-           folder: build(:folder, tinum: aod_ready_case_docket_number, titrnum: "1"))
+           bfdloout: aod_ready_case_ready_time,
+           folder: build(:folder, tinum: aod_ready_case_docket_number, titrnum: "123456789S"))
   end
 
   let(:postcavc_ready_case_docket_number) { "1801004" }
@@ -73,9 +70,8 @@ describe VACOLS::CaseDocket do
            bfac: "7",
            bfmpro: "ACT",
            bfcurloc: "83",
-           bfdlocin: 1.hour.ago,
-           bfdloout: 1.hour.ago,
-           folder: build(:folder, tinum: postcavc_ready_case_docket_number, titrnum: "1"))
+           bfdloout: 2.days.ago,
+           folder: build(:folder, tinum: postcavc_ready_case_docket_number, titrnum: "123456789S"))
   end
 
   let!(:aod_unready_case) do
@@ -83,9 +79,19 @@ describe VACOLS::CaseDocket do
            :aod,
            bfac: "1",
            bfmpro: "ACT",
-           bfcurloc: "55",
-           bfdlocin: 1.hour.ago,
-           bfdloout: 1.hour.ago)
+           bfcurloc: "55")
+  end
+
+  context ".counts_by_priority_and_readiness" do
+    subject { VACOLS::CaseDocket.counts_by_priority_and_readiness.to_hash }
+    it "creates counts grouped by priority and readiness" do
+      expect(subject).to eq([
+                              { "n" => 1, "priority" => 1, "ready" => 0 },
+                              { "n" => 2, "priority" => 1, "ready" => 1 },
+                              { "n" => 1, "priority" => 0, "ready" => 0 },
+                              { "n" => 2, "priority" => 0, "ready" => 1 }
+                            ])
+    end
   end
 
   context ".distribute_nonpriority_appeals" do
@@ -104,6 +110,7 @@ describe VACOLS::CaseDocket do
     it "does not distribute non-ready or priority cases" do
       expect(nonpriority_unready_case.reload.bfcurloc).to eq("57")
       expect(aod_ready_case.reload.bfcurloc).to eq("81")
+      expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
     end
 
     context "when limited" do
@@ -189,6 +196,144 @@ describe VACOLS::CaseDocket do
           expect(subject.count).to eq(1)
           expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
+        end
+      end
+    end
+  end
+
+  context ".distribute_priority_appeals" do
+    let(:genpop) { nil }
+    let(:limit) { 10 }
+
+    subject { VACOLS::CaseDocket.distribute_priority_appeals(judge, genpop, limit) }
+
+    it "distributes ready genpop cases" do
+      expect(subject.count).to eq(2)
+      expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+      expect(postcavc_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+    end
+
+    it "does not distribute non-ready or nonpriority cases" do
+      expect(aod_unready_case.reload.bfcurloc).to eq("55")
+      expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
+    end
+
+    context "when limited" do
+      let(:limit) { 1 }
+      it "only distributes cases to the limit" do
+        expect(subject.count).to eq(1)
+        expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+        expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
+      end
+      context "when the expected order is reversed" do
+        let(:aod_ready_case_ready_time) { 1.day.ago }
+        it "orders by ready time, not docket date" do
+          expect(subject.count).to eq(1)
+          expect(aod_ready_case.reload.bfcurloc).to eq("81")
+          expect(postcavc_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+        end
+      end
+    end
+
+    context "when a case is tied to a judge by a hearing on a prior appeal" do
+      let(:original_docket_number) { aod_ready_case_docket_number }
+      let(:hearing_judge) { judge.vacols_attorney_id }
+      let!(:hearing) do
+        create(:case_hearing,
+               :disposition_held,
+               folder_nr: original.bfkey,
+               hearing_date: 5.days.ago,
+               board_member: hearing_judge)
+      end
+
+      let!(:another_hearing) do
+        create(:case_hearing,
+               :disposition_held,
+               folder_nr: postcavc_ready_case.bfkey,
+               hearing_date: 5.days.ago,
+               board_member: another_judge.vacols_attorney_id)
+      end
+
+      context "when genpop is false" do
+        let(:genpop) { false }
+        it "distributes the case" do
+          expect(subject.count).to eq(1)
+          expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+          expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
+        end
+      end
+
+      context "when genpop is nil" do
+        it "distributes the case" do
+          expect(subject.count).to eq(1)
+          expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+          expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
+        end
+      end
+
+      context "when genpop is true" do
+        let(:genpop) { true }
+        it "does not distribute the case" do
+          expect(subject.count).to eq(0)
+          expect(aod_ready_case.reload.bfcurloc).to eq("81")
+          expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
+        end
+      end
+
+      context "when the case has been made genpop" do
+        let(:hearing_judge) { "1111" }
+        let(:genpop) { true }
+
+        before do
+          aod_ready_case.update(bfhines: "GP")
+        end
+
+        it "distributes the case" do
+          expect(subject.count).to eq(1)
+          expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+          expect(postcavc_ready_case.reload.bfcurloc).to eq("83")
+        end
+      end
+    end
+
+    context "when an aod case is tied to the same judge as last decided the case" do
+      let(:original_docket_number) { aod_ready_case_docket_number }
+      let(:genpop) { false }
+
+      it "distributes the case" do
+        subject
+        expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+      end
+
+      context "when a different judge decided the case" do
+        let(:original_judge) { "1111" }
+        it "does not distribute the case" do
+          subject
+          expect(aod_ready_case.reload.bfcurloc).to eq("81")
+        end
+      end
+
+      context "when distributing genpop cases" do
+        let(:genpop) { true }
+
+        context "when a placeholder judge code is used" do
+          let(:original_judge) { "000" }
+
+          it "distributes the case" do
+            subject
+            expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+          end
+        end
+
+        context "when the case has been made genpop" do
+          before do
+            aod_ready_case.update(bfhines: "GP")
+          end
+
+          it "distributes the case" do
+            subject
+            expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+          end
         end
       end
     end
