@@ -12,7 +12,7 @@ class ClaimReviewIntake < DecisionReviewIntake
     detail.start_review!
     detail.create_claimants!(
       participant_id: request_params[:claimant] || veteran.participant_id,
-      payee_code: request_params[:payee_code] || nil
+      payee_code: request_params[:payee_code]
     )
     detail.update(review_params(request_params))
   end
