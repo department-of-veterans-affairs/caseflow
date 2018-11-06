@@ -12,10 +12,7 @@ const sectionNavigationContainerStyling = css({
   width: '20%',
   '@media (max-width: 920px)': {
     top: '1rem',
-    paddingRight: 0,
-    // borderRadius: '5px',
-    // justifyContent: 'space-between',
-    // width: '100%',
+    paddingRight: 0
   }
 });
 
@@ -67,7 +64,7 @@ const sectionNavigationListStyling = css({
       '&:last-child': {
         borderRadius: '0 5px 5px 0'
       },
-      '& a': {
+      '& > a': {
         padding: 0
       },
       '& > a:after': {
