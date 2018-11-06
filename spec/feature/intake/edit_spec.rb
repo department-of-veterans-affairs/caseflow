@@ -296,7 +296,7 @@ RSpec.feature "Edit issues" do
         higher_level_review.process_end_product_establishments!
       end
 
-      it "shows request issues and allows adding/removing issues", skip: "Bug with adding and removing same issue" do
+      it "shows request issues and allows adding/removing issues" do
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
 
         expect(page).to have_content("Add / Remove Issues")
@@ -391,12 +391,12 @@ RSpec.feature "Edit issues" do
                  description: "This is an unidentified issue"
         )).to_not be_nil
 
-        rating_epe = EndProductEstablishment.find_by(
+        rating_epe = EndProductEstablishment.find_by!(
           source: higher_level_review,
           code: HigherLevelReview::END_PRODUCT_RATING_CODE
         )
 
-        non_rating_epe = EndProductEstablishment.find_by(
+        nonrating_epe = EndProductEstablishment.find_by!(
           source: higher_level_review,
           code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
         )
@@ -418,7 +418,7 @@ RSpec.feature "Edit issues" do
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran.file_number,
-          claim_id: non_rating_epe.reference_id,
+          claim_id: nonrating_epe.reference_id,
           contention_descriptions: [
             "Active Duty Adjustments - Description for Active Duty Adjustments"
           ],
