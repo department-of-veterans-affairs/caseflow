@@ -162,19 +162,29 @@ RSpec.feature "Task queue" do
     end
 
     it "shows tabs on the queue page" do
-      expect(page).to have_content(sprintf(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_count))
-      expect(page).to have_content(sprintf(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count))
+      expect(page).to have_content(
+        format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_count)
+      )
+      expect(page).to have_content(
+        format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count)
+      )
       expect(page).to have_content(COPY::ORGANIZATIONAL_QUEUE_PAGE_COMPLETE_TAB_TITLE)
     end
 
     it "shows the right number of cases in each tab" do
       # Unassigned tab
-      expect(page).to have_content(sprintf(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name))
+      expect(page).to have_content(
+        format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
+      )
       expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
 
       # Assigned tab
-      find("button", text: sprintf(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count)).click
-      expect(page).to have_content(sprintf(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, organization.name))
+      find("button", text: format(
+        COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count
+      )).click
+      expect(page).to have_content(
+        format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, organization.name)
+      )
       expect(find("tbody").find_all("tr").length).to eq(assigned_count)
     end
   end
