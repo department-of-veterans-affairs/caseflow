@@ -92,6 +92,10 @@ gem "zero_downtime_migrations"
 # https://github.com/sparklemotion/nokogiri/pull/1746
 gem "nokogiri", "1.8.5"
 
+# rack versions before 2.0.6 are affected by CVE-2018-16470 and CVE-2018-16471.
+# Explicitly define rack version here to avoid that.
+gem "rack", "~> 2.0.6"
+
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter"
