@@ -10,16 +10,17 @@ const sectionNavigationContainerStyling = css({
   position: 'sticky',
   top: '3rem',
   width: '20%',
-  '@media (max-width : 920px)': {
-    paddingRight: '0px',
-    borderRadius: '5px',
-    justifyContent: 'space-between',
-    width: '100%'
+  '@media (max-width: 920px)': {
+    top: '1rem',
+    paddingRight: 0,
+    // borderRadius: '5px',
+    // justifyContent: 'space-between',
+    // width: '100%',
   }
 });
 
 const sectionNavStyling = css({
-  '@media (max-width : 920px)': {
+  '@media (max-width: 920px)': {
     '&': {
       display: 'flex',
       flexFlow: 'row wrap'
@@ -31,24 +32,6 @@ const sectionNavStyling = css({
 });
 
 const sectionNavigationListStyling = css({
-  '@media (max-width : 920px)': {
-    display: 'flex',
-    flexFlow: 'row',
-    marginBottom: '10px',
-    borderBottom: 'none',
-    borderTop: 'none',
-    borderRadius: '5px',
-    width: '100%',
-    '& > li:first-child': {
-      borderRadius: '5px 0 0 5px'
-    },
-    '& > li:last-child': {
-      borderRadius: '0 5px 5px 0'
-    },
-    '& > li > a:after': {
-      content: 'none'
-    }
-  },
   '& > li': {
     backgroundColor: COLORS.GREY_BACKGROUND,
     color: COLORS.PRIMARY,
@@ -66,14 +49,38 @@ const sectionNavigationListStyling = css({
   '& > li > a:after': {
     content: '〉',
     float: 'right'
+  },
+  '@media (max-width: 920px)': {
+    display: 'flex',
+    flexFlow: 'row',
+    borderBottom: 'none',
+    borderTop: 'none',
+    width: '100%',
+    marginBottom: '30px',
+    '& > li': {
+      padding: '8.5px 10px',
+      fontSize: '13px',
+      flexGrow: 1,
+      '&:first-child': {
+        borderRadius: '5px 0 0 5px'
+      },
+      '&:last-child': {
+        borderRadius: '0 5px 5px 0'
+      },
+      '& a': {
+        padding: 0
+      },
+      '& > a:after': {
+        content: 'none'
+      }
+    }
   }
 });
 
 const sectionBodyStyling = css({
   float: 'left',
   width: '80%',
-
-  '@media (max-width : 920px)': {
+  '@media (max-width: 920px)': {
     flex: '1 100%'
   }
 });
@@ -116,8 +123,18 @@ const sectionHeadingStyling = css({
   padding: '1rem 2rem'
 });
 
+const anchorJumpLinkStyling = css({
+  color: COLORS.GREY_DARK,
+  paddingTop: '60px',
+  textDecoration: 'none',
+  pointerEvents: 'none',
+  cursor: 'default'
+});
+
 const ContentSection = ({ element }) => <React.Fragment>
-  <h2 id={`${getIdForElement(element)}`} {...sectionHeadingStyling}>{element.props.title}</h2>
+  <h2 {...sectionHeadingStyling}>
+    <a id={`${getIdForElement(element)}`} {...anchorJumpLinkStyling}>{element.props.title}</a>
+  </h2>
   <div {...sectionSegmentStyling}>{element}</div>
 </React.Fragment>;
 
