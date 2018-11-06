@@ -20,15 +20,17 @@ export default class Address extends React.PureComponent<Props> {
     const {
       address_line_1: addressLine1,
       address_line_2: addressLine2,
+      address_line_3: addressLine3,
       city,
       state,
       zip,
       country
     } = this.props.address;
-    const streetAddress = addressLine2 ? `${addressLine1} ${addressLine2}` : addressLine1;
 
     return <span {...addressIndentStyling}>
-      {streetAddress && <React.Fragment><span>{streetAddress},</span><br /></React.Fragment>}
+      {addressLine1}
+      {addressLine2 && <React.Fragment><br /><span>{addressLine2}</span></React.Fragment>}
+      {addressLine3 && <React.Fragment><br /><span>{addressLine3}</span></React.Fragment>}
       <span>{city}, {state} {zip} {country === 'USA' ? '' : country}</span>
     </span>;
   };
