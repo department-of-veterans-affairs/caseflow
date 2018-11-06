@@ -3,13 +3,20 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
+import { sprintf } from 'sprintf-js';
 
+import TabWindow from '../components/TabWindow';
 import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../components/Alert';
 
-import { workableTasksByAssigneeCssIdSelector } from './selectors';
+import {
+  tasksByAssigneeCssIdSelector,
+  completeTasksByAssigneeCssIdSelector,
+  onHoldTasksByAssigneeCssIdSelector,
+  workableTasksByAssigneeCssIdSelector
+} from './selectors';
+
 import {
   resetErrorMessages,
   resetSuccessMessages,
@@ -21,6 +28,7 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
 
+import type { State } from './types/state';
 import type { TaskWithAppeal } from './types/models';
 
 type Params = {||};
@@ -56,20 +64,24 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
 
   render = () => {
     const { messages } = this.props;
-    const noTasks = !_.size(this.props.tasks);
-
-    const content = noTasks ?
-      <p>{COPY.NO_CASES_IN_QUEUE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.</p> :
-      <TaskTable
-        includeDetailsLink
-        includeType
-        includeDocketNumber
-        includeIssueCount
-        includeDueDate
-        includeReaderLink
-        requireDasRecord
-        tasks={this.props.tasks}
-      />;
+    const tabs = [
+      {
+        label: sprintf(
+          COPY.ATTORNEY_QUEUE_PAGE_ASSIGNED_TAB_TITLE,
+          this.props.numberOfTasks.workable),
+        page: <WorkableTasksTab />
+      },
+      {
+        label: sprintf(
+          COPY.ATTORNEY_QUEUE_PAGE_ON_HOLD_TAB_TITLE,
+          this.props.numberOfTasks.onHold),
+        page: <OnHoldTasksTab />
+      },
+      {
+        label: COPY.ATTORNEY_QUEUE_PAGE_COMPLETE_TAB_TITLE,
+        page: <CompletedTasksTab />
+      }
+    ];
 
     return <AppSegment filledBackground>
       <div>
@@ -80,7 +92,10 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
         {messages.success && <Alert type="success" title={messages.success.title}>
           {messages.success.detail || COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
         </Alert>}
-        {content}
+        <TabWindow
+          name="tasks-attorney-list"
+          tabs={tabs}
+        />
       </div>
     </AppSegment>;
   }
@@ -99,7 +114,12 @@ const mapStateToProps = (state) => {
   } = state;
 
   return ({
-    tasks: workableTasksByAssigneeCssIdSelector(state),
+    tasks: tasksByAssigneeCssIdSelector(state),
+    numberOfTasks: {
+      workable: workableTasksByAssigneeCssIdSelector(state).length,
+      onHold: onHoldTasksByAssigneeCssIdSelector(state).length,
+      completed: completeTasksByAssigneeCssIdSelector(state).length
+    },
     messages,
     taskDecision
   });
@@ -116,3 +136,53 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default (connect(mapStateToProps, mapDispatchToProps)(AttorneyTaskListView): React.ComponentType<Params>);
+
+const WorkableTasksTab = connect(
+  (state: State) => ({ tasks: workableTasksByAssigneeCssIdSelector(state) }))(
+  (props: { tasks: Array<TaskWithAppeal> }) => {
+    return <React.Fragment>
+      <p>{COPY.ATTORNEY_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION}</p>
+      <TaskTable
+        includeDetailsLink
+        includeTask
+        includeType
+        includeDocketNumber
+        includeDaysWaiting
+        includeReaderLink
+        tasks={props.tasks}
+      />
+    </React.Fragment>;
+  });
+
+const OnHoldTasksTab = connect(
+  (state: State) => ({ tasks: onHoldTasksByAssigneeCssIdSelector(state) }))(
+  (props: { tasks: Array<TaskWithAppeal> }) => {
+    return <React.Fragment>
+      <p>{COPY.ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
+      <TaskTable
+        includeDetailsLink
+        includeTask
+        includeType
+        includeDocketNumber
+        includeDaysWaiting
+        includeReaderLink
+        tasks={props.tasks}
+      />
+    </React.Fragment>;
+  });
+
+const CompletedTasksTab = connect(
+  (state: State) => ({ tasks: completeTasksByAssigneeCssIdSelector(state) }))(
+  (props: { tasks: Array<TaskWithAppeal> }) => {
+    return <React.Fragment>
+      <p>{COPY.ATTORNEY_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}</p>
+      <TaskTable includeDetailsLink
+        includeTask
+        includeType
+        includeDocketNumber
+        includeDaysWaiting
+        includeReaderLink
+        tasks={props.tasks}
+      />
+    </React.Fragment>;
+  });
