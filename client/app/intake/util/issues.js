@@ -169,7 +169,8 @@ const formatRatingRequestIssues = (state) => {
           profile_date: issue.profileDate,
           notes: issue.notes,
           untimely_exemption: issue.untimelyExemption,
-          untimely_exemption_notes: issue.untimelyExemptionNotes
+          untimely_exemption_notes: issue.untimelyExemptionNotes,
+          ramp_claim_id: issue.rampClaimId
         };
       });
   }
@@ -278,6 +279,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       };
     } else if (issue.isRating) {
       const profileDate = new Date(issue.profileDate)
+
       return {
         referenceId: issue.id,
         text: ratingIssues[issue.id],
@@ -287,7 +289,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         sourceHigherLevelReview: issue.sourceHigherLevelReview,
         promulgationDate: issue.promulgationDate,
         timely: issue.timely,
-        beforeAma: profileDate < amaActivationDate && !issue.isRampDecision,
+        beforeAma: profileDate < amaActivationDate && !issue.rampClaimId,
         untimelyExemption: issue.untimelyExemption,
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
         ineligibleReason: issue.ineligibleReason
@@ -306,7 +308,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       text: `${issue.category} - ${issue.description}`,
       date: formatDate(issue.decisionDate),
       timely: isTimely,
-      beforeAma: issue.decisionDate < amaActivationDate && !issue.isRampDecision,
+      beforeAma: decisionDate < amaActivationDate,
       ineligibleReason: issue.ineligibleReason
     };
   });

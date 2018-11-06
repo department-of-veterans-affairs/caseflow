@@ -47,7 +47,8 @@ class RequestIssue < ApplicationRecord
         notes: data[:notes],
         is_unidentified: data[:is_unidentified],
         untimely_exemption: data[:untimely_exemption],
-        untimely_exemption_notes: data[:untimely_exemption_notes]
+        untimely_exemption_notes: data[:untimely_exemption_notes],
+        ramp_claim_id: data[:ramp_claim_id]
       ).validate_eligibility!
     end
 
@@ -96,6 +97,7 @@ class RequestIssue < ApplicationRecord
       category: issue_category,
       notes: notes,
       is_unidentified: is_unidentified,
+      ramp_claim_id: ramp_claim_id,
       ineligible_reason: ineligible_reason,
       title_of_active_review: duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
     }
@@ -105,6 +107,7 @@ class RequestIssue < ApplicationRecord
     check_for_active_request_issue!
     check_for_untimely!
     check_for_previous_higher_level_review!
+    check_for_before_ama!
     self
   end
 
@@ -145,6 +148,25 @@ class RequestIssue < ApplicationRecord
     if contested_rating_issue_ui_hash && contested_rating_issue_ui_hash[review_type].present?
       self.ineligible_reason = reason
       self.ineligible_due_to_id = contested_rating_issue_ui_hash[review_type]
+    end
+  end
+
+  def check_for_before_ama!
+    return unless eligible?
+    check_for_rating_before_ama! if rating?
+    check_for_nonrating_before_ama! if nonrating?
+  end
+
+  def check_for_rating_before_ama!
+    return if ramp_claim_id
+    if rating_issue_profile_date < DecisionReview::AMA_ACTIVATION_DATE
+      self.ineligible_reason = :before_ama
+    end
+  end
+
+  def check_for_nonrating_before_ama!
+    if decision_date < DecisionReview::AMA_ACTIVATION_DATE
+      self.ineligible_reason = :before_ama
     end
   end
 

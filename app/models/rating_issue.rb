@@ -4,7 +4,7 @@
 class RatingIssue
   include ActiveModel::Model
 
-  attr_accessor :reference_id, :decision_text, :profile_date,
+  attr_accessor :reference_id, :decision_text, :profile_date, :ramp_claim_id,
                 :promulgation_date, :participant_id, :contention_reference_id
 
   class << self
@@ -12,6 +12,7 @@ class RatingIssue
       rba_contentions = [data.dig(:rba_issue_contentions) || {}].flatten
       associated_claims = [data.dig(:associated_claims) || {}].flatten
       is_ramp_decision = EndProduct::RAMP_CODES.key?(associated_claims.first.dig(:bnft_clm_tc))
+      associated_claim_id = associated_claims.first.dig(:clm_id)
 
       new(
         reference_id: data[:rba_issue_id],
@@ -20,7 +21,7 @@ class RatingIssue
         decision_text: data[:decn_txt],
         promulgation_date: data[:promulgation_date],
         participant_id: data[:participant_id],
-        is_ramp_decision: is_ramp_decision
+        ramp_claim_id: is_ramp_decision ? associated_claim_id : nil
       )
     end
 
@@ -31,7 +32,7 @@ class RatingIssue
         decision_text: ui_hash[:decision_text],
         promulgation_date: ui_hash[:promulgation_date],
         contention_reference_id: ui_hash[:contention_reference_id],
-        is_ramp_decision: ui_hash[:is_ramp_decision],
+        ramp_claim_id: ui_hash[:ramp_claim_id],
         profile_date: ui_hash[:profile_date]
       )
     end
@@ -64,7 +65,7 @@ class RatingIssue
       decision_text: decision_text,
       promulgation_date: promulgation_date,
       contention_reference_id: contention_reference_id,
-      is_ramp_decision: is_ramp_decision,
+      ramp_claim_id: ramp_claim_id,
       title_of_active_review: title_of_active_review,
       source_higher_level_review: source_higher_level_review
     }
