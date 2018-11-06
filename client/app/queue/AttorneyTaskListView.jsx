@@ -28,7 +28,6 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
 
-import type { State } from './types/state';
 import type { TaskWithAppeal } from './types/models';
 
 type Params = {||};
@@ -68,18 +67,27 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
       {
         label: sprintf(
           COPY.ATTORNEY_QUEUE_PAGE_ASSIGNED_TAB_TITLE,
-          this.props.numberOfTasks.workable),
-        page: <WorkableTasksTab />
+          this.props.workableTasks.length),
+        page: <TaskTableTab
+          description={COPY.ATTORNEY_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION}
+          tasks={this.props.workableTasks}
+        />
       },
       {
         label: sprintf(
           COPY.ATTORNEY_QUEUE_PAGE_ON_HOLD_TAB_TITLE,
-          this.props.numberOfTasks.onHold),
-        page: <OnHoldTasksTab />
+          this.props.onHoldTasks.length),
+        page: <TaskTableTab
+          description={COPY.ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}
+          tasks={this.props.onHoldTasks}
+        />
       },
       {
         label: COPY.ATTORNEY_QUEUE_PAGE_COMPLETE_TAB_TITLE,
-        page: <CompletedTasksTab />
+        page: <TaskTableTab
+          description={COPY.ATTORNEY_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}
+          tasks={this.props.completedTasks}
+        />
       }
     ];
 
@@ -115,11 +123,9 @@ const mapStateToProps = (state) => {
 
   return ({
     tasks: tasksByAssigneeCssIdSelector(state),
-    numberOfTasks: {
-      workable: workableTasksByAssigneeCssIdSelector(state).length,
-      onHold: onHoldTasksByAssigneeCssIdSelector(state).length,
-      completed: completeTasksByAssigneeCssIdSelector(state).length
-    },
+    workableTasks: workableTasksByAssigneeCssIdSelector(state),
+    onHoldTasks: onHoldTasksByAssigneeCssIdSelector(state),
+    completedTasks: completeTasksByAssigneeCssIdSelector(state),
     messages,
     taskDecision
   });
@@ -137,52 +143,15 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default (connect(mapStateToProps, mapDispatchToProps)(AttorneyTaskListView): React.ComponentType<Params>);
 
-const WorkableTasksTab = connect(
-  (state: State) => ({ tasks: workableTasksByAssigneeCssIdSelector(state) }))(
-  (props: { tasks: Array<TaskWithAppeal> }) => {
-    return <React.Fragment>
-      <p>{COPY.ATTORNEY_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION}</p>
-      <TaskTable
-        includeDetailsLink
-        includeTask
-        includeType
-        includeDocketNumber
-        includeDaysWaiting
-        includeReaderLink
-        tasks={props.tasks}
-      />
-    </React.Fragment>;
-  });
-
-const OnHoldTasksTab = connect(
-  (state: State) => ({ tasks: onHoldTasksByAssigneeCssIdSelector(state) }))(
-  (props: { tasks: Array<TaskWithAppeal> }) => {
-    return <React.Fragment>
-      <p>{COPY.ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
-      <TaskTable
-        includeDetailsLink
-        includeTask
-        includeType
-        includeDocketNumber
-        includeDaysWaiting
-        includeReaderLink
-        tasks={props.tasks}
-      />
-    </React.Fragment>;
-  });
-
-const CompletedTasksTab = connect(
-  (state: State) => ({ tasks: completeTasksByAssigneeCssIdSelector(state) }))(
-  (props: { tasks: Array<TaskWithAppeal> }) => {
-    return <React.Fragment>
-      <p>{COPY.ATTORNEY_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}</p>
-      <TaskTable includeDetailsLink
-        includeTask
-        includeType
-        includeDocketNumber
-        includeDaysWaiting
-        includeReaderLink
-        tasks={props.tasks}
-      />
-    </React.Fragment>;
-  });
+const TaskTableTab = ({ description, tasks }) => <React.Fragment>
+  <p>{description}</p>
+  <TaskTable
+    includeDetailsLink
+    includeTask
+    includeType
+    includeDocketNumber
+    includeDaysWaiting
+    includeReaderLink
+    tasks={tasks}
+  />
+</React.Fragment>;
