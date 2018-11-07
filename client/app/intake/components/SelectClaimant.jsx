@@ -8,6 +8,13 @@ export default class SelectClaimant extends React.PureComponent {
     this.props.setPayeeCode(event ? event.value : null);
   }
 
+  shouldShowPayeeCode = () => {
+    const { formType, benefitType } = this.props;
+
+    return formType !== 'appeal' &&
+      (benefitType === 'compensation' || benefitType === 'pension');
+  }
+
   render = () => {
     const {
       claimantNotVeteran,
@@ -36,14 +43,16 @@ export default class SelectClaimant extends React.PureComponent {
           value={claimant}
         />
 
-        <SearchableDropdown
-          name="cf-payee-code"
-          strongLabel
-          label="What is the payee code for this claimant?"
-          placeholder="Select"
-          options={PAYEE_CODES}
-          value={payeeCode}
-          onChange={(event) => this.handlePayeeCodeChange(event)} />
+        {
+          this.shouldShowPayeeCode() && <SearchableDropdown
+            name="cf-payee-code"
+            strongLabel
+            label="What is the payee code for this claimant?"
+            placeholder="Select"
+            options={PAYEE_CODES}
+            value={payeeCode}
+            onChange={(event) => this.handlePayeeCodeChange(event)} />
+        }
 
       </div>;
     };
