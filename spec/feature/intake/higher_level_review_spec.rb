@@ -119,7 +119,7 @@ RSpec.feature "Higher-Level Review" do
     )
 
     within_fieldset("What is the Benefit Type?") do
-      find("label", text: "Compensation", match: :prefer_exact).click
+      find("label", text: "Fiduciary", match: :prefer_exact).click
     end
 
     fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
@@ -139,6 +139,15 @@ RSpec.feature "Higher-Level Review" do
     end
 
     expect(page).to have_content("Please select the claimant listed on the form.")
+
+    # We do not need to select payee codes for fiduciaries
+    expect(page).to_not have_content("What is the payee code for this claimant?")
+
+    # Switch the benefit type to compensation to test choosing the payee code.
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Compensation", match: :prefer_exact).click
+    end
+
     expect(page).to have_content("What is the payee code for this claimant?")
     expect(page).to have_content("Bob Vance, Spouse")
     expect(page).to_not have_content("Cathy Smith, Child")

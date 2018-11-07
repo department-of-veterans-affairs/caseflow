@@ -7,23 +7,9 @@ class ApplicationJob < ActiveJob::Base
     attr_reader :app_name
   end
 
-  around_perform do |job, block|
-    begin
-      block.call
-    rescue StandardError => ex
-      tags = { job: job.class.name, queue: job.queue_name }
-      context = {
-        job_id: job.job_id,
-        queue_name: job.queue_name,
-        job_class: job.class.name
-      }
-      Raven.capture_exception(ex, tags: tags, extra: context)
-      raise
-    end
-  end
-
-  before_perform do
+  before_perform do |job|
     # setup debug context
+    Raven.tags_context(job: job.class.name, queue: job.queue_name)
     Raven.extra_context(application: self.class.app_name.to_s)
   end
 end

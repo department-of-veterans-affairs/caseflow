@@ -102,7 +102,7 @@ export const formatRequestIssues = (requestIssues) => {
       };
     }
 
-    // Rated issues
+    // Rating issues
     const issueDate = new Date(issue.profile_date);
 
     return {
