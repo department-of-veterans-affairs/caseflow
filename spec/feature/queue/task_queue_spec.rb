@@ -12,6 +12,14 @@ RSpec.feature "Task queue" do
     )
   end
 
+  let!(:attorney_task) do
+    FactoryBot.create(
+      :ama_attorney_task,
+      :on_hold,
+      assigned_to: attorney_user
+    )
+  end
+
   let!(:non_veteran_claimant_appeal) do
     FactoryBot.create(
       :legacy_appeal,
@@ -44,6 +52,9 @@ RSpec.feature "Task queue" do
   end
 
   let(:vacols_tasks) { QueueRepository.tasks_for_user(attorney_user.css_id) }
+  let(:attorney_on_hold_tasks) do
+    Task.where(status: :on_hold, assigned_to: attorney_user)
+  end
 
   context "attorney user with assigned tasks" do
     before do
@@ -59,7 +70,7 @@ RSpec.feature "Task queue" do
     it "supports custom sorting" do
       docket_number_column_header = page.find(:xpath, "//thead/tr/th[3]/span/span[1]")
       docket_number_column_header.click
-      docket_number_column_vals = page.find_all(:xpath, "//tbody/tr/td[3]/span[3]")
+      docket_number_column_vals = page.find_all(:xpath, "//tbody/tr/td[4]/span[3]")
       expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort.reverse
       docket_number_column_header.click
       expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort.reverse
@@ -68,6 +79,24 @@ RSpec.feature "Task queue" do
     it "displays special text indicating an assigned case has paper documents" do
       expect(page).to have_content("#{paper_appeal.veteran_full_name} (#{paper_appeal.vbms_id.delete('S')})")
       expect(page).to have_content(COPY::IS_PAPER_CASE)
+    end
+
+    it "shows tabs on the queue page" do
+      expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
+      expect(page).to have_content(format(COPY::ATTORNEY_QUEUE_PAGE_ASSIGNED_TAB_TITLE, vacols_tasks.length))
+      expect(page).to have_content(format(COPY::ATTORNEY_QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_tasks.length))
+      expect(page).to have_content(COPY::ATTORNEY_QUEUE_PAGE_COMPLETE_TAB_TITLE)
+    end
+
+    it "shows the right number of cases in each tab" do
+      # Assigned tab
+      expect(page).to have_content(COPY::ATTORNEY_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION)
+      expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
+
+      # On Hold tab
+      find("button", text: format(COPY::ATTORNEY_QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_tasks.length)).click
+      expect(page).to have_content(COPY::ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
+      expect(find("tbody").find_all("tr").length).to eq(attorney_on_hold_tasks.length)
     end
   end
 
