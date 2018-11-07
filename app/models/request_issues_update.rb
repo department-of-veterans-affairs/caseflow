@@ -101,6 +101,7 @@ class RequestIssuesUpdate < ApplicationRecord
         is_unidentified: issue_data[:is_unidentified],
         ramp_claim_id: issue_data[:ramp_claim_id]
       ).tap do |request_issue|
+        request_issue.validate_eligibility!
         request_issue.rating_issue_profile_date ||= issue_data[:profile_date]
       end
     end
