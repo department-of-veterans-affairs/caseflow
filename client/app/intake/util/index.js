@@ -49,20 +49,13 @@ export const formatRadioOptions = (options) => {
 };
 
 export const prepareReviewData = (intakeData, intakeType) => {
-  let { payeeCode } = intakeData;
-
-  // If the Veteran is the claimant then the payee code is '00'
-  if ([false, 'false'].includes(intakeData.claimantNotVeteran)) {
-    payeeCode = '00';
-  }
-
   switch (intakeType) {
   case 'appeal':
     return {
       docket_type: intakeData.docketType,
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
-      payee_code: payeeCode,
+      payee_code: intakeData.payeeCode,
       legacy_opt_in_approved: intakeData.legacyOptInApproved
     };
   case 'supplementalClaim':
@@ -70,7 +63,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       benefit_type: intakeData.benefitType,
       claimant: intakeData.claimant,
-      payee_code: payeeCode,
+      payee_code: intakeData.payeeCode,
       legacy_opt_in_approved: intakeData.legacyOptInApproved
     };
   case 'higherLevelReview':
@@ -80,14 +73,14 @@ export const prepareReviewData = (intakeData, intakeType) => {
       benefit_type: intakeData.benefitType,
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
-      payee_code: payeeCode,
+      payee_code: intakeData.payeeCode,
       legacy_opt_in_approved: intakeData.legacyOptInApproved
     };
   default:
     return {
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
-      payee_code: payeeCode,
+      payee_code: intakeData.payeeCode,
       legacy_opt_in_approved: intakeData.legacyOptInApproved
     };
   }

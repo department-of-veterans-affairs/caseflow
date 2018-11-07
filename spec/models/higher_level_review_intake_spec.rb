@@ -116,6 +116,20 @@ describe HigherLevelReviewIntake do
           payee_code: "10"
         )
       end
+
+      context "And benefit type is non-compensation" do
+        let(:benefit_type) { "fiduciary" }
+
+        it "sets payee_code to nil" do
+          subject
+
+          expect(intake.detail.claimants.count).to eq 1
+          expect(intake.detail.claimants.first).to have_attributes(
+            participant_id: "1234",
+            payee_code: nil
+          )
+        end
+      end
     end
   end
 

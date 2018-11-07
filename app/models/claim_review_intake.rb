@@ -8,6 +8,10 @@ class ClaimReviewIntake < DecisionReviewIntake
     )
   end
 
+  def need_payee_code?(request_params)
+    request_params[:benefit_type] == "compensation" || request_params[:benefit_type] == "pension"
+  end
+
   def review!(request_params)
     detail.start_review!
 
@@ -15,12 +19,12 @@ class ClaimReviewIntake < DecisionReviewIntake
     if request_params[:claimant]
       detail.create_claimants!(
         participant_id: request_params[:claimant],
-        payee_code: request_params[:payee_code]
+        payee_code: need_payee_code?(request_params) ? request_params[:payee_code] : nil
       )
     else
       detail.create_claimants!(
         participant_id: veteran.participant_id,
-        payee_code: "00"
+        payee_code: need_payee_code?(request_params) ? "00" : nil
       )
     end
     detail.update(review_params(request_params))
