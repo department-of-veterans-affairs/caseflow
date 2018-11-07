@@ -8,16 +8,17 @@ const sectionNavigationContainerStyling = css({
   float: 'left',
   paddingRight: '3rem',
   position: 'sticky',
-  top: '3rem',
+  top: 0,
   width: '20%',
-  '@media (max-width: 920px)': {
-    top: '1rem',
+  '@media (max-width: 1020px)': {
+    paddingTop: '1rem',
+    backgroundColor: COLORS.WHITE,
     paddingRight: 0
   }
 });
 
 const sectionNavStyling = css({
-  '@media (max-width: 920px)': {
+  '@media (max-width: 1020px)': {
     '&': {
       display: 'flex',
       flexFlow: 'row wrap'
@@ -47,13 +48,13 @@ const sectionNavigationListStyling = css({
     content: '〉',
     float: 'right'
   },
-  '@media (max-width: 920px)': {
+  '@media (max-width: 1020px)': {
     display: 'flex',
     flexFlow: 'row',
     borderBottom: 'none',
     borderTop: 'none',
     width: '100%',
-    marginBottom: '30px',
+    marginBottom: '1rem',
     '& > li': {
       padding: '8.5px 10px',
       fontSize: '13px',
@@ -77,7 +78,7 @@ const sectionNavigationListStyling = css({
 const sectionBodyStyling = css({
   float: 'left',
   width: '80%',
-  '@media (max-width: 920px)': {
+  '@media (max-width: 1020px)': {
     flex: '1 100%'
   }
 });
@@ -122,7 +123,7 @@ const sectionHeadingStyling = css({
 
 const anchorJumpLinkStyling = css({
   color: COLORS.GREY_DARK,
-  paddingTop: '60px',
+  paddingTop: '72px',
   textDecoration: 'none',
   pointerEvents: 'none',
   cursor: 'default'
