@@ -67,7 +67,7 @@ module Caseflow::Error
 
   class DocumentUploadFailedInVBMS < SerializableError
     def initialize(args)
-      @code = args[:code] || 400
+      @code = args[:code] || 502
       @message = args[:message]
     end
   end

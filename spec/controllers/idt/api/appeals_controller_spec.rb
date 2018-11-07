@@ -534,7 +534,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       it "should throw an error" do
         allow(VBMSService).to receive(:upload_document_to_vbms).and_raise(VBMS::HTTPError.new(503, "VBMS is down"))
         post :outcode, params: params
-        expect(response.status).to eq(400)
+        expect(response.status).to eq(502)
         response_detail = JSON.parse(response.body)["errors"][0]["detail"]
         expect(response_detail).to eq "Document upload failed due to VBMS experiencing issues."
       end
