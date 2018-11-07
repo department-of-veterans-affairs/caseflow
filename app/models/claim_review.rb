@@ -87,7 +87,7 @@ class ClaimReview < DecisionReview
   end
 
   def cleared_ep?
-    end_product_establishments.any?(&:status_cleared?(sync: true))
+    end_product_establishments.any? { |ep| ep.status_cleared?(sync: true) }
   end
 
   private
