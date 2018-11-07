@@ -56,7 +56,12 @@ module HearingDayMapper
     def city_for_regional_office(regional_office)
       return if regional_office.nil?
 
-      ro = RegionalOffice.find!(regional_office)
+      ro = begin
+        RegionalOffice.find!(regional_office_key)
+      rescue NotFoundError
+        nil
+      end
+      return "" if ro.nil?
       "#{ro.city}, #{ro.state}"
     end
 

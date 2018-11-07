@@ -562,7 +562,7 @@ class RegionalOffice
     def find!(key)
       result = RegionalOffice.new(key)
 
-      Rails.logger.error("Invalid regional office key: #{key}") unless result.valid?
+      fail NotFoundError unless result.valid?
       result
     end
 
