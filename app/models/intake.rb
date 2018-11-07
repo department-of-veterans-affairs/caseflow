@@ -209,6 +209,7 @@ class Intake < ApplicationRecord
       veteran_file_number: veteran_file_number,
       veteran_name: veteran && veteran.name.formatted(:readable_short),
       veteran_form_name: veteran && veteran.name.formatted(:form),
+      veteran_is_deceased: veteran && veteran.deceased?,
       completed_at: completed_at,
       relationships: ama_enabled && veteran && veteran.relationships
     }

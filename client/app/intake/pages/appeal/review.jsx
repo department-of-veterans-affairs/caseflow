@@ -77,7 +77,7 @@ class Review extends React.PureComponent {
         value={docketType}
       />
 
-      <SelectClaimantConnected />
+      <SelectClaimantConnected/>
 
       { legacyOptInEnabled && <LegacyOptInApproved
         value={legacyOptInApproved === null ? null : legacyOptInApproved.toString()}
@@ -90,6 +90,7 @@ class Review extends React.PureComponent {
 
 const SelectClaimantConnected = connect(
   ({ appeal }) => ({
+    allPayeeCodes: true,
     claimantNotVeteran: appeal.claimantNotVeteran,
     claimant: appeal.claimant,
     payeeCode: appeal.payeeCode,
