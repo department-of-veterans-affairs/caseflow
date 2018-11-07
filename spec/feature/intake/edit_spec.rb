@@ -393,7 +393,7 @@ RSpec.feature "Edit issues" do
         fill_in "Notes", with: "I am an issue note"
         safe_click ".add-issue"
         expect(page).to have_content("PTSD denied")
-        # TODO:: Need to fix a bug, but these two expect statements should replace the above one
+        # TODO: : Need to fix a bug, but these two expect statements should replace the above one
         # expect(page).to have_content("PTSD denied Decision Date:")
         # expect(page).to_not have_content("PTSD denied is ineligible")
         expect(page).to have_content("I am an issue note")
@@ -431,7 +431,9 @@ RSpec.feature "Edit issues" do
         safe_click "#button-add-issue"
         find("label", text: "Non-RAMP Issue before AMA Activation").click
         safe_click ".add-issue"
-        expect(page).to have_content("Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}")
+        expect(page).to have_content(
+          "Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+        )
 
         # add RAMP issue before AMA
         safe_click "#button-add-issue"

@@ -68,14 +68,13 @@ class Fakes::BGSService
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
-          profile_date: DecisionReview::AMA_ACTIVATION_DATE.to_time - 10.days,
-          promulgation_date: DecisionReview::AMA_ACTIVATION_DATE.to_time - 5.days,
+          profile_date: DecisionReview::AMA_ACTIVATION_DATE - 10.days,
+          promulgation_date: DecisionReview::AMA_ACTIVATION_DATE - 5.days,
           issues: [
             { decision_text: "Issue before AMA not from a RAMP Review", reference_id: "before_ama_ref_id" },
             { decision_text: "Issue before AMA from a RAMP Review",
               associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" },
-              reference_id: "ramp_reference_id"
-            }
+              reference_id: "ramp_reference_id" }
           ]
         )
         Generators::Rating.build(

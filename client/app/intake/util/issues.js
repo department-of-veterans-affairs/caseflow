@@ -268,7 +268,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
   // match date definition in Rails Rating model
   const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
 
-  const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST)
+  const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
 
   return issues.map((issue) => {
     if (issue.isUnidentified) {
@@ -279,7 +279,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         isUnidentified: true
       };
     } else if (issue.isRating) {
-      const profileDate = new Date(issue.profileDate)
+      const profileDate = new Date(issue.profileDate);
 
       return {
         referenceId: issue.id,
