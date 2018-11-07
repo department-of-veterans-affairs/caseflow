@@ -24,7 +24,7 @@ class HigherLevelReview < ClaimReview
     Constants.INTAKE_FORM_NAMES_SHORT.higher_level_review
   end
 
-  def ui_hash(ama_enabled)
+  def ui_hash
     super.merge(
       formType: "higher_level_review",
       sameOffice: same_office,
@@ -57,8 +57,8 @@ class HigherLevelReview < ClaimReview
     super { create_dta_supplemental_claim }
   end
 
-  def issue_code(rated)
-    rated ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE
+  def issue_code(rating: true)
+    rating ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE
   end
 
   private

@@ -23,6 +23,7 @@ class GenericTask < Task
 
     []
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/AbcSize
 
   def update_from_params(params, current_user)

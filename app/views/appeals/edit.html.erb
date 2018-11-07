@@ -1,0 +1,10 @@
+<% content_for :full_page_content do %>
+  <%= react_component("IntakeEdit", props: {
+    userDisplayName: current_user.display_name,
+    dropdownUrls: dropdown_urls,
+    feedbackUrl: feedback_url,
+    buildDate: build_date,
+    serverIntake: appeal.ui_hash,
+    claimId: url_appeal_uuid
+  }) %>
+<% end %>

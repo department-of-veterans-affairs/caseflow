@@ -15,7 +15,7 @@ export const mapDataToInitialState = function(props = {}) {
     ...serverIntake,
     claimId,
     addIssuesModalVisible: false,
-    nonRatedIssueModalVisible: false,
+    nonRatingRequestIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
     addedIssues: formatRequestIssues(serverIntake.requestIssues),
     originalIssues: formatRequestIssues(serverIntake.requestIssues),

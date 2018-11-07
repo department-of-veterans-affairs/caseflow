@@ -27,7 +27,7 @@ describe Rating do
       decision_text: "Decision#{num}",
       promulgation_date: promulgation_date,
       contention_reference_id: nil,
-      in_active_review: nil,
+      title_of_active_review: nil,
       source_higher_level_review: nil
     }
   end
@@ -58,7 +58,7 @@ describe Rating do
         participant_id: rating.participant_id,
         profile_date: rating.profile_date,
         promulgation_date: rating.promulgation_date,
-        issues: issues
+        issues: issues.each { |issue| issue[:profile_date] = rating.profile_date }
       )
     end
 
