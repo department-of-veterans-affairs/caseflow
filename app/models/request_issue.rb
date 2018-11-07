@@ -10,10 +10,10 @@ class RequestIssue < ApplicationRecord
   validates :ineligible_reason, exclusion: { in: ["untimely"] }, if: proc { |reqi| reqi.untimely_exemption }
 
   enum ineligible_reason: {
-    duplicate_of_issue_in_active_review: 0,
-    untimely: 1,
-    previous_higher_level_review: 2,
-    before_ama: 3
+    duplicate_of_issue_in_active_review: "duplicate_of_issue_in_active_review",
+    untimely: "untimely",
+    previous_higher_level_review: "previous_higher_level_review",
+    before_ama: "before_ama"
   }
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
