@@ -99,6 +99,8 @@ class RequestIssuesUpdate < ApplicationRecord
         issue_category: issue_data[:issue_category],
         notes: issue_data[:notes],
         is_unidentified: issue_data[:is_unidentified],
+        untimely_exemption: issue_data[:untimely_exemption],
+        untimely_exemption_notes: issue_data[:untimely_exemption_notes],
         ramp_claim_id: issue_data[:ramp_claim_id]
       ).tap do |request_issue|
         request_issue.validate_eligibility!
