@@ -721,7 +721,9 @@ RSpec.feature "Higher-Level Review" do
       fill_in "Decision date", with: "04/19/2016"
       expect(page).to have_button("Add this issue", disabled: false)
       safe_click ".add-issue"
+      add_untimely_exemption_response("No", "I am a nonrating exemption note")
       expect(page).to have_content("6 issues")
+      expect(page).to have_content("I am a nonrating exemption note")
       expect(page).to have_content(
         "Another Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
       )

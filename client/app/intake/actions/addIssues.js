@@ -63,14 +63,17 @@ export const addRatingRequestIssue = (args) => (dispatch) => {
   });
 };
 
-export const addNonratingRequestIssue = (category, description, decisionDate, isRating = false) => (dispatch) => {
+export const addNonratingRequestIssue = (args) => (dispatch) => {
   dispatch({
     type: ACTIONS.ADD_ISSUE,
     payload: {
-      category,
-      description,
-      decisionDate,
-      isRating
+      category: args.category,
+      description: args.description,
+      decisionDate: args.decisionDate,
+      timely: args.timely,
+      untimelyExemption: args.untimelyExemption,
+      untimelyExemptionNotes: args.untimelyExemptionNotes,
+      isRating: false
     }
   });
 };
