@@ -174,7 +174,8 @@ class EndProductEstablishment < ApplicationRecord
     raise BGSSyncError.new(e, self)
   end
 
-  def status_canceled?
+  def status_canceled?(sync: false)
+    sync! if sync
     synced_status == CANCELED_STATUS
   end
 
