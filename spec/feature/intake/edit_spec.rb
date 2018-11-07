@@ -1,6 +1,9 @@
 require "rails_helper"
+require "support/intake_helpers"
 
 RSpec.feature "Edit issues" do
+  include IntakeHelpers
+
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
@@ -279,7 +282,7 @@ RSpec.feature "Edit issues" do
       end
     end
 
-    context "when there is a non-rating end product" do
+    context "when there is a nonrating end product" do
       let!(:nonrating_request_issue) do
         RequestIssue.create!(
           review_request: higher_level_review,
@@ -423,6 +426,22 @@ RSpec.feature "Edit issues" do
         safe_click ".add-issue"
         expect(page).to have_content("3 issues")
 
+        # Add untimely nonrating issue
+        safe_click "#button-add-issue"
+        safe_click ".no-matching-issues"
+        expect(page).to have_content("Does issue 4 match any of these issue categories?")
+        expect(page).to have_button("Add this issue", disabled: true)
+        fill_in "Issue category", with: "Active Duty Adjustments"
+        find("#issue-category").send_keys :enter
+        fill_in "Issue description", with: "Another Description for Active Duty Adjustments"
+        fill_in "Decision date", with: "04/25/2016"
+        expect(page).to have_button("Add this issue", disabled: false)
+        safe_click ".add-issue"
+        add_untimely_exemption_response("No", "I am a nonrating exemption note")
+        expect(page).to have_content("4 issues")
+        expect(page).to have_content("I am a nonrating exemption note")
+        expect(page).to have_content("Another Description for Active Duty Adjustments")
+
         # add unidentified issue
         safe_click "#button-add-issue"
         safe_click ".no-matching-issues"
@@ -430,7 +449,7 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content("Describe the issue to mark it as needing further review.")
         fill_in "Transcribe the issue as it's written on the form", with: "This is an unidentified issue"
         safe_click ".add-issue"
-        expect(page).to have_content("4 issues")
+        expect(page).to have_content("5 issues")
         expect(page).to have_content("This is an unidentified issue")
 
         # add issue before AMA
@@ -453,17 +472,30 @@ RSpec.feature "Edit issues" do
         safe_click "#Unidentified-issue-button-id-1"
 
         expect(page).to have_content("The review originally had 1 issue but now has 6.")
+
         safe_click "#Number-of-issues-has-changed-button-id-1"
 
         expect(page).to have_content("Edit Confirmed")
 
         # assert server has updated data for nonrating and unidentified issues
-        expect(RequestIssue.find_by(
-                 review_request: higher_level_review,
-                 issue_category: "Active Duty Adjustments",
-                 decision_date: 1.month.ago,
-                 description: "Description for Active Duty Adjustments"
-        )).to_not be_nil
+        active_duty_adjustments_request_issue = RequestIssue.find_by!(
+          review_request: higher_level_review,
+          issue_category: "Active Duty Adjustments",
+          decision_date: 1.month.ago,
+          description: "Description for Active Duty Adjustments"
+        )
+
+        expect(active_duty_adjustments_request_issue.untimely?).to eq(false)
+
+        another_active_duty_adjustments_request_issue = RequestIssue.find_by!(
+          review_request: higher_level_review,
+          issue_category: "Active Duty Adjustments",
+          description: "Another Description for Active Duty Adjustments"
+        )
+
+        expect(another_active_duty_adjustments_request_issue.untimely?).to eq(true)
+        expect(another_active_duty_adjustments_request_issue.untimely_exemption?).to eq(false)
+        expect(another_active_duty_adjustments_request_issue.untimely_exemption_notes).to_not be_nil
 
         expect(RequestIssue.find_by(
                  review_request: higher_level_review,

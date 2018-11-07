@@ -514,7 +514,7 @@ RSpec.feature "Appeal Intake" do
       review_request_type: "Appeal",
       review_request_id: appeal.id,
       issue_category: "Active Duty Adjustments",
-      description: "Another Description for Active Duty Adjustments",
+      description: "Another Description for Active Duty Adjustments"
     )
 
     expect(another_active_duty_adjustments_request_issue.untimely?).to eq(true)
