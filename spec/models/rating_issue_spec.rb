@@ -226,7 +226,7 @@ describe RatingIssue do
     end
 
     it "returns nil if no source_request_issue is found" do
-      subject.reference_id = "no-such-id"
+      subject.contention_reference_id = "no-such-id"
 
       expect(subject.save_decision_issue).to eq(nil)
     end
