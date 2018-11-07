@@ -22,9 +22,9 @@ describe BvaDispatchTask do
     let(:citation_number) { "A18123456" }
     let(:file) do
       ActionDispatch::Http::UploadedFile.new(
-        :filename => 'sample.pdf',
-        :type => 'pdf',
-        :tempfile => "path/to/file.pdf"
+        filename: "sample.pdf",
+        type: "pdf",
+        tempfile: "path/to/file.pdf"
       )
     end
     let(:params) do
