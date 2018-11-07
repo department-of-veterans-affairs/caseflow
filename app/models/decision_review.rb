@@ -34,6 +34,23 @@ class DecisionReview < ApplicationRecord
     end
   end
 
+  def ui_hash
+    {
+      veteran: {
+        name: veteran && veteran.name.formatted(:readable_short),
+        fileNumber: veteran_file_number,
+        formName: veteran && veteran.name.formatted(:form)
+      },
+      relationships: veteran && veteran.relationships,
+      claimant: claimant_participant_id,
+      claimantNotVeteran: claimant_not_veteran,
+      receiptDate: receipt_date.to_formatted_s(:json_date),
+      legacyOptInApproved: legacy_opt_in_approved,
+      ratings: serialized_ratings,
+      requestIssues: request_issues.map(&:ui_hash)
+    }
+  end
+
   def timely_rating?(promulgation_date)
     return true unless receipt_date
     promulgation_date >= (receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
@@ -72,6 +89,10 @@ class DecisionReview < ApplicationRecord
 
   def remove_issues!
     request_issues.destroy_all unless request_issues.empty?
+  end
+
+  def mark_rating_request_issues_to_reassociate!
+    request_issues.select(&:rating?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
   end
 
   private

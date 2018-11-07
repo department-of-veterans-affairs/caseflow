@@ -9,23 +9,11 @@ class ClaimReview < DecisionReview
 
   self.abstract_class = true
 
-  def ui_hash(ama_enabled)
-    {
-      veteran: {
-        name: veteran && veteran.name.formatted(:readable_short),
-        fileNumber: veteran_file_number,
-        formName: veteran && veteran.name.formatted(:form)
-      },
-      relationships: ama_enabled && veteran && veteran.relationships,
-      receiptDate: receipt_date.to_formatted_s(:json_date),
+  def ui_hash
+    super.merge(
       benefitType: benefit_type,
-      claimant: claimant_participant_id,
-      claimantNotVeteran: claimant_not_veteran,
-      payeeCode: payee_code,
-      legacyOptInApproved: legacy_opt_in_approved,
-      ratings: serialized_ratings,
-      requestIssues: request_issues.map(&:ui_hash)
-    }
+      payeeCode: payee_code
+    )
   end
 
   # The Asyncable module requires we define these.
@@ -61,10 +49,6 @@ class ClaimReview < DecisionReview
     new_issues.each do |issue|
       issue.update!(end_product_establishment: end_product_establishment_for_issue(issue))
     end
-  end
-
-  def mark_rating_request_issues_to_reassociate!
-    request_issues.select(&:rating?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
   end
 
   # Idempotent method to create all the artifacts for this claim.

@@ -24,7 +24,7 @@ class HigherLevelReview < ClaimReview
     Constants.INTAKE_FORM_NAMES_SHORT.higher_level_review
   end
 
-  def ui_hash(ama_enabled)
+  def ui_hash
     super.merge(
       formType: "higher_level_review",
       sameOffice: same_office,

@@ -128,8 +128,8 @@ class Veteran < ApplicationRecord
     @ratings ||= Rating.fetch_all(participant_id)
   end
 
-  def decision_rating_issues
-    RatingIssue.where(participant_id: participant_id)
+  def decision_issues
+    DecisionIssue.where(participant_id: participant_id)
   end
 
   def accessible_appeals_for_poa(poa_participant_ids)
@@ -152,7 +152,7 @@ class Veteran < ApplicationRecord
 
   def sync_rating_issues!
     timely_ratings(from_date: Time.zone.today).each do |rating|
-      rating.issues.select(&:contention_reference_id).each(&:save_with_source_request_issue!)
+      rating.issues.select(&:contention_reference_id).each(&:save_decision_issue)
     end
   end
 

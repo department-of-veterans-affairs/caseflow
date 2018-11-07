@@ -9,7 +9,7 @@ import _ from 'lodash';
 // appeals
 const getAppealChecklistItems = (requestIssues) => [<Fragment>
   <strong>Appeal created:</strong>
-  {requestIssues.map((ri, i) => <p key={i}>Issue: {ri.description}</p>)}
+  {requestIssues.map((ri, i) => <p key={i}>Issue: {ri.contentionText}</p>)}
 </Fragment>];
 
 // higher level reviews & supplemental claims
@@ -22,7 +22,7 @@ const getClaimReviewChecklistItems = (formType, requestIssues, isInformalConfere
   if (ratingIssues.length > 0) {
     checklist.push(<Fragment>
       <strong>A {claimReviewName} Rating EP is being established:</strong>
-      {ratingIssues.map((ri, i) => <p key={`rating-issue-${i}`}>Contention: {ri.description}</p>)}
+      {ratingIssues.map((ri, i) => <p key={`rating-issue-${i}`}>Contention: {ri.contentionText}</p>)}
     </Fragment>);
   }
 
@@ -71,8 +71,6 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       <strong>Edit the notice letter to reflect the status of requested issues.</strong>
     ];
 
-    const checklistClassNames = ['cf-intake-statusmessage-checklist', 'cf-success-checklist', 'cf-left-padding'];
-
     return <StatusMessage
       title="Intake completed"
       type="success"
@@ -80,7 +78,6 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       checklist={formType === 'appeal' ?
         getAppealChecklistItems(requestIssues) :
         getClaimReviewChecklistItems(formType, requestIssues, informalConference)}
-      checklistClassNames={checklistClassNames}
       wrapInAppSegment={false}
     />;
   }
