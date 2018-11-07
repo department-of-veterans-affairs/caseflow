@@ -92,8 +92,8 @@ class JudgeTask < Task
   end
 
   def self.eligible_for_assigment?(task)
-    return false if task.appeal.docket_type.nil?
     return false if task.appeal.class == LegacyAppeal
+    return false if task.appeal.docket_name.nil?
     # Hearing cases will not be processed until February 2019
     return false if task.appeal.hearing_docket?
 
