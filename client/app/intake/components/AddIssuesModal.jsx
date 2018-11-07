@@ -6,8 +6,13 @@ import React from 'react';
 import { formatDateStr } from '../../util/DateUtil';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
-import { addRatingRequestIssue, toggleNonratingRequestIssueModal } from '../actions/addIssues';
+import {
+  addRatingRequestIssue,
+  toggleNonratingRequestIssueModal,
+  toggleUntimelyExemptionModal
+} from '../actions/addIssues';
 import TextField from '../../components/TextField';
+import { issueById } from '../util/issues';
 
 class AddIssuesModal extends React.Component {
   constructor(props) {
@@ -32,14 +37,30 @@ class AddIssuesModal extends React.Component {
     });
   }
 
+  requiresUntimelyExemption = () => {
+    if (this.props.formType === 'supplemental_claim') {
+      return false;
+    }
+    const currentIssue = issueById(this.props.intakeData.ratings, this.state.referenceId);
+
+    return !currentIssue.timely;
+  }
+
   onAddIssue = () => {
-    this.props.addRatingRequestIssue({
-      issueId: this.state.referenceId,
-      ratings: this.props.intakeData.ratings,
-      isRating: true,
-      notes: this.state.notes
-    });
-    this.props.closeHandler();
+    if (this.requiresUntimelyExemption()) {
+      const currentIssue = issueById(this.props.intakeData.ratings, this.state.referenceId);
+
+      this.props.toggleUntimelyExemptionModal({ currentIssue,
+        notes: this.state.notes });
+    } else {
+      this.props.addRatingRequestIssue({
+        issueId: this.state.referenceId,
+        ratings: this.props.intakeData.ratings,
+        isRating: true,
+        notes: this.state.notes
+      });
+      this.props.closeHandler();
+    }
   }
 
   render() {
@@ -123,6 +144,7 @@ export default connect(
   null,
   (dispatch) => bindActionCreators({
     addRatingRequestIssue,
-    toggleNonratingRequestIssueModal
+    toggleNonratingRequestIssueModal,
+    toggleUntimelyExemptionModal
   }, dispatch)
 )(AddIssuesModal);

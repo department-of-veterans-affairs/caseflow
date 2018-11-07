@@ -1,6 +1,9 @@
 require "rails_helper"
+require "support/intake_helpers"
 
 RSpec.feature "Higher-Level Review" do
+  include IntakeHelpers
+
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
@@ -116,7 +119,7 @@ RSpec.feature "Higher-Level Review" do
     )
 
     within_fieldset("What is the Benefit Type?") do
-      find("label", text: "Compensation", match: :prefer_exact).click
+      find("label", text: "Fiduciary", match: :prefer_exact).click
     end
 
     fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
@@ -136,6 +139,15 @@ RSpec.feature "Higher-Level Review" do
     end
 
     expect(page).to have_content("Please select the claimant listed on the form.")
+
+    # We do not need to select payee codes for fiduciaries
+    expect(page).to_not have_content("What is the payee code for this claimant?")
+
+    # Switch the benefit type to compensation to test choosing the payee code.
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Compensation", match: :prefer_exact).click
+    end
+
     expect(page).to have_content("What is the payee code for this claimant?")
     expect(page).to have_content("Bob Vance, Spouse")
     expect(page).to_not have_content("Cathy Smith, Child")
@@ -662,7 +674,19 @@ RSpec.feature "Higher-Level Review" do
       safe_click "#button-add-issue"
       find_all("label", text: "Really old injury").first.click
       safe_click ".add-issue"
+      add_untimely_exemption_response("Yes")
       expect(page).to have_content("5 issues")
+      expect(page).to have_content("I am an exemption note")
+      expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
+
+      # remove and re-add with different answer to exemption
+      page.all(".remove-issue").last.click
+      safe_click "#button-add-issue"
+      find_all("label", text: "Really old injury").first.click
+      safe_click ".add-issue"
+      add_untimely_exemption_response("No")
+      expect(page).to have_content("5 issues")
+      expect(page).to have_content("I am an exemption note")
       expect(page).to have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
 
       # add untimely nonrating request issue
@@ -692,7 +716,7 @@ RSpec.feature "Higher-Level Review" do
       safe_click "#button-finish-intake"
 
       expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
-      expect(page).to have_content("This is an unidentified issue")
+      expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
 
       # make sure that database is populated
       expect(HigherLevelReview.find_by(
@@ -730,6 +754,14 @@ RSpec.feature "Higher-Level Review" do
                description: "Left knee granted",
                end_product_establishment_id: end_product_establishment.id,
                notes: "I am an issue note"
+      )).to_not be_nil
+
+      expect(RequestIssue.find_by(
+               review_request: higher_level_review,
+               description: "Really old injury",
+               end_product_establishment_id: end_product_establishment.id,
+               untimely_exemption: false,
+               untimely_exemption_notes: "I am an exemption note"
       )).to_not be_nil
 
       expect(RequestIssue.find_by(

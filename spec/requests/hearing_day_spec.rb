@@ -287,7 +287,9 @@ RSpec.describe "Hearing Schedule", type: :request do
         :case,
         folder: create(:folder, tinum: "docket-number"),
         bfregoff: "RO04",
-        bfcurloc: "57"
+        bfcurloc: "57",
+        bfhr: "2",
+        bfdocind: "V"
       )
     end
 

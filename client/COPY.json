@@ -88,6 +88,13 @@
   "COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold (will return to \"Pending action\" tab when hold is completed):",
   "COLOCATED_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed (last two weeks):",
 
+  "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
+  "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE": "Assigned (%d)",
+  "ORGANIZATIONAL_QUEUE_PAGE_COMPLETE_TAB_TITLE": "Completed",
+  "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION": "Cases owned by the %s team that are unassigned to a person.",
+  "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to a member of the %s team.",
+  "ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE": "This queue is empty. You can ",
+
   "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
   "SWITCH_TO_ASSIGN_MODE_LINK_LABEL": "Switch to Assign Cases",
 
