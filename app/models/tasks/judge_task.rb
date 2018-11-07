@@ -8,7 +8,10 @@ class JudgeTask < Task
 
     if action.eql? "assign"
       [
-        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
+        {
+          label: COPY::JUDGE_CHECKOUT_ASSIGN_TO_ATTORNEY_LABEL,
+          value: "modal/assign_to_attorney"
+        }
       ]
     else
       [
@@ -74,11 +77,12 @@ class JudgeTask < Task
   def self.assign_judge_tasks_for_root_tasks(root_tasks)
     root_tasks.each do |root_task|
       Rails.logger.info("Assigning judge task for appeal #{root_task.appeal.id}")
-      task = create(appeal: root_task.appeal,
+      task = create!(appeal: root_task.appeal,
                     parent: root_task,
                     appeal_type: Appeal.name,
                     assigned_at: Time.zone.now,
-                    assigned_to: next_assignee)
+                    assigned_to: next_assignee,
+                    action: :assign)
       Rails.logger.info("Assigned judge task with task id #{task.id} to #{task.assigned_to.css_id}")
     end
   end
