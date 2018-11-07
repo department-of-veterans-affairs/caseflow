@@ -25,7 +25,7 @@ class RootTask < Task
 
     def create_vso_subtask!(appeal, parent)
       appeal.vsos.each do |vso_organization|
-        GenericTask.create(
+        InformalHearingPresentationTask.create(
           appeal: appeal,
           parent: parent,
           status: Constants.TASK_STATUSES.in_progress,

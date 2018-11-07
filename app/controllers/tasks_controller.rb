@@ -2,7 +2,7 @@ class TasksController < ApplicationController
   include Errors
 
   before_action :verify_task_access, only: [:create]
-  skip_before_action :deny_vso_access, only: [:index, :update, :for_appeal]
+  skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
   TASK_CLASSES = {
     ColocatedTask: ColocatedTask,
