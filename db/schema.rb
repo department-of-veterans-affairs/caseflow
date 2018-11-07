@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181101193212) do
+ActiveRecord::Schema.define(version: 20181107182512) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -629,14 +629,13 @@ ActiveRecord::Schema.define(version: 20181101193212) do
     t.integer "parent_request_issue_id"
     t.text "notes"
     t.boolean "is_unidentified"
-    t.integer "ineligible_reason"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
     t.bigint "ineligible_due_to_id"
+    t.string "ineligible_reason"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
-    t.index ["ineligible_reason"], name: "index_request_issues_on_ineligible_reason"
     t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"
     t.index ["rating_issue_reference_id"], name: "index_request_issues_on_rating_issue_reference_id"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
