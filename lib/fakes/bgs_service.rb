@@ -68,8 +68,8 @@ class Fakes::BGSService
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
-          profile_date: DecisionReview::AMA_ACTIVATION_DATE - 10.days,
-          promulgation_date: DecisionReview::AMA_ACTIVATION_DATE - 5.days,
+          profile_date: DecisionReview.ama_activation_date - 10.days,
+          promulgation_date: DecisionReview.ama_activation_date - 5.days,
           issues: [
             { decision_text: "Issue before AMA not from a RAMP Review", reference_id: "before_ama_ref_id" },
             { decision_text: "Issue before AMA from a RAMP Review",

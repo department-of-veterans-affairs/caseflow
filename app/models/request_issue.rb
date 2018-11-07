@@ -159,13 +159,13 @@ class RequestIssue < ApplicationRecord
 
   def check_for_rating_before_ama!
     return if ramp_claim_id
-    if rating_issue_profile_date < DecisionReview::AMA_ACTIVATION_DATE
+    if rating_issue_profile_date < DecisionReview.ama_activation_date
       self.ineligible_reason = :before_ama
     end
   end
 
   def check_for_nonrating_before_ama!
-    if decision_date < DecisionReview::AMA_ACTIVATION_DATE
+    if decision_date < DecisionReview.ama_activation_date
       self.ineligible_reason = :before_ama
     end
   end

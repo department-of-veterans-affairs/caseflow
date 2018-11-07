@@ -258,8 +258,8 @@ describe RequestIssue do
       )
       Generators::Rating.build(
         participant_id: veteran.participant_id,
-        promulgation_date: DecisionReview::AMA_ACTIVATION_DATE - 5.days,
-        profile_date: DecisionReview::AMA_ACTIVATION_DATE - 10.days,
+        promulgation_date: DecisionReview.ama_activation_date - 5.days,
+        profile_date: DecisionReview.ama_activation_date - 10.days,
         issues: [
           { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
           { decision_text: "Issue before AMA Activation from RAMP",
@@ -322,10 +322,10 @@ describe RequestIssue do
     end
 
     context "Issues with decision dates before AMA" do
-      let(:profile_date) { DecisionReview::AMA_ACTIVATION_DATE - 5.days }
+      let(:profile_date) { DecisionReview.ama_activation_date - 5.days }
 
       it "flags nonrating issues before AMA" do
-        nonrating_request_issue.decision_date = DecisionReview::AMA_ACTIVATION_DATE - 5.days
+        nonrating_request_issue.decision_date = DecisionReview.ama_activation_date - 5.days
         nonrating_request_issue.validate_eligibility!
 
         expect(nonrating_request_issue.ineligible_reason).to eq("before_ama")

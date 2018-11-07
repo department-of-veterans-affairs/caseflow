@@ -16,12 +16,13 @@ class DecisionReview < ApplicationRecord
     ratings_with_issues.map(&:ui_hash)
   end
 
-  AMA_ACTIVATION_DATE =
-    if use_ama_activation_date?
+  def self.ama_activation_date
+    if FeatureToggle.enabled?(:use_ama_activation_date)
       Constants::DATES["AMA_ACTIVATION"].to_date
     else
       Constants::DATES["AMA_ACTIVATION_TEST"].to_date
     end
+  end
 
   def self.review_title
     to_s.underscore.titleize
@@ -134,9 +135,5 @@ class DecisionReview < ApplicationRecord
 
   def legacy_opt_in_enabled?
     FeatureToggle.enabled?(:intake_legacy_opt_in)
-  end
-
-  def use_ama_activation_date?
-    FeatureToggle.enabled?(:use_ama_activation_date)
   end
 end

@@ -434,8 +434,8 @@ RSpec.feature "Supplemental Claim Intake" do
     let!(:before_ama_rating) do
       Generators::Rating.build(
         participant_id: veteran.participant_id,
-        promulgation_date: DecisionReview::AMA_ACTIVATION_DATE - 5.days,
-        profile_date: DecisionReview::AMA_ACTIVATION_DATE - 10.days,
+        promulgation_date: DecisionReview.ama_activation_date - 5.days,
+        profile_date: DecisionReview.ama_activation_date - 10.days,
         issues: [
           { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
           { decision_text: "Issue before AMA Activation from RAMP",
