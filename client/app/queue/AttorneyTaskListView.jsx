@@ -34,6 +34,9 @@ type Params = {||};
 
 type Props = Params & {|
   tasks: Array<TaskWithAppeal>,
+  workableTasks: Array<TaskWithAppeal>,
+  onHoldTasks: Array<TaskWithAppeal>,
+  completedTasks: Array<TaskWithAppeal>,
   messages: Object,
   resetSaveState: typeof resetSaveState,
   resetSuccessMessages: typeof resetSuccessMessages,
