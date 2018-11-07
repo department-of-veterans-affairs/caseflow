@@ -32,7 +32,7 @@ class Appeal < DecisionReview
     end
   end
 
-  def ui_hash(ama_enabled)
+  def ui_hash
     super.merge(
       docketType: docket_type,
       formType: "appeal"

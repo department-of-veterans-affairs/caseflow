@@ -34,14 +34,14 @@ class DecisionReview < ApplicationRecord
     end
   end
 
-  def ui_hash(ama_enabled)
+  def ui_hash
     {
       veteran: {
         name: veteran && veteran.name.formatted(:readable_short),
         fileNumber: veteran_file_number,
         formName: veteran && veteran.name.formatted(:form)
       },
-      relationships: ama_enabled && veteran && veteran.relationships,
+      relationships: veteran && veteran.relationships,
       claimant: claimant_participant_id,
       claimantNotVeteran: claimant_not_veteran,
       receiptDate: receipt_date.to_formatted_s(:json_date),
