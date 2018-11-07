@@ -11,7 +11,8 @@ class TasksController < ApplicationController
     QualityReviewTask: QualityReviewTask,
     JudgeTask: JudgeTask,
     ScheduleHearingTask: ScheduleHearingTask,
-    MailTask: MailTask
+    MailTask: MailTask,
+    InformalHearingPresentationTask: InformalHearingPresentationTask
   }.freeze
 
   QUEUES = {
