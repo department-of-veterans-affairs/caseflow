@@ -5,6 +5,9 @@ class PrepareEstablishClaimTasksJob < ApplicationJob
   def perform
     count = { success: 0, fail: 0 }
 
+    # Set user to system_user to avoid sensitivity errors
+    RequestStore.store[:current_user] = User.system_user
+
     EstablishClaim.unprepared.each do |task|
       status = task.prepare_with_decision!
       count[:success] += ((status == :success) ? 1 : 0)
