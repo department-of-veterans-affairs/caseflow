@@ -1,5 +1,4 @@
 class InformalHearingPresentationTask < GenericTask
-  # rubocop:disable Metrics/AbcSize
   def available_actions(user)
     if assigned_to == user
       return [

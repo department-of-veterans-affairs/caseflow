@@ -96,5 +96,12 @@ FactoryBot.define do
       appeal { create(:appeal) }
       assigned_by nil
     end
+
+    factory :informal_hearing_presentation_task do
+      type InformalHearingPresentationTask.name
+      appeal_type Appeal.name
+      appeal { create(:appeal) }
+      assigned_by nil
+    end
   end
 end
