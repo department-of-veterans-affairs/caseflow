@@ -108,7 +108,9 @@ const SelectClaimantConnected = connect(
     claimantNotVeteran: higherLevelReview.claimantNotVeteran,
     claimant: higherLevelReview.claimant,
     payeeCode: higherLevelReview.payeeCode,
-    relationships: higherLevelReview.relationships
+    relationships: higherLevelReview.relationships,
+    benefitType: higherLevelReview.benefitType,
+    formType: intake.formType
   }),
   (dispatch) => bindActionCreators({
     setClaimantNotVeteran,
