@@ -78,11 +78,11 @@ class JudgeTask < Task
     root_tasks.each do |root_task|
       Rails.logger.info("Assigning judge task for appeal #{root_task.appeal.id}")
       task = create!(appeal: root_task.appeal,
-                    parent: root_task,
-                    appeal_type: Appeal.name,
-                    assigned_at: Time.zone.now,
-                    assigned_to: next_assignee,
-                    action: :assign)
+                     parent: root_task,
+                     appeal_type: Appeal.name,
+                     assigned_at: Time.zone.now,
+                     assigned_to: next_assignee,
+                     action: :assign)
       Rails.logger.info("Assigned judge task with task id #{task.id} to #{task.assigned_to.css_id}")
     end
   end
@@ -92,8 +92,9 @@ class JudgeTask < Task
   end
 
   def self.eligible_for_assigment?(task)
-    # Hearing cases will not be processed until February 2019
+    return false if task.appeal.docket_type.nil?
     return false if task.appeal.class == LegacyAppeal
+    # Hearing cases will not be processed until February 2019
     return false if task.appeal.hearing_docket?
 
     # If it's an evidence submission case, we need to wait until the
