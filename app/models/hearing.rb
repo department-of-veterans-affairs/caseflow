@@ -110,6 +110,7 @@ class Hearing < ApplicationRecord
       appellant_middle_initial: appellant_middle_initial,
       appellant_last_name: appellant_last_name,
       appeal_vacols_id: appeal_vacols_id
+
     }
   end
 
@@ -138,7 +139,7 @@ class Hearing < ApplicationRecord
     :appellant_zip, \
     to: :appeal, allow_nil: true
 
-  delegate :type, to: :appeal, prefix: true
+  delegate :type, :vacols_id, to: :appeal, prefix: true
 
   def to_hash(current_user_id)
     serializable_hash(
@@ -171,7 +172,8 @@ class Hearing < ApplicationRecord
         :appellant_city,
         :appellant_state,
         :appellant_zip,
-        :readable_location
+        :readable_location,
+        :appeal_vacols_id
       ],
       except: :military_service
     ).merge(
