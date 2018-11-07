@@ -8,10 +8,6 @@ class ClaimReviewIntake < DecisionReviewIntake
     )
   end
 
-  def need_payee_code?(request_params)
-    request_params[:benefit_type] == "compensation" || request_params[:benefit_type] == "pension"
-  end
-
   def review!(request_params)
     detail.start_review!
 
@@ -42,6 +38,10 @@ class ClaimReviewIntake < DecisionReviewIntake
   end
 
   private
+
+  def need_payee_code?(request_params)
+    request_params[:benefit_type] == "compensation" || request_params[:benefit_type] == "pension"
+  end
 
   # :nocov:
   def review_params(_request_params)
