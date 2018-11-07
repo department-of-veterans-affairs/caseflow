@@ -2,7 +2,6 @@ class LegacyTasksController < ApplicationController
   include Errors
 
   before_action :verify_task_assignment_access, only: [:create, :update]
-  skip_before_action :deny_vso_access, only: [:index]
 
   ROLES = Constants::USER_ROLE_TYPES.keys.freeze
 
