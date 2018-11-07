@@ -160,14 +160,8 @@ class EndProductEstablishment < ApplicationRecord
 
     fail EstablishedEndProductNotFound unless result
 
-    transaction do
-      update!(
-        synced_status: result.status_type_code,
-        last_synced_at: Time.zone.now
-      )
-
-      sync_source!
-    end
+    sync_source!
+    update!(synced_status: result.status_type_code, last_synced_at: Time.zone.now)
   rescue EstablishedEndProductNotFound => e
     raise e
   rescue StandardError => e
