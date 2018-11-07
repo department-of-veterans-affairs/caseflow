@@ -84,8 +84,8 @@
   "COLOCATED_QUEUE_PAGE_ON_HOLD_TAB_TITLE": "On hold (%d)",
   "COLOCATED_QUEUE_PAGE_COMPLETE_TAB_TITLE": "Completed",
   "COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION": "New cases assigned to you:",
-  "COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION": "Cases assigned back to you:",
-  "COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold (will return to \"Pending action\" tab when hold is released):",
+  "COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION": "Cases no longer on hold:",
+  "COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold (will return to \"Pending action\" tab when hold is completed):",
   "COLOCATED_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed (last two weeks):",
 
   "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
