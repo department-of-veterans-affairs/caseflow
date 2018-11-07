@@ -48,7 +48,11 @@ module HearingDayMapper
       return if regional_office.nil?
       return regional_office if regional_office == HearingDay::HEARING_TYPES[:central]
 
-      ro = RegionalOffice.find!(regional_office)
+      ro = begin
+        RegionalOffice.find!(regional_office)
+      rescue RegionalOffice::NotFoundError
+        nil
+      end
       fail(InvalidRegionalOfficeError) if ro.nil?
       ro.key
     end
@@ -57,8 +61,8 @@ module HearingDayMapper
       return if regional_office.nil?
 
       ro = begin
-        RegionalOffice.find!(regional_office_key)
-      rescue NotFoundError
+        RegionalOffice.find!(regional_office)
+      rescue RegionalOffice::NotFoundError
         nil
       end
       return "" if ro.nil?

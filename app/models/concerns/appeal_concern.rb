@@ -6,7 +6,7 @@ module AppealConcern
   def regional_office
     @regional_office ||= begin
                             RegionalOffice.find!(regional_office_key)
-                          rescue NotFoundError
+                          rescue RegionalOffice::NotFoundError
                             nil
                           end
   end
