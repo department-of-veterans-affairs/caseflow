@@ -53,11 +53,8 @@ class Judge
   end
 
   class << self
-    attr_writer :repository
-
     def repository
-      return JudgeRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= JudgeRepository
+      JudgeRepository
     end
 
     def list_all
