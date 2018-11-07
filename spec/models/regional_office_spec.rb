@@ -37,8 +37,13 @@ describe RegionalOffice do
     context "invalid regional office key" do
       let(:regional_office_key) { "RO747" }
 
-      it "raises NotFoundError" do
-        expect { subject }.to raise_error(RegionalOffice::NotFoundError)
+      it "logs an error and returns invalid record" do
+        expect(Rails.logger).to receive(:error).with("Invalid regional office key: RO747")
+        is_expected.to have_attributes(
+          key: "RO747",
+          city: nil,
+          valid?: false
+        )
       end
     end
   end
