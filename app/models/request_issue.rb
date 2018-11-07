@@ -84,17 +84,6 @@ class RequestIssue < ApplicationRecord
     end_product_establishment.status_active?
   end
 
-  def check_later_for_decision_rating_issue!
-    # We may be calling ourselves recursively, indefinitely. That's ok.
-    # Every time we submit for processing, we extend our lifetime.
-    submit_for_processing!
-    if run_async?
-      DecisionRatingIssueSyncJob.perform_later(self)
-    else
-      DecisionRatingIssueSyncJob.perform_now(self)
-    end
-  end
-
   def rating?
     rating_issue_reference_id && rating_issue_profile_date
   end

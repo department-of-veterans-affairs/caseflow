@@ -464,8 +464,6 @@ describe Veteran do
       end
 
       it "marks the RequestIssue for later sync via DecisionRatingIssueSyncJob" do
-        expect(DecisionRatingIssueSyncJob).to receive(:perform_now).once.and_return(true)
-
         subject
 
         request_issue = request_issues.first

@@ -163,7 +163,7 @@ class Veteran < ApplicationRecord
       if synced_rating_issues.any? { |rating_issue| rating_issue.source_request_issue == request_issue }
         request_issue.processed!
       else
-        request_issue.check_later_for_decision_rating_issue!
+        request_issue.submit_for_processing!
       end
     end
   end
