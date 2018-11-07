@@ -98,7 +98,8 @@ class RequestIssuesUpdate < ApplicationRecord
         decision_date: issue_data[:decision_date],
         issue_category: issue_data[:issue_category],
         notes: issue_data[:notes],
-        is_unidentified: issue_data[:is_unidentified]
+        is_unidentified: issue_data[:is_unidentified],
+        ramp_claim_id: issue_data[:ramp_claim_id]
       ).tap do |request_issue|
         request_issue.rating_issue_profile_date ||= issue_data[:profile_date]
       end

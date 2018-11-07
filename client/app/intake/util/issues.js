@@ -114,7 +114,8 @@ export const formatRequestIssues = (requestIssues) => {
       description: issue.description,
       ineligibleReason: issue.ineligible_reason,
       titleOfActiveReview: issue.title_of_active_review,
-      contentionText: issue.contention_text
+      contentionText: issue.contention_text,
+      rampClaimId: issue.ramp_claim_id
     };
   });
 };
@@ -288,11 +289,13 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         titleOfActiveReview: issue.titleOfActiveReview,
         sourceHigherLevelReview: issue.sourceHigherLevelReview,
         promulgationDate: issue.promulgationDate,
+        profileDate: issue.profileDate,
         timely: issue.timely,
         beforeAma: profileDate < amaActivationDate && !issue.rampClaimId,
         untimelyExemption: issue.untimelyExemption,
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
-        ineligibleReason: issue.ineligibleReason
+        ineligibleReason: issue.ineligibleReason,
+        rampClaimId: issue.rampClaimId
       };
     }
 

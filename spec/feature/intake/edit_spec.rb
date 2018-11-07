@@ -40,6 +40,20 @@ RSpec.feature "Edit issues" do
     )
   end
 
+  let!(:rating_before_ama) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date,
+      profile_date: DecisionReview::AMA_ACTIVATION_DATE - 10.days,
+      issues: [
+        { reference_id: "before_ama_ref_id", decision_text: "Issue before AMA Activation" },
+        { decision_text: "Issue before AMA Activation from a RAMP Review",
+          associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" },
+          reference_id: "ramp_ref_id" }
+      ]
+    )
+  end
+
   def check_row(label, text)
     row = find("tr", text: label)
     expect(row).to have_text(text)
@@ -198,13 +212,37 @@ RSpec.feature "Edit issues" do
         )
       end
 
+      let!(:ri_before_ama) do
+        RequestIssue.create!(
+          rating_issue_reference_id: "before_ama_ref_id",
+          rating_issue_profile_date: rating_before_ama.profile_date,
+          review_request: higher_level_review,
+          description: "Issue before AMA Activation",
+          contention_reference_id: "12345",
+          ineligible_reason: :before_ama
+        )
+      end
+
+      let!(:eligible_ri_before_ama) do
+        RequestIssue.create!(
+          rating_issue_reference_id: "ramp_ref_id",
+          rating_issue_profile_date: rating_before_ama.profile_date,
+          review_request: higher_level_review,
+          description: "Issue before AMA Activation from a RAMP Review",
+          contention_reference_id: "123456",
+          ramp_claim_id: "ramp_claim_id"
+        )
+      end
+
       before do
         another_higher_level_review.create_issues!([ri_in_review])
         higher_level_review.create_issues!([
                                              eligible_request_issue,
                                              untimely_request_issue,
                                              ri_with_active_previous_review,
-                                             ri_with_previous_hlr
+                                             ri_with_previous_hlr,
+                                             ri_before_ama,
+                                             eligible_ri_before_ama
                                            ])
         higher_level_review.process_end_product_establishments!
       end
@@ -225,7 +263,13 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content(
           "#{untimely_request_issue.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
         )
-        expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date:")
+        expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date: 05/01/2018")
+        expect(page).to have_content(
+          "#{ri_before_ama.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+        )
+        expect(page).to have_content(
+          "#{eligible_ri_before_ama.contention_text} Decision date:"
+        )
       end
     end
 

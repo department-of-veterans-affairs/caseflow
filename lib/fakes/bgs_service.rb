@@ -62,8 +62,16 @@ class Fakes::BGSService
             { decision_text: "Left knee" },
             { decision_text: "Right knee" },
             { decision_text: "PTSD" },
-            { decision_text: "This rating is in active review", reference_id: in_active_review_reference_id },
-            { decision_text: "This is an old issue is from a RAMP Review",
+            { decision_text: "This rating is in active review", reference_id: in_active_review_reference_id }
+          ]
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          profile_date: DecisionReview::AMA_ACTIVATION_DATE.to_time - 10.days,
+          promulgation_date: DecisionReview::AMA_ACTIVATION_DATE.to_time - 5.days,
+          issues: [
+            { decision_text: "Issue before AMA not from a RAMP Review", reference_id: "before_ama_ref_id" },
+            { decision_text: "Issue before AMA from a RAMP Review",
               associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" },
               reference_id: "ramp_reference_id"
             }
