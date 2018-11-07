@@ -458,17 +458,18 @@ describe Veteran do
     end
 
     context "EPE has cleared but rating has not yet been posted" do
+      let(:higher_level_review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
       let(:request_issues) do
-        [create(:request_issue, contention_reference_id: "unknown-id")]
+        [create(:request_issue, contention_reference_id: "unknown-id", review_request: higher_level_review)]
       end
 
       it "marks the RequestIssue for later sync via DecisionRatingIssueSyncJob" do
+        expect(DecisionRatingIssueSyncJob).to receive(:perform_now).once.and_return(true)
+
         subject
 
         request_issue = request_issues.first
-        expect(DecisionRatingIssueSyncJob).to have_received(:perform_now).with(request_issue)
         expect(request_issue.submitted?).to eq(true)
-        expect(request_issue.attempted?).to eq(true)
         expect(request_issue.processed?).to eq(false)
       end
     end

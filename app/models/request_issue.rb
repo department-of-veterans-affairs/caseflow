@@ -21,6 +21,22 @@ class RequestIssue < ApplicationRecord
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
 
   class << self
+    def submitted_at_column
+      :decision_sync_submitted_at
+    end
+
+    def attempted_at_column
+      :decision_sync_attempted_at
+    end
+
+    def processed_at_column
+      :decision_sync_processed_at
+    end
+
+    def error_column
+      :decision_sync_error
+    end
+
     def rating
       where.not(rating_issue_reference_id: nil, rating_issue_profile_date: nil)
         .or(where(is_unidentified: true))

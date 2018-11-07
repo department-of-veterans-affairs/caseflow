@@ -179,7 +179,7 @@ describe RequestIssue do
     end
 
     it "looks up the chain to the immediately previous request issue" do
-      veteran.sync_rating_issues!
+      veteran.sync_rating_issues!([previous_request_issue])
       expect(rating_request_issue.previous_request_issue).to eq(previous_request_issue)
     end
 
