@@ -1,4 +1,6 @@
 class ScheduleHearingTask < GenericTask
+  class NoOpenSlots < StandardError; end
+
   class << self
     def create_from_params(params, current_user)
       root_task = RootTask.find_by(appeal_id: params[:appeal].id)
@@ -68,6 +70,7 @@ class ScheduleHearingTask < GenericTask
   def update_co_hearing(hearing_date_str)
     # Get the next open slot for that hearing date and time.
     hearing = VACOLS::CaseHearing.find_by(hearing_date: hearing_date_str, folder_nr: nil)
+    fail NoOpenSlots, message: "No available slots for this hearing day." if hearing.nil?
     loaded_hearing = VACOLS::CaseHearing.load_hearing(hearing.hearing_pkseq)
     HearingRepository.update_vacols_hearing!(loaded_hearing, folder_nr: appeal.vacols_id)
   end
