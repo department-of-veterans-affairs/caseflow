@@ -195,7 +195,9 @@ const formatNonratingRequestIssues = (state) => {
       return {
         issue_category: issue.category,
         decision_text: issue.description,
-        decision_date: formatDateStringForApi(issue.decisionDate)
+        decision_date: formatDateStringForApi(issue.decisionDate),
+        untimely_exemption: issue.untimelyExemption,
+        untimely_exemption_notes: issue.untimelyExemptionNotes
       };
     });
   }

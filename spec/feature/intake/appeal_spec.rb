@@ -500,13 +500,26 @@ RSpec.feature "Appeal Intake" do
              untimely_exemption_notes: "I am an exemption note"
     )).to_not be_nil
 
-    expect(RequestIssue.find_by(
-             review_request_type: "Appeal",
-             review_request_id: appeal.id,
-             issue_category: "Active Duty Adjustments",
-             description: "Description for Active Duty Adjustments",
-             decision_date: 1.month.ago
-    )).to_not be_nil
+    active_duty_adjustments_request_issue = RequestIssue.find_by!(
+      review_request_type: "Appeal",
+      review_request_id: appeal.id,
+      issue_category: "Active Duty Adjustments",
+      description: "Description for Active Duty Adjustments",
+      decision_date: 1.month.ago
+    )
+
+    expect(active_duty_adjustments_request_issue.untimely?).to eq(false)
+
+    another_active_duty_adjustments_request_issue = RequestIssue.find_by!(
+      review_request_type: "Appeal",
+      review_request_id: appeal.id,
+      issue_category: "Active Duty Adjustments",
+      description: "Another Description for Active Duty Adjustments",
+    )
+
+    expect(another_active_duty_adjustments_request_issue.untimely?).to eq(true)
+    expect(another_active_duty_adjustments_request_issue.untimely_exemption?).to eq(false)
+    expect(another_active_duty_adjustments_request_issue.untimely_exemption_notes).to_not be_nil
 
     expect(RequestIssue.find_by(
              review_request: appeal,

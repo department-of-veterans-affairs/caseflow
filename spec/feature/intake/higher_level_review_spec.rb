@@ -817,13 +817,25 @@ RSpec.feature "Higher-Level Review" do
                untimely_exemption_notes: "I am an exemption note"
       )).to_not be_nil
 
-      expect(RequestIssue.find_by(
-               review_request: higher_level_review,
-               issue_category: "Active Duty Adjustments",
-               description: "Description for Active Duty Adjustments",
-               decision_date: 1.month.ago.to_date,
-               end_product_establishment_id: non_rating_end_product_establishment.id
-      )).to_not be_nil
+      active_duty_adjustments_request_issue = RequestIssue.find_by!(
+        review_request: higher_level_review,
+        issue_category: "Active Duty Adjustments",
+        description: "Description for Active Duty Adjustments",
+        decision_date: 1.month.ago,
+        end_product_establishment_id: non_rating_end_product_establishment.id
+      )
+
+      expect(active_duty_adjustments_request_issue.untimely?).to eq(false)
+
+      another_active_duty_adjustments_request_issue = RequestIssue.find_by!(
+        review_request: higher_level_review,
+        issue_category: "Active Duty Adjustments",
+        description: "Another Description for Active Duty Adjustments"
+      )
+
+      expect(another_active_duty_adjustments_request_issue.untimely?).to eq(true)
+      expect(another_active_duty_adjustments_request_issue.untimely_exemption?).to eq(false)
+      expect(another_active_duty_adjustments_request_issue.untimely_exemption_notes).to_not be_nil
 
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
