@@ -15,6 +15,7 @@ export const COLORS = {
   GOLD_LIGHT: '#F9C642',
   GREEN_LIGHTER: '#94BFA2',
   GREY_BACKGROUND: '#f9f9f9',
+  COLOR_COOL_BLUE_LIGHTER: '#8ba6ca',
   PRIMARY: '#0071bc',
   BASE: '#212121',
   RED_DARK: '#cd2026'
