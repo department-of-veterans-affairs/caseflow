@@ -147,11 +147,12 @@ const TaskTableTab = ({ description, tasks }) => <React.Fragment>
   <p>{description}</p>
   <TaskTable
     includeDetailsLink
-    includeTask
     includeType
     includeDocketNumber
-    includeDaysWaiting
+    includeIssueCount
+    includeDueDate
     includeReaderLink
+    requireDasRecord
     tasks={tasks}
   />
 </React.Fragment>;
