@@ -42,6 +42,7 @@ const getAppeals = (state: State): BasicAppeals => state.queue.appeals;
 const getAppealDetails = (state: State): AppealDetails => state.queue.appealDetails;
 const getUserCssId = (state: State): string => state.ui.userCssId;
 const getAppealId = (state: State, props: Object): string => props.appealId;
+const getActiveOrganizationId = (state: State): ?number => state.ui.activeOrganizationId;
 const getTaskUniqueId = (state: State, props: Object): string => props.taskId;
 const getCaseflowVeteranId = (state: State, props: Object): ?string => props.caseflowVeteranId;
 const getModals = (state: State): UiStateModals => state.ui.modals;
@@ -78,6 +79,12 @@ export const tasksWithAppealSelector = createSelector(
   }
 );
 
+export const tasksByOrganization = createSelector(
+  [tasksWithAppealSelector, getActiveOrganizationId],
+  (tasks: Array<TaskWithAppeal>, organizationId: string) =>
+    _.filter(tasks, (task) => (task.assignedTo.id === organizationId))
+);
+
 export const taskById = createSelector(
   [tasksWithAppealSelector, getTaskUniqueId],
   (tasks: Array<TaskWithAppeal>, taskId: string) =>
@@ -102,6 +109,23 @@ export const getTasksForAppeal = createSelector(
     return incompleteTasksSelector(_.filter(tasks, (task) => task.externalAppealId === appealId).
       concat(_.filter(amaTasks, (task) => task.externalAppealId === appealId)));
   }
+);
+
+export const getUnassignedOrganizationalTasks = createSelector(
+  [tasksWithAppealSelector],
+  (tasks: Tasks) => _.filter(tasks, (task) => {
+    return (task.status === TASK_STATUSES.assigned || task.status === TASK_STATUSES.in_progress);
+  })
+);
+
+export const getAssignedOrganizationalTasks = createSelector(
+  [tasksWithAppealSelector],
+  (tasks: Tasks) => _.filter(tasks, (task) => (task.status === TASK_STATUSES.on_hold))
+);
+
+export const getCompletedOrganizationalTasks = createSelector(
+  [tasksWithAppealSelector],
+  (tasks: Tasks) => _.filter(tasks, (task) => task.status === TASK_STATUSES.completed)
 );
 
 export const tasksForAppealAssignedToUserSelector = createSelector(
