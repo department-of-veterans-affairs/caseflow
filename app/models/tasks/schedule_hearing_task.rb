@@ -37,6 +37,11 @@ class ScheduleHearingTask < GenericTask
     verify_user_access!(current_user)
 
     task_payloads = params.delete(:business_payloads)
+    hearing_date = task_payloads[:values][:hearing_date]
+    new_date = Time.use_zone("Eastern Time (US & Canada)") do
+      Time.zone.parse(hearing_date)
+    end
+    task_payloads[:values][:hearing_date] = new_date
     task_business_payloads.update(task_payloads)
 
     super(params, current_user)
@@ -45,19 +50,14 @@ class ScheduleHearingTask < GenericTask
   def mark_as_complete!
     hearing_pkseq = task_business_payloads[0].values["hearing_pkseq"]
     hearing_type = task_business_payloads[0].values["hearing_type"]
-    hearing_date = task_business_payloads[0].values["hearing_date"].to_datetime
+    hearing_date = Time.zone.parse(task_business_payloads[0].values["hearing_date"])
+    hearing_date_str = "#{hearing_date.year}-#{hearing_date.month}-#{hearing_date.day} " \
+                       "#{format('%##d', hearing_date.hour)}:#{format('%##d', hearing_date.min)}:00"
 
     if hearing_type == Hearing::CO_HEARING
-      # Get the next open slot for that hearing date and time.
-      hearing = VACOLS::CaseHearing.find_by(hearing_date: hearing_date, folder_nr: nil)
-      loaded_hearing = VACOLS::CaseHearing.load_hearing(hearing.hearing_pkseq)
-      HearingRepository.update_vacols_hearing!(loaded_hearing, folder_nr: appeal.vacols_id)
+      HearingRepository.update_co_hearing(hearing_date_str, appeal)
     else
-      hearing = VACOLS::CaseHearing.find(hearing_pkseq)
-      hearing_hash = to_hash(hearing)
-      hearing_hash[:folder_nr] = appeal.vacols_id
-      hearing_hash[:hearing_date] = hearing_date
-      HearingRepository.create_vacols_child_hearing(hearing_hash)
+      HearingRepository.create_child_video_hearing(hearing_pkseq, hearing_date, appeal)
     end
 
     AppealRepository.update_location!(appeal, location_based_on_hearing_type(hearing_type))
@@ -77,13 +77,5 @@ class ScheduleHearingTask < GenericTask
     [
       Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h
     ]
-  end
-
-  private
-
-  def to_hash(hearing)
-    hearing.as_json.each_with_object({}) do |(k, v), result|
-      result[k.to_sym] = v
-    end
   end
 end

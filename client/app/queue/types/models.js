@@ -17,6 +17,7 @@ export type Judges = { [string]: User };
 export type Address = {
   address_line_1: string,
   address_line_2: string,
+  address_line_3: ?string,
   city: string,
   state: string,
   zip: string,

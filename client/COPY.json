@@ -86,7 +86,14 @@
   "COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION": "These are new administrative actions that have been assigned to you.",
   "COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION": "When a hold is complete, the case will appear here. Cases with new documents will also appear here.",
   "COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "When a hold is complete, the case will automatically return to the Pending action tab.",
-  "COLOCATED_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases with tasks that were marked complete in the last two weeks will appeal here.",
+  "COLOCATED_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases with tasks that were marked complete in the last two weeks will appear here.",
+
+  "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
+  "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE": "Assigned (%d)",
+  "ORGANIZATIONAL_QUEUE_PAGE_COMPLETE_TAB_TITLE": "Completed",
+  "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION": "Cases owned by the %s team that are unassigned to a person.",
+  "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to a member of the %s team.",
+  "ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE": "This queue is empty. You can ",
 
   "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
   "SWITCH_TO_ASSIGN_MODE_LINK_LABEL": "Switch to Assign Cases",
@@ -118,6 +125,9 @@
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_SUBMITTED_DATE": "Decision submitted to judge",
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED": "Total days worked by attorney",
   "JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_DAYS_WORKED_ADDENDUM": "does not include days assigned to other teams",
+
+  "JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_LABEL": "One Touch Initiative",
+  "JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_SUBHEAD": "Is this case part of the \"One Touch Initiative\"?",
 
   "JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_LABEL": "Additional Comments",
   "JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_SUBHEAD": "Share more details about your evaluation",

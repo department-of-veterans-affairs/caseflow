@@ -79,6 +79,14 @@ export const onHearingDateUpdate = (hearingId, date) => ({
   }
 });
 
+export const onHearingTimeUpdate = (hearingId, time) => ({
+  type: ACTIONS.HEARING_TIME_UPDATE,
+  payload: {
+    hearingId,
+    time
+  }
+});
+
 export const onSelectedHearingDayChange = (selectedHearingDay) => ({
   type: ACTIONS.SELECTED_HEARING_DAY_CHANGE,
   payload: {

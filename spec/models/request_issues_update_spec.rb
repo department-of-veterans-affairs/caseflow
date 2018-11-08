@@ -348,6 +348,12 @@ describe RequestIssuesUpdate do
           issue_category: "Apportionment"
         )
 
+        expect_any_instance_of(Fakes::BGSService).to receive(:cancel_end_product).with(
+          veteran.file_number,
+          "030HLRNR",
+          "030"
+        )
+
         allow_remove_contention
         allow_associate_rating_request_issues
 

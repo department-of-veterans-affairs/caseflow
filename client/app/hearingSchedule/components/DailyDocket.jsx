@@ -25,20 +25,20 @@ const tableRowStyling = css({
     '& > td:nth-child(2)': { width: '19%' },
     '& > td:nth-child(3)': { width: '17%' },
     '& > td:nth-child(4)': { backgroundColor: '#f1f1f1',
-      width: '20%' },
+      width: '18%' },
     '& > td:nth-child(5)': { backgroundColor: '#f1f1f1',
       width: '20%' },
     '& > td:nth-child(6)': { backgroundColor: '#f1f1f1',
-      width: '20%' }
+      width: '22%' }
   },
   '& > tr:nth-child(even)': {
     '& > td:nth-child(1)': { width: '4%' },
     '& > td:nth-child(2)': { width: '19%' },
     '& > td:nth-child(3)': { width: '17%' },
     '& > td:nth-child(4)': { backgroundColor: '#f1f1f1',
-      width: '40%' },
+      width: '38%' },
     '& > td:nth-child(5)': { backgroundColor: '#f1f1f1',
-      width: '20%' }
+      width: '22%' }
   }
 });
 
@@ -75,6 +75,10 @@ export default class DailyDocket extends React.Component {
     this.props.onResetSaveSuccessful();
   };
 
+  componentWillUnmount = () => {
+    this.props.onResetSaveSuccessful();
+  };
+
   emptyFunction = () => {
     // This is a placeholder for when we add onChange functions to the page.
   };
@@ -89,6 +93,10 @@ export default class DailyDocket extends React.Component {
 
   onHearingDateUpdate = (hearingId) => (date) => {
     this.props.onHearingDateUpdate(hearingId, date.value);
+  };
+
+  onHearingTimeUpdate = (hearingId) => (time) => {
+    this.props.onHearingTimeUpdate(hearingId, time);
   };
 
   saveHearing = (hearing) => () => {
@@ -108,7 +116,9 @@ export default class DailyDocket extends React.Component {
   };
 
   getAppellantInformation = (hearing) => {
-    return <div><b>{hearing.appellantMiFormatted} ({hearing.vbmsId})</b> <br />
+    const appellantName = hearing.appellantMiFormatted || hearing.veteranMiFormatted;
+
+    return <div><b>{appellantName} ({hearing.vbmsId})</b> <br />
       {hearing.appellantAddressLine1}<br />
       {hearing.appellantCity} {hearing.appellantState} {hearing.appellantZip}
     </div>;
@@ -134,7 +144,7 @@ export default class DailyDocket extends React.Component {
       options={DISPOSITION_OPTIONS}
       value={hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition}
       onChange={this.onHearingDispositionUpdate(hearing.id)}
-      readOnly={readOnly || hearing.editedDate}
+      readOnly={readOnly || !_.isUndefined(hearing.editedDate)}
     />;
   };
 
@@ -150,7 +160,7 @@ export default class DailyDocket extends React.Component {
   getHearingDateOptions = () => {
     return _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
       label: this.getHearingDate(hearingDayOption.hearingDate),
-      value: this.getHearingDate(hearingDayOption.hearingDate)
+      value: hearingDayOption.id
     }));
   };
 
@@ -164,29 +174,45 @@ export default class DailyDocket extends React.Component {
     />;
   };
 
+  getHearingTimeOptions = (hearing) => {
+    if (hearing.requestType === 'CO') {
+      return [
+        {
+          displayText: '9:00',
+          value: '9:00 am ET'
+        },
+        {
+          displayText: '1:00',
+          value: '1:00 pm ET'
+        }
+      ];
+    }
+
+    return [
+      {
+        displayText: '8:30',
+        value: '8:30 am ET'
+      },
+      {
+        displayText: '12:30',
+        value: '12:30 pm ET'
+      }
+    ];
+  };
+
   getHearingDayDropdown = (hearing, readOnly) => {
     return <div><SearchableDropdown
       name="Hearing Day"
       options={this.getHearingDateOptions()}
-      value={hearing.editedDate ? this.getHearingDate(hearing.editedDate) : this.getHearingDate(hearing.date)}
+      value={hearing.editedDate ? hearing.editedDate : this.getHearingDate(hearing.date)}
       onChange={this.onHearingDateUpdate(hearing.id)}
       readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
     />
     <RadioField
-      name="Hearing Time"
-      options={[
-        {
-          displayText: '8:30',
-          value: '8:30',
-          disabled: true
-        },
-        {
-          displayText: '1:30',
-          value: '1:30',
-          disabled: true
-        }
-      ]}
-      onChange={this.emptyFunction}
+      name={`hearingTime${hearing.id}`}
+      options={this.getHearingTimeOptions(hearing)}
+      value={hearing.editedTime ? hearing.editedTime : getTime(hearing.date)}
+      onChange={this.onHearingTimeUpdate(hearing.id)}
       hideLabel
     />
     </div>;
@@ -286,7 +312,8 @@ export default class DailyDocket extends React.Component {
       { this.props.saveSuccessful && <Alert
         type="success"
         styling={alertStyling}
-        title={`You have successfully updated ${this.props.saveSuccessful.appellantMiFormatted}'s hearing.`}
+        title={`You have successfully updated ${this.props.saveSuccessful.appellantMiFormatted ||
+          this.props.saveSuccessful.veteranMiFormatted}'s hearing.`}
       /> }
       <div className="cf-push-left">
         <h1>Daily Docket ({moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')})</h1> <br />
@@ -294,6 +321,7 @@ export default class DailyDocket extends React.Component {
       </div>
       <span className="cf-push-right">
         VLJ: {this.props.dailyDocket.judgeFirstName} {this.props.dailyDocket.judgeLastName} <br />
+        Coordinator: {this.props.dailyDocket.bvaCoordinator} <br />
         Hearing type: {this.props.dailyDocket.hearingType}
       </span>
       <div {...noMarginStyling}>
@@ -323,5 +351,6 @@ DailyDocket.propTypes = {
   dailyDocket: PropTypes.object,
   hearings: PropTypes.object,
   onHearingNotesUpdate: PropTypes.func,
-  onHearingDispositionUpdate: PropTypes.func
+  onHearingDispositionUpdate: PropTypes.func,
+  onHearingTimeUpdate: PropTypes.func
 };

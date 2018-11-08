@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe AddSeriesIdToDocumentsJob do
+describe AddSeriesIdToDocumentsService do
   context ".perform" do
     let(:appeal) do
       Generators::LegacyAppeal.build
@@ -61,7 +61,7 @@ describe AddSeriesIdToDocumentsJob do
       end
 
       it "assigns series_ids to documents without them" do
-        AddSeriesIdToDocumentsJob.perform_now(appeal)
+        AddSeriesIdToDocumentsService.add_series_ids(appeal)
 
         documents_without_series.zip(series_ids).each do |document, series_id|
           expect(document.reload.series_id).to eq(series_id)
@@ -84,7 +84,7 @@ describe AddSeriesIdToDocumentsJob do
       end
 
       it "documents with series ids are not touched" do
-        AddSeriesIdToDocumentsJob.perform_now(appeal)
+        AddSeriesIdToDocumentsService.add_series_ids(appeal)
 
         documents_with_series.zip(series_ids).each do |document, series_id|
           expect(document.reload.series_id).to eq(series_id)
