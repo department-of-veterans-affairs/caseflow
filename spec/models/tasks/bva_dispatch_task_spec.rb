@@ -55,6 +55,8 @@ describe BvaDispatchTask do
         decision = Decision.find_by(appeal_id: root_task.appeal.id)
         expect(decision).to_not eq nil
         expect(VBMSService).to have_received(:upload_document_to_vbms).with(root_task.appeal, decision)
+        expect(decision.document_type).to eq "BVA Decision"
+        expect(decision.source).to eq "BVA"
       end
     end
 
