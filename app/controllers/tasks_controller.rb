@@ -109,7 +109,7 @@ class TasksController < ApplicationController
 
   def verify_task_access
     if current_user.vso_employee? && task_class != InformalHearingPresentationTask
-      fail Caseflow::Error::ActionForbiddenError
+      fail Caseflow::Error::ActionForbiddenError, message: "VSOs cannot create that task."
     end
 
     redirect_to("/unauthorized") unless can_assign_task?
