@@ -73,7 +73,8 @@ RSpec.feature "Edit issues" do
              review_request: appeal,
              issue_category: "Military Retired Pay",
              description: "nonrating description",
-             contention_reference_id: "1234")
+             contention_reference_id: "1234",
+             decision_date: 1.month.ago)
     end
 
     scenario "allows adding/removing issues" do
@@ -280,7 +281,8 @@ RSpec.feature "Edit issues" do
           review_request: higher_level_review,
           issue_category: "Military Retired Pay",
           description: "nonrating description",
-          contention_reference_id: "1234"
+          contention_reference_id: "1234",
+          decision_date: 1.month.ago
         )
       end
 
@@ -303,7 +305,7 @@ RSpec.feature "Edit issues" do
         fill_in "Issue category", with: "Active Duty Adjustments"
         find("#issue-category").send_keys :enter
         fill_in "Issue description", with: "A description!"
-        fill_in "Decision date", with: "04/25/2018"
+        fill_in "Decision date", with: "04/26/2018"
         safe_click ".add-issue"
 
         safe_click "#button-add-issue"
@@ -672,7 +674,8 @@ RSpec.feature "Edit issues" do
           review_request: supplemental_claim,
           issue_category: "Military Retired Pay",
           description: "nonrating description",
-          contention_reference_id: "1234"
+          contention_reference_id: "1234",
+          decision_date: 1.month.ago
         )
       end
 

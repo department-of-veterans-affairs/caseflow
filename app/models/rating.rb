@@ -10,10 +10,6 @@ class Rating
   ONE_YEAR_PLUS_DAYS = 372.days
   TWO_LIFETIMES_DAYS = 250.years
 
-  def rating
-    self
-  end
-
   def issues
     @issues ||= fetch_issues
   end

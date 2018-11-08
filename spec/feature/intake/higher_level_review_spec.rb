@@ -553,6 +553,9 @@ RSpec.feature "Higher-Level Review" do
           }
         ]
       )
+    end
+
+    let!(:untimely_rating) do
       Generators::Rating.build(
         participant_id: veteran.participant_id,
         promulgation_date: receipt_date - 400.days,

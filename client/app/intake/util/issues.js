@@ -87,7 +87,7 @@ export const formatRequestIssues = (requestIssues) => {
         isRating: false,
         category: issue.category,
         description: issue.description,
-        decisionDate: issue.decision_date,
+        decisionDate: formatDateStr(issue.decision_date),
         ineligibleReason: issue.ineligible_reason,
         contentionText: issue.contention_text
       };

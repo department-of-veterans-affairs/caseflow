@@ -147,6 +147,7 @@ class RequestIssue < ApplicationRecord
   def check_for_previous_review!(review_type)
     reason = rating_issue_rationale_to_request_issue_reason(review_type)
     contested_rating_issue_ui_hash = fetch_contested_rating_issue_ui_hash
+
     if contested_rating_issue_ui_hash && contested_rating_issue_ui_hash[review_type].present?
       self.ineligible_reason = reason
       self.ineligible_due_to_id = contested_rating_issue_ui_hash[review_type]
@@ -197,6 +198,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def check_for_nonrating_untimely!
+    return if untimely_exemption
     if decision_date < (review_request.receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
       self.ineligible_reason = :untimely
     end

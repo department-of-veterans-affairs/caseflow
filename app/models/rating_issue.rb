@@ -28,8 +28,6 @@ class RatingIssue
         reference_id: ui_hash[:reference_id],
         decision_text: ui_hash[:decision_text],
         promulgation_date: ui_hash[:promulgation_date],
-        contention_reference_id: ui_hash[:contention_reference_id],
-        ramp_claim_id: ui_hash[:ramp_claim_id],
         profile_date: ui_hash[:profile_date],
         associated_claims_data: ui_hash[:associated_claims_data],
         rba_contentions_data: ui_hash[:rba_contentions_data]
@@ -73,7 +71,9 @@ class RatingIssue
       contention_reference_id: contention_reference_id,
       ramp_claim_id: ramp_claim_id,
       title_of_active_review: title_of_active_review,
-      source_higher_level_review: source_higher_level_review
+      source_higher_level_review: source_higher_level_review,
+      rba_contentions_data: rba_contentions_data,
+      associated_claims_data: associated_claims_data
     }
   end
 
@@ -113,6 +113,6 @@ class RatingIssue
   private
 
   def calculate_ramp_claim_id
-    from_ramp_decision? && associated_claims_data.first.dig(:clm_id)
+    associated_claims_data.first.dig(:clm_id) if from_ramp_decision?
   end
 end
