@@ -10,20 +10,16 @@ class ColocatedTask < Task
 
   class << self
     # Override so that each ColocatedTask for an appeal gets assigned to the same colocated staffer.
-    def create_many_from_params(params_array, _)
-      create(params_array.map { |p| modify_params(p) })
-    end
-
-    def create(tasks)
+    def create_many_from_params(params_array, user)
+      # Create all ColocatedTasks in one transaction so that if any fail they all fail.
       ActiveRecord::Base.multi_transaction do
         assignee = next_assignee
-        records = [tasks].flatten.each_with_object([]) do |task, result|
-          result << super(task.merge(assigned_to: assignee))
-          result
-        end
+        records = params_array.map { |params| create_from_params(params.merge(assigned_to: assignee), user) }
+
         if records.map(&:valid?).uniq == [true] && records.first.legacy?
           AppealRepository.update_location!(records.first.appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
         end
+
         records
       end
     end

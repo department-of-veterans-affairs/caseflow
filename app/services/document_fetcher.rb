@@ -46,7 +46,7 @@ class DocumentFetcher
   end
 
   def save!
-    AddSeriesIdToDocumentsJob.perform_now(appeal)
+    AddSeriesIdToDocumentsService.add_series_ids(appeal)
 
     ids = documents.map(&:vbms_document_id)
     existing_documents = Document.where(vbms_document_id: ids)

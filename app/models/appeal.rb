@@ -32,6 +32,13 @@ class Appeal < DecisionReview
     end
   end
 
+  def ui_hash
+    super.merge(
+      docketType: docket_type,
+      formType: "appeal"
+    )
+  end
+
   def type
     "Original"
   end
@@ -140,10 +147,8 @@ class Appeal < DecisionReview
     "not implemented for AMA"
   end
 
-  def create_issues!(request_issues_data:)
-    request_issues.destroy_all unless request_issues.empty?
-
-    request_issues_data.map { |data| request_issues.from_intake_data(data).save! }
+  def create_issues!(new_issues)
+    new_issues.each(&:save!)
   end
 
   def serializer_class

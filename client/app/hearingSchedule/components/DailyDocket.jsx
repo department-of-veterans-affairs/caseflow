@@ -160,7 +160,7 @@ export default class DailyDocket extends React.Component {
   getHearingDateOptions = () => {
     return _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
       label: this.getHearingDate(hearingDayOption.hearingDate),
-      value: this.getHearingDate(hearingDayOption.hearingDate)
+      value: hearingDayOption.id
     }));
   };
 
@@ -204,7 +204,7 @@ export default class DailyDocket extends React.Component {
     return <div><SearchableDropdown
       name="Hearing Day"
       options={this.getHearingDateOptions()}
-      value={hearing.editedDate ? this.getHearingDate(hearing.editedDate) : this.getHearingDate(hearing.date)}
+      value={hearing.editedDate ? hearing.editedDate : this.getHearingDate(hearing.date)}
       onChange={this.onHearingDateUpdate(hearing.id)}
       readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
     />
@@ -321,6 +321,7 @@ export default class DailyDocket extends React.Component {
       </div>
       <span className="cf-push-right">
         VLJ: {this.props.dailyDocket.judgeFirstName} {this.props.dailyDocket.judgeLastName} <br />
+        Coordinator: {this.props.dailyDocket.bvaCoordinator} <br />
         Hearing type: {this.props.dailyDocket.hearingType}
       </span>
       <div {...noMarginStyling}>

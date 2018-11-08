@@ -157,7 +157,6 @@ class EndProductEstablishment < ApplicationRecord
     # There is no need to sync end_product_status if the status
     # is already inactive since an EP can never leave that state
     return true unless status_active?
-
     fail EstablishedEndProductNotFound unless result
 
     transaction do
@@ -178,7 +177,8 @@ class EndProductEstablishment < ApplicationRecord
     synced_status == CANCELED_STATUS
   end
 
-  def status_cleared?
+  def status_cleared?(sync: false)
+    sync! if sync
     synced_status == CLEARED_STATUS
   end
 
@@ -220,7 +220,7 @@ class EndProductEstablishment < ApplicationRecord
   def cancel!
     transaction do
       # delete end product in bgs & set sync status to canceled
-      BGSService.new.cancel_end_product(:veteran_file_number, :code, :modifier)
+      BGSService.new.cancel_end_product(veteran_file_number, code, modifier)
       update!(synced_status: CANCELED_STATUS)
     end
   end

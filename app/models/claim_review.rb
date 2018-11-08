@@ -9,23 +9,12 @@ class ClaimReview < DecisionReview
 
   self.abstract_class = true
 
-  def ui_hash(ama_enabled)
-    {
-      veteran: {
-        name: veteran && veteran.name.formatted(:readable_short),
-        fileNumber: veteran_file_number,
-        formName: veteran && veteran.name.formatted(:form)
-      },
-      relationships: ama_enabled && veteran && veteran.relationships,
-      receiptDate: receipt_date.to_formatted_s(:json_date),
+  def ui_hash
+    super.merge(
       benefitType: benefit_type,
-      claimant: claimant_participant_id,
-      claimantNotVeteran: claimant_not_veteran,
       payeeCode: payee_code,
-      legacyOptInApproved: legacy_opt_in_approved,
-      ratings: serialized_ratings,
-      requestIssues: request_issues.map(&:ui_hash)
-    }
+      hasClearedEP: cleared_ep?
+    )
   end
 
   # The Asyncable module requires we define these.
@@ -63,10 +52,6 @@ class ClaimReview < DecisionReview
     end
   end
 
-  def mark_rating_request_issues_to_reassociate!
-    request_issues.select(&:rating?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
-  end
-
   # Idempotent method to create all the artifacts for this claim.
   # If any external calls fail, it is safe to call this multiple times until
   # establishment_processed_at is successfully set.
@@ -99,6 +84,10 @@ class ClaimReview < DecisionReview
       # allow higher level reviews to do additional logic on dta errors
       yield if block_given?
     end
+  end
+
+  def cleared_ep?
+    end_product_establishments.any? { |ep| ep.status_cleared?(sync: true) }
   end
 
   private
