@@ -168,7 +168,7 @@ class Hearing < ApplicationRecord
         :current_issue_count,
         :prepped,
         :docket_number,
-        # :appeal_type,
+        :appeal_type,
         :appellant_address_line_1,
         :appellant_city,
         :appellant_state,
