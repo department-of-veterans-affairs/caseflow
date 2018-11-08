@@ -184,16 +184,6 @@ class EndProductEstablishment < ApplicationRecord
     resolve_synced_decisions(synced_rating_issues)
   end
 
-  def resolve_synced_decisions(synced_rating_issues)
-    request_issues.reject(&:processed?).each do |request_issue|
-      if synced_rating_issues.any? { |rating_issue| rating_issue.source_request_issue == request_issue }
-        request_issue.processed!
-      else
-        request_issue.submit_for_processing!
-      end
-    end
-  end
-
   def status_canceled?
     synced_status == CANCELED_STATUS
   end
@@ -237,6 +227,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def request_issues
+    return [] unless source.try(:request_issues)
     source.request_issues.select { |ri| ri.end_product_establishment == self }
   end
 
@@ -256,6 +247,16 @@ class EndProductEstablishment < ApplicationRecord
 
   def potential_decision_ratings
     Rating.fetch_in_range(participant_id: veteran.participant_id, start_date: established_at, end_date: Time.zone.today)
+  end
+
+  def resolve_synced_decisions(synced_rating_issues)
+    request_issues.reject(&:processed?).each do |request_issue|
+      if synced_rating_issues.any? { |rating_issue| rating_issue.source_request_issue == request_issue }
+        request_issue.processed!
+      else
+        request_issue.submit_for_processing!
+      end
+    end
   end
 
   def rating_request_issues
