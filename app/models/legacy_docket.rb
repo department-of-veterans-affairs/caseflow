@@ -20,7 +20,7 @@ class LegacyDocket
   end
 
   def distribute_priority_appeals(distribution, genpop = nil, limit = 1)
-    cases = LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
+    LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
       DistributedCase.create(distribution: distribution,
                              case_id: record["bfkey"],
                              docket: "legacy",
@@ -29,7 +29,6 @@ class LegacyDocket
                              genpop: !record["vlj"].nil?,
                              genpop_query: maybe_boolean_to_string(genpop))
     end
-    DistributedCase.create(cases)
   end
 
   def distribute_nonpriority_appeals(distribution, genpop = nil, range = nil, limit = 1)

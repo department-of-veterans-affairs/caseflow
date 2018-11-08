@@ -2,6 +2,8 @@ class VACOLS::CaseDocket < VACOLS::Record
   # :nocov:
   self.table_name = "vacols.brieff"
 
+  class DocketNumberCentennialLoop < StandardError
+
   # rubocop:disable Metrics/MethodLength
   def self.counts_by_priority_and_readiness
     query = <<-SQL
@@ -101,7 +103,16 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:enable Metrics/MethodLength
 
   # rubocop:disable Metrics/MethodLength
-  def self.distribute_nonpriority_appeals(judge, genpop, range, limit)
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
+  def self.distribute_nonpriority_appeals(judge, genpop, range, limit, dry_run = false)
+    fail DocketNumberCentennialLoop if Time.zone.now.year >= 2030
+    # Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930.
+    # Although there are no new legacy appeals after 2019, an old appeal can be reopened through a finding
+    # of clear and unmistakable error, which would result in a brand new docket number being assigned.
+    # An updated docket number format will need to be in place for legacy appeals by 2030 in order
+    # to ensure that docket numbers are sorted correctly. Happy 100th birthday, by the way.
+
     conn = connection
 
     query = <<-SQL
@@ -151,26 +162,36 @@ class VACOLS::CaseDocket < VACOLS::Record
         and rownum <= ?
     SQL
 
+    fmtd_query = sanitize_sql_array([
+                                      query,
+                                      judge.vacols_attorney_id,
+                                      (genpop.nil? || !genpop) ? 1 : 0,
+                                      (genpop.nil? || genpop) ? 1 : 0,
+                                      range,
+                                      range.nil? ? 1 : 0,
+                                      limit
+                                    ])
+
     conn.transaction do
-      conn.execute("lock table BRIEFF in row exclusive mode")
-      appeals = conn.exec_query(sanitize_sql_array([
-                                                     query,
-                                                     judge.vacols_attorney_id,
-                                                     (genpop.nil? || !genpop) ? 1 : 0,
-                                                     (genpop.nil? || genpop) ? 1 : 0,
-                                                     range,
-                                                     range.nil? ? 1 : 0,
-                                                     limit
-                                                   ])).to_hash
-      vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
-      batch_update_vacols_location(conn, judge.vacols_uniq_id, vacols_ids)
-      appeals
+      if dry_run
+        conn.exec_query(fmtd_query).to_hash
+      else
+        conn.execute("lock table BRIEFF in row exclusive mode")
+        appeals = conn.exec_query(fmtd_query).to_hash
+        vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
+        batch_update_vacols_location(conn, judge.vacols_uniq_id, vacols_ids)
+        appeals
+      end
     end
   end
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
 
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
   # rubocop:disable Metrics/MethodLength
-  def self.distribute_priority_appeals(judge, genpop, limit)
+  def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
     conn = connection
 
     query = <<-SQL
@@ -229,22 +250,30 @@ class VACOLS::CaseDocket < VACOLS::Record
         and rownum <= ?
     SQL
 
+    fmtd_query = sanitize_sql_array([
+                                      query,
+                                      judge.vacols_attorney_id,
+                                      (genpop.nil? || !genpop) ? 1 : 0,
+                                      (genpop.nil? || genpop) ? 1 : 0,
+                                      limit
+                                    ])
+
     conn.transaction do
-      conn.execute("lock table BRIEFF in row exclusive mode")
-      appeals = conn.exec_query(sanitize_sql_array([
-                                                     query,
-                                                     judge.vacols_attorney_id,
-                                                     (genpop.nil? || !genpop) ? 1 : 0,
-                                                     (genpop.nil? || genpop) ? 1 : 0,
-                                                     limit
-                                                   ])).to_hash
-      return appeals if appeals.empty?
-      vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
-      batch_update_vacols_location(conn, judge.vacols_uniq_id, vacols_ids)
-      appeals
+      if dry_run
+        conn.exec_query(fmtd_query).to_hash
+      else
+        conn.execute("lock table BRIEFF in row exclusive mode")
+        appeals = conn.exec_query(fmtd_query).to_hash
+        return appeals if appeals.empty?
+        vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
+        batch_update_vacols_location(conn, judge.vacols_uniq_id, vacols_ids)
+        appeals
+      end
     end
   end
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
 
   # rubocop:disable Metrics/MethodLength
   def self.batch_update_vacols_location(conn, location, vacols_ids)

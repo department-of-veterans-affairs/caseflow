@@ -21,11 +21,12 @@ class Distribution < ApplicationRecord
   end
 
   def user_is_judge
-    judge.judge_in_vacols?
+    judge.judge_in_vacols? && !judge.attorney_in_vacols
   end
 
   def judge_has_no_unassigned_cases
-    return false if JudgeTask.where(assigned_to: judge, action: "assign").any?
+    pending_statuses = [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
+    return false if JudgeTask.where(assigned_to: judge, action: "assign", status: pending_statuses).any?
 
     legacy_tasks = QueueRepository.tasks_for_user(judge.css_id)
     legacy_tasks.none? { |task| task.assigned_to_attorney_date.nil? }

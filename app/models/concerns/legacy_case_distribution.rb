@@ -16,19 +16,19 @@ module LegacyCaseDistribution
                                                                         range: net_docket_range,
                                                                         limit: rem)
     rem -= nonpriority_hearing_appeals.count
-    priority_rem = (priority_target - priority_hearing_appeals.count).clamp(0, rem)
 
-    priority_nonhearing_appeals = docket.distribute_priority_appeals(self,
-                                                                     genpop: true,
-                                                                     limit: priority_rem)
-    rem -= priority_nonhearing_appeals.count
+    if priority_hearing_appeals.count < target_number_of_priority_appeals
+      priority_rem = [target_number_of_priority_appeals - priority_hearing_appeals.count, rem].min
+
+      priority_nonhearing_appeals = docket.distribute_priority_appeals(self,
+                                                                       genpop: true,
+                                                                       limit: priority_rem)
+      rem -= priority_nonhearing_appeals.count
+    end
 
     nonpriority_appeals = docket.distribute_nonpriority_appeals(self, limit: rem)
 
-    [
-      *priority_hearing_appeals, *nonpriority_hearing_appeals,
-      *priority_nonhearing_appeals, *nonpriority_appeals
-    ]
+    [*priority_hearing_appeals, *nonpriority_hearing_appeals, *priority_nonhearing_appeals, *nonpriority_appeals]
   end
 
   def legacy_statistics
@@ -51,8 +51,8 @@ module LegacyCaseDistribution
     [total_batch_size - priority_count, 0].max
   end
 
-  def priority_target
-    proportion = [1.0 * priority_count / total_batch_size, 1.0].min
+  def target_number_of_priority_appeals
+    proportion = [priority_count.to_f / total_batch_size, 1.0].min
     (proportion * batch_size).ceil
   end
 end
