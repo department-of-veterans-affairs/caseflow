@@ -34,7 +34,9 @@ describe BvaDispatchTask do
         file: file,
         redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx" }
     end
-    before { allow(BvaDispatchTask).to receive(:list_of_assignees).and_return([user.css_id]) }
+    before do
+      allow(BvaDispatchTask).to receive(:list_of_assignees).and_return([user.css_id])
+    end
 
     context "when single BvaDispatchTask exists for user and appeal combination" do
       before { BvaDispatchTask.create_and_assign(root_task) }
@@ -114,6 +116,7 @@ describe BvaDispatchTask do
         p
       end
       before do
+        allow(Caseflow::Fakes::S3Service).to receive(:store_file)
         BvaDispatchTask.create_and_assign(root_task)
         BvaDispatchTask.outcode(root_task.appeal, params, user)
       end
