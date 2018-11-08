@@ -144,7 +144,6 @@ class VACOLS::CaseDocket < VACOLS::Record
           where BRIEFF.BFMPRO <> 'HIS' and BRIEFF.BFCURLOC in ('81', '83')
             and BFAC <> '7' and AOD = '0'
           order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
-          -- NOTE THAT THIS WILL CEASE TO WORK ON JANUARY 1, 2030
         ) BRIEFF
         left join (
           select distinct TITRNUM, TINUM,
