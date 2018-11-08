@@ -7,13 +7,7 @@ class HearingsController < ApplicationController
   def update
     if params["hearing"]["date"]
       new_hearing_params = update_params
-      parent_record = to_hash(HearingDay.find_hearing_day(nil, params["hearing"]["date"]))
-      parent_record[:folder_nr] = hearing.appeal.vacols_id
-      parent_record.delete(:judge_last_name)
-      parent_record.delete(:judge_middle_name)
-      parent_record.delete(:judge_first_name)
-      parent_record.delete(:judge_name)
-      HearingRepository.create_vacols_child_hearing(parent_record)
+      HearingRepository.slot_new_hearing(params["hearing"]["date"], hearing.appeal)
     elsif params["hearing"]["time"]
       new_hearing_params = time_update_params(hearing.date)
     else
@@ -33,12 +27,6 @@ class HearingsController < ApplicationController
   end
 
   private
-
-  def to_hash(hearing)
-    hearing.as_json.each_with_object({}) do |(k, v), result|
-      result[k.to_sym] = v
-    end
-  end
 
   def check_hearing_prep_out_of_service
     render "out_of_service", layout: "application" if Rails.cache.read("hearing_prep_out_of_service")
