@@ -13,8 +13,8 @@ class RatingIssue
     def from_bgs_hash(rating, bgs_data)
       new(
         reference_id: bgs_data[:rba_issue_id],
-        rba_contentions_data: ensure_array_of_objects(bgs_data.dig(:rba_issue_contentions)),
-        associated_claims_data: ensure_array_of_objects(bgs_data.dig(:associated_claims)),
+        rba_contentions_data: ensure_array_of_hashes(bgs_data.dig(:rba_issue_contentions)),
+        associated_claims_data: ensure_array_of_hashes(bgs_data.dig(:associated_claims)),
         profile_date: rating.profile_date,
         decision_text: bgs_data[:decn_txt],
         promulgation_date: rating.promulgation_date,
@@ -36,8 +36,8 @@ class RatingIssue
 
     private
 
-    def ensure_array_of_objects(data)
-      [data || {}].flatten
+    def ensure_array_of_hashes(array_or_hash_or_nil)
+      [array_or_hash_or_nil || {}].flatten
     end
   end
 

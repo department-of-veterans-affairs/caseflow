@@ -164,7 +164,7 @@ class RequestIssue < ApplicationRecord
     return if is_unidentified
     return if ramp_claim_id
 
-    if decision_or_profile_date < DecisionReview.ama_activation_date
+    if decision_or_profile_date && decision_or_profile_date < DecisionReview.ama_activation_date
       self.ineligible_reason = :before_ama
     end
   end

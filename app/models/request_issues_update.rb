@@ -102,10 +102,7 @@ class RequestIssuesUpdate < ApplicationRecord
         untimely_exemption: issue_data[:untimely_exemption],
         untimely_exemption_notes: issue_data[:untimely_exemption_notes],
         ramp_claim_id: issue_data[:ramp_claim_id]
-      ).tap do |request_issue|
-        request_issue.rating_issue_profile_date ||= issue_data[:profile_date]
-        request_issue.validate_eligibility!
-      end
+      ).tap(&:validate_eligibility!)
     end
   end
 

@@ -82,7 +82,7 @@ describe RequestIssuesUpdate do
   let(:request_issues_data_with_new_issue) do
     existing_request_issues_data + [{
       reference_id: "issue3",
-      profile_date: Time.zone.local(2017, 4, 7),
+      profile_date: Time.zone.local(2017, 11, 7),
       decision_text: "Service connection for cancer was denied"
     }]
   end
@@ -246,7 +246,7 @@ describe RequestIssuesUpdate do
 
         created_issue = review.request_issues.find_by(rating_issue_reference_id: "issue3")
         expect(created_issue).to have_attributes(
-          rating_issue_profile_date: Time.zone.local(2017, 4, 7),
+          rating_issue_profile_date: Time.zone.local(2017, 11, 7),
           description: "Service connection for cancer was denied"
         )
         expect(created_issue.contention_reference_id).to_not be_nil
@@ -257,7 +257,8 @@ describe RequestIssuesUpdate do
           existing_request_issues_data + [{
             reference_id: "issue3",
             decision_text: "Nonrating issue",
-            category: "Apportionment"
+            issue_category: "Apportionment",
+            decision_date: 1.month.ago
           }]
         end
 
