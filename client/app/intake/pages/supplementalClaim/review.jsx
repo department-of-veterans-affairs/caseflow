@@ -76,6 +76,7 @@ class Review extends React.PureComponent {
 
 const SelectClaimantConnected = connect(
   ({ supplementalClaim, intake }) => ({
+    isVeteranDeceased: intake.veteran.isDeceased,
     claimantNotVeteran: supplementalClaim.claimantNotVeteran,
     claimant: supplementalClaim.claimant,
     payeeCode: supplementalClaim.payeeCode,
