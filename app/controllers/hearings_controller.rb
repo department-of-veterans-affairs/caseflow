@@ -5,6 +5,10 @@ class HearingsController < ApplicationController
   before_action :verify_access_to_hearing_prep_or_schedule, only: [:update]
 
   def update
+    if params["hearing"]["date"]
+      HearingRepository.slot_new_hearing(params["hearing"]["date"], hearing.appeal)
+    end
+
     hearing.update(update_params)
     render json: hearing.to_hash(current_user.id)
   end
