@@ -151,7 +151,7 @@ class VACOLS::CaseHearing < VACOLS::Record
              :repname, :addon,  :board_member, :mduser,
              :mdtime, :sattyid, :bfregoff, :bfso,
              :bfcorkey, :bfddec, :bfdc,
-             "staff.sdomainid as css_id", "folder.tinum", "brieff.bfkey", "staff.slogid",
+             "staff.sdomainid as css_id", "brieff.bfkey", "staff.slogid",
              "corres.saddrst1", "corres.saddrst2", "corres.saddrcty",
              "corres.saddrstt", "corres.saddrcnty", "corres.saddrzip",
              "corres.snamef, corres.snamemi", "corres.snamel, corres.sspare1",

@@ -222,7 +222,7 @@ class HearingRepository
         appellant_country: vacols_record.saddrcnty,
         appellant_zip: vacols_record.saddrzip,
         appeal_type: vacols_record.bfkey,
-        docket_number: vacols_record.tinum,
+        docket_number: vacols_record.folder_nr,
         veteran_first_name: vacols_record.snamef,
         veteran_middle_initial: vacols_record.snamemi,
         veteran_last_name: vacols_record.snamel,
