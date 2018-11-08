@@ -21,7 +21,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :location_code do
-    "DUMMY TEXT"
+    object.location_code
   end
 
   attribute :completed_hearing_on_previous_appeal? do
