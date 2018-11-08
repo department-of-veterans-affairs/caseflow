@@ -18,20 +18,12 @@ const currentAssigneeStyling = css({
   color: COLORS.GREEN
 });
 
-const getLocationCode = (locationCode, userId) => {
-  if (locationCode === userId) {
-    return <span {...currentAssigneeStyling}>{COPY.CASE_LIST_TABLE_ASSIGNEE_IS_CURRENT_USER_LABEL}</span>;
-  }
-
-  return locationCode;
-};
-
 const labelForLocation = (locationCode, userId) => {
   if (!locationCode) {
     return '';
   }
 
-  const regex = new RegExp(`\\b(?:BVA|VACO|VHAISA)${locationCode}\\b`);
+  const regex = new RegExp(`\\b(?:BVA|VACO|VHAISA)?${locationCode}\\b`);
 
   if (userId.match(regex) !== null) {
     return <span {...currentAssigneeStyling}>{COPY.CASE_LIST_TABLE_ASSIGNEE_IS_CURRENT_USER_LABEL}</span>;
@@ -74,11 +66,9 @@ class CaseListTable extends React.PureComponent {
         <DateString date={appeal.decisionDate} /> :
         ''
     },
-    // TODO: use some other field for AMA appeals — legacy appeals use location_code
     {
       header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
-      // valueFunction: (appeal) => labelForLocation(appeal.locationCode, this.props.userCssId)
-      valueFunction: (appeal) => getLocationCode(appeal.locationCode, this.props.userCssId)
+      valueFunction: (appeal) => labelForLocation(appeal.locationCode, this.props.userCssId)
     }
   ];
 

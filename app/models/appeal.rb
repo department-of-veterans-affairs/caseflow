@@ -37,17 +37,23 @@ class Appeal < DecisionReview
   end
 
   def location_code
-    # If there is an active attorney task, return that
-    atty_tasks = tasks.where(type: "AttorneyTask").where.not(status: Constants.TASK_STATUSES.completed)
-    return atty_tasks[0].assigned_to.css_id if atty_tasks
+    return nil if tasks.empty?
 
-    # # If there is an active organization task, return that
-    colocated_task = tasks.where(type: "ColocatedTask").where.not(status: Constants.TASK_STATUSES.completed)
-    return colocated_task[0].assigned_to.css_id if colocated_task
+    root_task = tasks.first.root_task
 
-    # If there is a judge task, return that
-    judge_task = tasks.where(type: "JudgeTask")
-    return judge_task[0].assigned_to.css_id if judge_task
+    return nil if !root_task
+
+    # if RootTask status:completed, then return "Post-decision"
+    return "Post-decision" if root_task.status == Constants.TASK_STATUSES.completed
+
+    active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
+    return nil if active_tasks.empty?
+
+    # if the only active case is a RootTask, then return "Case storage"
+    return "Case storage" if active_tasks == [root_task]
+
+    most_recent_assignee = active_tasks.order(updated_at: :desc).first.assigned_to
+    return most_recent_assignee.is_a?(Organization) ? most_recent_assignee.name : most_recent_assignee.css_id
   end
 
   def attorney_case_reviews
