@@ -77,7 +77,7 @@ class Review extends React.PureComponent {
         value={docketType}
       />
 
-      <SelectClaimantConnected/>
+      <SelectClaimantConnected />
 
       { legacyOptInEnabled && <LegacyOptInApproved
         value={legacyOptInApproved === null ? null : legacyOptInApproved.toString()}
