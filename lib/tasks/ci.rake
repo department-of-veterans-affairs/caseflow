@@ -117,8 +117,6 @@ namespace :ci do
     # in the build log.
     result.format!
 
-    File.rename("#{ENV['COVERAGE_DIR']}/index.html", "#{ENV['COVERAGE_DIR']}/total_coverage.html")
-
     File.open("#{ENV['COVERAGE_DIR']}/merged_results.json", "w") do |f|
       f.write(JSON.pretty_generate(result.to_hash))
     end
