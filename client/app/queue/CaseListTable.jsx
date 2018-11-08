@@ -27,7 +27,6 @@ const getLocationCode = (locationCode, userId) => {
 };
 
 const labelForLocation = (locationCode, userId) => {
-  debugger;
   if (!locationCode) {
     return '';
   }
