@@ -3,8 +3,15 @@ describe ColocatedTask do
   let!(:staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
   let(:vacols_case) { create(:case) }
   let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+  let!(:colocated_org) { Colocated.singleton }
+  let(:colocated_member_css_ids) { %w[BVATEST1 BVATEST2 BVATEST3] }
 
   before do
+    colocated_member_css_ids.each do |css_id|
+      u = FactoryBot.create(:user, css_id: css_id)
+      OrganizationsUser.add_user_to_organization(u, colocated_org)
+    end
+
     RequestStore.store[:current_user] = attorney
   end
 
@@ -22,34 +29,35 @@ describe ColocatedTask do
       end
 
       it "creates a co-located task successfully and updates VACOLS location" do
-        expect(subject.first.valid?).to be true
-        expect(subject.first.reload.status).to eq "assigned"
-        expect(subject.first.assigned_at).to_not eq nil
-        expect(subject.first.assigned_by).to eq attorney
-        expect(subject.first.action).to eq "aoj"
-        expect(subject.first.assigned_to).to eq User.find_by(css_id: "BVATEST1")
+        user_tasks = subject.select { |t| t.assigned_to_type == User.name }
+        expect(user_tasks.first.valid?).to be true
+        expect(user_tasks.first.reload.status).to eq "assigned"
+        expect(user_tasks.first.assigned_at).to_not eq nil
+        expect(user_tasks.first.assigned_by).to eq attorney
+        expect(user_tasks.first.action).to eq "aoj"
+        expect(user_tasks.first.assigned_to).to eq User.find_by(css_id: colocated_member_css_ids[0])
 
-        expect(subject.second.valid?).to be true
-        expect(subject.second.reload.status).to eq "assigned"
-        expect(subject.second.assigned_at).to_not eq nil
-        expect(subject.second.assigned_by).to eq attorney
-        expect(subject.second.action).to eq "poa_clarification"
-        expect(subject.second.assigned_to).to eq User.find_by(css_id: "BVATEST1")
+        expect(user_tasks.second.valid?).to be true
+        expect(user_tasks.second.reload.status).to eq "assigned"
+        expect(user_tasks.second.assigned_at).to_not eq nil
+        expect(user_tasks.second.assigned_by).to eq attorney
+        expect(user_tasks.second.action).to eq "poa_clarification"
+        expect(user_tasks.second.assigned_to).to eq User.find_by(css_id: colocated_member_css_ids[0])
 
         expect(vacols_case.reload.bfcurloc).to eq "CASEFLOW"
 
         record = ColocatedTask.create_many_from_params([{ assigned_by: attorney, action: :aoj, appeal: appeal }],
                                                        attorney)
-        expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST2")
+        expect(record.second.assigned_to).to eq User.find_by(css_id: colocated_member_css_ids[1])
 
         record = ColocatedTask.create_many_from_params([{ assigned_by: attorney, action: :aoj, appeal: appeal }],
                                                        attorney)
-        expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST3")
+        expect(record.second.assigned_to).to eq User.find_by(css_id: colocated_member_css_ids[2])
 
         # should start from index 0
         record = ColocatedTask.create_many_from_params([{ assigned_by: attorney, action: :aoj, appeal: appeal }],
                                                        attorney)
-        expect(record.first.assigned_to).to eq User.find_by(css_id: "BVATEST1")
+        expect(record.second.assigned_to).to eq User.find_by(css_id: colocated_member_css_ids[0])
       end
     end
 
@@ -69,7 +77,14 @@ describe ColocatedTask do
         expect(subject.first.assigned_at).to_not eq nil
         expect(subject.first.assigned_by).to eq attorney
         expect(subject.first.action).to eq "aoj"
-        expect(subject.first.assigned_to).to eq User.find_by(css_id: "BVATEST1")
+        expect(subject.first.assigned_to).to eq(Colocated)
+
+        expect(subject.second.valid?).to be true
+        expect(subject.second.reload.status).to eq "assigned"
+        expect(subject.second.assigned_at).to_not eq nil
+        expect(subject.second.assigned_by).to eq attorney
+        expect(subject.second.action).to eq "aoj"
+        expect(subject.second.assigned_to).to eq User.find_by(css_id: colocated_member_css_ids[0])
 
         expect(AppealRepository).to_not receive(:update_location!)
       end
@@ -176,7 +191,7 @@ describe ColocatedTask do
         let(:action) { :translation }
         it "should update location to translation in vacols" do
           expect(vacols_case.bfcurloc).to_not eq staff.slogid
-          colocated_admin_action.update!(status: "completed")
+          colocated_admin_action.mark_as_complete!
           expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:translation]
         end
       end
@@ -185,7 +200,7 @@ describe ColocatedTask do
         let(:action) { :schedule_hearing }
         it "should update location to schedule hearing in vacols" do
           expect(vacols_case.bfcurloc).to_not eq staff.slogid
-          colocated_admin_action.update!(status: "completed")
+          colocated_admin_action.mark_as_complete!
           expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:schedule_hearing]
         end
       end
@@ -206,7 +221,7 @@ describe ColocatedTask do
 
         it "should update location to assignor in vacols" do
           expect(vacols_case.bfcurloc).to_not eq staff.slogid
-          colocated_admin_action.update!(status: "completed")
+          colocated_admin_action.mark_as_complete!
           expect(vacols_case.reload.bfcurloc).to eq staff.slogid
         end
       end
@@ -247,7 +262,7 @@ describe ColocatedTask do
 
         time6 = Time.utc(2015, 1, 8, 12, 0, 0)
         Timecop.freeze(time6)
-        colocated_admin_action.update(status: "completed")
+        colocated_admin_action.mark_as_complete!
         # go back to in-progres - should reset date
         expect(colocated_admin_action.reload.started_at).to eq time5
         expect(colocated_admin_action.placed_on_hold_at).to eq time3

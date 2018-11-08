@@ -14,10 +14,16 @@ class ColocatedTask < Task
       # Create all ColocatedTasks in one transaction so that if any fail they all fail.
       ActiveRecord::Base.multi_transaction do
         assignee = next_assignee
-        records = params_array.map { |params| create_from_params(params.merge(assigned_to: assignee), user) }
+        records = params_array.map do |params|
+          team_task = create_from_params(params.merge(assigned_to: Colocated.singleton), user)
+          individual_task = create_from_params(params.merge(assigned_to: assignee, parent: team_task), user)
 
-        if records.map(&:valid?).uniq == [true] && records.first.legacy?
-          AppealRepository.update_location!(records.first.appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+          [team_task, individual_task]
+        end.flatten
+
+        individual_task = records.select { |r| r.assigned_to_type == User.name }.first
+        if records.map(&:valid?).uniq == [true] && individual_task.legacy?
+          AppealRepository.update_location!(individual_task.appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
         end
 
         records
@@ -27,7 +33,7 @@ class ColocatedTask < Task
     private
 
     def list_of_assignees
-      Constants::CoLocatedTeams::USERS[Rails.current_env]
+      Colocated.singleton.users.order(:id).pluck(:css_id)
     end
   end
 
