@@ -1,5 +1,4 @@
 class GenericTask < Task
-  # rubocop:disable Metrics/AbcSize
   def available_actions(user)
     if assigned_to == user
       return [
@@ -19,8 +18,6 @@ class GenericTask < Task
 
     []
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/AbcSize
 
   def update_from_params(params, current_user)
     verify_user_access!(current_user)
