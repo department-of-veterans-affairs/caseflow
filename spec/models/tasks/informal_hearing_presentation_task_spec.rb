@@ -35,5 +35,19 @@ describe InformalHearingPresentationTask do
         expect(subject).to eq(expected_actions)
       end
     end
+
+    context "when task is assigned to user" do
+      let(:task) do
+        InformalHearingPresentationTask.find(create(:informal_hearing_presentation_task).id)
+      end
+
+      let(:expected_actions) do
+        []
+      end
+
+      it "should return team assign, person reassign, and mark complete actions" do
+        expect(subject).to eq(expected_actions)
+      end
+    end
   end
 end
