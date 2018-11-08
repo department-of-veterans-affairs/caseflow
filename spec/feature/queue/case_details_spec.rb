@@ -397,15 +397,13 @@ RSpec.feature "Case details" do
   context "edit aod link appears/disappears as expected" do
     let(:appeal) { FactoryBot.create(:appeal) }
     let(:user) { FactoryBot.create(:user) }
-
-    before do
-      User.authenticate!(user: user)
-      visit("/queue/appeals/#{appeal.uuid}")
-    end
+    let(:user2) { FactoryBot.create(:user) }
 
     context "when the current user is a member of the AOD team" do
       before do
         allow_any_instance_of(AodTeam).to receive(:user_has_access?).with(user).and_return(true)
+        User.authenticate!(user: user)
+        visit("/queue/appeals/#{appeal.uuid}")
       end
 
       it "should display the edit link" do
@@ -414,11 +412,18 @@ RSpec.feature "Case details" do
     end
 
     context "when the current user is not a member of the AOD team" do
+      before do
+        allow_any_instance_of(AodTeam).to receive(:user_has_access?).with(user2).and_return(false)
+        User.authenticate!(user: user2)
+        visit("/queue/appeals/#{appeal.uuid}")
+      end
       it "should not display the edit link" do
         expect(page).to_not have_content("Edit")
       end
     end
+
   end
+
   describe "Marking organization task complete" do
     context "when there is no assigner" do
       let(:qr) { QualityReview.singleton }
