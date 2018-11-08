@@ -86,7 +86,7 @@ class HearingRepository
       hearing_hash = to_hash(hearing)
       hearing_hash[:folder_nr] = appeal.vacols_id
       hearing_hash[:hearing_date] = VacolsHelper.format_datetime_with_utc_timezone(hearing_date)
-      hearing_hash[:vdkey] = parent_hearing_hash[:hearing_pkseq]
+      hearing_hash[:vdkey] = hearing_hash[:hearing_pkseq]
       hearing_hash.delete(:hearing_pkseq)
       hearing_hash[:hearing_type] = "V"
       VACOLS::CaseHearing.create_child_hearing!(hearing_hash)
