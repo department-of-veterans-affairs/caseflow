@@ -120,7 +120,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def validate_receipt_date_not_before_ama
-    errors.add(:receipt_date, "before_ama") if receipt_date < AMA_ACTIVATION_DATE
+    errors.add(:receipt_date, "before_ama") if receipt_date < self.class.ama_activation_date
   end
 
   def validate_receipt_date_not_in_future

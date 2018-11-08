@@ -66,7 +66,7 @@ describe SupplementalClaim do
       end
 
       context "when it is before AMA begin date" do
-        let(:receipt_date) { SupplementalClaim::AMA_ACTIVATION_DATE - 1 }
+        let(:receipt_date) { DecisionReview.ama_activation_date - 1 }
 
         it "adds an error to receipt_date" do
           is_expected.to be false
