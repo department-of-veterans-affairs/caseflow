@@ -49,7 +49,6 @@ class VeteranCasesView extends React.PureComponent {
           return Promise.reject(response);
         }
 
-        debugger;
         this.props.onReceiveAppealDetails(prepareAppealForStore(returnedObject.appeals));
         this.props.setFetchedAllCasesFor(caseflowVeteranId);
 
