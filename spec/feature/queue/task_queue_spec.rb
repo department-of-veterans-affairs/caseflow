@@ -83,9 +83,9 @@ RSpec.feature "Task queue" do
 
     it "shows tabs on the queue page" do
       expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
-      expect(page).to have_content(format(COPY::ATTORNEY_QUEUE_PAGE_ASSIGNED_TAB_TITLE, vacols_tasks.length))
-      expect(page).to have_content(format(COPY::ATTORNEY_QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_tasks.length))
-      expect(page).to have_content(COPY::ATTORNEY_QUEUE_PAGE_COMPLETE_TAB_TITLE)
+      expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, vacols_tasks.length))
+      expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_tasks.length))
+      expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
     end
 
     it "shows the right number of cases in each tab" do
@@ -94,7 +94,7 @@ RSpec.feature "Task queue" do
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
 
       # On Hold tab
-      find("button", text: format(COPY::ATTORNEY_QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_tasks.length)).click
+      find("button", text: format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_tasks.length)).click
       expect(page).to have_content(COPY::ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
       expect(find("tbody").find_all("tr").length).to eq(attorney_on_hold_tasks.length)
     end
@@ -195,9 +195,9 @@ RSpec.feature "Task queue" do
         format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_count)
       )
       expect(page).to have_content(
-        format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count)
+        format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count)
       )
-      expect(page).to have_content(COPY::ORGANIZATIONAL_QUEUE_PAGE_COMPLETE_TAB_TITLE)
+      expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
     end
 
     it "shows the right number of cases in each tab" do
@@ -209,7 +209,7 @@ RSpec.feature "Task queue" do
 
       # Assigned tab
       find("button", text: format(
-        COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count
+        COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count
       )).click
       expect(page).to have_content(
         format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, organization.name)
