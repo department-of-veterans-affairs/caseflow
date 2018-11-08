@@ -621,7 +621,7 @@ class AppealRepository
     MetricsService.record("VACOLS: docket_counts_by_priority_and_readiness",
                           name: "docket_counts_by_priority_and_readiness",
                           service: :vacols) do
-      VACOLS::CaseDocket.counts_by_priority_and_readiness.to_hash
+      VACOLS::CaseDocket.counts_by_priority_and_readiness
     end
   end
 

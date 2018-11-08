@@ -5,8 +5,8 @@ class Distribution < ApplicationRecord
   belongs_to :judge, class_name: "User"
 
   validates :judge, presence: true
-  validate :user_is_judge, on: :create
-  validate :judge_has_no_unassigned_cases, on: :create
+  validate :validate_user_is_judge, on: :create
+  validate :validate_judge_has_no_unassigned_cases, on: :create
 
   after_create :distribute
 
@@ -25,12 +25,16 @@ class Distribution < ApplicationRecord
     update(statistics: legacy_statistics, completed_at: Time.zone.now)
   end
 
-  def user_is_judge
-    judge.judge_in_vacols?
-  end
-
   def acting_judge
     judge.attorney_in_vacols?
+  end
+
+  def validate_user_is_judge
+    errors.add(:judge, "must be a judge in VACOLS") unless judge.judge_in_vacols?
+  end
+
+  def validate_judge_has_no_unassigned_cases
+    errors.add(:judge, "must have no unassigned cases") unless judge_has_no_unassigned_cases
   end
 
   def judge_has_no_unassigned_cases
@@ -50,7 +54,7 @@ class Distribution < ApplicationRecord
 
   def total_batch_size
     attorney_count = Constants::AttorneyJudgeTeams::JUDGES[Rails.current_env].inject(0) do |sum, judge|
-      sum + judge[:attorneys].count
+      sum + judge[1][:attorneys].count
     end
 
     attorney_count * CASES_PER_ATTORNEY

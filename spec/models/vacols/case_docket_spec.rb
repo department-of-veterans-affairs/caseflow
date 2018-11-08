@@ -92,7 +92,7 @@ describe VACOLS::CaseDocket do
   end
 
   context ".counts_by_priority_and_readiness" do
-    subject { VACOLS::CaseDocket.counts_by_priority_and_readiness.to_hash }
+    subject { VACOLS::CaseDocket.counts_by_priority_and_readiness }
     it "creates counts grouped by priority and readiness" do
       expect(subject).to eq([
                               { "n" => 1, "priority" => 1, "ready" => 0 },

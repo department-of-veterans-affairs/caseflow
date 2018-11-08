@@ -2,7 +2,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   # :nocov:
   self.table_name = "vacols.brieff"
 
-  class DocketNumberCentennialLoop < StandardError
+  class DocketNumberCentennialLoop < StandardError; end
 
   # rubocop:disable Metrics/MethodLength
   def self.counts_by_priority_and_readiness
@@ -30,7 +30,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       group by PRIORITY, READY
     SQL
 
-    connection.exec_query(query)
+    connection.exec_query(query).to_hash
   end
   # rubocop:enable Metrics/MethodLength
 
