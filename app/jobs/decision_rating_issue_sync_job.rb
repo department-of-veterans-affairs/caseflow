@@ -12,7 +12,10 @@ class DecisionRatingIssueSyncJob < CaseflowJob
     begin
       request_issue.attempted!
       request_issue.end_product_establishment.sync_decision_issues!
-    rescue VBMS::ClientError => err
+    rescue ::NilRatingProfileListError => err
+      # swallow these, it just means nothing new has happened.
+
+    rescue BGS::ShareError => err
       request_issue.update_error!(err.to_s)
       Raven.capture_exception(err)
     end
