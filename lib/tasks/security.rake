@@ -12,13 +12,29 @@ task :security_caseflow do
   puts "running bundle-audit to check for insecure dependencies..."
   exit!(1) unless ShellCommand.run("bundle-audit update")
 
-  audit_result = ShellCommand.run("bundle-audit check")
+  snoozed_cves = [
+    # Example:
+    # { cve_name: "CVE-2018-1000201", until: Time.zone.local(2018, 9, 10) }
+  ]
+
+  alerting_cves = snoozed_cves
+    .select { |cve| cve[:until] <= Time.zone.today }
+    .map { |cve| cve[:cve_name] }
+
+  audit_result = ShellCommand.run("bundle-audit check --ignore=#{alerting_cves.join(' ')}")
 
   puts "\n"
   if brakeman_result && audit_result
     puts Rainbow("Passed. No obvious security vulnerabilities.").green
   else
-    puts Rainbow("Failed. Security vulnerabilities were found.").red
+    puts Rainbow(
+      "Failed. Security vulnerabilities were found. Find the dependency in Gemfile.lock, "\
+      "then specify a safe version of the dependency in the Gemfile (preferred) or "\
+      "snooze the CVE in security.rake for a week."
+    ).red
+    puts Rainbow(
+      "See https://github.com/department-of-veterans-affairs/caseflow/pull/7639 for an example."
+    ).red
     exit!(1)
   end
 end
