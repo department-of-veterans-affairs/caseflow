@@ -79,7 +79,7 @@ describe Distribution do
       expect(subject.statistics["priority_count"]).to eq(15)
       expect(subject.distributed_cases.count).to eq(15)
       expect(subject.distributed_cases.first.docket).to eq("legacy")
-      expect(subject.distributed_cases.first.ready_at).to eq(2.days.ago.to_date)
+      expect(subject.distributed_cases.first.ready_at).to eq(2.days.ago.beginning_of_day)
       expect(subject.distributed_cases.where(priority: true).count).to eq(5)
       expect(subject.distributed_cases.where(genpop: true).count).to eq(8)
       expect(subject.distributed_cases.where(priority: true, genpop: false).count).to eq(2)
