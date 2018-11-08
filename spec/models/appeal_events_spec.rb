@@ -1,13 +1,5 @@
 describe AppealEvents do
   before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
-  before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 

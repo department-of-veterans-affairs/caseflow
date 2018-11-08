@@ -1,12 +1,4 @@
 RSpec.describe UsersController, type: :controller do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let!(:user) { User.authenticate!(roles: ["System Admin"]) }
   let!(:staff) { create(:staff, :attorney_judge_role, user: user) }
 

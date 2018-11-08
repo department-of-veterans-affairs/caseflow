@@ -8,10 +8,8 @@ import _ from 'lodash';
 import COPY from '../../COPY.json';
 
 import {
-  actionableTasksForAppeal,
-  appealWithDetailSelector,
-  tasksForAppealAssignedToUserSelector,
-  incompleteOrganizationTasksByAssigneeIdSelector
+  taskById,
+  appealWithDetailSelector
 } from './selectors';
 import { prepareTasksForStore } from './utils';
 
@@ -31,6 +29,7 @@ import type { Appeal, Task } from './types/models';
 
 type Params = {|
   appealId: string,
+  taskId: string,
   task: Task,
   isReassignAction: boolean,
   isTeamAssign: boolean,
@@ -193,9 +192,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 
   return {
     highlightFormItems,
-    task: tasksForAppealAssignedToUserSelector(state, { appealId: ownProps.appealId })[0] ||
-      incompleteOrganizationTasksByAssigneeIdSelector(state, { appealId: ownProps.appealId })[0] ||
-      actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0],
+    task: taskById(state, { taskId: ownProps.taskId }),
     appeal: appealWithDetailSelector(state, ownProps)
   };
 };

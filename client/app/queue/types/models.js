@@ -17,6 +17,7 @@ export type Judges = { [string]: User };
 export type Address = {
   address_line_1: string,
   address_line_2: string,
+  address_line_3: ?string,
   city: string,
   state: string,
   zip: string,
@@ -86,7 +87,8 @@ export type Task = {
     firstName: string,
     lastName: string,
   },
-  availableActions: Array<{ label?: string, value: string, data: ?Object }>
+  availableActions: Array<{ label?: string, value: string, data: ?Object }>,
+  taskBusinessPayloads: Array<{description: string, values: Object}>,
 };
 
 export type Tasks = { [string]: Task };

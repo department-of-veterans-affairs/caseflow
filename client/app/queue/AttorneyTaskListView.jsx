@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
-import StatusMessage from '../components/StatusMessage';
 import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -59,11 +58,18 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
     const { messages } = this.props;
     const noTasks = !_.size(this.props.tasks);
 
-    if (noTasks) {
-      return <StatusMessage>
-        <h2>{COPY.NO_CASES_IN_QUEUE_MESSAGE}<Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link>.</h2>
-      </StatusMessage>;
-    }
+    const content = noTasks ?
+      <p>{COPY.NO_CASES_IN_QUEUE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.</p> :
+      <TaskTable
+        includeDetailsLink
+        includeType
+        includeDocketNumber
+        includeIssueCount
+        includeDueDate
+        includeReaderLink
+        requireDasRecord
+        tasks={this.props.tasks}
+      />;
 
     return <AppSegment filledBackground>
       <div>
@@ -74,16 +80,7 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
         {messages.success && <Alert type="success" title={messages.success.title}>
           {messages.success.detail || COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
         </Alert>}
-        <TaskTable
-          includeDetailsLink
-          includeType
-          includeDocketNumber
-          includeIssueCount
-          includeDueDate
-          includeReaderLink
-          requireDasRecord
-          tasks={this.props.tasks}
-        />
+        {content}
       </div>
     </AppSegment>;
   }

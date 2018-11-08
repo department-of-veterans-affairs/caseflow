@@ -2,6 +2,7 @@ require "rails_helper"
 
 describe Rating do
   before do
+    Time.zone = "UTC"
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
@@ -24,8 +25,9 @@ describe Rating do
       participant_id: participant_id,
       reference_id: "Issue#{num}",
       decision_text: "Decision#{num}",
-      in_active_review: nil,
       promulgation_date: promulgation_date,
+      contention_reference_id: nil,
+      title_of_active_review: nil,
       source_higher_level_review: nil
     }
   end
@@ -56,7 +58,7 @@ describe Rating do
         participant_id: rating.participant_id,
         profile_date: rating.profile_date,
         promulgation_date: rating.promulgation_date,
-        issues: issues
+        issues: issues.each { |issue| issue[:profile_date] = rating.profile_date }
       )
     end
 

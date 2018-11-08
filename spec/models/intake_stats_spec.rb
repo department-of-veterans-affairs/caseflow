@@ -2,13 +2,8 @@ require "rails_helper"
 
 describe IntakeStats do
   before do
-    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2016, 2, 17, 20, 59, 0))
     Rails.cache.clear
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   context ".throttled_calculate_all!" do

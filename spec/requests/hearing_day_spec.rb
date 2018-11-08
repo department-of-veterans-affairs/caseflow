@@ -124,7 +124,7 @@ RSpec.describe "Hearing Schedule", type: :request do
              folder_nr: create(:case).bfkey)
     end
 
-    it "returns video children hearings" do
+    it "returns video children hearings", skip: "This test is flaky" do
       headers = {
         "ACCEPT" => "application/json"
       }
@@ -287,7 +287,9 @@ RSpec.describe "Hearing Schedule", type: :request do
         :case,
         folder: create(:folder, tinum: "docket-number"),
         bfregoff: "RO04",
-        bfcurloc: "57"
+        bfcurloc: "57",
+        bfhr: "2",
+        bfdocind: "V"
       )
     end
 

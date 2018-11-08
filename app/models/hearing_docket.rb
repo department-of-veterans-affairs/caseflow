@@ -45,11 +45,8 @@ class HearingDocket
   end
 
   class << self
-    attr_writer :repository
-
     def repository
-      return HearingRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= HearingRepository
+      HearingRepository
     end
 
     def from_hearings(hearings)

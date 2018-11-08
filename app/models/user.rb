@@ -252,8 +252,6 @@ class User < ApplicationRecord
   end
 
   class << self
-    attr_writer :appeal_repository
-    attr_writer :user_repository
     attr_writer :authentication_service
     delegate :authenticate_vacols, to: :authentication_service
 
@@ -303,13 +301,11 @@ class User < ApplicationRecord
     end
 
     def appeal_repository
-      return AppealRepository if FeatureToggle.enabled?(:test_facols)
-      @appeal_repository ||= AppealRepository
+      AppealRepository
     end
 
     def user_repository
-      return UserRepository if FeatureToggle.enabled?(:test_facols)
-      @user_repository ||= UserRepository
+      UserRepository
     end
   end
 end

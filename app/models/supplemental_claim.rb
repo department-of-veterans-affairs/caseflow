@@ -15,7 +15,7 @@ class SupplementalClaim < ClaimReview
 
   END_PRODUCT_MODIFIERS = %w[040 041 042 043 044 045 046 047 048 049].freeze
 
-  def ui_hash(ama_enabled)
+  def ui_hash
     super.merge(
       formType: "supplemental_claim",
       isDtaError: is_dta_error
@@ -38,10 +38,10 @@ class SupplementalClaim < ClaimReview
     END_PRODUCT_MODIFIERS
   end
 
-  def issue_code(rated)
-    issue_code_type = rated ? :rating : :nonrating
+  def issue_code(rating: true)
+    issue_code_type = rating ? :rating : :nonrating
     if is_dta_error?
-      issue_code_type = rated ? :dta_rating : :dta_nonrating
+      issue_code_type = "dta_#{issue_code_type}".to_sym
     end
     END_PRODUCT_CODES[issue_code_type]
   end

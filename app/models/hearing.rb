@@ -21,6 +21,9 @@ class Hearing < ApplicationRecord
   # when fetched intially.
   has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots
 
+  CO_HEARING = "Central".freeze
+  VIDEO_HEARING = "Video".freeze
+
   def venue
     self.class.venues[venue_key]
   end
@@ -235,15 +238,12 @@ class Hearing < ApplicationRecord
   end
 
   class << self
-    attr_writer :repository
-
     def venues
       RegionalOffice::CITIES.merge(RegionalOffice::SATELLITE_OFFICES)
     end
 
     def repository
-      return HearingRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= HearingRepository
+      HearingRepository
     end
 
     def user_nil_or_assigned_to_another_judge?(user, vacols_css_id)

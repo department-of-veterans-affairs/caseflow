@@ -1,24 +1,25 @@
 require "rails_helper"
+require "support/intake_helpers"
 
 RSpec.feature "Higher-Level Review" do
+  include IntakeHelpers
+
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
-    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 26))
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-    allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+    allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
   end
 
   after do
     FeatureToggle.disable!(:intakeAma)
     FeatureToggle.disable!(:intake_legacy_opt_in)
-    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran) do
@@ -118,7 +119,7 @@ RSpec.feature "Higher-Level Review" do
     )
 
     within_fieldset("What is the Benefit Type?") do
-      find("label", text: "Compensation", match: :prefer_exact).click
+      find("label", text: "Fiduciary", match: :prefer_exact).click
     end
 
     fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
@@ -138,6 +139,15 @@ RSpec.feature "Higher-Level Review" do
     end
 
     expect(page).to have_content("Please select the claimant listed on the form.")
+
+    # We do not need to select payee codes for fiduciaries
+    expect(page).to_not have_content("What is the payee code for this claimant?")
+
+    # Switch the benefit type to compensation to test choosing the payee code.
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Compensation", match: :prefer_exact).click
+    end
+
     expect(page).to have_content("What is the payee code for this claimant?")
     expect(page).to have_content("Bob Vance, Spouse")
     expect(page).to_not have_content("Cathy Smith, Child")
@@ -228,7 +238,7 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_content(
       "A #{Constants.INTAKE_FORM_NAMES_SHORT.higher_level_review} Nonrating EP is being established:"
     )
-    expect(page).to have_content("Contention: Description for Active Duty Adjustments")
+    expect(page).to have_content("Contention: Active Duty Adjustments - Description for Active Duty Adjustments")
     expect(page).to have_content("Informal Conference Tracked Item")
 
     # ratings end product
@@ -310,12 +320,12 @@ RSpec.feature "Higher-Level Review" do
       )
     )
 
-    rated_issue = higher_level_review.request_issues.find_by(description: "PTSD denied")
+    rating_request_issue = higher_level_review.request_issues.find_by(description: "PTSD denied")
 
-    expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+    expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
       claim_id: ratings_end_product_establishment.reference_id,
-      rated_issue_contention_map: {
-        rated_issue.rating_issue_reference_id => rated_issue.contention_reference_id
+      rating_issue_contention_map: {
+        rating_request_issue.rating_issue_reference_id => rating_request_issue.contention_reference_id
       }
     )
 
@@ -364,6 +374,9 @@ RSpec.feature "Higher-Level Review" do
       decision_date: 1.month.ago.to_date
     )
 
+    # skip the sync call since all edit requests require resyncing
+    # currently, we're not mocking out vbms and bgs
+    allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
     visit "/higher_level_reviews/#{ratings_end_product_establishment.reference_id}/edit"
 
     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
@@ -377,8 +390,10 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_content("Page not found")
   end
 
+  let(:special_issue_reference_id) { "IAMANEPID" }
+
   it "Creates contentions with same office special issue" do
-    Fakes::VBMSService.end_product_claim_id = "IAMANEPID"
+    Fakes::VBMSService.end_product_claim_id = special_issue_reference_id
 
     visit "/intake"
     safe_click ".Select"
@@ -430,7 +445,7 @@ RSpec.feature "Higher-Level Review" do
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: "12341234",
-      claim_id: "IAMANEPID",
+      claim_id: special_issue_reference_id,
       contention_descriptions: ["PTSD denied"],
       special_issues: [{ code: "SSR", narrative: "Same Station Review" }],
       user: current_user
@@ -560,7 +575,7 @@ RSpec.feature "Higher-Level Review" do
       )
     end
 
-    let(:previous_higher_level_review) { create(:higher_level_review) }
+    let(:previous_higher_level_review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
     let!(:previous_request_issue) do
       create(
         :request_issue,
@@ -625,7 +640,7 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to have_content("Left knee granted (already selected for issue 1)")
       expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
 
-      # Add non-rated issue
+      # Add nonrating issue
       safe_click ".no-matching-issues"
       expect(page).to have_content("Does issue 2 match any of these issue categories?")
       expect(page).to have_button("Add this issue", disabled: true)
@@ -636,7 +651,7 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to have_button("Add this issue", disabled: false)
       safe_click ".add-issue"
       expect(page).to have_content("2 issues")
-      # this nonrated issue is timely
+      # this nonrating request issue is timely
       expect(page).to_not have_content(
         "Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
       )
@@ -658,14 +673,26 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to have_content("4 issues")
       expect(page).to have_content("4. Old injury is ineligible because it's already under review as a Appeal")
 
-      # add untimely rated issue
+      # add untimely rating request issue
       safe_click "#button-add-issue"
       find_all("label", text: "Really old injury").first.click
       safe_click ".add-issue"
+      add_untimely_exemption_response("Yes")
       expect(page).to have_content("5 issues")
+      expect(page).to have_content("I am an exemption note")
+      expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
+
+      # remove and re-add with different answer to exemption
+      page.all(".remove-issue").last.click
+      safe_click "#button-add-issue"
+      find_all("label", text: "Really old injury").first.click
+      safe_click ".add-issue"
+      add_untimely_exemption_response("No")
+      expect(page).to have_content("5 issues")
+      expect(page).to have_content("I am an exemption note")
       expect(page).to have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
 
-      # add untimely nonrated issue
+      # add untimely nonrating request issue
       safe_click "#button-add-issue"
       safe_click ".no-matching-issues"
       expect(page).to have_button("Add this issue", disabled: true)
@@ -692,6 +719,7 @@ RSpec.feature "Higher-Level Review" do
       safe_click "#button-finish-intake"
 
       expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+      expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
 
       # make sure that database is populated
       expect(HigherLevelReview.find_by(
@@ -733,6 +761,14 @@ RSpec.feature "Higher-Level Review" do
 
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
+               description: "Really old injury",
+               end_product_establishment_id: end_product_establishment.id,
+               untimely_exemption: false,
+               untimely_exemption_notes: "I am an exemption note"
+      )).to_not be_nil
+
+      expect(RequestIssue.find_by(
+               review_request: higher_level_review,
                issue_category: "Active Duty Adjustments",
                description: "Description for Active Duty Adjustments",
                decision_date: 1.month.ago.to_date,
@@ -755,9 +791,15 @@ RSpec.feature "Higher-Level Review" do
       expect(ineligible_issue.contention_reference_id).to be_nil
 
       expect(RequestIssue.find_by(rating_issue_reference_id: old_reference_id).untimely?).to eq(true)
-      expect(
-        RequestIssue.find_by(rating_issue_reference_id: higher_level_review_reference_id).previous_higher_level_review?
-      ).to eq(true)
+
+      hlr_request_issues = RequestIssue.where(rating_issue_reference_id: higher_level_review_reference_id)
+      expect(hlr_request_issues.count).to eq(2)
+
+      ineligible_due_to_previous_hlr = hlr_request_issues.select(&:previous_higher_level_review?).first
+      expect(hlr_request_issues).to include(previous_request_issue)
+      expect(ineligible_due_to_previous_hlr).to_not eq(previous_request_issue)
+      expect(ineligible_due_to_previous_hlr.contention_reference_id).to be_nil
+      expect(ineligible_due_to_previous_hlr.ineligible_due_to).to eq(previous_request_issue)
 
       expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(
         hash_including(

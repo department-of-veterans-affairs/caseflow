@@ -27,12 +27,10 @@ RSpec.feature "Case Assignment flows" do
   let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
 
   before do
-    FeatureToggle.enable! :test_facols
     FeatureToggle.enable! :attorney_assignment_to_colocated
   end
 
   after do
-    FeatureToggle.disable! :test_facols
     FeatureToggle.disable! :attorney_assignment_to_colocated
   end
 

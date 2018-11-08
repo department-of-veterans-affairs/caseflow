@@ -15,14 +15,6 @@ describe AppealSeriesAlerts do
     DocketSnapshot.create
   end
 
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let(:docket_month) { 1.year.ago.to_date.beginning_of_month }
 
   let(:appeal) do

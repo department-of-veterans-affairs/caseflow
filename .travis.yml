@@ -15,6 +15,7 @@ env:
 
 before_install:
   - export TZ=America/New_York
+  - export NLS_LANG=American_America.US7ASCII
   - ./ci-bin/ensure-env-vars-exist.bash
   - pip install --user awscli
   - mkdir ./coverage

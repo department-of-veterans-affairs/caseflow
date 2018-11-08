@@ -1,12 +1,7 @@
 RSpec.describe CaseReviewsController, type: :controller do
   before do
     Fakes::Initializer.load!
-    FeatureToggle.enable!(:test_facols)
     User.authenticate!(roles: ["System Admin"])
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   context "Ama appeal" do

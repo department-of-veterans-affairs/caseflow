@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import SearchableDropdown from '../../components/SearchableDropdown';
-import ApiUtil from '../../util/ApiUtil';
-import { onReceiveRegionalOffices } from '../actions';
+import SearchableDropdown from './SearchableDropdown';
+import ApiUtil from '../util/ApiUtil';
+import { onReceiveRegionalOffices } from './common/actions';
 import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 
@@ -64,7 +64,7 @@ RoSelectorDropdown.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  regionalOffices: state.hearingSchedule.regionalOffices
+  regionalOffices: state.components.regionalOffices
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

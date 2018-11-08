@@ -11,6 +11,7 @@ import { ACTIONS } from './constants';
 import caseListReducer from './CaseList/CaseListReducer';
 import uiReducer from './uiReducer/uiReducer';
 import type { QueueState } from './types/state';
+import commonComponentsReducer from '../components/common/reducers';
 
 // TODO: Remove this when we move entirely over to the appeals search.
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
@@ -441,7 +442,8 @@ const rootReducer = combineReducers({
   caseList: caseListReducer,
   caseSelect: caseSelectReducer,
   queue: workQueueReducer,
-  ui: uiReducer
+  ui: uiReducer,
+  components: commonComponentsReducer
 });
 
 export default timeFunction(

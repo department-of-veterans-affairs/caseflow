@@ -55,6 +55,8 @@ end
 
 FeatureToggle.cache_namespace = "test_#{ENV['TEST_SUBCATEGORY'] || 'all'}"
 
+ENV["TZ"] ||= "America/New York"
+
 Capybara.register_driver(:parallel_sniffybara) do |app|
   chrome_options = ::Selenium::WebDriver::Chrome::Options.new
 
@@ -174,8 +176,6 @@ User.prepend(StubbableUser)
 
 def reset_application!
   User.clear_stub!
-  Fakes::AppealRepository.clean!
-  Fakes::HearingRepository.clean!
   Fakes::CAVCDecisionRepository.clean!
   Fakes::BGSService.clean!
 end
@@ -218,11 +218,6 @@ def read_csv(klass, date_shift)
   klass.import(items)
 end
 
-# Setup fakes
-LegacyAppeal.repository = Fakes::AppealRepository
-PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
-Hearing.repository = Fakes::HearingRepository
-HearingDocket.repository = Fakes::HearingRepository
 User.authentication_service = Fakes::AuthenticationService
 CAVCDecision.repository = Fakes::CAVCDecisionRepository
 
@@ -249,13 +244,13 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    FeatureToggle.enable!(:test_facols)
+    @spec_time_zone = Time.zone
   end
 
   config.after(:each) do
     Timecop.return
     Rails.cache.clear
-    FeatureToggle.disable!(:test_facols)
+    Time.zone = @spec_time_zone
   end
 
   # Allows us to use shorthand FactoryBot methods.

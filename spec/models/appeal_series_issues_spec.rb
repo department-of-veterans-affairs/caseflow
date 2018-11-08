@@ -3,14 +3,6 @@ describe AppealSeriesIssues do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let(:vacols_id) { "12345678" }
   let(:series) { AppealSeries.create(appeals: appeals) }
   let(:appeals) { [original, post_remand] }

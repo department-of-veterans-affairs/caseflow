@@ -3,17 +3,12 @@ require "rails_helper"
 RSpec.feature "RAMP Refiling Intake" do
   before do
     FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 12, 8))
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran) do

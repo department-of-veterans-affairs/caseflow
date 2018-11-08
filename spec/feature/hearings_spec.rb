@@ -2,18 +2,9 @@ require "rails_helper"
 
 RSpec.feature "Hearings" do
   before do
-    User.user_repository = Fakes::UserRepository
     # Set the time zone to the current user's time zone for proper date conversion
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 1, 1, 13))
-  end
-
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   context "Hearings Prep" do

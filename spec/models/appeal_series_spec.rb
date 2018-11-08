@@ -4,14 +4,6 @@ describe AppealSeries do
   end
 
   before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
-  before do
     allow(AppealRepository).to receive(:latest_docket_month) { 11.months.ago.to_date.beginning_of_month }
     allow(AppealRepository).to receive(:regular_non_aod_docket_count) { 123_456 }
     allow(AppealRepository).to receive(:docket_counts_by_month) do

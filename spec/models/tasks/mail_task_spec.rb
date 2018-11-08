@@ -1,7 +1,4 @@
 describe MailTask do
-  before { FeatureToggle.enable!(:test_facols) }
-  after { FeatureToggle.disable!(:test_facols) }
-
   describe ".create_from_params" do
     let(:user) { FactoryBot.create(:user) }
     let(:appeal) { FactoryBot.create(:appeal) }

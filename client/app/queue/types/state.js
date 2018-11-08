@@ -35,6 +35,7 @@ export type UiStateModals = {|
 export type UiStateMessage = { title: string, detail?: React.Node };
 
 export type UiState = {
+  activeOrganizationId: ?number,
   selectingJudge: boolean,
   highlightFormItems: boolean,
   messages: {
@@ -89,12 +90,18 @@ export type QueueState = {|
   loadingAppealDetail: Object
 |};
 
+export type CommonComponentState = {|
+  regionalOffices: Array<Object>,
+  selectedRegionalOffice: { label: string, value: string },
+|};
+
 export type State = {
   caseDetail: CaseDetailState,
   caseList: Object,
   caseSelect: Object,
   queue: QueueState,
-  ui: UiState
+  ui: UiState,
+  components: CommonComponentState
 };
 
 type Action = { type: string, payload?: Object };

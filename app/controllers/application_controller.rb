@@ -182,7 +182,7 @@ class ApplicationController < ApplicationBaseController
   # - Ensure the fakes are loaded (reset in dev mode on file save & class reload)
   # - Setup the default authenticated user
   def setup_fakes
-    Fakes::Initializer.setup!(Rails.env, app_name: application)
+    Fakes::Initializer.setup!(Rails.env)
   end
 
   def set_application
@@ -282,8 +282,7 @@ class ApplicationController < ApplicationBaseController
 
   class << self
     def dependencies_faked?
-      Rails.env.stubbed? ||
-        Rails.env.test? ||
+      Rails.env.test? ||
         Rails.env.demo? ||
         Rails.env.ssh_forwarding? ||
         Rails.env.development?

@@ -83,4 +83,10 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :available_actions do
     object.available_actions_unwrapper(@instance_options[:user])
   end
+
+  attribute :task_business_payloads do
+    object.task_business_payloads.map do |payload|
+      { description: payload.description, values: payload.values }
+    end
+  end
 end

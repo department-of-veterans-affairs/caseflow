@@ -197,7 +197,7 @@ class Certification < ApplicationRecord
   end
 
   def can_be_updated?
-    Rails.env.stubbed? || Rails.env.demo? || !already_certified
+    Rails.env.demo? || !already_certified
   end
 
   class << self

@@ -1,12 +1,4 @@
 describe Appeal do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   context "#document_fetcher" do
     let(:veteran_file_number) { "64205050" }
     let(:appeal) do

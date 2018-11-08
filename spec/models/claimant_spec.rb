@@ -1,12 +1,4 @@
 describe Claimant do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let(:name) { nil }
   let(:relationship_to_veteran) { nil }
   let(:claimant_info) do

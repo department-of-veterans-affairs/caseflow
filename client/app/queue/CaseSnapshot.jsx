@@ -6,10 +6,7 @@ import { connect } from 'react-redux';
 
 import {
   actionableTasksForAppeal,
-  appealWithDetailSelector,
-  tasksForAppealAssignedToAttorneySelector,
-  tasksForAppealAssignedToUserSelector,
-  incompleteOrganizationTasksByAssigneeIdSelector
+  appealWithDetailSelector
 } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import DocketTypeBadge from './components/DocketTypeBadge';
@@ -310,17 +307,11 @@ export class CaseSnapshot extends React.PureComponent<Props> {
 const mapStateToProps = (state: State, ownProps: Params) => {
   const { featureToggles, userRole } = state.ui;
 
-  const taskAssignedToAttorney = tasksForAppealAssignedToAttorneySelector(state, { appealId: ownProps.appealId })[0];
-
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     featureToggles,
     userRole,
-    primaryTask: tasksForAppealAssignedToUserSelector(state, { appealId: ownProps.appealId })[0] ||
-      taskAssignedToAttorney ||
-      actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0] ||
-      incompleteOrganizationTasksByAssigneeIdSelector(state, { appealId: ownProps.appealId })[0],
-    taskAssignedToAttorney
+    primaryTask: actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0]
   };
 };
 

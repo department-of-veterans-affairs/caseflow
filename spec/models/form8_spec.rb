@@ -1,12 +1,4 @@
 describe Form8 do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   initial_fields = [:_initial_appellant_name,
                     :_initial_appellant_relationship,
                     :_initial_veteran_name,

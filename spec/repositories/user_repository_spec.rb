@@ -1,12 +1,4 @@
 describe UserRepository do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let(:css_id) { "TEST1" }
 
   context ".vacols_role" do
@@ -41,6 +33,14 @@ describe UserRepository do
 
       it "should return a co-located role" do
         expect(subject).to eq ["colocated"]
+      end
+    end
+
+    context "when a user is both a co-located admin and a dispatcher" do
+      let!(:staff) { create(:staff, sdept: "DSP", stitle: "A2", sattyid: nil, sdomainid: css_id) }
+
+      it "should return a co-located role" do
+        expect(subject).to eq %w[colocated dispatch]
       end
     end
 

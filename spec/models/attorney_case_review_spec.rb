@@ -2,9 +2,6 @@ describe AttorneyCaseReview do
   let(:attorney) { FactoryBot.create(:user) }
   let(:judge) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID) }
 
-  before { FeatureToggle.enable!(:test_facols) }
-  after { FeatureToggle.disable!(:test_facols) }
-
   context ".complete" do
     let(:document_type) { Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"] }
     let(:work_product) { "OMO - IME" }

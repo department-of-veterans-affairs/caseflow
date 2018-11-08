@@ -1,4 +1,4 @@
-class AmaReview < ApplicationRecord
+class DecisionReview < ApplicationRecord
   include CachedAttributes
 
   validate :validate_receipt_date
@@ -26,10 +26,29 @@ class AmaReview < ApplicationRecord
     return unless receipt_date
 
     cached_serialized_ratings.each do |rating|
-      rating[:issues].each do |rating_issue|
-        rating_issue[:timely] = timely_rating?(Date.parse(rating_issue[:promulgation_date].to_s))
+      rating[:issues].each do |rating_issue_hash|
+        rating_issue_hash[:timely] = timely_rating?(Date.parse(rating_issue_hash[:promulgation_date].to_s))
+        # always re-compute flags that depend on data in our db
+        rating_issue_hash.merge!(RatingIssue.from_ui_hash(rating_issue_hash).ui_hash)
       end
     end
+  end
+
+  def ui_hash
+    {
+      veteran: {
+        name: veteran && veteran.name.formatted(:readable_short),
+        fileNumber: veteran_file_number,
+        formName: veteran && veteran.name.formatted(:form)
+      },
+      relationships: veteran && veteran.relationships,
+      claimant: claimant_participant_id,
+      claimantNotVeteran: claimant_not_veteran,
+      receiptDate: receipt_date.to_formatted_s(:json_date),
+      legacyOptInApproved: legacy_opt_in_approved,
+      ratings: serialized_ratings,
+      requestIssues: request_issues.map(&:ui_hash)
+    }
   end
 
   def timely_rating?(promulgation_date)
@@ -70,6 +89,10 @@ class AmaReview < ApplicationRecord
 
   def remove_issues!
     request_issues.destroy_all unless request_issues.empty?
+  end
+
+  def mark_rating_request_issues_to_reassociate!
+    request_issues.select(&:rating?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
   end
 
   private

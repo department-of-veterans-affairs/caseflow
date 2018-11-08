@@ -55,8 +55,6 @@ class JudgeCaseAssignmentToAttorney
   end
 
   class << self
-    attr_writer :repository
-
     def create(task_attrs)
       task = new(task_attrs)
       task.assign_to_attorney! if task.valid?
@@ -70,8 +68,7 @@ class JudgeCaseAssignmentToAttorney
     end
 
     def repository
-      return QueueRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= QueueRepository
+      QueueRepository
     end
   end
 end

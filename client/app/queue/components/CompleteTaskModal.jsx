@@ -9,10 +9,8 @@ import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 import {
-  actionableTasksForAppeal,
-  appealWithDetailSelector,
-  incompleteOrganizationTasksByAssigneeIdSelector,
-  tasksForAppealAssignedToUserSelector
+  taskById,
+  appealWithDetailSelector
 } from '../selectors';
 import { setTaskAttrs } from '../QueueActions';
 import {
@@ -26,6 +24,7 @@ import type { Task, Appeal } from '../types/models';
 
 type Params = {|
   task: Task,
+  taskId: string,
   appeal: Appeal,
   appealId: string,
   modalType: string,
@@ -117,9 +116,7 @@ class CompleteTaskModal extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => ({
-  task: tasksForAppealAssignedToUserSelector(state, ownProps)[0] ||
-    actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0] ||
-    incompleteOrganizationTasksByAssigneeIdSelector(state, { appealId: ownProps.appealId })[0],
+  task: taskById(state, { taskId: ownProps.taskId }),
   appeal: appealWithDetailSelector(state, ownProps),
   saveState: state.ui.saveState.savePending
 });

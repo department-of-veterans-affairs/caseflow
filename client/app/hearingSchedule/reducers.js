@@ -3,6 +3,7 @@ import { ACTIONS } from './constants';
 import { update } from '../util/ReducerUtil';
 import { combineReducers } from 'redux';
 
+import commonComponentsReducer from '../components/common/reducers';
 import caseListReducer from '../queue/CaseList/CaseListReducer';
 import { workQueueReducer } from '../queue/reducers';
 import uiReducer from '../queue/uiReducer/uiReducer';
@@ -27,12 +28,6 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return update(state, {
       schedulePeriod: {
         $set: action.payload.schedulePeriod
-      }
-    });
-  case ACTIONS.RECEIVE_REGIONAL_OFFICES:
-    return update(state, {
-      regionalOffices: {
-        $set: action.payload.regionalOffices
       }
     });
   case ACTIONS.RECEIVE_DAILY_DOCKET:
@@ -62,14 +57,9 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
             'editedNotes',
             'editedDisposition',
             'editedDate',
+            'editedTime',
             'edited'
           ] }
-      }
-    });
-  case ACTIONS.REGIONAL_OFFICE_CHANGE:
-    return update(state, {
-      selectedRegionalOffice: {
-        $set: action.payload.regionalOffice
       }
     });
   case ACTIONS.RECEIVE_UPCOMING_HEARING_DAYS:
@@ -107,6 +97,15 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
       hearings: {
         [action.payload.hearingId]: {
           editedDate: { $set: action.payload.date },
+          edited: { $set: true }
+        }
+      }
+    });
+  case ACTIONS.HEARING_TIME_UPDATE:
+    return update(state, {
+      hearings: {
+        [action.payload.hearingId]: {
+          editedTime: { $set: action.payload.time },
           edited: { $set: true }
         }
       }
@@ -277,7 +276,8 @@ const combinedReducer = combineReducers({
   hearingSchedule: hearingScheduleReducer,
   ui: uiReducer,
   caseList: caseListReducer,
-  queue: workQueueReducer
+  queue: workQueueReducer,
+  components: commonComponentsReducer
 });
 
 export default timeFunction(

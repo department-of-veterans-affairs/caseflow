@@ -53,14 +53,14 @@ export const validateDate = (date) => {
   return null;
 };
 
-export const validNonRatedIssue = (issue) => {
+export const validNonratingRequestIssue = (issue) => {
   const unvalidatedDate = issue.decisionDate;
   const decisionDate = validateDate(unvalidatedDate);
 
   if (!issue.description) {
     return false;
   }
-  // If there isn't any nonRated category, return 0
+  // If there isn't any nonRatingRequest category, return 0
   if (!issue.category) {
     return false;
   }
@@ -73,18 +73,22 @@ export const validNonRatedIssue = (issue) => {
     return false;
   }
 
-  // If we've gotten to here, that means we've got all necessary parts for a nonRatedIssue to count
+  // If we've gotten to here, that means we've got all necessary parts for a nonRatingRequestIssue to count
   return true;
 };
 
+// formatRequestIssues takes an array of requestIssues in the server ui_hash format
+// and returns objects useful for displaying in UI
 export const formatRequestIssues = (requestIssues) => {
   return requestIssues.map((issue) => {
     if (issue.category) {
       return {
-        isRated: false,
+        isRating: false,
         category: issue.category,
         description: issue.description,
-        decisionDate: issue.decision_date
+        decisionDate: issue.decision_date,
+        ineligibleReason: issue.ineligible_reason,
+        contentionText: issue.contention_text
       };
     }
 
@@ -92,20 +96,24 @@ export const formatRequestIssues = (requestIssues) => {
     if (issue.is_unidentified) {
       return {
         description: issue.description,
+        contentionText: issue.contention_text,
         notes: issue.notes,
         isUnidentified: issue.is_unidentified
       };
     }
 
-    // Rated issues
+    // Rating issues
     const issueDate = new Date(issue.profile_date);
 
     return {
-      isRated: true,
+      isRating: true,
       id: issue.reference_id,
       profileDate: issueDate.toISOString(),
       notes: issue.notes,
-      description: issue.description
+      description: issue.description,
+      ineligibleReason: issue.ineligible_reason,
+      titleOfActiveReview: issue.title_of_active_review,
+      contentionText: issue.contention_text
     };
   });
 };
@@ -118,6 +126,15 @@ const ratingIssuesById = (ratings) => {
 
     return result;
   }, {});
+};
+
+export const issueById = (ratings, issueId) => {
+  const currentRating = _.filter(
+    ratings,
+    (ratingDate) => _.some(ratingDate.issues, { reference_id: issueId })
+  )[0];
+
+  return currentRating.issues[issueId];
 };
 
 const formatUnidentifiedIssues = (state) => {
@@ -137,18 +154,22 @@ const formatUnidentifiedIssues = (state) => {
   return [];
 };
 
-const formatRatedIssues = (state) => {
+const formatRatingRequestIssues = (state) => {
   const ratingIssues = ratingIssuesById(state.ratings);
 
   if (state.addedIssues && state.addedIssues.length > 0) {
     // we're using the new add issues page
     return state.addedIssues.
-      filter((issue) => issue.isRated && !issue.isUnidentified).
+      filter((issue) => issue.isRating && !issue.isUnidentified).
       map((issue) => {
-        return { reference_id: issue.id,
+        return {
+          reference_id: issue.id,
           decision_text: ratingIssues[issue.id],
           profile_date: issue.profileDate,
-          notes: issue.notes };
+          notes: issue.notes,
+          untimely_exemption: issue.untimelyExemption,
+          untimely_exemption_notes: issue.untimelyExemptionNotes
+        };
       });
   }
 
@@ -164,10 +185,10 @@ const formatRatedIssues = (state) => {
     value();
 };
 
-const formatNonRatedIssues = (state) => {
+const formatNonratingRequestIssues = (state) => {
   if (state.addedIssues && state.addedIssues.length > 0) {
     // we're using the new add issues page
-    return state.addedIssues.filter((issue) => !issue.isRated && !issue.isUnidentified).map((issue) => {
+    return state.addedIssues.filter((issue) => !issue.isRating && !issue.isUnidentified).map((issue) => {
       return {
         issue_category: issue.category,
         decision_text: issue.description,
@@ -177,9 +198,9 @@ const formatNonRatedIssues = (state) => {
   }
 
   // default to original format
-  return _(state.nonRatedIssues).
+  return _(state.nonRatingRequestIssues).
     filter((issue) => {
-      return validNonRatedIssue(issue);
+      return validNonratingRequestIssue(issue);
     }).
     map((issue) => {
       return {
@@ -192,8 +213,8 @@ const formatNonRatedIssues = (state) => {
 };
 
 export const formatIssues = (state) => {
-  const ratingData = formatRatedIssues(state);
-  const nonRatingData = formatNonRatedIssues(state);
+  const ratingData = formatRatingRequestIssues(state);
+  const nonRatingData = formatNonratingRequestIssues(state);
   const unidentifiedData = formatUnidentifiedIssues(state);
 
   const data = {
@@ -252,31 +273,35 @@ export const formatAddedIssues = (intakeData) => {
         notes: issue.notes,
         isUnidentified: true
       };
-    } else if (issue.isRated) {
+    } else if (issue.isRating) {
       return {
         referenceId: issue.id,
         text: ratingIssues[issue.id],
         date: formatDateStr(issue.profileDate),
         notes: issue.notes,
-        inActiveReview: issue.inActiveReview,
+        titleOfActiveReview: issue.titleOfActiveReview,
         sourceHigherLevelReview: issue.sourceHigherLevelReview,
         promulgationDate: issue.promulgationDate,
-        timely: issue.timely
+        timely: issue.timely,
+        untimelyExemption: issue.untimelyExemption,
+        untimelyExemptionNotes: issue.untimelyExemptionNotes,
+        ineligibleReason: issue.ineligibleReason
       };
     }
 
-    // we must do our own date math for nonrated issues.
+    // we must do our own date math for nonrating request issues.
     // we assume the timezone of the browser for all these.
     let decisionDate = new Date(issue.decisionDate);
     let receiptDate = new Date(intakeData.receiptDate);
     let isTimely = (receiptDate - decisionDate) <= ONE_YEAR_PLUS_MS;
 
-    // returns nonrated issue format
+    // returns nonrating request issue format
     return {
       referenceId: issue.id,
       text: `${issue.category} - ${issue.description}`,
       date: formatDate(issue.decisionDate),
-      timely: isTimely
+      timely: isTimely,
+      ineligibleReason: issue.ineligibleReason
     };
   });
 };

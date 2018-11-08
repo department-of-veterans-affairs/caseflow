@@ -1,24 +1,11 @@
 describe LegacyAppeal do
   before do
-    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
-
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
 
   let(:appeal) do
     create(:legacy_appeal, vacols_case: vacols_case)

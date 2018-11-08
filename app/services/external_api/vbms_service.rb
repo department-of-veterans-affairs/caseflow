@@ -37,7 +37,19 @@ class ExternalApi::VBMSService
 
     veteran_file_number = appeal.veteran_file_number
     request = VBMS::Requests::FindDocumentVersionReference.new(veteran_file_number)
-    documents = send_and_log_request(veteran_file_number, request)
+
+    begin
+      documents = send_and_log_request(veteran_file_number, request)
+    rescue VBMS::HTTPError => e
+      raise unless e.body.include?("File Number does not exist within the system.")
+
+      alternative_file_number = ExternalApi::BGSService.new.fetch_veteran_info(veteran_file_number)[:claim_number]
+
+      raise if alternative_file_number == veteran_file_number
+
+      request = VBMS::Requests::FindDocumentVersionReference.new(alternative_file_number)
+      documents = send_and_log_request(alternative_file_number, request)
+    end
 
     Rails.logger.info("Document list length: #{documents.length}")
 
@@ -144,13 +156,13 @@ class ExternalApi::VBMSService
     send_and_log_request(contention.claim_id, request, vbms_client_with_user(User.system_user))
   end
 
-  def self.associate_rated_issues!(claim_id:, rated_issue_contention_map:)
-    # rated_issue_contention_map format: { issue_id: contention_id, issue_id2: contention_id2 }
+  def self.associate_rating_request_issues!(claim_id:, rating_issue_contention_map:)
+    # rating_issue_contention_map format: { issue_id: contention_id, issue_id2: contention_id2 }
     @vbms_client ||= init_vbms_client
 
     request = VBMS::Requests::AssociateRatedIssues.new(
       claim_id: claim_id,
-      rated_issue_contention_map: rated_issue_contention_map
+      rated_issue_contention_map: rating_issue_contention_map
     )
 
     send_and_log_request(claim_id, request)

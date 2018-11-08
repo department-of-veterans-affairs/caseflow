@@ -34,6 +34,24 @@ class ExternalApi::BGSService
       end
   end
 
+  def cancel_end_product(veteran_file_number, end_product_code, end_product_modifier)
+    DBService.release_db_connections
+
+    @end_products[veteran_file_number] ||=
+      MetricsService.record("BGS: cancel end product by: \
+                            file_number = #{veteran_file_number}, \
+                            end_product_code = #{end_product_code}, \
+                            modifier = #{end_product_modifier}",
+                            service: :bgs,
+                            name: "claims.cancel_end_product") do
+        client.claims.cancel_end_product(
+          file_number: veteran_file_number,
+          end_product_code: end_product_code,
+          modifier: end_product_modifier
+        )
+      end
+  end
+
   def fetch_veteran_info(vbms_id)
     DBService.release_db_connections
 

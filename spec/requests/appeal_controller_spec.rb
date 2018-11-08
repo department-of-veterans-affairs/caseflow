@@ -1,12 +1,4 @@
 RSpec.describe "Reader Appeal Requests", type: :request do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let!(:user) { User.authenticate!(roles: ["Reader"]) }
   let(:vacols_record) { :remand_decided }
   let(:appeal) do

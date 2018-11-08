@@ -33,7 +33,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.claimant_not_veteran ? serverIntake.claimant : null
     },
     payeeCode: {
-      $set: serverIntake.payee_code
+      $set: serverIntake.payeeCode
     },
     legacyOptInApproved: {
       $set: serverIntake.legacy_opt_in_approved
@@ -62,8 +62,9 @@ const updateFromServerIntake = (state, serverIntake) => {
 export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) => (
   updateFromServerIntake({
     addIssuesModalVisible: false,
-    nonRatedIssueModalVisible: false,
+    nonRatingRequestIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
+    untimelyExemptionModalVisible: false,
     removeIssueModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
@@ -83,7 +84,7 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     isComplete: false,
     endProductDescription: null,
     issueCount: 0,
-    nonRatedIssues: { },
+    nonRatingRequestIssues: { },
     reviewIntakeError: null,
     completeIntakeErrorCode: null,
     completeIntakeErrorData: null,
@@ -271,10 +272,10 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         $set: action.payload.isSelected ? state.issueCount + 1 : state.issueCount - 1
       }
     });
-  case ACTIONS.NEW_NON_RATED_ISSUE:
+  case ACTIONS.NEW_NONRATING_REQUEST_ISSUE:
     return update(state, {
-      nonRatedIssues: {
-        [Object.keys(state.nonRatedIssues).length]: {
+      nonRatingRequestIssues: {
+        [Object.keys(state.nonRatingRequestIssues).length]: {
           $set: {
             category: null,
             description: null,
@@ -285,7 +286,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
     });
   case ACTIONS.SET_ISSUE_CATEGORY:
     return update(state, {
-      nonRatedIssues: {
+      nonRatingRequestIssues: {
         [action.payload.issueId]: {
           category: {
             $set: action.payload.category
@@ -295,7 +296,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
     });
   case ACTIONS.SET_ISSUE_DESCRIPTION:
     return update(state, {
-      nonRatedIssues: {
+      nonRatingRequestIssues: {
         [action.payload.issueId]: {
           description: {
             $set: action.payload.description
@@ -305,7 +306,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
     });
   case ACTIONS.SET_ISSUE_DECISION_DATE:
     return update(state, {
-      nonRatedIssues: {
+      nonRatingRequestIssues: {
         [action.payload.issueId]: {
           decisionDate: {
             $set: action.payload.decisionDate
