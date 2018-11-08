@@ -73,14 +73,14 @@ describe ColocatedTask do
 
       it "creates a co-located task successfully and does not update VACOLS location" do
         expect(subject.first.valid?).to be true
-        expect(subject.first.reload.status).to eq "assigned"
+        expect(subject.first.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
         expect(subject.first.assigned_at).to_not eq nil
         expect(subject.first.assigned_by).to eq attorney
         expect(subject.first.action).to eq "aoj"
-        expect(subject.first.assigned_to).to eq(Colocated)
+        expect(subject.first.assigned_to).to eq(Colocated.singleton)
 
         expect(subject.second.valid?).to be true
-        expect(subject.second.reload.status).to eq "assigned"
+        expect(subject.second.reload.status).to eq(Constants.TASK_STATUSES.assigned)
         expect(subject.second.assigned_at).to_not eq nil
         expect(subject.second.assigned_by).to eq attorney
         expect(subject.second.action).to eq "aoj"
@@ -140,18 +140,23 @@ describe ColocatedTask do
   end
 
   context ".update" do
-    let(:colocated_admin_action) { create(:colocated_task) }
+    let(:colocated_admin_action) do
+      atty = FactoryBot.create(:user)
+      FactoryBot.create(:staff, :attorney_role, sdomainid: atty.css_id)
+
+      ColocatedTask.find(FactoryBot.create(:colocated_task, assigned_by: atty).id)
+    end
 
     context "when status is updated to on-hold" do
       it "should validate on-hold duration" do
-        colocated_admin_action.update(status: "on_hold")
+        colocated_admin_action.update(status: Constants.TASK_STATUSES.on_hold)
         expect(colocated_admin_action.valid?).to eq false
         expect(colocated_admin_action.errors.messages[:on_hold_duration]).to eq ["has to be specified"]
 
-        colocated_admin_action.update(status: "in_progress")
+        colocated_admin_action.update(status: Constants.TASK_STATUSES.in_progress)
         expect(colocated_admin_action.valid?).to eq true
 
-        colocated_admin_action.update(status: "on_hold", on_hold_duration: 60)
+        colocated_admin_action.update(status: Constants.TASK_STATUSES.on_hold, on_hold_duration: 60)
         expect(colocated_admin_action.valid?).to eq true
       end
     end
@@ -165,7 +170,7 @@ describe ColocatedTask do
                                                 assigned_by: attorney,
                                                 assigned_to: create(:user),
                                                 action: action
-                                              }], attorney).first
+                                              }], attorney).last
       end
 
       context "when more than one task per appeal and not all colocated tasks are completed" do
@@ -178,11 +183,11 @@ describe ColocatedTask do
                                                   assigned_by: attorney,
                                                   assigned_to: create(:user),
                                                   action: :poa_clarification
-                                                }], attorney).first
+                                                }], attorney)
         end
 
         it "should not update location to assignor in vacols" do
-          colocated_admin_action.update(status: "completed")
+          colocated_admin_action.mark_as_complete!
           expect(vacols_case.reload.bfcurloc).to_not eq staff.slogid
         end
       end

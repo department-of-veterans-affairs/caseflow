@@ -5,6 +5,7 @@ class ColocatedTask < Task
   validate :assigned_by_role_is_valid
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
+  validate :on_hold_duration_is_set, on: :update
 
   after_update :update_location_in_vacols
 
@@ -21,7 +22,7 @@ class ColocatedTask < Task
           [team_task, individual_task]
         end.flatten
 
-        individual_task = records.select { |r| r.assigned_to_type == User.name }.first
+        individual_task = records.select { |r| r.assigned_to.is_a?(User) }.first
         if records.map(&:valid?).uniq == [true] && individual_task.legacy?
           AppealRepository.update_location!(individual_task.appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
         end
@@ -101,5 +102,11 @@ class ColocatedTask < Task
 
   def assigned_by_role_is_valid
     errors.add(:assigned_by, "has to be an attorney") if assigned_by && !assigned_by.attorney_in_vacols?
+  end
+
+  def on_hold_duration_is_set
+    if saved_change_to_status? && on_hold? && !on_hold_duration && assigned_to.is_a?(User)
+      errors.add(:on_hold_duration, "has to be specified")
+    end
   end
 end
