@@ -76,6 +76,7 @@ module QueueMapper
 
     update_attrs.merge(rename_deficiencies(decass_attrs[:deficiencies]))
       .merge(demdtim: VacolsHelper.local_date_with_utc_timezone)
+      .merge(rename_one_touch_initiative(decass_attrs[:one_touch_initiative]))
   end
 
   def self.rename_deficiencies(deficiencies)
@@ -83,6 +84,10 @@ module QueueMapper
       result[DEFICIENCIES[d.to_sym]] = "Y"
       result
     end
+  end
+
+  def self.rename_one_touch_initiative(one_touch_initiative)
+    one_touch_initiative ? "Y" : "N"
   end
 
   def self.complexity_to_vacols_code(complexity)

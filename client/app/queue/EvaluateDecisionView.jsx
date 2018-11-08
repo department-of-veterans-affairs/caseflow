@@ -11,6 +11,7 @@ import { sprintf } from 'sprintf-js';
 import decisionViewBase from './components/DecisionViewBase';
 import RadioField from '../components/RadioField';
 import CheckboxGroup from '../components/CheckboxGroup';
+import Checkbox from '../components/Checkbox';
 import TextareaField from '../components/TextareaField';
 import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
@@ -52,6 +53,7 @@ class EvaluateDecisionView extends React.PureComponent {
     super(props);
 
     this.state = {
+      one_touch_initiative: false,
       complexity: null,
       quality: null,
       factors_not_considered: {},
@@ -205,6 +207,16 @@ class EvaluateDecisionView extends React.PureComponent {
         {error.detail}
       </Alert>}
       <CaseSnapshot appealId={appealId} hideDropdown />
+      <hr {...hrStyling} />
+
+      <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_LABEL}</h2>
+      <Checkbox
+        label={<b>{COPY.JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_SUBHEAD}</b>}
+        name="One Touch Initiative"
+        value={this.state.one_touch_initiative}
+        onChange={(value) => { this.setState({ one_touch_initiative: value }) }}
+      />
+
       <hr {...hrStyling} />
 
       <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
