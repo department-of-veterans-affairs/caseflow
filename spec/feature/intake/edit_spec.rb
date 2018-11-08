@@ -8,6 +8,10 @@ RSpec.feature "Edit issues" do
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 26))
+
+    # skip the sync call since all edit requests require resyncing
+    # currently, we're not mocking out vbms and bgs
+    allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
   end
 
   after do
@@ -540,6 +544,21 @@ RSpec.feature "Edit issues" do
           click_cancel("/")
         end
       end
+
+      feature "with cleared end product" do
+        let!(:cleared_end_product) do
+          create(:end_product_establishment,
+                 source: higher_level_review,
+                 synced_status: "CLR")
+        end
+
+        scenario "prevents edits on eps that have cleared" do
+          visit "higher_level_reviews/#{rating_ep_claim_id}/edit/"
+          expect(page).to have_current_path("/higher_level_reviews/#{rating_ep_claim_id}/edit/cleared_eps")
+          expect(page).to have_content("Issues Not Editable")
+          expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        end
+      end
     end
   end
 
@@ -863,6 +882,21 @@ RSpec.feature "Edit issues" do
 
         scenario "from landing page" do
           click_cancel("/")
+        end
+      end
+
+      feature "with cleared end product" do
+        let!(:cleared_end_product) do
+          create(:end_product_establishment,
+                 source: supplemental_claim,
+                 synced_status: "CLR")
+        end
+
+        scenario "prevents edits on eps that have cleared" do
+          visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
+          expect(page).to have_current_path("/supplemental_claims/#{rating_ep_claim_id}/edit/cleared_eps")
+          expect(page).to have_content("Issues Not Editable")
+          expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
         end
       end
     end
