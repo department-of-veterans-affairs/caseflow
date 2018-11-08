@@ -35,10 +35,7 @@ module LegacyCaseDistribution
     priority_appeals = docket.distribute_priority_appeals(self, genpop: false, limit: rem)
     rem -= priority_appeals.count
 
-    nonpriority_appeals = docket.distribute_nonpriority_appeals(self,
-                                                                genpop: false,
-                                                                range: net_docket_range,
-                                                                limit: rem)
+    nonpriority_appeals = docket.distribute_nonpriority_appeals(self, genpop: false, range: 7000, limit: rem)
 
     [*priority_appeals, *nonpriority_appeals]
   end
