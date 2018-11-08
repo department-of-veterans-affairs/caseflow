@@ -125,7 +125,6 @@ jobs:
       - deploy:
           name: Verify code coverage
           command: |
-            rm ~/coverage/index.html
             ~/project/ci-bin/capture-log "bundle exec rake ci:circleci_verify_code_coverage"
 
       - deploy:
@@ -140,7 +139,7 @@ jobs:
 
       - store_artifacts:
           name: Store final coverage
-          path: ~/coverage
+          path: ~/coverage/combined
 
   lint:
     docker:
