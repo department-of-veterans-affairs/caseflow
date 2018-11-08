@@ -339,13 +339,14 @@ RSpec.feature "Edit issues" do
     end
 
     context "when there is a rating end product" do
+      let(:contention_ref_id) { "123" }
       let!(:request_issue) do
         RequestIssue.create!(
           rating_issue_reference_id: "def456",
           rating_issue_profile_date: rating.profile_date,
           review_request: higher_level_review,
           description: "PTSD denied",
-          contention_reference_id: "123"
+          contention_reference_id: contention_ref_id
         )
       end
 
@@ -392,6 +393,7 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content("2. Left knee granted")
         expect(page).to_not have_content("Notes:")
 
+        # remove existing issue
         page.all(".remove-issue")[0].click
         safe_click ".remove-issue"
         expect(page).not_to have_content("PTSD denied")
@@ -516,6 +518,11 @@ RSpec.feature "Edit issues" do
           source: higher_level_review,
           code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
         )
+
+        # expect the remove/re-add to create a new RequestIssue for same RatingIssue
+        expect(higher_level_review.request_issues).to_not include(request_issue)
+        new_version_of_request_issue = higher_level_review.find_request_issue_by_description(request_issue.description)
+        expect(new_version_of_request_issue.rating_issue_reference_id).to eq(request_issue.rating_issue_reference_id)
 
         # expect contentions to reflect issue update
         expect(Fakes::VBMSService).to have_received(:remove_contention!).once
