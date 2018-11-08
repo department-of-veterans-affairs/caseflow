@@ -89,6 +89,10 @@ export class AddIssuesPage extends React.Component {
       return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
     }
 
+    if (intakeData.hasClearedEP) {
+      return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
+    }
+
     const issuesComponent = () => {
       let issues = formatAddedIssues(intakeData, useAmaActivationDate);
 

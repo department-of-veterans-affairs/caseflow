@@ -208,11 +208,11 @@ class Veteran < ApplicationRecord
     end
   end
 
-  private
-
   def deceased?
     !date_of_death.nil?
   end
+
+  private
 
   def fetch_end_products
     bgs_end_products = bgs.get_end_products(file_number)
