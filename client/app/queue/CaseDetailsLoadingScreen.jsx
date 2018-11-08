@@ -10,6 +10,7 @@ import ApiUtil from '../util/ApiUtil';
 import { prepareAppealForStore, prepareLegacyTasksForStore, prepareTasksForStore } from './utils';
 
 import { onReceiveAppealDetails, onReceiveTasks, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
+import { setCanEditAod } from './uiReducer/uiActions';
 import type { Appeal, Appeals, Tasks } from './types/models';
 import type { State, UsersById } from './types/state';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
@@ -50,6 +51,7 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
     if (!appealDetails || !(appealId in appealDetails)) {
       promises.push(
         ApiUtil.get(`/appeals/${appealId}`).then((response) => {
+          this.props.setCanEditAod(response.body.can_edit_aod);
           this.props.onReceiveAppealDetails(prepareAppealForStore([response.body.appeal]));
         })
       );
@@ -134,6 +136,7 @@ const mapStateToProps = (state: State) => {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveTasks,
+  setCanEditAod,
   onReceiveAppealDetails,
   setAttorneysOfJudge,
   fetchAllAttorneys
