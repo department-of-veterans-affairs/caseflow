@@ -16,12 +16,21 @@ class Distribution < ApplicationRecord
   private
 
   def distribute
-    legacy_distribution
+    if acting_judge
+      legacy_acting_judge_distribution
+    else
+      legacy_distribution
+    end
+
     update(statistics: legacy_statistics, completed_at: Time.zone.now)
   end
 
   def user_is_judge
-    judge.judge_in_vacols? && !judge.attorney_in_vacols
+    judge.judge_in_vacols?
+  end
+
+  def acting_judge
+    judge.attorney_in_vacols
   end
 
   def judge_has_no_unassigned_cases
