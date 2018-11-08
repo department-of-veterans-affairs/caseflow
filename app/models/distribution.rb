@@ -30,7 +30,7 @@ class Distribution < ApplicationRecord
   end
 
   def acting_judge
-    judge.attorney_in_vacols
+    judge.attorney_in_vacols?
   end
 
   def judge_has_no_unassigned_cases
