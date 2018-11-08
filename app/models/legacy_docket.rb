@@ -19,28 +19,26 @@ class LegacyDocket
     count(priority: false) + nod_count * NOD_ADJUSTMENT
   end
 
-  def distribute_priority_appeals(distribution, genpop = nil, limit = 1)
+  def distribute_priority_appeals(distribution, genpop: nil, limit: 1)
     LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
-      DistributedCase.create(distribution: distribution,
-                             case_id: record["bfkey"],
-                             docket: "legacy",
-                             priority: true,
-                             ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
-                             genpop: !record["vlj"].nil?,
-                             genpop_query: maybe_boolean_to_string(genpop))
+      distribution.distributed_cases.create(case_id: record["bfkey"],
+                                            docket: "legacy",
+                                            priority: true,
+                                            ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
+                                            genpop: record["vlj"].nil?,
+                                            genpop_query: maybe_boolean_to_string(genpop))
     end
   end
 
-  def distribute_nonpriority_appeals(distribution, genpop = nil, range = nil, limit = 1)
+  def distribute_nonpriority_appeals(distribution, genpop: nil, range: nil, limit: 1)
     LegacyAppeal.repository.distribute_nonpriority_appeals(distribution.judge, genpop, range, limit).map do |record|
-      DistributedCase.create(distribution: distribution,
-                             case_id: record["bfkey"],
-                             docket: "legacy",
-                             priority: false,
-                             ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
-                             docket_index: record["docket_index"],
-                             genpop: !record["vlj"].nil?,
-                             genpop_query: maybe_boolean_to_string(genpop))
+      distribution.distributed_cases.create(case_id: record["bfkey"],
+                                            docket: "legacy",
+                                            priority: false,
+                                            ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
+                                            docket_index: record["docket_index"],
+                                            genpop: record["vlj"].nil?,
+                                            genpop_query: maybe_boolean_to_string(genpop))
     end
   end
 
@@ -56,7 +54,7 @@ class LegacyDocket
 
   def maybe_boolean_to_string(bool)
     case bool
-    when nil?
+    when nil
       "any"
     when true
       "yes"

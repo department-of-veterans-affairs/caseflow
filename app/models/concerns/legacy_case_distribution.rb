@@ -5,6 +5,7 @@ module LegacyCaseDistribution
 
   def legacy_distribution
     rem = batch_size
+    priority_target = target_number_of_priority_appeals
 
     priority_hearing_appeals = docket.distribute_priority_appeals(self, genpop: false, limit: rem)
     rem -= priority_hearing_appeals.count
@@ -15,8 +16,8 @@ module LegacyCaseDistribution
                                                                         limit: rem)
     rem -= nonpriority_hearing_appeals.count
 
-    if priority_hearing_appeals.count < target_number_of_priority_appeals
-      priority_rem = [target_number_of_priority_appeals - priority_hearing_appeals.count, rem].min
+    if priority_hearing_appeals.count < priority_target
+      priority_rem = [priority_target - priority_hearing_appeals.count, rem].min
 
       priority_nonhearing_appeals = docket.distribute_priority_appeals(self,
                                                                        genpop: true,
