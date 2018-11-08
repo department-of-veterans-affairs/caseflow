@@ -171,6 +171,29 @@ class EndProductEstablishment < ApplicationRecord
     raise BGSSyncError.new(e, self)
   end
 
+  def sync_decision_issues!
+    return unless status_cleared?
+    synced_rating_issues = []
+    potential_decision_ratings.each do |rating|
+      rating.issues.select(&:contention_reference_id).each do |rating_issue|
+        if rating_issue.save_decision_issue
+          synced_rating_issues << rating_issue
+        end
+      end
+    end
+    resolve_synced_decisions(synced_rating_issues)
+  end
+
+  def resolve_synced_decisions(synced_rating_issues)
+    request_issues.reject(&:processed?).each do |request_issue|
+      if synced_rating_issues.any? { |rating_issue| rating_issue.source_request_issue == request_issue }
+        request_issue.processed!
+      else
+        request_issue.submit_for_processing!
+      end
+    end
+  end
+
   def status_canceled?
     synced_status == CANCELED_STATUS
   end
@@ -218,7 +241,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def active_request_issues
-    request_issues.select { |request_issue| request_issue.removed_at.nil? }
+    request_issues.select { |request_issue| request_issue.removed_at.nil? && request_issue.status_active? }
   end
 
   private
@@ -229,6 +252,10 @@ class EndProductEstablishment < ApplicationRecord
       BGSService.new.cancel_end_product(veteran_file_number, code, modifier)
       update!(synced_status: CANCELED_STATUS)
     end
+  end
+
+  def potential_decision_ratings
+    Rating.fetch_in_range(participant_id: veteran.participant_id, start_date: established_at, end_date: Time.zone.today)
   end
 
   def rating_request_issues

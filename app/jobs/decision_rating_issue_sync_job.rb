@@ -9,10 +9,9 @@ class DecisionRatingIssueSyncJob < CaseflowJob
     RequestStore.store[:application] = "intake"
     RequestStore.store[:current_user] = User.system_user
 
-    veteran = request_issue.review_request.veteran
     begin
       request_issue.attempted!
-      veteran.sync_rating_issues!([request_issue])
+      request_issue.end_product_establishment.sync_decision_issues!
     rescue VBMS::ClientError => err
       request_issue.update_error!(err.to_s)
       Raven.capture_exception(err)

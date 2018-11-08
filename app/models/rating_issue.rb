@@ -44,8 +44,10 @@ class RatingIssue
   def save_decision_issue
     return unless source_request_issue
 
-    # if a DecisionIssue already exists, update rather than attempt to insert a duplicate
+    # if a DecisionIssue already exists, update rather than attempt to insert a duplicate.
+    # don't bother updating if already set.
     if decision_issue
+      return if decision_issue.source_request_issue == source_request_issue
       decision_issue.update!(source_request_issue: source_request_issue)
     else
       DecisionIssue.create!(
