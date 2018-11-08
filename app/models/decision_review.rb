@@ -33,7 +33,7 @@ class DecisionReview < ApplicationRecord
 
     cached_serialized_ratings.each do |rating|
       rating[:issues].each do |rating_issue_hash|
-        rating_issue_hash[:timely] = timely_rating?(Date.parse(rating_issue_hash[:promulgation_date].to_s))
+        rating_issue_hash[:timely] = timely_issue?(Date.parse(rating_issue_hash[:promulgation_date].to_s))
         # always re-compute flags that depend on data in our db
         rating_issue_hash.merge!(RatingIssue.from_ui_hash(rating_issue_hash).ui_hash)
       end
@@ -57,9 +57,9 @@ class DecisionReview < ApplicationRecord
     }
   end
 
-  def timely_rating?(promulgation_date)
+  def timely_issue?(decision_date)
     return true unless receipt_date
-    promulgation_date >= (receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
+    decision_date >= (receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
   end
 
   def start_review!

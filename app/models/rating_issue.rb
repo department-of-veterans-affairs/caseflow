@@ -102,7 +102,8 @@ class RatingIssue
   end
 
   def contention_reference_id
-    @contention_reference_id ||= rba_contentions_data.first.dig(:cntntn_id) if rba_contentions_data
+    return unless rba_contentions_data
+    @contention_reference_id ||= rba_contentions_data.first.dig(:cntntn_id)
   end
 
   def source_request_issue

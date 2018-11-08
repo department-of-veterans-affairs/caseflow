@@ -141,7 +141,7 @@ describe ClaimReview do
     end
   end
 
-  context "#timely_rating?" do
+  context "#timely_issue?" do
     before do
       Timecop.freeze(Time.utc(2019, 4, 24, 12, 0, 0))
     end
@@ -150,13 +150,13 @@ describe ClaimReview do
 
     context "decided in the last year" do
       it "considers it timely" do
-        expect(subject.timely_rating?(Time.zone.today)).to eq(true)
+        expect(subject.timely_issue?(Time.zone.today)).to eq(true)
       end
     end
 
     context "decided more than a year ago" do
       it "considers it untimely" do
-        expect(subject.timely_rating?(Time.zone.today - 400)).to eq(false)
+        expect(subject.timely_issue?(Time.zone.today - 400)).to eq(false)
       end
     end
   end

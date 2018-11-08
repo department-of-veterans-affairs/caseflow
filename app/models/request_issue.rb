@@ -154,9 +154,9 @@ class RequestIssue < ApplicationRecord
     end
   end
 
-  def decision_or_profile_date
-    return rating_issue_profile_date if rating?
+  def decision_or_promulgation_date
     return decision_date if nonrating?
+    return contested_rating_issue.try(:promulgation_date) if rating?
   end
 
   def check_for_before_ama!
@@ -164,7 +164,7 @@ class RequestIssue < ApplicationRecord
     return if is_unidentified
     return if ramp_claim_id
 
-    if decision_or_profile_date && decision_or_profile_date < DecisionReview.ama_activation_date
+    if decision_or_promulgation_date && decision_or_promulgation_date < DecisionReview.ama_activation_date
       self.ineligible_reason = :before_ama
     end
   end
@@ -185,21 +185,10 @@ class RequestIssue < ApplicationRecord
 
   def check_for_untimely!
     return unless eligible?
+    return if untimely_exemption
     return if review_request && review_request.is_a?(SupplementalClaim)
-    check_for_rating_untimely! if rating?
-    check_for_nonrating_untimely! if nonrating?
-  end
 
-  def check_for_rating_untimely!
-    return if untimely_exemption
-    if contested_rating_issue && !review_request.timely_rating?(contested_rating_issue.promulgation_date)
-      self.ineligible_reason = :untimely
-    end
-  end
-
-  def check_for_nonrating_untimely!
-    return if untimely_exemption
-    if decision_date < (review_request.receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
+    if decision_or_promulgation_date && !review_request.timely_issue?(decision_or_promulgation_date)
       self.ineligible_reason = :untimely
     end
   end
