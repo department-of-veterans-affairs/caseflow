@@ -295,8 +295,8 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
       </div>
       {!appeal.isLegacyAppeal &&
         <div {...smallBottomMargin}>
-        Issue description: {issue.description}
-      </div>
+          Issue description: {issue.description}
+        </div>
       }
       {appeal.isLegacyAppeal &&
         <React.Fragment>
