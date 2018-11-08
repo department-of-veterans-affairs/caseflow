@@ -185,4 +185,59 @@ describe Appeal do
       appeal.create_tasks_on_intake_success!
     end
   end
+
+  context "#location_code" do
+    context "if the RootTask status is completed" do
+      let(:appeal) do create(:appeal) end
+
+      before do
+        create(:root_task, appeal: appeal, status: :completed)
+      end
+
+      it "returns Post-decision" do
+        expect(appeal.location_code).to eq("Post-decision")
+      end
+    end
+
+    context "if there are no active tasks" do
+      let(:appeal) do create(:appeal) end
+      it "returns nil" do
+        expect(appeal.location_code).to eq(nil)
+      end
+    end
+
+    context "if the only active case is a RootTask" do
+      let(:appeal) do create(:appeal) end
+
+      before do
+        create(:root_task, appeal: appeal, status: :in_progress)
+      end
+      it "returns Case storage" do
+        expect(appeal.location_code).to eq("Case storage")
+      end
+    end
+
+    context "if there is an assignee" do
+      let(:organization) do create(:organization, name: "VSO") end
+      let(:appeal_organization) do create(:appeal) end
+      let(:user) do create(:user, css_id: "69") end
+      let(:appeal_user) do create(:appeal) end
+
+      before do
+        organization_root_task = create(:root_task, appeal: appeal_organization)
+        create(:generic_task, assigned_to: organization, appeal: appeal_organization, parent: organization_root_task)
+
+        user_root_task = create(:root_task, appeal: appeal_user)
+        create(:generic_task, assigned_to: user, appeal: appeal_user, parent: user_root_task)
+      end
+
+      it "if the most recent assignee is an organization it returns the organization name" do
+        expect(appeal_organization.location_code).to eq("VSO")
+      end
+
+      it "if the most recent assignee is not an organization it returns the id" do
+        expect(appeal_user.location_code).to eq("69")
+      end
+    end
+  end
 end

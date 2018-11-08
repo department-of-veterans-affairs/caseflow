@@ -40,7 +40,6 @@ class Appeal < DecisionReview
     return nil if tasks.empty?
 
     root_task = tasks.first.root_task
-
     return nil if !root_task
 
     # if RootTask status:completed, then return "Post-decision"
