@@ -218,11 +218,10 @@ describe RatingIssue do
 
     it "does not save duplicates" do
       decision_issue = create(:decision_issue, rating_issue_reference_id: reference_id, participant_id: participant_id)
-      subject.save_decision_issue
 
-      expect(subject.source_request_issue).to eq(request_issue)
+      expect(subject.save_decision_issue).to eq(nil)
       expect(subject.decision_issue).to eq(decision_issue)
-      expect(subject.decision_issue.source_request_issue).to eq(request_issue)
+      expect(decision_issue.source_request_issue).to_not eq(request_issue)
     end
 
     it "returns nil if no source_request_issue is found" do
