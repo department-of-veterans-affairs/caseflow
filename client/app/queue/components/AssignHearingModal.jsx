@@ -180,6 +180,12 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
         // Review with team to see why this is failing.
         this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.uniqueId]);
         this.props.history.goBack();
+      }, () => {
+        this.props.showErrorMessage({
+          title: 'No Available Slots',
+          detail: 'Could not find any available slots for this regional office and hearing day combination.' +
+              ' Please select a different date.'
+        });
       });
   };
 
