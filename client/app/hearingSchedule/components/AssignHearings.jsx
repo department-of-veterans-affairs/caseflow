@@ -73,40 +73,44 @@ export default class AssignHearings extends React.Component {
       <h3>Hearings to Schedule</h3>
       <h4>Available Hearing Days</h4>
       <ul className="usa-sidenav-list" {...sectionNavigationListStyling}>
-        {Object.values(this.props.upcomingHearingDays).slice(0, 9).
-          map((hearingDay) => {
-            const { selectedHearingDay } = this.props;
-            const dateSelected = selectedHearingDay &&
+        {Object.values(this.props.upcomingHearingDays).map((hearingDay) => {
+          const { selectedHearingDay } = this.props;
+          const dateSelected = selectedHearingDay &&
             (selectedHearingDay.hearingDate === hearingDay.hearingDate &&
                selectedHearingDay.roomInfo === hearingDay.roomInfo);
-            const buttonColorSelected = css({
+          const buttonColorSelected = css({
+            backgroundColor: COLORS.GREY_DARK,
+            color: COLORS.WHITE,
+            borderRadius: '0.1rem 0.1rem 0 0',
+            '&:hover': {
               backgroundColor: COLORS.GREY_DARK,
-              color: COLORS.WHITE,
-              borderRadius: '0.1rem 0.1rem 0 0',
-              '&:hover': {
-                backgroundColor: COLORS.GREY_DARK,
-                color: COLORS.WHITE
-              }
-            });
+              color: COLORS.WHITE
+            }
+          });
 
-            const styling = dateSelected ? buttonColorSelected : {};
+          const styling = dateSelected ? buttonColorSelected : {};
 
-            return <li key={hearingDay.id} >
-              <Button
-                styling={styling}
-                onClick={this.onSelectedHearingDayChange(hearingDay)}
-                linkStyling
-              >
-                {`${moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}
+          return <li key={hearingDay.id} >
+            <Button
+              styling={styling}
+              onClick={this.onSelectedHearingDayChange(hearingDay)}
+              linkStyling
+            >
+              {`${moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}
                 ${this.roomInfo(hearingDay)}`}
-              </Button>
-            </li>;
-          })}
+            </Button>
+          </li>;
+        })}
       </ul>
     </div>;
   };
 
   getHearingTime = (date, regionalOfficeTimezone) => {
+
+    if (this.props.selectedRegionalOffice.label === 'Central') {
+      return <div>{getTime(date)} </div>;
+    }
+
     return <div>
       {getTime(date)} /<br />{getTimeInDifferentTimeZone(date, regionalOfficeTimezone)}
     </div>;
@@ -142,6 +146,7 @@ export default class AssignHearings extends React.Component {
 
   tableScheduledHearingsRows = (hearings) => {
     return _.map(hearings, (hearing) => ({
+      vacolsId: hearing.appealVacolsId,
       caseDetails: `${hearing.appellantMiFormatted || hearing.veteranMiFormatted} | ${hearing.vbmsId}`,
       type: renderAppealType({
         caseType: hearing.appealType,

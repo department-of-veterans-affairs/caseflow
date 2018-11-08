@@ -267,6 +267,7 @@ jobs:
           path: ~/all_logs.log
 
 workflows:
+  version: 2
   build:
     jobs:
       - rspec

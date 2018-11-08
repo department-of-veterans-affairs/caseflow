@@ -1,5 +1,5 @@
-import _ from 'lodash';
 import { ACTIONS } from '../constants';
+import { issueById } from '../util/issues';
 
 const analytics = true;
 
@@ -8,13 +8,18 @@ export const toggleAddIssuesModal = () => ({
   meta: { analytics }
 });
 
-export const toggleNonRatedIssueModal = () => ({
-  type: ACTIONS.TOGGLE_NON_RATED_ISSUE_MODAL,
+export const toggleNonratingRequestIssueModal = () => ({
+  type: ACTIONS.TOGGLE_NONRATING_REQUEST_ISSUE_MODAL,
   meta: { analytics }
 });
 
 export const toggleUnidentifiedIssuesModal = () => ({
   type: ACTIONS.TOGGLE_UNIDENTIFIED_ISSUES_MODAL
+});
+
+export const toggleUntimelyExemptionModal = (currentIssueAndNotes = {}) => ({
+  type: ACTIONS.TOGGLE_UNTIMELY_EXEMPTION_MODAL,
+  payload: { currentIssueAndNotes }
 });
 
 export const toggleIssueRemoveModal = () => ({
@@ -37,36 +42,34 @@ export const addUnidentifiedIssue = (description, notes) => (dispatch) => {
   });
 };
 
-export const addRatedIssue = (args) => (dispatch) => {
-  let currentRating = _.filter(
-    args.ratings,
-    (ratingDate) => _.some(ratingDate.issues, { reference_id: args.issueId })
-  )[0];
-  let currentIssue = currentRating.issues[args.issueId];
+export const addRatingRequestIssue = (args) => (dispatch) => {
+  const currentIssue = issueById(args.ratings, args.issueId);
 
   dispatch({
     type: ACTIONS.ADD_ISSUE,
     payload: {
       id: args.issueId,
-      isRated: args.isRated,
+      isRating: args.isRating,
       titleOfActiveReview: currentIssue.title_of_active_review,
       timely: currentIssue.timely,
       sourceHigherLevelReview: currentIssue.source_higher_level_review,
       promulgationDate: currentIssue.promulgation_date,
-      profileDate: currentRating.profile_date,
-      notes: args.notes
+      profileDate: currentIssue.profile_date,
+      notes: args.notes,
+      untimelyExemption: args.untimelyExemption,
+      untimelyExemptionNotes: args.untimelyExemptionNotes
     }
   });
 };
 
-export const addNonRatedIssue = (category, description, decisionDate, isRated = false) => (dispatch) => {
+export const addNonratingRequestIssue = (category, description, decisionDate, isRating = false) => (dispatch) => {
   dispatch({
     type: ACTIONS.ADD_ISSUE,
     payload: {
       category,
       description,
       decisionDate,
-      isRated
+      isRating
     }
   });
 };

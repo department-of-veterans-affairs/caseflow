@@ -121,7 +121,7 @@ describe SupplementalClaimIntake do
     before do
       allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
       allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-      allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+      allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
     end
 
     let(:issue_data) do
@@ -187,9 +187,9 @@ describe SupplementalClaimIntake do
         user: user
       )
 
-      expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+      expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
         claim_id: ratings_end_product_establishment.reference_id,
-        rated_issue_contention_map: {
+        rating_issue_contention_map: {
           "reference-id" => intake.detail.request_issues.first.contention_reference_id
         }
       )
@@ -211,7 +211,7 @@ describe SupplementalClaimIntake do
 
         expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
         expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
-        expect(Fakes::VBMSService).to_not have_received(:associate_rated_issues!)
+        expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
       end
     end
 
@@ -223,7 +223,7 @@ describe SupplementalClaimIntake do
 
         expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
         expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
-        expect(Fakes::VBMSService).to_not have_received(:associate_rated_issues!)
+        expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
       end
     end
 

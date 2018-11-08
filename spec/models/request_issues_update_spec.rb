@@ -14,7 +14,7 @@ describe RequestIssuesUpdate do
 
   let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
 
-  let(:rated_end_product_establishment) do
+  let(:rating_end_product_establishment) do
     create(
       :end_product_establishment,
       veteran_file_number: veteran.file_number,
@@ -26,11 +26,11 @@ describe RequestIssuesUpdate do
   let(:request_issue_contentions) do
     [
       Generators::Contention.build(
-        claim_id: rated_end_product_establishment.reference_id,
+        claim_id: rating_end_product_establishment.reference_id,
         text: "Service connection for PTSD was granted at 10 percent"
       ),
       Generators::Contention.build(
-        claim_id: rated_end_product_establishment.reference_id,
+        claim_id: rating_end_product_establishment.reference_id,
         text: "Service connection for left knee immobility was denied"
       )
     ]
@@ -207,7 +207,7 @@ describe RequestIssuesUpdate do
 
       it "saves update, adds issues, and calls create contentions" do
         allow_create_contentions
-        allow_associate_rated_issues
+        allow_associate_rating_request_issues
 
         expect(subject).to be_truthy
         request_issues_update.reload
@@ -230,11 +230,14 @@ describe RequestIssuesUpdate do
 
         expect(review.request_issues.count).to eq(3)
 
-        new_map = rated_end_product_establishment.send(:rated_issue_contention_map, review.request_issues.reload)
+        new_map = rating_end_product_establishment.send(
+          :rating_issue_contention_map,
+          review.request_issues.reload
+        )
 
-        expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
-          claim_id: rated_end_product_establishment.reference_id,
-          rated_issue_contention_map: new_map
+        expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
+          claim_id: rating_end_product_establishment.reference_id,
+          rating_issue_contention_map: new_map
         )
 
         review.request_issues.map(&:rating_issue_associated_at).each do |value|
@@ -253,7 +256,7 @@ describe RequestIssuesUpdate do
         let(:request_issues_data) do
           existing_request_issues_data + [{
             reference_id: "issue3",
-            decision_text: "Nonrated issue",
+            decision_text: "Nonrating issue",
             category: "Apportionment"
           }]
         end
@@ -291,13 +294,13 @@ describe RequestIssuesUpdate do
       let(:nonrating_request_issue_contention) do
         Generators::Contention.build(
           claim_id: nonrating_end_product_establishment.reference_id,
-          text: "Unrated issue"
+          text: "Nonrating issue"
         )
       end
 
       it "saves update, removes issues, and calls remove contentions" do
         allow_remove_contention
-        allow_associate_rated_issues
+        allow_associate_rating_request_issues
 
         expect(subject).to be_truthy
 
@@ -318,18 +321,21 @@ describe RequestIssuesUpdate do
 
         expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
 
-        new_map = rated_end_product_establishment.send(:rated_issue_contention_map, review.request_issues.reload)
+        new_map = rating_end_product_establishment.send(
+          :rating_issue_contention_map,
+          review.request_issues.reload
+        )
 
-        expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
-          claim_id: rated_end_product_establishment.reference_id,
-          rated_issue_contention_map: new_map
+        expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
+          claim_id: rating_end_product_establishment.reference_id,
+          rating_issue_contention_map: new_map
         )
 
         expect(review.request_issues.first.rating_issue_associated_at).to eq(Time.zone.now)
 
         # ep should not be canceled because 1 rating request issue still exists
-        rated_end_product_establishment.reload
-        expect(rated_end_product_establishment.synced_status).to eq(nil)
+        rating_end_product_establishment.reload
+        expect(rating_end_product_establishment.synced_status).to eq(nil)
       end
 
       it "cancels end products with no request issues" do
@@ -342,8 +348,14 @@ describe RequestIssuesUpdate do
           issue_category: "Apportionment"
         )
 
+        expect_any_instance_of(Fakes::BGSService).to receive(:cancel_end_product).with(
+          veteran.file_number,
+          "030HLRNR",
+          "030"
+        )
+
         allow_remove_contention
-        allow_associate_rated_issues
+        allow_associate_rating_request_issues
 
         expect(subject).to be_truthy
 
@@ -397,8 +409,8 @@ describe RequestIssuesUpdate do
       allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
     end
 
-    def allow_associate_rated_issues
-      allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+    def allow_associate_rating_request_issues
+      allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
     end
 
     def raise_error_on_remove_contention

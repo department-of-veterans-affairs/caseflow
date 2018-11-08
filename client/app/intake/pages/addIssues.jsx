@@ -5,9 +5,10 @@ import { Redirect } from 'react-router-dom';
 import React from 'react';
 
 import AddIssuesModal from '../components/AddIssuesModal';
-import NonRatedIssueModal from '../components/NonRatedIssueModal';
+import NonratingRequestIssueModal from '../components/NonratingRequestIssueModal';
 import RemoveIssueModal from '../components/RemoveIssueModal';
 import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
+import UntimelyExemptionModal from '../components/UntimelyExemptionModal';
 import Button from '../../components/Button';
 import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, FORM_TYPES, PAGE_PATHS } from '../constants';
@@ -17,7 +18,8 @@ import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 import Table from '../../components/Table';
 import {
   toggleAddIssuesModal,
-  toggleNonRatedIssueModal,
+  toggleUntimelyExemptionModal,
+  toggleNonratingRequestIssueModal,
   removeIssue,
   toggleUnidentifiedIssuesModal,
   toggleIssueRemoveModal
@@ -53,7 +55,7 @@ export class AddIssuesPage extends React.Component {
       );
     } else if (issue.ineligibleReason) {
       return INELIGIBLE_REQUEST_ISSUES[issue.ineligibleReason];
-    } else if (issue.timely === false && formType !== 'supplemental_claim') {
+    } else if (issue.timely === false && formType !== 'supplemental_claim' && issue.untimelyExemption !== 'true') {
       return INELIGIBLE_REQUEST_ISSUES.untimely;
     } else if (issue.sourceHigherLevelReview && formType === 'higher_level_review') {
       return INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review;
@@ -83,6 +85,10 @@ export class AddIssuesPage extends React.Component {
       return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
     }
 
+    if (intakeData.hasClearedEP) {
+      return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
+    }
+
     const issuesComponent = () => {
       let issues = formatAddedIssues(intakeData);
 
@@ -103,9 +109,12 @@ export class AddIssuesPage extends React.Component {
             return <div className="issue" key={`issue-${index}`}>
               <div className={issueKlasses.join(' ')}>
                 <span className="issue-num">{index + 1}.&nbsp;</span>
-                {issue.text} {addendum}
-                { issue.date && <span className="issue-date">Decision date: {issue.date}</span> }
-                { issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span> }
+                { issue.text } {addendum}
+                { issue.date && <span className="issue-date">Decision date: { issue.date }</span> }
+                { issue.notes && <span className="issue-notes">Notes:&nbsp;{ issue.notes }</span> }
+                { issue.untimelyExemptionNotes &&
+                  <span className="issue-notes">Untimely Exemption Notes:&nbsp;{issue.untimelyExemptionNotes}</span>
+                }
               </div>
               <div className="issue-action">
                 <Button
@@ -154,11 +163,16 @@ export class AddIssuesPage extends React.Component {
     return <div className="cf-intake-edit">
       { intakeData.addIssuesModalVisible && <AddIssuesModal
         intakeData={intakeData}
+        formType={formType}
         closeHandler={this.props.toggleAddIssuesModal} />
       }
-      { intakeData.nonRatedIssueModalVisible && <NonRatedIssueModal
+      { intakeData.untimelyExemptionModalVisible && <UntimelyExemptionModal
         intakeData={intakeData}
-        closeHandler={this.props.toggleNonRatedIssueModal} />
+        closeHandler={this.props.toggleUntimelyExemptionModal} />
+      }
+      { intakeData.nonRatingRequestIssueModalVisible && <NonratingRequestIssueModal
+        intakeData={intakeData}
+        closeHandler={this.props.toggleNonratingRequestIssueModal} />
       }
       { intakeData.unidentifiedIssuesModalVisible && <UnidentifiedIssuesModal
         intakeData={intakeData}
@@ -195,7 +209,8 @@ export const IntakeAddIssuesPage = connect(
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
-    toggleNonRatedIssueModal,
+    toggleUntimelyExemptionModal,
+    toggleNonratingRequestIssueModal,
     toggleUnidentifiedIssuesModal,
     removeIssue
   }, dispatch)
@@ -205,15 +220,17 @@ export const EditAddIssuesPage = connect(
   (state) => ({
     intakeForms: {
       higher_level_review: state,
-      supplemental_claim: state
+      supplemental_claim: state,
+      appeal: state
     },
     formType: state.formType,
     veteran: state.veteran
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
+    toggleUntimelyExemptionModal,
     toggleIssueRemoveModal,
-    toggleNonRatedIssueModal,
+    toggleNonratingRequestIssueModal,
     toggleUnidentifiedIssuesModal,
     removeIssue
   }, dispatch)

@@ -1,7 +1,7 @@
-class AddSeriesIdToDocumentsJob < ApplicationJob
+class AddSeriesIdToDocumentsService < ApplicationJob
   queue_as :low_priority
 
-  def perform(appeal)
+  def self.add_series_ids(appeal)
     documents_to_check = Document.where(file_number: appeal.veteran_file_number).where(series_id: nil)
 
     if documents_to_check.count > 0

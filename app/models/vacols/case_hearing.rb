@@ -101,13 +101,16 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def load_days_for_central_office(start_date, end_date)
-      select_schedule_days.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) between ? and ?",
-                                 "C", "%VIDEO%", start_date, end_date).order(:hearing_date)
+      select_schedule_days.where("hearing_type = ? and (folder_nr NOT LIKE ? OR folder_nr IS NULL) " \
+                                  "and trunc(hearing_date) between ? and ?",
+                                 "C", "%VIDEO%", VacolsHelper.day_only_str(start_date),
+                                 VacolsHelper.day_only_str(end_date)).order(:hearing_date)
     end
 
     def load_days_for_regional_office(regional_office, start_date, end_date)
       select_schedule_days.where("folder_nr = ? and trunc(hearing_date) between ? and ?",
-                                 "VIDEO #{regional_office}", start_date, end_date)
+                                 "VIDEO #{regional_office}", VacolsHelper.day_only_str(start_date),
+                                 VacolsHelper.day_only_str(end_date)).order(:hearing_date)
     end
 
     def create_hearing!(hearing_info)
@@ -128,14 +131,11 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def create_child_hearing!(hearing_info)
-      # Store time value in UTC to VACOLS
-      hear_date = hearing_info[:hearing_date]
-      hearing_info[:hearing_date] = VacolsHelper.format_datetime_with_utc_timezone(hear_date)
       MetricsService.record("VACOLS: create_hearing!",
                             service: :vacols,
                             name: "create_hearing") do
-        create(hearing_info.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
-                                  adduser: current_user_slogid))
+        create!(hearing_info.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
+                                   adduser: current_user_slogid))
       end
     end
 
@@ -168,7 +168,7 @@ class VACOLS::CaseHearing < VACOLS::Record
 
     def select_schedule_days
       select(:hearing_pkseq,
-             :hearing_date,
+             :hearing_date, :vdbvapoc,
              "CASE WHEN folder_nr LIKE 'VIDEO%' THEN 'V' ELSE hearing_type END AS hearing_type",
              "CASE WHEN folder_nr LIKE 'VIDEO%' or folder_nr is null THEN folder_nr ELSE null END AS folder_nr",
              :room,

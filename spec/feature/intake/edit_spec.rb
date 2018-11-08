@@ -8,6 +8,10 @@ RSpec.feature "Edit issues" do
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 26))
+
+    # skip the sync call since all edit requests require resyncing
+    # currently, we're not mocking out vbms and bgs
+    allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
   end
 
   after do
@@ -16,7 +20,9 @@ RSpec.feature "Edit issues" do
   end
 
   let(:veteran) do
-    Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
+    create(:veteran,
+           first_name: "Ed",
+           last_name: "Merica")
   end
 
   let!(:current_user) do
@@ -29,7 +35,7 @@ RSpec.feature "Edit issues" do
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date + 1.day,
+      promulgation_date: receipt_date,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
@@ -41,6 +47,54 @@ RSpec.feature "Edit issues" do
   def check_row(label, text)
     row = find("tr", text: label)
     expect(row).to have_text(text)
+  end
+
+  context "appeals" do
+    let!(:appeal) do
+      create(:appeal,
+             veteran_file_number: veteran.file_number,
+             receipt_date: receipt_date,
+             docket_type: "evidence_submission",
+             legacy_opt_in_approved: false)
+    end
+
+    let!(:nonrating_request_issue) do
+      create(:request_issue,
+             review_request: appeal,
+             issue_category: "Military Retired Pay",
+             description: "nonrating description",
+             contention_reference_id: "1234")
+    end
+
+    scenario "allows adding/removing issues" do
+      visit "appeals/#{appeal.uuid}/edit/"
+      expect(page).to have_content("nonrating description")
+      # remove an issue
+      page.all(".remove-issue")[0].click
+      safe_click ".remove-issue"
+      expect(page).not_to have_content("nonrating description")
+
+      # add an issue
+      safe_click "#button-add-issue"
+      find("label", text: "Left knee granted").click
+      safe_click ".add-issue"
+
+      # save
+      expect(page).to have_content("Left knee granted")
+      safe_click("#button-submit-update")
+
+      # should redirect to queue
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+      # going back to edit page should show those issues
+      visit "appeals/#{appeal.uuid}/edit/"
+      expect(page).to have_content("Left knee granted")
+      expect(page).not_to have_content("nonrating description")
+
+      # canceling should redirect to queue
+      click_on "Cancel edit"
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+    end
   end
 
   context "Higher-Level Reviews" do
@@ -175,31 +229,31 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content(
           "#{untimely_request_issue.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
         )
-        expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date: 05/01/2018")
+        expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date:")
       end
     end
 
     context "when there is a non-rating end product" do
-      let!(:non_rated_request_issue) do
+      let!(:nonrating_request_issue) do
         RequestIssue.create!(
           review_request: higher_level_review,
           issue_category: "Military Retired Pay",
-          description: "non-rated description",
+          description: "nonrating description",
           contention_reference_id: "1234"
         )
       end
 
       before do
-        higher_level_review.create_issues!([non_rated_request_issue])
+        higher_level_review.create_issues!([nonrating_request_issue])
         higher_level_review.process_end_product_establishments!
       end
 
-      it "shows the Higher-Level Review Edit page with a non-rated claim id" do
-        non_rated_ep_claim_id = EndProductEstablishment.find_by(
+      it "shows the Higher-Level Review Edit page with a nonrating claim id" do
+        nonrating_ep_claim_id = EndProductEstablishment.find_by(
           source: higher_level_review,
           code: "030HLRNR"
         ).reference_id
-        visit "higher_level_reviews/#{non_rated_ep_claim_id}/edit"
+        visit "higher_level_reviews/#{nonrating_ep_claim_id}/edit"
 
         expect(page).to have_content("Military Retired Pay")
 
@@ -217,13 +271,13 @@ RSpec.feature "Edit issues" do
         safe_click ".confirm"
 
         expect(page).to have_current_path(
-          "/higher_level_reviews/#{non_rated_ep_claim_id}/edit/confirmation"
+          "/higher_level_reviews/#{nonrating_ep_claim_id}/edit/confirmation"
         )
         expect(page).to have_content("Edit Confirmed")
       end
     end
 
-    context "when there is a rated end product" do
+    context "when there is a rating end product" do
       let!(:request_issue) do
         RequestIssue.create!(
           rating_issue_reference_id: "def456",
@@ -234,7 +288,7 @@ RSpec.feature "Edit issues" do
         )
       end
 
-      let(:rated_ep_claim_id) do
+      let(:rating_ep_claim_id) do
         EndProductEstablishment.find_by(
           source: higher_level_review,
           code: "030HLRR"
@@ -247,7 +301,7 @@ RSpec.feature "Edit issues" do
       end
 
       it "shows request issues and allows adding/removing issues" do
-        visit "higher_level_reviews/#{rated_ep_claim_id}/edit"
+        visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
 
         expect(page).to have_content("Add / Remove Issues")
         check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
@@ -296,7 +350,7 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content("Left knee granted (already selected for issue 1)")
         expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
 
-        # Add non-rated issue
+        # Add nonrating issue
         safe_click ".no-matching-issues"
         expect(page).to have_content("Does issue 3 match any of these issue categories?")
         expect(page).to have_button("Add this issue", disabled: true)
@@ -328,7 +382,7 @@ RSpec.feature "Edit issues" do
 
         expect(page).to have_content("Edit Confirmed")
 
-        # assert server has updated data for non-rated and unidentified issues
+        # assert server has updated data for nonrating and unidentified issues
         expect(RequestIssue.find_by(
                  review_request: higher_level_review,
                  issue_category: "Active Duty Adjustments",
@@ -341,12 +395,12 @@ RSpec.feature "Edit issues" do
                  description: "This is an unidentified issue"
         )).to_not be_nil
 
-        rating_epe = EndProductEstablishment.find_by(
+        rating_epe = EndProductEstablishment.find_by!(
           source: higher_level_review,
           code: HigherLevelReview::END_PRODUCT_RATING_CODE
         )
 
-        non_rating_epe = EndProductEstablishment.find_by(
+        nonrating_epe = EndProductEstablishment.find_by!(
           source: higher_level_review,
           code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
         )
@@ -368,7 +422,7 @@ RSpec.feature "Edit issues" do
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran.file_number,
-          claim_id: non_rating_epe.reference_id,
+          claim_id: nonrating_epe.reference_id,
           contention_descriptions: [
             "Active Duty Adjustments - Description for Active Duty Adjustments"
           ],
@@ -378,7 +432,7 @@ RSpec.feature "Edit issues" do
       end
 
       it "enables save button only when dirty" do
-        visit "higher_level_reviews/#{rated_ep_claim_id}/edit"
+        visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
 
         expect(page).to have_button("Save", disabled: true)
 
@@ -395,7 +449,7 @@ RSpec.feature "Edit issues" do
       end
 
       it "Does not allow save if no issues are selected" do
-        visit "higher_level_reviews/#{rated_ep_claim_id}/edit"
+        visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
         safe_click ".remove-issue"
         # click again to get rid of pop up
         safe_click ".remove-issue"
@@ -414,7 +468,7 @@ RSpec.feature "Edit issues" do
           processed_at: nil
         )
 
-        visit "higher_level_reviews/#{rated_ep_claim_id}/edit"
+        visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
         safe_click "#button-add-issue"
         find("label", text: "Left knee granted").click
         safe_click ".add-issue"
@@ -428,10 +482,10 @@ RSpec.feature "Edit issues" do
       it "updates selected issues" do
         allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
         allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-        allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+        allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
         allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
 
-        visit "higher_level_reviews/#{rated_ep_claim_id}/edit"
+        visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
         safe_click ".remove-issue"
         # click again to get rid of pop-up
         safe_click ".remove-issue"
@@ -444,11 +498,11 @@ RSpec.feature "Edit issues" do
         safe_click("#button-submit-update")
 
         expect(page).to have_current_path(
-          "/higher_level_reviews/#{rated_ep_claim_id}/edit/confirmation"
+          "/higher_level_reviews/#{rating_ep_claim_id}/edit/confirmation"
         )
 
         # reload to verify that the new issues populate the form
-        visit "higher_level_reviews/#{rated_ep_claim_id}/edit"
+        visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
         expect(page).to have_content("Left knee granted")
         expect(page).to_not have_content("PTSD denied")
 
@@ -462,14 +516,14 @@ RSpec.feature "Edit issues" do
         # expect contentions to reflect issue update
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: veteran.file_number,
-          claim_id: rated_ep_claim_id,
+          claim_id: rating_ep_claim_id,
           contention_descriptions: ["Left knee granted"],
           special_issues: [],
           user: current_user
         )
-        expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
-          claim_id: rated_ep_claim_id,
-          rated_issue_contention_map: {
+        expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
+          claim_id: rating_ep_claim_id,
+          rating_issue_contention_map: {
             new_request_issue.rating_issue_reference_id => new_request_issue.contention_reference_id
           }
         )
@@ -478,9 +532,9 @@ RSpec.feature "Edit issues" do
 
       feature "cancel edits" do
         def click_cancel(visit_page)
-          visit "higher_level_reviews/#{rated_ep_claim_id}/edit#{visit_page}"
+          visit "higher_level_reviews/#{rating_ep_claim_id}/edit#{visit_page}"
           click_on "Cancel edit"
-          correct_path = "/higher_level_reviews/#{rated_ep_claim_id}/edit/cancel"
+          correct_path = "/higher_level_reviews/#{rating_ep_claim_id}/edit/cancel"
           expect(page).to have_current_path(correct_path)
           expect(page).to have_content("Edit Canceled")
           expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
@@ -488,6 +542,21 @@ RSpec.feature "Edit issues" do
 
         scenario "from landing page" do
           click_cancel("/")
+        end
+      end
+
+      feature "with cleared end product" do
+        let!(:cleared_end_product) do
+          create(:end_product_establishment,
+                 source: higher_level_review,
+                 synced_status: "CLR")
+        end
+
+        scenario "prevents edits on eps that have cleared" do
+          visit "higher_level_reviews/#{rating_ep_claim_id}/edit/"
+          expect(page).to have_current_path("/higher_level_reviews/#{rating_ep_claim_id}/edit/cleared_eps")
+          expect(page).to have_content("Issues Not Editable")
+          expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         end
       end
     end
@@ -518,7 +587,7 @@ RSpec.feature "Edit issues" do
       )
     end
 
-    let(:rated_ep_claim_id) do
+    let(:rating_ep_claim_id) do
       EndProductEstablishment.find_by(
         source: supplemental_claim,
         code: "040SCR"
@@ -539,17 +608,17 @@ RSpec.feature "Edit issues" do
     end
 
     context "when there is a non-rating end product" do
-      let!(:non_rated_request_issue) do
+      let!(:nonrating_request_issue) do
         RequestIssue.create!(
           review_request: supplemental_claim,
           issue_category: "Military Retired Pay",
-          description: "non-rated description",
+          description: "nonrating description",
           contention_reference_id: "1234"
         )
       end
 
       before do
-        supplemental_claim.create_issues!([non_rated_request_issue])
+        supplemental_claim.create_issues!([nonrating_request_issue])
         supplemental_claim.process_end_product_establishments!
       end
 
@@ -557,22 +626,22 @@ RSpec.feature "Edit issues" do
         let(:is_dta_error) { true }
 
         it "cannot be edited" do
-          non_rating_dta_claim_id = EndProductEstablishment.find_by(
+          nonrating_dta_claim_id = EndProductEstablishment.find_by(
             source: supplemental_claim,
             code: "040HDENR"
           ).reference_id
 
-          visit "supplemental_claims/#{non_rating_dta_claim_id}/edit"
+          visit "supplemental_claims/#{nonrating_dta_claim_id}/edit"
           expect(page).to have_content("Issues Not Editable")
         end
       end
 
-      it "shows the Supplemental Claim Edit page with a non-rated claim id" do
-        non_rated_ep_claim_id = EndProductEstablishment.find_by(
+      it "shows the Supplemental Claim Edit page with a nonrating claim id" do
+        nonrating_ep_claim_id = EndProductEstablishment.find_by(
           source: supplemental_claim,
           code: "040SCNR"
         ).reference_id
-        visit "supplemental_claims/#{non_rated_ep_claim_id}/edit"
+        visit "supplemental_claims/#{nonrating_ep_claim_id}/edit"
 
         expect(page).to have_content("Military Retired Pay")
 
@@ -590,13 +659,13 @@ RSpec.feature "Edit issues" do
         safe_click ".confirm"
 
         expect(page).to have_current_path(
-          "/supplemental_claims/#{non_rated_ep_claim_id}/edit/confirmation"
+          "/supplemental_claims/#{nonrating_ep_claim_id}/edit/confirmation"
         )
         expect(page).to have_content("Edit Confirmed")
       end
     end
 
-    context "when there is a rated end product" do
+    context "when there is a rating end product" do
       let!(:request_issue) do
         RequestIssue.create!(
           rating_issue_reference_id: "def456",
@@ -626,7 +695,7 @@ RSpec.feature "Edit issues" do
       end
 
       it "shows request issues and allows adding/removing issues" do
-        visit "supplemental_claims/#{rated_ep_claim_id}/edit"
+        visit "supplemental_claims/#{rating_ep_claim_id}/edit"
 
         # Check that request issues appear correctly as added issues
         expect(page).to_not have_content("Left knee granted")
@@ -678,7 +747,7 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content("Left knee granted (already selected for issue 1)")
         expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
 
-        # Add non-rated issue
+        # Add nonrating issue
         safe_click ".no-matching-issues"
         expect(page).to have_content("Does issue 3 match any of these issue categories?")
         expect(page).to have_button("Add this issue", disabled: true)
@@ -702,7 +771,7 @@ RSpec.feature "Edit issues" do
       end
 
       it "enables save button only when dirty" do
-        visit "supplemental_claims/#{rated_ep_claim_id}/edit"
+        visit "supplemental_claims/#{rating_ep_claim_id}/edit"
 
         expect(page).to have_button("Save", disabled: true)
 
@@ -720,7 +789,7 @@ RSpec.feature "Edit issues" do
       end
 
       it "Does not allow save if no issues are selected" do
-        visit "supplemental_claims/#{rated_ep_claim_id}/edit"
+        visit "supplemental_claims/#{rating_ep_claim_id}/edit"
         safe_click ".remove-issue"
         # click remove issue again to get rid of popup
         safe_click ".remove-issue"
@@ -739,7 +808,7 @@ RSpec.feature "Edit issues" do
           processed_at: nil
         )
 
-        visit "supplemental_claims/#{rated_ep_claim_id}/edit"
+        visit "supplemental_claims/#{rating_ep_claim_id}/edit"
         safe_click "#button-add-issue"
         find("label", text: "Left knee granted").click
         safe_click ".add-issue"
@@ -754,10 +823,10 @@ RSpec.feature "Edit issues" do
       it "updates selected issues" do
         allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
         allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-        allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+        allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
         allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
 
-        visit "supplemental_claims/#{rated_ep_claim_id}/edit"
+        visit "supplemental_claims/#{rating_ep_claim_id}/edit"
         safe_click ".remove-issue"
         safe_click ".remove-issue"
         safe_click "#button-add-issue"
@@ -769,11 +838,11 @@ RSpec.feature "Edit issues" do
         safe_click("#button-submit-update")
 
         expect(page).to have_current_path(
-          "/supplemental_claims/#{rated_ep_claim_id}/edit/confirmation"
+          "/supplemental_claims/#{rating_ep_claim_id}/edit/confirmation"
         )
 
         # reload to verify that the new issues populate the form
-        visit "supplemental_claims/#{rated_ep_claim_id}/edit"
+        visit "supplemental_claims/#{rating_ep_claim_id}/edit"
         expect(page).to have_content("Left knee granted")
         expect(page).to_not have_content("PTSD denied")
 
@@ -787,14 +856,14 @@ RSpec.feature "Edit issues" do
         # expect contentions to reflect issue update
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: veteran.file_number,
-          claim_id: rated_ep_claim_id,
+          claim_id: rating_ep_claim_id,
           contention_descriptions: ["Left knee granted"],
           special_issues: [],
           user: current_user
         )
-        expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
-          claim_id: rated_ep_claim_id,
-          rated_issue_contention_map: {
+        expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
+          claim_id: rating_ep_claim_id,
+          rating_issue_contention_map: {
             new_request_issue.rating_issue_reference_id => new_request_issue.contention_reference_id
           }
         )
@@ -803,9 +872,9 @@ RSpec.feature "Edit issues" do
 
       feature "cancel edits" do
         def click_cancel(visit_page)
-          visit "supplemental_claims/#{rated_ep_claim_id}/edit#{visit_page}"
+          visit "supplemental_claims/#{rating_ep_claim_id}/edit#{visit_page}"
           click_on "Cancel edit"
-          correct_path = "/supplemental_claims/#{rated_ep_claim_id}/edit/cancel"
+          correct_path = "/supplemental_claims/#{rating_ep_claim_id}/edit/cancel"
           expect(page).to have_current_path(correct_path)
           expect(page).to have_content("Edit Canceled")
           expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
@@ -813,6 +882,21 @@ RSpec.feature "Edit issues" do
 
         scenario "from landing page" do
           click_cancel("/")
+        end
+      end
+
+      feature "with cleared end product" do
+        let!(:cleared_end_product) do
+          create(:end_product_establishment,
+                 source: supplemental_claim,
+                 synced_status: "CLR")
+        end
+
+        scenario "prevents edits on eps that have cleared" do
+          visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
+          expect(page).to have_current_path("/supplemental_claims/#{rating_ep_claim_id}/edit/cleared_eps")
+          expect(page).to have_content("Issues Not Editable")
+          expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
         end
       end
     end

@@ -17,7 +17,7 @@ class RequestIssuesUpdate < ApplicationRecord
     transaction do
       review.create_issues!(new_issues)
       strip_removed_issues!
-      review.mark_rated_request_issues_to_reassociate!
+      review.mark_rating_request_issues_to_reassociate!
 
       update!(
         before_request_issue_ids: before_issues.map(&:id),
@@ -26,13 +26,23 @@ class RequestIssuesUpdate < ApplicationRecord
       submit_for_processing!
     end
 
-    if run_async?
-      ClaimReviewProcessJob.perform_later(self)
-    else
-      ClaimReviewProcessJob.perform_now(self)
-    end
+    process_job
 
     true
+  end
+
+  def process_job
+    if review.respond_to?(:process_end_product_establishments!)
+      if run_async?
+        ClaimReviewProcessJob.perform_later(self)
+      else
+        ClaimReviewProcessJob.perform_now(self)
+      end
+    else
+      # appeals should just be set to processed
+      attempted!
+      processed!
+    end
   end
 
   def process_end_product_establishments!

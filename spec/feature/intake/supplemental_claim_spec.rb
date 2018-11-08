@@ -11,7 +11,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-    allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+    allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
   end
 
   after do
@@ -296,12 +296,12 @@ RSpec.feature "Supplemental Claim Intake" do
       user: current_user
     )
 
-    rated_issue = supplemental_claim.request_issues.find_by(description: "PTSD denied")
+    rating_request_issue = supplemental_claim.request_issues.find_by(description: "PTSD denied")
 
-    expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+    expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
       claim_id: ratings_end_product_establishment.reference_id,
-      rated_issue_contention_map: {
-        rated_issue.rating_issue_reference_id => rated_issue.contention_reference_id
+      rating_issue_contention_map: {
+        rating_request_issue.rating_issue_reference_id => rating_request_issue.contention_reference_id
       }
     )
 
@@ -326,7 +326,11 @@ RSpec.feature "Supplemental Claim Intake" do
       decision_date: 1.month.ago.to_date
     )
 
+    # skip the sync call since all edit requests require resyncing
+    # currently, we're not mocking out vbms and bgs
+    allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
     visit "/supplemental_claims/#{ratings_end_product_establishment.reference_id}/edit"
+
     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
     expect(page).to have_content("Ed Merica (12341234)")
     expect(page).to have_content("04/20/2018")
@@ -488,7 +492,7 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to have_content("Left knee granted (already selected for issue 1)")
       expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
 
-      # Add non-rated issue
+      # Add nonrating issue
       safe_click ".no-matching-issues"
       expect(page).to have_content("Does issue 2 match any of these issue categories?")
       expect(page).to have_button("Add this issue", disabled: true)
@@ -530,7 +534,7 @@ RSpec.feature "Supplemental Claim Intake" do
       safe_click "#button-finish-intake"
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
-      expect(page).to have_content("This is an unidentified issue")
+      expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
 
       expect(SupplementalClaim.find_by(
                id: supplemental_claim.id,

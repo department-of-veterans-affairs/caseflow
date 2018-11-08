@@ -1,4 +1,12 @@
 describe RemandReasonRepository do
+  before do
+    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+  end
+
+  after do
+    Timecop.return
+  end
+
   context ".load_remand_reasons_for_appeals" do
     subject { RemandReasonRepository.load_remand_reasons_for_appeals(vacols_ids) }
 

@@ -5,7 +5,6 @@ import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID
 import ISSUE_DISPOSITIONS_BY_ID from '../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
 import LEGACY_REMAND_REASONS_BY_ID from '../../constants/LEGACY_ACTIVE_REMAND_REASONS_BY_ID.json';
 import REMAND_REASONS_BY_ID from '../../constants/AMA_REMAND_REASONS_BY_ID.json';
-import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import StringUtil from '../util/StringUtil';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
@@ -88,21 +87,6 @@ export const TASK_ACTIONS = {
   VIEW_APPELLANT_INFO: 'view-appellant-info',
   VIEW_APPEAL_INFO: 'view-appeal-info',
   QUEUE_TO_READER: 'queue-to-reader'
-};
-
-export const JUDGE_DECISION_OPTIONS = {
-  DRAFT_DECISION: {
-    label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
-    value: DECISION_TYPES.DISPATCH
-  },
-  SPECIAL_ISSUES: {
-    label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
-    value: DECISION_TYPES.DISPATCH
-  },
-  OMO_REQUEST: {
-    label: COPY.JUDGE_CHECKOUT_OMO_LABEL,
-    value: DECISION_TYPES.OMO_REQUEST
-  }
 };
 
 export const OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES = [{

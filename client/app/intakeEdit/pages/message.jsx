@@ -6,28 +6,33 @@ import _ from 'lodash';
 import StatusMessage from '../../components/StatusMessage';
 import { FORM_TYPES } from '../../intake/constants';
 
-class Canceled extends Component {
+class Message extends Component {
   render = () => {
     const {
       veteran,
-      formType
+      formType,
+      displayMessage,
+      title
     } = this.props;
+
     const formName = _.find(FORM_TYPES, { key: formType }).name;
-    const message = `No changes were made to ${veteran.name}'s (ID #${veteran.fileNumber}) ${formName}.
-Go to VBMS claim details and click the “Edit in Caseflow” button to return to edit.`;
+    const message = displayMessage({ formName,
+      veteran });
 
     return <div>
       <StatusMessage
-        title="Edit Canceled"
+        title={title}
         leadMessageList={[message]}
       />
     </div>;
   }
 }
 
-Canceled.propTypes = {
+Message.propTypes = {
   veteran: PropTypes.object.isRequired,
-  formType: PropTypes.oneOf(_.map(FORM_TYPES, 'key')).isRequired
+  formType: PropTypes.oneOf(_.map(FORM_TYPES, 'key')).isRequired,
+  title: PropTypes.string.isRequired,
+  displayMessage: PropTypes.func.isRequired
 };
 
 export default connect(
@@ -35,4 +40,4 @@ export default connect(
     veteran: state.veteran,
     formType: state.formType
   })
-)(Canceled);
+)(Message);
