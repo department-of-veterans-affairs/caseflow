@@ -11,7 +11,6 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Alert from '../components/Alert';
 
 import {
-  tasksByAssigneeCssIdSelector,
   completeTasksByAssigneeCssIdSelector,
   onHoldTasksByAssigneeCssIdSelector,
   workableTasksByAssigneeCssIdSelector
@@ -56,7 +55,9 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
     this.props.clearCaseSelectSearch();
     this.props.resetErrorMessages();
 
-    if (_.some(this.props.tasks, (task) => !task.taskId)) {
+    if (_.some(
+      [...this.props.workableTasks, ...this.props.onHoldTasks, ...this.props.completedTasks],
+      (task) => !task.taskId)) {
       this.props.showErrorMessage({
         title: COPY.TASKS_NEED_ASSIGNMENT_ERROR_TITLE,
         detail: COPY.TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE
@@ -69,7 +70,7 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
     const tabs = [
       {
         label: sprintf(
-          COPY.ATTORNEY_QUEUE_PAGE_ASSIGNED_TAB_TITLE,
+          COPY.QUEUE_PAGE_ASSIGNED_TAB_TITLE,
           this.props.workableTasks.length),
         page: <TaskTableTab
           description={COPY.ATTORNEY_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION}
@@ -78,7 +79,7 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
       },
       {
         label: sprintf(
-          COPY.ATTORNEY_QUEUE_PAGE_ON_HOLD_TAB_TITLE,
+          COPY.QUEUE_PAGE_ON_HOLD_TAB_TITLE,
           this.props.onHoldTasks.length),
         page: <TaskTableTab
           description={COPY.ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}
@@ -86,9 +87,9 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
         />
       },
       {
-        label: COPY.ATTORNEY_QUEUE_PAGE_COMPLETE_TAB_TITLE,
+        label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
         page: <TaskTableTab
-          description={COPY.ATTORNEY_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}
+          description={COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}
           tasks={this.props.completedTasks}
         />
       }
@@ -125,7 +126,6 @@ const mapStateToProps = (state) => {
   } = state;
 
   return ({
-    tasks: tasksByAssigneeCssIdSelector(state),
     workableTasks: workableTasksByAssigneeCssIdSelector(state),
     onHoldTasks: onHoldTasksByAssigneeCssIdSelector(state),
     completedTasks: completeTasksByAssigneeCssIdSelector(state),
