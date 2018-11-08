@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { REVIEW_OPTIONS, PAYEE_CODES } from '../constants';
+import { REVIEW_OPTIONS } from '../constants';
 import { formatDateStringForApi } from '../../util/DateUtil';
 
 export const getBlankOptionError = (responseErrorCodes, field) => (
