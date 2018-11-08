@@ -204,7 +204,7 @@ RSpec.describe TasksController, type: :controller do
 
     before do
       User.stub = user
-      @staff_user = FactoryBot.create(:staff, role, sdomainid: user.css_id)
+      @staff_user = FactoryBot.create(:staff, role, sdomainid: user.css_id) if role
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
     end
 
@@ -245,6 +245,44 @@ RSpec.describe TasksController, type: :controller do
           expect(attorney_task.assigned_to).to eq attorney
           expect(attorney_task.parent_id).to eq ama_judge_task.id
           expect(ama_judge_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
+        end
+      end
+    end
+
+    context "VSO user" do
+      let(:user) { create(:default_user, roles: ["VSO"]) }
+      let(:root_task) { create(:root_task, appeal: appeal) }
+      let(:role) { nil }
+
+      context "when creating a generic task" do
+        let(:params) do
+          [{
+            "external_id": appeal.vacols_id,
+            "type": GenericTask.name,
+            "assigned_to_id": user.id,
+            "parent_id": root_task.id
+          }]
+        end
+
+        it "should not be successful" do
+          post :create, params: { tasks: params }
+          expect(response.status).to eq 302
+        end
+      end
+
+      context "when creating a ihp task" do
+        let(:params) do
+          [{
+            "external_id": appeal.vacols_id,
+            "type": InformalHearingPresentationTask.name,
+            "assigned_to_id": user.id,
+            "parent_id": root_task.id
+          }]
+        end
+
+        it "should be successful" do
+          post :create, params: { tasks: params }
+          expect(response.status).to eq 201
         end
       end
     end

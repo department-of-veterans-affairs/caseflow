@@ -108,6 +108,10 @@ class TasksController < ApplicationController
   end
 
   def verify_task_access
+    if current_user.vso_employee? && task_class != InformalHearingPresentationTask
+      fail Caseflow::Error::ActionForbiddenError
+    end
+
     redirect_to("/unauthorized") unless can_assign_task?
   end
 

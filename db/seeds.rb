@@ -66,7 +66,7 @@ class SeedDB
       full_name: "VSO user associated with PVA",
       roles: %w[VSO]
     )
-    OrganizationsUser.add_user_to_organization(u, Organization.find_by(name: "American Legion"))
+    OrganizationsUser.add_user_to_organization(u, Organization.find_by(name: "Paralyzed Veterans Of America"))
   end
 
   def create_org_queue_user

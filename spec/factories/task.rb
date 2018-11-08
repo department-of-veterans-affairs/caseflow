@@ -28,7 +28,6 @@ FactoryBot.define do
 
     factory :root_task do
       type RootTask.name
-      appeal_type Appeal.name
       appeal { create(:appeal) }
       assigned_by { nil }
       assigned_to { Bva.singleton }
