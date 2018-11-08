@@ -209,15 +209,17 @@ class EvaluateDecisionView extends React.PureComponent {
       <CaseSnapshot appealId={appealId} hideDropdown />
       <hr {...hrStyling} />
 
-      <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_LABEL}</h2>
-      <Checkbox
-        label={<b>{COPY.JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_SUBHEAD}</b>}
-        name="One Touch Initiative"
-        value={this.state.one_touch_initiative}
-        onChange={(value) => { this.setState({ one_touch_initiative: value }) }}
-      />
-
-      <hr {...hrStyling} />
+      {appeal.isLegacyAppeal && <React.Fragment>
+        <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_LABEL}</h2>
+        <Checkbox
+          label={<b>{COPY.JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_SUBHEAD}</b>}
+          name="One Touch Initiative"
+          value={this.state.one_touch_initiative}
+          onChange={(value) => {
+            this.setState({ one_touch_initiative: value });
+          }}
+        />
+        <hr {...hrStyling} /></React.Fragment>}
 
       <h2 {...headerStyling}>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_LABEL}</h2>
       <b>{COPY.JUDGE_EVALUATE_DECISION_CASE_TIMELINESS_ASSIGNED_DATE}</b>: {dateAssigned.format('M/D/YY')}<br />

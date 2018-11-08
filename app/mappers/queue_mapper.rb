@@ -87,7 +87,7 @@ module QueueMapper
   end
 
   def self.rename_one_touch_initiative(one_touch_initiative)
-    one_touch_initiative ? "Y" : "N"
+    { de1touch: one_touch_initiative ? "Y" : "N" }
   end
 
   def self.complexity_to_vacols_code(complexity)
