@@ -138,11 +138,12 @@ class RequestIssue < ApplicationRecord
     end
   end
 
+  def contested_decision_issue
+    review_request.veteran.decision_issues.find_by(rating_issue_reference_id: contested_rating_issue.reference_id)
+  end
+
   def previous_request_issue
-    return unless contested_rating_issue
-    review_request.veteran.decision_issues.find_by(
-      rating_issue_reference_id: contested_rating_issue.reference_id
-    ).try(:source_request_issue)
+    contested_decision_issue.try(:source_request_issue)
   end
 
   private

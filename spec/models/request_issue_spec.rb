@@ -10,7 +10,8 @@ describe RequestIssue do
   let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
 
   let!(:rating_request_issue) do
-    RequestIssue.create(
+    create(
+      :request_issue,
       review_request: review,
       rating_issue_reference_id: rating_reference_id,
       rating_issue_profile_date: profile_date,
@@ -20,7 +21,8 @@ describe RequestIssue do
   end
 
   let!(:nonrating_request_issue) do
-    RequestIssue.create(
+    create(
+      :request_issue,
       review_request: review,
       description: "a nonrating request issue description",
       issue_category: "a category",
@@ -29,7 +31,8 @@ describe RequestIssue do
   end
 
   let!(:unidentified_issue) do
-    RequestIssue.create(
+    create(
+      :request_issue,
       review_request: review,
       description: "an unidentified issue",
       is_unidentified: true
@@ -168,22 +171,31 @@ describe RequestIssue do
   end
 
   context "#previous_request_issue" do
-    let(:previous_higher_level_review) { create(:higher_level_review) }
+    let(:previous_higher_level_review) { create(:higher_level_review, receipt_date: review.receipt_date - 100.days) }
+    let(:previous_end_product_establishment) do
+      create(
+        :end_product_establishment,
+        :cleared,
+        veteran_file_number: veteran.file_number,
+        established_at: previous_higher_level_review.receipt_date + 1.day
+      )
+    end
     let!(:previous_request_issue) do
       create(
         :request_issue,
         review_request: previous_higher_level_review,
         rating_issue_reference_id: higher_level_review_reference_id,
-        contention_reference_id: contention_reference_id
+        contention_reference_id: contention_reference_id,
+        end_product_establishment: previous_end_product_establishment
       )
     end
 
     it "looks up the chain to the immediately previous request issue" do
-      veteran.sync_rating_issues!([previous_request_issue])
+      previous_end_product_establishment.sync_decision_issues!
       expect(rating_request_issue.previous_request_issue).to eq(previous_request_issue)
     end
 
-    it "returns nil if Veteran.decision_rating_issues have not yet been synced" do
+    it "returns nil if decision issues have not yet been synced" do
       expect(rating_request_issue.previous_request_issue).to be_nil
     end
   end
