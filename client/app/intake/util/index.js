@@ -85,29 +85,3 @@ export const prepareReviewData = (intakeData, intakeType) => {
     };
   }
 };
-
-export const getValidPayeeCodes = (isDeceased) => {
-  let validCodes = ['00', '10', '11', '12', '13', '14', '15', '16', '17',
-    '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29',
-    '31', '32', '33', '34', '35', '36', '37', '38', '39', '50', '60'];
-
-  if (isDeceased) {
-    validCodes = ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19',
-      '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '31', '32',
-      '33', '34', '35', '36', '37', '38', '39', '50', '60', '70', '71', '72',
-      '73', '74', '75', '76', '77', '78'];
-  }
-
-  return validCodes.map((code) => {
-    return { value: code,
-      label: PAYEE_CODES[code] };
-  });
-};
-
-export const getAllPayeeCodes = () => {
-  return Object.keys(PAYEE_CODES).sort().
-    map((code) => {
-      return { value: code,
-        label: PAYEE_CODES[code] };
-    });
-};

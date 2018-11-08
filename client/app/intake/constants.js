@@ -212,7 +212,7 @@ export const CANCELLATION_REASONS = {
   }
 };
 
-export const PAYEE_CODES = {
+const PAYEE_CODES = {
   '00': '00 - Veteran',
   '01': '01 - First Payee Recipient',
   '02': '02 - Second Payee Recipient',
@@ -285,3 +285,26 @@ export const PAYEE_CODES = {
   89: '89 - Tenth Claimant Burial/Accrued',
   99: '99 - Institutional Veteran CFR3.852'
 };
+
+const getValidPayeeCodes = (isDeceased) => {
+  // got these from BGS find_payee_cds_by_bnft_claim_type_cd
+  let validCodes = ['00', '10', '11', '12', '13', '14', '15', '16', '17',
+    '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29',
+    '31', '32', '33', '34', '35', '36', '37', '38', '39', '50', '60'];
+
+  if (isDeceased) {
+    validCodes = ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19',
+      '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '31', '32',
+      '33', '34', '35', '36', '37', '38', '39', '50', '60', '70', '71', '72',
+      '73', '74', '75', '76', '77', '78'];
+  }
+
+  return validCodes.map((code) => {
+    return { value: code,
+      label: PAYEE_CODES[code] };
+  });
+};
+
+// wrap in singleton so these are calculated once
+export const DECEASED_PAYEE_CODES = (() => getValidPayeeCodes(true))();
+export const LIVING_PAYEE_CODES = (() => getValidPayeeCodes(false))();
