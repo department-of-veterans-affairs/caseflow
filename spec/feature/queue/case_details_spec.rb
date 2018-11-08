@@ -421,7 +421,6 @@ RSpec.feature "Case details" do
         expect(page).to_not have_content("Edit")
       end
     end
-
   end
 
   describe "Marking organization task complete" do
