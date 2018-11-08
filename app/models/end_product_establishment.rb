@@ -157,7 +157,6 @@ class EndProductEstablishment < ApplicationRecord
     # There is no need to sync end_product_status if the status
     # is already inactive since an EP can never leave that state
     return true unless status_active?
-
     fail EstablishedEndProductNotFound unless result
 
     transaction do
@@ -174,12 +173,12 @@ class EndProductEstablishment < ApplicationRecord
     raise BGSSyncError.new(e, self)
   end
 
-  def status_canceled?(sync: false)
-    sync! if sync
+  def status_canceled?
     synced_status == CANCELED_STATUS
   end
 
-  def status_cleared?
+  def status_cleared?(sync: false)
+    sync! if sync
     synced_status == CLEARED_STATUS
   end
 

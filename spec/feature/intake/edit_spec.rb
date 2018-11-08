@@ -8,6 +8,10 @@ RSpec.feature "Edit issues" do
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 26))
+
+    # skip the sync call since all edit requests require resyncing
+    # currently, we're not mocking out vbms and bgs
+    allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
   end
 
   after do

@@ -365,6 +365,9 @@ RSpec.feature "Higher-Level Review" do
       decision_date: 1.month.ago.to_date
     )
 
+    # skip the sync call since all edit requests require resyncing
+    # currently, we're not mocking out vbms and bgs
+    allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
     visit "/higher_level_reviews/#{ratings_end_product_establishment.reference_id}/edit"
 
     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
