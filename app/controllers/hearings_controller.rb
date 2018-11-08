@@ -6,15 +6,10 @@ class HearingsController < ApplicationController
 
   def update
     if params["hearing"]["date"]
-      new_hearing_params = update_params
       HearingRepository.slot_new_hearing(params["hearing"]["date"], hearing.appeal)
-    elsif params["hearing"]["time"]
-      new_hearing_params = time_update_params(hearing.date)
-    else
-      new_hearing_params = update_params
     end
 
-    hearing.update(new_hearing_params)
+    hearing.update(update_params)
     render json: hearing.to_hash(current_user.id)
   end
 
@@ -54,16 +49,6 @@ class HearingsController < ApplicationController
 
   def set_application
     RequestStore.store[:application] = "hearings"
-  end
-
-  def time_update_params(original_date)
-    params.require("hearing").permit(:notes,
-                                     :disposition,
-                                     :hold_open,
-                                     :aod,
-                                     :transcript_requested,
-                                     :add_on,
-                                     :prepped).merge(date: original_date.change(hour: 14, min: 30, sec: 0))
   end
 
   def update_params
