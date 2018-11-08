@@ -37,7 +37,19 @@ class ExternalApi::VBMSService
 
     veteran_file_number = appeal.veteran_file_number
     request = VBMS::Requests::FindDocumentVersionReference.new(veteran_file_number)
-    documents = send_and_log_request(veteran_file_number, request)
+
+    begin
+      documents = send_and_log_request(veteran_file_number, request)
+    rescue VBMS::HTTPError => e
+      raise unless e.body.include?("File Number does not exist within the system.")
+
+      alternative_file_number = ExternalApi::BGSService.new.fetch_veteran_info(veteran_file_number)[:claim_number]
+
+      raise if alternative_file_number == veteran_file_number
+
+      request = VBMS::Requests::FindDocumentVersionReference.new(alternative_file_number)
+      documents = send_and_log_request(alternative_file_number, request)
+    end
 
     Rails.logger.info("Document list length: #{documents.length}")
 

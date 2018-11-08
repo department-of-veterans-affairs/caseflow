@@ -64,21 +64,40 @@ class HearingDay < ApplicationRecord
       [total_video_and_co, travel_board]
     end
 
-    def load_days_with_hearings(start_date, end_date, regional_office = nil)
+    def load_days_with_open_hearing_slots(start_date, end_date, regional_office = nil)
       total_video_and_co, _travel_board = load_days(start_date, end_date, regional_office)
+
       enriched_hearing_days = []
       total_video_and_co.each do |hearing_day|
+        hearings = if hearing_day[:regional_office].nil?
+                     HearingRepository.fetch_co_hearings_for_parent(hearing_day[:hearing_date])
+                   else
+                     HearingRepository.fetch_video_hearings_for_parent(hearing_day[:id])
+                   end
+
+        scheduled_hearings = filter_non_scheduled_hearings(hearings)
+        total_slots = HearingDayRepository.fetch_hearing_day_slots(hearing_day)
+
+        next unless scheduled_hearings.length < total_slots
         enriched_hearing_days << hearing_day.slice(:id, :hearing_date, :hearing_type, :room_info)
-        enriched_hearing_days[enriched_hearing_days.length - 1][:total_slots] =
-          HearingDayRepository.fetch_hearing_day_slots(hearing_day)
-        enriched_hearing_days[enriched_hearing_days.length - 1][:hearings] =
-          if hearing_day[:regional_office].nil?
-            HearingRepository.fetch_co_hearings_for_parent(hearing_day[:hearing_date])
-          else
-            HearingRepository.fetch_video_hearings_for_parent(hearing_day[:id])
-          end
+        enriched_hearing_days[enriched_hearing_days.length - 1][:total_slots] = total_slots
+        enriched_hearing_days[enriched_hearing_days.length - 1][:hearings] = scheduled_hearings
       end
       enriched_hearing_days
+    end
+
+    def filter_non_scheduled_hearings(hearings)
+      filtered_hearings = []
+      hearings.each do |hearing|
+        if hearing.vacols_record.hearing_type == HEARING_TYPES[:central]
+          if !hearing.vacols_record.folder_nr.nil?
+            filtered_hearings << hearing
+          end
+        elsif hearing.vacols_record.hearing_disp != "P" && hearing.vacols_record.hearing_disp != "C"
+          filtered_hearings << hearing
+        end
+      end
+      filtered_hearings
     end
 
     def find_hearing_day(hearing_type, hearing_key)

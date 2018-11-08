@@ -8,6 +8,10 @@ RSpec.feature "Edit issues" do
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 26))
+
+    # skip the sync call since all edit requests require resyncing
+    # currently, we're not mocking out vbms and bgs
+    allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
   end
 
   after do
@@ -296,7 +300,7 @@ RSpec.feature "Edit issues" do
         higher_level_review.process_end_product_establishments!
       end
 
-      it "shows request issues and allows adding/removing issues", skip: "Bug with adding and removing same issue" do
+      it "shows request issues and allows adding/removing issues" do
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
 
         expect(page).to have_content("Add / Remove Issues")
@@ -391,12 +395,12 @@ RSpec.feature "Edit issues" do
                  description: "This is an unidentified issue"
         )).to_not be_nil
 
-        rating_epe = EndProductEstablishment.find_by(
+        rating_epe = EndProductEstablishment.find_by!(
           source: higher_level_review,
           code: HigherLevelReview::END_PRODUCT_RATING_CODE
         )
 
-        non_rating_epe = EndProductEstablishment.find_by(
+        nonrating_epe = EndProductEstablishment.find_by!(
           source: higher_level_review,
           code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
         )
@@ -418,7 +422,7 @@ RSpec.feature "Edit issues" do
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran.file_number,
-          claim_id: non_rating_epe.reference_id,
+          claim_id: nonrating_epe.reference_id,
           contention_descriptions: [
             "Active Duty Adjustments - Description for Active Duty Adjustments"
           ],
@@ -538,6 +542,21 @@ RSpec.feature "Edit issues" do
 
         scenario "from landing page" do
           click_cancel("/")
+        end
+      end
+
+      feature "with cleared end product" do
+        let!(:cleared_end_product) do
+          create(:end_product_establishment,
+                 source: higher_level_review,
+                 synced_status: "CLR")
+        end
+
+        scenario "prevents edits on eps that have cleared" do
+          visit "higher_level_reviews/#{rating_ep_claim_id}/edit/"
+          expect(page).to have_current_path("/higher_level_reviews/#{rating_ep_claim_id}/edit/cleared_eps")
+          expect(page).to have_content("Issues Not Editable")
+          expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         end
       end
     end
@@ -863,6 +882,21 @@ RSpec.feature "Edit issues" do
 
         scenario "from landing page" do
           click_cancel("/")
+        end
+      end
+
+      feature "with cleared end product" do
+        let!(:cleared_end_product) do
+          create(:end_product_establishment,
+                 source: supplemental_claim,
+                 synced_status: "CLR")
+        end
+
+        scenario "prevents edits on eps that have cleared" do
+          visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
+          expect(page).to have_current_path("/supplemental_claims/#{rating_ep_claim_id}/edit/cleared_eps")
+          expect(page).to have_content("Issues Not Editable")
+          expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
         end
       end
     end
