@@ -10,6 +10,10 @@ class Rating
   ONE_YEAR_PLUS_DAYS = 372.days
   TWO_LIFETIMES_DAYS = 250.years
 
+  def rating
+    self
+  end
+
   def issues
     @issues ||= fetch_issues
   end
@@ -38,13 +42,12 @@ class Rating
     return [] if response[:rating_issues].nil?
 
     [response[:rating_issues]].flatten.map do |issue_data|
-      RatingIssue.from_bgs_hash(
-        issue_data.merge(
-          promulgation_date: promulgation_date,
-          participant_id: participant_id,
-          profile_date: profile_date
-        )
-      )
+      RatingIssue.from_bgs_hash(self,
+                                issue_data.merge(
+                                  promulgation_date: promulgation_date,
+                                  participant_id: participant_id,
+                                  profile_date: profile_date
+                                ))
     end
   rescue Savon::Error
     []

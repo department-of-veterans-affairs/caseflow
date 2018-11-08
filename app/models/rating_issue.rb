@@ -12,16 +12,15 @@ class RatingIssue
   class << self
     def from_bgs_hash(rating, bgs_data)
       new(
-        reference_id: data[:rba_issue_id],
-        rba_contentions_data: ensure_array_of_objects(data.dig(:rba_issue_contentions)),
-        associated_claims_data: ensure_array_of_objects(data.dig(:associated_claims)),
+        reference_id: bgs_data[:rba_issue_id],
+        rba_contentions_data: ensure_array_of_objects(bgs_data.dig(:rba_issue_contentions)),
+        associated_claims_data: ensure_array_of_objects(bgs_data.dig(:associated_claims)),
         profile_date: rating.profile_date,
-        decision_text: data[:decn_txt],
+        decision_text: bgs_data[:decn_txt],
         promulgation_date: rating.promulgation_date,
         participant_id: rating.participant_id
       )
     end
-
 
     def from_ui_hash(ui_hash)
       new(
@@ -31,7 +30,9 @@ class RatingIssue
         promulgation_date: ui_hash[:promulgation_date],
         contention_reference_id: ui_hash[:contention_reference_id],
         ramp_claim_id: ui_hash[:ramp_claim_id],
-        profile_date: ui_hash[:profile_date]
+        profile_date: ui_hash[:profile_date],
+        associated_claims_data: ui_hash[:associated_claims_data],
+        rba_contentions_data: ui_hash[:rba_contentions_data]
       )
     end
 
@@ -76,12 +77,6 @@ class RatingIssue
     }
   end
 
-  def profile_date
-    rating.profile_date
-  end
-
-  def
-
   def title_of_active_review
     return unless reference_id
     request_issue = RequestIssue.find_active_by_reference_id(reference_id)
@@ -99,7 +94,7 @@ class RatingIssue
   end
 
   def from_ramp_decision?
-    EndProduct::RAMP_CODES.key?(associated_claims_data.first.dig(:bnft_clm_tc))
+    associated_claims_data && EndProduct::RAMP_CODES.key?(associated_claims_data.first.dig(:bnft_clm_tc))
   end
 
   def ramp_claim_id
@@ -107,7 +102,7 @@ class RatingIssue
   end
 
   def contention_reference_id
-    @contention_reference_id ||= rba_contentions_data.first.dig(:cntntn_id)
+    @contention_reference_id ||= rba_contentions_data.first.dig(:cntntn_id) if rba_contentions_data
   end
 
   def source_request_issue
@@ -118,6 +113,6 @@ class RatingIssue
   private
 
   def calculate_ramp_claim_id
-    from_ramp_decision? && associated_claim_data.first.dig(:clm_id)
+    from_ramp_decision? && associated_claims_data.first.dig(:clm_id)
   end
 end

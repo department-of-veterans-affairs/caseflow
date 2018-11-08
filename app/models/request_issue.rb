@@ -154,13 +154,14 @@ class RequestIssue < ApplicationRecord
   end
 
   def decision_or_profile_date
-    rating_issue_profile_date if rating?
-    decision_date if nonrating?
+    return rating_issue_profile_date if rating?
+    return decision_date if nonrating?
   end
 
   def check_for_before_ama!
     return unless eligible?
     return if is_unidentified
+    return if ramp_claim_id
 
     if decision_or_profile_date < DecisionReview.ama_activation_date
       self.ineligible_reason = :before_ama
