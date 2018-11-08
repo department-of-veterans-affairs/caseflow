@@ -13,8 +13,8 @@ class DecisionRatingIssueSyncJob < CaseflowJob
       request_issue.attempted!
       request_issue.end_product_establishment.sync_decision_issues!
     rescue ::NilRatingProfileListError => err
-      # swallow these, it just means nothing new has happened.
-
+      request_issue.update_error!(err.to_s)
+      # no Raven report, just noise. This just means nothing new has happened.
     rescue BGS::ShareError => err
       request_issue.update_error!(err.to_s)
       Raven.capture_exception(err)

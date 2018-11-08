@@ -7,7 +7,7 @@ describe DecisionRatingIssueSyncJob do
   let(:request_issue) { create(:request_issue, end_product_establishment: epe) }
   let(:no_ratings_err) { NilRatingProfileListError.new("none!") }
   let(:bgs_transport_err) { BGS::ShareError.new("network!") }
- 
+
   subject { described_class.perform_now(request_issue) }
 
   before do
