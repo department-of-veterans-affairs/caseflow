@@ -37,6 +37,7 @@ class RequestIssue < ApplicationRecord
       where.not(id: select(:parent_request_issue_id).uniq)
     end
 
+    # ramp_claim_id is set to the claim id of the RAMP EP when the contested rating issue is part of a ramp decision
     def from_intake_data(data)
       new(
         rating_issue_reference_id: data[:reference_id],
@@ -133,6 +134,7 @@ class RequestIssue < ApplicationRecord
     rating_with_issue = review_request.serialized_ratings.find do |rating|
       rating[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
     end || { issues: [] }
+
     rating_with_issue[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
   end
 
@@ -151,21 +153,16 @@ class RequestIssue < ApplicationRecord
     end
   end
 
+  def decision_or_profile_date
+    rating_issue_profile_date if rating?
+    decision_date if nonrating?
+  end
+
   def check_for_before_ama!
     return unless eligible?
-    check_for_rating_before_ama! if rating?
-    check_for_nonrating_before_ama! if nonrating?
-  end
+    return if is_unidentified
 
-  def check_for_rating_before_ama!
-    return if ramp_claim_id
-    if rating_issue_profile_date < DecisionReview.ama_activation_date
-      self.ineligible_reason = :before_ama
-    end
-  end
-
-  def check_for_nonrating_before_ama!
-    if decision_date < DecisionReview.ama_activation_date
+    if decision_or_profile_date < DecisionReview.ama_activation_date
       self.ineligible_reason = :before_ama
     end
   end

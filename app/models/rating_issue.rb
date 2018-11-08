@@ -4,26 +4,24 @@
 class RatingIssue
   include ActiveModel::Model
 
-  attr_accessor :reference_id, :decision_text, :profile_date, :ramp_claim_id,
-                :promulgation_date, :participant_id, :contention_reference_id
+  attr_accessor :reference_id, :decision_text, :profile_date, :associated_claims_data,
+                :promulgation_date, :participant_id, :rba_contentions_data
+
+  attr_writer :ramp_claim_id, :contention_reference_id
 
   class << self
-    def from_bgs_hash(data)
-      rba_contentions = [data.dig(:rba_issue_contentions) || {}].flatten
-      associated_claims = [data.dig(:associated_claims) || {}].flatten
-      is_ramp_decision = EndProduct::RAMP_CODES.key?(associated_claims.first.dig(:bnft_clm_tc))
-      associated_claim_id = associated_claims.first.dig(:clm_id)
-
+    def from_bgs_hash(rating, bgs_data)
       new(
         reference_id: data[:rba_issue_id],
-        profile_date: rba_contentions.first.dig(:prfil_dt) || data[:profile_date],
-        contention_reference_id: rba_contentions.first.dig(:cntntn_id),
+        rba_contentions_data: ensure_array_of_objects(data.dig(:rba_issue_contentions)),
+        associated_claims_data: ensure_array_of_objects(data.dig(:associated_claims)),
+        profile_date: rating.profile_date,
         decision_text: data[:decn_txt],
-        promulgation_date: data[:promulgation_date],
-        participant_id: data[:participant_id],
-        ramp_claim_id: is_ramp_decision ? associated_claim_id : nil
+        promulgation_date: rating.promulgation_date,
+        participant_id: rating.participant_id
       )
     end
+
 
     def from_ui_hash(ui_hash)
       new(
@@ -35,6 +33,12 @@ class RatingIssue
         ramp_claim_id: ui_hash[:ramp_claim_id],
         profile_date: ui_hash[:profile_date]
       )
+    end
+
+    private
+
+    def ensure_array_of_objects(data)
+      [data || {}].flatten
     end
   end
 
@@ -72,6 +76,12 @@ class RatingIssue
     }
   end
 
+  def profile_date
+    rating.profile_date
+  end
+
+  def
+
   def title_of_active_review
     return unless reference_id
     request_issue = RequestIssue.find_active_by_reference_id(reference_id)
@@ -88,8 +98,26 @@ class RatingIssue
     @decision_issue ||= DecisionIssue.find_by(participant_id: participant_id, rating_issue_reference_id: reference_id)
   end
 
+  def from_ramp_decision?
+    EndProduct::RAMP_CODES.key?(associated_claims_data.first.dig(:bnft_clm_tc))
+  end
+
+  def ramp_claim_id
+    @ramp_claim_id ||= calculate_ramp_claim_id
+  end
+
+  def contention_reference_id
+    @contention_reference_id ||= rba_contentions_data.first.dig(:cntntn_id)
+  end
+
   def source_request_issue
     return if contention_reference_id.nil?
     @source_request_issue ||= RequestIssue.unscoped.find_by(contention_reference_id: contention_reference_id)
+  end
+
+  private
+
+  def calculate_ramp_claim_id
+    from_ramp_decision? && associated_claim_data.first.dig(:clm_id)
   end
 end
