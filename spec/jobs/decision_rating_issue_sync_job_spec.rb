@@ -14,13 +14,13 @@ describe DecisionRatingIssueSyncJob do
     @raven_called = false
   end
 
-  it "ignores NilRatingProfileListError" do
+  it "ignores NilRatingProfileListError for Sentry, logs on db" do
     capture_raven_log
     allow(epe).to receive(:sync_decision_issues!).and_raise(no_ratings_err)
 
     subject
 
-    expect(request_issue.decision_sync_error).to be_nil
+    expect(request_issue.decision_sync_error).to eq("none!")
     expect(@raven_called).to eq(false)
   end
 
