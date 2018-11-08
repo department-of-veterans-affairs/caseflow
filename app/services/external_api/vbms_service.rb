@@ -62,7 +62,7 @@ class ExternalApi::VBMSService
   def self.upload_document_to_vbms(appeal, uploadable_document)
     @vbms_client ||= init_vbms_client
     response = initialize_upload(appeal, uploadable_document)
-    upload_document(appeal.sanitized_vbms_id, response.upload_token, uploadable_document.pdf_location)
+    upload_document(appeal.veteran_file_number, response.upload_token, uploadable_document.pdf_location)
   end
 
   def self.initialize_upload(appeal, uploadable_document)
@@ -71,14 +71,14 @@ class ExternalApi::VBMSService
     request = VBMS::Requests::InitializeUpload.new(
       content_hash: content_hash,
       filename: filename,
-      file_number: appeal.sanitized_vbms_id,
+      file_number: appeal.veteran_file_number,
       va_receive_date: uploadable_document.upload_date,
       doc_type: uploadable_document.document_type_id,
       source: uploadable_document.source,
       subject: uploadable_document.document_type,
       new_mail: true
     )
-    send_and_log_request(appeal.sanitized_vbms_id, request)
+    send_and_log_request(appeal.veteran_file_number, request)
   end
 
   def self.upload_document(vbms_id, upload_token, filepath)

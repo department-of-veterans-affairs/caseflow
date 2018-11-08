@@ -36,10 +36,6 @@ class Appeal < DecisionReview
     "Original"
   end
 
-  def sanitized_vbms_id
-    veteran_file_number
-  end
-
   def attorney_case_reviews
     tasks.map(&:attorney_case_reviews).flatten
   end

@@ -11,7 +11,7 @@ module UploadableDocument
   end
 
   def source
-    "VACOLS"
+    fail "#{self.class} is missing source"
   end
 
   def document_type
