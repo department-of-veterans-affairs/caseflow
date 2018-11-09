@@ -50,11 +50,18 @@ class Rating
     end
 
     def fetch_timely(participant_id:, from_date:)
-      start_date = from_date - ONE_YEAR_PLUS_DAYS
+      fetch_in_range(
+        participant_id: participant_id,
+        start_date: from_date - ONE_YEAR_PLUS_DAYS,
+        end_date: Time.zone.today
+      )
+    end
+
+    def fetch_in_range(participant_id:, start_date:, end_date:)
       response = BGSService.new.fetch_ratings_in_range(
         participant_id: participant_id,
         start_date: start_date,
-        end_date: Time.zone.today
+        end_date: end_date
       )
 
       unsorted = ratings_from_bgs_response(response).select do |rating|
