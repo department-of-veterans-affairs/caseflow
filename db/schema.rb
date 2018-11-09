@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181107225536) do
+ActiveRecord::Schema.define(version: 20181109131525) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -190,7 +190,7 @@ ActiveRecord::Schema.define(version: 20181107225536) do
     t.datetime "promulgation_date"
     t.datetime "profile_date"
     t.integer "participant_id", null: false
-    t.string "rating_issue_reference_id", null: false
+    t.string "rating_issue_reference_id"
     t.string "decision_text"
     t.index ["rating_issue_reference_id", "participant_id"], name: "decision_issues_uniq_idx", unique: true
     t.index ["source_request_issue_id"], name: "index_decision_issues_on_source_request_issue_id"
@@ -630,10 +630,10 @@ ActiveRecord::Schema.define(version: 20181107225536) do
     t.integer "parent_request_issue_id"
     t.text "notes"
     t.boolean "is_unidentified"
-    t.bigint "ineligible_due_to_id"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
     t.string "ramp_claim_id"
+    t.bigint "ineligible_due_to_id"
     t.string "ineligible_reason"
     t.datetime "decision_sync_submitted_at"
     t.datetime "decision_sync_attempted_at"
