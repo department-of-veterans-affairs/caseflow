@@ -1,6 +1,9 @@
 require "rails_helper"
+require "support/intake_helpers"
 
 RSpec.feature "Appeal Intake" do
+  include IntakeHelpers
+
   before do
     FeatureToggle.enable!(:intake)
     # Test that this works when only enabled on the current user
@@ -40,7 +43,7 @@ RSpec.feature "Appeal Intake" do
 
   let(:untimely_days) { 372.days }
 
-  let(:profile_date) { (receipt_date - untimely_days + 4.days).to_time(:local) }
+  let(:profile_date) { Date.new(2017, 11, 20).to_time(:local) }
 
   let!(:rating) do
     Generators::Rating.build(
@@ -144,8 +147,8 @@ RSpec.feature "Appeal Intake" do
       intake.veteran.participant_id
     )
 
-    expect(appeal.payee_code).to eq("00")
-    expect(page).to have_content("Decision date: 04/17/2017")
+    expect(appeal.payee_code).to eq(nil)
+    expect(page).to have_content("Decision date: 11/20/2017")
     expect(page).to have_content("Left knee granted")
     expect(page).to have_content("Untimely rating issue 1")
 
@@ -173,7 +176,7 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES_SHORT.appeal} created:")
-    expect(page).to have_content("Issue: Description for Active Duty Adjustments")
+    expect(page).to have_content("Issue: Active Duty Adjustments - Description for Active Duty Adjustments")
 
     intake.reload
     expect(intake.completed_at).to eq(Time.zone.now)
@@ -284,7 +287,7 @@ RSpec.feature "Appeal Intake" do
 
   scenario "For new Add / Remove Issues page" do
     duplicate_reference_id = "xyz789"
-    old_reference_id = "old123"
+    old_reference_id = "old1234"
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - 40.days,
@@ -303,6 +306,20 @@ RSpec.feature "Appeal Intake" do
         { reference_id: old_reference_id, decision_text: "Really old injury" }
       ]
     )
+
+    # before AMA Rating
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: DecisionReview.ama_activation_date - 5.days,
+      profile_date: DecisionReview.ama_activation_date - 10.days,
+      issues: [
+        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
+        { decision_text: "Issue before AMA Activation from RAMP",
+          associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" },
+          reference_id: "ramp_ref_id" }
+      ]
+    )
+
     epe = create(:end_product_establishment, :active)
     request_issue_in_progress = create(
       :request_issue,
@@ -360,7 +377,7 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content("Left knee granted (already selected for issue 1)")
     expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
 
-    # Add non-rated issue
+    # Add nonrating issue
     safe_click ".no-matching-issues"
     expect(page).to have_content("Does issue 2 match any of these issue categories?")
     expect(page).to have_button("Add this issue", disabled: true)
@@ -371,7 +388,7 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_button("Add this issue", disabled: false)
     safe_click ".add-issue"
     expect(page).to have_content("2 issues")
-    # this nonrated issue is timely
+    # this nonrating request issue is timely
     expect(page).to_not have_content(
       "Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
     )
@@ -393,14 +410,26 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content("4 issues")
     expect(page).to have_content("4. Old injury in review is ineligible because it's already under review as a Appeal")
 
-    # add untimely rated issue
+    # add untimely rating request issue
     safe_click "#button-add-issue"
     find_all("label", text: "Really old injury").first.click
     safe_click ".add-issue"
+    add_untimely_exemption_response("Yes")
     expect(page).to have_content("5 issues")
-    expect(page).to have_content("5. Really old injury is ineligible because it has a prior decision date")
+    expect(page).to have_content("I am an exemption note")
+    expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
 
-    # add untimely nonrated issue
+    # remove and re-add with different answer to exemption
+    page.all(".remove-issue").last.click
+    safe_click "#button-add-issue"
+    find_all("label", text: "Really old injury").first.click
+    safe_click ".add-issue"
+    add_untimely_exemption_response("No")
+    expect(page).to have_content("5 issues")
+    expect(page).to have_content("I am an exemption note")
+    expect(page).to have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
+
+    # add untimely nonrating request issue
     safe_click "#button-add-issue"
     safe_click ".no-matching-issues"
     expect(page).to have_button("Add this issue", disabled: true)
@@ -415,10 +444,39 @@ RSpec.feature "Appeal Intake" do
       "Another Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
     )
 
+    # add before_ama ratings
+    safe_click "#button-add-issue"
+    find_all("label", text: "Non-RAMP Issue before AMA Activation").first.click
+    safe_click ".add-issue"
+    expect(page).to have_content(
+      "7. Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+    )
+
+    # Eligible because it comes from a RAMP decision
+    safe_click "#button-add-issue"
+    find_all("label", text: "Issue before AMA Activation from RAMP").first.click
+    safe_click ".add-issue"
+    expect(page).to have_content(
+      "8. Issue before AMA Activation from RAMP Decision date:"
+    )
+
+    safe_click "#button-add-issue"
+    safe_click ".no-matching-issues"
+    expect(page).to have_button("Add this issue", disabled: true)
+    fill_in "Issue category", with: "Drill Pay Adjustments"
+    find("#issue-category").send_keys :enter
+    fill_in "Issue description", with: "A nonrating issue before AMA"
+    fill_in "Decision date", with: "10/19/2017"
+    expect(page).to have_button("Add this issue", disabled: false)
+    safe_click ".add-issue"
+    expect(page).to have_content(
+      "A nonrating issue before AMA #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+    )
+
     safe_click "#button-finish-intake"
 
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
-    expect(page).to have_content("This is an unidentified issue")
+    expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
 
     expect(Appeal.find_by(
              id: appeal.id,
@@ -434,6 +492,13 @@ RSpec.feature "Appeal Intake" do
     )).to_not be_nil
 
     expect(RequestIssue.find_by(
+             review_request: appeal,
+             description: "Really old injury",
+             untimely_exemption: false,
+             untimely_exemption_notes: "I am an exemption note"
+    )).to_not be_nil
+
+    expect(RequestIssue.find_by(
              review_request_type: "Appeal",
              review_request_id: appeal.id,
              issue_category: "Active Duty Adjustments",
@@ -445,6 +510,26 @@ RSpec.feature "Appeal Intake" do
              review_request: appeal,
              description: "This is an unidentified issue",
              is_unidentified: true
+    )).to_not be_nil
+
+    # Issues before AMA
+    expect(RequestIssue.find_by(
+             review_request: appeal,
+             description: "Non-RAMP Issue before AMA Activation",
+             ineligible_reason: :before_ama
+    )).to_not be_nil
+
+    expect(RequestIssue.find_by(
+             review_request: appeal,
+             description: "Issue before AMA Activation from RAMP",
+             ineligible_reason: nil,
+             ramp_claim_id: "ramp_claim_id"
+    )).to_not be_nil
+
+    expect(RequestIssue.find_by(
+             review_request: appeal,
+             description: "A nonrating issue before AMA",
+             ineligible_reason: :before_ama
     )).to_not be_nil
 
     duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
@@ -465,6 +550,7 @@ RSpec.feature "Appeal Intake" do
     find_all("label", text: "Left knee granted").first.click
     fill_in "Notes", with: "I am an issue note"
     safe_click ".add-issue"
+    add_untimely_exemption_response("Yes")
 
     ## Validate error message when complete intake fails
     expect_any_instance_of(AppealIntake).to receive(:complete!).and_raise("A random error. Oh no!")

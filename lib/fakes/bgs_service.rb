@@ -51,17 +51,30 @@ class Fakes::BGSService
         )
       when "has_many_ratings"
         in_active_review_reference_id = "in-active-review-ref-id"
+        in_active_review_receipt_date = Time.zone.parse("2018-04-01")
         Generators::Rating.build(
           participant_id: veteran.participant_id
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
+          profile_date: Time.zone.today - 100,
           promulgation_date: Time.zone.today - 90,
           issues: [
             { decision_text: "Left knee" },
             { decision_text: "Right knee" },
             { decision_text: "PTSD" },
             { decision_text: "This rating is in active review", reference_id: in_active_review_reference_id }
+          ]
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          profile_date: DecisionReview.ama_activation_date - 10.days,
+          promulgation_date: DecisionReview.ama_activation_date - 5.days,
+          issues: [
+            { decision_text: "Issue before AMA not from a RAMP Review", reference_id: "before_ama_ref_id" },
+            { decision_text: "Issue before AMA from a RAMP Review",
+              associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" },
+              reference_id: "ramp_reference_id" }
           ]
         )
         Generators::Rating.build(
@@ -73,7 +86,8 @@ class Fakes::BGSService
           ]
         )
         hlr = HigherLevelReview.find_or_create_by!(
-          veteran_file_number: veteran.file_number
+          veteran_file_number: veteran.file_number,
+          receipt_date: in_active_review_receipt_date
         )
         epe = EndProductEstablishment.find_or_create_by!(
           reference_id: in_active_review_reference_id,
@@ -83,7 +97,8 @@ class Fakes::BGSService
         RequestIssue.find_or_create_by!(
           review_request: hlr,
           end_product_establishment: epe,
-          rating_issue_reference_id: in_active_review_reference_id
+          rating_issue_reference_id: in_active_review_reference_id,
+          rating_issue_profile_date: in_active_review_receipt_date - 1
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,

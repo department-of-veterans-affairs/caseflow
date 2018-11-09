@@ -146,8 +146,6 @@ class EndProductEstablishment < ApplicationRecord
     # do not cancel ramp reviews for now
     return if source.is_a?(RampReview)
 
-    active_request_issues = request_issues.select { |request_issue| request_issue.removed_at.nil? }
-
     if active_request_issues.empty?
       cancel!
     end
@@ -157,7 +155,6 @@ class EndProductEstablishment < ApplicationRecord
     # There is no need to sync end_product_status if the status
     # is already inactive since an EP can never leave that state
     return true unless status_active?
-
     fail EstablishedEndProductNotFound unless result
 
     transaction do
@@ -174,11 +171,25 @@ class EndProductEstablishment < ApplicationRecord
     raise BGSSyncError.new(e, self)
   end
 
+  def sync_decision_issues!
+    return unless status_cleared?
+    synced_rating_issues = []
+    potential_decision_ratings.each do |rating|
+      rating.issues.select(&:contention_reference_id).each do |rating_issue|
+        if rating_issue.save_decision_issue
+          synced_rating_issues << rating_issue
+        end
+      end
+    end
+    resolve_synced_decisions(synced_rating_issues)
+  end
+
   def status_canceled?
     synced_status == CANCELED_STATUS
   end
 
-  def status_cleared?
+  def status_cleared?(sync: false)
+    sync! if sync
     synced_status == CLEARED_STATUS
   end
 
@@ -187,17 +198,16 @@ class EndProductEstablishment < ApplicationRecord
     !EndProduct::INACTIVE_STATUSES.include?(synced_status)
   end
 
-  def associate_rated_issues!
-    is_rated = true
-    return if code != source.issue_code(is_rated)
-    return if unassociated_rated_request_issues.count == 0
+  def associate_rating_request_issues!
+    return if code != source.issue_code(rating: true)
+    return if unassociated_rating_request_issues.count == 0
 
-    VBMSService.associate_rated_issues!(
+    VBMSService.associate_rating_request_issues!(
       claim_id: reference_id,
-      rated_issue_contention_map: rated_issue_contention_map(rated_request_issues)
+      rating_issue_contention_map: rating_issue_contention_map(rating_request_issues)
     )
 
-    RequestIssue.where(id: rated_request_issues.map(&:id)).update_all(
+    RequestIssue.where(id: rating_request_issues.map(&:id)).update_all(
       rating_issue_associated_at: Time.zone.now
     )
   end
@@ -216,33 +226,52 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
+  def request_issues
+    return [] unless source.try(:request_issues)
+    source.request_issues.select { |ri| ri.end_product_establishment == self }
+  end
+
+  def active_request_issues
+    request_issues.select { |request_issue| request_issue.removed_at.nil? && request_issue.status_active? }
+  end
+
   private
 
   def cancel!
     transaction do
       # delete end product in bgs & set sync status to canceled
-      BGSService.new.cancel_end_product(:veteran_file_number, :code, :modifier)
+      BGSService.new.cancel_end_product(veteran_file_number, code, modifier)
       update!(synced_status: CANCELED_STATUS)
     end
   end
 
-  def request_issues
-    source.request_issues.select { |ri| ri.end_product_establishment == self }
+  def potential_decision_ratings
+    Rating.fetch_in_range(participant_id: veteran.participant_id, start_date: established_at, end_date: Time.zone.today)
   end
 
-  def rated_request_issues
-    request_issues.select(&:rated?)
+  def resolve_synced_decisions(synced_rating_issues)
+    request_issues.reject(&:processed?).each do |request_issue|
+      if synced_rating_issues.any? { |rating_issue| rating_issue.source_request_issue == request_issue }
+        request_issue.processed!
+      else
+        request_issue.submit_for_processing!
+      end
+    end
   end
 
-  def unassociated_rated_request_issues
-    rated_request_issues.select { |ri| ri.rating_issue_associated_at.nil? }
+  def rating_request_issues
+    request_issues.select(&:rating?)
+  end
+
+  def unassociated_rating_request_issues
+    rating_request_issues.select { |ri| ri.rating_issue_associated_at.nil? }
   end
 
   def request_issues_ready_for_contentions
     request_issues.select { |ri| ri.contention_reference_id.nil? && ri.eligible? }
   end
 
-  def rated_issue_contention_map(request_issues_to_associate)
+  def rating_issue_contention_map(request_issues_to_associate)
     request_issues_to_associate.inject({}) do |contention_map, issue|
       contention_map[issue.rating_issue_reference_id] = issue.contention_reference_id
       contention_map

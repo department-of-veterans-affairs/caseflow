@@ -42,6 +42,7 @@ const getAppeals = (state: State): BasicAppeals => state.queue.appeals;
 const getAppealDetails = (state: State): AppealDetails => state.queue.appealDetails;
 const getUserCssId = (state: State): string => state.ui.userCssId;
 const getAppealId = (state: State, props: Object): string => props.appealId;
+const getActiveOrganizationId = (state: State): ?number => state.ui.activeOrganizationId;
 const getTaskUniqueId = (state: State, props: Object): string => props.taskId;
 const getCaseflowVeteranId = (state: State, props: Object): ?string => props.caseflowVeteranId;
 const getModals = (state: State): UiStateModals => state.ui.modals;
@@ -78,6 +79,12 @@ export const tasksWithAppealSelector = createSelector(
   }
 );
 
+export const tasksByOrganization = createSelector(
+  [tasksWithAppealSelector, getActiveOrganizationId],
+  (tasks: Array<TaskWithAppeal>, organizationId: string) =>
+    _.filter(tasks, (task) => (task.assignedTo.id === organizationId))
+);
+
 export const taskById = createSelector(
   [tasksWithAppealSelector, getTaskUniqueId],
   (tasks: Array<TaskWithAppeal>, taskId: string) =>
@@ -104,6 +111,23 @@ export const getTasksForAppeal = createSelector(
   }
 );
 
+export const getUnassignedOrganizationalTasks = createSelector(
+  [tasksWithAppealSelector],
+  (tasks: Tasks) => _.filter(tasks, (task) => {
+    return (task.status === TASK_STATUSES.assigned || task.status === TASK_STATUSES.in_progress);
+  })
+);
+
+export const getAssignedOrganizationalTasks = createSelector(
+  [tasksWithAppealSelector],
+  (tasks: Tasks) => _.filter(tasks, (task) => (task.status === TASK_STATUSES.on_hold))
+);
+
+export const getCompletedOrganizationalTasks = createSelector(
+  [tasksWithAppealSelector],
+  (tasks: Tasks) => _.filter(tasks, (task) => task.status === TASK_STATUSES.completed)
+);
+
 export const tasksForAppealAssignedToUserSelector = createSelector(
   [getTasksForAppeal, getUserCssId],
   (tasks: Tasks, cssId: string) => {
@@ -118,7 +142,7 @@ export const appealsByCaseflowVeteranId = createSelector(
       appeal.caseflowVeteranId.toString() === caseflowVeteranId.toString())
 );
 
-const tasksByAssigneeCssIdSelector = createSelector(
+export const tasksByAssigneeCssIdSelector = createSelector(
   [tasksWithAppealSelector, getUserCssId],
   (tasks: Array<TaskWithAppeal>, cssId: string) =>
     _.filter(tasks, (task) => task.assignedTo.cssId === cssId)
@@ -146,7 +170,11 @@ export const newTasksByAssigneeCssIdSelector = createSelector(
 export const workableTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks: Array<TaskWithAppeal>) => tasks.filter(
-    (task) => task.appeal.isLegacyAppeal || task.status !== TASK_STATUSES.on_hold
+    (task) => {
+      return (task.appeal.isLegacyAppeal ||
+          task.status === TASK_STATUSES.assigned ||
+          task.status === TASK_STATUSES.in_progress);
+    }
   )
 );
 

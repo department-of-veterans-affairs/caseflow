@@ -160,10 +160,10 @@ class Fakes::VBMSService
     end
   end
 
-  def self.associate_rated_issues!(claim_id:, rated_issue_contention_map:)
+  def self.associate_rating_request_issues!(claim_id:, rating_issue_contention_map:)
     Rails.logger.info("Submitting rated issues to VBMS...")
     Rails.logger.info("Claim id:\n #{claim_id}")
-    Rails.logger.info("Rated issue contention map: #{rated_issue_contention_map.inspect}")
+    Rails.logger.info("Rating issue contention map: #{rating_issue_contention_map.inspect}")
 
     true
   end

@@ -273,6 +273,25 @@ RSpec.feature "Case details" do
     end
   end
 
+  context "when an appeal has an issue that is ineligible" do
+    let(:eligible_issue_cnt) { 5 }
+    let(:ineligible_issue_cnt) { 3 }
+    let(:issues) do
+      [
+        build_list(:request_issue, eligible_issue_cnt, description: "Knee pain"),
+        build_list(:request_issue, ineligible_issue_cnt, description: "Sunburn", ineligible_reason: :untimely)
+      ].flatten
+    end
+    let!(:appeal) { FactoryBot.create(:appeal, request_issues: issues) }
+
+    scenario "only eligible issues should appear in case details page" do
+      visit "/queue/appeals/#{appeal.uuid}"
+
+      expect(page).to have_content("Issue #{eligible_issue_cnt}")
+      expect(page).to_not have_content("Issue #{eligible_issue_cnt + 1}")
+    end
+  end
+
   context "loads judge task detail views" do
     let!(:vacols_case) do
       FactoryBot.create(

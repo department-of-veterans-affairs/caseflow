@@ -22,7 +22,7 @@ jobs:
             POSTGRES_DB: caseflow_certification_test
 
       # This is our homespun VACOLS container. An oracle db with some special sauce.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_3
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_4
 
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.10
@@ -262,6 +262,7 @@ jobs:
           path: ~/all_logs.log
 
 workflows:
+  version: 2
   build:
     jobs:
       - rspec
