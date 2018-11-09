@@ -188,7 +188,7 @@ describe Appeal do
 
   context "#location_code" do
     context "if the RootTask status is completed" do
-      let(:appeal) do create(:appeal) end
+      let(:appeal) { create(:appeal) }
 
       before do
         create(:root_task, appeal: appeal, status: :completed)
@@ -200,14 +200,14 @@ describe Appeal do
     end
 
     context "if there are no active tasks" do
-      let(:appeal) do create(:appeal) end
+      let(:appeal) { create(:appeal) }
       it "returns nil" do
         expect(appeal.location_code).to eq(nil)
       end
     end
 
     context "if the only active case is a RootTask" do
-      let(:appeal) do create(:appeal) end
+      let(:appeal) { create(:appeal) }
 
       before do
         create(:root_task, appeal: appeal, status: :in_progress)
@@ -218,10 +218,10 @@ describe Appeal do
     end
 
     context "if there is an assignee" do
-      let(:organization) do create(:organization) end
-      let(:appeal_organization) do create(:appeal) end
-      let(:user) do create(:user) end
-      let(:appeal_user) do create(:appeal) end
+      let(:organization) { create(:organization) }
+      let(:appeal_organization) { create(:appeal) }
+      let(:user) { create(:user) }
+      let(:appeal_user) { create(:appeal) }
 
       before do
         organization_root_task = create(:root_task, appeal: appeal_organization)

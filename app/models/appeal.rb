@@ -61,7 +61,7 @@ class Appeal < DecisionReview
     return COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL if active_tasks == [root_task]
 
     most_recent_assignee = active_tasks.order(updated_at: :desc).first.assigned_to
-    return most_recent_assignee.is_a?(Organization) ? most_recent_assignee.name : most_recent_assignee.css_id
+    most_recent_assignee.is_a?(Organization) ? most_recent_assignee.name : most_recent_assignee.css_id
   end
 
   def attorney_case_reviews
