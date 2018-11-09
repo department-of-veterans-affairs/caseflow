@@ -1,6 +1,7 @@
 class StartCertificationJob < ApplicationJob
   queue_as :high_priority
   attr_accessor :certification
+  application_attr :certification
 
   def perform(certification, user = nil)
     @certification = certification

@@ -37,7 +37,19 @@ class ExternalApi::VBMSService
 
     veteran_file_number = appeal.veteran_file_number
     request = VBMS::Requests::FindDocumentVersionReference.new(veteran_file_number)
-    documents = send_and_log_request(veteran_file_number, request)
+
+    begin
+      documents = send_and_log_request(veteran_file_number, request)
+    rescue VBMS::HTTPError => e
+      raise unless e.body.include?("File Number does not exist within the system.")
+
+      alternative_file_number = ExternalApi::BGSService.new.fetch_veteran_info(veteran_file_number)[:claim_number]
+
+      raise if alternative_file_number == veteran_file_number
+
+      request = VBMS::Requests::FindDocumentVersionReference.new(alternative_file_number)
+      documents = send_and_log_request(alternative_file_number, request)
+    end
 
     Rails.logger.info("Document list length: #{documents.length}")
 
@@ -59,10 +71,10 @@ class ExternalApi::VBMSService
     send_and_log_request(veteran_file_number, request)
   end
 
-  def self.upload_document_to_vbms(appeal, form8)
+  def self.upload_document_to_vbms(appeal, uploadable_document)
     @vbms_client ||= init_vbms_client
-    response = initialize_upload(appeal, form8)
-    upload_document(appeal.vbms_id, response.upload_token, form8.pdf_location)
+    response = initialize_upload(appeal, uploadable_document)
+    upload_document(appeal.veteran_file_number, response.upload_token, uploadable_document.pdf_location)
   end
 
   def self.initialize_upload(appeal, uploadable_document)
@@ -71,14 +83,14 @@ class ExternalApi::VBMSService
     request = VBMS::Requests::InitializeUpload.new(
       content_hash: content_hash,
       filename: filename,
-      file_number: appeal.sanitized_vbms_id,
+      file_number: appeal.veteran_file_number,
       va_receive_date: uploadable_document.upload_date,
       doc_type: uploadable_document.document_type_id,
-      source: "VACOLS",
+      source: uploadable_document.source,
       subject: uploadable_document.document_type,
       new_mail: true
     )
-    send_and_log_request(appeal.vbms_id, request)
+    send_and_log_request(appeal.veteran_file_number, request)
   end
 
   def self.upload_document(vbms_id, upload_token, filepath)

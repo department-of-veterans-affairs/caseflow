@@ -1,19 +1,24 @@
-class RatingIssue < ApplicationRecord
-  belongs_to :source_request_issue, class_name: "RequestIssue"
+# ephemeral class used for caching Rating Issues for client,
+# and for creating DecisionIssues when a Rating Issue has a contention_reference_id
 
-  # this local attribute is used to resolve the source RequestIssue
-  attr_accessor :contention_reference_id
+class RatingIssue
+  include ActiveModel::Model
+
+  attr_accessor :reference_id, :decision_text, :profile_date, :associated_claims_data,
+                :promulgation_date, :participant_id, :rba_contentions_data
+
+  attr_writer :ramp_claim_id, :contention_reference_id
 
   class << self
-    def from_bgs_hash(data)
-      rba_contentions = [data.dig(:rba_issue_contentions) || {}].flatten
+    def from_bgs_hash(rating, bgs_data)
       new(
-        reference_id: data[:rba_issue_id],
-        profile_date: rba_contentions.first.dig(:prfil_dt) || data[:profile_date],
-        contention_reference_id: rba_contentions.first.dig(:cntntn_id),
-        decision_text: data[:decn_txt],
-        promulgation_date: data[:promulgation_date],
-        participant_id: data[:participant_id]
+        reference_id: bgs_data[:rba_issue_id],
+        rba_contentions_data: ensure_array_of_hashes(bgs_data.dig(:rba_issue_contentions)),
+        associated_claims_data: ensure_array_of_hashes(bgs_data.dig(:associated_claims)),
+        profile_date: rating.profile_date,
+        decision_text: bgs_data[:decn_txt],
+        promulgation_date: rating.promulgation_date,
+        participant_id: rating.participant_id
       )
     end
 
@@ -23,22 +28,33 @@ class RatingIssue < ApplicationRecord
         reference_id: ui_hash[:reference_id],
         decision_text: ui_hash[:decision_text],
         promulgation_date: ui_hash[:promulgation_date],
-        contention_reference_id: ui_hash[:contention_reference_id]
+        profile_date: ui_hash[:profile_date],
+        associated_claims_data: ui_hash[:associated_claims_data],
+        rba_contentions_data: ui_hash[:rba_contentions_data]
       )
+    end
+
+    private
+
+    def ensure_array_of_hashes(array_or_hash_or_nil)
+      [array_or_hash_or_nil || {}].flatten
     end
   end
 
-  def save_with_source_request_issue!
-    fetch_source_request_issue
+  def save_decision_issue
     return unless source_request_issue
 
-    # if a RatingIssue already exists, update rather than attempt to insert a duplicate
-    if existing_rating_issue
-      existing_rating_issue.update!(source_request_issue: source_request_issue)
-      self.attributes = existing_rating_issue.attributes
-    else
-      save!
-    end
+    # if a DecisionIssue already exists then do not touch it. These should be immutable.
+    return if decision_issue
+
+    DecisionIssue.create!(
+      source_request_issue: source_request_issue,
+      rating_issue_reference_id: reference_id,
+      participant_id: participant_id,
+      promulgation_date: promulgation_date,
+      decision_text: decision_text,
+      profile_date: profile_date
+    )
   end
 
   # If you change this method, you will need to clear cache in prod for your changes to
@@ -49,9 +65,13 @@ class RatingIssue < ApplicationRecord
       reference_id: reference_id,
       decision_text: decision_text,
       promulgation_date: promulgation_date,
+      profile_date: profile_date,
       contention_reference_id: contention_reference_id,
+      ramp_claim_id: ramp_claim_id,
       title_of_active_review: title_of_active_review,
-      source_higher_level_review: source_higher_level_review
+      source_higher_level_review: source_higher_level_review,
+      rba_contentions_data: rba_contentions_data,
+      associated_claims_data: associated_claims_data
     }
   end
 
@@ -63,19 +83,35 @@ class RatingIssue < ApplicationRecord
 
   def source_higher_level_review
     return unless reference_id
-    fetch_source_request_issue unless source_request_issue
     return unless source_request_issue
     source_request_issue.review_request.is_a?(HigherLevelReview) ? source_request_issue.id : nil
   end
 
-  private
-
-  def existing_rating_issue
-    @existing_rating_issue ||= RatingIssue.find_by(participant_id: participant_id, reference_id: reference_id)
+  def decision_issue
+    @decision_issue ||= DecisionIssue.find_by(participant_id: participant_id, rating_issue_reference_id: reference_id)
   end
 
-  def fetch_source_request_issue
+  def from_ramp_decision?
+    associated_claims_data && EndProduct::RAMP_CODES.key?(associated_claims_data.first.dig(:bnft_clm_tc))
+  end
+
+  def ramp_claim_id
+    @ramp_claim_id ||= calculate_ramp_claim_id
+  end
+
+  def contention_reference_id
+    return unless rba_contentions_data
+    @contention_reference_id ||= rba_contentions_data.first.dig(:cntntn_id)
+  end
+
+  def source_request_issue
     return if contention_reference_id.nil?
-    self.source_request_issue ||= RequestIssue.unscoped.find_by(contention_reference_id: contention_reference_id)
+    @source_request_issue ||= RequestIssue.unscoped.find_by(contention_reference_id: contention_reference_id)
+  end
+
+  private
+
+  def calculate_ramp_claim_id
+    associated_claims_data.first.dig(:clm_id) if from_ramp_decision?
   end
 end

@@ -160,9 +160,23 @@ export default class DailyDocket extends React.Component {
   getHearingDateOptions = () => {
     return _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
       label: this.getHearingDate(hearingDayOption.hearingDate),
-      value: this.getHearingDate(hearingDayOption.hearingDate)
+      value: hearingDayOption.id
     }));
   };
+
+ getHearingDateOptions = (hearing) => {
+   const hearings = [{ label: this.getHearingDate(hearing.date),
+     value: hearing.id }];
+
+   const hearingDayoptions = _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
+     label: this.getHearingDate(hearingDayOption.hearingDate),
+     value: hearingDayOption.id
+   }));
+
+   if (this.props.hearingDayOptions) {
+     return hearings.concat(hearingDayoptions);
+   }
+ };
 
   getHearingLocationDropdown = (hearing) => {
     return <SearchableDropdown
@@ -203,8 +217,8 @@ export default class DailyDocket extends React.Component {
   getHearingDayDropdown = (hearing, readOnly) => {
     return <div><SearchableDropdown
       name="Hearing Day"
-      options={this.getHearingDateOptions()}
-      value={hearing.editedDate ? this.getHearingDate(hearing.editedDate) : this.getHearingDate(hearing.date)}
+      options={this.getHearingDateOptions(hearing)}
+      value={hearing.editedDate ? hearing.editedDate : hearing.id}
       onChange={this.onHearingDateUpdate(hearing.id)}
       readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
     />
@@ -321,6 +335,7 @@ export default class DailyDocket extends React.Component {
       </div>
       <span className="cf-push-right">
         VLJ: {this.props.dailyDocket.judgeFirstName} {this.props.dailyDocket.judgeLastName} <br />
+        Coordinator: {this.props.dailyDocket.bvaCoordinator} <br />
         Hearing type: {this.props.dailyDocket.hearingType}
       </span>
       <div {...noMarginStyling}>

@@ -116,7 +116,11 @@ class SaveButtonUnconnected extends React.Component {
       <Button
         name="submit-update"
         onClick={this.validate}
-        loading={requestStatus.requestIssuesUpdate === REQUEST_STATE.IN_PROGRESS}
+        // on success also keep the loading state
+        // appeals take a long time to navigate to a different page, do not allow double saves in the meantime
+        // for other review types, this is a no-op since page changes
+        loading={requestStatus.requestIssuesUpdate === REQUEST_STATE.IN_PROGRESS ||
+          requestStatus.requestIssuesUpdate === REQUEST_STATE.SUCCEEDED}
         disabled={saveDisabled}
       >
         Save

@@ -1,21 +1,42 @@
 class RequestIssue < ApplicationRecord
+  include Asyncable
+
   belongs_to :review_request, polymorphic: true
   belongs_to :end_product_establishment
-  has_many :decision_issues
+  has_many :decision_issues, foreign_key: "source_request_issue_id"
   has_many :remand_reasons
-  has_many :decision_rating_issues, foreign_key: "source_request_issue_id", class_name: "RatingIssue"
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
 
+  # enum is symbol, but validates requires a string
+  validates :ineligible_reason, exclusion: { in: ["untimely"] }, if: proc { |reqi| reqi.untimely_exemption }
+
   enum ineligible_reason: {
-    duplicate_of_issue_in_active_review: 0,
-    untimely: 1,
-    previous_higher_level_review: 2
+    duplicate_of_issue_in_active_review: "duplicate_of_issue_in_active_review",
+    untimely: "untimely",
+    previous_higher_level_review: "previous_higher_level_review",
+    before_ama: "before_ama"
   }
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
 
   class << self
+    def submitted_at_column
+      :decision_sync_submitted_at
+    end
+
+    def attempted_at_column
+      :decision_sync_attempted_at
+    end
+
+    def processed_at_column
+      :decision_sync_processed_at
+    end
+
+    def error_column
+      :decision_sync_error
+    end
+
     def rating
       where.not(rating_issue_reference_id: nil, rating_issue_profile_date: nil)
         .or(where(is_unidentified: true))
@@ -34,6 +55,7 @@ class RequestIssue < ApplicationRecord
       where.not(id: select(:parent_request_issue_id).uniq)
     end
 
+    # ramp_claim_id is set to the claim id of the RAMP EP when the contested rating issue is part of a ramp decision
     def from_intake_data(data)
       new(
         rating_issue_reference_id: data[:reference_id],
@@ -42,7 +64,10 @@ class RequestIssue < ApplicationRecord
         decision_date: data[:decision_date],
         issue_category: data[:issue_category],
         notes: data[:notes],
-        is_unidentified: data[:is_unidentified]
+        is_unidentified: data[:is_unidentified],
+        untimely_exemption: data[:untimely_exemption],
+        untimely_exemption_notes: data[:untimely_exemption_notes],
+        ramp_claim_id: data[:ramp_claim_id]
       ).validate_eligibility!
     end
 
@@ -91,6 +116,7 @@ class RequestIssue < ApplicationRecord
       category: issue_category,
       notes: notes,
       is_unidentified: is_unidentified,
+      ramp_claim_id: ramp_claim_id,
       ineligible_reason: ineligible_reason,
       title_of_active_review: duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
     }
@@ -100,6 +126,7 @@ class RequestIssue < ApplicationRecord
     check_for_active_request_issue!
     check_for_untimely!
     check_for_previous_higher_level_review!
+    check_for_before_ama!
     self
   end
 
@@ -111,20 +138,22 @@ class RequestIssue < ApplicationRecord
     end
   end
 
+  def contested_decision_issue
+    review_request.veteran.decision_issues.find_by(rating_issue_reference_id: contested_rating_issue.reference_id)
+  end
+
   def previous_request_issue
-    return unless contested_rating_issue
-    review_request.veteran.decision_rating_issues.find_by(
-      reference_id: contested_rating_issue.reference_id
-    ).try(:source_request_issue)
+    contested_decision_issue.try(:source_request_issue)
   end
 
   private
 
-  # It may not yet exist in the db as a RatingIssue so we pull hash from the serialized_ratings.
+  # RatingIssue is not in db so we pull hash from the serialized_ratings.
   def fetch_contested_rating_issue_ui_hash
     rating_with_issue = review_request.serialized_ratings.find do |rating|
       rating[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
     end || { issues: [] }
+
     rating_with_issue[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
   end
 
@@ -137,9 +166,25 @@ class RequestIssue < ApplicationRecord
   def check_for_previous_review!(review_type)
     reason = rating_issue_rationale_to_request_issue_reason(review_type)
     contested_rating_issue_ui_hash = fetch_contested_rating_issue_ui_hash
+
     if contested_rating_issue_ui_hash && contested_rating_issue_ui_hash[review_type].present?
       self.ineligible_reason = reason
       self.ineligible_due_to_id = contested_rating_issue_ui_hash[review_type]
+    end
+  end
+
+  def decision_or_promulgation_date
+    return decision_date if nonrating?
+    return contested_rating_issue.try(:promulgation_date) if rating?
+  end
+
+  def check_for_before_ama!
+    return unless eligible?
+    return if is_unidentified
+    return if ramp_claim_id
+
+    if decision_or_promulgation_date && decision_or_promulgation_date < DecisionReview.ama_activation_date
+      self.ineligible_reason = :before_ama
     end
   end
 
@@ -159,19 +204,10 @@ class RequestIssue < ApplicationRecord
 
   def check_for_untimely!
     return unless eligible?
+    return if untimely_exemption
     return if review_request && review_request.is_a?(SupplementalClaim)
-    check_for_rating_untimely! if rating?
-    check_for_nonrating_untimely! if nonrating?
-  end
 
-  def check_for_rating_untimely!
-    if contested_rating_issue && !review_request.timely_rating?(contested_rating_issue.promulgation_date)
-      self.ineligible_reason = :untimely
-    end
-  end
-
-  def check_for_nonrating_untimely!
-    if decision_date < (review_request.receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
+    if !review_request.timely_issue?(decision_or_promulgation_date)
       self.ineligible_reason = :untimely
     end
   end

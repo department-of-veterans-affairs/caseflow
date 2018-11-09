@@ -4,7 +4,10 @@
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
     buildDate: build_date,
-    serverIntake: appeal.ui_hash(FeatureToggle.enabled?(:intakeAma, user: current_user)),
-    claimId: url_appeal_uuid
+    serverIntake: appeal.ui_hash,
+    claimId: url_appeal_uuid,
+    featureToggles: {
+      useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user)
+    }
   }) %>
 <% end %>

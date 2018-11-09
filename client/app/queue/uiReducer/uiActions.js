@@ -143,6 +143,11 @@ export const setOrganizationIds = (organizationIds: Array<number>) => ({
   payload: { organizationIds }
 });
 
+export const setActiveOrganizationId = (activeOrganizationId: number) => ({
+  type: ACTIONS.SET_ACTIVE_ORGANIZATION_ID,
+  payload: { activeOrganizationId }
+});
+
 export const setUserId = (userId: number) => ({
   type: ACTIONS.SET_USER_ID,
   payload: { userId }
