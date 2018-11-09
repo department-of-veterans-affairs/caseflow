@@ -46,22 +46,27 @@ class Appeal < DecisionReview
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
   def location_code
-    return nil if tasks.empty?
+    location_code = nil
+    root_task = tasks.first.root_task if !tasks.empty?
 
-    root_task = tasks.first.root_task
-    return nil if !root_task
+    if root_task
+      if root_task.status == Constants.TASK_STATUSES.completed
+        location_code = COPY::CASE_LIST_TABLE_POST_DECISION_LABEL
+      else
+        active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
+        if !active_tasks.empty?
+          if active_tasks == [root_task]
+            location_code = COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL
+          else
+            most_recent_assignee = active_tasks.order(updated_at: :desc).first.assigned_to
+            location_code = most_recent_assignee.is_a?(Organization) ?
+                most_recent_assignee.name : most_recent_assignee.css_id
+          end
+        end
+      end
+    end
 
-    # RootTasks are marked complete when the decision is dispatched from the Board, which we call "Post-decision"
-    return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task.status == Constants.TASK_STATUSES.completed
-
-    active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
-    return nil if active_tasks.empty?
-
-    # if the only active task is the RootTask, it's in a holding period at the Board, which we call "Case storage"
-    return COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL if active_tasks == [root_task]
-
-    most_recent_assignee = active_tasks.order(updated_at: :desc).first.assigned_to
-    most_recent_assignee.is_a?(Organization) ? most_recent_assignee.name : most_recent_assignee.css_id
+    location_code
   end
 
   def attorney_case_reviews

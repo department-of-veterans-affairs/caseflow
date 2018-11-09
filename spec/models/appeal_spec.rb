@@ -196,7 +196,7 @@ describe Appeal do
 
       it "returns Post-decision" do
         expect(appeal.location_code).to eq(COPY::CASE_LIST_TABLE_POST_DECISION_LABEL)
-      ent d
+      end
     end
 
     context "if there are no active tasks" do
@@ -212,6 +212,7 @@ describe Appeal do
       before do
         create(:root_task, appeal: appeal, status: :in_progress)
       end
+
       it "returns Case storage" do
         expect(appeal.location_code).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
       end
