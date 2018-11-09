@@ -1,5 +1,7 @@
 # Hearing Prep repository.
 class HearingRepository
+  class NoOpenSlots < StandardError; end
+
   class << self
     # :nocov:
     def fetch_hearings_for_judge(css_id, is_fetching_issues = false)
@@ -55,11 +57,39 @@ class HearingRepository
       vacols_record.update_hearing!(hearing_hash.merge(staff_id: vacols_record.slogid)) if hearing_hash.present?
     end
 
-    def create_vacols_child_hearing(parent_hearing_hash)
-      parent_hearing_hash[:vdkey] = parent_hearing_hash[:hearing_pkseq]
-      parent_hearing_hash.delete(:hearing_pkseq)
-      parent_hearing_hash[:hearing_type] = "V"
-      VACOLS::CaseHearing.create_child_hearing!(parent_hearing_hash)
+    def to_hash(hearing)
+      hearing.as_json.each_with_object({}) do |(k, v), result|
+        result[k.to_sym] = v
+      end
+    end
+
+    def slot_new_hearing(parent_record_id, appeal)
+      hearing_day = HearingDayRepository.find_hearing_day(nil, parent_record_id)
+
+      if hearing_day[:hearing_type] == "C"
+        update_co_hearing(hearing_day[:hearing_date], appeal)
+      else
+        create_child_video_hearing(parent_record_id, hearing_day[:hearing_date], appeal)
+      end
+    end
+
+    def update_co_hearing(hearing_date_str, appeal)
+      # Get the next open slot for that hearing date and time.
+      hearing = VACOLS::CaseHearing.find_by(hearing_date: hearing_date_str, folder_nr: nil)
+      fail NoOpenSlots, message: "No available slots for this hearing day." if hearing.nil?
+      loaded_hearing = VACOLS::CaseHearing.load_hearing(hearing.hearing_pkseq)
+      HearingRepository.update_vacols_hearing!(loaded_hearing, folder_nr: appeal.vacols_id)
+    end
+
+    def create_child_video_hearing(hearing_pkseq, hearing_date, appeal)
+      hearing = VACOLS::CaseHearing.find(hearing_pkseq)
+      hearing_hash = to_hash(hearing)
+      hearing_hash[:folder_nr] = appeal.vacols_id
+      hearing_hash[:hearing_date] = VacolsHelper.format_datetime_with_utc_timezone(hearing_date)
+      hearing_hash[:vdkey] = hearing_hash[:hearing_pkseq]
+      hearing_hash.delete(:hearing_pkseq)
+      hearing_hash[:hearing_type] = "V"
+      VACOLS::CaseHearing.create_child_hearing!(hearing_hash)
     end
 
     def load_vacols_data(hearing)

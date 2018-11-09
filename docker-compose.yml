@@ -3,7 +3,7 @@ services:
   vacols-db-test:
     build: ./local/vacols/.
     container_name: VACOLS_DB-test
-    image: vacols_db
+    image: vacols_db:latest
     tty: true
     stdin_open: true
     command: bash -c "/home/oracle/setup/dockerInit.sh"
@@ -16,7 +16,7 @@ services:
   vacols-db-development:
     build: ./local/vacols/.
     container_name: VACOLS_DB-development
-    image: vacols_db
+    image: vacols_db:latest
     tty: true
     stdin_open: true
     command: bash -c "/home/oracle/setup/dockerInit.sh"
