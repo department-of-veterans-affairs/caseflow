@@ -67,8 +67,7 @@ class SeedDB
       full_name: "VSO user associated with PVA",
       roles: %w[VSO]
     )
-    FactoryBot.create(:staff, user: u, sdept: "PVA")
-    FeatureToggle.enable!(:vso_queue, users: [u.css_id])
+    OrganizationsUser.add_user_to_organization(u, Organization.find_by(name: "Paralyzed Veterans Of America"))
   end
 
   def create_org_queue_user
