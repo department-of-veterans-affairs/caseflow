@@ -10,6 +10,10 @@ module UploadableDocument
     Time.zone.now
   end
 
+  def source
+    fail "#{self.class} is missing source"
+  end
+
   def document_type
     fail "#{self.class} is missing document_type"
   end

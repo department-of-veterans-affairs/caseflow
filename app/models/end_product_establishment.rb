@@ -146,8 +146,6 @@ class EndProductEstablishment < ApplicationRecord
     # do not cancel ramp reviews for now
     return if source.is_a?(RampReview)
 
-    active_request_issues = request_issues.select { |request_issue| request_issue.removed_at.nil? }
-
     if active_request_issues.empty?
       cancel!
     end
@@ -157,7 +155,6 @@ class EndProductEstablishment < ApplicationRecord
     # There is no need to sync end_product_status if the status
     # is already inactive since an EP can never leave that state
     return true unless status_active?
-
     fail EstablishedEndProductNotFound unless result
 
     transaction do
@@ -174,11 +171,25 @@ class EndProductEstablishment < ApplicationRecord
     raise BGSSyncError.new(e, self)
   end
 
+  def sync_decision_issues!
+    return unless status_cleared?
+    synced_rating_issues = []
+    potential_decision_ratings.each do |rating|
+      rating.issues.select(&:contention_reference_id).each do |rating_issue|
+        if rating_issue.save_decision_issue
+          synced_rating_issues << rating_issue
+        end
+      end
+    end
+    resolve_synced_decisions(synced_rating_issues)
+  end
+
   def status_canceled?
     synced_status == CANCELED_STATUS
   end
 
-  def status_cleared?
+  def status_cleared?(sync: false)
+    sync! if sync
     synced_status == CLEARED_STATUS
   end
 
@@ -215,6 +226,15 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
+  def request_issues
+    return [] unless source.try(:request_issues)
+    source.request_issues.select { |ri| ri.end_product_establishment == self }
+  end
+
+  def active_request_issues
+    request_issues.select { |request_issue| request_issue.removed_at.nil? && request_issue.status_active? }
+  end
+
   private
 
   def cancel!
@@ -225,8 +245,18 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
-  def request_issues
-    source.request_issues.select { |ri| ri.end_product_establishment == self }
+  def potential_decision_ratings
+    Rating.fetch_in_range(participant_id: veteran.participant_id, start_date: established_at, end_date: Time.zone.today)
+  end
+
+  def resolve_synced_decisions(synced_rating_issues)
+    request_issues.reject(&:processed?).each do |request_issue|
+      if synced_rating_issues.any? { |rating_issue| rating_issue.source_request_issue == request_issue }
+        request_issue.processed!
+      else
+        request_issue.submit_for_processing!
+      end
+    end
   end
 
   def rating_request_issues

@@ -1,4 +1,4 @@
-# This job syncs a RampElection with up to date BGS and VBMS data
+# This job syncs an EndProductEstablishment (end product manager) with up to date BGS and VBMS data
 class EndProductSyncJob < CaseflowJob
   queue_as :low_priority
   application_attr :intake
