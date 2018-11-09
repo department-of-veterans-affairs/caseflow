@@ -62,6 +62,7 @@ class Generators::Rating
         {
           rba_issue_id: issue_data[:reference_id] || generate_external_id,
           decn_txt: issue_data[:decision_text],
+          associated_claims: issue_data[:associated_claims],
           rba_issue_contentions: {
             prfil_dt: issue_data[:profile_date],
             cntntn_id: issue_data[:contention_reference_id]

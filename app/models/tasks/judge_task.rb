@@ -74,11 +74,12 @@ class JudgeTask < Task
   def self.assign_judge_tasks_for_root_tasks(root_tasks)
     root_tasks.each do |root_task|
       Rails.logger.info("Assigning judge task for appeal #{root_task.appeal.id}")
-      task = create(appeal: root_task.appeal,
-                    parent: root_task,
-                    appeal_type: Appeal.name,
-                    assigned_at: Time.zone.now,
-                    assigned_to: next_assignee)
+      task = create!(appeal: root_task.appeal,
+                     parent: root_task,
+                     appeal_type: Appeal.name,
+                     assigned_at: Time.zone.now,
+                     assigned_to: next_assignee,
+                     action: "assign")
       Rails.logger.info("Assigned judge task with task id #{task.id} to #{task.assigned_to.css_id}")
     end
   end
@@ -88,8 +89,9 @@ class JudgeTask < Task
   end
 
   def self.eligible_for_assigment?(task)
-    # Hearing cases will not be processed until February 2019
     return false if task.appeal.class == LegacyAppeal
+    return false if task.appeal.docket_name.nil?
+    # Hearing cases will not be processed until February 2019
     return false if task.appeal.hearing_docket?
 
     # If it's an evidence submission case, we need to wait until the
@@ -97,7 +99,6 @@ class JudgeTask < Task
     if task.appeal.evidence_submission_docket?
       return false if task.appeal.receipt_date > 90.days.ago
     end
-
     # If the task already has been assigned to a judge, or if it
     # is a VSO task, it will have children tasks. We only want to
     # assign tasks that have not been assigned yet.
