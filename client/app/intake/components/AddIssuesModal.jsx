@@ -67,6 +67,7 @@ class AddIssuesModal extends React.Component {
     if (this.props.intakeData.legacyIssues.length > 0) {
       return 'Next';
     }
+
     return 'Add this issue';
   }
 
