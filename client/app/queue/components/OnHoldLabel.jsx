@@ -6,7 +6,6 @@ export const numDaysOnHold = (task: Task) => moment().startOf('day').
   diff(task.placedOnHoldAt, 'days');
 
 type Props = { task: Task };
-const OnHoldLabel = (props: Props) => `${numDaysOnHold(props.task)}${props.task.onHoldDuration ? ` of ${
-  props.task.onHoldDuration}` : ''}`;
+const OnHoldLabel = (props: Props) => `${numDaysOnHold(props.task)} of ${props.task.onHoldDuration || '?'}`;
 
 export default OnHoldLabel;

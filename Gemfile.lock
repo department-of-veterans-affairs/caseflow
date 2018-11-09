@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/colszowka/simplecov.git
-  revision: 994dbff2780abe420f63036a7f674c296395b6c0
+  revision: 783c9d7e9995f3ea9baf9fbb517c1d0ceb12acdb
   specs:
-    simplecov (0.16.1)
-      docile (~> 1.1)
+    simplecov (0.15.1)
+      docile (~> 1.1.0)
       json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
 
@@ -316,7 +316,7 @@ GEM
     public_suffix (3.0.1)
     puma (3.12.0)
     quantile (0.2.0)
-    rack (2.0.5)
+    rack (2.0.6)
     rack-test (1.0.0)
       rack (>= 1.0, < 3)
     rails (5.1.6)
@@ -548,6 +548,7 @@ DEPENDENCIES
   pry
   pry-byebug
   puma (~> 3.12.0)
+  rack (~> 2.0.6)
   rails (= 5.1.6)
   rails_stdout_logging
   rainbow
@@ -579,4 +580,4 @@ DEPENDENCIES
   zero_downtime_migrations
 
 BUNDLED WITH
-   1.17.1
+   1.16.4
