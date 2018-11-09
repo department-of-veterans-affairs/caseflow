@@ -569,4 +569,69 @@ describe EndProductEstablishment do
       it { is_expected.to eq(false) }
     end
   end
+
+  context "#sync_decision_issues!" do
+    let(:rating) do
+      Generators::Rating.build(
+        issues: issues
+      )
+    end
+
+    let(:contention_ref_id) { "123456" }
+    let(:reference_id) { "Issue1" }
+
+    let(:issues) do
+      [
+        {
+          reference_id: reference_id,
+          decision_text: "Decision1",
+          contention_reference_id: contention_ref_id,
+          profile_date: Time.zone.today
+        },
+        { reference_id: "Issue2", decision_text: "Decision2" }
+      ]
+    end
+
+    let(:higher_level_review) { create(:higher_level_review) }
+    let(:end_product_establishment) { create(:end_product_establishment, :cleared, source: higher_level_review) }
+    let!(:request_issues) do
+      [
+        create(
+          :request_issue,
+          review_request: higher_level_review,
+          end_product_establishment: end_product_establishment,
+          contention_reference_id: contention_ref_id
+        )
+      ]
+    end
+
+    subject { end_product_establishment.sync_decision_issues! }
+
+    before do
+      allow(end_product_establishment).to receive(:potential_decision_ratings).and_return([rating])
+    end
+
+    it "connects rating issues with request issues based on contention_reference_id" do
+      expect(request_issues.first.decision_issues.count).to eq(0)
+
+      subject
+
+      expect(request_issues.first.decision_issues.count).to eq(1)
+      expect(request_issues.first.decision_issues.first.rating_issue_reference_id).to eq(reference_id)
+    end
+
+    context "EPE has cleared but rating has not yet been posted" do
+      before do
+        allow(end_product_establishment).to receive(:potential_decision_ratings).and_return([])
+      end
+
+      it "marks the RequestIssue for later sync via DecisionRatingIssueSyncJob" do
+        subject
+
+        request_issue = end_product_establishment.request_issues.first
+        expect(request_issue.submitted?).to eq(true)
+        expect(request_issue.processed?).to eq(false)
+      end
+    end
+  end
 end
