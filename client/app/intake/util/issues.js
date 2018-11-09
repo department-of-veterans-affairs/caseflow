@@ -299,6 +299,8 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       };
     }
 
+    const decisionDate = new Date(issue.decisionDate);
+
     // returns nonrating request issue format
     return {
       referenceId: issue.id,
