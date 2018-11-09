@@ -157,7 +157,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
 
   legacyTaskInformation = () => {
     // If this is not a task attached to a legacy appeal, use taskInformation.
-    if (!this.props.appeal.locationCode) {
+    if (!this.props.appeal.isLegacyAppeal) {
       return this.taskInformation();
     }
 
