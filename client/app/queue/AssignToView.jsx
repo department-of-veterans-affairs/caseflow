@@ -118,7 +118,8 @@ class AssignToView extends React.Component<Props, ViewState> {
       return (relevantAction.data);
     }
 
-    return null;
+    // We should never get here since any task action the creates this modal should provide data.     return null;
+    throw new Error('Task action requires data');
   }
 
   getAssignee = () => {
@@ -149,13 +150,12 @@ class AssignToView extends React.Component<Props, ViewState> {
 
     const successMsg = { title: `Task reassigned to ${this.getAssignee()}` };
 
-    return this.props.requestSave(`/tasks/${task.taskId}`, payload, successMsg, 'patch').
+    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
         const response = JSON.parse(resp.text);
         const preparedTasks = prepareTasksForStore(response.tasks.data);
 
         _.map(preparedTasks, (preparedTask) => this.props.setTaskAttrs(preparedTask.uniqueId, preparedTask));
-        console.log('test here');
       });
   }
 
