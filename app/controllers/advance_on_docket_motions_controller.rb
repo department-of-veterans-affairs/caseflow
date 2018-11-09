@@ -12,7 +12,7 @@ class AdvanceOnDocketMotionsController < ApplicationController
   end
 
   def verify_aod_access
-    raise Caseflow::Error::ActionForbiddenError, message: "User does not belong to AOD team" unless
+    fail Caseflow::Error::ActionForbiddenError, message: "User does not belong to AOD team" unless
       AodTeam.singleton.user_has_access?(current_user)
   end
 
