@@ -473,7 +473,7 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content("You still have an \"Unidentified\" issue")
         safe_click "#Unidentified-issue-button-id-1"
 
-        expect(page).to have_content("The review originally had 1 issue but now has 6.")
+        expect(page).to have_content("The review originally had 1 issue but now has 7.")
 
         safe_click "#Number-of-issues-has-changed-button-id-1"
 
