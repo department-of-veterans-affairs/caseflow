@@ -8,6 +8,7 @@ import { sprintf } from 'sprintf-js';
 import TabWindow from '../components/TabWindow';
 import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../components/Alert';
 
 import {
@@ -67,6 +68,13 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
 
   render = () => {
     const { messages } = this.props;
+    const noOpenTasks = !_.size([...this.props.workableTasks, ...this.props.onHoldTasks]);
+    const noCasesMessage = noOpenTasks ?
+      <p>
+        {COPY.NO_CASES_IN_QUEUE_MESSAGE}
+        <b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.
+      </p> : '';
+
     const tabs = [
       {
         label: sprintf(
@@ -104,6 +112,7 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
         {messages.success && <Alert type="success" title={messages.success.title}>
           {messages.success.detail || COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
         </Alert>}
+        {noCasesMessage}
         <TabWindow
           name="tasks-attorney-list"
           tabs={tabs}
