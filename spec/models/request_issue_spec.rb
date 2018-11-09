@@ -3,21 +3,26 @@ require "rails_helper"
 describe RequestIssue do
   let(:rating_reference_id) { "abc123" }
   let(:contention_reference_id) { 1234 }
+  let(:profile_date) { Time.zone.now }
+  let(:ramp_claim_id) { nil }
   let(:higher_level_review_reference_id) { "hlr123" }
   let(:review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
   let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
 
   let!(:rating_request_issue) do
-    RequestIssue.create(
+    create(
+      :request_issue,
       review_request: review,
       rating_issue_reference_id: rating_reference_id,
-      rating_issue_profile_date: Time.zone.now,
-      description: "a rating request issue"
+      rating_issue_profile_date: profile_date,
+      description: "a rating request issue",
+      ramp_claim_id: ramp_claim_id
     )
   end
 
   let!(:nonrating_request_issue) do
-    RequestIssue.create(
+    create(
+      :request_issue,
       review_request: review,
       description: "a nonrating request issue description",
       issue_category: "a category",
@@ -26,7 +31,8 @@ describe RequestIssue do
   end
 
   let!(:unidentified_issue) do
-    RequestIssue.create(
+    create(
+      :request_issue,
       review_request: review,
       description: "an unidentified issue",
       is_unidentified: true
@@ -165,22 +171,31 @@ describe RequestIssue do
   end
 
   context "#previous_request_issue" do
-    let(:previous_higher_level_review) { create(:higher_level_review) }
+    let(:previous_higher_level_review) { create(:higher_level_review, receipt_date: review.receipt_date - 100.days) }
+    let(:previous_end_product_establishment) do
+      create(
+        :end_product_establishment,
+        :cleared,
+        veteran_file_number: veteran.file_number,
+        established_at: previous_higher_level_review.receipt_date + 1.day
+      )
+    end
     let!(:previous_request_issue) do
       create(
         :request_issue,
         review_request: previous_higher_level_review,
         rating_issue_reference_id: higher_level_review_reference_id,
-        contention_reference_id: contention_reference_id
+        contention_reference_id: contention_reference_id,
+        end_product_establishment: previous_end_product_establishment
       )
     end
 
     it "looks up the chain to the immediately previous request issue" do
-      veteran.sync_rating_issues!
+      previous_end_product_establishment.sync_decision_issues!
       expect(rating_request_issue.previous_request_issue).to eq(previous_request_issue)
     end
 
-    it "returns nil if Veteran.decision_rating_issues have not yet been synced" do
+    it "returns nil if decision issues have not yet been synced" do
       expect(rating_request_issue.previous_request_issue).to be_nil
     end
   end
@@ -253,6 +268,17 @@ describe RequestIssue do
           { reference_id: old_reference_id, decision_text: "Really old injury" }
         ]
       )
+      Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: DecisionReview.ama_activation_date - 5.days,
+        profile_date: DecisionReview.ama_activation_date - 10.days,
+        issues: [
+          { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
+          { decision_text: "Issue before AMA Activation from RAMP",
+            associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" },
+            reference_id: "ramp_ref_id" }
+        ]
+      )
     end
 
     let!(:request_issue_in_progress) do
@@ -305,6 +331,33 @@ describe RequestIssue do
 
       rating_request_issue.save!
       expect(previous_request_issue.duplicate_but_ineligible).to eq([rating_request_issue])
+    end
+
+    context "Issues with decision dates before AMA" do
+      let(:profile_date) { DecisionReview.ama_activation_date - 5.days }
+
+      it "flags nonrating issues before AMA" do
+        nonrating_request_issue.decision_date = DecisionReview.ama_activation_date - 5.days
+        nonrating_request_issue.validate_eligibility!
+
+        expect(nonrating_request_issue.ineligible_reason).to eq("before_ama")
+      end
+
+      it "flags rating issues before AMA" do
+        rating_request_issue.rating_issue_reference_id = "before_ama_ref_id"
+        rating_request_issue.validate_eligibility!
+        expect(rating_request_issue.ineligible_reason).to eq("before_ama")
+      end
+
+      context "rating issue is from a RAMP decision" do
+        let(:ramp_claim_id) { "ramp_claim_id" }
+
+        it "does not flag rating issues before AMA from a RAMP decision" do
+          rating_request_issue.rating_issue_reference_id = "ramp_ref_id"
+          rating_request_issue.validate_eligibility!
+          expect(rating_request_issue.ineligible_reason).to be_nil
+        end
+      end
     end
   end
 end

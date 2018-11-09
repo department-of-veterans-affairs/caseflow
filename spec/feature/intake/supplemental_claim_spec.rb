@@ -48,12 +48,14 @@ RSpec.feature "Supplemental Claim Intake" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:profile_date) { (receipt_date - untimely_days + 4.days).to_time(:local) }
+  let(:profile_date) { Date.new(2017, 11, 20).to_time(:local) }
+
+  let(:timely_promulgation_date) { Date.new(2017, 11, 30) }
 
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - untimely_days + 1.day,
+      promulgation_date: timely_promulgation_date,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
@@ -168,7 +170,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_current_path("/intake/finish")
 
     expect(page).to have_content("Identify issues on")
-    expect(page).to have_content("Decision date: 04/17/2017")
+    expect(page).to have_content("Decision date: 11/20/2017")
     expect(page).to have_content("Left knee granted")
     expect(page).to have_content("Untimely rating issue 1")
     expect(page).to have_button("Establish EP", disabled: true)
@@ -411,7 +413,7 @@ RSpec.feature "Supplemental Claim Intake" do
     end
 
     let(:duplicate_reference_id) { "xyz789" }
-    let(:old_reference_id) { "old123" }
+    let(:old_reference_id) { "old1234" }
     let(:active_epe) { create(:end_product_establishment, :active) }
 
     let!(:timely_ratings) do
@@ -425,12 +427,31 @@ RSpec.feature "Supplemental Claim Intake" do
           { reference_id: duplicate_reference_id, decision_text: "Old injury" }
         ]
       )
+    end
+
+    let!(:untimely_rating_from_ramp) do
       Generators::Rating.build(
         participant_id: veteran.participant_id,
         promulgation_date: receipt_date - 400.days,
         profile_date: receipt_date - 450.days,
         issues: [
-          { reference_id: old_reference_id, decision_text: "Really old injury" }
+          { reference_id: old_reference_id,
+            decision_text: "Really old injury",
+            associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" } }
+        ]
+      )
+    end
+
+    let!(:before_ama_rating) do
+      Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: DecisionReview.ama_activation_date - 5.days,
+        profile_date: DecisionReview.ama_activation_date - 10.days,
+        issues: [
+          { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
+          { decision_text: "Issue before AMA Activation from RAMP",
+            associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" },
+            reference_id: "ramp_ref_id" }
         ]
       )
     end
@@ -531,6 +552,35 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to have_content("5. Really old injury")
       expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
 
+      # add before_ama ratings
+      safe_click "#button-add-issue"
+      find_all("label", text: "Non-RAMP Issue before AMA Activation").first.click
+      safe_click ".add-issue"
+      expect(page).to have_content(
+        "6. Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+      )
+
+      # Eligible because it comes from a RAMP decision
+      safe_click "#button-add-issue"
+      find_all("label", text: "Issue before AMA Activation from RAMP").first.click
+      safe_click ".add-issue"
+      expect(page).to have_content(
+        "7. Issue before AMA Activation from RAMP Decision date:"
+      )
+
+      safe_click "#button-add-issue"
+      safe_click ".no-matching-issues"
+      expect(page).to have_button("Add this issue", disabled: true)
+      fill_in "Issue category", with: "Drill Pay Adjustments"
+      find("#issue-category").send_keys :enter
+      fill_in "Issue description", with: "A nonrating issue before AMA"
+      fill_in "Decision date", with: "10/19/2017"
+      expect(page).to have_button("Add this issue", disabled: false)
+      safe_click ".add-issue"
+      expect(page).to have_content(
+        "A nonrating issue before AMA #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+      )
+
       safe_click "#button-finish-intake"
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
@@ -583,6 +633,29 @@ RSpec.feature "Supplemental Claim Intake" do
                description: "This is an unidentified issue",
                is_unidentified: true,
                end_product_establishment_id: end_product_establishment.id
+      )).to_not be_nil
+
+      # Issues before AMA
+      expect(RequestIssue.find_by(
+               review_request: supplemental_claim,
+               description: "Non-RAMP Issue before AMA Activation",
+               end_product_establishment_id: end_product_establishment.id,
+               ineligible_reason: :before_ama
+      )).to_not be_nil
+
+      expect(RequestIssue.find_by(
+               review_request: supplemental_claim,
+               description: "Issue before AMA Activation from RAMP",
+               ineligible_reason: nil,
+               ramp_claim_id: "ramp_claim_id",
+               end_product_establishment_id: end_product_establishment.id
+      )).to_not be_nil
+
+      expect(RequestIssue.find_by(
+               review_request: supplemental_claim,
+               description: "A nonrating issue before AMA",
+               ineligible_reason: :before_ama,
+               end_product_establishment_id: non_rating_end_product_establishment.id
       )).to_not be_nil
 
       duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)

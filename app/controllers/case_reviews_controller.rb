@@ -64,6 +64,7 @@ class CaseReviewsController < ApplicationController
                                    :complexity,
                                    :quality,
                                    :comment,
+                                   :one_touch_initiative,
                                    factors_not_considered: [],
                                    areas_for_improvement: [],
                                    issues: [:id, :disposition, :readjudication,

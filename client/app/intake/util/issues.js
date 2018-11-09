@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { formatDate, formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
+import DATES from '../../../constants/DATES.json';
 
 const getNonVeteranClaimant = (intakeData) => {
   const claimant = intakeData.relationships.filter((relationship) => {
@@ -86,7 +87,7 @@ export const formatRequestIssues = (requestIssues) => {
         isRating: false,
         category: issue.category,
         description: issue.description,
-        decisionDate: issue.decision_date,
+        decisionDate: formatDateStr(issue.decision_date),
         ineligibleReason: issue.ineligible_reason,
         contentionText: issue.contention_text
       };
@@ -113,7 +114,8 @@ export const formatRequestIssues = (requestIssues) => {
       description: issue.description,
       ineligibleReason: issue.ineligible_reason,
       titleOfActiveReview: issue.title_of_active_review,
-      contentionText: issue.contention_text
+      contentionText: issue.contention_text,
+      rampClaimId: issue.ramp_claim_id
     };
   });
 };
@@ -168,7 +170,8 @@ const formatRatingRequestIssues = (state) => {
           profile_date: issue.profileDate,
           notes: issue.notes,
           untimely_exemption: issue.untimelyExemption,
-          untimely_exemption_notes: issue.untimelyExemptionNotes
+          untimely_exemption_notes: issue.untimelyExemptionNotes,
+          ramp_claim_id: issue.rampClaimId
         };
       });
   }
@@ -192,7 +195,9 @@ const formatNonratingRequestIssues = (state) => {
       return {
         issue_category: issue.category,
         decision_text: issue.description,
-        decision_date: formatDateStringForApi(issue.decisionDate)
+        decision_date: formatDateStringForApi(issue.decisionDate),
+        untimely_exemption: issue.untimelyExemption,
+        untimely_exemption_notes: issue.untimelyExemptionNotes
       };
     });
   }
@@ -259,11 +264,11 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
   return fields.concat(claimantField);
 };
 
-export const formatAddedIssues = (intakeData) => {
+export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
   let issues = intakeData.addedIssues || [];
   let ratingIssues = ratingIssuesById(intakeData.ratings);
-  // match date definition in Rails Rating model
-  const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
+
+  const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
 
   return issues.map((issue) => {
     if (issue.isUnidentified) {
@@ -274,6 +279,8 @@ export const formatAddedIssues = (intakeData) => {
         isUnidentified: true
       };
     } else if (issue.isRating) {
+      const profileDate = new Date(issue.profileDate);
+
       return {
         referenceId: issue.id,
         text: ratingIssues[issue.id],
@@ -282,26 +289,28 @@ export const formatAddedIssues = (intakeData) => {
         titleOfActiveReview: issue.titleOfActiveReview,
         sourceHigherLevelReview: issue.sourceHigherLevelReview,
         promulgationDate: issue.promulgationDate,
+        profileDate: issue.profileDate,
         timely: issue.timely,
+        beforeAma: profileDate < amaActivationDate && !issue.rampClaimId,
         untimelyExemption: issue.untimelyExemption,
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
-        ineligibleReason: issue.ineligibleReason
+        ineligibleReason: issue.ineligibleReason,
+        rampClaimId: issue.rampClaimId
       };
     }
 
-    // we must do our own date math for nonrating request issues.
-    // we assume the timezone of the browser for all these.
-    let decisionDate = new Date(issue.decisionDate);
-    let receiptDate = new Date(intakeData.receiptDate);
-    let isTimely = (receiptDate - decisionDate) <= ONE_YEAR_PLUS_MS;
+    const decisionDate = new Date(issue.decisionDate);
 
     // returns nonrating request issue format
     return {
       referenceId: issue.id,
       text: `${issue.category} - ${issue.description}`,
       date: formatDate(issue.decisionDate),
-      timely: isTimely,
-      ineligibleReason: issue.ineligibleReason
+      beforeAma: decisionDate < amaActivationDate,
+      timely: issue.timely,
+      ineligibleReason: issue.ineligibleReason,
+      untimelyExemption: issue.untimelyExemption,
+      untimelyExemptionNotes: issue.untimelyExemptionNotes
     };
   });
 };
