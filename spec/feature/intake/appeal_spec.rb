@@ -23,9 +23,11 @@ RSpec.feature "Appeal Intake" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
+  let(:veteran_file_number) {"223344555"}
+
   let!(:veteran) do
     Generators::Veteran.build(
-      file_number: "223344555",
+      file_number: veteran_file_number,
       first_name: "Ed",
       last_name: "Merica",
       participant_id: "55443322"
@@ -86,10 +88,10 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_content(search_page_title)
 
-    fill_in search_bar_title, with: "22334455"
+    fill_in search_bar_title, with: veteran_file_number
 
     click_on "Search"
-
+    binding.pry
     expect(page).to have_current_path("/intake/review_request")
 
     fill_in "What is the Receipt Date of this form?", with: "05/25/2018"
@@ -133,8 +135,8 @@ RSpec.feature "Appeal Intake" do
 
     safe_click "#button-submit-review"
 
-    appeal = Appeal.find_by(veteran_file_number: "22334455")
-    intake = Intake.find_by(veteran_file_number: "22334455")
+    appeal = Appeal.find_by(veteran_file_number: veteran_file_number)
+    intake = Intake.find_by(veteran_file_number: veteran_file_number)
 
     expect(appeal).to_not be_nil
     expect(appeal.receipt_date).to eq(receipt_date)
@@ -202,7 +204,7 @@ RSpec.feature "Appeal Intake" do
   end
 
   it "Shows a review error when something goes wrong" do
-    intake = AppealIntake.new(veteran_file_number: "22334455", user: current_user)
+    intake = AppealIntake.new(veteran_file_number: veteran_file_number, user: current_user)
     intake.start!
 
     visit "/intake"

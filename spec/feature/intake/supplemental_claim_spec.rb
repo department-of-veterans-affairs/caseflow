@@ -19,8 +19,10 @@ RSpec.feature "Supplemental Claim Intake" do
     FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
+  let(:veteran_file_number) {"123412345"}
+
   let(:veteran) do
-    Generators::Veteran.build(file_number: "123412345", first_name: "Ed", last_name: "Merica")
+    Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
   end
 
   let(:veteran_no_ratings) do
@@ -99,7 +101,7 @@ RSpec.feature "Supplemental Claim Intake" do
     )
 
     Generators::EndProduct.build(
-      veteran_file_number: "12341234",
+      veteran_file_number: veteran_file_number,
       bgs_attrs: { end_product_type_code: "040" }
     )
 
@@ -119,7 +121,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(page).to have_content(search_page_title)
 
-    fill_in search_bar_title, with: "12341234"
+    fill_in search_bar_title, with: veteran_file_number
 
     click_on "Search"
 
@@ -176,7 +178,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_button("Establish EP", disabled: true)
     expect(page).to have_content("0 issues")
 
-    supplemental_claim = SupplementalClaim.find_by(veteran_file_number: "12341234")
+    supplemental_claim = SupplementalClaim.find_by(veteran_file_number: veteran_file_number)
 
     expect(supplemental_claim).to_not be_nil
     expect(supplemental_claim.receipt_date).to eq(receipt_date)
@@ -186,7 +188,7 @@ RSpec.feature "Supplemental Claim Intake" do
       participant_id: "5382910293",
       payee_code: "11"
     )
-    intake = Intake.find_by(veteran_file_number: "12341234")
+    intake = Intake.find_by(veteran_file_number: veteran_file_number)
 
     find("label", text: "PTSD denied").click
     expect(page).to have_content("1 issue")
@@ -284,14 +286,14 @@ RSpec.feature "Supplemental Claim Intake" do
     )
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
-      veteran_file_number: "12341234",
+      veteran_file_number: veteran_file_number,
       claim_id: ratings_end_product_establishment.reference_id,
       contention_descriptions: ["PTSD denied"],
       special_issues: [],
       user: current_user
     )
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
-      veteran_file_number: "12341234",
+      veteran_file_number: veteran_file_number,
       claim_id: nonratings_end_product_establishment.reference_id,
       contention_descriptions: ["Active Duty Adjustments - Description for Active Duty Adjustments"],
       special_issues: [],
@@ -334,7 +336,7 @@ RSpec.feature "Supplemental Claim Intake" do
     visit "/supplemental_claims/#{ratings_end_product_establishment.reference_id}/edit"
 
     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
-    expect(page).to have_content("Ed Merica (12341234)")
+    expect(page).to have_content("Ed Merica (#{veteran_file_number})")
     expect(page).to have_content("04/20/2018")
     expect(page).to_not have_content("Informal conference request")
     expect(page).to_not have_content("Same office request")
