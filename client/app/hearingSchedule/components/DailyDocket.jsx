@@ -161,36 +161,22 @@ export default class DailyDocket extends React.Component {
     return _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
       label: this.getHearingDate(hearingDayOption.hearingDate),
       value: hearingDayOption.id
-    }))};
+    }));
+  };
 
- //
- // getHearingDateOptions = (hearing) => {
- //   const hearings = [{label: this.getHearingDate(hearing.date),
- //                    value: hearing.id}];
- //
- //   const options = _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
- //       label: this.getHearingDate(hearingDayOption.hearingDate),
- //       value: hearingDayOption.id
- //     }));
- //   if (this.props.hearingDayOptions) {
- //     console.log( _.merge({}, options, hearings);
- //       // return hearings;
- //    }
- //  };
+ getHearingDateOptions = (hearing) => {
+   const hearings = [{ label: this.getHearingDate(hearing.date),
+     value: hearing.id }];
 
+   const hearingDayoptions = _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
+     label: this.getHearingDate(hearingDayOption.hearingDate),
+     value: hearingDayOption.id
+   }));
 
-  //  getHearingDateOptions = (hearing) => {
-  //    const hearings = [{label: this.getHearingDate(hearing.date),
-  //                     value: hearing.id}];
-  //
-  //    return _.map(this.props.hearingDayOptions, (hearing) => {
-  //      return _.merge(hearings, (hearing)  => ({
-  //        label: this.getHearingDate(hearing.hearingDate),
-  //        value: hearing.id
-  //      }));
-  //    });
-  // };
-
+   if (this.props.hearingDayOptions) {
+     return hearings.concat(hearingDayoptions);
+   }
+ };
 
   getHearingLocationDropdown = (hearing) => {
     return <SearchableDropdown
