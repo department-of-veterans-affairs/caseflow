@@ -1,4 +1,6 @@
 class RequestIssue < ApplicationRecord
+  include Asyncable
+
   belongs_to :review_request, polymorphic: true
   belongs_to :end_product_establishment
   has_many :decision_issues, foreign_key: "source_request_issue_id"
@@ -19,6 +21,22 @@ class RequestIssue < ApplicationRecord
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
 
   class << self
+    def submitted_at_column
+      :decision_sync_submitted_at
+    end
+
+    def attempted_at_column
+      :decision_sync_attempted_at
+    end
+
+    def processed_at_column
+      :decision_sync_processed_at
+    end
+
+    def error_column
+      :decision_sync_error
+    end
+
     def rating
       where.not(rating_issue_reference_id: nil, rating_issue_profile_date: nil)
         .or(where(is_unidentified: true))
@@ -120,11 +138,12 @@ class RequestIssue < ApplicationRecord
     end
   end
 
+  def contested_decision_issue
+    review_request.veteran.decision_issues.find_by(rating_issue_reference_id: contested_rating_issue.reference_id)
+  end
+
   def previous_request_issue
-    return unless contested_rating_issue
-    review_request.veteran.decision_issues.find_by(
-      rating_issue_reference_id: contested_rating_issue.reference_id
-    ).try(:source_request_issue)
+    contested_decision_issue.try(:source_request_issue)
   end
 
   private
