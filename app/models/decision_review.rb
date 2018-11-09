@@ -4,8 +4,6 @@ class DecisionReview < ApplicationRecord
   validate :validate_receipt_date
 
   AMA_BEGIN_DATE = Date.new(2017, 11, 1).freeze
-  APPEAL_ISSUE_SOC_ELIGIBLE = Time.zone.today - 60.days
-  APPEAL_ISSUE_NOD_ELIGIBLE = Time.zone.today - 372.days
 
   self.abstract_class = true
 
@@ -48,7 +46,7 @@ class DecisionReview < ApplicationRecord
       claimantNotVeteran: claimant_not_veteran,
       receiptDate: receipt_date.to_formatted_s(:json_date),
       legacyOptInApproved: legacy_opt_in_approved,
-      legacyIssues: legacy_issues,
+      legacyIssues: serialized_legacy_issues,
       ratings: serialized_ratings,
       requestIssues: request_issues.map(&:ui_hash)
     }
@@ -98,7 +96,7 @@ class DecisionReview < ApplicationRecord
     request_issues.select(&:rating?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
   end
 
-  def legacy_issues
+  def serialized_legacy_issues
     active_or_eligible_legacy_appeals.map do |legacy_appeal|
       {
         date: legacy_appeal.nod_date,
@@ -110,9 +108,9 @@ class DecisionReview < ApplicationRecord
   private
 
   def active_or_eligible_legacy_appeals
-    @active_or_eligible_legacy_appeals ||= LegacyAppeal.fetch_appeals_by_file_number(veteran_file_number).select do |appeal|
-      appeal.active? || (appeal.soc_date > APPEAL_ISSUE_SOC_ELIGIBLE || appeal.nod_date > APPEAL_ISSUE_NOD_ELIGIBLE)
-    end
+    @active_or_eligible_legacy_appeals ||= LegacyAppeal
+      .fetch_appeals_by_file_number(veteran_file_number)
+      .select(&:eligible_for_soc_opt_in?)
   end
 
   def ratings_with_issues
