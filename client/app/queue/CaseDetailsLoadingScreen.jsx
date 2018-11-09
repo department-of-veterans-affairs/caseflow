@@ -35,7 +35,8 @@ type Props = Params & {|
   setAttorneysOfJudge: typeof setAttorneysOfJudge,
   fetchAllAttorneys: typeof fetchAllAttorneys,
   onReceiveTasks: typeof onReceiveTasks,
-  onReceiveAppealDetails: typeof onReceiveAppealDetails
+  onReceiveAppealDetails: typeof onReceiveAppealDetails,
+  setCanEditAod: typeof setCanEditAod
 |};
 
 class CaseDetailLoadingScreen extends React.PureComponent<Props> {

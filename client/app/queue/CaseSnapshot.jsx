@@ -74,7 +74,8 @@ type Props = Params & {|
   userRole: string,
   appeal: Appeal,
   primaryTask: Task,
-  taskAssignedToUser: Task
+  taskAssignedToUser: Task,
+  canEditAod: Boolean
 |};
 
 export class CaseSnapshot extends React.PureComponent<Props> {
