@@ -73,6 +73,18 @@ describe SyncReviewsJob do
       end
     end
 
+    context "when there are request issues awaiting processing" do
+      let!(:pending_request_issue) { create(:request_issue).tap(&:submit_for_processing!) }
+      let!(:request_issue) { create(:request_issue) }
+
+      it "ignores request issues that are not flagged" do
+        expect(DecisionRatingIssueSyncJob).to_not receive(:perform_later).with(request_issue)
+        expect(DecisionRatingIssueSyncJob).to receive(:perform_later).with(pending_request_issue)
+
+        SyncReviewsJob.perform_now("limit" => 2)
+      end
+    end
+
     it "prioritizes never synced ramp elections" do
       expect(EndProductSyncJob).to receive(:perform_later).once.with(end_product_establishment_never_synced.id)
       SyncReviewsJob.perform_now("limit" => 1)
