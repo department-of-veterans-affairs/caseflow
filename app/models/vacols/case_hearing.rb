@@ -134,8 +134,8 @@ class VACOLS::CaseHearing < VACOLS::Record
       MetricsService.record("VACOLS: create_hearing!",
                             service: :vacols,
                             name: "create_hearing") do
-        create(hearing_info.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
-                                  adduser: current_user_slogid))
+        create!(hearing_info.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
+                                   adduser: current_user_slogid))
       end
     end
 

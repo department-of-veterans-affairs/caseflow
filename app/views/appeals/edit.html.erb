@@ -5,6 +5,9 @@
     feedbackUrl: feedback_url,
     buildDate: build_date,
     serverIntake: appeal.ui_hash,
-    claimId: url_appeal_uuid
+    claimId: url_appeal_uuid,
+    featureToggles: {
+      useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user)
+    }
   }) %>
 <% end %>
