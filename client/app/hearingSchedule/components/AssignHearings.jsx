@@ -225,7 +225,7 @@ export default class AssignHearings extends React.Component {
 
     const availableSlots = selectedHearingDay.totalSlots - Object.keys(selectedHearingDay.hearings).length;
     const scheduledOrder = _.sortBy(
-      (this.props.selectedHearingDay.hearings), ['appellantMiFormatted', 'veteranMiFormatted']);
+      (this.props.selectedHearingDay.hearings), 'date');
 
     return <div className="usa-width-three-fourths">
       <h1>
