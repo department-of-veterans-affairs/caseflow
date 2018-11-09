@@ -6,7 +6,7 @@ import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
 import TextField from '../../components/TextField';
 import { BOOLEAN_RADIO_OPTIONS } from '../constants';
-import { addRatingRequestIssue } from '../actions/addIssues';
+import { addRatingRequestIssue, addNonratingRequestIssue } from '../actions/addIssues';
 
 class UntimelyExemptionModal extends React.Component {
   constructor(props) {
@@ -22,14 +22,27 @@ class UntimelyExemptionModal extends React.Component {
     const currentIssue = this.props.intakeData.currentIssueAndNotes.currentIssue;
     const notes = this.props.intakeData.currentIssueAndNotes.notes;
 
-    this.props.addRatingRequestIssue({
-      issueId: currentIssue.reference_id,
-      ratings: this.props.intakeData.ratings,
-      isRating: true,
-      notes,
-      untimelyExemption: this.state.untimelyExemption,
-      untimelyExemptionNotes: this.state.untimelyExemptionNotes
-    });
+    if (currentIssue.reference_id) {
+      this.props.addRatingRequestIssue({
+        timely: false,
+        issueId: currentIssue.reference_id,
+        ratings: this.props.intakeData.ratings,
+        isRating: true,
+        notes,
+        untimelyExemption: this.state.untimelyExemption,
+        untimelyExemptionNotes: this.state.untimelyExemptionNotes
+      });
+    } else {
+      this.props.addNonratingRequestIssue({
+        timely: false,
+        isRating: false,
+        untimelyExemption: this.state.untimelyExemption,
+        untimelyExemptionNotes: this.state.untimelyExemptionNotes,
+        category: currentIssue.category,
+        description: currentIssue.description,
+        decisionDate: currentIssue.decisionDate
+      });
+    }
     this.props.closeHandler();
   }
 
@@ -97,6 +110,7 @@ class UntimelyExemptionModal extends React.Component {
 export default connect(
   null,
   (dispatch) => bindActionCreators({
-    addRatingRequestIssue
+    addRatingRequestIssue,
+    addNonratingRequestIssue
   }, dispatch)
 )(UntimelyExemptionModal);
