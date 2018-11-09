@@ -29,7 +29,12 @@ describe ColocatedTask do
       end
 
       it "creates a co-located task successfully and updates VACOLS location" do
-        user_tasks = subject.select { |t| t.assigned_to_type == User.name }
+        team_tasks = subject.select { |t| t.assigned_to.is_a?(Colocated) }
+        expect(team_tasks.first.valid?).to be true
+        expect(team_tasks.first.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
+        expect(team_tasks.first.assigned_to).to eq(Colocated.singleton)
+
+        user_tasks = subject.select { |t| t.assigned_to.is_a?(User) }
         expect(user_tasks.first.valid?).to be true
         expect(user_tasks.first.reload.status).to eq "assigned"
         expect(user_tasks.first.assigned_at).to_not eq nil

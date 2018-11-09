@@ -16,7 +16,9 @@ class ColocatedTask < Task
       ActiveRecord::Base.multi_transaction do
         assignee = next_assignee
         records = params_array.map do |params|
-          team_task = create_from_params(params.merge(assigned_to: Colocated.singleton), user)
+          team_task = create_from_params(
+            params.merge(assigned_to: Colocated.singleton, status: Constants.TASK_STATUSES.on_hold), user
+          )
           individual_task = create_from_params(params.merge(assigned_to: assignee, parent: team_task), user)
 
           [team_task, individual_task]
