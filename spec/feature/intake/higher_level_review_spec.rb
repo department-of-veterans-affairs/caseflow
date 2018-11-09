@@ -23,7 +23,7 @@ RSpec.feature "Higher-Level Review" do
   end
 
   let(:veteran) do
-    Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
+    Generators::Veteran.build(file_number: "123412345", first_name: "Ed", last_name: "Merica")
   end
 
   let(:veteran_no_ratings) do
@@ -870,6 +870,21 @@ RSpec.feature "Higher-Level Review" do
       expect(intake.completed_at).to eq(Time.zone.now)
       expect(intake.cancel_reason).to eq("other")
       expect(intake).to be_canceled
+    end
+
+    context "with active legacy appeal" do
+      before do
+        create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{veteran.file_number}S"))
+      end
+
+      scenario "adding issues" do
+        # feature is not yet fully implemented
+        start_higher_level_review(veteran)
+        visit "/intake/add_issues"
+
+        safe_click "#button-add-issue"
+        expect(page).to have_content("Next")
+      end
     end
   end
 end

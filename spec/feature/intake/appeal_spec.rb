@@ -25,7 +25,7 @@ RSpec.feature "Appeal Intake" do
 
   let!(:veteran) do
     Generators::Veteran.build(
-      file_number: "22334455",
+      file_number: "223344555",
       first_name: "Ed",
       last_name: "Merica",
       participant_id: "55443322"
@@ -33,7 +33,7 @@ RSpec.feature "Appeal Intake" do
   end
 
   let(:veteran_no_ratings) do
-    Generators::Veteran.build(file_number: "55555555",
+    Generators::Veteran.build(file_number: "555555555",
                               first_name: "Nora",
                               last_name: "Attings",
                               participant_id: "44444444")
@@ -526,5 +526,20 @@ RSpec.feature "Appeal Intake" do
     expect(intake.completed_at).to eq(Time.zone.now)
     expect(intake.cancel_reason).to eq("other")
     expect(intake).to be_canceled
+  end
+
+  context "with active legacy appeal" do
+    before do
+      create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{veteran.file_number}S"))
+    end
+
+    scenario "adding issues" do
+      # feature is not yet fully implemented
+      start_appeal(veteran)
+      visit "/intake/add_issues"
+
+      safe_click "#button-add-issue"
+      expect(page).to have_content("Next")
+    end
   end
 end

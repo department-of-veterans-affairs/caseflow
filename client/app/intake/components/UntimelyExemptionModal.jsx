@@ -61,7 +61,7 @@ class UntimelyExemptionModal extends React.Component {
             name: 'Cancel adding this issue',
             onClick: closeHandler
           },
-          { classNames: ['usa-button', 'usa-button-secondary', 'add-issue'],
+          { classNames: ['usa-button', 'add-issue'],
             name: 'Add this issue',
             onClick: this.onAddIssue,
             disabled: this.state.disabled

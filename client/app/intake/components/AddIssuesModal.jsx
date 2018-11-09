@@ -63,6 +63,13 @@ class AddIssuesModal extends React.Component {
     }
   }
 
+  getNextButtonText = () => {
+    if (this.props.intakeData.legacyIssues.length > 0) {
+      return 'Next';
+    }
+    return 'Add this issue';
+  }
+
   render() {
     let {
       intakeData,
@@ -104,8 +111,8 @@ class AddIssuesModal extends React.Component {
             name: 'Cancel adding this issue',
             onClick: closeHandler
           },
-          { classNames: ['usa-button', 'usa-button-secondary', 'add-issue'],
-            name: 'Add this issue',
+          { classNames: ['usa-button', 'add-issue'],
+            name: this.getNextButtonText(),
             onClick: this.onAddIssue,
             disabled: !this.state.referenceId
           },
