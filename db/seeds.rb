@@ -47,7 +47,7 @@ class SeedDB
 
     create_colocated_user
     create_vso_user
-    create_org_queue_user
+    create_org_queue_users
     create_qr_user
     create_mail_team_user
     create_bva_dispatch_user_with_tasks
@@ -69,10 +69,12 @@ class SeedDB
     OrganizationsUser.add_user_to_organization(u, Organization.find_by(name: "Paralyzed Veterans Of America"))
   end
 
-  def create_org_queue_user
-    u = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER", full_name: "Translation team member")
-    translation = Organization.create!(name: "Translation", url: "translation")
-    OrganizationsUser.add_user_to_organization(u, translation)
+  def create_org_queue_users
+    (0..5).each do |n|
+      u = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER_#{n}", full_name: "Translation team member")
+      translation = Organization.create!(name: "Translation", url: "translation")
+      OrganizationsUser.add_user_to_organization(u, translation)
+    end
   end
 
   def create_qr_user
@@ -431,7 +433,7 @@ class SeedDB
                       assigned_by: attorney,
                       assigned_to: colocated)
 
-    FactoryBot.create(:generic_task, assigned_by: judge, assigned_to: translation_org)
+    FactoryBot.create_list(:generic_task, 5, assigned_by: judge, assigned_to: translation_org)
   end
 
   def create_vsos

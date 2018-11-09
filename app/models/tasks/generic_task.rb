@@ -16,7 +16,7 @@ class GenericTask < Task
     if assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
       return [
         Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
-        Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
+        children.count == 1 ? Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h : Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
         Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
       ]
     end
