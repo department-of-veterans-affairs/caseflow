@@ -7,6 +7,7 @@ describe RatingIssue do
   end
 
   let(:promulgation_date) { Time.zone.today - 30 }
+  let(:profile_date) { Time.zone.today - 40 }
 
   context ".from_ui_hash" do
     subject { RatingIssue.from_ui_hash(ui_hash) }
@@ -34,13 +35,20 @@ describe RatingIssue do
   end
 
   context ".from_bgs_hash" do
-    subject { RatingIssue.from_bgs_hash(bgs_record) }
+    subject { RatingIssue.from_bgs_hash(rating, bgs_record) }
+
+    let!(:rating) do
+      Generators::Rating.build(
+        participant_id: "123",
+        promulgation_date: promulgation_date,
+        profile_date: profile_date
+      )
+    end
 
     let(:bgs_record) do
       {
         rba_issue_id: "NBA",
-        decn_txt: "This broadcast may not be reproduced",
-        promulgation_date: promulgation_date
+        decn_txt: "This broadcast may not be reproduced"
       }
     end
 
@@ -50,7 +58,7 @@ describe RatingIssue do
       is_expected.to have_attributes(
         reference_id: "NBA",
         decision_text: "This broadcast may not be reproduced",
-        profile_date: nil,
+        profile_date: profile_date,
         contention_reference_id: nil
       )
     end
@@ -68,7 +76,7 @@ describe RatingIssue do
         is_expected.to have_attributes(
           reference_id: "NBA",
           decision_text: "This broadcast may not be reproduced",
-          profile_date: Time.zone.now,
+          profile_date: profile_date,
           contention_reference_id: "foul"
         )
       end
@@ -87,7 +95,7 @@ describe RatingIssue do
         is_expected.to have_attributes(
           reference_id: "NBA",
           decision_text: "This broadcast may not be reproduced",
-          profile_date: Time.zone.now,
+          profile_date: profile_date,
           contention_reference_id: "foul"
         )
       end
@@ -171,7 +179,12 @@ describe RatingIssue do
         review_request: create(:higher_level_review)
       )
     end
-    subject { RatingIssue.new(reference_id: reference_id, contention_reference_id: contention_ref_id) }
+    subject do
+      RatingIssue.new(
+        reference_id: reference_id,
+        rba_contentions_data: [{ cntntn_id: contention_ref_id }]
+      )
+    end
 
     it "flags request_issue as having a previous higher level review" do
       expect(subject.source_higher_level_review).to eq(request_issue.id)
@@ -188,7 +201,7 @@ describe RatingIssue do
       RatingIssue.new(
         reference_id: reference_id,
         profile_date: Time.zone.today,
-        contention_reference_id: contention_ref_id,
+        rba_contentions_data: [{ cntntn_id: contention_ref_id }],
         promulgation_date: promulgation_date,
         participant_id: participant_id
       )

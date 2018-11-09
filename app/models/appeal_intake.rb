@@ -10,7 +10,7 @@ class AppealIntake < DecisionReviewIntake
   def review!(request_params)
     detail.create_claimants!(
       participant_id: request_params[:claimant] || veteran.participant_id,
-      payee_code: request_params[:payee_code] || "00"
+      payee_code: nil
     )
     detail.assign_attributes(request_params.permit(:receipt_date, :docket_type, :legacy_opt_in_approved))
     detail.save(context: :intake_review)

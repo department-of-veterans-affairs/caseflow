@@ -12,7 +12,8 @@ class ClaimReview < DecisionReview
   def ui_hash
     super.merge(
       benefitType: benefit_type,
-      payeeCode: payee_code
+      payeeCode: payee_code,
+      hasClearedEP: cleared_ep?
     )
   end
 
@@ -83,6 +84,10 @@ class ClaimReview < DecisionReview
       # allow higher level reviews to do additional logic on dta errors
       yield if block_given?
     end
+  end
+
+  def cleared_ep?
+    end_product_establishments.any? { |ep| ep.status_cleared?(sync: true) }
   end
 
   private
