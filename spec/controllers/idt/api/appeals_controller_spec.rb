@@ -480,10 +480,14 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
     let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: user.css_id) }
     let(:root_task) { FactoryBot.create(:root_task) }
     let(:citation_number) { "A18123456" }
+    let(:file) do
+      Rack::Test::UploadedFile.new(File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf"), "text/pdf")
+    end
     let(:params) do
       { appeal_id: root_task.appeal.external_id,
         citation_number: citation_number,
         decision_date: Date.new(1989, 12, 13).to_s,
+        file: file,
         redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx" }
     end
 
@@ -493,6 +497,11 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       key, t = Idt::Token.generate_one_time_key_and_proposed_token
       Idt::Token.activate_proposed_token(key, user.css_id)
       request.headers["TOKEN"] = t
+      FeatureToggle.enable!(:decision_document_upload)
+    end
+
+    after do
+      FeatureToggle.disable!(:decision_document_upload)
     end
 
     context "when some params are missing" do
@@ -519,10 +528,23 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       end
     end
 
+    context "when VBMS failure" do
+      before { BvaDispatchTask.create_and_assign(root_task) }
+
+      it "should throw an error" do
+        allow(VBMSService).to receive(:upload_document_to_vbms).and_raise(VBMS::HTTPError.new(503, "VBMS is down"))
+        post :outcode, params: params
+        expect(response.status).to eq(502)
+        response_detail = JSON.parse(response.body)["errors"][0]["detail"]
+        expect(response_detail).to eq "Document upload failed due to VBMS experiencing issues."
+      end
+    end
+
     context "when single BvaDispatchTask exists for user and appeal combination" do
       before { BvaDispatchTask.create_and_assign(root_task) }
 
       it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
+        expect(VBMSService).to receive(:upload_document_to_vbms)
         post :outcode, params: params
         expect(response.status).to eq(200)
         tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)
@@ -530,6 +552,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         task = tasks[0]
         expect(task.status).to eq("completed")
         expect(task.parent.status).to eq("completed")
+        expect(S3Service.files["decisions/" + root_task.appeal.external_id]).to_not eq nil
       end
     end
 
