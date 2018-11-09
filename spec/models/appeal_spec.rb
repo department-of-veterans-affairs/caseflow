@@ -242,4 +242,3 @@ describe Appeal do
     end
   end
 end
-
