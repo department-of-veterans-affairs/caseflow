@@ -4,11 +4,10 @@ describe ColocatedTask do
   let(:vacols_case) { create(:case) }
   let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
   let!(:colocated_org) { Colocated.singleton }
-  let(:colocated_member_css_ids) { %w[BVATEST1 BVATEST2 BVATEST3] }
+  let(:colocated_members) { FactoryBot.create_list(:user, 3) }
 
   before do
-    colocated_member_css_ids.each do |css_id|
-      u = FactoryBot.create(:user, css_id: css_id)
+    colocated_members.each do |u|
       OrganizationsUser.add_user_to_organization(u, colocated_org)
     end
 
@@ -40,29 +39,29 @@ describe ColocatedTask do
         expect(user_tasks.first.assigned_at).to_not eq nil
         expect(user_tasks.first.assigned_by).to eq attorney
         expect(user_tasks.first.action).to eq "aoj"
-        expect(user_tasks.first.assigned_to).to eq User.find_by(css_id: colocated_member_css_ids[0])
+        expect(user_tasks.first.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
 
         expect(user_tasks.second.valid?).to be true
         expect(user_tasks.second.reload.status).to eq "assigned"
         expect(user_tasks.second.assigned_at).to_not eq nil
         expect(user_tasks.second.assigned_by).to eq attorney
         expect(user_tasks.second.action).to eq "poa_clarification"
-        expect(user_tasks.second.assigned_to).to eq User.find_by(css_id: colocated_member_css_ids[0])
+        expect(user_tasks.second.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
 
         expect(vacols_case.reload.bfcurloc).to eq "CASEFLOW"
 
         record = ColocatedTask.create_many_from_params([{ assigned_by: attorney, action: :aoj, appeal: appeal }],
                                                        attorney)
-        expect(record.second.assigned_to).to eq User.find_by(css_id: colocated_member_css_ids[1])
+        expect(record.second.assigned_to).to eq User.find_by(css_id: colocated_members[1].css_id)
 
         record = ColocatedTask.create_many_from_params([{ assigned_by: attorney, action: :aoj, appeal: appeal }],
                                                        attorney)
-        expect(record.second.assigned_to).to eq User.find_by(css_id: colocated_member_css_ids[2])
+        expect(record.second.assigned_to).to eq User.find_by(css_id: colocated_members[2].css_id)
 
         # should start from index 0
         record = ColocatedTask.create_many_from_params([{ assigned_by: attorney, action: :aoj, appeal: appeal }],
                                                        attorney)
-        expect(record.second.assigned_to).to eq User.find_by(css_id: colocated_member_css_ids[0])
+        expect(record.second.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
       end
     end
 
@@ -89,7 +88,7 @@ describe ColocatedTask do
         expect(subject.second.assigned_at).to_not eq nil
         expect(subject.second.assigned_by).to eq attorney
         expect(subject.second.action).to eq "aoj"
-        expect(subject.second.assigned_to).to eq User.find_by(css_id: colocated_member_css_ids[0])
+        expect(subject.second.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
 
         expect(AppealRepository).to_not receive(:update_location!)
       end

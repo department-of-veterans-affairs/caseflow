@@ -61,7 +61,7 @@ RSpec.feature "Case Assignment flows" do
     end
 
     before do
-      u = FactoryBot.create(:user, css_id: "BVATEST1")
+      u = FactoryBot.create(:user)
       OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
 
       User.authenticate!(user: attorney_user)
