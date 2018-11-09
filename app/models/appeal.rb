@@ -43,20 +43,22 @@ class Appeal < DecisionReview
     "Original"
   end
 
+  # Returns the most directly responsible party for an appeal when it is at the Board,
+  # mirroring Legacy Appeals' location code in VACOLS
   def location_code
     return nil if tasks.empty?
 
     root_task = tasks.first.root_task
     return nil if !root_task
 
-    # if RootTask status:completed, then return "Post-decision"
-    return "Post-decision" if root_task.status == Constants.TASK_STATUSES.completed
+    # RootTasks are marked complete when the decision is dispatched from the Board, which we call "Post-decision"
+    return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task.status == Constants.TASK_STATUSES.completed
 
     active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
     return nil if active_tasks.empty?
 
-    # if the only active case is a RootTask, then return "Case storage"
-    return "Case storage" if active_tasks == [root_task]
+    # if the only active task is the RootTask, it's in a holding period at the Board, which we call "Case storage"
+    return COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL if active_tasks == [root_task]
 
     most_recent_assignee = active_tasks.order(updated_at: :desc).first.assigned_to
     return most_recent_assignee.is_a?(Organization) ? most_recent_assignee.name : most_recent_assignee.css_id

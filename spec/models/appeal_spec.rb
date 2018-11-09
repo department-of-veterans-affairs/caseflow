@@ -218,9 +218,9 @@ describe Appeal do
     end
 
     context "if there is an assignee" do
-      let(:organization) do create(:organization, name: "VSO") end
+      let(:organization) do create(:organization) end
       let(:appeal_organization) do create(:appeal) end
-      let(:user) do create(:user, css_id: "69") end
+      let(:user) do create(:user) end
       let(:appeal_user) do create(:appeal) end
 
       before do
@@ -232,11 +232,11 @@ describe Appeal do
       end
 
       it "if the most recent assignee is an organization it returns the organization name" do
-        expect(appeal_organization.location_code).to eq("VSO")
+        expect(appeal_organization.location_code).to eq(organization.name)
       end
 
       it "if the most recent assignee is not an organization it returns the id" do
-        expect(appeal_user.location_code).to eq("69")
+        expect(appeal_user.location_code).to eq(user.css_id)
       end
     end
   end
