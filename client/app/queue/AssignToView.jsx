@@ -118,8 +118,7 @@ class AssignToView extends React.Component<Props, ViewState> {
       return (relevantAction.data);
     }
 
-    // We should never get here since any task action the creates this modal should provide data.
-    throw new Error('Task action requires data');
+    return null;
   }
 
   getAssignee = () => {
@@ -150,19 +149,25 @@ class AssignToView extends React.Component<Props, ViewState> {
 
     const successMsg = { title: `Task reassigned to ${this.getAssignee()}` };
 
-    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
+    return this.props.requestSave(`/tasks/${task.taskId}`, payload, successMsg, 'patch').
       then((resp) => {
         const response = JSON.parse(resp.text);
         const preparedTasks = prepareTasksForStore(response.tasks.data);
 
         _.map(preparedTasks, (preparedTask) => this.props.setTaskAttrs(preparedTask.uniqueId, preparedTask));
+        console.log('test here');
       });
   }
 
   render = () => {
     const {
-      highlightFormItems
+      highlightFormItems,
+      task
     } = this.props;
+
+    if (!task || task.availableActions.length === 0) {
+      return null;
+    }
 
     return <React.Fragment>
       <SearchableDropdown

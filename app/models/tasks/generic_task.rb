@@ -6,22 +6,24 @@ class GenericTask < Task
     end
 
     if assigned_to == user
-      return [
+      [
         Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
         Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
         Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
       ]
-    end
-
-    if assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
-      return [
+    elsif parent && parent.assigned_to.is_a?(Organization) && parent.assigned_to.user_has_access?(user)
+      [
+        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
+      ]
+    elsif assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
+      [
         Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
-        children.count == 1 ? Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h : Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
+        Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
         Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
       ]
+    else
+      []
     end
-
-    []
   end
   # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/AbcSize
@@ -55,6 +57,7 @@ class GenericTask < Task
   def can_be_accessed_by_user?(user)
     return true if assigned_to && assigned_to == user
     return true if user && assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
+    return true if parent && parent.assigned_to.is_a?(Organization) && parent.assigned_to.user_has_access?(user)
     false
   end
 

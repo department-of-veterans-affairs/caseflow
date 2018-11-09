@@ -70,9 +70,9 @@ class SeedDB
   end
 
   def create_org_queue_users
+    translation = Organization.create!(name: "Translation", url: "translation")
     (0..5).each do |n|
-      u = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER_#{n}", full_name: "Translation team member")
-      translation = Organization.create!(name: "Translation", url: "translation")
+      u = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER_#{n}", full_name: "Translation team member #{n}")
       OrganizationsUser.add_user_to_organization(u, translation)
     end
   end
