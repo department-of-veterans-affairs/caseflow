@@ -1,6 +1,8 @@
 class InsertParentColocatedTask < ActiveRecord::Migration[5.1]
+  safety_assured
+
   def up
-    ColocatedTask.all.each do |t|
+    ColocatedTask.all.find_each do |t|
       next if t.completed? || (t.parent && t.parent.assigned_to.is_a?(Colocated)) || t.assigned_to.is_a?(Colocated)
 
       org_task = ColocatedTask.create!(
@@ -16,7 +18,7 @@ class InsertParentColocatedTask < ActiveRecord::Migration[5.1]
   end
 
   def down
-    ColocatedTask.where(assigned_to: Colocated.singleton).each do |org_task|
+    ColocatedTask.where(assigned_to: Colocated.singleton).find_each do |org_task|
       org_task.children.first.update!(parent_id: org_task.parent_id)
       org_task.destroy
     end
