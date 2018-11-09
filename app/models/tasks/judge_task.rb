@@ -98,8 +98,7 @@ class JudgeTask < Task
     # evidence submission window is over
     if task.appeal.evidence_submission_docket?
       return false if task.appeal.receipt_date > 90.days.ago
-    end
-    
+    end   
     # If the task already has been assigned to a judge, or if it
     # is a VSO task, it will have children tasks. We only want to
     # assign tasks that have not been assigned yet.
