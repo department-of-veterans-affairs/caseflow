@@ -2,7 +2,7 @@ class TasksController < ApplicationController
   include Errors
 
   before_action :verify_task_access, only: [:create]
-  skip_before_action :deny_vso_access, only: [:index, :update, :for_appeal]
+  skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
   TASK_CLASSES = {
     ColocatedTask: ColocatedTask,
@@ -11,7 +11,8 @@ class TasksController < ApplicationController
     QualityReviewTask: QualityReviewTask,
     JudgeTask: JudgeTask,
     ScheduleHearingTask: ScheduleHearingTask,
-    MailTask: MailTask
+    MailTask: MailTask,
+    InformalHearingPresentationTask: InformalHearingPresentationTask
   }.freeze
 
   QUEUES = {
@@ -107,6 +108,10 @@ class TasksController < ApplicationController
   end
 
   def verify_task_access
+    if current_user.vso_employee? && task_class != InformalHearingPresentationTask
+      fail Caseflow::Error::ActionForbiddenError, message: "VSOs cannot create that task."
+    end
+
     redirect_to("/unauthorized") unless can_assign_task?
   end
 

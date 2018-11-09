@@ -3,8 +3,6 @@ class DecisionReview < ApplicationRecord
 
   validate :validate_receipt_date
 
-  AMA_BEGIN_DATE = Date.new(2017, 11, 1).freeze
-
   self.abstract_class = true
 
   attr_reader :saving_review
@@ -18,6 +16,14 @@ class DecisionReview < ApplicationRecord
     ratings_with_issues.map(&:ui_hash)
   end
 
+  def self.ama_activation_date
+    if FeatureToggle.enabled?(:use_ama_activation_date)
+      Constants::DATES["AMA_ACTIVATION"].to_date
+    else
+      Constants::DATES["AMA_ACTIVATION_TEST"].to_date
+    end
+  end
+
   def self.review_title
     to_s.underscore.titleize
   end
@@ -27,7 +33,7 @@ class DecisionReview < ApplicationRecord
 
     cached_serialized_ratings.each do |rating|
       rating[:issues].each do |rating_issue_hash|
-        rating_issue_hash[:timely] = timely_rating?(Date.parse(rating_issue_hash[:promulgation_date].to_s))
+        rating_issue_hash[:timely] = timely_issue?(Date.parse(rating_issue_hash[:promulgation_date].to_s))
         # always re-compute flags that depend on data in our db
         rating_issue_hash.merge!(RatingIssue.from_ui_hash(rating_issue_hash).ui_hash)
       end
@@ -51,9 +57,9 @@ class DecisionReview < ApplicationRecord
     }
   end
 
-  def timely_rating?(promulgation_date)
-    return true unless receipt_date
-    promulgation_date >= (receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
+  def timely_issue?(decision_date)
+    return true unless receipt_date && decision_date
+    decision_date >= (receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
   end
 
   def start_review!
@@ -114,7 +120,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def validate_receipt_date_not_before_ama
-    errors.add(:receipt_date, "before_ama") if receipt_date < AMA_BEGIN_DATE
+    errors.add(:receipt_date, "before_ama") if receipt_date < self.class.ama_activation_date
   end
 
   def validate_receipt_date_not_in_future

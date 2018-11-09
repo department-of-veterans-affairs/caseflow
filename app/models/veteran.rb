@@ -150,12 +150,6 @@ class Veteran < ApplicationRecord
     super || ptcpnt_id
   end
 
-  def sync_rating_issues!
-    timely_ratings(from_date: Time.zone.today).each do |rating|
-      rating.issues.select(&:contention_reference_id).each(&:save_decision_issue)
-    end
-  end
-
   class << self
     def find_or_create_by_file_number(file_number)
       find_and_maybe_backfill_name(file_number) || create_by_file_number(file_number)
@@ -208,11 +202,11 @@ class Veteran < ApplicationRecord
     end
   end
 
-  private
-
   def deceased?
     !date_of_death.nil?
   end
+
+  private
 
   def fetch_end_products
     bgs_end_products = bgs.get_end_products(file_number)
