@@ -48,6 +48,13 @@ export const onReceiveTasks = (
   }
 });
 
+export const onReceiveAmaTasks = ({ amaTasks }) => ({
+  type: ACTIONS.RECEIVE_AMA_TASKS,
+  payload: {
+    amaTasks
+  }
+});
+
 export const setTaskAttrs = (uniqueId: string, attributes: Object) => ({
   type: ACTIONS.SET_TASK_ATTRS,
   payload: {

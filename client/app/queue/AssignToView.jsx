@@ -13,7 +13,7 @@ import {
 } from './selectors';
 import { prepareTasksForStore } from './utils';
 
-import { setTaskAttrs } from './QueueActions';
+import { setTaskAttrs, onReceiveAmaTasks } from './QueueActions';
 
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
@@ -105,8 +105,11 @@ class AssignToView extends React.Component<Props, ViewState> {
     }
 
     return this.props.requestSave('/tasks', payload, successMsg).
-      then(() => {
-        this.props.setTaskAttrs(task.uniqueId, { status: 'on_hold' });
+      then((resp) => {
+        const response = JSON.parse(resp.text);
+        const preparedTasks = prepareTasksForStore(response.tasks.data);
+
+        this.props.onReceiveAmaTasks({ amaTasks: preparedTasks });
       });
   }
 
@@ -155,7 +158,7 @@ class AssignToView extends React.Component<Props, ViewState> {
         const response = JSON.parse(resp.text);
         const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        _.map(preparedTasks, (preparedTask) => this.props.setTaskAttrs(preparedTask.uniqueId, preparedTask));
+        this.props.onReceiveAmaTasks({ amaTasks: preparedTasks });
       });
   }
 
@@ -205,7 +208,8 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
   requestSave,
-  setTaskAttrs
+  setTaskAttrs,
+  onReceiveAmaTasks
 }, dispatch);
 
 export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(
