@@ -58,7 +58,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def timely_issue?(decision_date)
-    return true unless receipt_date
+    return true unless receipt_date && decision_date
     decision_date >= (receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
   end
 

@@ -188,7 +188,7 @@ class RequestIssue < ApplicationRecord
     return if untimely_exemption
     return if review_request && review_request.is_a?(SupplementalClaim)
 
-    if decision_or_promulgation_date && !review_request.timely_issue?(decision_or_promulgation_date)
+    if !review_request.timely_issue?(decision_or_promulgation_date)
       self.ineligible_reason = :untimely
     end
   end

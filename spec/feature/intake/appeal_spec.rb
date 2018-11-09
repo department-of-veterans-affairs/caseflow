@@ -287,7 +287,7 @@ RSpec.feature "Appeal Intake" do
 
   scenario "For new Add / Remove Issues page" do
     duplicate_reference_id = "xyz789"
-    old_reference_id = "old123"
+    old_reference_id = "old1234"
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - 40.days,

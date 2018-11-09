@@ -50,10 +50,12 @@ RSpec.feature "Supplemental Claim Intake" do
 
   let(:profile_date) { Date.new(2017, 11, 20).to_time(:local) }
 
+  let(:timely_promulgation_date) { Date.new(2017, 11, 30) }
+
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - untimely_days + 1.day,
+      promulgation_date: timely_promulgation_date,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
@@ -411,7 +413,7 @@ RSpec.feature "Supplemental Claim Intake" do
     end
 
     let(:duplicate_reference_id) { "xyz789" }
-    let(:old_reference_id) { "old123" }
+    let(:old_reference_id) { "old1234" }
     let(:active_epe) { create(:end_product_establishment, :active) }
 
     let!(:timely_ratings) do
@@ -425,12 +427,17 @@ RSpec.feature "Supplemental Claim Intake" do
           { reference_id: duplicate_reference_id, decision_text: "Old injury" }
         ]
       )
+    end
+
+    let!(:untimely_rating_from_ramp) do
       Generators::Rating.build(
         participant_id: veteran.participant_id,
         promulgation_date: receipt_date - 400.days,
         profile_date: receipt_date - 450.days,
         issues: [
-          { reference_id: old_reference_id, decision_text: "Really old injury" }
+          { reference_id: old_reference_id,
+            decision_text: "Really old injury",
+            associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" } }
         ]
       )
     end

@@ -47,10 +47,12 @@ RSpec.feature "Higher-Level Review" do
 
   let(:profile_date) { Date.new(2017, 11, 20).to_time(:local) }
 
+  let(:timely_promulgation_date) { Date.new(2017, 11, 30) }
+
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - untimely_days + 1.day,
+      promulgation_date: timely_promulgation_date,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
@@ -537,7 +539,7 @@ RSpec.feature "Higher-Level Review" do
     let(:higher_level_review_reference_id) { "hlr123" }
     let(:contention_reference_id) { 1234 }
     let(:duplicate_reference_id) { "xyz789" }
-    let(:old_reference_id) { "old123" }
+    let(:old_reference_id) { "old1234" }
     let(:active_epe) { create(:end_product_establishment, :active) }
 
     let!(:timely_ratings) do
