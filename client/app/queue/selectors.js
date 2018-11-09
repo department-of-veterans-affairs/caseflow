@@ -142,7 +142,7 @@ export const appealsByCaseflowVeteranId = createSelector(
       appeal.caseflowVeteranId.toString() === caseflowVeteranId.toString())
 );
 
-const tasksByAssigneeCssIdSelector = createSelector(
+export const tasksByAssigneeCssIdSelector = createSelector(
   [tasksWithAppealSelector, getUserCssId],
   (tasks: Array<TaskWithAppeal>, cssId: string) =>
     _.filter(tasks, (task) => task.assignedTo.cssId === cssId)
@@ -170,7 +170,11 @@ export const newTasksByAssigneeCssIdSelector = createSelector(
 export const workableTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks: Array<TaskWithAppeal>) => tasks.filter(
-    (task) => task.appeal.isLegacyAppeal || task.status !== TASK_STATUSES.on_hold
+    (task) => {
+      return (task.appeal.isLegacyAppeal ||
+          task.status === TASK_STATUSES.assigned ||
+          task.status === TASK_STATUSES.in_progress);
+    }
   )
 );
 
