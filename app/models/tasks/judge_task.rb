@@ -8,10 +8,7 @@ class JudgeTask < Task
 
     if action.eql? "assign"
       [
-        {
-          label: COPY::JUDGE_CHECKOUT_ASSIGN_TO_ATTORNEY_LABEL,
-          value: "modal/assign_to_attorney"
-        }
+        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
       ]
     else
       [
@@ -82,7 +79,7 @@ class JudgeTask < Task
                      appeal_type: Appeal.name,
                      assigned_at: Time.zone.now,
                      assigned_to: next_assignee,
-                     action: :assign)
+                     action: "assign")
       Rails.logger.info("Assigned judge task with task id #{task.id} to #{task.assigned_to.css_id}")
     end
   end
@@ -102,7 +99,7 @@ class JudgeTask < Task
     if task.appeal.evidence_submission_docket?
       return false if task.appeal.receipt_date > 90.days.ago
     end
-
+JudgeTask.assign_ramp_judge_tasks(dry_run: true)
     # If the task already has been assigned to a judge, or if it
     # is a VSO task, it will have children tasks. We only want to
     # assign tasks that have not been assigned yet.
