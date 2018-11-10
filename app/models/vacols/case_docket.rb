@@ -192,7 +192,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         conn.execute(LOCK_READY_APPEALS)
         appeals = conn.exec_query(fmtd_query).to_hash
         vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
-        batch_update_vacols_location(conn, judge.vacols_uniq_id, vacols_ids)
+        VACOLS::Case.batch_update_vacols_location(judge.vacols_uniq_id, vacols_ids)
         appeals
       end
     end
@@ -240,7 +240,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         appeals = conn.exec_query(fmtd_query).to_hash
         return appeals if appeals.empty?
         vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
-        batch_update_vacols_location(conn, judge.vacols_uniq_id, vacols_ids)
+        VACOLS::Case.batch_update_vacols_location(judge.vacols_uniq_id, vacols_ids)
         appeals
       end
     end
@@ -249,44 +249,5 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
 
-  # rubocop:disable Metrics/MethodLength
-  def self.batch_update_vacols_location(conn, location, vacols_ids)
-    return if vacols_ids.empty?
-
-    user_id = (RequestStore.store[:current_user].try(:vacols_uniq_id) || "DSUSER").upcase
-
-    conn.execute(sanitize_sql_array([<<-SQL, location, vacols_ids]))
-      update BRIEFF
-      set BFDLOCIN = SYSDATE,
-          BFCURLOC = ?,
-          BFDLOOUT = SYSDATE,
-          BFORGTIC = NULL
-      where BFKEY in (?)
-    SQL
-
-    conn.execute(sanitize_sql_array([<<-SQL, user_id, vacols_ids]))
-      update PRIORLOC
-      set LOCDIN = SYSDATE,
-          LOCSTRCV = ?,
-          LOCEXCEP = 'Y'
-      where LOCKEY in (?) and LOCDIN is null
-    SQL
-
-    insert_strs = vacols_ids.map do |vacols_id|
-      sanitize_sql_array(
-        [
-          "into PRIORLOC (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY) values (SYSDATE, SYSDATE, ?, ?, ?)",
-          location,
-          user_id,
-          vacols_id
-        ]
-      )
-    end
-
-    conn.execute("insert all #{insert_strs.join(' ')} select 1 from dual")
-  end
-  # rubocop:enable Metrics/MethodLength
-
-  private_class_method :batch_update_vacols_location
   # :nocov:
 end
