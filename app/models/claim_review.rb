@@ -90,6 +90,14 @@ class ClaimReview < DecisionReview
     end_product_establishments.any? { |ep| ep.status_cleared?(sync: true) }
   end
 
+  # def payee_code_required?
+  #   claimant_not_veteran && (['compensation', 'pension'].include? review_request.benefit_type)
+  # end
+  #
+  # def validate_payee_code
+  #   errors.add(:payee_code, "blank") if !payee_code.present? && payee_code_required?
+  # end
+
   private
 
   def informal_conference?

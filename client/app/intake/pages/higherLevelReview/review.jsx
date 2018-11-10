@@ -108,6 +108,7 @@ const SelectClaimantConnected = connect(
     claimantNotVeteran: higherLevelReview.claimantNotVeteran,
     claimant: higherLevelReview.claimant,
     payeeCode: higherLevelReview.payeeCode,
+    payeeCodeError: higherLevelReview.payeeCodeError,
     relationships: higherLevelReview.relationships,
     benefitType: higherLevelReview.benefitType,
     formType: intake.formType

@@ -8,6 +8,8 @@ class HigherLevelReview < ClaimReview
     in: [true, false], message: "blank"
   }, if: [:legacy_opt_in_enabled?, :saving_review]
 
+  # validates :payee_code, presence: { message: "blank" }, if: [:payee_code_required?, :should_validate_payee_code?], on: :update
+
   END_PRODUCT_RATING_CODE = "030HLRR".freeze
   END_PRODUCT_NONRATING_CODE = "030HLRNR".freeze
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 033 035 036 037 038 039].freeze
