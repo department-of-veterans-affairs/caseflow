@@ -83,7 +83,7 @@ describe Distribution do
       expect(subject.distributed_cases.where(priority: true).count).to eq(5)
       expect(subject.distributed_cases.where(genpop: true).count).to eq(8)
       expect(subject.distributed_cases.where(priority: true, genpop: false).count).to eq(2)
-      expect(subject.distributed_cases.where(priority: false, genpop_query: "no").count).to eq(1)
+      expect(subject.distributed_cases.where(priority: false, genpop_query: "not_genpop").count).to eq(1)
       expect(subject.distributed_cases.where(priority: false, genpop_query: "any").map(&:docket_index).max).to eq(35)
     end
 

@@ -7,11 +7,11 @@ module LegacyCaseDistribution
     rem = batch_size
     priority_target = target_number_of_priority_appeals
 
-    priority_hearing_appeals = docket.distribute_priority_appeals(self, genpop: false, limit: rem)
+    priority_hearing_appeals = docket.distribute_priority_appeals(self, genpop: "not_genpop", limit: rem)
     rem -= priority_hearing_appeals.count
 
     nonpriority_hearing_appeals = docket.distribute_nonpriority_appeals(self,
-                                                                        genpop: false,
+                                                                        genpop: "not_genpop",
                                                                         range: net_docket_range,
                                                                         limit: rem)
     rem -= nonpriority_hearing_appeals.count
@@ -20,7 +20,7 @@ module LegacyCaseDistribution
       priority_rem = [priority_target - priority_hearing_appeals.count, rem].min
 
       priority_nonhearing_appeals = docket.distribute_priority_appeals(self,
-                                                                       genpop: true,
+                                                                       genpop: "only_genpop",
                                                                        limit: priority_rem)
       rem -= priority_nonhearing_appeals.count
     end
@@ -33,10 +33,10 @@ module LegacyCaseDistribution
   def legacy_acting_judge_distribution
     rem = batch_size
 
-    priority_appeals = docket.distribute_priority_appeals(self, genpop: false, limit: rem)
+    priority_appeals = docket.distribute_priority_appeals(self, genpop: "not_genpop", limit: rem)
     rem -= priority_appeals.count
 
-    nonpriority_appeals = docket.distribute_nonpriority_appeals(self, genpop: false, range: 7000, limit: rem)
+    nonpriority_appeals = docket.distribute_nonpriority_appeals(self, genpop: "not_genpop", range: 7000, limit: rem)
 
     [*priority_appeals, *nonpriority_appeals]
   end

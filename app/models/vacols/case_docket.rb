@@ -4,6 +4,49 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   class DocketNumberCentennialLoop < StandardError; end
 
+  LOCK_READY_APPEALS = "
+    select BFCURLOC from BRIEFF
+    where BRIEFF.BFMPRO = 'ACT' and BRIEFF.BFCURLOC in ('81', '83')
+    for update
+  ".freeze
+
+  SELECT_READY_APPEALS = "
+    select BFKEY, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
+    from BRIEFF
+    #{VACOLS::Case::JOIN_AOD}
+    inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
+    where BRIEFF.BFMPRO = 'ACT' and BRIEFF.BFCURLOC in ('81', '83')
+  ".freeze
+
+  # Judges 000, 888, and 999 are not real judges, but rather VACOLS codes.
+
+  JOIN_ASSOCIATED_VLJS_BY_HEARINGS = "
+    left join (
+      select distinct TITRNUM, TINUM,
+        first_value(BOARD_MEMBER) over (partition by TITRNUM, TINUM order by HEARING_DATE desc) VLJ
+      from HEARSCHED
+      inner join FOLDER on FOLDER.TICKNUM = HEARSCHED.FOLDER_NR
+      where HEARING_TYPE in ('C', 'T', 'V') and HEARING_DISP = 'H'
+    ) VLJ_HEARINGS
+      on VLJ_HEARINGS.VLJ not in ('000', '888', '999')
+        and VLJ_HEARINGS.TITRNUM = BRIEFF.TITRNUM
+        and (VLJ_HEARINGS.TINUM is null or VLJ_HEARINGS.TINUM = BRIEFF.TINUM)
+  ".freeze
+
+  JOIN_ASSOCIATED_VLJS_BY_PRIOR_DECISIONS = "
+    left join (
+      select distinct TITRNUM, TINUM,
+        first_value(BFMEMID) over (partition by TITRNUM, TINUM order by BFDDEC desc) VLJ
+      from BRIEFF
+      inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
+      where BFATTID is not null and BFMEMID not in ('000', '888', '999')
+    ) VLJ_PRIORDEC
+      on BRIEFF.AOD = 1
+        and VLJ_HEARINGS.VLJ is null
+        and VLJ_PRIORDEC.TITRNUM = BRIEFF.TITRNUM
+        and (VLJ_PRIORDEC.TINUM is null or VLJ_PRIORDEC.TINUM = BRIEFF.TINUM)
+  ".freeze
+
   # rubocop:disable Metrics/MethodLength
   def self.counts_by_priority_and_readiness
     query = <<-SQL
@@ -111,7 +154,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     # Although there are no new legacy appeals after 2019, an old appeal can be reopened through a finding
     # of clear and unmistakable error, which would result in a brand new docket number being assigned.
     # An updated docket number format will need to be in place for legacy appeals by 2030 in order
-    # to ensure that docket numbers are sorted correctly. Happy 100th birthday, by the way.
+    # to ensure that docket numbers are sorted correctly.
 
     conn = connection
 
@@ -121,40 +164,11 @@ class VACOLS::CaseDocket < VACOLS::Record
         select BFKEY, BFDLOOUT, rownum DOCKET_INDEX,
           case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
         from (
-          select BFKEY, BFDLOOUT, BFMPRO, BFCURLOC, BFHINES, TINUM, TITRNUM
-          from (
-            select BFKEY, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES,
-              case when nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0) > 0 then 1 else 0 end AOD
-            from BRIEFF
-            left join (
-              select TSKTKNM, count(*) CNT
-              from ASSIGN
-              where TSKACTCD in ('B', 'B1', 'B2')
-              group by TSKTKNM
-            ) AOD_DIARIES on AOD_DIARIES.TSKTKNM = BRIEFF.BFKEY
-            left join (
-              select FOLDER_NR, count(*) CNT
-              from HEARSCHED
-              where HEARING_TYPE in ('C', 'T', 'V')
-                and AOD in ('G', 'Y')
-              group by FOLDER_NR
-            ) AOD_HEARINGS on AOD_HEARINGS.FOLDER_NR = BRIEFF.BFKEY
-          ) BRIEFF
-          inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
-          where BRIEFF.BFMPRO <> 'HIS' and BRIEFF.BFCURLOC in ('81', '83')
-            and BFAC <> '7' and AOD = '0'
+          #{SELECT_READY_APPEALS}
+            and BFAC <> '7' and AOD = '0' and BFDLOOUT <= ?
           order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
         ) BRIEFF
-        left join (
-          select distinct TITRNUM, TINUM,
-            first_value(BOARD_MEMBER) over (partition by TITRNUM, TINUM order by HEARING_DATE desc) VLJ
-          from HEARSCHED
-          inner join FOLDER on FOLDER.TICKNUM = HEARSCHED.FOLDER_NR
-          where HEARING_TYPE in ('C', 'T', 'V') and HEARING_DISP = 'H'
-        ) VLJ_HEARINGS
-          on VLJ_HEARINGS.VLJ not in ('000', '888', '999')
-            and VLJ_HEARINGS.TITRNUM = BRIEFF.TITRNUM
-            and (VLJ_HEARINGS.TINUM is null or VLJ_HEARINGS.TINUM = BRIEFF.TINUM)
+        #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
       )
       where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
         and (DOCKET_INDEX <= ? or 1 = ?)
@@ -163,9 +177,10 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     fmtd_query = sanitize_sql_array([
                                       query,
+                                      VacolsHelper.local_time_with_utc_timezone,
                                       judge.vacols_attorney_id,
-                                      (genpop.nil? || !genpop) ? 1 : 0,
-                                      (genpop.nil? || genpop) ? 1 : 0,
+                                      (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
+                                      (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
                                       range,
                                       range.nil? ? 1 : 0,
                                       limit
@@ -175,7 +190,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       if dry_run
         conn.exec_query(fmtd_query).to_hash
       else
-        conn.execute("lock table BRIEFF in row exclusive mode")
+        conn.execute(LOCK_READY_APPEALS)
         appeals = conn.exec_query(fmtd_query).to_hash
         vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
         batch_update_vacols_location(conn, judge.vacols_uniq_id, vacols_ids)
@@ -199,51 +214,12 @@ class VACOLS::CaseDocket < VACOLS::Record
         select BFKEY, BFDLOOUT,
           case when BFHINES is null or BFHINES <> 'GP' then nvl(VLJ_HEARINGS.VLJ, VLJ_PRIORDEC.VLJ) end VLJ
         from (
-          select BFKEY, BFDLOOUT, BFMPRO, BFCURLOC, BFHINES, AOD
-          from (
-            select BFKEY, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES,
-              case when nvl(AOD_DIARIES.CNT, 0) + nvl(AOD_HEARINGS.CNT, 0) > 0 then 1 else 0 end AOD
-            from BRIEFF
-            left join (
-              select TSKTKNM, count(*) CNT
-              from ASSIGN
-              where TSKACTCD in ('B', 'B1', 'B2')
-              group by TSKTKNM
-            ) AOD_DIARIES on AOD_DIARIES.TSKTKNM = BRIEFF.BFKEY
-            left join (
-              select FOLDER_NR, count(*) CNT
-              from HEARSCHED
-              where HEARING_TYPE in ('C', 'T', 'V')
-                and AOD in ('G', 'Y')
-              group by FOLDER_NR
-            ) AOD_HEARINGS on AOD_HEARINGS.FOLDER_NR = BRIEFF.BFKEY
-          ) BRIEFF
-          where BRIEFF.BFMPRO <> 'HIS' and BRIEFF.BFCURLOC in ('81', '83')
-            and (BFAC = '7' or AOD = '1')
+          #{SELECT_READY_APPEALS}
+            and (BFAC = '7' or AOD = '1') and BFDLOOUT <= ?
           order by BFDLOOUT
         ) BRIEFF
-        inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
-        left join (
-          select distinct TITRNUM, TINUM,
-            first_value(BOARD_MEMBER) over (partition by TITRNUM, TINUM order by HEARING_DATE desc) VLJ
-          from HEARSCHED
-          inner join FOLDER on FOLDER.TICKNUM = HEARSCHED.FOLDER_NR
-          where HEARING_TYPE in ('C', 'T', 'V') and HEARING_DISP = 'H'
-        ) VLJ_HEARINGS
-          on VLJ_HEARINGS.VLJ not in ('000', '888', '999')
-            and VLJ_HEARINGS.TITRNUM = FOLDER.TITRNUM
-            and (VLJ_HEARINGS.TINUM is null or VLJ_HEARINGS.TINUM = FOLDER.TINUM)
-        left join (
-          select distinct TITRNUM, TINUM,
-            first_value(BFMEMID) over (partition by TITRNUM, TINUM order by BFDDEC desc) VLJ
-          from BRIEFF
-          inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
-          where BFATTID is not null and BFMEMID not in ('000', '888', '999')
-        ) VLJ_PRIORDEC
-          on BRIEFF.AOD = 1
-            and VLJ_HEARINGS.VLJ is null
-            and VLJ_PRIORDEC.TITRNUM = FOLDER.TITRNUM
-            and (VLJ_PRIORDEC.TINUM is null or VLJ_PRIORDEC.TINUM = FOLDER.TINUM)
+        #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+        #{JOIN_ASSOCIATED_VLJS_BY_PRIOR_DECISIONS}
       )
       where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
         and rownum <= ?
@@ -251,9 +227,10 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     fmtd_query = sanitize_sql_array([
                                       query,
+                                      VacolsHelper.local_time_with_utc_timezone,
                                       judge.vacols_attorney_id,
-                                      (genpop.nil? || !genpop) ? 1 : 0,
-                                      (genpop.nil? || genpop) ? 1 : 0,
+                                      (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
+                                      (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
                                       limit
                                     ])
 
@@ -261,7 +238,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       if dry_run
         conn.exec_query(fmtd_query).to_hash
       else
-        conn.execute("lock table BRIEFF in row exclusive mode")
+        conn.execute(LOCK_READY_APPEALS)
         appeals = conn.exec_query(fmtd_query).to_hash
         return appeals if appeals.empty?
         vacols_ids = appeals.map { |appeal| appeal["bfkey"] }

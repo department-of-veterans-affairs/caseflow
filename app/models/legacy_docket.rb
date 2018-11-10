@@ -19,18 +19,18 @@ class LegacyDocket
     count(priority: false) + nod_count * NOD_ADJUSTMENT
   end
 
-  def distribute_priority_appeals(distribution, genpop: nil, limit: 1)
+  def distribute_priority_appeals(distribution, genpop: "any", limit: 1)
     LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
       distribution.distributed_cases.create(case_id: record["bfkey"],
                                             docket: "legacy",
                                             priority: true,
                                             ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
                                             genpop: record["vlj"].nil?,
-                                            genpop_query: maybe_boolean_to_string(genpop))
+                                            genpop_query: genpop)
     end
   end
 
-  def distribute_nonpriority_appeals(distribution, genpop: nil, range: nil, limit: 1)
+  def distribute_nonpriority_appeals(distribution, genpop: "any", range: nil, limit: 1)
     LegacyAppeal.repository.distribute_nonpriority_appeals(distribution.judge, genpop, range, limit).map do |record|
       distribution.distributed_cases.create(case_id: record["bfkey"],
                                             docket: "legacy",
@@ -38,7 +38,7 @@ class LegacyDocket
                                             ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
                                             docket_index: record["docket_index"],
                                             genpop: record["vlj"].nil?,
-                                            genpop_query: maybe_boolean_to_string(genpop))
+                                            genpop_query: genpop)
     end
   end
 
@@ -50,16 +50,5 @@ class LegacyDocket
 
   def nod_count
     @nod_count ||= LegacyAppeal.repository.nod_count
-  end
-
-  def maybe_boolean_to_string(bool)
-    case bool
-    when nil
-      "any"
-    when true
-      "yes"
-    when false
-      "no"
-    end
   end
 end

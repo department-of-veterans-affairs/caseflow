@@ -23,6 +23,7 @@ describe VACOLS::CaseDocket do
            bfac: "3",
            bfmpro: "ACT",
            bfcurloc: "81",
+           bfdloout: 1.day.ago,
            folder: build(:folder, tinum: nonpriority_ready_case_docket_number, titrnum: "123456789S"))
   end
 
@@ -46,6 +47,7 @@ describe VACOLS::CaseDocket do
            bfac: "1",
            bfmpro: "ACT",
            bfcurloc: "83",
+           bfdloout: 1.day.ago,
            folder: build(:folder, tinum: another_nonpriority_ready_case_docket_number, titrnum: "123456789S"))
   end
 
@@ -54,7 +56,8 @@ describe VACOLS::CaseDocket do
            bfd19: 1.year.ago,
            bfac: "1",
            bfmpro: "ACT",
-           bfcurloc: "57")
+           bfcurloc: "57",
+           bfdloout: 1.day.ago)
   end
 
   let(:aod_ready_case_docket_number) { "1801003" }
@@ -111,7 +114,7 @@ describe VACOLS::CaseDocket do
   end
 
   context ".distribute_nonpriority_appeals" do
-    let(:genpop) { nil }
+    let(:genpop) { "any" }
     let(:range) { nil }
     let(:limit) { 10 }
 
@@ -174,8 +177,8 @@ describe VACOLS::CaseDocket do
                board_member: another_judge.vacols_attorney_id)
       end
 
-      context "when genpop is false" do
-        let(:genpop) { false }
+      context "when genpop is no" do
+        let(:genpop) { "not_genpop" }
         it "distributes the case" do
           expect(subject.count).to eq(1)
           expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
@@ -183,7 +186,7 @@ describe VACOLS::CaseDocket do
         end
       end
 
-      context "when genpop is nil" do
+      context "when genpop is any" do
         it "distributes the case" do
           expect(subject.count).to eq(1)
           expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
@@ -191,8 +194,8 @@ describe VACOLS::CaseDocket do
         end
       end
 
-      context "when genpop is true" do
-        let(:genpop) { true }
+      context "when genpop is yes" do
+        let(:genpop) { "only_genpop" }
         it "does not distribute the case" do
           expect(subject.count).to eq(0)
           expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
@@ -202,7 +205,7 @@ describe VACOLS::CaseDocket do
 
       context "when the case has been made genpop" do
         let(:hearing_judge) { "1111" }
-        let(:genpop) { true }
+        let(:genpop) { "only_genpop" }
 
         before do
           nonpriority_ready_case.update(bfhines: "GP")
@@ -218,7 +221,7 @@ describe VACOLS::CaseDocket do
   end
 
   context ".distribute_priority_appeals" do
-    let(:genpop) { nil }
+    let(:genpop) { "any" }
     let(:limit) { 10 }
 
     subject { VACOLS::CaseDocket.distribute_priority_appeals(judge, genpop, limit) }
@@ -270,8 +273,8 @@ describe VACOLS::CaseDocket do
                board_member: another_judge.vacols_attorney_id)
       end
 
-      context "when genpop is false" do
-        let(:genpop) { false }
+      context "when genpop is no" do
+        let(:genpop) { "not_genpop" }
         it "distributes the case" do
           expect(subject.count).to eq(1)
           expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
@@ -279,7 +282,7 @@ describe VACOLS::CaseDocket do
         end
       end
 
-      context "when genpop is nil" do
+      context "when genpop is any" do
         it "distributes the case" do
           expect(subject.count).to eq(1)
           expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
@@ -287,8 +290,8 @@ describe VACOLS::CaseDocket do
         end
       end
 
-      context "when genpop is true" do
-        let(:genpop) { true }
+      context "when genpop is yes" do
+        let(:genpop) { "only_genpop" }
         it "does not distribute the case" do
           expect(subject.count).to eq(0)
           expect(aod_ready_case.reload.bfcurloc).to eq("81")
@@ -298,7 +301,7 @@ describe VACOLS::CaseDocket do
 
       context "when the case has been made genpop" do
         let(:hearing_judge) { "1111" }
-        let(:genpop) { true }
+        let(:genpop) { "only_genpop" }
 
         before do
           aod_ready_case.update(bfhines: "GP")
@@ -314,7 +317,7 @@ describe VACOLS::CaseDocket do
 
     context "when an aod case is tied to the same judge as last decided the case" do
       let(:original_docket_number) { aod_ready_case_docket_number }
-      let(:genpop) { false }
+      let(:genpop) { "not_genpop" }
 
       it "distributes the case" do
         subject
@@ -330,7 +333,7 @@ describe VACOLS::CaseDocket do
       end
 
       context "when distributing genpop cases" do
-        let(:genpop) { true }
+        let(:genpop) { "only_genpop" }
 
         context "when a placeholder judge code is used" do
           let(:original_judge) { "000" }
