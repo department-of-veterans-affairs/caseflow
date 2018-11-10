@@ -23,7 +23,7 @@ RSpec.feature "Appeal Intake" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:veteran_file_number) {"223344555"}
+  let(:veteran_file_number) { "223344555" }
 
   let!(:veteran) do
     Generators::Veteran.build(
@@ -91,7 +91,6 @@ RSpec.feature "Appeal Intake" do
     fill_in search_bar_title, with: veteran_file_number
 
     click_on "Search"
-    binding.pry
     expect(page).to have_current_path("/intake/review_request")
 
     fill_in "What is the Receipt Date of this form?", with: "05/25/2018"

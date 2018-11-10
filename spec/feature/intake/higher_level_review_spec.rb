@@ -22,7 +22,7 @@ RSpec.feature "Higher-Level Review" do
     FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
-  let(:veteran_file_number) {"123412345"}
+  let(:veteran_file_number) { "123412345" }
 
   let(:veteran) do
     Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")

@@ -19,7 +19,7 @@ RSpec.feature "Supplemental Claim Intake" do
     FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
-  let(:veteran_file_number) {"123412345"}
+  let(:veteran_file_number) { "123412345" }
 
   let(:veteran) do
     Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
@@ -600,16 +600,17 @@ RSpec.feature "Supplemental Claim Intake" do
         source: supplemental_claim,
         veteran_file_number: veteran.file_number,
         code: "040SCR",
-        claimant_participant_id: "901987",
+        claimant_participant_id: supplemental_claim.claimant_participant_id,
         station: "499"
       )
+
       expect(end_product_establishment).to_not be_nil
 
       non_rating_end_product_establishment = EndProductEstablishment.find_by(
         source: supplemental_claim,
         veteran_file_number: veteran.file_number,
         code: "040SCNR",
-        claimant_participant_id: "901987",
+        claimant_participant_id: supplemental_claim.claimant_participant_id,
         station: "499"
       )
       expect(non_rating_end_product_establishment).to_not be_nil
