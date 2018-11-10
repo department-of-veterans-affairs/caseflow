@@ -165,7 +165,7 @@ class VACOLS::CaseDocket < VACOLS::Record
           case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
         from (
           #{SELECT_READY_APPEALS}
-            and BFAC <> '7' and AOD = '0' and BFDLOOUT <= ?
+            and BFAC <> '7' and AOD = '0'
           order by case when substr(TINUM, 1, 2) between '00' and '29' then 1 else 0 end, TINUM
         ) BRIEFF
         #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
@@ -177,7 +177,6 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     fmtd_query = sanitize_sql_array([
                                       query,
-                                      VacolsHelper.local_time_with_utc_timezone,
                                       judge.vacols_attorney_id,
                                       (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
                                       (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
@@ -215,7 +214,7 @@ class VACOLS::CaseDocket < VACOLS::Record
           case when BFHINES is null or BFHINES <> 'GP' then nvl(VLJ_HEARINGS.VLJ, VLJ_PRIORDEC.VLJ) end VLJ
         from (
           #{SELECT_READY_APPEALS}
-            and (BFAC = '7' or AOD = '1') and BFDLOOUT <= ?
+            and (BFAC = '7' or AOD = '1')
           order by BFDLOOUT
         ) BRIEFF
         #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
@@ -227,7 +226,6 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     fmtd_query = sanitize_sql_array([
                                       query,
-                                      VacolsHelper.local_time_with_utc_timezone,
                                       judge.vacols_attorney_id,
                                       (genpop == "any" || genpop == "not_genpop") ? 1 : 0,
                                       (genpop == "any" || genpop == "only_genpop") ? 1 : 0,
