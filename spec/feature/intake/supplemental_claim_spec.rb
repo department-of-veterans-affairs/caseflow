@@ -412,7 +412,7 @@ RSpec.feature "Supplemental Claim Intake" do
     end
 
     scenario "do not show veteran as a valid payee code" do
-      _, intake = start_supplemental_claim(veteran)
+      start_supplemental_claim(veteran)
 
       visit "/intake"
 

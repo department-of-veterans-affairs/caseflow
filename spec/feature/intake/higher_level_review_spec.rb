@@ -536,8 +536,7 @@ RSpec.feature "Higher-Level Review" do
     end
 
     scenario "do not show veteran as a valid payee code" do
-      _, intake = start_higher_level_review(veteran)
-
+      start_higher_level_review(veteran)
       visit "/intake"
 
       # click on payee code dropdown
