@@ -21,7 +21,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       fileNumber: {
         $set: serverIntake.veteran_file_number
       },
-      deceased: {
+      isDeceased: {
         $set: serverIntake.veteran_is_deceased
       }
     }
@@ -45,7 +45,7 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
       name: '',
       formName: '',
       fileNumber: '',
-      deceased: null
+      isDeceased: null
     },
     requestStatus: {
       fileNumberSearch: REQUEST_STATE.NOT_STARTED,

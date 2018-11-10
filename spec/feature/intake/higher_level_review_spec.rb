@@ -532,6 +532,27 @@ RSpec.feature "Higher-Level Review" do
     FeatureToggle.disable!(:intake_enable_add_issues_page)
   end
 
+  context "when veteran is deceased" do
+    let(:veteran) do
+      Generators::Veteran.build(file_number: "123121234", date_of_death: Date.new(2017, 11, 20))
+    end
+
+    scenario "do not show veteran as a valid payee code" do
+      start_higher_level_review(veteran)
+      visit "/intake"
+
+      # click on payee code dropdown
+      within_fieldset("Is the claimant someone other than the Veteran?") do
+        find("label", text: "Yes", match: :prefer_exact).click
+      end
+      find(".Select-control").click
+
+      # verify that veteran cannot be selected
+      expect(page).not_to have_content("00 - Veteran")
+      expect(page).to have_content("10 - Spouse")
+    end
+  end
+
   context "For new Add / Remove Issues page" do
     def check_row(label, text)
       row = find("tr", text: label)
