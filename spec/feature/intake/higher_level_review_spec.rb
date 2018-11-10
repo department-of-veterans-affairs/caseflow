@@ -22,8 +22,10 @@ RSpec.feature "Higher-Level Review" do
     FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
+  let(:veteran_file_number) { "123412345" }
+
   let(:veteran) do
-    Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
+    Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
   end
 
   let(:veteran_no_ratings) do
@@ -86,12 +88,12 @@ RSpec.feature "Higher-Level Review" do
     )
 
     Generators::EndProduct.build(
-      veteran_file_number: "12341234",
+      veteran_file_number: veteran_file_number,
       bgs_attrs: { end_product_type_code: "030" }
     )
 
     Generators::EndProduct.build(
-      veteran_file_number: "12341234",
+      veteran_file_number: veteran_file_number,
       bgs_attrs: { end_product_type_code: "031" }
     )
 
@@ -105,7 +107,7 @@ RSpec.feature "Higher-Level Review" do
 
     expect(page).to have_content(search_page_title)
 
-    fill_in search_bar_title, with: "12341234"
+    fill_in search_bar_title, with: veteran_file_number
 
     click_on "Search"
 
@@ -192,7 +194,7 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_button("Establish EP", disabled: true)
     expect(page).to have_content("0 issues")
 
-    higher_level_review = HigherLevelReview.find_by(veteran_file_number: "12341234")
+    higher_level_review = HigherLevelReview.find_by(veteran_file_number: veteran_file_number)
     expect(higher_level_review).to_not be_nil
     expect(higher_level_review.receipt_date).to eq(receipt_date)
     expect(higher_level_review.benefit_type).to eq(benefit_type)
@@ -204,7 +206,7 @@ RSpec.feature "Higher-Level Review" do
       payee_code: "10"
     )
 
-    intake = Intake.find_by(veteran_file_number: "12341234")
+    intake = Intake.find_by(veteran_file_number: veteran_file_number)
 
     find("label", text: "PTSD denied").click
     expect(page).to have_content("1 issue")
@@ -304,7 +306,7 @@ RSpec.feature "Higher-Level Review" do
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       hash_including(
-        veteran_file_number: "12341234",
+        veteran_file_number: veteran_file_number,
         claim_id: ratings_end_product_establishment.reference_id,
         contention_descriptions: ["PTSD denied"],
         special_issues: [],
@@ -314,7 +316,7 @@ RSpec.feature "Higher-Level Review" do
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       hash_including(
-        veteran_file_number: "12341234",
+        veteran_file_number: veteran_file_number,
         claim_id: nonratings_end_product_establishment.reference_id,
         contention_descriptions: ["Active Duty Adjustments - Description for Active Duty Adjustments"],
         special_issues: [],
@@ -382,7 +384,7 @@ RSpec.feature "Higher-Level Review" do
     visit "/higher_level_reviews/#{ratings_end_product_establishment.reference_id}/edit"
 
     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
-    expect(page).to have_content("Ed Merica (12341234)")
+    expect(page).to have_content("Ed Merica (#{veteran_file_number})")
     expect(page).to have_content("04/20/2018")
     expect(find("#table-row-4")).to have_content("Yes")
     expect(find("#table-row-5")).to have_content("No")
@@ -405,7 +407,7 @@ RSpec.feature "Higher-Level Review" do
 
     safe_click ".cf-submit.usa-button"
 
-    fill_in search_bar_title, with: "12341234"
+    fill_in search_bar_title, with: veteran_file_number
 
     click_on "Search"
 
@@ -436,7 +438,7 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_current_path("/intake/finish")
     expect(page).to have_content("Identify issues on")
 
-    higher_level_review = HigherLevelReview.find_by(veteran_file_number: "12341234")
+    higher_level_review = HigherLevelReview.find_by(veteran_file_number: veteran_file_number)
     expect(higher_level_review.same_office).to eq(true)
 
     find("label", text: "PTSD denied").click
@@ -446,7 +448,7 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
-      veteran_file_number: "12341234",
+      veteran_file_number: veteran_file_number,
       claim_id: special_issue_reference_id,
       contention_descriptions: ["PTSD denied"],
       special_issues: [{ code: "SSR", narrative: "Same Station Review" }],
@@ -976,6 +978,21 @@ RSpec.feature "Higher-Level Review" do
       expect(intake.completed_at).to eq(Time.zone.now)
       expect(intake.cancel_reason).to eq("other")
       expect(intake).to be_canceled
+    end
+
+    context "with active legacy appeal" do
+      before do
+        create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{veteran.file_number}S"))
+      end
+
+      scenario "adding issues" do
+        # feature is not yet fully implemented
+        start_higher_level_review(veteran)
+        visit "/intake/add_issues"
+
+        safe_click "#button-add-issue"
+        expect(page).to have_content("Next")
+      end
     end
   end
 end
