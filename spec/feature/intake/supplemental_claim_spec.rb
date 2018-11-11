@@ -19,8 +19,10 @@ RSpec.feature "Supplemental Claim Intake" do
     FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
+  let(:veteran_file_number) { "123412345" }
+
   let(:veteran) do
-    Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
+    Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
   end
 
   let(:veteran_no_ratings) do
@@ -48,12 +50,14 @@ RSpec.feature "Supplemental Claim Intake" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:profile_date) { (receipt_date - untimely_days + 4.days).to_time(:local) }
+  let(:profile_date) { Date.new(2017, 11, 20).to_time(:local) }
+
+  let(:timely_promulgation_date) { Date.new(2017, 11, 30) }
 
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - untimely_days + 1.day,
+      promulgation_date: timely_promulgation_date,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
@@ -97,7 +101,7 @@ RSpec.feature "Supplemental Claim Intake" do
     )
 
     Generators::EndProduct.build(
-      veteran_file_number: "12341234",
+      veteran_file_number: veteran_file_number,
       bgs_attrs: { end_product_type_code: "040" }
     )
 
@@ -117,7 +121,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(page).to have_content(search_page_title)
 
-    fill_in search_bar_title, with: "12341234"
+    fill_in search_bar_title, with: veteran_file_number
 
     click_on "Search"
 
@@ -168,13 +172,13 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_current_path("/intake/finish")
 
     expect(page).to have_content("Identify issues on")
-    expect(page).to have_content("Decision date: 04/17/2017")
+    expect(page).to have_content("Decision date: 11/20/2017")
     expect(page).to have_content("Left knee granted")
     expect(page).to have_content("Untimely rating issue 1")
     expect(page).to have_button("Establish EP", disabled: true)
     expect(page).to have_content("0 issues")
 
-    supplemental_claim = SupplementalClaim.find_by(veteran_file_number: "12341234")
+    supplemental_claim = SupplementalClaim.find_by(veteran_file_number: veteran_file_number)
 
     expect(supplemental_claim).to_not be_nil
     expect(supplemental_claim.receipt_date).to eq(receipt_date)
@@ -184,7 +188,7 @@ RSpec.feature "Supplemental Claim Intake" do
       participant_id: "5382910293",
       payee_code: "11"
     )
-    intake = Intake.find_by(veteran_file_number: "12341234")
+    intake = Intake.find_by(veteran_file_number: veteran_file_number)
 
     find("label", text: "PTSD denied").click
     expect(page).to have_content("1 issue")
@@ -282,14 +286,14 @@ RSpec.feature "Supplemental Claim Intake" do
     )
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
-      veteran_file_number: "12341234",
+      veteran_file_number: veteran_file_number,
       claim_id: ratings_end_product_establishment.reference_id,
       contention_descriptions: ["PTSD denied"],
       special_issues: [],
       user: current_user
     )
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
-      veteran_file_number: "12341234",
+      veteran_file_number: veteran_file_number,
       claim_id: nonratings_end_product_establishment.reference_id,
       contention_descriptions: ["Active Duty Adjustments - Description for Active Duty Adjustments"],
       special_issues: [],
@@ -332,7 +336,7 @@ RSpec.feature "Supplemental Claim Intake" do
     visit "/supplemental_claims/#{ratings_end_product_establishment.reference_id}/edit"
 
     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
-    expect(page).to have_content("Ed Merica (12341234)")
+    expect(page).to have_content("Ed Merica (#{veteran_file_number})")
     expect(page).to have_content("04/20/2018")
     expect(page).to_not have_content("Informal conference request")
     expect(page).to_not have_content("Same office request")
@@ -404,6 +408,28 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
   end
 
+  context "when veteran is deceased" do
+    let(:veteran) do
+      Generators::Veteran.build(file_number: "123121234", date_of_death: Date.new(2017, 11, 20))
+    end
+
+    scenario "do not show veteran as a valid payee code" do
+      start_supplemental_claim(veteran)
+
+      visit "/intake"
+
+      # click on payee code dropdown
+      within_fieldset("Is the claimant someone other than the Veteran?") do
+        find("label", text: "Yes", match: :prefer_exact).click
+      end
+      find(".Select-control").click
+
+      # verify that veteran cannot be selected
+      expect(page).not_to have_content("00 - Veteran")
+      expect(page).to have_content("10 - Spouse")
+    end
+  end
+
   context "For new Add / Remove Issues page" do
     def check_row(label, text)
       row = find("tr", text: label)
@@ -411,7 +437,7 @@ RSpec.feature "Supplemental Claim Intake" do
     end
 
     let(:duplicate_reference_id) { "xyz789" }
-    let(:old_reference_id) { "old123" }
+    let(:old_reference_id) { "old1234" }
     let(:active_epe) { create(:end_product_establishment, :active) }
 
     let!(:timely_ratings) do
@@ -425,12 +451,31 @@ RSpec.feature "Supplemental Claim Intake" do
           { reference_id: duplicate_reference_id, decision_text: "Old injury" }
         ]
       )
+    end
+
+    let!(:untimely_rating_from_ramp) do
       Generators::Rating.build(
         participant_id: veteran.participant_id,
         promulgation_date: receipt_date - 400.days,
         profile_date: receipt_date - 450.days,
         issues: [
-          { reference_id: old_reference_id, decision_text: "Really old injury" }
+          { reference_id: old_reference_id,
+            decision_text: "Really old injury",
+            associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" } }
+        ]
+      )
+    end
+
+    let!(:before_ama_rating) do
+      Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: DecisionReview.ama_activation_date - 5.days,
+        profile_date: DecisionReview.ama_activation_date - 10.days,
+        issues: [
+          { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
+          { decision_text: "Issue before AMA Activation from RAMP",
+            associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" },
+            reference_id: "ramp_ref_id" }
         ]
       )
     end
@@ -531,6 +576,35 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to have_content("5. Really old injury")
       expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
 
+      # add before_ama ratings
+      safe_click "#button-add-issue"
+      find_all("label", text: "Non-RAMP Issue before AMA Activation").first.click
+      safe_click ".add-issue"
+      expect(page).to have_content(
+        "6. Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+      )
+
+      # Eligible because it comes from a RAMP decision
+      safe_click "#button-add-issue"
+      find_all("label", text: "Issue before AMA Activation from RAMP").first.click
+      safe_click ".add-issue"
+      expect(page).to have_content(
+        "7. Issue before AMA Activation from RAMP Decision date:"
+      )
+
+      safe_click "#button-add-issue"
+      safe_click ".no-matching-issues"
+      expect(page).to have_button("Add this issue", disabled: true)
+      fill_in "Issue category", with: "Drill Pay Adjustments"
+      find("#issue-category").send_keys :enter
+      fill_in "Issue description", with: "A nonrating issue before AMA"
+      fill_in "Decision date", with: "10/19/2017"
+      expect(page).to have_button("Add this issue", disabled: false)
+      safe_click ".add-issue"
+      expect(page).to have_content(
+        "A nonrating issue before AMA #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+      )
+
       safe_click "#button-finish-intake"
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
@@ -548,16 +622,17 @@ RSpec.feature "Supplemental Claim Intake" do
         source: supplemental_claim,
         veteran_file_number: veteran.file_number,
         code: "040SCR",
-        claimant_participant_id: "901987",
+        claimant_participant_id: supplemental_claim.claimant_participant_id,
         station: "499"
       )
+
       expect(end_product_establishment).to_not be_nil
 
       non_rating_end_product_establishment = EndProductEstablishment.find_by(
         source: supplemental_claim,
         veteran_file_number: veteran.file_number,
         code: "040SCNR",
-        claimant_participant_id: "901987",
+        claimant_participant_id: supplemental_claim.claimant_participant_id,
         station: "499"
       )
       expect(non_rating_end_product_establishment).to_not be_nil
@@ -583,6 +658,29 @@ RSpec.feature "Supplemental Claim Intake" do
                description: "This is an unidentified issue",
                is_unidentified: true,
                end_product_establishment_id: end_product_establishment.id
+      )).to_not be_nil
+
+      # Issues before AMA
+      expect(RequestIssue.find_by(
+               review_request: supplemental_claim,
+               description: "Non-RAMP Issue before AMA Activation",
+               end_product_establishment_id: end_product_establishment.id,
+               ineligible_reason: :before_ama
+      )).to_not be_nil
+
+      expect(RequestIssue.find_by(
+               review_request: supplemental_claim,
+               description: "Issue before AMA Activation from RAMP",
+               ineligible_reason: nil,
+               ramp_claim_id: "ramp_claim_id",
+               end_product_establishment_id: end_product_establishment.id
+      )).to_not be_nil
+
+      expect(RequestIssue.find_by(
+               review_request: supplemental_claim,
+               description: "A nonrating issue before AMA",
+               ineligible_reason: :before_ama,
+               end_product_establishment_id: non_rating_end_product_establishment.id
       )).to_not be_nil
 
       duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
@@ -663,6 +761,21 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(intake.completed_at).to eq(Time.zone.now)
       expect(intake.cancel_reason).to eq("other")
       expect(intake).to be_canceled
+    end
+
+    context "with active legacy appeal" do
+      before do
+        create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{veteran.file_number}S"))
+      end
+
+      scenario "adding issues" do
+        # feature is not yet fully implemented
+        start_supplemental_claim(veteran)
+        visit "/intake/add_issues"
+
+        safe_click "#button-add-issue"
+        expect(page).to have_content("Next")
+      end
     end
   end
 end

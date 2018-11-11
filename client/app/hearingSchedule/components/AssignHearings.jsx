@@ -73,34 +73,35 @@ export default class AssignHearings extends React.Component {
       <h3>Hearings to Schedule</h3>
       <h4>Available Hearing Days</h4>
       <ul className="usa-sidenav-list" {...sectionNavigationListStyling}>
-        {Object.values(this.props.upcomingHearingDays).map((hearingDay) => {
-          const { selectedHearingDay } = this.props;
-          const dateSelected = selectedHearingDay &&
+        {_.orderBy(Object.values(this.props.upcomingHearingDays), (hearingDay) => hearingDay.hearingDate, 'asc').
+          map((hearingDay) => {
+            const { selectedHearingDay } = this.props;
+            const dateSelected = selectedHearingDay &&
             (selectedHearingDay.hearingDate === hearingDay.hearingDate &&
                selectedHearingDay.roomInfo === hearingDay.roomInfo);
-          const buttonColorSelected = css({
-            backgroundColor: COLORS.GREY_DARK,
-            color: COLORS.WHITE,
-            borderRadius: '0.1rem 0.1rem 0 0',
-            '&:hover': {
+            const buttonColorSelected = css({
               backgroundColor: COLORS.GREY_DARK,
-              color: COLORS.WHITE
-            }
-          });
+              color: COLORS.WHITE,
+              borderRadius: '0.1rem 0.1rem 0 0',
+              '&:hover': {
+                backgroundColor: COLORS.GREY_DARK,
+                color: COLORS.WHITE
+              }
+            });
 
-          const styling = dateSelected ? buttonColorSelected : {};
+            const styling = dateSelected ? buttonColorSelected : {};
 
-          return <li key={hearingDay.id} >
-            <Button
-              styling={styling}
-              onClick={this.onSelectedHearingDayChange(hearingDay)}
-              linkStyling
-            >
-              {`${moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}
+            return <li key={hearingDay.id} >
+              <Button
+                styling={styling}
+                onClick={this.onSelectedHearingDayChange(hearingDay)}
+                linkStyling
+              >
+                {`${moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}
                 ${this.roomInfo(hearingDay)}`}
-            </Button>
-          </li>;
-        })}
+              </Button>
+            </li>;
+          })}
       </ul>
     </div>;
   };
@@ -146,6 +147,7 @@ export default class AssignHearings extends React.Component {
 
   tableScheduledHearingsRows = (hearings) => {
     return _.map(hearings, (hearing) => ({
+      vacolsId: hearing.appealVacolsId,
       caseDetails: `${hearing.appellantMiFormatted || hearing.veteranMiFormatted} | ${hearing.vbmsId}`,
       type: renderAppealType({
         caseType: hearing.appealType,
@@ -222,6 +224,8 @@ export default class AssignHearings extends React.Component {
     const selectedHearingDay = this.props.selectedHearingDay;
 
     const availableSlots = selectedHearingDay.totalSlots - Object.keys(selectedHearingDay.hearings).length;
+    const scheduledOrder = _.sortBy(
+      (this.props.selectedHearingDay.hearings), 'date');
 
     return <div className="usa-width-three-fourths">
       <h1>
@@ -235,7 +239,7 @@ export default class AssignHearings extends React.Component {
             label: 'Scheduled',
             page: <Table
               columns={tabWindowColumns}
-              rowObjects={this.tableScheduledHearingsRows(this.props.selectedHearingDay.hearings)}
+              rowObjects={this.tableScheduledHearingsRows(scheduledOrder)}
               summary="scheduled-hearings-table"
             />
           },

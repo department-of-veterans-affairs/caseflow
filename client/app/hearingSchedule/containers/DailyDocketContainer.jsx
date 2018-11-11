@@ -37,8 +37,7 @@ export class DailyDocketContainer extends React.Component {
     return {
       disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
       notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
-      date: hearing.editedDate ? hearing.editedDate : null,
-      time: hearing.editedTime ? hearing.editedTime : null
+      master_record_updated: hearing.editedDate ? hearing.editedDate : null
     };
   };
 

@@ -20,6 +20,9 @@ const updateFromServerIntake = (state, serverIntake) => {
       },
       fileNumber: {
         $set: serverIntake.veteran_file_number
+      },
+      isDeceased: {
+        $set: serverIntake.veteran_is_deceased
       }
     }
   });
@@ -41,7 +44,8 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
     veteran: {
       name: '',
       formName: '',
-      fileNumber: ''
+      fileNumber: '',
+      isDeceased: null
     },
     requestStatus: {
       fileNumberSearch: REQUEST_STATE.NOT_STARTED,
