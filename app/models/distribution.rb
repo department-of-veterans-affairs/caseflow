@@ -107,6 +107,6 @@ class Distribution < ApplicationRecord
   end
 
   def distributed_cases_count
-    if status == "completed" then distributed_cases.count else 0 end
+    (status == "completed") ? distributed_cases.count : 0
   end
 end
