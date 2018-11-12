@@ -58,6 +58,7 @@ class HearingsController < ApplicationController
                                      :aod,
                                      :transcript_requested,
                                      :add_on,
-                                     :prepped)
+                                     :prepped,
+                                     :date)
   end
 end
