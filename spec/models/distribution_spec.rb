@@ -124,7 +124,7 @@ describe Distribution do
 
       it "does not validate" do
         expect(subject.errors.details).to have_key(:judge)
-        expect(subject.errors.details[:judge]).to include({ error: :not_judge })
+        expect(subject.errors.details[:judge]).to include(error: :not_judge)
       end
     end
 
@@ -133,7 +133,7 @@ describe Distribution do
 
       it "does not validate" do
         expect(subject.errors.details).to have_key(:judge)
-        expect(subject.errors.details[:judge]).to include({ error: :unassigned_cases })
+        expect(subject.errors.details[:judge]).to include(error: :unassigned_cases)
       end
     end
 
@@ -142,7 +142,7 @@ describe Distribution do
 
       it "does not validate" do
         expect(subject.errors.details).to have_key(:judge)
-        expect(subject.errors.details[:judge]).to include({ error: :unassigned_cases })
+        expect(subject.errors.details[:judge]).to include(error: :unassigned_cases)
       end
     end
   end
