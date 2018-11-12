@@ -155,7 +155,7 @@ RSpec.feature "Appeal Intake" do
 
     find("label", text: "PTSD denied").click
 
-    safe_click "#button-add-issue"
+    click_intake_add_issue
 
     safe_click ".Select"
     expect(page).to have_content("1 issue")
@@ -173,7 +173,7 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_content("2 issues")
 
-    safe_click "#button-finish-intake"
+    click_intake_finish
 
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES_SHORT.appeal} created:")
@@ -265,7 +265,7 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_content("This Veteran has no rated, disability issues")
 
-    safe_click "#button-add-issue"
+    click_intake_add_issue
 
     safe_click ".Select"
 
@@ -276,7 +276,7 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_content("1 issue")
 
-    safe_click "#button-finish-intake"
+    click_intake_finish
 
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
   end

@@ -22,7 +22,7 @@ module IntakeHelpers
 
   def add_intake_nonrating_issue(category:, description:, date:)
     safe_click ".no-matching-issues"
-    expect(page.text).to match(/Does issue \d match any of these issue categories?/)
+    expect(page.text).to match(/Does issue \d+ match any of these issue categories?/)
     expect(page).to have_button("Add this issue", disabled: true)
     fill_in "Issue category", with: category
     find("#issue-category").send_keys :enter
