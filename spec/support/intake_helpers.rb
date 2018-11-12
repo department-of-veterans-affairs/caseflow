@@ -15,7 +15,8 @@ module IntakeHelpers
   end
 
   def add_intake_rating_issue(description, note = nil)
-    find_all("label", text: description).first.click
+    # find_all with 'minimum' will wait like find() does.
+    find_all("label", text: description, minimum: 1).first.click
     fill_in("Notes", with: note) if note
     safe_click ".add-issue"
   end

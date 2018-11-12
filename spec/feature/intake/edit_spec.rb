@@ -94,9 +94,8 @@ RSpec.feature "Edit issues" do
       expect(page).not_to have_content("nonrating description")
 
       # add an issue
-      safe_click "#button-add-issue"
-      find("label", text: "Left knee granted").click
-      safe_click ".add-issue"
+      click_intake_add_issue
+      add_intake_rating_issue("Left knee granted")
 
       # save
       expect(page).to have_content("Left knee granted")
@@ -307,21 +306,19 @@ RSpec.feature "Edit issues" do
 
         expect(page).to have_content("Military Retired Pay")
 
-        safe_click "#button-add-issue"
-        safe_click ".no-matching-issues"
-        fill_in "Issue category", with: "Active Duty Adjustments"
-        find("#issue-category").send_keys :enter
-        fill_in "Issue description", with: "A description!"
-        fill_in "Decision date", with: "04/26/2018"
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "A description!",
+          date: "04/26/2018"
+        )
 
-        safe_click "#button-add-issue"
-        safe_click ".no-matching-issues"
-        fill_in "Issue category", with: "Drill Pay Adjustments"
-        find("#issue-category").send_keys :enter
-        fill_in "Issue description", with: "A nonrating issue before AMA"
-        fill_in "Decision date", with: "10/25/2017"
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_nonrating_issue(
+          category: "Drill Pay Adjustments",
+          description: "A nonrating issue before AMA",
+          date: "10/25/2017"
+        )
 
         safe_click("#button-submit-update")
 
@@ -374,7 +371,7 @@ RSpec.feature "Edit issues" do
         expect(page).to_not have_content("Left knee granted")
         expect(page).to have_content("PTSD denied")
 
-        safe_click "#button-add-issue"
+        click_intake_add_issue
 
         expect(page).to have_content("Add issue 2")
         expect(page).to have_content("Does issue 2 match any of these issues")
@@ -386,10 +383,8 @@ RSpec.feature "Edit issues" do
         expect(page).to_not have_content("2. Left knee granted")
 
         # adding an issue should show the issue
-        safe_click "#button-add-issue"
-        find("label", text: "Left knee granted").click
-        safe_click ".add-issue"
-
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
         expect(page).to have_content("2. Left knee granted")
         expect(page).to_not have_content("Notes:")
 
@@ -399,10 +394,8 @@ RSpec.feature "Edit issues" do
         expect(page).not_to have_content("PTSD denied")
 
         # re-add to proceed
-        safe_click "#button-add-issue"
-        find("label", text: "PTSD denied").click
-        fill_in "Notes", with: "I am an issue note"
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_rating_issue("PTSD denied", "I am an issue note")
         expect(page).to have_content("PTSD denied")
         # TODO: : Need to fix a bug, but these two expect statements should replace the above one
         # expect(page).to have_content("PTSD denied Decision Date:")
@@ -410,62 +403,48 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content("I am an issue note")
 
         # clicking add issue again should show a disabled radio button for that same rating
-        safe_click "#button-add-issue"
+        click_intake_add_issue
         expect(page).to have_content("Add issue 3")
         expect(page).to have_content("Does issue 3 match any of these issues")
         expect(page).to have_content("Left knee granted (already selected for issue 1)")
         expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
 
         # Add nonrating issue
-        safe_click ".no-matching-issues"
-        expect(page).to have_content("Does issue 3 match any of these issue categories?")
-        expect(page).to have_button("Add this issue", disabled: true)
-        fill_in "Issue category", with: "Active Duty Adjustments"
-        find("#issue-category").send_keys :enter
-        fill_in "Issue description", with: "Description for Active Duty Adjustments"
-        fill_in "Decision date", with: "04/25/2018"
-        expect(page).to have_button("Add this issue", disabled: false)
-        safe_click ".add-issue"
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "Description for Active Duty Adjustments",
+          date: "04/25/2018"
+        )
         expect(page).to have_content("3 issues")
 
         # Add untimely nonrating issue
-        safe_click "#button-add-issue"
-        safe_click ".no-matching-issues"
-        expect(page).to have_content("Does issue 4 match any of these issue categories?")
-        expect(page).to have_button("Add this issue", disabled: true)
-        fill_in "Issue category", with: "Active Duty Adjustments"
-        find("#issue-category").send_keys :enter
-        fill_in "Issue description", with: "Another Description for Active Duty Adjustments"
-        fill_in "Decision date", with: "04/25/2016"
-        expect(page).to have_button("Add this issue", disabled: false)
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "Another Description for Active Duty Adjustments",
+          date: "04/25/2016"
+        )
         add_untimely_exemption_response("No", "I am a nonrating exemption note")
         expect(page).to have_content("4 issues")
         expect(page).to have_content("I am a nonrating exemption note")
         expect(page).to have_content("Another Description for Active Duty Adjustments")
 
         # add unidentified issue
-        safe_click "#button-add-issue"
-        safe_click ".no-matching-issues"
-        safe_click ".no-matching-issues"
-        expect(page).to have_content("Describe the issue to mark it as needing further review.")
-        fill_in "Transcribe the issue as it's written on the form", with: "This is an unidentified issue"
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_unidentified_issue("This is an unidentified issue")
         expect(page).to have_content("5 issues")
         expect(page).to have_content("This is an unidentified issue")
 
         # add issue before AMA
-        safe_click "#button-add-issue"
-        find("label", text: "Non-RAMP Issue before AMA Activation").click
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
         expect(page).to have_content(
           "Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
         )
 
         # add RAMP issue before AMA
-        safe_click "#button-add-issue"
-        find("label", text: "Issue before AMA Activation from RAMP").click
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_rating_issue("Issue before AMA Activation from RAMP")
         expect(page).to have_content("Issue before AMA Activation from RAMP Decision date:")
 
         safe_click("#button-submit-update")
@@ -555,10 +534,8 @@ RSpec.feature "Edit issues" do
 
         expect(page).to have_button("Save", disabled: true)
 
-        safe_click "#button-add-issue"
-        find("label", text: "Left knee granted").click
-        safe_click ".add-issue"
-
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
         expect(page).to have_button("Save", disabled: false)
 
         page.all(".remove-issue")[1].click
@@ -588,11 +565,12 @@ RSpec.feature "Edit issues" do
         )
 
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
-        safe_click "#button-add-issue"
-        find("label", text: "Left knee granted").click
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
         safe_click("#button-submit-update")
+
         expect(page).to have_content("The review originally had 1 issue but now has 2.")
+
         safe_click ".confirm"
 
         expect(page).to have_content("Previous update not yet done processing")
@@ -608,9 +586,8 @@ RSpec.feature "Edit issues" do
         safe_click ".remove-issue"
         # click again to get rid of pop-up
         safe_click ".remove-issue"
-        safe_click "#button-add-issue"
-        find("label", text: "Left knee granted").click
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
 
         expect(page).to have_button("Save", disabled: false)
 
@@ -765,13 +742,12 @@ RSpec.feature "Edit issues" do
 
         expect(page).to have_content("Military Retired Pay")
 
-        safe_click "#button-add-issue"
-        safe_click ".no-matching-issues"
-        fill_in "Issue category", with: "Active Duty Adjustments"
-        find("#issue-category").send_keys :enter
-        fill_in "Issue description", with: "A description!"
-        fill_in "Decision date", with: "04/25/2018"
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "A description!",
+          date: "04/25/2018"
+        )
 
         safe_click("#button-submit-update")
 
@@ -826,7 +802,7 @@ RSpec.feature "Edit issues" do
         check_row("Benefit type", "Compensation")
         check_row("Claimant", "Bob Vance, Spouse (payee code 10)")
 
-        safe_click "#button-add-issue"
+        click_intake_add_issue
 
         expect(page).to have_content("Add issue 2")
         expect(page).to have_content("Does issue 2 match any of these issues")
@@ -838,9 +814,8 @@ RSpec.feature "Edit issues" do
         expect(page).to_not have_content("2. Left knee granted")
 
         # adding an issue should show the issue
-        safe_click "#button-add-issue"
-        find("label", text: "Left knee granted").click
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
 
         expect(page).to have_content("2. Left knee granted")
         expect(page).to_not have_content("Notes:")
@@ -853,39 +828,29 @@ RSpec.feature "Edit issues" do
         expect(page).not_to have_content("PTSD denied")
 
         # re-add to proceed
-        safe_click "#button-add-issue"
-        find("label", text: "PTSD denied").click
-        fill_in "Notes", with: "I am an issue note"
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_rating_issue("PTSD denied", "I am an issue note")
         expect(page).to have_content("2. PTSD denied")
         expect(page).to have_content("I am an issue note")
 
         # clicking add issue again should show a disabled radio button for that same rating
-        safe_click "#button-add-issue"
+        click_intake_add_issue
         expect(page).to have_content("Add issue 3")
         expect(page).to have_content("Does issue 3 match any of these issues")
         expect(page).to have_content("Left knee granted (already selected for issue 1)")
         expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
 
         # Add nonrating issue
-        safe_click ".no-matching-issues"
-        expect(page).to have_content("Does issue 3 match any of these issue categories?")
-        expect(page).to have_button("Add this issue", disabled: true)
-        fill_in "Issue category", with: "Active Duty Adjustments"
-        find("#issue-category").send_keys :enter
-        fill_in "Issue description", with: "Description for Active Duty Adjustments"
-        fill_in "Decision date", with: "04/25/2018"
-        expect(page).to have_button("Add this issue", disabled: false)
-        safe_click ".add-issue"
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "Description for Active Duty Adjustments",
+          date: "04/25/2018"
+        )
         expect(page).to have_content("3 issues")
 
         # add unidentified issue
-        safe_click "#button-add-issue"
-        safe_click ".no-matching-issues"
-        safe_click ".no-matching-issues"
-        expect(page).to have_content("Describe the issue to mark it as needing further review.")
-        fill_in "Transcribe the issue as it's written on the form", with: "This is an unidentified issue"
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_unidentified_issue("This is an unidentified issue")
         expect(page).to have_content("4 issues")
         expect(page).to have_content("This is an unidentified issue")
       end
@@ -895,9 +860,8 @@ RSpec.feature "Edit issues" do
 
         expect(page).to have_button("Save", disabled: true)
 
-        safe_click "#button-add-issue"
-        find("label", text: "Left knee granted").click
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
 
         expect(page).to have_button("Save", disabled: false)
 
@@ -929,9 +893,8 @@ RSpec.feature "Edit issues" do
         )
 
         visit "supplemental_claims/#{rating_ep_claim_id}/edit"
-        safe_click "#button-add-issue"
-        find("label", text: "Left knee granted").click
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
         safe_click("#button-submit-update")
 
         expect(page).to have_content("The review originally had 1 issue but now has 2.")
@@ -949,9 +912,8 @@ RSpec.feature "Edit issues" do
         visit "supplemental_claims/#{rating_ep_claim_id}/edit"
         safe_click ".remove-issue"
         safe_click ".remove-issue"
-        safe_click "#button-add-issue"
-        find("label", text: "Left knee granted").click
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
 
         expect(page).to have_button("Save", disabled: false)
 
