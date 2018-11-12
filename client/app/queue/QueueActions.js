@@ -451,12 +451,7 @@ const receiveDistribution = (dispatch, userId, response) => {
 
   dispatch(setPendingDistribution(distribution));
 
-  if (_.includes(["pending", "started"], distribution.status)) {
-    // Poll until the distribution completes or errors out.
-    ApiUtil.get(`/distributions/${distribution.id}`).
-      then((response) => receiveDistribution(dispatch, userId, response)).
-      catch((error) => distributionError(dispatch, userId, error));
-  } else {
+  if (distribution.status == "complete") {
     const caseN = distribution.distributed_cases_count;
 
     dispatch(showSuccessMessage({
@@ -465,6 +460,11 @@ const receiveDistribution = (dispatch, userId, response) => {
     }));
 
     refreshLegacyTasks(dispatch, userId).then(() => dispatch(setPendingDistribution(null)));
+  } else {
+    // Poll until the distribution completes or errors out.
+    ApiUtil.get(`/distributions/${distribution.id}`).
+      then((response) => receiveDistribution(dispatch, userId, response)).
+      catch((error) => distributionError(dispatch, userId, error));
   }
 };
 
