@@ -7,7 +7,8 @@ import type {
   BasicAppeals,
   AppealDetails,
   User,
-  Attorneys
+  Attorneys,
+  Distribution
 } from './models';
 
 export type AttorneyAppealsLoadingState = {
@@ -83,6 +84,7 @@ export type QueueState = {|
   attorneysOfJudge: AttorneysOfJudge,
   attorneyAppealsLoadingState: AttorneyAppealsLoadingState,
   isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
+  pendingDistribution: ?Distribution,
   attorneys: Attorneys,
   newDocsForAppeal: NewDocsForAppeal,
   organizationId: ?number,
