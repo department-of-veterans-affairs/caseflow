@@ -519,7 +519,7 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to have_content("1. Left knee granted")
       expect(page).to_not have_content("Notes:")
 
-      safe_click ".remove-issue"
+      click_remove_intake_issue("1")
       expect(page).not_to have_content("Left knee granted")
 
       # re-add to proceed

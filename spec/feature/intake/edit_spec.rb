@@ -89,8 +89,8 @@ RSpec.feature "Edit issues" do
 
       expect(page).to have_content("nonrating description")
       # remove an issue
-      page.all(".remove-issue")[0].click
-      safe_click ".remove-issue"
+      click_remove_intake_issue("1")
+      click_remove_issue_confirmation
       expect(page).not_to have_content("nonrating description")
 
       # add an issue
@@ -389,8 +389,8 @@ RSpec.feature "Edit issues" do
         expect(page).to_not have_content("Notes:")
 
         # remove existing issue
-        page.all(".remove-issue")[0].click
-        safe_click ".remove-issue"
+        click_remove_intake_issue("1")
+        click_remove_issue_confirmation
         expect(page).not_to have_content("PTSD denied")
 
         # re-add to proceed
@@ -538,17 +538,16 @@ RSpec.feature "Edit issues" do
         add_intake_rating_issue("Left knee granted")
         expect(page).to have_button("Save", disabled: false)
 
-        page.all(".remove-issue")[1].click
-        safe_click ".remove-issue"
+        click_remove_intake_issue("2")
+        click_remove_issue_confirmation
         expect(page).to_not have_content("Left knee granted")
         expect(page).to have_button("Save", disabled: true)
       end
 
       it "Does not allow save if no issues are selected" do
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
-        safe_click ".remove-issue"
-        # click again to get rid of pop up
-        safe_click ".remove-issue"
+        click_remove_intake_issue("1")
+        click_remove_issue_confirmation
 
         expect(page).to have_button("Save", disabled: true)
       end
@@ -583,9 +582,8 @@ RSpec.feature "Edit issues" do
         allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
 
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
-        safe_click ".remove-issue"
-        # click again to get rid of pop-up
-        safe_click ".remove-issue"
+        click_remove_intake_issue("1")
+        click_remove_issue_confirmation
         click_intake_add_issue
         add_intake_rating_issue("Left knee granted")
 
@@ -819,11 +817,11 @@ RSpec.feature "Edit issues" do
 
         expect(page).to have_content("2. Left knee granted")
         expect(page).to_not have_content("Notes:")
-        safe_click ".remove-issue"
+        click_remove_intake_issue("1")
 
         # expect a pop up
         expect(page).to have_content("Are you sure you want to remove this issue?")
-        safe_click ".remove-issue"
+        click_remove_issue_confirmation
 
         expect(page).not_to have_content("PTSD denied")
 
@@ -865,18 +863,17 @@ RSpec.feature "Edit issues" do
 
         expect(page).to have_button("Save", disabled: false)
 
-        page.all(".remove-issue")[1].click
-        # click remove issue again to get rid of popup
-        safe_click ".remove-issue"
+        click_remove_intake_issue("2")
+        click_remove_issue_confirmation
+
         expect(page).to_not have_content("Left knee granted")
         expect(page).to have_button("Save", disabled: true)
       end
 
       it "Does not allow save if no issues are selected" do
         visit "supplemental_claims/#{rating_ep_claim_id}/edit"
-        safe_click ".remove-issue"
-        # click remove issue again to get rid of popup
-        safe_click ".remove-issue"
+        click_remove_intake_issue("1")
+        click_remove_issue_confirmation
 
         expect(page).to have_button("Save", disabled: true)
       end
@@ -910,8 +907,8 @@ RSpec.feature "Edit issues" do
         allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
 
         visit "supplemental_claims/#{rating_ep_claim_id}/edit"
-        safe_click ".remove-issue"
-        safe_click ".remove-issue"
+        click_remove_intake_issue("1")
+        click_remove_issue_confirmation
         click_intake_add_issue
         add_intake_rating_issue("Left knee granted")
 

@@ -40,4 +40,21 @@ module IntakeHelpers
     fill_in "Transcribe the issue as it's written on the form", with: description
     safe_click ".add-issue"
   end
+
+  def click_remove_intake_issue(number)
+    issue_el = find_intake_issue_by_number(number)
+    issue_el.find(".remove-issue").click
+  end
+
+  def click_remove_issue_confirmation
+    safe_click ".remove-issue"
+  end
+
+  def find_intake_issue_by_number(number)
+    find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue"]').each do |node|
+      if node.find(".issue-num").text =~ /^#{number}\./
+        return node
+      end
+    end
+  end
 end

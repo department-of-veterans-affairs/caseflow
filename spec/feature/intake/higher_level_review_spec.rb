@@ -664,7 +664,7 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to_not have_content("Notes:")
 
       # removing an issue
-      safe_click ".remove-issue"
+      click_remove_intake_issue("1")
       expect(page).not_to have_content("Left knee granted")
 
       # re-add to proceed
@@ -713,7 +713,7 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
 
       # remove and re-add with different answer to exemption
-      page.all(".remove-issue").last.click
+      click_remove_intake_issue("5")
       click_intake_add_issue
       add_intake_rating_issue("Really old injury")
       add_untimely_exemption_response("No")
