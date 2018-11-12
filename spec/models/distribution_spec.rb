@@ -12,7 +12,17 @@ describe Distribution do
   let(:judge) { create(:user, css_id: css_id) }
   let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: css_id) }
 
-  context "distribute" do
+  # We use StartDistributionJob.perform_now in the test environment.
+  #
+  # context "StartDistributionJob" do
+  #   ActiveJob::Base.queue_adapter = :test
+
+  #   it "enqueues a job" do
+  #     expect { Distribution.create(judge: judge) }.to have_enqueued_job(StartDistributionJob)
+  #   end
+  # end
+
+  context "#distribute!" do
     subject { Distribution.create(judge: judge) }
 
     let!(:priority_cases) do
@@ -71,7 +81,9 @@ describe Distribution do
     end
 
     it "correctly distributes cases to the judge" do
+      subject.distribute!
       expect(subject.valid?).to eq(true)
+      expect(subject.status).to eq("completed")
       expect(subject.completed_at).to eq(Time.zone.now)
       expect(subject.statistics["acting_judge"]).to eq(false)
       expect(subject.statistics["batch_size"]).to eq(15)
@@ -92,6 +104,7 @@ describe Distribution do
       let!(:vacols_judge) { create(:staff, :attorney_judge_role, sdomainid: css_id) }
 
       it "correctly distributes cases to the acting judge" do
+        subject.distribute!
         expect(subject.valid?).to eq(true)
         expect(subject.statistics["acting_judge"]).to eq(true)
         expect(subject.statistics["batch_size"]).to eq(10)
@@ -111,6 +124,7 @@ describe Distribution do
 
       it "does not validate" do
         expect(subject.errors.details).to have_key(:judge)
+        expect(subject.errors.details[:judge]).to include({ error: :not_judge })
       end
     end
 
@@ -119,6 +133,7 @@ describe Distribution do
 
       it "does not validate" do
         expect(subject.errors.details).to have_key(:judge)
+        expect(subject.errors.details[:judge]).to include({ error: :unassigned_cases })
       end
     end
 
@@ -127,6 +142,7 @@ describe Distribution do
 
       it "does not validate" do
         expect(subject.errors.details).to have_key(:judge)
+        expect(subject.errors.details[:judge]).to include({ error: :unassigned_cases })
       end
     end
   end

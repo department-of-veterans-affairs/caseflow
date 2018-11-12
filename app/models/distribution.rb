@@ -1,4 +1,5 @@
 class Distribution < ApplicationRecord
+  include ActiveModel::Serializers::JSON
   include LegacyCaseDistribution
 
   has_many :distributed_cases
@@ -7,22 +8,63 @@ class Distribution < ApplicationRecord
   validates :judge, presence: true
   validate :validate_user_is_judge, on: :create
   validate :validate_judge_has_no_unassigned_cases, on: :create
+  validate :validate_judge_has_no_pending_distributions, on: :create
 
-  after_create :distribute
+  enum status: { pending: "pending", started: "started", error: "error", completed: "completed" }
+
+  before_create :mark_as_pending
+  after_commit :enqueue_distribution_job, on: :create
 
   CASES_PER_ATTORNEY = 5
   ALTERNATIVE_BATCH_SIZE = 10
 
-  private
+  def distribute!
+    return unless %w[pending error].include? status
 
-  def distribute
+    if status == "error"
+      return unless valid?(context: :create)
+    end
+
+    update(status: "started")
+
     if acting_judge
       legacy_acting_judge_distribution
     else
       legacy_distribution
     end
 
-    update(statistics: legacy_statistics, completed_at: Time.zone.now)
+    update(status: "completed", completed_at: Time.zone.now, statistics: legacy_statistics)
+  rescue StandardError => e
+    update(status: "error")
+    raise e
+  end
+
+  def self.pending_for_judge(judge)
+    where(status: %w[pending started], judge: judge)
+  end
+
+  private
+
+  def attributes
+    {
+      'id': nil,
+      'status': nil,
+      'created_at': nil,
+      'updated_at': nil,
+      'distributed_cases_count': nil
+    }
+  end
+
+  def mark_as_pending
+    self.status = "pending"
+  end
+
+  def enqueue_distribution_job
+    if Rails.env.development? || Rails.env.test?
+      StartDistributionJob.perform_now(self)
+    else
+      StartDistributionJob.perform_later(self, RequestStore[:current_user])
+    end
   end
 
   def acting_judge
@@ -30,11 +72,15 @@ class Distribution < ApplicationRecord
   end
 
   def validate_user_is_judge
-    errors.add(:judge, "must be a judge in VACOLS") unless judge.judge_in_vacols?
+    errors.add(:judge, :not_judge) unless judge.judge_in_vacols?
   end
 
   def validate_judge_has_no_unassigned_cases
-    errors.add(:judge, "must have no unassigned cases") unless judge_has_no_unassigned_cases
+    errors.add(:judge, :unassigned_cases) unless judge_has_no_unassigned_cases
+  end
+
+  def validate_judge_has_no_pending_distributions
+    errors.add(:judge, :pending_distribution) if self.class.pending_for_judge(judge).any?
   end
 
   def judge_has_no_unassigned_cases
@@ -58,5 +104,9 @@ class Distribution < ApplicationRecord
     end
 
     attorney_count * CASES_PER_ATTORNEY
+  end
+
+  def distributed_cases_count
+    if status == "completed" then distributed_cases.count else 0 end
   end
 end

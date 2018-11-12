@@ -237,6 +237,7 @@ ActiveRecord::Schema.define(version: 20181109131525) do
 
   create_table "distributions", force: :cascade do |t|
     t.integer "judge_id"
+    t.string "status"
     t.json "statistics"
     t.datetime "completed_at"
     t.datetime "created_at", null: false
@@ -652,12 +653,12 @@ ActiveRecord::Schema.define(version: 20181109131525) do
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
     t.bigint "ineligible_due_to_id"
-    t.string "ineligible_reason"
+    t.string "ramp_claim_id"
     t.datetime "decision_sync_submitted_at"
     t.datetime "decision_sync_attempted_at"
     t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
-    t.string "ramp_claim_id"
+    t.string "ineligible_reason"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
