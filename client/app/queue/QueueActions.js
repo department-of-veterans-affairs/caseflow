@@ -52,7 +52,7 @@ export const onReceiveTasks = (
 export const onReceiveAmaTasks = (amaTasks: Tasks) => ({
   type: ACTIONS.RECEIVE_AMA_TASKS,
   payload: {
-    prepareTasksForStore(amaTasks)
+    amaTasks: prepareTasksForStore(amaTasks)
   }
 });
 
