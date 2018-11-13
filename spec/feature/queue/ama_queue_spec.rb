@@ -215,7 +215,7 @@ RSpec.feature "AmaQueue" do
         OrganizationsUser.add_user_to_organization(other_user, translation_organization)
       end
 
-      scenario "assign case to self", focus: true do
+      scenario "assign case to self" do
         visit "/organizations/#{translation_organization.url}"
 
         click_on "Pal Smith"
@@ -243,13 +243,13 @@ RSpec.feature "AmaQueue" do
 
         find(".Select-control", text: "Select a user").click
         find("div", class: "Select-option", text: user.full_name).click
-        binding.pry
 
-        expect(page).to have_content(existing_instruction)
+        fill_in "taskInstructions", with: instructions
         click_on "Submit"
 
-        expect(page).to have_content("Task assigned to #{user_name}")
-        expect(translation_task.reload.children.frist.status).to eq("completed")
+        expect(page).to have_content("Task reassigned to #{user_name}")
+        old_task = translation_task.reload.children.find { |task| task.assigned_to == other_user }
+        expect(old_task.status).to eq("completed")
 
         # On hold tasks should not be visible on the case details screen
         # expect(page).to_not have_content("Actions")
