@@ -48,6 +48,7 @@ class DistributionsController < ApplicationController
     }, status: 403
   end
 
+  # rubocop:disable Metrics/MethodLength
   def json_error(error)
     case error
     when :not_judge
@@ -82,6 +83,7 @@ class DistributionsController < ApplicationController
       }
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def feature_enabled?
     FeatureToggle.enabled?(:automatic_case_distribution, user: current_user)
