@@ -1,4 +1,4 @@
-RSpec.describe TasksController, type: :controller do
+RSpec.describe TasksController, type: :controller, focus: true do
   before do
     Fakes::Initializer.load!
     FeatureToggle.enable!(:colocated_queue)
@@ -245,11 +245,12 @@ RSpec.describe TasksController, type: :controller do
         it "should be successful" do
           post :create, params: { tasks: params }
           expect(response.status).to eq 201
+
           response_body = JSON.parse(response.body)["tasks"]["data"]
-          expect(response_body.first["attributes"]["type"]).to eq AttorneyTask.name
-          expect(response_body.first["attributes"]["appeal_id"]).to eq ama_appeal.id
-          expect(response_body.first["attributes"]["docket_number"]).to eq ama_appeal.docket_number
-          expect(response_body.first["attributes"]["appeal_type"]).to eq Appeal.name
+          expect(response_body.second["attributes"]["type"]).to eq AttorneyTask.name
+          expect(response_body.second["attributes"]["appeal_id"]).to eq ama_appeal.id
+          expect(response_body.second["attributes"]["docket_number"]).to eq ama_appeal.docket_number
+          expect(response_body.second["attributes"]["appeal_type"]).to eq Appeal.name
 
           attorney_task = AttorneyTask.find_by(appeal: ama_appeal)
           expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned

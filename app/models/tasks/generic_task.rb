@@ -64,7 +64,7 @@ class GenericTask < Task
   end
 
   def can_be_accessed_by_user?(user)
-    available_actions(user) != []
+    !available_actions(user).empty?
   end
 
   private
