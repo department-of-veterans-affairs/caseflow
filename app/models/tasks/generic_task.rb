@@ -2,6 +2,8 @@ class GenericTask < Task
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def available_actions(user)
+    return [] unless user
+
     if assigned_to.is_a?(Vso) && assigned_to.user_has_access?(user)
       return [Constants.TASK_ACTIONS.MARK_COMPLETE.to_h]
     end
@@ -65,6 +67,19 @@ class GenericTask < Task
     available_actions(user) != []
   end
 
+  private
+
+  def task_is_assigned_to_user_within_organiztaion?(user)
+    parent &&
+      parent.assigned_to.is_a?(Organization) &&
+      assigned_to.is_a?(User) &&
+      parent.assigned_to.user_has_access?(user)
+  end
+
+  def task_is_assigned_to_users_organization?(user)
+    assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
+  end
+
   class << self
     def create_from_params(params, user)
       parent = Task.find(params[:parent_id])
@@ -96,17 +111,6 @@ class GenericTask < Task
     end
 
     private
-
-    def task_is_assigned_to_user_within_organiztaion?(user)
-      parent &&
-        parent.assigned_to.is_a?(Organization) &&
-        assigned_to.is_a?(User) &&
-        parent.assigned_to.user_has_access?(user)
-    end
-
-    def task_is_assigned_to_users_organization?(user)
-      assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
-    end
 
     def child_assigned_by_id(parent, current_user)
       return current_user.id if current_user
