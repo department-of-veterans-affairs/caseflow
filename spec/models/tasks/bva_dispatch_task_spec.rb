@@ -20,18 +20,31 @@ describe BvaDispatchTask do
     let(:user) { FactoryBot.create(:user) }
     let(:root_task) { FactoryBot.create(:root_task) }
     let(:citation_number) { "A18123456" }
+    let(:file) do
+      ActionDispatch::Http::UploadedFile.new(
+        filename: "sample.pdf",
+        type: "pdf",
+        tempfile: "path/to/file.pdf"
+      )
+    end
     let(:params) do
       { appeal_id: root_task.appeal.external_id,
         citation_number: citation_number,
         decision_date: Date.new(1989, 12, 13).to_s,
+        file: file,
         redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx" }
     end
-    before { allow(BvaDispatchTask).to receive(:list_of_assignees).and_return([user.css_id]) }
+    before do
+      allow(BvaDispatchTask).to receive(:list_of_assignees).and_return([user.css_id])
+    end
 
     context "when single BvaDispatchTask exists for user and appeal combination" do
       before { BvaDispatchTask.create_and_assign(root_task) }
 
       it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
+        expect(Caseflow::Fakes::S3Service).to receive(:store_file)
+          .with("decisions/" + root_task.appeal.external_id, "path/to/file.pdf", :filepath)
+        allow(VBMSService).to receive(:upload_document_to_vbms)
         BvaDispatchTask.outcode(root_task.appeal, params, user)
         tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)
         expect(tasks.length).to eq(1)
@@ -39,6 +52,11 @@ describe BvaDispatchTask do
         expect(task.status).to eq("completed")
         expect(task.parent.status).to eq("completed")
         expect(task.root_task.status).to eq("completed")
+        decision = Decision.find_by(appeal_id: root_task.appeal.id)
+        expect(decision).to_not eq nil
+        expect(VBMSService).to have_received(:upload_document_to_vbms).with(root_task.appeal, decision)
+        expect(decision.document_type).to eq "BVA Decision"
+        expect(decision.source).to eq "BVA"
       end
     end
 
@@ -100,6 +118,7 @@ describe BvaDispatchTask do
         p
       end
       before do
+        allow(Caseflow::Fakes::S3Service).to receive(:store_file)
         BvaDispatchTask.create_and_assign(root_task)
         BvaDispatchTask.outcode(root_task.appeal, params, user)
       end

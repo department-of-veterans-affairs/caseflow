@@ -84,6 +84,14 @@ module Asyncable
     !!self[self.class.processed_at_column]
   end
 
+  def attempted?
+    !!self[self.class.attempted_at_column]
+  end
+
+  def submitted?
+    !!self[self.class.submitted_at_column]
+  end
+
   def clear_error!
     update!(self.class.error_column => nil)
   end
