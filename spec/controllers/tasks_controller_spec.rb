@@ -65,7 +65,7 @@ RSpec.describe TasksController, type: :controller do
         expect(response_body.second["attributes"]["veteran_file_number"]).to eq task2.appeal.veteran_file_number
 
         # Ensure we include recently completed tasks
-        expect(response_body.select { |task| task["id"] == "#{task13.id}" }.count).to eq 1
+        expect(response_body.select { |task| task["id"] == task13.id.to_s }.count).to eq 1
 
         ama_tasks = response_body.select { |task| task["type"] == "attorney_tasks" }
         expect(ama_tasks.size).to eq 4
@@ -128,7 +128,7 @@ RSpec.describe TasksController, type: :controller do
         expect(response_body.second["attributes"]["placed_on_hold_at"]).to be nil
 
         # Ensure we include recently completed tasks
-        expect(response_body.select { |task| task["id"] == "#{task10.id}" }.count).to eq 1
+        expect(response_body.select { |task| task["id"] == task10.id.to_s }.count).to eq 1
       end
     end
 

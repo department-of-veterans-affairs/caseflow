@@ -65,7 +65,7 @@ class TasksController < ApplicationController
 
     tasks_to_return = queue_class.new(user: current_user).tasks
 
-    render json: { tasks: json_tasks(tasks) }, status: :created
+    render json: { tasks: json_tasks(tasks_to_return) }, status: :created
   end
 
   # To update attorney task

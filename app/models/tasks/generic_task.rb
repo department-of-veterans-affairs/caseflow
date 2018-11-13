@@ -1,5 +1,6 @@
 class GenericTask < Task
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/AbcSize
   def available_actions(user)
     return [] unless user
@@ -29,11 +30,10 @@ class GenericTask < Task
         Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
       ]
     end
-      
+
     []
   end
   # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
 

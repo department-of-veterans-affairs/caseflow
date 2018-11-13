@@ -49,7 +49,7 @@ export const onReceiveTasks = (
   }
 });
 
-export const onReceiveAmaTasks = (amaTasks: Tasks) => ({
+export const onReceiveAmaTasks = (amaTasks: Array<Object>) => ({
   type: ACTIONS.RECEIVE_AMA_TASKS,
   payload: {
     amaTasks: prepareTasksForStore(amaTasks)
@@ -346,10 +346,10 @@ export const initialAssignTasksToUser = ({
     then((resp) => resp.body).
     then((resp) => {
       if (oldTask.appealType === 'Appeal') {
-        const tasks = resp.tasks.data;
+        const amaTasks = resp.tasks.data;
 
         dispatch(onReceiveAmaTasks(
-          tasks
+          amaTasks
         ));
       } else {
         const task = resp.task.data;
@@ -403,10 +403,10 @@ export const reassignTasksToUser = ({
     then((resp) => resp.body).
     then((resp) => {
       if (oldTask.appealType === 'Appeal') {
-        const tasks = resp.tasks.data;
+        const amaTasks = resp.tasks.data;
 
         dispatch(onReceiveAmaTasks(
-          tasks
+          amaTasks
         ));
       } else {
         const task = resp.task.data;
