@@ -111,6 +111,10 @@ class Fakes::BGSService
           rating_issue_reference_id: in_active_review_reference_id,
           rating_issue_profile_date: in_active_review_receipt_date - 1
         )
+        Generators::EndProduct.build(
+          veteran_file_number: veteran.file_number,
+          bgs_attrs: { end_product_type_code: "031", benefit_claim_id: in_active_review_reference_id }
+        )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
           promulgation_date: Time.zone.today - 60,
