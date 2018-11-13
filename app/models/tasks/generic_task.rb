@@ -1,8 +1,6 @@
 class GenericTask < Task
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
-  # rubocop:disable Metrics/PerceivedComplexity
-  # rubocop:disable Metrics/CyclomaticComplexity
   def available_actions(user)
     if assigned_to.is_a?(Vso) && assigned_to.user_has_access?(user)
       return [Constants.TASK_ACTIONS.MARK_COMPLETE.to_h]
@@ -14,11 +12,11 @@ class GenericTask < Task
         Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
         Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
       ]
-    elsif parent && parent.assigned_to.is_a?(Organization) && parent.assigned_to.user_has_access?(user)
+    elsif task_is_assigned_to_user_within_organiztaion?
       [
         Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
       ]
-    elsif assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
+    elsif task_is_assigned_to_users_organization?
       [
         Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
@@ -59,16 +57,9 @@ class GenericTask < Task
     [sibling, self, children_to_update].flatten
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
   def can_be_accessed_by_user?(user)
-    return true if assigned_to && assigned_to == user
-    return true if user && assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
-    return true if parent && parent.assigned_to.is_a?(Organization) && parent.assigned_to.user_has_access?(user)
-    false
+    available_actions(user) != []
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity
 
   class << self
     def create_from_params(params, user)
@@ -101,6 +92,17 @@ class GenericTask < Task
     end
 
     private
+
+    def task_is_assigned_to_user_within_organiztaion?(user)
+      parent &&
+        parent.assigned_to.is_a?(Organization) &&
+        parent.assigned_to.user_has_access?(user) &&
+        assigned_to.is_a?(User)
+    end
+
+    def task_is_assigned_to_users_organization?(user)
+      assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
+    end
 
     def child_assigned_by_id(parent, current_user)
       return current_user.id if current_user
