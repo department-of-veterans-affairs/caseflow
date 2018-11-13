@@ -11,7 +11,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
 import Button from '../../components/Button';
 import Alert from '../../components/Alert';
-import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
+import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone } from '../../util/DateUtil';
 import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
 
 const tableRowStyling = css({
@@ -118,9 +118,13 @@ export default class DailyDocket extends React.Component {
   getAppellantInformation = (hearing) => {
     const appellantName = hearing.appellantMiFormatted || hearing.veteranMiFormatted;
 
-    return <div><b>{appellantName} ({hearing.vbmsId})</b> <br />
-      {hearing.appellantAddressLine1}<br />
-      {hearing.appellantCity} {hearing.appellantState} {hearing.appellantZip}
+    return <div><b>{appellantName} (<Link
+      href={`/queue/appeals/${hearing.appealVacolsId}`}
+      name={hearing.vbmsId} >
+      {hearing.vbmsId}
+    </Link>)</b> <br />
+    {hearing.appellantAddressLine1}<br />
+    {hearing.appellantCity} {hearing.appellantState} {hearing.appellantZip}
     </div>;
   };
 
@@ -193,11 +197,11 @@ export default class DailyDocket extends React.Component {
       return [
         {
           displayText: '9:00',
-          value: '9:00 am ET'
+          value: '9:00'
         },
         {
           displayText: '1:00',
-          value: '1:00 pm ET'
+          value: '13:00'
         }
       ];
     }
@@ -205,16 +209,18 @@ export default class DailyDocket extends React.Component {
     return [
       {
         displayText: '8:30',
-        value: '8:30 am ET'
+        value: '8:30'
       },
       {
         displayText: '12:30',
-        value: '12:30 pm ET'
+        value: '12:30'
       }
     ];
   };
 
   getHearingDayDropdown = (hearing, readOnly) => {
+    const timezone = hearing.requestType === 'CO' ? 'America/New_York' : hearing.regionalOfficeTimezone;
+
     return <div><SearchableDropdown
       name="Hearing Day"
       options={this.getHearingDateOptions(hearing)}
@@ -225,7 +231,7 @@ export default class DailyDocket extends React.Component {
     <RadioField
       name={`hearingTime${hearing.id}`}
       options={this.getHearingTimeOptions(hearing)}
-      value={hearing.editedTime ? hearing.editedTime : getTime(hearing.date)}
+      value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.date, timezone)}
       onChange={this.onHearingTimeUpdate(hearing.id)}
       hideLabel
     />
