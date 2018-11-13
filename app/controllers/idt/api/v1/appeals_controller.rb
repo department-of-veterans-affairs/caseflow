@@ -88,7 +88,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     ActiveModelSerializers::SerializableResource.new(
       appeal,
       serializer: ::Idt::V1::AppealDetailsSerializer,
-      include_addresses: Constants::BvaDispatchTeams::USERS[Rails.current_env].include?(user.css_id),
+      include_addresses: BvaDispatch.singleton.user_has_access?(user),
       base_url: request.base_url
     ).as_json
   end
