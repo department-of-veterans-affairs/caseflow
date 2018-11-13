@@ -48,7 +48,7 @@ export const onReceiveTasks = (
   }
 });
 
-export const onReceiveAmaTasks = (amaTasks) => ({
+export const onReceiveAmaTasks = (amaTasks: Tasks) => ({
   type: ACTIONS.RECEIVE_AMA_TASKS,
   payload: {
     amaTasks

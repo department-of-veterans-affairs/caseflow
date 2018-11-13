@@ -39,7 +39,8 @@ type Props = Params & {|
   appeal: Appeal,
   highlightFormItems: boolean,
   requestPatch: typeof requestPatch,
-  requestSave: typeof requestSave
+  requestSave: typeof requestSave,
+  onReceiveAmaTasks: typeof onReceiveAmaTasks
 |};
 
 type ViewState = {|
