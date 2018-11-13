@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
+import moment from 'moment';
 import DailyDocket from '../components/DailyDocket';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
@@ -37,7 +38,14 @@ export class DailyDocketContainer extends React.Component {
     return {
       disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
       notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
-      master_record_updated: hearing.editedDate ? hearing.editedDate : null
+      master_record_updated: hearing.editedDate ? hearing.editedDate : null,
+      date: hearing.editedTime ? moment(hearing.date).set({
+        // eslint-disable-next-line id-length
+        h: hearing.editedTime.split(':')[0],
+        // eslint-disable-next-line id-length
+        m: hearing.editedTime.split(':')[1]
+
+      }) : hearing.date
     };
   };
 
