@@ -7,8 +7,6 @@ class SupplementalClaim < ClaimReview
     in: [true, false], message: "blank"
   }, if: [:legacy_opt_in_enabled?, :saving_review]
 
-  # validates :payee_code, presence: { message: "blank" }, if: :payee_code_required?
-
   END_PRODUCT_CODES = {
     rating: "040SCR",
     nonrating: "040SCNR",
