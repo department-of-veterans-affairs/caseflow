@@ -3,7 +3,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
-import _ from 'lodash';
 
 import COPY from '../../COPY.json';
 
@@ -13,7 +12,7 @@ import {
 } from './selectors';
 import { prepareTasksForStore } from './utils';
 
-import { setTaskAttrs, onReceiveAmaTasks } from './QueueActions';
+import { onReceiveAmaTasks } from './QueueActions';
 
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
@@ -40,8 +39,7 @@ type Props = Params & {|
   appeal: Appeal,
   highlightFormItems: boolean,
   requestPatch: typeof requestPatch,
-  requestSave: typeof requestSave,
-  setTaskAttrs: typeof setTaskAttrs
+  requestSave: typeof requestSave
 |};
 
 type ViewState = {|
@@ -109,7 +107,7 @@ class AssignToView extends React.Component<Props, ViewState> {
         const response = JSON.parse(resp.text);
         const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        this.props.onReceiveAmaTasks({ amaTasks: preparedTasks });
+        this.props.onReceiveAmaTasks(preparedTasks);
       });
   }
 
@@ -121,7 +119,7 @@ class AssignToView extends React.Component<Props, ViewState> {
       return (relevantAction.data);
     }
 
-    // We should never get here since any task action the creates this modal should provide data.     return null;
+    // We should never get here since any task action the creates this modal should provide data.
     throw new Error('Task action requires data');
   }
 
@@ -158,7 +156,7 @@ class AssignToView extends React.Component<Props, ViewState> {
         const response = JSON.parse(resp.text);
         const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        this.props.onReceiveAmaTasks({ amaTasks: preparedTasks });
+        this.props.onReceiveAmaTasks(preparedTasks);
       });
   }
 
@@ -208,7 +206,6 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
   requestSave,
-  setTaskAttrs,
   onReceiveAmaTasks
 }, dispatch);
 

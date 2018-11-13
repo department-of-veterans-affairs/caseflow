@@ -356,7 +356,7 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
     return update(state, {
       [taskType]: {
         [uniqueId]: {
-          $set: action.payload.attributes
+          $merge: action.payload.attributes
         }
       }
     });

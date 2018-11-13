@@ -14,7 +14,7 @@ import {
   taskById,
   appealWithDetailSelector
 } from './selectors';
-import { setTaskAttrs } from './QueueActions';
+import { onReceiveAmaTasks } from './QueueActions';
 import { requestPatch } from './uiReducer/uiActions';
 import { prepareTasksForStore } from './utils';
 
@@ -51,7 +51,7 @@ type Props = Params & {|
   error: ?UiStateMessage,
   highlightFormItems: boolean,
   requestPatch: typeof requestPatch,
-  setTaskAttrs: typeof setTaskAttrs
+  onReceiveAmaTasks: typeof onReceiveAmaTasks
 |};
 
 class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
@@ -105,7 +105,7 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
         const response = JSON.parse(resp.text);
         const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.uniqueId]);
+        this.props.onReceiveAmaTasks(preparedTasks);
       });
   }
 
@@ -193,7 +193,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
-  setTaskAttrs
+  onReceiveAmaTasks
 }, dispatch);
 
 const WrappedComponent = decisionViewBase(ColocatedPlaceHoldView, {

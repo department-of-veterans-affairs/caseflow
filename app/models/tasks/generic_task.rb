@@ -1,5 +1,8 @@
 class GenericTask < Task
+  # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity
   def available_actions(user)
     if assigned_to.is_a?(Vso) && assigned_to.user_has_access?(user)
       return [Constants.TASK_ACTIONS.MARK_COMPLETE.to_h]
@@ -26,7 +29,9 @@ class GenericTask < Task
     end
   end
   # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
   # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   def update_from_params(params, current_user)
     verify_user_access!(current_user)
@@ -54,12 +59,16 @@ class GenericTask < Task
     [sibling, self, children_to_update].flatten
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
   def can_be_accessed_by_user?(user)
     return true if assigned_to && assigned_to == user
     return true if user && assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
     return true if parent && parent.assigned_to.is_a?(Organization) && parent.assigned_to.user_has_access?(user)
     false
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
 
   class << self
     def create_from_params(params, user)

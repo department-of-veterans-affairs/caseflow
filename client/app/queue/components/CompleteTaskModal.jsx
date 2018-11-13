@@ -12,7 +12,7 @@ import {
   taskById,
   appealWithDetailSelector
 } from '../selectors';
-import { setTaskAttrs } from '../QueueActions';
+import { onReceiveAmaTasks } from '../QueueActions';
 import {
   requestPatch
 } from '../uiReducer/uiActions';
@@ -34,7 +34,7 @@ type Props = Params & {|
   saveState: boolean,
   history: Object,
   requestPatch: typeof requestPatch,
-  setTaskAttrs: typeof setTaskAttrs
+  onReceiveAmaTasks: typeof onReceiveAmaTasks
 |};
 
 const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
@@ -105,7 +105,7 @@ class CompleteTaskModal extends React.Component<Props> {
         const response = JSON.parse(resp.text);
         const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.uniqueId]);
+        this.props.onReceiveAmaTasks(preparedTasks);
       });
   }
 
@@ -123,7 +123,7 @@ const mapStateToProps = (state: State, ownProps: Params) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
-  setTaskAttrs
+  onReceiveAmaTasks
 }, dispatch);
 
 const propsToText = (props) => {

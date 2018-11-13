@@ -30,7 +30,7 @@ import {
   taskById,
   appealWithDetailSelector
 } from '../selectors';
-import { setTaskAttrs } from '../QueueActions';
+import { onReceiveAmaTasks } from '../QueueActions';
 import { prepareTasksForStore } from '../utils';
 import DateSelector from '../../components/DateSelector';
 import _ from 'lodash';
@@ -57,7 +57,7 @@ type Props = Params & {|
   resetSaveState: typeof resetSaveState,
   onRegionalOfficeChange: typeof onRegionalOfficeChange,
   requestPatch: typeof requestPatch,
-  setTaskAttrs: typeof setTaskAttrs
+  onReceiveAmaTasks: typeof onReceiveAmaTasks
 |};
 
 type LocalState = {|
@@ -178,7 +178,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
         const preparedTasks = prepareTasksForStore(response.tasks.data);
 
         // Review with team to see why this is failing.
-        this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.uniqueId]);
+        this.props.onReceiveAmaTasks(preparedTasks);
         this.props.history.goBack();
       }, () => {
         this.props.showErrorMessage({
@@ -280,7 +280,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   showSuccessMessage,
   resetSuccessMessages,
   requestPatch,
-  setTaskAttrs,
+  onReceiveAmaTasks,
   onRegionalOfficeChange
 }, dispatch);
 

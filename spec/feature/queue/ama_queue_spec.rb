@@ -232,11 +232,9 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content("Task assigned to #{other_user_name}")
         expect(translation_task.reload.status).to eq("on_hold")
 
-
         visit "/organizations/#{translation_organization.url}"
         click_on "Assigned"
         click_on "Pal Smith"
-
 
         find(".Select-control", text: "Select an action").click
         find("div", class: "Select-option", text: "Re-assign to person").click
