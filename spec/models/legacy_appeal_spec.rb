@@ -11,6 +11,44 @@ describe LegacyAppeal do
     create(:legacy_appeal, vacols_case: vacols_case)
   end
 
+  context "#eligible_for_soc_opt_in?" do
+    let(:soc_eligible_date) { Time.zone.today - 60.days }
+    let(:nod_eligible_date) { Time.zone.today - 372.days }
+
+    let(:vacols_case) do
+      create(:case, bfcorlid: "123456789S")
+    end
+
+    before do
+      stub_const("LegacyAppeal::APPEAL_ISSUE_SOC_ELIGIBLE", soc_eligible_date)
+      stub_const("LegacyAppeal::APPEAL_ISSUE_NOD_ELIGIBLE", nod_eligible_date)
+    end
+
+    scenario "when is active but not eligible" do
+      allow(appeal).to receive(:active?).and_return(true)
+      allow(appeal).to receive(:soc_date).and_return(soc_eligible_date - 1.day)
+      allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
+
+      expect(appeal.eligible_for_soc_opt_in?).to eq(true)
+    end
+
+    scenario "when is not active but is eligible" do
+      allow(appeal).to receive(:active?).and_return(false)
+      allow(appeal).to receive(:soc_date).and_return(soc_eligible_date + 1.day)
+      allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
+
+      expect(appeal.eligible_for_soc_opt_in?).to eq(true)
+    end
+
+    scenario "when is not active or eligible" do
+      allow(appeal).to receive(:active?).and_return(false)
+      allow(appeal).to receive(:soc_date).and_return(soc_eligible_date - 1.day)
+      allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
+
+      expect(appeal.eligible_for_soc_opt_in?).to eq(false)
+    end
+  end
+
   context "#documents_with_type" do
     subject { appeal.documents_with_type(*type) }
     let(:documents) do

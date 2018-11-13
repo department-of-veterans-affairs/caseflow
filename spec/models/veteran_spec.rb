@@ -365,7 +365,7 @@ describe Veteran do
       RequestStore[:current_user] = create(:user)
 
       allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_ids)
-        .with(participant_ids).and_return(poas)
+        .with(array_including(participant_ids)).and_return(poas)
     end
 
     after do
