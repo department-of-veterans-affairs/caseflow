@@ -7,9 +7,6 @@ import { COLORS } from '../../constants/AppConstants';
 import { DISPOSITION_OPTIONS, HEARING_OPTIONS } from '../../hearings/constants/constants';
 
 import { DateString } from '../../util/DateUtil';
-// /Users/joe/code/thirdslant/caseflow/client/app/queue/components/HearingBadge.jsx
-// /Users/joe/code/thirdslant/caseflow/client/app/util/DateUtil.js
-// /Users/joe/code/thirdslant/caseflow/client/app/hearings/constants/constants.js
 
 const badgeStyling = css({
   display: 'inline-block',
@@ -34,15 +31,9 @@ const listStyling = css({
   }
 });
 
-const DocketTypeBadge = ({ hearing, name, number }) => {
-  if (!name) {
-    return null;
-  }
-
+const DocketTypeBadge = ({ hearing, id }) => {
   const dispositionText = _.find(DISPOSITION_OPTIONS, ['value', hearing.disposition]).label;
 
-  // "Hearing Request" docket type is stored in the database as "hearing".
-  // Change it here so later transformations affect it properly.
   const tooltipText = <div>
     This case has a hearing associated with it.
     <ul {...listStyling}>
@@ -53,7 +44,7 @@ const DocketTypeBadge = ({ hearing, name, number }) => {
     </ul>
   </div>;
 
-  return <Tooltip id={`badge-${number}`} text={tooltipText} position="bottom">
+  return <Tooltip id={`badge-${id}`} text={tooltipText} position="bottom">
     <span {...badgeStyling}>H</span>
   </Tooltip>;
 };
