@@ -33,35 +33,31 @@ const tableRowStyling = css({
   },
   '& > tr:nth-child(odd)': {
     '& > td:nth-child(1)': { width: '4%' },
-    '& > td:nth-child(2)': { width: '6%' },
+    '& > td:nth-child(2)': { width: '4%' },
     '& > td:nth-child(3)': { width: '10%' },
-    '& > td:nth-child(4)': { width: '10%' },
-    '& > td:nth-child(5)': { width: '10%' },
+    '& > td:nth-child(4)': { width: '18%' },
+    '& > td:nth-child(5)': { width: '15%' },
     '& > td:nth-child(6)': { backgroundColor: '#f1f1f1',
-      width: '22%' },
+      width: '15%' },
     '& > td:nth-child(7)': { backgroundColor: '#f1f1f1',
-        width: '22%' },
+        width: '15%' },
     '& > td:nth-child(8)': { backgroundColor: '#f1f1f1',
-        width: '22%' }
+        width: '15%' }
   },
   '& > tr:nth-child(even)': {
     '& > td:nth-child(1)': { width: '4%' },
-    '& > td:nth-child(2)': { width: '2%' },
-    '& > td:nth-child(3)': { width: '10%' },
     '& > td:nth-child(4)': { width: '20%' },
-    '& > td:nth-child(5)': { width: '0%' },
     '& > td:nth-child(6)': { backgroundColor: '#f1f1f1',
-    width: '10%' },
+    width: '15%' },
     '& > td:nth-child(7)': { backgroundColor: '#f1f1f1',
-    width: '10%' },
+    width: '15%' },
     '& > td:nth-child(8)': { backgroundColor: '#f1f1f1',
-    width: '10%' }
+    width: '22%' }
   }
 });
 
 const notesFieldStyling = css({
-  height: '70px',
-  width: '100%'
+  height: '70px'
 });
 
 const noMarginStyling = css({
@@ -150,6 +146,7 @@ export class DailyDocket extends React.PureComponent {
           }}>
           {hearing.vbms_id}
         </ViewableItemLink>
+        <div>{hearing.current_issue_count} {hearing.current_issue_count === 1 ? 'Issue' : 'Issues' }</div>
     </div>
      } else {
        appellantDisplay = <div>
@@ -164,6 +161,7 @@ export class DailyDocket extends React.PureComponent {
              }}>
              {hearing.vbms_id}
            </ViewableItemLink>
+          <div>{hearing.current_issue_count} {hearing.current_issue_count === 1 ? 'Issue' : 'Issues' }</div>
        </div>
      }
      return appellantDisplay;
@@ -179,9 +177,7 @@ getRoTime = (hearing) => {
 };
 
 getPrepCheckBox = (hearing) => {
-  if (hearing) {
-    return <span>
-        <Checkbox
+  return <Checkbox
           id={`${hearing.id}-prep`}
           onChange={this.preppedOnChange}
           key={`${hearing.id}`}
@@ -189,12 +185,21 @@ getPrepCheckBox = (hearing) => {
           name={`${hearing.id}-prep`}
           hideLabel
           {...preppedCheckboxStyling}
-        />
-    </span>;
-  }
+        />;
 };
 
-getDispositionDropdown = (hearing, readOnly) => {
+getTranscripted = (hearing) => {
+  return <div className="transcriptRequested">
+    <Checkbox
+      label="Transcript Requested"
+      name={`${hearing.id}.transcript_requested`}
+      value={hearing.transcript_requested}
+      onChange={this.setTranscriptRequested}
+    />
+</div>;
+};
+
+getDispositionDropdown = (hearing) => {
   return <SearchableDropdown
     label="Disposition"
     name={`${hearing.id}-disposition`}
@@ -216,17 +221,31 @@ getHoldOpenDropdown = (hearing) => {
   />;
 };
 
+getAodDropdown = (hearing) => {
+  return  <SearchableDropdown
+    label="AOD"
+    name={`${hearing.id}-aod`}
+    options={aodOptions}
+    onChange={this.setAod}
+    value={hearing.aod}
+    searchable={false}
+  />;
+}
+
 getNotesField = (hearing) => {
   return <div>
-    <TextareaField
+    <label htmlFor={`${hearing.id}.notes`} aria-label="notes">Notes</label>
+    <div {...textareaStyling}>
+      <Textarea
+        id={`${hearing.id}.notes`}
+        value={hearing.notes || ''}
         name="Notes"
         onChange={this.setNotes}
-        textAreaStyling={notesFieldStyling}
-        value={hearing.notes || ''}
+        maxLength="100"
       />
-</div>;
+    </div>
+  </div>
 };
-
 
   getDailyDocketRows = (hearing, readOnly) => {
     let dailyDocketRows = [];
@@ -239,17 +258,20 @@ getNotesField = (hearing) => {
         hearingPrep: this.getPrepCheckBox(hearing),
         hearingTime: this.getRoTime(hearing),
         appellantInformation: this.getAppellantInformation(hearing),
-        representative: <div>{hearing.representative}<br /><span>{hearing.representative_name}</span></div>,
-        hearingActions: this.getDispositionDropdown(hearing)
+        representative: <span>{hearing.representative}<br />{hearing.representative_name}</span>,
+        disposition: this.getDispositionDropdown(hearing),
+        holdOpen: this.getHoldOpenDropdown(hearing),
+        aod: this.getAodDropdown(hearing)
       },
       {
         number: null,
-        hearingPrep: this.getPrepCheckBox(hearing),
-        hearingTime: <div>{hearing.current_issue_count} {hearing.current_issue_count === 1 ? 'Issue' : 'Issues' }</div>,
+        hearingPrep: null,
+        hearingTime: null,
         appellantInformation: this.getNotesField(hearing),
-        disposition: null,
         representative: null,
-        hearingActions: this.getDispositionDropdown(hearing)
+        disposition: this.getTranscripted(hearing),
+        hearingHoldOpen: null,
+        aod: null
       });
     });
 
@@ -288,13 +310,12 @@ getNotesField = (hearing) => {
         header: 'Actions',
         align: 'left',
         valueName: 'disposition',
-        span: (row) => row.hearingActions ? 1 : 2
+        span: (row) => row.hearingHoldOpen ? 1 : 2
       },
       {
         header: '',
         align: 'left',
         valueName: 'holdOpen',
-        span: (row) => row.hearingActions ? 1 : 0
       },
       {
         header: '',
