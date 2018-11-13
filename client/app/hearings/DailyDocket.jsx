@@ -20,7 +20,9 @@ import { bindActionCreators } from 'redux';
 import TextareaField from '../components/TextareaField';
 import { getDateTime } from '../util/DateUtil';
 import { DISPOSITION_OPTIONS } from './constants/constants';
-
+import Checkbox from '../components/Checkbox';
+import ViewableItemLink from '../components/ViewableItemLink';
+import Textarea from 'react-textarea-autosize';
 
 
 const tableRowStyling = css({
@@ -31,28 +33,35 @@ const tableRowStyling = css({
   },
   '& > tr:nth-child(odd)': {
     '& > td:nth-child(1)': { width: '4%' },
-    '& > td:nth-child(2)': { width: '19%' },
-    '& > td:nth-child(3)': { width: '17%' },
-    '& > td:nth-child(4)': { backgroundColor: '#f1f1f1',
-      width: '18%' },
-    '& > td:nth-child(5)': { backgroundColor: '#f1f1f1',
-      width: '20%' },
+    '& > td:nth-child(2)': { width: '6%' },
+    '& > td:nth-child(3)': { width: '10%' },
+    '& > td:nth-child(4)': { width: '10%' },
+    '& > td:nth-child(5)': { width: '10%' },
     '& > td:nth-child(6)': { backgroundColor: '#f1f1f1',
-      width: '22%' }
+      width: '22%' },
+    '& > td:nth-child(7)': { backgroundColor: '#f1f1f1',
+        width: '22%' },
+    '& > td:nth-child(8)': { backgroundColor: '#f1f1f1',
+        width: '22%' }
   },
   '& > tr:nth-child(even)': {
     '& > td:nth-child(1)': { width: '4%' },
-    '& > td:nth-child(2)': { width: '19%' },
-    '& > td:nth-child(3)': { width: '17%' },
-    '& > td:nth-child(4)': { backgroundColor: '#f1f1f1',
-      width: '38%' },
-    '& > td:nth-child(5)': { backgroundColor: '#f1f1f1',
-      width: '22%' }
+    '& > td:nth-child(2)': { width: '2%' },
+    '& > td:nth-child(3)': { width: '10%' },
+    '& > td:nth-child(4)': { width: '20%' },
+    '& > td:nth-child(5)': { width: '0%' },
+    '& > td:nth-child(6)': { backgroundColor: '#f1f1f1',
+    width: '10%' },
+    '& > td:nth-child(7)': { backgroundColor: '#f1f1f1',
+    width: '10%' },
+    '& > td:nth-child(8)': { backgroundColor: '#f1f1f1',
+    width: '10%' }
   }
 });
 
 const notesFieldStyling = css({
-  height: '50px'
+  height: '70px',
+  width: '100%'
 });
 
 const noMarginStyling = css({
@@ -128,38 +137,62 @@ export class DailyDocket extends React.PureComponent {
   });
 
  getAppellantInformation = (hearing) => {
+   let appellantDisplay;
+   if (_.isEmpty(hearing.appellant_mi_formatted) ||
+     hearing.appellant_mi_formatted === hearing.veteran_mi_formatted) {
+      appellantDisplay = <div><b>{hearing.veteran_mi_formatted}</b><br />
+        <ViewableItemLink
+          boldCondition={!hearing.viewed_by_current_user}
+          onOpen={this.setHearingViewed}
+          linkProps={{
+            to: `/hearings/${hearing.id}/worksheet`,
+            target: '_blank'
+          }}>
+          {hearing.vbms_id}
+        </ViewableItemLink>
+    </div>
+     } else {
+       appellantDisplay = <div>
+         <span><b>{hearing.appellant_mi_formatted}</b><br />
+           {hearing.veteran_mi_formatted} (Veteran)</span><br />
+           <ViewableItemLink
+             boldCondition={!hearing.viewed_by_current_user}
+             onOpen={this.setHearingViewed}
+             linkProps={{
+               to: `/hearings/${hearing.id}/worksheet`,
+               target: '_blank'
+             }}>
+             {hearing.vbms_id}
+           </ViewableItemLink>
+       </div>
+     }
+     return appellantDisplay;
+  }
 
-  const appellantDisplay = <div>
-    { _.isEmpty(hearing.appellant_mi_formatted) ||
-      hearing.appellant_mi_formatted === hearing.veteran_mi_formatted ?
-      (<b>{hearing.veteran_mi_formatted}</b>) :
-      (<span><b>{hearing.appellant_mi_formatted}</b>
-        {hearing.veteran_mi_formatted} (Veteran)</span>)
-    }
-  </div>;
-}
-
- getRoTime = (date) => {
-  let roTimeZone = hearing.regional_office_timezone;
-
-  return moment(date).tz(roTimeZone).
-    format('h:mm a z').
-    replace(/(\w)(DT|ST)/g, '$1T');
+getRoTime = (hearing) => {
+  if (hearing) {
+    return <div>{getTime(hearing.date)} /<br />
+      {getTimeInDifferentTimeZone(hearing.date, hearing.regional_office_timezone)} <br />
+    <span>{hearing.regional_office_name}</span>
+    </div>;
+  }
 };
 
 getPrepCheckBox = (hearing) => {
-  return <span>
-      <Checkbox
-        id={`${hearing.id}-prep`}
-        onChange={this.preppedOnChange}
-        key={`${hearing.id}`}
-        value={hearing.prepped || false}
-        name={`${hearing.id}-prep`}
-        hideLabel
-        {...preppedCheckboxStyling}
-      />
-    </span>
-}
+  if (hearing) {
+    return <span>
+        <Checkbox
+          id={`${hearing.id}-prep`}
+          onChange={this.preppedOnChange}
+          key={`${hearing.id}`}
+          value={hearing.prepped || false}
+          name={`${hearing.id}-prep`}
+          hideLabel
+          {...preppedCheckboxStyling}
+        />
+    </span>;
+  }
+};
 
 getDispositionDropdown = (hearing, readOnly) => {
   return <SearchableDropdown
@@ -172,15 +205,28 @@ getDispositionDropdown = (hearing, readOnly) => {
   />;
 };
 
-
-getNotesField = (hearing) => {
-  return <TextareaField
-    name="Notes"
-    onChange={this.setNotes}
-    textAreaStyling={notesFieldStyling}
-    value={hearing.notes || ''}
+getHoldOpenDropdown = (hearing) => {
+  return <SearchableDropdown
+    label="Hold Open"
+    name={`${hearing.id}-hold_open`}
+    options={holdOptions(this.props.hearingDate)}
+    onChange={this.setHoldOpen}
+    value={hearing.hold_open}
+    searchable={false}
   />;
 };
+
+getNotesField = (hearing) => {
+  return <div>
+    <TextareaField
+        name="Notes"
+        onChange={this.setNotes}
+        textAreaStyling={notesFieldStyling}
+        value={hearing.notes || ''}
+      />
+</div>;
+};
+
 
   getDailyDocketRows = (hearing, readOnly) => {
     let dailyDocketRows = [];
@@ -193,8 +239,17 @@ getNotesField = (hearing) => {
         hearingPrep: this.getPrepCheckBox(hearing),
         hearingTime: this.getRoTime(hearing),
         appellantInformation: this.getAppellantInformation(hearing),
-        representative: hearing.respentative,
-        hearingActions: this.getHearingLocationDropdown(hearing)
+        representative: <div>{hearing.representative}<br /><span>{hearing.representative_name}</span></div>,
+        hearingActions: this.getDispositionDropdown(hearing)
+      },
+      {
+        number: null,
+        hearingPrep: this.getPrepCheckBox(hearing),
+        hearingTime: <div>{hearing.current_issue_count} {hearing.current_issue_count === 1 ? 'Issue' : 'Issues' }</div>,
+        appellantInformation: this.getNotesField(hearing),
+        disposition: null,
+        representative: null,
+        hearingActions: this.getDispositionDropdown(hearing)
       });
     });
 
@@ -232,8 +287,19 @@ getNotesField = (hearing) => {
       {
         header: 'Actions',
         align: 'left',
-        valueName: 'actions',
+        valueName: 'disposition',
         span: (row) => row.hearingActions ? 1 : 2
+      },
+      {
+        header: '',
+        align: 'left',
+        valueName: 'holdOpen',
+        span: (row) => row.hearingActions ? 1 : 0
+      },
+      {
+        header: '',
+        align: 'left',
+        valueName: 'aod'
       }
     ];
 
@@ -255,7 +321,7 @@ getNotesField = (hearing) => {
         <div {...noMarginStyling}>
           <Table
             columns={dailyDocketColumns}
-            rowObjects={this.getDailyDocketRows()}
+            rowObjects={this.getDailyDocketRows(docket)}
             summary="dailyDocket"
             bodyStyling={tableRowStyling}
           />
