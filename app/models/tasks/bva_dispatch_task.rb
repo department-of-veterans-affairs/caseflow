@@ -40,7 +40,7 @@ class BvaDispatchTask < GenericTask
     private
 
     def list_of_assignees
-      Constants::BvaDispatchTeams::USERS[Rails.current_env]
+      BvaDispatch.singleton.users.order(:id).pluck(:css_id)
     end
   end
 end
