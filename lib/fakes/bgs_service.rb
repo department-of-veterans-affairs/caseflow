@@ -113,7 +113,7 @@ class Fakes::BGSService
         )
         Generators::EndProduct.build(
           veteran_file_number: veteran.file_number,
-          bgs_attrs: { end_product_type_code: "031", benefit_claim_id: in_active_review_reference_id }
+          bgs_attrs: { benefit_claim_id: in_active_review_reference_id }
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
