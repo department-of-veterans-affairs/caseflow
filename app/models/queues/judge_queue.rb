@@ -4,16 +4,16 @@ class JudgeQueue
   attr_accessor :user
 
   def tasks
-    incomplete_tasks.where(assigned_to: user)
+    relevant_tasks.where(assigned_to: user)
   end
 
   def tasks_by_appeal_id(appeal_id, appeal_type)
-    incomplete_tasks.where(appeal_id: appeal_id, appeal_type: appeal_type)
+    relevant_tasks.where(appeal_id: appeal_id, appeal_type: appeal_type)
   end
 
   private
 
-  def incomplete_tasks
-    JudgeTask.where.not(status: Constants.TASK_STATUSES.completed)
+  def relevant_tasks
+    JudgeTask.incomplete_or_recently_completed
   end
 end
