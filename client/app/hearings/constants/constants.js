@@ -67,3 +67,9 @@ export const SERVER_ERROR_CODES = {
 
 export const VIDEO_HEARING = 'Video';
 export const CENTRAL_OFFICE_HEARING = 'Central';
+
+export const HEARING_OPTIONS = {
+  central_office: 'Central Office',
+  video: 'Video',
+  travel_board: 'Travel Board'
+};
