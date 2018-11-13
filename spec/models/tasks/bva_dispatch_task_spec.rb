@@ -23,7 +23,11 @@ describe BvaDispatchTask do
 
     context "when organization-level BvaDispatchTask already exists" do
       let(:root_task) { FactoryBot.create(:root_task) }
-      before { BvaDispatchTask.create_and_assign(root_task) }
+      before do
+        # Make sure the BvaDispatch team has members
+        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+        BvaDispatchTask.create_and_assign(root_task)
+      end
 
       it "should raise an error" do
         expect { BvaDispatchTask.create_and_assign(root_task) }.to raise_error(Caseflow::Error::DuplicateOrgTask)
