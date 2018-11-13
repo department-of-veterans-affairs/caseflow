@@ -240,7 +240,6 @@ RSpec.describe CaseReviewsController, type: :controller do
       context "Judge Case Review" do
         before do
           User.stub = judge
-          expect(QueueRepository).to receive(:sign_decision_or_create_omo!).and_return(true)
           # Do not select the case for quaility review
           allow_any_instance_of(JudgeCaseReview).to receive(:rand).and_return(probability + probability)
         end
@@ -258,10 +257,36 @@ RSpec.describe CaseReviewsController, type: :controller do
           end
 
           it "should be successful" do
+            expect(QueueRepository).to receive(:sign_decision_or_create_omo!).and_return(true)
             post :complete, params: { task_id: task_id, tasks: params }
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)
             expect(response_body["task"]["location"]).to eq "omo_office"
+          end
+        end
+
+        context "when no access to the legacy task" do
+          let(:params) do
+            {
+              "type": "JudgeCaseReview",
+              "location": "bva_dispatch",
+              "attorney_id": attorney.id,
+              "complexity": "easy",
+              "quality": "meets_expectations",
+              "comment": "do this",
+              "factors_not_considered": %w[theory_contention relevant_records],
+              "areas_for_improvement": ["process_violations"],
+              "issues": [{ "disposition": "1", "id": vacols_issue_remanded.issseq },
+                         { "disposition": "3", "id": vacols_issue_allowed.issseq }]
+            }
+          end
+
+          it "should not be successful" do
+            allow_any_instance_of(User).to receive(:fail_if_no_access_to_legacy_task!)
+              .and_raise(Caseflow::Error::UserRepositoryError)
+            expect(Raven).to_not receive(:capture_exception)
+            post :complete, params: { task_id: task_id, tasks: params }
+            expect(response.status).to eq 400
           end
         end
 
@@ -282,6 +307,7 @@ RSpec.describe CaseReviewsController, type: :controller do
           end
 
           it "should be successful" do
+            expect(QueueRepository).to receive(:sign_decision_or_create_omo!).and_return(true)
             post :complete, params: { task_id: task_id, tasks: params }
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)

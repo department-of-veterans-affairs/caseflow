@@ -4,6 +4,10 @@ class CaseReviewsController < ApplicationController
     JudgeCaseReview: JudgeCaseReview
   }.freeze
 
+  rescue_from Caseflow::Error::UserRepositoryError do |e|
+    render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
+  end
+
   def set_application
     RequestStore.store[:application] = "queue"
   end
