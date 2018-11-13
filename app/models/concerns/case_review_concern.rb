@@ -22,15 +22,33 @@ module CaseReviewConcern
       task.parent.update(assigned_to_id: reviewing_judge_id)
     end
     (issues || []).each do |issue_attrs|
-      update_issue_disposition(issue_attrs)
+      # Delete this check when we turn on the feature flag: ama_decision_issues
+      if issue_attrs[:decision_issues]
+        update_decision_and_request_issues_disposition
+      else
+        update_issue_disposition(issue_attrs)
+      end
     end
   end
 
+  def update_decision_and_request_issues_disposition(issue_attrs)
+    request_issues = appeal.request_issues.where(id: issue_attrs["request_issue_ids"]) if appeal
+    # create decision issues and set their dispositions
+    # if decision issue id is not passed, create a decision issue
+    # if decision issue id is passed, we will update the issue
+    # if decision issue already exists and not passed in the request delete it
+
+
+    # issue_attrs[:decision_issues].each do |decision_issue_attrs|
+    #   if decision_issue_attrs[:id]
+    #     request_issues.decision_issues.find(decision_issue_attrs[:id])
+    # end
+
+    request_issues.update_all((disposition: issue_attrs["request_issue_disposition"]))
+  end
+
   def update_issue_disposition(issue_attrs)
-    # TODO: update request issues for RAMP appeals for now. When we build out
-    # decision issues further, we'll update those.
     request_issue = appeal.request_issues.find_by(id: issue_attrs["id"]) if appeal
-    # TODO: throw error if request issue is not found
     return unless request_issue
 
     request_issue.update(disposition: issue_attrs["disposition"])
@@ -69,7 +87,7 @@ module CaseReviewConcern
   end
 
   def legacy?
-    (task_id =~ /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i) ? true : false
+    (task_id =~ LegacyTask::TASK_ID_REGEX) ? true : false
   end
 
   def vacols_id
