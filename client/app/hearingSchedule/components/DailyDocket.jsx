@@ -107,12 +107,16 @@ export default class DailyDocket extends React.Component {
     this.props.onCancelHearingUpdate(hearing);
   };
 
+  previouslyScheduled = (hearing) => {
+    return hearing.disposition === 'postponed' || hearing.disposition === 'cancelled';
+  };
+
   previouslyScheduledHearings = () => {
-    return _.filter(this.props.hearings, (hearing) => hearing.disposition === 'postponed');
+    return _.filter(this.props.hearings, (hearing) => this.previouslyScheduled(hearing));
   };
 
   dailyDocketHearings = () => {
-    return _.filter(this.props.hearings, (hearing) => hearing.disposition !== 'postponed');
+    return _.filter(this.props.hearings, (hearing) => !this.previouslyScheduled(hearing));
   };
 
   getAppellantInformation = (hearing) => {
@@ -192,16 +196,18 @@ export default class DailyDocket extends React.Component {
     />;
   };
 
-  getHearingTimeOptions = (hearing) => {
+  getHearingTimeOptions = (hearing, readOnly) => {
     if (hearing.requestType === 'CO') {
       return [
         {
           displayText: '9:00',
-          value: '9:00'
+          value: '9:00',
+          disabled: readOnly
         },
         {
           displayText: '1:00',
-          value: '13:00'
+          value: '13:00',
+          disabled: readOnly
         }
       ];
     }
@@ -209,11 +215,13 @@ export default class DailyDocket extends React.Component {
     return [
       {
         displayText: '8:30',
-        value: '8:30'
+        value: '8:30',
+        disabled: readOnly
       },
       {
         displayText: '12:30',
-        value: '12:30'
+        value: '12:30',
+        disabled: readOnly
       }
     ];
   };
@@ -230,7 +238,7 @@ export default class DailyDocket extends React.Component {
     />
     <RadioField
       name={`hearingTime${hearing.id}`}
-      options={this.getHearingTimeOptions(hearing)}
+      options={this.getHearingTimeOptions(hearing, readOnly)}
       value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.date, timezone)}
       onChange={this.onHearingTimeUpdate(hearing.id)}
       hideLabel
