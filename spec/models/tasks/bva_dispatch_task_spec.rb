@@ -12,6 +12,16 @@ describe BvaDispatchTask do
         task = BvaDispatchTask.create_and_assign(root_task)
         expect(task.assigned_to.class).to eq(User)
         expect(task.parent.assigned_to.class).to eq(BvaDispatch)
+        expect(task.parent.status).to eq(Constants.TASK_STATUSES.on_hold)
+      end
+    end
+
+    context "when organization-level BvaDispatchTask already exists" do
+      let(:root_task) { FactoryBot.create(:root_task) }
+      before { BvaDispatchTask.create_and_assign(root_task) }
+
+      it "should raise an error" do
+        expect { BvaDispatchTask.create_and_assign(root_task) }.to raise_error(Caseflow::Error::DuplicateOrgTask)
       end
     end
   end
@@ -62,7 +72,13 @@ describe BvaDispatchTask do
 
     context "when multiple BvaDispatchTasks exists for user and appeal combination" do
       let(:task_count) { 4 }
-      before { task_count.times { BvaDispatchTask.create_and_assign(root_task) } }
+      before do
+        task_count.times do
+          personal_task = BvaDispatchTask.create_and_assign(root_task)
+          # Set status of org-level task to completed to avoid getting caught by GenericTask.verify_org_task_unique.
+          personal_task.parent.update!(status: Constants.TASK_STATUSES.completed)
+        end
+      end
 
       it "should throw an error" do
         expect { BvaDispatchTask.outcode(root_task.appeal, params, user) }.to(raise_error) do |e|
