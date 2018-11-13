@@ -10,7 +10,9 @@ class StartDistributionJob < ApplicationJob
     Rails.logger.info e.backtrace.join("\n")
   end
 
+  # :nocov:
   def max_attempts
     1
   end
+  # :nocov:
 end
