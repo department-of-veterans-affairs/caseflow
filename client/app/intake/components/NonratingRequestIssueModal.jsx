@@ -2,7 +2,11 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
 
-import { addNonratingRequestIssue, toggleUnidentifiedIssuesModal } from '../actions/addIssues';
+import {
+  addNonratingRequestIssue,
+  toggleUnidentifiedIssuesModal,
+  toggleUntimelyExemptionModal
+} from '../actions/addIssues';
 import Modal from '../../components/Modal';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
@@ -38,13 +42,41 @@ class NonratingRequestIssueModal extends React.Component {
     });
   }
 
+  requiresUntimelyExemption = () => {
+    if (this.props.formType === 'supplemental_claim') {
+      return false;
+    }
+
+    const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
+
+    // we must do our own date math for nonrating request issues.
+    // we assume the timezone of the browser for all these.
+    let decisionDate = new Date(this.state.decisionDate);
+    let receiptDate = new Date(this.props.intakeData.receiptDate);
+    let isTimely = (receiptDate - decisionDate) <= ONE_YEAR_PLUS_MS;
+
+    return !isTimely;
+  }
+
   onAddIssue = () => {
-    this.props.addNonratingRequestIssue(
-      this.state.category.value,
-      this.state.description,
-      this.state.decisionDate
-    );
-    this.props.closeHandler();
+    if (this.requiresUntimelyExemption()) {
+      this.props.toggleUntimelyExemptionModal({
+        currentIssue: {
+          category: this.state.category.value,
+          description: this.state.description,
+          decisionDate: this.state.decisionDate
+        },
+        notes: null
+      });
+    } else {
+      this.props.addNonratingRequestIssue({
+        category: this.state.category.value,
+        description: this.state.description,
+        decisionDate: this.state.decisionDate,
+        timely: true
+      });
+      this.props.closeHandler();
+    }
   }
 
   render() {
@@ -64,7 +96,7 @@ class NonratingRequestIssueModal extends React.Component {
             name: 'Cancel adding this issue',
             onClick: closeHandler
           },
-          { classNames: ['usa-button', 'usa-button-secondary', 'add-issue'],
+          { classNames: ['usa-button', 'add-issue'],
             name: 'Add this issue',
             onClick: this.onAddIssue,
             disabled: requiredFieldsMissing
@@ -117,6 +149,7 @@ export default connect(
   null,
   (dispatch) => bindActionCreators({
     addNonratingRequestIssue,
-    toggleUnidentifiedIssuesModal
+    toggleUnidentifiedIssuesModal,
+    toggleUntimelyExemptionModal
   }, dispatch)
 )(NonratingRequestIssueModal);

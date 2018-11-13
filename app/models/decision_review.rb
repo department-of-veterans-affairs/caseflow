@@ -52,6 +52,7 @@ class DecisionReview < ApplicationRecord
       claimantNotVeteran: claimant_not_veteran,
       receiptDate: receipt_date.to_formatted_s(:json_date),
       legacyOptInApproved: legacy_opt_in_approved,
+      legacyIssues: serialized_legacy_issues,
       ratings: serialized_ratings,
       requestIssues: request_issues.map(&:ui_hash)
     }
@@ -101,7 +102,22 @@ class DecisionReview < ApplicationRecord
     request_issues.select(&:rating?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
   end
 
+  def serialized_legacy_issues
+    active_or_eligible_legacy_appeals.map do |legacy_appeal|
+      {
+        date: legacy_appeal.nod_date,
+        issues: legacy_appeal.issues.map(&:attributes)
+      }
+    end
+  end
+
   private
+
+  def active_or_eligible_legacy_appeals
+    @active_or_eligible_legacy_appeals ||= LegacyAppeal
+      .fetch_appeals_by_file_number(veteran_file_number)
+      .select(&:eligible_for_soc_opt_in?)
+  end
 
   def ratings_with_issues
     veteran.ratings.reject { |rating| rating.issues.empty? }

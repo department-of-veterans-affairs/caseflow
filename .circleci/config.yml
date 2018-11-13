@@ -137,6 +137,10 @@ jobs:
           name: Store concatenated logs
           path: ~/all_logs.log
 
+      - store_artifacts:
+          name: Store final coverage
+          path: ~/coverage/combined
+
   lint:
     docker:
       # The first image listed is the image that all steps run inside of.
