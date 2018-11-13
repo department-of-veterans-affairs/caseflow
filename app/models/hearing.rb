@@ -133,14 +133,9 @@ class Hearing < ApplicationRecord
     :number_of_documents_after_certification, \
     :veteran,  \
     :sanitized_vbms_id, \
-    # :docket_number, \
-    # :appellant_address_line_1, \
-    # :appellant_city, \
-    # :appellant_state, \
-    # :appellant_zip, \
     to: :appeal, allow_nil: true
 
-  delegate :type, :vacols_id, to: :appeal, prefix: true
+  delegate :vacols_id, to: :appeal, prefix: true
 
   def to_hash(current_user_id)
     serializable_hash(
