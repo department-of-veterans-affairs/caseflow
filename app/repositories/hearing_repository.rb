@@ -222,7 +222,7 @@ class HearingRepository
         appellant_country: vacols_record.saddrcnty,
         appellant_zip: vacols_record.saddrzip,
         appeal_type: VACOLS::Case::TYPES[vacols_record.bfac],
-        docket_number: vacols_record.folder_nr || "Missing Docket Number",
+        docket_number: vacols_record.tinum || "Missing Docket Number",
         veteran_first_name: vacols_record.snamef,
         veteran_middle_initial: vacols_record.snamemi,
         veteran_last_name: vacols_record.snamel,

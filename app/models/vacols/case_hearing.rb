@@ -155,9 +155,10 @@ class VACOLS::CaseHearing < VACOLS::Record
              "corres.saddrst1", "corres.saddrst2", "corres.saddrcty",
              "corres.saddrstt", "corres.saddrcnty", "corres.saddrzip",
              "corres.snamef, corres.snamemi", "corres.snamel, corres.sspare1",
-             "corres.sspare2, corres.sspare3")
+             "corres.sspare2, corres.sspare3, folder.tinum")
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
         .joins("left outer join vacols.brieff on brieff.bfkey = folder_nr")
+        .joins("left outer join vacols.folder on folder.ticknum = brieff.bfkey")
         .joins("left outer join vacols.corres on corres.stafkey = bfcorkey")
         .where(hearing_type: HEARING_TYPES.keys)
     end
