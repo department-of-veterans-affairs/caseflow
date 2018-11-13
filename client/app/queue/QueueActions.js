@@ -4,9 +4,10 @@ import { associateTasksWithAppeals,
   prepareAllTasksForStore,
   extractAppealsAndAmaTasks } from './utils';
 import { ACTIONS } from './constants';
-import { hideErrorMessage } from './uiReducer/uiActions';
+import { hideErrorMessage, showErrorMessage, showSuccessMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
 import _ from 'lodash';
+import pluralize from 'pluralize';
 import type { Dispatch } from './types/state';
 import type {
   Task,
@@ -415,6 +416,65 @@ export const reassignTasksToUser = ({
       }));
     });
 }));
+
+const refreshLegacyTasks = (dispatch, userId) =>
+  ApiUtil.get(`/queue/${userId}`, { timeout: { response: 5 * 60 * 1000 } }).
+    then((response) =>
+      dispatch(onReceiveQueue({
+        amaTasks: {},
+        ...associateTasksWithAppeals(JSON.parse(response.text))
+      }))
+    );
+
+const setPendingDistribution = (distribution) => ({
+  type: ACTIONS.SET_PENDING_DISTRIBUTION,
+  payload: {
+    distribution
+  }
+});
+
+const distributionError = (dispatch, userId, error) => {
+  const firstError = error.response.body.errors[0];
+
+  dispatch(showErrorMessage(firstError));
+
+  if (firstError.error === "unassigned_cases") {
+    dispatch(setPendingDistribution({ "status": "completed" }));
+    refreshLegacyTasks(dispatch, userId).then(() => dispatch(setPendingDistribution(null)));
+  } else {
+    dispatch(setPendingDistribution(null));
+  }
+};
+
+const receiveDistribution = (dispatch, userId, response) => {
+  const distribution = response.body.distribution;
+
+  dispatch(setPendingDistribution(distribution));
+
+  if (distribution.status == "completed") {
+    const caseN = distribution.distributed_cases_count;
+
+    dispatch(showSuccessMessage({
+      "title": "Distribution Complete",
+      "detail": `${caseN} new ${pluralize("case", caseN)} have been distributed from the docket.`
+    }));
+
+    refreshLegacyTasks(dispatch, userId).then(() => dispatch(setPendingDistribution(null)));
+  } else {
+    // Poll until the distribution completes or errors out.
+    ApiUtil.get(`/distributions/${distribution.id}`).
+      then((response) => receiveDistribution(dispatch, userId, response)).
+      catch((error) => distributionError(dispatch, userId, error));
+  }
+};
+
+export const requestDistribution = (userId) => (dispatch: Dispatch) => {
+  dispatch(setPendingDistribution({ "status": "pending" }));
+
+  ApiUtil.get('/distributions/new').
+    then((response) => receiveDistribution(dispatch, userId, response)).
+    catch((error) => distributionError(dispatch, userId, error));
+};
 
 const receiveAllAttorneys = (attorneys) => ({
   type: ACTIONS.RECEIVE_ALL_ATTORNEYS,
