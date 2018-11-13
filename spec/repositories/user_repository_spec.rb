@@ -23,8 +23,8 @@ describe UserRepository do
     context "when a user has the acting judge flag set but no attorney ID" do
       let!(:staff) { create(:staff, svlj: "A", sdomainid: css_id, sattyid: nil, sactive: "A") }
 
-      it "should return a judge role" do
-        expect(subject).to eq ["judge"]
+      it "should return an empty role" do
+        expect(subject).to eq []
       end
     end
 
