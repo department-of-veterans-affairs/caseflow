@@ -3,7 +3,7 @@ import { REVIEW_OPTIONS } from '../constants';
 import { formatDateStringForApi } from '../../util/DateUtil';
 
 export const getBlankOptionError = (responseErrorCodes, field) => (
-  (_.get(responseErrorCodes[field], 0) === 'blank') && message
+  (_.get(responseErrorCodes[field], 0) === 'blank') && 'Please select an option.'
 );
 
 export const getPageError = (responseErrorCodes) => (

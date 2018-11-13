@@ -17,7 +17,6 @@ class ClaimReviewIntake < DecisionReviewIntake
         participant_id: request_params[:claimant],
         payee_code: need_payee_code?(request_params) ? request_params[:payee_code] : nil
       )
-      validate_payee_code(request_params)
     else
       detail.create_claimants!(
         participant_id: veteran.participant_id,
@@ -26,6 +25,7 @@ class ClaimReviewIntake < DecisionReviewIntake
     end
 
     detail.update(review_params(request_params))
+    validate_payee_code(request_params)
   end
 
   def complete!(request_params)
@@ -48,7 +48,9 @@ class ClaimReviewIntake < DecisionReviewIntake
   def validate_payee_code(request_params)
     if need_payee_code?(request_params) && !request_params[:payee_code]
       detail.errors.add(:payee_code, "blank")
+      return false
     end
+    return true
   end
 
   # :nocov:

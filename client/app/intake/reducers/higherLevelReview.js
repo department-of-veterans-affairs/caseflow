@@ -201,6 +201,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       }
     }), action.payload.intake);
   case ACTIONS.SUBMIT_REVIEW_FAIL:
+  console.log("action.payload.responseErrorCodes::", action.payload.responseErrorCodes)
     return update(state, {
       informalConferenceError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'informal_conference')

@@ -29,6 +29,8 @@ export default class SelectClaimant extends React.PureComponent {
 
     let showClaimants = ['true', true].includes(claimantNotVeteran);
 
+    console.log("payeeCodeError::", payeeCodeError)
+
     const claimantLabel = 'Please select the claimant listed on the form. ' +
     'If you do not see the claimant in the options below, add them in VBMS, ' +
     'then refresh this page.';
