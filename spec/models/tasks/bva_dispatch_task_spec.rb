@@ -8,6 +8,11 @@ describe BvaDispatchTask do
 
     context "when valid root_task passed as argument" do
       let(:root_task) { FactoryBot.create(:root_task) }
+      before do
+        # Make sure the BvaDispatch team has members
+        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+      end
+
       it "should create a BvaDispatchTask assigned to a User with a parent task assigned to the BvaDispatch org" do
         task = BvaDispatchTask.create_and_assign(root_task)
         expect(task.assigned_to.class).to eq(User)
