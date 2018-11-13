@@ -7,24 +7,28 @@ class GenericTask < Task
     end
 
     if assigned_to == user
-      [
+      return [
         Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
         Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
         Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
       ]
-    elsif task_is_assigned_to_user_within_organiztaion?
-      [
+    end
+
+    if task_is_assigned_to_user_within_organiztaion?(user)
+      return [
         Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
       ]
-    elsif task_is_assigned_to_users_organization?
-      [
+    end
+
+    if task_is_assigned_to_users_organization?(user)
+      return [
         Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
         Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
       ]
-    else
-      []
     end
+      
+    []
   end
   # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
@@ -96,8 +100,8 @@ class GenericTask < Task
     def task_is_assigned_to_user_within_organiztaion?(user)
       parent &&
         parent.assigned_to.is_a?(Organization) &&
-        parent.assigned_to.user_has_access?(user) &&
-        assigned_to.is_a?(User)
+        assigned_to.is_a?(User) &&
+        parent.assigned_to.user_has_access?(user)
     end
 
     def task_is_assigned_to_users_organization?(user)
