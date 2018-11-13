@@ -33,9 +33,7 @@ class Judge
 
   def attorneys
     return [] unless user
-    (Constants::AttorneyJudgeTeams::JUDGES[Rails.current_env][user.css_id].try(:[], :attorneys) || []).map do |css_id|
-      User.find_or_create_by(css_id: css_id, station_id: User::BOARD_STATION_ID)
-    end
+    JudgeTeam.for_judge(user).users
   end
 
   private

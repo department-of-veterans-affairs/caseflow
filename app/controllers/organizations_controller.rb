@@ -11,6 +11,10 @@ class OrganizationsController < ApplicationController
   private
 
   def verify_organization_access
+    if organization && organization.is_a?(JudgeTeam.name)
+      return true if organization == JudgeTeam.for_judge(current_user)
+      redirect_to "/unauthorized"
+    end
     redirect_to "/unauthorized" unless organization && organization.user_has_access?(current_user)
   end
 
