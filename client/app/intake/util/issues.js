@@ -195,7 +195,9 @@ const formatNonratingRequestIssues = (state) => {
       return {
         issue_category: issue.category,
         decision_text: issue.description,
-        decision_date: formatDateStringForApi(issue.decisionDate)
+        decision_date: formatDateStringForApi(issue.decisionDate),
+        untimely_exemption: issue.untimelyExemption,
+        untimely_exemption_notes: issue.untimelyExemptionNotes
       };
     });
   }
@@ -265,8 +267,6 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
 export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
   let issues = intakeData.addedIssues || [];
   let ratingIssues = ratingIssuesById(intakeData.ratings);
-  // match date definition in Rails Rating model
-  const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
 
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
 
@@ -299,20 +299,18 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       };
     }
 
-    // we must do our own date math for nonrating request issues.
-    // we assume the timezone of the browser for all these.
-    let decisionDate = new Date(issue.decisionDate);
-    let receiptDate = new Date(intakeData.receiptDate);
-    let isTimely = (receiptDate - decisionDate) <= ONE_YEAR_PLUS_MS;
+    const decisionDate = new Date(issue.decisionDate);
 
     // returns nonrating request issue format
     return {
       referenceId: issue.id,
       text: `${issue.category} - ${issue.description}`,
       date: formatDate(issue.decisionDate),
-      timely: isTimely,
       beforeAma: decisionDate < amaActivationDate,
-      ineligibleReason: issue.ineligibleReason
+      timely: issue.timely,
+      ineligibleReason: issue.ineligibleReason,
+      untimelyExemption: issue.untimelyExemption,
+      untimelyExemptionNotes: issue.untimelyExemptionNotes
     };
   });
 };

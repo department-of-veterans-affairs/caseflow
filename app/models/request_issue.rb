@@ -196,7 +196,7 @@ class RequestIssue < ApplicationRecord
     return unless rating?
     return unless eligible?
     existing_request_issue = self.class.find_active_by_reference_id(rating_issue_reference_id)
-    if existing_request_issue
+    if existing_request_issue && existing_request_issue.review_request != review_request
       self.ineligible_reason = :duplicate_of_issue_in_active_review
       self.ineligible_due_to = existing_request_issue
     end

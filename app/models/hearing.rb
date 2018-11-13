@@ -66,10 +66,10 @@ class Hearing < ApplicationRecord
     appeals << self.class.repository.appeals_ready_for_hearing(appeal.vbms_id)
   end
 
-  def update(hearing_hash)
+  def update_caseflow_and_vacols(hearing_hash)
     ActiveRecord::Base.multi_transaction do
       self.class.repository.update_vacols_hearing!(vacols_record, hearing_hash)
-      super
+      update!(hearing_hash)
     end
   end
 

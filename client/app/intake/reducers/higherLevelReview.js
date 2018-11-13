@@ -38,6 +38,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     legacyOptInApproved: {
       $set: serverIntake.legacy_opt_in_approved
     },
+    legacyIssues: {
+      $set: serverIntake.legacyIssues
+    },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
     },
@@ -80,6 +83,7 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     payeeCodeError: null,
     legacyOptInApproved: null,
     legacyOptInApprovedError: null,
+    legacyIssues: [],
     isStarted: false,
     isReviewed: false,
     isComplete: false,
