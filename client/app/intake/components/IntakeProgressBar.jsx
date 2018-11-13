@@ -20,7 +20,7 @@ class IntakeProgressBarInner extends React.PureComponent {
         path: PAGE_PATHS.REVIEW
       },
       {
-        title: '4. Add / Remove Issues',
+        title: '4. Add Issues',
         path: (currentPath) => currentPath === PAGE_PATHS.ADD_ISSUES || currentPath === PAGE_PATHS.FINISH
       },
       {
