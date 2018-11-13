@@ -3,7 +3,12 @@ class BvaDispatchTask < GenericTask
 
   class << self
     def create_and_assign(root_task)
-      parent = create!(assigned_to: BvaDispatch.singleton, parent_id: root_task.id, appeal: root_task.appeal)
+      parent = create!(
+        assigned_to: BvaDispatch.singleton,
+        parent_id: root_task.id,
+        appeal: root_task.appeal,
+        status: Constants.TASK_STATUSES.on_hold
+      )
       create!(
         appeal: parent.appeal,
         parent_id: parent.id,
