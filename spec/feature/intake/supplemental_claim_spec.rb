@@ -1,6 +1,9 @@
 require "rails_helper"
+require "support/intake_helpers"
 
 RSpec.feature "Supplemental Claim Intake" do
+  include IntakeHelpers
+
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
@@ -197,7 +200,7 @@ RSpec.feature "Supplemental Claim Intake" do
     find("label", text: "Left knee granted").click
     expect(page).to have_content("1 issue")
 
-    safe_click "#button-add-issue"
+    click_intake_add_issue
 
     safe_click ".Select"
 
@@ -214,7 +217,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(page).to have_content("2 issues")
 
-    safe_click "#button-finish-intake"
+    click_intake_finish
 
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
     expect(page).to have_content(
@@ -392,7 +395,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(page).to have_content("This Veteran has no rated, disability issues")
 
-    safe_click "#button-add-issue"
+    click_intake_add_issue
 
     safe_click ".Select"
 
@@ -403,7 +406,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(page).to have_content("1 issue")
 
-    safe_click "#button-finish-intake"
+    click_intake_finish
 
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
   end
@@ -499,7 +502,7 @@ RSpec.feature "Supplemental Claim Intake" do
       check_row("Claimant", "Ed Merica")
 
       # clicking the add issues button should bring up the modal
-      safe_click "#button-add-issue"
+      click_intake_add_issue
       expect(page).to have_content("Add issue 1")
       expect(page).to have_content("Does issue 1 match any of these issues")
       expect(page).to have_content("Left knee granted")
@@ -511,101 +514,81 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to_not have_content("Left knee granted")
 
       # adding an issue should show the issue
-      safe_click "#button-add-issue"
-      find_all("label", text: "Left knee granted").first.click
-      safe_click ".add-issue"
-
+      click_intake_add_issue
+      add_intake_rating_issue("Left knee granted")
       expect(page).to have_content("1. Left knee granted")
       expect(page).to_not have_content("Notes:")
-      safe_click ".remove-issue"
 
+      click_remove_intake_issue("1")
       expect(page).not_to have_content("Left knee granted")
 
       # re-add to proceed
-      safe_click "#button-add-issue"
-      find_all("label", text: "Left knee granted").first.click
-      fill_in "Notes", with: "I am an issue note"
-      safe_click ".add-issue"
-
+      click_intake_add_issue
+      add_intake_rating_issue("Left knee granted", "I am an issue note")
       expect(page).to have_content("1. Left knee granted")
       expect(page).to have_content("I am an issue note")
 
       # clicking add issue again should show a disabled radio button for that same rating
-      safe_click "#button-add-issue"
+      click_intake_add_issue
       expect(page).to have_content("Add issue 2")
       expect(page).to have_content("Does issue 2 match any of these issues")
       expect(page).to have_content("Left knee granted (already selected for issue 1)")
       expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
 
       # Add nonrating issue
-      safe_click ".no-matching-issues"
-      expect(page).to have_content("Does issue 2 match any of these issue categories?")
-      expect(page).to have_button("Add this issue", disabled: true)
-      fill_in "Issue category", with: "Active Duty Adjustments"
-      find("#issue-category").send_keys :enter
-      fill_in "Issue description", with: "Description for Active Duty Adjustments"
-      fill_in "Decision date", with: "04/25/2018"
-      expect(page).to have_button("Add this issue", disabled: false)
-      safe_click ".add-issue"
+      add_intake_nonrating_issue(
+        category: "Active Duty Adjustments",
+        description: "Description for Active Duty Adjustments",
+        date: "04/25/2018"
+      )
       expect(page).to have_content("2 issues")
       # SC is always timely
       expect(page).to_not have_content("Description for Active Duty Adjustments is ineligible because it has a prior")
 
       # add unidentified issue
-      safe_click "#button-add-issue"
-      safe_click ".no-matching-issues"
-      safe_click ".no-matching-issues"
-      expect(page).to have_content("Describe the issue to mark it as needing further review.")
-      fill_in "Transcribe the issue as it's written on the form", with: "This is an unidentified issue"
-      safe_click ".add-issue"
+      click_intake_add_issue
+      add_intake_unidentified_issue("This is an unidentified issue")
       expect(page).to have_content("3 issues")
       expect(page).to have_content("This is an unidentified issue")
 
       # add ineligible issue
-      safe_click "#button-add-issue"
-      find_all("label", text: "Old injury").first.click
-      safe_click ".add-issue"
+      click_intake_add_issue
+      add_intake_rating_issue("Old injury")
       expect(page).to have_content("4 issues")
       expect(page).to have_content("4. Old injury is ineligible because it's already under review as a Appeal")
 
       # add untimely issue (OK on Supplemental Claim)
-      safe_click "#button-add-issue"
-      find_all("label", text: "Really old injury").first.click
-      safe_click ".add-issue"
+      click_intake_add_issue
+      add_intake_rating_issue("Really old injury")
       expect(page).to have_content("5 issues")
       expect(page).to have_content("5. Really old injury")
       expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
 
       # add before_ama ratings
-      safe_click "#button-add-issue"
-      find_all("label", text: "Non-RAMP Issue before AMA Activation").first.click
-      safe_click ".add-issue"
+      click_intake_add_issue
+      add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
       expect(page).to have_content(
         "6. Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
       )
 
       # Eligible because it comes from a RAMP decision
-      safe_click "#button-add-issue"
-      find_all("label", text: "Issue before AMA Activation from RAMP").first.click
-      safe_click ".add-issue"
+      click_intake_add_issue
+      add_intake_rating_issue("Issue before AMA Activation from RAMP")
       expect(page).to have_content(
         "7. Issue before AMA Activation from RAMP Decision date:"
       )
 
-      safe_click "#button-add-issue"
-      safe_click ".no-matching-issues"
-      expect(page).to have_button("Add this issue", disabled: true)
-      fill_in "Issue category", with: "Drill Pay Adjustments"
-      find("#issue-category").send_keys :enter
-      fill_in "Issue description", with: "A nonrating issue before AMA"
-      fill_in "Decision date", with: "10/19/2017"
-      expect(page).to have_button("Add this issue", disabled: false)
-      safe_click ".add-issue"
+      click_intake_add_issue
+      add_intake_nonrating_issue(
+        category: "Drill Pay Adjustments",
+        description: "A nonrating issue before AMA",
+        date: "10/19/2017"
+      )
       expect(page).to have_content(
         "A nonrating issue before AMA #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
       )
 
-      safe_click "#button-finish-intake"
+      click_intake_finish
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
       expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
@@ -709,15 +692,13 @@ RSpec.feature "Supplemental Claim Intake" do
       start_supplemental_claim(veteran)
       visit "/intake/add_issues"
 
-      safe_click "#button-add-issue"
-      find_all("label", text: "Left knee granted").first.click
-      fill_in "Notes", with: "I am an issue note"
-      safe_click ".add-issue"
+      click_intake_add_issue
+      add_intake_rating_issue("Left knee granted", "I am an issue note")
 
       ## Validate error message when complete intake fails
       expect_any_instance_of(SupplementalClaimIntake).to receive(:complete!).and_raise("A random error. Oh no!")
 
-      safe_click "#button-finish-intake"
+      click_intake_finish
 
       expect(page).to have_content("Something went wrong")
       expect(page).to have_current_path("/intake/add_issues")
@@ -773,7 +754,7 @@ RSpec.feature "Supplemental Claim Intake" do
         start_supplemental_claim(veteran)
         visit "/intake/add_issues"
 
-        safe_click "#button-add-issue"
+        click_intake_add_issue
         expect(page).to have_content("Next")
       end
     end
