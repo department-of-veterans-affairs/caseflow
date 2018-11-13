@@ -65,9 +65,9 @@ module Caseflow::Error
       @appeal_id = args[:appeal_id]
       @task_type = args[:task_type]
       @assignee_type = args[:assignee_type]
-      @code = args[:code] || 500
+      @code = args[:code] || 400
       @message = args[:message] || "Appeal #{@appeal_id} already has an active task of type #{@task_type} assigned to "\
-                                   "#{assignee_type}. Cannot create a duplicate task for this organization"
+                                   "#{assignee_type}. No action necessary"
     end
   end
 
