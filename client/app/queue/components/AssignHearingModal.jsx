@@ -31,7 +31,6 @@ import {
   appealWithDetailSelector
 } from '../selectors';
 import { onReceiveAmaTasks } from '../QueueActions';
-import { prepareTasksForStore } from '../utils';
 import DateSelector from '../../components/DateSelector';
 import _ from 'lodash';
 import type { Appeal, Task } from '../types/models';
@@ -175,10 +174,9 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
         const response = JSON.parse(resp.text);
-        const preparedTasks = prepareTasksForStore(response.tasks.data);
 
         // Review with team to see why this is failing.
-        this.props.onReceiveAmaTasks(preparedTasks);
+        this.props.onReceiveAmaTasks(response.tasks.data);
         this.props.history.goBack();
       }, () => {
         this.props.showErrorMessage({

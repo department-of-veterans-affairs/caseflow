@@ -16,7 +16,6 @@ import { onReceiveAmaTasks } from '../QueueActions';
 import {
   requestPatch
 } from '../uiReducer/uiActions';
-import { prepareTasksForStore } from '../utils';
 import editModalBase from './EditModalBase';
 
 import type { State } from '../types/state';
@@ -103,9 +102,8 @@ class CompleteTaskModal extends React.Component<Props> {
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
         const response = JSON.parse(resp.text);
-        const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        this.props.onReceiveAmaTasks(preparedTasks);
+        this.props.onReceiveAmaTasks(response.tasks.data);
       });
   }
 

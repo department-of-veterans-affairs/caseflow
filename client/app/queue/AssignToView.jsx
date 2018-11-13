@@ -10,7 +10,6 @@ import {
   taskById,
   appealWithDetailSelector
 } from './selectors';
-import { prepareTasksForStore } from './utils';
 
 import { onReceiveAmaTasks } from './QueueActions';
 
@@ -106,9 +105,8 @@ class AssignToView extends React.Component<Props, ViewState> {
     return this.props.requestSave('/tasks', payload, successMsg).
       then((resp) => {
         const response = JSON.parse(resp.text);
-        const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        this.props.onReceiveAmaTasks(preparedTasks);
+        this.props.onReceiveAmaTasks(response.tasks.data);
       });
   }
 
@@ -155,9 +153,8 @@ class AssignToView extends React.Component<Props, ViewState> {
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
         const response = JSON.parse(resp.text);
-        const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        this.props.onReceiveAmaTasks(preparedTasks);
+        this.props.onReceiveAmaTasks(response.tasks.data);
       });
   }
 

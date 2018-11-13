@@ -73,9 +73,14 @@ class ScheduleHearingTask < GenericTask
     end
   end
 
-  def available_actions(_user)
-    [
-      Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h
-    ]
+  def available_actions(user)
+    if (assigned_to && assigned_to == user) ||
+      (assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user))
+      return [
+        Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h
+      ]
+    end
+
+    []
   end
 end

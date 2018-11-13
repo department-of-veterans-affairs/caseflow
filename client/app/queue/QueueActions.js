@@ -2,7 +2,8 @@
 // @flow
 import { associateTasksWithAppeals,
   prepareAllTasksForStore,
-  extractAppealsAndAmaTasks } from './utils';
+  extractAppealsAndAmaTasks,
+  prepareTasksForStore } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
@@ -51,15 +52,7 @@ export const onReceiveTasks = (
 export const onReceiveAmaTasks = (amaTasks: Tasks) => ({
   type: ACTIONS.RECEIVE_AMA_TASKS,
   payload: {
-    amaTasks
-  }
-});
-
-export const setTaskAttrs = (uniqueId: string, attributes: Object) => ({
-  type: ACTIONS.SET_TASK_ATTRS,
-  payload: {
-    uniqueId,
-    attributes
+    prepareTasksForStore(amaTasks)
   }
 });
 
@@ -352,20 +345,22 @@ export const initialAssignTasksToUser = ({
   return ApiUtil.post(url, params).
     then((resp) => resp.body).
     then((resp) => {
-      const task = resp.tasks ? resp.tasks.data[0] : resp.task.data;
+      if (oldTask.appealType === 'Appeal') {
+        const tasks = resp.tasks.data;
 
-      const allTasks = prepareAllTasksForStore([task]);
-
-      dispatch(onReceiveTasks({
-        tasks: allTasks.tasks,
-        amaTasks: allTasks.amaTasks
-      }));
-      if (!oldTask.isLegacy) {
-        dispatch(setTaskAttrs(
-          oldTask.uniqueId,
-          { status: 'on_hold' }
+        dispatch(onReceiveAmaTasks(
+          tasks
         ));
+      } else {
+        const task = resp.task.data;
+        const allTasks = prepareAllTasksForStore([task]);
+
+        dispatch(onReceiveTasks({
+          tasks: allTasks.tasks,
+          amaTasks: allTasks.amaTasks
+        }));
       }
+
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
         taskId: oldTask.uniqueId,
@@ -407,14 +402,22 @@ export const reassignTasksToUser = ({
   return ApiUtil.patch(url, params).
     then((resp) => resp.body).
     then((resp) => {
-      const task = resp.tasks ? resp.tasks.data[0] : resp.task.data;
+      if (oldTask.appealType === 'Appeal') {
+        const tasks = resp.tasks.data;
 
-      const allTasks = prepareAllTasksForStore([task]);
+        dispatch(onReceiveAmaTasks(
+          tasks
+        ));
+      } else {
+        const task = resp.task.data;
+        const allTasks = prepareAllTasksForStore([task]);
 
-      dispatch(onReceiveTasks({
-        tasks: allTasks.tasks,
-        amaTasks: allTasks.amaTasks
-      }));
+        dispatch(onReceiveTasks({
+          tasks: allTasks.tasks,
+          amaTasks: allTasks.amaTasks
+        }));
+      }
+
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
         taskId: oldTask.uniqueId,

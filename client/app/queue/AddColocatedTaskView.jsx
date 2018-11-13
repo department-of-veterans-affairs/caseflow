@@ -13,7 +13,6 @@ import Alert from '../components/Alert';
 
 import { requestSave } from './uiReducer/uiActions';
 import { onReceiveAmaTasks, setAppealAttrs } from './QueueActions';
-import { prepareTasksForStore } from './utils';
 
 import {
   appealWithDetailSelector,
@@ -94,9 +93,8 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
           this.props.setAppealAttrs(task.externalAppealId, { location: 'CASEFLOW' });
         } else {
           const response = JSON.parse(resp.text);
-          const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-          this.props.onReceiveAmaTasks(preparedTasks);
+          this.props.onReceiveAmaTasks(response.tasks.data);
         }
       });
   }

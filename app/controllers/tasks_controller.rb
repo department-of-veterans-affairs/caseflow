@@ -62,6 +62,9 @@ class TasksController < ApplicationController
     tasks = task_class.create_many_from_params(create_params, current_user)
 
     tasks.each { |task| return invalid_record_error(task) unless task.valid? }
+
+    tasks_to_return = queue_class.new(user: current_user).tasks
+
     render json: { tasks: json_tasks(tasks) }, status: :created
   end
 

@@ -16,7 +16,6 @@ import {
 } from './selectors';
 import { onReceiveAmaTasks } from './QueueActions';
 import { requestPatch } from './uiReducer/uiActions';
-import { prepareTasksForStore } from './utils';
 
 import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -103,9 +102,8 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
     this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
         const response = JSON.parse(resp.text);
-        const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        this.props.onReceiveAmaTasks(preparedTasks);
+        this.props.onReceiveAmaTasks(response.tasks.data);
       });
   }
 
