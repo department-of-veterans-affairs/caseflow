@@ -112,6 +112,32 @@ describe SupplementalClaimIntake do
           payee_code: "10"
         )
       end
+
+      context "And benefit type is compensation" do
+        let(:benefit_type) { "compensation" }
+
+        context "payee code is nil" do
+          let(:payee_code) { nil }
+
+          it "is expected to add an error that payee_code cannot be blank" do
+            expect(subject).to be_falsey
+            expect(detail.errors[:payee_code]).to include("blank")
+          end
+        end
+      end
+
+      context "And benefit type is pension" do
+        let(:benefit_type) { "pension" }
+
+        context "payee code is nil" do
+          let(:payee_code) { nil }
+
+          it "is expected to add an error that payee_code cannot be blank" do
+            expect(subject).to be_falsey
+            expect(detail.errors[:payee_code]).to include("blank")
+          end
+        end
+      end
     end
   end
 

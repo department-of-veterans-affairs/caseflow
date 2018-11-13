@@ -454,6 +454,43 @@ RSpec.feature "Higher-Level Review" do
     )
   end
 
+  it "Requires Payee Code for compensation and pension benefit types and non-Veteran claimant" do
+    intake = HigherLevelReviewIntake.new(veteran_file_number: "22334455", user: current_user)
+    intake.start!
+    visit "/intake"
+
+    expect(page).to have_current_path("/intake/review_request")
+
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Compensation", match: :prefer_exact).click
+    end
+
+    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+
+    within_fieldset("Did the Veteran request an informal conference?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
+    within_fieldset("Did the Veteran request review by the same office?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
+    within_fieldset("Is the claimant someone other than the Veteran?") do
+      find("label", text: "Yes", match: :prefer_exact).click
+    end
+
+    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
+    find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_content("Please select an option")
+
+  end
+
   it "Shows a review error when something goes wrong" do
     start_higher_level_review(veteran_no_ratings)
     visit "/intake"

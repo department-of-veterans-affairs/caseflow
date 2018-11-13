@@ -24,9 +24,6 @@ class HigherLevelReview < ClaimReview
     Constants.INTAKE_FORM_NAMES_SHORT.higher_level_review
   end
 
-  def payee_code_error
-  end
-
   def ui_hash
     super.merge(
       formType: "higher_level_review",

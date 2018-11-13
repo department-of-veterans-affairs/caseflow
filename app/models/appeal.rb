@@ -133,10 +133,6 @@ class Appeal < DecisionReview
     claimants.first
   end
 
-  def payee_code_required?
-    false
-  end
-
   delegate :first_name, :last_name, :middle_name, :name_suffix, to: :appellant, prefix: true, allow_nil: true
 
   def cavc
