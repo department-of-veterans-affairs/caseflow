@@ -38,7 +38,7 @@ RSpec.describe "Hearing Schedule", type: :request do
   describe "Assign judge to hearing - VACOLS" do
     let!(:hearing) do
       RequestStore[:current_user] = user
-      Generators::Vacols::Staff.create
+      Generators::Vacols::Staff.create!
       Generators::Vacols::CaseHearing.create(hearing_type: HearingDay::HEARING_TYPES[:video],
                                              hearing_date: "11-Jun-2017", regional_office: "RO27", room: "3")
     end
@@ -54,7 +54,7 @@ RSpec.describe "Hearing Schedule", type: :request do
   describe "Assign judge to hearing - Caseflow" do
     let!(:hearing) do
       RequestStore[:current_user] = user
-      Generators::Vacols::Staff.create
+      Generators::Vacols::Staff.create!
       HearingDay.create(hearing_type: HearingDay::HEARING_TYPES[:central],
                         hearing_date: "11-Jun-2019", room_info: "3", created_by: "ramiro", updated_by: "ramiro")
     end
@@ -69,7 +69,7 @@ RSpec.describe "Hearing Schedule", type: :request do
   describe "Modify RO in Travel Board Hearing - VACOLS Only" do
     let!(:hearing) do
       RequestStore[:current_user] = user
-      Generators::Vacols::Staff.create
+      Generators::Vacols::Staff.create!
       Generators::Vacols::TravelBoardSchedule.create({})
     end
 
@@ -92,7 +92,7 @@ RSpec.describe "Hearing Schedule", type: :request do
          { hearing_type: HearingDay::HEARING_TYPES[:video], hearing_date: "15-Jun-2017 08:30:00.000-4:00",
            regional_office: "RO27", room: "4" }]
       )
-      Generators::Vacols::TravelBoardSchedule.create(tbmem1: "111")
+      Generators::Vacols::TravelBoardSchedule.create!(tbmem1: "111")
       Generators::Vacols::Staff.create(sattyid: "111")
     end
 
@@ -156,9 +156,9 @@ RSpec.describe "Hearing Schedule", type: :request do
          { hearing_type: HearingDay::HEARING_TYPES[:video], hearing_date: "15-Jun-2019 08:30:00.000-4:00",
            regional_office: "RO27", room_info: "4", created_by: "ramiro", updated_by: "ramiro" }]
       )
-      Generators::Vacols::TravelBoardSchedule.create(tbyear: 2019, tbstdate: "2019-01-30 00:00:00",
-                                                     tbenddate: "2019-02-03 00:00:00", tbmem1: "111")
-      Generators::Vacols::Staff.create(sattyid: "111")
+      Generators::Vacols::TravelBoardSchedule.create!(tbyear: 2019, tbstdate: "2019-01-30 00:00:00",
+                                                      tbenddate: "2019-02-03 00:00:00", tbmem1: "111")
+      Generators::Vacols::Staff.create!(sattyid: "111")
       Generators::Vacols::Staff.create(sattyid: "105", snamel: "Randall", snamef: "Tony")
     end
 
@@ -188,7 +188,7 @@ RSpec.describe "Hearing Schedule", type: :request do
          { hearing_type: HearingDay::HEARING_TYPES[:central],
            hearing_date: (Time.zone.today + 315.days).to_date, room: "3" }]
       )
-      Generators::Vacols::TravelBoardSchedule.create(tbmem1: "111")
+      Generators::Vacols::TravelBoardSchedule.create!(tbmem1: "111")
       Generators::Vacols::Staff.create(sattyid: "111")
     end
 
@@ -213,7 +213,7 @@ RSpec.describe "Hearing Schedule", type: :request do
          { hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "9-Jun-2017 09:00:00.000-4:00", room: "3",
            regional_office: "RO27" }]
       )
-      Generators::Vacols::TravelBoardSchedule.create(tbmem1: "111")
+      Generators::Vacols::TravelBoardSchedule.create!(tbmem1: "111")
       Generators::Vacols::Staff.create(sattyid: "111")
     end
 
@@ -239,8 +239,8 @@ RSpec.describe "Hearing Schedule", type: :request do
          { hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "9-Jun-2019 09:00:00.000-4:00",
            room_info: "3", regional_office: "RO27", created_by: "ramiro", updated_by: "ramiro" }]
       )
-      Generators::Vacols::TravelBoardSchedule.create(tbyear: 2019, tbstdate: "2019-01-30 00:00:00",
-                                                     tbenddate: "2019-02-03 00:00:00", tbmem1: "111")
+      Generators::Vacols::TravelBoardSchedule.create!(tbyear: 2019, tbstdate: "2019-01-30 00:00:00",
+                                                      tbenddate: "2019-02-03 00:00:00", tbmem1: "111")
       Generators::Vacols::Staff.create(sattyid: "111")
     end
 
@@ -261,7 +261,7 @@ RSpec.describe "Hearing Schedule", type: :request do
     let!(:staff) { create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
     let!(:hearings) do
       RequestStore[:current_user] = user
-      Generators::Vacols::Staff.create(sattyid: "111")
+      Generators::Vacols::Staff.create!(sattyid: "111")
       HearingDay.create(
         [{ hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "7-Mar-2019 09:00:00.000-4:00",
            room_info: "1", regional_office: "RO04", created_by: "ramiro", updated_by: "ramiro" },

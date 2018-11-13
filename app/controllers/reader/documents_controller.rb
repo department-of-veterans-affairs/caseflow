@@ -4,7 +4,7 @@ class Reader::DocumentsController < Reader::ApplicationController
     respond_to do |format|
       format.html { return render "reader/appeal/index" }
       format.json do
-        AppealView.find_or_create_by(
+        AppealView.find_or_create_by!(
           appeal: appeal,
           user_id: current_user.id
         ).tap do |t|

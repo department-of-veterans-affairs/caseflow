@@ -182,7 +182,7 @@ describe Hearing do
         let(:appeal) { create(:legacy_appeal, :with_veteran, vacols_case: create(:case_with_form_9)) }
 
         it "should load military service from appeal" do
-          hearing.update(appeal: appeal)
+          hearing.update!(appeal: appeal)
           expect(subject).to eq appeal.veteran.periods_of_service.join("\n")
         end
       end
@@ -193,7 +193,7 @@ describe Hearing do
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case_with_form_9)) }
 
       it "should load military service from appeal" do
-        hearing.update(appeal: appeal)
+        hearing.update!(appeal: appeal)
         expect(subject).to eq "Test"
       end
     end

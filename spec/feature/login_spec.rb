@@ -19,7 +19,7 @@ RSpec.feature "Login" do
   end
 
   scenario "User whose station ID has one RO doesn't require login" do
-    user = User.create(css_id: "ANNE MERICA", station_id: "314")
+    user = User.create!(css_id: "ANNE MERICA", station_id: "314")
     Fakes::AuthenticationService.user_session = {
       "id" => "ANNE MERICA", "roles" => ["Certify Appeal"], "station_id" => "314", "email" => "world@example.com"
     }
@@ -65,7 +65,7 @@ RSpec.feature "Login" do
   # :nocov:
 
   scenario "email and selected regional office should be set on login" do
-    user = User.create(css_id: "ANNE MERICA", station_id: "405")
+    user = User.create!(css_id: "ANNE MERICA", station_id: "405")
     visit "certifications/new/#{appeal.vacols_id}"
     select_ro_from_dropdown
     click_on "Log in"

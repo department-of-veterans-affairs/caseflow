@@ -12,7 +12,7 @@ class WorksheetIssue < ApplicationRecord
 
   class << self
     def create_from_issue(appeal, issue)
-      WorksheetIssue.find_or_create_by(appeal: appeal, vacols_sequence_id: issue.vacols_sequence_id).tap do |record|
+      WorksheetIssue.find_or_create_by!(appeal: appeal, vacols_sequence_id: issue.vacols_sequence_id).tap do |record|
         record.update(notes: issue.note,
                       description: issue.formatted_program_type_levels,
                       disposition: issue.formatted_disposition,

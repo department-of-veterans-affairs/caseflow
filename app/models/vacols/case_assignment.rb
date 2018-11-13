@@ -16,7 +16,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
 
   def assigned_by
     assigned_by_user_id = if assigned_by_css_id
-                            User.find_or_create_by(
+                            User.find_or_create_by!(
                               css_id: assigned_by_css_id,
                               station_id: User::BOARD_STATION_ID
                             ).id

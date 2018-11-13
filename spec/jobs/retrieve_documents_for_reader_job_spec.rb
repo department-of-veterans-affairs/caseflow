@@ -38,7 +38,7 @@ describe RetrieveDocumentsForReaderJob do
         before do
           # create 10 users
           10.times do
-            u = Generators::User.create(roles: ["Reader"])
+            u = Generators::User.create!(roles: ["Reader"])
             Generators::ReaderUser.create(user_id: u.id)
           end
         end

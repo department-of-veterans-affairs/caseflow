@@ -233,7 +233,7 @@ describe RampElectionIntake do
                     option_selected: existing_option_selected,
                     receipt_date: 38.days.ago,
                     established_at: 38.days.ago)
-        EndProductEstablishment.create(
+        EndProductEstablishment.create!(
           veteran_file_number: veteran_file_number,
           source: re,
           reference_id: preexisting_ep.claim_id,

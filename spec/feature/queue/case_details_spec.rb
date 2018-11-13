@@ -113,7 +113,7 @@ RSpec.feature "Case details" do
 
     context "when appeal has a single hearing with a HearingView" do
       let!(:case_hearings) { [FactoryBot.build(:case_hearing, :disposition_held, user: judge_user)] }
-      before { HearingView.create(hearing_id: hearing.id, user_id: attorney_user.id).touch }
+      before { HearingView.create!(hearing_id: hearing.id, user_id: attorney_user.id).touch }
 
       scenario "Fewer attributes of hearing are displayed" do
         visit "/queue"

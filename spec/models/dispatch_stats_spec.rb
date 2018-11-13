@@ -44,11 +44,11 @@ describe DispatchStats do
 
   context ".calculate_all!" do
     it "calculates and saves all completed dispatch_stats" do
-      Generators::EstablishClaim.create(completed_at: 40.days.ago)
-      Generators::EstablishClaim.create(completed_at: 7.days.ago)
-      Generators::EstablishClaim.create(completed_at: 2.days.ago)
-      Generators::EstablishClaim.create(completed_at: 4.hours.ago)
-      Generators::EstablishClaim.create(completed_at: 30.minutes.ago)
+      Generators::EstablishClaim.create!(completed_at: 40.days.ago)
+      Generators::EstablishClaim.create!(completed_at: 7.days.ago)
+      Generators::EstablishClaim.create!(completed_at: 2.days.ago)
+      Generators::EstablishClaim.create!(completed_at: 4.hours.ago)
+      Generators::EstablishClaim.create!(completed_at: 30.minutes.ago)
 
       DispatchStats.calculate_all!
 
@@ -60,11 +60,11 @@ describe DispatchStats do
     end
 
     it "calculates and saves all started dispatch_stats" do
-      Generators::EstablishClaim.create(started_at: 40.days.ago)
-      Generators::EstablishClaim.create(started_at: 7.days.ago)
-      Generators::EstablishClaim.create(started_at: 2.days.ago)
-      Generators::EstablishClaim.create(started_at: 4.hours.ago)
-      Generators::EstablishClaim.create(started_at: 30.minutes.ago)
+      Generators::EstablishClaim.create!(started_at: 40.days.ago)
+      Generators::EstablishClaim.create!(started_at: 7.days.ago)
+      Generators::EstablishClaim.create!(started_at: 2.days.ago)
+      Generators::EstablishClaim.create!(started_at: 4.hours.ago)
+      Generators::EstablishClaim.create!(started_at: 30.minutes.ago)
 
       DispatchStats.calculate_all!
 
@@ -76,7 +76,7 @@ describe DispatchStats do
     end
 
     it "calculates and saves all canceled dispatch_stats" do
-      Generators::EstablishClaim.create(completed_at: 30.minutes.ago, completion_status: 1)
+      Generators::EstablishClaim.create!(completed_at: 30.minutes.ago, completion_status: 1)
 
       DispatchStats.calculate_all!
 
@@ -88,10 +88,10 @@ describe DispatchStats do
     end
 
     it "filters remands and partial grants from full grants" do
-      remand = Generators::EstablishClaim.create(completed_at: 7.days.ago)
-      full_grant = Generators::EstablishClaim.create(completed_at: 7.days.ago)
-      ClaimEstablishment.create(task_id: remand.id, decision_type: 3)
-      ClaimEstablishment.create(task_id: full_grant.id, decision_type: 1)
+      remand = Generators::EstablishClaim.create!(completed_at: 7.days.ago)
+      full_grant = Generators::EstablishClaim.create!(completed_at: 7.days.ago)
+      ClaimEstablishment.create!(task_id: remand.id, decision_type: 3)
+      ClaimEstablishment.create!(task_id: full_grant.id, decision_type: 1)
 
       DispatchStats.calculate_all!
 

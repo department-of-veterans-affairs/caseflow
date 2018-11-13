@@ -4,7 +4,7 @@ RSpec.feature "Certification Stats Dashboard" do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 17, 55, 0, rand(1000)))
 
-    Certification.create(
+    Certification.create!(
       nod_matching_at:     5.hours.ago,
       form9_matching_at:   5.hours.ago,
       soc_matching_at:     5.hours.ago,
@@ -15,7 +15,7 @@ RSpec.feature "Certification Stats Dashboard" do
       completed_at:        4.hours.ago
     )
 
-    Certification.create(
+    Certification.create!(
       nod_matching_at:     4.hours.ago,
       form9_matching_at:   5.hours.ago,
       soc_matching_at:     5.hours.ago,
@@ -26,7 +26,7 @@ RSpec.feature "Certification Stats Dashboard" do
       completed_at:        nil
     )
 
-    Certification.create(
+    Certification.create!(
       nod_matching_at:     4.hours.ago,
       form9_matching_at:   5.hours.ago,
       soc_matching_at:     5.hours.ago,
@@ -37,7 +37,7 @@ RSpec.feature "Certification Stats Dashboard" do
       completed_at:        3.hours.ago
     )
 
-    Certification.create(
+    Certification.create!(
       nod_matching_at:     45.minutes.ago,
       form9_matching_at:   45.minutes.ago,
       soc_matching_at:     45.minutes.ago,
@@ -86,7 +86,7 @@ RSpec.feature "Certification Stats Dashboard" do
   # The mouseover effect with the stat bars is erratic
   # TODO: Augment stats to disable mouseover for the tests
   scenario "Check missing documents" do
-    Certification.create(
+    Certification.create!(
       nod_matching_at:     45.minutes.ago,
       form9_matching_at:   45.minutes.ago,
       soc_matching_at:     45.minutes.ago,
@@ -97,7 +97,7 @@ RSpec.feature "Certification Stats Dashboard" do
       completed_at:        nil
     )
 
-    Certification.create(
+    Certification.create!(
       nod_matching_at:     45.minutes.ago,
       form9_matching_at:   45.minutes.ago,
       soc_matching_at:     nil,

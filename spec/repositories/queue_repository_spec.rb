@@ -58,7 +58,7 @@ describe QueueRepository do
 
     context "when the case has already been assigned to an attorney" do
       it "should throw an exception" do
-        vacols_case.update(bfcurloc: attorney.vacols_uniq_id)
+        vacols_case.update!(bfcurloc: attorney.vacols_uniq_id)
 
         expect do
           QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)

@@ -3,7 +3,7 @@ class OrganizationsUser < ApplicationRecord
   belongs_to :user
 
   def self.add_user_to_organization(user, organization)
-    existing_record(user, organization) || create(organization_id: organization.id, user_id: user.id)
+    existing_record(user, organization) || create!(organization_id: organization.id, user_id: user.id)
   end
 
   def self.remove_user_from_organization(user, organization)

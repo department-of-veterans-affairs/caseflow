@@ -175,8 +175,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           end
 
           it "returns a list of assigned appeals" do
-            tasks.first.update(assigned_at: 5.days.ago)
-            tasks.second.update(assigned_at: 15.days.ago)
+            tasks.first.update!(assigned_at: 5.days.ago)
+            tasks.second.update!(assigned_at: 15.days.ago)
             get :list
             expect(response.status).to eq 200
             expect(RequestStore[:current_user]).to eq user

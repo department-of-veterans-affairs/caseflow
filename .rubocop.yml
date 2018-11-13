@@ -68,6 +68,9 @@ Rails/Present:
   NotBlank: false
   UnlessBlank: false
 
+Rails/SaveBang:
+  Enabled: true
+
 Metrics/MethodLength:
   Max: 20
 

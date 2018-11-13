@@ -297,7 +297,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
     scenario "Assign the correct new task to myself" do
       # Create an older task with an inaccessible appeal
-      Generators::EstablishClaim.create(
+      Generators::EstablishClaim.create!(
         created_at: 4.days.ago,
         prepared_at: Date.yesterday,
         aasm_state: :unassigned,
@@ -305,7 +305,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       )
 
       # Create a task already assigned to another user
-      Generators::EstablishClaim.create(
+      Generators::EstablishClaim.create!(
         created_at: 4.days.ago,
         prepared_at: Date.yesterday,
         user_id: case_worker.id,
@@ -313,7 +313,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       )
 
       # Create a task already completed by me
-      completed_task = Generators::EstablishClaim.create(
+      completed_task = Generators::EstablishClaim.create!(
         created_at: 4.days.ago,
         prepared_at: Date.yesterday,
         user_id: current_user.id,
@@ -322,7 +322,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       )
 
       # Create an invalid task, this should be invalidated and skipped
-      invalid_task = Generators::EstablishClaim.create(
+      invalid_task = Generators::EstablishClaim.create!(
         created_at: 4.days.ago,
         prepared_at: Date.yesterday,
         aasm_state: :unassigned,
@@ -362,7 +362,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     scenario "Visit an Establish Claim task that is assigned to another user" do
-      not_my_task = Generators::EstablishClaim.create(user_id: case_worker.id, aasm_state: :started)
+      not_my_task = Generators::EstablishClaim.create!(user_id: case_worker.id, aasm_state: :started)
 
       visit "/dispatch/establish-claim/#{not_my_task.id}"
       expect(page).to have_current_path("/unauthorized")

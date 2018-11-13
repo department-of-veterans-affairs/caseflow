@@ -34,14 +34,14 @@ class SeedDB
   end
 
   def create_users
-    User.create(css_id: "BVASCASPER1", station_id: 101, full_name: "Attorney with cases")
-    User.create(css_id: "BVASRITCHIE", station_id: 101, full_name: "Attorney no cases")
-    User.create(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Judge with hearings and cases")
-    User.create(css_id: "BVARERDMAN", station_id: 101, full_name: "Judge has attorneys with cases")
-    User.create(css_id: "BVAOFRANECKI", station_id: 101, full_name: "Judge has case to sign")
-    User.create(css_id: "BVAJWEHNER", station_id: 101, full_name: "Judge has case to assign no team")
-    User.create(css_id: "BVATWARNER", station_id: 101, full_name: "Build Hearing Schedule")
-    User.create(css_id: "BVAGWHITE", station_id: 101, full_name: "BVA Dispatch user with cases")
+    User.create!(css_id: "BVASCASPER1", station_id: 101, full_name: "Attorney with cases")
+    User.create!(css_id: "BVASRITCHIE", station_id: 101, full_name: "Attorney no cases")
+    User.create!(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Judge with hearings and cases")
+    User.create!(css_id: "BVARERDMAN", station_id: 101, full_name: "Judge has attorneys with cases")
+    User.create!(css_id: "BVAOFRANECKI", station_id: 101, full_name: "Judge has case to sign")
+    User.create!(css_id: "BVAJWEHNER", station_id: 101, full_name: "Judge has case to assign no team")
+    User.create!(css_id: "BVATWARNER", station_id: 101, full_name: "Build Hearing Schedule")
+    User.create!(css_id: "BVAGWHITE", station_id: 101, full_name: "BVA Dispatch user with cases")
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
@@ -55,13 +55,13 @@ class SeedDB
   end
 
   def create_colocated_user
-    user = User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located with cases")
+    user = User.create!(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located with cases")
     FactoryBot.create(:staff, :colocated_role, user: user, sdept: "DSP")
     OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
   end
 
   def create_vso_user
-    u = User.create(
+    u = User.create!(
       css_id: "VSO",
       station_id: 101,
       full_name: "VSO user associated with PVA",
@@ -121,7 +121,7 @@ class SeedDB
   def create_dispatch_tasks(number)
     num_appeals = @legacy_appeals.length
     tasks = Array.new(number) do |i|
-      establish_claim = EstablishClaim.create(
+      establish_claim = EstablishClaim.create!(
         appeal: @legacy_appeals[i % num_appeals],
         aasm_state: :unassigned,
         prepared_at: rand(3).days.ago
@@ -131,9 +131,9 @@ class SeedDB
 
     # creating user quotas for the existing team quotas
     team_quota = EstablishClaim.todays_quota
-    UserQuota.create(team_quota: team_quota, user: @users[3])
-    UserQuota.create(team_quota: team_quota, user: @users[4])
-    UserQuota.create(team_quota: team_quota, user: @users[5])
+    UserQuota.create!(team_quota: team_quota, user: @users[3])
+    UserQuota.create!(team_quota: team_quota, user: @users[4])
+    UserQuota.create!(team_quota: team_quota, user: @users[5])
 
     # Give each user a task in a different state
     tasks[0].assign!(@users[0])
@@ -169,7 +169,7 @@ class SeedDB
     task = EstablishClaim.assign_next_to!(@users[6])
 
     # Create one task with no decision documents
-    EstablishClaim.create(
+    EstablishClaim.create!(
       appeal: tasks[2].appeal,
       created_at: 5.days.ago
     )
@@ -198,7 +198,7 @@ class SeedDB
   end
 
   def create_annotations
-    Generators::Annotation.create(comment: "Hello World!", document_id: 1, x: 300, y: 400)
+    Generators::Annotation.create!(comment: "Hello World!", document_id: 1, x: 300, y: 400)
     Generators::Annotation.create(comment: "This is an example comment", document_id: 2)
   end
 
@@ -219,12 +219,12 @@ class SeedDB
   end
 
   def create_tags
-    DocumentsTag.create(
-      tag_id: Generators::Tag.create(text: "Service Connected").id,
+    DocumentsTag.create!(
+      tag_id: Generators::Tag.create!(text: "Service Connected").id,
       document_id: 1
     )
     DocumentsTag.create(
-      tag_id: Generators::Tag.create(text: "Right Knee").id,
+      tag_id: Generators::Tag.create!(text: "Right Knee").id,
       document_id: 2
     )
   end
@@ -310,9 +310,9 @@ class SeedDB
       request_issues: FactoryBot.create_list(:request_issue, 8, description: "Kidney problems")
     )
 
-    LegacyAppeal.create(vacols_id: "2096907", vbms_id: "228081153S")
-    LegacyAppeal.create(vacols_id: "2226048", vbms_id: "213912991S")
-    LegacyAppeal.create(vacols_id: "2249056", vbms_id: "608428712S")
+    LegacyAppeal.create!(vacols_id: "2096907", vbms_id: "228081153S")
+    LegacyAppeal.create!(vacols_id: "2226048", vbms_id: "213912991S")
+    LegacyAppeal.create!(vacols_id: "2249056", vbms_id: "608428712S")
     LegacyAppeal.create(vacols_id: "2306397", vbms_id: "779309925S")
   end
 
@@ -340,7 +340,7 @@ class SeedDB
       parent: parent,
       appeal: appeal
     )
-    child.update(status: :completed)
+    child.update!(status: :completed)
     FactoryBot.create(:attorney_case_review, task_id: child.id)
   end
 
@@ -436,13 +436,13 @@ class SeedDB
   end
 
   def create_vsos
-    Vso.create(
+    Vso.create!(
       name: "American Legion",
       role: "VSO",
       url: "american-legion",
       participant_id: "2452415"
     )
-    Vso.create(
+    Vso.create!(
       name: "Vietnam Veterans Of America",
       role: "VSO",
       url: "vietnam-veterans-of-america",
@@ -479,7 +479,7 @@ class SeedDB
 
   def create_previously_held_hearing_data
     user = User.find_by_css_id("BVAAABSHIRE")
-    appeal = LegacyAppeal.find_or_create_by(vacols_id: "3617215", vbms_id: "994806951S")
+    appeal = LegacyAppeal.find_or_create_by!(vacols_id: "3617215", vbms_id: "994806951S")
 
     return if ([appeal.type] - ["Post Remand", "Original"]).empty? &&
               appeal.hearings.map(&:disposition).include?(:held)

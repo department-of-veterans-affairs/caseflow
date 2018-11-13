@@ -123,7 +123,7 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         bgs_attrs: { status_type_code: "CLR" }
       )
-      EndProductEstablishment.create(
+      EndProductEstablishment.create!(
         source: ramp_election,
         veteran_file_number: "12341234",
         reference_id: ep.claim_id,
@@ -178,7 +178,7 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         bgs_attrs: { status_type_code: "CLR" }
       )
-      EndProductEstablishment.create(
+      EndProductEstablishment.create!(
         source: ramp_election,
         veteran_file_number: "12341234",
         reference_id: ep.claim_id,
@@ -220,7 +220,7 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         bgs_attrs: { status_type_code: "CLR" }
       )
-      EndProductEstablishment.create(
+      EndProductEstablishment.create!(
         source: ramp_election,
         veteran_file_number: "12341234",
         reference_id: ep.claim_id,
@@ -429,7 +429,7 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         bgs_attrs: { status_type_code: "CLR" }
       )
-      EndProductEstablishment.create(
+      EndProductEstablishment.create!(
         source: ramp_election,
         veteran_file_number: "12341234",
         reference_id: ep.claim_id,
@@ -487,7 +487,7 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         bgs_attrs: { status_type_code: "CLR" }
       )
-      EndProductEstablishment.create(
+      EndProductEstablishment.create!(
         source: ramp_election,
         veteran_file_number: "12341234",
         reference_id: ep.claim_id,

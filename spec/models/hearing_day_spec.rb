@@ -2,7 +2,7 @@ describe HearingDay do
   context "#create" do
     let(:hearing) do
       RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
-      Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
+      Generators::Vacols::Staff.create!(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
       HearingDay.create_hearing_day(hearing_hash)
     end
 
@@ -85,7 +85,7 @@ describe HearingDay do
   context "update hearing" do
     let(:hearing) do
       RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
-      Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
+      Generators::Vacols::Staff.create!(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
       HearingDay.create_hearing_day(hearing_hash)
     end
 
@@ -135,7 +135,7 @@ describe HearingDay do
   context "bulk persist" do
     let(:schedule_period) do
       RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
-      Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
+      Generators::Vacols::Staff.create!(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
       create(:ro_schedule_period)
     end
 

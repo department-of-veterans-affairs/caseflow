@@ -25,7 +25,7 @@ class Generators::Hearing
 
     def build(attrs = {})
       attrs[:appeal_id] ||= attrs[:appeal].try(:id) || default_appeal.id
-      attrs[:user_id] ||= attrs[:user].try(:id) || Generators::User.create.id
+      attrs[:user_id] ||= attrs[:user].try(:id) || Generators::User.create!.id
       hearing = ::Hearing.new(default_attrs.merge(attrs))
 
       hearing
@@ -33,11 +33,11 @@ class Generators::Hearing
 
     def create(attrs = {})
       attrs = default_attrs.merge(attrs)
-      hearing = ::Hearing.find_or_create_by(vacols_id: attrs[:vacols_id])
+      hearing = ::Hearing.find_or_create_by!(vacols_id: attrs[:vacols_id])
       attrs[:appeal_id] ||= attrs[:appeal].try(:id) || default_appeal_id(hearing)
       attrs[:appeal_vacols_id] = LegacyAppeal.find(attrs[:appeal_id]).vacols_id
-      attrs[:user_id] ||= attrs[:user].try(:id) || Generators::User.create.id
-      hearing.update_attributes(attrs)
+      attrs[:user_id] ||= attrs[:user].try(:id) || Generators::User.create!.id
+      hearing.update_attributes!(attrs)
 
       hearing
     end

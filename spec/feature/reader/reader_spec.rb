@@ -128,19 +128,19 @@ RSpec.feature "Reader" do
     # files to load when we fetch content.
     let(:documents) do
       [
-        Generators::Document.create(
+        Generators::Document.create!(
           filename: "My BVA Decision",
           type: "BVA Decision",
           received_at: 7.days.ago,
           vbms_document_id: 6,
           category_procedural: true,
           tags: [
-            Generators::Tag.create(text: "New Tag1"),
+            Generators::Tag.create!(text: "New Tag1"),
             Generators::Tag.create(text: "New Tag2")
           ],
           description: Generators::Random.word_characters(50)
         ),
-        Generators::Document.create(
+        Generators::Document.create!(
           filename: "My Form 9",
           type: "Form 9",
           received_at: 5.days.ago,
@@ -554,27 +554,27 @@ RSpec.feature "Reader" do
     context "When there is an existing annotation" do
       let!(:annotations) do
         [
-          Generators::Annotation.create(
+          Generators::Annotation.create!(
             comment: "another comment",
             document_id: documents[0].id,
             y: 150
           ),
-          Generators::Annotation.create(
+          Generators::Annotation.create!(
             comment: "how's it going",
             document_id: documents[0].id,
             y: 200
           ),
-          Generators::Annotation.create(
+          Generators::Annotation.create!(
             comment: "my mother is a fish",
             document_id: documents[0].id,
             y: 250
           ),
-          Generators::Annotation.create(
+          Generators::Annotation.create!(
             comment: "baby metal 4 lyfe",
             document_id: documents[0].id,
             y: 300
           ),
-          Generators::Annotation.create(
+          Generators::Annotation.create!(
             comment: "hello world",
             document_id: documents[0].id,
             y: 750

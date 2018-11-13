@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.feature "Log in as User" do
   before do
-    User.create(station_id: "283", css_id: "ANNE MERICA")
+    User.create!(station_id: "283", css_id: "ANNE MERICA")
     User.authenticate!
   end
 

@@ -1661,7 +1661,7 @@ describe LegacyAppeal do
         appeals_hash[:worksheet_issues_attributes][0][:notes] = "Tomato"
         appeals_hash[:worksheet_issues_attributes][0][:id] = id
 
-        appeal.update(appeals_hash)
+        appeal.update!(appeals_hash)
 
         expect(appeal.worksheet_issues.count).to eq(1)
         issue = appeal.worksheet_issues.first
@@ -1675,7 +1675,7 @@ describe LegacyAppeal do
 
         # soft delete an issue
         appeals_hash[:worksheet_issues_attributes][0][:_destroy] = "1"
-        appeal.update(appeals_hash)
+        appeal.update!(appeals_hash)
         expect(appeal.worksheet_issues.count).to eq(0)
         expect(appeal.worksheet_issues.with_deleted.count).to eq(1)
         expect(appeal.worksheet_issues.with_deleted.first.deleted_at).to_not eq nil

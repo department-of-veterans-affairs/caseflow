@@ -9,14 +9,14 @@ module CaseReviewConcern
 
   def appeal
     @appeal ||= if legacy?
-                  LegacyAppeal.find_or_create_by(vacols_id: vacols_id)
+                  LegacyAppeal.find_or_create_by!(vacols_id: vacols_id)
                 else
                   Task.find(task_id).appeal
                 end
   end
 
   def update_task_and_issue_dispositions
-    task.update(status: :completed)
+    task.update!(status: :completed)
 
     if task.type == "AttorneyTask" && task.assigned_by_id != reviewing_judge_id
       task.parent.update(assigned_to_id: reviewing_judge_id)
@@ -33,7 +33,7 @@ module CaseReviewConcern
     # TODO: throw error if request issue is not found
     return unless request_issue
 
-    request_issue.update(disposition: issue_attrs["disposition"])
+    request_issue.update!(disposition: issue_attrs["disposition"])
     # If disposition was remanded and now is changed to another dispostion,
     # delete all remand reasons associated with the request issue
     update_remand_reasons(request_issue, issue_attrs["remand_reasons"] || [])

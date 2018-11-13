@@ -1,6 +1,6 @@
 class AdvanceOnDocketMotionsController < ApplicationController
   def create
-    appeal.claimants.first.person.advance_on_docket_motions.create(
+    appeal.claimants.first.person.advance_on_docket_motions.create!(
       reason: aod_params[:reason],
       granted: aod_params[:granted],
       user_id: current_user.id

@@ -10,7 +10,7 @@ describe AttorneyTask do
 
     it "should validate number of children" do
       expect(subject.valid?).to eq true
-      record = AttorneyTask.create(
+      record = AttorneyTask.create!(
         assigned_to: attorney,
         assigned_by: judge,
         appeal: create(:appeal),

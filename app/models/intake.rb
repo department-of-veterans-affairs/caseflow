@@ -103,7 +103,7 @@ class Intake < ApplicationRecord
         detail: find_or_build_initial_detail
       )
     else
-      update_attributes(
+      update_attributes!(
         started_at: Time.zone.now,
         completed_at: Time.zone.now,
         completion_status: :error

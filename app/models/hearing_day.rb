@@ -17,7 +17,7 @@ class HearingDay < ApplicationRecord
       hearing_date = hearing_date.is_a?(DateTime) ? hearing_date : Time.zone.parse(hearing_date).to_datetime
       if hearing_date > CASEFLOW_SCHEDULE_DATE
         hearing_hash = hearing_hash.merge(created_by: current_user_css_id, updated_by: current_user_css_id)
-        create(hearing_hash).to_hash
+        create!(hearing_hash).to_hash
       else
         HearingDayRepository.create_vacols_hearing!(hearing_hash)
       end

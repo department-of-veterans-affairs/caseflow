@@ -455,7 +455,7 @@ RSpec.feature "Checkout flows" do
     end
 
     before do
-      child_task.update(status: :completed)
+      child_task.update!(status: :completed)
       User.authenticate!(user: attorney_user)
     end
 

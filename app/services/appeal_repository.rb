@@ -70,7 +70,7 @@ class AppealRepository
         appeal.hearings = hearings[appeal.vacols_id] || []
         appeal.cavc_decisions = cavc_decisions[appeal.vacols_id] || []
         appeal.remand_return_date = (aod_and_rem_return[appeal.vacols_id].rem_return || false) unless appeal.active?
-        appeal.save
+        appeal.save!
         appeal
       end
     end
@@ -614,7 +614,7 @@ class AppealRepository
 
         # fetching Issue objects using the issue hash
         appeal.issues = assignment_issues_hash_array.map { |issue_hash| Issue.load_from_vacols(issue_hash) }
-        appeal.save
+        appeal.save!
         appeal
       end
     end

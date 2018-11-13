@@ -11,7 +11,7 @@ class ScheduleHearingTask < GenericTask
 
       task_payloads = params.delete(:business_payloads)
       child_task = super(params, current_user)
-      child_task.task_business_payloads.create(task_payloads) if task_payloads
+      child_task.task_business_payloads.create!(task_payloads) if task_payloads
 
       child_task
     end
@@ -42,7 +42,7 @@ class ScheduleHearingTask < GenericTask
       Time.zone.parse(hearing_date)
     end
     task_payloads[:values][:hearing_date] = new_date
-    task_business_payloads.update(task_payloads)
+    task_business_payloads.update!(task_payloads)
 
     super(params, current_user)
   end

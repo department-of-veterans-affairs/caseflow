@@ -6,9 +6,9 @@ RSpec.feature "Test Users for Demo" do
     ENV["DEPLOY_ENV"] = "development"
     BGSService.end_product_records = { default: BGSService.all_grants }
 
-    User.create(station_id: "283", css_id: User::FUNCTIONS.sample)
-    User.create(station_id: "ABC", css_id: User::FUNCTIONS.sample)
-    User.create(station_id: "283", css_id: "ANNE MERICA")
+    User.create!(station_id: "283", css_id: User::FUNCTIONS.sample)
+    User.create!(station_id: "ABC", css_id: User::FUNCTIONS.sample)
+    User.create!(station_id: "283", css_id: "ANNE MERICA")
     User.authenticate!
   end
 

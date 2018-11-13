@@ -16,7 +16,7 @@ class AnnotationController < ApplicationController
   end
 
   def destroy
-    Annotation.find(params.require(:id)).destroy
+    Annotation.find(params.require(:id)).destroy!
     render json: {}
   end
 

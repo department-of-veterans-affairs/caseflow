@@ -10,7 +10,7 @@ class Claimant < ApplicationRecord
       participant_id: participant_id,
       payee_code: payee_code
     )
-    Person.find_or_create_by(participant_id: participant_id).tap do |person|
+    Person.find_or_create_by!(participant_id: participant_id).tap do |person|
       person.update!(date_of_birth: BGSService.new.fetch_person_info(participant_id)[:birth_date])
     end
   end

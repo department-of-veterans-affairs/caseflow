@@ -49,7 +49,7 @@ class HearingRepository
     def hearings_for_appeals(vacols_ids)
       hearings = VACOLS::CaseHearing.for_appeals(vacols_ids)
 
-      hearings.update(hearings) { |_, case_hearings| hearings_for(case_hearings) }
+      hearings.update!(hearings) { |_, case_hearings| hearings_for(case_hearings) }
     end
 
     def update_vacols_hearing!(vacols_record, hearing_hash)

@@ -23,7 +23,7 @@ describe Document do
       let(:document) { Generators::Document.build(type: document_type) }
       it { is_expected.to be_truthy }
       it "persists in database" do
-        document.save
+        document.save!
         expect(Document.find_by(vbms_document_id: document.vbms_document_id).type).to eq(document_type)
       end
     end
@@ -45,7 +45,7 @@ describe Document do
     context "when received_at is nil" do
       it { is_expected.to be_nil }
       it "persists in database" do
-        document.save
+        document.save!
         expect(Document.find_by(vbms_document_id: document.vbms_document_id).received_at).to eq(nil)
       end
     end
@@ -54,7 +54,7 @@ describe Document do
       let(:received_at) { Time.zone.now }
       it { is_expected.to eq(Time.zone.today) }
       it "persists in database" do
-        document.save
+        document.save!
         expect(Document.find_by(vbms_document_id: document.vbms_document_id).received_at).to eq(Time.zone.today)
       end
     end
@@ -202,7 +202,7 @@ describe Document do
 
       it { is_expected.to have_attributes(type: "Form 9", alt_types: %w[NOD SOC]) }
       it "persists in database" do
-        document.save
+        document.save!
         expect(Document.find_by(vbms_document_id: document.vbms_document_id).file_number).to eq(case_file_number)
       end
     end
@@ -299,12 +299,12 @@ describe Document do
 
   context "versioning" do
     it "saves new version on update description" do
-      document.save
+      document.save!
       expect(document.versions.length).to eq 1
       expect(document.description).to eq("Document description")
 
       document.description = "Updated description"
-      document.save
+      document.save!
 
       expect(document.versions.length).to eq 2
       expect(document.reload.description).to eq("Updated description")

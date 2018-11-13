@@ -105,39 +105,39 @@ class Generators::Vacols::Case
       # Commit dependencies
       folder_attrs = attrs[:folder_attrs].nil? ? {} : attrs[:folder_attrs]
       folder_attrs[:ticknum] = custom_case_attrs[:bfkey]
-      Generators::Vacols::Folder.create(folder_attrs)
+      Generators::Vacols::Folder.create!(folder_attrs)
 
       representative_attrs = attrs[:representative_attrs].nil? ? {} : attrs[:representative_attrs]
       representative_attrs[:repkey] = custom_case_attrs[:bfkey]
-      Generators::Vacols::Representative.create(representative_attrs)
+      Generators::Vacols::Representative.create!(representative_attrs)
 
       correspondent_attrs = attrs[:correspondent_attrs].nil? ? {} : attrs[:correspondent_attrs]
       correspondent_attrs[:stafkey] = custom_case_attrs[:bfcorkey]
-      Generators::Vacols::Correspondent.create(correspondent_attrs)
+      Generators::Vacols::Correspondent.create!(correspondent_attrs)
 
       note_attrs = attrs[:note_attrs].nil? ? {} : attrs[:note_attrs]
       note_attrs[:tsktknm] = custom_case_attrs[:bfkey]
-      Generators::Vacols::Note.create(note_attrs)
+      Generators::Vacols::Note.create!(note_attrs)
 
       decass_attrs = attrs[:decass_attrs].nil? ? {} : attrs[:decass_attrs]
       decass_attrs[:defolder] = custom_case_attrs[:bfkey]
-      Generators::Vacols::Decass.create(decass_attrs)
+      Generators::Vacols::Decass.create!(decass_attrs)
 
       # One to many relationships
 
       # Default to two issues
       case_issue_attrs = attrs[:case_issue_attrs].nil? ? [{}, {}] : attrs[:case_issue_attrs]
       case_issue_attrs.each { |issue| issue[:isskey] = custom_case_attrs[:bfkey] }
-      Generators::Vacols::CaseIssue.create(case_issue_attrs)
+      Generators::Vacols::CaseIssue.create!(case_issue_attrs)
 
       # Default to zero hearings
       case_hearing_attrs = attrs[:case_hearing_attrs].nil? ? [] : attrs[:case_hearing_attrs]
       case_hearing_attrs.each { |hearing| hearing[:folder_nr] = custom_case_attrs[:bfkey] }
-      Generators::Vacols::CaseHearing.create(case_hearing_attrs)
+      Generators::Vacols::CaseHearing.create!(case_hearing_attrs)
 
       staff_attrs = attrs[:staff_attrs].nil? ? {} : attrs[:staff_attrs]
       staff_attrs[:slogid] = custom_case_attrs[:bfcurloc]
-      Generators::Vacols::Staff.create(staff_attrs)
+      Generators::Vacols::Staff.create!(staff_attrs)
 
       VACOLS::Case.create(custom_case_attrs)
     end

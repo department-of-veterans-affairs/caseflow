@@ -9,7 +9,7 @@ class HearingsController < ApplicationController
       HearingRepository.slot_new_hearing(params["hearing"]["master_record_updated"], hearing.appeal)
     end
 
-    hearing.update(update_params)
+    hearing.update!(update_params)
     render json: hearing.to_hash(current_user.id)
   end
 

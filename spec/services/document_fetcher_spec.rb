@@ -144,7 +144,7 @@ describe DocumentFetcher do
     context "when there are documents with same series_id" do
       let!(:saved_documents) do
         [
-          Generators::Document.create(type: "Form 9", series_id: series_id, category_procedural: true),
+          Generators::Document.create!(type: "Form 9", series_id: series_id, category_procedural: true),
           Generators::Document.create(type: "NOD", series_id: series_id, category_medical: true)
         ]
       end
@@ -167,7 +167,7 @@ describe DocumentFetcher do
         let(:tag) { "TEST_TAG" }
         let!(:existing_annotations) do
           [
-            Generators::Annotation.create(
+            Generators::Annotation.create!(
               comment: older_comment,
               x: 1,
               y: 2,
@@ -183,12 +183,12 @@ describe DocumentFetcher do
         end
         let!(:document_tag) do
           [
-            DocumentsTag.create(
-              tag_id: Generators::Tag.create(text: "NOT USED TAG").id,
+            DocumentsTag.create!(
+              tag_id: Generators::Tag.create!(text: "NOT USED TAG").id,
               document_id: saved_documents[0].id
             ),
             DocumentsTag.create(
-              tag_id: Generators::Tag.create(text: tag).id,
+              tag_id: Generators::Tag.create!(text: tag).id,
               document_id: saved_documents[1].id
             )
           ]

@@ -11,7 +11,7 @@ class TagController < ApplicationController
 
     tags_request = tag_params[:tags]
     tags_request.each do |tag|
-      new_tag = Tag.find_or_create_by(tag)
+      new_tag = Tag.find_or_create_by!(tag)
       begin
         document.tags << new_tag
       rescue ActiveRecord::RecordNotUnique

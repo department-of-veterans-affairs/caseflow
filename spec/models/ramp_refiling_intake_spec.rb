@@ -30,7 +30,7 @@ describe RampRefilingIntake do
                 receipt_date: 3.days.ago,
                 established_at: Time.zone.now)
 
-    EndProductEstablishment.create(
+    EndProductEstablishment.create!(
       source: re,
       established_at: Time.zone.now,
       veteran_file_number: veteran_file_number,
@@ -51,7 +51,7 @@ describe RampRefilingIntake do
       veteran_file_number: veteran_file_number,
       bgs_attrs: { status_type_code: "CLR" }
     )
-    EndProductEstablishment.create(
+    EndProductEstablishment.create!(
       source: re,
       established_at: Time.zone.now,
       veteran_file_number: veteran_file_number,

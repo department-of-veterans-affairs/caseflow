@@ -61,31 +61,31 @@ describe AppealHistory do
     subject { history.appeal_series }
 
     it "uses existing appeal series when possible" do
-      original.save
+      original.save!
       expect(original.appeal_series).to be_nil
       expect(subject.length).to eq 1
       expect(original.reload.appeal_series).to eq subject.first
-      original.appeal_series.update(incomplete: true)
+      original.appeal_series.update!(incomplete: true)
       history = AppealHistory.new(vbms_id: vbms_id)
       history.appeal_series
       expect(original.reload.appeal_series.incomplete).to be true
     end
 
     it "regenerates appeal series if a new appeal has been added" do
-      original.save
+      original.save!
       expect(subject.length).to eq 1
-      original.reload.appeal_series.update(incomplete: true)
-      another_original.save
+      original.reload.appeal_series.update!(incomplete: true)
+      another_original.save!
       history = AppealHistory.new(vbms_id: vbms_id)
       expect(history.appeal_series.length).to eq 2
       expect(original.reload.appeal_series.incomplete).to be false
     end
 
     it "regenerates appeal series if an appeal has been merged" do
-      original.save
-      merged.save
+      original.save!
+      merged.save!
       expect(subject.length).to eq 2
-      original.reload.appeal_series.update(merged_appeal_count: 0, incomplete: true)
+      original.reload.appeal_series.update!(merged_appeal_count: 0, incomplete: true)
       history = AppealHistory.new(vbms_id: vbms_id)
       expect(history.appeal_series.length).to eq 2
       expect(original.reload.appeal_series.incomplete).to be false
@@ -107,8 +107,8 @@ describe AppealHistory do
         let(:vacols_id) { "1234567B" }
 
         it "creates a single, joined appeal series" do
-          original.save
-          post_remand.save
+          original.save!
+          post_remand.save!
           expect(subject.length).to eq 1
           expect(original.reload.appeal_series).to eq post_remand.reload.appeal_series
         end
@@ -118,8 +118,8 @@ describe AppealHistory do
         let(:vacols_id) { "7654321B" }
 
         it "marks the appeal series as incomplete" do
-          original.save
-          post_remand.save
+          original.save!
+          post_remand.save!
           expect(subject.length).to eq 2
           expect(post_remand.reload.appeal_series.incomplete).to be true
         end
@@ -141,8 +141,8 @@ describe AppealHistory do
         let(:prior_decision_date) { 365.days.ago.to_date }
 
         it "creates a single, joined appeal series" do
-          original.save
-          post_remand.save
+          original.save!
+          post_remand.save!
           expect(subject.length).to eq 1
           expect(original.reload.appeal_series).to eq post_remand.reload.appeal_series
         end
@@ -152,8 +152,8 @@ describe AppealHistory do
         let(:prior_decision_date) { 364.days.ago.to_date }
 
         it "marks the appeal series as incomplete" do
-          original.save
-          post_remand.save
+          original.save!
+          post_remand.save!
           expect(subject.length).to eq 2
           expect(post_remand.reload.appeal_series.incomplete).to be true
         end
@@ -181,9 +181,9 @@ describe AppealHistory do
         end
 
         it "creates a single, joined appeal series" do
-          original.save
-          another_original.save
-          post_remand.save
+          original.save!
+          another_original.save!
+          post_remand.save!
           expect(subject.length).to eq 2
           expect(original.reload.appeal_series).to eq post_remand.reload.appeal_series
         end
@@ -197,9 +197,9 @@ describe AppealHistory do
         end
 
         it "marks the appeal series as incomplete" do
-          original.save
-          another_original.save
-          post_remand.save
+          original.save!
+          another_original.save!
+          post_remand.save!
           expect(subject.length).to eq 3
           expect(post_remand.reload.appeal_series.incomplete).to be true
         end
@@ -213,9 +213,9 @@ describe AppealHistory do
         end
 
         it "marks the appeal series as incomplete" do
-          original.save
-          another_original.save
-          post_remand.save
+          original.save!
+          another_original.save!
+          post_remand.save!
           expect(subject.length).to eq 3
           expect(post_remand.reload.appeal_series.incomplete).to be true
         end
@@ -244,9 +244,9 @@ describe AppealHistory do
         let(:description_2) { "" }
 
         it "merges the series" do
-          merged.save
-          another_merged.save
-          merge_target.save
+          merged.save!
+          another_merged.save!
+          merge_target.save!
           expect(subject.length).to eq 2
           expect(merged.reload.appeal_series).to eq merge_target.reload.appeal_series
           expect(merged.appeal_series.merged_appeal_count).to eq 2
@@ -263,9 +263,9 @@ describe AppealHistory do
         let(:description_2) { "" }
 
         it "does not merge the series" do
-          merged.save
-          another_merged.save
-          merge_target.save
+          merged.save!
+          another_merged.save!
+          merge_target.save!
           expect(subject.length).to eq 3
           expect(merged.reload.appeal_series.merged_appeal_count).to eq 2
         end
@@ -283,9 +283,9 @@ describe AppealHistory do
         end
 
         it "merges the series" do
-          merged.save
-          another_merged.save
-          merge_target.save
+          merged.save!
+          another_merged.save!
+          merge_target.save!
           expect(subject.length).to eq 2
           expect(merged.reload.appeal_series).to eq merge_target.reload.appeal_series
           expect(merged.appeal_series.merged_appeal_count).to eq 2

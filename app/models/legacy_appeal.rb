@@ -754,7 +754,7 @@ class LegacyAppeal < ApplicationRecord
 
       fail ActiveRecord::RecordNotFound unless appeal.check_and_load_vacols_data!
 
-      appeal.save
+      appeal.save!
       appeal
     end
 

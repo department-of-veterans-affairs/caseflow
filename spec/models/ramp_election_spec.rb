@@ -209,7 +209,7 @@ describe RampElection do
 
     context "when election has an issue attached to a ramp refiling" do
       let!(:ramp_refiling) do
-        RampRefiling.create(
+        RampRefiling.create!(
           veteran_file_number: veteran_file_number,
           receipt_date: receipt_date,
           option_selected: option_selected,

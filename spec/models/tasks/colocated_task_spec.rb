@@ -153,14 +153,14 @@ describe ColocatedTask do
 
     context "when status is updated to on-hold" do
       it "should validate on-hold duration" do
-        colocated_admin_action.update(status: Constants.TASK_STATUSES.on_hold)
+        colocated_admin_action.update!(status: Constants.TASK_STATUSES.on_hold)
         expect(colocated_admin_action.valid?).to eq false
         expect(colocated_admin_action.errors.messages[:on_hold_duration]).to eq ["has to be specified"]
 
-        colocated_admin_action.update(status: Constants.TASK_STATUSES.in_progress)
+        colocated_admin_action.update!(status: Constants.TASK_STATUSES.in_progress)
         expect(colocated_admin_action.valid?).to eq true
 
-        colocated_admin_action.update(status: Constants.TASK_STATUSES.on_hold, on_hold_duration: 60)
+        colocated_admin_action.update!(status: Constants.TASK_STATUSES.on_hold, on_hold_duration: 60)
         expect(colocated_admin_action.valid?).to eq true
       end
     end
@@ -240,31 +240,31 @@ describe ColocatedTask do
       it "should reset timestamps only if status has changed" do
         time1 = Time.utc(2015, 1, 1, 12, 0, 0)
         Timecop.freeze(time1)
-        colocated_admin_action.update(status: "in_progress")
+        colocated_admin_action.update!(status: "in_progress")
         expect(colocated_admin_action.reload.started_at).to eq time1
 
         time2 = Time.utc(2015, 1, 3, 12, 0, 0)
         Timecop.freeze(time2)
-        colocated_admin_action.update(status: "in_progress")
+        colocated_admin_action.update!(status: "in_progress")
         # time should not change
         expect(colocated_admin_action.reload.started_at).to eq time1
 
         time3 = Time.utc(2015, 1, 5, 12, 0, 0)
         Timecop.freeze(time3)
-        colocated_admin_action.update(status: "on_hold", on_hold_duration: 30)
+        colocated_admin_action.update!(status: "on_hold", on_hold_duration: 30)
         expect(colocated_admin_action.reload.started_at).to eq time1
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
 
         time4 = Time.utc(2015, 1, 6, 12, 0, 0)
         Timecop.freeze(time4)
-        colocated_admin_action.update(status: "on_hold", on_hold_duration: 30)
+        colocated_admin_action.update!(status: "on_hold", on_hold_duration: 30)
         # neither dates should change
         expect(colocated_admin_action.reload.started_at).to eq time1
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
 
         time5 = Time.utc(2015, 1, 7, 12, 0, 0)
         Timecop.freeze(time5)
-        colocated_admin_action.update(status: "in_progress")
+        colocated_admin_action.update!(status: "in_progress")
         # go back to in-progres - should reset date
         expect(colocated_admin_action.reload.started_at).to eq time5
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
@@ -279,7 +279,7 @@ describe ColocatedTask do
 
         time7 = Time.utc(2015, 1, 9, 12, 0, 0)
         Timecop.freeze(time7)
-        colocated_admin_action.update(status: "assigned")
+        colocated_admin_action.update!(status: "assigned")
         # go back to in-progres - should reset date
         expect(colocated_admin_action.reload.started_at).to eq time5
         expect(colocated_admin_action.placed_on_hold_at).to eq time3

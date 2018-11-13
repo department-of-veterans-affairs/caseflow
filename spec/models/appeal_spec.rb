@@ -81,7 +81,7 @@ describe Appeal do
       end
 
       it "finds the appeal" do
-        legacy_appeal.save
+        legacy_appeal.save!
         expect(Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(legacy_appeal.vacols_id)).to \
           eq(legacy_appeal)
       end

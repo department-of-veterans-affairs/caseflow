@@ -33,7 +33,7 @@ describe Certification do
       end
 
       it "does not update certification fields" do
-        certification.update(already_certified: true, certification_date: 2.days.ago)
+        certification.update!(already_certified: true, certification_date: 2.days.ago)
         date = certification.certification_date
         subject
         expect(certification.reload.certification_date).to eq date
@@ -369,11 +369,11 @@ describe Certification do
     subject { Certification.v2 }
 
     before do
-      Certification.create(v2: true)
-      Certification.create(bgs_representative_type: "Attorney")
-      Certification.create(bgs_representative_name: "Sir Alex F")
-      Certification.create(vacols_representative_type: "Attorney")
-      Certification.create(vacols_representative_name: "Jose Mou")
+      Certification.create!(v2: true)
+      Certification.create!(bgs_representative_type: "Attorney")
+      Certification.create!(bgs_representative_name: "Sir Alex F")
+      Certification.create!(vacols_representative_type: "Attorney")
+      Certification.create!(vacols_representative_name: "Jose Mou")
       Certification.create
     end
 

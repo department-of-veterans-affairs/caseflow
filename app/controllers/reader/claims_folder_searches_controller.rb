@@ -1,6 +1,6 @@
 class Reader::ClaimsFolderSearchesController < Reader::ApplicationController
   def create
-    ClaimsFolderSearch.create(
+    ClaimsFolderSearch.create!(
       user: current_user,
       appeal: appeal,
       query: params[:query]

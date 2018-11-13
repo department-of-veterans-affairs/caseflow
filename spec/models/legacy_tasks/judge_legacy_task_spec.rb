@@ -6,7 +6,7 @@ describe JudgeLegacyTask do
     subject do
       JudgeLegacyTask.from_vacols(
         case_assignment,
-        LegacyAppeal.create(vacols_id: "1111"),
+        LegacyAppeal.create!(vacols_id: "1111"),
         User.new(css_id: "USER_ID")
       )
     end
