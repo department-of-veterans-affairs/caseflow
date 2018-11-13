@@ -439,7 +439,7 @@ const distributionError = (dispatch, userId, error) => {
   dispatch(showErrorMessage(firstError));
 
   if (firstError.error === "unassigned_cases") {
-    dispatch(setPendingDistribution({ "status": "complete" }));
+    dispatch(setPendingDistribution({ "status": "completed" }));
     refreshLegacyTasks(dispatch, userId).then(() => dispatch(setPendingDistribution(null)));
   } else {
     dispatch(setPendingDistribution(null));
@@ -451,7 +451,7 @@ const receiveDistribution = (dispatch, userId, response) => {
 
   dispatch(setPendingDistribution(distribution));
 
-  if (distribution.status == "complete") {
+  if (distribution.status == "completed") {
     const caseN = distribution.distributed_cases_count;
 
     dispatch(showSuccessMessage({
