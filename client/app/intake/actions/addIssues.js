@@ -53,6 +53,7 @@ export const addRatingRequestIssue = (args) => (dispatch) => {
       titleOfActiveReview: currentIssue.title_of_active_review,
       timely: currentIssue.timely,
       sourceHigherLevelReview: currentIssue.source_higher_level_review,
+      rampClaimId: currentIssue.ramp_claim_id,
       promulgationDate: currentIssue.promulgation_date,
       profileDate: currentIssue.profile_date,
       notes: args.notes,
@@ -62,14 +63,17 @@ export const addRatingRequestIssue = (args) => (dispatch) => {
   });
 };
 
-export const addNonratingRequestIssue = (category, description, decisionDate, isRating = false) => (dispatch) => {
+export const addNonratingRequestIssue = (args) => (dispatch) => {
   dispatch({
     type: ACTIONS.ADD_ISSUE,
     payload: {
-      category,
-      description,
-      decisionDate,
-      isRating
+      category: args.category,
+      description: args.description,
+      decisionDate: args.decisionDate,
+      timely: args.timely,
+      untimelyExemption: args.untimelyExemption,
+      untimelyExemptionNotes: args.untimelyExemptionNotes,
+      isRating: false
     }
   });
 };
