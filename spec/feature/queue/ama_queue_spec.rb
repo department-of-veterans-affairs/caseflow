@@ -227,7 +227,6 @@ RSpec.feature "AmaQueue" do
         find("div", class: "Select-option", text: other_user.full_name).click
 
         expect(page).to have_content(existing_instruction)
-        binding.pry
         click_on "Submit"
 
         expect(page).to have_content("Task assigned to #{other_user_name}")
@@ -240,10 +239,11 @@ RSpec.feature "AmaQueue" do
 
 
         find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: "Assign to person").click
+        find("div", class: "Select-option", text: "Re-assign to person").click
 
         find(".Select-control", text: "Select a user").click
         find("div", class: "Select-option", text: user.full_name).click
+        binding.pry
 
         expect(page).to have_content(existing_instruction)
         click_on "Submit"
