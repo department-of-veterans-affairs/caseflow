@@ -176,6 +176,7 @@ export class AddIssuesPage extends React.Component {
       }
       { intakeData.nonRatingRequestIssueModalVisible && <NonratingRequestIssueModal
         intakeData={intakeData}
+        formType={formType}
         closeHandler={this.props.toggleNonratingRequestIssueModal} />
       }
       { intakeData.unidentifiedIssuesModalVisible && <UnidentifiedIssuesModal

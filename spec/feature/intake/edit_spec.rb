@@ -1,6 +1,9 @@
 require "rails_helper"
+require "support/intake_helpers"
 
 RSpec.feature "Edit issues" do
+  include IntakeHelpers
+
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
@@ -279,7 +282,7 @@ RSpec.feature "Edit issues" do
       end
     end
 
-    context "when there is a non-rating end product" do
+    context "when there is a nonrating end product" do
       let!(:nonrating_request_issue) do
         RequestIssue.create!(
           review_request: higher_level_review,
@@ -336,13 +339,14 @@ RSpec.feature "Edit issues" do
     end
 
     context "when there is a rating end product" do
+      let(:contention_ref_id) { "123" }
       let!(:request_issue) do
         RequestIssue.create!(
           rating_issue_reference_id: "def456",
           rating_issue_profile_date: rating.profile_date,
           review_request: higher_level_review,
           description: "PTSD denied",
-          contention_reference_id: "123"
+          contention_reference_id: contention_ref_id
         )
       end
 
@@ -389,6 +393,7 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content("2. Left knee granted")
         expect(page).to_not have_content("Notes:")
 
+        # remove existing issue
         page.all(".remove-issue")[0].click
         safe_click ".remove-issue"
         expect(page).not_to have_content("PTSD denied")
@@ -423,6 +428,22 @@ RSpec.feature "Edit issues" do
         safe_click ".add-issue"
         expect(page).to have_content("3 issues")
 
+        # Add untimely nonrating issue
+        safe_click "#button-add-issue"
+        safe_click ".no-matching-issues"
+        expect(page).to have_content("Does issue 4 match any of these issue categories?")
+        expect(page).to have_button("Add this issue", disabled: true)
+        fill_in "Issue category", with: "Active Duty Adjustments"
+        find("#issue-category").send_keys :enter
+        fill_in "Issue description", with: "Another Description for Active Duty Adjustments"
+        fill_in "Decision date", with: "04/25/2016"
+        expect(page).to have_button("Add this issue", disabled: false)
+        safe_click ".add-issue"
+        add_untimely_exemption_response("No", "I am a nonrating exemption note")
+        expect(page).to have_content("4 issues")
+        expect(page).to have_content("I am a nonrating exemption note")
+        expect(page).to have_content("Another Description for Active Duty Adjustments")
+
         # add unidentified issue
         safe_click "#button-add-issue"
         safe_click ".no-matching-issues"
@@ -430,7 +451,7 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content("Describe the issue to mark it as needing further review.")
         fill_in "Transcribe the issue as it's written on the form", with: "This is an unidentified issue"
         safe_click ".add-issue"
-        expect(page).to have_content("4 issues")
+        expect(page).to have_content("5 issues")
         expect(page).to have_content("This is an unidentified issue")
 
         # add issue before AMA
@@ -452,18 +473,31 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content("You still have an \"Unidentified\" issue")
         safe_click "#Unidentified-issue-button-id-1"
 
-        expect(page).to have_content("The review originally had 1 issue but now has 6.")
+        expect(page).to have_content("The review originally had 1 issue but now has 7.")
+
         safe_click "#Number-of-issues-has-changed-button-id-1"
 
         expect(page).to have_content("Edit Confirmed")
 
         # assert server has updated data for nonrating and unidentified issues
-        expect(RequestIssue.find_by(
-                 review_request: higher_level_review,
-                 issue_category: "Active Duty Adjustments",
-                 decision_date: 1.month.ago,
-                 description: "Description for Active Duty Adjustments"
-        )).to_not be_nil
+        active_duty_adjustments_request_issue = RequestIssue.find_by!(
+          review_request: higher_level_review,
+          issue_category: "Active Duty Adjustments",
+          decision_date: 1.month.ago,
+          description: "Description for Active Duty Adjustments"
+        )
+
+        expect(active_duty_adjustments_request_issue.untimely?).to eq(false)
+
+        another_active_duty_adjustments_request_issue = RequestIssue.find_by!(
+          review_request: higher_level_review,
+          issue_category: "Active Duty Adjustments",
+          description: "Another Description for Active Duty Adjustments"
+        )
+
+        expect(another_active_duty_adjustments_request_issue.untimely?).to eq(true)
+        expect(another_active_duty_adjustments_request_issue.untimely_exemption?).to eq(false)
+        expect(another_active_duty_adjustments_request_issue.untimely_exemption_notes).to_not be_nil
 
         expect(RequestIssue.find_by(
                  review_request: higher_level_review,
@@ -484,6 +518,11 @@ RSpec.feature "Edit issues" do
           source: higher_level_review,
           code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
         )
+
+        # expect the remove/re-add to create a new RequestIssue for same RatingIssue
+        expect(higher_level_review.request_issues).to_not include(request_issue)
+        new_version_of_request_issue = higher_level_review.find_request_issue_by_description(request_issue.description)
+        expect(new_version_of_request_issue.rating_issue_reference_id).to eq(request_issue.rating_issue_reference_id)
 
         # expect contentions to reflect issue update
         expect(Fakes::VBMSService).to have_received(:remove_contention!).once
