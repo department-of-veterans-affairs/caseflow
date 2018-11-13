@@ -430,6 +430,9 @@ RSpec.feature "Case details" do
       let(:user) { FactoryBot.create(:user) }
 
       before do
+        # Marking this task complete creates a BvaDispatchTask. Make sure there are members of that organization so
+        # that the creation of that BvaDispatchTask succeeds.
+        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
         OrganizationsUser.add_user_to_organization(user, qr)
         User.authenticate!(user: user)
       end
