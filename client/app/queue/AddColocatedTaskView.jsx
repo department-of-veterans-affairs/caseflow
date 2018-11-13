@@ -12,7 +12,8 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import Alert from '../components/Alert';
 
 import { requestSave } from './uiReducer/uiActions';
-import { setTaskAttrs, setAppealAttrs } from './QueueActions';
+import { onReceiveAmaTasks, setAppealAttrs } from './QueueActions';
+import { prepareTasksForStore } from './utils';
 
 import {
   appealWithDetailSelector,
@@ -48,7 +49,7 @@ type Props = Params & {|
   task: Task,
   // dispatch
   requestSave: typeof requestSave,
-  setTaskAttrs: typeof setTaskAttrs,
+  onReceiveAmaTasks: typeof onReceiveAmaTasks,
   setAppealAttrs: typeof setAppealAttrs
 |};
 
@@ -88,11 +89,14 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
     };
 
     this.props.requestSave('/tasks', payload, successMsg).
-      then(() => {
+      then((resp) => {
         if (task.isLegacy) {
           this.props.setAppealAttrs(task.externalAppealId, { location: 'CASEFLOW' });
         } else {
-          this.props.setTaskAttrs(task.uniqueId, { status: 'on_hold' });
+          const response = JSON.parse(resp.text);
+          const preparedTasks = prepareTasksForStore(response.tasks.data);
+
+          this.props.onReceiveAmaTasks(preparedTasks);
         }
       });
   }
@@ -141,7 +145,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
-  setTaskAttrs,
+  onReceiveAmaTasks,
   setAppealAttrs
 }, dispatch);
 
