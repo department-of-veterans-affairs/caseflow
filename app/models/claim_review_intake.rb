@@ -50,7 +50,7 @@ class ClaimReviewIntake < DecisionReviewIntake
       detail.errors.add(:payee_code, "blank")
       return false
     end
-    return true
+    true
   end
 
   # :nocov:

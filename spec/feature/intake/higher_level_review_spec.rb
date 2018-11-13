@@ -455,7 +455,7 @@ RSpec.feature "Higher-Level Review" do
   end
 
   it "Requires Payee Code for compensation and pension benefit types and non-Veteran claimant" do
-    intake = HigherLevelReviewIntake.new(veteran_file_number: "22334455", user: current_user)
+    intake = HigherLevelReviewIntake.new(veteran_file_number: veteran.file_number, user: current_user)
     intake.start!
     visit "/intake"
 
@@ -487,8 +487,21 @@ RSpec.feature "Higher-Level Review" do
 
     safe_click "#button-submit-review"
 
-    expect(page).to have_content("Please select an option")
+    expect(page).to have_content("Please select an option.")
 
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Pension", match: :prefer_exact).click
+    end
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_content("Please select an option.")
+
+    fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
+    find("#cf-payee-code").send_keys :enter
+
+    safe_click "#button-submit-review"
+    expect(page).to have_current_path("/intake/finish")
   end
 
   it "Shows a review error when something goes wrong" do
