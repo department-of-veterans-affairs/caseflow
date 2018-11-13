@@ -168,6 +168,20 @@ export default class DailyDocket extends React.Component {
     }));
   };
 
+ getHearingDateOptions = (hearing) => {
+   const hearings = [{ label: this.getHearingDate(hearing.date),
+     value: hearing.id }];
+
+   const hearingDayoptions = _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
+     label: this.getHearingDate(hearingDayOption.hearingDate),
+     value: hearingDayOption.id
+   }));
+
+   if (this.props.hearingDayOptions) {
+     return hearings.concat(hearingDayoptions);
+   }
+ };
+
   getHearingLocationDropdown = (hearing) => {
     return <SearchableDropdown
       name="Hearing Location"
@@ -209,8 +223,8 @@ export default class DailyDocket extends React.Component {
 
     return <div><SearchableDropdown
       name="Hearing Day"
-      options={this.getHearingDateOptions()}
-      value={hearing.editedDate ? hearing.editedDate : this.getHearingDate(hearing.date)}
+      options={this.getHearingDateOptions(hearing)}
+      value={hearing.editedDate ? hearing.editedDate : hearing.id}
       onChange={this.onHearingDateUpdate(hearing.id)}
       readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
     />

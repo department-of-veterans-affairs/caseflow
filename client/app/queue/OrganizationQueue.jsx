@@ -39,7 +39,7 @@ class OrganizationQueue extends React.PureComponent {
       },
       {
         label: sprintf(
-          COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TAB_TITLE, this.props.assignedTasks.length),
+          COPY.QUEUE_PAGE_ASSIGNED_TAB_TITLE, this.props.assignedTasks.length),
         page: <TaskTableTab
           description={
             sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION,
@@ -48,10 +48,10 @@ class OrganizationQueue extends React.PureComponent {
         />
       },
       {
-        label: COPY.ORGANIZATIONAL_QUEUE_PAGE_COMPLETE_TAB_TITLE,
+        label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
         page: <TaskTableTab
           description={
-            sprintf(COPY.COLOCATED_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION,
+            sprintf(COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION,
               this.props.organizationName)}
           tasks={this.props.completedTasks}
         />

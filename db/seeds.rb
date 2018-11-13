@@ -57,6 +57,7 @@ class SeedDB
   def create_colocated_user
     user = User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located with cases")
     FactoryBot.create(:staff, :colocated_role, user: user, sdept: "DSP")
+    OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
   end
 
   def create_vso_user
@@ -66,8 +67,7 @@ class SeedDB
       full_name: "VSO user associated with PVA",
       roles: %w[VSO]
     )
-    FactoryBot.create(:staff, user: u, sdept: "PVA")
-    FeatureToggle.enable!(:vso_queue, users: [u.css_id])
+    OrganizationsUser.add_user_to_organization(u, Organization.find_by(name: "Paralyzed Veterans Of America"))
   end
 
   def create_org_queue_user
