@@ -5,8 +5,8 @@ class HearingsController < ApplicationController
   before_action :verify_access_to_hearing_prep_or_schedule, only: [:update]
 
   def update
-    if params["hearing"]["date"]
-      HearingRepository.slot_new_hearing(params["hearing"]["date"], hearing.appeal)
+    if params["hearing"]["master_record_updated"]
+      HearingRepository.slot_new_hearing(params["hearing"]["master_record_updated"], hearing.appeal)
     end
 
     hearing.update(update_params)
@@ -58,6 +58,7 @@ class HearingsController < ApplicationController
                                      :aod,
                                      :transcript_requested,
                                      :add_on,
-                                     :prepped)
+                                     :prepped,
+                                     :date)
   end
 end

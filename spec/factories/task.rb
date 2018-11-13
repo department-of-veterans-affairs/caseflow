@@ -28,7 +28,6 @@ FactoryBot.define do
 
     factory :root_task do
       type RootTask.name
-      appeal_type Appeal.name
       appeal { create(:appeal) }
       assigned_by { nil }
       assigned_to { Bva.singleton }
@@ -92,6 +91,13 @@ FactoryBot.define do
 
     factory :quality_review_task do
       type QualityReviewTask.name
+      appeal_type Appeal.name
+      appeal { create(:appeal) }
+      assigned_by nil
+    end
+
+    factory :informal_hearing_presentation_task do
+      type InformalHearingPresentationTask.name
       appeal_type Appeal.name
       appeal { create(:appeal) }
       assigned_by nil
