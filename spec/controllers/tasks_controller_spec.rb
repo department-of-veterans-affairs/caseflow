@@ -408,9 +408,6 @@ RSpec.describe TasksController, type: :controller do
           let!(:hearings_org) do
             create(:hearings_management)
           end
-          let!(:staff_mapping) do
-            create(:hearings_staff, organization_id: hearings_org.id)
-          end
           let(:params) do
             [{
               "type": ScheduleHearingTask.name,
