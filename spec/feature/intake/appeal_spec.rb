@@ -585,7 +585,21 @@ RSpec.feature "Appeal Intake" do
 
   context "with active legacy appeal" do
     before do
-      create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{veteran.file_number}S"))
+      # create two legacy appeals with 2 issues each
+      create(:legacy_appeal, vacols_case:
+        create(:case, bfkey: "vacols1", bfcorlid: "#{veteran.file_number}S"), date: 3.days.ago)
+      create(:legacy_appeal, vacols_case:
+        create(:case, bfkey: "vacols2", bfcorlid: "#{veteran.file_number}S"), date: 4.days.ago)
+      allow(AppealRepository).to receive(:issues).with("vacols1")
+        .and_return([
+                      Generators::Issue.build(vacols_sequence_id: 1),
+                      Generators::Issue.build(vacols_sequence_id: 2)
+                    ])
+      allow(AppealRepository).to receive(:issues).with("vacols2")
+        .and_return([
+                      Generators::Issue.build(vacols_sequence_id: 3),
+                      Generators::Issue.build(vacols_sequence_id: 4)
+                    ])
     end
 
     scenario "adding issues" do
@@ -594,7 +608,15 @@ RSpec.feature "Appeal Intake" do
       visit "/intake/add_issues"
 
       click_intake_add_issue
+
       expect(page).to have_content("Next")
+      add_intake_rating_issue("Left knee granted")
+
+      # expect legacy opt in modal
+      expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+      add_intake_rating_issue("None of these match")
+
+      expect(page).to have_content("Left knee granted")
     end
   end
 end

@@ -20,6 +20,18 @@ export const commonReducers = (state, action) => {
     });
   };
 
+  actionsMap[ACTIONS.TOGGLE_LEGACY_OPT_IN_MODAL] = () => {
+    return update(state, {
+      $toggle: ['legacyOptInModalVisible'],
+      addIssuesModalVisible: {
+        $set: false
+      },
+      currentIssueAndNotes: {
+        $set: action.payload.currentIssueAndNotes
+      }
+    });
+  };
+
   actionsMap[ACTIONS.TOGGLE_ISSUE_REMOVE_MODAL] = () => {
     return update(state, {
       $toggle: ['removeIssueModalVisible']
