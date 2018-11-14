@@ -2,7 +2,8 @@
 // @flow
 import { associateTasksWithAppeals,
   prepareAllTasksForStore,
-  extractAppealsAndAmaTasks } from './utils';
+  extractAppealsAndAmaTasks,
+  prepareTasksForStore } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage, showErrorMessage, showSuccessMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
@@ -49,11 +50,10 @@ export const onReceiveTasks = (
   }
 });
 
-export const setTaskAttrs = (uniqueId: string, attributes: Object) => ({
-  type: ACTIONS.SET_TASK_ATTRS,
+export const onReceiveAmaTasks = (amaTasks: Array<Object>) => ({
+  type: ACTIONS.RECEIVE_AMA_TASKS,
   payload: {
-    uniqueId,
-    attributes
+    amaTasks: prepareTasksForStore(amaTasks)
   }
 });
 
@@ -319,7 +319,7 @@ export const initialAssignTasksToUser = ({
   let params, url;
 
   if (oldTask.appealType === 'Appeal') {
-    url = '/tasks';
+    url = '/tasks?role=Judge';
     params = {
       data: {
         tasks: [{
@@ -346,20 +346,22 @@ export const initialAssignTasksToUser = ({
   return ApiUtil.post(url, params).
     then((resp) => resp.body).
     then((resp) => {
-      const task = resp.tasks ? resp.tasks.data[0] : resp.task.data;
+      if (oldTask.appealType === 'Appeal') {
+        const amaTasks = resp.tasks.data;
 
-      const allTasks = prepareAllTasksForStore([task]);
-
-      dispatch(onReceiveTasks({
-        tasks: allTasks.tasks,
-        amaTasks: allTasks.amaTasks
-      }));
-      if (!oldTask.isLegacy) {
-        dispatch(setTaskAttrs(
-          oldTask.uniqueId,
-          { status: 'on_hold' }
+        dispatch(onReceiveAmaTasks(
+          amaTasks
         ));
+      } else {
+        const task = resp.task.data;
+        const allTasks = prepareAllTasksForStore([task]);
+
+        dispatch(onReceiveTasks({
+          tasks: allTasks.tasks,
+          amaTasks: allTasks.amaTasks
+        }));
       }
+
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
         taskId: oldTask.uniqueId,
@@ -376,7 +378,7 @@ export const reassignTasksToUser = ({
   let params, url;
 
   if (oldTask.appealType === 'Appeal') {
-    url = `/tasks/${oldTask.taskId}`;
+    url = `/tasks/${oldTask.taskId}?role=Judge`;
     params = {
       data: {
         task: {
@@ -401,14 +403,22 @@ export const reassignTasksToUser = ({
   return ApiUtil.patch(url, params).
     then((resp) => resp.body).
     then((resp) => {
-      const task = resp.tasks ? resp.tasks.data[0] : resp.task.data;
+      if (oldTask.appealType === 'Appeal') {
+        const amaTasks = resp.tasks.data;
 
-      const allTasks = prepareAllTasksForStore([task]);
+        dispatch(onReceiveAmaTasks(
+          amaTasks
+        ));
+      } else {
+        const task = resp.task.data;
+        const allTasks = prepareAllTasksForStore([task]);
 
-      dispatch(onReceiveTasks({
-        tasks: allTasks.tasks,
-        amaTasks: allTasks.amaTasks
-      }));
+        dispatch(onReceiveTasks({
+          tasks: allTasks.tasks,
+          amaTasks: allTasks.amaTasks
+        }));
+      }
+
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
         taskId: oldTask.uniqueId,
