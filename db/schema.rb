@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181113205510) do
+ActiveRecord::Schema.define(version: 20181114142531) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -537,6 +537,7 @@ ActiveRecord::Schema.define(version: 20181113205510) do
   create_table "organizations_users", force: :cascade do |t|
     t.integer "organization_id"
     t.integer "user_id"
+    t.boolean "admin", default: false
     t.index ["organization_id"], name: "index_organizations_users_on_organization_id"
     t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
   end
@@ -650,9 +651,9 @@ ActiveRecord::Schema.define(version: 20181113205510) do
     t.integer "parent_request_issue_id"
     t.text "notes"
     t.boolean "is_unidentified"
+    t.bigint "ineligible_due_to_id"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
-    t.bigint "ineligible_due_to_id"
     t.string "ramp_claim_id"
     t.datetime "decision_sync_submitted_at"
     t.datetime "decision_sync_attempted_at"
