@@ -438,8 +438,8 @@ const distributionError = (dispatch, userId, error) => {
 
   dispatch(showErrorMessage(firstError));
 
-  if (firstError.error === "unassigned_cases") {
-    dispatch(setPendingDistribution({ "status": "completed" }));
+  if (firstError.error === 'unassigned_cases') {
+    dispatch(setPendingDistribution({ status: 'completed' }));
     refreshLegacyTasks(dispatch, userId).then(() => dispatch(setPendingDistribution(null)));
   } else {
     dispatch(setPendingDistribution(null));
@@ -451,25 +451,25 @@ const receiveDistribution = (dispatch, userId, response) => {
 
   dispatch(setPendingDistribution(distribution));
 
-  if (distribution.status == "completed") {
+  if (distribution.status == 'completed') {
     const caseN = distribution.distributed_cases_count;
 
     dispatch(showSuccessMessage({
-      "title": "Distribution Complete",
-      "detail": `${caseN} new ${pluralize("case", caseN)} have been distributed from the docket.`
+      title: 'Distribution Complete',
+      detail: `${caseN} new ${pluralize('case', caseN)} have been distributed from the docket.`
     }));
 
     refreshLegacyTasks(dispatch, userId).then(() => dispatch(setPendingDistribution(null)));
   } else {
     // Poll until the distribution completes or errors out.
     ApiUtil.get(`/distributions/${distribution.id}`).
-      then((response) => receiveDistribution(dispatch, userId, response)).
+      then((resp) => receiveDistribution(dispatch, userId, resp)).
       catch((error) => distributionError(dispatch, userId, error));
   }
 };
 
 export const requestDistribution = (userId) => (dispatch: Dispatch) => {
-  dispatch(setPendingDistribution({ "status": "pending" }));
+  dispatch(setPendingDistribution({ status: 'pending' }));
 
   ApiUtil.get('/distributions/new').
     then((response) => receiveDistribution(dispatch, userId, response)).

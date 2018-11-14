@@ -145,7 +145,7 @@ const mapStateToProps = (state, ownProps) => {
     isTaskAssignedToUserSelected,
     pendingDistribution,
     distributionLoading: pendingDistribution !== null,
-    distributionCompleteCasesLoading: pendingDistribution && pendingDistribution.status === "completed",
+    distributionCompleteCasesLoading: pendingDistribution && pendingDistribution.status === 'completed',
     featureToggles,
     selectedTasks: selectedTasksSelector(state, ownProps.userId),
     success,
