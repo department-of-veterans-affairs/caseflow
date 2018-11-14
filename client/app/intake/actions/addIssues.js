@@ -26,6 +26,11 @@ export const toggleIssueRemoveModal = () => ({
   type: ACTIONS.TOGGLE_ISSUE_REMOVE_MODAL
 });
 
+export const toggleLegacyOptInModal = (currentIssueAndNotes = {}) => ({
+  type: ACTIONS.TOGGLE_LEGACY_OPT_IN_MODAL,
+  payload: { currentIssueAndNotes }
+});
+
 export const removeIssue = (index) => ({
   type: ACTIONS.REMOVE_ISSUE,
   payload: { index }
