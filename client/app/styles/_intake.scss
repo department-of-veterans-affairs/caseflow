@@ -9,14 +9,29 @@
   .cf-success-checklist {
     max-width: 800px;
     margin: 50px auto 65px;
-  }
 
+    li {
+      background: url(https://upload.wikimedia.org/wikipedia/commons/c/c2/Asterisk_font_awesome.svg) no-repeat left top transparent;
+      // background: url(#{images/icons/asterisk.svg) no-repeat left top transparent;
+      background-size: 22px 17px;
+      background-position-y: 7px;
+      padding-left: 38px;
+      padding-top: 3px;
+
+      path {
+        fill: $color-gray-dark;
+      }
+    }
+  }
   .cf-msg-screen-deck {
     text-align: left;
 
     strong {
       color: $color-black;
     }
+  }
+  .not-eligible {
+    color: $color-red;
   }
 }
 
@@ -174,10 +189,6 @@
           .issue-date {
             display: block;
           }
-        }
-
-        .not-eligible {
-          color: $color-red;
         }
 
         .issue-action {

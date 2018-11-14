@@ -3,33 +3,43 @@ import StatusMessage from '../../components/StatusMessage';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../constants';
+import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES.json';
 import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
 
-// appeals
-const getAppealChecklistItems = (requestIssues) => [<Fragment>
-  <strong>Appeal created:</strong>
-  {requestIssues.map((ri, i) => <p key={i}>Issue: {ri.contentionText}</p>)}
-</Fragment>];
-
-// higher level reviews & supplemental claims
-const getClaimReviewChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
+const getChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
   const checklist = [];
-  const ratingIssues = requestIssues.filter((ri) => ri.isRating || ri.isUnidentified);
-  const nonratingIssues = requestIssues.filter((ri) => ri.isRating === false);
+  console.log("requestIssues1234567::", requestIssues)
+  const ineligibleIssues = requestIssues.filter((ri) => ri.ineligibleReason)
+  const eligibleIssues = requestIssues.filter((ri) => !ri.ineligibleReason)
+  let ratingEndProductIssues = []
+  let nonratingEndProductIssues = []
+
+  if (formType !== 'appeal') {
+    ratingEndProductIssues = eligibleIssues.filter((ri) => ri.isRating || ri.isUnidentified);
+    nonratingEndProductIssues = eligibleIssues.filter((ri) => ri.isRating === false);
+  }
+
   const claimReviewName = _.find(FORM_TYPES, { key: formType }).shortName;
 
-  if (ratingIssues.length > 0) {
+  if (formType === 'appeal') {
     checklist.push(<Fragment>
-      <strong>A {claimReviewName} Rating EP is being established:</strong>
-      {ratingIssues.map((ri, i) => <p key={`rating-issue-${i}`}>Contention: {ri.contentionText}</p>)}
+      <strong>Appeal created:</strong>
+      {eligibleIssues.map((ri, i) => <p key={i}>Issue: {ri.contentionText}</p>)}
     </Fragment>);
   }
 
-  if (nonratingIssues.length > 0) {
+  if (ratingEndProductIssues.length > 0) {
+    checklist.push(<Fragment>
+      <strong>A {claimReviewName} Rating EP is being established:</strong>
+      {ratingEndProductIssues.map((ri, i) => <p key={`rating-issue-${i}`}>Contention: {ri.contentionText}</p>)}
+    </Fragment>);
+  }
+
+  if (nonratingEndProductIssues.length > 0) {
     checklist.push(<Fragment>
       <strong>A {claimReviewName} Nonrating EP is being established:</strong>
-      {nonratingIssues.map((nri, i) => <p key={`nonrating-issue-${i}`}>Contention: {nri.contentionText}</p>)}
+      {nonratingEndProductIssues.map((nri, i) => <p key={`nonrating-issue-${i}`}>Contention: {nri.contentionText}</p>)}
     </Fragment>);
   }
 
@@ -37,7 +47,23 @@ const getClaimReviewChecklistItems = (formType, requestIssues, isInformalConfere
     checklist.push('Informal Conference Tracked Item');
   }
 
+  if (ineligibleIssues.length > 0) {
+    checklist.push(<Fragment>
+      <strong>Ineligible</strong>
+      {ineligibleIssues.map((ri, i) => <p key={`ineligible-issue-${i}`} className='cf-red-text'>{ri.contentionText} {ineligibilityCopy(ri)}</p>)}
+    </Fragment>);
+  }
   return checklist;
+};
+
+const ineligibilityCopy = (issue) => {
+  if (issue.titleOfActiveReview) {
+    return INELIGIBLE_REQUEST_ISSUES.duplicate_of_issue_in_active_review.replace(
+      '{review_title}', issue.titleOfActiveReview
+    );
+  } else if (issue.ineligibleReason) {
+    return INELIGIBLE_REQUEST_ISSUES[issue.ineligibleReason];
+  }
 };
 
 class DecisionReviewIntakeCompleted extends React.PureComponent {
@@ -54,15 +80,15 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       informalConference
     } = completedReview;
 
-    switch (intakeStatus) {
-    case INTAKE_STATES.NONE:
-      return <Redirect to={PAGE_PATHS.BEGIN} />;
-    case INTAKE_STATES.STARTED:
-      return <Redirect to={PAGE_PATHS.REVIEW} />;
-    case INTAKE_STATES.REVIEWED:
-      return <Redirect to={PAGE_PATHS.FINISH} />;
-    default:
-    }
+    // switch (intakeStatus) {
+    // case INTAKE_STATES.NONE:
+    //   return <Redirect to={PAGE_PATHS.BEGIN} />;
+    // case INTAKE_STATES.STARTED:
+    //   return <Redirect to={PAGE_PATHS.REVIEW} />;
+    // case INTAKE_STATES.REVIEWED:
+    //   return <Redirect to={PAGE_PATHS.FINISH} />;
+    // default:
+    // }
 
     const leadMessageList = [
       `${veteran.name}'s (ID #${veteran.fileNumber}) ` +
@@ -75,13 +101,11 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       title="Intake completed"
       type="success"
       leadMessageList={leadMessageList}
-      checklist={formType === 'appeal' ?
-        getAppealChecklistItems(requestIssues) :
-        getClaimReviewChecklistItems(formType, requestIssues, informalConference)}
+      checklist={getChecklistItems(formType, requestIssues, informalConference)}
       wrapInAppSegment={false}
     />;
   }
-}
+};
 
 export default connect(
   (state) => ({
