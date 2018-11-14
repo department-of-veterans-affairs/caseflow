@@ -974,8 +974,6 @@ RSpec.feature "Higher-Level Review" do
         # expect legacy opt in modal
         expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
         add_intake_rating_issue("None of these match")
-        # none of these match should do the timeliness check
-        add_untimely_exemption_response("Yes")
 
         expect(page).to have_content("Left knee granted")
       end
