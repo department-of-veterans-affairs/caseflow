@@ -2,12 +2,10 @@ FactoryBot.define do
   factory :legacy_appeal do
     transient do
       vacols_case nil
-      date nil
     end
 
     vacols_id { vacols_case.bfkey }
     vbms_id { vacols_case.bfcorlid }
-    nod_date { nil unless date }
 
     trait :with_veteran do
       after(:create) do |legacy_appeal, evaluator|

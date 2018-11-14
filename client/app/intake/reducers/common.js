@@ -56,6 +56,9 @@ export const commonReducers = (state, action) => {
       nonRatingRequestIssueModalVisible: {
         $set: false
       },
+      legacyOptInModalVisible: {
+        $set: false
+      },
       currentIssueAndNotes: {
         $set: action.payload.currentIssueAndNotes
       }

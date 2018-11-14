@@ -103,13 +103,12 @@ class DecisionReview < ApplicationRecord
   end
 
   def serialized_legacy_issues
-    active_or_eligible_legacy_appeals.reject { |legacy_appeal| legacy_appeal.issues.empty? }
-      .map do |legacy_appeal|
-        {
-          date: legacy_appeal.nod_date,
-          issues: legacy_appeal.issues.map(&:intake_attributes)
-        }
-      end
+    active_or_eligible_legacy_appeals.map do |legacy_appeal|
+      {
+        date: legacy_appeal.nod_date,
+        issues: legacy_appeal.issues.map(&:intake_attributes)
+      }
+    end
   end
 
   private

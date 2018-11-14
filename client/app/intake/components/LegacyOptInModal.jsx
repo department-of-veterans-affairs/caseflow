@@ -1,10 +1,12 @@
-import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
 
 import { formatDateStr } from '../../util/DateUtil';
-import { addRatingRequestIssue, toggleLegacyOptInModal } from '../actions/addIssues';
+import {
+  addRatingRequestIssue,
+  toggleUntimelyExemptionModal,
+  toggleLegacyOptInModal } from '../actions/addIssues';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
 
@@ -24,11 +26,24 @@ class LegacyOptInModal extends React.Component {
     });
   }
 
+  requiresUntimelyExemption = () => {
+    if (this.state.vacolsId !== NO_MATCH_TEXT) {
+      return false;
+    }
+
+    return !this.props.intakeData.currentIssueAndNotes.currentIssue.timely;
+  }
+
   onAddIssue = () => {
-    // currently just adds the issue
+    // currently just adds the issue & checks for untimeliness
     // if vacols issue is selected, logic to be implemented by 7336 & 7337 
     const currentIssue = this.props.intakeData.currentIssueAndNotes.currentIssue;
     const notes = this.props.intakeData.currentIssueAndNotes.notes;
+
+    if (this.requiresUntimelyExemption()) {
+      return this.props.toggleUntimelyExemptionModal({ currentIssue,
+        notes: this.state.notes });
+    }
 
     this.props.addRatingRequestIssue({
       issueId: currentIssue.reference_id,
@@ -47,8 +62,7 @@ class LegacyOptInModal extends React.Component {
     } = this.props;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
-
-    const legacyIssuesSections = _.map(intakeData.legacyIssues, (legacyIssue, index) => {
+    const legacyIssuesSections = intakeData.legacyIssues.map((legacyIssue, index) => {
       const radioOptions = legacyIssue.issues.map((issue) => {
         return {
           displayText: issue.description,
@@ -107,6 +121,7 @@ export default connect(
   null,
   (dispatch) => bindActionCreators({
     addRatingRequestIssue,
+    toggleUntimelyExemptionModal,
     toggleLegacyOptInModal
   }, dispatch)
 )(LegacyOptInModal);
