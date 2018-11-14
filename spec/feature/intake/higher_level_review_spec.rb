@@ -115,6 +115,7 @@ RSpec.feature "Higher-Level Review" do
 
     fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
     safe_click "#button-submit-review"
+
     expect(page).to have_content(
       "Receipt date cannot be in the future."
     )

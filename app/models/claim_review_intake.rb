@@ -54,7 +54,7 @@ class ClaimReviewIntake < DecisionReviewIntake
       detail.remove_claimants!
       return false
     end
-    true
+    detail.valid?
   end
 
   # :nocov:

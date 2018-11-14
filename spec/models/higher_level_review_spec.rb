@@ -9,8 +9,7 @@ describe HigherLevelReview do
   end
 
   let(:veteran_file_number) { "64205555" }
-  let(:veteran_participant_id) { "64204444" }
-  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number, participant_id: veteran_participant_id) }
+  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number) }
   let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
   let(:benefit_type) { "compensation" }
   let(:informal_conference) { nil }
