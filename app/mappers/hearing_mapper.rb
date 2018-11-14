@@ -10,6 +10,7 @@ module HearingMapper
   class << self
     def hearing_fields_to_vacols_codes(hearing_info)
       {
+        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_info[:date]),
         notes: notes_to_vacols_format(hearing_info[:notes]),
         disposition: disposition_to_vacols_format(hearing_info[:disposition], hearing_info.keys),
         hold_open: hold_open_to_vacols_format(hearing_info[:hold_open]),
@@ -18,7 +19,10 @@ module HearingMapper
         transcript_requested: transcript_requested_to_vacols_format(hearing_info[:transcript_requested]),
         representative_name: representative_name_to_vacols_format(hearing_info[:representative_name]),
         folder_nr: hearing_info[:folder_nr]
-      }.select { |k, _v| hearing_info.keys.map(&:to_sym).include? k } # only send updates to key/values that are passed
+      }.select do |k, _v|
+        hearing_info.keys.map(&:to_sym).include?(k) || (k.to_sym == :hearing_date && hearing_info[:date])
+        # only send updates to key/values that are passed
+      end
     end
 
     def bfha_vacols_code(hearing_record)

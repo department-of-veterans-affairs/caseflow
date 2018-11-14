@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181107225536) do
+ActiveRecord::Schema.define(version: 20181113205510) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -190,7 +190,7 @@ ActiveRecord::Schema.define(version: 20181107225536) do
     t.datetime "promulgation_date"
     t.datetime "profile_date"
     t.integer "participant_id", null: false
-    t.string "rating_issue_reference_id", null: false
+    t.string "rating_issue_reference_id"
     t.string "decision_text"
     t.index ["rating_issue_reference_id", "participant_id"], name: "decision_issues_uniq_idx", unique: true
     t.index ["source_request_issue_id"], name: "index_decision_issues_on_source_request_issue_id"
@@ -222,6 +222,26 @@ ActiveRecord::Schema.define(version: 20181107225536) do
     t.string "outgoing_reference_id"
     t.string "aasm_state"
     t.datetime "prepared_at"
+  end
+
+  create_table "distributed_cases", force: :cascade do |t|
+    t.integer "distribution_id"
+    t.string "case_id"
+    t.string "docket"
+    t.boolean "priority"
+    t.boolean "genpop"
+    t.string "genpop_query"
+    t.integer "docket_index"
+    t.datetime "ready_at"
+  end
+
+  create_table "distributions", force: :cascade do |t|
+    t.integer "judge_id"
+    t.string "status"
+    t.json "statistics"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "docket_snapshots", id: :serial, force: :cascade do |t|
@@ -630,9 +650,14 @@ ActiveRecord::Schema.define(version: 20181107225536) do
     t.integer "parent_request_issue_id"
     t.text "notes"
     t.boolean "is_unidentified"
-    t.bigint "ineligible_due_to_id"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
+    t.bigint "ineligible_due_to_id"
+    t.string "ramp_claim_id"
+    t.datetime "decision_sync_submitted_at"
+    t.datetime "decision_sync_attempted_at"
+    t.datetime "decision_sync_processed_at"
+    t.string "decision_sync_error"
     t.string "ineligible_reason"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
@@ -697,14 +722,6 @@ ActiveRecord::Schema.define(version: 20181107225536) do
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
     t.index ["appeal_type", "appeal_id"], name: "index_special_issue_lists_on_appeal_type_and_appeal_id"
-  end
-
-  create_table "staff_field_for_organizations", force: :cascade do |t|
-    t.bigint "organization_id", null: false
-    t.string "name", null: false
-    t.string "values", default: [], null: false, array: true
-    t.boolean "exclude", default: false
-    t.index ["organization_id"], name: "index_staff_field_for_organizations_on_organization_id"
   end
 
   create_table "supplemental_claims", force: :cascade do |t|

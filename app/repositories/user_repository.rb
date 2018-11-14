@@ -73,7 +73,7 @@ class UserRepository
       when "J"
         ["judge"]
       when "A"
-        staff_record.sattyid ? %w[attorney judge] : ["judge"]
+        staff_record.sattyid ? %w[attorney judge] : []
       when nil
         check_other_staff_fields(staff_record)
       else

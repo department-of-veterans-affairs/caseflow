@@ -301,6 +301,9 @@ RSpec.describe TasksController, type: :controller, focus: true do
 
     context "Co-located admin action" do
       before do
+        u = FactoryBot.create(:user)
+        OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
+
         FeatureToggle.enable!(:attorney_assignment_to_colocated)
       end
 
@@ -342,24 +345,34 @@ RSpec.describe TasksController, type: :controller, focus: true do
              }]
           end
 
+          before do
+            u = FactoryBot.create(:user)
+            OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
+          end
+
           it "should be successful" do
             expect(AppealRepository).to receive(:update_location!).exactly(1).times
             post :create, params: { tasks: params }
             expect(response.status).to eq 201
             response_body = JSON.parse(response.body)["tasks"]["data"]
-            expect(response_body.size).to eq 2
-            expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
+            expect(response_body.size).to eq(4)
+            expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
             expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.first["attributes"]["instructions"][0]).to eq "do this"
             expect(response_body.first["attributes"]["action"]).to eq "address_verification"
 
             expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.second["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.second["attributes"]["instructions"][0]).to eq "another one"
-            expect(response_body.second["attributes"]["action"]).to eq "missing_records"
+            expect(response_body.second["attributes"]["instructions"][0]).to eq "do this"
+            expect(response_body.second["attributes"]["action"]).to eq "address_verification"
             # assignee should be the same person
             id = response_body.second["attributes"]["assigned_to"]["id"]
-            expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq id
+            expect(response_body.last["attributes"]["assigned_to"]["id"]).to eq id
+
+            expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
+            expect(response_body.last["attributes"]["appeal_id"]).to eq appeal.id
+            expect(response_body.last["attributes"]["instructions"][0]).to eq "another one"
+            expect(response_body.last["attributes"]["action"]).to eq "missing_records"
           end
         end
 
@@ -377,11 +390,11 @@ RSpec.describe TasksController, type: :controller, focus: true do
             post :create, params: { tasks: params }
             expect(response.status).to eq 201
             response_body = JSON.parse(response.body)["tasks"]["data"]
-            expect(response_body.size).to eq 1
-            expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
-            expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.first["attributes"]["instructions"][0]).to eq "do this"
-            expect(response_body.first["attributes"]["action"]).to eq "address_verification"
+            expect(response_body.size).to eq(2)
+            expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
+            expect(response_body.last["attributes"]["appeal_id"]).to eq appeal.id
+            expect(response_body.last["attributes"]["instructions"][0]).to eq "do this"
+            expect(response_body.last["attributes"]["action"]).to eq "address_verification"
           end
         end
 
@@ -406,9 +419,6 @@ RSpec.describe TasksController, type: :controller, focus: true do
           end
           let!(:hearings_org) do
             create(:hearings_management)
-          end
-          let!(:staff_mapping) do
-            create(:hearings_staff, organization_id: hearings_org.id)
           end
           let(:params) do
             [{

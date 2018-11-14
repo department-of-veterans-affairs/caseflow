@@ -5,6 +5,9 @@
     feedbackUrl: feedback_url,
     buildDate: build_date,
     serverIntake: higher_level_review.ui_hash,
-    claimId: url_claim_id
+    claimId: url_claim_id,
+    featureToggles: {
+      useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user)
+    }
   }) %>
 <% end %>
