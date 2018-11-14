@@ -379,7 +379,7 @@ RSpec.feature "AmaQueue" do
       User.authenticate!(user: user)
     end
 
-    scenario "return case to judge", focus: true do
+    scenario "return case to judge" do
       visit "/organizations/#{quality_review_organization.url}"
       click_on "Bob Smith"
 
