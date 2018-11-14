@@ -4,6 +4,8 @@ class JudgeTeam < Organization
   end
 
   def self.create_for_judge(user)
-    create!(name: user.css_id)
+    org = create!(name: user.css_id)
+    OrganizationsUser.add_user_to_organization(user, org).update!(admin: true)
+    org
   end
 end
