@@ -57,8 +57,7 @@ class Judge
     regional_office_keys = dockets.map { |_date, docket| docket.regional_office_key }
 
     # fetching data of all dockets staff based on the regional office keys
-    ro_staff = VACOLS::Staff.where(stafkey: regional_office_keys)
-    ro_staff_hash = ro_staff.reduce({}) { |acc, record| acc.merge(record.stafkey => record) }
+    ro_staff_hash = HearingDayRepository.ro_staff_hash(regional_office_keys)
 
     # returns a hash of docket date (string) as key and number of slots for the docket
     # as they key
