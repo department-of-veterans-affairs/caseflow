@@ -318,7 +318,7 @@ export const initialAssignTasksToUser = ({
   let params, url;
 
   if (oldTask.appealType === 'Appeal') {
-    url = '/tasks';
+    url = '/tasks?role=Judge';
     params = {
       data: {
         tasks: [{
@@ -377,7 +377,7 @@ export const reassignTasksToUser = ({
   let params, url;
 
   if (oldTask.appealType === 'Appeal') {
-    url = `/tasks/${oldTask.taskId}`;
+    url = `/tasks/${oldTask.taskId}?role=Judge`;
     params = {
       data: {
         task: {
