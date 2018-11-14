@@ -14,8 +14,6 @@ class Task < ApplicationRecord
 
   after_update :update_parent_status
 
-  validate :on_hold_duration_is_set, on: :update
-
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym    => Constants.TASK_STATUSES.assigned,
     Constants.TASK_STATUSES.in_progress.to_sym => Constants.TASK_STATUSES.in_progress,
@@ -59,6 +57,14 @@ class Task < ApplicationRecord
 
   def self.recently_completed
     where(status: Constants.TASK_STATUSES.completed, completed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
+  end
+
+  def self.incomplete
+    where.not(status: Constants.TASK_STATUSES.completed)
+  end
+
+  def self.incomplete_or_recently_completed
+    incomplete.or(recently_completed)
   end
 
   def self.create_many_from_params(params_array, current_user)
@@ -216,12 +222,6 @@ class Task < ApplicationRecord
     if children.any? && children.reject { |t| t.status == Constants.TASK_STATUSES.completed }.empty?
       return mark_as_complete! if assigned_to.is_a?(Organization)
       return update!(status: :assigned) if on_hold?
-    end
-  end
-
-  def on_hold_duration_is_set
-    if saved_change_to_status? && on_hold? && !on_hold_duration && colocated_task?
-      errors.add(:on_hold_duration, "has to be specified")
     end
   end
 

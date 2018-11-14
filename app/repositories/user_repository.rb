@@ -28,7 +28,7 @@ class UserRepository
     def fail_if_no_access_to_task!(css_id, vacols_id)
       unless QueueRepository.tasks_for_user(css_id).map(&:vacols_id).include?(vacols_id)
         msg = "User with css ID #{css_id} cannot modify appeal data with vacols ID: #{vacols_id}"
-        fail Caseflow::Error::UserRepositoryError, msg
+        fail(Caseflow::Error::UserRepositoryError, message: msg)
       end
       true
     end
@@ -73,7 +73,7 @@ class UserRepository
       when "J"
         ["judge"]
       when "A"
-        staff_record.sattyid ? %w[attorney judge] : ["judge"]
+        staff_record.sattyid ? %w[attorney judge] : []
       when nil
         check_other_staff_fields(staff_record)
       else

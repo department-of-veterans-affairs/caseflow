@@ -11,11 +11,13 @@ describe Rating do
   let(:receipt_date) { Time.zone.today }
 
   let(:promulgation_date) { receipt_date - 30 }
+  let(:profile_date) { receipt_date - 40 }
 
   let(:rating) do
     Generators::Rating.build(
       issues: issues,
       promulgation_date: promulgation_date,
+      profile_date: profile_date,
       participant_id: participant_id
     )
   end
@@ -26,9 +28,13 @@ describe Rating do
       reference_id: "Issue#{num}",
       decision_text: "Decision#{num}",
       promulgation_date: promulgation_date,
+      profile_date: profile_date,
       contention_reference_id: nil,
+      ramp_claim_id: nil,
       title_of_active_review: nil,
-      source_higher_level_review: nil
+      source_higher_level_review: nil,
+      rba_contentions_data: [{ prfil_dt: profile_date, cntntn_id: nil }],
+      associated_claims_data: [{}]
     }
   end
 

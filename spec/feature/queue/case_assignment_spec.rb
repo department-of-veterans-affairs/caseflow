@@ -60,7 +60,12 @@ RSpec.feature "Case Assignment flows" do
       ]
     end
 
-    before { User.authenticate!(user: attorney_user) }
+    before do
+      u = FactoryBot.create(:user)
+      OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
+
+      User.authenticate!(user: attorney_user)
+    end
 
     scenario "adds colocated task" do
       visit "/queue"
