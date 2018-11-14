@@ -32,8 +32,7 @@ class Judge
   end
 
   def attorneys
-    return [] unless user
-    JudgeTeam.for_judge(user).users
+    user ? JudgeTeam.for_judge(user).users : []
   end
 
   private

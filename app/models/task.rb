@@ -59,6 +59,14 @@ class Task < ApplicationRecord
     where(status: Constants.TASK_STATUSES.completed, completed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
   end
 
+  def self.incomplete
+    where.not(status: Constants.TASK_STATUSES.completed)
+  end
+
+  def self.incomplete_or_recently_completed
+    incomplete.or(recently_completed)
+  end
+
   def self.create_many_from_params(params_array, current_user)
     params_array.map { |params| create_from_params(params, current_user) }
   end
