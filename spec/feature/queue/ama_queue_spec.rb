@@ -214,7 +214,7 @@ RSpec.feature "AmaQueue" do
       end
 
       scenario "assign case to self" do
-        visit "/organizations/#{translation_organization.url}"
+        visit translation_organization.path
 
         click_on "Pal Smith"
 
@@ -360,7 +360,7 @@ RSpec.feature "AmaQueue" do
     end
 
     scenario "return case to judge" do
-      visit "/organizations/#{quality_review_organization.url}"
+      visit quality_review_organization.path
       click_on "Bob Smith"
 
       find(".Select-control", text: "Select an action").click
