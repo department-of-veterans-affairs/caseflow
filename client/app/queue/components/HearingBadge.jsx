@@ -13,7 +13,7 @@ const badgeStyling = css({
   background: COLORS.GREEN,
   borderRadius: '.5rem',
   lineHeight: '2rem',
-  marginRight: '0.5rem',
+  marginLeft: '1rem',
   padding: '0 1rem'
 });
 
