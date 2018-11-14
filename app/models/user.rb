@@ -209,8 +209,12 @@ class User < ApplicationRecord
     self.class.appeal_repository.load_user_case_assignments_from_vacols(css_id)
   end
 
+  def administrated_teams
+    organizations_users.where(admin: true).map(&:organization)
+  end
+
   def judge_css_id
-    organizations.where(type: JudgeTeam.name).first.try(:name)
+    organizations.find_by(type: JudgeTeam.name).try(:name)
   end
 
   def as_json(options)

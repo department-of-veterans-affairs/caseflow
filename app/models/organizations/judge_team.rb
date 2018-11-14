@@ -1,6 +1,6 @@
 class JudgeTeam < Organization
   def self.for_judge(user)
-    find_by(name: user.css_id)
+    user.administrated_teams.find_by(type: JudgeTeam.name)
   end
 
   def self.create_for_judge(user)
