@@ -306,10 +306,10 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           end
 
           context "and the user is from dispatch" do
-            # BVATEST1 is defined in Constants::BvaDispatchTeams
-            let(:user) { create(:user, css_id: "BVATEST1", full_name: "George Michael") }
+            let(:user) { create(:user) }
 
             before do
+              OrganizationsUser.add_user_to_organization(user, BvaDispatch.singleton)
               allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id).and_return(
                 address_line_1: "1234 K St.",
                 address_line_2: "APT 3",

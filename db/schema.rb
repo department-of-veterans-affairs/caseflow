@@ -224,6 +224,26 @@ ActiveRecord::Schema.define(version: 20181113205510) do
     t.datetime "prepared_at"
   end
 
+  create_table "distributed_cases", force: :cascade do |t|
+    t.integer "distribution_id"
+    t.string "case_id"
+    t.string "docket"
+    t.boolean "priority"
+    t.boolean "genpop"
+    t.string "genpop_query"
+    t.integer "docket_index"
+    t.datetime "ready_at"
+  end
+
+  create_table "distributions", force: :cascade do |t|
+    t.integer "judge_id"
+    t.string "status"
+    t.json "statistics"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "docket_snapshots", id: :serial, force: :cascade do |t|
     t.integer "docket_count"
     t.date "latest_docket_month"
@@ -630,9 +650,9 @@ ActiveRecord::Schema.define(version: 20181113205510) do
     t.integer "parent_request_issue_id"
     t.text "notes"
     t.boolean "is_unidentified"
-    t.bigint "ineligible_due_to_id"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
+    t.bigint "ineligible_due_to_id"
     t.string "ramp_claim_id"
     t.datetime "decision_sync_submitted_at"
     t.datetime "decision_sync_attempted_at"
