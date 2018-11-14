@@ -98,7 +98,7 @@ describe HigherLevelReviewIntake do
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
           participant_id: intake.veteran.participant_id,
-          payee_code: "00"
+          payee_code: nil
         )
       end
     end
@@ -117,33 +117,31 @@ describe HigherLevelReviewIntake do
         )
       end
 
-      context "And benefit type is compensation" do
-        let(:benefit_type) { "compensation" }
+      context "And payee code is nil" do
+        let(:payee_code) { nil }
 
-        context "payee code is nil" do
-          let(:payee_code) { nil }
-
-          it "is expected to add an error that payee_code cannot be blank" do
-            expect(subject).to be_falsey
-            expect(detail.errors[:payee_code]).to include("blank")
-          end
-        end
-      end
-
-      context "And benefit type is pension" do
-        let(:benefit_type) { "pension" }
-
-        context "payee code is nil" do
-          let(:payee_code) { nil }
+        context "And benefit type is compensation" do
+          let(:benefit_type) { "compensation" }
 
           it "is expected to add an error that payee_code cannot be blank" do
             expect(subject).to be_falsey
             expect(detail.errors[:payee_code]).to include("blank")
+            expect(detail.claimants).to be_empty
+          end
+        end
+
+        context "And benefit type is pension" do
+          let(:benefit_type) { "pension" }
+
+          it "is expected to add an error that payee_code cannot be blank" do
+            expect(subject).to be_falsey
+            expect(detail.errors[:payee_code]).to include("blank")
+            expect(detail.claimants).to be_empty
           end
         end
       end
 
-      context "And benefit type is non-compensation" do
+      context "And benefit type is not compensation or pension" do
         let(:benefit_type) { "fiduciary" }
 
         it "sets payee_code to nil" do

@@ -460,7 +460,7 @@ RSpec.feature "Supplemental Claim Intake" do
     safe_click "#button-submit-review"
     expect(page).to have_current_path("/intake/finish")
   end
-  
+
   context "when veteran is deceased" do
     let(:veteran) do
       Generators::Veteran.build(file_number: "123121234", date_of_death: Date.new(2017, 11, 20))

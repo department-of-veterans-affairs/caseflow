@@ -7,6 +7,14 @@ class ClaimReview < DecisionReview
   has_many :end_product_establishments, as: :source
   has_one :intake, as: :detail
 
+  with_options if: :saving_review do
+    validates :receipt_date, :benefit_type, presence: { message: "blank" }
+  end
+
+  validates :legacy_opt_in_approved, inclusion: {
+    in: [true, false], message: "blank"
+  }, if: [:legacy_opt_in_enabled?, :saving_review]
+
   self.abstract_class = true
 
   def ui_hash

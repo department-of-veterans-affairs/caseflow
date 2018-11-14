@@ -9,7 +9,8 @@ describe HigherLevelReview do
   end
 
   let(:veteran_file_number) { "64205555" }
-  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number) }
+  let(:veteran_participant_id) { "64204444" }
+  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number, participant_id: veteran_participant_id) }
   let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
   let(:benefit_type) { "compensation" }
   let(:informal_conference) { nil }
@@ -68,7 +69,7 @@ describe HigherLevelReview do
       end
     end
 
-    context "informal_conference and same_office" do
+    context "informal_conference, same_office, legacy opt-in" do
       context "when saving review" do
         before { higher_level_review.start_review! }
 

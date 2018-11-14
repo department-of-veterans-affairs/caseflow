@@ -42,12 +42,16 @@ class ClaimReviewIntake < DecisionReviewIntake
   private
 
   def need_payee_code?(request_params)
+    # payee_code is only required for claim reviews where the veteran is
+    # not the claimant and the benefit_type is compensation or pension
+    return if !request_params[:claimant] || request_params[:claimant] == detail.veteran.participant_id
     request_params[:benefit_type] == "compensation" || request_params[:benefit_type] == "pension"
   end
 
   def validate_payee_code(request_params)
     if need_payee_code?(request_params) && !request_params[:payee_code]
       detail.errors.add(:payee_code, "blank")
+      detail.remove_claimants!
       return false
     end
     true

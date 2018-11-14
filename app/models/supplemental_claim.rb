@@ -1,12 +1,4 @@
 class SupplementalClaim < ClaimReview
-  with_options if: :saving_review do
-    validates :receipt_date, :benefit_type, presence: { message: "blank" }
-  end
-
-  validates :legacy_opt_in_approved, inclusion: {
-    in: [true, false], message: "blank"
-  }, if: [:legacy_opt_in_enabled?, :saving_review]
-
   END_PRODUCT_CODES = {
     rating: "040SCR",
     nonrating: "040SCNR",
