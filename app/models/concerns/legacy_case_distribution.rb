@@ -43,7 +43,6 @@ module LegacyCaseDistribution
 
   def legacy_statistics
     {
-      acting_judge: acting_judge,
       batch_size: batch_size,
       total_batch_size: total_batch_size,
       priority_count: priority_count

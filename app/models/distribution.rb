@@ -57,10 +57,6 @@ class Distribution < ApplicationRecord
     end
   end
 
-  def acting_judge
-    judge.attorney_in_vacols?
-  end
-
   def validate_user_is_judge
     errors.add(:judge, :not_judge) unless judge.judge_in_vacols?
   end
