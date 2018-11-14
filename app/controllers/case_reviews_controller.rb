@@ -5,7 +5,7 @@ class CaseReviewsController < ApplicationController
   }.freeze
 
   rescue_from Caseflow::Error::UserRepositoryError do |e|
-    render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
+    render(e.serialize_response)
   end
 
   def set_application
