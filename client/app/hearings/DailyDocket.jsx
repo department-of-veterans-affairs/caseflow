@@ -29,7 +29,8 @@ const tableRowStyling = css({
   },
   '& > tr:nth-child(odd)': {
     '& > td:nth-child(1)': { width: '4%' },
-    '& > td:nth-child(2)': { width: '4%' },
+    '& > td:nth-child(2)': { width: '4%',
+      '> .cf-form-checkboxes': { marginTop: '0' } },
     '& > td:nth-child(3)': { width: '10%' },
     '& > td:nth-child(4)': { width: '18%' },
     '& > td:nth-child(5)': { width: '15%' },
@@ -230,20 +231,20 @@ getAodDropdown = (hearing) => {
   />;
 }
 
-getNotesField = (hearing) => {
-  return <div>
-    <label htmlFor={`${hearing.id}.notes`} aria-label="notes">Notes</label>
-    <div {...textareaStyling}>
-      <Textarea
-        id={`${hearing.id}.notes`}
-        value={hearing.notes || ''}
-        name="Notes"
-        onChange={this.setNotes}
-        maxLength="100"
-      />
-    </div>
-  </div>;
-};
+ getNotesField = (hearing) => {
+   return <div>
+     <label htmlFor={`${hearing.id}.notes`} aria-label="notes">Notes</label>
+     <div {...textareaStyling}>
+       <Textarea
+         id={`${hearing.id}.notes`}
+         value={hearing.notes || ''}
+         name="Notes"
+         onChange={this.setNotes}
+         maxLength="100"
+       />
+     </div>
+   </div>;
+ };
 
   getDailyDocketRows = (hearing) => {
     let dailyDocketRows = [];
@@ -277,6 +278,7 @@ getNotesField = (hearing) => {
   };
 
   render() {
+
     const dailyDocketColumns = [
       {
         header: '',
