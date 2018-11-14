@@ -13,6 +13,7 @@ services:
       - "u02_test:/u02"
     ports:
       - "1521:1521"
+  
   vacols-db-development:
     build: ./local/vacols/.
     container_name: VACOLS_DB-development
@@ -28,12 +29,14 @@ services:
       - "1522:1521"
 
   appeals-redis:
+    container_name: appeals-redis
     image: redis:2.8.23
     ports:
       - "6379:6379"
 
   appeals-postgres:
     image: postgres:9.3.14
+    container_name: appeals-db
     ports:
       - "5432:5432"
     volumes:
@@ -42,6 +45,7 @@ services:
      - POSTGRES_PASSWORD=postgres
 
   appeals-localstack-aws:
+    container_name: localstack
     image: localstack/localstack
     ports:
       - "4567-4583:4567-4583"
@@ -53,9 +57,9 @@ services:
 
 volumes:
   postgresdata:
-  u01_test:
-  ORCL_test:
-  u02_test:
   u01_development:
   ORCL_development:
   u02_development:
+  u01_test:
+  ORCL_test:
+  u02_test:

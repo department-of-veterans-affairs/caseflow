@@ -20,6 +20,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     []
   end
 
+  attribute :location_code do
+    object.location_code
+  end
+
   attribute :completed_hearing_on_previous_appeal? do
     false
   end

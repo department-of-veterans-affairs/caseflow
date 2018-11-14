@@ -110,6 +110,11 @@ export const doDatesMatch = (date, query) => {
   return hasMatched;
 };
 
+export const getTimeWithoutTimeZone = (date, timeZone) => {
+  return moment(date).tz(timeZone).
+    format('H:mm');
+};
+
 export const getTime = (date) => {
   return moment(date).tz('America/New_York').
     format('h:mm a z').

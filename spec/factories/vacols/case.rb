@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :case, class: VACOLS::Case do
     sequence(:bfkey)
     sequence(:bfcorkey)
-    sequence(:bfcorlid, 500_000_000) { |n| "#{n}S" }
+    sequence(:bfcorlid, 300_000_000) { |n| "#{n}S" }
 
     association :correspondent, factory: :correspondent
     association :folder, factory: :folder, ticknum: :bfkey

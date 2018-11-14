@@ -64,11 +64,11 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
         page: <PendingTasksTab />
       },
       {
-        label: sprintf(COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TAB_TITLE, numOnHoldTasks),
+        label: sprintf(COPY.QUEUE_PAGE_ON_HOLD_TAB_TITLE, numOnHoldTasks),
         page: <OnHoldTasksTab />
       },
       {
-        label: COPY.COLOCATED_QUEUE_PAGE_COMPLETE_TAB_TITLE,
+        label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
         page: <CompleteTasksTab />
       }
     ];
@@ -154,7 +154,7 @@ const CompleteTasksTab = connect(
   (state: State) => ({ tasks: completeTasksByAssigneeCssIdSelector(state) }))(
   (props: { tasks: Array<TaskWithAppeal> }) => {
     return <React.Fragment>
-      <p>{COPY.COLOCATED_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}</p>
+      <p>{COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}</p>
       <TaskTable
         includeDetailsLink
         includeTask
