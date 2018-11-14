@@ -4,7 +4,6 @@ import * as React from 'react';
 
 import Tooltip from '../../components/Tooltip';
 import { COLORS } from '../../constants/AppConstants';
-import { DISPOSITION_OPTIONS, HEARING_OPTIONS } from '../../hearings/constants/constants';
 
 import { DateString } from '../../util/DateUtil';
 
@@ -31,22 +30,26 @@ const listStyling = css({
   }
 });
 
-const DocketTypeBadge = ({ hearing, id }) => {
-  const dispositionText = _.find(DISPOSITION_OPTIONS, ['value', hearing.disposition]).label;
+const DocketTypeBadge = ({ hearing }) => {
+  let badge = null;
 
-  const tooltipText = <div>
-    This case has a hearing associated with it.
-    <ul {...listStyling}>
-      <li>Judge: <strong>{hearing.heldBy}</strong></li>
-      <li>Disposition: <strong>{dispositionText}</strong></li>
-      <li>Date: <strong><DateString date={hearing.date} /></strong></li>
-      <li>Type: <strong>{HEARING_OPTIONS[hearing.type]}</strong></li>
-    </ul>
-  </div>;
+  if (hearing) {
+    const tooltipText = <div>
+      This case has a hearing associated with it.
+      <ul {...listStyling}>
+        <li>Judge: <strong>{hearing.heldBy}</strong></li>
+        <li>Disposition: <strong>{_.startCase(hearing.disposition)}</strong></li>
+        <li>Date: <strong><DateString date={hearing.date} /></strong></li>
+        <li>Type: <strong>{_.startCase(hearing.type)}</strong></li>
+      </ul>
+    </div>;
 
-  return <Tooltip id={`badge-${id}`} text={tooltipText} position="bottom">
-    <span {...badgeStyling}>H</span>
-  </Tooltip>;
+    badge = <Tooltip id={`badge-${hearing.id}`} text={tooltipText} position="bottom">
+      <span {...badgeStyling}>H</span>
+    </Tooltip>;
+  }
+
+  return badge;
 };
 
 export default DocketTypeBadge;

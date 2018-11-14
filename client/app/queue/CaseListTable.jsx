@@ -40,19 +40,12 @@ class CaseListTable extends React.PureComponent {
 
   getColumns = () => [
     {
+      valueFunction: (appeal) => <HearingBadge hearing={appeal.hearings[0]} />
+    },
+    {
       header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
       valueFunction: (appeal) => {
-        const mostRecentHearing = appeal.hearings[0];
-        let hearingBadge;
-
-        if (mostRecentHearing) {
-          hearingBadge = <HearingBadge
-            hearing={mostRecentHearing}
-            id={mostRecentHearing.id} />;
-        }
-
         return <React.Fragment>
-          {hearingBadge}
           <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />
           <CaseDetailsLink
             appeal={appeal}
