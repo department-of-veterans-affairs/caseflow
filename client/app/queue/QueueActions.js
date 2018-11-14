@@ -451,7 +451,7 @@ const receiveDistribution = (dispatch, userId, response) => {
 
   dispatch(setPendingDistribution(distribution));
 
-  if (distribution.status == 'completed') {
+  if (distribution.status === 'completed') {
     const caseN = distribution.distributed_cases_count;
 
     dispatch(showSuccessMessage({
