@@ -1,4 +1,4 @@
-RSpec.describe TasksController, type: :controller, focus: true do
+RSpec.describe TasksController, type: :controller do
   before do
     Fakes::Initializer.load!
     FeatureToggle.enable!(:colocated_queue)
@@ -516,7 +516,7 @@ RSpec.describe TasksController, type: :controller, focus: true do
         patch :update, params: { task: { assigned_to_id: new_attorney.id }, id: attorney_task.id }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
-        expect(response_body).to eq []
+        expect(response_body.first["id"]).to eq attorney_task.id.to_s
       end
     end
 

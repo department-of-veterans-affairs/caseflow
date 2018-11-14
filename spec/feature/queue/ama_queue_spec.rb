@@ -379,7 +379,7 @@ RSpec.feature "AmaQueue" do
       User.authenticate!(user: user)
     end
 
-    scenario "return case to judge" do
+    scenario "return case to judge", focus: true do
       visit "/organizations/#{quality_review_organization.url}"
       click_on "Bob Smith"
 
@@ -404,7 +404,7 @@ RSpec.feature "AmaQueue" do
       fill_in "taskInstructions", with: quality_review_instructions
 
       click_on "Submit"
-      expect(page).to have_content("You have no cases assigned")
+      expect(page).to have_content("On hold (1)")
 
       User.authenticate!(user: judge_user)
 
