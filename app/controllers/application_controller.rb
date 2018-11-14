@@ -19,7 +19,11 @@ class ApplicationController < ApplicationBaseController
   rescue_from Caseflow::Error::VacolsRepositoryError do |e|
     Rails.logger.error "Vacols error occured: #{e.message}"
     Raven.capture_exception(e)
-    render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
+    if e.class.method_defined?(:serialize_response)
+      render(e.serialize_response)
+    else
+      render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
+    end
   end
 
   private
