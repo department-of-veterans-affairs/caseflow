@@ -193,6 +193,8 @@ Rails.application.routes.draw do
   resources :legacy_tasks, only: [:create, :update]
   resources :tasks, only: [:index, :create, :update]
 
+  resources :distributions, only: [:new, :show]
+
   resources :organizations, only: [:show], param: :url do
     resources :tasks, only: [:index], controller: 'organizations/tasks'
     resources :users, only: [:index, :create, :destroy], controller: 'organizations/users'
