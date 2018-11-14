@@ -128,11 +128,11 @@ RSpec.feature "Higher-Level Review" do
 
     fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
 
-    within_fieldset("Did the Veteran request an informal conference?") do
+    within_fieldset("Was an informal conference requested?") do
       find("label", text: "Yes", match: :prefer_exact).click
     end
 
-    within_fieldset("Did the Veteran request review by the same office?") do
+    within_fieldset("Was an interview by the same office requested?") do
       find("label", text: "No", match: :prefer_exact).click
     end
 
@@ -171,11 +171,11 @@ RSpec.feature "Higher-Level Review" do
 
     visit "/intake/review_request"
 
-    within_fieldset("Did the Veteran request an informal conference?") do
+    within_fieldset("Was an informal conference requested?") do
       expect(find_field("Yes", visible: false)).to be_checked
     end
 
-    within_fieldset("Did the Veteran request review by the same office?") do
+    within_fieldset("Was an interview by the same office requested?") do
       expect(find_field("No", visible: false)).to be_checked
     end
 
@@ -417,11 +417,11 @@ RSpec.feature "Higher-Level Review" do
 
     fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
 
-    within_fieldset("Did the Veteran request an informal conference?") do
+    within_fieldset("Was an informal conference requested?") do
       find("label", text: "Yes", match: :prefer_exact).click
     end
 
-    within_fieldset("Did the Veteran request review by the same office?") do
+    within_fieldset("Was an interview by the same office requested?") do
       find("label", text: "Yes", match: :prefer_exact).click
     end
 

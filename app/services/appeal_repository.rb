@@ -624,6 +624,22 @@ class AppealRepository
     VACOLS::CaseAssignment.exists_for_appeals([vacols_id])[vacols_id]
   end
 
+  def self.docket_counts_by_priority_and_readiness
+    MetricsService.record("VACOLS: docket_counts_by_priority_and_readiness",
+                          name: "docket_counts_by_priority_and_readiness",
+                          service: :vacols) do
+      VACOLS::CaseDocket.counts_by_priority_and_readiness
+    end
+  end
+
+  def self.nod_count
+    MetricsService.record("VACOLS: nod_count",
+                          name: "nod_count",
+                          service: :vacols) do
+      VACOLS::CaseDocket.nod_count
+    end
+  end
+
   def self.regular_non_aod_docket_count
     MetricsService.record("VACOLS: regular_non_aod_docket_count",
                           name: "regular_non_aod_docket_count",
@@ -647,6 +663,22 @@ class AppealRepository
                           name: "docket_counts_by_month",
                           service: :vacols) do
       VACOLS::CaseDocket.docket_counts_by_month
+    end
+  end
+
+  def self.distribute_priority_appeals(judge, genpop, limit)
+    MetricsService.record("VACOLS: distribute_priority_appeals",
+                          name: "distribute_priority_appeals",
+                          service: :vacols) do
+      VACOLS::CaseDocket.distribute_priority_appeals(judge, genpop, limit)
+    end
+  end
+
+  def self.distribute_nonpriority_appeals(judge, genpop, range, limit)
+    MetricsService.record("VACOLS: distribute_nonpriority_appeals",
+                          name: "distribute_nonpriority_appeals",
+                          service: :vacols) do
+      VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, genpop, range, limit)
     end
   end
 

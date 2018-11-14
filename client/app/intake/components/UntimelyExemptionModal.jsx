@@ -88,7 +88,7 @@ class UntimelyExemptionModal extends React.Component {
         <p>The issue requested isn't usually eligible because its decision date is older than what's allowed.</p>
         <RadioField
           name="untimely-exemption"
-          label="Did the applicant request an exemption to the date requirements?"
+          label="Did the applicant request an extension to the date requirements?"
           strongLabel
           vertical
           options={BOOLEAN_RADIO_OPTIONS}
