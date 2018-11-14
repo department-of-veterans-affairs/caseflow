@@ -99,17 +99,22 @@ describe Distribution do
       expect(subject.distributed_cases.where(priority: false, genpop_query: "any").map(&:docket_index).max).to eq(35)
     end
 
-    context "when the judge is acting" do
-      let(:css_id) { "RANDO" }
-      let!(:vacols_judge) { create(:staff, :attorney_judge_role, sdomainid: css_id) }
+    # context "when the judge is only recieves hearing cases" do
+    #   it "correctly distributes cases to the judge" do
+    #     subject.distribute!
+    #     expect(subject.valid?).to eq(true)
+    #     expect(subject.statistics["acting_judge"]).to eq(true)
+    #     expect(subject.statistics["batch_size"]).to eq(10)
+    #     expect(subject.distributed_cases.count).to eq(7)
+    #     expect(subject.distributed_cases.where(genpop: false).count).to eq(7)
+    #   end
+    # end
 
-      it "correctly distributes cases to the acting judge" do
-        subject.distribute!
-        expect(subject.valid?).to eq(true)
-        expect(subject.statistics["acting_judge"]).to eq(true)
-        expect(subject.statistics["batch_size"]).to eq(10)
-        expect(subject.distributed_cases.count).to eq(7)
-        expect(subject.distributed_cases.where(genpop: false).count).to eq(7)
+    context "when the job errors" do
+      it "marks the distribution as error" do
+        allow_any_instance_of(LegacyDocket).to receive(:distribute_priority_appeals).and_raise(StandardError)
+        expect { subject.distribute! }.to raise_error(StandardError)
+        expect(subject.status).to eq("error")
       end
     end
   end

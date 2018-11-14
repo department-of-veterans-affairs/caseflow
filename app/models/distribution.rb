@@ -27,11 +27,7 @@ class Distribution < ApplicationRecord
 
     update(status: "started")
 
-    if acting_judge
-      legacy_acting_judge_distribution
-    else
-      legacy_distribution
-    end
+    legacy_distribution
 
     update(status: "completed", completed_at: Time.zone.now, statistics: legacy_statistics)
   rescue StandardError => e
@@ -46,13 +42,7 @@ class Distribution < ApplicationRecord
   private
 
   def attributes
-    {
-      'id': nil,
-      'status': nil,
-      'created_at': nil,
-      'updated_at': nil,
-      'distributed_cases_count': nil
-    }
+    { 'id': nil, 'status': nil, 'created_at': nil, 'updated_at': nil, 'distributed_cases_count': nil }
   end
 
   def mark_as_pending

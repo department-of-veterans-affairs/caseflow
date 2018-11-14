@@ -30,16 +30,16 @@ module LegacyCaseDistribution
     [*priority_hearing_appeals, *nonpriority_hearing_appeals, *priority_nonhearing_appeals, *nonpriority_appeals]
   end
 
-  def legacy_acting_judge_distribution
-    rem = batch_size
+  # def legacy_hearing_only_distribution
+  #   rem = batch_size
 
-    priority_appeals = docket.distribute_priority_appeals(self, genpop: "not_genpop", limit: rem)
-    rem -= priority_appeals.count
+  #   priority_appeals = docket.distribute_priority_appeals(self, genpop: "not_genpop", limit: rem)
+  #   rem -= priority_appeals.count
 
-    nonpriority_appeals = docket.distribute_nonpriority_appeals(self, genpop: "not_genpop", range: 7000, limit: rem)
+  #   nonpriority_appeals = docket.distribute_nonpriority_appeals(self, genpop: "not_genpop", range: 7000, limit: rem)
 
-    [*priority_appeals, *nonpriority_appeals]
-  end
+  #   [*priority_appeals, *nonpriority_appeals]
+  # end
 
   def legacy_statistics
     {
