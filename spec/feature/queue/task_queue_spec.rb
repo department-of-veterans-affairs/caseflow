@@ -183,7 +183,7 @@ RSpec.feature "Task queue" do
       User.authenticate!(user: organization_user)
       FactoryBot.create_list(:generic_task, unassigned_count, :in_progress, assigned_to: organization)
       FactoryBot.create_list(:generic_task, assigned_count, :on_hold, assigned_to: organization)
-      visit("/organizations/#{organization.url}")
+      visit(organization.path)
     end
 
     it "shows the right organization name" do

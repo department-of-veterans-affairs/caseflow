@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181113164150) do
+ActiveRecord::Schema.define(version: 20181114142531) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -222,6 +222,26 @@ ActiveRecord::Schema.define(version: 20181113164150) do
     t.string "outgoing_reference_id"
     t.string "aasm_state"
     t.datetime "prepared_at"
+  end
+
+  create_table "distributed_cases", force: :cascade do |t|
+    t.integer "distribution_id"
+    t.string "case_id"
+    t.string "docket"
+    t.boolean "priority"
+    t.boolean "genpop"
+    t.string "genpop_query"
+    t.integer "docket_index"
+    t.datetime "ready_at"
+  end
+
+  create_table "distributions", force: :cascade do |t|
+    t.integer "judge_id"
+    t.string "status"
+    t.json "statistics"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "docket_snapshots", id: :serial, force: :cascade do |t|
@@ -517,6 +537,7 @@ ActiveRecord::Schema.define(version: 20181113164150) do
   create_table "organizations_users", force: :cascade do |t|
     t.integer "organization_id"
     t.integer "user_id"
+    t.boolean "admin", default: false
     t.index ["organization_id"], name: "index_organizations_users_on_organization_id"
     t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
   end
@@ -702,14 +723,6 @@ ActiveRecord::Schema.define(version: 20181113164150) do
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
     t.index ["appeal_type", "appeal_id"], name: "index_special_issue_lists_on_appeal_type_and_appeal_id"
-  end
-
-  create_table "staff_field_for_organizations", force: :cascade do |t|
-    t.bigint "organization_id", null: false
-    t.string "name", null: false
-    t.string "values", default: [], null: false, array: true
-    t.boolean "exclude", default: false
-    t.index ["organization_id"], name: "index_staff_field_for_organizations_on_organization_id"
   end
 
   create_table "supplemental_claims", force: :cascade do |t|

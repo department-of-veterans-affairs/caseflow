@@ -163,3 +163,11 @@ export type Attorneys = {
 export type TaskWithAppeal = Task & {
   appeal: Appeal
 };
+
+export type Distribution = {|
+  id: number,
+  status: string,
+  created_at: string,
+  updated_at: string,
+  distributed_cases_count: number
+|};

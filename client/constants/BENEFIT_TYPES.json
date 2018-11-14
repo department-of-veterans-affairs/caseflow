@@ -1,11 +1,11 @@
 {
   "compensation": "Compensation",
-  "pension": "Pension",
+  "pension": "Pension & Survivor's Benefits",
   "fiduciary": "Fiduciary",
   "insurance": "Insurance",
   "education": "Education",
   "voc_rehab": "Vocational Rehab. & Employment",
   "loan_guaranty": "Loan Guaranty",
-  "vha": "VHA",
-  "nca": "NCA"
+  "vha": "Veterans Health Administration",
+  "nca": "National Cemetery Association"
 }
