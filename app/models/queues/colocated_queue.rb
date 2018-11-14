@@ -16,14 +16,6 @@ class ColocatedQueue
   private
 
   def relevant_tasks
-    incomplete_tasks.or(recently_completed_tasks)
-  end
-
-  def recently_completed_tasks
-    ColocatedTask.recently_completed
-  end
-
-  def incomplete_tasks
-    ColocatedTask.where.not(status: Constants.TASK_STATUSES.completed)
+    ColocatedTask.incomplete_or_recently_completed
   end
 end
