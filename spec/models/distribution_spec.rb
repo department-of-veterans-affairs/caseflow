@@ -85,7 +85,6 @@ describe Distribution do
       expect(subject.valid?).to eq(true)
       expect(subject.status).to eq("completed")
       expect(subject.completed_at).to eq(Time.zone.now)
-      expect(subject.statistics["acting_judge"]).to eq(false)
       expect(subject.statistics["batch_size"]).to eq(15)
       expect(subject.statistics["total_batch_size"]).to eq(45)
       expect(subject.statistics["priority_count"]).to eq(15)
@@ -103,7 +102,6 @@ describe Distribution do
     #   it "correctly distributes cases to the judge" do
     #     subject.distribute!
     #     expect(subject.valid?).to eq(true)
-    #     expect(subject.statistics["acting_judge"]).to eq(true)
     #     expect(subject.statistics["batch_size"]).to eq(10)
     #     expect(subject.distributed_cases.count).to eq(7)
     #     expect(subject.distributed_cases.where(genpop: false).count).to eq(7)
