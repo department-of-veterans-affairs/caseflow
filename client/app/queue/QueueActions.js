@@ -468,7 +468,7 @@ const receiveDistribution = (dispatch, userId, response) => {
   }
 };
 
-export const requestDistribution = (userId) => (dispatch: Dispatch) => {
+export const requestDistribution = (userId: string) => (dispatch: Dispatch) => {
   dispatch(setPendingDistribution({ status: 'pending' }));
 
   ApiUtil.get('/distributions/new').
