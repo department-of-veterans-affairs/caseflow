@@ -174,4 +174,16 @@ class Fakes::VBMSService
 
     true
   end
+
+  def self.reset!
+    @document_records = nil
+    @end_product_claim_id = nil
+    @uploaded_form8 = nil
+    @uploaded_form8_appeal = nil
+    @manifest_vbms_fetched_at = nil
+    @manifest_vva_fetched_at = nil
+    @contention_records = nil
+    @end_product_claim_ids_by_file_number = nil
+    @disposition_records = nil
+  end
 end

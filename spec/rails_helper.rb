@@ -245,6 +245,7 @@ RSpec.configure do |config|
 
   config.before(:each) do
     @spec_time_zone = Time.zone
+    Fakes::VBMSService.reset!
   end
 
   config.after(:each) do
