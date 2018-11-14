@@ -74,7 +74,8 @@ type Props = Params & {|
   userRole: string,
   appeal: Appeal,
   primaryTask: Task,
-  taskAssignedToUser: Task
+  taskAssignedToUser: Task,
+  canEditAod: Boolean
 |};
 
 export class CaseSnapshot extends React.PureComponent<Props> {
@@ -261,7 +262,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
               aod: appeal.isAdvancedOnDocket,
               type: appeal.caseType
             })}
-            {!appeal.isLegacyAppeal && <span {...editButton}>
+            {!appeal.isLegacyAppeal && this.props.canEditAod && <span {...editButton}>
               <Link
                 to={`/queue/appeals/${appeal.externalId}/modal/advanced_on_docket_motion`}>
                 Edit
@@ -305,13 +306,14 @@ export class CaseSnapshot extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => {
-  const { featureToggles, userRole } = state.ui;
+  const { featureToggles, userRole, canEditAod } = state.ui;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     featureToggles,
     userRole,
-    primaryTask: actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0]
+    primaryTask: actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0],
+    canEditAod
   };
 };
 

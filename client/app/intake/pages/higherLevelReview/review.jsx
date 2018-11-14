@@ -71,7 +71,7 @@ class Review extends React.PureComponent {
 
       <RadioField
         name="informal-conference"
-        label="Did the Veteran request an informal conference?"
+        label="Was an informal conference requested?"
         strongLabel
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
@@ -82,7 +82,7 @@ class Review extends React.PureComponent {
 
       <RadioField
         name="same-office"
-        label="Did the Veteran request review by the same office?"
+        label="Was an interview by the same office requested?"
         strongLabel
         vertical
         options={BOOLEAN_RADIO_OPTIONS}

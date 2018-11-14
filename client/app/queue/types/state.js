@@ -7,7 +7,8 @@ import type {
   BasicAppeals,
   AppealDetails,
   User,
-  Attorneys
+  Attorneys,
+  Distribution
 } from './models';
 
 export type AttorneyAppealsLoadingState = {
@@ -56,7 +57,8 @@ export type UiState = {
   userIsVsoEmployee: boolean,
   feedbackUrl: string,
   veteranCaseListIsVisible: boolean,
-  organizationIds: Array<number>
+  organizationIds: Array<number>,
+  canEditAod: boolean
 };
 
 export type UsersById = { [number]: ?User };
@@ -83,6 +85,7 @@ export type QueueState = {|
   attorneysOfJudge: AttorneysOfJudge,
   attorneyAppealsLoadingState: AttorneyAppealsLoadingState,
   isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
+  pendingDistribution: ?Distribution,
   attorneys: Attorneys,
   newDocsForAppeal: NewDocsForAppeal,
   organizationId: ?number,

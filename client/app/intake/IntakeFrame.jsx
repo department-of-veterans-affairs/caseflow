@@ -90,7 +90,7 @@ class IntakeFrame extends React.PureComponent {
                 <PageRoute
                   exact
                   path={PAGE_PATHS.ADD_ISSUES}
-                  title="Add Issues | Caseflow Intake"
+                  title="Add / Remove Issues | Caseflow Intake"
                   component={IntakeAddIssuesPage} />
                 <PageRoute
                   exact

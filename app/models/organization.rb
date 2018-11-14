@@ -1,6 +1,5 @@
 class Organization < ApplicationRecord
   has_many :tasks, as: :assigned_to
-  has_many :staff_field_for_organization
   has_many :organizations_users, dependent: :destroy
   has_many :users, through: :organizations_users
 
@@ -21,5 +20,13 @@ class Organization < ApplicationRecord
 
   def user_has_access?(user)
     users.pluck(:id).include?(user.id)
+  end
+
+  def path
+    "/organizations/#{url ? url : id}"
+  end
+
+  def user_admin_path
+    "#{path}/users"
   end
 end

@@ -73,9 +73,8 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def co_hearings_for_master_record(parent_hearing_date)
-      select_hearings.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) between ? and ?",
-                            "C", "%VIDEO%", parent_hearing_date.to_date,
-                            (parent_hearing_date + 1.day).to_date)
+      select_hearings.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) = ?",
+                            "C", "%VIDEO%", parent_hearing_date.to_date)
     end
 
     def for_appeal(appeal_vacols_id)
@@ -145,23 +144,20 @@ class VACOLS::CaseHearing < VACOLS::Record
       # VACOLS overloads the HEARSCHED table with other types of hearings
       # that work differently. Filter those out.
       select("VACOLS.HEARING_VENUE(vdkey) as hearing_venue",
-             "staff.sdomainid as css_id",
-             :hearing_disp, :hearing_pkseq,
-             :hearing_date, :hearing_type,
-             :notes1, :folder_nr,
-             :vdkey, :aod,
+             :hearing_disp, :hearing_pkseq, :hearing_date, :hearing_type,
+             :notes1, :folder_nr, :vdkey, :aod,
              :holddays, :tranreq, :transent,
-             :repname, :addon,
-             :board_member, :mduser,
-             :mdtime, :sattyid,
-             :bfregoff, :bfso,
+             :repname, :addon,  :board_member, :mduser,
+             :mdtime, :sattyid, :bfregoff, :bfso,
              :bfcorkey, :bfddec, :bfdc,
-             "staff.slogid",
-             "corres.snamef, corres.snamemi",
-             "corres.snamel, corres.sspare1",
-             "corres.sspare2, corres.sspare3")
+             "staff.sdomainid as css_id", "brieff.bfac", "staff.slogid",
+             "corres.saddrst1", "corres.saddrst2", "corres.saddrcty",
+             "corres.saddrstt", "corres.saddrcnty", "corres.saddrzip",
+             "corres.snamef, corres.snamemi", "corres.snamel, corres.sspare1",
+             "corres.sspare2, corres.sspare3, folder.tinum")
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
         .joins("left outer join vacols.brieff on brieff.bfkey = folder_nr")
+        .joins("left outer join vacols.folder on folder.ticknum = brieff.bfkey")
         .joins("left outer join vacols.corres on corres.stafkey = bfcorkey")
         .where(hearing_type: HEARING_TYPES.keys)
     end
