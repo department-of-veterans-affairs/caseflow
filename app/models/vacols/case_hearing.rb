@@ -96,7 +96,8 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def load_days_for_range(start_date, end_date)
-      select_schedule_days.where("trunc(hearing_date) between ? and ?", start_date, end_date).order(:hearing_date)
+      select_schedule_days.where("trunc(hearing_date) between ? and ?", VacolsHelper.day_only_str(start_date),
+                                 VacolsHelper.day_only_str(end_date)).order(:hearing_date)
     end
 
     def load_days_for_central_office(start_date, end_date)

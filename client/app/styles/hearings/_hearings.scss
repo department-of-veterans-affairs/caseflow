@@ -169,69 +169,6 @@
       }
     }
 
-    .cf-hearings-docket-date {
-      width: 14%;
-
-      > span {
-        display: inline-block;
-        vertical-align: top;
-
-        &:first-child {
-          padding-bottom: 5px;
-        }
-
-        &:last-child {
-          display: block;
-        }
-      }
-    }
-
-    .cf-hearings-prepped {
-      width: 3%;
-
-      .cf-form-checkboxes {
-        margin-top: 0;
-        padding-left: 4px;
-      }
-    }
-
-    .cf-hearings-docket-appellant {
-      width: 20%;
-
-      b {
-        display: block;
-      }
-    }
-
-    .cf-hearings-docket-notes {
-      padding-top: 0;
-
-      .cf-form-textarea {
-        margin-bottom: 0;
-      }
-
-      label {
-        position: absolute;
-        display: inline-block;
-        vertical-align: top;
-        width: 3em;
-
-        div {
-          padding-left: 3em;
-       }
-      }
-
-      textarea {
-        padding-top: 0;
-        padding-bottom: 0;
-        height: 4em;
-        min-height: 4em;
-        resize: vertical;
-        margin-left: 3em;
-        width: 84%;
-      }
-    }
-
     .cf-hearings-docket-actions {
       width: 45%;
       text-align: center;
@@ -246,10 +183,6 @@
         padding: 0 .32em;
       }
     }
-  }
-
-  .transcriptCell {
-    background-color: $color-gray-lightest;
   }
 
   .transcriptRequested {

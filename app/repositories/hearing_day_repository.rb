@@ -67,13 +67,17 @@ class HearingDayRepository
       end
     end
 
-    def fetch_hearing_day_slots(hearing_day)
+    def fetch_hearing_day_slots(regional_office_record, hearing_day)
       # returns the total slots for the hearing day's regional office.
-      ro_staff = VACOLS::Staff.where(stafkey: hearing_day[:regional_office])
-      slots_from_vacols = slots_based_on_type(staff: ro_staff[0],
+      slots_from_vacols = slots_based_on_type(staff: regional_office_record,
                                               type: hearing_day[:hearing_type],
                                               date: hearing_day[:hearing_date])
       slots_from_vacols || HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper.timezone(hearing_day[:regional_office])]
+    end
+
+    def ro_staff_hash(regional_office_keys)
+      ro_staff = VACOLS::Staff.where(stafkey: regional_office_keys)
+      ro_staff.reduce({}) { |acc, record| acc.merge(record.stafkey => record) }
     end
 
     def to_canonical_hash(hearing)
