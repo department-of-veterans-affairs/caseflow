@@ -265,6 +265,7 @@ export const prepareAppealForStore =
           nodReceiptDate: appeal.attributes.events.nod_receipt_date,
           form9Date: appeal.attributes.events.form9_date
         },
+        timeline: appeal.attributes.timeline,
         decisionDate: appeal.attributes.decision_date,
         certificationDate: appeal.attributes.certification_date,
         powerOfAttorney: appeal.attributes.power_of_attorney,

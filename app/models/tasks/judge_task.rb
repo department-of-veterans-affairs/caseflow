@@ -20,6 +20,10 @@ class JudgeTask < Task
     end
   end
 
+  def friendly_name
+    'Decision taken (Judge)'
+  end
+
   def self.create_from_params(params, user)
     new_task = super(params, user)
 

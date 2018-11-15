@@ -94,4 +94,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
       nod_receipt_date: object.receipt_date
     }
   end
+
+  attribute :timeline do
+      object.tasks.where(status: "completed").order('completed_at DESC').map do |task|
+        task.prepare_for_timeline
+      end
+  end
 end

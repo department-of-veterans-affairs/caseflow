@@ -199,6 +199,13 @@ class Task < ApplicationRecord
     }
   end
 
+  def prepare_for_timeline
+    {
+      title: friendly_name,
+      date: completed_at
+    }
+  end
+
   private
 
   def users_to_options(users)

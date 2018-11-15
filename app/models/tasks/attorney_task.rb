@@ -27,6 +27,10 @@ class AttorneyTask < Task
     ]
   end
 
+  def friendly_name
+    'Decision drafted (Attorney)'
+  end
+
   private
 
   def parent_attorney_child_count

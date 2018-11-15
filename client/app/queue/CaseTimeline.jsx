@@ -46,6 +46,7 @@ export default class CaseTimeline extends React.PureComponent {
         pendingTitle: COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
         date: appeal.decisionDate
       },
+      appeal.timeline,
       {
         legacyOnly: true,
         title: COPY.CASE_TIMELINE_FORM_9_RECEIVED,
@@ -57,7 +58,9 @@ export default class CaseTimeline extends React.PureComponent {
         pendingTitle: COPY.CASE_TIMELINE_NOD_PENDING,
         date: appeal.events.nodReceiptDate
       }
-    ].filter((event) => !event.legacyOnly || appeal.isLegacyAppeal);
+    ].flat().filter((event) => !event.legacyOnly || appeal.isLegacyAppeal);
+
+    const timeline_events = appeal.timeline;
 
     return <React.Fragment>
       {COPY.CASE_TIMELINE_HEADER}
