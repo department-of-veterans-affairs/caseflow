@@ -766,7 +766,9 @@ RSpec.feature "Supplemental Claim Intake" do
       end
 
       scenario "adding issue with legacy opt in disabled" do
-        FeatureToggle.disable!(:intake_legacy_opt_in)
+        allow(FeatureToggle).to receive(:enabled?).and_call_original
+        allow(FeatureToggle).to receive(:enabled?).with(:intake_legacy_opt_in, user: current_user).and_return(false)
+
         start_supplemental_claim(veteran)
         visit "/intake/add_issues"
 
