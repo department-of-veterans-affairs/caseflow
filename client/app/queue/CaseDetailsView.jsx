@@ -17,8 +17,9 @@ import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
-import { resetErrorMessages, resetSuccessMessages } from './uiReducer/uiActions';
+import { resetErrorMessages, resetSuccessMessages, setHearingDay } from './uiReducer/uiActions';
 import CaseTimeline from './CaseTimeline';
+import { getQueryParams } from '../util/QueryParamsUtil';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
@@ -39,6 +40,11 @@ class CaseDetailsView extends React.PureComponent {
   componentDidMount = () => {
     window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
     this.props.resetErrorMessages();
+
+    const { hearingDate, regionalOffice } = getQueryParams(window.location.search);
+    console.log('!!!!!!!', hearingDate, regionalOffice);
+    if(hearingDate && regionalOffice)
+      this.props.setHearingDay({ hearingDate, regionalOffice });
   }
 
   render = () => {
@@ -102,7 +108,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     resetErrorMessages,
-    resetSuccessMessages
+    resetSuccessMessages,
+    setHearingDay
   }, dispatch)
 );
 

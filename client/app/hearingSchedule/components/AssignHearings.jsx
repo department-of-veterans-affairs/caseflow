@@ -162,7 +162,7 @@ export default class AssignHearings extends React.Component {
   veteransReadyForHearing = () => {
 
     const { selectedHearingDay, selectedRegionalOffice } = this.props;
-    const day = moment(selectedHearingDay).format('YYYY-MM-DD')
+    const date = moment(selectedHearingDay).format('YYYY-MM-DD')
 
     const tabWindowColumns = [
       {
@@ -170,7 +170,7 @@ export default class AssignHearings extends React.Component {
         align: 'left',
         valueName: 'caseDetails',
         valueFunction: (veteran) => <Link
-          href={`/queue/appeals/${veteran.vacolsId}/?hearingDate=${day}&ro=${selectedRegionalOffice.value}`}
+          href={`/queue/appeals/${veteran.vacolsId}/?hearingDate=${date}&regionalOffice=${selectedRegionalOffice.value}`}
           name={veteran.vacolsId}>
           {veteran.caseDetails}
         </Link>
