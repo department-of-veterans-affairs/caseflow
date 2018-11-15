@@ -174,10 +174,11 @@ end
 
 User.prepend(StubbableUser)
 
-def reset_application!
+def clean_application!
   User.clear_stub!
   Fakes::CAVCDecisionRepository.clean!
   Fakes::BGSService.clean!
+  Fakes::VBMSService.clean!
 end
 
 def current_user
