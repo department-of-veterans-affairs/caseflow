@@ -23,6 +23,7 @@ class ClaimReviewIntake < DecisionReviewIntake
   rescue ActiveRecord::RecordInvalid => _err
     # propagate the error from invalid column to the user-visible reason
     if detail.errors.messages[:benefit_type].include?(ClaimantValidator::PAYEE_CODE_REQUIRED)
+      detail.validate
       detail.errors[:payee_code] << "blank"
       return false
     end
