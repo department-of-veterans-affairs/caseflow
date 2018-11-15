@@ -174,10 +174,11 @@ end
 
 User.prepend(StubbableUser)
 
-def reset_application!
+def clean_application!
   User.clear_stub!
   Fakes::CAVCDecisionRepository.clean!
   Fakes::BGSService.clean!
+  Fakes::VBMSService.clean!
 end
 
 def current_user
@@ -245,7 +246,6 @@ RSpec.configure do |config|
 
   config.before(:each) do
     @spec_time_zone = Time.zone
-    Fakes::VBMSService.reset!
   end
 
   config.after(:each) do

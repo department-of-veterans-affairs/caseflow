@@ -175,15 +175,16 @@ class Fakes::VBMSService
     true
   end
 
-  def self.reset!
-    @document_records = nil
-    @end_product_claim_id = nil
-    @uploaded_form8 = nil
-    @uploaded_form8_appeal = nil
-    @manifest_vbms_fetched_at = nil
-    @manifest_vva_fetched_at = nil
-    @contention_records = nil
-    @end_product_claim_ids_by_file_number = nil
-    @disposition_records = nil
+  # Used in test to clean fake VBMS state.
+  def self.clean!
+    self.document_records = nil
+    self.end_product_claim_id = nil
+    self.uploaded_form8 = nil
+    self.uploaded_form8_appeal = nil
+    self.manifest_vbms_fetched_at = nil
+    self.manifest_vva_fetched_at = nil
+    self.contention_records = nil
+    self.end_product_claim_ids_by_file_number = nil
+    self.disposition_records = nil
   end
 end
