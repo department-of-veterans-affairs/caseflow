@@ -422,7 +422,7 @@ RSpec.feature "Supplemental Claim Intake" do
       find("label", text: "Compensation", match: :prefer_exact).click
     end
 
-    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+    fill_in "What is the Receipt Date of this form?", with: "04/20/2019"
 
     within_fieldset("Is the claimant someone other than the Veteran?") do
       find("label", text: "Yes", match: :prefer_exact).click
@@ -436,8 +436,12 @@ RSpec.feature "Supplemental Claim Intake" do
 
     safe_click "#button-submit-review"
 
+    expect(page).to have_content(
+      "Receipt date cannot be in the future."
+    )
     expect(page).to have_content("Please select an option.")
 
+    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
     within_fieldset("What is the Benefit Type?") do
       find("label", text: "Pension", match: :prefer_exact).click
     end
