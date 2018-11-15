@@ -199,7 +199,11 @@ class Task < ApplicationRecord
     }
   end
 
-  def prepare_for_timeline
+  def friendly_name
+    "#{type} completed"
+  end
+
+  def timeline_title
     {
       title: friendly_name,
       date: completed_at

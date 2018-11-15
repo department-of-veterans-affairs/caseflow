@@ -28,7 +28,7 @@ class AttorneyTask < Task
   end
 
   def friendly_name
-    "Decision drafted (Attorney)"
+    COPY::CASE_TIMELINE_ATTORNEY_TASK
   end
 
   private

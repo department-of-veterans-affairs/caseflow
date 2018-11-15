@@ -253,5 +253,7 @@
   "CASE_TIMELINE_FORM_9_RECEIVED": "Form 9 received",
   "CASE_TIMELINE_FORM_9_PENDING": "Form 9 pending",
   "CASE_TIMELINE_NOD_RECEIVED": "Notice of disagreement received",
-  "CASE_TIMELINE_NOD_PENDING": "Notice of disagreement pending"
+  "CASE_TIMELINE_NOD_PENDING": "Notice of disagreement pending",
+  "CASE_TIMELINE_JUDGE_TASK": "Decision signed by judge",
+  "CASE_TIMELINE_ATTORNEY_TASK": "Decision drafted by attorney"
 }
