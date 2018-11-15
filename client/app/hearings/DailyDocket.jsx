@@ -7,7 +7,7 @@ import { CATEGORIES, ACTIONS } from './analytics';
 import { orderTheDocket } from './util/index';
 import Table from '../components/Table';
 import SearchableDropdown from '../components/SearchableDropdown';
-import { getTime, getTimeInDifferentTimeZone } from '../util/DateUtil';
+import { getTime, getTimeInDifferentTimeZone, getDate } from '../util/DateUtil';
 import {
   setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested, setHearingViewed,
   setHearingPrepped
@@ -28,8 +28,8 @@ const tableRowStyling = css({
     verticalAlign: 'top'
   },
   '& > tr:nth-child(odd)': {
-    '& > td:nth-child(1)': { width: '4%' },
-    '& > td:nth-child(2)': { width: '4%',
+    '& > td:nth-child(1)': { width: '1%' },
+    '& > td:nth-child(2)': { width: '2%',
       '> .cf-form-checkboxes': { marginTop: '0' } },
     '& > td:nth-child(3)': { width: '10%' },
     '& > td:nth-child(4)': { width: '18%' },
@@ -43,27 +43,29 @@ const tableRowStyling = css({
   },
   '& > tr:nth-child(even)': {
     '& > td:nth-child(1)': { width: '4%' },
-    '& > td:nth-child(4)': { width: '20%' },
+    '& > td:nth-child(2)': { width: '2%' },
+    '& > td:nth-child(4)': { width: '20%',
+      '& label': {
+        position: 'absolute',
+        display: 'inline-block'
+      },
+      '& div': { paddingLeft: '5rem' },
+      '& textarea': {
+        minHeight: '4em',
+        resize: 'vertical',
+        width: ' 120%' } },
     '& > td:nth-child(6)': { backgroundColor: '#f1f1f1',
       width: '15%' },
     '& > td:nth-child(7)': { backgroundColor: '#f1f1f1',
       width: '15%' },
     '& > td:nth-child(8)': { backgroundColor: '#f1f1f1',
-      width: '22%' }
+      width: '15%' }
   }
 });
 
 const noMarginStyling = css({
   marginRight: '-40px',
   marginLeft: '-40px'
-});
-
-const textareaStyling = css({
-  '@media only screen and (max-width : 1024px)': {
-    '& > textarea': {
-      width: '80%'
-    }
-  }
 });
 
 const preppedCheckboxStyling = css({
@@ -102,26 +104,32 @@ export class DailyDocket extends React.PureComponent {
     window.analyticsEvent(CATEGORIES.DAILY_DOCKET_PAGE, ACTIONS.GO_BACK_TO_HEARING_DAYS);
   }
 
-  setDisposition = (selected) =>
-    this.props.setDisposition(this.props.hearing.id, selectedValue(selected), this.props.hearingDate);
+  setDisposition = (hearingId, hearingDate) => (selected) => {
+    this.props.setDisposition(hearingId, selectedValue(selected), hearingDate);
+  }
 
-  setHoldOpen = (selected) =>
-    this.props.setHoldOpen(this.props.hearing.id, selectedValue(selected), this.props.hearingDate);
+  setHoldOpen = (hearingId, hearingDate) => (selected) => {
+    this.props.setHoldOpen(hearingId, selectedValue(selected), hearingDate);
+  }
 
-  setAod = (selected) =>
-    this.props.setAod(this.props.hearing.id, selectedValue(selected), this.props.hearingDate);
+  setAod = (hearingId, hearingDate) => (selected) => {
+    this.props.setAod(hearingId, selectedValue(selected), hearingDate);
+  }
 
-  setTranscriptRequested = (value) =>
-    this.props.setTranscriptRequested(this.props.hearing.id, value, this.props.hearingDate);
+  setTranscriptRequested = (hearingId, hearingDate) => (value) => {
+    this.props.setTranscriptRequested(hearingId, value, hearingDate);
+  }
 
-  setNotes = (event) => this.props.setNotes(this.props.hearing.id, event.target.value, this.props.hearingDate);
+  setNotes = (hearingId, hearingDate) => (event) => {
+    this.props.setNotes(hearingId, event.target.value, hearingDate);
+  }
 
-  setHearingViewed = () => this.props.setHearingViewed(this.props.hearing.id)
+  setHearingViewed = (hearingId) => this.props.setHearingViewed(hearingId)
 
-  preppedOnChange = (value) => this.props.setHearingPrepped({
-    hearingId: this.props.hearing.id,
+  preppedOnChange = (hearingId, hearingDate) => (value) => this.props.setHearingPrepped({
+    hearingId,
     prepped: value,
-    date: this.props.hearingDate,
+    date: hearingDate,
     setEdited: true
   });
 
@@ -167,18 +175,16 @@ export class DailyDocket extends React.PureComponent {
  }
 
 getRoTime = (hearing) => {
-  if (hearing) {
-    return <div>{getTime(hearing.date)} /<br />
-      {getTimeInDifferentTimeZone(hearing.date, hearing.regional_office_timezone)} <br />
-      <span>{hearing.regional_office_name}</span>
-    </div>;
-  }
+  return <div>{getTime(hearing.date)} /<br />
+    {getTimeInDifferentTimeZone(hearing.date, hearing.regional_office_timezone)} <br />
+    <span>{hearing.regional_office_name}</span>
+  </div>;
 };
 
 getPrepCheckBox = (hearing) => {
   return <Checkbox
     id={`${hearing.id}-prep`}
-    onChange={this.preppedOnChange}
+    onChange={this.preppedOnChange(hearing.id, getDate(hearing.date))}
     key={`${hearing.id}`}
     value={hearing.prepped || false}
     name={`${hearing.id}-prep`}
@@ -188,14 +194,12 @@ getPrepCheckBox = (hearing) => {
 };
 
 getTranscripted = (hearing) => {
-  return <div className="transcriptRequested">
-    <Checkbox
-      label="Transcript Requested"
-      name={`${hearing.id}.transcript_requested`}
-      value={hearing.transcript_requested}
-      onChange={this.setTranscriptRequested}
-    />
-  </div>;
+  return <Checkbox
+    label="Transcript Requested"
+    name={`${hearing.id}.transcript_requested`}
+    value={hearing.transcript_requested}
+    onChange={this.setTranscriptRequested(hearing.id, getDate(hearing.date))}
+  />;
 };
 
 getDispositionDropdown = (hearing) => {
@@ -203,7 +207,7 @@ getDispositionDropdown = (hearing) => {
     label="Disposition"
     name={`${hearing.id}-disposition`}
     options={DISPOSITION_OPTIONS}
-    onChange={this.setDisposition}
+    onChange={this.setDisposition(hearing.id, getDate(hearing.date))}
     value={hearing.disposition}
     searchable={false}
   />;
@@ -225,25 +229,24 @@ getAodDropdown = (hearing) => {
     label="AOD"
     name={`${hearing.id}-aod`}
     options={aodOptions}
-    onChange={this.setAod}
+    onChange={this.setAod(hearing.id, getDate(hearing.date))}
     value={hearing.aod}
     searchable={false}
   />;
 }
 
  getNotesField = (hearing) => {
-   return <div>
+   return <span>
      <label htmlFor={`${hearing.id}.notes`} aria-label="notes">Notes</label>
-     <div {...textareaStyling}>
+     <div>
        <Textarea
          id={`${hearing.id}.notes`}
          value={hearing.notes || ''}
          name="Notes"
-         onChange={this.setNotes}
-         maxLength="100"
+         onChange={this.setNotes(hearing.id, getDate(hearing.date))}
        />
      </div>
-   </div>;
+   </span>;
  };
 
   getDailyDocketRows = (hearing) => {
