@@ -23,9 +23,6 @@ export class ListScheduleContainer extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      dateRangeKey: `${props.startDate}->${props.endDate}`
-    };
   }
 
   loadHearingSchedule = () => {

@@ -290,7 +290,7 @@ const mapStateToProps = (state) => ({
   filterVljIsOpen: state.hearingSchedule.filterVljIsOpen,
   startDate: state.hearingSchedule.viewStartDate,
   endDate: state.hearingSchedule.viewEndDate,
-  hearingSchedule: state.hearingSchedule.hearingSchedule || {}
+  hearingSchedule: state.hearingSchedule.hearingSchedule
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
