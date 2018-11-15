@@ -60,8 +60,6 @@ export default class CaseTimeline extends React.PureComponent {
       }
     ].flat().filter((event) => !event.legacyOnly || appeal.isLegacyAppeal);
 
-    const timeline_events = appeal.timeline;
-
     return <React.Fragment>
       {COPY.CASE_TIMELINE_HEADER}
       <table>
