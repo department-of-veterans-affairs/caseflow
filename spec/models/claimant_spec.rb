@@ -121,4 +121,39 @@ describe Claimant do
       end
     end
   end
+
+  context "#valid?" do
+    context "payee_code" do
+      let(:review_request) { build(:higher_level_review, benefit_type: benefit_type) }
+
+      subject { build(:claimant, review_request: review_request) }
+
+      context "when review_request.benefit_type is compensation" do
+        let(:benefit_type) { "compensation" }
+
+        it "requires non-blank value" do
+          expect(subject).to_not be_valid
+          expect(subject.errors.messages[:payee_code]).to eq ["blank"]
+        end
+      end
+
+      context "when review_request.benefit_type is pension" do
+        let(:benefit_type) { "pension" }
+
+        it "requires non-blank value" do
+          expect(subject).to_not be_valid
+          expect(subject.errors.messages[:payee_code]).to eq ["blank"]
+        end
+      end
+
+      context "when review_request.benefit_type is fiduciary" do
+        let(:benefit_type) { "fiduciary" }
+
+        it "allows blank value" do
+          expect(subject).to be_valid
+          expect(subject.errors.messages[:payee_code]).to eq []
+        end
+      end
+    end
+  end
 end

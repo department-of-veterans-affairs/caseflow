@@ -120,7 +120,7 @@ describe SupplementalClaimIntake do
           let(:benefit_type) { "compensation" }
 
           it "is expected to add an error that payee_code cannot be blank" do
-            expect(subject).to be_falsey
+            expect(subject).to eq(false)
             expect(detail.errors[:payee_code]).to include("blank")
             expect(detail.claimants).to be_empty
           end
