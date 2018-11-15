@@ -412,7 +412,7 @@ RSpec.feature "Supplemental Claim Intake" do
   end
 
   it "Requires Payee Code for compensation and pension benefit types and non-Veteran claimant" do
-    intake = HigherLevelReviewIntake.new(veteran_file_number: veteran.file_number, user: current_user)
+    intake = SupplementalClaimIntake.new(veteran_file_number: veteran.file_number, user: current_user)
     intake.start!
     visit "/intake"
 
