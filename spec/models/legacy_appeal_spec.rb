@@ -19,6 +19,8 @@ describe LegacyAppeal do
       create(:case, bfcorlid: "123456789S")
     end
 
+    let(:issues) { [Generators::Issue.build(vacols_sequence_id: 1)] }
+
     before do
       stub_const("LegacyAppeal::APPEAL_ISSUE_SOC_ELIGIBLE", soc_eligible_date)
       stub_const("LegacyAppeal::APPEAL_ISSUE_NOD_ELIGIBLE", nod_eligible_date)
@@ -26,6 +28,7 @@ describe LegacyAppeal do
 
     scenario "when is active but not eligible" do
       allow(appeal).to receive(:active?).and_return(true)
+      allow(appeal).to receive(:issues).and_return(issues)
       allow(appeal).to receive(:soc_date).and_return(soc_eligible_date - 1.day)
       allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
 
@@ -34,6 +37,7 @@ describe LegacyAppeal do
 
     scenario "when is not active but is eligible" do
       allow(appeal).to receive(:active?).and_return(false)
+      allow(appeal).to receive(:issues).and_return(issues)
       allow(appeal).to receive(:soc_date).and_return(soc_eligible_date + 1.day)
       allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
 
@@ -42,6 +46,16 @@ describe LegacyAppeal do
 
     scenario "when is not active or eligible" do
       allow(appeal).to receive(:active?).and_return(false)
+      allow(appeal).to receive(:issues).and_return(issues)
+      allow(appeal).to receive(:soc_date).and_return(soc_eligible_date - 1.day)
+      allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
+
+      expect(appeal.eligible_for_soc_opt_in?).to eq(false)
+    end
+
+    scenario "when is active or eligible but has no issues" do
+      allow(appeal).to receive(:active?).and_return(true)
+      allow(appeal).to receive(:issues).and_return([])
       allow(appeal).to receive(:soc_date).and_return(soc_eligible_date - 1.day)
       allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
 

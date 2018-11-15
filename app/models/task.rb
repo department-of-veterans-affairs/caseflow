@@ -36,7 +36,7 @@ class Task < ApplicationRecord
     end
   end
 
-  def no_actions_available?(_user)
+  def no_actions_available?(user)
     return true if [Constants.TASK_STATUSES.on_hold, Constants.TASK_STATUSES.completed].include?(status)
 
     # Users who are assigned a subtask of an organization don't have actions on the organizational task.
