@@ -231,7 +231,7 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  def start_appeal(test_veteran, legacy_opt_in_approved:false)
+  def start_appeal(test_veteran, legacy_opt_in_approved: false)
     appeal = Appeal.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,

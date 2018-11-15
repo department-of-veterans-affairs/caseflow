@@ -103,7 +103,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def serialized_legacy_issues
-    return [] if not legacy_opt_in_approved
+    return [] if !legacy_opt_in_approved
     active_or_eligible_legacy_appeals.map do |legacy_appeal|
       {
         date: legacy_appeal.nod_date,
