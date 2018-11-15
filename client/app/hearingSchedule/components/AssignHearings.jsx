@@ -28,32 +28,32 @@ export default class AssignHearings extends React.Component {
     this.props.onSelectedHearingDayChange(hearingDay);
   };
 
-  onClick = (vacolsId) => {
-    const payload = {
-      data: {
-        tasks: [
-          {
-            type: 'ScheduleHearingTask',
-            external_id: vacolsId,
-            assigned_to_type: 'User',
-            assigned_to_id: this.props.userId,
-            business_payloads: {
-              description: 'Create Task',
-              values: {
-                regional_office_value: this.props.selectedRegionalOffice.value,
-                regional_office_label: this.props.selectedRegionalOffice.label,
-                hearing_pkseq: this.props.selectedHearingDay.id,
-                hearing_type: this.props.selectedHearingDay.hearingType,
-                hearing_date: this.props.selectedHearingDay.hearingDate
-              }
-            }
-          }
-        ]
-      }
-    };
-
-    ApiUtil.post('/tasks', payload);
-  };
+  // onClick = (vacolsId) => {
+  //   const payload = {
+  //     data: {
+  //       tasks: [
+  //         {
+  //           type: 'ScheduleHearingTask',
+  //           external_id: vacolsId,
+  //           assigned_to_type: 'User',
+  //           assigned_to_id: this.props.userId,
+  //           business_payloads: {
+  //             description: 'Create Task',
+  //             values: {
+  //               regional_office_value: this.props.selectedRegionalOffice.value,
+  //               regional_office_label: this.props.selectedRegionalOffice.label,
+  //               hearing_pkseq: this.props.selectedHearingDay.id,
+  //               hearing_type: this.props.selectedHearingDay.hearingType,
+  //               hearing_date: this.props.selectedHearingDay.hearingDate
+  //             }
+  //           }
+  //         }
+  //       ]
+  //     }
+  //   };
+  //
+  //   ApiUtil.post('/tasks', payload);
+  // };
 
   roomInfo = (hearingDay) => {
     let room = hearingDay.roomInfo;
@@ -161,15 +161,17 @@ export default class AssignHearings extends React.Component {
 
   veteransReadyForHearing = () => {
 
+    const { selectedHearingDay, selectedRegionalOffice } = this.props;
+    const day = moment(selectedHearingDay).format('YYYY-MM-DD')
+
     const tabWindowColumns = [
       {
         header: 'Case details',
         align: 'left',
         valueName: 'caseDetails',
         valueFunction: (veteran) => <Link
-          href={`/queue/appeals/${veteran.vacolsId}`}
-          name={veteran.vacolsId}
-          onClick={this.onClick.bind(this, veteran.vacolsId)} >
+          href={`/queue/appeals/${veteran.vacolsId}/?hearingDate=${day}&ro=${selectedRegionalOffice.value}`}
+          name={veteran.vacolsId}>
           {veteran.caseDetails}
         </Link>
       },
@@ -220,8 +222,6 @@ export default class AssignHearings extends React.Component {
       />;
 
     };
-
-    const selectedHearingDay = this.props.selectedHearingDay;
 
     const availableSlots = selectedHearingDay.totalSlots - Object.keys(selectedHearingDay.hearings).length;
     const scheduledOrder = _.sortBy(
