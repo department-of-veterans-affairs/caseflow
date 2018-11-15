@@ -27,8 +27,7 @@ export const initialState = {
   loadedUserId: null,
   selectedAssignee: null,
   selectedAssigneeSecondary: null,
-  veteranCaseListIsVisible: false,
-  canEditAod: false
+  veteranCaseListIsVisible: false
 };
 
 const setMessageState = (state, message, msgType) => update(state, {
@@ -63,10 +62,6 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
   case ACTIONS.SET_SELECTING_JUDGE:
     return update(state, {
       selectingJudge: { $set: action.payload.selectingJudge }
-    });
-  case ACTIONS.SET_CAN_EDIT_AOD:
-    return update(state, {
-      canEditAod: { $set: action.payload.canEditAod }
     });
   case ACTIONS.HIGHLIGHT_INVALID_FORM_ITEMS:
     return update(state, {
