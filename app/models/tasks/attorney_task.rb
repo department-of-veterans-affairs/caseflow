@@ -28,7 +28,7 @@ class AttorneyTask < Task
   end
 
   def friendly_name
-    'Decision drafted (Attorney)'
+    "Decision drafted (Attorney)"
   end
 
   private

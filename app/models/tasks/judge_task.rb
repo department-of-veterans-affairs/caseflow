@@ -21,7 +21,7 @@ class JudgeTask < Task
   end
 
   def friendly_name
-    'Decision taken (Judge)'
+    "Decision taken (Judge)"
   end
 
   def self.create_from_params(params, user)
