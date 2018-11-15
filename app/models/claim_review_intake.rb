@@ -20,13 +20,13 @@ class ClaimReviewIntake < DecisionReviewIntake
       create_claimant!
       detail.save!
     end
-  rescue ActiveRecord::RecordInvalid => err
+  rescue ActiveRecord::RecordInvalid => _err
     # propagate the error from invalid column to the user-visible reason
     if detail.errors.messages[:benefit_type].include?(ClaimantValidator::PAYEE_CODE_REQUIRED)
       detail.errors[:payee_code] << "blank"
       return false
     end
-    raise err
+    # we just swallow the exception otherwise, since we want the validation errors to return to client
   end
 
   def complete!(request_params)
