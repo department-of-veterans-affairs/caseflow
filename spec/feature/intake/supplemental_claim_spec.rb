@@ -362,12 +362,12 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  def start_supplemental_claim(test_veteran, is_comp: true)
+  def start_supplemental_claim(test_veteran, is_comp: true, legacy_opt_in_approved: false)
     supplemental_claim = SupplementalClaim.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
       benefit_type: is_comp ? "compensation" : "education",
-      legacy_opt_in_approved: false
+      legacy_opt_in_approved: legacy_opt_in_approved
     )
 
     intake = SupplementalClaimIntake.create!(
@@ -751,7 +751,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
       scenario "adding issues" do
         # feature is not yet fully implemented
-        start_supplemental_claim(veteran)
+        start_supplemental_claim(veteran, legacy_opt_in_approved: true)
         visit "/intake/add_issues"
 
         click_intake_add_issue
@@ -763,6 +763,16 @@ RSpec.feature "Supplemental Claim Intake" do
         expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
         add_intake_rating_issue("None of these match")
 
+        expect(page).to have_content("Left knee granted")
+      end
+
+      scenario "adding issue with legacy opt in not set" do
+        start_supplemental_claim(veteran, legacy_opt_in_approved: nil)
+        visit "/intake/add_issues"
+
+        click_intake_add_issue
+        expect(page).to have_content("Add this issue")
+        add_intake_rating_issue("Left knee granted")
         expect(page).to have_content("Left knee granted")
       end
     end
