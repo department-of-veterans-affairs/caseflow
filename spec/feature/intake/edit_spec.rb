@@ -72,7 +72,7 @@ RSpec.feature "Edit issues" do
              veteran_file_number: veteran.file_number,
              receipt_date: receipt_date,
              docket_type: "evidence_submission",
-             legacy_opt_in_approved: false)
+             legacy_opt_in_approved: false).tap(&:create_tasks_on_intake_success!)
     end
 
     let!(:nonrating_request_issue) do
@@ -84,16 +84,26 @@ RSpec.feature "Edit issues" do
              decision_date: 1.month.ago)
     end
 
+    let!(:rating_request_issue) do
+      create(:request_issue,
+             review_request: appeal,
+             rating_issue_reference_id: "def456",
+             rating_issue_profile_date: profile_date,
+             description: "PTSD denied",
+             contention_reference_id: "4567")
+    end
+
     scenario "allows adding/removing issues" do
       visit "appeals/#{appeal.uuid}/edit/"
 
       expect(page).to have_content("nonrating description")
+
       # remove an issue
-      click_remove_intake_issue("1")
+      click_remove_intake_issue("2")
       click_remove_issue_confirmation
       expect(page).not_to have_content("nonrating description")
 
-      # add an issue
+      # add a different issue
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
 
@@ -112,6 +122,31 @@ RSpec.feature "Edit issues" do
       # canceling should redirect to queue
       click_on "Cancel edit"
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+    end
+
+    scenario "allows removing and re-adding same issue" do
+      issue_description = rating_request_issue.description
+
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      expect(page).to have_content(issue_description)
+      expect(page).to have_button("Save", disabled: true)
+
+      # remove
+      click_remove_intake_issue("1")
+      click_remove_issue_confirmation
+      expect(page).not_to have_content(issue_description)
+
+      # re-add
+      click_intake_add_issue
+      add_intake_rating_issue(issue_description, "a new comment")
+      expect(page).to have_content(issue_description)
+      expect(page).to_not have_content(
+        Constants.INELIGIBLE_REQUEST_ISSUES.duplicate_of_issue_in_active_review.gsub("{review_title}", "Appeal")
+      )
+
+      # issue note was added
+      expect(page).to have_button("Save", disabled: false)
     end
   end
 
@@ -168,7 +203,7 @@ RSpec.feature "Edit issues" do
         RequestIssue.create!(
           review_request: higher_level_review,
           issue_category: "Military Retired Pay",
-          description: "non-rated description",
+          description: "nonrating description",
           contention_reference_id: "1234",
           ineligible_reason: nil,
           decision_date: Date.new(2018, 5, 1)
@@ -179,7 +214,7 @@ RSpec.feature "Edit issues" do
         RequestIssue.create!(
           review_request: higher_level_review,
           issue_category: "Active Duty Adjustments",
-          description: "non-rated description",
+          description: "nonrating description",
           contention_reference_id: "12345",
           ineligible_reason: :untimely
         )
@@ -397,9 +432,7 @@ RSpec.feature "Edit issues" do
         click_intake_add_issue
         add_intake_rating_issue("PTSD denied", "I am an issue note")
         expect(page).to have_content("PTSD denied")
-        # TODO: : Need to fix a bug, but these two expect statements should replace the above one
-        # expect(page).to have_content("PTSD denied Decision Date:")
-        # expect(page).to_not have_content("PTSD denied is ineligible")
+        expect(page).to_not have_content("PTSD denied is ineligible")
         expect(page).to have_content("I am an issue note")
 
         # clicking add issue again should show a disabled radio button for that same rating
