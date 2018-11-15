@@ -56,6 +56,6 @@ RSpec.configure do |config|
   config.append_after(:each) do
     DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }].clean
     DatabaseCleaner[:active_record, { connection: Rails.env.to_s.to_sym }].clean
-    reset_application!
+    clean_application!
   end
 end
