@@ -124,7 +124,9 @@ describe Claimant do
 
   context "#valid?" do
     context "payee_code" do
-      let(:review_request) { build(:higher_level_review, benefit_type: benefit_type) }
+      let(:review_request) do
+        build(:higher_level_review, benefit_type: benefit_type, veteran_file_number: create(:veteran).file_number)
+      end
 
       subject { build(:claimant, review_request: review_request) }
 
