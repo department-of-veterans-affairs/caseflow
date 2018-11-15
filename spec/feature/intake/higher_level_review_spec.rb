@@ -469,13 +469,13 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  def start_higher_level_review(test_veteran, is_comp: true, claim_participant_id: nil, legacy_opt_in_approved: false)
+  def start_higher_level_review(test_veteran, is_comp: true, claim_participant_id: nil)
     higher_level_review = HigherLevelReview.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
       informal_conference: false, same_office: false,
       benefit_type: is_comp ? "compensation" : "education",
-      legacy_opt_in_approved: legacy_opt_in_approved
+      legacy_opt_in_approved: false
     )
 
     intake = HigherLevelReviewIntake.create!(
@@ -963,7 +963,7 @@ RSpec.feature "Higher-Level Review" do
 
       scenario "adding issues" do
         # feature is not yet fully implemented
-        start_higher_level_review(veteran, legacy_opt_in_approved: true)
+        start_higher_level_review(veteran)
         visit "/intake/add_issues"
 
         click_intake_add_issue
@@ -978,8 +978,11 @@ RSpec.feature "Higher-Level Review" do
         expect(page).to have_content("Left knee granted")
       end
 
-      scenario "adding issue with legacy opt in not set" do
-        start_higher_level_review(veteran, legacy_opt_in_approved: nil)
+      scenario "adding issue with legacy opt in disabled" do
+        allow(FeatureToggle).to receive(:enabled?).and_call_original
+        allow(FeatureToggle).to receive(:enabled?).with(:intake_legacy_opt_in, user: current_user).and_return(false)
+
+        start_higher_level_review(veteran)
         visit "/intake/add_issues"
 
         click_intake_add_issue
