@@ -1,6 +1,4 @@
 class AdvanceOnDocketMotionsController < ApplicationController
-  before_action :verify_aod_access
-
   def create
     appeal.claimants.first.person.advance_on_docket_motions.create(
       reason: aod_params[:reason],
@@ -9,11 +7,6 @@ class AdvanceOnDocketMotionsController < ApplicationController
     )
 
     render json: {}
-  end
-
-  def verify_aod_access
-    fail Caseflow::Error::ActionForbiddenError, message: "User does not belong to AOD team" unless
-      AodTeam.singleton.user_has_access?(current_user)
   end
 
   def aod_params

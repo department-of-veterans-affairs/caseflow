@@ -11,13 +11,6 @@ export const resetErrorMessages = () => ({
   type: ACTIONS.RESET_ERROR_MESSAGES
 });
 
-export const setCanEditAod = (canEditAod: Boolean) => ({
-  type: ACTIONS.SET_CAN_EDIT_AOD,
-  payload: {
-    canEditAod
-  }
-});
-
 export const showErrorMessage = (errorMessage: UiStateMessage) => ({
   type: ACTIONS.SHOW_ERROR_MESSAGE,
   payload: {
