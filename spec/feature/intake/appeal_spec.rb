@@ -231,12 +231,12 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  def start_appeal(test_veteran, legacy_opt_in_approved: false)
+  def start_appeal(test_veteran)
     appeal = Appeal.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
       docket_type: "evidence_submission",
-      legacy_opt_in_approved: legacy_opt_in_approved
+      legacy_opt_in_approved: false
     )
 
     intake = AppealIntake.create!(
@@ -590,7 +590,7 @@ RSpec.feature "Appeal Intake" do
 
     scenario "adding issues" do
       # feature is not yet fully implemented
-      start_appeal(veteran, legacy_opt_in_approved: true)
+      start_appeal(veteran)
       visit "/intake/add_issues"
 
       click_intake_add_issue
@@ -606,8 +606,11 @@ RSpec.feature "Appeal Intake" do
       expect(page).to have_content("Left knee granted")
     end
 
-    scenario "adding issue with legacy opt in not set" do
-      start_appeal(veteran, legacy_opt_in_approved: nil)
+    scenario "adding issue with legacy opt in disabled" do
+      allow(FeatureToggle).to receive(:enabled?).and_call_original
+      allow(FeatureToggle).to receive(:enabled?).with(:intake_legacy_opt_in, user: current_user).and_return(false)
+
+      start_appeal(veteran)
       visit "/intake/add_issues"
 
       click_intake_add_issue
