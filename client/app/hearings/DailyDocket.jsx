@@ -52,8 +52,9 @@ const tableRowStyling = css({
       '& div': { paddingLeft: '5rem' },
       '& textarea': {
         minHeight: '4em',
-        resize: 'vertical',
-        width: ' 120%' } },
+        resize: 'vertical' } },
+    '& > td:nth-child(5)': { backgroundColor: '#f1f1f1',
+      width: '15%' },
     '& > td:nth-child(6)': { backgroundColor: '#f1f1f1',
       width: '15%' },
     '& > td:nth-child(7)': { backgroundColor: '#f1f1f1',
@@ -193,7 +194,7 @@ getPrepCheckBox = (hearing) => {
   />;
 };
 
-getTranscripted = (hearing) => {
+getTranscriptRequested = (hearing) => {
   return <Checkbox
     label="Transcript Requested"
     name={`${hearing.id}.transcript_requested`}
@@ -217,8 +218,8 @@ getHoldOpenDropdown = (hearing) => {
   return <SearchableDropdown
     label="Hold Open"
     name={`${hearing.id}-hold_open`}
-    options={holdOptions(this.props.hearingDate)}
-    onChange={this.setHoldOpen}
+    options={holdOptions(getDate(hearing.date))}
+    onChange={this.setHoldOpen(hearing.id, getDate(hearing.date))}
     value={hearing.hold_open}
     searchable={false}
   />;
@@ -271,7 +272,7 @@ getAodDropdown = (hearing) => {
         hearingTime: null,
         appellantInformation: this.getNotesField(hearings),
         representative: null,
-        disposition: this.getTranscripted(hearings),
+        disposition: this.getTranscriptRequested(hearings),
         hearingHoldOpen: null,
         aod: null
       });
@@ -301,12 +302,14 @@ getAodDropdown = (hearing) => {
       {
         header: 'Appellant/Veteran ID',
         align: 'left',
-        valueName: 'appellantInformation'
+        valueName: 'appellantInformation',
+        span: (row) => row.representative ? 1 : 2
       },
       {
         header: 'Representative',
         align: 'left',
-        valueName: 'representative'
+        valueName: 'representative',
+        span: (row) => row.representative ? 1 : 0
       },
       {
         header: 'Actions',
