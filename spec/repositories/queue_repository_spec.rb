@@ -64,6 +64,17 @@ describe QueueRepository do
           QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
         end.to raise_error(Caseflow::Error::QueueRepositoryError)
       end
+    end    
+
+
+    context "when the case already has an unused decass record" do
+      it "should update rather than reusing the old one" do
+        expect(VACOLS::Decass.where(defolder: vacols_id).length).to eq 0
+        VACOLS::Decass.create!(defolder: vacols_id)
+        
+        QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
+        expect(VACOLS::Decass.where(defolder: vacols_id).length).to eq 1 
+      end
     end
   end
 
