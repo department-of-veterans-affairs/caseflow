@@ -123,7 +123,7 @@ class QueueRepository
 
         update_location_to_attorney(vacols_id, attorney)
 
-        VACOLS::Decass.create!(
+        attrs = {
           defolder: vacols_id,
           deatty: attorney.vacols_attorney_id,
           deteam: attorney.vacols_group_id[0..2],
@@ -132,7 +132,11 @@ class QueueRepository
           dedeadline: VacolsHelper.local_date_with_utc_timezone + 30.days,
           deassign: VacolsHelper.local_date_with_utc_timezone,
           deicr: decass_complexity_rating(vacols_id)
-        )
+        }
+
+        existing_decass_record = VACOLS::Decass.where(defolder: vacols_id).where("deprod IS NULL")
+        return VACOLS::Decass.update!(attrs) if existing_decass_record.present?
+        VACOLS::Decass.create!(attrs)
       end
     end
 
