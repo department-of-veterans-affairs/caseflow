@@ -688,6 +688,9 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def eligible_for_soc_opt_in?
+    return false unless nod_date
+    return false unless soc_date
+
     issues.any? && (active? ||
       (soc_date > APPEAL_ISSUE_SOC_ELIGIBLE || nod_date > APPEAL_ISSUE_NOD_ELIGIBLE))
   end
