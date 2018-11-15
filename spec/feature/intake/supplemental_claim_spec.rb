@@ -424,11 +424,11 @@ RSpec.feature "Supplemental Claim Intake" do
 
     fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
 
-    within_fieldset("Did the Veteran request an informal conference?") do
+    within_fieldset("Was an informal conference requested?") do
       find("label", text: "No", match: :prefer_exact).click
     end
 
-    within_fieldset("Did the Veteran request review by the same office?") do
+    within_fieldset("Was an interview by the same office requested?") do
       find("label", text: "No", match: :prefer_exact).click
     end
 
