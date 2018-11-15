@@ -48,6 +48,23 @@ export class AddIssuesPage extends React.Component {
     }
   }
 
+  needsEligibilityCheck = (issue, intakeData) => {
+    if (!intakeData.requestIssues) {
+      return false;
+    }
+    if (issue.ineligibleReason) {
+      return true;
+    }
+
+    let existingRequestIssue = _.some(intakeData.requestIssues, { reference_id: issue.referenceId });
+
+    if (existingRequestIssue) {
+      return false;
+    }
+
+    return true;
+  }
+
   checkIfEligible = (issue, formType) => {
     if (issue.isUnidentified) {
       return false;
@@ -102,14 +119,17 @@ export class AddIssuesPage extends React.Component {
         <div>
           { issues.map((issue, index) => {
             let issueKlasses = ['issue-desc'];
-            let isEligible = this.checkIfEligible(issue, formType);
             let addendum = '';
 
-            if (isEligible !== true) {
-              if (isEligible !== false) {
-                addendum = isEligible;
+            if (this.needsEligibilityCheck(issue, intakeData)) {
+              let isEligible = this.checkIfEligible(issue, formType);
+
+              if (isEligible !== true) {
+                if (isEligible !== false) {
+                  addendum = isEligible;
+                }
+                issueKlasses.push('not-eligible');
               }
-              issueKlasses.push('not-eligible');
             }
 
             return <div className="issue" key={`issue-${index}`}>
