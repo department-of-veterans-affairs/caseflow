@@ -33,10 +33,14 @@ RSpec.describe TasksController, type: :controller do
     let!(:task8) { create(:ama_judge_task, assigned_to: user, assigned_by: user) }
     let!(:task9) { create(:ama_judge_task, :in_progress, assigned_to: user, assigned_by: user) }
     let!(:task10) { create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user) }
+    let!(:task15) do
+      create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user, completed_at: 3.weeks.ago)
+    end
 
     let!(:task11) { create(:ama_attorney_task, assigned_to: user) }
     let!(:task12) { create(:ama_attorney_task, :in_progress, assigned_to: user) }
     let!(:task13) { create(:ama_attorney_task, :completed, assigned_to: user) }
+    let!(:task16) { create(:ama_attorney_task, :completed, assigned_to: user, completed_at: 3.weeks.ago) }
     let!(:task14) { create(:ama_attorney_task, :on_hold, assigned_to: user) }
 
     context "when user is an attorney" do
@@ -46,7 +50,8 @@ RSpec.describe TasksController, type: :controller do
         get :index, params: { user_id: user.id, role: "attorney" }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
-        expect(response_body.size).to eq 5
+
+        expect(response_body.size).to eq 6
         expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
         expect(response_body.first["attributes"]["assigned_by"]["pg_id"]).to eq user.id
         expect(response_body.first["attributes"]["placed_on_hold_at"]).to_not be nil
@@ -59,8 +64,11 @@ RSpec.describe TasksController, type: :controller do
         expect(response_body.second["attributes"]["veteran_full_name"]).to eq task2.appeal.veteran_full_name
         expect(response_body.second["attributes"]["veteran_file_number"]).to eq task2.appeal.veteran_file_number
 
+        # Ensure we include recently completed tasks
+        expect(response_body.select { |task| task["id"] == task13.id.to_s }.count).to eq 1
+
         ama_tasks = response_body.select { |task| task["type"] == "attorney_tasks" }
-        expect(ama_tasks.size).to eq 3
+        expect(ama_tasks.size).to eq 4
         expect(ama_tasks.count { |task| task["attributes"]["status"] == Constants.TASK_STATUSES.assigned }).to eq 1
         expect(ama_tasks.count { |task| task["attributes"]["status"] == Constants.TASK_STATUSES.in_progress }).to eq 1
         expect(ama_tasks.count { |task| task["attributes"]["status"] == Constants.TASK_STATUSES.on_hold }).to eq 1
@@ -110,7 +118,7 @@ RSpec.describe TasksController, type: :controller do
       it "should process the request succesfully" do
         get :index, params: { user_id: user.id, role: "judge" }
         response_body = JSON.parse(response.body)["tasks"]["data"]
-        expect(response_body.size).to eq 2
+        expect(response_body.size).to eq 3
         expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
         expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq user.id
         expect(response_body.first["attributes"]["placed_on_hold_at"]).to be nil
@@ -118,6 +126,9 @@ RSpec.describe TasksController, type: :controller do
         expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.in_progress
         expect(response_body.second["attributes"]["assigned_to"]["id"]).to eq user.id
         expect(response_body.second["attributes"]["placed_on_hold_at"]).to be nil
+
+        # Ensure we include recently completed tasks
+        expect(response_body.select { |task| task["id"] == task10.id.to_s }.count).to eq 1
       end
     end
 
@@ -234,11 +245,12 @@ RSpec.describe TasksController, type: :controller do
         it "should be successful" do
           post :create, params: { tasks: params }
           expect(response.status).to eq 201
+
           response_body = JSON.parse(response.body)["tasks"]["data"]
-          expect(response_body.first["attributes"]["type"]).to eq AttorneyTask.name
-          expect(response_body.first["attributes"]["appeal_id"]).to eq ama_appeal.id
-          expect(response_body.first["attributes"]["docket_number"]).to eq ama_appeal.docket_number
-          expect(response_body.first["attributes"]["appeal_type"]).to eq Appeal.name
+          expect(response_body.second["attributes"]["type"]).to eq AttorneyTask.name
+          expect(response_body.second["attributes"]["appeal_id"]).to eq ama_appeal.id
+          expect(response_body.second["attributes"]["docket_number"]).to eq ama_appeal.docket_number
+          expect(response_body.second["attributes"]["appeal_type"]).to eq Appeal.name
 
           attorney_task = AttorneyTask.find_by(appeal: ama_appeal)
           expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
@@ -504,7 +516,7 @@ RSpec.describe TasksController, type: :controller do
         patch :update, params: { task: { assigned_to_id: new_attorney.id }, id: attorney_task.id }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
-        expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq new_attorney.id
+        expect(response_body.first["id"]).to eq attorney_task.id.to_s
       end
     end
 

@@ -62,7 +62,10 @@ class TasksController < ApplicationController
     tasks = task_class.create_many_from_params(create_params, current_user)
 
     tasks.each { |task| return invalid_record_error(task) unless task.valid? }
-    render json: { tasks: json_tasks(tasks) }, status: :created
+
+    tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
+
+    render json: { tasks: json_tasks(tasks_to_return) }, status: :created
   end
 
   # To update attorney task
@@ -82,7 +85,9 @@ class TasksController < ApplicationController
     tasks = task.update_from_params(update_params, current_user)
     tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
-    render json: { tasks: json_tasks(tasks) }
+    tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
+
+    render json: { tasks: json_tasks(tasks_to_return) }
   end
 
   def for_appeal

@@ -15,7 +15,10 @@ class GenericTask < Task
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def available_actions(user)
+    return [] unless user
+
     if assigned_to == user
       return [
         Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
@@ -24,7 +27,13 @@ class GenericTask < Task
       ]
     end
 
-    if assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
+    if task_is_assigned_to_user_within_organiztaion?(user)
+      return [
+        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
+      ]
+    end
+
+    if task_is_assigned_to_users_organization?(user)
       return [
         Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
@@ -34,6 +43,9 @@ class GenericTask < Task
 
     []
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   def update_from_params(params, current_user)
     verify_user_access!(current_user)
@@ -62,9 +74,20 @@ class GenericTask < Task
   end
 
   def can_be_accessed_by_user?(user)
-    return true if assigned_to && assigned_to == user
-    return true if user && assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
-    false
+    !available_actions(user).empty?
+  end
+
+  private
+
+  def task_is_assigned_to_user_within_organiztaion?(user)
+    parent &&
+      parent.assigned_to.is_a?(Organization) &&
+      assigned_to.is_a?(User) &&
+      parent.assigned_to.user_has_access?(user)
+  end
+
+  def task_is_assigned_to_users_organization?(user)
+    assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
   end
 
   class << self

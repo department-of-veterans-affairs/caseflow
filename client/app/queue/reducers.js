@@ -81,6 +81,12 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
         $merge: action.payload.amaTasks ? action.payload.amaTasks : {}
       }
     });
+  case ACTIONS.RECEIVE_AMA_TASKS:
+    return update(state, {
+      amaTasks: {
+        $set: action.payload.amaTasks
+      }
+    });
   case ACTIONS.RECEIVE_JUDGE_DETAILS:
     return update(state, {
       judges: {
