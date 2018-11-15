@@ -106,7 +106,7 @@ class DecisionReview < ApplicationRecord
     active_or_eligible_legacy_appeals.map do |legacy_appeal|
       {
         date: legacy_appeal.nod_date,
-        issues: legacy_appeal.issues.map(&:attributes)
+        issues: legacy_appeal.issues.map(&:intake_attributes)
       }
     end
   end
