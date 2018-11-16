@@ -119,6 +119,8 @@ describe HigherLevelReviewIntake do
 
       context "And payee code is nil" do
         let(:payee_code) { nil }
+        # Check that the review_request validations still work
+        let(:receipt_date) { 3.days.from_now }
 
         context "And benefit type is compensation" do
           let(:benefit_type) { "compensation" }
@@ -126,6 +128,7 @@ describe HigherLevelReviewIntake do
           it "is expected to add an error that payee_code cannot be blank" do
             expect(subject).to be_falsey
             expect(detail.errors[:payee_code]).to include("blank")
+            expect(detail.errors[:receipt_date]).to include("in_future")
             expect(detail.claimants).to be_empty
           end
         end
@@ -136,6 +139,7 @@ describe HigherLevelReviewIntake do
           it "is expected to add an error that payee_code cannot be blank" do
             expect(subject).to be_falsey
             expect(detail.errors[:payee_code]).to include("blank")
+            expect(detail.errors[:receipt_date]).to include("in_future")
             expect(detail.claimants).to be_empty
           end
         end

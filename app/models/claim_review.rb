@@ -9,6 +9,7 @@ class ClaimReview < DecisionReview
 
   with_options if: :saving_review do
     validates :receipt_date, :benefit_type, presence: { message: "blank" }
+    validates_associated :claimants
   end
 
   validates :legacy_opt_in_approved, inclusion: {
