@@ -340,17 +340,6 @@ bundle install --with staging
 bundle exec rails s -e staging
 ```
 
-## Connecting to VACOLS in UAT
-
-Connecting to VACOLS in UAT is helpful for understanding how the Oracle db behaves.
-
-1. Put the following in your staging ssh config:
-    ```
-    LocalForward 1527 dsva-appeals-vacols-uat-sanitized.cdqbofmbcmtd.us-gov-west-1.rds.amazonaws.com:1526
-    ```
-1. Install SQL Developer
-1.
-
 ## Changing between test users
 Select 'Switch User' from the dropdown or navigate to
 [http://localhost:3000/dev/users](http://localhost:3000/test/users). You can use
