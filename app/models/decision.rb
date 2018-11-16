@@ -11,30 +11,34 @@ class Decision < ApplicationRecord
     "BVA Decision"
   end
 
+  # We have to always download the file from s3 to make sure it exists locally
+  # instead of storing it on the server and relying that it will be there
   def pdf_location
-    @pdf_location ||= tempfile && tempfile.path
+    S3Service.fetch_file(s3_location, output_location)
+    output_location
   end
 
   def source
     "BVA"
   end
 
-  def s3_filename
-    appeal.external_id
-  end
-
   def upload!
     return unless file
-    S3Service.store_file(Decision::S3_SUB_BUCKET + "/" + s3_filename + ".pdf", pdf_location, :filepath)
+    S3Service.store_file(s3_location, Base64.decode64(file))
     VBMSService.upload_document_to_vbms(appeal, self)
+  end
+
+  def s3_location
+    Decision::S3_SUB_BUCKET + "/" + pdf_name
   end
 
   private
 
-  def tempfile
-    pdf = Tempfile.new(["decisions", ".pdf"], encoding: "ascii-8bit")
-    pdf.write(Base64.decode64(file))
-    pdf.close
-    pdf
+  def pdf_name
+    appeal.external_id + ".pdf"
+  end
+
+  def output_location
+    File.join(Rails.root, "tmp", "pdfs", pdf_name)
   end
 end
