@@ -133,18 +133,18 @@ class QueueRepository
         }
 
         if incomplete_decass_record(vacols_id).present?
-          update_decass_record(incomplete_decass_record(vacols_id), attrs.merge(modifying_user: judge.vacols_uniq_id))
+          return update_decass_record(incomplete_decass_record(vacols_id), attrs.merge(modifying_user: judge.vacols_uniq_id))
         end
 
         create_decass_record(attrs.merge(adding_user: judge.vacols_uniq_id))
       end
     end
 
-    def incomplete_decass_record(_vacols_id)
+    def incomplete_decass_record(vacols_id)
       VACOLS::Decass
-        .where(defolder: "1212")
+        .where(defolder: vacols_id)
         .where.not(deprod: %w[REA REU DEV VHA IME AFI OTV OTI]).or(
-          VACOLS::Decass.where(defolder: "1212").where("DEOQ IS NULL")
+          VACOLS::Decass.where(defolder: vacols_id).where("DEOQ IS NULL")
         ).first
     end
 
@@ -208,7 +208,7 @@ class QueueRepository
 
     def create_decass_record(decass_attrs)
       decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs.merge(
-                                                                    added_at: VacolsHelper.local_date_with_utc_timezone
+                                                                    added_at_date: VacolsHelper.local_date_with_utc_timezone
       ))
       VACOLS::Decass.create!(decass_attrs)
     end
