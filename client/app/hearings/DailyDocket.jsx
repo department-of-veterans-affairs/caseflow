@@ -125,7 +125,7 @@ export class DailyDocket extends React.PureComponent {
     this.props.setNotes(hearingId, event.target.value, hearingDate);
   }
 
-  setHearingViewed = (hearingId) => this.props.setHearingViewed(hearingId)
+  setHearingViewed = (hearingId) => () => this.props.setHearingViewed(hearingId)
 
   preppedOnChange = (hearingId, hearingDate) => (value) => this.props.setHearingPrepped({
     hearingId,
