@@ -605,5 +605,19 @@ RSpec.feature "Appeal Intake" do
 
       expect(page).to have_content("Left knee granted")
     end
+
+    scenario "adding issue with legacy opt in disabled" do
+      allow(FeatureToggle).to receive(:enabled?).and_call_original
+      allow(FeatureToggle).to receive(:enabled?).with(:intake_legacy_opt_in, user: current_user).and_return(false)
+
+      start_appeal(veteran)
+      visit "/intake/add_issues"
+
+      click_intake_add_issue
+      expect(page).to have_content("Add this issue")
+      add_intake_rating_issue("Left knee granted")
+      add_untimely_exemption_response("Yes")
+      expect(page).to have_content("Left knee granted")
+    end
   end
 end

@@ -28,7 +28,11 @@ class HearingDayRepository
         result << to_canonical_hash(hearing)
       end
       travel_board = VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
-      [video_and_co.uniq { |hearing_day| [hearing_day[:hearing_date].to_date, hearing_day[:room_info]] }, travel_board]
+      [video_and_co.uniq do |hearing_day|
+        [hearing_day[:hearing_date].to_date,
+         hearing_day[:room_info],
+         hearing_day[:hearing_type]]
+      end, travel_board]
     end
 
     def load_days_for_central_office(start_date, end_date)
@@ -63,13 +67,17 @@ class HearingDayRepository
       end
     end
 
-    def fetch_hearing_day_slots(hearing_day)
+    def fetch_hearing_day_slots(regional_office_record, hearing_day)
       # returns the total slots for the hearing day's regional office.
-      ro_staff = VACOLS::Staff.where(stafkey: hearing_day[:regional_office])
-      slots_from_vacols = slots_based_on_type(staff: ro_staff[0],
+      slots_from_vacols = slots_based_on_type(staff: regional_office_record,
                                               type: hearing_day[:hearing_type],
                                               date: hearing_day[:hearing_date])
       slots_from_vacols || HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper.timezone(hearing_day[:regional_office])]
+    end
+
+    def ro_staff_hash(regional_office_keys)
+      ro_staff = VACOLS::Staff.where(stafkey: regional_office_keys)
+      ro_staff.reduce({}) { |acc, record| acc.merge(record.stafkey => record) }
     end
 
     def to_canonical_hash(hearing)
