@@ -111,6 +111,10 @@ class Fakes::BGSService
           rating_issue_reference_id: in_active_review_reference_id,
           rating_issue_profile_date: in_active_review_receipt_date - 1
         )
+        Generators::EndProduct.build(
+          veteran_file_number: veteran.file_number,
+          bgs_attrs: { benefit_claim_id: in_active_review_reference_id }
+        )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
           promulgation_date: Time.zone.today - 60,
@@ -143,6 +147,10 @@ class Fakes::BGSService
           veteran_file_number: veteran.file_number,
           source: sc
         )
+        Generators::EndProduct.build(
+          veteran_file_number: veteran.file_number,
+          bgs_attrs: { benefit_claim_id: claim_id }
+        )
         sc
       when "has_higher_level_review_with_vbms_claim_id"
         claim_id = "600118951"
@@ -171,6 +179,10 @@ class Fakes::BGSService
             }
           ]
         )
+        Generators::EndProduct.build(
+          veteran_file_number: veteran.file_number,
+          bgs_attrs: { benefit_claim_id: claim_id }
+        )
         hlr
       when "has_ramp_election_with_contentions"
         claim_id = "123456"
@@ -185,6 +197,10 @@ class Fakes::BGSService
           last_synced_at: 10.minutes.ago
         )
         Generators::Contention.build(text: "A contention!", claim_id: claim_id)
+        Generators::EndProduct.build(
+          veteran_file_number: veteran.file_number,
+          bgs_attrs: { benefit_claim_id: claim_id }
+        )
         ramp_election
       end
     end

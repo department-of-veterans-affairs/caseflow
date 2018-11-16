@@ -111,16 +111,14 @@ class ListSchedule extends React.Component {
   getHearingScheduleRows = () => {
     const { hearingSchedule } = this.props;
 
-    const hearingScheduleRows = _.map(hearingSchedule, (hearingDay) => ({
+    return _.map(hearingSchedule, (hearingDay) => ({
       hearingDate: <Link to={`/schedule/docket/${hearingDay.id}`}>{formatDate(hearingDay.hearingDate)}</Link>,
       hearingType: hearingDay.hearingType,
       regionalOffice: hearingDay.regionalOffice,
       room: hearingDay.roomInfo,
       vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName)
     }));
-
-    return hearingScheduleRows;
-  }
+  };
 
   getHearingScheduleColumns = (hearingScheduleRows) => {
 
