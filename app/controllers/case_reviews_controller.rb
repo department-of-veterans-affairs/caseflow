@@ -5,7 +5,7 @@ class CaseReviewsController < ApplicationController
   }.freeze
 
   rescue_from Caseflow::Error::UserRepositoryError do |e|
-    render(e.serialize_response)
+    handle_non_critical_error("case_reviews", e)
   end
 
   def set_application

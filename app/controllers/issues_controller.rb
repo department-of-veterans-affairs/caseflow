@@ -8,7 +8,7 @@ class IssuesController < ApplicationController
   end
 
   rescue_from Caseflow::Error::UserRepositoryError do |e|
-    render(e.serialize_response)
+    handle_non_critical_error("issues", e)
   end
 
   def create
