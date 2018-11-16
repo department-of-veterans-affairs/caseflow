@@ -28,6 +28,9 @@ const StatsContainer = (props) => <BrowserRouter>
           <li>
             <a href="/dispatch/stats">Dispatch Stats</a>
           </li>
+          <li>
+            <a href="/intake/stats">Intake Stats</a>
+          </li>
         </ul>
       </AppSegment>
     </AppFrame>
