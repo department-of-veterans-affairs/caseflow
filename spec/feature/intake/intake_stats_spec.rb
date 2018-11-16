@@ -9,7 +9,7 @@ RSpec.feature "Intake Stats Dashboard" do
     Timecop.return
   end
 
-  scenario "Switching tab intervals", skip: "Fails intermittently" do
+  scenario "Switching tab intervals" do
     User.authenticate!(roles: ["Admin Intake"])
 
     create(:ramp_election, veteran_file_number: "77776661", notice_date: 1.day.ago)
@@ -34,21 +34,23 @@ RSpec.feature "Intake Stats Dashboard" do
            established_at: Time.zone.now,
            end_product_status: "HELLA_ACTIVE").issues.create!(description: "this is the only issue here")
 
-    create(:ramp_election,
-           veteran_file_number: "77776666",
-           notice_date: 5.days.ago,
-           receipt_date: 2.days.ago,
-           option_selected: :higher_level_review_with_hearing,
-           established_at: Time.zone.now)
+    election_for_closed_appeals = create(
+      :ramp_election,
+      veteran_file_number: "77776666",
+      notice_date: 5.days.ago,
+      receipt_date: 2.days.ago,
+      option_selected: :higher_level_review_with_hearing,
+      established_at: Time.zone.now
+    )
 
     RampClosedAppeal.create!(
-      ramp_election_id: 5,
+      ramp_election_id: election_for_closed_appeals.id,
       vacols_id: "12345",
       nod_date: 365.days.ago
     )
 
     RampClosedAppeal.create!(
-      ramp_election_id: 5,
+      ramp_election_id: election_for_closed_appeals,
       vacols_id: "54321",
       nod_date: 363.days.ago
     )
