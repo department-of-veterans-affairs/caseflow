@@ -211,6 +211,18 @@ bundle exec rake local:build
 
 The above shortcut runs a set of commands in sequence that should build your local environment. If you need to troubleshoot the process, you can copy each individual step out of the task and run them independently.
 
+### Connecting to databases locally
+
+There are two databases you'll use: the postgres db aka Caseflow's db, and the Oracle db representing VACOLS (FACOLS).
+
+Rails provides a useful way to connect to the default database called `dbconsole`:
+
+```sh
+bundle exec rails dbconsole # password is `postgres`
+```
+
+To connect to FACOLS, we recommend using [SQL Developer](https://www.oracle.com/database/technologies/appdev/sql-developer.html). Connection details can be found in the docker-compose.yml file.
+
 ### Debugging FACOLS setup
 FACOLS (short for fake-VACOLS) is our name for the Oracle DB with mock VACOLS data that we run locally. Sometimes the above setup fails at FACOLS steps, or the app cannot connect to the FACOLS DB. Here are some frequently encountered scenarios.
 
@@ -327,6 +339,17 @@ bundle install --with staging
 ```sh
 bundle exec rails s -e staging
 ```
+
+## Connecting to VACOLS in UAT
+
+Connecting to VACOLS in UAT is helpful for looking at what kind of values and data the Oracle db holds.
+
+1. Put the following in your staging ssh config:
+    ```
+    LocalForward 1527 dsva-appeals-vacols-uat-sanitized.cdqbofmbcmtd.us-gov-west-1.rds.amazonaws.com:1526
+    ```
+1. Install SQL Developer
+1.
 
 ## Changing between test users
 Select 'Switch User' from the dropdown or navigate to
