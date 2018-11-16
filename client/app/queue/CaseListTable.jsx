@@ -83,7 +83,8 @@ class CaseListTable extends React.PureComponent {
 
     if (doAnyAppealsHaveHearings) {
       const hearingColumn = {
-        valueFunction: (appeal) => <HearingBadge hearing={appeal.hearings[0]} />
+        // hearings are returned in this order: [earliestHearing, ..., mostRecentHearing]
+        valueFunction: (appeal) => <HearingBadge hearing={appeal.hearings[appeal.hearings.length - 1]} />
       };
 
       columns.unshift(hearingColumn);
