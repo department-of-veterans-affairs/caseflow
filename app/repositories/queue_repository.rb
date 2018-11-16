@@ -124,6 +124,7 @@ class QueueRepository
         update_location_to_attorney(vacols_id, attorney)
 
         attrs = {
+          case_id: vacols_id,
           attorney_id: attorney.vacols_attorney_id,
           group_name: attorney.vacols_group_id[0..2],
           assigned_to_attorney_date: VacolsHelper.local_date_with_utc_timezone,
@@ -131,20 +132,20 @@ class QueueRepository
           complexity_rating: decass_complexity_rating(vacols_id)
         }
 
-        existing_decass_record = VACOLS::Decass.where(defolder: vacols_id).where("deprod IS NULL")
-
-        if existing_decass_record.present?
-          update_decass_record(existing_decass_record.first, attrs.merge(modifying_user: judge.vacols_uniq_id)) 
-          return existing_decass_record.reload
+        if incomplete_decass_record(vacols_id).present?
+          update_decass_record(incomplete_decass_record(vacols_id), attrs.merge(modifying_user: judge.vacols_uniq_id))
         end
 
-        create_attrs = {
-          case_id: vacols_id,
-          adding_user: judge.vacols_uniq_id,
-          added_at: VacolsHelper.local_date_with_utc_timezone,
-        }
-        create_decass_record(attrs.merge(create_attrs))
+        create_decass_record(attrs.merge(adding_user: judge.vacols_uniq_id))
       end
+    end
+
+    def incomplete_decass_record(_vacols_id)
+      VACOLS::Decass
+        .where(defolder: "1212")
+        .where.not(deprod: %w[REA REU DEV VHA IME AFI OTV OTI]).or(
+          VACOLS::Decass.where(defolder: "1212").where("DEOQ IS NULL")
+        ).first
     end
 
     def reassign_case_to_attorney!(judge:, attorney:, vacols_id:, created_in_vacols_date:)
@@ -202,10 +203,13 @@ class QueueRepository
       decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
       VACOLS::Decass.where(defolder: decass_record.defolder, deadtim: decass_record.deadtim)
         .update_all(decass_attrs)
+      decass_record.reload
     end
 
     def create_decass_record(decass_attrs)
-      decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
+      decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs.merge(
+                                                                    added_at: VacolsHelper.local_date_with_utc_timezone
+      ))
       VACOLS::Decass.create!(decass_attrs)
     end
 
