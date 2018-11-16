@@ -80,6 +80,7 @@ const SelectClaimantConnected = connect(
     claimantNotVeteran: supplementalClaim.claimantNotVeteran,
     claimant: supplementalClaim.claimant,
     payeeCode: supplementalClaim.payeeCode,
+    payeeCodeError: supplementalClaim.payeeCodeError,
     relationships: supplementalClaim.relationships,
     benefitType: supplementalClaim.benefitType,
     formType: intake.formType
