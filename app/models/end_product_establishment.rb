@@ -171,8 +171,7 @@ class EndProductEstablishment < ApplicationRecord
     raise BGSSyncError.new(e, self)
   end
 
-  def sync_decision_issues!
-    return unless status_cleared?
+  def sync_decision_issues_from_ratings!
     synced_rating_issues = []
     potential_decision_ratings.each do |rating|
       rating.issues.select(&:contention_reference_id).each do |rating_issue|
@@ -182,6 +181,29 @@ class EndProductEstablishment < ApplicationRecord
       end
     end
     resolve_synced_decisions(synced_rating_issues)
+  end
+
+  def sync_decision_issues_from_contentions!
+    # rating issues may not exist for every contention
+    # - rating eps may not have matching ratings for each contention
+    # - nonrating eps don't have ratings
+    # in these cases, use the contention desposition to create a decision issue
+
+    # find request issues with no matching ratings
+    unmatched_request_issues = request_issues - potential_decision_ratings(&:source_request_issue)
+    unmatched_request_issues.each do |request_issue|
+      found_contention = contentions.detect { |contention| contention.contention_id == request_issue.contention_reference_id }
+      # will there be a case where there isn't a matching contention?
+      # also will all request issues have contention_ids?
+      request_issue.save_decision_issue(found_contention)
+      request_issue.processed!
+    end
+  end
+
+  def sync_decision_issues!
+    return unless status_cleared?
+    sync_decision_issues_from_ratings!
+    sync_decision_issues_from_contentions!
   end
 
   def status_canceled?
@@ -246,7 +268,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def potential_decision_ratings
-    Rating.fetch_in_range(participant_id: veteran.participant_id, start_date: established_at, end_date: Time.zone.today)
+    @potential_decision_ratings ||= Rating.fetch_in_range(participant_id: veteran.participant_id, start_date: established_at, end_date: Time.zone.today)
   end
 
   def resolve_synced_decisions(synced_rating_issues)

@@ -149,6 +149,27 @@ class RequestIssue < ApplicationRecord
 
   private
 
+  def save_decision_issue(contention)
+    # do not create another decision issue for this request issue if one already exists
+    return if decision_issue_reference_id
+
+    ActiveRecord::Base.transaction do
+      created_decision_issue = DecisionIssue.create!(
+        source_request_issue: self,
+        participant_id: review_request.veteran.participant_id,
+        disposition: contention.disposition,
+        # contention has start_date and submit_date
+        disposition_date: contention.start_date
+      )
+
+      RequestDecisionIssue.create!(
+        request_issue: self,
+        decision_issue: created_decision_issue
+      )
+      created_decision_issue
+    end
+  end
+
   # RatingIssue is not in db so we pull hash from the serialized_ratings.
   def fetch_contested_rating_issue_ui_hash
     rating_with_issue = review_request.serialized_ratings.find do |rating|
