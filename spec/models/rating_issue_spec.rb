@@ -214,6 +214,7 @@ describe RatingIssue do
       expect(subject.decision_issue).to be_a(DecisionIssue)
       expect(subject.decision_issue.rating_issue_reference_id).to eq(reference_id)
       expect(subject.decision_issue.source_request_issue).to eq(request_issue)
+      expect(RequestDecisionIssue.where(decision_issue: subject.decision_issue).first).to_not be_nil
     end
 
     it "does not save duplicates" do
