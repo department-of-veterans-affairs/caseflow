@@ -65,6 +65,27 @@ describe QueueRepository do
         end.to raise_error(Caseflow::Error::QueueRepositoryError)
       end
     end
+
+    context "when the case already has an incomplete decass record" do
+      it "should update the existing record rather than creating a new one" do
+        expect(VACOLS::Decass.where(defolder: vacols_case.bfkey).count).to eq 0
+        VACOLS::Decass.create!(defolder: vacols_case.bfkey,
+                               deadusr: "FAKE",
+                               deadtim: VacolsHelper.local_date_with_utc_timezone,
+                               deatty: "111",
+                               deteam: "D5",
+                               deprod: "DEV")
+        QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
+        decass_results = VACOLS::Decass.where(defolder: vacols_case.bfkey)
+        expect(decass_results.count).to eq 1
+        decass = decass_results.first
+        expect(decass.deatty).to eq attorney_staff.sattyid
+        expect(decass.deteam).to eq attorney_staff.stitle[0..2]
+        expect(decass.demdusr).to eq judge_staff.slogid
+        expect(decass.deprod).to eq nil
+        expect(decass.deadtim).to eq VacolsHelper.local_date_with_utc_timezone
+      end
+    end
   end
 
   context ".reassign_case_to_judge!" do
