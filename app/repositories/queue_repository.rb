@@ -132,8 +132,9 @@ class QueueRepository
           complexity_rating: decass_complexity_rating(vacols_id)
         }
 
-        if incomplete_decass_record(vacols_id).present?
-          return update_decass_record(incomplete_decass_record(vacols_id), attrs.merge(modifying_user: judge.vacols_uniq_id))
+        incomplete_record = incomplete_decass_record(vacols_id)
+        if incomplete_record.present?
+          return update_decass_record(incomplete_record, attrs.merge(modifying_user: judge.vacols_uniq_id))
         end
 
         create_decass_record(attrs.merge(adding_user: judge.vacols_uniq_id))
@@ -207,9 +208,8 @@ class QueueRepository
     end
 
     def create_decass_record(decass_attrs)
-      decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs.merge(
-                                                                    added_at_date: VacolsHelper.local_date_with_utc_timezone
-      ))
+      decass_attrs = decass_attrs.merge(added_at_date: VacolsHelper.local_date_with_utc_timezone)
+      decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
       VACOLS::Decass.create!(decass_attrs)
     end
 
