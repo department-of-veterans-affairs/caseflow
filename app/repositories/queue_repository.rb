@@ -124,19 +124,26 @@ class QueueRepository
         update_location_to_attorney(vacols_id, attorney)
 
         attrs = {
-          defolder: vacols_id,
-          deatty: attorney.vacols_attorney_id,
-          deteam: attorney.vacols_group_id[0..2],
-          deadusr: judge.vacols_uniq_id,
-          deadtim: VacolsHelper.local_date_with_utc_timezone,
-          dedeadline: VacolsHelper.local_date_with_utc_timezone + 30.days,
-          deassign: VacolsHelper.local_date_with_utc_timezone,
-          deicr: decass_complexity_rating(vacols_id)
+          attorney_id: attorney.vacols_attorney_id,
+          group_name: attorney.vacols_group_id[0..2],
+          assigned_to_attorney_date: VacolsHelper.local_date_with_utc_timezone,
+          deadline_date: VacolsHelper.local_date_with_utc_timezone + 30.days,
+          complexity_rating: decass_complexity_rating(vacols_id)
         }
 
         existing_decass_record = VACOLS::Decass.where(defolder: vacols_id).where("deprod IS NULL")
-        return VACOLS::Decass.update!(attrs) if existing_decass_record.present?
-        VACOLS::Decass.create!(attrs)
+
+        if existing_decass_record.present?
+          update_decass_record(existing_decass_record.first, attrs.merge(modifying_user: judge.vacols_uniq_id)) 
+          return existing_decass_record.reload
+        end
+
+        create_attrs = {
+          case_id: vacols_id,
+          adding_user: judge.vacols_uniq_id,
+          added_at: VacolsHelper.local_date_with_utc_timezone,
+        }
+        create_decass_record(attrs.merge(create_attrs))
       end
     end
 
@@ -195,6 +202,11 @@ class QueueRepository
       decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
       VACOLS::Decass.where(defolder: decass_record.defolder, deadtim: decass_record.deadtim)
         .update_all(decass_attrs)
+    end
+
+    def create_decass_record(decass_attrs)
+      decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
+      VACOLS::Decass.create!(decass_attrs)
     end
 
     def update_location_to_attorney(vacols_id, attorney)

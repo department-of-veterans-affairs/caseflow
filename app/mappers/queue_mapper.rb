@@ -1,8 +1,11 @@
 module QueueMapper
   COLUMN_NAMES = {
+    case_id: :defolder,
     work_product: :deprod,
     note: :deatcom,
     document_id: :dedocid,
+    adding_user: :deadusr,
+    added_at: :deadtim,
     modifying_user: :demdusr,
     reassigned_to_judge_date: :dereceive,
     assigned_to_attorney_date: :deassign,
@@ -10,6 +13,7 @@ module QueueMapper
     attorney_id: :deatty,
     group_name: :deteam,
     board_member_id: :dememid,
+    complexity_rating: :deicr,
     complexity: :defdiff,
     quality: :deoq,
     comment: :debmcom,
