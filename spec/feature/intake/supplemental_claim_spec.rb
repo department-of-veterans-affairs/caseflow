@@ -746,16 +746,36 @@ RSpec.feature "Supplemental Claim Intake" do
 
     context "with active legacy appeal" do
       before do
-        create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{veteran.file_number}S"))
+        setup_legacy_opt_in_appeals(veteran.file_number)
       end
 
       scenario "adding issues" do
         # feature is not yet fully implemented
         start_supplemental_claim(veteran)
         visit "/intake/add_issues"
+        click_intake_add_issue
+
+        expect(page).to have_content("Next")
+        add_intake_rating_issue("Left knee granted")
+
+        # expect legacy opt in modal
+        expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+        add_intake_rating_issue("None of these match")
+
+        expect(page).to have_content("Left knee granted")
+      end
+
+      scenario "adding issue with legacy opt in disabled" do
+        allow(FeatureToggle).to receive(:enabled?).and_call_original
+        allow(FeatureToggle).to receive(:enabled?).with(:intake_legacy_opt_in, user: current_user).and_return(false)
+
+        start_supplemental_claim(veteran)
+        visit "/intake/add_issues"
 
         click_intake_add_issue
-        expect(page).to have_content("Next")
+        expect(page).to have_content("Add this issue")
+        add_intake_rating_issue("Left knee granted")
+        expect(page).to have_content("Left knee granted")
       end
     end
   end

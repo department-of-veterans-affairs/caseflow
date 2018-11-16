@@ -109,27 +109,6 @@ class HearingRepository
       false
     end
 
-    def number_of_slots(regional_office_key:, type:, date:)
-      record = VACOLS::Staff.find_by(stafkey: regional_office_key)
-      slots_based_on_type(staff: record, type: type, date: date) if record
-    end
-
-    def fetch_dockets_slots(dockets)
-      # fetching all the RO keys of the dockets
-      regional_office_keys = dockets.map { |_date, docket| docket.regional_office_key }
-
-      # fetching data of all dockets staff based on the regional office keys
-      ro_staff = VACOLS::Staff.where(stafkey: regional_office_keys)
-      ro_staff_hash = ro_staff.reduce({}) { |acc, record| acc.merge(record.stafkey => record) }
-
-      # returns a hash of docket date (string) as key and number of slots for the docket
-      # as they key
-      dockets.map do |date, docket|
-        record = ro_staff_hash[docket.regional_office_key]
-        [date, (slots_based_on_type(staff: record, type: docket.type, date: docket.date) if record)]
-      end.to_h
-    end
-
     def appeals_ready_for_hearing(vbms_id)
       AppealRepository.appeals_ready_for_hearing(vbms_id)
     end
@@ -138,20 +117,6 @@ class HearingRepository
     def set_vacols_values(hearing, vacols_record)
       hearing.assign_from_vacols(vacols_attributes(vacols_record))
       hearing
-    end
-
-    # STAFF.STC2 is the Travel Board limit for Mon and Fri
-    # STAFF.STC3 is the Travel Board limit for Tue, Wed, Thur
-    # STAFF.STC4 is the Video limit
-    def slots_based_on_type(staff:, type:, date:)
-      case type
-      when :central_office
-        11
-      when :video
-        staff.stc4
-      when :travel
-        (date.monday? || date.friday?) ? staff.stc2 : staff.stc3
-      end
     end
 
     def hearings_for(case_hearings)
@@ -215,6 +180,14 @@ class HearingRepository
         transcript_sent_date: AppealRepository.normalize_vacols_date(vacols_record.transent),
         add_on: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.addon.try(:to_sym)],
         notes: vacols_record.notes1,
+        appellant_address_line_1: vacols_record.saddrst1,
+        appellant_address_line_2: vacols_record.saddrst2,
+        appellant_city: vacols_record.saddrcty,
+        appellant_state: vacols_record.saddrstt,
+        appellant_country: vacols_record.saddrcnty,
+        appellant_zip: vacols_record.saddrzip,
+        appeal_type: VACOLS::Case::TYPES[vacols_record.bfac],
+        docket_number: vacols_record.tinum || "Missing Docket Number",
         veteran_first_name: vacols_record.snamef,
         veteran_middle_initial: vacols_record.snamemi,
         veteran_last_name: vacols_record.snamel,

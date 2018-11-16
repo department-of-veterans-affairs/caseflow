@@ -12,7 +12,7 @@ class Decision < ApplicationRecord
   end
 
   def pdf_location
-    file && file.tempfile
+    @pdf_location ||= tempfile && tempfile.path
   end
 
   def source
@@ -25,7 +25,16 @@ class Decision < ApplicationRecord
 
   def upload!
     return unless file
-    S3Service.store_file(Decision::S3_SUB_BUCKET + "/" + s3_filename, pdf_location, :filepath)
+    S3Service.store_file(Decision::S3_SUB_BUCKET + "/" + s3_filename + ".pdf", pdf_location, :filepath)
     VBMSService.upload_document_to_vbms(appeal, self)
+  end
+
+  private
+
+  def tempfile
+    pdf = Tempfile.new(["decisions", ".pdf"], encoding: "ascii-8bit")
+    pdf.write(Base64.decode64(file))
+    pdf.close
+    pdf
   end
 end

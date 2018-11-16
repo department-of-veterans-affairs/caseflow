@@ -57,4 +57,22 @@ module IntakeHelpers
       end
     end
   end
+
+  def setup_legacy_opt_in_appeals(veteran_file_number)
+    # create two legacy appeals with 2 issues each
+    create(:legacy_appeal, vacols_case:
+      create(:case, bfkey: "vacols1", bfcorlid: "#{veteran_file_number}S", bfdnod: 3.days.ago, bfdsoc: 3.days.ago))
+    create(:legacy_appeal, vacols_case:
+      create(:case, bfkey: "vacols2", bfcorlid: "#{veteran_file_number}S", bfdnod: 4.days.ago, bfdsoc: 4.days.ago))
+    allow(AppealRepository).to receive(:issues).with("vacols1")
+      .and_return([
+                    Generators::Issue.build(vacols_sequence_id: 1),
+                    Generators::Issue.build(vacols_sequence_id: 2)
+                  ])
+    allow(AppealRepository).to receive(:issues).with("vacols2")
+      .and_return([
+                    Generators::Issue.build(vacols_sequence_id: 3),
+                    Generators::Issue.build(vacols_sequence_id: 4)
+                  ])
+  end
 end

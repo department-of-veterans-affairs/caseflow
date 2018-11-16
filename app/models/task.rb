@@ -36,7 +36,7 @@ class Task < ApplicationRecord
     end
   end
 
-  def no_actions_available?(_user)
+  def no_actions_available?(user)
     return true if [Constants.TASK_STATUSES.on_hold, Constants.TASK_STATUSES.completed].include?(status)
 
     # Users who are assigned a subtask of an organization don't have actions on the organizational task.
@@ -57,6 +57,14 @@ class Task < ApplicationRecord
 
   def self.recently_completed
     where(status: Constants.TASK_STATUSES.completed, completed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
+  end
+
+  def self.incomplete
+    where.not(status: Constants.TASK_STATUSES.completed)
+  end
+
+  def self.incomplete_or_recently_completed
+    incomplete.or(recently_completed)
   end
 
   def self.create_many_from_params(params_array, current_user)

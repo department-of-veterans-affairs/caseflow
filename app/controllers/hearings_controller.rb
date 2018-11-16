@@ -9,7 +9,9 @@ class HearingsController < ApplicationController
       HearingRepository.slot_new_hearing(params["hearing"]["master_record_updated"], hearing.appeal)
     end
 
-    hearing.update(update_params)
+    hearing.update_caseflow_and_vacols(update_params)
+    # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
+    HearingRepository.load_vacols_data(hearing)
     render json: hearing.to_hash(current_user.id)
   end
 

@@ -341,4 +341,23 @@ describe GenericTask do
       end
     end
   end
+
+  describe ".verify_org_task_unique" do
+    context "when attempting to create two tasks for different appeals assigned to the same organization" do
+      let(:organization) { FactoryBot.create(:organization) }
+      let(:appeals) { FactoryBot.create_list(:appeal, 2) }
+      it "should succeed" do
+        expect do
+          appeals.each do |a|
+            root_task = RootTask.create(appeal: a)
+            GenericTask.create!(
+              assigned_to: organization,
+              parent_id: root_task.id,
+              appeal: a
+            )
+          end
+        end.to_not raise_error
+      end
+    end
+  end
 end

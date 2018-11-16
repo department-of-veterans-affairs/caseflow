@@ -1,5 +1,25 @@
 class GenericTask < Task
+  before_create :verify_org_task_unique
+
+  # Use the existence of an organization-level task to prevent duplicates since there should only ever be one org-level
+  # task active at a time for a single appeal.
+  def verify_org_task_unique
+    if Task.where(type: type, assigned_to: assigned_to, appeal: appeal)
+        .where.not(status: Constants.TASK_STATUSES.completed).any? &&
+       assigned_to.is_a?(Organization)
+      fail(
+        Caseflow::Error::DuplicateOrgTask,
+        appeal_id: appeal.id,
+        task_type: self.class.name,
+        assignee_type: assigned_to.class.name
+      )
+    end
+  end
+
+  # rubocop:disable Metrics/MethodLength
   def available_actions(user)
+    return [] unless user
+
     if assigned_to == user
       return [
         Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
@@ -8,7 +28,13 @@ class GenericTask < Task
       ]
     end
 
-    if assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
+    if task_is_assigned_to_user_within_organiztaion?(user)
+      return [
+        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
+      ]
+    end
+
+    if task_is_assigned_to_users_organization?(user)
       return [
         Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
@@ -18,6 +44,9 @@ class GenericTask < Task
 
     []
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   def update_from_params(params, current_user)
     verify_user_access!(current_user)
@@ -46,9 +75,20 @@ class GenericTask < Task
   end
 
   def can_be_accessed_by_user?(user)
-    return true if assigned_to && assigned_to == user
-    return true if user && assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
-    false
+    !available_actions(user).empty?
+  end
+
+  private
+
+  def task_is_assigned_to_user_within_organiztaion?(user)
+    parent &&
+      parent.assigned_to.is_a?(Organization) &&
+      assigned_to.is_a?(User) &&
+      parent.assigned_to.user_has_access?(user)
+  end
+
+  def task_is_assigned_to_users_organization?(user)
+    assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
   end
 
   class << self
