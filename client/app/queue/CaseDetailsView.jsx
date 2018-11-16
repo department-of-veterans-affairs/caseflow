@@ -42,7 +42,7 @@ class CaseDetailsView extends React.PureComponent {
     this.props.resetErrorMessages();
 
     const { hearingDate, regionalOffice } = getQueryParams(window.location.search);
-    console.log('!!!!!!!', hearingDate, regionalOffice);
+    
     if(hearingDate && regionalOffice)
       this.props.setHearingDay({ hearingDate, regionalOffice });
   }
