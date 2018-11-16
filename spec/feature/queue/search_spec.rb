@@ -39,6 +39,60 @@ RSpec.feature "Search" do
       end
     end
 
+    context "queue case search for appeals that have hearings" do
+      context "a case in the search view has a hearing" do
+        let!(:today) { Time.zone.today }
+        let!(:hearings) do
+          [
+            create(:case_hearing, :disposition_held, hearing_date: today - 4.days),
+            create(:case_hearing, :disposition_no_show, hearing_date: today - 3.days),
+            create(:case_hearing, :disposition_postponed, hearing_date: today - 2.days)
+          ]
+        end
+
+        let!(:appeal_with_hearing) do
+          FactoryBot.create(
+            :legacy_appeal,
+            :with_veteran,
+            vacols_case: FactoryBot.create(
+              :case,
+              case_hearings: hearings
+            )
+          )
+        end
+
+        before do
+          visit "/search"
+          fill_in "searchBarEmptyList", with: appeal_with_hearing.sanitized_vbms_id
+          click_on "Search"
+        end
+
+        it "table row displays a badge if a case has a hearing" do
+          expect(page).to have_selector(".cf-hearing-badge")
+          expect(find(".cf-hearing-badge")).to have_content("H")
+        end
+
+        it "shows information for the correct hearing when there are multiple hearings" do
+          expect(page).to have_css(".__react_component_tooltip div ul li:nth-child(3) strong span",
+            visible: :hidden,
+            text: 2.days.ago.strftime("%m/%d/%y"))
+        end
+      end
+
+      context "no cases in the search view have hearings" do
+        before do
+          visit "/search"
+          fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+          click_on "Search"
+        end
+
+        it "table does not display a column for a badge if no cases have hearings" do
+          docket_column_header = page.find(:xpath, "//thead/tr/th[1]/span")
+          expect(docket_column_header).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
+        end
+      end
+    end
+
     context "when no appeals found" do
       before do
         visit "/search"
