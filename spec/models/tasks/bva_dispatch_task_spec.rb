@@ -56,7 +56,7 @@ describe BvaDispatchTask do
 
       it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
         expect(Caseflow::Fakes::S3Service).to receive(:store_file)
-          .with("decisions/" + root_task.appeal.external_id + ".pdf", /decisions/, :filepath)
+          .with("decisions/" + root_task.appeal.external_id + ".pdf", /PDF/)
         allow(VBMSService).to receive(:upload_document_to_vbms)
         BvaDispatchTask.outcode(root_task.appeal, params, user)
         tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)
