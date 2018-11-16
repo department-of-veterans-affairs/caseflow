@@ -198,7 +198,7 @@ getTranscriptRequested = (hearing) => {
   return <Checkbox
     label="Transcript Requested"
     name={`${hearing.id}.transcript_requested`}
-    value={hearing.transcript_requested}
+    value={hearing.transcript_requested || false}
     onChange={this.setTranscriptRequested(hearing.id, getDate(hearing.date))}
   />;
 };
