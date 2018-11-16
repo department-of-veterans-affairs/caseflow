@@ -50,7 +50,7 @@ RSpec.feature "Intake Stats Dashboard" do
     )
 
     RampClosedAppeal.create!(
-      ramp_election_id: election_for_closed_appeals,
+      ramp_election_id: election_for_closed_appeals.id,
       vacols_id: "54321",
       nod_date: 363.days.ago
     )
