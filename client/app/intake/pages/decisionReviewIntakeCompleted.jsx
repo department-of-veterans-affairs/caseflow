@@ -9,7 +9,6 @@ import _ from 'lodash';
 
 const getChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
   const checklist = [];
-  console.log("requestIssues1234567::", requestIssues)
   const ineligibleIssues = requestIssues.filter((ri) => ri.ineligibleReason)
   const eligibleIssues = requestIssues.filter((ri) => !ri.ineligibleReason)
   let ratingEndProductIssues = []
@@ -46,13 +45,6 @@ const getChecklistItems = (formType, requestIssues, isInformalConferenceRequeste
   if (isInformalConferenceRequested) {
     checklist.push('Informal Conference Tracked Item');
   }
-
-  if (ineligibleIssues.length > 0) {
-    checklist.push(<Fragment>
-      <strong>Ineligible</strong>
-      {ineligibleIssues.map((ri, i) => <p key={`ineligible-issue-${i}`} className='cf-red-text'>{ri.contentionText} {ineligibilityCopy(ri)}</p>)}
-    </Fragment>);
-  }
   return checklist;
 };
 
@@ -65,6 +57,30 @@ const ineligibilityCopy = (issue) => {
     return INELIGIBLE_REQUEST_ISSUES[issue.ineligibleReason];
   }
 };
+
+class IneligibleIssuesList extends React.PureComponent {
+  render = () =>
+    <Fragment>
+      <ul className="cf-ineligible-checklist cf-left-padding">
+        <li>
+          <strong>Ineligible</strong>
+          {this.props.issues.map((ri, i) => <p key={`ineligible-issue-${i}`} className='cf-red-text'>{ri.contentionText} {ineligibilityCopy(ri)}</p>)}
+        </li>
+      </ul>
+    </Fragment>;
+}
+
+// const ineligibleIssuesList = (ineligibleIssues) => {
+//   if (ineligibleIssues.length > 0) {
+//     return
+//       <ul className="cf-ineligible-checklist cf-left-padding">
+//         <li>
+//           <strong>Ineligible</strong>
+//           {ineligibleIssues.map((ri, i) => <p key={`ineligible-issue-${i}`} className='cf-red-text'>{ri.contentionText} {ineligibilityCopy(ri)}</p>)}
+//         </li>
+//       </ul>;
+//   }
+// }
 
 class DecisionReviewIntakeCompleted extends React.PureComponent {
   render() {
@@ -89,6 +105,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     //   return <Redirect to={PAGE_PATHS.FINISH} />;
     // default:
     // }
+    const ineligibleIssues = requestIssues.filter((ri) => ri.ineligibleReason);
 
     const leadMessageList = [
       `${veteran.name}'s (ID #${veteran.fileNumber}) ` +
@@ -97,13 +114,16 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       <strong>Edit the notice letter to reflect the status of requested issues.</strong>
     ];
 
-    return <StatusMessage
+    return <div><StatusMessage
       title="Intake completed"
       type="success"
       leadMessageList={leadMessageList}
       checklist={getChecklistItems(formType, requestIssues, informalConference)}
       wrapInAppSegment={false}
-    />;
+    />
+    { ineligibleIssues && <IneligibleIssuesList issues={ineligibleIssues} /> }
+    </div>
+    ;
   }
 };
 

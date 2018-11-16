@@ -6,13 +6,17 @@
 // the .cf-app-intake ancestor is needed for these rules to ensure a higher
 // specificity than the stock .cf component classes.
 .cf-app-intake {
-  .cf-success-checklist {
+  .cf-success-checklist, .cf-ineligible-checklist {
     max-width: 800px;
     margin: 50px auto 65px;
+  }
+
+  .cf-ineligible-checklist {
+    list-style-type: none;
 
     li {
-      background: url(https://upload.wikimedia.org/wikipedia/commons/c/c2/Asterisk_font_awesome.svg) no-repeat left top transparent;
-      // background: url(#{images/icons/asterisk.svg) no-repeat left top transparent;
+      // background: url(https://upload.wikimedia.org/wikipedia/commons/c/c2/Asterisk_font_awesome.svg) no-repeat left top transparent;
+      background: url(#{$image-url}/icons/asterisk.svg) no-repeat left top transparent;
       background-size: 22px 17px;
       background-position-y: 7px;
       padding-left: 38px;
