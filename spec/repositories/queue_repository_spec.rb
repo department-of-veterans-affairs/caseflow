@@ -74,7 +74,7 @@ describe QueueRepository do
                                deadtim: VacolsHelper.local_date_with_utc_timezone,
                                deatty: "111",
                                deteam: "D5",
-                               deprod: "DEC")
+                               deprod: "DEV")
         QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
         decass_results = VACOLS::Decass.where(defolder: vacols_case.bfkey)
         expect(decass_results.count).to eq 1
