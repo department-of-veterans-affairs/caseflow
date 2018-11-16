@@ -39,13 +39,7 @@ describe BvaDispatchTask do
     let(:user) { FactoryBot.create(:user) }
     let(:root_task) { FactoryBot.create(:root_task) }
     let(:citation_number) { "A18123456" }
-    let(:file) do
-      ActionDispatch::Http::UploadedFile.new(
-        filename: "sample.pdf",
-        type: "pdf",
-        tempfile: "path/to/file.pdf"
-      )
-    end
+    let(:file) { "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW" }
     let(:params) do
       { appeal_id: root_task.appeal.external_id,
         citation_number: citation_number,
@@ -62,7 +56,7 @@ describe BvaDispatchTask do
 
       it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
         expect(Caseflow::Fakes::S3Service).to receive(:store_file)
-          .with("decisions/" + root_task.appeal.external_id, "path/to/file.pdf", :filepath)
+          .with("decisions/" + root_task.appeal.external_id + ".pdf", /PDF/)
         allow(VBMSService).to receive(:upload_document_to_vbms)
         BvaDispatchTask.outcode(root_task.appeal, params, user)
         tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)

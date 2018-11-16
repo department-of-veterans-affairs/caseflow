@@ -9,6 +9,7 @@ import NonratingRequestIssueModal from '../components/NonratingRequestIssueModal
 import RemoveIssueModal from '../components/RemoveIssueModal';
 import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
 import UntimelyExemptionModal from '../components/UntimelyExemptionModal';
+import LegacyOptInModal from '../components/LegacyOptInModal';
 import Button from '../../components/Button';
 import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, FORM_TYPES, PAGE_PATHS } from '../constants';
@@ -22,7 +23,8 @@ import {
   toggleNonratingRequestIssueModal,
   removeIssue,
   toggleUnidentifiedIssuesModal,
-  toggleIssueRemoveModal
+  toggleIssueRemoveModal,
+  toggleLegacyOptInModal
 } from '../actions/addIssues';
 
 export class AddIssuesPage extends React.Component {
@@ -44,6 +46,23 @@ export class AddIssuesPage extends React.Component {
     } else {
       this.props.removeIssue(index);
     }
+  }
+
+  needsEligibilityCheck = (issue, intakeData) => {
+    if (!intakeData.requestIssues) {
+      return false;
+    }
+    if (issue.ineligibleReason) {
+      return true;
+    }
+
+    let existingRequestIssue = _.some(intakeData.requestIssues, { reference_id: issue.referenceId });
+
+    if (existingRequestIssue) {
+      return false;
+    }
+
+    return true;
   }
 
   checkIfEligible = (issue, formType) => {
@@ -100,14 +119,17 @@ export class AddIssuesPage extends React.Component {
         <div>
           { issues.map((issue, index) => {
             let issueKlasses = ['issue-desc'];
-            let isEligible = this.checkIfEligible(issue, formType);
             let addendum = '';
 
-            if (isEligible !== true) {
-              if (isEligible !== false) {
-                addendum = isEligible;
+            if (this.needsEligibilityCheck(issue, intakeData)) {
+              let isEligible = this.checkIfEligible(issue, formType);
+
+              if (isEligible !== true) {
+                if (isEligible !== false) {
+                  addendum = isEligible;
+                }
+                issueKlasses.push('not-eligible');
               }
-              issueKlasses.push('not-eligible');
             }
 
             return <div className="issue" key={`issue-${index}`}>
@@ -183,6 +205,10 @@ export class AddIssuesPage extends React.Component {
         intakeData={intakeData}
         closeHandler={this.props.toggleUnidentifiedIssuesModal} />
       }
+      { intakeData.legacyOptInModalVisible && <LegacyOptInModal
+        intakeData={intakeData}
+        closeHandler={this.props.toggleLegacyOptInModal} />
+      }
       { intakeData.removeIssueModalVisible && <RemoveIssueModal
         removeIndex={this.state.issueRemoveIndex}
         intakeData={intakeData}
@@ -218,6 +244,7 @@ export const IntakeAddIssuesPage = connect(
     toggleUntimelyExemptionModal,
     toggleNonratingRequestIssueModal,
     toggleUnidentifiedIssuesModal,
+    toggleLegacyOptInModal,
     removeIssue
   }, dispatch)
 )(AddIssuesPage);
@@ -239,6 +266,7 @@ export const EditAddIssuesPage = connect(
     toggleIssueRemoveModal,
     toggleNonratingRequestIssueModal,
     toggleUnidentifiedIssuesModal,
+    toggleLegacyOptInModal,
     removeIssue
   }, dispatch)
 )(AddIssuesPage);
