@@ -468,13 +468,13 @@ RSpec.feature "Higher-Level Review" do
       find("label", text: "Compensation", match: :prefer_exact).click
     end
 
-    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+    fill_in "What is the Receipt Date of this form?", with: "04/20/2019"
 
-    within_fieldset("Did the Veteran request an informal conference?") do
+    within_fieldset("Was an informal conference requested?") do
       find("label", text: "No", match: :prefer_exact).click
     end
 
-    within_fieldset("Did the Veteran request review by the same office?") do
+    within_fieldset("Was an interview by the same office requested?") do
       find("label", text: "No", match: :prefer_exact).click
     end
 
@@ -490,7 +490,12 @@ RSpec.feature "Higher-Level Review" do
 
     safe_click "#button-submit-review"
 
+    expect(page).to have_content(
+      "Receipt date cannot be in the future."
+    )
     expect(page).to have_content("Please select an option.")
+
+    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
 
     within_fieldset("What is the Benefit Type?") do
       find("label", text: "Pension", match: :prefer_exact).click

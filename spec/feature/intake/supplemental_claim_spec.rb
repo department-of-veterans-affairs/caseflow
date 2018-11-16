@@ -412,7 +412,7 @@ RSpec.feature "Supplemental Claim Intake" do
   end
 
   it "Requires Payee Code for compensation and pension benefit types and non-Veteran claimant" do
-    intake = HigherLevelReviewIntake.new(veteran_file_number: veteran.file_number, user: current_user)
+    intake = SupplementalClaimIntake.new(veteran_file_number: veteran.file_number, user: current_user)
     intake.start!
     visit "/intake"
 
@@ -422,15 +422,7 @@ RSpec.feature "Supplemental Claim Intake" do
       find("label", text: "Compensation", match: :prefer_exact).click
     end
 
-    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
-
-    within_fieldset("Did the Veteran request an informal conference?") do
-      find("label", text: "No", match: :prefer_exact).click
-    end
-
-    within_fieldset("Did the Veteran request review by the same office?") do
-      find("label", text: "No", match: :prefer_exact).click
-    end
+    fill_in "What is the Receipt Date of this form?", with: "04/20/2019"
 
     within_fieldset("Is the claimant someone other than the Veteran?") do
       find("label", text: "Yes", match: :prefer_exact).click
@@ -444,8 +436,12 @@ RSpec.feature "Supplemental Claim Intake" do
 
     safe_click "#button-submit-review"
 
+    expect(page).to have_content(
+      "Receipt date cannot be in the future."
+    )
     expect(page).to have_content("Please select an option.")
 
+    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
     within_fieldset("What is the Benefit Type?") do
       find("label", text: "Pension", match: :prefer_exact).click
     end
