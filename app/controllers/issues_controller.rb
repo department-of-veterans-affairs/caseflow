@@ -7,6 +7,10 @@ class IssuesController < ApplicationController
     render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
   end
 
+  rescue_from Caseflow::Error::UserRepositoryError do |e|
+    render(e.serialize_response)
+  end
+
   def create
     return record_not_found unless appeal
 
