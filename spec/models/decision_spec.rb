@@ -1,5 +1,4 @@
 describe Decision do
-
   context "#pdf_location" do
     let(:appeal) { create(:appeal) }
     subject { Decision.new(appeal: appeal).pdf_location }
