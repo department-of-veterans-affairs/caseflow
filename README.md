@@ -342,7 +342,7 @@ bundle exec rails s -e staging
 
 ## Connecting to VACOLS in UAT
 
-Connecting to VACOLS in UAT is helpful for looking at what kind of values and data the Oracle db holds.
+Connecting to VACOLS in UAT is helpful for understanding how the Oracle db behaves.
 
 1. Put the following in your staging ssh config:
     ```
