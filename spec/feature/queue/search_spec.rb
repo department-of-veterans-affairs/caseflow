@@ -1,5 +1,6 @@
 require "rails_helper"
 # rubocop:disable Style/FormatString
+# rubocop:disable Style/FormatStringToken
 
 RSpec.feature "Search" do
   let(:attorney_user) { FactoryBot.create(:user) }
@@ -73,9 +74,11 @@ RSpec.feature "Search" do
         end
 
         it "shows information for the correct hearing when there are multiple hearings" do
-          expect(page).to have_css(".__react_component_tooltip div ul li:nth-child(3) strong span",
+          expect(page).to have_css(
+            ".__react_component_tooltip div ul li:nth-child(3) strong span",
             visible: :hidden,
-            text: 2.days.ago.strftime("%m/%d/%y"))
+            text: 2.days.ago.strftime("%m/%d/%y")
+          )
         end
       end
 
@@ -321,3 +324,5 @@ RSpec.feature "Search" do
 end
 
 # rubocop:enable Style/FormatString
+# rubocop:enable Style/FormatStringToken
+
