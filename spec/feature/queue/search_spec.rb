@@ -325,4 +325,3 @@ end
 
 # rubocop:enable Style/FormatString
 # rubocop:enable Style/FormatStringToken
-
