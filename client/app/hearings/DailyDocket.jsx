@@ -142,7 +142,7 @@ export class DailyDocket extends React.PureComponent {
      appellantDisplay = <div><b>{hearing.veteran_mi_formatted}</b><br />
        <ViewableItemLink
          boldCondition={!hearing.viewed_by_current_user}
-         onOpen={this.setHearingViewed}
+         onOpen={this.setHearingViewed(hearing.id)}
          linkProps={{
            to: `/hearings/${hearing.id}/worksheet`,
            target: '_blank'
