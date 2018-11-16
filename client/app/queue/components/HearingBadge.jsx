@@ -45,7 +45,7 @@ const DocketTypeBadge = ({ hearing }) => {
     </ul>
   </div>;
 
-  return <div {...css({ marginRight: '-3rem' })}>
+  return <div {...css({ marginRight: '-3rem' })} className="cf-hearing-badge">
     <Tooltip id={`badge-${hearing.id}`} text={tooltipText} position="bottom">
       <span {...badgeStyling}>H</span>
     </Tooltip>
