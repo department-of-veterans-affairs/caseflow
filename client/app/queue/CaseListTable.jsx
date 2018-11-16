@@ -20,12 +20,6 @@ const currentAssigneeStyling = css({
   color: COLORS.GREEN
 });
 
-const badgeStyling = css({
-  '& > tbody td:first-child ': {
-    paddingRight: 0
-  }
-});
-
 const labelForLocation = (locationCode, userId) => {
   if (!locationCode) {
     return '';
@@ -47,9 +41,6 @@ class CaseListTable extends React.PureComponent {
 
   getColumns = () => {
     const columns = [
-      {
-        valueFunction: (appeal) => <HearingBadge hearing={appeal.hearings[0]} />
-      },
       {
         header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
         valueFunction: (appeal) => {
@@ -90,26 +81,23 @@ class CaseListTable extends React.PureComponent {
       return appeal.hearings.length;
     }));
 
-    if (!doAnyAppealsHaveHearings) {
-      columns.shift();
+    if (doAnyAppealsHaveHearings) {
+      const hearingColumn = {
+        valueFunction: (appeal) => <HearingBadge hearing={appeal.hearings[0]} />
+      };
+
+      columns.unshift(hearingColumn);
     }
 
     return columns;
-  };
-
-  render = () => {
-    const styling = {
-      ...this.props.styling,
-      ...badgeStyling
-    };
-
-    return <Table
-      columns={this.getColumns}
-      rowObjects={this.props.appeals}
-      getKeyForRow={this.getKeyForRow}
-      styling={styling}
-    />;
   }
+
+  render = () => <Table
+    columns={this.getColumns}
+    rowObjects={this.props.appeals}
+    getKeyForRow={this.getKeyForRow}
+    styling={this.props.styling}
+  />
 }
 
 CaseListTable.propTypes = {

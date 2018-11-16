@@ -31,25 +31,25 @@ const listStyling = css({
 });
 
 const DocketTypeBadge = ({ hearing }) => {
-  let badge = null;
-
-  if (hearing) {
-    const tooltipText = <div>
-      This case has a hearing associated with it.
-      <ul {...listStyling}>
-        <li>Judge: <strong>{hearing.heldBy}</strong></li>
-        <li>Disposition: <strong>{_.startCase(hearing.disposition)}</strong></li>
-        <li>Date: <strong><DateString date={hearing.date} /></strong></li>
-        <li>Type: <strong>{_.startCase(hearing.type)}</strong></li>
-      </ul>
-    </div>;
-
-    badge = <Tooltip id={`badge-${hearing.id}`} text={tooltipText} position="bottom">
-      <span {...badgeStyling}>H</span>
-    </Tooltip>;
+  if (!hearing) {
+    return null;
   }
 
-  return badge;
+  const tooltipText = <div>
+    This case has a hearing associated with it.
+    <ul {...listStyling}>
+      <li>Judge: <strong>{hearing.heldBy}</strong></li>
+      <li>Disposition: <strong>{_.startCase(hearing.disposition)}</strong></li>
+      <li>Date: <strong><DateString date={hearing.date} /></strong></li>
+      <li>Type: <strong>{_.startCase(hearing.type)}</strong></li>
+    </ul>
+  </div>;
+
+  return <div {...css({ marginRight: '-3rem' })}>
+    <Tooltip id={`badge-${hearing.id}`} text={tooltipText} position="bottom">
+      <span {...badgeStyling}>H</span>
+    </Tooltip>
+  </div>;
 };
 
 export default DocketTypeBadge;
