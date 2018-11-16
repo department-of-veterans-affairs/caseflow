@@ -3,6 +3,7 @@ class RequestIssue < ApplicationRecord
 
   belongs_to :review_request, polymorphic: true
   belongs_to :end_product_establishment
+  # TODO: has_many :decision_issues, through: :request_decision_issues
   has_many :decision_issues, foreign_key: "source_request_issue_id"
   has_many :remand_reasons
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
