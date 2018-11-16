@@ -28,8 +28,9 @@ class HearingDocket
   end
 
   def slots
-    @slots ||= HearingDocket.repository.number_of_slots(
-      regional_office_key: regional_office_key,
+    ro_staff = VACOLS::Staff.where(stafkey: regional_office_key)
+    @slots ||= HearingDayRepository.slots_based_on_type(
+      staff: ro_staff[0],
       type: type,
       date: date
     ) || SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office_key)]
@@ -45,10 +46,6 @@ class HearingDocket
   end
 
   class << self
-    def repository
-      HearingRepository
-    end
-
     def from_hearings(hearings)
       new(
         date: hearings.sort_by(&:date).first.date,
