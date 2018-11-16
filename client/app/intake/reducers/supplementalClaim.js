@@ -70,6 +70,7 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     claimantNotVeteran: null,
     claimant: null,
     payeeCode: null,
+    payeeCodeError: null,
     legacyOptInApproved: null,
     legacyOptInApprovedError: null,
     legacyIssues: [],
@@ -163,6 +164,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       legacyOptInApprovedError: {
         $set: null
       },
+      payeeCodeError: {
+        $set: null
+      },
       isReviewed: {
         $set: true
       },
@@ -182,6 +186,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       },
       legacyOptInApprovedError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')
+      },
+      payeeCodeError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'payee_code')
       },
       requestStatus: {
         submitReview: {
