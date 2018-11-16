@@ -47,20 +47,22 @@ class RatingIssue
     # if a DecisionIssue already exists then do not touch it. These should be immutable.
     return if decision_issue
 
-    created_decision_issue = DecisionIssue.create!(
-      source_request_issue: source_request_issue,
-      rating_issue_reference_id: reference_id,
-      participant_id: participant_id,
-      promulgation_date: promulgation_date,
-      decision_text: decision_text,
-      profile_date: profile_date
-    )
+    ActiveRecord::Base.transaction do
+      created_decision_issue = DecisionIssue.create!(
+        source_request_issue: source_request_issue,
+        rating_issue_reference_id: reference_id,
+        participant_id: participant_id,
+        promulgation_date: promulgation_date,
+        decision_text: decision_text,
+        profile_date: profile_date
+      )
 
-    RequestDecisionIssue.create!(
-      request_issue: source_request_issue,
-      decision_issue: created_decision_issue
-    )
-    created_decision_issue
+      RequestDecisionIssue.create!(
+        request_issue: source_request_issue,
+        decision_issue: created_decision_issue
+      )
+      created_decision_issue
+    end
   end
 
   # If you change this method, you will need to clear cache in prod for your changes to
