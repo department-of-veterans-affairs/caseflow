@@ -82,6 +82,7 @@ describe QueueRepository do
         expect(decass.deatty).to eq attorney_staff.sattyid
         expect(decass.deteam).to eq attorney_staff.stitle[0..2]
         expect(decass.demdusr).to eq judge_staff.slogid
+        expect(decass.deprod).to eq nil
         expect(decass.deadtim).to eq VacolsHelper.local_date_with_utc_timezone
       end
     end

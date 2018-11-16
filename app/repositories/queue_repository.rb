@@ -134,7 +134,9 @@ class QueueRepository
 
         incomplete_record = incomplete_decass_record(vacols_id)
         if incomplete_record.present?
-          return update_decass_record(incomplete_record, attrs.merge(modifying_user: judge.vacols_uniq_id))
+          return update_decass_record(incomplete_record, 
+            attrs.merge(modifying_user: judge.vacols_uniq_id, work_product: nil)
+          )
         end
 
         create_decass_record(attrs.merge(adding_user: judge.vacols_uniq_id))
