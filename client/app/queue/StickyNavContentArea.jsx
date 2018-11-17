@@ -56,8 +56,8 @@ const sectionNavigationListStyling = css({
     width: '100%',
     marginBottom: '1rem',
     '& > li': {
-      padding: '8.5px 10px',
-      fontSize: '13px',
+      padding: '0.75rem 0.75rem',
+      fontSize: '1.25rem',
       flexGrow: 1,
       '&:first-child': {
         borderRadius: '5px 0 0 5px'
@@ -123,7 +123,7 @@ const sectionHeadingStyling = css({
 
 const anchorJumpLinkStyling = css({
   color: COLORS.GREY_DARK,
-  paddingTop: '72px',
+  paddingTop: '7rem',
   textDecoration: 'none',
   pointerEvents: 'none',
   cursor: 'default'
