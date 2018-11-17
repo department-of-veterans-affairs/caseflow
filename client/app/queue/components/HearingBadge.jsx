@@ -45,6 +45,7 @@ const DocketTypeBadge = ({ hearing }) => {
     </ul>
   </div>;
 
+  // We expect this badge to be shown in a table, so we use this to get rid of the standard table padding.
   return <div {...css({ marginRight: '-3rem' })} className="cf-hearing-badge">
     <Tooltip id={`badge-${hearing.id}`} text={tooltipText} position="bottom">
       <span {...badgeStyling}>H</span>
