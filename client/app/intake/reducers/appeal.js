@@ -27,10 +27,13 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.claimant_not_veteran ? serverIntake.claimant : null
     },
     payeeCode: {
-      $set: serverIntake.payee_code
+      $set: serverIntake.payeeCode
     },
     legacyOptInApproved: {
       $set: serverIntake.legacy_opt_in_approved
+    },
+    legacyIssues: {
+      $set: serverIntake.legacyIssues
     },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
@@ -65,6 +68,7 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     payeeCode: null,
     legacyOptInApproved: null,
     legacyOptInApprovedError: null,
+    legacyIssues: [],
     isStarted: false,
     isReviewed: false,
     isComplete: false,

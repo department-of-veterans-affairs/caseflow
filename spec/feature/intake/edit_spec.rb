@@ -1,6 +1,9 @@
 require "rails_helper"
+require "support/intake_helpers"
 
 RSpec.feature "Edit issues" do
+  include IntakeHelpers
+
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
@@ -8,6 +11,10 @@ RSpec.feature "Edit issues" do
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 26))
+
+    # skip the sync call since all edit requests require resyncing
+    # currently, we're not mocking out vbms and bgs
+    allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
   end
 
   after do
@@ -26,7 +33,7 @@ RSpec.feature "Edit issues" do
   end
 
   let(:receipt_date) { Time.zone.today - 20 }
-  let(:profile_date) { "2017-05-02T07:00:00.000Z" }
+  let(:profile_date) { "2017-11-02T07:00:00.000Z" }
 
   let!(:rating) do
     Generators::Rating.build(
@@ -36,6 +43,20 @@ RSpec.feature "Edit issues" do
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
         { reference_id: "def456", decision_text: "PTSD denied" }
+      ]
+    )
+  end
+
+  let!(:rating_before_ama) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: DecisionReview.ama_activation_date - 5.days,
+      profile_date: DecisionReview.ama_activation_date - 10.days,
+      issues: [
+        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
+        { decision_text: "Issue before AMA Activation from RAMP",
+          associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" },
+          reference_id: "ramp_ref_id" }
       ]
     )
   end
@@ -51,7 +72,7 @@ RSpec.feature "Edit issues" do
              veteran_file_number: veteran.file_number,
              receipt_date: receipt_date,
              docket_type: "evidence_submission",
-             legacy_opt_in_approved: false)
+             legacy_opt_in_approved: false).tap(&:create_tasks_on_intake_success!)
     end
 
     let!(:nonrating_request_issue) do
@@ -59,21 +80,32 @@ RSpec.feature "Edit issues" do
              review_request: appeal,
              issue_category: "Military Retired Pay",
              description: "nonrating description",
-             contention_reference_id: "1234")
+             contention_reference_id: "1234",
+             decision_date: 1.month.ago)
+    end
+
+    let!(:rating_request_issue) do
+      create(:request_issue,
+             review_request: appeal,
+             rating_issue_reference_id: "def456",
+             rating_issue_profile_date: profile_date,
+             description: "PTSD denied",
+             contention_reference_id: "4567")
     end
 
     scenario "allows adding/removing issues" do
       visit "appeals/#{appeal.uuid}/edit/"
+
       expect(page).to have_content("nonrating description")
+
       # remove an issue
-      page.all(".remove-issue")[0].click
-      safe_click ".remove-issue"
+      click_remove_intake_issue("2")
+      click_remove_issue_confirmation
       expect(page).not_to have_content("nonrating description")
 
-      # add an issue
-      safe_click "#button-add-issue"
-      find("label", text: "Left knee granted").click
-      safe_click ".add-issue"
+      # add a different issue
+      click_intake_add_issue
+      add_intake_rating_issue("Left knee granted")
 
       # save
       expect(page).to have_content("Left knee granted")
@@ -90,6 +122,31 @@ RSpec.feature "Edit issues" do
       # canceling should redirect to queue
       click_on "Cancel edit"
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+    end
+
+    scenario "allows removing and re-adding same issue" do
+      issue_description = rating_request_issue.description
+
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      expect(page).to have_content(issue_description)
+      expect(page).to have_button("Save", disabled: true)
+
+      # remove
+      click_remove_intake_issue("1")
+      click_remove_issue_confirmation
+      expect(page).not_to have_content(issue_description)
+
+      # re-add
+      click_intake_add_issue
+      add_intake_rating_issue(issue_description, "a new comment")
+      expect(page).to have_content(issue_description)
+      expect(page).to_not have_content(
+        Constants.INELIGIBLE_REQUEST_ISSUES.duplicate_of_issue_in_active_review.gsub("{review_title}", "Appeal")
+      )
+
+      # issue note was added
+      expect(page).to have_button("Save", disabled: false)
     end
   end
 
@@ -146,7 +203,7 @@ RSpec.feature "Edit issues" do
         RequestIssue.create!(
           review_request: higher_level_review,
           issue_category: "Military Retired Pay",
-          description: "non-rated description",
+          description: "nonrating description",
           contention_reference_id: "1234",
           ineligible_reason: nil,
           decision_date: Date.new(2018, 5, 1)
@@ -157,7 +214,7 @@ RSpec.feature "Edit issues" do
         RequestIssue.create!(
           review_request: higher_level_review,
           issue_category: "Active Duty Adjustments",
-          description: "non-rated description",
+          description: "nonrating description",
           contention_reference_id: "12345",
           ineligible_reason: :untimely
         )
@@ -198,13 +255,37 @@ RSpec.feature "Edit issues" do
         )
       end
 
+      let!(:ri_before_ama) do
+        RequestIssue.create!(
+          rating_issue_reference_id: "before_ama_ref_id",
+          rating_issue_profile_date: rating_before_ama.profile_date,
+          review_request: higher_level_review,
+          description: "Non-RAMP Issue before AMA Activation",
+          contention_reference_id: "12345",
+          ineligible_reason: :before_ama
+        )
+      end
+
+      let!(:eligible_ri_before_ama) do
+        RequestIssue.create!(
+          rating_issue_reference_id: "ramp_ref_id",
+          rating_issue_profile_date: rating_before_ama.profile_date,
+          review_request: higher_level_review,
+          description: "Issue before AMA Activation from RAMP",
+          contention_reference_id: "123456",
+          ramp_claim_id: "ramp_claim_id"
+        )
+      end
+
       before do
         another_higher_level_review.create_issues!([ri_in_review])
         higher_level_review.create_issues!([
                                              eligible_request_issue,
                                              untimely_request_issue,
                                              ri_with_active_previous_review,
-                                             ri_with_previous_hlr
+                                             ri_with_previous_hlr,
+                                             ri_before_ama,
+                                             eligible_ri_before_ama
                                            ])
         higher_level_review.process_end_product_establishments!
       end
@@ -225,17 +306,24 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content(
           "#{untimely_request_issue.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
         )
-        expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date:")
+        expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date: 05/01/2018")
+        expect(page).to have_content(
+          "#{ri_before_ama.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+        )
+        expect(page).to have_content(
+          "#{eligible_ri_before_ama.contention_text} Decision date:"
+        )
       end
     end
 
-    context "when there is a non-rating end product" do
+    context "when there is a nonrating end product" do
       let!(:nonrating_request_issue) do
         RequestIssue.create!(
           review_request: higher_level_review,
           issue_category: "Military Retired Pay",
           description: "nonrating description",
-          contention_reference_id: "1234"
+          contention_reference_id: "1234",
+          decision_date: 1.month.ago
         )
       end
 
@@ -253,17 +341,26 @@ RSpec.feature "Edit issues" do
 
         expect(page).to have_content("Military Retired Pay")
 
-        safe_click "#button-add-issue"
-        safe_click ".no-matching-issues"
-        fill_in "Issue category", with: "Active Duty Adjustments"
-        find("#issue-category").send_keys :enter
-        fill_in "Issue description", with: "A description!"
-        fill_in "Decision date", with: "04/25/2018"
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "A description!",
+          date: "04/26/2018"
+        )
+
+        click_intake_add_issue
+        add_intake_nonrating_issue(
+          category: "Drill Pay Adjustments",
+          description: "A nonrating issue before AMA",
+          date: "10/25/2017"
+        )
 
         safe_click("#button-submit-update")
 
-        expect(page).to have_content("The review originally had 1 issue but now has 2.")
+        expect(page).to have_content("The review originally had 1 issue but now has 3.")
+        expect(page).to have_content(
+          "A nonrating issue before AMA #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+        )
         safe_click ".confirm"
 
         expect(page).to have_current_path(
@@ -274,13 +371,14 @@ RSpec.feature "Edit issues" do
     end
 
     context "when there is a rating end product" do
+      let(:contention_ref_id) { "123" }
       let!(:request_issue) do
         RequestIssue.create!(
           rating_issue_reference_id: "def456",
           rating_issue_profile_date: rating.profile_date,
           review_request: higher_level_review,
           description: "PTSD denied",
-          contention_reference_id: "123"
+          contention_reference_id: contention_ref_id
         )
       end
 
@@ -308,7 +406,7 @@ RSpec.feature "Edit issues" do
         expect(page).to_not have_content("Left knee granted")
         expect(page).to have_content("PTSD denied")
 
-        safe_click "#button-add-issue"
+        click_intake_add_issue
 
         expect(page).to have_content("Add issue 2")
         expect(page).to have_content("Does issue 2 match any of these issues")
@@ -320,75 +418,107 @@ RSpec.feature "Edit issues" do
         expect(page).to_not have_content("2. Left knee granted")
 
         # adding an issue should show the issue
-        safe_click "#button-add-issue"
-        find("label", text: "Left knee granted").click
-        safe_click ".add-issue"
-
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
         expect(page).to have_content("2. Left knee granted")
         expect(page).to_not have_content("Notes:")
 
-        page.all(".remove-issue")[0].click
-        safe_click ".remove-issue"
+        # remove existing issue
+        click_remove_intake_issue("1")
+        click_remove_issue_confirmation
         expect(page).not_to have_content("PTSD denied")
 
         # re-add to proceed
-        safe_click "#button-add-issue"
-        find("label", text: "PTSD denied").click
-        fill_in "Notes", with: "I am an issue note"
-        safe_click ".add-issue"
-        expect(page).to have_content("2. PTSD denied")
+        click_intake_add_issue
+        add_intake_rating_issue("PTSD denied", "I am an issue note")
+        expect(page).to have_content("PTSD denied")
+        expect(page).to_not have_content("PTSD denied is ineligible")
         expect(page).to have_content("I am an issue note")
 
         # clicking add issue again should show a disabled radio button for that same rating
-        safe_click "#button-add-issue"
+        click_intake_add_issue
         expect(page).to have_content("Add issue 3")
         expect(page).to have_content("Does issue 3 match any of these issues")
         expect(page).to have_content("Left knee granted (already selected for issue 1)")
         expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
 
         # Add nonrating issue
-        safe_click ".no-matching-issues"
-        expect(page).to have_content("Does issue 3 match any of these issue categories?")
-        expect(page).to have_button("Add this issue", disabled: true)
-        fill_in "Issue category", with: "Active Duty Adjustments"
-        find("#issue-category").send_keys :enter
-        fill_in "Issue description", with: "Description for Active Duty Adjustments"
-        fill_in "Decision date", with: "04/25/2018"
-        expect(page).to have_button("Add this issue", disabled: false)
-        safe_click ".add-issue"
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "Description for Active Duty Adjustments",
+          date: "04/25/2018"
+        )
         expect(page).to have_content("3 issues")
 
-        # add unidentified issue
-        safe_click "#button-add-issue"
-        safe_click ".no-matching-issues"
-        safe_click ".no-matching-issues"
-        expect(page).to have_content("Describe the issue to mark it as needing further review.")
-        fill_in "Transcribe the issue as it's written on the form", with: "This is an unidentified issue"
-        safe_click ".add-issue"
+        # Add untimely nonrating issue
+        click_intake_add_issue
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "Another Description for Active Duty Adjustments",
+          date: "04/25/2016"
+        )
+        add_untimely_exemption_response("No", "I am a nonrating exemption note")
         expect(page).to have_content("4 issues")
+        expect(page).to have_content("I am a nonrating exemption note")
+        expect(page).to have_content("Another Description for Active Duty Adjustments")
+
+        # add unidentified issue
+        click_intake_add_issue
+        add_intake_unidentified_issue("This is an unidentified issue")
+        expect(page).to have_content("5 issues")
         expect(page).to have_content("This is an unidentified issue")
+
+        # add issue before AMA
+        click_intake_add_issue
+        add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
+        expect(page).to have_content(
+          "Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+        )
+
+        # add RAMP issue before AMA
+        click_intake_add_issue
+        add_intake_rating_issue("Issue before AMA Activation from RAMP")
+        expect(page).to have_content("Issue before AMA Activation from RAMP Decision date:")
 
         safe_click("#button-submit-update")
 
         expect(page).to have_content("You still have an \"Unidentified\" issue")
         safe_click "#Unidentified-issue-button-id-1"
 
-        expect(page).to have_content("The review originally had 1 issue but now has 4.")
+        expect(page).to have_content("The review originally had 1 issue but now has 7.")
+
         safe_click "#Number-of-issues-has-changed-button-id-1"
 
         expect(page).to have_content("Edit Confirmed")
 
         # assert server has updated data for nonrating and unidentified issues
-        expect(RequestIssue.find_by(
-                 review_request: higher_level_review,
-                 issue_category: "Active Duty Adjustments",
-                 decision_date: 1.month.ago,
-                 description: "Description for Active Duty Adjustments"
-        )).to_not be_nil
+        active_duty_adjustments_request_issue = RequestIssue.find_by!(
+          review_request: higher_level_review,
+          issue_category: "Active Duty Adjustments",
+          decision_date: 1.month.ago,
+          description: "Description for Active Duty Adjustments"
+        )
+
+        expect(active_duty_adjustments_request_issue.untimely?).to eq(false)
+
+        another_active_duty_adjustments_request_issue = RequestIssue.find_by!(
+          review_request: higher_level_review,
+          issue_category: "Active Duty Adjustments",
+          description: "Another Description for Active Duty Adjustments"
+        )
+
+        expect(another_active_duty_adjustments_request_issue.untimely?).to eq(true)
+        expect(another_active_duty_adjustments_request_issue.untimely_exemption?).to eq(false)
+        expect(another_active_duty_adjustments_request_issue.untimely_exemption_notes).to_not be_nil
 
         expect(RequestIssue.find_by(
                  review_request: higher_level_review,
                  description: "This is an unidentified issue"
+        )).to_not be_nil
+
+        expect(RequestIssue.find_by(
+                 review_request: higher_level_review,
+                 ramp_claim_id: "ramp_claim_id"
         )).to_not be_nil
 
         rating_epe = EndProductEstablishment.find_by!(
@@ -401,17 +531,22 @@ RSpec.feature "Edit issues" do
           code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
         )
 
+        # expect the remove/re-add to create a new RequestIssue for same RatingIssue
+        expect(higher_level_review.request_issues).to_not include(request_issue)
+        new_version_of_request_issue = higher_level_review.find_request_issue_by_description(request_issue.description)
+        expect(new_version_of_request_issue.rating_issue_reference_id).to eq(request_issue.rating_issue_reference_id)
+
         # expect contentions to reflect issue update
         expect(Fakes::VBMSService).to have_received(:remove_contention!).once
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran.file_number,
           claim_id: rating_epe.reference_id,
-          contention_descriptions: [
+          contention_descriptions: array_including(
             RequestIssue::UNIDENTIFIED_ISSUE_MSG,
-            "PTSD denied",
-            "Left knee granted"
-          ],
+            "Left knee granted",
+            "Issue before AMA Activation from RAMP"
+          ),
           special_issues: [],
           user: current_user
         )
@@ -432,23 +567,20 @@ RSpec.feature "Edit issues" do
 
         expect(page).to have_button("Save", disabled: true)
 
-        safe_click "#button-add-issue"
-        find("label", text: "Left knee granted").click
-        safe_click ".add-issue"
-
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
         expect(page).to have_button("Save", disabled: false)
 
-        page.all(".remove-issue")[1].click
-        safe_click ".remove-issue"
+        click_remove_intake_issue("2")
+        click_remove_issue_confirmation
         expect(page).to_not have_content("Left knee granted")
         expect(page).to have_button("Save", disabled: true)
       end
 
       it "Does not allow save if no issues are selected" do
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
-        safe_click ".remove-issue"
-        # click again to get rid of pop up
-        safe_click ".remove-issue"
+        click_remove_intake_issue("1")
+        click_remove_issue_confirmation
 
         expect(page).to have_button("Save", disabled: true)
       end
@@ -465,11 +597,12 @@ RSpec.feature "Edit issues" do
         )
 
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
-        safe_click "#button-add-issue"
-        find("label", text: "Left knee granted").click
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
         safe_click("#button-submit-update")
+
         expect(page).to have_content("The review originally had 1 issue but now has 2.")
+
         safe_click ".confirm"
 
         expect(page).to have_content("Previous update not yet done processing")
@@ -482,12 +615,10 @@ RSpec.feature "Edit issues" do
         allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
 
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
-        safe_click ".remove-issue"
-        # click again to get rid of pop-up
-        safe_click ".remove-issue"
-        safe_click "#button-add-issue"
-        find("label", text: "Left knee granted").click
-        safe_click ".add-issue"
+        click_remove_intake_issue("1")
+        click_remove_issue_confirmation
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
 
         expect(page).to have_button("Save", disabled: false)
 
@@ -538,6 +669,21 @@ RSpec.feature "Edit issues" do
 
         scenario "from landing page" do
           click_cancel("/")
+        end
+      end
+
+      feature "with cleared end product" do
+        let!(:cleared_end_product) do
+          create(:end_product_establishment,
+                 source: higher_level_review,
+                 synced_status: "CLR")
+        end
+
+        scenario "prevents edits on eps that have cleared" do
+          visit "higher_level_reviews/#{rating_ep_claim_id}/edit/"
+          expect(page).to have_current_path("/higher_level_reviews/#{rating_ep_claim_id}/edit/cleared_eps")
+          expect(page).to have_content("Issues Not Editable")
+          expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         end
       end
     end
@@ -594,7 +740,8 @@ RSpec.feature "Edit issues" do
           review_request: supplemental_claim,
           issue_category: "Military Retired Pay",
           description: "nonrating description",
-          contention_reference_id: "1234"
+          contention_reference_id: "1234",
+          decision_date: 1.month.ago
         )
       end
 
@@ -626,13 +773,12 @@ RSpec.feature "Edit issues" do
 
         expect(page).to have_content("Military Retired Pay")
 
-        safe_click "#button-add-issue"
-        safe_click ".no-matching-issues"
-        fill_in "Issue category", with: "Active Duty Adjustments"
-        find("#issue-category").send_keys :enter
-        fill_in "Issue description", with: "A description!"
-        fill_in "Decision date", with: "04/25/2018"
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "A description!",
+          date: "04/25/2018"
+        )
 
         safe_click("#button-submit-update")
 
@@ -687,7 +833,7 @@ RSpec.feature "Edit issues" do
         check_row("Benefit type", "Compensation")
         check_row("Claimant", "Bob Vance, Spouse (payee code 10)")
 
-        safe_click "#button-add-issue"
+        click_intake_add_issue
 
         expect(page).to have_content("Add issue 2")
         expect(page).to have_content("Does issue 2 match any of these issues")
@@ -699,54 +845,43 @@ RSpec.feature "Edit issues" do
         expect(page).to_not have_content("2. Left knee granted")
 
         # adding an issue should show the issue
-        safe_click "#button-add-issue"
-        find("label", text: "Left knee granted").click
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
 
         expect(page).to have_content("2. Left knee granted")
         expect(page).to_not have_content("Notes:")
-        safe_click ".remove-issue"
+        click_remove_intake_issue("1")
 
         # expect a pop up
         expect(page).to have_content("Are you sure you want to remove this issue?")
-        safe_click ".remove-issue"
+        click_remove_issue_confirmation
 
         expect(page).not_to have_content("PTSD denied")
 
         # re-add to proceed
-        safe_click "#button-add-issue"
-        find("label", text: "PTSD denied").click
-        fill_in "Notes", with: "I am an issue note"
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_rating_issue("PTSD denied", "I am an issue note")
         expect(page).to have_content("2. PTSD denied")
         expect(page).to have_content("I am an issue note")
 
         # clicking add issue again should show a disabled radio button for that same rating
-        safe_click "#button-add-issue"
+        click_intake_add_issue
         expect(page).to have_content("Add issue 3")
         expect(page).to have_content("Does issue 3 match any of these issues")
         expect(page).to have_content("Left knee granted (already selected for issue 1)")
         expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
 
         # Add nonrating issue
-        safe_click ".no-matching-issues"
-        expect(page).to have_content("Does issue 3 match any of these issue categories?")
-        expect(page).to have_button("Add this issue", disabled: true)
-        fill_in "Issue category", with: "Active Duty Adjustments"
-        find("#issue-category").send_keys :enter
-        fill_in "Issue description", with: "Description for Active Duty Adjustments"
-        fill_in "Decision date", with: "04/25/2018"
-        expect(page).to have_button("Add this issue", disabled: false)
-        safe_click ".add-issue"
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "Description for Active Duty Adjustments",
+          date: "04/25/2018"
+        )
         expect(page).to have_content("3 issues")
 
         # add unidentified issue
-        safe_click "#button-add-issue"
-        safe_click ".no-matching-issues"
-        safe_click ".no-matching-issues"
-        expect(page).to have_content("Describe the issue to mark it as needing further review.")
-        fill_in "Transcribe the issue as it's written on the form", with: "This is an unidentified issue"
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_unidentified_issue("This is an unidentified issue")
         expect(page).to have_content("4 issues")
         expect(page).to have_content("This is an unidentified issue")
       end
@@ -756,24 +891,22 @@ RSpec.feature "Edit issues" do
 
         expect(page).to have_button("Save", disabled: true)
 
-        safe_click "#button-add-issue"
-        find("label", text: "Left knee granted").click
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
 
         expect(page).to have_button("Save", disabled: false)
 
-        page.all(".remove-issue")[1].click
-        # click remove issue again to get rid of popup
-        safe_click ".remove-issue"
+        click_remove_intake_issue("2")
+        click_remove_issue_confirmation
+
         expect(page).to_not have_content("Left knee granted")
         expect(page).to have_button("Save", disabled: true)
       end
 
       it "Does not allow save if no issues are selected" do
         visit "supplemental_claims/#{rating_ep_claim_id}/edit"
-        safe_click ".remove-issue"
-        # click remove issue again to get rid of popup
-        safe_click ".remove-issue"
+        click_remove_intake_issue("1")
+        click_remove_issue_confirmation
 
         expect(page).to have_button("Save", disabled: true)
       end
@@ -790,9 +923,8 @@ RSpec.feature "Edit issues" do
         )
 
         visit "supplemental_claims/#{rating_ep_claim_id}/edit"
-        safe_click "#button-add-issue"
-        find("label", text: "Left knee granted").click
-        safe_click ".add-issue"
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
         safe_click("#button-submit-update")
 
         expect(page).to have_content("The review originally had 1 issue but now has 2.")
@@ -808,11 +940,10 @@ RSpec.feature "Edit issues" do
         allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
 
         visit "supplemental_claims/#{rating_ep_claim_id}/edit"
-        safe_click ".remove-issue"
-        safe_click ".remove-issue"
-        safe_click "#button-add-issue"
-        find("label", text: "Left knee granted").click
-        safe_click ".add-issue"
+        click_remove_intake_issue("1")
+        click_remove_issue_confirmation
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
 
         expect(page).to have_button("Save", disabled: false)
 
@@ -863,6 +994,21 @@ RSpec.feature "Edit issues" do
 
         scenario "from landing page" do
           click_cancel("/")
+        end
+      end
+
+      feature "with cleared end product" do
+        let!(:cleared_end_product) do
+          create(:end_product_establishment,
+                 source: supplemental_claim,
+                 synced_status: "CLR")
+        end
+
+        scenario "prevents edits on eps that have cleared" do
+          visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
+          expect(page).to have_current_path("/supplemental_claims/#{rating_ep_claim_id}/edit/cleared_eps")
+          expect(page).to have_content("Issues Not Editable")
+          expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
         end
       end
     end

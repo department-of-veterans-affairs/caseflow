@@ -30,8 +30,7 @@ import {
   taskById,
   appealWithDetailSelector
 } from '../selectors';
-import { setTaskAttrs } from '../QueueActions';
-import { prepareTasksForStore } from '../utils';
+import { onReceiveAmaTasks } from '../QueueActions';
 import DateSelector from '../../components/DateSelector';
 import _ from 'lodash';
 import type { Appeal, Task } from '../types/models';
@@ -57,7 +56,7 @@ type Props = Params & {|
   resetSaveState: typeof resetSaveState,
   onRegionalOfficeChange: typeof onRegionalOfficeChange,
   requestPatch: typeof requestPatch,
-  setTaskAttrs: typeof setTaskAttrs
+  onReceiveAmaTasks: typeof onReceiveAmaTasks
 |};
 
 type LocalState = {|
@@ -175,11 +174,16 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
         const response = JSON.parse(resp.text);
-        const preparedTasks = prepareTasksForStore(response.tasks.data);
 
         // Review with team to see why this is failing.
-        this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.uniqueId]);
+        this.props.onReceiveAmaTasks(response.tasks.data);
         this.props.history.goBack();
+      }, () => {
+        this.props.showErrorMessage({
+          title: 'No Available Slots',
+          detail: 'Could not find any available slots for this regional office and hearing day combination.' +
+              ' Please select a different date.'
+        });
       });
   };
 
@@ -274,7 +278,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   showSuccessMessage,
   resetSuccessMessages,
   requestPatch,
-  setTaskAttrs,
+  onReceiveAmaTasks,
   onRegionalOfficeChange
 }, dispatch);
 

@@ -12,7 +12,7 @@ RSpec.feature "User organization" do
     let!(:organization_user) { OrganizationsUser.add_user_to_organization(user, organization) }
 
     scenario "Adds and removes users from the organization" do
-      visit "/organizations/#{organization.url}/users"
+      visit organization.user_admin_path
 
       expect(page).to have_content("#{organization.name} team")
 
@@ -34,7 +34,7 @@ RSpec.feature "User organization" do
 
   context "When user is not in the organization" do
     scenario "Adds and removes users from the organization" do
-      visit "/organizations/#{organization.url}/users"
+      visit organization.user_admin_path
 
       expect(page).to have_content("You aren't authorized")
     end
@@ -45,7 +45,7 @@ RSpec.feature "User organization" do
       end
 
       scenario "Adds and removes users from the organization" do
-        visit "/organizations/#{organization.url}/users"
+        visit organization.user_admin_path
 
         expect(page).to have_content("#{organization.name} team")
       end

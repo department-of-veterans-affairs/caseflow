@@ -71,7 +71,7 @@ class Review extends React.PureComponent {
 
       <RadioField
         name="informal-conference"
-        label="Did the Veteran request an informal conference?"
+        label="Was an informal conference requested?"
         strongLabel
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
@@ -82,7 +82,7 @@ class Review extends React.PureComponent {
 
       <RadioField
         name="same-office"
-        label="Did the Veteran request review by the same office?"
+        label="Was an interview by the same office requested?"
         strongLabel
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
@@ -103,10 +103,12 @@ class Review extends React.PureComponent {
 }
 
 const SelectClaimantConnected = connect(
-  ({ intake, higherLevelReview }) => ({
+  ({ higherLevelReview, intake }) => ({
+    isVeteranDeceased: intake.veteran.isDeceased,
     claimantNotVeteran: higherLevelReview.claimantNotVeteran,
     claimant: higherLevelReview.claimant,
     payeeCode: higherLevelReview.payeeCode,
+    payeeCodeError: higherLevelReview.payeeCodeError,
     relationships: higherLevelReview.relationships,
     benefitType: higherLevelReview.benefitType,
     formType: intake.formType

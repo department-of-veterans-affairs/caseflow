@@ -20,7 +20,8 @@ describe QueueMapper do
           complexity: :medium,
           quality: :exceeds_expectations,
           comment: "do something",
-          deficiencies: [:caselaw, :lay_evidence, :remands_are_not_completed] }
+          deficiencies: [:caselaw, :lay_evidence, :remands_are_not_completed],
+          one_touch_initiative: true }
       end
 
       let(:expected_result) do
@@ -38,7 +39,8 @@ describe QueueMapper do
           debmcom: "do something",
           deqr3: "Y",
           deqr7: "Y",
-          deqr10: "Y" }
+          deqr10: "Y",
+          de1touch: "Y" }
       end
       it { is_expected.to eq expected_result }
     end
@@ -58,7 +60,8 @@ describe QueueMapper do
           dedocid: "123456789.1234",
           dereceive: VacolsHelper.local_date_with_utc_timezone,
           demdtim: VacolsHelper.local_date_with_utc_timezone,
-          demdusr: "TESTSLOGID" }
+          demdusr: "TESTSLOGID",
+          de1touch: "N" }
       end
       it { is_expected.to eq expected_result }
     end
@@ -76,7 +79,8 @@ describe QueueMapper do
           dedocid: "123456789.1234",
           dereceive: VacolsHelper.local_date_with_utc_timezone,
           demdtim: VacolsHelper.local_date_with_utc_timezone,
-          demdusr: "TESTSLOGID" }
+          demdusr: "TESTSLOGID",
+          de1touch: "N" }
       end
       it { is_expected.to eq expected_result }
     end

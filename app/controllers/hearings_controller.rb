@@ -5,7 +5,13 @@ class HearingsController < ApplicationController
   before_action :verify_access_to_hearing_prep_or_schedule, only: [:update]
 
   def update
-    hearing.update(update_params)
+    if params["hearing"]["master_record_updated"]
+      HearingRepository.slot_new_hearing(params["hearing"]["master_record_updated"], hearing.appeal)
+    end
+
+    hearing.update_caseflow_and_vacols(update_params)
+    # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
+    HearingRepository.load_vacols_data(hearing)
     render json: hearing.to_hash(current_user.id)
   end
 
@@ -54,6 +60,7 @@ class HearingsController < ApplicationController
                                      :aod,
                                      :transcript_requested,
                                      :add_on,
-                                     :prepped)
+                                     :prepped,
+                                     :date)
   end
 end

@@ -7,12 +7,22 @@ class ClaimReview < DecisionReview
   has_many :end_product_establishments, as: :source
   has_one :intake, as: :detail
 
+  with_options if: :saving_review do
+    validates :receipt_date, :benefit_type, presence: { message: "blank" }
+    validates_associated :claimants
+  end
+
+  validates :legacy_opt_in_approved, inclusion: {
+    in: [true, false], message: "blank"
+  }, if: [:legacy_opt_in_enabled?, :saving_review]
+
   self.abstract_class = true
 
   def ui_hash
     super.merge(
       benefitType: benefit_type,
-      payeeCode: payee_code
+      payeeCode: payee_code,
+      hasClearedEP: cleared_ep?
     )
   end
 
@@ -79,10 +89,18 @@ class ClaimReview < DecisionReview
   def on_sync(end_product_establishment)
     if end_product_establishment.status_cleared?
       sync_dispositions(end_product_establishment.reference_id)
-      veteran.sync_rating_issues!
+      end_product_establishment.sync_decision_issues!
       # allow higher level reviews to do additional logic on dta errors
       yield if block_given?
     end
+  end
+
+  def cleared_ep?
+    end_product_establishments.any? { |ep| ep.status_cleared?(sync: true) }
+  end
+
+  def find_request_issue_by_description(description)
+    request_issues.find { |reqi| reqi.description == description }
   end
 
   private

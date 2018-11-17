@@ -2,7 +2,7 @@ class TasksController < ApplicationController
   include Errors
 
   before_action :verify_task_access, only: [:create]
-  skip_before_action :deny_vso_access, only: [:index, :update, :for_appeal]
+  skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
   TASK_CLASSES = {
     ColocatedTask: ColocatedTask,
@@ -11,7 +11,8 @@ class TasksController < ApplicationController
     QualityReviewTask: QualityReviewTask,
     JudgeTask: JudgeTask,
     ScheduleHearingTask: ScheduleHearingTask,
-    MailTask: MailTask
+    MailTask: MailTask,
+    InformalHearingPresentationTask: InformalHearingPresentationTask
   }.freeze
 
   QUEUES = {
@@ -61,7 +62,10 @@ class TasksController < ApplicationController
     tasks = task_class.create_many_from_params(create_params, current_user)
 
     tasks.each { |task| return invalid_record_error(task) unless task.valid? }
-    render json: { tasks: json_tasks(tasks) }, status: :created
+
+    tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
+
+    render json: { tasks: json_tasks(tasks_to_return) }, status: :created
   end
 
   # To update attorney task
@@ -81,7 +85,9 @@ class TasksController < ApplicationController
     tasks = task.update_from_params(update_params, current_user)
     tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
-    render json: { tasks: json_tasks(tasks) }
+    tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
+
+    render json: { tasks: json_tasks(tasks_to_return) }
   end
 
   def for_appeal
@@ -107,6 +113,10 @@ class TasksController < ApplicationController
   end
 
   def verify_task_access
+    if current_user.vso_employee? && task_class != InformalHearingPresentationTask
+      fail Caseflow::Error::ActionForbiddenError, message: "VSOs cannot create that task."
+    end
+
     redirect_to("/unauthorized") unless can_assign_task?
   end
 

@@ -42,6 +42,7 @@ export const initialState = {
   attorneysOfJudge: [],
   attorneyAppealsLoadingState: {},
   isTaskAssignedToUserSelected: {},
+  pendingDistribution: null,
   attorneys: {},
   organizationId: null,
   loadingAppealDetail: {}
@@ -78,6 +79,12 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
       },
       amaTasks: {
         $merge: action.payload.amaTasks ? action.payload.amaTasks : {}
+      }
+    });
+  case ACTIONS.RECEIVE_AMA_TASKS:
+    return update(state, {
+      amaTasks: {
+        $set: action.payload.amaTasks
       }
     });
   case ACTIONS.RECEIVE_JUDGE_DETAILS:
@@ -327,6 +334,12 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
       }
     });
   }
+  case ACTIONS.SET_PENDING_DISTRIBUTION:
+    return update(state, {
+      pendingDistribution: {
+        $set: action.payload.distribution
+      }
+    });
   case ACTIONS.RECEIVE_ALL_ATTORNEYS:
     return update(state, {
       attorneys: {

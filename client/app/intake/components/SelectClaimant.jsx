@@ -1,7 +1,7 @@
 import React from 'react';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
-import { BOOLEAN_RADIO_OPTIONS, PAYEE_CODES } from '../constants';
+import { BOOLEAN_RADIO_OPTIONS, DECEASED_PAYEE_CODES, LIVING_PAYEE_CODES } from '../constants';
 
 export default class SelectClaimant extends React.PureComponent {
   handlePayeeCodeChange(event) {
@@ -17,12 +17,14 @@ export default class SelectClaimant extends React.PureComponent {
 
   render = () => {
     const {
+      isVeteranDeceased,
       claimantNotVeteran,
       setClaimantNotVeteran,
       claimant,
       setClaimant,
       relationships,
-      payeeCode
+      payeeCode,
+      payeeCodeError
     } = this.props;
 
     let showClaimants = ['true', true].includes(claimantNotVeteran);
@@ -49,8 +51,9 @@ export default class SelectClaimant extends React.PureComponent {
             strongLabel
             label="What is the payee code for this claimant?"
             placeholder="Select"
-            options={PAYEE_CODES}
+            options={isVeteranDeceased ? DECEASED_PAYEE_CODES : LIVING_PAYEE_CODES}
             value={payeeCode}
+            errorMessage={payeeCodeError}
             onChange={(event) => this.handlePayeeCodeChange(event)} />
         }
 

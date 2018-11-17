@@ -17,6 +17,10 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     render(json: { message: e.message }, status: 400)
   end
 
+  rescue_from Caseflow::Error::DocumentUploadFailedInVBMS do |e|
+    render(e.serialize_response)
+  end
+
   rescue_from ActiveRecord::RecordNotFound do |_e|
     render(json: { message: "Record not found" }, status: 404)
   end
@@ -71,6 +75,9 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def outcode_params
     keys = %w[citation_number decision_date redacted_document_location]
+    if feature_enabled?(:decision_document_upload)
+      keys << "file"
+    end
     params.require(keys)
 
     # Have to do this because params.require() returns an array of the parameter values.
@@ -81,7 +88,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     ActiveModelSerializers::SerializableResource.new(
       appeal,
       serializer: ::Idt::V1::AppealDetailsSerializer,
-      include_addresses: Constants::BvaDispatchTeams::USERS[Rails.current_env].include?(user.css_id),
+      include_addresses: BvaDispatch.singleton.user_has_access?(user),
       base_url: request.base_url
     ).as_json
   end

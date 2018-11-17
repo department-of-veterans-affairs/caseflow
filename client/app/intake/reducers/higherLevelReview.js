@@ -33,10 +33,13 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.claimant_not_veteran ? serverIntake.claimant : null
     },
     payeeCode: {
-      $set: serverIntake.payee_code
+      $set: serverIntake.payeeCode
     },
     legacyOptInApproved: {
       $set: serverIntake.legacy_opt_in_approved
+    },
+    legacyIssues: {
+      $set: serverIntake.legacyIssues
     },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
@@ -77,8 +80,10 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     claimantNotVeteran: null,
     claimant: null,
     payeeCode: null,
+    payeeCodeError: null,
     legacyOptInApproved: null,
     legacyOptInApprovedError: null,
+    legacyIssues: [],
     isStarted: false,
     isReviewed: false,
     isComplete: false,
@@ -187,6 +192,9 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       legacyOptInApprovedError: {
         $set: null
       },
+      payeeCodeError: {
+        $set: null
+      },
       isReviewed: {
         $set: true
       },
@@ -209,6 +217,9 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       },
       legacyOptInApprovedError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')
+      },
+      payeeCodeError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'payee_code')
       },
       receiptDateError: {
         $set: getReceiptDateError(action.payload.responseErrorCodes, state)

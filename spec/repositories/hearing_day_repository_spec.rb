@@ -29,7 +29,7 @@ describe HearingDayRepository do
   end
 
   context ".fetch_hearing_day_slots" do
-    subject { HearingDayRepository.fetch_hearing_day_slots(hearing_day) }
+    subject { HearingDayRepository.fetch_hearing_day_slots(staff, hearing_day) }
     let!(:staff) { create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
     let(:hearing_day) do
       { regional_office: "RO04",

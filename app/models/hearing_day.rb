@@ -67,6 +67,10 @@ class HearingDay < ApplicationRecord
     def load_days_with_open_hearing_slots(start_date, end_date, regional_office = nil)
       total_video_and_co, _travel_board = load_days(start_date, end_date, regional_office)
 
+      # fetching all the RO keys of the dockets
+      regional_office_keys = total_video_and_co.map { |hearing_day| hearing_day[:regional_office] }
+      regional_office_hash = HearingDayRepository.ro_staff_hash(regional_office_keys)
+
       enriched_hearing_days = []
       total_video_and_co.each do |hearing_day|
         hearings = if hearing_day[:regional_office].nil?
@@ -76,7 +80,8 @@ class HearingDay < ApplicationRecord
                    end
 
         scheduled_hearings = filter_non_scheduled_hearings(hearings)
-        total_slots = HearingDayRepository.fetch_hearing_day_slots(hearing_day)
+        total_slots = HearingDayRepository
+          .fetch_hearing_day_slots(regional_office_hash[hearing_day[:regional_office]], hearing_day)
 
         next unless scheduled_hearings.length < total_slots
         enriched_hearing_days << hearing_day.slice(:id, :hearing_date, :hearing_type, :room_info)

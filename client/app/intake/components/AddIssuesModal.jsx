@@ -9,7 +9,8 @@ import RadioField from '../../components/RadioField';
 import {
   addRatingRequestIssue,
   toggleNonratingRequestIssueModal,
-  toggleUntimelyExemptionModal
+  toggleUntimelyExemptionModal,
+  toggleLegacyOptInModal
 } from '../actions/addIssues';
 import TextField from '../../components/TextField';
 import { issueById } from '../util/issues';
@@ -37,6 +38,10 @@ class AddIssuesModal extends React.Component {
     });
   }
 
+  hasLegacyIssues = () => {
+    return this.props.intakeData.legacyIssues.length > 0;
+  }
+
   requiresUntimelyExemption = () => {
     if (this.props.formType === 'supplemental_claim') {
       return false;
@@ -47,9 +52,12 @@ class AddIssuesModal extends React.Component {
   }
 
   onAddIssue = () => {
-    if (this.requiresUntimelyExemption()) {
-      const currentIssue = issueById(this.props.intakeData.ratings, this.state.referenceId);
+    const currentIssue = issueById(this.props.intakeData.ratings, this.state.referenceId);
 
+    if (this.hasLegacyIssues()) {
+      this.props.toggleLegacyOptInModal({ currentIssue,
+        notes: this.state.notes });
+    } else if (this.requiresUntimelyExemption()) {
       this.props.toggleUntimelyExemptionModal({ currentIssue,
         notes: this.state.notes });
     } else {
@@ -61,6 +69,14 @@ class AddIssuesModal extends React.Component {
       });
       this.props.closeHandler();
     }
+  }
+
+  getNextButtonText = () => {
+    if (this.props.intakeData.legacyIssues.length > 0) {
+      return 'Next';
+    }
+
+    return 'Add this issue';
   }
 
   render() {
@@ -104,8 +120,8 @@ class AddIssuesModal extends React.Component {
             name: 'Cancel adding this issue',
             onClick: closeHandler
           },
-          { classNames: ['usa-button', 'usa-button-secondary', 'add-issue'],
-            name: 'Add this issue',
+          { classNames: ['usa-button', 'add-issue'],
+            name: this.getNextButtonText(),
             onClick: this.onAddIssue,
             disabled: !this.state.referenceId
           },
@@ -145,6 +161,7 @@ export default connect(
   (dispatch) => bindActionCreators({
     addRatingRequestIssue,
     toggleNonratingRequestIssueModal,
-    toggleUntimelyExemptionModal
+    toggleUntimelyExemptionModal,
+    toggleLegacyOptInModal
   }, dispatch)
 )(AddIssuesModal);
