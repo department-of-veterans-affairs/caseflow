@@ -45,7 +45,9 @@ const smallTopMargin = css({
   }
 });
 
-const roSelectionStyling = css({ marginTop: '10px' });
+const roSelectionStyling = css({
+  marginTop: '10px',
+  marginBottom: '10px' });
 
 class AssignHearingsContainer extends React.PureComponent {
 
