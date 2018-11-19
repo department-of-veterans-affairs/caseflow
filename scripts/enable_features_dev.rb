@@ -59,6 +59,10 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
+          feature: "ama_decision_issues",
+          enable_all: true
+        },
+        {
           feature: "use_representative_info_from_bgs",
           enable_all: true
         }

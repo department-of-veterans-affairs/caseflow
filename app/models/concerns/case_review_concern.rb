@@ -21,30 +21,29 @@ module CaseReviewConcern
     if task.type == "AttorneyTask" && task.assigned_by_id != reviewing_judge_id
       task.parent.update(assigned_to_id: reviewing_judge_id)
     end
-    (issues || []).each do |issue_attrs|
-      # Delete this check when we turn on the feature flag: ama_decision_issues
-      if issue_attrs[:decision_issues]
-        update_decision_and_request_issues_disposition
+
+    # Remove this check when feature flag 'ama_decision_issues' is enabled for all
+    (issues || []).each do |attrs|
+      if attrs[:added_decision_issues]
+        create_and_delete_decision_issues(attrs)
       else
-        update_issue_disposition(issue_attrs)
+        update_issue_disposition(attrs)
       end
     end
   end
 
-  def update_decision_and_request_issues_disposition(issue_attrs)
-    request_issues = appeal.request_issues.where(id: issue_attrs["request_issue_ids"]) if appeal
-    # create decision issues and set their dispositions
-    # if decision issue id is not passed, create a decision issue
-    # if decision issue id is passed, we will update the issue
-    # if decision issue already exists and not passed in the request delete it
+  def create_and_delete_decision_issues(attrs)
+    request_issues = appeal.request_issues.where(id: attrs[:request_issue_ids]) if appeal
 
+    return if request_issues.empty?
 
-    # issue_attrs[:decision_issues].each do |decision_issue_attrs|
-    #   if decision_issue_attrs[:id]
-    #     request_issues.decision_issues.find(decision_issue_attrs[:id])
-    # end
-
-    request_issues.update_all((disposition: issue_attrs["request_issue_disposition"]))
+    attrs[:added_decision_issues].each do |added|
+      decision_issue = DecisionIssue.create!(disposition: added[:disposition], description: added[:description])
+      request_issues.each do |request_issue|
+        RequestDecisionIssue.create!(decision_issue: decision_issue, request_issue: request_issue)
+        DecisionIssue.where(id: attrs[:deleted_decision_issue_ids]).delete_all
+      end
+    end
   end
 
   def update_issue_disposition(issue_attrs)

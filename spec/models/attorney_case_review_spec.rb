@@ -2,6 +2,45 @@ describe AttorneyCaseReview do
   let(:attorney) { FactoryBot.create(:user) }
   let(:judge) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID) }
 
+  context "#create_and_delete_decision_issues" do
+    subject { AttorneyCaseReview.new(issues: issues).create_and_delete_decision_issues }
+
+    context "lets test it" do
+      let(:request_issue1) { create(:request_issue) }
+      let(:decision_issue1) { create(:decision_issue) }
+      let(:request_issue2) { create(:request_issue, decision_issues: [decision_issue1]) }
+
+      let(:decision_issue2) { create(:decision_issue) }
+      let(:request_issue3) { create(:request_issue, decision_issues: [decision_issue2]) }
+      let(:request_issue4) { create(:request_issue) }
+
+      let(:request_issue5) { create(:request_issue) }
+      let(:request_issue6) { create(:request_issue) }
+
+      let(:decision_issue3) { create(:decision_issue) }
+      let(:decision_issue4) { create(:decision_issue) }
+      let(:request_issue7) { create(:request_issue, decision_issues: [decision_issue3, decision_issue4]) }
+
+      let(:issues) do
+        [{ request_issue_ids: [request_issue1.id, request_issue2.id], # many to many
+           added_decision_issues: [{ disposition: "allowed", description: "something" },
+                                   { disposition: "remanded", description: "something" }],
+           deleted_decision_issue_ids: [decision_issue1.id] },
+         { request_issue_ids: [request_issue3.id, request_issue4.id], # many to one
+           added_decision_issues: [{ disposition: "allowed", description: "something" }],
+           deleted_decision_issue_ids: [decision_issue2.id] },
+         { request_issue_ids: [request_issue5.id], # one to many
+           added_decision_issues: [{ disposition: "allowed", description: "something" },
+                                   { disposition: "remanded", description: "something" }] },
+         { request_issue_ids: [request_issue6.id], # one to one
+           added_decision_issues: [{ disposition: "allowed", description: "something" }] },
+         { request_issue_ids: [request_issue7.id], # no added, delete all decisions
+           added_decision_issues: [],
+           deleted_decision_issue_ids: [decision_issue3.id, decision_issue4.id] }]
+      end
+    end
+  end
+
   context ".complete" do
     let(:document_type) { Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"] }
     let(:work_product) { "OMO - IME" }
