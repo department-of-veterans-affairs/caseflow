@@ -3,7 +3,9 @@ require "rails_helper"
 RSpec.feature "Case details" do
   let(:attorney_first_name) { "Robby" }
   let(:attorney_last_name) { "McDobby" }
-  let!(:attorney_user) { FactoryBot.create(:user, full_name: "#{attorney_first_name} #{attorney_last_name}") }
+  let!(:attorney_user) do
+    FactoryBot.create(:user, full_name: "#{attorney_first_name} #{attorney_last_name}")
+  end
   let!(:vacols_atty) do
     FactoryBot.create(
       :staff,
@@ -455,13 +457,19 @@ RSpec.feature "Case details" do
       let!(:appeal) { FactoryBot.create(:appeal) }
       let!(:appeal2) { FactoryBot.create(:appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
-      let!(:attorney_task) { FactoryBot.create(:task, appeal: appeal, type: AttorneyTask.name, parent: root_task,
-        assigned_to: user, status: "completed", completed_at: Time.zone.now - 4.days) }
-      let!(:judge_task) { FactoryBot.create(:task, appeal: appeal, type: JudgeTask.name, parent: attorney_task,
-        assigned_to: user, status: "completed", completed_at: Time.zone.now) }
+      let!(:attorney_task) do
+        FactoryBot.create(:task, appeal: appeal, type: AttorneyTask.name, parent: root_task,
+                                 assigned_to: user, status: "completed", completed_at: Time.zone.now - 4.days)
+      end
+      let!(:judge_task) do
+        FactoryBot.create(:task, appeal: appeal, type: JudgeTask.name, parent: attorney_task,
+                                 assigned_to: user, status: "completed", completed_at: Time.zone.now)
+      end
       let!(:qr) { QualityReview.singleton }
-      let!(:task) { FactoryBot.create(:qr_task, appeal: appeal, assigned_to: user, status: "completed",
-        completed_at: Time.zone.now - 2.days) }
+      let!(:task) do
+        FactoryBot.create(:qr_task, appeal: appeal, assigned_to: user, status: "completed",
+                                    completed_at: Time.zone.now - 2.days)
+      end
 
       before do
         OrganizationsUser.add_user_to_organization(user, qr)
