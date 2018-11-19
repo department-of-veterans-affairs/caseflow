@@ -85,12 +85,18 @@ class IntakesController < ApplicationController
   def new_intake
     @new_intake ||= Intake.build(
       user: current_user,
-      veteran_file_number: params[:file_number],
+      veteran_file_number: veteran_file_number,
       form_type: params[:form_type]
     )
   end
 
   def intake
     @intake ||= Intake.where(user: current_user).find(params[:id])
+  end
+
+  def veteran_file_number
+    # param could be file number or SSN. Make sure we return file number.
+    veteran = VeteranFinder.new.find(params[:file_number])
+    veteran ? veteran.file_number : params[:file_number]
   end
 end
