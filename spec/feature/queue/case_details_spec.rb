@@ -455,14 +455,14 @@ RSpec.feature "Case details" do
       let!(:appeal) { FactoryBot.create(:appeal) }
       let!(:appeal2) { FactoryBot.create(:appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
-      let!(:attorney_task) { FactoryBot.create(:task, appeal: appeal, type: AttorneyTask.name, parent: root_task, assigned_to: user, status: 'completed', completed_at: Time.zone.now-4.days) }
-      let!(:judge_task) { FactoryBot.create(:task, appeal: appeal, type: JudgeTask.name, parent: attorney_task, assigned_to: user, status: 'completed', completed_at: Time.zone.now) }
+      let!(:attorney_task) { FactoryBot.create(:task, appeal: appeal, type: AttorneyTask.name, parent: root_task, assigned_to: user, status: "completed", completed_at: Time.zone.now - 4.days) }
+      let!(:judge_task) { FactoryBot.create(:task, appeal: appeal, type: JudgeTask.name, parent: attorney_task, assigned_to: user, status: "completed", completed_at: Time.zone.now) }
       let!(:qr) { QualityReview.singleton }
-      let!(:task) { FactoryBot.create(:qr_task, appeal: appeal, assigned_to: user, status: 'completed', completed_at: Time.zone.now-2.days) }
+      let!(:task) { FactoryBot.create(:qr_task, appeal: appeal, assigned_to: user, status: "completed", completed_at: Time.zone.now - 2.days) }
 
       before do
         OrganizationsUser.add_user_to_organization(user, qr)
-        attorney_task.update!(status: 'completed')
+        attorney_task.update!(status: "completed")
       end
 
       it "should display judge & attorney tasks" do
@@ -477,6 +477,5 @@ RSpec.feature "Case details" do
         expect(page).not_to have_content(COPY::CASE_TIMELINE_JUDGE_TASK)
       end
     end
-
   end
 end

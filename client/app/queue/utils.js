@@ -266,10 +266,10 @@ export const prepareAppealForStore =
           form9Date: appeal.attributes.events.form9_date
         },
         timeline: appeal.attributes.timeline.map((event) => ({
-            title: event.title,
-            pendingTitle: event.pending_title,
-            date: event.date
-          })),
+          title: event.title,
+          pendingTitle: event.pending_title,
+          date: event.date
+        })),
         decisionDate: appeal.attributes.decision_date,
         certificationDate: appeal.attributes.certification_date,
         powerOfAttorney: appeal.attributes.power_of_attorney,
@@ -285,8 +285,6 @@ export const prepareAppealForStore =
       appealDetails: appealDetailsHash
     };
   };
-
-
 
 export const renderAppealType = (appeal: BasicAppeal) => {
   const {
