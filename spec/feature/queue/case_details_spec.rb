@@ -451,7 +451,6 @@ RSpec.feature "Case details" do
       end
     end
 
-    # appeal with tasks & user
     describe "CaseTimeline shows judge & attorney tasks" do
       let!(:user) { FactoryBot.create(:user) }
       let!(:appeal) { FactoryBot.create(:appeal) }
@@ -478,7 +477,6 @@ RSpec.feature "Case details" do
 
       it "should display judge & attorney tasks" do
         visit "/queue/appeals/#{appeal.uuid}"
-
         expect(page).to have_content(COPY::CASE_TIMELINE_ATTORNEY_TASK)
         expect(page).to have_content(COPY::CASE_TIMELINE_JUDGE_TASK)
       end
