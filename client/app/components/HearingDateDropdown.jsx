@@ -70,16 +70,18 @@ class HearingDateDropdown extends React.Component {
     }
 
     return (
-      <InlineForm>
-        <b>Date of Hearing</b>
-        <p style={{ marginRight: '30px', width: '150px' }}>
+      <React.Fragment>
+        <b style={{ marginBottom: '-8px', marginTop: '8px', display: 'block' }}>Date of Hearing</b>
+        <InlineForm>
+          <p style={{ marginRight: '30px', width: '150px' }}>
           {selectedHearingDate.label}
         </p>
         <Button
           name="Change"
           linkStyling
           onClick={() => { this.setState({ editable: true })}} />
-      </InlineForm>
+        </InlineForm>
+      </React.Fragment>
     );
   }
 }

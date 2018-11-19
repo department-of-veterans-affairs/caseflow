@@ -72,16 +72,18 @@ class RoSelectorDropdown extends React.Component {
     }
 
     return (
-      <InlineForm>
-        <b>Regional Office</b>
-        <p style={{ marginRight: '30px', width: '150px' }}>
-          {selectedRegionalOffice.label}
-        </p>
-        <Button
-          name="Change"
-          linkStyling
-          onClick={() => { this.setState({ editable: true })}} />
-      </InlineForm>
+      <React.Fragment>
+        <b style={{ marginBottom: '-8px', marginTop: '8px', display: 'block' }}>Regional Office</b>
+        <InlineForm>
+          <p style={{ marginRight: '30px', width: '150px' }}>
+            {selectedRegionalOffice.label}
+          </p>
+          <Button
+            name="Change"
+            linkStyling
+            onClick={() => { this.setState({ editable: true })}} />
+        </InlineForm>
+      </React.Fragment>
     );
   }
 }
