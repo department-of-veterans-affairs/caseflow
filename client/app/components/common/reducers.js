@@ -18,7 +18,7 @@ const commonComponentsReducer = (state = initialState, action = {}) => {
       }
     });
   case ACTIONS.RECEIVE_HEARING_DATES:
-    return update(staet, {
+    return update(state, {
       hearingDates: {
         $set: action.payload.hearingDates
       }

@@ -206,8 +206,6 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
     return <React.Fragment>
       <div {...fullWidth} {...css({ marginBottom: '0' })} >
-        {/*<b {...titleStyling} >Regional Office</b>*/}
-
         <RoSelectorDropdown
           onChange={onRegionalOfficeChange}
           value={selectedRegionalOffice}
@@ -215,33 +213,15 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           changePrompt={true}
           staticOptions={centralOfficeStaticEntry} />
 
-        <HearingDateDropdown
+        {selectedRegionalOffice && <HearingDateDropdown
+          key={selectedRegionalOffice}
           regionalOffice={selectedRegionalOffice}
           onChange={onHearingDateChange}
           value={selectedHearingDate}
           readOnly={false}
           changePrompt={true}
-        />
+        />}
 
-       {/*<b {...titleStyling} >Date of hearing</b>*/}
-        {/*this.state.dateEdit &&
-          <DateSelector
-            name="hearingDate"
-            label={false}
-            value={selectedDate}
-            onChange={(option) => option && this.setState({ selectedDate: option })}
-            type="date"
-          />
-        */}
-        {/*!this.state.dateEdit &&
-          <InlineForm>
-            <p {...buttonLinksStyling}>{formatDateStr(selectedDate)}</p>
-            <Button
-              name="Change"
-              linkStyling
-              onClick={this.onDateClick} />
-          </InlineForm>
-        */}
         <RadioField
           name="time"
           label="Time"

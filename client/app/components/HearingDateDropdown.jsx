@@ -8,6 +8,7 @@ import ApiUtil from '../util/ApiUtil';
 import { onReceiveHearingDates } from './common/actions';
 import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
+import { formatDate } from '../util/DateUtil';
 
 class HearingDateDropdown extends React.Component {
   constructor(props){
@@ -20,10 +21,9 @@ class HearingDateDropdown extends React.Component {
 
   loadHearingDates = () => {
    const { regionalOffice } = this.props;
-    console.log(regionalOffice);
+
     return ApiUtil.get(`/regional_offices/${regionalOffice}/open_hearing_dates.json`).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
-
       this.props.onReceiveHearingDates(resp.hearingDates);
     });
   };
@@ -38,10 +38,10 @@ class HearingDateDropdown extends React.Component {
 
     let hearingDateOptions = [];
 
-    _.forEach(this.props.hearingDates, (value) => {
+    _.forEach(this.props.hearingDates, (date) => {
       hearingDateOptions.push({
-        label: formatDate(value, 'MM/DD/YYYY'),
-        value
+        label: formatDate(date.hearingDate, 'MM/DD/YYYY'),
+        value: date.hearingDate
       });
     });
 
@@ -71,6 +71,7 @@ class HearingDateDropdown extends React.Component {
 
     return (
       <InlineForm>
+        <b>Date of Hearing</b>
         <p style={{ marginRight: '30px', width: '150px' }}>
           {selectedHearingDate.label}
         </p>
