@@ -185,6 +185,16 @@ class Issue
     }
   end
 
+  def intake_attributes
+    {
+      vacols_sequence_id: vacols_sequence_id,
+      description: friendly_description,
+      disposition: disposition,
+      close_date: close_date,
+      note: note
+    }
+  end
+
   attr_writer :remand_reasons
   def remand_reasons
     @remand_reasons ||= self.class.remand_repository.load_remands_from_vacols(id, vacols_sequence_id)

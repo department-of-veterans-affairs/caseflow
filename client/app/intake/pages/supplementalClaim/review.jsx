@@ -12,7 +12,7 @@ import {
   setClaimant,
   setPayeeCode,
   setLegacyOptInApproved
-} from '../../actions/ama';
+} from '../../actions/decisionReview';
 import { setReceiptDate } from '../../actions/intake';
 import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
@@ -80,6 +80,7 @@ const SelectClaimantConnected = connect(
     claimantNotVeteran: supplementalClaim.claimantNotVeteran,
     claimant: supplementalClaim.claimant,
     payeeCode: supplementalClaim.payeeCode,
+    payeeCodeError: supplementalClaim.payeeCodeError,
     relationships: supplementalClaim.relationships,
     benefitType: supplementalClaim.benefitType,
     formType: intake.formType
