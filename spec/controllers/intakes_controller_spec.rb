@@ -5,6 +5,24 @@ RSpec.describe IntakesController do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
+  describe "#create" do
+    let(:file_number) { "123456789" }
+    let(:ssn) { file_number.to_s.reverse } # our fakes do this
+    let!(:veteran) { create(:veteran, file_number: file_number) }
+
+    it "should search by Veteran file number" do
+      post :create, params: { file_number: file_number, form_type: "higher_level_review" }
+      expect(response.status).to eq(200)
+      expect(Intake.last.veteran_file_number).to eq(file_number)
+    end
+
+    it "should search by SSN" do
+      post :create, params: { file_number: ssn, form_type: "higher_level_review" }
+      expect(response.status).to eq(200)
+      expect(Intake.last.veteran_file_number).to eq(file_number)
+    end
+  end
+
   describe "#complete" do
     # TODO: this is just testing the current implementation; should make this more behavioral
     it "should call complete! and return a 200" do
