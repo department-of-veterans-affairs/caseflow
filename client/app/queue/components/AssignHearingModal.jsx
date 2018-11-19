@@ -198,7 +198,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   render = () => {
     const { timeOptions, selectedTime } = this.state;
-    const { selectedHearingDate, selectedRegionalOffice, task, onRegionalOfficeChange, onHearingDateChange } = this.props;
+    const { selectedHearingDate, selectedRegionalOffice, task, onRegionalOfficeChange, onHearingDateChange, appeal } = this.props;
 
     if (!task) {
       return null;
@@ -216,6 +216,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           staticOptions={centralOfficeStaticEntry} />
 
         <HearingDateDropdown
+          regionalOffice={selectedRegionalOffice}
           onChange={onHearingDateChange}
           value={selectedHearingDate}
           readOnly={false}
