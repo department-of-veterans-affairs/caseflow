@@ -3,6 +3,8 @@ class Claimant < ApplicationRecord
 
   belongs_to :review_request, polymorphic: true
 
+  validates_with ClaimantValidator
+
   bgs_attr_accessor :first_name, :last_name, :middle_name, :relationship
 
   def self.create_from_intake_data!(participant_id:, payee_code:)
