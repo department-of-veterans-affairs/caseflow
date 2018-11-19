@@ -99,7 +99,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   componentWillMount = () => {
     const { hearingDay, appeal, onRegionalOfficeChange, onHearingDateChange } = this.props;
-    const ro = appeal.sanitizedHearingRequestType == 'central_office' ? 'C' : (hearingDay.regionalOffice || '');
+    const ro = appeal.sanitizedHearingRequestType == 'central_office' ? 'C' : (hearingDay.regionalOffice || appeal.regionalOffice.key);
     onRegionalOfficeChange(ro);
     if(hearingDay.hearingDate) onHearingDateChange(hearingDay.hearingDate);
   };
