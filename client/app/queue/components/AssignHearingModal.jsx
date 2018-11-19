@@ -101,7 +101,6 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     const { hearingDay, appeal, onRegionalOfficeChange, onHearingDateChange } = this.props;
     const ro = appeal.sanitizedHearingRequestType == 'central_office' ? 'C' : (hearingDay.regionalOffice || '');
     onRegionalOfficeChange(ro);
-
     if(hearingDay.hearingDate) onHearingDateChange(hearingDay.hearingDate);
   };
 

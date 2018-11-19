@@ -9,7 +9,7 @@ import Table from '../../components/Table';
 import { css } from 'glamor';
 import moment from 'moment';
 import { COLORS } from '../../constants/AppConstants';
-import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
+import { getTime, getTimeInDifferentTimeZone, formatDate } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 import { renderAppealType } from '../../queue/utils';
 import StatusMessage from '../../components/StatusMessage';
@@ -162,7 +162,7 @@ export default class AssignHearings extends React.Component {
   veteransReadyForHearing = () => {
 
     const { selectedHearingDay, selectedRegionalOffice } = this.props;
-    const date = moment(selectedHearingDay).format('YYYY-MM-DD')
+    const date = moment(selectedHearingDay.hearingDate).format('YYYY-MM-DD')
 
     const tabWindowColumns = [
       {
