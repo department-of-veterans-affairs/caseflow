@@ -9,13 +9,13 @@ import _ from 'lodash';
 
 const getChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
   const checklist = [];
-  const eligibleIssues = requestIssues.filter((ri) => !ri.ineligibleReason)
-  let eligibleRatingIssues = []
-  let eligibleNonratingIssues = []
+  const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason)
+  let eligibleRatingRequestIssues = []
+  let eligibleNonratingRequestIssues = []
 
   if (formType !== 'appeal') {
-    eligibleRatingIssues = eligibleIssues.filter((ri) => ri.isRating || ri.isUnidentified);
-    eligibleNonratingIssues = eligibleIssues.filter((ri) => ri.isRating === false);
+    eligibleRatingRequestIssues = eligibleRequestIssues.filter((ri) => ri.isRating || ri.isUnidentified);
+    eligibleNonratingRequestIssues = eligibleRequestIssues.filter((ri) => ri.isRating === false);
   }
 
   const claimReviewName = _.find(FORM_TYPES, { key: formType }).shortName;
@@ -23,21 +23,23 @@ const getChecklistItems = (formType, requestIssues, isInformalConferenceRequeste
   if (formType === 'appeal') {
     checklist.push(<Fragment>
       <strong>Appeal created:</strong>
-      {eligibleIssues.map((ri, i) => <p key={i}>Issue: {ri.contentionText}</p>)}
+      {eligibleRequestIssues.map((ri, i) => <p key={i}>Issue: {ri.contentionText}</p>)}
     </Fragment>);
   }
 
-  if (eligibleRatingIssues.length > 0) {
+  if (eligibleRatingRequestIssues.length > 0) {
     checklist.push(<Fragment>
       <strong>A {claimReviewName} Rating EP is being established:</strong>
-      {eligibleRatingIssues.map((ri, i) => <p key={`rating-issue-${i}`}>Contention: {ri.contentionText}</p>)}
+      {eligibleRatingRequestIssues.map((ri, i) => <p key={`rating-issue-${i}`}>Contention: {ri.contentionText}</p>)}
     </Fragment>);
   }
 
-  if (eligibleNonratingIssues.length > 0) {
+  if (eligibleNonratingRequestIssues.length > 0) {
     checklist.push(<Fragment>
       <strong>A {claimReviewName} Nonrating EP is being established:</strong>
-      {eligibleNonratingIssues.map((nri, i) => <p key={`nonrating-issue-${i}`}>Contention: {nri.contentionText}</p>)}
+      {eligibleNonratingRequestIssues.map((nri, i) =>
+        <p key={`nonrating-issue-${i}`}>Contention: {nri.contentionText}</p>
+      )}
     </Fragment>);
   }
 
@@ -85,7 +87,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       requestIssues,
       informalConference
     } = completedReview;
-    const ineligibleIssues = requestIssues.filter((ri) => ri.ineligibleReason);
+    const ineligibleRequestIssues = requestIssues.filter((ri) => ri.ineligibleReason);
 
     switch (intakeStatus) {
     case INTAKE_STATES.NONE:
@@ -111,7 +113,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       checklist={getChecklistItems(formType, requestIssues, informalConference)}
       wrapInAppSegment={false}
     />
-    { ineligibleIssues && <IneligibleIssuesList issues={ineligibleIssues} /> }
+    { ineligibleRequestIssues && <IneligibleIssuesList issues={ineligibleRequestIssues} /> }
     </div>
     ;
   }
