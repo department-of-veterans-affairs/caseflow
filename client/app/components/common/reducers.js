@@ -17,6 +17,18 @@ const commonComponentsReducer = (state = initialState, action = {}) => {
         $set: action.payload.regionalOffice
       }
     });
+  case ACTIONS.RECEIVE_HEARING_DATES:
+    return update(staet, {
+      hearingDates: {
+        $set: action.payload.hearingDates
+      }
+    });
+  case ACTIONS.HEARING_DATE_CHANGE:
+    return update(state, {
+      selectedHearingDate: {
+        $set: action.payload.hearingDate
+      }
+    });
   default:
     return state;
   }
