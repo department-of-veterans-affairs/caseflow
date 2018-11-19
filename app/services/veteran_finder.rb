@@ -11,6 +11,7 @@ class VeteranFinder
 
   def find_by_ssn(ssn)
     file_number = bgs.fetch_file_number_by_ssn(ssn)
+    return unless file_number
     find_by_filenumber(file_number)
   end
 
