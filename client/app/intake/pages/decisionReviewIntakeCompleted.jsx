@@ -70,18 +70,6 @@ class IneligibleIssuesList extends React.PureComponent {
     </Fragment>;
 }
 
-// const ineligibleIssuesList = (ineligibleIssues) => {
-//   if (ineligibleIssues.length > 0) {
-//     return
-//       <ul className="cf-ineligible-checklist cf-left-padding">
-//         <li>
-//           <strong>Ineligible</strong>
-//           {ineligibleIssues.map((ri, i) => <p key={`ineligible-issue-${i}`} className='cf-red-text'>{ri.contentionText} {ineligibilityCopy(ri)}</p>)}
-//         </li>
-//       </ul>;
-//   }
-// }
-
 class DecisionReviewIntakeCompleted extends React.PureComponent {
   render() {
     const {
@@ -95,17 +83,17 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       requestIssues,
       informalConference
     } = completedReview;
-
-    // switch (intakeStatus) {
-    // case INTAKE_STATES.NONE:
-    //   return <Redirect to={PAGE_PATHS.BEGIN} />;
-    // case INTAKE_STATES.STARTED:
-    //   return <Redirect to={PAGE_PATHS.REVIEW} />;
-    // case INTAKE_STATES.REVIEWED:
-    //   return <Redirect to={PAGE_PATHS.FINISH} />;
-    // default:
-    // }
     const ineligibleIssues = requestIssues.filter((ri) => ri.ineligibleReason);
+
+    switch (intakeStatus) {
+    case INTAKE_STATES.NONE:
+      return <Redirect to={PAGE_PATHS.BEGIN} />;
+    case INTAKE_STATES.STARTED:
+      return <Redirect to={PAGE_PATHS.REVIEW} />;
+    case INTAKE_STATES.REVIEWED:
+      return <Redirect to={PAGE_PATHS.FINISH} />;
+    default:
+    }
 
     const leadMessageList = [
       `${veteran.name}'s (ID #${veteran.fileNumber}) ` +

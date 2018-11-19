@@ -15,16 +15,11 @@
     list-style-type: none;
 
     li {
-      // background: url(https://upload.wikimedia.org/wikipedia/commons/c/c2/Asterisk_font_awesome.svg) no-repeat left top transparent;
       background: url(#{$image-url}/icons/asterisk.svg) no-repeat left top transparent;
-      background-size: 22px 17px;
-      background-position-y: 7px;
+      background-size: 22px 22px;
+      background-position-y: 4px;
       padding-left: 38px;
       padding-top: 3px;
-
-      path {
-        fill: $color-gray-dark;
-      }
     }
   }
   .cf-msg-screen-deck {
