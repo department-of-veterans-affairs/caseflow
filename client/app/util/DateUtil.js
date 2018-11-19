@@ -126,3 +126,7 @@ export const getTimeInDifferentTimeZone = (date, timeZone) => {
     format('h:mm a z').
     replace(/(\w)(DT|ST)/g, '$1T');
 };
+
+export const getDate = (date) => {
+  return moment(date).format('YYYY-MM-DD');
+};

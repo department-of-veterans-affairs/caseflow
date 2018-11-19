@@ -23,7 +23,8 @@ export default class SelectClaimant extends React.PureComponent {
       claimant,
       setClaimant,
       relationships,
-      payeeCode
+      payeeCode,
+      payeeCodeError
     } = this.props;
 
     let showClaimants = ['true', true].includes(claimantNotVeteran);
@@ -52,6 +53,7 @@ export default class SelectClaimant extends React.PureComponent {
             placeholder="Select"
             options={isVeteranDeceased ? DECEASED_PAYEE_CODES : LIVING_PAYEE_CODES}
             value={payeeCode}
+            errorMessage={payeeCodeError}
             onChange={(event) => this.handlePayeeCodeChange(event)} />
         }
 
