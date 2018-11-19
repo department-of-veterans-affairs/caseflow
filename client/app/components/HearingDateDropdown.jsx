@@ -85,7 +85,7 @@ class HearingDateDropdown extends React.Component {
 }
 
 HearingDateDropdown.propTypes = {
-  regionalOffice: PropTypes.string,
+  regionalOffice: PropTypes.string.isRequired,
   hearingDates: PropTypes.object,
   onChange: PropTypes.func,
   value: PropTypes.object,
