@@ -161,24 +161,6 @@ class AppealsController < ApplicationController
     }, status: 400
   end
 
-  def handle_non_critical_error(endpoint, err)
-    if !err.class.method_defined? :serialize_response
-      code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
-      err = Caseflow::Error::SerializableError.new(code: code, message: err.to_s)
-    end
-
-    DataDogService.increment_counter(
-      metric_group: "errors",
-      metric_name: "non_critical",
-      app_name: RequestStore[:application],
-      attrs: {
-        endpoint: endpoint
-      }
-    )
-
-    render err.serialize_response
-  end
-
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
       appeals
