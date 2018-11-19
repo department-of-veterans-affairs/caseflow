@@ -73,6 +73,7 @@ class RoSelectorDropdown extends React.Component {
 
     return (
       <InlineForm>
+        <b>Regional Office</b>
         <p style={{ marginRight: '30px', width: '150px' }}>
           {selectedRegionalOffice.label}
         </p>
