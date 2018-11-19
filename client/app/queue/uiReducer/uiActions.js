@@ -191,9 +191,7 @@ export const hideVeteranCaseList = () => ({
   type: ACTIONS.HIDE_VETERAN_CASE_LIST
 });
 
-export const setHearingDay = ({ hearingDate, regionalOffice }) => ({
+export const setHearingDay = (hearingDay: Object) => ({
   type: ACTIONS.SET_HEARING_DAY,
-  payload: {
-    hearingDate, regionalOffice
-  }
-})
+  payload: hearingDay
+});

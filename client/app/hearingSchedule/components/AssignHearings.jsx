@@ -9,8 +9,7 @@ import Table from '../../components/Table';
 import { css } from 'glamor';
 import moment from 'moment';
 import { COLORS } from '../../constants/AppConstants';
-import { getTime, getTimeInDifferentTimeZone, formatDate } from '../../util/DateUtil';
-import ApiUtil from '../../util/ApiUtil';
+import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import { renderAppealType } from '../../queue/utils';
 import StatusMessage from '../../components/StatusMessage';
 
@@ -161,18 +160,21 @@ export default class AssignHearings extends React.Component {
 
   veteransReadyForHearing = () => {
 
-    const { selectedHearingDay, selectedRegionalOffice } = this.props;
-    const date = moment(selectedHearingDay.hearingDate).format('YYYY-MM-DD')
-
+    const { selectedHearingDay, selectedRegionalOffice, veteran } = this.props;
+    const date = moment(selectedHearingDay.hearingDate).format('YYYY-MM-DD');
+    const SROVal = selectedRegionalOffice.value;
+    const vacolsId = veteran.vacolsId;
+    const qry = `?hearingDate=${date}&regionalOffice=${SROVal}`;
+    const href = `/queue/appeals/${vacolsId}/${qry}`;
     const tabWindowColumns = [
       {
         header: 'Case details',
         align: 'left',
         valueName: 'caseDetails',
-        valueFunction: (veteran) => <Link
-          href={`/queue/appeals/${veteran.vacolsId}/?hearingDate=${date}&regionalOffice=${selectedRegionalOffice.value}`}
-          name={veteran.vacolsId}>
-          {veteran.caseDetails}
+        valueFunction: (_veteran) => <Link
+          href={href}
+          name={_veteran.vacolsId}>
+          {_veteran.caseDetails}
         </Link>
       },
       {

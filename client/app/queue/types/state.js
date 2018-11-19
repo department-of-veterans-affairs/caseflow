@@ -58,7 +58,11 @@ export type UiState = {
   feedbackUrl: string,
   veteranCaseListIsVisible: boolean,
   organizationIds: Array<number>,
-  canEditAod: boolean
+  canEditAod: boolean,
+  hearingDay: {
+    hearingDate: ?string,
+    regionalOffice: ?string
+  }
 };
 
 export type UsersById = { [number]: ?User };
@@ -96,6 +100,7 @@ export type QueueState = {|
 export type CommonComponentState = {|
   regionalOffices: Array<Object>,
   selectedRegionalOffice: { label: string, value: string },
+  selectedHearingDate: string
 |};
 
 export type State = {

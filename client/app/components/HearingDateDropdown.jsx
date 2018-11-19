@@ -11,7 +11,7 @@ import connect from 'react-redux/es/connect/connect';
 import { formatDate, formatDateStringForApi } from '../util/DateUtil';
 
 class HearingDateDropdown extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -20,10 +20,11 @@ class HearingDateDropdown extends React.Component {
   }
 
   loadHearingDates = () => {
-   const { regionalOffice } = this.props;
+    const { regionalOffice } = this.props;
 
     return ApiUtil.get(`/regional_offices/${regionalOffice}/open_hearing_dates.json`).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+
       this.props.onReceiveHearingDates(resp.hearingDates);
     });
   };
@@ -45,21 +46,20 @@ class HearingDateDropdown extends React.Component {
       });
     });
 
-
-
     return hearingDateOptions;
   };
 
   render() {
     const { readOnly, staticOptions, onChange, value, placeholder } = this.props;
     const hearingDateOptions = this.hearingDateOptions();
-    const selectedHearingDate = _.find(hearingDateOptions, (o) => o.value === value) || {};
+    const selectedHearingDate = _.find(hearingDateOptions, (opt) => opt.value === value) || {};
 
-    if(!this.props.changePrompt || this.state.editable){
+    if (!this.props.changePrompt || this.state.editable) {
       return (
         <SearchableDropdown
           name="hearing_date"
           label="Date of Hearing"
+          staticOptions={staticOptions}
           options={hearingDateOptions}
           readOnly={readOnly || false}
           onChange={onChange}
@@ -71,15 +71,20 @@ class HearingDateDropdown extends React.Component {
 
     return (
       <React.Fragment>
-        <b style={{ marginBottom: '-8px', marginTop: '8px', display: 'block' }}>Date of Hearing</b>
+        <b style={{ marginBottom: '-8px',
+          marginTop: '8px',
+          display: 'block' }}>Date of Hearing</b>
         <InlineForm>
-          <p style={{ marginRight: '30px', width: '150px' }}>
-          {selectedHearingDate.label}
-        </p>
-        <Button
-          name="Change"
-          linkStyling
-          onClick={() => { this.setState({ editable: true })}} />
+          <p style={{ marginRight: '30px',
+            width: '150px' }}>
+            {selectedHearingDate.label}
+          </p>
+          <Button
+            name="Change"
+            linkStyling
+            onClick={() => {
+              this.setState({ editable: true });
+            }} />
         </InlineForm>
       </React.Fragment>
     );

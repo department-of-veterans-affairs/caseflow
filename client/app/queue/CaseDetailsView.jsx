@@ -43,8 +43,10 @@ class CaseDetailsView extends React.PureComponent {
 
     const { hearingDate, regionalOffice } = getQueryParams(window.location.search);
 
-    if(hearingDate && regionalOffice)
-      this.props.setHearingDay({ hearingDate, regionalOffice });
+    if (hearingDate && regionalOffice) {
+      this.props.setHearingDay({ hearingDate,
+        regionalOffice });
+    }
   }
 
   render = () => {

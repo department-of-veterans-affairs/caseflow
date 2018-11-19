@@ -10,7 +10,7 @@ import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 
 class RoSelectorDropdown extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -54,9 +54,9 @@ class RoSelectorDropdown extends React.Component {
   render() {
     const { readOnly, staticOptions, onChange, value, placeholder } = this.props;
     const regionalOfficeOptions = this.regionalOfficeOptions();
-    const selectedRegionalOffice = _.find(regionalOfficeOptions, (o) => o.value === value) || {};
+    const selectedRegionalOffice = _.find(regionalOfficeOptions, (opt) => opt.value === value) || {};
 
-    if(!this.props.changePrompt || this.state.editable){
+    if (!this.props.changePrompt || this.state.editable) {
       return (
         <SearchableDropdown
           name="ro"
@@ -73,15 +73,20 @@ class RoSelectorDropdown extends React.Component {
 
     return (
       <React.Fragment>
-        <b style={{ marginBottom: '-8px', marginTop: '8px', display: 'block' }}>Regional Office</b>
+        <b style={{ marginBottom: '-8px',
+          marginTop: '8px',
+          display: 'block' }}>Regional Office</b>
         <InlineForm>
-          <p style={{ marginRight: '30px', width: '150px' }}>
+          <p style={{ marginRight: '30px',
+            width: '150px' }}>
             {selectedRegionalOffice.label}
           </p>
           <Button
             name="Change"
             linkStyling
-            onClick={() => { this.setState({ editable: true })}} />
+            onClick={() => {
+              this.setState({ editable: true });
+            }} />
         </InlineForm>
       </React.Fragment>
     );

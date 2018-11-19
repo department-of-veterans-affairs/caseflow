@@ -21,10 +21,6 @@ const actionButtonsStyling = css({
 
 export class ListScheduleContainer extends React.Component {
 
-  constructor(props) {
-    super(props);
-  }
-
   loadHearingSchedule = () => {
     let requestUrl = '/hearings/hearing_day.json';
 

@@ -7,7 +7,7 @@ class RegionalOfficesController < ApplicationController
 
   def open_hearing_dates
     ro = params[:regional_office]
-    hearing_dates = HearingDay.load_days_with_open_hearing_slots(Date.today, Date.today + 365, ro)
+    hearing_dates = HearingDay.load_days_with_open_hearing_slots(Time.zone.today, Time.zone.today + 365, ro)
     render json: {
       hearing_dates: hearing_dates.map do |date|
         {
