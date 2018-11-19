@@ -14,7 +14,7 @@ import {
   setIssueCategory,
   setIssueDescription,
   setIssueDecisionDate
-} from '../../actions/ama';
+} from '../../actions/decisionReview';
 import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, REQUEST_STATE } from '../../constants';
 import { getIntakeStatus, issueCountSelector } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';

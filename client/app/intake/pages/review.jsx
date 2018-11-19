@@ -14,7 +14,7 @@ import AppealReviewPage from './appeal/review';
 import Button from '../../components/Button';
 import CancelButton from '../components/CancelButton';
 import { submitReview as submitRampElection } from '../actions/rampElection';
-import { submitReview as submitAmaReview } from '../actions/ama';
+import { submitReview as submitDecisionReview } from '../actions/decisionReview';
 import { submitReview as submitRampRefiling } from '../actions/rampRefiling';
 import { toggleIneligibleError } from '../util';
 
@@ -40,8 +40,8 @@ export default connect(
 
 class ReviewNextButton extends React.PureComponent {
   submitReview = (selectedForm, intakeData) => {
-    if (selectedForm.category === 'ama') {
-      return this.props.submitAmaReview(this.props.intakeId, intakeData, selectedForm.formName);
+    if (selectedForm.category === 'decisionReview') {
+      return this.props.submitDecisionReview(this.props.intakeId, intakeData, selectedForm.formName);
     }
 
     if (selectedForm.key === 'ramp_election') {
@@ -55,7 +55,7 @@ class ReviewNextButton extends React.PureComponent {
 
   handleClick = (selectedForm, intakeData) => {
     this.submitReview(selectedForm, intakeData).then(
-      () => this.props.featureToggles.newAddIssuesPage && selectedForm.category === 'ama' ?
+      () => this.props.featureToggles.newAddIssuesPage && selectedForm.category === 'decisionReview' ?
         this.props.history.push('/add_issues') :
         this.props.history.push('/finish')
     );
@@ -102,7 +102,7 @@ const ReviewNextButtonConnected = connect(
   (dispatch) => bindActionCreators({
     submitRampElection,
     submitRampRefiling,
-    submitAmaReview
+    submitDecisionReview
   }, dispatch)
 )(ReviewNextButton);
 
