@@ -6,13 +6,15 @@
 // the .cf-app-intake ancestor is needed for these rules to ensure a higher
 // specificity than the stock .cf component classes.
 .cf-app-intake {
-  .cf-success-checklist, .cf-ineligible-checklist {
+  .cf-success-checklist,
+  .cf-ineligible-checklist {
     max-width: 800px;
     margin: 50px auto 65px;
   }
 
   .cf-ineligible-checklist {
     list-style-type: none;
+    margin-bottom: 20px;
 
     li {
       background: url(#{$image-url}/icons/asterisk.svg) no-repeat left top transparent;
@@ -22,15 +24,13 @@
       padding-top: 3px;
     }
   }
+
   .cf-msg-screen-deck {
     text-align: left;
 
     strong {
       color: $color-black;
     }
-  }
-  .not-eligible {
-    color: $color-red;
   }
 }
 
@@ -188,6 +188,10 @@
           .issue-date {
             display: block;
           }
+        }
+
+        .not-eligible {
+          color: $color-red;
         }
 
         .issue-action {

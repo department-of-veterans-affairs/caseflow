@@ -771,6 +771,13 @@ RSpec.feature "Higher-Level Review" do
 
       expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
       expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
+      success_checklist = find("ul.cf-success-checklist")
+      expect(success_checklist).to_not have_content("Already reviewed injury")
+      expect(success_checklist).to_not have_content("Another Description for Active Duty Adjustments")
+
+      ineligible_checklist = find("ul.cf-ineligible-checklist")
+      expect(ineligible_checklist).to have_content("Already reviewed injury is ineligible")
+      expect(ineligible_checklist).to have_content("Another Description for Active Duty Adjustments is ineligible")
 
       # make sure that database is populated
       expect(HigherLevelReview.find_by(

@@ -9,10 +9,9 @@ import _ from 'lodash';
 
 const getChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
   const checklist = [];
-  const ineligibleIssues = requestIssues.filter((ri) => ri.ineligibleReason)
-  const eligibleIssues = requestIssues.filter((ri) => !ri.ineligibleReason)
-  let ratingEndProductIssues = []
-  let nonratingEndProductIssues = []
+  const eligibleIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
+  let ratingEndProductIssues = [];
+  let nonratingEndProductIssues = [];
 
   if (formType !== 'appeal') {
     ratingEndProductIssues = eligibleIssues.filter((ri) => ri.isRating || ri.isUnidentified);
@@ -45,6 +44,7 @@ const getChecklistItems = (formType, requestIssues, isInformalConferenceRequeste
   if (isInformalConferenceRequested) {
     checklist.push('Informal Conference Tracked Item');
   }
+
   return checklist;
 };
 
@@ -64,7 +64,10 @@ class IneligibleIssuesList extends React.PureComponent {
       <ul className="cf-ineligible-checklist cf-left-padding">
         <li>
           <strong>Ineligible</strong>
-          {this.props.issues.map((ri, i) => <p key={`ineligible-issue-${i}`} className='cf-red-text'>{ri.contentionText} {ineligibilityCopy(ri)}</p>)}
+          {this.props.issues.map((ri, i) =>
+            <p key={`ineligible-issue-${i}`} className="cf-red-text">
+              {ri.contentionText} {ineligibilityCopy(ri)}
+            </p>)}
         </li>
       </ul>
     </Fragment>;
@@ -113,7 +116,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     </div>
     ;
   }
-};
+}
 
 export default connect(
   (state) => ({
