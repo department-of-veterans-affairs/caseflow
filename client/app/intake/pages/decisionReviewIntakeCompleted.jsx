@@ -9,13 +9,13 @@ import _ from 'lodash';
 
 const getChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
   const checklist = [];
-  const eligibleIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
-  let ratingEndProductIssues = [];
-  let nonratingEndProductIssues = [];
+  const eligibleIssues = requestIssues.filter((ri) => !ri.ineligibleReason)
+  let eligibleRatingIssues = []
+  let eligibleNonratingIssues = []
 
   if (formType !== 'appeal') {
-    ratingEndProductIssues = eligibleIssues.filter((ri) => ri.isRating || ri.isUnidentified);
-    nonratingEndProductIssues = eligibleIssues.filter((ri) => ri.isRating === false);
+    eligibleRatingIssues = eligibleIssues.filter((ri) => ri.isRating || ri.isUnidentified);
+    eligibleNonratingIssues = eligibleIssues.filter((ri) => ri.isRating === false);
   }
 
   const claimReviewName = _.find(FORM_TYPES, { key: formType }).shortName;
@@ -27,24 +27,23 @@ const getChecklistItems = (formType, requestIssues, isInformalConferenceRequeste
     </Fragment>);
   }
 
-  if (ratingEndProductIssues.length > 0) {
+  if (eligibleRatingIssues.length > 0) {
     checklist.push(<Fragment>
       <strong>A {claimReviewName} Rating EP is being established:</strong>
-      {ratingEndProductIssues.map((ri, i) => <p key={`rating-issue-${i}`}>Contention: {ri.contentionText}</p>)}
+      {eligibleRatingIssues.map((ri, i) => <p key={`rating-issue-${i}`}>Contention: {ri.contentionText}</p>)}
     </Fragment>);
   }
 
-  if (nonratingEndProductIssues.length > 0) {
+  if (eligibleNonratingIssues.length > 0) {
     checklist.push(<Fragment>
       <strong>A {claimReviewName} Nonrating EP is being established:</strong>
-      {nonratingEndProductIssues.map((nri, i) => <p key={`nonrating-issue-${i}`}>Contention: {nri.contentionText}</p>)}
+      {eligibleNonratingIssues.map((nri, i) => <p key={`nonrating-issue-${i}`}>Contention: {nri.contentionText}</p>)}
     </Fragment>);
   }
 
   if (isInformalConferenceRequested) {
     checklist.push('Informal Conference Tracked Item');
   }
-
   return checklist;
 };
 
@@ -65,13 +64,13 @@ class IneligibleIssuesList extends React.PureComponent {
         <li>
           <strong>Ineligible</strong>
           {this.props.issues.map((ri, i) =>
-            <p key={`ineligible-issue-${i}`} className="cf-red-text">
+            <p key={`ineligible-issue-${i}`} className='cf-red-text'>
               {ri.contentionText} {ineligibilityCopy(ri)}
             </p>)}
         </li>
       </ul>
     </Fragment>;
-}
+};
 
 class DecisionReviewIntakeCompleted extends React.PureComponent {
   render() {
@@ -116,7 +115,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     </div>
     ;
   }
-}
+};
 
 export default connect(
   (state) => ({
