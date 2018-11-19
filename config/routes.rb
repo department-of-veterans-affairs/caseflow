@@ -193,6 +193,8 @@ Rails.application.routes.draw do
   resources :legacy_tasks, only: [:create, :update]
   resources :tasks, only: [:index, :create, :update]
 
+  resources :distributions, only: [:new, :show]
+
   resources :organizations, only: [:show], param: :url do
     resources :tasks, only: [:index], controller: 'organizations/tasks'
     resources :users, only: [:index, :create, :destroy], controller: 'organizations/users'
@@ -209,6 +211,7 @@ Rails.application.routes.draw do
 
   get 'certification/stats(/:interval)', to: 'certification_stats#show', as: 'certification_stats'
   get 'dispatch/stats(/:interval)', to: 'dispatch_stats#show', as: 'dispatch_stats'
+  get 'intake/stats(/:interval)', to: 'intake_stats#show', as: 'intake_stats'
   get 'stats', to: 'stats#show'
 
   match '/intake/:any' => 'intakes#index', via: [:get]

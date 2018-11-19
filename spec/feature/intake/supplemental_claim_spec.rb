@@ -411,6 +411,52 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
   end
 
+  it "Requires Payee Code for compensation and pension benefit types and non-Veteran claimant" do
+    intake = SupplementalClaimIntake.new(veteran_file_number: veteran.file_number, user: current_user)
+    intake.start!
+    visit "/intake"
+
+    expect(page).to have_current_path("/intake/review_request")
+
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Compensation", match: :prefer_exact).click
+    end
+
+    fill_in "What is the Receipt Date of this form?", with: "04/20/2019"
+
+    within_fieldset("Is the claimant someone other than the Veteran?") do
+      find("label", text: "Yes", match: :prefer_exact).click
+    end
+
+    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
+    find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_content(
+      "Receipt date cannot be in the future."
+    )
+    expect(page).to have_content("Please select an option.")
+
+    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Pension", match: :prefer_exact).click
+    end
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_content("Please select an option.")
+
+    fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
+    find("#cf-payee-code").send_keys :enter
+
+    safe_click "#button-submit-review"
+    expect(page).to have_current_path("/intake/finish")
+  end
+
   context "when veteran is deceased" do
     let(:veteran) do
       Generators::Veteran.build(file_number: "123121234", date_of_death: Date.new(2017, 11, 20))
@@ -746,16 +792,36 @@ RSpec.feature "Supplemental Claim Intake" do
 
     context "with active legacy appeal" do
       before do
-        create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{veteran.file_number}S"))
+        setup_legacy_opt_in_appeals(veteran.file_number)
       end
 
       scenario "adding issues" do
         # feature is not yet fully implemented
         start_supplemental_claim(veteran)
         visit "/intake/add_issues"
+        click_intake_add_issue
+
+        expect(page).to have_content("Next")
+        add_intake_rating_issue("Left knee granted")
+
+        # expect legacy opt in modal
+        expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+        add_intake_rating_issue("None of these match")
+
+        expect(page).to have_content("Left knee granted")
+      end
+
+      scenario "adding issue with legacy opt in disabled" do
+        allow(FeatureToggle).to receive(:enabled?).and_call_original
+        allow(FeatureToggle).to receive(:enabled?).with(:intake_legacy_opt_in, user: current_user).and_return(false)
+
+        start_supplemental_claim(veteran)
+        visit "/intake/add_issues"
 
         click_intake_add_issue
-        expect(page).to have_content("Next")
+        expect(page).to have_content("Add this issue")
+        add_intake_rating_issue("Left knee granted")
+        expect(page).to have_content("Left knee granted")
       end
     end
   end

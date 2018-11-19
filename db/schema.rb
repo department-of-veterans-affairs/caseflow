@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181113205510) do
+ActiveRecord::Schema.define(version: 20181119181014) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -222,6 +222,26 @@ ActiveRecord::Schema.define(version: 20181113205510) do
     t.string "outgoing_reference_id"
     t.string "aasm_state"
     t.datetime "prepared_at"
+  end
+
+  create_table "distributed_cases", force: :cascade do |t|
+    t.integer "distribution_id"
+    t.string "case_id"
+    t.string "docket"
+    t.boolean "priority"
+    t.boolean "genpop"
+    t.string "genpop_query"
+    t.integer "docket_index"
+    t.datetime "ready_at"
+  end
+
+  create_table "distributions", force: :cascade do |t|
+    t.integer "judge_id"
+    t.string "status"
+    t.json "statistics"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "docket_snapshots", id: :serial, force: :cascade do |t|
@@ -517,6 +537,7 @@ ActiveRecord::Schema.define(version: 20181113205510) do
   create_table "organizations_users", force: :cascade do |t|
     t.integer "organization_id"
     t.integer "user_id"
+    t.boolean "admin", default: false
     t.index ["organization_id"], name: "index_organizations_users_on_organization_id"
     t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
   end
@@ -612,6 +633,14 @@ ActiveRecord::Schema.define(version: 20181113205510) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["request_issue_id"], name: "index_remand_reasons_on_request_issue_id"
+  end
+
+  create_table "request_decision_issues", force: :cascade do |t|
+    t.integer "request_issue_id"
+    t.integer "decision_issue_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["request_issue_id", "decision_issue_id"], name: "index_on_request_issue_id_and_decision_issue_id", unique: true
   end
 
   create_table "request_issues", force: :cascade do |t|

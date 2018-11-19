@@ -18,21 +18,21 @@ export const FORM_TYPES = {
     key: 'higher_level_review',
     name: INTAKE_FORM_NAMES.higher_level_review,
     shortName: INTAKE_FORM_NAMES_SHORT.higher_level_review,
-    category: 'ama',
+    category: 'decisionReview',
     formName: 'higherLevelReview'
   },
   SUPPLEMENTAL_CLAIM: {
     key: 'supplemental_claim',
     name: INTAKE_FORM_NAMES.supplemental_claim,
     shortName: INTAKE_FORM_NAMES_SHORT.supplemental_claim,
-    category: 'ama',
+    category: 'decisionReview',
     formName: 'supplementalClaim'
   },
   APPEAL: {
     key: 'appeal',
     name: INTAKE_FORM_NAMES.appeal,
     shortName: INTAKE_FORM_NAMES_SHORT.appeal,
-    category: 'ama',
+    category: 'decisionReview',
     formName: 'appeal'
   }
 };
@@ -128,6 +128,7 @@ export const ACTIONS = {
   TOGGLE_UNIDENTIFIED_ISSUES_MODAL: 'TOGGLE_UNIDENTIFIED_ISSUES_MODAL',
   TOGGLE_UNTIMELY_EXEMPTION_MODAL: 'TOGGLE_UNTIMELY_EXEMPTION_MODAL',
   TOGGLE_ISSUE_REMOVE_MODAL: 'TOGGLE_ISSUE_REMOVE_MODAL',
+  TOGGLE_LEGACY_OPT_IN_MODAL: 'TOGGLE_LEGACY_OPT_IN_MODAL',
   SUBMIT_REVIEW_START: 'SUBMIT_REVIEW_START',
   SUBMIT_REVIEW_SUCCEED: 'SUBMIT_REVIEW_SUCCEED',
   SUBMIT_REVIEW_FAIL: 'SUBMIT_REVIEW_FAIL',

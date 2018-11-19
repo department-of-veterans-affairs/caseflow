@@ -306,10 +306,10 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           end
 
           context "and the user is from dispatch" do
-            # BVATEST1 is defined in Constants::BvaDispatchTeams
-            let(:user) { create(:user, css_id: "BVATEST1", full_name: "George Michael") }
+            let(:user) { create(:user) }
 
             before do
+              OrganizationsUser.add_user_to_organization(user, BvaDispatch.singleton)
               allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id).and_return(
                 address_line_1: "1234 K St.",
                 address_line_2: "APT 3",
@@ -480,14 +480,11 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
     let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: user.css_id) }
     let(:root_task) { FactoryBot.create(:root_task) }
     let(:citation_number) { "A18123456" }
-    let(:file) do
-      Rack::Test::UploadedFile.new(File.join(Rails.root, "lib", "pdfs", "FakeDecisionDocument.pdf"), "text/pdf")
-    end
     let(:params) do
       { appeal_id: root_task.appeal.external_id,
         citation_number: citation_number,
         decision_date: Date.new(1989, 12, 13).to_s,
-        file: file,
+        file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW",
         redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx" }
     end
 
@@ -552,7 +549,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         task = tasks[0]
         expect(task.status).to eq("completed")
         expect(task.parent.status).to eq("completed")
-        expect(S3Service.files["decisions/" + root_task.appeal.external_id]).to_not eq nil
+        expect(S3Service.files["decisions/" + root_task.appeal.external_id + ".pdf"]).to_not eq nil
       end
     end
 

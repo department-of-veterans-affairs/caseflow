@@ -73,9 +73,8 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def co_hearings_for_master_record(parent_hearing_date)
-      select_hearings.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) between ? and ?",
-                            "C", "%VIDEO%", parent_hearing_date.to_date,
-                            (parent_hearing_date + 1.day).to_date)
+      select_hearings.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) = ?",
+                            "C", "%VIDEO%", parent_hearing_date.to_date)
     end
 
     def for_appeal(appeal_vacols_id)
@@ -97,7 +96,8 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def load_days_for_range(start_date, end_date)
-      select_schedule_days.where("trunc(hearing_date) between ? and ?", start_date, end_date).order(:hearing_date)
+      select_schedule_days.where("trunc(hearing_date) between ? and ?", VacolsHelper.day_only_str(start_date),
+                                 VacolsHelper.day_only_str(end_date)).order(:hearing_date)
     end
 
     def load_days_for_central_office(start_date, end_date)

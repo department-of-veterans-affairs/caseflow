@@ -11,7 +11,7 @@
   "CASE_SEARCH_DATA_LOAD_FAILED_MESSAGE": "Unable to load cases",
 
   "CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE": "Case Details",
-  "CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE": "Docket Type & Number",
+  "CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE": "Docket",
   "CASE_LIST_TABLE_APPELLANT_NAME_COLUMN_TITLE": "Appellant Name",
   "CASE_LIST_TABLE_APPEAL_STATUS_COLUMN_TITLE": "Status",
   "CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE": "Type(s)",
@@ -56,7 +56,7 @@
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL": "This Post Remand data has hearing data associated with a previous original appeal.",
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK": "View all cases",
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK": " to see other cases associated with this Veteran.",
-  "CASE_DETAILS_INCORRECT_POA": "POA data comes from VBMS. To update POA, please send a request to the VLJ support management branch.",
+  "CASE_DETAILS_INCORRECT_POA": "POA data comes from VBMS. To update POA, please send a request to the VLJ support staff.",
   "CASE_DETAILS_UNABLE_TO_LOAD": "We're unable to load this information. If the problem persists, please submit feedback through Caseflow",
   "CASE_DETAILS_LOADING": "Loading...",
   "CASE_DETAILS_POA_VSO": "Veteran Service Organization",

@@ -51,7 +51,6 @@ class AppealsController < ApplicationController
 
   def show
     no_cache
-
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
@@ -59,7 +58,8 @@ class AppealsController < ApplicationController
         MetricsService.record("Get appeal information for ID #{id}",
                               service: :queue,
                               name: "AppealsController.show") do
-          render json: { appeal: json_appeals([appeal])[:data][0] }
+          render json: { appeal: json_appeals([appeal])[:data][0],
+                         can_edit_aod: AodTeam.singleton.user_has_access?(current_user) }
         end
       end
     end
@@ -159,24 +159,6 @@ class AppealsController < ApplicationController
         "detail": "Veteran ID should be included as HTTP_VETERAN_ID element of request headers"
       ]
     }, status: 400
-  end
-
-  def handle_non_critical_error(endpoint, err)
-    if !err.class.method_defined? :serialize_response
-      code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
-      err = Caseflow::Error::SerializableError.new(code: code, message: err.to_s)
-    end
-
-    DataDogService.increment_counter(
-      metric_group: "errors",
-      metric_name: "non_critical",
-      app_name: RequestStore[:application],
-      attrs: {
-        endpoint: endpoint
-      }
-    )
-
-    render err.serialize_response
   end
 
   def json_appeals(appeals)

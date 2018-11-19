@@ -8,6 +8,11 @@ describe BvaDispatchTask do
 
     context "when valid root_task passed as argument" do
       let(:root_task) { FactoryBot.create(:root_task) }
+      before do
+        # Make sure the BvaDispatch team has members
+        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+      end
+
       it "should create a BvaDispatchTask assigned to a User with a parent task assigned to the BvaDispatch org" do
         task = BvaDispatchTask.create_and_assign(root_task)
         expect(task.assigned_to.class).to eq(User)
@@ -18,7 +23,11 @@ describe BvaDispatchTask do
 
     context "when organization-level BvaDispatchTask already exists" do
       let(:root_task) { FactoryBot.create(:root_task) }
-      before { BvaDispatchTask.create_and_assign(root_task) }
+      before do
+        # Make sure the BvaDispatch team has members
+        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+        BvaDispatchTask.create_and_assign(root_task)
+      end
 
       it "should raise an error" do
         expect { BvaDispatchTask.create_and_assign(root_task) }.to raise_error(Caseflow::Error::DuplicateOrgTask)
@@ -30,13 +39,7 @@ describe BvaDispatchTask do
     let(:user) { FactoryBot.create(:user) }
     let(:root_task) { FactoryBot.create(:root_task) }
     let(:citation_number) { "A18123456" }
-    let(:file) do
-      ActionDispatch::Http::UploadedFile.new(
-        filename: "sample.pdf",
-        type: "pdf",
-        tempfile: "path/to/file.pdf"
-      )
-    end
+    let(:file) { "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW" }
     let(:params) do
       { appeal_id: root_task.appeal.external_id,
         citation_number: citation_number,
@@ -53,7 +56,7 @@ describe BvaDispatchTask do
 
       it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
         expect(Caseflow::Fakes::S3Service).to receive(:store_file)
-          .with("decisions/" + root_task.appeal.external_id, "path/to/file.pdf", :filepath)
+          .with("decisions/" + root_task.appeal.external_id + ".pdf", /PDF/)
         allow(VBMSService).to receive(:upload_document_to_vbms)
         BvaDispatchTask.outcode(root_task.appeal, params, user)
         tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)

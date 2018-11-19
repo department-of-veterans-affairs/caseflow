@@ -1,6 +1,6 @@
 module Caseflow::Error
-  class SerializableError < StandardError
-    attr_accessor :code, :message
+  module ErrorSerializer
+    extend ActiveSupport::Concern
 
     def initialize(args)
       @code = args[:code]
@@ -10,6 +10,11 @@ module Caseflow::Error
     def serialize_response
       { json: { "errors": [{ "status": code, "title": message, "detail": message }] }, status: code }
     end
+  end
+
+  class SerializableError < StandardError
+    include Caseflow::Error::ErrorSerializer
+    attr_accessor :code, :message
   end
 
   class EfolderError < SerializableError; end
@@ -137,7 +142,15 @@ module Caseflow::Error
 
   class VacolsRepositoryError < StandardError; end
   class VacolsRecordNotFound < VacolsRepositoryError; end
-  class UserRepositoryError < VacolsRepositoryError; end
+  class UserRepositoryError < VacolsRepositoryError
+    include Caseflow::Error::ErrorSerializer
+    attr_accessor :code, :message
+
+    def initialize(args)
+      @code = args[:code] || 400
+      @message = args[:message]
+    end
+  end
   class IssueRepositoryError < VacolsRepositoryError; end
   class QueueRepositoryError < VacolsRepositoryError; end
   class MissingRequiredFieldError < VacolsRepositoryError; end
