@@ -703,6 +703,27 @@ class LegacyAppeal < ApplicationRecord
     vacols_id
   end
 
+  def timeline
+    [
+      {
+        title: COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA,
+        pendingTitle: COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
+        date: decision_date
+      },
+      tasks.where(status: "completed").order("completed_at DESC").map(&:timeline_title),
+      {
+        title: COPY::CASE_TIMELINE_FORM_9_RECEIVED,
+        pendingTitle: COPY::CASE_TIMELINE_FORM_9_PENDING,
+        date: form9_date
+      },
+      {
+        title: COPY::CASE_TIMELINE_NOD_RECEIVED,
+        pendingTitle: COPY::CASE_TIMELINE_NOD_PENDING,
+        date: nod_date
+      }
+    ].flatten
+  end
+
   private
 
   def use_representative_info_from_bgs?

@@ -40,32 +40,13 @@ export default class CaseTimeline extends React.PureComponent {
 
   render = () => {
     const { appeal } = this.props;
-    const events = [
-      {
-        title: COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA,
-        pendingTitle: COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
-        date: appeal.decisionDate
-      },
-      appeal.timeline,
-      {
-        legacyOnly: true,
-        title: COPY.CASE_TIMELINE_FORM_9_RECEIVED,
-        pendingTitle: COPY.CASE_TIMELINE_FORM_9_PENDING,
-        date: appeal.events.form9Date
-      },
-      {
-        title: COPY.CASE_TIMELINE_NOD_RECEIVED,
-        pendingTitle: COPY.CASE_TIMELINE_NOD_PENDING,
-        date: appeal.events.nodReceiptDate
-      }
-    ].flat().filter((event) => !event.legacyOnly || appeal.isLegacyAppeal);
 
     return <React.Fragment>
       {COPY.CASE_TIMELINE_HEADER}
       <table>
         <tbody>
-          {events.map((event, index) => {
-            return this.getEventRow(event, index === events.length - 1);
+          {appeal.timeline.map((event, index) => {
+            return this.getEventRow(event, index === appeal.timeline.length - 1);
           })}
         </tbody>
       </table>

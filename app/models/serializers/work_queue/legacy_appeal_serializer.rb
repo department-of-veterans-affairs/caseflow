@@ -2,6 +2,8 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :assigned_attorney
   attribute :assigned_judge
 
+  attribute :timeline
+
   attribute :issues do
     object.issues.map do |issue|
       ActiveModelSerializers::SerializableResource.new(

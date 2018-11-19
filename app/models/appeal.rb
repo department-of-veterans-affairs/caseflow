@@ -212,6 +212,22 @@ class Appeal < DecisionReview
     RootTask.create_root_and_sub_tasks!(self)
   end
 
+  def timeline
+    [
+      {
+        title: COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA,
+        pendingTitle: COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
+        date: decision_date
+      },
+      tasks.where(status: "completed").order("completed_at DESC").map(&:timeline_title),
+      {
+        title: COPY::CASE_TIMELINE_NOD_RECEIVED,
+        pendingTitle: COPY::CASE_TIMELINE_NOD_PENDING,
+        date: receipt_date
+      }
+    ].flatten
+  end
+
   private
 
   def bgs

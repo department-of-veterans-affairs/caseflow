@@ -96,6 +96,6 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :timeline do
-    object.tasks.where(status: "completed").order("completed_at DESC").map(&:prepare_for_timeline)
+    object.timeline
   end
 end
