@@ -42,18 +42,15 @@ class CaseDetailsView extends React.PureComponent {
     this.props.resetErrorMessages();
 
     const { hearingDate, regionalOffice } = getQueryParams(window.location.search);
-    
+
     if(hearingDate && regionalOffice)
       this.props.setHearingDay({ hearingDate, regionalOffice });
   }
 
   render = () => {
-    const {
-      appealId,
-      appeal,
-      error,
-      success
-    } = this.props;
+    const { appealId, appeal, error, success } = this.props;
+
+    console.log('!!!!!!', appeal);
 
     return <AppSegment filledBackground>
       <CaseTitle appeal={appeal} appealId={appealId} redirectUrl={window.location.pathname} />
