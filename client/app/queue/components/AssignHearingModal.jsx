@@ -86,9 +86,9 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
     this.state = {
       selectedDate: props.hearingDay.hearingDate || '',
-      selectedTime: '',
+      selectedTime: null,
       dateEdit: false,
-      timeOptions: props.task.taskBusinessPayloads[0].values.hearing_type === VIDEO_HEARING ?
+      timeOptions: props.appeal.sanitizedHearingRequestType === 'video' ?
         [{ displayText: '8:30 am',
           value: '8:30 am ET' }, { displayText: '12:30 pm',
           value: '12:30 pm ET' }] :
@@ -99,13 +99,9 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   }
 
   componentWillMount = () => {
-    const ro = this.props.hearingDay.regionalOffice || this.props.task.taskBusinessPayloads[0].values.regional_office_value;
+    const { hearingDay, appeal } = this.props;
+    const ro = appeal.sanitizedHearingRequestType == 'central_office' ? 'C' : (hearingDay.regionalOffice || '');
     this.props.onRegionalOfficeChange(ro);
-  };
-
-  onDateClick = () => {
-    this.setState({ dateEdit: true });
-    this.setState({ selectedDate: this.formatDateString(this.props.task.taskBusinessPayloads[0].values.hearing_date) });
   };
 
   formatDateString = (dateToFormat) => {
@@ -191,14 +187,16 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   getSelectedTimeOption = () => {
     const { task } = this.props;
-    const { timeOptions } = this.state;
+    const { timeOptions, selectedTime } = this.state;
 
-    const timeStr = getTime(task.taskBusinessPayloads[0].values.hearing_date);
-    return _.find(timeOptions, (option) => option.value === timeStr);
+    if(!selectedTime) return {};
+
+  //  const timeStr = getTime(selectedTime);
+    return _.find(timeOptions, (option) => option.value === selectedTime);
   }
 
   render = () => {
-    const { selectedDate, timeOptions } = this.state;
+    const { selectedDate, timeOptions, selectedTime } = this.state;
     const { selectedRegionalOffice, task, onRegionalOfficeChange } = this.props;
 
     if (!task) {
@@ -240,8 +238,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           label="Time"
           strongLabel
           options={timeOptions}
-          onChange={(option) => option && this.setState({ selectedTime: option })}
-          value={this.getSelectedTimeOption().value} />
+          onChange={(val) => val && this.setState({ selectedTime: val })}
+          value={selectedTime} />
       </div>
     </React.Fragment>;
   }
