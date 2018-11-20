@@ -6,6 +6,35 @@ import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../constants';
 import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES.json';
 import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
+import Alert from '../../components/Alert';
+
+const leadMessageList = ({ veteran, formName, requestIssues }) => {
+  const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
+  if (unidentifiedIssues.length === 0) {
+    return [
+      `${veteran.name}'s (ID #${veteran.fileNumber}) ` +
+        `Request for ${formName} has been processed. ` +
+        'If you need to edit this, go to VBMS claim details and click the “Edit in Caseflow” button.',
+      <strong>Edit the notice letter to reflect the status of requested issues.</strong>
+    ];
+  }
+
+  const unidentifiedIssuesAlert = (unidentifiedIssues) => {
+    return <Alert type='warning'>
+      <h2>Unidentified issue</h2>
+      <p>There is still an unidentified issue that needs to be resolved before sending the notice letter. To edit, go to VBMS claim details and click the “Edit in Caseflow” button.</p>
+      {unidentifiedIssues.map((ri, i) => <p class="cf-red-text" key={i}>
+        Unidentified issue: no issue matched for requested "{ri.description}"
+      </p>)}
+    </Alert>;
+  };
+
+  return [
+    `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been processed.`,
+    unidentifiedIssuesAlert(unidentifiedIssues),
+    <strong>Edit the notice letter to reflect the status of requested issues.</strong>
+  ];
+}
 
 const getChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
   const checklist = [];
@@ -100,17 +129,10 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     default:
     }
 
-    const leadMessageList = [
-      `${veteran.name}'s (ID #${veteran.fileNumber}) ` +
-        `Request for ${selectedForm.name} has been processed. ` +
-        'If you need to edit this, go to VBMS claim details and click the “Edit in Caseflow” button.',
-      <strong>Edit the notice letter to reflect the status of requested issues.</strong>
-    ];
-
     return <div><StatusMessage
       title="Intake completed"
       type="success"
-      leadMessageList={leadMessageList}
+      leadMessageList={leadMessageList({ veteran, formName: selectedForm.name, requestIssues })}
       checklist={getChecklistItems(formType, requestIssues, informalConference)}
       wrapInAppSegment={false}
     />
