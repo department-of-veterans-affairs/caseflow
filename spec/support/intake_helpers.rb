@@ -1,6 +1,11 @@
 module IntakeHelpers
-  let(:search_page_title) { "Search for Veteran by ID" }
-  let(:search_bar_title) { "Enter the Veteran's ID" }
+  def search_page_title
+    "Search for Veteran by ID"
+  end
+
+  def search_bar_title
+    "Enter the Veteran's ID"
+  end
 
   def add_untimely_exemption_response(yes_or_no, note = "I am an exemption note")
     expect(page).to have_content("The issue requested isn't usually eligible because its decision date is older")
