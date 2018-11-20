@@ -147,7 +147,8 @@ class ExternalApi::BGSService
       end
       if bgs_address
         # Count on addresses being sorted with most recent first if we return a list of addresses.
-        bgs_address = bgs_address[0] if bgs_address.is_a?(Array)
+        # The very first element of the array might not necessarily be an address
+        bgs_address = bgs_address.select { |a| a.key?(:addrs_one_txt) }[0] if bgs_address.is_a?(Array)
         @poa_addresses[participant_id] = get_address_from_bgs_address(bgs_address)
       end
     end
