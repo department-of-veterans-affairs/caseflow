@@ -10,6 +10,7 @@ import Alert from '../../components/Alert';
 
 const leadMessageList = ({ veteran, formName, requestIssues }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
+
   if (unidentifiedIssues.length === 0) {
     return [
       `${veteran.name}'s (ID #${veteran.fileNumber}) ` +
@@ -19,22 +20,21 @@ const leadMessageList = ({ veteran, formName, requestIssues }) => {
     ];
   }
 
-  const unidentifiedIssuesAlert = (unidentifiedIssues) => {
-    return <Alert type='warning'>
-      <h2>Unidentified issue</h2>
-      <p>There is still an unidentified issue that needs to be resolved before sending the notice letter. To edit, go to VBMS claim details and click the “Edit in Caseflow” button.</p>
-      {unidentifiedIssues.map((ri, i) => <p class="cf-red-text" key={i}>
-        Unidentified issue: no issue matched for requested "{ri.description}"
-      </p>)}
-    </Alert>;
-  };
+  const unidentifiedIssuesAlert = <Alert type="warning">
+    <h2>Unidentified issue</h2>
+    <p>There is still an unidentified issue that needs to be resolved before sending the notice
+    letter. To edit, go to VBMS claim details and click the “Edit in Caseflow” button.</p>
+    {unidentifiedIssues.map((ri, i) => <p className="cf-red-text" key={i}>
+      Unidentified issue: no issue matched for requested "{ri.description}"
+    </p>)}
+  </Alert>;
 
   return [
     `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been processed.`,
-    unidentifiedIssuesAlert(unidentifiedIssues),
+    unidentifiedIssuesAlert,
     <strong>Edit the notice letter to reflect the status of requested issues.</strong>
   ];
-}
+};
 
 const getChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
   const checklist = [];
@@ -132,7 +132,9 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     return <div><StatusMessage
       title="Intake completed"
       type="success"
-      leadMessageList={leadMessageList({ veteran, formName: selectedForm.name, requestIssues })}
+      leadMessageList={leadMessageList({ veteran,
+        formName: selectedForm.name,
+        requestIssues })}
       checklist={getChecklistItems(formType, requestIssues, informalConference)}
       wrapInAppSegment={false}
     />
