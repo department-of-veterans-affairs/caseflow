@@ -1,6 +1,9 @@
 require "rails_helper"
+require "support/intake_helpers"
 
 RSpec.feature "Intake" do
+  include IntakeHelpers
+
   before do
     FeatureToggle.enable!(:intake)
 
