@@ -638,6 +638,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
       expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
+      expect(page).to have_content('Unidentified issue: no issue matched for requested "This is an unidentified issue"')
       success_checklist = find("ul.cf-success-checklist")
       expect(success_checklist).to_not have_content("Non-RAMP issue before AMA Activation")
       expect(success_checklist).to_not have_content("A nonrating issue before AMA")
