@@ -220,14 +220,6 @@ RSpec.describe TasksController, type: :controller do
     end
 
     context "Attornet task" do
-      before do
-        FeatureToggle.enable!(:judge_assignment_to_attorney)
-      end
-
-      after do
-        FeatureToggle.disable!(:judge_assignment_to_attorney)
-      end
-
       context "when current user is a judge" do
         let(:ama_appeal) { create(:appeal) }
         let(:ama_judge_task) { create(:ama_judge_task, assigned_to: user) }
