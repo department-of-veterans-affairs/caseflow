@@ -687,11 +687,15 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
+  def matchable_to_request_issue?
+    issues.any? && (active? || eligible_for_soc_opt_in?)
+  end
+
   def eligible_for_soc_opt_in?
     return false unless nod_date
     return false unless soc_date
 
-    issues.any? && (soc_date > APPEAL_ISSUE_SOC_ELIGIBLE || nod_date > APPEAL_ISSUE_NOD_ELIGIBLE)
+    soc_date > APPEAL_ISSUE_SOC_ELIGIBLE || nod_date > APPEAL_ISSUE_NOD_ELIGIBLE
   end
 
   def serializer_class
