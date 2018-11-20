@@ -23,37 +23,38 @@ module CaseReviewConcern
     end
 
     # Remove this check when feature flag 'ama_decision_issues' is enabled for all
-    (issues || []).each do |attrs|
-      if attrs[:added_decision_issues]
-        create_and_delete_decision_issues(attrs)
-      else
-        update_issue_disposition(attrs)
-      end
-    end
+    #if FeatureToggle.enabled?(:ama_decision_issues, )
+    delete_and_create_decision_issues
+    # else
+    #   update_issue_dispositions
+    # end
   end
 
-  def create_and_delete_decision_issues(attrs)
-    request_issues = appeal.request_issues.where(id: attrs[:request_issue_ids]) if appeal
-
-    return if request_issues.empty?
-
-    attrs[:added_decision_issues].each do |added|
-      decision_issue = DecisionIssue.create!(disposition: added[:disposition], description: added[:description])
+  def delete_and_create_decision_issues
+    return unless appeal
+    # We will always delete and re-create decision issues on attorney/judge checkout
+    appeal.request_issues.each { |request_issue| request_issue.decision_issues.delete_all }
+ 
+    issues.each do |issue_attrs|
+      request_issues = appeal.request_issues.where(id: issue_attrs[:request_issue_ids])
+      next if request_issues.empty?
+      decision_issue = DecisionIssue.create!(disposition: issue_attrs[:disposition], description: issue_attrs[:description])
       request_issues.each do |request_issue|
         RequestDecisionIssue.create!(decision_issue: decision_issue, request_issue: request_issue)
-        DecisionIssue.where(id: attrs[:deleted_decision_issue_ids]).delete_all
       end
     end
   end
 
-  def update_issue_disposition(issue_attrs)
-    request_issue = appeal.request_issues.find_by(id: issue_attrs["id"]) if appeal
-    return unless request_issue
+  def update_issue_dispositions
+    (issues || []).each do |issue_attrs|
+      request_issue = appeal.request_issues.find_by(id: issue_attrs["id"]) if appeal
+      return unless request_issue
 
-    request_issue.update(disposition: issue_attrs["disposition"])
-    # If disposition was remanded and now is changed to another dispostion,
-    # delete all remand reasons associated with the request issue
-    update_remand_reasons(request_issue, issue_attrs["remand_reasons"] || [])
+      request_issue.update(disposition: issue_attrs["disposition"])
+      # If disposition was remanded and now is changed to another dispostion,
+      # delete all remand reasons associated with the request issue
+      update_remand_reasons(request_issue, issue_attrs["remand_reasons"] || [])
+    end
   end
 
   def update_remand_reasons(request_issue, remand_reasons_attrs)

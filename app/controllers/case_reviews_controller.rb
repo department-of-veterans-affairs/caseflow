@@ -76,9 +76,7 @@ class CaseReviewsController < ApplicationController
 
   def issues_params
     if ama? && feature_enabled?(:ama_decision_issues)
-      [request_issue_ids: [],
-       added_decision_issues: [:disposition, :description, remand_reasons: [:code, :post_aoj]],
-       deleted_decision_issue_ids: []]
+      [:disposition, :description, request_issue_ids: [], remand_reasons: [:code, :post_aoj]]
     else
       [:id, :disposition, :readjudication, remand_reasons: [:code, :post_aoj]]
     end
