@@ -5,7 +5,8 @@ import React from 'react';
 import {
   addNonratingRequestIssue,
   toggleUnidentifiedIssuesModal,
-  toggleUntimelyExemptionModal
+  toggleUntimelyExemptionModal,
+  toggleLegacyOptInModal
 } from '../actions/addIssues';
 import Modal from '../../components/Modal';
 import SearchableDropdown from '../../components/SearchableDropdown';
@@ -42,6 +43,18 @@ class NonratingRequestIssueModal extends React.Component {
     });
   }
 
+  hasLegacyIssues = () => {
+    return this.props.intakeData.legacyIssues.length > 0;
+  }
+
+  getNextButtonText = () => {
+    if (this.hasLegacyIssues()) {
+      return 'Next';
+    }
+
+    return 'Add this issue';
+  }
+
   requiresUntimelyExemption = () => {
     if (this.props.formType === 'supplemental_claim') {
       return false;
@@ -59,13 +72,20 @@ class NonratingRequestIssueModal extends React.Component {
   }
 
   onAddIssue = () => {
-    if (this.requiresUntimelyExemption()) {
+    const currentIssue = {
+      category: this.state.category.value,
+      description: this.state.description,
+      decisionDate: this.state.decisionDate,
+      isRating: false
+    };
+
+    if (this.hasLegacyIssues()) {
+      this.props.toggleLegacyOptInModal({
+        currentIssue: currentIssue,
+        notes: null });
+    } else if (this.requiresUntimelyExemption()) {
       this.props.toggleUntimelyExemptionModal({
-        currentIssue: {
-          category: this.state.category.value,
-          description: this.state.description,
-          decisionDate: this.state.decisionDate
-        },
+        currentIssue: currentIssue,
         notes: null
       });
     } else {
@@ -97,7 +117,7 @@ class NonratingRequestIssueModal extends React.Component {
             onClick: closeHandler
           },
           { classNames: ['usa-button', 'add-issue'],
-            name: 'Add this issue',
+            name: this.getNextButtonText(),
             onClick: this.onAddIssue,
             disabled: requiredFieldsMissing
           },
@@ -150,6 +170,7 @@ export default connect(
   (dispatch) => bindActionCreators({
     addNonratingRequestIssue,
     toggleUnidentifiedIssuesModal,
-    toggleUntimelyExemptionModal
+    toggleUntimelyExemptionModal,
+    toggleLegacyOptInModal
   }, dispatch)
 )(NonratingRequestIssueModal);
