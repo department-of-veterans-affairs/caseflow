@@ -62,7 +62,7 @@ export class Dockets extends React.Component {
   getType = (type) => {
     const capitalizeFirstChar = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 
-    return (type === 'central_office') ? 'CO' :
+    return (type === 'central_office') ? 'Central' :
       capitalizeFirstChar(type);
   }
 
