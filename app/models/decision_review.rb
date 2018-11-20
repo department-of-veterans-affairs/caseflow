@@ -104,7 +104,8 @@ class DecisionReview < ApplicationRecord
 
   def serialized_legacy_issues
     return [] unless FeatureToggle.enabled?(:intake_legacy_opt_in, user: RequestStore.store[:current_user])
-    active_or_eligible_legacy_appeals.map do |legacy_appeal|
+    active_legacy_appeals.map do |legacy_appeal|
+      return [] unless legacy_appeal.issues
       {
         date: legacy_appeal.nod_date,
         issues: legacy_appeal.issues.map(&:intake_attributes)
@@ -114,10 +115,10 @@ class DecisionReview < ApplicationRecord
 
   private
 
-  def active_or_eligible_legacy_appeals
-    @active_or_eligible_legacy_appeals ||= LegacyAppeal
+  def active_legacy_appeals
+    @active_legacy_appeals ||= LegacyAppeal
       .fetch_appeals_by_file_number(veteran_file_number)
-      .select(&:eligible_for_soc_opt_in?)
+      .select(&:active?)
   end
 
   def ratings_with_issues
