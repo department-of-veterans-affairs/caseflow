@@ -114,7 +114,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       checklist={getChecklistItems(formType, requestIssues, informalConference)}
       wrapInAppSegment={false}
     />
-    { ineligibleRequestIssues && <IneligibleIssuesList issues={ineligibleRequestIssues} /> }
+    { ineligibleRequestIssues.length > 0 && <IneligibleIssuesList issues={ineligibleRequestIssues} /> }
     </div>
     ;
   }
