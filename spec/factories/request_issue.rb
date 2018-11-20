@@ -13,8 +13,8 @@ FactoryBot.define do
 
     after(:create) do |request_issue, evaluator|
       if evaluator.decision_issues.present?
-      	request_issue.decision_issues << evaluator.decision_issues
-      	request_issue.save
+        request_issue.decision_issues << evaluator.decision_issues
+        request_issue.save
       end
     end
   end

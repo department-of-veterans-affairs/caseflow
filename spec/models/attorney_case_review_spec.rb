@@ -3,8 +3,8 @@ describe AttorneyCaseReview do
   let(:judge) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID) }
 
   context "#create_and_delete_decision_issues" do
-    let(:task) { create(:ama_attorney_task) }
-    let(:appeal) { task.appeal }
+    let(:appeal) { create(:appeal) }
+    let(:task) { create(:ama_attorney_task, appeal: appeal) }
     let(:request_issue1) { create(:request_issue, review_request: appeal) }
     let(:decision_issue1) { create(:decision_issue) }
     let(:request_issue2) { create(:request_issue, review_request: appeal, decision_issues: [decision_issue1]) }
@@ -14,26 +14,40 @@ describe AttorneyCaseReview do
     let(:request_issue4) { create(:request_issue, review_request: appeal) }
 
     let(:request_issue5) { create(:request_issue, review_request: appeal) }
-    
+
     let(:decision_issue3) { create(:decision_issue) }
     let(:decision_issue4) { create(:decision_issue) }
     let(:request_issue6) { create(:request_issue, review_request: appeal, decision_issues: [decision_issue3, decision_issue4]) }
 
     let(:issues) do
-      [ { disposition: "allowed", description: "something1", request_issue_ids: [request_issue1.id, request_issue2.id] }, # many to many
-        { disposition: "remanded", description: "something2", request_issue_ids: [request_issue1.id, request_issue2.id] },
-        { disposition: "allowed", description: "something3", request_issue_ids: [request_issue3.id, request_issue4.id] }, # many ri to one di
-        { disposition: "allowed", description: "something4", request_issue_ids: [request_issue5.id] }, # one ri to many di
-        { disposition: "remanded", description: "something5", request_issue_ids: [request_issue5.id] },
-        { disposition: "allowed", description: "something6", request_issue_ids: [request_issue6.id] }
-      ]
+      [{ disposition: "allowed", description: "something1", 
+         request_issue_ids: [request_issue1.id, request_issue2.id] },
+       { disposition: "remanded", description: "something2", 
+         request_issue_ids: [request_issue1.id, request_issue2.id] },
+       { disposition: "allowed", description: "something3", 
+         request_issue_ids: [request_issue3.id, request_issue4.id] },
+       { disposition: "allowed", description: "something4", 
+         request_issue_ids: [request_issue5.id] },
+       { disposition: "remanded", description: "something5", 
+         request_issue_ids: [request_issue5.id] },
+       { disposition: "allowed", description: "something6", 
+         request_issue_ids: [request_issue6.id] }]
     end
 
     subject { AttorneyCaseReview.new(issues: issues, task_id: task.id).delete_and_create_decision_issues }
 
     it "should create and delete decision issues" do
       subject
-      binding.pry
+      old_decision_issue_ids = [decision_issue1.id, decision_issue2.id, decision_issue3.id, decision_issue4.id]
+      expect(DecisionIssue.where(id: old_decision_issue_ids)).to eq []
+      expect(request_issue1.reload.decision_issues.size).to eq 2
+      expect(request_issue2.reload.decision_issues.size).to eq 2
+      expect(request_issue1.decision_issues).to eq request_issue2.decision_issues
+      expect(request_issue3.reload.decision_issues.size).to eq 1
+      expect(request_issue4.reload.decision_issues.size).to eq 1
+      expect(request_issue3.reload.decision_issues.first).to eq request_issue4.decision_issues.first
+      expect(request_issue5.reload.decision_issues.size).to eq 2
+      expect(request_issue6.decision_issues.size).to eq 1
     end
   end
 

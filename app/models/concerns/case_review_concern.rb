@@ -23,22 +23,28 @@ module CaseReviewConcern
     end
 
     # Remove this check when feature flag 'ama_decision_issues' is enabled for all
-    #if FeatureToggle.enabled?(:ama_decision_issues, )
-    delete_and_create_decision_issues
-    # else
-    #   update_issue_dispositions
-    # end
+    if FeatureToggle.enabled?(:ama_decision_issues, user: RequestStore.store[:current_user])
+      delete_and_create_decision_issues
+    else
+      update_issue_dispositions
+    end
   end
 
   def delete_and_create_decision_issues
     return unless appeal
     # We will always delete and re-create decision issues on attorney/judge checkout
-    appeal.request_issues.each { |request_issue| request_issue.decision_issues.delete_all }
- 
+    decision_issue_ids_to_delete = appeal.decision_issues.map(&:id)
+    RequestDecisionIssue.where(decision_issue_id: decision_issue_ids_to_delete).delete_all
+    DecisionIssue.where(id: decision_issue_ids_to_delete).delete_all
+
     issues.each do |issue_attrs|
       request_issues = appeal.request_issues.where(id: issue_attrs[:request_issue_ids])
       next if request_issues.empty?
-      decision_issue = DecisionIssue.create!(disposition: issue_attrs[:disposition], description: issue_attrs[:description])
+      decision_issue = DecisionIssue.create!(
+        disposition: issue_attrs[:disposition],
+        description: issue_attrs[:description],
+        participant_id: appeal.veteran.participant_id
+      )
       request_issues.each do |request_issue|
         RequestDecisionIssue.create!(decision_issue: decision_issue, request_issue: request_issue)
       end
