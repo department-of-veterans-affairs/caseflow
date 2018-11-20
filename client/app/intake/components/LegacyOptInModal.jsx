@@ -5,6 +5,7 @@ import React from 'react';
 import { formatDateStr } from '../../util/DateUtil';
 import {
   addRatingRequestIssue,
+  addNonratingRequestIssue,
   toggleUntimelyExemptionModal,
   toggleLegacyOptInModal } from '../actions/addIssues';
 import Modal from '../../components/Modal';
@@ -20,10 +21,13 @@ class LegacyOptInModal extends React.Component {
     };
   }
 
+  const { currentIssueAndNotes } = this.props.intakeData
+
   radioOnChange = (value) => {
     this.setState({
       vacolsId: value
     });
+    currentIssueAndNotes.currentIssue.vacolsId = value;
   }
 
   requiresUntimelyExemption = () => {
@@ -31,26 +35,35 @@ class LegacyOptInModal extends React.Component {
       return false;
     }
 
-    return !this.props.intakeData.currentIssueAndNotes.currentIssue.timely;
+    return !currentIssueAndNotes.currentIssue.timely;
   }
 
   onAddIssue = () => {
     // currently just adds the issue & checks for untimeliness
-    // if vacols issue is selected, logic to be implemented by 7336 & 7337 
-    const currentIssue = this.props.intakeData.currentIssueAndNotes.currentIssue;
-    const notes = this.props.intakeData.currentIssueAndNotes.notes;
+    // if vacols issue is selected, logic to be implemented by 7336 & 7337
+    const currentIssue = currentIssueAndNotes.currentIssue;
+    const notes = currentIssueAndNotes.notes;
 
     if (this.requiresUntimelyExemption()) {
       return this.props.toggleUntimelyExemptionModal({ currentIssue,
         notes: this.state.notes });
+    } else if (currentIssue.isRating) {
+        this.props.addRatingRequestIssue({
+        issueId: currentIssue.reference_id,
+        ratings: this.props.intakeData.ratings,
+        isRating: true,
+        vacolsId: this.state.vacolsId,
+        notes
+      });
+    } else {
+      this.props.addNonratingRequestIssue({
+        category: this.state.category.value,
+        description: this.state.description,
+        decisionDate: this.state.decisionDate,
+        timely: true,
+        vacolsId: this.state.vacolsId
+      });
     }
-
-    this.props.addRatingRequestIssue({
-      issueId: currentIssue.reference_id,
-      ratings: this.props.intakeData.ratings,
-      isRating: true,
-      notes
-    });
 
     this.props.toggleLegacyOptInModal();
   }
@@ -80,7 +93,7 @@ class LegacyOptInModal extends React.Component {
 
       return <RadioField
         vertical
-        label={<h3>Notice of Disagreement Date { formatDateStr(legacyIssue.date) }</h3>}
+        label={<h3>Notice of Disagreement Date { formatDateStr(legacyIssue.nod_date) }</h3>}
         name="rating-radio"
         options={radioOptions}
         key={`${index}legacy-opt-in`}
@@ -121,6 +134,7 @@ export default connect(
   null,
   (dispatch) => bindActionCreators({
     addRatingRequestIssue,
+    addNonratingRequestIssue,
     toggleUntimelyExemptionModal,
     toggleLegacyOptInModal
   }, dispatch)

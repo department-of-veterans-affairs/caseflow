@@ -65,7 +65,7 @@ export class AddIssuesPage extends React.Component {
     return true;
   }
 
-  checkIfEligible = (issue, formType) => {
+  checkIfEligible = (issue, formType, legacyOptInApproved) => {
     if (issue.isUnidentified) {
       return false;
     } else if (issue.titleOfActiveReview) {
@@ -80,6 +80,8 @@ export class AddIssuesPage extends React.Component {
       return INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review;
     } else if (issue.beforeAma) {
       return INELIGIBLE_REQUEST_ISSUES.before_ama;
+    } else if (issue.vacolsId && !legacyOptInApproved) {
+      return INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn;
     }
 
     return true;
@@ -122,7 +124,7 @@ export class AddIssuesPage extends React.Component {
             let addendum = '';
 
             if (this.needsEligibilityCheck(issue, intakeData)) {
-              let isEligible = this.checkIfEligible(issue, formType);
+              let isEligible = this.checkIfEligible(issue, formType, intakeData.legacyOptInApproved);
 
               if (isEligible !== true) {
                 if (isEligible !== false) {
