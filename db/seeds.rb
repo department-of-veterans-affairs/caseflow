@@ -434,7 +434,13 @@ class SeedDB
                       assigned_by: attorney,
                       assigned_to: colocated)
 
-    FactoryBot.create_list(:generic_task, 5, assigned_by: judge, assigned_to: translation_org)
+    FactoryBot.create_list(
+      :generic_task,
+      5,
+      assigned_by: judge,
+      assigned_to: translation_org,
+      parent: FactoryBot.create(:root_task)
+    )
   end
 
   def create_vsos

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181114142531) do
+ActiveRecord::Schema.define(version: 20181119181014) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -633,6 +633,14 @@ ActiveRecord::Schema.define(version: 20181114142531) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["request_issue_id"], name: "index_remand_reasons_on_request_issue_id"
+  end
+
+  create_table "request_decision_issues", force: :cascade do |t|
+    t.integer "request_issue_id"
+    t.integer "decision_issue_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["request_issue_id", "decision_issue_id"], name: "index_on_request_issue_id_and_decision_issue_id", unique: true
   end
 
   create_table "request_issues", force: :cascade do |t|

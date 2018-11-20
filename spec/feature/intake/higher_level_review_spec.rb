@@ -115,6 +115,7 @@ RSpec.feature "Higher-Level Review" do
 
     fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
     safe_click "#button-submit-review"
+
     expect(page).to have_content(
       "Receipt date cannot be in the future."
     )
@@ -456,6 +457,61 @@ RSpec.feature "Higher-Level Review" do
     )
   end
 
+  it "Requires Payee Code for compensation and pension benefit types and non-Veteran claimant" do
+    intake = HigherLevelReviewIntake.new(veteran_file_number: veteran.file_number, user: current_user)
+    intake.start!
+    visit "/intake"
+
+    expect(page).to have_current_path("/intake/review_request")
+
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Compensation", match: :prefer_exact).click
+    end
+
+    fill_in "What is the Receipt Date of this form?", with: "04/20/2019"
+
+    within_fieldset("Was an informal conference requested?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
+    within_fieldset("Was an interview by the same office requested?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
+    within_fieldset("Is the claimant someone other than the Veteran?") do
+      find("label", text: "Yes", match: :prefer_exact).click
+    end
+
+    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
+      find("label", text: "No", match: :prefer_exact).click
+    end
+
+    find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_content(
+      "Receipt date cannot be in the future."
+    )
+    expect(page).to have_content("Please select an option.")
+
+    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: "Pension", match: :prefer_exact).click
+    end
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_content("Please select an option.")
+
+    fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
+    find("#cf-payee-code").send_keys :enter
+
+    safe_click "#button-submit-review"
+    expect(page).to have_current_path("/intake/finish")
+  end
+
   it "Shows a review error when something goes wrong" do
     start_higher_level_review(veteran_no_ratings)
     visit "/intake"
@@ -771,6 +827,13 @@ RSpec.feature "Higher-Level Review" do
 
       expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
       expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
+      success_checklist = find("ul.cf-success-checklist")
+      expect(success_checklist).to_not have_content("Already reviewed injury")
+      expect(success_checklist).to_not have_content("Another Description for Active Duty Adjustments")
+
+      ineligible_checklist = find("ul.cf-ineligible-checklist")
+      expect(ineligible_checklist).to have_content("Already reviewed injury is ineligible")
+      expect(ineligible_checklist).to have_content("Another Description for Active Duty Adjustments is ineligible")
 
       # make sure that database is populated
       expect(HigherLevelReview.find_by(

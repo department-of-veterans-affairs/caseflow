@@ -3,33 +3,43 @@ import StatusMessage from '../../components/StatusMessage';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../constants';
+import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES.json';
 import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
 
-// appeals
-const getAppealChecklistItems = (requestIssues) => [<Fragment>
-  <strong>Appeal created:</strong>
-  {requestIssues.map((ri, i) => <p key={i}>Issue: {ri.contentionText}</p>)}
-</Fragment>];
-
-// higher level reviews & supplemental claims
-const getClaimReviewChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
+const getChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
   const checklist = [];
-  const ratingIssues = requestIssues.filter((ri) => ri.isRating || ri.isUnidentified);
-  const nonratingIssues = requestIssues.filter((ri) => ri.isRating === false);
+  const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
+  let eligibleRatingRequestIssues = [];
+  let eligibleNonratingRequestIssues = [];
+
+  if (formType !== 'appeal') {
+    eligibleRatingRequestIssues = eligibleRequestIssues.filter((ri) => ri.isRating || ri.isUnidentified);
+    eligibleNonratingRequestIssues = eligibleRequestIssues.filter((ri) => ri.isRating === false);
+  }
+
   const claimReviewName = _.find(FORM_TYPES, { key: formType }).shortName;
 
-  if (ratingIssues.length > 0) {
+  if (formType === 'appeal') {
     checklist.push(<Fragment>
-      <strong>A {claimReviewName} Rating EP is being established:</strong>
-      {ratingIssues.map((ri, i) => <p key={`rating-issue-${i}`}>Contention: {ri.contentionText}</p>)}
+      <strong>Appeal created:</strong>
+      {eligibleRequestIssues.map((ri, i) => <p key={i}>Issue: {ri.contentionText}</p>)}
     </Fragment>);
   }
 
-  if (nonratingIssues.length > 0) {
+  if (eligibleRatingRequestIssues.length > 0) {
+    checklist.push(<Fragment>
+      <strong>A {claimReviewName} Rating EP is being established:</strong>
+      {eligibleRatingRequestIssues.map((ri, i) => <p key={`rating-issue-${i}`}>Contention: {ri.contentionText}</p>)}
+    </Fragment>);
+  }
+
+  if (eligibleNonratingRequestIssues.length > 0) {
     checklist.push(<Fragment>
       <strong>A {claimReviewName} Nonrating EP is being established:</strong>
-      {nonratingIssues.map((nri, i) => <p key={`nonrating-issue-${i}`}>Contention: {nri.contentionText}</p>)}
+      {eligibleNonratingRequestIssues.map((nri, i) => <p key={`nonrating-issue-${i}`}>
+        Contention: {nri.contentionText}
+      </p>)}
     </Fragment>);
   }
 
@@ -39,6 +49,31 @@ const getClaimReviewChecklistItems = (formType, requestIssues, isInformalConfere
 
   return checklist;
 };
+
+const ineligibilityCopy = (issue) => {
+  if (issue.titleOfActiveReview) {
+    return INELIGIBLE_REQUEST_ISSUES.duplicate_of_issue_in_active_review.replace(
+      '{review_title}', issue.titleOfActiveReview
+    );
+  } else if (issue.ineligibleReason) {
+    return INELIGIBLE_REQUEST_ISSUES[issue.ineligibleReason];
+  }
+};
+
+class IneligibleIssuesList extends React.PureComponent {
+  render = () =>
+    <Fragment>
+      <ul className="cf-ineligible-checklist cf-left-padding">
+        <li>
+          <strong>Ineligible</strong>
+          {this.props.issues.map((ri, i) =>
+            <p key={`ineligible-issue-${i}`} className="cf-red-text">
+              {ri.contentionText} {ineligibilityCopy(ri)}
+            </p>)}
+        </li>
+      </ul>
+    </Fragment>;
+}
 
 class DecisionReviewIntakeCompleted extends React.PureComponent {
   render() {
@@ -53,6 +88,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       requestIssues,
       informalConference
     } = completedReview;
+    const ineligibleRequestIssues = requestIssues.filter((ri) => ri.ineligibleReason);
 
     switch (intakeStatus) {
     case INTAKE_STATES.NONE:
@@ -71,15 +107,16 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       <strong>Edit the notice letter to reflect the status of requested issues.</strong>
     ];
 
-    return <StatusMessage
+    return <div><StatusMessage
       title="Intake completed"
       type="success"
       leadMessageList={leadMessageList}
-      checklist={formType === 'appeal' ?
-        getAppealChecklistItems(requestIssues) :
-        getClaimReviewChecklistItems(formType, requestIssues, informalConference)}
+      checklist={getChecklistItems(formType, requestIssues, informalConference)}
       wrapInAppSegment={false}
-    />;
+    />
+    { ineligibleRequestIssues && <IneligibleIssuesList issues={ineligibleRequestIssues} /> }
+    </div>
+    ;
   }
 }
 
