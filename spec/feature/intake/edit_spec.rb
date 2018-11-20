@@ -377,11 +377,9 @@ RSpec.feature "Edit issues" do
           rating_issue_reference_id: "def456",
           rating_issue_profile_date: rating.profile_date,
           review_request: higher_level_review,
-          description: "PTSD denied",
-          contention_reference_id: contention_ref_id
+          description: "PTSD denied"
         )
       end
-
       let(:rating_ep_claim_id) do
         EndProductEstablishment.find_by(
           source: higher_level_review,
@@ -537,7 +535,9 @@ RSpec.feature "Edit issues" do
         expect(new_version_of_request_issue.rating_issue_reference_id).to eq(request_issue.rating_issue_reference_id)
 
         # expect contentions to reflect issue update
-        expect(Fakes::VBMSService).to have_received(:remove_contention!).once
+        existing_contention = rating_epe.contentions.first
+        expect(existing_contention.text).to eq("PTSD denied")
+        expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(existing_contention)
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran.file_number,
@@ -545,7 +545,8 @@ RSpec.feature "Edit issues" do
           contention_descriptions: array_including(
             RequestIssue::UNIDENTIFIED_ISSUE_MSG,
             "Left knee granted",
-            "Issue before AMA Activation from RAMP"
+            "Issue before AMA Activation from RAMP",
+            "PTSD denied" # remove and create, both
           ),
           special_issues: [],
           user: current_user
