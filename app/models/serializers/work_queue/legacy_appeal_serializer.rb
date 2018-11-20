@@ -83,11 +83,4 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
       state: object.regional_office.state
     }
   end
-
-  attribute :events do
-    {
-      nod_receipt_date: object.nod_date,
-      form9_date: object.form9_date
-    }
-  end
 end

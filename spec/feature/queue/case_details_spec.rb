@@ -458,21 +458,17 @@ RSpec.feature "Case details" do
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
       let!(:attorney_task) do
         FactoryBot.create(:task, appeal: appeal, type: AttorneyTask.name, parent: root_task,
-                                 assigned_to: user, status: "completed", completed_at: Time.zone.now - 4.days)
+                                 assigned_to: user, completed_at: Time.zone.now - 4.days)
       end
       let!(:judge_task) do
         FactoryBot.create(:task, appeal: appeal, type: JudgeTask.name, parent: attorney_task,
-                                 assigned_to: user, status: "completed", completed_at: Time.zone.now)
-      end
-      let!(:qr) { QualityReview.singleton }
-      let!(:task) do
-        FactoryBot.create(:qr_task, appeal: appeal, assigned_to: user, status: "completed",
-                                    completed_at: Time.zone.now - 2.days)
+                                 assigned_to: user, status: Constants.TASK_STATUSES.completed,
+                                 completed_at: Time.zone.now)
       end
 
       before do
-        OrganizationsUser.add_user_to_organization(user, qr)
-        attorney_task.update!(status: "completed")
+        # This attribute needs to be set here due to update_parent_status hook in the task model
+        attorney_task.update!(status: Constants.TASK_STATUSES.completed)
       end
 
       it "should display judge & attorney tasks" do

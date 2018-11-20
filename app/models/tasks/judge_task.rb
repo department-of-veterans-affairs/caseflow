@@ -20,7 +20,7 @@ class JudgeTask < Task
     end
   end
 
-  def friendly_name
+  def timeline_title
     COPY::CASE_TIMELINE_JUDGE_TASK
   end
 

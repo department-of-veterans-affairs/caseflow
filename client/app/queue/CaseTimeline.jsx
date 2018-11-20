@@ -27,14 +27,14 @@ const tableCell = css({
 });
 
 export default class CaseTimeline extends React.PureComponent {
-  getEventRow = ({ title, pendingTitle, date }, lastRow) => {
+  getEventRow = ({ title, date }, lastRow) => {
     const formattedDate = date ? moment(date).format('MM/DD/YYYY') : null;
     const eventImage = date ? <GreenCheckmark /> : <GrayDot />;
 
     return <tr key={title}>
       <td {...tableCell}>{formattedDate}</td>
       <td {...tableCellWithIcon}>{eventImage}{!lastRow && <div {...grayLine} />}</td>
-      <td {...tableCell}>{date ? title : pendingTitle}</td>
+      <td {...tableCell}>{title}</td>
     </tr>;
   }
 

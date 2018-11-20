@@ -215,14 +215,12 @@ class Appeal < DecisionReview
   def timeline
     [
       {
-        title: COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA,
-        pendingTitle: COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
+        title: decision_date ? COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
         date: decision_date
       },
-      tasks.where(status: "completed").order("completed_at DESC").map(&:timeline_title),
+      tasks.where(status: Constants.TASK_STATUSES.completed).order("completed_at DESC").map(&:timeline_details),
       {
-        title: COPY::CASE_TIMELINE_NOD_RECEIVED,
-        pendingTitle: COPY::CASE_TIMELINE_NOD_PENDING,
+        title: receipt_date ? COPY::CASE_TIMELINE_NOD_RECEIVED : COPY::CASE_TIMELINE_NOD_PENDING,
         date: receipt_date
       }
     ].flatten

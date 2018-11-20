@@ -89,12 +89,6 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.veteran ? object.veteran.id : nil
   end
 
-  attribute :events do
-    {
-      nod_receipt_date: object.receipt_date
-    }
-  end
-
   attribute :timeline do
     object.timeline
   end

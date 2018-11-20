@@ -207,13 +207,13 @@ class Task < ApplicationRecord
     }
   end
 
-  def friendly_name
+  def timeline_title
     "#{type} completed"
   end
 
-  def timeline_title
+  def timeline_details
     {
-      title: friendly_name,
+      title: timeline_title,
       date: completed_at
     }
   end
