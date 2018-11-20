@@ -55,7 +55,7 @@ class SeedDB
   end
 
   def create_colocated_user
-    user = User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located with cases")
+    user = User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located with cases", roles: %w[Reader])
     FactoryBot.create(:staff, :colocated_role, user: user, sdept: "DSP")
     OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
   end
