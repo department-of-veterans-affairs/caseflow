@@ -1,5 +1,5 @@
 class Colocated < Organization
   def self.singleton
-    Colocated.first || Colocated.create(name: "VLJ Support Management", url: "vlj-support-management")
+    Colocated.first || Colocated.create(name: "VLJ Support Staff", url: "vlj-support")
   end
 end

@@ -55,7 +55,7 @@ class SeedDB
   end
 
   def create_colocated_user
-    user = User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located with cases")
+    user = User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located with cases", roles: %w[Reader])
     FactoryBot.create(:staff, :colocated_role, user: user, sdept: "DSP")
     OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
   end
@@ -434,7 +434,13 @@ class SeedDB
                       assigned_by: attorney,
                       assigned_to: colocated)
 
-    FactoryBot.create_list(:generic_task, 5, assigned_by: judge, assigned_to: translation_org)
+    FactoryBot.create_list(
+      :generic_task,
+      5,
+      assigned_by: judge,
+      assigned_to: translation_org,
+      parent: FactoryBot.create(:root_task)
+    )
   end
 
   def create_vsos
