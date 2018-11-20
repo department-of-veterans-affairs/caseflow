@@ -24,7 +24,7 @@ const leadMessageList = ({ veteran, formName, requestIssues }) => {
     <h2>Unidentified issue</h2>
     <p>There is still an unidentified issue that needs to be resolved before sending the notice
     letter. To edit, go to VBMS claim details and click the “Edit in Caseflow” button.</p>
-    {unidentifiedIssues.map((ri, i) => <p className="cf-red-text" key={i}>
+    {unidentifiedIssues.map((ri, i) => <p className="cf-red-text" key={`unidentified-alert-${i}`}>
       Unidentified issue: no issue matched for requested "{ri.description}"
     </p>)}
   </Alert>;
@@ -52,7 +52,7 @@ const getChecklistItems = (formType, requestIssues, isInformalConferenceRequeste
   if (formType === 'appeal') {
     checklist.push(<Fragment>
       <strong>Appeal created:</strong>
-      {eligibleRequestIssues.map((ri, i) => <p key={i}>Issue: {ri.contentionText}</p>)}
+      {eligibleRequestIssues.map((ri, i) => <p key={`appeal-issue-${i}`}>Issue: {ri.contentionText}</p>)}
     </Fragment>);
   }
 
