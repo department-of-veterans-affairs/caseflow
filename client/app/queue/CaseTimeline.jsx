@@ -26,33 +26,29 @@ const tableCell = css({
   padding: '3px'
 });
 
-export default class CaseTimeline extends React.PureComponent {
-  getEventRow = ({ title, date }, lastRow) => {
-    const formattedDate = date ? moment(date).format('MM/DD/YYYY') : null;
-    const eventImage = date ? <GreenCheckmark /> : <GrayDot />;
+const getEventRow = ({ title, date }, lastRow) => {
+  const formattedDate = date ? moment(date).format('MM/DD/YYYY') : null;
+  const eventImage = date ? <GreenCheckmark /> : <GrayDot />;
 
-    return <tr key={title}>
-      <td {...tableCell}>{formattedDate}</td>
-      <td {...tableCellWithIcon}>{eventImage}{!lastRow && <div {...grayLine} />}</td>
-      <td {...tableCell}>{title}</td>
-    </tr>;
-  }
+  return <tr key={title}>
+    <td {...tableCell}>{formattedDate}</td>
+    <td {...tableCellWithIcon}>{eventImage}{!lastRow && <div {...grayLine} />}</td>
+    <td {...tableCell}>{title}</td>
+  </tr>;
+};
 
-  render = () => {
-    const { appeal } = this.props;
-
-    return <React.Fragment>
-      {COPY.CASE_TIMELINE_HEADER}
-      <table>
-        <tbody>
-          {appeal.timeline.map((event, index) => {
-            return this.getEventRow(event, index === appeal.timeline.length - 1);
-          })}
-        </tbody>
-      </table>
-    </React.Fragment>;
-  };
-}
+export const CaseTimeline = ({ appeal }) => {
+  return <React.Fragment>
+    {COPY.CASE_TIMELINE_HEADER}
+    <table>
+      <tbody>
+        {appeal.timeline.map((event, index) => {
+          return getEventRow(event, index === appeal.timeline.length - 1);
+        })}
+      </tbody>
+    </table>
+  </React.Fragment>;
+};
 
 CaseTimeline.propTypes = {
   appeal: PropTypes.object.isRequired
