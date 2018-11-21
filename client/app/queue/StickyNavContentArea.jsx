@@ -8,8 +8,25 @@ const sectionNavigationContainerStyling = css({
   float: 'left',
   paddingRight: '3rem',
   position: 'sticky',
-  top: '3rem',
-  width: '20%'
+  top: 0,
+  width: '20%',
+  '@media (max-width: 1020px)': {
+    paddingTop: '1rem',
+    backgroundColor: COLORS.WHITE,
+    paddingRight: 0
+  }
+});
+
+const sectionNavStyling = css({
+  '@media (max-width: 1020px)': {
+    '&': {
+      display: 'flex',
+      flexFlow: 'row wrap'
+    },
+    '& > *': {
+      flex: '1 auto'
+    }
+  }
 });
 
 const sectionNavigationListStyling = css({
@@ -30,12 +47,40 @@ const sectionNavigationListStyling = css({
   '& > li > a:after': {
     content: '〉',
     float: 'right'
+  },
+  '@media (max-width: 1020px)': {
+    display: 'flex',
+    flexFlow: 'row',
+    borderBottom: 'none',
+    borderTop: 'none',
+    width: '100%',
+    marginBottom: '1rem',
+    '& > li': {
+      padding: '0.75rem 0.75rem',
+      fontSize: '1.25rem',
+      flexGrow: 1,
+      '&:first-child': {
+        borderRadius: '5px 0 0 5px'
+      },
+      '&:last-child': {
+        borderRadius: '0 5px 5px 0'
+      },
+      '& > a': {
+        padding: 0
+      },
+      '& > a:after': {
+        content: 'none'
+      }
+    }
   }
 });
 
 const sectionBodyStyling = css({
   float: 'left',
-  width: '80%'
+  width: '80%',
+  '@media (max-width: 1020px)': {
+    flex: '1 100%'
+  }
 });
 
 const getIdForElement = (elem) => `${StringUtil.parameterize(elem.props.title)}-section`;
@@ -45,7 +90,7 @@ export default class StickyNavContentArea extends React.PureComponent {
     // Ignore undefined child elements.
     const childElements = this.props.children.filter((child) => typeof child === 'object');
 
-    return <React.Fragment>
+    return <div {...sectionNavStyling}>
       <aside {...sectionNavigationContainerStyling}>
         <ul className="usa-sidenav-list" {...sectionNavigationListStyling}>
           {childElements.map((child, i) =>
@@ -56,7 +101,7 @@ export default class StickyNavContentArea extends React.PureComponent {
       <div {...sectionBodyStyling}>
         {childElements.map((child, i) => <ContentSection key={i} element={child} />)}
       </div>
-    </React.Fragment>;
+    </div>;
   };
 }
 
@@ -76,8 +121,18 @@ const sectionHeadingStyling = css({
   padding: '1rem 2rem'
 });
 
+const anchorJumpLinkStyling = css({
+  color: COLORS.GREY_DARK,
+  paddingTop: '7rem',
+  textDecoration: 'none',
+  pointerEvents: 'none',
+  cursor: 'default'
+});
+
 const ContentSection = ({ element }) => <React.Fragment>
-  <h2 id={`${getIdForElement(element)}`} {...sectionHeadingStyling}>{element.props.title}</h2>
+  <h2 {...sectionHeadingStyling}>
+    <a id={`${getIdForElement(element)}`} {...anchorJumpLinkStyling}>{element.props.title}</a>
+  </h2>
   <div {...sectionSegmentStyling}>{element}</div>
 </React.Fragment>;
 

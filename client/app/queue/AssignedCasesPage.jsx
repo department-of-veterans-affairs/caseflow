@@ -25,7 +25,6 @@ type Props = Params & {|
   // From state
   attorneysOfJudge: AttorneysOfJudge,
   appealsOfAttorney: Appeals,
-  featureToggles: Object,
   selectedTasks: Array<Task>,
   tasksOfAttorney: Array<TaskWithAppeal>,
   attorneyAppealsLoadingState: AttorneyAppealsLoadingState,
@@ -56,7 +55,7 @@ class AssignedCasesPage extends React.Component<Props> {
   render = () => {
     const props = this.props;
     const {
-      match, attorneysOfJudge, attorneyAppealsLoadingState, featureToggles, selectedTasks, success, error
+      match, attorneysOfJudge, attorneyAppealsLoadingState, selectedTasks, success, error
     } = props;
     const { attorneyId } = match.params;
 
@@ -80,11 +79,10 @@ class AssignedCasesPage extends React.Component<Props> {
       <h2>{attorneyName}'s Cases</h2>
       {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}
       {success && <Alert type="success" title={success.title} message={success.detail} scrollOnAlert={false} />}
-      {featureToggles.judge_assignment_to_attorney &&
-        <AssignWidget
-          previousAssigneeId={attorneyId}
-          onTaskAssignment={(params) => props.reassignTasksToUser(params)}
-          selectedTasks={selectedTasks} />}
+      <AssignWidget
+        previousAssigneeId={attorneyId}
+        onTaskAssignment={(params) => props.reassignTasksToUser(params)}
+        selectedTasks={selectedTasks} />
       <TaskTable
         includeSelect
         includeDetailsLink
@@ -102,7 +100,6 @@ class AssignedCasesPage extends React.Component<Props> {
 const mapStateToProps = (state: State, ownProps: Params) => {
   const { attorneyAppealsLoadingState, attorneysOfJudge } = state.queue;
   const {
-    featureToggles,
     messages: {
       success,
       error
@@ -114,7 +111,6 @@ const mapStateToProps = (state: State, ownProps: Params) => {
     tasksOfAttorney: getAssignedTasks(state, attorneyId),
     attorneyAppealsLoadingState,
     attorneysOfJudge,
-    featureToggles,
     selectedTasks: selectedTasksSelector(state, attorneyId),
     success,
     error

@@ -138,7 +138,7 @@ class ApplicationController < ApplicationBaseController
       return false if current_user.admin?
       return false if current_user.organization_queue_user? || current_user.vso_employee?
       return false if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
-      return false if current_user.colocated_in_vacols? && feature_enabled?(:colocated_queue)
+      return false if current_user.colocated_in_vacols?
       return true
     end
     false
@@ -157,9 +157,6 @@ class ApplicationController < ApplicationBaseController
       # This feature toggle control access of attorneys to create admin actions for co-located users
       feature_enabled?(:attorney_assignment_to_colocated) ||
         current_user.organizations.pluck(:name).include?(QualityReview.singleton.name)
-    elsif current_user.judge_in_vacols?
-      # This feature toggle control access of judges to assign cases to attorneys
-      feature_enabled?(:judge_assignment_to_attorney)
     else
       true
     end
