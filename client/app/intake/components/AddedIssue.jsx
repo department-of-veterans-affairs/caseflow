@@ -32,7 +32,7 @@ class AddedIssue extends React.PureComponent {
     return true;
   }
 
-  checkIfEligible() {
+  updateEligibleState() {
     let { issue, formType } = this.props;
 
     let errorMsg = '';
@@ -67,8 +67,8 @@ class AddedIssue extends React.PureComponent {
   render() {
     let { issue, issueIdx } = this.props;
 
-    if (this.needsEligibilityCheck) {
-      this.checkIfEligible();
+    if (this.needsEligibilityCheck()) {
+      this.updateEligibleState();
     }
 
     return <div className={this.state.cssKlasses.join(' ')}>
