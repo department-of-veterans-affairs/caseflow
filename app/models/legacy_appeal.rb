@@ -6,9 +6,6 @@ class LegacyAppeal < ApplicationRecord
   include AddressMapper
   include Taskable
 
-  APPEAL_ISSUE_SOC_ELIGIBLE = Time.zone.today - 60.days
-  APPEAL_ISSUE_NOD_ELIGIBLE = Time.zone.today - 372.days
-
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
   has_many :worksheet_issues, foreign_key: :appeal_id
@@ -695,7 +692,7 @@ class LegacyAppeal < ApplicationRecord
     return false unless nod_date
     return false unless soc_date
 
-    soc_date > APPEAL_ISSUE_SOC_ELIGIBLE || nod_date > APPEAL_ISSUE_NOD_ELIGIBLE
+    soc_date > soc_eligible_date || nod_date > nod_eligible_date
   end
 
   def serializer_class
@@ -707,6 +704,14 @@ class LegacyAppeal < ApplicationRecord
   end
 
   private
+
+  def soc_eligible_date
+    Time.zone.today - 60.days
+  end
+
+  def nod_eligible_date
+    Time.zone.today - 372.days
+  end
 
   def use_representative_info_from_bgs?
     FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&

@@ -1031,7 +1031,6 @@ RSpec.feature "Higher-Level Review" do
 
         expect(page).to have_content("Next")
         add_intake_rating_issue("Left knee granted")
-
         # expect legacy opt in modal
         expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
         add_intake_rating_issue("None of these match")
