@@ -633,6 +633,21 @@ RSpec.feature "Appeal Intake" do
       add_untimely_exemption_response("Yes")
 
       expect(page).to have_content("Left knee granted")
+
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      add_intake_nonrating_issue(
+        category: "Active Duty Adjustments",
+        description: "Description for Active Duty Adjustments",
+        date: "04/25/2018",
+        legacy_issues: true
+      )
+
+      expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
+
+      add_intake_rating_issue("None of these match")
+
+      expect(page).to have_content("Description for Active Duty Adjustments")
     end
 
     scenario "adding issue with legacy opt in disabled" do

@@ -33,14 +33,15 @@ module IntakeHelpers
     safe_click ".add-issue"
   end
 
-  def add_intake_nonrating_issue(category:, description:, date:)
+  def add_intake_nonrating_issue(category:, description:, date:, legacy_issues: false)
+    add_button_text = legacy_issues ? "Next" : "Add this issue"
     expect(page.text).to match(/Does issue \d+ match any of these issue categories?/)
-    expect(page).to have_button("Add this issue", disabled: true)
+    expect(page).to have_button(add_button_text, disabled: true)
     fill_in "Issue category", with: category
     find("#issue-category").send_keys :enter
     fill_in "Issue description", with: description
     fill_in "Decision date", with: date
-    expect(page).to have_button("Add this issue", disabled: false)
+    expect(page).to have_button(add_button_text, disabled: false)
     safe_click ".add-issue"
   end
 
