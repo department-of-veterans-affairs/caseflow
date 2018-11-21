@@ -85,6 +85,14 @@ export class AddIssuesPage extends React.Component {
     return true;
   }
 
+  onClickAddIssue = (ratingIssueCount) => {
+    if (!ratingIssueCount) {
+      return this.props.toggleNonratingRequestIssueModal;
+    }
+
+    return this.props.toggleAddIssuesModal;
+  }
+
   render() {
     const {
       intakeForms,
@@ -158,7 +166,7 @@ export class AddIssuesPage extends React.Component {
             name="add-issue"
             legacyStyling={false}
             classNames={['usa-button-secondary']}
-            onClick={this.props.toggleAddIssuesModal}
+            onClick={this.onClickAddIssue(_.size(intakeData.ratings))}
           >
             + Add issue
           </Button>
