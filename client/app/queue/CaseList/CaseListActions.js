@@ -90,9 +90,9 @@ export const fetchAppealsUsingVeteranId = (searchQuery) =>
       headers: { 'veteran-id': veteranId }
     }).
       then((response) => {
-        const returnedObject = JSON.parse(response.text);
+        const isResponseEmpty = !response.text || _.size(JSON.parse(response.text) === 0);
 
-        if (_.size(returnedObject.appeals) === 0) {
+        if (isResponseEmpty) {
           dispatch(fetchedNoAppealsUsingVeteranId(veteranId));
 
           return reject();
