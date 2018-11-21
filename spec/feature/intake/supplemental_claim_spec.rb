@@ -535,6 +535,23 @@ RSpec.feature "Supplemental Claim Intake" do
       )
     end
 
+    context "Veteran has no ratings" do
+      scenario "the Add Issue modal skips directly to Nonrating Issue modal" do
+        start_supplemental_claim(veteran_no_ratings)
+        visit "/intake/add_issues"
+
+        click_intake_add_issue
+
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "Description for Active Duty Adjustments",
+          date: "04/19/2018"
+        )
+
+        expect(page).to have_content("1 issue")
+      end
+    end
+
     scenario "SC comp" do
       supplemental_claim, = start_supplemental_claim(veteran)
       visit "/intake/add_issues"
@@ -579,6 +596,7 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
 
       # Add nonrating issue
+      click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
@@ -622,6 +640,7 @@ RSpec.feature "Supplemental Claim Intake" do
       )
 
       click_intake_add_issue
+      click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Drill Pay Adjustments",
         description: "A nonrating issue before AMA",
