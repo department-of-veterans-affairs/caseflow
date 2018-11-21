@@ -308,13 +308,14 @@ RSpec.describe TasksController, type: :controller do
         let(:params) do
           [{
             "external_id": appeal.vacols_id,
+            "action": "address_verification",
             "type": ColocatedTask.name
           }]
         end
 
-        it "should not be successful" do
+        it "should fail assigned_by validation" do
           post :create, params: { tasks: params }
-          expect(response.status).to eq 302
+          expect(response.status).to eq(400)
         end
       end
 
