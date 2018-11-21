@@ -75,12 +75,12 @@ module IntakeHelpers
     allow(AppealRepository).to receive(:issues).with("vacols1")
       .and_return([
                     Generators::Issue.build(vacols_sequence_id: 1),
-                    Generators::Issue.build(vacols_sequence_id: 2)
+                    Generators::Issue.build(vacols_sequence_id: 1)
                   ])
     allow(AppealRepository).to receive(:issues).with("vacols2")
       .and_return([
-                    Generators::Issue.build(vacols_sequence_id: 3),
-                    Generators::Issue.build(vacols_sequence_id: 4)
+                    Generators::Issue.build(vacols_sequence_id: 1),
+                    Generators::Issue.build(vacols_sequence_id: 1)
                   ])
   end
 end
