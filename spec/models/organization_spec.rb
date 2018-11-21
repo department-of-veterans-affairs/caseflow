@@ -38,11 +38,11 @@ describe Organization do
   end
 
   describe ".assignable" do
+    let(:user) { create(:user) }
     let!(:organization) { create(:organization, name: "Test") }
     let!(:other_organization) { create(:organization, name: "Org") }
 
     context "when current task is assigned to a user" do
-      let(:user) { create(:user) }
       let(:task) { create(:generic_task, assigned_to: user) }
 
       it "returns a list without that organization" do
@@ -59,12 +59,29 @@ describe Organization do
     end
 
     context "when current task is assigned to a user and its parent is assigned to a user to an organization" do
-      let(:user) { create(:user) }
       let(:parent) { create(:generic_task, assigned_to: organization) }
       let(:task) { create(:generic_task, assigned_to: user, parent: parent) }
 
       it "returns a list without that organization" do
         expect(Organization.assignable(task)).to eq([other_organization])
+      end
+    end
+
+    context "when there is a named Organization as a subclass of Organization" do
+      let(:task) { create(:generic_task, assigned_to: user) }
+      before { QualityReview.singleton }
+
+      it "should be included in the list of organizations returned by assignable" do
+        expect(Organization.assignable(task).length).to eq(3)
+      end
+    end
+
+    context "when organization cannot receive tasks" do
+      let(:task) { create(:generic_task, assigned_to: user) }
+      before { Bva.singleton }
+
+      it "should not be included in the list of organizations returned by assignable" do
+        expect(Organization.assignable(task)).to match_array([organization, other_organization])
       end
     end
   end
