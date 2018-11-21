@@ -81,11 +81,11 @@ class NonratingRequestIssueModal extends React.Component {
 
     if (this.hasLegacyIssues()) {
       this.props.toggleLegacyOptInModal({
-        currentIssue: currentIssue,
+        currentIssue,
         notes: null });
     } else if (this.requiresUntimelyExemption()) {
       this.props.toggleUntimelyExemptionModal({
-        currentIssue: currentIssue,
+        currentIssue,
         notes: null
       });
     } else {

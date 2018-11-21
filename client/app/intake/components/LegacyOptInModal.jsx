@@ -19,7 +19,7 @@ class LegacyOptInModal extends React.Component {
     this.state = {
       vacolsId: ''
     };
-  };
+  }
 
   radioOnChange = (value) => {
     this.setState({
@@ -38,14 +38,14 @@ class LegacyOptInModal extends React.Component {
   onAddIssue = () => {
     // currently just adds the issue & checks for untimeliness
     // if vacols issue is selected, logic to be implemented by 7336 & 7337
-    console.log("intakeData::", this.props.intakeData)
     const currentIssue = this.props.intakeData.currentIssueAndNotes.currentIssue;
     const notes = this.props.intakeData.currentIssueAndNotes.notes;
 
     if (this.requiresUntimelyExemption()) {
-      return this.props.toggleUntimelyExemptionModal({ currentIssue, notes });
+      return this.props.toggleUntimelyExemptionModal({ currentIssue,
+        notes });
     } else if (currentIssue.reference_id) {
-        this.props.addRatingRequestIssue({
+      this.props.addRatingRequestIssue({
         issueId: currentIssue.reference_id,
         ratings: this.props.intakeData.ratings,
         isRating: true,
