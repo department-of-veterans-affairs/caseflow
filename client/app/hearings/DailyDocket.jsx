@@ -176,6 +176,12 @@ export class DailyDocket extends React.PureComponent {
  }
 
 getRoTime = (hearing) => {
+  if (hearing.request_type === 'Central') {
+    return <div>{getTime(hearing.date)} <br />
+      {hearing.regional_office_name}
+    </div>;
+  }
+
   return <div>{getTime(hearing.date)} /<br />
     {getTimeInDifferentTimeZone(hearing.date, hearing.regional_office_timezone)} <br />
     <span>{hearing.regional_office_name}</span>

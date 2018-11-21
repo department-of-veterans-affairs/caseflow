@@ -22,6 +22,10 @@ module IntakeHelpers
     safe_click "#button-finish-intake"
   end
 
+  def click_intake_no_matching_issues
+    safe_click ".no-matching-issues"
+  end
+
   def add_intake_rating_issue(description, note = nil)
     # find_all with 'minimum' will wait like find() does.
     find_all("label", text: description, minimum: 1).first.click
@@ -30,7 +34,6 @@ module IntakeHelpers
   end
 
   def add_intake_nonrating_issue(category:, description:, date:)
-    safe_click ".no-matching-issues"
     expect(page.text).to match(/Does issue \d+ match any of these issue categories?/)
     expect(page).to have_button("Add this issue", disabled: true)
     fill_in "Issue category", with: category
@@ -75,12 +78,12 @@ module IntakeHelpers
     allow(AppealRepository).to receive(:issues).with("vacols1")
       .and_return([
                     Generators::Issue.build(vacols_sequence_id: 1),
-                    Generators::Issue.build(vacols_sequence_id: 2)
+                    Generators::Issue.build(vacols_sequence_id: 1)
                   ])
     allow(AppealRepository).to receive(:issues).with("vacols2")
       .and_return([
-                    Generators::Issue.build(vacols_sequence_id: 3),
-                    Generators::Issue.build(vacols_sequence_id: 4)
+                    Generators::Issue.build(vacols_sequence_id: 1),
+                    Generators::Issue.build(vacols_sequence_id: 1)
                   ])
   end
 end

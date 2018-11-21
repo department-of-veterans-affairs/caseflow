@@ -12,8 +12,6 @@ class Task < ApplicationRecord
   before_create :set_assigned_at_and_update_parent_status
   before_update :set_timestamps
 
-  after_update :update_parent_status
-
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym    => Constants.TASK_STATUSES.assigned,
     Constants.TASK_STATUSES.in_progress.to_sym => Constants.TASK_STATUSES.in_progress,
@@ -147,8 +145,7 @@ class Task < ApplicationRecord
   end
 
   def self.verify_user_can_assign!(user)
-    unless user.attorney_in_vacols? ||
-           (user.judge_in_vacols? && FeatureToggle.enabled?(:judge_assignment_to_attorney, user: user))
+    unless user.attorney_in_vacols? || user.judge_in_vacols?
       fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot assign this task"
     end
   end
@@ -223,10 +220,6 @@ class Task < ApplicationRecord
       return mark_as_complete! if assigned_to.is_a?(Organization)
       return update!(status: :assigned) if on_hold?
     end
-  end
-
-  def update_parent_status
-    parent.when_child_task_completed if saved_change_to_status? && completed? && parent
   end
 
   def set_assigned_at_and_update_parent_status

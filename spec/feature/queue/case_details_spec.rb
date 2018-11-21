@@ -269,6 +269,8 @@ RSpec.feature "Case details" do
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
+      # Call have_content() so we wait for the case details page to load
+      expect(page).to have_content(appeal.veteran_full_name)
       expect(page.document.text).to match(/Disposition 1 - Allowed/i)
     end
   end

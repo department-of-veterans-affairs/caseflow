@@ -133,7 +133,7 @@ export default class DailyDocket extends React.Component {
   };
 
   getHearingTime = (hearing) => {
-    if (hearing.requestType === 'CO') {
+    if (hearing.requestType === 'Central') {
       return <div>{getTime(hearing.date)} <br />
         {hearing.regionalOfficeName}
       </div>;
@@ -197,7 +197,7 @@ export default class DailyDocket extends React.Component {
   };
 
   getHearingTimeOptions = (hearing, readOnly) => {
-    if (hearing.requestType === 'CO') {
+    if (hearing.requestType === 'Central') {
       return [
         {
           displayText: '9:00',
@@ -227,7 +227,7 @@ export default class DailyDocket extends React.Component {
   };
 
   getHearingDayDropdown = (hearing, readOnly) => {
-    const timezone = hearing.requestType === 'CO' ? 'America/New_York' : hearing.regionalOfficeTimezone;
+    const timezone = hearing.requestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone;
 
     return <div><SearchableDropdown
       name="Hearing Day"
