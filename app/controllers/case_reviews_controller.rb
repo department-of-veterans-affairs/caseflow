@@ -57,8 +57,7 @@ class CaseReviewsController < ApplicationController
                                    :work_product,
                                    :overtime,
                                    :note,
-                                   issues: [:id, :disposition, :readjudication,
-                                            remand_reasons: [:code, :post_aoj]])
+                                   issues: issues_params)
       .merge(attorney: current_user, task_id: params[:task_id])
   end
 
@@ -71,8 +70,19 @@ class CaseReviewsController < ApplicationController
                                    :one_touch_initiative,
                                    factors_not_considered: [],
                                    areas_for_improvement: [],
-                                   issues: [:id, :disposition, :readjudication,
-                                            remand_reasons: [:code, :post_aoj]])
+                                   issues: issues_params)
       .merge(judge: current_user, task_id: params[:task_id])
+  end
+
+  def issues_params
+    if ama? && feature_enabled?(:ama_decision_issues)
+      [:disposition, :description, request_issue_ids: [], remand_reasons: [:code, :post_aoj]]
+    else
+      [:id, :disposition, :readjudication, remand_reasons: [:code, :post_aoj]]
+    end
+  end
+
+  def ama?
+    params["task_id"] !~ LegacyTask::TASK_ID_REGEX
   end
 end
