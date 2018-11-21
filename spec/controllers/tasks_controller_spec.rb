@@ -220,14 +220,6 @@ RSpec.describe TasksController, type: :controller do
     end
 
     context "Attornet task" do
-      before do
-        FeatureToggle.enable!(:judge_assignment_to_attorney)
-      end
-
-      after do
-        FeatureToggle.disable!(:judge_assignment_to_attorney)
-      end
-
       context "when current user is a judge" do
         let(:ama_appeal) { create(:appeal) }
         let(:ama_judge_task) { create(:ama_judge_task, assigned_to: user) }
@@ -316,13 +308,14 @@ RSpec.describe TasksController, type: :controller do
         let(:params) do
           [{
             "external_id": appeal.vacols_id,
+            "action": "address_verification",
             "type": ColocatedTask.name
           }]
         end
 
-        it "should not be successful" do
+        it "should fail assigned_by validation" do
           post :create, params: { tasks: params }
-          expect(response.status).to eq 302
+          expect(response.status).to eq(400)
         end
       end
 
