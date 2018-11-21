@@ -635,7 +635,6 @@ RSpec.feature "Appeal Intake" do
       expect(page).to have_content("Left knee granted")
 
       click_intake_add_issue
-      click_intake_add_issue
       click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
