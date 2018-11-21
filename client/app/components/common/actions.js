@@ -27,3 +27,10 @@ export const onHearingDateChange = (hearingDate) => ({
     hearingDate
   }
 });
+
+export const onHearingTimeChange = (hearingTime) => ({
+  type: ACTIONS.HEARING_TIME_CHANGE,
+  payload: {
+    hearingTime
+  }
+});

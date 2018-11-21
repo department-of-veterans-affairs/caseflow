@@ -31,6 +31,7 @@ export const initialState = {
   canEditAod: false,
   hearingDay: {
     hearingDate: null,
+    hearingTime: null,
     regionalOffice: null
   }
 };

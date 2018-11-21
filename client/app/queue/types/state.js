@@ -61,6 +61,7 @@ export type UiState = {
   canEditAod: boolean,
   hearingDay: {
     hearingDate: ?string,
+    hearingTime: ?string,
     regionalOffice: ?string
   }
 };
