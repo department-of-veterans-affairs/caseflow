@@ -104,9 +104,6 @@ class DecisionReview < ApplicationRecord
 
   def serialized_legacy_appeals
     return [] unless FeatureToggle.enabled?(:intake_legacy_opt_in, user: RequestStore.store[:current_user])
-
-    # If a Veteran does not opt-in to withdraw legacy appeals, do not show inactive appeals
-    available_legacy_appeals = legacy_opt_in_approved ? matchable_legacy_appeals : active_matchable_legacy_appeals
     return [] unless available_legacy_appeals
 
     available_legacy_appeals.map do |legacy_appeal|
@@ -120,13 +117,18 @@ class DecisionReview < ApplicationRecord
 
   private
 
+  def available_legacy_appeals
+    # If a Veteran does not opt-in to withdraw legacy appeals, do not show inactive appeals
+    legacy_opt_in_approved ? matchable_legacy_appeals : active_legacy_appeals
+  end
+
   def matchable_legacy_appeals
     @matchable_legacy_appeals ||= LegacyAppeal
       .fetch_appeals_by_file_number(veteran_file_number)
       .select(&:matchable_to_request_issue?)
   end
 
-  def active_matchable_legacy_appeals
+  def active_legacy_appeals
     @active_matchable_legacy_appeals ||= matchable_legacy_appeals.select(&:active?)
   end
 
