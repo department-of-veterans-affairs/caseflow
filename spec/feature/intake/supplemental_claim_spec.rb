@@ -835,7 +835,7 @@ RSpec.feature "Supplemental Claim Intake" do
         expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
 
         add_intake_rating_issue("None of these match")
-        
+
         expect(page).to have_content("Description for Active Duty Adjustments")
       end
 
