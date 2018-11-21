@@ -147,8 +147,7 @@ class Task < ApplicationRecord
   end
 
   def self.verify_user_can_assign!(user)
-    unless user.attorney_in_vacols? ||
-           (user.judge_in_vacols? && FeatureToggle.enabled?(:judge_assignment_to_attorney, user: user))
+    unless user.attorney_in_vacols? || user.judge_in_vacols?
       fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot assign this task"
     end
   end
