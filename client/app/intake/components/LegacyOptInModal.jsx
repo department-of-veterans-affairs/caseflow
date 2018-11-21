@@ -26,6 +26,7 @@ class LegacyOptInModal extends React.Component {
     // legacy opt in are keyed off of a combo of both id & vacolsSequenceId
     // NO_MATCH_TEXT does not have a vacolsSequenceId
     const legacyValues = value.split('-');
+
     this.setState({
       id: legacyValues[0],
       vacolsSequenceId: legacyValues.length > 1 ? legacyValues[1] : '',
