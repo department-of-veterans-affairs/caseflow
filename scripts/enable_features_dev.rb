@@ -43,10 +43,6 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
-          feature: "judge_assignment_to_attorney",
-          enable_all: true
-        },
-        {
           feature: "attorney_assignment_to_colocated",
           enable_all: true
         },
@@ -56,6 +52,10 @@ json_config = <<EOS.strip_heredoc
         },
         {
           feature: "decision_document_upload",
+          enable_all: true
+        },
+        {
+          feature: "ama_decision_issues",
           enable_all: true
         },
         {
