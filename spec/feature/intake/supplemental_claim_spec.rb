@@ -836,18 +836,13 @@ RSpec.feature "Supplemental Claim Intake" do
         expect(page).to have_content("Left knee granted")
 
         click_intake_add_issue
-        safe_click ".no-matching-issues"
-
-        expect(page).to have_button("Next", disabled: true)
-
-        fill_in "Issue category", with: "Active Duty Adjustments"
-        find("#issue-category").send_keys :enter
-        fill_in "Issue description", with: "Description for Active Duty Adjustments"
-        fill_in "Decision date", with: "04/25/2018"
-
-        expect(page).to have_button("Next", disabled: false)
-
-        safe_click ".add-issue"
+        click_intake_no_matching_issues
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "Description for Active Duty Adjustments",
+          date: "04/25/2018",
+          legacy_issues: true
+        )
 
         expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
 
