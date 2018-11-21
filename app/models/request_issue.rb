@@ -149,7 +149,7 @@ class RequestIssue < ApplicationRecord
 
   private
 
-  def save_decision_issue(contention)
+  def save_decision_issue(disposition)
     # do not create another decision issue for this request issue if one already exists
     return if decision_issue_reference_id
 
@@ -157,9 +157,9 @@ class RequestIssue < ApplicationRecord
       created_decision_issue = DecisionIssue.create!(
         source_request_issue: self,
         participant_id: review_request.veteran.participant_id,
-        disposition: contention.disposition,
-        # contention has start_date and submit_date
-        disposition_date: contention.start_date
+        disposition: disposition.disposition,
+        # use epe last_synced_at as a proxy for when the decision was made
+        disposition_date: end_product_establishment.last_synced_at
       )
 
       RequestDecisionIssue.create!(

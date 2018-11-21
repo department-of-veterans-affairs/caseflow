@@ -578,6 +578,7 @@ describe EndProductEstablishment do
     end
 
     let(:contention_ref_id) { "123456" }
+    let(:contention_ref_id_2) { "234567" }
     let(:reference_id) { "Issue1" }
 
     let(:issues) do
@@ -594,16 +595,6 @@ describe EndProductEstablishment do
 
     let(:higher_level_review) { create(:higher_level_review) }
     let(:end_product_establishment) { create(:end_product_establishment, :cleared, source: higher_level_review) }
-    let!(:request_issues) do
-      [
-        create(
-          :request_issue,
-          review_request: higher_level_review,
-          end_product_establishment: end_product_establishment,
-          contention_reference_id: contention_ref_id
-        )
-      ]
-    end
 
     subject { end_product_establishment.sync_decision_issues! }
 
@@ -611,26 +602,153 @@ describe EndProductEstablishment do
       allow(end_product_establishment).to receive(:potential_decision_ratings).and_return([rating])
     end
 
-    it "connects rating issues with request issues based on contention_reference_id" do
-      expect(request_issues.first.decision_issues.count).to eq(0)
-
-      subject
-
-      expect(request_issues.first.decision_issues.count).to eq(1)
-      expect(request_issues.first.decision_issues.first.rating_issue_reference_id).to eq(reference_id)
-    end
-
-    context "EPE has cleared but rating has not yet been posted" do
-      before do
-        allow(end_product_establishment).to receive(:potential_decision_ratings).and_return([])
+    context "for rating request issues with ratings" do
+      let!(:request_issues) do
+        # ep has 1 rating request issue which has a matching rating issue
+        [
+          create(
+            :request_issue,
+            review_request: higher_level_review,
+            end_product_establishment: end_product_establishment,
+            contention_reference_id: contention_ref_id
+          )
+        ]
       end
 
-      it "marks the RequestIssue for later sync via DecisionRatingIssueSyncJob" do
+      it "connects rating issues with request issues based on contention_reference_id" do
+        expect(request_issues.first.decision_issues.count).to eq(0)
+
         subject
 
-        request_issue = end_product_establishment.request_issues.first
-        expect(request_issue.submitted?).to eq(true)
-        expect(request_issue.processed?).to eq(false)
+        expect(request_issues.first.decision_issues.count).to eq(1)
+        expect(request_issues.first.decision_issues.first.rating_issue_reference_id).to eq(reference_id)
+      end
+
+      context "EPE has cleared but rating has not yet been posted" do
+        before do
+          allow(end_product_establishment).to receive(:potential_decision_ratings).and_return([])
+        end
+
+        it "marks the RequestIssue for later sync via DecisionRatingIssueSyncJob" do
+          subject
+
+          request_issue = end_product_establishment.request_issues.first
+          expect(request_issue.submitted?).to eq(true)
+          expect(request_issue.processed?).to eq(false)
+        end
+      end
+    end
+
+    context "for rating request issues with some ratings" do
+      before do
+        allow(Fakes::VBMSService).to receive(:fetch_dispositions_from_vbms).
+          with(end_product_establishment.reference_id).and_return(dispositions)
+      end
+
+      let(:disposition_text) {"disposition test"}
+      let(:dispositions) do
+        [
+          claim_id: end_product_establishment.reference_id,
+          contention_id: contention_ref_id_2,
+          disposition: disposition_text
+        ]
+      end
+      let!(:request_issues) do
+        # ep has 2 rating request issues
+        # first one matches with a rating issue
+        # second one does not have a matching rating issue
+        [
+          create(
+            :request_issue,
+            review_request: higher_level_review,
+            end_product_establishment: end_product_establishment,
+            contention_reference_id: contention_ref_id
+          ),
+          create(
+            :request_issue,
+            review_request: higher_level_review,
+            end_product_establishment: end_product_establishment,
+            contention_reference_id: contention_ref_id_2
+          )
+        ]
+      end
+
+      it "creates decision issues by matching rating issues or contentions for non-matching rating request issues" do
+        expect(request_issues.first.decision_issues.count).to eq(0)
+        expect(request_issues.second.decision_issues.count).to eq(0)
+
+        subject
+        expect(request_issues.first.decision_issues.count).to eq(1)
+        expect(request_issues.second.decision_issues.count).to eq(1)
+        expect(request_issues.first.decision_issues.first.rating_issue_reference_id).to eq(reference_id)
+        second_decision_issue = request_issues.second.decision_issues.first
+        expect(second_decision_issue.source_request_issue_id).to eq(request_issues[1].id)
+        expect(second_decision_issue.desposition).to eq(disposition_text)
+      end
+    end
+
+    context "for rating request issues without any ratings" do
+      let!(:request_issues) do
+        # ep has 1 rating request issue which does not have any
+        # matching rating issues
+        [
+          create(
+            :request_issue,
+            review_request: higher_level_review,
+            end_product_establishment: end_product_establishment,
+            contention_reference_id: contention_ref_id_2
+          )
+        ]
+      end
+
+      it "does not match any request issues with rating issues" do
+      end
+      it "connects request issues without rating issues based on contention desposition" do
+      end
+    end
+
+    context "for nonrating request issues" do
+      before do
+        allow(Fakes::VBMSService).to receive(:fetch_dispositions_from_vbms).
+          with(end_product_establishment.reference_id).and_return(dispositions)
+      end
+
+      let(:end_product_establishment) do
+        create(:end_product_establishment,
+          :cleared,
+          source: higher_level_review,
+          code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
+          )
+      end
+
+      let(:disposition_text) {"disposition test"}
+      let(:dispositions) do
+        [
+          claim_id: end_product_establishment.reference_id,
+          contention_id: contention_ref_id_2,
+          disposition: disposition_text
+        ]
+      end
+
+      let!(:request_issues) do
+        # ep has 1 non rating request issue
+        [
+          create(
+            :request_issue,
+            review_request: higher_level_review,
+            end_product_establishment: end_product_establishment,
+            contention_reference_id: contention_ref_id_2,
+            issue_category: "Apportionment",
+            decision_date: "2018-08-01"
+          )
+        ]
+      end
+
+      it "connects nonrating request issues based on contention desposition" do
+        expect(request_issues.first.decision_issues.count).to eq(0)
+        subject
+        expect(second_decision_issue.source_request_issue_id).to eq(request_issues[0].id)
+        expect(second_decision_issue.desposition).to eq(disposition_text)
       end
     end
   end

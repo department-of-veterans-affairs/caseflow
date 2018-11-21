@@ -103,6 +103,10 @@ class ClaimReview < DecisionReview
     request_issues.find { |reqi| reqi.description == description }
   end
 
+  def fetch_dispositions_from_vbms(reference_id)
+    VBMSService.get_dispositions!(claim_id: reference_id)
+  end
+
   private
 
   def informal_conference?
@@ -124,10 +128,6 @@ class ClaimReview < DecisionReview
         disposition: disposition.disposition
       )
     end
-  end
-
-  def fetch_dispositions_from_vbms(reference_id)
-    VBMSService.get_dispositions!(claim_id: reference_id)
   end
 
   def matching_request_issue(contention_id)

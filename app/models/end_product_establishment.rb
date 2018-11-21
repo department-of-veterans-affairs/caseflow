@@ -183,27 +183,33 @@ class EndProductEstablishment < ApplicationRecord
     resolve_synced_decisions(synced_rating_issues)
   end
 
-  def sync_decision_issues_from_contentions!
+  def has_nonrating_code
+    code === HigherLevelReview::END_PRODUCT_NONRATING_CODE ||
+      code === SupplementalClaim::END_PRODUCT_CODES[nonrating]
+  end
+
+  def sync_decision_issues_from_dispositons!(request_issues_without_ratings)
     # rating issues may not exist for every contention
     # - rating eps may not have matching ratings for each contention
     # - nonrating eps don't have ratings
-    # in these cases, use the contention desposition to create a decision issue
+    # in these cases, use the contention disposition to create a decision issue
+    dispositions = source.fetch_dispositions_from_vbms(reference_id)
 
-    # find request issues with no matching ratings
-    unmatched_request_issues = request_issues - potential_decision_ratings(&:source_request_issue)
-    unmatched_request_issues.each do |request_issue|
-      found_contention = contentions.detect { |contention| contention.contention_id == request_issue.contention_reference_id }
-      # will there be a case where there isn't a matching contention?
-      # also will all request issues have contention_ids?
-      request_issue.save_decision_issue(found_contention)
+    request_issues_without_ratings.each do |request_issue|
+      found_disposition = dispositions.detect { |disposition| disposition.contention_id == request_issue.contention_reference_id }
+      request_issue.save_decision_issue(found_disposition)
       request_issue.processed!
     end
   end
 
   def sync_decision_issues!
     return unless status_cleared?
-    sync_decision_issues_from_ratings!
-    sync_decision_issues_from_contentions!
+    if has_nonrating_code
+      sync_decision_issues_from_dispositons!(request_issues)
+    else
+      request_issues_to_sync_by_disposition = sync_decision_issues_from_ratings!
+      sync_decision_issues_from_dispositons!(request_issues_to_sync_by_disposition)
+    end
   end
 
   def status_canceled?
@@ -272,13 +278,33 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def resolve_synced_decisions(synced_rating_issues)
+    # synced_rating_issues can contain rating issues _not_ from this ep
+    # keep track of which rating request issues from this ep has a matching rating issue
+    synced_rating_request_issue_for_this_ep = []
     request_issues.reject(&:processed?).each do |request_issue|
       if synced_rating_issues.any? { |rating_issue| rating_issue.source_request_issue == request_issue }
         request_issue.processed!
-      else
+        if request_issues.includes?(request_issue)
+          synced_rating_request_issue_for_this_ep << request_issues
+        end 
+      elsif rating_request_issues.length == 0 && synced_rating_request_issue_for_this_ep.length == 0
+        # only submit for processing again if there are no request issues with associated ratings
         request_issue.submit_for_processing!
       end
     end
+
+    # if synced_rating_request_issue_for_this_ep is not empty
+    # meaning that some rating issues were generated for this ep
+    # we can assume that any rating request issues that are not matched
+    # will never get a matching rating issue
+    rating_request_issues_to_match_by_disposition = []
+    if synced_rating_request_issue_for_this_ep.length > 0 || rating_request_issues.length > 0
+      rating_request_issues_to_match_by_disposition = request_issues.reject(&:processed?) - rating_request_issues - synced_rating_request_issue_for_this_ep
+    end
+    # if synced_rating_request_issue_for_this_ep is empty
+    # we need to wait until some rating issues are returned
+
+    rating_request_issues_to_match_by_disposition
   end
 
   def rating_request_issues
