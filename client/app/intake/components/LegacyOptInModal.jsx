@@ -16,18 +16,26 @@ class LegacyOptInModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      vacolsId: ''
+      id: '',
+      vacolsSequenceId: '',
+      radioKey: ''
     };
   }
 
   radioOnChange = (value) => {
+    // legacy opt in are keyed off of a combo of both id & vacolsSequenceId
+    // NO_MATCH_TEXT does not have a vacolsSequenceId
+    const legacyValues = value.split('-');
+
     this.setState({
-      vacolsId: value
+      id: legacyValues[0],
+      vacolsSequenceId: legacyValues.length > 1 ? legacyValues[1] : '',
+      radioKey: value
     });
   }
 
   requiresUntimelyExemption = () => {
-    if (this.state.vacolsId !== NO_MATCH_TEXT) {
+    if (this.state.id !== NO_MATCH_TEXT) {
       return false;
     }
 
@@ -66,7 +74,7 @@ class LegacyOptInModal extends React.Component {
       const radioOptions = legacyAppeal.issues.map((issue) => {
         return {
           displayText: issue.description,
-          value: issue.id
+          value: `${issue.id}-${issue.vacols_sequence_id}`
         };
       });
 
@@ -84,7 +92,7 @@ class LegacyOptInModal extends React.Component {
         name="rating-radio"
         options={radioOptions}
         key={`${index}legacy-opt-in`}
-        value={this.state.vacolsId}
+        value={this.state.radioKey}
         onChange={this.radioOnChange}
       />;
     });
@@ -99,7 +107,7 @@ class LegacyOptInModal extends React.Component {
           { classNames: ['usa-button', 'add-issue'],
             name: 'Add this issue',
             onClick: this.onAddIssue,
-            disabled: !this.state.vacolsId
+            disabled: !this.state.id
           }
         ]}
         visible
