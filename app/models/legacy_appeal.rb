@@ -717,7 +717,7 @@ class LegacyAppeal < ApplicationRecord
         title: nod_date ? COPY::CASE_TIMELINE_NOD_RECEIVED : COPY::CASE_TIMELINE_NOD_PENDING,
         date: nod_date
       }
-    ].flatten
+    ]
   end
 
   private
