@@ -97,6 +97,9 @@ export const fetchAppealsUsingVeteranId = (searchQuery) =>
 
           return reject();
         }
+
+        const returnedObject = JSON.parse(response.text);
+
         dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
 
         // Expect all of the appeals will be for the same Caseflow Veteran ID so we pull off the first for the URL.
