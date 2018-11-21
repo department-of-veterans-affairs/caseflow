@@ -17,6 +17,10 @@ class Organization < ApplicationRecord
     users.pluck(:id).include?(user.id)
   end
 
+  def user_is_admin?(user)
+    organizations_users.where(admin: true).pluck(:user_id).include?(user.id)
+  end
+
   def path
     "/organizations/#{url ? url : id}"
   end
