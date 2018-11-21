@@ -121,7 +121,6 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   formatHearingDate = () => {
     const { selectedHearingDate, selectedHearingTime } = this.props;
-    console.log(selectedHearingDate);
 
     const dateParts = selectedHearingDate.split('-');
     const year = parseInt(dateParts[0], 10);
@@ -145,6 +144,12 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   submit = () => {
     const { task, appeal, selectedHearingDate, selectedRegionalOffice } = this.props;
+    const values = {
+      regional_office_value: this.getRegionalOffice(selectedRegionalOffice),
+      hearing_pkseq: this.props.task.taskBusinessPayloads[0].values.hearing_pkseq,
+      hearing_type: this.props.task.taskBusinessPayloads[0].values.hearing_type,
+      hearing_date: this.formatHearingDate()
+    };
 
     const payload = {
       data: {
@@ -152,12 +157,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           status: 'completed',
           business_payloads: {
             description: 'Update Task',
-            values: {
-              regional_office_value: this.getRegionalOffice(selectedRegionalOffice),
-              hearing_pkseq: this.props.task.taskBusinessPayloads[0].values.hearing_pkseq,
-              hearing_type: this.props.task.taskBusinessPayloads[0].values.hearing_type,
-              hearing_date: this.formatHearingDate()
-            }
+            values
           }
         }
       }
