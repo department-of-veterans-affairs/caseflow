@@ -13,6 +13,12 @@ class AddedIssue extends React.PureComponent {
     };
   }
 
+  componentDidMount() {
+    if (this.needsEligibilityCheck()) {
+      this.updateEligibleState();
+    }
+  }
+
   needsEligibilityCheck() {
     let { issue, requestIssues } = this.props;
 
@@ -66,10 +72,6 @@ class AddedIssue extends React.PureComponent {
 
   render() {
     let { issue, issueIdx } = this.props;
-
-    if (this.needsEligibilityCheck()) {
-      this.updateEligibleState();
-    }
 
     return <div className={this.state.cssKlasses.join(' ')}>
       <span className="issue-num">{issueIdx + 1}.&nbsp;</span>
