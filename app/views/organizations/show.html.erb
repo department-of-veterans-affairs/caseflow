@@ -13,7 +13,8 @@
     buildDate: build_date,
     featureToggles: {
       judge_case_review_checkout: FeatureToggle.enabled?(:judge_case_review_checkout, user: current_user),
-      judge_assignment_to_attorney: FeatureToggle.enabled?(:judge_assignment_to_attorney, user: current_user)
+      judge_assignment_to_attorney: FeatureToggle.enabled?(:judge_assignment_to_attorney, user: current_user),
+      ama_decision_issues: FeatureToggle.enabled?(:ama_decision_issues, user: current_user)
     }
   }) %>
 <% end %>

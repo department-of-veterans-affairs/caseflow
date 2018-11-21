@@ -30,8 +30,13 @@ class SelectIssueDispositionDropdown extends React.PureComponent<Props> {
   getStyling = () => {
     const {
       highlight,
+      noStyling,
       issue: { disposition }
     } = this.props;
+
+    if (noStyling) {
+      return;
+    }
 
     if (highlight && !disposition) {
       return css({
