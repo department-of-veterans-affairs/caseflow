@@ -72,7 +72,7 @@ class AddIssuesModal extends React.Component {
   }
 
   getNextButtonText = () => {
-    if (this.hasLegacyIssues()) {
+    if (this.hasLegacyAppeals()) {
       return 'Next';
     }
 

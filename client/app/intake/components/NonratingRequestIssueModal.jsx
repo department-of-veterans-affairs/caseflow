@@ -43,12 +43,12 @@ class NonratingRequestIssueModal extends React.Component {
     });
   }
 
-  hasLegacyIssues = () => {
-    return this.props.intakeData.legacyIssues.length > 0;
+  hasLegacyAppeals = () => {
+    return this.props.intakeData.legacyAppeals.length > 0;
   }
 
   getNextButtonText = () => {
-    if (this.hasLegacyIssues()) {
+    if (this.hasLegacyAppeals()) {
       return 'Next';
     }
 
@@ -79,7 +79,7 @@ class NonratingRequestIssueModal extends React.Component {
       isRating: false
     };
 
-    if (this.hasLegacyIssues()) {
+    if (this.hasLegacyAppeals()) {
       this.props.toggleLegacyOptInModal({
         currentIssue,
         notes: null });
