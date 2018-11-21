@@ -2,16 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { css } from 'glamor';
 import _ from 'lodash';
 
 import decisionViewBase from './components/DecisionViewBase';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import IssueList from './components/IssueList';
 import SelectIssueDispositionDropdown from './components/SelectIssueDispositionDropdown';
 import Modal from '../components/Modal';
 import TextareaField from '../components/TextareaField';
-import Alert from '../components/Alert';
 import SearchableDropdown from '../components/SearchableDropdown';
 import ContestedIssues from './components/ContestedIssues';
 import COPY from '../../COPY.json';
@@ -24,36 +20,13 @@ import {
 } from './QueueActions';
 import { hideSuccessMessage } from './uiReducer/uiActions';
 import {
-  fullWidth,
-  marginBottom,
-  marginLeft,
   PAGE_TITLES,
   VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS
 } from './constants';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
-import { getUndecidedIssues } from './utils';
 
 import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES.json';
-
-const tableStyling = css({
-  '& tr': {
-    borderBottom: 'none'
-  }
-});
-const tbodyStyling = css({
-  '& > tr > td': {
-    verticalAlign: 'top',
-    paddingTop: '2rem',
-    '&:first-of-type': {
-      width: '40%'
-    },
-    '&:last-of-type': {
-      width: '35%'
-    }
-  }
-});
-const smallTopMargin = css({ marginTop: '1rem' });
 
 class AmaSelectDispositionsView extends React.PureComponent {
   constructor(props) {
@@ -173,7 +146,8 @@ class AmaSelectDispositionsView extends React.PureComponent {
         <h3>{COPY.DECISION_ISSUE_MODAL_BENEFIT_TYPE}</h3>
         <SearchableDropdown
           value={issue.benefitType}
-          options={_.map(BENEFIT_TYPES, (value, key) => ({label: value, value: key}))}
+          options={_.map(BENEFIT_TYPES, (value, key) => ({ label: value,
+            value: key }))}
         />
 
       </Modal>}

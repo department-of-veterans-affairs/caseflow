@@ -1,12 +1,7 @@
-// @flow
 import * as React from 'react';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
 import Button from '../../components/Button';
-
-import IssueListItem from './IssueListItem';
-import LegacyIssueListItem from './LegacyIssueListItem';
-import { NO_ISSUES_ON_APPEAL_MSG } from '../../reader/constants';
 
 const contestedIssueStyling = css({
   backgroundColor: COLORS.GREY_BACKGROUND,
@@ -23,7 +18,7 @@ const buttonDiv = css({
   marginBottom: '20px'
 });
 
-export default class ContestedIssues extends React.PureComponent<Props> {
+export default class ContestedIssues extends React.PureComponent {
   render = () => {
     const {
       requestIssues,

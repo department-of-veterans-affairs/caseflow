@@ -25,8 +25,6 @@ const headingStyling = css({
 });
 
 export default function CaseDetailsIssueList(props) {
-  let IssueComponent = LegacyIssueDetails;
-
   if (!props.isLegacyAppeal && props.amaIssueType) {
     return <ContestedIssues
       requestIssues={props.issues}
@@ -47,13 +45,6 @@ export default function CaseDetailsIssueList(props) {
 }
 
 const AmaIssueDetails = (props) => <CaseDetailsDescriptionList>
-  <dt>Hello! Description</dt><dd>{props.children.description}</dd>
-  {props.children.disposition && <React.Fragment>
-    <dt>Disposition</dt><dd>{ISSUE_DISPOSITIONS_BY_ID[props.children.disposition]}</dd>
-  </React.Fragment>}
-</CaseDetailsDescriptionList>;
-
-const LegacyAmaIssueDetails = (props) => <CaseDetailsDescriptionList>
   <dt>Description</dt><dd>{props.children.description}</dd>
   {props.children.disposition && <React.Fragment>
     <dt>Disposition</dt><dd>{ISSUE_DISPOSITIONS_BY_ID[props.children.disposition]}</dd>

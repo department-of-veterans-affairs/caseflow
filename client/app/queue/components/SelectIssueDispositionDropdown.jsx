@@ -23,7 +23,8 @@ type Params = {|
 |};
 
 type Props = Params & {|
-  highlight: boolean
+  highlight: boolean,
+  noStyling: boolean
 |}
 
 class SelectIssueDispositionDropdown extends React.PureComponent<Props> {
