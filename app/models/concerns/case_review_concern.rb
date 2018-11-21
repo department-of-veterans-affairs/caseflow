@@ -54,7 +54,7 @@ module CaseReviewConcern
   def update_issue_dispositions
     (issues || []).each do |issue_attrs|
       request_issue = appeal.request_issues.find_by(id: issue_attrs["id"]) if appeal
-      return unless request_issue
+      next unless request_issue
 
       request_issue.update(disposition: issue_attrs["disposition"])
       # If disposition was remanded and now is changed to another dispostion,

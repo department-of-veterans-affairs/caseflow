@@ -17,20 +17,22 @@ describe AttorneyCaseReview do
 
     let(:decision_issue3) { create(:decision_issue) }
     let(:decision_issue4) { create(:decision_issue) }
-    let(:request_issue6) { create(:request_issue, review_request: appeal, decision_issues: [decision_issue3, decision_issue4]) }
+    let(:request_issue6) do 
+      create(:request_issue, review_request: appeal, decision_issues: [decision_issue3, decision_issue4])
+    end
 
     let(:issues) do
-      [{ disposition: "allowed", description: "something1", 
+      [{ disposition: "allowed", description: "something1",
          request_issue_ids: [request_issue1.id, request_issue2.id] },
-       { disposition: "remanded", description: "something2", 
+       { disposition: "remanded", description: "something2",
          request_issue_ids: [request_issue1.id, request_issue2.id] },
-       { disposition: "allowed", description: "something3", 
+       { disposition: "allowed", description: "something3",
          request_issue_ids: [request_issue3.id, request_issue4.id] },
-       { disposition: "allowed", description: "something4", 
+       { disposition: "allowed", description: "something4",
          request_issue_ids: [request_issue5.id] },
-       { disposition: "remanded", description: "something5", 
+       { disposition: "remanded", description: "something5",
          request_issue_ids: [request_issue5.id] },
-       { disposition: "allowed", description: "something6", 
+       { disposition: "allowed", description: "something6",
          request_issue_ids: [request_issue6.id] }]
     end
 

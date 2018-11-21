@@ -73,8 +73,10 @@ RSpec.describe CaseReviewsController, type: :controller do
               "document_id": "123456789.1234",
               "overtime": true,
               "note": "something",
-              "issues": [{ "disposition": "allowed", "description": "wonderful life", "request_issue_ids": [request_issue1.id, request_issue3.id] },
-                         { "disposition": "remanded", "description": "great moments", "request_issue_ids": [request_issue2.id] }]
+              "issues": [{ "disposition": "allowed", "description": "wonderful life",
+                           "request_issue_ids": [request_issue1.id, request_issue3.id] },
+                         { "disposition": "remanded", "description": "great moments",
+                           "request_issue_ids": [request_issue2.id] }]
             }
           end
           let!(:bva_dispatch_task_count_before) { BvaDispatchTask.count }
