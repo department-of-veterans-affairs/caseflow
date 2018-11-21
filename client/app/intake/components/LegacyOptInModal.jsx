@@ -69,16 +69,16 @@ class LegacyOptInModal extends React.Component {
     } = this.props;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
-    const legacyIssuesSections = intakeData.legacyIssues.map((legacyIssue, index) => {
-      const radioOptions = legacyIssue.issues.map((issue) => {
+    const legacyAppealsSections = intakeData.legacyAppeals.map((legacyAppeal, index) => {
+      const radioOptions = legacyAppeal.issues.map((issue) => {
         return {
           displayText: issue.description,
-          value: String(issue.vacols_sequence_id)
+          value: issue.id
         };
       });
 
       // on the last issue add a radio button for "None of these match"
-      if (index === intakeData.legacyIssues.length - 1) {
+      if (index === intakeData.legacyAppeals.length - 1) {
         radioOptions.push({
           displayText: NO_MATCH_TEXT,
           value: NO_MATCH_TEXT
@@ -87,7 +87,7 @@ class LegacyOptInModal extends React.Component {
 
       return <RadioField
         vertical
-        label={<h3>Notice of Disagreement Date { formatDateStr(legacyIssue.date) }</h3>}
+        label={<h3>Notice of Disagreement Date { formatDateStr(legacyAppeal.date) }</h3>}
         name="rating-radio"
         options={radioOptions}
         key={`${index}legacy-opt-in`}
@@ -117,7 +117,7 @@ class LegacyOptInModal extends React.Component {
           <h2>
             Does issue {issueNumber} match any of these VACOLS issues?
           </h2>
-          { legacyIssuesSections }
+          { legacyAppealsSections }
         </div>
       </Modal>
     </div>;

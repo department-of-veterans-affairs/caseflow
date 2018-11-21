@@ -81,9 +81,6 @@ RSpec.feature "Supplemental Claim Intake" do
     )
   end
 
-  let(:search_bar_title) { "Enter the Veteran's ID" }
-  let(:search_page_title) { "Search for Veteran ID" }
-
   it "Creates an end product" do
     # Testing two relationships, tests 1 relationship in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
@@ -638,6 +635,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
       expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
+      expect(page).to have_content('Unidentified issue: no issue matched for requested "This is an unidentified issue"')
       success_checklist = find("ul.cf-success-checklist")
       expect(success_checklist).to_not have_content("Non-RAMP issue before AMA Activation")
       expect(success_checklist).to_not have_content("A nonrating issue before AMA")

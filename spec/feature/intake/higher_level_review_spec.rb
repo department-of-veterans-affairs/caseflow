@@ -75,9 +75,6 @@ RSpec.feature "Higher-Level Review" do
     )
   end
 
-  let(:search_bar_title) { "Enter the Veteran's ID" }
-  let(:search_page_title) { "Search for Veteran ID" }
-
   it "Creates an end product and contentions for it" do
     # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
@@ -827,6 +824,7 @@ RSpec.feature "Higher-Level Review" do
 
       expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
       expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
+      expect(page).to have_content('Unidentified issue: no issue matched for requested "This is an unidentified issue"')
       success_checklist = find("ul.cf-success-checklist")
       expect(success_checklist).to_not have_content("Already reviewed injury")
       expect(success_checklist).to_not have_content("Another Description for Active Duty Adjustments")
@@ -1033,7 +1031,6 @@ RSpec.feature "Higher-Level Review" do
 
         expect(page).to have_content("Next")
         add_intake_rating_issue("Left knee granted")
-
         # expect legacy opt in modal
         expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
         add_intake_rating_issue("None of these match")
