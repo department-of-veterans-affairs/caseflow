@@ -1,6 +1,9 @@
 require "rails_helper"
+require "support/intake_helpers"
 
 RSpec.feature "Intake" do
+  include IntakeHelpers
+
   before do
     FeatureToggle.enable!(:intake)
 
@@ -32,9 +35,6 @@ RSpec.feature "Intake" do
       bfdnod: 1.year.ago
     )
   end
-
-  let(:search_bar_title) { "Enter the Veteran's ID" }
-  let(:search_page_title) { "Search for Veteran ID" }
 
   context "As a user with unauthorized role" do
     let!(:current_user) do
