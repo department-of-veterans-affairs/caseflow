@@ -21,11 +21,6 @@ describe LegacyAppeal do
 
     let(:issues) { [Generators::Issue.build(vacols_sequence_id: 1)] }
 
-    before do
-      stub_const("LegacyAppeal::APPEAL_ISSUE_SOC_ELIGIBLE", soc_eligible_date)
-      stub_const("LegacyAppeal::APPEAL_ISSUE_NOD_ELIGIBLE", nod_eligible_date)
-    end
-
     scenario "when is active but not eligible" do
       allow(appeal).to receive(:active?).and_return(true)
       allow(appeal).to receive(:issues).and_return(issues)
