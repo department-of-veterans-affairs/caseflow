@@ -39,13 +39,12 @@ class LegacyOptInModal extends React.Component {
     // currently just adds the issue & checks for untimeliness
     // if vacols issue is selected, logic to be implemented by 7336 & 7337
     console.log("intakeData::", this.props.intakeData)
-    const currentIssueAndNotes = this.props.intakeData.currentIssuesAndNotes;
-    const currentIssue = currentIssueAndNotes.currentIssue;
-    const notes = currentIssueAndNotes.notes;
+    const currentIssue = this.props.intakeData.currentIssueAndNotes.currentIssue;
+    const notes = this.props.intakeData.currentIssueAndNotes.notes;
 
     if (this.requiresUntimelyExemption()) {
       return this.props.toggleUntimelyExemptionModal({ currentIssue, notes });
-    } else if (currentIssue.isRating) {
+    } else if (currentIssue.reference_id) {
         this.props.addRatingRequestIssue({
         issueId: currentIssue.reference_id,
         ratings: this.props.intakeData.ratings,
