@@ -34,8 +34,7 @@ module CaseReviewConcern
     return unless appeal
     # We will always delete and re-create decision issues on attorney/judge checkout
     decision_issue_ids_to_delete = appeal.decision_issues.map(&:id)
-    RequestDecisionIssue.where(decision_issue_id: decision_issue_ids_to_delete).delete_all
-    DecisionIssue.where(id: decision_issue_ids_to_delete).delete_all
+    DecisionIssue.where(id: decision_issue_ids_to_delete).destroy_all
 
     issues.each do |issue_attrs|
       request_issues = appeal.request_issues.where(id: issue_attrs[:request_issue_ids])

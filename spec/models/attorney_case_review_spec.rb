@@ -17,7 +17,7 @@ describe AttorneyCaseReview do
 
     let(:decision_issue3) { create(:decision_issue) }
     let(:decision_issue4) { create(:decision_issue) }
-    let(:request_issue6) do 
+    let(:request_issue6) do
       create(:request_issue, review_request: appeal, decision_issues: [decision_issue3, decision_issue4])
     end
 
@@ -42,6 +42,7 @@ describe AttorneyCaseReview do
       subject
       old_decision_issue_ids = [decision_issue1.id, decision_issue2.id, decision_issue3.id, decision_issue4.id]
       expect(DecisionIssue.where(id: old_decision_issue_ids)).to eq []
+      expect(RequestDecisionIssue.where(decision_issue_id: old_decision_issue_ids)).to eq []
       expect(request_issue1.reload.decision_issues.size).to eq 2
       expect(request_issue2.reload.decision_issues.size).to eq 2
       expect(request_issue1.decision_issues).to eq request_issue2.decision_issues
