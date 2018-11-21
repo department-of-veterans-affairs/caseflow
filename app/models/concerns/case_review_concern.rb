@@ -21,22 +21,45 @@ module CaseReviewConcern
     if task.type == "AttorneyTask" && task.assigned_by_id != reviewing_judge_id
       task.parent.update(assigned_to_id: reviewing_judge_id)
     end
-    (issues || []).each do |issue_attrs|
-      update_issue_disposition(issue_attrs)
+
+    # Remove this check when feature flag 'ama_decision_issues' is enabled for all
+    if FeatureToggle.enabled?(:ama_decision_issues, user: RequestStore.store[:current_user])
+      delete_and_create_decision_issues
+    else
+      update_issue_dispositions
     end
   end
 
-  def update_issue_disposition(issue_attrs)
-    # TODO: update request issues for RAMP appeals for now. When we build out
-    # decision issues further, we'll update those.
-    request_issue = appeal.request_issues.find_by(id: issue_attrs["id"]) if appeal
-    # TODO: throw error if request issue is not found
-    return unless request_issue
+  def delete_and_create_decision_issues
+    return unless appeal
+    # We will always delete and re-create decision issues on attorney/judge checkout
+    decision_issue_ids_to_delete = appeal.decision_issues.map(&:id)
+    DecisionIssue.where(id: decision_issue_ids_to_delete).destroy_all
 
-    request_issue.update(disposition: issue_attrs["disposition"])
-    # If disposition was remanded and now is changed to another dispostion,
-    # delete all remand reasons associated with the request issue
-    update_remand_reasons(request_issue, issue_attrs["remand_reasons"] || [])
+    issues.each do |issue_attrs|
+      request_issues = appeal.request_issues.where(id: issue_attrs[:request_issue_ids])
+      next if request_issues.empty?
+      decision_issue = DecisionIssue.create!(
+        disposition: issue_attrs[:disposition],
+        description: issue_attrs[:description],
+        participant_id: appeal.veteran.participant_id
+      )
+      request_issues.each do |request_issue|
+        RequestDecisionIssue.create!(decision_issue: decision_issue, request_issue: request_issue)
+      end
+    end
+  end
+
+  def update_issue_dispositions
+    (issues || []).each do |issue_attrs|
+      request_issue = appeal.request_issues.find_by(id: issue_attrs["id"]) if appeal
+      next unless request_issue
+
+      request_issue.update(disposition: issue_attrs["disposition"])
+      # If disposition was remanded and now is changed to another dispostion,
+      # delete all remand reasons associated with the request issue
+      update_remand_reasons(request_issue, issue_attrs["remand_reasons"] || [])
+    end
   end
 
   def update_remand_reasons(request_issue, remand_reasons_attrs)
@@ -69,7 +92,7 @@ module CaseReviewConcern
   end
 
   def legacy?
-    (task_id =~ /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i) ? true : false
+    (task_id =~ LegacyTask::TASK_ID_REGEX) ? true : false
   end
 
   def vacols_id
