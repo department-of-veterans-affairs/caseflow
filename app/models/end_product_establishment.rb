@@ -11,7 +11,7 @@ class EndProductEstablishment < ApplicationRecord
   class ContentionCreationFailed < StandardError; end
 
   attr_accessor :valid_modifiers, :special_issues
-  # In AMA reviews, we may create 2 end products at the same time. To avoid using
+  # In decision reviews, we may create 2 end products at the same time. To avoid using
   # the same modifier, we add used modifiers to the invalid_modifiers array.
   attr_writer :invalid_modifiers
   belongs_to :source, polymorphic: true

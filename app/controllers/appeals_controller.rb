@@ -4,7 +4,7 @@ class AppealsController < ApplicationController
   before_action :react_routed
   before_action :set_application, only: [:document_count, :new_documents]
   # Only whitelist endpoints VSOs should have access to.
-  skip_before_action :deny_vso_access, only: [:index, :show_case_list, :show]
+  skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran]
 
   def index
     get_appeals_for_file_number(request.headers["HTTP_VETERAN_ID"]) && return
@@ -159,24 +159,6 @@ class AppealsController < ApplicationController
         "detail": "Veteran ID should be included as HTTP_VETERAN_ID element of request headers"
       ]
     }, status: 400
-  end
-
-  def handle_non_critical_error(endpoint, err)
-    if !err.class.method_defined? :serialize_response
-      code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
-      err = Caseflow::Error::SerializableError.new(code: code, message: err.to_s)
-    end
-
-    DataDogService.increment_counter(
-      metric_group: "errors",
-      metric_name: "non_critical",
-      app_name: RequestStore[:application],
-      attrs: {
-        endpoint: endpoint
-      }
-    )
-
-    render err.serialize_response
   end
 
   def json_appeals(appeals)
