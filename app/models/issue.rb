@@ -185,7 +185,7 @@ class Issue
     }
   end
 
-  def intake_attributes(is_untimely = false)
+  def intake_attributes(is_untimely: false)
     {
       id: id,
       vacols_sequence_id: vacols_sequence_id,
