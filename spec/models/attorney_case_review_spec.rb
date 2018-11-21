@@ -1,6 +1,9 @@
 describe AttorneyCaseReview do
   let(:attorney) { FactoryBot.create(:user) }
+  let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+
   let(:judge) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID) }
+  let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id) }
 
   context "#create_and_delete_decision_issues" do
     let(:appeal) { create(:appeal) }
@@ -76,7 +79,7 @@ describe AttorneyCaseReview do
     subject { AttorneyCaseReview.complete(params) }
 
     context "when ama" do
-      let(:task_id) { create(:ama_attorney_task).id }
+      let(:task_id) { create(:ama_attorney_task, assigned_by: judge, assigned_to: attorney).id }
 
       context "when all parameters are present" do
         it "should create draft decision record" do
@@ -93,8 +96,6 @@ describe AttorneyCaseReview do
 
     context "when legacy" do
       let(:task_id) { "#{vacols_case.bfkey}-#{vacols_case.decass[0].deadtim.strftime('%F')}" }
-      let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
-      let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id) }
       let(:case_issues) { [] }
       let(:vacols_case) { FactoryBot.create(:case, :assigned, staff: vacols_atty, case_issues: case_issues) }
 
@@ -179,7 +180,7 @@ describe AttorneyCaseReview do
         context "when ama" do
           let(:document_type) { Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"] }
           let(:work_product) { "Decision" }
-          let(:task) { create(:ama_attorney_task) }
+          let(:task) { create(:ama_attorney_task, assigned_by: judge, assigned_to: attorney) }
           let(:task_id) { task.id }
           let(:request_issue1) do
             create(:request_issue, review_request: task.appeal, disposition: "remanded")
