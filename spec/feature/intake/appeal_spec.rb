@@ -71,9 +71,6 @@ RSpec.feature "Appeal Intake" do
     )
   end
 
-  let(:search_bar_title) { "Enter the Veteran's ID" }
-  let(:search_page_title) { "Search for Veteran ID" }
-
   it "Creates an appeal" do
     # Testing no relationships in Appeal and Veteran is claimant, tests two relationships in HRL and one in SC
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(nil)
@@ -458,6 +455,15 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
     expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
+    expect(page).to have_content('Unidentified issue: no issue matched for requested "This is an unidentified issue"')
+
+    success_checklist = find("ul.cf-success-checklist")
+    expect(success_checklist).to_not have_content("Non-RAMP issue before AMA Activation")
+    expect(success_checklist).to_not have_content("A nonrating issue before AMA")
+
+    ineligible_checklist = find("ul.cf-ineligible-checklist")
+    expect(ineligible_checklist).to have_content("Non-RAMP Issue before AMA Activation is ineligible")
+    expect(ineligible_checklist).to have_content("A nonrating issue before AMA is ineligible")
 
     expect(Appeal.find_by(
              id: appeal.id,

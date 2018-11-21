@@ -101,6 +101,12 @@ describe "Appeals API v2", type: :request do
 
     let(:api_key) { ApiKey.create!(consumer_name: "Testington Roboterson") }
 
+    before do
+      allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs, ssn|
+        ssn
+      end
+    end
+
     it "returns 401 if API key not authorized" do
       headers = {
         "ssn": "111223333",

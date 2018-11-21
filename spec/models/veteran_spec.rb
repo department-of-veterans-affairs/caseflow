@@ -415,4 +415,22 @@ describe Veteran do
       expect(veteran.valid?(:bgs)).to be false
     end
   end
+
+  describe ".find_by_file_number_or_ssn" do
+    let(:file_number) { "123456789" }
+    let(:ssn) { file_number.to_s.reverse } # our fakes do this
+    let!(:veteran) { create(:veteran, file_number: file_number) }
+
+    it "fetches based on file_number" do
+      expect(described_class.find_by_file_number_or_ssn(file_number)).to eq(veteran)
+    end
+
+    it "fetches based on SSN" do
+      expect(described_class.find_by_file_number_or_ssn(ssn)).to eq(veteran)
+    end
+
+    it "returns nil if a Veteran does not exist in BGS or Caseflow" do
+      expect(described_class.find_by_file_number_or_ssn("000000000")).to be_nil
+    end
+  end
 end
