@@ -121,6 +121,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   formatHearingDate = () => {
     const { selectedHearingDate, selectedHearingTime } = this.props;
+    console.log(selectedHearingDate);
 
     const dateParts = selectedHearingDate.split('-');
     const year = parseInt(dateParts[0], 10);
@@ -207,7 +208,11 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   render = () => {
     const { timeOptions } = this.state;
-    const { selectedHearingDate, selectedRegionalOffice, selectedHearingTime, onHearingTimeChange } = this.props;
+    const {
+      selectedHearingDate, selectedRegionalOffice,
+      selectedHearingTime, onHearingTimeChange,
+      onHearingDateChange
+    } = this.props;
 
     return <React.Fragment>
       <div {...fullWidth} {...css({ marginBottom: '0' })} >
@@ -221,7 +226,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
         {selectedRegionalOffice && <HearingDateDropdown
           key={selectedRegionalOffice}
           regionalOffice={selectedRegionalOffice}
-          onChange={this.props.onHearingDateChange}
+          onChange={(opt) => { onHearingDateChange(opt.value) }}
           value={selectedHearingDate}
           readOnly={false}
           changePrompt
