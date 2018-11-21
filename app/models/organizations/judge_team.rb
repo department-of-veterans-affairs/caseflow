@@ -8,4 +8,8 @@ class JudgeTeam < Organization
     OrganizationsUser.make_user_admin(user, org)
     org
   end
+
+  def can_receive_task?(_task)
+    false
+  end
 end
