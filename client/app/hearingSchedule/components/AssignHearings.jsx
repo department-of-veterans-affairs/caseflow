@@ -179,7 +179,9 @@ export default class AssignHearings extends React.Component {
         valueFunction: (veteran) => <Link
           href={`/queue/appeals/${veteran.vacolsId}/${qry}`}
           name={veteran.vacolsId}
-          onClick={(e) => { this.onClick(veteran.vacolsId) }}>
+          onClick={() => {
+            this.onClick(veteran.vacolsId);
+          }}>
           {veteran.caseDetails}
         </Link>
       },

@@ -14,7 +14,7 @@ import {
 import { onRegionalOfficeChange, onHearingDateChange, onHearingTimeChange } from '../../components/common/actions';
 import { fullWidth } from '../constants';
 import editModalBase from './EditModalBase';
-import { formatDate, formatDateStr, formatDateStringForApi, getTime } from '../../util/DateUtil';
+import { formatDate, formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
 
 import type {
   State
@@ -101,9 +101,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     return '';
   }
 
-
   componentWillMount = () => {
-    const { hearingDay, task } = this.props;
+    const { hearingDay } = this.props;
 
     this.props.onRegionalOfficeChange(this.getRO());
 
@@ -138,16 +137,12 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     return hearingDate;
   };
 
-  getRegionalOffice = (regionalOffice) => {
-    return regionalOffice.value ? regionalOffice.value : regionalOffice;
-  };
-
   submit = () => {
     const { task, appeal, selectedHearingDate, selectedRegionalOffice } = this.props;
     const values = {
-      regional_office_value: this.getRegionalOffice(selectedRegionalOffice),
-      hearing_pkseq: this.props.task.taskBusinessPayloads[0].values.hearing_pkseq,
-      hearing_type: this.props.task.taskBusinessPayloads[0].values.hearing_type,
+      regional_office_value: selectedRegionalOffice,
+      hearing_pkseq: task.taskBusinessPayloads[0].values.hearing_pkseq,
+      hearing_type: task.taskBusinessPayloads[0].values.hearing_type,
       hearing_date: this.formatHearingDate()
     };
 
@@ -163,7 +158,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       }
     };
 
-    const hearingType = this.props.task.taskBusinessPayloads[0].values.hearing_type ===
+    const hearingType = task.taskBusinessPayloads[0].values.hearing_type ===
                           CENTRAL_OFFICE_HEARING ? 'CO' : VIDEO_HEARING;
     const hearingDateStr = formatDateStr(selectedHearingDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
     const title = `You have successfully assigned ${appeal.veteranFullName} to a ${hearingType} hearing ` +
@@ -202,7 +197,6 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       return {};
     }
 
-    //  const timeStr = getTime(selectedTime);
     return _.find(timeOptions, (option) => option.value === selectedHearingTime);
   }
 
@@ -210,14 +204,15 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     const { timeOptions } = this.state;
     const {
       selectedHearingDate, selectedRegionalOffice,
-      selectedHearingTime, onHearingTimeChange,
-      onHearingDateChange
+      selectedHearingTime
     } = this.props;
 
     return <React.Fragment>
       <div {...fullWidth} {...css({ marginBottom: '0' })} >
         <RoSelectorDropdown
-          onChange={this.props.onRegionalOfficeChange}
+          onChange={(opt) => {
+            this.props.onRegionalOfficeChange(opt.value);
+          }}
           value={selectedRegionalOffice}
           readOnly
           changePrompt
@@ -226,7 +221,9 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
         {selectedRegionalOffice && <HearingDateDropdown
           key={selectedRegionalOffice}
           regionalOffice={selectedRegionalOffice}
-          onChange={(opt) => { onHearingDateChange(opt.value) }}
+          onChange={(opt) => {
+            this.props.onHearingDateChange(opt.value);
+          }}
           value={selectedHearingDate}
           readOnly={false}
           changePrompt
@@ -237,7 +234,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           label="Time"
           strongLabel
           options={timeOptions}
-          onChange={onHearingTimeChange}
+          onChange={this.props.onHearingTimeChange}
           value={selectedHearingTime} />
       </div>
     </React.Fragment>;

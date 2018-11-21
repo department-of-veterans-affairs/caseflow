@@ -101,7 +101,8 @@ export type QueueState = {|
 export type CommonComponentState = {|
   regionalOffices: Array<Object>,
   selectedRegionalOffice: { label: string, value: string },
-  selectedHearingDate: string
+  selectedHearingDate: string,
+  selectedHearingTime: string
 |};
 
 export type State = {
