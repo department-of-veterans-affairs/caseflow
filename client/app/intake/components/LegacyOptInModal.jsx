@@ -66,7 +66,7 @@ class LegacyOptInModal extends React.Component {
       const radioOptions = legacyAppeal.issues.map((issue) => {
         return {
           displayText: issue.description,
-          value: String(issue.vacols_sequence_id)
+          value: issue.id
         };
       });
 
