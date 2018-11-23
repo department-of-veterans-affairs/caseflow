@@ -453,14 +453,20 @@ RSpec.feature "Case details" do
     describe "Issue order by created_at in Case Details page" do
       context "when there are two issues" do
         let!(:appeal) { FactoryBot.create(:appeal) }
-        issue_description = 'Head trauma 1'
-        issue_description2 = 'Head trauma 2'
-        let!(:request_issue) { FactoryBot.create(:request_issue, review_request_id: appeal.id, description: issue_description, review_request_type: "Appeal") }
-        let!(:request_issue2) { FactoryBot.create(:request_issue, review_request_id: appeal.id, description: issue_description2, review_request_type: "Appeal") }
+        issue_description = "Head trauma 1"
+        issue_description2 = "Head trauma 2"
+        let!(:request_issue) do
+          FactoryBot.create(:request_issue, review_request_id: appeal.id, description: issue_description,
+                                            review_request_type: "Appeal")
+        end
+        let!(:request_issue2) do
+          FactoryBot.create(:request_issue, review_request_id: appeal.id, description: issue_description2,
+                                            review_request_type: "Appeal")
+        end
 
         it "should display sorted issues" do
           visit "/queue/appeals/#{appeal.uuid}"
-          expect(page).to have_content(issue_description+ ' Issue 2 DESCRIPTION ' + issue_description2)
+          expect(page).to have_content(issue_description + " Issue 2 DESCRIPTION " + issue_description2)
         end
       end
     end
