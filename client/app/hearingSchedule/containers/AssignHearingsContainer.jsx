@@ -115,7 +115,7 @@ class AssignHearingsContainer extends React.PureComponent {
         <section className="usa-form-large" {...roSelectionStyling}>
           <RoSelectorDropdown
             onChange={this.props.onRegionalOfficeChange}
-            value={this.props.selectedRegionalOffice}
+            value={this.props.selectedRegionalOffice ? this.props.selectedRegionalOffice : null}
             staticOptions={centralOfficeStaticEntry}
           />
         </section>
