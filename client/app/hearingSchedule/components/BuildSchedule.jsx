@@ -147,6 +147,7 @@ export default class BuildSchedule extends React.Component {
         columns={pastUploadsColumns}
         rowObjects={pastUploadsRows}
         summary="past-uploads"
+        slowReRendersAreOk
       />
     </AppSegment>;
   }
@@ -165,4 +166,3 @@ BuildSchedule.propTypes = {
   schedulePeriod: PropTypes.object,
   displaySuccessMessage: PropTypes.bool
 };
-
