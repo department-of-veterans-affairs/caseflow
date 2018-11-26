@@ -29,7 +29,8 @@ class AddedIssue extends React.PureComponent {
     let errorMsg = '';
 
     if (issue.isUnidentified) {
-      return;
+      return { errorMsg,
+        cssKlasses: ['issue-desc', 'not-eligible'] };
     }
 
     if (issue.titleOfActiveReview) {
