@@ -68,12 +68,6 @@ class ClaimReviewIntake < DecisionReviewIntake
     end
   end
 
-  def update_person!
-    Person.find_or_create_by(participant_id: detail.claimant_participant_id).tap do |person|
-      person.update!(date_of_birth: BGSService.new.fetch_person_info(detail.claimant_participant_id)[:birth_date])
-    end
-  end
-
   def need_payee_code?
     # payee_code is only required for claim reviews where the veteran is
     # not the claimant and the benefit_type is compensation or pension

@@ -14,11 +14,13 @@ class AppealIntake < DecisionReviewIntake
 
     transaction do
       detail.assign_attributes(review_params)
-      detail.create_claimants!(
+      Claimant.create!(
         participant_id: claimant_participant_id,
-        payee_code: nil
+        payee_code: nil,
+        review_request: detail
       )
       detail.save(context: :intake_review)
+      update_person!
     end
   rescue ActiveRecord::RecordInvalid => _err
     # propagate the error from invalid column to the user-visible reason
@@ -39,7 +41,6 @@ class AppealIntake < DecisionReviewIntake
   private
 
   def claimant_participant_id
-    binding.pry
     request_params[:veteran_is_not_claimant] ? request_params[:claimant] : veteran.participant_id
   end
 
