@@ -49,7 +49,7 @@ class DecisionReview < ApplicationRecord
       },
       relationships: veteran && veteran.relationships,
       claimant: claimant_participant_id,
-      claimantNotVeteran: claimant_not_veteran,
+      veteranIsNotClaimant: veteran_is_not_claimant,
       receiptDate: receipt_date.to_formatted_s(:json_date),
       legacyOptInApproved: legacy_opt_in_approved,
       legacyIssues: serialized_legacy_issues,
@@ -69,6 +69,7 @@ class DecisionReview < ApplicationRecord
 
   def create_claimants!(participant_id:, payee_code:)
     remove_claimants!
+    claimant_participant_id = veteran_is_not_claimant ? participant_id : veteran.participant_id
     claimants.create_from_intake_data!(participant_id: participant_id, payee_code: payee_code)
   end
 
@@ -82,6 +83,8 @@ class DecisionReview < ApplicationRecord
   end
 
   def claimant_not_veteran
+    # This is being replaced by veteran_is_not_claimant, but keeping it temporarily
+    # until data is backfilled
     claimant_participant_id && claimant_participant_id != veteran.participant_id
   end
 

@@ -18,16 +18,17 @@ export default class SelectClaimant extends React.PureComponent {
   render = () => {
     const {
       isVeteranDeceased,
-      claimantNotVeteran,
-      setClaimantNotVeteran,
+      veteranIsNotClaimant,
+      setVeteranIsNotClaimant,
       claimant,
+      claimantError,
       setClaimant,
       relationships,
       payeeCode,
       payeeCodeError
     } = this.props;
 
-    let showClaimants = ['true', true].includes(claimantNotVeteran);
+    let showClaimants = ['true', true].includes(veteranIsNotClaimant);
 
     const claimantLabel = 'Please select the claimant listed on the form. ' +
     'If you do not see the claimant in the options below, add them in VBMS, ' +
@@ -43,6 +44,7 @@ export default class SelectClaimant extends React.PureComponent {
           options={relationships}
           onChange={setClaimant}
           value={claimant}
+          errorMessage={claimantError}
         />
 
         {
@@ -67,8 +69,8 @@ export default class SelectClaimant extends React.PureComponent {
         strongLabel
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
-        onChange={setClaimantNotVeteran}
-        value={claimantNotVeteran === null ? null : claimantNotVeteran.toString()}
+        onChange={setVeteranIsNotClaimant}
+        value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant.toString()}
       />
 
       { showClaimants && claimantOptions() }

@@ -8,7 +8,7 @@ class ClaimReview < DecisionReview
   has_one :intake, as: :detail
 
   with_options if: :saving_review do
-    validates :receipt_date, :benefit_type, presence: { message: "blank" }
+    validates :receipt_date, :benefit_type, :veteran_is_not_claimant, presence: { message: "blank" }
     validates_associated :claimants
   end
 

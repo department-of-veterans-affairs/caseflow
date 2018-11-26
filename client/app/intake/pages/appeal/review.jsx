@@ -8,7 +8,7 @@ import SelectClaimant from '../../components/SelectClaimant';
 import LegacyOptInApproved from '../../components/LegacyOptInApproved';
 import { setDocketType } from '../../actions/appeal';
 import {
-  setClaimantNotVeteran,
+  setVeteranIsNotClaimant,
   setClaimant,
   setPayeeCode,
   setLegacyOptInApproved
@@ -90,15 +90,16 @@ class Review extends React.PureComponent {
 
 const SelectClaimantConnected = connect(
   ({ appeal, intake }) => ({
-    claimantNotVeteran: appeal.claimantNotVeteran,
+    veteranIsNotClaimant: appeal.veteranIsNotClaimant,
     claimant: appeal.claimant,
+    claimantError: appeal.claimantError,
     payeeCode: appeal.payeeCode,
     relationships: appeal.relationships,
     benefitType: appeal.benefitType,
     formType: intake.formType
   }),
   (dispatch) => bindActionCreators({
-    setClaimantNotVeteran,
+    setVeteranIsNotClaimant,
     setClaimant,
     setPayeeCode
   }, dispatch)

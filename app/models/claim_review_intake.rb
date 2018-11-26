@@ -44,18 +44,15 @@ class ClaimReviewIntake < DecisionReviewIntake
   private
 
   def create_claimant!
-    # If there's a claimant use it, otherwise the claimant is the Veteran
-    if request_params[:claimant]
-      Claimant.create!(
+    if request_params[:veteran_is_not_claimant]
+      detail.create_claimants!(
         participant_id: request_params[:claimant],
-        payee_code: need_payee_code? ? request_params[:payee_code] : nil,
-        review_request: detail
+        payee_code: need_payee_code? ? request_params[:payee_code] : nil
       )
     else
-      Claimant.create!(
+      detail.create_claimants!(
         participant_id: veteran.participant_id,
-        payee_code: need_payee_code? ? "00" : nil,
-        review_request: detail
+        payee_code: nil
       )
     end
   end
@@ -63,7 +60,7 @@ class ClaimReviewIntake < DecisionReviewIntake
   def need_payee_code?
     # payee_code is only required for claim reviews where the veteran is
     # not the claimant and the benefit_type is compensation or pension
-    return if !request_params[:claimant] || request_params[:claimant] == detail.veteran.participant_id
+    return unless request_params[:veteran_is_not_claimant]
     ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(request_params[:benefit_type])
   end
 
