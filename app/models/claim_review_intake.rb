@@ -71,7 +71,7 @@ class ClaimReviewIntake < DecisionReviewIntake
   def need_payee_code?
     # payee_code is only required for claim reviews where the veteran is
     # not the claimant and the benefit_type is compensation or pension
-    return unless request_params[:veteran_is_not_claimant]
+    return unless request_params[:veteran_is_not_claimant] == "true"
     ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(request_params[:benefit_type])
   end
 

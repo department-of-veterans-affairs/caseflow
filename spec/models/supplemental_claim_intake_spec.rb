@@ -70,6 +70,7 @@ describe SupplementalClaimIntake do
     let(:benefit_type) { "compensation" }
     let(:claimant) { nil }
     let(:payee_code) { nil }
+    let(:veteran_is_not_claimant) { "false" }
 
     let(:detail) do
       SupplementalClaim.create!(
@@ -83,7 +84,8 @@ describe SupplementalClaimIntake do
         receipt_date: receipt_date,
         benefit_type: benefit_type,
         claimant: claimant,
-        payee_code: payee_code
+        payee_code: payee_code,
+        veteran_is_not_claimant: veteran_is_not_claimant
       )
     end
 
@@ -102,6 +104,7 @@ describe SupplementalClaimIntake do
     context "Claimant is different than Veteran" do
       let(:claimant) { "1234" }
       let(:payee_code) { "10" }
+      let(:veteran_is_not_claimant) { "true" }
 
       it "adds other relationship to claimants" do
         subject
@@ -111,6 +114,18 @@ describe SupplementalClaimIntake do
           participant_id: "1234",
           payee_code: "10"
         )
+      end
+
+      context "and claimant is nil" do
+        let(:claimant) { nil }
+        let(:receipt_date) { 3.days.from_now }
+
+        it "is expected to add an error that claimant cannot be blank" do
+          expect(subject).to be_falsey
+          expect(detail.errors[:claimant]).to include("blank")
+          expect(detail.errors[:receipt_date]).to include("in_future")
+          expect(detail.claimants).to be_empty
+        end
       end
 
       context "And payee code is nil" do
