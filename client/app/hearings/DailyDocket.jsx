@@ -355,6 +355,7 @@ getAodDropdown = (hearing) => {
             rowObjects={this.getDailyDocketRows(docket)}
             summary="dailyDocket"
             bodyStyling={tableRowStyling}
+            slowReRendersAreOk
           />
         </div>
       </AppSegment>
