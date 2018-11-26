@@ -82,8 +82,9 @@ class Appeal < DecisionReview
   end
 
   def eligible_request_issues
-    # Orders by created_at ASC leaving nil values at the end
-    request_issues.select(&:eligible?).sort_by { |issue| [issue.created_at ? 0 : 1, issue] }
+    # It's possible that two users create issues around the same time and the sequencing is off
+    # (https://stackoverflow.com/questions/5818463/rails-created-at-timestamp-order-disagrees-with-id-order)
+    request_issues.select(&:eligible?).sort_by { |issue| issue.id }
   end
 
   def issues
