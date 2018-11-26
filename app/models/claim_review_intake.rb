@@ -23,10 +23,18 @@ class ClaimReviewIntake < DecisionReviewIntake
   rescue ActiveRecord::RecordInvalid => _err
     # propagate the error from invalid column to the user-visible reason
     if detail.errors.messages[:benefit_type].include?(ClaimantValidator::PAYEE_CODE_REQUIRED)
-      detail.validate
-      detail.errors[:payee_code] << "blank"
-      return false
+      payee_code_error = "blank"
     end
+
+    if detail.errors.messages[:veteran_is_not_claimant].include?(ClaimantValidator::CLAIMANT_REQUIRED)
+      claimant_error = "blank"
+    end
+
+    detail.validate
+    detail.errors[:payee_code] << payee_code_error if payee_code_error
+    detail.errors[:claimant] << claimant_error if claimant_error
+
+    return false
     # we just swallow the exception otherwise, since we want the validation errors to return to client
   end
 
@@ -44,15 +52,29 @@ class ClaimReviewIntake < DecisionReviewIntake
   private
 
   def create_claimant!
+    # if request_params[:veteran_is_not_claimant]
+    #   detail.create_claimants!(
+    #     participant_id: request_params[:claimant],
+    #     payee_code: need_payee_code? ? request_params[:payee_code] : nil
+    #   )
+    # else
+    #   detail.create_claimants!(
+    #     participant_id: veteran.participant_id,
+    #     payee_code: nil
+    #   )
+    # end
+
     if request_params[:veteran_is_not_claimant]
-      detail.create_claimants!(
+      Claimant.create!(
         participant_id: request_params[:claimant],
-        payee_code: need_payee_code? ? request_params[:payee_code] : nil
+        payee_code: need_payee_code? ? request_params[:payee_code] : nil,
+        review_request: detail
       )
     else
       detail.create_claimants!(
         participant_id: veteran.participant_id,
-        payee_code: nil
+        payee_code: nil,
+        review_request: detail
       )
     end
   end
