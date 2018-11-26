@@ -55,4 +55,10 @@ describe JudgeTeam do
       end
     end
   end
+
+  describe ".can_receive_task?" do
+    it "should return false because judge teams should not have tasks assigned to them in the web UI" do
+      expect(JudgeTeam.create_for_judge(judge).can_receive_task?(nil)).to eq(false)
+    end
+  end
 end
