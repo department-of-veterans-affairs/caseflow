@@ -13,7 +13,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
         description: issue.description,
         notes: issue.notes,
         remand_reasons: issue.remand_reasons,
-        decision_issue_ids: issue.request_decision_issues
+        decision_issue_ids: issue.request_decision_issues.pluck(:decision_issue_id)
       }
     end
   end

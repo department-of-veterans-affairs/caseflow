@@ -28,6 +28,7 @@ export default function CaseDetailsIssueList(props) {
   if (!props.isLegacyAppeal && props.amaIssueType) {
     return <ContestedIssues
       requestIssues={props.issues}
+      decisionIssues={props.decisionIssues}
     />;
   }
 

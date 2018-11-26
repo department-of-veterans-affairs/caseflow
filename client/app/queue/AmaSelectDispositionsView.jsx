@@ -81,6 +81,12 @@ class AmaSelectDispositionsView extends React.PureComponent {
     });
   }
 
+  editDecisionHandler = (issueId) => () => {
+    this.setState({
+      issuesOpen: issueIds
+    });
+  }
+
   handleModalClose = () => {
     this.setState({
       issuesOpen: null
@@ -103,8 +109,10 @@ class AmaSelectDispositionsView extends React.PureComponent {
 
     return <React.Fragment>
       <ContestedIssues
+        decisionIssues={appeal.decisionIssues}
         requestIssues={appeal.issues}
         addDecisionHandler={this.addDecisionHandler}
+        editDecisionHandler={this.editDecisionHandler}
       />
       { this.state.issuesOpen && <Modal
         buttons = {[
