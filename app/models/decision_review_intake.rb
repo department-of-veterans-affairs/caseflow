@@ -6,7 +6,7 @@ class DecisionReviewIntake < Intake
       veteran_is_not_claimant: detail.veteran_is_not_claimant,
       payeeCode: detail.payee_code,
       legacy_opt_in_approved: detail.legacy_opt_in_approved,
-      legacyIssues: detail.serialized_legacy_issues,
+      legacyAppeals: detail.serialized_legacy_appeals,
       ratings: detail.serialized_ratings,
       requestIssues: detail.request_issues.map(&:ui_hash)
     )

@@ -133,7 +133,7 @@ export default class DailyDocket extends React.Component {
   };
 
   getHearingTime = (hearing) => {
-    if (hearing.requestType === 'CO') {
+    if (hearing.requestType === 'Central') {
       return <div>{getTime(hearing.date)} <br />
         {hearing.regionalOfficeName}
       </div>;
@@ -197,7 +197,7 @@ export default class DailyDocket extends React.Component {
   };
 
   getHearingTimeOptions = (hearing, readOnly) => {
-    if (hearing.requestType === 'CO') {
+    if (hearing.requestType === 'Central') {
       return [
         {
           displayText: '9:00',
@@ -227,7 +227,7 @@ export default class DailyDocket extends React.Component {
   };
 
   getHearingDayDropdown = (hearing, readOnly) => {
-    const timezone = hearing.requestType === 'CO' ? 'America/New_York' : hearing.regionalOfficeTimezone;
+    const timezone = hearing.requestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone;
 
     return <div><SearchableDropdown
       name="Hearing Day"
@@ -251,7 +251,7 @@ export default class DailyDocket extends React.Component {
       name="Notes"
       onChange={this.onHearingNotesUpdate(hearing.id)}
       textAreaStyling={notesFieldStyling}
-      value={_.isUndefined(hearing.editedNotes) ? hearing.notes : hearing.editedNotes || ''}
+      value={_.isUndefined(hearing.editedNotes) ? hearing.notes || '' : hearing.editedNotes}
     />;
   };
 
@@ -358,6 +358,7 @@ export default class DailyDocket extends React.Component {
           rowObjects={this.getDailyDocketRows(this.dailyDocketHearings(this.props.hearings), false)}
           summary="dailyDocket"
           bodyStyling={tableRowStyling}
+          slowReRendersAreOk
         />
       </div>
       { !_.isEmpty(this.previouslyScheduledHearings(this.props.hearings)) && <div>
@@ -368,7 +369,7 @@ export default class DailyDocket extends React.Component {
             rowObjects={this.getDailyDocketRows(this.previouslyScheduledHearings(), true)}
             summary="dailyDocket"
             bodyStyling={tableRowStyling}
-          />
+            slowReRendersAreOk />
         </div>
       </div> }
     </AppSegment>;

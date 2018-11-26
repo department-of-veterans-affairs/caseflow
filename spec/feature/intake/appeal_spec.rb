@@ -71,9 +71,6 @@ RSpec.feature "Appeal Intake" do
     )
   end
 
-  let(:search_bar_title) { "Enter the Veteran's ID" }
-  let(:search_page_title) { "Search for Veteran ID" }
-
   it "Creates an appeal" do
     # Testing no relationships in Appeal and Veteran is claimant, tests two relationships in HRL and one in SC
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(nil)
@@ -281,6 +278,26 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
   end
 
+  context "Veteran has no ratings" do
+    scenario "the Add Issue modal skips directly to Nonrating Issue modal" do
+      start_appeal(veteran_no_ratings)
+
+      visit "/intake/add_issues"
+
+      click_intake_add_issue
+
+      add_intake_nonrating_issue(
+        category: "Active Duty Adjustments",
+        description: "Description for Active Duty Adjustments",
+        date: "04/19/2018"
+      )
+
+      expect(page).to have_content("1 issue")
+
+      click_intake_finish
+    end
+  end
+
   def check_row(label, text)
     row = find("tr", text: label)
     expect(row).to have_text(text)
@@ -376,6 +393,7 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
 
     # Add nonrating issue
+    click_intake_no_matching_issues
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
@@ -419,6 +437,7 @@ RSpec.feature "Appeal Intake" do
 
     # add untimely nonrating request issue
     click_intake_add_issue
+    click_intake_no_matching_issues
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Another Description for Active Duty Adjustments",
@@ -445,6 +464,7 @@ RSpec.feature "Appeal Intake" do
 
     # nonrating before_ama
     click_intake_add_issue
+    click_intake_no_matching_issues
     add_intake_nonrating_issue(
       category: "Drill Pay Adjustments",
       description: "A nonrating issue before AMA",
@@ -458,6 +478,7 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
     expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
+    expect(page).to have_content('Unidentified issue: no issue matched for requested "This is an unidentified issue"')
 
     success_checklist = find("ul.cf-success-checklist")
     expect(success_checklist).to_not have_content("Non-RAMP issue before AMA Activation")
@@ -612,6 +633,21 @@ RSpec.feature "Appeal Intake" do
       add_untimely_exemption_response("Yes")
 
       expect(page).to have_content("Left knee granted")
+
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      add_intake_nonrating_issue(
+        category: "Active Duty Adjustments",
+        description: "Description for Active Duty Adjustments",
+        date: "04/25/2018",
+        legacy_issues: true
+      )
+
+      expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
+
+      add_intake_rating_issue("None of these match")
+
+      expect(page).to have_content("Description for Active Duty Adjustments")
     end
 
     scenario "adding issue with legacy opt in disabled" do
