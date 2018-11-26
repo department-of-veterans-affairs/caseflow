@@ -10,6 +10,7 @@ class HearingDay < ApplicationRecord
   }.freeze
 
   CASEFLOW_SCHEDULE_DATE = Date.new(2019, 3, 31).freeze
+  CASEFLOW_CO_PARENT_DATE = Date.new(2018, 12, 31).freeze
 
   class << self
     def create_hearing_day(hearing_hash)
@@ -51,7 +52,8 @@ class HearingDay < ApplicationRecord
         cf_video_and_co = where("DATE(hearing_date) between ? and ?", start_date, end_date).each_with_object([])
         video_and_co, travel_board = HearingDayRepository.load_days_for_range(start_date, end_date)
       elsif regional_office == HEARING_TYPES[:central]
-        cf_video_and_co = []
+        cf_video_and_co = where("hearing_type = ? and DATE(hearing_date) between ? and ?",
+                                "C", start_date, end_date).each_with_object([])
         video_and_co, travel_board = HearingDayRepository.load_days_for_central_office(start_date, end_date)
       else
         cf_video_and_co = where("regional_office = ? and DATE(hearing_date) between ? and ?",
