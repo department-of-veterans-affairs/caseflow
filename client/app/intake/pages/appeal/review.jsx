@@ -91,6 +91,7 @@ class Review extends React.PureComponent {
 const SelectClaimantConnected = connect(
   ({ appeal, intake }) => ({
     veteranIsNotClaimant: appeal.veteranIsNotClaimant,
+    veteranIsNotClaimantError: appeal.veteranIsNotClaimantError,
     claimant: appeal.claimant,
     claimantError: appeal.claimantError,
     payeeCode: appeal.payeeCode,

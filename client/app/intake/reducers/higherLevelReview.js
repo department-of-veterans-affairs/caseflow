@@ -78,6 +78,7 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     sameOffice: null,
     sameOfficeError: null,
     veteranIsNotClaimant: null,
+    veteranIsNotClaimantError: null,
     claimant: null,
     claimantError: null,
     payeeCode: null,
@@ -193,6 +194,9 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       legacyOptInApprovedError: {
         $set: null
       },
+      veteranIsNotClaimantError: {
+        $set: null
+      },
       claimantError: {
         $set: null
       },
@@ -221,6 +225,9 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       },
       legacyOptInApprovedError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')
+      },
+      veteranIsNotClaimantError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'veteran_is_not_claimant')
       },
       claimantError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'claimant')

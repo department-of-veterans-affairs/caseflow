@@ -106,6 +106,7 @@ const SelectClaimantConnected = connect(
   ({ higherLevelReview, intake }) => ({
     isVeteranDeceased: intake.veteran.isDeceased,
     veteranIsNotClaimant: higherLevelReview.veteranIsNotClaimant,
+    veteranIsNotClaimantError: higherLevelReview.veteranIsNotClaimantError,
     claimant: higherLevelReview.claimant,
     claimantError: higherLevelReview.claimantError,
     payeeCode: higherLevelReview.payeeCode,

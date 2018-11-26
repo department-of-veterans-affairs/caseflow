@@ -117,7 +117,10 @@ RSpec.feature "Higher-Level Review" do
       "Receipt date cannot be in the future."
     )
     expect(page).to have_content(
-      "Please select an option."
+      "What is the Benefit Type? Please select an option."
+    )
+    expect(page).to have_content(
+      "Is the claimant someone other than the Veteran? Please select an option."
     )
 
     within_fieldset("What is the Benefit Type?") do

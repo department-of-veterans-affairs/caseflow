@@ -19,6 +19,7 @@ export default class SelectClaimant extends React.PureComponent {
     const {
       isVeteranDeceased,
       veteranIsNotClaimant,
+      veteranIsNotClaimantError,
       setVeteranIsNotClaimant,
       claimant,
       claimantError,
@@ -70,6 +71,7 @@ export default class SelectClaimant extends React.PureComponent {
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
         onChange={setVeteranIsNotClaimant}
+        errorMessage={veteranIsNotClaimantError}
         value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant.toString()}
       />
 

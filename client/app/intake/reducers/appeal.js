@@ -64,6 +64,7 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     docketType: null,
     docketTypeError: null,
     veteranIsNotClaimant: null,
+    veteranIsNotClaimantError: null,
     claimant: null,
     claimantError: null,
     payeeCode: null,
@@ -159,6 +160,9 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       legacyOptInApprovedError: {
         $set: null
       },
+      veteranIsNotClaimantError: {
+        $set: null
+      },
       claimantError: {
         $set: null
       },
@@ -178,6 +182,9 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       },
       receiptDateError: {
         $set: getReceiptDateError(action.payload.responseErrorCodes, state)
+      },
+      veteranIsNotClaimantError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'veteran_is_not_claimant')
       },
       claimantError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'claimant')

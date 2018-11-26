@@ -78,6 +78,7 @@ const SelectClaimantConnected = connect(
   ({ supplementalClaim, intake }) => ({
     isVeteranDeceased: intake.veteran.isDeceased,
     veteranIsNotClaimant: supplementalClaim.veteranIsNotClaimant,
+    veteranIsNotClaimantError: supplementalClaim.veteranIsNotClaimantError,
     claimant: supplementalClaim.claimant,
     claimantError: supplementalClaim.claimantError,
     payeeCode: supplementalClaim.payeeCode,
