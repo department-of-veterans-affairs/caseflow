@@ -72,10 +72,6 @@ class AmaSelectDispositionsView extends React.PureComponent {
       appeal
     } = this.props;
 
-    if (appeal.isLegacyAppeal) {
-      return `/queue/appeals/${appealId}`;
-    }
-
     return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
   }
 
