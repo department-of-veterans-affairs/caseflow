@@ -229,6 +229,7 @@ export default class AssignHearings extends React.Component {
         columns={tabWindowColumns}
         rowObjects={this.tableAssignHearingsRows(this.props.veteransReadyForHearing)}
         summary="scheduled-hearings-table"
+        slowReRendersAreOk
       />;
 
     };
@@ -251,6 +252,7 @@ export default class AssignHearings extends React.Component {
               columns={tabWindowColumns}
               rowObjects={this.tableScheduledHearingsRows(scheduledOrder)}
               summary="scheduled-hearings-table"
+              slowReRendersAreOk
             />
           },
           {

@@ -258,7 +258,8 @@ class ListSchedule extends React.Component {
             <Table
               columns={hearingScheduleColumns}
               rowObjects={hearingScheduleRows}
-              summary="hearing-schedule" />
+              summary="hearing-schedule"
+              slowReRendersAreOk />
 
           </LoadingDataDisplay>
         </div>

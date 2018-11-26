@@ -148,6 +148,40 @@ RSpec.feature "Edit issues" do
       # issue note was added
       expect(page).to have_button("Save", disabled: false)
     end
+
+    context "with legacy appeals" do
+      before do
+        setup_legacy_opt_in_appeals(veteran.file_number)
+      end
+
+      scenario "adding issues" do
+        visit "appeals/#{appeal.uuid}/edit/"
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
+
+        # expect legacy opt in modal
+        expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
+
+        add_intake_rating_issue("None of these match")
+
+        expect(page).to have_content("Left knee granted")
+
+        click_intake_add_issue
+        click_intake_no_matching_issues
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "Description for Active Duty Adjustments",
+          date: "04/25/2018",
+          legacy_issues: true
+        )
+
+        expect(page).to have_content("Does issue 4 match any of these VACOLS issues?")
+
+        add_intake_rating_issue("None of these match")
+
+        expect(page).to have_content("Description for Active Duty Adjustments")
+      end
+    end
   end
 
   context "Higher-Level Reviews" do
@@ -342,6 +376,7 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content("Military Retired Pay")
 
         click_intake_add_issue
+        click_intake_no_matching_issues
         add_intake_nonrating_issue(
           category: "Active Duty Adjustments",
           description: "A description!",
@@ -349,6 +384,7 @@ RSpec.feature "Edit issues" do
         )
 
         click_intake_add_issue
+        click_intake_no_matching_issues
         add_intake_nonrating_issue(
           category: "Drill Pay Adjustments",
           description: "A nonrating issue before AMA",
@@ -367,6 +403,52 @@ RSpec.feature "Edit issues" do
           "/higher_level_reviews/#{nonrating_ep_claim_id}/edit/confirmation"
         )
         expect(page).to have_content("Edit Confirmed")
+      end
+    end
+
+    context "Veteran has no ratings" do
+      let!(:higher_level_review) do
+        HigherLevelReview.create!(
+          veteran_file_number: veteran_no_ratings.file_number,
+          receipt_date: receipt_date,
+          informal_conference: false,
+          same_office: false,
+          benefit_type: "compensation"
+        )
+      end
+      let(:veteran_no_ratings) do
+        Generators::Veteran.build(
+          file_number: "55555555",
+          first_name: "Nora",
+          last_name: "Attings",
+          participant_id: "44444444"
+        )
+      end
+      let(:request_issue) do
+        create(:request_issue, description: "nonrating issue desc", review_request: higher_level_review)
+      end
+      let(:rating_ep_claim_id) do
+        higher_level_review.end_product_establishments.first.reference_id
+      end
+
+      before do
+        higher_level_review.create_issues!([request_issue])
+        higher_level_review.process_end_product_establishments!
+      end
+
+      scenario "the Add Issue modal skips directly to Nonrating Issue modal" do
+        visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
+
+        expect(page).to have_content("Add / Remove Issues")
+
+        click_intake_add_issue
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "Description for Active Duty Adjustments",
+          date: "04/19/2018"
+        )
+
+        expect(page).to have_content("2 issues")
       end
     end
 
@@ -441,6 +523,7 @@ RSpec.feature "Edit issues" do
         expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
 
         # Add nonrating issue
+        click_intake_no_matching_issues
         add_intake_nonrating_issue(
           category: "Active Duty Adjustments",
           description: "Description for Active Duty Adjustments",
@@ -450,6 +533,7 @@ RSpec.feature "Edit issues" do
 
         # Add untimely nonrating issue
         click_intake_add_issue
+        click_intake_no_matching_issues
         add_intake_nonrating_issue(
           category: "Active Duty Adjustments",
           description: "Another Description for Active Duty Adjustments",
@@ -775,6 +859,7 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content("Military Retired Pay")
 
         click_intake_add_issue
+        click_intake_no_matching_issues
         add_intake_nonrating_issue(
           category: "Active Duty Adjustments",
           description: "A description!",
@@ -873,6 +958,7 @@ RSpec.feature "Edit issues" do
         expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
 
         # Add nonrating issue
+        click_intake_no_matching_issues
         add_intake_nonrating_issue(
           category: "Active Duty Adjustments",
           description: "Description for Active Duty Adjustments",

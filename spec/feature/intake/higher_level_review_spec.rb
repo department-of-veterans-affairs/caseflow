@@ -680,6 +680,23 @@ RSpec.feature "Higher-Level Review" do
       )
     end
 
+    context "Veteran has no ratings" do
+      scenario "the Add Issue modal skips directly to Nonrating Issue modal" do
+        start_higher_level_review(veteran_no_ratings)
+        visit "/intake/add_issues"
+
+        click_intake_add_issue
+
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "Description for Active Duty Adjustments",
+          date: "04/19/2018"
+        )
+
+        expect(page).to have_content("1 issue")
+      end
+    end
+
     scenario "HLR comp" do
       allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
         first_name: "BOB",
@@ -734,6 +751,7 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
 
       # Add nonrating issue
+      click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
@@ -776,6 +794,7 @@ RSpec.feature "Higher-Level Review" do
 
       # add untimely nonrating request issue
       click_intake_add_issue
+      click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Another Description for Active Duty Adjustments",
@@ -811,6 +830,7 @@ RSpec.feature "Higher-Level Review" do
       )
 
       click_intake_add_issue
+      click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Drill Pay Adjustments",
         description: "A nonrating issue before AMA",
@@ -1031,12 +1051,26 @@ RSpec.feature "Higher-Level Review" do
 
         expect(page).to have_content("Next")
         add_intake_rating_issue("Left knee granted")
-
         # expect legacy opt in modal
         expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
         add_intake_rating_issue("None of these match")
 
         expect(page).to have_content("Left knee granted")
+
+        click_intake_add_issue
+        click_intake_no_matching_issues
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "Description for Active Duty Adjustments",
+          date: "04/25/2018",
+          legacy_issues: true
+        )
+
+        expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
+
+        add_intake_rating_issue("None of these match")
+
+        expect(page).to have_content("Description for Active Duty Adjustments")
       end
 
       scenario "adding issue with legacy opt in disabled" do
