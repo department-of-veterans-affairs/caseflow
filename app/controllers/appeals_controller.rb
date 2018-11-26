@@ -11,10 +11,19 @@ class AppealsController < ApplicationController
   end
 
   def show_case_list
+    # byebug
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        return get_appeals_for_file_number(Veteran.find(params[:caseflow_veteran_id]).file_number)
+        # byebug
+        # return get_appeals_for_file_number(Veteran.find(params[:caseflow_veteran_id]).file_number)
+        veteran_file_number = Veteran.find(params[:caseflow_veteran_id]).file_number
+        return render json: {
+          appeals: get_appeals_for_file_number(veteran_file_number),
+          claim_reviews: ClaimReview.find_all_by_file_number(veteran_file_number)
+        }
+        # appeals: get_appeals_for_file_number(request.headers["HTTP_VETERAN_ID"]),
+        # claim_reviews: ClaimReview.find_all_by_file_number(request.headers["HTTP_VETERAN_ID"])
       end
     end
   end
@@ -116,9 +125,10 @@ class AppealsController < ApplicationController
       end
       # rubocop:enable Lint/HandleExceptions
 
-      render json: {
-        appeals: json_appeals(appeals)[:data]
-      }
+      # render json: {
+      #   appeals: json_appeals(appeals)[:data]
+      # }
+      json_appeals(appeals)[:data]
     end
   end
 

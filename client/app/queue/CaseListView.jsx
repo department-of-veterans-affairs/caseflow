@@ -16,6 +16,7 @@ import {
 } from '../constants/AppConstants';
 import CaseListSearch from './CaseListSearch';
 import CaseListTable from './CaseListTable';
+import OtherReviewsTable from './OtherReviewsTable';
 import { fullWidth } from './constants';
 
 import { onReceiveAppealsUsingVeteranId } from './CaseList/CaseListActions';
@@ -40,6 +41,9 @@ class CaseListView extends React.PureComponent {
 
     return ApiUtil.get(`/cases/${caseflowVeteranId}`).
       then((response) => {
+        debugger;
+        console.log("RESPONSE");
+        console.log(response)
         const returnedObject = JSON.parse(response.text);
 
         this.props.onReceiveAppealsUsingVeteranId(returnedObject.appeals);
@@ -73,7 +77,12 @@ class CaseListView extends React.PureComponent {
       {this.searchPageHeading()}
       <br /><br />
       <h2 className="cf-push-left" {...fullWidth}>{heading}</h2>
+
+      <h3 className="cf-push-left" {...fullWidth}>Appeals</h3>
       <CaseListTable appeals={this.props.appeals} />
+
+      <h3 className="cf-push-left" {...fullWidth}>Other Reviews</h3>
+      {/*<OtherReviewsTable reviews={this.props.reviews} />*/}
     </div>;
   }
 

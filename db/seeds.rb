@@ -318,6 +318,40 @@ class SeedDB
     LegacyAppeal.create(vacols_id: "2306397", vbms_id: "779309925S")
   end
 
+  def create_higher_level_reviews
+
+    # steal code from a spec file?
+    # spec/models/higher_level_review_spec.rb:11
+    # line 121 shows us the payee_code function
+    hlr = HigherLevelReview.create(
+      veteran_file_number: "682007349",
+      payee_code: "10",
+      claim_date: Time.today
+      # EP status?
+      # decision date?
+      # EP code?
+
+      # also need to add the fields to this HLR that new_end_product_establishment references
+    )
+
+    # NOTE: see models/higher_level_review.rb:111
+    hlr.new_end_product_establishment(ep_code)
+
+
+      # an HLR can have many EPs
+      # we want an EP code that tells you how to route this / who to send it to / info a/b what's being granted
+      # an appeal with also have an EP (eventually) but not in caseflow, only has an EP when it leaves the board to be dispatched
+  end
+
+  def create_supplemental_claims
+    SupplementalClaim.create(
+      veteran_file_number: "682007349",
+      # EP status?
+      # decision date?
+      # EP code?
+    )
+  end
+
   def create_root_task(appeal)
     FactoryBot.create(:root_task, appeal: appeal)
   end
@@ -517,6 +551,8 @@ class SeedDB
     create_legacy_appeals(50)
     create_dispatch_tasks(50)
     create_ramp_elections(9)
+    create_higher_level_reviews
+    create_supplemental_claims
     create_hearings
     create_api_key
   end

@@ -47,6 +47,24 @@ class ClaimReview < DecisionReview
     def error_column
       :establishment_error
     end
+
+    def find_all_by_file_number(file_number)
+      claim_reviews = HigherLevelReview.where(veteran_file_number: file_number) + SupplementalClaim.where(veteran_file_number: file_number)
+      #.all?
+      # [1] + [3, 4] => [1, 3, 4]
+      byebug
+      #.order?
+      claim_reviews.map(&:search_table_ui_hash)
+    end
+  end
+
+  def search_table_ui_hash
+    {
+      ep_codes: ep_codes,
+      claimant_names: claimants.map(&:name),
+      ep_status: "",
+      decision_date: ""
+    }
   end
 
   def issue_code(*)
@@ -104,6 +122,10 @@ class ClaimReview < DecisionReview
   end
 
   private
+
+  def ep_codes
+    end_product_establishments.map(&:modifier)
+  end
 
   def informal_conference?
     false
