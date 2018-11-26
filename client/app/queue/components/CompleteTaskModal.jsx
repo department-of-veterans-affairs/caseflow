@@ -80,7 +80,7 @@ class CompleteTaskModal extends React.Component<Props> {
 
   getContentArgs = () => ({
     assignerName: this.getTaskAssignerName(),
-    teamName: CO_LOCATED_ADMIN_ACTIONS[this.props.task.action],
+    teamName: CO_LOCATED_ADMIN_ACTIONS[this.props.task.label],
     appeal: this.props.appeal
   });
 
@@ -127,7 +127,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 const propsToText = (props) => {
   return {
     title: SEND_TO_LOCATION_MODAL_TYPE_ATTRS[props.modalType].title({
-      teamName: (props.task && props.task.action) ? CO_LOCATED_ADMIN_ACTIONS[props.task.action] : ''
+      teamName: (props.task && props.task.label) ? CO_LOCATED_ADMIN_ACTIONS[props.task.label] : ''
     }),
     button: SEND_TO_LOCATION_MODAL_TYPE_ATTRS[props.modalType].buttonText
   };
