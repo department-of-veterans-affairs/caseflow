@@ -19,7 +19,6 @@ class ClaimReviewIntake < DecisionReviewIntake
       detail.assign_attributes(review_params)
       create_claimant!
       detail.save!
-      update_person!
     end
   rescue ActiveRecord::RecordInvalid => _err
     # propagate the error from invalid column to the user-visible reason
@@ -53,7 +52,7 @@ class ClaimReviewIntake < DecisionReviewIntake
   private
 
   def create_claimant!
-    if request_params[:veteran_is_not_claimant]
+    if request_params[:veteran_is_not_claimant] == "true"
       Claimant.create!(
         participant_id: request_params[:claimant],
         payee_code: need_payee_code? ? request_params[:payee_code] : nil,
@@ -66,6 +65,7 @@ class ClaimReviewIntake < DecisionReviewIntake
         review_request: detail
       )
     end
+    update_person!
   end
 
   def need_payee_code?

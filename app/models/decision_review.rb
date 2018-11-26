@@ -69,7 +69,6 @@ class DecisionReview < ApplicationRecord
 
   def create_claimants!(participant_id:, payee_code:)
     remove_claimants!
-    claimant_participant_id = veteran_is_not_claimant ? participant_id : veteran.participant_id
     claimants.create_from_intake_data!(participant_id: participant_id, payee_code: payee_code)
   end
 

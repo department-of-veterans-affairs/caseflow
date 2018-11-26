@@ -19,16 +19,18 @@ class AppealIntake < DecisionReviewIntake
         payee_code: nil,
         review_request: detail
       )
-      detail.save(context: :intake_review)
       update_person!
+      detail.save(context: :intake_review)
     end
   rescue ActiveRecord::RecordInvalid => _err
     # propagate the error from invalid column to the user-visible reason
     if detail.errors.messages[:veteran_is_not_claimant].include?(ClaimantValidator::CLAIMANT_REQUIRED)
-      detail.validate
-      detail.errors[:claimant] << "blank"
-      return false
+      claimant_error = "blank"
     end
+
+    detail.validate
+    detail.errors[:claimant] << claimant_error if claimant_error
+    return false
   end
 
   def complete!(request_params)
@@ -41,7 +43,7 @@ class AppealIntake < DecisionReviewIntake
   private
 
   def claimant_participant_id
-    request_params[:veteran_is_not_claimant] ? request_params[:claimant] : veteran.participant_id
+    (request_params[:veteran_is_not_claimant] == "true") ? request_params[:claimant] : veteran.participant_id
   end
 
   def review_params
@@ -50,6 +52,6 @@ class AppealIntake < DecisionReviewIntake
       :docket_type,
       :veteran_is_not_claimant,
       :legacy_opt_in_approved
-      )
+    )
   end
 end
