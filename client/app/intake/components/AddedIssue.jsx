@@ -4,21 +4,6 @@ import React from 'react';
 import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES.json';
 
 class AddedIssue extends React.PureComponent {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      errorMsg: '',
-      cssKlasses: ['issue-desc']
-    };
-  }
-
-  componentDidMount() {
-    if (this.needsEligibilityCheck()) {
-      this.updateEligibleState();
-    }
-  }
-
   needsEligibilityCheck() {
     let { issue, requestIssues } = this.props;
 
@@ -38,7 +23,7 @@ class AddedIssue extends React.PureComponent {
     return true;
   }
 
-  updateEligibleState() {
+  getEligibility() {
     let { issue, formType } = this.props;
 
     let errorMsg = '';
@@ -62,20 +47,29 @@ class AddedIssue extends React.PureComponent {
     }
 
     if (errorMsg !== '') {
-      this.setState((state) => {
-        return { errorMsg,
-          cssKlasses: state.cssKlasses.concat(['not-eligible'])
-        };
-      });
+      return { errorMsg,
+        cssKlasses: ['issue-desc', 'not-eligible'] };
     }
   }
 
   render() {
     let { issue, issueIdx } = this.props;
+    let eligibleState = {
+      errorMsg: '',
+      cssKlasses: ['issue-desc']
+    };
 
-    return <div className={this.state.cssKlasses.join(' ')}>
+    if (this.needsEligibilityCheck()) {
+      let eligibilityCheck = this.getEligibility();
+
+      if (eligibilityCheck) {
+        eligibleState = eligibilityCheck;
+      }
+    }
+
+    return <div className={eligibleState.cssKlasses.join(' ')}>
       <span className="issue-num">{issueIdx + 1}.&nbsp;</span>
-      { issue.text } {this.state.errorMsg}
+      { issue.text } {eligibleState.errorMsg}
       { issue.date && <span className="issue-date">Decision date: { issue.date }</span> }
       { issue.notes && <span className="issue-notes">Notes:&nbsp;{ issue.notes }</span> }
       { issue.untimelyExemptionNotes &&
