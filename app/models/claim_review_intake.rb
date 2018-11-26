@@ -19,6 +19,7 @@ class ClaimReviewIntake < DecisionReviewIntake
       detail.assign_attributes(review_params)
       create_claimant!
       detail.save!
+      update_person!
     end
   rescue ActiveRecord::RecordInvalid => _err
     # propagate the error from invalid column to the user-visible reason
@@ -52,18 +53,6 @@ class ClaimReviewIntake < DecisionReviewIntake
   private
 
   def create_claimant!
-    # if request_params[:veteran_is_not_claimant]
-    #   detail.create_claimants!(
-    #     participant_id: request_params[:claimant],
-    #     payee_code: need_payee_code? ? request_params[:payee_code] : nil
-    #   )
-    # else
-    #   detail.create_claimants!(
-    #     participant_id: veteran.participant_id,
-    #     payee_code: nil
-    #   )
-    # end
-
     if request_params[:veteran_is_not_claimant]
       Claimant.create!(
         participant_id: request_params[:claimant],
@@ -71,11 +60,17 @@ class ClaimReviewIntake < DecisionReviewIntake
         review_request: detail
       )
     else
-      detail.create_claimants!(
+      Claimant.create!(
         participant_id: veteran.participant_id,
         payee_code: nil,
         review_request: detail
       )
+    end
+  end
+
+  def update_person!
+    Person.find_or_create_by(participant_id: detail.claimant_participant_id).tap do |person|
+      person.update!(date_of_birth: BGSService.new.fetch_person_info(detail.claimant_participant_id)[:birth_date])
     end
   end
 
