@@ -52,7 +52,7 @@ class DecisionReview < ApplicationRecord
       claimantNotVeteran: claimant_not_veteran,
       receiptDate: receipt_date.to_formatted_s(:json_date),
       legacyOptInApproved: legacy_opt_in_approved,
-      legacyIssues: serialized_legacy_issues,
+      legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
       requestIssues: request_issues.map(&:ui_hash)
     }
@@ -102,11 +102,14 @@ class DecisionReview < ApplicationRecord
     request_issues.select(&:rating?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
   end
 
-  def serialized_legacy_issues
-    return [] unless FeatureToggle.enabled?(:intake_legacy_opt_in, user: current_user)
-    active_or_eligible_legacy_appeals.map do |legacy_appeal|
+  def serialized_legacy_appeals
+    return [] unless FeatureToggle.enabled?(:intake_legacy_opt_in, user: RequestStore.store[:current_user])
+    return [] unless available_legacy_appeals
+
+    available_legacy_appeals.map do |legacy_appeal|
       {
         date: legacy_appeal.nod_date,
+        eligible_for_soc_opt_in: legacy_appeal.eligible_for_soc_opt_in?,
         issues: legacy_appeal.issues.map(&:intake_attributes)
       }
     end
@@ -114,10 +117,19 @@ class DecisionReview < ApplicationRecord
 
   private
 
-  def active_or_eligible_legacy_appeals
-    @active_or_eligible_legacy_appeals ||= LegacyAppeal
+  def available_legacy_appeals
+    # If a Veteran does not opt-in to withdraw legacy appeals, do not show inactive appeals
+    legacy_opt_in_approved ? matchable_legacy_appeals : active_legacy_appeals
+  end
+
+  def matchable_legacy_appeals
+    @matchable_legacy_appeals ||= LegacyAppeal
       .fetch_appeals_by_file_number(veteran_file_number)
-      .select(&:eligible_for_soc_opt_in?)
+      .select(&:matchable_to_request_issue?)
+  end
+
+  def active_legacy_appeals
+    @active_matchable_legacy_appeals ||= matchable_legacy_appeals.select(&:active?)
   end
 
   def ratings_with_issues

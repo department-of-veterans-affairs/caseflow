@@ -32,8 +32,8 @@ const updateFromServerIntake = (state, serverIntake) => {
     legacyOptInApproved: {
       $set: serverIntake.legacy_opt_in_approved
     },
-    legacyIssues: {
-      $set: serverIntake.legacyIssues
+    legacyAppeals: {
+      $set: serverIntake.legacyAppeals
     },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
@@ -70,9 +70,10 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     claimantNotVeteran: null,
     claimant: null,
     payeeCode: null,
+    payeeCodeError: null,
     legacyOptInApproved: null,
     legacyOptInApprovedError: null,
-    legacyIssues: [],
+    legacyAppeals: [],
     isStarted: false,
     isReviewed: false,
     isComplete: false,
@@ -163,6 +164,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       legacyOptInApprovedError: {
         $set: null
       },
+      payeeCodeError: {
+        $set: null
+      },
       isReviewed: {
         $set: true
       },
@@ -182,6 +186,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       },
       legacyOptInApprovedError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')
+      },
+      payeeCodeError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'payee_code')
       },
       requestStatus: {
         submitReview: {

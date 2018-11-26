@@ -15,12 +15,7 @@ RSpec.feature "Judge assignment to attorney" do
     create(:staff, :attorney_role, slogid: "TEST2", sdomainid: attorney_two.css_id)
     create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: appeal_one)
     create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: appeal_two)
-    FeatureToggle.enable!(:judge_assignment_to_attorney)
     User.authenticate!(user: judge)
-  end
-
-  after do
-    FeatureToggle.disable!(:judge_assignment_to_attorney)
   end
 
   context "Can move appeals between attorneys" do
@@ -55,12 +50,11 @@ RSpec.feature "Judge assignment to attorney" do
       appeal_review = judge_review_task.appeal
       vet = appeal_review.veteran
       attorney_completed_task = create(:ama_attorney_task, appeal: appeal_review, parent: judge_review_task)
-      attorney_completed_task.update(status: "completed")
+      attorney_completed_task.mark_as_complete!
       case_review = create(:attorney_case_review, task_id: attorney_completed_task.id)
 
       visit "/queue"
 
-      puts judge_review_task.id
       expect(page).to have_content("Review 1 Cases")
       expect(page).to have_content("#{vet.first_name} #{vet.last_name}")
       expect(page).to have_content(appeal_review.veteran_file_number)

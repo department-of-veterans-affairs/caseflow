@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181114142531) do
+ActiveRecord::Schema.define(version: 20181119212851) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -186,14 +186,13 @@ ActiveRecord::Schema.define(version: 20181114142531) do
     t.string "disposition"
     t.string "disposition_date"
     t.string "description"
-    t.bigint "source_request_issue_id", null: false
+    t.bigint "source_request_issue_id"
     t.datetime "promulgation_date"
     t.datetime "profile_date"
     t.integer "participant_id", null: false
     t.string "rating_issue_reference_id"
     t.string "decision_text"
     t.index ["rating_issue_reference_id", "participant_id"], name: "decision_issues_uniq_idx", unique: true
-    t.index ["source_request_issue_id"], name: "index_decision_issues_on_source_request_issue_id"
   end
 
   create_table "decisions", force: :cascade do |t|
@@ -633,6 +632,14 @@ ActiveRecord::Schema.define(version: 20181114142531) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["request_issue_id"], name: "index_remand_reasons_on_request_issue_id"
+  end
+
+  create_table "request_decision_issues", force: :cascade do |t|
+    t.integer "request_issue_id"
+    t.integer "decision_issue_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["request_issue_id", "decision_issue_id"], name: "index_on_request_issue_id_and_decision_issue_id", unique: true
   end
 
   create_table "request_issues", force: :cascade do |t|

@@ -125,7 +125,7 @@ export class DailyDocket extends React.PureComponent {
     this.props.setNotes(hearingId, event.target.value, hearingDate);
   }
 
-  setHearingViewed = (hearingId) => this.props.setHearingViewed(hearingId)
+  setHearingViewed = (hearingId) => () => this.props.setHearingViewed(hearingId);
 
   preppedOnChange = (hearingId, hearingDate) => (value) => this.props.setHearingPrepped({
     hearingId,
@@ -142,7 +142,7 @@ export class DailyDocket extends React.PureComponent {
      appellantDisplay = <div><b>{hearing.veteran_mi_formatted}</b><br />
        <ViewableItemLink
          boldCondition={!hearing.viewed_by_current_user}
-         onOpen={this.setHearingViewed}
+         onOpen={this.setHearingViewed(hearing.id)}
          linkProps={{
            to: `/hearings/${hearing.id}/worksheet`,
            target: '_blank'
@@ -176,6 +176,12 @@ export class DailyDocket extends React.PureComponent {
  }
 
 getRoTime = (hearing) => {
+  if (hearing.request_type === 'Central') {
+    return <div>{getTime(hearing.date)} <br />
+      {hearing.regional_office_name}
+    </div>;
+  }
+
   return <div>{getTime(hearing.date)} /<br />
     {getTimeInDifferentTimeZone(hearing.date, hearing.regional_office_timezone)} <br />
     <span>{hearing.regional_office_name}</span>
@@ -198,7 +204,7 @@ getTranscriptRequested = (hearing) => {
   return <Checkbox
     label="Transcript Requested"
     name={`${hearing.id}.transcript_requested`}
-    value={hearing.transcript_requested}
+    value={hearing.transcript_requested || false}
     onChange={this.setTranscriptRequested(hearing.id, getDate(hearing.date))}
   />;
 };
@@ -349,6 +355,7 @@ getAodDropdown = (hearing) => {
             rowObjects={this.getDailyDocketRows(docket)}
             summary="dailyDocket"
             bodyStyling={tableRowStyling}
+            slowReRendersAreOk
           />
         </div>
       </AppSegment>

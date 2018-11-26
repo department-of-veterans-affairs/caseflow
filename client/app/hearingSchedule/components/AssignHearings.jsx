@@ -22,6 +22,8 @@ const sectionNavigationListStyling = css({
   }
 });
 
+const roSelectionStyling = css({ marginTop: '10px' });
+
 export default class AssignHearings extends React.Component {
 
   onSelectedHearingDayChange = (hearingDay) => () => {
@@ -69,7 +71,7 @@ export default class AssignHearings extends React.Component {
   };
 
   formatAvailableHearingDays = () => {
-    return <div className="usa-width-one-fourth">
+    return <div className="usa-width-one-fourth" {...roSelectionStyling}>
       <h3>Hearings to Schedule</h3>
       <h4>Available Hearing Days</h4>
       <ul className="usa-sidenav-list" {...sectionNavigationListStyling}>
@@ -217,6 +219,7 @@ export default class AssignHearings extends React.Component {
         columns={tabWindowColumns}
         rowObjects={this.tableAssignHearingsRows(this.props.veteransReadyForHearing)}
         summary="scheduled-hearings-table"
+        slowReRendersAreOk
       />;
 
     };
@@ -241,6 +244,7 @@ export default class AssignHearings extends React.Component {
               columns={tabWindowColumns}
               rowObjects={this.tableScheduledHearingsRows(scheduledOrder)}
               summary="scheduled-hearings-table"
+              slowReRendersAreOk
             />
           },
           {

@@ -66,11 +66,10 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
       {success && <Alert type="success" title={success.title} message={success.detail} scrollOnAlert={false} />}
       {!featureToggles.automatic_case_distribution &&
         <React.Fragment>
-          {featureToggles.judge_assignment_to_attorney &&
-            <AssignWidget
-              previousAssigneeId={userId}
-              onTaskAssignment={(params) => this.props.initialAssignTasksToUser(params)}
-              selectedTasks={selectedTasks} />}
+          <AssignWidget
+            previousAssigneeId={userId}
+            onTaskAssignment={(params) => this.props.initialAssignTasksToUser(params)}
+            selectedTasks={selectedTasks} />
           <TaskTable
             includeSelect
             includeDetailsLink
@@ -87,11 +86,10 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
         <div {...assignSectionStyling}>
           {this.props.tasks.length > 0 || this.props.distributionCompleteCasesLoading ? (
             <React.Fragment>
-              {featureToggles.judge_assignment_to_attorney &&
-                <AssignWidget
-                  previousAssigneeId={userId}
-                  onTaskAssignment={(params) => this.props.initialAssignTasksToUser(params)}
-                  selectedTasks={selectedTasks} />}
+              <AssignWidget
+                previousAssigneeId={userId}
+                onTaskAssignment={(params) => this.props.initialAssignTasksToUser(params)}
+                selectedTasks={selectedTasks} />
               <TaskTable
                 includeSelect
                 includeDetailsLink

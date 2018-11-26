@@ -213,7 +213,8 @@ describe RatingIssue do
       expect(subject.source_request_issue).to eq(request_issue)
       expect(subject.decision_issue).to be_a(DecisionIssue)
       expect(subject.decision_issue.rating_issue_reference_id).to eq(reference_id)
-      expect(subject.decision_issue.source_request_issue).to eq(request_issue)
+      expect(subject.decision_issue.request_issues.first).to eq(request_issue)
+      expect(RequestDecisionIssue.where(decision_issue: subject.decision_issue).first).to_not be_nil
     end
 
     it "does not save duplicates" do
@@ -221,7 +222,7 @@ describe RatingIssue do
 
       expect(subject.save_decision_issue).to eq(nil)
       expect(subject.decision_issue).to eq(decision_issue)
-      expect(decision_issue.source_request_issue).to_not eq(request_issue)
+      expect(decision_issue.request_issues.first).to_not eq(request_issue)
     end
 
     it "returns nil if no source_request_issue is found" do

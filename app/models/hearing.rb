@@ -81,7 +81,7 @@ class Hearing < ApplicationRecord
   end
 
   def readable_location
-    if request_type == "CO"
+    if request_type == Hearing::CO_HEARING
       return "Washington DC"
     end
 

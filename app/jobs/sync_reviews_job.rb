@@ -1,4 +1,4 @@
-# This job will sync end products & contentions that we created for AMA reviews
+# This job will sync end products & contentions that we created for decision reviews
 class SyncReviewsJob < CaseflowJob
   queue_as :low_priority
   application_attr :intake

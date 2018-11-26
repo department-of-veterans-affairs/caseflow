@@ -112,7 +112,6 @@ describe ColocatedTask do
 
       before do
         FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id)
-        FeatureToggle.enable!(:judge_assignment_to_attorney, users: [judge.css_id])
       end
 
       subject do

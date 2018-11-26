@@ -62,7 +62,7 @@ export class Dockets extends React.Component {
   getType = (type) => {
     const capitalizeFirstChar = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 
-    return (type === 'central_office') ? 'CO' :
+    return (type === 'central') ? 'Central' :
       capitalizeFirstChar(type);
   }
 
@@ -118,7 +118,7 @@ export class Dockets extends React.Component {
   }
 
   getCombinedRONames = (docket) => docket.regional_office_names ? docket.regional_office_names.join(' / ') : '';
-  getRegionalOffice = (docket) => docket.type === 'central_office' ? '' : this.getCombinedRONames(docket);
+  getRegionalOffice = (docket) => docket.type === 'central' ? '' : this.getCombinedRONames(docket);
 
   getRowObjects = (hearings, reverseSort = false) => {
     let docketIndex = Object.keys(hearings).sort();
