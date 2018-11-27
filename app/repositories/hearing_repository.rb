@@ -87,14 +87,14 @@ class HearingRepository
 
     def create_child_co_hearing(hearing_date_str, appeal)
       hearing_day = HearingDay.find_by(hearing_type: "C", hearing_date: hearing_date_str.to_date)
-      vacols_judge = hearing_day.judge_id ? UserRepository.user_info_from_vacols(hearing_day.judge.css_id) : nil
+      attorney_id = hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil
       VACOLS::CaseHearing.create_child_hearing!(
         folder_nr: appeal.vacols_id,
         hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date_str),
         vdkey: hearing_day.id,
         hearing_type: hearing_day.hearing_type,
         room: hearing_day.room_info,
-        board_member: vacols_judge.attorney_id,
+        board_member: attorney_id,
         vdbvapoc: hearing_day.bva_poc
       )
     end
