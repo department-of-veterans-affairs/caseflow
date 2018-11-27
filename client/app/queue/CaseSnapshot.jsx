@@ -99,15 +99,15 @@ export class CaseSnapshot extends React.PureComponent<Props> {
 
   getActionName = () => {
     const {
-      action
+      label
     } = this.props.primaryTask;
 
-    // First see if there is a constant to convert the action, otherwise sentence-ify it
-    if (CO_LOCATED_ADMIN_ACTIONS[action]) {
-      return CO_LOCATED_ADMIN_ACTIONS[action];
+    // First see if there is a constant to convert the label, otherwise sentence-ify it
+    if (CO_LOCATED_ADMIN_ACTIONS[label]) {
+      return CO_LOCATED_ADMIN_ACTIONS[label];
     }
 
-    return StringUtil.snakeCaseToSentence(action);
+    return StringUtil.snakeCaseToSentence(label);
   }
 
   taskInstructionsWithLineBreaks = (instructions?: Array<string>) => <React.Fragment>
@@ -130,7 +130,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       this.getAbbrevName(primaryTask.decisionPreparedBy) : null;
 
     return <React.Fragment>
-      { primaryTask.action &&
+      { primaryTask.label &&
         <React.Fragment>
           <dt>{COPY.CASE_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{this.getActionName()}</dd>
         </React.Fragment> }
@@ -200,7 +200,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
         </React.Fragment>;
       } else if (userRole === USER_ROLE_TYPES.colocated) {
         return <React.Fragment>
-          <dt>{COPY.CASE_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{CO_LOCATED_ADMIN_ACTIONS[primaryTask.action]}</dd>
+          <dt>{COPY.CASE_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{CO_LOCATED_ADMIN_ACTIONS[primaryTask.label]}</dd>
           <dt>{COPY.CASE_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
           { taskIsOnHold(primaryTask) &&
             <React.Fragment>

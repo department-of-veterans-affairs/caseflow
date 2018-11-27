@@ -85,4 +85,23 @@ describe Organization do
       end
     end
   end
+
+  describe ".user_is_admin?" do
+    let(:org) { create(:organization) }
+    let(:user) { create(:user) }
+
+    context "when user is not an admin for the organization" do
+      before { OrganizationsUser.add_user_to_organization(user, org) }
+      it "should return false" do
+        expect(org.user_is_admin?(user)).to eq(false)
+      end
+    end
+
+    context "when user is an admin for the organization" do
+      before { OrganizationsUser.make_user_admin(user, org) }
+      it "should return true" do
+        expect(org.user_is_admin?(user)).to eq(true)
+      end
+    end
+  end
 end

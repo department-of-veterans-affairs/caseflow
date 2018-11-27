@@ -380,4 +380,39 @@ describe User do
       it { is_expected.to eq(current_task) }
     end
   end
+
+  describe ".administrated_teams" do
+  end
+
+  describe ".administrated_teams" do
+    let(:org) { create(:organization) }
+    let(:user) { create(:user) }
+
+    context "when user belongs to one organization but is not an admin" do
+      before { OrganizationsUser.add_user_to_organization(user, org) }
+      it "should return an empty list" do
+        expect(user.administrated_teams).to eq([])
+      end
+    end
+
+    context "when user is an admin of one organization" do
+      before { OrganizationsUser.make_user_admin(user, org) }
+      it "should return a list that contains the single organization" do
+        expect(user.administrated_teams).to eq([org])
+      end
+    end
+
+    context "when user belongs to several organizations and is an admin of several different organizations" do
+      let(:member_orgs) { create_list(:organization, 5) }
+      let(:admin_orgs) { create_list(:organization, 3) }
+
+      before do
+        member_orgs.each { |o| OrganizationsUser.add_user_to_organization(user, o) }
+        admin_orgs.each { |o| OrganizationsUser.make_user_admin(user, o) }
+      end
+      it "should return a list of all teams user is an admin for" do
+        expect(user.administrated_teams).to eq(admin_orgs)
+      end
+    end
+  end
 end

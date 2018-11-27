@@ -23,6 +23,10 @@ class Task < ApplicationRecord
     []
   end
 
+  def label
+    action
+  end
+
   # available_actions() returns an array of options from selected by the subclass
   # from TASK_ACTIONS that looks something like:
   # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
