@@ -100,33 +100,34 @@ class GenericTask < Task
   end
 
   class << self
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
     def create_from_params(params, user)
-      # Modify params first for the benefit of ColocatedTasks which may not have parent tasks if they are attached
-      # to LegacyAppeals.
-      params = modify_params(params)
-
-      parent = Task.find(params[:parent_id])
-      fail Caseflow::Error::ChildTaskAssignedToSameUser if parent.assigned_to_id == params[:assigned_to_id] &&
+      parent = Task.find(params[:parent_id]) if params[:parent_id]
+      fail Caseflow::Error::ChildTaskAssignedToSameUser if parent && parent.assigned_to_id == params[:assigned_to_id] &&
                                                            parent.assigned_to_type == params[:assigned_to_type]
 
-      parent.verify_user_access!(user)
+      parent.verify_user_access!(user) if parent
 
+      params = modify_params(params)
       child = create_child_task(parent, user, params)
-      parent.update_status(params[:status]) if parent.is_a?(GenericTask)
+      parent.update_status(params[:status]) if parent && parent.is_a?(GenericTask)
       child
     end
+    # rubocop:enable Metrics/PerceivedComplexity
+    # rubocop:enable Metrics/CyclomaticComplexity
 
     def create_child_task(parent, user, params)
       # Create an assignee from the input arguments so we throw an error if the assignee does not exist.
       assignee = params[:assigned_to] || Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
 
-      parent.update_status(Constants.TASK_STATUSES.on_hold) if parent.is_a?(GenericTask)
+      parent.update_status(Constants.TASK_STATUSES.on_hold) if parent && parent.is_a?(GenericTask)
 
       Task.create!(
         type: name,
-        appeal: parent.appeal,
+        appeal: parent.try(:appeal) || params[:appeal],
         assigned_by_id: child_assigned_by_id(parent, user),
-        parent_id: parent.id,
+        parent_id: parent.try(:id),
         assigned_to: assignee,
         action: params[:action],
         instructions: params[:instructions]

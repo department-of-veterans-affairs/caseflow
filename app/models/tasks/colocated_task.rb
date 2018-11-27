@@ -10,19 +10,6 @@ class ColocatedTask < GenericTask
   after_update :update_location_in_vacols
 
   class << self
-    def modify_params(params)
-      # When ColocatedTasks are created for LegacyAppeals, we do not include a parent_id in the API request. Therefore,
-      # we need to give this ColocatedTask a parent so we use the appeal's root task.
-      unless params[:parent_id]
-        # We currently only allow one RootTask per appeal. If that changes in the future, then this code will need
-        # to change as well.
-        root_task = RootTask.find_by(appeal: params[:appeal]) || RootTask.create!(appeal: params[:appeal])
-        params[:parent_id] = root_task.id
-      end
-
-      super
-    end
-
     # Override so that each ColocatedTask for an appeal gets assigned to the same colocated staffer.
     def create_many_from_params(params_array, user)
       # Create all ColocatedTasks in one transaction so that if any fail they all fail.
@@ -75,7 +62,8 @@ class ColocatedTask < GenericTask
   end
 
   def no_actions_available?(user)
-    completed? || !Colocated.singleton.user_has_access?(user)
+    # TODO: Move this to Colocated.singleton.user_has_access?(user).
+    completed? || user.colocated_in_vacols?
   end
 
   def update_if_hold_expired!
