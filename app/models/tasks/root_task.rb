@@ -15,6 +15,11 @@ class RootTask < Task
     []
   end
 
+  def no_actions_available?(user)
+    return false if status == Constants.TASK_STATUSES.on_hold && MailTeam.singleton.user_has_access?(user)
+    super
+  end
+
   class << self
     def create_root_and_sub_tasks!(appeal)
       root_task = create!(appeal_id: appeal.id, appeal_type: appeal.class.name)

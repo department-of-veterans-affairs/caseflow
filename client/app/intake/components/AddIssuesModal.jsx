@@ -38,8 +38,8 @@ class AddIssuesModal extends React.Component {
     });
   }
 
-  hasLegacyIssues = () => {
-    return this.props.intakeData.legacyIssues.length > 0;
+  hasLegacyAppeals = () => {
+    return this.props.intakeData.legacyAppeals.length > 0;
   }
 
   requiresUntimelyExemption = () => {
@@ -54,7 +54,7 @@ class AddIssuesModal extends React.Component {
   onAddIssue = () => {
     const currentIssue = issueById(this.props.intakeData.ratings, this.state.referenceId);
 
-    if (this.hasLegacyIssues()) {
+    if (this.hasLegacyAppeals()) {
       this.props.toggleLegacyOptInModal({ currentIssue,
         notes: this.state.notes });
     } else if (this.requiresUntimelyExemption()) {
@@ -72,7 +72,7 @@ class AddIssuesModal extends React.Component {
   }
 
   getNextButtonText = () => {
-    if (this.hasLegacyIssues()) {
+    if (this.hasLegacyAppeals()) {
       return 'Next';
     }
 

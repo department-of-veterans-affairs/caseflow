@@ -43,6 +43,18 @@ class NonratingRequestIssueModal extends React.Component {
     });
   }
 
+  hasLegacyAppeals = () => {
+    return this.props.intakeData.legacyAppeals.length > 0;
+  }
+
+  getNextButtonText = () => {
+    if (this.hasLegacyAppeals()) {
+      return 'Next';
+    }
+
+    return 'Add this issue';
+  }
+
   requiresUntimelyExemption = () => {
     if (this.props.formType === 'supplemental_claim') {
       return false;
@@ -67,13 +79,13 @@ class NonratingRequestIssueModal extends React.Component {
       isRating: false
     };
 
-    if (this.hasLegacyIssues()) {
+    if (this.hasLegacyAppeals()) {
       this.props.toggleLegacyOptInModal({
-        currentIssue: currentIssue,
+        currentIssue,
         notes: null });
     } else if (this.requiresUntimelyExemption()) {
       this.props.toggleUntimelyExemptionModal({
-        currentIssue: currentIssue,
+        currentIssue,
         notes: null
       });
     } else {
@@ -105,7 +117,7 @@ class NonratingRequestIssueModal extends React.Component {
             onClick: closeHandler
           },
           { classNames: ['usa-button', 'add-issue'],
-            name: 'Add this issue',
+            name: this.getNextButtonText(),
             onClick: this.onAddIssue,
             disabled: requiredFieldsMissing
           },

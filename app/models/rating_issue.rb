@@ -49,7 +49,6 @@ class RatingIssue
 
     ActiveRecord::Base.transaction do
       created_decision_issue = DecisionIssue.create!(
-        source_request_issue: source_request_issue,
         rating_issue_reference_id: reference_id,
         participant_id: participant_id,
         promulgation_date: promulgation_date,

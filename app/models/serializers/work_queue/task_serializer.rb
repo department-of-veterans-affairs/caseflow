@@ -3,7 +3,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
     false
   end
   attribute :type
-  attribute :action
+  attribute :label
   attribute :appeal_id
   attribute :status
   attribute :assigned_at

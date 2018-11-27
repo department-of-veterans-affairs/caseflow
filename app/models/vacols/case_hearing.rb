@@ -12,7 +12,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   HEARING_TYPES = {
     V: :video,
     T: :travel,
-    C: :central_office
+    C: :central
   }.freeze
 
   HEARING_DISPOSITIONS = {

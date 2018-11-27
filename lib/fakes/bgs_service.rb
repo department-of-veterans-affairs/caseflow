@@ -68,6 +68,7 @@ class Fakes::BGSService
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
+          # 2019/2/14 is AMA activation date
           profile_date: Date.new(2019, 2, 14) - 10.days,
           promulgation_date: Date.new(2019, 2, 14) - 5.days,
           issues: [
@@ -79,8 +80,9 @@ class Fakes::BGSService
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
-          profile_date: Date.new(2017, 11, 1) - 10.days,
-          promulgation_date: Date.new(2017, 11, 1) - 5.days,
+          # 2017/11/1 is RAMP begin date
+          profile_date: Date.new(2017, 11, 1) - 20.days,
+          promulgation_date: Date.new(2017, 11, 1) - 15.days,
           issues: [
             { decision_text: "Issue before test AMA not from a RAMP Review", reference_id: "before_test_ama_ref_id" },
             { decision_text: "Issue before test AMA from a RAMP Review",
@@ -189,13 +191,11 @@ class Fakes::BGSService
         ramp_election = RampElection.find_or_create_by!(
           veteran_file_number: veteran.file_number
         )
-        EndProductEstablishment.find_or_create_by!(
-          reference_id: claim_id,
-          veteran_file_number: veteran.file_number,
-          source: ramp_election,
-          synced_status: "CLR",
-          last_synced_at: 10.minutes.ago
-        )
+        EndProductEstablishment.find_or_create_by!(reference_id: claim_id, source: ramp_election) do |e|
+          e.veteran_file_number = veteran.file_number
+          e.last_synced_at = 10.minutes.ago
+          e.synced_status = "CLR"
+        end
         Generators::Contention.build(text: "A contention!", claim_id: claim_id)
         Generators::EndProduct.build(
           veteran_file_number: veteran.file_number,
@@ -512,7 +512,8 @@ class Fakes::BGSService
   end
 
   def fetch_file_number_by_ssn(ssn)
-    ssn_not_found ? nil : ssn
+    # reverse is a hack to return something different than what is passed.
+    ssn_not_found ? nil : ssn.to_s.reverse
   end
 
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
