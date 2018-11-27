@@ -79,8 +79,12 @@ class SeedDB
   end
 
   def create_qr_user
-    u = User.create!(station_id: 101, css_id: "QR_USER", full_name: "QR User")
-    OrganizationsUser.add_user_to_organization(u, QualityReview.singleton)
+    qr_user = User.create!(station_id: 101, css_id: "QR_USER", full_name: "QR User")
+    OrganizationsUser.add_user_to_organization(qr_user, QualityReview.singleton)
+
+    # Create two QR tasks. One assigned to the organization and one assigned to both the organization and a QR user.
+    create_task_at_quality_review
+    create_task_at_quality_review(qr_user)
   end
 
   def create_mail_team_user
@@ -388,6 +392,37 @@ class SeedDB
       parent: parent,
       appeal: appeal
     )
+  end
+
+  def create_task_at_quality_review(qr_user = nil)
+    root_task = FactoryBot.create(:root_task)
+    appeal = root_task.appeal
+
+    judge = FactoryBot.create(:user)
+    FactoryBot.create(:staff, :judge_role, user: judge)
+    judge_task = JudgeTask.create!(appeal: appeal, parent: root_task, assigned_to: judge, action: "assign")
+
+    atty = FactoryBot.create(:user)
+    FactoryBot.create(:staff, :attorney_role, user: atty)
+    atty_task_params = [{ appeal: appeal, parent_id: judge_task.id, assigned_to: atty, assigned_by: judge }]
+    atty_task = AttorneyTask.create_many_from_params(atty_task_params, judge).first
+
+    # Happens in CaseReviewConcern.update_task_and_issue_dispositions()
+    atty_task.mark_as_complete!
+    judge_task.mark_as_complete!
+
+    qr_org_task = QualityReviewTask.create_from_root_task(root_task)
+
+    if qr_user
+      qr_task_params = [{
+        appeal: appeal,
+        parent_id: qr_org_task.id,
+        assigned_to_id: qr_user.id,
+        assigned_to_type: qr_user.class.name,
+        assigned_by: qr_user
+      }]
+      QualityReviewTask.create_many_from_params(qr_task_params, qr_user).first
+    end
   end
 
   def create_tasks
