@@ -415,10 +415,12 @@ RSpec.feature "Appeal Intake" do
     )
 
     # add unidentified issue
+    expect(page).to_not have_css(".issue-unidentified")
     click_intake_add_issue
     add_intake_unidentified_issue("This is an unidentified issue")
     expect(page).to have_content("3 issues")
     expect(page).to have_content("This is an unidentified issue")
+    expect(page).to have_css(".issue-unidentified")
 
     # add ineligible issue
     click_intake_add_issue

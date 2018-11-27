@@ -27,10 +27,11 @@ class AddedIssue extends React.PureComponent {
     let { issue, formType } = this.props;
 
     let errorMsg = '';
+    const cssKlassesWithError = ['issue-desc', 'not-eligible'];
 
     if (issue.isUnidentified) {
       return { errorMsg,
-        cssKlasses: ['issue-desc', 'not-eligible'] };
+        cssKlasses: cssKlassesWithError.concat(['issue-unidentified']) };
     }
 
     if (issue.titleOfActiveReview) {
@@ -49,7 +50,7 @@ class AddedIssue extends React.PureComponent {
 
     if (errorMsg !== '') {
       return { errorMsg,
-        cssKlasses: ['issue-desc', 'not-eligible'] };
+        cssKlasses: cssKlassesWithError };
     }
   }
 
