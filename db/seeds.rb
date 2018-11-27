@@ -79,12 +79,12 @@ class SeedDB
   end
 
   def create_qr_user
-    u = User.create!(station_id: 101, css_id: "QR_USER", full_name: "QR User")
-    OrganizationsUser.add_user_to_organization(u, QualityReview.singleton)
+    qr_user = User.create!(station_id: 101, css_id: "QR_USER", full_name: "QR User")
+    OrganizationsUser.add_user_to_organization(qr_user, QualityReview.singleton)
 
     # Create two QR tasks. One assigned to the organization and one assigned to both the organization and a QR user.
     create_task_at_quality_review
-    create_task_at_quality_review(u)
+    create_task_at_quality_review(qr_user)
   end
 
   def create_mail_team_user
