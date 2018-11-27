@@ -3,9 +3,11 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { sprintf } from 'sprintf-js';
+import { css } from 'glamor';
 
 import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import {
   newTasksByAssigneeCssIdSelector,
@@ -29,6 +31,25 @@ import type { State, UiStateMessage } from './types/state';
 
 type Params = {||};
 
+const styles = {
+  container: css({
+    position: 'relative'
+  }),
+  dropdownTrigger: css({
+    marginRight: 0
+  }),
+  dropdownButton: css({
+    position: 'absolute',
+    top: '40px',
+    right: '40px'
+  }),
+  dropdownList: css({
+    top: '3.55rem',
+    right: '0',
+    width: '26rem'
+  })
+};
+
 type Props = Params & {|
   // store
   success: UiStateMessage,
@@ -41,6 +62,19 @@ type Props = Params & {|
 |};
 
 class ColocatedTaskListView extends React.PureComponent<Props> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      menu: false
+    };
+  }
+
+  onMenuClick = () => {
+    this.setState((prevState) => ({
+      menu: !prevState.menu
+    }));
+  };
+
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
   };
@@ -48,12 +82,17 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
   componentWillUnmount = () => this.props.hideSuccessMessage();
 
   render = () => {
+    let dropdown;
     const {
       success,
+      organizations,
       numNewTasks,
       numPendingTasks,
       numOnHoldTasks
     } = this.props;
+
+    // debugge;
+
     const tabs = [
       {
         label: sprintf(COPY.COLOCATED_QUEUE_PAGE_NEW_TAB_TITLE, numNewTasks),
@@ -73,9 +112,42 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
       }
     ];
 
-    return <AppSegment filledBackground>
+    const dropdownButtonList = (orgs) => {
+      return <ul className="cf-dropdown-menu active" {...styles.dropdownList}>
+        <li key={0}>
+          <Link className="usa-button-secondary usa-button"
+            href="#FIXME">
+            {COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL}
+          </Link>
+        </li>
+
+        {orgs.map((org, index) =>
+          <li key={index + 1}>
+            <Link className="usa-button-secondary usa-button"
+              href={org.target}>
+              {sprintf(COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL, org.name)}
+            </Link>
+          </li>)}
+      </ul>;
+    };
+
+    if (organizations.length > 0) {
+      dropdown = <div className="cf-dropdown" {...styles.dropdownButton}>
+        <a onClick={this.onMenuClick}
+          className="cf-dropdown-trigger usa-button usa-button-secondary"
+          {...styles.dropdownTrigger}>
+          {COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL}
+        </a>
+        {this.state.menu && dropdownButtonList(organizations) }
+      </div>;
+    }
+
+    return <AppSegment filledBackground styling={styles.container}>
       {success && <Alert type="success" title={success.title} message={success.detail} styling={marginBottom(1)} />}
       <h1 {...fullWidth}>{COPY.COLOCATED_QUEUE_PAGE_TABLE_TITLE}</h1>
+
+      {dropdown}
+
       <TabWindow name="tasks-tabwindow" tabs={tabs} />
     </AppSegment>;
   };
@@ -86,6 +158,8 @@ const mapStateToProps = (state) => {
 
   return {
     success,
+    organizationIds: state.ui.organizationIds,
+    organizations: state.ui.organizations,
     numNewTasks: newTasksByAssigneeCssIdSelector(state).length,
     numPendingTasks: pendingTasksByAssigneeCssIdSelector(state).length,
     numOnHoldTasks: onHoldTasksByAssigneeCssIdSelector(state).length
