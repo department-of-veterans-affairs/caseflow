@@ -209,7 +209,7 @@ class User < ApplicationRecord
     self.class.appeal_repository.load_user_case_assignments_from_vacols(css_id)
   end
 
-  def administrated_teams
+  def administered_teams
     organizations_users.select(&:admin?).map(&:organization)
   end
 
