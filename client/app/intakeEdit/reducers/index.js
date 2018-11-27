@@ -24,7 +24,11 @@ export const mapDataToInitialState = function(props = {}) {
     requestStatus: {
       requestIssuesUpdate: REQUEST_STATE.NOT_STARTED
     },
-    requestIssuesUpdateErrorCode: null
+    requestIssuesUpdateErrorCode: null,
+    // issuesAfter: null,
+    // issuesBefore: null,
+    issuesAfter: formatRequestIssues(serverIntake.issuesAfter),
+    issuesBefore: formatRequestIssues(serverIntake.issuesBefore)
   };
 };
 
@@ -45,7 +49,13 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
           $set: REQUEST_STATE.SUCCEEDED
         }
       },
-      requestIssuesUpdateErrorCode: { $set: null }
+      requestIssuesUpdateErrorCode: { $set: null },
+      issuesAfter: {
+        $set: formatRequestIssues(action.payload.issuesAfter)
+      },
+      issuesBefore: {
+        $set: formatRequestIssues(action.payload.issuesBefore)
+      }
     });
   case ACTIONS.REQUEST_ISSUES_UPDATE_FAIL:
     return update(state, {

@@ -9,6 +9,7 @@ class DecisionReview < ApplicationRecord
   attr_reader :saving_review
 
   has_many :request_issues, as: :review_request
+  has_many :request_issues_updates, foreign_key: :review_id
   has_many :claimants, as: :review_request
   has_many :request_decision_issues, through: :request_issues
   has_many :decision_issues, as: :decision_review
