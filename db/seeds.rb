@@ -317,13 +317,7 @@ class SeedDB
       number_of_claimants: 1,
       veteran_file_number: "975191063",
       docket_type: "direct_review",
-      request_issues:
-        FactoryBot.create_list(
-          :request_issue,
-          8,
-          description: description,
-          notes: notes
-        )
+      request_issues: FactoryBot.create_list(:request_issue, 8, description: description, notes: notes)
     )
 
     LegacyAppeal.create(vacols_id: "2096907", vbms_id: "228081153S")

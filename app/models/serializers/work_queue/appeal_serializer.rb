@@ -22,6 +22,16 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
       {
         id: issue.id,
         disposition: issue.disposition,
+        description: issue.description
+      }
+    end
+  end
+
+  attribute :decision_issues do
+    object.decision_issues.map do |issue|
+      {
+        id: issue.id,
+        disposition: issue.disposition,
         description: issue.description,
         request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id)
       }

@@ -30,7 +30,7 @@ import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES.json';
 import uuid from 'uuid';
 
-class AmaSelectDispositionsView extends React.PureComponent {
+class SelectDispositionsView extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -71,13 +71,11 @@ class AmaSelectDispositionsView extends React.PureComponent {
     const {
       appealId,
       taskId,
-      checkoutFlow,
-      appeal
+      checkoutFlow
     } = this.props;
 
     return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
   }
-
   openDecisionHandler = (requestIssueIds, decisionIssue) => () => {
     if (!decisionIssue) {
       decisionIssue = {
