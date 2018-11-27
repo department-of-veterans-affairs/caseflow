@@ -13,6 +13,11 @@ import DocketTypeBadge from './components/DocketTypeBadge';
 import ActionsDropdown from './components/ActionsDropdown';
 import OnHoldLabel from './components/OnHoldLabel';
 import CopyTextButton from '../components/CopyTextButton';
+import TextField from '../components/TextField';
+import ReaderLink from './ReaderLink';
+import { CATEGORIES } from './constants';
+import { toggleVeteranCaseList } from './uiReducer/uiActions';
+
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import COPY from '../../COPY.json';
@@ -45,6 +50,35 @@ const snapshotParentContainerStyling = css({
 
 const headingStyling = css({
   marginBottom: '0.5rem'
+});
+
+const newStyling = css({
+  margin: '100px 200px 100px 0px'
+});
+
+const spanStyle = css({
+  border: '2px',
+  borderStyle: 'solid',
+  borderColor: '#DCDCDC',
+  padding: '5px',
+  backgroundColor: 'white'
+});
+
+const titleStyle = css({
+  fontWeight: 'bold',
+  textAlign: 'center'
+});
+
+const divStyle = css({
+  marginRight: '10px'
+});
+
+const redType = css({
+  color: 'red'
+});
+
+const displayNone = css({
+  display: 'none'
 });
 
 const editButton = css({
@@ -248,65 +282,65 @@ export class CaseSnapshot extends React.PureComponent<Props> {
   render = () => {
     const {
       appeal,
-      primaryTask
+      primaryTask,
+      veteranCaseListIsVisible
     } = this.props;
     const taskAssignedToVso = primaryTask && primaryTask.assignedTo.type === 'Vso';
 
-    return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
-      <div className="usa-width-one-fourth">
-        <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TITLE}</h3>
-        <CaseDetailsDescriptionList>
-          <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</dt>
-          <dd>
-            {renderLegacyAppealType({
-              aod: appeal.isAdvancedOnDocket,
-              type: appeal.caseType
-            })}
-            {!appeal.isLegacyAppeal && this.props.canEditAod && <span {...editButton}>
-              <Link
-                to={`/queue/appeals/${appeal.externalId}/modal/advanced_on_docket_motion`}>
-                Edit
-              </Link>
-            </span>}
-          </dd>
-          <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
-          <dd><DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}</dd>
-          { !taskAssignedToVso && appeal.assignedJudge &&
-            <React.Fragment>
-              <dt>{COPY.CASE_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</dt>
-              <dd>{appeal.assignedJudge.full_name}</dd>
-            </React.Fragment> }
-          { !taskAssignedToVso && appeal.assignedAttorney &&
-            <React.Fragment>
-              <dt>{COPY.CASE_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</dt>
-              <dd>{appeal.assignedAttorney.full_name}</dd>
-            </React.Fragment> }
-          {this.daysSinceTaskAssignmentListItem()}
-          { !taskAssignedToVso && primaryTask && primaryTask.documentId &&
-            <React.Fragment>
-              <dt>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</dt>
-              <dd><CopyTextButton text={primaryTask.documentId} /></dd>
-            </React.Fragment> }
-        </CaseDetailsDescriptionList>
+    console.log('--test--');
+    console.log(appeal);
+    console.log(this.props);
+
+    return <div className="usa-grid" {...snapshotParentContainerStyling}>
+      {/*<div {...newStyling}>
+        <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
+        <TextField text={appeal.docketNumber} value={appeal.docketNumber} readOnly={true} />
+        <dd><DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}</dd>
+      </div>*/}
+
+      <div {...divStyle}>
+        <dt {...titleStyle}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL.toUpperCase()}</dt>
+        {/*<TextField text={appeal.docketNumber} value={appeal.docketNumber} readOnly={true} />*/}
+        <dd {...spanStyle}>
+          <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}
+        </dd>
       </div>
-      <div className="usa-width-one-fourth">
-        <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_TASK_ASSIGNMENT_BOX_TITLE}</h3>
-        <CaseDetailsDescriptionList>
-          {this.legacyTaskInformation()}
-        </CaseDetailsDescriptionList>
+
+      <div {...divStyle}>
+       <dt {...titleStyle}>{'VETERAN DOCUMENTS'}</dt>
+       <dd>
+         <ReaderLink
+            appealId={appeal.id}
+            appeal={appeal} />
+       </dd>
       </div>
-      {this.showActionsSection() &&
-        <div className="usa-width-one-half">
-          <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-          <ActionsDropdown task={primaryTask} appealId={appeal.externalId} />
-        </div>
-      }
+
+      <div {...divStyle}>
+       <dt {...titleStyle}>{'TYPE'}</dt>
+       <dd {...redType}>{'CAVC'}</dd>
+       <dd className={appeal.caseType == 'CAVC' ? redType : null}>{appeal.caseType}</dd>
+      </div>
+
+      <div {...divStyle} className={appeal.decisionDocumentId ? null : displayNone}>
+       <dt {...titleStyle}>{'DECISION DOCUMENT ID'}</dt>
+       <CopyTextButton text={appeal.decisionDocumentId} />
+      </div>
+
+      <div>
+        <dt>{}</dt>
+        <Link onClick={this.props.toggleVeteranCaseList}>
+          { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
+        </Link>
+      </div>
+
+
     </div>;
   };
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => {
   const { featureToggles, userRole, canEditAod } = state.ui;
+  veteranCaseListIsVisible: state.ui.veteranCaseListIsVisible;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),

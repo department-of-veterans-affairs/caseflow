@@ -29,6 +29,17 @@ const headerStyling = css({
   paddingRight: '2.5rem'
 });
 
+const newHeaderStyling = css({
+  fontSize: '34px',
+  fontWeight: 'bold'
+});
+
+const headerSupportStyling = css({
+  fontSize: '18px',
+  color: 'grey',
+  marginLeft: '2px'
+});
+
 const listStyling = css({
   listStyleType: 'none',
   verticalAlign: 'super',
@@ -57,25 +68,29 @@ class CaseTitle extends React.PureComponent {
       veteranCaseListIsVisible
     } = this.props;
 
-    return <CaseTitleScaffolding heading={appeal.veteranFullName}>
+    return <CaseTitleScaffolding /*heading={appeal.veteranFullName}*/>
       <React.Fragment>
-        Veteran ID:&nbsp;
+        <span {...newHeaderStyling}>{appeal.veteranFullName}</span>
+        <span {...headerSupportStyling}>{'  |  Veteran ID  '}</span>
         <CopyTextButton text={appeal.veteranFileNumber} />
       </React.Fragment>
 
-      { !this.props.userIsVsoEmployee && <ReaderLink
+      {/* !this.props.userIsVsoEmployee && <ReaderLink
         appealId={appealId}
         analyticsSource={CATEGORIES[analyticsSource.toUpperCase()]}
         redirectUrl={redirectUrl}
         appeal={appeal}
         taskType={taskType}
-        longMessage /> }
+        longMessage /> */}
 
-      <span {...viewCasesStyling}>
-        <Link onClick={this.props.toggleVeteranCaseList}>
-          { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
-        </Link>
-      </span>
+      {
+        <span {...viewCasesStyling}>
+          <Link onClick={this.props.toggleVeteranCaseList}>
+            { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
+          </Link>
+        </span>
+      }
+
     </CaseTitleScaffolding>;
   }
 }
@@ -105,7 +120,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 export default connect(mapStateToProps, mapDispatchToProps)(CaseTitle);
 
 const CaseTitleScaffolding = (props) => <div {...containingDivStyling}>
-  <h1 {...headerStyling}>{props.heading}</h1>
   <ul {...listStyling}>
     {props.children.map((child, i) => child && <li key={i} {...listItemStyling}>{child}</li>)}
   </ul>
