@@ -91,8 +91,6 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
       numOnHoldTasks
     } = this.props;
 
-    // debugge;
-
     const tabs = [
       {
         label: sprintf(COPY.COLOCATED_QUEUE_PAGE_NEW_TAB_TITLE, numNewTasks),
@@ -113,10 +111,10 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
     ];
 
     const dropdownButtonList = (orgs) => {
+
       return <ul className="cf-dropdown-menu active" {...styles.dropdownList}>
         <li key={0}>
-          <Link className="usa-button-secondary usa-button"
-            href="#FIXME">
+          <Link className="usa-button-secondary usa-button" onClick={this.onMenuClick}>
             {COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL}
           </Link>
         </li>
@@ -124,7 +122,7 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
         {orgs.map((org, index) =>
           <li key={index + 1}>
             <Link className="usa-button-secondary usa-button"
-              href={org.target}>
+              href={`/organizations/${org.url}`}>
               {sprintf(COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL, org.name)}
             </Link>
           </li>)}
