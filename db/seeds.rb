@@ -101,7 +101,8 @@ class SeedDB
       FactoryBot.create_list(
         :request_issue,
         [3, 4, 5].sample,
-        description: "Kidney problems",
+        description: "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011",
+        notes: "Pain disorder with 100\% evaluation per examination",
         review_request: root.appeal
       )
       parent = FactoryBot.create(
@@ -244,6 +245,9 @@ class SeedDB
   end
 
   def create_ama_appeals
+    description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
+    notes = "Pain disorder with 100\% evaluation per examination"
+
     @appeal_with_vso = FactoryBot.create(
       :appeal,
       claimants: [
@@ -252,68 +256,68 @@ class SeedDB
       ],
       veteran_file_number: "701305078",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 3, description: "Head trauma")
+      request_issues: FactoryBot.create_list(:request_issue, 3, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       veteran_file_number: "783740847",
       docket_type: "evidence_submission",
-      request_issues: FactoryBot.create_list(:request_issue, 3, description: "Knee pain")
+      request_issues: FactoryBot.create_list(:request_issue, 3, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       veteran_file_number: "963360019",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 2, description: "PTSD")
+      request_issues: FactoryBot.create_list(:request_issue, 2, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "604969679",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 1, description: "Tinnitus")
+      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "228081153",
       docket_type: "evidence_submission",
-      request_issues: FactoryBot.create_list(:request_issue, 1, description: "Tinnitus")
+      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "152003980",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 3, description: "PTSD")
+      request_issues: FactoryBot.create_list(:request_issue, 3, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "375273128",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 1, description: "Knee pain")
+      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "682007349",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 5, description: "Veteran reports hearing loss in left ear")
+      request_issues: FactoryBot.create_list(:request_issue, 5, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "231439628S",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 1, description: "Back pain")
+      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "975191063",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 8, description: "Kidney problems")
+      request_issues: FactoryBot.create_list(:request_issue, 8, description: description, notes: notes)
     )
 
     LegacyAppeal.create(vacols_id: "2096907", vbms_id: "228081153S")
