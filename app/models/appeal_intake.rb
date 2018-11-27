@@ -25,7 +25,7 @@ class AppealIntake < DecisionReviewIntake
   rescue ActiveRecord::RecordInvalid => _err
     # propagate the error from invalid column to the user-visible reason
     if detail.errors.messages[:veteran_is_not_claimant].include?(ClaimantValidator::CLAIMANT_REQUIRED)
-      claimant_error = "blank"
+      claimant_error = ClaimantValidator::BLANK
     end
 
     detail.validate

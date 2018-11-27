@@ -120,7 +120,7 @@ describe HigherLevelReviewIntake do
         )
       end
 
-      context "and claimant is nil" do
+      context "claimant is nil" do
         let(:claimant) { nil }
         let(:receipt_date) { 3.days.from_now }
 
