@@ -405,7 +405,7 @@ ActiveRecord::Schema.define(version: 20181126190223) do
     t.date "hearing_date", null: false
     t.string "hearing_type", null: false
     t.string "regional_office"
-    t.string "judge_id"
+    t.integer "judge_id"
     t.string "bva_poc"
     t.string "room_info", null: false
     t.datetime "created_at", null: false
