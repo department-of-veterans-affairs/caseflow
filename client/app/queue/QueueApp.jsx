@@ -39,7 +39,7 @@ import AssignToView from './AssignToView';
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
 import SubmitDecisionView from './SubmitDecisionView';
-import SelectDispositionsView from './SelectDispositionsView';
+import SelectDispositionsContainer from './SelectDispositionsContainer';
 import SelectSpecialIssuesView from './SelectSpecialIssuesView';
 import SpecialIssueLoadingScreen from './SpecialIssueLoadingScreen';
 import AddEditIssueView from './AddEditIssueView';
@@ -132,7 +132,7 @@ class QueueApp extends React.PureComponent<Props> {
     checkoutFlow={props.match.params.checkoutFlow}
     nextStep="/queue" />;
 
-  routedSelectDispositions = (props) => <SelectDispositionsView
+  routedSelectDispositions = (props) => <SelectDispositionsContainer
     appealId={props.match.params.appealId}
     taskId={props.match.params.taskId}
     checkoutFlow={props.match.params.checkoutFlow} />;
