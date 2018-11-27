@@ -35,6 +35,8 @@ import DateSelector from '../../components/DateSelector';
 import _ from 'lodash';
 import type { Appeal, Task } from '../types/models';
 import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../../hearings/constants/constants';
+import { getQueryParams } from '../../util/QueryParamsUtil';
+
 
 type Params = {|
   task: Task,
@@ -156,16 +158,34 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       }
     };
 
+
+
     const hearingType = this.props.task.taskBusinessPayloads[0].values.hearing_type ===
                           CENTRAL_OFFICE_HEARING ? 'CO' : VIDEO_HEARING;
     const hearingDateStr = formatDateStr(this.state.selectedDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
     const title = `You have successfully assigned ${appeal.veteranFullName} to a ${hearingType} hearing ` +
                   `on ${hearingDateStr}.`;
 
+
+     // const newUrl = () => {
+     //   const regionalOfficeKey = this.props.selectedRegionalOffice.value;
+     //   const requestUrl = `/hearings/schedule/assign?regional_office=${this.props.selectedRegionalOffice.value}`;
+     //   let requestUrl;
+     //
+     //   if (this.props.selectedRegionalOffice) {
+     //
+     //      requestUrl = null
+     //   } else {
+     //     requestUrl = `/hearings/schedule/assign?regional_office=${this.props.selectedRegionalOffice.value}`;
+     //   }
+     //   debugger;
+     //   return requestUrl
+     // }
+
     const getDetail = () => {
       return <p>To assign another veteran please use the "Schedule Veterans" link below.
       You can also use the hearings section below to view the hearing in new tab.<br /><br />
-        <Link href="/hearings/schedule/assign">Back to Schedule Veterans</Link></p>;
+    <Link href={`/hearings/schedule/assign?value=C&label=Central`}>Back to Schedule Veterans</Link></p>;
     };
 
     const successMsg = { title,
@@ -288,4 +308,3 @@ export default (withRouter(
       button: 'Schedule' }
   ))
 ): React.ComponentType<Params>);
-
