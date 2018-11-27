@@ -679,8 +679,8 @@ ActiveRecord::Schema.define(version: 20181127201444) do
     t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
     t.string "ineligible_reason"
-    t.integer "legacy_issue_reference_id"
-    t.integer "legacy_sequence_reference_id"
+    t.string "vacols_id"
+    t.string "vacols_sequence_id"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
