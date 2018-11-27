@@ -210,7 +210,7 @@ class User < ApplicationRecord
   end
 
   def administrated_teams
-    organizations_users.where(admin: true).map(&:organization)
+    organizations_users.select(&:admin?).map(&:organization)
   end
 
   def judge_css_id

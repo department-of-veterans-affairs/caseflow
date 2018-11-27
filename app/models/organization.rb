@@ -26,7 +26,7 @@ class Organization < ApplicationRecord
   end
 
   def user_is_admin?(user)
-    organizations_users.where(admin: true).pluck(:user_id).include?(user.id)
+    admins.include?(user)
   end
 
   def path

@@ -4,9 +4,9 @@ class JudgeTeam < Organization
   end
 
   def self.create_for_judge(user)
-    org = create!(name: user.css_id)
-    OrganizationsUser.make_user_admin(user, org)
-    org
+    create!(name: user.css_id).tap do |org|
+      OrganizationsUser.make_user_admin(user, org)
+    end
   end
 
   def can_receive_task?(_task)
