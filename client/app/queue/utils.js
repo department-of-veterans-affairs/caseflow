@@ -79,7 +79,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
         pgId: task.attributes.assigned_by.pg_id
       },
       taskId: task.id,
-      action: task.attributes.action,
+      label: task.attributes.label,
       documentId: task.attributes.document_id,
       workProduct: null,
       previousTaskAssignedOn: task.attributes.previous_task.assigned_at,
@@ -152,7 +152,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       addedByName: task.attributes.added_by_name,
       addedByCssId: task.attributes.added_by_css_id,
       taskId: task.attributes.task_id,
-      action: task.attributes.action,
+      label: task.attributes.label,
       documentId: task.attributes.document_id,
       workProduct: task.attributes.work_product,
       previousTaskAssignedOn: task.attributes.previous_task.assigned_on,
