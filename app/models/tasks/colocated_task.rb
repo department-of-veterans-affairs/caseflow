@@ -9,6 +9,9 @@ class ColocatedTask < GenericTask
 
   after_update :update_location_in_vacols
 
+  # Skip for ColocatedTasks because we allow multiple open organizations ColocatedTasks.
+  def verify_org_task_unique; end
+
   class << self
     # Override so that each ColocatedTask for an appeal gets assigned to the same colocated staffer.
     def create_many_from_params(params_array, user)
@@ -62,8 +65,12 @@ class ColocatedTask < GenericTask
   end
 
   def no_actions_available?(user)
-    # TODO: Move this to Colocated.singleton.user_has_access?(user).
-    completed? || user.colocated_in_vacols?
+    completed? || assigned_to != user
+  end
+
+  def can_be_accessed_by_user?(user)
+    return true if assigned_to == Colocated.singleton
+    super
   end
 
   def update_if_hold_expired!

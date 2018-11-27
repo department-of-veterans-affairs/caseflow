@@ -44,8 +44,6 @@ class GenericTask < Task
 
     []
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
 
   def update_from_params(params, current_user)
@@ -72,7 +70,7 @@ class GenericTask < Task
   end
 
   def can_be_accessed_by_user?(user)
-    !available_actions(user).empty?
+    available_actions_unwrapper(user).any? || task_is_assigned_to_users_organization?(user)
   end
 
   def update_status(status)
@@ -126,7 +124,7 @@ class GenericTask < Task
       Task.create!(
         type: name,
         appeal: parent.try(:appeal) || params[:appeal],
-        assigned_by_id: child_assigned_by_id(parent, user),
+        assigned_by_id: params[:assigned_by].try(:id) || child_assigned_by_id(parent, user),
         parent_id: parent.try(:id),
         assigned_to: assignee,
         action: params[:action],

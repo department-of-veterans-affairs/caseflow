@@ -70,7 +70,7 @@ describe ColocatedTask do
         ColocatedTask.create_many_from_params([{
                                                 assigned_by: attorney,
                                                 action: :aoj,
-                                                parent: create(:ama_attorney_task),
+                                                parent_id: create(:ama_attorney_task, assigned_to: attorney).id,
                                                 appeal: create(:appeal)
                                               }], attorney)
       end
@@ -317,7 +317,7 @@ describe ColocatedTask do
           ColocatedTask.create_many_from_params([{
                                                   assigned_by: attorney,
                                                   action: :aoj,
-                                                  parent: create(:ama_attorney_task),
+                                                  parent_id: create(:ama_attorney_task, assigned_to: attorney).id,
                                                   appeal: create(:appeal)
                                                 }], attorney)
         end
