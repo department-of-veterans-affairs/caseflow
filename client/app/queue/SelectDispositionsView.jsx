@@ -68,8 +68,7 @@ class SelectDispositionsView extends React.PureComponent {
     const {
       appealId,
       taskId,
-      checkoutFlow,
-      appeal
+      checkoutFlow
     } = this.props;
 
     return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
