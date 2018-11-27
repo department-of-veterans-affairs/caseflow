@@ -23,8 +23,6 @@ class LegacyOptInModal extends React.Component {
     };
   }
 
-  const { currentIssueAndNotes } = this.props.intakeData
-
   radioOnChange = (value) => {
     // legacy opt in are keyed off of a combo of both id & vacolsSequenceId
     // NO_MATCH_TEXT does not have a vacolsSequenceId
@@ -35,7 +33,6 @@ class LegacyOptInModal extends React.Component {
       vacolsSequenceId: legacyValues.length > 1 ? legacyValues[1] : '',
       radioKey: value
     });
-    currentIssueAndNotes.currentIssue.vacolsId = value;
   }
 
   requiresUntimelyExemption = () => {
@@ -43,7 +40,7 @@ class LegacyOptInModal extends React.Component {
       return false;
     }
 
-    return !currentIssueAndNotes.currentIssue.timely;
+    return !this.props.intakeData.currentIssueAndNotes.currentIssue.timely;
   }
 
   onAddIssue = () => {
@@ -54,13 +51,14 @@ class LegacyOptInModal extends React.Component {
 
     if (this.requiresUntimelyExemption()) {
       return this.props.toggleUntimelyExemptionModal({ currentIssue,
-        notes });
+        notes, this.state.id, this.state.vacolsSequenceId });
     } else if (currentIssue.reference_id) {
       this.props.addRatingRequestIssue({
         issueId: currentIssue.reference_id,
         ratings: this.props.intakeData.ratings,
         isRating: true,
-        vacolsId: this.state.vacolsId,
+        legacyIssueId: this.state.id,
+        vacolsSequenceId: this.state.vacolsSequenceId,
         notes
       });
     } else {
@@ -69,7 +67,8 @@ class LegacyOptInModal extends React.Component {
         description: currentIssue.description,
         decisionDate: currentIssue.decisionDate,
         timely: true,
-        vacolsId: this.state.vacolsId
+        legacyIssueId: this.state.id,
+        vacolsSequenceId: this.state.vacolsSequenceId
       });
     }
     this.props.toggleLegacyOptInModal();

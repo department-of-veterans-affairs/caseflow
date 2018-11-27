@@ -63,7 +63,9 @@ export const addRatingRequestIssue = (args) => (dispatch) => {
       profileDate: currentIssue.profile_date,
       notes: args.notes,
       untimelyExemption: args.untimelyExemption,
-      untimelyExemptionNotes: args.untimelyExemptionNotes
+      untimelyExemptionNotes: args.untimelyExemptionNotes,
+      legacyIssueId: args.legacyIssueId,
+      vacolsSequenceId: args.vacolsSequenceId
     }
   });
 };
@@ -78,7 +80,9 @@ export const addNonratingRequestIssue = (args) => (dispatch) => {
       timely: args.timely,
       untimelyExemption: args.untimelyExemption,
       untimelyExemptionNotes: args.untimelyExemptionNotes,
-      isRating: false
+      isRating: false,
+      legacyIssueId: args.legacyIssueId,
+      vacolsSequenceId: args.vacolsSequenceId
     }
   });
 };

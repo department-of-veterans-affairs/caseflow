@@ -16,7 +16,9 @@ class RequestIssue < ApplicationRecord
     duplicate_of_issue_in_active_review: "duplicate_of_issue_in_active_review",
     untimely: "untimely",
     previous_higher_level_review: "previous_higher_level_review",
-    before_ama: "before_ama"
+    before_ama: "before_ama",
+    legacy_issue_not_withdrawn: "legacy_issue_not_withdrawn",
+    legacy_appeal_not_eligible: "legacy_appeal_not_eligible"
   }
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
@@ -68,7 +70,9 @@ class RequestIssue < ApplicationRecord
         is_unidentified: data[:is_unidentified],
         untimely_exemption: data[:untimely_exemption],
         untimely_exemption_notes: data[:untimely_exemption_notes],
-        ramp_claim_id: data[:ramp_claim_id]
+        ramp_claim_id: data[:ramp_claim_id],
+        legacy_issue_id: data[:legacy_issue_id],
+        vacols_sequence_id: data[:vacols_sequence_id]
       ).validate_eligibility!
     end
 
@@ -118,6 +122,8 @@ class RequestIssue < ApplicationRecord
       notes: notes,
       is_unidentified: is_unidentified,
       ramp_claim_id: ramp_claim_id,
+      legacy_issue_id: legacy_issue_id,
+      vacols_sequence_id: vacols_sequence_id,
       ineligible_reason: ineligible_reason,
       title_of_active_review: duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
     }
@@ -128,6 +134,7 @@ class RequestIssue < ApplicationRecord
     check_for_untimely!
     check_for_previous_higher_level_review!
     check_for_before_ama!
+    check_for_legacy_issue_not_withdrawn!
     self
   end
 
@@ -186,6 +193,22 @@ class RequestIssue < ApplicationRecord
 
     if decision_or_promulgation_date && decision_or_promulgation_date < DecisionReview.ama_activation_date
       self.ineligible_reason = :before_ama
+    end
+  end
+
+  def check_for_legacy_issue_not_withdrawn!
+    return unless eligible?
+
+    if !review_request.legacy_opt_in_approved && legacy_issue_id
+      self.ineligible_reason = :legacy_issue_not_withdrawn
+    end
+  end
+
+  def check_for_legacy_appeal_not_eligible!
+    return unless eligible?
+
+    if !review_request.legacy_opt_in_approved && legacy_issue_id
+      self.ineligible_reason = :legacy_issue_not_withdrawn
     end
   end
 
