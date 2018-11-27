@@ -107,7 +107,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   };
 
   formatDateString = (dateToFormat) => {
-    const formattedDate = formatDate(dateToFormat);
+    const formattedDate = formatDateStr(dateToFormat);
 
     return formatDateStringForApi(formattedDate);
   };
@@ -192,7 +192,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       return null;
     }
 
-    const hearingDateStr = formatDate(this.props.task.taskBusinessPayloads[0].values.hearing_date);
+    const hearingDateStr = formatDateStr(this.props.task.taskBusinessPayloads[0].values.hearing_date);
     // In state date is formatted YYY-MM-DD
 
     if (this.state.selectedDate === '') {
