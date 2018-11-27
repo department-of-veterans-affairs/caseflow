@@ -101,7 +101,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
 
   render = () => {
     const { highlightFormItems, error } = this.props;
-    const { label, instructions } = this.state;
+    const { instructions } = this.state;
 
     return <React.Fragment>
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
@@ -113,11 +113,11 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
       </Alert>}
       <div {...marginTop(4)}>
         <SearchableDropdown
-          errorMessage={highlightFormItems && !label ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+          errorMessage={highlightFormItems && !this.state.label ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
           name={COPY.ADD_COLOCATED_TASK_ACTION_TYPE_LABEL}
           placeholder="Select an action type"
-          options={_.map(CO_LOCATED_ADMIN_ACTIONS, (key: string, value: string) => ({
-            key,
+          options={_.map(CO_LOCATED_ADMIN_ACTIONS, (label: string, value: string) => ({
+            label,
             value
           }))}
           onChange={(option) => option && this.setState({ label: option.value })}
