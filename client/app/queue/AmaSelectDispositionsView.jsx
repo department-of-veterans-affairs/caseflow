@@ -16,7 +16,8 @@ import {
   updateEditingAppealIssue,
   setDecisionOptions,
   startEditingAppealIssue,
-  saveEditedAppealIssue
+  saveEditedAppealIssue,
+  editStagedAppeal
 } from './QueueActions';
 import { hideSuccessMessage } from './uiReducer/uiActions';
 import {
@@ -27,13 +28,15 @@ import {
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES.json';
+import uuid from 'uuid';
 
 class AmaSelectDispositionsView extends React.PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
-      issuesOpen: null
+      openRequestIssueIds: null,
+      decisionIssue: null
     };
   }
 
@@ -75,31 +78,57 @@ class AmaSelectDispositionsView extends React.PureComponent {
     return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
   }
 
-  addDecisionHandler = (issueIds) => () => {
-    this.setState({
-      issuesOpen: issueIds
-    });
-  }
+  openDecisionHandler = (requestIssueIds, decisionIssue) => () => {
+    if (!decisionIssue) {
+      decisionIssue = {
+        id: uuid.v4(),
+        description: '',
+        disposition: null,
+        request_issue_ids: requestIssueIds
+      };
+    }
 
-  editDecisionHandler = (issueId) => () => {
     this.setState({
-      issuesOpen: issueIds
+      openRequestIssueIds: requestIssueIds,
+      decisionIssue
     });
   }
 
   handleModalClose = () => {
     this.setState({
-      issuesOpen: null
+      openRequestIssueIds: null,
+      decisionIssue: null
     });
   }
 
+  saveDecision = () => {
+    let decisionIssueFound = false;
+    let newDecisionIssues = this.props.appeal.decisionIssues.map((decisionIssue) => {
+      if (decisionIssue.id === this.state.decisionIssue.id) {
+        decisionIssueFound = true;
+        return this.state.decisionIssue;
+      } else {
+        return decisionIssue;
+      }
+    });
+    if (!decisionIssueFound) {
+      newDecisionIssues = [...newDecisionIssues, this.state.decisionIssue];
+    }
+
+    this.props.editStagedAppeal(
+      this.props.appeal.externalId, { decisionIssues: newDecisionIssues }
+    );
+
+    this.handleModalClose();
+  }
+
   selectedIssues = () => {
-    if (!this.state.issuesOpen) {
+    if (!this.state.openRequestIssueIds) {
       return [];
     }
 
     return this.props.appeal.issues.filter((issue) => {
-      return this.state.issuesOpen.includes(issue.id);
+      return this.state.openRequestIssueIds.includes(issue.id);
     });
   }
 
@@ -111,10 +140,10 @@ class AmaSelectDispositionsView extends React.PureComponent {
       <ContestedIssues
         decisionIssues={appeal.decisionIssues}
         requestIssues={appeal.issues}
-        addDecisionHandler={this.addDecisionHandler}
-        editDecisionHandler={this.editDecisionHandler}
+        openDecisionHandler={this.openDecisionHandler}
+        numbered
       />
-      { this.state.issuesOpen && <Modal
+      { this.state.openRequestIssueIds && <Modal
         buttons = {[
           { classNames: ['cf-modal-link', 'cf-btn-link'],
             name: 'Close',
@@ -122,7 +151,7 @@ class AmaSelectDispositionsView extends React.PureComponent {
           },
           { classNames: ['usa-button', 'usa-button-secondary'],
             name: 'Proceed with action',
-            onClick: this.handleModalClose
+            onClick: this.saveDecision
           }
         ]}
         closeHandler={this.handleModalClose}
@@ -135,15 +164,28 @@ class AmaSelectDispositionsView extends React.PureComponent {
         <TextareaField
           label={COPY.DECISION_ISSUE_MODAL_DESCRIPTION_EXAMPLE}
           name="Text Box"
-          onChange={(value) => {
-            this.setState({ value });
+          onChange={(issueDescription) => {
+            this.setState({
+              decisionIssue: {
+                ...this.state.decisionIssue,
+                description: issueDescription
+              }
+            });
           }}
-          value={this.state.value}
+          value={this.state.decisionIssue.description}
         />
         <h3>{COPY.DECISION_ISSUE_MODAL_DISPOSITION}</h3>
         <SelectIssueDispositionDropdown
-          issue={issue}
+          issue={this.state.decisionIssue}
           appeal={appeal}
+          updateIssue={({disposition}) => {
+            this.setState({
+              decisionIssue: {
+                ...this.state.decisionIssue,
+                disposition: disposition
+              }
+            })
+          }}
           noStyling
         />
         <br />
@@ -176,7 +218,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDecisionOptions,
   startEditingAppealIssue,
   saveEditedAppealIssue,
-  hideSuccessMessage
+  hideSuccessMessage,
+  editStagedAppeal
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(AmaSelectDispositionsView));

@@ -4,14 +4,16 @@ import { COLORS } from '../../constants/AppConstants';
 import Button from '../../components/Button';
 import ISSUE_DISPOSITIONS_BY_ID from '../../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
 
+const TEXT_INDENTATION = '10px'; 
+
 const contestedIssueStyling = css({
   backgroundColor: COLORS.GREY_BACKGROUND,
-  padding: '0 20px',
+  padding: `5px ${TEXT_INDENTATION}`,
   margin: '10px 0'
 });
 
 const indentedIssueStyling = css({
-  margin: '0 10px'
+  margin: `0 ${TEXT_INDENTATION}`
 });
 
 const buttonDiv = css({
@@ -34,8 +36,8 @@ const descriptionDiv = css({
   marginTop: '10px'
 });
 
-const dispositionSpan = css({
-  float: 'right'
+const descriptionSpan = css({
+  marginRight: '10px'
 });
 
 const grayLine = css({
@@ -46,34 +48,45 @@ const grayLine = css({
   marginBottom: '10px'
 });
 
+const flexContainer = css({
+  display: 'flex',
+  justifyContent: 'space-between'
+});
+
+const noteDiv = css({
+  marginTop: '10px',
+  fontSize: '1.5rem',
+  color: COLORS.GREY
+});
+
 export default class ContestedIssues extends React.PureComponent {
   decisionIssues = (requestIssue) => {
     const {
       decisionIssues,
-      editDecisionHandler
+      openDecisionHandler
     } = this.props;
 
     return decisionIssues.filter((decisionIssue) => {
-      return requestIssue.decision_issue_ids.includes(decisionIssue.id);
+      return decisionIssue.request_issue_ids.includes(requestIssue.id);
     }).map((decisionIssue) => {
       return <div {...outerDiv}>
         <div {...grayLine}/>
         <div {...decisionIssueDiv}>
-          <div>
+          <div {...flexContainer}>
             Decision
-            {editDecisionHandler && <span {...dispositionSpan}>
+            {openDecisionHandler && <span>
               <Button
                 name="Edit"
-                onClick={editDecisionHandler([decisionIssue.id])}
+                onClick={openDecisionHandler([requestIssue.id], decisionIssue)}
                 classNames={['cf-btn-link']}
               />
             </span>}
           </div>
-          <div {...descriptionDiv}>
-            <span>
+          <div {...descriptionDiv} {...flexContainer}>
+            <span {...descriptionSpan}>
               {decisionIssue.description}
             </span>
-            <span {...dispositionSpan}>
+            <span>
               {ISSUE_DISPOSITIONS_BY_ID[decisionIssue.disposition]}
             </span>
           </div>
@@ -86,29 +99,40 @@ export default class ContestedIssues extends React.PureComponent {
     const {
       requestIssues,
       decisionIssues,
-      addDecisionHandler
+      openDecisionHandler,
+      numbered
     } = this.props;
 
-    return requestIssues.map((issue) => {
-      return <React.Fragment key={issue.description}>
-        <div {...contestedIssueStyling}>
-          Contested Issue
-        </div>
-        <div {...indentedIssueStyling}>
-          {issue.description}
-          <div>Note: "{issue.notes}"</div>
-        </div>
-        {this.decisionIssues(issue)}
-        { addDecisionHandler &&
-          <div {...buttonDiv}>
-            <Button
-              name="+ Add Decision"
-              onClick={addDecisionHandler([issue.id])}
-              classNames={['usa-button-secondary']}
-            />
-          </div>
-        }
-      </React.Fragment>;
+    const listStyle = css({
+      listStyleType: numbered ? 'decimal' : 'none',
+      paddingLeft: numbered ? 'inherit' : '0'
     });
+
+    const listPadding = css({
+      paddingLeft: numbered ? '5px' : '0'
+    });
+
+    return <ol {...listStyle}>{requestIssues.map((issue) => {
+        return <li {...listPadding} key={issue.description}>
+          <div {...contestedIssueStyling}>
+            Contested Issue
+          </div>
+          <div {...indentedIssueStyling}>
+            {issue.description}
+            <div {...noteDiv}>Note: "{issue.notes}"</div>
+          </div>
+          {this.decisionIssues(issue)}
+          { openDecisionHandler &&
+            <div {...buttonDiv}>
+              <Button
+                name="+ Add Decision"
+                onClick={openDecisionHandler([issue.id])}
+                classNames={['usa-button-secondary']}
+              />
+            </div>
+          }
+        </li>;
+      })}
+    </ol>;
   }
 }

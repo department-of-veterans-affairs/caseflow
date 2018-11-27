@@ -12,8 +12,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
         program: "Compensation",
         description: issue.description,
         notes: issue.notes,
-        remand_reasons: issue.remand_reasons,
-        decision_issue_ids: issue.request_decision_issues.pluck(:decision_issue_id)
+        remand_reasons: issue.remand_reasons
       }
     end
   end
@@ -23,7 +22,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
       {
         id: issue.id,
         disposition: issue.disposition,
-        description: issue.description
+        description: issue.description,
+        request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id)
       }
     end
   end
