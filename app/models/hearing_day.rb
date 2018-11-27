@@ -15,7 +15,11 @@ class HearingDay < ApplicationRecord
   class << self
     def create_hearing_day(hearing_hash)
       hearing_date = hearing_hash[:hearing_date]
-      hearing_date = hearing_date.is_a?(DateTime) ? hearing_date : Time.zone.parse(hearing_date).to_datetime
+      hearing_date = if hearing_date.is_a?(DateTime) | hearing_date.is_a?(Date)
+                       hearing_date
+                     else
+                       Time.zone.parse(hearing_date).to_datetime
+                     end
       if hearing_date > CASEFLOW_SCHEDULE_DATE
         hearing_hash = hearing_hash.merge(created_by: current_user_css_id, updated_by: current_user_css_id)
         create(hearing_hash).to_hash

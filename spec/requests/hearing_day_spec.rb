@@ -8,13 +8,11 @@ RSpec.describe "Hearing Schedule", type: :request do
   describe "Create a schedule slot - VACOLS" do
     it "Create one schedule day" do
       post "/hearings/hearing_day", params: { hearing_type: HearingDay::HEARING_TYPES[:central],
-                                              hearing_date: "7-Jun-2018 09:00:00.000-4:00", room_info: "1",
+                                              hearing_date: "7-Jun-2018", room_info: "1",
                                               regional_office: "RO17" }
       expect(response).to have_http_status(:success)
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["hearing_date"])
       expect(actual_date).to eq(Date.new(2018, 6, 7))
-      actual_time = Time.zone.parse(JSON.parse(response.body)["hearing"]["hearing_date"]).strftime("%H:%M:%S")
-      expect(actual_time).to eq("09:00:00")
       expect(JSON.parse(response.body)["hearing"]["hearing_type"]).to eq("Central")
       expect(JSON.parse(response.body)["hearing"]["room_info"]).to eq("1 (1W200A)")
     end
@@ -23,13 +21,11 @@ RSpec.describe "Hearing Schedule", type: :request do
   describe "Create a schedule slot - Caseflow" do
     it "Create one schedule day" do
       post "/hearings/hearing_day", params: { hearing_type: HearingDay::HEARING_TYPES[:central],
-                                              hearing_date: "7-Jun-2019 09:00:00.000-4:00", room_info: "1",
+                                              hearing_date: "7-Jun-2019", room_info: "1",
                                               regional_office: "RO17" }
       expect(response).to have_http_status(:success)
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["hearing_date"])
       expect(actual_date).to eq(Date.new(2019, 6, 7))
-      actual_time = Time.zone.parse(JSON.parse(response.body)["hearing"]["hearing_date"]).strftime("%H:%M:%S")
-      expect(actual_time).to eq("09:00:00")
       expect(JSON.parse(response.body)["hearing"]["hearing_type"]).to eq("Central")
       expect(JSON.parse(response.body)["hearing"]["room_info"]).to eq("1 (1W200A)")
     end
