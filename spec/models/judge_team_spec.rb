@@ -10,8 +10,8 @@ describe JudgeTeam do
         judge.reload
 
         expect(judge.organizations.length).to eq(1)
-        expect(judge.administrated_teams.length).to eq(1)
-        expect(judge.administrated_teams.first.class).to eq(JudgeTeam)
+        expect(judge.administered_teams.length).to eq(1)
+        expect(judge.administered_teams.first.class).to eq(JudgeTeam)
       end
     end
   end
@@ -51,7 +51,7 @@ describe JudgeTeam do
 
       it "should return first judge team even when they admin two judge teams" do
         expect(JudgeTeam.for_judge(user)).to eq(first_judge_team)
-        expect(user.administrated_teams.length).to eq(2)
+        expect(user.administered_teams.length).to eq(2)
       end
     end
   end
