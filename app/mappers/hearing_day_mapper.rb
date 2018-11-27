@@ -15,7 +15,7 @@ module HearingDayMapper
     addtime:      :created_at,
     mduser:       :updated_by,
     mdtime:       :updated_at,
-    vdbvapoc:     :bva_coordinator,
+    vdbvapoc:     :bva_poc,
     judge_last_name: :judge_last_name,
     judge_middle_name: :judge_middle_name,
     judge_first_name: :judge_first_name
