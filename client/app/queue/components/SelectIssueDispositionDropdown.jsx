@@ -23,15 +23,21 @@ type Params = {|
 |};
 
 type Props = Params & {|
-  highlight: boolean
+  highlight: boolean,
+  noStyling: boolean
 |}
 
 class SelectIssueDispositionDropdown extends React.PureComponent<Props> {
   getStyling = () => {
     const {
       highlight,
+      noStyling,
       issue: { disposition }
     } = this.props;
+
+    if (noStyling) {
+      return;
+    }
 
     if (highlight && !disposition) {
       return css({

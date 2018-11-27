@@ -14,7 +14,7 @@ class LegacyTasksController < ApplicationController
     return invalid_role_error unless ROLES.include?(current_role)
     respond_to do |format|
       format.html do
-        render "queue/show"
+        render "queue/index"
       end
       format.json do
         MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
