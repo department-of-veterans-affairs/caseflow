@@ -36,7 +36,7 @@ class ColocatedTask < Task
     private
 
     def list_of_assignees
-      Colocated.singleton.users.order(:id).pluck(:css_id)
+      Colocated.singleton.non_admins.sort_by(&:id).pluck(:css_id)
     end
   end
 
