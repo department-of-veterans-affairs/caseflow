@@ -3,6 +3,14 @@ class Organization < ApplicationRecord
   has_many :organizations_users, dependent: :destroy
   has_many :users, through: :organizations_users
 
+  def admins
+    organizations_users.select(&:admin?).map(&:user)
+  end
+
+  def non_admin_users
+    organizations_users.reject(&:admin?).map(&:user)
+  end
+
   def self.assignable(task)
     select { |org| org.can_receive_task?(task) }
   end
