@@ -517,8 +517,6 @@ ActiveRecord::Schema.define(version: 20181127201444) do
   end
 
   create_table "legacy_issue_optins", force: :cascade do |t|
-    t.string "review_request_type", null: false
-    t.bigint "review_request_id", null: false
     t.bigint "request_issue_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -527,7 +525,6 @@ ActiveRecord::Schema.define(version: 20181127201444) do
     t.datetime "processed_at"
     t.string "error"
     t.index ["request_issue_id"], name: "index_legacy_issue_optins_on_request_issue_id"
-    t.index ["review_request_type", "review_request_id"], name: "idx_legacy_issue_optins_review_request"
   end
 
   create_table "non_availabilities", force: :cascade do |t|
