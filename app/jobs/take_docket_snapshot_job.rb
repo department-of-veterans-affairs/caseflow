@@ -1,5 +1,6 @@
 class TakeDocketSnapshotJob < ApplicationJob
   queue_as :low_priority
+  application_attr :api
 
   def perform
     DocketSnapshot.create
