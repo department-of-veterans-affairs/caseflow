@@ -7,7 +7,7 @@ class Organization < ApplicationRecord
     organizations_users.select(&:admin?).map(&:user)
   end
 
-  def non_admin_users
+  def non_admins
     organizations_users.reject(&:admin?).map(&:user)
   end
 
