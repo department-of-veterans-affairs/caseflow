@@ -1,4 +1,4 @@
-class ColocatedTask < Task
+class ColocatedTask < GenericTask
   include RoundRobinAssigner
 
   validates :action, inclusion: { in: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s) }
@@ -10,15 +10,26 @@ class ColocatedTask < Task
   after_update :update_location_in_vacols
 
   class << self
+    def modify_params(params)
+      # When ColocatedTasks are created for LegacyAppeals, we do not include a parent_id in the API request. Therefore,
+      # we need to give this ColocatedTask a parent so we use the appeal's root task.
+      unless params[:parent_id]
+        # We currently only allow one RootTask per appeal. If that changes in the future, then this code will need
+        # to change as well.
+        root_task = RootTask.find_by(appeal: params[:appeal]) || RootTask.create!(appeal: params[:appeal])
+        params[:parent_id] = root_task.id
+      end
+
+      super
+    end
+
     # Override so that each ColocatedTask for an appeal gets assigned to the same colocated staffer.
     def create_many_from_params(params_array, user)
       # Create all ColocatedTasks in one transaction so that if any fail they all fail.
       ActiveRecord::Base.multi_transaction do
         assignee = next_assignee
         records = params_array.map do |params|
-          team_task = create_from_params(
-            params.merge(assigned_to: Colocated.singleton, status: Constants.TASK_STATUSES.on_hold), user
-          )
+          team_task = create_from_params(params.merge(assigned_to: Colocated.singleton), user)
           individual_task = create_from_params(params.merge(assigned_to: assignee, parent: team_task), user)
 
           [team_task, individual_task]
@@ -40,9 +51,7 @@ class ColocatedTask < Task
     end
   end
 
-  def available_actions(user)
-    return [] unless user.colocated_in_vacols?
-
+  def available_actions(_user)
     actions = [
       {
         label: COPY::COLOCATED_ACTION_PLACE_HOLD,
@@ -50,7 +59,7 @@ class ColocatedTask < Task
       }
     ]
 
-    if %w[translation schedule_hearing].include?(action) && appeal.class.name.eql?("LegacyAppeal")
+    if %w[translation schedule_hearing].include?(action) && appeal.is_a?(LegacyAppeal)
       actions.unshift(
         label: format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action]),
         value: "modal/send_colocated_task"
@@ -65,8 +74,8 @@ class ColocatedTask < Task
     actions
   end
 
-  def no_actions_available?(_user)
-    completed?
+  def no_actions_available?(user)
+    completed? || !Colocated.singleton.user_has_access?(user)
   end
 
   def update_if_hold_expired!

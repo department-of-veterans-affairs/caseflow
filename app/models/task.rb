@@ -86,9 +86,13 @@ class Task < ApplicationRecord
     params
   end
 
-  def update_from_params(params, _current_user)
+  def modify_update_params(params)
     params["instructions"] = [instructions, params["instructions"]].flatten if params.key?("instructions")
-    update(params)
+    params
+  end
+
+  def update_from_params(params, _current_user)
+    update(modify_update_params(params))
 
     [self]
   end
