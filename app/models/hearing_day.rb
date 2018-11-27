@@ -11,7 +11,9 @@ class HearingDay < ApplicationRecord
     central: "C"
   }.freeze
 
-  CASEFLOW_SCHEDULE_DATE = Date.new(2019, 3, 31).freeze
+  # These dates indicate the date in which we pull parent records into Caseflow. For
+  # legacy appeals, the children hearings will continue to be stored in VACOLS.
+  CASEFLOW_V_PARENT_DATE = Date.new(2019, 3, 31).freeze
   CASEFLOW_CO_PARENT_DATE = Date.new(2018, 12, 31).freeze
 
   class << self
@@ -22,7 +24,7 @@ class HearingDay < ApplicationRecord
                      else
                        Time.zone.parse(hearing_date).to_datetime
                      end
-      if hearing_date > CASEFLOW_SCHEDULE_DATE
+      if hearing_date > CASEFLOW_V_PARENT_DATE
         hearing_hash = hearing_hash.merge(created_by: current_user_css_id, updated_by: current_user_css_id)
         create(hearing_hash).to_hash
       else
