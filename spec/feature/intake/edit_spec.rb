@@ -561,6 +561,8 @@ RSpec.feature "Edit issues" do
         add_intake_unidentified_issue("This is an unidentified issue")
         expect(page).to have_content("5 issues")
         expect(page).to have_content("This is an unidentified issue")
+        expect(find_intake_issue_by_number(5)).to have_css(".issue-unidentified")
+        expect_ineligible_issue(5)
 
         # add issue before AMA
         click_intake_add_issue
@@ -568,6 +570,7 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content(
           "Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
         )
+        expect_ineligible_issue(6)
 
         # add RAMP issue before AMA
         click_intake_add_issue

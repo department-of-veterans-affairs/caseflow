@@ -70,6 +70,10 @@ module IntakeHelpers
     end
   end
 
+  def expect_ineligible_issue(number)
+    expect(find_intake_issue_by_number(number)).to have_css(".not-eligible")
+  end
+
   def setup_legacy_opt_in_appeals(veteran_file_number)
     # create two legacy appeals with 2 issues each
     create(:legacy_appeal, vacols_case:
