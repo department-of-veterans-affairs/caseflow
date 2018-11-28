@@ -2,15 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { css } from 'glamor';
 import _ from 'lodash';
 
 import decisionViewBase from './components/DecisionViewBase';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import IssueList from './components/IssueList';
 import SelectIssueDispositionDropdown from './components/SelectIssueDispositionDropdown';
-import Table from '../components/Table';
-import Alert from '../components/Alert';
+import Modal from '../components/Modal';
+import TextareaField from '../components/TextareaField';
+import SearchableDropdown from '../components/SearchableDropdown';
+import ContestedIssues from './components/ContestedIssues';
+import COPY from '../../COPY.json';
 
 import {
   updateEditingAppealIssue,
@@ -20,36 +20,23 @@ import {
 } from './QueueActions';
 import { hideSuccessMessage } from './uiReducer/uiActions';
 import {
-  fullWidth,
-  marginBottom,
-  marginLeft,
   PAGE_TITLES,
   VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS
 } from './constants';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
-import { getUndecidedIssues } from './utils';
 
-const tableStyling = css({
-  '& tr': {
-    borderBottom: 'none'
-  }
-});
-const tbodyStyling = css({
-  '& > tr > td': {
-    verticalAlign: 'top',
-    paddingTop: '2rem',
-    '&:first-of-type': {
-      width: '40%'
-    },
-    '&:last-of-type': {
-      width: '35%'
-    }
-  }
-});
-const smallTopMargin = css({ marginTop: '1rem' });
+import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES.json';
 
 class SelectDispositionsView extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      issuesOpen: null
+    };
+  }
+
   getPageName = () => PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()];
 
   getNextStepUrl = () => {
@@ -81,108 +68,84 @@ class SelectDispositionsView extends React.PureComponent {
     const {
       appealId,
       taskId,
-      checkoutFlow,
-      appeal
+      checkoutFlow
     } = this.props;
-
-    if (appeal.isLegacyAppeal) {
-      return `/queue/appeals/${appealId}`;
-    }
 
     return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
   }
 
-  componentWillUnmount = () => this.props.hideSuccessMessage();
-  componentDidMount = () => {
-    if (this.props.userRole === USER_ROLE_TYPES.attorney) {
-      this.props.setDecisionOptions({ work_product: 'Decision' });
-    }
+  addDecisionHandler = (issueIds) => () => {
+    this.setState({
+      issuesOpen: issueIds
+    });
   }
 
-  updateIssue = (issueId, attributes) => {
-    const { appealId } = this.props;
+  handleModalClose = () => {
+    this.setState({
+      issuesOpen: null
+    });
+  }
 
-    this.props.startEditingAppealIssue(appealId, issueId, attributes);
-    this.props.saveEditedAppealIssue(appealId);
-  };
-
-  validateForm = () => {
-    const { appeal: { issues } } = this.props;
-    const issuesWithoutDisposition = _.reject(issues, 'disposition');
-
-    return !issuesWithoutDisposition.length;
-  };
-
-  getKeyForRow = (rowNumber) => rowNumber;
-  getColumns = () => {
-    const {
-      appeal,
-      taskId,
-      checkoutFlow,
-      appealId
-    } = this.props;
-
-    const columns = [{
-      header: 'Issues',
-      valueFunction: (issue, idx) => <IssueList
-        appeal={{
-          issues: [issue],
-          isLegacyAppeal: appeal.isLegacyAppeal
-        }}
-        idxToDisplay={idx + 1}
-        showDisposition={false}
-        stretchToFullWidth />
-    }, {
-      header: 'Dispositions',
-      valueFunction: (issue) => <SelectIssueDispositionDropdown
-        updateIssue={_.partial(this.updateIssue, issue.id)}
-        issue={issue}
-        appeal={appeal} />
-    }];
-
-    if (appeal.isLegacyAppeal) {
-      columns.splice(1, 0, {
-        header: 'Actions',
-        valueFunction: (issue) => {
-          return <Link to={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions/edit/${issue.id}`}>
-            Edit Issue
-          </Link>;
-        }
-      });
+  selectedIssues = () => {
+    if (!this.state.issuesOpen) {
+      return [];
     }
 
-    return columns;
-  };
+    return this.props.appeal.issues.filter((issue) => {
+      return this.state.issuesOpen.includes(issue.id);
+    });
+  }
 
   render = () => {
-    const {
-      success,
-      appealId,
-      taskId,
-      checkoutFlow,
-      appeal,
-      appeal: { issues }
-    } = this.props;
+    const { appeal } = this.props;
+    const issue = this.selectedIssues()[0];
 
     return <React.Fragment>
-      <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
-        {this.getPageName()}
-      </h1>
-      <p className="cf-lead-paragraph" {...marginBottom(2)}>
-        Review each issue and assign the appropriate dispositions.
-      </p>
-      {success && <Alert type="success" title={success.title} message={success.detail} styling={smallTopMargin} />}
-      <hr />
-      <Table
-        columns={this.getColumns}
-        rowObjects={appeal.isLegacyAppeal ? getUndecidedIssues(issues) : issues}
-        getKeyForRow={this.getKeyForRow}
-        styling={tableStyling}
-        bodyStyling={tbodyStyling}
+      <ContestedIssues
+        requestIssues={appeal.issues}
+        addDecisionHandler={this.addDecisionHandler}
       />
-      {appeal.isLegacyAppeal && <div {...marginLeft(1.5)}>
-        <Link to={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions/add`}>Add Issue</Link>
-      </div>}
+      { this.state.issuesOpen && <Modal
+        buttons = {[
+          { classNames: ['cf-modal-link', 'cf-btn-link'],
+            name: 'Close',
+            onClick: this.handleModalClose
+          },
+          { classNames: ['usa-button', 'usa-button-secondary'],
+            name: 'Proceed with action',
+            onClick: this.handleModalClose
+          }
+        ]}
+        closeHandler={this.handleModalClose}
+        title = "Add decision">
+
+        <h3>{COPY.DECISION_ISSUE_MODAL_TITLE}</h3>
+        <p>{COPY.DECISION_ISSUE_MODAL_SUB_TITLE}</p>
+
+        <h3>{COPY.DECISION_ISSUE_MODAL_DESCRIPTION}</h3>
+        <TextareaField
+          label={COPY.DECISION_ISSUE_MODAL_DESCRIPTION_EXAMPLE}
+          name="Text Box"
+          onChange={(value) => {
+            this.setState({ value });
+          }}
+          value={this.state.value}
+        />
+        <h3>{COPY.DECISION_ISSUE_MODAL_DISPOSITION}</h3>
+        <SelectIssueDispositionDropdown
+          issue={issue}
+          appeal={appeal}
+          noStyling
+        />
+        <br />
+        <h3>{COPY.DECISION_ISSUE_MODAL_BENEFIT_TYPE}</h3>
+        <SearchableDropdown
+          value={issue.benefitType}
+          options={_.map(BENEFIT_TYPES, (value, key) => ({ label: value,
+            value: key }))}
+        />
+
+      </Modal>}
     </React.Fragment>;
   };
 }
