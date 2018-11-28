@@ -72,6 +72,7 @@ RSpec.feature "Edit issues" do
              veteran_file_number: veteran.file_number,
              receipt_date: receipt_date,
              docket_type: "evidence_submission",
+             veteran_is_not_claimant: false,
              legacy_opt_in_approved: false).tap(&:create_tasks_on_intake_success!)
     end
 
@@ -191,7 +192,8 @@ RSpec.feature "Edit issues" do
         receipt_date: receipt_date,
         informal_conference: false,
         same_office: false,
-        benefit_type: "compensation"
+        benefit_type: "compensation",
+        veteran_is_not_claimant: true
       )
     end
 
@@ -782,7 +784,8 @@ RSpec.feature "Edit issues" do
         veteran_file_number: veteran.file_number,
         receipt_date: receipt_date,
         benefit_type: "compensation",
-        is_dta_error: is_dta_error
+        is_dta_error: is_dta_error,
+        veteran_is_not_claimant: true
       )
     end
 
