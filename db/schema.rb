@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181121222514) do
+ActiveRecord::Schema.define(version: 20181128225613) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -402,15 +402,16 @@ ActiveRecord::Schema.define(version: 20181121222514) do
   end
 
   create_table "hearing_days", force: :cascade do |t|
-    t.datetime "hearing_date", null: false
+    t.date "hearing_date", null: false
     t.string "hearing_type", null: false
     t.string "regional_office"
-    t.string "judge_id"
+    t.integer "judge_id"
     t.string "room_info", null: false
     t.datetime "created_at", null: false
     t.string "created_by", null: false
     t.datetime "updated_at", null: false
     t.string "updated_by", null: false
+    t.string "bva_poc"
   end
 
   create_table "hearing_views", id: :serial, force: :cascade do |t|
@@ -513,6 +514,17 @@ ActiveRecord::Schema.define(version: 20181121222514) do
     t.bigint "appeal_series_id"
     t.index ["appeal_series_id"], name: "index_legacy_appeals_on_appeal_series_id"
     t.index ["vacols_id"], name: "index_legacy_appeals_on_vacols_id", unique: true
+  end
+
+  create_table "legacy_issue_optins", force: :cascade do |t|
+    t.bigint "request_issue_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "submitted_at"
+    t.datetime "attempted_at"
+    t.datetime "processed_at"
+    t.string "error"
+    t.index ["request_issue_id"], name: "index_legacy_issue_optins_on_request_issue_id"
   end
 
   create_table "non_availabilities", force: :cascade do |t|
@@ -667,6 +679,8 @@ ActiveRecord::Schema.define(version: 20181121222514) do
     t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
     t.string "ineligible_reason"
+    t.string "vacols_id"
+    t.string "vacols_sequence_id"
     t.datetime "created_at"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
@@ -731,6 +745,14 @@ ActiveRecord::Schema.define(version: 20181121222514) do
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
     t.index ["appeal_type", "appeal_id"], name: "index_special_issue_lists_on_appeal_type_and_appeal_id"
+  end
+
+  create_table "staff_field_for_organizations", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "name", null: false
+    t.string "values", default: [], null: false, array: true
+    t.boolean "exclude", default: false
+    t.index ["organization_id"], name: "index_staff_field_for_organizations_on_organization_id"
   end
 
   create_table "supplemental_claims", force: :cascade do |t|
