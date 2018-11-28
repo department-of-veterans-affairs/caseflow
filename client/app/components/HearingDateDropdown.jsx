@@ -8,7 +8,7 @@ import ApiUtil from '../util/ApiUtil';
 import { onReceiveHearingDates } from './common/actions';
 import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
-import { formatDateStr, formatDateStringForApi } from '../util/DateUtil';
+import { formatDateStr } from '../util/DateUtil';
 
 class HearingDateDropdown extends React.Component {
   constructor(props) {
@@ -52,9 +52,17 @@ class HearingDateDropdown extends React.Component {
       hearingDateOptions.push(...this.props.staticOptions);
     }
 
-    return hearingDateOptions.sort((a,b) => (
-      a.value > b.value ? 1 : (a.value < b.value ? -1 : 0)
-    ));
+    return hearingDateOptions.sort((d1, d2) => {
+
+      if (d1.value > d2.value) {
+        return 1;
+      } else if (d1.value < d2.value){
+        return -1;
+      }
+
+      return 0;
+
+    });
   };
 
   render() {
