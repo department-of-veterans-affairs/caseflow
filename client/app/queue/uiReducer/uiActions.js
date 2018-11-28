@@ -143,7 +143,7 @@ export const setOrganizationIds = (organizationIds: Array<number>) => ({
   payload: { organizationIds }
 });
 
-export const setOrganizations = (organizations: Array<>) => ({
+export const setOrganizations = (organizations: Array<Object>) => ({
   type: ACTIONS.SET_ORGANIZATIONS,
   payload: { organizations }
 });

@@ -1,16 +1,11 @@
 // @flow
-import * as React from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import COPY from '../../../COPY.json';
-
-type Params = {||};
-
-type Props = Params & {|
-  organizations: Array<Object>,
-|};
 
 // NOTE: parent container needs to be given 'position: relative'
 const styles = {
@@ -29,8 +24,16 @@ const styles = {
   })
 };
 
-export default class QueueSelectorDropdown extends React.PureComponent<Props> {
-  constructor(props) {
+type Props = {|
+  organizations: Array<Object>
+|};
+
+type ComponentState = {|
+  menu: boolean
+|};
+
+export default class QueueSelectorDropdown extends React.Component<Props, ComponentState> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       menu: false
@@ -87,3 +90,10 @@ export default class QueueSelectorDropdown extends React.PureComponent<Props> {
     </div>;
   }
 }
+
+QueueSelectorDropdown.propTypes = {
+  organizations: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired
+  }))
+};

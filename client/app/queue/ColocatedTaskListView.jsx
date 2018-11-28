@@ -38,6 +38,7 @@ const containerStyles = css({
 type Props = Params & {|
   // store
   success: UiStateMessage,
+  organizations: Array<Object>,
   numNewTasks: number,
   numPendingTasks: number,
   numOnHoldTasks: number,
