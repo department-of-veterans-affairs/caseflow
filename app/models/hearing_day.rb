@@ -14,8 +14,8 @@ class HearingDay < ApplicationRecord
   def to_hash
     as_json.each_with_object({}) do |(k, v), result|
       result[k.to_sym] = v
-    end.merge(judge_first_name: judge.full_name.split(" ").first,
-              judge_last_name: judge.full_name.split(" ").last)
+    end.merge(judge_first_name: judge ? judge.full_name.split(" ").first : nil,
+              judge_last_name: judge ? judge.full_name.split(" ").last : nil)
   end
 
   # These dates indicate the date in which we pull parent records into Caseflow. For
