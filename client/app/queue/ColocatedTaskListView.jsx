@@ -47,19 +47,6 @@ type Props = Params & {|
 |};
 
 class ColocatedTaskListView extends React.PureComponent<Props> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      menu: false
-    };
-  }
-
-  onMenuClick = () => {
-    this.setState((prevState) => ({
-      menu: !prevState.menu
-    }));
-  };
-
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
   };
@@ -108,7 +95,6 @@ const mapStateToProps = (state) => {
 
   return {
     success,
-    organizationIds: state.ui.organizationIds,
     organizations: state.ui.organizations,
     numNewTasks: newTasksByAssigneeCssIdSelector(state).length,
     numPendingTasks: pendingTasksByAssigneeCssIdSelector(state).length,

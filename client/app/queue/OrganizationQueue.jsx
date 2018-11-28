@@ -27,19 +27,6 @@ const containerStyles = css({
 });
 
 class OrganizationQueue extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      menu: false
-    };
-  }
-
-  onMenuClick = () => {
-    this.setState((prevState) => ({
-      menu: !prevState.menu
-    }));
-  };
-
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
   }
