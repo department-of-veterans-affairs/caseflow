@@ -1,5 +1,5 @@
 class Fakes::EndProductStore
-  REDIS_NS ||= :end_product_records
+  REDIS_NS ||= "end_product_records_#{Rails.env}"
 
   def self.cache_store
     @cache_store ||= begin
