@@ -407,7 +407,6 @@ ActiveRecord::Schema.define(version: 20181128225613) do
     t.string "hearing_type", null: false
     t.string "regional_office"
     t.integer "judge_id"
-    t.string "bva_poc"
     t.string "room_info", null: false
     t.datetime "created_at", null: false
     t.string "created_by", null: false
@@ -748,14 +747,6 @@ ActiveRecord::Schema.define(version: 20181128225613) do
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
     t.index ["appeal_type", "appeal_id"], name: "index_special_issue_lists_on_appeal_type_and_appeal_id"
-  end
-
-  create_table "staff_field_for_organizations", force: :cascade do |t|
-    t.bigint "organization_id", null: false
-    t.string "name", null: false
-    t.string "values", default: [], null: false, array: true
-    t.boolean "exclude", default: false
-    t.index ["organization_id"], name: "index_staff_field_for_organizations_on_organization_id"
   end
 
   create_table "supplemental_claims", force: :cascade do |t|
