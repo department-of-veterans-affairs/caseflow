@@ -257,6 +257,27 @@ describe HigherLevelReviewIntake do
       )
     end
 
+    context "when a legacy VACOLS opt-in occurs" do
+      let(:issue_data) do
+        {
+          profile_date: "2018-04-30T11:11:00.000-04:00",
+          reference_id: "reference-id",
+          decision_text: "decision text",
+          vacols_id: "a-vacols-issue",
+          vacols_sequence_id: "vacols-seq"
+        }
+      end
+
+      it "creates a LegacyIssueOptin" do
+        expect(LegacyIssueOptin.count).to eq 0
+        expect(LegacyOptinProcessJob).to receive(:perform_now).once
+
+        subject
+
+        expect(LegacyIssueOptin.count).to eq 1
+      end
+    end
+
     context "when the intake was already complete" do
       let(:completed_at) { Time.zone.now }
 
