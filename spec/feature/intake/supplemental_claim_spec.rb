@@ -8,6 +8,7 @@ RSpec.feature "Supplemental Claim Intake" do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
+    FeatureToggle.disable!(:intake_enable_add_issues_page)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 26))
@@ -80,9 +81,6 @@ RSpec.feature "Supplemental Claim Intake" do
       ]
     )
   end
-
-  let(:search_bar_title) { "Enter the Veteran's ID" }
-  let(:search_page_title) { "Search for Veteran ID" }
 
   it "Creates an end product" do
     # Testing two relationships, tests 1 relationship in HRL and nil in Appeal
@@ -362,12 +360,13 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  def start_supplemental_claim(test_veteran, is_comp: true)
+  def start_supplemental_claim(test_veteran, is_comp: true, veteran_is_not_claimant: false)
     supplemental_claim = SupplementalClaim.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
       benefit_type: is_comp ? "compensation" : "education",
-      legacy_opt_in_approved: false
+      legacy_opt_in_approved: false,
+      veteran_is_not_claimant: veteran_is_not_claimant
     )
 
     intake = SupplementalClaimIntake.create!(
@@ -538,6 +537,23 @@ RSpec.feature "Supplemental Claim Intake" do
       )
     end
 
+    context "Veteran has no ratings" do
+      scenario "the Add Issue modal skips directly to Nonrating Issue modal" do
+        start_supplemental_claim(veteran_no_ratings)
+        visit "/intake/add_issues"
+
+        click_intake_add_issue
+
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "Description for Active Duty Adjustments",
+          date: "04/19/2018"
+        )
+
+        expect(page).to have_content("1 issue")
+      end
+    end
+
     scenario "SC comp" do
       supplemental_claim, = start_supplemental_claim(veteran)
       visit "/intake/add_issues"
@@ -582,6 +598,7 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
 
       # Add nonrating issue
+      click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
@@ -625,6 +642,7 @@ RSpec.feature "Supplemental Claim Intake" do
       )
 
       click_intake_add_issue
+      click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Drill Pay Adjustments",
         description: "A nonrating issue before AMA",
@@ -638,6 +656,14 @@ RSpec.feature "Supplemental Claim Intake" do
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
       expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
+      expect(page).to have_content('Unidentified issue: no issue matched for requested "This is an unidentified issue"')
+      success_checklist = find("ul.cf-success-checklist")
+      expect(success_checklist).to_not have_content("Non-RAMP issue before AMA Activation")
+      expect(success_checklist).to_not have_content("A nonrating issue before AMA")
+
+      ineligible_checklist = find("ul.cf-ineligible-checklist")
+      expect(ineligible_checklist).to have_content("Non-RAMP Issue before AMA Activation is ineligible")
+      expect(ineligible_checklist).to have_content("A nonrating issue before AMA is ineligible")
 
       expect(SupplementalClaim.find_by(
                id: supplemental_claim.id,
@@ -806,9 +832,25 @@ RSpec.feature "Supplemental Claim Intake" do
 
         # expect legacy opt in modal
         expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+
         add_intake_rating_issue("None of these match")
 
         expect(page).to have_content("Left knee granted")
+
+        click_intake_add_issue
+        click_intake_no_matching_issues
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "Description for Active Duty Adjustments",
+          date: "04/25/2018",
+          legacy_issues: true
+        )
+
+        expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
+
+        add_intake_rating_issue("None of these match")
+
+        expect(page).to have_content("Description for Active Duty Adjustments")
       end
 
       scenario "adding issue with legacy opt in disabled" do

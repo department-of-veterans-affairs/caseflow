@@ -96,7 +96,8 @@ class VACOLS::CaseDocket < VACOLS::Record
         where BFCURLOC in ('81', '83')
           and BFAC <> '9'
       )
-      where ROWNUMBER = ?
+      cross join (select count(*) as MAX_ROWNUMBER from BRIEFF where BFCURLOC in ('81', '83') and BFAC <> '9')
+      where ROWNUMBER = least(?, MAX_ROWNUMBER)
     SQL
 
     connection.exec_query(sanitize_sql_array([query, n])).first["bfd19"].to_date

@@ -8,6 +8,7 @@ RSpec.feature "Higher-Level Review" do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
+    FeatureToggle.disable!(:intake_enable_add_issues_page)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 26))
@@ -75,9 +76,6 @@ RSpec.feature "Higher-Level Review" do
     )
   end
 
-  let(:search_bar_title) { "Enter the Veteran's ID" }
-  let(:search_page_title) { "Search for Veteran ID" }
-
   it "Creates an end product and contentions for it" do
     # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
@@ -120,7 +118,19 @@ RSpec.feature "Higher-Level Review" do
       "Receipt date cannot be in the future."
     )
     expect(page).to have_content(
-      "Please select an option."
+      "What is the Benefit Type? Please select an option."
+    )
+    expect(page).to have_content(
+      "Was an informal conference requested? Please select an option."
+    )
+    expect(page).to have_content(
+      "Was an interview by the same office requested? Please select an option."
+    )
+    expect(page).to have_content(
+      "Is the claimant someone other than the Veteran? Please select an option."
+    )
+    expect(page).to have_content(
+      "Did they agree to withdraw their issues from the legacy system? Please select an option."
     )
 
     within_fieldset("What is the Benefit Type?") do
@@ -156,6 +166,15 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_content("What is the payee code for this claimant?")
     expect(page).to have_content("Bob Vance, Spouse")
     expect(page).to_not have_content("Cathy Smith, Child")
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_content(
+      "add them in VBMS, then refresh this page. Please select an option."
+    )
+    expect(page).to have_content(
+      "What is the payee code for this claimant? Please select an option."
+    )
 
     find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
 
@@ -525,19 +544,19 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  def start_higher_level_review(test_veteran, is_comp: true, claim_participant_id: nil)
+  def start_higher_level_review(test_veteran, is_comp: true, claim_participant_id: nil, veteran_is_not_claimant: false)
     higher_level_review = HigherLevelReview.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
       informal_conference: false, same_office: false,
       benefit_type: is_comp ? "compensation" : "education",
-      legacy_opt_in_approved: false
+      legacy_opt_in_approved: false,
+      veteran_is_not_claimant: veteran_is_not_claimant
     )
 
     intake = HigherLevelReviewIntake.create!(
       veteran_file_number: test_veteran.file_number,
-      user: current_user,
-      started_at: 5.minutes.ago,
+      user: current_user, started_at: 5.minutes.ago,
       detail: higher_level_review
     )
 
@@ -577,14 +596,13 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
   end
 
-  scenario "redirects to add_issues with feature flag enabled" do
+  it "redirects to add_issues with feature flag enabled" do
     FeatureToggle.enable!(:intake_enable_add_issues_page)
     start_higher_level_review(veteran_no_ratings)
     visit "/intake"
 
     safe_click "#button-submit-review"
     expect(page).to have_current_path("/intake/add_issues")
-
     FeatureToggle.disable!(:intake_enable_add_issues_page)
   end
 
@@ -683,6 +701,23 @@ RSpec.feature "Higher-Level Review" do
       )
     end
 
+    context "Veteran has no ratings" do
+      scenario "the Add Issue modal skips directly to Nonrating Issue modal" do
+        start_higher_level_review(veteran_no_ratings)
+        visit "/intake/add_issues"
+
+        click_intake_add_issue
+
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "Description for Active Duty Adjustments",
+          date: "04/19/2018"
+        )
+
+        expect(page).to have_content("1 issue")
+      end
+    end
+
     scenario "HLR comp" do
       allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
         first_name: "BOB",
@@ -691,7 +726,11 @@ RSpec.feature "Higher-Level Review" do
         relationship_type: "Spouse"
       )
 
-      higher_level_review, = start_higher_level_review(veteran, claim_participant_id: "5382910292")
+      higher_level_review, = start_higher_level_review(
+        veteran,
+        claim_participant_id: "5382910292",
+        veteran_is_not_claimant: true
+      )
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add / Remove Issues")
@@ -737,6 +776,7 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
 
       # Add nonrating issue
+      click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
@@ -779,6 +819,7 @@ RSpec.feature "Higher-Level Review" do
 
       # add untimely nonrating request issue
       click_intake_add_issue
+      click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Another Description for Active Duty Adjustments",
@@ -814,6 +855,7 @@ RSpec.feature "Higher-Level Review" do
       )
 
       click_intake_add_issue
+      click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Drill Pay Adjustments",
         description: "A nonrating issue before AMA",
@@ -827,6 +869,14 @@ RSpec.feature "Higher-Level Review" do
 
       expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
       expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
+      expect(page).to have_content('Unidentified issue: no issue matched for requested "This is an unidentified issue"')
+      success_checklist = find("ul.cf-success-checklist")
+      expect(success_checklist).to_not have_content("Already reviewed injury")
+      expect(success_checklist).to_not have_content("Another Description for Active Duty Adjustments")
+
+      ineligible_checklist = find("ul.cf-ineligible-checklist")
+      expect(ineligible_checklist).to have_content("Already reviewed injury is ineligible")
+      expect(ineligible_checklist).to have_content("Another Description for Active Duty Adjustments is ineligible")
 
       # make sure that database is populated
       expect(HigherLevelReview.find_by(
@@ -1026,12 +1076,26 @@ RSpec.feature "Higher-Level Review" do
 
         expect(page).to have_content("Next")
         add_intake_rating_issue("Left knee granted")
-
         # expect legacy opt in modal
         expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
         add_intake_rating_issue("None of these match")
 
         expect(page).to have_content("Left knee granted")
+
+        click_intake_add_issue
+        click_intake_no_matching_issues
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "Description for Active Duty Adjustments",
+          date: "04/25/2018",
+          legacy_issues: true
+        )
+
+        expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
+
+        add_intake_rating_issue("None of these match")
+
+        expect(page).to have_content("Description for Active Duty Adjustments")
       end
 
       scenario "adding issue with legacy opt in disabled" do

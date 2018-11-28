@@ -131,7 +131,7 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
           <strong>Veteran ID:</strong> {appeal.veteranFileNumber}
         </span>
         <span {...columnStyling}>
-          <strong>Task:</strong> {CO_LOCATED_ADMIN_ACTIONS[task.action]}
+          <strong>Task:</strong> {CO_LOCATED_ADMIN_ACTIONS[task.label]}
         </span>
       </div>
       <hr />

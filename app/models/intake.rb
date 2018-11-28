@@ -228,6 +228,13 @@ class Intake < ApplicationRecord
 
   private
 
+  def update_person!
+    # Update the person when a claimant is created
+    Person.find_or_create_by(participant_id: detail.claimant_participant_id).tap do |person|
+      person.update!(date_of_birth: BGSService.new.fetch_person_info(detail.claimant_participant_id)[:birth_date])
+    end
+  end
+
   def file_number_valid?
     return false unless veteran_file_number
 
