@@ -29,6 +29,37 @@ describe HigherLevelReview do
     )
   end
 
+  context "#special_issues" do
+    let(:vacols_id) { nil }
+    let!(:request_issue) do
+      create(:request_issue, review_request: higher_level_review, vacols_id: vacols_id)
+    end
+
+    subject { higher_level_review.special_issues }
+
+    context "no special conditions" do
+      it "is empty" do
+        expect(subject).to eq []
+      end
+    end
+
+    context "VACOLS opt-in" do
+      let(:vacols_id) { "something" }
+
+      it "includes VACOLS opt-in" do
+        expect(subject).to include(code: "VO", narrative: "VACOLS Opt-in")
+      end
+    end
+
+    context "same office" do
+      let(:same_office) { true }
+
+      it "includes same office" do
+        expect(subject).to include(code: "SSR", narrative: "Same Station Review")
+      end
+    end
+  end
+
   context "#valid?" do
     subject { higher_level_review.valid? }
 

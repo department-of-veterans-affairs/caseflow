@@ -268,13 +268,14 @@ describe HigherLevelReviewIntake do
         }
       end
 
-      it "creates a LegacyIssueOptin" do
+      it "submits a LegacyIssueOptin" do
         expect(LegacyIssueOptin.count).to eq 0
         expect(LegacyOptinProcessJob).to receive(:perform_now).once
 
         subject
 
         expect(LegacyIssueOptin.count).to eq 1
+        expect(LegacyIssueOptin.first).to be_submitted
       end
     end
 

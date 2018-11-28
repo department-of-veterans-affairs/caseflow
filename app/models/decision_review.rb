@@ -1,5 +1,6 @@
 class DecisionReview < ApplicationRecord
   include CachedAttributes
+  include LegacyOptinable
 
   validate :validate_receipt_date
 
@@ -115,6 +116,12 @@ class DecisionReview < ApplicationRecord
         issues: legacy_appeal.issues.map(&:intake_attributes)
       }
     end
+  end
+
+  def special_issues
+    specials = []
+    specials << vacols_optin_special_issue if needs_vacols_optin_special_issue?
+    specials
   end
 
   private
