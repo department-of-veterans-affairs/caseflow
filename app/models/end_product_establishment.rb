@@ -275,7 +275,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def potential_decision_ratings
-    @potential_decision_ratings ||= Rating.fetch_in_range(participant_id: veteran.participant_id, start_date: established_at, end_date: Time.zone.today)
+    Rating.fetch_in_range(participant_id: veteran.participant_id, start_date: established_at, end_date: Time.zone.today)
   end
 
   def resolve_synced_decisions(synced_rating_issues)
