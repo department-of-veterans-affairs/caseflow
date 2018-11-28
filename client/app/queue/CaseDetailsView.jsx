@@ -18,7 +18,7 @@ import CaseSnapshot from './CaseSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
 import { resetErrorMessages, resetSuccessMessages } from './uiReducer/uiActions';
-import CaseTimeline from './CaseTimeline';
+import { CaseTimeline } from './CaseTimeline';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
@@ -46,7 +46,8 @@ class CaseDetailsView extends React.PureComponent {
       appealId,
       appeal,
       error,
-      success
+      success,
+      featureToggles
     } = this.props;
 
     return <AppSegment filledBackground>
@@ -67,6 +68,7 @@ class CaseDetailsView extends React.PureComponent {
       <hr {...horizontalRuleStyling} />
       <StickyNavContentArea>
         <CaseDetailsIssueList
+          amaIssueType={featureToggles.ama_decision_issues}
           title="Issues"
           isLegacyAppeal={appeal.isLegacyAppeal}
           issues={appeal.issues}
@@ -89,11 +91,12 @@ CaseDetailsView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const { success, error } = state.ui.messages;
-  const { veteranCaseListIsVisible } = state.ui;
+  const { veteranCaseListIsVisible, featureToggles } = state.ui;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     success,
+    featureToggles,
     error,
     veteranCaseListIsVisible
   };

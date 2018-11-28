@@ -54,7 +54,7 @@ export type Task = {
   uniqueId: string,
   isLegacy: boolean,
   type: ?string,
-  action: string,
+  label: string,
   appealId: number,
   appealType: string,
   externalAppealId: string,

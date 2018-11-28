@@ -2,6 +2,8 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :assigned_attorney
   attribute :assigned_judge
 
+  attribute :timeline
+
   attribute :issues do
     object.issues.map do |issue|
       ActiveModelSerializers::SerializableResource.new(
@@ -79,13 +81,6 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
       key: object.regional_office.key,
       city: object.regional_office.city,
       state: object.regional_office.state
-    }
-  end
-
-  attribute :events do
-    {
-      nod_receipt_date: object.nod_date,
-      form9_date: object.form9_date
     }
   end
 end

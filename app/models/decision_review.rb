@@ -49,7 +49,7 @@ class DecisionReview < ApplicationRecord
       },
       relationships: veteran && veteran.relationships,
       claimant: claimant_participant_id,
-      claimantNotVeteran: claimant_not_veteran,
+      veteranIsNotClaimant: veteran_is_not_claimant,
       receiptDate: receipt_date.to_formatted_s(:json_date),
       legacyOptInApproved: legacy_opt_in_approved,
       legacyAppeals: serialized_legacy_appeals,
@@ -82,6 +82,8 @@ class DecisionReview < ApplicationRecord
   end
 
   def claimant_not_veteran
+    # This is being replaced by veteran_is_not_claimant, but keeping it temporarily
+    # until data is backfilled
     claimant_participant_id && claimant_participant_id != veteran.participant_id
   end
 

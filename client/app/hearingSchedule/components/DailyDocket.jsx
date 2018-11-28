@@ -251,7 +251,7 @@ export default class DailyDocket extends React.Component {
       name="Notes"
       onChange={this.onHearingNotesUpdate(hearing.id)}
       textAreaStyling={notesFieldStyling}
-      value={_.isUndefined(hearing.editedNotes) ? hearing.notes : hearing.editedNotes || ''}
+      value={_.isUndefined(hearing.editedNotes) ? hearing.notes || '' : hearing.editedNotes}
     />;
   };
 
@@ -349,7 +349,7 @@ export default class DailyDocket extends React.Component {
       </div>
       <span className="cf-push-right">
         VLJ: {this.props.dailyDocket.judgeFirstName} {this.props.dailyDocket.judgeLastName} <br />
-        Coordinator: {this.props.dailyDocket.bvaCoordinator} <br />
+        Coordinator: {this.props.dailyDocket.bvaPoc} <br />
         Hearing type: {this.props.dailyDocket.hearingType}
       </span>
       <div {...noMarginStyling}>
@@ -358,6 +358,7 @@ export default class DailyDocket extends React.Component {
           rowObjects={this.getDailyDocketRows(this.dailyDocketHearings(this.props.hearings), false)}
           summary="dailyDocket"
           bodyStyling={tableRowStyling}
+          slowReRendersAreOk
         />
       </div>
       { !_.isEmpty(this.previouslyScheduledHearings(this.props.hearings)) && <div>
@@ -368,7 +369,7 @@ export default class DailyDocket extends React.Component {
             rowObjects={this.getDailyDocketRows(this.previouslyScheduledHearings(), true)}
             summary="dailyDocket"
             bodyStyling={tableRowStyling}
-          />
+            slowReRendersAreOk />
         </div>
       </div> }
     </AppSegment>;

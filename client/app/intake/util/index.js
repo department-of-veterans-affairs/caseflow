@@ -55,6 +55,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
       docket_type: intakeData.docketType,
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
+      veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
       payee_code: intakeData.payeeCode,
       legacy_opt_in_approved: intakeData.legacyOptInApproved
     };
@@ -63,6 +64,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       benefit_type: intakeData.benefitType,
       claimant: intakeData.claimant,
+      veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
       payee_code: intakeData.payeeCode,
       legacy_opt_in_approved: intakeData.legacyOptInApproved
     };
@@ -73,6 +75,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
       benefit_type: intakeData.benefitType,
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
+      veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
       payee_code: intakeData.payeeCode,
       legacy_opt_in_approved: intakeData.legacyOptInApproved
     };
@@ -80,6 +83,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
     return {
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
+      veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
       payee_code: intakeData.payeeCode,
       legacy_opt_in_approved: intakeData.legacyOptInApproved
     };

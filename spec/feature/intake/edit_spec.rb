@@ -72,6 +72,7 @@ RSpec.feature "Edit issues" do
              veteran_file_number: veteran.file_number,
              receipt_date: receipt_date,
              docket_type: "evidence_submission",
+             veteran_is_not_claimant: false,
              legacy_opt_in_approved: false).tap(&:create_tasks_on_intake_success!)
     end
 
@@ -148,6 +149,40 @@ RSpec.feature "Edit issues" do
       # issue note was added
       expect(page).to have_button("Save", disabled: false)
     end
+
+    context "with legacy appeals" do
+      before do
+        setup_legacy_opt_in_appeals(veteran.file_number)
+      end
+
+      scenario "adding issues" do
+        visit "appeals/#{appeal.uuid}/edit/"
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
+
+        # expect legacy opt in modal
+        expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
+
+        add_intake_rating_issue("None of these match")
+
+        expect(page).to have_content("Left knee granted")
+
+        click_intake_add_issue
+        click_intake_no_matching_issues
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "Description for Active Duty Adjustments",
+          date: "04/25/2018",
+          legacy_issues: true
+        )
+
+        expect(page).to have_content("Does issue 4 match any of these VACOLS issues?")
+
+        add_intake_rating_issue("None of these match")
+
+        expect(page).to have_content("Description for Active Duty Adjustments")
+      end
+    end
   end
 
   context "Higher-Level Reviews" do
@@ -157,7 +192,8 @@ RSpec.feature "Edit issues" do
         receipt_date: receipt_date,
         informal_conference: false,
         same_office: false,
-        benefit_type: "compensation"
+        benefit_type: "compensation",
+        veteran_is_not_claimant: true
       )
     end
 
@@ -748,7 +784,8 @@ RSpec.feature "Edit issues" do
         veteran_file_number: veteran.file_number,
         receipt_date: receipt_date,
         benefit_type: "compensation",
-        is_dta_error: is_dta_error
+        is_dta_error: is_dta_error,
+        veteran_is_not_claimant: true
       )
     end
 

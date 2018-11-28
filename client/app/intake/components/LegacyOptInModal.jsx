@@ -5,6 +5,7 @@ import React from 'react';
 import { formatDateStr } from '../../util/DateUtil';
 import {
   addRatingRequestIssue,
+  addNonratingRequestIssue,
   toggleUntimelyExemptionModal,
   toggleLegacyOptInModal } from '../actions/addIssues';
 import Modal from '../../components/Modal';
@@ -50,18 +51,24 @@ class LegacyOptInModal extends React.Component {
 
     if (this.requiresUntimelyExemption()) {
       return this.props.toggleUntimelyExemptionModal({ currentIssue,
-        notes: this.state.notes });
+        notes });
+    } else if (currentIssue.reference_id) {
+      this.props.addRatingRequestIssue({
+        issueId: currentIssue.reference_id,
+        ratings: this.props.intakeData.ratings,
+        isRating: true,
+        notes
+      });
+    } else {
+      this.props.addNonratingRequestIssue({
+        category: currentIssue.category,
+        description: currentIssue.description,
+        decisionDate: currentIssue.decisionDate,
+        timely: true
+      });
     }
-
-    this.props.addRatingRequestIssue({
-      issueId: currentIssue.reference_id,
-      ratings: this.props.intakeData.ratings,
-      isRating: true,
-      notes
-    });
-
     this.props.toggleLegacyOptInModal();
-  }
+  };
 
   render() {
     let {
@@ -129,6 +136,7 @@ export default connect(
   null,
   (dispatch) => bindActionCreators({
     addRatingRequestIssue,
+    addNonratingRequestIssue,
     toggleUntimelyExemptionModal,
     toggleLegacyOptInModal
   }, dispatch)

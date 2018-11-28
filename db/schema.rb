@@ -86,6 +86,7 @@ ActiveRecord::Schema.define(version: 20181128225613) do
     t.datetime "established_at"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.boolean "legacy_opt_in_approved"
+    t.boolean "veteran_is_not_claimant"
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
 
@@ -406,6 +407,7 @@ ActiveRecord::Schema.define(version: 20181128225613) do
     t.string "hearing_type", null: false
     t.string "regional_office"
     t.integer "judge_id"
+    t.string "bva_poc"
     t.string "room_info", null: false
     t.datetime "created_at", null: false
     t.string "created_by", null: false
@@ -443,6 +445,7 @@ ActiveRecord::Schema.define(version: 20181128225613) do
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
     t.boolean "legacy_opt_in_approved"
+    t.boolean "veteran_is_not_claimant"
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
@@ -765,6 +768,7 @@ ActiveRecord::Schema.define(version: 20181128225613) do
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
     t.boolean "legacy_opt_in_approved"
+    t.boolean "veteran_is_not_claimant"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 

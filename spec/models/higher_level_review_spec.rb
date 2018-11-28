@@ -15,6 +15,7 @@ describe HigherLevelReview do
   let(:informal_conference) { nil }
   let(:same_office) { nil }
   let(:legacy_opt_in_approved) { false }
+  let(:veteran_is_not_claimant) { false }
 
   let(:higher_level_review) do
     HigherLevelReview.new(
@@ -23,7 +24,8 @@ describe HigherLevelReview do
       informal_conference: informal_conference,
       same_office: same_office,
       benefit_type: benefit_type,
-      legacy_opt_in_approved: legacy_opt_in_approved
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: veteran_is_not_claimant
     )
   end
 
@@ -68,7 +70,7 @@ describe HigherLevelReview do
       end
     end
 
-    context "informal_conference, same_office, legacy opt-in" do
+    context "informal_conference, same_office, legacy opt-in, veteran_is_not_claimant" do
       context "when saving review" do
         before { higher_level_review.start_review! }
 
@@ -84,11 +86,13 @@ describe HigherLevelReview do
 
         context "when they are nil" do
           let(:legacy_opt_in_approved) { nil }
+          let(:veteran_is_not_claimant) { nil }
           it "adds errors to informal_conference and same_office" do
             is_expected.to be false
             expect(higher_level_review.errors[:informal_conference]).to include("blank")
             expect(higher_level_review.errors[:same_office]).to include("blank")
             expect(higher_level_review.errors[:legacy_opt_in_approved]).to include("blank")
+            expect(higher_level_review.errors[:veteran_is_not_claimant]).to include("blank")
           end
         end
       end
