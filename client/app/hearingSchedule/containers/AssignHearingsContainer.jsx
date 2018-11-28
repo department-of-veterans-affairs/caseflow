@@ -13,15 +13,14 @@ import {
   onSelectedHearingDayChange,
   onReceiveVeteransReadyForHearing
 } from '../actions';
-import { onRegionalOfficeChange, onReceiveRegionalOffice } from '../../components/common/actions';
+import { onRegionalOfficeChange } from '../../components/common/actions';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import { COLORS, LOGO_COLORS } from '../../constants/AppConstants';
 import { onReceiveTasks } from '../../queue/QueueActions';
 import { setUserCssId } from '../../queue/uiReducer/uiActions';
 import RoSelectorDropdown from '../../components/RoSelectorDropdown';
 import AssignHearings from '../components/AssignHearings';
-import { getQueryParams } from '../../util/QueryParamsUtil';
-
+import querystring from 'querystring';
 
 const centralOfficeStaticEntry = [{
   label: 'Central',
@@ -57,23 +56,15 @@ class AssignHearingsContainer extends React.PureComponent {
     this.props.setUserCssId(this.props.userCssId);
     this.props.onRegionalOfficeChange('');
 
-    const query = getQueryParams(window.location.search);
-    let regional = query.label;
+    const query = querystring.parse(window.location.search.slice(1));
+    let regionalOffice = query.label;
 
-    if (regional) {
-      return this.props.onRegionalOfficeChange({label: query.label, value: query.value});
+    if (regionalOffice) {
+      return this.props.onRegionalOfficeChange({ label: query.label,
+        value: query.value
+      });
     }
-
   }
-
- //  componentDidMount = () =>{
- //   const query = getQueryParams(window.location.search);
- //   let regional = query.offices;
- //
- //   if (regional) {
- //     return this.props.onRegionalOfficeChange(regional);
- //   }
- // }
 
   loadUpcomingHearingDays = () => {
     if (!this.props.selectedRegionalOffice) {
