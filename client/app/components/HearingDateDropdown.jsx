@@ -67,7 +67,7 @@ class HearingDateDropdown extends React.Component {
         <SearchableDropdown
           name="hearing_date"
           label="Date of Hearing"
-          options={hearingDateOptions}
+          options={hearingDateOptions || []}
           readOnly={readOnly || false}
           onChange={onChange}
           value={value}
