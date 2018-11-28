@@ -93,6 +93,17 @@ class Task < ApplicationRecord
     [self]
   end
 
+  def update_status(new_status)
+    return unless new_status
+
+    case new_status
+    when Constants.TASK_STATUSES.completed
+      mark_as_complete!
+    else
+      update!(status: new_status)
+    end
+  end
+
   def legacy?
     appeal_type == LegacyAppeal.name
   end
