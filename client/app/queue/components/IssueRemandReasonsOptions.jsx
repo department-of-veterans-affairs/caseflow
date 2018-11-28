@@ -64,7 +64,8 @@ type Params = Props & {|
   issues: Issues,
   appeal: Appeal,
   highlight: boolean,
-  editStagedAppeal: typeof startEditingAppealIssue
+  amaDecisionIssues: boolean,
+  editStagedAppeal: typeof editStagedAppeal
 |};
 
 type RemandReasonOption = {|
@@ -96,12 +97,13 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
 
   updateIssue = (remandReasons) => {
     const { appeal, appealId, issueId, amaDecisionIssues } = this.props;
-    const useDecisionIssues = !appeal.isLegacy && amaDecisionIssues;
+    const useDecisionIssues = !appeal.isLegacyAppeal && amaDecisionIssues;
     const issues = useDecisionIssues ? appeal.decisionIssues : appeal.issues;
 
     const updatedIssues = issues.map((issue) => {
       if (issue.id === issueId) {
-        return { ...issue, remandReasons };
+        return { ...issue,
+          remandReasons };
       }
 
       return issue;
@@ -185,6 +187,7 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
 
   toggleRemandReason = (checked, event) => {
     const splitId = event.target.id.split('-');
+
     this.setState({
       [splitId[splitId.length - 1]]: {
         checked,

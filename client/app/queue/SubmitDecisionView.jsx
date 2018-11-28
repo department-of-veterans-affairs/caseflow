@@ -58,6 +58,7 @@ type Props = Params & {|
   decision: Object,
   task: Task,
   highlightFormItems: Boolean,
+  amaDecisionIssues: Boolean,
   userRole: string,
   error: ?UiStateMessage,
   // dispatch

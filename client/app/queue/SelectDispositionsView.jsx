@@ -13,10 +13,7 @@ import ContestedIssues from './components/ContestedIssues';
 import COPY from '../../COPY.json';
 
 import {
-  updateEditingAppealIssue,
   setDecisionOptions,
-  startEditingAppealIssue,
-  saveEditedAppealIssue,
   editStagedAppeal
 } from './QueueActions';
 import { hideSuccessMessage } from './uiReducer/uiActions';
@@ -82,19 +79,18 @@ class SelectDispositionsView extends React.PureComponent {
 
     return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
   }
+
   openDecisionHandler = (requestIssueIds, decisionIssue) => () => {
-    if (!decisionIssue) {
-      decisionIssue = {
-        id: uuid.v4(),
-        description: '',
-        disposition: null,
-        request_issue_ids: requestIssueIds
-      };
-    }
+    const newDecisionIssue = {
+      id: uuid.v4(),
+      description: '',
+      disposition: null,
+      request_issue_ids: requestIssueIds
+    };
 
     this.setState({
       openRequestIssueIds: requestIssueIds,
-      decisionIssue
+      decisionIssue: decisionIssue || newDecisionIssue
     });
   }
 
@@ -110,11 +106,14 @@ class SelectDispositionsView extends React.PureComponent {
     let newDecisionIssues = this.props.appeal.decisionIssues.map((decisionIssue) => {
       if (decisionIssue.id === this.state.decisionIssue.id) {
         decisionIssueFound = true;
+
         return this.state.decisionIssue;
-      } else {
-        return decisionIssue;
       }
+
+      return decisionIssue;
+
     });
+
     if (!decisionIssueFound) {
       newDecisionIssues = [...newDecisionIssues, this.state.decisionIssue];
     }
@@ -182,13 +181,13 @@ class SelectDispositionsView extends React.PureComponent {
         <SelectIssueDispositionDropdown
           issue={this.state.decisionIssue}
           appeal={appeal}
-          updateIssue={({disposition}) => {
+          updateIssue={({ disposition }) => {
             this.setState({
               decisionIssue: {
                 ...this.state.decisionIssue,
-                disposition: disposition
+                disposition
               }
-            })
+            });
           }}
           noStyling
         />
@@ -218,10 +217,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  updateEditingAppealIssue,
   setDecisionOptions,
-  startEditingAppealIssue,
-  saveEditedAppealIssue,
   hideSuccessMessage,
   editStagedAppeal
 }, dispatch);

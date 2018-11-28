@@ -4,7 +4,7 @@ import { COLORS } from '../../constants/AppConstants';
 import Button from '../../components/Button';
 import ISSUE_DISPOSITIONS_BY_ID from '../../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
 
-const TEXT_INDENTATION = '10px'; 
+const TEXT_INDENTATION = '10px';
 
 const contestedIssueStyling = css({
   backgroundColor: COLORS.GREY_BACKGROUND,
@@ -70,7 +70,7 @@ export default class ContestedIssues extends React.PureComponent {
       return decisionIssue.request_issue_ids.includes(requestIssue.id);
     }).map((decisionIssue) => {
       return <div {...outerDiv}>
-        <div {...grayLine}/>
+        <div {...grayLine} />
         <div {...decisionIssueDiv}>
           <div {...flexContainer}>
             Decision
@@ -98,7 +98,6 @@ export default class ContestedIssues extends React.PureComponent {
   render = () => {
     const {
       requestIssues,
-      decisionIssues,
       openDecisionHandler,
       numbered
     } = this.props;
@@ -113,16 +112,16 @@ export default class ContestedIssues extends React.PureComponent {
     });
 
     return <ol {...listStyle}>{requestIssues.map((issue) => {
-        return <li {...listPadding} key={issue.description}>
-          <div {...contestedIssueStyling}>
+      return <li {...listPadding} key={issue.description}>
+        <div {...contestedIssueStyling}>
             Contested Issue
-          </div>
-          <div {...indentedIssueStyling}>
-            {issue.description}
-            <div {...noteDiv}>Note: "{issue.notes}"</div>
-          </div>
-          {this.decisionIssues(issue)}
-          { openDecisionHandler &&
+        </div>
+        <div {...indentedIssueStyling}>
+          {issue.description}
+          <div {...noteDiv}>Note: "{issue.notes}"</div>
+        </div>
+        {this.decisionIssues(issue)}
+        { openDecisionHandler &&
             <div {...buttonDiv}>
               <Button
                 name="+ Add Decision"
@@ -130,9 +129,9 @@ export default class ContestedIssues extends React.PureComponent {
                 classNames={['usa-button-secondary']}
               />
             </div>
-          }
-        </li>;
-      })}
+        }
+      </li>;
+    })}
     </ol>;
   }
 }
