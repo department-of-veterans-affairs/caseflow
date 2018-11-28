@@ -16,7 +16,7 @@ class AddedIssue extends React.PureComponent {
 
     let existingRequestIssue = _.some(requestIssues, { reference_id: issue.referenceId });
 
-    if (existingRequestIssue) {
+    if (existingRequestIssue && !existingRequestIssue.ineligibleReason) {
       return false;
     }
 
