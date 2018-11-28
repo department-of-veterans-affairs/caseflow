@@ -1,4 +1,4 @@
-class RootTask < Task
+class RootTask < GenericTask
   after_initialize :set_assignee
 
   def set_assignee
@@ -7,22 +7,17 @@ class RootTask < Task
 
   def when_child_task_completed; end
 
-  def available_actions(user)
-    if MailTeam.singleton.user_has_access?(user)
-      return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h]
-    end
-
-    []
+  def available_actions(_user)
+    [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h]
   end
 
   def no_actions_available?(user)
-    return false if status == Constants.TASK_STATUSES.on_hold && MailTeam.singleton.user_has_access?(user)
-    super
+    return true unless MailTeam.singleton.user_has_access?(user) && status != Constants.TASK_STATUSES.completed
   end
 
   class << self
     def create_root_and_sub_tasks!(appeal)
-      root_task = create!(appeal_id: appeal.id, appeal_type: appeal.class.name)
+      root_task = create!(appeal: appeal)
       create_vso_subtask!(appeal, root_task)
     end
 
