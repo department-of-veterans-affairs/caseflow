@@ -5,7 +5,7 @@
     userRole: (current_user.vacols_roles.first || "").capitalize,
     userCssId: current_user.css_id,
     organizationIds: current_user.organizations.pluck(:id),
-    organizations: current_user.organizations,
+    organizations: current_user.organizations.map {|o| o.slice(:id, :name, :url)},
     userIsVsoEmployee: current_user.vso_employee?,
     caseSearchHomePage: case_search_home_page,
     organizationName: organization.name,

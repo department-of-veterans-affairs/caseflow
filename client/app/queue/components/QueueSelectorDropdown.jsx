@@ -50,11 +50,16 @@ export default class QueueSelectorDropdown extends React.Component<Props, Compon
     const { organizations } = this.props;
     const url = window.location.pathname.split('/');
     const location = url[url.length - 1];
+    let dropdownButtonList;
 
-    const dropdownButtonList = (orgs) => {
+    if (organizations.length < 1) {
+      return null;
+    }
+
+    if (this.state.menu) {
       const queueHref = (location === 'queue') ? '#' : '/queue';
 
-      return <ul className="cf-dropdown-menu active" {...styles.dropdownList}>
+      dropdownButtonList = <ul className="cf-dropdown-menu active" {...styles.dropdownList}>
         <li key={0}>
           <Link className="usa-button-secondary usa-button"
             href={queueHref} onClick={this.onMenuClick}>
@@ -62,7 +67,7 @@ export default class QueueSelectorDropdown extends React.Component<Props, Compon
           </Link>
         </li>
 
-        {orgs.map((org, index) => {
+        {organizations.map((org, index) => {
           const orgHref = (location === org.url) ? '#' : `/organizations/${org.url}`;
 
           return <li key={index + 1}>
@@ -73,10 +78,6 @@ export default class QueueSelectorDropdown extends React.Component<Props, Compon
           </li>;
         })}
       </ul>;
-    };
-
-    if (organizations.length < 1) {
-      return null;
     }
 
     return <div className="cf-dropdown" {...styles.dropdownButton}>
@@ -85,7 +86,7 @@ export default class QueueSelectorDropdown extends React.Component<Props, Compon
         {...styles.dropdownTrigger}>
         {COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL}
       </a>
-      {this.state.menu && dropdownButtonList(organizations) }
+      {dropdownButtonList}
     </div>;
   }
 }
