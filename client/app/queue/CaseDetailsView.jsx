@@ -72,6 +72,7 @@ class CaseDetailsView extends React.PureComponent {
           title="Issues"
           isLegacyAppeal={appeal.isLegacyAppeal}
           issues={appeal.issues}
+          decisionIssues={appeal.decisionIssues}
         />
         <PowerOfAttorneyDetail title="Power of Attorney" appealId={appealId} />
         {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) &&
