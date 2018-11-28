@@ -641,11 +641,11 @@ describe EndProductEstablishment do
 
     context "for rating request issues with some ratings" do
       before do
-        allow(Fakes::VBMSService).to receive(:fetch_dispositions_from_vbms).
-          with(end_product_establishment.reference_id).and_return(dispositions)
+        allow(Fakes::VBMSService).to receive(:get_dispositions!).
+          with(claim_id: end_product_establishment.reference_id).and_return(dispositions)
       end
 
-      let(:disposition_text) {"disposition test"}
+      let(:disposition_text) {"allowed"}
       let(:dispositions) do
         [
           claim_id: end_product_establishment.reference_id,
@@ -678,12 +678,16 @@ describe EndProductEstablishment do
         expect(request_issues.second.decision_issues.count).to eq(0)
 
         subject
+        # first rating request issue is matched by rating
         expect(request_issues.first.decision_issues.count).to eq(1)
         expect(request_issues.second.decision_issues.count).to eq(1)
         expect(request_issues.first.decision_issues.first.rating_issue_reference_id).to eq(reference_id)
+
+        # second rating request isssue is matched by disposition
         second_decision_issue = request_issues.second.decision_issues.first
+        expect(second_decision_issue.rating_issue_reference_id).to eq(nil)
         expect(second_decision_issue.source_request_issue_id).to eq(request_issues[1].id)
-        expect(second_decision_issue.desposition).to eq(disposition_text)
+        expect(second_decision_issue.disposition).to eq(disposition_text)
       end
     end
 
@@ -700,17 +704,26 @@ describe EndProductEstablishment do
           )
         ]
       end
+      let(:rating){Generators::Rating.build(issues: [])}
 
-      it "does not match any request issues with rating issues" do
-      end
-      it "connects request issues without rating issues based on contention desposition" do
+      it "will retry rating request issue later" do
+        subject
+
+        # get_dispositions! should not be called
+        expect(Fakes::VBMSService).not_to receive(:get_dispositions!)
+        # request issue should not be marked as processed
+        request_issue = request_issues.first
+        expect(request_issue.processed?).to eq(false)
+
+        # no decision issue is made
+        expect(DecisionIssue.count).to eq(0)
       end
     end
 
     context "for nonrating request issues" do
       before do
-        allow(Fakes::VBMSService).to receive(:fetch_dispositions_from_vbms).
-          with(end_product_establishment.reference_id).and_return(dispositions)
+        allow(Fakes::VBMSService).to receive(:get_dispositions!).
+          with(claim_id: end_product_establishment.reference_id).and_return(dispositions)
       end
 
       let(:end_product_establishment) do
@@ -721,7 +734,7 @@ describe EndProductEstablishment do
           )
       end
 
-      let(:disposition_text) {"disposition test"}
+      let(:disposition_text) {"allowed"}
       let(:dispositions) do
         [
           claim_id: end_product_establishment.reference_id,
@@ -744,11 +757,15 @@ describe EndProductEstablishment do
         ]
       end
 
-      it "connects nonrating request issues based on contention desposition" do
+      it "connects nonrating request issues based on contention disposition" do
         expect(request_issues.first.decision_issues.count).to eq(0)
         subject
-        expect(second_decision_issue.source_request_issue_id).to eq(request_issues[0].id)
-        expect(second_decision_issue.desposition).to eq(disposition_text)
+
+        expect(request_issues.first.decision_issues.count).to eq(1)
+        first_decision_issue = request_issues.first.decision_issues.first
+        expect(first_decision_issue.rating_issue_reference_id).to eq(nil)
+        expect(first_decision_issue.source_request_issue_id).to eq(request_issues.first.id)
+        expect(first_decision_issue.disposition).to eq(disposition_text)
       end
     end
   end

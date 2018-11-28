@@ -147,17 +147,15 @@ class RequestIssue < ApplicationRecord
     contested_decision_issue && contested_decision_issue.request_issues.first
   end
 
-  private
-
   def save_decision_issue(disposition)
     # do not create another decision issue for this request issue if one already exists
     return if decision_issue_reference_id
 
     ActiveRecord::Base.transaction do
       created_decision_issue = DecisionIssue.create!(
-        source_request_issue: self,
+        source_request_issue_id: id,
         participant_id: review_request.veteran.participant_id,
-        disposition: disposition.disposition,
+        disposition: disposition[:disposition],
         # use epe last_synced_at as a proxy for when the decision was made
         disposition_date: end_product_establishment.last_synced_at
       )
@@ -169,6 +167,8 @@ class RequestIssue < ApplicationRecord
       created_decision_issue
     end
   end
+
+  private
 
   # RatingIssue is not in db so we pull hash from the serialized_ratings.
   def fetch_contested_rating_issue_ui_hash

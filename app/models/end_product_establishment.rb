@@ -185,7 +185,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def has_nonrating_code
     code === HigherLevelReview::END_PRODUCT_NONRATING_CODE ||
-      code === SupplementalClaim::END_PRODUCT_CODES[nonrating]
+      code === SupplementalClaim::END_PRODUCT_CODES[:nonrating]
   end
 
   def sync_decision_issues_from_dispositons!(request_issues_without_ratings)
@@ -194,11 +194,12 @@ class EndProductEstablishment < ApplicationRecord
     # - nonrating eps don't have ratings
     # in these cases, use the contention disposition to create a decision issue
     dispositions = source.fetch_dispositions_from_vbms(reference_id)
-
     request_issues_without_ratings.each do |request_issue|
-      found_disposition = dispositions.detect { |disposition| disposition.contention_id == request_issue.contention_reference_id }
-      request_issue.save_decision_issue(found_disposition)
-      request_issue.processed!
+      found_disposition = dispositions.detect { |disposition| disposition[:contention_id].to_i == request_issue.contention_reference_id }
+      if found_disposition
+        request_issue.save_decision_issue(found_disposition)
+        request_issue.processed!
+      end
     end
   end
 
@@ -284,7 +285,7 @@ class EndProductEstablishment < ApplicationRecord
     request_issues.reject(&:processed?).each do |request_issue|
       if synced_rating_issues.any? { |rating_issue| rating_issue.source_request_issue == request_issue }
         request_issue.processed!
-        if request_issues.includes?(request_issue)
+        if request_issues.include?(request_issue)
           synced_rating_request_issue_for_this_ep << request_issues
         end 
       elsif rating_request_issues.length == 0 && synced_rating_request_issue_for_this_ep.length == 0
