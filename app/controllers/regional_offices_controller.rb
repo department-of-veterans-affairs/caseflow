@@ -8,7 +8,12 @@ class RegionalOfficesController < ApplicationController
   def open_hearing_dates
     ro = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    hearing_dates = HearingDay.load_days_with_open_hearing_slots(Time.zone.today, Time.zone.today + 365, ro)
+    hearing_dates = HearingDay.load_days_with_open_hearing_slots(
+      Time.zone.today.beginning_of_day,
+      Time.zone.today.beginning_of_day + 182.days,
+      ro
+    )
+
     render json: {
       hearing_dates: hearing_dates.map do |date|
         {

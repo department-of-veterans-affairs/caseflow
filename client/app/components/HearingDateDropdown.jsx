@@ -8,7 +8,7 @@ import ApiUtil from '../util/ApiUtil';
 import { onReceiveHearingDates } from './common/actions';
 import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
-import { formatDate, formatDateStringForApi } from '../util/DateUtil';
+import { formatDateStr, formatDateStringForApi } from '../util/DateUtil';
 
 class HearingDateDropdown extends React.Component {
   constructor(props) {
@@ -43,8 +43,8 @@ class HearingDateDropdown extends React.Component {
 
     _.forEach(this.props.hearingDates, (date) => {
       hearingDateOptions.push({
-        label: formatDate(date.hearingDate, 'MM/DD/YYYY'),
-        value: formatDateStringForApi(formatDate(date.hearingDate))
+        label: formatDateStr(date.hearingDate),
+        value: formatDateStr(date.hearingDate, undefined, 'YYYY-MM-DD')
       });
     });
 
@@ -52,7 +52,9 @@ class HearingDateDropdown extends React.Component {
       hearingDateOptions.push(...this.props.staticOptions);
     }
 
-    return hearingDateOptions;
+    return hearingDateOptions.sort((a,b) => (
+      a.value > b.value ? 1 : (a.value < b.value ? -1 : 0)
+    ));
   };
 
   render() {
