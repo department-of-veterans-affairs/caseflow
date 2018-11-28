@@ -19,7 +19,7 @@ const styles = {
   }),
   dropdownButton: css({
     position: 'absolute',
-    top: '40px',
+    top: '48px',
     right: '40px'
   }),
   dropdownList: css({
