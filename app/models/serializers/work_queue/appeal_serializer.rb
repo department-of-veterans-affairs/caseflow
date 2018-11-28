@@ -94,6 +94,4 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
       nod_receipt_date: object.receipt_date
     }
   end
-
-  attribute :decision_document_id
 end

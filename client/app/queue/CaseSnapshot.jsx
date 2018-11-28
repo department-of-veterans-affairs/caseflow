@@ -3,6 +3,7 @@ import { css } from 'glamor';
 import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import {
   actionableTasksForAppeal,
@@ -25,6 +26,7 @@ import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import { COLORS } from '../constants/AppConstants';
 import StringUtil from '../util/StringUtil';
+import type { Dispatch } from './types/state';
 
 import {
   renderLegacyAppealType,
@@ -46,6 +48,32 @@ const snapshotParentContainerStyling = css({
   '& > div:first-child': { paddingLeft: '3rem' },
 
   '& .Select': { maxWidth: '100%' }
+});
+
+const containingDivStyling = css({
+  /*borderBottom: `1px solid ${COLORS.GREY_LIGHT}`,
+  display: 'block',
+  // Offsets the padding from .cf-app-segment--alt to make the bottom border full width.
+  margin: '-2rem -4rem 0 -4rem',
+  padding: '0 0 1.5rem 4rem',
+
+  '& > *': {
+    display: 'inline-block',
+    margin: '0'
+  }*/
+});
+
+const listStyling = css({
+  listStyleType: 'none',
+  /*verticalAlign: 'super',
+  padding: '1rem 0 0 0'*/
+});
+
+const listItemStyling = css({
+  /*display: 'inline',
+  padding: '0.5rem 1.5rem 0.5rem 0',
+  ':not(:last-child)': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
+  ':not(:first-child)': { paddingLeft: '1.5rem' }*/
 });
 
 const headingStyling = css({
@@ -84,6 +112,11 @@ const displayNone = css({
 const editButton = css({
   float: 'right'
 });
+
+const caseInfo = css({
+  backgroundColor: '#F8F8F8'
+});
+
 
 const snapshotChildResponsiveWrapFixStyling = css({
   '@media(max-width: 1200px)': {
@@ -291,64 +324,81 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     console.log(appeal);
     console.log(this.props);
 
-    return <div className="usa-grid" {...snapshotParentContainerStyling}>
-      {/*<div {...newStyling}>
+    return <CaseSnapshotScaffolding className="usa-grid" {...snapshotParentContainerStyling}>
+      {/*<div className="usa-grid" {...snapshotParentContainerStyling}>*/}
+
+      {
+        /*<div {...newStyling}>
         <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
         <TextField text={appeal.docketNumber} value={appeal.docketNumber} readOnly={true} />
         <dd><DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}</dd>
-      </div>*/}
+      </div>*/
+      }
 
-      <div {...divStyle}>
-        <dt {...titleStyle}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL.toUpperCase()}</dt>
-        {/*<TextField text={appeal.docketNumber} value={appeal.docketNumber} readOnly={true} />*/}
-        <dd {...spanStyle}>
+      <React.Fragment>
+        <span {...titleStyle}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL.toUpperCase()}</span>
+        <span {...spanStyle}>
           <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}
-        </dd>
-      </div>
+        </span>
+      </React.Fragment>
 
-      <div {...divStyle}>
-       <dt {...titleStyle}>{'VETERAN DOCUMENTS'}</dt>
-       <dd>
-         <ReaderLink
-            appealId={appeal.id}
-            appeal={appeal} />
-       </dd>
-      </div>
+      <React.Fragment>
+        <span {...titleStyle}>{'VETERAN DOCUMENTS'}</span>
+        <span>
+          <ReaderLink appealId={appeal.id} appeal={appeal} redirectUrl={window.location.pathname} longMessage />
+        </span>
+      </React.Fragment>
 
-      <div {...divStyle}>
-       <dt {...titleStyle}>{'TYPE'}</dt>
-       <dd {...redType}>{'CAVC'}</dd>
-       <dd className={appeal.caseType == 'CAVC' ? redType : null}>{appeal.caseType}</dd>
-      </div>
+      <React.Fragment>
+        <span {...titleStyle}>{'TYPE'}</span>
+        <span {...redType}>{'CAVC'}</span>
+        <span className={appeal.caseType == 'CAVC' ? redType : null}>{appeal.caseType}</span>
+      </React.Fragment>
 
-      <div {...divStyle} className={appeal.decisionDocumentId ? null : displayNone}>
-       <dt {...titleStyle}>{'DECISION DOCUMENT ID'}</dt>
-       <CopyTextButton text={appeal.decisionDocumentId} />
-      </div>
+      <React.Fragment>
+        <span {...divStyle} className={primaryTask && primaryTask.documentId ? null : displayNone}>
+         <span {...titleStyle}>{'DECISION DOCUMENT ID'}</span>
+         <CopyTextButton text={primaryTask ? primaryTask.documentId : null} />
+        </span>
+      </React.Fragment>
 
-      <div>
-        <dt>{}</dt>
+      <React.Fragment>
         <Link onClick={this.props.toggleVeteranCaseList}>
           { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
         </Link>
-      </div>
+      </React.Fragment>
 
+      {/*
+        <span>
+          <Link onClick={this.props.toggleVeteranCaseList}>
+            { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
+          </Link>
+        </span>*/
+      }
 
-    </div>;
+    {/* </div> */}
+    </CaseSnapshotScaffolding>;
   };
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => {
   const { featureToggles, userRole, canEditAod } = state.ui;
-  veteranCaseListIsVisible: state.ui.veteranCaseListIsVisible;
-
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     featureToggles,
     userRole,
     primaryTask: actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0],
-    canEditAod
+    canEditAod,
+    veteranCaseListIsVisible: state.ui.veteranCaseListIsVisible
   };
 };
 
-export default connect(mapStateToProps)(CaseSnapshot);
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  toggleVeteranCaseList
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(CaseSnapshot);
+
+const CaseSnapshotScaffolding = (props) => <div {...caseInfo}>
+  {props.children.map((child, i) => child && <span key={i}>{child}</span>)}
+</div>;

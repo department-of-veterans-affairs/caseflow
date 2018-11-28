@@ -54,7 +54,8 @@ const listItemStyling = css({
 });
 
 const viewCasesStyling = css({
-  cursor: 'pointer'
+  cursor: 'pointer',
+  display: 'none'
 });
 
 class CaseTitle extends React.PureComponent {
@@ -75,7 +76,7 @@ class CaseTitle extends React.PureComponent {
         <CopyTextButton text={appeal.veteranFileNumber} />
       </React.Fragment>
 
-      {/* !this.props.userIsVsoEmployee && <ReaderLink
+      { /*!this.props.userIsVsoEmployee && <ReaderLink
         appealId={appealId}
         analyticsSource={CATEGORIES[analyticsSource.toUpperCase()]}
         redirectUrl={redirectUrl}

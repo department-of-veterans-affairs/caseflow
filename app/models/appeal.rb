@@ -212,10 +212,6 @@ class Appeal < DecisionReview
     RootTask.create_root_and_sub_tasks!(self)
   end
 
-  def decision_document_id
-    tasks.map(&:latest_attorney_case_review).pluck(:document_id).uniq.first
-  end
-
   private
 
   def bgs

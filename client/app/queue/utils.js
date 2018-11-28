@@ -269,8 +269,7 @@ export const prepareAppealForStore =
         certificationDate: appeal.attributes.certification_date,
         powerOfAttorney: appeal.attributes.power_of_attorney,
         regionalOffice: appeal.attributes.regional_office,
-        caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
-        decisionDocumentId: appeal.attributes.decision_document_id
+        caseflowVeteranId: appeal.attributes.caseflow_veteran_id
       };
 
       return accumulator;
