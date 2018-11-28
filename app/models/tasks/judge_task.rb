@@ -20,6 +20,10 @@ class JudgeTask < Task
     end
   end
 
+  def timeline_title
+    COPY::CASE_TIMELINE_JUDGE_TASK
+  end
+
   def self.create_from_params(params, user)
     new_task = super(params, user)
 
