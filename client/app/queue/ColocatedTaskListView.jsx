@@ -6,8 +6,8 @@ import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
 
 import TaskTable from './components/TaskTable';
+import QueueSelectorDropdown from './components/QueueSelectorDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import {
   newTasksByAssigneeCssIdSelector,
@@ -31,24 +31,9 @@ import type { State, UiStateMessage } from './types/state';
 
 type Params = {||};
 
-const styles = {
-  container: css({
-    position: 'relative'
-  }),
-  dropdownTrigger: css({
-    marginRight: 0
-  }),
-  dropdownButton: css({
-    position: 'absolute',
-    top: '40px',
-    right: '40px'
-  }),
-  dropdownList: css({
-    top: '3.55rem',
-    right: '0',
-    width: '26rem'
-  })
-};
+const containerStyles = css({
+  position: 'relative'
+});
 
 type Props = Params & {|
   // store
@@ -82,7 +67,6 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
   componentWillUnmount = () => this.props.hideSuccessMessage();
 
   render = () => {
-    let dropdown;
     const {
       success,
       organizations,
@@ -110,42 +94,10 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
       }
     ];
 
-    const dropdownButtonList = (orgs) => {
-
-      return <ul className="cf-dropdown-menu active" {...styles.dropdownList}>
-        <li key={0}>
-          <Link className="usa-button-secondary usa-button" onClick={this.onMenuClick}>
-            {COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL}
-          </Link>
-        </li>
-
-        {orgs.map((org, index) =>
-          <li key={index + 1}>
-            <Link className="usa-button-secondary usa-button"
-              href={`/organizations/${org.url}`}>
-              {sprintf(COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL, org.name)}
-            </Link>
-          </li>)}
-      </ul>;
-    };
-
-    if (organizations.length > 0) {
-      dropdown = <div className="cf-dropdown" {...styles.dropdownButton}>
-        <a onClick={this.onMenuClick}
-          className="cf-dropdown-trigger usa-button usa-button-secondary"
-          {...styles.dropdownTrigger}>
-          {COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL}
-        </a>
-        {this.state.menu && dropdownButtonList(organizations) }
-      </div>;
-    }
-
-    return <AppSegment filledBackground styling={styles.container}>
+    return <AppSegment filledBackground styling={containerStyles}>
       {success && <Alert type="success" title={success.title} message={success.detail} styling={marginBottom(1)} />}
       <h1 {...fullWidth}>{COPY.COLOCATED_QUEUE_PAGE_TABLE_TITLE}</h1>
-
-      {dropdown}
-
+      <QueueSelectorDropdown organizations={organizations} />
       <TabWindow name="tasks-tabwindow" tabs={tabs} />
     </AppSegment>;
   };

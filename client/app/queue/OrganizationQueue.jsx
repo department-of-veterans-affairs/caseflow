@@ -7,8 +7,8 @@ import { css } from 'glamor';
 
 import TabWindow from '../components/TabWindow';
 import TaskTable from './components/TaskTable';
+import QueueSelectorDropdown from './components/QueueSelectorDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import {
   getUnassignedOrganizationalTasks,
@@ -22,24 +22,9 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
 
-const styles = {
-  container: css({
-    position: 'relative'
-  }),
-  dropdownTrigger: css({
-    marginRight: 0
-  }),
-  dropdownButton: css({
-    position: 'absolute',
-    top: '40px',
-    right: '40px'
-  }),
-  dropdownList: css({
-    top: '3.55rem',
-    right: '0',
-    width: '26rem'
-  })
-};
+const containerStyles = css({
+  position: 'relative'
+});
 
 class OrganizationQueue extends React.PureComponent {
   constructor(props) {
@@ -60,7 +45,6 @@ class OrganizationQueue extends React.PureComponent {
   }
 
   render = () => {
-    let dropdown;
     const tabs = [
       {
         label: sprintf(
@@ -93,48 +77,10 @@ class OrganizationQueue extends React.PureComponent {
       }
     ];
 
-    const dropdownButtonList = (orgs) => {
-      const url = window.location.pathname.split('/');
-      const location = url[url.length - 1];
-
-      return <ul className="cf-dropdown-menu active" {...styles.dropdownList}>
-        <li key={0}>
-          <Link className="usa-button-secondary usa-button"
-            href="/queue" onClick={this.onMenuClick}>
-            {COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL}
-          </Link>
-        </li>
-
-        {orgs.map((org, index) => {
-          const href = (location === org.url) ? "javascript:;" : `/organizations/${org.url}`;
-
-          return <li key={index + 1}>
-            <Link className="usa-button-secondary usa-button"
-              href={href} onClick={this.onMenuClick}>
-              {sprintf(COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL, org.name)}
-            </Link>
-          </li>;
-        })}
-      </ul>;
-    };
-
-    if (this.props.organizations.length > 0) {
-      dropdown = <div className="cf-dropdown" {...styles.dropdownButton}>
-        <a onClick={this.onMenuClick}
-          className="cf-dropdown-trigger usa-button usa-button-secondary"
-          {...styles.dropdownTrigger}>
-          {COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL}
-        </a>
-        {this.state.menu && dropdownButtonList(this.props.organizations) }
-      </div>;
-    }
-
-    return <AppSegment filledBackground styling={styles.container}>
+    return <AppSegment filledBackground styling={containerStyles}>
       <div>
         <h1 {...fullWidth}>{sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName)}</h1>
-
-        {dropdown}
-
+        <QueueSelectorDropdown organizations={this.props.organizations} />
         <TabWindow
           name="tasks-organization-queue"
           tabs={tabs}
