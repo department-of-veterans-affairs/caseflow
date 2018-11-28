@@ -46,11 +46,15 @@ class HearingDateDropdown extends React.Component {
       });
     });
 
+    if (this.props.staticOptions) {
+      hearingDateOptions.push(...this.props.staticOptions);
+    }
+
     return hearingDateOptions;
   };
 
   render() {
-    const { readOnly, staticOptions, onChange, value, placeholder } = this.props;
+    const { readOnly, onChange, value, placeholder } = this.props;
     const hearingDateOptions = this.hearingDateOptions();
     const selectedHearingDate = _.find(hearingDateOptions, (opt) => opt.value === value) || {};
 
@@ -59,7 +63,6 @@ class HearingDateDropdown extends React.Component {
         <SearchableDropdown
           name="hearing_date"
           label="Date of Hearing"
-          staticOptions={staticOptions}
           options={hearingDateOptions}
           readOnly={readOnly || false}
           onChange={onChange}
@@ -103,7 +106,7 @@ HearingDateDropdown.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  hearingDates: state.components.hearingDates
+  hearingDates: state.components.hearingDates || []
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

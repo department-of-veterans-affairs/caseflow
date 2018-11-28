@@ -62,7 +62,6 @@ class RoSelectorDropdown extends React.Component {
           name="ro"
           label="Regional Office"
           options={regionalOfficeOptions}
-          staticOptions={staticOptions}
           readOnly={readOnly || false}
           onChange={onChange}
           value={value}
