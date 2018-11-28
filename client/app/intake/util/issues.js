@@ -295,7 +295,10 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         untimelyExemption: issue.untimelyExemption,
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
         ineligibleReason: issue.ineligibleReason,
-        rampClaimId: issue.rampClaimId
+        rampClaimId: issue.rampClaimId,
+        vacolsId: issue.vacolsId,
+        vacolsSequenceId: issue.vacolsSequenceId,
+        eligibleForSocOptIn: issue.eligibleForSocOptIn
       };
     }
 
@@ -306,11 +309,22 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       referenceId: issue.id,
       text: `${issue.category} - ${issue.description}`,
       date: formatDate(issue.decisionDate),
-      beforeAma: decisionDate < amaActivationDate,
       timely: issue.timely,
-      ineligibleReason: issue.ineligibleReason,
+      beforeAma: decisionDate < amaActivationDate,
       untimelyExemption: issue.untimelyExemption,
-      untimelyExemptionNotes: issue.untimelyExemptionNotes
+      untimelyExemptionNotes: issue.untimelyExemptionNotes,
+      ineligibleReason: issue.ineligibleReason,
+      vacolsId: issue.vacolsId,
+      vacolsSequenceId: issue.vacolsSequenceId,
+      eligibleForSocOptIn: issue.eligibleForSocOptIn
     };
+  });
+};
+
+export const findLegacyAppealByVacolsIssue = (legacyAppeals, vacolsId, vacolsSequenceId) => {
+  return _.find(legacyAppeals, (appeal) => {
+    return _.some(appeal.issues, (issue) => {
+      return issue.vacols_id == vacolsId && issue.vacols_sequence_id == vacolsSequenceId;
+    });
   });
 };

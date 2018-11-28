@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import React from 'react';
 
 import { formatDateStr } from '../../util/DateUtil';
+import { findLegacyAppealByVacolsIssue } from '../util/issues';
 import {
   addRatingRequestIssue,
   addNonratingRequestIssue,
@@ -17,26 +18,36 @@ class LegacyOptInModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: '',
+      vacolsId: '',
       vacolsSequenceId: '',
-      radioKey: ''
+      radioKey: '',
+      eligibleForSocOptIn: ''
     };
   }
 
   radioOnChange = (value) => {
-    // legacy opt in are keyed off of a combo of both id & vacolsSequenceId
+    // legacy opt in are keyed off of a combo of both vacolsId & vacolsSequenceId
     // NO_MATCH_TEXT does not have a vacolsSequenceId
     const legacyValues = value.split('-');
+    const vacolsSequenceId = legacyValues.length > 1 ? Number(legacyValues[1]) : '';
+    const legacyAppeal = findLegacyAppealByVacolsIssue(this.props.intakeData.legacyAppeals, legacyValues[0], vacolsSequenceId);
+    const eligibleForSocOptIn = legacyAppeal ? legacyAppeal.eligible_for_soc_opt_in : '';
+
+    if (vacolsSequenceId) {
+      this.setState({
+        vacolsId: legacyValues[0],
+        vacolsSequenceId,
+        eligibleForSocOptIn
+      });
+    }
 
     this.setState({
-      id: legacyValues[0],
-      vacolsSequenceId: legacyValues.length > 1 ? legacyValues[1] : '',
       radioKey: value
     });
   }
 
   requiresUntimelyExemption = () => {
-    if (this.state.id !== NO_MATCH_TEXT) {
+    if (this.state.vacolsId !== NO_MATCH_TEXT) {
       return false;
     }
 
@@ -51,14 +62,16 @@ class LegacyOptInModal extends React.Component {
 
     if (this.requiresUntimelyExemption()) {
       return this.props.toggleUntimelyExemptionModal({ currentIssue,
-        notes, this.state.id, this.state.vacolsSequenceId });
+        notes, vacolsId: this.state.vacolsId, vacolsSequenceId: this.state.vacolsSequenceId,
+        eligibleForSocOptIn: this.state.eligibleForSocOptIn });
     } else if (currentIssue.reference_id) {
       this.props.addRatingRequestIssue({
         issueId: currentIssue.reference_id,
         ratings: this.props.intakeData.ratings,
         isRating: true,
-        legacyIssueId: this.state.id,
+        vacolsId: this.state.vacolsId,
         vacolsSequenceId: this.state.vacolsSequenceId,
+        eligibleForSocOptIn: this.state.eligibleForSocOptIn,
         notes
       });
     } else {
@@ -67,8 +80,9 @@ class LegacyOptInModal extends React.Component {
         description: currentIssue.description,
         decisionDate: currentIssue.decisionDate,
         timely: true,
-        legacyIssueId: this.state.id,
-        vacolsSequenceId: this.state.vacolsSequenceId
+        vacolsId: this.state.vacolsId,
+        vacolsSequenceId: this.state.vacolsSequenceId,
+        eligibleForSocOptIn: this.state.eligibleForSocOptIn
       });
     }
     this.props.toggleLegacyOptInModal();
@@ -85,7 +99,7 @@ class LegacyOptInModal extends React.Component {
       const radioOptions = legacyAppeal.issues.map((issue) => {
         return {
           displayText: issue.description,
-          value: `${issue.id}-${issue.vacols_sequence_id}`
+          value: `${issue.vacols_id}-${issue.vacols_sequence_id}`
         };
       });
 
@@ -118,7 +132,7 @@ class LegacyOptInModal extends React.Component {
           { classNames: ['usa-button', 'add-issue'],
             name: 'Add this issue',
             onClick: this.onAddIssue,
-            disabled: !this.state.id
+            disabled: !this.state.radioKey
           }
         ]}
         visible

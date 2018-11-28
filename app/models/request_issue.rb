@@ -71,7 +71,7 @@ class RequestIssue < ApplicationRecord
         untimely_exemption: data[:untimely_exemption],
         untimely_exemption_notes: data[:untimely_exemption_notes],
         ramp_claim_id: data[:ramp_claim_id],
-        legacy_issue_id: data[:legacy_issue_id],
+        vacols_id: data[:vacols_id],
         vacols_sequence_id: data[:vacols_sequence_id]
       ).validate_eligibility!
     end
@@ -122,8 +122,8 @@ class RequestIssue < ApplicationRecord
       notes: notes,
       is_unidentified: is_unidentified,
       ramp_claim_id: ramp_claim_id,
-      legacy_issue_id: legacy_issue_id,
-      vacols_sequence_id: vacols_sequence_id,
+      # vacols_id: vacols_id,
+      # vacols_sequence_id: vacols_sequence_id,
       ineligible_reason: ineligible_reason,
       title_of_active_review: duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
     }
@@ -199,7 +199,7 @@ class RequestIssue < ApplicationRecord
   def check_for_legacy_issue_not_withdrawn!
     return unless eligible?
 
-    if !review_request.legacy_opt_in_approved && legacy_issue_id
+    if !review_request.legacy_opt_in_approved && vacols_id
       self.ineligible_reason = :legacy_issue_not_withdrawn
     end
   end
@@ -207,7 +207,7 @@ class RequestIssue < ApplicationRecord
   def check_for_legacy_appeal_not_eligible!
     return unless eligible?
 
-    if !review_request.legacy_opt_in_approved && legacy_issue_id
+    if !review_request.legacy_opt_in_approved && vacols_id
       self.ineligible_reason = :legacy_issue_not_withdrawn
     end
   end

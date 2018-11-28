@@ -64,8 +64,9 @@ export const addRatingRequestIssue = (args) => (dispatch) => {
       notes: args.notes,
       untimelyExemption: args.untimelyExemption,
       untimelyExemptionNotes: args.untimelyExemptionNotes,
-      legacyIssueId: args.legacyIssueId,
-      vacolsSequenceId: args.vacolsSequenceId
+      vacolsId: args.vacolsId,
+      vacolsSequenceId: args.vacolsSequenceId,
+      eligibleForSocOptIn: args.eligibleForSocOptIn
     }
   });
 };
@@ -81,8 +82,9 @@ export const addNonratingRequestIssue = (args) => (dispatch) => {
       untimelyExemption: args.untimelyExemption,
       untimelyExemptionNotes: args.untimelyExemptionNotes,
       isRating: false,
-      legacyIssueId: args.legacyIssueId,
-      vacolsSequenceId: args.vacolsSequenceId
+      vacolsId: args.vacolsId,
+      vacolsSequenceId: args.vacolsSequenceId,
+      eligibleForSocOptIn: args.eligibleForSocOptIn
     }
   });
 };

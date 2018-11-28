@@ -29,10 +29,11 @@ class UntimelyExemptionModal extends React.Component {
         ratings: this.props.intakeData.ratings,
         isRating: true,
         notes: currentIssueData.notes,
-        legacyIssueId: currentIssueData.legacyIssueId,
-        vacolsSequenceId: currentIssueData.vacolsSequenceId,
         untimelyExemption: this.state.untimelyExemption,
-        untimelyExemptionNotes: this.state.untimelyExemptionNotes
+        untimelyExemptionNotes: this.state.untimelyExemptionNotes,
+        vacolsId: currentIssueData.vacolsId,
+        vacolsSequenceId: currentIssueData.vacolsSequenceId,
+        eligibleForSocOptIn: currentIssueData.eligibleForSocOptIn
       });
     } else {
       this.props.addNonratingRequestIssue({
@@ -43,8 +44,9 @@ class UntimelyExemptionModal extends React.Component {
         category: currentIssue.category,
         description: currentIssue.description,
         decisionDate: currentIssue.decisionDate,
-        legacyIssueId: currentIssueData.legacyIssueId,
+        vacolsId: currentIssueData.vacolsId,
         vacolsSequenceId: currentIssueData.vacolsSequenceId,
+        eligibleForSocOptIn: currentIssueData.eligibleForSocOptIn
       });
     }
     this.props.closeHandler();
