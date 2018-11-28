@@ -21,10 +21,10 @@ class HearingDateDropdown extends React.Component {
 
   loadHearingDates = () => {
     const { regionalOffice } = this.props;
-
+    console.log('!!!!!', 'LOADING')
     return ApiUtil.get(`/regional_offices/${regionalOffice}/open_hearing_dates.json`).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
-
+      console.log(resp.hearingDates);
       this.props.onReceiveHearingDates(resp.hearingDates);
     });
   };
@@ -106,7 +106,7 @@ HearingDateDropdown.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  hearingDates: state.components.hearingDates || []
+  hearingDates: state.components.hearingDates
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
