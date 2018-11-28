@@ -74,11 +74,29 @@ class HearingRepository
     end
 
     def update_co_hearing(hearing_date_str, appeal)
+      if hearing_date_str.to_date > HearingDay::CASEFLOW_CO_PARENT_DATE
+        return create_child_co_hearing(hearing_date_str, appeal)
+      end
+
       # Get the next open slot for that hearing date and time.
       hearing = VACOLS::CaseHearing.find_by(hearing_date: hearing_date_str, folder_nr: nil)
       fail NoOpenSlots, message: "No available slots for this hearing day." if hearing.nil?
       loaded_hearing = VACOLS::CaseHearing.load_hearing(hearing.hearing_pkseq)
       HearingRepository.update_vacols_hearing!(loaded_hearing, folder_nr: appeal.vacols_id)
+    end
+
+    def create_child_co_hearing(hearing_date_str, appeal)
+      hearing_day = HearingDay.find_by(hearing_type: "C", hearing_date: hearing_date_str.to_date)
+      attorney_id = hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil
+      VACOLS::CaseHearing.create_child_hearing!(
+        folder_nr: appeal.vacols_id,
+        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date_str),
+        vdkey: hearing_day.id,
+        hearing_type: hearing_day.hearing_type,
+        room: hearing_day.room_info,
+        board_member: attorney_id,
+        vdbvapoc: hearing_day.bva_poc
+      )
     end
 
     def create_child_video_hearing(hearing_pkseq, hearing_date, appeal)

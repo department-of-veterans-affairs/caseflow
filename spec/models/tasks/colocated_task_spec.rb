@@ -299,4 +299,32 @@ describe ColocatedTask do
       expect(colocated_task.available_actions_unwrapper(colocated_user).count).to eq(0)
     end
   end
+
+  describe "round robin assignment skips admins" do
+    context "when there is one admin and one non admin in the organization" do
+      let(:non_admin) { FactoryBot.create(:user) }
+      let(:admin) { FactoryBot.create(:user) }
+      let(:task_count) { 6 }
+
+      before do
+        colocated_org.users.delete_all
+        OrganizationsUser.add_user_to_organization(non_admin, colocated_org)
+        OrganizationsUser.add_user_to_organization(admin, colocated_org).update!(admin: true)
+      end
+
+      it "should assign all tasks to the non-admin user" do
+        task_count.times do
+          ColocatedTask.create_many_from_params([{
+                                                  assigned_by: attorney,
+                                                  action: :aoj,
+                                                  parent: create(:ama_attorney_task),
+                                                  appeal: create(:appeal)
+                                                }], attorney)
+        end
+
+        expect(non_admin.tasks.count).to eq(task_count)
+        expect(admin.tasks.count).to eq(0)
+      end
+    end
+  end
 end

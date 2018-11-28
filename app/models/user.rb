@@ -209,6 +209,10 @@ class User < ApplicationRecord
     self.class.appeal_repository.load_user_case_assignments_from_vacols(css_id)
   end
 
+  def administered_teams
+    organizations_users.select(&:admin?).map(&:organization)
+  end
+
   def judge_css_id
     Constants::AttorneyJudgeTeams::JUDGES[Rails.current_env].each_pair do |id, value|
       return id if value[:attorneys].include?(css_id)
