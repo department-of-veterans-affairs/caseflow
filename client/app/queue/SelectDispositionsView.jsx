@@ -82,7 +82,7 @@ class SelectDispositionsView extends React.PureComponent {
 
   openDecisionHandler = (requestIssueIds, decisionIssue) => () => {
     const newDecisionIssue = {
-      id: uuid.v4(),
+      id: `temporary-id-${uuid.v4()}`,
       description: '',
       disposition: null,
       request_issue_ids: requestIssueIds

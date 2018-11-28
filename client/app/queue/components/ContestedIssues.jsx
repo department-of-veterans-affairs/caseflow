@@ -32,7 +32,7 @@ const decisionIssueDiv = css({
   padding: '10px'
 });
 
-const descriptionDiv = css({
+const verticalSpaceDiv = css({
   marginTop: '10px'
 });
 
@@ -54,7 +54,6 @@ const flexContainer = css({
 });
 
 const noteDiv = css({
-  marginTop: '10px',
   fontSize: '1.5rem',
   color: COLORS.GREY
 });
@@ -82,7 +81,7 @@ export default class ContestedIssues extends React.PureComponent {
               />
             </span>}
           </div>
-          <div {...descriptionDiv} {...flexContainer}>
+          <div {...verticalSpaceDiv} {...flexContainer}>
             <span {...descriptionSpan}>
               {decisionIssue.description}
             </span>
@@ -118,7 +117,8 @@ export default class ContestedIssues extends React.PureComponent {
         </div>
         <div {...indentedIssueStyling}>
           {issue.description}
-          <div {...noteDiv}>Note: "{issue.notes}"</div>
+          <div {...verticalSpaceDiv}>Benefit type: {issue.program}</div>
+          <div {...noteDiv} {...verticalSpaceDiv}>Note: "{issue.notes}"</div>
         </div>
         {this.decisionIssues(issue)}
         { openDecisionHandler &&
