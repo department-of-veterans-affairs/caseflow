@@ -703,6 +703,23 @@ class LegacyAppeal < ApplicationRecord
     vacols_id
   end
 
+  def timeline
+    [
+      {
+        title: decision_date ? COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
+        date: decision_date
+      },
+      {
+        title: form9_date ? COPY::CASE_TIMELINE_FORM_9_RECEIVED : COPY::CASE_TIMELINE_FORM_9_PENDING,
+        date: form9_date
+      },
+      {
+        title: nod_date ? COPY::CASE_TIMELINE_NOD_RECEIVED : COPY::CASE_TIMELINE_NOD_PENDING,
+        date: nod_date
+      }
+    ]
+  end
+
   private
 
   def soc_eligible_date

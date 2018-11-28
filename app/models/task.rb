@@ -208,6 +208,17 @@ class Task < ApplicationRecord
     }
   end
 
+  def timeline_title
+    "#{type} completed"
+  end
+
+  def timeline_details
+    {
+      title: timeline_title,
+      date: completed_at
+    }
+  end
+
   private
 
   def users_to_options(users)
