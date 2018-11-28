@@ -82,7 +82,7 @@ class CaseListView extends React.PureComponent {
       <CaseListTable appeals={this.props.appeals} />
 
       <h3 className="cf-push-left" {...fullWidth}>Other Reviews</h3>
-      {/*<OtherReviewsTable reviews={this.props.reviews} />*/}
+      <OtherReviewsTable reviews={this.props.claim_reviews} />
     </div>;
   }
 

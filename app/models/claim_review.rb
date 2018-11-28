@@ -49,10 +49,10 @@ class ClaimReview < DecisionReview
     end
 
     def find_all_by_file_number(file_number)
+      # byebug
       claim_reviews = HigherLevelReview.where(veteran_file_number: file_number) + SupplementalClaim.where(veteran_file_number: file_number)
       #.all?
       # [1] + [3, 4] => [1, 3, 4]
-      byebug
       #.order?
       claim_reviews.map(&:search_table_ui_hash)
     end
@@ -62,7 +62,7 @@ class ClaimReview < DecisionReview
     {
       ep_codes: ep_codes,
       claimant_names: claimants.map(&:name),
-      ep_status: "",
+      ep_status_code: "",
       decision_date: ""
     }
   end

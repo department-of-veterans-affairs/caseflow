@@ -331,23 +331,58 @@ class SeedDB
   end
 
   def create_higher_level_reviews
+    veteran_file_number = "682007349";
+    ep_code = "170RMDAMC"
 
     # steal code from a spec file?
     # spec/models/higher_level_review_spec.rb:11
     # line 121 shows us the payee_code function
-    hlr = HigherLevelReview.create(
-      veteran_file_number: "682007349",
-      payee_code: "10",
-      claim_date: Time.today
+    higher_level_review = HigherLevelReview.create!(
+      veteran_file_number: veteran_file_number,
+      receipt_date: Time.zone.now,
+      informal_conference: false,
+      same_office: false,
+      benefit_type: "compensation",
       # EP status?
       # decision date?
       # EP code?
-
       # also need to add the fields to this HLR that new_end_product_establishment references
     )
 
+    higher_level_review.create_claimants!(participant_id: "5382910292", payee_code: "10")
+
+    intake = Intake.create!(
+      user_id: "5959",
+      detail: higher_level_review,
+      veteran_file_number: veteran_file_number,
+      started_at: Time.zone.now,
+      completed_at: Time.zone.now,
+      completion_status: "success",
+      type: "HigherLevelReviewIntake"
+    )
+
+    eligible_request_issue = RequestIssue.create!(
+      review_request: higher_level_review,
+      issue_category: "Military Retired Pay",
+      description: "nonrating description",
+      contention_reference_id: "1234",
+      ineligible_reason: nil,
+      decision_date: Date.new(2018, 5, 1)
+    )
+
+    untimely_request_issue = RequestIssue.create!(
+      review_request: higher_level_review,
+      issue_category: "Active Duty Adjustments",
+      description: "nonrating description",
+      contention_reference_id: "12345",
+      ineligible_reason: :untimely
+    )
     # NOTE: see models/higher_level_review.rb:111
-    hlr.new_end_product_establishment(ep_code)
+    higher_level_review.create_issues!([
+                                         eligible_request_issue,
+                                         untimely_request_issue
+                                       ])
+    higher_level_review.process_end_product_establishments!
 
 
       # an HLR can have many EPs
@@ -358,6 +393,8 @@ class SeedDB
   def create_supplemental_claims
     SupplementalClaim.create(
       veteran_file_number: "682007349",
+      receipt_date: Time.zone.now,
+      benefit_type: "compensation"
       # EP status?
       # decision date?
       # EP code?
@@ -594,6 +631,9 @@ class SeedDB
     setup_dispatch
     create_previously_held_hearing_data
 
+    create_higher_level_reviews
+    create_supplemental_claims
+
     return if Rails.env.development?
 
     # The fake data here is only necessary when we're not running
@@ -602,8 +642,6 @@ class SeedDB
     create_legacy_appeals(50)
     create_dispatch_tasks(50)
     create_ramp_elections(9)
-    create_higher_level_reviews
-    create_supplemental_claims
     create_hearings
     create_api_key
   end
