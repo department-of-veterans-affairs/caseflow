@@ -121,7 +121,9 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   formatHearingDate = () => {
     const { selectedHearingDate, selectedHearingTime } = this.props;
 
-    if(!selectedHearingTime || !selectedHearingDate) return null;
+    if (!selectedHearingTime || !selectedHearingDate) {
+      return null;
+    }
 
     const dateParts = selectedHearingDate.split('-');
     const year = parseInt(dateParts[0], 10);
@@ -140,12 +142,16 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   };
 
   validateForm = () => {
+
     const hearingDate = this.formatHearingDate();
-    if(hearingDate === null){
+
+    if (hearingDate === null) {
+
       this.props.showErrorMessage({
         title: 'Required Fields',
         detail: 'Please fill in Date of Hearing and Time fields'
-      })
+      });
+
       return false;
     }
 

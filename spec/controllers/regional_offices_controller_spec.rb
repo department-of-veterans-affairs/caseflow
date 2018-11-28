@@ -1,4 +1,4 @@
-RSpec.describe RegionalOfficesController, type: :controller do 
+RSpec.describe RegionalOfficesController, type: :controller do
   let!(:user) { User.authenticate! }
 
   context "index" do
@@ -24,7 +24,6 @@ RSpec.describe RegionalOfficesController, type: :controller do
              hearing_date: Time.zone.today + 20,
              folder_nr: create(:case).bfkey)
     end
-
 
     it "returns hearing dates with open slots" do
       get :open_hearing_dates, params: { regional_office: "C" }, as: :json
