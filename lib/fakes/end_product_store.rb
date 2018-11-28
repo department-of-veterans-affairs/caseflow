@@ -21,7 +21,7 @@ class Fakes::EndProductStore
       existing_eps[claim_id] = end_product
       deflate_and_store(veteran_id, existing_eps)
     else
-      deflate_and_store(key, veteran_id => end_product)
+      deflate_and_store(veteran_id, claim_id => end_product)
     end
   end
 

@@ -409,13 +409,13 @@ class Fakes::BGSService
     @end_product_store ||= Fakes::EndProductStore.new
   end
 
-  def self.store_end_product_record(key, value)
-    end_product_store.store_end_product_record(key, value)
+  def self.store_end_product_record(veteran_id, end_product)
+    end_product_store.store_end_product_record(veteran_id, end_product)
   end
 
   def get_end_products(veteran_id)
-    records = self.class.end_product_store.fetch_and_inflate(veteran_id) || {}
-
+    store = self.class.end_product_store
+    records = store.fetch_and_inflate(veteran_id) || store.fetch_and_inflate(:default) || {}
     records.values
   end
 
