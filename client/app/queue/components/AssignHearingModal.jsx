@@ -14,7 +14,7 @@ import {
 import { onRegionalOfficeChange, onHearingDateChange, onHearingTimeChange } from '../../components/common/actions';
 import { fullWidth } from '../constants';
 import editModalBase from './EditModalBase';
-import { getTime, formatDateStringForApi, formatDateStr } from '../../util/DateUtil';
+import { formatDateStringForApi, formatDateStr } from '../../util/DateUtil';
 
 import type {
   State
@@ -121,6 +121,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   formatHearingDate = () => {
     const { selectedHearingDate, selectedHearingTime } = this.props;
 
+    if(!selectedHearingTime || !selectedHearingDate) return null;
+
     const dateParts = selectedHearingDate.split('-');
     const year = parseInt(dateParts[0], 10);
     const month = parseInt(dateParts[1], 10) - 1;
@@ -136,6 +138,19 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
     return hearingDate;
   };
+
+  validateForm = () => {
+    const hearingDate = this.formatHearingDate();
+    if(hearingDate === null){
+      this.props.showErrorMessage({
+        title: 'Required Fields',
+        detail: 'Please fill in Date of Hearing and Time fields'
+      })
+      return false;
+    }
+
+    return true;
+  }
 
   submit = () => {
     const { task, appeal, selectedHearingDate, selectedRegionalOffice } = this.props;

@@ -406,12 +406,12 @@ ActiveRecord::Schema.define(version: 20181127201444) do
     t.string "hearing_type", null: false
     t.string "regional_office"
     t.integer "judge_id"
-    t.string "bva_poc"
     t.string "room_info", null: false
     t.datetime "created_at", null: false
     t.string "created_by", null: false
     t.datetime "updated_at", null: false
     t.string "updated_by", null: false
+    t.string "bva_poc"
   end
 
   create_table "hearing_views", id: :serial, force: :cascade do |t|
@@ -679,7 +679,6 @@ ActiveRecord::Schema.define(version: 20181127201444) do
     t.datetime "decision_sync_attempted_at"
     t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
-    t.string "ineligible_reason"
     t.string "vacols_id"
     t.string "vacols_sequence_id"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
