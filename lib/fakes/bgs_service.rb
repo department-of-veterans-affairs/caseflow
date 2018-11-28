@@ -402,6 +402,7 @@ class Fakes::BGSService
     self.inaccessible_appeal_vbms_ids = []
     self.rating_records = {}
     self.rating_issue_records = {}
+    end_product_store.clear!
   end
 
   def self.end_product_store
