@@ -85,6 +85,9 @@ class HearingDayRepository
     end
 
     def to_canonical_hash(hearing)
+      if hearing.is_a?(HearingDay)
+        return hearing.to_hash
+      end
       hearing_hash = hearing.as_json.each_with_object({}) do |(k, v), result|
         result[HearingDayMapper::COLUMN_NAME_REVERSE_MAP[k.to_sym]] = v
       end
