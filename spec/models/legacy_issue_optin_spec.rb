@@ -55,4 +55,28 @@ describe LegacyIssueOptin do
       end
     end
   end
+
+  context "#perform!" do
+    before do
+      RequestStore[:current_user] = user
+    end
+
+    let(:vacols_case_issue) { create(:case_issue, :education, :disposition_allowed) }
+    let(:vacols_case) { create(:case, :status_advance, case_issues: [vacols_case_issue]) }
+    let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let(:ep_status) { "PEND" }
+    let(:user) { Generators::User.build }
+    let(:request_issue) do
+      create(:request_issue, vacols_id: vacols_case_issue.isskey, vacols_sequence_id: vacols_case_issue.issseq)
+    end
+
+    subject { create(:legacy_issue_optin, request_issue: request_issue) }
+
+    it "closes VACOLS issue with disposition O" do
+      subject.perform!
+
+      expect(vacols_case_issue.reload.issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
+      expect(subject).to be_processed
+    end
+  end
 end

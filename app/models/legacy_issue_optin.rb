@@ -8,6 +8,7 @@ class LegacyIssueOptin < ApplicationRecord
   def perform!
     attempted!
     close_legacy_issue_in_vacols
+    close_legacy_appeal_in_vacols if legacy_appeal_has_no_issues?
     clear_error!
     processed!
   end
@@ -29,6 +30,10 @@ class LegacyIssueOptin < ApplicationRecord
       closed_on: Time.zone.today,
       disposition: VACOLS_DISPOSITION_CODE
     )
+  end
+
+  def legacy_appeal_has_no_issues?
+    false # TODO
   end
 
   def legacy_appeal
