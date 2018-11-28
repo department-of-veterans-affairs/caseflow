@@ -53,7 +53,13 @@ class CaseDetailsView extends React.PureComponent {
   }
 
   render = () => {
-    const { appealId, appeal, error, success } = this.props;
+    const {
+      appealId,
+      appeal,
+      error,
+      success,
+      featureToggles
+    } = this.props;
 
     return <AppSegment filledBackground>
       <CaseTitle appeal={appeal} appealId={appealId} redirectUrl={window.location.pathname} />
@@ -73,6 +79,7 @@ class CaseDetailsView extends React.PureComponent {
       <hr {...horizontalRuleStyling} />
       <StickyNavContentArea>
         <CaseDetailsIssueList
+          amaIssueType={featureToggles.ama_decision_issues}
           title="Issues"
           isLegacyAppeal={appeal.isLegacyAppeal}
           issues={appeal.issues}
@@ -95,11 +102,12 @@ CaseDetailsView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const { success, error } = state.ui.messages;
-  const { veteranCaseListIsVisible } = state.ui;
+  const { veteranCaseListIsVisible, featureToggles } = state.ui;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     success,
+    featureToggles,
     error,
     veteranCaseListIsVisible
   };

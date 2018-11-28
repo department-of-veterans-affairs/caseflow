@@ -11,7 +11,19 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
         disposition: issue.disposition,
         program: "Compensation",
         description: issue.description,
-        remand_reasons: issue.remand_reasons
+        notes: issue.notes,
+        remand_reasons: issue.remand_reasons,
+        decision_issue_ids: issue.request_decision_issues
+      }
+    end
+  end
+
+  attribute :decision_issues do
+    object.decision_issues.map do |issue|
+      {
+        id: issue.id,
+        disposition: issue.disposition,
+        description: issue.description
       }
     end
   end

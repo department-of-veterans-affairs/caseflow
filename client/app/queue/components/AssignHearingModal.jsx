@@ -14,7 +14,7 @@ import {
 import { onRegionalOfficeChange, onHearingDateChange, onHearingTimeChange } from '../../components/common/actions';
 import { fullWidth } from '../constants';
 import editModalBase from './EditModalBase';
-import { formatDate, formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
+import { getTime, formatDateStringForApi, formatDateStr } from '../../util/DateUtil';
 
 import type {
   State
@@ -113,7 +113,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   };
 
   formatDateString = (dateToFormat) => {
-    const formattedDate = formatDate(dateToFormat);
+    const formattedDate = formatDateStr(dateToFormat);
 
     return formatDateStringForApi(formattedDate);
   };

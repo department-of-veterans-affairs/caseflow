@@ -117,7 +117,7 @@ class TaskTable extends React.PureComponent<Props> {
     } : null;
   }
 
-  actionNameOfTask = (task: TaskWithAppeal) => CO_LOCATED_ADMIN_ACTIONS[task.action]
+  actionNameOfTask = (task: TaskWithAppeal) => CO_LOCATED_ADMIN_ACTIONS[task.label]
 
   caseTaskColumn = () => {
     return this.props.includeTask ? {
