@@ -471,6 +471,8 @@ RSpec.feature "Case details" do
           visit "/queue/appeals/#{appeal.uuid}"
           expect(page).to have_content(issue_description + " Issue 2 DESCRIPTION " + issue_description2)
         end
+      end
+    end
 
     describe "CaseTimeline shows judge & attorney tasks" do
       let!(:user) { FactoryBot.create(:user) }
