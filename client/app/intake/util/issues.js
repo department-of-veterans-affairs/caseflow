@@ -329,11 +329,3 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
     };
   });
 };
-
-export const findLegacyAppealByVacolsIssue = (legacyAppeals, vacolsId, vacolsSequenceId) => {
-  return _.find(legacyAppeals, (appeal) => {
-    return _.some(appeal.issues, (issue) => {
-      return issue.vacols_id == vacolsId && issue.vacols_sequence_id == vacolsSequenceId;
-    });
-  });
-};

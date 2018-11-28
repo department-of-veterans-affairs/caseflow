@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import React from 'react';
 
 import { formatDateStr } from '../../util/DateUtil';
-import { findLegacyAppealByVacolsIssue } from '../util/issues';
 import {
   addRatingRequestIssue,
   addNonratingRequestIssue,
@@ -29,8 +28,8 @@ class LegacyOptInModal extends React.Component {
     // legacy opt in are keyed off of a combo of both vacolsId & vacolsSequenceId
     // NO_MATCH_TEXT does not have a vacolsSequenceId
     const legacyValues = value.split('-');
-    const vacolsSequenceId = legacyValues.length > 1 ? Number(legacyValues[1]) : '';
-    const legacyAppeal = findLegacyAppealByVacolsIssue(this.props.intakeData.legacyAppeals, legacyValues[0], vacolsSequenceId);
+    const vacolsSequenceId = legacyValues.length > 1 ? legacyValues[1] : '';
+    const legacyAppeal = this.props.intakeData.legacyAppeals.find(appeal => appeal.vacols_id == legacyValues[0])
     const eligibleForSocOptIn = legacyAppeal ? legacyAppeal.eligible_for_soc_opt_in : '';
 
     if (vacolsSequenceId) {
@@ -47,16 +46,10 @@ class LegacyOptInModal extends React.Component {
   }
 
   requiresUntimelyExemption = () => {
-    if (this.state.vacolsId !== NO_MATCH_TEXT) {
-      return false;
-    }
-
     return !this.props.intakeData.currentIssueAndNotes.currentIssue.timely;
   }
 
   onAddIssue = () => {
-    // currently just adds the issue & checks for untimeliness
-    // if vacols issue is selected, logic to be implemented by 7336 & 7337
     const currentIssue = this.props.intakeData.currentIssueAndNotes.currentIssue;
     const notes = this.props.intakeData.currentIssueAndNotes.notes;
 
