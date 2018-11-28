@@ -102,7 +102,7 @@ HearingDateDropdown.propTypes = {
   regionalOffice: PropTypes.string.isRequired,
   hearingDates: PropTypes.object,
   onChange: PropTypes.func,
-  value: PropTypes.object,
+  value: PropTypes.string,
   placeholder: PropTypes.string,
   staticOptions: PropTypes.array,
   readOnly: PropTypes.bool,
