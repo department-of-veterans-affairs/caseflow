@@ -1,5 +1,5 @@
 class Fakes::EndProductStore
-  REDIS_NS ||= "end_product_records_#{Rails.env}"
+  REDIS_NS ||= "end_product_records_#{Rails.env}".freeze
 
   def self.cache_store
     @cache_store ||= begin
@@ -14,26 +14,23 @@ class Fakes::EndProductStore
     end
   end
 
-  def store_end_product_record(key, value)
-    # puts "end product store #{key} => #{value.to_json}"
-    subkey = value[:benefit_claim_id]
-    existing_value = fetch_and_inflate(key)
-    if existing_value
-      existing_value[subkey] = value
-      deflate_and_store(key, existing_value)
+  def store_end_product_record(veteran_id, end_product)
+    claim_id = end_product[:benefit_claim_id]
+    existing_eps = fetch_and_inflate(veteran_id)
+    if existing_eps
+      existing_eps[claim_id] = end_product
+      deflate_and_store(veteran_id, existing_eps)
     else
-      deflate_and_store(key, subkey => value)
+      deflate_and_store(key, veteran_id => end_product)
     end
   end
 
-  def fetch_and_inflate(key)
-    json_str = self.class.cache_store.get(key)
-    # puts "found #{key} -> #{json_str.pretty_inspect}"
+  def fetch_and_inflate(veteran_id)
+    json_str = self.class.cache_store.get(veteran_id)
     json_str ? JSON.parse(json_str, symbolize_names: true) : nil
   end
 
-  def deflate_and_store(key, value)
-    # puts "store #{key} => #{value.pretty_inspect}"
-    self.class.cache_store.set(key, value.to_json)
+  def deflate_and_store(veteran_id, end_products)
+    self.class.cache_store.set(veteran_id, end_products.to_json)
   end
 end
