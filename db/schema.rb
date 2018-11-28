@@ -407,12 +407,12 @@ ActiveRecord::Schema.define(version: 20181128225613) do
     t.string "hearing_type", null: false
     t.string "regional_office"
     t.integer "judge_id"
+    t.string "bva_poc"
     t.string "room_info", null: false
     t.datetime "created_at", null: false
     t.string "created_by", null: false
     t.datetime "updated_at", null: false
     t.string "updated_by", null: false
-    t.string "bva_poc"
   end
 
   create_table "hearing_views", id: :serial, force: :cascade do |t|
