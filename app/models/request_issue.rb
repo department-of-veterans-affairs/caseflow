@@ -122,8 +122,8 @@ class RequestIssue < ApplicationRecord
       notes: notes,
       is_unidentified: is_unidentified,
       ramp_claim_id: ramp_claim_id,
-      # vacols_id: vacols_id,
-      # vacols_sequence_id: vacols_sequence_id,
+      vacols_id: vacols_id,
+      vacols_sequence_id: vacols_sequence_id,
       ineligible_reason: ineligible_reason,
       title_of_active_review: duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
     }
@@ -135,6 +135,7 @@ class RequestIssue < ApplicationRecord
     check_for_previous_higher_level_review!
     check_for_before_ama!
     check_for_legacy_issue_not_withdrawn!
+    check_for_legacy_appeal_not_eligible!
     self
   end
 
@@ -206,9 +207,12 @@ class RequestIssue < ApplicationRecord
 
   def check_for_legacy_appeal_not_eligible!
     return unless eligible?
+    return unless review_request.serialized_legacy_appeals
 
-    if !review_request.legacy_opt_in_approved && vacols_id
-      self.ineligible_reason = :legacy_issue_not_withdrawn
+    legacy_appeal = review_request.serialized_legacy_appeals.select {|appeal| appeal[:vacols_id] == vacols_id}
+
+    if vacols_id && !legacy_appeal.first[:eligible_for_soc_opt_in]
+      self.ineligible_reason = :legacy_appeal_not_eligible
     end
   end
 
