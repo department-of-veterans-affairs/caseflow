@@ -50,10 +50,9 @@ export default class QueueSelectorDropdown extends React.Component<Props, Compon
     const { organizations } = this.props;
     const url = window.location.pathname.split('/');
     const location = url[url.length - 1];
-    const noOpLink = 'javascript:;';
 
     const dropdownButtonList = (orgs) => {
-      const queueHref = (location === 'queue') ? noOpLink : '/queue';
+      const queueHref = (location === 'queue') ? '#' : '/queue';
 
       return <ul className="cf-dropdown-menu active" {...styles.dropdownList}>
         <li key={0}>
@@ -64,7 +63,7 @@ export default class QueueSelectorDropdown extends React.Component<Props, Compon
         </li>
 
         {orgs.map((org, index) => {
-          const orgHref = (location === org.url) ? noOpLink : `/organizations/${org.url}`;
+          const orgHref = (location === org.url) ? '#' : `/organizations/${org.url}`;
 
           return <li key={index + 1}>
             <Link className="usa-button-secondary usa-button"
