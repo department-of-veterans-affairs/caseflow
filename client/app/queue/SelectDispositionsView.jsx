@@ -40,6 +40,12 @@ class SelectDispositionsView extends React.PureComponent {
     };
   }
 
+  componentDidMount = () => {
+    if (this.props.userRole === USER_ROLE_TYPES.attorney) {
+      this.props.setDecisionOptions({ work_product: 'Decision' });
+    }
+  }
+
   getPageName = () => PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()];
 
   getNextStepUrl = () => {
@@ -48,10 +54,10 @@ class SelectDispositionsView extends React.PureComponent {
       taskId,
       checkoutFlow,
       userRole,
-      appeal: { issues }
+      appeal: { decisionIssues }
     } = this.props;
     let nextStep;
-    const dispositions = issues.map((issue) => issue.disposition);
+    const dispositions = decisionIssues.map((issue) => issue.disposition);
     const remandedIssues = _.some(dispositions, (disp) => [
       VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
     ].includes(disp));
@@ -199,7 +205,7 @@ class SelectDispositionsView extends React.PureComponent {
   };
 }
 
-AmaSelectDispositionsView.propTypes = {
+SelectDispositionsView.propTypes = {
   appealId: PropTypes.string.isRequired,
   checkoutFlow: PropTypes.string.isRequired,
   userRole: PropTypes.string.isRequired
@@ -220,4 +226,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   editStagedAppeal
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(AmaSelectDispositionsView));
+export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SelectDispositionsView));
