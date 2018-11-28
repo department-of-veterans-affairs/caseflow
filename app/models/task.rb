@@ -23,15 +23,19 @@ class Task < ApplicationRecord
     []
   end
 
+  def label
+    action
+  end
+
   # available_actions() returns an array of options from selected by the subclass
   # from TASK_ACTIONS that looks something like:
   # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
   def available_actions_unwrapper(user)
-    return [] if no_actions_available?(user)
+    no_actions_available?(user) ? [] : available_actions(user).map { |action| build_action_hash(action) }
+  end
 
-    available_actions(user).map do |a|
-      { label: a[:label], value: a[:value], data: a[:func] ? send(a[:func]) : nil }
-    end
+  def build_action_hash(action)
+    { label: action[:label], value: action[:value], data: action[:func] ? send(action[:func]) : nil }
   end
 
   def no_actions_available?(user)
