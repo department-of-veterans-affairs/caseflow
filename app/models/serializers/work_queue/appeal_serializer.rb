@@ -22,7 +22,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
       {
         id: issue.id,
         disposition: issue.disposition,
-        description: issue.description
+        description: issue.description,
+        remand_reasons: issue.remand_reasons
       }
     end
   end

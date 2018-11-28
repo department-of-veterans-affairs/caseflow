@@ -192,18 +192,6 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
         }
       }
     });
-  case ACTIONS.EDIT_STAGED_DECISION_ISSUE:
-    return update(state, {
-      stagedChanges: {
-        appeals: {
-          [action.payload.appealId]: {
-            decisionIssues: {
-              $merge: action.payload.attributes
-            }
-          }
-        }
-      }
-    });
   case ACTIONS.CHECKOUT_STAGED_APPEAL:
     return update(state, {
       stagedChanges: {

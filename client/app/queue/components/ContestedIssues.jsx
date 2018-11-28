@@ -114,7 +114,7 @@ export default class ContestedIssues extends React.PureComponent {
     return <ol {...listStyle}>{requestIssues.map((issue) => {
       return <li {...listPadding} key={issue.description}>
         <div {...contestedIssueStyling}>
-            Contested Issue
+          Contested Issue
         </div>
         <div {...indentedIssueStyling}>
           {issue.description}
