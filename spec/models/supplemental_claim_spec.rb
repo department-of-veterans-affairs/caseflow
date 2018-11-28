@@ -13,13 +13,15 @@ describe SupplementalClaim do
   let(:receipt_date) { nil }
   let(:benefit_type) { nil }
   let(:legacy_opt_in_approved) { nil }
+  let(:veteran_is_not_claimant) { false }
 
   let(:supplemental_claim) do
     SupplementalClaim.new(
       veteran_file_number: veteran_file_number,
       receipt_date: receipt_date,
       benefit_type: benefit_type,
-      legacy_opt_in_approved: legacy_opt_in_approved
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: veteran_is_not_claimant
     )
   end
 
@@ -40,11 +42,13 @@ describe SupplementalClaim do
       end
 
       context "when they are nil" do
+        let(:veteran_is_not_claimant) { nil }
         it "adds errors" do
           is_expected.to be false
           expect(supplemental_claim.errors[:benefit_type]).to include("blank")
           expect(supplemental_claim.errors[:legacy_opt_in_approved]).to include("blank")
           expect(supplemental_claim.errors[:receipt_date]).to include("blank")
+          expect(supplemental_claim.errors[:veteran_is_not_claimant]).to include("blank")
         end
       end
     end

@@ -20,11 +20,11 @@ const updateFromServerIntake = (state, serverIntake) => {
     receiptDate: {
       $set: serverIntake.receipt_date && formatDateStr(serverIntake.receipt_date)
     },
-    claimantNotVeteran: {
-      $set: serverIntake.claimant_not_veteran
+    veteranIsNotClaimant: {
+      $set: serverIntake.veteran_is_not_claimant
     },
     claimant: {
-      $set: serverIntake.claimant_not_veteran ? serverIntake.claimant : null
+      $set: serverIntake.veteran_is_not_claimant ? serverIntake.claimant : null
     },
     payeeCode: {
       $set: serverIntake.payeeCode
@@ -63,8 +63,10 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     receiptDateError: null,
     docketType: null,
     docketTypeError: null,
-    claimantNotVeteran: null,
+    veteranIsNotClaimant: null,
+    veteranIsNotClaimantError: null,
     claimant: null,
+    claimantError: null,
     payeeCode: null,
     legacyOptInApproved: null,
     legacyOptInApprovedError: null,
@@ -112,13 +114,13 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         $set: action.payload.receiptDate
       }
     });
-  case ACTIONS.SET_CLAIMANT_NOT_VETERAN:
+  case ACTIONS.SET_VETERAN_IS_NOT_CLAIMANT:
     return update(state, {
-      claimantNotVeteran: {
-        $set: action.payload.claimantNotVeteran
+      veteranIsNotClaimant: {
+        $set: action.payload.veteranIsNotClaimant
       },
       claimant: {
-        $set: action.payload.claimantNotVeteran === 'true' ? state.claimant : null
+        $set: action.payload.veteranIsNotClaimant === 'true' ? state.claimant : null
       }
     });
   case ACTIONS.SET_CLAIMANT:
@@ -158,6 +160,12 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       legacyOptInApprovedError: {
         $set: null
       },
+      veteranIsNotClaimantError: {
+        $set: null
+      },
+      claimantError: {
+        $set: null
+      },
       isReviewed: {
         $set: true
       },
@@ -174,6 +182,12 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       },
       receiptDateError: {
         $set: getReceiptDateError(action.payload.responseErrorCodes, state)
+      },
+      veteranIsNotClaimantError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'veteran_is_not_claimant')
+      },
+      claimantError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'claimant')
       },
       legacyOptInApprovedError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')
