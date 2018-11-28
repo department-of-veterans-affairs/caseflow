@@ -46,6 +46,9 @@ class LegacyOptInModal extends React.Component {
   }
 
   requiresUntimelyExemption = () => {
+    if (this.props.formType === 'supplemental_claim') {
+      return false;
+    }
     return !this.props.intakeData.currentIssueAndNotes.currentIssue.timely;
   }
 
