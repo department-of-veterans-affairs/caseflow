@@ -19,7 +19,8 @@ class Generators::Rating
             decision_text: "Basic eligibility to Dependents' Educational Assistance"\
               " is established from October 1, 2017."
           }
-        ]
+        ],
+        associated_claims: []
       }
     end
 
@@ -32,15 +33,15 @@ class Generators::Rating
 
       attrs[:issues] = populate_issue_ids(attrs)
 
-      existing_rating = Fakes::BGSService.rating_issue_records[attrs[:participant_id]][attrs[:profile_date]]
+      existing_rating = Fakes::BGSService.rating_profile_records[attrs[:participant_id]][attrs[:profile_date]]
       fail "You may not override an existing rating for #{attrs[:profile_date]}" if existing_rating
 
       Fakes::BGSService.rating_records[attrs[:participant_id]] << bgs_rating_data(attrs)
 
-      Fakes::BGSService.rating_issue_records[attrs[:participant_id]][attrs[:profile_date]] =
+      Fakes::BGSService.rating_profile_records[attrs[:participant_id]][attrs[:profile_date]] =
         bgs_rating_profile_data(attrs)
 
-      Rating.new(attrs.except(:issues))
+      Rating.new(attrs.except(:issues, :associated_claims))
     end
 
     private
@@ -55,42 +56,56 @@ class Generators::Rating
       }
     end
 
-    def bgs_rating_profile_data(attrs)
-      return :no_issues if attrs[:issues] == :no_issues
+    def bgs_rating_issues_data(attrs)
+      return nil unless attrs[:issues]
 
-      attrs[:issues].map do |issue_data|
+      issue_data = attrs[:issues].map do |issue_data|
         {
           rba_issue_id: issue_data[:reference_id] || generate_external_id,
           decn_txt: issue_data[:decision_text],
-          associated_claims: issue_data[:associated_claims],
           rba_issue_contentions: {
             prfil_dt: issue_data[:profile_date],
             cntntn_id: issue_data[:contention_reference_id]
           }
         }
       end
+
+      # BGS returns the data not as an array if there is only one issue
+      issue_data.length == 1 ? issue_data.first : issue_data
+    end
+
+    def bgs_associated_claims_data(attrs)
+      return nil unless attrs[:associated_claims]
+
+      attrs[:associated_claims].length == 1 ? attrs[:associated_claims].first : attrs[:associated_claims]
+    end
+
+    def bgs_rating_profile_data(attrs)
+      {
+        rating_issues: bgs_rating_issues_data(attrs),
+        associated_claims: bgs_associated_claims_data(attrs)
+      }
     end
 
     def init_fakes(participant_id)
-      Fakes::BGSService.rating_issue_records ||= {}
-      Fakes::BGSService.rating_issue_records[participant_id] ||= {}
+      Fakes::BGSService.rating_profile_records ||= {}
+      Fakes::BGSService.rating_profile_records[participant_id] ||= {}
       Fakes::BGSService.rating_records ||= {}
       Fakes::BGSService.rating_records[participant_id] ||= []
     end
 
     def generate_profile_datetime(participant_id)
       DATE_LIST.find do |date|
-        !Fakes::BGSService.rating_issue_records[participant_id][date]
+        !Fakes::BGSService.rating_profile_records[participant_id][date]
       end
     end
 
     def get_prev_issues_count(participant_id)
-      Fakes::BGSService.rating_issue_records[participant_id].values.flatten(1).count
+      Fakes::BGSService.rating_profile_records[participant_id].values.flatten(1).count
     end
 
     def populate_issue_ids(attrs)
-      return :no_issues if attrs[:issues] == :no_issues
-
+      return unless attrs[:issues]
       # gives a unique id to each issue that is tied to a specific participant_id
       prev_count = get_prev_issues_count(attrs[:participant_id])
       attrs[:issues].each_with_index.map do |issue, i|

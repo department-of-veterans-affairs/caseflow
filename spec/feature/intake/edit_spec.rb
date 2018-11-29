@@ -54,10 +54,20 @@ RSpec.feature "Edit issues" do
       profile_date: DecisionReview.ama_activation_date - 10.days,
       issues: [
         { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
-        { decision_text: "Issue before AMA Activation from RAMP",
-          associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" },
-          reference_id: "ramp_ref_id" }
       ]
+    )
+  end
+
+  let!(:rating_before_ama_from_ramp) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: DecisionReview.ama_activation_date - 5.days,
+      profile_date: DecisionReview.ama_activation_date - 11.days,
+      issues: [
+        { decision_text: "Issue before AMA Activation from RAMP",
+          reference_id: "ramp_ref_id" }
+      ],
+      associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
     )
   end
 
@@ -305,7 +315,7 @@ RSpec.feature "Edit issues" do
       let!(:eligible_ri_before_ama) do
         RequestIssue.create!(
           rating_issue_reference_id: "ramp_ref_id",
-          rating_issue_profile_date: rating_before_ama.profile_date,
+          rating_issue_profile_date: rating_before_ama_from_ramp.profile_date,
           review_request: higher_level_review,
           description: "Issue before AMA Activation from RAMP",
           contention_reference_id: "123456",
