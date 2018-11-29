@@ -138,11 +138,6 @@ export const setUserCssId = (cssId: ?string) => ({
   payload: { cssId }
 });
 
-export const setOrganizationIds = (organizationIds: Array<number>) => ({
-  type: ACTIONS.SET_ORGANIZATION_IDS,
-  payload: { organizationIds }
-});
-
 export const setOrganizations = (organizations: Array<Object>) => ({
   type: ACTIONS.SET_ORGANIZATIONS,
   payload: { organizations }
