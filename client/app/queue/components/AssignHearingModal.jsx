@@ -72,18 +72,26 @@ const centralOfficeStaticEntry = [{
 }];
 
 class AssignHearingModal extends React.PureComponent<Props, LocalState> {
-  constructor(props) {
-    super(props);
 
-    this.state = {
-      timeOptions: props.appeal.sanitizedHearingRequestType === 'video' ?
-        [{ displayText: '8:30 am',
-          value: '8:30 am ET' }, { displayText: '12:30 pm',
-          value: '12:30 pm ET' }] :
-        [{ displayText: '9:00 am',
-          value: '9:00 am ET' }, { displayText: '1:00 pm',
-          value: '1:00 pm ET' }]
-    };
+  getTimeOptions = () => {
+    const { appeal: { sanitizedHearingRequestType } } = this.props;
+
+    if (sanitizedHearingRequestType === 'video') {
+      return [
+        { displayText: '8:30 am',
+          value: '8:30 am ET' },
+        { displayText: '12:30 pm',
+          value: '12:30 pm ET' }
+      ];
+    }
+
+    return [
+      { displayText: '9:00 am',
+        value: '9:00 am ET' },
+      { displayText: '1:00 pm',
+        value: '1:00 pm ET' }
+    ];
+
   }
 
   getRO = () => {
@@ -211,8 +219,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   };
 
   getSelectedTimeOption = () => {
-    const { timeOptions } = this.state;
     const { selectedHearingTime } = this.props;
+    const timeOptions = this.getTimeOptions();
 
     if (!selectedHearingTime) {
       return {};
@@ -222,11 +230,12 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   }
 
   render = () => {
-    const { timeOptions } = this.state;
     const {
       selectedHearingDate, selectedRegionalOffice,
       selectedHearingTime
     } = this.props;
+
+    const timeOptions = this.getTimeOptions();
 
     return <React.Fragment>
       <div {...fullWidth} {...css({ marginBottom: '0' })} >
