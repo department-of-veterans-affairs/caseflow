@@ -8,7 +8,7 @@ class LegacyIssueOptin < ApplicationRecord
   def perform!
     attempted!
     close_legacy_issue_in_vacols
-    close_legacy_appeal_in_vacols if legacy_appeal_has_no_issues?
+    close_legacy_appeal_in_vacols if legacy_appeal_needs_closing?
     clear_error!
     processed!
   end
@@ -28,12 +28,14 @@ class LegacyIssueOptin < ApplicationRecord
       appeals: [legacy_appeal],
       user: RequestStore.store[:current_user],
       closed_on: Time.zone.today,
-      disposition: VACOLS_DISPOSITION_CODE
+      disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[VACOLS_DISPOSITION_CODE]
     )
   end
 
-  def legacy_appeal_has_no_issues?
-    false # TODO
+  def legacy_appeal_needs_closing?
+    # if all the issues are closed, the appeal should be closed.
+    closed_issues = legacy_appeal.issues.select(&:closed?)
+    closed_issues.size == legacy_appeal.issues.size
   end
 
   def legacy_appeal

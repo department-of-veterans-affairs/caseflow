@@ -520,6 +520,10 @@ class LegacyAppeal < ApplicationRecord
     status == "Remand"
   end
 
+  def advance?
+    status == "Advance"
+  end
+
   def decided_by_bva?
     !active? && LegacyAppeal.bva_dispositions.include?(disposition)
   end
