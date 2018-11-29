@@ -73,7 +73,7 @@ export default class ContestedIssues extends React.PureComponent {
     return decisionIssues.filter((decisionIssue) => {
       return decisionIssue.request_issue_ids.includes(requestIssue.id);
     }).map((decisionIssue) => {
-      return <div {...outerDiv}>
+      return <div {...outerDiv} key={decisionIssue.id}>
         <div {...grayLine} />
         <div {...decisionIssueDiv}>
           <div {...flexContainer}>
@@ -123,7 +123,7 @@ export default class ContestedIssues extends React.PureComponent {
       );
       const shouldShowError = highlight && !hasDecisionIssue;
 
-      return <li {...listPadding} key={issue.description}>
+      return <li {...listPadding} key={issue.id}>
         <div {...contestedIssueStyling}>
           Contested Issue
         </div>

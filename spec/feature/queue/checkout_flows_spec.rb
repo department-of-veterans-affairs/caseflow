@@ -104,6 +104,50 @@ RSpec.feature "Checkout flows" do
 
       expect(page.current_path).to eq("/queue")
     end
+
+    context "when ama issue feature toggle is turned on", focus: true do
+      before do
+        FeatureToggle.enable!(:ama_decision_issues)
+      end
+
+      scenario "veteran is the appellant" do
+        visit "/queue"
+        click_on "(#{appeal.veteran_file_number})"
+
+        click_on "Continue"
+
+        binding.pry
+
+        expect(page).to have_content "Select Dispositions"
+        issue_dispositions = page.find_all(
+          ".Select-control",
+          text: "Select Disposition",
+          count: appeal.request_issues.length
+        )
+
+        issue_dispositions.each do |row|
+          row.click
+          page.find("div", class: "Select-option", text: "Allowed").click
+        end
+
+        click_on "Continue"
+        expect(page).to have_content("Submit Draft Decision for Review")
+
+        document_id = Array.new(35).map { rand(10) }.join
+        fill_in "document_id", with: document_id
+        expect(page.find("#document_id").value.length).to eq 30
+
+        fill_in "notes", with: "note"
+
+        safe_click "#select-judge"
+        click_dropdown 0
+
+        click_on "Continue"
+        expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
+
+        expect(page.current_path).to eq("/queue")
+      end
+    end
   end
 
   context "given a valid legacy appeal and an attorney user" do

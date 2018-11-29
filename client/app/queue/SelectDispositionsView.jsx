@@ -135,7 +135,7 @@ class SelectDispositionsView extends React.PureComponent {
     let newDecisionIssues;
 
     if (this.state.editingExistingIssue) {
-      this.props.appeal.decisionIssues.map((decisionIssue) => {
+      newDecisionIssues = this.props.appeal.decisionIssues.map((decisionIssue) => {
         if (decisionIssue.id === this.state.decisionIssue.id) {
           return this.state.decisionIssue;
         }
@@ -203,6 +203,10 @@ class SelectDispositionsView extends React.PureComponent {
     }
 
     return <React.Fragment>
+      <h1>{COPY.DECISION_ISSUE_PAGE_TITLE}</h1>
+      <p>{COPY.DECISION_ISSUE_PAGE_EXPLANATION}</p>
+      <hr />
+
       <ContestedIssues
         decisionIssues={appeal.decisionIssues}
         requestIssues={appeal.issues}
@@ -219,7 +223,9 @@ class SelectDispositionsView extends React.PureComponent {
           Contested Issue
           <ul>
             {
-              appeal.issues.map((issue) => <li>{issue.description}</li>)
+              appeal.issues.filter((issue) => {
+                return decisionIssue.request_issue_ids.includes(issue.id);
+              }).map((issue) => <li key={issue.id}>{issue.description}</li>)
             }
           </ul>
         </div>
