@@ -251,6 +251,7 @@ export const prepareAppealForStore =
         hearings: prepareAppealHearingsForStore(appeal),
         completedHearingOnPreviousAppeal: appeal.attributes['completed_hearing_on_previous_appeal?'],
         issues: prepareAppealIssuesForStore(appeal),
+        decisionIssues: appeal.attributes.decision_issues,
         appellantFullName: appeal.attributes.appellant_full_name,
         appellantAddress: appeal.attributes.appellant_address,
         appellantRelationship: appeal.attributes.appellant_relationship,

@@ -58,6 +58,7 @@ type Props = Params & {|
   decision: Object,
   task: Task,
   highlightFormItems: Boolean,
+  amaDecisionIssues: Boolean,
   userRole: string,
   error: ?UiStateMessage,
   // dispatch
@@ -111,6 +112,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       task: { taskId },
       appeal: {
         issues,
+        decisionIssues,
         veteranFullName,
         externalId: appealId,
         isLegacyAppeal
@@ -118,10 +120,12 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       checkoutFlow,
       decision,
       userRole,
-      judges
+      judges,
+      amaDecisionIssues
     } = this.props;
 
-    const payload = buildCaseReviewPayload(checkoutFlow, decision, userRole, issues, { isLegacyAppeal });
+    const issuesToPass = !isLegacyAppeal && amaDecisionIssues ? decisionIssues : issues;
+    const payload = buildCaseReviewPayload(checkoutFlow, decision, userRole, issuesToPass, { isLegacyAppeal });
 
     const fields = {
       type: checkoutFlow === DECISION_TYPES.DRAFT_DECISION ?
@@ -233,7 +237,8 @@ const mapStateToProps = (state, ownProps) => {
     decision,
     error,
     userRole,
-    highlightFormItems
+    highlightFormItems,
+    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues
   };
 };
 
