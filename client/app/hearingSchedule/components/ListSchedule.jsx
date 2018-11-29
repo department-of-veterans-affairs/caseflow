@@ -25,11 +25,6 @@ const downloadButtonStyling = css({
   marginTop: '60px'
 });
 
-const addDayButtonStyling = css({
-  marginTop: '60px',
-  marginRight: '10px'
-});
-
 export const hearingSchedStyling = css({
   marginTop: '50px'
 });
@@ -244,13 +239,6 @@ class ListSchedule extends React.Component {
               </CSVLink>
             </Button>
           </div>
-          <div className="cf-push-right" {...addDayButtonStyling}>
-            <Button
-              classNames={['usa-button-secondary']}
-              onClick={this.props.openModal} >
-              Add Hearing Day
-            </Button>
-          </div>
         </div>
         <div className="section-hearings-list">
           <LoadingDataDisplay
@@ -268,6 +256,11 @@ class ListSchedule extends React.Component {
               <FilterRibbon
                 filteredByList={this.state.filteredByList}
                 clearAllFilters={this.clearFilteredByList} />
+              <Link
+                linkStyling="true"
+                onClick={this.props.openModal} >
+                Add Hearing Date
+              </Link>
             </div>
             <Table
               columns={hearingScheduleColumns}

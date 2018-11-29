@@ -64,12 +64,13 @@ export class ListScheduleContainer extends React.Component {
   ]);
 
   openModal = () => {
-    this.setState({modalOpen: true})
+    this.setState({showModalAlert: false});
+    this.setState({modalOpen: true});
     this.props.onSelectedHearingDayChange('');
   }
 
   closeModal = () => {
-    this.setState({modalOpen: false})
+    this.setState({modalOpen: false});
     this.setState({showModalAlert: true})
   }
 
@@ -127,7 +128,11 @@ const mapStateToProps = (state) => ({
   hearingSchedule: state.hearingSchedule.hearingSchedule,
   startDate: state.hearingSchedule.viewStartDate,
   endDate: state.hearingSchedule.viewEndDate,
-  selectedHearingDay: state.hearingSchedule.selectedHearingDay
+  selectedHearingDay: state.hearingSchedule.selectedHearingDay,
+  selectedRegionalOffice: state.components.selectedRegionalOffice,
+  selectedVLJ: state.hearingSchedule.selectedVLJ,
+  selectedCoordinator: state.hearingSchedule.selectedCoordinator,
+  notes: state.hearingSchedule.notes
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

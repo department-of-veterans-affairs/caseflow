@@ -52,7 +52,7 @@ const centralOfficeStaticEntry = [{
   value: 'C'
 }];
 
-class HearingDayAddModal extends React.Component {
+class HearingDayEditModal extends React.Component {
   constructor(props) {
     super(props);
 
@@ -184,7 +184,7 @@ class HearingDayAddModal extends React.Component {
   }
 }
 
-HearingDayAddModal.propTypes = {
+HearingDayEditModal.propTypes = {
   userId: PropTypes.number,
   userCssId: PropTypes.string,
   closeModal: PropTypes.func,
@@ -202,4 +202,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onRegionalOfficeChange
 }, dispatch);
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HearingDayAddModal));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HearingDayEditModal));
