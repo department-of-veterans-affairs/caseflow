@@ -45,7 +45,7 @@ export const initialState = {
   pendingDistribution: null,
   attorneys: {},
   organizationId: null,
-  organizations: null,
+  organizations: [],
   loadingAppealDetail: {}
 };
 
