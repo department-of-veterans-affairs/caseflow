@@ -3,8 +3,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { sprintf } from 'sprintf-js';
+import { css } from 'glamor';
 
 import TaskTable from './components/TaskTable';
+import QueueSelectorDropdown from './components/QueueSelectorDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import {
@@ -29,9 +31,14 @@ import type { State, UiStateMessage } from './types/state';
 
 type Params = {||};
 
+const containerStyles = css({
+  position: 'relative'
+});
+
 type Props = Params & {|
   // store
   success: UiStateMessage,
+  organizations: Array<Object>,
   numNewTasks: number,
   numPendingTasks: number,
   numOnHoldTasks: number,
@@ -50,10 +57,12 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
   render = () => {
     const {
       success,
+      organizations,
       numNewTasks,
       numPendingTasks,
       numOnHoldTasks
     } = this.props;
+
     const tabs = [
       {
         label: sprintf(COPY.COLOCATED_QUEUE_PAGE_NEW_TAB_TITLE, numNewTasks),
@@ -73,9 +82,10 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
       }
     ];
 
-    return <AppSegment filledBackground>
+    return <AppSegment filledBackground styling={containerStyles}>
       {success && <Alert type="success" title={success.title} message={success.detail} styling={marginBottom(1)} />}
       <h1 {...fullWidth}>{COPY.COLOCATED_QUEUE_PAGE_TABLE_TITLE}</h1>
+      <QueueSelectorDropdown organizations={organizations} />
       <TabWindow name="tasks-tabwindow" tabs={tabs} />
     </AppSegment>;
   };
@@ -86,6 +96,7 @@ const mapStateToProps = (state) => {
 
   return {
     success,
+    organizations: state.ui.organizations,
     numNewTasks: newTasksByAssigneeCssIdSelector(state).length,
     numPendingTasks: pendingTasksByAssigneeCssIdSelector(state).length,
     numOnHoldTasks: onHoldTasksByAssigneeCssIdSelector(state).length
