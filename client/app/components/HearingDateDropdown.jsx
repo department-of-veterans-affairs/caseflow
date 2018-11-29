@@ -44,7 +44,7 @@ class HearingDateDropdown extends React.Component {
     _.forEach(this.props.hearingDates, (date) => {
       hearingDateOptions.push({
         label: formatDateStr(date.hearingDate),
-        value: formatDateStr(date.hearingDate, undefined, 'YYYY-MM-DD')
+        value: formatDateStr(date.hearingDate, 'YYYY-MM-DD', 'YYYY-MM-DD')
       });
     });
 
@@ -56,7 +56,7 @@ class HearingDateDropdown extends React.Component {
 
       if (d1.value > d2.value) {
         return 1;
-      } else if (d1.value < d2.value){
+      } else if (d1.value < d2.value) {
         return -1;
       }
 
