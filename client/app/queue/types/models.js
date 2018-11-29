@@ -110,6 +110,7 @@ export type Hearing = {
 
 export type AppealDetail = {
   issues: Array<Object>,
+  decisionIssues: Array<Object>,
   hearings: Array<Hearing>,
   completedHearingOnPreviousAppeal: boolean,
   appellantFullName: string,

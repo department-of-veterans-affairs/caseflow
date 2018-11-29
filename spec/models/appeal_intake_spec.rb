@@ -68,6 +68,7 @@ describe AppealIntake do
     let(:claimant) { nil }
     let(:payee_code) { nil }
     let(:legacy_opt_in_approved) { true }
+    let(:veteran_is_not_claimant) { "false" }
     let(:detail) { Appeal.create!(veteran_file_number: veteran_file_number) }
 
     let(:request_params) do
@@ -76,7 +77,8 @@ describe AppealIntake do
         docket_type: docket_type,
         claimant: claimant,
         payee_code: payee_code,
-        legacy_opt_in_approved: legacy_opt_in_approved
+        legacy_opt_in_approved: legacy_opt_in_approved,
+        veteran_is_not_claimant: veteran_is_not_claimant
       )
     end
 
@@ -86,7 +88,8 @@ describe AppealIntake do
       expect(intake.detail).to have_attributes(
         receipt_date: Date.new(2018, 5, 25),
         docket_type: "hearing",
-        legacy_opt_in_approved: true
+        legacy_opt_in_approved: true,
+        veteran_is_not_claimant: false
       )
     end
 
@@ -115,6 +118,7 @@ describe AppealIntake do
     context "Claimant is different than Veteran" do
       let(:claimant) { "1234" }
       let(:payee_code) { "10" }
+      let(:veteran_is_not_claimant) { "true" }
 
       it "adds other relationship to claimants" do
         subject
@@ -124,6 +128,18 @@ describe AppealIntake do
           participant_id: "1234",
           payee_code: nil
         )
+      end
+
+      context "claimant is nil" do
+        let(:claimant) { nil }
+        let(:receipt_date) { 3.days.from_now }
+
+        it "is expected to add an error that claimant cannot be blank" do
+          expect(subject).to be_falsey
+          expect(detail.errors[:claimant]).to include("blank")
+          expect(detail.errors[:receipt_date]).to include("in_future")
+          expect(detail.claimants).to be_empty
+        end
       end
     end
   end
