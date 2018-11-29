@@ -28,7 +28,12 @@ export const initialState = {
   selectedAssignee: null,
   selectedAssigneeSecondary: null,
   veteranCaseListIsVisible: false,
-  canEditAod: false
+  canEditAod: false,
+  hearingDay: {
+    hearingDate: null,
+    hearingTime: null,
+    regionalOffice: null
+  }
 };
 
 const setMessageState = (state, message, msgType) => update(state, {
@@ -183,6 +188,12 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
     return update(state, {
       activeOrganizationId: {
         $set: action.payload.activeOrganizationId
+      }
+    });
+  case ACTIONS.SET_HEARING_DAY:
+    return update(state, {
+      hearingDay: {
+        $set: action.payload
       }
     });
   default:
