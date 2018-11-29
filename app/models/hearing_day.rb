@@ -11,6 +11,13 @@ class HearingDay < ApplicationRecord
     central: "C"
   }.freeze
 
+  def to_hash
+    as_json.each_with_object({}) do |(k, v), result|
+      result[k.to_sym] = v
+    end.merge(judge_first_name: judge ? judge.full_name.split(" ").first : nil,
+              judge_last_name: judge ? judge.full_name.split(" ").last : nil)
+  end
+
   # These dates indicate the date in which we pull parent records into Caseflow. For
   # legacy appeals, the children hearings will continue to be stored in VACOLS.
   CASEFLOW_V_PARENT_DATE = Date.new(2019, 3, 31).freeze
@@ -124,33 +131,15 @@ class HearingDay < ApplicationRecord
     private
 
     def enrich_with_judge_names(hearing_days)
-      vlj_ids = []
       hearing_days_hash = []
       hearing_days.each do |hearing_day|
         hearing_days_hash << hearing_day.to_hash
-        vlj_ids << hearing_day[:judge_id]
       end
-
-      judges = User.css_ids_by_vlj_ids(vlj_ids)
-
-      hearing_days_hash.each_with_object([]) do |hearing_day, result|
-        judge_info = judges[hearing_day[:judge_id]]
-        if !judge_info.nil?
-          hearing_day = hearing_day.merge(judge_first_name: judge_info[:first_name],
-                                          judge_last_name: judge_info[:last_name])
-        end
-        result << hearing_day
-      end
+      hearing_days_hash
     end
 
     def current_user_css_id
       RequestStore.store[:current_user].css_id.upcase
-    end
-  end
-
-  def to_hash
-    as_json.each_with_object({}) do |(k, v), result|
-      result[k.to_sym] = v
     end
   end
 end

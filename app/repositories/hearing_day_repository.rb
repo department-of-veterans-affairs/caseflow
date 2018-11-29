@@ -27,8 +27,11 @@ class HearingDayRepository
         .each_with_object([]) do |hearing, result|
         result << to_canonical_hash(hearing)
       end
+      removed_children_records = video_and_co.reject do |hearing_day|
+        hearing_day[:hearing_type] == "C" && hearing_day[:hearing_date] > HearingDay::CASEFLOW_CO_PARENT_DATE
+      end
       travel_board = VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
-      [video_and_co.uniq do |hearing_day|
+      [removed_children_records.uniq do |hearing_day|
         [hearing_day[:hearing_date].to_date,
          hearing_day[:room_info],
          hearing_day[:hearing_type]]
@@ -36,6 +39,7 @@ class HearingDayRepository
     end
 
     def load_days_for_central_office(start_date, end_date)
+      end_date = (end_date > HearingDay::CASEFLOW_CO_PARENT_DATE) ? HearingDay::CASEFLOW_CO_PARENT_DATE : end_date
       video_and_co = VACOLS::CaseHearing.load_days_for_central_office(start_date, end_date)
         .each_with_object([]) do |hearing, result|
         result << to_canonical_hash(hearing)
@@ -81,6 +85,9 @@ class HearingDayRepository
     end
 
     def to_canonical_hash(hearing)
+      if hearing.is_a?(HearingDay)
+        return hearing.to_hash
+      end
       hearing_hash = hearing.as_json.each_with_object({}) do |(k, v), result|
         result[HearingDayMapper::COLUMN_NAME_REVERSE_MAP[k.to_sym]] = v
       end
