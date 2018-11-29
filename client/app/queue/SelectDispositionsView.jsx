@@ -13,10 +13,8 @@ import ContestedIssues from './components/ContestedIssues';
 import COPY from '../../COPY.json';
 
 import {
-  updateEditingAppealIssue,
   setDecisionOptions,
-  startEditingAppealIssue,
-  saveEditedAppealIssue
+  editStagedAppeal
 } from './QueueActions';
 import { hideSuccessMessage } from './uiReducer/uiActions';
 import {
@@ -27,14 +25,22 @@ import {
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES.json';
+import uuid from 'uuid';
 
 class SelectDispositionsView extends React.PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
-      issuesOpen: null
+      openRequestIssueIds: null,
+      decisionIssue: null
     };
+  }
+
+  componentDidMount = () => {
+    if (this.props.userRole === USER_ROLE_TYPES.attorney) {
+      this.props.setDecisionOptions({ work_product: 'Decision' });
+    }
   }
 
   getPageName = () => PAGE_TITLES.DISPOSITIONS[this.props.userRole.toUpperCase()];
@@ -45,10 +51,10 @@ class SelectDispositionsView extends React.PureComponent {
       taskId,
       checkoutFlow,
       userRole,
-      appeal: { issues }
+      appeal: { decisionIssues }
     } = this.props;
     let nextStep;
-    const dispositions = issues.map((issue) => issue.disposition);
+    const dispositions = decisionIssues.map((issue) => issue.disposition);
     const remandedIssues = _.some(dispositions, (disp) => [
       VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
     ].includes(disp));
@@ -74,25 +80,58 @@ class SelectDispositionsView extends React.PureComponent {
     return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
   }
 
-  addDecisionHandler = (issueIds) => () => {
+  openDecisionHandler = (requestIssueIds, decisionIssue) => () => {
+    const newDecisionIssue = {
+      id: `temporary-id-${uuid.v4()}`,
+      description: '',
+      disposition: null,
+      request_issue_ids: requestIssueIds
+    };
+
     this.setState({
-      issuesOpen: issueIds
+      openRequestIssueIds: requestIssueIds,
+      decisionIssue: decisionIssue || newDecisionIssue
     });
   }
 
   handleModalClose = () => {
     this.setState({
-      issuesOpen: null
+      openRequestIssueIds: null,
+      decisionIssue: null
     });
   }
 
+  saveDecision = () => {
+    let decisionIssueFound = false;
+    let newDecisionIssues = this.props.appeal.decisionIssues.map((decisionIssue) => {
+      if (decisionIssue.id === this.state.decisionIssue.id) {
+        decisionIssueFound = true;
+
+        return this.state.decisionIssue;
+      }
+
+      return decisionIssue;
+
+    });
+
+    if (!decisionIssueFound) {
+      newDecisionIssues = [...newDecisionIssues, this.state.decisionIssue];
+    }
+
+    this.props.editStagedAppeal(
+      this.props.appeal.externalId, { decisionIssues: newDecisionIssues }
+    );
+
+    this.handleModalClose();
+  }
+
   selectedIssues = () => {
-    if (!this.state.issuesOpen) {
+    if (!this.state.openRequestIssueIds) {
       return [];
     }
 
     return this.props.appeal.issues.filter((issue) => {
-      return this.state.issuesOpen.includes(issue.id);
+      return this.state.openRequestIssueIds.includes(issue.id);
     });
   }
 
@@ -102,10 +141,12 @@ class SelectDispositionsView extends React.PureComponent {
 
     return <React.Fragment>
       <ContestedIssues
+        decisionIssues={appeal.decisionIssues}
         requestIssues={appeal.issues}
-        addDecisionHandler={this.addDecisionHandler}
+        openDecisionHandler={this.openDecisionHandler}
+        numbered
       />
-      { this.state.issuesOpen && <Modal
+      { this.state.openRequestIssueIds && <Modal
         buttons = {[
           { classNames: ['cf-modal-link', 'cf-btn-link'],
             name: 'Close',
@@ -113,7 +154,7 @@ class SelectDispositionsView extends React.PureComponent {
           },
           { classNames: ['usa-button', 'usa-button-secondary'],
             name: 'Proceed with action',
-            onClick: this.handleModalClose
+            onClick: this.saveDecision
           }
         ]}
         closeHandler={this.handleModalClose}
@@ -126,15 +167,28 @@ class SelectDispositionsView extends React.PureComponent {
         <TextareaField
           label={COPY.DECISION_ISSUE_MODAL_DESCRIPTION_EXAMPLE}
           name="Text Box"
-          onChange={(value) => {
-            this.setState({ value });
+          onChange={(issueDescription) => {
+            this.setState({
+              decisionIssue: {
+                ...this.state.decisionIssue,
+                description: issueDescription
+              }
+            });
           }}
-          value={this.state.value}
+          value={this.state.decisionIssue.description}
         />
         <h3>{COPY.DECISION_ISSUE_MODAL_DISPOSITION}</h3>
         <SelectIssueDispositionDropdown
-          issue={issue}
+          issue={this.state.decisionIssue}
           appeal={appeal}
+          updateIssue={({ disposition }) => {
+            this.setState({
+              decisionIssue: {
+                ...this.state.decisionIssue,
+                disposition
+              }
+            });
+          }}
           noStyling
         />
         <br />
@@ -163,11 +217,9 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  updateEditingAppealIssue,
   setDecisionOptions,
-  startEditingAppealIssue,
-  saveEditedAppealIssue,
-  hideSuccessMessage
+  hideSuccessMessage,
+  editStagedAppeal
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SelectDispositionsView));

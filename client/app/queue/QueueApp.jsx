@@ -12,7 +12,8 @@ import {
   setUserCssId,
   setUserIsVsoEmployee,
   setFeedbackUrl,
-  setOrganizationIds
+  setOrganizationIds,
+  setOrganizations
 } from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
@@ -70,13 +71,15 @@ type Props = {|
   caseSearchHomePage?: boolean,
   featureToggles: Object,
   organizationIds: Array<number>,
+  organizations: Array<Object>,
   // Action creators
   setFeatureToggles: typeof setFeatureToggles,
   setUserRole: typeof setUserRole,
   setUserCssId: typeof setUserCssId,
   setUserIsVsoEmployee: typeof setUserIsVsoEmployee,
   setFeedbackUrl: typeof setFeedbackUrl,
-  setOrganizationIds: typeof setOrganizationIds
+  setOrganizationIds: typeof setOrganizationIds,
+  setOrganizations: typeof setOrganizations
 |};
 
 class QueueApp extends React.PureComponent<Props> {
@@ -85,6 +88,7 @@ class QueueApp extends React.PureComponent<Props> {
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizationIds(this.props.organizationIds);
+    this.props.setOrganizations(this.props.organizations);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
     this.props.setFeedbackUrl(this.props.feedbackUrl);
   }
@@ -101,7 +105,6 @@ class QueueApp extends React.PureComponent<Props> {
     }
 
     return <ColocatedTaskListView />;
-
   }
 
   routedQueueList = () => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
@@ -419,7 +422,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setUserCssId,
   setUserIsVsoEmployee,
   setFeedbackUrl,
-  setOrganizationIds
+  setOrganizationIds,
+  setOrganizations
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueApp);

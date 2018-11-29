@@ -508,9 +508,9 @@ RSpec.feature "Supplemental Claim Intake" do
         profile_date: receipt_date - 450.days,
         issues: [
           { reference_id: old_reference_id,
-            decision_text: "Really old injury",
-            associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" } }
-        ]
+            decision_text: "Really old injury" }
+        ],
+        associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
       )
     end
 
@@ -520,11 +520,21 @@ RSpec.feature "Supplemental Claim Intake" do
         promulgation_date: DecisionReview.ama_activation_date - 5.days,
         profile_date: DecisionReview.ama_activation_date - 10.days,
         issues: [
-          { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
-          { decision_text: "Issue before AMA Activation from RAMP",
-            associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" },
-            reference_id: "ramp_ref_id" }
+          { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
         ]
+      )
+    end
+
+    let!(:before_ama_rating_from_ramp) do
+      Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: DecisionReview.ama_activation_date - 5.days,
+        profile_date: DecisionReview.ama_activation_date - 11.days,
+        issues: [
+          { decision_text: "Issue before AMA Activation from RAMP",
+            reference_id: "ramp_ref_id" }
+        ],
+        associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
       )
     end
 
@@ -744,7 +754,6 @@ RSpec.feature "Supplemental Claim Intake" do
       ineligible_issue = duplicate_request_issues.select(&:duplicate_of_issue_in_active_review?).first
       expect(ineligible_issue).to_not eq(request_issue_in_progress)
       expect(ineligible_issue.contention_reference_id).to be_nil
-
       expect(RequestIssue.find_by(rating_issue_reference_id: old_reference_id).eligible?).to eq(true)
 
       expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(

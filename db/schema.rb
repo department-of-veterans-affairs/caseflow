@@ -645,6 +645,8 @@ ActiveRecord::Schema.define(version: 20181128225613) do
     t.string "code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "decision_issue_id"
+    t.index ["decision_issue_id"], name: "index_remand_reasons_on_decision_issue_id"
     t.index ["request_issue_id"], name: "index_remand_reasons_on_request_issue_id"
   end
 
