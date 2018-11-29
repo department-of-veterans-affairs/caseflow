@@ -84,7 +84,7 @@ class Appeal < DecisionReview
   end
 
   def eligible_request_issues
-    # It's possible that two users create issues around the same time and the sequencing is off
+    # It's possible that two users create issues around the same time and the sequencer gets thrown off
     # (https://stackoverflow.com/questions/5818463/rails-created-at-timestamp-order-disagrees-with-id-order)
     request_issues.select(&:eligible?).sort_by(&:id)
   end
