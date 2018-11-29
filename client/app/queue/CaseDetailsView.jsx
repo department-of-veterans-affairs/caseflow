@@ -18,7 +18,7 @@ import CaseSnapshot from './CaseSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
 import { resetErrorMessages, resetSuccessMessages } from './uiReducer/uiActions';
-import CaseTimeline from './CaseTimeline';
+import { CaseTimeline } from './CaseTimeline';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
@@ -72,6 +72,7 @@ class CaseDetailsView extends React.PureComponent {
           title="Issues"
           isLegacyAppeal={appeal.isLegacyAppeal}
           issues={appeal.issues}
+          decisionIssues={appeal.decisionIssues}
         />
         <PowerOfAttorneyDetail title="Power of Attorney" appealId={appealId} />
         {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) &&

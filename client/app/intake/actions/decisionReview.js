@@ -115,10 +115,10 @@ export const setLegacyOptInApproved = (legacyOptInApproved) => ({
   }
 });
 
-export const setClaimantNotVeteran = (claimantNotVeteran) => ({
-  type: ACTIONS.SET_CLAIMANT_NOT_VETERAN,
+export const setVeteranIsNotClaimant = (veteranIsNotClaimant) => ({
+  type: ACTIONS.SET_VETERAN_IS_NOT_CLAIMANT,
   payload: {
-    claimantNotVeteran
+    veteranIsNotClaimant
   }
 });
 

@@ -99,7 +99,9 @@ class HigherLevelReview < ClaimReview
       veteran_file_number: veteran_file_number,
       receipt_date: Time.zone.now.to_date,
       is_dta_error: true,
-      benefit_type: benefit_type
+      benefit_type: benefit_type,
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: veteran_is_not_claimant
     ).tap do |sc|
       sc.create_claimants!(
         participant_id: claimant_participant_id,
