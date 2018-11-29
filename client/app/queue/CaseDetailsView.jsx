@@ -17,14 +17,9 @@ import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
-<<<<<<< HEAD
 import { resetErrorMessages, resetSuccessMessages, setHearingDay } from './uiReducer/uiActions';
-import CaseTimeline from './CaseTimeline';
-import { getQueryParams } from '../util/QueryParamsUtil';
-=======
-import { resetErrorMessages, resetSuccessMessages } from './uiReducer/uiActions';
 import { CaseTimeline } from './CaseTimeline';
->>>>>>> master
+import { getQueryParams } from '../util/QueryParamsUtil';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
