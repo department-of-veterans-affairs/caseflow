@@ -1,5 +1,6 @@
 # rubocop:disable Metrics/ClassLength
 require "bgs"
+require "fakes/end_product_store"
 
 class Fakes::BGSService
   include PowerOfAttorneyMapper
@@ -399,15 +400,23 @@ class Fakes::BGSService
   def self.clean!
     self.ssn_not_found = false
     self.inaccessible_appeal_vbms_ids = []
-    self.end_product_records = {}
     self.rating_records = {}
     self.rating_profile_records = {}
+    end_product_store.clear!
+  end
+
+  def self.end_product_store
+    @end_product_store ||= Fakes::EndProductStore.new
+  end
+
+  def self.store_end_product_record(veteran_id, end_product)
+    end_product_store.store_end_product_record(veteran_id, end_product)
   end
 
   def get_end_products(veteran_id)
-    records = self.class.end_product_records || {}
-
-    records[veteran_id] || records[:default] || []
+    store = self.class.end_product_store
+    records = store.fetch_and_inflate(veteran_id) || store.fetch_and_inflate(:default) || {}
+    records.values
   end
 
   def cancel_end_product(veteran_id, end_product_code, end_product_modifier)

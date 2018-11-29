@@ -251,6 +251,7 @@ RSpec.configure do |config|
   config.after(:each) do
     Timecop.return
     Rails.cache.clear
+    Fakes::BGSService.clean!
     Time.zone = @spec_time_zone
   end
 
