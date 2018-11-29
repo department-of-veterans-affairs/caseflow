@@ -132,20 +132,18 @@ class SelectDispositionsView extends React.PureComponent {
       return;
     }
 
-    let decisionIssueFound = false;
-    let newDecisionIssues = this.props.appeal.decisionIssues.map((decisionIssue) => {
-      if (decisionIssue.id === this.state.decisionIssue.id) {
-        decisionIssueFound = true;
+    let newDecisionIssues;
 
-        return this.state.decisionIssue;
-      }
+    if (this.state.editingExistingIssue) {
+      this.props.appeal.decisionIssues.map((decisionIssue) => {
+        if (decisionIssue.id === this.state.decisionIssue.id) {
+          return this.state.decisionIssue;
+        }
 
-      return decisionIssue;
-
-    });
-
-    if (!decisionIssueFound) {
-      newDecisionIssues = [...newDecisionIssues, this.state.decisionIssue];
+        return decisionIssue;
+      });
+    } else {
+      newDecisionIssues = [...this.props.appeal.decisionIssues, this.state.decisionIssue];
     }
 
     this.props.editStagedAppeal(
