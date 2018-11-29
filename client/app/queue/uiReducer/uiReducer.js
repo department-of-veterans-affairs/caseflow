@@ -21,6 +21,7 @@ export const initialState = {
   userRole: '',
   userCssId: '',
   organizationIds: [],
+  organizations: [],
   activeOrganizationId: null,
   userIsVsoEmployee: false,
   feedbackUrl: '#',
@@ -177,6 +178,12 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
     return update(state, {
       organizationIds: {
         $set: action.payload.organizationIds
+      }
+    });
+  case ACTIONS.SET_ORGANIZATIONS:
+    return update(state, {
+      organizations: {
+        $set: action.payload.organizations
       }
     });
   case ACTIONS.SET_ACTIVE_ORGANIZATION_ID:

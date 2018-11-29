@@ -13,7 +13,7 @@ class DecisionReview < ApplicationRecord
   before_destroy :remove_issues!
 
   cache_attribute :cached_serialized_ratings, cache_key: :ratings_cache_key, expires_in: 1.day do
-    ratings_with_issues.map(&:ui_hash)
+    ratings_with_issues.map(&:serialize)
   end
 
   def self.ama_activation_date
@@ -35,7 +35,7 @@ class DecisionReview < ApplicationRecord
       rating[:issues].each do |rating_issue_hash|
         rating_issue_hash[:timely] = timely_issue?(Date.parse(rating_issue_hash[:promulgation_date].to_s))
         # always re-compute flags that depend on data in our db
-        rating_issue_hash.merge!(RatingIssue.from_ui_hash(rating_issue_hash).ui_hash)
+        rating_issue_hash.merge!(RatingIssue.deserialize(rating_issue_hash).serialize)
       end
     end
   end
@@ -49,7 +49,7 @@ class DecisionReview < ApplicationRecord
       },
       relationships: veteran && veteran.relationships,
       claimant: claimant_participant_id,
-      claimantNotVeteran: claimant_not_veteran,
+      veteranIsNotClaimant: veteran_is_not_claimant,
       receiptDate: receipt_date.to_formatted_s(:json_date),
       legacyOptInApproved: legacy_opt_in_approved,
       legacyAppeals: serialized_legacy_appeals,
@@ -82,6 +82,8 @@ class DecisionReview < ApplicationRecord
   end
 
   def claimant_not_veteran
+    # This is being replaced by veteran_is_not_claimant, but keeping it temporarily
+    # until data is backfilled
     claimant_participant_id && claimant_participant_id != veteran.participant_id
   end
 
@@ -137,7 +139,8 @@ class DecisionReview < ApplicationRecord
   end
 
   def ratings_cache_key
-    "#{veteran_file_number}-ratings"
+    # change timestamp in order to clear old cache
+    "#{veteran_file_number}-ratings-11282018"
   end
 
   def formatted_receipt_date

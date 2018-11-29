@@ -3,19 +3,35 @@
 # Caseflow DB. For now all schedule data is sent to the
 # VACOLS DB (Aug 2018 implementation).
 class HearingDay < ApplicationRecord
+  belongs_to :judge, class_name: "User"
+
   HEARING_TYPES = {
     video: "V",
     travel: "T",
     central: "C"
   }.freeze
 
-  CASEFLOW_SCHEDULE_DATE = Date.new(2019, 3, 31).freeze
+  def to_hash
+    as_json.each_with_object({}) do |(k, v), result|
+      result[k.to_sym] = v
+    end.merge(judge_first_name: judge ? judge.full_name.split(" ").first : nil,
+              judge_last_name: judge ? judge.full_name.split(" ").last : nil)
+  end
+
+  # These dates indicate the date in which we pull parent records into Caseflow. For
+  # legacy appeals, the children hearings will continue to be stored in VACOLS.
+  CASEFLOW_V_PARENT_DATE = Date.new(2019, 3, 31).freeze
+  CASEFLOW_CO_PARENT_DATE = Date.new(2018, 12, 31).freeze
 
   class << self
     def create_hearing_day(hearing_hash)
       hearing_date = hearing_hash[:hearing_date]
-      hearing_date = hearing_date.is_a?(DateTime) ? hearing_date : Time.zone.parse(hearing_date).to_datetime
-      if hearing_date > CASEFLOW_SCHEDULE_DATE
+      hearing_date = if hearing_date.is_a?(DateTime) | hearing_date.is_a?(Date)
+                       hearing_date
+                     else
+                       Time.zone.parse(hearing_date).to_datetime
+                     end
+      if hearing_date > CASEFLOW_V_PARENT_DATE
         hearing_hash = hearing_hash.merge(created_by: current_user_css_id, updated_by: current_user_css_id)
         create(hearing_hash).to_hash
       else
@@ -41,8 +57,12 @@ class HearingDay < ApplicationRecord
     def update_schedule(updated_hearings)
       updated_hearings.each do |hearing_hash|
         hearing_to_update = HearingDay.find_hearing_day(hearing_hash[:hearing_type], hearing_hash[:id])
-        hearing_hash.delete(:hearing_key)
-        HearingDay.update_hearing_day(hearing_to_update, hearing_hash)
+        update_hash = if hearing_to_update.is_a?(HearingDay)
+                        { judge: User.find_by_css_id_or_create_with_default_station_id(hearing_hash[:css_id]) }
+                      else
+                        { judge_id: hearing_hash[:judge_id] }
+                      end
+        HearingDay.update_hearing_day(hearing_to_update, update_hash)
       end
     end
 
@@ -51,7 +71,8 @@ class HearingDay < ApplicationRecord
         cf_video_and_co = where("DATE(hearing_date) between ? and ?", start_date, end_date).each_with_object([])
         video_and_co, travel_board = HearingDayRepository.load_days_for_range(start_date, end_date)
       elsif regional_office == HEARING_TYPES[:central]
-        cf_video_and_co = []
+        cf_video_and_co = where("hearing_type = ? and DATE(hearing_date) between ? and ?",
+                                "C", start_date, end_date).each_with_object([])
         video_and_co, travel_board = HearingDayRepository.load_days_for_central_office(start_date, end_date)
       else
         cf_video_and_co = where("regional_office = ? and DATE(hearing_date) between ? and ?",
@@ -114,33 +135,15 @@ class HearingDay < ApplicationRecord
     private
 
     def enrich_with_judge_names(hearing_days)
-      vlj_ids = []
       hearing_days_hash = []
       hearing_days.each do |hearing_day|
         hearing_days_hash << hearing_day.to_hash
-        vlj_ids << hearing_day[:judge_id]
       end
-
-      judges = User.css_ids_by_vlj_ids(vlj_ids)
-
-      hearing_days_hash.each_with_object([]) do |hearing_day, result|
-        judge_info = judges[hearing_day[:judge_id]]
-        if !judge_info.nil?
-          hearing_day = hearing_day.merge(judge_first_name: judge_info[:first_name],
-                                          judge_last_name: judge_info[:last_name])
-        end
-        result << hearing_day
-      end
+      hearing_days_hash
     end
 
     def current_user_css_id
       RequestStore.store[:current_user].css_id.upcase
-    end
-  end
-
-  def to_hash
-    as_json.each_with_object({}) do |(k, v), result|
-      result[k.to_sym] = v
     end
   end
 end

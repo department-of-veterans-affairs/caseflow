@@ -8,6 +8,6 @@ class SupplementalClaimIntake < ClaimReviewIntake
   private
 
   def review_params
-    request_params.permit(:receipt_date, :benefit_type, :legacy_opt_in_approved)
+    request_params.permit(:receipt_date, :benefit_type, :veteran_is_not_claimant, :legacy_opt_in_approved)
   end
 end
