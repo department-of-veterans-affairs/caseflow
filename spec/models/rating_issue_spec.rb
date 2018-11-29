@@ -6,20 +6,23 @@ describe RatingIssue do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
+  let(:profile_date) { Time.zone.today - 30 }
   let(:promulgation_date) { Time.zone.today - 30 }
   let(:profile_date) { Time.zone.today - 40 }
 
-  context ".from_ui_hash" do
-    subject { RatingIssue.from_ui_hash(ui_hash) }
+  context ".deserialize" do
+    subject { RatingIssue.deserialize(rating_issue.serialize) }
 
-    let(:ui_hash) do
-      {
+    let(:rating_issue) do
+      RatingIssue.new(
         reference_id: "NBA",
         participant_id: "123",
+        profile_date: profile_date,
         promulgation_date: promulgation_date,
         decision_text: "This broadcast may not be reproduced",
-        extra_attribute: "foobar"
-      }
+        associated_end_products: [],
+        rba_contentions_data: [{}]
+      )
     end
 
     it { is_expected.to be_a(RatingIssue) }
@@ -28,8 +31,10 @@ describe RatingIssue do
       is_expected.to have_attributes(
         reference_id: "NBA",
         participant_id: "123",
+        profile_date: profile_date,
         promulgation_date: promulgation_date,
-        decision_text: "This broadcast may not be reproduced"
+        decision_text: "This broadcast may not be reproduced",
+        rba_contentions_data: [{}]
       )
     end
   end

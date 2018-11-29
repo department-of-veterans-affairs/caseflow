@@ -44,8 +44,6 @@ class GenericTask < Task
 
     []
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
 
   def update_from_params(params, current_user)
@@ -53,12 +51,7 @@ class GenericTask < Task
 
     return reassign(params[:reassign], current_user) if params[:reassign]
 
-    new_status = params[:status]
-    if new_status == Constants.TASK_STATUSES.completed
-      mark_as_complete!
-    else
-      update!(status: new_status)
-    end
+    update_status(params[:status])
 
     [self]
   end
@@ -75,7 +68,7 @@ class GenericTask < Task
   end
 
   def can_be_accessed_by_user?(user)
-    !available_actions(user).empty?
+    available_actions_unwrapper(user).any?
   end
 
   private
@@ -101,7 +94,7 @@ class GenericTask < Task
 
       params = modify_params(params)
       child = create_child_task(parent, user, params)
-      update_status(parent, params[:status])
+      parent.update_status(params[:status])
       child
     end
 
@@ -109,7 +102,7 @@ class GenericTask < Task
       # Create an assignee from the input arguments so we throw an error if the assignee does not exist.
       assignee = Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
 
-      parent.update!(status: :on_hold)
+      parent.update_status(Constants.TASK_STATUSES.on_hold)
 
       Task.create!(
         type: name,
@@ -126,17 +119,6 @@ class GenericTask < Task
     def child_assigned_by_id(parent, current_user)
       return current_user.id if current_user
       return parent.assigned_to_id if parent && parent.assigned_to_type == User.name
-    end
-
-    def update_status(parent, status)
-      return unless status
-
-      case status
-      when Constants.TASK_STATUSES.completed
-        parent.mark_as_complete!
-      else
-        parent.update!(status: status)
-      end
     end
   end
 end

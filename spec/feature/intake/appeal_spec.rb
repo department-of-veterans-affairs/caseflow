@@ -228,12 +228,13 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  def start_appeal(test_veteran)
+  def start_appeal(test_veteran, veteran_is_not_claimant: false)
     appeal = Appeal.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
       docket_type: "evidence_submission",
-      legacy_opt_in_approved: false
+      legacy_opt_in_approved: false,
+      veteran_is_not_claimant: veteran_is_not_claimant
     )
 
     intake = AppealIntake.create!(
@@ -325,16 +326,23 @@ RSpec.feature "Appeal Intake" do
       ]
     )
 
-    # before AMA Rating
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: DecisionReview.ama_activation_date - 5.days,
       profile_date: DecisionReview.ama_activation_date - 10.days,
       issues: [
-        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
         { decision_text: "Issue before AMA Activation from RAMP",
-          associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" },
           reference_id: "ramp_ref_id" }
+      ],
+      associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
+    )
+
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: DecisionReview.ama_activation_date - 5.days,
+      profile_date: DecisionReview.ama_activation_date - 11.days,
+      issues: [
+        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
       ]
     )
 
