@@ -16,6 +16,8 @@ class DecisionReview < ApplicationRecord
     ratings_with_issues.map(&:ui_hash)
   end
 
+  NONRATING_EP_CODES = [HigherLevelReview::END_PRODUCT_NONRATING_CODE, SupplementalClaim::END_PRODUCT_CODES[:nonrating]].freeze
+
   def self.ama_activation_date
     if FeatureToggle.enabled?(:use_ama_activation_date)
       Constants::DATES["AMA_ACTIVATION"].to_date

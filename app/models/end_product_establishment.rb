@@ -184,8 +184,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def has_nonrating_code
-    code === HigherLevelReview::END_PRODUCT_NONRATING_CODE ||
-      code === SupplementalClaim::END_PRODUCT_CODES[:nonrating]
+    DecisionReview::NONRATING_EP_CODES.include?(code)
   end
 
   def sync_decision_issues_from_dispositons!(request_issues_without_ratings)

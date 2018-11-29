@@ -691,18 +691,13 @@ describe EndProductEstablishment do
       end
     end
 
-    context "for rating request issues without any ratings" do
+    context "for ep with ratings but no rating issues" do
+      it "creates decision issues by contentions" do
+      end
+    end
+
+    context "for ep without any ratings" do
       let!(:request_issues) do
-        # ep has 1 rating request issue which does not have any
-        # matching rating issues
-        [
-          create(
-            :request_issue,
-            review_request: higher_level_review,
-            end_product_establishment: end_product_establishment,
-            contention_reference_id: contention_ref_id_2
-          )
-        ]
       end
       let(:rating){Generators::Rating.build(issues: [])}
 
