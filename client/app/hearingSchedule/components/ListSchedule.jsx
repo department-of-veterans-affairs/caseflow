@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from "react-router-dom";
 import _ from 'lodash';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import { css } from 'glamor';
@@ -18,9 +19,15 @@ import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ListScheduleDateSearch from './ListScheduleDateSearch';
+import Alert from "../../components/Alert";
 
 const downloadButtonStyling = css({
   marginTop: '60px'
+});
+
+const addDayButtonStyling = css({
+  marginTop: '60px',
+  marginRight: '10px'
 });
 
 export const hearingSchedStyling = css({
@@ -233,8 +240,15 @@ class ListSchedule extends React.Component {
                 data={hearingScheduleRows}
                 target="_blank"
                 filename={`HearingSchedule ${this.props.startDate}-${this.props.endDate}.csv`}>
-                Download current view
+                Download Current View
               </CSVLink>
+            </Button>
+          </div>
+          <div className="cf-push-right" {...addDayButtonStyling}>
+            <Button
+              classNames={['usa-button-secondary']}
+              onClick={this.props.openModal} >
+              Add Hearing Day
             </Button>
           </div>
         </div>
@@ -280,7 +294,8 @@ ListSchedule.propTypes = {
     updatedOn: PropTypes.string,
     updatedBy: PropTypes.string
   }),
-  onApply: PropTypes.func
+  onApply: PropTypes.func,
+  openModal: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -300,4 +315,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveHearingSchedule
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(ListSchedule);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ListSchedule));

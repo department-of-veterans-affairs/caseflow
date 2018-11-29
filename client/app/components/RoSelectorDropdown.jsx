@@ -46,6 +46,7 @@ class RoSelectorDropdown extends React.Component {
     return <SearchableDropdown
       name="ro"
       label="Regional Office"
+      hideLabel={this.props.hideLabel}
       options={this.regionalOfficeOptions()}
       staticOptions={this.props.staticOptions}
       onChange={this.props.onChange}
@@ -60,7 +61,8 @@ RoSelectorDropdown.propTypes = {
   onChange: PropTypes.func,
   value: PropTypes.object,
   placeholder: PropTypes.string,
-  staticOptions: PropTypes.array
+  staticOptions: PropTypes.array,
+  hideLabel: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({

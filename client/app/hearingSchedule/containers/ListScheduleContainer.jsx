@@ -1,9 +1,15 @@
 import React from 'react';
+import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import ListSchedule from '../components/ListSchedule';
 import { hearingSchedStyling } from '../components/ListScheduleDateSearch';
-import { onViewStartDateChange, onViewEndDateChange, onReceiveHearingSchedule } from '../actions';
+import {
+  onViewStartDateChange,
+  onViewEndDateChange,
+  onReceiveHearingSchedule,
+  onSelectedHearingDayChange
+} from '../actions';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -12,6 +18,8 @@ import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import QueueCaseSearchBar from '../../queue/SearchBar';
+import Alert from "../../components/Alert";
+import HearingDayAddModal from '../components/HearingDayAddModal'
 
 const dateFormatString = 'YYYY-MM-DD';
 
@@ -24,8 +32,15 @@ export class ListScheduleContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      dateRangeKey: `${props.startDate}->${props.endDate}`
+      dateRangeKey: `${props.startDate}->${props.endDate}`,
+      modalOpen: false,
+      showModalAlert: false
     };
+  }
+
+  componentDidMount = () => {
+    this.props.onSelectedHearingDayChange('');
+    this.setState({showModalAlert: false})
   }
 
   loadHearingSchedule = () => {
@@ -48,15 +63,44 @@ export class ListScheduleContainer extends React.Component {
     this.loadHearingSchedule()
   ]);
 
+  openModal = () => {
+    this.setState({modalOpen: true})
+    this.props.onSelectedHearingDayChange('');
+  }
+
+  closeModal = () => {
+    this.setState({modalOpen: false})
+    this.setState({showModalAlert: true})
+  }
+
+  cancelModal = () => {
+    this.setState({modalOpen: false})
+  }
+
+  getAlertTitle = () => {
+    return `You have successfully added Hearing Day ${formatDateStr(this.props.selectedHearingDay)} `
+  };
+
+  getAlertMessage = () => {
+    return <p>To add Veterans to this date, click Schedule Veterans</p>;
+  };
+
+  showAlert = () => {
+    return this.state.showModalAlert;
+  }
+
   render() {
     return (
       <React.Fragment>
         <QueueCaseSearchBar />
+        {this.showAlert() && <Alert type="success" title={this.getAlertTitle()} scrollOnAlert={false}>
+          {this.getAlertMessage()}
+        </Alert>}
         <AppSegment filledBackground>
           <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
           {this.props.userRoleBuild &&
             <span className="cf-push-right">
-              <Link button="secondary" to="/schedule/build">Build schedule</Link>
+              <Link button="secondary" to="/schedule/build">Build Schedule</Link>
             </span>
           }{this.props.userRoleAssign &&
             <span className="cf-push-right"{...actionButtonsStyling} >
@@ -66,7 +110,13 @@ export class ListScheduleContainer extends React.Component {
           <div className="cf-help-divider" {...hearingSchedStyling} ></div>
           <ListSchedule
             hearingSchedule={this.props.hearingSchedule}
-            onApply={this.createHearingPromise} />
+            onApply={this.createHearingPromise}
+            openModal={this.openModal} />
+          {this.state.modalOpen &&
+            <HearingDayAddModal
+            closeModal={this.closeModal}
+            cancelModal={this.cancelModal} />
+          }
         </AppSegment>
       </React.Fragment>
     );
@@ -76,13 +126,15 @@ export class ListScheduleContainer extends React.Component {
 const mapStateToProps = (state) => ({
   hearingSchedule: state.hearingSchedule.hearingSchedule,
   startDate: state.hearingSchedule.viewStartDate,
-  endDate: state.hearingSchedule.viewEndDate
+  endDate: state.hearingSchedule.viewEndDate,
+  selectedHearingDay: state.hearingSchedule.selectedHearingDay
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onViewStartDateChange,
   onViewEndDateChange,
-  onReceiveHearingSchedule
+  onReceiveHearingSchedule,
+  onSelectedHearingDayChange
 }, dispatch);
 
 ListScheduleContainer.propTypes = {
@@ -90,4 +142,4 @@ ListScheduleContainer.propTypes = {
   userRoleBuild: PropTypes.bool
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ListScheduleContainer);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ListScheduleContainer));
