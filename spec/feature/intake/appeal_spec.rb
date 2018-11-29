@@ -342,7 +342,7 @@ RSpec.feature "Appeal Intake" do
       promulgation_date: DecisionReview.ama_activation_date - 5.days,
       profile_date: DecisionReview.ama_activation_date - 11.days,
       issues: [
-        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
+        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
       ]
     )
 

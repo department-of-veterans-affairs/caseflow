@@ -59,25 +59,25 @@ class Generators::Rating
     def bgs_rating_issues_data(attrs)
       return nil unless attrs[:issues]
 
-      issue_data = attrs[:issues].map do |issue_data|
+      issue_data = attrs[:issues].map do |issue|
         {
-          rba_issue_id: issue_data[:reference_id] || generate_external_id,
-          decn_txt: issue_data[:decision_text],
+          rba_issue_id: issue[:reference_id] || generate_external_id,
+          decn_txt: issue[:decision_text],
           rba_issue_contentions: {
-            prfil_dt: issue_data[:profile_date],
-            cntntn_id: issue_data[:contention_reference_id]
+            prfil_dt: issue[:profile_date],
+            cntntn_id: issue[:contention_reference_id]
           }
         }
       end
 
       # BGS returns the data not as an array if there is only one issue
-      issue_data.length == 1 ? issue_data.first : issue_data
+      (issue_data.length == 1) ? issue_data.first : issue_data
     end
 
     def bgs_associated_claims_data(attrs)
       return nil unless attrs[:associated_claims]
 
-      attrs[:associated_claims].length == 1 ? attrs[:associated_claims].first : attrs[:associated_claims]
+      (attrs[:associated_claims].length == 1) ? attrs[:associated_claims].first : attrs[:associated_claims]
     end
 
     def bgs_rating_profile_data(attrs)

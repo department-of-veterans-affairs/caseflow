@@ -13,7 +13,7 @@ describe RatingIssue do
   context ".deserialize" do
     subject { RatingIssue.deserialize(rating_issue.serialize) }
 
-    let(:rating_issue) {
+    let(:rating_issue) do
       RatingIssue.new(
         reference_id: "NBA",
         participant_id: "123",
@@ -23,7 +23,7 @@ describe RatingIssue do
         associated_end_products: [],
         rba_contentions_data: [{}]
       )
-    }
+    end
 
     it { is_expected.to be_a(RatingIssue) }
 

@@ -12,7 +12,7 @@ describe Rating do
 
   let(:promulgation_date) { receipt_date - 30 }
   let(:profile_date) { receipt_date - 40 }
-  let(:associated_claims) {[]}
+  let(:associated_claims) { [] }
 
   let(:rating) do
     Generators::Rating.build(
@@ -58,13 +58,13 @@ describe Rating do
   end
 
   context "#associated_end_products" do
-    subject {rating.associated_end_products}
-    
+    subject { rating.associated_end_products }
+
     context "when mutliple associated eps exist" do
       let(:associated_claims) do
         [
-          {clm_id: "abc123", bnft_clm_tc: "040SCR"},
-          {clm_id: "dcf345", bnft_clm_tc: "030HLRNR"}
+          { clm_id: "abc123", bnft_clm_tc: "040SCR" },
+          { clm_id: "dcf345", bnft_clm_tc: "030HLRNR" }
         ]
       end
       it do
@@ -77,7 +77,7 @@ describe Rating do
     context "when one ep exists" do
       let(:associated_claims) do
         [
-          {clm_id: "qwe123", bnft_clm_tc: "030HLRR"}
+          { clm_id: "qwe123", bnft_clm_tc: "030HLRR" }
         ]
       end
       it do
