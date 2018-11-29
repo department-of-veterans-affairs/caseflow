@@ -57,8 +57,12 @@ class HearingDay < ApplicationRecord
     def update_schedule(updated_hearings)
       updated_hearings.each do |hearing_hash|
         hearing_to_update = HearingDay.find_hearing_day(hearing_hash[:hearing_type], hearing_hash[:id])
-        hearing_hash.delete(:hearing_key)
-        HearingDay.update_hearing_day(hearing_to_update, hearing_hash)
+        update_hash = if hearing_to_update.is_a?(HearingDay)
+                        { judge: User.find_by_css_id_or_create_with_default_station_id(hearing_hash[:css_id]) }
+                      else
+                        { judge_id: hearing_hash[:judge_id] }
+                      end
+        HearingDay.update_hearing_day(hearing_to_update, update_hash)
       end
     end
 
