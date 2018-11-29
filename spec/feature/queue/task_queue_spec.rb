@@ -216,5 +216,9 @@ RSpec.feature "Task queue" do
       )
       expect(find("tbody").find_all("tr").length).to eq(assigned_count)
     end
+
+    it "shows queue switcher dropdown" do
+      expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
+    end
   end
 end

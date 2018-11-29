@@ -22,9 +22,7 @@ class Generators::EndProduct
       attrs = default_attrs.merge(attrs)
       attrs[:bgs_attrs] = default_attrs[:bgs_attrs].merge(attrs[:bgs_attrs])
 
-      Fakes::BGSService.end_product_records ||= {}
-      Fakes::BGSService.end_product_records[attrs[:veteran_file_number]] ||= []
-      Fakes::BGSService.end_product_records[attrs[:veteran_file_number]] << attrs[:bgs_attrs]
+      Fakes::BGSService.store_end_product_record(attrs[:veteran_file_number], attrs[:bgs_attrs])
 
       unless Veteran.new(file_number: attrs[:veteran_file_number]).found?
         Generators::Veteran.build(file_number: attrs[:veteran_file_number])

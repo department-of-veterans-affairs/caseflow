@@ -53,11 +53,21 @@ RSpec.feature "Edit issues" do
       promulgation_date: DecisionReview.ama_activation_date - 5.days,
       profile_date: DecisionReview.ama_activation_date - 10.days,
       issues: [
-        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
-        { decision_text: "Issue before AMA Activation from RAMP",
-          associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" },
-          reference_id: "ramp_ref_id" }
+        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
       ]
+    )
+  end
+
+  let!(:rating_before_ama_from_ramp) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: DecisionReview.ama_activation_date - 5.days,
+      profile_date: DecisionReview.ama_activation_date - 11.days,
+      issues: [
+        { decision_text: "Issue before AMA Activation from RAMP",
+          reference_id: "ramp_ref_id" }
+      ],
+      associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
     )
   end
 
@@ -72,6 +82,7 @@ RSpec.feature "Edit issues" do
              veteran_file_number: veteran.file_number,
              receipt_date: receipt_date,
              docket_type: "evidence_submission",
+             veteran_is_not_claimant: false,
              legacy_opt_in_approved: false).tap(&:create_tasks_on_intake_success!)
     end
 
@@ -191,7 +202,8 @@ RSpec.feature "Edit issues" do
         receipt_date: receipt_date,
         informal_conference: false,
         same_office: false,
-        benefit_type: "compensation"
+        benefit_type: "compensation",
+        veteran_is_not_claimant: true
       )
     end
 
@@ -303,7 +315,7 @@ RSpec.feature "Edit issues" do
       let!(:eligible_ri_before_ama) do
         RequestIssue.create!(
           rating_issue_reference_id: "ramp_ref_id",
-          rating_issue_profile_date: rating_before_ama.profile_date,
+          rating_issue_profile_date: rating_before_ama_from_ramp.profile_date,
           review_request: higher_level_review,
           description: "Issue before AMA Activation from RAMP",
           contention_reference_id: "123456",
@@ -782,7 +794,8 @@ RSpec.feature "Edit issues" do
         veteran_file_number: veteran.file_number,
         receipt_date: receipt_date,
         benefit_type: "compensation",
-        is_dta_error: is_dta_error
+        is_dta_error: is_dta_error,
+        veteran_is_not_claimant: true
       )
     end
 

@@ -3,7 +3,7 @@ class DecisionReviewIntake < Intake
     super.merge(
       receipt_date: detail.receipt_date,
       claimant: detail.claimant_participant_id,
-      claimant_not_veteran: detail.claimant_not_veteran,
+      veteran_is_not_claimant: detail.veteran_is_not_claimant,
       payeeCode: detail.payee_code,
       legacy_opt_in_approved: detail.legacy_opt_in_approved,
       legacyAppeals: detail.serialized_legacy_appeals,
