@@ -59,6 +59,7 @@ const sectionNavigationListStyling = css({
     marginBottom: '1rem',
     '& > li': {
       padding: '0.75rem 0.75rem',
+      fontSize: '1.5rem',
       flexGrow: 1,
       '&:first-child': {
         borderRadius: '5px 0 0 5px'
