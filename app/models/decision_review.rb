@@ -139,7 +139,8 @@ class DecisionReview < ApplicationRecord
   end
 
   def ratings_cache_key
-    "#{veteran_file_number}-ratings"
+    # change timestamp in order to clear old cache
+    "#{veteran_file_number}-ratings-11282018"
   end
 
   def formatted_receipt_date
