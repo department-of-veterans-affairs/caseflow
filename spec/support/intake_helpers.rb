@@ -70,8 +70,24 @@ module IntakeHelpers
     end
   end
 
+  def find_intake_issue_by_text(text)
+    find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue"]').each do |node|
+      if node.text =~ /#{text}/
+        return node
+      end
+    end
+  end
+
+  def find_intake_issue_number_by_text(text)
+    find_intake_issue_by_text(text).find(".issue-num").text.delete(".")
+  end
+
   def expect_ineligible_issue(number)
     expect(find_intake_issue_by_number(number)).to have_css(".not-eligible")
+  end
+
+  def expect_eligible_issue(number)
+    expect(find_intake_issue_by_number(number)).to_not have_css(".not-eligible")
   end
 
   def setup_legacy_opt_in_appeals(veteran_file_number)

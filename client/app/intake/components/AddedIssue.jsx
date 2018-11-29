@@ -14,9 +14,12 @@ class AddedIssue extends React.PureComponent {
       return true;
     }
 
-    let existingRequestIssue = _.some(requestIssues, { reference_id: issue.referenceId });
+    let existingRequestIssue = _.filter(requestIssues, { reference_id: issue.referenceId })[0];
 
-    if (existingRequestIssue && !existingRequestIssue.ineligibleReason) {
+    // leaving this here to make it easier to debug in future.
+    // console.log('existingRequestIssue', existingRequestIssue);
+
+    if (existingRequestIssue && !existingRequestIssue.ineligible_reason) {
       return false;
     }
 
@@ -25,6 +28,8 @@ class AddedIssue extends React.PureComponent {
 
   getEligibility() {
     let { issue, formType } = this.props;
+
+    // console.log('getEligibility', formType, issue);
 
     let errorMsg = '';
     const cssKlassesWithError = ['issue-desc', 'not-eligible'];
@@ -60,6 +65,8 @@ class AddedIssue extends React.PureComponent {
       errorMsg: '',
       cssKlasses: ['issue-desc']
     };
+
+    // console.log('needsEligibilityCheck', issue, this.needsEligibilityCheck());
 
     if (this.needsEligibilityCheck()) {
       let eligibilityCheck = this.getEligibility();
