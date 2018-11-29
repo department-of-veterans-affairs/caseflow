@@ -92,9 +92,20 @@ const spanStyle = css({
   backgroundColor: 'white'
 });
 
+const positionAbsolute = css({
+  position: 'absolute',
+  margin: '0  0 0'
+});
+
+const leftMargin = css({
+  marginLeft: '40px'
+});
+
 const titleStyle = css({
   fontWeight: 'bold',
-  textAlign: 'center'
+  textAlign: 'center',
+  fontSize: '12px',
+  marginLeft: '5px'
 });
 
 const divStyle = css({
@@ -113,10 +124,14 @@ const editButton = css({
   float: 'right'
 });
 
-const caseInfo = css({
+const thStyle = css({
+  border: 'none',
   backgroundColor: '#F8F8F8'
 });
 
+const caseInfo = css({
+  backgroundColor: '#F8F8F8'
+});
 
 const snapshotChildResponsiveWrapFixStyling = css({
   '@media(max-width: 1200px)': {
@@ -323,60 +338,53 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     console.log('--test--');
     console.log(appeal);
     console.log(this.props);
+    console.log(this.props.children);
 
     return <CaseSnapshotScaffolding className="usa-grid" {...snapshotParentContainerStyling}>
-      {/*<div className="usa-grid" {...snapshotParentContainerStyling}>*/}
 
-      {
-        /*<div {...newStyling}>
-        <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
-        <TextField text={appeal.docketNumber} value={appeal.docketNumber} readOnly={true} />
-        <dd><DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}</dd>
-      </div>*/
-      }
+    <th {...thStyle}>
+        <React.Fragment>
+          <span {...titleStyle}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL.toUpperCase()}</span><br/>
+          <span {...spanStyle} {...positionAbsolute}>
+            <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}
+          </span>
+        </React.Fragment>
+      </th>
 
-      <React.Fragment>
-        <span {...titleStyle}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL.toUpperCase()}</span>
-        <span {...spanStyle}>
-          <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}
-        </span>
-      </React.Fragment>
+      <th {...thStyle} {...leftMargin}>
+        <React.Fragment>
+          <span {...titleStyle}>{'VETERAN DOCUMENTS'}</span><br/>
+          <span>
+            <ReaderLink appealId={appeal.id} appeal={appeal} redirectUrl={window.location.pathname} longMessage />
+          </span>
+        </React.Fragment>
+      </th>
 
-      <React.Fragment>
-        <span {...titleStyle}>{'VETERAN DOCUMENTS'}</span>
-        <span>
-          <ReaderLink appealId={appeal.id} appeal={appeal} redirectUrl={window.location.pathname} longMessage />
-        </span>
-      </React.Fragment>
+      <th {...thStyle}>
+        <React.Fragment>
+            <span {...titleStyle}>{'TYPE'}</span><br/>
+            <span className={appeal.caseType == 'CAVC' ? redType : null}>{appeal.caseType}</span>
+        </React.Fragment>
+      </th>
 
-      <React.Fragment>
-        <span {...titleStyle}>{'TYPE'}</span>
-        <span {...redType}>{'CAVC'}</span>
-        <span className={appeal.caseType == 'CAVC' ? redType : null}>{appeal.caseType}</span>
-      </React.Fragment>
+      <th className={primaryTask && primaryTask.documentId ? null : displayNone}  {...thStyle}>
+        <React.Fragment>
+          <span {...divStyle} classname>
+           <span {...titleStyle}>{'DECISION DOCUMENT ID'}</span><br/>
+           <CopyTextButton text={primaryTask ? primaryTask.documentId : null} />
+          </span>
+        </React.Fragment>
+      </th>
 
-      <React.Fragment>
-        <span {...divStyle} className={primaryTask && primaryTask.documentId ? null : displayNone}>
-         <span {...titleStyle}>{'DECISION DOCUMENT ID'}</span>
-         <CopyTextButton text={primaryTask ? primaryTask.documentId : null} />
-        </span>
-      </React.Fragment>
-
-      <React.Fragment>
-        <Link onClick={this.props.toggleVeteranCaseList}>
-          { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
-        </Link>
-      </React.Fragment>
-
-      {/*
-        <span>
+      <th {...thStyle}>
+        <React.Fragment>
+          <br/>
           <Link onClick={this.props.toggleVeteranCaseList}>
             { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
           </Link>
-        </span>*/
-      }
+        </React.Fragment>
+      </th>
 
-    {/* </div> */}
     </CaseSnapshotScaffolding>;
   };
 }
@@ -399,6 +407,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 
 export default connect(mapStateToProps, mapDispatchToProps)(CaseSnapshot);
 
-const CaseSnapshotScaffolding = (props) => <div {...caseInfo}>
-  {props.children.map((child, i) => child && <span key={i}>{child}</span>)}
-</div>;
+const CaseSnapshotScaffolding = (props) => <table {...caseInfo}>
+  {props.children.map((child, i) => child && <span {...caseInfo} key={i}>{child}</span>)}
+</table>;
