@@ -57,7 +57,6 @@ export type UiState = {
   userIsVsoEmployee: boolean,
   feedbackUrl: string,
   veteranCaseListIsVisible: boolean,
-  organizationIds: Array<number>,
   organizations: Array<Object>,
   canEditAod: boolean
 };
