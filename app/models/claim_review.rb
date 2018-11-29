@@ -50,22 +50,60 @@ class ClaimReview < DecisionReview
     end
 
     def find_all_by_file_number(file_number)
-      # byebug
       claim_reviews = HigherLevelReview.where(veteran_file_number: file_number) + SupplementalClaim.where(veteran_file_number: file_number)
       #.all?
       # [1] + [3, 4] => [1, 3, 4]
       #.order?
       claim_reviews.map(&:search_table_ui_hash)
+
+
+      # claim_reviews.map{ |review| {
+
+      #   if review.is_a?(HigherLevelReview)
+      #     review_type = "higher_level_review"
+      #   elsif review.is_a?(SupplementalClaim)
+      #     review_type = "supplemental_claim"
+      #   end
+
+      #   {
+      #     # EP Code(s)
+      #     ep_codes: review.ep_codes,
+      #     # Appellant name
+      #     claimant_names: review.claimants.map(&:name),
+      #     # Review type
+      #     review_type: review_type,
+      #     # Benefit type
+      #     benefit_type: review.benefit_type,
+      #     # EP Status
+      #     ep_status: review.end_product_establishments.map(&:synced_status),
+      #     # Decision date
+      #     decision_date: review.establishment_processed_at
+      #   }
+      # }
     end
   end
 
   def search_table_ui_hash
     {
+      # EP Code(s)
       ep_codes: ep_codes,
+      # Appellant name
       claimant_names: claimants.map(&:name),
-      ep_status_code: "",
-      decision_date: ""
+      # Review type
+      review_type: type_of_claim_review(self.class),
+      # EP Status
+      ep_status: end_product_establishments.map(&:synced_status),
+      # Decision date
+      decision_date: establishment_processed_at
     }
+  end
+
+  def type_of_claim_review(review_class)
+    if review_class == HigherLevelReview
+      return "higher_level_review"
+    elsif review_class == SupplementalClaim
+      return "supplemental_claim"
+    end
   end
 
   def issue_code(*)
