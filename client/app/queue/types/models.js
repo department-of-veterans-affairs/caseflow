@@ -147,7 +147,13 @@ export type BasicAppeal = {
   veteranFileNumber: string,
   isPaperCase: ?boolean,
   tasks?: Array<Task>,
-  issueCount: number
+  issueCount: number,
+  sanitizedHearingRequestType?: string,
+  regionalOffice?: ?{
+    key: ?string,
+    city: ?string,
+    state: ?string
+  }
 };
 
 export type BasicAppeals = { [string]: BasicAppeal };
