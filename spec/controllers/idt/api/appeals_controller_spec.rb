@@ -124,7 +124,13 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
                  bfdloout: 2.days.ago.to_date)
         end
         let(:vacols_case2) do
-          create(:case, :status_active, :assigned, user: user, assigner: assigner2, document_id: "5678", bfdloout: 4.days.ago.to_date)
+          create(:case, 
+                 :status_active, 
+                 :assigned, 
+                 user: user, 
+                 assigner: assigner2, 
+                 document_id: "5678", 
+                 bfdloout: 4.days.ago.to_date)
         end
 
         let!(:appeals) do
