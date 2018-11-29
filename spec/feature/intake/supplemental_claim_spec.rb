@@ -8,6 +8,7 @@ RSpec.feature "Supplemental Claim Intake" do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
+    FeatureToggle.disable!(:intake_enable_add_issues_page)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 26))
@@ -359,12 +360,13 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  def start_supplemental_claim(test_veteran, is_comp: true)
+  def start_supplemental_claim(test_veteran, is_comp: true, veteran_is_not_claimant: false)
     supplemental_claim = SupplementalClaim.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
       benefit_type: is_comp ? "compensation" : "education",
-      legacy_opt_in_approved: false
+      legacy_opt_in_approved: false,
+      veteran_is_not_claimant: veteran_is_not_claimant
     )
 
     intake = SupplementalClaimIntake.create!(
