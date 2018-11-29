@@ -208,7 +208,7 @@ class RequestIssue < ApplicationRecord
   def check_for_legacy_appeal_not_eligible!
     return unless eligible?
     return unless review_request.serialized_legacy_appeals
-
+binding.pry
     legacy_appeal = review_request.serialized_legacy_appeals.select {|appeal| appeal[:vacols_id] == vacols_id}
 
     if vacols_id && !legacy_appeal.first[:eligible_for_soc_opt_in]

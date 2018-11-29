@@ -290,6 +290,8 @@ describe RequestIssue do
       )
     end
 
+    
+
     it "flags nonrating request issue as untimely when decision date is older than receipt_date" do
       nonrating_request_issue.decision_date = receipt_date - 400
       nonrating_request_issue.validate_eligibility!
