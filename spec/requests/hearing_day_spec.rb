@@ -196,7 +196,8 @@ RSpec.describe "Hearing Schedule", type: :request do
       }
       get "/hearings/hearing_day", headers: headers
       expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body)["hearings"].size).to be(2)
+      # We don't pull in VACOLS hearings later than 1/1
+      expect(JSON.parse(response.body)["hearings"].size).to be(1)
       expect(JSON.parse(response.body)["tbhearings"].size).to be(0)
     end
   end
