@@ -93,6 +93,17 @@ class Task < ApplicationRecord
     [self]
   end
 
+  def update_status(new_status)
+    return unless new_status
+
+    case new_status
+    when Constants.TASK_STATUSES.completed
+      mark_as_complete!
+    else
+      update!(status: new_status)
+    end
+  end
+
   def legacy?
     appeal_type == LegacyAppeal.name
   end
@@ -205,6 +216,17 @@ class Task < ApplicationRecord
       selected: root_task.children.find { |task| task.type == JudgeTask.name }.assigned_to,
       options: users_to_options(Judge.list_all),
       type: JudgeTask.name
+    }
+  end
+
+  def timeline_title
+    "#{type} completed"
+  end
+
+  def timeline_details
+    {
+      title: timeline_title,
+      date: completed_at
     }
   end
 

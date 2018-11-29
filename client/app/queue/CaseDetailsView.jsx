@@ -17,8 +17,9 @@ import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
-import { resetErrorMessages, resetSuccessMessages } from './uiReducer/uiActions';
-import CaseTimeline from './CaseTimeline';
+import { resetErrorMessages, resetSuccessMessages, setHearingDay } from './uiReducer/uiActions';
+import { CaseTimeline } from './CaseTimeline';
+import { getQueryParams } from '../util/QueryParamsUtil';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
@@ -39,6 +40,16 @@ class CaseDetailsView extends React.PureComponent {
   componentDidMount = () => {
     window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
     this.props.resetErrorMessages();
+
+    const { hearingDate, regionalOffice, hearingTime } = getQueryParams(window.location.search);
+
+    if (hearingDate && regionalOffice) {
+      this.props.setHearingDay({
+        hearingDate,
+        hearingTime: decodeURIComponent(hearingTime),
+        regionalOffice
+      });
+    }
   }
 
   render = () => {
@@ -72,6 +83,7 @@ class CaseDetailsView extends React.PureComponent {
           title="Issues"
           isLegacyAppeal={appeal.isLegacyAppeal}
           issues={appeal.issues}
+          decisionIssues={appeal.decisionIssues}
         />
         <PowerOfAttorneyDetail title="Power of Attorney" appealId={appealId} />
         {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) &&
@@ -105,7 +117,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     resetErrorMessages,
-    resetSuccessMessages
+    resetSuccessMessages,
+    setHearingDay
   }, dispatch)
 );
 

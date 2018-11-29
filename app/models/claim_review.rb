@@ -9,6 +9,7 @@ class ClaimReview < DecisionReview
 
   with_options if: :saving_review do
     validates :receipt_date, :benefit_type, presence: { message: "blank" }
+    validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
     validates_associated :claimants
   end
 

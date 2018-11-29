@@ -10,7 +10,9 @@ class Appeal < DecisionReview
 
   with_options on: :intake_review do
     validates :receipt_date, :docket_type, presence: { message: "blank" }
+    validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
     validates :legacy_opt_in_approved, inclusion: { in: [true, false], message: "blank" }, if: :legacy_opt_in_enabled?
+    validates_associated :claimants
   end
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
@@ -82,7 +84,9 @@ class Appeal < DecisionReview
   end
 
   def eligible_request_issues
-    request_issues.select(&:eligible?)
+    # It's possible that two users create issues around the same time and the sequencer gets thrown off
+    # (https://stackoverflow.com/questions/5818463/rails-created-at-timestamp-order-disagrees-with-id-order)
+    request_issues.select(&:eligible?).sort_by(&:id)
   end
 
   def issues
@@ -210,6 +214,20 @@ class Appeal < DecisionReview
 
   def create_tasks_on_intake_success!
     RootTask.create_root_and_sub_tasks!(self)
+  end
+
+  def timeline
+    [
+      {
+        title: decision_date ? COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
+        date: decision_date
+      },
+      tasks.where(status: Constants.TASK_STATUSES.completed).order("completed_at DESC").map(&:timeline_details),
+      {
+        title: receipt_date ? COPY::CASE_TIMELINE_NOD_RECEIVED : COPY::CASE_TIMELINE_NOD_PENDING,
+        date: receipt_date
+      }
+    ].flatten
   end
 
   private
