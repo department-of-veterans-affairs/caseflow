@@ -111,13 +111,14 @@ class ListSchedule extends React.Component {
   getHearingScheduleRows = () => {
     const { hearingSchedule } = this.props;
 
-    return _.map(hearingSchedule, (hearingDay) => ({
-      hearingDate: <Link to={`/schedule/docket/${hearingDay.id}`}>{formatDateStr(hearingDay.hearingDate)}</Link>,
-      hearingType: hearingDay.hearingType,
-      regionalOffice: hearingDay.regionalOffice,
-      room: hearingDay.roomInfo,
-      vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName)
-    }));
+    return _.orderBy(hearingSchedule, (hearingDay) => hearingDay.hearingDate, 'asc').
+      map((hearingDay) => ({
+        hearingDate: <Link to={`/schedule/docket/${hearingDay.id}`}>{formatDateStr(hearingDay.hearingDate)}</Link>,
+        hearingType: hearingDay.hearingType,
+        regionalOffice: hearingDay.regionalOffice,
+        room: hearingDay.roomInfo,
+        vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName)
+      }));
   };
 
   getHearingScheduleColumns = (hearingScheduleRows) => {
@@ -288,7 +289,8 @@ const mapStateToProps = (state) => ({
   filterLocationIsOpen: state.hearingSchedule.filterLocationIsOpen,
   filterVljIsOpen: state.hearingSchedule.filterVljIsOpen,
   startDate: state.hearingSchedule.viewStartDate,
-  endDate: state.hearingSchedule.viewEndDate
+  endDate: state.hearingSchedule.viewEndDate,
+  hearingSchedule: state.hearingSchedule.hearingSchedule
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

@@ -138,11 +138,6 @@ export const setUserCssId = (cssId: ?string) => ({
   payload: { cssId }
 });
 
-export const setOrganizationIds = (organizationIds: Array<number>) => ({
-  type: ACTIONS.SET_ORGANIZATION_IDS,
-  payload: { organizationIds }
-});
-
 export const setOrganizations = (organizations: Array<Object>) => ({
   type: ACTIONS.SET_ORGANIZATIONS,
   payload: { organizations }
@@ -194,4 +189,9 @@ export const showVeteranCaseList = () => ({
 
 export const hideVeteranCaseList = () => ({
   type: ACTIONS.HIDE_VETERAN_CASE_LIST
+});
+
+export const setHearingDay = (hearingDay: Object) => ({
+  type: ACTIONS.SET_HEARING_DAY,
+  payload: hearingDay
 });
