@@ -9,7 +9,7 @@ import SelectIssueDispositionDropdown from './components/SelectIssueDispositionD
 import Modal from '../components/Modal';
 import TextareaField from '../components/TextareaField';
 import SearchableDropdown from '../components/SearchableDropdown';
-import ContestedIssues from './components/ContestedIssues';
+import ContestedIssues, { contestedIssueStyling } from './components/ContestedIssues';
 import COPY from '../../COPY.json';
 
 import {
@@ -33,7 +33,9 @@ class SelectDispositionsView extends React.PureComponent {
 
     this.state = {
       openRequestIssueIds: null,
-      decisionIssue: null
+      decisionIssue: null,
+      editingExistingIssue: false,
+      highlightModal: false
     };
   }
 
@@ -80,28 +82,56 @@ class SelectDispositionsView extends React.PureComponent {
     return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
   }
 
+  validateForm = () => {
+    const { appeal: { issues, decisionIssues } } = this.props;
+
+    return issues.every((issue) => {
+      return decisionIssues.some((decisionIssue) => decisionIssue.request_issue_ids.includes(issue.id));
+    });
+  }
+
   openDecisionHandler = (requestIssueIds, decisionIssue) => () => {
+    const benefitType = _.find(this.props.appeal.issues, (issue) => requestIssueIds.includes(issue.id)).program;
+
     const newDecisionIssue = {
       id: `temporary-id-${uuid.v4()}`,
       description: '',
       disposition: null,
+      benefit_type: benefitType,
       request_issue_ids: requestIssueIds
     };
 
     this.setState({
       openRequestIssueIds: requestIssueIds,
-      decisionIssue: decisionIssue || newDecisionIssue
+      decisionIssue: decisionIssue || newDecisionIssue,
+      editingExistingIssue: Boolean(decisionIssue)
     });
   }
 
   handleModalClose = () => {
     this.setState({
       openRequestIssueIds: null,
-      decisionIssue: null
+      decisionIssue: null,
+      editingExistingIssue: false,
+      highlightModal: false
     });
   }
 
+  validate = () => {
+    const { decisionIssue } = this.state;
+
+    return decisionIssue.benefit_type && decisionIssue.disposition && decisionIssue.description;
+  }
+
   saveDecision = () => {
+    if (!this.validate()) {
+      this.setState({
+        highlightModal: true
+      });
+
+      return;
+    }
+
     let decisionIssueFound = false;
     let newDecisionIssues = this.props.appeal.decisionIssues.map((decisionIssue) => {
       if (decisionIssue.id === this.state.decisionIssue.id) {
@@ -125,6 +155,18 @@ class SelectDispositionsView extends React.PureComponent {
     this.handleModalClose();
   }
 
+  deleteDecision = () => {
+    const remainingDecisionIssues = this.props.appeal.decisionIssues.filter((decisionIssue) => {
+      return decisionIssue.id !== this.state.decisionIssue.id;
+    });
+
+    this.props.editStagedAppeal(
+      this.props.appeal.externalId, { decisionIssues: remainingDecisionIssues }
+    );
+
+    this.handleModalClose();
+  }
+
   selectedIssues = () => {
     if (!this.state.openRequestIssueIds) {
       return [];
@@ -136,8 +178,31 @@ class SelectDispositionsView extends React.PureComponent {
   }
 
   render = () => {
-    const { appeal } = this.props;
-    const issue = this.selectedIssues()[0];
+    const { appeal, highlight } = this.props;
+    const {
+      highlightModal,
+      decisionIssue,
+      openRequestIssueIds,
+      editingExistingIssue
+    } = this.state;
+
+    const modalButtons = [
+      { classNames: ['cf-modal-link', 'cf-btn-link'],
+        name: 'Close',
+        onClick: this.handleModalClose
+      },
+      { classNames: ['usa-button', 'usa-button-primary'],
+        name: 'Save',
+        onClick: this.saveDecision
+      }
+    ];
+
+    if (editingExistingIssue) {
+      modalButtons.push({ classNames: ['usa-button', 'usa-button-secondary'],
+        name: 'Delete decision',
+        onClick: this.deleteDecision
+      });
+    }
 
     return <React.Fragment>
       <ContestedIssues
@@ -145,46 +210,53 @@ class SelectDispositionsView extends React.PureComponent {
         requestIssues={appeal.issues}
         openDecisionHandler={this.openDecisionHandler}
         numbered
+        highlight={highlight}
       />
-      { this.state.openRequestIssueIds && <Modal
-        buttons = {[
-          { classNames: ['cf-modal-link', 'cf-btn-link'],
-            name: 'Close',
-            onClick: this.handleModalClose
-          },
-          { classNames: ['usa-button', 'usa-button-secondary'],
-            name: 'Proceed with action',
-            onClick: this.saveDecision
-          }
-        ]}
+      { openRequestIssueIds && <Modal
+        buttons = {modalButtons}
         closeHandler={this.handleModalClose}
-        title = "Add decision">
+        title = {`${editingExistingIssue ? 'Edit' : 'Add'} decision`}>
 
-        <h3>{COPY.DECISION_ISSUE_MODAL_TITLE}</h3>
-        <p>{COPY.DECISION_ISSUE_MODAL_SUB_TITLE}</p>
+        <div {...contestedIssueStyling}>
+          Contested Issue
+          <ul>
+            {
+              appeal.issues.map((issue) => <li>{issue.description}</li>)
+            }
+          </ul>
+        </div>
+
+        {!editingExistingIssue &&
+          <React.Fragment>
+            <h3>{COPY.DECISION_ISSUE_MODAL_TITLE}</h3>
+            <p>{COPY.DECISION_ISSUE_MODAL_SUB_TITLE}</p>
+          </React.Fragment>
+        }
 
         <h3>{COPY.DECISION_ISSUE_MODAL_DESCRIPTION}</h3>
         <TextareaField
+          errorMessage={highlightModal && !decisionIssue.description ? 'This field is required' : null}
           label={COPY.DECISION_ISSUE_MODAL_DESCRIPTION_EXAMPLE}
           name="Text Box"
           onChange={(issueDescription) => {
             this.setState({
               decisionIssue: {
-                ...this.state.decisionIssue,
+                ...decisionIssue,
                 description: issueDescription
               }
             });
           }}
-          value={this.state.decisionIssue.description}
+          value={decisionIssue.description}
         />
         <h3>{COPY.DECISION_ISSUE_MODAL_DISPOSITION}</h3>
         <SelectIssueDispositionDropdown
-          issue={this.state.decisionIssue}
+          highlight={highlightModal}
+          issue={decisionIssue}
           appeal={appeal}
           updateIssue={({ disposition }) => {
             this.setState({
               decisionIssue: {
-                ...this.state.decisionIssue,
+                ...decisionIssue,
                 disposition
               }
             });
@@ -194,11 +266,17 @@ class SelectDispositionsView extends React.PureComponent {
         <br />
         <h3>{COPY.DECISION_ISSUE_MODAL_BENEFIT_TYPE}</h3>
         <SearchableDropdown
-          value={issue.benefitType}
+          name="Benefit type dropdown"
+          value={decisionIssue.benefit_type}
           options={_.map(BENEFIT_TYPES, (value, key) => ({ label: value,
             value: key }))}
+          onChange={(benefitType) => this.setState({
+            decisionIssue: {
+              ...decisionIssue,
+              benefit_type: benefitType
+            }
+          })}
         />
-
       </Modal>}
     </React.Fragment>;
   };
@@ -213,6 +291,7 @@ SelectDispositionsView.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
   success: state.ui.messages.success,
+  highlight: state.ui.highlightFormItems,
   ..._.pick(state.ui, 'userRole')
 });
 

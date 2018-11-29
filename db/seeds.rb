@@ -424,8 +424,8 @@ class SeedDB
     atty_task = AttorneyTask.create_many_from_params(atty_task_params, judge).first
 
     # Happens in CaseReviewConcern.update_task_and_issue_dispositions()
-    atty_task.mark_as_complete!
-    judge_task.mark_as_complete!
+    # atty_task.mark_as_complete!
+    # judge_task.mark_as_complete!
 
     qr_org_task = QualityReviewTask.create_from_root_task(root_task)
 
