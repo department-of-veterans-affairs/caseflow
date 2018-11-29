@@ -11,6 +11,13 @@ export const resetErrorMessages = () => ({
   type: ACTIONS.RESET_ERROR_MESSAGES
 });
 
+export const setCanEditAod = (canEditAod: Boolean) => ({
+  type: ACTIONS.SET_CAN_EDIT_AOD,
+  payload: {
+    canEditAod
+  }
+});
+
 export const showErrorMessage = (errorMessage: UiStateMessage) => ({
   type: ACTIONS.SHOW_ERROR_MESSAGE,
   payload: {
@@ -131,6 +138,16 @@ export const setUserCssId = (cssId: ?string) => ({
   payload: { cssId }
 });
 
+export const setOrganizations = (organizations: Array<Object>) => ({
+  type: ACTIONS.SET_ORGANIZATIONS,
+  payload: { organizations }
+});
+
+export const setActiveOrganizationId = (activeOrganizationId: number) => ({
+  type: ACTIONS.SET_ACTIVE_ORGANIZATION_ID,
+  payload: { activeOrganizationId }
+});
+
 export const setUserId = (userId: number) => ({
   type: ACTIONS.SET_USER_ID,
   payload: { userId }
@@ -172,4 +189,9 @@ export const showVeteranCaseList = () => ({
 
 export const hideVeteranCaseList = () => ({
   type: ACTIONS.HIDE_VETERAN_CASE_LIST
+});
+
+export const setHearingDay = (hearingDay: Object) => ({
+  type: ACTIONS.SET_HEARING_DAY,
+  payload: hearingDay
 });

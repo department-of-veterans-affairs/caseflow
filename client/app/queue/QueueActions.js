@@ -2,11 +2,13 @@
 // @flow
 import { associateTasksWithAppeals,
   prepareAllTasksForStore,
-  extractAppealsAndAmaTasks } from './utils';
+  extractAppealsAndAmaTasks,
+  prepareTasksForStore } from './utils';
 import { ACTIONS } from './constants';
-import { hideErrorMessage } from './uiReducer/uiActions';
+import { hideErrorMessage, showErrorMessage, showSuccessMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
 import _ from 'lodash';
+import pluralize from 'pluralize';
 import type { Dispatch } from './types/state';
 import type {
   Task,
@@ -48,11 +50,10 @@ export const onReceiveTasks = (
   }
 });
 
-export const setTaskAttrs = (uniqueId: string, attributes: Object) => ({
-  type: ACTIONS.SET_TASK_ATTRS,
+export const onReceiveAmaTasks = (amaTasks: Array<Object>) => ({
+  type: ACTIONS.RECEIVE_AMA_TASKS,
   payload: {
-    uniqueId,
-    attributes
+    amaTasks: prepareTasksForStore(amaTasks)
   }
 });
 
@@ -318,7 +319,7 @@ export const initialAssignTasksToUser = ({
   let params, url;
 
   if (oldTask.appealType === 'Appeal') {
-    url = '/tasks';
+    url = '/tasks?role=Judge';
     params = {
       data: {
         tasks: [{
@@ -345,20 +346,22 @@ export const initialAssignTasksToUser = ({
   return ApiUtil.post(url, params).
     then((resp) => resp.body).
     then((resp) => {
-      const task = resp.tasks ? resp.tasks.data[0] : resp.task.data;
+      if (oldTask.appealType === 'Appeal') {
+        const amaTasks = resp.tasks.data;
 
-      const allTasks = prepareAllTasksForStore([task]);
-
-      dispatch(onReceiveTasks({
-        tasks: allTasks.tasks,
-        amaTasks: allTasks.amaTasks
-      }));
-      if (!oldTask.isLegacy) {
-        dispatch(setTaskAttrs(
-          oldTask.uniqueId,
-          { status: 'on_hold' }
+        dispatch(onReceiveAmaTasks(
+          amaTasks
         ));
+      } else {
+        const task = resp.task.data;
+        const allTasks = prepareAllTasksForStore([task]);
+
+        dispatch(onReceiveTasks({
+          tasks: allTasks.tasks,
+          amaTasks: allTasks.amaTasks
+        }));
       }
+
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
         taskId: oldTask.uniqueId,
@@ -375,7 +378,7 @@ export const reassignTasksToUser = ({
   let params, url;
 
   if (oldTask.appealType === 'Appeal') {
-    url = `/tasks/${oldTask.taskId}`;
+    url = `/tasks/${oldTask.taskId}?role=Judge`;
     params = {
       data: {
         task: {
@@ -400,14 +403,22 @@ export const reassignTasksToUser = ({
   return ApiUtil.patch(url, params).
     then((resp) => resp.body).
     then((resp) => {
-      const task = resp.tasks ? resp.tasks.data[0] : resp.task.data;
+      if (oldTask.appealType === 'Appeal') {
+        const amaTasks = resp.tasks.data;
 
-      const allTasks = prepareAllTasksForStore([task]);
+        dispatch(onReceiveAmaTasks(
+          amaTasks
+        ));
+      } else {
+        const task = resp.task.data;
+        const allTasks = prepareAllTasksForStore([task]);
 
-      dispatch(onReceiveTasks({
-        tasks: allTasks.tasks,
-        amaTasks: allTasks.amaTasks
-      }));
+        dispatch(onReceiveTasks({
+          tasks: allTasks.tasks,
+          amaTasks: allTasks.amaTasks
+        }));
+      }
+
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
         taskId: oldTask.uniqueId,
@@ -415,6 +426,65 @@ export const reassignTasksToUser = ({
       }));
     });
 }));
+
+const refreshLegacyTasks = (dispatch, userId) =>
+  ApiUtil.get(`/queue/${userId}`, { timeout: { response: 5 * 60 * 1000 } }).
+    then((response) =>
+      dispatch(onReceiveQueue({
+        amaTasks: {},
+        ...associateTasksWithAppeals(JSON.parse(response.text))
+      }))
+    );
+
+const setPendingDistribution = (distribution) => ({
+  type: ACTIONS.SET_PENDING_DISTRIBUTION,
+  payload: {
+    distribution
+  }
+});
+
+const distributionError = (dispatch, userId, error) => {
+  const firstError = error.response.body.errors[0];
+
+  dispatch(showErrorMessage(firstError));
+
+  if (firstError.error === 'unassigned_cases') {
+    dispatch(setPendingDistribution({ status: 'completed' }));
+    refreshLegacyTasks(dispatch, userId).then(() => dispatch(setPendingDistribution(null)));
+  } else {
+    dispatch(setPendingDistribution(null));
+  }
+};
+
+const receiveDistribution = (dispatch, userId, response) => {
+  const distribution = response.body.distribution;
+
+  dispatch(setPendingDistribution(distribution));
+
+  if (distribution.status === 'completed') {
+    const caseN = distribution.distributed_cases_count;
+
+    dispatch(showSuccessMessage({
+      title: 'Distribution Complete',
+      detail: `${caseN} new ${pluralize('case', caseN)} have been distributed from the docket.`
+    }));
+
+    refreshLegacyTasks(dispatch, userId).then(() => dispatch(setPendingDistribution(null)));
+  } else {
+    // Poll until the distribution completes or errors out.
+    ApiUtil.get(`/distributions/${distribution.id}`).
+      then((resp) => receiveDistribution(dispatch, userId, resp)).
+      catch((error) => distributionError(dispatch, userId, error));
+  }
+};
+
+export const requestDistribution = (userId: string) => (dispatch: Dispatch) => {
+  dispatch(setPendingDistribution({ status: 'pending' }));
+
+  ApiUtil.get('/distributions/new').
+    then((response) => receiveDistribution(dispatch, userId, response)).
+    catch((error) => distributionError(dispatch, userId, error));
+};
 
 const receiveAllAttorneys = (attorneys) => ({
   type: ACTIONS.RECEIVE_ALL_ATTORNEYS,
@@ -452,11 +522,6 @@ export const setSpecialIssues = (specialIssues: Object) => ({
   payload: {
     specialIssues
   }
-});
-
-export const setOrganizationId = (id: number) => ({
-  type: ACTIONS.SET_ORGANIZATION_ID,
-  payload: { id }
 });
 
 export const setAppealAod = (externalAppealId: string) => ({

@@ -6,8 +6,7 @@ import { bindActionCreators } from 'redux';
 import { AssignWidgetModal } from './components/AssignWidget';
 
 import {
-  tasksForAppealAssignedToAttorneySelector,
-  tasksForAppealAssignedToUserSelector
+  taskById
 } from './selectors';
 
 import {
@@ -19,7 +18,9 @@ import type { State } from './types/state';
 import type { Task } from './types/models';
 
 type Params = {|
-  appealId: number
+  appealId: number,
+  userId: string,
+  taskId: number
 |};
 
 type Props = Params & {|
@@ -37,7 +38,7 @@ class AssignToAttorneyModalView extends React.PureComponent<Props> {
   ) => {
     const previousAssigneeId = tasks[0].assignedTo.id.toString();
 
-    if (tasks[0].action === 'assign') {
+    if (tasks[0].label === 'assign') {
       return this.props.initialAssignTasksToUser({
         tasks,
         assigneeId,
@@ -53,7 +54,7 @@ class AssignToAttorneyModalView extends React.PureComponent<Props> {
   }
 
   render = () => {
-    const { task } = this.props;
+    const { task, userId } = this.props;
     const previousAssigneeId = task ? task.assignedTo.id.toString() : null;
 
     if (!previousAssigneeId) {
@@ -62,6 +63,7 @@ class AssignToAttorneyModalView extends React.PureComponent<Props> {
 
     return <AssignWidgetModal
       isModal
+      userId={userId}
       onTaskAssignment={this.handleAssignment}
       previousAssigneeId={previousAssigneeId}
       selectedTasks={[task]} />;
@@ -70,8 +72,7 @@ class AssignToAttorneyModalView extends React.PureComponent<Props> {
 
 const mapStateToProps = (state: State, ownProps: Object) => {
   return {
-    task: tasksForAppealAssignedToAttorneySelector(state, ownProps)[0] ||
-      tasksForAppealAssignedToUserSelector(state, ownProps)[0]
+    task: taskById(state, { taskId: ownProps.taskId })
   };
 };
 
@@ -83,4 +84,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 export default (connect(
   mapStateToProps,
   mapDispatchToProps
-)(AssignToAttorneyModalView): React.ComponentType<Params>);
+)(AssignToAttorneyModalView): React.ComponentType<Props>);

@@ -20,8 +20,8 @@ class IntakeProgressBarInner extends React.PureComponent {
         path: PAGE_PATHS.REVIEW
       },
       {
-        title: '4. Finish',
-        path: PAGE_PATHS.FINISH
+        title: '4. Add Issues',
+        path: (currentPath) => currentPath === PAGE_PATHS.ADD_ISSUES || currentPath === PAGE_PATHS.FINISH
       },
       {
         title: '5. Confirmation',
@@ -30,7 +30,9 @@ class IntakeProgressBarInner extends React.PureComponent {
     ];
 
     const progressBarSectionsWithCurrentMarked = progressBarSections.map((section) =>
-      _({ current: section.path === this.props.location.pathname }).
+      _({ current: _.isFunction(section.path) ?
+        section.path(this.props.location.pathname) :
+        section.path === this.props.location.pathname }).
         merge(section).
         omit('path').
         value()

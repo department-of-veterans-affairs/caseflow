@@ -1,4 +1,4 @@
-class RootTask < Task
+class RootTask < GenericTask
   after_initialize :set_assignee
 
   def set_assignee
@@ -7,9 +7,17 @@ class RootTask < Task
 
   def when_child_task_completed; end
 
+  def available_actions(_user)
+    [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h]
+  end
+
+  def no_actions_available?(user)
+    !(MailTeam.singleton.user_has_access?(user) && status != Constants.TASK_STATUSES.completed)
+  end
+
   class << self
     def create_root_and_sub_tasks!(appeal)
-      root_task = create!(appeal_id: appeal.id, appeal_type: appeal.class.name)
+      root_task = create!(appeal: appeal)
       create_vso_subtask!(appeal, root_task)
     end
 
@@ -17,7 +25,7 @@ class RootTask < Task
 
     def create_vso_subtask!(appeal, parent)
       appeal.vsos.each do |vso_organization|
-        GenericTask.create(
+        InformalHearingPresentationTask.create(
           appeal: appeal,
           parent: parent,
           status: Constants.TASK_STATUSES.in_progress,
@@ -25,5 +33,11 @@ class RootTask < Task
         )
       end
     end
+  end
+
+  def can_be_accessed_by_user?(user)
+    return true if HearingsManagement.singleton.user_has_access?(user)
+
+    super(user)
   end
 end

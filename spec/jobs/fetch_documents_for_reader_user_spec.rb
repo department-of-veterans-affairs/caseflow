@@ -2,14 +2,6 @@ require "rails_helper"
 require "faker"
 
 describe FetchDocumentsForReaderUserJob do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   context ".perform" do
     let(:user) do
       Generators::User.create(roles: ["Reader"])

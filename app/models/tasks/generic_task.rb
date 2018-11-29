@@ -1,9 +1,24 @@
 class GenericTask < Task
-  # rubocop:disable Metrics/AbcSize
-  def available_actions(user)
-    if assigned_to.is_a?(Vso) && assigned_to.user_has_access?(user)
-      return [Constants.TASK_ACTIONS.MARK_COMPLETE.to_h]
+  before_create :verify_org_task_unique
+
+  # Use the existence of an organization-level task to prevent duplicates since there should only ever be one org-level
+  # task active at a time for a single appeal.
+  def verify_org_task_unique
+    if Task.where(type: type, assigned_to: assigned_to, appeal: appeal)
+        .where.not(status: Constants.TASK_STATUSES.completed).any? &&
+       assigned_to.is_a?(Organization)
+      fail(
+        Caseflow::Error::DuplicateOrgTask,
+        appeal_id: appeal.id,
+        task_type: self.class.name,
+        assignee_type: assigned_to.class.name
+      )
     end
+  end
+
+  # rubocop:disable Metrics/MethodLength
+  def available_actions(user)
+    return [] unless user
 
     if assigned_to == user
       return [
@@ -13,7 +28,13 @@ class GenericTask < Task
       ]
     end
 
-    if assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
+    if task_is_assigned_to_user_within_organiztaion?(user)
+      return [
+        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
+      ]
+    end
+
+    if task_is_assigned_to_users_organization?(user)
       return [
         Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
         Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
@@ -23,19 +44,14 @@ class GenericTask < Task
 
     []
   end
-  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   def update_from_params(params, current_user)
     verify_user_access!(current_user)
 
     return reassign(params[:reassign], current_user) if params[:reassign]
 
-    new_status = params[:status]
-    if new_status == Constants.TASK_STATUSES.completed
-      mark_as_complete!
-    else
-      update!(status: new_status)
-    end
+    update_status(params[:status])
 
     [self]
   end
@@ -52,34 +68,44 @@ class GenericTask < Task
   end
 
   def can_be_accessed_by_user?(user)
-    return true if assigned_to && assigned_to == user
-    return true if user && assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
-    false
+    available_actions_unwrapper(user).any?
+  end
+
+  private
+
+  def task_is_assigned_to_user_within_organiztaion?(user)
+    parent &&
+      parent.assigned_to.is_a?(Organization) &&
+      assigned_to.is_a?(User) &&
+      parent.assigned_to.user_has_access?(user)
+  end
+
+  def task_is_assigned_to_users_organization?(user)
+    assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
   end
 
   class << self
-    def create_from_params(params_array, current_user)
-      params_array.map do |params|
-        parent = Task.find(params[:parent_id])
-        fail Caseflow::Error::ChildTaskAssignedToSameUser if parent.assigned_to_id == params[:assigned_to_id] &&
-                                                             parent.assigned_to_type == params[:assigned_to_type]
+    def create_from_params(params, user)
+      parent = Task.find(params[:parent_id])
+      fail Caseflow::Error::ChildTaskAssignedToSameUser if parent.assigned_to_id == params[:assigned_to_id] &&
+                                                           parent.assigned_to_type == params[:assigned_to_type]
 
-        parent.verify_user_access!(current_user)
+      parent.verify_user_access!(user)
 
-        params[:instructions] = [params[:instructions]] unless params[:instructions].is_a?(Array)
-        child = create_child_task(parent, current_user, params)
-        update_status(parent, params[:status])
-        child
-      end
+      params = modify_params(params)
+      child = create_child_task(parent, user, params)
+      parent.update_status(params[:status])
+      child
     end
 
     def create_child_task(parent, current_user, params)
       # Create an assignee from the input arguments so we throw an error if the assignee does not exist.
       assignee = Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
 
-      parent.update!(status: :on_hold)
+      parent.update_status(Constants.TASK_STATUSES.on_hold)
 
-      GenericTask.create!(
+      Task.create!(
+        type: name,
         appeal: parent.appeal,
         assigned_by_id: child_assigned_by_id(parent, current_user),
         parent_id: parent.id,
@@ -93,17 +119,6 @@ class GenericTask < Task
     def child_assigned_by_id(parent, current_user)
       return current_user.id if current_user
       return parent.assigned_to_id if parent && parent.assigned_to_type == User.name
-    end
-
-    def update_status(parent, status)
-      return unless status
-
-      case status
-      when Constants.TASK_STATUSES.completed
-        parent.mark_as_complete!
-      else
-        parent.update!(status: status)
-      end
     end
   end
 end

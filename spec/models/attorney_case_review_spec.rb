@@ -1,9 +1,89 @@
 describe AttorneyCaseReview do
   let(:attorney) { FactoryBot.create(:user) }
-  let(:judge) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID) }
+  let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
 
-  before { FeatureToggle.enable!(:test_facols) }
-  after { FeatureToggle.disable!(:test_facols) }
+  let(:judge) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID) }
+  let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id) }
+
+  context "#create_and_delete_decision_issues" do
+    let(:appeal) { create(:appeal) }
+    let(:task) { create(:ama_attorney_task, appeal: appeal) }
+    let(:request_issue1) { create(:request_issue, review_request: appeal) }
+    let(:decision_issue1) { create(:decision_issue) }
+    let(:request_issue2) { create(:request_issue, review_request: appeal, decision_issues: [decision_issue1]) }
+
+    let(:remand_reason1) { create(:ama_remand_reason) }
+    let(:remand_reason2) { create(:ama_remand_reason) }
+    let(:decision_issue2) do
+      create(:decision_issue, remand_reasons: [remand_reason1, remand_reason2])
+    end
+    let(:request_issue3) { create(:request_issue, review_request: appeal, decision_issues: [decision_issue2]) }
+    let(:request_issue4) { create(:request_issue, review_request: appeal) }
+
+    let(:request_issue5) { create(:request_issue, review_request: appeal) }
+
+    let(:decision_issue3) { create(:decision_issue) }
+    let(:decision_issue4) { create(:decision_issue) }
+    let(:request_issue6) do
+      create(:request_issue, review_request: appeal, decision_issues: [decision_issue3, decision_issue4])
+    end
+
+    let(:issues) do
+      [{ disposition: "allowed", description: "something1",
+         request_issue_ids: [request_issue1.id, request_issue2.id] },
+       { disposition: "remanded", description: "something2",
+         request_issue_ids: [request_issue1.id, request_issue2.id],
+         remand_reasons: [
+           { code: "va_records", post_aoj: false },
+           { code: "incorrect_notice_sent", post_aoj: true }
+         ] },
+       { disposition: "allowed", description: "something3",
+         request_issue_ids: [request_issue3.id, request_issue4.id] },
+       { disposition: "allowed", description: "something4",
+         request_issue_ids: [request_issue5.id] },
+       { disposition: "remanded", description: "something5",
+         request_issue_ids: [request_issue5.id],
+         remand_reasons: [
+           { code: "va_records", post_aoj: false },
+           { code: "incorrect_notice_sent", post_aoj: true }
+         ] },
+       { disposition: "allowed", description: "something6",
+         request_issue_ids: [request_issue6.id] }]
+    end
+
+    subject { AttorneyCaseReview.new(issues: issues, task_id: task.id).delete_and_create_decision_issues }
+
+    it "should create and delete decision issues" do
+      subject
+      old_decision_issue_ids = [decision_issue1.id, decision_issue2.id, decision_issue3.id, decision_issue4.id]
+      old_remand_reasons_ids = [remand_reason1.id, remand_reason2.id]
+      expect(DecisionIssue.where(id: old_decision_issue_ids)).to eq []
+      expect(RequestDecisionIssue.where(decision_issue_id: old_decision_issue_ids)).to eq []
+      expect(RemandReason.where(id: old_remand_reasons_ids)).to eq []
+      expect(request_issue1.reload.decision_issues.size).to eq 2
+      expect(request_issue2.reload.decision_issues.size).to eq 2
+      expect(request_issue1.decision_issues).to eq request_issue2.decision_issues
+      expect(request_issue1.decision_issues[0].disposition).to eq "allowed"
+      expect(request_issue1.decision_issues[0].description).to eq "something1"
+
+      expect(request_issue1.decision_issues[1].disposition).to eq "remanded"
+      expect(request_issue1.decision_issues[1].description).to eq "something2"
+
+      expect(request_issue1.decision_issues[1].remand_reasons.size).to eq 2
+      expect(request_issue1.decision_issues[1].remand_reasons[0].code).to eq "va_records"
+      expect(request_issue1.decision_issues[1].remand_reasons[0].post_aoj).to eq false
+
+      expect(request_issue1.decision_issues[1].remand_reasons[1].code).to eq "incorrect_notice_sent"
+      expect(request_issue1.decision_issues[1].remand_reasons[1].post_aoj).to eq true
+
+      expect(request_issue3.reload.decision_issues.size).to eq 1
+      expect(request_issue4.reload.decision_issues.size).to eq 1
+      expect(request_issue3.reload.decision_issues.first).to eq request_issue4.decision_issues.first
+      expect(request_issue5.reload.decision_issues.size).to eq 2
+      expect(request_issue5.decision_issues[1].remand_reasons.size).to eq 2
+      expect(request_issue6.decision_issues.size).to eq 1
+    end
+  end
 
   context ".complete" do
     let(:document_type) { Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"] }
@@ -27,7 +107,7 @@ describe AttorneyCaseReview do
     subject { AttorneyCaseReview.complete(params) }
 
     context "when ama" do
-      let(:task_id) { create(:ama_attorney_task).id }
+      let(:task_id) { create(:ama_attorney_task, assigned_by: judge, assigned_to: attorney).id }
 
       context "when all parameters are present" do
         it "should create draft decision record" do
@@ -44,8 +124,6 @@ describe AttorneyCaseReview do
 
     context "when legacy" do
       let(:task_id) { "#{vacols_case.bfkey}-#{vacols_case.decass[0].deadtim.strftime('%F')}" }
-      let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
-      let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id) }
       let(:case_issues) { [] }
       let(:vacols_case) { FactoryBot.create(:case, :assigned, staff: vacols_atty, case_issues: case_issues) }
 
@@ -130,7 +208,7 @@ describe AttorneyCaseReview do
         context "when ama" do
           let(:document_type) { Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"] }
           let(:work_product) { "Decision" }
-          let(:task) { create(:ama_attorney_task) }
+          let(:task) { create(:ama_attorney_task, assigned_by: judge, assigned_to: attorney) }
           let(:task_id) { task.id }
           let(:request_issue1) do
             create(:request_issue, review_request: task.appeal, disposition: "remanded")

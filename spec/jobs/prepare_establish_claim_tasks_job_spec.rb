@@ -2,14 +2,6 @@ require "rails_helper"
 
 describe PrepareEstablishClaimTasksJob do
   before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
-  before do
     allow(VBMSService).to receive(:fetch_document_file) do |document|
       fail VBMS::ClientError, "Failure" if document.vbms_document_id == "2"
       "the decision file"

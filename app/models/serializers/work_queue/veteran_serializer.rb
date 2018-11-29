@@ -6,20 +6,23 @@ class WorkQueue::VeteranSerializer < ActiveModel::Serializer
     object.veteran_gender
   end
   attribute :date_of_birth do
-    object.veteran.date_of_birth
+    object.veteran ? object.veteran.date_of_birth : nil
   end
   attribute :date_of_death do
-    object.veteran.date_of_death
+    object.veteran ? object.veteran.date_of_death : nil
   end
   attribute :address do
-    {
-      address_line_1: object.veteran_address_line_1,
-      address_line_2: object.veteran_address_line_2,
-      city: object.veteran_city,
-      state: object.veteran_state,
-      zip: object.veteran_zip,
-      country: object.veteran_country
-    }
+    if object.veteran_address_line_1
+      {
+        address_line_1: object.veteran_address_line_1,
+        address_line_2: object.veteran_address_line_2,
+        address_line_3: object.veteran_address_line_3,
+        city: object.veteran_city,
+        state: object.veteran_state,
+        zip: object.veteran_zip,
+        country: object.veteran_country
+      }
+    end
   end
   attribute :regional_office do
     if object.regional_office

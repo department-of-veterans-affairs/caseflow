@@ -4,6 +4,10 @@ class CaseReviewsController < ApplicationController
     JudgeCaseReview: JudgeCaseReview
   }.freeze
 
+  rescue_from Caseflow::Error::UserRepositoryError do |e|
+    handle_non_critical_error("case_reviews", e)
+  end
+
   def set_application
     RequestStore.store[:application] = "queue"
   end
@@ -14,7 +18,7 @@ class CaseReviewsController < ApplicationController
     record = case_review_class.complete(complete_params)
     return invalid_record_error(record) unless record.valid?
 
-    create_quality_review_task(record) if case_review_class == JudgeCaseReview
+    create_quality_review_task(record)
 
     response = { task: record }
     response[:issues] = record.appeal.issues
@@ -24,7 +28,10 @@ class CaseReviewsController < ApplicationController
   private
 
   def create_quality_review_task(record)
-    return if record.appeal.class == LegacyAppeal
+    return if record.appeal.is_a?(LegacyAppeal) ||
+              !record.is_a?(JudgeCaseReview) ||
+              record.task.parent.is_a?(QualityReviewTask)
+
     QualityReviewTask.create_from_root_task(record.task.root_task)
   end
 
@@ -53,8 +60,7 @@ class CaseReviewsController < ApplicationController
                                    :work_product,
                                    :overtime,
                                    :note,
-                                   issues: [:id, :disposition, :readjudication,
-                                            remand_reasons: [:code, :post_aoj]])
+                                   issues: issues_params)
       .merge(attorney: current_user, task_id: params[:task_id])
   end
 
@@ -64,10 +70,22 @@ class CaseReviewsController < ApplicationController
                                    :complexity,
                                    :quality,
                                    :comment,
+                                   :one_touch_initiative,
                                    factors_not_considered: [],
                                    areas_for_improvement: [],
-                                   issues: [:id, :disposition, :readjudication,
-                                            remand_reasons: [:code, :post_aoj]])
+                                   issues: issues_params)
       .merge(judge: current_user, task_id: params[:task_id])
+  end
+
+  def issues_params
+    if ama? && feature_enabled?(:ama_decision_issues)
+      [:disposition, :description, request_issue_ids: [], remand_reasons: [:code, :post_aoj]]
+    else
+      [:id, :disposition, :readjudication, remand_reasons: [:code, :post_aoj]]
+    end
+  end
+
+  def ama?
+    params["task_id"] !~ LegacyTask::TASK_ID_REGEX
   end
 end

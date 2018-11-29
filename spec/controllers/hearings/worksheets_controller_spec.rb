@@ -2,14 +2,6 @@ RSpec.describe Hearings::WorksheetsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let(:hearing) { create(:hearing) }
 
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   describe "SHOW worksheet" do
     it "returns data with success" do
       get :show, params: { hearing_id: hearing.id }, format: "json"

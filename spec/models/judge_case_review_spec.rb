@@ -103,12 +103,7 @@ describe JudgeCaseReview do
     context "when all parameters are present to sign a decision and VACOLS update is successful" do
       before do
         RequestStore.store[:current_user] = judge
-        FeatureToggle.enable!(:test_facols)
         allow(UserRepository).to receive(:fail_if_no_access_to_task!).and_return(true)
-      end
-
-      after do
-        FeatureToggle.disable!(:test_facols)
       end
 
       context "when selected for quality review" do

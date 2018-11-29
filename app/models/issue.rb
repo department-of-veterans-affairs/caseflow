@@ -185,6 +185,18 @@ class Issue
     }
   end
 
+  def intake_attributes(is_untimely: false)
+    {
+      id: id,
+      vacols_sequence_id: vacols_sequence_id,
+      description: friendly_description,
+      disposition: disposition,
+      close_date: close_date,
+      note: note,
+      is_untimely: is_untimely
+    }
+  end
+
   attr_writer :remand_reasons
   def remand_reasons
     @remand_reasons ||= self.class.remand_repository.load_remands_from_vacols(id, vacols_sequence_id)
@@ -220,16 +232,12 @@ class Issue
   # rubocop:enable Metrics/CyclomaticComplexity
 
   class << self
-    attr_writer :repository
-
     def repository
-      return IssueRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= IssueRepository
+      IssueRepository
     end
 
     def remand_repository
-      return RemandReasonRepository if FeatureToggle.enabled?(:test_facols)
-      @remand_repository ||= RemandReasonRepository
+      RemandReasonRepository
     end
 
     def load_from_vacols(hash)

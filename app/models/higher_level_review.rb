@@ -1,6 +1,5 @@
 class HigherLevelReview < ClaimReview
   with_options if: :saving_review do
-    validates :receipt_date, :benefit_type, presence: { message: "blank" }
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
   end
 
@@ -17,29 +16,15 @@ class HigherLevelReview < ClaimReview
   DTA_ERRORS = [DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO].freeze
 
   def self.review_title
-    "Higher-Level Review"
+    Constants.INTAKE_FORM_NAMES_SHORT.higher_level_review
   end
 
-  def ui_hash(ama_enabled)
-    {
+  def ui_hash
+    super.merge(
       formType: "higher_level_review",
-      veteran: {
-        name: veteran && veteran.name.formatted(:readable_short),
-        fileNumber: veteran_file_number,
-        formName: veteran && veteran.name.formatted(:form)
-      },
-      relationships: ama_enabled && veteran && veteran.relationships,
-      claimId: end_product_claim_id,
-      receiptDate: receipt_date.to_formatted_s(:json_date),
-      benefitType: benefit_type,
       sameOffice: same_office,
-      informalConference: informal_conference,
-      claimant: claimant_participant_id,
-      claimantNotVeteran: claimant_not_veteran,
-      payeeCode: payee_code,
-      ratings: cached_serialized_ratings,
-      requestIssues: request_issues.map(&:ui_hash)
-    }
+      informalConference: informal_conference
+    )
   end
 
   def rating_end_product_establishment
@@ -52,10 +37,6 @@ class HigherLevelReview < ClaimReview
 
   def end_product_base_modifier
     valid_modifiers.first
-  end
-
-  def end_product_claim_id
-    rating_end_product_establishment && rating_end_product_establishment.reference_id
   end
 
   def special_issues
@@ -71,8 +52,8 @@ class HigherLevelReview < ClaimReview
     super { create_dta_supplemental_claim }
   end
 
-  def issue_code(rated)
-    rated ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE
+  def issue_code(rating: true)
+    rating ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE
   end
 
   private
@@ -118,7 +99,9 @@ class HigherLevelReview < ClaimReview
       veteran_file_number: veteran_file_number,
       receipt_date: Time.zone.now.to_date,
       is_dta_error: true,
-      benefit_type: benefit_type
+      benefit_type: benefit_type,
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: veteran_is_not_claimant
     ).tap do |sc|
       sc.create_claimants!(
         participant_id: claimant_participant_id,
@@ -135,7 +118,8 @@ class HigherLevelReview < ClaimReview
       code: ep_code,
       claimant_participant_id: claimant_participant_id,
       station: end_product_station,
-      benefit_type_code: veteran.benefit_type_code
+      benefit_type_code: veteran.benefit_type_code,
+      user: intake_processed_by
     )
   end
 end

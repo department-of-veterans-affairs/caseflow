@@ -84,6 +84,7 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
       appeal: { hearings }
     } = this.props;
     const orderedHearings = _.orderBy(hearings, 'date', 'asc');
+    const uniqueOrderedHearings = _.uniqWith(orderedHearings, _.isEqual);
     const hearingElementsStyle = css({
       '&:first-of-type': {
         marginTop: '1rem'
@@ -94,8 +95,9 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
       _.extend(hearingElementsStyle, marginLeft);
     }
 
-    const hearingElements = _.map(orderedHearings, (hearing) => <div key={hearing.id} {...hearingElementsStyle}>
-      <span {...boldText}>Hearing{orderedHearings.length > 1 ? ` ${orderedHearings.indexOf(hearing) + 1}` : ''}:</span>
+    const hearingElements = _.map(uniqueOrderedHearings, (hearing) => <div key={hearing.id} {...hearingElementsStyle}>
+      <span {...boldText}>Hearing{uniqueOrderedHearings.length > 1 ?
+        ` ${uniqueOrderedHearings.indexOf(hearing) + 1}` : ''}:</span>
       <BareList compact
         listStyle={css(marginLeft, noTopBottomMargin)}
         ListElementComponent="ul"
@@ -103,7 +105,7 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
     </div>);
 
     return <React.Fragment>
-      {orderedHearings.length > 1 && <br />}
+      {uniqueOrderedHearings.length > 1 && <br />}
       {hearingElements}
     </React.Fragment>;
   }
@@ -111,7 +113,7 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
   getDetailField = (
     { label, valueFunction, value }: { label: string, valueFunction: Function, value?: string}
   ) => () => <React.Fragment>
-    {label && <span {...boldText}>{label}:</span>} {value || valueFunction()}
+    {label && <span {...boldText}>{label}:</span>} {typeof value === 'undefined' ? valueFunction() : value}
   </React.Fragment>;
 
   scrollToCaseList = () => {

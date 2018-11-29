@@ -26,6 +26,7 @@ import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRI
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
+import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 
 /**
  * For legacy attorney checkout flow, filter out already-decided issues. Undecided
@@ -58,6 +59,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
     acc[task.id] = {
       uniqueId: task.id,
       isLegacy: false,
+      type: task.attributes.type,
       appealType: task.attributes.appeal_type,
       addedByCssId: null,
       appealId: task.attributes.appeal_id,
@@ -77,7 +79,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
         pgId: task.attributes.assigned_by.pg_id
       },
       taskId: task.id,
-      action: task.attributes.action,
+      label: task.attributes.label,
       documentId: task.attributes.document_id,
       workProduct: null,
       previousTaskAssignedOn: task.attributes.previous_task.assigned_at,
@@ -87,8 +89,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       instructions: task.attributes.instructions,
       decisionPreparedBy,
       availableActions: task.attributes.available_actions,
-      assignableOrganizations: task.attributes.assignable_organizations,
-      assignableUsers: task.attributes.assignable_users
+      taskBusinessPayloads: task.attributes.task_business_payloads
     };
 
     return acc;
@@ -129,6 +130,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
   const mappedLegacyTasks = tasks.map((task): Task => {
     return {
       uniqueId: task.attributes.external_appeal_id,
+      type: task.attributes.type,
       isLegacy: true,
       appealId: task.attributes.appeal_id,
       appealType: task.attributes.appeal_type,
@@ -150,13 +152,14 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       addedByName: task.attributes.added_by_name,
       addedByCssId: task.attributes.added_by_css_id,
       taskId: task.attributes.task_id,
-      action: task.attributes.action,
+      label: task.attributes.label,
       documentId: task.attributes.document_id,
       workProduct: task.attributes.work_product,
       previousTaskAssignedOn: task.attributes.previous_task.assigned_on,
       status: task.attributes.status,
       decisionPreparedBy: null,
-      availableActions: task.attributes.available_actions
+      availableActions: task.attributes.available_actions,
+      taskBusinessPayloads: task.attributes.task_business_payloads
     };
   });
 
@@ -237,7 +240,8 @@ export const prepareAppealForStore =
         assignedJudge: appeal.attributes.assigned_judge,
         veteranFullName: appeal.attributes.veteran_full_name,
         veteranFileNumber: appeal.attributes.veteran_file_number,
-        isPaperCase: appeal.attributes.paper_case
+        isPaperCase: appeal.attributes.paper_case,
+        sanitizedHearingRequestType: appeal.attributes.sanitized_hearing_request_type
       };
 
       return accumulator;
@@ -248,6 +252,7 @@ export const prepareAppealForStore =
         hearings: prepareAppealHearingsForStore(appeal),
         completedHearingOnPreviousAppeal: appeal.attributes['completed_hearing_on_previous_appeal?'],
         issues: prepareAppealIssuesForStore(appeal),
+        decisionIssues: appeal.attributes.decision_issues,
         appellantFullName: appeal.attributes.appellant_full_name,
         appellantAddress: appeal.attributes.appellant_address,
         appellantRelationship: appeal.attributes.appellant_relationship,
@@ -258,10 +263,7 @@ export const prepareAppealForStore =
         veteranAddress: appeal.attributes.veteran_address,
         externalId: appeal.attributes.external_id,
         status: appeal.attributes.status,
-        events: {
-          nodReceiptDate: appeal.attributes.events.nod_receipt_date,
-          form9Date: appeal.attributes.events.form9_date
-        },
+        timeline: appeal.attributes.timeline,
         decisionDate: appeal.attributes.decision_date,
         certificationDate: appeal.attributes.certification_date,
         powerOfAttorney: appeal.attributes.power_of_attorney,
@@ -431,6 +433,11 @@ export const taskHasNewDocuments = (task: Task, newDocsForAppeal: NewDocsForAppe
   return newDocsForAppeal[task.externalAppealId].docs.length > 0;
 };
 
-export const taskIsOnHold = (task: Task) =>
-  moment().startOf('day').
-    diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;
+export const taskIsOnHold = (task: Task) => {
+  if (task.onHoldDuration && task.placedOnHoldAt) {
+    return moment().startOf('day').
+      diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;
+  }
+
+  return task.status === TASK_STATUSES.on_hold;
+};

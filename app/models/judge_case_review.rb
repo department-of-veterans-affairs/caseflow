@@ -45,6 +45,7 @@ class JudgeCaseReview < ApplicationRecord
       decass_attrs: {
         complexity: complexity,
         quality: quality,
+        one_touch_initiative: one_touch_initiative,
         deficiencies: factors_not_considered + areas_for_improvement,
         comment: comment,
         modifying_user: modifying_user,
@@ -66,8 +67,6 @@ class JudgeCaseReview < ApplicationRecord
   end
 
   class << self
-    attr_writer :repository
-
     def complete(params)
       ActiveRecord::Base.multi_transaction do
         record = create(params)
@@ -83,8 +82,7 @@ class JudgeCaseReview < ApplicationRecord
     end
 
     def repository
-      return QueueRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= QueueRepository
+      QueueRepository
     end
   end
 end

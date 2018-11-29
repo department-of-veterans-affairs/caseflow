@@ -45,12 +45,14 @@ describe HearingRepository do
   context ".hearings_for" do
     subject { HearingRepository.hearings_for(records) }
 
+    let!(:case_hearing) { create(:case_hearing) }
+
     let(:record1) do
       OpenStruct.new(
         hearing_type: "T",
         master_record_type: nil,
         bfregoff: "RO36",
-        hearing_pkseq: "1234",
+        hearing_pkseq: case_hearing.hearing_pkseq,
         folder_nr: "5678",
         hearing_date: Time.zone.now
       )
@@ -77,43 +79,10 @@ describe HearingRepository do
 
     it "should create hearing records" do
       expect(subject.size).to eq 3
-      expect(subject.first.vacols_id).to eq "1234"
+      expect(subject.first.vacols_id).to eq case_hearing.hearing_pkseq.to_s
       expect(subject.first.master_record).to eq false
       expect(subject.second.master_record).to eq true
       expect(subject.third.master_record).to eq true
-    end
-  end
-
-  context ".slots_based_on_type" do
-    subject { HearingRepository.slots_based_on_type(staff: staff, type: type, date: date) }
-
-    context "when it is a central office" do
-      let(:staff) { OpenStruct.new }
-      let(:type) { :central_office }
-      let(:date) { Time.zone.now }
-      it { is_expected.to eq 11 }
-    end
-
-    context "when it is a video, use staff.stc4" do
-      let(:staff) { OpenStruct.new(stc2: 8, stc3: 9, stc4: 12) }
-      let(:type) { :video }
-      let(:date) { Time.zone.now }
-      it { is_expected.to eq 12 }
-    end
-
-    context "when it is a travel board" do
-      let(:staff) { OpenStruct.new(stc2: 8, stc3: 9, stc4: 12) }
-      let(:type) { :travel }
-
-      context "when it is a Monday, use staff.stc2" do
-        let(:date) { 1.day.ago }
-        it { is_expected.to eq 8 }
-      end
-
-      context "when it is a Tuesday, use staff.stc3" do
-        let(:date) { Time.zone.now }
-        it { is_expected.to eq 9 }
-      end
     end
   end
 end

@@ -12,7 +12,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   HEARING_TYPES = {
     V: :video,
     T: :travel,
-    C: :central_office
+    C: :central
   }.freeze
 
   HEARING_DISPOSITIONS = {
@@ -46,7 +46,10 @@ class VACOLS::CaseHearing < VACOLS::Record
     room: :room,
     hearing_date: :hearing_date,
     hearing_type: :hearing_type,
-    judge_id: :board_member
+    judge_id: :board_member,
+    folder_nr: :folder_nr,
+    board_member: :board_member,
+    team: :team
   }.freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
@@ -70,9 +73,8 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def co_hearings_for_master_record(parent_hearing_date)
-      select_hearings.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) between ? and ?",
-                            "C", "%VIDEO%", parent_hearing_date.to_date,
-                            (parent_hearing_date + 1.day).to_date)
+      select_hearings.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) = ?",
+                            "C", "%VIDEO%", parent_hearing_date.to_date)
     end
 
     def for_appeal(appeal_vacols_id)
@@ -94,17 +96,21 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def load_days_for_range(start_date, end_date)
-      select_schedule_days.where("trunc(hearing_date) between ? and ?", start_date, end_date).order(:hearing_date)
+      select_schedule_days.where("trunc(hearing_date) between ? and ?", VacolsHelper.day_only_str(start_date),
+                                 VacolsHelper.day_only_str(end_date)).order(:hearing_date)
     end
 
     def load_days_for_central_office(start_date, end_date)
-      select_schedule_days.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) between ? and ?",
-                                 "C", "%VIDEO%", start_date, end_date).order(:hearing_date)
+      select_schedule_days.where("hearing_type = ? and (folder_nr NOT LIKE ? OR folder_nr IS NULL) " \
+                                  "and trunc(hearing_date) between ? and ?",
+                                 "C", "%VIDEO%", VacolsHelper.day_only_str(start_date),
+                                 VacolsHelper.day_only_str(end_date)).order(:hearing_date)
     end
 
     def load_days_for_regional_office(regional_office, start_date, end_date)
       select_schedule_days.where("folder_nr = ? and trunc(hearing_date) between ? and ?",
-                                 "VIDEO #{regional_office}", start_date, end_date)
+                                 "VIDEO #{regional_office}", VacolsHelper.day_only_str(start_date),
+                                 VacolsHelper.day_only_str(end_date)).order(:hearing_date)
     end
 
     def create_hearing!(hearing_info)
@@ -124,36 +130,42 @@ class VACOLS::CaseHearing < VACOLS::Record
       end
     end
 
+    def create_child_hearing!(hearing_info)
+      MetricsService.record("VACOLS: create_hearing!",
+                            service: :vacols,
+                            name: "create_hearing") do
+        create!(hearing_info.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
+                                   adduser: current_user_slogid))
+      end
+    end
+
     private
 
     def select_hearings
       # VACOLS overloads the HEARSCHED table with other types of hearings
       # that work differently. Filter those out.
       select("VACOLS.HEARING_VENUE(vdkey) as hearing_venue",
-             "staff.sdomainid as css_id",
-             :hearing_disp, :hearing_pkseq,
-             :hearing_date, :hearing_type,
-             :notes1, :folder_nr,
-             :vdkey, :aod,
+             :hearing_disp, :hearing_pkseq, :hearing_date, :hearing_type,
+             :notes1, :folder_nr, :vdkey, :aod,
              :holddays, :tranreq, :transent,
-             :repname, :addon,
-             :board_member, :mduser,
-             :mdtime, :sattyid,
-             :bfregoff, :bfso,
+             :repname, :addon,  :board_member, :mduser,
+             :mdtime, :sattyid, :bfregoff, :bfso,
              :bfcorkey, :bfddec, :bfdc,
-             "staff.slogid",
-             "corres.snamef, corres.snamemi",
-             "corres.snamel, corres.sspare1",
-             "corres.sspare2, corres.sspare3")
+             "staff.sdomainid as css_id", "brieff.bfac", "staff.slogid",
+             "corres.saddrst1", "corres.saddrst2", "corres.saddrcty",
+             "corres.saddrstt", "corres.saddrcnty", "corres.saddrzip",
+             "corres.snamef, corres.snamemi", "corres.snamel, corres.sspare1",
+             "corres.sspare2, corres.sspare3, folder.tinum")
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
         .joins("left outer join vacols.brieff on brieff.bfkey = folder_nr")
+        .joins("left outer join vacols.folder on folder.ticknum = brieff.bfkey")
         .joins("left outer join vacols.corres on corres.stafkey = bfcorkey")
         .where(hearing_type: HEARING_TYPES.keys)
     end
 
     def select_schedule_days
       select(:hearing_pkseq,
-             :hearing_date,
+             :hearing_date, :vdbvapoc,
              "CASE WHEN folder_nr LIKE 'VIDEO%' THEN 'V' ELSE hearing_type END AS hearing_type",
              "CASE WHEN folder_nr LIKE 'VIDEO%' or folder_nr is null THEN folder_nr ELSE null END AS folder_nr",
              :room,

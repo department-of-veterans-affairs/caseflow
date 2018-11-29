@@ -11,6 +11,7 @@ import { ACTIONS } from './constants';
 import caseListReducer from './CaseList/CaseListReducer';
 import uiReducer from './uiReducer/uiReducer';
 import type { QueueState } from './types/state';
+import commonComponentsReducer from '../components/common/reducers';
 
 // TODO: Remove this when we move entirely over to the appeals search.
 import caseSelectReducer from '../reader/CaseSelect/CaseSelectReducer';
@@ -41,13 +42,15 @@ export const initialState = {
   attorneysOfJudge: [],
   attorneyAppealsLoadingState: {},
   isTaskAssignedToUserSelected: {},
+  pendingDistribution: null,
   attorneys: {},
   organizationId: null,
+  organizations: [],
   loadingAppealDetail: {}
 };
 
 // eslint-disable-next-line max-statements
-const workQueueReducer = (state: QueueState = initialState, action: Object = {}): QueueState => {
+export const workQueueReducer = (state: QueueState = initialState, action: Object = {}): QueueState => {
   switch (action.type) {
   case ACTIONS.RECEIVE_QUEUE_DETAILS:
     return update(state, {
@@ -77,6 +80,12 @@ const workQueueReducer = (state: QueueState = initialState, action: Object = {})
       },
       amaTasks: {
         $merge: action.payload.amaTasks ? action.payload.amaTasks : {}
+      }
+    });
+  case ACTIONS.RECEIVE_AMA_TASKS:
+    return update(state, {
+      amaTasks: {
+        $set: action.payload.amaTasks
       }
     });
   case ACTIONS.RECEIVE_JUDGE_DETAILS:
@@ -326,6 +335,12 @@ const workQueueReducer = (state: QueueState = initialState, action: Object = {})
       }
     });
   }
+  case ACTIONS.SET_PENDING_DISTRIBUTION:
+    return update(state, {
+      pendingDistribution: {
+        $set: action.payload.distribution
+      }
+    });
   case ACTIONS.RECEIVE_ALL_ATTORNEYS:
     return update(state, {
       attorneys: {
@@ -370,12 +385,6 @@ const workQueueReducer = (state: QueueState = initialState, action: Object = {})
       }
     });
   }
-  case ACTIONS.SET_ORGANIZATION_ID:
-    return update(state, {
-      organizationId: {
-        $set: action.payload.id
-      }
-    });
   case ACTIONS.SET_APPEAL_AOD:
     return update(state, {
       appeals: {
@@ -398,11 +407,14 @@ const workQueueReducer = (state: QueueState = initialState, action: Object = {})
         }
       }
     });
-  case ACTIONS.RECEIVE_APPEAL_VALUE:
+  case ACTIONS.RECEIVE_APPEAL_VALUE: {
+    const existingState = state.loadingAppealDetail[action.payload.appealId] || {};
+
     return update(state, {
       loadingAppealDetail: {
         $merge: {
           [action.payload.appealId]: {
+            ...existingState,
             [action.payload.name]: {
               loading: false
             }
@@ -417,11 +429,15 @@ const workQueueReducer = (state: QueueState = initialState, action: Object = {})
         }
       }
     });
-  case ACTIONS.ERROR_ON_RECEIVE_APPEAL_VALUE:
+  }
+  case ACTIONS.ERROR_ON_RECEIVE_APPEAL_VALUE: {
+    const existingState = state.loadingAppealDetail[action.payload.appealId] || {};
+
     return update(state, {
       loadingAppealDetail: {
         $merge: {
           [action.payload.appealId]: {
+            ...existingState,
             [action.payload.name]: {
               loading: false,
               error: action.payload.error
@@ -430,6 +446,7 @@ const workQueueReducer = (state: QueueState = initialState, action: Object = {})
         }
       }
     });
+  }
   default:
     return state;
   }
@@ -439,7 +456,8 @@ const rootReducer = combineReducers({
   caseList: caseListReducer,
   caseSelect: caseSelectReducer,
   queue: workQueueReducer,
-  ui: uiReducer
+  ui: uiReducer,
+  components: commonComponentsReducer
 });
 
 export default timeFunction(

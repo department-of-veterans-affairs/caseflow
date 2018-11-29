@@ -4,13 +4,11 @@ RSpec.describe Organizations::TasksController, type: :controller do
   let(:participant_id) { "123456" }
   let(:vso_participant_id) { "789" }
   let(:url) { "American-Legion" }
-  let(:feature) { :rollout_vso }
 
   let(:vso) do
     Vso.create(
       participant_id: vso_participant_id,
       url: url,
-      feature: feature,
       role: "VSO"
     )
   end
@@ -37,8 +35,6 @@ RSpec.describe Organizations::TasksController, type: :controller do
   end
 
   before do
-    FeatureToggle.enable!(:rollout_vso)
-
     allow_any_instance_of(BGSService).to receive(:get_participant_id_for_user)
       .with(user).and_return(participant_id)
     allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_id)
@@ -87,17 +83,6 @@ RSpec.describe Organizations::TasksController, type: :controller do
 
     context "when user is not part of a VSO" do
       let(:vso_participant_ids) { [] }
-
-      it "should be redirected" do
-        get :index, params: { organization_url: url }
-        expect(response.status).to eq 302
-      end
-    end
-
-    context "when user does not have feature" do
-      before do
-        FeatureToggle.disable!(:rollout_vso)
-      end
 
       it "should be redirected" do
         get :index, params: { organization_url: url }

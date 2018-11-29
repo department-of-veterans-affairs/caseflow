@@ -1,12 +1,7 @@
 describe SupplementalClaimIntake do
   before do
-    FeatureToggle.enable!(:test_facols)
     Time.zone = "Eastern Time (US & Canada)"
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran_file_number) { "64205555" }
@@ -75,6 +70,7 @@ describe SupplementalClaimIntake do
     let(:benefit_type) { "compensation" }
     let(:claimant) { nil }
     let(:payee_code) { nil }
+    let(:veteran_is_not_claimant) { "false" }
 
     let(:detail) do
       SupplementalClaim.create!(
@@ -88,7 +84,8 @@ describe SupplementalClaimIntake do
         receipt_date: receipt_date,
         benefit_type: benefit_type,
         claimant: claimant,
-        payee_code: payee_code
+        payee_code: payee_code,
+        veteran_is_not_claimant: veteran_is_not_claimant
       )
     end
 
@@ -99,7 +96,7 @@ describe SupplementalClaimIntake do
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
           participant_id: intake.veteran.participant_id,
-          payee_code: "00"
+          payee_code: nil
         )
       end
     end
@@ -107,6 +104,7 @@ describe SupplementalClaimIntake do
     context "Claimant is different than Veteran" do
       let(:claimant) { "1234" }
       let(:payee_code) { "10" }
+      let(:veteran_is_not_claimant) { "true" }
 
       it "adds other relationship to claimants" do
         subject
@@ -117,6 +115,60 @@ describe SupplementalClaimIntake do
           payee_code: "10"
         )
       end
+
+      context "claimant is nil" do
+        let(:claimant) { nil }
+        let(:receipt_date) { 3.days.from_now }
+
+        it "is expected to add an error that claimant cannot be blank" do
+          expect(subject).to be_falsey
+          expect(detail.errors[:claimant]).to include("blank")
+          expect(detail.errors[:receipt_date]).to include("in_future")
+          expect(detail.claimants).to be_empty
+        end
+      end
+
+      context "And payee code is nil" do
+        let(:payee_code) { nil }
+        # Check that the review_request validations still work
+        let(:receipt_date) { 3.days.from_now }
+
+        context "And benefit type is compensation" do
+          let(:benefit_type) { "compensation" }
+
+          it "is expected to add an error that payee_code cannot be blank" do
+            expect(subject).to eq(false)
+            expect(detail.errors[:payee_code]).to include("blank")
+            expect(detail.errors[:receipt_date]).to include("in_future")
+            expect(detail.claimants).to be_empty
+          end
+        end
+
+        context "And benefit type is pension" do
+          let(:benefit_type) { "pension" }
+
+          it "is expected to add an error that payee_code cannot be blank" do
+            expect(subject).to be_falsey
+            expect(detail.errors[:payee_code]).to include("blank")
+            expect(detail.errors[:receipt_date]).to include("in_future")
+            expect(detail.claimants).to be_empty
+          end
+        end
+      end
+
+      context "And benefit type is not compensation or pension" do
+        let(:benefit_type) { "fiduciary" }
+
+        it "sets payee_code to nil" do
+          subject
+
+          expect(intake.detail.claimants.count).to eq 1
+          expect(intake.detail.claimants.first).to have_attributes(
+            participant_id: "1234",
+            payee_code: nil
+          )
+        end
+      end
     end
   end
 
@@ -126,7 +178,7 @@ describe SupplementalClaimIntake do
     before do
       allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
       allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-      allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+      allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
     end
 
     let(:issue_data) do
@@ -180,19 +232,21 @@ describe SupplementalClaimIntake do
           suppress_acknowledgement_letter: false,
           claimant_participant_id: claimant.participant_id
         },
-        veteran_hash: intake.veteran.to_vbms_hash
+        veteran_hash: intake.veteran.to_vbms_hash,
+        user: user
       )
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: intake.detail.veteran_file_number,
         claim_id: ratings_end_product_establishment.reference_id,
         contention_descriptions: ["decision text"],
-        special_issues: []
+        special_issues: [],
+        user: user
       )
 
-      expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).with(
+      expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
         claim_id: ratings_end_product_establishment.reference_id,
-        rated_issue_contention_map: {
+        rating_issue_contention_map: {
           "reference-id" => intake.detail.request_issues.first.contention_reference_id
         }
       )
@@ -214,7 +268,7 @@ describe SupplementalClaimIntake do
 
         expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
         expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
-        expect(Fakes::VBMSService).to_not have_received(:associate_rated_issues!)
+        expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
       end
     end
 
@@ -226,7 +280,7 @@ describe SupplementalClaimIntake do
 
         expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
         expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
-        expect(Fakes::VBMSService).to_not have_received(:associate_rated_issues!)
+        expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
       end
     end
 

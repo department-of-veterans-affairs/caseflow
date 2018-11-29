@@ -17,8 +17,9 @@ import CaseTitle from './CaseTitle';
 import CaseSnapshot from './CaseSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
-import { resetErrorMessages, resetSuccessMessages } from './uiReducer/uiActions';
-import CaseTimeline from './CaseTimeline';
+import { resetErrorMessages, resetSuccessMessages, setHearingDay } from './uiReducer/uiActions';
+import { CaseTimeline } from './CaseTimeline';
+import { getQueryParams } from '../util/QueryParamsUtil';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
@@ -39,6 +40,16 @@ class CaseDetailsView extends React.PureComponent {
   componentDidMount = () => {
     window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
     this.props.resetErrorMessages();
+
+    const { hearingDate, regionalOffice, hearingTime } = getQueryParams(window.location.search);
+
+    if (hearingDate && regionalOffice) {
+      this.props.setHearingDay({
+        hearingDate,
+        hearingTime: decodeURIComponent(hearingTime),
+        regionalOffice
+      });
+    }
   }
 
   render = () => {
@@ -46,7 +57,8 @@ class CaseDetailsView extends React.PureComponent {
       appealId,
       appeal,
       error,
-      success
+      success,
+      featureToggles
     } = this.props;
 
     return <AppSegment filledBackground>
@@ -67,9 +79,11 @@ class CaseDetailsView extends React.PureComponent {
       <hr {...horizontalRuleStyling} />
       <StickyNavContentArea>
         <CaseDetailsIssueList
+          amaIssueType={featureToggles.ama_decision_issues}
           title="Issues"
           isLegacyAppeal={appeal.isLegacyAppeal}
           issues={appeal.issues}
+          decisionIssues={appeal.decisionIssues}
         />
         <PowerOfAttorneyDetail title="Power of Attorney" appealId={appealId} />
         {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) &&
@@ -89,11 +103,12 @@ CaseDetailsView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const { success, error } = state.ui.messages;
-  const { veteranCaseListIsVisible } = state.ui;
+  const { veteranCaseListIsVisible, featureToggles } = state.ui;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     success,
+    featureToggles,
     error,
     veteranCaseListIsVisible
   };
@@ -102,7 +117,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     resetErrorMessages,
-    resetSuccessMessages
+    resetSuccessMessages,
+    setHearingDay
   }, dispatch)
 );
 

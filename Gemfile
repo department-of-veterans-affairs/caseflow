@@ -6,7 +6,7 @@ gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow
 gem "moment_timezone-rails"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "5.1.6"
+gem "rails", "5.1.6.1"
 # Use sqlite3 as the database for Active Record
 gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
 gem "sqlite3", platforms: [:ruby, :mswin, :mingw, :mswin, :x64_mingw]
@@ -27,6 +27,8 @@ gem "jbuilder", "~> 2.0"
 gem "sdoc", "~> 0.4.0", group: :doc
 
 gem "active_model_serializers", "~> 0.10.0"
+# active_model_serializers has a default dependency on loofah 2.2.2 which has a security vuln (CVE-2018-16468)
+gem "loofah", ">= 2.2.3"
 
 # soft delete gem
 gem "paranoia", "~> 2.2"
@@ -70,7 +72,7 @@ gem "therubyracer", platforms: :ruby
 
 gem "pg", platforms: :ruby
 
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "446b1ad643607e49dd3cacff24f7039bb17f78b8"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "c9568319e5982f239b918bb4c3b07527d2c35cec"
 
 gem "redis-rails", "~> 5.0.2"
 
@@ -90,6 +92,10 @@ gem "zero_downtime_migrations"
 # https://github.com/sparklemotion/nokogiri/pull/1746
 gem "nokogiri", "1.8.5"
 
+# rack versions before 2.0.6 are affected by CVE-2018-16470 and CVE-2018-16471.
+# Explicitly define rack version here to avoid that.
+gem "rack", "~> 2.0.6"
+
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter"
@@ -102,7 +108,7 @@ group :production, :staging do
   gem "rails_stdout_logging"
 end
 
-group :stubbed, :test, :development, :demo do
+group :test, :development, :demo do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug", platforms: :ruby
   gem "pry"
@@ -145,7 +151,7 @@ group :stubbed, :test, :development, :demo do
   gem "factory_bot_rails", "~> 4.8"
 end
 
-group :stubbed, :development do
+group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem "dotenv-rails"
   gem "foreman"

@@ -1,19 +1,21 @@
 describe HigherLevelReview do
   before do
-    FeatureToggle.enable!(:test_facols)
+    FeatureToggle.enable!(:intake_legacy_opt_in)
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
   end
 
   after do
-    FeatureToggle.disable!(:test_facols)
+    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
   let(:veteran_file_number) { "64205555" }
   let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number) }
-  let(:receipt_date) { HigherLevelReview::AMA_BEGIN_DATE + 1 }
+  let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
   let(:benefit_type) { "compensation" }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
+  let(:legacy_opt_in_approved) { false }
+  let(:veteran_is_not_claimant) { false }
 
   let(:higher_level_review) do
     HigherLevelReview.new(
@@ -21,7 +23,9 @@ describe HigherLevelReview do
       receipt_date: receipt_date,
       informal_conference: informal_conference,
       same_office: same_office,
-      benefit_type: benefit_type
+      benefit_type: benefit_type,
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: veteran_is_not_claimant
     )
   end
 
@@ -44,7 +48,7 @@ describe HigherLevelReview do
       end
 
       context "when it is before AMA begin date" do
-        let(:receipt_date) { SupplementalClaim::AMA_BEGIN_DATE - 1 }
+        let(:receipt_date) { DecisionReview.ama_activation_date - 1 }
 
         it "adds an error to receipt_date" do
           is_expected.to be false
@@ -66,13 +70,14 @@ describe HigherLevelReview do
       end
     end
 
-    context "informal_conference and same_office" do
+    context "informal_conference, same_office, legacy opt-in, veteran_is_not_claimant" do
       context "when saving review" do
         before { higher_level_review.start_review! }
 
         context "when they are set" do
           let(:informal_conference) { true }
           let(:same_office) { false }
+          let(:legacy_opt_in_approved) { false }
 
           it "is valid" do
             is_expected.to be true
@@ -80,10 +85,14 @@ describe HigherLevelReview do
         end
 
         context "when they are nil" do
+          let(:legacy_opt_in_approved) { nil }
+          let(:veteran_is_not_claimant) { nil }
           it "adds errors to informal_conference and same_office" do
             is_expected.to be false
             expect(higher_level_review.errors[:informal_conference]).to include("blank")
             expect(higher_level_review.errors[:same_office]).to include("blank")
+            expect(higher_level_review.errors[:legacy_opt_in_approved]).to include("blank")
+            expect(higher_level_review.errors[:veteran_is_not_claimant]).to include("blank")
           end
         end
       end

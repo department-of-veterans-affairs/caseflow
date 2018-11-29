@@ -3,7 +3,10 @@ import { ACTIONS } from './constants';
 import { update } from '../util/ReducerUtil';
 import { combineReducers } from 'redux';
 
+import commonComponentsReducer from '../components/common/reducers';
 import caseListReducer from '../queue/CaseList/CaseListReducer';
+import { workQueueReducer } from '../queue/reducers';
+import uiReducer from '../queue/uiReducer/uiReducer';
 
 export const initialState = {};
 
@@ -27,22 +30,36 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: action.payload.schedulePeriod
       }
     });
-  case ACTIONS.RECEIVE_REGIONAL_OFFICES:
-    return update(state, {
-      regionalOffices: {
-        $set: action.payload.regionalOffices
-      }
-    });
   case ACTIONS.RECEIVE_DAILY_DOCKET:
     return update(state, {
-      dailyDocket: {
-        $set: action.payload.dailyDocket
-      }
+      dailyDocket: { $set: action.payload.dailyDocket },
+      hearings: { $set: action.payload.hearings },
+      hearingDayOptions: { $set: action.payload.hearingDayOptions }
     });
-  case ACTIONS.REGIONAL_OFFICE_CHANGE:
+  case ACTIONS.RECEIVE_SAVED_HEARING:
     return update(state, {
-      selectedRegionalOffice: {
-        $set: action.payload.regionalOffice
+      hearings: {
+        [action.payload.hearing.id]: {
+          $set: action.payload.hearing
+        }
+      },
+      saveSuccessful: { $set: action.payload.hearing }
+    });
+  case ACTIONS.RESET_SAVE_SUCCESSFUL:
+    return update(state, {
+      $unset: ['saveSuccessful']
+    });
+  case ACTIONS.CANCEL_HEARING_UPDATE:
+    return update(state, {
+      hearings: {
+        [action.payload.hearing.id]: {
+          $unset: [
+            'editedNotes',
+            'editedDisposition',
+            'editedDate',
+            'editedTime',
+            'edited'
+          ] }
       }
     });
   case ACTIONS.RECEIVE_UPCOMING_HEARING_DAYS:
@@ -55,6 +72,42 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return update(state, {
       veteransReadyForHearing: {
         $set: action.payload.veterans
+      }
+    });
+  case ACTIONS.HEARING_NOTES_UPDATE:
+    return update(state, {
+      hearings: {
+        [action.payload.hearingId]: {
+          editedNotes: { $set: action.payload.notes },
+          edited: { $set: true }
+        }
+      }
+    });
+  case ACTIONS.HEARING_DISPOSITION_UPDATE:
+    return update(state, {
+      hearings: {
+        [action.payload.hearingId]: {
+          editedDisposition: { $set: action.payload.disposition },
+          edited: { $set: true }
+        }
+      }
+    });
+  case ACTIONS.HEARING_DATE_UPDATE:
+    return update(state, {
+      hearings: {
+        [action.payload.hearingId]: {
+          editedDate: { $set: action.payload.date },
+          edited: { $set: true }
+        }
+      }
+    });
+  case ACTIONS.HEARING_TIME_UPDATE:
+    return update(state, {
+      hearings: {
+        [action.payload.hearingId]: {
+          editedTime: { $set: action.payload.time },
+          edited: { $set: true }
+        }
       }
     });
   case ACTIONS.SELECTED_HEARING_DAY_CHANGE:
@@ -221,7 +274,10 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
 
 const combinedReducer = combineReducers({
   hearingSchedule: hearingScheduleReducer,
-  caseList: caseListReducer
+  ui: uiReducer,
+  caseList: caseListReducer,
+  queue: workQueueReducer,
+  components: commonComponentsReducer
 });
 
 export default timeFunction(

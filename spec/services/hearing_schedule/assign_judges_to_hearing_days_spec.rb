@@ -158,31 +158,6 @@ describe HearingSchedule::AssignJudgesToHearingDays do
     end
   end
 
-  context "handle CO hearings" do
-    before do
-      co_hearing_days
-
-      date = get_unique_dates_between(schedule_period.start_date,
-                                      schedule_period.end_date, 1).first
-      create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
-                                      object_identifier: "CSS_ID1")
-    end
-
-    let(:co_hearing_days) do
-      get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, 50).map do |date|
-        create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: nil)
-      end
-    end
-
-    subject { assign_judges_to_hearing_days.video_co_hearing_days }
-
-    it "filter CO non wednesdays" do
-      subject.each do |hearing_day|
-        expect(hearing_day.hearing_date.wednesday?).to be(true)
-      end
-    end
-  end
-
   context "handle already assgined hearing day" do
     before do
       judge
@@ -205,7 +180,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
     subject { assign_judges_to_hearing_days }
 
-    it "expect judge to have non-available days" do
+    it "expect judge to have non-available days", skip: "This test is flaky." do
       expect(subject.judges[judge.sdomainid][:non_availabilities]
         .include?(co_hearing_day.hearing_date.to_date)).to be(true)
     end
@@ -323,7 +298,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
         expect(subject.count).to eq(day_count)
       end
 
-      it "all hearing days should be assigned to judges" do
+      it "all hearing days should be assigned to judges", skip: "This test is flaky." do
         judge_count = {}
         subject.each do |hearing_day|
           expected_day = hearing_days[hearing_day[:id]]

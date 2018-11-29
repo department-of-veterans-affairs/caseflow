@@ -2,20 +2,45 @@ require "rails_helper"
 
 describe Rating do
   before do
+    Time.zone = "UTC"
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
+  let(:participant_id) { 1234 }
+
+  let(:receipt_date) { Time.zone.today }
+
+  let(:promulgation_date) { receipt_date - 30 }
+  let(:profile_date) { receipt_date - 40 }
+  let(:associated_claims) { [] }
+
   let(:rating) do
     Generators::Rating.build(
-      issues: issues
+      issues: issues,
+      promulgation_date: promulgation_date,
+      profile_date: profile_date,
+      participant_id: participant_id,
+      associated_claims: associated_claims
     )
   end
 
+  def build_issue(num)
+    {
+      participant_id: participant_id,
+      reference_id: "Issue#{num}",
+      decision_text: "Decision#{num}",
+      promulgation_date: promulgation_date,
+      profile_date: profile_date,
+      contention_reference_id: nil,
+      ramp_claim_id: nil,
+      title_of_active_review: nil,
+      source_higher_level_review: nil,
+      rba_contentions_data: [{ prfil_dt: profile_date, cntntn_id: nil }]
+    }
+  end
+
   let(:issues) do
-    [
-      { reference_id: "Issue1", decision_text: "Decision1", in_active_review: nil },
-      { reference_id: "Issue2", decision_text: "Decision2", in_active_review: nil }
-    ]
+    [build_issue(1), build_issue(2)]
   end
 
   context "#issues" do
@@ -32,20 +57,57 @@ describe Rating do
     end
   end
 
-  context "#ui_hash" do
-    subject { rating.ui_hash }
+  context "#associated_end_products" do
+    subject { rating.associated_end_products }
+
+    context "when mutliple associated eps exist" do
+      let(:associated_claims) do
+        [
+          { clm_id: "abc123", bnft_clm_tc: "040SCR" },
+          { clm_id: "dcf345", bnft_clm_tc: "030HLRNR" }
+        ]
+      end
+      it do
+        expect(subject.first).to have_attributes(claim_id: "abc123", claim_type_code: "040SCR")
+        expect(subject.last).to have_attributes(claim_id: "dcf345", claim_type_code: "030HLRNR")
+        expect(subject.count).to eq(2)
+      end
+    end
+
+    context "when one ep exists" do
+      let(:associated_claims) do
+        [
+          { clm_id: "qwe123", bnft_clm_tc: "030HLRR" }
+        ]
+      end
+      it do
+        expect(subject.first).to have_attributes(claim_id: "qwe123", claim_type_code: "030HLRR")
+        expect(subject.count).to eq(1)
+      end
+    end
+
+    context "when no eps exist" do
+      let(:associated_claims) { nil }
+      it do
+        is_expected.to be_empty
+      end
+    end
+  end
+
+  context "#serialize" do
+    subject { rating.serialize }
 
     it do
       is_expected.to match(
         participant_id: rating.participant_id,
         profile_date: rating.profile_date,
         promulgation_date: rating.promulgation_date,
-        issues: issues
+        issues: rating.issues.map(&:serialize)
       )
     end
 
     context "when rating issues is nil" do
-      let(:issues) { :no_issues }
+      let(:issues) { nil }
 
       it "should have no issues" do
         is_expected.to match(

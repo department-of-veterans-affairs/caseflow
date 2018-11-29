@@ -17,7 +17,7 @@ class RequestIssuesUpdate < ApplicationRecord
     transaction do
       review.create_issues!(new_issues)
       strip_removed_issues!
-      review.mark_rated_request_issues_to_reassociate!
+      review.mark_rating_request_issues_to_reassociate!
 
       update!(
         before_request_issue_ids: before_issues.map(&:id),
@@ -26,13 +26,23 @@ class RequestIssuesUpdate < ApplicationRecord
       submit_for_processing!
     end
 
-    if run_async?
-      ClaimReviewProcessJob.perform_later(self)
-    else
-      ClaimReviewProcessJob.perform_now(self)
-    end
+    process_job
 
     true
+  end
+
+  def process_job
+    if review.respond_to?(:process_end_product_establishments!)
+      if run_async?
+        ClaimReviewProcessJob.perform_later(self)
+      else
+        ClaimReviewProcessJob.perform_now(self)
+      end
+    else
+      # appeals should just be set to processed
+      attempted!
+      processed!
+    end
   end
 
   def process_end_product_establishments!
@@ -44,6 +54,8 @@ class RequestIssuesUpdate < ApplicationRecord
       request_issue.end_product_establishment.remove_contention!(request_issue)
     end
 
+    potential_end_products_to_remove = removed_issues.map(&:end_product_establishment).uniq
+    potential_end_products_to_remove.each(&:cancel_unused_end_product!)
     clear_error!
     processed!
   end
@@ -86,10 +98,11 @@ class RequestIssuesUpdate < ApplicationRecord
         decision_date: issue_data[:decision_date],
         issue_category: issue_data[:issue_category],
         notes: issue_data[:notes],
-        is_unidentified: issue_data[:is_unidentified]
-      ).tap do |request_issue|
-        request_issue.rating_issue_profile_date ||= issue_data[:profile_date]
-      end
+        is_unidentified: issue_data[:is_unidentified],
+        untimely_exemption: issue_data[:untimely_exemption],
+        untimely_exemption_notes: issue_data[:untimely_exemption_notes],
+        ramp_claim_id: issue_data[:ramp_claim_id]
+      ).tap(&:validate_eligibility!)
     end
   end
 

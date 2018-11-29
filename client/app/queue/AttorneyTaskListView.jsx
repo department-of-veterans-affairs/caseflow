@@ -3,14 +3,20 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
+import { sprintf } from 'sprintf-js';
 
-import StatusMessage from '../components/StatusMessage';
+import TabWindow from '../components/TabWindow';
 import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../components/Alert';
 
-import { workableTasksByAssigneeCssIdSelector } from './selectors';
+import {
+  completeTasksByAssigneeCssIdSelector,
+  onHoldTasksByAssigneeCssIdSelector,
+  workableTasksByAssigneeCssIdSelector
+} from './selectors';
+
 import {
   resetErrorMessages,
   resetSuccessMessages,
@@ -28,6 +34,9 @@ type Params = {||};
 
 type Props = Params & {|
   tasks: Array<TaskWithAppeal>,
+  workableTasks: Array<TaskWithAppeal>,
+  onHoldTasks: Array<TaskWithAppeal>,
+  completedTasks: Array<TaskWithAppeal>,
   messages: Object,
   resetSaveState: typeof resetSaveState,
   resetSuccessMessages: typeof resetSuccessMessages,
@@ -47,7 +56,9 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
     this.props.clearCaseSelectSearch();
     this.props.resetErrorMessages();
 
-    if (_.some(this.props.tasks, (task) => !task.taskId)) {
+    if (_.some(
+      [...this.props.workableTasks, ...this.props.onHoldTasks, ...this.props.completedTasks],
+      (task) => !task.taskId)) {
       this.props.showErrorMessage({
         title: COPY.TASKS_NEED_ASSIGNMENT_ERROR_TITLE,
         detail: COPY.TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE
@@ -57,13 +68,40 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
 
   render = () => {
     const { messages } = this.props;
-    const noTasks = !_.size(this.props.tasks);
+    const noOpenTasks = !_.size([...this.props.workableTasks, ...this.props.onHoldTasks]);
+    const noCasesMessage = noOpenTasks ?
+      <p>
+        {COPY.NO_CASES_IN_QUEUE_MESSAGE}
+        <b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.
+      </p> : '';
 
-    if (noTasks) {
-      return <StatusMessage>
-        <h2>{COPY.NO_CASES_IN_QUEUE_MESSAGE}<Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link>.</h2>
-      </StatusMessage>;
-    }
+    const tabs = [
+      {
+        label: sprintf(
+          COPY.QUEUE_PAGE_ASSIGNED_TAB_TITLE,
+          this.props.workableTasks.length),
+        page: <TaskTableTab
+          description={COPY.ATTORNEY_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION}
+          tasks={this.props.workableTasks}
+        />
+      },
+      {
+        label: sprintf(
+          COPY.QUEUE_PAGE_ON_HOLD_TAB_TITLE,
+          this.props.onHoldTasks.length),
+        page: <TaskTableTab
+          description={COPY.ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}
+          tasks={this.props.onHoldTasks}
+        />
+      },
+      {
+        label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
+        page: <TaskTableTab
+          description={COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}
+          tasks={this.props.completedTasks}
+        />
+      }
+    ];
 
     return <AppSegment filledBackground>
       <div>
@@ -74,15 +112,10 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
         {messages.success && <Alert type="success" title={messages.success.title}>
           {messages.success.detail || COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
         </Alert>}
-        <TaskTable
-          includeDetailsLink
-          includeType
-          includeDocketNumber
-          includeIssueCount
-          includeDueDate
-          includeReaderLink
-          requireDasRecord
-          tasks={this.props.tasks}
+        {noCasesMessage}
+        <TabWindow
+          name="tasks-attorney-list"
+          tabs={tabs}
         />
       </div>
     </AppSegment>;
@@ -102,7 +135,9 @@ const mapStateToProps = (state) => {
   } = state;
 
   return ({
-    tasks: workableTasksByAssigneeCssIdSelector(state),
+    workableTasks: workableTasksByAssigneeCssIdSelector(state),
+    onHoldTasks: onHoldTasksByAssigneeCssIdSelector(state),
+    completedTasks: completeTasksByAssigneeCssIdSelector(state),
     messages,
     taskDecision
   });
@@ -119,3 +154,17 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default (connect(mapStateToProps, mapDispatchToProps)(AttorneyTaskListView): React.ComponentType<Params>);
+
+const TaskTableTab = ({ description, tasks }) => <React.Fragment>
+  <p>{description}</p>
+  <TaskTable
+    includeDetailsLink
+    includeType
+    includeDocketNumber
+    includeIssueCount
+    includeDueDate
+    includeReaderLink
+    requireDasRecord
+    tasks={tasks}
+  />
+</React.Fragment>;

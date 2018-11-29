@@ -10,6 +10,7 @@ import ApiUtil from '../util/ApiUtil';
 import { prepareAppealForStore, prepareLegacyTasksForStore, prepareTasksForStore } from './utils';
 
 import { onReceiveAppealDetails, onReceiveTasks, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
+import { setCanEditAod } from './uiReducer/uiActions';
 import type { Appeal, Appeals, Tasks } from './types/models';
 import type { State, UsersById } from './types/state';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
@@ -34,7 +35,8 @@ type Props = Params & {|
   setAttorneysOfJudge: typeof setAttorneysOfJudge,
   fetchAllAttorneys: typeof fetchAllAttorneys,
   onReceiveTasks: typeof onReceiveTasks,
-  onReceiveAppealDetails: typeof onReceiveAppealDetails
+  onReceiveAppealDetails: typeof onReceiveAppealDetails,
+  setCanEditAod: typeof setCanEditAod
 |};
 
 class CaseDetailLoadingScreen extends React.PureComponent<Props> {
@@ -42,8 +44,6 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
     const {
       appealId,
       appealDetails,
-      caseflowTasks,
-      vacolsTasks,
       userRole
     } = this.props;
 
@@ -52,27 +52,25 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
     if (!appealDetails || !(appealId in appealDetails)) {
       promises.push(
         ApiUtil.get(`/appeals/${appealId}`).then((response) => {
+          this.props.setCanEditAod(response.body.can_edit_aod);
           this.props.onReceiveAppealDetails(prepareAppealForStore([response.body.appeal]));
         })
       );
     }
 
-    if ((!vacolsTasks || _.filter(vacolsTasks, (task) => task.externalAppealId === appealId).length === 0) &&
-      (!caseflowTasks || _.filter(caseflowTasks, (task) => task.externalAppealId === appealId).length === 0)) {
-      const taskPromise = ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
-        const legacyTasks = _.every(response.body.tasks, (task) => task.attributes.appeal_type === 'LegacyAppeal');
+    const taskPromise = ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
+      const legacyTasks = _.every(response.body.tasks, (task) => task.attributes.appeal_type === 'LegacyAppeal');
 
-        if (legacyTasks && [USER_ROLE_TYPES.attorney, USER_ROLE_TYPES.judge].includes(userRole)) {
-          this.props.onReceiveTasks({ amaTasks: {},
-            tasks: prepareLegacyTasksForStore(response.body.tasks) });
-        } else {
-          this.props.onReceiveTasks({ tasks: {},
-            amaTasks: prepareTasksForStore(response.body.tasks) });
-        }
-      });
+      if (legacyTasks && [USER_ROLE_TYPES.attorney, USER_ROLE_TYPES.judge].includes(userRole)) {
+        this.props.onReceiveTasks({ amaTasks: {},
+          tasks: prepareLegacyTasksForStore(response.body.tasks) });
+      } else {
+        this.props.onReceiveTasks({ tasks: {},
+          amaTasks: prepareTasksForStore(response.body.tasks) });
+      }
+    });
 
-      promises.push(taskPromise);
-    }
+    promises.push(taskPromise);
 
     return Promise.all(promises);
   };
@@ -139,6 +137,7 @@ const mapStateToProps = (state: State) => {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveTasks,
+  setCanEditAod,
   onReceiveAppealDetails,
   setAttorneysOfJudge,
   fetchAllAttorneys

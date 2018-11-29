@@ -2,13 +2,11 @@ require "rails_helper"
 
 RSpec.feature "Intake Stats Dashboard" do
   before do
-    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2020, 1, 7, 17, 55, 0, rand(1000)))
   end
 
   after do
     Timecop.return
-    FeatureToggle.disable!(:test_facols)
   end
 
   scenario "Switching tab intervals" do
@@ -36,21 +34,23 @@ RSpec.feature "Intake Stats Dashboard" do
            established_at: Time.zone.now,
            end_product_status: "HELLA_ACTIVE").issues.create!(description: "this is the only issue here")
 
-    create(:ramp_election,
-           veteran_file_number: "77776666",
-           notice_date: 5.days.ago,
-           receipt_date: 2.days.ago,
-           option_selected: :higher_level_review_with_hearing,
-           established_at: Time.zone.now)
+    election_for_closed_appeals = create(
+      :ramp_election,
+      veteran_file_number: "77776666",
+      notice_date: 5.days.ago,
+      receipt_date: 2.days.ago,
+      option_selected: :higher_level_review_with_hearing,
+      established_at: Time.zone.now
+    )
 
     RampClosedAppeal.create!(
-      ramp_election_id: 5,
+      ramp_election_id: election_for_closed_appeals.id,
       vacols_id: "12345",
       nod_date: 365.days.ago
     )
 
     RampClosedAppeal.create!(
-      ramp_election_id: 5,
+      ramp_election_id: election_for_closed_appeals.id,
       vacols_id: "54321",
       nod_date: 363.days.ago
     )

@@ -3,7 +3,9 @@ require "rails_helper"
 RSpec.feature "Case details" do
   let(:attorney_first_name) { "Robby" }
   let(:attorney_last_name) { "McDobby" }
-  let!(:attorney_user) { FactoryBot.create(:user, full_name: "#{attorney_first_name} #{attorney_last_name}") }
+  let!(:attorney_user) do
+    FactoryBot.create(:user, full_name: "#{attorney_first_name} #{attorney_last_name}")
+  end
   let!(:vacols_atty) do
     FactoryBot.create(
       :staff,
@@ -31,13 +33,7 @@ RSpec.feature "Case details" do
   let!(:vacols_colocated) { FactoryBot.create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
 
   before do
-    FeatureToggle.enable!(:test_facols)
-
     User.authenticate!(user: attorney_user)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   context "hearings pane on attorney task detail view" do
@@ -169,6 +165,36 @@ RSpec.feature "Case details" do
       end
     end
 
+    context "when veteran is not in BGS" do
+      let!(:appeal) do
+        FactoryBot.create(
+          :legacy_appeal,
+          :with_veteran,
+          vacols_case: FactoryBot.create(
+            :case,
+            :assigned,
+            user: attorney_user,
+            correspondent: FactoryBot.create(:correspondent, sgender: "F")
+          )
+        )
+      end
+
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_return(nil)
+      end
+
+      scenario "details view informs us that the Veteran is the appellant" do
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+
+        expect(page).to have_content("About the Veteran")
+        expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
+        expect(page).to_not have_content("1/10/1935")
+        expect(page).to_not have_content("5/25/2016")
+        expect(page).to have_content(appeal.regional_office.city)
+      end
+    end
+
     context "when Veteran is not the appellant" do
       let!(:appeal) do
         FactoryBot.create(
@@ -245,7 +271,28 @@ RSpec.feature "Case details" do
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
+      # Call have_content() so we wait for the case details page to load
+      expect(page).to have_content(appeal.veteran_full_name)
       expect(page.document.text).to match(/Disposition 1 - Allowed/i)
+    end
+  end
+
+  context "when an appeal has an issue that is ineligible" do
+    let(:eligible_issue_cnt) { 5 }
+    let(:ineligible_issue_cnt) { 3 }
+    let(:issues) do
+      [
+        build_list(:request_issue, eligible_issue_cnt, description: "Knee pain"),
+        build_list(:request_issue, ineligible_issue_cnt, description: "Sunburn", ineligible_reason: :untimely)
+      ].flatten
+    end
+    let!(:appeal) { FactoryBot.create(:appeal, request_issues: issues) }
+
+    scenario "only eligible issues should appear in case details page" do
+      visit "/queue/appeals/#{appeal.uuid}"
+
+      expect(page).to have_content("Issue #{eligible_issue_cnt}")
+      expect(page).to_not have_content("Issue #{eligible_issue_cnt + 1}")
     end
   end
 
@@ -274,6 +321,7 @@ RSpec.feature "Case details" do
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
       preparer_name = "#{task.assigned_by.first_name[0]}. #{task.assigned_by.last_name}"
+
       expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_PREPARER_LABEL} #{preparer_name}/i)
       expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} #{task.document_id}/i)
     end
@@ -347,6 +395,115 @@ RSpec.feature "Case details" do
       expect(page).to have_content("#{assigner_name.first[0]}. #{assigner_name.last}")
 
       expect(Task.find(on_hold_task.id).status).to eq("on_hold")
+    end
+  end
+
+  context "edit aod link appears/disappears as expected" do
+    let(:appeal) { FactoryBot.create(:appeal) }
+    let(:user) { FactoryBot.create(:user) }
+    let(:user2) { FactoryBot.create(:user) }
+
+    context "when the current user is a member of the AOD team" do
+      before do
+        allow_any_instance_of(AodTeam).to receive(:user_has_access?).with(user).and_return(true)
+        User.authenticate!(user: user)
+        visit("/queue/appeals/#{appeal.uuid}")
+      end
+
+      it "should display the edit link" do
+        expect(page).to have_content("Edit")
+      end
+    end
+
+    context "when the current user is not a member of the AOD team" do
+      before do
+        allow_any_instance_of(AodTeam).to receive(:user_has_access?).with(user2).and_return(false)
+        User.authenticate!(user: user2)
+        visit("/queue/appeals/#{appeal.uuid}")
+      end
+      it "should not display the edit link" do
+        expect(page).to_not have_content("Edit")
+      end
+    end
+  end
+
+  describe "Marking organization task complete" do
+    context "when there is no assigner" do
+      let(:qr) { QualityReview.singleton }
+      let(:task) { FactoryBot.create(:qr_task) }
+      let(:user) { FactoryBot.create(:user) }
+
+      before do
+        # Marking this task complete creates a BvaDispatchTask. Make sure there are members of that organization so
+        # that the creation of that BvaDispatchTask succeeds.
+        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+        OrganizationsUser.add_user_to_organization(user, qr)
+        User.authenticate!(user: user)
+      end
+
+      it "marking task as complete works" do
+        visit "/queue/appeals/#{task.appeal.uuid}"
+
+        find(".Select-control", text: "Select an action").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
+
+        find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
+
+        expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, ""))
+      end
+    end
+
+    describe "Issue order by created_at in Case Details page" do
+      context "when there are two issues" do
+        let!(:appeal) { FactoryBot.create(:appeal) }
+        issue_description = "Head trauma 1"
+        issue_description2 = "Head trauma 2"
+        let!(:request_issue) do
+          FactoryBot.create(:request_issue, review_request_id: appeal.id, description: issue_description,
+                                            review_request_type: "Appeal")
+        end
+        let!(:request_issue2) do
+          FactoryBot.create(:request_issue, review_request_id: appeal.id, description: issue_description2,
+                                            review_request_type: "Appeal")
+        end
+
+        it "should display sorted issues" do
+          visit "/queue/appeals/#{appeal.uuid}"
+          expect(page).to have_content(issue_description + " Issue 2 DESCRIPTION " + issue_description2)
+        end
+      end
+    end
+
+    describe "CaseTimeline shows judge & attorney tasks" do
+      let!(:user) { FactoryBot.create(:user) }
+      let!(:appeal) { FactoryBot.create(:appeal) }
+      let!(:appeal2) { FactoryBot.create(:appeal) }
+      let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
+      let!(:attorney_task) do
+        FactoryBot.create(:task, appeal: appeal, type: AttorneyTask.name, parent: root_task,
+                                 assigned_to: user, completed_at: Time.zone.now - 4.days)
+      end
+      let!(:judge_task) do
+        FactoryBot.create(:task, appeal: appeal, type: JudgeTask.name, parent: attorney_task,
+                                 assigned_to: user, status: Constants.TASK_STATUSES.completed,
+                                 completed_at: Time.zone.now)
+      end
+
+      before do
+        # This attribute needs to be set here due to update_parent_status hook in the task model
+        attorney_task.update!(status: Constants.TASK_STATUSES.completed)
+      end
+
+      it "should display judge & attorney tasks" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to have_content(COPY::CASE_TIMELINE_ATTORNEY_TASK)
+        expect(page).to have_content(COPY::CASE_TIMELINE_JUDGE_TASK)
+      end
+
+      it "should NOT display judge & attorney tasks" do
+        visit "/queue/appeals/#{appeal2.uuid}"
+        expect(page).not_to have_content(COPY::CASE_TIMELINE_JUDGE_TASK)
+      end
     end
   end
 end

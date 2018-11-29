@@ -19,10 +19,6 @@ default: &default
   password: <%= ENV['POSTGRES_PASSWORD'] %>
   <% end %>
 
-stubbed:
-  <<: *default
-  database: caseflow_certification_stubbed
-
 demo:
   <<: *default
   database: caseflow_certification_demo
@@ -44,21 +40,15 @@ production:
   <<: *default
   url: <%= ENV["POSTGRES_URL"] %>
 
-# For connecting to the VACOLS Databases
-stubbed_vacols:
-  adapter: sqlite3
-  pool: 5
-  timeout: 5000
-  database: db/development-vacols.sqlite3
-
-# Docker setup
 development_vacols:
- adapter: oracle_enhanced
- host: localhost
- port: 1522
- username: VACOLS
- password: VACOLS
- database: BVAP.localdomain
+  adapter: oracle_enhanced
+  username: VACOLS
+  password: VACOLS
+  <% if ! ENV['DOCKERIZED'] %>
+  host: localhost
+  port: 1522
+  <% end %>
+  database: <%= ENV['DEMO_DB'] || "BVAP.localdomain" %> 
 
 demo_vacols:
   adapter: sqlite3

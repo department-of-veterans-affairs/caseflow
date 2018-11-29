@@ -1,7 +1,4 @@
 describe ColocatedQueue do
-  before { FeatureToggle.enable!(:test_facols) }
-  after { FeatureToggle.disable!(:test_facols) }
-
   describe "#tasks" do
     let(:atty) { FactoryBot.create(:user) }
     let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: atty.css_id) }

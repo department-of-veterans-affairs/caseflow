@@ -11,11 +11,26 @@ export const commonReducers = (state, action) => {
     });
   };
 
-  actionsMap[ACTIONS.TOGGLE_NON_RATED_ISSUE_MODAL] = () => {
+  actionsMap[ACTIONS.TOGGLE_NONRATING_REQUEST_ISSUE_MODAL] = () => {
     return update(state, {
-      $toggle: ['nonRatedIssueModalVisible'],
+      $toggle: ['nonRatingRequestIssueModalVisible'],
       addIssuesModalVisible: {
         $set: false
+      }
+    });
+  };
+
+  actionsMap[ACTIONS.TOGGLE_LEGACY_OPT_IN_MODAL] = () => {
+    return update(state, {
+      $toggle: ['legacyOptInModalVisible'],
+      addIssuesModalVisible: {
+        $set: false
+      },
+      nonRatingRequestIssueModalVisible: {
+        $set: false
+      },
+      currentIssueAndNotes: {
+        $set: action.payload.currentIssueAndNotes
       }
     });
   };
@@ -29,8 +44,26 @@ export const commonReducers = (state, action) => {
   actionsMap[ACTIONS.TOGGLE_UNIDENTIFIED_ISSUES_MODAL] = () => {
     return update(state, {
       $toggle: ['unidentifiedIssuesModalVisible'],
-      nonRatedIssueModalVisible: {
+      nonRatingRequestIssueModalVisible: {
         $set: false
+      }
+    });
+  };
+
+  actionsMap[ACTIONS.TOGGLE_UNTIMELY_EXEMPTION_MODAL] = () => {
+    return update(state, {
+      $toggle: ['untimelyExemptionModalVisible'],
+      addIssuesModalVisible: {
+        $set: false
+      },
+      nonRatingRequestIssueModalVisible: {
+        $set: false
+      },
+      legacyOptInModalVisible: {
+        $set: false
+      },
+      currentIssueAndNotes: {
+        $set: action.payload.currentIssueAndNotes
       }
     });
   };

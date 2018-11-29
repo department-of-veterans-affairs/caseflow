@@ -9,6 +9,7 @@ import { bindActionCreators } from 'redux';
 import Table from '../../components/Table';
 import Checkbox from '../../components/Checkbox';
 import DocketTypeBadge from './DocketTypeBadge';
+import HearingBadge from './HearingBadge';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
@@ -27,6 +28,7 @@ import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTION
 import type { TaskWithAppeal } from '../types/models';
 
 type Params = {|
+  includeHearingBadge?: boolean,
   includeSelect?: boolean,
   includeDetailsLink?: boolean,
   includeTask?: boolean,
@@ -49,7 +51,8 @@ type Params = {|
 type Props = Params & {|
   setSelectionOfTaskOfUser: Function,
   isTaskAssignedToUserSelected?: Object,
-  userIsVsoEmployee: boolean
+  userIsVsoEmployee: boolean,
+  userRole: string
 |};
 
 class TaskTable extends React.PureComponent<Props> {
@@ -75,6 +78,13 @@ class TaskTable extends React.PureComponent<Props> {
 
   collapseColumnIfNoDASRecord = (task) => this.taskHasDASRecord(task) ? 1 : 0
 
+  caseHearingColumn = () => {
+    return this.props.includeHearingBadge ? {
+      header: '',
+      valueFunction: (task) => <HearingBadge hearing={task.appeal.hearings[0]} />
+    } : null;
+  }
+
   caseSelectColumn = () => {
     return this.props.includeSelect ? {
       header: COPY.CASE_LIST_TABLE_SELECT_COLUMN_TITLE,
@@ -96,6 +106,7 @@ class TaskTable extends React.PureComponent<Props> {
       valueFunction: (task: TaskWithAppeal) => <CaseDetailsLink
         task={task}
         appeal={task.appeal}
+        userRole={this.props.userRole}
         disabled={!this.taskHasDASRecord(task)} />,
       getSortValue: (task) => {
         const vetName = task.appeal.veteranFullName.split(' ');
@@ -106,7 +117,7 @@ class TaskTable extends React.PureComponent<Props> {
     } : null;
   }
 
-  actionNameOfTask = (task: TaskWithAppeal) => CO_LOCATED_ADMIN_ACTIONS[task.action]
+  actionNameOfTask = (task: TaskWithAppeal) => CO_LOCATED_ADMIN_ACTIONS[task.label]
 
   caseTaskColumn = () => {
     return this.props.includeTask ? {
@@ -263,6 +274,7 @@ class TaskTable extends React.PureComponent<Props> {
 
   getQueueColumns = () : Array<{ header: string, span?: Function, valueFunction: Function, getSortValue?: Function }> =>
     _.compact([
+      this.caseHearingColumn(),
       this.caseSelectColumn(),
       this.caseDetailsColumn(),
       this.caseTaskColumn(),
@@ -304,7 +316,8 @@ class TaskTable extends React.PureComponent<Props> {
 
 const mapStateToProps = (state) => ({
   isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,
-  userIsVsoEmployee: state.ui.userIsVsoEmployee
+  userIsVsoEmployee: state.ui.userIsVsoEmployee,
+  userRole: state.ui.userRole
 });
 
 const mapDispatchToProps = (dispatch) => (

@@ -2,8 +2,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :assigned_attorney
   attribute :assigned_judge
 
+  attribute :timeline
+
   attribute :issues do
-    object.request_issues.map do |issue|
+    object.eligible_request_issues.map do |issue|
       # Hard code program for October 1st Pilot, we don't have all the info for how we'll
       # break down request issues yet but all RAMP appeals will be 'compensation'
       {
@@ -11,13 +13,40 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
         disposition: issue.disposition,
         program: "Compensation",
         description: issue.description,
+        notes: issue.notes,
         remand_reasons: issue.remand_reasons
+      }
+    end
+  end
+
+  attribute :decision_issues do
+    object.decision_issues.map do |issue|
+      {
+        id: issue.id,
+        disposition: issue.disposition,
+        description: issue.description,
+        remand_reasons: issue.remand_reasons
+      }
+    end
+  end
+
+  attribute :decision_issues do
+    object.decision_issues.map do |issue|
+      {
+        id: issue.id,
+        disposition: issue.disposition,
+        description: issue.description,
+        request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id)
       }
     end
   end
 
   attribute :hearings do
     []
+  end
+
+  attribute :location_code do
+    object.location_code
   end
 
   attribute :completed_hearing_on_previous_appeal? do
@@ -67,8 +96,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :decision_date do
-    task = object.tasks.where(type: "BvaDispatchTask", action: "review", status: "completed").last
-    task ? task.completed_at : nil
+    object.decision_date
   end
 
   attribute :certification_date do
@@ -84,11 +112,5 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
 
   attribute :caseflow_veteran_id do
     object.veteran ? object.veteran.id : nil
-  end
-
-  attribute :events do
-    {
-      nod_receipt_date: object.receipt_date
-    }
   end
 end

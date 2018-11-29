@@ -1,14 +1,6 @@
 require "rails_helper"
 
 RSpec.feature "Login" do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
 
   before do

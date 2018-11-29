@@ -1,13 +1,18 @@
 class TasksController < ApplicationController
   include Errors
 
-  before_action :verify_task_access, only: [:create, :assignable_organizations, :assignable_users]
-  skip_before_action :deny_vso_access, only: [:index, :update, :for_appeal]
+  before_action :verify_task_access, only: [:create]
+  skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
   TASK_CLASSES = {
     ColocatedTask: ColocatedTask,
     AttorneyTask: AttorneyTask,
-    GenericTask: GenericTask
+    GenericTask: GenericTask,
+    QualityReviewTask: QualityReviewTask,
+    JudgeTask: JudgeTask,
+    ScheduleHearingTask: ScheduleHearingTask,
+    MailTask: MailTask,
+    InformalHearingPresentationTask: InformalHearingPresentationTask
   }.freeze
 
   QUEUES = {
@@ -54,10 +59,13 @@ class TasksController < ApplicationController
   def create
     return invalid_type_error unless task_class
 
-    tasks = task_class.create_from_params(create_params, current_user)
+    tasks = task_class.create_many_from_params(create_params, current_user)
 
     tasks.each { |task| return invalid_record_error(task) unless task.valid? }
-    render json: { tasks: json_tasks(tasks) }, status: :created
+
+    tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
+
+    render json: { tasks: json_tasks(tasks_to_return) }, status: :created
   end
 
   # To update attorney task
@@ -77,7 +85,9 @@ class TasksController < ApplicationController
     tasks = task.update_from_params(update_params, current_user)
     tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
-    render json: { tasks: json_tasks(tasks) }
+    tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
+
+    render json: { tasks: json_tasks(tasks_to_return) }
   end
 
   def for_appeal
@@ -97,15 +107,17 @@ class TasksController < ApplicationController
 
   private
 
-  def can_act_on_task?
-    return true if can_assign_task?
-    true if task.can_be_accessed_by_user?(current_user)
-  rescue ActiveRecord::RecordNotFound
-    return false
+  def can_assign_task?
+    return true if create_params.first[:appeal].is_a?(Appeal)
+    super
   end
 
   def verify_task_access
-    redirect_to("/unauthorized") unless can_act_on_task?
+    if current_user.vso_employee? && task_class != InformalHearingPresentationTask
+      fail Caseflow::Error::ActionForbiddenError, message: "VSOs cannot create that task."
+    end
+
+    redirect_to("/unauthorized") unless can_assign_task?
   end
 
   def queue_class
@@ -144,12 +156,17 @@ class TasksController < ApplicationController
 
   def create_params
     @create_params ||= [params.require("tasks")].flatten.map do |task|
-      task = task.permit(:type, :instructions, :action, :assigned_to_id, :assigned_to_type, :external_id, :parent_id)
+      task = task.permit(:type, :instructions, :action, :label, :assigned_to_id,
+                         :assigned_to_type, :external_id, :parent_id, business_payloads: [:description, values: {}])
         .merge(assigned_by: current_user)
         .merge(appeal: Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id]))
 
       task.delete(:external_id)
       task = task.merge(assigned_to_type: User.name) if !task[:assigned_to_type]
+
+      # Allow actions to be passed with either the key "action" or "label" while we transition to using "label" in place
+      # of "action" so requests coming from browsers that have older versions of the javascript bundle succeed.
+      task = task.merge(action: task.delete(:label)) if task[:label]
 
       task
     end
@@ -161,7 +178,8 @@ class TasksController < ApplicationController
       :on_hold_duration,
       :assigned_to_id,
       :instructions,
-      reassign: [:assigned_to_id, :assigned_to_type, :instructions]
+      reassign: [:assigned_to_id, :assigned_to_type, :instructions],
+      business_payloads: [:description, values: {}]
     )
   end
 

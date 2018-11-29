@@ -1,12 +1,4 @@
 RSpec.describe IssuesController, type: :controller do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let!(:user) { User.authenticate!(roles: ["System Admin"]) }
   let(:case_issue) { nil }
   let(:appeal) do
@@ -62,6 +54,7 @@ RSpec.describe IssuesController, type: :controller do
         post :create, params: { appeal_id:
           create(:legacy_appeal, vacols_case: create(:case)).vacols_id,
                                 issues: params }
+        expect(Raven).to_not receive(:capture_exception)
         expect(response.status).to eq 400
         response_body = JSON.parse(response.body)["errors"].first["detail"]
         expect(response_body).to match(/cannot modify appeal/)

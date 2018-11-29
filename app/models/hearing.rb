@@ -11,6 +11,9 @@ class Hearing < ApplicationRecord
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
   vacols_attr_accessor :representative_name, :representative
   vacols_attr_accessor :regional_office_key, :master_record
+  vacols_attr_accessor :docket_number, :appeal_type, :appellant_address_line_1
+  vacols_attr_accessor :appellant_address_line_2, :appellant_city, :appellant_state
+  vacols_attr_accessor :appellant_zip, :appellant_country
 
   belongs_to :appeal, class_name: "LegacyAppeal"
   belongs_to :user # the judge
@@ -20,6 +23,9 @@ class Hearing < ApplicationRecord
   # this is used to cache appeal stream for hearings
   # when fetched intially.
   has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots
+
+  CO_HEARING = "Central".freeze
+  VIDEO_HEARING = "Video".freeze
 
   def venue
     self.class.venues[venue_key]
@@ -63,15 +69,23 @@ class Hearing < ApplicationRecord
     appeals << self.class.repository.appeals_ready_for_hearing(appeal.vbms_id)
   end
 
-  def update(hearing_hash)
+  def update_caseflow_and_vacols(hearing_hash)
     ActiveRecord::Base.multi_transaction do
       self.class.repository.update_vacols_hearing!(vacols_record, hearing_hash)
-      super
+      update!(hearing_hash)
     end
   end
 
   def regional_office_timezone
     HearingMapper.timezone(regional_office_key)
+  end
+
+  def readable_location
+    if request_type == Hearing::CO_HEARING
+      return "Washington DC"
+    end
+
+    regional_office_name
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -99,6 +113,7 @@ class Hearing < ApplicationRecord
       appellant_middle_initial: appellant_middle_initial,
       appellant_last_name: appellant_last_name,
       appeal_vacols_id: appeal_vacols_id
+
     }
   end
 
@@ -113,21 +128,14 @@ class Hearing < ApplicationRecord
   delegate \
     :veteran_age, \
     :veteran_sex, \
-    :appellant_city, \
-    :appellant_state, \
     :vbms_id, \
     :number_of_documents, \
     :number_of_documents_after_certification, \
     :veteran,  \
     :sanitized_vbms_id, \
-    :docket_number, \
-    :appellant_address_line_1, \
-    :appellant_city, \
-    :appellant_state, \
-    :appellant_zip, \
     to: :appeal, allow_nil: true
 
-  delegate :type, to: :appeal, prefix: true
+  delegate :vacols_id, to: :appeal, prefix: true
 
   def to_hash(current_user_id)
     serializable_hash(
@@ -159,7 +167,9 @@ class Hearing < ApplicationRecord
         :appellant_address_line_1,
         :appellant_city,
         :appellant_state,
-        :appellant_zip
+        :appellant_zip,
+        :readable_location,
+        :appeal_vacols_id
       ],
       except: :military_service
     ).merge(
@@ -226,15 +236,12 @@ class Hearing < ApplicationRecord
   end
 
   class << self
-    attr_writer :repository
-
     def venues
       RegionalOffice::CITIES.merge(RegionalOffice::SATELLITE_OFFICES)
     end
 
     def repository
-      return HearingRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= HearingRepository
+      HearingRepository
     end
 
     def user_nil_or_assigned_to_another_judge?(user, vacols_css_id)

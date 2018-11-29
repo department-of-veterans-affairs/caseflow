@@ -1,11 +1,6 @@
 describe ClaimReview do
   before do
-    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   def random_ref_id
@@ -26,7 +21,7 @@ describe ClaimReview do
     )
   end
 
-  let(:receipt_date) { SupplementalClaim::AMA_BEGIN_DATE + 1 }
+  let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
 
@@ -146,6 +141,50 @@ describe ClaimReview do
     end
   end
 
+  context "#timely_issue?" do
+    before do
+      Timecop.freeze(Time.utc(2019, 4, 24, 12, 0, 0))
+    end
+
+    subject { create(:higher_level_review, receipt_date: Time.zone.today) }
+
+    context "decided in the last year" do
+      it "considers it timely" do
+        expect(subject.timely_issue?(Time.zone.today)).to eq(true)
+      end
+    end
+
+    context "decided more than a year ago" do
+      it "considers it untimely" do
+        expect(subject.timely_issue?(Time.zone.today - 400)).to eq(false)
+      end
+    end
+  end
+
+  context "#serialized_ratings" do
+    let(:ratings) do
+      [
+        Generators::Rating.build(promulgation_date: Time.zone.today - 30),
+        Generators::Rating.build(promulgation_date: Time.zone.today - 400)
+      ]
+    end
+
+    before do
+      allow(subject.veteran).to receive(:ratings).and_return(ratings)
+    end
+
+    subject do
+      create(:higher_level_review, veteran_file_number: veteran_file_number, receipt_date: Time.zone.today)
+    end
+
+    it "calculates timely flag" do
+      serialized_ratings = subject.serialized_ratings
+
+      expect(serialized_ratings.first[:issues]).to include(hash_including(timely: true), hash_including(timely: true))
+      expect(serialized_ratings.last[:issues]).to include(hash_including(timely: false), hash_including(timely: false))
+    end
+  end
+
   context "#create_issues!" do
     before { claim_review.save! }
     subject { claim_review.create_issues!(issues) }
@@ -173,13 +212,33 @@ describe ClaimReview do
   end
 
   context "#process_end_product_establishments!" do
+    let!(:user) do
+      User.create(
+        station_id: 1,
+        css_id: "test_user",
+        full_name: "Test User"
+      )
+    end
+
+    let!(:intake) do
+      Intake.create(
+        user_id: user.id,
+        detail: claim_review,
+        veteran_file_number: veteran.file_number,
+        started_at: Time.zone.now,
+        completed_at: Time.zone.now,
+        completion_status: "success",
+        type: "HigherLevelReviewIntake"
+      )
+    end
+
     before do
       claim_review.save!
       claim_review.create_issues!(issues)
 
       allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
       allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-      allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+      allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
     end
 
     subject { claim_review.process_end_product_establishments! }
@@ -205,19 +264,21 @@ describe ClaimReview do
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran_participant_id
           },
-          veteran_hash: veteran.to_vbms_hash
+          veteran_hash: veteran.to_vbms_hash,
+          user: user
         )
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.last.reference_id,
           contention_descriptions: ["another decision text", "decision text"],
-          special_issues: []
+          special_issues: [],
+          user: user
         )
 
-        expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).once.with(
+        expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
           claim_id: claim_review.end_product_establishments.last.reference_id,
-          rated_issue_contention_map: {
+          rating_issue_contention_map: {
             "reference-id" => rating_request_issue.reload.contention_reference_id,
             "reference-id2" => second_rating_request_issue.reload.contention_reference_id
           }
@@ -228,9 +289,9 @@ describe ClaimReview do
         expect(second_rating_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
       end
 
-      context "when associate rated issues fails" do
+      context "when associate rating request issues fails" do
         before do
-          allow(VBMSService).to receive(:associate_rated_issues!).and_raise(vbms_error)
+          allow(VBMSService).to receive(:associate_rating_request_issues!).and_raise(vbms_error)
         end
 
         it "does not commit the end product establishment" do
@@ -244,9 +305,9 @@ describe ClaimReview do
       context "when there are no rating issues" do
         let(:issues) { [non_rating_request_issue] }
 
-        it "does not associate_rated_issues" do
+        it "does not associate_rating_request_issues" do
           subject
-          expect(Fakes::VBMSService).to_not have_received(:associate_rated_issues!)
+          expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
           expect(non_rating_request_issue.rating_issue_associated_at).to be_nil
         end
       end
@@ -278,12 +339,13 @@ describe ClaimReview do
               veteran_file_number: veteran_file_number,
               claim_id: claim_review.end_product_establishments.last.reference_id,
               contention_descriptions: ["another decision text"],
-              special_issues: []
+              special_issues: [],
+              user: user
             )
 
-            expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).once.with(
+            expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
               claim_id: claim_review.end_product_establishments.last.reference_id,
-              rated_issue_contention_map: {
+              rating_issue_contention_map: {
                 "reference-id" => rating_request_issue.reload.contention_reference_id,
                 "reference-id2" => second_rating_request_issue.reload.contention_reference_id
               }
@@ -309,7 +371,7 @@ describe ClaimReview do
 
             expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
             expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
-            expect(Fakes::VBMSService).to_not have_received(:associate_rated_issues!)
+            expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
           end
         end
 
@@ -353,11 +415,11 @@ describe ClaimReview do
           expect(claim_contentions_for_all_issues_on_epe.count).to eq(0)
 
           allow_create_contentions
-          raise_error_on_associate_rated_issues
+          raise_error_on_associate_rating_request_issues
 
           expect(Fakes::VBMSService).to_not receive(:establish_claim!)
           expect(Fakes::VBMSService).to receive(:create_contentions!).once
-          expect(Fakes::VBMSService).to receive(:associate_rated_issues!).once
+          expect(Fakes::VBMSService).to receive(:associate_rating_request_issues!).once
           expect { subject }.to raise_error(vbms_error)
           expect(claim_review.establishment_processed_at).to be_nil
 
@@ -365,17 +427,17 @@ describe ClaimReview do
           expect(epe_contentions.count).to eq(2)
           expect(epe_contentions.where.not(rating_issue_associated_at: nil).count).to eq(0)
 
-          allow_associate_rated_issues
+          allow_associate_rating_request_issues
 
           expect(Fakes::VBMSService).to_not receive(:establish_claim!)
           expect(Fakes::VBMSService).to_not receive(:create_contentions!)
-          expect(Fakes::VBMSService).to receive(:associate_rated_issues!).once
+          expect(Fakes::VBMSService).to receive(:associate_rating_request_issues!).once
           subject
           expect(claim_review.establishment_processed_at).to eq(Time.zone.now)
 
           expect(Fakes::VBMSService).to_not receive(:establish_claim!)
           expect(Fakes::VBMSService).to_not receive(:create_contentions!)
-          expect(Fakes::VBMSService).to_not receive(:associate_rated_issues!)
+          expect(Fakes::VBMSService).to_not receive(:associate_rating_request_issues!)
           subject
         end
 
@@ -395,12 +457,12 @@ describe ClaimReview do
           allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
         end
 
-        def raise_error_on_associate_rated_issues
-          allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_raise(vbms_error)
+        def raise_error_on_associate_rating_request_issues
+          allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_raise(vbms_error)
         end
 
-        def allow_associate_rated_issues
-          allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+        def allow_associate_rating_request_issues
+          allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
         end
 
         def claim_contentions_for_all_issues_on_epe
@@ -469,19 +531,21 @@ describe ClaimReview do
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran_participant_id
           },
-          veteran_hash: veteran.to_vbms_hash
+          veteran_hash: veteran.to_vbms_hash,
+          user: user
         )
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRR").reference_id,
           contention_descriptions: ["decision text"],
-          special_issues: []
+          special_issues: [],
+          user: user
         )
 
-        expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).once.with(
+        expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRR").reference_id,
-          rated_issue_contention_map: {
+          rating_issue_contention_map: {
             "reference-id" => rating_request_issue.reload.contention_reference_id
           }
         )
@@ -501,14 +565,16 @@ describe ClaimReview do
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran_participant_id
           },
-          veteran_hash: veteran.to_vbms_hash
+          veteran_hash: veteran.to_vbms_hash,
+          user: user
         )
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRNR").reference_id,
           contention_descriptions: ["surgery - Issue text"],
-          special_issues: []
+          special_issues: [],
+          user: user
         )
 
         expect(claim_review.end_product_establishments.first).to be_committed
@@ -619,7 +685,7 @@ describe ClaimReview do
 
         allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
         allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-        allow(Fakes::VBMSService).to receive(:associate_rated_issues!).and_call_original
+        allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
       end
 
       it "does not create a supplemental claim if there are no DTAs" do
@@ -654,7 +720,7 @@ describe ClaimReview do
               payee_code: "00",
               predischarge: false,
               claim_type: "Claim",
-              station_of_jurisdiction: "499",
+              station_of_jurisdiction: "397",
               date: Time.zone.now.to_date,
               end_product_modifier: "040",
               end_product_label: end_product[:label],
@@ -663,7 +729,8 @@ describe ClaimReview do
               suppress_acknowledgement_letter: false,
               claimant_participant_id: veteran_participant_id
             },
-            veteran_hash: veteran.to_vbms_hash
+            veteran_hash: veteran.to_vbms_hash,
+            user: User.system_user
           )
         end
 
@@ -672,18 +739,19 @@ describe ClaimReview do
             veteran_file_number: veteran.file_number,
             claim_id: reference_id,
             contention_descriptions: issues.map(&:contention_text),
-            special_issues: []
+            special_issues: [],
+            user: User.system_user
           )
         end
 
-        context "for rated issues" do
+        context "for rating request issues" do
           before do
             [rating_contention, second_rating_contention].each do |contention|
               RequestIssue.find_by(description: contention.text).update!(contention_reference_id: contention.id)
             end
           end
 
-          it "creates a supplemental claim for rated issues" do
+          it "creates a supplemental claim for rating request issues" do
             claim_review.on_sync(end_product_establishment)
 
             # find a supplemental claim by veteran id
@@ -725,10 +793,10 @@ describe ClaimReview do
               [rating_request_issue, second_rating_request_issue]
             )
 
-            # for rated issues, verify that this is called
-            expect(Fakes::VBMSService).to have_received(:associate_rated_issues!).once.with(
+            # for rating request issues, verify that this is called
+            expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
               claim_id: supplemental_claim_end_product_establishment.reference_id,
-              rated_issue_contention_map:
+              rating_issue_contention_map:
               {
                 "reference-id" => follow_up_issues.first.reload.contention_reference_id,
                 "reference-id2" => follow_up_issues.second.reload.contention_reference_id
@@ -737,14 +805,14 @@ describe ClaimReview do
           end
         end
 
-        context "for non-rated issues" do
+        context "for nonrating issues" do
           before do
             [non_rating_contention, second_non_rating_contention].each do |contention|
               RequestIssue.find_by(description: contention.text).update!(contention_reference_id: contention.id)
             end
           end
 
-          it "creates a supplemental claim for non-rated issues" do
+          it "creates a supplemental claim for nonrating issues" do
             claim_review.on_sync(end_product_establishment)
 
             supplemental_claim = SupplementalClaim.find_by(

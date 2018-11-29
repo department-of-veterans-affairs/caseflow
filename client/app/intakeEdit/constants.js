@@ -1,9 +1,3 @@
-export const PAGE_PATHS = {
-  BEGIN: '/',
-  CANCEL_ISSUES: '/cancel',
-  CONFIRMATION: '/confirmation'
-};
-
 export const ENDPOINT_NAMES = {
   REQUEST_ISSUES_UPDATE: 'request-issues-update'
 };

@@ -60,7 +60,7 @@
   </script>
 
   <% if ENV["PUBLIC_SENTRY_DSN"] %>
-    <script src="https://cdn.ravenjs.com/3.6.0/raven.min.js"></script>
+    <script src="https://cdn.ravenjs.com/3.27.0/raven.min.js"></script>
     <script>
       Raven.config("<%= ENV["PUBLIC_SENTRY_DSN"] %>", {
         release: "<%= Rails.application.config.build_version[:commit][0..6] %>"
@@ -114,7 +114,7 @@
         UZZUZZZUZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZXXdXZZZZZZZZZZZZZZZZZZZZZUZZZZZZZZZZZZZZZ
         ZZZZZZZZZZZZZZUZZZZZZZZUZZUZZZZZZZZZZZZZZXZZZZZZZZZZUZZZZZZZZZZZZZZZZZZZZUZZZUZZ
 
-        Well, hey there! We are the US Digtial Service at the VA. We're a group of
+        Well, hey there! We are the US Digital Service at the VA. We're a group of
         super-motivated folks working on important problems at the VA which change
         lives, every day.
 

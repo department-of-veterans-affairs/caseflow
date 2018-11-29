@@ -98,7 +98,7 @@ class QueueRepository
 
     def tasks_query(css_id)
       records = VACOLS::CaseAssignment.tasks_for_user(css_id)
-      filter_duplicate_tasks(records)
+      filter_duplicate_tasks(records, css_id)
     end
 
     def tasks_for_appeal_query(appeal_id)
@@ -123,17 +123,31 @@ class QueueRepository
 
         update_location_to_attorney(vacols_id, attorney)
 
-        VACOLS::Decass.create!(
-          defolder: vacols_id,
-          deatty: attorney.vacols_attorney_id,
-          deteam: attorney.vacols_group_id[0..2],
-          deadusr: judge.vacols_uniq_id,
-          deadtim: VacolsHelper.local_date_with_utc_timezone,
-          dedeadline: VacolsHelper.local_date_with_utc_timezone + 30.days,
-          deassign: VacolsHelper.local_date_with_utc_timezone,
-          deicr: decass_complexity_rating(vacols_id)
-        )
+        attrs = {
+          case_id: vacols_id,
+          attorney_id: attorney.vacols_attorney_id,
+          group_name: attorney.vacols_group_id[0..2],
+          assigned_to_attorney_date: VacolsHelper.local_date_with_utc_timezone,
+          deadline_date: VacolsHelper.local_date_with_utc_timezone + 30.days,
+          complexity_rating: decass_complexity_rating(vacols_id)
+        }
+
+        incomplete_record = incomplete_decass_record(vacols_id)
+        if incomplete_record.present?
+          return update_decass_record(incomplete_record,
+                                      attrs.merge(modifying_user: judge.vacols_uniq_id, work_product: nil))
+        end
+
+        create_decass_record(attrs.merge(adding_user: judge.vacols_uniq_id))
       end
+    end
+
+    def incomplete_decass_record(vacols_id)
+      VACOLS::Decass
+        .where(defolder: vacols_id)
+        .where.not(deprod: %w[REA REU DEV VHA IME AFI OTV OTI]).or(
+          VACOLS::Decass.where(defolder: vacols_id).where("DEOQ IS NULL")
+        ).first
     end
 
     def reassign_case_to_attorney!(judge:, attorney:, vacols_id:, created_in_vacols_date:)
@@ -150,14 +164,33 @@ class QueueRepository
       end
     end
 
-    def filter_duplicate_tasks(records)
-      # Keep the latest assignment if there are duplicate records
+    def filter_duplicate_tasks(records, css_id = nil)
+      # Keep the latest updated assignment if there are duplicate records
       records.group_by(&:vacols_id).each_with_object([]) do |(_k, v), result|
-        result << v.sort_by(&:created_at).last
+        next result << v.first if v.size == 1
+
+        user = User.find_by(css_id: css_id, station_id: User::BOARD_STATION_ID) if css_id
+        # If user is an attorney, find all associated with the user's attorney_id
+        if user && attorney_id_match_found?(v, user)
+          v.select! { |task| task.attorney_id == user.vacols_attorney_id }
+        end
+        # If DAS record doesn't have updated_at date, put it at the beginning of the list
+        result << (v.reject(&:updated_at) + v.select(&:updated_at).sort_by(&:updated_at)).last
       end
     end
 
+    def update_location_to_judge(vacols_id, judge)
+      vacols_case = VACOLS::Case.find(vacols_id)
+      fail VACOLS::Case::InvalidLocationError, "Invalid location \"#{judge.vacols_uniq_id}\"" unless
+        judge.vacols_uniq_id
+      vacols_case.update_vacols_location!(judge.vacols_uniq_id)
+    end
+
     private
+
+    def attorney_id_match_found?(records, user)
+      user.attorney_in_vacols? && records.map(&:attorney_id).include?(user.vacols_attorney_id)
+    end
 
     def find_decass_record(vacols_id, created_in_vacols_date)
       decass_record = VACOLS::Decass.find_by(defolder: vacols_id, deadtim: created_in_vacols_date)
@@ -172,6 +205,13 @@ class QueueRepository
       decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
       VACOLS::Decass.where(defolder: decass_record.defolder, deadtim: decass_record.deadtim)
         .update_all(decass_attrs)
+      decass_record.reload
+    end
+
+    def create_decass_record(decass_attrs)
+      decass_attrs = decass_attrs.merge(added_at_date: VacolsHelper.local_date_with_utc_timezone)
+      decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
+      VACOLS::Decass.create!(decass_attrs)
     end
 
     def update_location_to_attorney(vacols_id, attorney)

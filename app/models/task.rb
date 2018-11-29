@@ -5,15 +5,12 @@ class Task < ApplicationRecord
   belongs_to :assigned_by, class_name: User.name
   belongs_to :appeal, polymorphic: true
   has_many :attorney_case_reviews
+  has_many :task_business_payloads
 
   validates :assigned_to, :appeal, :type, :status, presence: true
 
   before_create :set_assigned_at_and_update_parent_status
   before_update :set_timestamps
-
-  after_update :update_parent_status
-
-  validate :on_hold_duration_is_set, on: :update
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym    => Constants.TASK_STATUSES.assigned,
@@ -24,6 +21,28 @@ class Task < ApplicationRecord
 
   def available_actions(_user)
     []
+  end
+
+  def label
+    action
+  end
+
+  # available_actions() returns an array of options from selected by the subclass
+  # from TASK_ACTIONS that looks something like:
+  # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
+  def available_actions_unwrapper(user)
+    no_actions_available?(user) ? [] : available_actions(user).map { |action| build_action_hash(action) }
+  end
+
+  def build_action_hash(action)
+    { label: action[:label], value: action[:value], data: action[:func] ? send(action[:func]) : nil }
+  end
+
+  def no_actions_available?(user)
+    return true if [Constants.TASK_STATUSES.on_hold, Constants.TASK_STATUSES.completed].include?(status)
+
+    # Users who are assigned a subtask of an organization don't have actions on the organizational task.
+    assigned_to.is_a?(Organization) && children.any? { |child| child.assigned_to == user }
   end
 
   def assigned_by_display_name
@@ -42,10 +61,29 @@ class Task < ApplicationRecord
     where(status: Constants.TASK_STATUSES.completed, completed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
   end
 
-  def self.create_from_params(params, current_user)
-    verify_user_can_assign!(current_user)
-    params = params.each { |p| p["instructions"] = [p["instructions"]] if p.key?("instructions") }
+  def self.incomplete
+    where.not(status: Constants.TASK_STATUSES.completed)
+  end
+
+  def self.incomplete_or_recently_completed
+    incomplete.or(recently_completed)
+  end
+
+  def self.create_many_from_params(params_array, current_user)
+    params_array.map { |params| create_from_params(params, current_user) }
+  end
+
+  def self.create_from_params(params, user)
+    verify_user_can_assign!(user)
+    params = modify_params(params)
     create(params)
+  end
+
+  def self.modify_params(params)
+    if params.key?("instructions") && !params[:instructions].is_a?(Array)
+      params["instructions"] = [params["instructions"]]
+    end
+    params
   end
 
   def update_from_params(params, _current_user)
@@ -53,6 +91,17 @@ class Task < ApplicationRecord
     update(params)
 
     [self]
+  end
+
+  def update_status(new_status)
+    return unless new_status
+
+    case new_status
+    when Constants.TASK_STATUSES.completed
+      mark_as_complete!
+    else
+      update!(status: new_status)
+    end
   end
 
   def legacy?
@@ -111,8 +160,7 @@ class Task < ApplicationRecord
   end
 
   def self.verify_user_can_assign!(user)
-    unless user.attorney_in_vacols? ||
-           (user.judge_in_vacols? && FeatureToggle.enabled?(:judge_assignment_to_attorney, user: user))
+    unless user.attorney_in_vacols? || user.judge_in_vacols?
       fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot assign this task"
     end
   end
@@ -128,37 +176,76 @@ class Task < ApplicationRecord
     nil
   end
 
-  def assignable_organizations
-    Organization.assignable(self)
+  def assign_to_organization_data
+    organizations = Organization.assignable(self).map do |organization|
+      {
+        label: organization.name,
+        value: organization.id
+      }
+    end
+
+    {
+      selected: nil,
+      options: organizations,
+      type: GenericTask.name
+    }
   end
 
-  def assignable_users
-    if assigned_to.is_a?(Organization)
-      assigned_to.members
-    elsif parent && parent.assigned_to.is_a?(Organization)
-      parent.assigned_to.members.reject { |member| member == assigned_to }
-    else
-      []
-    end
+  def mail_assign_to_organization_data
+    assign_to_organization_data.merge(type: MailTask.name)
+  end
+
+  def assign_to_user_data
+    users = if assigned_to.is_a?(Organization)
+              assigned_to.users
+            elsif parent && parent.assigned_to.is_a?(Organization)
+              parent.assigned_to.users.reject { |u| u == assigned_to }
+            else
+              []
+            end
+
+    {
+      selected: nil,
+      options: users_to_options(users),
+      type: type
+    }
+  end
+
+  def assign_to_judge_data
+    {
+      selected: root_task.children.find { |task| task.type == JudgeTask.name }.assigned_to,
+      options: users_to_options(Judge.list_all),
+      type: JudgeTask.name
+    }
+  end
+
+  def timeline_title
+    "#{type} completed"
+  end
+
+  def timeline_details
+    {
+      title: timeline_title,
+      date: completed_at
+    }
   end
 
   private
+
+  def users_to_options(users)
+    users.map do |user|
+      {
+        label: user.full_name,
+        value: user.id
+      }
+    end
+  end
 
   def update_status_if_children_tasks_are_complete
     if children.any? && children.reject { |t| t.status == Constants.TASK_STATUSES.completed }.empty?
       return mark_as_complete! if assigned_to.is_a?(Organization)
       return update!(status: :assigned) if on_hold?
     end
-  end
-
-  def on_hold_duration_is_set
-    if saved_change_to_status? && on_hold? && !on_hold_duration && colocated_task?
-      errors.add(:on_hold_duration, "has to be specified")
-    end
-  end
-
-  def update_parent_status
-    parent.when_child_task_completed if saved_change_to_status? && completed? && parent
   end
 
   def set_assigned_at_and_update_parent_status

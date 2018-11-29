@@ -3,17 +3,12 @@ require "rails_helper"
 RSpec.feature "RAMP Refiling Intake" do
   before do
     FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 12, 8))
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   let(:veteran) do
@@ -401,13 +396,15 @@ RSpec.feature "RAMP Refiling Intake" do
           suppress_acknowledgement_letter: false,
           claimant_participant_id: veteran.participant_id
         },
-        veteran_hash: intake.veteran.to_vbms_hash
+        veteran_hash: intake.veteran.to_vbms_hash,
+        user: current_user
       )
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: "12341234",
         claim_id: "SHANE9123242",
-        contention_descriptions: ["Left knee rating increase"]
+        contention_descriptions: ["Left knee rating increase"],
+        user: current_user
       )
 
       expect(ramp_refiling.issues.count).to eq(1)

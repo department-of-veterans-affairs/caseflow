@@ -5,14 +5,6 @@ describe EstablishClaim do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let(:folder) { build(:folder) }
 
   let(:vacols_case) do
@@ -437,7 +429,7 @@ describe EstablishClaim do
       it "raises InvalidTransition" do
         expect { subject }.to raise_error(AASM::InvalidTransition)
 
-        expect(Fakes::AppealRepository.location_updated_for).to_not eq(appeal)
+        expect(vacols_case.bfcurloc).to_not eq("98")
       end
     end
 

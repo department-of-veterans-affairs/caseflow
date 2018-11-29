@@ -41,7 +41,7 @@ class JudgeCaseAssignmentToAttorney
   end
 
   def last_case_assignment
-    VACOLS::CaseAssignment.select_tasks.where("brieff.bfkey = ?", vacols_id).sort_by(&:created_at).last
+    VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
   end
 
   private
@@ -55,8 +55,6 @@ class JudgeCaseAssignmentToAttorney
   end
 
   class << self
-    attr_writer :repository
-
     def create(task_attrs)
       task = new(task_attrs)
       task.assign_to_attorney! if task.valid?
@@ -70,8 +68,7 @@ class JudgeCaseAssignmentToAttorney
     end
 
     def repository
-      return QueueRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= QueueRepository
+      QueueRepository
     end
   end
 end

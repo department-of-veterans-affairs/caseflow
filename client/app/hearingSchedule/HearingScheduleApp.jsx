@@ -27,7 +27,20 @@ export default class HearingScheduleApp extends React.PureComponent {
     };
   };
 
+  propsForAssignHearingsContainer = () => {
+    const {
+      userId,
+      userCssId
+    } = this.props;
+
+    return {
+      userId,
+      userCssId
+    };
+  };
+
   routeForListScheduleContainer = () => <ListScheduleContainer {...this.propsForListScheduleContainer()} />;
+  routeForAssignHearingsContainer = () => <AssignHearingsContainer {...this.propsForAssignHearingsContainer()} />
 
   render = () => <BrowserRouter basename="/hearings">
     <NavigationBar
@@ -81,7 +94,7 @@ export default class HearingScheduleApp extends React.PureComponent {
             path="/schedule/assign"
             title="Assign Hearings"
             breadcrumb="Assign"
-            component={AssignHearingsContainer}
+            component={this.routeForAssignHearingsContainer}
           />
         </div>
       </AppFrame>
@@ -101,5 +114,8 @@ HearingScheduleApp.propTypes = {
   userRoleBuild: PropTypes.bool,
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
-  dropdownUrls: PropTypes.array
+  dropdownUrls: PropTypes.array,
+  userRole: PropTypes.string,
+  userId: PropTypes.number,
+  userCssId: PropTypes.string
 };

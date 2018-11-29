@@ -2,13 +2,8 @@ require "rails_helper"
 
 RSpec.feature "Intake Manager Page" do
   before do
-    FeatureToggle.enable!(:test_facols)
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 12, 8))
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   context "As a user with Admin Intake role" do

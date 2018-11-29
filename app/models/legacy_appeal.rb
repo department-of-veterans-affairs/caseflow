@@ -54,7 +54,7 @@ class LegacyAppeal < ApplicationRecord
   # These attributes are needed for the Fakes::QueueRepository.tasks_for_user to work
   # because it is using an Appeal object
   attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :assigned_to_location_date, :added_by,
-                :created_at, :document_id, :assigned_by
+                :created_at, :document_id, :assigned_by, :updated_at, :attorney_id
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
@@ -123,7 +123,9 @@ class LegacyAppeal < ApplicationRecord
     caseflow: "CASEFLOW",
     quality_review: "48",
     translation: "14",
-    schedule_hearing: "57"
+    schedule_hearing: "57",
+    awaiting_video_hearing: "38",
+    awaiting_co_hearing: "36"
   }.freeze
 
   def document_fetcher
@@ -192,8 +194,16 @@ class LegacyAppeal < ApplicationRecord
     vbms_id.ends_with?("C") ? (veteran && veteran.ssn) : sanitized_vbms_id
   end
 
-  delegate :age, :sex, to: :veteran, prefix: true
-  delegate :address_line_1, :address_line_2, :address_line_3, :city, :state, :zip, :country, to: :veteran, prefix: true
+  delegate :address_line_1,
+           :address_line_2,
+           :address_line_3,
+           :city,
+           :state,
+           :zip,
+           :country,
+           :age,
+           :sex,
+           to: :veteran, prefix: true, allow_nil: true
 
   # NOTE: we cannot currently match end products to a specific appeal.
   delegate :end_products, to: :veteran
@@ -674,6 +684,17 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
+  def matchable_to_request_issue?
+    issues.any? && (active? || eligible_for_soc_opt_in?)
+  end
+
+  def eligible_for_soc_opt_in?
+    return false unless nod_date
+    return false unless soc_date
+
+    soc_date > soc_eligible_date || nod_date > nod_eligible_date
+  end
+
   def serializer_class
     ::WorkQueue::LegacyAppealSerializer
   end
@@ -682,7 +703,32 @@ class LegacyAppeal < ApplicationRecord
     vacols_id
   end
 
+  def timeline
+    [
+      {
+        title: decision_date ? COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
+        date: decision_date
+      },
+      {
+        title: form9_date ? COPY::CASE_TIMELINE_FORM_9_RECEIVED : COPY::CASE_TIMELINE_FORM_9_PENDING,
+        date: form9_date
+      },
+      {
+        title: nod_date ? COPY::CASE_TIMELINE_NOD_RECEIVED : COPY::CASE_TIMELINE_NOD_PENDING,
+        date: nod_date
+      }
+    ]
+  end
+
   private
+
+  def soc_eligible_date
+    Time.zone.today - 60.days
+  end
+
+  def nod_eligible_date
+    Time.zone.today - 372.days
+  end
 
   def use_representative_info_from_bgs?
     FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&
@@ -732,8 +778,6 @@ class LegacyAppeal < ApplicationRecord
   end
 
   class << self
-    attr_writer :repository
-
     def find_or_create_by_vacols_id(vacols_id)
       appeal = find_or_initialize_by(vacols_id: vacols_id)
 
@@ -769,8 +813,7 @@ class LegacyAppeal < ApplicationRecord
     end
 
     def repository
-      return AppealRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= AppealRepository
+      AppealRepository
     end
 
     # rubocop:disable Metrics/ParameterLists

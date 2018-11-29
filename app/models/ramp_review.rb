@@ -1,5 +1,6 @@
 class RampReview < ApplicationRecord
   belongs_to :user
+  has_one :intake, as: :detail
 
   RAMP_BEGIN_DATE = Date.new(2017, 11, 1).freeze
 
@@ -101,6 +102,10 @@ class RampReview < ApplicationRecord
     @preexisting_end_product_establishment ||= EndProductEstablishment.find_by(source: self)
   end
 
+  def intake_processed_by
+    intake ? intake.user : nil
+  end
+
   def new_end_product_establishment
     @new_end_product_establishment ||= EndProductEstablishment.new(
       veteran_file_number: veteran_file_number,
@@ -112,7 +117,8 @@ class RampReview < ApplicationRecord
       valid_modifiers: valid_modifiers,
       source: self,
       station: "397", # AMC
-      benefit_type_code: veteran.benefit_type_code
+      benefit_type_code: veteran.benefit_type_code,
+      user: intake_processed_by
     )
   end
 

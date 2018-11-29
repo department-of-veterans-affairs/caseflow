@@ -5,20 +5,30 @@ class ColocatedTask < Task
   validate :assigned_by_role_is_valid
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
+  validate :on_hold_duration_is_set, on: :update
 
   after_update :update_location_in_vacols
 
   class << self
-    def create(tasks)
+    # Override so that each ColocatedTask for an appeal gets assigned to the same colocated staffer.
+    def create_many_from_params(params_array, user)
+      # Create all ColocatedTasks in one transaction so that if any fail they all fail.
       ActiveRecord::Base.multi_transaction do
         assignee = next_assignee
-        records = [tasks].flatten.each_with_object([]) do |task, result|
-          result << super(task.merge(assigned_to: assignee))
-          result
+        records = params_array.map do |params|
+          team_task = create_from_params(
+            params.merge(assigned_to: Colocated.singleton, status: Constants.TASK_STATUSES.on_hold), user
+          )
+          individual_task = create_from_params(params.merge(assigned_to: assignee, parent: team_task), user)
+
+          [team_task, individual_task]
+        end.flatten
+
+        individual_task = records.select { |r| r.assigned_to.is_a?(User) }.first
+        if records.map(&:valid?).uniq == [true] && individual_task.legacy?
+          AppealRepository.update_location!(individual_task.appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
         end
-        if records.map(&:valid?).uniq == [true] && records.first.legacy?
-          AppealRepository.update_location!(records.first.appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
-        end
+
         records
       end
     end
@@ -26,7 +36,7 @@ class ColocatedTask < Task
     private
 
     def list_of_assignees
-      Constants::CoLocatedTeams::USERS[Rails.current_env]
+      Colocated.singleton.non_admins.sort_by(&:id).pluck(:css_id)
     end
   end
 
@@ -34,10 +44,6 @@ class ColocatedTask < Task
     return [] unless user.colocated_in_vacols?
 
     actions = [
-      {
-        label: COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
-        value: "modal/mark_task_complete"
-      },
       {
         label: COPY::COLOCATED_ACTION_PLACE_HOLD,
         value: Constants::CO_LOCATED_ACTIONS["PLACE_HOLD"]
@@ -49,9 +55,18 @@ class ColocatedTask < Task
         label: format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action]),
         value: "modal/send_colocated_task"
       )
+    else
+      actions.unshift(
+        label: COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
+        value: "modal/mark_task_complete"
+      )
     end
 
     actions
+  end
+
+  def no_actions_available?(_user)
+    completed?
   end
 
   def update_if_hold_expired!
@@ -89,5 +104,11 @@ class ColocatedTask < Task
 
   def assigned_by_role_is_valid
     errors.add(:assigned_by, "has to be an attorney") if assigned_by && !assigned_by.attorney_in_vacols?
+  end
+
+  def on_hold_duration_is_set
+    if saved_change_to_status? && on_hold? && !on_hold_duration && assigned_to.is_a?(User)
+      errors.add(:on_hold_duration, "has to be specified")
+    end
   end
 end

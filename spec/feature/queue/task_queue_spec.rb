@@ -1,9 +1,6 @@
 require "rails_helper"
 
 RSpec.feature "Task queue" do
-  before { FeatureToggle.enable!(:test_facols) }
-  after { FeatureToggle.disable!(:test_facols) }
-
   let(:attorney_user) { FactoryBot.create(:user) }
   let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 
@@ -12,6 +9,14 @@ RSpec.feature "Task queue" do
       :legacy_appeal,
       :with_veteran,
       vacols_case: FactoryBot.create(:case, :assigned, user: attorney_user)
+    )
+  end
+
+  let!(:attorney_task) do
+    FactoryBot.create(
+      :ama_attorney_task,
+      :on_hold,
+      assigned_to: attorney_user
     )
   end
 
@@ -47,6 +52,9 @@ RSpec.feature "Task queue" do
   end
 
   let(:vacols_tasks) { QueueRepository.tasks_for_user(attorney_user.css_id) }
+  let(:attorney_on_hold_tasks) do
+    Task.where(status: :on_hold, assigned_to: attorney_user)
+  end
 
   context "attorney user with assigned tasks" do
     before do
@@ -72,6 +80,24 @@ RSpec.feature "Task queue" do
       expect(page).to have_content("#{paper_appeal.veteran_full_name} (#{paper_appeal.vbms_id.delete('S')})")
       expect(page).to have_content(COPY::IS_PAPER_CASE)
     end
+
+    it "shows tabs on the queue page" do
+      expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
+      expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, vacols_tasks.length))
+      expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_tasks.length))
+      expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
+    end
+
+    it "shows the right number of cases in each tab" do
+      # Assigned tab
+      expect(page).to have_content(COPY::ATTORNEY_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION)
+      expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
+
+      # On Hold tab
+      find("button", text: format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_tasks.length)).click
+      expect(page).to have_content(COPY::ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
+      expect(find("tbody").find_all("tr").length).to eq(attorney_on_hold_tasks.length)
+    end
   end
 
   context "VSO employee" do
@@ -82,7 +108,6 @@ RSpec.feature "Task queue" do
     let(:vso_employee) { FactoryBot.create(:user, :vso_role) }
     let!(:vso_task) { FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso) }
     before do
-      FeatureToggle.enable!(vso.feature.to_sym, users: [vso_employee.css_id])
       User.authenticate!(user: vso_employee)
       allow_any_instance_of(Vso).to receive(:user_has_access?).and_return(true)
       visit(vso.path)
@@ -103,6 +128,97 @@ RSpec.feature "Task queue" do
 
       expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, vso_task.appeal.veteran_full_name))
       expect(Task.find(vso_task.id).status).to eq("completed")
+    end
+  end
+
+  describe "Creating a mail task" do
+    context "when we are a member of the mail team" do
+      let!(:org) { FactoryBot.create(:organization) }
+      let(:appeal) { FactoryBot.create(:appeal) }
+      let!(:root_task) { RootTask.find(FactoryBot.create(:root_task, appeal: appeal).id) }
+      let(:mail_user) { FactoryBot.create(:user) }
+
+      before do
+        User.authenticate!(user: mail_user)
+        allow_any_instance_of(MailTeam).to receive(:user_has_access?).with(mail_user).and_return(true)
+      end
+
+      it "should allow us to assign a mail task to a user" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        find(".Select-control", text: "Select an action…").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CREATE_MAIL_TASK.label).click
+
+        find(".Select-control", text: "Select a team").click
+        find("div", class: "Select-option", text: org.name).click
+        fill_in("taskInstructions", with: "note")
+
+        find("button", text: "Submit").click
+
+        expect(page).to have_content("Task assigned to #{org.name}")
+
+        mail_task = root_task.children[0]
+        expect(mail_task.class).to eq(MailTask)
+        expect(mail_task.assigned_to).to eq(MailTeam.singleton)
+        expect(mail_task.children.length).to eq(1)
+
+        generic_task = mail_task.children[0]
+        expect(generic_task.class).to eq(GenericTask)
+        expect(generic_task.assigned_to.class).to eq(org.class)
+        expect(generic_task.assigned_to.id).to eq(org.id)
+        expect(generic_task.children.length).to eq(0)
+      end
+    end
+  end
+
+  describe "Organizational queue page" do
+    let(:organization) { FactoryBot.create(:organization) }
+    let(:organization_user) { FactoryBot.create(:user) }
+
+    let(:unassigned_count) { 8 }
+    let(:assigned_count) { 12 }
+
+    before do
+      OrganizationsUser.add_user_to_organization(organization_user, organization)
+      User.authenticate!(user: organization_user)
+      FactoryBot.create_list(:generic_task, unassigned_count, :in_progress, assigned_to: organization)
+      FactoryBot.create_list(:generic_task, assigned_count, :on_hold, assigned_to: organization)
+      visit(organization.path)
+    end
+
+    it "shows the right organization name" do
+      expect(page).to have_content(organization.name)
+    end
+
+    it "shows tabs on the queue page" do
+      expect(page).to have_content(
+        format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_count)
+      )
+      expect(page).to have_content(
+        format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count)
+      )
+      expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
+    end
+
+    it "shows the right number of cases in each tab" do
+      # Unassigned tab
+      expect(page).to have_content(
+        format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name)
+      )
+      expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
+
+      # Assigned tab
+      find("button", text: format(
+        COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count
+      )).click
+      expect(page).to have_content(
+        format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, organization.name)
+      )
+      expect(find("tbody").find_all("tr").length).to eq(assigned_count)
+    end
+
+    it "shows queue switcher dropdown" do
+      expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
     end
   end
 end

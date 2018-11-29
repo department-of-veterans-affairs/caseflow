@@ -55,6 +55,8 @@ end
 
 FeatureToggle.cache_namespace = "test_#{ENV['TEST_SUBCATEGORY'] || 'all'}"
 
+ENV["TZ"] ||= "America/New York"
+
 Capybara.register_driver(:parallel_sniffybara) do |app|
   chrome_options = ::Selenium::WebDriver::Chrome::Options.new
 
@@ -172,12 +174,11 @@ end
 
 User.prepend(StubbableUser)
 
-def reset_application!
+def clean_application!
   User.clear_stub!
-  Fakes::AppealRepository.clean!
-  Fakes::HearingRepository.clean!
   Fakes::CAVCDecisionRepository.clean!
   Fakes::BGSService.clean!
+  Fakes::VBMSService.clean!
 end
 
 def current_user
@@ -218,11 +219,6 @@ def read_csv(klass, date_shift)
   klass.import(items)
 end
 
-# Setup fakes
-LegacyAppeal.repository = Fakes::AppealRepository
-PowerOfAttorney.repository = Fakes::PowerOfAttorneyRepository
-Hearing.repository = Fakes::HearingRepository
-HearingDocket.repository = Fakes::HearingRepository
 User.authentication_service = Fakes::AuthenticationService
 CAVCDecision.repository = Fakes::CAVCDecisionRepository
 
@@ -243,13 +239,20 @@ RSpec.configure do |config|
 
     read_csv(VACOLS::Vftypes, date_shift)
     read_csv(VACOLS::Issref, date_shift)
+    read_csv(VACOLS::Actcode, date_shift)
 
     Rails.cache.clear
+  end
+
+  config.before(:each) do
+    @spec_time_zone = Time.zone
   end
 
   config.after(:each) do
     Timecop.return
     Rails.cache.clear
+    Fakes::BGSService.clean!
+    Time.zone = @spec_time_zone
   end
 
   # Allows us to use shorthand FactoryBot methods.

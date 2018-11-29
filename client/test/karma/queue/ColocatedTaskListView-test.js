@@ -49,6 +49,7 @@ describe('ColocatedTaskListView', () => {
 
   const getAmaTaskTemplate = (): Task => ({
     uniqueId: '1',
+    type: 'GenericTask',
     isLegacy: false,
     appealType: 'Appeal',
     addedByCssId: null,
@@ -70,7 +71,7 @@ describe('ColocatedTaskListView', () => {
       pgId: 1
     },
     taskId: '8',
-    action: 'new_rep_arguments',
+    label: 'new_rep_arguments',
     documentId: null,
     workProduct: null,
     previousTaskAssignedOn: null,
@@ -78,8 +79,7 @@ describe('ColocatedTaskListView', () => {
     onHoldDuration: null,
     decisionPreparedBy: null,
     availableActions: [],
-    assignableUsers: [],
-    assignableOrganizations: []
+    taskBusinessPayloads: []
   });
 
   const appealTemplate: BasicAppeal = {
@@ -153,7 +153,7 @@ describe('ColocatedTaskListView', () => {
 
       expect(caseDetails.text()).to.include(appeal.veteranFullName);
       expect(caseDetails.text()).to.include(appeal.veteranFileNumber);
-      expect(columnTasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.action]);
+      expect(columnTasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.label]);
       expect(types.text()).to.include(appeal.caseType);
       expect(docketNumber.text()).to.include(appeal.docketNumber);
       expect(daysWaiting.text()).to.equal('1');
@@ -302,7 +302,7 @@ describe('ColocatedTaskListView', () => {
 
       expect(caseDetails.text()).to.include(appeal.veteranFullName);
       expect(caseDetails.text()).to.include(appeal.veteranFileNumber);
-      expect(columnTasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.action]);
+      expect(columnTasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.label]);
       expect(types.text()).to.include(appeal.caseType);
       expect(docketNumber.text()).to.include(appeal.docketNumber);
       expect(daysOnHold.text()).to.equal('1 of 30');

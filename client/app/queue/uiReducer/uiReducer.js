@@ -20,12 +20,20 @@ export const initialState = {
   featureToggles: {},
   userRole: '',
   userCssId: '',
+  organizations: [],
+  activeOrganizationId: null,
   userIsVsoEmployee: false,
   feedbackUrl: '#',
   loadedUserId: null,
   selectedAssignee: null,
   selectedAssigneeSecondary: null,
-  veteranCaseListIsVisible: false
+  veteranCaseListIsVisible: false,
+  canEditAod: false,
+  hearingDay: {
+    hearingDate: null,
+    hearingTime: null,
+    regionalOffice: null
+  }
 };
 
 const setMessageState = (state, message, msgType) => update(state, {
@@ -60,6 +68,10 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
   case ACTIONS.SET_SELECTING_JUDGE:
     return update(state, {
       selectingJudge: { $set: action.payload.selectingJudge }
+    });
+  case ACTIONS.SET_CAN_EDIT_AOD:
+    return update(state, {
+      canEditAod: { $set: action.payload.canEditAod }
     });
   case ACTIONS.HIGHLIGHT_INVALID_FORM_ITEMS:
     return update(state, {
@@ -164,6 +176,24 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
     return update(state, {
       selectedAssigneeSecondary: {
         $set: action.payload.assigneeId
+      }
+    });
+  case ACTIONS.SET_ORGANIZATIONS:
+    return update(state, {
+      organizations: {
+        $set: action.payload.organizations
+      }
+    });
+  case ACTIONS.SET_ACTIVE_ORGANIZATION_ID:
+    return update(state, {
+      activeOrganizationId: {
+        $set: action.payload.activeOrganizationId
+      }
+    });
+  case ACTIONS.SET_HEARING_DAY:
+    return update(state, {
+      hearingDay: {
+        $set: action.payload
       }
     });
   default:

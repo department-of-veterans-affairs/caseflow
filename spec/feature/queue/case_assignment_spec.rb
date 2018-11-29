@@ -27,12 +27,10 @@ RSpec.feature "Case Assignment flows" do
   let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
 
   before do
-    FeatureToggle.enable! :test_facols
     FeatureToggle.enable! :attorney_assignment_to_colocated
   end
 
   after do
-    FeatureToggle.disable! :test_facols
     FeatureToggle.disable! :attorney_assignment_to_colocated
   end
 
@@ -62,7 +60,12 @@ RSpec.feature "Case Assignment flows" do
       ]
     end
 
-    before { User.authenticate!(user: attorney_user) }
+    before do
+      u = FactoryBot.create(:user)
+      OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
+
+      User.authenticate!(user: attorney_user)
+    end
 
     scenario "adds colocated task" do
       visit "/queue"

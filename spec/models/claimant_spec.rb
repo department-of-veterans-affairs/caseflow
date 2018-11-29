@@ -1,12 +1,4 @@
 describe Claimant do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let(:name) { nil }
   let(:relationship_to_veteran) { nil }
   let(:claimant_info) do
@@ -126,6 +118,43 @@ describe Claimant do
         claimant = create(:claimant)
         create(:person, participant_id: claimant.participant_id, date_of_birth: 20.years.ago)
         expect(claimant.advanced_on_docket(1.year.ago)).to eq(false)
+      end
+    end
+  end
+
+  context "#valid?" do
+    context "payee_code" do
+      let(:review_request) do
+        build(:higher_level_review, benefit_type: benefit_type, veteran_file_number: create(:veteran).file_number)
+      end
+
+      subject { build(:claimant, review_request: review_request) }
+
+      context "when review_request.benefit_type is compensation" do
+        let(:benefit_type) { "compensation" }
+
+        it "requires non-blank value" do
+          expect(subject).to_not be_valid
+          expect(subject.errors.messages[:payee_code]).to eq ["blank"]
+        end
+      end
+
+      context "when review_request.benefit_type is pension" do
+        let(:benefit_type) { "pension" }
+
+        it "requires non-blank value" do
+          expect(subject).to_not be_valid
+          expect(subject.errors.messages[:payee_code]).to eq ["blank"]
+        end
+      end
+
+      context "when review_request.benefit_type is fiduciary" do
+        let(:benefit_type) { "fiduciary" }
+
+        it "allows blank value" do
+          expect(subject).to be_valid
+          expect(subject.errors.messages[:payee_code]).to eq []
+        end
       end
     end
   end

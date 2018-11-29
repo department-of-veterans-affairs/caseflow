@@ -17,6 +17,7 @@ describe EndProductEstablishment do
       participant_id: veteran_participant_id
     )
   end
+  let(:current_user) { Generators::User.build }
   let(:code) { "030HLRR" }
   let(:payee_code) { "00" }
   let(:reference_id) { nil }
@@ -44,7 +45,8 @@ describe EndProductEstablishment do
       committed_at: committed_at,
       benefit_type_code: benefit_type_code,
       doc_reference_id: doc_reference_id,
-      development_item_reference_id: development_item_reference_id
+      development_item_reference_id: development_item_reference_id,
+      user: current_user
     )
   end
 
@@ -115,7 +117,8 @@ describe EndProductEstablishment do
             gulf_war_registry: false,
             claimant_participant_id: "11223344"
           },
-          veteran_hash: veteran.reload.to_vbms_hash
+          veteran_hash: veteran.reload.to_vbms_hash,
+          user: current_user
         )
         expect(end_product_establishment.reload).to have_attributes(
           modifier: "031"
@@ -142,7 +145,8 @@ describe EndProductEstablishment do
               gulf_war_registry: false,
               claimant_participant_id: "11223344"
             },
-            veteran_hash: veteran.reload.to_vbms_hash
+            veteran_hash: veteran.reload.to_vbms_hash,
+            user: current_user
           )
           expect(end_product_establishment.reload).to have_attributes(
             modifier: "032"
@@ -193,7 +197,8 @@ describe EndProductEstablishment do
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false
           },
-          veteran_hash: veteran.reload.to_vbms_hash
+          veteran_hash: veteran.reload.to_vbms_hash,
+          user: current_user
         )
       end
 
@@ -264,8 +269,9 @@ describe EndProductEstablishment do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
         veteran_file_number: veteran_file_number,
         claim_id: end_product_establishment.reference_id,
-        contention_descriptions: contention_descriptions,
-        special_issues: []
+        contention_descriptions: array_including(contention_descriptions),
+        special_issues: [],
+        user: current_user
       )
 
       expect(end_product_establishment.contentions.count).to eq(4)
@@ -283,8 +289,9 @@ describe EndProductEstablishment do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: end_product_establishment.reference_id,
-          contention_descriptions: contention_descriptions,
-          special_issues: "SPECIALISSUES!"
+          contention_descriptions: array_including(contention_descriptions),
+          special_issues: "SPECIALISSUES!",
+          user: current_user
         )
       end
     end
@@ -560,6 +567,71 @@ describe EndProductEstablishment do
       let(:synced_status) { "NOTCANCELED" }
 
       it { is_expected.to eq(false) }
+    end
+  end
+
+  context "#sync_decision_issues!" do
+    let(:rating) do
+      Generators::Rating.build(
+        issues: issues
+      )
+    end
+
+    let(:contention_ref_id) { "123456" }
+    let(:reference_id) { "Issue1" }
+
+    let(:issues) do
+      [
+        {
+          reference_id: reference_id,
+          decision_text: "Decision1",
+          contention_reference_id: contention_ref_id,
+          profile_date: Time.zone.today
+        },
+        { reference_id: "Issue2", decision_text: "Decision2" }
+      ]
+    end
+
+    let(:higher_level_review) { create(:higher_level_review) }
+    let(:end_product_establishment) { create(:end_product_establishment, :cleared, source: higher_level_review) }
+    let!(:request_issues) do
+      [
+        create(
+          :request_issue,
+          review_request: higher_level_review,
+          end_product_establishment: end_product_establishment,
+          contention_reference_id: contention_ref_id
+        )
+      ]
+    end
+
+    subject { end_product_establishment.sync_decision_issues! }
+
+    before do
+      allow(end_product_establishment).to receive(:potential_decision_ratings).and_return([rating])
+    end
+
+    it "connects rating issues with request issues based on contention_reference_id" do
+      expect(request_issues.first.decision_issues.count).to eq(0)
+
+      subject
+
+      expect(request_issues.first.decision_issues.count).to eq(1)
+      expect(request_issues.first.decision_issues.first.rating_issue_reference_id).to eq(reference_id)
+    end
+
+    context "EPE has cleared but rating has not yet been posted" do
+      before do
+        allow(end_product_establishment).to receive(:potential_decision_ratings).and_return([])
+      end
+
+      it "marks the RequestIssue for later sync via DecisionRatingIssueSyncJob" do
+        subject
+
+        request_issue = end_product_establishment.request_issues.first
+        expect(request_issue.submitted?).to eq(true)
+        expect(request_issue.processed?).to eq(false)
+      end
     end
   end
 end

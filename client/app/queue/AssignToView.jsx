@@ -3,18 +3,15 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
-import _ from 'lodash';
 
 import COPY from '../../COPY.json';
 
 import {
-  appealWithDetailSelector,
-  tasksForAppealAssignedToUserSelector,
-  incompleteOrganizationTasksByAssigneeIdSelector
+  taskById,
+  appealWithDetailSelector
 } from './selectors';
-import { prepareTasksForStore } from './utils';
 
-import { setTaskAttrs } from './QueueActions';
+import { onReceiveAmaTasks } from './QueueActions';
 
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
@@ -30,9 +27,11 @@ import type { Appeal, Task } from './types/models';
 
 type Params = {|
   appealId: string,
+  taskId: string,
   task: Task,
   isReassignAction: boolean,
-  isTeamAssign: boolean
+  isTeamAssign: boolean,
+  history: Object
 |};
 
 type Props = Params & {|
@@ -40,7 +39,7 @@ type Props = Params & {|
   highlightFormItems: boolean,
   requestPatch: typeof requestPatch,
   requestSave: typeof requestSave,
-  setTaskAttrs: typeof setTaskAttrs
+  onReceiveAmaTasks: typeof onReceiveAmaTasks
 |};
 
 type ViewState = {|
@@ -62,8 +61,12 @@ class AssignToView extends React.Component<Props, ViewState> {
       existingInstructions = instructions[instructionLength - 1];
     }
 
+    const actionData = this.taskActionData();
+    const selectedOption = actionData.selected ?
+      this.taskActionData().options.find((option) => option.value === actionData.selected.id) : null;
+
     this.state = {
-      selectedValue: null,
+      selectedValue: selectedOption ? selectedOption.value : null,
       instructions: existingInstructions
     };
   }
@@ -79,10 +82,11 @@ class AssignToView extends React.Component<Props, ViewState> {
       isReassignAction,
       isTeamAssign
     } = this.props;
+
     const payload = {
       data: {
         tasks: [{
-          type: 'GenericTask',
+          type: this.taskActionData().type ? this.taskActionData().type : 'GenericTask',
           external_id: appeal.externalId,
           parent_id: task.taskId,
           assigned_to_id: this.state.selectedValue,
@@ -99,15 +103,29 @@ class AssignToView extends React.Component<Props, ViewState> {
     }
 
     return this.props.requestSave('/tasks', payload, successMsg).
-      then(() => {
-        this.props.setTaskAttrs(task.uniqueId, { status: 'on_hold' });
+      then((resp) => {
+        const response = JSON.parse(resp.text);
+
+        this.props.onReceiveAmaTasks(response.tasks.data);
       });
+  }
+
+  taskActionData = () => {
+    const relevantAction = this.props.task.availableActions.
+      find((action) => this.props.history.location.pathname.endsWith(action.value));
+
+    if (relevantAction && relevantAction.data) {
+      return (relevantAction.data);
+    }
+
+    // We should never get here since any task action the creates this modal should provide data.
+    throw new Error('Task action requires data');
   }
 
   getAssignee = () => {
     let assignee = 'person';
 
-    this.options().forEach((opt) => {
+    this.taskActionData().options.forEach((opt) => {
       if (opt.value === this.state.selectedValue) {
         assignee = opt.label;
       }
@@ -135,34 +153,20 @@ class AssignToView extends React.Component<Props, ViewState> {
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
         const response = JSON.parse(resp.text);
-        const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        _.map(preparedTasks, (preparedTask) => this.props.setTaskAttrs(preparedTask.uniqueId, preparedTask));
+        this.props.onReceiveAmaTasks(response.tasks.data);
       });
-  }
-
-  options = () => {
-    if (this.props.isTeamAssign) {
-      return (this.props.task.assignableOrganizations || []).map((organization) => {
-        return {
-          label: organization.name,
-          value: organization.id
-        };
-      });
-    }
-
-    return (this.props.task.assignableUsers || []).map((user) => {
-      return {
-        label: user.full_name,
-        value: user.id
-      };
-    });
   }
 
   render = () => {
     const {
-      highlightFormItems
+      highlightFormItems,
+      task
     } = this.props;
+
+    if (!task || task.availableActions.length === 0) {
+      return null;
+    }
 
     return <React.Fragment>
       <SearchableDropdown
@@ -173,7 +177,7 @@ class AssignToView extends React.Component<Props, ViewState> {
         placeholder={this.props.isTeamAssign ? COPY.ASSIGN_TO_TEAM_DROPDOWN : COPY.ASSIGN_TO_USER_DROPDOWN}
         value={this.state.selectedValue}
         onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
-        options={this.options()} />
+        options={this.taskActionData().options} />
       <br />
       <TextareaField
         name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
@@ -192,8 +196,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 
   return {
     highlightFormItems,
-    task: tasksForAppealAssignedToUserSelector(state, { appealId: ownProps.appealId })[0] ||
-      incompleteOrganizationTasksByAssigneeIdSelector(state, { appealId: ownProps.appealId })[0],
+    task: taskById(state, { taskId: ownProps.taskId }),
     appeal: appealWithDetailSelector(state, ownProps)
   };
 };
@@ -201,7 +204,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
   requestSave,
-  setTaskAttrs
+  onReceiveAmaTasks
 }, dispatch);
 
 export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(

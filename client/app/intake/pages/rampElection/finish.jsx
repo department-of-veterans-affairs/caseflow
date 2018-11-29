@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { completeIntake, confirmFinishIntake } from '../../actions/rampElection';
 import { bindActionCreators } from 'redux';
 import { getIntakeStatus } from '../../selectors';
-import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
+import ErrorAlert from '../../components/ErrorAlert';
 import _ from 'lodash';
 
 const submitText = 'Finish intake';
@@ -97,9 +97,9 @@ class Finish extends React.PureComponent {
       <h1>Finish processing { optionName } election</h1>
 
       { requestState === REQUEST_STATE.FAILED &&
-        <CompleteIntakeErrorAlert
-          completeIntakeErrorCode={completeIntakeErrorCode}
-          completeIntakeErrorData={completeIntakeErrorData} />
+        <ErrorAlert
+          errorCode={completeIntakeErrorCode}
+          errorData={completeIntakeErrorData} />
       }
 
       <p>Please complete the following steps outside Caseflow.</p>

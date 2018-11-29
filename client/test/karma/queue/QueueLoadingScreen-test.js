@@ -7,6 +7,7 @@ const serverData = {
       {
         attributes: {
           is_legacy: true,
+          type: 'LegacyJudgeTask',
           appeal_type: 'LegacyAppeal',
           added_by_css_id: 'BVANKUVALIS',
           added_by_name: 'Nash X Kuvalis',
@@ -38,7 +39,7 @@ const serverData = {
             assigned_on: '2018-08-02T17:37:03.000Z'
           },
           task_id: '3625593-2018-07-11',
-          action: 'review',
+          label: 'review',
           user_id: 'BVANKUVALIS',
           veteran_file_number: '767574947',
           veteran_name: 'Mills, Beulah, J',
@@ -73,10 +74,12 @@ describe('QueueLoadingScreen', () => {
         },
         // eslint-disable-next-line no-undefined
         availableActions: undefined,
+        // eslint-disable-next-line no-undefined
+        taskBusinessPayloads: undefined,
         addedByName: 'Nash X Kuvalis',
         addedByCssId: 'BVANKUVALIS',
         taskId: '3625593-2018-07-11',
-        action: 'review',
+        label: 'review',
         documentId: '12345-12345678',
         assignedBy: {
           firstName: 'Stephen',
@@ -87,7 +90,8 @@ describe('QueueLoadingScreen', () => {
         workProduct: 'OTD',
         previousTaskAssignedOn: '2018-08-02T17:37:03.000Z',
         status: 'Assigned',
-        decisionPreparedBy: null
+        decisionPreparedBy: null,
+        type: 'LegacyJudgeTask'
       }
     });
   });

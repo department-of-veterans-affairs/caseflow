@@ -8,10 +8,7 @@ class JudgeTask < Task
 
     if action.eql? "assign"
       [
-        {
-          label: COPY::JUDGE_CHECKOUT_ASSIGN_TO_ATTORNEY_LABEL,
-          value: "modal/assign_to_attorney"
-        }
+        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
       ]
     else
       [
@@ -23,8 +20,27 @@ class JudgeTask < Task
     end
   end
 
-  def self.create(params)
+  def timeline_title
+    COPY::CASE_TIMELINE_JUDGE_TASK
+  end
+
+  def self.create_from_params(params, user)
+    new_task = super(params, user)
+
+    parent = Task.find(params[:parent_id]) if params[:parent_id]
+    if parent && parent.type == QualityReviewTask.name
+      parent.update!(status: :on_hold)
+    end
+
+    new_task
+  end
+
+  def self.modify_params(params)
     super(params.merge(action: "assign"))
+  end
+
+  def self.verify_user_can_assign!(user)
+    QualityReview.singleton.user_has_access?(user) || super(user)
   end
 
   def when_child_task_completed
@@ -62,11 +78,12 @@ class JudgeTask < Task
   def self.assign_judge_tasks_for_root_tasks(root_tasks)
     root_tasks.each do |root_task|
       Rails.logger.info("Assigning judge task for appeal #{root_task.appeal.id}")
-      task = create(appeal: root_task.appeal,
-                    parent: root_task,
-                    appeal_type: Appeal.name,
-                    assigned_at: Time.zone.now,
-                    assigned_to: next_assignee)
+      task = create!(appeal: root_task.appeal,
+                     parent: root_task,
+                     appeal_type: Appeal.name,
+                     assigned_at: Time.zone.now,
+                     assigned_to: next_assignee,
+                     action: "assign")
       Rails.logger.info("Assigned judge task with task id #{task.id} to #{task.assigned_to.css_id}")
     end
   end
@@ -76,6 +93,8 @@ class JudgeTask < Task
   end
 
   def self.eligible_for_assigment?(task)
+    return false if task.appeal.class == LegacyAppeal
+    return false if task.appeal.docket_name.nil?
     # Hearing cases will not be processed until February 2019
     return false if task.appeal.hearing_docket?
 
@@ -84,7 +103,6 @@ class JudgeTask < Task
     if task.appeal.evidence_submission_docket?
       return false if task.appeal.receipt_date > 90.days.ago
     end
-
     # If the task already has been assigned to a judge, or if it
     # is a VSO task, it will have children tasks. We only want to
     # assign tasks that have not been assigned yet.

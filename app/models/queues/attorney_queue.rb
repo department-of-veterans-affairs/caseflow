@@ -18,7 +18,8 @@ class AttorneyQueue
       end
       result
     end
-    ama_tasks = AttorneyTask.where.not(status: Constants.TASK_STATUSES.completed).where(assigned_to: user)
+    ama_tasks = Task.incomplete_or_recently_completed
+      .where(assigned_to: user, type: [AttorneyTask.name, QualityReviewTask.name])
     (on_hold_legacy_tasks + ama_tasks).flatten
   end
 

@@ -1,12 +1,4 @@
 describe Appeal do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   context "#document_fetcher" do
     let(:veteran_file_number) { "64205050" }
     let(:appeal) do
@@ -191,6 +183,62 @@ describe Appeal do
       expect(RootTask).to receive(:create_root_and_sub_tasks!).once
 
       appeal.create_tasks_on_intake_success!
+    end
+  end
+
+  context "#location_code" do
+    context "if the RootTask status is completed" do
+      let(:appeal) { create(:appeal) }
+
+      before do
+        create(:root_task, appeal: appeal, status: :completed)
+      end
+
+      it "returns Post-decision" do
+        expect(appeal.location_code).to eq(COPY::CASE_LIST_TABLE_POST_DECISION_LABEL)
+      end
+    end
+
+    context "if there are no active tasks" do
+      let(:appeal) { create(:appeal) }
+      it "returns nil" do
+        expect(appeal.location_code).to eq(nil)
+      end
+    end
+
+    context "if the only active case is a RootTask" do
+      let(:appeal) { create(:appeal) }
+
+      before do
+        create(:root_task, appeal: appeal, status: :in_progress)
+      end
+
+      it "returns Case storage" do
+        expect(appeal.location_code).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+      end
+    end
+
+    context "if there is an assignee" do
+      let(:organization) { create(:organization) }
+      let(:appeal_organization) { create(:appeal) }
+      let(:user) { create(:user) }
+      let(:appeal_user) { create(:appeal) }
+
+      before do
+        organization_root_task = create(:root_task, appeal: appeal_organization)
+        create(:generic_task, assigned_to: organization, appeal: appeal_organization, parent: organization_root_task)
+
+        user_root_task = create(:root_task, appeal: appeal_user)
+        create(:generic_task, assigned_to: user, appeal: appeal_user, parent: user_root_task)
+      end
+
+      it "if the most recent assignee is an organization it returns the organization name" do
+        expect(appeal_organization.location_code).to eq(organization.name)
+      end
+
+      it "if the most recent assignee is not an organization it returns the id" do
+        expect(appeal_user.location_code).to eq(user.css_id)
+      end
     end
   end
 end

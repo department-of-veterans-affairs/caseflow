@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
 import update from 'immutability-helper';
+import pluralize from 'pluralize';
 
 import Button from '../../components/Button';
 import IssueCounter from '../../intake/components/IssueCounter';
@@ -70,7 +71,13 @@ class SaveButtonUnconnected extends React.Component {
 
   save = () => {
     this.props.requestIssuesUpdate(this.props.claimId, this.props.formType, this.props.state).
-      then(() => this.props.history.push('/confirmation'));
+      then(() => {
+        if (this.props.formType === 'appeal') {
+          window.location.href = `/queue/appeals/${this.props.claimId}`;
+        } else {
+          this.props.history.push('/confirmation');
+        }
+      });
   }
 
   render = () => {
@@ -90,7 +97,7 @@ class SaveButtonUnconnected extends React.Component {
         onConfirm={() => this.confirmModal('issueChangeModal')}>
         <p>
           The review originally had {this.state.originalIssueNumber}&nbsp;
-          issues but now has {this.props.state.addedIssues.length}.
+          { pluralize('issue', this.state.originalIssueNumber) } but now has {this.props.state.addedIssues.length}.
         </p>
         <p>Please check that this is the correct number.</p>
       </SaveAlertConfirmModal>}
@@ -109,7 +116,11 @@ class SaveButtonUnconnected extends React.Component {
       <Button
         name="submit-update"
         onClick={this.validate}
-        loading={requestStatus.requestIssuesUpdate === REQUEST_STATE.IN_PROGRESS}
+        // on success also keep the loading state
+        // appeals take a long time to navigate to a different page, do not allow double saves in the meantime
+        // for other review types, this is a no-op since page changes
+        loading={requestStatus.requestIssuesUpdate === REQUEST_STATE.IN_PROGRESS ||
+          requestStatus.requestIssuesUpdate === REQUEST_STATE.SUCCEEDED}
         disabled={saveDisabled}
       >
         Save
@@ -133,7 +144,7 @@ const SaveButton = connect(
   }, dispatch)
 )(SaveButtonUnconnected);
 
-class CancelEditButton extends React.PureComponent {
+class CancelEditButtonUnconnected extends React.PureComponent {
   render = () => {
     return <Button
       id="cancel-edit"
@@ -141,7 +152,11 @@ class CancelEditButton extends React.PureComponent {
       willNeverBeLoading
       onClick={
         () => {
-          this.props.history.push('/cancel');
+          if (this.props.formType === 'appeal') {
+            window.location.href = `/queue/appeals/${this.props.claimId}`;
+          } else {
+            this.props.history.push('/cancel');
+          }
         }
       }
     >
@@ -149,6 +164,13 @@ class CancelEditButton extends React.PureComponent {
     </Button>;
   }
 }
+
+const CancelEditButton = connect(
+  (state) => ({
+    formType: state.formType,
+    claimId: state.claimId
+  })
+)(CancelEditButtonUnconnected);
 
 const mapStateToProps = (state) => {
   return {

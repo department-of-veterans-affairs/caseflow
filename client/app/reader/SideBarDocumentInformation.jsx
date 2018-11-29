@@ -48,7 +48,12 @@ class SideBarDocumentInformation extends PureComponent {
         }
         <div className="cf-pdf-meta-title">
           <strong>Issues: </strong>
-          <IssueList appeal={appeal} className="cf-pdf-meta-doc-info-issues" issuesOnly />
+          <IssueList
+            appeal={{ ...appeal,
+              isLegacyAppeal: appeal.docket_name === 'legacy' }}
+            className="cf-pdf-meta-doc-info-issues"
+            issuesOnly
+          />
         </div>
       </div>;
     }

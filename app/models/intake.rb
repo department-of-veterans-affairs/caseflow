@@ -53,6 +53,13 @@ class Intake < ApplicationRecord
     )
   end
 
+  def self.close_expired_intakes!
+    Intake.expired.each do |intake|
+      intake.complete_with_status!(:expired)
+      intake.cancel_detail!
+    end
+  end
+
   def self.flagged_for_manager_review
     Intake.select("intakes.*, intakes.type as form_type, users.full_name")
       .joins(:user,
@@ -89,7 +96,7 @@ class Intake < ApplicationRecord
     preload_intake_data!
 
     if validate_start
-      close_expired_intakes!
+      self.class.close_expired_intakes!
 
       update_attributes(
         started_at: Time.zone.now,
@@ -202,6 +209,7 @@ class Intake < ApplicationRecord
       veteran_file_number: veteran_file_number,
       veteran_name: veteran && veteran.name.formatted(:readable_short),
       veteran_form_name: veteran && veteran.name.formatted(:form),
+      veteran_is_deceased: veteran && veteran.deceased?,
       completed_at: completed_at,
       relationships: ama_enabled && veteran && veteran.relationships
     }
@@ -220,10 +228,10 @@ class Intake < ApplicationRecord
 
   private
 
-  def close_expired_intakes!
-    Intake.expired.each do |intake|
-      intake.complete_with_status!(:expired)
-      intake.cancel_detail!
+  def update_person!
+    # Update the person when a claimant is created
+    Person.find_or_create_by(participant_id: detail.claimant_participant_id).tap do |person|
+      person.update!(date_of_birth: BGSService.new.fetch_person_info(detail.claimant_participant_id)[:birth_date])
     end
   end
 

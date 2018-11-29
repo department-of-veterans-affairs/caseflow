@@ -1,11 +1,6 @@
 describe RampRefiling do
   before do
-    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   let(:user) { Generators::User.build }
@@ -126,6 +121,13 @@ describe RampRefiling do
       end
       let(:modifier) { RampReview::END_PRODUCT_DATA_BY_OPTION[option_selected][:modifier] }
 
+      let!(:ramp_refiling_intake) do
+        RampRefilingIntake.create!(
+          veteran_file_number: veteran_file_number,
+          detail: ramp_refiling,
+          user: user
+        )
+      end
       context "when an issue is not created in VBMS" do
         # Issues with the description "FAIL ME" are configured to fail in Fakes::VBMSService
         let!(:issue_to_fail) do
@@ -152,7 +154,8 @@ describe RampRefiling do
           EndProductEstablishment.create!(
             veteran_file_number: veteran_file_number,
             reference_id: "testtest",
-            source: ramp_refiling
+            source: ramp_refiling,
+            user: user
           )
         end
 
@@ -164,7 +167,8 @@ describe RampRefiling do
           expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
             veteran_file_number: "64205555",
             claim_id: "testtest",
-            contention_descriptions: %w[Arm Arm Leg]
+            contention_descriptions: %w[Arm Arm Leg],
+            user: user
           )
         end
       end
@@ -178,7 +182,8 @@ describe RampRefiling do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: "64205555",
           claim_id: "1337",
-          contention_descriptions: %w[Arm Arm Leg]
+          contention_descriptions: %w[Arm Arm Leg],
+          user: user
         )
 
         expect(issues.first.reload.contention_reference_id).to_not be_nil

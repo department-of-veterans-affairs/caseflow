@@ -2,6 +2,9 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
   attribute :is_legacy do
     true
   end
+  attribute :type do
+    object.class.name
+  end
   attribute :assigned_on
   attribute :due_on
   attribute :docket_name
@@ -11,7 +14,7 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
   attribute :added_by_name
   attribute :added_by_css_id
   attribute :task_id
-  attribute :action
+  attribute :label
   attribute :document_id
   attribute :work_product
   attribute :appeal_type

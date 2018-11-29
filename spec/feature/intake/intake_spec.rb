@@ -1,9 +1,11 @@
 require "rails_helper"
+require "support/intake_helpers"
 
 RSpec.feature "Intake" do
+  include IntakeHelpers
+
   before do
     FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 12, 8))
@@ -12,10 +14,6 @@ RSpec.feature "Intake" do
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   let!(:veteran) do
@@ -37,9 +35,6 @@ RSpec.feature "Intake" do
       bfdnod: 1.year.ago
     )
   end
-
-  let(:search_bar_title) { "Enter the Veteran's ID" }
-  let(:search_page_title) { "Search for Veteran ID" }
 
   context "As a user with unauthorized role" do
     let!(:current_user) do
@@ -80,8 +75,10 @@ RSpec.feature "Intake" do
     scenario "User clicks on Search Cases" do
       visit "/intake"
       expect(page).to have_content("Search cases")
-      click_link("Search cases")
-      expect(page).to have_current_path("/search")
+      new_window = window_opened_by { click_link("Search cases") }
+      within_window new_window do
+        expect(page).to have_current_path("/search")
+      end
     end
 
     scenario "Search for a veteran that does not exist in BGS" do

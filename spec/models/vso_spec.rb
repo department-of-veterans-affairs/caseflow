@@ -9,7 +9,7 @@ describe Vso do
   end
 
   let(:user) do
-    create(:user)
+    create(:user, roles: ["VSO"])
   end
 
   let(:vso_participant_ids) do
@@ -66,6 +66,16 @@ describe Vso do
 
     context "when the users participant_id is associated with no VSOs" do
       let(:vso_participant_ids) { [] }
+
+      it "returns false" do
+        is_expected.to be_falsey
+      end
+    end
+
+    context "when the user does not have the VSO role" do
+      let(:user) do
+        create(:user, roles: ["Other Role"])
+      end
 
       it "returns false" do
         is_expected.to be_falsey

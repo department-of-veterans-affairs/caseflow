@@ -11,12 +11,11 @@ import COPY from '../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 import {
-  tasksForAppealAssignedToUserSelector,
+  taskById,
   appealWithDetailSelector
 } from './selectors';
-import { setTaskAttrs } from './QueueActions';
+import { onReceiveAmaTasks } from './QueueActions';
 import { requestPatch } from './uiReducer/uiActions';
-import { prepareTasksForStore } from './utils';
 
 import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -41,6 +40,7 @@ type ViewState = {|
 |};
 
 type Params = {|
+  taskId: string,
   appealId: string
 |};
 
@@ -50,7 +50,7 @@ type Props = Params & {|
   error: ?UiStateMessage,
   highlightFormItems: boolean,
   requestPatch: typeof requestPatch,
-  setTaskAttrs: typeof setTaskAttrs
+  onReceiveAmaTasks: typeof onReceiveAmaTasks
 |};
 
 class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
@@ -102,9 +102,8 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
     this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
         const response = JSON.parse(resp.text);
-        const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.uniqueId]);
+        this.props.onReceiveAmaTasks(response.tasks.data);
       });
   }
 
@@ -132,7 +131,7 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
           <strong>Veteran ID:</strong> {appeal.veteranFileNumber}
         </span>
         <span {...columnStyling}>
-          <strong>Task:</strong> {CO_LOCATED_ADMIN_ACTIONS[task.action]}
+          <strong>Task:</strong> {CO_LOCATED_ADMIN_ACTIONS[task.label]}
         </span>
       </div>
       <hr />
@@ -185,14 +184,14 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   return {
     error,
     highlightFormItems,
-    task: tasksForAppealAssignedToUserSelector(state, ownProps)[0],
+    task: taskById(state, { taskId: ownProps.taskId }),
     appeal: appealWithDetailSelector(state, ownProps)
   };
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
-  setTaskAttrs
+  onReceiveAmaTasks
 }, dispatch);
 
 const WrappedComponent = decisionViewBase(ColocatedPlaceHoldView, {

@@ -1,11 +1,9 @@
 describe QueueRepository do
   before do
-    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
   after do
-    FeatureToggle.disable!(:test_facols)
     Timecop.return
   end
 
@@ -65,6 +63,27 @@ describe QueueRepository do
         expect do
           QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
         end.to raise_error(Caseflow::Error::QueueRepositoryError)
+      end
+    end
+
+    context "when the case already has an incomplete decass record" do
+      it "should update the existing record rather than creating a new one" do
+        expect(VACOLS::Decass.where(defolder: vacols_case.bfkey).count).to eq 0
+        VACOLS::Decass.create!(defolder: vacols_case.bfkey,
+                               deadusr: "FAKE",
+                               deadtim: VacolsHelper.local_date_with_utc_timezone,
+                               deatty: "111",
+                               deteam: "D5",
+                               deprod: "DEV")
+        QueueRepository.assign_case_to_attorney!(judge: judge, attorney: attorney, vacols_id: vacols_id)
+        decass_results = VACOLS::Decass.where(defolder: vacols_case.bfkey)
+        expect(decass_results.count).to eq 1
+        decass = decass_results.first
+        expect(decass.deatty).to eq attorney_staff.sattyid
+        expect(decass.deteam).to eq attorney_staff.stitle[0..2]
+        expect(decass.demdusr).to eq judge_staff.slogid
+        expect(decass.deprod).to eq nil
+        expect(decass.deadtim).to eq VacolsHelper.local_date_with_utc_timezone
       end
     end
   end
@@ -186,23 +205,91 @@ describe QueueRepository do
   end
 
   context ".filter_duplicate_tasks" do
-    subject { QueueRepository.filter_duplicate_tasks(tasks) }
-
-    let(:tasks) do
-      [
-        OpenStruct.new(vacols_id: "123C", created_at: 3.days.ago),
-        OpenStruct.new(vacols_id: "123B", created_at: 5.days.ago),
-        OpenStruct.new(vacols_id: "123C", created_at: 2.days.ago),
-        OpenStruct.new(vacols_id: "123C", created_at: 9.days.ago),
-        OpenStruct.new(vacols_id: "123A", created_at: 9.days.ago)
-      ]
+    let(:judge) { User.create(css_id: "BAWS123", station_id: User::BOARD_STATION_ID) }
+    let(:attorney) { User.create(css_id: "FATR456", station_id: User::BOARD_STATION_ID) }
+    let!(:judge_staff) do
+      create(:staff, :judge_role, slogid: "BVABAWS", sdomainid: judge.css_id)
+    end
+    let!(:attorney_staff) do
+      create(:staff, :attorney_role, stitle: "DF", slogid: "BVASAMD", sdomainid: attorney.css_id, sattyid: "1234")
     end
 
-    it "should filter duplicate tasks and keep the latest" do
-      expect(subject.size).to eq 3
-      expect(subject).to include tasks.third
-      expect(subject).to include tasks.second
-      expect(subject).to include tasks.last
+    context "when user an attorney" do
+      subject { QueueRepository.filter_duplicate_tasks(tasks, attorney.css_id) }
+
+      let(:tasks) do
+        [
+          OpenStruct.new(vacols_id: "123B", updated_at: nil),
+          OpenStruct.new(vacols_id: "123B", updated_at: 1.day.ago),
+          OpenStruct.new(vacols_id: "123C", updated_at: 2.days.ago),
+          OpenStruct.new(vacols_id: "123C", updated_at: 11.days.ago),
+          OpenStruct.new(vacols_id: "123C", updated_at: 9.days.ago, attorney_id: "1234"),
+          OpenStruct.new(vacols_id: "123A", updated_at: 9.days.ago),
+          OpenStruct.new(vacols_id: "123F", updated_at: 2.days.ago),
+          OpenStruct.new(vacols_id: "123F", updated_at: 11.days.ago, attorney_id: "5678")
+        ]
+      end
+
+      it "should filter duplicate tasks and keep the latest" do
+        expect(subject.size).to eq 4
+        expect(subject).to include tasks[1]
+        expect(subject).to include tasks[4]
+        expect(subject).to include tasks[5]
+        expect(subject).to include tasks[6]
+      end
+    end
+
+    context "when user a judge" do
+      subject { QueueRepository.filter_duplicate_tasks(tasks, judge.css_id) }
+
+      let(:tasks) do
+        [
+          OpenStruct.new(vacols_id: "123B", updated_at: 3.days.ago),
+          OpenStruct.new(vacols_id: "123B", updated_at: 1.day.ago),
+          OpenStruct.new(vacols_id: "123C", updated_at: 2.days.ago),
+          OpenStruct.new(vacols_id: "123C", updated_at: 11.days.ago),
+          OpenStruct.new(vacols_id: "123C", updated_at: 9.days.ago, attorney_id: "1234"),
+          OpenStruct.new(vacols_id: "123A", updated_at: 9.days.ago),
+          OpenStruct.new(vacols_id: "123F", updated_at: 2.days.ago),
+          OpenStruct.new(vacols_id: "123F", updated_at: 11.days.ago, attorney_id: "5678")
+        ]
+      end
+
+      it "should filter duplicate tasks and keep the latest" do
+        expect(subject.size).to eq 4
+        expect(subject).to include tasks[1]
+        expect(subject).to include tasks[2]
+        expect(subject).to include tasks[5]
+        expect(subject).to include tasks[6]
+      end
+    end
+
+    context "when no user is passed" do
+      subject { QueueRepository.filter_duplicate_tasks(tasks) }
+
+      let(:tasks) do
+        [
+          OpenStruct.new(vacols_id: "123B", updated_at: 3.days.ago),
+          OpenStruct.new(vacols_id: "123B", updated_at: 1.day.ago),
+          OpenStruct.new(vacols_id: "123C", updated_at: 2.days.ago),
+          OpenStruct.new(vacols_id: "123C", updated_at: 11.days.ago),
+          OpenStruct.new(vacols_id: "123C", updated_at: 9.days.ago, attorney_id: "1234"),
+          OpenStruct.new(vacols_id: "123A", updated_at: 9.days.ago),
+          OpenStruct.new(vacols_id: "123F", updated_at: 2.days.ago),
+          OpenStruct.new(vacols_id: "123F", updated_at: 11.days.ago, attorney_id: "5678"),
+          OpenStruct.new(vacols_id: "123G", updated_at: nil),
+          OpenStruct.new(vacols_id: "123G", updated_at: nil)
+        ]
+      end
+
+      it "should filter duplicate tasks and keep the latest" do
+        expect(subject.size).to eq 5
+        expect(subject).to include tasks[1]
+        expect(subject).to include tasks[2]
+        expect(subject).to include tasks[5]
+        expect(subject).to include tasks[6]
+        expect(subject).to include tasks[8]
+      end
     end
   end
 end

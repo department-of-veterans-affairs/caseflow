@@ -1,52 +1,83 @@
-class ClaimReviewIntake < Intake
+class ClaimReviewIntake < DecisionReviewIntake
   include Asyncable
 
-  def cancel_detail!
-    detail.remove_claimants!
-    super
+  attr_reader :request_params
+
+  def ui_hash(ama_enabled)
+    super.merge(
+      benefit_type: detail.benefit_type,
+      end_product_description: detail.end_product_description
+    )
   end
 
   def review!(request_params)
     detail.start_review!
-    detail.create_claimants!(
-      participant_id: request_params[:claimant] || veteran.participant_id,
-      payee_code: request_params[:payee_code] || "00"
-    )
-    detail.update(review_params(request_params))
-  end
 
-  def review_errors
-    detail.errors.messages
+    @request_params = request_params
+
+    transaction do
+      detail.assign_attributes(review_params)
+      create_claimant!
+      detail.save!
+    end
+  rescue ActiveRecord::RecordInvalid => _err
+    # propagate the error from invalid column to the user-visible reason
+    if detail.errors.messages[:benefit_type].include?(ClaimantValidator::PAYEE_CODE_REQUIRED)
+      payee_code_error = ClaimantValidator::BLANK
+    end
+
+    if detail.errors.messages[:veteran_is_not_claimant].include?(ClaimantValidator::CLAIMANT_REQUIRED)
+      claimant_error = ClaimantValidator::BLANK
+    end
+
+    detail.validate
+    detail.errors[:payee_code] << payee_code_error if payee_code_error
+    detail.errors[:claimant] << claimant_error if claimant_error
+
+    return false
+    # we just swallow the exception otherwise, since we want the validation errors to return to client
   end
 
   def complete!(request_params)
-    return if complete? || pending?
-    complete_claim_review(request_params)
-  end
-
-  private
-
-  def complete_claim_review(request_params)
-    req_issues = request_params[:request_issues] || []
-    transaction do
-      start_completion!
-      detail.request_issues.destroy_all unless detail.request_issues.empty?
-      detail.create_issues!(build_issues(req_issues))
+    super(request_params) do
       detail.submit_for_processing!
       if run_async?
         ClaimReviewProcessJob.perform_later(detail)
       else
         ClaimReviewProcessJob.perform_now(detail)
       end
-      complete_with_status!(:success)
     end
   end
 
-  def review_params(_request_params)
-    fail Caseflow::Error::MustImplementInSubclass
+  private
+
+  def create_claimant!
+    if request_params[:veteran_is_not_claimant] == "true"
+      Claimant.create!(
+        participant_id: request_params[:claimant],
+        payee_code: need_payee_code? ? request_params[:payee_code] : nil,
+        review_request: detail
+      )
+    else
+      Claimant.create!(
+        participant_id: veteran.participant_id,
+        payee_code: nil,
+        review_request: detail
+      )
+    end
+    update_person!
   end
 
-  def build_issues(request_issues_data)
-    request_issues_data.map { |data| detail.request_issues.from_intake_data(data) }
+  def need_payee_code?
+    # payee_code is only required for claim reviews where the veteran is
+    # not the claimant and the benefit_type is compensation or pension
+    return unless request_params[:veteran_is_not_claimant] == "true"
+    ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(request_params[:benefit_type])
   end
+
+  # :nocov:
+  def review_params
+    fail Caseflow::Error::MustImplementInSubclass
+  end
+  # :nocov:
 end

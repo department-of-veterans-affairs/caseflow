@@ -6,10 +6,8 @@ RSpec.feature "AmaQueue" do
 
     Fakes::Initializer.load!
     FeatureToggle.enable!(:queue_beaam_appeals)
-    FeatureToggle.enable!(:test_facols)
   end
   after do
-    FeatureToggle.disable!(:test_facols)
     FeatureToggle.disable!(:queue_beaam_appeals)
   end
 
@@ -112,6 +110,7 @@ RSpec.feature "AmaQueue" do
       end
 
       before do
+        allow_any_instance_of(AodTeam).to receive(:user_has_access?).with(attorney_user).and_return(true)
         allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id).and_return(
           address_line_1: "Veteran Address",
           city: "Washington",
@@ -191,13 +190,11 @@ RSpec.feature "AmaQueue" do
 
     context "when user is part of translation" do
       let(:user_name) { "Translation User" }
+      let(:other_user_name) { "Other User" }
       let!(:user) { User.authenticate!(user: create(:user, roles: ["Reader"], full_name: user_name)) }
-      let!(:staff) { FactoryBot.create(:staff, user: user, sdept: "TRANS", sattyid: nil) }
+      let!(:other_user) { create(:user, roles: ["Reader"], full_name: other_user_name) }
       let!(:translation_organization) { Organization.create!(name: "Translation", url: "translation") }
       let!(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
-      let!(:staff_field) do
-        StaffFieldForOrganization.create!(organization: translation_organization, name: "sdept", values: %w[TRANS])
-      end
 
       let!(:translation_task) do
         create(
@@ -214,8 +211,13 @@ RSpec.feature "AmaQueue" do
       let(:existing_instruction) { "Existing instruction" }
       let(:instructions) { "Test instructions" }
 
+      before do
+        OrganizationsUser.add_user_to_organization(user, translation_organization)
+        OrganizationsUser.add_user_to_organization(other_user, translation_organization)
+      end
+
       scenario "assign case to self" do
-        visit "/organizations/#{translation_organization.url}"
+        visit translation_organization.path
 
         click_on "Pal Smith"
 
@@ -223,13 +225,30 @@ RSpec.feature "AmaQueue" do
         find("div", class: "Select-option", text: "Assign to person").click
 
         find(".Select-control", text: "Select a user").click
-        find("div", class: "Select-option", text: user.full_name).click
+        find("div", class: "Select-option", text: other_user.full_name).click
 
         expect(page).to have_content(existing_instruction)
         click_on "Submit"
 
-        expect(page).to have_content("Task assigned to #{user_name}")
+        expect(page).to have_content("Task assigned to #{other_user_name}")
         expect(translation_task.reload.status).to eq("on_hold")
+
+        visit "/organizations/#{translation_organization.url}"
+        click_on "Assigned"
+        click_on "Pal Smith"
+
+        find(".Select-control", text: "Select an action").click
+        find("div", class: "Select-option", text: "Re-assign to person").click
+
+        find(".Select-control", text: "Select a user").click
+        find("div", class: "Select-option", text: user.full_name).click
+
+        fill_in "taskInstructions", with: instructions
+        click_on "Submit"
+
+        expect(page).to have_content("Task reassigned to #{user_name}")
+        old_task = translation_task.reload.children.find { |task| task.assigned_to == other_user }
+        expect(old_task.status).to eq("completed")
 
         # On hold tasks should not be visible on the case details screen
         # expect(page).to_not have_content("Actions")
@@ -322,6 +341,79 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content(appeals.first.docket_number)
         expect(page).to_not have_content(appeals.second.docket_number)
       end
+    end
+  end
+
+  context "QR flow" do
+    let(:user_name) { "QR User" }
+    let!(:user) { FactoryBot.create(:user, roles: ["Reader"], full_name: user_name) }
+
+    let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
+    let!(:judge_staff) { FactoryBot.create(:staff, :judge_role, user: judge_user) }
+
+    let!(:quality_review_organization) { QualityReview.singleton }
+    let!(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
+    let!(:appeal) { create(:appeal) }
+
+    let!(:quality_review_task) do
+      create(
+        :quality_review_task,
+        :in_progress,
+        assigned_to: quality_review_organization,
+        assigned_by: judge_user,
+        parent: root_task,
+        appeal: appeal
+      )
+    end
+
+    let!(:quality_review_instructions) { "Fix this case!" }
+    let!(:root_task) { create(:root_task) }
+
+    let!(:judge_task) { create(:ama_judge_task, parent: root_task, assigned_to: judge_user, status: :completed) }
+
+    before do
+      OrganizationsUser.add_user_to_organization(user, quality_review_organization)
+      # We expect all QR users to be attorneys. This matters because we serve different queue views on the frontend
+      # to attorneys.
+      FactoryBot.create(:staff, user: user)
+      User.authenticate!(user: user)
+    end
+
+    scenario "return case to judge" do
+      visit quality_review_organization.path
+      click_on "Bob Smith"
+
+      find(".Select-control", text: "Select an action").click
+      find("div", class: "Select-option", text: "Assign to person").click
+
+      find(".Select-control", text: "Select a user").click
+      find("div", class: "Select-option", text: user.full_name).click
+
+      fill_in "taskInstructions", with: "Review the quality"
+      click_on "Submit"
+
+      expect(page).to have_content("Task assigned to #{user_name}")
+
+      click_on "Caseflow"
+
+      click_on "Bob Smith"
+
+      find(".Select-control", text: "Select an action").click
+      find("div", class: "Select-option", text: "Return to judge").click
+
+      fill_in "taskInstructions", with: quality_review_instructions
+
+      click_on "Submit"
+      expect(page).to have_content("On hold (1)")
+
+      User.authenticate!(user: judge_user)
+
+      visit "/queue"
+
+      click_on "Switch to Assign Cases"
+      click_on "Bob Smith"
+
+      expect(page).to have_content(quality_review_instructions)
     end
   end
 end

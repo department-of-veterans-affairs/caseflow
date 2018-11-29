@@ -4,7 +4,7 @@ class BgsAddressService
 
   attr_accessor :participant_id
 
-  bgs_attr_accessor :address_line_1, :address_line_2, :city, :country, :state, :zip
+  bgs_attr_accessor :address_line_1, :address_line_2, :address_line_3, :city, :country, :state, :zip
 
   def address
     return nil unless found?

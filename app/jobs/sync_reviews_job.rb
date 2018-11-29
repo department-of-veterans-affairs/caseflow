@@ -1,4 +1,4 @@
-# This job will sync end products & contentions that we created for AMA reviews
+# This job will sync end products & contentions that we created for decision reviews
 class SyncReviewsJob < CaseflowJob
   queue_as :low_priority
   application_attr :intake
@@ -15,6 +15,7 @@ class SyncReviewsJob < CaseflowJob
     perform_end_product_syncs(limit)
     perform_ramp_refiling_reprocessing
     perform_claim_review_processing(limit)
+    perform_decision_rating_issues_syncs(limit)
   end
 
   private
@@ -41,6 +42,12 @@ class SyncReviewsJob < CaseflowJob
       klass.requires_processing.limit(limit).each do |claim_review|
         ClaimReviewProcessJob.perform_later(claim_review)
       end
+    end
+  end
+
+  def perform_decision_rating_issues_syncs(limit)
+    RequestIssue.requires_processing.limit(limit).each do |request_issue|
+      DecisionRatingIssueSyncJob.perform_later(request_issue)
     end
   end
 end

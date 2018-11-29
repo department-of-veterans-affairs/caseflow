@@ -4,13 +4,12 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 
-import { setTaskAttrs } from './QueueActions';
+import { onReceiveAmaTasks } from './QueueActions';
 import ApiUtil from '../util/ApiUtil';
 import COPY from '../../COPY.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import { subHeadTextStyle } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import { prepareTasksForStore } from './utils';
 
 class CaseDetailsLink extends React.PureComponent {
   onClick = () => {
@@ -29,9 +28,8 @@ class CaseDetailsLink extends React.PureComponent {
       ApiUtil.patch(`/tasks/${task.taskId}`, payload).
         then((resp) => {
           const response = JSON.parse(resp.text);
-          const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-          this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.uniqueId]);
+          this.props.onReceiveAmaTasks(response.tasks.data);
         });
     }
 
@@ -83,16 +81,13 @@ CaseDetailsLink.propTypes = {
   task: PropTypes.object,
   appeal: PropTypes.object.isRequired,
   disabled: PropTypes.bool,
+  userRole: PropTypes.string.isRequired,
   getLinkText: PropTypes.func,
   onClick: PropTypes.func
 };
 
-const mapStateToProps = (state) => ({
-  userRole: state.ui.userRole
-});
-
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setTaskAttrs
+  onReceiveAmaTasks
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(CaseDetailsLink);
+export default connect(null, mapDispatchToProps)(CaseDetailsLink);

@@ -128,6 +128,10 @@ class Veteran < ApplicationRecord
     @ratings ||= Rating.fetch_all(participant_id)
   end
 
+  def decision_issues
+    DecisionIssue.where(participant_id: participant_id)
+  end
+
   def accessible_appeals_for_poa(poa_participant_ids)
     appeals = Appeal.where(veteran_file_number: file_number).includes(:claimants)
 
@@ -146,18 +150,26 @@ class Veteran < ApplicationRecord
     super || ptcpnt_id
   end
 
-  def sync_rating_issues!
-    timely_ratings(from_date: Time.zone.today).each do |rating|
-      rating.issues.select(&:contention_reference_id).each(&:save_with_request_issue!)
-    end
-  end
-
   class << self
     def find_or_create_by_file_number(file_number)
       find_and_maybe_backfill_name(file_number) || create_by_file_number(file_number)
     end
 
+    def find_by_file_number_or_ssn(file_number_or_ssn)
+      if file_number_or_ssn.to_s.length == 9
+        find_by(file_number: file_number_or_ssn) || find_by_ssn(file_number_or_ssn)
+      else
+        find_by(file_number: file_number_or_ssn)
+      end
+    end
+
     private
+
+    def find_by_ssn(ssn)
+      file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
+      return unless file_number
+      find_by(file_number: file_number)
+    end
 
     def find_and_maybe_backfill_name(file_number)
       veteran = find_by(file_number: file_number)
@@ -204,11 +216,11 @@ class Veteran < ApplicationRecord
     end
   end
 
-  private
-
   def deceased?
     !date_of_death.nil?
   end
+
+  private
 
   def fetch_end_products
     bgs_end_products = bgs.get_end_products(file_number)

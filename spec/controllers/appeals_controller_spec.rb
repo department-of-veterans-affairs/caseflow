@@ -1,12 +1,4 @@
 RSpec.describe AppealsController, type: :controller do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   before { User.authenticate!(roles: ["System Admin"]) }
 
   describe "GET appeals" do
@@ -56,6 +48,7 @@ RSpec.describe AppealsController, type: :controller do
 
       it "should return document count" do
         get :document_count, params: { appeal_id: appeal.vacols_id }
+
         response_body = JSON.parse(response.body)
         expect(response_body["document_count"]).to eq 2
       end
@@ -128,7 +121,7 @@ RSpec.describe AppealsController, type: :controller do
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
 
     it "should succeed" do
-      get :show, params: { id: appeal.vacols_id }
+      get :show, params: { appeal_id: appeal.vacols_id }
 
       assert_response :success
     end
@@ -138,7 +131,7 @@ RSpec.describe AppealsController, type: :controller do
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
 
     it "should succeed" do
-      get :show, params: { id: appeal.vacols_id }, as: :json
+      get :show, params: { appeal_id: appeal.vacols_id }, as: :json
 
       assert_response :success
     end
