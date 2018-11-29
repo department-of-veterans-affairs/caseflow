@@ -57,7 +57,6 @@ export type UiState = {
   userIsVsoEmployee: boolean,
   feedbackUrl: string,
   veteranCaseListIsVisible: boolean,
-  organizationIds: Array<number>,
   organizations: Array<Object>,
   canEditAod: boolean
 };
@@ -90,6 +89,7 @@ export type QueueState = {|
   attorneys: Attorneys,
   newDocsForAppeal: NewDocsForAppeal,
   organizationId: ?number,
+  organizations: Array<Object>,
   specialIssues: Object,
   loadingAppealDetail: Object
 |};
