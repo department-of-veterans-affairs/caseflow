@@ -52,17 +52,7 @@ class HearingDateDropdown extends React.Component {
       hearingDateOptions.push(...this.props.staticOptions);
     }
 
-    return hearingDateOptions.sort((d1, d2) => {
-
-      if (d1.value > d2.value) {
-        return 1;
-      } else if (d1.value < d2.value) {
-        return -1;
-      }
-
-      return 0;
-
-    });
+    return hearingDateOptions.sort((d1, d2) => d1.value - d2.value);
   };
 
   render() {
