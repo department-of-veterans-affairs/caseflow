@@ -3,23 +3,30 @@ class Organization < ApplicationRecord
   has_many :organizations_users, dependent: :destroy
   has_many :users, through: :organizations_users
 
-  def self.assignable(task)
-    organizations = where(type: [nil, BvaDispatch.name])
+  def admins
+    organizations_users.select(&:admin?).map(&:user)
+  end
 
-    # Exclude the current organization from the list of assignable organizations if the
-    # task is assigned to this organization or the task is a child of a task assigned to
-    # this organization. Prevents assignment loops.
-    if task.assigned_to_type == name
-      organizations.where.not(id: task.assigned_to_id)
-    elsif task.assigned_to_type == User.name && task.parent && task.parent.assigned_to_type == name
-      organizations.where.not(id: task.parent.assigned_to_id)
-    else
-      organizations
-    end
+  def non_admins
+    organizations_users.reject(&:admin?).map(&:user)
+  end
+
+  def self.assignable(task)
+    select { |org| org.can_receive_task?(task) }
+  end
+
+  def can_receive_task?(task)
+    return false if task.assigned_to == self
+    return false if task.assigned_to.is_a?(User) && task.parent && task.parent.assigned_to == self
+    true
   end
 
   def user_has_access?(user)
     users.pluck(:id).include?(user.id)
+  end
+
+  def user_is_admin?(user)
+    admins.include?(user)
   end
 
   def path

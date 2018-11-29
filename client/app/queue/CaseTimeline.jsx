@@ -26,51 +26,29 @@ const tableCell = css({
   padding: '3px'
 });
 
-export default class CaseTimeline extends React.PureComponent {
-  getEventRow = ({ title, pendingTitle, date }, lastRow) => {
-    const formattedDate = date ? moment(date).format('MM/DD/YYYY') : null;
-    const eventImage = date ? <GreenCheckmark /> : <GrayDot />;
+const getEventRow = ({ title, date }, lastRow) => {
+  const formattedDate = date ? moment(date).format('MM/DD/YYYY') : null;
+  const eventImage = date ? <GreenCheckmark /> : <GrayDot />;
 
-    return <tr key={title}>
-      <td {...tableCell}>{formattedDate}</td>
-      <td {...tableCellWithIcon}>{eventImage}{!lastRow && <div {...grayLine} />}</td>
-      <td {...tableCell}>{date ? title : pendingTitle}</td>
-    </tr>;
-  }
+  return <tr key={title}>
+    <td {...tableCell}>{formattedDate}</td>
+    <td {...tableCellWithIcon}>{eventImage}{!lastRow && <div {...grayLine} />}</td>
+    <td {...tableCell}>{title}</td>
+  </tr>;
+};
 
-  render = () => {
-    const { appeal } = this.props;
-    const events = [
-      {
-        title: COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA,
-        pendingTitle: COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
-        date: appeal.decisionDate
-      },
-      {
-        legacyOnly: true,
-        title: COPY.CASE_TIMELINE_FORM_9_RECEIVED,
-        pendingTitle: COPY.CASE_TIMELINE_FORM_9_PENDING,
-        date: appeal.events.form9Date
-      },
-      {
-        title: COPY.CASE_TIMELINE_NOD_RECEIVED,
-        pendingTitle: COPY.CASE_TIMELINE_NOD_PENDING,
-        date: appeal.events.nodReceiptDate
-      }
-    ].filter((event) => !event.legacyOnly || appeal.isLegacyAppeal);
-
-    return <React.Fragment>
-      {COPY.CASE_TIMELINE_HEADER}
-      <table>
-        <tbody>
-          {events.map((event, index) => {
-            return this.getEventRow(event, index === events.length - 1);
-          })}
-        </tbody>
-      </table>
-    </React.Fragment>;
-  };
-}
+export const CaseTimeline = ({ appeal }) => {
+  return <React.Fragment>
+    {COPY.CASE_TIMELINE_HEADER}
+    <table>
+      <tbody>
+        {appeal.timeline.map((event, index) => {
+          return getEventRow(event, index === appeal.timeline.length - 1);
+        })}
+      </tbody>
+    </table>
+  </React.Fragment>;
+};
 
 CaseTimeline.propTypes = {
   appeal: PropTypes.object.isRequired

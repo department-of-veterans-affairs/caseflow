@@ -8,6 +8,7 @@ RSpec.feature "Supplemental Claim Intake" do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
+    FeatureToggle.disable!(:intake_enable_add_issues_page)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 26))
@@ -359,12 +360,13 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  def start_supplemental_claim(test_veteran, is_comp: true)
+  def start_supplemental_claim(test_veteran, is_comp: true, veteran_is_not_claimant: false)
     supplemental_claim = SupplementalClaim.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: 2.days.ago,
       benefit_type: is_comp ? "compensation" : "education",
-      legacy_opt_in_approved: false
+      legacy_opt_in_approved: false,
+      veteran_is_not_claimant: veteran_is_not_claimant
     )
 
     intake = SupplementalClaimIntake.create!(
@@ -506,9 +508,9 @@ RSpec.feature "Supplemental Claim Intake" do
         profile_date: receipt_date - 450.days,
         issues: [
           { reference_id: old_reference_id,
-            decision_text: "Really old injury",
-            associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" } }
-        ]
+            decision_text: "Really old injury" }
+        ],
+        associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
       )
     end
 
@@ -518,11 +520,21 @@ RSpec.feature "Supplemental Claim Intake" do
         promulgation_date: DecisionReview.ama_activation_date - 5.days,
         profile_date: DecisionReview.ama_activation_date - 10.days,
         issues: [
-          { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
-          { decision_text: "Issue before AMA Activation from RAMP",
-            associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" },
-            reference_id: "ramp_ref_id" }
+          { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
         ]
+      )
+    end
+
+    let!(:before_ama_rating_from_ramp) do
+      Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: DecisionReview.ama_activation_date - 5.days,
+        profile_date: DecisionReview.ama_activation_date - 11.days,
+        issues: [
+          { decision_text: "Issue before AMA Activation from RAMP",
+            reference_id: "ramp_ref_id" }
+        ],
+        associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
       )
     end
 
@@ -533,6 +545,23 @@ RSpec.feature "Supplemental Claim Intake" do
         rating_issue_reference_id: duplicate_reference_id,
         description: "Old injury"
       )
+    end
+
+    context "Veteran has no ratings" do
+      scenario "the Add Issue modal skips directly to Nonrating Issue modal" do
+        start_supplemental_claim(veteran_no_ratings)
+        visit "/intake/add_issues"
+
+        click_intake_add_issue
+
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "Description for Active Duty Adjustments",
+          date: "04/19/2018"
+        )
+
+        expect(page).to have_content("1 issue")
+      end
     end
 
     scenario "SC comp" do
@@ -579,6 +608,7 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
 
       # Add nonrating issue
+      click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
@@ -622,6 +652,7 @@ RSpec.feature "Supplemental Claim Intake" do
       )
 
       click_intake_add_issue
+      click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Drill Pay Adjustments",
         description: "A nonrating issue before AMA",
@@ -723,7 +754,6 @@ RSpec.feature "Supplemental Claim Intake" do
       ineligible_issue = duplicate_request_issues.select(&:duplicate_of_issue_in_active_review?).first
       expect(ineligible_issue).to_not eq(request_issue_in_progress)
       expect(ineligible_issue.contention_reference_id).to be_nil
-
       expect(RequestIssue.find_by(rating_issue_reference_id: old_reference_id).eligible?).to eq(true)
 
       expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(
@@ -811,9 +841,25 @@ RSpec.feature "Supplemental Claim Intake" do
 
         # expect legacy opt in modal
         expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+
         add_intake_rating_issue("None of these match")
 
         expect(page).to have_content("Left knee granted")
+
+        click_intake_add_issue
+        click_intake_no_matching_issues
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "Description for Active Duty Adjustments",
+          date: "04/25/2018",
+          legacy_issues: true
+        )
+
+        expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
+
+        add_intake_rating_issue("None of these match")
+
+        expect(page).to have_content("Description for Active Duty Adjustments")
       end
 
       scenario "adding issue with legacy opt in disabled" do

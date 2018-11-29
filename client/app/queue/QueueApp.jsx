@@ -12,7 +12,8 @@ import {
   setUserCssId,
   setUserIsVsoEmployee,
   setFeedbackUrl,
-  setOrganizationIds
+  setOrganizationIds,
+  setOrganizations
 } from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
@@ -39,7 +40,7 @@ import AssignToView from './AssignToView';
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
 import SubmitDecisionView from './SubmitDecisionView';
-import SelectDispositionsView from './SelectDispositionsView';
+import SelectDispositionsContainer from './SelectDispositionsContainer';
 import SelectSpecialIssuesView from './SelectSpecialIssuesView';
 import SpecialIssueLoadingScreen from './SpecialIssueLoadingScreen';
 import AddEditIssueView from './AddEditIssueView';
@@ -70,13 +71,15 @@ type Props = {|
   caseSearchHomePage?: boolean,
   featureToggles: Object,
   organizationIds: Array<number>,
+  organizations: Array<Object>,
   // Action creators
   setFeatureToggles: typeof setFeatureToggles,
   setUserRole: typeof setUserRole,
   setUserCssId: typeof setUserCssId,
   setUserIsVsoEmployee: typeof setUserIsVsoEmployee,
   setFeedbackUrl: typeof setFeedbackUrl,
-  setOrganizationIds: typeof setOrganizationIds
+  setOrganizationIds: typeof setOrganizationIds,
+  setOrganizations: typeof setOrganizations
 |};
 
 class QueueApp extends React.PureComponent<Props> {
@@ -85,6 +88,7 @@ class QueueApp extends React.PureComponent<Props> {
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizationIds(this.props.organizationIds);
+    this.props.setOrganizations(this.props.organizations);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
     this.props.setFeedbackUrl(this.props.feedbackUrl);
   }
@@ -101,7 +105,6 @@ class QueueApp extends React.PureComponent<Props> {
     }
 
     return <ColocatedTaskListView />;
-
   }
 
   routedQueueList = () => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
@@ -112,8 +115,8 @@ class QueueApp extends React.PureComponent<Props> {
     <BeaamAppealListView {...this.props} />
   </QueueLoadingScreen>;
 
-  routedJudgeQueueList = (action) => ({ match }) => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
-    {action === 'assign' ?
+  routedJudgeQueueList = (label) => ({ match }) => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
+    {label === 'assign' ?
       <JudgeAssignTaskListView {...this.props} match={match} /> :
       <JudgeReviewTaskListView {...this.props} />}
   </QueueLoadingScreen>;
@@ -132,7 +135,7 @@ class QueueApp extends React.PureComponent<Props> {
     checkoutFlow={props.match.params.checkoutFlow}
     nextStep="/queue" />;
 
-  routedSelectDispositions = (props) => <SelectDispositionsView
+  routedSelectDispositions = (props) => <SelectDispositionsContainer
     appealId={props.match.params.appealId}
     taskId={props.match.params.taskId}
     checkoutFlow={props.match.params.checkoutFlow} />;
@@ -419,7 +422,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setUserCssId,
   setUserIsVsoEmployee,
   setFeedbackUrl,
-  setOrganizationIds
+  setOrganizationIds,
+  setOrganizations
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueApp);

@@ -30,6 +30,11 @@ RSpec.feature "User organization" do
 
       expect(user_with_role.organizations.count).to eq(0)
     end
+
+    scenario "Organization task list view shows queue switcher dropdown" do
+      visit organization.path
+      expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
+    end
   end
 
   context "When user is not in the organization" do

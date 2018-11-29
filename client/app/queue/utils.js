@@ -79,7 +79,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
         pgId: task.attributes.assigned_by.pg_id
       },
       taskId: task.id,
-      action: task.attributes.action,
+      label: task.attributes.label,
       documentId: task.attributes.document_id,
       workProduct: null,
       previousTaskAssignedOn: task.attributes.previous_task.assigned_at,
@@ -152,7 +152,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       addedByName: task.attributes.added_by_name,
       addedByCssId: task.attributes.added_by_css_id,
       taskId: task.attributes.task_id,
-      action: task.attributes.action,
+      label: task.attributes.label,
       documentId: task.attributes.document_id,
       workProduct: task.attributes.work_product,
       previousTaskAssignedOn: task.attributes.previous_task.assigned_on,
@@ -251,6 +251,7 @@ export const prepareAppealForStore =
         hearings: prepareAppealHearingsForStore(appeal),
         completedHearingOnPreviousAppeal: appeal.attributes['completed_hearing_on_previous_appeal?'],
         issues: prepareAppealIssuesForStore(appeal),
+        decisionIssues: appeal.attributes.decision_issues,
         appellantFullName: appeal.attributes.appellant_full_name,
         appellantAddress: appeal.attributes.appellant_address,
         appellantRelationship: appeal.attributes.appellant_relationship,
@@ -261,10 +262,7 @@ export const prepareAppealForStore =
         veteranAddress: appeal.attributes.veteran_address,
         externalId: appeal.attributes.external_id,
         status: appeal.attributes.status,
-        events: {
-          nodReceiptDate: appeal.attributes.events.nod_receipt_date,
-          form9Date: appeal.attributes.events.form9_date
-        },
+        timeline: appeal.attributes.timeline,
         decisionDate: appeal.attributes.decision_date,
         certificationDate: appeal.attributes.certification_date,
         powerOfAttorney: appeal.attributes.power_of_attorney,

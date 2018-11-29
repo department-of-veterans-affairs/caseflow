@@ -135,7 +135,7 @@ class RequestIssue < ApplicationRecord
     return unless review_request
     @contested_rating_issue ||= begin
       ui_hash = fetch_contested_rating_issue_ui_hash
-      ui_hash ? RatingIssue.from_ui_hash(ui_hash) : nil
+      ui_hash ? RatingIssue.deserialize(ui_hash) : nil
     end
   end
 

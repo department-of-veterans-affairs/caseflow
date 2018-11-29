@@ -12,8 +12,6 @@ class Task < ApplicationRecord
   before_create :set_assigned_at_and_update_parent_status
   before_update :set_timestamps
 
-  after_update :update_parent_status
-
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym    => Constants.TASK_STATUSES.assigned,
     Constants.TASK_STATUSES.in_progress.to_sym => Constants.TASK_STATUSES.in_progress,
@@ -25,15 +23,19 @@ class Task < ApplicationRecord
     []
   end
 
+  def label
+    action
+  end
+
   # available_actions() returns an array of options from selected by the subclass
   # from TASK_ACTIONS that looks something like:
   # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
   def available_actions_unwrapper(user)
-    return [] if no_actions_available?(user)
+    no_actions_available?(user) ? [] : available_actions(user).map { |action| build_action_hash(action) }
+  end
 
-    available_actions(user).map do |a|
-      { label: a[:label], value: a[:value], data: a[:func] ? send(a[:func]) : nil }
-    end
+  def build_action_hash(action)
+    { label: action[:label], value: action[:value], data: action[:func] ? send(action[:func]) : nil }
   end
 
   def no_actions_available?(user)
@@ -89,6 +91,17 @@ class Task < ApplicationRecord
     update(params)
 
     [self]
+  end
+
+  def update_status(new_status)
+    return unless new_status
+
+    case new_status
+    when Constants.TASK_STATUSES.completed
+      mark_as_complete!
+    else
+      update!(status: new_status)
+    end
   end
 
   def legacy?
@@ -206,6 +219,17 @@ class Task < ApplicationRecord
     }
   end
 
+  def timeline_title
+    "#{type} completed"
+  end
+
+  def timeline_details
+    {
+      title: timeline_title,
+      date: completed_at
+    }
+  end
+
   private
 
   def users_to_options(users)
@@ -222,10 +246,6 @@ class Task < ApplicationRecord
       return mark_as_complete! if assigned_to.is_a?(Organization)
       return update!(status: :assigned) if on_hold?
     end
-  end
-
-  def update_parent_status
-    parent.when_child_task_completed if saved_change_to_status? && completed? && parent
   end
 
   def set_assigned_at_and_update_parent_status

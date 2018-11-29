@@ -197,6 +197,7 @@ export default class ReviewAssignments extends React.Component {
         columns={hearingAssignmentColumns}
         rowObjects={hearingAssignmentRows}
         summary="hearing-assignments"
+        slowReRendersAreOk
       />
     </AppSegment>;
   }
