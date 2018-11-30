@@ -47,9 +47,20 @@ module CaseReviewConcern
       request_issues.each do |request_issue|
         RequestDecisionIssue.create!(decision_issue: decision_issue, request_issue: request_issue)
       end
+      create_remand_reasons(decision_issue, issue_attrs[:remand_reasons] || [])
     end
   end
 
+  def create_remand_reasons(decision_issue, remand_reasons_attrs)
+    remand_reasons_attrs.each do |attrs|
+      decision_issue.remand_reasons.find_or_initialize_by(code: attrs[:code]).tap do |record|
+        record.post_aoj = attrs[:post_aoj]
+        record.save!
+      end
+    end
+  end
+
+  # Delete this method when feature flag 'ama_decision_issues' is enabled for all
   def update_issue_dispositions
     (issues || []).each do |issue_attrs|
       request_issue = appeal.request_issues.find_by(id: issue_attrs["id"]) if appeal
@@ -62,6 +73,7 @@ module CaseReviewConcern
     end
   end
 
+  # Delete this method when feature flag 'ama_decision_issues' is enabled for all
   def update_remand_reasons(request_issue, remand_reasons_attrs)
     remand_reasons_attrs.each do |remand_reason_attrs|
       request_issue.remand_reasons.find_or_initialize_by(code: remand_reason_attrs["code"]).tap do |record|

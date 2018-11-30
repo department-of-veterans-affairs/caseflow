@@ -646,6 +646,8 @@ ActiveRecord::Schema.define(version: 20181129230649) do
     t.string "code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "decision_issue_id"
+    t.index ["decision_issue_id"], name: "index_remand_reasons_on_decision_issue_id"
     t.index ["request_issue_id"], name: "index_remand_reasons_on_request_issue_id"
   end
 
@@ -682,9 +684,9 @@ ActiveRecord::Schema.define(version: 20181129230649) do
     t.datetime "decision_sync_attempted_at"
     t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
-    t.integer "decision_issue_reference_id"
     t.string "vacols_id"
     t.string "vacols_sequence_id"
+    t.datetime "created_at"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
