@@ -21,8 +21,8 @@ class RequestIssue < ApplicationRecord
 
   class ErrorCreatingDecisionIssue < StandardError
     def initialize(request_issue_id)
-      super("Request Issue #{request_issue_id} cannot create decision issue\
-       due to not having any matching rating issues or contentions")
+      super("Request Issue #{request_issue_id} cannot create decision issue " +
+        "due to not having any matching rating issues or contentions")
     end
   end
 
@@ -172,7 +172,7 @@ class RequestIssue < ApplicationRecord
 
     create_decision_issue_from_disposition if decision_issues.empty?
 
-    fail ErrorCreatingDecisionIssue, id if decision_issues.empty?
+    fail ErrorCreatingDecisionIssue.new(id) if decision_issues.empty?
     processed!
   end
 
