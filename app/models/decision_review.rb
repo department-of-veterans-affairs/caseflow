@@ -119,9 +119,9 @@ class DecisionReview < ApplicationRecord
   end
 
   def special_issues
-    specials = []
-    specials << vacols_optin_special_issue if needs_vacols_optin_special_issue?
-    specials
+    [].tap do |specials|
+      specials << vacols_optin_special_issue if needs_vacols_optin_special_issue?
+    end
   end
 
   private

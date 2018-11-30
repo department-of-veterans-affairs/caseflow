@@ -34,8 +34,7 @@ class LegacyIssueOptin < ApplicationRecord
 
   def legacy_appeal_needs_closing?
     # if all the issues are closed, the appeal should be closed.
-    closed_issues = legacy_appeal.issues.select(&:closed?)
-    closed_issues.size == legacy_appeal.issues.size
+    legacy_appeal.issues.reject(&:closed?).empty?
   end
 
   def legacy_appeal
