@@ -233,7 +233,7 @@ class EndProductEstablishment < ApplicationRecord
   def sync_decision_issues!
     request_issues.each do |request_issue|
       request_issue.submit_for_processing!
-      DecisionIssueSyncJob.perform(request_issue)
+      DecisionIssueSyncJob.perform_later(request_issue)
     end
   end
 
@@ -253,7 +253,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def fetch_associated_rating
     potential_decision_ratings.find do |rating|
-      rating.associated_end_products.any? { |end_product| end_product.claim_id == reference_id }
+      rating.associated_end_products.any?{ |end_product| end_product.claim_id == reference_id }
     end
   end
 
