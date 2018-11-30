@@ -3,6 +3,7 @@
 
 class ClaimReview < DecisionReview
   include Asyncable
+  include LegacyOptinable
 
   has_many :end_product_establishments, as: :source
   has_one :intake, as: :detail
@@ -59,6 +60,7 @@ class ClaimReview < DecisionReview
   def create_issues!(new_issues)
     new_issues.each do |issue|
       issue.update!(end_product_establishment: end_product_establishment_for_issue(issue))
+      create_legacy_issue_optin(issue) if issue.vacols_id
     end
   end
 
