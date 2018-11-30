@@ -1,6 +1,8 @@
 module LegacyOptinable
   extend ActiveSupport::Concern
 
+  private
+
   def create_legacy_issue_optin(request_issue)
     legacy_optin = LegacyIssueOptin.create!(request_issue: request_issue).tap(&:submit_for_processing!)
     if LegacyIssueOptin.run_async?
