@@ -47,7 +47,7 @@ class SyncReviewsJob < CaseflowJob
 
   def perform_decision_rating_issues_syncs(limit)
     RequestIssue.requires_processing.limit(limit).each do |request_issue|
-      DecisionRatingIssueSyncJob.perform_later(request_issue)
+      DecisionIssueSyncJob.perform_later(request_issue)
     end
   end
 end

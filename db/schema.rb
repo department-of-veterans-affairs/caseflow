@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181127201444) do
+ActiveRecord::Schema.define(version: 20181129230649) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -187,12 +187,13 @@ ActiveRecord::Schema.define(version: 20181127201444) do
     t.string "disposition"
     t.string "disposition_date"
     t.string "description"
-    t.bigint "source_request_issue_id"
     t.datetime "promulgation_date"
     t.datetime "profile_date"
-    t.integer "participant_id", null: false
+    t.string "participant_id", null: false
     t.string "rating_issue_reference_id"
     t.string "decision_text"
+    t.string "decision_review_type"
+    t.integer "decision_review_id"
     t.index ["rating_issue_reference_id", "participant_id"], name: "decision_issues_uniq_idx", unique: true
   end
 
@@ -407,12 +408,12 @@ ActiveRecord::Schema.define(version: 20181127201444) do
     t.string "hearing_type", null: false
     t.string "regional_office"
     t.integer "judge_id"
-    t.string "bva_poc"
     t.string "room_info", null: false
     t.datetime "created_at", null: false
     t.string "created_by", null: false
     t.datetime "updated_at", null: false
     t.string "updated_by", null: false
+    t.string "bva_poc"
   end
 
   create_table "hearing_views", id: :serial, force: :cascade do |t|
@@ -682,7 +683,6 @@ ActiveRecord::Schema.define(version: 20181127201444) do
     t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
     t.integer "decision_issue_reference_id"
-    t.string "ineligible_reason"
     t.string "vacols_id"
     t.string "vacols_sequence_id"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true

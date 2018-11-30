@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe DecisionRatingIssueSyncJob do
+describe DecisionIssueSyncJob do
   class NilRatingProfileListError < StandardError; end
 
   let(:epe) { create(:end_product_establishment, :cleared, established_at: Time.zone.today) }

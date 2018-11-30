@@ -1,7 +1,6 @@
 describe EndProductEstablishment do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
-
     if source.is_a?(HigherLevelReview)
       allow(source).to receive(:valid_modifiers).and_return(%w[030 031 032])
       allow(source).to receive(:invalid_modifiers).and_return(invalid_modifiers)
@@ -46,6 +45,7 @@ describe EndProductEstablishment do
       benefit_type_code: benefit_type_code,
       doc_reference_id: doc_reference_id,
       development_item_reference_id: development_item_reference_id,
+      established_at: 30.days.ago,
       user: current_user
     )
   end
@@ -570,197 +570,47 @@ describe EndProductEstablishment do
     end
   end
 
-  context "#sync_decision_issues!" do
-    let(:rating) do
+  context "#associated_rating" do
+    subject { end_product_establishment.associated_rating }
+    let(:associated_claims) { [] }
+
+    let(:promulgation_date) { end_product_establishment.established_at + 1.day }
+
+    let!(:rating) do
       Generators::Rating.build(
-        issues: issues
+        participant_id: veteran.participant_id,
+        promulgation_date: promulgation_date,
+        associated_claims: associated_claims
       )
     end
 
-    let(:contention_ref_id) { "123456" }
-    let(:contention_ref_id_2) { "234567" }
-    let(:reference_id) { "Issue1" }
-
-    let(:issues) do
-      [
-        {
-          reference_id: reference_id,
-          decision_text: "Decision1",
-          contention_reference_id: contention_ref_id,
-          profile_date: Time.zone.today
-        },
-        { reference_id: "Issue2", decision_text: "Decision2" }
-      ]
-    end
-
-    let(:higher_level_review) { create(:higher_level_review) }
-    let(:end_product_establishment) { create(:end_product_establishment, :cleared, source: higher_level_review) }
-
-    subject { end_product_establishment.sync_decision_issues! }
-
-    before do
-      allow(end_product_establishment).to receive(:potential_decision_ratings).and_return([rating])
-    end
-
-    context "for rating request issues with ratings" do
-      let!(:request_issues) do
-        # ep has 1 rating request issue which has a matching rating issue
+    context "when ep is one of many associated to the rating" do
+      let(:associated_claims) do
         [
-          create(
-            :request_issue,
-            review_request: higher_level_review,
-            end_product_establishment: end_product_establishment,
-            contention_reference_id: contention_ref_id
+        { clm_id: "09123", bnft_clm_tc: end_product_establishment.code },
+        { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code }
+      ] end
+      it { is_expected.to have_attributes(participant_id: rating.participant_id, promulgation_date: rating.promulgation_date) }
+    end
+
+    context "when associated rating only has 1 ep" do
+      let(:associated_claims) do
+        [
+        { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code }
+      ] end
+      it { is_expected.to have_attributes(participant_id: rating.participant_id, promulgation_date: rating.promulgation_date) }
+
+      context "when rating is before established_at date" do
+        let!(:another_rating) do
+          Generators::Rating.build(
+            participant_id: veteran.participant_id,
+            promulgation_date: end_product_establishment.established_at + 1.day,
+            associated_claims: []
           )
-        ]
-      end
-
-      it "connects rating issues with request issues based on contention_reference_id" do
-        expect(request_issues.first.decision_issues.count).to eq(0)
-
-        subject
-
-        expect(request_issues.first.decision_issues.count).to eq(1)
-        expect(request_issues.first.decision_issues.first.rating_issue_reference_id).to eq(reference_id)
-      end
-
-      context "EPE has cleared but rating has not yet been posted" do
-        before do
-          allow(end_product_establishment).to receive(:potential_decision_ratings).and_return([])
         end
+        let(:promulgation_date) { end_product_establishment.established_at - 1.day }
 
-        it "marks the RequestIssue for later sync via DecisionRatingIssueSyncJob" do
-          subject
-
-          request_issue = end_product_establishment.request_issues.first
-          expect(request_issue.submitted?).to eq(true)
-          expect(request_issue.processed?).to eq(false)
-        end
-      end
-    end
-
-    context "for rating request issues with some ratings" do
-      before do
-        allow(Fakes::VBMSService).to receive(:get_dispositions!).
-          with(claim_id: end_product_establishment.reference_id).and_return(dispositions)
-      end
-
-      let(:disposition_text) {"allowed"}
-      let(:dispositions) do
-        [
-          claim_id: end_product_establishment.reference_id,
-          contention_id: contention_ref_id_2,
-          disposition: disposition_text
-        ]
-      end
-      let!(:request_issues) do
-        # ep has 2 rating request issues
-        # first one matches with a rating issue
-        # second one does not have a matching rating issue
-        [
-          create(
-            :request_issue,
-            review_request: higher_level_review,
-            end_product_establishment: end_product_establishment,
-            contention_reference_id: contention_ref_id
-          ),
-          create(
-            :request_issue,
-            review_request: higher_level_review,
-            end_product_establishment: end_product_establishment,
-            contention_reference_id: contention_ref_id_2
-          )
-        ]
-      end
-
-      it "creates decision issues by matching rating issues or contentions for non-matching rating request issues" do
-        expect(request_issues.first.decision_issues.count).to eq(0)
-        expect(request_issues.second.decision_issues.count).to eq(0)
-
-        subject
-        # first rating request issue is matched by rating
-        expect(request_issues.first.decision_issues.count).to eq(1)
-        expect(request_issues.second.decision_issues.count).to eq(1)
-        expect(request_issues.first.decision_issues.first.rating_issue_reference_id).to eq(reference_id)
-
-        # second rating request isssue is matched by disposition
-        second_decision_issue = request_issues.second.decision_issues.first
-        expect(second_decision_issue.rating_issue_reference_id).to eq(nil)
-        expect(second_decision_issue.source_request_issue_id).to eq(request_issues[1].id)
-        expect(second_decision_issue.disposition).to eq(disposition_text)
-      end
-    end
-
-    context "for ep with ratings but no rating issues" do
-      it "creates decision issues by contentions" do
-      end
-    end
-
-    context "for ep without any ratings" do
-      let!(:request_issues) do
-      end
-      let(:rating){Generators::Rating.build(issues: [])}
-
-      it "will retry rating request issue later" do
-        subject
-
-        # get_dispositions! should not be called
-        expect(Fakes::VBMSService).not_to receive(:get_dispositions!)
-        # request issue should not be marked as processed
-        request_issue = request_issues.first
-        expect(request_issue.processed?).to eq(false)
-
-        # no decision issue is made
-        expect(DecisionIssue.count).to eq(0)
-      end
-    end
-
-    context "for nonrating request issues" do
-      before do
-        allow(Fakes::VBMSService).to receive(:get_dispositions!).
-          with(claim_id: end_product_establishment.reference_id).and_return(dispositions)
-      end
-
-      let(:end_product_establishment) do
-        create(:end_product_establishment,
-          :cleared,
-          source: higher_level_review,
-          code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
-          )
-      end
-
-      let(:disposition_text) {"allowed"}
-      let(:dispositions) do
-        [
-          claim_id: end_product_establishment.reference_id,
-          contention_id: contention_ref_id_2,
-          disposition: disposition_text
-        ]
-      end
-
-      let!(:request_issues) do
-        # ep has 1 non rating request issue
-        [
-          create(
-            :request_issue,
-            review_request: higher_level_review,
-            end_product_establishment: end_product_establishment,
-            contention_reference_id: contention_ref_id_2,
-            issue_category: "Apportionment",
-            decision_date: "2018-08-01"
-          )
-        ]
-      end
-
-      it "connects nonrating request issues based on contention disposition" do
-        expect(request_issues.first.decision_issues.count).to eq(0)
-        subject
-
-        expect(request_issues.first.decision_issues.count).to eq(1)
-        first_decision_issue = request_issues.first.decision_issues.first
-        expect(first_decision_issue.rating_issue_reference_id).to eq(nil)
-        expect(first_decision_issue.source_request_issue_id).to eq(request_issues.first.id)
-        expect(first_decision_issue.disposition).to eq(disposition_text)
+        it { is_expected.to eq(nil) }
       end
     end
   end
