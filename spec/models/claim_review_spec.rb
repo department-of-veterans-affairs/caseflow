@@ -718,7 +718,7 @@ describe ClaimReview do
 
           # skipping due to supplementail claims not being created from dta issues
           # will be resolved with https://github.com/department-of-veterans-affairs/caseflow/issues/7978
-          it "creates a supplemental claim for rating request issues", :skip => true do
+          it "creates a supplemental claim for rating request issues", skip: true do
             claim_review.on_sync(end_product_establishment)
 
             # find a supplemental claim by veteran id
@@ -781,7 +781,7 @@ describe ClaimReview do
 
           # skipping due to supplementail claims not being created from dta issues
           # will be resolved with https://github.com/department-of-veterans-affairs/caseflow/issues/7978
-          it "creates a supplemental claim for nonrating issues", :skip => true do
+          it "creates a supplemental claim for nonrating issues", skip: true do
             claim_review.on_sync(end_product_establishment)
 
             supplemental_claim = SupplementalClaim.find_by(

@@ -253,7 +253,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def fetch_associated_rating
     potential_decision_ratings.find do |rating|
-      rating.associated_end_products.any?{ |end_product| end_product.claim_id == reference_id }
+      rating.associated_end_products.any? { |end_product| end_product.claim_id == reference_id }
     end
   end
 

@@ -207,7 +207,7 @@ describe RequestIssue do
         end_product_establishment: previous_end_product_establishment,
         rating_issue_reference_id: rating_reference_id,
         rating_issue_profile_date: profile_date,
-        description: "a rating request issue",
+        description: "a rating request issue"
       )
     end
 
