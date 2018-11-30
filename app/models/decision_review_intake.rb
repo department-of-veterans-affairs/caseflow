@@ -10,6 +10,9 @@ class DecisionReviewIntake < Intake
       ratings: detail.serialized_ratings,
       requestIssues: detail.request_issues.map(&:ui_hash)
     )
+  rescue Rating::NilRatingProfileListError
+    cancel!(reason: "system_error")
+    raise
   end
 
   def cancel_detail!
