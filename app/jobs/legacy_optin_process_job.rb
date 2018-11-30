@@ -9,7 +9,7 @@ class LegacyOptinProcessJob < CaseflowJob
 
     begin
       legacy_optin.perform!
-    rescue BadThing => err # TODO: define exceptions
+    rescue StandardError => err # TODO: define exceptions
       legacy_optin.update_error!(err.to_s)
       Raven.capture_exception(err)
     end

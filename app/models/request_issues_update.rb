@@ -102,8 +102,8 @@ class RequestIssuesUpdate < ApplicationRecord
         untimely_exemption: issue_data[:untimely_exemption],
         untimely_exemption_notes: issue_data[:untimely_exemption_notes],
         ramp_claim_id: issue_data[:ramp_claim_id],
-        vacols_id: data[:vacols_id],
-        vacols_sequence_id: data[:vacols_sequence_id]
+        vacols_id: issue_data[:vacols_id],
+        vacols_sequence_id: issue_data[:vacols_sequence_id]
       ).tap(&:validate_eligibility!)
     end
   end
