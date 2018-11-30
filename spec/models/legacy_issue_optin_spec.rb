@@ -69,6 +69,7 @@ describe LegacyIssueOptin do
     let(:request_issue) do
       create(:request_issue, vacols_id: vacols_case_issue.isskey, vacols_sequence_id: vacols_case_issue.issseq)
     end
+    let(:issue) { Issue.load_from_vacols(vacols_case_issue.reload.attributes) }
 
     subject { create(:legacy_issue_optin, request_issue: request_issue) }
 
@@ -78,7 +79,8 @@ describe LegacyIssueOptin do
       vacols_case_issue.reload
       vacols_case.reload
       expect(vacols_case_issue.issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
-      expect(vacols_case_issue).to be_closed
+      expect(issue.disposition).to eq(:ama_opt_in)
+      expect(issue).to be_closed
       expect(vacols_case).to_not be_closed
       expect(subject).to be_processed
     end
@@ -93,7 +95,8 @@ describe LegacyIssueOptin do
         vacols_case.reload
         expect(vacols_case).to be_closed
         expect(vacols_case.bfdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
-        expect(vacols_case_issue).to be_closed
+        expect(issue.disposition).to eq(:ama_opt_in)
+        expect(issue).to be_closed
         expect(subject).to be_processed
       end
     end

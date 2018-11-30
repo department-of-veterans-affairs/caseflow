@@ -7,8 +7,6 @@ class VACOLS::CaseIssue < VACOLS::Record
 
   validates :isskey, :issseq, :issprog, :isscode, :issaduser, :issadtime, presence: true, on: :create
 
-  belongs_to :vacols_case, class_name: "VACOLS::Case", foreign_key: :isskey
-
   # :nocov:
   def remand_clone_attributes
     slice(:issprog, :isscode, :isslev1, :isslev2, :isslev3, :issdesc, :issgr)
@@ -141,15 +139,6 @@ class VACOLS::CaseIssue < VACOLS::Record
 
   def destroy
     delete_error_message
-  end
-
-  # For status (BFMPRO) of ADV or REM, for the most part, having a disposition means the issue is closed.
-  # On appeal where the status is REM (remanded) the issues with disposition "3" are still active.
-  def closed?
-    return false if issdc.nil?
-    return false if issdc == "3" && vacols_case.remanded?
-    return true if vacols_case.status_advanced_or_remanded_or_completed?
-    false
   end
 
   private
