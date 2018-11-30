@@ -133,6 +133,10 @@ RSpec.feature "Checkout flows" do
 
         expect(page).to have_content COPY::DECISION_ISSUE_PAGE_TITLE
 
+        click_on "Continue"
+
+        expect(page).to have_content "Each request issue must have at least one decision issue"
+
         click_on "+ Add Decision"
         expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
 
@@ -175,6 +179,7 @@ RSpec.feature "Checkout flows" do
 
         expect(appeal.decision_issues.count).to eq(1)
         expect(appeal.decision_issues.first.description).to eq(decision_issue_text)
+        expect(appeal.decision_issues.first.remand_reasons.first.code).to eq("service_treatment_records")
       end
     end
   end
