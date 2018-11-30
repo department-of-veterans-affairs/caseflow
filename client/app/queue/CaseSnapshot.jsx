@@ -97,8 +97,8 @@ const positionAbsolute = css({
   margin: '0  0 0'
 });
 
-const leftMargin = css({
-  marginLeft: '40px'
+const rightMargin = css({
+  marginRight: '40px'
 });
 
 const titleStyle = css({
@@ -126,7 +126,13 @@ const editButton = css({
 
 const thStyle = css({
   border: 'none',
-  backgroundColor: '#F8F8F8'
+  backgroundColor: '#F8F8F8',
+  margin: '0 0 0 20px',
+  display: 'none'
+});
+
+const descriptionStyle = css({
+  marginLeft: '5px'
 });
 
 const caseInfo = css({
@@ -335,14 +341,14 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     } = this.props;
     const taskAssignedToVso = primaryTask && primaryTask.assignedTo.type === 'Vso';
 
-    console.log('--test--');
+    /*console.log('--test--');
     console.log(appeal);
     console.log(this.props);
-    console.log(this.props.children);
+    console.log(this.props.children);*/
 
     return <CaseSnapshotScaffolding className="usa-grid" {...snapshotParentContainerStyling}>
 
-    <th {...thStyle}>
+      <th {...thStyle} {...rightMargin}>
         <React.Fragment>
           <span {...titleStyle}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL.toUpperCase()}</span><br/>
           <span {...spanStyle} {...positionAbsolute}>
@@ -351,10 +357,10 @@ export class CaseSnapshot extends React.PureComponent<Props> {
         </React.Fragment>
       </th>
 
-      <th {...thStyle} {...leftMargin}>
+      <th {...thStyle}>
         <React.Fragment>
           <span {...titleStyle}>{'VETERAN DOCUMENTS'}</span><br/>
-          <span>
+          <span {...descriptionStyle}>
             <ReaderLink appealId={appeal.id} appeal={appeal} redirectUrl={window.location.pathname} longMessage />
           </span>
         </React.Fragment>
@@ -363,13 +369,13 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       <th {...thStyle}>
         <React.Fragment>
             <span {...titleStyle}>{'TYPE'}</span><br/>
-            <span className={appeal.caseType == 'CAVC' ? redType : null}>{appeal.caseType}</span>
+            <span  {...descriptionStyle} className={appeal.caseType == 'CAVC' ? redType : null}>{appeal.caseType}</span>
         </React.Fragment>
       </th>
 
       <th className={primaryTask && primaryTask.documentId ? null : displayNone}  {...thStyle}>
         <React.Fragment>
-          <span {...divStyle} classname>
+          <span {...divStyle}>
            <span {...titleStyle}>{'DECISION DOCUMENT ID'}</span><br/>
            <CopyTextButton text={primaryTask ? primaryTask.documentId : null} />
           </span>
@@ -407,6 +413,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 
 export default connect(mapStateToProps, mapDispatchToProps)(CaseSnapshot);
 
-const CaseSnapshotScaffolding = (props) => <table {...caseInfo}>
-  {props.children.map((child, i) => child && <span {...caseInfo} key={i}>{child}</span>)}
+const CaseSnapshotScaffolding = (props) => <table>
+  {props.children.map((child, i) => child && <span className={i==0 ? rightMargin : null} key={i}>{child}</span>)}
 </table>;

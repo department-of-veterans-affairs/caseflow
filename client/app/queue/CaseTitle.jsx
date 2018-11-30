@@ -11,6 +11,10 @@ import { COLORS } from '../constants/AppConstants';
 import ReaderLink from './ReaderLink';
 import CopyTextButton from '../components/CopyTextButton';
 import { toggleVeteranCaseList } from './uiReducer/uiActions';
+import COPY from '../../COPY.json';
+import DocketTypeBadge from './components/DocketTypeBadge';
+
+import { actionableTasksForAppeal } from './selectors';
 
 const containingDivStyling = css({
   borderBottom: `1px solid ${COLORS.GREY_LIGHT}`,
@@ -58,10 +62,74 @@ const viewCasesStyling = css({
   display: 'none'
 });
 
+const headingStyling = css({
+  marginBottom: '0.5rem'
+});
+
+const newStyling = css({
+  margin: '100px 200px 100px 0px'
+});
+
+const spanStyle = css({
+  border: '2px',
+  borderStyle: 'solid',
+  borderColor: '#DCDCDC',
+  padding: '5px',
+  backgroundColor: 'white'
+});
+
+const positionAbsolute = css({
+  position: 'absolute',
+  margin: '0  0 0'
+});
+
+const rightMargin = css({
+  marginRight: '40px !important'
+});
+
+const titleStyle = css({
+  fontWeight: 'bold',
+  textAlign: 'center',
+  fontSize: '12px',
+  marginLeft: '5px'
+});
+
+const divStyle = css({
+  marginRight: '10px'
+});
+
+const redType = css({
+  color: 'red'
+});
+
+const displayNone = css({
+  display: 'none'
+});
+
+const editButton = css({
+  float: 'right'
+});
+
+const thStyle = css({
+  border: 'none',
+  backgroundColor: '#F8F8F8',
+  margin: '0 0 0 20px'
+});
+
+const descriptionStyle = css({
+  marginLeft: '5px'
+});
+
+const caseInfo = css({
+  backgroundColor: '#F8F8F8',
+  paddingBottom: '50px',
+});
+
 class CaseTitle extends React.PureComponent {
   render = () => {
     const {
       appeal,
+      primaryTask,
       appealId,
       redirectUrl,
       taskType,
@@ -69,12 +137,27 @@ class CaseTitle extends React.PureComponent {
       veteranCaseListIsVisible
     } = this.props;
 
-    return <CaseTitleScaffolding /*heading={appeal.veteranFullName}*/>
+    console.log('--CaseTitle--');
+    console.log(appeal);
+    console.log(this.props);
+    console.log(this.props.children);
+    console.log(primaryTask);
+    console.log(appealId);
+    console.log(redirectUrl);
+    console.log(taskType);
+    console.log(analyticsSource);
+    console.log(veteranCaseListIsVisible);
+    //console.log(actionableTasksForAppeal(null, { appealId: appealId })[0]);
+
+    return <CaseTitleScaffolding /*heading={appeal.veteranFullName}*/{...caseInfo}>
       <React.Fragment>
         <span {...newHeaderStyling}>{appeal.veteranFullName}</span>
-        <span {...headerSupportStyling}>{'  |  Veteran ID  '}</span>
-        <CopyTextButton text={appeal.veteranFileNumber} />
       </React.Fragment>
+
+      <span>
+        <span {...headerSupportStyling}>{' Veteran ID '}</span>
+        <CopyTextButton text={appeal.veteranFileNumber} />
+      </span>
 
       { /*!this.props.userIsVsoEmployee && <ReaderLink
         appealId={appealId}
@@ -85,12 +168,58 @@ class CaseTitle extends React.PureComponent {
         longMessage /> */}
 
       {
-        <span {...viewCasesStyling}>
+        /*<span {...viewCasesStyling}>
           <Link onClick={this.props.toggleVeteranCaseList}>
             { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
           </Link>
-        </span>
+        </span>*/
       }
+      <br/>
+
+      <span {...caseInfo}>
+        <th {...thStyle}>
+          <React.Fragment>
+            <span {...titleStyle} className={rightMargin}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL.toUpperCase()}</span><br/>
+            <span {...spanStyle} {...positionAbsolute}>
+              <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}
+            </span>
+          </React.Fragment>
+        </th>
+
+        <th {...thStyle}>
+          <React.Fragment>
+            <span {...titleStyle}>{'VETERAN DOCUMENTS'}</span><br/>
+            <span {...descriptionStyle}>
+              <ReaderLink appealId={appeal.id} appeal={appeal} redirectUrl={window.location.pathname} longMessage />
+            </span>
+          </React.Fragment>
+        </th>
+
+        <th {...thStyle}>
+          <React.Fragment>
+              <span {...titleStyle}>{'TYPE'}</span><br/>
+              <span  {...descriptionStyle} className={appeal.caseType == 'CAVC' ? redType : null}>{appeal.caseType}</span>
+          </React.Fragment>
+        </th>
+
+        {<th className={primaryTask && primaryTask.documentId ? null : displayNone}  {...thStyle}>
+          <React.Fragment>
+            <span {...divStyle}>
+             <span {...titleStyle}>{'DECISION DOCUMENT ID'}</span><br/>
+             <CopyTextButton text={primaryTask ? primaryTask.documentId : null} />
+            </span>
+          </React.Fragment>
+        </th>}
+
+        <th {...thStyle}>
+          <React.Fragment>
+            <br/>
+            <Link onClick={this.props.toggleVeteranCaseList}>
+              { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
+            </Link>
+          </React.Fragment>
+        </th>
+      </span>
 
     </CaseTitleScaffolding>;
   }
@@ -111,7 +240,8 @@ CaseTitle.defaultProps = {
 
 const mapStateToProps = (state) => ({
   veteranCaseListIsVisible: state.ui.veteranCaseListIsVisible,
-  userIsVsoEmployee: state.ui.userIsVsoEmployee
+  userIsVsoEmployee: state.ui.userIsVsoEmployee,
+  primaryTask: actionableTasksForAppeal(state, { appealId: Object.keys(state.queue.appealDetails)[0]})[0]
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -120,8 +250,15 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 
 export default connect(mapStateToProps, mapDispatchToProps)(CaseTitle);
 
-const CaseTitleScaffolding = (props) => <div {...containingDivStyling}>
+const CaseTitleScaffolding = (props) => <div>
+  <ul>
+    {props.children.map((child, i) => child && <li key={i} {...listItemStyling}>{child}</li>)}
+    {/*props.children.map((child, i) => child && <span {...caseInfo} className={i==0 ? rightMargin : null} key={i}>{child}</span>)*/}
+  </ul>
+</div>;
+
+/*const CaseTitleScaffolding = (props) => <div {...containingDivStyling}>
   <ul {...listStyling}>
     {props.children.map((child, i) => child && <li key={i} {...listItemStyling}>{child}</li>)}
   </ul>
-</div>;
+</div>;*/
