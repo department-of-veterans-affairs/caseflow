@@ -7,19 +7,24 @@ import COPY from '../../../COPY.json';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
+import StatusMessage from '../../components/StatusMessage'
 import {fullWidth} from "../../queue/constants";
 import RoSelectorDropdown from "../../components/RoSelectorDropdown";
 import DateSelector from "../../components/DateSelector";
 import Dropdown from '../../components/Dropdown'
 import TextareaField from '../../components/TextareaField';
 import {bindActionCreators} from "redux";
-import { onSelectedHearingDayChange } from "../actions";
+import { onSelectedHearingDayChange, setModalErrors } from "../actions";
 import { onRegionalOfficeChange } from '../../components/common/actions'
 
 const notesFieldStyling = css({
   height: '100px',
   fontSize: '10pt'
 });
+
+const spanStyling = css({
+  marginBotton: '5px'
+})
 
 const hearingTypeOptions = [
     {displayText: "", value: ""},
@@ -74,11 +79,52 @@ class HearingDayAddModal extends React.Component {
   };
 
   onClickConfirm = () => {
-    //validation
+    this.validateForm();
+
+    if (this.props.modalErrors && this.props.modalErrors.length > 0) {
+      return;
+    }
+
     console.log("state at confirm is: ", this.state);
     console.log("redux RO: ", this.props.selectedRegionalOffice);
     console.log("redux Hearing Day added: ", this.props.selectedHearingDay);
     this.props.closeModal();
+  };
+
+  validateForm = () => {
+    if (this.props.selectedHearingDay === '') {
+      this.setErrorMessages('Please make sure you have entered a Hearing Date');
+    }
+
+    if (this.state.selectedHearingType === '') {
+      this.setErrorMessages('Please make sure you have entered a Hearing Date');
+    }
+
+    if (!this.props.selectedRegionalOffice) {
+      this.setErrorMessages('Please make sure you select a Regional Office');
+    }
+  };
+
+  setErrorMessages = (errorMessage) => {
+    let newErrors = this.props.modalErrors ? this.props.modalErrors.slice(0) : [];
+    newErrors.push(errorMessage);
+    this.props.setModalErrors(newErrors);
+  }
+
+  getAlertTitle = () => {
+    if (this.state.videoSelected) {
+      return 'Hearing type is a Video hearing'
+    } else {
+      return 'Cannot create New Hearing Day'
+    }
+  };
+
+  getAlertMessage = () => {
+    return <ul>
+      {
+        this.state.errorMessages.map((item, i) => <ListItem key={i} value={item} />)
+      }
+    </ul>
   };
 
   modalCancelButton = () => {
@@ -113,6 +159,16 @@ class HearingDayAddModal extends React.Component {
   modalMessage = () => {
     return <React.Fragment>
       <div {...fullWidth} {...css({ marginBottom: '0' })} >
+        <p {...spanStyling} >Please select the details of the new hearing day </p>
+        {
+          this.state.error &&
+            <StatusMessage
+              title= {this.getAlertTitle()}
+              type="alert"
+              messageText={this.getAlertMessage()}
+              wrapInAppSegment={false} >
+            </StatusMessage>
+        }
         <b {...titleStyling} >Select Hearing Date</b>
         <DateSelector
           name="hearingDate"
@@ -128,6 +184,15 @@ class HearingDayAddModal extends React.Component {
           value={this.state.selectedHearingType}
           onChange={this.onHearingTypeChange}
           options={hearingTypeOptions}/>
+        {
+          this.state.error && this.state.videoSelected &&
+          <StatusMessage
+            title= {this.getAlertTitle}
+            type="alert"
+            messageText={this.getAlertMessage}
+            wrapInAppSegment={false} >
+          </StatusMessage>
+        }
         {this.state.videoSelected &&
         <RoSelectorDropdown
           label="Select Regional Office (RO)"
@@ -166,9 +231,6 @@ class HearingDayAddModal extends React.Component {
 
   render() {
 
-    const { spErrorDetails } = this.props;
-    let title = 'Invalid entries';
-
     return <AppSegment filledBackground>
       <div className="cf-modal-scroll">
         <Modal
@@ -194,12 +256,14 @@ HearingDayAddModal.propTypes = {
 const mapStateToProps = (state) => ({
   selectedRegionalOffice: state.components.selectedRegionalOffice,
   regionalOffices: state.components.regionalOffices,
-  selectedHearingDay: state.hearingSchedule.selectedHearingDay
+  selectedHearingDay: state.hearingSchedule.selectedHearingDay,
+  modalErrors: state.hearingSchedule.modalErrors
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onSelectedHearingDayChange,
-  onRegionalOfficeChange
+  onRegionalOfficeChange,
+  setModalErrors
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HearingDayAddModal));

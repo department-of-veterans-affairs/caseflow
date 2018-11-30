@@ -267,6 +267,12 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return update(state, {
       $toggle: ['filterVljIsOpen']
     });
+  case ACTIONS.SET_MODAL_ERRORS:
+    return update(state, {
+      modalErrors: {
+        $set: action.payload.errors
+      }
+    });
   default:
     return state;
   }

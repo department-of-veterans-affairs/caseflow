@@ -8,9 +8,8 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import {fullWidth} from "../../queue/constants";
-import RoSelectorDropdown from "../../components/RoSelectorDropdown";
-import DateSelector from "../../components/DateSelector";
 import Dropdown from '../../components/Dropdown'
+import Checkbox from '../../components/Checkbox'
 import TextareaField from '../../components/TextareaField';
 import {bindActionCreators} from "redux";
 import { onSelectedHearingDayChange } from "../actions";
@@ -21,10 +20,10 @@ const notesFieldStyling = css({
   fontSize: '10pt'
 });
 
-const hearingTypeOptions = [
+const roomOptions = [
     {displayText: "", value: ""},
-    {displayText: "Video", value: "V"},
-    {displayText: "Central", value: "C"}
+    {displayText: "1W.0002", value: "1"},
+    {displayText: "1W.0003", value: "2"}
   ];
 
 // Next two options to be replaced by redux state once we determine
@@ -57,8 +56,10 @@ class HearingDayEditModal extends React.Component {
     super(props);
 
     this.state = {
-      videoSelected: false,
-      selectedHearingType: '',
+      modifyRoom: false,
+      modifyVlj: false,
+      modifyCoordinator: false,
+      selectedRoom: '',
       selectedVLJ: '',
       selectedCoordinator: '',
       notes: ''
@@ -76,8 +77,6 @@ class HearingDayEditModal extends React.Component {
   onClickConfirm = () => {
     //validation
     console.log("state at confirm is: ", this.state);
-    console.log("redux RO: ", this.props.selectedRegionalOffice);
-    console.log("redux Hearing Day added: ", this.props.selectedHearingDay);
     this.props.closeModal();
   };
 
@@ -89,17 +88,24 @@ class HearingDayEditModal extends React.Component {
     this.props.cancelModal();
   };
 
-  onHearingTypeChange = (value) => {
-    this.setState({selectedHearingType: value});
-    if (value === 'V') {
-      this.setState({videoSelected: true});
-    } else {
-      this.setState({videoSelected: false});
-    }
+  onModifyRoom = () => {
+    this.setState({modifyRoom: !this.state.modifyRoom});
+  };
+
+  onModifyVlj = () => {
+    this.setState({modifyVlj: !this.state.modifyVlj});
+  };
+
+  onModifyCoordinator = () => {
+    this.setState({modifyCoordinator: !this.state.modifyCoordinator});
+  };
+
+  onRoomChange = (value) => {
+    this.setState({selectedRoom: value});
   };
 
   onVljChange = (value) => {
-    this.setState({selectedVLJ: value});
+    this.setState({selectedVlj: value});
   };
 
   onCoordinatorChange = (value) => {
@@ -113,49 +119,50 @@ class HearingDayEditModal extends React.Component {
   modalMessage = () => {
     return <React.Fragment>
       <div {...fullWidth} {...css({ marginBottom: '0' })} >
-        <b {...titleStyling} >Select Hearing Date</b>
-        <DateSelector
-          name="hearingDate"
-          label={false}
-          value={this.props.selectedHearingDay}
-          onChange={(option) => option && this.props.onSelectedHearingDayChange(option)}
-          type="date"
-        />
+        <Checkbox
+          name="roomEdit"
+          label="Change Room"
+          strongLabel={true}
+          checked={this.state.modifyRoom}
+          onChange={this.onModifyRoom} />
+        <Checkbox
+          name="vljEdit"
+          label="Change VLJ"
+          strongLabel={true}
+          checked={this.state.modifyVlj}
+          onChange={this.onModifyVlj} />
+        <Checkbox
+          name="coordinatorEdit"
+          label="Change Coordinator"
+          strongLabel={true}
+          checked={this.state.modifyCoordinator}
+          onChange={this.onModifyCoordinator} />
         <Dropdown
-          name="hearingType"
-          label="Select Hearing Type"
+          name="room"
+          label="Select Room"
           strongLabel={true}
-          value={this.state.selectedHearingType}
-          onChange={this.onHearingTypeChange}
-          options={hearingTypeOptions}/>
-        {this.state.videoSelected &&
-        <RoSelectorDropdown
-          label="Select Regional Office (RO)"
-          strongLabel={true}
-          onChange={this.props.onRegionalOfficeChange}
-          value={this.props.selectedRegionalOffice}
-          staticOptions={centralOfficeStaticEntry}/>
-        }
-        {this.state.videoSelected &&
+          readOnly={!this.state.modifyRoom}
+          value={this.state.selectedRoom}
+          onChange={this.onRoomChange}
+          options={roomOptions}/>
         <Dropdown
           name="vlj"
-          label="Select VLJ (Optional)"
+          label="Select VLJ"
           strongLabel={true}
+          readOnly={!this.state.modifyVlj}
           value={this.state.selectedVLJ}
           onChange={this.onVljChange}
           options={vljOptions}/>
-        }
-        {this.state.videoSelected &&
         <Dropdown
           name="coordinator"
-          label="Select Hearing Coordinator (Optional)"
+          label="Select Hearing Coordinator"
           strongLabel={true}
+          readOnly={!this.state.modifyCoordinator}
           value={this.state.selectedCoordinator}
           onChange={this.onCoordinatorChange}
           options={coordinatorOptions}/>
-        }
         <TextareaField
-          name="Notes (Optional)"
+          name="Notes"
           strongLabel={true}
           onChange={this.onNotesChange}
           textAreaStyling={notesFieldStyling}
@@ -166,13 +173,10 @@ class HearingDayEditModal extends React.Component {
 
   render() {
 
-    const { spErrorDetails } = this.props;
-    let title = 'Invalid entries';
-
     return <AppSegment filledBackground>
       <div className="cf-modal-scroll">
         <Modal
-          title="Add Hearing Day"
+          title="Edit Hearing Day"
           closeHandler={this.onCancelModal}
           confirmButton={this.modalConfirmButton()}
           cancelButton={this.modalCancelButton()}
@@ -192,14 +196,11 @@ HearingDayEditModal.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  selectedRegionalOffice: state.components.selectedRegionalOffice,
-  regionalOffices: state.components.regionalOffices,
   selectedHearingDay: state.hearingSchedule.selectedHearingDay
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onSelectedHearingDayChange,
-  onRegionalOfficeChange
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HearingDayEditModal));

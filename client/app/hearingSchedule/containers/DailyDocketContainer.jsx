@@ -17,8 +17,18 @@ import {
   onHearingDateUpdate,
   onHearingTimeUpdate
 } from '../actions';
+import HearingDayEditModal from "../components/HearingDayEditModal";
+import {formatDateStr} from "../../util/DateUtil";
+import Alert from "../../components/Alert";
 
 export class DailyDocketContainer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      modalOpen: false,
+      showModalAlert: false
+    };
+  }
 
   loadHearingDay = () => {
     const requestUrl = `/hearings/hearing_day/${this.props.match.params.hearingDayId}`;
@@ -62,6 +72,32 @@ export class DailyDocketContainer extends React.Component {
 
   createHearingPromise = () => Promise.all([this.loadHearingDay()]);
 
+  openModal = () => {
+    this.setState({showModalAlert: false});
+    this.setState({modalOpen: true});
+  }
+
+  closeModal = () => {
+    this.setState({modalOpen: false});
+    this.setState({showModalAlert: true})
+  }
+
+  cancelModal = () => {
+    this.setState({modalOpen: false})
+  }
+
+  getAlertTitle = () => {
+    return 'You have successfully completed this action'
+  };
+
+  getAlertMessage = () => {
+    return <p>You can view your new updates, listed below</p>;
+  };
+
+  showAlert = () => {
+    return this.state.showModalAlert;
+  }
+
   render() {
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createHearingPromise}
@@ -72,6 +108,9 @@ export class DailyDocketContainer extends React.Component {
       failStatusMessageProps={{
         title: 'Unable to load the daily docket.'
       }}>
+      {this.showAlert() && <Alert type="success" title={this.getAlertTitle()} scrollOnAlert={false}>
+        {this.getAlertMessage()}
+      </Alert>}
       <DailyDocket
         dailyDocket={this.props.dailyDocket}
         hearings={this.props.hearings}
@@ -84,7 +123,13 @@ export class DailyDocketContainer extends React.Component {
         saveSuccessful={this.props.saveSuccessful}
         onResetSaveSuccessful={this.props.onResetSaveSuccessful}
         onCancelHearingUpdate={this.props.onCancelHearingUpdate}
+        openModal={this.openModal}
       />
+      {this.state.modalOpen &&
+      <HearingDayEditModal
+        closeModal={this.closeModal}
+        cancelModal={this.cancelModal} />
+      }
     </LoadingDataDisplay>;
 
     return <div>{loadingDataDisplay}</div>;
@@ -95,7 +140,11 @@ const mapStateToProps = (state) => ({
   dailyDocket: state.hearingSchedule.dailyDocket,
   hearings: state.hearingSchedule.hearings,
   hearingDayOptions: state.hearingSchedule.hearingDayOptions,
-  saveSuccessful: state.hearingSchedule.saveSuccessful
+  saveSuccessful: state.hearingSchedule.saveSuccessful,
+  selectedVLJ: state.hearingSchedule.selectedVLJ,
+  selectedCoordinator: state.hearingSchedule.selectedCoordinator,
+  selectedRoom: state.hearingSchedule.selectedRoom,
+  notes: state.hearingSchedule.notes
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

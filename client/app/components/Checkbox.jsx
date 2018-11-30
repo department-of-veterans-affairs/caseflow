@@ -18,7 +18,8 @@ export default class Checkbox extends React.Component {
       errorMessage,
       unpadded,
       hideLabel,
-      styling
+      styling,
+      strongLabel
     } = this.props;
 
     let classNames = [
@@ -32,6 +33,8 @@ export default class Checkbox extends React.Component {
     if (errorMessage) {
       classNames.push('usa-input-error');
     }
+
+    const labelContents = label || name;
 
     return <div className={classNames.join(' ')} {...styling}>
       {errorMessage && <div className="usa-input-error-message">{errorMessage}</div>}
@@ -47,7 +50,11 @@ export default class Checkbox extends React.Component {
         />
         <label htmlFor={name}>
           <span className={classnames({ 'usa-sr-only': hideLabel })}>
-            {(label || name)}
+            {
+              strongLabel ?
+                <strong>{labelContents}</strong> :
+                labelContents
+            }
           </span> {required && <span className="cf-required">Required</span>}
         </label>
       </div>
@@ -66,5 +73,6 @@ Checkbox.propTypes = {
   disabled: PropTypes.bool,
   hideLabel: PropTypes.bool,
   value: PropTypes.bool,
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  strongLabel: PropTypes.bool
 };

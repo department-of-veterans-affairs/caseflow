@@ -235,3 +235,10 @@ export const toggleLocationFilterVisibility = () => ({
 export const toggleVljFilterVisibility = () => ({
   type: ACTIONS.TOGGLE_VLJ_FILTER_DROPDOWN
 });
+
+export const setModalErrors = (errors) => ({
+  type: ACTIONS.SET_MODAL_ERRORS,
+  payload: {
+    errors
+  }
+});

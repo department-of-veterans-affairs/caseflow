@@ -60,6 +60,10 @@ const backLinkStyling = css({
   marginBottom: '25px'
 });
 
+const editLinkStyling = css({
+  marginLeft: '30px',
+});
+
 const alertStyling = css({
   marginBottom: '30px'
 });
@@ -345,7 +349,17 @@ export default class DailyDocket extends React.Component {
       /> }
       <div className="cf-push-left">
         <h1>Daily Docket ({moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')})</h1> <br />
-        <div {...backLinkStyling}><Link to="/schedule">&lt; Back to schedule</Link></div>
+        <div {...backLinkStyling}>
+          <Link
+            to="/schedule">&lt; Back to schedule
+          </Link>
+          <Link
+            {...editLinkStyling}
+            linkStyling="true"
+            onClick={this.props.openModal} >
+            Edit Hearing Date
+          </Link>
+        </div>
       </div>
       <span className="cf-push-right">
         VLJ: {this.props.dailyDocket.judgeFirstName} {this.props.dailyDocket.judgeLastName} <br />
@@ -381,5 +395,6 @@ DailyDocket.propTypes = {
   hearings: PropTypes.object,
   onHearingNotesUpdate: PropTypes.func,
   onHearingDispositionUpdate: PropTypes.func,
-  onHearingTimeUpdate: PropTypes.func
+  onHearingTimeUpdate: PropTypes.func,
+  openModal: PropTypes.func
 };
