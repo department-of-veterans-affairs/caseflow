@@ -147,13 +147,15 @@ describe AppealIntake do
   context "#complete!" do
     subject { intake.complete!(params) }
 
-    let(:params) do
-      { request_issues: [
+    let(:params) { { request_issues: issue_data } }
+
+    let(:issue_data) do
+      [
         { profile_date: "2018-04-30", reference_id: "reference-id", decision_text: "decision text" },
         { decision_text: "nonrating request issue decision text",
           issue_category: "test issue category",
           decision_date: "2018-12-25" }
-      ] }
+      ]
     end
 
     let(:detail) do
@@ -180,6 +182,30 @@ describe AppealIntake do
         description: "nonrating request issue decision text"
       )
       expect(intake.detail.tasks.count).to eq 1
+    end
+
+    context "when a legacy VACOLS opt-in occurs" do
+      let(:issue_data) do
+        [
+          {
+            profile_date: "2018-04-30",
+            reference_id: "reference-id",
+            decision_text: "decision text",
+            vacols_id: "a-vacols-issue",
+            vacols_sequence_id: "vacols-seq"
+          }
+        ]
+      end
+
+      it "submits a LegacyIssueOptin" do
+        expect(LegacyIssueOptin.count).to eq 0
+        expect(LegacyOptinProcessJob).to receive(:perform_now).once
+
+        subject
+
+        expect(LegacyIssueOptin.count).to eq 1
+        expect(LegacyIssueOptin.first).to be_submitted
+      end
     end
   end
 end

@@ -40,8 +40,9 @@ class HigherLevelReview < ClaimReview
   end
 
   def special_issues
-    return [] unless same_office
-    [{ code: "SSR", narrative: "Same Station Review" }]
+    specials = super
+    specials << { code: "SSR", narrative: "Same Station Review" } if same_office
+    specials
   end
 
   def valid_modifiers
