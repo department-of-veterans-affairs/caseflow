@@ -590,16 +590,30 @@ describe EndProductEstablishment do
         [
           { clm_id: "09123", bnft_clm_tc: end_product_establishment.code },
           { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code }
-        ] end
-      it { is_expected.to have_attributes(participant_id: rating.participant_id, promulgation_date: rating.promulgation_date) }
+        ]
+      end
+
+      it {
+        is_expected.to have_attributes(
+          participant_id: rating.participant_id,
+          promulgation_date: rating.promulgation_date
+        )
+      }
     end
 
     context "when associated rating only has 1 ep" do
       let(:associated_claims) do
         [
           { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code }
-        ] end
-      it { is_expected.to have_attributes(participant_id: rating.participant_id, promulgation_date: rating.promulgation_date) }
+        ]
+      end
+
+      it {
+        is_expected.to have_attributes(
+          participant_id: rating.participant_id,
+          promulgation_date: rating.promulgation_date
+        )
+      }
 
       context "when rating is before established_at date" do
         let!(:another_rating) do

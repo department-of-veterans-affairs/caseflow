@@ -205,13 +205,17 @@ describe RequestIssue do
         rating_issue_reference_id: higher_level_review_reference_id,
         contention_reference_id: contention_reference_id,
         end_product_establishment: previous_end_product_establishment,
-        rating_issue_reference_id: rating_reference_id,
         rating_issue_profile_date: profile_date,
         description: "a rating request issue"
       )
     end
 
-    let(:associated_claims) { [{ clm_id: previous_end_product_establishment.reference_id, bnft_clm_tc: previous_end_product_establishment.code }] }
+    let(:associated_claims) do
+      [{
+        clm_id: previous_end_product_establishment.reference_id,
+        bnft_clm_tc: previous_end_product_establishment.code
+      }]
+    end
 
     it "looks up the chain to the immediately previous request issue" do
       previous_request_issue.sync_decision_issues!
