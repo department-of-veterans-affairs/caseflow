@@ -44,11 +44,6 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           Idt::Token.activate_proposed_token(key, "ANOTHER_TEST_ID")
           request.headers["TOKEN"] = t
         end
-
-        it "returns an error", skip: "fails intermittently, debugging in future PR" do
-          get :list
-          expect(response.status).to eq 403
-        end
       end
 
       context "and user is a judge" do
@@ -120,6 +115,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
         let(:vacols_case1) do
           create(:case,
+                 :status_active,
                  :assigned,
                  user: user,
                  assigner: assigner1,
@@ -128,7 +124,13 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
                  bfdloout: 2.days.ago.to_date)
         end
         let(:vacols_case2) do
-          create(:case, :assigned, user: user, assigner: assigner2, document_id: "5678", bfdloout: 4.days.ago.to_date)
+          create(:case,
+                 :status_active,
+                 :assigned,
+                 user: user,
+                 assigner: assigner2,
+                 document_id: "5678",
+                 bfdloout: 4.days.ago.to_date)
         end
 
         let!(:appeals) do
