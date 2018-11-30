@@ -21,13 +21,6 @@ const actionButtonsStyling = css({
 
 export class ListScheduleContainer extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      dateRangeKey: `${props.startDate}->${props.endDate}`
-    };
-  }
-
   loadHearingSchedule = () => {
     let requestUrl = '/hearings/hearing_day.json';
 
@@ -64,9 +57,7 @@ export class ListScheduleContainer extends React.Component {
             </span>
           }
           <div className="cf-help-divider" {...hearingSchedStyling} ></div>
-          <ListSchedule
-            hearingSchedule={this.props.hearingSchedule}
-            onApply={this.createHearingPromise} />
+          <ListSchedule onApply={this.createHearingPromise} />
         </AppSegment>
       </React.Fragment>
     );

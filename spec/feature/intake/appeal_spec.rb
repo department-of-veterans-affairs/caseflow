@@ -71,8 +71,24 @@ RSpec.feature "Appeal Intake" do
     )
   end
 
+  let(:no_ratings_err) { Rating::NilRatingProfileListError.new("none!") }
+
+  it "cancels an intake in progress when there is a NilRatingProfileListError" do
+    allow_any_instance_of(Fakes::BGSService).to receive(:fetch_ratings_in_range).and_raise(no_ratings_err)
+    start_appeal(veteran)
+    intake = Intake.find_by(veteran_file_number: veteran_file_number)
+
+    visit "/intake"
+    expect(page).to have_content("Something went wrong")
+    intake.reload
+    expect(intake.completion_status).to eq("canceled")
+    visit "/intake"
+    expect(page).to_not have_content("Something went wrong")
+    expect(page).to have_content("Which form are you processing?")
+  end
+
   it "Creates an appeal" do
-    # Testing no relationships in Appeal and Veteran is claimant, tests two relationships in HRL and one in SC
+    # Testing no relationships in Appeal and Veteran is claimant, tests two relationships in HLR and one in SC
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(nil)
 
     visit "/intake"
@@ -326,16 +342,23 @@ RSpec.feature "Appeal Intake" do
       ]
     )
 
-    # before AMA Rating
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: DecisionReview.ama_activation_date - 5.days,
       profile_date: DecisionReview.ama_activation_date - 10.days,
       issues: [
-        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
         { decision_text: "Issue before AMA Activation from RAMP",
-          associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" },
           reference_id: "ramp_ref_id" }
+      ],
+      associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
+    )
+
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: DecisionReview.ama_activation_date - 5.days,
+      profile_date: DecisionReview.ama_activation_date - 11.days,
+      issues: [
+        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
       ]
     )
 

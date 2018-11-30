@@ -40,9 +40,7 @@ class ColocatedTask < Task
     end
   end
 
-  def available_actions(user)
-    return [] unless user.colocated_in_vacols?
-
+  def available_actions(_user)
     actions = [
       {
         label: COPY::COLOCATED_ACTION_PLACE_HOLD,
@@ -65,8 +63,8 @@ class ColocatedTask < Task
     actions
   end
 
-  def no_actions_available?(_user)
-    completed?
+  def no_actions_available?(user)
+    completed? || assigned_to != user
   end
 
   def update_if_hold_expired!
