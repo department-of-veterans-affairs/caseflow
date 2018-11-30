@@ -32,6 +32,15 @@ class Appeal < DecisionReview
     end
   end
 
+  # CMGTODO
+  def self.where_priority(priority: true); end
+
+  # CMGTODO: create ready_for_distribution_at
+  # CMGTODO: "ready" also needs to mean that it has not already been distributed
+  def self.where_ready_for_distribution(ready: true)
+    where("ready_for_distribution_at is #{ready ? 'not ' : ''}null")
+  end
+
   def ui_hash
     super.merge(
       docketType: docket_type,
@@ -43,13 +52,15 @@ class Appeal < DecisionReview
     "Original"
   end
 
+  def root_task
+    tasks.first.root_task if !tasks.empty?
+  end
+
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
-  # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/PerceivedComplexity
   def location_code
     location_code = nil
-    root_task = tasks.first.root_task if !tasks.empty?
 
     if root_task && root_task.status == Constants.TASK_STATUSES.completed
       location_code = COPY::CASE_LIST_TABLE_POST_DECISION_LABEL
@@ -69,7 +80,6 @@ class Appeal < DecisionReview
 
     location_code
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
 
   def attorney_case_reviews
