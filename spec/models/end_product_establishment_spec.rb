@@ -1,6 +1,7 @@
 describe EndProductEstablishment do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
+
     if source.is_a?(HigherLevelReview)
       allow(source).to receive(:valid_modifiers).and_return(%w[030 031 032])
       allow(source).to receive(:invalid_modifiers).and_return(invalid_modifiers)
@@ -588,7 +589,7 @@ describe EndProductEstablishment do
       let(:associated_claims) do
         [
           { clm_id: "09123", bnft_clm_tc: end_product_establishment.code },
-        { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code }
+          { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code }
         ] end
       it { is_expected.to have_attributes(participant_id: rating.participant_id, promulgation_date: rating.promulgation_date) }
     end

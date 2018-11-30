@@ -16,7 +16,7 @@ describe DecisionIssueSyncJob do
 
   it "ignores NilRatingProfileListError for Sentry, logs on db" do
     capture_raven_log
-    allow(epe).to receive(:sync_decision_issues!).and_raise(no_ratings_err)
+    allow(request_issue).to receive(:sync_decision_issues!).and_raise(no_ratings_err)
 
     subject
 
@@ -26,7 +26,7 @@ describe DecisionIssueSyncJob do
 
   it "logs BGS errors" do
     capture_raven_log
-    allow(epe).to receive(:sync_decision_issues!).and_raise(bgs_transport_err)
+    allow(request_issue).to receive(:sync_decision_issues!).and_raise(bgs_transport_err)
 
     subject
 
@@ -35,7 +35,7 @@ describe DecisionIssueSyncJob do
   end
 
   it "ignores error on success" do
-    allow(epe).to receive(:sync_decision_issues!).and_return(true)
+    allow(request_issue).to receive(:sync_decision_issues!).and_return(true)
 
     expect(subject).to eq(true)
     expect(request_issue.decision_sync_error).to be_nil

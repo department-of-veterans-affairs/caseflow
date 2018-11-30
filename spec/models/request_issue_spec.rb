@@ -189,13 +189,13 @@ describe RequestIssue do
   end
 
   context "#previous_request_issue" do
-    let(:previous_higher_level_review) { create(:higher_level_review, receipt_date: review.receipt_date - 100.days) }
+    let(:previous_higher_level_review) { create(:higher_level_review, receipt_date: review.receipt_date - 10.days) }
     let(:previous_end_product_establishment) do
       create(
         :end_product_establishment,
         :cleared,
         veteran_file_number: veteran.file_number,
-        established_at: previous_higher_level_review.receipt_date + 1.day
+        established_at: previous_higher_level_review.receipt_date - 100.days
       )
     end
     let!(:previous_request_issue) do
@@ -204,12 +204,17 @@ describe RequestIssue do
         review_request: previous_higher_level_review,
         rating_issue_reference_id: higher_level_review_reference_id,
         contention_reference_id: contention_reference_id,
-        end_product_establishment: previous_end_product_establishment
+        end_product_establishment: previous_end_product_establishment,
+        rating_issue_reference_id: rating_reference_id,
+        rating_issue_profile_date: profile_date,
+        description: "a rating request issue",
       )
     end
 
+    let(:associated_claims) { [{ clm_id: previous_end_product_establishment.reference_id, bnft_clm_tc: previous_end_product_establishment.code }] }
+
     it "looks up the chain to the immediately previous request issue" do
-      previous_end_product_establishment.sync_decision_issues!
+      previous_request_issue.sync_decision_issues!
       expect(rating_request_issue.previous_request_issue).to eq(previous_request_issue)
     end
 
