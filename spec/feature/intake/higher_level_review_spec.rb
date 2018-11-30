@@ -10,7 +10,7 @@ RSpec.feature "Higher-Level Review" do
     FeatureToggle.enable!(:intake_legacy_opt_in)
 
     Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2018, 5, 26))
+    Timecop.freeze(Time.utc(2018, 11, 28))
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
@@ -37,7 +37,7 @@ RSpec.feature "Higher-Level Review" do
 
   let(:inaccessible) { false }
 
-  let(:receipt_date) { Date.new(2018, 4, 20) }
+  let(:receipt_date) { Date.new(2018, 11, 20) }
 
   let(:benefit_type) { "compensation" }
 
@@ -49,13 +49,11 @@ RSpec.feature "Higher-Level Review" do
 
   let(:profile_date) { Date.new(2017, 11, 20).to_time(:local) }
 
-  let(:timely_promulgation_date) { Date.new(2017, 11, 30) }
-
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: timely_promulgation_date,
-      profile_date: profile_date,
+      promulgation_date: receipt_date - 5.days,
+      profile_date: receipt_date - 2.days,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
         { reference_id: "def456", decision_text: "PTSD denied" }
@@ -66,8 +64,8 @@ RSpec.feature "Higher-Level Review" do
   let!(:untimely_rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - untimely_days,
-      profile_date: profile_date - 1.day,
+      promulgation_date: receipt_date - untimely_days - 1.day,
+      profile_date: receipt_date - untimely_days - 3.days,
       issues: [
         { reference_id: "old123", decision_text: "Untimely rating issue 1" },
         { reference_id: "old456", decision_text: "Untimely rating issue 2" }
@@ -522,13 +520,13 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  def start_higher_level_review(test_veteran, is_comp: true, claim_participant_id: nil)
+  def start_higher_level_review(test_veteran, is_comp: true, claim_participant_id: nil, legacy_opt_in_approved: false)
     higher_level_review = HigherLevelReview.create!(
       veteran_file_number: test_veteran.file_number,
-      receipt_date: 2.days.ago,
+      receipt_date: receipt_date,
       informal_conference: false, same_office: false,
       benefit_type: is_comp ? "compensation" : "education",
-      legacy_opt_in_approved: false
+      legacy_opt_in_approved: legacy_opt_in_approved
     )
 
     intake = HigherLevelReviewIntake.create!(
@@ -1042,35 +1040,91 @@ RSpec.feature "Higher-Level Review" do
         setup_legacy_opt_in_appeals(veteran.file_number)
       end
 
-      scenario "adding issues" do
-        # feature is not yet fully implemented
-        start_higher_level_review(veteran)
-        visit "/intake/add_issues"
+      context "with legacy_opt_in_approved" do
+        scenario "adding issues" do
+          start_higher_level_review(veteran, legacy_opt_in_approved: true)
+          visit "/intake/add_issues"
 
-        click_intake_add_issue
+          click_intake_add_issue
+          expect(page).to have_content("Next")
+          add_intake_rating_issue("Left knee granted")
 
-        expect(page).to have_content("Next")
-        add_intake_rating_issue("Left knee granted")
-        # expect legacy opt in modal
-        expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-        add_intake_rating_issue("None of these match")
+          # expect legacy opt in modal
+          expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+          # do not show "inactive and ineligible" issues when legacy opt in is true
+          expect(page).to_not have_content("typhoid arthritis")
 
-        expect(page).to have_content("Left knee granted")
+          add_intake_rating_issue("intervertebral disc syndrome") #ineligible issue
 
-        click_intake_add_issue
-        click_intake_no_matching_issues
-        add_intake_nonrating_issue(
-          category: "Active Duty Adjustments",
-          description: "Description for Active Duty Adjustments",
-          date: "04/25/2018",
-          legacy_issues: true
-        )
+          expect(page).to have_content("Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}")
 
-        expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
+          # Expect untimely exemption modal for untimely issue
+          click_intake_add_issue
+          binding.pry
+          add_intake_rating_issue("Untimely rating issue 1")
+          add_intake_rating_issue("None of these match")
+          add_untimely_exemption_response("Yes")
 
-        add_intake_rating_issue("None of these match")
+          expect(page).to have_content("Untimely rating issue 1")
 
-        expect(page).to have_content("Description for Active Duty Adjustments")
+          click_intake_add_issue
+          click_intake_no_matching_issues
+          add_intake_nonrating_issue(
+            category: "Active Duty Adjustments",
+            description: "Description for Active Duty Adjustments",
+            date: "10/25/2017",
+            legacy_issues: true
+          )
+
+          expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
+
+          add_intake_rating_issue("None of these match")
+          add_untimely_exemption_response("Yes")
+
+          expect(page).to have_content("Description for Active Duty Adjustments")
+
+          click_intake_finish
+
+          ineligible_checklist = find("ul.cf-ineligible-checklist")
+          expect(ineligible_checklist).to have_content("Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}")
+
+          expect(RequestIssue.find_by(
+                   description: "Left knee granted",
+                   ineligible_reason: :legacy_appeal_not_eligible,
+                   vacols_id: "vacols2",
+                   vacols_sequence_id: "1"
+          )).to_not be_nil
+        end
+      end
+
+      context "with legacy opt in not approved" do
+        scenario "adding issues" do
+          start_higher_level_review(veteran, legacy_opt_in_approved: false)
+          visit "/intake/add_issues"
+          click_intake_add_issue
+          add_intake_rating_issue("Left knee granted")
+
+          expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+          # do not show inactive appeals when legacy opt in is false
+          expect(page).to_not have_content("impairment of hip")
+          expect(page).to_not have_content("typhoid arthritis")
+
+          add_intake_rating_issue("ankylosis of hip")
+
+          expect(page).to have_content("Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}")
+
+          click_intake_finish
+
+          ineligible_checklist = find("ul.cf-ineligible-checklist")
+          expect(ineligible_checklist).to have_content("Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}")
+
+          expect(RequestIssue.find_by(
+                   description: "Left knee granted",
+                   ineligible_reason: :legacy_issue_not_withdrawn,
+                   vacols_id: "vacols1",
+                   vacols_sequence_id: "1"
+          )).to_not be_nil
+        end
       end
 
       scenario "adding issue with legacy opt in disabled" do

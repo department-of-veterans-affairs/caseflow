@@ -78,8 +78,8 @@ module IntakeHelpers
     # ankylosis of hip, limitation of thigh motion (extension)
     allow(AppealRepository).to receive(:issues).with("vacols1")
       .and_return([
-                    Generators::Issue.build(vacols_sequence_id: 1, codes: %w[02 15 03 5250]),
-                    Generators::Issue.build(vacols_sequence_id: 2, codes: %w[02 15 03 5251])
+                    Generators::Issue.build(id: "vacols1", vacols_sequence_id: 1, codes: %w[02 15 03 5250]),
+                    Generators::Issue.build(id: "vacols1", vacols_sequence_id: 2, codes: %w[02 15 03 5251])
                   ])
 
     # Active and not eligible
@@ -89,8 +89,8 @@ module IntakeHelpers
     # intervertebral disc syndrome, degenerative arthritis of the spine
     allow(AppealRepository).to receive(:issues).with("vacols2")
       .and_return([
-                    Generators::Issue.build(vacols_sequence_id: 1, codes: %w[02 15 03 5243]),
-                    Generators::Issue.build(vacols_sequence_id: 2, codes: %w[02 15 03 5242])
+                    Generators::Issue.build(id: "vacols2", vacols_sequence_id: 1, codes: %w[02 15 03 5243]),
+                    Generators::Issue.build(id: "vacols2", vacols_sequence_id: 2, codes: %w[02 15 03 5242])
                   ])
 
     # Not active and eligible
@@ -100,8 +100,8 @@ module IntakeHelpers
     # impairment of hip, impairment of femur
     allow(AppealRepository).to receive(:issues).with("vacols3")
       .and_return([
-                    Generators::Issue.build(vacols_sequence_id: 1, codes: %w[02 15 03 5254]),
-                    Generators::Issue.build(vacols_sequence_id: 2, codes: %w[02 15 03 5255])
+                    Generators::Issue.build(id: "vacols3", vacols_sequence_id: 1, codes: %w[02 15 03 5254]),
+                    Generators::Issue.build(id: "vacols3", vacols_sequence_id: 2, codes: %w[02 15 03 5255])
                   ])
 
     # Not active and not eligible
@@ -111,8 +111,8 @@ module IntakeHelpers
     # typhoid arthritis, caisson disease of bones
     allow(AppealRepository).to receive(:issues).with("vacols4")
       .and_return([
-                    Generators::Issue.build(vacols_sequence_id: 1, codes: %w[02 15 03 5006]),
-                    Generators::Issue.build(vacols_sequence_id: 2, codes: %w[02 15 03 5011])
+                    Generators::Issue.build(id: "vacols4", vacols_sequence_id: 1, codes: %w[02 15 03 5006]),
+                    Generators::Issue.build(id: "vacols4", vacols_sequence_id: 2, codes: %w[02 15 03 5011])
                   ])
   end
 end
