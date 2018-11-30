@@ -112,6 +112,10 @@ RSpec.feature "Checkout flows" do
         FeatureToggle.enable!(:ama_decision_issues)
       end
 
+      after do
+        FeatureToggle.disable!(:ama_decision_issues)
+      end
+
       let(:decision_issue_text) { "This is a test decision issue" }
       let(:decision_issue_disposition) { "Remanded" }
 
