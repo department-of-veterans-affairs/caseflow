@@ -71,7 +71,7 @@ class Distribution < ApplicationRecord
 
   def judge_has_no_unassigned_cases
     pending_statuses = [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
-    return false if JudgeTask.where(assigned_to: judge, action: "assign", status: pending_statuses).any?
+    return false if judge.tasks.select { |t| t.is_a?(JudgeTask) && (t.action == "assign" || t.is_a?(JudgeAssignTask)) }.where(status: pending_statuses).any?
 
     legacy_tasks = QueueRepository.tasks_for_user(judge.css_id)
     legacy_tasks.none? { |task| task.assigned_to_attorney_date.nil? }
