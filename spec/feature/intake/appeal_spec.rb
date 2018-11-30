@@ -166,7 +166,7 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_content("1 issue")
 
-    fill_in "Decision date", with: "10/28/2018"
+    fill_in "Decision date", with: "10/27/2018"
 
     expect(page).to have_content("2 issues")
 
@@ -397,7 +397,7 @@ RSpec.feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: "10/28/2018"
+      date: "10/27/2018"
     )
     expect(page).to have_content("2 issues")
 
