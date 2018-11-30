@@ -168,7 +168,7 @@ describe RampClosedAppeal do
       )
     end
 
-    it "finds reopened appeals based off of ramp closed appeals", focus: true do
+    it "finds reopened appeals based off of ramp closed appeals" do
       expect(subject.count).to eq 3
       expect(subject).to include ramp_closed_appeals_canceled_ep.first
       expect(subject).to include ramp_closed_appeals_canceled_ep.last
