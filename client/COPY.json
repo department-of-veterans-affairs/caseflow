@@ -265,5 +265,7 @@
   "DECISION_ISSUE_MODAL_DESCRIPTION": "Description",
   "DECISION_ISSUE_MODAL_DESCRIPTION_EXAMPLE": "Ex: Increased rating for arthritis is granted with an evaluation of 90%",
   "DECISION_ISSUE_MODAL_DISPOSITION": "Disposition",
-  "DECISION_ISSUE_MODAL_BENEFIT_TYPE": "Benefit type"
+  "DECISION_ISSUE_MODAL_BENEFIT_TYPE": "Benefit type",
+
+  "UNAUTHORIZED_PAGE_ACCESS_MESSAGE": "You aren't authorized to use this part of Caseflow yet."
 }
