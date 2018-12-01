@@ -52,6 +52,8 @@ module AmaCaseDistribution
   end
 
   def distribute_appeals(docket, n, priority: false, genpop: "any", range: nil)
+    return [] if n == 0
+
     if range.nil?
       appeals = dockets[docket].distribute_appeals(self, priority: priority, genpop: genpop, limit: n)
     elsif docket == :legacy && priority == false
@@ -68,6 +70,8 @@ module AmaCaseDistribution
 
   def deduct_distributed_actuals_from_remaining_docket_proportions(*args)
     nonpriority_count = batch_size - @appeals.count(&:priority)
+
+    return if nonpriority_count == 0
 
     args.each do |docket|
       docket_count = @appeals.count { |appeal| appeal.docket == docket.to_s && !appeal.priority }
@@ -103,7 +107,7 @@ module AmaCaseDistribution
   end
 
   def priority_target
-    proportion = [priority_count.to_f / total_batch_size, 1.0].min
+    proportion = [priority_count.to_f / total_batch_size, 1].min
     (proportion * batch_size).ceil
   end
 
