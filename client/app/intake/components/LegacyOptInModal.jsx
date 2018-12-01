@@ -29,7 +29,7 @@ class LegacyOptInModal extends React.Component {
     // NO_MATCH_TEXT does not have a vacolsSequenceId
     const legacyValues = value.split('-');
     const vacolsSequenceId = legacyValues.length > 1 ? legacyValues[1] : null;
-    const legacyAppeal = this.props.intakeData.legacyAppeals.find(appeal => appeal.vacols_id == legacyValues[0])
+    const legacyAppeal = this.props.intakeData.legacyAppeals.find((appeal) => appeal.vacols_id == legacyValues[0]);
     const eligibleForSocOptIn = legacyAppeal ? legacyAppeal.eligible_for_soc_opt_in : null;
 
     if (vacolsSequenceId) {
@@ -49,6 +49,7 @@ class LegacyOptInModal extends React.Component {
     if (this.props.formType === 'supplemental_claim') {
       return false;
     }
+
     return !this.props.intakeData.currentIssueAndNotes.currentIssue.timely;
   }
 
@@ -58,7 +59,9 @@ class LegacyOptInModal extends React.Component {
 
     if (this.requiresUntimelyExemption()) {
       return this.props.toggleUntimelyExemptionModal({ currentIssue,
-        notes, vacolsId: this.state.vacolsId, vacolsSequenceId: this.state.vacolsSequenceId,
+        notes,
+        vacolsId: this.state.vacolsId,
+        vacolsSequenceId: this.state.vacolsSequenceId,
         eligibleForSocOptIn: this.state.eligibleForSocOptIn });
     } else if (currentIssue.reference_id) {
       this.props.addRatingRequestIssue({

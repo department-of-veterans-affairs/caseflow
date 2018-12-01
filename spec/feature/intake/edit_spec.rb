@@ -179,7 +179,7 @@ RSpec.feature "Edit issues" do
           # expect legacy opt in modal
           expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
 
-          add_intake_rating_issue("intervertebral disc syndrome") #ineligible issue
+          add_intake_rating_issue("intervertebral disc syndrome") # ineligible issue
 
           expect(page).to have_content("Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}")
 

@@ -630,7 +630,7 @@ RSpec.feature "Appeal Intake" do
         # do not show "inactive and ineligible" issues when legacy opt in is true
         expect(page).to_not have_content("typhoid arthritis")
 
-        add_intake_rating_issue("intervertebral disc syndrome") #ineligible issue
+        add_intake_rating_issue("intervertebral disc syndrome") # ineligible issue
 
         expect(page).to have_content("Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}")
 
