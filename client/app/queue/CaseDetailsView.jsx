@@ -41,13 +41,16 @@ class CaseDetailsView extends React.PureComponent {
     window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
     this.props.resetErrorMessages();
 
-    const { hearingDate, regionalOffice, hearingTime } = getQueryParams(window.location.search);
+    const { hearingDate, roLabel, roValue, hearingTime } = getQueryParams(window.location.search);
 
-    if (hearingDate && regionalOffice) {
+    if (hearingDate && roValue) {
       this.props.setHearingDay({
         hearingDate,
         hearingTime: decodeURIComponent(hearingTime),
-        regionalOffice
+        regionalOffice: {
+          label: decodeURIComponent(roLabel),
+          value: roValue
+        }
       });
     }
   }

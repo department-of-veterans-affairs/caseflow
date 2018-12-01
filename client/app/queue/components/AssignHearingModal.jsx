@@ -100,7 +100,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
     if (sanitizedHearingRequestType === 'central_office') {
       return 'C';
-    } else if (hearingDay.regionalOffice) {
+    } else if (hearingDay.regionalOffice.value) {
       return hearingDay.regionalOffice;
     } else if (appeal.regionalOffice) {
       return appeal.regionalOffice.key;
@@ -169,7 +169,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   submit = () => {
     const { task, appeal, selectedHearingDate, selectedRegionalOffice } = this.props;
     const values = {
-      regional_office_value: selectedRegionalOffice,
+      regional_office_value: selectedRegionalOffice.value,
       hearing_pkseq: task.taskBusinessPayloads[0].values.hearing_pkseq,
       hearing_type: task.taskBusinessPayloads[0].values.hearing_type,
       hearing_date: this.formatHearingDate()
@@ -188,13 +188,12 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     };
 
     const getRegionalLink = () => {
-      /* eslint-disable max-len */
       let requestUrl;
 
       if (this.props.selectedRegionalOffice) {
-        requestUrl = `roLabel=${this.props.task.taskBusinessPayloads[0].values.regional_office_label}&roValue=${this.props.selectedRegionalOffice}`;
+        requestUrl = `roLabel=${selectedRegionalOffice.label}&roValue=${selectedRegionalOffice.value}`;
       }
-       debugger
+
       return requestUrl;
     };
 
@@ -252,9 +251,9 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       <div {...fullWidth} {...css({ marginBottom: '0' })} >
         <RoSelectorDropdown
           onChange={(opt) => {
-            this.props.onRegionalOfficeChange(opt.value);
+            this.props.onRegionalOfficeChange(opt);
           }}
-          value={selectedRegionalOffice}
+          value={selectedRegionalOffice || {}}
           readOnly
           changePrompt
           staticOptions={centralOfficeStaticEntry} />

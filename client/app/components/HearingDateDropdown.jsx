@@ -23,7 +23,7 @@ class HearingDateDropdown extends React.Component {
 
     const { regionalOffice } = this.props;
 
-    return ApiUtil.get(`/regional_offices/${regionalOffice}/open_hearing_dates.json`).then((response) => {
+    return ApiUtil.get(`/regional_offices/${regionalOffice.value}/open_hearing_dates.json`).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
       this.props.onReceiveHearingDates(resp.hearingDates);
@@ -97,7 +97,7 @@ class HearingDateDropdown extends React.Component {
 }
 
 HearingDateDropdown.propTypes = {
-  regionalOffice: PropTypes.string.isRequired,
+  regionalOffice: PropTypes.object.isRequired,
   hearingDates: PropTypes.object,
   onChange: PropTypes.func,
   value: PropTypes.string,

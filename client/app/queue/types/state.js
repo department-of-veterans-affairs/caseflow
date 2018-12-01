@@ -62,7 +62,10 @@ export type UiState = {
   hearingDay: {
     hearingDate: ?string,
     hearingTime: ?string,
-    regionalOffice: ?string
+    regionalOffice: ?{
+      label: ?string,
+      value: ?string
+    }
   }
 };
 

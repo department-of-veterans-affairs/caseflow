@@ -32,7 +32,10 @@ export const initialState = {
   hearingDay: {
     hearingDate: null,
     hearingTime: null,
-    regionalOffice: null
+    regionalOffice: {
+      label: null,
+      value: null
+    }
   }
 };
 

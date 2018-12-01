@@ -169,7 +169,8 @@ export default class AssignHearings extends React.Component {
     const date = moment(selectedHearingDay.hearingDate).format('YYYY-MM-DD');
     const time = getTime(selectedHearingDay.hearingDate);
     const SROVal = selectedRegionalOffice.value;
-    const qry = `?hearingDate=${date}&regionalOffice=${SROVal}&hearingTime=${time}`;
+    const SROLabel = selectedRegionalOffice.label;
+    const qry = `?hearingDate=${date}&roValue=${SROVal}&roLabel=${SROLabel}&hearingTime=${time}`;
 
     const tabWindowColumns = [
       {

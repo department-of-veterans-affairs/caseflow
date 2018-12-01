@@ -54,16 +54,17 @@ class AssignHearingsContainer extends React.PureComponent {
 
   componentDidMount = () => {
     this.props.setUserCssId(this.props.userCssId);
-    this.props.onRegionalOfficeChange('');
 
     const query = querystring.parse(window.location.search.slice(1));
-    let regionalOffice = query.label;
 
-    if (regionalOffice) {
-      return this.props.onRegionalOfficeChange({ label: query.label,
-        value: query.value
+    if (query.roValue) {
+      return this.props.onRegionalOfficeChange({
+        label: decodeURIComponent(query.roLabel),
+        value: query.roValue
       });
     }
+    this.props.onRegionalOfficeChange('');
+
   }
 
   loadUpcomingHearingDays = () => {
