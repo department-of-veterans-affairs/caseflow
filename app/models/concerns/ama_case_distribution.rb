@@ -5,25 +5,31 @@ module AmaCaseDistribution
   private
 
   def ama_distribution
-    priority_count # count the number of priority appeals before we start distributing anything
     @appeals = []
     @rem = batch_size
     @remaining_docket_proportions = docket_proportions.clone
     @nonpriority_iterations = 0
 
+    # Count the number of priority appeals before we distribute anything.
+    priority_count
+
+    # Distribute appeals that are tied to judges.
     distribute_appeals(:legacy, @rem, priority: true, genpop: "not_genpop")
     distribute_appeals(:hearing, @rem, priority: true, genpop: "not_genpop")
     distribute_appeals(:legacy, @rem, priority: false, genpop: "not_genpop", range: legacy_docket_range)
     distribute_appeals(:hearing, @rem, priority: false, genpop: "not_genpop")
 
+    # If we haven't yet met the priority target, distribute additional priority appeals.
     priority_rem = (priority_target - @appeals.count(&:priority)).clamp(0, @rem)
-
     oldest_priority_appeals_by_docket(priority_rem).each do |docket, n|
       distribute_appeals(docket, n, priority: true)
     end
 
+    # As we may have already distributed nonpriority legacy and hearing docket cases, we adjust the docket proportions.
     deduct_distributed_actuals_from_remaining_docket_proportions(:legacy, :hearing)
 
+    # Distribute nonpriority appeals from any docket according to the docket proportions.
+    # If a docket runs out of available appeals, we reallocate its cases to the other dockets.
     until @rem == 0 || @remaining_docket_proportions.all? { |_, proportion| proportion == 0 }
       distribute_appeals_according_to_remaining_docket_proportions
       @nonpriority_iterations += 1
