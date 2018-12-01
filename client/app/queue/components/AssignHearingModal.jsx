@@ -99,7 +99,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     const { sanitizedHearingRequestType } = appeal;
 
     if (sanitizedHearingRequestType === 'central_office') {
-      return 'C';
+      return hearingDay.regionalOffice;
     } else if (hearingDay.regionalOffice.value) {
       return hearingDay.regionalOffice;
     } else if (appeal.regionalOffice) {
