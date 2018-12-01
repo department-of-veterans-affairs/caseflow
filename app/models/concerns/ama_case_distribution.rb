@@ -9,6 +9,7 @@ module AmaCaseDistribution
     @appeals = []
     @rem = batch_size
     @remaining_docket_proportions = docket_proportions.clone
+    @nonpriority_iterations = 0
 
     distribute_appeals(:legacy, @rem, priority: true, genpop: "not_genpop")
     distribute_appeals(:hearing, @rem, priority: true, genpop: "not_genpop")
@@ -16,15 +17,32 @@ module AmaCaseDistribution
     distribute_appeals(:hearing, @rem, priority: false, genpop: "not_genpop")
 
     priority_rem = (priority_target - @appeals.count(&:priority)).clamp(0, @rem)
-    oldest_priority_appeals_by_docket(priority_rem).each { |docket, n| distribute_appeals(docket, n, priority: true) }
+
+    oldest_priority_appeals_by_docket(priority_rem).each do |docket, n|
+      distribute_appeals(docket, n, priority: true)
+    end
 
     deduct_distributed_actuals_from_remaining_docket_proportions(:legacy, :hearing)
 
-    until @rem == 0 || @remaining_docket_proportions.all? { |_, p| p == 0 }
+    until @rem == 0 || @remaining_docket_proportions.all? { |_, proportion| proportion == 0 }
       distribute_appeals_according_to_remaining_docket_proportions
+      @nonpriority_iterations += 1
     end
 
     @appeals
+  end
+
+  def ama_statistics
+    {
+      batch_size: batch_size,
+      total_batch_size: total_batch_size,
+      priority_count: priority_count,
+      legacy_proportion: docket_proportions[:legacy],
+      direct_review_proportion: docket_proportions[:direct_review],
+      evidence_submission_proportion: docket_proportions[:evidence_submission],
+      hearing_proportion: docket_proportions[:hearing],
+      nonpriority_iterations: @nonpriority_iterations
+    }
   end
 
   def distribute_appeals(docket, n, priority: false, genpop: "any", range: nil)
@@ -47,8 +65,8 @@ module AmaCaseDistribution
 
     args.each do |docket|
       docket_count = @appeals.count { |appeal| appeal.docket == docket.to_s && !appeal.priority }
-      p = docket_count / nonpriority_count
-      @remaining_docket_proportions[docket] = [@remaining_docket_proportions[docket] - p, 0].max
+      proportion = docket_count / nonpriority_count
+      @remaining_docket_proportions[docket] = [@remaining_docket_proportions[docket] - proportion, 0].max
     end
   end
 
@@ -61,9 +79,6 @@ module AmaCaseDistribution
       @remaining_docket_proportions[docket] = 0 if appeals.count < n
     end
   end
-
-  # CMGTODO
-  def ama_statistics; end
 
   def dockets
     @dockets ||= {
@@ -108,11 +123,11 @@ module AmaCaseDistribution
 
   def normalize_proportions(proportions)
     total = proportions.values.reduce(0, :+)
-    proportions.transform_values { |p| p * (1.0 / total) }
+    proportions.transform_values { |proportion| proportion * (1.0 / total) }
   end
 
   def stochastic_allocation(n, proportions)
-    result = proportions.transform_values { |p| (n * p).floor }
+    result = proportions.transform_values { |proportion| (n * proportion).floor }
     rem = n - result.values.reduce(0, :+)
 
     return result if rem == 0
@@ -120,13 +135,13 @@ module AmaCaseDistribution
     iterations = rem
 
     catch :complete do
-      proportions.each_with_index do |(docket, p), i|
+      proportions.each_with_index do |(docket, proportion), i|
         if i == proportions.count - 1
           result[docket] += rem
           throw :complete
         end
 
-        probability = (n * p).modulo(1) / iterations
+        probability = (n * proportion).modulo(1) / iterations
 
         iterations.times do
           next unless probability > rand
