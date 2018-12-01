@@ -54,7 +54,6 @@ class RoSelectorDropdown extends React.Component {
   render() {
     const { readOnly, onChange, value, placeholder } = this.props;
     const regionalOfficeOptions = this.regionalOfficeOptions();
-    // const selectedRegionalOffice = _.find(regionalOfficeOptions, (opt) => opt.value === value) || {};
 
     if (!this.props.changePrompt || this.state.editable) {
       return (
