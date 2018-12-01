@@ -11,7 +11,7 @@ module AmaCaseDistribution
   def ama_distribution
     rem = batch_size
     priority_target = target_number_of_priority_appeals
-    docket_proportions
+    remaining_docket_proportions = docket_proportions
 
     priority_legacy_hearing_appeals =
       dockets[:legacy].distribute_appeals(self, priority: true, genpop: "not_genpop", limit: rem)
@@ -56,13 +56,11 @@ module AmaCaseDistribution
 
     nonpriority_target = batch_size - priority_distributed_count
 
-    remaining_docket_proportions = docket_proportions
-
-    if docket_proportions[:hearing] * nonpriority_target < hearing_distributed_count
+    if hearing_distributed_count > docket_proportions[:hearing] * nonpriority_target
       remaining_docket_proportions = remaining_docket_proportions.except(:hearing)
     end
 
-    if docket_proportions[:legacy] * nonpriority_target < legacy_distributed_count
+    if legacy_distributed_count > docket_proportions[:legacy] * nonpriority_target
       remaining_docket_proportions = remaining_docket_proportions.except(:legacy)
     end
 
@@ -70,7 +68,7 @@ module AmaCaseDistribution
 
     until rem == 0 || remaining_docket_proportions.empty?
       remaining_docket_proportions = normalize_proportions(remaining_docket_proportions)
-      docket_targets = stochastic_round(rem, remaining_docket_proportions)
+      docket_targets = stochastic_allocation(rem, remaining_docket_proportions)
 
       docket_targets.each do |docket, n|
         cases = dockets[docket].distribute_appeals(self, priority: false, limit: n)
@@ -119,9 +117,7 @@ module AmaCaseDistribution
   end
 
   def legacy_nonpriority_docket_range
-    legacy_batch_size = total_batch_size * docket_proportions[:legacy]
-    legacy_priority_count = dockets[:legacy].count(priority: true, ready: true)
-    [legacy_batch_size - legacy_priority_count, 0].max.round
+    [(total_batch_size - priority_count) * docket_proportions[:legacy], 0].max.round
   end
 
   def dockets_with_oldest_n_priority_appeals(n)
@@ -133,14 +129,16 @@ module AmaCaseDistribution
   end
 
   # CMGTODO
-  def docket_proportions; end
+  def docket_proportions
+    @docket_proportions ||= normalize_proportions(dockets.map(&:weight))
+  end
 
   def normalize_proportions(proportions)
     total = proportions.values.reduce(0, :+)
     proportions.transform_values { |p| p * (1.0 / total) }
   end
 
-  def stochastic_round(n, proportions)
+  def stochastic_allocation(n, proportions)
     result = proportions.transform_values { |p| (n * p).floor }
     rem = n - result.values.reduce(0, :+)
 
