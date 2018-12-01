@@ -11,7 +11,7 @@ module AmaCaseDistribution
   def ama_distribution
     rem = batch_size
     priority_target = target_number_of_priority_appeals
-    remaining_docket_proportions = docket_proportions
+    remaining_docket_proportions = docket_proportions.clone
 
     priority_legacy_hearing_appeals =
       dockets[:legacy].distribute_appeals(self, priority: true, genpop: "not_genpop", limit: rem)
@@ -58,10 +58,14 @@ module AmaCaseDistribution
 
     if hearing_distributed_count > docket_proportions[:hearing] * nonpriority_target
       remaining_docket_proportions = remaining_docket_proportions.except(:hearing)
+    else
+      remaining_docket_proportions[:hearing] -= hearing_distributed_count / nonpriority_target
     end
 
     if legacy_distributed_count > docket_proportions[:legacy] * nonpriority_target
       remaining_docket_proportions = remaining_docket_proportions.except(:legacy)
+    else
+      remaining_docket_proportions[:legacy] -= legacy_distributed_count / nonpriority_target
     end
 
     other_nonpriority_appeals = []
