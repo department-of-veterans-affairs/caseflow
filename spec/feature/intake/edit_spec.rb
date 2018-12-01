@@ -61,18 +61,31 @@ RSpec.feature "Edit issues" do
     )
   end
 
+  let!(:ratings_with_legacy_issues) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date - 4.days,
+      profile_date: receipt_date - 4.days,
+      issues: [
+        { reference_id: "has_legacy_issue", decision_text: "Issue with legacy issue not withdrawn" },
+        { reference_id: "has_ineligible_legacy_appeal", decision_text: "Issue connected to ineligible legacy appeal" }
+      ]
+    )
+  end
+
   def check_row(label, text)
     row = find("tr", text: label)
     expect(row).to have_text(text)
   end
 
   context "appeals" do
+    let(:legacy_opt_in_approved) { false }
     let!(:appeal) do
       create(:appeal,
              veteran_file_number: veteran.file_number,
              receipt_date: receipt_date,
              docket_type: "evidence_submission",
-             legacy_opt_in_approved: false).tap(&:create_tasks_on_intake_success!)
+             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
     end
 
     let!(:nonrating_request_issue) do
@@ -154,32 +167,76 @@ RSpec.feature "Edit issues" do
         setup_legacy_opt_in_appeals(veteran.file_number)
       end
 
-      scenario "adding issues" do
+      context "with legacy_opt_in_approved" do
+        let(:legacy_opt_in_approved) { true }
+        scenario "adding issues" do
+          visit "appeals/#{appeal.uuid}/edit/"
+
+          click_intake_add_issue
+          expect(page).to have_content("Next")
+          add_intake_rating_issue("Left knee granted")
+
+          # expect legacy opt in modal
+          expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
+
+          add_intake_rating_issue("intervertebral disc syndrome") #ineligible issue
+
+          expect(page).to have_content("Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}")
+
+          safe_click("#button-submit-update")
+          safe_click ".confirm"
+
+          expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+          expect(RequestIssue.find_by(
+                   description: "Left knee granted",
+                   ineligible_reason: :legacy_appeal_not_eligible,
+                   vacols_id: "vacols2",
+                   vacols_sequence_id: "1"
+          )).to_not be_nil
+        end
+      end
+
+      context "with legacy opt in not approved" do
+        let(:legacy_opt_in_approved) { false }
+        scenario "adding issues" do
+          visit "appeals/#{appeal.uuid}/edit/"
+          click_intake_add_issue
+          add_intake_rating_issue("Left knee granted")
+
+          expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
+          # do not show inactive appeals when legacy opt in is false
+          expect(page).to_not have_content("impairment of hip")
+          expect(page).to_not have_content("typhoid arthritis")
+
+          add_intake_rating_issue("ankylosis of hip")
+
+          expect(page).to have_content("Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}")
+
+          safe_click("#button-submit-update")
+          safe_click ".confirm"
+
+          expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+          expect(RequestIssue.find_by(
+                   description: "Left knee granted",
+                   ineligible_reason: :legacy_issue_not_withdrawn,
+                   vacols_id: "vacols1",
+                   vacols_sequence_id: "1"
+          )).to_not be_nil
+        end
+      end
+
+      scenario "adding issue with legacy opt in disabled" do
+        allow(FeatureToggle).to receive(:enabled?).and_call_original
+        allow(FeatureToggle).to receive(:enabled?).with(:intake_legacy_opt_in, user: current_user).and_return(false)
+
         visit "appeals/#{appeal.uuid}/edit/"
+
         click_intake_add_issue
+        expect(page).to have_content("Add this issue")
         add_intake_rating_issue("Left knee granted")
-
-        # expect legacy opt in modal
-        expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
-
-        add_intake_rating_issue("None of these match")
-
         expect(page).to have_content("Left knee granted")
-
-        click_intake_add_issue
-        click_intake_no_matching_issues
-        add_intake_nonrating_issue(
-          category: "Active Duty Adjustments",
-          description: "Description for Active Duty Adjustments",
-          date: "04/25/2018",
-          legacy_issues: true
-        )
-
-        expect(page).to have_content("Does issue 4 match any of these VACOLS issues?")
-
-        add_intake_rating_issue("None of these match")
-
-        expect(page).to have_content("Description for Active Duty Adjustments")
       end
     end
   end
@@ -311,6 +368,32 @@ RSpec.feature "Edit issues" do
         )
       end
 
+      let!(:ri_legacy_issue_not_withdrawn) do
+        RequestIssue.create!(
+          rating_issue_reference_id: "has_legacy_issue",
+          rating_issue_profile_date: rating_before_ama.profile_date,
+          review_request: higher_level_review,
+          description: "Issue with legacy issue not withdrawn",
+          vacols_id: "123",
+          vacols_sequence_id: "1",
+          contention_reference_id: "1234567",
+          ineligible_reason: :legacy_issue_not_withdrawn
+        )
+      end
+
+      let!(:ri_legacy_issue_ineligible) do
+        RequestIssue.create!(
+          rating_issue_reference_id: "has_ineligible_legacy_appeal",
+          rating_issue_profile_date: rating_before_ama.profile_date,
+          review_request: higher_level_review,
+          description: "Issue connected to ineligible legacy appeal",
+          contention_reference_id: "12345678",
+          vacols_id: "321",
+          vacols_sequence_id: "2",
+          ineligible_reason: :legacy_appeal_not_eligible
+        )
+      end
+
       before do
         another_higher_level_review.create_issues!([ri_in_review])
         higher_level_review.create_issues!([
@@ -319,7 +402,9 @@ RSpec.feature "Edit issues" do
                                              ri_with_active_previous_review,
                                              ri_with_previous_hlr,
                                              ri_before_ama,
-                                             eligible_ri_before_ama
+                                             eligible_ri_before_ama,
+                                             ri_legacy_issue_not_withdrawn,
+                                             ri_legacy_issue_ineligible
                                            ])
         higher_level_review.process_end_product_establishments!
       end
@@ -346,6 +431,12 @@ RSpec.feature "Edit issues" do
         )
         expect(page).to have_content(
           "#{eligible_ri_before_ama.contention_text} Decision date:"
+        )
+        expect(page).to have_content(
+          "#{ri_legacy_issue_not_withdrawn.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
+        )
+        expect(page).to have_content(
+          "#{ri_legacy_issue_ineligible.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
         )
       end
     end

@@ -37,7 +37,7 @@ RSpec.feature "Higher-Level Review" do
 
   let(:inaccessible) { false }
 
-  let(:receipt_date) { Date.new(2018, 11, 20) }
+  let(:receipt_date) { Date.new(2018, 9, 20) }
 
   let(:benefit_type) { "compensation" }
 
@@ -47,13 +47,13 @@ RSpec.feature "Higher-Level Review" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:profile_date) { Date.new(2017, 11, 20).to_time(:local) }
+  let(:profile_date) { Date.new(2018, 9, 15).to_time(:local) }
 
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - 5.days,
-      profile_date: receipt_date - 2.days,
+      profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
         { reference_id: "def456", decision_text: "PTSD denied" }
@@ -61,7 +61,7 @@ RSpec.feature "Higher-Level Review" do
     )
   end
 
-  let!(:untimely_rating) do
+  let!(:untimely_ratings) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
       promulgation_date: receipt_date - untimely_days - 1.day,
@@ -108,7 +108,7 @@ RSpec.feature "Higher-Level Review" do
 
     expect(page).to have_current_path("/intake/review_request")
 
-    fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
+    fill_in "What is the Receipt Date of this form?", with: "12/15/2018"
     safe_click "#button-submit-review"
 
     expect(page).to have_content(
@@ -122,7 +122,7 @@ RSpec.feature "Higher-Level Review" do
       find("label", text: "Fiduciary", match: :prefer_exact).click
     end
 
-    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+    fill_in "What is the Receipt Date of this form?", with: "09/20/2018"
 
     within_fieldset("Was an informal conference requested?") do
       find("label", text: "Yes", match: :prefer_exact).click
@@ -184,7 +184,7 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_current_path("/intake/finish")
 
     expect(page).to have_content("Identify issues on")
-    expect(page).to have_content("Decision date: 11/20/2017")
+    expect(page).to have_content("Decision date: 09/15/2018")
     expect(page).to have_content("Left knee granted")
     expect(page).to have_content("Untimely rating issue 1")
     expect(page).to have_button("Establish EP", disabled: true)
@@ -224,7 +224,7 @@ RSpec.feature "Higher-Level Review" do
 
     expect(page).to have_content("1 issue")
 
-    fill_in "Decision date", with: "04/25/2018"
+    fill_in "Decision date", with: "10/27/2018"
 
     expect(page).to have_content("2 issues")
 
@@ -381,7 +381,7 @@ RSpec.feature "Higher-Level Review" do
 
     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
     expect(page).to have_content("Ed Merica (#{veteran_file_number})")
-    expect(page).to have_content("04/20/2018")
+    expect(page).to have_content("09/20/2018")
     expect(find("#table-row-4")).to have_content("Yes")
     expect(find("#table-row-5")).to have_content("No")
     expect(page).to have_content("PTSD denied")
@@ -622,8 +622,8 @@ RSpec.feature "Higher-Level Review" do
         promulgation_date: receipt_date - 40.days,
         profile_date: receipt_date - 50.days,
         issues: [
-          { reference_id: "xyz123", decision_text: "Left knee granted" },
-          { reference_id: "xyz456", decision_text: "PTSD denied" },
+          { reference_id: "xyz123", decision_text: "Left knee granted 2" },
+          { reference_id: "xyz456", decision_text: "PTSD denied 2" },
           { reference_id: duplicate_reference_id, decision_text: "Old injury" },
           {
             reference_id: higher_level_review_reference_id,
@@ -726,26 +726,26 @@ RSpec.feature "Higher-Level Review" do
 
       # adding an issue should show the issue
       click_intake_add_issue
-      add_intake_rating_issue("Left knee granted")
+      add_intake_rating_issue("Left knee granted 2")
 
       expect(page).to have_content("1. Left knee granted")
       expect(page).to_not have_content("Notes:")
 
       # removing an issue
       click_remove_intake_issue("1")
-      expect(page).not_to have_content("Left knee granted")
+      expect(page).not_to have_content("Left knee granted 2")
 
       # re-add to proceed
       click_intake_add_issue
-      add_intake_rating_issue("Left knee granted", "I am an issue note")
-      expect(page).to have_content("1. Left knee granted")
+      add_intake_rating_issue("Left knee granted 2", "I am an issue note")
+      expect(page).to have_content("1. Left knee granted 2")
       expect(page).to have_content("I am an issue note")
 
       # clicking add issue again should show a disabled radio button for that same rating
       click_intake_add_issue
       expect(page).to have_content("Add issue 2")
       expect(page).to have_content("Does issue 2 match any of these issues")
-      expect(page).to have_content("Left knee granted (already selected for issue 1)")
+      expect(page).to have_content("Left knee granted 2 (already selected for issue 1)")
       expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
 
       # Add nonrating issue
@@ -753,7 +753,7 @@ RSpec.feature "Higher-Level Review" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
-        date: "04/25/2018"
+        date: "10/27/2018"
       )
       expect(page).to have_content("2 issues")
       # this nonrating request issue is timely
@@ -884,7 +884,7 @@ RSpec.feature "Higher-Level Review" do
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
                rating_issue_reference_id: "xyz123",
-               description: "Left knee granted",
+               description: "Left knee granted 2",
                end_product_establishment_id: end_product_establishment.id,
                notes: "I am an issue note"
       )).to_not be_nil
@@ -974,7 +974,7 @@ RSpec.feature "Higher-Level Review" do
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         hash_including(
-          contention_descriptions: array_including("Left knee granted")
+          contention_descriptions: array_including("Left knee granted 2")
         )
       )
     end
@@ -1060,7 +1060,6 @@ RSpec.feature "Higher-Level Review" do
 
           # Expect untimely exemption modal for untimely issue
           click_intake_add_issue
-          binding.pry
           add_intake_rating_issue("Untimely rating issue 1")
           add_intake_rating_issue("None of these match")
           add_untimely_exemption_response("Yes")
