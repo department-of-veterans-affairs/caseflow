@@ -923,7 +923,8 @@ RSpec.feature "Higher-Level Review" do
                rating_issue_reference_id: "xyz123",
                description: "Left knee granted",
                end_product_establishment_id: end_product_establishment.id,
-               notes: "I am an issue note"
+               notes: "I am an issue note",
+               benefit_type: "compensation"
       )).to_not be_nil
 
       expect(RequestIssue.find_by(
@@ -931,7 +932,8 @@ RSpec.feature "Higher-Level Review" do
                description: "Really old injury",
                end_product_establishment_id: end_product_establishment.id,
                untimely_exemption: false,
-               untimely_exemption_notes: "I am an exemption note"
+               untimely_exemption_notes: "I am an exemption note",
+               benefit_type: "compensation"
       )).to_not be_nil
 
       active_duty_adjustments_request_issue = RequestIssue.find_by!(
@@ -939,7 +941,8 @@ RSpec.feature "Higher-Level Review" do
         issue_category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
         decision_date: 1.month.ago,
-        end_product_establishment_id: non_rating_end_product_establishment.id
+        end_product_establishment_id: non_rating_end_product_establishment.id,
+        benefit_type: "compensation"
       )
 
       expect(active_duty_adjustments_request_issue.untimely?).to eq(false)
@@ -947,7 +950,8 @@ RSpec.feature "Higher-Level Review" do
       another_active_duty_adjustments_request_issue = RequestIssue.find_by!(
         review_request: higher_level_review,
         issue_category: "Active Duty Adjustments",
-        description: "Another Description for Active Duty Adjustments"
+        description: "Another Description for Active Duty Adjustments",
+        benefit_type: "compensation"
       )
 
       expect(another_active_duty_adjustments_request_issue.untimely?).to eq(true)
@@ -958,7 +962,8 @@ RSpec.feature "Higher-Level Review" do
                review_request: higher_level_review,
                description: "This is an unidentified issue",
                is_unidentified: true,
-               end_product_establishment_id: end_product_establishment.id
+               end_product_establishment_id: end_product_establishment.id,
+               benefit_type: "compensation"
       )).to_not be_nil
 
       # Issues before AMA
@@ -966,7 +971,8 @@ RSpec.feature "Higher-Level Review" do
                review_request: higher_level_review,
                description: "Non-RAMP Issue before AMA Activation",
                end_product_establishment_id: end_product_establishment.id,
-               ineligible_reason: :before_ama
+               ineligible_reason: :before_ama,
+               benefit_type: "compensation"
       )).to_not be_nil
 
       expect(RequestIssue.find_by(
@@ -974,14 +980,16 @@ RSpec.feature "Higher-Level Review" do
                description: "Issue before AMA Activation from RAMP",
                ineligible_reason: nil,
                ramp_claim_id: "ramp_claim_id",
-               end_product_establishment_id: end_product_establishment.id
+               end_product_establishment_id: end_product_establishment.id,
+               benefit_type: "compensation"
       )).to_not be_nil
 
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
                description: "A nonrating issue before AMA",
                ineligible_reason: :before_ama,
-               end_product_establishment_id: non_rating_end_product_establishment.id
+               end_product_establishment_id: non_rating_end_product_establishment.id,
+               benefit_type: "compensation"
       )).to_not be_nil
 
       duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
@@ -1033,13 +1041,22 @@ RSpec.feature "Higher-Level Review" do
     end
 
     scenario "Non-compensation" do
-      start_higher_level_review(veteran, is_comp: false)
+      hlr, _ = start_higher_level_review(veteran, is_comp: false)
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add / Remove Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
       check_row("Benefit type", "Education")
       expect(page).to_not have_content("Claimant")
+      click_intake_add_issue
+      add_intake_rating_issue("Left knee granted")
+      click_intake_finish
+      # request issue should have matching benefit type
+      expect(RequestIssue.find_by(
+        review_request: hlr,
+        description: "Left knee granted",
+        benefit_type: "education"
+      )).to_not be_nil
     end
 
     scenario "canceling" do

@@ -427,7 +427,8 @@ describe RequestIssue do
                 decision_text: "Left knee granted",
                 profile_date: ratings.profile_date,
                 decision_review_type: "HigherLevelReview",
-                decision_review_id: review.id
+                decision_review_id: review.id,
+                benefit_type: "compensation"
               )
               expect(rating_request_issue.processed?).to eq(true)
             end
@@ -454,7 +455,8 @@ describe RequestIssue do
                 disposition: "allowed",
                 disposition_date: end_product_establishment.last_synced_at,
                 decision_review_type: "HigherLevelReview",
-                decision_review_id: review.id
+                decision_review_id: review.id,
+                benefit_type: "compensation"
               )
               expect(rating_request_issue.processed?).to eq(true)
             end
@@ -494,7 +496,8 @@ describe RequestIssue do
             disposition: "allowed",
             disposition_date: end_product_establishment.last_synced_at,
             decision_review_type: "HigherLevelReview",
-            decision_review_id: review.id
+            decision_review_id: review.id,
+            benefit_type: "compensation"
           )
           expect(request_issue.processed?).to eq(true)
         end

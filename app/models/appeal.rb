@@ -183,7 +183,7 @@ class Appeal < DecisionReview
 
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      issue.save!
+      issue.update!(benefit_type: "compensation")
       create_legacy_issue_optin(issue) if issue.vacols_id
     end
   end
