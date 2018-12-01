@@ -4,97 +4,62 @@ module AmaCaseDistribution
 
   private
 
-  # rubocop:disable Metrics/AbcSize
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/PerceivedComplexity
   def ama_distribution
-    rem = batch_size
-    priority_target = target_number_of_priority_appeals
-    remaining_docket_proportions = docket_proportions.clone
+    priority_count # count the number of priority appeals before we start distributing anything
+    @cases = []
+    @rem = batch_size
+    @remaining_docket_proportions = docket_proportions.clone
 
-    priority_legacy_hearing_appeals =
-      dockets[:legacy].distribute_appeals(self, priority: true, genpop: "not_genpop", limit: rem)
-    rem -= priority_legacy_hearing_appeals.count
+    distribute_appeals(:legacy, @rem, priority: true, genpop: "not_genpop")
+    distribute_appeals(:hearing, @rem, priority: true, genpop: "not_genpop")
+    distribute_appeals(:legacy, @rem, priority: false, genpop: "not_genpop", range: legacy_docket_range)
+    distribute_appeals(:hearing, @rem, priority: false, genpop: "not_genpop")
 
-    priority_hearing_appeals =
-      dockets[:hearing].distribute_appeals(self, priority: true, genpop: "not_genpop", limit: rem)
-    rem -= priority_hearing_appeals.count
+    priority_rem = (priority_target - @cases.count(&:priority)).clamp(0, @rem)
+    oldest_priority_appeals_by_docket(priority_rem).each { |docket, n| distribute_appeals(docket, n, priority: true) }
 
-    nonpriority_legacy_hearing_appeals =
-      dockets[:legacy].distribute_nonpriority_appeals(self,
-                                                      genpop: "not_genpop",
-                                                      range: legacy_nonpriority_docket_range,
-                                                      limit: rem)
-    rem -= nonpriority_legacy_hearing_appeals.count
+    deduct_distributed_actuals_from_remaining_docket_proportions(:legacy, :hearing)
 
-    nonpriority_hearing_appeals =
-      dockets[:hearing].distribute_appeals(self, priority: false, genpop: "not_genpop", limit: rem)
-    rem -= nonpriority_hearing_appeals.count
-
-    priority_distributed_count = priority_legacy_hearing_appeals.count + priority_hearing_appeals.count
-    hearing_distributed_count = priority_hearing_appeals.count + nonpriority_hearing_appeals.count
-    legacy_distributed_count = priority_legacy_hearing_appeals.count + nonpriority_legacy_hearing_appeals.count
-
-    if priority_distributed_count < priority_target
-      priority_rem = [priority_target - priority_distributed_count, rem].min
-      other_priority_n_by_docket = dockets_with_oldest_n_priority_appeals(priority_rem)
-
-      other_priority_appeals_by_docket = {}
-      other_priority_n_by_docket.each do |docket, n|
-        other_priority_appeals_by_docket[docket] =
-          dockets[docket].distribute_appeals(self, priority: true, limit: n)
-      end
-
-      other_priority_appeals = other_priority_appeals_by_docket.values.flatten
-      rem -= other_priority_appeals.count
-
-      priority_distributed_count += other_priority_appeals.count
-      hearing_distributed_count += (other_priority_appeals_by_docket.try(:hearing).try(:count) || 0)
-      legacy_distributed_count += (other_priority_appeals_by_docket.try(:legacy).try(:count) || 0)
+    until @rem == 0 || @remaining_docket_proportions.all? { |_, p| p == 0 }
+      distribute_appeals_according_to_remaining_docket_proportions
     end
 
-    nonpriority_target = batch_size - priority_distributed_count
-
-    if hearing_distributed_count > docket_proportions[:hearing] * nonpriority_target
-      remaining_docket_proportions = remaining_docket_proportions.except(:hearing)
-    else
-      remaining_docket_proportions[:hearing] -= hearing_distributed_count / nonpriority_target
-    end
-
-    if legacy_distributed_count > docket_proportions[:legacy] * nonpriority_target
-      remaining_docket_proportions = remaining_docket_proportions.except(:legacy)
-    else
-      remaining_docket_proportions[:legacy] -= legacy_distributed_count / nonpriority_target
-    end
-
-    other_nonpriority_appeals = []
-
-    until rem == 0 || remaining_docket_proportions.empty?
-      remaining_docket_proportions = normalize_proportions(remaining_docket_proportions)
-      docket_targets = stochastic_allocation(rem, remaining_docket_proportions)
-
-      docket_targets.each do |docket, n|
-        cases = dockets[docket].distribute_appeals(self, priority: false, limit: n)
-        other_nonpriority_appeals += cases
-        rem -= cases.count
-
-        if cases.count < n
-          remaining_docket_proportions = remaining_docket_proportions.except(docket)
-        end
-      end
-    end
-
-    [
-      *priority_legacy_hearing_appeals, *priority_hearing_appeals,
-      *nonpriority_legacy_hearing_appeals, *nonpriority_hearing_appeals,
-      *other_priority_appeals, *other_nonpriority_appeals
-    ]
+    @cases
   end
-  # rubocop:enable Metrics/PerceivedComplexity
-  # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/AbcSize
+
+  def distribute_appeals(docket, n, priority: false, genpop: "any", range: nil)
+    if range.nil?
+      cases = dockets[docket].distribute_appeals(self, priority: priority, genpop: genpop, limit: n)
+    elsif docket == :legacy && priority == false
+      cases = dockets[:legacy].distribute_nonpriority_appeals(self, genpop: genpop, range: range, limit: n)
+    else
+      return
+    end
+
+    @cases += cases
+    @rem -= cases.count
+
+    cases
+  end
+
+  def deduct_distributed_actuals_from_remaining_docket_proportions(*args)
+    args.each do |docket|
+      nonpriority_count = batch_size - @cases.count(&:priority)
+      docket_count = @cases.count { |c| c.docket == docket.to_s && !c.priority }
+      p = docket_count / nonpriority_count
+      @remaining_docket_proportions[docket] = [@remaining_docket_proportions[docket] - p, 0].max
+    end
+  end
+
+  def distribute_appeals_according_to_remaining_docket_proportions
+    @remaining_docket_proportions = normalize_proportions(@remaining_docket_proportions)
+    docket_targets = stochastic_allocation(@rem, @remaining_docket_proportions)
+
+    docket_targets.each do |docket, n|
+      cases = distribute_appeals(docket, n, priority: false)
+      @remaining_docket_proportions[docket] = 0 if cases.count < n
+    end
+  end
 
   # CMGTODO
   def ama_statistics; end
@@ -115,16 +80,18 @@ module AmaCaseDistribution
       .reduce(0, :+)
   end
 
-  def target_number_of_priority_appeals
+  def priority_target
     proportion = [priority_count.to_f / total_batch_size, 1.0].min
     (proportion * batch_size).ceil
   end
 
-  def legacy_nonpriority_docket_range
+  def legacy_docket_range
     [(total_batch_size - priority_count) * docket_proportions[:legacy], 0].max.round
   end
 
-  def dockets_with_oldest_n_priority_appeals(n)
+  def oldest_priority_appeals_by_docket(n)
+    return {} if n == 0
+
     dockets.map { |sym, docket| docket.age_of_n_oldest_priority_appeals(n).map { |age| [age, sym] } }
       .flatten
       .sort_by { |a| a[0] }

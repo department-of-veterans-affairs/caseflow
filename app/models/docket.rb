@@ -26,7 +26,7 @@ class Docket
 
   # CMGTODO: unique index on distributed_cases.case_id to prevent distributing the same appeal twice
   # CMGTODO: update DistributedCase validation and add judge_task association
-  def distribute_appeals(distribution, priority, limit: 1)
+  def distribute_appeals(distribution, priority: false, limit: 1)
     transaction do
       appeals = appeals(priority: priority, ready: true).limit(limit)
 

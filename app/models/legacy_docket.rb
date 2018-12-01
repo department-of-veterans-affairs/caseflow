@@ -49,7 +49,7 @@ class LegacyDocket
     end
   end
 
-  def distribute_appeals(distribution, priority, genpop: "any", limit: 1)
+  def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1)
     if priority
       distribute_priority_appeals(distribution, genpop: genpop, limit: limit)
     else
