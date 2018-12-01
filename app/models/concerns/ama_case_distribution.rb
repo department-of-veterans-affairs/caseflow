@@ -130,7 +130,7 @@ module AmaCaseDistribution
 
   # CMGTODO
   def docket_proportions
-    @docket_proportions ||= normalize_proportions(dockets.map(&:weight))
+    @docket_proportions ||= normalize_proportions(dockets.transform_values(&:weight))
   end
 
   def normalize_proportions(proportions)
