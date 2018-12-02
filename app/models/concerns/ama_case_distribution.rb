@@ -9,12 +9,15 @@ module AmaCaseDistribution
     @remaining_docket_proportions = docket_proportions.clone
     @nonpriority_iterations = 0
 
-    # Count the number of priority appeals before we distribute anything.
+    # Count the number of priority appeals available before we distribute anything.
     priority_count
 
-    # Distribute appeals that are tied to judges.
+    # Distribute priority appeals that are tied to judges (not genpop).
     distribute_appeals(:legacy, @rem, priority: true, genpop: "not_genpop")
     distribute_appeals(:hearing, @rem, priority: true, genpop: "not_genpop")
+
+    # Distribute nonpriority appeals that are tied to judges.
+    # Legacy docket appeals that are tied to judges are only distributed when they are within the docket range.
     distribute_appeals(:legacy, @rem, priority: false, genpop: "not_genpop", range: legacy_docket_range)
     distribute_appeals(:hearing, @rem, priority: false, genpop: "not_genpop")
 
@@ -51,11 +54,12 @@ module AmaCaseDistribution
   end
 
   def distribute_appeals(docket, n, priority: false, genpop: "any", range: nil)
-    return [] if n == 0
+    return [] unless n > 0
 
     if range.nil?
       appeals = dockets[docket].distribute_appeals(self, priority: priority, genpop: genpop, limit: n)
     elsif docket == :legacy && priority == false
+      return [] unless range > 0
       appeals = dockets[:legacy].distribute_nonpriority_appeals(self, genpop: genpop, range: range, limit: n)
     else
       return
@@ -68,13 +72,13 @@ module AmaCaseDistribution
   end
 
   def deduct_distributed_actuals_from_remaining_docket_proportions(*args)
-    nonpriority_count = batch_size - @appeals.count(&:priority)
+    nonpriority_target = batch_size - @appeals.count(&:priority)
 
-    return if nonpriority_count == 0
+    return if nonpriority_target == 0
 
     args.each do |docket|
       docket_count = @appeals.count { |appeal| appeal.docket == docket.to_s && !appeal.priority }
-      proportion = docket_count / nonpriority_count
+      proportion = docket_count / nonpriority_target
       @remaining_docket_proportions[docket] = [@remaining_docket_proportions[docket] - proportion, 0].max
     end
   end
@@ -115,7 +119,7 @@ module AmaCaseDistribution
   end
 
   def oldest_priority_appeals_by_docket(n)
-    return {} if n == 0
+    return {} unless n > 0
 
     dockets
       .map { |sym, docket| docket.age_of_n_oldest_priority_appeals(n).map { |age| [age, sym] } }
@@ -146,9 +150,9 @@ module ProportionHash
     iterations = rem
 
     catch :complete do
-      each_with_index do |(docket, proportion), i|
+      each_with_index do |(key, proportion), i|
         if i == count - 1
-          result[docket] += rem
+          result[key] += rem
           throw :complete
         end
 
@@ -157,7 +161,7 @@ module ProportionHash
         iterations.times do
           next unless probability > rand
 
-          result[docket] += 1
+          result[key] += 1
           rem -= 1
 
           throw :complete if rem == 0
