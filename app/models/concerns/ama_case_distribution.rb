@@ -54,7 +54,7 @@ module AmaCaseDistribution
       direct_review_proportion: docket_proportions[:direct_review],
       evidence_submission_proportion: docket_proportions[:evidence_submission],
       hearing_proportion: docket_proportions[:hearing],
-      interpolated_minimum_direct_review_proportion: @interpolated_minimum_direct_review_proportion,
+      interpolated_minimum_direct_review_proportion: interpolated_minimum_direct_review_proportion,
       nonpriority_iterations: @nonpriority_iterations
     }
   end
