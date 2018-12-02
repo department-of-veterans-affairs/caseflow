@@ -1,4 +1,3 @@
-# rubocop:disable Metrics/ModuleLength
 module AmaCaseDistribution
   extend ActiveSupport::Concern
 
@@ -30,7 +29,7 @@ module AmaCaseDistribution
 
     # Distribute nonpriority appeals from any docket according to the docket proportions.
     # If a docket runs out of available appeals, we reallocate its cases to the other dockets.
-    until @rem == 0 || @remaining_docket_proportions.all? { |_, proportion| proportion == 0 }
+    until @rem == 0 || @remaining_docket_proportions.all_zero?
       distribute_appeals_according_to_remaining_docket_proportions
       @nonpriority_iterations += 1
     end
@@ -81,13 +80,13 @@ module AmaCaseDistribution
   end
 
   def distribute_appeals_according_to_remaining_docket_proportions
-    @remaining_docket_proportions = normalize_proportions(@remaining_docket_proportions)
-    docket_targets = stochastic_allocation(@rem, @remaining_docket_proportions)
-
-    docket_targets.each do |docket, n|
-      appeals = distribute_appeals(docket, n, priority: false)
-      @remaining_docket_proportions[docket] = 0 if appeals.count < n
-    end
+    @remaining_docket_proportions
+      .normalize!
+      .stochastic_allocation(@rem)
+      .each do |docket, n|
+        appeals = distribute_appeals(docket, n, priority: false)
+        @remaining_docket_proportions[docket] = 0 if appeals.count < n
+      end
   end
 
   def dockets
@@ -128,16 +127,18 @@ module AmaCaseDistribution
 
   # CMGTODO
   def docket_proportions
-    @docket_proportions ||= normalize_proportions(dockets.transform_values(&:weight))
+    @docket_proportions ||= dockets.transform_values(&:weight).extend(ProportionHash).normalize!
+  end
+end
+
+module ProportionHash
+  def normalize!
+    total = values.reduce(0, :+)
+    transform_values! { |proportion| proportion * (1.0 / total) }
   end
 
-  def normalize_proportions(proportions)
-    total = proportions.values.reduce(0, :+)
-    proportions.transform_values { |proportion| proportion * (1.0 / total) }
-  end
-
-  def stochastic_allocation(n, proportions)
-    result = proportions.transform_values { |proportion| (n * proportion).floor }
+  def stochastic_allocation(n)
+    result = transform_values { |proportion| (n * proportion).floor }
     rem = n - result.values.reduce(0, :+)
 
     return result if rem == 0
@@ -145,8 +146,8 @@ module AmaCaseDistribution
     iterations = rem
 
     catch :complete do
-      proportions.each_with_index do |(docket, proportion), i|
-        if i == proportions.count - 1
+      each_with_index do |(docket, proportion), i|
+        if i == count - 1
           result[docket] += rem
           throw :complete
         end
@@ -166,5 +167,8 @@ module AmaCaseDistribution
 
     result
   end
+
+  def all_zero?
+    all? { |_, proportion| proportion == 0 }
+  end
 end
-# rubocop:enable Metrics/ModuleLength
