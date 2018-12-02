@@ -1,6 +1,10 @@
 module AmaCaseDistribution
   extend ActiveSupport::Concern
 
+  MINIMUM_LEGACY_PROPORTION = 0.1
+  MAXIMUM_DIRECT_REVIEW_PROPORTION = 0.8
+  INTERPOLATED_DIRECT_REVIEW_PROPORTION_ADJUSTMENT = 0.67
+
   private
 
   def ama_distribution
@@ -49,6 +53,7 @@ module AmaCaseDistribution
       direct_review_proportion: docket_proportions[:direct_review],
       evidence_submission_proportion: docket_proportions[:evidence_submission],
       hearing_proportion: docket_proportions[:hearing],
+      interpolated_minimum_direct_review_proportion: @interpolated_minimum_direct_review_proportion,
       nonpriority_iterations: @nonpriority_iterations
     }
   end
@@ -71,12 +76,12 @@ module AmaCaseDistribution
     appeals
   end
 
-  def deduct_distributed_actuals_from_remaining_docket_proportions(*args)
+  def deduct_distributed_actuals_from_remaining_docket_proportions(*dockets)
     nonpriority_target = batch_size - @appeals.count(&:priority)
 
     return if nonpriority_target == 0
 
-    args.each do |docket|
+    dockets.each do |docket|
       docket_count = @appeals.count { |appeal| appeal.docket == docket.to_s && !appeal.priority }
       proportion = docket_count / nonpriority_target
       @remaining_docket_proportions[docket] = [@remaining_docket_proportions[docket] - proportion, 0].max
@@ -129,16 +134,56 @@ module AmaCaseDistribution
       .each_with_object(Hash.new(0)) { |a, counts| counts[a[1]] += 1 }
   end
 
-  # CMGTODO
   def docket_proportions
-    @docket_proportions ||= dockets.transform_values(&:weight).extend(ProportionHash).normalize!
+    return @docket_proportions if @docket_proportions
+
+    proportions = dockets
+      .transform_values(&:weight)
+      .extend(ProportionHash)
+      .add_fixed_proportions(direct_review: direct_review_proportion)
+
+    if proportions[:legacy] < MINIMUM_LEGACY_PROPORTION
+      legacy_proportion = [MINIMUM_LEGACY_PROPORTION, maximum_legacy_proportion].min
+
+      proportions = proportions.add_fixed_proportions(
+        legacy: legacy_proportion,
+        direct_review: direct_review_proportion
+      )
+    end
+
+    @docket_proportions = proportions
+  end
+
+  def direct_review_proportion
+    @direct_review_proportion ||= (dockets[:direct_review].due_count / total_batch_size)
+      .clamp(interpolated_minimum_direct_review_proportion, MAXIMUM_DIRECT_REVIEW_PROPORTION)
+  end
+
+  def interpolated_minimum_direct_review_proportion
+    return @interpolated_minimum_direct_review_proportion if @interpolated_minimum_direct_review_proportion
+
+    current_due_time = AmaDirectReviewDocket::TIME_GOAL + AmaDirectReviewDocket::BECOMES_DUE
+    interpolator = 1 - (dockets[:direct_review].time_until_due_of_oldest_appeal / current_due_time)
+
+    proportion =
+      (pacesetting_direct_review_proportion * interpolator * INTERPOLATED_DIRECT_REVIEW_PROPORTION_ADJUSTMENT)
+        .clamp(0, MAXIMUM_DIRECT_REVIEW_PROPORTION)
+
+    @interpolated_minimum_direct_review_proportion = proportion
+  end
+
+  # CMGTODO
+  def pacesetting_direct_review_proportion; end
+
+  def maximum_legacy_proportion
+    [dockets[:legacy].count(priority: false, ready: true).to_f / total_batch_size, 1].min
   end
 end
 
 module ProportionHash
-  def normalize!
+  def normalize!(to: 1.0)
     total = values.reduce(0, :+)
-    transform_values! { |proportion| proportion * (1.0 / total) }
+    transform_values! { |proportion| proportion * (to / total) }
   end
 
   def stochastic_allocation(n)
@@ -170,6 +215,13 @@ module ProportionHash
     end
 
     result
+  end
+
+  def add_fixed_proportions(fixed)
+    slice(*(keys - fixed.keys))
+      .extend(ProportionHash)
+      .normalize!(to: 1.0 - fixed.values.reduce(0, :+))
+      .merge!(fixed)
   end
 
   def all_zero?
