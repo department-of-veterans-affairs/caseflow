@@ -135,9 +135,7 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 
 3) Do the same thing for the "Instant Client Package - SDK" library; run the install command:
 
-```
-    brew install instantclient-sdk
-```
+    `brew install instantclient-sdk`
 
     ...and follow the corresponding steps in Homebrew's error message.
 
