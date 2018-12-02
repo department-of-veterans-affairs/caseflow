@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ModuleLength
 module AmaCaseDistribution
   extend ActiveSupport::Concern
 
@@ -143,7 +144,10 @@ module AmaCaseDistribution
       .add_fixed_proportions(direct_review: direct_review_proportion)
 
     if proportions[:legacy] < MINIMUM_LEGACY_PROPORTION
-      legacy_proportion = [MINIMUM_LEGACY_PROPORTION, maximum_legacy_proportion].min
+      legacy_proportion = [
+        MINIMUM_LEGACY_PROPORTION,
+        dockets[:legacy].count(priority: false, ready: true).to_f / total_batch_size
+      ].min
 
       proportions = proportions.add_fixed_proportions(
         legacy: legacy_proportion,
@@ -174,11 +178,8 @@ module AmaCaseDistribution
 
   # CMGTODO
   def pacesetting_direct_review_proportion; end
-
-  def maximum_legacy_proportion
-    [dockets[:legacy].count(priority: false, ready: true).to_f / total_batch_size, 1].min
-  end
 end
+# rubocop:enable Metrics/ModuleLength
 
 module ProportionHash
   def normalize!(to: 1.0)
