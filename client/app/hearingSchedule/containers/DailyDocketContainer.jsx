@@ -60,6 +60,12 @@ export class DailyDocketContainer extends React.Component {
       });
   };
 
+  deleteHearingDay = () => {
+    ApiUtil.patch(``, { data: { hearing_day: { _destroy: true} } }).then((response) => {
+      console.log('we deleted it')
+    })
+  };
+
   createHearingPromise = () => Promise.all([this.loadHearingDay()]);
 
   render() {

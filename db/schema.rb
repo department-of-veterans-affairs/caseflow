@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181129230649) do
+ActiveRecord::Schema.define(version: 20181203195219) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -414,6 +414,8 @@ ActiveRecord::Schema.define(version: 20181129230649) do
     t.datetime "updated_at", null: false
     t.string "updated_by", null: false
     t.string "bva_poc"
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_hearing_days_on_deleted_at"
   end
 
   create_table "hearing_views", id: :serial, force: :cascade do |t|
@@ -678,12 +680,12 @@ ActiveRecord::Schema.define(version: 20181129230649) do
     t.bigint "ineligible_due_to_id"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
-    t.string "ineligible_reason"
     t.string "ramp_claim_id"
     t.datetime "decision_sync_submitted_at"
     t.datetime "decision_sync_attempted_at"
     t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
+    t.string "ineligible_reason"
     t.string "vacols_id"
     t.string "vacols_sequence_id"
     t.datetime "created_at"
