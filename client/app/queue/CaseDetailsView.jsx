@@ -20,8 +20,6 @@ import StickyNavContentArea from './StickyNavContentArea';
 import { resetErrorMessages, resetSuccessMessages, setHearingDay } from './uiReducer/uiActions';
 import { CaseTimeline } from './CaseTimeline';
 import { getQueryParams } from '../util/QueryParamsUtil';
-import { actionableTasksForAppeal } from './selectors';
-import ApiUtil from '../util/ApiUtil';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
@@ -44,8 +42,6 @@ class CaseDetailsView extends React.PureComponent {
     this.props.resetErrorMessages();
 
     const { hearingDate, regionalOffice, hearingTime } = getQueryParams(window.location.search);
-
-    this.addScheduleVeteranTask();
 
     if (hearingDate && regionalOffice) {
       this.props.setHearingDay({

@@ -45,7 +45,7 @@ RSpec.feature "Judge assignment to attorney" do
 
   context "Can view their queue" do
     scenario "when viewing the review task queue" do
-      judge_review_task = create(:ama_judge_task, :in_progress, assigned_to: judge, action: :review)
+      judge_review_task = create(:ama_judge_review_task, :in_progress, assigned_to: judge)
       expect(judge_review_task.status).to eq("in_progress")
       appeal_review = judge_review_task.appeal
       vet = appeal_review.veteran

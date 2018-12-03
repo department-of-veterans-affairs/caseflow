@@ -71,8 +71,24 @@ RSpec.feature "Appeal Intake" do
     )
   end
 
+  let(:no_ratings_err) { Rating::NilRatingProfileListError.new("none!") }
+
+  it "cancels an intake in progress when there is a NilRatingProfileListError" do
+    allow_any_instance_of(Fakes::BGSService).to receive(:fetch_ratings_in_range).and_raise(no_ratings_err)
+    start_appeal(veteran)
+    intake = Intake.find_by(veteran_file_number: veteran_file_number)
+
+    visit "/intake"
+    expect(page).to have_content("Something went wrong")
+    intake.reload
+    expect(intake.completion_status).to eq("canceled")
+    visit "/intake"
+    expect(page).to_not have_content("Something went wrong")
+    expect(page).to have_content("Which form are you processing?")
+  end
+
   it "Creates an appeal" do
-    # Testing no relationships in Appeal and Veteran is claimant, tests two relationships in HRL and one in SC
+    # Testing no relationships in Appeal and Veteran is claimant, tests two relationships in HLR and one in SC
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(nil)
 
     visit "/intake"
@@ -415,16 +431,20 @@ RSpec.feature "Appeal Intake" do
     )
 
     # add unidentified issue
+    expect(page).to_not have_css(".issue-unidentified")
     click_intake_add_issue
     add_intake_unidentified_issue("This is an unidentified issue")
     expect(page).to have_content("3 issues")
     expect(page).to have_content("This is an unidentified issue")
+    expect(find_intake_issue_by_number(3)).to have_css(".issue-unidentified")
+    expect_ineligible_issue(3)
 
     # add ineligible issue
     click_intake_add_issue
     add_intake_rating_issue("Old injury in review")
     expect(page).to have_content("4 issues")
     expect(page).to have_content("4. Old injury in review is ineligible because it's already under review as a Appeal")
+    expect_ineligible_issue(4)
 
     # add untimely rating request issue
     click_intake_add_issue
@@ -433,6 +453,7 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content("5 issues")
     expect(page).to have_content("I am an exemption note")
     expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
+    expect_ineligible_issue(5)
 
     # remove and re-add with different answer to exemption
     click_remove_intake_issue("5")
@@ -442,6 +463,7 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content("5 issues")
     expect(page).to have_content("I am an exemption note")
     expect(page).to have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
+    expect_ineligible_issue(5)
 
     # add untimely nonrating request issue
     click_intake_add_issue
@@ -457,6 +479,7 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content(
       "Another Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
     )
+    expect_ineligible_issue(6)
 
     # add before_ama ratings
     click_intake_add_issue
@@ -464,6 +487,7 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content(
       "7. Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
     )
+    expect_ineligible_issue(7)
 
     # Eligible because it comes from a RAMP decision
     click_intake_add_issue
@@ -481,6 +505,7 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content(
       "A nonrating issue before AMA #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
     )
+    expect_ineligible_issue(9)
 
     click_intake_finish
 

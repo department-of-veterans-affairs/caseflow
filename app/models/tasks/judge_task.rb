@@ -1,11 +1,7 @@
 class JudgeTask < Task
-  validates :action, inclusion: { in: %w[assign review] }
-
   include RoundRobinAssigner
 
-  def available_actions(user)
-    return [] if assigned_to != user
-
+  def available_actions(_user)
     if action.eql? "assign"
       [
         Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
@@ -20,6 +16,10 @@ class JudgeTask < Task
     end
   end
 
+  def no_actions_available?(user)
+    assigned_to != user
+  end
+
   def timeline_title
     COPY::CASE_TIMELINE_JUDGE_TASK
   end
@@ -28,7 +28,7 @@ class JudgeTask < Task
     new_task = super(params, user)
 
     parent = Task.find(params[:parent_id]) if params[:parent_id]
-    if parent && parent.type == QualityReviewTask.name
+    if parent && parent.is_a?(QualityReviewTask)
       parent.update!(status: :on_hold)
     end
 
@@ -36,7 +36,7 @@ class JudgeTask < Task
   end
 
   def self.modify_params(params)
-    super(params.merge(action: "assign"))
+    super(params.merge(type: JudgeAssignTask.name))
   end
 
   def self.verify_user_can_assign!(user)
@@ -44,7 +44,7 @@ class JudgeTask < Task
   end
 
   def when_child_task_completed
-    update!(action: :review)
+    update!(type: JudgeReviewTask.name)
     super
   end
 
@@ -78,12 +78,14 @@ class JudgeTask < Task
   def self.assign_judge_tasks_for_root_tasks(root_tasks)
     root_tasks.each do |root_task|
       Rails.logger.info("Assigning judge task for appeal #{root_task.appeal.id}")
-      task = create!(appeal: root_task.appeal,
-                     parent: root_task,
-                     appeal_type: Appeal.name,
-                     assigned_at: Time.zone.now,
-                     assigned_to: next_assignee,
-                     action: "assign")
+
+      task = JudgeAssignTask.create!(
+        appeal: root_task.appeal,
+        parent: root_task,
+        appeal_type: Appeal.name,
+        assigned_at: Time.zone.now,
+        assigned_to: next_assignee
+      )
       Rails.logger.info("Assigned judge task with task id #{task.id} to #{task.assigned_to.css_id}")
     end
   end

@@ -480,13 +480,13 @@ RSpec.feature "Case details" do
       let!(:appeal2) { FactoryBot.create(:appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
       let!(:attorney_task) do
-        FactoryBot.create(:task, appeal: appeal, type: AttorneyTask.name, parent: root_task,
-                                 assigned_to: user, completed_at: Time.zone.now - 4.days)
+        create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user,
+                                   completed_at: Time.zone.now - 4.days)
       end
       let!(:judge_task) do
-        FactoryBot.create(:task, appeal: appeal, type: JudgeTask.name, parent: attorney_task,
-                                 assigned_to: user, status: Constants.TASK_STATUSES.completed,
-                                 completed_at: Time.zone.now)
+        create(:ama_judge_review_task, appeal: appeal, parent: attorney_task, assigned_to: user,
+                                       status: Constants.TASK_STATUSES.completed,
+                                       completed_at: Time.zone.now)
       end
 
       before do

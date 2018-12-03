@@ -1,5 +1,6 @@
 class Appeal < DecisionReview
   include Taskable
+  include LegacyOptinable
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -79,7 +80,7 @@ class Appeal < DecisionReview
   end
 
   def reviewing_judge_name
-    task = tasks.where(type: "JudgeTask").order(:created_at).last
+    task = tasks.order(:created_at).select { |t| t.is_a?(JudgeTask) }.last
     task ? task.assigned_to.try(:full_name) : ""
   end
 
@@ -181,7 +182,10 @@ class Appeal < DecisionReview
   end
 
   def create_issues!(new_issues)
-    new_issues.each(&:save!)
+    new_issues.each do |issue|
+      issue.save!
+      create_legacy_issue_optin(issue) if issue.vacols_id
+    end
   end
 
   def serializer_class
