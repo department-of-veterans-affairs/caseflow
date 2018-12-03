@@ -22,9 +22,9 @@ class ClaimReview < DecisionReview
 
   def ui_hash
     super.merge(
-      benefitType: benefit_type,
-      payeeCode: payee_code,
-      hasClearedEP: cleared_ep?
+      benefit_type: benefit_type,
+      payee_code: payee_code,
+      has_cleared_ep: cleared_ep?
     )
   end
 

@@ -45,17 +45,17 @@ class DecisionReview < ApplicationRecord
     {
       veteran: {
         name: veteran && veteran.name.formatted(:readable_short),
-        fileNumber: veteran_file_number,
-        formName: veteran && veteran.name.formatted(:form)
+        file_number: veteran_file_number,
+        form_name: veteran && veteran.name.formatted(:form)
       },
       relationships: veteran && veteran.relationships,
       claimant: claimant_participant_id,
-      veteranIsNotClaimant: veteran_is_not_claimant,
-      receiptDate: receipt_date.to_formatted_s(:json_date),
-      legacyOptInApproved: legacy_opt_in_approved,
-      legacyAppeals: serialized_legacy_appeals,
+      veteran_is_not_claimant: veteran_is_not_claimant,
+      receipt_date: receipt_date.to_formatted_s(:json_date),
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      legacy_appeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
-      requestIssues: request_issues.map(&:ui_hash)
+      request_issues: request_issues.map(&:ui_hash)
     }
   end
 

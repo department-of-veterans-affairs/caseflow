@@ -10,8 +10,8 @@ class SupplementalClaim < ClaimReview
 
   def ui_hash
     super.merge(
-      formType: "supplemental_claim",
-      isDtaError: is_dta_error
+      form_type: "supplemental_claim",
+      is_dta_error: is_dta_error
     )
   end
 

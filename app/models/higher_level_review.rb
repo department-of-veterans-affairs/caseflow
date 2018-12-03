@@ -21,9 +21,9 @@ class HigherLevelReview < ClaimReview
 
   def ui_hash
     super.merge(
-      formType: "higher_level_review",
-      sameOffice: same_office,
-      informalConference: informal_conference
+      form_type: "higher_level_review",
+      same_office: same_office,
+      informal_conference: informal_conference
     )
   end
 

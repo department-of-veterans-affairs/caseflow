@@ -4,11 +4,11 @@ class DecisionReviewIntake < Intake
       receipt_date: detail.receipt_date,
       claimant: detail.claimant_participant_id,
       veteran_is_not_claimant: detail.veteran_is_not_claimant,
-      payeeCode: detail.payee_code,
+      payee_code: detail.payee_code,
       legacy_opt_in_approved: detail.legacy_opt_in_approved,
-      legacyAppeals: detail.serialized_legacy_appeals,
+      legacy_appeals: detail.serialized_legacy_appeals,
       ratings: detail.serialized_ratings,
-      requestIssues: detail.request_issues.map(&:ui_hash)
+      request_issues: detail.request_issues.map(&:ui_hash)
     )
   rescue Rating::NilRatingProfileListError
     cancel!(reason: "system_error")

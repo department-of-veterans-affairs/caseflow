@@ -37,8 +37,8 @@ class Appeal < DecisionReview
 
   def ui_hash
     super.merge(
-      docketType: docket_type,
-      formType: "appeal"
+      docket_type: docket_type,
+      form_type: "appeal"
     )
   end
 
