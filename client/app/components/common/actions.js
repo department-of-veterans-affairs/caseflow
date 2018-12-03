@@ -14,10 +14,10 @@ export const onRegionalOfficeChange = (regionalOffice) => ({
   }
 });
 
-export const onReceiveHearingDates = (hearingDates) => ({
-  type: ACTIONS.RECEIVE_HEARING_DATES,
+export const onReceiveHearingDays = (hearingDays) => ({
+  type: ACTIONS.RECEIVE_HEARING_DAYS,
   payload: {
-    hearingDates
+    hearingDays
   }
 });
 

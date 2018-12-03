@@ -17,10 +17,10 @@ const commonComponentsReducer = (state = initialState, action = {}) => {
         $set: action.payload.regionalOffice
       }
     });
-  case ACTIONS.RECEIVE_HEARING_DATES:
+  case ACTIONS.RECEIVE_HEARING_DAYS:
     return update(state, {
-      hearingDates: {
-        $set: action.payload.hearingDates
+      hearingDays: {
+        $set: action.payload.hearingDays
       }
     });
   case ACTIONS.HEARING_DAY_CHANGE:
