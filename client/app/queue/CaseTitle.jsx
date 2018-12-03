@@ -13,6 +13,9 @@ import CopyTextButton from '../components/CopyTextButton';
 import { toggleVeteranCaseList } from './uiReducer/uiActions';
 import COPY from '../../COPY.json';
 import DocketTypeBadge from './components/DocketTypeBadge';
+import HearingBadge from './components/HearingBadge';
+import SpecialtyCaseBadge from './components/SpecialtyCaseBadge';
+import AodBadge from './components/AodBadge';
 
 import { actionableTasksForAppeal } from './selectors';
 
@@ -101,6 +104,10 @@ const divStyle = css({
   marginRight: '10px'
 });
 
+const badgeStyle = css({
+  marginRight: '28px'
+});
+
 const redType = css({
   color: 'red'
 });
@@ -109,8 +116,13 @@ const displayNone = css({
   display: 'none'
 });
 
+const displayInline = css({
+  display: 'inline'
+});
+
 const editButton = css({
-  float: 'right'
+  margin: '18px 0px 0px -10px',
+  position: 'fixed'
 });
 
 const thStyle = css({
@@ -118,17 +130,18 @@ const thStyle = css({
   backgroundColor: '#F8F8F8',
   margin: '0 0 0 20px',
   paddingLeft: '0',
-
 });
 
 const descriptionStyle = css({
   marginLeft: '10px',
-  //':first-child': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
+  ':first-child': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
 });
 
 const caseInfo = css({
   backgroundColor: '#F8F8F8',
   paddingBottom: '50px',
+  /*':first-child': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },*/
+  'span:after': { content: ' |' }
 });
 
 class CaseTitle extends React.PureComponent {
@@ -140,14 +153,17 @@ class CaseTitle extends React.PureComponent {
       redirectUrl,
       taskType,
       analyticsSource,
-      veteranCaseListIsVisible
+      veteranCaseListIsVisible,
+      canEditAod
     } = this.props;
 
     console.log('--CaseTitle--');
     console.log(appeal);
-    console.log(appeal.hearings);
+    console.log(appeal.hearings.length);
+    console.log(appeal.isAdvancedOnDocket);
+    console.log(this.props.canEditAod);
+
     console.log(this.props);
-    console.log(this.props.children);
     console.log(primaryTask);
     console.log(appealId);
     console.log(redirectUrl);
@@ -166,8 +182,22 @@ class CaseTitle extends React.PureComponent {
         <CopyTextButton text={appeal.veteranFileNumber} />
       </span>
 
-      <span className={appeal.hearings.length == 0 ? null : displayNone} >
-        { 'Hearing' }
+      <span className={appeal.hearings.length != 0 ? null : displayNone} {...badgeStyle}>
+        <HearingBadge hearing={appeal.hearings[0]} className={displayInline}/>
+      </span>
+
+      <span className={appeal.isAdvancedOnDocket ? null : displayNone} {...badgeStyle}>
+        <AodBadge appeal={appeal} className={displayInline}/>
+      </span>
+
+      <span className={appeal.isAdvancedOnDocket ? null : displayNone} {...badgeStyle}>
+        <SpecialtyCaseBadge appeal={appeal.hearings[0]} className={displayInline}/>
+        {<span {...editButton}>
+          <Link
+            to={`/queue/appeals/${appeal.externalId}/modal/advanced_on_docket_motion`}>
+            Edit
+          </Link>
+        </span>}
       </span>
 
       <br/>
@@ -278,7 +308,8 @@ CaseTitle.defaultProps = {
 const mapStateToProps = (state) => ({
   veteranCaseListIsVisible: state.ui.veteranCaseListIsVisible,
   userIsVsoEmployee: state.ui.userIsVsoEmployee,
-  primaryTask: actionableTasksForAppeal(state, { appealId: Object.keys(state.queue.appealDetails)[0]})[0]
+  primaryTask: actionableTasksForAppeal(state, { appealId: Object.keys(state.queue.appealDetails)[0]})[0],
+  canEditAod: state.ui.canEditAod
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

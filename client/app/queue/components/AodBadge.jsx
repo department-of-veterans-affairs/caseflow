@@ -10,11 +10,11 @@ import { DateString } from '../../util/DateUtil';
 const badgeStyling = css({
   display: 'inline-block',
   color: COLORS.WHITE,
-  background: COLORS.GREEN,
+  background: COLORS.RED,
   borderRadius: '.5rem',
   lineHeight: '2rem',
   marginLeft: '1rem',
-  padding: '0 1rem'
+  padding: '0 .5rem'
 });
 
 const listStyling = css({
@@ -30,25 +30,24 @@ const listStyling = css({
   }
 });
 
-const DocketTypeBadge = ({ hearing }) => {
-  if (!hearing) {
+const DocketTypeBadge = ({ appeal }) => {
+  console.log('******** AOD ********')
+  console.log(appeal)
+  if (!appeal) {
     return null;
   }
 
   const tooltipText = <div>
-    This case has a hearing associated with it.
-    <ul {...listStyling}>
-      <li>Judge: <strong>{hearing.heldBy}</strong></li>
-      <li>Disposition: <strong>{_.startCase(hearing.disposition)}</strong></li>
-      <li>Date: <strong><DateString date={hearing.date} /></strong></li>
-      <li>Type: <strong>{_.startCase(hearing.type)}</strong></li>
-    </ul>
+    This case is Advanced on the Docket.
   </div>;
+
+  console.log('******* AOD END *********')
+  console.log(tooltipText)
 
   // We expect this badge to be shown in a table, so we use this to get rid of the standard table padding.
   return <span {...css({ marginRight: '-3rem' })} className="cf-hearing-badge">
-    <Tooltip id={`badge-${hearing.id}`} text={tooltipText} position="bottom">
-      <span {...badgeStyling}>H</span>
+    <Tooltip id={`badge-${appeal.id}`} text={tooltipText} position="bottom">
+      <span {...badgeStyling}>AOD</span>
     </Tooltip>
   </span>;
 };
