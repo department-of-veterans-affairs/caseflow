@@ -122,7 +122,7 @@ const displayInline = css({
 
 const editButton = css({
   margin: '18px 0px 0px -10px',
-  position: 'fixed'
+  position: 'inherit'
 });
 
 const thStyle = css({
@@ -135,13 +135,15 @@ const thStyle = css({
 const descriptionStyle = css({
   marginLeft: '10px',
   ':first-child': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
+  'span::after': { content: ' |' }
 });
 
 const caseInfo = css({
   backgroundColor: '#F8F8F8',
   paddingBottom: '50px',
-  /*':first-child': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },*/
-  'span:after': { content: ' |' }
+  marginLeft: '10px',
+  /*'span:first-child': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },*/
+  'th::after': {content: "→"}
 });
 
 class CaseTitle extends React.PureComponent {
@@ -228,11 +230,30 @@ class CaseTitle extends React.PureComponent {
           </React.Fragment>
         </th>
 
+
+        <th {...thStyle}>
+          <React.Fragment>
+            <span {...titleStyle}></span><br/>
+            <span {...descriptionStyle} style={{color: COLORS.GREY_LIGHT}}>
+              {'|'}
+            </span>
+          </React.Fragment>
+        </th>
+
         <th {...thStyle}>
           <React.Fragment>
             <span {...titleStyle}>{'VETERAN DOCUMENTS'}</span><br/>
-            <span {...descriptionStyle}>
+            <span {...descriptionStyle} style={{color: 'red','span: :after': {content: '| ***'} } }>
               <ReaderLink appealId={appeal.id} appeal={appeal} redirectUrl={window.location.pathname} longMessage />
+            </span>
+          </React.Fragment>
+        </th>
+
+        <th {...thStyle}>
+          <React.Fragment>
+            <span {...titleStyle}></span><br/>
+            <span {...descriptionStyle} style={{color: COLORS.GREY_LIGHT}}>
+              {'|'}
             </span>
           </React.Fragment>
         </th>
@@ -269,6 +290,15 @@ class CaseTitle extends React.PureComponent {
           </React.Fragment>
         </th>
 
+        <th {...thStyle}>
+          <React.Fragment>
+            <span {...titleStyle}></span><br/>
+            <span {...descriptionStyle} style={{color: COLORS.GREY_LIGHT}}>
+              {'|'}
+            </span>
+          </React.Fragment>
+        </th>
+
         {<th className={primaryTask && primaryTask.documentId ? null : displayNone}  {...thStyle}>
           <React.Fragment>
             <span {...divStyle}>
@@ -277,6 +307,15 @@ class CaseTitle extends React.PureComponent {
             </span>
           </React.Fragment>
         </th>}
+
+        <th {...thStyle}>
+          <React.Fragment>
+            <span {...titleStyle}></span><br/>
+            <span {...descriptionStyle} style={{color: COLORS.GREY_LIGHT}}>
+              {'|'}
+            </span>
+          </React.Fragment>
+        </th>
 
         <th {...thStyle}>
           <React.Fragment>
@@ -305,10 +344,11 @@ CaseTitle.defaultProps = {
   analyticsSource: 'queue_task'
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state, ownProps) => ({
   veteranCaseListIsVisible: state.ui.veteranCaseListIsVisible,
   userIsVsoEmployee: state.ui.userIsVsoEmployee,
-  primaryTask: actionableTasksForAppeal(state, { appealId: Object.keys(state.queue.appealDetails)[0]})[0],
+  primaryTask: actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0],
+  //appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
   canEditAod: state.ui.canEditAod
 });
 
