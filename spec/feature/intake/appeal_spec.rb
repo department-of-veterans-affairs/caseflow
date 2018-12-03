@@ -665,7 +665,9 @@ RSpec.feature "Appeal Intake" do
 
         add_intake_rating_issue("intervertebral disc syndrome") # ineligible issue
 
-        expect(page).to have_content("Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}")
+        expect(page).to have_content(
+          "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
+        )
 
         # Expect untimely exemption modal for untimely issue
         click_intake_add_issue
@@ -694,7 +696,9 @@ RSpec.feature "Appeal Intake" do
         click_intake_finish
 
         ineligible_checklist = find("ul.cf-ineligible-checklist")
-        expect(ineligible_checklist).to have_content("Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}")
+        expect(ineligible_checklist).to have_content(
+          "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
+        )
 
         expect(RequestIssue.find_by(
                  description: "Left knee granted",
@@ -719,12 +723,16 @@ RSpec.feature "Appeal Intake" do
 
         add_intake_rating_issue("ankylosis of hip")
 
-        expect(page).to have_content("Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}")
+        expect(page).to have_content(
+          "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
+        )
 
         click_intake_finish
 
         ineligible_checklist = find("ul.cf-ineligible-checklist")
-        expect(ineligible_checklist).to have_content("Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}")
+        expect(ineligible_checklist).to have_content(
+          "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
+        )
 
         expect(RequestIssue.find_by(
                  description: "Left knee granted",

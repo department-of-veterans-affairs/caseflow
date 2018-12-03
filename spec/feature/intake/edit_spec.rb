@@ -192,7 +192,9 @@ RSpec.feature "Edit issues" do
 
           add_intake_rating_issue("intervertebral disc syndrome") # ineligible issue
 
-          expect(page).to have_content("Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}")
+          expect(page).to have_content(
+            "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
+          )
 
           safe_click("#button-submit-update")
           safe_click ".confirm"
@@ -222,7 +224,9 @@ RSpec.feature "Edit issues" do
 
           add_intake_rating_issue("ankylosis of hip")
 
-          expect(page).to have_content("Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}")
+          expect(page).to have_content(
+            "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
+          )
 
           safe_click("#button-submit-update")
           safe_click ".confirm"
@@ -415,7 +419,8 @@ RSpec.feature "Edit issues" do
           vacols_sequence_id: "2",
           ineligible_reason: :legacy_appeal_not_eligible
         )
-        
+      end
+
       let(:ep_claim_id) do
         EndProductEstablishment.find_by(
           source: higher_level_review,
@@ -440,28 +445,29 @@ RSpec.feature "Edit issues" do
 
       it "shows the Higher-Level Review Edit page with ineligibility messages" do
         visit "higher_level_reviews/#{ep_claim_id}/edit"
+        ineligible = Constants.INELIGIBLE_REQUEST_ISSUES
 
         expect(page).to have_content(
-          "#{ri_with_previous_hlr.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review}"
+          "#{ri_with_previous_hlr.contention_text} #{ineligible.previous_higher_level_review}"
         )
         expect(page).to have_content(
           "#{ri_in_review.contention_text} is ineligible because it's already under review as a Higher-Level Review"
         )
         expect(page).to have_content(
-          "#{untimely_request_issue.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
+          "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
         )
         expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date: 05/01/2018")
         expect(page).to have_content(
-          "#{ri_before_ama.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+          "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
         )
         expect(page).to have_content(
           "#{eligible_ri_before_ama.contention_text} Decision date:"
         )
         expect(page).to have_content(
-          "#{ri_legacy_issue_not_withdrawn.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
+          "#{ri_legacy_issue_not_withdrawn.contention_text} #{ineligible.legacy_issue_not_withdrawn}"
         )
         expect(page).to have_content(
-          "#{ri_legacy_issue_ineligible.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
+          "#{ri_legacy_issue_ineligible.contention_text} #{ineligible.legacy_appeal_not_eligible}"
         )
       end
 

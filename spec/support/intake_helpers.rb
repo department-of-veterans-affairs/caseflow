@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ModuleLength
 module IntakeHelpers
   def search_page_title
     "Search for Veteran by ID"
@@ -90,10 +91,19 @@ module IntakeHelpers
     expect(find_intake_issue_by_number(number)).to_not have_css(".not-eligible")
   end
 
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   def setup_legacy_opt_in_appeals(veteran_file_number)
     # Active and eligible
     create(:legacy_appeal, vacols_case:
-      create(:case, :status_active, bfkey: "vacols1", bfcorlid: "#{veteran_file_number}S", bfdnod: 3.days.ago, bfdsoc: 3.days.ago))
+      create(
+        :case,
+        :status_active,
+        bfkey: "vacols1",
+        bfcorlid: "#{veteran_file_number}S",
+        bfdnod: 3.days.ago,
+        bfdsoc: 3.days.ago
+      ))
 
     # ankylosis of hip, limitation of thigh motion (extension)
     allow(AppealRepository).to receive(:issues).with("vacols1")
@@ -104,7 +114,12 @@ module IntakeHelpers
 
     # Active and not eligible
     create(:legacy_appeal, vacols_case:
-      create(:case, :status_active, bfkey: "vacols2", bfcorlid: "#{veteran_file_number}S", bfdnod: 4.years.ago, bfdsoc: 4.months.ago))
+      create(:case,
+             :status_active,
+             bfkey: "vacols2",
+             bfcorlid: "#{veteran_file_number}S",
+             bfdnod: 4.years.ago,
+             bfdsoc: 4.months.ago))
 
     # intervertebral disc syndrome, degenerative arthritis of the spine
     allow(AppealRepository).to receive(:issues).with("vacols2")
@@ -115,7 +130,12 @@ module IntakeHelpers
 
     # Not active and eligible
     create(:legacy_appeal, vacols_case:
-      create(:case, :status_complete, bfkey: "vacols3", bfcorlid: "#{veteran_file_number}S", bfdnod: 4.days.ago, bfdsoc: 4.days.ago))
+      create(:case,
+             :status_complete,
+             bfkey: "vacols3",
+             bfcorlid: "#{veteran_file_number}S",
+             bfdnod: 4.days.ago,
+             bfdsoc: 4.days.ago))
 
     # impairment of hip, impairment of femur
     allow(AppealRepository).to receive(:issues).with("vacols3")
@@ -126,7 +146,12 @@ module IntakeHelpers
 
     # Not active and not eligible
     create(:legacy_appeal, vacols_case:
-      create(:case, :status_complete, bfkey: "vacols4", bfcorlid: "#{veteran_file_number}S", bfdnod: 4.years.ago, bfdsoc: 4.months.ago))
+      create(:case,
+             :status_complete,
+             bfkey: "vacols4",
+             bfcorlid: "#{veteran_file_number}S",
+             bfdnod: 4.years.ago,
+             bfdsoc: 4.months.ago))
 
     # typhoid arthritis, caisson disease of bones
     allow(AppealRepository).to receive(:issues).with("vacols4")
@@ -135,4 +160,7 @@ module IntakeHelpers
                     Generators::Issue.build(id: "vacols4", vacols_sequence_id: 2, codes: %w[02 15 03 5011])
                   ])
   end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 end
+# rubocop:enable Metrics/ModuleLength

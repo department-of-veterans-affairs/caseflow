@@ -542,7 +542,14 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  def start_higher_level_review(test_veteran, is_comp: true, claim_participant_id: nil, legacy_opt_in_approved: false, veteran_is_not_claimant: false)
+  def start_higher_level_review(
+    test_veteran,
+    is_comp: true,
+    claim_participant_id: nil,
+    legacy_opt_in_approved: false,
+    veteran_is_not_claimant: false
+  )
+
     higher_level_review = HigherLevelReview.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: receipt_date,
@@ -1091,7 +1098,9 @@ RSpec.feature "Higher-Level Review" do
 
           add_intake_rating_issue("intervertebral disc syndrome") # ineligible issue
 
-          expect(page).to have_content("Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}")
+          expect(page).to have_content(
+            "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
+          )
 
           # Expect untimely exemption modal for untimely issue
           click_intake_add_issue
@@ -1120,7 +1129,9 @@ RSpec.feature "Higher-Level Review" do
           click_intake_finish
 
           ineligible_checklist = find("ul.cf-ineligible-checklist")
-          expect(ineligible_checklist).to have_content("Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}")
+          expect(ineligible_checklist).to have_content(
+            "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
+          )
 
           expect(RequestIssue.find_by(
                    description: "Left knee granted",
@@ -1145,12 +1156,16 @@ RSpec.feature "Higher-Level Review" do
 
           add_intake_rating_issue("ankylosis of hip")
 
-          expect(page).to have_content("Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}")
+          expect(page).to have_content(
+            "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
+          )
 
           click_intake_finish
 
           ineligible_checklist = find("ul.cf-ineligible-checklist")
-          expect(ineligible_checklist).to have_content("Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}")
+          expect(ineligible_checklist).to have_content(
+            "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
+          )
 
           expect(RequestIssue.find_by(
                    description: "Left knee granted",

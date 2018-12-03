@@ -11,7 +11,13 @@ describe RequestIssue do
   let(:ramp_claim_id) { nil }
   let(:higher_level_review_reference_id) { "hlr123" }
   let(:legacy_opt_in_approved) { false }
-  let(:review) { create(:higher_level_review, veteran_file_number: veteran.file_number, legacy_opt_in_approved: legacy_opt_in_approved) }
+  let(:review) do
+    create(
+      :higher_level_review,
+      veteran_file_number: veteran.file_number,
+      legacy_opt_in_approved: legacy_opt_in_approved
+    )
+  end
   let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
   let!(:decision_sync_processed_at) { nil }
   let!(:end_product_establishment) { nil }
@@ -366,8 +372,14 @@ describe RequestIssue do
         FeatureToggle.enable!(:intake_legacy_opt_in)
 
         # Active and eligible
-        create(:legacy_appeal, vacols_case:
-          create(:case, :status_active, bfkey: "vacols1", bfcorlid: "#{veteran.file_number}S", bfdnod: 3.days.ago, bfdsoc: 3.days.ago))
+        create(:legacy_appeal, vacols_case: create(
+          :case,
+          :status_active,
+          bfkey: "vacols1",
+          bfcorlid: "#{veteran.file_number}S",
+          bfdnod: 3.days.ago,
+          bfdsoc: 3.days.ago
+        ))
         allow(AppealRepository).to receive(:issues).with("vacols1")
           .and_return([
                         Generators::Issue.build(id: "vacols1", vacols_sequence_id: 1, codes: %w[02 15 03 5250]),
@@ -375,8 +387,14 @@ describe RequestIssue do
                       ])
 
         # Active and not eligible
-        create(:legacy_appeal, vacols_case:
-          create(:case, :status_active, bfkey: "vacols2", bfcorlid: "#{veteran.file_number}S", bfdnod: 4.years.ago, bfdsoc: 4.months.ago))
+        create(:legacy_appeal, vacols_case: create(
+          :case,
+          :status_active,
+          bfkey: "vacols2",
+          bfcorlid: "#{veteran.file_number}S",
+          bfdnod: 4.years.ago,
+          bfdsoc: 4.months.ago
+        ))
         allow(AppealRepository).to receive(:issues).with("vacols2")
           .and_return([
                         Generators::Issue.build(id: "vacols2", vacols_sequence_id: 1, codes: %w[02 15 03 5243]),
