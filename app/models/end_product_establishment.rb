@@ -157,6 +157,11 @@ class EndProductEstablishment < ApplicationRecord
     return true unless status_active?
     fail EstablishedEndProductNotFound unless result
 
+    # load contentions now, in case "source" needs them.
+    # this VBMS call is slow and will cause the transaction below
+    # to timeout in some cases.
+    contentions
+
     transaction do
       update!(
         synced_status: result.status_type_code,
