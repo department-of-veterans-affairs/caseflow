@@ -72,7 +72,7 @@ class Distribution < ApplicationRecord
   def judge_has_no_unassigned_cases
     pending_statuses = [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
     assigned_tasks = judge.tasks.select do |t|
-      t.is_a?(JudgeTask) && (t.action == "assign" || t.is_a?(JudgeAssignTask)) && pending_statuses.include?(t.status)
+      ((t.is_a?(JudgeTask) && t.action == "assign") || t.is_a?(JudgeAssignTask)) && pending_statuses.include?(t.status)
     end
     return false if assigned_tasks.any?
 
