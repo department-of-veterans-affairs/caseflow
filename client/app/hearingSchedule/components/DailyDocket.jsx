@@ -357,6 +357,7 @@ export default class DailyDocket extends React.Component {
           { _.isEmpty(this.props.hearings) &&
           <Button
             linkStyling
+            onClick={this.props.deleteHearingDay}
           >Remove Hearing Day</Button> }
         </div>
       </div>
@@ -399,5 +400,6 @@ DailyDocket.propTypes = {
   hearings: PropTypes.object,
   onHearingNotesUpdate: PropTypes.func,
   onHearingDispositionUpdate: PropTypes.func,
-  onHearingTimeUpdate: PropTypes.func
+  onHearingTimeUpdate: PropTypes.func,
+  deleteHearingDay: PropTypes.func
 };

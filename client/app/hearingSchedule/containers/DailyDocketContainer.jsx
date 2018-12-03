@@ -61,7 +61,8 @@ export class DailyDocketContainer extends React.Component {
   };
 
   deleteHearingDay = () => {
-    ApiUtil.patch(``, { data: { hearing_day: { _destroy: true} } }).then((response) => {
+    ApiUtil.patch(`/hearings/hearing_day/${this.props.dailyDocket.id}`, { data: { hearing_day: { _destroy: true} } }).
+    then((response) => {
       console.log('we deleted it')
     })
   };
@@ -86,6 +87,7 @@ export class DailyDocketContainer extends React.Component {
         onHearingDispositionUpdate={this.props.onHearingDispositionUpdate}
         onHearingDateUpdate={this.props.onHearingDateUpdate}
         onHearingTimeUpdate={this.props.onHearingTimeUpdate}
+        deleteHearingDay={this.deleteHearingDay}
         saveHearing={this.saveHearing}
         saveSuccessful={this.props.saveSuccessful}
         onResetSaveSuccessful={this.props.onResetSaveSuccessful}

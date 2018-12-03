@@ -72,7 +72,6 @@ class Hearings::HearingDayController < HearingScheduleController
 
   def update
     return record_not_found unless hearing
-    params.delete(:hearing_key)
     updated_hearing = HearingDay.update_hearing_day(hearing, update_params)
 
     json_hearing = if updated_hearing.class.equal?(TrueClass)
@@ -93,7 +92,7 @@ class Hearings::HearingDayController < HearingScheduleController
   private
 
   def hearing
-    @hearing ||= HearingDay.find_hearing_day(update_params[:hearing_type], update_params[:hearing_key])
+    @hearing ||= HearingDay.find_hearing_day(update_params[:hearing_type], update_params[:hearing_id])
   end
 
   def fetch_hearings(hearing_day, id)
@@ -116,7 +115,7 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def update_params
-    params.permit(:judge_id, :regional_office, :hearing_key, :hearing_type, :_destroy)
+    params.require("hearing_day").permit(:judge_id, :regional_office, :hearing_key, :hearing_type, :_destroy)
       .merge(updated_by: current_user)
   end
 
