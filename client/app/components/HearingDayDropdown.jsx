@@ -52,13 +52,12 @@ class HearingDayDropdown extends React.Component {
       hearingDateOptions.push(...this.props.staticOptions);
     }
 
-    return hearingDateOptions.sort((d1, d2) => new Date(d1.value) - new Date(d2.value));
+    return hearingDateOptions.sort((d1, d2) => new Date(d1.value.hearingDate) - new Date(d2.value.hearingDate));
   };
 
   render() {
     const { readOnly, onChange, value, placeholder } = this.props;
     const hearingDateOptions = this.hearingDateOptions();
-    const selectedHearingDate = _.find(hearingDateOptions, (opt) => opt.value === value) || {};
 
     if (!this.props.changePrompt || this.state.editable) {
       return (
@@ -82,7 +81,7 @@ class HearingDayDropdown extends React.Component {
         <InlineForm>
           <p style={{ marginRight: '30px',
             width: '150px' }}>
-            {selectedHearingDate.label}
+            {value.label}
           </p>
           <Button
             name="Change"
@@ -100,7 +99,7 @@ HearingDayDropdown.propTypes = {
   regionalOffice: PropTypes.string.isRequired,
   hearingDates: PropTypes.object,
   onChange: PropTypes.func,
-  value: PropTypes.string,
+  value: PropTypes.object,
   placeholder: PropTypes.string,
   staticOptions: PropTypes.array,
   readOnly: PropTypes.bool,
