@@ -144,7 +144,7 @@ module AmaCaseDistribution
   def docket_proportions
     return @docket_proportions if @docket_proportions
 
-    # We distribute from the other dockets proportional to their "weight," basically the number of pending appeals.
+    # We distribute appeals proportional to each docket's "weight," basically the number of pending appeals.
     # LegacyDocket makes adjustments to the weight to account for pre-Form 9 appeals.
     @docket_proportions = dockets
       .transform_values(&:weight)
@@ -154,6 +154,7 @@ module AmaCaseDistribution
     return @docket_proportions if docket_margin_net_of_priority == 0
 
     # Unlike the other dockets, the direct review docket observes a time goal.
+    # We distribute appeals from the docket sufficient to meet the goal, instead of proportionally.
     # When there are no or few "due" direct review appeals, we instead calculate a curve out.
     direct_review_proportion = (direct_review_due_count / docket_margin_net_of_priority)
       .clamp(interpolated_minimum_direct_review_proportion, MAXIMUM_DIRECT_REVIEW_PROPORTION)
