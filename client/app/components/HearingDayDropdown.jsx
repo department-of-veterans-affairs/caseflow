@@ -81,7 +81,7 @@ class HearingDayDropdown extends React.Component {
         <InlineForm>
           <p style={{ marginRight: '30px',
             width: '150px' }}>
-            {value.label}
+            {value ? value.label : ''}
           </p>
           <Button
             name="Change"
