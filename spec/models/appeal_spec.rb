@@ -265,4 +265,26 @@ describe Appeal do
       end
     end
   end
+
+  context "is taskable" do
+    context "#assigned_attorney" do
+      let(:attorney) { create(:user) }
+      let(:appeal) { create(:appeal) }
+      let!(:task) { create(:ama_attorney_task, assigned_to: attorney, appeal: appeal) }
+
+      subject { appeal.assigned_attorney }
+
+      it { is_expected.to eq attorney }
+    end
+
+    context "#assigned_judge" do
+      let(:judge) { create(:user) }
+      let(:appeal) { create(:appeal) }
+      let!(:task) { create(:ama_judge_task, assigned_to: judge, appeal: appeal) }
+
+      subject { appeal.assigned_judge }
+
+      it { is_expected.to eq judge }
+    end
+  end
 end
