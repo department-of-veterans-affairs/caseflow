@@ -140,21 +140,27 @@ module AmaCaseDistribution
   def docket_proportions
     return @docket_proportions if @docket_proportions
 
+    # Unlike the other dockets, the direct review docket observes a time goal.
+    # When there are no or few "due" direct review appeals, we instead calculate a curve out.
     direct_review_proportion = (direct_review_due_count / total_batch_size)
       .clamp(interpolated_minimum_direct_review_proportion, MAXIMUM_DIRECT_REVIEW_PROPORTION)
 
+    # We distribute from the other dockets proportional to their "weight," basically the number of pending appeals.
+    # LegacyDocket makes adjustments to the weight to account for pre-Form 9 appeals.
     proportions = dockets
+      .except(:direct_review)
       .transform_values(&:weight)
       .extend(ProportionHash)
-      .add_fixed_proportions(direct_review: direct_review_proportion)
+      .add_fixed_proportions!(direct_review: direct_review_proportion)
 
+    # The legacy docket proportion is subject to a minimum, provided we have at least that many legacy appeals.
     if proportions[:legacy] < MINIMUM_LEGACY_PROPORTION
       legacy_proportion = [
         MINIMUM_LEGACY_PROPORTION,
         dockets[:legacy].count(priority: false, ready: true).to_f / total_batch_size
       ].min
 
-      proportions = proportions.add_fixed_proportions(
+      proportions.add_fixed_proportions!(
         legacy: legacy_proportion,
         direct_review: direct_review_proportion
       )
@@ -191,6 +197,12 @@ module ProportionHash
     transform_values! { |proportion| proportion * (to / total) }
   end
 
+  def add_fixed_proportions!(fixed)
+    except!(*fixed.keys)
+      .normalize!(to: 1.0 - fixed.values.reduce(0, :+))
+      .merge!(fixed)
+  end
+
   def stochastic_allocation(n)
     result = transform_values { |proportion| (n * proportion).floor }
     rem = n - result.values.reduce(0, :+)
@@ -220,13 +232,6 @@ module ProportionHash
     end
 
     result
-  end
-
-  def add_fixed_proportions(fixed)
-    slice(*(keys - fixed.keys))
-      .extend(ProportionHash)
-      .normalize!(to: 1.0 - fixed.values.reduce(0, :+))
-      .merge!(fixed)
   end
 
   def all_zero?
