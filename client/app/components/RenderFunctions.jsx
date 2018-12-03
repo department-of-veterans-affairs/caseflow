@@ -616,6 +616,8 @@ export class ClipboardIcon extends React.PureComponent {
 
 export class NewFileIcon extends React.PureComponent {
   render() {
+    console.log('--INSIDE NewFileIcon--');
+
     return <svg width="35px" height="11px" viewBox="0 0 35 11" xmlns="http://www.w3.org/2000/svg" version="1.1">
       <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
         <g id="Group" transform="translate(0.000000, -3.000000)">

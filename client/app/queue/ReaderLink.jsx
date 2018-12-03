@@ -24,16 +24,19 @@ export default class ReaderLink extends React.PureComponent {
       appeal,
       longMessage
     } = this.props;
+    /*console.log('--INSIDE ReaderLink--');
+    console.log(appeal);*/
 
     return longMessage ?
-      <React.Fragment>View <NewFile externalAppealId={appeal.externalId} /></React.Fragment> :
+      <React.Fragment>View { this.getAppealDocumentCount() } <NewFile externalAppealId={appeal.externalId} /></React.Fragment> :
       <React.Fragment>View docs <NewFile externalAppealId={appeal.externalId} /></React.Fragment>;
   };
 
   getAppealDocumentCount = () => {
     if (this.props.longMessage) {
       //return <span>&nbsp;<AppealDocumentCount appeal={this.props.appeal} /></span>;
-      return <span><AppealDocumentCount appeal={this.props.appeal} /></span>;
+      return <React.Fragment><AppealDocumentCount appeal={this.props.appeal} /></React.Fragment>;
+      //return <span><AppealDocumentCount appeal={this.props.appeal} /></span>;
     }
 
     return <div {...documentCountSizeStyling}>
@@ -65,10 +68,11 @@ export default class ReaderLink extends React.PureComponent {
     }
 
     return <React.Fragment>
+
       <Link {...linkProps} onClick={this.readerLinkAnalytics}>
         {this.getLinkText()}
       </Link>
-      {this.getAppealDocumentCount()}
+      {/*this.getAppealDocumentCount()*/}
     </React.Fragment>;
   };
 }
