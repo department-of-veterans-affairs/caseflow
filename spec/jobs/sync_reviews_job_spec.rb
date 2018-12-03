@@ -78,8 +78,8 @@ describe SyncReviewsJob do
       let!(:request_issue) { create(:request_issue) }
 
       it "ignores request issues that are not flagged" do
-        expect(DecisionRatingIssueSyncJob).to_not receive(:perform_later).with(request_issue)
-        expect(DecisionRatingIssueSyncJob).to receive(:perform_later).with(pending_request_issue)
+        expect(DecisionIssueSyncJob).to_not receive(:perform_later).with(request_issue)
+        expect(DecisionIssueSyncJob).to receive(:perform_later).with(pending_request_issue)
 
         SyncReviewsJob.perform_now("limit" => 2)
       end
