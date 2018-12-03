@@ -238,7 +238,7 @@ describe HearingDay do
     let(:vacols_case2) do
       create(
         :case,
-        folder: create(:folder, tinum: "docket-number"),
+        folder: create(:folder),
         bfregoff: "RO13",
         bfcurloc: "57",
         bfdocind: "V"
