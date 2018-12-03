@@ -306,6 +306,8 @@ RSpec.feature "Edit issues" do
     end
 
     context "when there are ineligible issues" do
+      ineligible = Constants.INELIGIBLE_REQUEST_ISSUES
+
       let!(:eligible_request_issue) do
         RequestIssue.create!(
           review_request: higher_level_review,
@@ -429,6 +431,7 @@ RSpec.feature "Edit issues" do
       end
 
       before do
+        setup_legacy_opt_in_appeals(veteran.file_number)
         another_higher_level_review.create_issues!([ri_in_review])
         higher_level_review.create_issues!([
                                              eligible_request_issue,
@@ -445,7 +448,6 @@ RSpec.feature "Edit issues" do
 
       it "shows the Higher-Level Review Edit page with ineligibility messages" do
         visit "higher_level_reviews/#{ep_claim_id}/edit"
-        ineligible = Constants.INELIGIBLE_REQUEST_ISSUES
 
         expect(page).to have_content(
           "#{ri_with_previous_hlr.contention_text} #{ineligible.previous_higher_level_review}"
@@ -474,15 +476,17 @@ RSpec.feature "Edit issues" do
       it "re-applies eligibility check on remove/re-add of ineligible issue" do
         visit "higher_level_reviews/#{ep_claim_id}/edit"
 
-        expect(page).to have_content("6 issues")
+        expect(page).to have_content("8 issues")
         expect_eligible_issue(1)
         expect_ineligible_issue(2)
         expect_ineligible_issue(3)
         expect_ineligible_issue(4)
         expect_ineligible_issue(5)
         expect_eligible_issue(6)
+        expect_ineligible_issue(7)
+        expect_ineligible_issue(8)
 
-        # remove and re-add each ineligible issue. when re-added, it should always be issue 6.
+        # remove and re-add each ineligible issue. when re-added, it should always be issue 8.
 
         # 2
         ri_with_previous_hlr_issue_num = find_intake_issue_number_by_text(ri_with_previous_hlr.contention_text)
@@ -490,15 +494,16 @@ RSpec.feature "Edit issues" do
         click_remove_issue_confirmation
 
         expect(page).to_not have_content(
-          "#{ri_with_previous_hlr.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review}"
+          "#{ri_with_previous_hlr.contention_text} #{ineligible.previous_higher_level_review}"
         )
 
         click_intake_add_issue
         add_intake_rating_issue(ri_with_previous_hlr.contention_text)
+        add_intake_rating_issue("None of these match")
 
-        expect_ineligible_issue(6)
+        expect_ineligible_issue(8)
         expect(page).to have_content(
-          "#{ri_with_previous_hlr.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review}"
+          "#{ri_with_previous_hlr.contention_text} #{ineligible.previous_higher_level_review}"
         )
 
         # 3
@@ -512,8 +517,9 @@ RSpec.feature "Edit issues" do
 
         click_intake_add_issue
         add_intake_rating_issue(ri_in_review.contention_text)
+        add_intake_rating_issue("None of these match")
 
-        expect_ineligible_issue(6)
+        expect_ineligible_issue(8)
         expect(page).to have_content(
           "#{ri_in_review.contention_text} is ineligible because it's already under review as a Higher-Level Review"
         )
@@ -524,7 +530,7 @@ RSpec.feature "Edit issues" do
         click_remove_issue_confirmation
 
         expect(page).to_not have_content(
-          "#{untimely_request_issue.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
+          "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
         )
 
         click_intake_add_issue
@@ -532,13 +538,15 @@ RSpec.feature "Edit issues" do
         add_intake_nonrating_issue(
           category: "Active Duty Adjustments",
           description: untimely_request_issue.contention_text,
-          date: "01/01/2016"
+          date: "01/01/2016",
+          legacy_issues: true
         )
+        add_intake_rating_issue("None of these match")
         add_untimely_exemption_response("No", "I am a nonrating exemption note")
 
-        expect_ineligible_issue(6)
+        expect_ineligible_issue(8)
         expect(page).to have_content(
-          "#{untimely_request_issue.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
+          "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
         )
 
         # 5
@@ -547,15 +555,36 @@ RSpec.feature "Edit issues" do
         click_remove_issue_confirmation
 
         expect(page).to_not have_content(
-          "#{ri_before_ama.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+          "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
         )
 
         click_intake_add_issue
         add_intake_rating_issue(ri_before_ama.contention_text)
+        add_intake_rating_issue("None of these match")
 
-        expect_ineligible_issue(6)
+        expect_ineligible_issue(8)
         expect(page).to have_content(
-          "#{ri_before_ama.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+          "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
+        )
+
+        # 7
+        ri_legacy_issue_not_withdrawn_num = find_intake_issue_number_by_text(
+          ri_legacy_issue_not_withdrawn.contention_text
+        )
+        click_remove_intake_issue(ri_legacy_issue_not_withdrawn_num)
+        click_remove_issue_confirmation
+
+        expect(page).to_not have_content(
+          "#{ri_legacy_issue_not_withdrawn.contention_text} #{ineligible.legacy_issue_not_withdrawn}"
+        )
+
+        click_intake_add_issue
+        add_intake_rating_issue(ri_legacy_issue_not_withdrawn.contention_text)
+        add_intake_rating_issue("ankylosis of hip")
+
+        expect_ineligible_issue(8)
+        expect(page).to have_content(
+          "#{ri_legacy_issue_not_withdrawn.contention_text} #{ineligible.legacy_issue_not_withdrawn}"
         )
       end
     end

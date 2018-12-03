@@ -15,8 +15,8 @@ RSpec.feature "Appeal Intake" do
   end
 
   after do
-    FeatureToggle.enable!(:intakeAma, users: [current_user.css_id])
-    FeatureToggle.enable!(:intake_legacy_opt_in, users: [current_user.css_id])
+    FeatureToggle.disable!(:intakeAma, users: [current_user.css_id])
+    FeatureToggle.disable!(:intake_legacy_opt_in, users: [current_user.css_id])
   end
 
   let!(:current_user) do
