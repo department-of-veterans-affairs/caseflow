@@ -11,7 +11,7 @@ import {
   resetSuccessMessages,
   requestPatch
 } from '../uiReducer/uiActions';
-import { onRegionalOfficeChange, onHearingDateChange, onHearingTimeChange } from '../../components/common/actions';
+import { onRegionalOfficeChange, onHearingDayChange, onHearingTimeChange } from '../../components/common/actions';
 import { fullWidth } from '../constants';
 import editModalBase from './EditModalBase';
 import { formatDateStringForApi, formatDateStr } from '../../util/DateUtil';
@@ -24,7 +24,7 @@ import type {
 import { withRouter } from 'react-router-dom';
 import RadioField from '../../components/RadioField';
 import RoSelectorDropdown from '../../components/RoSelectorDropdown';
-import HearingDateDropdown from '../../components/HearingDateDropdown';
+import HearingDayDropdown from '../../components/HearingDayDropdown';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import {
   taskById,
@@ -40,6 +40,7 @@ type Params = {|
   taskId: string,
   appeal: Appeal,
   appealId: string,
+  userId: string
 |};
 
 type Props = Params & {|
@@ -48,7 +49,7 @@ type Props = Params & {|
   selectedRegionalOffice: string,
   history: Object,
   hearingDay: Object,
-  selectedHearingDate: string,
+  selectedHearingDay: Object,
   selectedHearingTime: string,
   // Action creators
   showErrorMessage: typeof showErrorMessage,
@@ -59,7 +60,7 @@ type Props = Params & {|
   onRegionalOfficeChange: typeof onRegionalOfficeChange,
   requestPatch: typeof requestPatch,
   onReceiveAmaTasks: typeof onReceiveAmaTasks,
-  onHearingDateChange: typeof onHearingDateChange,
+  onHearingDayChange: typeof onHearingDayChange,
   onHearingTimeChange: typeof onHearingTimeChange
 |};
 
@@ -76,14 +77,14 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   componentDidMount = () => {
     const {
-      hearingDay, onHearingDateChange,
+      hearingDay, onHearingDayChange,
       onHearingTimeChange, onRegionalOfficeChange
     } = this.props;
 
     onRegionalOfficeChange(this.getRO());
 
     if (hearingDay.hearingDate) {
-      onHearingDateChange(hearingDay.hearingDate);
+      onHearingDayChange(hearingDay.hearingDate);
       onHearingTimeChange(hearingDay.hearingTime);
     }
 
@@ -113,9 +114,10 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
 
   addScheduleHearingTask = () => {
-    const { scheduleHearingTask } = this.props;
+    const { scheduleHearingTask, appeal, userId } = this.props;
     // some check that a hearing needs to be completed
-    if (!scheduleVeteranTask) {
+    console.log(this.props);
+    if (!scheduleHearingTask) {
       const payload = {
         data: {
           tasks: [
@@ -123,11 +125,13 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
               type: 'ScheduleHearingTask',
               external_id: appeal.id,
               assigned_to_type: 'User',
-              assigned_to_id: this.props.userId
+              assigned_to_id: userId
             }
           ]
         }
       };
+
+      console.log('adding schedule hearing task');
 
       return ApiUtil.post('/tasks', payload).then(response => {
         const resp = JSON.parse(response);
@@ -141,18 +145,27 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
     const {
       scheduleHearingTask, requestPatch, onReceiveAmaTasks,
-      history, showErrorMessage
+      history, showErrorMessage, selectedHearingDay, selectedRegionalOffice
     } = this.props;
 
     const payload = {
       data: {
         task: {
-          status: 'completed'
+          status: 'completed',
+          business_payloads: {
+            description: 'Update Task',
+            values: {
+              regional_office_value: selectedRegionalOffice,
+              hearing_pkseq: selectedHearingDay.value.hearingPkseq,
+              hearing_type: this.getHearingType(),
+              hearing_date: this.formatHearingDate()
+            }
+          }
         }
       }
     };
 
-    return requestPatch(`/tasks/${scheduleHearingTaks.taskId}`, payload, this.getSuccessMsg()).
+    return requestPatch(`/tasks/${scheduleHearingTask.taskId}`, payload, this.getSuccessMsg()).
       then((resp) => {
         const response = JSON.parse(resp.text);
 
@@ -204,20 +217,25 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     return '';
   }
 
-  getSuccessMsg = () => {
-    const { appeal, selectedHearingDate } = this.props;
+  getHearingType = () => {
+    const { appeal : { sanitizedHearingRequestType } } = this.props;
 
-    const hearingType = appeal.sanitizedHearingRequestType === 'central_office' ? 'CO' : VIDEO_HEARING;
-    const hearingDateStr = formatDateStr(selectedHearingDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
+    return sanitizedHearingRequestType === 'central_office' ? 'CO' : VIDEO_HEARING;
+  }
+
+  getSuccessMsg = () => {
+    const { appeal, selectedHearingDay } = this.props;
+
+    const hearingDateStr = formatDateStr(selectedHearingDay.value.hearingDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
     const title = `You have successfully assigned ${appeal.veteranFullName} ` +
-                  `to a ${hearingType} hearing on ${hearingDateStr}.`;
+                  `to a ${this.getHearingType()} hearing on ${hearingDateStr}.`;
 
     const detail = (
       <p>
         To assign another veteran please use the "Schedule Veterans" link below.
         You can also use the hearings section below to view the hearing in new tab.<br /><br />
         <Link href="/hearings/schedule/assign">Back to Schedule Veterans</Link>
-      </p>;
+      </p>
     );
 
     return { title, detail };
@@ -230,13 +248,13 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   };
 
   formatHearingDate = () => {
-    const { selectedHearingDate, selectedHearingTime } = this.props;
+    const { selectedHearingDay, selectedHearingTime } = this.props;
 
-    if (!selectedHearingTime || !selectedHearingDate) {
+    if (!selectedHearingTime || !selectedHearingDay) {
       return null;
     }
 
-    const dateParts = selectedHearingDate.split('-');
+    const dateParts = selectedHearingDay.value.hearingDate.split('-');
     const year = parseInt(dateParts[0], 10);
     const month = parseInt(dateParts[1], 10) - 1;
     const day = parseInt(dateParts[2], 10);
@@ -265,7 +283,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   render = () => {
     const {
-      selectedHearingDate, selectedRegionalOffice,
+      selectedHearingDay, selectedRegionalOffice,
       selectedHearingTime
     } = this.props;
 
@@ -282,13 +300,13 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           changePrompt
           staticOptions={centralOfficeStaticEntry} />
 
-        {selectedRegionalOffice && <HearingDateDropdown
+        {selectedRegionalOffice && <HearingDayDropdown
           key={selectedRegionalOffice}
           regionalOffice={selectedRegionalOffice}
           onChange={(opt) => {
-            this.props.onHearingDateChange(opt.value);
+            this.props.onHearingDayChange(opt);
           }}
-          value={selectedHearingDate}
+          value={selectedHearingDay}
           readOnly={false}
           changePrompt
         />}
@@ -312,7 +330,7 @@ const mapStateToProps = (state: State, ownProps: Params) => ({
   selectedRegionalOffice: state.components.selectedRegionalOffice,
   regionalOfficeOptions: state.components.regionalOffices,
   hearingDay: state.ui.hearingDay,
-  selectedHearingDate: state.components.selectedHearingDate,
+  selectedHearingDay: state.components.selectedHearingDay,
   selectedHearingTime: state.components.selectedHearingTime
 });
 
@@ -324,7 +342,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
   onReceiveAmaTasks,
   onRegionalOfficeChange,
-  onHearingDateChange,
+  onHearingDayChange,
   onHearingTimeChange
 }, dispatch);
 
