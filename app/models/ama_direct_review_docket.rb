@@ -11,4 +11,8 @@ class AmaDirectReviewDocket < Docket
 
   # CMGTODO
   def time_until_due_of_oldest_appeal; end
+
+  def time_until_due_of_new_appeal
+    TIME_GOAL + BECOMES_DUE
+  end
 end

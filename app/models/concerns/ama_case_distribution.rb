@@ -176,12 +176,11 @@ module AmaCaseDistribution
   def interpolated_minimum_direct_review_proportion
     return @interpolated_minimum_direct_review_proportion if @interpolated_minimum_direct_review_proportion
 
-    current_due_time = AmaDirectReviewDocket::TIME_GOAL + AmaDirectReviewDocket::BECOMES_DUE
-    interpolator = 1 - (dockets[:direct_review].time_until_due_of_oldest_appeal / current_due_time)
+    t = 1 - (dockets[:direct_review].time_until_due_of_oldest_appeal /
+             dockets[:direct_review].time_until_due_of_new_appeal)
 
-    proportion =
-      (pacesetting_direct_review_proportion * interpolator * INTERPOLATED_DIRECT_REVIEW_PROPORTION_ADJUSTMENT)
-        .clamp(0, MAXIMUM_DIRECT_REVIEW_PROPORTION)
+    proportion = (pacesetting_direct_review_proportion * t * INTERPOLATED_DIRECT_REVIEW_PROPORTION_ADJUSTMENT)
+      .clamp(0, MAXIMUM_DIRECT_REVIEW_PROPORTION)
 
     @interpolated_minimum_direct_review_proportion = proportion
   end
