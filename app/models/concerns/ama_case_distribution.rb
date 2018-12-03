@@ -205,6 +205,7 @@ module ProportionHash
       .merge!(fixed)
   end
 
+  # rubocop:disable Metrics/MethodLength
   def stochastic_allocation(n)
     result = transform_values { |proportion| (n * proportion).floor }
     rem = probability_budget = iterations = n - result.values.reduce(0, :+)
@@ -212,16 +213,17 @@ module ProportionHash
     return result if rem == 0
 
     catch :complete do
-      each_with_index do |(key, proportion), i|
-        if i == count - 1
+      each do |key, proportion|
+        prop_rem = (n * proportion).modulo(1)
+
+        if prop_rem >= probability_budget
           result[key] += rem
           throw :complete
         end
 
-        probability = (n * proportion).modulo(1) / probability_budget
-
         iterations.times do
-          probability_budget -= probability
+          probability = prop_rem / probability_budget
+          probability_budget -= prop_rem / iterations
 
           next unless probability > rand
 
@@ -235,6 +237,7 @@ module ProportionHash
 
     result
   end
+  # rubocop:enable Metrics/MethodLength
 
   def all_zero?
     all? { |_, proportion| proportion == 0 }
