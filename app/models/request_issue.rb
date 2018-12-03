@@ -197,7 +197,8 @@ class RequestIssue < ApplicationRecord
         disposition: contention_disposition[:disposition],
         # use epe last_synced_at as a proxy for when the decision was made
         disposition_date: end_product_establishment.last_synced_at,
-        decision_review: review_request
+        decision_review: review_request,
+        benefit_type: benefit_type
       )
     end
   end
@@ -216,7 +217,8 @@ class RequestIssue < ApplicationRecord
         promulgation_date: rating_issue.promulgation_date,
         decision_text: rating_issue.decision_text,
         profile_date: rating_issue.profile_date,
-        decision_review: review_request
+        decision_review: review_request,
+        benefit_type: benefit_type
       )
     end
   end

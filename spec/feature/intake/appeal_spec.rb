@@ -203,7 +203,8 @@ RSpec.feature "Appeal Intake" do
       rating_issue_reference_id: "def456",
       rating_issue_profile_date: profile_date,
       description: "PTSD denied",
-      decision_date: nil
+      decision_date: nil,
+      benefit_type: "compensation"
     )
 
     expect(appeal.request_issues.last).to have_attributes(
@@ -211,7 +212,8 @@ RSpec.feature "Appeal Intake" do
       rating_issue_profile_date: nil,
       issue_category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      decision_date: 1.month.ago.to_date
+      decision_date: 1.month.ago.to_date,
+      benefit_type: "compensation"
     )
   end
 
