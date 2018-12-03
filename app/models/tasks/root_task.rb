@@ -7,8 +7,19 @@ class RootTask < GenericTask
 
   def when_child_task_completed; end
 
-  def available_actions(_user)
-    [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h]
+  def available_actions(user)
+    return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h] if MailTeam.singleton.user_has_access?(user)
+
+    return [{
+      label: 'Schedule Veteran',
+      value: 'modal/schedule_veteran'
+    }] if HearingsManagement.singleton.user_has_access?(user)
+
+    []
+  end
+
+  def no_actions_available?(_user)
+    status == Constants.TASK_STATUSES.completed
   end
 
   def no_actions_available?(user)
