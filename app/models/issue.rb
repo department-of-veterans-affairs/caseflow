@@ -185,15 +185,14 @@ class Issue
     }
   end
 
-  def intake_attributes(is_untimely: false)
+  def intake_attributes
     {
-      id: id,
+      vacols_id: id,
       vacols_sequence_id: vacols_sequence_id,
       description: friendly_description,
       disposition: disposition,
       close_date: close_date,
-      note: note,
-      is_untimely: is_untimely
+      note: note
     }
   end
 
