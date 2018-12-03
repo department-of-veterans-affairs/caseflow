@@ -10,7 +10,7 @@ import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 import { formatDateStr } from '../util/DateUtil';
 
-class HearingDateDropdown extends React.Component {
+class HearingDayDropdown extends React.Component {
   constructor(props) {
     super(props);
 
@@ -44,7 +44,7 @@ class HearingDateDropdown extends React.Component {
     _.forEach(this.props.hearingDates, (date) => {
       hearingDateOptions.push({
         label: formatDateStr(date.hearingDate),
-        value: formatDateStr(date.hearingDate, 'YYYY-MM-DD', 'YYYY-MM-DD')
+        value: { ...date, hearingDate: formatDateStr(date.hearingDate, 'YYYY-MM-DD', 'YYYY-MM-DD') }
       });
     });
 
@@ -96,7 +96,7 @@ class HearingDateDropdown extends React.Component {
   }
 }
 
-HearingDateDropdown.propTypes = {
+HearingDayDropdown.propTypes = {
   regionalOffice: PropTypes.string.isRequired,
   hearingDates: PropTypes.object,
   onChange: PropTypes.func,
@@ -115,4 +115,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveHearingDates
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(HearingDateDropdown);
+export default connect(mapStateToProps, mapDispatchToProps)(HearingDayDropdown);

@@ -21,10 +21,10 @@ export const onReceiveHearingDates = (hearingDates) => ({
   }
 });
 
-export const onHearingDateChange = (hearingDate) => ({
-  type: ACTIONS.HEARING_DATE_CHANGE,
+export const onHearingDayChange = (hearingDay) => ({
+  type: ACTIONS.HEARING_DAY_CHANGE,
   payload: {
-    hearingDate
+    hearingDay
   }
 });
 
