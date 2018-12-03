@@ -11,6 +11,30 @@ describe Appeal do
     end
   end
 
+  context "#special_issues" do
+    let(:appeal) { create(:appeal) }
+    let(:vacols_id) { nil }
+    let!(:request_issue) do
+      create(:request_issue, review_request: appeal, vacols_id: vacols_id)
+    end
+
+    subject { appeal.reload.special_issues }
+
+    context "no special conditions" do
+      it "is empty" do
+        expect(subject).to eq []
+      end
+    end
+
+    context "VACOLS opt-in" do
+      let(:vacols_id) { "something" }
+
+      it "includes VACOLS opt-in" do
+        expect(subject).to include(code: "VO", narrative: "VACOLS Opt-in")
+      end
+    end
+  end
+
   context "#docket_number" do
     context "when receipt_date is defined" do
       let(:appeal) do

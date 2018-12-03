@@ -20,7 +20,7 @@ export const initialState = {
   featureToggles: {},
   userRole: '',
   userCssId: '',
-  organizationIds: [],
+  organizations: [],
   activeOrganizationId: null,
   userIsVsoEmployee: false,
   feedbackUrl: '#',
@@ -28,7 +28,12 @@ export const initialState = {
   selectedAssignee: null,
   selectedAssigneeSecondary: null,
   veteranCaseListIsVisible: false,
-  canEditAod: false
+  canEditAod: false,
+  hearingDay: {
+    hearingDate: null,
+    hearingTime: null,
+    regionalOffice: null
+  }
 };
 
 const setMessageState = (state, message, msgType) => update(state, {
@@ -173,16 +178,22 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
         $set: action.payload.assigneeId
       }
     });
-  case ACTIONS.SET_ORGANIZATION_IDS:
+  case ACTIONS.SET_ORGANIZATIONS:
     return update(state, {
-      organizationIds: {
-        $set: action.payload.organizationIds
+      organizations: {
+        $set: action.payload.organizations
       }
     });
   case ACTIONS.SET_ACTIVE_ORGANIZATION_ID:
     return update(state, {
       activeOrganizationId: {
         $set: action.payload.activeOrganizationId
+      }
+    });
+  case ACTIONS.SET_HEARING_DAY:
+    return update(state, {
+      hearingDay: {
+        $set: action.payload
       }
     });
   default:

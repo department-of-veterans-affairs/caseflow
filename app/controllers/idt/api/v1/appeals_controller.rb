@@ -46,7 +46,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def tasks_assigned_to_user
     tasks = if user.attorney_in_vacols? || user.judge_in_vacols?
-              LegacyWorkQueue.tasks_with_appeals(user, role)[0].select { |task| task.appeal.active? }
+              LegacyWorkQueue.tasks_with_appeals(user, role)[0].select { |task| task.appeal.activated? }
             else
               []
             end
@@ -66,7 +66,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   end
 
   def appeals_by_file_number
-    appeals = LegacyAppeal.fetch_appeals_by_file_number(file_number).select(&:active?)
+    appeals = LegacyAppeal.fetch_appeals_by_file_number(file_number).select(&:activated?)
     if feature_enabled?(:idt_ama_appeals)
       appeals += Appeal.where(veteran_file_number: file_number)
     end

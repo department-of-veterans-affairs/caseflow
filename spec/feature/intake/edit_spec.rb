@@ -41,7 +41,7 @@ RSpec.feature "Edit issues" do
       promulgation_date: receipt_date,
       profile_date: profile_date,
       issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted" },
+        { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: "000" },
         { reference_id: "def456", decision_text: "PTSD denied" }
       ]
     )
@@ -53,11 +53,21 @@ RSpec.feature "Edit issues" do
       promulgation_date: DecisionReview.ama_activation_date - 5.days,
       profile_date: DecisionReview.ama_activation_date - 10.days,
       issues: [
-        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
-        { decision_text: "Issue before AMA Activation from RAMP",
-          associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" },
-          reference_id: "ramp_ref_id" }
+        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
       ]
+    )
+  end
+
+  let!(:rating_before_ama_from_ramp) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: DecisionReview.ama_activation_date - 5.days,
+      profile_date: DecisionReview.ama_activation_date - 11.days,
+      issues: [
+        { decision_text: "Issue before AMA Activation from RAMP",
+          reference_id: "ramp_ref_id" }
+      ],
+      associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
     )
   end
 
@@ -85,6 +95,7 @@ RSpec.feature "Edit issues" do
              veteran_file_number: veteran.file_number,
              receipt_date: receipt_date,
              docket_type: "evidence_submission",
+             veteran_is_not_claimant: false,
              legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
     end
 
@@ -248,7 +259,8 @@ RSpec.feature "Edit issues" do
         receipt_date: receipt_date,
         informal_conference: false,
         same_office: false,
-        benefit_type: "compensation"
+        benefit_type: "compensation",
+        veteran_is_not_claimant: true
       )
     end
 
@@ -294,7 +306,7 @@ RSpec.feature "Edit issues" do
         RequestIssue.create!(
           review_request: higher_level_review,
           issue_category: "Military Retired Pay",
-          description: "nonrating description",
+          description: "eligible nonrating description",
           contention_reference_id: "1234",
           ineligible_reason: nil,
           decision_date: Date.new(2018, 5, 1)
@@ -305,7 +317,7 @@ RSpec.feature "Edit issues" do
         RequestIssue.create!(
           review_request: higher_level_review,
           issue_category: "Active Duty Adjustments",
-          description: "nonrating description",
+          description: "untimely nonrating description",
           contention_reference_id: "12345",
           ineligible_reason: :untimely
         )
@@ -329,9 +341,19 @@ RSpec.feature "Edit issues" do
           rating_issue_profile_date: rating.profile_date,
           review_request: higher_level_review,
           description: "PTSD denied",
-          contention_reference_id: "123",
+          contention_reference_id: "111",
           ineligible_reason: :duplicate_of_issue_in_active_review,
           ineligible_due_to: ri_in_review
+        )
+      end
+
+      let!(:ri_previous_hlr) do
+        RequestIssue.create!(
+          rating_issue_reference_id: "abc123",
+          rating_issue_profile_date: rating.profile_date,
+          review_request: another_higher_level_review,
+          description: "Left knee granted",
+          contention_reference_id: "000"
         )
       end
 
@@ -341,8 +363,9 @@ RSpec.feature "Edit issues" do
           rating_issue_profile_date: rating.profile_date,
           review_request: higher_level_review,
           description: "Left knee granted",
-          contention_reference_id: "123",
-          ineligible_reason: :previous_higher_level_review
+          contention_reference_id: "222",
+          ineligible_reason: :previous_higher_level_review,
+          ineligible_due_to: ri_previous_hlr
         )
       end
 
@@ -360,7 +383,7 @@ RSpec.feature "Edit issues" do
       let!(:eligible_ri_before_ama) do
         RequestIssue.create!(
           rating_issue_reference_id: "ramp_ref_id",
-          rating_issue_profile_date: rating_before_ama.profile_date,
+          rating_issue_profile_date: rating_before_ama_from_ramp.profile_date,
           review_request: higher_level_review,
           description: "Issue before AMA Activation from RAMP",
           contention_reference_id: "123456",
@@ -392,6 +415,12 @@ RSpec.feature "Edit issues" do
           vacols_sequence_id: "2",
           ineligible_reason: :legacy_appeal_not_eligible
         )
+        
+      let(:ep_claim_id) do
+        EndProductEstablishment.find_by(
+          source: higher_level_review,
+          code: "030HLRNR"
+        ).reference_id
       end
 
       before do
@@ -410,10 +439,6 @@ RSpec.feature "Edit issues" do
       end
 
       it "shows the Higher-Level Review Edit page with ineligibility messages" do
-        ep_claim_id = EndProductEstablishment.find_by(
-          source: higher_level_review,
-          code: "030HLRNR"
-        ).reference_id
         visit "higher_level_reviews/#{ep_claim_id}/edit"
 
         expect(page).to have_content(
@@ -437,6 +462,94 @@ RSpec.feature "Edit issues" do
         )
         expect(page).to have_content(
           "#{ri_legacy_issue_ineligible.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
+        )
+      end
+
+      it "re-applies eligibility check on remove/re-add of ineligible issue" do
+        visit "higher_level_reviews/#{ep_claim_id}/edit"
+
+        expect(page).to have_content("6 issues")
+        expect_eligible_issue(1)
+        expect_ineligible_issue(2)
+        expect_ineligible_issue(3)
+        expect_ineligible_issue(4)
+        expect_ineligible_issue(5)
+        expect_eligible_issue(6)
+
+        # remove and re-add each ineligible issue. when re-added, it should always be issue 6.
+
+        # 2
+        ri_with_previous_hlr_issue_num = find_intake_issue_number_by_text(ri_with_previous_hlr.contention_text)
+        click_remove_intake_issue(ri_with_previous_hlr_issue_num)
+        click_remove_issue_confirmation
+
+        expect(page).to_not have_content(
+          "#{ri_with_previous_hlr.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review}"
+        )
+
+        click_intake_add_issue
+        add_intake_rating_issue(ri_with_previous_hlr.contention_text)
+
+        expect_ineligible_issue(6)
+        expect(page).to have_content(
+          "#{ri_with_previous_hlr.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review}"
+        )
+
+        # 3
+        ri_in_review_issue_num = find_intake_issue_number_by_text(ri_in_review.contention_text)
+        click_remove_intake_issue(ri_in_review_issue_num)
+        click_remove_issue_confirmation
+
+        expect(page).to_not have_content(
+          "#{ri_in_review.contention_text} is ineligible because it's already under review as a Higher-Level Review"
+        )
+
+        click_intake_add_issue
+        add_intake_rating_issue(ri_in_review.contention_text)
+
+        expect_ineligible_issue(6)
+        expect(page).to have_content(
+          "#{ri_in_review.contention_text} is ineligible because it's already under review as a Higher-Level Review"
+        )
+
+        # 4
+        untimely_request_issue_num = find_intake_issue_number_by_text(untimely_request_issue.contention_text)
+        click_remove_intake_issue(untimely_request_issue_num)
+        click_remove_issue_confirmation
+
+        expect(page).to_not have_content(
+          "#{untimely_request_issue.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
+        )
+
+        click_intake_add_issue
+        click_intake_no_matching_issues
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: untimely_request_issue.contention_text,
+          date: "01/01/2016"
+        )
+        add_untimely_exemption_response("No", "I am a nonrating exemption note")
+
+        expect_ineligible_issue(6)
+        expect(page).to have_content(
+          "#{untimely_request_issue.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
+        )
+
+        # 5
+        ri_before_ama_num = find_intake_issue_number_by_text(ri_before_ama.contention_text)
+        click_remove_intake_issue(ri_before_ama_num)
+        click_remove_issue_confirmation
+
+        expect(page).to_not have_content(
+          "#{ri_before_ama.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+        )
+
+        click_intake_add_issue
+        add_intake_rating_issue(ri_before_ama.contention_text)
+
+        expect_ineligible_issue(6)
+        expect(page).to have_content(
+          "#{ri_before_ama.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
         )
       end
     end
@@ -640,6 +753,8 @@ RSpec.feature "Edit issues" do
         add_intake_unidentified_issue("This is an unidentified issue")
         expect(page).to have_content("5 issues")
         expect(page).to have_content("This is an unidentified issue")
+        expect(find_intake_issue_by_number(5)).to have_css(".issue-unidentified")
+        expect_ineligible_issue(5)
 
         # add issue before AMA
         click_intake_add_issue
@@ -647,6 +762,7 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content(
           "Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
         )
+        expect_ineligible_issue(6)
 
         # add RAMP issue before AMA
         click_intake_add_issue
@@ -873,7 +989,8 @@ RSpec.feature "Edit issues" do
         veteran_file_number: veteran.file_number,
         receipt_date: receipt_date,
         benefit_type: "compensation",
-        is_dta_error: is_dta_error
+        is_dta_error: is_dta_error,
+        veteran_is_not_claimant: true
       )
     end
 

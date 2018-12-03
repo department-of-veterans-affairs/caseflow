@@ -12,7 +12,7 @@ const getNonVeteranClaimant = (intakeData) => {
 
 const getClaimantField = (formType, veteran, intakeData) => {
   if (formType === 'appeal' || intakeData.benefitType === 'compensation') {
-    const claimant = intakeData.claimantNotVeteran ? getNonVeteranClaimant(intakeData) : veteran.name;
+    const claimant = intakeData.veteranIsNotClaimant ? getNonVeteranClaimant(intakeData) : veteran.name;
 
     return [{
       field: 'Claimant',

@@ -117,8 +117,8 @@ describe RampClosedAppeal do
     end
   end
 
-  context ".reclose_all!" do
-    subject { RampClosedAppeal.reclose_all! }
+  context ".appeals_to_reclose" do
+    subject { RampClosedAppeal.appeals_to_reclose }
 
     let!(:other_ramp_closed_appeals) do
       [
@@ -168,16 +168,10 @@ describe RampClosedAppeal do
       )
     end
 
-    it "finds reopened appeals based off of ramp closed appeals and recloses them" do
-      subject
-
-      # Test it recloses appeal with no canceled EP
-      expect(vacols_case.reload.bfdc).to eq("P")
-
-      # Test it rolls back Ramp Election if canceled EP
-      expect(ramp_election_canceled_ep.reload.established_at).to be_nil
-      expect { ramp_closed_appeals_canceled_ep.first.reload }.to raise_error ActiveRecord::RecordNotFound
-      expect { ramp_closed_appeals_canceled_ep.last.reload }.to raise_error ActiveRecord::RecordNotFound
+    it "finds reopened appeals based off of ramp closed appeals" do
+      expect(subject.count).to eq 3
+      expect(subject).to include ramp_closed_appeals_canceled_ep.first
+      expect(subject).to include ramp_closed_appeals_canceled_ep.last
     end
   end
 end

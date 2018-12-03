@@ -6,20 +6,23 @@ describe RatingIssue do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
+  let(:profile_date) { Time.zone.today - 30 }
   let(:promulgation_date) { Time.zone.today - 30 }
   let(:profile_date) { Time.zone.today - 40 }
 
-  context ".from_ui_hash" do
-    subject { RatingIssue.from_ui_hash(ui_hash) }
+  context ".deserialize" do
+    subject { RatingIssue.deserialize(rating_issue.serialize) }
 
-    let(:ui_hash) do
-      {
+    let(:rating_issue) do
+      RatingIssue.new(
         reference_id: "NBA",
         participant_id: "123",
+        profile_date: profile_date,
         promulgation_date: promulgation_date,
         decision_text: "This broadcast may not be reproduced",
-        extra_attribute: "foobar"
-      }
+        associated_end_products: [],
+        rba_contentions_data: [{}]
+      )
     end
 
     it { is_expected.to be_a(RatingIssue) }
@@ -28,8 +31,10 @@ describe RatingIssue do
       is_expected.to have_attributes(
         reference_id: "NBA",
         participant_id: "123",
+        profile_date: profile_date,
         promulgation_date: promulgation_date,
-        decision_text: "This broadcast may not be reproduced"
+        decision_text: "This broadcast may not be reproduced",
+        rba_contentions_data: [{}]
       )
     end
   end
@@ -188,47 +193,6 @@ describe RatingIssue do
 
     it "flags request_issue as having a previous higher level review" do
       expect(subject.source_higher_level_review).to eq(request_issue.id)
-    end
-  end
-
-  context "#save_decision_issue" do
-    let(:contention_ref_id) { 123 }
-    let(:participant_id) { 456 }
-    let(:reference_id) { "ref-id" }
-    let!(:request_issue) { create(:request_issue, contention_reference_id: contention_ref_id) }
-
-    subject do
-      RatingIssue.new(
-        reference_id: reference_id,
-        profile_date: Time.zone.today,
-        rba_contentions_data: [{ cntntn_id: contention_ref_id }],
-        promulgation_date: promulgation_date,
-        participant_id: participant_id
-      )
-    end
-
-    it "correctly associates DecisionIssue with RequestIssue based on contention_reference_id" do
-      subject.save_decision_issue
-
-      expect(subject.source_request_issue).to eq(request_issue)
-      expect(subject.decision_issue).to be_a(DecisionIssue)
-      expect(subject.decision_issue.rating_issue_reference_id).to eq(reference_id)
-      expect(subject.decision_issue.request_issues.first).to eq(request_issue)
-      expect(RequestDecisionIssue.where(decision_issue: subject.decision_issue).first).to_not be_nil
-    end
-
-    it "does not save duplicates" do
-      decision_issue = create(:decision_issue, rating_issue_reference_id: reference_id, participant_id: participant_id)
-
-      expect(subject.save_decision_issue).to eq(nil)
-      expect(subject.decision_issue).to eq(decision_issue)
-      expect(decision_issue.request_issues.first).to_not eq(request_issue)
-    end
-
-    it "returns nil if no source_request_issue is found" do
-      subject.contention_reference_id = "no-such-id"
-
-      expect(subject.save_decision_issue).to eq(nil)
     end
   end
 end

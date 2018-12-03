@@ -8,6 +8,7 @@ RSpec.feature "Higher-Level Review" do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
+    FeatureToggle.disable!(:intake_enable_add_issues_page)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 11, 28))
@@ -115,7 +116,19 @@ RSpec.feature "Higher-Level Review" do
       "Receipt date cannot be in the future."
     )
     expect(page).to have_content(
-      "Please select an option."
+      "What is the Benefit Type? Please select an option."
+    )
+    expect(page).to have_content(
+      "Was an informal conference requested? Please select an option."
+    )
+    expect(page).to have_content(
+      "Was an interview by the same office requested? Please select an option."
+    )
+    expect(page).to have_content(
+      "Is the claimant someone other than the Veteran? Please select an option."
+    )
+    expect(page).to have_content(
+      "Did they agree to withdraw their issues from the legacy system? Please select an option."
     )
 
     within_fieldset("What is the Benefit Type?") do
@@ -151,6 +164,15 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_content("What is the payee code for this claimant?")
     expect(page).to have_content("Bob Vance, Spouse")
     expect(page).to_not have_content("Cathy Smith, Child")
+
+    safe_click "#button-submit-review"
+
+    expect(page).to have_content(
+      "add them in VBMS, then refresh this page. Please select an option."
+    )
+    expect(page).to have_content(
+      "What is the payee code for this claimant? Please select an option."
+    )
 
     find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
 
@@ -520,19 +542,19 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  def start_higher_level_review(test_veteran, is_comp: true, claim_participant_id: nil, legacy_opt_in_approved: false)
+  def start_higher_level_review(test_veteran, is_comp: true, claim_participant_id: nil, legacy_opt_in_approved: false, veteran_is_not_claimant: false)
     higher_level_review = HigherLevelReview.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: receipt_date,
       informal_conference: false, same_office: false,
       benefit_type: is_comp ? "compensation" : "education",
-      legacy_opt_in_approved: legacy_opt_in_approved
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: veteran_is_not_claimant
     )
 
     intake = HigherLevelReviewIntake.create!(
       veteran_file_number: test_veteran.file_number,
-      user: current_user,
-      started_at: 5.minutes.ago,
+      user: current_user, started_at: 5.minutes.ago,
       detail: higher_level_review
     )
 
@@ -572,14 +594,13 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
   end
 
-  scenario "redirects to add_issues with feature flag enabled" do
+  it "redirects to add_issues with feature flag enabled" do
     FeatureToggle.enable!(:intake_enable_add_issues_page)
     start_higher_level_review(veteran_no_ratings)
     visit "/intake"
 
     safe_click "#button-submit-review"
     expect(page).to have_current_path("/intake/add_issues")
-
     FeatureToggle.disable!(:intake_enable_add_issues_page)
   end
 
@@ -651,11 +672,21 @@ RSpec.feature "Higher-Level Review" do
         promulgation_date: DecisionReview.ama_activation_date - 5.days,
         profile_date: DecisionReview.ama_activation_date - 10.days,
         issues: [
-          { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
-          { decision_text: "Issue before AMA Activation from RAMP",
-            associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" },
-            reference_id: "ramp_ref_id" }
+          { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
         ]
+      )
+    end
+
+    let!(:before_ama_rating_from_ramp) do
+      Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: DecisionReview.ama_activation_date - 5.days,
+        profile_date: DecisionReview.ama_activation_date - 11.days,
+        issues: [
+          { decision_text: "Issue before AMA Activation from RAMP",
+            reference_id: "ramp_ref_id" }
+        ],
+        associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
       )
     end
 
@@ -703,7 +734,11 @@ RSpec.feature "Higher-Level Review" do
         relationship_type: "Spouse"
       )
 
-      higher_level_review, = start_higher_level_review(veteran, claim_participant_id: "5382910292")
+      higher_level_review, = start_higher_level_review(
+        veteran,
+        claim_participant_id: "5382910292",
+        veteran_is_not_claimant: true
+      )
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add / Remove Issues")

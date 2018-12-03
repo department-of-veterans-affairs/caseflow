@@ -55,4 +55,50 @@ describe LegacyIssueOptin do
       end
     end
   end
+
+  context "#perform!" do
+    before do
+      RequestStore[:current_user] = user
+    end
+
+    let(:vacols_case_issue) { create(:case_issue) }
+    let(:vacols_case_issue2) { create(:case_issue) }
+    let(:vacols_case) { create(:case, :status_advance, case_issues: [vacols_case_issue, vacols_case_issue2]) }
+    let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let(:user) { Generators::User.build }
+    let(:request_issue) do
+      create(:request_issue, vacols_id: vacols_case_issue.isskey, vacols_sequence_id: vacols_case_issue.issseq)
+    end
+    let(:issue) { Issue.load_from_vacols(vacols_case_issue.reload.attributes) }
+
+    subject { create(:legacy_issue_optin, request_issue: request_issue) }
+
+    it "closes VACOLS issue with disposition O" do
+      subject.perform!
+
+      vacols_case_issue.reload
+      vacols_case.reload
+      expect(vacols_case_issue.issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
+      expect(issue.disposition).to eq(:ama_opt_in)
+      expect(issue).to be_closed
+      expect(vacols_case).to_not be_closed
+      expect(subject).to be_processed
+    end
+
+    context "VACOLS case has no more open issues" do
+      let(:vacols_case) { create(:case, :status_advance, case_issues: [vacols_case_issue]) }
+
+      it "also closes VACOLS case with disposition O" do
+        subject.perform!
+
+        vacols_case_issue.reload
+        vacols_case.reload
+        expect(vacols_case).to be_closed
+        expect(vacols_case.bfdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
+        expect(issue.disposition).to eq(:ama_opt_in)
+        expect(issue).to be_closed
+        expect(subject).to be_processed
+      end
+    end
+  end
 end

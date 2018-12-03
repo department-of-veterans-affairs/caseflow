@@ -46,6 +46,7 @@ describe EndProductEstablishment do
       benefit_type_code: benefit_type_code,
       doc_reference_id: doc_reference_id,
       development_item_reference_id: development_item_reference_id,
+      established_at: 30.days.ago,
       user: current_user
     )
   end
@@ -570,67 +571,61 @@ describe EndProductEstablishment do
     end
   end
 
-  context "#sync_decision_issues!" do
-    let(:rating) do
+  context "#associated_rating" do
+    subject { end_product_establishment.associated_rating }
+    let(:associated_claims) { [] }
+
+    let(:promulgation_date) { end_product_establishment.established_at + 1.day }
+
+    let!(:rating) do
       Generators::Rating.build(
-        issues: issues
+        participant_id: veteran.participant_id,
+        promulgation_date: promulgation_date,
+        associated_claims: associated_claims
       )
     end
 
-    let(:contention_ref_id) { "123456" }
-    let(:reference_id) { "Issue1" }
-
-    let(:issues) do
-      [
-        {
-          reference_id: reference_id,
-          decision_text: "Decision1",
-          contention_reference_id: contention_ref_id,
-          profile_date: Time.zone.today
-        },
-        { reference_id: "Issue2", decision_text: "Decision2" }
-      ]
-    end
-
-    let(:higher_level_review) { create(:higher_level_review) }
-    let(:end_product_establishment) { create(:end_product_establishment, :cleared, source: higher_level_review) }
-    let!(:request_issues) do
-      [
-        create(
-          :request_issue,
-          review_request: higher_level_review,
-          end_product_establishment: end_product_establishment,
-          contention_reference_id: contention_ref_id
-        )
-      ]
-    end
-
-    subject { end_product_establishment.sync_decision_issues! }
-
-    before do
-      allow(end_product_establishment).to receive(:potential_decision_ratings).and_return([rating])
-    end
-
-    it "connects rating issues with request issues based on contention_reference_id" do
-      expect(request_issues.first.decision_issues.count).to eq(0)
-
-      subject
-
-      expect(request_issues.first.decision_issues.count).to eq(1)
-      expect(request_issues.first.decision_issues.first.rating_issue_reference_id).to eq(reference_id)
-    end
-
-    context "EPE has cleared but rating has not yet been posted" do
-      before do
-        allow(end_product_establishment).to receive(:potential_decision_ratings).and_return([])
+    context "when ep is one of many associated to the rating" do
+      let(:associated_claims) do
+        [
+          { clm_id: "09123", bnft_clm_tc: end_product_establishment.code },
+          { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code }
+        ]
       end
 
-      it "marks the RequestIssue for later sync via DecisionRatingIssueSyncJob" do
-        subject
+      it {
+        is_expected.to have_attributes(
+          participant_id: rating.participant_id,
+          promulgation_date: rating.promulgation_date
+        )
+      }
+    end
 
-        request_issue = end_product_establishment.request_issues.first
-        expect(request_issue.submitted?).to eq(true)
-        expect(request_issue.processed?).to eq(false)
+    context "when associated rating only has 1 ep" do
+      let(:associated_claims) do
+        [
+          { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code }
+        ]
+      end
+
+      it {
+        is_expected.to have_attributes(
+          participant_id: rating.participant_id,
+          promulgation_date: rating.promulgation_date
+        )
+      }
+
+      context "when rating is before established_at date" do
+        let!(:another_rating) do
+          Generators::Rating.build(
+            participant_id: veteran.participant_id,
+            promulgation_date: end_product_establishment.established_at + 1.day,
+            associated_claims: []
+          )
+        end
+        let(:promulgation_date) { end_product_establishment.established_at - 1.day }
+
+        it { is_expected.to eq(nil) }
       end
     end
   end
