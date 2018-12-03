@@ -91,10 +91,7 @@ module IntakeHelpers
     expect(find_intake_issue_by_number(number)).to_not have_css(".not-eligible")
   end
 
-  # rubocop:disable Metrics/AbcSize
-  # rubocop:disable Metrics/MethodLength
-  def setup_legacy_opt_in_appeals(veteran_file_number)
-    # Active and eligible
+  def setup_active_eligible_legacy_appeal(veteran_file_number)
     create(:legacy_appeal, vacols_case:
       create(
         :case,
@@ -111,8 +108,9 @@ module IntakeHelpers
                     Generators::Issue.build(id: "vacols1", vacols_sequence_id: 1, codes: %w[02 15 03 5250]),
                     Generators::Issue.build(id: "vacols1", vacols_sequence_id: 2, codes: %w[02 15 03 5251])
                   ])
+  end
 
-    # Active and not eligible
+  def setup_active_ineligible_appeal(veteran_file_number)
     create(:legacy_appeal, vacols_case:
       create(:case,
              :status_active,
@@ -127,8 +125,9 @@ module IntakeHelpers
                     Generators::Issue.build(id: "vacols2", vacols_sequence_id: 1, codes: %w[02 15 03 5243]),
                     Generators::Issue.build(id: "vacols2", vacols_sequence_id: 2, codes: %w[02 15 03 5242])
                   ])
+  end
 
-    # Not active and eligible
+  def setup_inactive_eligible_appeal(veteran_file_number)
     create(:legacy_appeal, vacols_case:
       create(:case,
              :status_complete,
@@ -143,8 +142,9 @@ module IntakeHelpers
                     Generators::Issue.build(id: "vacols3", vacols_sequence_id: 1, codes: %w[02 15 03 5254]),
                     Generators::Issue.build(id: "vacols3", vacols_sequence_id: 2, codes: %w[02 15 03 5255])
                   ])
+  end
 
-    # Not active and not eligible
+  def setup_inactive_ineligible_appeal(veteran_file_number)
     create(:legacy_appeal, vacols_case:
       create(:case,
              :status_complete,
@@ -160,7 +160,12 @@ module IntakeHelpers
                     Generators::Issue.build(id: "vacols4", vacols_sequence_id: 2, codes: %w[02 15 03 5011])
                   ])
   end
-  # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/AbcSize
+
+  def setup_legacy_opt_in_appeals(veteran_file_number)
+    setup_active_eligible_legacy_appeal(veteran_file_number)
+    setup_active_ineligible_legacy_appeal(veteran_file_number)
+    setup_inactive_eligible_legacy_appeal(veteran_file_number)
+    setup_inactive_ineligible_legacy_appeal(veteran_file_number)
+  end
 end
 # rubocop:enable Metrics/ModuleLength
