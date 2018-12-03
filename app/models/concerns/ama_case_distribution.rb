@@ -207,11 +207,9 @@ module ProportionHash
 
   def stochastic_allocation(n)
     result = transform_values { |proportion| (n * proportion).floor }
-    rem = n - result.values.reduce(0, :+)
+    rem = probability_budget = iterations = n - result.values.reduce(0, :+)
 
     return result if rem == 0
-
-    iterations = rem
 
     catch :complete do
       each_with_index do |(key, proportion), i|
@@ -220,9 +218,11 @@ module ProportionHash
           throw :complete
         end
 
-        probability = (n * proportion).modulo(1) / iterations
+        probability = (n * proportion).modulo(1) / probability_budget
 
         iterations.times do
+          probability_budget -= probability
+
           next unless probability > rand
 
           result[key] += 1
