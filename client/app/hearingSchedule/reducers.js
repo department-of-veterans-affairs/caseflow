@@ -267,10 +267,34 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return update(state, {
       $toggle: ['filterVljIsOpen']
     });
-  case ACTIONS.SET_MODAL_ERRORS:
+  case ACTIONS.SELECT_HEARING_TYPE:
     return update(state, {
-      modalErrors: {
-        $set: action.payload.errors
+      hearingType: {
+        $set: action.payload.hearingType
+      }
+    });
+  case ACTIONS.SELECT_VLJ:
+    return update(state, {
+      vlj: {
+        $set: action.payload.vlj
+      }
+    });
+  case ACTIONS.SELECT_COORDINATOR:
+    return update(state, {
+      coordinator: {
+        $set: action.payload.coordinator
+      }
+    });
+  case ACTIONS.SELECT_HEARING_ROOM:
+    return update(state, {
+      hearingRoom: {
+        $set: action.payload.hearingRoom
+      }
+    });
+  case ACTIONS.SET_NOTES:
+    return update(state, {
+      notes: {
+        $set: action.payload.notes
       }
     });
   default:

@@ -15,7 +15,11 @@ import {
   onHearingNotesUpdate,
   onHearingDispositionUpdate,
   onHearingDateUpdate,
-  onHearingTimeUpdate
+  onHearingTimeUpdate,
+  selectHearingRoom,
+  selectVlj,
+  selectHearingCoordinator,
+  setNotes
 } from '../actions';
 import HearingDayEditModal from "../components/HearingDayEditModal";
 import {formatDateStr} from "../../util/DateUtil";
@@ -75,11 +79,21 @@ export class DailyDocketContainer extends React.Component {
   openModal = () => {
     this.setState({showModalAlert: false});
     this.setState({modalOpen: true});
+
+    this.props.selectHearingRoom('');
+    this.props.selectVlj('');
+    this.props.selectHearingCoordinator('');
+    this.props.setNotes('');
   }
 
   closeModal = () => {
     this.setState({modalOpen: false});
     this.setState({showModalAlert: true})
+
+    console.log("Edited hearing room: ", this.props.hearingRoom);
+    console.log("Edited hearing day vlj: ", this.props.vlj);
+    console.log("Edited hearing day coordinator: ", this.props.coordinator);
+    console.log("Edited hearing day notes: ", this.props.notes);
   }
 
   cancelModal = () => {
@@ -141,9 +155,9 @@ const mapStateToProps = (state) => ({
   hearings: state.hearingSchedule.hearings,
   hearingDayOptions: state.hearingSchedule.hearingDayOptions,
   saveSuccessful: state.hearingSchedule.saveSuccessful,
-  selectedVLJ: state.hearingSchedule.selectedVLJ,
-  selectedCoordinator: state.hearingSchedule.selectedCoordinator,
-  selectedRoom: state.hearingSchedule.selectedRoom,
+  vlj: state.hearingSchedule.vlj,
+  coordinator: state.hearingSchedule.coordinator,
+  hearingRoom: state.hearingSchedule.hearingRoom,
   notes: state.hearingSchedule.notes
 });
 
@@ -155,7 +169,11 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onHearingNotesUpdate,
   onHearingDispositionUpdate,
   onHearingDateUpdate,
-  onHearingTimeUpdate
+  onHearingTimeUpdate,
+  selectHearingRoom,
+  selectVlj,
+  selectHearingCoordinator,
+  setNotes
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer);

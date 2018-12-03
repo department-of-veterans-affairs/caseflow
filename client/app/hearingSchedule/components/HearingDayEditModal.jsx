@@ -8,12 +8,11 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import {fullWidth} from "../../queue/constants";
-import Dropdown from '../../components/Dropdown'
+import SearchableDropdown from '../../components/SearchableDropdown'
 import Checkbox from '../../components/Checkbox'
 import TextareaField from '../../components/TextareaField';
 import {bindActionCreators} from "redux";
-import { onSelectedHearingDayChange } from "../actions";
-import { onRegionalOfficeChange } from '../../components/common/actions'
+import {selectHearingCoordinator, selectVlj, selectHearingRoom, setNotes} from "../actions";
 
 const notesFieldStyling = css({
   height: '100px',
@@ -21,24 +20,24 @@ const notesFieldStyling = css({
 });
 
 const roomOptions = [
-    {displayText: "", value: ""},
-    {displayText: "1W.0002", value: "1"},
-    {displayText: "1W.0003", value: "2"}
+    {label: "", value: ""},
+    {label: "1W.0002", value: "1"},
+    {label: "1W.0003", value: "2"}
   ];
 
 // Next two options to be replaced by redux state once we determine
 // the proper queries to identify these two sets of users.
 const vljOptions = [
-  {displayText: "", value: ""},
-  {displayText: "Anjali Q. Abshire", value: "BVAAABSHIRE"},
-  {displayText: "Jaida Y Wehner", value: "BVAJWEHNER"},
-  {displayText: "Obie F Franecki", value: "BVAOFRANECKI"}
+  {label: "", value: ""},
+  {label: "Anjali Q. Abshire", value: "BVAAABSHIRE"},
+  {label: "Jaida Y Wehner", value: "BVAJWEHNER"},
+  {label: "Obie F Franecki", value: "BVAOFRANECKI"}
 ];
 
 const coordinatorOptions = [
-  {displayText: "", value: ""},
-  {displayText: "Thomas A Warner", value: "BVATWARNER"},
-  {displayText: "Mackenzie M Gerhold", value: "BVAMGERHOLD"}
+  {label: "", value: ""},
+  {label: "Thomas A Warner", value: "BVATWARNER"},
+  {label: "Mackenzie M Gerhold", value: "BVAMGERHOLD"}
 ];
 
 const titleStyling = css({
@@ -59,10 +58,6 @@ class HearingDayEditModal extends React.Component {
       modifyRoom: false,
       modifyVlj: false,
       modifyCoordinator: false,
-      selectedRoom: '',
-      selectedVLJ: '',
-      selectedCoordinator: '',
-      notes: ''
     };
   }
 
@@ -75,7 +70,6 @@ class HearingDayEditModal extends React.Component {
   };
 
   onClickConfirm = () => {
-    //validation
     console.log("state at confirm is: ", this.state);
     this.props.closeModal();
   };
@@ -101,19 +95,19 @@ class HearingDayEditModal extends React.Component {
   };
 
   onRoomChange = (value) => {
-    this.setState({selectedRoom: value});
+    this.props.selectHearingRoom(value);
   };
 
   onVljChange = (value) => {
-    this.setState({selectedVlj: value});
+    this.props.selectVlj(value);
   };
 
   onCoordinatorChange = (value) => {
-    this.setState({selectedCoordinator: value});
+    this.props.selectHearingCoordinator(value);
   };
 
   onNotesChange = (value) => {
-    this.setState({notes: value})
+    this.props.setNotes(value);
   }
 
   modalMessage = () => {
@@ -123,50 +117,53 @@ class HearingDayEditModal extends React.Component {
           name="roomEdit"
           label="Change Room"
           strongLabel={true}
-          checked={this.state.modifyRoom}
+          value={this.state.modifyRoom}
           onChange={this.onModifyRoom} />
         <Checkbox
           name="vljEdit"
           label="Change VLJ"
           strongLabel={true}
-          checked={this.state.modifyVlj}
+          value={this.state.modifyVlj}
           onChange={this.onModifyVlj} />
         <Checkbox
           name="coordinatorEdit"
           label="Change Coordinator"
           strongLabel={true}
-          checked={this.state.modifyCoordinator}
+          value={this.state.modifyCoordinator}
           onChange={this.onModifyCoordinator} />
-        <Dropdown
+        <SearchableDropdown
           name="room"
           label="Select Room"
           strongLabel={true}
           readOnly={!this.state.modifyRoom}
-          value={this.state.selectedRoom}
+          value={this.props.hearingRoom}
           onChange={this.onRoomChange}
-          options={roomOptions}/>
-        <Dropdown
+          options={roomOptions}
+          placeholder="Select..." />
+        <SearchableDropdown
           name="vlj"
           label="Select VLJ"
           strongLabel={true}
           readOnly={!this.state.modifyVlj}
-          value={this.state.selectedVLJ}
+          value={this.props.vlj}
           onChange={this.onVljChange}
-          options={vljOptions}/>
-        <Dropdown
+          options={vljOptions}
+          placeholder="Select..."/>
+        <SearchableDropdown
           name="coordinator"
           label="Select Hearing Coordinator"
           strongLabel={true}
           readOnly={!this.state.modifyCoordinator}
-          value={this.state.selectedCoordinator}
+          value={this.props.coordinator}
           onChange={this.onCoordinatorChange}
-          options={coordinatorOptions}/>
+          options={coordinatorOptions}
+          placeholder="Select..."/>
         <TextareaField
           name="Notes"
           strongLabel={true}
           onChange={this.onNotesChange}
           textAreaStyling={notesFieldStyling}
-          value={this.state.notes} />
+          value={this.props.notes} />
       </div>
     </React.Fragment>
   };
@@ -196,11 +193,16 @@ HearingDayEditModal.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  selectedHearingDay: state.hearingSchedule.selectedHearingDay
+  vlj: state.hearingSchedule.vlj,
+  coordinator: state.hearingSchedule.coordinator,
+  notes: state.hearingSchedule.notes
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onSelectedHearingDayChange,
+  selectVlj,
+  selectHearingCoordinator,
+  selectHearingRoom,
+  setNotes,
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HearingDayEditModal));

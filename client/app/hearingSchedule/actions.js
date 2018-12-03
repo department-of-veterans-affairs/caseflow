@@ -236,9 +236,38 @@ export const toggleVljFilterVisibility = () => ({
   type: ACTIONS.TOGGLE_VLJ_FILTER_DROPDOWN
 });
 
-export const setModalErrors = (errors) => ({
-  type: ACTIONS.SET_MODAL_ERRORS,
+export const selectHearingType = (hearingType) => ({
+  type: ACTIONS.SELECT_HEARING_TYPE,
   payload: {
-    errors
+    hearingType
+  }
+});
+
+export const selectVlj = (vlj) => ({
+  type: ACTIONS.SELECT_VLJ,
+  payload: {
+    vlj
+  }
+});
+
+export const selectHearingCoordinator = (coordinator) => ({
+  type: ACTIONS.SELECT_COORDINATOR,
+  payload: {
+    coordinator
+  }
+});
+
+export const selectHearingRoom = (hearingRoom) => ({
+  type: ACTIONS.SELECT_HEARING_ROOM,
+  payload: {
+    hearingRoom
+  }
+});
+
+
+export const setNotes = (notes) => ({
+  type: ACTIONS.SET_NOTES,
+  payload: {
+    notes
   }
 });

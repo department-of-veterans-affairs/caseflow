@@ -8,7 +8,11 @@ import {
   onViewStartDateChange,
   onViewEndDateChange,
   onReceiveHearingSchedule,
-  onSelectedHearingDayChange
+  onSelectedHearingDayChange,
+  selectHearingType,
+  selectVlj,
+  selectHearingCoordinator,
+  setNotes
 } from '../actions';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
@@ -67,11 +71,22 @@ export class ListScheduleContainer extends React.Component {
     this.setState({showModalAlert: false});
     this.setState({modalOpen: true});
     this.props.onSelectedHearingDayChange('');
+    this.props.selectHearingType('');
+    this.props.selectVlj('');
+    this.props.selectHearingCoordinator('');
+    this.props.setNotes('');
   }
 
   closeModal = () => {
     this.setState({modalOpen: false});
-    this.setState({showModalAlert: true})
+    this.setState({showModalAlert: true});
+
+    console.log("Added Hearing Day date: ", this.props.selectedHearingDay);
+    console.log("Added hearing day type: ", this.props.hearingType);
+    console.log("Added hearing day vlj: ", this.props.vlj);
+    console.log("Added hearing day coordinator: ", this.props.coordinator);
+    console.log("Added hearing day notes: ", this.props.notes);
+    console.log("redux RO: ", this.props.selectedRegionalOffice);
   }
 
   cancelModal = () => {
@@ -130,8 +145,9 @@ const mapStateToProps = (state) => ({
   endDate: state.hearingSchedule.viewEndDate,
   selectedHearingDay: state.hearingSchedule.selectedHearingDay,
   selectedRegionalOffice: state.components.selectedRegionalOffice,
-  selectedVLJ: state.hearingSchedule.selectedVLJ,
-  selectedCoordinator: state.hearingSchedule.selectedCoordinator,
+  hearingType: state.hearingSchedule.hearingType,
+  vlj: state.hearingSchedule.vlj,
+  coordinator: state.hearingSchedule.coordinator,
   notes: state.hearingSchedule.notes
 });
 
@@ -139,7 +155,11 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onViewStartDateChange,
   onViewEndDateChange,
   onReceiveHearingSchedule,
-  onSelectedHearingDayChange
+  onSelectedHearingDayChange,
+  selectHearingType,
+  selectVlj,
+  selectHearingCoordinator,
+  setNotes
 }, dispatch);
 
 ListScheduleContainer.propTypes = {
