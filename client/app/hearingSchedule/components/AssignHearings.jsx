@@ -30,35 +30,6 @@ export default class AssignHearings extends React.Component {
     this.props.onSelectedHearingDayChange(hearingDay);
   };
 
-  onClick = (vacolsId) => {
-    const values = {
-      regional_office_value: this.props.selectedRegionalOffice.value,
-      regional_office_label: this.props.selectedRegionalOffice.label,
-      hearing_pkseq: this.props.selectedHearingDay.id,
-      hearing_type: this.props.selectedHearingDay.hearingType,
-      hearing_date: this.props.selectedHearingDay.hearingDate
-    };
-
-    const payload = {
-      data: {
-        tasks: [
-          {
-            type: 'ScheduleHearingTask',
-            external_id: vacolsId,
-            assigned_to_type: 'User',
-            assigned_to_id: this.props.userId,
-            business_payloads: {
-              description: 'Create Task',
-              values
-            }
-          }
-        ]
-      }
-    };
-
-    ApiUtil.post('/tasks', payload);
-  };
-
   roomInfo = (hearingDay) => {
     let room = hearingDay.roomInfo;
 
@@ -178,10 +149,7 @@ export default class AssignHearings extends React.Component {
         valueName: 'caseDetails',
         valueFunction: (veteran) => <Link
           href={`/queue/appeals/${veteran.vacolsId}/${qry}`}
-          name={veteran.vacolsId}
-          onClick={() => {
-            this.onClick(veteran.vacolsId);
-          }}>
+          name={veteran.vacolsId}>
           {veteran.caseDetails}
         </Link>
       },
