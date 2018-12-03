@@ -122,8 +122,12 @@ module AmaCaseDistribution
     (proportion * batch_size).ceil
   end
 
+  def nonpriority_docket_range
+    [total_batch_size - priority_count, 0].max
+  end
+
   def legacy_docket_range
-    [(total_batch_size - priority_count) * docket_proportions[:legacy], 0].max.round
+    (nonpriority_docket_range * docket_proportions[:legacy]).round
   end
 
   def oldest_priority_appeals_by_docket(n)
@@ -142,7 +146,7 @@ module AmaCaseDistribution
 
     # Unlike the other dockets, the direct review docket observes a time goal.
     # When there are no or few "due" direct review appeals, we instead calculate a curve out.
-    direct_review_proportion = (direct_review_due_count / total_batch_size)
+    direct_review_proportion = (direct_review_due_count / nonpriority_docket_range)
       .clamp(interpolated_minimum_direct_review_proportion, MAXIMUM_DIRECT_REVIEW_PROPORTION)
 
     # We distribute from the other dockets proportional to their "weight," basically the number of pending appeals.
@@ -157,7 +161,7 @@ module AmaCaseDistribution
     if @docket_proportions[:legacy] < MINIMUM_LEGACY_PROPORTION
       legacy_proportion = [
         MINIMUM_LEGACY_PROPORTION,
-        dockets[:legacy].count(priority: false, ready: true).to_f / total_batch_size
+        dockets[:legacy].count(priority: false, ready: true).to_f / nonpriority_docket_range
       ].min
 
       @docket_proportions.add_fixed_proportions!(
