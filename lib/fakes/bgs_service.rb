@@ -404,6 +404,7 @@ class Fakes::BGSService
     self.rating_records = {}
     self.rating_profile_records = {}
     end_product_store.clear!
+    self.manage_claimant_letter_v2_requests = {}
   end
 
   def self.end_product_store
