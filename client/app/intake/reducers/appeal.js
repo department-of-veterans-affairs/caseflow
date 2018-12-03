@@ -6,7 +6,7 @@ import { getReceiptDateError, getBlankOptionError, getPageError, formatRelations
 import { update } from '../../util/ReducerUtil';
 
 const updateFromServerIntake = (state, serverIntake) => {
-  if (serverIntake.form_type !== FORM_TYPES.APPEAL.key) {
+  if (serverIntake.formType !== FORM_TYPES.APPEAL.key) {
     return state;
   }
 
@@ -15,28 +15,28 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: Boolean(serverIntake.id)
     },
     docketType: {
-      $set: serverIntake.docket_type
+      $set: serverIntake.docketType
     },
     receiptDate: {
-      $set: serverIntake.receipt_date && formatDateStr(serverIntake.receipt_date)
+      $set: serverIntake.receiptDate && formatDateStr(serverIntake.receiptDate)
     },
     veteranIsNotClaimant: {
-      $set: serverIntake.veteran_is_not_claimant
+      $set: serverIntake.veteranIsNotClaimant
     },
     claimant: {
-      $set: serverIntake.veteran_is_not_claimant ? serverIntake.claimant : null
+      $set: serverIntake.veteranIsNotClaimant ? serverIntake.claimant : null
     },
     payeeCode: {
       $set: serverIntake.payeeCode
     },
     legacyOptInApproved: {
-      $set: serverIntake.legacy_opt_in_approved
+      $set: serverIntake.legacyOptInApproved
     },
     legacyAppeals: {
       $set: serverIntake.legacyAppeals
     },
     isReviewed: {
-      $set: Boolean(serverIntake.receipt_date)
+      $set: Boolean(serverIntake.receiptDate)
     },
     ratings: {
       $set: formatRatings(serverIntake.ratings)
@@ -45,7 +45,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: formatRequestIssues(serverIntake.requestIssues)
     },
     isComplete: {
-      $set: Boolean(serverIntake.completed_at)
+      $set: Boolean(serverIntake.completedAt)
     },
     relationships: {
       $set: formatRelationships(serverIntake.relationships)

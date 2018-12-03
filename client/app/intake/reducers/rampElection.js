@@ -19,7 +19,7 @@ const formatAppeals = (appeals) => {
 };
 
 const updateFromServerIntake = (state, serverIntake) => {
-  if (serverIntake.form_type !== FORM_TYPES.RAMP_ELECTION.key) {
+  if (serverIntake.formType !== FORM_TYPES.RAMP_ELECTION.key) {
     return state;
   }
 
@@ -31,19 +31,19 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.notice_date && formatDateStr(serverIntake.notice_date)
     },
     optionSelected: {
-      $set: serverIntake.option_selected
+      $set: serverIntake.optionSelected
     },
     receiptDate: {
-      $set: serverIntake.receipt_date && formatDateStr(serverIntake.receipt_date)
+      $set: serverIntake.receiptDate && formatDateStr(serverIntake.receiptDate)
     },
     isReviewed: {
-      $set: Boolean(serverIntake.option_selected && serverIntake.receipt_date)
+      $set: Boolean(serverIntake.optionSelected && serverIntake.receiptDate)
     },
     isComplete: {
-      $set: Boolean(serverIntake.completed_at)
+      $set: Boolean(serverIntake.completedAt)
     },
     endProductDescription: {
-      $set: serverIntake.end_product_description
+      $set: serverIntake.endProductDescription
     },
     appeals: {
       $set: formatAppeals(serverIntake.appeals)

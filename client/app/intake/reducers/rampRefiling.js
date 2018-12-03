@@ -5,7 +5,7 @@ import { getBlankOptionError, getPageError, getReceiptDateError } from '../util/
 import _ from 'lodash';
 
 const updateFromServerIntake = (state, serverIntake) => {
-  if (serverIntake.form_type !== FORM_TYPES.RAMP_REFILING.key) {
+  if (serverIntake.formType !== FORM_TYPES.RAMP_REFILING.key) {
     return state;
   }
 
@@ -14,28 +14,28 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: Boolean(serverIntake.id)
     },
     optionSelected: {
-      $set: serverIntake.option_selected
+      $set: serverIntake.optionSelected
     },
     receiptDate: {
-      $set: serverIntake.receipt_date && formatDateStr(serverIntake.receipt_date)
+      $set: serverIntake.receiptDate && formatDateStr(serverIntake.receiptDate)
     },
     appealDocket: {
       $set: serverIntake.appeal_docket
     },
     electionReceiptDate: {
-      $set: serverIntake.election_receipt_date && formatDateStr(serverIntake.election_receipt_date)
+      $set: serverIntake.electionReceiptDate && formatDateStr(serverIntake.electionReceiptDate)
     },
     isReviewed: {
-      $set: Boolean(serverIntake.option_selected && serverIntake.receipt_date)
+      $set: Boolean(serverIntake.optionSelected && serverIntake.receiptDate)
     },
     issues: {
       $set: state.issues || _.keyBy(serverIntake.issues, 'id')
     },
     isComplete: {
-      $set: Boolean(serverIntake.completed_at)
+      $set: Boolean(serverIntake.completedAt)
     },
     endProductDescription: {
-      $set: serverIntake.end_product_description
+      $set: serverIntake.endProductDescription
     }
   });
 
