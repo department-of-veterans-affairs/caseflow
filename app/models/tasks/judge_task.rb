@@ -1,9 +1,7 @@
 class JudgeTask < Task
   include RoundRobinAssigner
 
-  def available_actions(user)
-    return [] if assigned_to != user
-
+  def available_actions(_user)
     if action.eql? "assign"
       [
         Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
@@ -18,6 +16,10 @@ class JudgeTask < Task
     end
   end
 
+  def no_actions_available?(user)
+    assigned_to != user
+  end
+
   def timeline_title
     COPY::CASE_TIMELINE_JUDGE_TASK
   end
@@ -26,7 +28,7 @@ class JudgeTask < Task
     new_task = super(params, user)
 
     parent = Task.find(params[:parent_id]) if params[:parent_id]
-    if parent && parent.type == QualityReviewTask.name
+    if parent && parent.is_a?(QualityReviewTask)
       parent.update!(status: :on_hold)
     end
 
