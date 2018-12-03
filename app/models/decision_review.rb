@@ -1,5 +1,6 @@
 class DecisionReview < ApplicationRecord
   include CachedAttributes
+  include LegacyOptinable
 
   validate :validate_receipt_date
 
@@ -114,6 +115,12 @@ class DecisionReview < ApplicationRecord
         eligible_for_soc_opt_in: legacy_appeal.eligible_for_soc_opt_in?,
         issues: legacy_appeal.issues.map(&:intake_attributes)
       }
+    end
+  end
+
+  def special_issues
+    [].tap do |specials|
+      specials << vacols_optin_special_issue if needs_vacols_optin_special_issue?
     end
   end
 

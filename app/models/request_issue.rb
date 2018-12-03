@@ -19,6 +19,13 @@ class RequestIssue < ApplicationRecord
     before_ama: "before_ama"
   }
 
+  class ErrorCreatingDecisionIssue < StandardError
+    def initialize(request_issue_id)
+      super("Request Issue #{request_issue_id} cannot create decision issue " \
+        "due to not having any matching rating issues or contentions")
+    end
+  end
+
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
 
   class << self
@@ -68,7 +75,9 @@ class RequestIssue < ApplicationRecord
         is_unidentified: data[:is_unidentified],
         untimely_exemption: data[:untimely_exemption],
         untimely_exemption_notes: data[:untimely_exemption_notes],
-        ramp_claim_id: data[:ramp_claim_id]
+        ramp_claim_id: data[:ramp_claim_id],
+        vacols_id: data[:vacols_id],
+        vacols_sequence_id: data[:vacols_sequence_id]
       ).validate_eligibility!
     end
 
@@ -147,7 +156,64 @@ class RequestIssue < ApplicationRecord
     contested_decision_issue && contested_decision_issue.request_issues.first
   end
 
+  def sync_decision_issues!
+    return if processed?
+
+    attempted!
+    decision_issues.delete_all
+    create_decision_issues
+  end
+
   private
+
+  def create_decision_issues
+    if rating?
+      return unless end_product_establishment.associated_rating
+      create_decision_issues_from_rating
+    end
+
+    create_decision_issue_from_disposition if decision_issues.empty?
+
+    fail ErrorCreatingDecisionIssue, id if decision_issues.empty?
+    processed!
+  end
+
+  def matching_rating_issues
+    @matching_rating_issues ||= end_product_establishment.associated_rating.issues.select do |rating_issue|
+      rating_issue.contention_reference_id == contention_reference_id
+    end
+  end
+
+  def create_decision_issue_from_disposition
+    if contention_disposition
+      decision_issues.create!(
+        participant_id: review_request.veteran.participant_id,
+        disposition: contention_disposition[:disposition],
+        # use epe last_synced_at as a proxy for when the decision was made
+        disposition_date: end_product_establishment.last_synced_at,
+        decision_review: review_request
+      )
+    end
+  end
+
+  def contention_disposition
+    @contention_disposition ||= end_product_establishment.fetch_dispositions_from_vbms.find do |disposition|
+      disposition[:contention_id].to_i == contention_reference_id
+    end
+  end
+
+  def create_decision_issues_from_rating
+    matching_rating_issues.each do |rating_issue|
+      decision_issues.create!(
+        rating_issue_reference_id: rating_issue.reference_id,
+        participant_id: rating_issue.participant_id,
+        promulgation_date: rating_issue.promulgation_date,
+        decision_text: rating_issue.decision_text,
+        profile_date: rating_issue.profile_date,
+        decision_review: review_request
+      )
+    end
+  end
 
   # RatingIssue is not in db so we pull hash from the serialized_ratings.
   def fetch_contested_rating_issue_ui_hash

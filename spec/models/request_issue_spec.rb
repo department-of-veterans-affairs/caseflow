@@ -1,6 +1,10 @@
 require "rails_helper"
 
 describe RequestIssue do
+  before do
+    Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
+  end
+
   let(:rating_reference_id) { "abc123" }
   let(:contention_reference_id) { 1234 }
   let(:profile_date) { Time.zone.now }
@@ -8,6 +12,18 @@ describe RequestIssue do
   let(:higher_level_review_reference_id) { "hlr123" }
   let(:review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
   let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
+  let!(:decision_sync_processed_at) { nil }
+  let!(:end_product_establishment) { nil }
+  let(:issues) do
+    [
+      {
+        reference_id: rating_reference_id,
+        decision_text: "Left knee granted",
+        contention_reference_id: contention_reference_id
+      },
+      { reference_id: "xyz456", decision_text: "PTSD denied" }
+    ]
+  end
 
   let!(:rating_request_issue) do
     create(
@@ -16,7 +32,10 @@ describe RequestIssue do
       rating_issue_reference_id: rating_reference_id,
       rating_issue_profile_date: profile_date,
       description: "a rating request issue",
-      ramp_claim_id: ramp_claim_id
+      ramp_claim_id: ramp_claim_id,
+      decision_sync_processed_at: decision_sync_processed_at,
+      end_product_establishment: end_product_establishment,
+      contention_reference_id: contention_reference_id
     )
   end
 
@@ -26,7 +45,10 @@ describe RequestIssue do
       review_request: review,
       description: "a nonrating request issue description",
       issue_category: "a category",
-      decision_date: 1.day.ago
+      decision_date: 1.day.ago,
+      decision_sync_processed_at: decision_sync_processed_at,
+      end_product_establishment: end_product_establishment,
+      contention_reference_id: contention_reference_id
     )
   end
 
@@ -39,19 +61,15 @@ describe RequestIssue do
     )
   end
 
+  let(:associated_claims) { [] }
+
   let!(:ratings) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: review.receipt_date - 40.days,
-      profile_date: review.receipt_date - 50.days,
-      issues: [
-        {
-          reference_id: rating_reference_id,
-          decision_text: "Left knee granted",
-          contention_reference_id: contention_reference_id
-        },
-        { reference_id: "xyz456", decision_text: "PTSD denied" }
-      ]
+      promulgation_date: (review.receipt_date - 40.days).in_time_zone,
+      profile_date: (review.receipt_date - 50.days).in_time_zone,
+      issues: issues,
+      associated_claims: associated_claims
     )
   end
 
@@ -171,13 +189,13 @@ describe RequestIssue do
   end
 
   context "#previous_request_issue" do
-    let(:previous_higher_level_review) { create(:higher_level_review, receipt_date: review.receipt_date - 100.days) }
+    let(:previous_higher_level_review) { create(:higher_level_review, receipt_date: review.receipt_date - 10.days) }
     let(:previous_end_product_establishment) do
       create(
         :end_product_establishment,
         :cleared,
         veteran_file_number: veteran.file_number,
-        established_at: previous_higher_level_review.receipt_date + 1.day
+        established_at: previous_higher_level_review.receipt_date - 100.days
       )
     end
     let!(:previous_request_issue) do
@@ -186,12 +204,21 @@ describe RequestIssue do
         review_request: previous_higher_level_review,
         rating_issue_reference_id: higher_level_review_reference_id,
         contention_reference_id: contention_reference_id,
-        end_product_establishment: previous_end_product_establishment
+        end_product_establishment: previous_end_product_establishment,
+        rating_issue_profile_date: profile_date,
+        description: "a rating request issue"
       )
     end
 
+    let(:associated_claims) do
+      [{
+        clm_id: previous_end_product_establishment.reference_id,
+        bnft_clm_tc: previous_end_product_establishment.code
+      }]
+    end
+
     it "looks up the chain to the immediately previous request issue" do
-      previous_end_product_establishment.sync_decision_issues!
+      previous_request_issue.sync_decision_issues!
       expect(rating_request_issue.previous_request_issue).to eq(previous_request_issue)
     end
 
@@ -356,6 +383,130 @@ describe RequestIssue do
           rating_request_issue.rating_issue_reference_id = "ramp_ref_id"
           rating_request_issue.validate_eligibility!
           expect(rating_request_issue.ineligible_reason).to be_nil
+        end
+      end
+    end
+  end
+
+  context "#sync_decision_issues!" do
+    let(:request_issue) { rating_request_issue }
+    subject { request_issue.sync_decision_issues! }
+
+    context "when it has been processed" do
+      let(:decision_sync_processed_at) { 1.day.ago }
+      let!(:decision_issue) { rating_request_issue.decision_issues.create!(participant_id: veteran.participant_id) }
+
+      it "does nothing" do
+        subject
+        expect(rating_request_issue.decision_issues.count).to eq(1)
+      end
+    end
+
+    context "when it hasn't been processed" do
+      let(:ep_code) { HigherLevelReview::END_PRODUCT_RATING_CODE }
+      let(:end_product_establishment) do
+        create(:end_product_establishment,
+               :cleared,
+               veteran_file_number: veteran.file_number,
+               established_at: review.receipt_date - 100.days,
+               code: ep_code)
+      end
+
+      context "with rating ep" do
+        context "when associated rating exists" do
+          let(:associated_claims) { [{ clm_id: end_product_establishment.reference_id, bnft_clm_tc: ep_code }] }
+
+          context "when matching rating issues exist" do
+            it "creates decision issues based on rating issues" do
+              subject
+              expect(rating_request_issue.decision_issues.count).to eq(1)
+              expect(rating_request_issue.decision_issues.first).to have_attributes(
+                rating_issue_reference_id: rating_reference_id,
+                participant_id: veteran.participant_id,
+                promulgation_date: ratings.promulgation_date,
+                decision_text: "Left knee granted",
+                profile_date: ratings.profile_date,
+                decision_review_type: "HigherLevelReview",
+                decision_review_id: review.id
+              )
+              expect(rating_request_issue.processed?).to eq(true)
+            end
+          end
+
+          context "when no matching rating issues exist" do
+            let(:issues) do
+              [{ reference_id: "xyz456", decision_text: "PTSD denied", contention_reference_id: "bad_id" }]
+            end
+
+            let!(:contention) do
+              Generators::Contention.build(
+                id: contention_reference_id,
+                claim_id: end_product_establishment.reference_id,
+                disposition: "allowed"
+              )
+            end
+
+            it "creates decision issues based on contention disposition" do
+              subject
+              expect(rating_request_issue.decision_issues.count).to eq(1)
+              expect(rating_request_issue.decision_issues.first).to have_attributes(
+                participant_id: veteran.participant_id,
+                disposition: "allowed",
+                disposition_date: end_product_establishment.last_synced_at,
+                decision_review_type: "HigherLevelReview",
+                decision_review_id: review.id
+              )
+              expect(rating_request_issue.processed?).to eq(true)
+            end
+          end
+        end
+
+        context "when no associated rating exists" do
+          it "resubmits for processing" do
+            subject
+            expect(rating_request_issue.decision_issues.count).to eq(0)
+            expect(rating_request_issue.processed?).to eq(false)
+            expect(rating_request_issue.decision_sync_attempted_at).to eq(Time.zone.now)
+          end
+        end
+      end
+
+      context "with nonrating ep" do
+        let(:request_issue) { nonrating_request_issue }
+
+        let(:ep_code) { HigherLevelReview::END_PRODUCT_NONRATING_CODE }
+
+        let!(:contention) do
+          Generators::Contention.build(
+            id: contention_reference_id,
+            claim_id: end_product_establishment.reference_id,
+            disposition: "allowed"
+          )
+        end
+
+        it "creates decision issues based on contention disposition" do
+          expect(request_issue.end_product_establishment).to_not receive(:associated_rating)
+
+          subject
+          expect(request_issue.decision_issues.count).to eq(1)
+          expect(request_issue.decision_issues.first).to have_attributes(
+            participant_id: veteran.participant_id,
+            disposition: "allowed",
+            disposition_date: end_product_establishment.last_synced_at,
+            decision_review_type: "HigherLevelReview",
+            decision_review_id: review.id
+          )
+          expect(request_issue.processed?).to eq(true)
+        end
+
+        context "when there is no disposition" do
+          before do
+            Fakes::VBMSService.disposition_records = nil
+          end
+          it "raises an error" do
+            expect { subject }.to raise_error(RequestIssue::ErrorCreatingDecisionIssue)
+            expect(nonrating_request_issue.processed?).to eq(false)
+          end
         end
       end
     end
