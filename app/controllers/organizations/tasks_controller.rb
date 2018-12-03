@@ -3,10 +3,10 @@ class Organizations::TasksController < OrganizationsController
   before_action :verify_role_access, only: [:index]
 
   def index
-    tasks = GenericQueue.new(user: organization).tasks
+    relevant_tasks = GenericQueue.new(user: organization).relevant_tasks
 
     render json: {
-      tasks: json_tasks(tasks),
+      tasks: json_tasks(relevant_tasks),
       id: organization.id
     }
   end

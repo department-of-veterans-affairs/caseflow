@@ -11,8 +11,6 @@ class GenericQueue
     relevant_tasks.where(appeal_id: appeal_id, appeal_type: appeal_type)
   end
 
-  private
-
   def relevant_tasks
     Task.incomplete_or_recently_completed
   end
