@@ -50,10 +50,12 @@ module AmaCaseDistribution
       batch_size: batch_size,
       total_batch_size: total_batch_size,
       priority_count: priority_count,
+      direct_review_due_count: direct_review_due_count,
       legacy_proportion: docket_proportions[:legacy],
       direct_review_proportion: docket_proportions[:direct_review],
       evidence_submission_proportion: docket_proportions[:evidence_submission],
       hearing_proportion: docket_proportions[:hearing],
+      pacesetting_direct_review_proportion: pacesetting_direct_review_proportion,
       interpolated_minimum_direct_review_proportion: interpolated_minimum_direct_review_proportion,
       nonpriority_iterations: @nonpriority_iterations
     }
@@ -138,6 +140,9 @@ module AmaCaseDistribution
   def docket_proportions
     return @docket_proportions if @docket_proportions
 
+    direct_review_proportion = (direct_review_due_count / total_batch_size)
+      .clamp(interpolated_minimum_direct_review_proportion, MAXIMUM_DIRECT_REVIEW_PROPORTION)
+
     proportions = dockets
       .transform_values(&:weight)
       .extend(ProportionHash)
@@ -158,9 +163,8 @@ module AmaCaseDistribution
     @docket_proportions = proportions
   end
 
-  def direct_review_proportion
-    @direct_review_proportion ||= (dockets[:direct_review].due_count / total_batch_size)
-      .clamp(interpolated_minimum_direct_review_proportion, MAXIMUM_DIRECT_REVIEW_PROPORTION)
+  def direct_review_due_count
+    @direct_review_due_count ||= dockets[:direct_review].due_count
   end
 
   def interpolated_minimum_direct_review_proportion
