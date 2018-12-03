@@ -156,7 +156,7 @@ const mapDispatchToProps = (dispatch) => ({
 export default (connect(mapStateToProps, mapDispatchToProps)(AttorneyTaskListView): React.ComponentType<Params>);
 
 const TaskTableTab = ({ description, tasks }) => <React.Fragment>
-  <p>{description}</p>
+  <p className="cf-margin-top-0" >{description}</p>
   <TaskTable
     includeDetailsLink
     includeType
