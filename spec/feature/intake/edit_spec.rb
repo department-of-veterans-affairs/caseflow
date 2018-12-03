@@ -41,7 +41,7 @@ RSpec.feature "Edit issues" do
       promulgation_date: receipt_date,
       profile_date: profile_date,
       issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted" },
+        { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: "000" },
         { reference_id: "def456", decision_text: "PTSD denied" }
       ]
     )
@@ -71,19 +71,32 @@ RSpec.feature "Edit issues" do
     )
   end
 
+  let!(:ratings_with_legacy_issues) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date - 4.days,
+      profile_date: receipt_date - 4.days,
+      issues: [
+        { reference_id: "has_legacy_issue", decision_text: "Issue with legacy issue not withdrawn" },
+        { reference_id: "has_ineligible_legacy_appeal", decision_text: "Issue connected to ineligible legacy appeal" }
+      ]
+    )
+  end
+
   def check_row(label, text)
     row = find("tr", text: label)
     expect(row).to have_text(text)
   end
 
   context "appeals" do
+    let(:legacy_opt_in_approved) { false }
     let!(:appeal) do
       create(:appeal,
              veteran_file_number: veteran.file_number,
              receipt_date: receipt_date,
              docket_type: "evidence_submission",
              veteran_is_not_claimant: false,
-             legacy_opt_in_approved: false).tap(&:create_tasks_on_intake_success!)
+             legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
     end
 
     let!(:nonrating_request_issue) do
@@ -165,32 +178,80 @@ RSpec.feature "Edit issues" do
         setup_legacy_opt_in_appeals(veteran.file_number)
       end
 
-      scenario "adding issues" do
+      context "with legacy_opt_in_approved" do
+        let(:legacy_opt_in_approved) { true }
+        scenario "adding issues" do
+          visit "appeals/#{appeal.uuid}/edit/"
+
+          click_intake_add_issue
+          expect(page).to have_content("Next")
+          add_intake_rating_issue("Left knee granted")
+
+          # expect legacy opt in modal
+          expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
+
+          add_intake_rating_issue("intervertebral disc syndrome") # ineligible issue
+
+          expect(page).to have_content(
+            "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
+          )
+
+          safe_click("#button-submit-update")
+          safe_click ".confirm"
+
+          expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+          expect(RequestIssue.find_by(
+                   description: "Left knee granted",
+                   ineligible_reason: :legacy_appeal_not_eligible,
+                   vacols_id: "vacols2",
+                   vacols_sequence_id: "1"
+          )).to_not be_nil
+        end
+      end
+
+      context "with legacy opt in not approved" do
+        let(:legacy_opt_in_approved) { false }
+        scenario "adding issues" do
+          visit "appeals/#{appeal.uuid}/edit/"
+          click_intake_add_issue
+          add_intake_rating_issue("Left knee granted")
+
+          expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
+          # do not show inactive appeals when legacy opt in is false
+          expect(page).to_not have_content("impairment of hip")
+          expect(page).to_not have_content("typhoid arthritis")
+
+          add_intake_rating_issue("ankylosis of hip")
+
+          expect(page).to have_content(
+            "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
+          )
+
+          safe_click("#button-submit-update")
+          safe_click ".confirm"
+
+          expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+          expect(RequestIssue.find_by(
+                   description: "Left knee granted",
+                   ineligible_reason: :legacy_issue_not_withdrawn,
+                   vacols_id: "vacols1",
+                   vacols_sequence_id: "1"
+          )).to_not be_nil
+        end
+      end
+
+      scenario "adding issue with legacy opt in disabled" do
+        allow(FeatureToggle).to receive(:enabled?).and_call_original
+        allow(FeatureToggle).to receive(:enabled?).with(:intake_legacy_opt_in, user: current_user).and_return(false)
+
         visit "appeals/#{appeal.uuid}/edit/"
+
         click_intake_add_issue
+        expect(page).to have_content("Add this issue")
         add_intake_rating_issue("Left knee granted")
-
-        # expect legacy opt in modal
-        expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
-
-        add_intake_rating_issue("None of these match")
-
         expect(page).to have_content("Left knee granted")
-
-        click_intake_add_issue
-        click_intake_no_matching_issues
-        add_intake_nonrating_issue(
-          category: "Active Duty Adjustments",
-          description: "Description for Active Duty Adjustments",
-          date: "04/25/2018",
-          legacy_issues: true
-        )
-
-        expect(page).to have_content("Does issue 4 match any of these VACOLS issues?")
-
-        add_intake_rating_issue("None of these match")
-
-        expect(page).to have_content("Description for Active Duty Adjustments")
       end
     end
   end
@@ -245,11 +306,13 @@ RSpec.feature "Edit issues" do
     end
 
     context "when there are ineligible issues" do
+      ineligible = Constants.INELIGIBLE_REQUEST_ISSUES
+
       let!(:eligible_request_issue) do
         RequestIssue.create!(
           review_request: higher_level_review,
           issue_category: "Military Retired Pay",
-          description: "nonrating description",
+          description: "eligible nonrating description",
           contention_reference_id: "1234",
           ineligible_reason: nil,
           decision_date: Date.new(2018, 5, 1)
@@ -260,7 +323,7 @@ RSpec.feature "Edit issues" do
         RequestIssue.create!(
           review_request: higher_level_review,
           issue_category: "Active Duty Adjustments",
-          description: "nonrating description",
+          description: "untimely nonrating description",
           contention_reference_id: "12345",
           ineligible_reason: :untimely
         )
@@ -284,9 +347,19 @@ RSpec.feature "Edit issues" do
           rating_issue_profile_date: rating.profile_date,
           review_request: higher_level_review,
           description: "PTSD denied",
-          contention_reference_id: "123",
+          contention_reference_id: "111",
           ineligible_reason: :duplicate_of_issue_in_active_review,
           ineligible_due_to: ri_in_review
+        )
+      end
+
+      let!(:ri_previous_hlr) do
+        RequestIssue.create!(
+          rating_issue_reference_id: "abc123",
+          rating_issue_profile_date: rating.profile_date,
+          review_request: another_higher_level_review,
+          description: "Left knee granted",
+          contention_reference_id: "000"
         )
       end
 
@@ -296,8 +369,9 @@ RSpec.feature "Edit issues" do
           rating_issue_profile_date: rating.profile_date,
           review_request: higher_level_review,
           description: "Left knee granted",
-          contention_reference_id: "123",
-          ineligible_reason: :previous_higher_level_review
+          contention_reference_id: "222",
+          ineligible_reason: :previous_higher_level_review,
+          ineligible_due_to: ri_previous_hlr
         )
       end
 
@@ -323,7 +397,41 @@ RSpec.feature "Edit issues" do
         )
       end
 
+      let!(:ri_legacy_issue_not_withdrawn) do
+        RequestIssue.create!(
+          rating_issue_reference_id: "has_legacy_issue",
+          rating_issue_profile_date: rating_before_ama.profile_date,
+          review_request: higher_level_review,
+          description: "Issue with legacy issue not withdrawn",
+          vacols_id: "123",
+          vacols_sequence_id: "1",
+          contention_reference_id: "1234567",
+          ineligible_reason: :legacy_issue_not_withdrawn
+        )
+      end
+
+      let!(:ri_legacy_issue_ineligible) do
+        RequestIssue.create!(
+          rating_issue_reference_id: "has_ineligible_legacy_appeal",
+          rating_issue_profile_date: rating_before_ama.profile_date,
+          review_request: higher_level_review,
+          description: "Issue connected to ineligible legacy appeal",
+          contention_reference_id: "12345678",
+          vacols_id: "321",
+          vacols_sequence_id: "2",
+          ineligible_reason: :legacy_appeal_not_eligible
+        )
+      end
+
+      let(:ep_claim_id) do
+        EndProductEstablishment.find_by(
+          source: higher_level_review,
+          code: "030HLRNR"
+        ).reference_id
+      end
+
       before do
+        setup_legacy_opt_in_appeals(veteran.file_number)
         another_higher_level_review.create_issues!([ri_in_review])
         higher_level_review.create_issues!([
                                              eligible_request_issue,
@@ -331,33 +439,153 @@ RSpec.feature "Edit issues" do
                                              ri_with_active_previous_review,
                                              ri_with_previous_hlr,
                                              ri_before_ama,
-                                             eligible_ri_before_ama
+                                             eligible_ri_before_ama,
+                                             ri_legacy_issue_not_withdrawn,
+                                             ri_legacy_issue_ineligible
                                            ])
         higher_level_review.process_end_product_establishments!
       end
 
       it "shows the Higher-Level Review Edit page with ineligibility messages" do
-        ep_claim_id = EndProductEstablishment.find_by(
-          source: higher_level_review,
-          code: "030HLRNR"
-        ).reference_id
         visit "higher_level_reviews/#{ep_claim_id}/edit"
 
         expect(page).to have_content(
-          "#{ri_with_previous_hlr.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review}"
+          "#{ri_with_previous_hlr.contention_text} #{ineligible.previous_higher_level_review}"
         )
         expect(page).to have_content(
           "#{ri_in_review.contention_text} is ineligible because it's already under review as a Higher-Level Review"
         )
         expect(page).to have_content(
-          "#{untimely_request_issue.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
+          "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
         )
         expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date: 05/01/2018")
         expect(page).to have_content(
-          "#{ri_before_ama.contention_text} #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+          "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
         )
         expect(page).to have_content(
           "#{eligible_ri_before_ama.contention_text} Decision date:"
+        )
+        expect(page).to have_content(
+          "#{ri_legacy_issue_not_withdrawn.contention_text} #{ineligible.legacy_issue_not_withdrawn}"
+        )
+        expect(page).to have_content(
+          "#{ri_legacy_issue_ineligible.contention_text} #{ineligible.legacy_appeal_not_eligible}"
+        )
+      end
+
+      it "re-applies eligibility check on remove/re-add of ineligible issue" do
+        visit "higher_level_reviews/#{ep_claim_id}/edit"
+
+        expect(page).to have_content("8 issues")
+        expect_ineligible_issue(1)
+        expect_ineligible_issue(2)
+        expect_eligible_issue(3)
+        expect_ineligible_issue(4)
+        expect_ineligible_issue(5)
+        expect_ineligible_issue(6)
+        expect_ineligible_issue(7)
+        expect_eligible_issue(8)
+
+        # remove and re-add each ineligible issue. when re-added, it should always be issue 8.
+        # excludes ineligible legacy opt in issue because it requires the HLR to have that option selected
+
+        # 1
+        ri_legacy_issue_not_withdrawn_num = find_intake_issue_number_by_text(
+          ri_legacy_issue_not_withdrawn.contention_text
+        )
+        click_remove_intake_issue(ri_legacy_issue_not_withdrawn_num)
+        click_remove_issue_confirmation
+
+        expect(page).to_not have_content(
+          "#{ri_legacy_issue_not_withdrawn.contention_text} #{ineligible.legacy_issue_not_withdrawn}"
+        )
+
+        click_intake_add_issue
+        add_intake_rating_issue(ri_legacy_issue_not_withdrawn.contention_text)
+        add_intake_rating_issue("ankylosis of hip")
+
+        expect_ineligible_issue(8)
+        expect(page).to have_content(
+          "#{ri_legacy_issue_not_withdrawn.contention_text} #{ineligible.legacy_issue_not_withdrawn}"
+        )
+
+        # 4
+        ri_with_previous_hlr_issue_num = find_intake_issue_number_by_text(ri_with_previous_hlr.contention_text)
+        click_remove_intake_issue(ri_with_previous_hlr_issue_num)
+        click_remove_issue_confirmation
+
+        expect(page).to_not have_content(
+          "#{ri_with_previous_hlr.contention_text} #{ineligible.previous_higher_level_review}"
+        )
+
+        click_intake_add_issue
+        add_intake_rating_issue(ri_with_previous_hlr.contention_text)
+        add_intake_rating_issue("None of these match")
+
+        expect_ineligible_issue(8)
+        expect(page).to have_content(
+          "#{ri_with_previous_hlr.contention_text} #{ineligible.previous_higher_level_review}"
+        )
+
+        # 5
+        ri_in_review_issue_num = find_intake_issue_number_by_text(ri_in_review.contention_text)
+        click_remove_intake_issue(ri_in_review_issue_num)
+        click_remove_issue_confirmation
+
+        expect(page).to_not have_content(
+          "#{ri_in_review.contention_text} is ineligible because it's already under review as a Higher-Level Review"
+        )
+
+        click_intake_add_issue
+        add_intake_rating_issue(ri_in_review.contention_text)
+        add_intake_rating_issue("None of these match")
+
+        expect_ineligible_issue(8)
+        expect(page).to have_content(
+          "#{ri_in_review.contention_text} is ineligible because it's already under review as a Higher-Level Review"
+        )
+
+        # 6
+        untimely_request_issue_num = find_intake_issue_number_by_text(untimely_request_issue.contention_text)
+        click_remove_intake_issue(untimely_request_issue_num)
+        click_remove_issue_confirmation
+
+        expect(page).to_not have_content(
+          "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
+        )
+
+        click_intake_add_issue
+        click_intake_no_matching_issues
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: untimely_request_issue.contention_text,
+          date: "01/01/2016",
+          legacy_issues: true
+        )
+        add_intake_rating_issue("None of these match")
+        add_untimely_exemption_response("No", "I am a nonrating exemption note")
+
+        expect_ineligible_issue(8)
+        expect(page).to have_content(
+          "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
+        )
+
+        # 7
+        ri_before_ama_num = find_intake_issue_number_by_text(ri_before_ama.contention_text)
+        click_remove_intake_issue(ri_before_ama_num)
+        click_remove_issue_confirmation
+
+        expect(page).to_not have_content(
+          "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
+        )
+
+        click_intake_add_issue
+        add_intake_rating_issue(ri_before_ama.contention_text)
+        add_intake_rating_issue("None of these match")
+
+        expect_ineligible_issue(8)
+        expect(page).to have_content(
+          "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
         )
       end
     end
@@ -561,6 +789,8 @@ RSpec.feature "Edit issues" do
         add_intake_unidentified_issue("This is an unidentified issue")
         expect(page).to have_content("5 issues")
         expect(page).to have_content("This is an unidentified issue")
+        expect(find_intake_issue_by_number(5)).to have_css(".issue-unidentified")
+        expect_ineligible_issue(5)
 
         # add issue before AMA
         click_intake_add_issue
@@ -568,6 +798,7 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content(
           "Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
         )
+        expect_ineligible_issue(6)
 
         # add RAMP issue before AMA
         click_intake_add_issue

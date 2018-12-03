@@ -49,29 +49,6 @@ class RatingIssue
     end
   end
 
-  def save_decision_issue
-    return unless source_request_issue
-
-    # if a DecisionIssue already exists then do not touch it. These should be immutable.
-    return if decision_issue
-
-    ActiveRecord::Base.transaction do
-      created_decision_issue = DecisionIssue.create!(
-        rating_issue_reference_id: reference_id,
-        participant_id: participant_id,
-        promulgation_date: promulgation_date,
-        decision_text: decision_text,
-        profile_date: profile_date
-      )
-
-      RequestDecisionIssue.create!(
-        request_issue: source_request_issue,
-        decision_issue: created_decision_issue
-      )
-      created_decision_issue
-    end
-  end
-
   def ui_hash
     serialize
   end

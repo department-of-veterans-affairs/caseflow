@@ -11,7 +11,7 @@ RSpec.feature "Higher-Level Review" do
     FeatureToggle.disable!(:intake_enable_add_issues_page)
 
     Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2018, 5, 26))
+    Timecop.freeze(Time.utc(2018, 11, 28))
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
@@ -38,7 +38,7 @@ RSpec.feature "Higher-Level Review" do
 
   let(:inaccessible) { false }
 
-  let(:receipt_date) { Date.new(2018, 4, 20) }
+  let(:receipt_date) { Date.new(2018, 9, 20) }
 
   let(:benefit_type) { "compensation" }
 
@@ -48,14 +48,12 @@ RSpec.feature "Higher-Level Review" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:profile_date) { Date.new(2017, 11, 20).to_time(:local) }
-
-  let(:timely_promulgation_date) { Date.new(2017, 11, 30) }
+  let(:profile_date) { Date.new(2018, 9, 15).to_time(:local) }
 
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: timely_promulgation_date,
+      promulgation_date: receipt_date - 5.days,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
@@ -64,11 +62,11 @@ RSpec.feature "Higher-Level Review" do
     )
   end
 
-  let!(:untimely_rating) do
+  let!(:untimely_ratings) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - untimely_days,
-      profile_date: profile_date - 1.day,
+      promulgation_date: receipt_date - untimely_days - 1.day,
+      profile_date: receipt_date - untimely_days - 3.days,
       issues: [
         { reference_id: "old123", decision_text: "Untimely rating issue 1" },
         { reference_id: "old456", decision_text: "Untimely rating issue 2" }
@@ -111,7 +109,7 @@ RSpec.feature "Higher-Level Review" do
 
     expect(page).to have_current_path("/intake/review_request")
 
-    fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
+    fill_in "What is the Receipt Date of this form?", with: "12/15/2018"
     safe_click "#button-submit-review"
 
     expect(page).to have_content(
@@ -137,7 +135,7 @@ RSpec.feature "Higher-Level Review" do
       find("label", text: "Fiduciary", match: :prefer_exact).click
     end
 
-    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+    fill_in "What is the Receipt Date of this form?", with: "09/20/2018"
 
     within_fieldset("Was an informal conference requested?") do
       find("label", text: "Yes", match: :prefer_exact).click
@@ -208,7 +206,7 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_current_path("/intake/finish")
 
     expect(page).to have_content("Identify issues on")
-    expect(page).to have_content("Decision date: 11/20/2017")
+    expect(page).to have_content("Decision date: 09/15/2018")
     expect(page).to have_content("Left knee granted")
     expect(page).to have_content("Untimely rating issue 1")
     expect(page).to have_button("Establish EP", disabled: true)
@@ -248,7 +246,7 @@ RSpec.feature "Higher-Level Review" do
 
     expect(page).to have_content("1 issue")
 
-    fill_in "Decision date", with: "04/25/2018"
+    fill_in "Decision date", with: "10/27/2018"
 
     expect(page).to have_content("2 issues")
 
@@ -405,7 +403,7 @@ RSpec.feature "Higher-Level Review" do
 
     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
     expect(page).to have_content("Ed Merica (#{veteran_file_number})")
-    expect(page).to have_content("04/20/2018")
+    expect(page).to have_content("09/20/2018")
     expect(find("#table-row-4")).to have_content("Yes")
     expect(find("#table-row-5")).to have_content("No")
     expect(page).to have_content("PTSD denied")
@@ -544,13 +542,20 @@ RSpec.feature "Higher-Level Review" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  def start_higher_level_review(test_veteran, is_comp: true, claim_participant_id: nil, veteran_is_not_claimant: false)
+  def start_higher_level_review(
+    test_veteran,
+    is_comp: true,
+    claim_participant_id: nil,
+    legacy_opt_in_approved: false,
+    veteran_is_not_claimant: false
+  )
+
     higher_level_review = HigherLevelReview.create!(
       veteran_file_number: test_veteran.file_number,
-      receipt_date: 2.days.ago,
+      receipt_date: receipt_date,
       informal_conference: false, same_office: false,
       benefit_type: is_comp ? "compensation" : "education",
-      legacy_opt_in_approved: false,
+      legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: veteran_is_not_claimant
     )
 
@@ -645,8 +650,8 @@ RSpec.feature "Higher-Level Review" do
         promulgation_date: receipt_date - 40.days,
         profile_date: receipt_date - 50.days,
         issues: [
-          { reference_id: "xyz123", decision_text: "Left knee granted" },
-          { reference_id: "xyz456", decision_text: "PTSD denied" },
+          { reference_id: "xyz123", decision_text: "Left knee granted 2" },
+          { reference_id: "xyz456", decision_text: "PTSD denied 2" },
           { reference_id: duplicate_reference_id, decision_text: "Old injury" },
           {
             reference_id: higher_level_review_reference_id,
@@ -763,26 +768,26 @@ RSpec.feature "Higher-Level Review" do
 
       # adding an issue should show the issue
       click_intake_add_issue
-      add_intake_rating_issue("Left knee granted")
+      add_intake_rating_issue("Left knee granted 2")
 
       expect(page).to have_content("1. Left knee granted")
       expect(page).to_not have_content("Notes:")
 
       # removing an issue
       click_remove_intake_issue("1")
-      expect(page).not_to have_content("Left knee granted")
+      expect(page).not_to have_content("Left knee granted 2")
 
       # re-add to proceed
       click_intake_add_issue
-      add_intake_rating_issue("Left knee granted", "I am an issue note")
-      expect(page).to have_content("1. Left knee granted")
+      add_intake_rating_issue("Left knee granted 2", "I am an issue note")
+      expect(page).to have_content("1. Left knee granted 2")
       expect(page).to have_content("I am an issue note")
 
       # clicking add issue again should show a disabled radio button for that same rating
       click_intake_add_issue
       expect(page).to have_content("Add issue 2")
       expect(page).to have_content("Does issue 2 match any of these issues")
-      expect(page).to have_content("Left knee granted (already selected for issue 1)")
+      expect(page).to have_content("Left knee granted 2 (already selected for issue 1)")
       expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
 
       # Add nonrating issue
@@ -790,7 +795,7 @@ RSpec.feature "Higher-Level Review" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
-        date: "04/25/2018"
+        date: "10/27/2018"
       )
       expect(page).to have_content("2 issues")
       # this nonrating request issue is timely
@@ -921,9 +926,10 @@ RSpec.feature "Higher-Level Review" do
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
                rating_issue_reference_id: "xyz123",
-               description: "Left knee granted",
+               description: "Left knee granted 2",
                end_product_establishment_id: end_product_establishment.id,
-               notes: "I am an issue note"
+               notes: "I am an issue note",
+               benefit_type: "compensation"
       )).to_not be_nil
 
       expect(RequestIssue.find_by(
@@ -931,7 +937,8 @@ RSpec.feature "Higher-Level Review" do
                description: "Really old injury",
                end_product_establishment_id: end_product_establishment.id,
                untimely_exemption: false,
-               untimely_exemption_notes: "I am an exemption note"
+               untimely_exemption_notes: "I am an exemption note",
+               benefit_type: "compensation"
       )).to_not be_nil
 
       active_duty_adjustments_request_issue = RequestIssue.find_by!(
@@ -939,7 +946,8 @@ RSpec.feature "Higher-Level Review" do
         issue_category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
         decision_date: 1.month.ago,
-        end_product_establishment_id: non_rating_end_product_establishment.id
+        end_product_establishment_id: non_rating_end_product_establishment.id,
+        benefit_type: "compensation"
       )
 
       expect(active_duty_adjustments_request_issue.untimely?).to eq(false)
@@ -947,7 +955,8 @@ RSpec.feature "Higher-Level Review" do
       another_active_duty_adjustments_request_issue = RequestIssue.find_by!(
         review_request: higher_level_review,
         issue_category: "Active Duty Adjustments",
-        description: "Another Description for Active Duty Adjustments"
+        description: "Another Description for Active Duty Adjustments",
+        benefit_type: "compensation"
       )
 
       expect(another_active_duty_adjustments_request_issue.untimely?).to eq(true)
@@ -958,7 +967,8 @@ RSpec.feature "Higher-Level Review" do
                review_request: higher_level_review,
                description: "This is an unidentified issue",
                is_unidentified: true,
-               end_product_establishment_id: end_product_establishment.id
+               end_product_establishment_id: end_product_establishment.id,
+               benefit_type: "compensation"
       )).to_not be_nil
 
       # Issues before AMA
@@ -966,7 +976,8 @@ RSpec.feature "Higher-Level Review" do
                review_request: higher_level_review,
                description: "Non-RAMP Issue before AMA Activation",
                end_product_establishment_id: end_product_establishment.id,
-               ineligible_reason: :before_ama
+               ineligible_reason: :before_ama,
+               benefit_type: "compensation"
       )).to_not be_nil
 
       expect(RequestIssue.find_by(
@@ -974,14 +985,16 @@ RSpec.feature "Higher-Level Review" do
                description: "Issue before AMA Activation from RAMP",
                ineligible_reason: nil,
                ramp_claim_id: "ramp_claim_id",
-               end_product_establishment_id: end_product_establishment.id
+               end_product_establishment_id: end_product_establishment.id,
+               benefit_type: "compensation"
       )).to_not be_nil
 
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
                description: "A nonrating issue before AMA",
                ineligible_reason: :before_ama,
-               end_product_establishment_id: non_rating_end_product_establishment.id
+               end_product_establishment_id: non_rating_end_product_establishment.id,
+               benefit_type: "compensation"
       )).to_not be_nil
 
       duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
@@ -1011,7 +1024,7 @@ RSpec.feature "Higher-Level Review" do
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         hash_including(
-          contention_descriptions: array_including("Left knee granted")
+          contention_descriptions: array_including("Left knee granted 2")
         )
       )
     end
@@ -1033,13 +1046,24 @@ RSpec.feature "Higher-Level Review" do
     end
 
     scenario "Non-compensation" do
-      start_higher_level_review(veteran, is_comp: false)
+      hlr, = start_higher_level_review(veteran, is_comp: false)
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add / Remove Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
       check_row("Benefit type", "Education")
       expect(page).to_not have_content("Claimant")
+      click_intake_add_issue
+      add_intake_rating_issue("Left knee granted")
+      click_intake_finish
+      expect(page).to have_content("Intake completed")
+
+      # request issue should have matching benefit type
+      expect(RequestIssue.find_by(
+               review_request: hlr,
+               description: "Left knee granted",
+               benefit_type: "education"
+      )).to_not be_nil
     end
 
     scenario "canceling" do
@@ -1077,35 +1101,98 @@ RSpec.feature "Higher-Level Review" do
         setup_legacy_opt_in_appeals(veteran.file_number)
       end
 
-      scenario "adding issues" do
-        # feature is not yet fully implemented
-        start_higher_level_review(veteran)
-        visit "/intake/add_issues"
+      context "with legacy_opt_in_approved" do
+        scenario "adding issues" do
+          start_higher_level_review(veteran, legacy_opt_in_approved: true)
+          visit "/intake/add_issues"
 
-        click_intake_add_issue
+          click_intake_add_issue
+          expect(page).to have_content("Next")
+          add_intake_rating_issue("Left knee granted")
 
-        expect(page).to have_content("Next")
-        add_intake_rating_issue("Left knee granted")
-        # expect legacy opt in modal
-        expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-        add_intake_rating_issue("None of these match")
+          # expect legacy opt in modal
+          expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+          # do not show "inactive and ineligible" issues when legacy opt in is true
+          expect(page).to_not have_content("typhoid arthritis")
 
-        expect(page).to have_content("Left knee granted")
+          add_intake_rating_issue("intervertebral disc syndrome") # ineligible issue
 
-        click_intake_add_issue
-        click_intake_no_matching_issues
-        add_intake_nonrating_issue(
-          category: "Active Duty Adjustments",
-          description: "Description for Active Duty Adjustments",
-          date: "04/25/2018",
-          legacy_issues: true
-        )
+          expect(page).to have_content(
+            "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
+          )
 
-        expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
+          # Expect untimely exemption modal for untimely issue
+          click_intake_add_issue
+          add_intake_rating_issue("Untimely rating issue 1")
+          add_intake_rating_issue("None of these match")
+          add_untimely_exemption_response("Yes")
 
-        add_intake_rating_issue("None of these match")
+          expect(page).to have_content("Untimely rating issue 1")
 
-        expect(page).to have_content("Description for Active Duty Adjustments")
+          click_intake_add_issue
+          click_intake_no_matching_issues
+          add_intake_nonrating_issue(
+            category: "Active Duty Adjustments",
+            description: "Description for Active Duty Adjustments",
+            date: "10/25/2017",
+            legacy_issues: true
+          )
+
+          expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
+
+          add_intake_rating_issue("None of these match")
+          add_untimely_exemption_response("Yes")
+
+          expect(page).to have_content("Description for Active Duty Adjustments")
+
+          click_intake_finish
+
+          ineligible_checklist = find("ul.cf-ineligible-checklist")
+          expect(ineligible_checklist).to have_content(
+            "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
+          )
+
+          expect(RequestIssue.find_by(
+                   description: "Left knee granted",
+                   ineligible_reason: :legacy_appeal_not_eligible,
+                   vacols_id: "vacols2",
+                   vacols_sequence_id: "1"
+          )).to_not be_nil
+        end
+      end
+
+      context "with legacy opt in not approved" do
+        scenario "adding issues" do
+          start_higher_level_review(veteran, legacy_opt_in_approved: false)
+          visit "/intake/add_issues"
+          click_intake_add_issue
+          add_intake_rating_issue("Left knee granted")
+
+          expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+          # do not show inactive appeals when legacy opt in is false
+          expect(page).to_not have_content("impairment of hip")
+          expect(page).to_not have_content("typhoid arthritis")
+
+          add_intake_rating_issue("ankylosis of hip")
+
+          expect(page).to have_content(
+            "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
+          )
+
+          click_intake_finish
+
+          ineligible_checklist = find("ul.cf-ineligible-checklist")
+          expect(ineligible_checklist).to have_content(
+            "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
+          )
+
+          expect(RequestIssue.find_by(
+                   description: "Left knee granted",
+                   ineligible_reason: :legacy_issue_not_withdrawn,
+                   vacols_id: "vacols1",
+                   vacols_sequence_id: "1"
+          )).to_not be_nil
+        end
       end
 
       scenario "adding issue with legacy opt in disabled" do

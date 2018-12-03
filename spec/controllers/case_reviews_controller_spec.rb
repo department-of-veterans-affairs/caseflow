@@ -57,7 +57,7 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(task.reload.status).to eq "completed"
             expect(task.completed_at).to_not eq nil
             expect(task.parent.reload.status).to eq "assigned"
-            expect(task.parent.action).to eq "review"
+            expect(task.parent.type).to eq JudgeReviewTask.name
 
             expect(bva_dispatch_task_count_before).to eq(BvaDispatchTask.count)
           end
@@ -110,7 +110,7 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(task.reload.status).to eq "completed"
             expect(task.completed_at).to_not eq nil
             expect(task.parent.reload.status).to eq "assigned"
-            expect(task.parent.action).to eq "review"
+            expect(task.parent.type).to eq JudgeReviewTask.name
 
             expect(bva_dispatch_task_count_before).to eq(BvaDispatchTask.count)
             FeatureToggle.disable!(:ama_decision_issues)

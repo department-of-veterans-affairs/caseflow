@@ -516,12 +516,11 @@ RSpec.feature "Checkout flows" do
     let(:root_task) { FactoryBot.create(:root_task) }
     let(:parent_task) do
       FactoryBot.create(
-        :ama_judge_task,
+        :ama_judge_review_task,
         :in_progress,
         assigned_to: judge_user,
         appeal: appeal,
-        parent: root_task,
-        action: "review"
+        parent: root_task
       )
     end
 

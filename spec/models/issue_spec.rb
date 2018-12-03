@@ -343,4 +343,33 @@ describe Issue do
       end
     end
   end
+
+  context "#closed?" do
+    subject { issue.closed? }
+    let(:disposition) { nil }
+    let(:vacols_case) { create(:case, :status_advance, case_issues: [vacols_case_issue], bfkey: vacols_id) }
+    let(:vacols_case_issue) { create(:case_issue) }
+    let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+
+    it { is_expected.to be_falsey }
+
+    context "disposition is present" do
+      let(:disposition) { :remanded }
+
+      it { is_expected.to be_truthy }
+    end
+
+    context "case is REM, disposition is 3" do
+      let(:disposition) { "3" }
+      let(:vacols_case) { create(:case, :status_remand, case_issues: [vacols_case_issue], bfkey: vacols_id) }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "case is neither REM nor ADV" do
+      let(:vacols_case) { create(:case, :status_complete, case_issues: [vacols_case_issue], bfkey: vacols_id) }
+
+      it { is_expected.to be_falsey }
+    end
+  end
 end
