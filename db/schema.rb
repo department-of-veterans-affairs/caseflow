@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181129230649) do
+ActiveRecord::Schema.define(version: 20181203174849) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -194,6 +194,7 @@ ActiveRecord::Schema.define(version: 20181129230649) do
     t.string "decision_text"
     t.string "decision_review_type"
     t.integer "decision_review_id"
+    t.string "benefit_type"
     t.index ["rating_issue_reference_id", "participant_id"], name: "decision_issues_uniq_idx", unique: true
   end
 
@@ -552,6 +553,8 @@ ActiveRecord::Schema.define(version: 20181129230649) do
     t.integer "organization_id"
     t.integer "user_id"
     t.boolean "admin", default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.index ["organization_id"], name: "index_organizations_users_on_organization_id"
     t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
   end
@@ -678,15 +681,16 @@ ActiveRecord::Schema.define(version: 20181129230649) do
     t.bigint "ineligible_due_to_id"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
-    t.string "ineligible_reason"
     t.string "ramp_claim_id"
     t.datetime "decision_sync_submitted_at"
     t.datetime "decision_sync_attempted_at"
     t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
+    t.string "ineligible_reason"
     t.string "vacols_id"
     t.string "vacols_sequence_id"
     t.datetime "created_at"
+    t.string "benefit_type"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"

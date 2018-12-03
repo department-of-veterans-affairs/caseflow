@@ -23,8 +23,9 @@ client/yarn-error.log
 /reports/*
 !/reports/.keep
 
-# Ignore vim swap files
+# Ignore vim swap and tag files
 *.swp
+tags
 
 # Ignore hidden files
 .*
