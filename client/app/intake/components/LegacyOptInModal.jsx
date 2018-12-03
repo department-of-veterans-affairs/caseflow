@@ -30,7 +30,7 @@ class LegacyOptInModal extends React.Component {
     const legacyValues = value.split('-');
     const vacolsSequenceId = legacyValues.length > 1 ? legacyValues[1] : null;
     const legacyAppeal = this.props.intakeData.legacyAppeals.find((appeal) => appeal.vacols_id === legacyValues[0]);
-    const eligibleForSocOptIn = legacyAppeal ? legacyAppeal.eligible_for_soc_opt_in : null;
+    const eligibleForSocOptIn = legacyAppeal && legacyAppeal.eligible_for_soc_opt_in;
 
     if (vacolsSequenceId) {
       this.setState({

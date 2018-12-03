@@ -51,10 +51,12 @@ class AddedIssue extends React.PureComponent {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review;
     } else if (issue.beforeAma) {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.before_ama;
-    } else if (!legacyOptInApproved && issue.vacolsId) {
-      errorMsg = INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn;
-    } else if (issue.vacolsId && !issue.eligibleForSocOptIn) {
-      errorMsg = INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible;
+    } else if (issue.vacolsId) {
+      if (!legacyOptInApproved) {
+        errorMsg = INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn;
+      } else if (!issue.eligibleForSocOptIn) {
+        errorMsg = INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible;
+      }
     }
 
     if (errorMsg !== '') {

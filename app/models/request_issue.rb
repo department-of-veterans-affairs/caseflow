@@ -263,8 +263,9 @@ class RequestIssue < ApplicationRecord
 
   def check_for_legacy_issue_not_withdrawn!
     return unless eligible?
+    return unless vacols_id
 
-    if !review_request.legacy_opt_in_approved && vacols_id
+    if !review_request.legacy_opt_in_approved
       self.ineligible_reason = :legacy_issue_not_withdrawn
     end
   end
@@ -272,11 +273,11 @@ class RequestIssue < ApplicationRecord
   def check_for_legacy_appeal_not_eligible!
     return unless eligible?
     return unless vacols_id
-    return unless review_request.serialized_legacy_appeals
+    return unless review_request.serialized_legacy_appeals.any?
 
-    legacy_appeal = review_request.serialized_legacy_appeals.select { |appeal| appeal[:vacols_id] == vacols_id }
+    legacy_appeal = review_request.serialized_legacy_appeals.find { |appeal| appeal[:vacols_id] == vacols_id }
 
-    if !legacy_appeal.first[:eligible_for_soc_opt_in]
+    if !legacy_appeal[:eligible_for_soc_opt_in]
       self.ineligible_reason = :legacy_appeal_not_eligible
     end
   end

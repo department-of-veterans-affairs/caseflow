@@ -110,7 +110,7 @@ module IntakeHelpers
                   ])
   end
 
-  def setup_active_ineligible_appeal(veteran_file_number)
+  def setup_active_ineligible_legacy_appeal(veteran_file_number)
     create(:legacy_appeal, vacols_case:
       create(:case,
              :status_active,
@@ -127,7 +127,7 @@ module IntakeHelpers
                   ])
   end
 
-  def setup_inactive_eligible_appeal(veteran_file_number)
+  def setup_inactive_eligible_legacy_appeal(veteran_file_number)
     create(:legacy_appeal, vacols_case:
       create(:case,
              :status_complete,
@@ -144,7 +144,7 @@ module IntakeHelpers
                   ])
   end
 
-  def setup_inactive_ineligible_appeal(veteran_file_number)
+  def setup_inactive_ineligible_legacy_appeal(veteran_file_number)
     create(:legacy_appeal, vacols_case:
       create(:case,
              :status_complete,
