@@ -80,7 +80,7 @@ class Appeal < DecisionReview
   end
 
   def reviewing_judge_name
-    task = tasks.where(type: "JudgeTask").order(:created_at).last
+    task = tasks.order(:created_at).select { |t| t.is_a?(JudgeTask) }.last
     task ? task.assigned_to.try(:full_name) : ""
   end
 
