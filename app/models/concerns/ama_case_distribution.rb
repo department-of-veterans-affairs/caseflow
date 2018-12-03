@@ -147,26 +147,26 @@ module AmaCaseDistribution
 
     # We distribute from the other dockets proportional to their "weight," basically the number of pending appeals.
     # LegacyDocket makes adjustments to the weight to account for pre-Form 9 appeals.
-    proportions = dockets
+    @docket_proportions = dockets
       .except(:direct_review)
       .transform_values(&:weight)
       .extend(ProportionHash)
       .add_fixed_proportions!(direct_review: direct_review_proportion)
 
     # The legacy docket proportion is subject to a minimum, provided we have at least that many legacy appeals.
-    if proportions[:legacy] < MINIMUM_LEGACY_PROPORTION
+    if @docket_proportions[:legacy] < MINIMUM_LEGACY_PROPORTION
       legacy_proportion = [
         MINIMUM_LEGACY_PROPORTION,
         dockets[:legacy].count(priority: false, ready: true).to_f / total_batch_size
       ].min
 
-      proportions.add_fixed_proportions!(
+      @docket_proportions.add_fixed_proportions!(
         legacy: legacy_proportion,
         direct_review: direct_review_proportion
       )
     end
 
-    @docket_proportions = proportions
+    @docket_proportions
   end
 
   def direct_review_due_count
@@ -179,10 +179,9 @@ module AmaCaseDistribution
     t = 1 - (dockets[:direct_review].time_until_due_of_oldest_appeal /
              dockets[:direct_review].time_until_due_of_new_appeal)
 
-    proportion = (pacesetting_direct_review_proportion * t * INTERPOLATED_DIRECT_REVIEW_PROPORTION_ADJUSTMENT)
-      .clamp(0, MAXIMUM_DIRECT_REVIEW_PROPORTION)
-
-    @interpolated_minimum_direct_review_proportion = proportion
+    @interpolated_minimum_direct_review_proportion =
+      (pacesetting_direct_review_proportion * t * INTERPOLATED_DIRECT_REVIEW_PROPORTION_ADJUSTMENT)
+        .clamp(0, MAXIMUM_DIRECT_REVIEW_PROPORTION)
   end
 
   # CMGTODO

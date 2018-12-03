@@ -9,7 +9,7 @@ class AmaDirectReviewDocket < Docket
   # CMGTODO
   def due_count; end
 
-  # CMGTODO
+  # CMGTODO: clamp to [0, time_until_due_of_new_appeal]
   def time_until_due_of_oldest_appeal; end
 
   def time_until_due_of_new_appeal
