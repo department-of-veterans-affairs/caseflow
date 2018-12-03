@@ -107,7 +107,6 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
-    tasks: actionableTasksForAppeal(state, { appealId: ownProps.appealId }),
     success,
     featureToggles,
     error,
