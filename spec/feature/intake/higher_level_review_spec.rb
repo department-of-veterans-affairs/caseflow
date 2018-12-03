@@ -1041,7 +1041,7 @@ RSpec.feature "Higher-Level Review" do
     end
 
     scenario "Non-compensation" do
-      hlr, _ = start_higher_level_review(veteran, is_comp: false)
+      hlr, = start_higher_level_review(veteran, is_comp: false)
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add / Remove Issues")
@@ -1055,9 +1055,9 @@ RSpec.feature "Higher-Level Review" do
 
       # request issue should have matching benefit type
       expect(RequestIssue.find_by(
-        review_request: hlr,
-        description: "Left knee granted",
-        benefit_type: "education"
+               review_request: hlr,
+               description: "Left knee granted",
+               benefit_type: "education"
       )).to_not be_nil
     end
 
