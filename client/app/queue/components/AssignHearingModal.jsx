@@ -223,6 +223,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     const timeOptions = this.getTimeOptions();
 
     if (!selectedHearingTime) {
+
       return {};
     }
 
@@ -236,6 +237,15 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     } = this.props;
 
     const timeOptions = this.getTimeOptions();
+
+    const getTimeError = () => {
+      if (!selectedHearingTime) {
+        return <div>
+          <span>No hearing time selected</span>
+          <ul><li {...css({ fontWeight: '500' })}>Please select a hearing time</li></ul>
+        </div>;
+      }
+    };
 
     return <React.Fragment>
       <div {...fullWidth} {...css({ marginBottom: '0' })} >
@@ -265,7 +275,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           strongLabel
           options={timeOptions}
           onChange={this.props.onHearingTimeChange}
-          value={selectedHearingTime} />
+          value={selectedHearingTime}
+          errorMessage={getTimeError()} />
       </div>
     </React.Fragment>;
   }
