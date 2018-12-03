@@ -1051,6 +1051,8 @@ RSpec.feature "Higher-Level Review" do
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
       click_intake_finish
+      expect(page).to have_content("Intake completed")
+
       # request issue should have matching benefit type
       expect(RequestIssue.find_by(
         review_request: hlr,
