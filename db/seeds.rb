@@ -416,7 +416,7 @@ class SeedDB
 
     judge = FactoryBot.create(:user)
     FactoryBot.create(:staff, :judge_role, user: judge)
-    judge_task = JudgeTask.create!(appeal: appeal, parent: root_task, assigned_to: judge, action: "assign")
+    judge_task = JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge)
 
     atty = FactoryBot.create(:user)
     FactoryBot.create(:staff, :attorney_role, user: atty)
