@@ -129,7 +129,7 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def update_params
-    params.require("hearing_day").permit(:judge_id, :regional_office, :hearing_key, :hearing_type)
+    params.permit(:judge_id, :regional_office, :hearing_key, :hearing_type)
       .merge(updated_by: current_user)
   end
 
