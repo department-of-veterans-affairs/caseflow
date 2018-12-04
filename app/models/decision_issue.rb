@@ -6,6 +6,11 @@ class DecisionIssue < ApplicationRecord
   has_many :remand_reasons, dependent: :destroy
   belongs_to :decision_review, polymorphic: true
 
+  def title_of_active_review
+    request_issue = RequestIssue.find_active_by_contested_decision_id(id)
+    request_issue.review_title if request_issue
+  end
+
   private
 
   def appeal?
