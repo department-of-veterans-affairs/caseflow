@@ -181,6 +181,30 @@ dd {
 }
 
 //------------------------------------
+// Spacers
+//-----------------------------------*/
+
+// This generates a set of margin and padding options that can be added to any element.
+//
+// ex.  <p className="cf-padding-top-3rem">
+//  or  <h4 className="cf-margin-bottom-0">
+//  or  <img className="cf-padding-right-6rem cf-padding-left-0rem">
+
+$styles: ('margin'), ('padding');
+$directions: ('top'), ('bottom'), ('left'), ('right');
+$rems: ('0', '0rem', '1rem', '2rem', '3rem', '4rem', '5rem', '6rem', '7rem', '8rem', '9rem', '10rem');
+
+@each $style in $styles {
+  @each $direction in $directions {
+    @each $rem in $rems {
+      .cf-#{$style}-#{$direction}-#{$rem} {
+        #{$style}-#{$direction}: #{$rem};
+      }
+    }
+  }
+}
+
+//------------------------------------
 // Icons
 //-----------------------------------*/
 

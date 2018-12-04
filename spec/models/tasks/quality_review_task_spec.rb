@@ -23,7 +23,7 @@ describe QualityReviewTask do
 
       let!(:judge) { FactoryBot.create(:user) }
       let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, user: judge) }
-      let!(:judge_task) { JudgeTask.create!(appeal: appeal, parent: root_task, assigned_to: judge, action: "assign") }
+      let!(:judge_task) { JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge) }
 
       let!(:atty) { FactoryBot.create(:user) }
       let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, user: atty) }

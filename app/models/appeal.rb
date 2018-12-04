@@ -80,7 +80,7 @@ class Appeal < DecisionReview
   end
 
   def reviewing_judge_name
-    task = tasks.where(type: "JudgeTask").order(:created_at).last
+    task = tasks.order(:created_at).select { |t| t.is_a?(JudgeTask) }.last
     task ? task.assigned_to.try(:full_name) : ""
   end
 
@@ -183,7 +183,9 @@ class Appeal < DecisionReview
 
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      issue.save!
+      # temporary until ticket for appeals benefit type by issue is implemented
+      # https://github.com/department-of-veterans-affairs/caseflow/issues/5882
+      issue.update!(benefit_type: "compensation")
       create_legacy_issue_optin(issue) if issue.vacols_id
     end
   end

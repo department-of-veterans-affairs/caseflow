@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ModuleLength
 module IntakeHelpers
   def search_page_title
     "Search for Veteran by ID"
@@ -90,21 +91,81 @@ module IntakeHelpers
     expect(find_intake_issue_by_number(number)).to_not have_css(".not-eligible")
   end
 
-  def setup_legacy_opt_in_appeals(veteran_file_number)
-    # create two legacy appeals with 2 issues each
+  def setup_active_eligible_legacy_appeal(veteran_file_number)
     create(:legacy_appeal, vacols_case:
-      create(:case, bfkey: "vacols1", bfcorlid: "#{veteran_file_number}S", bfdnod: 3.days.ago, bfdsoc: 3.days.ago))
-    create(:legacy_appeal, vacols_case:
-      create(:case, bfkey: "vacols2", bfcorlid: "#{veteran_file_number}S", bfdnod: 4.days.ago, bfdsoc: 4.days.ago))
+      create(
+        :case,
+        :status_active,
+        bfkey: "vacols1",
+        bfcorlid: "#{veteran_file_number}S",
+        bfdnod: 3.days.ago,
+        bfdsoc: 3.days.ago
+      ))
+
+    # ankylosis of hip, limitation of thigh motion (extension)
     allow(AppealRepository).to receive(:issues).with("vacols1")
       .and_return([
-                    Generators::Issue.build(vacols_sequence_id: 1),
-                    Generators::Issue.build(vacols_sequence_id: 1)
-                  ])
-    allow(AppealRepository).to receive(:issues).with("vacols2")
-      .and_return([
-                    Generators::Issue.build(vacols_sequence_id: 1),
-                    Generators::Issue.build(vacols_sequence_id: 1)
+                    Generators::Issue.build(id: "vacols1", vacols_sequence_id: 1, codes: %w[02 15 03 5250]),
+                    Generators::Issue.build(id: "vacols1", vacols_sequence_id: 2, codes: %w[02 15 03 5251])
                   ])
   end
+
+  def setup_active_ineligible_legacy_appeal(veteran_file_number)
+    create(:legacy_appeal, vacols_case:
+      create(:case,
+             :status_active,
+             bfkey: "vacols2",
+             bfcorlid: "#{veteran_file_number}S",
+             bfdnod: 4.years.ago,
+             bfdsoc: 4.months.ago))
+
+    # intervertebral disc syndrome, degenerative arthritis of the spine
+    allow(AppealRepository).to receive(:issues).with("vacols2")
+      .and_return([
+                    Generators::Issue.build(id: "vacols2", vacols_sequence_id: 1, codes: %w[02 15 03 5243]),
+                    Generators::Issue.build(id: "vacols2", vacols_sequence_id: 2, codes: %w[02 15 03 5242])
+                  ])
+  end
+
+  def setup_inactive_eligible_legacy_appeal(veteran_file_number)
+    create(:legacy_appeal, vacols_case:
+      create(:case,
+             :status_complete,
+             bfkey: "vacols3",
+             bfcorlid: "#{veteran_file_number}S",
+             bfdnod: 4.days.ago,
+             bfdsoc: 4.days.ago))
+
+    # impairment of hip, impairment of femur
+    allow(AppealRepository).to receive(:issues).with("vacols3")
+      .and_return([
+                    Generators::Issue.build(id: "vacols3", vacols_sequence_id: 1, codes: %w[02 15 03 5254]),
+                    Generators::Issue.build(id: "vacols3", vacols_sequence_id: 2, codes: %w[02 15 03 5255])
+                  ])
+  end
+
+  def setup_inactive_ineligible_legacy_appeal(veteran_file_number)
+    create(:legacy_appeal, vacols_case:
+      create(:case,
+             :status_complete,
+             bfkey: "vacols4",
+             bfcorlid: "#{veteran_file_number}S",
+             bfdnod: 4.years.ago,
+             bfdsoc: 4.months.ago))
+
+    # typhoid arthritis, caisson disease of bones
+    allow(AppealRepository).to receive(:issues).with("vacols4")
+      .and_return([
+                    Generators::Issue.build(id: "vacols4", vacols_sequence_id: 1, codes: %w[02 15 03 5006]),
+                    Generators::Issue.build(id: "vacols4", vacols_sequence_id: 2, codes: %w[02 15 03 5011])
+                  ])
+  end
+
+  def setup_legacy_opt_in_appeals(veteran_file_number)
+    setup_active_eligible_legacy_appeal(veteran_file_number)
+    setup_active_ineligible_legacy_appeal(veteran_file_number)
+    setup_inactive_eligible_legacy_appeal(veteran_file_number)
+    setup_inactive_ineligible_legacy_appeal(veteran_file_number)
+  end
 end
+# rubocop:enable Metrics/ModuleLength
