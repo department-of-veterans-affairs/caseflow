@@ -132,7 +132,7 @@ class Issue
   end
 
   def active?
-    !disposition
+    disposition.nil? || in_remand?
   end
 
   def allowed?
@@ -206,16 +206,28 @@ class Issue
   # rubocop:disable Metrics/CyclomaticComplexity
   def closed?
     return false if disposition.nil?
-    return false if disposition == "3" && legacy_appeal.remand?
+    return false if in_remand?
     return true if legacy_appeal.remand? || legacy_appeal.advance? || !legacy_appeal.active?
     false
   end
   # rubocop:enable Metrics/CyclomaticComplexity
 
+  def eligible_for_opt_in?
+    (active? || disposition_is_failure_to_respond?) && legacy_appeal.eligible_for_soc_opt_in?
+  end
+
   private
 
   def legacy_appeal
     @legacy_appeal ||= LegacyAppeal.find_by(vacols_id: id)
+  end
+
+  def disposition_is_failure_to_respond?
+    [:remand_failure_to_respond, :advance_failure_to_respond].include?(disposition)
+  end
+
+  def in_remand?
+    legacy_appeal.try(:remand?) && remanded?
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
