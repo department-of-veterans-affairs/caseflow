@@ -84,6 +84,7 @@ class NonratingRequestIssueModal extends React.Component {
         currentIssue,
         notes: null });
     } else if (this.requiresUntimelyExemption()) {
+      currentIssue.timely = false;
       this.props.toggleUntimelyExemptionModal({
         currentIssue,
         notes: null

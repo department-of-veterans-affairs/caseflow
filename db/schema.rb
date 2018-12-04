@@ -194,6 +194,7 @@ ActiveRecord::Schema.define(version: 20181203195219) do
     t.string "decision_text"
     t.string "decision_review_type"
     t.integer "decision_review_id"
+    t.string "benefit_type"
     t.index ["rating_issue_reference_id", "participant_id"], name: "decision_issues_uniq_idx", unique: true
   end
 
@@ -691,6 +692,7 @@ ActiveRecord::Schema.define(version: 20181203195219) do
     t.string "vacols_id"
     t.string "vacols_sequence_id"
     t.datetime "created_at"
+    t.string "benefit_type"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
