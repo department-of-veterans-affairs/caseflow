@@ -456,7 +456,8 @@ describe RequestIssue do
                 disposition_date: end_product_establishment.last_synced_at,
                 decision_review_type: "HigherLevelReview",
                 decision_review_id: review.id,
-                benefit_type: "compensation"
+                benefit_type: "compensation",
+                last_action_date: end_product_establishment.result.last_action_date.to_date
               )
               expect(rating_request_issue.processed?).to eq(true)
             end
@@ -497,7 +498,8 @@ describe RequestIssue do
             disposition_date: end_product_establishment.last_synced_at,
             decision_review_type: "HigherLevelReview",
             decision_review_id: review.id,
-            benefit_type: "compensation"
+            benefit_type: "compensation",
+            last_action_date: end_product_establishment.result.last_action_date.to_date
           )
           expect(request_issue.processed?).to eq(true)
         end

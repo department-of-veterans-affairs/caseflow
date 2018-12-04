@@ -6,6 +6,10 @@ class DecisionIssue < ApplicationRecord
   has_many :remand_reasons, dependent: :destroy
   belongs_to :decision_review, polymorphic: true
 
+  def approx_decision_date
+    profile_date ? profile_date.to_date : last_action_date
+  end
+
   private
 
   def appeal?
