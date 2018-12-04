@@ -7,6 +7,7 @@
     organizations: current_user.organizations.map {|o| o.slice(:id, :name, :url)},
     userIsVsoEmployee: current_user.vso_employee?,
     caseSearchHomePage: case_search_home_page,
+    organizationName: defined?(organization) ? organization.name : nil,
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
     buildDate: build_date,

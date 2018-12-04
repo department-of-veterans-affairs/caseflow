@@ -8,15 +8,15 @@ RSpec.feature "Appeal Intake" do
     FeatureToggle.enable!(:intake)
     # Test that this works when only enabled on the current user
     FeatureToggle.enable!(:intakeAma, users: [current_user.css_id])
-    FeatureToggle.enable!(:intake_legacy_opt_in)
+    FeatureToggle.enable!(:intake_legacy_opt_in, users: [current_user.css_id])
 
     Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2018, 5, 20))
+    Timecop.freeze(Time.utc(2018, 11, 28))
   end
 
   after do
-    FeatureToggle.disable!(:intakeAma)
-    FeatureToggle.disable!(:intake_legacy_opt_in)
+    FeatureToggle.disable!(:intakeAma, users: [current_user.css_id])
+    FeatureToggle.disable!(:intake_legacy_opt_in, users: [current_user.css_id])
   end
 
   let!(:current_user) do
@@ -41,16 +41,16 @@ RSpec.feature "Appeal Intake" do
                               participant_id: "44444444")
   end
 
-  let(:receipt_date) { Date.new(2018, 4, 20) }
+  let(:receipt_date) { Date.new(2018, 9, 20) }
 
   let(:untimely_days) { 372.days }
 
-  let(:profile_date) { Date.new(2017, 11, 20).to_time(:local) }
+  let(:profile_date) { Date.new(2018, 9, 15).to_time(:local) }
 
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - untimely_days + 1.day,
+      promulgation_date: receipt_date - 5.days,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
@@ -62,8 +62,8 @@ RSpec.feature "Appeal Intake" do
   let!(:untimely_rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - untimely_days,
-      profile_date: receipt_date - untimely_days + 3.days,
+      promulgation_date: receipt_date - untimely_days - 1.day,
+      profile_date: receipt_date - untimely_days - 3.days,
       issues: [
         { reference_id: "old123", decision_text: "Untimely rating issue 1" },
         { reference_id: "old456", decision_text: "Untimely rating issue 2" }
@@ -106,13 +106,13 @@ RSpec.feature "Appeal Intake" do
     click_on "Search"
     expect(page).to have_current_path("/intake/review_request")
 
-    fill_in "What is the Receipt Date of this form?", with: "05/25/2018"
+    fill_in "What is the Receipt Date of this form?", with: "12/15/2018"
     safe_click "#button-submit-review"
 
     expect(page).to have_content("Receipt date cannot be in the future.")
     expect(page).to have_content("Please select an option.")
 
-    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+    fill_in "What is the Receipt Date of this form?", with: "09/20/2018"
 
     within_fieldset("Which review option did the Veteran request?") do
       find("label", text: "Evidence Submission", match: :prefer_exact).click
@@ -162,7 +162,7 @@ RSpec.feature "Appeal Intake" do
     )
 
     expect(appeal.payee_code).to eq(nil)
-    expect(page).to have_content("Decision date: 11/20/2017")
+    expect(page).to have_content("Decision date: 09/15/2018")
     expect(page).to have_content("Left knee granted")
     expect(page).to have_content("Untimely rating issue 1")
 
@@ -182,7 +182,7 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_content("1 issue")
 
-    fill_in "Decision date", with: "04/19/2018"
+    fill_in "Decision date", with: "10/27/2018"
 
     expect(page).to have_content("2 issues")
 
@@ -246,12 +246,12 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  def start_appeal(test_veteran, veteran_is_not_claimant: false)
+  def start_appeal(test_veteran, veteran_is_not_claimant: false, legacy_opt_in_approved: false)
     appeal = Appeal.create!(
       veteran_file_number: test_veteran.file_number,
-      receipt_date: 2.days.ago,
+      receipt_date: receipt_date,
       docket_type: "evidence_submission",
-      legacy_opt_in_approved: false,
+      legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: veteran_is_not_claimant
     )
 
@@ -330,8 +330,8 @@ RSpec.feature "Appeal Intake" do
       promulgation_date: receipt_date - 40.days,
       profile_date: receipt_date - 50.days,
       issues: [
-        { reference_id: "xyz123", decision_text: "Left knee granted" },
-        { reference_id: "xyz456", decision_text: "PTSD denied" },
+        { reference_id: "xyz123", decision_text: "Left knee granted 2" },
+        { reference_id: "xyz456", decision_text: "PTSD denied 2" },
         { reference_id: duplicate_reference_id, decision_text: "Old injury in review" }
       ]
     )
@@ -384,30 +384,30 @@ RSpec.feature "Appeal Intake" do
     click_intake_add_issue
     expect(page).to have_content("Add issue 1")
     expect(page).to have_content("Does issue 1 match any of these issues")
-    expect(page).to have_content("Left knee granted")
-    expect(page).to have_content("PTSD denied")
+    expect(page).to have_content("Left knee granted 2")
+    expect(page).to have_content("PTSD denied 2")
 
     # test canceling adding an issue by closing the modal
     safe_click ".close-modal"
-    expect(page).to_not have_content("Left knee granted")
+    expect(page).to_not have_content("Left knee granted 2")
 
     # adding an issue should show the issue
     click_intake_add_issue
-    add_intake_rating_issue("Left knee granted")
+    add_intake_rating_issue("Left knee granted 2")
 
-    expect(page).to have_content("1. Left knee granted")
+    expect(page).to have_content("1. Left knee granted 2")
     expect(page).to_not have_content("Notes:")
 
     # removing the issue should hide the issue
     click_remove_intake_issue("1")
 
-    expect(page).to_not have_content("Left knee granted")
+    expect(page).to_not have_content("Left knee granted 2")
 
     # re-add to proceed
     click_intake_add_issue
-    add_intake_rating_issue("Left knee granted", "I am an issue note")
+    add_intake_rating_issue("Left knee granted 2", "I am an issue note")
 
-    expect(page).to have_content("1. Left knee granted")
+    expect(page).to have_content("1. Left knee granted 2")
     expect(page).to have_content("I am an issue note")
 
     # clicking add issue again should show a disabled radio button for that same rating
@@ -415,7 +415,7 @@ RSpec.feature "Appeal Intake" do
 
     expect(page).to have_content("Add issue 2")
     expect(page).to have_content("Does issue 2 match any of these issues")
-    expect(page).to have_content("Left knee granted (already selected for issue 1)")
+    expect(page).to have_content("Left knee granted 2 (already selected for issue 1)")
     expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
 
     # Add nonrating issue
@@ -423,7 +423,7 @@ RSpec.feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: "04/19/2018"
+      date: "10/27/2018"
     )
     expect(page).to have_content("2 issues")
 
@@ -532,7 +532,7 @@ RSpec.feature "Appeal Intake" do
     expect(RequestIssue.find_by(
              review_request: appeal,
              rating_issue_reference_id: "xyz123",
-             description: "Left knee granted",
+             description: "Left knee granted 2",
              notes: "I am an issue note"
     )).to_not be_nil
 
@@ -606,7 +606,6 @@ RSpec.feature "Appeal Intake" do
 
     click_intake_add_issue
     add_intake_rating_issue("Left knee granted", "I am an issue note")
-    add_untimely_exemption_response("Yes")
 
     ## Validate error message when complete intake fails
     expect_any_instance_of(AppealIntake).to receive(:complete!).and_raise("A random error. Oh no!")
@@ -652,37 +651,98 @@ RSpec.feature "Appeal Intake" do
       setup_legacy_opt_in_appeals(veteran.file_number)
     end
 
-    scenario "adding issues" do
-      # feature is not yet fully implemented
-      start_appeal(veteran)
-      visit "/intake/add_issues"
+    context "with legacy_opt_in_approved" do
+      scenario "adding issues" do
+        start_appeal(veteran, legacy_opt_in_approved: true)
+        visit "/intake/add_issues"
 
-      click_intake_add_issue
-      expect(page).to have_content("Next")
-      add_intake_rating_issue("Left knee granted")
+        click_intake_add_issue
+        expect(page).to have_content("Next")
+        add_intake_rating_issue("Left knee granted")
 
-      # expect legacy opt in modal
-      expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-      add_intake_rating_issue("None of these match")
-      # none of these match should do the timeliness check
-      add_untimely_exemption_response("Yes")
+        # expect legacy opt in modal
+        expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+        # do not show "inactive and ineligible" issues when legacy opt in is true
+        expect(page).to_not have_content("typhoid arthritis")
 
-      expect(page).to have_content("Left knee granted")
+        add_intake_rating_issue("intervertebral disc syndrome") # ineligible issue
 
-      click_intake_add_issue
-      click_intake_no_matching_issues
-      add_intake_nonrating_issue(
-        category: "Active Duty Adjustments",
-        description: "Description for Active Duty Adjustments",
-        date: "04/25/2018",
-        legacy_issues: true
-      )
+        expect(page).to have_content(
+          "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
+        )
 
-      expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
+        # Expect untimely exemption modal for untimely issue
+        click_intake_add_issue
+        add_intake_rating_issue("Untimely rating issue 1")
+        add_intake_rating_issue("None of these match")
+        add_untimely_exemption_response("Yes")
 
-      add_intake_rating_issue("None of these match")
+        expect(page).to have_content("Untimely rating issue 1")
 
-      expect(page).to have_content("Description for Active Duty Adjustments")
+        click_intake_add_issue
+        click_intake_no_matching_issues
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "Description for Active Duty Adjustments",
+          date: "10/25/2017",
+          legacy_issues: true
+        )
+
+        expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
+
+        add_intake_rating_issue("None of these match")
+        add_untimely_exemption_response("Yes")
+
+        expect(page).to have_content("Description for Active Duty Adjustments")
+
+        click_intake_finish
+
+        ineligible_checklist = find("ul.cf-ineligible-checklist")
+        expect(ineligible_checklist).to have_content(
+          "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
+        )
+
+        expect(RequestIssue.find_by(
+                 description: "Left knee granted",
+                 ineligible_reason: :legacy_appeal_not_eligible,
+                 vacols_id: "vacols2",
+                 vacols_sequence_id: "1"
+        )).to_not be_nil
+      end
+    end
+
+    context "with legacy opt in not approved" do
+      scenario "adding issues" do
+        start_appeal(veteran, legacy_opt_in_approved: false)
+        visit "/intake/add_issues"
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
+
+        expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+        # do not show inactive appeals when legacy opt in is false
+        expect(page).to_not have_content("impairment of hip")
+        expect(page).to_not have_content("typhoid arthritis")
+
+        add_intake_rating_issue("ankylosis of hip")
+
+        expect(page).to have_content(
+          "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
+        )
+
+        click_intake_finish
+
+        ineligible_checklist = find("ul.cf-ineligible-checklist")
+        expect(ineligible_checklist).to have_content(
+          "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
+        )
+
+        expect(RequestIssue.find_by(
+                 description: "Left knee granted",
+                 ineligible_reason: :legacy_issue_not_withdrawn,
+                 vacols_id: "vacols1",
+                 vacols_sequence_id: "1"
+        )).to_not be_nil
+      end
     end
 
     scenario "adding issue with legacy opt in disabled" do
@@ -695,7 +755,6 @@ RSpec.feature "Appeal Intake" do
       click_intake_add_issue
       expect(page).to have_content("Add this issue")
       add_intake_rating_issue("Left knee granted")
-      add_untimely_exemption_response("Yes")
       expect(page).to have_content("Left knee granted")
     end
   end

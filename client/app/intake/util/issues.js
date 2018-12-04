@@ -82,6 +82,7 @@ export const validNonratingRequestIssue = (issue) => {
 // and returns objects useful for displaying in UI
 export const formatRequestIssues = (requestIssues) => {
   return requestIssues.map((issue) => {
+    // Nonrating issues
     if (issue.category) {
       return {
         isRating: false,
@@ -89,7 +90,9 @@ export const formatRequestIssues = (requestIssues) => {
         description: issue.description,
         decisionDate: formatDateStr(issue.decision_date),
         ineligibleReason: issue.ineligible_reason,
-        contentionText: issue.contention_text
+        contentionText: issue.contention_text,
+        untimelyExemption: issue.untimelyExemption,
+        untimelyExemptionNotes: issue.untimelyExemptionNotes
       };
     }
 
@@ -115,7 +118,9 @@ export const formatRequestIssues = (requestIssues) => {
       ineligibleReason: issue.ineligible_reason,
       titleOfActiveReview: issue.title_of_active_review,
       contentionText: issue.contention_text,
-      rampClaimId: issue.ramp_claim_id
+      rampClaimId: issue.ramp_claim_id,
+      untimelyExemption: issue.untimelyExemption,
+      untimelyExemptionNotes: issue.untimelyExemptionNotes
     };
   });
 };
@@ -171,7 +176,9 @@ const formatRatingRequestIssues = (state) => {
           notes: issue.notes,
           untimely_exemption: issue.untimelyExemption,
           untimely_exemption_notes: issue.untimelyExemptionNotes,
-          ramp_claim_id: issue.rampClaimId
+          ramp_claim_id: issue.rampClaimId,
+          vacols_id: issue.vacolsId,
+          vacols_sequence_id: issue.vacolsSequenceId
         };
       });
   }
@@ -197,7 +204,9 @@ const formatNonratingRequestIssues = (state) => {
         decision_text: issue.description,
         decision_date: formatDateStringForApi(issue.decisionDate),
         untimely_exemption: issue.untimelyExemption,
-        untimely_exemption_notes: issue.untimelyExemptionNotes
+        untimely_exemption_notes: issue.untimelyExemptionNotes,
+        vacols_id: issue.vacolsId,
+        vacols_sequence_id: issue.vacolsSequenceId
       };
     });
   }
@@ -295,7 +304,10 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         untimelyExemption: issue.untimelyExemption,
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
         ineligibleReason: issue.ineligibleReason,
-        rampClaimId: issue.rampClaimId
+        rampClaimId: issue.rampClaimId,
+        vacolsId: issue.vacolsId,
+        vacolsSequenceId: issue.vacolsSequenceId,
+        eligibleForSocOptIn: issue.eligibleForSocOptIn
       };
     }
 
@@ -306,11 +318,14 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       referenceId: issue.id,
       text: `${issue.category} - ${issue.description}`,
       date: formatDate(issue.decisionDate),
-      beforeAma: decisionDate < amaActivationDate,
       timely: issue.timely,
-      ineligibleReason: issue.ineligibleReason,
+      beforeAma: decisionDate < amaActivationDate,
       untimelyExemption: issue.untimelyExemption,
-      untimelyExemptionNotes: issue.untimelyExemptionNotes
+      untimelyExemptionNotes: issue.untimelyExemptionNotes,
+      ineligibleReason: issue.ineligibleReason,
+      vacolsId: issue.vacolsId,
+      vacolsSequenceId: issue.vacolsSequenceId,
+      eligibleForSocOptIn: issue.eligibleForSocOptIn
     };
   });
 };
