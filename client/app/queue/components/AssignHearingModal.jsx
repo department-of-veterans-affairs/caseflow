@@ -152,8 +152,9 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   validateForm = () => {
 
     const hearingDate = this.formatHearingDate();
+    const { selectedHearingTime } = this.props;
 
-    if (hearingDate === null) {
+    if (hearingDate === null || !selectedHearingTime) {
 
       this.props.showErrorMessage({
         title: 'Required Fields',
@@ -164,6 +165,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     }
 
     return true;
+
   }
 
   submit = () => {
@@ -238,15 +240,6 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
     const timeOptions = this.getTimeOptions();
 
-    const getTimeError = () => {
-      if (!selectedHearingTime) {
-        return <div>
-          <span>No hearing time selected</span>
-          <ul><li {...css({ fontWeight: '500' })}>Please select a hearing time</li></ul>
-        </div>;
-      }
-    };
-
     return <React.Fragment>
       <div {...fullWidth} {...css({ marginBottom: '0' })} >
         <RoSelectorDropdown
@@ -275,8 +268,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           strongLabel
           options={timeOptions}
           onChange={this.props.onHearingTimeChange}
-          value={selectedHearingTime}
-          errorMessage={getTimeError()} />
+          value={selectedHearingTime} />
       </div>
     </React.Fragment>;
   }
