@@ -151,7 +151,7 @@ module AmaCaseDistribution
       .extend(ProportionHash)
 
     # Prevent divide by zero errors if 100% of the docket margin is priority.
-    return @docket_proportions if docket_margin_net_of_priority == 0
+    return @docket_proportions.normalize! if docket_margin_net_of_priority == 0
 
     # Unlike the other dockets, the direct review docket observes a time goal.
     # We distribute appeals from the docket sufficient to meet the goal, instead of proportionally.
