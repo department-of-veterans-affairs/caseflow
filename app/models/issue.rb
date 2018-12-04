@@ -203,14 +203,12 @@ class Issue
 
   # For status (BFMPRO) of ADV or REM, for the most part, having a disposition means the issue is closed.
   # On appeal where the status is REM (remanded) the issues with disposition "3" are still active.
-  # rubocop:disable Metrics/CyclomaticComplexity
   def closed?
     return false if disposition.nil?
     return false if in_remand?
     return true if legacy_appeal.remand? || legacy_appeal.advance? || !legacy_appeal.active?
     false
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   def eligible_for_opt_in?
     (active? || disposition_is_failure_to_respond?) && legacy_appeal.eligible_for_soc_opt_in?
