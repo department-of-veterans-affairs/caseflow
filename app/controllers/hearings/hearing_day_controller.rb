@@ -90,6 +90,11 @@ class Hearings::HearingDayController < HearingScheduleController
     }, status: :ok
   end
 
+  def destroy
+    hearing_day.destroy!
+    render json: {}
+  end
+
   private
 
   def hearing
