@@ -45,7 +45,8 @@ class ColocatedTask < Task
       {
         label: COPY::COLOCATED_ACTION_PLACE_HOLD,
         value: Constants::CO_LOCATED_ACTIONS["PLACE_HOLD"]
-      }
+      },
+      Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h
     ]
 
     if %w[translation schedule_hearing].include?(action) && appeal.class.name.eql?("LegacyAppeal")
