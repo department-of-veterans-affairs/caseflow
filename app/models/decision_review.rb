@@ -114,7 +114,7 @@ class DecisionReview < ApplicationRecord
         vacols_id: legacy_appeal.vacols_id,
         date: legacy_appeal.nod_date,
         eligible_for_soc_opt_in: legacy_appeal.eligible_for_soc_opt_in?,
-        issues: legacy_appeal.issues.map(&:intake_attributes)
+        issues: legacy_appeal.issues.select(&:eligible_for_opt_in?).map(&:intake_attributes)
       }
     end
   end

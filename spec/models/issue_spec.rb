@@ -359,8 +359,8 @@ describe Issue do
       it { is_expected.to be_truthy }
     end
 
-    context "case is REM, disposition is 3" do
-      let(:disposition) { "3" }
+    context "case is REM, disposition is remanded" do
+      let(:disposition) { :remanded }
       let(:vacols_case) { create(:case, :status_remand, case_issues: [vacols_case_issue], bfkey: vacols_id) }
 
       it { is_expected.to be_falsey }
@@ -370,6 +370,36 @@ describe Issue do
       let(:vacols_case) { create(:case, :status_complete, case_issues: [vacols_case_issue], bfkey: vacols_id) }
 
       it { is_expected.to be_falsey }
+    end
+  end
+
+  context "#eligible_for_opt_in?" do
+    let(:disposition) { nil }
+    let(:vacols_case) { create(:case_with_soc, :status_advance, case_issues: [vacols_case_issue], bfkey: vacols_id) }
+    let(:vacols_case_issue) { create(:case_issue) }
+    let!(:appeal) { create(:legacy_appeal, soc_date: Time.zone.today, vacols_case: vacols_case) }
+
+    subject { issue.eligible_for_opt_in? }
+
+    it { is_expected.to be_truthy }
+
+    context "disposition is present" do
+      let(:disposition) { :remanded }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "disposition is failure to respond" do
+      let(:disposition) { :remand_failure_to_respond }
+
+      it { is_expected.to be_truthy }
+    end
+
+    context "case is REM, disposition is remanded" do
+      let(:disposition) { :remanded }
+      let(:vacols_case) { create(:case_with_soc, :status_remand, case_issues: [vacols_case_issue], bfkey: vacols_id) }
+
+      it { is_expected.to be_truthy }
     end
   end
 end
