@@ -44,7 +44,7 @@ type Params = {|
 type Props = Params & {|
   // From state
   savePending: boolean,
-  selectedRegionalOffice: string,
+  selectedRegionalOffice: Object,
   history: Object,
   hearingDay: Object,
   selectedHearingDate: string,
@@ -189,7 +189,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     };
 
     const getRegionalLink = () => {
-      let requestUrl;
+      let requestUrl = '';
 
       if (this.props.selectedRegionalOffice) {
         requestUrl = `roLabel=${selectedRegionalOffice.label}&roValue=${selectedRegionalOffice.value}`;
@@ -260,7 +260,6 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           staticOptions={centralOfficeStaticEntry} />
 
         {selectedRegionalOffice && <HearingDateDropdown
-          key={selectedRegionalOffice}
           regionalOffice={selectedRegionalOffice}
           onChange={(opt) => {
             this.props.onHearingDateChange(opt.value);
