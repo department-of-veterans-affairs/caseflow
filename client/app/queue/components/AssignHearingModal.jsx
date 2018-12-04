@@ -16,6 +16,7 @@ import { fullWidth } from '../constants';
 import editModalBase from './EditModalBase';
 import { formatDateStringForApi, formatDateStr } from '../../util/DateUtil';
 import { actionableTasksForAppeal } from '../selectors';
+import ApiUtil from '../../util/ApiUtil';
 
 import type {
   State
@@ -114,16 +115,18 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
 
   addScheduleHearingTask = () => {
-    const { scheduleHearingTask, appeal, userId } = this.props;
-    // some check that a hearing needs to be completed
-    console.log(this.props);
+    const {
+      scheduleHearingTask, appeal,
+      userId, onReceiveAmaTasks 
+    } = this.props;
+
     if (!scheduleHearingTask) {
       const payload = {
         data: {
           tasks: [
             {
               type: 'ScheduleHearingTask',
-              external_id: appeal.id,
+              external_id: appeal.externalId,
               assigned_to_type: 'User',
               assigned_to_id: userId
             }
@@ -131,12 +134,10 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
         }
       };
 
-      console.log('adding schedule hearing task');
-
       return ApiUtil.post('/tasks', payload).then(response => {
-        const resp = JSON.parse(response);
+        const resp = JSON.parse(response.text);
 
-        console.log(resp);
+        onReceiveAmaTasks(resp.tasks.data);
       });
     }
   }
@@ -286,6 +287,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       selectedHearingDay, selectedRegionalOffice,
       selectedHearingTime
     } = this.props;
+
+    console.log(this.props);
 
     const timeOptions = this.getTimeOptions();
 
