@@ -3,7 +3,8 @@ class ContestableIssue
   include ActiveModel::Model
 
   attr_accessor :rating_reference_id, :date, :description, :ramp_claim_id, :title_of_active_review,
-                :source_higher_level_review, :contesting_decision_review, :decision_issue_reference_id, :promulgation_date
+                :source_higher_level_review, :contesting_decision_review, :decision_issue_reference_id,
+                :promulgation_date
 
   class << self
     def from_rating_issue(rating_issue, contesting_decision_review)
@@ -25,7 +26,7 @@ class ContestableIssue
         date: decision_issue.profile_date.to_date,
         description: decision_issue.decision_text, # TODO: also work with disposition
         title_of_active_review: decision_issue.title_of_active_review,
-        source_higher_level_review: decision_issue.decision_review.is_a?(HigherLevelReview) ? decision_issue.decision_review.id : nil,
+        source_higher_level_review: decision_issue.source_higher_level_review,
         contesting_decision_review: contesting_decision_review
       )
     end

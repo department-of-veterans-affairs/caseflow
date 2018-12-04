@@ -90,7 +90,8 @@ class RequestIssue < ApplicationRecord
     end
 
     def find_active_by_contested_decision_id(contested_decision_issue_id)
-      request_issue = unscoped.find_by(contested_decision_issue_id: contested_decision_issue_id, removed_at: nil, ineligible_reason: nil)
+      request_issue = unscoped.find_by(contested_decision_issue_id: contested_decision_issue_id,
+                                       removed_at: nil, ineligible_reason: nil)
       return unless request_issue && request_issue.status_active?
       request_issue
     end

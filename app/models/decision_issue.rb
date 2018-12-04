@@ -11,6 +11,11 @@ class DecisionIssue < ApplicationRecord
     request_issue.review_title if request_issue
   end
 
+  def source_higher_level_review
+    return unless decision_review
+    decision_review.is_a?(HigherLevelReview) ? decision_review.id : nil
+  end
+
   private
 
   def appeal?

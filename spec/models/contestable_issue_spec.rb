@@ -17,25 +17,25 @@ describe ContestableIssue do
       rba_contentions_data: [{}]
     )
   end
-  let(:profile_date) { Time.zone.now }
+  let(:profile_date) { Time.zone.today }
   let(:decision_issue) do
     DecisionIssue.new(
       id: "1",
       rating_issue_reference_id: "rating1",
       profile_date: profile_date,
-      decision_text: "this is a disposition",
-      # decision_review: decision_review
+      decision_text: "this is a disposition"
     )
   end
 
   context ".from_rating_issue" do
     subject { ContestableIssue.from_rating_issue(rating_issue, decision_review) }
+
     it "can be serialized" do
       contestable_issue = subject
       expect(contestable_issue).to have_attributes(
         rating_reference_id: rating_issue.reference_id,
         decision_issue_reference_id: nil,
-        date: rating_issue.profile_date,
+        date: profile_date,
         description: rating_issue.decision_text,
         contesting_decision_review: decision_review
       )
@@ -43,7 +43,7 @@ describe ContestableIssue do
       expect(contestable_issue.serialize).to eq(
         ratingReferenceId: rating_issue.reference_id,
         decisionIssueReferenceId: nil,
-        date: rating_issue.profile_date,
+        date: profile_date,
         description: rating_issue.decision_text,
         rampClaimId: nil,
         titleOfActiveReview: nil,
@@ -78,7 +78,7 @@ describe ContestableIssue do
       expect(contestable_issue).to have_attributes(
         rating_reference_id: "rating1",
         decision_issue_reference_id: decision_issue.id,
-        date: decision_issue.profile_date,
+        date: profile_date,
         description: decision_issue.decision_text,
         contesting_decision_review: decision_review
       )
@@ -86,7 +86,7 @@ describe ContestableIssue do
       expect(contestable_issue.serialize).to eq(
         ratingReferenceId: "rating1",
         decisionIssueReferenceId: decision_issue.id,
-        date: decision_issue.profile_date,
+        date: profile_date,
         description: decision_issue.decision_text,
         rampClaimId: nil,
         titleOfActiveReview: nil,
@@ -102,7 +102,7 @@ describe ContestableIssue do
         expect(subject.serialize).to eq(
           ratingReferenceId: "rating1",
           decisionIssueReferenceId: decision_issue.id,
-          date: decision_issue.profile_date,
+          date: profile_date,
           description: decision_issue.decision_text,
           rampClaimId: nil,
           titleOfActiveReview: nil,
