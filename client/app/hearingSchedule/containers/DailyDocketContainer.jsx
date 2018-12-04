@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import moment from 'moment';
 import DailyDocket from '../components/DailyDocket';
@@ -61,9 +62,9 @@ export class DailyDocketContainer extends React.Component {
   };
 
   deleteHearingDay = () => {
-    ApiUtil.patch(`/hearings/hearing_day/${this.props.dailyDocket.id}`, { data: { hearing_day: { _destroy: true} } }).
-    then((response) => {
-      console.log('we deleted it')
+    ApiUtil.delete(`/hearings/hearing_day/${this.props.dailyDocket.id}`).
+    then(() => {
+      this.props.history.push('/schedule');
     })
   };
 
@@ -117,4 +118,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onHearingTimeUpdate
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer));

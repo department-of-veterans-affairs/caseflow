@@ -120,7 +120,7 @@ Rails.application.routes.draw do
     resources :dockets, only: [:index, :show], param: :docket_date
     resources :worksheets, only: [:update, :show], param: :hearing_id
     resources :appeals, only: [:update], param: :appeal_id
-    resources :hearing_day, only: [:index, :show, :update]
+    resources :hearing_day, only: [:index, :show, :update, :destroy]
     resources :schedule_periods, only: [:index, :create]
     resources :schedule_periods, only: [:show, :update, :download], param: :schedule_period_id
     resources :hearing_day, only: [:update, :show], param: :hearing_key
