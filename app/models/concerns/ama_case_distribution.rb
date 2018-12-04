@@ -193,8 +193,12 @@ module AmaCaseDistribution
   end
 
   def pacesetting_direct_review_proportion
-    nonpriority_decisions_per_year = Appeal.nonpriority_decisions_per_year + LegacyAppeal.nonpriority_decisions_per_year
-    dockets[:direct_review].nonpriority_receipts_per_year / nonpriority_decisions_per_year
+    return @pacesetting_direct_review_proportion if @pacesetting_direct_review_proportion
+
+    receipts_per_year = dockets[:direct_review].nonpriority_receipts_per_year
+    decisions_per_year = Appeal.nonpriority_decisions_per_year + LegacyAppeal.nonpriority_decisions_per_year
+
+    @pacesetting_direct_review_proportion = receipts_per_year / decisions_per_year
   end
 end
 # rubocop:enable Metrics/ModuleLength
