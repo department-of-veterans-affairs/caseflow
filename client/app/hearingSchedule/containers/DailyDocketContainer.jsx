@@ -19,7 +19,9 @@ import {
   selectHearingRoom,
   selectVlj,
   selectHearingCoordinator,
-  setNotes
+  setNotes,
+  onReceiveJudges,
+  onReceiveCoordinators
 } from '../actions';
 import HearingDayEditModal from "../components/HearingDayEditModal";
 import {formatDateStr} from "../../util/DateUtil";
@@ -74,7 +76,52 @@ export class DailyDocketContainer extends React.Component {
       });
   };
 
-  createHearingPromise = () => Promise.all([this.loadHearingDay()]);
+  loadActiveJudges = () => {
+    let requestUrl = '/users?role=Judge';
+
+    return ApiUtil.get(requestUrl).then((response) => {
+      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+
+      let activeJudges = [];
+
+      _.forEach(resp.judges, (value, key) => {
+        activeJudges.push({
+          label: value.fullName,
+          value: value.cssId
+        });
+      });
+
+      this.props.onReceiveJudges(_.orderBy(activeJudges, (judge) => judge.label, 'asc'));
+    })
+
+  };
+
+  loadActiveCoordinators = () => {
+    let requestUrl = '/users?role=Hearing';
+
+    return ApiUtil.get(requestUrl).then((response) => {
+      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+
+      console.log("coordinators from user:", resp.coordinators);
+      let activeCoordinators = [];
+
+      _.forEach(resp.coordinators, (value, key) => {
+        activeCoordinators.push({
+          label: value.fullName,
+          value: value.cssId
+        });
+      });
+
+      this.props.onReceiveCoordinators(_.orderBy(activeCoordinators, (coordinator) => coordinator.label, 'asc'));
+    })
+
+  };
+
+  createHearingPromise = () => Promise.all([
+    this.loadHearingDay(),
+    this.loadActiveJudges(),
+    this.loadActiveCoordinators()
+  ]);
 
   openModal = () => {
     this.setState({showModalAlert: false});
@@ -173,7 +220,9 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   selectHearingRoom,
   selectVlj,
   selectHearingCoordinator,
-  setNotes
+  setNotes,
+  onReceiveJudges,
+  onReceiveCoordinators
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer);

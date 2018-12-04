@@ -271,3 +271,17 @@ export const setNotes = (notes) => ({
     notes
   }
 });
+
+export const onReceiveJudges = (activeJudges) => ({
+  type: ACTIONS.RECEIVE_JUDGES,
+  payload: {
+    activeJudges
+  }
+});
+
+export const onReceiveCoordinators = (activeCoordinators) => ({
+  type: ACTIONS.RECEIVE_COORDINATORS,
+  payload: {
+    activeCoordinators
+  }
+});

@@ -31,6 +31,11 @@ FactoryBot.define do
       sactive "A"
     end
 
+    trait :hearing_coordinator do
+      stitle "HRG"
+      sactive "A"
+    end
+
     trait :attorney_judge_role do
       svlj "A"
       sactive "A"

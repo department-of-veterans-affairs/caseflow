@@ -53,21 +53,6 @@ const hearingTypeOptions = [
     {label: "Central", value: "C"}
   ];
 
-// Next two options to be replaced by redux state once we determine
-// the proper queries to identify these two sets of users.
-const vljOptions = [
-  {label: "", value: ""},
-  {label: "Anjali Q. Abshire", value: "BVAAABSHIRE"},
-  {label: "Jaida Y Wehner", value: "BVAJWEHNER"},
-  {label: "Obie F Franecki", value: "BVAOFRANECKI"}
-];
-
-const coordinatorOptions = [
-  {label: "", value: ""},
-  {label: "Thomas A Warner", value: "BVATWARNER"},
-  {label: "Mackenzie M Gerhold", value: "BVAMGERHOLD"}
-];
-
 const titleStyling = css({
   marginBottom: 0,
   padding: 0
@@ -153,12 +138,18 @@ class HearingDayAddModal extends React.Component {
   onHearingTypeChange = (value) => {
     this.props.selectHearingType(value);
 
-    if (value === 'V') {
-      this.setState({videoSelected: true});
-      this.setState({centralOfficeSelected: false});
-    } else {
-      this.setState({videoSelected: false});
-      this.setState({centralOfficeSelected: true});
+    switch (value.value) {
+      case 'V':
+        this.setState({videoSelected: true});
+        this.setState({centralOfficeSelected: false});
+        break;
+      case 'C':
+        this.setState({videoSelected: false});
+        this.setState({centralOfficeSelected: true});
+        break;
+      default:
+        this.setState({videoSelected: false});
+        this.setState({centralOfficeSelected: false});
     }
   };
 
@@ -232,7 +223,7 @@ class HearingDayAddModal extends React.Component {
           strongLabel={true}
           value={this.props.vlj}
           onChange={this.onVljChange}
-          options={vljOptions}/>
+          options={this.props.activeJudges}/>
         }
         {(this.state.videoSelected || this.state.centralOfficeSelected) &&
         <SearchableDropdown
@@ -241,7 +232,7 @@ class HearingDayAddModal extends React.Component {
           strongLabel={true}
           value={this.props.coordinator}
           onChange={this.onCoordinatorChange}
-          options={coordinatorOptions}/>
+          options={this.props.activeCoordinators}/>
         }
         <TextareaField
           name="Notes (Optional)"
@@ -291,7 +282,9 @@ const mapStateToProps = (state) => ({
   hearingType: state.hearingSchedule.hearingType,
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
-  notes: state.hearingSchedule.notes
+  notes: state.hearingSchedule.notes,
+  activeJudges: state.hearingSchedule.activeJudges,
+  activeCoordinators: state.hearingSchedule.activeCoordinators
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

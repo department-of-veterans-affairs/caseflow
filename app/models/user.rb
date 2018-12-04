@@ -300,6 +300,12 @@ class User < ApplicationRecord
       User.find_by(css_id: css_id) || User.create(css_id: css_id, station_id: BOARD_STATION_ID)
     end
 
+    def list_hearing_coordinators
+      Rails.cache.fetch("#{Rails.env}_list_of_hearing_coordinators_from_vacols") do
+        user_repository.find_all_hearing_coordinators
+      end
+    end
+
     def authentication_service
       @authentication_service ||= AuthenticationService
     end

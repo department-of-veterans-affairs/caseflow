@@ -12,7 +12,9 @@ import {
   selectHearingType,
   selectVlj,
   selectHearingCoordinator,
-  setNotes
+  setNotes,
+  onReceiveJudges,
+  onReceiveCoordinators
 } from '../actions';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
@@ -24,6 +26,7 @@ import PropTypes from 'prop-types';
 import QueueCaseSearchBar from '../../queue/SearchBar';
 import Alert from "../../components/Alert";
 import HearingDayAddModal from '../components/HearingDayAddModal'
+import _ from "lodash";
 
 const dateFormatString = 'YYYY-MM-DD';
 
@@ -63,8 +66,51 @@ export class ListScheduleContainer extends React.Component {
     });
   };
 
+  loadActiveJudges = () => {
+    let requestUrl = '/users?role=Judge';
+
+    return ApiUtil.get(requestUrl).then((response) => {
+      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+
+      let activeJudges = [];
+
+      _.forEach(resp.judges, (value, key) => {
+        activeJudges.push({
+          label: value.fullName,
+          value: value.cssId
+        });
+      });
+
+      this.props.onReceiveJudges(_.orderBy(activeJudges, (judge) => judge.label, 'asc'));
+    })
+
+  };
+
+  loadActiveCoordinators = () => {
+    let requestUrl = '/users?role=Hearing';
+
+    return ApiUtil.get(requestUrl).then((response) => {
+      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+
+      console.log("coordinators from user:", resp);
+      let activeCoordinators = [];
+
+      _.forEach(resp.coordinators, (value, key) => {
+        activeCoordinators.push({
+          label: value.fullName,
+          value: value.cssId
+        });
+      });
+
+      this.props.onReceiveCoordinators(_.orderBy(activeCoordinators, (coordinator) => coordinator.label, 'asc'));
+    })
+
+  };
+
   createHearingPromise = () => Promise.all([
-    this.loadHearingSchedule()
+    this.loadHearingSchedule(),
+    this.loadActiveJudges(),
+    this.loadActiveCoordinators()
   ]);
 
   openModal = () => {
@@ -81,12 +127,24 @@ export class ListScheduleContainer extends React.Component {
     this.setState({modalOpen: false});
     this.setState({showModalAlert: true});
 
-    console.log("Added Hearing Day date: ", this.props.selectedHearingDay);
-    console.log("Added hearing day type: ", this.props.hearingType);
-    console.log("Added hearing day vlj: ", this.props.vlj);
-    console.log("Added hearing day coordinator: ", this.props.coordinator);
-    console.log("Added hearing day notes: ", this.props.notes);
-    console.log("redux RO: ", this.props.selectedRegionalOffice);
+    let data = {
+      hearing_type: this.props.hearingType.value,
+      hearing_date: this.props.selectedHearingDay,
+      room_info: "1",
+      judge_id: this.props.vlj.value,
+      notes: this.props.notes
+    };
+
+    if (this.props.selectedRegionalOffice && this.props.selectedRegionalOffice.value !== '') {
+      data["regional_office"] = this.props.selectedRegionalOffice.value
+    }
+
+    ApiUtil.post('/hearings/hearing_day.json', {data: data})
+      .then((response) => {
+      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+
+      console.log("added hearing day result: ", resp);
+    });
   }
 
   cancelModal = () => {
@@ -148,7 +206,7 @@ const mapStateToProps = (state) => ({
   hearingType: state.hearingSchedule.hearingType,
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
-  notes: state.hearingSchedule.notes
+  notes: state.hearingSchedule.notes,
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -159,7 +217,9 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   selectHearingType,
   selectVlj,
   selectHearingCoordinator,
-  setNotes
+  setNotes,
+  onReceiveJudges,
+  onReceiveCoordinators
 }, dispatch);
 
 ListScheduleContainer.propTypes = {

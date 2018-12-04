@@ -25,21 +25,6 @@ const roomOptions = [
     {label: "1W.0003", value: "2"}
   ];
 
-// Next two options to be replaced by redux state once we determine
-// the proper queries to identify these two sets of users.
-const vljOptions = [
-  {label: "", value: ""},
-  {label: "Anjali Q. Abshire", value: "BVAAABSHIRE"},
-  {label: "Jaida Y Wehner", value: "BVAJWEHNER"},
-  {label: "Obie F Franecki", value: "BVAOFRANECKI"}
-];
-
-const coordinatorOptions = [
-  {label: "", value: ""},
-  {label: "Thomas A Warner", value: "BVATWARNER"},
-  {label: "Mackenzie M Gerhold", value: "BVAMGERHOLD"}
-];
-
 const titleStyling = css({
   marginBottom: 0,
   padding: 0
@@ -147,7 +132,7 @@ class HearingDayEditModal extends React.Component {
           readOnly={!this.state.modifyVlj}
           value={this.props.vlj}
           onChange={this.onVljChange}
-          options={vljOptions}
+          options={this.props.activeJudges}
           placeholder="Select..."/>
         <SearchableDropdown
           name="coordinator"
@@ -156,7 +141,7 @@ class HearingDayEditModal extends React.Component {
           readOnly={!this.state.modifyCoordinator}
           value={this.props.coordinator}
           onChange={this.onCoordinatorChange}
-          options={coordinatorOptions}
+          options={this.props.activeCoordinators}
           placeholder="Select..."/>
         <TextareaField
           name="Notes"
@@ -195,7 +180,9 @@ HearingDayEditModal.propTypes = {
 const mapStateToProps = (state) => ({
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
-  notes: state.hearingSchedule.notes
+  notes: state.hearingSchedule.notes,
+  activeJudges: state.hearingSchedule.activeJudges,
+  activeCoordinators: state.hearingSchedule.activeCoordinators
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
