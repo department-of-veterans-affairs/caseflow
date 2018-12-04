@@ -117,7 +117,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   addScheduleHearingTask = () => {
     const {
       scheduleHearingTask, appeal,
-      userId, onReceiveAmaTasks 
+      userId, onReceiveAmaTasks
     } = this.props;
 
     if (!scheduleHearingTask) {
@@ -221,7 +221,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   getHearingType = () => {
     const { appeal : { sanitizedHearingRequestType } } = this.props;
 
-    return sanitizedHearingRequestType === 'central_office' ? 'CO' : VIDEO_HEARING;
+    return sanitizedHearingRequestType === 'central_office' ? CENTRAL_OFFICE_HEARING : VIDEO_HEARING;
   }
 
   getSuccessMsg = () => {
@@ -287,8 +287,6 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       selectedHearingDay, selectedRegionalOffice,
       selectedHearingTime
     } = this.props;
-
-    console.log(this.props);
 
     const timeOptions = this.getTimeOptions();
 
