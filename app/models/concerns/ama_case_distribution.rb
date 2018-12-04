@@ -192,8 +192,10 @@ module AmaCaseDistribution
         .clamp(0, MAXIMUM_DIRECT_REVIEW_PROPORTION)
   end
 
-  # CMGTODO
-  def pacesetting_direct_review_proportion; end
+  def pacesetting_direct_review_proportion
+    nonpriority_decisions_per_year = Appeal.nonpriority_decisions_per_year + LegacyAppeal.nonpriority_decisions_per_year
+    dockets[:direct_review].nonpriority_receipts_per_year / nonpriority_decisions_per_year
+  end
 end
 # rubocop:enable Metrics/ModuleLength
 

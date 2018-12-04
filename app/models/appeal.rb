@@ -41,6 +41,9 @@ class Appeal < DecisionReview
     where("ready_for_distribution_at is #{ready ? 'not ' : ''}null")
   end
 
+  # CMGTODO
+  def self.nonpriority_decisions_per_year; end
+
   def ui_hash
     super.merge(
       docketType: docket_type,

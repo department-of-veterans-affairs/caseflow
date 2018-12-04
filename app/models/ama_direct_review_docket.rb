@@ -15,4 +15,7 @@ class AmaDirectReviewDocket < Docket
   def time_until_due_of_new_appeal
     TIME_GOAL + BECOMES_DUE
   end
+
+  # CMGTODO
+  def nonpriority_receipts_per_year; end
 end
