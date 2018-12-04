@@ -11,7 +11,6 @@ import moment from 'moment';
 import { COLORS } from '../../constants/AppConstants';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import { renderAppealType } from '../../queue/utils';
-import ApiUtil from '../../util/ApiUtil';
 import StatusMessage from '../../components/StatusMessage';
 
 const sectionNavigationListStyling = css({

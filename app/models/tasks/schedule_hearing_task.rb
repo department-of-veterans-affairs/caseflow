@@ -22,7 +22,7 @@ class ScheduleHearingTask < GenericTask
     end
     task_payloads[:values][:hearing_date] = new_date
 
-    if task_business_payloads.length > 0
+    if !task_business_payloads.empty?
       task_business_payloads.update(task_payloads)
     else
       task_business_payloads.create(task_payloads)

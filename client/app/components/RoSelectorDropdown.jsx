@@ -33,10 +33,10 @@ class RoSelectorDropdown extends React.Component {
     }
   }
 
-  componentDidUpdate(){
+  componentDidUpdate() {
     const { value, onChange } = this.props;
 
-    if (this.regionalOfficeOptions().length && typeof(value) === 'string') {
+    if (this.regionalOfficeOptions().length && typeof (value) === 'string') {
       onChange(this.getValue());
     }
   }
@@ -44,8 +44,8 @@ class RoSelectorDropdown extends React.Component {
   getValue = () => {
     const { value } = this.props;
 
-    if (typeof(value) === 'string') {
-      return _.find(this.regionalOfficeOptions(), ro => ro.value === value) || {};
+    if (typeof (value) === 'string') {
+      return _.find(this.regionalOfficeOptions(), (ro) => ro.value === value) || {};
     }
 
     return value || {};
@@ -70,7 +70,7 @@ class RoSelectorDropdown extends React.Component {
   };
 
   render() {
-    const { readOnly, onChange, value, placeholder } = this.props;
+    const { readOnly, onChange, placeholder } = this.props;
     const regionalOfficeOptions = this.regionalOfficeOptions();
 
     if (!this.props.changePrompt || this.state.editable) {

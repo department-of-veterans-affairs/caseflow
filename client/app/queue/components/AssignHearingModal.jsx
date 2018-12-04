@@ -46,7 +46,7 @@ type Params = {|
 type Props = Params & {|
   // From state
   savePending: boolean,
-  selectedRegionalOffice: string,
+  selectedRegionalOffice: Object,
   scheduleHearingTask: Object,
   history: Object,
   hearingDay: Object,
@@ -91,10 +91,9 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   };
 
   validateForm = () => {
-    console.log(this.props);
     const hearingDate = this.formatHearingDate();
 
-    if (hearingDate === null || this.props.selecteHearingTime === null) {
+    if (hearingDate === null || this.props.selectedHearingTime === null) {
 
       this.props.showErrorMessage({
         title: 'Required Fields',
@@ -282,7 +281,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       hearingTime: hearingDay.hearingTime,
       hearingDate: hearingDay.hearingDate,
       regionalOffice: this.getRO()
-    }
+    };
   }
 
   render = () => {

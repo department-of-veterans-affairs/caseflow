@@ -37,10 +37,10 @@ class HearingDayDropdown extends React.Component {
     }
   }
 
-  componentDidUpdate(){
+  componentDidUpdate() {
     const { value, onChange } = this.props;
 
-    if (this.hearingDayOptions().length && typeof(value) === 'string') {
+    if (this.hearingDayOptions().length && typeof (value) === 'string') {
       onChange(this.getValue());
     }
   }
@@ -48,8 +48,8 @@ class HearingDayDropdown extends React.Component {
   getValue = () => {
     const { value } = this.props;
 
-    if (typeof(value) === 'string'){
-      return _.find(this.hearingDayOptions(), day => day.value.hearingDate === value) || {};
+    if (typeof (value) === 'string') {
+      return _.find(this.hearingDayOptions(), (day) => day.value.hearingDate === value) || {};
     }
 
     return value || {};
@@ -75,7 +75,7 @@ class HearingDayDropdown extends React.Component {
   };
 
   render() {
-    const { readOnly, onChange, value, placeholder } = this.props;
+    const { readOnly, onChange, placeholder } = this.props;
     const hearingDayOptions = this.hearingDayOptions();
 
     if (!this.props.changePrompt || this.state.editable) {
