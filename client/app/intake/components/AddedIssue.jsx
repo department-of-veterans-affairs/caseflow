@@ -69,12 +69,12 @@ class AddedIssue extends React.PureComponent {
     }
   }
 
-  legacyIssueFor(vacolsSequenceId) {
+  legacyIssue() {
     let { issue, legacyAppeals } = this.props;
 
     let legacyAppeal = _.filter(legacyAppeals, { vacols_id: issue.vacolsId })[0];
 
-    return _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(vacolsSequenceId, 10) })[0];
+    return _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })[0];
   }
 
   render() {
@@ -105,7 +105,7 @@ class AddedIssue extends React.PureComponent {
       { issue.vacolsId && !eligibleState.errorMsg &&
         <div className="issue-vacols">
           <span className="msg">{ INELIGIBLE_REQUEST_ISSUES.adding_this_issue_vacols_optin }:</span>
-          <span className="desc">{ this.legacyIssueFor(issue.vacolsSequenceId).description }</span>
+          <span className="desc">{ this.legacyIssue().description }</span>
         </div>
       }
     </div>;
