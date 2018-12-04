@@ -111,6 +111,7 @@ class DecisionReview < ApplicationRecord
 
     available_legacy_appeals.map do |legacy_appeal|
       {
+        vacols_id: legacy_appeal.vacols_id,
         date: legacy_appeal.nod_date,
         eligible_for_soc_opt_in: legacy_appeal.eligible_for_soc_opt_in?,
         issues: legacy_appeal.issues.map(&:intake_attributes)
@@ -128,7 +129,7 @@ class DecisionReview < ApplicationRecord
 
   def available_legacy_appeals
     # If a Veteran does not opt-in to withdraw legacy appeals, do not show inactive appeals
-    legacy_opt_in_approved ? matchable_legacy_appeals : active_legacy_appeals
+    legacy_opt_in_approved ? matchable_legacy_appeals : active_matchable_legacy_appeals
   end
 
   def matchable_legacy_appeals
@@ -137,7 +138,7 @@ class DecisionReview < ApplicationRecord
       .select(&:matchable_to_request_issue?)
   end
 
-  def active_legacy_appeals
+  def active_matchable_legacy_appeals
     @active_matchable_legacy_appeals ||= matchable_legacy_appeals.select(&:active?)
   end
 
