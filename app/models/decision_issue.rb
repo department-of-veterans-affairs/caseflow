@@ -7,7 +7,7 @@ class DecisionIssue < ApplicationRecord
   belongs_to :decision_review, polymorphic: true
 
   def approx_decision_date
-    profile_date ? profile_date.to_date : last_action_date
+    profile_date ? profile_date.to_date : end_product_last_action_date
   end
 
   private

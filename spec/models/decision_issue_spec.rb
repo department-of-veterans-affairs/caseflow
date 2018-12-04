@@ -9,10 +9,10 @@ describe RequestIssue do
     subject { decision_issue.approx_decision_date }
 
     let(:profile_date) { nil }
-    let(:last_action_date) { nil }
+    let(:end_product_last_action_date) { nil }
 
     let(:decision_issue) do
-      build(:decision_issue, profile_date: profile_date, last_action_date: last_action_date)
+      build(:decision_issue, profile_date: profile_date, end_product_last_action_date: end_product_last_action_date)
     end
 
     context "when there is no profile date" do
@@ -20,10 +20,10 @@ describe RequestIssue do
         expect(subject).to be_nil
       end
 
-      context "when there is a last_action_date" do
-        let(:last_action_date) { 4.days.ago }
+      context "when there is an end_product_last_action_date" do
+        let(:end_product_last_action_date) { 4.days.ago }
 
-        it "returns the last_action_date" do
+        it "returns the end_product_last_action_date" do
           expect(subject).to eq(4.days.ago.to_date)
         end
       end
@@ -31,7 +31,7 @@ describe RequestIssue do
 
     context "when there is a profile date" do
       let(:profile_date) { 3.days.ago }
-      let(:last_action_date) { 4.days.ago }
+      let(:end_product_last_action_date) { 4.days.ago }
 
       it "returns the profile_date" do
         expect(subject).to eq(3.days.ago.to_date)
