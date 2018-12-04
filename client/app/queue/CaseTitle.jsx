@@ -20,60 +20,44 @@ import AodBadge from './components/AodBadge';
 import { actionableTasksForAppeal } from './selectors';
 
 const containingDivStyling = css({
-  borderBottom: `1px solid ${COLORS.GREY_LIGHT}`,
-  display: 'block',
+  border: `1px solid ${COLORS.GREY_LIGHT}`,
+  display: 'grid',
+  margin: 'auto',
+  width: '110%',
   // Offsets the padding from .cf-app-segment--alt to make the bottom border full width.
-  margin: '-2rem -4rem 0 -4rem',
+  margin: '-2rem -3rem 0 -3rem',
   padding: '0 0 1.5rem 4rem',
-
   '& > *': {
     display: 'inline-block',
     margin: '0'
   }
 });
 
-const headerStyling = css({
-  paddingRight: '2.5rem'
+const ulStyling = css({
+  padding: '0 0 0 0',
+  margin: '10px 0 0 -25px'
+});
+
+const newRow = css({
+  margin: '5px 0 0 -18px'
 });
 
 const newHeaderStyling = css({
-  fontSize: '34px',
+  fontSize: '20px',
   fontWeight: 'bold'
 });
 
 const headerSupportStyling = css({
-  fontSize: '18px',
+  fontSize: '14px',
   color: 'grey',
   marginLeft: '2px'
 });
 
-const listStyling = css({
-  listStyleType: 'none',
-  verticalAlign: 'super',
-  padding: '1rem 0 0 0'
-});
-
 const listItemStyling = css({
   display: 'inline',
-  padding: '0.5rem 1.5rem 0.5rem 0',
-  /*':not(:nth-last-child(2))': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },*/
-  /*':not(:last-child)': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },*/
+  padding: '0 5px 0 6px',
+  fontSize: '14px',
   ':first-child': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
-  //':nth-child(3)': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
-  paddingLeft: '0'
-});
-
-const viewCasesStyling = css({
-  cursor: 'pointer',
-  display: 'none'
-});
-
-const headingStyling = css({
-  marginBottom: '0.5rem'
-});
-
-const newStyling = css({
-  margin: '100px 200px 100px 0px'
 });
 
 const spanStyle = css({
@@ -86,7 +70,7 @@ const spanStyle = css({
 
 const positionAbsolute = css({
   position: 'absolute',
-  margin: '0  0 0'
+  margin: '0 0 0 0'
 });
 
 const rightMargin = css({
@@ -96,7 +80,7 @@ const rightMargin = css({
 const titleStyle = css({
   fontWeight: 'bold',
   textAlign: 'center',
-  fontSize: '12px',
+  fontSize: '10px',
   marginLeft: '10px'
 });
 
@@ -105,15 +89,16 @@ const divStyle = css({
 });
 
 const badgeStyle = css({
-  marginRight: '28px'
+  marginRight: '26px',
+  marginLeft: '-20px',
+  fontSize: '14px'
 });
-
 const redType = css({
   color: 'red'
 });
 
 const displayNone = css({
-  display: 'none'
+  display: 'none',
 });
 
 const displayInline = css({
@@ -121,29 +106,31 @@ const displayInline = css({
 });
 
 const editButton = css({
-  margin: '18px 0px 0px -10px',
-  position: 'inherit'
+  margin: '18px 0px 0px 12px',
+  position: 'inherit',
+  fontSize: '13px'
 });
 
 const thStyle = css({
   border: 'none',
   backgroundColor: '#F8F8F8',
-  margin: '0 0 0 20px',
+  margin: '5px 0 0 20px',
   paddingLeft: '0',
 });
 
 const descriptionStyle = css({
   marginLeft: '10px',
-  ':first-child': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
-  'span::after': { content: ' |' }
 });
 
 const caseInfo = css({
-  backgroundColor: '#F8F8F8',
   paddingBottom: '50px',
-  marginLeft: '10px',
-  /*'span:first-child': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },*/
-  'th::after': {content: "→"}
+  marginLeft: '10px'
+});
+
+const caseTitleStyle = css({
+  paddingBottom: '50px',
+  marginLeft: '-50px',
+  width: '100%'
 });
 
 class CaseTitle extends React.PureComponent {
@@ -159,22 +146,7 @@ class CaseTitle extends React.PureComponent {
       canEditAod
     } = this.props;
 
-    console.log('--CaseTitle--');
-    console.log(appeal);
-    console.log(appeal.hearings.length);
-    console.log(appeal.isAdvancedOnDocket);
-    console.log(this.props.canEditAod);
-
-    console.log(this.props);
-    console.log(primaryTask);
-    console.log(appealId);
-    console.log(redirectUrl);
-    console.log(taskType);
-    console.log(analyticsSource);
-    console.log(veteranCaseListIsVisible);
-    //console.log(actionableTasksForAppeal(null, { appealId: appealId })[0]);
-
-    return <CaseTitleScaffolding /*heading={appeal.veteranFullName}*/{...caseInfo}>
+    return <CaseTitleScaffolding {...caseTitleStyle}>
       <React.Fragment>
         <span {...newHeaderStyling}>{appeal.veteranFullName}</span>
       </React.Fragment>
@@ -184,15 +156,25 @@ class CaseTitle extends React.PureComponent {
         <CopyTextButton text={appeal.veteranFileNumber} />
       </span>
 
-      <span className={appeal.hearings.length != 0 ? null : displayNone} {...badgeStyle}>
-        <HearingBadge hearing={appeal.hearings[0]} className={displayInline}/>
+      <span {...descriptionStyle} style={{color: 'red', marginLeft: '0px'}}>
+        {''}
+      </span>
+
+      <React.Fragment>
+        <Link onClick={this.props.toggleVeteranCaseList}>
+          { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
+        </Link>
+      </React.Fragment>
+
+      <span {...badgeStyle}>
+        <HearingBadge hearing={appeal.hearings[0]} className={displayInline} className={appeal.hearings.length != 0 ? null : displayNone}/>
       </span>
 
       <span className={appeal.isAdvancedOnDocket ? null : displayNone} {...badgeStyle}>
         <AodBadge appeal={appeal} className={displayInline}/>
       </span>
 
-      <span className={appeal.isAdvancedOnDocket ? null : displayNone} {...badgeStyle}>
+      <span className={appeal.isAdvancedOnDocket ? null : displayNone} {...badgeStyle} style={{paddingLeft: '5px'}}>
         <SpecialtyCaseBadge appeal={appeal.hearings[0]} className={displayInline}/>
         {<span {...editButton}>
           <Link
@@ -202,23 +184,7 @@ class CaseTitle extends React.PureComponent {
         </span>}
       </span>
 
-      <br/>
-
-      { /*!this.props.userIsVsoEmployee && <ReaderLink
-        appealId={appealId}
-        analyticsSource={CATEGORIES[analyticsSource.toUpperCase()]}
-        redirectUrl={redirectUrl}
-        appeal={appeal}
-        taskType={taskType}
-        longMessage /> */}
-
-      {
-        /*<span {...viewCasesStyling}>
-          <Link onClick={this.props.toggleVeteranCaseList}>
-            { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
-          </Link>
-        </span>*/
-      }
+      <br style={{display: 'block',lineHeight:'210%', content: "", height:'5px', visibility: 'hidden', marginBottom: '1px'}}/>
 
       <span {...caseInfo}>
         <th {...thStyle}>
@@ -243,7 +209,7 @@ class CaseTitle extends React.PureComponent {
         <th {...thStyle}>
           <React.Fragment>
             <span {...titleStyle}>{'VETERAN DOCUMENTS'}</span><br/>
-            <span {...descriptionStyle} style={{color: 'red','span: :after': {content: '| ***'} } }>
+            <span {...descriptionStyle} style={{color: 'red'}}>
               <ReaderLink appealId={appeal.id} appeal={appeal} redirectUrl={window.location.pathname} longMessage />
             </span>
           </React.Fragment>
@@ -258,31 +224,6 @@ class CaseTitle extends React.PureComponent {
           </React.Fragment>
         </th>
 
-        {/*<th>
-          <ReaderLink appealId={appeal.id}
-            analyticsSource={CATEGORIES.QUEUE_TABLE}
-            redirectUrl={window.location.pathname}
-            appeal={appeal} longMessage/>
-
-            <svg width="35px" height="11px" viewBox="0 0 40 11" xmlns="http://www.w3.org/2000/svg" version="1.1">
-              <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-                <g id="Group" transform="translate(0.000000, -3.000000)">
-                  <g id="icon" transform="translate(0.000000, 3.000000)">
-                    <path d="M0.5,0.5 L0.5,10.5 L8.5,10.5 L8.5,0.5 L0.5,0.5 Z" id="Path" stroke="#844E9F"></path>
-                    <polygon id="Path" fill="#844E9F" points="2.25 3 2.25 4 6.75 4 6.75 3"></polygon>
-                    <polygon id="Path-Copy" fill="#844E9F" points="2.25 5 2.25 6 6.75 6 6.75 5"></polygon>
-                    <polygon id="Path-Copy-2" fill="#844E9F" points="2.25 7 2.25 8 6.75 8 6.75 7"></polygon>
-                  </g>
-                  <text id="NEW" fontFamily="SourceSansPro-Regular, Source Sans Pro" fontSize="13" fontWeight="normal" letterSpacing="-0.75" fill="#844E9F">
-                    <tspan x="10" y="13">N</tspan>
-                    <tspan x="17.661" y="13">E</tspan>
-                    <tspan x="24.512" y="13">W</tspan>
-                  </text>
-                </g>
-              </g>
-            </svg>
-        </th>*/}
-
         <th {...thStyle}>
           <React.Fragment>
               <span {...titleStyle}>{'TYPE'}</span><br/>
@@ -290,7 +231,7 @@ class CaseTitle extends React.PureComponent {
           </React.Fragment>
         </th>
 
-        <th {...thStyle}>
+        <th className={primaryTask && primaryTask.documentId ? null : displayNone} {...thStyle}>
           <React.Fragment>
             <span {...titleStyle}></span><br/>
             <span {...descriptionStyle} style={{color: COLORS.GREY_LIGHT}}>
@@ -308,23 +249,6 @@ class CaseTitle extends React.PureComponent {
           </React.Fragment>
         </th>}
 
-        <th {...thStyle}>
-          <React.Fragment>
-            <span {...titleStyle}></span><br/>
-            <span {...descriptionStyle} style={{color: COLORS.GREY_LIGHT}}>
-              {'|'}
-            </span>
-          </React.Fragment>
-        </th>
-
-        <th {...thStyle}>
-          <React.Fragment>
-            <br/>
-            <Link onClick={this.props.toggleVeteranCaseList}>
-              { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
-            </Link>
-          </React.Fragment>
-        </th>
       </span>
 
     </CaseTitleScaffolding>;
@@ -348,7 +272,6 @@ const mapStateToProps = (state, ownProps) => ({
   veteranCaseListIsVisible: state.ui.veteranCaseListIsVisible,
   userIsVsoEmployee: state.ui.userIsVsoEmployee,
   primaryTask: actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0],
-  //appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
   canEditAod: state.ui.canEditAod
 });
 
@@ -358,15 +281,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 
 export default connect(mapStateToProps, mapDispatchToProps)(CaseTitle);
 
-const CaseTitleScaffolding = (props) => <div>
-  <ul>
-    {props.children.map((child, i) => child && <li key={i} {...listItemStyling}>{child}</li>)}
-    {/*props.children.map((child, i) => child && <span {...caseInfo} className={i==0 ? rightMargin : null} key={i}>{child}</span>)*/}
+const CaseTitleScaffolding = (props) => <div {...containingDivStyling}>
+  <ul {...ulStyling}>
+    {props.children.map((child, i) => child && <li key={i} {...listItemStyling} className={i==8? newRow : null}>{child}</li>)}
   </ul>
 </div>;
-
-/*const CaseTitleScaffolding = (props) => <div {...containingDivStyling}>
-  <ul {...listStyling}>
-    {props.children.map((child, i) => child && <li key={i} {...listItemStyling}>{child}</li>)}
-  </ul>
-</div>;*/

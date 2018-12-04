@@ -3,7 +3,6 @@ import { css } from 'glamor';
 import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import {
   actionableTasksForAppeal,
@@ -14,11 +13,6 @@ import DocketTypeBadge from './components/DocketTypeBadge';
 import ActionsDropdown from './components/ActionsDropdown';
 import OnHoldLabel from './components/OnHoldLabel';
 import CopyTextButton from '../components/CopyTextButton';
-import TextField from '../components/TextField';
-import ReaderLink from './ReaderLink';
-import { CATEGORIES } from './constants';
-import { toggleVeteranCaseList } from './uiReducer/uiActions';
-
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import COPY from '../../COPY.json';
@@ -26,7 +20,6 @@ import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import { COLORS } from '../constants/AppConstants';
 import StringUtil from '../util/StringUtil';
-import type { Dispatch } from './types/state';
 
 import {
   renderLegacyAppealType,
@@ -50,93 +43,12 @@ const snapshotParentContainerStyling = css({
   '& .Select': { maxWidth: '100%' }
 });
 
-const containingDivStyling = css({
-  /*borderBottom: `1px solid ${COLORS.GREY_LIGHT}`,
-  display: 'block',
-  // Offsets the padding from .cf-app-segment--alt to make the bottom border full width.
-  margin: '-2rem -4rem 0 -4rem',
-  padding: '0 0 1.5rem 4rem',
-
-  '& > *': {
-    display: 'inline-block',
-    margin: '0'
-  }*/
-});
-
-const listStyling = css({
-  listStyleType: 'none',
-  /*verticalAlign: 'super',
-  padding: '1rem 0 0 0'*/
-});
-
-const listItemStyling = css({
-  /*display: 'inline',
-  padding: '0.5rem 1.5rem 0.5rem 0',
-  ':not(:last-child)': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
-  ':not(:first-child)': { paddingLeft: '1.5rem' }*/
-});
-
 const headingStyling = css({
   marginBottom: '0.5rem'
 });
 
-const newStyling = css({
-  margin: '100px 200px 100px 0px'
-});
-
-const spanStyle = css({
-  border: '2px',
-  borderStyle: 'solid',
-  borderColor: '#DCDCDC',
-  padding: '5px',
-  backgroundColor: 'white'
-});
-
-const positionAbsolute = css({
-  position: 'absolute',
-  margin: '0  0 0'
-});
-
-const rightMargin = css({
-  marginRight: '40px'
-});
-
-const titleStyle = css({
-  fontWeight: 'bold',
-  textAlign: 'center',
-  fontSize: '12px',
-  marginLeft: '5px'
-});
-
-const divStyle = css({
-  marginRight: '10px'
-});
-
-const redType = css({
-  color: 'red'
-});
-
-const displayNone = css({
-  display: 'none'
-});
-
 const editButton = css({
   float: 'right'
-});
-
-const thStyle = css({
-  border: 'none',
-  backgroundColor: '#F8F8F8',
-  margin: '0 0 0 20px',
-  display: 'none'
-});
-
-const descriptionStyle = css({
-  marginLeft: '5px'
-});
-
-const caseInfo = css({
-  backgroundColor: '#F8F8F8'
 });
 
 const snapshotChildResponsiveWrapFixStyling = css({
@@ -336,83 +248,73 @@ export class CaseSnapshot extends React.PureComponent<Props> {
   render = () => {
     const {
       appeal,
-      primaryTask,
-      veteranCaseListIsVisible
+      primaryTask
     } = this.props;
     const taskAssignedToVso = primaryTask && primaryTask.assignedTo.type === 'Vso';
 
-    /*console.log('--test--');
-    console.log(appeal);
-    console.log(this.props);
-    console.log(this.props.children);*/
-
-    return <CaseSnapshotScaffolding className="usa-grid" {...snapshotParentContainerStyling}>
-
-      <th {...thStyle} {...rightMargin}>
-        <React.Fragment>
-          <span {...titleStyle}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL.toUpperCase()}</span><br/>
-          <span {...spanStyle} {...positionAbsolute}>
-            <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}
-          </span>
-        </React.Fragment>
-      </th>
-
-      <th {...thStyle}>
-        <React.Fragment>
-          <span {...titleStyle}>{'VETERAN DOCUMENTS'}</span><br/>
-          <span {...descriptionStyle}>
-            <ReaderLink appealId={appeal.id} appeal={appeal} redirectUrl={window.location.pathname} longMessage />
-          </span>
-        </React.Fragment>
-      </th>
-
-      <th {...thStyle}>
-        <React.Fragment>
-            <span {...titleStyle}>{'TYPE'}</span><br/>
-            <span  {...descriptionStyle} className={appeal.caseType == 'CAVC' ? redType : null}>{appeal.caseType}</span>
-        </React.Fragment>
-      </th>
-
-      <th className={primaryTask && primaryTask.documentId ? null : displayNone}  {...thStyle}>
-        <React.Fragment>
-          <span {...divStyle}>
-           <span {...titleStyle}>{'DECISION DOCUMENT ID'}</span><br/>
-           <CopyTextButton text={primaryTask ? primaryTask.documentId : null} />
-          </span>
-        </React.Fragment>
-      </th>
-
-      <th {...thStyle}>
-        <React.Fragment>
-          <br/>
-          <Link onClick={this.props.toggleVeteranCaseList}>
-            { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
-          </Link>
-        </React.Fragment>
-      </th>
-
-    </CaseSnapshotScaffolding>;
+    return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
+      <div className="usa-width-one-fourth">
+        <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TITLE}</h3>
+        <CaseDetailsDescriptionList>
+          <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</dt>
+          <dd>
+            {renderLegacyAppealType({
+              aod: appeal.isAdvancedOnDocket,
+              type: appeal.caseType
+            })}
+            {!appeal.isLegacyAppeal && this.props.canEditAod && <span {...editButton}>
+              <Link
+                to={`/queue/appeals/${appeal.externalId}/modal/advanced_on_docket_motion`}>
+                Edit
+              </Link>
+            </span>}
+          </dd>
+          <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
+          <dd><DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}</dd>
+          { !taskAssignedToVso && appeal.assignedJudge &&
+            <React.Fragment>
+              <dt>{COPY.CASE_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</dt>
+              <dd>{appeal.assignedJudge.full_name}</dd>
+            </React.Fragment> }
+          { !taskAssignedToVso && appeal.assignedAttorney &&
+            <React.Fragment>
+              <dt>{COPY.CASE_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</dt>
+              <dd>{appeal.assignedAttorney.full_name}</dd>
+            </React.Fragment> }
+          {this.daysSinceTaskAssignmentListItem()}
+          { !taskAssignedToVso && primaryTask && primaryTask.documentId &&
+            <React.Fragment>
+              <dt>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</dt>
+              <dd><CopyTextButton text={primaryTask.documentId} /></dd>
+            </React.Fragment> }
+        </CaseDetailsDescriptionList>
+      </div>
+      <div className="usa-width-one-fourth">
+        <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_TASK_ASSIGNMENT_BOX_TITLE}</h3>
+        <CaseDetailsDescriptionList>
+          {this.legacyTaskInformation()}
+        </CaseDetailsDescriptionList>
+      </div>
+      {this.showActionsSection() &&
+        <div className="usa-width-one-half">
+          <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
+          <ActionsDropdown task={primaryTask} appealId={appeal.externalId} />
+        </div>
+      }
+    </div>;
   };
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => {
   const { featureToggles, userRole, canEditAod } = state.ui;
+
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     featureToggles,
     userRole,
     primaryTask: actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0],
-    canEditAod,
-    veteranCaseListIsVisible: state.ui.veteranCaseListIsVisible
+    canEditAod
   };
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  toggleVeteranCaseList
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(CaseSnapshot);
-
-const CaseSnapshotScaffolding = (props) => <table>
-  {props.children.map((child, i) => child && <span className={i==0 ? rightMargin : null} key={i}>{child}</span>)}
-</table>;
+export default connect(mapStateToProps)(CaseSnapshot);
