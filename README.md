@@ -459,3 +459,13 @@ When Caseflow Monitor starts working again, switch the banner back to automatic 
 ```
 Rails.cache.write(:degraded_service_banner, :auto)
 ```
+
+## Documentation
+We have a lot of technical documentation spread over a lot of different repositories. Here is a non-exhaustive mapping of where to find documentation:
+
+[Local Caseflow Setup](https://github.com/department-of-veterans-affairs/caseflow/tree/master/docs)
+[Test data setup in lower environments](https://github.com/department-of-veterans-affairs/appeals-qa/tree/master/docs)
+[Caseflow specific devops documentation](https://github.com/department-of-veterans-affairs/appeals-
+deployment/tree/master/docs) This folder also contains our [first responder manual](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/first-responder-manual.md), which is super in understanding our production systems.
+[Non-Caseflow specific devops documentation](https://github.com/department-of-veterans-affairs/devops/tree/master/docs)
+[Project documentation](https://github.com/department-of-veterans-affairs/appeals-design-research/tree/master/Projects)
