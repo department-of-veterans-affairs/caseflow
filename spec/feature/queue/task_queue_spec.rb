@@ -227,9 +227,11 @@ RSpec.feature "Task queue" do
     let!(:staff) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
     let!(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
     let!(:vlj_support_staffer) { FactoryBot.create(:user) }
+    let!(:judgeteam) { JudgeTeam.create_for_judge(attorney) }
 
     before do
       OrganizationsUser.add_user_to_organization(vlj_support_staffer, Colocated.singleton)
+      OrganizationsUser.add_user_to_organization(vlj_support_staffer, judgeteam)
       User.authenticate!(user: vlj_support_staffer)
     end
 
@@ -251,6 +253,15 @@ RSpec.feature "Task queue" do
 
         expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteran_full_name))
       end
+    end
+
+    it "shows queue switcher dropdown" do
+      visit("/queue/")
+      expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
+
+      find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+      expect(page).to have_content(Colocated.singleton.name)
+      expect(page).to_not have_content(judgeteam.name)
     end
   end
 end
