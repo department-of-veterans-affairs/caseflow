@@ -200,52 +200,52 @@ module AmaCaseDistribution
 
     @pacesetting_direct_review_proportion = receipts_per_year / decisions_per_year
   end
-end
-# rubocop:enable Metrics/ModuleLength
 
-module ProportionHash
-  def normalize!(to: 1.0)
-    total = values.reduce(0, :+)
-    transform_values! { |proportion| proportion * (to / total) }
-  end
-
-  def add_fixed_proportions!(fixed)
-    except!(*fixed.keys)
-      .normalize!(to: 1.0 - fixed.values.reduce(0, :+))
-      .merge!(fixed)
-  end
-
-  def stochastic_allocation(n)
-    result = transform_values { |proportion| (n * proportion).floor }
-    rem = probability_budget = iterations = n - result.values.reduce(0, :+)
-
-    catch :complete do
-      each do |key, proportion|
-        prop_rem = (n * proportion).modulo(1)
-
-        if prop_rem >= probability_budget
-          result[key] += rem
-          throw :complete
-        end
-
-        iterations.times do
-          probability = prop_rem / probability_budget
-          probability_budget -= prop_rem / iterations
-
-          next unless probability > rand
-
-          result[key] += 1
-          rem -= 1
-
-          throw :complete if rem == 0
-        end
-      end
+  module ProportionHash
+    def normalize!(to: 1.0)
+      total = values.reduce(0, :+)
+      transform_values! { |proportion| proportion * (to / total) }
     end
 
-    result
-  end
+    def add_fixed_proportions!(fixed)
+      except!(*fixed.keys)
+        .normalize!(to: 1.0 - fixed.values.reduce(0, :+))
+        .merge!(fixed)
+    end
 
-  def all_zero?
-    all? { |_, proportion| proportion == 0 }
+    def stochastic_allocation(n)
+      result = transform_values { |proportion| (n * proportion).floor }
+      rem = probability_budget = iterations = n - result.values.reduce(0, :+)
+
+      catch :complete do
+        each do |key, proportion|
+          prop_rem = (n * proportion).modulo(1)
+
+          if prop_rem >= probability_budget
+            result[key] += rem
+            throw :complete
+          end
+
+          iterations.times do
+            probability = prop_rem / probability_budget
+            probability_budget -= prop_rem / iterations
+
+            next unless probability > rand
+
+            result[key] += 1
+            rem -= 1
+
+            throw :complete if rem == 0
+          end
+        end
+      end
+
+      result
+    end
+
+    def all_zero?
+      all? { |_, proportion| proportion == 0 }
+    end
   end
 end
+# rubocop:enable Metrics/ModuleLength
