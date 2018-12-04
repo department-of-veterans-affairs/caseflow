@@ -45,7 +45,7 @@ class SeedDB
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
-    create_colocated_user
+    create_colocated_users
     create_vso_user
     create_org_queue_users
     create_qr_user
@@ -54,7 +54,11 @@ class SeedDB
     create_case_search_only_user
   end
 
-  def create_colocated_user
+  def create_colocated_users
+    secondary_user = FactoryBot.create(:user, full_name: "Secondary VLJ support staff", roles: %w[Reader])
+    FactoryBot.create(:staff, :colocated_role, user: secondary_user, sdept: "DSP")
+    OrganizationsUser.add_user_to_organization(secondary_user, Colocated.singleton)
+
     user = User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located with cases", roles: %w[Reader])
     FactoryBot.create(:staff, :colocated_role, user: user, sdept: "DSP")
     OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
@@ -354,7 +358,7 @@ class SeedDB
     FactoryBot.create(:attorney_case_review, task_id: child.id)
   end
 
-  def create_task_at_colocated(appeal, judge, attorney, colocated)
+  def create_task_at_colocated(appeal, judge, attorney, colocated_user)
     parent = FactoryBot.create(
       :ama_judge_task,
       :on_hold,
@@ -372,11 +376,19 @@ class SeedDB
       appeal: appeal
     )
 
+    org_task = FactoryBot.create(:ama_colocated_task,
+                                 appeal: appeal,
+                                 parent: child,
+                                 assigned_by: attorney,
+                                 assigned_to: Colocated.singleton)
+
     FactoryBot.create(:ama_colocated_task,
                       appeal: appeal,
-                      parent: child,
+                      parent: org_task,
+                      action: org_task.action,
+                      instructions: org_task.instructions,
                       assigned_by: attorney,
-                      assigned_to: colocated)
+                      assigned_to: colocated_user)
   end
 
   def create_task_at_attorney_review(appeal, judge, attorney)
@@ -404,7 +416,7 @@ class SeedDB
 
     judge = FactoryBot.create(:user)
     FactoryBot.create(:staff, :judge_role, user: judge)
-    judge_task = JudgeTask.create!(appeal: appeal, parent: root_task, assigned_to: judge, action: "assign")
+    judge_task = JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge)
 
     atty = FactoryBot.create(:user)
     FactoryBot.create(:staff, :attorney_role, user: atty)
@@ -429,6 +441,29 @@ class SeedDB
     end
   end
 
+  def create_colocated_legacy_tasks(attorney, colocated_user)
+    [
+      { vacols_id: "2096907", trait: nil, additional: { action: "schedule_hearing" } },
+      { vacols_id: "2226048", trait: :in_progress },
+      { vacols_id: "2249056", trait: :in_progress },
+      { vacols_id: "2306397", trait: :on_hold }
+    ].each do |attrs|
+      org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
+                        status: Constants.TASK_STATUSES.on_hold,
+                        assigned_by: attorney,
+                        assigned_to: Colocated.singleton }.merge(attrs[:additional] || {})
+      org_task = FactoryBot.create(:colocated_task, org_task_args)
+
+      personal_task_args = org_task_args.merge(
+        parent: org_task,
+        action: org_task.action,
+        instructions: org_task.instructions,
+        assigned_to: colocated_user
+      )
+      FactoryBot.create(*[:colocated_task, attrs[:trait]].compact, personal_task_args)
+    end
+  end
+
   def create_tasks
     attorney = User.find_by(css_id: "BVASCASPER1")
     judge = User.find_by(css_id: "BVAAABSHIRE")
@@ -448,30 +483,7 @@ class SeedDB
 
     FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @appeal_with_vso)
 
-    # Colocated tasks with legacy appeals
-    FactoryBot.create(:colocated_task,
-                      appeal: LegacyAppeal.find_by(vacols_id: "2096907"),
-                      assigned_by: attorney,
-                      assigned_to: colocated,
-                      action: "schedule_hearing")
-
-    FactoryBot.create(:colocated_task,
-                      :in_progress,
-                      appeal: LegacyAppeal.find_by(vacols_id: "2226048"),
-                      assigned_by: attorney,
-                      assigned_to: colocated)
-
-    FactoryBot.create(:colocated_task,
-                      :in_progress,
-                      appeal: LegacyAppeal.find_by(vacols_id: "2249056"),
-                      assigned_by: attorney,
-                      assigned_to: colocated)
-
-    FactoryBot.create(:colocated_task,
-                      :on_hold,
-                      appeal: LegacyAppeal.find_by(vacols_id: "2306397"),
-                      assigned_by: attorney,
-                      assigned_to: colocated)
+    create_colocated_legacy_tasks(attorney, colocated)
 
     FactoryBot.create_list(
       :generic_task,

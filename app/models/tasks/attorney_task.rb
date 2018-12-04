@@ -7,7 +7,7 @@ class AttorneyTask < Task
   validate :parent_attorney_child_count, on: :create
 
   def available_actions(user)
-    if parent.type == JudgeTask.name && parent.assigned_to == user
+    if parent.is_a?(JudgeTask) && parent.assigned_to == user
       return [
         Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
       ]
@@ -25,6 +25,10 @@ class AttorneyTask < Task
         value: "colocated_task"
       }
     ]
+  end
+
+  def timeline_title
+    COPY::CASE_TIMELINE_ATTORNEY_TASK
   end
 
   private

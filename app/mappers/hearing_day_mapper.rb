@@ -9,13 +9,12 @@ module HearingDayMapper
     folder_nr:    :regional_office,
     room:         :room_info,
     board_member: :judge_id,
-    judge_name:   :judge_name,
     team:         :team,
     adduser:      :created_by,
     addtime:      :created_at,
     mduser:       :updated_by,
     mdtime:       :updated_at,
-    vdbvapoc:     :bva_coordinator,
+    vdbvapoc:     :bva_poc,
     judge_last_name: :judge_last_name,
     judge_middle_name: :judge_middle_name,
     judge_first_name: :judge_first_name
@@ -31,7 +30,6 @@ module HearingDayMapper
         regional_office: validate_regional_office(hearing_info[:regional_office]),
         judge_id: hearing_info[:judge_id],
         team: hearing_info[:team],
-        judge_name: hearing_info[:judge_name],
         judge_last_name: hearing_info[:judge_last_name],
         judge_middle_name: hearing_info[:judge_middle_name],
         judge_first_name: hearing_info[:judge_first_name]

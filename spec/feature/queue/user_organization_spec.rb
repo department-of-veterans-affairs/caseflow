@@ -8,8 +8,23 @@ RSpec.feature "User organization" do
   let!(:user_with_role) { create(:user, full_name: "with role", roles: [role]) }
   let!(:user_without_role) { create(:user, full_name: "without role") }
 
-  context "When user is in the organization" do
-    let!(:organization_user) { OrganizationsUser.add_user_to_organization(user, organization) }
+  context "When user is in the organization but not an admin" do
+    before { OrganizationsUser.add_user_to_organization(user, organization) }
+
+    scenario "Adds and removes users from the organization" do
+      visit organization.user_admin_path
+
+      expect(page).to have_content(COPY::UNAUTHORIZED_PAGE_ACCESS_MESSAGE)
+    end
+
+    scenario "Organization task list view shows queue switcher dropdown" do
+      visit organization.path
+      expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
+    end
+  end
+
+  context "When user is admin of the organization" do
+    before { OrganizationsUser.make_user_admin(user, organization) }
 
     scenario "Adds and removes users from the organization" do
       visit organization.user_admin_path
@@ -30,13 +45,18 @@ RSpec.feature "User organization" do
 
       expect(user_with_role.organizations.count).to eq(0)
     end
+
+    scenario "Organization task list view shows queue switcher dropdown" do
+      visit organization.path
+      expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
+    end
   end
 
   context "When user is not in the organization" do
     scenario "Adds and removes users from the organization" do
       visit organization.user_admin_path
 
-      expect(page).to have_content("You aren't authorized")
+      expect(page).to have_content(COPY::UNAUTHORIZED_PAGE_ACCESS_MESSAGE)
     end
 
     context "but user is a system admin" do

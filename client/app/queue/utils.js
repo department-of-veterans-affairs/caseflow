@@ -240,7 +240,8 @@ export const prepareAppealForStore =
         assignedJudge: appeal.attributes.assigned_judge,
         veteranFullName: appeal.attributes.veteran_full_name,
         veteranFileNumber: appeal.attributes.veteran_file_number,
-        isPaperCase: appeal.attributes.paper_case
+        isPaperCase: appeal.attributes.paper_case,
+        sanitizedHearingRequestType: appeal.attributes.sanitized_hearing_request_type
       };
 
       return accumulator;
@@ -251,6 +252,7 @@ export const prepareAppealForStore =
         hearings: prepareAppealHearingsForStore(appeal),
         completedHearingOnPreviousAppeal: appeal.attributes['completed_hearing_on_previous_appeal?'],
         issues: prepareAppealIssuesForStore(appeal),
+        decisionIssues: appeal.attributes.decision_issues,
         appellantFullName: appeal.attributes.appellant_full_name,
         appellantAddress: appeal.attributes.appellant_address,
         appellantRelationship: appeal.attributes.appellant_relationship,
@@ -261,10 +263,7 @@ export const prepareAppealForStore =
         veteranAddress: appeal.attributes.veteran_address,
         externalId: appeal.attributes.external_id,
         status: appeal.attributes.status,
-        events: {
-          nodReceiptDate: appeal.attributes.events.nod_receipt_date,
-          form9Date: appeal.attributes.events.form9_date
-        },
+        timeline: appeal.attributes.timeline,
         decisionDate: appeal.attributes.decision_date,
         certificationDate: appeal.attributes.certification_date,
         powerOfAttorney: appeal.attributes.power_of_attorney,

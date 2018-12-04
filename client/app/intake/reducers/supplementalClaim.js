@@ -20,11 +20,11 @@ const updateFromServerIntake = (state, serverIntake) => {
     benefitType: {
       $set: serverIntake.benefit_type
     },
-    claimantNotVeteran: {
-      $set: serverIntake.claimant_not_veteran
+    veteranIsNotClaimant: {
+      $set: serverIntake.veteran_is_not_claimant
     },
     claimant: {
-      $set: serverIntake.claimant_not_veteran ? serverIntake.claimant : null
+      $set: serverIntake.veteran_is_not_claimant ? serverIntake.claimant : null
     },
     payeeCode: {
       $set: serverIntake.payeeCode
@@ -67,8 +67,10 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     receiptDateError: null,
     benefitType: null,
     benefitTypeError: null,
-    claimantNotVeteran: null,
+    veteranIsNotClaimant: null,
+    veteranIsNotClaimantError: null,
     claimant: null,
+    claimantError: null,
     payeeCode: null,
     payeeCodeError: null,
     legacyOptInApproved: null,
@@ -118,13 +120,13 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: action.payload.benefitType
       }
     });
-  case ACTIONS.SET_CLAIMANT_NOT_VETERAN:
+  case ACTIONS.SET_VETERAN_IS_NOT_CLAIMANT:
     return update(state, {
-      claimantNotVeteran: {
-        $set: action.payload.claimantNotVeteran
+      veteranIsNotClaimant: {
+        $set: action.payload.veteranIsNotClaimant
       },
       claimant: {
-        $set: action.payload.claimantNotVeteran === 'true' ? state.claimant : null
+        $set: action.payload.veteranIsNotClaimant === 'true' ? state.claimant : null
       }
     });
   case ACTIONS.SET_CLAIMANT:
@@ -164,6 +166,12 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       legacyOptInApprovedError: {
         $set: null
       },
+      veteranIsNotClaimantError: {
+        $set: null
+      },
+      claimantError: {
+        $set: null
+      },
       payeeCodeError: {
         $set: null
       },
@@ -186,6 +194,12 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       },
       legacyOptInApprovedError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')
+      },
+      veteranIsNotClaimantError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'veteran_is_not_claimant')
+      },
+      claimantError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'claimant')
       },
       payeeCodeError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'payee_code')

@@ -167,21 +167,23 @@ class SearchableDropdown extends React.Component<Props, ComponentState> {
             labelContents
         }
       </label>
-      {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
-      <SelectComponent
-        inputProps={{ id: name }}
-        options={options}
-        onChange={this.onChange}
-        value={this.state.value}
-        placeholder={placeholder === null ? DEFAULT_PLACEHOLDER : placeholder}
-        clearable={false}
-        noResultsText={noResultsText ? noResultsText : NO_RESULTS_TEXT}
-        searchable={searchable}
-        disabled={readOnly}
-        multi={multi}
-        onBlurResetsInput={false}
-        {...addCreatableOptions}
-      />
+      <div className={errorMessage ? 'usa-input-error' : ''}>
+        {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
+        <SelectComponent
+          inputProps={{ id: name }}
+          options={options}
+          onChange={this.onChange}
+          value={this.state.value}
+          placeholder={placeholder === null ? DEFAULT_PLACEHOLDER : placeholder}
+          clearable={false}
+          noResultsText={noResultsText ? noResultsText : NO_RESULTS_TEXT}
+          searchable={searchable}
+          disabled={readOnly}
+          multi={multi}
+          onBlurResetsInput={false}
+          {...addCreatableOptions}
+        />
+      </div>
     </div>;
   }
 }

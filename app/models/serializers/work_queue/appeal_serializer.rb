@@ -2,6 +2,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :assigned_attorney
   attribute :assigned_judge
 
+  attribute :timeline
+
   attribute :issues do
     object.eligible_request_issues.map do |issue|
       # Hard code program for October 1st Pilot, we don't have all the info for how we'll
@@ -9,11 +11,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
       {
         id: issue.id,
         disposition: issue.disposition,
-        program: "Compensation",
+        program: "compensation",
         description: issue.description,
         notes: issue.notes,
-        remand_reasons: issue.remand_reasons,
-        decision_issue_ids: issue.request_decision_issues
+        remand_reasons: issue.remand_reasons
       }
     end
   end
@@ -23,7 +24,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
       {
         id: issue.id,
         disposition: issue.disposition,
-        description: issue.description
+        description: issue.description,
+        benefit_type: "compensation",
+        remand_reasons: issue.remand_reasons,
+        request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id)
       }
     end
   end
@@ -99,11 +103,5 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
 
   attribute :caseflow_veteran_id do
     object.veteran ? object.veteran.id : nil
-  end
-
-  attribute :events do
-    {
-      nod_receipt_date: object.receipt_date
-    }
   end
 end

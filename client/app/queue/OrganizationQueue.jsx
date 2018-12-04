@@ -3,9 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { sprintf } from 'sprintf-js';
+import { css } from 'glamor';
 
 import TabWindow from '../components/TabWindow';
 import TaskTable from './components/TaskTable';
+import QueueSelectorDropdown from './components/QueueSelectorDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import {
@@ -19,6 +21,10 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
+
+const containerStyles = css({
+  position: 'relative'
+});
 
 class OrganizationQueue extends React.PureComponent {
   componentDidMount = () => {
@@ -58,9 +64,10 @@ class OrganizationQueue extends React.PureComponent {
       }
     ];
 
-    return <AppSegment filledBackground>
+    return <AppSegment filledBackground styling={containerStyles}>
       <div>
         <h1 {...fullWidth}>{sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName)}</h1>
+        <QueueSelectorDropdown organizations={this.props.organizations} />
         <TabWindow
           name="tasks-organization-queue"
           tabs={tabs}
@@ -75,6 +82,7 @@ OrganizationQueue.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
+  organizations: state.ui.organizations,
   unassignedTasks: getUnassignedOrganizationalTasks(state),
   assignedTasks: getAssignedOrganizationalTasks(state),
   completedTasks: getCompletedOrganizationalTasks(state),
@@ -90,7 +98,7 @@ const mapDispatchToProps = (dispatch) => ({
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
 const TaskTableTab = ({ description, tasks }) => <React.Fragment>
-  <p>{description}</p>
+  <p className="cf-margin-top-0">{description}</p>
   <TaskTable
     includeDetailsLink
     includeTask

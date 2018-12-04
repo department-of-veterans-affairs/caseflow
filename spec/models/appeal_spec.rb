@@ -11,6 +11,30 @@ describe Appeal do
     end
   end
 
+  context "#special_issues" do
+    let(:appeal) { create(:appeal) }
+    let(:vacols_id) { nil }
+    let!(:request_issue) do
+      create(:request_issue, review_request: appeal, vacols_id: vacols_id)
+    end
+
+    subject { appeal.reload.special_issues }
+
+    context "no special conditions" do
+      it "is empty" do
+        expect(subject).to eq []
+      end
+    end
+
+    context "VACOLS opt-in" do
+      let(:vacols_id) { "something" }
+
+      it "includes VACOLS opt-in" do
+        expect(subject).to include(code: "VO", narrative: "VACOLS Opt-in")
+      end
+    end
+  end
+
   context "#docket_number" do
     context "when receipt_date is defined" do
       let(:appeal) do
@@ -239,6 +263,28 @@ describe Appeal do
       it "if the most recent assignee is not an organization it returns the id" do
         expect(appeal_user.location_code).to eq(user.css_id)
       end
+    end
+  end
+
+  context "is taskable" do
+    context "#assigned_attorney" do
+      let(:attorney) { create(:user) }
+      let(:appeal) { create(:appeal) }
+      let!(:task) { create(:ama_attorney_task, assigned_to: attorney, appeal: appeal) }
+
+      subject { appeal.assigned_attorney }
+
+      it { is_expected.to eq attorney }
+    end
+
+    context "#assigned_judge" do
+      let(:judge) { create(:user) }
+      let(:appeal) { create(:appeal) }
+      let!(:task) { create(:ama_judge_task, assigned_to: judge, appeal: appeal) }
+
+      subject { appeal.assigned_judge }
+
+      it { is_expected.to eq judge }
     end
   end
 end

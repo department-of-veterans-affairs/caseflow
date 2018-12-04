@@ -216,5 +216,41 @@ RSpec.feature "Task queue" do
       )
       expect(find("tbody").find_all("tr").length).to eq(assigned_count)
     end
+
+    it "shows queue switcher dropdown" do
+      expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
+    end
+  end
+
+  describe "VLJ support staff task action" do
+    let!(:attorney) { FactoryBot.create(:user) }
+    let!(:staff) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+    let!(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+    let!(:vlj_support_staffer) { FactoryBot.create(:user) }
+
+    before do
+      OrganizationsUser.add_user_to_organization(vlj_support_staffer, Colocated.singleton)
+      User.authenticate!(user: vlj_support_staffer)
+    end
+
+    context "when a ColocatedTask has been assigned through the Colocated organization to an individual" do
+      before do
+        ColocatedTask.create_many_from_params([{
+                                                assigned_by: attorney,
+                                                action: :aoj,
+                                                appeal: appeal
+                                              }], attorney)
+      end
+
+      it "should be actionable" do
+        visit("/queue/appeals/#{appeal.external_id}")
+
+        find(".Select-control", text: "Select an action…").click
+        find("div", class: "Select-option", text: COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY).click
+        find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
+
+        expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteran_full_name))
+      end
+    end
   end
 end

@@ -2,12 +2,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import SearchableDropdown from './SearchableDropdown';
+import InlineForm from './InlineForm';
+import Button from './Button';
 import ApiUtil from '../util/ApiUtil';
 import { onReceiveRegionalOffices } from './common/actions';
 import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 
 class RoSelectorDropdown extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      editable: false
+    };
+  }
 
   loadRegionalOffices = () => {
     return ApiUtil.get('/regional_offices.json').then((response) => {
@@ -45,29 +54,60 @@ class RoSelectorDropdown extends React.Component {
   labelMessage = this.props.label || "Regional Office";
 
   render() {
-    return <SearchableDropdown
-      name="ro"
-      label={this.labelMessage}
-      strongLabel={this.props.strongLabel}
-      hideLabel={this.props.hideLabel}
-      options={this.regionalOfficeOptions()}
-      staticOptions={this.props.staticOptions}
-      onChange={this.props.onChange}
-      value={this.props.value}
-      placeholder={this.props.placeholder}
-    />;
+    const { readOnly, onChange, value, placeholder, strongLabel, hideLabel } = this.props;
+    const regionalOfficeOptions = this.regionalOfficeOptions();
+    const selectedRegionalOffice = _.find(regionalOfficeOptions, (opt) => opt.value === value) || {};
+
+    if (!this.props.changePrompt || this.state.editable) {
+      return (
+        <SearchableDropdown
+          name="ro"
+          label={this.labelMessage}
+          strongLabel={strongLabel}
+          hideLabel={hideLabel}
+          options={regionalOfficeOptions || []}
+          readOnly={readOnly || false}
+          onChange={onChange}
+          value={value}
+          placeholder={placeholder}
+
+        />
+      );
+    }
+
+    return (
+      <React.Fragment>
+        <b style={{ marginBottom: '-8px',
+          marginTop: '8px',
+          display: 'block' }}>Regional Office</b>
+        <InlineForm>
+          <p style={{ marginRight: '30px',
+            width: '150px' }}>
+            {selectedRegionalOffice.label}
+          </p>
+          <Button
+            name="Change"
+            linkStyling
+            onClick={() => {
+              this.setState({ editable: true });
+            }} />
+        </InlineForm>
+      </React.Fragment>
+    );
   }
 }
 
 RoSelectorDropdown.propTypes = {
   regionalOffices: PropTypes.object,
   onChange: PropTypes.func,
-  value: PropTypes.object,
+  value: PropTypes.string,
   placeholder: PropTypes.string,
   staticOptions: PropTypes.array,
   hideLabel: PropTypes.bool,
   label: PropTypes.string,
-  strongLabel: PropTypes.bool
+  strongLabel: PropTypes.bool,
+  readOnly: PropTypes.bool,
+  changePrompt: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({

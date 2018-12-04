@@ -363,7 +363,7 @@ export default class DailyDocket extends React.Component {
       </div>
       <span className="cf-push-right">
         VLJ: {this.props.dailyDocket.judgeFirstName} {this.props.dailyDocket.judgeLastName} <br />
-        Coordinator: {this.props.dailyDocket.bvaCoordinator} <br />
+        Coordinator: {this.props.dailyDocket.bvaPoc} <br />
         Hearing type: {this.props.dailyDocket.hearingType}
       </span>
       <div {...noMarginStyling}>
