@@ -228,6 +228,10 @@ class User < ApplicationRecord
     self.class.user_repository.user_info_for_idt(css_id)
   end
 
+  def selectable_organizations
+    organizations.select(&:selectable_in_queue?)
+  end
+
   private
 
   def bgs

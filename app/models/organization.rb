@@ -21,6 +21,10 @@ class Organization < ApplicationRecord
     true
   end
 
+  def selectable_in_queue?
+    true
+  end
+
   def user_has_access?(user)
     users.pluck(:id).include?(user.id)
   end
