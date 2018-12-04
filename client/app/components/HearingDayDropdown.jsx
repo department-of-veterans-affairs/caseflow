@@ -37,6 +37,24 @@ class HearingDayDropdown extends React.Component {
     }
   }
 
+  componentDidUpdate(){
+    const { value, onChange } = this.props;
+
+    if (this.hearingDayOptions().length && typeof(value) === 'string') {
+      onChange(this.getValue());
+    }
+  }
+
+  getValue = () => {
+    const { value } = this.props;
+
+    if (typeof(value) === 'string'){
+      return _.find(this.hearingDayOptions(), day => day.value.hearingDate === value) || {};
+    }
+
+    return value || {};
+  }
+
   hearingDayOptions = () => {
 
     let hearingDayOptions = [];
@@ -44,7 +62,8 @@ class HearingDayDropdown extends React.Component {
     _.forEach(this.props.hearingDays, (day) => {
       hearingDayOptions.push({
         label: formatDateStr(day.hearingDate),
-        value: { ...day, hearingDate: formatDateStr(day.hearingDate, 'YYYY-MM-DD', 'YYYY-MM-DD') }
+        value: { ...day,
+          hearingDate: formatDateStr(day.hearingDate, 'YYYY-MM-DD', 'YYYY-MM-DD') }
       });
     });
 
@@ -67,7 +86,7 @@ class HearingDayDropdown extends React.Component {
           options={hearingDayOptions || []}
           readOnly={readOnly || false}
           onChange={onChange}
-          value={value}
+          value={this.getValue()}
           placeholder={placeholder}
         />
       );
@@ -81,7 +100,7 @@ class HearingDayDropdown extends React.Component {
         <InlineForm>
           <p style={{ marginRight: '30px',
             width: '150px' }}>
-            {value ? value.label : ''}
+            {this.getValue().label}
           </p>
           <Button
             name="Change"
@@ -99,7 +118,10 @@ HearingDayDropdown.propTypes = {
   regionalOffice: PropTypes.string.isRequired,
   hearingDays: PropTypes.object,
   onChange: PropTypes.func,
-  value: PropTypes.object,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
   placeholder: PropTypes.string,
   staticOptions: PropTypes.array,
   readOnly: PropTypes.bool,
